@@ -1,915 +1,207 @@
-Return-Path: <linux-kernel+bounces-178743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 521488C571B
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 15:29:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C8CE8C56C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 15:17:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAC112887DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 13:28:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD28E1C2154D
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 13:17:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4288917088C;
-	Tue, 14 May 2024 13:18:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 235C31448C8;
+	Tue, 14 May 2024 13:17:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PZDBNAZG"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hgRTnlbY"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2B1516D4D4;
-	Tue, 14 May 2024 13:18:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 743DC55C36;
+	Tue, 14 May 2024 13:17:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715692692; cv=none; b=Bfprar03YFel2j8RDFwOG1DcQdzXYGxTvvlWhqFh/0vBqMgsDG7iyQLZSEYvtWcJYkUZfHLV2lPPgWYgF870zLQxALaDqMZ4kGXK20BJNJ7u7Cpw3dct6UoXJ7rZEfRe968s2SyfcjIhCKOytkJ3oiTKu2hIK0LY0cwroV1K8zA=
+	t=1715692651; cv=none; b=gy8fPSNdBZ4FFJTyhOyi7R/Fkh0/tPJETx5I7mKPmivFNhfBTaWf9+WlNZYcJctpZu/IHTIw8D78/NFp67dWEc3pjdq9b02jyXkbjSI8UNJGBXDTXRoBihrgMz/52C31xXCiubIJd41RY8/sTdEqx/isuYLtSu8K72o/AUut9B8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715692692; c=relaxed/simple;
-	bh=p41Jp5EYVfGBDeVAOVl/zsa3dPK/Cb6MVZmuxA54sNc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=eA/pR8tnEjctvuHaS2woMLWw0qSCWZ49a38YRvAKSnVZmkSBmoOVFHld6sVWU45DnCYHCEpbdwUJ9sNTpAMG2x34WdjNWsdcT+iZI9DPHQfa4Ry905/bpI3Sv7LEOYU/lrHbqKIy8PnLMa+p4twoUrF9Ohw7QvHqKwBLgbomeJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PZDBNAZG; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1ec69e3dbcfso43600605ad.0;
-        Tue, 14 May 2024 06:18:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715692689; x=1716297489; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ac/6w8eF1/WlkpgOl3mXtqTlZQH+FEfp7jqPuIxAGeU=;
-        b=PZDBNAZGGYe4fv1q4qayXccZK8OtiLu4EPRGjN7Ri7eCf6r/hIpUVBykMqz3dX8av0
-         Nvkp9B3HSaLqOo2Kzqt7CgSihHZHQDtpq1V56/+U9doiMw5DUW8Ij3uRsix+HYk3fMjd
-         8cOPEnWTOfi95HKrArNz+rHBaz6/gwD3v2l3WkSQyUpd7tnEMfN++QaVJNkNuvds5Rce
-         zZ+kmaIQF8LiWE1L7kpqzlHpNaQWMvKivfcBLMzi0JZxjLXw2UZx3qUvhME6V2JMhzrU
-         Ihku4vTMeXH9I7sD1qVMphHHYsVTgOCqtEVt17RB5voNXul3LRMpPkcwp4vUXiJxDdcT
-         +DEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715692689; x=1716297489;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ac/6w8eF1/WlkpgOl3mXtqTlZQH+FEfp7jqPuIxAGeU=;
-        b=wYpghHm7pBNV7PUdjL3GnutAZvCzBWJ//os24e5ChTrW4HHRVsw2xXEDFQLKPyjTZ8
-         YodQtx9OKFMSX90lVAjUmkG11RIKXkxnxmIa7DnHoIAlNCmSy8r9I/sdNpia9VNGGXR1
-         AWc2ZTc12jPl8xLIlj0j0yxE65VIKWJfweBbr3DWGNGVbmJ56BcRDB8N0EyQK+7SQ6rZ
-         VLcdIgqKMmprn5TY3p1iir1X1KSRw7+ENbXsTmWXNxvuT+ep7X+MBTQvvRSktR3GN/nY
-         2xz9HI/FNQanTbwgvBZOpuhoWPtMlgFpwT6AeC7GtfZnAjoQQZ1XBKDHNDfnAv4Cjb9C
-         Vhyw==
-X-Forwarded-Encrypted: i=1; AJvYcCVVZgyC+QWAZT19OhI36ak2wyJJMosR262JhldzT4YsaeuhAMgoUCtF6eihMcSuga5iBj+pgXVy1XCspRrq5nu1x7Haz6TkRCl2XQaC2Wg0fmPaLw36Wa90KtC0YcDjuCSBqkMvMG0ti+V/03lrHvIaQ9Rs5esCmeG0/0XddLaFtaM4DNrc1fXubGJN
-X-Gm-Message-State: AOJu0YwDgud/rABgQ8AsBgPCkEkW0b/q6x4oQCdF/5wtKnKidmYvwkBN
-	GrnfBILDkXEirceNjwSUyoWJVHo02sEYthoS637FB6o8kWZkm2I7
-X-Google-Smtp-Source: AGHT+IFUEWOJAbO6+4ufK9Zg10BKKcqWXq5o8D/uKQjVC20XowtdZrymelxo6YOYB03vsfJ+FIXc0A==
-X-Received: by 2002:a17:903:234e:b0:1e3:cdd1:dd80 with SMTP id d9443c01a7336-1ef43c0cba2mr162831555ad.6.1715692688780;
-        Tue, 14 May 2024 06:18:08 -0700 (PDT)
-Received: from wedsonaf-dev.. ([50.204.89.32])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-1ef0b9d18a4sm97277335ad.56.2024.05.14.06.18.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 May 2024 06:18:08 -0700 (PDT)
-From: Wedson Almeida Filho <wedsonaf@gmail.com>
-To: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Dave Chinner <david@fromorbit.com>
-Cc: Kent Overstreet <kent.overstreet@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-fsdevel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Wedson Almeida Filho <walmeida@microsoft.com>
-Subject: [RFC PATCH v2 30/30] WIP: fs: ext2: add rust ro ext2 implementation
-Date: Tue, 14 May 2024 10:17:11 -0300
-Message-Id: <20240514131711.379322-31-wedsonaf@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240514131711.379322-1-wedsonaf@gmail.com>
-References: <20240514131711.379322-1-wedsonaf@gmail.com>
+	s=arc-20240116; t=1715692651; c=relaxed/simple;
+	bh=a6elSW/RT/RajJiGoLeliv8zDflrefwedHQs/lf6dsQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=u3e36HWjbmj6Mmh2KQV5A7msmrSDeDjAY3qE8mlZdYkIHkkpDrHNjc8icjDlvYWhXDpmSxfiBZoPQnjFnMVt8olGYu9bdckZqDN2qRiBgXZTAaXuPBSh5hLNZaedngumoggVmRqG995l697U5nfog9WVbQNXdn+ZL6gYiTSgDCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hgRTnlbY; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=MIME-Version:Content-Type:References:
+	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=a6elSW/RT/RajJiGoLeliv8zDflrefwedHQs/lf6dsQ=; b=hgRTnlbYtjsSYuDr5fpjoPfRmG
+	REkUKL1WEk/fHnGZvvzgBogkJOL2H5GRSlppYoZPe2CkoRrH3S8SA9VJ961NeH7jNjc9thn19BQ9R
+	RHiKF4RDoB29PRzDIYyTzIxtO29NIQcSdCDAAFdK3PVeia1cAUJs7nBazxt1RnvS6hXBF2+LnD1sF
+	kdwvX+d4SMq7QDQmVKj4VvkJpm53xShsGSWTtw0pCNP9uv+Tk2eBk6G+mF4ALP4CIY1/7VuBlc4l3
+	4ul4k6HwKjFjGnjLZZjuGuknKBqMCs3ap7oFClCrvZ8RWs8I75MuUmtlAOWAbqiSpz7rwSgdrTAAV
+	56tbQ6LA==;
+Received: from [2001:8b0:10b:5::bb3] (helo=u3832b3a9db3152.infradead.org)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1s6s1t-000000096br-1Smh;
+	Tue, 14 May 2024 13:17:18 +0000
+Message-ID: <87bce8896d05c026647a957ad49de5c5582a766b.camel@infradead.org>
+Subject: Re: [PATCH v2 13/15] KVM: x86: Kill cur_tsc_{nsec,offset,write}
+ fields
+From: David Woodhouse <dwmw2@infradead.org>
+To: Chenyi Qiang <chenyi.qiang@intel.com>, kvm@vger.kernel.org
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Jonathan Corbet <corbet@lwn.net>, 
+ Sean Christopherson <seanjc@google.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
+ <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>,  Paul Durrant <paul@xen.org>, Shuah Khan
+ <shuah@kernel.org>, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, Oliver Upton
+ <oliver.upton@linux.dev>, Marcelo Tosatti <mtosatti@redhat.com>, 
+ jalliste@amazon.co.uk, sveith@amazon.de, zide.chen@intel.com, Dongli Zhang
+ <dongli.zhang@oracle.com>
+Date: Tue, 14 May 2024 14:17:16 +0100
+In-Reply-To: <0867c527-6fe5-4f54-adcc-0344e9416f9b@intel.com>
+References: <20240427111929.9600-1-dwmw2@infradead.org>
+	 <20240427111929.9600-14-dwmw2@infradead.org>
+	 <0867c527-6fe5-4f54-adcc-0344e9416f9b@intel.com>
+Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
+	boundary="=-rAPrvdXo1WtVIUIleiJX"
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 
-From: Wedson Almeida Filho <walmeida@microsoft.com>
 
-Signed-off-by: Wedson Almeida Filho <walmeida@microsoft.com>
----
- fs/Kconfig            |   1 +
- fs/Makefile           |   1 +
- fs/rust-ext2/Kconfig  |  13 +
- fs/rust-ext2/Makefile |   8 +
- fs/rust-ext2/defs.rs  | 173 +++++++++++++
- fs/rust-ext2/ext2.rs  | 551 ++++++++++++++++++++++++++++++++++++++++++
- rust/kernel/lib.rs    |   3 +
- 7 files changed, 750 insertions(+)
- create mode 100644 fs/rust-ext2/Kconfig
- create mode 100644 fs/rust-ext2/Makefile
- create mode 100644 fs/rust-ext2/defs.rs
- create mode 100644 fs/rust-ext2/ext2.rs
+--=-rAPrvdXo1WtVIUIleiJX
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/fs/Kconfig b/fs/Kconfig
-index 2cbd99d6784c..cf0cac5c5b1e 100644
---- a/fs/Kconfig
-+++ b/fs/Kconfig
-@@ -338,6 +338,7 @@ source "fs/ufs/Kconfig"
- source "fs/erofs/Kconfig"
- source "fs/vboxsf/Kconfig"
- source "fs/tarfs/Kconfig"
-+source "fs/rust-ext2/Kconfig"
- 
- endif # MISC_FILESYSTEMS
- 
-diff --git a/fs/Makefile b/fs/Makefile
-index d8bbda73e3a9..c1a3007efc7d 100644
---- a/fs/Makefile
-+++ b/fs/Makefile
-@@ -130,3 +130,4 @@ obj-$(CONFIG_EROFS_FS)		+= erofs/
- obj-$(CONFIG_VBOXSF_FS)		+= vboxsf/
- obj-$(CONFIG_ZONEFS_FS)		+= zonefs/
- obj-$(CONFIG_TARFS_FS)		+= tarfs/
-+obj-$(CONFIG_RUST_EXT2_FS)	+= rust-ext2/
-diff --git a/fs/rust-ext2/Kconfig b/fs/rust-ext2/Kconfig
-new file mode 100644
-index 000000000000..976371655ca6
---- /dev/null
-+++ b/fs/rust-ext2/Kconfig
-@@ -0,0 +1,13 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+#
-+
-+config RUST_EXT2_FS
-+	tristate "Rust second extended fs support"
-+	depends on RUST && BLOCK
-+	help
-+	  Ext2 is a standard Linux file system for hard disks.
-+
-+	  To compile this file system support as a module, choose M here: the
-+	  module will be called rust_ext2.
-+
-+	  If unsure, say Y.
-diff --git a/fs/rust-ext2/Makefile b/fs/rust-ext2/Makefile
-new file mode 100644
-index 000000000000..ac960b5f89d7
---- /dev/null
-+++ b/fs/rust-ext2/Makefile
-@@ -0,0 +1,8 @@
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Makefile for the linux tarfs filesystem routines.
-+#
-+
-+obj-$(CONFIG_RUST_EXT2_FS) += rust_ext2.o
-+
-+rust_ext2-y := ext2.o
-diff --git a/fs/rust-ext2/defs.rs b/fs/rust-ext2/defs.rs
-new file mode 100644
-index 000000000000..5f84852b4961
---- /dev/null
-+++ b/fs/rust-ext2/defs.rs
-@@ -0,0 +1,173 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+//! Definitions of tarfs structures.
-+
-+use kernel::types::LE;
-+
-+pub(crate) const EXT2_SUPER_MAGIC: u16 = 0xEF53;
-+
-+pub(crate) const EXT2_MAX_BLOCK_LOG_SIZE: u32 = 16;
-+
-+pub(crate) const EXT2_GOOD_OLD_REV: u32 = 0; /* The good old (original) format */
-+pub(crate) const EXT2_DYNAMIC_REV: u32 = 1; /* V2 format w/ dynamic inode sizes */
-+
-+pub(crate) const EXT2_GOOD_OLD_INODE_SIZE: u16 = 128;
-+
-+pub(crate) const EXT2_ROOT_INO: u32 = 2; /* Root inode */
-+
-+/* First non-reserved inode for old ext2 filesystems. */
-+pub(crate) const EXT2_GOOD_OLD_FIRST_INO: u32 = 11;
-+
-+pub(crate) const EXT2_FEATURE_INCOMPAT_FILETYPE: u32 = 0x0002;
-+
-+/*
-+ * Constants relative to the data blocks
-+ */
-+pub(crate) const EXT2_NDIR_BLOCKS: usize = 12;
-+pub(crate) const EXT2_IND_BLOCK: usize = EXT2_NDIR_BLOCKS;
-+pub(crate) const EXT2_DIND_BLOCK: usize = EXT2_IND_BLOCK + 1;
-+pub(crate) const EXT2_TIND_BLOCK: usize = EXT2_DIND_BLOCK + 1;
-+pub(crate) const EXT2_N_BLOCKS: usize = EXT2_TIND_BLOCK + 1;
-+
-+kernel::derive_readable_from_bytes! {
-+    #[repr(C)]
-+    pub(crate) struct Super {
-+        pub(crate) inodes_count: LE<u32>,
-+        pub(crate) blocks_count: LE<u32>,
-+        pub(crate) r_blocks_count: LE<u32>,
-+        pub(crate) free_blocks_count: LE<u32>, /* Free blocks count */
-+        pub(crate) free_inodes_count: LE<u32>, /* Free inodes count */
-+        pub(crate) first_data_block: LE<u32>,  /* First Data Block */
-+        pub(crate) log_block_size: LE<u32>,    /* Block size */
-+        pub(crate) log_frag_size: LE<u32>,     /* Fragment size */
-+        pub(crate) blocks_per_group: LE<u32>,  /* # Blocks per group */
-+        pub(crate) frags_per_group: LE<u32>,   /* # Fragments per group */
-+        pub(crate) inodes_per_group: LE<u32>,  /* # Inodes per group */
-+        pub(crate) mtime: LE<u32>,             /* Mount time */
-+        pub(crate) wtime: LE<u32>,             /* Write time */
-+        pub(crate) mnt_count: LE<u16>,         /* Mount count */
-+        pub(crate) max_mnt_count: LE<u16>,     /* Maximal mount count */
-+        pub(crate) magic: LE<u16>,             /* Magic signature */
-+        pub(crate) state: LE<u16>,             /* File system state */
-+        pub(crate) errors: LE<u16>,            /* Behaviour when detecting errors */
-+        pub(crate) minor_rev_level: LE<u16>,   /* minor revision level */
-+        pub(crate) lastcheck: LE<u32>,         /* time of last check */
-+        pub(crate) checkinterval: LE<u32>,     /* max. time between checks */
-+        pub(crate) creator_os: LE<u32>,        /* OS */
-+        pub(crate) rev_level: LE<u32>,         /* Revision level */
-+        pub(crate) def_resuid: LE<u16>,        /* Default uid for reserved blocks */
-+        pub(crate) def_resgid: LE<u16>,        /* Default gid for reserved blocks */
-+        /*
-+         * These fields are for EXT2_DYNAMIC_REV superblocks only.
-+         *
-+         * Note: the difference between the compatible feature set and
-+         * the incompatible feature set is that if there is a bit set
-+         * in the incompatible feature set that the kernel doesn't
-+         * know about, it should refuse to mount the filesystem.
-+         *
-+         * e2fsck's requirements are more strict; if it doesn't know
-+         * about a feature in either the compatible or incompatible
-+         * feature set, it must abort and not try to meddle with
-+         * things it doesn't understand...
-+         */
-+        pub(crate) first_ino: LE<u32>,              /* First non-reserved inode */
-+        pub(crate) inode_size: LE<u16>,             /* size of inode structure */
-+        pub(crate) block_group_nr: LE<u16>,         /* block group # of this superblock */
-+        pub(crate) feature_compat: LE<u32>,         /* compatible feature set */
-+        pub(crate) feature_incompat: LE<u32>,       /* incompatible feature set */
-+        pub(crate) feature_ro_compat: LE<u32>,      /* readonly-compatible feature set */
-+        pub(crate) uuid: [u8; 16],                  /* 128-bit uuid for volume */
-+        pub(crate) volume_name: [u8; 16],           /* volume name */
-+        pub(crate) last_mounted: [u8; 64],          /* directory where last mounted */
-+        pub(crate) algorithm_usage_bitmap: LE<u32>, /* For compression */
-+        /*
-+         * Performance hints.  Directory preallocation should only
-+         * happen if the EXT2_COMPAT_PREALLOC flag is on.
-+         */
-+        pub(crate) prealloc_blocks: u8,    /* Nr of blocks to try to preallocate*/
-+        pub(crate) prealloc_dir_blocks: u8,        /* Nr to preallocate for dirs */
-+        padding1: u16,
-+        /*
-+         * Journaling support valid if EXT3_FEATURE_COMPAT_HAS_JOURNAL set.
-+         */
-+        pub(crate) journal_uuid: [u8; 16],      /* uuid of journal superblock */
-+        pub(crate) journal_inum: u32,           /* inode number of journal file */
-+        pub(crate) journal_dev: u32,            /* device number of journal file */
-+        pub(crate) last_orphan: u32,            /* start of list of inodes to delete */
-+        pub(crate) hash_seed: [u32; 4],         /* HTREE hash seed */
-+        pub(crate) def_hash_version: u8,        /* Default hash version to use */
-+        pub(crate) reserved_char_pad: u8,
-+        pub(crate) reserved_word_pad: u16,
-+        pub(crate) default_mount_opts: LE<u32>,
-+        pub(crate) first_meta_bg: LE<u32>,      /* First metablock block group */
-+        reserved: [u32; 190],                   /* Padding to the end of the block */
-+    }
-+
-+    #[repr(C)]
-+    #[derive(Clone, Copy)]
-+    pub(crate) struct Group {
-+        /// Blocks bitmap block.
-+        pub block_bitmap: LE<u32>,
-+
-+        /// Inodes bitmap block.
-+        pub inode_bitmap: LE<u32>,
-+
-+        /// Inodes table block.
-+        pub inode_table: LE<u32>,
-+
-+        /// Number of free blocks.
-+        pub free_blocks_count: LE<u16>,
-+
-+        /// Number of free inodes.
-+        pub free_inodes_count: LE<u16>,
-+
-+        /// Number of directories.
-+        pub used_dirs_count: LE<u16>,
-+
-+        pad: LE<u16>,
-+        reserved: [u32; 3],
-+    }
-+
-+    #[repr(C)]
-+    pub(crate) struct INode {
-+        pub mode: LE<u16>,                  /* File mode */
-+        pub uid: LE<u16>,                   /* Low 16 bits of Owner Uid */
-+        pub size: LE<u32>,                  /* Size in bytes */
-+        pub atime: LE<u32>,                 /* Access time */
-+        pub ctime: LE<u32>,                 /* Creation time */
-+        pub mtime: LE<u32>,                 /* Modification time */
-+        pub dtime: LE<u32>,                 /* Deletion Time */
-+        pub gid: LE<u16>,                   /* Low 16 bits of Group Id */
-+        pub links_count: LE<u16>,           /* Links count */
-+        pub blocks: LE<u32>,                /* Blocks count */
-+        pub flags: LE<u32>,                 /* File flags */
-+        pub reserved1: LE<u32>,
-+        pub block: [LE<u32>; EXT2_N_BLOCKS],/* Pointers to blocks */
-+        pub generation: LE<u32>,            /* File version (for NFS) */
-+        pub file_acl: LE<u32>,              /* File ACL */
-+        pub dir_acl: LE<u32>,               /* Directory ACL */
-+        pub faddr: LE<u32>,                 /* Fragment address */
-+        pub frag: u8,	                    /* Fragment number */
-+        pub fsize: u8,	                    /* Fragment size */
-+        pub pad1: LE<u16>,
-+        pub uid_high: LE<u16>,
-+        pub gid_high: LE<u16>,
-+        pub reserved2: LE<u32>,
-+    }
-+
-+    #[repr(C)]
-+    pub(crate) struct DirEntry {
-+        pub(crate) inode: LE<u32>,       /* Inode number */
-+        pub(crate) rec_len: LE<u16>,     /* Directory entry length */
-+        pub(crate) name_len: u8,         /* Name length */
-+        pub(crate) file_type: u8,        /* Only if the "filetype" feature flag is set. */
-+    }
-+}
-+
-+pub(crate) const FT_REG_FILE: u8 = 1;
-+pub(crate) const FT_DIR: u8 = 2;
-+pub(crate) const FT_CHRDEV: u8 = 3;
-+pub(crate) const FT_BLKDEV: u8 = 4;
-+pub(crate) const FT_FIFO: u8 = 5;
-+pub(crate) const FT_SOCK: u8 = 6;
-+pub(crate) const FT_SYMLINK: u8 = 7;
-diff --git a/fs/rust-ext2/ext2.rs b/fs/rust-ext2/ext2.rs
-new file mode 100644
-index 000000000000..2d6b1e7ca156
---- /dev/null
-+++ b/fs/rust-ext2/ext2.rs
-@@ -0,0 +1,551 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+//! Ext2 file system.
-+
-+use alloc::vec::Vec;
-+use core::mem::size_of;
-+use defs::*;
-+use kernel::fs::{
-+    self, address_space, dentry, dentry::DEntry, file, file::File, inode, inode::INode, iomap, sb,
-+    sb::SuperBlock, Offset,
-+};
-+use kernel::types::{ARef, Either, FromBytes, Locked, LE};
-+use kernel::{block, c_str, prelude::*, str::CString, time::Timespec, user, PAGE_SIZE};
-+
-+pub mod defs;
-+
-+kernel::module_fs! {
-+    type: Ext2Fs,
-+    name: "ext2",
-+    author: "Wedson Almeida Filho <walmeida@microsoft.com>",
-+    description: "ext2 file system",
-+    license: "GPL",
-+}
-+
-+const SB_OFFSET: Offset = 1024;
-+
-+struct INodeData {
-+    data_blocks: [u32; defs::EXT2_N_BLOCKS],
-+}
-+
-+struct Ext2Fs {
-+    mapper: inode::Mapper,
-+    block_size: u32,
-+    has_file_type: bool,
-+    _block_size_bits: u32,
-+    inodes_per_block: u32,
-+    inodes_per_group: u32,
-+    inode_count: u32,
-+    inode_size: u16,
-+    first_ino: u32,
-+    group: Vec<defs::Group>,
-+}
-+
-+impl Ext2Fs {
-+    fn iget(sb: &SuperBlock<Self>, ino: u32) -> Result<ARef<INode<Self>>> {
-+        let s = sb.data();
-+        if (ino != EXT2_ROOT_INO && ino < s.first_ino) || ino > s.inode_count {
-+            return Err(ENOENT);
-+        }
-+        let group = ((ino - 1) / s.inodes_per_group) as usize;
-+        let offset = (ino - 1) % s.inodes_per_group;
-+
-+        if group >= s.group.len() {
-+            return Err(ENOENT);
-+        }
-+
-+        // Create an inode or find an existing (cached) one.
-+        let mut inode = match sb.get_or_create_inode(ino.into())? {
-+            Either::Left(existing) => return Ok(existing),
-+            Either::Right(new) => new,
-+        };
-+
-+        let inodes_block = Offset::from(s.group[group].inode_table.value());
-+        let inode_block = inodes_block + Offset::from(offset / s.inodes_per_block);
-+        let offset = (offset % s.inodes_per_block) as usize;
-+        let b = sb
-+            .data()
-+            .mapper
-+            .mapped_folio(inode_block * Offset::from(s.block_size))?;
-+        let idata = defs::INode::from_bytes(&b, offset * s.inode_size as usize).ok_or(EIO)?;
-+        let mode = idata.mode.value();
-+
-+        if idata.links_count.value() == 0 && (mode == 0 || idata.dtime.value() != 0) {
-+            return Err(ESTALE);
-+        }
-+
-+        const DIR_FOPS: file::Ops<Ext2Fs> = file::Ops::new::<Ext2Fs>();
-+        const DIR_IOPS: inode::Ops<Ext2Fs> = inode::Ops::new::<Ext2Fs>();
-+        const FILE_AOPS: address_space::Ops<Ext2Fs> = iomap::ro_aops::<Ext2Fs>();
-+
-+        let mut size = idata.size.value().into();
-+        let typ = match mode & fs::mode::S_IFMT {
-+            fs::mode::S_IFREG => {
-+                size |= Offset::from(idata.dir_acl.value())
-+                    .checked_shl(32)
-+                    .ok_or(EUCLEAN)?;
-+                inode
-+                    .set_aops(FILE_AOPS)
-+                    .set_fops(file::Ops::generic_ro_file());
-+                inode::Type::Reg
-+            }
-+            fs::mode::S_IFDIR => {
-+                inode
-+                    .set_iops(DIR_IOPS)
-+                    .set_fops(DIR_FOPS)
-+                    .set_aops(FILE_AOPS);
-+                inode::Type::Dir
-+            }
-+            fs::mode::S_IFLNK => {
-+                if idata.blocks.value() == 0 {
-+                    const OFFSET: usize = core::mem::offset_of!(defs::INode, block);
-+                    let name = &b[offset * usize::from(s.inode_size) + OFFSET..];
-+                    let name_len = size as usize;
-+                    if name_len > name.len() || name_len == 0 {
-+                        return Err(EIO);
-+                    }
-+                    inode.set_iops(inode::Ops::simple_symlink_inode());
-+                    inode::Type::Lnk(Some(CString::try_from(&name[..name_len])?))
-+                } else {
-+                    inode
-+                        .set_aops(FILE_AOPS)
-+                        .set_iops(inode::Ops::page_symlink_inode());
-+                    inode::Type::Lnk(None)
-+                }
-+            }
-+            fs::mode::S_IFSOCK => inode::Type::Sock,
-+            fs::mode::S_IFIFO => inode::Type::Fifo,
-+            fs::mode::S_IFCHR => {
-+                let (major, minor) = decode_dev(&idata.block);
-+                inode::Type::Chr(major, minor)
-+            }
-+            fs::mode::S_IFBLK => {
-+                let (major, minor) = decode_dev(&idata.block);
-+                inode::Type::Blk(major, minor)
-+            }
-+            _ => return Err(ENOENT),
-+        };
-+        inode.init(inode::Params {
-+            typ,
-+            mode: mode & 0o777,
-+            size,
-+            blocks: idata.blocks.value().into(),
-+            nlink: idata.links_count.value().into(),
-+            uid: u32::from(idata.uid.value()) | u32::from(idata.uid_high.value()) << 16,
-+            gid: u32::from(idata.gid.value()) | u32::from(idata.gid_high.value()) << 16,
-+            ctime: Timespec::new(idata.ctime.value().into(), 0)?,
-+            mtime: Timespec::new(idata.mtime.value().into(), 0)?,
-+            atime: Timespec::new(idata.atime.value().into(), 0)?,
-+            value: INodeData {
-+                data_blocks: core::array::from_fn(|i| idata.block[i].value()),
-+            },
-+        })
-+    }
-+
-+    fn offsets<'a>(&self, mut block: u64, out: &'a mut [u32]) -> Option<&'a [u32]> {
-+        let ptrs = u64::from(self.block_size / size_of::<u32>() as u32);
-+        let ptr_mask = ptrs - 1;
-+        let ptr_bits = ptrs.trailing_zeros();
-+
-+        if block < EXT2_NDIR_BLOCKS as u64 {
-+            out[0] = block as u32;
-+            return Some(&out[..1]);
-+        }
-+
-+        block -= EXT2_NDIR_BLOCKS as u64;
-+        if block < ptrs {
-+            out[0] = EXT2_IND_BLOCK as u32;
-+            out[1] = block as u32;
-+            return Some(&out[..2]);
-+        }
-+
-+        block -= ptrs;
-+        if block < (1 << (2 * ptr_bits)) {
-+            out[0] = EXT2_DIND_BLOCK as u32;
-+            out[1] = (block >> ptr_bits) as u32;
-+            out[2] = (block & ptr_mask) as u32;
-+            return Some(&out[..3]);
-+        }
-+
-+        block -= ptrs * ptrs;
-+        if block < ptrs * ptrs * ptrs {
-+            out[0] = EXT2_TIND_BLOCK as u32;
-+            out[1] = (block >> (2 * ptr_bits)) as u32;
-+            out[2] = ((block >> ptr_bits) & ptr_mask) as u32;
-+            out[3] = (block & ptr_mask) as u32;
-+            return Some(&out[..4]);
-+        }
-+
-+        None
-+    }
-+
-+    fn offset_to_block(inode: &INode<Self>, block: Offset) -> Result<u64> {
-+        let s = inode.super_block().data();
-+        let mut indices = [0u32; 4];
-+        let boffsets = s.offsets(block as u64, &mut indices).ok_or(EIO)?;
-+        let mut boffset = inode.data().data_blocks[boffsets[0] as usize];
-+        let mapper = &s.mapper;
-+        for i in &boffsets[1..] {
-+            let b = mapper.mapped_folio(Offset::from(boffset) * Offset::from(s.block_size))?;
-+            let table = LE::<u32>::from_bytes_to_slice(&b).ok_or(EIO)?;
-+            boffset = table[*i as usize].value();
-+        }
-+        Ok(boffset.into())
-+    }
-+
-+    fn check_descriptors(s: &Super, groups: &[Group]) -> Result {
-+        for (i, g) in groups.iter().enumerate() {
-+            let first = i as u32 * s.blocks_per_group.value() + s.first_data_block.value();
-+            let last = if i == groups.len() - 1 {
-+                s.blocks_count.value()
-+            } else {
-+                first + s.blocks_per_group.value() - 1
-+            };
-+
-+            if g.block_bitmap.value() < first || g.block_bitmap.value() > last {
-+                pr_err!(
-+                    "Block bitmap for group {i} no in group (block {})\n",
-+                    g.block_bitmap.value()
-+                );
-+                return Err(EINVAL);
-+            }
-+
-+            if g.inode_bitmap.value() < first || g.inode_bitmap.value() > last {
-+                pr_err!(
-+                    "Inode bitmap for group {i} no in group (block {})\n",
-+                    g.inode_bitmap.value()
-+                );
-+                return Err(EINVAL);
-+            }
-+
-+            if g.inode_table.value() < first || g.inode_table.value() > last {
-+                pr_err!(
-+                    "Inode table for group {i} no in group (block {})\n",
-+                    g.inode_table.value()
-+                );
-+                return Err(EINVAL);
-+            }
-+        }
-+        Ok(())
-+    }
-+}
-+
-+impl fs::FileSystem for Ext2Fs {
-+    type Data = Box<Self>;
-+    type INodeData = INodeData;
-+    const NAME: &'static CStr = c_str!("rust-ext2");
-+    const SUPER_TYPE: sb::Type = sb::Type::BlockDev;
-+
-+    fn fill_super(
-+        sb: &mut SuperBlock<Self, sb::New>,
-+        mapper: Option<inode::Mapper>,
-+    ) -> Result<Self::Data> {
-+        let Some(mapper) = mapper else {
-+            return Err(EINVAL);
-+        };
-+
-+        if sb.min_blocksize(PAGE_SIZE as i32) == 0 {
-+            pr_err!("Unable to set block size\n");
-+            return Err(EINVAL);
-+        }
-+
-+        // Map the super block and check the magic number.
-+        let mapped = mapper.mapped_folio(SB_OFFSET)?;
-+        let s = Super::from_bytes(&mapped, 0).ok_or(EIO)?;
-+
-+        if s.magic.value() != EXT2_SUPER_MAGIC {
-+            return Err(EINVAL);
-+        }
-+
-+        // Check for unsupported flags.
-+        let mut has_file_type = false;
-+        if s.rev_level.value() >= EXT2_DYNAMIC_REV {
-+            let features = s.feature_incompat.value();
-+            if features & !EXT2_FEATURE_INCOMPAT_FILETYPE != 0 {
-+                pr_err!("Unsupported incompatible feature: {:x}\n", features);
-+                return Err(EINVAL);
-+            }
-+
-+            has_file_type = features & EXT2_FEATURE_INCOMPAT_FILETYPE != 0;
-+
-+            let features = s.feature_ro_compat.value();
-+            if !sb.rdonly() && features != 0 {
-+                pr_err!("Unsupported rw incompatible feature: {:x}\n", features);
-+                return Err(EINVAL);
-+            }
-+        }
-+
-+        // Set the block size.
-+        let block_size_bits = s.log_block_size.value();
-+        if block_size_bits > EXT2_MAX_BLOCK_LOG_SIZE - 10 {
-+            pr_err!("Invalid log block size: {}\n", block_size_bits);
-+            return Err(EINVAL);
-+        }
-+
-+        let block_size = 1024u32 << block_size_bits;
-+        if sb.min_blocksize(block_size as i32) != block_size as i32 {
-+            pr_err!("Bad block size: {}\n", block_size);
-+            return Err(ENXIO);
-+        }
-+
-+        // Get the first inode and the inode size.
-+        let (inode_size, first_ino) = if s.rev_level.value() == EXT2_GOOD_OLD_REV {
-+            (EXT2_GOOD_OLD_INODE_SIZE, EXT2_GOOD_OLD_FIRST_INO)
-+        } else {
-+            let size = s.inode_size.value();
-+            if size < EXT2_GOOD_OLD_INODE_SIZE
-+                || !size.is_power_of_two()
-+                || u32::from(size) > block_size
-+            {
-+                pr_err!("Unsupported inode size: {}\n", size);
-+                return Err(EINVAL);
-+            }
-+            (size, s.first_ino.value())
-+        };
-+
-+        // Get the number of inodes per group and per block.
-+        let inode_count = s.inodes_count.value();
-+        let inodes_per_group = s.inodes_per_group.value();
-+        let inodes_per_block = block_size / u32::from(inode_size);
-+        if inodes_per_group == 0 || inodes_per_block == 0 {
-+            return Err(EINVAL);
-+        }
-+
-+        if inodes_per_group > block_size * 8 || inodes_per_group < inodes_per_block {
-+            pr_err!("Bad inodes per group: {}\n", inodes_per_group);
-+            return Err(EINVAL);
-+        }
-+
-+        // Check the size of the groups.
-+        let itb_per_group = inodes_per_group / inodes_per_block;
-+        let blocks_per_group = s.blocks_per_group.value();
-+        if blocks_per_group > block_size * 8 || blocks_per_group <= itb_per_group + 3 {
-+            pr_err!("Bad blocks per group: {}\n", blocks_per_group);
-+            return Err(EINVAL);
-+        }
-+
-+        let blocks_count = s.blocks_count.value();
-+        if block::Sector::from(blocks_count) > sb.sector_count() >> (1 + block_size_bits) {
-+            pr_err!(
-+                "Block count ({blocks_count}) exceeds size of device ({})\n",
-+                sb.sector_count() >> (1 + block_size_bits)
-+            );
-+            return Err(EINVAL);
-+        }
-+
-+        let group_count = (blocks_count - s.first_data_block.value() - 1) / blocks_per_group + 1;
-+        if group_count * inodes_per_group != inode_count {
-+            pr_err!(
-+                "Unexpected inode count: {inode_count} vs {}",
-+                group_count * inodes_per_group
-+            );
-+            return Err(EINVAL);
-+        }
-+
-+        let mut groups = Vec::new();
-+        groups.reserve(group_count as usize, GFP_NOFS)?;
-+
-+        let mut remain = group_count;
-+        let mut offset = (SB_OFFSET / Offset::from(block_size) + 1) * Offset::from(block_size);
-+        while remain > 0 {
-+            let b = mapper.mapped_folio(offset)?;
-+            for g in Group::from_bytes_to_slice(&b).ok_or(EIO)? {
-+                groups.push(*g, GFP_NOFS)?;
-+                remain -= 1;
-+                if remain == 0 {
-+                    break;
-+                }
-+            }
-+            offset += Offset::try_from(b.len())?;
-+        }
-+
-+        Self::check_descriptors(s, &groups)?;
-+
-+        sb.set_magic(s.magic.value().into());
-+        drop(mapped);
-+        Ok(Box::new(
-+            Ext2Fs {
-+                mapper,
-+                block_size,
-+                _block_size_bits: block_size_bits,
-+                has_file_type,
-+                inodes_per_group,
-+                inodes_per_block,
-+                inode_count,
-+                inode_size,
-+                first_ino,
-+                group: groups,
-+            },
-+            GFP_KERNEL,
-+        )?)
-+    }
-+
-+    fn init_root(sb: &SuperBlock<Self>) -> Result<dentry::Root<Self>> {
-+        let inode = Self::iget(sb, EXT2_ROOT_INO)?;
-+        dentry::Root::try_new(inode)
-+    }
-+}
-+
-+fn rec_len(d: &DirEntry) -> u32 {
-+    let len = d.rec_len.value();
-+
-+    if PAGE_SIZE >= 65536 && len == u16::MAX {
-+        1u32 << 16
-+    } else {
-+        len.into()
-+    }
-+}
-+
-+#[vtable]
-+impl file::Operations for Ext2Fs {
-+    type FileSystem = Self;
-+
-+    fn seek(file: &File<Self>, offset: Offset, whence: file::Whence) -> Result<Offset> {
-+        file::generic_seek(file, offset, whence)
-+    }
-+
-+    fn read(_: &File<Self>, _: &mut user::Writer, _: &mut Offset) -> Result<usize> {
-+        Err(EISDIR)
-+    }
-+
-+    fn read_dir(
-+        _file: &File<Self>,
-+        inode: &Locked<&INode<Self>, inode::ReadSem>,
-+        emitter: &mut file::DirEmitter,
-+    ) -> Result {
-+        let has_file_type = inode.super_block().data().has_file_type;
-+
-+        inode.for_each_page(emitter.pos(), Offset::MAX, |data| {
-+            let mut offset = 0usize;
-+            let mut acc: Offset = 0;
-+            let limit = data.len().saturating_sub(size_of::<DirEntry>());
-+            while offset < limit {
-+                let dirent = DirEntry::from_bytes(data, offset).ok_or(EIO)?;
-+                offset += size_of::<DirEntry>();
-+
-+                let name_len = usize::from(dirent.name_len);
-+                if data.len() - offset < name_len {
-+                    return Err(EIO);
-+                }
-+
-+                let name = &data[offset..][..name_len];
-+                let rec_len = rec_len(dirent);
-+                offset = offset - size_of::<DirEntry>() + rec_len as usize;
-+                if rec_len == 0 || offset > data.len() {
-+                    return Err(EIO);
-+                }
-+
-+                acc += Offset::from(rec_len);
-+                let ino = dirent.inode.value();
-+                if ino == 0 {
-+                    continue;
-+                }
-+
-+                let t = if !has_file_type {
-+                    file::DirEntryType::Unknown
-+                } else {
-+                    match dirent.file_type {
-+                        FT_REG_FILE => file::DirEntryType::Reg,
-+                        FT_DIR => file::DirEntryType::Dir,
-+                        FT_SYMLINK => file::DirEntryType::Lnk,
-+                        FT_CHRDEV => file::DirEntryType::Chr,
-+                        FT_BLKDEV => file::DirEntryType::Blk,
-+                        FT_FIFO => file::DirEntryType::Fifo,
-+                        FT_SOCK => file::DirEntryType::Sock,
-+                        _ => continue,
-+                    }
-+                };
-+
-+                if !emitter.emit(acc, name, ino.into(), t) {
-+                    return Ok(Some(()));
-+                }
-+                acc = 0;
-+            }
-+            Ok(None)
-+        })?;
-+        Ok(())
-+    }
-+}
-+
-+#[vtable]
-+impl inode::Operations for Ext2Fs {
-+    type FileSystem = Self;
-+
-+    fn lookup(
-+        parent: &Locked<&INode<Self>, inode::ReadSem>,
-+        dentry: dentry::Unhashed<'_, Self>,
-+    ) -> Result<Option<ARef<DEntry<Self>>>> {
-+        let inode = parent.for_each_page(0, Offset::MAX, |data| {
-+            let mut offset = 0usize;
-+            while data.len() - offset > size_of::<DirEntry>() {
-+                let dirent = DirEntry::from_bytes(data, offset).ok_or(EIO)?;
-+                offset += size_of::<DirEntry>();
-+
-+                let name_len = usize::from(dirent.name_len);
-+                if data.len() - offset < name_len {
-+                    return Err(EIO);
-+                }
-+
-+                let name = &data[offset..][..name_len];
-+
-+                offset = offset - size_of::<DirEntry>() + usize::from(dirent.rec_len.value());
-+                if offset > data.len() {
-+                    return Err(EIO);
-+                }
-+
-+                let ino = dirent.inode.value();
-+                if ino != 0 && name == dentry.name() {
-+                    return Ok(Some(Self::iget(parent.super_block(), ino)?));
-+                }
-+            }
-+            Ok(None)
-+        })?;
-+
-+        dentry.splice_alias(inode)
-+    }
-+}
-+
-+impl iomap::Operations for Ext2Fs {
-+    type FileSystem = Self;
-+
-+    fn begin<'a>(
-+        inode: &'a INode<Self>,
-+        pos: Offset,
-+        length: Offset,
-+        _flags: u32,
-+        map: &mut iomap::Map<'a>,
-+        _srcmap: &mut iomap::Map<'a>,
-+    ) -> Result {
-+        let size = inode.size();
-+        if pos >= size {
-+            map.set_offset(pos)
-+                .set_length(length.try_into()?)
-+                .set_flags(iomap::map_flags::MERGED)
-+                .set_type(iomap::Type::Hole);
-+            return Ok(());
-+        }
-+
-+        let block_size = inode.super_block().data().block_size as Offset;
-+        let block = pos / block_size;
-+
-+        let boffset = Self::offset_to_block(inode, block)?;
-+        map.set_offset(block * block_size)
-+            .set_length(block_size as u64)
-+            .set_flags(iomap::map_flags::MERGED)
-+            .set_type(iomap::Type::Mapped)
-+            .set_bdev(Some(inode.super_block().bdev()))
-+            .set_addr(boffset * block_size as u64);
-+
-+        Ok(())
-+    }
-+}
-+
-+fn decode_dev(block: &[LE<u32>]) -> (u32, u32) {
-+    let v = block[0].value();
-+    if v != 0 {
-+        ((v >> 8) & 255, v & 255)
-+    } else {
-+        let v = block[1].value();
-+        ((v & 0xfff00) >> 8, (v & 0xff) | ((v >> 12) & 0xfff00))
-+    }
-+}
-diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-index 445599d4bff6..732bc9939f7f 100644
---- a/rust/kernel/lib.rs
-+++ b/rust/kernel/lib.rs
-@@ -165,3 +165,6 @@ macro_rules! container_of {
-         ptr.wrapping_sub(offset) as *const $type
-     }}
- }
-+
-+/// The size in bytes of a page of memory.
-+pub const PAGE_SIZE: usize = bindings::PAGE_SIZE;
--- 
-2.34.1
+On Fri, 2024-05-10 at 17:03 +0800, Chenyi Qiang wrote:
+>=20
+> Do we need to track vcpu->arch.this_tsc_nsec/this_tsc_write? At least
+> they are still used in compute_guest_tsc() to calculate the guest
+> tsc.
 
+Ah yes, that's true. Good catch; thanks.
+
+That should be caught by a test case which runs the guest TSC at a
+higher speed than the host, but *without* hardware TSC scaling.
+
+--=-rAPrvdXo1WtVIUIleiJX
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEkQw
+ggYQMIID+KADAgECAhBNlCwQ1DvglAnFgS06KwZPMA0GCSqGSIb3DQEBDAUAMIGIMQswCQYDVQQG
+EwJVUzETMBEGA1UECBMKTmV3IEplcnNleTEUMBIGA1UEBxMLSmVyc2V5IENpdHkxHjAcBgNVBAoT
+FVRoZSBVU0VSVFJVU1QgTmV0d29yazEuMCwGA1UEAxMlVVNFUlRydXN0IFJTQSBDZXJ0aWZpY2F0
+aW9uIEF1dGhvcml0eTAeFw0xODExMDIwMDAwMDBaFw0zMDEyMzEyMzU5NTlaMIGWMQswCQYDVQQG
+EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYD
+VQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50
+aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKC
+AQEAyjztlApB/975Rrno1jvm2pK/KxBOqhq8gr2+JhwpKirSzZxQgT9tlC7zl6hn1fXjSo5MqXUf
+ItMltrMaXqcESJuK8dtK56NCSrq4iDKaKq9NxOXFmqXX2zN8HHGjQ2b2Xv0v1L5Nk1MQPKA19xeW
+QcpGEGFUUd0kN+oHox+L9aV1rjfNiCj3bJk6kJaOPabPi2503nn/ITX5e8WfPnGw4VuZ79Khj1YB
+rf24k5Ee1sLTHsLtpiK9OjG4iQRBdq6Z/TlVx/hGAez5h36bBJMxqdHLpdwIUkTqT8se3ed0PewD
+ch/8kHPo5fZl5u1B0ecpq/sDN/5sCG52Ds+QU5O5EwIDAQABo4IBZDCCAWAwHwYDVR0jBBgwFoAU
+U3m/WqorSs9UgOHYm8Cd8rIDZsswHQYDVR0OBBYEFAnA8vwL2pTbX/4r36iZQs/J4K0AMA4GA1Ud
+DwEB/wQEAwIBhjASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEF
+BQcDBDARBgNVHSAECjAIMAYGBFUdIAAwUAYDVR0fBEkwRzBFoEOgQYY/aHR0cDovL2NybC51c2Vy
+dHJ1c3QuY29tL1VTRVJUcnVzdFJTQUNlcnRpZmljYXRpb25BdXRob3JpdHkuY3JsMHYGCCsGAQUF
+BwEBBGowaDA/BggrBgEFBQcwAoYzaHR0cDovL2NydC51c2VydHJ1c3QuY29tL1VTRVJUcnVzdFJT
+QUFkZFRydXN0Q0EuY3J0MCUGCCsGAQUFBzABhhlodHRwOi8vb2NzcC51c2VydHJ1c3QuY29tMA0G
+CSqGSIb3DQEBDAUAA4ICAQBBRHUAqznCFfXejpVtMnFojADdF9d6HBA4kMjjsb0XMZHztuOCtKF+
+xswhh2GqkW5JQrM8zVlU+A2VP72Ky2nlRA1GwmIPgou74TZ/XTarHG8zdMSgaDrkVYzz1g3nIVO9
+IHk96VwsacIvBF8JfqIs+8aWH2PfSUrNxP6Ys7U0sZYx4rXD6+cqFq/ZW5BUfClN/rhk2ddQXyn7
+kkmka2RQb9d90nmNHdgKrwfQ49mQ2hWQNDkJJIXwKjYA6VUR/fZUFeCUisdDe/0ABLTI+jheXUV1
+eoYV7lNwNBKpeHdNuO6Aacb533JlfeUHxvBz9OfYWUiXu09sMAviM11Q0DuMZ5760CdO2VnpsXP4
+KxaYIhvqPqUMWqRdWyn7crItNkZeroXaecG03i3mM7dkiPaCkgocBg0EBYsbZDZ8bsG3a08LwEsL
+1Ygz3SBsyECa0waq4hOf/Z85F2w2ZpXfP+w8q4ifwO90SGZZV+HR/Jh6rEaVPDRF/CEGVqR1hiuQ
+OZ1YL5ezMTX0ZSLwrymUE0pwi/KDaiYB15uswgeIAcA6JzPFf9pLkAFFWs1QNyN++niFhsM47qod
+x/PL+5jR87myx5uYdBEQkkDc+lKB1Wct6ucXqm2EmsaQ0M95QjTmy+rDWjkDYdw3Ms6mSWE3Bn7i
+5ZgtwCLXgAIe5W8mybM2JzCCBhQwggT8oAMCAQICEQDGvhmWZ0DEAx0oURL6O6l+MA0GCSqGSIb3
+DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
+VQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28g
+UlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMB4XDTIyMDEwNzAw
+MDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJARYTZHdtdzJAaW5mcmFkZWFkLm9y
+ZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3GpC2bomUqk+91wLYBzDMcCj5C9m6
+oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZHh7htyAkWYVoFsFPrwHounto8xTsy
+SSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT9YgcBqKCo65pTFmOnR/VVbjJk4K2
+xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNjP+qDrh0db7PAjO1D4d5ftfrsf+kd
+RR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy2U+eITZ5LLE5s45mX2oPFknWqxBo
+bQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3BgBEmfsYWlBXO8rVXfvPgLs32VdV
+NZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/7auNVRmPB3v5SWEsH8xi4Bez2V9U
+KxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmdlFYhAflWKQ03Ufiu8t3iBE3VJbc2
+5oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9aelIl6vtbhMA+l0nfrsORMa4kobqQ5
+C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMBAAGjggHMMIIByDAfBgNVHSMEGDAW
+gBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeDMcimo0oz8o1R1Nver3ZVpSkwDgYD
+VR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwQGCCsGAQUFBwMC
+MEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYBBQUHAgEWF2h0dHBzOi8vc2VjdGln
+by5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9jcmwuc2VjdGlnby5jb20vU2VjdGln
+b1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcmwwgYoGCCsGAQUFBwEB
+BH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdvLmNvbS9TZWN0aWdvUlNBQ2xpZW50
+QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAjBggrBgEFBQcwAYYXaHR0cDovL29j
+c3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkqhkiG9w0B
+AQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQvQ/fzPXmtR9t54rpmI2TfyvcKgOXp
+qa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvIlSPrzIB4Z2wyIGQpaPLlYflrrVFK
+v9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9ChWFfgSXvrWDZspnU3Gjw/rMHrGnql
+Htlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0whpBtXdyDjzBtQTaZJ7zTT/vlehc/
+tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9IzCCBhQwggT8oAMCAQICEQDGvhmW
+Z0DEAx0oURL6O6l+MA0GCSqGSIb3DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3Jl
+YXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0
+ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJl
+IEVtYWlsIENBMB4XDTIyMDEwNzAwMDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJ
+ARYTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3
+GpC2bomUqk+91wLYBzDMcCj5C9m6oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZH
+h7htyAkWYVoFsFPrwHounto8xTsySSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT
+9YgcBqKCo65pTFmOnR/VVbjJk4K2xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNj
+P+qDrh0db7PAjO1D4d5ftfrsf+kdRR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy
+2U+eITZ5LLE5s45mX2oPFknWqxBobQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3
+BgBEmfsYWlBXO8rVXfvPgLs32VdVNZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/
+7auNVRmPB3v5SWEsH8xi4Bez2V9UKxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmd
+lFYhAflWKQ03Ufiu8t3iBE3VJbc25oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9ae
+lIl6vtbhMA+l0nfrsORMa4kobqQ5C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMB
+AAGjggHMMIIByDAfBgNVHSMEGDAWgBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeD
+Mcimo0oz8o1R1Nver3ZVpSkwDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYw
+FAYIKwYBBQUHAwQGCCsGAQUFBwMCMEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYB
+BQUHAgEWF2h0dHBzOi8vc2VjdGlnby5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9j
+cmwuc2VjdGlnby5jb20vU2VjdGlnb1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1h
+aWxDQS5jcmwwgYoGCCsGAQUFBwEBBH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdv
+LmNvbS9TZWN0aWdvUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAj
+BggrBgEFBQcwAYYXaHR0cDovL29jc3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5m
+cmFkZWFkLm9yZzANBgkqhkiG9w0BAQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQv
+Q/fzPXmtR9t54rpmI2TfyvcKgOXpqa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvI
+lSPrzIB4Z2wyIGQpaPLlYflrrVFKv9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9Ch
+WFfgSXvrWDZspnU3Gjw/rMHrGnqlHtlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0w
+hpBtXdyDjzBtQTaZJ7zTT/vlehc/tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9
+IzGCBMcwggTDAgEBMIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVz
+dGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMT
+NVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEA
+xr4ZlmdAxAMdKFES+jupfjANBglghkgBZQMEAgEFAKCCAeswGAYJKoZIhvcNAQkDMQsGCSqGSIb3
+DQEHATAcBgkqhkiG9w0BCQUxDxcNMjQwNTE0MTMxNzE2WjAvBgkqhkiG9w0BCQQxIgQgZIGRpiuq
+gn/blTCIlEh/GtK7gMVRdZ7CruE27IHMeaowgb0GCSsGAQQBgjcQBDGBrzCBrDCBljELMAkGA1UE
+BhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEYMBYG
+A1UEChMPU2VjdGlnbyBMaW1pdGVkMT4wPAYDVQQDEzVTZWN0aWdvIFJTQSBDbGllbnQgQXV0aGVu
+dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIRAMa+GZZnQMQDHShREvo7qX4wgb8GCyqGSIb3
+DQEJEAILMYGvoIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVy
+MRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNl
+Y3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEAxr4Z
+lmdAxAMdKFES+jupfjANBgkqhkiG9w0BAQEFAASCAgApyoHKvBHnh5RYZwfd+RPMq10TS7LEQvsA
+tH4FRkJTC1GW44MP6potjYYWRLeD9eeuq9XEUrtKIECUMInFWrhQ/GIefLu2j8aaisjcR7aqoHuh
+jiljE/+/l4Zs+VK7X9v+83kB+OsdWnpHDLuwMOaib/zhMhnI7gj5YTNC2eXGFnfS9ht6npmHBpqM
+yXjBIWLO3hOXNdPOJedqFfa9B6Vf1IgC4u9Kpurp4aFBJvaxk5BlBc46mV2d2GDOqknw0+54OFjV
+9GOiUw0tuEAu3I9D8vNokI0pIG532dIhadU9NNSqMitd/5dsk+t5F2u3ZVFudPSz+lZxjIX91sgp
+45mbNWbW2WCVNeJt/a5BVytFJ+6C+HiDJ2250kG+jR1U2UkanTNKZobiCmjCMxUoYIV4N2hsYhCH
+ngzDm+FFaFjisJ6I8bdw26AipS8tNET99B4+4NukmyFDIesquHJpfipAhCIRdXQnN1JPNGWCpFv/
+i0CAGPzBnIGTs+YWMm1rPIobM+tfRIflgP6OnLAKJ9IPTQ/ijqhvcJPNU4PK7EBf7f/3WHnSWQ1d
+70+w2XqRUObsBP0CEBkdgv4IUvjCwXYDNagLmOfddyL99XHFfqsbB0FgSwFmlhf4xyLpTfw7K61w
+MzAT/6x31bMyVDDeZEk5g9+7uJQbjH1wUkNlURVNEwAAAAAAAA==
+
+
+--=-rAPrvdXo1WtVIUIleiJX--
 
