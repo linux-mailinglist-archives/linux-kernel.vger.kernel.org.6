@@ -1,260 +1,184 @@
-Return-Path: <linux-kernel+bounces-178800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E4488C57D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:24:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFEBA8C57DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:24:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFA33B21899
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:24:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E821B218B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:24:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67F81145328;
-	Tue, 14 May 2024 14:23:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD7AD144D39;
+	Tue, 14 May 2024 14:24:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="fAypVu8V"
-Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ABDa9XQP"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8BA0144D3A
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 14:23:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B0E8144D0B
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 14:24:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715696635; cv=none; b=rOKzjYsK4NlddX/aKKPZ48oj+BqJB8DBWFHExDtls9c4qorF46zoVhGY4FYa1PAKjrS692vB/WHNqcrGkFhWBGeljjblXTwbnac4n+ChaE4xgSJ0UqubX6B/QJirl/aSxDVmNUCeJ+xsFy1ZueAP7f+/ybiQ0LaaUg9ibSUfwkw=
+	t=1715696679; cv=none; b=updQQqdzD3lTjpqqBQwym+oL9sxliz1SQnKbJ/Y2+6ZkoL9Kz+xw40FkAU6XqqcGW1gq7sprJAKeNaP4KZP3fVL1XIKd5OAw2zrH/nyhMMtY1FGN5FvIZtffadNp2p+v7r+jcyLcRXZ+EkwRG5ROZCsyctVKQbWfG7rmeTqDA8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715696635; c=relaxed/simple;
-	bh=MJNL3swls7/XFSBkIMHCbTJs1e4qifE3acRWRujrkd0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DbhgnehvE8XmymfWFBa8CjNA3ff0EW7zBupnxV+ZOMD9kfSTQET6i1VGJnAl9o4DySMMCICPlxgWSWPkpKXqvWxK0Ox0nNyTwnGb2lsszRi4sn/zKXJxzwqIdAcmb7Wq+daSGDnXWlhuP8ZbrGxDoHvNXqrgm/gKfHEtVDMsOK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=fAypVu8V; arc=none smtp.client-ip=209.85.166.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
-Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-36c6e69180fso20970995ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 07:23:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1715696633; x=1716301433; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9YWn5jiV2rbv9bUfRPQn5PpR5vLXDPL+5w2PCpg75zY=;
-        b=fAypVu8V/SeQH3bpbDn4mLqOr2E6nr+3FvDXMFfFdmosYOM9Uc5eO9htG8U/YuMOdA
-         FYFi5+LI6O0It2OqTXoeB75ncjcDTGmdqOwBa8L/+mtaMRJmGPefFfkR15qvqyg7kJeX
-         eslF5to2A8m6lJtPoOBGbZRs4kfUMtLS0LGmnqySU+tc8tq/hWLXzOGCpiIKOLlH3+DA
-         vSJvRNSMWjy7xcSSedT1qgJGx5WaavaDhMVCdnxBkdObwbl9QCheS8fcpbZzJgUXmFNY
-         /5POWOWbTeTLMSRIfZ1m2gtSVvTiaxnEjuz9nv8SyUiKTvhR8zFk7rYF13y5xrd7YPSx
-         KDEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715696633; x=1716301433;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9YWn5jiV2rbv9bUfRPQn5PpR5vLXDPL+5w2PCpg75zY=;
-        b=koK0vKT5fLiW2laEXXHdAjQ9a0I/caWYBw5bH8XIzNwe/ehiE/Loej77+/UvUrVgmD
-         6F9TVTBmJy2HmN+hb6tBgok2i+jfL/DQKQKo9pbtMoQlGAtmj3UQyFSwX+Sjvd2Q9zUW
-         hGzIr0Lw2r+aSwtBygS+n138B6MUZXS6mgJeCpyh30gI+dJp/peqzbB09y1lvpSJ+TOH
-         HjxA7bV2B8vDUoJdzu5LRKmDy8QajzXWUEoOREHfIoY77jw7v4cNLbrwBzYKbpo/9urX
-         pYVUNpRL9NF8RSVMrKxqJGZct4m4ae0bjzNWn4VUw47vt6gH0V+zdW8DvIMvUxoSAacz
-         jxHg==
-X-Forwarded-Encrypted: i=1; AJvYcCVCs9n1YVmHaEzBwuKi+8SscaPuYs+ulUStspYjloa+E8c0j8dfBDTYjaUG3qwiV80/KJPPUQeRBzdjkBqj9nDQSZKY2DjyWrTMHmQJ
-X-Gm-Message-State: AOJu0YwMJHziIdw8YbQswzEeE2kvotzYF9I81cRdqMiZ7HAG0fgdJJSk
-	Vx3a/YOJRzOuQ5mCsoW4JZ5zWSkxSfnoaRjhQX/eBZlNK1TDb44YdCtk6YGpQJDM4uTMDQo7dVh
-	Gl0fnYH0fTszSKmCojMmJtFMD4aOqwgdeieEZ/xr00LimEHOmVIM=
-X-Google-Smtp-Source: AGHT+IENHPgioCtyM7FQlXlQjrWZgq2dBdxVmW4+FCsDRQU7f9qoVwX+EnLVyxiIZV6uiDPiZpVti8QA6Ck39cfMdCc=
-X-Received: by 2002:a05:6e02:1a46:b0:36d:ae10:3f83 with SMTP id
- e9e14a558f8ab-36dae103fe3mr21276645ab.11.1715696632801; Tue, 14 May 2024
- 07:23:52 -0700 (PDT)
+	s=arc-20240116; t=1715696679; c=relaxed/simple;
+	bh=CAI/Q+O7gZEq9om/A/A7hRhXWyKZi5yJD6oSXYGsU3g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FptxCyskR3tSoMmUI71ijnUZ2ecF6/AwrI3hfVYHwLXTOlkD/UkI0Lp09r3YlMbTkp+EBOEdUQW/1AwgwxO6tvxGWjL3v2c5E1PXL4g70s43NjH+OQMKDeIiBg1R+2tqQ8J0uY0Z64L7FFPGKU+0Q6ErEADSJTBJuhmMr1uCW70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ABDa9XQP; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353722.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44ECUkTN030352;
+	Tue, 14 May 2024 14:24:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=9Uk9sPwbu8Xnq7un5OWPPwl9F/6BF471v1lOmCrInZw=;
+ b=ABDa9XQPQa0y2F0O+4I1YPYH5sHlUKApbZ/YR/vQAdrYO69VbZtIGh6VFhC++3wh47Fc
+ /ZQN6ml/lvN6bx5WJVHeCEJkWhRy4Ev6+vtwY+L90ybhIft4PTwzB0RzX+sq0H9nG/IH
+ d23kgI3SQX+rZJTF4ZbzNyuEO4s7Sl+CC+RqmGo7uG0AoFFJD6F01ntGrPsiZFh2uBd8
+ 1z2CboxprAU5rJ4P2LU8dna48YwPlURw15L6TcReF7FEzQsQO3CVSk8IxjSwU++BCM56
+ VcSL7yrM5szSEhxnk/lXZ1/QJZS3D6vMDrZeZiAb6B9UorXBP+zkW/+eji6clMivscrs JA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y44hrrttg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 14 May 2024 14:24:07 +0000
+Received: from m0353722.ppops.net (m0353722.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44EEO6XH012082;
+	Tue, 14 May 2024 14:24:07 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y44hrrttd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 14 May 2024 14:24:06 +0000
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44EBV5l9020460;
+	Tue, 14 May 2024 14:24:06 GMT
+Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3y2kcyx046-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 14 May 2024 14:24:06 +0000
+Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
+	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44EEO3rg45547948
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 14 May 2024 14:24:05 GMT
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 639B75805D;
+	Tue, 14 May 2024 14:24:03 +0000 (GMT)
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7B8EE58065;
+	Tue, 14 May 2024 14:23:59 +0000 (GMT)
+Received: from [9.79.191.48] (unknown [9.79.191.48])
+	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 14 May 2024 14:23:59 +0000 (GMT)
+Message-ID: <e942abce-97ec-4bf1-8220-55bfed18c265@linux.ibm.com>
+Date: Tue, 14 May 2024 19:53:58 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240226065113.1690534-1-nick.hu@sifive.com> <CAPDyKFph3WsZMmALnzBQKE4S_80Ji5h386Wi0vHda37QUsjMtg@mail.gmail.com>
- <CAKddAkDcdaXKzpcKN=LCCx9S4Trv+joLX2s=nyhzaRtM5HorqA@mail.gmail.com>
- <CAKddAkC6N=Cfo0z+F8herKTuJzCyt_MA0vWNbLCr6CbQnj0y8g@mail.gmail.com>
- <CAPDyKFr_M0NDH0gaunBpybnALOFfz4LpX4_JW2GCUxjwGzdZsg@mail.gmail.com> <CAKddAkC5CRX+ZTh=MgzPYU72SY13+AQYhknhV_CC+=XX9=DKyg@mail.gmail.com>
-In-Reply-To: <CAKddAkC5CRX+ZTh=MgzPYU72SY13+AQYhknhV_CC+=XX9=DKyg@mail.gmail.com>
-From: Anup Patel <anup@brainfault.org>
-Date: Tue, 14 May 2024 19:53:40 +0530
-Message-ID: <CAAhSdy1SDd=VUqDQA0T5n9LwHo=3uGzFq1dUcbDFcB3aBdaioA@mail.gmail.com>
-Subject: Re: [PATCH] cpuidle: riscv-sbi: Add cluster_pm_enter()/exit()
-To: Nick Hu <nick.hu@sifive.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, palmer@dabbelt.com, rafael@kernel.org, 
-	daniel.lezcano@linaro.org, paul.walmsley@sifive.com, linux-pm@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	zong.li@sifive.com, Cyan Yang <cyan.yang@sifive.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND][PATCH v3 1/1] sched: Report the different kinds of
+ imbalances in /proc/schedstat
+To: Chen Yu <yu.c.chen@intel.com>, Swapnil Sapkal <swapnil.sapkal@amd.com>
+Cc: linux-kernel@vger.kernel.org, mingo@redhat.com, peterz@infradead.org,
+        torvalds@linux-foundation.org, juri.lelli@redhat.com,
+        dietmar.eggemann@arm.com, rostedt@goodmis.org, mgorman@suse.de,
+        bristot@redhat.com, vschneid@redhat.com, vincent.guittot@linaro.org,
+        gautham.shenoy@amd.com, kprateek.nayak@amd.com
+References: <20240514044445.1409976-1-swapnil.sapkal@amd.com>
+ <20240514044445.1409976-2-swapnil.sapkal@amd.com>
+ <ZkNHshuGhY6nBGmJ@chenyu5-mobl2>
+Content-Language: en-US
+From: Shrikanth Hegde <sshegde@linux.ibm.com>
+In-Reply-To: <ZkNHshuGhY6nBGmJ@chenyu5-mobl2>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: MZPGlk5qYo-ogM3PHwWoI8CpAWL1lwMR
+X-Proofpoint-ORIG-GUID: CE5G7ZNpD9lpW7oB8mWrKK6uytvsQ-JB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-14_07,2024-05-14_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=999
+ mlxscore=0 malwarescore=0 suspectscore=0 priorityscore=1501 phishscore=0
+ clxscore=1011 spamscore=0 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
+ definitions=main-2405140102
 
-Hi Nick,
 
-On Tue, May 14, 2024 at 3:20=E2=80=AFPM Nick Hu <nick.hu@sifive.com> wrote:
->
-> Hi Ulf,
->
-> Thank you for your valuable suggestion.
-> I sincerely apologize for the delay in responding to your message. We
-> have diligently worked on experimenting with the suggestion you
-> provided.
->
-> As per your recommendation, we have incorporated the "power-domains=3D<>
-> property" into the consumer's node, resulting in modifications to the
-> DTS as illustrated below:
->
-> cpus {
->     ...
->      domain-idle-states {
->            CLUSTER_SLEEP:cluster-sleep {
->                         compatible =3D "domain-idle-state";
->                         ...
->             }
->      }
->      power-domains {
->             ...
->             ...
->             CLUSTER_PD: clusterpd {
->                     domain-idle-states =3D <&CLUSTER_SLEEP>;
->             };
->      }
-> }
-> soc {
->       deviceA@xxx{
->              ...
->              power-domains =3D <&CLUSTER_PD>;
->              ...
->       }
-> }
->
-> However, this adjustment has led to an issue where the probe for
-> 'deviceA' is deferred by 'device_links_check_suppliers()' within
-> 'really_probe()'. In an attempt to mitigate this issue, we
-> experimented with a workaround by adding the attribute
-> "status=3D"disabled"" to the 'CLUSTER_PD' node. This action aimed to
-> prevent the creation of a device link between 'deviceA' and
-> 'CLUSTER_PD'. Nevertheless, we remain uncertain about the
-> appropriateness of this solution.
->
-> Do you have suggestions on how to effectively address this issue?
 
-I totally missed this email since I was not CC'ed sorry about that. Please
-use get_maintainers.pl when sending patches.
+On 5/14/24 4:44 PM, Chen Yu wrote:
+> On 2024-05-14 at 04:44:45 +0000, Swapnil Sapkal wrote:
+>> In /proc/schedstat, lb_imbalance reports the sum of imbalances
+>> discovered in sched domains with each call to sched_balance_rq(), which is
+>> not very useful because lb_imbalance does not mention whether the imbalance
+>> is due to load, utilization, nr_tasks or misfit_tasks. Remove this field
+>> from /proc/schedstat.
+>>
+>> Currently there is no field in /proc/schedstat to report different types
+>> of imbalances. Introduce new fields in /proc/schedstat to report the
+>> total imbalances in load, utilization, nr_tasks or misfit_tasks.
+>>
+>> Added fields to /proc/schedstat:
+>>  	- lb_imbalance_load: Total imbalance due to load.
+>> 	- lb_imbalance_util: Total imbalance due to utilization.
+>> 	- lb_imbalance_task: Total imbalance due to number of tasks.
+>> 	- lb_imbalance_misfit: Total imbalance due to misfit tasks.
+>>
+>> Reviewed-by: Shrikanth Hegde <sshegde@linux.ibm.com>
+>> Signed-off-by: Swapnil Sapkal <swapnil.sapkal@amd.com>
+>> ---
+>>  Documentation/scheduler/sched-stats.rst | 121 ++++++++++++++----------
+>>  include/linux/sched/topology.h          |   5 +-
+>>  kernel/sched/fair.c                     |  21 +++-
+>>  kernel/sched/stats.c                    |   7 +-
+>>  4 files changed, 99 insertions(+), 55 deletions(-)
+> 
+> [...]
+> 
+>> diff --git a/kernel/sched/stats.c b/kernel/sched/stats.c
+>> index 78e48f5426ee..a02bc9db2f1c 100644
+>> --- a/kernel/sched/stats.c
+>> +++ b/kernel/sched/stats.c
+>> @@ -151,11 +151,14 @@ static int show_schedstat(struct seq_file *seq, void *v)
+>>  			seq_printf(seq, "domain%d %*pb", dcount++,
+>>  				   cpumask_pr_args(sched_domain_span(sd)));
+>>  			for (itype = 0; itype < CPU_MAX_IDLE_TYPES; itype++) {
+>> -				seq_printf(seq, " %u %u %u %u %u %u %u %u",
+>> +				seq_printf(seq, " %u %u %u %u %u %u %u %u %u %u %u",
+>>  				    sd->lb_count[itype],
+>>  				    sd->lb_balanced[itype],
+>>  				    sd->lb_failed[itype],
+>> -				    sd->lb_imbalance[itype],
+>> +				    sd->lb_imbalance_load[itype],
+>> +				    sd->lb_imbalance_util[itype],
+>> +				    sd->lb_imbalance_task[itype],
+>> +				    sd->lb_imbalance_misfit[itype],
+>>  				    sd->lb_gained[itype],
+>>  				    sd->lb_hot_gained[itype],
+>>  				    sd->lb_nobusyq[itype],
+> 
+> Do we need to increase SCHEDSTAT_VERSION to 16?
 
-The genpd_add_provider() (called by of_genpd_add_provider_simple())
-does mark the power-domain DT node as initialized (fwnode_dev_initialized()=
-)
-so after the cpuidle-riscv-sbi driver is probed the 'deviceA' dependency is
-resolved and 'deviceA' should be probed unless there are other unmet
-dependencies.
+It's been increased already as part of below commit 
 
-Try adding "#define DEBUG" before all includes in drivers/core/base.c
-and add "loglevel=3D8" in kernel parameters, this will print producer-consu=
-mer
-linkage of all devices.
+commit 11b0bfa5d463b17cac5bf6b94fea4921713530c3
+Author: Ingo Molnar <mingo@kernel.org>
+Date:   Fri Mar 8 11:58:55 2024 +0100
 
-Marking the power-domain DT node as "disabled" is certainly not the
-right way.
+    sched/debug: Increase SCHEDSTAT_VERSION to 16
+    
+    We changed the order of definitions within 'enum cpu_idle_type',
+    which changed the order of [CPU_MAX_IDLE_TYPES] columns in
+    show_schedstat().
 
-Regards,
-Anup
 
->
-> Regards,
-> Nick
->
-> On Tue, Apr 30, 2024 at 4:13=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.o=
-rg> wrote:
-> >
-> > On Mon, 29 Apr 2024 at 18:26, Nick Hu <nick.hu@sifive.com> wrote:
-> > >
-> > > On Tue, Apr 30, 2024 at 12:22=E2=80=AFAM Nick Hu <nick.hu@sifive.com>=
- wrote:
-> > > >
-> > > > Hi Ulf
-> > > >
-> > > > On Mon, Apr 29, 2024 at 10:32=E2=80=AFPM Ulf Hansson <ulf.hansson@l=
-inaro.org> wrote:
-> > > > >
-> > > > > On Mon, 26 Feb 2024 at 07:51, Nick Hu <nick.hu@sifive.com> wrote:
-> > > > > >
-> > > > > > When the cpus in the same cluster are all in the idle state, th=
-e kernel
-> > > > > > might put the cluster into a deeper low power state. Call the
-> > > > > > cluster_pm_enter() before entering the low power state and call=
- the
-> > > > > > cluster_pm_exit() after the cluster woken up.
-> > > > > >
-> > > > > > Signed-off-by: Nick Hu <nick.hu@sifive.com>
-> > > > >
-> > > > > I was not cced this patch, but noticed that this patch got queued=
- up
-> > > > > recently. Sorry for not noticing earlier.
-> > > > >
-> > > > > If not too late, can you please drop/revert it? We should really =
-move
-> > > > > away from the CPU cluster notifiers. See more information below.
-> > > > >
-> > > > > > ---
-> > > > > >  drivers/cpuidle/cpuidle-riscv-sbi.c | 24 +++++++++++++++++++++=
-+--
-> > > > > >  1 file changed, 22 insertions(+), 2 deletions(-)
-> > > > > >
-> > > > > > diff --git a/drivers/cpuidle/cpuidle-riscv-sbi.c b/drivers/cpui=
-dle/cpuidle-riscv-sbi.c
-> > > > > > index e8094fc92491..298dc76a00cf 100644
-> > > > > > --- a/drivers/cpuidle/cpuidle-riscv-sbi.c
-> > > > > > +++ b/drivers/cpuidle/cpuidle-riscv-sbi.c
-> > > > > > @@ -394,6 +394,7 @@ static int sbi_cpuidle_pd_power_off(struct =
-generic_pm_domain *pd)
-> > > > > >  {
-> > > > > >         struct genpd_power_state *state =3D &pd->states[pd->sta=
-te_idx];
-> > > > > >         u32 *pd_state;
-> > > > > > +       int ret;
-> > > > > >
-> > > > > >         if (!state->data)
-> > > > > >                 return 0;
-> > > > > > @@ -401,6 +402,10 @@ static int sbi_cpuidle_pd_power_off(struct=
- generic_pm_domain *pd)
-> > > > > >         if (!sbi_cpuidle_pd_allow_domain_state)
-> > > > > >                 return -EBUSY;
-> > > > > >
-> > > > > > +       ret =3D cpu_cluster_pm_enter();
-> > > > > > +       if (ret)
-> > > > > > +               return ret;
-> > > > >
-> > > > > Rather than using the CPU cluster notifiers, consumers of the gen=
-pd
-> > > > > can register themselves to receive genpd on/off notifiers.
-> > > > >
-> > > > > In other words, none of this should be needed, right?
-> > > > >
-> > > > Thanks for the feedback!
-> > > > Maybe I miss something, I'm wondering about a case like below:
-> > > > If we have a shared L2 cache controller inside the cpu cluster powe=
-r
-> > > > domain and we add this controller to be a consumer of the power
-> > > > domain, Shouldn't the genpd invoke the domain idle only after the
-> > > > shared L2 cache controller is suspended?
-> > > > Is there a way that we can put the L2 cache down while all cpus in =
-the
-> > > > same cluster are idle?
-> > > > > [...]
-> > > Sorry, I made some mistake in my second question.
-> > > Update the question here:
-> > > Is there a way that we can save the L2 cache states while all cpus in=
- the
-> > > same cluster are idle and the cluster could be powered down?
-> >
-> > If the L2 cache is a consumer of the cluster, the consumer driver for
-> > the L2 cache should register for genpd on/off notifiers.
-> >
-> > The device representing the L2 cache needs to be enabled for runtime
-> > PM, to be taken into account correctly by the cluster genpd. In this
-> > case, the device should most likely remain runtime suspended, but
-> > instead rely on the genpd on/off notifiers to understand when
-> > save/restore of the cache states should be done.
-> >
-> > Kind regards
-> > Uffe
+> 
+> thanks,
+> Chenyu
 
