@@ -1,87 +1,198 @@
-Return-Path: <linux-kernel+bounces-178407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 235DD8C4D2F
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 09:39:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93FAF8C4D33
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 09:40:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B86381F21427
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 07:39:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7CB61C20C98
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 07:40:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 943EC17BB9;
-	Tue, 14 May 2024 07:39:48 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A0D51DA2F;
+	Tue, 14 May 2024 07:39:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HzsEGhmS"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D2CA12E75;
-	Tue, 14 May 2024 07:39:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 177F314277
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 07:39:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715672388; cv=none; b=E+Daa7f9xV9nLoxuN+fDAH7966X1TQ1Bg9xcx5MtheemNDOctecueyOlH8ijEq9H7D96YVWXSr5BKMupAhdzqILbIhrB8l8e6qGfQoMaoDOVsvvWEFq0vU5arpcNco8wem7LBm6kY/++I01Mn3U1AJbQLxhvI+xhXH4NMboG/PA=
+	t=1715672388; cv=none; b=bwGIPv5l+RAfMsGf9kpgKWLgbH0/cSzcrhzPr+Mt1A9b7xK/0g5oD/1LjdLP+3WnXk4fkWb5C3DdYo9HhLcB5N4AQxuHfapkbVfGPAYH9ec+sgHOdeo4ss4tcXD3V59IkFL9cb/69b+WnjFXNx1isdSMNXV2znS9ZJtw7diU5sw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1715672388; c=relaxed/simple;
-	bh=O6fvMG9fls+8aSK9zXqzwgl4m3ezYko0QL6OnAcKSq0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o0ne7HKG6+JJtHw9UxAU+8bnZZdHr8iUm92XEyyVVnrL+CyQtWls8K4dR6DpjZsQFLQL0o/wV8fOP6GVBiqWZHOpNK4nY7PgM7HdXueLZugP3lYOjoJu8pXcscLsNMrT/8oK/MV5K8gXxzr5C9VNpIxWZs5mxnDziyK8Pz7+ZoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from fsav414.sakura.ne.jp (fsav414.sakura.ne.jp [133.242.250.113])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 44E7dWvk004086;
-	Tue, 14 May 2024 16:39:32 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav414.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav414.sakura.ne.jp);
- Tue, 14 May 2024 16:39:32 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav414.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 44E7dVMG004083
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Tue, 14 May 2024 16:39:32 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <21d52c65-4f18-46a2-be68-ff8487103e82@I-love.SAKURA.ne.jp>
-Date: Tue, 14 May 2024 16:39:32 +0900
+	bh=BBXqtS3wza4QUm5avAstdSHbXwq4rAP5fYUeIZvK6z8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AprcLY/+lZO3CEQtKD6nl/pV1W1fqNOVJKsSxtd5W3c7/6UgHkRE5fRQeSO2PfA4Xj4q2HISg//ynz4Q8yxaD8M/xK40irgWrveafl85iZDYqfrtLvRWytFoWuOCgZCMWsmicPLdEyPM0pYsPg6ynAOdfok65i1hKnfQppnbP9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HzsEGhmS; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a59b81d087aso1306903466b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 00:39:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715672385; x=1716277185; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Fesw46FZQhpdD0Hum6AHiEjagvfShSZGibZKbsl5F+w=;
+        b=HzsEGhmSImymZwrXp1ADG/I5YcAIGBoWy9Q4WX7olLT8b/9JftGvURgcxniefCcb/j
+         q+9XShClClJb4oCIZdzrSA1JYMAQD9O8Ht5I1FLxyNisur6hOR1hs0mELwDuGtAbZHqW
+         8VuThr00dCWrROwaI8Rp2A0yHgtvELrLuroW+M22qoEeHWPbm8HdVhQm0H/rZDjwKrJp
+         k0j1s30mpBu5iWaJbe30vc/DLqJKR31Vo8nd4fEoNfOIdBVQmeyizly+sQSMFM6Basan
+         DYFl7cu6W3jCtLCGQbQd0WqNiAk8UrAh+BLalxgTUj+Lq0i62jylCz4uUkD/DPK+Rs0m
+         Od+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715672385; x=1716277185;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Fesw46FZQhpdD0Hum6AHiEjagvfShSZGibZKbsl5F+w=;
+        b=TLgbnieZv+Q73YMCrlgbqH4wb7mDIJ8E4bnsAoEOtERFDnlzZH5xYawH76jmrs8ZrD
+         k9tNqFudLH4Gc3lU796ZzQXf7lU1C2ZE9j1WlNDukuSlK/BuZCxejKUCJD0UAQ5kNP4Z
+         R/MJap8ovr567Jiikl4kNClhMquzBv8aOiH+ErWph1uyygxZTSGhuHxbKQqOIRR6JE8D
+         +tnfIxySuYDEekSu13DuLOQBLRLUPsi4MqgElIR+Fnt6m/EdZ0osJf0w10DZeH8AdYT3
+         pEsT922gNZAQg0QBke9ooAOakmuwMG8RqOZccBPZfmDtEJWvet2dnOuv9y0GzAEebdEY
+         xElg==
+X-Forwarded-Encrypted: i=1; AJvYcCUW/jYkQIZXfXHJD+238zd6XEm6JHKweQmmDGEEf/CRUok0FofETapvKpM42oiKfal+1sgdoNARJPjtg7JShXlHpsg5doES7+rYIini
+X-Gm-Message-State: AOJu0YyEIha5uUeB98Iqmq6qEIetLm2aX+F5j0MyDFM1pel5rzEJXhSy
+	LzveFS8Gngqbw/dAmuxAgaRE26gJQvTsUBfOmUulIJKoS/asDUVPQoQamYCJug==
+X-Google-Smtp-Source: AGHT+IFk54xjT9Zc4sowK6oPt/4PJk/GJXaYzAOXTacsXhp+JubATr03CVlRBs4xsou0q/WcQcEAFw==
+X-Received: by 2002:a17:907:785a:b0:a59:a033:3e2 with SMTP id a640c23a62f3a-a5a2d676511mr1158264566b.74.1715672385102;
+        Tue, 14 May 2024 00:39:45 -0700 (PDT)
+Received: from thinkpad ([149.14.240.163])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b177fcsm687002966b.202.2024.05.14.00.39.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 May 2024 00:39:44 -0700 (PDT)
+Date: Tue, 14 May 2024 09:39:43 +0200
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: devi priya <quic_devipriy@quicinc.com>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	andersson@kernel.org, konrad.dybcio@linaro.org,
+	mturquette@baylibre.com, sboyd@kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH V5 4/6] arm64: dts: qcom: ipq9574: Add PCIe PHYs and
+ controller nodes
+Message-ID: <20240514073943.GB2463@thinkpad>
+References: <20240512082858.1806694-1-quic_devipriy@quicinc.com>
+ <20240512082858.1806694-5-quic_devipriy@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Linux kernel bug] INFO: task hung in blk_mq_get_tag
-To: Sam Sun <samsun1006219@gmail.com>, Hillf Danton <hdanton@sina.com>
-Cc: linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, axboe@kernel.dk,
-        syzkaller-bugs@googlegroups.com, xrivendell7@gmail.com
-References: <CAEkJfYPxWBfEnuKeCGEsscVTYy8MrNxCJwdbxS=c2-B0H+HfTA@mail.gmail.com>
- <20240513225409.3025-1-hdanton@sina.com>
- <CAEkJfYMhv8AxxHSVdPT9bCX1cJZXw39+bMFh=2N9uNOB4Hcr=w@mail.gmail.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <CAEkJfYMhv8AxxHSVdPT9bCX1cJZXw39+bMFh=2N9uNOB4Hcr=w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240512082858.1806694-5-quic_devipriy@quicinc.com>
 
-On 2024/05/14 11:05, Sam Sun wrote:
-> Pointed out by Tetsuo, this kernel panic might be caused by sending
-> NMI between cpus. As dump log shows:
+On Sun, May 12, 2024 at 01:58:56PM +0530, devi priya wrote:
+> Add PCIe0, PCIe1, PCIe2, PCIe3 (and corresponding PHY) devices
+> found on IPQ9574 platform. The PCIe0 & PCIe1 are 1-lane Gen3
+> host whereas PCIe2 & PCIe3 are 2-lane Gen3 host.
+> 
+> Signed-off-by: devi priya <quic_devipriy@quicinc.com>
+> ---
+>  Changes in V5:
+> 	- Dropped anoc and snoc lane clocks from Phy nodes and enabled them
+> 	  via interconnect.
+> 	- Dropped msi-parent as it is handled via msi IRQ
+> 
+>  arch/arm64/boot/dts/qcom/ipq9574.dtsi | 365 +++++++++++++++++++++++++-
+>  1 file changed, 361 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+> index 5b3e69379b1f..da6418c9d52b 100644
+> --- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
 
-You can do
+[...]
 
-  # echo 0 > /proc/sys/kernel/hung_task_all_cpu_backtrace
+> +		pcie1: pci@10000000 {
 
-before starting the reproducer in order to disable
-trigger_all_cpu_backtrace() from hung task.
+'pcie@' since this is a PCIe controller.
 
-If trigger_all_cpu_backtrace() from hung task can reproduce
-the kernel panic, I think that trigger_all_cpu_backtrace() from
-SysRq-l should be as well able to reproduce the kernel panic.
-That is, you can build with CONFIG_MAGIC_SYSRQ=y and try
+> +			compatible = "qcom,pcie-ipq9574";
+> +			reg =  <0x10000000 0xf1d>,
+> +			       <0x10000F20 0xa8>,
 
-  # echo l > /proc/sysrq-trigger
+Please use lower case for hex everywhere.
 
-for bisecting and reporting as a separate bug.
+> +			       <0x10001000 0x1000>,
+> +			       <0x000F8000 0x4000>,
+> +			       <0x10100000 0x1000>;
+> +			reg-names = "dbi", "elbi", "atu", "parf", "config";
+> +			device_type = "pci";
+> +			linux,pci-domain = <2>;
+> +			bus-range = <0x00 0xff>;
+> +			num-lanes = <1>;
+> +			#address-cells = <3>;
+> +			#size-cells = <2>;
+> +
+> +			ranges = <0x01000000 0x0 0x00000000 0x10200000 0x0 0x100000>,  /* I/O */
+> +				 <0x02000000 0x0 0x10300000 0x10300000 0x0 0x7d00000>; /* MEM */
+> +
+> +			interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
+> +			interrupt-names = "msi";
 
+Are you sure that this platform only has single MSI SPI IRQ?
+
+> +			#interrupt-cells = <1>;
+> +			interrupt-map-mask = <0 0 0 0x7>;
+> +			interrupt-map = <0 0 0 1 &intc 0 0 35 IRQ_TYPE_LEVEL_HIGH>, /* int_a */
+> +					<0 0 0 2 &intc 0 0 49 IRQ_TYPE_LEVEL_HIGH>, /* int_b */
+> +					<0 0 0 3 &intc 0 0 84 IRQ_TYPE_LEVEL_HIGH>, /* int_c */
+> +					<0 0 0 4 &intc 0 0 85 IRQ_TYPE_LEVEL_HIGH>; /* int_d */
+> +
+> +			/* clocks and clock-names are used to enable the clock in CBCR */
+
+This comment is redundant.
+
+> +			clocks = <&gcc GCC_PCIE1_AHB_CLK>,
+> +				 <&gcc GCC_PCIE1_AUX_CLK>,
+> +				 <&gcc GCC_PCIE1_AXI_M_CLK>,
+> +				 <&gcc GCC_PCIE1_AXI_S_CLK>,
+> +				 <&gcc GCC_PCIE1_AXI_S_BRIDGE_CLK>,
+> +				 <&gcc GCC_PCIE1_RCHNG_CLK>;
+> +			clock-names = "ahb",
+> +				      "aux",
+> +				      "axi_m",
+> +				      "axi_s",
+> +				      "axi_bridge",
+> +				      "rchng";
+> +
+> +			resets = <&gcc GCC_PCIE1_PIPE_ARES>,
+> +				 <&gcc GCC_PCIE1_CORE_STICKY_ARES>,
+> +				 <&gcc GCC_PCIE1_AXI_S_STICKY_ARES>,
+> +				 <&gcc GCC_PCIE1_AXI_S_ARES>,
+> +				 <&gcc GCC_PCIE1_AXI_M_STICKY_ARES>,
+> +				 <&gcc GCC_PCIE1_AXI_M_ARES>,
+> +				 <&gcc GCC_PCIE1_AUX_ARES>,
+> +				 <&gcc GCC_PCIE1_AHB_ARES>;
+> +			reset-names = "pipe",
+> +				      "sticky",
+> +				      "axi_s_sticky",
+> +				      "axi_s",
+> +				      "axi_m_sticky",
+> +				      "axi_m",
+> +				      "aux",
+> +				      "ahb";
+> +
+> +			phys = <&pcie1_phy>;
+> +			phy-names = "pciephy";
+> +			interconnects = <&gcc MASTER_ANOC_PCIE1 &gcc SLAVE_ANOC_PCIE1>,
+> +					<&gcc MASTER_SNOC_PCIE1 &gcc SLAVE_SNOC_PCIE1>;
+
+Is this really the interconnect paths between PCIe-DDR and PCIe-CPU? I doubt...
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
