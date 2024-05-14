@@ -1,125 +1,169 @@
-Return-Path: <linux-kernel+bounces-178963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 643C78C59DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 18:45:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 991E18C59E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 18:47:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 824A01C21464
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:45:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF79F282952
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:47:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AD5B17F360;
-	Tue, 14 May 2024 16:45:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1721317F37E;
+	Tue, 14 May 2024 16:47:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="SwLFwFBk"
-Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lzXyJ0Sp"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 589A92AF09
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 16:45:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAE5AF501;
+	Tue, 14 May 2024 16:47:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715705113; cv=none; b=i9fIx5PEZBMvbo5vfDrUe5IwDjp470kPakrFsPdAA6WtYJc1ZmP47HKhvoiBMYg+X7rYU96MamJq1sIQ7gBukcrba7JsDZ40Dcj3NhP7KJvPmUDJSUKQWrhamqrNVK0PZxuY5qSE7/agHfjVPCzgqbrWm5TI6AU80BQQO1CHKkk=
+	t=1715705268; cv=none; b=gBI5/D/YFWM26O+zjI5cKQFOdqTmuAahaP+pBdrts9q54ciLRHVq2PQglamzYINZ81qCKNXhcjiz/UwKZwOERsl9ypt17YGlPblktJMuITponI+kFjmXl0WEYd+aBi4yq3MTEmgp+jQ1BAVg0JOCGVmuoYCGjIw+EyFd6D5kzcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715705113; c=relaxed/simple;
-	bh=diyKllqobKbeGJc5R1CZjCecj8JwIgAdEMhvC1ZOIPA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nS2DdhgX8/TP1WBuIpAARWVqFhMjscGR8bpCP1vHQzvu6zq5Wn1Njfyod+0XoEacGTIHZBsZUqW7xh0tlVYRgtGCwS6EyEvGhsMMmVMwTtY1J0ScZrItidqZfb4tUCCD0f6FYnkw2XKOR9d3aL4TCqQkxggQktI6m8Y+G4gvm6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=SwLFwFBk; arc=none smtp.client-ip=209.85.166.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-7e1b520812fso36430839f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 09:45:11 -0700 (PDT)
+	s=arc-20240116; t=1715705268; c=relaxed/simple;
+	bh=mwFsSf+AWXeVxQSo74iPcsI576htwkDDfmRc0faDOi0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=n9z3I5tU+sYTSqOLUZDutbpRWU3bf8t07SW9HSr898A/hXZgGMguOZE6cRiESml6Rkl7Cv0SZbfqrrP3XP26e2m8h5i+lRmu9g3Y4x+Ce+1b9ZOQdWljpe23FW1dfCFYebnj5ZgaBhcFAUIZjdE7UFksj2uHTULUvvS/6okdNDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lzXyJ0Sp; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-51ffff16400so9671394e87.2;
+        Tue, 14 May 2024 09:47:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1715705110; x=1716309910; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OqKNcj7j0AZZaaEg2IE4Ch533Q1LfRJ1nDU5mEA1FkI=;
-        b=SwLFwFBkbB0nbUxeqedwjU/lTmquVv67N+Wv80U2rttrPYQJ4WLoNDAoIU5h0PT52R
-         KN6j+gVQQkMe2j9WNJUF7kgNsCe41WdrAEusWLx5PG4T3Twy5QmOGGEdwobuKR85SkVz
-         mCf+ttokVOLfUc64RWCziJn33FXRq8Ak5wTmY=
+        d=gmail.com; s=20230601; t=1715705265; x=1716310065; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9EeQjuV214QMKCW8+MdYcFTtVImchVTc5aos0uWhYxk=;
+        b=lzXyJ0Sp90TcfO/OHpGTA0ZJCHyVYuXgrPIcL8YS2axoKNDOap2ioFFiMBjVr6IGIO
+         jYeqS1wR4IgNSUm5JHu7MrgHg04+w5o2b8I/NiStJxYgywib77yMX2uko8JEaVSjepJD
+         0zUKCTEmkWd/Uo69GskpTSUOGgT11gvQjSXSEM2O1JSInRj4JEX9hBT7I9AXfG7afweI
+         xhYoEfEn7UsfP2yzToc3OxEjvg4nfRk8rNCtJnbFCCYMPcPg9Q/KQSdp77RQPaKlzl9z
+         ED+lputB8/VSjYZtlgzfZYKGht3vTf3aR4vRXbdJKTjGN1eosMn8OMpn33DwKLgV0gZy
+         RZcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715705110; x=1716309910;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OqKNcj7j0AZZaaEg2IE4Ch533Q1LfRJ1nDU5mEA1FkI=;
-        b=gA354e+eauqcUT7+sWHBFDbtlaODiYEH9TxCm33G0CUTTcFDToBJJdcrhzoE1ljd/Z
-         37xY1zjsJQ50qpmKXwKu8JD7sNwi9favZ9H4VuUUC3Ctr50oSNpFEsKsT83eqv/sd+Lb
-         skQGgwsDMpiZbtibuZqKjfPWEVpE+tbUc2XjYH6zS+JIeKLu9UAAUV/TaUikPv+o5fxm
-         Dfvh2BUQ/ByGT103ULGSjVs/pItIc1t3Ofnl7z/jYwQsA7Taq/ImAESeJX5VFak821G3
-         cSKc72NW2AAAUdEsffUEuuMAbMCYnSUqfuP9TsAYMtSakTV5Cre/UadhVjEmg8anejlT
-         p0Gg==
-X-Gm-Message-State: AOJu0YzNOM5jh9uQsGoLMu7XSQp9aC4AaDB7a1pcs8Hy9+LJ2qDcqN32
-	D5nfWFvYBwMMfjuvGpeTg6ifouKZr60ZWqASy2AaoLvHgJWY/a0p9KHrUdaNMLs=
-X-Google-Smtp-Source: AGHT+IHJWsjymJ9pgm9nI2xMNo2ER37wCeFcVuOst5E9tYnvhx2Gbm+LFuCTw3kM22zofhBtRP8VSg==
-X-Received: by 2002:a92:608:0:b0:36c:3856:4386 with SMTP id e9e14a558f8ab-36cc14e921amr138441975ab.3.1715705110440;
-        Tue, 14 May 2024 09:45:10 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-36cc9473003sm19088335ab.79.2024.05.14.09.45.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 May 2024 09:45:10 -0700 (PDT)
-Message-ID: <58fd25ea-c444-45cf-a41d-c3022e9d5f80@linuxfoundation.org>
-Date: Tue, 14 May 2024 10:45:09 -0600
+        d=1e100.net; s=20230601; t=1715705265; x=1716310065;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9EeQjuV214QMKCW8+MdYcFTtVImchVTc5aos0uWhYxk=;
+        b=QnLyCwpd6REiTzUQo7UuqhUfC0mOIOx5MU6OvESNct7j8hK1ph1+NPqukkvadvGhvY
+         1hFcUPo5uDLAZc8Ft1Az67VbHwHiJ7/Ez1reFp07CtrnTKcpa7E7xp/tvDZMktqeFfrM
+         CklDBp91KOKVPGrVqpSswWWJI8bXvv3FAKXZAJTeNlUDBgAWCUJGcW7SqBsamKNaq59+
+         3xGfwyY38ZOcocRAlfY3ZB9D5qGzukgicK9ILyo9irdH5y3p4zBsK3uV/sYhDJBe4ZI+
+         pVCfqm+jzGIIMut7X28HhvzgKBauC9A1HdNwS/TCnbS0CEBa0bTWyzsxB+1SnJWvYvTz
+         k86A==
+X-Forwarded-Encrypted: i=1; AJvYcCWc1NEOfUnJ0V0M4KRrS3M/ONOzu8Mrz+Rhel/Xw3vUxqw7u57TvC2j2oqcZvIJULWhoUz9b3KkUZRDml0pSQTycg4sSyYXfg==
+X-Gm-Message-State: AOJu0YziFUiX3uKb/iGp6buEPYOXHiwYFd8BtQ2d9hbEgqOuY/8skbqQ
+	zaMqgVCqfdy0HwgXaStwKeA0bJdJ1d8eqjs+rNKb9peiaitTchjFaahBI3wW22pIP+w0kDJzYjn
+	mUWlE+LkJri08EN+s066teSQcIGU=
+X-Google-Smtp-Source: AGHT+IGgSINXuTYWtlb6RPS0H4uxWInGDhUgFzN0Cd/IbplikulDsAF1ZDGi3eVXIqzcXUuEnpPFF0tcLEARhHXEJ64=
+X-Received: by 2002:a05:6512:281a:b0:523:8c69:4843 with SMTP id
+ 2adb3069b0e04-5238c694a9amr18263e87.49.1715705264430; Tue, 14 May 2024
+ 09:47:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 0/4] add tests to verify IFS (In Field Scan) driver
- functionality
-To: Pengfei Xu <pengfei.xu@intel.com>, shuah@kernel.org,
- linux-kselftest <linux-kselftest@vger.kernel.org>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, jithu.joseph@intel.com,
- ashok.raj@intel.com, sathyanarayanan.kuppuswamy@intel.com,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <cover.1714447026.git.pengfei.xu@intel.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <cover.1714447026.git.pengfei.xu@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240513220146.1461457-1-yury.norov@gmail.com>
+ <20240513220146.1461457-7-yury.norov@gmail.com> <878r0cn6a5.ffs@tglx> <874jb0n5rt.ffs@tglx>
+In-Reply-To: <874jb0n5rt.ffs@tglx>
+From: Yury Norov <yury.norov@gmail.com>
+Date: Tue, 14 May 2024 09:47:32 -0700
+Message-ID: <CAAH8bW-o_zz_C_NFnjL3uP1BXyC4OF-BAR2Dk2Xd-DFDOZpodQ@mail.gmail.com>
+Subject: Re: [PATCH 6/6] tick/common: optimize cpumask_equal() usage
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Paul E. McKenney" <paulmck@kernel.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, 
+	Ben Segall <bsegall@google.com>, Daniel Bristot de Oliveira <bristot@redhat.com>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Frederic Weisbecker <frederic@kernel.org>, 
+	Imran Khan <imran.f.khan@oracle.com>, Ingo Molnar <mingo@redhat.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Juri Lelli <juri.lelli@redhat.com>, 
+	Leonardo Bras <leobras@redhat.com>, Mel Gorman <mgorman@suse.de>, 
+	Peter Zijlstra <peterz@infradead.org>, Rik van Riel <riel@surriel.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Tejun Heo <tj@kernel.org>, 
+	Valentin Schneider <vschneid@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Waiman Long <longman@redhat.com>, Zefan Li <lizefan.x@bytedance.com>, cgroups@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 4/29/24 21:31, Pengfei Xu wrote:
-> To verify IFS (In Field Scan [1]) driver functionality, add the following 6
-> test cases:
->    1. Verify that IFS sysfs entries are created after loading the IFS module
->    2. Check if loading an invalid IFS test image fails and loading a valid
->       one succeeds
->    3. Perform IFS scan test on each CPU using all the available image files
->    4. Perform IFS scan with first test image file on a random CPU for 3
->       rounds
->    5. Perform IFS ARRAY BIST(Board Integrated System Test) test on each CPU
->    6. Perform IFS ARRAY BIST test on a random CPU for 3 rounds
-> 
-> These are not exhaustive, but some minimal test runs to check various
-> parts of the driver. Some negative tests are also included.
-> 
-> [1] https://docs.kernel.org/arch/x86/ifs.html
-> 
-> Pengfei Xu (4):
->    selftests: ifs: verify test interfaces are created by the driver
->    selftests: ifs: verify test image loading functionality
->    selftests: ifs: verify IFS scan test functionality
->    selftests: ifs: verify IFS ARRAY BIST functionality
-> 
->   MAINTAINERS                                   |   1 +
->   tools/testing/selftests/Makefile              |   1 +
->   .../drivers/platform/x86/intel/ifs/Makefile   |   6 +
->   .../platform/x86/intel/ifs/test_ifs.sh        | 496 ++++++++++++++++++
->   4 files changed, 504 insertions(+)
->   create mode 100644 tools/testing/selftests/drivers/platform/x86/intel/ifs/Makefile
->   create mode 100755 tools/testing/selftests/drivers/platform/x86/intel/ifs/test_ifs.sh
-> 
+On Tue, May 14, 2024 at 1:42=E2=80=AFAM Thomas Gleixner <tglx@linutronix.de=
+> wrote:
+>
+> On Tue, May 14 2024 at 10:31, Thomas Gleixner wrote:
+> > On Mon, May 13 2024 at 15:01, Yury Norov wrote:
+> >> Some functions in the file call cpumask_equal() with src1p =3D=3D src2=
+p.
+> >> We can obviously just skip comparison entirely in this case.
+> >>
+> >> This patch fixes cpumask_equal invocations when boot-test or LTP detec=
+t
+> >> such condition.
+> >
+> > Please write your changelogs in imperative mood.
+> >
+> > git grep 'This patch' Documentation/process/
+> >
+> > Also please see Documentation/process/maintainer-tip.rst
+> >
+> >> Signed-off-by: Yury Norov <yury.norov@gmail.com>
+> >> ---
+> >>  kernel/time/tick-common.c | 15 +++++++++++----
+> >>  1 file changed, 11 insertions(+), 4 deletions(-)
+> >>
+> >> diff --git a/kernel/time/tick-common.c b/kernel/time/tick-common.c
+> >> index d88b13076b79..b31fef292833 100644
+> >> --- a/kernel/time/tick-common.c
+> >> +++ b/kernel/time/tick-common.c
+> >> @@ -253,7 +253,8 @@ static void tick_setup_device(struct tick_device *=
+td,
+> >>       * When the device is not per cpu, pin the interrupt to the
+> >>       * current cpu:
+> >>       */
+> >> -    if (!cpumask_equal(newdev->cpumask, cpumask))
+> >> +    if (newdev->cpumask !=3D cpumask &&
+> >> +                    !cpumask_equal(newdev->cpumask, cpumask))
+> >>              irq_set_affinity(newdev->irq, cpumask);
+> >
+> > I'm not seeing the benefit. This is slow path setup code so the extra
+> > comparison does not really buy anything aside of malformatted line
+> > breaks.
+>
+> Instead of sprinkling these conditional all over the place, can't you
+> just do the obvious and check for ptr1 =3D=3D ptr2 in bitmap_copy() and
+> bitmap_equal()?
 
-I am fine with adding a test. I would need ifs ack or reviewed-by.
-I don't see ifs maintainer on on this thread.
+I proposed this a while (few years) ago, and it has been rejected. On
+bitmaps level we decided not to do that for the reasons memcpy() and
+memcmp() doesn't, and on cpumasks and nodemasks level it hasn't
+been discussed at all.
 
-thanks,
--- Shuah
+Now that most of bitmap ops have inline and outline implementation,
+we technically can move this checks in outline code, as inline bitmap
+ops are very lightweight already.
+
+So I see the following options:
+ - Implement these sanity checks in outline bitmap API (lib/bitmap.c);
+ - Implement them on cpumask and nodemask level; or
+ - add a new family of helpers that do this check, like
+  bitmap_copy_if_needed() (better name appreciated).
+
+The argument against #1 and #2 these days was that memcpy() and
+similarly bitmap_copy() with dst =3D=3D src may be a sign of error, and
+we don't want to add a code that optimizes for it.
+
+Now, I ran the kernel through the LTP test and in practice all the
+cases that I spot look pretty normal. So I can continue sprinkling
+the checks once a few years, or do something like described above.
+
+Can you / everyone please share your opinion?
+
+Thanks,
+Yury
 
