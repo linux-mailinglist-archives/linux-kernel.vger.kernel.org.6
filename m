@@ -1,68 +1,54 @@
-Return-Path: <linux-kernel+bounces-178574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 750018C50B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 13:10:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C242B8C510B
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 13:18:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A66F41C209BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 11:10:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4DA3CB20907
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 11:18:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B93913E8BC;
-	Tue, 14 May 2024 10:46:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64FE212EBD4;
+	Tue, 14 May 2024 10:53:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R4e/0vTo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lhIZOkwa"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58FC16D1B4;
-	Tue, 14 May 2024 10:46:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAF0755C0A
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 10:53:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715683595; cv=none; b=ebl81oE9puI6D8Xe+6x9PKN/QiScty1ixMf7rKobzEPWaode8QUA/xOQyi+3xPkcOat6UE/jPk5kFRwP+AgcayFQM8cW9xEXSANSG50KC46qyIFL6QeuRunGcuNSWYfPzqOdxcOWgO3Xu2h23n+Fid2Z9kvJt5o+31jEdNo2K7k=
+	t=1715684008; cv=none; b=bzldnraTssoLevwGSBT5fu9dOdz+Xj04nGvSCKH7QG4PCLFyv+fQbvR9WMncYJNFSoeMZS24iRoEA6nzRhTeKzvLZ0tJVvIFLDZ3rym8Ej2meGCWbRCNHKMVOEW0/WEp3Ti2MOcIwS3mNZ8VRFRGTXhFIjn4ExPfIpg72dEXOw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715683595; c=relaxed/simple;
-	bh=DHFuiyL6T5J2md2p75u4E5Jz8QSMYKiBIleKiS1nJh0=;
+	s=arc-20240116; t=1715684008; c=relaxed/simple;
+	bh=aU1RwmVoZA1OHt1xQFp3L8EH8NSGi/JkZ+0wsLin0kw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZU1528G/m2+5s2lJPkHO+m+uXCj9ZzGqmNs2zLxkpunD5AGpHNPLSmjBSwwECM4PCnYTcw/lvl1u93Rd75u8P2QUz/YWuB0djvZfHrGgjFwXmH6vmt/Schw60Ejc4GuP3z4feLfLEcUT3kikjJWy9kxfLJ2LMNZe1ucT8QgeRZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R4e/0vTo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14BE6C2BD10;
-	Tue, 14 May 2024 10:46:29 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=qxYh29EzQEA5WMV28MfMdlfd8DtLjbJ1u7aF1xtb5XRuwJfDXku3OhzYJe3Ayp/6m7NUuXY87ulrWLq4o55mGLotcG/8JqcccnZnkOKzd5+cprt4QWlT6Or9vK9AqYMHrY4/wgIuvZGKvwu64qAPGPuklHm0EwOw8AGfNzTones=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lhIZOkwa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3D3CC32781;
+	Tue, 14 May 2024 10:53:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715683595;
-	bh=DHFuiyL6T5J2md2p75u4E5Jz8QSMYKiBIleKiS1nJh0=;
+	s=k20201202; t=1715684008;
+	bh=aU1RwmVoZA1OHt1xQFp3L8EH8NSGi/JkZ+0wsLin0kw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R4e/0vToJzWnMNABYFEb4mmjwzdFvt8whPVkDhVQGVZsd1pCwDU5fO/OnKDblY/i3
-	 88Sm+EYr5yGI0aO4xWDXQ1dfL7KZ+Vq6/YhRZhOIJCCCBx+oaXk5ADEFadUSOvIZJp
-	 Mizuyt+YaWqmabrF+GUHajeM8UubkHt2uxD+WOayb5bD4WgWHLZO9Krv9XIurhl7ql
-	 30/NPnQpZPKzIECZ8fvkVPCHDM5b2d/YQT6yQq7BJo22H/wGq38yxAlfhsHV3qEKY5
-	 3YhljaB8T2eZ4XVEugsVw/z/DhtdTK0k2lkcy3ER60Lfp+nJv1cr0pEy+0AN6XrQ4J
-	 MvA4WPFkgVsbQ==
-Date: Tue, 14 May 2024 11:46:26 +0100
-From: Simon Horman <horms@kernel.org>
-To: Bharat Bhushan <bbhushan2@marvell.com>
-Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Sunil Kovvuri Goutham <sgoutham@marvell.com>,
-	Geethasowjanya Akula <gakula@marvell.com>,
-	Subbaraya Sundeep Bhatta <sbhatta@marvell.com>,
-	Hariprasad Kelam <hkelam@marvell.com>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	Jerin Jacob <jerinj@marvell.com>,
-	Linu Cherian <lcherian@marvell.com>,
-	"richardcochran@gmail.com" <richardcochran@gmail.com>
-Subject: Re: [EXTERNAL] Re: [net-next,v2 5/8] cn10k-ipsec: Add SA add/delete
- support for outb inline ipsec
-Message-ID: <20240514104626.GE2787@kernel.org>
-References: <20240513105446.297451-1-bbhushan2@marvell.com>
- <20240513105446.297451-6-bbhushan2@marvell.com>
- <20240513165133.GS2787@kernel.org>
- <SN7PR18MB531442D0D88031D320F3372BE3E32@SN7PR18MB5314.namprd18.prod.outlook.com>
+	b=lhIZOkwal34GZ1VVw0JrpLrXyv1VHEeYDo7S0XiBZcMN+jqcjxV7nvHqVk5nayOMj
+	 EKELqxj/mmmPo/LD+JMHU5hOx1j7KnlWHfKYZjk9M48EwXTwIUCykA5kqnxgqQ+Ove
+	 /2iBh+sMiwkGQFBn66lSDnO/sYhBjd/W5J4QQFnK47WLC8cqDl6YIKDYqNI/FKbdxZ
+	 qDhKMClYu5SM0jfnrDM/qR6CN8hyjxZpu++QVR0oGKgVXZXCaEV89eWrwYAViqWK45
+	 d1gCWgg4KHUukpzf/XAGOKd9fhBrytEaVnlwbMB/GJNI9Ri4QCW5p7Qtf37let0DDk
+	 Qw3DeZDcZuFZg==
+Date: Tue, 14 May 2024 16:20:04 +0530
+From: Naveen N Rao <naveen@kernel.org>
+To: Gautam Menghani <gautam@linux.ibm.com>
+Cc: mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu, 
+	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arch/powerpc: Remove the definition of unused cede
+ function
+Message-ID: <vfx2z4dn6afpkl4z7ygewadw7mohfd7l3tfazdya4sbxniurkg@vrubq25slkvs>
+References: <20240514100507.271681-1-gautam@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,43 +57,55 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <SN7PR18MB531442D0D88031D320F3372BE3E32@SN7PR18MB5314.namprd18.prod.outlook.com>
+In-Reply-To: <20240514100507.271681-1-gautam@linux.ibm.com>
 
-On Tue, May 14, 2024 at 06:52:38AM +0000, Bharat Bhushan wrote:
-> Please see inline
+On Tue, May 14, 2024 at 03:35:03PM GMT, Gautam Menghani wrote:
+> Remove extended_cede_processor() definition as it has no callers since
+> commit 48f6e7f6d948("powerpc/pseries: remove cede offline state for CPUs")
+
+extended_cede_processor() was added in commit 69ddb57cbea0 
+("powerpc/pseries: Add extended_cede_processor() helper function."), 
+which also added [get|set]_cede_latency_hint(). Those can also be 
+removed if extended_cede_processor() is no longer needed.
+
+- Naveen
+
 > 
-> > -----Original Message-----
-> > From: Simon Horman <horms@kernel.org>
-
-..
-
-> > > +static const struct xfrmdev_ops cn10k_ipsec_xfrmdev_ops = {
-> > > +	.xdo_dev_state_add	= cn10k_ipsec_add_state,
-> > > +	.xdo_dev_state_delete	= cn10k_ipsec_del_state,
-> > > +};
-> > > +
-> > 
-> > cn10k_ipsec_xfrmdev_ops is unused.
-> > Perhaps it, along with it's callbacks,
-> > should be added by the function that uses it?
+> Signed-off-by: Gautam Menghani <gautam@linux.ibm.com>
+> ---
+>  arch/powerpc/include/asm/plpar_wrappers.h | 18 ------------------
+>  1 file changed, 18 deletions(-)
 > 
-> I wanted to enable ipsec offload in last patch of the series 
-> ("[net-next,v2 8/8] cn10k-ipsec: Enable outbound inline ipsec offload")
-
-I appreciate the patchset being split up like this.
-
-> Is it okay to set xfrmdev_ops in this patch without setting NETIF_F_HW_ESP (below two lines of last patch)
-> +	/* Set xfrm device ops */
-> +	netdev->xfrmdev_ops = &cn10k_ipsec_xfrmdev_ops;
+> diff --git a/arch/powerpc/include/asm/plpar_wrappers.h b/arch/powerpc/include/asm/plpar_wrappers.h
+> index b3ee44a40c2f..6431fa1e1cb1 100644
+> --- a/arch/powerpc/include/asm/plpar_wrappers.h
+> +++ b/arch/powerpc/include/asm/plpar_wrappers.h
+> @@ -37,24 +37,6 @@ static inline long cede_processor(void)
+>  	return plpar_hcall_norets_notrace(H_CEDE);
+>  }
+>  
+> -static inline long extended_cede_processor(unsigned long latency_hint)
+> -{
+> -	long rc;
+> -	u8 old_latency_hint = get_cede_latency_hint();
+> -
+> -	set_cede_latency_hint(latency_hint);
+> -
+> -	rc = cede_processor();
+> -
+> -	/* Ensure that H_CEDE returns with IRQs on */
+> -	if (WARN_ON(IS_ENABLED(CONFIG_PPC_IRQ_SOFT_MASK_DEBUG) && !(mfmsr() & MSR_EE)))
+> -		__hard_irq_enable();
+> -
+> -	set_cede_latency_hint(old_latency_hint);
+> -
+> -	return rc;
+> -}
+> -
+>  static inline long vpa_call(unsigned long flags, unsigned long cpu,
+>  		unsigned long vpa)
+>  {
+> -- 
+> 2.45.0
 > 
-> Last patch will set below flags.
-> +	netdev->hw_features |= NETIF_F_HW_ESP;
-> +	netdev->hw_enc_features |= NETIF_F_HW_ESP;
-> +
-
-IMHO, yes, something like that would be fine, as long as it leads to a
-working system (with a feature not enabled).  Perhaps it would be good to
-include a comment in the code about this to make it clear what is going on.
-
-..
 
