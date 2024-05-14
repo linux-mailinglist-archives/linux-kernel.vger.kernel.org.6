@@ -1,128 +1,195 @@
-Return-Path: <linux-kernel+bounces-178329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6EC48C4BFE
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 07:28:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 794C48C4BE6
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 07:11:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFB081C22B73
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 05:28:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A39A1F243D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 05:11:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D20A1804A;
-	Tue, 14 May 2024 05:28:48 +0000 (UTC)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A7E5179AD;
+	Tue, 14 May 2024 05:11:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="tQZ/S9bU"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5571A171AB;
-	Tue, 14 May 2024 05:28:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00070B645;
+	Tue, 14 May 2024 05:10:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715664528; cv=none; b=u9AHlz2x936g+Nf+H9Y5WA3Zb4T1bXGEPew28I/f4HRRYaxu9gFq9vGkmA+lbq5u3tQIaCPl1azfdiu48Q2bR36Q30y3i/vnPhinWS3ih4kIlKeLlMqLvDlJaIFMbG+HNVyv41BLBzl34zasF/EWQDJBw6Dlnmv99GP9HrwUd8o=
+	t=1715663461; cv=none; b=ArNg0CHMu5sIdNFly9o5WlPk3EWT6/kcZNCqRfnBzd3Kspktj1HQPN5LrAdiuQPCXne8wvJG6zxJ9wehEhYD8WKkuBMLDG5ju9v3SPIcAJ3Umd226SM50NyIL5gv5mm58dBI/C/irYn8WtL0pm0EtCzukdd54rXN6NXKIjXcNbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715664528; c=relaxed/simple;
-	bh=NRqzaYlat30Cka6lLWm1QfveJqU5KFy7bW8Zc9IvWpI=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=gdS8vyBtbGog4eb3X1H1CgRl+bOIn+VK6WvldPNjT8lKY44LiTlhb5KeECGFw+36viMV3optOmzDToLsfPqUX95UG5JeSrI94qzuPqG4EF+WZC8lnVgwbLgDy2xDDI7sNv2fkwSSrSDJVHKdwGQDnatah38x8XIIjBhrepSMKcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 59DB71A0BC9;
-	Tue, 14 May 2024 07:28:38 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 0FA831A0BA8;
-	Tue, 14 May 2024 07:28:38 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 56BBC1820F77;
-	Tue, 14 May 2024 13:28:36 +0800 (+08)
-From: Richard Zhu <hongxing.zhu@nxp.com>
-To: bhelgaas@google.com,
-	lorenzo.pieralisi@arm.com,
-	frank.li@nxp.com,
-	mani@kernel.org
-Cc: linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	kernel@pengutronix.de,
-	imx@lists.linux.dev,
-	Richard Zhu <hongxing.zhu@nxp.com>
-Subject: [PATCH v1] PCI: dwc: Fix resume failure if no EP is connected at some platforms.
-Date: Tue, 14 May 2024 13:09:18 +0800
-Message-Id: <1715663358-8900-1-git-send-email-hongxing.zhu@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+	s=arc-20240116; t=1715663461; c=relaxed/simple;
+	bh=VX/nT1OFCwLiO8UeA/uTNBtASw+CFxCX7ESZVp+tJ/4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=LfhZt4M38FNVfNormbQEtdRi/AHpXbbtmjIwCXgF9H3JALlq+5g7CrlbEKFWWIwCWgBofrZYtn5eoTVCSi+IP1/HbnypBTvSJRNegCaqduLeCP2YMJKd1fjkxIJ9DcEETUkbyg3ETngIKrllk3ZMla2i8Z2pe1O0y0hr4ZM2hUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=tQZ/S9bU; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44E5AExJ102487;
+	Tue, 14 May 2024 00:10:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1715663414;
+	bh=iWcfHQIJy00RbPyb4r7MZWVEdLEUYPY1krQxFcJwd48=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=tQZ/S9bUczitgIkqcrruTbtabGay4Qt3menVgEc0BBwrFa3ybQa3stO9pz4ScsmwG
+	 t7a/F/zqaKnXRWWB8jgE7vD0mJeNb83WnxERUnG0RcK5SoFVcfPduAqC54g3qj60VB
+	 JGumjiETJrO/NJMumQFz/1XhWWqgCLyB6n0VqcP4=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44E5AEc8079975
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 14 May 2024 00:10:14 -0500
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 14
+ May 2024 00:10:13 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 14 May 2024 00:10:13 -0500
+Received: from [10.249.131.75] ([10.249.131.75])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44E5A41c073551;
+	Tue, 14 May 2024 00:10:05 -0500
+Message-ID: <c9d27e22-b5cd-4995-86fa-3893430d08a8@ti.com>
+Date: Tue, 14 May 2024 10:40:03 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] dt-bindings: display: ti,am65x-dss: Add OLDI
+ properties for AM625 DSS
+To: Rob Herring <robh@kernel.org>
+CC: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+        Jyri Sarha
+	<jyri.sarha@iki.fi>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Laurent Pinchart
+	<Laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@gmail.com>, Daniel
+ Vetter <daniel@ffwll.ch>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor
+ Dooley <conor+dt@kernel.org>,
+        DRI Development List
+	<dri-devel@lists.freedesktop.org>,
+        Devicetree List
+	<devicetree@vger.kernel.org>,
+        Linux Kernel List
+	<linux-kernel@vger.kernel.org>,
+        Nishanth Menon <nm@ti.com>, Vignesh
+ Raghavendra <vigneshr@ti.com>,
+        Praneeth Bajjuri <praneeth@ti.com>, Udit Kumar
+	<u-kumar1@ti.com>,
+        Francesco Dolcini <francesco@dolcini.it>,
+        Alexander
+ Sverdlin <alexander.sverdlin@siemens.com>,
+        Randolph Sapp <rs@ti.com>, Devarsh
+ Thakkar <devarsht@ti.com>,
+        Jayesh Choudhary <j-choudhary@ti.com>, Jai Luthra
+	<j-luthra@ti.com>
+References: <20240511193055.1686149-1-a-bhatia1@ti.com>
+ <20240511193055.1686149-4-a-bhatia1@ti.com>
+ <20240513193504.GA3000298-robh@kernel.org>
+Content-Language: en-US
+From: Aradhya Bhatia <a-bhatia1@ti.com>
+In-Reply-To: <20240513193504.GA3000298-robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-The dw_pcie_suspend_noirq() function currently returns success directly
-if no endpoint (EP) device is connected. However, on some platforms, power
-loss occurs during suspend, causing dw_resume() to do nothing in this case.
-This results in a system halt because the DWC controller is not initialized
-after power-on during resume.
 
-Change call to deinit() in suspend and init() at resume regardless of
-whether there are EP device connections or not. It is not harmful to
-perform deinit() and init() again for the no power-off case, and it keeps
-the code simple and consistent in logic.
 
-Fixes: 4774faf854f5 ("PCI: dwc: Implement generic suspend/resume functionality")
-Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
----
-https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/log/?h=controller/dwc
-This patch depends on the branch listed above, because it's not in pci-next.
-But suppose it will be in there soon.
+On 14/05/24 01:05, Rob Herring wrote:
+> On Sun, May 12, 2024 at 01:00:54AM +0530, Aradhya Bhatia wrote:
+>> The DSS in AM625 SoC has 2 OLDI TXes. Refer the OLDI schema to add the
+>> properties.
+>>
+>> Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
+>> ---
+>>  .../bindings/display/ti/ti,am65x-dss.yaml     | 136 +++++++++++++++++-
+>>  1 file changed, 135 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml b/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml
+>> index 399d68986326..4aa2de59b32b 100644
+>> --- a/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml
+>> +++ b/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml
+>> @@ -85,12 +85,30 @@ properties:
+>>  
+>>      properties:
+>>        port@0:
+>> -        $ref: /schemas/graph.yaml#/properties/port
+>> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> 
+> You don't need this change. You aren't adding any extra properties.
 
- .../pci/controller/dwc/pcie-designware-host.c | 30 +++++++++----------
- 1 file changed, 15 insertions(+), 15 deletions(-)
+Alright. I will make the change.
 
-diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-index a0822d5371bc5..cb8c3c2bcc790 100644
---- a/drivers/pci/controller/dwc/pcie-designware-host.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-@@ -933,23 +933,23 @@ int dw_pcie_suspend_noirq(struct dw_pcie *pci)
- 	if (dw_pcie_readw_dbi(pci, offset + PCI_EXP_LNKCTL) & PCI_EXP_LNKCTL_ASPM_L1)
- 		return 0;
- 
--	if (dw_pcie_get_ltssm(pci) <= DW_PCIE_LTSSM_DETECT_ACT)
--		return 0;
--
--	if (pci->pp.ops->pme_turn_off)
--		pci->pp.ops->pme_turn_off(&pci->pp);
--	else
--		ret = dw_pcie_pme_turn_off(pci);
-+	if (dw_pcie_get_ltssm(pci) > DW_PCIE_LTSSM_DETECT_ACT) {
-+		/* Only send out PME_TURN_OFF when PCIE link is up */
-+		if (pci->pp.ops->pme_turn_off)
-+			pci->pp.ops->pme_turn_off(&pci->pp);
-+		else
-+			ret = dw_pcie_pme_turn_off(pci);
- 
--	if (ret)
--		return ret;
-+		if (ret)
-+			return ret;
- 
--	ret = read_poll_timeout(dw_pcie_get_ltssm, val, val == DW_PCIE_LTSSM_L2_IDLE,
--				PCIE_PME_TO_L2_TIMEOUT_US/10,
--				PCIE_PME_TO_L2_TIMEOUT_US, false, pci);
--	if (ret) {
--		dev_err(pci->dev, "Timeout waiting for L2 entry! LTSSM: 0x%x\n", val);
--		return ret;
-+		ret = read_poll_timeout(dw_pcie_get_ltssm, val, val == DW_PCIE_LTSSM_L2_IDLE,
-+					PCIE_PME_TO_L2_TIMEOUT_US/10,
-+					PCIE_PME_TO_L2_TIMEOUT_US, false, pci);
-+		if (ret) {
-+			dev_err(pci->dev, "Timeout waiting for L2 entry! LTSSM: 0x%x\n", val);
-+			return ret;
-+		}
- 	}
- 
- 	if (pci->pp.ops->deinit)
--- 
-2.37.1
+> 
+>>          description:
+>>            For AM65x DSS, the OLDI output port node from video port 1.
+>>            For AM625 DSS, the internal DPI output port node from video
+>>            port 1.
+>>            For AM62A7 DSS, the port is tied off inside the SoC.
+>> +        properties:
+>> +          endpoint@0:
+>> +            $ref: /schemas/graph.yaml#/properties/endpoint
+>> +            description:
+>> +              For AM625 DSS, VP Connection to OLDI0.
+>> +              For AM65X DSS, OLDI output from the SoC.
+>> +
+>> +          endpoint@1:
+>> +            $ref: /schemas/graph.yaml#/properties/endpoint
+>> +            description:
+>> +              For AM625 DSS, VP Connection to OLDI1.
+>> +
+>> +        anyOf:
+>> +          - required:
+>> +              - endpoint
+>> +          - required:
+>> +              - endpoint@0
+>> +              - endpoint@1
+>>  
+>>        port@1:
+>>          $ref: /schemas/graph.yaml#/properties/port
+>> @@ -112,6 +130,22 @@ properties:
+>>        Input memory (from main memory to dispc) bandwidth limit in
+>>        bytes per second
+>>  
+>> +  oldi-txes:
+>> +    type: object
+>> +    properties:
+>> +      "#address-cells":
+>> +        const: 1
+>> +
+>> +      "#size-cells":
+>> +        const: 0
+>> +
+>> +    patternProperties:
+>> +      '^oldi_tx@[0-1]$':
+>> +        type: object
+>> +        $ref: ti,am625-oldi.yaml#
+>> +        unevaluatedProperties: false
+>> +        description: OLDI transmitters connected to the DSS VPs
+> 
+> Connected to is not part of the DSS. I don't think these nodes belong 
+> here as mentioned in the other patch.
+> 
+
+Replied to this in patch 2/4 to keep the discussion in one thread.
+
+
+Regards
+Aradhya
 
 
