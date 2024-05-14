@@ -1,206 +1,114 @@
-Return-Path: <linux-kernel+bounces-179085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B58858C5B70
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 21:02:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DF138C5B72
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 21:02:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15198B2199D
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 19:02:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED3501F225E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 19:02:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E742F180A96;
-	Tue, 14 May 2024 19:02:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84CDD181304;
+	Tue, 14 May 2024 19:02:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="tSovA4+A"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2073.outbound.protection.outlook.com [40.107.244.73])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qu0sGo/S"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 705131E504
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 19:02:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.73
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715713348; cv=fail; b=VB1H+LHZR2LTXd/Z+Sz2ZqynAT/6dU3eKlWuMNnQBCqi/Raj/vhXdVtl5P/GabOu73vtKFD33PLNI555l8qnCL5hn5pNwmy4rD7DHtumfL7HW8zHJNdQQRWKXM5cHpAOYso12cA+sBRLD4DWN0ZtjD24rmLPodYnJRNJQJwNgOo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715713348; c=relaxed/simple;
-	bh=IpvbgRGTmhRen8xLBksHiUP1Ez9xxnATmlRlkpqqYcc=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=rn5l5ookEafXODhtkqkzONEl8Mz3dTO5FeJnZAVRkxI5BjBuys7zhnslV6f7o3g/5LfCzE8mwyRYfie8zumyu7KTm1xZvSlrQGsA6/XpqMSUyHx34GCvZaidOFM/unekpv8Ya1wiqiKjsel1XMRLl42FADM+a+OzHrQmzGsfW8k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=tSovA4+A; arc=fail smtp.client-ip=40.107.244.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=kreBmlLMbUBa1/1xw7js7fdCGs3EPPNCB3IApBy0M03fyTxBQ+wj9pmNNLcrQqQOLaZDo1pO9bLcQRXgLCuWX1lYr2zQpajViSfNCKWZlEEIz2K4myyYxQ7n66w7CsDAekapKsYMLLXijHCe/2uKn9nB3j4BBnvxh1zaxaW76ERwrt3rSktm/EbZzHrUWCkI0JmzHAkcZ2dWQouy8jU/8soNMbtnwLan2P4NYvzazTrvFETHJ4agoT0fw2dzKAzTe5F5ZRfceY3RFjhV3nSLv/bueEB8nxWq5ug7B6jqHiL71FwOUjGlszB+sNmWEJPwNZXUFPHeMG2sw+Qtw+Bdpg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XPFGeu9uCnr2nOTTberAiIPOJjJw8Na7jolLoNJBleA=;
- b=h4777bNzbhBcyIx/C32RYXIjYNn8MXoVdKEcLTfcuKuY5Ttl9m/Xazis4utUTwlvCiM12lH6+5mlD8aU8n9YV0ZsgoQlUPzNlTEy2LKVSFwhLqXDLrI9EHrqEVDjXCKLhy6yB6r5trErVHmM0NmZPKkC4dUEjIfb3fP/dq0bteQkw8IBOHESOFncZq+KAE62Ep2CcHUcgP/gO6XBI447eRKJb6/dU3dhsG5Sn2Bl/7eT4RFj3qu/lks8lDqPI5UfrWbyMvPN3J0VgSeuO4P6wpBoKk9lTzkVWimlTRE490IZ1MFp4lugrq7MaglPYqfNDsmI9fl5cLNmP17uOMkPPA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XPFGeu9uCnr2nOTTberAiIPOJjJw8Na7jolLoNJBleA=;
- b=tSovA4+AuXgt8Ykfljvnd/7eax0Njeb1WNkBhr4crodc9KU3IiH25NNavot1RWDbiVZYkKQwDJYEMk9so5nfhSkOh0bEJaxhV6xrUk0w5AZEpLtxo0OVJ6BlkUAmjpIQqKm7CAUWZwzzSaSXfzM3zLnTGCgxYtepU5mnGE0EdEg=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM8PR12MB5445.namprd12.prod.outlook.com (2603:10b6:8:24::7) by
- SJ0PR12MB6992.namprd12.prod.outlook.com (2603:10b6:a03:483::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Tue, 14 May
- 2024 19:02:23 +0000
-Received: from DM8PR12MB5445.namprd12.prod.outlook.com
- ([fe80::a544:caf8:b505:5db6]) by DM8PR12MB5445.namprd12.prod.outlook.com
- ([fe80::a544:caf8:b505:5db6%7]) with mapi id 15.20.7544.052; Tue, 14 May 2024
- 19:02:23 +0000
-Message-ID: <24a4eb65-5e1b-44f9-a8ae-71f5f8f26ceb@amd.com>
-Date: Wed, 15 May 2024 02:02:12 +0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/9] iommu/amd: Add AMD IOMMU emulation support for
- SEV-SNP guest kernel
-Content-Language: en-US
-To: Michael Kelley <mhklinux@outlook.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
- "joro@8bytes.org" <joro@8bytes.org>
-Cc: "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>,
- "vasant.hegde@amd.com" <vasant.hegde@amd.com>,
- "michael.roth@amd.com" <michael.roth@amd.com>,
- "jon.grimm@amd.com" <jon.grimm@amd.com>,
- "rientjes@google.com" <rientjes@google.com>
-References: <20240430152430.4245-1-suravee.suthikulpanit@amd.com>
- <SN6PR02MB4157E795C636EBE75CC806A1D4E22@SN6PR02MB4157.namprd02.prod.outlook.com>
-From: "Suthikulpanit, Suravee" <suravee.suthikulpanit@amd.com>
-In-Reply-To: <SN6PR02MB4157E795C636EBE75CC806A1D4E22@SN6PR02MB4157.namprd02.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SI2PR01CA0004.apcprd01.prod.exchangelabs.com
- (2603:1096:4:191::22) To DM8PR12MB5445.namprd12.prod.outlook.com
- (2603:10b6:8:24::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4DF61E504;
+	Tue, 14 May 2024 19:02:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715713361; cv=none; b=XnPsZRIJJjY2SMBYT4u/TgKyZN14TC9Y893LO2ZGMiBU6qeCmmPcmTPbV3rf9hATtqX0IDxbN0RitjlBQXwtasA/cFPHm+lAhXAu06oOe0ycFw4vQo/gqRQznBzFOgbo9I9CULd9tNO/aF3d/iPWQAS3GYf41coZhskkmX7xdbc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715713361; c=relaxed/simple;
+	bh=jxhYiv+J0iyFeK8LIFwYs1oTdF393tkXterG44SitaY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oOfrYmY8oHkezzdqQAiBP46NT7Barqf5Ie9WfJM25Ry+9kH5GXdhLDyRaKQ4HMLpeBWBuJddkPsuWZN1hCsN/gDYh5YOQX360hTZOYZQGSF7jUiinbOlcJJiqbnKJZDwWtJj2FUT7KqVWt/pH3X6YvpR+uTKgA9PpffejO36mEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qu0sGo/S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 334ECC2BD10;
+	Tue, 14 May 2024 19:02:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715713361;
+	bh=jxhYiv+J0iyFeK8LIFwYs1oTdF393tkXterG44SitaY=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=qu0sGo/SOXkdmYDDFLiu/c4BkLi7e/hwMKaAJssv5GtJxVfoRdhQpXei2KHLDbWb0
+	 Ws7MEHdL6nziU6pdhumvzCxbb6BKHDfytpV/bMGe/II60T5U30mI9gGiRZbXVxigv2
+	 9klutUeql7Y5CZB6jtLHa2T95mSmbcuWc8MZbePGYh1H3WZ5AxBnnUbxPo7rZSLFu4
+	 d+6qIDewPuOuJE/3WDWDUFv7N9TfVJmfK9UzqyXPfYSkB1gcTKZ3WTOIpXoM/ez8W8
+	 nYB6tcLHRWPJXSBG+nsxq6DigVOKp92sE3nRb71LuV0gvL4CjeqgYJgKsCaBXSDvdc
+	 xolQYn0AprKUA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 81A4ACE098A; Tue, 14 May 2024 12:02:40 -0700 (PDT)
+Date: Tue, 14 May 2024 12:02:40 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Andrea Parri <parri.andrea@gmail.com>
+Cc: Puranjay Mohan <puranjay@kernel.org>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	David Howells <dhowells@redhat.com>,
+	Jade Alglave <j.alglave@ucl.ac.uk>,
+	Luc Maranget <luc.maranget@inria.fr>,
+	Akira Yokosawa <akiyks@gmail.com>,
+	Daniel Lustig <dlustig@nvidia.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	puranjay12@gmail.com
+Subject: Re: [PATCH] tools/memory-model: Add atomic_andnot() with its variants
+Message-ID: <aeba034f-142b-4d8f-9ea8-475f4dbaaf1c@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20240514094633.48067-1-puranjay@kernel.org>
+ <ZkNG2uZEiF1S6M7z@andrea>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM8PR12MB5445:EE_|SJ0PR12MB6992:EE_
-X-MS-Office365-Filtering-Correlation-Id: 21a40b9b-53fa-47ef-6dd3-08dc744862f7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|366007|1800799015;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZVpKMVlFOVZkR0JTcDdYNVNuT09Cclp2cC9rclZyWWdvdVArTjNTSjR3dmpB?=
- =?utf-8?B?R3ZwRTJ3U0t0dUZMV0tWd2pTZ1pRUXJCM3cvdE1FQndZTEhHKzlKZExhYkRi?=
- =?utf-8?B?UFl5U0VnaFdaM0NhM1pNWlh6cUFqZkxobmRFbjJZbzJoWDkwc0U3Y0RhSU9Q?=
- =?utf-8?B?OEZ6ckthSE1oRVloLzZ3NDU3bDczOTExT1VKbWNFQThma2QydGJ5R1BXMC9l?=
- =?utf-8?B?bG84WXlqRE5lZElNL2l0NXVIdGpuYXNPWDFDV0J5Vm1vWDBDUUtDdmhwOExS?=
- =?utf-8?B?d1V6OTMzSDBwVFJZdVk5OHRwN04vb24wYm5DS2wvanowNUFab1Jzb1gxZjhX?=
- =?utf-8?B?cVBVT0t5S2xzMllHTnhYZlFiNGdISmxQSWs4enlxUkJSdkNOcnlTZVh1RTBq?=
- =?utf-8?B?b3F6YWR2cHE0M3VEclViYkl5MlBhOSszT2dFUWhBdUZ1SlJpZ21wR09FMC9H?=
- =?utf-8?B?Qk1BMUlXa2hYeTQzcWhTSFJmeDROQ3p3YlJsV3IvZ2FweFk4bkh3cytjdG9D?=
- =?utf-8?B?dnFuTVFtekEvb2h2SEZEZExqOFhFeE1JaUhCYWUwaVl6L1J1L1FrRzJkMkVw?=
- =?utf-8?B?V1NlbkJWWjk0a2VYVjFwb1B0WnBRa2RxcFFGZmpxTCtVT1hUTzZaZk9TK2dE?=
- =?utf-8?B?emZEMHVaNHNvLy9OM2psajIrd2NxTHV2SHJUcktMWElIOVJXdVU3aTd2a05y?=
- =?utf-8?B?RitvOW0zY3N4MHY4cVF2Z2RISkhabFE5ZCtwdGJHU1FpcUxlVEVUT0g3dkZ2?=
- =?utf-8?B?VFRxQmVNOFdzUlBwMlhNQVVvY2JxclYyTlFEbVRPVmczTjI4aUN0SlpIeHh6?=
- =?utf-8?B?NXRPaWRlOER4ZHhqaWhXREU1ZUpQWlJRcWM5OFZ1K2ZXNE1pMzZzYk1oaGVY?=
- =?utf-8?B?ejFzV2F5TUFsWUVTL3FieEM1YWpWOVJnZHFuK2tvclluelBCeGlENzIwbjdm?=
- =?utf-8?B?YmhnMmoyRVZGTE14Vm1rWUxQT25qcTlGUVpqSUFFTi9QbDlISEtibUQvQ2Y1?=
- =?utf-8?B?S1pYemFzRWlGQzdLT1hYVk15UVd0US9Cd2IwNFJwYnRwcEpBaWZZS0FsZGt4?=
- =?utf-8?B?TG14UC94K0lOM2piQm1Bc3YyU1UzL2RwcnBNTHRLVGozbXV0bElnN0tRdHNY?=
- =?utf-8?B?L2JTLzFjejBjWXpEenZmMGVrS0NWYTN3ZmZSNVpwalUvTVVMYXlaOFYrTGhH?=
- =?utf-8?B?bkdMYmZGUTY3Z05tZEZXSll4N3ZVQkVNT1VVTGdzS2pITjNFclJ4RUtOdGw2?=
- =?utf-8?B?a0ZSYkFFeTdkK0RkRmFZY0NuVXBsRVJjR0htYncvRU8rMFJCVkZPVHZYbm5y?=
- =?utf-8?B?NHovbU1IbFgvUHFQeDNmNWhJZE1JakNLa1duTUJFTEtxZmpwREkxaEJ5dVJU?=
- =?utf-8?B?RjhDdmJCcGx3azJiYzk5OFhKSDVQWWRBRTBmZlkrNVhMS2tKcGp2VktTdWxC?=
- =?utf-8?B?S1R2WEFiek8zamRWclJsYXFDcFdRMlFsYkFXTS9XV2JpQ0NsQmJJdnM3VTJH?=
- =?utf-8?B?cUo5ZDJZQlVRVzlQakZES0Q1c25yWGxIb3JLY05DWDB0OWp4N1RMaWRQS1pF?=
- =?utf-8?B?R1ZsQ1oxV3dKWnVvd0d5cnUxVjJhMlpqdWRidUhyZFFsU2JuWDg2ajkxNE9n?=
- =?utf-8?B?bjNEMXAyNENjaXVBak52VlhCVXZTdnh3YVpwSFNtSUNoQS9wZUJldVNZVFF4?=
- =?utf-8?B?OEhFMjFGdTVyVktKazEwMjVvQ3pWanlDNnBSL3NOOVJNMWhWWFovWDFRPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM8PR12MB5445.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(366007)(1800799015);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NDBLZjc4dmdVNkJra3dzMWpndW1zNkJrcHVzWFUxQ2tQZnJLQzRDaStSSUM3?=
- =?utf-8?B?Y3FDd3JVa0JvbEl3aFRqYlB4MFRrRmN4NlRMYjBrcFkzMWxrR1E5TVBSTG9R?=
- =?utf-8?B?YUUrTXlPNWNXMy9HaGd2K2UrQU1vRmJOUnM4WnFBa1JrQU5CMjZyd0JUdFBv?=
- =?utf-8?B?dXFJUkJra1lpdldyd0hodVdscHhpQlpra0JzRVY5RTZJTzYwV1RGTTVubEtx?=
- =?utf-8?B?M2tkckFOSjg0YVBKNWJQZWFYL0RiZ3Y1cUNqR1JPeTk0YXJoTGFQUlZmZFd2?=
- =?utf-8?B?bHF5WDRjaHhXN1JFVGZ3SXJRcklGMDQ3b2JhWGVBQXBnSmxEQnBGa3ZTeU1M?=
- =?utf-8?B?NXNGK1dKeC9laTJQeU5RWFIvWi9JUDliSk8zSXQvV2RNc1NuV1YvV0dYcCtL?=
- =?utf-8?B?dGVTSC9xNHZWQnVTYzJjRTZFZUoxYlpPS3QxUFFvQU9yc3poalZaUlB1aGdM?=
- =?utf-8?B?a00xVnFzL0dMc2RWY040RUZ4VnFhbWxmTFBnYXFrU2haZlJ5N2t2TlRZc29S?=
- =?utf-8?B?THVVRmpaZ1hhL09NU2ROcmRET2pVZU8wVG9GaWtzWExvdVd1VzNjUitxNStk?=
- =?utf-8?B?aHdYTzRwMks1T0p4cGQ3RFpiTWlMR3l5eG9JNUIyRnB2WFkwSVZtbHBacnZF?=
- =?utf-8?B?WUM4UHkxTmhsMVVhKzd0Y2ZZZTQwUUlmRnAwYXBId0c5cUo2cENpNy84REZn?=
- =?utf-8?B?TFlYcGM0NWx6bFl3V0tCdEtmYTVnVS9YRjVFcWdUUkVHYkh6WElneUN5djdG?=
- =?utf-8?B?V3pSSTk2Z2dZWFExRjVQc1dZQnkvYWZadkRlZUE3UEh5SnFDWWRYTm9BYytx?=
- =?utf-8?B?cGFrNHRlbnpxckExb2dxc2RZVGtVOFQ4UW1hRUYwOUlWcmFDbHpBYXAwOWFQ?=
- =?utf-8?B?eTdJTG5aOXNkQjZ0aTdKajVGTjRRYVREdVFmTGxPb2svbGNIelpCNWc1dDha?=
- =?utf-8?B?MkZKRDRJU2Y4TXJKeis0blYwN0J1UDBJbGdySWJLdUtWYzlsWmhxa01jOHE5?=
- =?utf-8?B?WDVXaHFlRHlJdGNML29YaytmZXJDWTBUT0dyL3d5MTcza0JWdndkUUlLOWpY?=
- =?utf-8?B?N3dmVGV3SjdRL3ZORzhIZ0xjY2VaR2ZwVGVBOEhWd2lBZXFnQmZ6UGpIbm5R?=
- =?utf-8?B?ZnZjT1VWVzNpUHNVUTFaVVJBWUh1YjFLVTJLTEk3VTdKdlliR1FYb0ZzaGhE?=
- =?utf-8?B?a3p5OWllM0xTUlhDZFNXbk5QZ0JUcDlRMnB4S1FCU3NvekVSOGNPazg1WGlQ?=
- =?utf-8?B?cjVpSjh3d1E0OU9SaEN2U1lYRzVGKytadC9zTzdDK29DYXRPdWFuVE9sU2pU?=
- =?utf-8?B?VFVXN2tad2I5TnNLVTFaQXl1YSs1SUNXbWxOY21TTVJDajFrSFowSFVXWHlx?=
- =?utf-8?B?TkllMmF6Vi9wbkFvV3NvKzJrWE1TaHdiR3J6TG1OWE9TYmp1YUFQNzVjVGxN?=
- =?utf-8?B?bmJsSzBWUC9NMWkwSlVnS3NyaVNMMzNYRElDT3RIZXFwSkdQMDVvWEM1c2xx?=
- =?utf-8?B?M0VGd2w3eGR5QmtVTE1OajVObEN3YzN3ejYzQ2sxVWlsYk9KTEtucEx1UUNz?=
- =?utf-8?B?N3NrdlBmZ3hHaFdrb3YzbkpJRzJEekpEeHc0bFpHZ3ZseUducEQ5MS9BdGNl?=
- =?utf-8?B?QUh3SkVjRXF0QWtkMXlzd2szTzNPUGx0MXVuRnFENzZNbHpoQUh3cXV2SjB1?=
- =?utf-8?B?dGpWUXJxZWh2SW54QUpCUkc0elRFazZCT0pOY0E4ZEhZaHVBeURaUm9qb1pW?=
- =?utf-8?B?QmE5S25ya2VrWGRqQWZBVmJNN3g4SzlZWlpNNTZTQ2NlOVlIOElPRWRwWm5m?=
- =?utf-8?B?UjR4WXpPYkcxN25hMjFpN3MraVJqd2pJbzIvUnpxenF1T3VTVlVWNFVCajRx?=
- =?utf-8?B?aGVNSVpncDBmV2Zpd2ZoVU9UREMrRDd5Ulp0UFo1cEk4bjQ4Y25TRm5ibHd4?=
- =?utf-8?B?Y1Q1dHUvWDZIRm9hejlxeWNSekI1a1dydlEva3F4VnZ5RjUrNDhja28wWHAw?=
- =?utf-8?B?b0QwVzdDd1RaM3krcVNCTEVnU0J3MzBjUXZWTVg5bDNjYnVLbUVlMmdTTndS?=
- =?utf-8?B?MGkxMXFCL1p5VXlhQXVSVWk1UzJZeGtvSkM5QTN6dmxLQXV0eEtKSlFYNmJS?=
- =?utf-8?Q?93aialCc9r8KULmKhzyIphfEp?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 21a40b9b-53fa-47ef-6dd3-08dc744862f7
-X-MS-Exchange-CrossTenant-AuthSource: DM8PR12MB5445.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 May 2024 19:02:23.0336
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: qGd38xaKsGZw9VkRMqm5Ns+4YqEFMnm5rtranMIHN5dYdSbEr6D6DFhHtDMSVl3iWixnYG0RD5W9Ty3krgv2lg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6992
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZkNG2uZEiF1S6M7z@andrea>
 
+On Tue, May 14, 2024 at 01:11:22PM +0200, Andrea Parri wrote:
+> > C andnot
+> > 
+> > {
+> > atomic_t u = ATOMIC_INIT(7);
+> > }
+> > 
+> > P0(atomic_t *u)
+> > {
+> > 
+> >         r0 = atomic_fetch_andnot(3, u);
+> >         r1 = READ_ONCE(*u);
+> > }
+> > 
+> > exists (0:r0=7 /\ 0:r1=4)
+> 
+> Fair enough for the changelog.  If/when submitting proper tests, please
+> check their format using klitmus7 (besides herd7); say,
+> 
+>   $ mkdir mymodule
+>   $ klitmus7 -o mymodule <.litmus file>
+>   $ cd mymodule ; make
+>   $ sudo sh run.sh
+> 
+> Documentation/litmus-tests/ provides some examples litmus tests.
+> 
+> 
+> > Signed-off-by: Puranjay Mohan <puranjay@kernel.org>
+> 
+> Acked-by: Andrea Parri <parri.andrea@gmail.com>
 
+Queued and pushed, thank you both!
 
-On 5/14/2024 3:05 AM, Michael Kelley wrote:
-> From: Suravee Suthikulpanit<suravee.suthikulpanit@amd.com>  Sent: Tuesday, April 30, 2024 8:24 AM
->> To boot a VM w/ x2APIC ID > 255, guest interrupt remapping emulation
->> is required.
->
-> Top-level question:  Is there a reason the MSI extended destination ID mechanism is
-> insufficient to avoid the need for interrupt remapping?  (see function pointer
-> "msi_ext_dest_id").  I'm unclear on whether it is or not. If it is not sufficient, perhaps
-> you could explain why.
+Again, I will hold off pushing this until herd7 releases a version
+supporting this.
 
-In case of running a Linux VM w/ QEMU/KVM as hypervisor, the 
-qemu-system-x86_64 option kvm-msi-ext-dest-id=on would allow booting the 
-VM w/ x2APIC ID > 255. However, for other hypervisor, it might not 
-support this feature.
-
->> For SEV guest, this can be achieved using an emulated
->> AMD IOMMU.
-> You've used "SEV" here and in several other places.  I think you intend this to be
-> the more specific "SEV-SNP", and exclude SEV and SEV-ES. For avoid any confusion,
-> I'd suggest using "SEV-SNP" throughout if that's what you mean.
-
-Actually, The CC_ATTR_GUEST_MEM_ENCRYPT attribute is true for all SEV 
-guests, so this will enable IOMMU emulation for all SEV guests.
-
-Thanks,
-Suravee
-
-> Michael
+							Thanx, Paul
 
