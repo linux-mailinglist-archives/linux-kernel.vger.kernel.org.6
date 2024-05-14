@@ -1,215 +1,121 @@
-Return-Path: <linux-kernel+bounces-178888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 663778C591B
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 17:53:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E3028C5920
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 17:54:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 898501C21498
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 15:53:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CA981C21C65
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 15:54:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6593A17F36E;
-	Tue, 14 May 2024 15:53:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0733C17EBB9;
+	Tue, 14 May 2024 15:54:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="FZuiVjXa"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2078.outbound.protection.outlook.com [40.107.93.78])
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="DgnoW9Q7";
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="DgnoW9Q7"
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7FCF17EBA5;
-	Tue, 14 May 2024 15:53:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.78
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715702011; cv=fail; b=uXwTP47h5+FXXols2ZdJjpymtir17Eijvsf3U4vLL9Fj1Gzk0xDx9m52AnGkT5/bnoxiT+jThrKVG6cmjZheV9E/Bz3stcPWmSWb9Zs0bFZGCikFCy5qpYk5nYdmeNq0fOQhMfX4X5l5wL1XD9oYmUVmQtZBTqeYTcU+lniXltU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715702011; c=relaxed/simple;
-	bh=7zRoEWUVU3mKwcYMr9VyLsDGQi+RQOUmlzXYl2bajTE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=jen+UCr08ZkC0F1aXyglRthNIXy414lZNjvkw2ZJuDWXZsnM7fZOxf45+H7xIEfAAtt4Jq6WzEDn6aZghkcHG62QBgCYM4Ofp7FYqeMCsnyGNQVyLSDotVjplJUIaFZNBQzoiFSoPOBw4VpeotaeUeF7p4a7kV02youPMlMCHyU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=FZuiVjXa; arc=fail smtp.client-ip=40.107.93.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Z+m0yM/OQ/MlAqWeNazws7spAEJCHmJNMcUBcQPCiqJyyjBkJFD1QzCJPZmZYGNWDgfNPTc9EYwgQG/sm1AMcXOaK2dYK5gNZIwyXMwaUl1CupvEQTHrwRUSqL8Y4wb3i9DU787LM9bPTDkdTvxotQzXvYLV8ooD9qUkv7hvByByj0Cacu/Aop8P2a/eoV5EJ3bRlSG1v+hVqVQPRB9+v3TgWt+f+PWlE0XJa7FjdocwxxwiMiIWGq6MHu/6D65g/kHnnrz9/oDhi9ezCpIMpK2YQ9JKQOzRpSeUbsBpjVzC7VCPJyHtUmIYkA+nTDihaF48o1HP+elEa5tNOXNWSg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WOANvG65P9Cbz7EDd7p28oCJJFW3rG4vuvjFizjTNJI=;
- b=TI8PNPRnpUYnlrfhGahOTIDYIMzMGaxjNNqCMG7HTo1Q871hqo/4TzO/5ZsHlk8z0z6gYS4JIHXOLlXCeTFseISjTf7WxGfR3L+7mL1mYmWeK0ezHPEcQLKt4jg+DxGafOD03oWFDxeGuqevvyAb92MqHWaZ5fgBOMWAWD72Jea8kiSV+SL3To7JaaIO5a/CtnXSRgMhFN9J+EJmNYqkb9a2d7UBRdaiIqF99Hgm61DA8MgjAffO+U0yPc4xYTkORE7DQ6l4vCHFrLbTR4sqAZD3dwOYkUvlOWpUGGR9l4NBVzfy39TSWc50S/zxJoJo+35QrJHqva3ZZwyOPA3NNA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WOANvG65P9Cbz7EDd7p28oCJJFW3rG4vuvjFizjTNJI=;
- b=FZuiVjXa82xPHp2MyruQwTWQUZLopnwm13ldJZjuYLuaZFbetHtpG40g/VpIDleQX05jrcj3GibeyDVolVH/JW4qhx4Cltx7y8Mo58xW/+CusXCKHCovuViRcumsxAP4i3u5WfJUVRM2azcJhnWNmr4UFLD7h/SrQNjrmDSEFF5Gusba7f/BCFEbpL15Rj0D2BQJ6A7gHqjMDZqMlQONcqywrxWFK5xrpUisnAvq1fXdY0u3I+mB7ieWM2Q2Dr9Btkm72N880vM3i0dCrUvB6SWlK3pVKDVpmjj517D0mboNc/jkAujXWk0IX8SsNfqXFXw7mKlXCppB6kBCULQyXw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DM6PR12MB3849.namprd12.prod.outlook.com (2603:10b6:5:1c7::26)
- by DM6PR12MB4369.namprd12.prod.outlook.com (2603:10b6:5:2a1::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Tue, 14 May
- 2024 15:53:26 +0000
-Received: from DM6PR12MB3849.namprd12.prod.outlook.com
- ([fe80::c296:774b:a5fc:965e]) by DM6PR12MB3849.namprd12.prod.outlook.com
- ([fe80::c296:774b:a5fc:965e%4]) with mapi id 15.20.7544.052; Tue, 14 May 2024
- 15:53:26 +0000
-Date: Tue, 14 May 2024 12:53:23 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: will@kernel.org, robin.murphy@arm.com, kevin.tian@intel.com,
-	suravee.suthikulpanit@amd.com, joro@8bytes.org,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-	yi.l.liu@intel.com, eric.auger@redhat.com, vasant.hegde@amd.com,
-	jon.grimm@amd.com, santosh.shukla@amd.com, Dhaval.Giani@amd.com,
-	shameerali.kolothum.thodi@huawei.com
-Subject: Re: [PATCH RFCv1 07/14] iommufd: Add viommu set/unset_dev_id ops
-Message-ID: <ZkOI8ztR1mUMJ8oe@nvidia.com>
-References: <cover.1712978212.git.nicolinc@nvidia.com>
- <6e57d7b5aa1705bdd547b1cd2aca93d3bf70dfa4.1712978212.git.nicolinc@nvidia.com>
- <ZkDWXnPW7CaX5TtA@nvidia.com>
- <ZkGZc5dvLigXcWib@nvidia.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZkGZc5dvLigXcWib@nvidia.com>
-X-ClientProxiedBy: PH7P220CA0042.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:510:32b::25) To DM6PR12MB3849.namprd12.prod.outlook.com
- (2603:10b6:5:1c7::26)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B5D917EB87;
+	Tue, 14 May 2024 15:54:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715702071; cv=none; b=D0JSduvci5Ezx+NZEJbYivn4eOM4WUCPnLMcGyYWASGEpx84pINeUbJWikzQ1hiVY3TVnGbtdEUPiynM7MT9gyI84/BTUm78lXssttfX3tu5eMQX9fB59wl2xPo+IjoSTJpeIK+PRq6GHmvUX/MZJoWFP5U+z7/z7gP0fyKi8mw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715702071; c=relaxed/simple;
+	bh=KNws679LRysr8jk1Zmb1/BwUO/NizgI+qJLVlNx5NaY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=B7kgkzpsRxFEg3S1gd1er0c4nUSAe/0h1zdXaT6okyA1RKvWcsWqxnDJUi6XJBDeImTM04NQ64h3DVfC/C9Cfh9+EARoWbPtJcbnUWflqlVu83R6IEFzNuVOsUGgebLO9wH4cY8hFLVmVL8MjfxixyBaVkv/x8yoK2Q+QPtTy5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=DgnoW9Q7; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=DgnoW9Q7; arc=none smtp.client-ip=96.44.175.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1715702068;
+	bh=KNws679LRysr8jk1Zmb1/BwUO/NizgI+qJLVlNx5NaY=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=DgnoW9Q7iH3ySE/JVhSguSKX7/LxDsKLHMWl4jiW90F2CZQN0eNlz9BLdUeZj4ll/
+	 3syv2ceHNoM+X0PmH4MthuBQbr1WWHn+MCyYDCdYBOJD3RapDvZNCAzjLsTVinQNfZ
+	 CSdxPXFcKNd+svFXJK9uPZDCNSbaBpoLr6szD48E=
+Received: from localhost (localhost [127.0.0.1])
+	by bedivere.hansenpartnership.com (Postfix) with ESMTP id DB7951286BFA;
+	Tue, 14 May 2024 11:54:28 -0400 (EDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+ by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id 88j1_6gHYV9J; Tue, 14 May 2024 11:54:28 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1715702068;
+	bh=KNws679LRysr8jk1Zmb1/BwUO/NizgI+qJLVlNx5NaY=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=DgnoW9Q7iH3ySE/JVhSguSKX7/LxDsKLHMWl4jiW90F2CZQN0eNlz9BLdUeZj4ll/
+	 3syv2ceHNoM+X0PmH4MthuBQbr1WWHn+MCyYDCdYBOJD3RapDvZNCAzjLsTVinQNfZ
+	 CSdxPXFcKNd+svFXJK9uPZDCNSbaBpoLr6szD48E=
+Received: from [172.21.4.27] (unknown [50.204.89.33])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 1194A1286A68;
+	Tue, 14 May 2024 11:54:28 -0400 (EDT)
+Message-ID: <c8b98d9fc2ac4062d6c010551244da184af1244d.camel@HansenPartnership.com>
+Subject: Re: [RFC PATCH 0/2] TPM derived keys
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Ignat Korchagin <ignat@cloudflare.com>
+Cc: Jarkko Sakkinen <jarkko@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>, 
+ David Howells <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>,
+ James Morris <jmorris@namei.org>,  serge@hallyn.com,
+ linux-integrity@vger.kernel.org, keyrings@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, kernel-team@cloudflare.com
+Date: Tue, 14 May 2024 09:54:26 -0600
+In-Reply-To: <CALrw=nE-t6ZWCvPm=3XS_=-UM9D=mMaXL2GOw-QL5GOLtbcHmA@mail.gmail.com>
+References: <20240503221634.44274-1-ignat@cloudflare.com>
+	 <CALrw=nGhgRrhJ5mWWC6sV2WYWoijvD9WgFzMfOe6mHmqnza-Hw@mail.gmail.com>
+	 <D18XXJ373C2V.2M6AOMKD1B89W@kernel.org>
+	 <CALrw=nHGLN=dn3fbyAcXsBufw0tAWUT1PKVHDK5RZkHcdd3CUw@mail.gmail.com>
+	 <D19CUF0H9Q3S.3L5Y5S9553S5@kernel.org>
+	 <CALrw=nEZ07U9VhbGsnpchOYw1icUZCnuoHHXkJLzhFqSPe9_fQ@mail.gmail.com>
+	 <3bfcacf38d4f5ab5c8008f2d7df539012940222e.camel@HansenPartnership.com>
+	 <CALrw=nE-t6ZWCvPm=3XS_=-UM9D=mMaXL2GOw-QL5GOLtbcHmA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR12MB3849:EE_|DM6PR12MB4369:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8cf6ad9f-b3fa-4c9e-b8f8-08dc742dfdab
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|7416005|366007|376005|1800799015;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?35HfbVtNjeRtEQWHc8M26QuB5szOQTJkHh1m+3CF49ItbYh3WZI+x8adbbn2?=
- =?us-ascii?Q?njKraobfcBT0pQuBxzVZIsz0rZabxDbSp0NRM7khWgJtWn86OCpez0CL6KrN?=
- =?us-ascii?Q?dBLwlSEAUtF093A/3z0AivTu7rZ0GuI+7C2a07YaI0rwROdkSKQNalxt9pZH?=
- =?us-ascii?Q?oMYFw/M6hYsQQIxBW2UcwpxoWGqgZWzsJr3E+e6d3bCF7Ow/LOw9jLcESEqA?=
- =?us-ascii?Q?p9dVWhDXQ58zwTFFGonrCsLGFAiWj3MztFWY9spTah5CGsAFVhDJgtQQ7M4C?=
- =?us-ascii?Q?O0K3xrsCUs+pwUIfCVg27018ogQp3XoqSsio2GkMTiwqidsgHoddgambHrMS?=
- =?us-ascii?Q?BA+L7kPXvy3S0MFDAy1SKyLObVDR9WC4CI6vJPk3Qi8yz8QSKQKGBbQiN4tV?=
- =?us-ascii?Q?PrA4t+KEbEuJews7ouC7J2LIyFvoU+KF257CYqhdlehBxufhnwKXR6uxbofq?=
- =?us-ascii?Q?gTRyz34FrtQJby+e5aQDDxmkjA0CdSI6QLsCvo7d5papSqMmdPka5aeqk+8L?=
- =?us-ascii?Q?cfNzuiVFF2vyNWzHkQLWI6jxGYxSYC+YR7VQKbMP/ICLHqFJdwFpBZ6GO+g9?=
- =?us-ascii?Q?kaZO+WT3kKHc0NLZ/CXGIpzB6ewf6xU+vh/nQD/cPvA4SWA4//L+B7zCYUIh?=
- =?us-ascii?Q?upGfS+MxwhHCFe+1BEbfdYwhP8rTwko+AY+gFeqfB6EJshECw3Gem2JN8xzf?=
- =?us-ascii?Q?H2Ssm/cOD2AVYt52ApeLZ0z9DEj09oXBKFyXACRi5flLNltyOwTL5pSTpqQH?=
- =?us-ascii?Q?09y/yfjP8pe7I7gQ7OUG6ioO1ua9OCktjMMKADWL45d+DomhpSKfPkFtG9Vj?=
- =?us-ascii?Q?oBvqmyq9CuqtcbKbRolg5aYtmIXevfdPEHKVOJaKMBzsyeCppDGy3jOjeAJW?=
- =?us-ascii?Q?xbpUzN86UYWw42WEYwae5GAV5p3WhU2SLIiqeCkG9SksfdcvAIW4KS00kXjz?=
- =?us-ascii?Q?jjvxeC+X5L+lImJgslT/U557FID8b0ZasAtoM4nljNOI7FI1GOaTe+tHNEdZ?=
- =?us-ascii?Q?bzjjJ/gnjrLsSLhaFRsZPuI4YRevv4W73XSlpGRDibAmeAfdPQRXhlmkHyKx?=
- =?us-ascii?Q?ROL3qHJFsHP0G3yoOMSOUhSdkYH3799JU/T2lrOzAa4HtbwdhTw2zKxzr41Q?=
- =?us-ascii?Q?EZQjLsIdxH2e6zB2cEQtQGZXQzDbNDlw6DSxwo95oVQjfD9Ic1oIjLZ6cbJ7?=
- =?us-ascii?Q?LPDMEHvN0iHNfF52IKWmnSusYWvqLIhaQkq3FSO57NwrM1HHM43gSmGPG/K7?=
- =?us-ascii?Q?nbyrf+QNhvAtZ60tO6CnfmeFWPD+GvZEnK47DCdCCA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3849.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7416005)(366007)(376005)(1800799015);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?spytAs+1nl+sRPb1dXgSinUmeHbCHqMAFKzGv9nXa/tNrdaTxh2kcG1ByT0V?=
- =?us-ascii?Q?qCHbsfZTzJ4Zba8HsAQACoTPQU0Th/B/9cybYOy57S74F+0lwtP2QEqcbnuB?=
- =?us-ascii?Q?VvrOPJ/AfQcNjj5g5XvKLBhzRWO2DOriDPJ6/S9iP3UnJfCE/EkHVxhS+cDV?=
- =?us-ascii?Q?J0x42bnTjcCvcnBgGxzVVK2NNFz5aRk3mLJ4pORaY4IjtB1k1ZSjlUdAjyuD?=
- =?us-ascii?Q?3OGWLp5NTRSkOmnqsBFY6N25robejsjNbLKpCfOp6zOfnnHgAKyXKUJ1GbHu?=
- =?us-ascii?Q?o3NkQ2TZYdYjwy0+afWQ4uhUIJca8u93wf15w/1hYtvJX+BSQ8ZeIZ2XPeWD?=
- =?us-ascii?Q?+J32RdM2SyZ5C8ajbs0CNvOeEuj3MG7fvN/sTt6Z3UqG06mYDa7wkPEKbDp0?=
- =?us-ascii?Q?h8zJ7IEEKTDuFPS9qXAyzxIL6nRyT3sQwg+dtqpjZ/Bya5hiJJIYuYF94ovf?=
- =?us-ascii?Q?sv8YNhuYTHGbO5MjIUeXxtcQUdzJY35UP8C+mtEuijyvIm21fhTTsBUtGAfI?=
- =?us-ascii?Q?H+2abxmA9J/TjAO8dmlco7k6geQvOveoeED3WiqmPezMRgFVOvM9DSTIlrTS?=
- =?us-ascii?Q?igVhju2wRgSMP4LzCYNW7C1jjWUVf3anKe8TdN08TfsxDchJEJGyul+DYkdy?=
- =?us-ascii?Q?y9J3mC20Fpfbh5RFALOk8MNdew6LuIOa/azpd6QN9ZlSA156/7VFD7Ymkk3S?=
- =?us-ascii?Q?3d+/NXDcnEUqw2cE7QEl07vl3D3wWw55n1Gd7SxSlmzbqKnweUU4uLbrjU+W?=
- =?us-ascii?Q?p1l/U3mmyvwysprOyFD5GgooUiWmxOBLxh1RKCXSQ3R5/bRy0t5Mw93bBg/x?=
- =?us-ascii?Q?PtfpH6n5W1GXK6kBCVIdID7DrDGspa4jSXnWE3HHZcvYOXaWn3OXwZYOwdWm?=
- =?us-ascii?Q?4jV9pxGp4Cl6Yoz+9l45Yw6FZknnv8C68RiLWzyiSfvGoeYqJLCLMcXSzdzL?=
- =?us-ascii?Q?jNiIdbzgh6iFdIUYertblfcqqWseueEVouafXtMAPgaRjtd8IVBzM0yVs8ot?=
- =?us-ascii?Q?dGNBXr3g8JBw73JQsXrf9Q7Hz4xmByizoP+cPP8YMI+h+tlitfNDT5fnqmju?=
- =?us-ascii?Q?xx1pxaOJzgW7dXyyo8AJAK8XPvj4uZVnwPcVqbeV7XJ/0qZ9af93FLCyR1Ij?=
- =?us-ascii?Q?6wasSPMryxHNMHIdCyvozyc8cHQLDjynR5xk3ChEF84qhx2mRwl0Rr4x8wVO?=
- =?us-ascii?Q?gTOhLOnGQEIZ3iqYIKwH6151sJb5A0F6bWtWis03WWCsRmezU/fiL9y3mhkW?=
- =?us-ascii?Q?GfgLbWogllXs/1byWgEgU7JfgQpGn/mk4mrVsg5lcPa4FH+UiEwrlZUZXDG8?=
- =?us-ascii?Q?arEfsbaOFW2ckdJxH7wBvn2R0n9Px6KsbvJbb3EoTEalbc8mN3YYNpCEPpLs?=
- =?us-ascii?Q?c0JKpGmXM7YSlRGy9beG5rjn7kZDvxsZ6EdIL7Ky5UNz/9E3U0yyxj/v5q+T?=
- =?us-ascii?Q?DnuqJrQrEPR5EuCh2xI/+pGcOAsQaqMwUqGhTH7ejscVRWMevoIC0N0QpQXE?=
- =?us-ascii?Q?+UK2/dFOMtWaG23NJV7m2l5ZxqDLKNIfuClESOvRRkUkHL7XnVaO1Sl6G0PZ?=
- =?us-ascii?Q?rc7vdzMGfTw0G2VqmfM=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8cf6ad9f-b3fa-4c9e-b8f8-08dc742dfdab
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3849.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 May 2024 15:53:25.9178
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: pdLP+UKgXsLYfizOIA01NiCq4giQ9XUoxAkKzzPRSsZeaqDXOSAJn36OCK6SssT9
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4369
+Content-Transfer-Encoding: 8bit
 
-On Sun, May 12, 2024 at 09:39:15PM -0700, Nicolin Chen wrote:
-> On Sun, May 12, 2024 at 11:46:54AM -0300, Jason Gunthorpe wrote:
-> > On Fri, Apr 12, 2024 at 08:47:04PM -0700, Nicolin Chen wrote:
-> > > Add a pair of ops to set and unet device's virtual ID that belongs to
-> > > a viommu object. They will be used, in the following patch, by iommufd
-> > > to support some HW-acceleration feature from the host level.
-> > > 
-> > > For instance, every device behind an ARM SMMU has a Stream ID. The ID
-> > > is used by ATC invalidation commands so SMMU HW can direct invalidation
-> > > requests to the corresponding PCI device where the ID belongs to. In a
-> > > virtualization use case, a passthroughed device in the VM will have a
-> > > virtuail Stream ID, used by the ATC invalidation commands in the guest
-> > > system. NVIDIA's CMDQV extension for SMMUv3 provides a v-interface to
-> > > execute the guest-level ATC invalidation commands directly, yet needs
-> > > the HW to be aware of its virtual Stream ID so it can replace with its
-> > > physical Stream ID.
+On Tue, 2024-05-14 at 16:38 +0100, Ignat Korchagin wrote:
+> On Tue, May 14, 2024 at 4:30 PM James Bottomley
+> <James.Bottomley@hansenpartnership.com> wrote:
 > > 
-> > I imagine using this as well for the ATC invalidation commands. It
-> > would be very easy and simplifying if the command fixup just extracted
-> > the vSID from the ATC invalidation and used an xarray to turn it into
-> > a pSID and then pushed the resulting command.
+> > On Tue, 2024-05-14 at 14:11 +0100, Ignat Korchagin wrote:
+> > >   * if someone steals one of the disks - we don't want them to
+> > > see it has encrypted data (no LUKS header)
+> > 
+> > What is the use case that makes this important?  In usual operation
+> > over the network, the fact that we're setting up encryption is
+> > easily identifiable to any packet sniffer (DHE key exchanges are
+> > fairly easy to fingerprint), but security relies on the fact that
+> > even knowing that we're setting up encryption, the attacker can't
+> > gain access to it.  The fact that we are setting up encryption
+> > isn't seen as a useful thing to conceal, so why is it important for
+> > your encrypted disk use case?
 > 
-> You mean the nested SMMU series right? Actually the set_dev_id
-> ioctl was a part of that until we wanted to try DEV_INVALIDATE.
+> In some "jurisdictions" authorities can demand that you decrypt the
+> data for them for "reasons". On the other hand if they can't prove
+> there is a ciphertext in the first place - it makes their case
+> harder.
 
-Yes, there is nothing inherently wrong with DEV_INVALIDATE, we could
-continue to use that as the API and automatically pick up the VIOMMU
-instance from the nesting domain to process the ATS.
+Well, this isn't necessarily a good assumption: the way to detect an
+encrypted disk is to look at the entropy of the device blocks.  If the
+disk is encrypted, the entropy will be pretty much maximal unlike every
+other use case.  The other thing is that if the authorities have your
+TPM, they already have access to the disk in this derived key scenario.
+If *you* still have access to your TPM, you can update the storage seed
+to shred the data.
 
-The VMM needs a reliable place to send the CMDQ data, on ARM/AMD this
-needs to be an always available global-to-the-viommu thing. Intel
-needs to associate the virtual invalidation with the correct nesting
-domain as well.
+James
 
-So I original thought it would nice and simple to have a
-VIOMMU_INVALIDATE as well.
-
-But.. If we need a nesting domain that is indentity (ie the S2) then
-when the VIOMMU is created then we'd also create an identity nesting
-domain as well. Functionally we could use that global nesting domain
-to deliver the DEV_INVALIDATE too.
-
-It is a bit quirky, but it would be OK.
-
-> So again, yes, it makes sense to me that we move viommu and the
-> set_dev_id to the nested series, and then drop DEV_INVALIDATE.
-
-I would like to do this bit by bit. viommu is a big series on its own.
-
-DEV_INVALIDATE is fine, it just can't do ATS invalidation.
-
-We can add ATS invalidation after either as an enhancement as part of
-adding the VIOMMU either as DEV_INVALIDATE or VIOMMU_INVALIDATE (or
-both)
-
-Jason
 
