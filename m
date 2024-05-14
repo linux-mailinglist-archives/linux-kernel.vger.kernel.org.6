@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-178486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 739F48C4E5D
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 11:07:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B265E8C4E64
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 11:09:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E99DD1F2123F
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 09:07:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E33A51C218DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 09:09:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE13720319;
-	Tue, 14 May 2024 09:07:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6D992554B;
+	Tue, 14 May 2024 09:09:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="um7R6a5p"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oG4M/ckI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05FBC210E6;
-	Tue, 14 May 2024 09:07:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E241FC1F;
+	Tue, 14 May 2024 09:08:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715677643; cv=none; b=VRD37j02w+gz9FFQthfzTu0H5GEz79UHHs6gnahPkHFfHnzE83yOetTgGePCP3Px7LmPz9KbW2OY+O1hkUBqCADIyoE7twN4tlbyO77JsXg1Hsp6OA4JL8ZCQiz7Grxh/yH3ymTRCzu/XdBpxR3Ug7PFe8CFKtq/NjPpzFYFNo8=
+	t=1715677740; cv=none; b=grdShWbHLbteyAGo8XTbZKEufIuxJwHP8Q8wsfc8eg9BMLHjwqbb4lEQND3sA08zcDZ4XsLA4+6aMBb7xvvkjuUQLcjoVeOgio/wWVxvvjCyHRYpR1ofRaTgl3d9IDt7r0w7+2ap24Da6q3WUhJMJs0g3nTqLvlwSNZ1KUkkKJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715677643; c=relaxed/simple;
-	bh=iFT8aIHoU1LknzItSMfCjY/5wBCDpCYYk8xEjm1J854=;
+	s=arc-20240116; t=1715677740; c=relaxed/simple;
+	bh=ap9JnqoWxM+49u1ZymC0acfXzXG2I4pVgX2/+ebPCyA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SDKnkO3qL5F6ubHmVH/LixRQKZv/I/44b+ke/oUyXDN73Eed0h9DX3l5S/95cFR28cUcEmBzK9hfuN85dkC5X9pcuzOKtq8NawyCENpq9r/P8Mo3kRrtwdtu1eTxDuSIh0VX/rYf8MwxWvdknWwvIjEma9nuMe7zRSrZXD76rXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=um7R6a5p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C1F1C32782;
-	Tue, 14 May 2024 09:07:16 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=n4A0DmmdBEZsiyCBsaxe2/2/qGJUUKxQpi01rN8m6atAzsuL0pkCyshlLip/D+TT5AydLqv5oLyaJXEj0FNZ1/NBCXqj3UifOJBvZeYNP9mjpXAQg+4zGvKwyN0cDM9Nhe8K5JCvxmcTQMbnidDARktX3nwKpTHvpTkUIcBBKZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oG4M/ckI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7060AC2BD10;
+	Tue, 14 May 2024 09:08:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715677642;
-	bh=iFT8aIHoU1LknzItSMfCjY/5wBCDpCYYk8xEjm1J854=;
+	s=k20201202; t=1715677739;
+	bh=ap9JnqoWxM+49u1ZymC0acfXzXG2I4pVgX2/+ebPCyA=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=um7R6a5pwNj5xKhigiQd99ciah98i0htbHCHHb0urG3QskhxBuFVZqZoWCZoX12+C
-	 g626hKTyBYjedwCl4FLQygR2F+qJMHAP0RpKf4C3i7P8UHp2UuWvk7qdOKRwdoZ7mN
-	 oYGDTHFReXM/bs9mzIiKUzXjdPFnYhtbKXK+wgWMoZJR+FW0AqGgcrBGeFtqKlEpAj
-	 o3C0p/oLB/LYgtX7E4+OQ/lgsrOyhtm+CNw8l49gGaaS97EoF6J080WTEW6N+J0IZ7
-	 CUVZKaIcAXgEHppAdgbv421HJyDVsOHy1AX7jqPJjNJxylN0C/CCQYJFwYrit8qX/H
-	 xaZbTI/3u97cQ==
-Message-ID: <778500c9-83bc-47b7-bf1d-28de44084776@kernel.org>
-Date: Tue, 14 May 2024 11:07:14 +0200
+	b=oG4M/ckIwYvYT3/HksLmeFm9T2KOi2Z0tUQ6WjIBboE70xEn97v6qqacrW2Yi2SQH
+	 h1dZEraFttdTihnKTHABDJ2dhluN+EIIllIw6EOzVjHZt/OgbOkDd/L2fVlpAvLZo6
+	 v8/E/aZFAPC2WfyjrFEpA674pUAlTg41voD6JMQoSeP1qQLynkcWsA6J9MCrwyuJIG
+	 HxEZySU+QiugFCGhE2ygG+PBQuAqRUUfGucqSvTrWghteKy1WWCtz682nofUPn6HfY
+	 +aCgzTSKhEN99HKo/dSXffYZZog5Aknx1OsSnFE/6I1ocom1PBY+I58PAsI1TVJuWJ
+	 jgPvbLGgmzstw==
+Message-ID: <c7317ea0-fcd6-40e0-9d90-bb1ff349c0e0@kernel.org>
+Date: Tue, 14 May 2024 11:08:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,28 +49,16 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] dt-bindings: display: panel: constrain 'reg'
-To: neil.armstrong@linaro.org, Dmitry Baryshkov
- <dmitry.baryshkov@linaro.org>, Rob Herring <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Sam Ravnborg <sam@ravnborg.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Chris Morgan <macromorgan@hotmail.com>,
- Linus Walleij <linus.walleij@linaro.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Konrad Dybcio <konradybcio@gmail.com>,
- Del Regno <angelogioacchino.delregno@somainline.org>,
- Heiko Stuebner <heiko@sntech.de>, Luca Weiss <luca.weiss@fairphone.com>,
- Shawn Guo <shawn.guo@linaro.org>, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240509-dt-bindings-dsi-panel-reg-v1-0-8b2443705be0@linaro.org>
- <20240513131711.GA2419451-robh@kernel.org>
- <CAA8EJppkJ9rukeUZ=1kAL3Y0WVhN5QFXnNU3tjv4yuXMjc++7w@mail.gmail.com>
- <a1108f14-9a1b-414a-97c5-0bc43457d635@linaro.org>
+Subject: Re: [PATCH 1/2] dt-bindings: mfd: syscon: Add
+ img,boston-platform-regs
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>, Lee Jones <lee@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Paul Burton <paulburton@kernel.org>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mips@vger.kernel.org
+References: <20240513-boston-syscon-v1-0-93ff557d3548@flygoat.com>
+ <20240513-boston-syscon-v1-1-93ff557d3548@flygoat.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -116,38 +104,22 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <a1108f14-9a1b-414a-97c5-0bc43457d635@linaro.org>
+In-Reply-To: <20240513-boston-syscon-v1-1-93ff557d3548@flygoat.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 14/05/2024 10:44, Neil Armstrong wrote:
-> On 13/05/2024 18:41, Dmitry Baryshkov wrote:
->> On Mon, 13 May 2024 at 16:17, Rob Herring <robh@kernel.org> wrote:
->>>
->>> On Thu, May 09, 2024 at 11:42:50AM +0200, Krzysztof Kozlowski wrote:
->>>> Hi,
->>>>
->>>> Cleanups for display panel bindings.
->>>>
->>>> Rob, maybe you could take entire set if it applies? I based it on
->>>> linux-next, so letl me know if I need to rebase on your for-next.
->>>
->>> Applied. These 2 don't exist in my tree:
->>
->> It's most likely fine, but was there an ack from drm-misc maintainers?
->>
->>> Documentation/devicetree/bindings/display/panel/lg,sw43408.yaml
->>> Documentation/devicetree/bindings/display/panel/raydium,rm69380.yaml
->>
->> Because those were added to drm-misc during the last cycle. So ideally
->> the patch should have gone through drm-misc.
->>
+On 13/05/2024 20:58, Jiaxun Yang wrote:
+> This compatible has been used in arch/mips/boot/dts/img/boston.dts
+> for a while but never documented properly.
 > 
-> Exact there's a conflict on today's next, Rob can you drop them so I can apply them via drm-misc ?
+> Add it to simple syscon binding.
+> 
+> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+> ---
+>  Documentation/devicetree/bindings/mfd/syscon.yaml | 1 +
 
-It's almost the first time I see bindings picked up via drm-misc. Is
-this an exception or rather new trend (which would be awesome as this is
-what we prefer usually)?
+It is documented in clock/img,boston-clock.txt. Please fix/convert/work
+on that.
 
 Best regards,
 Krzysztof
