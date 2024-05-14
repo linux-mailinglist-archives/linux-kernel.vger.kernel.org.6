@@ -1,137 +1,104 @@
-Return-Path: <linux-kernel+bounces-178672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5A028C5630
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:49:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44CC58C5633
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:52:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC28A1C21BF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:49:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8153BB21AC8
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:52:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A362F6CDBD;
-	Tue, 14 May 2024 12:49:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="jqD3WRqS";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="jqD3WRqS"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 604B96CDC8;
+	Tue, 14 May 2024 12:51:53 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AF881879;
-	Tue, 14 May 2024 12:49:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2DD12A8D7;
+	Tue, 14 May 2024 12:51:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715690988; cv=none; b=QBaylyeswS1IZxQ9dMZ6956CVtpmPmt+4qwB+pDwB8/xvXL2gVxauQu/h4tYu4ri+nFWlyak8SdZDRjKURazMx5rf4L7WTSnsN/iYz0SZvpecWmGHR/wahfEGjzRXYt5IJZh+yrJnlwXSzl6KD9RA+xsP5v0/HIX1M1ieN5u33A=
+	t=1715691113; cv=none; b=bdHsAj5cV/tj2hXiuykFHm1l9+iBJHy3hc3gJ7piJ5YmoQ7jRi7GvorqIo9u845iumaFPPGoAdI8dAgdO+TDhR7RkLeEfQ6H/7Wm32/uNZJtdV2aqDSOIIPl64Kz1XATtrvoKrPCHAAU/29ZhZCXGjM6fPH90fJ3KqdfBcv9wtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715690988; c=relaxed/simple;
-	bh=a6K4hHzuy1MYWwstaaqHLrIevHBlIT/S0Pb5gq4hQF4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FVXvmOm0yYVTM13Dzjpj2KIC9bDt/6S/lvwiUNyFcP+aB27Il6Xw6wrPfgLli6l+3aKAznknplpl2/rh6bZfGFAaiZdYt1UTORM9yO10j9uhPg+8DFbt7Sk994GobMZ+Ks6/weZNAY1RGT2WF/0g3hazgGQLrBD2XijDyd+l3DI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=jqD3WRqS; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=jqD3WRqS; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from kunlun.arch.suse.cz (unknown [10.100.128.76])
-	by smtp-out2.suse.de (Postfix) with ESMTP id 562E460C24;
-	Tue, 14 May 2024 12:49:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1715690984; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0ohSg6YjbgbhC4L4yRgqvJkso+JLgw6lS+f326pBTXE=;
-	b=jqD3WRqSkPoffGUASovsNhfpVpL4MMdIkDxsjGMhaBOV29ootingsvOEEaHnrJCVKBG4Td
-	CwgqZ+2DvSOpPzIC5L/pD3Frua3DVabkhFKudocYUfJsflBFu07oA0JCeMM3njOWiNWFns
-	+pRkOo3vKwKI1jzPkyIi8zLOCrkhaFs=
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1715690984; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0ohSg6YjbgbhC4L4yRgqvJkso+JLgw6lS+f326pBTXE=;
-	b=jqD3WRqSkPoffGUASovsNhfpVpL4MMdIkDxsjGMhaBOV29ootingsvOEEaHnrJCVKBG4Td
-	CwgqZ+2DvSOpPzIC5L/pD3Frua3DVabkhFKudocYUfJsflBFu07oA0JCeMM3njOWiNWFns
-	+pRkOo3vKwKI1jzPkyIi8zLOCrkhaFs=
-From: Anthony Iliopoulos <ailiop@suse.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Christian Brauner <brauner@kernel.org>,
-	cve@kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: linux-cve-announce@vger.kernel.org
-Subject: Re: CVE-2024-26821: fs: relax mount_setattr() permission checks
-Date: Tue, 14 May 2024 14:49:39 +0200
-Message-ID: <20240514124939.77984-1-ailiop@suse.com>
-X-Mailer: git-send-email 2.45.0
-In-Reply-To: <2024041702-CVE-2024-26821-de6b@gregkh>
-References: <2024041702-CVE-2024-26821-de6b@gregkh>
+	s=arc-20240116; t=1715691113; c=relaxed/simple;
+	bh=aUbOwPaUPupYeFUaKwFn5yDwjguh9nzt7U4EFOp5KJI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=cCrwqHOVFJWy8ZkpTBeOCbRSPXuUkxkaPIleBm6hQyhZJQCwVgbXlGnbnxj0zQqg4Eq7BiMfZ9CrmXK+0wbVyDtckm3wd5oPl2CHnkd9YMksR5f/a4VZNUcYidbun1k14sIwurVQ2m1mFRIC/qOLr8luJjGh9k/dxMc2ZtqBDHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Vdx3d48ddzvXdj;
+	Tue, 14 May 2024 20:48:13 +0800 (CST)
+Received: from kwepemi500008.china.huawei.com (unknown [7.221.188.139])
+	by mail.maildlp.com (Postfix) with ESMTPS id 71F4C18007D;
+	Tue, 14 May 2024 20:51:41 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemi500008.china.huawei.com (7.221.188.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Tue, 14 May 2024 20:51:40 +0800
+Message-ID: <e0bc19d6-4a15-faa4-c8e1-163904276d5b@huawei.com>
+Date: Tue, 14 May 2024 20:51:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH 4/6] genirq: optimize irq_do_set_affinity()
+To: Yury Norov <yury.norov@gmail.com>, <linux-kernel@vger.kernel.org>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, "Paul E. McKenney"
+	<paulmck@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Anna-Maria
+ Behnsen <anna-maria@linutronix.de>, Ben Segall <bsegall@google.com>, Daniel
+ Bristot de Oliveira <bristot@redhat.com>, Dietmar Eggemann
+	<dietmar.eggemann@arm.com>, Frederic Weisbecker <frederic@kernel.org>, Imran
+ Khan <imran.f.khan@oracle.com>, Ingo Molnar <mingo@redhat.com>, Johannes
+ Weiner <hannes@cmpxchg.org>, Juri Lelli <juri.lelli@redhat.com>, Leonardo
+ Bras <leobras@redhat.com>, Mel Gorman <mgorman@suse.de>, Peter Zijlstra
+	<peterz@infradead.org>, Rik van Riel <riel@surriel.com>, Steven Rostedt
+	<rostedt@goodmis.org>, Tejun Heo <tj@kernel.org>, Thomas Gleixner
+	<tglx@linutronix.de>, Valentin Schneider <vschneid@redhat.com>, Vincent
+ Guittot <vincent.guittot@linaro.org>, Waiman Long <longman@redhat.com>, Zefan
+ Li <lizefan.x@bytedance.com>, <cgroups@vger.kernel.org>
+References: <20240513220146.1461457-1-yury.norov@gmail.com>
+ <20240513220146.1461457-5-yury.norov@gmail.com>
+Content-Language: en-US
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <20240513220146.1461457-5-yury.norov@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-Spam-Flag: NO
-X-Spam-Score: -2.80
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.981];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	RCVD_COUNT_ZERO(0.00)[0];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCPT_COUNT_FIVE(0.00)[5];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[]
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemi500008.china.huawei.com (7.221.188.139)
 
-On Wed, Apr 17, 2024 at 11:44:04AM +0200, Greg Kroah-Hartman wrote:
-> Description
-> ===========
-> 
-> In the Linux kernel, the following vulnerability has been resolved:
-> 
-> fs: relax mount_setattr() permission checks
-> 
-> When we added mount_setattr() I added additional checks compared to the
-> legacy do_reconfigure_mnt() and do_change_type() helpers used by regular
-> mount(2). If that mount had a parent then verify that the caller and the
-> mount namespace the mount is attached to match and if not make sure that
-> it's an anonymous mount.
-> 
-> The real rootfs falls into neither category. It is neither an anoymous
-> mount because it is obviously attached to the initial mount namespace
-> but it also obviously doesn't have a parent mount. So that means legacy
-> mount(2) allows changing mount properties on the real rootfs but
-> mount_setattr(2) blocks this. I never thought much about this but of
-> course someone on this planet of earth changes properties on the real
-> rootfs as can be seen in [1].
-> 
-> Since util-linux finally switched to the new mount api in 2.39 not so
-> long ago it also relies on mount_setattr() and that surfaced this issue
-> when Fedora 39 finally switched to it. Fix this.
-> 
-> The Linux kernel CVE team has assigned CVE-2024-26821 to this issue.
 
-This one probably needs to be disputed as it isn't an actual
-vulnerability, but rather a fix for the mount_setattr which previously
-didn't allow reconfiguring the real rootfs similar to what the mount
-syscall always allowed to do.
 
-So it merely brings mount_attr up to par with mount in terms of allowing
-the real rootfs to be reconfigured.
+On 2024/5/14 6:01, Yury Norov wrote:
+> If mask == desc->irq_common_data.affinity, copying one to another is
+> useless, and we can just skip it.
+> 
+> Signed-off-by: Yury Norov <yury.norov@gmail.com>
+> ---
+>  kernel/irq/manage.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
+> index bf9ae8a8686f..ad9ed9fdf919 100644
+> --- a/kernel/irq/manage.c
+> +++ b/kernel/irq/manage.c
+> @@ -285,7 +285,8 @@ int irq_do_set_affinity(struct irq_data *data, const struct cpumask *mask,
+>  	switch (ret) {
+>  	case IRQ_SET_MASK_OK:
+>  	case IRQ_SET_MASK_OK_DONE:
+> -		cpumask_copy(desc->irq_common_data.affinity, mask);
+> +		if (desc->irq_common_data.affinity != mask)
+> +			cpumask_copy(desc->irq_common_data.affinity, mask);
 
-Christian, what do you think ?
+It seems that mask is a pointer, shouldn't use "cpumask_equal"？
 
-Regards,
-Anthony
+>  		fallthrough;
+>  	case IRQ_SET_MASK_OK_NOCOPY:
+>  		irq_validate_effective_affinity(data);
 
