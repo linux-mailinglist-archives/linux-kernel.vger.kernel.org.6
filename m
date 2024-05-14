@@ -1,185 +1,103 @@
-Return-Path: <linux-kernel+bounces-179180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 569478C5CC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 23:28:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 157D58C5CC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 23:28:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02AE2283068
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 21:28:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C54F1282F0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 21:28:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9CC2181BA8;
-	Tue, 14 May 2024 21:28:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7311B181CFE;
+	Tue, 14 May 2024 21:28:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qcz2ad2Z"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="r+ym+12D"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64242181B93
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 21:28:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89A36181BA3;
+	Tue, 14 May 2024 21:28:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715722108; cv=none; b=W3NOY5H141/EkjSWb+/70upY/tNdU5OdpxKjpvlB5x8Tv/7STMDr4zi9tcVvldv++7/Qv9E/D70r/0EYBtbEH6r9cOAJGauB1ICgTGnurhD8ejAi1tab16R6e2he+zJ0g2+JDf4Le9VdSvuoq/R7Dwk08jW8+p3MImDitQDuLq4=
+	t=1715722110; cv=none; b=mX2PLX3wUjdDbB5i7EhJaQLKKDc57/2ionjlCF+Yye4EjKAdZuPCKNzLWMCeK4LXGD7CBIHLhN2aZKJUt2aQAVw0N/aBAF2rljKcQL/gxJ0xDXmzaxLilkacVRoAYP18sbK9VSzkITwQLQgxkkU4ObTIFVjVyY05Pip5j60DjIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715722108; c=relaxed/simple;
-	bh=XDdbNe7ZsD+QuIaN3ybfNtK8paLDxZBMpUwiE+mNH00=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jiKJm1Plo/d0N7Pa5Ow5EeZh1hIaI7zLNTZMnjrEAjK4jqgfudLLRZCLh7ZP41B8WtEdBHnKXrYfFbwBWh+7/k2alxxd+AUW8nlAAD3BHaT0CCDFRBc+NwxstcgghFQ+tJsgD5u7jIzMeaVe50F//VZkmrtdX2itEpKwDoP+kcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qcz2ad2Z; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-571be483ccaso824884a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 14:28:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715722105; x=1716326905; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eS2rhGpY5r3pjUZRE//h/6PnRia7SX4QGvgiH8032Rs=;
-        b=Qcz2ad2ZwSz3DwUigbm7HTF4/O72K09AHFXn4fc81g1hU+wtWyoeEYK1/9IDXe1LMB
-         /L4p/VlE9k3kdVGJ7x79UAMnDyYQZc/piNv4zqkXeToiF7kxOsOkm4WyKauFx0mZAmop
-         D13Hzg3RvF06BYemoquXJD0Yb2J/x2KPbwOAXiZBBSQS0ZkTLseKk4Jbtj+xwfKwl86A
-         cZdzSX4MAjHsEXjjCFUy/5nitDBpyxxVxyL8egxK3JViMtIEABZII2TBN2o/AhJm51wm
-         21Uu4gwkFg6fPL/zjez7A/i/HIyH4CR/SHfAmV0WZoO8pVgWqHqsxYNNfl+B+vP96/oj
-         J26g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715722105; x=1716326905;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eS2rhGpY5r3pjUZRE//h/6PnRia7SX4QGvgiH8032Rs=;
-        b=rQnOWZ9NpPUWgjoqUQylPtM1zH+c3o9BdE4D7TStF7u4IGgExuefrhnxFuEK7zHGTK
-         4Rl9o4wdmmhvLTPHOS8M9QtCdCi516JUjIZGuA7Di7RZGBfv19nw8H5DqMzgW+GKeM+i
-         kAovge0WmrR9VwO1cwN6c1sm5S6mmDzBjC53MG3irsg6sdBQU0kPypKBSRkmd508eSxr
-         mmpOGMETJFh3+AEq93viDN5+4KkiYST0qaiPSeRXSJiolba58e6E5+eRlSGWfMPxxebV
-         0v+2rJZdbWW4mwEOJnH0sL5I5EhkMbCdossf7+1JBivCMDd4lbcimAxk8d7hwczEHMQd
-         nBjA==
-X-Forwarded-Encrypted: i=1; AJvYcCXsZrlI7I7wM1lMaPUey9mVOQyafBJW1PWoGs8aLGi243KWaOWgHyexk+O/tv2uuv30FiQuymnsgK18qigA+L+GK2yJR9jM4fXnmYGT
-X-Gm-Message-State: AOJu0YxYOS1ThhSO7oDHcgLNLQuMkLXFNuHeSbaXSBE21fm38ewHVBtl
-	wZkHL+laUptYCOcfwzaaTGIGro6Z/9TWiRUqOpeLs7M7G33OQA4HrwrO9Gowwc3NN5byt4yWPGv
-	Y3HsIZdtzN+3KST6R8DRcQbBuneQ=
-X-Google-Smtp-Source: AGHT+IFJ4Hbx5jNuAI876QYUFP8wMd6M526tTNZKhnNeAWEpQY2GtrlLOSk2WZPmg5O+fdDOFb47pNOjaQYwYarHfyI=
-X-Received: by 2002:a50:c30b:0:b0:574:eb80:3305 with SMTP id
- 4fb4d7f45d1cf-574eb80345fmr1518586a12.11.1715722104503; Tue, 14 May 2024
- 14:28:24 -0700 (PDT)
+	s=arc-20240116; t=1715722110; c=relaxed/simple;
+	bh=v0RcfcwgjnK6DXraXfbbO0hweNJe7AtF6Td2ScAX+f4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uUtcLR2/oedZ+njjW3EUM2WB8doNR8TRubuNCMCYZWgUfc9AfXvF0zz1jPtVpBZcsAOVY5JSDySm2Id0SuBVOwcqiodVsbwtvUc7QXZX/IWZV8J3HCWPvbQfEAQKOLWULt0rS/wvS9IXPcDPbY2lrYNw1mJA/UJhpyzN/fqbi78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=r+ym+12D; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=18MZUUawb/h4MdJ2B0MrgZRDL4PYAEDgDX9KON4i6lc=; b=r+ym+12DadmXIqEpLKf2643jfL
+	vyQHT+0RozPUfuV+RVz0aW6W8NuvhWmjpAgP7GeFcXlmaVBgCz/9eW6kfqGkGbXPF2QhtH3+J08rY
+	ydmGCoc/qzLKre6U7YSK6rkO1m/SmtV0REeYhGVbZwgPeu8a1j2M680C+hed2l2cD6g8Wy22mKPvN
+	qhPd9bzVX5ZScN/8atD34ZEXC4GDUKFEJ8jo4w73HhFLzfm3tkTBHbKpeoK8ggAgFS9bwvHEdaso9
+	nziKaHoELR3qKSgWGMgI5TNPaWcpkGJXCcX+/SZM9qtVMubjtpzZG9Dk6cyvwIbDa1uZRbflV893d
+	c/oZ/jxA==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1s6zh3-00000009WDa-3cXA;
+	Tue, 14 May 2024 21:28:18 +0000
+Date: Tue, 14 May 2024 22:28:17 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Andrew Morton <akpm@linux-foundation.org>, jeffxu@chromium.org,
+	keescook@chromium.org, jannh@google.com, sroettger@google.com,
+	gregkh@linuxfoundation.org, torvalds@linux-foundation.org,
+	usama.anjum@collabora.com, Liam.Howlett@oracle.com,
+	surenb@google.com, merimus@google.com, rdunlap@infradead.org,
+	jeffxu@google.com, jorgelo@chromium.org, groeck@chromium.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-mm@kvack.org, pedro.falcato@gmail.com, dave.hansen@intel.com,
+	linux-hardening@vger.kernel.org, deraadt@openbsd.org
+Subject: Re: [PATCH v10 0/5] Introduce mseal
+Message-ID: <ZkPXcT_JuQeZCAv0@casper.infradead.org>
+References: <20240415163527.626541-1-jeffxu@chromium.org>
+ <20240514104646.e6af4292f19b834777ec1e32@linux-foundation.org>
+ <871q646rea.fsf@meer.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240511035435.1477004-1-linmiaohe@huawei.com> <20240514141439.55fba39c81c1af55c9a100e1@linux-foundation.org>
-In-Reply-To: <20240514141439.55fba39c81c1af55c9a100e1@linux-foundation.org>
-From: Yang Shi <shy828301@gmail.com>
-Date: Tue, 14 May 2024 15:28:12 -0600
-Message-ID: <CAHbLzkq+NBjwjSvU1fQe56nLf5mmGp65TH8hDpb66EFLENctKA@mail.gmail.com>
-Subject: Re: [PATCH -rc7] mm/huge_memory: mark huge_zero_page reserved
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Miaohe Lin <linmiaohe@huawei.com>, nao.horiguchi@gmail.com, xuyu@linux.alibaba.com, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <871q646rea.fsf@meer.lwn.net>
 
-On Tue, May 14, 2024 at 3:14=E2=80=AFPM Andrew Morton <akpm@linux-foundatio=
-n.org> wrote:
->
-> On Sat, 11 May 2024 11:54:35 +0800 Miaohe Lin <linmiaohe@huawei.com> wrot=
-e:
->
-> > When I did memory failure tests recently, below panic occurs:
+On Tue, May 14, 2024 at 02:59:57PM -0600, Jonathan Corbet wrote:
+> Andrew Morton <akpm@linux-foundation.org> writes:
+> 
+> > On Mon, 15 Apr 2024 16:35:19 +0000 jeffxu@chromium.org wrote:
 > >
-> >  kernel BUG at include/linux/mm.h:1135!
-> >  invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
-> >  CPU: 9 PID: 137 Comm: kswapd1 Not tainted 6.9.0-rc4-00491-gd5ce28f156f=
-e-dirty #14
+> >> This patchset proposes a new mseal() syscall for the Linux kernel.
 > >
-> > ...
+> > I have not moved this into mm-stable for a 6.10 merge.  Mainly because
+> > of the total lack of Reviewed-by:s and Acked-by:s.
 > >
-> > --- a/mm/huge_memory.c
-> > +++ b/mm/huge_memory.c
-> > @@ -208,6 +208,7 @@ static bool get_huge_zero_page(void)
-> >               __free_pages(zero_page, compound_order(zero_page));
-> >               goto retry;
-> >       }
-> > +     __SetPageReserved(zero_page);
-> >       WRITE_ONCE(huge_zero_pfn, page_to_pfn(zero_page));
+> > The code appears to be stable enough for a merge.
 > >
-> >       /* We take additional reference here. It will be put back by shri=
-nker */
-> > @@ -260,6 +261,7 @@ static unsigned long shrink_huge_zero_page_scan(str=
-uct shrinker *shrink,
-> >               struct page *zero_page =3D xchg(&huge_zero_page, NULL);
-> >               BUG_ON(zero_page =3D=3D NULL);
-> >               WRITE_ONCE(huge_zero_pfn, ~0UL);
-> > +             __ClearPageReserved(zero_page);
-> >               __free_pages(zero_page, compound_order(zero_page));
-> >               return HPAGE_PMD_NR;
-> >       }
->
-> This causes a bit of a mess when staged ahead of mm-stable.  So to
-> avoid disruption I staged it behind mm-stable.  This means that when
-> the -stable maintainers try to merge it, they will ask for a fixed up
-> version for older kernels so you can please just send them this
-> version.
+> > It's awkward that we're in conference this week, but I ask people to
+> > give consideration to the desirability of moving mseal() into mainline
+> > sometime over the next week, please.
+> 
+> I hate to be obnoxious, but I *was* copied ... :)
+> 
+> Not taking a position on merging, but I have to ask: are we convinced at
+> this point that mseal() isn't a chrome-only system call?  Did we ever
+> see the glibc patches that were promised?
 
-Can you please drop this from mm-unstable since both I and David
-nack'ed a similar patch in another thread.
-https://lore.kernel.org/linux-mm/20240511032801.1295023-1-linmiaohe@huawei.=
-com/
+I think _this_ version of mseal() is OpenBSD's mimmutable() with a
+basically unused extra 'flags' argument.  As such, we have an existance
+proof that it's useful beyond Chrome.
 
-Both patches actually do the same thing, just this one uses page, the
-other one uses folio.
-
->
-> To facilitate this I added the below adjustment:
->
-> (btw, shouldn't get_huge_zero_page() and shrink_huge_zero_page_scan()
-> be renamed to *_folio_*?)
->
->
-> From: Andrew Morton <akpm@linux-foundation.org>
-> Subject: mm-huge_memory-mark-huge_zero_page-reserved-fix
-> Date: Tue May 14 01:53:37 PM PDT 2024
->
-> Update it for 5691753d73a2 ("mm: convert huge_zero_page to huge_zero_foli=
-o")
->
-> Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: Miaohe Lin <linmiaohe@huawei.com>
-> Cc: Naoya Horiguchi <nao.horiguchi@gmail.com>
-> Cc: Xu Yu <xuyu@linux.alibaba.com>
-> Cc: Yang Shi <shy828301@gmail.com>
-> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-> ---
->
->  mm/huge_memory.c |    4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> --- a/mm/huge_memory.c~mm-huge_memory-mark-huge_zero_page-reserved-fix
-> +++ a/mm/huge_memory.c
-> @@ -212,7 +212,7 @@ retry:
->                 folio_put(zero_folio);
->                 goto retry;
->         }
-> -       __SetPageReserved(zero_page);
-> +       __folio_set_reserved(zero_folio);
->         WRITE_ONCE(huge_zero_pfn, folio_pfn(zero_folio));
->
->         /* We take additional reference here. It will be put back by shri=
-nker */
-> @@ -265,7 +265,7 @@ static unsigned long shrink_huge_zero_pa
->                 struct folio *zero_folio =3D xchg(&huge_zero_folio, NULL)=
-;
->                 BUG_ON(zero_folio =3D=3D NULL);
->                 WRITE_ONCE(huge_zero_pfn, ~0UL);
-> -               __ClearPageReserved(zero_page);
-> +               __folio_clear_reserved(zero_folio);
->                 folio_put(zero_folio);
->                 return HPAGE_PMD_NR;
->         }
-> _
->
+I think Liam still had concerns around the
+walk-the-vmas-twice-to-error-out-early part of the implementation?
+Although we can always fix the implementation later; changing the API
+is hard.
 
