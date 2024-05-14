@@ -1,126 +1,184 @@
-Return-Path: <linux-kernel+bounces-179166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AFAE8C5C96
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 23:02:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E3508C5C97
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 23:03:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 893511C21D5A
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 21:02:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CACD6B21A2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 21:03:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E71218132E;
-	Tue, 14 May 2024 21:02:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF102180A70;
+	Tue, 14 May 2024 21:03:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xTHATAbS";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Dweu8njF"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="u6ZVCiAj";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="/f9yNye8";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="u6ZVCiAj";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="/f9yNye8"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D70BE14532B;
-	Tue, 14 May 2024 21:02:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D6411DFD1
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 21:03:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715720524; cv=none; b=qWHl/p93VmEIEsbV8PcFpPxrk2gK/AylfxuY/O8AgMfXIt6xlpDJI6OA/n5ghM+4awZkEfl2M8wD6vmikGtEkdfUg7nsyb12C/QrPeYGTCRTcx2T0t4qLCFY6vtVQTB0N75wWM5hhZJaWeFjObIJbiDDZDMxqu8Z3guzTlOA7G8=
+	t=1715720629; cv=none; b=GEvmgnlKpYrZ9ghEBNb0JsocazjhL8Hytzsd5C7D85heAAg5T6AFbLgEqeDTE80fQO3j1wX34DPUjjkQK2JyS1tvlH+K1ijKVkBhgPNhausGdjTqmki5fjRUFs5zd3b9W1WfEBQgvZDBBr13CZnfVwTzYNxyYNIPQ3uIw275ujY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715720524; c=relaxed/simple;
-	bh=oNNSswIyrt13EK8oXKF/p1rfPKlwxsz+mTptoXw8pUk=;
-	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=JFlc/z9lCj8L7Zw1+iSDjKAWRR3ntG12PhCNw6TicNApI17HzHywXqFHSLk/d34UA3jM0D12x27Dh7LOdLFXs6+oPcokgbgHgm91YZhPgg1ZLkb06/ksIIoWmhkT2NLtVpyLke64jKhtV/DJCaxlcwwdpyS/LWlCIcQJEWwrhPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xTHATAbS; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Dweu8njF; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1715720521;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1715720629; c=relaxed/simple;
+	bh=GECJCyHkaDUmKNqSuWSOdIioBqA9Kdoym171AamYHYg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZO8bYyUX6JArBtYtfMmHmY3oTV1WU5/DfjB6ywZH2F294bnTaLq2VwcvsohrAgyXVkx2clqCq4/9D/bcKRyW13fT9X/DvaGwAhLI2Ki9kCeyOQgQiACoRGdVevv3ez7+8yW5QXVAfywNblgRYunR+jT/OYIfFTdPn6d9q6eUbug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=u6ZVCiAj; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=/f9yNye8; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=u6ZVCiAj; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=/f9yNye8; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 9CA9A1FBA6;
+	Tue, 14 May 2024 21:03:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1715720625; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=l9IhefwFGHqUFohDsQBE0bSZV5Ni7HPgyBwTX8U3rtw=;
-	b=xTHATAbS2oMlFmU6eR+Gzu1a3vT8mekSwRgnuz1YS3XvVDoHBoIMqULio2ndUn9WP2ICWF
-	gVWExzS0yzfhheDls2sX765jaH+nmuOGwcZYTNnnp17kwzfWEE2fqeGibiRIgTXV6JpaFI
-	qZ+DYt1ekmDlyuCWnSy9huETcMJF0wOQUINTDfiIQ8jjcgZp3wYy4FBAqBdj8WlQF7ROdx
-	zHdakega01kbXTFPcLlSBWEXWpYH1LkZNQIhVcbsUywuIZybaDf0vbaSLR+yPmRTJJ2q2c
-	UxJ6PT7rDT/sDk8G7COrgst9cIjlgOGxjC3DqcsuDbTVvU44Tp1Lp5yGMxAI5Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1715720521;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	bh=lsytN/Ol0bA8FK1+9NUuQFTtsbXKHbOnQZ7CagSXtsE=;
+	b=u6ZVCiAjzycXAwGcaHq1QPNWE8OZdJEdtr1m3hRNKyev3uDuY/xGzqChh7uk5T4NjYUeuX
+	crPvzJ8JLq4isvh9TLO9QECXAWJcCSPwVNvvV4EaVYUA0JSXjP8d2wiQD6p7VEwYDjXCzq
+	me1TGuukLfetINnfR6MZSOOO4cCcJYQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1715720625;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=l9IhefwFGHqUFohDsQBE0bSZV5Ni7HPgyBwTX8U3rtw=;
-	b=Dweu8njFymxpAMKfxaoBwSdUnenIrETZ5nUXq2uSyUt7JIeu5epMEk1O9qFSQ30RdiM9m/
-	EMLFVyv2o679WFCg==
-To: Yury Norov <yury.norov@gmail.com>, linux-kernel@vger.kernel.org, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, "Paul E. McKenney"
- <paulmck@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Anna-Maria
- Behnsen <anna-maria@linutronix.de>, Ben Segall <bsegall@google.com>,
- Daniel Bristot de Oliveira <bristot@redhat.com>, Dietmar Eggemann
- <dietmar.eggemann@arm.com>, Frederic Weisbecker <frederic@kernel.org>,
- Imran Khan <imran.f.khan@oracle.com>, Ingo Molnar <mingo@redhat.com>,
- Johannes Weiner <hannes@cmpxchg.org>, Juri Lelli <juri.lelli@redhat.com>,
- Leonardo Bras <leobras@redhat.com>, Mel Gorman <mgorman@suse.de>, Peter
- Zijlstra <peterz@infradead.org>, Rik van Riel <riel@surriel.com>, Steven
- Rostedt <rostedt@goodmis.org>, Tejun Heo <tj@kernel.org>, Valentin
- Schneider <vschneid@redhat.com>, Vincent Guittot
- <vincent.guittot@linaro.org>, Waiman Long <longman@redhat.com>, Yury Norov
- <yury.norov@gmail.com>, Zefan Li <lizefan.x@bytedance.com>,
- cgroups@vger.kernel.org
-Subject: Re: [PATCH 3/6] driver core: cpu: optimize print_cpus_isolated()
-In-Reply-To: <20240513220146.1461457-4-yury.norov@gmail.com>
-References: <20240513220146.1461457-1-yury.norov@gmail.com>
- <20240513220146.1461457-4-yury.norov@gmail.com>
-Date: Tue, 14 May 2024 23:02:00 +0200
-Message-ID: <87jzjwkszb.ffs@tglx>
+	bh=lsytN/Ol0bA8FK1+9NUuQFTtsbXKHbOnQZ7CagSXtsE=;
+	b=/f9yNye86xDoN89fH3Puo6+R4EuwSeCQwsnMxLRcEwCCN0q/fXDri7/gSpoFwdEyJN7aIK
+	ecgjVPiglyCZWdAQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=u6ZVCiAj;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="/f9yNye8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1715720625; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lsytN/Ol0bA8FK1+9NUuQFTtsbXKHbOnQZ7CagSXtsE=;
+	b=u6ZVCiAjzycXAwGcaHq1QPNWE8OZdJEdtr1m3hRNKyev3uDuY/xGzqChh7uk5T4NjYUeuX
+	crPvzJ8JLq4isvh9TLO9QECXAWJcCSPwVNvvV4EaVYUA0JSXjP8d2wiQD6p7VEwYDjXCzq
+	me1TGuukLfetINnfR6MZSOOO4cCcJYQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1715720625;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lsytN/Ol0bA8FK1+9NUuQFTtsbXKHbOnQZ7CagSXtsE=;
+	b=/f9yNye86xDoN89fH3Puo6+R4EuwSeCQwsnMxLRcEwCCN0q/fXDri7/gSpoFwdEyJN7aIK
+	ecgjVPiglyCZWdAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B45331372E;
+	Tue, 14 May 2024 21:03:44 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id /kVBKbDRQ2Y5KAAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Tue, 14 May 2024 21:03:44 +0000
+Date: Tue, 14 May 2024 23:03:39 +0200
+From: Oscar Salvador <osalvador@suse.de>
+To: =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@kernel.org>
+Cc: Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	David Hildenbrand <david@redhat.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	linux-riscv@lists.infradead.org,
+	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>,
+	Andrew Bresticker <abrestic@rivosinc.com>,
+	Chethan Seshadri <Chethan.Seshadri@catalinasystems.io>,
+	Lorenzo Stoakes <lstoakes@gmail.com>,
+	Santosh Mamila <santosh.mamila@catalinasystems.io>,
+	Sivakumar Munnangi <siva.munnangi@catalinasystems.io>,
+	Sunil V L <sunilvl@ventanamicro.com>, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, virtualization@lists.linux-foundation.org
+Subject: Re: [PATCH v2 5/8] riscv: mm: Take memory hotplug read-lock during
+ kernel page table dump
+Message-ID: <ZkPRq5zca7PGsqwJ@localhost.localdomain>
+References: <20240514140446.538622-1-bjorn@kernel.org>
+ <20240514140446.538622-6-bjorn@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240514140446.538622-6-bjorn@kernel.org>
+X-Spam-Flag: NO
+X-Spam-Score: -6.51
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: 9CA9A1FBA6
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-6.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCPT_COUNT_TWELVE(0.00)[17];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_CC(0.00)[rivosinc.com,eecs.berkeley.edu,redhat.com,dabbelt.com,sifive.com,lists.infradead.org,catalinasystems.io,gmail.com,ventanamicro.com,vger.kernel.org,kvack.org,lists.linux-foundation.org];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[rivosinc.com:email,suse.de:dkim,suse.de:email]
 
-On Mon, May 13 2024 at 15:01, Yury Norov wrote:
-> The function may be called with housekeeping_cpumask == cpu_possible_mask,
+On Tue, May 14, 2024 at 04:04:43PM +0200, Björn Töpel wrote:
+> From: Björn Töpel <bjorn@rivosinc.com>
+> 
+> During memory hot remove, the ptdump functionality can end up touching
+> stale data. Avoid any potential crashes (or worse), by holding the
+> memory hotplug read-lock while traversing the page table.
+> 
+> This change is analogous to arm64's commit bf2b59f60ee1 ("arm64/mm:
+> Hold memory hotplug lock while walking for kernel page table dump").
+> 
+> Signed-off-by: Björn Töpel <bjorn@rivosinc.com>
 
-How so? There is no cpumask argument in the function signature. Can you
-please be precise?
+Reviewed-by: Oscar Salvador <osalvador@suse.de>
 
-> and in such case the 'isolated' cpumask would be just empty.
->
-> We can call cpumask_clear() in that case, and save CPU cycles.
->
-> @@ -282,8 +282,10 @@ static ssize_t print_cpus_isolated(struct device *dev,
->  	if (!alloc_cpumask_var(&isolated, GFP_KERNEL))
->  		return -ENOMEM;
->  
-> -	cpumask_andnot(isolated, cpu_possible_mask,
-> -		       housekeeping_cpumask(HK_TYPE_DOMAIN));
-> +	if (cpu_possible_mask != housekeeping_cpumask(HK_TYPE_DOMAIN))
-> +		cpumask_andnot(isolated, cpu_possible_mask, housekeeping_cpumask(HK_TYPE_DOMAIN));
-> +	else
-> +		cpumask_clear(isolated);
->  	len = sysfs_emit(buf, "%*pbl\n", cpumask_pr_args(isolated));
->  
->  	free_cpumask_var(isolated);
+funny enough, it seems arm64 and riscv are the only ones holding the
+hotplug lock here.
+I think we have the same problem on the other arches as well (at least
+on x86_64 that I can see).
 
-Seriously? You need clear() to emit an empty string via %*pbl?
+If we happen to finally need the lock in those, I would rather have a
+centric function in the generic mm code with the locking and then
+calling an arch specific ptdump_show function, so the lock is not
+scattered. But that is another story.
 
-	if (cpu_possible_mask != housekeeping_cpumask(HK_TYPE_DOMAIN)) {
-        	if (!alloc_cpumask_var(&isolated, GFP_KERNEL))
-                	return -ENOMEM;
-                cpumask_andnot(isolated, cpu_possible_mask, housekeeping_cpumask(HK_TYPE_DOMAIN));
-                len = sysfs_emit(buf, "%*pbl\n", cpumask_pr_args(isolated));
-	  	free_cpumask_var(isolated);
-	} else {
-        	len = sysfs_emit(buf, "\n");
-        }
+ 
 
-That actually would make sense and spare way more CPU cycles, no?
-
-Is it actually worth the larger text size? Not really convinced about that.
-
-Thanks,
-
-        tglx
+-- 
+Oscar Salvador
+SUSE Labs
 
