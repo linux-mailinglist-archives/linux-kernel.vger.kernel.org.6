@@ -1,105 +1,147 @@
-Return-Path: <linux-kernel+bounces-178525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7F0D8C4F04
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:29:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 071838C4F01
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:28:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34FEA28215F
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 10:29:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1996D1F21857
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 10:28:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78AD813473E;
-	Tue, 14 May 2024 09:47:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A4BE134418;
+	Tue, 14 May 2024 09:46:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ebZtsB3+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L4HGvJ05"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B791453E15;
-	Tue, 14 May 2024 09:47:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DDE753E15;
+	Tue, 14 May 2024 09:46:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715680022; cv=none; b=jqHH/7jmU+f+ZdwvLmGDwILedoMarpOTTnSBk5r4ITgya/SqCi3hGvODHuPtZxr7AP6o1VvyDryeVO8PVR/5Dd9a2v6GQ5hWPP7kfDWK+Q9Rqm8DVDK9YXcl79xbZlukxfTv9l9ekPOLKBLuUk/hSv6PIcMjIiosHNoHcD66+lo=
+	t=1715680017; cv=none; b=Dg2k+NFUch2BS/ZnAAgyHMRo4Uotdir/PGMgk87I4VPo8wwFI4v8hTe8oL6BLFAoAFRWgtlpfE8UFBB/mvfSb/cTdv4bXWT01EUVsFAgzuKwp/d6IhEJP8UJCfnan6UD2hHmjXZml5Gjy5FhLsXFqX2RMxYpljSJtRcoc7G/Hnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715680022; c=relaxed/simple;
-	bh=1Zdh3I3iV5/PfBYzP95f6ESpwYqR9hmPaBqIdpc80Os=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aQwGGz1wpWjABiWddG3EVHrr3hsQ2zKWx10tjPiCvogagutcdnP+7IQoW0riLuMXdIysRIv68SGnIEE9/05JODV/HeDcxo1FXjBchtORTwJIOj3p6AxJWRzrLpSZYVXZXf5FFpzkP6ZHwCJcpeYSRNylU5SE7uX39v+2bzccGYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ebZtsB3+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA5B1C32782;
-	Tue, 14 May 2024 09:46:43 +0000 (UTC)
+	s=arc-20240116; t=1715680017; c=relaxed/simple;
+	bh=dfYJ4UEi4cz7TvFXBGiFzXx4XErQQccYti1P3UdmCOU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ntA8nqIQ284HVuUlgd8vETHqoK+Qa+nxAIisB52jWUfH3qTSsIzu1/+M0kdp0LLk7lgvy47rAnC0OQ7eBvg0l2mGU7v7IlvlrUyuHvH6Vm2vUrB2BNorcrLXNjB2iHYTa4fvE5eEHsMbzBChvQU2MheSdhyOAO3wEYn2DSF1a2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L4HGvJ05; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 921E4C32786;
+	Tue, 14 May 2024 09:46:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715680022;
-	bh=1Zdh3I3iV5/PfBYzP95f6ESpwYqR9hmPaBqIdpc80Os=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ebZtsB3+Hv9eriC+r0eJ/3356apxrIQaXbLiyLZDcevp1g7Iff2R1fc8/pmU8Tcfh
-	 4X+M6GKQzy35r38ADhYUL+zcUr23n/XXrk8plj4BDhjELOyfIPZ+7EFtdbvp4XtBCr
-	 PZ0L5bgmeSryggK2PorkIuIpafdY4jLfrL7TTFwSU3WiMI1LbTskVbNjgfCL536dHW
-	 F1DoJMaaZUAenqkPy9hWgxSvcQUoz8579hYES7RyrtqPMdkIMB/r2Ip51eHTIBbRHW
-	 YgySYldZaPQrSy/Rd3CUDKyfpTm6mZr0ebRukPpjFMO1B7pf+iKNB9eObAYbeMpgEC
-	 qcSG80+KWxkbA==
-Date: Tue, 14 May 2024 10:46:29 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Felix Kaechele <felix@kaechele.ca>, Job Noorman <job@noorman.info>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/5] input: himax_hx83112b: implement MCU register
- reading
-Message-ID: <44570cd2-9540-47f8-a409-26220b0812fb@sirena.org.uk>
-References: <20240511121245.109644-1-felix@kaechele.ca>
- <20240511121245.109644-4-felix@kaechele.ca>
- <ZkKb5_SRNwG1pRou@google.com>
+	s=k20201202; t=1715680016;
+	bh=dfYJ4UEi4cz7TvFXBGiFzXx4XErQQccYti1P3UdmCOU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=L4HGvJ05P1kdy7JsAeGZzTWy5UC5yCDkt7J4izjjNlV+W1yVKpSVB3AtSEcgQn/dm
+	 dOpsRZfjdp3lMmQzu5bajEURt5cuBIFXiyE/2Gi7E5myVtrp3WG2pcvJrAcIAfYOMk
+	 uCvh68F2oD1Oeot5H0m3JzViCCsqxBMn3rXPkmDSTtFzH4JTu8oH7FmlOutWCqEbL4
+	 xMd2Z6jvh6U9uqYYcma+yR5QPY8qCu8ze5eaubLROkaibqDDwpev+M8tfnIcGm/fUd
+	 oIdSDo/05EN2KwpW4RqaFcl0Xam4bNAfNT+GTfv5aWlfX8VJDVMwmXIHTwdphmpoQd
+	 TzvCQAAUS2CmQ==
+From: Puranjay Mohan <puranjay@kernel.org>
+To: Alan Stern <stern@rowland.harvard.edu>,
+	Andrea Parri <parri.andrea@gmail.com>,
+	Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	David Howells <dhowells@redhat.com>,
+	Jade Alglave <j.alglave@ucl.ac.uk>,
+	Luc Maranget <luc.maranget@inria.fr>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Akira Yokosawa <akiyks@gmail.com>,
+	Daniel Lustig <dlustig@nvidia.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org
+Cc: puranjay12@gmail.com
+Subject: [PATCH] tools/memory-model: Add atomic_andnot() with its variants
+Date: Tue, 14 May 2024 09:46:33 +0000
+Message-Id: <20240514094633.48067-1-puranjay@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="qIPUr/BZPS1Qo9uv"
-Content-Disposition: inline
-In-Reply-To: <ZkKb5_SRNwG1pRou@google.com>
-X-Cookie: In the war of wits, he's unarmed.
+Content-Transfer-Encoding: 8bit
 
+Pull-855[1] added the support of atomic_andnot() to the herd tool. Use
+this to add the implementation in the LKMM. All of the ordering variants
+are also added.
 
---qIPUr/BZPS1Qo9uv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Here is a small litmus-test that uses this operation:
 
-On Mon, May 13, 2024 at 04:01:59PM -0700, Dmitry Torokhov wrote:
-> On Sat, May 11, 2024 at 08:12:24AM -0400, Felix Kaechele wrote:
-> > Implement reading from the MCU in a more universal fashion. This allows
-> > properly handling reads of more than 4 bytes using the AHB FIFO
-> > implemented in the chip.
+C andnot
 
-> Mark, do we have anything in regmap to support this better or having a
-> wrapper is the best solution here?
+{
+atomic_t u = ATOMIC_INIT(7);
+}
 
-No, I've not seen something that explicitly requires toggling a burst
-mode on and off to do a bulk operation.  Off the top of my head I'd
-suggest just always leaving the burst mode enabled but I assume there's
-some downside to doing that.  We could add something but I'm not sure if
-it's worth it without having seen any other devices with the same need.
+P0(atomic_t *u)
+{
 
---qIPUr/BZPS1Qo9uv
-Content-Type: application/pgp-signature; name="signature.asc"
+        r0 = atomic_fetch_andnot(3, u);
+        r1 = READ_ONCE(*u);
+}
 
------BEGIN PGP SIGNATURE-----
+exists (0:r0=7 /\ 0:r1=4)
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZDMvUACgkQJNaLcl1U
-h9CCogf/eDQCdhAa8JoQL0uKEvCPgYIHa+U0n7N0kt6REwUn7vSgK8Wiy9Z4wfyE
-FqwL1PXqrv3pHNi9xn8/L+QhpAM2s2TEnVcAp7O4M2m5AlKIJPfzdg2hVBNCkBhu
-1L/idQLya58JGKcrQn4/ukNdf37o9ZE9FyY0s1h8/SBmLQEGUQGVOuCbgQR4QXAU
-/axeuus9qA+pbqmqhdV0vVJPrfwkLZxmOlwkTIbx6wbAodYY3KYV3z0z7onG7Hyo
-wcZys6QN37X7UnZWwyMF57YMXDxVcYv4FoRASc1ILRwMv6ooBHlEA7Pw5MMHm1tr
-m8lhLOwy3MPSOaiuufcJdRHR3py7fw==
-=0n8h
------END PGP SIGNATURE-----
+Test andnot Allowed
+States 1
+0:r0=7; 0:r1=4;
+Ok
+Witnesses
+Positive: 1 Negative: 0
+Condition exists (0:r0=7 /\ 0:r1=4)
+Observation andnot Always 1 0
+Time andnot 0.00
+Hash=78f011a0b5a0c65fa1cf106fcd62c845
 
---qIPUr/BZPS1Qo9uv--
+[1] https://github.com/herd/herdtools7/pull/855
+
+Signed-off-by: Puranjay Mohan <puranjay@kernel.org>
+---
+
+This commit is based on the commit[1] that is adding `&`, `|`, and `^`.
+
+Both of these patches should go together when the next version of herd7 is
+released. I will update the "REQUIREMENTS" section when the new version is
+released.
+
+Later on, I will add some example litmus tests to showcase the usage of
+these new operations.
+
+[1] https://lore.kernel.org/all/20240508143400.36256-1-puranjay@kernel.org/
+
+---
+ tools/memory-model/linux-kernel.def | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/tools/memory-model/linux-kernel.def b/tools/memory-model/linux-kernel.def
+index d1f11930ec51..a12b96c547b7 100644
+--- a/tools/memory-model/linux-kernel.def
++++ b/tools/memory-model/linux-kernel.def
+@@ -70,6 +70,7 @@ atomic_or(V,X)  { __atomic_op(X,|,V); }
+ atomic_xor(V,X) { __atomic_op(X,^,V); }
+ atomic_inc(X)   { __atomic_op(X,+,1); }
+ atomic_dec(X)   { __atomic_op(X,-,1); }
++atomic_andnot(V,X) { __atomic_op(X,&~,V); }
+ 
+ atomic_add_return(V,X) __atomic_op_return{mb}(X,+,V)
+ atomic_add_return_relaxed(V,X) __atomic_op_return{once}(X,+,V)
+@@ -138,3 +139,8 @@ atomic_add_negative(V,X) __atomic_op_return{mb}(X,+,V) < 0
+ atomic_add_negative_relaxed(V,X) __atomic_op_return{once}(X,+,V) < 0
+ atomic_add_negative_acquire(V,X) __atomic_op_return{acquire}(X,+,V) < 0
+ atomic_add_negative_release(V,X) __atomic_op_return{release}(X,+,V) < 0
++
++atomic_fetch_andnot(V,X) __atomic_fetch_op{mb}(X,&~,V)
++atomic_fetch_andnot_acquire(V,X) __atomic_fetch_op{acquire}(X,&~,V)
++atomic_fetch_andnot_release(V,X) __atomic_fetch_op{release}(X,&~,V)
++atomic_fetch_andnot_relaxed(V,X) __atomic_fetch_op{once}(X,&~,V)
+-- 
+2.40.1
+
 
