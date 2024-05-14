@@ -1,180 +1,252 @@
-Return-Path: <linux-kernel+bounces-178946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92E558C59A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 18:19:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7FD38C59A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 18:20:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45F03282259
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:19:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C7B8283FB5
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:20:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DD5C17F399;
-	Tue, 14 May 2024 16:19:43 +0000 (UTC)
-Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E297C17EB9A;
+	Tue, 14 May 2024 16:20:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="dlA82Jfx"
+Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com [209.85.161.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 650882E644
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 16:19:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 260022E644
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 16:20:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715703583; cv=none; b=KYAG56K52ecCh/pS95oqSexoutB8OI9Ih7EKkxqDxwnxIi1WOIntwJSFtlMyNQwt1U9C6CW9dLa9kNNd680eRk3JfE0ulZyb20e5GTRlMe2RsBbPEoEbYKB3l90e33DFhcomIcQkqJHKfFNk0OwzaNgiJq/U9JuGPodP1dsIFhk=
+	t=1715703614; cv=none; b=C+UL5gbjYCyH7iLdXd4f25ysF07kjojPVIQsAL2gQ6ik+2BnhSb5xVQz9mlloB5ug+UT+lmTQDqpYVsEj/5ZaZ7HoF3zeAY5lMKAV+d0VJ35fH/2buQwbXiBh1CRjDV9EkiFJMRi0lWH74Kib9v2u70QRKiSmO1gN0ZdnpC/7oc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715703583; c=relaxed/simple;
-	bh=+ByZcCnWf44fc+o7/2OuFFDEhl+hQdbp8vf3ww8oL0w=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ENRDkDwnalC8nITrmtQmACQV/IH61e4dNa77zf5nKntFYFnCTY2apbQYzsZsJ7uJbLcpJvUc27tHtC8V8hYJfIy/37DmPCtCuFkvIqfy8XCCUpqy7MH/Y8qWdoBxYVHTY7P72v+ADC7RoRx8oVKOr4iYXzrYHETpRHp/cC4/9D8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-7d9fde69c43so637328439f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 09:19:41 -0700 (PDT)
+	s=arc-20240116; t=1715703614; c=relaxed/simple;
+	bh=sBddaltgijYxOlwTiY8lIxG5A8nnnzWqjBV9WdsiQ4A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FC+0DcQEKWaLVjPTwmLaLH7nLCTZl83XWVczJPHsARKGqcyyPuE1qO+MZLCWNTAalcbUWWSdGel7QgN0yR77fvO7AvU47G7updIwI2oFm7x7Vh4Y3ZjjYooP8lQcu4jV2hqFMkJrJqgryz8wB0FWoDVwAbf4c4M1CKSNKhE3aVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=dlA82Jfx; arc=none smtp.client-ip=209.85.161.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-5b27ad74c40so2915597eaf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 09:20:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1715703611; x=1716308411; darn=vger.kernel.org;
+        h=in-reply-to:autocrypt:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UYXKNdfSmwQhSg5U5ughUywC3JHzrWvrSGmvFe4e+Pw=;
+        b=dlA82JfxV3uUeESaoUAG3OLMuleLyhcSUE/0Pzq/T3G1xGYcGtmQOxtAyiOEsc5/eT
+         t8AzzwaG9lHvyInBxQRKqfWQ+mntGfB5zGZWtnzT4FR/dEbRvPTRTDl33/cRxcOULlaF
+         Qkz6Wnb0oM3smBIuORdl3M1fchFyKGt1zzU2A=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715703580; x=1716308380;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ADKpUwPv38gh9DoDzpa2cLgvFE+ua1Pou5uj6pXFteU=;
-        b=ZKOpC9UKvj3qGhwIafquwI6wkjGpeb1fSEMVcFt57DocXKEqcs1UEjQQcOvYC9gmsJ
-         /LXNuWtabW9EogEfxsGBCS4qVM8fV4gfNOAydBdWE8Os0xdGVIoeaXaZAC7mURTywKXx
-         glcENIiXUnHaY+biQCoNc48pSFVhl7qn4D0XXZqMck1IbQTL5EYhoXT2tUOHuefPBXmx
-         qAFrJWaKBwdYgwC6WFF9hrJnKBzVKnc3zU699mNXWPcJjpXmOLJ7hjEc48f6+7zRQUZg
-         XDwWu8/GjoPxEpSoGjqqS99sXOpWtZEcbxwPD8cqwvRZ4NC0QZEpc7+TAvvuyAOYk2uW
-         z0uQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXZLRJB7HZXY4xnVYlQWp0yrOwpUlqRnHJnozn6v1z2/AsP+S6kDCnIpj5o9hZKlWSAvLaed0TiZaCxzy+1dbvctupNFG49dWpuJzyF
-X-Gm-Message-State: AOJu0YyBrib5NKlgaDH1gwuy3TgliXP+wZdtVTdWmOsu8bA4hQum6LmQ
-	q717AqTj1kla6q0hLuJj7Sdt7UYvlOuJfbTwoVjy1x2ccAuv2o5NxxGSfTuxznRfXwOWTm0vrsy
-	1dyInnu2w6A5uPs1fAlzyheOksYbnyqyDUzmF/Smq5PjHaNmyjNjw9bE=
-X-Google-Smtp-Source: AGHT+IF7IuSg4JHHBlLC1BzD0nSErtMxpgz+gfvbW6aB8JzPG4hjusDPW4HIDtmg7y8X4ZIsJ5yCZi8LA+r9BlL17mMeI0AGT7Vy
+        d=1e100.net; s=20230601; t=1715703611; x=1716308411;
+        h=in-reply-to:autocrypt:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=UYXKNdfSmwQhSg5U5ughUywC3JHzrWvrSGmvFe4e+Pw=;
+        b=BGTSrewd43NoT5lCHTt00EW4SheTtqaCG8GZ9c8g12iaIKZuMAgKHSpAXZ0b6o1JkV
+         iHnaZD6+ltKmwNqmz+xnhg6j1OdnbmIEtnFvBsOHEs8ZN4UgW3WTx9/coAUbTnBgq2/U
+         6ngUhNz37jbH93466FUxgRLMWteSXkCERJBi177daUWMsC6p+QtxWnkARXobufZFhako
+         CPWjm8aHxhPIOS1rcJDvukmTC2vnYN9rPj1md2fcLVSVQodyoFXQImcESWctnZcZSJA8
+         t4NaiJaBNxykfpPTPR1EvI9T4HKfYmdB7bpucKzrcf1eR94/XSSOap9zvvIJ3f15fw8C
+         n/6A==
+X-Forwarded-Encrypted: i=1; AJvYcCXwmRALwFm5w/kkx9o9FbVVLWYOQDW65qByY+0oypcWAyTUKDfB9d4qCTJlico4TPKNRIaTjln8wGOBwhtwiMtzxRjoichcl3GwaqHT
+X-Gm-Message-State: AOJu0Yw1Z7pM8y26yuuEF2rFPUmOSBirrwJ38SGAKcQeRh4Ov1US/fee
+	CJQ3nIQn6TDMEtZPXt5Nsu5majWRR7EFvwyFYJQZSL/RjF+qQ6aJCn8rzicxGQ==
+X-Google-Smtp-Source: AGHT+IE2BLWE5ABAZRECtE1xjBTuI1pAPZhcbzCeFfxHlrxH+2pdv4W1Pr8uQB73yE3jmNcWbOcjqQ==
+X-Received: by 2002:a05:6871:6aa:b0:22e:bcfd:deb0 with SMTP id 586e51a60fabf-24172e41c70mr15883818fac.41.1715703611230;
+        Tue, 14 May 2024 09:20:11 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43df77e0c77sm68208541cf.96.2024.05.14.09.20.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 May 2024 09:20:10 -0700 (PDT)
+Message-ID: <b422f395-7554-4596-b779-268718b34383@broadcom.com>
+Date: Tue, 14 May 2024 09:20:06 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:1351:b0:7cc:2522:f5fd with SMTP id
- ca18e2360f4ac-7e1b51a9835mr87941539f.1.1715703580705; Tue, 14 May 2024
- 09:19:40 -0700 (PDT)
-Date: Tue, 14 May 2024 09:19:40 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000077d29606186c5e99@google.com>
-Subject: [syzbot] [ntfs3?] UBSAN: array-index-out-of-bounds in decompress_lznt
-From: syzbot <syzbot+39b2fb0f2638669008ec@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
-	ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] mailbox: Make BCM2835_MBOX default to ARCH_BCM2835
+To: Conor Dooley <conor@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>,
+ Bjorn Andersson <quic_bjorande@quicinc.com>,
+ Maximilian Luz <luzmaximilian@gmail.com>, Ard Biesheuvel <ardb@kernel.org>,
+ Johan Hovold <johan+linaro@kernel.org>, "Michael S. Tsirkin"
+ <mst@redhat.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ Conor Dooley <conor.dooley@microchip.com>,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>, Stefan Wahren <wahrenst@gmx.net>
+References: <20240513235234.1474619-1-florian.fainelli@broadcom.com>
+ <20240513235234.1474619-2-florian.fainelli@broadcom.com>
+ <20240514-amiable-unequal-d4133956c80c@spud>
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20240514-amiable-unequal-d4133956c80c@spud>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="0000000000004e332806186c6012"
 
-Hello,
+--0000000000004e332806186c6012
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-syzbot found the following issue on:
+On 5/14/24 05:29, Conor Dooley wrote:
+> On Mon, May 13, 2024 at 04:52:32PM -0700, Florian Fainelli wrote:
+>> This driver is depended on by CONFIG_FIRMWARE_RASPBERRYPI which provides
+>> a number of essential services, including but not limited to a Linux
+>> common clock framework provider. Make sure that enable
+>> CONFIG_ARCH_BCM2835 does enable the corresponding mailbox driver.
+>>
+>> Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
+>> ---
+>>   drivers/mailbox/Kconfig | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/mailbox/Kconfig b/drivers/mailbox/Kconfig
+>> index 42940108a187..2b4cde562a90 100644
+>> --- a/drivers/mailbox/Kconfig
+>> +++ b/drivers/mailbox/Kconfig
+>> @@ -109,6 +109,7 @@ config ALTERA_MBOX
+>>   config BCM2835_MBOX
+>>   	tristate "BCM2835 Mailbox"
+>>   	depends on ARCH_BCM2835
+>> +	default ARCH_BCM2835
+> 
+> This is just "default y", since I doubt ARCH_BCM2835 can be a module?
 
-HEAD commit:    f4345f05c0df Merge tag 'block-6.9-20240510' of git://git.k..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=15035598980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9d7ea7de0cb32587
-dashboard link: https://syzkaller.appspot.com/bug?extid=39b2fb0f2638669008ec
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16375db8980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16ef17a8980000
+Right, although I intend to also add COMPILE_TEST, by then, it might be 
+preferable to have it "default ARCH_BCM2835".
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/eab3aead3b47/disk-f4345f05.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/64d327c02024/vmlinux-f4345f05.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/0191e269a6fd/bzImage-f4345f05.xz
-mounted in repro #1: https://storage.googleapis.com/syzbot-assets/293e623536d7/mount_0.gz
-mounted in repro #2: https://storage.googleapis.com/syzbot-assets/165c0c1a16ff/mount_1.gz
+> 
+> If so, patch 2 could also just be "default y" and I think patch 3 can
+> have the same logic applied to it, given you're defaulting it to a
+> dependency also?
 
-The issue was bisected to:
-
-commit d68968440b1a75dee05cfac7f368f1aa139e1911
-Author: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Date:   Mon Jan 29 07:30:09 2024 +0000
-
-    fs/ntfs3: Update inode->i_size after success write into compressed file
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13472020980000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=10c72020980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=17472020980000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+39b2fb0f2638669008ec@syzkaller.appspotmail.com
-Fixes: d68968440b1a ("fs/ntfs3: Update inode->i_size after success write into compressed file")
-
-------------[ cut here ]------------
-UBSAN: array-index-out-of-bounds in fs/ntfs3/lznt.c:240:16
-index 9 is out of range for type 'const size_t[9]' (aka 'const unsigned long[9]')
-CPU: 1 PID: 5072 Comm: syz-executor335 Not tainted 6.9.0-rc7-syzkaller-00136-gf4345f05c0df #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
- ubsan_epilogue lib/ubsan.c:231 [inline]
- __ubsan_handle_out_of_bounds+0x121/0x150 lib/ubsan.c:429
- decompress_chunk fs/ntfs3/lznt.c:240 [inline]
- decompress_lznt+0x229/0xd50 fs/ntfs3/lznt.c:387
- ni_read_frame+0x1633/0x1c50 fs/ntfs3/frecord.c:2684
- ni_readpage_cmpr+0x38b/0xa60 fs/ntfs3/frecord.c:2143
- ntfs_read_folio+0x19e/0x210 fs/ntfs3/inode.c:725
- filemap_read_folio+0x1a0/0x790 mm/filemap.c:2331
- filemap_update_page mm/filemap.c:2415 [inline]
- filemap_get_pages+0x15a9/0x2090 mm/filemap.c:2529
- filemap_read+0x457/0xfa0 mm/filemap.c:2601
- __kernel_read+0x5c8/0xab0 fs/read_write.c:434
- integrity_kernel_read+0xb0/0x100 security/integrity/iint.c:28
- ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:485 [inline]
- ima_calc_file_shash security/integrity/ima/ima_crypto.c:516 [inline]
- ima_calc_file_hash+0xadb/0x1b30 security/integrity/ima/ima_crypto.c:573
- ima_collect_measurement+0x535/0xa90 security/integrity/ima/ima_api.c:291
- process_measurement+0x13ac/0x1f60 security/integrity/ima/ima_main.c:359
- ima_file_check+0xf2/0x170 security/integrity/ima/ima_main.c:559
- security_file_post_open+0x6d/0xa0 security/security.c:2981
- do_open fs/namei.c:3644 [inline]
- path_openat+0x28b7/0x3240 fs/namei.c:3799
- do_filp_open+0x235/0x490 fs/namei.c:3826
- do_sys_openat2+0x13e/0x1d0 fs/open.c:1406
- do_sys_open fs/open.c:1421 [inline]
- __do_sys_open fs/open.c:1429 [inline]
- __se_sys_open fs/open.c:1425 [inline]
- __x64_sys_open+0x225/0x270 fs/open.c:1425
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fbd0c2059b9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 61 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fffa3c72cd8 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
-RAX: ffffffffffffffda RBX: 00007fffa3c72ea8 RCX: 00007fbd0c2059b9
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000020000180
-RBP: 00007fbd0c298610 R08: 00007fffa3c72ea8 R09: 00007fffa3c72ea8
-R10: 00007fffa3c72ea8 R11: 0000000000000246 R12: 0000000000000001
-R13: 00007fffa3c72e98 R14: 0000000000000001 R15: 0000000000000001
- </TASK>
----[ end trace ]---
+Right.
+-- 
+Florian
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+--0000000000004e332806186c6012
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+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
+riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
+QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
+UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
+M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
+Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
+14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
+a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
+XzCCBVgwggRAoAMCAQICDBP8P9hKRVySg3Qv5DANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
+RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
+UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAxMjE4MTFaFw0yNTA5MTAxMjE4MTFaMIGW
+MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
+BgNVBAoTDUJyb2FkY29tIEluYy4xGTAXBgNVBAMTEEZsb3JpYW4gRmFpbmVsbGkxLDAqBgkqhkiG
+9w0BCQEWHWZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tMIIBIjANBgkqhkiG9w0BAQEFAAOC
+AQ8AMIIBCgKCAQEA+oi3jMmHltY4LMUy8Up5+1zjd1iSgUBXhwCJLj1GJQF+GwP8InemBbk5rjlC
+UwbQDeIlOfb8xGqHoQFGSW8p9V1XUw+cthISLkycex0AJ09ufePshLZygRLREU0H4ecNPMejxCte
+KdtB4COST4uhBkUCo9BSy1gkl8DJ8j/BQ1KNUx6oYe0CntRag+EnHv9TM9BeXBBLfmMRnWNhvOSk
+nSmRX0J3d9/G2A3FIC6WY2XnLW7eAZCQPa1Tz3n2B5BGOxwqhwKLGLNu2SRCPHwOdD6e0drURF7/
+Vax85/EqkVnFNlfxtZhS0ugx5gn2pta7bTdBm1IG4TX+A3B1G57rVwIDAQABo4IB3jCCAdowDgYD
+VR0PAQH/BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZCaHR0cDovL3NlY3Vy
+ZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAuY3J0MEEG
+CCsGAQUFBzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWdu
+MmNhMjAyMDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcCARYmaHR0cHM6Ly93
+d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNVHR8EQjBAMD6gPKA6
+hjhodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNy
+bDAoBgNVHREEITAfgR1mbG9yaWFuLmZhaW5lbGxpQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggr
+BgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQUUwwfJ6/F
+KL0fRdVROal/Lp4lAF0wDQYJKoZIhvcNAQELBQADggEBAKBgfteDc1mChZjKBY4xAplC6uXGyBrZ
+kNGap1mHJ+JngGzZCz+dDiHRQKGpXLxkHX0BvEDZLW6LGOJ83ImrW38YMOo3ZYnCYNHA9qDOakiw
+2s1RH00JOkO5SkYdwCHj4DB9B7KEnLatJtD8MBorvt+QxTuSh4ze96Jz3kEIoHMvwGFkgObWblsc
+3/YcLBmCgaWpZ3Ksev1vJPr5n8riG3/N4on8gO5qinmmr9Y7vGeuf5dmZrYMbnb+yCBalkUmZQwY
+NxADYvcRBA0ySL6sZpj8BIIhWiXiuusuBmt2Mak2eEv0xDbovE6Z6hYyl/ZnRadbgK/ClgbY3w+O
+AfUXEZ0xggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52
+LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgwT
+/D/YSkVckoN0L+QwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIKtOPiQ5+eQI89aB
+bxSBr68QHnx7A5YRbTmdxEpdw8pOMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcN
+AQkFMQ8XDTI0MDUxNDE2MjAxMVowaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZI
+AWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEH
+MAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQCujj4rlpnMB4v/j8XygzMa+zsx52o4Ncr+
+wGfYS4RJ7BYcm3z2+ZK54f4hrRd4ZoB1Ye73A77z/V/pgVsJ//emlOLiMP0KQ92LMElWeZAfgWAu
+kpF8j7MTzzx7FS7qjL2udwvmTut+x+hbEZOSLJAwToTqFsX+J5gOr1r1wHS4doR2zIpxc/Ygrvox
+gEZPxcP9DVb9ejpghmp7fGNbYk1n3jHRGxjI0HEmj9eRBZZGQWiZ3FTo4gw1NwJwsi9KEUW/btor
+CmlpHRkLI3GCNeWXgPLgrQDjLAdApQjK9+tVdxiM69BplY+MtcknXMkLlTqlfdqBqJKMAXGn023y
+jqPY
+--0000000000004e332806186c6012--
 
