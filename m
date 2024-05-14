@@ -1,111 +1,187 @@
-Return-Path: <linux-kernel+bounces-178914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBB648C5969
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 18:08:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F33F8C596C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 18:09:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78A0A28300D
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:08:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99E471F2433D
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:09:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B13C17EBB3;
-	Tue, 14 May 2024 16:08:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8191717EBB6;
+	Tue, 14 May 2024 16:09:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jQGTrt9I"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="R9Yqk8AD"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED5CE1292D2
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 16:08:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BB9B1448F3
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 16:09:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715702919; cv=none; b=TwuVl6ogKkLtVgh9M/zXZiII1lb5GzWAWKahtVCUH9QDoOUocW3EDJ4qmyRDzZ1E4PCXAqyXOBJFtE5m+0XJK22qN569SfMcvbmpGJfUmu68i7rN4pFIfwC+eJdebtH+PPG7zBNjg+H0p0Byr/L/03yfHM96lGPoPujrElyu87E=
+	t=1715702949; cv=none; b=UYAOALCUIuBSgEiB5TWsW26+OOLUTCNY6MSvSmc1POMXkiHi08ahRAGLpk3tL/bk6a4sW1RYoC3mfmMO/4IJ72rMasSI31NlZwW8H4P4kvGMLoAwkbRufRBxj1cdYbZhw5CAptO3s6XA7OXX+Y7rcNjKqKaaEhgypPMTCIWaT5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715702919; c=relaxed/simple;
-	bh=XSPCe4xxFqvcMIAr/wLrWhpaH8vmS5z/ad4RRHXg9RQ=;
+	s=arc-20240116; t=1715702949; c=relaxed/simple;
+	bh=2NaUwO+c1ZDsGQvErbOvxItcWN5Zu9ssbIm5SR9sE/c=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aerKaQHWALjovOIiM5Ap6uYQqTtm4hc0UV2X1xwyyWVXtknDiJf1ZNsgk6HI0VSF2SAJ2aiQLUlDpcn+FhUdtzzS7hIxlpb2B3Pf+DaF1akkj43lDYixb9gZQ9CfKbytyqCDRCsFdydK8zNOHpIiDUN03iamyxHLTZKoFp+rsps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jQGTrt9I; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-51f4d2676d1so6426115e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 09:08:37 -0700 (PDT)
+	 To:Cc:Content-Type; b=iMTctCFriVxFsax2z064laEhefVrkTbDy0Al5a7Gn6zekC7GFYHi+9OOURJHC7TyEmtPVXzQUmtn34tNQteU34a/2HNsYIxQmAFNSg8K0mLmteUmGhq0wWR5XChY8ecW6213YzwW0xVeJvzZjiIDB58uML5UtppUucL23vpxv28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=R9Yqk8AD; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2b346712919so4116852a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 09:09:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715702916; x=1716307716; darn=vger.kernel.org;
+        d=cloudflare.com; s=google09082023; t=1715702947; x=1716307747; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xKy0SWYRXhheNkTNgLPNmG3Z68/bNuWUrHpBXIM6cis=;
-        b=jQGTrt9IImS8ehJESgUiRRJk/gNabOsVDIK7TMXezYdTi6S/1TKFD2wpj4k2mPTSvR
-         RujMOzVr8HsyQkhGPiCmuKvTmSGTwXKBiSKk4K9kAs216ePmtjmuWjH82HF5RygCet65
-         PckDPlW+EkEr2W5Ozk0BmalS0VJ/ys+UJO3lLrOZSPYvFh+ztfnP0n8WhSL+L57oKrCQ
-         qfgKTOK+3f6R6iengUKfSH3tzLme8d2RPHr1HfVBdD5K3OQFWJ9PF9SqcTxWp6o2Fxq1
-         sDWFUP6+xio3m1K6uB1bN48RqiAXJwhvQWO4rpWxzO0tRllV0Jdlrxb7zvkeeup/07Hw
-         seYg==
+        bh=lAA8ABQW5Kp/Vp6EOKwo5QYY73GU6/0kgQ+y5yUiQfk=;
+        b=R9Yqk8ADJ+3zPgFFAnTnautQkuSWGkfokRhRfuh2g6w0ApKsmVPE1phfXWMHNdPHcY
+         kItrOBsMHc4AkbN/ZEinzT6IyFNwz9DmmNR1cB6IjxI+7A+Eu2doDr/3of0H7dKz4pu/
+         rLW1zP/NpDwrqnS+GIwvH0nXjDjbP6dQK6Bvl7KSoBsCPgLWKHZ2uZv4ZLtWXAny94bW
+         UeiHbpaAtmGwFWF6tpTGevFbzbtFL+QkhIp3lPoHhO2tuQfObvV/EJL4tP3nPxznSnhH
+         Vlxhe6+BG4sVnRk0ZuS8D4J++SV9DLY8HQcJDZ+bDR6hKHlxw4ewrHv4VYSaa46FFqs0
+         Dgow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715702916; x=1716307716;
+        d=1e100.net; s=20230601; t=1715702947; x=1716307747;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xKy0SWYRXhheNkTNgLPNmG3Z68/bNuWUrHpBXIM6cis=;
-        b=qEE9cLCe8Wk2VbT/x4FgdSlPlQ/ecZCK4AFAQL4kMvTCqoYdALNRlmdSuhK4YK4nu9
-         D6c6dC+hsu/6nMPBpati8MbjyhHhe61mvg0hjF49ncJ/I1Utkv271keEv95ZHPMHqk/h
-         b9AZ+YoCfgpSL/HURQuWf8vo6rQehXfPWOr7Nef+SC3iAW3z/1cLcybm/O4MJe0RwBHY
-         sXBkN7zWNqP0NCv8/W0W+fdLlIfrvKW/s2cFnJJEx/plGDjXavRLSPvnJdMjIj8Jubdj
-         D6u8681et6vKfBAhXhQJakhW/t0AdQFCPhSo1DgInuTFyH4+lblP27wjUengaPHtCkQP
-         uU+g==
-X-Forwarded-Encrypted: i=1; AJvYcCWDjsve4xYVtUWbB2XmRG8KSZN2JDf+rtADwU8DC7VbnpbVbqT7yev+t3ACMWvf5fZGOcIu0HNTxPJOjy7JT5i7YJe0l2lskTu86kZU
-X-Gm-Message-State: AOJu0YzjCpvIw4VR0t+9OFm3btWUxRbzcLxcl1JjXlRPt+p8en7i1Nm7
-	vvndQLnG1XZWXe7usUPPs9FVfkzwGJzEo4kpSDeSHuPZo3QgxPS3/3PbRlB7Tri05uli5LOkA5K
-	6sE31mRrBvHExa6U4j+qeYR+/lDo=
-X-Google-Smtp-Source: AGHT+IGCA69EF9DerZfCfl7O8gngBZ6tRPZIy/9OT5bTEGZTv+njHDkK0v8AYchwCace99abPrm7ne4ItwLcI1RSlOQ=
-X-Received: by 2002:a05:6512:304d:b0:522:35c6:d343 with SMTP id
- 2adb3069b0e04-52235c6d3d6mr8549406e87.16.1715702915980; Tue, 14 May 2024
- 09:08:35 -0700 (PDT)
+        bh=lAA8ABQW5Kp/Vp6EOKwo5QYY73GU6/0kgQ+y5yUiQfk=;
+        b=NoegHNbrJk3aU8G9QjauVzH4YHUEa3zmAudPtWE1QQqIG4fQgOcTA88vcLApsfkN+i
+         yKy2MIbOb00B5ksRGXqflzyAyr8/UVZLbV9sZqkszu4raNuzQRiuN+fyp9AR1lmRyxJl
+         9+g2JhylbycaVtmC7rgxW1tYUDhYy2jMMhtAmPiXr2PvwqUZ0kf/0Lm6x/DDZPZI17wP
+         EsaTr7aSj6Dc2bykqJVGzVbOI5ZX32LY6KAkol7iiEABDctJjWzBqB1Qy4aZWTTKmKy3
+         EtZxdYIx7/8rH3o59Hx4Q9KSiuxbScTIHcnYpHBnxJBsLj1+nf584ipxg91bisFIMSZm
+         /kpg==
+X-Forwarded-Encrypted: i=1; AJvYcCXMSvdSKwmSswMhaPc58F0g2GDHX9qxrJD8WU0upolm4TvNmwCQvuwtvF8fGXNPq5pndxza7WPhVPxUMJYtVPfY3mjIAIgsDUviu7GE
+X-Gm-Message-State: AOJu0YwBu8fHAUzmB5fpgnhPv5l1XQrh5kzUwB4grKgYfvzUZu6x819h
+	0QFQeaXAGh3Q9QYDAZlucPIhrAtyWReVcUvyBy0I5r18R3b/2hUIOt9Lgc6bbfuKPJ3T/HasjeX
+	73dBNwCBlaDc7P0BF8WAECbj0rOShZdA8k5O9yw==
+X-Google-Smtp-Source: AGHT+IH3dmdyHallXCVdxeMNdlicZ1dK8HZ6VAkn0dTMFFhhdJk11v+SFUlYIwiiSPc4lireyO7nGZTI2WmMinVlE0k=
+X-Received: by 2002:a17:90a:bd8d:b0:2b9:a299:918f with SMTP id
+ 98e67ed59e1d1-2b9a29992dcmr1249853a91.6.1715702947417; Tue, 14 May 2024
+ 09:09:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <7efffaa0-6330-4b01-b3d2-63eb063cbbb0@gmail.com>
- <CAHx5RXD8qFmbEytrPcd40Pj0VRo7uOvZjucrMj6Xxqw73YyS1Q@mail.gmail.com>
- <212a9464-d52b-4730-95b9-5a0aebd38c91@gmail.com> <CAHx5RXCWW5M-eW5v65bAkQWZemsU2NTvDv3jA9_XKz=+YP56Qg@mail.gmail.com>
- <688e54ec-3b29-4e3b-a2c3-f2c83b9c97b7@lunn.ch> <CAHx5RXBFdzsgKXR94gdZd2b=uz8PJDg4OjLPJxKtsdhcjJq3Qw@mail.gmail.com>
- <e307a237-68e3-40c9-be31-4fe3d560ada2@lunn.ch> <CAHx5RXCF0=Soz_k88RGvJFGrajaxn=mVnqpb99GAQ=b7XOcWiw@mail.gmail.com>
- <732d8bb2-1d4f-4958-b130-0bd15a407271@gmail.com> <CAHx5RXDaweFTF_Qt0GdBH4nBeMqwL4VVto7xzHBvFgFL5n=Ebg@mail.gmail.com>
- <c8c01e53-0a45-4319-88ff-bfb0caba150c@lunn.ch>
-In-Reply-To: <c8c01e53-0a45-4319-88ff-bfb0caba150c@lunn.ch>
-From: Stephen Langstaff <stephenlangstaff1@gmail.com>
-Date: Tue, 14 May 2024 17:08:24 +0100
-Message-ID: <CAHx5RXDzN93WaYFe2bk6m2TmMC+A9vsmhodRFmZi17cFY5CrWQ@mail.gmail.com>
-Subject: Re: drivers/net/dsa/dsa_loop_bdinfo.c build problems
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Florian Fainelli <f.fainelli@gmail.com>, linux-kernel@vger.kernel.org, OlteanV@gmail.com
+References: <20240503221634.44274-1-ignat@cloudflare.com> <CALrw=nGhgRrhJ5mWWC6sV2WYWoijvD9WgFzMfOe6mHmqnza-Hw@mail.gmail.com>
+ <D18XXJ373C2V.2M6AOMKD1B89W@kernel.org> <CALrw=nHGLN=dn3fbyAcXsBufw0tAWUT1PKVHDK5RZkHcdd3CUw@mail.gmail.com>
+ <D19CUF0H9Q3S.3L5Y5S9553S5@kernel.org> <CALrw=nEZ07U9VhbGsnpchOYw1icUZCnuoHHXkJLzhFqSPe9_fQ@mail.gmail.com>
+ <D19F74M6B8UC.2VEOOZHGOS87V@kernel.org> <D19FUGDA2CUO.16EF7U9ZEZ4SD@kernel.org>
+ <D19GWXHYP2VC.1OY7BOW5LNXVF@kernel.org> <D19H0UVF3R0O.3N4GLZWFRZ2DO@kernel.org>
+ <CALrw=nE7ga6wxSqrJBTOaj+pPXhi4+-Rn4ePRC9vXL-8Qd3GrA@mail.gmail.com> <D19HDMZ1OKN9.2PX2FJVY4WZ09@kernel.org>
+In-Reply-To: <D19HDMZ1OKN9.2PX2FJVY4WZ09@kernel.org>
+From: Ignat Korchagin <ignat@cloudflare.com>
+Date: Tue, 14 May 2024 17:08:56 +0100
+Message-ID: <CALrw=nF53qsmBp06qDerh3++0VYm-OZJ8k-Es3+2AAQFRjY-9w@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/2] TPM derived keys
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: James Bottomley <James.Bottomley@hansenpartnership.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	David Howells <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, serge@hallyn.com, linux-integrity@vger.kernel.org, 
+	keyrings@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel-team@cloudflare.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 14, 2024 at 1:32=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrote:
+On Tue, May 14, 2024 at 4:43=E2=80=AFPM Jarkko Sakkinen <jarkko@kernel.org>=
+ wrote:
+>
+> On Tue May 14, 2024 at 6:30 PM EEST, Ignat Korchagin wrote:
+> > On Tue, May 14, 2024 at 4:26=E2=80=AFPM Jarkko Sakkinen <jarkko@kernel.=
+org> wrote:
+> > >
+> > > On Tue May 14, 2024 at 6:21 PM EEST, Jarkko Sakkinen wrote:
+> > > > On Tue May 14, 2024 at 5:30 PM EEST, Jarkko Sakkinen wrote:
+> > > > > On Tue May 14, 2024 at 5:00 PM EEST, Jarkko Sakkinen wrote:
+> > > > > > On Tue May 14, 2024 at 4:11 PM EEST, Ignat Korchagin wrote:
+> > > > > > > For example, a cheap NAS box with no internal storage (disks =
+connected
+> > > > > > > externally via USB). We want:
+> > > > > > >   * disks to be encrypted and decryptable only by this NAS bo=
+x
+> > > > > >
+> > > > > > So how this differs from LUKS2 style, which also systemd suppor=
+ts where
+> > > > > > the encryption key is anchored to PCR's? If I took hard drive o=
+ut of my
+> > > > > > Linux box, I could not decrypt it in another machine because of=
+ this.
+> > > > >
+> > > > > Maybe you could replace the real LUKS2 header with a dummy LUKS2
+> > > > > header, which would need to be able the describe "do not use this=
+" and
+> > > > > e.g. SHA256 of the actual header. And then treat the looked up he=
+ader as
+> > > > > the header when the drive is mounted.
+> > > > >
+> > > > > LUKS2 would also need to be able to have pre-defined (e.g. kernel
+> > > > > command-line or bootconfig) small internal storage, which would b=
+e
+> > > > > also encrypted with TPM's PRCs containing an array of LUKS2 heade=
+r
+> > > > > and then look up that with SHA256 as the key.
+> > > > >
+> > > > > Without knowing LUKS2 implementation to me these do not sound rea=
+ching
+> > > > > the impossible engineer problems so maybe this would be worth of
+> > > > > investigating...
+> > > >
+> > > > Or why you could not just encrypt the whole header with another key
+> > > > that is only in that device? Then it would appear as random full
+> > > > length.
+> > > >
+> > > > I.e. unsealing
+> > > >
+> > > > 1. Decrypt LUKS2 header with TPM2 key
+> > > > 2. Use the new resulting header as it was in the place of encrypted
+> > > >    stored to the external drive.
+> > > > 3. Decrypt key from the LUK2S header etc.
+> > >
+> > > Maybe something like:
+> > >
+> > > 1. Asymmetric for LUKS2 (just like it is)
+> > > 2. Additional symmetric key, which is created as non-migratable and s=
+tored
+> > >    to the TPM2 chip. This deciphers the header, i.e. takes the random
+> > >    away.
+> >
+> > This could work, but you still have the problem of - if the header
+> > gets wiped, all the data is lost.
+> > As for storing things on the TPM chip - that doesn't scale. Today you
+> > only think about disk encryption, tomorrow there is a new application,
+> > which wants to do the same thing and so on. One of the features of
+> > derived keys - you don't store anything, just recreate/derive when
+> > needed and it scales infinitely.
+>
+> OK, so now I know the problem at least and that is probably the
+> most important thing in this discussion, right?
 
-> So try to making FIXED_PHY =3D m, and load it after dsa_loop_bdinfo.ko.
+Yes, I think so.
 
-In my configuration FIXED_PHY is selected by several other modules:
-  =E2=94=82 Selected by [y]:
-  =E2=94=82   - FSL_DPAA_ETH [=3Dy] && NETDEVICES [=3Dy] && ETHERNET [=3Dy]=
- &&
-NET_VENDOR_FREESCALE [=3Dy] && FSL_DPAA [=3Dy] && FSL_FMAN [=3Dy]
-  =E2=94=82   - FWNODE_MDIO [=3Dy] && NETDEVICES [=3Dy] && MDIO_DEVICE [=3D=
-y] &&
-(ACPI [=3Dy] || OF [=3Dy] || COMPILE_TEST [=3Dn])
-  =E2=94=82   - OF_MDIO [=3Dy] && NETDEVICES [=3Dy] && MDIO_DEVICE [=3Dy] &=
-& OF [=3Dy]
-&& PHYLIB [=3Dy]
+> So make a better story, now you also probably have better idea,
+> also split the patch properly by subsystem, send the patch set,
 
-..so it looks pretty tied up with the MDIO support which I guess I
-will need for the real PHY!
+I'm actually not super clear on this part - I have two patches: one
+for TPM header definitions and another one for the keyring subsystem?
+Any other subsystems in play here?
 
-If I sorted out building the dsa_loop_bdinfo.c code as a built-in do
-you think that would solve the ordering issue?
+> and I'll promise to revisit.
+
+Thanks. Would probably take some time as I want to think more on the
+open questions I raised in the description, try to address some
+comments from James B from other replies (key rotation for example)
+and rebase on recently merged TPM encrypted sessions. But since this
+is an RFC I would like to continue the discussion and gather opinions
+from folks here, if there are any more concerns.
+
+> Fair enough? :-)
+>
+> BR, Jarkko
 
