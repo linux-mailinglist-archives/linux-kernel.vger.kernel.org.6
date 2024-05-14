@@ -1,75 +1,69 @@
-Return-Path: <linux-kernel+bounces-178962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F4F98C59DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 18:44:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 643C78C59DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 18:45:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAF872825AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:44:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 824A01C21464
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:45:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2921117EBB0;
-	Tue, 14 May 2024 16:44:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AD5B17F360;
+	Tue, 14 May 2024 16:45:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hkpc2g2X"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="SwLFwFBk"
+Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C22D2AF09;
-	Tue, 14 May 2024 16:44:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 589A92AF09
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 16:45:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715705052; cv=none; b=j2YPetC8/z4s8Kr1w1vurpYFCzkla9aePEcY63ImCkirMB4vTcW4MgAnHxY6kmYAw0ZHSZ9InrOjff3yURYma6GFbuPgPuz+SrarFkHF4VivZKNaS/3aERKwnaAqJ5GgMWnVdUBEO6g5mrxDyD6h+MT3zCTag2w/Q5YkJl5uE+U=
+	t=1715705113; cv=none; b=i9fIx5PEZBMvbo5vfDrUe5IwDjp470kPakrFsPdAA6WtYJc1ZmP47HKhvoiBMYg+X7rYU96MamJq1sIQ7gBukcrba7JsDZ40Dcj3NhP7KJvPmUDJSUKQWrhamqrNVK0PZxuY5qSE7/agHfjVPCzgqbrWm5TI6AU80BQQO1CHKkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715705052; c=relaxed/simple;
-	bh=TF6OcNMMClZDu0+KfMH2AcPi5DjWoWCLW6YTjXSjd6M=;
+	s=arc-20240116; t=1715705113; c=relaxed/simple;
+	bh=diyKllqobKbeGJc5R1CZjCecj8JwIgAdEMhvC1ZOIPA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZN+q0wkp+rnJ3qtZM2FgIc96EVvSPN2YcOs6fN20vc1o6iFBnAlQFDykqZip7nwD/pcD0YVcg6wrRUzQgIGK1Aj/e/E9pXx+tMaaHnHsS5/8o6v+PWkIj7rUkXNOMAhk0ITwQ7M2ZGFFgczuKl7F9rUl7UZfaGic8ailhA0ay8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hkpc2g2X; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1ee5235f5c9so45048765ad.2;
-        Tue, 14 May 2024 09:44:09 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=nS2DdhgX8/TP1WBuIpAARWVqFhMjscGR8bpCP1vHQzvu6zq5Wn1Njfyod+0XoEacGTIHZBsZUqW7xh0tlVYRgtGCwS6EyEvGhsMMmVMwTtY1J0ScZrItidqZfb4tUCCD0f6FYnkw2XKOR9d3aL4TCqQkxggQktI6m8Y+G4gvm6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=SwLFwFBk; arc=none smtp.client-ip=209.85.166.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-7e1b520812fso36430839f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 09:45:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715705049; x=1716309849; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ybj1VVny4pX1Hop1gzKlQUO6BxWECSsxknSFeM7x8Fk=;
-        b=Hkpc2g2XcZD+nS42lVWQNHgnAtupZ9trRsK+dN1kM2xEBROpNPjEo/IB4PL84W8Hs8
-         Acq6GbunUovX5mKfoGTi6rOFSk5nKPKm2+t/49/UP9KzAMVxwmBGFnMAsmujdYJnkOOq
-         Taz5apSgH6eVyFXJIZpQPR2T8Ww1jL+aGPwfR56TQJm+LDk/IsPow7QpwXjNmCHh4NeM
-         CF1ocxx/5UuZYk5e8oj3Zl/EnfUiNKEdwdVj4U5iAaPMaOAzt7eKtJ92uOZagkcGoRd3
-         ZRfbrS8snAQ+omP6TWZJJf6/ArZm6puNJKMhKHjWu8jh8aiv+4L/PV8r0wAx8YW7cMiM
-         1UHw==
+        d=linuxfoundation.org; s=google; t=1715705110; x=1716309910; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OqKNcj7j0AZZaaEg2IE4Ch533Q1LfRJ1nDU5mEA1FkI=;
+        b=SwLFwFBkbB0nbUxeqedwjU/lTmquVv67N+Wv80U2rttrPYQJ4WLoNDAoIU5h0PT52R
+         KN6j+gVQQkMe2j9WNJUF7kgNsCe41WdrAEusWLx5PG4T3Twy5QmOGGEdwobuKR85SkVz
+         mCf+ttokVOLfUc64RWCziJn33FXRq8Ak5wTmY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715705049; x=1716309849;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ybj1VVny4pX1Hop1gzKlQUO6BxWECSsxknSFeM7x8Fk=;
-        b=dQb28QpPJPoKG+BOCEkaJbb2lJMPLcf/COU5yDkBnfwfFxB9Xp5LLcLVny+aka3IRO
-         c2FqsYTsyyv2hoVZfza5S7woLQLunrtAR04jS7DWg6KqbEQUYwbv0RUOAzgbRp1cbYFi
-         qi/ZFf7AEyOS9QRy2Obq2d27Hyj0KGhANyKqGy1OgzQai1cHYzzASlRSF9gCimX50RhG
-         eFVmbg1UlYSslyVj/9IQ2BIpbyyFMH7YShLzGikR6/45aeL3FK8XA9hoChfrcLBbUIAM
-         T2sHLbY6DkhzumljvevYWiNpYB8b6oW+evFX5EC67uYkdQFKksQ3FKG0/MEPH/s/+o6u
-         aoGg==
-X-Forwarded-Encrypted: i=1; AJvYcCUFJjdyHP7lCc8N0/7ktEBNZpwvex/ULNNF5RuEhl0E1RvyOKfg897o9/I1dRmWeGp6lV8fGMFv8G0Bujp+XZFTnniQRNtcu3NTexhMXJKetmft8WEOTpSruQUVdHsaLch4JEzpW847HTc=
-X-Gm-Message-State: AOJu0YyFvC1iOfz8iGsNQ5H4QK3hZoVwTDIWMe4joOD3+xyJbVu2nGcZ
-	5cSgo/CTMmoJOrC7mrY8xQne/tyoh7aPydsmoQPMORKaqhLoGBdUh8PVjA==
-X-Google-Smtp-Source: AGHT+IHiMRG8Tkxf0VO5nt3Qj/oDCKfWMbKP9GknWc+aPJSm110qM5xstBNtw78csZRUDnESSDZFBQ==
-X-Received: by 2002:a17:903:228f:b0:1eb:152a:5a6e with SMTP id d9443c01a7336-1ef43c0c9b5mr178366915ad.3.1715705048765;
-        Tue, 14 May 2024 09:44:08 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0badcae8sm99628805ad.103.2024.05.14.09.44.07
+        d=1e100.net; s=20230601; t=1715705110; x=1716309910;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OqKNcj7j0AZZaaEg2IE4Ch533Q1LfRJ1nDU5mEA1FkI=;
+        b=gA354e+eauqcUT7+sWHBFDbtlaODiYEH9TxCm33G0CUTTcFDToBJJdcrhzoE1ljd/Z
+         37xY1zjsJQ50qpmKXwKu8JD7sNwi9favZ9H4VuUUC3Ctr50oSNpFEsKsT83eqv/sd+Lb
+         skQGgwsDMpiZbtibuZqKjfPWEVpE+tbUc2XjYH6zS+JIeKLu9UAAUV/TaUikPv+o5fxm
+         Dfvh2BUQ/ByGT103ULGSjVs/pItIc1t3Ofnl7z/jYwQsA7Taq/ImAESeJX5VFak821G3
+         cSKc72NW2AAAUdEsffUEuuMAbMCYnSUqfuP9TsAYMtSakTV5Cre/UadhVjEmg8anejlT
+         p0Gg==
+X-Gm-Message-State: AOJu0YzNOM5jh9uQsGoLMu7XSQp9aC4AaDB7a1pcs8Hy9+LJ2qDcqN32
+	D5nfWFvYBwMMfjuvGpeTg6ifouKZr60ZWqASy2AaoLvHgJWY/a0p9KHrUdaNMLs=
+X-Google-Smtp-Source: AGHT+IHJWsjymJ9pgm9nI2xMNo2ER37wCeFcVuOst5E9tYnvhx2Gbm+LFuCTw3kM22zofhBtRP8VSg==
+X-Received: by 2002:a92:608:0:b0:36c:3856:4386 with SMTP id e9e14a558f8ab-36cc14e921amr138441975ab.3.1715705110440;
+        Tue, 14 May 2024 09:45:10 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-36cc9473003sm19088335ab.79.2024.05.14.09.45.09
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 May 2024 09:44:07 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <183b8b2a-625e-495d-a443-c57e68ae758f@roeck-us.net>
-Date: Tue, 14 May 2024 09:44:06 -0700
+        Tue, 14 May 2024 09:45:10 -0700 (PDT)
+Message-ID: <58fd25ea-c444-45cf-a41d-c3022e9d5f80@linuxfoundation.org>
+Date: Tue, 14 May 2024 10:45:09 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,146 +71,55 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] hwmon: Add support for ina233
-To: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>, patrick@stwcx.xyz
-Cc: Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240514092242.2739662-1-Delphine_CC_Chiu@wiwynn.com>
+Subject: Re: [PATCH v1 0/4] add tests to verify IFS (In Field Scan) driver
+ functionality
+To: Pengfei Xu <pengfei.xu@intel.com>, shuah@kernel.org,
+ linux-kselftest <linux-kselftest@vger.kernel.org>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, jithu.joseph@intel.com,
+ ashok.raj@intel.com, sathyanarayanan.kuppuswamy@intel.com,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <cover.1714447026.git.pengfei.xu@intel.com>
 Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20240514092242.2739662-1-Delphine_CC_Chiu@wiwynn.com>
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <cover.1714447026.git.pengfei.xu@intel.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 5/14/24 02:22, Delphine CC Chiu wrote:
-> Support ina233 with vshunt
+On 4/29/24 21:31, Pengfei Xu wrote:
+> To verify IFS (In Field Scan [1]) driver functionality, add the following 6
+> test cases:
+>    1. Verify that IFS sysfs entries are created after loading the IFS module
+>    2. Check if loading an invalid IFS test image fails and loading a valid
+>       one succeeds
+>    3. Perform IFS scan test on each CPU using all the available image files
+>    4. Perform IFS scan with first test image file on a random CPU for 3
+>       rounds
+>    5. Perform IFS ARRAY BIST(Board Integrated System Test) test on each CPU
+>    6. Perform IFS ARRAY BIST test on a random CPU for 3 rounds
 > 
-> Signed-off-by: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
-> ---
-
-I don't understand what you are doing here. The patch introducing ina233
-support was not accepted, still waiting for you to apply the changes
-I asked for. This is v2, which doesn't really add support for ina233
-but adds a non-standard attribute on top of the not accepted patch.
-
-As for reporting the shunt voltage, I don't mind, but it should be
-reported as standard attribute. The pmbus core supports reporting
-a "VMON" voltage (PMBUS_VIRT_READ_VMON) which you should use. I am not
-going to accept a non-standard attribute to report a voltage.
-
-Thanks,
-Guenter
-
->   drivers/hwmon/pmbus/ina233.c | 37 +++++++++++++++++++++++++++++++++++-
->   1 file changed, 36 insertions(+), 1 deletion(-)
+> These are not exhaustive, but some minimal test runs to check various
+> parts of the driver. Some negative tests are also included.
 > 
-> diff --git a/drivers/hwmon/pmbus/ina233.c b/drivers/hwmon/pmbus/ina233.c
-> index d5c7d7408ac3..33736e5049a9 100644
-> --- a/drivers/hwmon/pmbus/ina233.c
-> +++ b/drivers/hwmon/pmbus/ina233.c
-> @@ -11,9 +11,43 @@
->   #include <linux/init.h>
->   #include <linux/kernel.h>
->   #include <linux/module.h>
-> +#include <linux/hwmon-sysfs.h>
->   #include "pmbus.h"
->   
->   #define MFR_CALIBRATION	0xd4
-> +#define MFR_READ_VSHUNT 0xd1
-> +
-> +#define HIGHEST_BIT 15
-> +
-> +static ssize_t ina233_vshunt_show(struct device *dev,
-> +				  struct device_attribute *devattr, char *buf)
-> +{
-> +	int shunt_volt;
-> +	struct i2c_client *client = to_i2c_client(dev->parent);
-> +
-> +	shunt_volt = i2c_smbus_read_word_data(client, MFR_READ_VSHUNT);
-> +	if (shunt_volt < 0)
-> +		return shunt_volt;
-> +
-> +	// Is negative
-> +	if (shunt_volt & (1 << HIGHEST_BIT))
-> +		shunt_volt = ~(shunt_volt & ~(1 << HIGHEST_BIT)) + 1;
-> +
-> +	// This unit is mV.
-> +	// LSB 2.5 μV is reference from spec 7.6.3.2 MFR_READ_VSHUNT
-> +	int val = DIV_ROUND_UP(shunt_volt * 25, 10000);
-> +
-> +	return sysfs_emit(buf, "%d\n", val);
-> +}
-> +
-> +static SENSOR_DEVICE_ATTR_RO(vshunt, ina233_vshunt, 1);
-> +
-> +static struct attribute *ina233_attrs[] = {
-> +	&sensor_dev_attr_vshunt.dev_attr.attr,
-> +	NULL,
-> +};
-> +
-> +ATTRIBUTE_GROUPS(ina233);
->   
->   struct pmbus_driver_info ina233_info = {
->   	.pages = 1,
-> @@ -29,6 +63,7 @@ struct pmbus_driver_info ina233_info = {
->   	.m[PSC_VOLTAGE_OUT] = 8,
->   	.R[PSC_VOLTAGE_IN] = 2,
->   	.R[PSC_VOLTAGE_OUT] = 2,
-> +	.groups = ina233_groups,
->   };
->   
->   static int ina233_probe(struct i2c_client *client)
-> @@ -82,7 +117,7 @@ static struct i2c_driver ina233_driver = {
->   
->   module_i2c_driver(ina233_driver);
->   
-> -MODULE_AUTHOR("Eli Huang <eli_huang@wiwynn.com>");
-> +MODULE_AUTHOR("Delphine_CC_Chiu <Delphine_CC_Chiu@wiwynn.com>");
->   MODULE_DESCRIPTION("PMBus driver for Texas Instruments INA233 and compatible chips");
->   MODULE_LICENSE("GPL");
->   MODULE_IMPORT_NS(PMBUS);
+> [1] https://docs.kernel.org/arch/x86/ifs.html
+> 
+> Pengfei Xu (4):
+>    selftests: ifs: verify test interfaces are created by the driver
+>    selftests: ifs: verify test image loading functionality
+>    selftests: ifs: verify IFS scan test functionality
+>    selftests: ifs: verify IFS ARRAY BIST functionality
+> 
+>   MAINTAINERS                                   |   1 +
+>   tools/testing/selftests/Makefile              |   1 +
+>   .../drivers/platform/x86/intel/ifs/Makefile   |   6 +
+>   .../platform/x86/intel/ifs/test_ifs.sh        | 496 ++++++++++++++++++
+>   4 files changed, 504 insertions(+)
+>   create mode 100644 tools/testing/selftests/drivers/platform/x86/intel/ifs/Makefile
+>   create mode 100755 tools/testing/selftests/drivers/platform/x86/intel/ifs/test_ifs.sh
+> 
 
+I am fine with adding a test. I would need ifs ack or reviewed-by.
+I don't see ifs maintainer on on this thread.
+
+thanks,
+-- Shuah
 
