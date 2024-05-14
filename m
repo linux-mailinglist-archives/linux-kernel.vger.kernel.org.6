@@ -1,79 +1,73 @@
-Return-Path: <linux-kernel+bounces-178397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DF5C8C4D01
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 09:29:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 355168C4D05
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 09:29:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D2F5B229D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 07:29:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E05DB284221
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 07:29:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1467D1EB37;
-	Tue, 14 May 2024 07:28:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0333A249F7;
+	Tue, 14 May 2024 07:28:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VCRqifh/"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KicqaabY"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9705820335
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 07:28:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C27BA21364;
+	Tue, 14 May 2024 07:28:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715671703; cv=none; b=l6EepeRY7RUXKxhIMj3NJB3U9kHOy5QPtJ0kUeJjxPSPhGStfMfWKR7uLPHNMm6r9dFXqrYGR6AI9eZLLUSIMugkB1THqNsUDOJJSDtNZ7F07kWdGdGDwAqP6lyFsA9wLSeseSe2aqIiF9hgYB43BCWb25tVTdehnWDEvjQWJis=
+	t=1715671707; cv=none; b=Fb40HklPxHuRs83U6tDnsIL+Ek40qy7s7VZwU71v/3oQ8ApIGuNOOR+Ez+dBSNjLI6hmF1u5ROyVYJdeCXXmsnCIG35fm0XOAqNHV9W5AMmBqzMxSteYw163Rwuuj1hKKCCFLoWXZeyot28c0cCHgN2SV09Cq+xu8UfbJAdic7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715671703; c=relaxed/simple;
-	bh=/zbNmJnrBYof+TFZ1f9IC1pLr1xpwQrseSt/5531pW8=;
+	s=arc-20240116; t=1715671707; c=relaxed/simple;
+	bh=FRYTpE+ZKXIh4YyPPKLg4bjtwKieQShpeatsuOLN5z8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rTHMFbuxjED6x8OJ8ko1tfrlI8KtkxNoqIiSXikGcu6CCRsu9CE/c7w9UyYzQlFt+f2e3j7OpHguUwRxxrpH6ttc/GwKxbGUUeOtTih5AtbfS2rVM0INLHSjE/NA4VKdZLhAnCwzy9B+bjNanGGzfFvwN4cvJ5htSvBY/Lp5cHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VCRqifh/; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715671699;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rCyrSqY6tNdEEVYrLErxV8jAv56KZFmfGB/kOU6LsTE=;
-	b=VCRqifh/L1XJjIDm/qMwJTeKqTFK3z4O7XkvrG+aoVIB4v1mxW/QNxiFqV5rc/rBOtUCK8
-	RZgUEUidRI4zKKpXk7Duw7TUjp8Hb/gsvpgLxlc9wNqYGlmVx+CknPlwghdP9cZ2mGg7bq
-	hUofz8daf0i0VLlRoHLzDu2rWH/7DF0=
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com
- [209.85.215.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-80-fc11vSwsMI-j5RXQJORV9A-1; Tue, 14 May 2024 03:28:03 -0400
-X-MC-Unique: fc11vSwsMI-j5RXQJORV9A-1
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-61a9f6c869dso4499347a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 00:28:02 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=WwItr+cklYwRM3qLAWoFp8n69/H3wkB7hN/bLT88aaQ76Lk/uZ1yBgOiks4qhHJ/83zwFdXq28tvGUGijQFIP5ygSytccXY4zcR3GnGRFe/ahjxQQxtbuO91szDcYZbIEUsxSTTDW07DYbMZttfkZHhd4DuVUbMO8jSzGVRAjeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KicqaabY; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a599c55055dso1339106166b.0;
+        Tue, 14 May 2024 00:28:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715671704; x=1716276504; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fkOAfgx4bguLtu620L16y0kU0KIWqErrwfo8cR4hKAY=;
+        b=KicqaabYoenpZsk6+xeGWBtSFGVV72/Ndw0kxoO/1VyUyd+Ez6Lsnl+gcz5fr3nlyq
+         wI482gKcZFOwSC2BjmzJSNpTDSYic6RF7G499H+EyeLrmDibOr1O9VQ1z1ywX0rJ3UWE
+         LtOv1ntwY1WLe39QblIopMJUVPOZ87WcleNVKmK/G9aNgHfCKweycizrNK6mFUzS8ZLE
+         WR84HjzE+nS7qcatNZeGbJmCn4l2w2smNMFTJV7iqZQXSIAWrU4yLqlYtWRaivIuvfqW
+         G3vhP7u9MWflOlG/Iq92C4H4hjyNoMywHZNbFjDlAQQyffN5/jz/6YJC7DKn0Wv32mG1
+         wqHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715671682; x=1716276482;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=rCyrSqY6tNdEEVYrLErxV8jAv56KZFmfGB/kOU6LsTE=;
-        b=QkKe9HflPOBdI+wz46vpHjV7mYrxXGYEx4bIb1j0dR+/MLiefr07bIqyLlDSq1WRLJ
-         3TXizXRlhOlM0JF9rtKHu6JPinlNNr/RDHBZ9OFANhiQGf0ZeyUdI+E1CIkWer6ZaSIx
-         JgtJ274kD8ep2wYLi6kuJ8csdib8XI2W/ry/8x/WdZOE+fh3TKLbrZfPbaNCn6jVcYh/
-         uflBUtL/SxQNuyCf5PsIR7traCFolt5Kgf/53RxH0IRr/WOh7byBBJpV/V5ZFnY4eIDg
-         sMiMcIehzm5P2J5FF9bUn4yOaR7EsxgC3phtQky1smHJyQBdzX15tmr3L8YBvNMga/vL
-         aWgg==
-X-Forwarded-Encrypted: i=1; AJvYcCWcMGRNaqSLS4UkeU3FC9X9oBalqkomNeTyno3m8ykCb0xKknVd+3PEl4A/8tlskL348xSdxY1HDyWV06m2I1KTbepM5z9SVa7p7Bp7
-X-Gm-Message-State: AOJu0YyDhPwAADK5HcMKUlQ89INC7vy1fqbapd6+alZ2HWjtNkmNlBmm
-	WO4iU1768KMzws1xjb2/Fl4tGArOGkIaXRaWLfb644dLvkNWiWotvktaIEnaG5r/YYddWcn4MQ+
-	GsNLoOJx4baKO78HW9s5GSRTf3Erv2I08NOuMJzQd4vDkP1VflOu+F7R0Su2pAA==
-X-Received: by 2002:a05:6a21:6802:b0:1af:9321:8ac3 with SMTP id adf61e73a8af0-1afde10debemr11738093637.36.1715671681831;
-        Tue, 14 May 2024 00:28:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHra1DAm/uRiLAzU5PNgm685JCcjDtOry36q06hMMN8aWCTMkQTvupLI92LgQ6KHGdt3jGnDw==
-X-Received: by 2002:a05:6a21:6802:b0:1af:9321:8ac3 with SMTP id adf61e73a8af0-1afde10debemr11738075637.36.1715671681472;
-        Tue, 14 May 2024 00:28:01 -0700 (PDT)
-Received: from [10.72.120.5] ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2b62863cd9dsm10903410a91.12.2024.05.14.00.27.57
+        d=1e100.net; s=20230601; t=1715671704; x=1716276504;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fkOAfgx4bguLtu620L16y0kU0KIWqErrwfo8cR4hKAY=;
+        b=PMxV88h/gqZESsMaHw61zBlssZq/N9IRXnp2DzjYitutMAAhkyGIhB/dElCTR1Y2T9
+         tbuDVw4A9mVfMWH1YgEnbTniEdjMlVKmmXVtaq9zpkyb6F2hfBur0b/LGCM4Z/eTQkMf
+         5WIJWFLyPN578l+mS2DxO/PZJDQltQ5DjBhO2H0ozAxvFKcXRnRM+uiDByDiEBeBx986
+         mLGMtLZae/mPLx8L8GRQlW1lfTQsHl8KbxfePhddZdc/o+B1Hv64ox4EzDwHphyhn2yi
+         P9WVDG/tJn+VJmh7EGOAbf9V0n6bKqPQBM832ZiM0bYbnTdF2kmr/z5wEHvFWMdoSPyO
+         H0ww==
+X-Forwarded-Encrypted: i=1; AJvYcCXNQeqi5PTwMD6Rkjf7+LRc5/sjvmsexuzPNY1rvtANY+lehrzkOLTe1rAs+vBKODCDQlFsCUeArr37CpTaNkptawvjLbVMFrHZVAX0koTVHI93WqRqBH9fCRCX7vQfW08RviWTc0w1j7EctAfsd7IVstHMD9/6gVj8QWw0fNX3t45V9A==
+X-Gm-Message-State: AOJu0YxzvbN47smNDhgUpumbLlB71kG3lOWNvuinaU9d7KnSg5VkcZrG
+	i3jWhp64GE68NAAXYEIqkfbzL7NoTcEfHcNhd4/ZvtcbFJAcCh+r
+X-Google-Smtp-Source: AGHT+IE1NondGHhAST7tDS6gFOX8bCH78EncM9TLCv5C0qyrSxfln2AbTQ6B2TWE1aZc67h/cD+soQ==
+X-Received: by 2002:a17:906:4443:b0:a59:c728:5420 with SMTP id a640c23a62f3a-a5a2d6786damr777502266b.66.1715671703779;
+        Tue, 14 May 2024 00:28:23 -0700 (PDT)
+Received: from [10.76.84.175] ([5.2.194.157])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a7a944664sm104110266b.37.2024.05.14.00.28.22
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 May 2024 00:28:01 -0700 (PDT)
-Message-ID: <5a1ff1a3-3197-40b4-8b9c-f2ec567ff24e@redhat.com>
-Date: Tue, 14 May 2024 15:27:56 +0800
+        Tue, 14 May 2024 00:28:22 -0700 (PDT)
+Message-ID: <82131f75-b03b-4015-9421-548b0fd7be6e@gmail.com>
+Date: Tue, 14 May 2024 10:28:21 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,182 +75,32 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH md-6.10 8/9] md: factor out helpers for different
- sync_action in md_do_sync()
-To: Yu Kuai <yukuai1@huaweicloud.com>, agk@redhat.com, snitzer@kernel.org,
- mpatocka@redhat.com, song@kernel.org
-Cc: dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-raid@vger.kernel.org, yukuai3@huawei.com, yi.zhang@huawei.com,
- yangerkun@huawei.com
-References: <20240509011900.2694291-1-yukuai1@huaweicloud.com>
- <20240509011900.2694291-9-yukuai1@huaweicloud.com>
-From: Xiao Ni <xni@redhat.com>
-In-Reply-To: <20240509011900.2694291-9-yukuai1@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH 6/6] iio: adc: ad7173: Add support for AD411x devices
+To: David Lechner <dlechner@baylibre.com>, dumitru.ceclan@analog.com
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240401-ad4111-v1-0-34618a9cc502@analog.com>
+ <20240401-ad4111-v1-6-34618a9cc502@analog.com>
+ <CAMknhBFdtv84E_S4wa4UW0pO2yiUEk9=jn=_i4F=b8VHdR6v+w@mail.gmail.com>
+Content-Language: en-US
+From: "Ceclan, Dumitru" <mitrutzceclan@gmail.com>
+In-Reply-To: <CAMknhBFdtv84E_S4wa4UW0pO2yiUEk9=jn=_i4F=b8VHdR6v+w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 01/04/2024 22:45, David Lechner wrote:
+>>         unsigned int clock;
+>>         unsigned int id;
+>>         char *name;
+>> +       bool has_current_inputs;
+> Maybe more future-proof to have num_current_inputs instead of bool?
 
-在 2024/5/9 上午9:18, Yu Kuai 写道:
-> From: Yu Kuai <yukuai3@huawei.com>
->
-> Make code cleaner by replace if else if with switch, and it's more
-> obvious now what is doning for each sync_action. There are no
-
-Hi Kuai
-
-type error s/doning/doing/g
-
-Regards
-
-Xiao
-
-> functional changes.
->
-> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-> ---
->   drivers/md/md.c | 123 ++++++++++++++++++++++++++++--------------------
->   1 file changed, 73 insertions(+), 50 deletions(-)
->
-> diff --git a/drivers/md/md.c b/drivers/md/md.c
-> index 2fc81175b46b..42db128b82d9 100644
-> --- a/drivers/md/md.c
-> +++ b/drivers/md/md.c
-> @@ -8928,6 +8928,77 @@ void md_allow_write(struct mddev *mddev)
->   }
->   EXPORT_SYMBOL_GPL(md_allow_write);
->   
-> +static sector_t md_sync_max_sectors(struct mddev *mddev,
-> +				    enum sync_action action)
-> +{
-> +	switch (action) {
-> +	case ACTION_RESYNC:
-> +	case ACTION_CHECK:
-> +	case ACTION_REPAIR:
-> +		atomic64_set(&mddev->resync_mismatches, 0);
-> +		fallthrough;
-> +	case ACTION_RESHAPE:
-> +		return mddev->resync_max_sectors;
-> +	case ACTION_RECOVER:
-> +		return mddev->dev_sectors;
-> +	default:
-> +		return 0;
-> +	}
-> +}
-> +
-> +static sector_t md_sync_position(struct mddev *mddev, enum sync_action action)
-> +{
-> +	sector_t start = 0;
-> +	struct md_rdev *rdev;
-> +
-> +	switch (action) {
-> +	case ACTION_CHECK:
-> +	case ACTION_REPAIR:
-> +		return mddev->resync_min;
-> +	case ACTION_RESYNC:
-> +		if (!mddev->bitmap)
-> +			return mddev->recovery_cp;
-> +		return 0;
-> +	case ACTION_RESHAPE:
-> +		/*
-> +		 * If the original node aborts reshaping then we continue the
-> +		 * reshaping, so set again to avoid restart reshape from the
-> +		 * first beginning
-> +		 */
-> +		if (mddev_is_clustered(mddev) &&
-> +		    mddev->reshape_position != MaxSector)
-> +			return mddev->reshape_position;
-> +		return 0;
-> +	case ACTION_RECOVER:
-> +		start = MaxSector;
-> +		rcu_read_lock();
-> +		rdev_for_each_rcu(rdev, mddev)
-> +			if (rdev->raid_disk >= 0 &&
-> +			    !test_bit(Journal, &rdev->flags) &&
-> +			    !test_bit(Faulty, &rdev->flags) &&
-> +			    !test_bit(In_sync, &rdev->flags) &&
-> +			    rdev->recovery_offset < start)
-> +				start = rdev->recovery_offset;
-> +		rcu_read_unlock();
-> +
-> +		/* If there is a bitmap, we need to make sure all
-> +		 * writes that started before we added a spare
-> +		 * complete before we start doing a recovery.
-> +		 * Otherwise the write might complete and (via
-> +		 * bitmap_endwrite) set a bit in the bitmap after the
-> +		 * recovery has checked that bit and skipped that
-> +		 * region.
-> +		 */
-> +		if (mddev->bitmap) {
-> +			mddev->pers->quiesce(mddev, 1);
-> +			mddev->pers->quiesce(mddev, 0);
-> +		}
-> +		return start;
-> +	default:
-> +		return MaxSector;
-> +	}
-> +}
-> +
->   #define SYNC_MARKS	10
->   #define	SYNC_MARK_STEP	(3*HZ)
->   #define UPDATE_FREQUENCY (5*60*HZ)
-> @@ -9046,56 +9117,8 @@ void md_do_sync(struct md_thread *thread)
->   		spin_unlock(&all_mddevs_lock);
->   	} while (mddev->curr_resync < MD_RESYNC_DELAYED);
->   
-> -	j = 0;
-> -	if (test_bit(MD_RECOVERY_SYNC, &mddev->recovery)) {
-> -		/* resync follows the size requested by the personality,
-> -		 * which defaults to physical size, but can be virtual size
-> -		 */
-> -		max_sectors = mddev->resync_max_sectors;
-> -		atomic64_set(&mddev->resync_mismatches, 0);
-> -		/* we don't use the checkpoint if there's a bitmap */
-> -		if (test_bit(MD_RECOVERY_REQUESTED, &mddev->recovery))
-> -			j = mddev->resync_min;
-> -		else if (!mddev->bitmap)
-> -			j = mddev->recovery_cp;
-> -
-> -	} else if (test_bit(MD_RECOVERY_RESHAPE, &mddev->recovery)) {
-> -		max_sectors = mddev->resync_max_sectors;
-> -		/*
-> -		 * If the original node aborts reshaping then we continue the
-> -		 * reshaping, so set j again to avoid restart reshape from the
-> -		 * first beginning
-> -		 */
-> -		if (mddev_is_clustered(mddev) &&
-> -		    mddev->reshape_position != MaxSector)
-> -			j = mddev->reshape_position;
-> -	} else {
-> -		/* recovery follows the physical size of devices */
-> -		max_sectors = mddev->dev_sectors;
-> -		j = MaxSector;
-> -		rcu_read_lock();
-> -		rdev_for_each_rcu(rdev, mddev)
-> -			if (rdev->raid_disk >= 0 &&
-> -			    !test_bit(Journal, &rdev->flags) &&
-> -			    !test_bit(Faulty, &rdev->flags) &&
-> -			    !test_bit(In_sync, &rdev->flags) &&
-> -			    rdev->recovery_offset < j)
-> -				j = rdev->recovery_offset;
-> -		rcu_read_unlock();
-> -
-> -		/* If there is a bitmap, we need to make sure all
-> -		 * writes that started before we added a spare
-> -		 * complete before we start doing a recovery.
-> -		 * Otherwise the write might complete and (via
-> -		 * bitmap_endwrite) set a bit in the bitmap after the
-> -		 * recovery has checked that bit and skipped that
-> -		 * region.
-> -		 */
-> -		if (mddev->bitmap) {
-> -			mddev->pers->quiesce(mddev, 1);
-> -			mddev->pers->quiesce(mddev, 0);
-> -		}
-> -	}
-> +	max_sectors = md_sync_max_sectors(mddev, action);
-> +	j = md_sync_position(mddev, action);
->   
->   	pr_info("md: %s of RAID array %s\n", desc, mdname(mddev));
->   	pr_debug("md: minimum _guaranteed_  speed: %d KB/sec/disk.\n", speed_min(mddev));
-
+ At first I agreed with this, but the way that the current inputs are
+mapped to reg values does not really offer a way to extend them
+without changing completely the numbering scheme. If that happens,
+changing this field will be the least bit to need changing.
 
