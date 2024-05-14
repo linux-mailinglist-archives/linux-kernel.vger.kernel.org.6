@@ -1,154 +1,125 @@
-Return-Path: <linux-kernel+bounces-178560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48B368C500F
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:57:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C9838C5034
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:59:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E1681F21130
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 10:57:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8458E284C2B
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 10:58:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DC101386B5;
-	Tue, 14 May 2024 10:34:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TA28sTl8"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35D3A13A260;
+	Tue, 14 May 2024 10:38:05 +0000 (UTC)
+Received: from mail115-100.sinamail.sina.com.cn (mail115-100.sinamail.sina.com.cn [218.30.115.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22D62320F;
-	Tue, 14 May 2024 10:34:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6533A4205D
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 10:37:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715682891; cv=none; b=Hn6lWKgDJocCeF4u5/b/y3ll/bbfNXnI0PORFtz4pQu1JGdFlMlsOW71eylwRaTXTNmftezgKgKNL7ywxL6LHUz+Zs+gPcsy8SuOS3ho/lA6QTOUGXF9G68pArbUi0Fc1kA5q+QmX2p3H/lxPE/2Eqa9Q0vB4f0kbTmoMkeQQdw=
+	t=1715683084; cv=none; b=eYck2xl1kETQblzwBgUuUzKdSv0zCHsGCksX5HYIEUPfaxVMX13t5Rtp6iTNFM1QblA0C1KcH1rxmao8LTOT+h/Qvw9iZ1pfevyUtfgfvFPbxBHFyGDZiqT3CDWr4fShN2XGybQbko6nSZg1Gkb96yzyOa12ypnOw9eXRegSn5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715682891; c=relaxed/simple;
-	bh=TWwiNmIgzodg4vjdt4GkKt1IUIQV7RRqeSjjxHf7908=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LBnBrLk6EcunEnyvyYySHVj+nDlPk04FDd2JeVNPgDSM6b9VOehL6NOzXSE+vDNtJQeMU+G2xDohi1fFnzWO7jrCo4OyryGKtPAjvG+mtD0auewNUfs/kpHiUtGbPDcKfv/qu+6kFGPj2OXBbI5pRwH8fadZPU+vnHAMTGhaLsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TA28sTl8; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a59e4136010so1395306566b.3;
-        Tue, 14 May 2024 03:34:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715682888; x=1716287688; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R7trD0rDL4U7JA4p6IKLVIIlna4fm1L1zpyVjzxwMlo=;
-        b=TA28sTl8F1V/h+L2Zg6gakOXLVbi2P7H/XW+Qgytke1xiovSnSm/LNsjT94QFe3N92
-         zCgWEsjxXPKSZbBIWafAPtC08l0B2m4dDzDC469SMhaZ/WsqBderR1Il9v6reUK2Vxfo
-         686OP1gqA65sS2iCS5ZgA6FF+OIH/oCndwykbti8Z8PaOmFluEIvWhXedsTpPeintn91
-         nm4ks9xbaroMu1ugOc3FdCxSqDLqVsr1LvcqpSgHNilTzU8NuxT/i+HLqcIMkLkZI6je
-         iBhAbqSjXekbYlwG5aNLRV8IdGcwGgypG2kYZ4vsyRIehUtbYq6OCKLSq1YuE55+UPpR
-         jqOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715682888; x=1716287688;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=R7trD0rDL4U7JA4p6IKLVIIlna4fm1L1zpyVjzxwMlo=;
-        b=MIA75hC8LodTakVwwL99uYX4Dls0gJghI8wavuuJNEKebzvMejrWvEnM+f+mFAbJ+7
-         vjF6Jz70cS2fSo7lzbgSqYLB2lgm9av6FN1/QhcTOyBOofIiPT0xlSNunCDerBGz4pcy
-         mnRdZTHxMAcTvMpsPUOLTUi5XhWvokumcXmjH4xdx+NwhAltl5JB7OreLCW2YCdLMKjr
-         GGD3WGbnfzvNS9K+Wb1iC7xOqMQOk75QcaCMr+QU8N73uUjQvOHx8yP5rM6sCoYzAUe/
-         qABmZa65dBz0o2IhoYrJsbK2SIdOKsIxRKSo/VGqd4ONNDjGz2qBOR7gLjtY0iBgJbZQ
-         QKgA==
-X-Forwarded-Encrypted: i=1; AJvYcCU9iidAlrzmO8wOzGRLxVeOhzNCpGVKbSqmQEyLsZ/gbff011RvpbNIEsV0/VFWy9yOHpQO5Rie6jUTcB2f07nVDkusITEB9pSMQuurfYLVfY7CKU16OxihN9OkCKZtuA9+kh96mFB2j8ahlHdkIjFKEcKSp355gsPNgxpIK2FNVHIvlv4f
-X-Gm-Message-State: AOJu0Ywt3mA15TrHBDi66C9MccwhqDNfbg4//1UElnarxwCpJo0AKlbL
-	WH6BMxGAVD93hQqRofTMlqAGF1ch4XZjCbfSNTl7MLsfsob1dyD65tWUsYf3
-X-Google-Smtp-Source: AGHT+IF2/0DyNnYwDYAigKCEdRXmn4XP3gsRHlGPpr2+mdv/bs9kDusp8Vw8UqBhX/D9pnrRYpYSqQ==
-X-Received: by 2002:a17:907:bb83:b0:a59:b68d:4604 with SMTP id a640c23a62f3a-a5a2d65f36amr744967066b.59.1715682888350;
-        Tue, 14 May 2024 03:34:48 -0700 (PDT)
-Received: from njaxe.localnet (host-79-55-54-147.retail.telecomitalia.it. [79.55.54.147])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a178a9d9csm704053766b.74.2024.05.14.03.34.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 May 2024 03:34:48 -0700 (PDT)
-From: matteomartelli3@gmail.com
-To: matteomartelli3@gmail.com, Rob Herring <robh@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Krzysztof Kozlowski <krzk@kernel.org>, linux-sound@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] ASoC: es8311: dt-bindings: add everest es8311 codec
-Date: Tue, 14 May 2024 12:34:47 +0200
-Message-ID: <4196680.zEN4bpRDmC@njaxe>
-In-Reply-To: <20240513184404.GA2805391-robh@kernel.org>
-References:
- <20240510131238.1319333-1-matteomartelli3@gmail.com>
- <4072123.0gxhY3eTYf@njaxe> <20240513184404.GA2805391-robh@kernel.org>
+	s=arc-20240116; t=1715683084; c=relaxed/simple;
+	bh=ttL8nhYSj14rqc6rPfMgzrqper9I6jzQqcP61trWcYU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=S9qPxeQiL6bb8RFfnF2oMwIb+TlXE5IsMGr3zYy8DcWOM5QEXfyCNhepcBaQqasQUPWlVPFlTJQX+g2ue+Eyrhg0zizh88dBcicJTU+chIwO+M97JZRlwZXhzk8262tdHIXOJMkMj7G/N16A+PuGuEDa68NpDnc+tEQGiFLS2m0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.88.50.104])
+	by sina.com (172.16.235.24) with ESMTP
+	id 66433F00000078FB; Tue, 14 May 2024 18:37:55 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 22684945089256
+X-SMAIL-UIID: A76544F3C5E1431A937ADE10C72885BC-20240514-183755-1
+From: Hillf Danton <hdanton@sina.com>
+To: Sam Sun <samsun1006219@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	axboe@kernel.dk,
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+	syzkaller-bugs@googlegroups.com,
+	xrivendell7@gmail.com
+Subject: Re: [Linux kernel bug] INFO: task hung in blk_mq_get_tag
+Date: Tue, 14 May 2024 18:37:42 +0800
+Message-Id: <20240514103742.3137-1-hdanton@sina.com>
+In-Reply-To: <CAEkJfYMhv8AxxHSVdPT9bCX1cJZXw39+bMFh=2N9uNOB4Hcr=w@mail.gmail.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Monday, 13 May 2024 20.44.04 CEST Rob Herring wrote:
-> On Mon, May 13, 2024 at 05:38:16PM +0200, matteomartelli3@gmail.com wrote:
-> > On Monday, 13 May 2024 10.53.57 CEST Krzysztof Kozlowski wrote:
-> > > On 10/05/2024 15:00, Matteo Martelli wrote:
-> > > > Add DT bindings documentation for the Everest-semi ES8311 codec.
-> > > > 
-> > > > Everest-semi ES8311 codec is a low-power mono audio codec with I2S audio
-> > > > interface and I2C control.
-> > > > 
-> > > > Signed-off-by: Matteo Martelli <matteomartelli3@gmail.com>
-> > > > ---
-> > > >  .../bindings/sound/everest,es8311.yaml        | 52 +++++++++++++++++++
-> > > >  1 file changed, 52 insertions(+)
-> > > >  create mode 100644 Documentation/devicetree/bindings/sound/everest,es8311.yaml
-> > > > 
-> > > > diff --git a/Documentation/devicetree/bindings/sound/everest,es8311.yaml b/Documentation/devicetree/bindings/sound/everest,es8311.yaml
-> > > > new file mode 100644
-> > > > index 000000000000..54fb58b9ab58
-> > > > --- /dev/null
-> > > > +++ b/Documentation/devicetree/bindings/sound/everest,es8311.yaml
-> > > > @@ -0,0 +1,52 @@
-> > > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > > +%YAML 1.2
-> > > > +---
-> > > > +$id: http://devicetree.org/schemas/sound/everest,es8311.yaml#
-> > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > > +
-> > > > +title: Everest ES8311 audio CODEC
-> > > 
-> > > This looks exactly like es8316, except of later added port. Are you sure
-> > > you are not planning to add port later, which would make both schemas
-> > > identical?
-> > 
-> > I did not pay enough attention to audio-graph-port property which is in
-> > fact supported and could be added as well. Thus the es8311.yaml would be
-> > identical to es8316.yaml. My guess is that I should just add the
-> > "everest,es8311" compatible string to the existing es8316.yaml even if the
-> > two drivers are separate (like for instance mediatek,mt8186-clock.yaml). Is
-> > this correct?
+On Tue, 14 May 2024 10:05:21 +0800 Sam Sun <samsun1006219@gmail.com>
+> On Tue, May 14, 2024 at 6:54 AM Hillf Danton <hdanton@sina.com> wrote:
+> > On Mon, 13 May 2024 20:57:44 +0800 Sam Sun <samsun1006219@gmail.com>
+> > >
+> > > I applied this patch and tried using the C repro, but it still crashed
+> > > with the same task hang kernel dump log.
+> >
+> > Oh low-hanging pear is sour, and try again seeing if there is missing
+> > wakeup due to wake batch.
+> >
+> > --- x/lib/sbitmap.c
+> > +++ y/lib/sbitmap.c
+> > @@ -579,6 +579,8 @@ void sbitmap_queue_wake_up(struct sbitma
+> >         unsigned int wake_batch = READ_ONCE(sbq->wake_batch);
+> >         unsigned int wakeups;
+> >
+> > +       __sbitmap_queue_wake_up(sbq, nr);
+> > +
+> >         if (!atomic_read(&sbq->ws_active))
+> >                 return;
+> >
+> > --
 > 
-> Yes.
+> I applied this patch together with the last patch. Unfortunately it
+> still crashed.
+
+After two rounds of test, what is clear now so far is -- it is IOs
+in flight that caused the task hung reported, though without spotting
+why they failed to complete within 120 seconds.
 > 
-> > If that's the case:
-> > * should the evereset,es8316.yaml file be renamed to evereset,es831x.yaml?
-> 
-> No.
-> 
-> > * should I also add myself to the maintainers list of that schema?
-> 
-> That's up to you. Do you want to be CCed on future changes to it?
+> Pointed out by Tetsuo, this kernel panic might be caused by sending
+> NMI between cpus. As dump log shows:
+> ```
+> [  429.046960][   T32] NMI backtrace for cpu 0
+> [  429.047499][   T32] CPU: 0 PID: 32 Comm: khungtaskd Not tainted 6.9.0-dirty #6
+> [  429.048417][   T32] Hardware name: QEMU Standard PC (i440FX + PIIX,
+> 1996), BIOS rel-1.16.1-0-g3208b098f51a-prebuilt.qemu.org 04/01/2014
+> [  429.049873][   T32] Call Trace:
+> [  429.050299][   T32]  <TASK>
+> [  429.050672][   T32]  dump_stack_lvl+0x201/0x300
+> ...
+> [  429.063133][   T32]  ret_from_fork_asm+0x11/0x20
+> [  429.063735][   T32]  </TASK>
+> [  429.064168][   T32] Sending NMI from CPU 0 to CPUs 1:
+> [  429.064833][   T32] BUG: unable to handle page fault for address:
+> ffffffff813d4cf1
 
-Yes.
+Given many syzbot reports without gpf like this one, I have difficulty
+understanding it. If it is printed after task hung detected, it should
+be a seperate issue.
 
-> Rob
-> 
-
-Thanks for your feedbacks, I will fix it in patch version 2 as discussed.
-
-Matteo Martelli
-
-
-
+> [  429.065765][   T32] #PF: supervisor write access in kernel mode
+> [  429.066502][   T32] #PF: error_code(0x0003) - permissions violation
+> [  429.067274][   T32] PGD db38067 P4D db38067 PUD db39063 PMD 12001a1
+> [  429.068068][   T32] Oops: 0003 [#1] PREEMPT SMP KASAN NOPTI
+> [  429.068767][   T32] CPU: 0 PID: 32 Comm: khungtaskd Not tainted
+> 6.9.0-dirty #6
+> [  429.069666][   T32] Hardware name: QEMU Standard PC (i440FX + PIIX,
+> 1996), BIOS rel-1.16.1-0-g3208b098f51a-prebuilt.qemu.org 04/01/2014
+> [  429.071142][   T32] RIP: 0010:__send_ipi_mask+0x541/0x690
 
