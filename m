@@ -1,180 +1,187 @@
-Return-Path: <linux-kernel+bounces-178664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 142BB8C5619
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:42:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 078778C561B
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:44:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F493282B7F
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:42:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14609282827
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:43:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2461C6CDA3;
-	Tue, 14 May 2024 12:42:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 250AB6BFB1;
+	Tue, 14 May 2024 12:43:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HdUBJOcy"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="OfdFJswx";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="jYOYD9Hc";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="OfdFJswx";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="jYOYD9Hc"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A4BE42A98;
-	Tue, 14 May 2024 12:42:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC01242A98
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 12:43:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715690548; cv=none; b=lUIfwZaJGv54NMhEsUXb+qDI+Z1a263fvPRMIV2vhc5jdDDgt7FyKj6WsvUbcqJ3NDQeUbsXXGZ2S9iOVxlLgAtPj87XnZcQQTiayEaDVl3ohC99OMJphIPRg/LLJh2wuMKYO4jkxtqEH/D2+3Jql905MvNZazXN94FKJS3MFJU=
+	t=1715690630; cv=none; b=InaBLe6MC8/eWG1WeMuM7sW8CtmP19VwHLHTdJ+20R75KAA+s1qjs2pR1gQw6BrXK7c+ubbg90U95QYsm6RfZE+Jh5gm3P7Y259vmRz8Fbkso04KNCOitodNKBmZonX8yx7tEn1kdnyX+gqLxte7YXir0DfD6qPjPaCq2B34m8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715690548; c=relaxed/simple;
-	bh=Hzybv0ZnTrpR4AWXuutVofcBl76owQvTU7LlgMcj/9M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Iln9Q+//le6OsqAkCfGyRkEj59X0ZFcQhjmy6qOn921wQzwQ6Mt+8bOFKFv20iKCecctyEhoXC965Y6zwVsN3y4QMdIpTNUZdEzy4yvV/sX4ZKPhCwbie+xPw1RI1lSzoqkYPF98r9foUP/flsWyj8AfFu2xBbBssaNDNftk40Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HdUBJOcy; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-6f457853950so4318221b3a.0;
-        Tue, 14 May 2024 05:42:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715690546; x=1716295346; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=l1YeAwgqmGFiWDHi7YEeyDDdEvor4QpkzTYylwt6Hos=;
-        b=HdUBJOcy7YGZ+GGNLDJwNtKPARHWh9SeZJ3qR72qGtORwapHpDdgEbjPLZl8tvucs8
-         ZQ/jSES+Mrbw+w1x93wiFNVQFa76DLea1Sf1pwM8tf0hVgsn/HP43gy17kiGrrRzmjWp
-         ygDs21kKxF1HG5dWym8MhcTFgMWoClO8iEsL2ADavCvA5Vbkq+eL2F0cODOAo5oB7ev3
-         ckQqyemCPWLGZCOPbmxVoRlTwN6k/h1i1KRFJi3z/9vVPrMHJh7y/fseerC/DdrnQxk5
-         Vul9LLJgi7j372u7Vbj8Oy/fFE/yWZIsgv+BcH2u7yxzrPDiFJtuxOPKL3HaVpg7SjVR
-         Uxtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715690546; x=1716295346;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=l1YeAwgqmGFiWDHi7YEeyDDdEvor4QpkzTYylwt6Hos=;
-        b=Tf+km28Spt/N/jShEOiXXDi+5umz7xrONnk26/v8D6y9KWKdsuyS5jBiki45yZ215K
-         Yy9DNDUgHwk+Cv+tNn5ja2Nq47dwUKDxDIX7fOzi0Cc7yzD2MzLtS1GA2AtCyM03ciFP
-         q3np0XRcyb5B9HPSaYO3hTsqwC/r4j3SHuk/qB0C0LKqjzNvkJ0Guf90tM+S9k/z9Nie
-         iLxAA8GAK8wsNRj+VVzu7xMVyq6cwa3f4SST4NwFavPUizXOMQg4VC20NpqH8/ewcd+V
-         P1nApm5alZuYfKhFl0XrhQ/Fn0hSKm1WaPOdjdB+38IOZwGCIabDopisdXKhpWV3OXJR
-         jXCA==
-X-Forwarded-Encrypted: i=1; AJvYcCXXfCPmRe2bFuPMlJb6q63spxfbTPnDbQtRiNXIfRHQsGIpoC1F9+8mm7C+LFr8LF0dzxbmgqW76OVE2uz8Ud8sdlqSstBb3dVtdhYZA7if3RqY8ZTO8Y8K7wKx5UkVedcN9umOqvLnRg==
-X-Gm-Message-State: AOJu0YxG2nt+upx/LoNke4QZFpULnHbpfwcfjgLlOSCwf3zTKcbBWFOu
-	1Db/Y2CwhmGRQjqaQH0kI7BHyTB/27gPf+xCUGt3e1msljSYt9PN
-X-Google-Smtp-Source: AGHT+IEuZgBfRlCELuju1acZdAR4f9lKleu9hlxeVkY1yJpmYFzfQ6+FCyCrOVgQNrs6ma/IXaYl9w==
-X-Received: by 2002:a05:6a20:3cab:b0:1af:fff9:1c59 with SMTP id adf61e73a8af0-1affff91d50mr6018016637.2.1715690546454;
-        Tue, 14 May 2024 05:42:26 -0700 (PDT)
-Received: from rigel (60-241-107-82.static.tpgi.com.au. [60.241.107.82])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2b300d9sm9009831b3a.215.2024.05.14.05.42.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 May 2024 05:42:26 -0700 (PDT)
-Date: Tue, 14 May 2024 20:42:21 +0800
-From: Kent Gibson <warthog618@gmail.com>
-To: Hagar Hemdan <hagarhem@amazon.com>
-Cc: Norbert Manthey <nmanthey@amazon.de>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gpio: prevent potential speculation leaks in
- gpio_device_get_desc()
-Message-ID: <20240514124221.GA76024@rigel>
-References: <20240514122601.15261-1-hagarhem@amazon.com>
+	s=arc-20240116; t=1715690630; c=relaxed/simple;
+	bh=fybAa2AhazjNF6OntAwxCwydTpK6qmpPtRSw57Lp0Xs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sfjgEzJOebS5n0lr/+JDzVEAoPkFEZJVb7ybYOkMBac1a6Y7YvjDD0QxR7LuF8CpwStWsX+Gekr9aNIMHIPVR8HvHbBl9t7E8hBjYYiKslNqi3fQT4IAIvD7eLpcjdDBHG6YAmTfaQoo0YMHFEVOXM+kvcQyM1VQAStyJH/eYXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=OfdFJswx; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=jYOYD9Hc; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=OfdFJswx; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=jYOYD9Hc; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 8C3F53E9B4;
+	Tue, 14 May 2024 12:43:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1715690620; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=b6+tNv49nCn2ieSVSaIM5fRcj0h4rC0itWZkCMQCCrg=;
+	b=OfdFJswxiTBoiznw6QMWMjDcL/nhcYc9+MfvzqZVpLIZQVamC9mPVi2112OzDDB0ULEF74
+	eveBt1u30DF4RxnCL+meNgByyodBg7ROkyQGl0d+3N0p4yZ2xYgRWP6V/AUNcMKqvaoizj
+	i4+ZuLHn/yoigoEVe5cXWVJ42Rho/bE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1715690620;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=b6+tNv49nCn2ieSVSaIM5fRcj0h4rC0itWZkCMQCCrg=;
+	b=jYOYD9Hc6gt0PFWQBWu/snQ6WKHPQHOEIi48m1M7hmhVERDEd9R7gtkyKZj3LyZ7euWZVD
+	PLyUgCTdauLSGwBw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1715690620; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=b6+tNv49nCn2ieSVSaIM5fRcj0h4rC0itWZkCMQCCrg=;
+	b=OfdFJswxiTBoiznw6QMWMjDcL/nhcYc9+MfvzqZVpLIZQVamC9mPVi2112OzDDB0ULEF74
+	eveBt1u30DF4RxnCL+meNgByyodBg7ROkyQGl0d+3N0p4yZ2xYgRWP6V/AUNcMKqvaoizj
+	i4+ZuLHn/yoigoEVe5cXWVJ42Rho/bE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1715690620;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=b6+tNv49nCn2ieSVSaIM5fRcj0h4rC0itWZkCMQCCrg=;
+	b=jYOYD9Hc6gt0PFWQBWu/snQ6WKHPQHOEIi48m1M7hmhVERDEd9R7gtkyKZj3LyZ7euWZVD
+	PLyUgCTdauLSGwBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5AFE41372E;
+	Tue, 14 May 2024 12:43:40 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id A8z4FHxcQ2b4HAAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Tue, 14 May 2024 12:43:40 +0000
+Message-ID: <e2346a0d-6360-46cb-8707-281de8f4d874@suse.de>
+Date: Tue, 14 May 2024 14:43:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240514122601.15261-1-hagarhem@amazon.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: drm: Remove driver dependencies on FB_DEVICE
+To: Manas Ghandat <ghandatmanas@gmail.com>,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, airlied@gmail.com,
+ daniel@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <e5c0a250-8c91-4523-b980-5b0e13749616@gmail.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <e5c0a250-8c91-4523-b980-5b0e13749616@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.29 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com,linux.intel.com,kernel.org,ffwll.ch];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_DN_SOME(0.00)[]
+X-Spam-Score: -4.29
+X-Spam-Flag: NO
 
-On Tue, May 14, 2024 at 12:26:01PM +0000, Hagar Hemdan wrote:
-> Users can call the gpio_ioctl() interface to get information about gpio
-> chip lines.
+Hi
 
-Indeed they can, assuming they have access to the gpiochip device. So what?
+Am 14.05.24 um 14:34 schrieb Manas Ghandat:
+> Hi. I recently looked at the todos of drm and found the topic 
+> interesting. I wanted to get started with this issue but having some 
+> trouble identifying the devices. What would be the right approach to 
+> get started?
 
-> Lines on the chip are identified by an offset in the range
-> of [0,chip.lines).
-> Offset is copied from user and then used as an array index to get
-> the gpio descriptor without sanitization.
+Sorry, there's already someone working on that topic.
 
-Yup, and it returns an -EINVAL, via gpio_device_get_desc(), if it is out
-of range.
+Best regards
+Thomas
 
 >
-> This change ensures that the offset is sanitized by
-> using "array_index_nospec" to mitigate any possibility of speculative
-> information leaks.
+> Thanks,
+>
+> Manas
 >
 
-Speculative leaks of what?  The size of the array?
-That is explicitly public knowledge - if they call GPIO_GET_CHIPINFO_IOCTL
-it will tell them.
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
-> This bug was discovered and resolved using Coverity Static Analysis
-> Security Testing (SAST) by Synopsys, Inc.
->
-> Fixes: aad955842d1c ("gpiolib: cdev: support GPIO_V2_GET_LINEINFO_IOCTL and GPIO_V2_GET_LINEINFO_WATCH_IOCTL")
-> Signed-off-by: Hagar Hemdan <hagarhem@amazon.com>
-> ---
-> Only compile tested, no access to HW.
-> ---
->  drivers/gpio/gpiolib-cdev.c | 10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
-> index 9dad67ea2597..215c03e6808f 100644
-> --- a/drivers/gpio/gpiolib-cdev.c
-> +++ b/drivers/gpio/gpiolib-cdev.c
-> @@ -20,6 +20,7 @@
->  #include <linux/kfifo.h>
->  #include <linux/module.h>
->  #include <linux/mutex.h>
-> +#include <linux/nospec.h>
->  #include <linux/overflow.h>
->  #include <linux/pinctrl/consumer.h>
->  #include <linux/poll.h>
-> @@ -2170,7 +2171,8 @@ static int lineevent_create(struct gpio_device *gdev, void __user *ip)
->  	lflags = eventreq.handleflags;
->  	eflags = eventreq.eventflags;
->
-> -	desc = gpio_device_get_desc(gdev, offset);
-> +	desc = gpio_device_get_desc(gdev,
-> +				array_index_nospec(offset, gdev->ngpio));
-
-Moving an out of bounds index INTO bounds here is totally wrong.
-That is NOT what the user asked for, and in that case they should get an
-error, as they currently do, no an actual different line - which is what
-this change does.
-
-NACK.
-
-Cheers,
-Kent.
-
->  	if (IS_ERR(desc))
->  		return PTR_ERR(desc);
->
-> @@ -2477,7 +2479,8 @@ static int lineinfo_get_v1(struct gpio_chardev_data *cdev, void __user *ip,
->  		return -EFAULT;
->
->  	/* this doubles as a range check on line_offset */
-> -	desc = gpio_device_get_desc(cdev->gdev, lineinfo.line_offset);
-> +	desc = gpio_device_get_desc(cdev->gdev,
-> +				array_index_nospec(lineinfo.line_offset, cdev->gdev->ngpio));
->  	if (IS_ERR(desc))
->  		return PTR_ERR(desc);
->
-> @@ -2514,7 +2517,8 @@ static int lineinfo_get(struct gpio_chardev_data *cdev, void __user *ip,
->  	if (memchr_inv(lineinfo.padding, 0, sizeof(lineinfo.padding)))
->  		return -EINVAL;
->
-> -	desc = gpio_device_get_desc(cdev->gdev, lineinfo.offset);
-> +	desc = gpio_device_get_desc(cdev->gdev,
-> +				array_index_nospec(lineinfo.offset, cdev->gdev->ngpio));
->  	if (IS_ERR(desc))
->  		return PTR_ERR(desc);
->
-> --
-> 2.40.1
->
 
