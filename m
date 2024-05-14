@@ -1,132 +1,229 @@
-Return-Path: <linux-kernel+bounces-178409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C66BE8C4D37
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 09:40:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2D468C4D39
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 09:40:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82A56281EFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 07:40:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB368B22DC0
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 07:40:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E3E321360;
-	Tue, 14 May 2024 07:39:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7547E17583;
+	Tue, 14 May 2024 07:40:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PCi5HuRd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M4oY5dsM"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B31A81DDF6;
-	Tue, 14 May 2024 07:39:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2453214A8F;
+	Tue, 14 May 2024 07:40:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715672389; cv=none; b=CcyFvnHYqUprYCB4kzTN1b6vnhcpvO81KLHq1sMNXw3zLkhOfuFgD3ertjXQ5J71NEdi6wlnRcUzbp8iuBgXD+tOyAuBHLxu0H/o1oajormO6YpzthOP6cxpZEC0UNhxBzxWcxIoBThMpDgf5bnCzTOdq3pjeU2do8V6saybv6o=
+	t=1715672416; cv=none; b=Xc/Sr2G3QiemvPuWbm8J+T3ikXYTHmxhFhxdGS5UrWyS/YydfwVuT9jh3AbTxDWsxPBgYWrAlD2Q9POiDYEZcAylcLYIqQnAvoxV7JTkrdg28gcAemJ/hT1upFJLWJAY+0b3V06iGer3/Ht2n5TyIWkHW32HeR/1aGQR0ofy/v4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715672389; c=relaxed/simple;
-	bh=SWbGqPIqowbFIN53jl9RELvguCAd57M714knD8HLmE8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=P2FXZ8zyo+FNzeObksWT2oWQc0um/eITk4i81OsOOUpDJvLRCjyv2MX0Cg3vEvOuiqlZM5oD1wFdZv2qkr8ijO153IrOyIlhrDLKfbBVLxUN6jlbIK04W9LsxrjBKcEAl5+Qn9YQkfifoqkChlGPvf+KjMj0Bd1UYJi4sUenpJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PCi5HuRd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48CF0C2BD10;
-	Tue, 14 May 2024 07:39:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715672389;
-	bh=SWbGqPIqowbFIN53jl9RELvguCAd57M714knD8HLmE8=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=PCi5HuRdYAC70UK5sa6g8DvSwsoyAYhViF8n9nHHLaMwhVUjBFs7I09yAny/C6rF0
-	 YreGHzays/nDC9G7HRK0E5J4dgjdV8NAbkoj6FrlJJ21wFe3ysEcHb1cTZI/+/zrHa
-	 8S7K3M1eXCoGbBoIxF4Ypm3KLdx1NoK0NnpJVAwar/GvSVPGeMZBxc0HHXdQ4i1LD8
-	 1tyXFRWBnDT7xqzFmHJLeI9dM7vESn6lw+SoCaBGECtBTssRDhSDWnuABiT2j/wBfk
-	 9Nxg74iwhTcGcaOUnBgIUBQt4VJXFeSS6vBay9G+G+NQlJPvQzlfrxMqxFBeRAaANH
-	 QDV2fOxEmfozQ==
-Message-ID: <146476f1-496a-4fa1-9822-4b17254685f9@kernel.org>
-Date: Tue, 14 May 2024 09:39:44 +0200
+	s=arc-20240116; t=1715672416; c=relaxed/simple;
+	bh=wmBYKPZic6o/3k1aA9E1qpLYMrpAVXLd4dEq/ZkqCGc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r7m6o9xcuMPlTxdlPE4Rx74klUaUwjrNhXdWKSBQUUyCEKpraSpH3/6hCwOZgiwfTttF5Iur+3Wj9YyX7ywx2oDopLdUhID7RedZ0MuzJKQKmuvAkdTk6+/1m6okU0/zWLkkZ4W4ZCCMRh3+pE6xDm8kaFgZ6YLoypWC9iH2Rts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M4oY5dsM; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-6f4302187c0so4288333b3a.1;
+        Tue, 14 May 2024 00:40:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715672414; x=1716277214; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3YvLEqN9SF7GsP5Ax2ZZ6G4kMkxSvXwWE7lq39nUwFw=;
+        b=M4oY5dsMwocE7dvSdbdbOVgqXrZlKOWItwYbhkBwOcyG9VKS+hQ25Mcc9x5cgiDWNg
+         UJH8Dj8y4uJ8VHKrBRKrRee9CK9F1YMUwSdy9rZ5x+ivU/xEKtYHA/k2zhLNfab09qoI
+         KLSZy8n5U0LglITz51hCHpFEkHkJLXjmjcbzMz3IdPtkAsmWHM8scOvHSVzLMIOi9vyn
+         e6PUcajqwIWZzcGSPOaumnFkh+QcCdqW7cDc4tdfOXSicWOpLIuibrQAyg60/6ygk6FJ
+         Fi8Pk0yYf0WwZLU1AAAlIMe2j+ixNk0QWQFPExBMhtpmKgXmzwpgMyZ5L2c/uhho70Da
+         PzOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715672414; x=1716277214;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3YvLEqN9SF7GsP5Ax2ZZ6G4kMkxSvXwWE7lq39nUwFw=;
+        b=fhC0zxT1N43mRIvvA3FM2QOnlVq97moOby4PxvCvbnq1FRYWVLHmv4uXHd4rW4Hjt6
+         LAhzrLrkgrPro6GX35qfZRomCTgwz4Oc9OcCzVaZUIX5BHLyBnDji+JH+Fjevlpvmn5M
+         SuMxbaOQTVtSuet6fjU0Mk+YGvr2luqGNIFh/C2bhceaS+B4vHwFmuwqfMhE/EJSjEfU
+         97xya0QcxgaHKiexVB+YJIuFHnqcUq0V6bADGLkZQlAkQ7nF3kWogJs2s/QngO9WzKGA
+         LlRNH2DTQbZLxAOHY4clbKkUvmBaGucuXBAfhRcj2xPLTevDM3/a76twvJIwc1v51myz
+         7gDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUZLBrMIVnHkMsN4pQOdRyrQSLx2B1arr3GCbePzuF1UIJDZD+stFjkh/KB0p3qOsvUD0AQRp0DVMnBJw+D/PXC3L8M1fZT7HOi4OtpKpO3BQg4Ta720Ca90zyHOBDXg90rJav2dhjAaQ==
+X-Gm-Message-State: AOJu0Yw6Obfh4ScDpI6+ptxOPEpUEI3KtWbNAYxzvI9yEiARIWW6oKvi
+	ZXCmaP1jpEsj7p+dNo2bHBIBwD/cPSr31zo8JHAzN3Q4UnPIakuQ
+X-Google-Smtp-Source: AGHT+IGNqjEroFEESDPk+9hGlEurdGGZ2qzj8D2ekEtBC4a4gYh2e8R5zHqiPYEoJGR5nX/Za9xXlA==
+X-Received: by 2002:a05:6a20:4323:b0:1af:58f8:1190 with SMTP id adf61e73a8af0-1afde0d5a81mr17017732637.12.1715672414235;
+        Tue, 14 May 2024 00:40:14 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2a81c8csm8501511b3a.70.2024.05.14.00.40.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 May 2024 00:40:13 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 1E369183B228E; Tue, 14 May 2024 14:40:10 +0700 (WIB)
+Date: Tue, 14 May 2024 14:40:09 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Kuan-Wei Chiu <visitorckw@gmail.com>,
+	Matthew Mirvish <matthew@mm12.xyz>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>, Coly Li <colyli@suse.de>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the refactor-heap tree with the
+ block tree
+Message-ID: <ZkMVWeGUb8OSiC4U@archie.me>
+References: <20240509152745.08af752f@canb.auug.org.au>
+ <te64v6zwwor6jkco6uiu2zz7ern6ijhyu5okfvdz3bmj3w5qfp@mx4zdniwymqj>
+ <Zj1RzZdtfL7UQax1@visitorckw-System-Product-Name>
+ <buehluxvo234sj7onzl6wwjmuslmnkh7g6vnpru23kpti6qmpp@7nqak2ser7mw>
+ <Zj2PX6Fy3BEnQc50@visitorckw-System-Product-Name>
+ <20240510034618.GA3161190@mm12.xyz>
+ <Zj3kowGa9XzJ0yak@visitorckw-System-Product-Name>
+ <Zj/F/yf0ixB/eRX7@visitorckw-System-Product-Name>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] dt-bindings: clock: meson: Convert axg-audio-clkc to
- YAML format
-To: Jan Dakinevich <jan.dakinevich@salutedevices.com>,
- Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
- Jerome Brunet <jbrunet@baylibre.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-amlogic@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- Michael Turquette <mturquette@baylibre.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>,
- Stephen Boyd <sboyd@kernel.org>
-References: <20240513224552.800153-1-jan.dakinevich@salutedevices.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240513224552.800153-1-jan.dakinevich@salutedevices.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="312VrB8j4PQGMpon"
+Content-Disposition: inline
+In-Reply-To: <Zj/F/yf0ixB/eRX7@visitorckw-System-Product-Name>
 
-On 14/05/2024 00:45, Jan Dakinevich wrote:
-> From: Alexander Stein <alexander.stein@mailbox.org>
-> 
-> Convert Amlogic AXG Audio Clock Controller binding to yaml.
-> 
-> Signed-off-by: Alexander Stein <alexander.stein@mailbox.org>
-> Signed-off-by: Jan Dakinevich <jan.dakinevich@salutedevices.com>
-> ---
-> 
-> Also, this patch was discussed at [1].
-> 
-> Changes v1 -> v2 [2]
->  - Stop using conditionals and list all clocks;
->  - Cosmetics.
-> 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Best regards,
-Krzysztof
+--312VrB8j4PQGMpon
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Sun, May 12, 2024 at 03:24:47AM +0800, Kuan-Wei Chiu wrote:
+> On Fri, May 10, 2024 at 05:11:02PM +0800, Kuan-Wei Chiu wrote:
+> > On Thu, May 09, 2024 at 11:46:18PM -0400, Matthew Mirvish wrote:
+> > > On Fri, May 10, 2024 at 11:07:11AM +0800, Kuan-Wei Chiu wrote:
+> > > > On Thu, May 09, 2024 at 07:16:31PM -0400, Kent Overstreet wrote:
+> > > > > On Fri, May 10, 2024 at 06:44:29AM +0800, Kuan-Wei Chiu wrote:
+> > > > > > On Thu, May 09, 2024 at 03:58:57PM -0400, Kent Overstreet wrote:
+> > > > > > > On Thu, May 09, 2024 at 03:27:45PM +1000, Stephen Rothwell wr=
+ote:
+> > > > > > > > Hi all,
+> > > > > > > >=20
+> > > > > > > > Today's linux-next merge of the refactor-heap tree got conf=
+licts in:
+> > > > > > > >=20
+> > > > > > > >   drivers/md/bcache/bset.c
+> > > > > > > >   drivers/md/bcache/bset.h
+> > > > > > > >   drivers/md/bcache/btree.c
+> > > > > > > >   drivers/md/bcache/writeback.c
+> > > > > > > >=20
+> > > > > > > > between commit:
+> > > > > > > >=20
+> > > > > > > >   3a861560ccb3 ("bcache: fix variable length array abuse in=
+ btree_iter")
+> > > > > > > >=20
+> > > > > > > > from the block tree and commit:
+> > > > > > > >=20
+> > > > > > > >   afa5721abaaa ("bcache: Remove heap-related macros and swi=
+tch to generic min_heap")
+> > > > > > > >=20
+> > > > > > > > from the refactor-heap tree.
+> > > > > > > >=20
+> > > > > > > > Ok, these conflicts are too extensive, so I am dropping the=
+ refactor-heap
+> > > > > > > > tree for today.  I suggest you all get together and sort so=
+mething out.
+> > > > > > >=20
+> > > > > > > Coli and Kuan, you guys will need to get this sorted out quic=
+k if we
+> > > > > > > want refactor-heap to make the merge window
+> > > > > >=20
+> > > > > > Hi Coli and Kent,
+> > > > > >=20
+> > > > > > If I understand correctly, the reported bug is because we attem=
+pted to
+> > > > > > point (heap)->data to a dynamically allocated memory , but at t=
+hat time
+> > > > > > (heap)->data was not a regular pointer but a fixed size array w=
+ith a
+> > > > > > length of MAX_BSETS.
+> > > > > >=20
+> > > > > > In my refactor heap patch series, I introduced a preallocated a=
+rray and
+> > > > > > decided in min_heap_init() whether the data pointer should poin=
+t to an
+> > > > > > incoming pointer or to the preallocated array. Therefore, I am
+> > > > > > wondering if my patch might have unintentionally fixed this bug?
+> > > > > >=20
+> > > > > > I am unsure how to reproduce the reported issue. Could you assi=
+st me in
+> > > > > > verifying whether my assumption is correct?
+> > > > >=20
+> > > > > This is a merge conflict, not a runtime. Can you rebase onto Coli=
+'s
+> > > > > tree? We'll have to retest.
+> > > >=20
+> > > > Oh, sorry for the misunderstanding I caused. When I mentioned "bug"=
+ [1]
+> > > > earlier, I was referring to the bug addressed in
+> > > > 3a861560ccb3 ("bcache: fix variable length array abuse in btree_ite=
+r"),
+> > > > not a merge conflict.
+> > > >=20
+> > > > Here are the results after the rebase:
+> > > > https://github.com/visitorckw/linux.git refactor-heap
+> > > >=20
+> > > > [1]: https://bugs.launchpad.net/ubuntu/+source/linux/+bug/2039368
+> > >=20
+> > > The ubuntu kernels build with UBSAN now, and the bug reported is just=
+ a
+> > > UBSAN warning. The original implementation's iterator has a fixed size
+> > > sets array that is indexed out of bounds when the iterator is allocat=
+ed
+> > > on the heap with more space -- the patch restructures it a bit to hav=
+e a
+> > > single iterator type with a flexible array and then a larger "stack"
+> > > type which embeds the iterator along with the preallocated region.
+> > >=20
+> > > I took a brief look at the refactor-heap branch but I'm not entirely
+> > > sure what's going on with the new min heaps: in the one place where t=
+he
+> > > larger iterators are used (in bch_btree_node_read_done) it doesn't lo=
+ok
+> > > like the heap is ever initialized (perhaps since the old iter_init
+> > > wasn't used here because of the special case it got missed in the
+> > > refactor?) With the new heaps it should be fairly easy to fix though;
+> > > just change the fill_iter mempool to be allocating only the minheap d=
+ata
+> > > arrays and setup iter->heap.data properly with that instead.
+> >=20
+> > Thank you, Matthew.
+> > Not initializing the heap's data pointer was indeed my mistake.
+> > Following your advice, I made the following modifications to the code
+> > on the refactor-heap branch in my github repo. I hope this time it
+> > works well.
+> >
+> Should I resend it as a patch series?
+
+Go ahead.
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--312VrB8j4PQGMpon
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZkMVVAAKCRD2uYlJVVFO
+o4xpAQDcKGhTrKxpV8NOk9uCQIEYfiixEwNAetO//zNDgyWC3wD/SacWmXhwC6uq
+YKUG0mVu0I+GIuX7vPUQfOQsSAyfZQ8=
+=vAUY
+-----END PGP SIGNATURE-----
+
+--312VrB8j4PQGMpon--
 
