@@ -1,193 +1,116 @@
-Return-Path: <linux-kernel+bounces-178686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 804688C566A
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:57:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 938798C566C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:57:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1351C1F22833
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:57:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBAF328430C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:57:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DBBA83CD7;
-	Tue, 14 May 2024 12:55:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A16E85C41;
+	Tue, 14 May 2024 12:55:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="SqHcSbng"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d2qWrFSc"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C6605A79B;
-	Tue, 14 May 2024 12:55:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A57F385936;
+	Tue, 14 May 2024 12:55:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715691334; cv=none; b=ZVGgFFP70v07VQmhzkFIeXcfxzGyJy/AaubjpnnV0Gv734i3gQj5ogi0xAOUyt8LsOY0zkaKYbV0/j0kSx5+E7nphvBsTWzqHQT90X2dMnx7I5VjrjdJLJfQ8alBRf82EIIBU4mq4TlF5fM0uuHi1KR0NEAhGxfPl2GyHIYNZKE=
+	t=1715691347; cv=none; b=QXHOOdCEpbhtC0vnr9hpbGwBE483wg8j2D22z0bjj83710Z5YDqGC9BqpyrBL46psJcrbfd5V5tW4nNVV0VJ93NPu2DY2DBqiWE4G0s7B7DJEnHu+5y2gcjJKu714mt+aaBF+28VPj4vgtH4gqPkv8HY4D4coazwxuEPT5K3Vb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715691334; c=relaxed/simple;
-	bh=ogLSvab9s/uaYk8nU1V6GvKZYCgdD8Qs2Pc34NIY5X0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=REk401ZHEAYvgdh8g52Z1C6NddsmO9qCrrMJ2qGJfTKPMX4lQfBgBVorSikqnMco0AEEwRu8kN/ZZSXPf9NRKEBgwlYNZ6uewoNuys+L9m4J7LtUQDNvOfKQMmj6d/7pbv5fS3Wkp52lMuoTO2K72q0oP7r3bQovx944Na8TGA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=SqHcSbng; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 103CD20007;
-	Tue, 14 May 2024 12:55:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1715691323;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1U1lSHyn+UBGYjOWsepzisKyKSuUqvB3hMNBkgKOiVw=;
-	b=SqHcSbngLJlpXZ3Qfg4KbR4KsZwO0iwvwjzI88o8+Tf2e/Q0DD67RsrnIP/SgrGMEJZ3hQ
-	Op8bxR6zbPwZWcXBE35qbKg9Z3diV2VFHHT+H3fyKu2MHKiNGs2FNi+dsvqmB9Id1OI8L0
-	Zcrk4xCQCpNsWLtad7RjLVLwn70oLnGzp+xvl+4UIL1PutKDvt9wCLEPbs0sRSkiIcTmXk
-	x8OVkso3DFNW+I0RFrCfQa9Y5hfPaxWMG0z9OJYQmMRGmNsXb167RC3WrZi0FrHHdbi+5H
-	hL27DJm0xrFQ4QSjQosQYjpgMA0WqCpPxwAYZRB1OAK1XvcexRfN+zuhnoMJTA==
-Date: Tue, 14 May 2024 14:55:18 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: <Steen.Hegelund@microchip.com>
-Cc: <tglx@linutronix.de>, <robh@kernel.org>, <krzk+dt@kernel.org>,
- <conor+dt@kernel.org>, <davem@davemloft.net>, <edumazet@google.com>,
- <kuba@kernel.org>, <pabeni@redhat.com>, <lee@kernel.org>, <arnd@arndb.de>,
- <Horatiu.Vultur@microchip.com>, <UNGLinuxDriver@microchip.com>,
- <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
- <saravanak@google.com>, <bhelgaas@google.com>, <p.zabel@pengutronix.de>,
- <Lars.Povlsen@microchip.com>, <Daniel.Machon@microchip.com>,
- <alexandre.belloni@bootlin.com>, <linux-kernel@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <netdev@vger.kernel.org>,
- <linux-pci@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
- <Allan.Nielsen@microchip.com>, <luca.ceresoli@bootlin.com>,
- <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH 16/17] mfd: Add support for LAN966x PCI device
-Message-ID: <20240514145518.3e989b83@bootlin.com>
-In-Reply-To: <D1447AHUWV6C.13V6FOWZ80GH@microchip.com>
-References: <20240430083730.134918-1-herve.codina@bootlin.com>
-	<20240430083730.134918-17-herve.codina@bootlin.com>
-	<D1447AHUWV6C.13V6FOWZ80GH@microchip.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1715691347; c=relaxed/simple;
+	bh=JegKl63JU3+HoS2Kj0zGHv+XRNw+qSIozCHP8J1ApPI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BA0UVPPhJifoF+RFdq27vrM6PzlsbPV+egfth/1y4BtWOlBbOPX6/jkd9I3z9G3giPv8AXN3fg//vsOfDm2KaWVhUinyhDiAEgOV98fyt+4l6DJiJuS1xieOEBOQaH5oO6wVKDYFSbhJn5Cm0uvrW2nK3wUqU7ZlKbFPPck3zys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d2qWrFSc; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715691347; x=1747227347;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=JegKl63JU3+HoS2Kj0zGHv+XRNw+qSIozCHP8J1ApPI=;
+  b=d2qWrFSc8IYzxZ/o4HnbgkBouX07xnjnG7beQwzRMB5+272r4aancIU8
+   0C7UC94br6cZpbjQcs0OskfTx76J+RwzIYMUJ+cmq3bepDGVmQbg5Z1y8
+   2DxnMT1Dj2af527TrKR1m2FdLPrXh7CWm3iafoUkmUQZMPMBi8m4y2nuI
+   c/CyaVl4b7Zd0cCZmUGfRjlnxhHh6In5vJ1y9oWNHZSFCpFt24I6DbpkA
+   vkal3+ARIk0PvcszX1DwZ7X+0+awNhHiaPXs8HinlDnQm98mXf/15Gkwm
+   cvgj7JVFxFQr+gu09HK3GXGqrRATJMW7M1oQwqfrmaQPXE/n47qgD8UUH
+   w==;
+X-CSE-ConnectionGUID: 1g1UUzU7Qt2JEn5otc8Bnw==
+X-CSE-MsgGUID: KgtgbEBrQrOtdL0J3bZvcQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11073"; a="11613731"
+X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
+   d="scan'208";a="11613731"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2024 05:55:46 -0700
+X-CSE-ConnectionGUID: uPqxZQ7UQ16yfGxkcY/2QA==
+X-CSE-MsgGUID: WEZl111KQGCg7ZvqYT9c5Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
+   d="scan'208";a="31232243"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2024 05:55:45 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1s6rgz-00000007Qy8-3M37;
+	Tue, 14 May 2024 15:55:41 +0300
+Date: Tue, 14 May 2024 15:55:41 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, linux-serial@vger.kernel.org,
+	Peter Collingbourne <pcc@google.com>
+Subject: Re: [Bug] staging: rtl8723bs: Bluetooth stops working after patch:
+ serial: 8250_dw: Do not reclock if already at correct rate
+Message-ID: <ZkNfTRv0Lk8-_M1s@smile.fi.intel.com>
+References: <8fe72cec-adba-42dd-9185-15e777714a81@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: herve.codina@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8fe72cec-adba-42dd-9185-15e777714a81@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hi Steen,
-
-On Wed, 8 May 2024 08:20:04 +0000
-<Steen.Hegelund@microchip.com> wrote:
-
-..
-> > +
-> > +static irqreturn_t pci_dev_irq_handler(int irq, void *data)
-> > +{
-> > +       struct pci_dev_intr_ctrl *intr_ctrl = data;
-> > +       int ret;
-> > +
-> > +       ret = generic_handle_domain_irq(intr_ctrl->irq_domain, 0);
-> > +       return ret ? IRQ_NONE : IRQ_HANDLED;
-> > +}
-> > +
-> > +static struct pci_dev_intr_ctrl *pci_dev_create_intr_ctrl(struct pci_dev *pdev)
-> > +{
-> > +       struct pci_dev_intr_ctrl *intr_ctrl;
-> > +       struct fwnode_handle *fwnode;
-> > +       int ret;
-> > +
-> > +       if (!pdev->irq)
-> > +               return ERR_PTR(-EOPNOTSUPP);
-> > +
-> > +       fwnode = dev_fwnode(&pdev->dev);
-> > +       if (!fwnode)
-> > +               return ERR_PTR(-ENODEV);
-> > +
-> > +       intr_ctrl = kmalloc(sizeof(*intr_ctrl), GFP_KERNEL);
-> > +       if (!intr_ctrl)
-> > +               return ERR_PTR(-ENOMEM);
-> > +
-> > +       intr_ctrl->pci_dev = pdev;
-> > +
-> > +       intr_ctrl->irq_domain = irq_domain_create_linear(fwnode, 1, &pci_dev_irq_domain_ops,
-> > +                                                        intr_ctrl);
-> > +       if (!intr_ctrl->irq_domain) {
-> > +               pci_err(pdev, "Failed to create irqdomain\n");
-> > +               ret = -ENOMEM;
-> > +               goto err_free_intr_ctrl;
-> > +       }
-> > +
-> > +       ret = pci_alloc_irq_vectors(pdev, 1, 1, PCI_IRQ_LEGACY);
-> > +       if (ret < 0) {
-> > +               pci_err(pdev, "Unable alloc irq vector (%d)\n", ret);
-> > +               goto err_remove_domain;
-> > +       }
-> > +       intr_ctrl->irq = pci_irq_vector(pdev, 0);
-> > +       ret = request_irq(intr_ctrl->irq, pci_dev_irq_handler, IRQF_SHARED,
-> > +                         dev_name(&pdev->dev), intr_ctrl);
-> > +       if (ret) {
-> > +               pci_err(pdev, "Unable to request irq %d (%d)\n", intr_ctrl->irq, ret);
-> > +               goto err_free_irq_vector;
-> > +       }
-> > +
-> > +       return intr_ctrl;
-> > +
-> > +err_free_irq_vector:
-> > +       pci_free_irq_vectors(pdev);
-> > +err_remove_domain:
-> > +       irq_domain_remove(intr_ctrl->irq_domain);
-> > +err_free_intr_ctrl:
-> > +       kfree(intr_ctrl);
-> > +       return ERR_PTR(ret);
-> > +}
-> > +
-> > +static void pci_dev_remove_intr_ctrl(struct pci_dev_intr_ctrl *intr_ctrl)
-> > +{
-> > +       free_irq(intr_ctrl->irq, intr_ctrl);
-> > +       pci_free_irq_vectors(intr_ctrl->pci_dev);
-> > +       irq_dispose_mapping(irq_find_mapping(intr_ctrl->irq_domain, 0));
-> > +       irq_domain_remove(intr_ctrl->irq_domain);
-> > +       kfree(intr_ctrl);
-> > +}
-> > +  
+On Tue, May 14, 2024 at 06:32:37AM +0200, Philipp Hortmann wrote:
+> Hi,
 > 
-> It looks like the two functions below (and their helper functions) are so
-> generic that they could be part of the pci driver core support.
-> Any plans for that?
-
-Indeed, I tried to write them in a generic way.
-Right now, at least for the next iteration of this series, I don't plan to
-move them as part of the PCI code.
-This piece of code did not get any feedback and I would prefer to keep them
-here for the moment.
-
-Of course, they could be move out of the LAN966x PCI driver later.
-
+> I have a ODYS Trendbook next 14 with the wlan/bluetooth module rtl8723bs.
 > 
-> > +static void devm_pci_dev_remove_intr_ctrl(void *data)
-> > +{
-> > +       struct pci_dev_intr_ctrl *intr_ctrl = data;
-> > +
-> > +       pci_dev_remove_intr_ctrl(intr_ctrl);
-> > +}
-> > +
-> > +static int devm_pci_dev_create_intr_ctrl(struct pci_dev *pdev)
-> > +{
-> > +       struct pci_dev_intr_ctrl *intr_ctrl;
-> > +
-> > +       intr_ctrl = pci_dev_create_intr_ctrl(pdev);
-> > +
-> > +       if (IS_ERR(intr_ctrl))
-> > +               return PTR_ERR(intr_ctrl);
-> > +
-> > +       return devm_add_action_or_reset(&pdev->dev, devm_pci_dev_remove_intr_ctrl, intr_ctrl);
-> > +}
-> > +  
+> Bluetooth stops working with the following commit:
+> commit e5d6bd25f93d6ae158bb4cd04956cb497a85b8ef (HEAD)
+> Author: Peter Collingbourne <pcc@google.com>
+> Date:   Thu Feb 22 11:26:34 2024 -0800
+>     serial: 8250_dw: Do not reclock if already at correct rate
 > 
+> Please find dmesg below. Module has issues to load firmware.
+> 
+> To enshure that this is the function breaking commit I applied the commit
+> reversed on top of the latest kernel from the staging tree. Then bluetooth
+> is working again.
+> 
+> I can support with further tests. I do not have a good proposal for a fix as
+> I expect a lot of side effects. Please send me proposals for a fix.
 
-Best regards,
-Hervé
+The revert is in the tree IIRC.
+7dfae6cbadc1 ("serial: 8250_dw: Revert: Do not reclock if already at correct rate")
+
+First appeared in v6.9-rc5.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
