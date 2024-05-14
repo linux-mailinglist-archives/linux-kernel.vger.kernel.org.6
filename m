@@ -1,101 +1,109 @@
-Return-Path: <linux-kernel+bounces-178698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47DFB8C5699
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 15:10:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED03D8C569A
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 15:10:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3EF02843ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 13:10:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AC161C21DD3
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 13:10:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F31E14036F;
-	Tue, 14 May 2024 13:09:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="kqcd9f34"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BB061420C8;
+	Tue, 14 May 2024 13:09:29 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA63714199C;
-	Tue, 14 May 2024 13:09:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84D731411CF
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 13:09:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715692156; cv=none; b=Ue4g6StQo7qdXmJa/IqKpSxMucMPKlGoJDJkl5ddCz7z16AOk6Ak6bomFl8nsWLBJBJWfrP0QLRauMo1ws3YW9z86XmfVPbI0cMFHpRx37h3//r8G/8X1bQrcPS13miM9e3PJPgP2tDSHq+AdPbuOkq1Q3DZQ8klH1390HGpD9o=
+	t=1715692169; cv=none; b=oTPQ1eB0du+ErgsMPWlnAYZrCqcW3Z9KP81sCbXch34UMyaD5I6UB7Sm7lxbvalzKypO2RLV1/JXdreOhnubHe4Ktw3mmT0T9L4eH7ubh5ze7kQ183wiWNPNZM+Jpz2YADXZD3SEgkV2+t3v+0I2cAJ0jHUAGypId5QQscs1/zo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715692156; c=relaxed/simple;
-	bh=IMciIs02jZfJJNuVLxbbibqMHxlWWQB7g6LZ+KmsTbw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a9thy9pKO7LwhwP+ueUkkmSDBYyJaEmJ1dd/OCeO/EImCPINfaGr53+L7NvIShSNe8VV0O5SLXwVgi3tkblMxinb3k0IyHqgaKn0/3tiqVzYg8oE992aq4iUEygTnByZvtI7UGctH0t4hVSR8lFIU5awl2fXWVwxOoCPgzgU1po=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=kqcd9f34; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=qawFOO1lYL5ztdc7toCwvMFh7tarh+OmXydhWJWRKUk=; b=kqcd9f34BPPW8ZPHox5dB35Jxj
-	G7xketqHAI0NXcl1aFE7G8SHbe6nkEIfQl3+TxFxHYrnNh0Wa2G97z8ivFKE0mZXhy/1CY/CFUsTA
-	TGnPNmGV7x0ahYOhg4IVkwVJ5P2rZTpw1UZ98YK/UK9VJ5YSP28UJxSjMtESSgk3Vxz4=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1s6rtr-00FOB2-Va; Tue, 14 May 2024 15:08:59 +0200
-Date: Tue, 14 May 2024 15:08:59 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Thomas Gessler <thomas.gessler@brueckmann-gmbh.de>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	MD Danish Anwar <danishanwar@ti.com>,
-	Ravi Gunasekaran <r-gunasekaran@ti.com>
-Subject: Re: [PATCH 2/2] net: phy: dp83869: Fix RGMII-SGMII and 1000BASE-X
-Message-ID: <16f79b3f-0b33-4196-858a-b1469ed1200b@lunn.ch>
-References: <20240514122728.1490156-1-thomas.gessler@brueckmann-gmbh.de>
- <20240514122728.1490156-2-thomas.gessler@brueckmann-gmbh.de>
+	s=arc-20240116; t=1715692169; c=relaxed/simple;
+	bh=65edET6jm+UN4MrjA0dVXg2bXDSEpLCbz9A1nWNT5T8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DJ283SngK0D0sGFrUPJX22Gj68fhgNhMBujZN/Euwk5kP1gSWbBhWEDQcIEviC2Sxv1y3UDXsfPACmQZYROidpCiliugzkegEauhvFzzz9M+9qrharqvSZO71IHX4nfoeKfyTDYb4ifTKiOUmMxRPFz9jfLDkilUKlC10/Lry2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4VdxS26w8VzvYcl
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 21:05:54 +0800 (CST)
+Received: from kwepemi500008.china.huawei.com (unknown [7.221.188.139])
+	by mail.maildlp.com (Postfix) with ESMTPS id D96761400CD
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 21:09:22 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemi500008.china.huawei.com
+ (7.221.188.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Tue, 14 May
+ 2024 21:09:22 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <tglx@linutronix.de>, <linux-kernel@vger.kernel.org>
+CC: <ruanjinjie@huawei.com>
+Subject: [PATCH] genirq: Clean code for handle_edge_irq()
+Date: Tue, 14 May 2024 21:09:15 +0800
+Message-ID: <20240514130915.2613753-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240514122728.1490156-2-thomas.gessler@brueckmann-gmbh.de>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemi500008.china.huawei.com (7.221.188.139)
 
-> +/* FX_CTRL bits */
-> +#define DP83869_CTRL0_SPEED_SEL_MSB		BIT(6)
-> +#define DP83869_CTRL0_DUPLEX_MODE		BIT(8)
-> +#define DP83869_CTRL0_RESTART_AN		BIT(9)
-> +#define DP83869_CTRL0_ISOLATE			BIT(10)
-> +#define DP83869_CTRL0_PWRDN			BIT(11)
-> +#define DP83869_CTRL0_ANEG_EN			BIT(12)
-> +#define DP83869_CTRL0_SPEED_SEL_LSB		BIT(13)
-> +#define DP83869_CTRL0_LOOPBACK			BIT(14)
+The pending set and mask_ack_irq() repeated twice, a new goto label can
+reduce a few lines of code, with no functional changes.
 
-This looks like a standard BMCR. Please just use defines from mii.h,
-since they are well known.
+Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+---
+ kernel/irq/chip.c | 17 +++++++----------
+ 1 file changed, 7 insertions(+), 10 deletions(-)
 
-> +/* FX_STS bits */
-> +#define DP83869_STTS_LINK_STATUS		BIT(2)
-> +#define DP83869_STTS_ANEG_COMPLETE		BIT(5)
+diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
+index 638cf5eee04b..4613dc9ff6b6 100644
+--- a/kernel/irq/chip.c
++++ b/kernel/irq/chip.c
+@@ -775,21 +775,15 @@ void handle_edge_irq(struct irq_desc *desc)
+ 
+ 	desc->istate &= ~(IRQS_REPLAY | IRQS_WAITING);
+ 
+-	if (!irq_may_run(desc)) {
+-		desc->istate |= IRQS_PENDING;
+-		mask_ack_irq(desc);
+-		goto out_unlock;
+-	}
++	if (!irq_may_run(desc))
++		goto out_mask_ack;
+ 
+ 	/*
+ 	 * If its disabled or no action available then mask it and get
+ 	 * out of here.
+ 	 */
+-	if (irqd_irq_disabled(&desc->irq_data) || !desc->action) {
+-		desc->istate |= IRQS_PENDING;
+-		mask_ack_irq(desc);
+-		goto out_unlock;
+-	}
++	if (irqd_irq_disabled(&desc->irq_data) || !desc->action)
++		goto out_mask_ack;
+ 
+ 	kstat_incr_irqs_this_cpu(desc);
+ 
+@@ -818,6 +812,9 @@ void handle_edge_irq(struct irq_desc *desc)
+ 	} while ((desc->istate & IRQS_PENDING) &&
+ 		 !irqd_irq_disabled(&desc->irq_data));
+ 
++out_mask_ack:
++	desc->istate |= IRQS_PENDING;
++	mask_ack_irq(desc);
+ out_unlock:
+ 	raw_spin_unlock(&desc->lock);
+ }
+-- 
+2.34.1
 
-And these are standard BMCR bits.
-
-> +
-> +/* FX_ANADV bits */
-> +#define DP83869_BP_FULL_DUPLEX			BIT(5)
-> +#define DP83869_BP_HALF_DUPLEX			BIT(6)
-> +#define DP83869_BP_PAUSE			BIT(7)
-> +#define DP83869_BP_ASYMMETRIC_PAUSE		BIT(8)
-
-ADVERTISE_1000XPSE_ASYN, ADVERTISE_1000XPAUSE, ...
-
-Please go through all these defines and see what match to existing
-ones.
-
-	Andrew
 
