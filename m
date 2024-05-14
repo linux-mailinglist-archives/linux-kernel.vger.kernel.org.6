@@ -1,162 +1,132 @@
-Return-Path: <linux-kernel+bounces-179122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44E798C5BF2
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 21:56:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 739018C5BF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 21:57:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76C451C21B82
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 19:56:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05AF11F22DF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 19:57:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DE17183C1B;
-	Tue, 14 May 2024 19:54:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E800C181B97;
+	Tue, 14 May 2024 19:55:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Z6LTwj7/"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="BQ5nTcrJ"
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97C3C182C93;
-	Tue, 14 May 2024 19:54:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E1E1181331
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 19:55:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715716496; cv=none; b=bftlikCgVWUKLJj/oRP3e4filHhbEjo5DvZrjxnHAUA9MZIAdOtkncfIBc3Sz41UY3xHa4zanb2/MEke5NVnZ/KcIgiZgq+PFlIChH0j53diEIPNLRQ0R4CJFN9uivCsJ4vBAUIXVvI3XKfLicg7U/dZQVvePO6uzhzsvJ793e8=
+	t=1715716516; cv=none; b=CtXK5NS31kVH62+xYDG7FdfLoqP9zNZ05JJzpO4nmvnUogS4hY8mw24HZHtmHLurIAg0HATGa+PLGzTF9a+ZcyfbwgeT/WwWQsbywK6XxFsdTnjBdZGIwAbIBia4RxeDQJGi9KE1e+0v8C+LxfAeGf4kbUNsBM2xRaeP4kwY4/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715716496; c=relaxed/simple;
-	bh=CUrJ5Gu3phSulzvatvhZSag83EpG0yxPg8pFVkgEFtw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WwS30yOr7vf86WkLJefO+zhTZQLCTr71qeP7QIH0yxvsWzk3oDOmDGa8z12bu++cypYMFkbINzuuN48BepN5DLnO7RDQy6BcjAtHk2cHDm4Qi779XshGfdD7888pp9KNggO30joegxC35fy929MnC/Pi6IUEQ2NxFlDkF3H966c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Z6LTwj7/; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353724.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44EIBlPs020468;
-	Tue, 14 May 2024 19:54:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : content-transfer-encoding
- : mime-version; s=pp1; bh=i25QKyN7M2GvSJcgjQJBO7ej2MnuXeNYmIhBHP9S6sY=;
- b=Z6LTwj7/eUaGL2TraTWvZeOhJliGq/XpU54H6mEFa2jskv7vNP9FdCvN9OyhYGN2swpW
- HlE9R4H+zifSa+MvPFTtcauqVlwpEoFxzUm8fWwrPSXLHXsXyGB71/x6lJx7IXubeLP0
- MMGMtV6H8cItJ+X/bxuZPqcwxYYa/0+5199XQvBqpG8MS/roDvjTkNiuETuP/wjkui6m
- TiZ92G/WycY/WR/EvQ7iwWH+ajRoSWy4YvVImrwql9cc0n3hFOUUSoOmC3rkF0TfhWTa
- LlT10XVGv05LO9y42AzIZxoYpZxlRTn2dRGqmTOjb+LBjAuUZQCtRd1tZuY3hoWXQUjo zw== 
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y4ckrg9nc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 14 May 2024 19:54:43 +0000
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44EJAn7t005985;
-	Tue, 14 May 2024 19:54:43 GMT
-Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3y2mgmf7e3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 14 May 2024 19:54:43 +0000
-Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
-	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44EJsepE50463264
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 14 May 2024 19:54:42 GMT
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8651858063;
-	Tue, 14 May 2024 19:54:38 +0000 (GMT)
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 51F7658077;
-	Tue, 14 May 2024 19:54:38 +0000 (GMT)
-Received: from slate16.aus.stglabs.ibm.com (unknown [9.61.107.19])
-	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 14 May 2024 19:54:38 +0000 (GMT)
-From: Eddie James <eajames@linux.ibm.com>
-To: linux-fsi@lists.ozlabs.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        eajames@linux.ibm.com, krzk+dt@kernel.org, conor+dt@kernel.org,
-        robh@kernel.org, joel@jms.id.au, andrew@codeconstruct.com.au
-Subject: [PATCH v5 9/9] dt-bindings: fsi: Document the FSI Hub Controller
-Date: Tue, 14 May 2024 14:54:35 -0500
-Message-Id: <20240514195435.155372-10-eajames@linux.ibm.com>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <20240514195435.155372-1-eajames@linux.ibm.com>
-References: <20240514195435.155372-1-eajames@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 4oJYffjNeyyWYVNDqe-gJa_keUFAX_A4
-X-Proofpoint-GUID: 4oJYffjNeyyWYVNDqe-gJa_keUFAX_A4
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1715716516; c=relaxed/simple;
+	bh=Tn7ggDBZ467fewog7X29iTchxNr3w1imZ5QlMHFp0v0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=j+Cbo2E84k3exYKq4hctmYI2GzPzBC1p++p+k9bIaAWrWnBp75Z+NOibz+6rbYkeyODcd1buLgBwJ26HsRlWWy1tqIpobO3pzcID87btLSB4SdR/Ni1S7h/ocZjrCo5noYFuXyid1ojmwr0VU3lITWlR+nYeNpMhUqSCMHFmQjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=BQ5nTcrJ; arc=none smtp.client-ip=209.85.219.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-dbed0710c74so5193127276.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 12:55:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1715716512; x=1716321312; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=I5DfaKSvWBjSuruH8QpkzwqbDWxyqIe8ntp5STBjhPE=;
+        b=BQ5nTcrJeiDGmJPbk+0RbPTElKvyqninC22tbUnOXLGS1LGq1NMiBlKd/vEdzgWmX3
+         J6CyOwcl5ivwV579DFEK3+TPJNedRbX5ta4rufuEGc9PXSFysi/1ahLWwCZ145ht6Uyl
+         Bw6LPtcCw4jhHWxePof5VARvVKrO7Gny5IjBXAEBH3jl2fhWU277pEPsN/aRwtFOao6H
+         alRLOYOxC3Mw4O3SYM24cutTSjj6riCyqehsqMkh76Ix8NCPvVfYnaoGWhA3ar0CMRBO
+         uOblc/Ql1V5KS6OL2dGv81/5AuDDrkYhB4Q5bH42HhK8obCcNSuLZXmuVzWWpy725Av5
+         SDxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715716512; x=1716321312;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=I5DfaKSvWBjSuruH8QpkzwqbDWxyqIe8ntp5STBjhPE=;
+        b=lvcSevrViporIiUFDhwd5cU19iO134tbGKJqWuDOEWgMYS89uuwu1/yfMaiIT64RVb
+         t5fZWgo2MXDI1h00IzKw6R3AsYjcq22iDnYLOUtJIRBofFjK1AhxlT5u3vHPoT0JH/Sa
+         VYUebEiFA6TfLad3v0Ybh0+adGmjCZZnbl5fT3Mr5qpEfLg6lGnXPdxdh3s3bevuxigB
+         sM0kYgCc56kmqpwN+gOe1NusUaELrR3c7R7up65VzlbRgpYfwD/Ps+Yi3nmd/4z5rFnR
+         a9/jOWKlhBIPGQwrgxGetwsvXt95W+F8f6qu4BqPghvNt0nYF0wY9PtEyRPcCgpZXRjQ
+         mA/A==
+X-Forwarded-Encrypted: i=1; AJvYcCX+HQPQUUZmAA9xGA3vLDHZLX+gWpJx6JYrERfGGuAk2lVO+eLGaDCPFFjoneIDNjHTtqQOSpp+frowlL/ASdJm0JmLE6GqlDDgek9U
+X-Gm-Message-State: AOJu0YxuRfxvDSXSt/iwYYxk7LBHHQVxYirR6LKrZmZDdaF4ntx4u/lZ
+	rEk/L0EOVrk73sqUje0VNp0KljYIB6ddXqRJGIo39HNVcapSeNxIDtEuC2zW4QyTw+glgQEsrNN
+	c33Up8FntjzWzvdnC0N6R/k2zYPxAg5b5GK33
+X-Google-Smtp-Source: AGHT+IGVq5mRXTNrK/KaBwurMBldLnV/6qJN5uwTdGazOX6+s8bWL81rsv23lU+ZbyujJVMk8Qdjk3/8J+Z+jQ3+QZk=
+X-Received: by 2002:a25:ad50:0:b0:de4:619a:fbd with SMTP id
+ 3f1490d57ef6-dee4f2f6cb8mr13359322276.9.1715716512499; Tue, 14 May 2024
+ 12:55:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-14_12,2024-05-14_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- phishscore=0 adultscore=0 spamscore=0 mlxlogscore=999 suspectscore=0
- lowpriorityscore=0 clxscore=1015 bulkscore=0 malwarescore=0
- impostorscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2405010000 definitions=main-2405140142
+References: <1714775551-22384-1-git-send-email-wufan@linux.microsoft.com> <1714775551-22384-17-git-send-email-wufan@linux.microsoft.com>
+In-Reply-To: <1714775551-22384-17-git-send-email-wufan@linux.microsoft.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 14 May 2024 15:55:01 -0400
+Message-ID: <CAHC9VhTK4WS6BOXqLJ4sNKXR9a17gT3vXJUBc1F11cZ_QaOYBA@mail.gmail.com>
+Subject: Re: [PATCH v18 16/21] fsverity: expose verified fsverity built-in
+ signatures to LSMs
+To: ebiggers@kernel.org
+Cc: Fan Wu <wufan@linux.microsoft.com>, corbet@lwn.net, zohar@linux.ibm.com, 
+	jmorris@namei.org, serge@hallyn.com, tytso@mit.edu, axboe@kernel.dk, 
+	agk@redhat.com, snitzer@kernel.org, eparis@redhat.com, 
+	linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, fsverity@lists.linux.dev, 
+	linux-block@vger.kernel.org, dm-devel@lists.linux.dev, audit@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Deven Bowers <deven.desai@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Document the FSI Hub Controller CFAM engine.
+On Fri, May 3, 2024 at 6:32=E2=80=AFPM Fan Wu <wufan@linux.microsoft.com> w=
+rote:
+>
+> This patch enhances fsverity's capabilities to support both integrity and
+> authenticity protection by introducing the exposure of built-in
+> signatures through a new LSM hook. This functionality allows LSMs,
+> e.g. IPE, to enforce policies based on the authenticity and integrity of
+> files, specifically focusing on built-in fsverity signatures. It enables
+> a policy enforcement layer within LSMs for fsverity, offering granular
+> control over the usage of authenticity claims. For instance, a policy
+> could be established to permit the execution of all files with verified
+> built-in fsverity signatures while restricting kernel module loading
+> from specified fsverity files via fsverity digests.
+>
+> The introduction of a security_inode_setintegrity() hook call within
+> fsverity's workflow ensures that the verified built-in signature of a fil=
+e
+> is exposed to LSMs. This enables LSMs to recognize and label fsverity fil=
+es
+> that contain a verified built-in fsverity signature. This hook is invoked
+> subsequent to the fsverity_verify_signature() process, guaranteeing the
+> signature's verification against fsverity's keyring. This mechanism is
+> crucial for maintaining system security, as it operates in kernel space,
+> effectively thwarting attempts by malicious binaries to bypass user space
+> stack interactions.
+>
+> The second to last commit in this patch set will add a link to the IPE
+> documentation in fsverity.rst.
+>
+> Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
+> Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
 
-Signed-off-by: Eddie James <eajames@linux.ibm.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- .../bindings/fsi/ibm,p9-fsi-controller.yaml   | 45 +++++++++++++++++++
- 1 file changed, 45 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/fsi/ibm,p9-fsi-controller.yaml
+Eric, are you okay with the fs-verity patches in v18?  If so, it would
+be nice to get your ACK on this patch at the very least.
 
-diff --git a/Documentation/devicetree/bindings/fsi/ibm,p9-fsi-controller.yaml b/Documentation/devicetree/bindings/fsi/ibm,p9-fsi-controller.yaml
-new file mode 100644
-index 0000000000000..29ea80ff915ef
---- /dev/null
-+++ b/Documentation/devicetree/bindings/fsi/ibm,p9-fsi-controller.yaml
-@@ -0,0 +1,45 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/fsi/ibm,p9-fsi-controller.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: IBM FSI-attached FSI Hub Controller
-+
-+maintainers:
-+  - Eddie James <eajames@linux.ibm.com>
-+
-+description:
-+  The FSI Hub Controller is an FSI controller, providing a number of FSI links,
-+  located on a CFAM. Therefore this node will always be a child of an FSI CFAM
-+  node.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - ibm,p9-fsi-controller
-+
-+  reg:
-+    items:
-+      - description: FSI slave address
-+
-+allOf:
-+  - $ref: fsi-controller.yaml#
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    fsi@3400 {
-+        compatible = "ibm,p9-fsi-controller";
-+        reg = <0x3400 0x400>;
-+        #address-cells = <2>;
-+        #size-cells = <0>;
-+
-+        cfam@0,0 {
-+            reg = <0 0>;
-+            #address-cells = <1>;
-+            #size-cells = <1>;
-+            chip-id = <0>;
-+        };
-+    };
--- 
-2.39.3
+While it looks like there may be a need for an additional respin to
+address some new/different feedback from the device-mapper folks, that
+shouldn't affect the fs-verity portions of the patchset.
 
+--=20
+paul-moore.com
 
