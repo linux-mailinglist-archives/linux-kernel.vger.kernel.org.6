@@ -1,134 +1,174 @@
-Return-Path: <linux-kernel+bounces-178807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A80FB8C57EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:29:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 749698C57F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:31:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6448C281EDB
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:29:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0515A1F24A6D
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:31:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FBCE145326;
-	Tue, 14 May 2024 14:29:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8EF9158D80;
+	Tue, 14 May 2024 14:31:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="N2P4OVPF"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="hWM//Mpa"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43EA1144D1C;
-	Tue, 14 May 2024 14:29:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AFDC158A01
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 14:31:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715696985; cv=none; b=aW4V5lGcqmH+RZJC7cPnkdvBaIrPnwsl3AEZc+HFZGHL9Qe1lZlOxPmN7CqvrhDcpTYU5atdlF+LHtWh8cA/R+0OhbTMHP68D0YI89+pCyJnGlv+4FWRfLKkzhaUYh6ZzUoU1RSresjFaSDvlPuZWIu/EpOXkpAVjWGkI1eINbo=
+	t=1715697090; cv=none; b=XCORud9hznbtRRJhsWyCKUChUIEDn7bAegKBJDvF27S5t5HTSHFzX1noe2wFD3qHskytI0+TUG6pU4gpK7R+iVUOgC+Qz9HyYpR8+voP05u0lLm3rCxymeTwIY/30ql0jaROPYRsyu+AWKbcA6Y6bOoZZmr+SuPbUWVaMZg/2rk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715696985; c=relaxed/simple;
-	bh=dwNVR7ca4QlNEsSuPL8Sp2uaU6DNnzNYe3WImPBpFsA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=YDMG6FkD0viNvVPNR9E4a9+WKq2cae1F4CexmxWqVNbKlzJGvpPaF6+1Ij/nrDVAKSLOZjaxJruxPns7kM+0rBjsRm9+15bTbOs0tDh+C34RfskMv4SlL3xQ7yAKRVpKoflnSShcjhmGmVFh/EfPz9VOBN+TY4YdgltuS8qkw20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=N2P4OVPF; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44EETT5C017469;
-	Tue, 14 May 2024 09:29:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1715696969;
-	bh=J+2Dx63m3rl/avn6WlrRF0ewymLz6wPP3CDkECjxYqo=;
-	h=Date:Subject:From:To:CC:References:In-Reply-To;
-	b=N2P4OVPFpRWLPxmxd6L2IzL3sr2/+S0SoG5DtOlW+KgBhsj2z7rVmvjHp+9lRF01u
-	 sPe+mymPxjfx9o1qz9bOSCG0kK5ku+EQvqEklnguu2z1yUqBwajSa+aqsUCKBAjxb3
-	 cU2Wu/AhVPVlofozCvNXwiJA0rztOCryB/goprHE=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44EETT57061774
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 14 May 2024 09:29:29 -0500
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 14
- May 2024 09:29:29 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 14 May 2024 09:29:29 -0500
-Received: from [172.24.227.193] (devarsht.dhcp.ti.com [172.24.227.193] (may be forged))
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44EETNm1001116;
-	Tue, 14 May 2024 09:29:24 -0500
-Message-ID: <0eee0424-f177-808f-3a86-499443155ddb@ti.com>
-Date: Tue, 14 May 2024 19:59:23 +0530
+	s=arc-20240116; t=1715697090; c=relaxed/simple;
+	bh=DxlEqtVTRXFReuQuvLxn/d2cy0K8/Bkbm/OiSCg4Hc0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=L1p5U0WtOk3n6knhmrfzzn1zovoaiu5Pz4eY4wrACQa7gcCZr6C2aOj7Ktwfmrd7EMQuSSp2Ricdu3i4syeey0LL99Soo4yIbYFjOEee4Ot3e4/nbQKiYD+T7mba+8kDo0xYztCPqQhYErVUC1YKogUgWraOi8rSbQleN/GXEVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=hWM//Mpa; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-34f7d8bfaa0so3978983f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 07:31:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1715697086; x=1716301886; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ln4czWjw11QmRtGLij7AUk0r+XUH7GvNjZu/Euwwgag=;
+        b=hWM//Mpau4m8Yz1o7+7aF1/2p5TPzek5rHFRxFmsv5WaO3XVYbeqP9rUlxCQ70kwam
+         yUKLRofi9KBARSkLnwEwzmySNSivqBDoocfe6zYDPGRVGE8XC8fMiydNOyCBOqSdkmg5
+         CERuKR37UR0RPAHmqWuNyryGSOJA1VgbqI/uWxGKmz+SzE0pxCgTgC4SI1nGSMquwVBx
+         bDCxrfUrlXagTlmBdYHn8fo1+ISfGMbfDY2xYbYijF1cgBpEBvaTCwsOb4bfPxQLznxX
+         kSJqe45FX9RHhcH0t5rqIKi0+y6rild8LWDJg0l2zQttzshBwieApguq714m9zCVq4Bi
+         G80w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715697086; x=1716301886;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ln4czWjw11QmRtGLij7AUk0r+XUH7GvNjZu/Euwwgag=;
+        b=AGZBtTpK2VulO5TJuZ09RE3+VcHsmIr93PDA7fHnXEN9pYyCYiJIN0egdrBbq65q5q
+         4qIobArm8q5qL9yMcUKrn/QKfzZL+OoPlUABPv5LefFkpFKt9+Zb3nGSiztJGudsp/0i
+         J51wL83kfftA9sV8Iz11vp2cdbF9cFIU4m67xU5pHNZEh7WGvY9E5phOQ2yiiSk+Kfp5
+         GF2ngFxJNhGgF4qcWHtJ7uXlbNGT9lyECyoVHatsFiu+3lkcXrGAr/L8mt9PfndMJ76k
+         ONn1fvU0MrmmoTNQI4xjlQoBEJh2F0sMpmPZMop6XUXXTW2OrrskIq0b4myPG7LYGvWI
+         7Urg==
+X-Forwarded-Encrypted: i=1; AJvYcCUerkOw+jIH7vH4wS3afz0Sieu73tAE8aFOlsdLrGD/qSyFKrNOQKpfIx86LW0yDRfZ5MBUI8fd4azu+OWtbOa7Zc1HG97mROJ3IBn1
+X-Gm-Message-State: AOJu0Yy5STIR67jN71ickP5L4MGVttJAC4uebHFSkNtxBz9Yi8UftIW3
+	OqD9OdUfC3DmGFCRfZDMm5KZSfrStE3kNKpsBAFVfQ+8jac1A1WY3j0bqmxmuss=
+X-Google-Smtp-Source: AGHT+IEMwg+hLrvXY8E1TdPRRYJF6yX+6J61OrtJvgZefi9YUEoDxzUYDJl8/OrpwBDQbxRW36oP3g==
+X-Received: by 2002:adf:fa0f:0:b0:34d:1b8c:1afb with SMTP id ffacd0b85a97d-3504a736b48mr7803454f8f.24.1715697086450;
+        Tue, 14 May 2024 07:31:26 -0700 (PDT)
+Received: from toaster.lan ([2a01:e0a:3c5:5fb1:3f47:f219:de13:38a7])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-351cb0fb6b4sm627163f8f.24.2024.05.14.07.31.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 May 2024 07:31:26 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	alsa-devel@alsa-project.org,
+	linux-kernel@vger.kernel.org,
+	linux-amlogic@lists.infradead.org
+Subject: [PATCH RFC] ASoC: amlogic: do not use dpcm_playback/capture flags
+Date: Tue, 14 May 2024 16:30:46 +0200
+Message-ID: <20240514143116.3824376-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <87o79azh65.wl-kuninori.morimoto.gx@renesas.com>
+References: <87o79azh65.wl-kuninori.morimoto.gx@renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH] arm64: dts: ti: k3-am62x-sk-common: Reserve 128MiB of
- global CMA
-Content-Language: en-US
-From: Devarsh Thakkar <devarsht@ti.com>
-To: Andrew Davis <afd@ti.com>, Nishanth Menon <nm@ti.com>,
-        "Raghavendra,
- Vignesh" <vigneshr@ti.com>
-CC: <kristo@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <a-bhatia1@ti.com>, <j-luthra@ti.com>,
-        <praneeth@ti.com>, <j-choudhary@ti.com>, <gregkh@linuxfoundation.org>,
-        Brandon <b-brnich@ti.com>, "Pothukuchi, Vijay" <vijayp@ti.com>,
-        "Etheridge,
- Darren" <detheridge@ti.com>
-References: <20230803111455.811339-1-devarsht@ti.com>
- <20230805193355.o657pwbq2w3tciui@vehicular>
- <9b61e8a0-fec0-b33f-259c-c744aa5a88b9@ti.com>
- <18bb47b8-c441-00b1-7ac7-f9038dffedc4@ti.com>
- <d2c6c120-5d3b-4975-5972-155343c1c0ca@ti.com>
-In-Reply-To: <d2c6c120-5d3b-4975-5972-155343c1c0ca@ti.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 
-Hi Andrew, Vignesh, Nishanth,
+dpcm_playback/capture flags are being deprecated in ASoC.
+Use playback/capture_only flags instead
 
-On 08/08/23 13:44, Devarsh Thakkar wrote:
-[...]
->>>>> Reserve 128MiB of global CMA which is also marked as re-usable
->>>>> so that OS can also use the same if peripheral drivers are not using the
->>>>> same.
->>>>>
+Suggested-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
 
-I wanted to re-initiate discussion on this. Per discussion with few of the
-maintainers in OSS 2023 Summit, the suggestion was either to have MMU in the
-devices or use the CMA region as done with this patch.
-There was not much traction for the idea/suggestion to have some updates in
-CMA API to dynamically increase the CMA region per the requirement (for e.g.
-move the MIGRATE_MOVABLE pages to CMA area dynamically). Also I see some
-efforts in the past made on that direction for introducing CMA_AGGRESSIVE
-Kconfig to allocate from ZONE_MOVEABLE but were not accepted [1] and
-nevertheless it still requires CMA region to be available to begin with and
-only gives a bit of extra margin for the CMA.
+Following Kuninori's series, dpcm_playback/capture will be ignored.
+However, properly disabling stream direction is important for Amlogic
+audio drivers.
 
-My vote is still to use global cma region with re-usable flag (as done with
-this patch) and 128 MiB is well estimated per the use-cases AM62x EVM is meant
-to cater (the vendor specific kernel has been using it) and is very much
-needed to provided out-of-box experience as otherwise basic display and camera
-use-cases don't work out-of-box. Besides I see many other boards [presumably
-mmu-less] using a similar approach :
+I'm not too sure how this should be applied to avoid breaking bisect,
+before or after Kuninori's series. Maybe it should be merged into it ?
 
-     $git grep linux,cma-default arch/ | wc
-     36      72    2538
+Any suggestion Kuninori ?
 
+ sound/soc/meson/axg-card.c         | 10 +++++-----
+ sound/soc/meson/meson-card-utils.c |  4 ++--
+ 2 files changed, 7 insertions(+), 7 deletions(-)
 
-Kindly let us know your opinion on this if we are aligned to proceed with this
-approach or not.
+diff --git a/sound/soc/meson/axg-card.c b/sound/soc/meson/axg-card.c
+index 09aa36e94c85..646ab87afac2 100644
+--- a/sound/soc/meson/axg-card.c
++++ b/sound/soc/meson/axg-card.c
+@@ -132,7 +132,7 @@ static int axg_card_add_tdm_loopback(struct snd_soc_card *card,
+ 	lb->stream_name = lb->name;
+ 	lb->cpus->of_node = pad->cpus->of_node;
+ 	lb->cpus->dai_name = "TDM Loopback";
+-	lb->dpcm_capture = 1;
++	lb->capture_only = 1;
+ 	lb->no_pcm = 1;
+ 	lb->ops = &axg_card_tdm_be_ops;
+ 	lb->init = axg_card_tdm_dai_lb_init;
+@@ -176,7 +176,7 @@ static int axg_card_parse_cpu_tdm_slots(struct snd_soc_card *card,
+ 
+ 	/* Disable playback is the interface has no tx slots */
+ 	if (!tx)
+-		link->dpcm_playback = 0;
++		link->capture_only = 1;
+ 
+ 	for (i = 0, rx = 0; i < AXG_TDM_NUM_LANES; i++) {
+ 		snprintf(propname, 32, "dai-tdm-slot-rx-mask-%d", i);
+@@ -186,9 +186,9 @@ static int axg_card_parse_cpu_tdm_slots(struct snd_soc_card *card,
+ 
+ 	/* Disable capture is the interface has no rx slots */
+ 	if (!rx)
+-		link->dpcm_capture = 0;
++		link->playback_only = 1;
+ 
+-	/* ... but the interface should at least have one of them */
++	/* ... but the interface should at least have one direction */
+ 	if (!tx && !rx) {
+ 		dev_err(card->dev, "tdm link has no cpu slots\n");
+ 		return -EINVAL;
+@@ -275,7 +275,7 @@ static int axg_card_parse_tdm(struct snd_soc_card *card,
+ 		return ret;
+ 
+ 	/* Add loopback if the pad dai has playback */
+-	if (link->dpcm_playback) {
++	if (!link->capture_only) {
+ 		ret = axg_card_add_tdm_loopback(card, index);
+ 		if (ret)
+ 			return ret;
+diff --git a/sound/soc/meson/meson-card-utils.c b/sound/soc/meson/meson-card-utils.c
+index ed6c7e2f609c..1a4ef124e4e2 100644
+--- a/sound/soc/meson/meson-card-utils.c
++++ b/sound/soc/meson/meson-card-utils.c
+@@ -186,9 +186,9 @@ int meson_card_set_fe_link(struct snd_soc_card *card,
+ 	link->dpcm_merged_rate = 1;
+ 
+ 	if (is_playback)
+-		link->dpcm_playback = 1;
++		link->playback_only = 1;
+ 	else
+-		link->dpcm_capture = 1;
++		link->capture_only = 1;
+ 
+ 	return meson_card_set_link_name(card, link, node, "fe");
+ }
+-- 
+2.43.0
 
-[1]:
-https://lore.kernel.org/all/20141107070655.GA3486@bbox/
-https://linux-mm.kvack.narkive.com/LCGSAqAp/patch-0-4-cma-aggressive-make-cma-memory-be-more-aggressive-about-allocation
-
-
-Regards
-Devarsh
 
