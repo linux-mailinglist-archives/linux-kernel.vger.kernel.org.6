@@ -1,389 +1,788 @@
-Return-Path: <linux-kernel+bounces-178248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF9918C4B11
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 04:02:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 567CA8C4B15
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 04:03:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6258528463C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 02:02:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06DB628458E
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 02:03:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 203E41173F;
-	Tue, 14 May 2024 02:01:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E406AB641;
+	Tue, 14 May 2024 02:03:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gEDePHWI"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="h7kqacWU"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3CF3B653;
-	Tue, 14 May 2024 02:01:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715652097; cv=fail; b=r25pJK3ZVk7gnGjpe/kKxS1AZ5SUVV5Xjr0Ukas+c25cQiv5/Bnj6kkInk98QCB/6/HVqGlopMIuUfgMSPGS+4dhRyhaS6O1dpFRO+b1seFFelVX+IfypwG44EvGIEZzgDFElAPDiRDEk+AxuE7fkAzdmxX7MdT0GohFejOBCxY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715652097; c=relaxed/simple;
-	bh=m2H1lv4pb3oKgcM/Ls/p8NN4sfJGHfynXNZhp3glPUE=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=ROnyROFCSNALf357Ct/9+jUuhbVZrCXFwtC5xXMeZLaedzvK2rZGThZYi+huIir45R90vMfLC9Y0rSM5ibxJl55T2MmpWU5ODEmP0mPo4vC11TZiIbc6NB6Hon+JB7ze4r38mzxKgIcEKaCGyIYf62z32CwCYbLmrRAARZWvJI4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gEDePHWI; arc=fail smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715652096; x=1747188096;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=m2H1lv4pb3oKgcM/Ls/p8NN4sfJGHfynXNZhp3glPUE=;
-  b=gEDePHWIlFzl5I7ofjuH67at7KMkeSOaSA4bQSpFyk2hjJpS0pgHlBn0
-   JFFdXwj0lD5u8QyJU5v3CUagzIP8mtUM0KUOWZuxyvsn2oGNVcEQMnCTz
-   4IvyChAZGdKX9vrn2L7aGyq2SIoJgrPKRbIqEUw3gVzCmWXA4QEyi/Vjm
-   Su+sfzB4ek2f7TvGjhoCaJmdtZ9f2S3Wht1qGWYx9/2QqNacqMa6ZretM
-   sJaMpOfXmAAG5kodJcuvw5hK5u2G/I9Tp+neD//1FIyxQPu132Fa3kvo8
-   FQ1nW5/vNLlYi1KQV/t3lpuY/1s/dRy4fo9OI78nybnBRtG9VmaTfOI1g
-   Q==;
-X-CSE-ConnectionGUID: FO75xV15SSSqawVrgxX+vw==
-X-CSE-MsgGUID: BebOS1PrSmmTWYx6buOHpA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11072"; a="11775098"
-X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
-   d="scan'208";a="11775098"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2024 19:01:36 -0700
-X-CSE-ConnectionGUID: IjfqtJ/zSdyW0NMGAGSjWg==
-X-CSE-MsgGUID: neduB8gQQHKmBDf1m+Of6A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
-   d="scan'208";a="34969922"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 13 May 2024 19:01:35 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 13 May 2024 19:01:35 -0700
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35 via Frontend Transport; Mon, 13 May 2024 19:01:35 -0700
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.100)
- by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Mon, 13 May 2024 19:01:35 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=RbFJ2DkkakPK207wUflPBDiDmUD71yvTTLxa9qGAA2SFGQY30Pk+vpNwZJGXeNLW9GQaz6DUg/irnjekfulUfNR4k+IuH7xY/3Q1LbPpyB5YYffeBCM3veggsq45PT6pVyCS+JJAsMR+rCefbpuwANUU3GRLH/8zVH1hcY4HczLlAhzuM88I+QL6oNN2BoaeC061f5taHO9wU24EI7b2KLAA9QY6q3A3xh3Xjx3iK1xg/RbvYNmNh6bb0YBNC0d3PczmKy1q4Zl2JsRK+m7iz/K5eNn0boPL7vwGPU4vqh4qt4sEVUoM6BgOHdMJgvt/l8BPCpzYOan7F7T45bnXnQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mVAUaaWtPcpxYRfY7nLLEgFFB1rhYGuGhKeBSk+Q+/A=;
- b=AWsIONmpO5Y8uYhztCRpHId3PBfabq2TjDZHkYycgLOZAX9z40eBrpqMUZX7lc4XkxG8obIpRCkHOPgiv2o339iCg8RoY6C8B8gZ+7W1vi5mwWyokghiglt2YCAFbVtgXyMSiu5NiEElA2C1Zt2unWJpN49pXLdzQmkiQ9vrpW/Xpv6Djp0E3o2kFGb4luYQGRXDJrOva2WGj3Rz2q5cFrZ2VKtgTyaNIOACJi/o9OfmoVbAmDebuoDKzLA8Z+JVo+IgDy+ZNj5+B4w5Gb14B3R8qj+oKKDmCBv/r4ZK0UIN0+rFlEn666uF4dHdqrqalIsVOKbB5pJmmkj6zaTzsA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from MW3PR11MB4538.namprd11.prod.outlook.com (2603:10b6:303:57::12)
- by PH0PR11MB7562.namprd11.prod.outlook.com (2603:10b6:510:287::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Tue, 14 May
- 2024 02:01:33 +0000
-Received: from MW3PR11MB4538.namprd11.prod.outlook.com
- ([fe80::e117:2595:337:e067]) by MW3PR11MB4538.namprd11.prod.outlook.com
- ([fe80::e117:2595:337:e067%7]) with mapi id 15.20.7544.052; Tue, 14 May 2024
- 02:01:33 +0000
-Message-ID: <033c24ce-b0e4-4653-ab8a-2cefbbec0893@intel.com>
-Date: Mon, 13 May 2024 19:01:30 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Intel-wired-lan] [PATCH RFC iwl-next 07/12] idpf: compile
- singleq code only under default-n CONFIG_IDPF_SINGLEQ
-To: Alexander Lobakin <aleksander.lobakin@intel.com>,
-	<intel-wired-lan@lists.osuosl.org>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Eric Dumazet
-	<edumazet@google.com>, Tony Nguyen <anthony.l.nguyen@intel.com>,
-	<nex.sw.ncis.osdt.itp.upstreaming@intel.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "David S. Miller"
-	<davem@davemloft.net>
-References: <20240510152620.2227312-1-aleksander.lobakin@intel.com>
- <20240510152620.2227312-8-aleksander.lobakin@intel.com>
-Content-Language: en-US
-From: "Tantilov, Emil S" <emil.s.tantilov@intel.com>
-In-Reply-To: <20240510152620.2227312-8-aleksander.lobakin@intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR03CA0005.namprd03.prod.outlook.com
- (2603:10b6:a03:33a::10) To MW3PR11MB4538.namprd11.prod.outlook.com
- (2603:10b6:303:57::12)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3278D17FF
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 02:03:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715652193; cv=none; b=S75O3ByfitXbpCCkM/QQZOQRUBf6FQPyyXtl/oJzgnYqlSIj1qBjPnqErL3n1Cw0GK25BhUdNIb3Kl0/M30H3FObB8bKhtRXoMnhV9L/qT1clL6VqyjF/OQ4JM75HROsoL0A5PCKGIDoElOzPs6Ti3tpaztdWr3oU5ps+YfygXg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715652193; c=relaxed/simple;
+	bh=ztQztVEAsLYY0jkIeXwRsOI3ugtrw2zLixrbiHOJZe8=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=AFl+f58URs4qPK+YJXFWypKakJprpVPm3ZZwApyR6igxwueQbo7aWYolQMtB/QWgvAZi7BfWZ/zkZP/D/aHYkuaHqQNhZvWCryjDwxqpWhVkz6ZVx8Zfcgc20dEMRSroixrNuwzuBYzFn6D9gBijyAH29MCRvQOrRTmwa5UvoDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yuanchu.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=h7kqacWU; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yuanchu.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-61be325413eso66082867b3.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 19:03:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715652189; x=1716256989; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=2CILSZ0uaH9NdCYkm3r9ynyezJGNQ4maM6CJOkgWuPY=;
+        b=h7kqacWUHcEXEucIX9WUqNpoBp5eSiMIKyw0NyVXZblffNtrbHqIYWwf8NCUiBvM7M
+         ZVzfn7p33ROHU1042yLKOzapIsiVlkT+EBacWQtjrd4EzjWRgYTr9qdDhTFGgzXIJ7we
+         WkB0RfCej8+NgIwrWKoN7BZjTebJLXyWwTT6OttlJ8PJwaNxRLXM5rzIJOX/51DcFrEg
+         LCiTvhawUrAogo+Qz66Mpzs+fcSKBXXPpB5Ha5J2FPmMTZQPkUiniy8XHdaAvKA0JY2E
+         t9UnlKMSlgZ03i6M55lsR9uzzh9DGfp+XOLQwT1gZtC/DKh7mkFd780H5UsoOVHwkvsC
+         iLYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715652189; x=1716256989;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2CILSZ0uaH9NdCYkm3r9ynyezJGNQ4maM6CJOkgWuPY=;
+        b=PifFmxQGHn14XnIas/KSllThj6mBifNrK+CBatXePbdszep4NhuTHyy9zl0SSUVhmq
+         U0IIb23ngWH5waTpjEAulMThvS+ZQuNb6TUivO0QgX48Q6t3KhapA7NlkblF8Sjb2zJA
+         0i61Ce8GQfYnvjOjwJVPQNgIPiGZ52YT0RYFOTjPbyCtFEjiVXZrzU33odCTJuoO7RuA
+         ldY5tQED634Jx5BHgmbDzlSjXlHoEeDLKTh6ilFox4Xy8jwc0N1BUjvgjs74w0+3uqT6
+         5UZRIihmnMK99qvasb9FtUXjiWIFDzN6pbawGY8Zv4McRZI7aWJ5FQ2GYqPNwjzfU3sj
+         G7kA==
+X-Forwarded-Encrypted: i=1; AJvYcCUKSPPE/XN10uk13jlnTLvHv+Q9GI4UGsprxoUv12MYX740J5Vpv8nETOvCx3aJBVRjFqLiqtq/8R91tBDX/IDOkXPTNJqlgptVugw2
+X-Gm-Message-State: AOJu0YxLHOANzZNw5Jkd1PPzvAQEI28wzcNUOWjV3clEPNNCV2WxBAd7
+	+lq8oSZC0isoWDOBM7+NNFnRMk2iAzfhDYV+K3NV5p/MYpZEVLkFt+jI6JLqyU9//T89mP7O3xj
+	At9J0/Q==
+X-Google-Smtp-Source: AGHT+IEWtB+4/73l6vSM8tCV6D8XBpUnv0LMYl0bKkmcEoYg6wuA/fBaNuJBg4Q9guALsrY4eXPZh4P4kz4V
+X-Received: from yuanchu-desktop.svl.corp.google.com ([2620:15c:2a3:200:c98c:5a45:8674:49c2])
+ (user=yuanchu job=sendgmr) by 2002:a05:690c:3804:b0:61b:32dc:881d with SMTP
+ id 00721157ae682-622af8c8494mr31409317b3.3.1715652189206; Mon, 13 May 2024
+ 19:03:09 -0700 (PDT)
+Date: Mon, 13 May 2024 19:03:00 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW3PR11MB4538:EE_|PH0PR11MB7562:EE_
-X-MS-Office365-Filtering-Correlation-Id: 23face3c-283b-40d3-6588-08dc73b9c75a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|366007|376005;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?NFpOZEZVVUhnU1JsN3lZWDVqUlFlbmczY2h2a3FYYWVseVZVM1NNdmlyaTJW?=
- =?utf-8?B?d3UyZDlqZVFKdjhpU0hBMnA4aXdnOEVvQTFDdjFEcndHYys5dVJqek9ucG04?=
- =?utf-8?B?M3Q4WTB5by9LQ2NKTnlMVWxINE5LcHpER0tBSXRoQ29kNHFZTU5rNjdFdnp3?=
- =?utf-8?B?bHpnRmxGZTZSYlROWEIwMUpYbElSY1d3UFAxVFd5c2VBWEdsRVRvMjN5b0d2?=
- =?utf-8?B?dW9zMWJpV3FjeHRwZkE4a2ladnNHMDRIOUpjUmpwWDJ6R0FnTm9saldzTFY3?=
- =?utf-8?B?VWpJcjY4blgzby92VGt0cGpyRlErYWNxNDQxV0FuMHdHL2E5KzFjcDhsRmxt?=
- =?utf-8?B?VFBTSXdXNWxKSHppdUQ1SnB3UWJvWTQxMmNodDM5SmJ3WVc0NHBHVUxkbFg4?=
- =?utf-8?B?bkUvRmFhcXRJTkRGbG0ybEx5c1dwMXA5SVJXczB1a2doaFcxQlMyTnJzelRx?=
- =?utf-8?B?MXcwS0RlSzRoY3Z1b252VFVxa3J3bCtNWXlad1hrNWJBMFhPaG13M3QzQW40?=
- =?utf-8?B?Q3UwUGdzb2ttVTZBT01kQzEwZmtVYlJ3dHVadGZKR3dTU2E4MkszOXI2UU1p?=
- =?utf-8?B?WlFISjVMQ1V5aVhCYzJEd3U3U012UE5tc2VvWnRIMkF1TzNSakZ4VjVxR0VD?=
- =?utf-8?B?L3l1TXNLUlZWQ0dnaVViL0I1SUYvbTJrMm1wMnk3RXFacUhIWmN6K2Q5QUV5?=
- =?utf-8?B?ZmNUOSttbnZaZGdSNkc5dUI4Z25Fa1hYWEwxZlJwS0s3c1llUVJmb0RHOFph?=
- =?utf-8?B?UU5pVlZGcW4zVENTMzNQUFo3SjA4ZTdYeUF2STVDRmlwUy9CNHVINDduVnNz?=
- =?utf-8?B?bGJSbklOOGZ2U0ZTNnhZMS9LODNzZmFMK1pEenNWTXdlRC9PdFo0QXh6d21H?=
- =?utf-8?B?TFNQSnNsNzFEc3liY0phUWZvT3AvRzZHMjZQTnBPKy9SMjVzTDdhM2RIN0k0?=
- =?utf-8?B?WVdBMXFrbnU0NngraFFwNG5YL3Q4Q3NDczFhL2c3RkZXYjhUREVKYXpianZu?=
- =?utf-8?B?a00xcytUK3hJek9QaHU5MEhxbytzZGc2MUdCL3FlMFBOWlJzVXdUQm9mUlUz?=
- =?utf-8?B?dDIrNlI4NU82emVkaUhhcDVvazBiM0ZVR2tBYyt6d3AwcnBzOUhPbkJabzlO?=
- =?utf-8?B?RjA2VHZjdU5BeU9aMXBxSWgzU1BRWGVsdXAyMUZWS05TRnJ2K0M0SGVYZzI5?=
- =?utf-8?B?SmFFMUdseFFBT3VuWVd4NFEwMVgxY0Fna1hsQzRuYW9vR0NsbWd3KzBNMDk2?=
- =?utf-8?B?RWEvUHBKR3pCMEF3QUUvUGkvTDh6V003Ny9TT29wUzhiQ203S1ZrN05CbEdm?=
- =?utf-8?B?L0pjYkdZMksxc1U4TVB5VVVCV1RMcWJjdWR6RmZseVFjQWcxaDd5T0ZuQ2pz?=
- =?utf-8?B?dVRzd3BXRGJReFBLLzRKZWFkQkxTNnEvRDJxb1pvWnJJSVNHUnNyOG9ONlFn?=
- =?utf-8?B?RHVPY0JtY3E4SWVUVnh3SEkzeEgzSlcxWW9uVDd4M2pSKzdGMGpneDhZZVJa?=
- =?utf-8?B?c3VFaFdrb3pKUkJNVjVNZFBJTUJUUjBLNWM5VXllVlZMdVQ3b3RPZVQ4SU85?=
- =?utf-8?B?cXRNMjJodmEzUUtuQnVxRTJMZnN1M2l2VzE5TXZMbmFKSExHU1R0MzdSNCth?=
- =?utf-8?B?RkN3R1RxWGhBM29aQ1l2bjc5YnRSNnIzNnZGN2NuMnBjWGVZQi9pbVIwZTk4?=
- =?utf-8?B?b05hQU1KUnhoYk1Vc0J2TGkxWWhKV0JDSGc2VlE4VHBYK01zRlpFZTl3PT0=?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW3PR11MB4538.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(366007)(376005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?VXhQVmI0QXc4d2NZcHJsOGRHQ3lubmdhYjdsaGo4NnpMVys5bEoyQytnUWFV?=
- =?utf-8?B?ajBIVHcxMnZVZUtNbXhQalRuTE9DSWF6Z3FuTU1WZkR0YzdaM1JvQTNpSG9x?=
- =?utf-8?B?cnBDb280cVdnQjFDTmYvRnZIVFBSdkN3RUExQTJtS1ZabmZuT3g3eS9Mekhm?=
- =?utf-8?B?N1pLVGY0aHZPbXBWYmR0eFNVVnVoUFRWWGc3d0xqQ05SVHN2VVV0RCtodWk4?=
- =?utf-8?B?WkhWR1JxSnZjbGpmbFRJQ1lTUlNjSXNhZG40cTlyUzJmell1OFdRVU9KNVl6?=
- =?utf-8?B?T3lGRStGOWNRMVNwWWV4UGxQa3JuUlhjU3JPY3ZvOHRlWlBsRG8rZS9pRzZP?=
- =?utf-8?B?dnM3YmR4TFh4TzViSnBwQTJvQ3p3aWNQa3F3VG5nbU1VVW9UcVF6SlpkYnRx?=
- =?utf-8?B?bjFwYVVxVTIvcGlGVVU0ZCtjem1zT3lsRnF5eHhZSCs5THJkVXc5OFBrb3dM?=
- =?utf-8?B?T1libFpkY3ZhdTVEYWhJSkNZNm1KQmtIMWVncEVOVFVzOUg0UE9XUzFvcHFZ?=
- =?utf-8?B?WU5xQk1wZ3FMaG9PQ1FXc000b2RVWmxmT1VLcVRpU3ZYdFNrUTc4NGlxVzZW?=
- =?utf-8?B?MFl1c3lJSEswQlZxWFNRNUFoclZHam0vTGNDTjRJeDNxZm5YcklTRytJbTBP?=
- =?utf-8?B?WlRwYzdFa0gvUkxkdGdqbndqZ1BSQVh1NHJpUjRPSkpiRUYvNzBrdmVXazNi?=
- =?utf-8?B?ZHlqNktZRVh5N2xkb0p0V2UwNTQrMnExNUpGYzdZbzZHOURJUkxoMFU0QnFG?=
- =?utf-8?B?K0szMzBxTG9TcTdGQUlEUGMwbUUvVVJJTC9hcnJOcFhPdVNnRnhqMDFyNXVR?=
- =?utf-8?B?M1V0YnI1N0JidVJxUStsNHF6a3EvNTMrdUZGSHdiVGpNN0FwSytod2dOVWtO?=
- =?utf-8?B?R3ZleFcyaTJpT21nZmZFdHI1emhmRGttZU9BUjRZVGJVbHY0UHV4cDhpbS9y?=
- =?utf-8?B?WVYxQ2JlOUsxSEllWlBSR254U21rUUFwcVh1cnVLNU5zUThpOXkvY0JWc3NB?=
- =?utf-8?B?cEsyN01DcUQ0UGh5dW5jNElFRkNVZy9MTDFiMEJsc1M2d0FsUGg2b3BndjBB?=
- =?utf-8?B?WFd5Z1VxNkxXSG9JTGJKTVRPS2RUUlZpVXNLMzVEdk1LWFZyc3Z4SUo0eEM0?=
- =?utf-8?B?ZE5HSWQvelNnYUl5OHozb1pxZEtjSm5pTjRrV0o4V1FEMUJoNGZuVmdEaW0r?=
- =?utf-8?B?TlBPYzlqQkFHK1lYTnBDV1lQeHRnTVR5cmdmNUFyeWNLcWFPSVppM2lSU3F5?=
- =?utf-8?B?bnlvcXY3WkFoQWRtZVBMcHZGZElEM09QVFlVTW1YbTUwU1IwZFJyMXJrSWtG?=
- =?utf-8?B?MmJnRDFOREJaZ1NPSEdSY3VENDFZTUI4bU80cFZSVk5yQjhScENMQkV0NUd3?=
- =?utf-8?B?L2VaZEZsZ1NkSGxreTNKeWFETC83c2VvOGtZYkliQ28wRnJvdFpGRXJOZ0hl?=
- =?utf-8?B?MkROZWFwOUdTYmQvMGhCM25KZHNDa3VSdERUa1FNRTd2UlRZRWJlcXZqcVN0?=
- =?utf-8?B?Z1FQRU1WOEYzY2s0S21ka0lSbjVEMXBDZ0ZoejF6Y3c1Z1Q3cURJMHYxNml6?=
- =?utf-8?B?Ti8vYy9jUEJtQ1VlNVdmQ2hyUkNabjZHdHVkRG1hbTJ6cjBpUFNYQTB0V2lr?=
- =?utf-8?B?Q2diTjhoTlZsa3ovdUs1L1hENmNGT256ck8xVjZoMVhhaC9zSlhidmJGSitS?=
- =?utf-8?B?ZFFoZWtBOGZKUTdoc1JaVDR2TG01ajJSQm1KMFRCVjNqQ3YxTlhRdG9aUThj?=
- =?utf-8?B?TUZDSE1kbUs3VWY1UTBycHMvN1lzdXhrbUgydWIwSXNMMDBCQi9HZ3NnMElE?=
- =?utf-8?B?Q1RxdGk3cjZxYXNEa2JYZzdwVTRkT3dOUUprbU0zRWhlVjBvS0pDVkZzWWFS?=
- =?utf-8?B?cWRBNk5ORFBlMS9Ma2JlZlNUYVMyYmpxa3VCMHc3MzhmS3JYRkw5WEJ3L0E3?=
- =?utf-8?B?M0lzdGIxL3B6VSsyZkl0MFpJVGgrcWJoN0xXZUVySkNUT1Q5QkN3QnJpek9X?=
- =?utf-8?B?QTJKQUZUOHgyeWcvS1J4bEtnaDZrbGk4amRSdXpScVh1WGlPNnZGTHBiNDhS?=
- =?utf-8?B?dXF6TkxZS3pZYnc4RFpzcVFmYzJWZU02a01CNktEMDFqNmYzOEt3eUtobzZm?=
- =?utf-8?B?VDdieDROWmNwSDVTVGt6TEpiR08waWpYenhWQUdrRnVaNDViMEdyTktnRlV6?=
- =?utf-8?B?OUE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 23face3c-283b-40d3-6588-08dc73b9c75a
-X-MS-Exchange-CrossTenant-AuthSource: MW3PR11MB4538.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 May 2024 02:01:33.1502
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 5t8jT8pmIIuMMDbK5oWTV/NWVAf6rbx/RD/tcfGzA6k3VbivEVSfRIOXDQMpGLIZZOi9fu+pdRmMwzE35Wge7Ki22iQY34NpxIPWTguOyqw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB7562
-X-OriginatorOrg: intel.com
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.0.rc1.225.g2a3ae87e7f-goog
+Message-ID: <20240514020301.1835794-1-yuanchu@google.com>
+Subject: [RFC PATCH v1 1/2] virt: memctl: control guest physical memory properties
+From: Yuanchu Xie <yuanchu@google.com>
+To: Wei Liu <liuwe@microsoft.com>, Rob Bradford <rbradford@rivosinc.com>
+Cc: "Theodore Ts'o" <tytso@mit.edu>, Pasha Tatashin <pasha.tatashin@soleen.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Dan Williams <dan.j.williams@intel.com>, 
+	Tom Lendacky <thomas.lendacky@amd.com>, 
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, virtualization@lists.linux.dev, 
+	dev@lists.cloudhypervisor.org, Yuanchu Xie <yuanchu@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 5/10/2024 8:26 AM, Alexander Lobakin wrote:
-> Currently, there's no HW supporting idpf in the singleq model. Still,
-> this dead code is supported by the driver and often times add hotpath
-The driver supports the HW in single queue mode (not the other way 
-around), so I would like to point out that all current HW on which idpf 
-can load supports this model.
+Memctl provides a way for the guest to control its physical memory
+properties, and enables optimizations and security features. For
+example, the guest can provide information to the host where parts of a
+hugepage may be unbacked, or sensitive data may not be swapped out, etc.
 
-> branches and redundant cacheline accesses.
-> While it can't currently be removed, add CONFIG_IDPF_SINGLEQ and build
-> the singleq code only when it's enabled manually. This corresponds to
-> -10 Kb of object code size and a good bunch of hotpath checks.
-> idpf_is_queue_model_split() works as a gate and compiles out to `true`
-> when the config option is disabled.
-Compiling singleq out does introduce an issue for the users that would 
-end up without a netdev if the driver is loaded on a setup where the 
-Control Plane is configured for singlq mode. In that scenario the user 
-will have to recompile the driver/kernel in order to load the driver 
-successfully.
+Memctl allows guests to manipulate its gPTE entries in the SLAT, and
+also some other properties of the memory map the back's host memory.
+This is achieved by using the KVM_CAP_SYNC_MMU capability. When this
+capability is available, the changes in the backing of the memory region
+on the host are automatically reflected into the guest. For example, an
+mmap() or madvise() that affects the region will be made visible
+immediately.
 
-> 
-> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
-> ---
->   drivers/net/ethernet/intel/Kconfig            | 13 +---------
->   drivers/net/ethernet/intel/idpf/Kconfig       | 26 +++++++++++++++++++
->   drivers/net/ethernet/intel/idpf/Makefile      |  3 ++-
->   drivers/net/ethernet/intel/idpf/idpf.h        |  3 ++-
->   drivers/net/ethernet/intel/idpf/idpf_txrx.c   |  2 +-
->   .../net/ethernet/intel/idpf/idpf_virtchnl.c   | 15 ++++++++---
->   6 files changed, 43 insertions(+), 19 deletions(-)
->   create mode 100644 drivers/net/ethernet/intel/idpf/Kconfig
-> 
-> diff --git a/drivers/net/ethernet/intel/Kconfig b/drivers/net/ethernet/intel/Kconfig
-> index e0287fbd501d..0375c7448a57 100644
-> --- a/drivers/net/ethernet/intel/Kconfig
-> +++ b/drivers/net/ethernet/intel/Kconfig
-> @@ -384,17 +384,6 @@ config IGC_LEDS
->   	  Optional support for controlling the NIC LED's with the netdev
->   	  LED trigger.
->   
-> -config IDPF
-> -	tristate "Intel(R) Infrastructure Data Path Function Support"
-> -	depends on PCI_MSI
-> -	select DIMLIB
-> -	select PAGE_POOL
-> -	select PAGE_POOL_STATS
-> -	help
-> -	  This driver supports Intel(R) Infrastructure Data Path Function
-> -	  devices.
-> -
-> -	  To compile this driver as a module, choose M here. The module
-> -	  will be called idpf.
-> +source "drivers/net/ethernet/intel/idpf/Kconfig"
->   
->   endif # NET_VENDOR_INTEL
-> diff --git a/drivers/net/ethernet/intel/idpf/Kconfig b/drivers/net/ethernet/intel/idpf/Kconfig
-> new file mode 100644
-> index 000000000000..bee83a40f218
-> --- /dev/null
-> +++ b/drivers/net/ethernet/intel/idpf/Kconfig
-> @@ -0,0 +1,26 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +# Copyright (C) 2024 Intel Corporation
-> +
-> +config IDPF
-> +	tristate "Intel(R) Infrastructure Data Path Function Support"
-> +	depends on PCI_MSI
-> +	select DIMLIB
-> +	select PAGE_POOL
-> +	select PAGE_POOL_STATS
-> +	help
-> +	  This driver supports Intel(R) Infrastructure Data Path Function
-> +	  devices.
-> +
-> +	  To compile this driver as a module, choose M here. The module
-> +	  will be called idpf.
-> +
-> +if IDPF
-> +
-> +config IDPF_SINGLEQ
-> +	bool "idpf singleq support"
-> +	help
-> +	  This option enables support for legacy single Rx/Tx queues w/no
-> +	  completion and fill queues. Only enable if you have such hardware
-This description is not accurate - all HW supports single queue. The 
-configuration is done by the Control Plane. Furthermore, without access 
-to the Control Plane config, there is no way for the user to know what 
-mode is enabled.
+There are two components of the implementation: the guest Linux driver
+and Virtual Machine Monitor (VMM) device. A guest-allocated shared
+buffer is negotiated per-cpu through a few PCI MMIO registers, the VMM
+device assigns a unique command for each per-cpu buffer. The guest
+writes its memctl request in the per-cpu buffer, then writes the
+corresponding command into the command register, calling into the VMM
+device to perform the memctl request.
 
-Thanks,
-Emil
+The synchronous per-cpu shared buffer approach avoids the kick and busy
+waiting that the guest would have to do with virtio virtqueue transport.
 
-> +	  as it increases the driver size and adds runtme checks on hotpath.
-> +
-> +endif # IDPF
-> diff --git a/drivers/net/ethernet/intel/idpf/Makefile b/drivers/net/ethernet/intel/idpf/Makefile
-> index 6844ead2f3ac..2ce01a0b5898 100644
-> --- a/drivers/net/ethernet/intel/idpf/Makefile
-> +++ b/drivers/net/ethernet/intel/idpf/Makefile
-> @@ -12,7 +12,8 @@ idpf-y := \
->   	idpf_ethtool.o		\
->   	idpf_lib.o		\
->   	idpf_main.o		\
-> -	idpf_singleq_txrx.o	\
->   	idpf_txrx.o		\
->   	idpf_virtchnl.o 	\
->   	idpf_vf_dev.o
-> +
-> +idpf-$(CONFIG_IDPF_SINGLEQ)	+= idpf_singleq_txrx.o
-> diff --git a/drivers/net/ethernet/intel/idpf/idpf.h b/drivers/net/ethernet/intel/idpf/idpf.h
-> index f9e43d171f17..5d9529f5b41b 100644
-> --- a/drivers/net/ethernet/intel/idpf/idpf.h
-> +++ b/drivers/net/ethernet/intel/idpf/idpf.h
-> @@ -599,7 +599,8 @@ struct idpf_adapter {
->    */
->   static inline int idpf_is_queue_model_split(u16 q_model)
->   {
-> -	return q_model == VIRTCHNL2_QUEUE_MODEL_SPLIT;
-> +	return !IS_ENABLED(CONFIG_IDPF_SINGLEQ) ||
-> +	       q_model == VIRTCHNL2_QUEUE_MODEL_SPLIT;
->   }
->   
->   #define idpf_is_cap_ena(adapter, field, flag) \
-> diff --git a/drivers/net/ethernet/intel/idpf/idpf_txrx.c b/drivers/net/ethernet/intel/idpf/idpf_txrx.c
-> index 4aa5ee781bd7..2bc1a5a0b50f 100644
-> --- a/drivers/net/ethernet/intel/idpf/idpf_txrx.c
-> +++ b/drivers/net/ethernet/intel/idpf/idpf_txrx.c
-> @@ -1306,7 +1306,7 @@ static void idpf_vport_calc_numq_per_grp(struct idpf_vport *vport,
->   static void idpf_rxq_set_descids(const struct idpf_vport *vport,
->   				 struct idpf_rx_queue *q)
->   {
-> -	if (vport->rxq_model == VIRTCHNL2_QUEUE_MODEL_SPLIT) {
-> +	if (idpf_is_queue_model_split(vport->rxq_model)) {
->   		q->rxdids = VIRTCHNL2_RXDID_2_FLEX_SPLITQ_M;
->   	} else {
->   		if (vport->base_rxd)
-> diff --git a/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c b/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
-> index 44602b87cd41..d1705fcb701a 100644
-> --- a/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
-> +++ b/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
-> @@ -1256,12 +1256,12 @@ int idpf_send_create_vport_msg(struct idpf_adapter *adapter,
->   	vport_msg->vport_type = cpu_to_le16(VIRTCHNL2_VPORT_TYPE_DEFAULT);
->   	vport_msg->vport_index = cpu_to_le16(idx);
->   
-> -	if (adapter->req_tx_splitq)
-> +	if (adapter->req_tx_splitq || !IS_ENABLED(CONFIG_IDPF_SINGLEQ))
->   		vport_msg->txq_model = cpu_to_le16(VIRTCHNL2_QUEUE_MODEL_SPLIT);
->   	else
->   		vport_msg->txq_model = cpu_to_le16(VIRTCHNL2_QUEUE_MODEL_SINGLE);
->   
-> -	if (adapter->req_rx_splitq)
-> +	if (adapter->req_rx_splitq || !IS_ENABLED(CONFIG_IDPF_SINGLEQ))
->   		vport_msg->rxq_model = cpu_to_le16(VIRTCHNL2_QUEUE_MODEL_SPLIT);
->   	else
->   		vport_msg->rxq_model = cpu_to_le16(VIRTCHNL2_QUEUE_MODEL_SINGLE);
-> @@ -1323,10 +1323,17 @@ int idpf_check_supported_desc_ids(struct idpf_vport *vport)
->   
->   	vport_msg = adapter->vport_params_recvd[vport->idx];
->   
-> +	if (!IS_ENABLED(CONFIG_IDPF_SINGLEQ) &&
-> +	    (vport_msg->rxq_model == VIRTCHNL2_QUEUE_MODEL_SINGLE ||
-> +	     vport_msg->txq_model == VIRTCHNL2_QUEUE_MODEL_SINGLE)) {
-> +		dev_err(&adapter->pdev->dev, "singleq mode requested, but not compiled-in\n");
-> +		return -EOPNOTSUPP;
-> +	}
-> +
->   	rx_desc_ids = le64_to_cpu(vport_msg->rx_desc_ids);
->   	tx_desc_ids = le64_to_cpu(vport_msg->tx_desc_ids);
->   
-> -	if (vport->rxq_model == VIRTCHNL2_QUEUE_MODEL_SPLIT) {
-> +	if (idpf_is_queue_model_split(vport->rxq_model)) {
->   		if (!(rx_desc_ids & VIRTCHNL2_RXDID_2_FLEX_SPLITQ_M)) {
->   			dev_info(&adapter->pdev->dev, "Minimum RX descriptor support not provided, using the default\n");
->   			vport_msg->rx_desc_ids = cpu_to_le64(VIRTCHNL2_RXDID_2_FLEX_SPLITQ_M);
-> @@ -1336,7 +1343,7 @@ int idpf_check_supported_desc_ids(struct idpf_vport *vport)
->   			vport->base_rxd = true;
->   	}
->   
-> -	if (vport->txq_model != VIRTCHNL2_QUEUE_MODEL_SPLIT)
-> +	if (!idpf_is_queue_model_split(vport->txq_model))
->   		return 0;
->   
->   	if ((tx_desc_ids & MIN_SUPPORT_TXDID) != MIN_SUPPORT_TXDID) {
+We provide both kernel and userspace APIs
+Kernel API
+long memctl_vmm_call(__u64 func_code, __u64 addr, __u64 length, __u64 arg,
+		     struct memctl_buf *buf);
+
+Kernel drivers can take advantage of the memctl calls to provide
+paravirtualization of kernel stacks or page zeroing.
+
+User API
+From the userland, the memctl guest driver is controlled via ioctl(2)
+call. It requires CAP_SYS_ADMIN.
+
+ioctl(fd, MEMCTL_IOCTL, union memctl_vmm *memctl_vmm);
+
+Guest userland applications can tag VMAs and guest hugepages, or advise
+the host on how to handle sensitive guest pages.
+
+Supported function codes and their use cases:
+MEMCTL_FREE/REMOVE/DONTNEED/PAGEOUT. For the guest. One can reduce the
+struct page and page table lookup overhead by using hugepages backed by
+smaller pages on the host. These memctl commands can allow for partial
+freeing of private guest hugepages to save memory. They also allow
+kernel memory, such as kernel stacks and task_structs to be
+paravirtualized.
+
+MEMCTL_UNMERGEABLE is useful for security, when the VM does not want to
+share its backing pages.
+The same with MADV_DONTDUMP, so sensitive pages are not included in a
+dump.
+MLOCK/UNLOCK can advise the host that sensitive information is not
+swapped out on the host.
+
+MEMCTL_MPROTECT_NONE/R/W/RW. For guest stacks backed by hugepages, stack
+guard pages can be handled in the host and memory can be saved in the
+hugepage.
+
+MEMCTL_SET_VMA_ANON_NAME is useful for observability and debugging how
+guest memory is being mapped on the host.
+
+Sample program making use of MEMCTL_SET_VMA_ANON_NAME and
+MEMCTL_DONTNEED:
+https://github.com/Dummyc0m/memctl-set-anon-vma-name/tree/main
+https://github.com/Dummyc0m/memctl-set-anon-vma-name/tree/dontneed
+
+The VMM implementation is being proposed for Cloud Hypervisor:
+https://github.com/Dummyc0m/cloud-hypervisor/
+
+Cloud Hypervisor issue:
+https://github.com/cloud-hypervisor/cloud-hypervisor/issues/6318
+
+Signed-off-by: Yuanchu Xie <yuanchu@google.com>
+---
+ .../userspace-api/ioctl/ioctl-number.rst      |   2 +
+ drivers/virt/Kconfig                          |   2 +
+ drivers/virt/Makefile                         |   1 +
+ drivers/virt/memctl/Kconfig                   |  10 +
+ drivers/virt/memctl/Makefile                  |   2 +
+ drivers/virt/memctl/memctl.c                  | 425 ++++++++++++++++++
+ include/linux/memctl.h                        |  27 ++
+ include/uapi/linux/memctl.h                   |  81 ++++
+ 8 files changed, 550 insertions(+)
+ create mode 100644 drivers/virt/memctl/Kconfig
+ create mode 100644 drivers/virt/memctl/Makefile
+ create mode 100644 drivers/virt/memctl/memctl.c
+ create mode 100644 include/linux/memctl.h
+ create mode 100644 include/uapi/linux/memctl.h
+
+diff --git a/Documentation/userspace-api/ioctl/ioctl-number.rst b/Documentation/userspace-api/ioctl/ioctl-number.rst
+index 457e16f06e04..789d1251c0be 100644
+--- a/Documentation/userspace-api/ioctl/ioctl-number.rst
++++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
+@@ -368,6 +368,8 @@ Code  Seq#    Include File                                           Comments
+ 0xCD  01     linux/reiserfs_fs.h
+ 0xCE  01-02  uapi/linux/cxl_mem.h                                    Compute Express Link Memory Devices
+ 0xCF  02     fs/smb/client/cifs_ioctl.h
++0xDA  00     linux/memctl.h                                          Memctl Device
++                                                                     <mailto:yuanchu@google.com>
+ 0xDB  00-0F  drivers/char/mwave/mwavepub.h
+ 0xDD  00-3F                                                          ZFCP device driver see drivers/s390/scsi/
+                                                                      <mailto:aherrman@de.ibm.com>
+diff --git a/drivers/virt/Kconfig b/drivers/virt/Kconfig
+index 40129b6f0eca..419496558cfc 100644
+--- a/drivers/virt/Kconfig
++++ b/drivers/virt/Kconfig
+@@ -50,4 +50,6 @@ source "drivers/virt/acrn/Kconfig"
+ 
+ source "drivers/virt/coco/Kconfig"
+ 
++source "drivers/virt/memctl/Kconfig"
++
+ endif
+diff --git a/drivers/virt/Makefile b/drivers/virt/Makefile
+index f29901bd7820..68e152e7cef1 100644
+--- a/drivers/virt/Makefile
++++ b/drivers/virt/Makefile
+@@ -10,3 +10,4 @@ obj-y				+= vboxguest/
+ obj-$(CONFIG_NITRO_ENCLAVES)	+= nitro_enclaves/
+ obj-$(CONFIG_ACRN_HSM)		+= acrn/
+ obj-y				+= coco/
++obj-$(CONFIG_MEMCTL)		+= memctl/
+diff --git a/drivers/virt/memctl/Kconfig b/drivers/virt/memctl/Kconfig
+new file mode 100644
+index 000000000000..981ed9b76f97
+--- /dev/null
++++ b/drivers/virt/memctl/Kconfig
+@@ -0,0 +1,10 @@
++# SPDX-License-Identifier: GPL-2.0
++config MEMCTL
++	tristate "memctl Guest Service Module"
++	depends on KVM_GUEST && 64BIT
++	help
++	  memctl is a guest kernel module that allows to communicate
++	  with hypervisor / VMM and control the guest memory backing.
++
++	  To compile as a module, choose M, the module will be called
++	  memctl. If unsure, say N.
+diff --git a/drivers/virt/memctl/Makefile b/drivers/virt/memctl/Makefile
+new file mode 100644
+index 000000000000..410829a3c297
+--- /dev/null
++++ b/drivers/virt/memctl/Makefile
+@@ -0,0 +1,2 @@
++# SPDX-License-Identifier: GPL-2.0
++obj-$(CONFIG_MEMCTL)	:= memctl.o
+diff --git a/drivers/virt/memctl/memctl.c b/drivers/virt/memctl/memctl.c
+new file mode 100644
+index 000000000000..661a552f98d8
+--- /dev/null
++++ b/drivers/virt/memctl/memctl.c
+@@ -0,0 +1,425 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Control guest memory mappings
++ *
++ * Author: Yuanchu Xie <yuanchu@google.com>
++ * Author: Pasha Tatashin <pasha.tatashin@soleen.com>
++ */
++#define pr_fmt(fmt) "memctl %s: " fmt, __func__
++
++#include <linux/spinlock.h>
++#include <linux/cpumask.h>
++#include <linux/percpu-defs.h>
++#include <linux/percpu.h>
++#include <linux/types.h>
++#include <linux/gfp.h>
++#include <linux/compiler.h>
++#include <linux/fs.h>
++#include <linux/sched/clock.h>
++#include <linux/wait.h>
++#include <linux/printk.h>
++#include <linux/slab.h>
++#include <linux/miscdevice.h>
++#include <linux/module.h>
++#include <linux/proc_fs.h>
++#include <linux/resource_ext.h>
++#include <linux/memctl.h>
++#include <linux/mutex.h>
++#include <linux/pci.h>
++#include <linux/io-64-nonatomic-lo-hi.h>
++
++#define PCI_VENDOR_ID_GOOGLE		0x1ae0
++#define PCI_DEVICE_ID_GOOGLE_MEMCTL	0x0087
++
++#define MEMCTL_VERSION "0.01"
++
++enum memctl_transport_command {
++	MEMCTL_TRANSPORT_RESET = 0x060FE6D2,
++	MEMCTL_TRANSPORT_REGISTER = 0x0E359539,
++	MEMCTL_TRANSPORT_READY = 0x0CA8D227,
++	MEMCTL_TRANSPORT_DISCONNECT = 0x030F5DA0,
++	MEMCTL_TRANSPORT_ACK = 0x03CF5196,
++	MEMCTL_TRANSPORT_ERROR = 0x01FBA249,
++};
++
++struct memctl_transport {
++	union {
++		struct {
++			u64 buf_phys_addr;
++		} reg;
++		struct {
++			u32 command;
++			u32 _padding;
++		} resp;
++	};
++	u32 command;
++};
++
++struct memctl_percpu_channel {
++	struct memctl_buf buf;
++	u64 buf_phys_addr;
++	u32 command;
++};
++
++struct memctl {
++	void __iomem *base_addr;
++	/* cache the info call */
++	struct memctl_vmm_info memctl_vmm_info;
++	struct memctl_percpu_channel __percpu *pcpu_channels;
++};
++
++static DEFINE_RWLOCK(memctl_lock);
++static struct memctl *memctl __read_mostly;
++
++static void memctl_write_command(void __iomem *base_addr, u32 command)
++{
++	iowrite32(command,
++		  base_addr + offsetof(struct memctl_transport, command));
++}
++
++static u32 memctl_read_command(void __iomem *base_addr)
++{
++	return ioread32(base_addr + offsetof(struct memctl_transport, command));
++}
++
++static void memctl_write_reg(void __iomem *base_addr, u64 buf_phys_addr)
++{
++	iowrite64_lo_hi(buf_phys_addr,
++			base_addr + offsetof(struct memctl_transport,
++					     reg.buf_phys_addr));
++}
++
++static u32 memctl_read_resp(void __iomem *base_addr)
++{
++	return ioread32(base_addr +
++			offsetof(struct memctl_transport, resp.command));
++}
++
++static void memctl_send_request(struct memctl *memctl, struct memctl_buf *buf)
++{
++	struct memctl_percpu_channel *channel;
++
++	preempt_disable();
++	channel = this_cpu_ptr(memctl->pcpu_channels);
++	memcpy(&channel->buf, buf, sizeof(channel->buf));
++	memctl_write_command(memctl->base_addr, channel->command);
++	memcpy(buf, &channel->buf, sizeof(*buf));
++	preempt_enable();
++}
++
++static int __memctl_vmm_call(struct memctl_buf *buf)
++{
++	int err = 0;
++
++	if (!memctl)
++		return -EINVAL;
++
++	read_lock(&memctl_lock);
++	if (!memctl) {
++		err = -EINVAL;
++		goto unlock;
++	}
++	if (buf->call.func_code == MEMCTL_INFO) {
++		memcpy(&buf->info, &memctl->memctl_vmm_info, sizeof(buf->info));
++		goto unlock;
++	}
++
++	memctl_send_request(memctl, buf);
++
++unlock:
++	read_unlock(&memctl_lock);
++	return err;
++}
++
++/*
++ * Used for internal kernel memctl calls, i.e. to better support kernel stacks,
++ * or to efficiently zero hugetlb pages.
++ */
++long memctl_vmm_call(__u64 func_code, __u64 addr, __u64 length, __u64 arg,
++		     struct memctl_buf *buf)
++{
++	buf->call.func_code = func_code;
++	buf->call.addr = addr;
++	buf->call.length = length;
++	buf->call.arg = arg;
++
++	return __memctl_vmm_call(buf);
++}
++EXPORT_SYMBOL(memctl_vmm_call);
++
++static int memctl_init_info(struct memctl *dev, struct memctl_buf *buf)
++{
++	buf->call.func_code = MEMCTL_INFO;
++
++	memctl_send_request(dev, buf);
++	if (buf->ret.ret_code)
++		return buf->ret.ret_code;
++
++	/* Initialize global memctl_vmm_info */
++	memcpy(&dev->memctl_vmm_info, &buf->info, sizeof(dev->memctl_vmm_info));
++	pr_debug("memctl_vmm_info:\n"
++		 "memctl_vmm_info.ret_errno = %u\n"
++		 "memctl_vmm_info.ret_code = %u\n"
++		 "memctl_vmm_info.big_endian = %llu\n"
++		 "memctl_vmm_info.major_version = %u\n"
++		 "memctl_vmm_info.minor_version = %u\n"
++		 "memctl_vmm_info.page_size = %llu\n",
++		 dev->memctl_vmm_info.ret_errno, dev->memctl_vmm_info.ret_code,
++		 dev->memctl_vmm_info.big_endian,
++		 dev->memctl_vmm_info.major_version,
++		 dev->memctl_vmm_info.minor_version,
++		 dev->memctl_vmm_info.page_size);
++
++	return 0;
++}
++
++static int memctl_open(struct inode *inode, struct file *filp)
++{
++	struct memctl_buf *buf = NULL;
++
++	if (!capable(CAP_SYS_ADMIN))
++		return -EACCES;
++
++	/* Do not allow exclusive open */
++	if (filp->f_flags & O_EXCL)
++		return -EINVAL;
++
++	buf = kzalloc(sizeof(struct memctl_buf), GFP_KERNEL);
++	if (!buf)
++		return -ENOMEM;
++
++	/* Overwrite the misc device set by misc_register */
++	filp->private_data = buf;
++	return 0;
++}
++
++static int memctl_release(struct inode *inode, struct file *filp)
++{
++	kfree(filp->private_data);
++	filp->private_data = NULL;
++	return 0;
++}
++
++static long memctl_ioctl(struct file *filp, unsigned int cmd,
++			 unsigned long ioctl_param)
++{
++	struct memctl_buf *buf = filp->private_data;
++	int err;
++
++	if (cmd != MEMCTL_IOCTL_VMM)
++		return -EINVAL;
++
++	if (copy_from_user(&buf->call, (void __user *)ioctl_param,
++			   sizeof(struct memctl_buf)))
++		return -EFAULT;
++
++	err = __memctl_vmm_call(buf);
++	if (err)
++		return err;
++
++	if (copy_to_user((void __user *)ioctl_param, &buf->ret,
++			 sizeof(struct memctl_buf)))
++		return -EFAULT;
++
++	return 0;
++}
++
++static const struct file_operations memctl_fops = {
++	.owner = THIS_MODULE,
++	.open = memctl_open,
++	.release = memctl_release,
++	.unlocked_ioctl = memctl_ioctl,
++	.compat_ioctl = compat_ptr_ioctl,
++};
++
++static struct miscdevice memctl_dev = {
++	.minor = MISC_DYNAMIC_MINOR,
++	.name = KBUILD_MODNAME,
++	.fops = &memctl_fops,
++};
++
++static int memctl_connect(struct memctl *memctl)
++{
++	int cpu;
++	u32 cmd;
++
++	memctl_write_command(memctl->base_addr, MEMCTL_TRANSPORT_RESET);
++	cmd = memctl_read_command(memctl->base_addr);
++	if (cmd != MEMCTL_TRANSPORT_ACK) {
++		pr_err("failed to reset device, cmd 0x%x\n", cmd);
++		return -EINVAL;
++	}
++
++	for_each_possible_cpu(cpu) {
++		struct memctl_percpu_channel *channel =
++			per_cpu_ptr(memctl->pcpu_channels, cpu);
++
++		memctl_write_reg(memctl->base_addr, channel->buf_phys_addr);
++		memctl_write_command(memctl->base_addr,
++				     MEMCTL_TRANSPORT_REGISTER);
++
++		cmd = memctl_read_command(memctl->base_addr);
++		if (cmd != MEMCTL_TRANSPORT_ACK) {
++			pr_err("failed to register pcpu buf, cmd 0x%x\n", cmd);
++			return -EINVAL;
++		}
++		channel->command = memctl_read_resp(memctl->base_addr);
++	}
++
++	memctl_write_command(memctl->base_addr, MEMCTL_TRANSPORT_READY);
++	cmd = memctl_read_command(memctl->base_addr);
++	if (cmd != MEMCTL_TRANSPORT_ACK) {
++		pr_err("failed to ready device, cmd 0x%x\n", cmd);
++		return -EINVAL;
++	}
++	return 0;
++}
++
++static int memctl_disconnect(struct memctl *memctl)
++{
++	u32 cmd;
++
++	memctl_write_command(memctl->base_addr, MEMCTL_TRANSPORT_DISCONNECT);
++
++	cmd = memctl_read_command(memctl->base_addr);
++	if (cmd != MEMCTL_TRANSPORT_ERROR) {
++		pr_err("failed to disconnect device, cmd 0x%x\n", cmd);
++		return -EINVAL;
++	}
++	return 0;
++}
++
++static int memctl_alloc_percpu_channels(struct memctl *memctl)
++{
++	int cpu;
++
++	memctl->pcpu_channels = alloc_percpu_gfp(struct memctl_percpu_channel,
++						 GFP_ATOMIC | __GFP_ZERO);
++	if (!memctl->pcpu_channels)
++		return -ENOMEM;
++
++	for_each_possible_cpu(cpu) {
++		struct memctl_percpu_channel *channel =
++			per_cpu_ptr(memctl->pcpu_channels, cpu);
++		phys_addr_t buf_phys = per_cpu_ptr_to_phys(&channel->buf);
++
++		channel->buf_phys_addr = buf_phys;
++	}
++	return 0;
++}
++
++static int memctl_init(void __iomem *base_addr)
++{
++	struct memctl_buf *buf = NULL;
++	struct memctl *dev = NULL;
++	int err = 0;
++
++	err = misc_register(&memctl_dev);
++	if (err)
++		return err;
++
++	/* We take a spinlock for a long time, but this is only during init. */
++	write_lock(&memctl_lock);
++	if (WARN(READ_ONCE(memctl), "multiple memctl devices present")) {
++		err = -EEXIST;
++		goto fail_free;
++	}
++
++	dev = kzalloc(sizeof(struct memctl), GFP_ATOMIC);
++	buf = kzalloc(sizeof(struct memctl_buf), GFP_ATOMIC);
++	if (!dev || !buf) {
++		err = -ENOMEM;
++		goto fail_free;
++	}
++
++	dev->base_addr = base_addr;
++
++	err = memctl_alloc_percpu_channels(dev);
++	if (err)
++		goto fail_free;
++
++	err = memctl_connect(dev);
++	if (err)
++		goto fail_free;
++
++	err = memctl_init_info(dev, buf);
++	if (err)
++		goto fail_free;
++
++	WRITE_ONCE(memctl, dev);
++	write_unlock(&memctl_lock);
++	return 0;
++
++fail_free:
++	write_unlock(&memctl_lock);
++	kfree(dev);
++	kfree(buf);
++	misc_deregister(&memctl_dev);
++	return err;
++}
++
++static int memctl_pci_probe(struct pci_dev *dev, const struct pci_device_id *id)
++{
++	void __iomem *base_addr;
++	int err;
++
++	err = pcim_enable_device(dev);
++	if (err < 0)
++		return err;
++
++	base_addr = pcim_iomap(dev, 0, 0);
++	if (!base_addr)
++		return -ENOMEM;
++
++	err = memctl_init(base_addr);
++	if (err)
++		pci_disable_device(dev);
++
++	return err;
++}
++
++static void __exit memctl_pci_remove(struct pci_dev *_dev)
++{
++	int err;
++	struct memctl *dev;
++
++	write_lock(&memctl_lock);
++	dev = READ_ONCE(memctl);
++	if (!dev) {
++		err = -EINVAL;
++		pr_err("cleanup called when uninitialized\n");
++		write_unlock(&memctl_lock);
++		return;
++	}
++
++	/* disconnect */
++	err = memctl_disconnect(dev);
++	if (err)
++		pr_err("device did not ack disconnect");
++	/* free percpu channels */
++	free_percpu(dev->pcpu_channels);
++
++	kfree(dev);
++	WRITE_ONCE(memctl, NULL);
++	write_unlock(&memctl_lock);
++	misc_deregister(&memctl_dev);
++}
++
++static const struct pci_device_id memctl_pci_id_tbl[] = {
++	{ PCI_DEVICE(PCI_VENDOR_ID_GOOGLE, PCI_DEVICE_ID_GOOGLE_MEMCTL) },
++	{ 0 }
++};
++MODULE_DEVICE_TABLE(pci, memctl_pci_id_tbl);
++
++static struct pci_driver memctl_pci_driver = {
++	.name = "memctl",
++	.id_table = memctl_pci_id_tbl,
++	.probe = memctl_pci_probe,
++	.remove = memctl_pci_remove,
++};
++module_pci_driver(memctl_pci_driver);
++
++MODULE_AUTHOR("Yuanchu Xie <yuanchu@google.com>");
++MODULE_DESCRIPTION("memctl Guest Service Module");
++MODULE_VERSION(MEMCTL_VERSION);
++MODULE_LICENSE("GPL");
+diff --git a/include/linux/memctl.h b/include/linux/memctl.h
+new file mode 100644
+index 000000000000..5e1073134692
+--- /dev/null
++++ b/include/linux/memctl.h
+@@ -0,0 +1,27 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Kernel interface for /dev/memctl - memctl Guest Memory Service Module
++ *
++ * Copyright (c) 2021, Google LLC.
++ * Pasha Tatashin <pasha.tatashin@soleen.com>
++ */
++
++#ifndef _MEMCTL_H
++#define _MEMCTL_H
++
++#include <uapi/linux/memctl.h>
++#include <linux/errno.h>
++
++#ifdef CONFIG_MEMCTL
++/* buf must be kzalloc'd */
++long memctl_vmm_call(__u64 func_code, __u64 addr, __u64 length, __u64 arg,
++		     struct memctl_buf *buf);
++#else
++static inline long memctl_vmm_call(__u64 func_code, __u64 addr, __u64 length,
++				   __u64 arg, struct memctl_buf *buf)
++{
++	return -ENODEV;
++}
++#endif /* CONFIG_MEMCTL */
++
++#endif /* _MEMCTL_H */
+diff --git a/include/uapi/linux/memctl.h b/include/uapi/linux/memctl.h
+new file mode 100644
+index 000000000000..a7b9a4e65e51
+--- /dev/null
++++ b/include/uapi/linux/memctl.h
+@@ -0,0 +1,81 @@
++/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
++/*
++ * Userspace interface for /dev/memctl - memctl Guest Memory Service Module
++ *
++ * Copyright (c) 2021, Google LLC.
++ * Yuanchu Xie <yuanchu@google.com>
++ * Pasha Tatashin <pasha.tatashin@soleen.com>
++ */
++
++#ifndef _UAPI_MEMCTL_H
++#define _UAPI_MEMCTL_H
++
++#include <linux/wait.h>
++#include <linux/types.h>
++#include <asm/param.h>
++
++/* Contains the function code and arguments for specific function */
++struct memctl_vmm_call {
++	__u64 func_code;	/* memctl set function code */
++	__u64 addr;		/* hyper. page size aligned guest phys. addr */
++	__u64 length;		/* hyper. page size aligned length */
++	__u64 arg;		/* function code specific argument */
++};
++
++/* Is filled on return to guest from VMM from most function calls */
++struct memctl_vmm_ret {
++	__u32 ret_errno;	/* on error, value of errno */
++	__u32 ret_code;		/* memctl internal error code, on success 0 */
++	__u64 ret_value;	/* return value from the function call */
++	__u64 arg0;		/* currently unused */
++	__u64 arg1;		/* currently unused */
++};
++
++/* Is filled on return to guest from VMM from MEMCTL_INFO function call */
++struct memctl_vmm_info {
++	__u32 ret_errno;	/* on error, value of errno */
++	__u32 ret_code;		/* memctl internal error code, on success 0 */
++	__u64 big_endian;	/* non-zero when hypervisor is big endian */
++	__u32 major_version;	/* VMM memctl backend major version */
++	__u32 minor_version;	/* VMM memctl backend minor version */
++	__u64 page_size;	/* hypervisor page size */
++};
++
++struct memctl_buf {
++	union {
++		struct memctl_vmm_call call;
++		struct memctl_vmm_ret ret;
++		struct memctl_vmm_info info;
++	};
++};
++
++/* The ioctl type, documented in ioctl-number.rst */
++#define MEMCTL_IOCTL_TYPE		0xDA
++
++#define MEMCTL_IOCTL_VMM _IOWR(MEMCTL_IOCTL_TYPE, 0x00, struct memctl_buf)
++
++/* Get memctl_vmm_info, addr, length, and arg are ignored */
++#define MEMCTL_INFO		0
++
++/* Memctl calls, memctl_vmm_return is returned */
++#define MEMCTL_DONTNEED		1 /* madvise(addr, len, MADV_DONTNEED); */
++#define MEMCTL_REMOVE		2 /* madvise(addr, len, MADV_MADV_REMOVE); */
++#define MEMCTL_FREE		3 /* madvise(addr, len, MADV_FREE); */
++#define MEMCTL_PAGEOUT		4 /* madvise(addr, len, MADV_PAGEOUT); */
++
++#define MEMCTL_UNMERGEABLE	5 /* madvise(addr, len, MADV_UNMERGEABLE); */
++#define MEMCTL_DONTDUMP		6 /* madvise(addr, len, MADV_DONTDUMP); */
++
++#define MEMCTL_MLOCK		7 /* mlock2(addr, len, 0) */
++#define MEMCTL_MUNLOCK		8 /* munlock(addr, len) */
++
++#define MEMCTL_MPROTECT_NONE	9 /* mprotect(addr, len, PROT_NONE) */
++#define MEMCTL_MPROTECT_R	10 /* mprotect(addr, len, PROT_READ) */
++#define MEMCTL_MPROTECT_W	11 /* mprotect(addr, len, PROT_WRITE) */
++/* mprotect(addr, len, PROT_READ | PROT_WRITE) */
++#define MEMCTL_MPROTECT_RW	12
++
++/* prctl(PR_SET_VMA, PR_SET_VMA_ANON_NAME, addr, len, arg) */
++#define MEMCTL_SET_VMA_ANON_NAME 13
++
++#endif /* _UAPI_MEMCTL_H */
+-- 
+2.45.0.rc1.225.g2a3ae87e7f-goog
+
 
