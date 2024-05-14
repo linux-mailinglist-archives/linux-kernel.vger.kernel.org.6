@@ -1,115 +1,133 @@
-Return-Path: <linux-kernel+bounces-179260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43F998C5E1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 01:37:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3469E8C5E1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 01:38:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D8511C20F48
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 23:37:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A90EDB21654
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 23:38:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5AB7182C93;
-	Tue, 14 May 2024 23:37:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3737182CA3;
+	Tue, 14 May 2024 23:38:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ia9TWNR6"
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XMRYHZwv"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AC7C13D619
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 23:36:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFA0F13D619
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 23:37:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715729819; cv=none; b=oItoIMTjKeYec5D1rG56QG6EIShigpjZdxUuZ+nVsc8nHkHpXW004Y98GKcWNgGvQSRBQtlvPnrVYaY+UGG4r1n7+2L8BqcQNNuHGPPeNLgguMJrJELzMUACFWpsmuwFVC/FWokJsQ+YH2cKvmG/nXC7no6E6qm27/FknBXNRPI=
+	t=1715729880; cv=none; b=k/mAfWAsUmwVGEPCYtw4jPIW2uA7JF1YW6uCrf71FKcqOF7NkLOxWWtrdDhs3TUjM7ARrzPrtNDBw4rcsJOzr1RDbFxqlZCeYiq7uHyYN3VNmYaQcTCoJY5zEvVd2i3dSByonj5Gz7yzY9Lb33bCXLAIbganQDSnb8wxxCGaBRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715729819; c=relaxed/simple;
-	bh=52SPuKOsw1lbaFiybwD05AI4uDArZnOo9RtFjz5jCFg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RS3sAt/oNQ0usiME7OG8uFwqyIYywu/9uLvpfdj2diJuBwtbAjUvTnY2OLOVKnJARSm/3wkdaqlFKFS5UeFmqUUKIjZXmnz4CRbWcTf7RGB/CqMOqZmnf9nx3ztep0wim7VI8nag0pVido2VA31FJkxvvOlZih+GzUCA90mwnbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ia9TWNR6; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 14 May 2024 16:36:49 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1715729814;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QGeu7E7YtU64Es+FXJxCc3GogLv/cEp8pF/frLRvsxw=;
-	b=ia9TWNR6cK0XgiL91oaEYNnsvY8LIynRf33KCN9kTNxOQLhTvTuZX6AIqh9dqUWc0SOO3D
-	lEn4JEcU1aa4TH6gewXNp/j53gmNvYEpXX3py4Wj7xtH0vXAut0Isjc0m7/48vWNgySInp
-	jVB+5339DuiYFwz1X9Xt6FK3oV/EerY=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Rik van Riel <riel@surriel.com>, linux-mm@kvack.org,
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-team@fb.com
-Subject: Re: [PATCH] mm: vmscan: restore incremental cgroup iteration
-Message-ID: <ZkP1kW_DZdCdTn7m@P9FQF9L96D>
-References: <20240514202641.2821494-1-hannes@cmpxchg.org>
+	s=arc-20240116; t=1715729880; c=relaxed/simple;
+	bh=M0ojsRsGu00hlS+3D/N7mtRoW2fXDtGb0dL7Dj9nSEI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BbGgiNcyQTBMX0kDA46Q9BNqQOBiRpVdYXKMSXC3ul4VfmvRHeNNO8brQSydqHwDElGgY/1vBSYsPyE7RFOELRwZKg3Snb2wjiHwkHMMRAqNB3NumoFJxxICeOXidOXKC1fKottEQRh9WZ6FaG7Bcent1rsDd+Gfht7kuDAOYX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=XMRYHZwv; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-6f44dd41a5cso6157156b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 16:37:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1715729878; x=1716334678; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=U/46gzPRjfsjywIh4JZDG9x4PubRXzjsJhZrxZRHzS8=;
+        b=XMRYHZwv1mBGvBcx6lSEfGBbDW4MMi40t3slgMuu4Pp7Wt3luR+mizh03LmcSf85ak
+         0dVF6s7MQ6VoRzzYEJCkcKS45zOkai1q9OCU4pp+2FqaeaW18bI+ZN9TjjuODgCtMWIy
+         U28Z+B7RIOrtCDbP1zF1L5ovEGmzzBPApfGLA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715729878; x=1716334678;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=U/46gzPRjfsjywIh4JZDG9x4PubRXzjsJhZrxZRHzS8=;
+        b=gAJjVrbiAMvMeRsFDyP27KDgL/gvkRBaTAiqSEInRnOadutEZgX/ZpMriYDGQHPV9l
+         SIkOFt/M/Ts2JxmJQ7+ZJJA/u41VP6YKN/N83FGl22UZPWiWHQa6Idqt1EaYdlp/Q7MA
+         QBiLBYSDHFr0VjRkrTGalPybgNV2XlrL9B07hKZLF91JkAyDBllqH7gC3cN7bGeY6YyR
+         yo1IKZFiBK+xZZrJdT8hCqekidwOwz6atvNAS9nVIvK4emvPou9/Tcxra9AFAgTHWXWH
+         V6kZU2I/VYB/iiRWfH1XdQJNWP+tE8MQkjWFJd5a+qutkle91UixN0JKSWrmbBL5AjAO
+         AXgw==
+X-Forwarded-Encrypted: i=1; AJvYcCW+xH50DoFAJnMxtKo0ZfMtoKBpEe0W/sSfuj93J7VAChq1wESmeZN101ac/VVAWaK5wgEBGuoIDBspdPnEI4hTyca9GQMKUEkifO8f
+X-Gm-Message-State: AOJu0YxHyrI7rKzZlCYhjoFyFhr1aQl8d7dX9IkuhojIkblnYjTCBuUh
+	RconAe59NI80woayGn8qUCz0wsWHdMMOzfBrr5uSjDhNjCwcDKcjVh7X42GaHA==
+X-Google-Smtp-Source: AGHT+IHkWP0liojNW9LtVuhI4Z2GrRahcPNwxeY6SopHSto2NofFRMQtA1v0XzpbwKOEEaFOcB1wng==
+X-Received: by 2002:a05:6a20:9782:b0:1af:ab0b:1c08 with SMTP id adf61e73a8af0-1afde1b6f80mr14140701637.46.1715729878103;
+        Tue, 14 May 2024 16:37:58 -0700 (PDT)
+Received: from www.outflux.net ([198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6340b76e262sm8858679a12.35.2024.05.14.16.37.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 May 2024 16:37:57 -0700 (PDT)
+From: Kees Cook <keescook@chromium.org>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>,
+	Marco Elver <elver@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	kasan-dev@googlegroups.com,
+	linux-hardening@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ubsan: Restore dependency on ARCH_HAS_UBSAN
+Date: Tue, 14 May 2024 16:37:48 -0700
+Message-Id: <20240514233747.work.441-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240514202641.2821494-1-hannes@cmpxchg.org>
-X-Migadu-Flow: FLOW_OUT
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1157; i=keescook@chromium.org;
+ h=from:subject:message-id; bh=M0ojsRsGu00hlS+3D/N7mtRoW2fXDtGb0dL7Dj9nSEI=;
+ b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBmQ/XL0cMiBAzkKwdeLzy9N0TrgLVfExeGQZ0JN
+ BHF7seFPsyJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZkP1ywAKCRCJcvTf3G3A
+ JgcVD/wOawyFjlRnf29/qod98RqXmvKGYR/z9gCakCBi8CxR4/Svp5cc0T+1pQzJxoBBpejCMg0
+ pxH/ab2G44oXnSULaNGapGZ9ntp42d7DnWiaGdghDJs4jq3mBvhU0185EFH6k8FjNeio8qOlkzv
+ LB+qmxeol6rTzNUICQEJtpC7MjGXDrI/JUqDk1fZv6ff4wyQo98trBnhME4QDzoTGzodcr85+MK
+ seSwVJg6ecBebIIFhz3DVVzIJnNxeMxEnZpTEssJLlImhYpeycEbBFSR2zDyTvse/FGdwy0pUFK
+ QM4cI+mh8yFa/+zN3C68no7tg2X4sBU9dMnRmQbj9mASW8Sb0QSnWVxY3v+5RlMTtESHi/17hNW
+ rrv7je0gK4u7WSLM2ayMhcVuGBo6QNx23Jl4PnB/3ONTkgDdcPszSp0ZPMC+ZxifMJF1myji/kE
+ JhrrIhEKljsD6Di1P0ATy6w3ZgKnqu0lFKIGkOetXWIFTOYefwC1q4MH7b3xDklAqAlIsBvEaR7
+ 1aQCDkbTy/0YQCvK0n2IUMBrFXZR3VYLlbk9MzllZAeApJm3Hv9Kw1O7MDrj9bViSqrlzXNA2H7
+ OBDGcCh6D4DMvDBgFJO4rmlnrgsvq0AgWoOTzGdS8A0pH9fGFC06u3z1Jj9A2K/lntAbCWi1qKp
+ 9P8N+ld MNH39rig==
+X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
-On Tue, May 14, 2024 at 04:26:41PM -0400, Johannes Weiner wrote:
-> Currently, reclaim always walks the entire cgroup tree in order to
-> ensure fairness between groups. While overreclaim is limited in
-> shrink_lruvec(), many of our systems have a sizable number of active
-> groups, and an even bigger number of idle cgroups with cache left
-> behind by previous jobs; the mere act of walking all these cgroups can
-> impose significant latency on direct reclaimers.
-> 
-> In the past, we've used a save-and-restore iterator that enabled
-> incremental tree walks over multiple reclaim invocations. This ensured
-> fairness, while keeping the work of individual reclaimers small.
-> 
-> However, in edge cases with a lot of reclaim concurrency, individual
-> reclaimers would sometimes not see enough of the cgroup tree to make
-> forward progress and (prematurely) declare OOM. Consequently we
-> switched to comprehensive walks in 1ba6fc9af35b ("mm: vmscan: do not
-> share cgroup iteration between reclaimers").
-> 
-> To address the latency problem without bringing back the premature OOM
-> issue, reinstate the shared iteration, but with a restart condition to
-> do the full walk in the OOM case - similar to what we do for
-> memory.low enforcement and active page protection.
-> 
-> In the worst case, we do one more full tree walk before declaring
-> OOM. But the vast majority of direct reclaim scans can then finish
-> much quicker, while fairness across the tree is maintained:
-> 
-> - Before this patch, we observed that direct reclaim always takes more
->   than 100us and most direct reclaim time is spent in reclaim cycles
->   lasting between 1ms and 1 second. Almost 40% of direct reclaim time
->   was spent on reclaim cycles exceeding 100ms.
-> 
-> - With this patch, almost all page reclaim cycles last less than 10ms,
->   and a good amount of direct page reclaim finishes in under 100us. No
->   page reclaim cycles lasting over 100ms were observed anymore.
-> 
-> The shared iterator state is maintaned inside the target cgroup, so
-> fair and incremental walks are performed during both global reclaim
-> and cgroup limit reclaim of complex subtrees.
-> 
-> Reported-by: Rik van Riel <riel@surriel.com>
-> Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
-> Signed-off-by: Rik van Riel <riel@surriel.com>
+While removing CONFIG_UBSAN_SANITIZE_ALL, ARCH_HAS_UBSAN wasn't correctly
+depended on. Restore this, as we do not want to attempt UBSAN builds
+unless it's actually been tested on a given architecture.
 
-Looks really solid.
+Reported-by: Masahiro Yamada <masahiroy@kernel.org>
+Closes: https://lore.kernel.org/all/20240514095427.541201-1-masahiroy@kernel.org
+Fixes: 918327e9b7ff ("ubsan: Remove CONFIG_UBSAN_SANITIZE_ALL")
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+Cc: Marco Elver <elver@google.com>
+Cc: Andrey Konovalov <andreyknvl@gmail.com>
+Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>
+Cc: kasan-dev@googlegroups.com
+Cc: linux-hardening@vger.kernel.org
+---
+ lib/Kconfig.ubsan | 1 +
+ 1 file changed, 1 insertion(+)
 
-Reviewed-by: Roman Gushchin <roman.gushchin@linux.dev>
+diff --git a/lib/Kconfig.ubsan b/lib/Kconfig.ubsan
+index e81e1ac4a919..bdda600f8dfb 100644
+--- a/lib/Kconfig.ubsan
++++ b/lib/Kconfig.ubsan
+@@ -4,6 +4,7 @@ config ARCH_HAS_UBSAN
+ 
+ menuconfig UBSAN
+ 	bool "Undefined behaviour sanity checker"
++	depends on ARCH_HAS_UBSAN
+ 	help
+ 	  This option enables the Undefined Behaviour sanity checker.
+ 	  Compile-time instrumentation is used to detect various undefined
+-- 
+2.34.1
 
-Thanks!
 
