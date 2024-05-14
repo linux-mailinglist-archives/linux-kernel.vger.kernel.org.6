@@ -1,187 +1,205 @@
-Return-Path: <linux-kernel+bounces-178665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 078778C561B
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:44:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B6788C561F
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:44:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14609282827
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:43:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8ADFDB20DD5
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:44:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 250AB6BFB1;
-	Tue, 14 May 2024 12:43:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 697186EB5B;
+	Tue, 14 May 2024 12:44:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="OfdFJswx";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="jYOYD9Hc";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="OfdFJswx";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="jYOYD9Hc"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WHZuW4sr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC01242A98
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 12:43:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8214D66B5E;
+	Tue, 14 May 2024 12:44:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715690630; cv=none; b=InaBLe6MC8/eWG1WeMuM7sW8CtmP19VwHLHTdJ+20R75KAA+s1qjs2pR1gQw6BrXK7c+ubbg90U95QYsm6RfZE+Jh5gm3P7Y259vmRz8Fbkso04KNCOitodNKBmZonX8yx7tEn1kdnyX+gqLxte7YXir0DfD6qPjPaCq2B34m8Q=
+	t=1715690640; cv=none; b=LEfwU0SDe/JOXlS4YyAr5bQXiRMMZLRMdQUikAFI5hvCtAwE5FQyJd8Taq/iIr11SfztWOgx6lNMS9o2JzwOBjg3hTJCoUsvHxgaoQlQAs0fXjjL7DACTUgM68NhvxQ4t7la7WJFPgjAnOT1HM5rKMesjKyFVMgrwrH4oKizQ6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715690630; c=relaxed/simple;
-	bh=fybAa2AhazjNF6OntAwxCwydTpK6qmpPtRSw57Lp0Xs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sfjgEzJOebS5n0lr/+JDzVEAoPkFEZJVb7ybYOkMBac1a6Y7YvjDD0QxR7LuF8CpwStWsX+Gekr9aNIMHIPVR8HvHbBl9t7E8hBjYYiKslNqi3fQT4IAIvD7eLpcjdDBHG6YAmTfaQoo0YMHFEVOXM+kvcQyM1VQAStyJH/eYXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=OfdFJswx; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=jYOYD9Hc; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=OfdFJswx; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=jYOYD9Hc; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 8C3F53E9B4;
-	Tue, 14 May 2024 12:43:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1715690620; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=b6+tNv49nCn2ieSVSaIM5fRcj0h4rC0itWZkCMQCCrg=;
-	b=OfdFJswxiTBoiznw6QMWMjDcL/nhcYc9+MfvzqZVpLIZQVamC9mPVi2112OzDDB0ULEF74
-	eveBt1u30DF4RxnCL+meNgByyodBg7ROkyQGl0d+3N0p4yZ2xYgRWP6V/AUNcMKqvaoizj
-	i4+ZuLHn/yoigoEVe5cXWVJ42Rho/bE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1715690620;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=b6+tNv49nCn2ieSVSaIM5fRcj0h4rC0itWZkCMQCCrg=;
-	b=jYOYD9Hc6gt0PFWQBWu/snQ6WKHPQHOEIi48m1M7hmhVERDEd9R7gtkyKZj3LyZ7euWZVD
-	PLyUgCTdauLSGwBw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1715690620; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=b6+tNv49nCn2ieSVSaIM5fRcj0h4rC0itWZkCMQCCrg=;
-	b=OfdFJswxiTBoiznw6QMWMjDcL/nhcYc9+MfvzqZVpLIZQVamC9mPVi2112OzDDB0ULEF74
-	eveBt1u30DF4RxnCL+meNgByyodBg7ROkyQGl0d+3N0p4yZ2xYgRWP6V/AUNcMKqvaoizj
-	i4+ZuLHn/yoigoEVe5cXWVJ42Rho/bE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1715690620;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=b6+tNv49nCn2ieSVSaIM5fRcj0h4rC0itWZkCMQCCrg=;
-	b=jYOYD9Hc6gt0PFWQBWu/snQ6WKHPQHOEIi48m1M7hmhVERDEd9R7gtkyKZj3LyZ7euWZVD
-	PLyUgCTdauLSGwBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5AFE41372E;
-	Tue, 14 May 2024 12:43:40 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id A8z4FHxcQ2b4HAAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Tue, 14 May 2024 12:43:40 +0000
-Message-ID: <e2346a0d-6360-46cb-8707-281de8f4d874@suse.de>
-Date: Tue, 14 May 2024 14:43:39 +0200
+	s=arc-20240116; t=1715690640; c=relaxed/simple;
+	bh=frcCTz483GMnhYg7RWj0qSs/9NEH9LvHXWO5H2Yy4ig=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jYG+XxTi2aTzB2x5jFpynWgHV1E4GbdsmIyRUdE+3eTH/HKACY35xAST5DbAhIvf2N+n/Eabjwg9Vrw+Rd6j5d/+HnM1GHL9pH9pl9EVQVKzpzIjUV6Gt618UB3TozCi/Eba7+naslobFQZCiBNCq6YRDLSoEGSV5QfOn2HSVs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WHZuW4sr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2213C2BD10;
+	Tue, 14 May 2024 12:43:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715690640;
+	bh=frcCTz483GMnhYg7RWj0qSs/9NEH9LvHXWO5H2Yy4ig=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WHZuW4srm0yCDfSbJUt5JCAxCjKy7cx7Q1H3MbIduBZqdIECmEiWfF/AXzRGjYxME
+	 GW2/CRUxcrQ0bQp8yDXScoMqdoZG0/KtGNE7ImqeXvan3fS7YfUL+u14bqag6i3gzD
+	 IQLtGQazfqcdl/DkfSnxxX38HL4cvm/vuT0/djBaE1+wID4tOnzwJVIBw10ppTJ9HX
+	 p/xSP4MFZp8AMV/0GEAo/MsORo1RdQ3eZlmsx1m3OHYIBqUZJyv42UczQ5JPWf6Liq
+	 XfyKyJ10c0bVUZns5frYAgeCGUVeoLkF7BQR7t4Q0qaEOD7XpZblYZ0iouWN5YvG2W
+	 jk2uzrlyC7etw==
+Date: Tue, 14 May 2024 13:43:54 +0100
+From: Conor Dooley <conor@kernel.org>
+To: =?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>
+Cc: Conor Dooley <conor.dooley@microchip.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Anup Patel <anup@brainfault.org>, Shuah Khan <shuah@kernel.org>,
+	Atish Patra <atishp@atishpatra.org>, linux-doc@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, kvm@vger.kernel.org,
+	kvm-riscv@lists.infradead.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v4 02/11] riscv: add ISA extensions validation
+Message-ID: <20240514-sip-exclusion-014b07b01f4c@spud>
+References: <20240429150553.625165-1-cleger@rivosinc.com>
+ <20240429150553.625165-3-cleger@rivosinc.com>
+ <20240429-subtext-tabby-3a1532f058a5@spud>
+ <5d5febd5-d113-4e8c-9535-9e75acf23398@rivosinc.com>
+ <20240430-payable-famished-6711765d5ca4@wendy>
+ <e57f8b70-7981-42c1-bb04-2060054dd796@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: drm: Remove driver dependencies on FB_DEVICE
-To: Manas Ghandat <ghandatmanas@gmail.com>,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, airlied@gmail.com,
- daniel@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <e5c0a250-8c91-4523-b980-5b0e13749616@gmail.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <e5c0a250-8c91-4523-b980-5b0e13749616@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.29 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com,linux.intel.com,kernel.org,ffwll.ch];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_DN_SOME(0.00)[]
-X-Spam-Score: -4.29
-X-Spam-Flag: NO
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="d4LtUScPc142c/dS"
+Content-Disposition: inline
+In-Reply-To: <e57f8b70-7981-42c1-bb04-2060054dd796@rivosinc.com>
 
-Hi
 
-Am 14.05.24 um 14:34 schrieb Manas Ghandat:
-> Hi. I recently looked at the todos of drm and found the topic 
-> interesting. I wanted to get started with this issue but having some 
-> trouble identifying the devices. What would be the right approach to 
-> get started?
+--d4LtUScPc142c/dS
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Sorry, there's already someone working on that topic.
+On Tue, May 14, 2024 at 09:53:08AM +0200, Cl=E9ment L=E9ger wrote:
+>=20
+>=20
+> On 30/04/2024 13:44, Conor Dooley wrote:
+> > On Tue, Apr 30, 2024 at 09:18:47AM +0200, Cl=E9ment L=E9ger wrote:
+> >>
+> >>
+> >> On 30/04/2024 00:15, Conor Dooley wrote:
+> >>> On Mon, Apr 29, 2024 at 05:04:55PM +0200, Cl=E9ment L=E9ger wrote:
+> >>>> Since a few extensions (Zicbom/Zicboz) already needs validation and
+> >>>> future ones will need it as well (Zc*) add a validate() callback to
+> >>>> struct riscv_isa_ext_data. This require to rework the way extensions=
+ are
+> >>>> parsed and split it in two phases. First phase is isa string or isa
+> >>>> extension list parsing and consists in enabling all the extensions i=
+n a
+> >>>> temporary bitmask without any validation. The second step "resolves"=
+ the
+> >>>> final isa bitmap, handling potential missing dependencies. The mecha=
+nism
+> >>>> is quite simple and simply validate each extension described in the
+> >>>> temporary bitmap before enabling it in the final isa bitmap. validat=
+e()
+> >>>> callbacks can return either 0 for success, -EPROBEDEFER if extension
+> >>>> needs to be validated again at next loop. A previous ISA bitmap is k=
+ept
+> >>>> to avoid looping mutliple times if an extension dependencies are nev=
+er
+> >>>> satisfied until we reach a stable state. In order to avoid any poten=
+tial
+> >>>> infinite looping, allow looping a maximum of the number of extension=
+ we
+> >>>> handle. Zicboz and Zicbom extensions are modified to use this valida=
+tion
+> >>>> mechanism.
+> >>>
+> >>> Your reply to my last review only talked about part of my comments,
+> >>> which is usually what you do when you're gonna implement the rest, but
+> >>> you haven't.
+> >>> I like the change you've made to shorten looping, but I'd at least li=
+ke
+> >>> a response to why a split is not worth doing :)
+> >>
+> >> Hi Conor,
+> >>
+> >> Missed that point since I was feeling that my solution actually
+> >> addresses your concerns. Your argument was that there is no reason to
+> >> loop for Zicbom/Zicboz but that would also apply to Zcf in case we are
+> >> on RV64 as well (since zcf is not supported on RV64). So for Zcf, that
+> >> would lead to using both mecanism or additional ifdefery with little to
+> >> no added value since the current solution actually solves both cases:
+> >>
+> >> - We don't have any extra looping if all validation callback returns 0
+> >> (except the initial one on riscv_isa_ext, which is kind of unavoidable=
+).
+> >> - Zicbom, Zicboz callbacks will be called only once (which was one of
+> >> your concern).
+> >>
+> >> Adding a second kind of callback for after loop validation would only
+> >> lead to a bunch of additional macros/ifdefery for extensions with
+> >> validate() callback, with validate_end() or with both (ie Zcf)). For
+> >> these reasons, I do not think there is a need for a separate mechanism
+> >> nor additional callback for such extensions except adding extra code
+> >> with no real added functionality.
+> >>
+> >> AFAIK, the platform driver probing mechanism works the same, the probe=
+()
+> >> callback is actually called even if for some reason properties are
+> >> missing from nodes for platform devices and thus the probe() returns
+> >> -EINVAL or whatever.
+> >>
+> >> Hope this answers your question,
+> >=20
+> > Yeah, pretty much I am happy with just an "it's not worth doing it"
+> > response. Given it wasn't your first choice, I doubt you're overly happy
+> > with it either, but I really would like to avoid looping to closure to
+> > sort out dependencies - particularly on the boot CPU before we bring
+> > anyone else up, but if the code is now more proactive about breaking
+> > out, I suppose that'll have to do :)
+> > I kinda wish we didn't do this at all, but I think we've brought this
+> > upon ourselves via hwprobe. I'm still on the fence as to whether things
+> > that are implied need to be handled in this way. I think I'll bring this
+> > up tomorrow at the weekly call, because so far it's only been you and I
+> > discussing this really and it's a policy decision that hwprobe-ists
+> > should be involved in I think.
+>=20
+> Hi Conor,
+>=20
+> Were you able to discuss that topic ?
 
-Best regards
-Thomas
+I realised last night that I'd not got back to this thread and meant to
+do that today (I had accidentally deleted it from my mailbox), but I had
+a migraine this morning and so didn't.
+I did bring it up and IIRC Palmer was of the opinion that we should try
+our best to infer extensions.
 
->
-> Thanks,
->
-> Manas
->
+> > Implied extensions aside, I think we will eventually need this stuff
+> > anyway, for extensions that make no sense to consider if a config option
+> > for a dependency is disabled.
+> > From talking to Eric Biggers the other week about
+> > riscv_isa_extension_available() I'm of the opinion that we need to do
+> > better with that interface w.r.t. extension and config dependencies,
+> > and what seems like a good idea to me at the moment is putting tests for
+> > IS_ENABLED(RISCV_ISA_FOO) into these validate hooks.
+> >=20
+> > I'll try to look at the actual implementation here tomorrow.
+>=20
+> Did you found time to look at the implementation ?
 
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+No, with the above excuse. I'll try to get to it today or tomorrow...
 
+--d4LtUScPc142c/dS
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZkNcigAKCRB4tDGHoIJi
+0kA2AQDbZCPdb5B0I8LI5ibKy3ZRNF+UdA1ZiQXHtgoETMFd0gEA1hljHOnzoE/w
+C3Pfa2PGHUyVZgXKvpMsjyz8TWUNpQE=
+=uWRj
+-----END PGP SIGNATURE-----
+
+--d4LtUScPc142c/dS--
 
