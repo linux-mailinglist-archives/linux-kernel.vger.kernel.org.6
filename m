@@ -1,121 +1,133 @@
-Return-Path: <linux-kernel+bounces-178228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F48C8C4ABC
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 03:03:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DCD78C4ABE
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 03:05:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4409286B43
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 01:03:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3328F1F23054
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 01:05:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D37C17CD;
-	Tue, 14 May 2024 01:03:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB98617F7;
+	Tue, 14 May 2024 01:04:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="IRTRWiz8"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="H/DGQZqo"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1288CEC5
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 01:03:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78BB0EC5;
+	Tue, 14 May 2024 01:04:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715648599; cv=none; b=c4KqoHC3eFYZ/oIWo92LWPXtt2RJaEwtqTax8R8gqtOmLDsgd7GYJrz2onY1RlXJ0glV3Hci8lRBzl0jF09bAbQSiMxrONMUWvuyVhkxzRMPiStt4lnZ8dnjJVm54rXWCQu8WnaRGU0xsfNsivD9RxObmsAnA1RRHbMQieFTDBA=
+	t=1715648697; cv=none; b=NqXMMEl0NRdKoz2TctpuG+B96hbUfL9q/jI6kwGfeGrBHnDK7PISWgovNu2PFMJfT36YOd3AhRGhTzdpOASi/ZxLdzgldk0ChSYfnpXlwqTtcsoJ6/yu2n7oiDUm0G5Emp/e/rx2jWtLxizclgT71T9rrOWOai1rFTpYtMJs62o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715648599; c=relaxed/simple;
-	bh=7dQLwwE3ln7On0AlPEwJlYxpqrpUlDJ5OpTLUT6s5YY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LhokjgnrDmJOg3+gqU4J5SEJDet6XqOjcIBFR6JmtWSZVTb5Bh81KfHy5FyTMqhMwD/mraWZihG1nsd3xvCNhq4LxSduG3N74IfrY1vK3qRRfjJff4B0Z99GxQjRAyeq4b1PxuprxZNeUZHzar5XVIDG25elNm6hZ9NCgFZPMWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=IRTRWiz8; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2e0a34b2899so77306841fa.3
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 18:03:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1715648595; x=1716253395; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=k5CdkRdgFHJBeaGlLOzrrq5zI+RRCPQz8DEEq+Gptqg=;
-        b=IRTRWiz83i4UqiwhIBBUpEphAlUuqzIghxSw1Jwbxqnf8CL5yzSZeu7/vM2i57vxfq
-         FW0A8uETIuIQKj6MC8AOjKfpR6RwimEDma83XyLFWgK441VLrRc56tVX/Kl96plgnJT4
-         iIdV+xKC5t8X16n7GqPGyeFmP32RhNzGRnQpc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715648595; x=1716253395;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=k5CdkRdgFHJBeaGlLOzrrq5zI+RRCPQz8DEEq+Gptqg=;
-        b=vmTGzaUpTy10yfZUK0V/xLbcz3H+Tv06VGekKcFYvFaAbUrJuJo7vy1xMzLApLleUf
-         PWPEi9peUzajpGqufVfhEQFo6d6LsBPQseLzeJqBnS+yE+MNRYcPjcHsBR2lbdfbTAY0
-         QsK1ejd3Uw3gFZT9Rhmx9C+Zyin6nm12QsDzf7wCB9iVASionHT3ThsacS87ggpNC62v
-         v/A8cRuM95F+bOpsLU15NtjxxoFvSYeE7qMUtJc2ygg5zwzE5Imw5AYM575a9XeuXbmA
-         eeaVBFW2LHB4Hs/D9CB54sznOJ6jr33ZKhLc8HOtpI183dlyc4w+PvH0k0dXq5oc7CXb
-         NhrA==
-X-Gm-Message-State: AOJu0YwghBCR+N3biS7tGlAEkbrlL6BWLjWxi3ifeAS5jbf3zdL5nJhS
-	bGYVJwhlgYCX4MJTEoeYwii+9nxWYrj29VoJMSZsal1H0AC0amQ5ZqSAeW9YNXuMAi/WB4KhWAU
-	APY+ktA==
-X-Google-Smtp-Source: AGHT+IH4W5Cqlb0PxWbmwWIp70wiwaDrjlxCLPr77wxIiuK5amn/i+5CmqR23yZD5WBieeSV4C1JeQ==
-X-Received: by 2002:a2e:719:0:b0:2e5:2f6b:263 with SMTP id 38308e7fff4ca-2e52f6b02c2mr76881451fa.50.1715648595066;
-        Mon, 13 May 2024 18:03:15 -0700 (PDT)
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2e4d162301csm16152731fa.128.2024.05.13.18.03.14
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 May 2024 18:03:14 -0700 (PDT)
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-51f71e4970bso5922170e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 18:03:14 -0700 (PDT)
-X-Received: by 2002:a19:7416:0:b0:51d:804a:232 with SMTP id
- 2adb3069b0e04-5220fc6e614mr8505759e87.11.1715648593961; Mon, 13 May 2024
- 18:03:13 -0700 (PDT)
+	s=arc-20240116; t=1715648697; c=relaxed/simple;
+	bh=KpGdy+iNF9Q5pBXwuUA79Rxsk8NAisAZjG5Wn6q25sI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=YHbGX7PA6/SdsnLL1Tzad0HwTcHfg25jbSgM1e5BdPP2bwXUshOhO7Z+7V4gayycNmD21O49+3TOwgXdQgboVVFJVwuuUhx+fxDKMdRvVk2j/FI8VxvwDKrHZO78OCVPd0o+g1t7UinwhBezcO8ERK/i2KaB51NWeHIlIOx0/Z4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=H/DGQZqo; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1715648688;
+	bh=2gikEIEKCJZFx4Q6uIk5VWAKDlmFbhNf5CGuTuWtjaA=;
+	h=Date:From:To:Cc:Subject:From;
+	b=H/DGQZqoKZA4JVA5du1qIgnDBbbff6GWcdyOtB/aEABiYwVomG/s/mSQCeEcQqXxi
+	 r3S7XdMySPw4zKlXllQ09IV/kne+E3cMkC8/LzL58yTFNeGhIOOnlX4mDJS6yWdZIj
+	 QP0kyMYOkD1iF05DwS4fOFzW0avJABF6OYtv6ycPMy1OixrISduA0jvbs8DFetyReE
+	 paB7rWJotMMm7IxJ8Fwu7vaGsgvMY4gJC8m22TI8+ZhMAPiz8PW35Z8ep0GdV55hRR
+	 CGphD/i24vZuTHZiWtrV7XQCho6maLs49ehSQEbZLC/EQpJJml4VWV8OC50ASeYpnj
+	 sp0MM4gC4+FKw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VddS05HbSz4wbr;
+	Tue, 14 May 2024 11:04:44 +1000 (AEST)
+Date: Tue, 14 May 2024 11:04:42 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Jens Axboe <axboe@kernel.dk>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Miklos Szeredi <mszeredi@redhat.com>
+Subject: linux-next: manual merge of the vfs tree with Linus' tree
+Message-ID: <20240514110442.7431447b@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZkG4cMe1TFI5w7sc@gmail.com>
-In-Reply-To: <ZkG4cMe1TFI5w7sc@gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 13 May 2024 18:02:57 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgf=jwo1HZjQN7UeFw7iYPtQ_i0ri7JNOci+7Rn5-pDcg@mail.gmail.com>
-Message-ID: <CAHk-=wgf=jwo1HZjQN7UeFw7iYPtQ_i0ri7JNOci+7Rn5-pDcg@mail.gmail.com>
-Subject: Re: [GIT PULL] x86/boot changes for v6.10
-To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, "the arch/x86 maintainers" <x86@kernel.org>, 
-	Ard Biesheuvel <ardb@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/IDc3V30OQnlG3XYUMBjT1o/";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Sun, 12 May 2024 at 23:51, Ingo Molnar <mingo@kernel.org> wrote:
->
->  - Re-introduce a bootloader quirk wrt. CR4 handling
+--Sig_/IDc3V30OQnlG3XYUMBjT1o/
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I've pulled this, but shouldn't the compressed boot also just stop
-setting the G flag that it didn't understand?
+Hi all,
 
-For example, arch/x86/kernel/head64.c seems to do this:
+Today's linux-next merge of the vfs tree got a conflict in:
 
-        pmd_entry = __PAGE_KERNEL_LARGE_EXEC & ~_PAGE_GLOBAL;
+  io_uring/rw.c
 
-but arch/x86/boot/compressed/ident_map_64.c does the somewhat suspect
+between commits:
 
-        mapping_info.page_flag = __PAGE_KERNEL_LARGE_EXEC | sme_me_mask;
+  a9165b83c193 ("io_uring/rw: always setup io_async_rw for read/write reque=
+sts")
+  0d10bd77a1be ("io_uring: get rid of struct io_rw_state")
 
-without masking off _PAGE_GLOBAL.
+from Linus' tree and commit:
 
-The hibernation code does
+  7c98f7cb8fda ("remove call_{read,write}_iter() functions")
 
-        pgprot_t pmd_text_prot = __pgprot(__PAGE_KERNEL_LARGE_EXEC);
-        pgprot_val(pmd_text_prot) &= __default_kernel_pte_mask;
+from the vfs tree.
 
-and again there are several situations where __default_kernel_pte_mask
-does not have _PAGE_GLOBAL.
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
-So again, the boot/compressed code seems a bit at an odds with other
-code paths. The cr4 games seem to work around the fact that this code
-is just buggy.
+--=20
+Cheers,
+Stephen Rothwell
 
-Hmm?
+diff --cc io_uring/rw.c
+index 894c43a5fc0e,29f4aa153ab9..000000000000
+--- a/io_uring/rw.c
++++ b/io_uring/rw.c
+@@@ -1046,9 -1054,9 +1046,9 @@@ int io_write(struct io_kiocb *req, unsi
+  	kiocb->ki_flags |=3D IOCB_WRITE;
+ =20
+  	if (likely(req->file->f_op->write_iter))
+- 		ret2 =3D call_write_iter(req->file, kiocb, &io->iter);
+ -		ret2 =3D req->file->f_op->write_iter(kiocb, &s->iter);
+++		ret2 =3D req->file->f_op->write_iter(kiocb, &io->iter);
+  	else if (req->file->f_op->write)
+ -		ret2 =3D loop_rw_iter(WRITE, rw, &s->iter);
+ +		ret2 =3D loop_rw_iter(WRITE, rw, &io->iter);
+  	else
+  		ret2 =3D -EINVAL;
+ =20
 
-          Linus
+--Sig_/IDc3V30OQnlG3XYUMBjT1o/
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZCuKoACgkQAVBC80lX
+0Gwt0Qf+P+R1DRmRIZ0c5rhC6IvMKMm8bOF8U/+yS9a4b4MMeONeNfmNQbgRFqmA
+i5NXRKkCltxYMddkkt7ZGdYbcbRf1PNveMLccLqtjr9WpnhqGpk5sD2/wp0qogAO
+P7D7kNE2Ux+D+6447+xGuGrGkO2U1qMvOTnBT+E0uhUwSsZV0zzp0bTlueTOomqP
+0eHC7AhjHEce/HZMGqFfcYJ5g4WE0P2zDqgzh0V5hvicTnrEcTC4mJ+HAlaBtuxS
+IO49ngeSbCxeXNxkfqxN7hTmbkem94WtyRFWit/BGcL+uvmTMUEtmlEQQ/SQzcMO
+ValXUKg0sJ+6qm8MqYYAEHIB5NJ6tQ==
+=fq4O
+-----END PGP SIGNATURE-----
+
+--Sig_/IDc3V30OQnlG3XYUMBjT1o/--
 
