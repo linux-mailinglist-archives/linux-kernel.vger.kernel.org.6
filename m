@@ -1,96 +1,83 @@
-Return-Path: <linux-kernel+bounces-178211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF0A28C4A77
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 02:29:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD92E8C4A7A
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 02:29:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D6EAB23A6A
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 00:29:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5CE71C22FE1
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 00:29:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A567A953;
-	Tue, 14 May 2024 00:28:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76505816;
+	Tue, 14 May 2024 00:29:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="USk9NWby"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e4Vg1eCa"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A78EB7470;
-	Tue, 14 May 2024 00:28:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB51625;
+	Tue, 14 May 2024 00:29:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715646516; cv=none; b=P4hFjl+zAXJDQkSR/ty2CbDeOyrOPToRwRj1rKUxhA8X4kr621lxSxAcvL90AWCXvz0GwjyrQqPcYiQ0u9+1CMTHNhA9XXdSTs94IQgKbZQiD7SEdz9okYLDFGRV+YoNBOmPJweFFYiVoPSHJpISRKUPe6vUcyOkYgz9lh7y3BY=
+	t=1715646582; cv=none; b=M+WwV7ua8h7tjutT49Hm8yufli4JlOz5dapG1Rmk28boMWG6CJ2BvkzVUgRtL63P+3XYMqYYwYgCQx0Tpr1pyvJQynwDBS6pjvmKOrWSu/BFVdj12W2EpGLc9dNfESHrmvWYST1XI50B1cq86lRXtdneDaCGzrYWSIHsX/Kv7IA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715646516; c=relaxed/simple;
-	bh=vrfVCwMNSrpMBHio2ZoX7aks/0UpGwwNm55xOZdIHRQ=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=BjME783Rgo8cUR6x9bDdu6MXBhR859AWPaBvN/zpby8mxJrF9rq2DHfRPiZdQOZeeIvDmm61vCDpzrMFJW5SFZiWdol/Y1ppXThW1kUBHko1jGa8YR90yClYrp5GWr17tShrK7u8n4BBEEThb8WIiNyT27RoIWVusn+sg6LH+bU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=USk9NWby; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0449EC4AF08;
-	Tue, 14 May 2024 00:28:33 +0000 (UTC)
+	s=arc-20240116; t=1715646582; c=relaxed/simple;
+	bh=edxKrIcX/tWini2op1ZeRVAJxMDEO9ut9l/DC6r+nAc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eBX6i3FpqiyKiuitY3FPPZqTLTUdMAa6RyKJV46BgVyGPvHnCZJq5bITAwV2c3srXePO6WqwFoOXTfmgF3Uzc4px4TxUMgaL6B+mRODfAIQi8ouy+0Nm7bW4+UxMYdmspGlhb7BKEh+BsuO1AFrx3rNlhKuOL3mBrFETGvKZ2Qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e4Vg1eCa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8782C113CC;
+	Tue, 14 May 2024 00:29:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715646516;
-	bh=vrfVCwMNSrpMBHio2ZoX7aks/0UpGwwNm55xOZdIHRQ=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=USk9NWby9tjJ5bBcEQmIuIX2jOwXCQAnfWz9FHYcjMu0Mnwho1TcA2DL2dqLEsmId
-	 3X6a3lsA/RPP/50vwF5Y7SHlkX7HVagQoafzbHiD0kuDbRC0taTHpgAljkl0KK43dt
-	 6bvot2MDn0wylzm+EuhFm7S8R60grgRX2NrzjM1oBWxmTKMqqzN/x9661QPbZviBWK
-	 I9mSXhs1hg0CVwSTqEC8t1zrfF01C7F7w9RPo2eCE1NvDJca5w6rwQKO4ya1iQ7JDK
-	 MoCC3sz1yBhsyf0FZTuudauAiVhs11lS5IEB0rakg7ay1I7jAm018sSHtQ432myZDD
-	 spm7mIRvheH7A==
+	s=k20201202; t=1715646582;
+	bh=edxKrIcX/tWini2op1ZeRVAJxMDEO9ut9l/DC6r+nAc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=e4Vg1eCa+uqwO6oESjTnKIyzmvwiR6ktp5gmallKcveP8FrADKCpzoPAuvu2zCt3F
+	 ILzEPJt2MSp1R8Y8QHO5rIb4dpNIp783qKG+X4ODxch14JVcN7QrYki/y4sCxll9Fu
+	 KXHhL6y/vb+eWEith5pi7Dbq++GRySoh+zvWbz97KFyHk98wTN/x/NPrfboADy0aai
+	 ph87lpudRrhGSgasmrQUsCFn8pGP0Cy7xZ/Ezxr1Q/abDAEM5jI4sx/3kT9QisRUsr
+	 5r+LZEmW3dO3yZuTmo3KEY0BD9FuIwmw9wgWLZ0XenhJIpYRHgoHP/3v3keMH71qhm
+	 DNCNGmEbG87Dg==
+Date: Mon, 13 May 2024 17:29:41 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Mat Martineau <martineau@kernel.org>
+Cc: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, mptcp@lists.linux.dev,
+ Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ Florian Westphal <fw@strlen.de>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Gregory Detal <gregory.detal@gmail.com>
+Subject: Re: [PATCH net-next 0/8] mptcp: small improvements, fix and
+ clean-ups
+Message-ID: <20240513172941.290cc5cd@kernel.org>
+In-Reply-To: <f60cac35-5a2b-16cf-4706-b2e41acfacae@kernel.org>
+References: <20240510-upstream-net-next-20240509-misc-improvements-v1-0-4f25579e62ba@kernel.org>
+	<20240513160630.545c3024@kernel.org>
+	<f60cac35-5a2b-16cf-4706-b2e41acfacae@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 14 May 2024 03:28:32 +0300
-Message-Id: <D18XXJ373C2V.2M6AOMKD1B89W@kernel.org>
-Cc: <kernel-team@cloudflare.com>
-Subject: Re: [RFC PATCH 0/2] TPM derived keys
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Ignat Korchagin" <ignat@cloudflare.com>, "James Bottomley"
- <James.Bottomley@hansenpartnership.com>, "Mimi Zohar"
- <zohar@linux.ibm.com>, "David Howells" <dhowells@redhat.com>, "Paul Moore"
- <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>,
- <serge@hallyn.com>, <linux-integrity@vger.kernel.org>,
- <keyrings@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-X-Mailer: aerc 0.17.0
-References: <20240503221634.44274-1-ignat@cloudflare.com>
- <CALrw=nGhgRrhJ5mWWC6sV2WYWoijvD9WgFzMfOe6mHmqnza-Hw@mail.gmail.com>
-In-Reply-To: <CALrw=nGhgRrhJ5mWWC6sV2WYWoijvD9WgFzMfOe6mHmqnza-Hw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon May 13, 2024 at 8:11 PM EEST, Ignat Korchagin wrote:
-> On Fri, May 3, 2024 at 11:16=E2=80=AFPM Ignat Korchagin <ignat@cloudflare=
-com> wrote:
-> I would like to point out to myself I was wrong: it is possible to ask
-> the kernel to generate a trusted key inside the kernel locally with
-> "keyctl add trusted kmk "new 32" @u"
+On Mon, 13 May 2024 17:24:08 -0700 (PDT) Mat Martineau wrote:
+> The conflict here is purely in the diff context, patch 2 of this series 
+> and "tcp: socket option to check for MPTCP fallback to TCP" add cases to 
+> the same switch statement and have a couple of unmodified lines between 
+> their additions.
+> 
+> "git am -3" handles it cleanly in this case, if you have time and 
+> inclination for a second attempt. But I realize you're working through a 
+> backlog and net-next is now closed, so that time might not be available. 
+> We'll try again when net-next reopens if needed.
 
-Not in a full-time kernel position ATM as I'm working as contract
-researcher up until beginning of Oct (took some industry break after
-a startup went down of business), so please, politely asking, write
-a bit more compact descriptions ;-) I'm trying to find a new position by
-the beginning of Oct but right now I'd appreciate a bit more thought out
-text descriptions.
+Your -3 must be more powerful somehow, or my scripts are broken because
+it isn't enough on my end.
 
-I'm working out a small patch set with James Prestwood to add asymmetric
-TPM2 keys based on his old patch set [1] but laid out on top of the
-existing baseline.
-
-I did already the key type shenanigans etc. for it and James P is laying
-his pre-existing RSA code and new ECDSA on top of that. So this will
-give x.509 compatibility [2]. This patch set will be out soon and likely
-part of 6.11 (or almost guaranteed as most of it is done).
-
-So by plain guess this might be along the lines what you might want?
-
-[1] https://lore.kernel.org/all/20200518172704.29608-1-prestwoj@gmail.com/
-[2] https://datatracker.ietf.org/doc/draft-woodhouse-cert-best-practice/
-
-BR, Jarkko
+If you can do a quick resend there's still a chance. The patches look
+quite simple.
 
