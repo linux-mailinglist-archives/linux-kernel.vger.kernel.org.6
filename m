@@ -1,193 +1,303 @@
-Return-Path: <linux-kernel+bounces-178651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B27EF8C55DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:13:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 943AC8C55DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:14:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5D9E1C226B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:13:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B791A1C21C02
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:14:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4418643AD7;
-	Tue, 14 May 2024 12:13:39 +0000 (UTC)
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F21CA40862;
+	Tue, 14 May 2024 12:14:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZXzfyJKj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBCE62B9B3;
-	Tue, 14 May 2024 12:13:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED315320F
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 12:14:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715688818; cv=none; b=uNxfx0ETSw/HIwLM5kJxg2gML+qm/UwazClxYSHH0ZI/MhO7xjchQHyYKS1YfjFGg7ZDJtIfgX+nZj80fr9N4orM8Qc4Tky5p/eWqKZUUQVnyiM+u5/HHhOGwe/lue76agY4G9ZIL3AQnq3t7CL7OAop/NheXLXX9rkV4wMoya4=
+	t=1715688891; cv=none; b=D+btuu7PS1nTBTJDlgY0vzgIJQUOtT6WFbufFx5+WLu85JtbDoq2Ux6u6l0cs47mbULUUxG8AidC8vflFe7thyZllh6+vj0RZt3oHQ0mNIiC13RawUl6LgckAhjClHer2xpV0NQdJFXcvBxwXnvDtdmHxIQ0tcQRlf5PO28spKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715688818; c=relaxed/simple;
-	bh=SAh86WZuy+3Mi3t0E3g4MD/8KNjqtP5jCPGaQVvTfX4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Bwli8T/DyS3PpYEWtTdhCW7Zlc1k6OFFTMW8Fd5eCDvx0hdiA8IVTq8aLONqBYXJbCb3E0IiHsHJtJAJ+7zEDsu5kEXLTiLTdDTCje3JdrSvZTng/vBcIsPeJClkuFAy9M93gYk0N+qE+t+5ODEyTjyLT/5E6t6nHyDGqPtR1oA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-deb654482bcso6030947276.1;
-        Tue, 14 May 2024 05:13:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715688815; x=1716293615;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=R64lFTR0r2luFzeMpjygmzdIkrGNpnnAqlD2Bb/1onQ=;
-        b=N/58GmANb0iSN84gfsjWf1S/hrF7kM/woxs5ZCz6xUQgaGvwr8IpsXs+WksS5JIqHt
-         W4MN8Qrlo/sWiKSd8OGzUncFfPsIPXS1wUiXH1BsW6yfW3Wd3RfTHrKAsCZrvHOVWjkh
-         nauzUN5aiNWTAfrWd7TOrbT8EBkzNpq7YnnUIU7wc/XZ1OqPoGj7tH7brSrXo0zsbsxz
-         uzC4uaDEit0BzBVOkhEfR67pCP1iCgUznD/57jEW2ywiVTLojS8RAqzD/8/UQ0zdlmqn
-         R8dq0eKVMdnZfKltoXUUAkeUAvTOrV3Pfywf8tfo92XMuEZ3KX2m+0LGYE1j0/ynU7JY
-         01Rw==
-X-Forwarded-Encrypted: i=1; AJvYcCXFqxN+TkNdkuOVhrrpXhVaqg1KWb1XuJTgR+6Qv0L1uBRf+Eh9Ajb18Q7D0aYRQSwWT4KsimzPZee5TtzMdmGXNoLmoRc7j6WPe809Ng017fatPR0czArYjCGnRZ1e4TjK5iqB6TEsOvfAvFZhT1VSEzi0ufOcjN3kFGrDGwfDZQlTGZHY
-X-Gm-Message-State: AOJu0YxkQuBODXrOXrdTDgV/D3un+itsvSnxG3xPNLeNG5CNuyHF7eXv
-	lDp+Zw0tzoS4ceOG9vVHDvf6cPiwnCiiM9A3KZzj6WVKM+5VjxD2WfFZzg0r
-X-Google-Smtp-Source: AGHT+IG/l/g+rKVKvvSz6FBGWRMFLxdNjCBrQXGJwAnbHYnoawB5VgVytZPinpgvuT1laWfHRTJB1g==
-X-Received: by 2002:a25:d607:0:b0:de5:5a17:de9f with SMTP id 3f1490d57ef6-dee4f1b7853mr12150118276.13.1715688815023;
-        Tue, 14 May 2024 05:13:35 -0700 (PDT)
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com. [209.85.128.177])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-debd34fde87sm2549076276.0.2024.05.14.05.13.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 May 2024 05:13:34 -0700 (PDT)
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-61be4b986aaso61981357b3.3;
-        Tue, 14 May 2024 05:13:34 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVbkmmAiu0Z6xXBEiUFOdKYaiOAUxQ3D3pQt6L3I2/lUGVgrY+lqPg0tb8Kbh0KwzDzOhs9KOS+XzpAtibphVmBP61yKrua9ZVAJ5hpHCM0jBbKuu2e7kVEAROgmv17WS4AUSPtHawXA4Ot6KCvilykmojps01k57fpnXCoXsBnPbnmVU8Q
-X-Received: by 2002:a0d:d44d:0:b0:61a:cb67:9d0d with SMTP id
- 00721157ae682-622affdc8a1mr124948897b3.22.1715688814234; Tue, 14 May 2024
- 05:13:34 -0700 (PDT)
+	s=arc-20240116; t=1715688891; c=relaxed/simple;
+	bh=oFi+X8DWJauq3qBIES8fh+chhp9UGsg3AZYUFiG6KcE=;
+	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=U9urEPxHBZ31xQo6fPH7wUorN/ZCn6w8Af4AkuQMfZdHr/ongZj7shGkWrx2L62fIVbXowHZkicllUaJ3ouKHXyBfwPNOEBjrRkFeeWv798KNlJ0xhJ0HE+ojIikDODqpqHfaA+B1Y0gjwxTSlrLWwja5F4vvmTT2aL025cQb7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZXzfyJKj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F9D8C2BD10;
+	Tue, 14 May 2024 12:14:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715688890;
+	bh=oFi+X8DWJauq3qBIES8fh+chhp9UGsg3AZYUFiG6KcE=;
+	h=Date:From:To:cc:Subject:From;
+	b=ZXzfyJKju5ZjosiQ/BIq4xrcSZFoq9z+Zb+r/X3aPGNSDgO2hRy9N7RoC55w/WTMB
+	 Jq2lbKgqbbu9YV6wFmzMIwduN9t5RTO/jQUn9RZ8dV17Lpw0kaJkLxsh7T/7QEvpyr
+	 son5rYho20C1Xa1RZGC/jBYc4oL6vOy3W7TFqHOjXIoA4MKPbgMkaOeNN9/6Nmmg7i
+	 l83k+fVRbNropJjn6V0wVKKa2U436pKKRH4Piiuquydq0kZ4m1y3wbehiI2Sp80/qU
+	 /43/EvDfFTIYTZch+LnSgClzdtySM3nvCEnTNPsvuW0bHk0+11szqDZV9iJspfWoNh
+	 sXtG5u9UtaH9Q==
+Date: Tue, 14 May 2024 14:14:48 +0200 (CEST)
+From: Jiri Kosina <jikos@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+cc: Benjamin Tissoires <bentiss@kernel.org>, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] HID for 6.10
+Message-ID: <nycvar.YFH.7.76.2405141414420.16865@cbobk.fhfr.pm>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240509190819.2985-1-richardbgobert@gmail.com> <20240509190819.2985-3-richardbgobert@gmail.com>
-In-Reply-To: <20240509190819.2985-3-richardbgobert@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 14 May 2024 14:13:21 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXFJwxexojG+41ppD=2EmyXsVM6bwh+-cxCxfSsM_yJiw@mail.gmail.com>
-Message-ID: <CAMuHMdXFJwxexojG+41ppD=2EmyXsVM6bwh+-cxCxfSsM_yJiw@mail.gmail.com>
-Subject: Re: [PATCH net-next v10 2/3] net: gro: move L3 flush checks to
- tcp_gro_receive and udp_gro_receive_segment
-To: Richard Gobert <richardbgobert@gmail.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	pabeni@redhat.com, willemdebruijn.kernel@gmail.com, dsahern@kernel.org, 
-	alexander.duyck@gmail.com, shuah@kernel.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-Hi Richard,
+Linus,
 
-On Thu, May 9, 2024 at 9:09=E2=80=AFPM Richard Gobert <richardbgobert@gmail=
-com> wrote:
-> {inet,ipv6}_gro_receive functions perform flush checks (ttl, flags,
-> iph->id, ...) against all packets in a loop. These flush checks are used =
-in
-> all merging UDP and TCP flows.
->
-> These checks need to be done only once and only against the found p skb,
-> since they only affect flush and not same_flow.
->
-> This patch leverages correct network header offsets from the cb for both
-> outer and inner network headers - allowing these checks to be done only
-> once, in tcp_gro_receive and udp_gro_receive_segment. As a result,
-> NAPI_GRO_CB(p)->flush is not used at all. In addition, flush_id checks ar=
-e
-> more declarative and contained in inet_gro_flush, thus removing the need
-> for flush_id in napi_gro_cb.
->
-> This results in less parsing code for non-loop flush tests for TCP and UD=
-P
-> flows.
->
-> To make sure results are not within noise range - I've made netfilter dro=
-p
-> all TCP packets, and measured CPU performance in GRO (in this case GRO is
-> responsible for about 50% of the CPU utilization).
->
-> perf top while replaying 64 parallel IP/TCP streams merging in GRO:
-> (gro_receive_network_flush is compiled inline to tcp_gro_receive)
-> net-next:
->         6.94% [kernel] [k] inet_gro_receive
->         3.02% [kernel] [k] tcp_gro_receive
->
-> patch applied:
->         4.27% [kernel] [k] tcp_gro_receive
->         4.22% [kernel] [k] inet_gro_receive
->
-> perf top while replaying 64 parallel IP/IP/TCP streams merging in GRO (sa=
-me
-> results for any encapsulation, in this case inet_gro_receive is top
-> offender in net-next)
-> net-next:
->         10.09% [kernel] [k] inet_gro_receive
->         2.08% [kernel] [k] tcp_gro_receive
->
-> patch applied:
->         6.97% [kernel] [k] inet_gro_receive
->         3.68% [kernel] [k] tcp_gro_receive
->
-> Signed-off-by: Richard Gobert <richardbgobert@gmail.com>
+please pull from
 
-Thanks for your patch, which is now commit 4b0ebbca3e167976 ("net: gro:
-move L3 flush checks to tcp_gro_receive and udp_gro_receive_segment")
-in net-next/main (next-20240514).
+  git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git tags/hid-for-li=
+nus-2024051401
 
-noreply@ellerman.id.au reports build failures on m68k, e.g.
-http://kisskb.ellerman.id.au/kisskb/buildresult/15168903/
+to receive HID subsystem updates for 6.10 merge window. Highlights:
 
-    net/core/gro.c: In function =E2=80=98dev_gro_receive=E2=80=99:
-    ././include/linux/compiler_types.h:460:38: error: call to
-=E2=80=98__compiletime_assert_654=E2=80=99 declared with attribute error: B=
-UILD_BUG_ON
-failed: !IS_ALIGNED(offsetof(struct napi_gro_cb, zeroed), sizeof(u32))
+=3D=3D=3D=3D=3D
+- Firmware loading from host support in intel-ish driver, needed
+  to support Lunar Lake and later (Zhang Lixu)
+- updates to HID-BPF infrastructure, with some of the specific
+  fixes (e.g. rdesc fixups) abstracted into separate BPF programs
+  for consumption from libevdev/udev-hid-bpf (Benjamin Tissoires)
+- support for Deck IMU in hid-steam (Max Maisel)
+- fixes for better support of 3rd party playstation DS4 controllers
+  (Max Staudt)
+- support for missing mappings and codes from HUT 1.5 in hid-debug
+  (Thomas Kuehne)
+- initial support for ROG Ally and ROG X13 devices (Luke D. Jones)
+- full support for WinWing Orion2 (Ivan Gorinov)
+=3D=3D=3D=3D=3D
 
-> --- a/include/net/gro.h
-> +++ b/include/net/gro.h
-> @@ -36,15 +36,15 @@ struct napi_gro_cb {
->         /* This is non-zero if the packet cannot be merged with the new s=
-kb. */
->         u16     flush;
->
-> -       /* Save the IP ID here and check when we get to the transport lay=
-er */
-> -       u16     flush_id;
-> -
->         /* Number of segments aggregated. */
->         u16     count;
->
->         /* Used in ipv6_gro_receive() and foo-over-udp and esp-in-udp */
->         u16     proto;
+Thanks!
 
-On most architectures, there is now a hole of 2 bytes here.
-However, on m68k the minimum alignment of __wsum (__u32) below is 2,
-hence there is no hole, breaking the assertion.
+----------------------------------------------------------------
+Allan Sandfeld Jensen (1):
+      HID: logitech: add a few Logitech HID++ device IDs
 
-Probably you just want to make this explicit, by adding
+Basavaraj Natikar (3):
+      HID: amd_sfh: Modify and log error only if case of functionality fail=
+ures
+      HID: amd_sfh: Handle "no sensors" in PM operations
+      HID: amd_sfh: Use amd_get_c2p_val() to read C2P register
 
-    u16 pad;
+Benjamin Tissoires (27):
+      HID: bpf/dispatch: regroup kfuncs definitions
+      HID: bpf: export hid_hw_output_report as a BPF kfunc
+      selftests/hid: add KASAN to the VM tests
+      selftests/hid: Add test for hid_bpf_hw_output_report
+      HID: bpf: allow to inject HID event from BPF
+      selftests/hid: add tests for hid_bpf_input_report
+      HID: bpf: allow to use bpf_timer_set_sleepable_cb() in tracing callba=
+cks.
+      HID: bpf: fix hid_bpf_input_report() when hid-core is not ready
+      HID: do not assume HAT Switch logical max < 8
+      HID: bpf: add first in-tree HID-BPF fix for the XPPen Artist 24
+      HID: bpf: add in-tree HID-BPF fix for the XPPen Artist 16
+      HID: bpf: add in-tree HID-BPF fix for the HP Elite Presenter Mouse
+      HID: bpf: add in-tree HID-BPF fix for the IOGear Kaliber Gaming MMOme=
+ntum mouse
+      HID: bpf: add in-tree HID-BPF fix for the Wacom ArtPen
+      HID: bpf: add in-tree HID-BPF fix for the XBox Elite 2 over Bluetooth
+      HID: bpf: add in-tree HID-BPF fix for the Huion Kamvas Pro 19
+      HID: bpf: add in-tree HID-BPF fix for the Raptor Mach 2
+      selftests/hid: import base_device.py from hid-tools
+      selftests/hid: add support for HID-BPF pre-loading before starting a =
+test
+      selftests/hid: tablets: reduce the number of pen state
+      selftests/hid: tablets: add a couple of XP-PEN tablets
+      selftests/hid: tablets: also check for XP-Pen offset correction
+      selftests/hid: add Huion Kamvas Pro 19 tests
+      selftests/hid: import base_gamepad.py from hid-tools
+      selftests/hid: move the gamepads definitions in the test file
+      selftests/hid: add tests for the Raptor Mach 2 joystick
+      selftests/hid: skip tests with HID-BPF if udev-hid-bpf is not install=
+ed
 
-here.
+Chen Ni (1):
+      HID: intel-ish-hid: ipc: Add check for pci_alloc_irq_vectors
 
->
-> +       /* used to support CHECKSUM_COMPLETE for tunneling protocols */
-> +       __wsum  csum;
+Christophe JAILLET (1):
+      HID: sony: Remove usage of the deprecated ida_simple_xx() API
 
-Gr{oetje,eeting}s,
+Colin Ian King (1):
+      HID: sony: remove redundant assignment
 
-                        Geert
+David Yang (1):
+      HID: kye: Change Device Usage from Puck to Mouse
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-org
+Ivan Gorinov (1):
+      HID: Add WinWing Orion2 throttle support
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Jiapeng Chong (2):
+      HID: winwing: Remove unused variable 'minor'
+      HID: nintendo: Remove unused function
+
+Jos=E9 Exp=F3sito (1):
+      HID: uclogic: Expose firmware name
+
+Kenny Levinsen (3):
+      HID: i2c-hid: Retry address probe after delay
+      HID: i2c-hid: Use address probe to wake on resume
+      HID: i2c-hid: Remove unused label in i2c_hid_set_power
+
+Li Zhijian (4):
+      HID: hid-picolcd*: Convert sprintf() family to sysfs_emit() family
+      HID: hid-sensor-custom: Convert sprintf() family to sysfs_emit() fami=
+ly
+      HID: roccat: Convert sprintf() family to sysfs_emit() family
+      HID: corsair,lenovo: Convert sprintf() family to sysfs_emit() family
+
+Luke D. Jones (4):
+      HID: asus: fix more n-key report descriptors if n-key quirked
+      HID: asus: make asus_kbd_init() generic, remove rog_nkey_led_init()
+      HID: asus: add ROG Ally N-Key ID and keycodes
+      HID: asus: add ROG Z13 lightbar
+
+Martino Fontana (1):
+      HID: nintendo: use ida for LED player id
+
+Max Maisel (1):
+      HID: hid-steam: Add Deck IMU support
+
+Max Staudt (7):
+      HID: nintendo: Don't fail on setting baud rate
+      HID: playstation: DS4: Fix LED blinking
+      HID: playstation: DS4: Don't fail on FW/HW version request
+      HID: playstation: DS4: Don't fail on calibration data request
+      HID: playstation: DS4: Parse minimal report 0x01
+      HID: playstation: Simplify device type ID
+      HID: playstation: DS4: Fix calibration workaround for clone devices
+
+Qianru Huang (2):
+      Documentation: hid: intel-ish-hid: remove section numbering
+      Documentation: hid: intel-ish-hid: add section for firmware loading
+
+Sean O'Brien (1):
+      HID: Add quirk for Logitech Casa touchpad
+
+Thomas Kuehne (4):
+      HID: hid-debug: add missing evdev and HID codes
+      HID: hid-debug: fix Moir -> Moire typo
+      HID: hid-debug: more informative output for EV_KEY
+      HID: hid-debug: add EV_FF and FF_STATUS mappings
+
+Uwe Kleine-K=F6nig (3):
+      HID: google: hammer: Convert to platform remove callback returning vo=
+id
+      HID: hid-sensor-custom: Convert to platform remove callback returning=
+ void
+      HID: surface-hid: kbd: Convert to platform remove callback returning =
+void
+
+Zhang Lixu (4):
+      HID: intel-ish-hid: ipc: Add Lunar Lake-M PCI device ID
+      HID: intel-ish-hid: Add driver_data for specifying the firmware filen=
+ame
+      HID: intel-ish-hid: Implement loading firmware from host feature
+      HID: intel-ish-hid: handler multiple MNG_RESET_NOTIFY messages
+
+Zhang, Lixu (1):
+      HID: intel-ish-hid: Use PCI_VDEVICE() and rename device ID macros
+
+ Documentation/hid/hid-bpf.rst                      |    2 +-
+ Documentation/hid/intel-ish-hid.rst                |  137 +-
+ drivers/hid/Kconfig                                |   16 +
+ drivers/hid/Makefile                               |    1 +
+ drivers/hid/amd-sfh-hid/amd_sfh_pcie.c             |    5 +-
+ drivers/hid/amd-sfh-hid/sfh1_1/amd_sfh_init.c      |   17 +-
+ drivers/hid/amd-sfh-hid/sfh1_1/amd_sfh_interface.c |    2 +-
+ drivers/hid/bpf/hid_bpf_dispatch.c                 |  226 +-
+ drivers/hid/bpf/progs/FR-TEC__Raptor-Mach-2.bpf.c  |  185 ++
+ drivers/hid/bpf/progs/HP__Elite-Presenter.bpf.c    |   58 +
+ drivers/hid/bpf/progs/Huion__Kamvas-Pro-19.bpf.c   |  290 ++
+ .../hid/bpf/progs/IOGEAR__Kaliber-MMOmentum.bpf.c  |   59 +
+ drivers/hid/bpf/progs/Makefile                     |   91 +
+ .../hid/bpf/progs/Microsoft__XBox-Elite-2.bpf.c    |  133 +
+ drivers/hid/bpf/progs/README                       |  102 +
+ drivers/hid/bpf/progs/Wacom__ArtPen.bpf.c          |  173 +
+ drivers/hid/bpf/progs/XPPen__Artist24.bpf.c        |  229 ++
+ drivers/hid/bpf/progs/XPPen__ArtistPro16Gen2.bpf.c |  274 ++
+ drivers/hid/bpf/progs/hid_bpf.h                    |   15 +
+ drivers/hid/bpf/progs/hid_bpf_helpers.h            |  168 +
+ drivers/hid/hid-asus.c                             |  132 +-
+ drivers/hid/hid-core.c                             |    2 +
+ drivers/hid/hid-corsair.c                          |    4 +-
+ drivers/hid/hid-debug.c                            | 3437 ++++++++++++++++=
++---
+ drivers/hid/hid-google-hammer.c                    |    5 +-
+ drivers/hid/hid-ids.h                              |    3 +
+ drivers/hid/hid-kye.c                              |   75 +-
+ drivers/hid/hid-lenovo.c                           |   23 +-
+ drivers/hid/hid-logitech-hidpp.c                   |   14 +-
+ drivers/hid/hid-multitouch.c                       |    6 +
+ drivers/hid/hid-nintendo.c                         |   57 +-
+ drivers/hid/hid-picolcd_core.c                     |    6 +-
+ drivers/hid/hid-picolcd_fb.c                       |    8 +-
+ drivers/hid/hid-playstation.c                      |  138 +-
+ drivers/hid/hid-roccat-isku.c                      |    2 +-
+ drivers/hid/hid-roccat-kone.c                      |   12 +-
+ drivers/hid/hid-roccat-koneplus.c                  |    4 +-
+ drivers/hid/hid-roccat-kovaplus.c                  |   10 +-
+ drivers/hid/hid-roccat-pyra.c                      |    6 +-
+ drivers/hid/hid-sensor-custom.c                    |   17 +-
+ drivers/hid/hid-sony.c                             |    7 +-
+ drivers/hid/hid-steam.c                            |  155 +-
+ drivers/hid/hid-uclogic-params.c                   |    3 +
+ drivers/hid/hid-winwing.c                          |  226 ++
+ drivers/hid/i2c-hid/i2c-hid-core.c                 |   44 +-
+ drivers/hid/intel-ish-hid/Makefile                 |    1 +
+ drivers/hid/intel-ish-hid/ipc/hw-ish.h             |   45 +-
+ drivers/hid/intel-ish-hid/ipc/ipc.c                |   21 +-
+ drivers/hid/intel-ish-hid/ipc/pci-ish.c            |   80 +-
+ drivers/hid/intel-ish-hid/ishtp/hbm.c              |   21 +
+ drivers/hid/intel-ish-hid/ishtp/init.c             |    8 +
+ drivers/hid/intel-ish-hid/ishtp/ishtp-dev.h        |   28 +
+ drivers/hid/intel-ish-hid/ishtp/loader.c           |  275 ++
+ drivers/hid/intel-ish-hid/ishtp/loader.h           |  226 ++
+ drivers/hid/surface-hid/surface_kbd.c              |    5 +-
+ include/linux/hid.h                                |    6 +-
+ include/linux/hid_bpf.h                            |    3 +
+ tools/testing/selftests/hid/config.common          |    1 +
+ tools/testing/selftests/hid/hid_bpf.c              |  112 +-
+ tools/testing/selftests/hid/progs/hid.c            |   46 +
+ .../testing/selftests/hid/progs/hid_bpf_helpers.h  |    6 +
+ tools/testing/selftests/hid/tests/base.py          |   92 +-
+ tools/testing/selftests/hid/tests/base_device.py   |  421 +++
+ tools/testing/selftests/hid/tests/base_gamepad.py  |  238 ++
+ tools/testing/selftests/hid/tests/test_gamepad.py  |  457 ++-
+ tools/testing/selftests/hid/tests/test_tablet.py   |  723 ++--
+ 66 files changed, 8301 insertions(+), 1093 deletions(-)
+ create mode 100644 drivers/hid/bpf/progs/FR-TEC__Raptor-Mach-2.bpf.c
+ create mode 100644 drivers/hid/bpf/progs/HP__Elite-Presenter.bpf.c
+ create mode 100644 drivers/hid/bpf/progs/Huion__Kamvas-Pro-19.bpf.c
+ create mode 100644 drivers/hid/bpf/progs/IOGEAR__Kaliber-MMOmentum.bpf.c
+ create mode 100644 drivers/hid/bpf/progs/Makefile
+ create mode 100644 drivers/hid/bpf/progs/Microsoft__XBox-Elite-2.bpf.c
+ create mode 100644 drivers/hid/bpf/progs/README
+ create mode 100644 drivers/hid/bpf/progs/Wacom__ArtPen.bpf.c
+ create mode 100644 drivers/hid/bpf/progs/XPPen__Artist24.bpf.c
+ create mode 100644 drivers/hid/bpf/progs/XPPen__ArtistPro16Gen2.bpf.c
+ create mode 100644 drivers/hid/bpf/progs/hid_bpf.h
+ create mode 100644 drivers/hid/bpf/progs/hid_bpf_helpers.h
+ create mode 100644 drivers/hid/hid-winwing.c
+ create mode 100644 drivers/hid/intel-ish-hid/ishtp/loader.c
+ create mode 100644 drivers/hid/intel-ish-hid/ishtp/loader.h
+ create mode 100644 tools/testing/selftests/hid/tests/base_device.py
+ create mode 100644 tools/testing/selftests/hid/tests/base_gamepad.py
+
+--=20
+Jiri Kosina
+SUSE Labs
+
 
