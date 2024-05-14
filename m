@@ -1,248 +1,265 @@
-Return-Path: <linux-kernel+bounces-178519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A65858C4EF2
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:25:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBB078C4EF7
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:26:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18AFD282FCC
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 10:25:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2441EB2077E
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 10:26:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6642313048B;
-	Tue, 14 May 2024 09:40:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7099130E35;
+	Tue, 14 May 2024 09:43:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="nUybUr9i"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="iWMQ5of0"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2ABC41C92;
-	Tue, 14 May 2024 09:40:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D86284D22
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 09:43:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715679650; cv=none; b=Lv4J2ojccTtVx2ia+DxcyHCPfnt5mJjmFgvlNUoDWn8bFN3yaSyt4wcdLMxdMSQlsS2eTO0qnAo9Y3HwY+GPrnJTWJCfHniISuouT6fZMwq3WN2xo4APqaAqcagCW1P99x9yX3HD8ZWcPfKxaQtUZMOlUAVInu0lvu7p6z4dP+s=
+	t=1715679801; cv=none; b=Pim7wiDXaCse1oR6YH4hzBATaJ+TIlUMOpJQ1PnRZVdc/VhsSX+WPA4U6i/mGZYqOj9kMlbNskiiLBc23DCQtTAV5apmWTfUwn+1Q6VNqjetRCgY80S/YSEaJg1Wn+jOCOcLrmCfmFxqgRGxpayEeEnpGiUVl9k3n5TCzRxDFBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715679650; c=relaxed/simple;
-	bh=fUsD6LUTdjE3pAPXHLqyl5dRHGqYcANQ1LUVv9dUdZA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=EXKrTFBYwD2P4DiotIOY5a11tZvs0Ugplwh/GKizdle0Qq2uYYttHVhVvQpHD1gruV1JDNZs1pNE4VAHGdnYs14zfFWKtueqEg9dOg7GIBAxrG5/ydsnOiIe9nNDQkf38cUqJt27JsKEsSzPuwZMPzZQo3YR9tlERBjDnuCFvl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=nUybUr9i; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44E7tsc4027298;
-	Tue, 14 May 2024 09:40:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=mi2RdJrkmKsN8ltJ5aUEwLAREuBftGQxjpo5hXDRxgg=; b=nU
-	ybUr9iEsxZRQjD1S24T59fGP4OSgAcKLjwUywOCertkq9k7S2Vzjav+5/AgN1DWD
-	hsufoytciMEqmICSQKMR1cV+ehP1L+b3WACSYxc2VkLMIZQC6xeI5fML6PEvioW8
-	wTub8zgwarkgFS+BNkkZqvLIq4zRbWYxj7BJct0yFN9PR0AHY1JIdr9x+CpcNfES
-	9gg3I9w408tgQ5+kSTG5v5KYNwizQ2EoEzc5Q4c42BV5QzxLapi7ftDdwxivaw6s
-	YddBaXql/yzxj153u2fkE8+YOk7TIQ/miRHfKi6m1yFTam3Pzaw+9rlg2Y1Zd6gv
-	jn78Je17KqUsBtohO3dw==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y1y9mdy6y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 14 May 2024 09:40:37 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44E9eZfl030697
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 14 May 2024 09:40:35 GMT
-Received: from [10.131.33.37] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 14 May
- 2024 02:40:31 -0700
-Message-ID: <d7fbc261-39a1-57a3-6891-ae2de63368d0@quicinc.com>
-Date: Tue, 14 May 2024 15:10:28 +0530
+	s=arc-20240116; t=1715679801; c=relaxed/simple;
+	bh=GNuSE3s2r9EbP9ocQpFNdq2tZtq7uo/Tjsb9ccdwGJY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UXnTdxWbwcsgBHx7xArle/wQI1uXzEWK/ZTdakR797qwGxZzqMlQsPGsq1c3xOWRE5UGX6OBFOKZFAZlv/LZbIVgB3F38vbpv3N6N9zHcc1n8y05hO3pBeJoTBbRzIHIbFsUWQCkaiVQlMpKlHpbtCA+nyT+EMFMAUGcZBn6Xts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=iWMQ5of0; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-34cb2bf85easo446884f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 02:43:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1715679796; x=1716284596; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HEietWmYD6kKU/pV6wujRo1uhNo/bfHaQjmoZVTM8+A=;
+        b=iWMQ5of0/ggMHzemNXGUGyT0aEwb8+6FgtXh5FkV01Su/b2T8pycIpxmyLrnpo6ds8
+         VLiglOgv+TFRb/7+BRusIGNNEaWMXZ5ezwpknsmQ/lMuTkLdXCRiSWo60xVRKm+toslz
+         LTKi83IDni+xqjly7SCgd9ij3Z9FJzNGw/x+ZL+st2uQYWtvfYRYB7o1eFjnQyWJNFFJ
+         T8ZeBybw01vSgI7sDMfLF6uNcZAYnmpCAKCDwWgmNNEq4XFDLQfmsdCFLU0e4mEnuED7
+         YO/gYBWt0qXdOjS8eVCPDuHJYFgS936FcpCkBUAhUXm0dzJg74swQ/sl4iYEbJ4BFBVk
+         Gsrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715679796; x=1716284596;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HEietWmYD6kKU/pV6wujRo1uhNo/bfHaQjmoZVTM8+A=;
+        b=SJ+Dcw6YGeXjhv62UCwZfxXXlLeFTkGjqyLjQFndJjtEoFXndVSmWivIQNDzJhPd0f
+         GNY1J4MXkAIhXOMdzO9xeU7Z8lOZuUVkw9Dnd8zoZ5PZQ3QvYWfX1ood4JvUm6Tcbd4M
+         PhisK9uMGRA/KrxcC1fgv5ubpyXWDnjLs3cH3yu/nATrqjbk5gP+npKi1mSz83aERdCN
+         piDqaaJ8SY+60TjdhNMjBArUny4zx9KKSMhJDqoJjQ2A6Rze+vZNDMP0kX3ubFYXy3bh
+         qNFutkRQXvhqqVEaRO1H80YiafZuXfxVIcTNOdX/ePME+Zqk0z4AxOHGnlpeexs1L7EY
+         QYdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWwI7Ff5B4krUZAklyi7qzJE964x/EN6rOWmIn06P0/Yr6XY1wtQAxRCl00zyUweq5oFdnEc26YIveeCstagZ76YvJMJ/pbQL9KWz9b
+X-Gm-Message-State: AOJu0YyZRff+13iBwXupQVf9CoyiJclOcerxGToY5J/va2z1KJ1867on
+	3tJJd8emIYwaNFt1PFgHNDXDwEoNPFy7qXtViDVhi+PqdX6PlAWsQqUQC0lCuaU=
+X-Google-Smtp-Source: AGHT+IHsscONJjXt03GkOV8zZbc6kOxoRUClFHpAMSKc94NJeP6QWGgAaazEO2tWqCS4ba0q1uyBGQ==
+X-Received: by 2002:a05:600c:1c11:b0:41f:9c43:574f with SMTP id 5b1f17b1804b1-41feac59cffmr88723965e9.3.1715679796443;
+        Tue, 14 May 2024 02:43:16 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:999:a3a0:1660:5f6e:2f9c:91b9? ([2a01:e0a:999:a3a0:1660:5f6e:2f9c:91b9])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41faedf5dcesm76566455e9.0.2024.05.14.02.43.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 May 2024 02:43:15 -0700 (PDT)
+Message-ID: <c8e4c44d-8125-417e-8c61-a1f6d438815e@rivosinc.com>
+Date: Tue, 14 May 2024 11:43:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH V4 2/2] cpufreq: scmi: Register for limit change
- notifications
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 6/7] riscv: kvm: add SBI FWFT support for
+ SBI_FWFT_DOUBLE_TRAP_ENABLE
+To: Deepak Gupta <debug@rivosinc.com>
+Cc: Conor Dooley <conor@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Anup Patel <anup@brainfault.org>, Atish Patra <atishp@atishpatra.org>,
+ linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+ kvm-riscv@lists.infradead.org, Ved Shanbhogue <ved@rivosinc.com>
+References: <20240418142701.1493091-1-cleger@rivosinc.com>
+ <20240418142701.1493091-7-cleger@rivosinc.com>
+ <ZixSFLZYZaf8BKHP@debug.ba.rivosinc.com>
 Content-Language: en-US
-To: Cristian Marussi <cristian.marussi@arm.com>
-CC: <sudeep.holla@arm.com>, <rafael@kernel.org>, <viresh.kumar@linaro.org>,
-        <morten.rasmussen@arm.com>, <dietmar.eggemann@arm.com>,
-        <lukasz.luba@arm.com>, <pierre.gondois@arm.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-pm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_mdtipton@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>
-References: <20240328074131.2839871-1-quic_sibis@quicinc.com>
- <20240328074131.2839871-3-quic_sibis@quicinc.com> <ZjH7hWnKFcpQ-TXH@pluto>
-From: Sibi Sankar <quic_sibis@quicinc.com>
-In-Reply-To: <ZjH7hWnKFcpQ-TXH@pluto>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 7BftsmZAxynvjVdMmba2KZ8pb45XmQ0V
-X-Proofpoint-ORIG-GUID: 7BftsmZAxynvjVdMmba2KZ8pb45XmQ0V
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-14_04,2024-05-10_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 adultscore=0
- priorityscore=1501 lowpriorityscore=0 spamscore=0 phishscore=0
- malwarescore=0 suspectscore=0 impostorscore=0 clxscore=1011 bulkscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405010000 definitions=main-2405140068
+From: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
+In-Reply-To: <ZixSFLZYZaf8BKHP@debug.ba.rivosinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 
 
-On 5/1/24 13:51, Cristian Marussi wrote:
-> On Thu, Mar 28, 2024 at 01:11:31PM +0530, Sibi Sankar wrote:
->> Register for limit change notifications if supported and use the throttled
->> frequency from the notification to apply HW pressure.
+On 27/04/2024 03:17, Deepak Gupta wrote:
+> On Thu, Apr 18, 2024 at 04:26:45PM +0200, Clément Léger wrote:
+>> Add support in KVM SBI FWFT extension to allow VS-mode to request double
+>> trap enabling. Double traps can then be generated by VS-mode, allowing
+>> M-mode to redirect them to S-mode.
 >>
-> 
-> Hi Sibi,
-> 
-> a bit late on this, sorry.
-> 
-> Just a couple of nitpicks down below.
-> 
->> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
+>> Signed-off-by: Clément Léger <cleger@rivosinc.com>
 >> ---
+>> arch/riscv/include/asm/csr.h               |  1 +
+>> arch/riscv/include/asm/kvm_vcpu_sbi_fwft.h |  2 +-
+>> arch/riscv/kvm/vcpu_sbi_fwft.c             | 41 ++++++++++++++++++++++
+>> 3 files changed, 43 insertions(+), 1 deletion(-)
 >>
->> v4:
->> * Use a interim variable to show the khz calc. [Lukasz]
->> * Use driver_data to pass on the handle and scmi_dev instead of using
->>    global variables. Dropped Lukasz's Rb due to adding these minor
->>    changes.
+>> diff --git a/arch/riscv/include/asm/csr.h b/arch/riscv/include/asm/csr.h
+>> index 905cdf894a57..ee1b73655bec 100644
+>> --- a/arch/riscv/include/asm/csr.h
+>> +++ b/arch/riscv/include/asm/csr.h
+>> @@ -196,6 +196,7 @@
+>> /* xENVCFG flags */
+>> #define ENVCFG_STCE            (_AC(1, ULL) << 63)
+>> #define ENVCFG_PBMTE            (_AC(1, ULL) << 62)
+>> +#define ENVCFG_DTE            (_AC(1, ULL) << 59)
+>> #define ENVCFG_CBZE            (_AC(1, UL) << 7)
+>> #define ENVCFG_CBCFE            (_AC(1, UL) << 6)
+>> #define ENVCFG_CBIE_SHIFT        4
+>> diff --git a/arch/riscv/include/asm/kvm_vcpu_sbi_fwft.h
+>> b/arch/riscv/include/asm/kvm_vcpu_sbi_fwft.h
+>> index 7dc1b80c7e6c..a9e20d655126 100644
+>> --- a/arch/riscv/include/asm/kvm_vcpu_sbi_fwft.h
+>> +++ b/arch/riscv/include/asm/kvm_vcpu_sbi_fwft.h
+>> @@ -11,7 +11,7 @@
 >>
->>   drivers/cpufreq/scmi-cpufreq.c | 44 ++++++++++++++++++++++++++++++++++
->>   1 file changed, 44 insertions(+)
+>> #include <asm/sbi.h>
 >>
->> diff --git a/drivers/cpufreq/scmi-cpufreq.c b/drivers/cpufreq/scmi-cpufreq.c
->> index 3b4f6bfb2f4c..d946b7a08258 100644
->> --- a/drivers/cpufreq/scmi-cpufreq.c
->> +++ b/drivers/cpufreq/scmi-cpufreq.c
->> @@ -21,11 +21,18 @@
->>   #include <linux/types.h>
->>   #include <linux/units.h>
->>   
->> +struct scmi_cpufreq_driver_data {
->> +	struct scmi_device *sdev;
->> +	const struct scmi_handle *handle;
->> +};
+>> -#define KVM_SBI_FWFT_FEATURE_COUNT    1
+>> +#define KVM_SBI_FWFT_FEATURE_COUNT    2
+>>
+>> struct kvm_sbi_fwft_config;
+>> struct kvm_vcpu;
+>> diff --git a/arch/riscv/kvm/vcpu_sbi_fwft.c
+>> b/arch/riscv/kvm/vcpu_sbi_fwft.c
+>> index b9b7f8fa6d22..9e8e397eb02f 100644
+>> --- a/arch/riscv/kvm/vcpu_sbi_fwft.c
+>> +++ b/arch/riscv/kvm/vcpu_sbi_fwft.c
+>> @@ -9,10 +9,19 @@
+>> #include <linux/errno.h>
+>> #include <linux/err.h>
+>> #include <linux/kvm_host.h>
+>> +#include <linux/riscv_dbltrp.h>
+>> #include <asm/sbi.h>
+>> #include <asm/kvm_vcpu_sbi.h>
+>> #include <asm/kvm_vcpu_sbi_fwft.h>
+>>
+>> +#ifdef CONFIG_32BIT
+>> +# define CSR_HENVCFG_DBLTRP    CSR_HENVCFGH
+>> +# define DBLTRP_DTE    (ENVCFG_DTE >> 32)
+>> +#else
+>> +# define CSR_HENVCFG_DBLTRP    CSR_HENVCFG
+>> +# define DBLTRP_DTE    ENVCFG_DTE
+>> +#endif
 >> +
->>   struct scmi_data {
->>   	int domain_id;
->>   	int nr_opp;
->>   	struct device *cpu_dev;
->> +	struct cpufreq_policy *policy;
->>   	cpumask_var_t opp_shared_cpus;
->> +	struct notifier_block limit_notify_nb;
->>   };
->>   
->>   static struct scmi_protocol_handle *ph;
->> @@ -174,6 +181,22 @@ static struct freq_attr *scmi_cpufreq_hw_attr[] = {
->>   	NULL,
->>   };
->>   
->> +static int scmi_limit_notify_cb(struct notifier_block *nb, unsigned long event, void *data)
+>> #define MIS_DELEG (1UL << EXC_LOAD_MISALIGNED | 1UL <<
+>> EXC_STORE_MISALIGNED)
+>>
+>> static int kvm_sbi_fwft_set_misaligned_delegation(struct kvm_vcpu *vcpu,
+>> @@ -36,6 +45,33 @@ static int
+>> kvm_sbi_fwft_get_misaligned_delegation(struct kvm_vcpu *vcpu,
+>>     return SBI_SUCCESS;
+>> }
+>>
+>> +static int kvm_sbi_fwft_set_double_trap(struct kvm_vcpu *vcpu,
+>> +                    struct kvm_sbi_fwft_config *conf,
+>> +                    unsigned long value)
 >> +{
->> +	struct scmi_data *priv = container_of(nb, struct scmi_data, limit_notify_nb);
->> +	struct scmi_perf_limits_report *limit_notify = data;
->> +	struct cpufreq_policy *policy = priv->policy;
->> +	unsigned int limit_freq_khz;
+>> +    if (!riscv_double_trap_enabled())
+>> +        return SBI_ERR_NOT_SUPPORTED;
+> 
+> Why its required to check whether host has enabled double trap for itself ?
+> It's orthogonal to guest asking hypervisor to enable double trap.
+
+Hi Deepak,
+
+Indeed, as you saw, henvcfg.DTE needs menvcfg.DTE to be enabled in order
+to be usable.
+
+> 
+> Probably you need a check here whether underlying FW supports handling
+> double
+> trap.
+> 
+> Am I missing something here?
+> 
 >> +
->> +	limit_freq_khz = limit_notify->range_max_freq / HZ_PER_KHZ;
+>> +    if (value)
+>> +        csr_set(CSR_HENVCFG_DBLTRP, DBLTRP_DTE);
+>> +    else
+>> +        csr_clear(CSR_HENVCFG_DBLTRP, DBLTRP_DTE);
+> 
+> I think vcpu->arch.cfg has `henvcfg` field. Can we reflect it there as
+> well so that current
+> `henvcfg` copy in vcpu arch specifci config is consistent? Otherwise
+> it'll be lost when vCPU
+> is scheduled out and later scheduled back in (on vcpu load)
+
+henvcfg is restored when loading the vpcu (kvm_arch_vcpu_load()) and
+saved when the CPU is put (kvm_arch_vcpu_put()). But I just saw that
+this change is included in the next patch. Should have been this one ,
+I'll fix that.
+
+
+> 
+> Furthermore, lets not do feature specific alias names for CSR.
+> 
+> Instead let's keep consistent 64bit image of henvcfg in vcpu->arch.cfg.
+> 
+> And whenever it's time to pick up the setting, pick up logic either
+> perform the writes in
+> henvcfg. And if required it'll perform henvcfgh too (as
+> `kvm_arch_vcpu_load` already does)
+
+I don't have a strong opinion on that point so if you think it really is
+better, I'll switch to that.
+
+Thanks,
+
+Clément
+
+> 
 >> +
->> +	policy->max = clamp(limit_freq_khz, policy->cpuinfo.min_freq, policy->cpuinfo.max_freq);
->> +
->> +	cpufreq_update_pressure(policy);
->> +
->> +	return NOTIFY_OK;
+>> +    return SBI_SUCCESS;
 >> +}
 >> +
->>   static int scmi_cpufreq_init(struct cpufreq_policy *policy)
->>   {
->>   	int ret, nr_opp, domain;
->> @@ -181,6 +204,7 @@ static int scmi_cpufreq_init(struct cpufreq_policy *policy)
->>   	struct device *cpu_dev;
->>   	struct scmi_data *priv;
->>   	struct cpufreq_frequency_table *freq_table;
->> +	struct scmi_cpufreq_driver_data *data = cpufreq_get_driver_data();
->>   
->>   	cpu_dev = get_cpu_device(policy->cpu);
->>   	if (!cpu_dev) {
->> @@ -294,6 +318,17 @@ static int scmi_cpufreq_init(struct cpufreq_policy *policy)
->>   		}
->>   	}
->>   
->> +	priv->limit_notify_nb.notifier_call = scmi_limit_notify_cb;
->> +	ret = data->handle->notify_ops->devm_event_notifier_register(data->sdev, SCMI_PROTOCOL_PERF,
->> +							SCMI_EVENT_PERFORMANCE_LIMITS_CHANGED,
->> +							&domain,
->> +							&priv->limit_notify_nb);
->> +	if (ret)
->> +		dev_warn(cpu_dev,
-> 
-> or &data->sdev->dev which refers to this driver ? which is more informational ? no strong opinion just a question...
-
-Pointing to the driver is better given that we already pass on domain
-info.
-
-> 
->> +			 "failed to register for limits change notifier for domain %d\n", domain);
+>> +static int kvm_sbi_fwft_get_double_trap(struct kvm_vcpu *vcpu,
+>> +                    struct kvm_sbi_fwft_config *conf,
+>> +                    unsigned long *value)
+>> +{
+>> +    if (!riscv_double_trap_enabled())
+>> +        return SBI_ERR_NOT_SUPPORTED;
 >> +
->> +	priv->policy = policy;
+>> +    *value = (csr_read(CSR_HENVCFG_DBLTRP) & DBLTRP_DTE) != 0;
 >> +
->>   	return 0;
->>   
->>   out_free_opp:
->> @@ -366,12 +401,21 @@ static int scmi_cpufreq_probe(struct scmi_device *sdev)
->>   	int ret;
->>   	struct device *dev = &sdev->dev;
->>   	const struct scmi_handle *handle;
->> +	struct scmi_cpufreq_driver_data *data;
->>   
->>   	handle = sdev->handle;
-> 
-> 	^^^ ....
->>   
->>   	if (!handle)
->>   		return -ENODEV;
->>   
->> +	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
->> +	if (!data)
->> +		return -ENOMEM;
+>> +    return SBI_SUCCESS;
+>> +}
 >> +
->> +	data->sdev = sdev;
->> +	data->handle = handle;
-> 
-> 	^^^ ... you dont need to pass around handle AND sdev really
->                  since you can access the handle from sdev.
-> 
->> +	scmi_cpufreq_driver.driver_data = data;
-
-Ack setting sdev as driver data would suffice. Will fix it in the next
-re-spin.
-
--Sibi
-
-> 
-> This is slightly better, but, as said, does not solve the multi-instance issue...
-> ...the scmi cpufreq driver remains a driver that works only if instantiated (probed)
-> once, given how the CPUFreq core handles cpufreq_driver registration itself...
-> 
-> ...just a note about something to work on in the future...NOT a concern for this series.
-> 
-> In general,
-> 
-> LGTM.
-> 
-> Thanks,
-> Cristian
-> 
+>> static struct kvm_sbi_fwft_config *
+>> kvm_sbi_fwft_get_config(struct kvm_vcpu *vcpu, enum sbi_fwft_feature_t
+>> feature)
+>> {
+>> @@ -111,6 +147,11 @@ static const struct kvm_sbi_fwft_feature
+>> features[] = {
+>>         .id = SBI_FWFT_MISALIGNED_DELEG,
+>>         .set = kvm_sbi_fwft_set_misaligned_delegation,
+>>         .get = kvm_sbi_fwft_get_misaligned_delegation,
+>> +    },
+>> +    {
+>> +        .id = SBI_FWFT_DOUBLE_TRAP_ENABLE,
+>> +        .set = kvm_sbi_fwft_set_double_trap,
+>> +        .get = kvm_sbi_fwft_get_double_trap,
+>>     }
+>> };
+>>
+>> -- 
+>> 2.43.0
+>>
+>>
 
