@@ -1,133 +1,114 @@
-Return-Path: <linux-kernel+bounces-179091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CF568C5B80
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 21:08:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 795408C5B83
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 21:08:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 821401F236CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 19:08:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DA031F2371A
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 19:08:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6F2718131A;
-	Tue, 14 May 2024 19:08:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62D13181B8E;
+	Tue, 14 May 2024 19:08:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BtESHlSQ"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OGQ3Ifh/"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCD97180A94;
-	Tue, 14 May 2024 19:08:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10B5A180A88;
+	Tue, 14 May 2024 19:08:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715713687; cv=none; b=S5OViuKOKCPXiikZAK9Hd5cLCyIKCdJkL7KloBfwq5eLSmJtSpHQOv1h7TKAKkIBhcIeYvsDbMXXn+777U+Oi34ipM6gFrBM4LlGzpGoD8b3vllVGLR0a9eOzyMyTFft+Ii9GqeUWlqykeTHCVnkToO+qIBJJN3kYTItt6UyY3Q=
+	t=1715713701; cv=none; b=VV3ERmmjqUYl/2Y7t2yFhtAIUMPYxfqGka/AenNU2YhTqboSGprlNRH6f82yjbeSWJNhHQwVOGQjfXcM8kfgjmHRy0rLzizlULw5z2PsdBZ73404GGG8FFxZWz76rvsoq3zIGoht9deaMouJZjkKRZk3jT0/GVgBNuWyNmdZhzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715713687; c=relaxed/simple;
-	bh=V8kl0vk+zhxlMwqHSJ01OCOj/2EJeFrBwxvtafI4exY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bSX9UhWlsoWoZdRuPdVuO0TzfXREKBjzVPRW0MHNvvBjT+yDqU2wdnfZY+A4RrzTdXfEi2WMex8lu2kG8mDXZmzZ50YKZyghvrGFKh9D7wNTZYB8EHQx548QNp49xm2d47umOeu2+ec4Qiq6ggrukIuj5ZjRxkjrfvd7qOtIVHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BtESHlSQ; arc=none smtp.client-ip=209.85.215.177
+	s=arc-20240116; t=1715713701; c=relaxed/simple;
+	bh=IpGPND/tsqpjm2a8m8Te8+p7Nlut/1u//Hu1RhsO6XY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=M5Ap8T6dtilVAlFA1enkef6igTlzXda0CuXZgqKpCyFeKGasdOIYW0B1saaQrz0Y6kvk7RrxN9gNGBqxoW5Zsvv8LDLheTOS8fP1JcWRkgTclDvZ/9mB709sadjQ4s6O+quR03+ZpRsIFMGrAnO3OC2R8tiKk/7KEmoqVHrBk6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OGQ3Ifh/; arc=none smtp.client-ip=209.85.208.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-6123726725eso4824076a12.3;
-        Tue, 14 May 2024 12:08:05 -0700 (PDT)
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2e3e18c24c1so64125611fa.1;
+        Tue, 14 May 2024 12:08:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715713685; x=1716318485; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=l7gJ1jGOfc0uuKsE3YPwqokUa9StmsGv9lzNrtz5bw8=;
-        b=BtESHlSQThoo85hM8WGS0e35fO7XV+WLmgZ4helCiqjXachZkvWuwJNj8Vrt6jpAnQ
-         qEBVCJ9XHot4uaVzCT3FkQoTVlpiKfzyARh00XVft3oTH8U3oMjj1Ed4Ox4Fk3k0+mvO
-         2zvjqNrOi4kb0IpQHgAR7IvKggcnOkqit01xaF65ftbzKNcpsJvlmgQlCIuGjDcec1zG
-         7PRQO38FD+ME3bjIDL+VdL7/bW9oFkGMpoYNh6Pbo/eTScRg6mNTsQGIWDcBUte91FAS
-         IYd/99HRfMDugBnk09s6i/NVNFpRHxzahxIBwh8ciS6hm1NMpTokbIBL3TIs1ZdiqfN3
-         IUyw==
+        d=gmail.com; s=20230601; t=1715713698; x=1716318498; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QWyQ8SrXymIEYoVoLdfE4J6PDjSgrbL7WVMMamjZDdw=;
+        b=OGQ3Ifh/5RFKxgNprAG680SWYWc5PwRyIqkdYvIUXAqloNH/k9NCT1/gWCOM7EVacP
+         SgNWDEdI4R6K8z09BuZ2o9fT8vU9ndcXQC6p43G7sHdfObkp+Azir6y4LMRMBhpd5l0/
+         oRs1m/x1smZkDoJK04rng655fXZEze2R1NBuqVrtj4QlR7aMolijwSNxsjTnIwC/N3Bv
+         o6MQja9rf5dDI+qs64OD7Zl81is+eppbx4ns+QZlqUou5IqCB+PczD4a0h+k24D6ZBy3
+         P8sc04mlL4ZG7zrXEkYCBfSDR01+MmUqKMf0wjFvcDqMCBNJkEVg2vvRG7Wt1GvnWsYU
+         rGLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715713685; x=1716318485;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=l7gJ1jGOfc0uuKsE3YPwqokUa9StmsGv9lzNrtz5bw8=;
-        b=iT/hSkb405Z5e/7AFkFGFTsXiIdwouzG1iE/HMXDbNULf3GrbeFwBYJ3yRm+XgC3Pp
-         OVG6pJ64HAxM9UAJ3yu/mt2CaWShaz/2adbCk27SWuTqekfPtcGyGN3FpJBPBAOOoQEK
-         zuWuYdchECtAOnmomqjB9tud5Fw9xxPx9AxyNKwmf6fZTue36VWxYO2Z2IAsCX33RkFu
-         7nPToyisi1Nm/PWzWJuGJZD3yEdBYhuZ7CfDmMOUir9l8ivtjx3BpL8c3OekM9T3lhGn
-         4/lOiI49Sb13Dsk46HT+SfDwUurH0jRLmJEONHA07qARzqVIaUbZM4FzywI5fUTxt1jY
-         Ux/w==
-X-Forwarded-Encrypted: i=1; AJvYcCVdm2FxsKtCLfZmACl/Rz5mKV1T3gbK7yhu3OlFpM3UbnvWxXHrc2g6aSLWIRbZ4LQWIeqCUJgxK84CxIjaVIT/crlAdWUwQNJSkQDyHv0CYbYUZtC4XKgd3IrZX1/ByCOZk7M6OIIgag==
-X-Gm-Message-State: AOJu0YynR9hT6LdfkGOKoziT0gYC0Q+6CRJJQ3pe9ExPIBFSO5zhBH1/
-	2cD/Wlf7VSsvt99rTlPb186nULrpbbQgnmhAoV/zQP1RiQeJa+v8kXYdYC5L6UFXUDxJwMXT2KK
-	dyviio8Ktino+nV1+yZmogfZ8ZC9GzF16
-X-Google-Smtp-Source: AGHT+IHCCEoKj19UznkogC+zYoUc7bQR4OFX0YiHMuxVUCgZ6i1gyjrpfzvT6eBTiL6WIXw1/13vW0/aDeCk+Z3YrfY=
-X-Received: by 2002:a17:90a:ff91:b0:2b6:ab87:5e5b with SMTP id
- 98e67ed59e1d1-2b6cc140159mr11949740a91.9.1715713685105; Tue, 14 May 2024
- 12:08:05 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715713698; x=1716318498;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QWyQ8SrXymIEYoVoLdfE4J6PDjSgrbL7WVMMamjZDdw=;
+        b=ORWQpFipVoS0wdPBK9GpDP2tzsC1k3EorNuCkMbPxk5kr2riG2bbfudmH17sUbEbAD
+         jPGrMZbu4w1dRwKt4/CAUcGoY0amNh6qOBl0eyqJFk5XIjKx2NtSJa8VVK+s1GbH2KW0
+         BTIk8audaZRGGspQxhH2yRLGKgFFGVjnC8g6ZoocJjY0Mg6Nk81eQVztdMu+Nrql9LYb
+         ShyZsf0+hzkp3GnV19tqv2bAlohit9DSPqW8S/qnG43sUNVe8jnn/pIic1Vk2jvBAt9x
+         1132FWRw204HCr6xn4Qn0nmCns++RTL4jjr/YrFxjoavwCFoUZevgNCA0Sk1qmcmovLp
+         o+tw==
+X-Forwarded-Encrypted: i=1; AJvYcCW/nAbHFp8d5BO3TGWFnh2F6ymB4SThlBbBc0KEC7c0RIOzIikFI85asrZb9+3hPVtrAjpw0YIXRvpeEwt+HunxV2c5EZsEzFQk7yfmdBS0EUI3RUoTY+Y0FAl3Eks8/mEyYFDQGZrz3a48TSjGrQ/PJoDmhTbhLjK3AgM30aeyhQ==
+X-Gm-Message-State: AOJu0YzbLltTQrCPXOr3q+m0B+6g7dlxd7mv2JeIFkb3LcK3LSRe/o3/
+	M8PJ4quzA8Dg8PBEnVGxI4mKFwctxnG6epJZGCACWhsfb5Cttp3wm9DLZg==
+X-Google-Smtp-Source: AGHT+IERoXF5/EznzlInP8tMJxYg7eNXAeefxuD+1UW2gx7hk+iAGF0KbuluqTjCKxlFRIxh+Hgd7g==
+X-Received: by 2002:a2e:8896:0:b0:2e5:15d0:511c with SMTP id 38308e7fff4ca-2e52028da88mr91508751fa.40.1715713698045;
+        Tue, 14 May 2024 12:08:18 -0700 (PDT)
+Received: from [172.27.21.185] ([193.47.165.251])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4201916e7c6sm66162655e9.12.2024.05.14.12.08.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 May 2024 12:08:17 -0700 (PDT)
+Message-ID: <e9af11f9-1ff0-44ba-a43d-0c345d1b8831@gmail.com>
+Date: Tue, 14 May 2024 22:08:14 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240514171417.492a1301@canb.auug.org.au> <CY5PR12MB642964F3A1D72F422DCB814BFEE32@CY5PR12MB6429.namprd12.prod.outlook.com>
-In-Reply-To: <CY5PR12MB642964F3A1D72F422DCB814BFEE32@CY5PR12MB6429.namprd12.prod.outlook.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Tue, 14 May 2024 15:07:53 -0400
-Message-ID: <CADnq5_Mf5zUJGajNnrhJB4qAAe_H--Xd=+ABUS6JHL=vvbdVXQ@mail.gmail.com>
-Subject: Re: linux-next: build warning after merge of the amdgpu tree
-To: "Nirujogi, Pratap" <Pratap.Nirujogi@amd.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "Deucher, Alexander" <Alexander.Deucher@amd.com>, 
-	Dave Airlie <airlied@redhat.com>, DRI <dri-devel@lists.freedesktop.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>, 
-	"Chan, Benjamin (Koon Pan)" <Benjamin.Chan@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v5 1/3] net/mlx4: Track RX allocation failures in
+ a stat
+To: Joe Damato <jdamato@fastly.com>, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org
+Cc: mkarsten@uwaterloo.ca, nalramli@fastly.com,
+ Tariq Toukan <tariqt@nvidia.com>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>,
+ "open list:MELLANOX MLX4 core VPI driver" <linux-rdma@vger.kernel.org>
+References: <20240513172909.473066-1-jdamato@fastly.com>
+ <20240513172909.473066-2-jdamato@fastly.com>
+Content-Language: en-US
+From: Tariq Toukan <ttoukan.linux@gmail.com>
+In-Reply-To: <20240513172909.473066-2-jdamato@fastly.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, May 14, 2024 at 2:20=E2=80=AFPM Nirujogi, Pratap
-<Pratap.Nirujogi@amd.com> wrote:
->
-> [AMD Official Use Only - AMD Internal Distribution Only]
->
-> Hi Stephen,
->
-> Thank you for reporting this warning, I will address this in the next amd=
-gpu patchset I will be submitting in this week.
 
-Should be fixed with this patch:
-https://patchwork.freedesktop.org/patch/593995/
-Sorry, I forgot to CC you.
 
-Alex
+On 13/05/2024 20:29, Joe Damato wrote:
+> mlx4_en_alloc_frags currently returns -ENOMEM when mlx4_alloc_page
+> fails but does not increment a stat field when this occurs.
+> 
+> A new field called alloc_fail has been added to struct mlx4_en_rx_ring
+> which is now incremented in mlx4_en_rx_ring when -ENOMEM occurs.
+> 
+> Signed-off-by: Joe Damato <jdamato@fastly.com>
+> Tested-by: Martin Karsten <mkarsten@uwaterloo.ca>
+> ---
+>   drivers/net/ethernet/mellanox/mlx4/en_netdev.c | 1 +
+>   drivers/net/ethernet/mellanox/mlx4/en_rx.c     | 4 +++-
+>   drivers/net/ethernet/mellanox/mlx4/mlx4_en.h   | 1 +
+>   3 files changed, 5 insertions(+), 1 deletion(-)
+> 
 
->
-> Thanks,
-> Pratap
->
-> -----Original Message-----
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Sent: Tuesday, May 14, 2024 3:14 AM
-> To: Alex Deucher <alexdeucher@gmail.com>
-> Cc: Deucher, Alexander <Alexander.Deucher@amd.com>; Nirujogi, Pratap <Pra=
-tap.Nirujogi@amd.com>; Dave Airlie <airlied@redhat.com>; DRI <dri-devel@lis=
-ts.freedesktop.org>; Linux Kernel Mailing List <linux-kernel@vger.kernel.or=
-g>; Linux Next Mailing List <linux-next@vger.kernel.org>
-> Subject: linux-next: build warning after merge of the amdgpu tree
->
-> Hi all,
->
-> After merging the amdgpu tree, today's linux-next build (htmldocs) produc=
-ed this warning:
->
-> drivers/gpu/drm/amd/include/amd_shared.h:110: warning: Enum value 'AMD_IP=
-_BLOCK_TYPE_ISP' not described in enum 'amd_ip_block_type'
->
-> Introduced by commit
->
->   a83048bfa402 ("drm/amd/amdgpu: Add ISP support to amdgpu_discovery")
->
-> --
-> Cheers,
-> Stephen Rothwell
+Reviewed-by: Tariq Toukan <tariqt@nvidia.com>
 
