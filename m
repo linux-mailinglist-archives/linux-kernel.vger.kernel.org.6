@@ -1,80 +1,145 @@
-Return-Path: <linux-kernel+bounces-178291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B977E8C4B75
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 05:25:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CE038C4B87
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 05:35:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 484231F22974
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 03:25:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77C581C2117A
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 03:35:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F4BB665;
-	Tue, 14 May 2024 03:25:41 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2E4617C2
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 03:25:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C03CF519;
+	Tue, 14 May 2024 03:35:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RWhj5WyH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89DC3AD53;
+	Tue, 14 May 2024 03:35:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715657141; cv=none; b=jPr0it6+eMa6LnYMR/44KUugOyPtEFHZGBDqzSK2Lb/9n3A23t0AgPWbj1T/WS+diRjhBfkkq+pMYkNiorrskNw7grk0NgTG2uUq5frI8MRqxK1Yrp5CZl37brCs+jJSH44eJt1GuK/a/jKFKCnWCAtoO61qnD0r/bT+5xS5KBY=
+	t=1715657751; cv=none; b=HPO42QaS7A0t7+1/FRasS7zqC+9U+HcoudA72MBtrEF/JFMjNaJiO+mENpnsvPoI/aZAb+47RQ9GmiHuYhE1XNxdSE52yWtCSbRvQn9MY93RFsp4g5zye5DKLm/L12ZxKJOLC+Z4rhfTir/l6/Krtuw5jK05WPH1pQpWfqqdD6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715657141; c=relaxed/simple;
-	bh=jk63Rm7ks9AdRCHsNPN6oDJWZW1fBSt+HTwGGngaXvI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VlZCu78bVl2+Vwhg9Mz/HwESWw+4EhwMKOwtyFCPpD2WRY6SM55DbzLiEq9c+9ioQDithw3s/cVnq/PbtdM2Fsytyv5k1imYB0hMSe69WkRNpfP1xtvkmgERnUEh3ycJOnQ4oiqFu/hKY8dht2bvGp9qyz2eDf3vH4d/VDmSoEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 788891007;
-	Mon, 13 May 2024 20:26:01 -0700 (PDT)
-Received: from [10.163.35.194] (unknown [10.163.35.194])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DA3373F762;
-	Mon, 13 May 2024 20:25:33 -0700 (PDT)
-Message-ID: <3ade5078-0105-4d10-86d2-02806d48fbd0@arm.com>
-Date: Tue, 14 May 2024 08:55:43 +0530
+	s=arc-20240116; t=1715657751; c=relaxed/simple;
+	bh=2g51WnteVbDW6Xw9cHo8bze8u9qoK08M7PEKoTNl//U=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=i5QPuNqmTH+TZ7Nbmu5T9mEyb4i31vq4UFthc7biMNPjC/DT2LM5aGD32NFHiGEy9N9PfcySKapVH270nriVUn3qlWNlbzM8gKuPidfKwkufhHeoMkWX6TmMQkZ8cbAugOTm70nyZ+kwEXGDTikA79S+cKUajXUJ24paxRQ3M1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RWhj5WyH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4913AC2BD10;
+	Tue, 14 May 2024 03:35:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715657751;
+	bh=2g51WnteVbDW6Xw9cHo8bze8u9qoK08M7PEKoTNl//U=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=RWhj5WyH38Woqr+5eMMlmko6m4W28FqTOEvMn2vnCfh/yJHDfSelrHDdq8V296J2s
+	 ZaDecWJebiToXuNeDOHk8hkAqC0FezOcUWj3+1oEtpAevdnjdHYub5zHelCHV+44sP
+	 sY8B02t11x5Gt58+t0omv/OQ/jp/9HsU7dCOHyrLxej3fMwMunVBzZpc6m1le3F26m
+	 g027xhP7NXsTyu3Uy5iaRfbIQWnwjxHS1vTrUPnzOCbjhqtmU4cmP4ffBK3evUqzSZ
+	 p3b4TXgHAQssXm6Nx/ikd6fGoui/EKPwhF4lWm0v5bRa8FnTkj+tje5PB04f8XHZ47
+	 9b53bYw7AT5Qw==
+Message-ID: <31d4dfdf8bc4b866a2b6d45fc4de0c2d.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/rmap: optimize folio_move_anon_rmap()
-Content-Language: en-US
-To: David Hildenbrand <david@redhat.com>,
- Chen Taotao <chentt10@chinatelecom.cn>, akpm@linux-foundation.org
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20240512123555.8358-1-chentt10@chinatelecom.cn>
- <7a4d4992-4c8a-43b9-8c41-a938bc3cec67@redhat.com>
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <7a4d4992-4c8a-43b9-8c41-a938bc3cec67@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240422232404.213174-6-sboyd@kernel.org>
+References: <20240422232404.213174-1-sboyd@kernel.org> <20240422232404.213174-6-sboyd@kernel.org>
+Subject: Re: [PATCH v4 05/10] platform: Add test managed platform_device/driver APIs
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, patches@lists.linux.dev, kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org, devicetree@vger.kernel.org, Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rafael J . Wysocki <rafael@kernel.org>, Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, Daniel Latypov <dlatypov@google.com>, Christian Marangi <ansuelsmth@gmail.com>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Maxime Ripard <maxime@cerno.tech>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Date: Mon, 13 May 2024 20:35:49 -0700
+User-Agent: alot/0.10
 
+Quoting Stephen Boyd (2024-04-22 16:23:58)
+> diff --git a/drivers/base/test/platform_kunit.c b/drivers/base/test/platf=
+orm_kunit.c
+> new file mode 100644
+> index 000000000000..54af6db2a6d8
+> --- /dev/null
+> +++ b/drivers/base/test/platform_kunit.c
+> @@ -0,0 +1,174 @@
+[...]
+> +struct platform_device *
+> +platform_device_alloc_kunit(struct kunit *test, const char *name, int id)
+> +{
+> +       struct platform_device *pdev;
+> +
+> +       pdev =3D platform_device_alloc(name, id);
+> +       if (!pdev)
+> +               return NULL;
+> +
+> +       if (kunit_add_action_or_reset(test, (kunit_action_t *)&platform_d=
+evice_put, pdev))
+> +               return NULL;
+> +
+> +       return pdev;
+> +}
+> +EXPORT_SYMBOL_GPL(platform_device_alloc_kunit);
+> +
+> +static void platform_device_add_kunit_exit(struct kunit_resource *res)
+> +{
+> +       struct platform_device *pdev =3D res->data;
+> +
+> +       platform_device_unregister(pdev);
+> +}
+> +
+> +static bool
+> +platform_device_alloc_kunit_match(struct kunit *test,
+> +                                 struct kunit_resource *res, void *match=
+_data)
+> +{
+> +       struct platform_device *pdev =3D match_data;
+> +
+> +       return res->data =3D=3D pdev;
+> +}
+> +
+> +/**
+> + * platform_device_add_kunit() - Register a KUnit test managed platform =
+device
+> + * @test: test context
+> + * @pdev: platform device to add
+> + *
+> + * Register a test managed platform device. The device is unregistered w=
+hen the
+> + * test completes.
+> + *
+> + * Return: 0 on success, negative errno on failure.
+> + */
+> +int platform_device_add_kunit(struct kunit *test, struct platform_device=
+ *pdev)
+> +{
+> +       struct kunit_resource *res;
+> +       int ret;
+> +
+> +       ret =3D platform_device_add(pdev);
+> +       if (ret)
+> +               return ret;
+> +
+> +       res =3D kunit_find_resource(test, platform_device_alloc_kunit_mat=
+ch, pdev);
 
+This doesn't work because platform_device_alloc_kunit() used
+kunit_add_action_or_reset() which has a chained free routine and data
+pointer. I've added a test to make sure the platform device is removed
+from the bus. It's not super great though because when this code fails
+to find a match it will still remove the device by calling
+platform_device_unregister() when the test ends. It will follow that up
+with a call to platform_device_put(), which is the problem as that
+causes an underflow and operates on an already freed device.
 
-On 5/13/24 21:07, David Hildenbrand wrote:
-> On 12.05.24 14:35, Chen Taotao wrote:
->> When a folio belongs exclusively to one process after a COW event,
->> folio_move_anon_rmap() always moves the folio into the anon_vma
->> belongs only to this process.
->>
->> However, if the folio already belongs to the anon_vma of the this
->> process, we don't need to move it again. In this case, we first
->> check if the folio already belongs to the anna_vma of the this
->> process, and only move it if it does not.
->>
->> The above changes may improve the performance of vm faults in some
->> scenarios, because the performance loss caused by WRITE_ONCE() is
->> much more than the performance loss caused by add a judgment.
-> 
-> Please proof that by real numbers. I don't think it will make a real difference, and we likely don't want that change.
-
-Agreed, only scenarios when pre-condition check makes any sense is
-if subsequent actions are expensive such as writing into registers
-etc. But in this case both 'if' and 'WRITE_ONCE' statements are of
-comparable cost, hence adding additional conditional check is only
-going to increase the cost on average i.e when both gets executed.
+I couldn't come up with anything better than searching the platform bus.
+Maybe if there was a way to allocate the memory or redirect where
+platform_device_alloc_kunit() got memory from we could hold the device
+memory around after it should have been freed and make sure the kref for
+the device kobject is 0. That seems pretty invasive to do though so I'm
+just going to leave it for now and add this test to make sure it cleans
+up.
 
