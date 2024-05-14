@@ -1,95 +1,142 @@
-Return-Path: <linux-kernel+bounces-178542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A5778C4F39
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:41:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A1008C4F41
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:42:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 766A028224F
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 10:41:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BCC71C20B90
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 10:42:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 545B413D60E;
-	Tue, 14 May 2024 10:06:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F58B13DDAB;
+	Tue, 14 May 2024 10:08:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="mMOcalef"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="IkZtOLmk"
+Received: from mail-40130.protonmail.ch (mail-40130.protonmail.ch [185.70.40.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 940B213AA4E
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 10:06:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56BCA64CCC;
+	Tue, 14 May 2024 10:08:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715681203; cv=none; b=gS8kXNsl89LiiujVfwnI/lvWr7pRi0ScR1Auq8kLtsRzzwpYu/aSVT+gqmbltuvou1oOyrV+Jftslps6R6FZD39Pzyoe1YmEtfMk5773VdtxkRtYs57aAXHT5X5c2pSoWgl0tAGMXWoNHcrQTBYix+lI+4qH5FBKgghOAZ12ac8=
+	t=1715681302; cv=none; b=ARBOJRmpSfxF2GhMxgibbKwz2OXfU7NuR9VQQoTRUCI19yD/90KXH/cdBvYrH2YghtYUFPbmCutrA8IsAObcF6tV+UjyP1z17dJFzDs2Kuncl+npCEATf4nLJn1Zg3nPZ/OodEj0PEFNJFRX9roYYUJzPGOOo0D9tGNLS+S00ig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715681203; c=relaxed/simple;
-	bh=ZZGB3QQLbx9thwXnWrDjUTHhrcBF4DS6mic9U+ZCYqk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DUmxtXmXlTlahIz8tGQP5ekIs3Zx4nyB9AfiLFAWIhYMgZjlmmmhjYn6cdZAfXZENqpiZC6LccPa2cbdW5xM5vCZJcSumKiAPpAuKt6W3d7vKOmfuKys+rWiSCDwWuIP/LV2OMN9/Wzm0Gi8A7VrGUGhz2NesVNVwo4fKyK21WU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=mMOcalef; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C607C2BD10;
-	Tue, 14 May 2024 10:06:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1715681203;
-	bh=ZZGB3QQLbx9thwXnWrDjUTHhrcBF4DS6mic9U+ZCYqk=;
-	h=From:To:Cc:Subject:Date:From;
-	b=mMOcalef94Gh7a4egYXlueneWoXw30OU3pbBDxR3l8zG7ZbOpnl8fcldb62LJLynq
-	 YhMYcB6MpyGOdBELmjE1IOpVb8hUgk9JyeOcvI4VldNR3q7HWx+jJK1uVmOAb+Cbzv
-	 7275LoXGYGtdfnc0x9NNM0anf28AjFyyUjnWerr0=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: jfs-discussion@lists.sourceforge.net
-Cc: linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	syzbot+9dfe490c8176301c1d06@syzkaller.appspotmail.com,
-	Dave Kleikamp <shaggy@kernel.org>
-Subject: [PATCH] jfs: xattr: fix buffer overflow for invalid xattr
-Date: Tue, 14 May 2024 12:06:34 +0200
-Message-ID: <2024051433-slider-cloning-98f9@gregkh>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1715681302; c=relaxed/simple;
+	bh=QyKYD3PwPSFlPeTWf1A6/mdsJu/IVZlMnqS0/afEXBA=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=huUI9fyTh5yHg44kXyQsULDqS/RtId4bQbvnWf9OMTPJYpmc0zxaEaCIUFwfut/T/MayGZ7ilt4XrPbDeJXpoMGYzXGcDPC38Z6TkB5k4SAO1I3lr4qTiI1TF/mKF3E90nH/zXU29mhOj3GgBD+mwxA7fd/cPUXD4ucE8ycHRIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=IkZtOLmk; arc=none smtp.client-ip=185.70.40.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1715681292; x=1715940492;
+	bh=pDQ/GZuN6/xzmKr4VIr850YYvdaKXfcBGi96KdzKmCs=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=IkZtOLmkcBx1CuMDvnT4u5THBvtDjLxi5uL5N9xM3lWpy/X2S6Lau3LNPzfodDras
+	 zIJexQyRrWhfd+fWQPANY4nsrYGZ3FoL38tEwMU/KEVQjJvZNRGlk69yokNgiW8lPG
+	 /NIbM289FXLpq9ltjROYy2nYFgwKzLT6GmOPY0qSx/hCeXZqYptHDmRwECp+5EuY5B
+	 uhnrNd8UKvsoFHsrAGOx0r3Jgx2N32cg+LPG5QyGl530fsKk6Z4YpYANtu1C1xi0nj
+	 9fYlnRcB+wReQj3vmz6CXdgLm3WRBSdXPdDBu56XYEmvACli58kuiaK4P4Gz8wBMMa
+	 mI+Ae52wWREBQ==
+Date: Tue, 14 May 2024 10:08:06 +0000
+To: "marcel@holtmann.org" <marcel@holtmann.org>, "luiz.dentz@gmail.com" <luiz.dentz@gmail.com>
+From: "SoloSaravanan@proton.me" <SoloSaravanan@proton.me>
+Cc: "linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [PATCH] Bluetooth: btusb: Add device 13d3:3606 as MT7921 device
+Message-ID: <JXwMChGqaA3oLmTz9wy26FlzjhHGqOWSO0HRbgYAeoy7jX3jcAaHmbwR6Dl-aMdkPzhdHO_kgV4MqoYahTdhn39W_GCOo-GbP1kU0C6kx2o=@proton.me>
+Feedback-ID: 84438951:user:proton
+X-Pm-Message-ID: a01415225bb1c36746ba7ebddec821c4357c5703
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Lines: 34
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1239; i=gregkh@linuxfoundation.org; h=from:subject:message-id; bh=ZZGB3QQLbx9thwXnWrDjUTHhrcBF4DS6mic9U+ZCYqk=; b=owGbwMvMwCRo6H6F97bub03G02pJDGnO5qv+b1nnWaSilLdEzibVtaXv8oadskYB7Qu7DRaG3 fGu5t/UEcvCIMjEICumyPJlG8/R/RWHFL0MbU/DzGFlAhnCwMUpABP5f4hhNrvzNc2T0jbeNbJv vpZpn7rxaeG72wwLdhQ2sfvOuvJ2L/dlsbrGm7/E79b3AwA=
-X-Developer-Key: i=gregkh@linuxfoundation.org; a=openpgp; fpr=F4B60CC5BF78C2214A313DCB3147D40DDB2DFB29
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-When an xattr size is not what is expected, it is printed out to the
-kernel log in hex format as a form of debugging.  But when that xattr
-size is bigger than the expected size, printing it out can cause an
-access off the end of the buffer.
+From 6c5cec6d7a84c140958786bcb082d94f1b147ece Mon Sep 17 00:00:00 2001
+From: SoloSaravanan <SoloSaravanan@proton.me>
+Date: Tue, 14 May 2024 15:01:29 +0530
+Subject: [PATCH] Bluetooth: btusb: Add device 13d3:3606 as MT7921 device
 
-Fix this all up by properly restricting the size of the debug hex dump
-in the kernel log.
+Add VendorID 13d3 & ProdID 3606 for MediaTek MT7921 USB Bluetooth chip.
 
-Reported-by: syzbot+9dfe490c8176301c1d06@syzkaller.appspotmail.com
-Cc: Dave Kleikamp <shaggy@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+The information in /sys/kernel/debug/usb/devices about the Bluetooth device=
+ is listed as the below.
+
+T: Bus=3D03 Lev=3D01 Prnt=3D01 Port=3D09 Cnt=3D03 Dev#=3D 4 Spd=3D480 MxCh=
+=3D 0 D: Ver=3D 2.10 Cls=3Def(misc ) Sub=3D02 Prot=3D01 MxPS=3D64 #Cfgs=3D =
+1 P: Vendor=3D13d3 ProdID=3D3606 Rev=3D 1.00
+S: Manufacturer=3DMediaTek Inc.
+S: Product=3DWireless_Device
+S: SerialNumber=3D000000000
+C:* #Ifs=3D 3 Cfg#=3D 1 Atr=3De0 MxPwr=3D100mA
+A: FirstIf#=3D 0 IfCount=3D 3 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 I:* If#=3D=
+ 0 Alt=3D 0 #EPs=3D 3 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=3Dbtusb E: =
+Ad=3D81(I) Atr=3D03(Int.) MxPS=3D 16 Ivl=3D125us
+E: Ad=3D82(I) Atr=3D02(Bulk) MxPS=3D 512 Ivl=3D0ms
+E: Ad=3D02(O) Atr=3D02(Bulk) MxPS=3D 512 Ivl=3D0ms
+I:* If#=3D 1 Alt=3D 0 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
+=3Dbtusb
+E: Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D 0 Ivl=3D1ms
+E: Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D 0 Ivl=3D1ms
+I: If#=3D 1 Alt=3D 1 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=3D=
+btusb
+E: Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D 9 Ivl=3D1ms
+E: Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D 9 Ivl=3D1ms
+I: If#=3D 1 Alt=3D 2 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=3D=
+btusb
+E: Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D 17 Ivl=3D1ms
+E: Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D 17 Ivl=3D1ms
+I: If#=3D 1 Alt=3D 3 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=3D=
+btusb
+E: Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D 25 Ivl=3D1ms
+E: Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D 25 Ivl=3D1ms
+I: If#=3D 1 Alt=3D 4 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=3D=
+btusb
+E: Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D 33 Ivl=3D1ms
+E: Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D 33 Ivl=3D1ms
+I: If#=3D 1 Alt=3D 5 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=3D=
+btusb
+E: Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D 49 Ivl=3D1ms
+E: Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D 49 Ivl=3D1ms
+I: If#=3D 1 Alt=3D 6 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=3D=
+btusb
+E: Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D 63 Ivl=3D1ms
+E: Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D 63 Ivl=3D1ms
+I:* If#=3D 2 Alt=3D 0 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
+=3D(none)
+E: Ad=3D8a(I) Atr=3D03(Int.) MxPS=3D 64 Ivl=3D125us
+E: Ad=3D0a(O) Atr=3D03(Int.) MxPS=3D 64 Ivl=3D125us
+I: If#=3D 2 Alt=3D 1 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=3D=
+(none)
+E: Ad=3D8a(I) Atr=3D03(Int.) MxPS=3D 512 Ivl=3D125us
+E: Ad=3D0a(O) Atr=3D03(Int.) MxPS=3D 512 Ivl=3D125us
+
+Signed-off-by: SoloSaravanan <SoloSaravanan@proton.me>
 ---
- fs/jfs/xattr.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/bluetooth/btusb.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/fs/jfs/xattr.c b/fs/jfs/xattr.c
-index 0fb7afac298e..9987055293b3 100644
---- a/fs/jfs/xattr.c
-+++ b/fs/jfs/xattr.c
-@@ -557,9 +557,11 @@ static int ea_get(struct inode *inode, struct ea_buffer *ea_buf, int min_size)
- 
-       size_check:
- 	if (EALIST_SIZE(ea_buf->xattr) != ea_size) {
-+		int size = min_t(int, EALIST_SIZE(ea_buf->xattr), ea_size);
-+
- 		printk(KERN_ERR "ea_get: invalid extended attribute\n");
- 		print_hex_dump(KERN_ERR, "", DUMP_PREFIX_ADDRESS, 16, 1,
--				     ea_buf->xattr, ea_size, 1);
-+				     ea_buf->xattr, size, 1);
- 		ea_release(inode, ea_buf);
- 		rc = -EIO;
- 		goto clean_up;
--- 
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index effa54629..65e4b7fc6 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -615,6 +615,9 @@ static const struct usb_device_id quirks_table[] =3D {
+ =09{ USB_DEVICE(0x0e8d, 0x0608), .driver_info =3D BTUSB_MEDIATEK |
+ =09=09=09=09=09=09     BTUSB_WIDEBAND_SPEECH |
+ =09=09=09=09=09=09     BTUSB_VALID_LE_STATES },
++=09{ USB_DEVICE(0x13d3, 0x3606), .driver_info =3D BTUSB_MEDIATEK |
++=09=09=09=09=09=09     BTUSB_WIDEBAND_SPEECH |
++=09=09=09=09=09=09     BTUSB_VALID_LE_STATES },
+=20
+ =09/* MediaTek MT7922A Bluetooth devices */
+ =09{ USB_DEVICE(0x0489, 0xe0d8), .driver_info =3D BTUSB_MEDIATEK |
+--=20
 2.45.0
+
 
 
