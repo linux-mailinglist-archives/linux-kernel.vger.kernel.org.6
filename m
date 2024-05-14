@@ -1,42 +1,42 @@
-Return-Path: <linux-kernel+bounces-178619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FECD8C53C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 13:47:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75E798C5401
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 13:49:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77818288735
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 11:47:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A72BF1C22AA5
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 11:49:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4734212F36D;
-	Tue, 14 May 2024 11:38:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C66613440B;
+	Tue, 14 May 2024 11:41:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="0gDVtmwi"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="PwlENW0q"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7736912EBEF;
-	Tue, 14 May 2024 11:38:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C4BA320F;
+	Tue, 14 May 2024 11:41:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715686737; cv=none; b=RQFnVZ+5D1F2vDlpElnTKRkgIHuR7TXVLPVUL5FjipPw/CNHASIpRxfxne41k3aoT+S4Qq+PUQ/+ELpOpFRRZa6oZk37ZJA6zVofxQ08BkLsAclMcLgNu9WHNO1MBgAT2XpslRVKhh0F/VkGK/Cjnfre5KREVszuMLXrJIKgAW4=
+	t=1715686900; cv=none; b=g5FnceZn9xZ7vfqmOLhCVpAAkfm3y5eNWtFxpXE2RmY6aI8MQAPHak3JsOBLIBcy+uIffX89iLouhKOFaEkza5hQsZPPlTT6MBfXL47tiCU/4JjGX9ud8eeewlvfG75FpIca5bQq2VnTwOrLO06Hg3qfMl/FWc71NQJYTNvfrxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715686737; c=relaxed/simple;
-	bh=U5OyByZKNL7fmEp2KCPZqURBDg9PnrSPfafRZIFyhWI=;
+	s=arc-20240116; t=1715686900; c=relaxed/simple;
+	bh=Np97OD7t8dwwyjh4ggOlwIA1o9feDlUGEyD0ru9+0hI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CpZWsLzzpMbroQb7jnOMFak7gM0eW+RpYboG7oqTF2Mov+Znm9TpQ1AqKg9xBZTq1x8imhk4s49QwnL8Or8rmeEaLZZDLW14aUKr05cn/fiXojCmdrIbeon9yK4L6wJOGFwCIViWO62z3JOFczI4Hb6nAtAkdVnRjAx8Y19+B+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=0gDVtmwi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8613C2BD10;
-	Tue, 14 May 2024 11:38:56 +0000 (UTC)
+	 MIME-Version; b=q/KdpXdmxGpTg3hzzhu5P9Qn7+olFtQrTZC/rDT+6AUyN76JIQ34VBvhY30He2rL01QS+JlF6sPhOjYJvrkJVwwHsH5pcSQC/+tfDL8hK0DYr+dIUgO583QSQIxUBtkF3EcKetiKVpw79r30Y9lchVy2NRu+bfL10z4eoMD7ETA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=PwlENW0q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD1B7C2BD10;
+	Tue, 14 May 2024 11:41:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1715686737;
-	bh=U5OyByZKNL7fmEp2KCPZqURBDg9PnrSPfafRZIFyhWI=;
+	s=korg; t=1715686900;
+	bh=Np97OD7t8dwwyjh4ggOlwIA1o9feDlUGEyD0ru9+0hI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=0gDVtmwi3txH9ZKaGa1gehe8/HYZMueYQ7F1V3Oc+8bO4DtK4ZNTecHqO5vvfy/4u
-	 c62H/gHfgh3+p8Cni115KS5NDbjp2zbIaaYVnco3yWdI6UlSy3jjajGWPqcFlw5X1A
-	 7DIPkmYtiYY32Thaba2Gsjt/aCe2E+yv4nf6nX6g=
+	b=PwlENW0q7O9HBsoUUEMiF/ha+lh9synxdorDPRvdcHfK02NyjVmAroegBCEOmgjeC
+	 bqdBJ00h+Qm68RV/pYxUkPYBzdFuiVa3OT2ETjpS9iSimfn3yU0XIPj2zAI4rocJfB
+	 IyPoPoh3wmscGCD1vtSHhPS/lbLVJg9VJ3PV8RGU=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -50,12 +50,12 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Maaz Mombasawala <maaz.mombasawala@broadcom.com>,
 	Martin Krastev <martin.krastev@broadcom.com>,
 	zdi-disclosures@trendmicro.com
-Subject: [PATCH 6.1 221/236] drm/vmwgfx: Fix invalid reads in fence signaled events
-Date: Tue, 14 May 2024 12:19:43 +0200
-Message-ID: <20240514101028.746271769@linuxfoundation.org>
+Subject: [PATCH 4.19 61/63] drm/vmwgfx: Fix invalid reads in fence signaled events
+Date: Tue, 14 May 2024 12:20:22 +0200
+Message-ID: <20240514100950.312271935@linuxfoundation.org>
 X-Mailer: git-send-email 2.45.0
-In-Reply-To: <20240514101020.320785513@linuxfoundation.org>
-References: <20240514101020.320785513@linuxfoundation.org>
+In-Reply-To: <20240514100948.010148088@linuxfoundation.org>
+References: <20240514100948.010148088@linuxfoundation.org>
 User-Agent: quilt/0.67
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -67,7 +67,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-6.1-stable review patch.  If anyone has any objections, please let me know.
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
@@ -103,7 +103,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/drivers/gpu/drm/vmwgfx/vmwgfx_fence.c
 +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_fence.c
-@@ -991,7 +991,7 @@ static int vmw_event_fence_action_create
+@@ -1064,7 +1064,7 @@ static int vmw_event_fence_action_create
  	}
  
  	event->event.base.type = DRM_VMW_EVENT_FENCE_SIGNALED;
