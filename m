@@ -1,202 +1,357 @@
-Return-Path: <linux-kernel+bounces-179142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DC178C5C4F
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 22:27:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FD968C5C51
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 22:30:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA6D72810E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 20:27:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A032AB20C0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 20:30:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60637181BA9;
-	Tue, 14 May 2024 20:27:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1441A18133B;
+	Tue, 14 May 2024 20:30:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="B26BTArW";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="1IRBTVc1";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="B26BTArW";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="1IRBTVc1"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JX1OcmSU"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F5D618133B;
-	Tue, 14 May 2024 20:26:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715718420; cv=none; b=BXKVdn63ykt4W5OAAdOWqRLITe4aP1FQda9OsTq6HmGcO0niQkSjdz7JyQu0erw5JGbp5RcuvPOLqLaepRXaoLnP9ot2ygO7PnombnY4yuyipW9SmVwrHiCmn0tqoSQHWIm5fxJYtl+atztHR7MES545PRB6J40gg6xxkUDq1V0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715718420; c=relaxed/simple;
-	bh=oU0zTOQEazN2a80NqjhwaXY8nU6keZNiSCitSjyv7TQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RV/90qgpLUcom9nkGhmWMTbinWmsoDjHEjsLT/iLPRRapEbK6EJyZYebaLO5Vaa4s40LJH+fRY43Z7An45vSK658pBCoegEXdSko1HLzV6XuOEL1C7gqG0oR96sqHSi6uRHfzSHpy8ck5PneRpvb0kLUvfV0TnGvZr3oByMVUAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=B26BTArW; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=1IRBTVc1; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=B26BTArW; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=1IRBTVc1; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 731611F8BF;
-	Tue, 14 May 2024 20:26:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1715718416; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9yjxIwA1Fan6uISC9vU5afpsy0S0SjDWMQ82F600DAs=;
-	b=B26BTArW7pLJtAbCnS8oHTPC4ZDZhEY+OSzSERTB3KdheXmHuHHbJerwugQ/S4xJqV7buD
-	5mSzjHiXphrrAcFgozcOGhK+RBxF6kqZWb4uYjACars0BkL4RuLEL9E20b3DvyaNL2AxJJ
-	kRt1K249Nnxyi7njIRMt1tqGOy8m4fE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1715718416;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9yjxIwA1Fan6uISC9vU5afpsy0S0SjDWMQ82F600DAs=;
-	b=1IRBTVc1wBNIu6pO4byzhdDLYzRc7KSHpbB5c3jy4WMztCRTijmkU8eYjPHutAAcT0vUZ/
-	V4wKrHrvTZFnLpAg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=B26BTArW;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=1IRBTVc1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1715718416; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9yjxIwA1Fan6uISC9vU5afpsy0S0SjDWMQ82F600DAs=;
-	b=B26BTArW7pLJtAbCnS8oHTPC4ZDZhEY+OSzSERTB3KdheXmHuHHbJerwugQ/S4xJqV7buD
-	5mSzjHiXphrrAcFgozcOGhK+RBxF6kqZWb4uYjACars0BkL4RuLEL9E20b3DvyaNL2AxJJ
-	kRt1K249Nnxyi7njIRMt1tqGOy8m4fE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1715718416;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9yjxIwA1Fan6uISC9vU5afpsy0S0SjDWMQ82F600DAs=;
-	b=1IRBTVc1wBNIu6pO4byzhdDLYzRc7KSHpbB5c3jy4WMztCRTijmkU8eYjPHutAAcT0vUZ/
-	V4wKrHrvTZFnLpAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0DB3B1372E;
-	Tue, 14 May 2024 20:26:54 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id IIFZOw7JQ2YLHwAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Tue, 14 May 2024 20:26:54 +0000
-Date: Tue, 14 May 2024 22:26:49 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: Peter Xu <peterx@redhat.com>
-Cc: Axel Rasmussen <axelrasmussen@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	David Hildenbrand <david@redhat.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, Helge Deller <deller@gmx.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Liu Shixin <liushixin2@huawei.com>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Muchun Song <muchun.song@linux.dev>,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, linux-parisc@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, x86@kernel.org
-Subject: Re: [PATCH v2 1/1] arch/fault: don't print logs for pte marker
- poison errors
-Message-ID: <ZkPJCc5N1Eotpa4u@localhost.localdomain>
-References: <20240510182926.763131-1-axelrasmussen@google.com>
- <20240510182926.763131-2-axelrasmussen@google.com>
- <Zj51rEwZeSK4Vr1G@x1n>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18154181B8F
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 20:30:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715718614; cv=fail; b=ijbrw94RtsJ2zUCn1RgFaYt1rBcV3VDR5WhtElZ4ATKgv9Op9OzyZTBq2PFZO+dLDDcRLfvvQr4bticslVp1x8NgzhhGHKB4sTq+WkbtBgId8puSuSJ3NrE+sXel9HyZc3sZ7cYN8EJtLGqGsNab7lq7yqRctraFprxfbXFc7Po=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715718614; c=relaxed/simple;
+	bh=0m4+Xbr6e+9ozatJIk+KCKBRR7y2V368B5oGiN+6bso=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=KvbX/IAxz/cjY6Hk1A2uyKmN5hoSpuP35zeRJLQcb9X6WllUYc1W7009qNndMhzpqgflXvec4CctMqbTAtuQI3h/YW+e5CBbXTRmv7Grz6qTMLHjbsk7ruv440TYA43+kSsO/G/uXQa6GCeXiH626MBAozdEBtODWdbGLLCz3x8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JX1OcmSU; arc=fail smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715718612; x=1747254612;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=0m4+Xbr6e+9ozatJIk+KCKBRR7y2V368B5oGiN+6bso=;
+  b=JX1OcmSU+YuQrL4OCAfuUebZpxGHqgDXXPoHe+eYIRLAtid55pwOuLw0
+   o/nOt/Yq3DEpCI2iTZVArzc0+oZvE/2w4bUBXlhTXgtNSiyvkMMy2YO85
+   yO7zFk/YmA/xcADnC0F93BY7vTE8t2WIl9diewMaAlvM1Mv9xakukfbc/
+   6TSL7wNUH2xJWvsSgp0/nL1Ex40gR1iH749RBxsOb86Jw4H+FTUqYV2QM
+   swJapf3ssZ79yIIIKn21Ft2A7cisaa/q8NgtzuRRPUnuv3l/TbLX59qH1
+   XRj0SG9MgYMn5LEIYvCrqu6JmW6NQpBtL60g2WVVOKACCumtj0TgiFmSI
+   g==;
+X-CSE-ConnectionGUID: d/Sr2NwlSn6PD6dfUO97/A==
+X-CSE-MsgGUID: PUyXb1LPRTaau7Z6Roiw0g==
+X-IronPort-AV: E=McAfee;i="6600,9927,11073"; a="11851096"
+X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
+   d="scan'208";a="11851096"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2024 13:30:11 -0700
+X-CSE-ConnectionGUID: BuhIHvw7TyOOX9BxfMwyfQ==
+X-CSE-MsgGUID: eTxmQf7HTa21diJgBb10ZA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
+   d="scan'208";a="35333965"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 14 May 2024 13:30:11 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Tue, 14 May 2024 13:30:10 -0700
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35 via Frontend Transport; Tue, 14 May 2024 13:30:10 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.100)
+ by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Tue, 14 May 2024 13:30:10 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=I/gFXmhZxps+QJCybPqlsu0yAYRF4NAYotmFZ/GmLpfr1u+i0BCrL5/wgQrtUEG1q33dTd3yFeyvezkB3KGvgQr9T6cz0oPdNhJuWAQjcnNTR1m/GwwqbeN4XcEe/fskDBCLu+0YJc9W1naa3K9IlblqR0Emzwb8RE90Lz/IQTUmgIY0f+/v5uHqnWNc2AXUvKxgTdwtDqtz89x4veV/B2F6rpdGvyG+iNBrVFdkAtSg04iobhuD0Sc5nW3f8S35d/w/u18Md37zl1wTtPvodXZL1u+kg2x0UcnEJhDqEYZK/qG4roR6AteeEOjqHBEnIX7bHWWuZ5z06vz5fgM/+Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CemipY4oMbOw9IFK/xhWHhpeJlde+ky4LTmVEok7DZM=;
+ b=VZ+Zuxb38ARri9QN/yqjxtQHSjSI6BF9hoWoh0Xla8qV0aoTV8en3nXTtxTHoFQOX5hWXM4Ld0MSiW6M353AIED1xXiPnX5ICGk5FVH8u1znDHjF8C/4wMZXkLFJYmDJKPNW6PGENciBY/zJm9SdqYKUnFBN0o2OEl/nvHkXrJs9WZxzCCz6D8BMlhJAzCeIfrHFzlv3KICUlkpXgvxSx4vhxW590mkyAZ+wAZRHT9JNNcXXf0nbHzFOJOhcB5jbN5woB7UdMKTJzgyFAooP+EhgdTh6YRYoHvRO0c2VKheFKVuhbjytx0pOaLAg4lMD4ViO4xnZ5g3NfkOxOpXWUA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
+ by IA1PR11MB7919.namprd11.prod.outlook.com (2603:10b6:208:3fa::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Tue, 14 May
+ 2024 20:30:07 +0000
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::b394:287f:b57e:2519]) by SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::b394:287f:b57e:2519%4]) with mapi id 15.20.7544.052; Tue, 14 May 2024
+ 20:30:07 +0000
+Message-ID: <b718c70b-21ea-4c4d-9ecf-387b8276a721@intel.com>
+Date: Tue, 14 May 2024 13:30:05 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v17 7/9] x86/resctrl: Add new monitor files for Sub-NUMA
+ cluster (SNC) monitoring
+To: "Luck, Tony" <tony.luck@intel.com>
+CC: "Yu, Fenghua" <fenghua.yu@intel.com>, "Wieczor-Retman, Maciej"
+	<maciej.wieczor-retman@intel.com>, Peter Newman <peternewman@google.com>,
+	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>, "Drew
+ Fustini" <dfustini@baylibre.com>, Dave Martin <Dave.Martin@arm.com>,
+	"x86@kernel.org" <x86@kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "patches@lists.linux.dev"
+	<patches@lists.linux.dev>
+References: <20240503203325.21512-1-tony.luck@intel.com>
+ <20240503203325.21512-8-tony.luck@intel.com>
+ <0178e84e-d55f-47bf-b8b0-58e05fcaa108@intel.com>
+ <ZkJIZdU2knEUJN7Q@agluck-desk3>
+ <f49931b0-d9bf-45f0-ab35-93b1a78f6b97@intel.com>
+ <ZkKupOKRu5S7Rkgx@agluck-desk3>
+ <2efcae46-736a-4809-8530-7dde3977f3ce@intel.com>
+ <SJ1PR11MB60838E2DB2984EF95D34C692FCE32@SJ1PR11MB6083.namprd11.prod.outlook.com>
+Content-Language: en-US
+From: Reinette Chatre <reinette.chatre@intel.com>
+In-Reply-To: <SJ1PR11MB60838E2DB2984EF95D34C692FCE32@SJ1PR11MB6083.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW4P220CA0017.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:303:115::22) To SJ2PR11MB7573.namprd11.prod.outlook.com
+ (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zj51rEwZeSK4Vr1G@x1n>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-6.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCPT_COUNT_TWELVE(0.00)[28];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,gmx.de];
-	FREEMAIL_CC(0.00)[google.com,linux-foundation.org,kernel.org,alien8.de,csgroup.eu,linux.intel.com,redhat.com,zytor.com,gmx.de,hansenpartnership.com,nvidia.com,huawei.com,infradead.org,ellerman.id.au,linux.dev,linux.ibm.com,gmail.com,linutronix.de,vger.kernel.org,kvack.org,lists.ozlabs.org];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RLeqp5gkuwhygrjzi4zhnnr4iu)];
-	MISSING_XM_UA(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim]
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 731611F8BF
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Score: -6.51
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|IA1PR11MB7919:EE_
+X-MS-Office365-Filtering-Correlation-Id: 09ff54f7-c72f-4cc4-02ee-08dc7454a529
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|376005|366007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?dGVvcWVVVzlkR1p3bnA1MDNJTXo4RmE3MFZLNHdVNWNPSERTREtBdElia2do?=
+ =?utf-8?B?OW1CeVZIaFFiMklaYnpFWFpKYkhTa2o1dFJ2OGhYcGtEcHNBbFNqZW1IeXB6?=
+ =?utf-8?B?MGFadnpiNjVRNSswMittaTEzZnNSOU0yZ1NmY0tEenI2SGRnVG5IdzcxVTVi?=
+ =?utf-8?B?QXJ4OVFsYm94eGdVQ3c1djdXTE5HZEJjTXRFUHVMazYzVGJMT2tTMkZsUFIz?=
+ =?utf-8?B?dU5mYzlTd3JVL0hqcGFTYlVxNEtlazkyTmppYmRrdVFJMUE3aGJUaDg4bmdv?=
+ =?utf-8?B?TlpRYk1XdUpORk54bVI4NzJQOEQ3ZUY0SlFTWlh3VG9MeGdqVEJ4S0NnRHN0?=
+ =?utf-8?B?YUdidWpGMXJYVW5hNUVEQmlDbk9KQmE1L09ncGtmbnB5UVdQN0FVeXZxd3JJ?=
+ =?utf-8?B?UVVBdldYVTFkUjR2cENVc1ZSSjRMN2V0N3JKMXFOZDB1Nkw2Nmk0Snd3em1X?=
+ =?utf-8?B?UG5uaGh4aTlvR1ZCQWFsRkdNbmhWdWNSWDV1b1BpWUlQY3ltYzZpWkJ0eEJZ?=
+ =?utf-8?B?VzZKN0xYT2tmOGdDVnp5U21ZN1g0VUxYbXdqV3BtYjlPeWQvdTZkT2lYaHZY?=
+ =?utf-8?B?QTB6ZFFxR2IvcXEwaHZuSGs5VEQrR1FGQm42K1BtY0NiamRPTFI5R1JsQXFz?=
+ =?utf-8?B?Qm44UnhnbDJ0RzdSUjdwL2pLMnZ6ZVAzL01SSWRiSXVQQnZCNlo1RGptMUNW?=
+ =?utf-8?B?WjlCbnc3NHFUaGVNN2ErL0YxQnZBb1FsZXViMXZXWUsxVXdoQ1hwQU9rQjdL?=
+ =?utf-8?B?YXM4VS9QaXdaa1VwMFNreTZybmtyY2QzY1RLdjdjQy9jQkx2cGlNMzJXWUtG?=
+ =?utf-8?B?OVdKeTN6VmFjTmd5bHRSUGw0YkJtckhyQXJuSEZZZ1gyclNPUGxDeU9iWVVV?=
+ =?utf-8?B?bERjb2VIMEoraTFWUXNXQXZGVzc1Z3NZWmlyOHFIL2F0TnJPV1hWcDJnMjRV?=
+ =?utf-8?B?Vnc3UHNKbnV6SXQzYWplT2xvRTdHZExFb2VXcXp6R1duczl3Nk5mUmJFd0R2?=
+ =?utf-8?B?WVNvd0Q1VkwzMy8rZEh0U3hiV0llUzE1S3FDbHloMFh4WmdVS3FDSW1MaFpC?=
+ =?utf-8?B?bGx4VzVLbU1OUGVqSWcwRXR3T0VOTEM3SmV0cU1yT3djMTVVT0ovTXNTQzRt?=
+ =?utf-8?B?NnBPQ1g2YnFyQno5L3pjUHNmMncyYXorbVJXRmh0ZTZWTzRyamRhTzdZa2tS?=
+ =?utf-8?B?eStqNTBzc3RBWGYvOXk5b3UrV3Q4V09mTjVsTUFGMGJSaENSbCtpOWxqdHdk?=
+ =?utf-8?B?M0d1eUNOeE5lc2pXVG52VjdQWGxiZTYzb2hCemc3NndJamtkRXYxeFdkZE9q?=
+ =?utf-8?B?K0RVU1ZXcDdlT0VnN3YvekFwU3ZEOENvWENMcFM0ZWNTbGIrQlJOcWV4TnIw?=
+ =?utf-8?B?YUZGNFJXcktnRFRMNjBZVUg4d2dHWnFZZk04UnVCNGpWam01WUZyUkcvU1ZJ?=
+ =?utf-8?B?TDlUMUdpOXNEOHdvd3dIT1A4WWRudGxnbVBTb2VvMXljY1RpdkZzM0dOYnR4?=
+ =?utf-8?B?dnpqa0x0SjJ4ZE1sK1JEb1ltUVVaSzQ0V2U1YW9zaWZxUDRvUERKR1JoUFFW?=
+ =?utf-8?B?ZDlUb3M4RWRRWUpSK3ZKL3FwNjNnS0orL1RkaEFmVjRKM0ZhMWtLRUYxVFpI?=
+ =?utf-8?B?SWxZcnlLdzdQd05kZXZWUTl2QW9jYlFzVEFMV0hLOW1hZC9TSVNVSlRVMzMz?=
+ =?utf-8?B?NnhsNFJPajJPSlZzYldXNTREK0FpTi9ETlZuYmhoZzczd0NWM0M3YWpnPT0=?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(366007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?ZE5vU3hMalhPeW93R1RsYVo0cUUvdGNicXdLR1BYeGQ0QndsbjUzMERjcWkz?=
+ =?utf-8?B?R0Z0ZE96cDNRWm5CVUNJZGJkQ0FndEJrMmFrUWtnZko3d1hicE5xRmw1M0ha?=
+ =?utf-8?B?UFNNSHFybVVKbWFGelQ5QTQ3VllzUDdOeWU1d0NQbmI0bnZhWWdlamw1Q1Ni?=
+ =?utf-8?B?NHAxVmhPbEs1eWhlRnA1NzFHQXBmNHJoeXpndTQveEkxZS8rZnNKZmpxdS96?=
+ =?utf-8?B?bHBGVnNLRFgrZjdKczFSTmpPZjh6SjQycWVnSnViRTNHS0s3UjhEbFNpZlFN?=
+ =?utf-8?B?R2o5ZDQ1TjFGU0orczJiSmk3eGExNWtxb3VMOER1Ni9keFJldHBicFFlekJw?=
+ =?utf-8?B?V3lBbCtOUUUzUmRpMWcwcFFKRGNNYjMzSlgxQ1BYMHhqSGxvTG5zWFp6N3Vp?=
+ =?utf-8?B?Ly9pc2dnZmtNM29LSGRwdTAzY3diaExpUzA0KzJaTlJmTVZ1OGpsQWppUHRX?=
+ =?utf-8?B?bENwM1hiYjlQVW5jd1ZOU1NJQmdnUTd6cmtzcmFhUCtFU1pXWGdvUTRNZkFh?=
+ =?utf-8?B?Ui9qOFRzNGQ3cWVOSDlweFE2MXhQa2J0cXFmaGxmOHlpc0VmWlI1K3lIa0xR?=
+ =?utf-8?B?K0FHM25BSGIxRUxBbjZnK0s4UmFicmVrWHlXRXBUbC81NHdZcU1tN1dldlFO?=
+ =?utf-8?B?bXd0T3g5dWdtSUpnOUlsME16UHZzTUV1SEY0VW5oY0J1Q0tITjZsZ3Q4ckd4?=
+ =?utf-8?B?cFlkZmYrK3pqWHViZThiNFMwZnMzM2MzMWFjYTNuR05MSmVYUXEyR3V4NmFt?=
+ =?utf-8?B?VEZxVGVHMC9hS1kzUlN0QjVxeFdPVFlhOVQ3cEhFS3ArRkdMUzVmRGJYbjY5?=
+ =?utf-8?B?a2FNY1NjV1NlaXdhaWFDWGgxSUhCdkFKNUIvR2xTL1hpZThJSUFsU21oVVUv?=
+ =?utf-8?B?VjdDWkc4bk9vbWg3L2pLSkllcFlxLzVWUFpaWHFUcTAzYXR0V0lRYkRmejhB?=
+ =?utf-8?B?REtiQU9jMTV4eWJxYnlLQ3JMdEhPdTR2MktVaEUzVThhQVlSdHVxK2ovTW51?=
+ =?utf-8?B?SkNEWE5wK0pSWmJqOEo2VnE4LzFLeElzVGpxWksrNVJYQVBoVDcwZFJNR0Qr?=
+ =?utf-8?B?VDQvdUFjc3QzOW1DbnRicjBHaEhGWGdnMzdVZlZNT1djeVdqRWxPSzg1clpC?=
+ =?utf-8?B?OUtKZkYxTWJhZGtxQXhENW9xbzNGbytocDdiVk5TQUN1cTRGT05CdVJkU0c4?=
+ =?utf-8?B?TmIwRWNtTDhzYWoyUGgvZHhab0VyOW9zczdrWk1UWnNWT3BEZFNGS2Q0YU5s?=
+ =?utf-8?B?ZTFxTm1QS0hpMTByR3hiZHJqT3U4c2ZsczduMTkxV0JheWVFZ0dKQjcwUFpr?=
+ =?utf-8?B?aEc5Q3lFZU15WHNiVTI2VENoWnpRVUhLNzF1VzFDVTRvSURHZEo0ZkU5UDJa?=
+ =?utf-8?B?OGJzK21Mck1EeFBha29Mdkh0SDViK1JTQTZsNmVNNUI0T0MxeFlDMjQ2Ym9X?=
+ =?utf-8?B?TkF6eFdlUjNHQWNDK0xpcWZ5WGp0ZTAwd21RMnVZZkZCZGp5MExhcVorZ0JY?=
+ =?utf-8?B?aXVpMzNpU0NXQ2hWQnZoVVVWUXpqOWJyT2t6WU56aFlEd1JXRFVxOFoybktm?=
+ =?utf-8?B?SitPdUpqSlNaT2l6dGd6c3huVThnMHVNb3V3Tjd4L0lZSEM4SjBhZjNNSHhh?=
+ =?utf-8?B?OEdkSjloYWF3MkExamEydUVtaEF4dVpSNnZqYWx0bUszWmhkOGE5ZGdWNUQ1?=
+ =?utf-8?B?azBuTk9Od0pFT2VKbC9UUVdjRnJjcm5QU2M3NWs2d1ErazdlU3V6bVJKMzRq?=
+ =?utf-8?B?bDBOMGFVbzlJRlpoMDB6REpZWjBzV1VPTWhzbEYxMW9MMG5NOU5SYTNQa09S?=
+ =?utf-8?B?cjA4NjA1bTBMVk40WG5RM1RJMzN4NjRIUjJqTGxTMEdhd0pQS054RjYyMFFi?=
+ =?utf-8?B?WVE1cHlJQ2h5L2psRVloMjRWUjZDT09majBMQVZRUEk4eEVrMWpQZXR0MW1M?=
+ =?utf-8?B?TkhocTZER2ZUeVhjWHdPQnNBZlNyS0pQY0lqT2NhQW45OGVrRUZmVXMwR2dj?=
+ =?utf-8?B?NEl4MUFSQkl6RXR3V3Bqb0psS1pNMUV1cldsVURQM3phMnh3SDRoSmsxS2RU?=
+ =?utf-8?B?NTVTcmtTUytFc083YUNXcSszK1R0Vk81d0VDWk5lSlF1bzVZeHZyU011dHBN?=
+ =?utf-8?B?ZllENVhsSDhDeUZSZXJEeVZId3FlK2pYcmIyT003cHIyOUpWT083MXB1d1VL?=
+ =?utf-8?B?TWc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 09ff54f7-c72f-4cc4-02ee-08dc7454a529
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 May 2024 20:30:07.8555
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: qjR8MaPi9+KU+GzVKlK+XJnHRjb8H4N25soTG5ne2Kykum6iq4STPi9KFycJnJYxAHGIrZme7nKkLkJ/6FqmVsBwAJV0n/u45Mj2DYInyrE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB7919
+X-OriginatorOrg: intel.com
 
-On Fri, May 10, 2024 at 03:29:48PM -0400, Peter Xu wrote:
-> IMHO we shouldn't mention that detail, but only state the effect which is
-> to not report the event to syslog.
+Hi Tony,
+
+On 5/14/2024 11:26 AM, Luck, Tony wrote:
+>> On 5/13/2024 5:21 PM, Tony Luck wrote:
+>>> On Mon, May 13, 2024 at 11:53:17AM -0700, Reinette Chatre wrote:
+>>>> On 5/13/2024 10:05 AM, Tony Luck wrote:
+>>>>> On Fri, May 10, 2024 at 02:24:13PM -0700, Reinette Chatre wrote:
+>>>>> Thanks for the review. Detailed comments below. But overall I'm
+>>>>> going to split patch 7 into a bunch of smaller changes, each with
+>>>>> a better commit message.
+>>>>>
+>>>>>> On 5/3/2024 1:33 PM, Tony Luck wrote:
+>>>>>>
+>>>>>> (Could you please start the changelog with some context?)
+>>>>>>
+>>>>>>> Add a field to the rdt_resource structure to track whether monitoring
+>>>>>>> resources are tracked by hardware at a different scope (NODE) from
+>>>>>>> the legacy L3 scope.
+>>>>>>
+>>>>>> This seems to describe @mon_scope that was introduced in patch #3?
+>>>>>
+>>>>> Not really. Patch #3 made the change so that control an monitor
+>>>>> functions can have different scope. That's still needed as with SNC
+>>>>> enabled the underlying data collection is at the node level for
+>>>>> monitoring, while control stays at the L3 cache scope.
+>>>>>
+>>>>> This new field describes the legacy scope of monitoring, so that
+>>>>> resctrl can provide correctly scoped monitor files for legacy
+>>>>> applications that aren't aware of SNC. So I'm using this both
+>>>>> to indicate when SNC is enabled (with mon_scope != mon_display_scope)
+>>>>> or disabled (when they are the same).
+>>>>
+>>>> This seems to enforce the idea that these new additions aim to be
+>>>> generic on the surface but the only goal is to support SNC.
+>>>
+>>> If you have some more ideas on how to make this more generic and
+>>> less SNC specific I'm all ears.
+>>
+>> It may not end up being totally generic. It should not pretend to be
+>> when it is not. It makes the flows difficult to follow when there are
+>> these unexpected checks/quirks in what claims to be core code.
 > 
-> There's no hard rule that a pte marker can't reflect a real page poison in
-> the future even MCE.  Actually I still remember most places don't care
-> about the pfn in the hwpoison swap entry so maybe we can even do it? But
-> that's another story regardless..
+> Do you want some sort of warning comments in pieces of code
+> that are SNC specific?
 
-But we should not use pte markers for real hwpoisons events (aka MCE), right?
-I mean, we do have the means to mark a page as hwpoisoned when a real
-MCE gets triggered, why would we want a pte marker to also reflect that?
-Or is that something for userfaultd realm?
+I cannot think now where warnings will be appropriate but if you
+find instances then please do. To start the quirks can at least be
+documented. For example, "Only user of <feature> is SNC, which does
+not require <custom> so simplify by <describe shortcut> ..."
 
-> And also not report swapin error is, IMHO, only because arch errors said
-> "MCE" in the error logs which may not apply here.  Logically speaking
-> swapin error should also be reported so admin knows better on why a proc is
-> killed.  Now it can still confuse the admin if it really happens, iiuc.
+> 
+>>
+>>>>>>>         }
+>>>>>>> +
+>>>>>>> +       return 0;
+>>>>>>> +}
+>>>>>>> +
+>>>>>>> +static int mkdir_mondata_subdir(struct kernfs_node *parent_kn,
+>>>>>>> +                               struct rdt_mon_domain *d,
+>>>>>>> +                               struct rdt_resource *r, struct rdtgroup *prgrp)
+>>>>>>> +{
+>>>>>>> +       struct kernfs_node *kn, *ckn;
+>>>>>>> +       char name[32];
+>>>>>>> +       bool do_sum;
+>>>>>>> +       int ret;
+>>>>>>> +
+>>>>>>> +       do_sum = r->mon_scope != r->mon_display_scope;
+>>>>>>> +       sprintf(name, "mon_%s_%02d", r->name, d->display_id);
+>>>>>>> +       kn = kernfs_find_and_get_ns(parent_kn, name, NULL);
+>>>>>>> +       if (!kn) {
+>>>>>>> +               /* create the directory */
+>>>>>>> +               kn = kernfs_create_dir(parent_kn, name, parent_kn->mode, prgrp);
+>>>>>>> +               if (IS_ERR(kn))
+>>>>>>> +                       return PTR_ERR(kn);
+>>>>>>> +
+>>>>>>> +               ret = rdtgroup_kn_set_ugid(kn);
+>>>>>>> +               if (ret)
+>>>>>>> +                       goto out_destroy;
+>>>>>>> +               ret = mon_add_all_files(kn, d, r, prgrp, do_sum);
+>>>>>>
+>>>>>> This does not look right. If I understand correctly the private data
+>>>>>> of these event files will have whichever mon domain came up first as
+>>>>>> its domain id. That seems completely arbitrary and does not reflect
+>>>>>> accurate state for this file. Since "do_sum" is essentially a "flag"
+>>>>>> on how this file can be treated, can its "dom_id" not rather be
+>>>>>> the "monitor scope domain id"? Could that not help to eliminate
+>>>>>
+>>>>> You are correct that this should be the "monitor scope domain id" rather
+>>>>> than the first SNC domain that appears. I'll change to use that. I don't
+>>>>> think it helps in removing the per-domain display_id.
+>>>>
+>>>> Wouldn't the file metadata then be the "display_id"?
+>>>
+>>> Yes. The metadata is the display_id for files that need to sum across
+>>> SNC nodes, but the domain id for ones where no summation is needed.
+>>
+>> Right ... and there is a "sum" flag to tell which is which?
+> 
+> Yes. sum==0 means the domid field is the one and only domain to
+> report for this resctrl monitor file. sum==1 means the domid field is
+> the display_id - all domains with this display_id must be summed to
+> provide the result to present to the user.
+> 
+> I've tried to capture that in the kerneldoc comment for struct mon_event.
+> Here's what I'm planning to include in v18 (Outlook will probably mangle
+> the formatting ... just imagine that the text lines up neatly):
+> 
+> diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
+> index 49440f194253..3411557d761a 100644
+> --- a/arch/x86/kernel/cpu/resctrl/internal.h
+> +++ b/arch/x86/kernel/cpu/resctrl/internal.h
+> @@ -132,14 +132,19 @@ struct mon_evt {
+>   *                     as kernfs private data
+>   * @rid:               Resource id associated with the event file
+>   * @evtid:             Event id associated with the event file
+> - * @domid:             The domain to which the event file belongs
+> + * @sum:               Set when event must be summed across multiple
+> + *                     domains.
+> + * @domid:             When @sum is zero this is the domain to which
+> + *                     the event file belongs. When sum is one this
+> + *                     is the display_id of all domains to be summed
 
-I am bit confused by this.
-It seems we create poisoned pte markers on swap errors (e.g:
-unuse_pte()), which get passed down the chain with VM_FAULT_HWPOISON,
-which end up in sigbus (I guess?).
+Here is where I would like to understand why it cannot just be
+"When sum is one this is the domain id of the scope at which (for which?)
+the events must be summed." Although, you already mentioned this will be
+clear in next posting.
 
-This all seems very subtle to me.
+>   * @u:                 Name of the bit fields struct
+>   */
+>  union mon_data_bits {
+>         void *priv;
+>         struct {
+>                 unsigned int rid                : 10;
+> -               enum resctrl_event_id evtid     : 8;
+> +               enum resctrl_event_id evtid     : 7;
+> +               unsigned int sum                : 1;
+>                 unsigned int domid              : 14;
+>         } u;
+>  };
+> 
+> -Tony
 
-First of all, why not passing VM_FAULT_SIGBUS if that is what will end
-up happening?
-I mean, at the moment that is not possible because we convolute swaping
-errors and uffd poison in the same type of marker, so we do not have any
-means to differentiate between the two of them.
-
-Would it make sense to create yet another pte marker type to split that
-up? Because when I look at VM_FAULT_HWPOISON, I get reminded of MCE
-stuff, and that does not hold here.
-
- 
-
--- 
-Oscar Salvador
-SUSE Labs
+Reinette
 
