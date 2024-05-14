@@ -1,109 +1,161 @@
-Return-Path: <linux-kernel+bounces-178497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E7C88C4E8A
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 11:15:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D2898C4E94
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 11:17:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE850B21FC1
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 09:15:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B91B41F2299E
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 09:17:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E9812C85D;
-	Tue, 14 May 2024 09:15:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7656123763;
+	Tue, 14 May 2024 09:17:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qcrYibdz"
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SpIiA8mM";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="7oDLRceR"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D5B23776
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 09:14:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F04A2F874
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 09:17:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715678099; cv=none; b=kqSa/4mD9v3M6/PA0CijR916XAtlNL1datvtLuFBPoG5Fj5sYNfVFS0dln45R5jIity7XwREZ4YiTd0gF7xi8D7fpwqtvUTI85ftr4MYaCFW+XIfTRoEF+MKR8XpE2AzlYLKF1coMWRA9HCcKMzsJLMVDqm99oqc/wdB+lx9vX4=
+	t=1715678246; cv=none; b=AcgkdDzBg0bfvYBfkIFRyAKY1XsbhQQHjRXUgaKwLHug3sZHxPYLT7nDqD5VSAzCyRK9rx/eXNsXFo09mLi1V9C8fzak1e9+orb4hewaR/RKoQfJDeu9LCVD0o/qW2mgPwv1gpAVuYGCMlFJknB+ldEYI0la9vYq8sdo+4rGw8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715678099; c=relaxed/simple;
-	bh=icODbfYucz8iEZrgAXkiUdXTmzMqOGwAC8BcHGY3Tbw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Wl7wqqurecbrZkUB22dJcjSvay0Z8lcUVNqIvhIzszverHlcI87WbRIBSQTYRhE3DiwV7Nrl8MdPYWN+VWxaiJ5+k8JBbMxE4eG36XbTUQ7TsBViCwoPlaJKJbiT6sxNTB5wcWbNEwq2dRi9JjcxkLqFs+wXKRcRoBiJ2FJt0G8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qcrYibdz; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-61be4b9869dso56130127b3.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 02:14:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715678097; x=1716282897; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=HwiEG+/aSeVq+45AIyqwaFB4r49uUU/xCyg6kp9PQPw=;
-        b=qcrYibdzw8ejm3DTwFw0aQ1+8lS7v2cSxPOunX5wyzvQ3VIB47U7vUt+w0Mhhvmp7Z
-         z5P7kDVAcGymKYdHPrjLIaeJK/ImNxN8LnlWBwQ7gZ/zPT1rBmsqgeNyZqgTcqhyA6Vf
-         J1xROsideLdaV4Fo00Swsvk9uNh801DspFGapE3Y7wX0j3udajKlB/tjQbk3+7105lzX
-         miKVMNy8RwOWj9fc+fJxPwImi7TroSZzDytSgAkfdW7PB1PqLbyYQFm+uwLuTGGXuAew
-         wE3bKYXJuE1Kyek921rT/w91vx2Dh98ZXnNatzi+4zPzqP1KnuoqMqWLhVGELXnRlHfy
-         fDEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715678097; x=1716282897;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HwiEG+/aSeVq+45AIyqwaFB4r49uUU/xCyg6kp9PQPw=;
-        b=PIdoDfGjJiGP6XMD185gpdp/MyTrkmTdlJ458PsoxvyB4BMiviPleyTdLxfXuXS7Iy
-         n2bVX80H6lP3ZfsgmzijTiodmFlJL/D9wZKyrCp7SLDgTHj3z2LyFdig15ZxoS02ZOXe
-         prtApBjVE5i6FbU9fqqhjNGCOlfRTo33nQcpCnZZBCNRm4l8bp5t/pys7lY4Ob8Z+Y2c
-         ULlYhB1u9Cq1bJnDI3flUIMLlbIe8vZbQC/WvVZpwSHyruXNDZc9aAz2N50OTK6doMe+
-         ZsNzr8pwW3IZiUi8T1mZLEGyxe9ghjtXcGi6nUNFcWN4BlzcdF5CNlBemCXXSBS2FG4m
-         pAXA==
-X-Forwarded-Encrypted: i=1; AJvYcCWC0Q9mMkHfXWy86tbZ9X5xl1mF+idEVyKd9X4JQJARc8wSRWS5HC6DVkgJLS/W01zozx1v2JBu24eH+DwnTvkGnLsb9zA+/eGKggn/
-X-Gm-Message-State: AOJu0YxJAlelzO8o+RJ6uRlyB9/fnR/X/fD6XBXMXMf2c8tIky5nv/6E
-	SV/7BsmR7TOyRPtvjzOhB+iC9hDQByTqpOTFBttjtMATG2OcDIsGNWR0TR7TrsNmLnLSnPMD24/
-	6jiOFQIppfeTDOS0dGikRYhaKb3L786OI25GrZg==
-X-Google-Smtp-Source: AGHT+IHTndqU8L/COCyzxzWqR9ztoQ2UlOx5uP/3CeJVhfGg7caer2qbn+5Tp3fV+rceU+UurQnOt0LPpOXSqHkDU54=
-X-Received: by 2002:a05:690c:660e:b0:61a:af67:1cfd with SMTP id
- 00721157ae682-622aff906e3mr134790487b3.5.1715678097010; Tue, 14 May 2024
- 02:14:57 -0700 (PDT)
+	s=arc-20240116; t=1715678246; c=relaxed/simple;
+	bh=UWQzSiSNX3y764hb9eyjlKetHfQD4w8G//zFNzrnft0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=eLLLeQ8x8IYSKd0kxJIh5gUg05FBHIDXsb9fD5y+bssqtTci6LdqpuI+iu3yO3pRJ3i0RQeBgjvCQrm64Ib8LJ38hshGqs/eaTRHyzUcRZppPs6n/cBS9jEgfYy3JQ27u6OdaBEGSZnZe4f9Z4zvcKPi02aGBv4jr5uR4oWbsMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SpIiA8mM; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=7oDLRceR; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1715678244;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kA5X0iCNf5JNDOSYIdoDW8OtH47IaeM4S6bNIFPr8zY=;
+	b=SpIiA8mMqoHOvI/05Idu3McxJa4YW52QWSoF7UOb2DU833wDb8dJLnJl5+lWrMrEfr1mw/
+	V1Ne4Bc4YrpxcN4zP6IOBE3MlVR8+MMzpPVmxFqJtbnoj5C52FEhG0asP1N8JLmQJyyzZP
+	cndHyfJ0wYEla1y91d8YOoEYBqMfARPHw9eFBGmw/pwGqlmvNJNPRhnVQjWTjN0+HR0Z3E
+	DTmTSEBPdH0nmdr45VRt0W55q30wnB/C8Kz32MWyw3rbtgxngQ7Wqzza5TmoH5WeWOGHLz
+	pUmCCdMm1Ui1TtAbykBsVBVfDAjRnzh/WoYL+gVsftW02A1K+vWAr4f2SH8qiQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1715678244;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kA5X0iCNf5JNDOSYIdoDW8OtH47IaeM4S6bNIFPr8zY=;
+	b=7oDLRceREQzqN72Z2EteITBkj4PjqqTzKvb22n125Ytm/Cu8tYQPuf7yRaBASMGqJmXNc8
+	LTKklI5VIbTTVbAg==
+To: Justin Stitt <justinstitt@google.com>, John Stultz <jstultz@google.com>,
+ Stephen Boyd <sboyd@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
+ Bill Wendling <morbo@google.com>
+Cc: linux-kernel@vger.kernel.org, llvm@lists.linux.dev, Justin Stitt
+ <justinstitt@google.com>
+Subject: Re: [PATCH] ntp: safeguard against time_constant overflow case
+In-Reply-To: <20240506-b4-sio-ntp-c-v1-1-a01281aa01ba@google.com>
+References: <20240506-b4-sio-ntp-c-v1-1-a01281aa01ba@google.com>
+Date: Tue, 14 May 2024 11:17:23 +0200
+Message-ID: <87y18clplo.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAMSo37XWZ118=R9tFHZqw+wc7Sy_QNHHLdkQhaxjhCeuQQhDJw@mail.gmail.com>
- <20240514070033.5795-1-jtornosm@redhat.com>
-In-Reply-To: <20240514070033.5795-1-jtornosm@redhat.com>
-From: Yongqin Liu <yongqin.liu@linaro.org>
-Date: Tue, 14 May 2024 11:14:46 +0200
-Message-ID: <CAMSo37VywwR8qbNWhOo9kS0QzACE0NcYwJXG_GKT9zcKn4GitQ@mail.gmail.com>
-Subject: Re: [PATCH v2] net: usb: ax88179_178a: avoid writing the mac address
- before first reading
-To: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
-Cc: amit.pundir@linaro.org, davem@davemloft.net, edumazet@google.com, 
-	inventor500@vivaldi.net, jarkko.palviainen@gmail.com, jstultz@google.com, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, stable@vger.kernel.org, 
-	sumit.semwal@linaro.org, vadim.fedorenko@linux.dev, vmartensson@google.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 
-Hi Jose
-On Tue, 14 May 2024 at 09:00, Jose Ignacio Tornos Martinez
-<jtornosm@redhat.com> wrote:
+On Mon, May 06 2024 at 22:01, Justin Stitt wrote:
+
+> Using syzkaller with the recently reintroduced signed integer overflow
+> sanitizer produces this UBSAN report:
 >
-> Hello Yongqin,
->
-> I could not get a lot of information from the logs, but at least I
-> identified the device.
-> Anyway, I found the issue and the solution is being applied:
-> https://lore.kernel.org/netdev/171564122955.1634.5508968909715338167.git-patchwork-notify@kernel.org/
-Ah, I was not aware of it:(
+> [   46.809326] ------------[ cut here ]------------
+> [   46.812882] UBSAN: signed-integer-overflow in ../kernel/time/ntp.c:738:18
+> [   46.817676] 9223372036854775806 + 4 cannot be represented in type 'long'
+> [   46.822346] CPU: 1 PID: 685 Comm: syz-executor.0 Not tainted 6.8.0-rc2-00036-g679ee73ec453 #2
+> [   46.828270] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+> [   46.834836] Call Trace:
+> [   46.836625]  <TASK>
+> [   46.838147]  dump_stack_lvl+0x93/0xd0
+> [   46.840771]  handle_overflow+0x171/0x1b0
+> [   46.843516]  __do_adjtimex+0x1236/0x1440
+> [   46.846275]  do_adjtimex+0x2be/0x740
+> [   46.848864]  __x64_sys_clock_adjtime+0x154/0x1d0
+> [   46.852164]  do_syscall_64+0xd7/0x1b0
+> [   46.854783]  ? arch_exit_to_user_mode_prepare+0x11/0x60
+> [   46.858426]  entry_SYSCALL_64_after_hwframe+0x6f/0x77
+> [   46.861914] RIP: 0033:0x7fde90aaf539
+> [   46.864500] Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 14 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 8
+> [   46.877151] RSP: 002b:00007ffebfe63358 EFLAGS: 00000246 ORIG_RAX: 0000000000000131
+> [   46.882279] RAX: ffffffffffffffda RBX: 00007fde90be3f80 RCX: 00007fde90aaf539
+> [   46.887270] RDX: 0000000000000000 RSI: 0000000020000280 RDI: 0000000000000000
+> [   46.892174] RBP: 00007fde90b0e496 R08: 0000000000000000 R09: 0000000000000000
+> [   46.897061] R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> [   46.902020] R13: 0000000000000095 R14: 00007fde90be3f80 R15: 00007fde90be3f80
+> [   46.906946]  </TASK>
+> [   46.908537] ---[ end trace ]---
 
-Thanks a lot for the work!
+Please trim stack traces so they contain only useful information.
 
--- 
-Best Regards,
-Yongqin Liu
----------------------------------------------------------------
-#mailing list
-linaro-android@lists.linaro.org
-http://lists.linaro.org/mailman/listinfo/linaro-android
+ UBSAN: signed-integer-overflow in ../kernel/time/ntp.c:738:18
+ 9223372036854775806 + 4 cannot be represented in type 'long'
+ Call Trace:
+  <TASK>
+  handle_overflow+0x171/0x1b0
+  __do_adjtimex+0x1236/0x1440
+  do_adjtimex+0x2be/0x740
+  __x64_sys_clock_adjtime+0x154/0x1d0
+  do_syscall_64+0xd7/0x1b0
+
+Is completely sufficient, no?
+
+> Historically, the signed integer overflow sanitizer did not work in the
+> kernel due to its interaction with `-fwrapv` but this has since been
+> changed [1] in the newest version of Clang; It being re-enabled in the
+> kernel with Commit 557f8c582a9ba8ab ("ubsan: Reintroduce signed overflow
+> sanitizer").
+
+How is that relevant to the problem?
+
+> Nonetheless, let's slightly rework the logic surrounding time_constant
+
+s/Nonetheless, let's slightly /Rework/
+
+> and how it is incremented such that we avoid unintentional wrap-around
+> (even though it is extremely unlikely to be hit in non-fuzzing
+> scenarios).
+
+We don't avoid anything. Please write change logs in imperative mood.
+
+>  	if (txc->modes & ADJ_TIMECONST) {
+>  		time_constant = txc->constant;
+> -		if (!(time_status & STA_NANO))
+> -			time_constant += 4;
+> -		time_constant = min(time_constant, (long)MAXTC);
+> -		time_constant = max(time_constant, 0l);
+> +		if (!(time_status & STA_NANO) &&
+> +		    unlikely(LONG_MAX - time_constant_inc >= time_constant))
+
+What's unlikely about this? Correct operation of adjtimex() will
+increment, no?
+
+As this obviously will be clamped to MAXTC anyway, you can spare that whole
+LONG_MAX - time_constant_inc dance and simply do:
+
+		if (!(time_status & STA_NANO) && time_constant < MAXTC)
+                	time_constant += 4;
+
+No?
+
+> +			time_constant += time_constant_inc;
+> +		time_constant = clamp_t(long, time_constant, 0, MAXTC);
+
+Thanks,
+
+        tglx
 
