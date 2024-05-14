@@ -1,202 +1,220 @@
-Return-Path: <linux-kernel+bounces-178565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEBB88C504C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 13:01:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44CD08C504D
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 13:02:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37BDEB20D84
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 11:01:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B035A1F21817
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 11:02:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C40213B2B3;
-	Tue, 14 May 2024 10:39:26 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A818913C3F1;
+	Tue, 14 May 2024 10:39:29 +0000 (UTC)
+Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED80257CBC
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 10:39:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6213213B59A
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 10:39:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715683166; cv=none; b=txf17jWCJs7ZG1/NzX2NL39tXqP33MJoCiUcS5ADC6Kw3KzGc169Y78RR89B3YvukgDhp6yAV8aD/CyqptKYGr4iMS4iw9oWDfpW25psYRaGeSB1LGRg+Mdt85n5U9xCLIziQ+culdMP9CxWTSBFROmnBR4FHwDBQaob5sVQh5I=
+	t=1715683169; cv=none; b=taxtlHk49nFAFPEAP9QzXNJvDrpcimglK8byDoMDAyXXd47hIRbU8qieuvrlRx6CJqjPJ0+o3heJ5J1JlnuWaSy+awZptQuP00M3MbNV8oDZBp4RUXGM5B2x+NQzNfbqvm/O6Qvt0oc6WzWP7Ttrt/pZzxtW3o4oo8GhAMYL4oo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715683166; c=relaxed/simple;
-	bh=txS2G0u54enaXo4z12t/FbcJbf5DOqfdEI0CmKzi+5E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Br2OyZ5nIpkqyEBGe931tsAWLZ9v3806LYXpvZnj1crO4F6tYgyCLuJkEKM21UGlsNr7Rq8WotwW9nkxhwhXUa7o0nQlggrI4vQ5BWQrOdVM+ei1HjCvKTR8PHhbNlUENUlUTkVowOnOfqDq8TND26o8JeVAWZSKsx7EYUCiUdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 599D6C32781;
-	Tue, 14 May 2024 10:39:24 +0000 (UTC)
-Date: Tue, 14 May 2024 11:39:21 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Yang Shi <yang@os.amperecomputing.com>
-Cc: will@kernel.org, scott@os.amperecomputing.com, cl@gentwo.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: mm: force write fault for atomic RMW instructions
-Message-ID: <ZkM_WXxEQo51mrK5@arm.com>
-References: <20240507223558.3039562-1-yang@os.amperecomputing.com>
- <Zj4O8q9-bliXE435@arm.com>
- <6066e0da-f00a-40fd-a5e2-d4d78786c227@os.amperecomputing.com>
+	s=arc-20240116; t=1715683169; c=relaxed/simple;
+	bh=6UPQyeg0/NEklFVQsWYpVDYn6YwqQ616Kg0qAhdUXaQ=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=V3WtNPGa1WyEtzoMHFH1XoBwRaVT5f45MDZU/PdmFw76m9N6DdoGF6wpEr3a7xSlbR5zJiUU5uSmKKiH+KhamMABn0kgQ6ZiSicyycfUCCYCAGH0AXe8kAyg1JZeFRmlR1Mso1BLNbfG/cohGDd2ciltp3vqa0mzE9QenyiSh/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-7e1db7e5386so298028039f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 03:39:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715683166; x=1716287966;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lPAYknr1g5jVKi+ThJU5ulKyp6rTzheR6mKSF8PP+pk=;
+        b=RfDdpP6Z5HAu3ceJBfctinNUNsnKDNglhfxQLDT7olUlcBsGoLqNr36KTU3PagMyTH
+         hXlFO1mvhf7WcVW2kWXQ+GB1KOJricD4XzwdDGs3R7k2Eh0O5C7h8X5Bi225889QyOhs
+         MJ2GbcDg1ORDnV1D+cg6NhhLOin2ov1EJV1nDfqI35TBT6APoHa4ITolgBxFneaoipD4
+         TK+PSwOz9Un9B0eHwe6x1hA3axUoWY4Q91LafEtgn+sbbGOYTODwkWA0Mp9yvhQDLQAO
+         r/6uRirpLLOBv1lZgE6yzIFwm5ngn4+Gc5kCIEt6jnN2w2ZDgTMHH+MVGixskUa865v9
+         8HuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWwl7ZzqYrlheibuID3T+xJlb/UjZJsBI9EYrtXw/zKdrd9XVMqaJ/rkjUFXf7/L3FkgmyXfFNjRlcHM70XkSeg185n10owfL+ZmOkG
+X-Gm-Message-State: AOJu0YwUu5/Ya7eQeuAH0iPci2ZQ67SZRy/2L2SX3wpuLWSreWgoL6gu
+	puriwdwR6eduwKzJq4ax7sHmlJY2mozlxFQesjp8nLGp/t1vQWZd7M4QitTWULWj3ZCFyxXFbM8
+	/wm+SL5PQ5peT5CW/6NgIFHJoqbCWXQtWtfRSmeCgf8FCY5Z1TQ7GzfE=
+X-Google-Smtp-Source: AGHT+IGhBohnYpxANGC97Cdo3Ti41CFL8EhfzDHVZAoy0td1kuokLJE8mTFG9/f8ADdFOJMjP2QuWBgMmdVA47QZxwttQwHZCnZK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6066e0da-f00a-40fd-a5e2-d4d78786c227@os.amperecomputing.com>
+X-Received: by 2002:a05:6638:8917:b0:488:9fae:e95c with SMTP id
+ 8926c6da1cb9f-48958e02868mr1453317173.4.1715683166680; Tue, 14 May 2024
+ 03:39:26 -0700 (PDT)
+Date: Tue, 14 May 2024 03:39:26 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b2883b0618679d34@google.com>
+Subject: [syzbot] [bcachefs?] general protection fault in __bch2_insert_snapshot_whiteouts
+From: syzbot <syzbot+1c9fca23fe478633b305@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, May 10, 2024 at 10:13:02AM -0700, Yang Shi wrote:
-> On 5/10/24 5:11 AM, Catalin Marinas wrote:
-> > On Tue, May 07, 2024 at 03:35:58PM -0700, Yang Shi wrote:
-> > > The atomic RMW instructions, for example, ldadd, actually does load +
-> > > add + store in one instruction, it may trigger two page faults, the
-> > > first fault is a read fault, the second fault is a write fault.
-> > > 
-> > > Some applications use atomic RMW instructions to populate memory, for
-> > > example, openjdk uses atomic-add-0 to do pretouch (populate heap memory
-> > > at launch time) between v18 and v22.
-> > I'd also argue that this should be optimised in openjdk. Is an LDADD
-> > more efficient on your hardware than a plain STR? I hope it only does
-> > one operation per page rather than per long. There's also MAP_POPULATE
-> > that openjdk can use to pre-fault the pages with no additional fault.
-> > This would be even more efficient than any store or atomic operation.
-> 
-> It is not about whether atomic is more efficient than plain store on our
-> hardware or not. It is arch-independent solution used by openjdk.
+Hello,
 
-It may be arch independent but it's not a great choice. If you run this
-on pre-LSE atomics hardware (ARMv8.0), this operation would involve
-LDXR+STXR and there's no way for the kernel to "upgrade" it to a write
-operation on the first LDXR fault.
+syzbot found the following issue on:
 
-It would be good to understand why openjdk is doing this instead of a
-plain write. Is it because it may be racing with some other threads
-already using the heap? That would be a valid pattern.
+HEAD commit:    75fa778d74b7 Add linux-next specific files for 20240510
+git tree:       linux-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=131c3100980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ccdd3ebd6715749a
+dashboard link: https://syzkaller.appspot.com/bug?extid=1c9fca23fe478633b305
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13e892e4980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=118d0fb8980000
 
-> > Not sure the reason for the architecture to report a read fault only on
-> > atomics. Looking at the pseudocode, it checks for both but the read
-> > permission takes priority. Also in case of a translation fault (which is
-> > what we get on the first fault), I think the syndrome write bit is
-> > populated as (!read && write), so 0 since 'read' is 1 for atomics.
-> 
-> Yeah, I'm confused too. Triggering write fault in the first place should be
-> fine, right? Can we update the spec?
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/ad9391835bcf/disk-75fa778d.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/d827b3da9a26/vmlinux-75fa778d.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/8f32f0182388/bzImage-75fa778d.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/056346e690a7/mount_0.gz
 
-As you noticed, even if we change the spec, we still have the old
-hardware. Also, changing the spec would probably need to come with a new
-CPUID field since that's software visible. I'll raise it with the
-architects, maybe in the future it will allow us to skip the instruction
-read.
+The issue was bisected to:
 
-> > > But the double page fault has some problems:
-> > > 
-> > > 1. Noticeable TLB overhead.  The kernel actually installs zero page with
-> > >     readonly PTE for the read fault.  The write fault will trigger a
-> > >     write-protection fault (CoW).  The CoW will allocate a new page and
-> > >     make the PTE point to the new page, this needs TLB invalidations.  The
-> > >     tlb invalidation and the mandatory memory barriers may incur
-> > >     significant overhead, particularly on the machines with many cores.
-> > I can see why the current behaviour is not ideal but I can't tell why
-> > openjdk does it this way either.
-> > 
-> > A bigger hammer would be to implement mm_forbids_zeropage() but this may
-> > affect some workloads that rely on sparsely populated large arrays.
-> 
-> But we still needs to decode the insn, right? Or you mean forbid zero page
-> for all read fault? IMHO, this may incur noticeable overhead for read fault
-> since the fault handler has to allocate real page every time.
+commit f7643bc9749f270d487c32dc35b578575bf1adb0
+Author: Kent Overstreet <kent.overstreet@linux.dev>
+Date:   Wed Apr 17 05:26:02 2024 +0000
 
-The current kernel mm_forbids_zeropage() is a big knob irrespective of
-the instruction triggering the fault.
+    bcachefs: make btree read errors silent during scan
 
-> > > diff --git a/arch/arm64/include/asm/insn.h b/arch/arm64/include/asm/insn.h
-> > > index db1aeacd4cd9..5d5a3fbeecc0 100644
-> > > --- a/arch/arm64/include/asm/insn.h
-> > > +++ b/arch/arm64/include/asm/insn.h
-> > > @@ -319,6 +319,7 @@ static __always_inline u32 aarch64_insn_get_##abbr##_value(void)	\
-> > >    * "-" means "don't care"
-> > >    */
-> > >   __AARCH64_INSN_FUNCS(class_branch_sys,	0x1c000000, 0x14000000)
-> > > +__AARCH64_INSN_FUNCS(class_atomic,	0x3b200c00, 0x38200000)
-> > 
-> > This looks correct, it covers the LDADD and SWP instructions. However,
-> > one concern is whether future architecture versions will add some
-> > instructions in this space that are allowed to do a read only operation
-> > (e.g. skip writing if the value is the same or fails some comparison).
-> 
-> I think we can know the instruction by decoding it, right? Then we can
-> decide whether force write fault or not by further decoding.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=100ed95c980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=120ed95c980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=140ed95c980000
 
-Your mask above covers unallocated opcodes, we don't know what else will
-get in there in the future, whether we get instructions that only do
-reads. We could ask for clarification from the architects but I doubt
-they'd commit to allocating it only to instructions that do a write in
-this space. The alternative is to check for the individual instructions
-already allocated in here (after the big mask check above) but this will
-increase the fault cost a bit.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+1c9fca23fe478633b305@syzkaller.appspotmail.com
+Fixes: f7643bc9749f ("bcachefs: make btree read errors silent during scan")
 
-There are CAS and CASP variants that also require a write permission
-even if they fail the check. We should cover them as well.
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000002: 0000 [#1] PREEMPT SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x0000000000000010-0x0000000000000017]
+CPU: 1 PID: 5094 Comm: syz-executor156 Not tainted 6.9.0-rc7-next-20240510-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+RIP: 0010:bch2_snapshot_has_children fs/bcachefs/snapshot.h:184 [inline]
+RIP: 0010:__bch2_insert_snapshot_whiteouts+0x306/0x15e0 fs/bcachefs/btree_update.c:135
+Code: fb 0f 86 c2 11 00 00 e8 28 d9 7c fd 49 6b c7 38 49 8d 5c 04 18 48 8d 7b 14 48 89 f8 48 c1 e8 03 49 bc 00 00 00 00 00 fc ff df <42> 0f b6 04 20 84 c0 0f 85 3d 12 00 00 44 8b 7b 14 48 83 c3 18 48
+RSP: 0018:ffffc900037be0c0 EFLAGS: 00010203
+RAX: 0000000000000002 RBX: 0000000000000000 RCX: ffff8880296b0000
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000014
+RBP: ffffc900037be420 R08: ffffffff841942f8 R09: 1ffffffff25f64b0
+R10: dffffc0000000000 R11: fffffbfff25f64b1 R12: dffffc0000000000
+R13: ffffc900037be380 R14: ffffffff84194214 R15: 00000000ffffffff
+FS:  000055555dcea380(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000559e8263e0b0 CR3: 000000006fca6000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ bch2_insert_snapshot_whiteouts fs/bcachefs/btree_update.h:95 [inline]
+ bch2_trans_update_extent_overwrite+0xfd6/0x3710 fs/bcachefs/btree_update.c:218
+ bch2_trans_update_extent fs/bcachefs/btree_update.c:318 [inline]
+ bch2_trans_update+0x186f/0x2550 fs/bcachefs/btree_update.c:514
+ bch2_extent_update+0x43c/0xbb0 fs/bcachefs/io_write.c:325
+ bch2_write_index_default fs/bcachefs/io_write.c:374 [inline]
+ __bch2_write_index+0xee9/0x2190 fs/bcachefs/io_write.c:527
+ bch2_write_data_inline fs/bcachefs/io_write.c:1551 [inline]
+ bch2_write+0xf4d/0x1670 fs/bcachefs/io_write.c:1619
+ closure_queue include/linux/closure.h:269 [inline]
+ closure_call include/linux/closure.h:402 [inline]
+ bch2_writepage_do_io fs/bcachefs/fs-io-buffered.c:460 [inline]
+ bch2_writepages+0x27d/0x380 fs/bcachefs/fs-io-buffered.c:652
+ do_writepages+0x359/0x870 mm/page-writeback.c:2634
+ filemap_fdatawrite_wbc+0x125/0x180 mm/filemap.c:397
+ __filemap_fdatawrite_range mm/filemap.c:430 [inline]
+ file_write_and_wait_range+0x1aa/0x290 mm/filemap.c:788
+ bch2_fsync+0x93/0x130 fs/bcachefs/fs-io.c:197
+ generic_write_sync include/linux/fs.h:2794 [inline]
+ bch2_buffered_write fs/bcachefs/fs-io-buffered.c:1128 [inline]
+ bch2_write_iter+0x262e/0x2840 fs/bcachefs/fs-io-buffered.c:1136
+ new_sync_write fs/read_write.c:497 [inline]
+ vfs_write+0xa72/0xc90 fs/read_write.c:590
+ ksys_write+0x1a0/0x2c0 fs/read_write.c:643
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fbe67e38979
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 61 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffd7ce752c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007fbe67e8104b RCX: 00007fbe67e38979
+RDX: 000000000000000b RSI: 0000000020000680 RDI: 0000000000000004
+RBP: 00007fbe67ebe610 R08: 00007ffd7ce75498 R09: 00007ffd7ce75498
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+R13: 00007ffd7ce75488 R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:bch2_snapshot_has_children fs/bcachefs/snapshot.h:184 [inline]
+RIP: 0010:__bch2_insert_snapshot_whiteouts+0x306/0x15e0 fs/bcachefs/btree_update.c:135
+Code: fb 0f 86 c2 11 00 00 e8 28 d9 7c fd 49 6b c7 38 49 8d 5c 04 18 48 8d 7b 14 48 89 f8 48 c1 e8 03 49 bc 00 00 00 00 00 fc ff df <42> 0f b6 04 20 84 c0 0f 85 3d 12 00 00 44 8b 7b 14 48 83 c3 18 48
+RSP: 0018:ffffc900037be0c0 EFLAGS: 00010203
+RAX: 0000000000000002 RBX: 0000000000000000 RCX: ffff8880296b0000
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000014
+RBP: ffffc900037be420 R08: ffffffff841942f8 R09: 1ffffffff25f64b0
+R10: dffffc0000000000 R11: fffffbfff25f64b1 R12: dffffc0000000000
+R13: ffffc900037be380 R14: ffffffff84194214 R15: 00000000ffffffff
+FS:  000055555dcea380(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000002000193c CR3: 000000006fca6000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	fb                   	sti
+   1:	0f 86 c2 11 00 00    	jbe    0x11c9
+   7:	e8 28 d9 7c fd       	call   0xfd7cd934
+   c:	49 6b c7 38          	imul   $0x38,%r15,%rax
+  10:	49 8d 5c 04 18       	lea    0x18(%r12,%rax,1),%rbx
+  15:	48 8d 7b 14          	lea    0x14(%rbx),%rdi
+  19:	48 89 f8             	mov    %rdi,%rax
+  1c:	48 c1 e8 03          	shr    $0x3,%rax
+  20:	49 bc 00 00 00 00 00 	movabs $0xdffffc0000000000,%r12
+  27:	fc ff df
+* 2a:	42 0f b6 04 20       	movzbl (%rax,%r12,1),%eax <-- trapping instruction
+  2f:	84 c0                	test   %al,%al
+  31:	0f 85 3d 12 00 00    	jne    0x1274
+  37:	44 8b 7b 14          	mov    0x14(%rbx),%r15d
+  3b:	48 83 c3 18          	add    $0x18,%rbx
+  3f:	48                   	rex.W
 
-> > > diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
-> > > index 8251e2fea9c7..f7bceedf5ef3 100644
-> > > --- a/arch/arm64/mm/fault.c
-> > > +++ b/arch/arm64/mm/fault.c
-> > > @@ -529,6 +529,7 @@ static int __kprobes do_page_fault(unsigned long far, unsigned long esr,
-> > >   	unsigned int mm_flags = FAULT_FLAG_DEFAULT;
-> > >   	unsigned long addr = untagged_addr(far);
-> > >   	struct vm_area_struct *vma;
-> > > +	unsigned int insn;
-> > >   	if (kprobe_page_fault(regs, esr))
-> > >   		return 0;
-> > > @@ -586,6 +587,24 @@ static int __kprobes do_page_fault(unsigned long far, unsigned long esr,
-> > >   	if (!vma)
-> > >   		goto lock_mmap;
-> > > +	if (mm_flags & (FAULT_FLAG_WRITE | FAULT_FLAG_INSTRUCTION))
-> > > +		goto continue_fault;
-[...]
-> > > +
-> > > +	pagefault_disable();
-> > 
-> > This prevents recursively entering do_page_fault() but it may be worth
-> > testing it with an execute-only permission.
-> 
-> You mean the text section permission of the test is executive only?
 
-Yes. Not widely used though.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-A point Will raised was on potential ABI changes introduced by this
-patch. The ESR_EL1 reported to user remains the same as per the hardware
-spec (read-only), so from a SIGSEGV we may have some slight behaviour
-changes:
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
-1. PTE invalid:
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-   a) vma is VM_READ && !VM_WRITE permission - SIGSEGV reported with
-      ESR_EL1.WnR == 0 in sigcontext with your patch. Without this
-      patch, the PTE is mapped as PTE_RDONLY first and a subsequent
-      fault will report SIGSEGV with ESR_EL1.WnR == 1.
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
-   b) vma is !VM_READ && !VM_WRITE permission - SIGSEGV reported with
-      ESR_EL1.WnR == 0, so no change from current behaviour, unless we
-      fix the patch for (1.a) to fake the WnR bit which would change the
-      current expectations.
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-2. PTE valid with PTE_RDONLY - we get a normal writeable fault in
-   hardware, no need to fix ESR_EL1 up.
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-The patch would have to address (1) above but faking the ESR_EL1.WnR bit
-based on the vma flags looks a bit fragile.
-
-Similarly, we have userfaultfd that reports the fault to user. I think
-in scenario (1) the kernel will report UFFD_PAGEFAULT_FLAG_WRITE with
-your patch but no UFFD_PAGEFAULT_FLAG_WP. Without this patch, there are
-indeed two faults, with the second having both UFFD_PAGEFAULT_FLAG_WP
-and UFFD_PAGEFAULT_FLAG_WRITE set.
-
--- 
-Catalin
+If you want to undo deduplication, reply with:
+#syz undup
 
