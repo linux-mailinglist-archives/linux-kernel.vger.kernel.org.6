@@ -1,120 +1,109 @@
-Return-Path: <linux-kernel+bounces-178611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 913058C5317
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 13:43:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 167008C5277
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 13:37:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35A891F22F18
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 11:43:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A707CB21951
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 11:37:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07EF613A405;
-	Tue, 14 May 2024 11:31:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="b4WsIwr8"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF96813D608;
+	Tue, 14 May 2024 11:25:19 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81C5513A275
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 11:31:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 270B748CF2;
+	Tue, 14 May 2024 11:25:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715686301; cv=none; b=P5xl4mx5oUs+B0Lr9P+/apilTej+kUTclHb7GaEkC1gsRPYaXBqapWhSHD2w1VltALicUeR2ZYfCiGFbo255VisYzHpnSp1ANe/0GoB2t/0/mTEUqI6AGsYwTAHBgl1Kn/PVCFc6/FU6LHuBtVcB2MM8Mdd1jujREiXKHeyXGkA=
+	t=1715685919; cv=none; b=PJ9MZId37JcbF/q0EAzrKJgNvvGRjwYXnkbjrDgxSsnUOWX0FDcamtDo5EDQ5Tsb70V9Gar4YF8+AjIExtz3iJDZHsEy7hjF/47usvnN4PZoN6JXYMgKDf4vQr3oD61fa3xYLLNLhH2KXiHVyGFD7sGIPW1jnON3kM8uxARhJaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715686301; c=relaxed/simple;
-	bh=XhRGyln3sd8lONicUWHD3oNu6jfDpsgZZThQ5tswa48=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RaPvZlduGYOf+QbCpbWySeSoDVd3HycWBre4wzF01BOHYNiLNIbU5DsDHVwrLKLgFh1NzY28x3d4raYVIbpE4W9jHB8E2KsSbLicl42c70pg8vcQPJ8j0u3GRlRW4oDFhg4EExdmHaB/Pd7ZYa/BeH4nYzPaMLM9ChskMCB4xrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=b4WsIwr8; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44EANCY7030176;
-	Tue, 14 May 2024 11:21:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
- subject : message-id : references : mime-version : content-type :
- in-reply-to; s=pp1; bh=yXOdXwxnUSH4P8a7AOTpMor36F3JDzt6190nMqMER5k=;
- b=b4WsIwr8zy19hJwwFMUUOO8FPazTRB/qxKEMKmax7SWjFgB55pJPn48OCp8Xjz0aCRV6
- PFqEErF1Ts6j/z5WkeHDcsmoJw60AOP/vnTpCXYJcKdLxtEEXCvRN9iMWrZDMDpCiONv
- DxT2ox9yzZNkkNJytUs6J2+I2QXrRDDfgR+R9K0C6t9kwsFI/BUiHrd9tl6/tO3ZbrCk
- 3Va8UsSZn666yvBtpfPdW9ju9erjTOBu38xECGaWbnjWd+xwGuG9kNZ5Rxf7l3Kb45/W
- CWUvDkkLwlB+wRXYKDeTrYqSBXQ9PC7V8g300yiz9p2yQM42qkw2KsXEHc9o5GjsxLxG Ew== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y4656g4ey-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 14 May 2024 11:21:55 +0000
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44EBLsSD022184;
-	Tue, 14 May 2024 11:21:54 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y4656g4ev-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 14 May 2024 11:21:54 +0000
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44E8cclE006189;
-	Tue, 14 May 2024 11:21:53 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3y2mgmcxqq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 14 May 2024 11:21:53 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44EBLnTJ54001924
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 14 May 2024 11:21:51 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9989F20043;
-	Tue, 14 May 2024 11:21:49 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5874E20040;
-	Tue, 14 May 2024 11:21:48 +0000 (GMT)
-Received: from li-c6426e4c-27cf-11b2-a85c-95d65bc0de0e.ibm.com (unknown [9.204.206.66])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue, 14 May 2024 11:21:48 +0000 (GMT)
-Date: Tue, 14 May 2024 16:51:41 +0530
-From: Gautam Menghani <gautam@linux.ibm.com>
-To: Naveen N Rao <naveen@kernel.org>
-Cc: mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arch/powerpc: Remove the definition of unused cede
- function
-Message-ID: <bbz5jnemmpzaz4577fured3vyettp677qgacvifgfgnq4nbeqi@gvqz4r4hc4jc>
-References: <20240514100507.271681-1-gautam@linux.ibm.com>
- <vfx2z4dn6afpkl4z7ygewadw7mohfd7l3tfazdya4sbxniurkg@vrubq25slkvs>
+	s=arc-20240116; t=1715685919; c=relaxed/simple;
+	bh=JZ8hPgZYNySm6liu5QHHuI3IvzBQOuIu23k6l/4xmM4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hUpesLNQxw7RICwfcInU73t7Y9DyLt04oRM6WFo4dH20gkR3yPuWHJcsISTeNDZ5OGr0lNGf2vYqMH1A0rWf6+g8Wb2qZnafOWZqehtI/dHZbEDsgK1tJlA1/ej9QO3ejsfWakoQyK0MZSjD+4PqANoglAMaOrYMHc+Fx4/EVpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VdvCh5w4fz4f3jdL;
+	Tue, 14 May 2024 19:25:04 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id 70DE81A0FD2;
+	Tue, 14 May 2024 19:25:13 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.124.27])
+	by APP3 (Coremail) with SMTP id _Ch0CgCHSKAXSkNm4rTMMQ--.61831S2;
+	Tue, 14 May 2024 19:25:13 +0800 (CST)
+From: Kemeng Shi <shikemeng@huaweicloud.com>
+To: tytso@mit.edu,
+	jack@suse.com,
+	yi.zhang@huaweicloud.com
+Cc: linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/9] A fix and some cleanups to jbd2
+Date: Tue, 14 May 2024 19:24:29 +0800
+Message-Id: <20240514112438.1269037-1-shikemeng@huaweicloud.com>
+X-Mailer: git-send-email 2.30.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <vfx2z4dn6afpkl4z7ygewadw7mohfd7l3tfazdya4sbxniurkg@vrubq25slkvs>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 3bgrU1ZxcOf30zPoKAqInHN_9dgFBylG
-X-Proofpoint-ORIG-GUID: FiGjcpiVqSb0OJDqIa9WUvmLQP5-qZ19
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-14_06,2024-05-10_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
- lowpriorityscore=0 phishscore=0 mlxscore=0 spamscore=0 clxscore=1015
- priorityscore=1501 mlxlogscore=403 suspectscore=0 malwarescore=0
- impostorscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2405010000 definitions=main-2405140081
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_Ch0CgCHSKAXSkNm4rTMMQ--.61831S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7uryfAr1rAr47GF47Jr1kZrb_yoW8JFyUpF
+	yfKa1Syryvvry2qrsxZF4UW3y5Gr10kry7GwnFkF18Aw1UAr17uF1qyF18AryUXFZ3Ka10
+	qrykX3s5GF12kFUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyl14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCF04k20xvY0x0EwIxG
+	rwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4
+	vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IY
+	x2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26c
+	xKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
+	67AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjfU5WlkUUUUU
+X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
-On Tue, May 14, 2024 at 04:20:04PM GMT, Naveen N Rao wrote:
-> On Tue, May 14, 2024 at 03:35:03PM GMT, Gautam Menghani wrote:
-> > Remove extended_cede_processor() definition as it has no callers since
-> > commit 48f6e7f6d948("powerpc/pseries: remove cede offline state for CPUs")
-> 
-> extended_cede_processor() was added in commit 69ddb57cbea0 
-> ("powerpc/pseries: Add extended_cede_processor() helper function."), 
-> which also added [get|set]_cede_latency_hint(). Those can also be 
-> removed if extended_cede_processor() is no longer needed.
+v1->v2:
+-Collect RVB from Yi and Jan
+-remove rename "flags" to "escape" in patch 2/9
+-goto new copy_done tag in patch 4/9
+-add more comment in patch 5/9
 
-Yes thanks for pointing it out, will remove them as well.
+Patch 1 fixes memleak in jbd2_journal_write_metadata_buffer.
+Patch 2-6 contain some cleanups to jbd2_journal_write_metadata_buffer().
+Patch 7-9 contain some cleanups to kjournald2()
+All tests in "kvm-xfstest smoke" survive. Please let me konw if more tests
+should be ran. Thanks.
 
-Thanks,
-Gautam
+Kemeng Shi (9):
+  jbd2: avoid memleak in jbd2_journal_write_metadata_buffer
+  jbd2: remove unused return info from
+    jbd2_journal_write_metadata_buffer
+  jbd2: remove unnedded "need_copy_out" in
+    jbd2_journal_write_metadata_buffer
+  jbd2: jump to new copy_done tag when b_frozen_data is created
+    concurrently
+  jbd2: remove unneeded kmap to do escape in
+    jbd2_journal_write_metadata_buffer
+  jbd2: use bh_in instead of jh2bh(jh_in) to simplify code
+  jbd2: remove dead equality check of j_commit_[sequence/request] in
+    kjournald2
+  jbd2: remove dead check of JBD2_UNMOUNT in kjournald2
+  jbd2: remove unnecessary "should_sleep" in kjournald2
+
+ fs/jbd2/commit.c  | 10 ++++-----
+ fs/jbd2/journal.c | 54 ++++++++++++++++++-----------------------------
+ 2 files changed, 25 insertions(+), 39 deletions(-)
+
+-- 
+2.30.0
+
 
