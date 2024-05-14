@@ -1,296 +1,370 @@
-Return-Path: <linux-kernel+bounces-179097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 306948C5BA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 21:18:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6408D8C5BA5
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 21:17:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4ECBC1C21BAF
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 19:18:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 889C81C21F4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 19:17:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A533181315;
-	Tue, 14 May 2024 19:18:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53C93181326;
+	Tue, 14 May 2024 19:17:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0DIplDvC"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="BNLtTOEP"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF3E217F36F
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 19:18:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74832180A9C
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 19:17:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715714297; cv=none; b=kmj9MnYsIbLgtawGd+Hy4IashbO4n8XoAzzULZ8WKZS5JH2BnOXAuIkXJGEzvTLRcarpwr0TWM9Edl0NDxr6NzUf6jzrGP4LyBUa+d7xWlB8tnAbiLBGsIooLNIYfelZg4xG2E3r+o79FPnFV3KQHlf50fwuLXl4u/GS+5NB/Qo=
+	t=1715714231; cv=none; b=BFD7N2/AzA0KqRazlKM5rws6b3ZTtHp+vSZ8a8PDS/JT/ccjxXfhjYlsZelwXjV7+RZn8QKtdlH+QNvzl5Bt/euzJwNaC0wnBWF4b6aEPrjauuDlLoE+7CdNLFRFHGQJv0NF3gMfX4XkeDsrS87Xn5llxZ9vZI4wbEXIn2hwm2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715714297; c=relaxed/simple;
-	bh=2+0MbbVhfwpzgandx9JAIthS253OCPOQX76PZB0bhis=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=SXhY8FX0Ubb+5Vi0VYFKHoDtWd9trqXxhjwNAteIH5uIWs+mWqOXStY/wrnpzNCEzqR53RDVE0zPtqrUF19FGk9rwDTnLBRwAmYKuTpCvsY+Pw+V23GRd+bsgInUZFWIK1xMa1Q422ASnUsYXMoPzoVV0wxnhkMsS+VvQBrQNjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0DIplDvC; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-61dfa4090c1so92546357b3.3
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 12:18:14 -0700 (PDT)
+	s=arc-20240116; t=1715714231; c=relaxed/simple;
+	bh=MozuXVveDnrHeKmyD0B1EwTHbFJkgmgL95Uc2DUuy6g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MgFScT3Y/qLFwntAPWSffsgruaYgcLirn76bZLXJ1SmoShyg7fgrxuxOPTXhaHsOwCGktMnB7FlfP7WPE8WFmDhFWL79n7QArySDBr6y9VtI0eV6Lk2Z22HB5+WGW9Xz2HUl3ev0lRq4MXms40JakjR5GK9PGCycu45fRbMuqDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=BNLtTOEP; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-6f45f1179c3so5638845b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 12:17:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715714294; x=1716319094; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=PqyaUutE/tXclPFxiVv+3e9qFm1giav03EIhpEdhlMw=;
-        b=0DIplDvCGx+qplxkobg57S3o/zCFF+kBW9pgC3mJB3laDvKkyAAj1crgTH13PxKOIY
-         RfR6ldQ8hiLJqJVumZQPowlSTwN2LWerVHER6mYOiOjBjzrj2BjWYHfIKrx5JHSGH1z+
-         wVncmF4cNbef5nAYT1NSgZ9aXJ4uOwz2JKK4ylKKpQ2yXGPu38pl6YUrIo2kfYKjHOJC
-         kOglf5eTnc9uJb0Le07czy54jrlHOpbjffzx/regVt0tVmxbxDYXuYRBNg7Or/X7K5D7
-         kf1FX1wnXo72FqVvBPKJe5eLhy5sq8973ksLyIopcgnThJ88gdXHdTOociJp17X/iiqc
-         TFBA==
+        d=fastly.com; s=google; t=1715714228; x=1716319028; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pTDVDPIJPU/zB7yOz2CW356qdobpBCSC9vzkcw4b+Vw=;
+        b=BNLtTOEPkBFb3jswJej8HldOR+IXLPeMUOi5lDaloCg8y0f7iLN0p0g+DxZjtzK+g4
+         dxxGBOxu3wSfHXOV0ryfrfsLZ2Of5XU1AWthnZwoGfnb5y47aDzkEppG2DQ3OQOju+By
+         0smB/gVweZBwh1FYe5P2R93rdO78FMDYyEEy4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715714294; x=1716319094;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PqyaUutE/tXclPFxiVv+3e9qFm1giav03EIhpEdhlMw=;
-        b=n2M+/70uw16RSL0ctpC8HRaqm1rX+jSgDI3/cA8isz+jlhDSYx+5WK/GVTX0x/Sk83
-         jJ72dWdOt4WJYTqguW/tD1x9kmBRyyQ4PFvaBWL+chsJWVIXeiHU6YZHsAmyaXxrht/E
-         IDrHwfS22Q2hbkSZeH/CtMFphL2ilZxjRWyXOU40iRcdJ1cbGNZ4MP6YHCtugO7HtTzA
-         9J47Gnx9wRTdE2xetLCcfjxm7LAeKlAe+dzWl913ax4c9IUUvdsQgXVQzQRTaTpaR/DK
-         fAc6WEP7X84hQvE3uTHPxWfprXdLjiUFyudIZYLhlVLIFO1qWKReUh/1R1e3apBZKfkj
-         1Q8w==
-X-Forwarded-Encrypted: i=1; AJvYcCUt+n+fXimgt8dhoXtYwGRBP8zYk4BrvcS13JHc3B1Rbe6c5FhixeAbh7SXiTsngc+zu3EmTHkctdb+q6OX141gB9VOqbSao1K3T0Mq
-X-Gm-Message-State: AOJu0Yw0RQKXvpICY5uwHipYGAefJXEDdk4h2i/YrUz/9bLGGgbaSYGj
-	TKa1gWpWTk/xEeamrbmTfE7/eOqSoN2ShNafUbRGBKX5Yjkf8XwjTGwVpl8JxNxF2z10n2Y6/ik
-	yCUGqQxcdEw==
-X-Google-Smtp-Source: AGHT+IFdDacH/jd9wchBAosfs0uALEbjVQaMnhta/CmF0GvJ5me+eLXuTQ1EUN72qk/nK/8lKDSNa65XF1TWvw==
-X-Received: from xllamas.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5070])
- (user=cmllamas job=sendgmr) by 2002:a05:6902:18c6:b0:dee:6f2b:20a8 with SMTP
- id 3f1490d57ef6-dee6f2b271bmr819105276.0.1715714293720; Tue, 14 May 2024
- 12:18:13 -0700 (PDT)
-Date: Tue, 14 May 2024 19:15:46 +0000
+        d=1e100.net; s=20230601; t=1715714228; x=1716319028;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pTDVDPIJPU/zB7yOz2CW356qdobpBCSC9vzkcw4b+Vw=;
+        b=nmYOyrJKgndevHKEBIoNU1bya0P6IpzRgVJ3U85Xro47qvTyWtuUyzWFqphCGEpddi
+         ExTh8eo/Ms9Y+aJb5gQP6E74xMfCQKXGqf3OcLWeuHeUcIKGbFbdDVcoUSJk6TEuuXGE
+         kUyVU2J50yFLrfwBy2e03yvNTyOFctsSnI9oEAzn7IitHyOzoeeK5zNquPwjPsRdT0OO
+         gpFJco2KQvg4Xi+bo+FHnuNMxXlijXnqd13hMvPh3XD2p9505HWP6j8xDkmSsr1juQ8T
+         kfj3uOoaC9cTxOJzjzWpQY65YsFjS0/VnXpl+v7FKmyxVXn9FeP01wk93TMNJpu+kCnm
+         tdUw==
+X-Gm-Message-State: AOJu0YySQDQXpSWC5UQt2/xKoP6HSg4kjVzGXAr3xLQ3AtdNQ5/2Sku5
+	XlRhmUh0qXdbH5LEEX9314U12yXh1qjYxGKvm1R7ih3qNlRGXnm0k+iu6uYANDQ=
+X-Google-Smtp-Source: AGHT+IEapaWz2Z4pXiUsS5wH7EhPUg0W/WCcuEu0rXf7Oj25JwfpVNz2/12huNaGr0U6rNhR1SGJoQ==
+X-Received: by 2002:a05:6a00:13a0:b0:6f3:34c0:13c9 with SMTP id d2e1a72fcca58-6f4e0384909mr15368460b3a.29.1715714227653;
+        Tue, 14 May 2024 12:17:07 -0700 (PDT)
+Received: from LQ3V64L9R2 ([12.133.136.198])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2a664b2sm9483343b3a.42.2024.05.14.12.17.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 May 2024 12:17:07 -0700 (PDT)
+Date: Tue, 14 May 2024 12:17:04 -0700
+From: Joe Damato <jdamato@fastly.com>
+To: Tariq Toukan <ttoukan.linux@gmail.com>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	zyjzyj2000@gmail.com, nalramli@fastly.com,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	"open list:MELLANOX MLX5 core VPI driver" <linux-rdma@vger.kernel.org>,
+	Tariq Toukan <tariqt@nvidia.com>
+Subject: Re: [PATCH net-next v2 1/1] net/mlx5e: Add per queue netdev-genl
+ stats
+Message-ID: <ZkO4sHysmB20x46a@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Tariq Toukan <ttoukan.linux@gmail.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	zyjzyj2000@gmail.com, nalramli@fastly.com,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	"open list:MELLANOX MLX5 core VPI driver" <linux-rdma@vger.kernel.org>,
+	Tariq Toukan <tariqt@nvidia.com>
+References: <20240510041705.96453-1-jdamato@fastly.com>
+ <20240510041705.96453-2-jdamato@fastly.com>
+ <230701b9-c52a-4b59-9969-4cd5a5d697f4@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.45.0.rc1.225.g2a3ae87e7f-goog
-Message-ID: <20240514191547.3230887-1-cmllamas@google.com>
-Subject: [PATCH v4 RESEND] lockdep: fix deadlock issue between lockdep and rcu
-From: Carlos Llamas <cmllamas@google.com>
-To: "Paul E . McKenney" <paulmck@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Bart Van Assche <bvanassche@acm.org>
-Cc: John Stultz <jstultz@google.com>, Joel Fernandes <joel@joelfernandes.org>, 
-	linux-kernel@vger.kernel.org, kernel-team@android.com, 
-	Zhiguo Niu <zhiguo.niu@unisoc.com>, stable@vger.kernel.org, 
-	Carlos Llamas <cmllamas@google.com>, Xuewen Yan <xuewen.yan@unisoc.com>, 
-	Ingo Molnar <mingo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <230701b9-c52a-4b59-9969-4cd5a5d697f4@gmail.com>
 
-From: Zhiguo Niu <zhiguo.niu@unisoc.com>
+On Tue, May 14, 2024 at 09:44:37PM +0300, Tariq Toukan wrote:
+> 
+> 
+> On 10/05/2024 7:17, Joe Damato wrote:
+> > Add functions to support the netdev-genl per queue stats API.
+> > 
+> > ./cli.py --spec netlink/specs/netdev.yaml \
+> > --dump qstats-get --json '{"scope": "queue"}'
+> > 
+> > ...snip
+> > 
+> >   {'ifindex': 7,
+> >    'queue-id': 62,
+> >    'queue-type': 'rx',
+> >    'rx-alloc-fail': 0,
+> >    'rx-bytes': 105965251,
+> >    'rx-packets': 179790},
+> >   {'ifindex': 7,
+> >    'queue-id': 0,
+> >    'queue-type': 'tx',
+> >    'tx-bytes': 9402665,
+> >    'tx-packets': 17551},
+> > 
+> > ...snip
+> > 
+> > Also tested with the script tools/testing/selftests/drivers/net/stats.py
+> > in several scenarios to ensure stats tallying was correct:
+> > 
+> > - on boot (default queue counts)
+> > - adjusting queue count up or down (ethtool -L eth0 combined ...)
+> > - adding mqprio TCs
+> > 
+> > Signed-off-by: Joe Damato <jdamato@fastly.com>
+> > ---
+> >   .../net/ethernet/mellanox/mlx5/core/en_main.c | 144 ++++++++++++++++++
+> >   1 file changed, 144 insertions(+)
+> > 
+> > diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+> > index ffe8919494d5..4a675d8b31b5 100644
+> > --- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+> > +++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+> > @@ -39,6 +39,7 @@
+> >   #include <linux/debugfs.h>
+> >   #include <linux/if_bridge.h>
+> >   #include <linux/filter.h>
+> > +#include <net/netdev_queues.h>
+> >   #include <net/page_pool/types.h>
+> >   #include <net/pkt_sched.h>
+> >   #include <net/xdp_sock_drv.h>
+> > @@ -5282,6 +5283,148 @@ static bool mlx5e_tunnel_any_tx_proto_supported(struct mlx5_core_dev *mdev)
+> >   	return (mlx5_vxlan_allowed(mdev->vxlan) || mlx5_geneve_tx_allowed(mdev));
+> >   }
+> > +static void mlx5e_get_queue_stats_rx(struct net_device *dev, int i,
+> > +				     struct netdev_queue_stats_rx *stats)
+> > +{
+> > +	struct mlx5e_priv *priv = netdev_priv(dev);
+> > +
+> > +	if (mlx5e_is_uplink_rep(priv))
+> > +		return;
+> > +
+> > +	struct mlx5e_channel_stats *channel_stats = priv->channel_stats[i];
+> > +	struct mlx5e_rq_stats *xskrq_stats = &channel_stats->xskrq;
+> > +	struct mlx5e_rq_stats *rq_stats = &channel_stats->rq;
+> > +
+> 
+> Don't we allow variable declaration only at the beginning of a block?
+> Is this style accepted in the networking subsystem?
 
-There is a deadlock scenario between lockdep and rcu when
-rcu nocb feature is enabled, just as following call stack:
+Thanks for the careful review.
 
-     rcuop/x
--000|queued_spin_lock_slowpath(lock = 0xFFFFFF817F2A8A80, val = ?)
--001|queued_spin_lock(inline) // try to hold nocb_gp_lock
--001|do_raw_spin_lock(lock = 0xFFFFFF817F2A8A80)
--002|__raw_spin_lock_irqsave(inline)
--002|_raw_spin_lock_irqsave(lock = 0xFFFFFF817F2A8A80)
--003|wake_nocb_gp_defer(inline)
--003|__call_rcu_nocb_wake(rdp = 0xFFFFFF817F30B680)
--004|__call_rcu_common(inline)
--004|call_rcu(head = 0xFFFFFFC082EECC28, func = ?)
--005|call_rcu_zapped(inline)
--005|free_zapped_rcu(ch = ?)// hold graph lock
--006|rcu_do_batch(rdp = 0xFFFFFF817F245680)
--007|nocb_cb_wait(inline)
--007|rcu_nocb_cb_kthread(arg = 0xFFFFFF817F245680)
--008|kthread(_create = 0xFFFFFF80803122C0)
--009|ret_from_fork(asm)
+I don't know; checkpatch --strict didn't complain, but I can move
+all the variable declarations up in the next revision, if you'd
+like.
 
-     rcuop/y
--000|queued_spin_lock_slowpath(lock = 0xFFFFFFC08291BBC8, val = 0)
--001|queued_spin_lock()
--001|lockdep_lock()
--001|graph_lock() // try to hold graph lock
--002|lookup_chain_cache_add()
--002|validate_chain()
--003|lock_acquire
--004|_raw_spin_lock_irqsave(lock = 0xFFFFFF817F211D80)
--005|lock_timer_base(inline)
--006|mod_timer(inline)
--006|wake_nocb_gp_defer(inline)// hold nocb_gp_lock
--006|__call_rcu_nocb_wake(rdp = 0xFFFFFF817F2A8680)
--007|__call_rcu_common(inline)
--007|call_rcu(head = 0xFFFFFFC0822E0B58, func = ?)
--008|call_rcu_hurry(inline)
--008|rcu_sync_call(inline)
--008|rcu_sync_func(rhp = 0xFFFFFFC0822E0B58)
--009|rcu_do_batch(rdp = 0xFFFFFF817F266680)
--010|nocb_cb_wait(inline)
--010|rcu_nocb_cb_kthread(arg = 0xFFFFFF817F266680)
--011|kthread(_create = 0xFFFFFF8080363740)
--012|ret_from_fork(asm)
+> > +	stats->packets = rq_stats->packets + xskrq_stats->packets;
+> > +	stats->bytes = rq_stats->bytes + xskrq_stats->bytes;
+> > +	stats->alloc_fail = rq_stats->buff_alloc_err +
+> > +			    xskrq_stats->buff_alloc_err;
+> > +}
+> > +
+> > +static void mlx5e_get_queue_stats_tx(struct net_device *dev, int i,
+> > +				     struct netdev_queue_stats_tx *stats)
+> > +{
+> > +	struct mlx5e_priv *priv = netdev_priv(dev);
+> > +	struct net_device *netdev = priv->netdev;
+> > +	struct mlx5e_txqsq *sq;
+> > +	int j;
+> > +
+> > +	if (mlx5e_is_uplink_rep(priv))
+> > +		return;
+> > +
+> > +	for (j = 0; j < netdev->num_tx_queues; j++) {
+> > +		sq = priv->txq2sq[j];
+> 
+> No sq instance in case interface is down.
 
-rcuop/x and rcuop/y are rcu nocb threads with the same nocb gp thread.
-This patch release the graph lock before lockdep call_rcu.
+Ah, I see. OK.
 
-Fixes: a0b0fd53e1e6 ("locking/lockdep: Free lock classes that are no longer in use")
-Cc:  <stable@vger.kernel.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Cc: Waiman Long <longman@redhat.com>
-Cc: Carlos Llamas <cmllamas@google.com>
-Cc: Bart Van Assche <bvanassche@acm.org>
-Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
-Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
-Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
-Reviewed-by: Waiman Long <longman@redhat.com>
-Reviewed-by: Carlos Llamas <cmllamas@google.com>
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
-Signed-off-by: Carlos Llamas <cmllamas@google.com>
----
- kernel/locking/lockdep.c | 48 ++++++++++++++++++++++++++--------------
- 1 file changed, 32 insertions(+), 16 deletions(-)
+> This should be a simple arithmetic calculation.
+> Need to expose the proper functions for this calculation, and use it here
+> and in the sq create flows.
 
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 151bd3de5936..3468d8230e5f 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -6184,25 +6184,27 @@ static struct pending_free *get_pending_free(void)
- static void free_zapped_rcu(struct rcu_head *cb);
- 
- /*
-- * Schedule an RCU callback if no RCU callback is pending. Must be called with
-- * the graph lock held.
-- */
--static void call_rcu_zapped(struct pending_free *pf)
-+* See if we need to queue an RCU callback, must called with
-+* the lockdep lock held, returns false if either we don't have
-+* any pending free or the callback is already scheduled.
-+* Otherwise, a call_rcu() must follow this function call.
-+*/
-+static bool prepare_call_rcu_zapped(struct pending_free *pf)
- {
- 	WARN_ON_ONCE(inside_selftest());
- 
- 	if (list_empty(&pf->zapped))
--		return;
-+		return false;
- 
- 	if (delayed_free.scheduled)
--		return;
-+		return false;
- 
- 	delayed_free.scheduled = true;
- 
- 	WARN_ON_ONCE(delayed_free.pf + delayed_free.index != pf);
- 	delayed_free.index ^= 1;
- 
--	call_rcu(&delayed_free.rcu_head, free_zapped_rcu);
-+	return true;
- }
- 
- /* The caller must hold the graph lock. May be called from RCU context. */
-@@ -6228,6 +6230,7 @@ static void free_zapped_rcu(struct rcu_head *ch)
- {
- 	struct pending_free *pf;
- 	unsigned long flags;
-+	bool need_callback;
- 
- 	if (WARN_ON_ONCE(ch != &delayed_free.rcu_head))
- 		return;
-@@ -6239,14 +6242,18 @@ static void free_zapped_rcu(struct rcu_head *ch)
- 	pf = delayed_free.pf + (delayed_free.index ^ 1);
- 	__free_zapped_classes(pf);
- 	delayed_free.scheduled = false;
-+	need_callback =
-+		prepare_call_rcu_zapped(delayed_free.pf + delayed_free.index);
-+	lockdep_unlock();
-+	raw_local_irq_restore(flags);
- 
- 	/*
--	 * If there's anything on the open list, close and start a new callback.
--	 */
--	call_rcu_zapped(delayed_free.pf + delayed_free.index);
-+	* If there's pending free and its callback has not been scheduled,
-+	* queue an RCU callback.
-+	*/
-+	if (need_callback)
-+		call_rcu(&delayed_free.rcu_head, free_zapped_rcu);
- 
--	lockdep_unlock();
--	raw_local_irq_restore(flags);
- }
- 
- /*
-@@ -6286,6 +6293,7 @@ static void lockdep_free_key_range_reg(void *start, unsigned long size)
- {
- 	struct pending_free *pf;
- 	unsigned long flags;
-+	bool need_callback;
- 
- 	init_data_structures_once();
- 
-@@ -6293,10 +6301,11 @@ static void lockdep_free_key_range_reg(void *start, unsigned long size)
- 	lockdep_lock();
- 	pf = get_pending_free();
- 	__lockdep_free_key_range(pf, start, size);
--	call_rcu_zapped(pf);
-+	need_callback = prepare_call_rcu_zapped(pf);
- 	lockdep_unlock();
- 	raw_local_irq_restore(flags);
--
-+	if (need_callback)
-+		call_rcu(&delayed_free.rcu_head, free_zapped_rcu);
- 	/*
- 	 * Wait for any possible iterators from look_up_lock_class() to pass
- 	 * before continuing to free the memory they refer to.
-@@ -6390,6 +6399,7 @@ static void lockdep_reset_lock_reg(struct lockdep_map *lock)
- 	struct pending_free *pf;
- 	unsigned long flags;
- 	int locked;
-+	bool need_callback = false;
- 
- 	raw_local_irq_save(flags);
- 	locked = graph_lock();
-@@ -6398,11 +6408,13 @@ static void lockdep_reset_lock_reg(struct lockdep_map *lock)
- 
- 	pf = get_pending_free();
- 	__lockdep_reset_lock(pf, lock);
--	call_rcu_zapped(pf);
-+	need_callback = prepare_call_rcu_zapped(pf);
- 
- 	graph_unlock();
- out_irq:
- 	raw_local_irq_restore(flags);
-+	if (need_callback)
-+		call_rcu(&delayed_free.rcu_head, free_zapped_rcu);
- }
- 
- /*
-@@ -6446,6 +6458,7 @@ void lockdep_unregister_key(struct lock_class_key *key)
- 	struct pending_free *pf;
- 	unsigned long flags;
- 	bool found = false;
-+	bool need_callback = false;
- 
- 	might_sleep();
- 
-@@ -6466,11 +6479,14 @@ void lockdep_unregister_key(struct lock_class_key *key)
- 	if (found) {
- 		pf = get_pending_free();
- 		__lockdep_free_key_range(pf, key, 1);
--		call_rcu_zapped(pf);
-+		need_callback = prepare_call_rcu_zapped(pf);
- 	}
- 	lockdep_unlock();
- 	raw_local_irq_restore(flags);
- 
-+	if (need_callback)
-+		call_rcu(&delayed_free.rcu_head, free_zapped_rcu);
-+
- 	/* Wait until is_dynamic_key() has finished accessing k->hash_entry. */
- 	synchronize_rcu();
- }
--- 
-2.45.0.rc1.225.g2a3ae87e7f-goog
+OK. I was trying to avoid adding more code, but I did see where the
+math is done for this elsewhere in the driver and it probably makes
+sense to factor that out into its own function to be used in
+multiple places.
 
+> Here it seems that you need a very involved user, so he passes the correct
+> index i of the SQ that he's interested in..
+> 
+> > +		if (sq->ch_ix == i) {
+> 
+> So you're looking for the first SQ on channel i?
+> But there might be multiple SQs on channel i...
+> Also, this SQ might be already included in the base stats.
+> In addition, this i might be too large for a channel index (num_tx_queues
+> can be 8 * num_channels)
+> 
+> The logic here (of mapping from i in num_tx_queues to SQ stats) needs
+> careful definition.
+
+OK, I'll go back through and try to sort this out again re-reading
+the sq code a few more times.
+
+Thanks again for the careful review, I do really appreciate your
+time and effort.
+
+> > +			stats->packets = sq->stats->packets;
+> > +			stats->bytes = sq->stats->bytes;
+> > +			return;
+> > +		}
+> > +	}
+> > +}
+> > +
+> > +static void mlx5e_get_base_stats(struct net_device *dev,
+> > +				 struct netdev_queue_stats_rx *rx,
+> > +				 struct netdev_queue_stats_tx *tx)
+> > +{
+> > +	struct mlx5e_priv *priv = netdev_priv(dev);
+> > +	int i, j;
+> > +
+> > +	if (!mlx5e_is_uplink_rep(priv)) {
+> > +		rx->packets = 0;
+> > +		rx->bytes = 0;
+> > +		rx->alloc_fail = 0;
+> > +
+> > +		/* compute stats for deactivated RX queues
+> > +		 *
+> > +		 * if priv->channels.num == 0 the device is down, so compute
+> > +		 * stats for every queue.
+> > +		 *
+> > +		 * otherwise, compute only the queues which have been deactivated.
+> > +		 */
+> > +		if (priv->channels.num == 0)
+> > +			i = 0;
+> > +		else
+> > +			i = priv->channels.params.num_channels;
+> > +
+> > +		for (; i < priv->stats_nch; i++) {
+> > +			struct mlx5e_channel_stats *channel_stats = priv->channel_stats[i];
+> > +			struct mlx5e_rq_stats *xskrq_stats = &channel_stats->xskrq;
+> > +			struct mlx5e_rq_stats *rq_stats = &channel_stats->rq;
+> > +
+> > +			rx->packets += rq_stats->packets + xskrq_stats->packets;
+> > +			rx->bytes += rq_stats->bytes + xskrq_stats->bytes;
+> > +			rx->alloc_fail += rq_stats->buff_alloc_err +
+> > +					  xskrq_stats->buff_alloc_err;
+> 
+> Isn't this equivalent to mlx5e_get_queue_stats_rx(i) ?
+
+It is, yes. If you'd prefer that I call mlx5e_get_queue_stats_rx, I
+can do that.
+
+> > +		}
+> > +
+> > +		if (priv->rx_ptp_opened) {
+> > +			struct mlx5e_rq_stats *rq_stats = &priv->ptp_stats.rq;
+> > +
+> > +			rx->packets += rq_stats->packets;
+> > +			rx->bytes += rq_stats->bytes;
+> > +		}
+> > +	}
+> > +
+> > +	tx->packets = 0;
+> > +	tx->bytes = 0;
+> > +
+> > +	/* three TX cases to handle:
+> > +	 *
+> > +	 * case 1: priv->channels.num == 0, get the stats for every TC
+> > +	 *         on every queue.
+> > +	 *
+> > +	 * case 2: priv->channel.num > 0, so get the stats for every TC on
+> > +	 *         every deactivated queue.
+> > +	 *
+> > +	 * case 3: the number of TCs has changed, so get the stats for the
+> > +	 *         inactive TCs on active TX queues (handled in the second loop
+> > +	 *         below).
+> > +	 */
+> > +	if (priv->channels.num == 0)
+> > +		i = 0;
+> > +	else
+> > +		i = priv->channels.params.num_channels;
+> > +
+> 
+> All reads/writes to priv->channels must be under the priv->state_lock.
+
+Ah, yes. You are right and I forgot about this part, yet again and
+made the same error with RX above.
+
+I think in the next revision I'll hold the state_lock for the entire
+function, right?
+
+I presume that dropping the lock right after reading
+priv->channels.params.num_channels is incorrect, because the
+channels could disappear while iterating through them.
+
+> > +	for (; i < priv->stats_nch; i++) {
+> > +		struct mlx5e_channel_stats *channel_stats = priv->channel_stats[i];
+> > +
+> > +		for (j = 0; j < priv->max_opened_tc; j++) {
+> > +			struct mlx5e_sq_stats *sq_stats = &channel_stats->sq[j];
+> > +
+> > +			tx->packets += sq_stats->packets;
+> > +			tx->bytes += sq_stats->bytes;
+> > +		}
+> > +	}
+> > +
+> > +	/* Handle case 3 described above. */
+> > +	for (i = 0; i < priv->channels.params.num_channels; i++) {
+> > +		struct mlx5e_channel_stats *channel_stats = priv->channel_stats[i];
+> > +		u8 dcb_num_tc = mlx5e_get_dcb_num_tc(&priv->channels.params);
+> > +
+> > +		for (j = dcb_num_tc; j < priv->max_opened_tc; j++) {
+> > +			struct mlx5e_sq_stats *sq_stats = &channel_stats->sq[j];
+> > +
+> > +			tx->packets += sq_stats->packets;
+> > +			tx->bytes += sq_stats->bytes;
+> > +		}
+> > +	}
+> > +
+> > +	if (priv->tx_ptp_opened) {
+> > +		for (j = 0; j < priv->max_opened_tc; j++) {
+> > +			struct mlx5e_sq_stats *sq_stats = &priv->ptp_stats.sq[j];
+> > +
+> > +			tx->packets    += sq_stats->packets;
+> > +			tx->bytes      += sq_stats->bytes;
+> > +		}
+> > +	}
+> > +}
+> > +
+> > +static const struct netdev_stat_ops mlx5e_stat_ops = {
+> > +	.get_queue_stats_rx     = mlx5e_get_queue_stats_rx,
+> > +	.get_queue_stats_tx     = mlx5e_get_queue_stats_tx,
+> > +	.get_base_stats         = mlx5e_get_base_stats,
+> > +};
+> > +
+> >   static void mlx5e_build_nic_netdev(struct net_device *netdev)
+> >   {
+> >   	struct mlx5e_priv *priv = netdev_priv(netdev);
+> > @@ -5299,6 +5442,7 @@ static void mlx5e_build_nic_netdev(struct net_device *netdev)
+> >   	netdev->watchdog_timeo    = 15 * HZ;
+> > +	netdev->stat_ops          = &mlx5e_stat_ops;
+> >   	netdev->ethtool_ops	  = &mlx5e_ethtool_ops;
+> >   	netdev->vlan_features    |= NETIF_F_SG;
 
