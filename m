@@ -1,263 +1,133 @@
-Return-Path: <linux-kernel+bounces-178835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE1E18C586F
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 17:03:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 972998C5877
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 17:05:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D7A41C22206
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 15:03:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31AFF1F237BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 15:05:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6E8517EB8C;
-	Tue, 14 May 2024 15:02:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3149817EB92;
+	Tue, 14 May 2024 15:05:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nHyHF8CG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fwH2L2d/"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3F971448C8;
-	Tue, 14 May 2024 15:02:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6ABF3EA66;
+	Tue, 14 May 2024 15:05:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715698976; cv=none; b=imq/iTErfFzO8NJ57B1nf7ZyeAm21/OojeyQ4q/dPeuYycvp2wSoWhUek0c5+TX5C4hIPLXguyg7MWSYmauvWo2niweIvijIFmWjxzyyrd//rWr4dostOfotkmuuerXsA4n4EAdFieuH42XRw8YzUZqL4oX4YIKU+mFdLWEJcB8=
+	t=1715699116; cv=none; b=rAr1lJOeT06x1bwVn+xJumIPhTrpZPI0hQkSEBR21t+5BJPxIP32IycZiW3ey9xnmhX7xK1NbTFxlCSpbYLeSkJGB6fdrq81MUMYExZSr5XzLjm5sn1CIBvmsSDs5rHoiAQx2NHccnAtoejRBYFHwDjM+KtJPH9kEbUu3TP0e4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715698976; c=relaxed/simple;
-	bh=qXSXhAaDwGgQP2ADIwaMUOx4lgpbJlAYOhbtaN38fGg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b+qhlBUmXVp3XzdHcu7QWNYEbWadsrNEcfAvD7EF/Pzp4IHF5nvnVxNStCF9ejhgO8V6JoYPp6YAlrKPXt8qVGSOV2g8OstdvESBWaCIsxxsMrwFEObK+G35fhrkMnKTJMMaMujYpmUdw1qqrwFsjrokYSsLGaLlNKloh2h+/eQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nHyHF8CG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACEE0C2BD10;
-	Tue, 14 May 2024 15:02:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715698975;
-	bh=qXSXhAaDwGgQP2ADIwaMUOx4lgpbJlAYOhbtaN38fGg=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=nHyHF8CGKQ+uulpBZyC6m4NeeRAGCL4A+cI+S7UJOyHF2b4uZD7bPE3e073LH+yZM
-	 fD5mZupiBIBMhHGLPJwYwwy2txzGX+Q3aiS2HmrWPh1nU/ICVj2g0LDIkjGQ+DcapZ
-	 gUzLNYJvF1mzFjbcJvCj3t1JSBrxTtZWjqSIr+9+QFq6s1ptfaCgX4UnpOKp/su+pE
-	 iyKFc/rC8m0txhtipaiWFa7owIfRIXynvx4Q2RW4T79MO1jcmeWOthlxS4xHEJqaT2
-	 1qPTDu7cmrs3c6iS4SMdUf1r2FeeiJgM3R5J9YaNCGcNXm4+kqsk90/nTWUKsG5yUB
-	 xONt5vl49UOnQ==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 1D979CE0485; Tue, 14 May 2024 08:02:55 -0700 (PDT)
-Date: Tue, 14 May 2024 08:02:55 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-	elver@google.com, akpm@linux-foundation.org, tglx@linutronix.de,
-	peterz@infradead.org, dianders@chromium.org, pmladek@suse.com,
-	arnd@arndb.de, torvalds@linux-foundation.org, kernel-team@meta.com,
-	Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v2 cmpxchg 09/13] lib: Add one-byte emulation function
-Message-ID: <a4451340-fa42-4255-9940-fecd4f0c4269@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <b67e79d4-06cb-4a45-a906-b9e0fbae22c5@paulmck-laptop>
- <20240501230130.1111603-9-paulmck@kernel.org>
- <ZkInMNOsLO5XbDj5@boqun-archlinux>
- <9f0ff126-2806-488e-97cc-7258eff0c574@paulmck-laptop>
- <ZkI4XPJLeCtabfGh@boqun-archlinux>
- <ZkKD6UqXZozp1p-W@boqun-archlinux>
- <29f1d801-9fb4-4ecb-8d5e-cecb7d7a76e1@paulmck-laptop>
- <ZkN64LAeOfHAXyUM@boqun-archlinux>
+	s=arc-20240116; t=1715699116; c=relaxed/simple;
+	bh=w4qu7AcWvUkrD2GyDHl1h65yHhTJv5ueqrzrzj7ci3s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=TMqHrKhOVpbr3EudIwoRQuP1lc6c/Q7umqo8FBPYQAQN7KUU0yaxuDGoZCaJsETdBKCGi2QcDQl2trqbKetZzG4yqLSs+c3jXmUSYK72R4L2J4bpgj4uE+uXnw4yixTYj5i3VLqc0HBUFcMMlk05n60WFE8ux09hmPBrj2glx1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fwH2L2d/; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44EBohpO004317;
+	Tue, 14 May 2024 15:05:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=NnZu3bgBmSPSM6LjznEKtBZHGtRz96Gtt9Ol698i3bE=; b=fw
+	H2L2d/9BoqMTJgCd45y6wQvAHo0ncZjyEqdX8HMR5PCTprwfXmuRNoOhgcv2s/Sz
+	hrg0O6wK43J0ZPZ7aMUTqPYBQx/aczrpep8aG1RzpzcRSVti39ViagTLFHVizOhg
+	4hVZ30A+hikkkj93BzXzP0s2BO8LOQyP0fQOUdNxBMkTsqSHMQLtvqOyLiLF0J/c
+	txY/Eiu5x/Vp36QW9boaZOFeu4ygJfmhzwYmNNmKkJVYEo8bPcIVNVMIS7TQxh5k
+	GGLqUz/0+j8PDcpI0/o/BAcNZuuvE8w3/ziqZ9S2+wcJvPDKNHJU2vr6EyAxDYi3
+	FOQKMCc0kp2yfGPvNqsQ==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y47eg8fxc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 14 May 2024 15:05:08 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44EF55m7013646
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 14 May 2024 15:05:05 GMT
+Received: from [10.216.14.10] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 14 May
+ 2024 08:04:59 -0700
+Message-ID: <0a372307-8887-ac97-54c6-d6080e64540f@quicinc.com>
+Date: Tue, 14 May 2024 20:34:56 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZkN64LAeOfHAXyUM@boqun-archlinux>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH 12/13] regulator: add pm8008 pmic regulator driver
+Content-Language: en-US
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+CC: <johan@kernel.org>, <andersson@kernel.org>, <broonie@kernel.org>,
+        <conor+dt@kernel.org>, <devicetree@vger.kernel.org>,
+        <johan+linaro@kernel.org>, <konrad.dybcio@linaro.org>,
+        <krzk+dt@kernel.org>, <lee@kernel.org>, <lgirdwood@gmail.com>,
+        <linus.walleij@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <robh@kernel.org>, <swboyd@chromium.org>
+References: <ZjpMeVk_HiixZUEu@hovoldconsulting.com>
+ <20240514140446.706847-1-quic_skakitap@quicinc.com>
+ <CAHp75VcfYuukpLg=F36ykddsT9SpfdGNyyvVeyw-Yvz61Lrq7g@mail.gmail.com>
+From: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>
+In-Reply-To: <CAHp75VcfYuukpLg=F36ykddsT9SpfdGNyyvVeyw-Yvz61Lrq7g@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 06wmee6BnCQYyBEKBkIDU_zBFoOtEd63
+X-Proofpoint-ORIG-GUID: 06wmee6BnCQYyBEKBkIDU_zBFoOtEd63
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-14_08,2024-05-14_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
+ malwarescore=0 phishscore=0 spamscore=0 mlxlogscore=894 lowpriorityscore=0
+ clxscore=1015 impostorscore=0 suspectscore=0 priorityscore=1501
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405010000 definitions=main-2405140106
 
-On Tue, May 14, 2024 at 07:53:20AM -0700, Boqun Feng wrote:
-> On Tue, May 14, 2024 at 07:22:47AM -0700, Paul E. McKenney wrote:
-> > On Mon, May 13, 2024 at 02:19:37PM -0700, Boqun Feng wrote:
-> > > On Mon, May 13, 2024 at 08:57:16AM -0700, Boqun Feng wrote:
-> > > > On Mon, May 13, 2024 at 08:41:27AM -0700, Paul E. McKenney wrote:
-> > > > [...]
-> > > > > > > +#include <linux/types.h>
-> > > > > > > +#include <linux/export.h>
-> > > > > > > +#include <linux/instrumented.h>
-> > > > > > > +#include <linux/atomic.h>
-> > > > > > > +#include <linux/panic.h>
-> > > > > > > +#include <linux/bug.h>
-> > > > > > > +#include <asm-generic/rwonce.h>
-> > > > > > > +#include <linux/cmpxchg-emu.h>
-> > > > > > > +
-> > > > > > > +union u8_32 {
-> > > > > > > +	u8 b[4];
-> > > > > > > +	u32 w;
-> > > > > > > +};
-> > > > > > > +
-> > > > > > > +/* Emulate one-byte cmpxchg() in terms of 4-byte cmpxchg. */
-> > > > > > > +uintptr_t cmpxchg_emu_u8(volatile u8 *p, uintptr_t old, uintptr_t new)
-> > > > > > > +{
-> > > > > > > +	u32 *p32 = (u32 *)(((uintptr_t)p) & ~0x3);
-> > > > > > > +	int i = ((uintptr_t)p) & 0x3;
-> > > > > > > +	union u8_32 old32;
-> > > > > > > +	union u8_32 new32;
-> > > > > > > +	u32 ret;
-> > > > > > > +
-> > > > > > > +	ret = READ_ONCE(*p32);
-> > > > > > > +	do {
-> > > > > > > +		old32.w = ret;
-> > > > > > > +		if (old32.b[i] != old)
-> > > > > > > +			return old32.b[i];
-> > > > > > > +		new32.w = old32.w;
-> > > > > > > +		new32.b[i] = new;
-> > > > > > > +		instrument_atomic_read_write(p, 1);
-> > > > > > > +		ret = data_race(cmpxchg(p32, old32.w, new32.w)); // Overridden above.
-> > > > > > 
-> > > > > > Just out of curiosity, why is this `data_race` needed? cmpxchg is atomic
-> > > > > > so there should be no chance for a data race?
-> > > > > 
-> > > > > That is what I thought, too.  ;-)
-> > > > > 
-> > > > > The problem is that the cmpxchg() covers 32 bits, and so without that
-> > > > > data_race(), KCSAN would complain about data races with perfectly
-> > > > > legitimate concurrent accesses to the other three bytes.
-> > > > > 
-> > > > > The instrument_atomic_read_write(p, 1) beforehand tells KCSAN to complain
-> > > > > about concurrent accesses, but only to that one byte.
-> > > > > 
-> > > > 
-> > > > Oh, I see. For that purpose, maybe we can just use raw_cmpxchg() here,
-> > > > i.e. a cmpxchg() without any instrument in it. Cc Mark in case I'm
-> > > > missing something.
-> > > > 
-> > > 
-> > > I just realized that the KCSAN instrumentation is already done in
-> > > cmpxchg() layer:
-> > > 
-> > > 	#define cmpxchg(ptr, ...) \
-> > > 	({ \
-> > > 		typeof(ptr) __ai_ptr = (ptr); \
-> > > 		kcsan_mb(); \
-> > > 		instrument_atomic_read_write(__ai_ptr, sizeof(*__ai_ptr)); \
-> > > 		raw_cmpxchg(__ai_ptr, __VA_ARGS__); \
-> > > 	})
-> > > 
-> > > and, this function is lower in the layer, so it shouldn't have the
-> > > instrumentation itself. How about the following (based on today's RCU
-> > > dev branch)?
-> > 
-> > The raw_cmpxchg() looks nicer than the added data_race()!
-> > 
-> > One question below, though.
-> > 
-> > 							Thanx, Paul
-> > 
-> > > Regards,
-> > > Boqun
-> > > 
-> > > -------------------------------------------->8
-> > > Subject: [PATCH] lib: cmpxchg-emu: Make cmpxchg_emu_u8() noinstr
-> > > 
-> > > Currently, cmpxchg_emu_u8() is called via cmpxchg() or raw_cmpxchg()
-> > > which already makes the instrumentation decision:
-> > > 
-> > > * cmpxchg() case:
-> > > 
-> > > 	cmpxchg():
-> > > 	  kcsan_mb();
-> > > 	  instrument_atomic_read_write(...);
-> > > 	  raw_cmpxchg():
-> > > 	    arch_cmpxchg():
-> > > 	      cmpxchg_emu_u8();
-> > > 
-> > > ... should have KCSAN instrumentation.
-> > > 
-> > > * raw_cmpxchg() case:
-> > > 
-> > > 	raw_cmpxchg():
-> > > 	  arch_cmpxchg():
-> > > 	    cmpxchg_emu_u8();
-> > > 
-> > > ... shouldn't have KCSAN instrumentation.
-> > > 
-> > > Therefore it's redundant to put KCSAN instrumentation in
-> > > cmpxchg_emu_u8() (along with the data_race() to get away the
-> > > instrumentation).
-> > > 
-> > > So make cmpxchg_emu_u8() a noinstr function, and remove the KCSAN
-> > > instrumentation inside it.
-> > > 
-> > > Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-> > > ---
-> > >  include/linux/cmpxchg-emu.h |  4 +++-
-> > >  lib/cmpxchg-emu.c           | 14 ++++++++++----
-> > >  2 files changed, 13 insertions(+), 5 deletions(-)
-> > > 
-> > > diff --git a/include/linux/cmpxchg-emu.h b/include/linux/cmpxchg-emu.h
-> > > index 998deec67740..c4c85f41d9f4 100644
-> > > --- a/include/linux/cmpxchg-emu.h
-> > > +++ b/include/linux/cmpxchg-emu.h
-> > > @@ -10,6 +10,8 @@
-> > >  #ifndef __LINUX_CMPXCHG_EMU_H
-> > >  #define __LINUX_CMPXCHG_EMU_H
-> > >  
-> > > -uintptr_t cmpxchg_emu_u8(volatile u8 *p, uintptr_t old, uintptr_t new);
-> > > +#include <linux/compiler.h>
-> > > +
-> > > +noinstr uintptr_t cmpxchg_emu_u8(volatile u8 *p, uintptr_t old, uintptr_t new);
-> > >  
-> > >  #endif /* __LINUX_CMPXCHG_EMU_H */
-> > > diff --git a/lib/cmpxchg-emu.c b/lib/cmpxchg-emu.c
-> > > index 27f6f97cb60d..788c22cd4462 100644
-> > > --- a/lib/cmpxchg-emu.c
-> > > +++ b/lib/cmpxchg-emu.c
-> > > @@ -21,8 +21,13 @@ union u8_32 {
-> > >  	u32 w;
-> > >  };
-> > >  
-> > > -/* Emulate one-byte cmpxchg() in terms of 4-byte cmpxchg. */
-> > > -uintptr_t cmpxchg_emu_u8(volatile u8 *p, uintptr_t old, uintptr_t new)
-> > > +/*
-> > > + * Emulate one-byte cmpxchg() in terms of 4-byte cmpxchg.
-> > > + *
-> > > + * This function is marked as 'noinstr' as the instrumentation should be done at
-> > > + * outer layer.
-> > > + */
-> > > +noinstr uintptr_t cmpxchg_emu_u8(volatile u8 *p, uintptr_t old, uintptr_t new)
-> > >  {
-> > >  	u32 *p32 = (u32 *)(((uintptr_t)p) & ~0x3);
-> > >  	int i = ((uintptr_t)p) & 0x3;
-> > > @@ -37,8 +42,9 @@ uintptr_t cmpxchg_emu_u8(volatile u8 *p, uintptr_t old, uintptr_t new)
-> > >  			return old32.b[i];
-> > >  		new32.w = old32.w;
-> > >  		new32.b[i] = new;
-> > > -		instrument_atomic_read_write(p, 1);
-> > 
-> > Don't we need to keep that instrument_atomic_read_write() in order
-> > to allow KCSAN to detect data races with plain C-language reads?
-> > Or is that being handled some other way?
-> > 
-> 
-> I think that's already covered by the current code, cmpxchg_emu_u8() is
-> called from cmpxchg() macro, which has a:
-> 
-> 	instrument_atomic_read_write(p, sizeof(*p));
-> 
-> in it, and in the cmpxchg((u8*), ..) case, 'sizeof(*p)' is obviously 1
-> ;-)
 
-I believe you, but could you nevertheless please test it?  ;-)
+On 5/14/2024 7:48 PM, Andy Shevchenko wrote:
+> On Tue, May 14, 2024 at 5:05 PM Satya Priya Kakitapalli
+> <quic_skakitap@quicinc.com> wrote:
+>>> On Thu, May 09, 2024 at 03:07:02PM +0300, Andy Shevchenko wrote:
+>>>> Wed, May 08, 2024 at 10:37:50PM +0000, Stephen Boyd kirjoitti:
+>>>>> Quoting Johan Hovold (2024-05-06 08:08:29)
+> ...
+>
+>>>>>> +               BUILD_BUG_ON((ARRAY_SIZE(pldo_ranges) != 1) ||
+>>>>> This should be an && not || right?
+>>>>>> +                               (ARRAY_SIZE(nldo_ranges) != 1));
+>>>> In any case BUILD_BUG_ON() is not encouraged for such cases, it would be much
+>>>> better to have a static_assert() near to one of those arrays.
+>>> I think the reason it is placed here is that the above line reads:
+>>>
+>>>        rdesc->n_linear_ranges = 1;
+>>>
+>>> and that would need to change if anyone expands the arrays.
+>> Correct. static_assert() cannot be used in the middle of code here, it can only be used at the declarations part which doesn't serve the purpose.
+> I didn't get this. The ARRAY_SIZE():s are defined at compile time
+> globally. How does this prevent from using static_assert()?
 
-							Thanx, Paul
 
-> Regards,
-> Boqun
-> 
-> > > -		ret = data_race(cmpxchg(p32, old32.w, new32.w)); // Overridden above.
-> > > +
-> > > +		// raw_cmpxchg() is used here to avoid instrumentation.
-> > > +		ret = raw_cmpxchg(p32, old32.w, new32.w); // Overridden above.
-> > >  	} while (ret != old32.w);
-> > >  	return old;
-> > >  }
-> > > -- 
-> > > 2.44.0
-> > > 
+The reason we added it here is to make sure the nlod_ranges and 
+pldo_ranges doesn't become larger, and we forget updating the 
+n_linear_ranges. Adding static_assert here is not feasible so adding a 
+BUILD_BUG_ON at this point makes sure the n_linear_ranges is proper.
+
+
+>> So, BUILD_BUG_ON is the only way to go here.
+> I don't think so.
+>
 
