@@ -1,210 +1,178 @@
-Return-Path: <linux-kernel+bounces-178748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7D8B8C5721
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 15:30:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BF128C5725
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 15:30:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CE541F2208C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 13:30:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61EBAB241C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 13:30:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D4C51459FF;
-	Tue, 14 May 2024 13:21:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AADD8146D7F;
+	Tue, 14 May 2024 13:23:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="tG9nHuQa"
-Received: from sonic311-13.consmr.mail.bf2.yahoo.com (sonic311-13.consmr.mail.bf2.yahoo.com [74.6.131.123])
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="eV/6kj3W"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A84D1459F1
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 13:21:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.6.131.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4205B1448F4;
+	Tue, 14 May 2024 13:23:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715692893; cv=none; b=sKZTyad3v9Kz8iDWR8em5n9qyPy7WXySu7eTLXVYEN4p1S8J3rNYmRM8OS+8kTj2p4tq8JceSyhCe9kGda8J9oPpLJpWeQv9ieSJsm6CdpUXYGDPkPLt80iVL3jL3i3KhNmecip4AG9/sIyC9kKAbIqQ78kkCgQqteEgbdW3Ego=
+	t=1715693029; cv=none; b=LyEqiRl8QGAcm1Gx8mqbwdg+nGGagZYXXHZzGCBZZQYfKqhv7Qjezq2w0pwLJ03O7kY7FLONXCjop6nl/1J16g0cPBYO6Gmd4Nyv9KO9EHfw6DzmWNfI+iNdz5LhiKIpZVUbMYUn8xGkvyaeDQu9eZaNFOPzQVhgbzsAHOQRg4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715692893; c=relaxed/simple;
-	bh=hZtaa+gXLYdDiofDQR4Fm4ng3aii+qH+CB9OYIf7MZo=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=I62n4i2ujypU27q7fAfKbU/Gf/eIyfBW+pWHY9rfJ11ulVzkYDeCVKf6GMP/IyOQiw99SXK8nAj6cwFAmxT6r+Yv5SDQl6chpeCWj/zWc4EUNcZmV/41FNvXdIwpXcxGcnSho1gE3z13Z6A814nrEmC3P++8KnGhScFhKhz2uBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=tG9nHuQa; arc=none smtp.client-ip=74.6.131.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1715692885; bh=hZtaa+gXLYdDiofDQR4Fm4ng3aii+qH+CB9OYIf7MZo=; h=Date:From:To:Cc:In-Reply-To:References:Subject:From:Subject:Reply-To; b=tG9nHuQakGf2Q8AG3wahA9jaKjLDB1LpHLBrzN89CjkgVG/RIUWPqvDklnWhE2EZh3Xmwu03HRvGXC1S+0R2fDfFHfyArgjpEhfmMC+bdrPjuGm5M3/Dn6FZ7zit6aWX2Mtsr7FwrUnwvDKSfNIVfNlUfT6CGb4rrrvi8VaYaDBG8AuCbavzkgy+SkRdB++emExJgbtiaLKco7GBw094bfymqAGVrfW8/tC8c7qHQXVOljO+xQOdSvdS/ormuluQ9MvRyv4py7SuSkzr5vY3j12hPJYh8kpTNagW6TETG8kMJbXc4Rh63T7GIvJ7JvbifdG2XK0jMuZJcGicS4bLPw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1715692885; bh=7PngqoAxqPKK6rji8ZXq+PM5bGW2MtZgRGUZKxTTZ88=; h=X-Sonic-MF:Date:From:To:Subject:From:Subject; b=CD0rdbJG7lGKqmvfMwkmSCqHfJPgVmN9K6wjkvzHBSlBTtqrlgzDfTL6fIwRTwbyj8A0RxRcaYyYrpSk/VQqoU6uwIbn/YDaKAhDqI3hda4WvUwTrMEnSySlGMXPS82qT4vPahWRhdKnD8cfnk3sZUPNpQYPLhhFbboJDS6KWUxOEyXMPd/NzAlySzYPyrS9vKp2GpAvmsG3JyThlC3fsAhfuzhZjeuYQf0E4QP8tdOZwPyqwh8vcKjAd2TjASuPJDuj3fFog404BJs6+Mx42P7LXBSAUfUVg/6FZtb90EeO0kPQXkfAuZBapLXd+uHZyf0/QY/G5jUJ+P8m7k0QyQ==
-X-YMail-OSG: EJfSh3IVM1mV2u_Ym0XQC5AGUHjfIL_6xJFIjTr43wbINzQJA5ByyViZ7OtdfVS
- d_lwqbIpGGfaC5BJJekV6vQA6Z0s2Nd.BIuYFc2N61PCImwXjvu7RgsJZqZgSFu3gdhm20INHwSv
- IbFyd.xY9sI87ZqgpqbCYUc_t7wonILPTA4gKPkEu6LTmWBDCeFCoI8s5AVSYQBiXUwQ7qRC4WDU
- sn4g_IGuJtQ79yERFigGGJaAiinT4XVLkvLYIEBOXiZFfn8mHxRmmQoMURQoWTvkFAVWVg7oJvL7
- gt6uX2gUpJSt8TaXWj6zEHpVzb_g9wYGC4vC0Um7EI8Rlnrr.F1RBurSlAgnnNl1D4kp_YKgauO9
- eGGo4aN4C1lDauvSp_QFhq8Mc4PkrWuME7Gr8ScRvYlHf2XtiewZCNKHzMrvTLhx_TQjiDIaBBIo
- fJ9I0Xu_YXpxdNX2zwPriYB3H3WFbDAzBuvUNAHScGOcf0cu2AIBPgsElOyv4fQlfJJ.Ebacmdaf
- mqyQtf3648NcJgSxppKyIqIyKFD0eDkzqOH4bjpAmIAO4m9XUgJLOiT3ICbCbNt_CN9KV.eL3IeE
- auuIsbmnUYK3YgiUwzhhqJdquwgyB2bAZt3.omTYFTPS5efqa0tJeY7Mwth9c0K_02sr76k7p9bj
- 291Lk7R9BRihR.8wrcfSFDijqsmp8x5oQcMGC58gQzYaifZpHjcQndWAtS8hJszLsINvc8hCSKnF
- _ApwBd1_hnC6xz7QwimHPCgR152ojMzULV31bsu4VPLfA.TWFjDu8Wzf9f3trjBP8favQLaH4iwH
- mwThQh2Qji48_paWjS_UaYOPxXKzrMxZmJhNXeWeudP69wOexna2kzBUMIQ1Arozh6IQMAqs7bYi
- TA4eryYe61TBfI4XjTu1pl_kP1Hrtm7Bbo5zKpI0cpWyYWErH_lvZyx2xXvw8kkdbd8eburbREBT
- Zb3pZ.8sR4pU2CLXzcgGpSZBHXmmUrt36QpEd6ies4DDeCGuxQpn1CC0E64hadf6wnKFpBIi3.Jo
- rakCsSeqZu1dLJa8VLr4GRq0iLyoYNUKk4wI0tQgn95o6AzGGhZv9Igyuc7Kaq2XkHLRFBr74xmQ
- 3sRvZEHZpXtGAyZAvr28JQkFlTQhAncv2QTyq_7cTXURWDN8cjb.5Mk7VSCuOIcPixt.WKaYe8dz
- z6xOOd336B1gwHA96YHiTSCwvsNPV5_c3y5zRIpJEqBOuex0kEvxn6ceR0UTZVtqDwQR7h205yYa
- KFUs2Ziq3baqw5LiUWAdcA8_oG9GmxJZASBn8d.T8palzIrOMqaOTIDlzqb7UPAVDaxdz7gGf3vl
- N3BNp0EJy_B2Xzmg5AT7U1hmax1HeyaOypo0dnqeQGsWIPzVwfwCSaIdapSiiBGN.4SAF_yFBfFK
- Zz.8PWHH5LegNh0UmMkncLHln0jnWEJWCgUzgliPjnD5WzRvM9YFIdqNQKsVxfwBTq2CRiwXr5Fs
- _y7U6Q9wDGSIHoLRJNtlUW26x4sX1WdBE54o.WpJzqytIY39RMrIQ1c6ABhZgwfRH7b5CNUFW2_o
- _uzTBLqqdfbnO8xDbuMaRCH3O7dfA4lEuKP9dn5e2nsPdpTh39JEFyadw1CS7POGzoSFMRV14nal
- pshgXtoNiVRrJ5dojdgzjlduPZJUzFDVMUNEv0vpWOHDx0E0i8mTUHryLhKMz8Ros_pvB.40PiiN
- 7J8pgzrSgdQ0J_Br94oCe2TxtlkhaCzC6mwT7Cf69Og3noUSFV6FeD3hzSzouhUJiQFJeJn4tTTO
- Q8DCtddvnZ1wq_0jWjMmAuSfQ8HcvAgx.isOhHZgHgpL6oQL6E0TLIty3fho0cK6k8b9AjlUHE1y
- GbQQJFeBv3hgnLZKmZZE4QYo8_FZJAXhTMhC78Q95k7SvROz_iB7j_L1uYcQm2rR9nL9MhKQbmhG
- bQxqmV6rCvPNpD2HCbcb02Pvq14bg.gz3h0GcQdnTQ5QC9EgYZ782.FD7WhS1HsCAqKUCJrA6Piq
- z_USTX3U2OyDM8hHb1BwyH0fxwG3KMsglDsadfKrMGBQL2NMyEPQYp8RyzrPoRWAuM7L4EQ712..
- NKy.X1BIhfuJg1lUMuIYZWnbhG62fRPgIgsrqlJ_ndVwS5ghEs8t_nKkJr.PjnYruDKeTowzw9mk
- UfTGYjEErCgeAuRArUo4veQALnQxln8cAnin8yYtgAJL7JOPfB3ONNwTZwuDaSqJ14GjeNsBwM1d
- yDP.mDjutRQh9sh6t7aZtsaBr33rrS8tw_fC1TA--
-X-Sonic-MF: <vkrevs@yahoo.com>
-X-Sonic-ID: 8705d1b8-d904-44ac-a0a6-bd8618fbaf99
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.bf2.yahoo.com with HTTP; Tue, 14 May 2024 13:21:25 +0000
-Date: Tue, 14 May 2024 13:21:20 +0000 (UTC)
-From: Vadym Krevs <vkrevs@yahoo.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>, 
-	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Bagas Sanjaya <bagasdotme@gmail.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Regressions <regressions@lists.linux.dev>, 
-	Linux Serial <linux-serial@vger.kernel.org>, 
-	Gilles Buloz <gilles.buloz@kontron.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>
-Message-ID: <645803059.1237606.1715692880298@mail.yahoo.com>
-In-Reply-To: <6bfafddc-cf5b-4829-e09b-2622aaf83093@linux.intel.com>
-References: <ZkLv3wn62jqMVpSF@archie.me> <CAHp75VcjeJ5oZy2JjbyrKn+GVvixJKmfh3Yj1p-HxcJHrm0Wzg@mail.gmail.com> <606328522.1205749.1715678929830@mail.yahoo.com> <CAHp75VefMFJMAHrKmDf1joSkKOcaRMJWse8yM63Nt5v2W7w3Fw@mail.gmail.com> <6bfafddc-cf5b-4829-e09b-2622aaf83093@linux.intel.com>
-Subject: Re: [regression] [bisected] commit
- 6bb6fa6908ebd3cb4e14cd4f0ce272ec885d2eb0 corrupts data sent via
- pseudoterminal device
+	s=arc-20240116; t=1715693029; c=relaxed/simple;
+	bh=i4pIjJe0x16spaf+Nby5Vt3rvwu45Ga15QdtD4TELDw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gtGrUmopzCdamW1vxmoTgmstDAdO0YtrEa/RYbE6QTsNnca/g0K7v4mQWBy+i5ExD/3C7VNaAHj3GMSi6KFBlt2J517nlaoULO0rqnnyLXK7gq8s1es5R7IlJ379YN7/OehtF0/DUr9/Itk4rppfYHY4Yo9C2E+SxkSQWsjxZWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=eV/6kj3W; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-41fc2f7fbb5so30820075e9.1;
+        Tue, 14 May 2024 06:23:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1715693026; x=1716297826; darn=vger.kernel.org;
+        h=in-reply-to:autocrypt:from:references:cc:to:content-language
+         :subject:user-agent:mime-version:date:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=i4pIjJe0x16spaf+Nby5Vt3rvwu45Ga15QdtD4TELDw=;
+        b=eV/6kj3WmbNW45slkirTm8SoP1UngqDtc2U+us7koJLzFKjt6yoSRv+0t/9MW47fwC
+         ArQxx0HCKi2rNGSKd5LOvlFVC7pQGCamY88bWOJ6IIsu76xQtb6/K/QVZyic7//N1YrN
+         JwjnLAu2ETI5yHnRNQl8g3DMoar15hiLW/ilLGPYaydyY2iWAKjZU4aAvNq6T9NIwAQ/
+         y26v8F8tFNU/EGwq0RnJxJcnx+yDRhYIKn4vOcI6MCkBwpV7AyaBnM7+6YpjWYqxGTO+
+         q6jf/TLOGxAiYLXvGUQq7PUnACftzN+u7MA00LWP8yXCLmJfKCzmUYLfF7JTQq62mF5Z
+         MTDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715693026; x=1716297826;
+        h=in-reply-to:autocrypt:from:references:cc:to:content-language
+         :subject:user-agent:mime-version:date:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=i4pIjJe0x16spaf+Nby5Vt3rvwu45Ga15QdtD4TELDw=;
+        b=gHpsE1gIYKSP7eirzHpmBUHHbD8fJVz4P7tIA7YWsKuNcArwKQs35URdbS6wceMHcx
+         hBa+1scEZJ32QILFAHLyzxL2+7KDh6FGs4M2/azdmrn5EY/a5KStZE0Nfh6u/Z4TNpP0
+         l0KzotZChibTvmfWbx9Dyi5b3fmKqcRolVAB7AyR6ULX7VLVutaF4WYdOdDidX7QrbU4
+         dejeAIQeHWsQ+5bGmyXdHDfz1Xgr8CCqgo0lj1rn/kVsyMM2WcA1cZ9X+2EFoNatdeWk
+         DvMeQkTv2Q5MpLaQFvk2+VAEVz9eX6ffnmGKkYM1t1A+kiW32IWjJpnV+GfQ65BGCW9U
+         kP4g==
+X-Forwarded-Encrypted: i=1; AJvYcCXtxJkMQpigSHSldfRAEKldK0DCLt45HHAZKI13+dIWDZ75BaFCBtz2r8hCYhpodxKUXtuQMJ6kP532p5WTSxRBHOlGyEKAEX/vsW+vJyvRJchg7DPv5IPGtZHIVLqlnmddpi8s
+X-Gm-Message-State: AOJu0YxJ/Pcu4X4E5iBi3wpg3QA0JnNkcSXFVCDnsx7K3kGTe+iZ5/ff
+	tUQjW1tdyMiH2rGyO2zr7KkpzHamBDkMZIfdO5g+xgf+2QYoJ7A=
+X-Google-Smtp-Source: AGHT+IGBidFu3u5LcN0dwJ1l7jTnwnSr7ddHSRHFj1Wk5Lf/7XWy1WnDvx4EYx1pSVYG/e2K7Idp9w==
+X-Received: by 2002:a05:600c:511f:b0:418:5ef3:4a04 with SMTP id 5b1f17b1804b1-41fead59f07mr119358965e9.18.1715693026173;
+        Tue, 14 May 2024 06:23:46 -0700 (PDT)
+Received: from [192.168.1.3] (p5b2b40c2.dip0.t-ipconnect.de. [91.43.64.194])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42013c5fa61sm88956135e9.40.2024.05.14.06.23.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 May 2024 06:23:45 -0700 (PDT)
+Message-ID: <f08ad152-eefa-4748-8a71-6b84117e19b3@googlemail.com>
+Date: Tue, 14 May 2024 15:23:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: WebService/1.1.22321 YMailNorrin
+User-Agent: Betterbird (Windows)
+Subject: Re: Kernel 6.8.4 regression: aacraid controller not initialized any
+ more, system boot hangs
+Content-Language: de-DE
+To: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org, stable@vger.kernel.org,
+ linux-kernel@vger.kernel.org, regressions@leemhuis.info,
+ regressions@lists.linux.dev
+References: <eec6ebbf-061b-4a7b-96dc-ea748aa4d035@googlemail.com>
+ <yq1cypvwz5o.fsf@ca-mkp.ca.oracle.com>
+ <c4e8e0b5-fc32-4e26-8c0e-27a996769903@googlemail.com>
+ <yq14jb0twk6.fsf@ca-mkp.ca.oracle.com>
+From: Peter Schneider <pschneider1968@googlemail.com>
+Autocrypt: addr=pschneider1968@googlemail.com; keydata=
+ xjMEY58biBYJKwYBBAHaRw8BAQdADPnoGTrfCUCyH7SZVkFtnlzsFpeKANckofR4WVLMtMzN
+ L1BldGVyIFNjaG5laWRlciA8cHNjaG5laWRlcjE5NjhAZ29vZ2xlbWFpbC5jb20+wpwEExYK
+ AEQCGyMFCQW15qgFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQSjgovXlszhGoyt6IZu
+ OpLJLD/yRAUCY58b8AIZAQAKCRBuOpLJLD/yRIeIAQD0+/LMdKHM6AJdPCt+e9Z92BMybfnN
+ RtGqkdZWtvdhDQD9FJkGh/3PFtDinimB8UOB7Gi6AGxt9Nu9ne7PvHa0KQXOOARjnxuIEgor
+ BgEEAZdVAQUBAQdAw2GRwTf5HJlO6CCigzqH6GUKOjqR1xJ+3nR5EbBze0sDAQgHwn4EGBYK
+ ACYWIQSjgovXlszhGoyt6IZuOpLJLD/yRAUCY58biAIbDAUJBbXmqAAKCRBuOpLJLD/yRONS
+ AQCwB9qiEQoSnxHodu8kRuvUxXKIqN7701W+INXtFGtJygEAyPZH3/vSBJ4A7GUG7BZyQRcr
+ ryS0CUq77B7ZkcI1Nwo=
+In-Reply-To: <yq14jb0twk6.fsf@ca-mkp.ca.oracle.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------PnG437ECAAr56hnFUTpvgz20"
 
-On Tuesday, 14 May 2024 at 12:03:25 BST, Ilpo J=C3=A4rvinen <ilpo.jarvinen@=
-linux.intel.com> wrote:
-=C2=A0
-> On Tue, 14 May 2024, Andy Shevchenko wrote:
->=C2=A0
-> > On Tue, May 14, 2024 at 12:28=E2=80=AFPM Vadym Krevs <vkrevs@yahoo.com>=
- wrote:
-> > >
-> > > It's a standard setup for an out-of-the box default install of openSU=
-SE 15.5 with KDE. All tests done in Konsole with bash as shell.
-> > >
-> > > stty -a -F /dev/pts/1
-> > > speed 38400 baud; rows 57; columns 217; line =3D 0;
-> > > intr =3D ^C; quit =3D ^; erase =3D ^?; kill =3D ^U; eof =3D ^D; eol =
-=3D <undef>; eol2 =3D <undef>; swtch =3D <undef>; start =3D ^Q; stop =3D ^S=
-; susp =3D ^Z; rprnt =3D ^R; werase =3D ^W; lnext =3D ^V; discard =3D ^O; m=
-in =3D 1; time =3D 0;
-> > > -parenb -parodd -cmspar cs8 -hupcl -cstopb cread -clocal -crtscts
-> > > -ignbrk -brkint -ignpar -parmrk -inpck -istrip -inlcr -igncr icrnl ix=
-on ixoff -iuclc -ixany -imaxbel iutf8
-> > > opost -olcuc -ocrnl onlcr -onocr -onlret -ofill -ofdel nl0 cr0 tab0 b=
-s0 vt0 ff0
-> > > isig icanon iexten echo echoe echok -echonl -noflsh -xcase -tostop -e=
-choprt echoctl echoke -flusho -extproc
-> >
-> > Thank you!
-> >
-> > Yeah. SW flow control is enabled, but I don't see which character is
-> > being used for that. Anyway, let's give Ilpo a chance to look into
-> > this.
->=C2=A0
-> Thanks a lot for pinpointing the commit with bisect. It turns out this
-> is a quite bad corruption bug and I'm quite surprised I didn't see (or
-> notice) it while testing the patch.
->=C2=A0
-> Could you please test and confirm the patch below fixes the issue?
-> --
-> [PATCH] tty: n_tty: Fix buffer offsets when looked ahead is used
->=C2=A0
-> When lookahead has "consumed" some characters (la_count > 0),
-> n_tty_receive_buf_standard() and n_tty_receive_buf_closing() for
-> characters beyond the la_count are given wrong cp/fp offsets which
-> leads to duplicating and losing some characters.
->=C2=A0
-> If la_count > 0, correct buffer pointers and make count consistency too
-> (the latter is not strictly necessary to fix the issue but seems more
-> logical to adjust all variables immediately to keep state consistent).
->=C2=A0
-> Reported-by: Vadym Krevs <vkrevs@yahoo.com>
-> Fixes: 6bb6fa6908eb ("tty: Implement lookahead to process XON/XOFF timely=
-")
-> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D218834
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
-> ---
-> drivers/tty/n_tty.c | 22 ++++++++++++++++------
-> 1 file changed, 16 insertions(+), 6 deletions(-)
->=C2=A0
-> diff --git a/drivers/tty/n_tty.c b/drivers/tty/n_tty.c
-> index f252d0b5a434..5e9ca4376d68 100644
-> --- a/drivers/tty/n_tty.c
-> +++ b/drivers/tty/n_tty.c
-> @@ -1619,15 +1619,25 @@ static void __receive_buf(struct tty_struct *tty,=
- const u8 *cp, const u8 *fp,
-> else if (ldata->raw || (L_EXTPROC(tty) && !preops))
-> n_tty_receive_buf_raw(tty, cp, fp, count);
-> else if (tty->closing && !L_EXTPROC(tty)) {
-> -=C2=A0 =C2=A0 =C2=A0 =C2=A0 if (la_count > 0)
-> +=C2=A0 =C2=A0 =C2=A0 =C2=A0 if (la_count > 0) {
-> n_tty_receive_buf_closing(tty, cp, fp, la_count, true);
-> -=C2=A0 =C2=A0 =C2=A0 =C2=A0 if (count > la_count)
-> -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 n_tty_receive_buf_closing(tty,=
- cp, fp, count - la_count, false);
-> +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 cp +=3D la_count;
-> +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if (fp)
-> +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 fp +=3D la_count=
-;
-> +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 count -=3D la_count;
-> +=C2=A0 =C2=A0 =C2=A0 =C2=A0 }
-> +=C2=A0 =C2=A0 =C2=A0 =C2=A0 if (count > 0)
-> +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 n_tty_receive_buf_closing(tty,=
- cp, fp, count, false);
-> } else {
-> -=C2=A0 =C2=A0 =C2=A0 =C2=A0 if (la_count > 0)
-> +=C2=A0 =C2=A0 =C2=A0 =C2=A0 if (la_count > 0) {
-> n_tty_receive_buf_standard(tty, cp, fp, la_count, true);
-> -=C2=A0 =C2=A0 =C2=A0 =C2=A0 if (count > la_count)
-> -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 n_tty_receive_buf_standard(tty=
-, cp, fp, count - la_count, false);
-> +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 cp +=3D la_count;
-> +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if (fp)
-> +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 fp +=3D la_count=
-;
-> +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 count -=3D la_count;
-> +=C2=A0 =C2=A0 =C2=A0 =C2=A0 }
-> +=C2=A0 =C2=A0 =C2=A0 =C2=A0 if (count > 0)
-> +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 n_tty_receive_buf_standard(tty=
-, cp, fp, count, false);
->=C2=A0
-> flush_echoes(tty);
-> if (tty->ops->flush_chars)
-> --
-> 2.39.2
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------PnG437ECAAr56hnFUTpvgz20
+Content-Type: multipart/mixed; boundary="------------cdi051ZZSIdFXMDMKWhP8wq0";
+ protected-headers="v1"
+From: Peter Schneider <pschneider1968@googlemail.com>
+To: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org, stable@vger.kernel.org,
+ linux-kernel@vger.kernel.org, regressions@leemhuis.info,
+ regressions@lists.linux.dev
+Message-ID: <f08ad152-eefa-4748-8a71-6b84117e19b3@googlemail.com>
+Subject: Re: Kernel 6.8.4 regression: aacraid controller not initialized any
+ more, system boot hangs
+References: <eec6ebbf-061b-4a7b-96dc-ea748aa4d035@googlemail.com>
+ <yq1cypvwz5o.fsf@ca-mkp.ca.oracle.com>
+ <c4e8e0b5-fc32-4e26-8c0e-27a996769903@googlemail.com>
+ <yq14jb0twk6.fsf@ca-mkp.ca.oracle.com>
+In-Reply-To: <yq14jb0twk6.fsf@ca-mkp.ca.oracle.com>
 
-Yes, I've tested the patch against the 6.9.0-rc7-local-00012-gdccb07f2914c =
-kernel (last commit=C2=A045db3ab70092637967967bfd8e6144017638563c from May =
-8th)=C2=A0and it works just fine.=C2=A0
+--------------cdi051ZZSIdFXMDMKWhP8wq0
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
-Thank you very much for fixing the problem so quicky.
+SGkgTWFydGluLA0KDQpBbSAxNC4wNS4yMDI0IHVtIDE0OjU0IHNjaHJpZWIgTWFydGluIEsu
+IFBldGVyc2VuOg0KPiANCj4gUGV0ZXIsDQo+IA0KPj4gRGlkIHlvdSBoYXZlIGFueSBjaGFu
+Y2UgdG8gbG9vayBpbnRvIHRoaXMgaW4gbW9yZSBkZXB0aD8gRG8geW91IG5lZWQNCj4+IG1v
+cmUgaW5mb3JtYXRpb24gZnJvbSBtZSB0byB0YWNrbGUgdGhpcyBpc3N1ZT8gSSdtIG5vdCBh
+IGtlcm5lbA0KPj4gZGV2ZWxvcGVyLCBqdXN0IGEgdXNlciwgYnV0IEkgZ3Vlc3Mgd2l0aCBw
+cm9wZXIgaW5zdHJ1Y3Rpb24gSSB3b3VsZCBiZQ0KPj4gYWJsZSB0byBjb21waWxlIGFuZCB0
+ZXN0IHBhdGNoZXMuDQo+IA0KPiBJIGFtIGFmcmFpZCBJIGhhdmVuJ3QgaGFkIGEgdGltZSB0
+byBsb29rIGZ1cnRoZXIgaW50byB0aGlzIHlldCBkdWUgdG8NCj4gdHJhdmVsLiBUaGUgYW5u
+dWFsIExTRi9NTS9CUEYgY29uZmVyZW5jZSBpcyB0YWtpbmcgcGxhY2UgdGhpcyB3ZWVrLiBJ
+DQo+IHdpbGwgZ2V0IGJhY2sgdG8geW91IGFzIHNvb24gYXMgcG9zc2libGUuDQoNCk9rLCBn
+cmVhdCwgc28gaGF2ZSBhIGdvb2QgdGltZSB3aGVyZWV2ZXIgdGhpcyBjb25mZXJlbmNlIGlz
+IGdvaW5nIHRvIHRha2UgcGxhY2UhIEl0IGlzbid0IA0KdmVyeSB1cmdlbnQsIGJlY2F1c2Ug
+aW4gdGhlIG1lYW50aW1lIEkgY2FuIGp1c3QgY29udGludWUgdG8gdXNlIHRoZSA2LjUuMTMg
+a2VybmVsIG9uIG15IA0KUHJveG1veCBtYWNoaW5lLiBJIGp1c3Qgd2FudGVkIHRvIHBpbmcg
+eW91IGFnYWluIHNvIHRoaXMgd291bGRuJ3QgZmFsbCB0aHJvdWdoIHRoZSBjcmFja3MuDQoN
+Cj4gQmVmb3JlIEkgbWFrZSBhbnkgcmVjb21tZW5kYXRpb25zIHdydC4gZmlybXdhcmUgdXBk
+YXRlcyBJIHdvdWxkIGxpa2UgdG8NCj4gdW5kZXJzdGFuZCB3aHkgYSBjaGFuZ2UgaW50ZW5k
+ZWQgdG8gbWFrZSBzY2FubmluZyBtb3JlIHJlc2lsaWVudCBhZ2FpbnN0DQo+IGRldmljZSBp
+bXBsZW1lbnRhdGlvbiBlcnJvcnMgaGFzIGhhZCB0aGUgb3Bwb3NpdGUgZWZmZWN0LiBFc3Bl
+Y2lhbGx5DQo+IHNpbmNlIHRoZSBjaGFuZ2UgaW4gcXVlc3Rpb24gcmV2ZXJ0cyB0byBob3cg
+TGludXggaGFzIHNjYW5uZWQgZm9yDQo+IGRldmljZXMgZm9yIGRlY2FkZXMuDQoNCkknbGwg
+bGVhdmUgZXZlcnl0aGluZyBhcyBpdCBpcyBub3csIGFuZCB3b24ndCBjaGFuZ2UgdGhlIGNy
+aW1lIHNjZW5lIHVudGlsIHlvdSB0ZWxsIG1lIA0Kd2hhdCB0byBkbyBuZXh0Lg0KDQoNCkJl
+c3RlIEdyw7zDn2UsDQpQZXRlciBTY2huZWlkZXINCg0KLS0gDQpDbGltYiB0aGUgbW91bnRh
+aW4gbm90IHRvIHBsYW50IHlvdXIgZmxhZywgYnV0IHRvIGVtYnJhY2UgdGhlIGNoYWxsZW5n
+ZSwNCmVuam95IHRoZSBhaXIgYW5kIGJlaG9sZCB0aGUgdmlldy4gQ2xpbWIgaXQgc28geW91
+IGNhbiBzZWUgdGhlIHdvcmxkLA0Kbm90IHNvIHRoZSB3b3JsZCBjYW4gc2VlIHlvdS4gICAg
+ICAgICAgICAgICAgICAgIC0tIERhdmlkIE1jQ3VsbG91Z2ggSnIuDQoNCk9wZW5QR1A6ICAw
+eEEzODI4QkQ3OTZDQ0UxMUE4Q0FERTg4NjZFM0E5MkM5MkMzRkYyNDQNCkRvd25sb2FkOiBo
+dHRwczovL3d3dy5wZXRlcnMtbmV0enBsYXR6LmRlL2Rvd25sb2FkL3BzY2huZWlkZXIxOTY4
+X3B1Yi5hc2MNCmh0dHBzOi8va2V5cy5tYWlsdmVsb3BlLmNvbS9wa3MvbG9va3VwP29wPWdl
+dCZzZWFyY2g9cHNjaG5laWRlcjE5NjhAZ29vZ2xlbWFpbC5jb20NCmh0dHBzOi8va2V5cy5t
+YWlsdmVsb3BlLmNvbS9wa3MvbG9va3VwP29wPWdldCZzZWFyY2g9cHNjaG5laWRlcjE5NjhA
+Z21haWwuY29tDQo=
 
-Kind regards,
-Vadym
+--------------cdi051ZZSIdFXMDMKWhP8wq0--
 
-P.S.: Hopefully, Yahoo mail has actually sent this reply as plain text.
+--------------PnG437ECAAr56hnFUTpvgz20
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+wnsEABYIACMWIQSjgovXlszhGoyt6IZuOpLJLD/yRAUCZkNl4AUDAAAAAAAKCRBuOpLJLD/yRLgl
+APoD1O8x6JDCdgoVHfWedEebUCEpHyuaySPGluRk+qzg3wEAxs6J01Ge68f9KIYi176XiURPg0z8
+NZq5v8L4RHPSwwY=
+=r9NY
+-----END PGP SIGNATURE-----
+
+--------------PnG437ECAAr56hnFUTpvgz20--
 
