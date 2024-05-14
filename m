@@ -1,86 +1,100 @@
-Return-Path: <linux-kernel+bounces-178359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 660978C4C84
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 09:00:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 405818C4C90
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 09:06:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8F1C282428
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 07:00:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70F581C20CA4
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 07:06:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A853BF9F5;
-	Tue, 14 May 2024 07:00:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D731101F7;
+	Tue, 14 May 2024 07:06:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Jr1O09Av"
-Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z4aW5Cxj"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27597AD31
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 07:00:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F06FDE545
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 07:06:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715670012; cv=none; b=mQjBGCM1XMPxCmTW5zLZ18Z9sOJVP3DF5ipfZLFjmMfEyT71NosXcy++K0FEw0loqi0NLvoLlpDKougVvoLoRWJIsNlkMFWysQ8WmvWbnwD9h1W4021xRnos+gud+hTtu0uZLZIN8mqyLgDLroyEZMc71P++Rzqyjsm1Rks3k5Y=
+	t=1715670405; cv=none; b=Qh0r3JtsLj0/ne4D4okH61jaDltfWmnSAyUm4NMNbKWCed2ecN0eTlLre8xh0Jq+hFMOMtlanU7mlLC3NZGq34HzugYBo9W6JeK7cv/IYCKOe/C1GHLkZSWsVX8thZNEqZ+F5L0xByCdGZM7f+kuovX9nbUUe22zDNad7Z3w4ao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715670012; c=relaxed/simple;
-	bh=Fr1k8FCX8AQDOA16hofIxkjmqYHc90QA46DYS6nQbjQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=r6XZwwobR86DygQlT8llAzHewiLKEyNXhhH2mg0N58VQBxh54tH/8HZvNeqzL78vu91ehjrR5ZRwcXvoZwfKKqZyE1vq+vmWGZSBVlcNX0tDDarUBDfrKTqT+gLSfrP/sCDWGvrgpQUqOE4r0IlqMeL8KYwXVYra3taNCM2EwL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Jr1O09Av; arc=none smtp.client-ip=95.215.58.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1715670004;
+	s=arc-20240116; t=1715670405; c=relaxed/simple;
+	bh=/sGwybPQwY/yOOcIbLPLu9i4V+Uh09IXDoQAEtRlkA4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gz26u4lFKvKuU3CYMHcYOlPpJJx2wwNbZeLPfeV6vEZ2K1TTWY09vt6nqw3D7yEMlEHGwPd9PIGZ0jrnnS93ZP2UvSi9/M69185hc/XSHZZaKnMIoXO044Heki3yHlKqT7R4Em+uYyZLHbO+BcBX89hRxzt4+xVZbwhuw7KjgQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z4aW5Cxj; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715670402;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=GuMB+wcCP156JnQ5VQJFiYAVGQR5x6RhBdouNcVSTSA=;
-	b=Jr1O09AvAPD6UyTKl8bsftFt7gGDU4ozIL0ch7vr4uDZaxxseqfppwgKLqdgWEekI+10Aj
-	GDPQmfgQykdWsimeN0XdSGhpkoNzOa7KLYlsOj9YKY1p289hhryhT6IBTuKt2NAKk6ckRr
-	mQAtzerY6ehi6Y6+0OEcbwpK7loX8L4=
-From: Yajun Deng <yajun.deng@linux.dev>
-To: akpm@linux-foundation.org,
-	hannes@cmpxchg.org,
-	vbabka@suse.cz
-Cc: linux-mm@kvack.org,
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/sGwybPQwY/yOOcIbLPLu9i4V+Uh09IXDoQAEtRlkA4=;
+	b=Z4aW5Cxjbr4zWrq3v3dE+subkgsAPwxnnWVaW3givY2rb+j+KAwgYu9SMEvRIGER934/r8
+	N7bfT890Jt9QziKHz7e9oiSq6KSE9SZ9fnpbm82JWAD83mLMRh9EQ6bisOfJo3GlMsSARU
+	UT9hU1UVSUahZAbYXLJWpIMS7ik2IcA=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-168-rl7Ye17INCCff6bEcvpkrw-1; Tue,
+ 14 May 2024 03:00:40 -0400
+X-MC-Unique: rl7Ye17INCCff6bEcvpkrw-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id E3D773C00085;
+	Tue, 14 May 2024 07:00:38 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.39.192.244])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id D60301251C7B;
+	Tue, 14 May 2024 07:00:34 +0000 (UTC)
+From: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
+To: yongqin.liu@linaro.org
+Cc: amit.pundir@linaro.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	inventor500@vivaldi.net,
+	jarkko.palviainen@gmail.com,
+	jstultz@google.com,
+	jtornosm@redhat.com,
+	kuba@kernel.org,
 	linux-kernel@vger.kernel.org,
-	Yajun Deng <yajun.deng@linux.dev>
-Subject: [PATCH] mm: page_alloc: fix the incorrect parameter
-Date: Tue, 14 May 2024 14:59:33 +0800
-Message-Id: <20240514065933.1523170-1-yajun.deng@linux.dev>
+	linux-usb@vger.kernel.org,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	stable@vger.kernel.org,
+	sumit.semwal@linaro.org,
+	vadim.fedorenko@linux.dev,
+	vmartensson@google.com
+Subject: Re: [PATCH v2] net: usb: ax88179_178a: avoid writing the mac address before first reading
+Date: Tue, 14 May 2024 09:00:32 +0200
+Message-ID: <20240514070033.5795-1-jtornosm@redhat.com>
+In-Reply-To: <CAMSo37XWZ118=R9tFHZqw+wc7Sy_QNHHLdkQhaxjhCeuQQhDJw@mail.gmail.com>
+References: <CAMSo37XWZ118=R9tFHZqw+wc7Sy_QNHHLdkQhaxjhCeuQQhDJw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.3
 
-The first parameter passed to set_pageblock_migratetype should be the
-buddy, not the page. Let's change it back correctly.
+Hello Yongqin,
 
-Fixes: fd919a85cd55 ("mm: page_isolation: prepare for hygienic freelists")
-Signed-off-by: Yajun Deng <yajun.deng@linux.dev>
----
- mm/page_alloc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I could not get a lot of information from the logs, but at least I
+identified the device.
+Anyway, I found the issue and the solution is being applied:
+https://lore.kernel.org/netdev/171564122955.1634.5508968909715338167.git-patchwork-notify@kernel.org/
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index cd584aace6bf..5422f6f8975d 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -1728,7 +1728,7 @@ bool move_freepages_block_isolate(struct zone *zone, struct page *page,
- 
- 		del_page_from_free_list(buddy, zone, order,
- 					get_pfnblock_migratetype(buddy, pfn));
--		set_pageblock_migratetype(page, migratetype);
-+		set_pageblock_migratetype(buddy, migratetype);
- 		split_large_buddy(zone, buddy, pfn, order);
- 		return true;
- 	}
--- 
-2.25.1
+Best regards
+José Ignacio
 
 
