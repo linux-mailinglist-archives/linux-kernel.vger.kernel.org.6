@@ -1,156 +1,198 @@
-Return-Path: <linux-kernel+bounces-179135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD9CB8C5C3E
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 22:22:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7333D8C5C40
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 22:23:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F19521C22253
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 20:22:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26F4D284581
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 20:23:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A95C5181BA2;
-	Tue, 14 May 2024 20:22:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="ZF1wg4ws"
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50AE5181B91;
+	Tue, 14 May 2024 20:23:35 +0000 (UTC)
+Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95BB3181B82
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 20:22:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D411181320
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 20:23:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715718152; cv=none; b=mTU/rT6XVbEqktuXMyGodlnocnty5kV0pwm27fp/GFJ/lS7FOCdj8CbhjnfX4t+ssdXrsfTIVNbWCTCQvycp7kh/LjpGhhku6ZZCezFETTtEEFaVetuB8aIoY45ftRaPW7h7lxMtLUnDkitzAavrBseSHoOXhAtll4m6t58RhLA=
+	t=1715718214; cv=none; b=MX4SIMBlOnTngKljeDfEjVaDF8hm81UWjxgS7d9QdiT7AWm9F/OEsS9CVwRSvJyGPypH/gZkTAZ6L+n+BqGDMwj0n280OWlNHrphg7wXWGXAKWJw9b1jclSvbGdXUFKLBVb6UBCWXceyZTXyTbwuZnDNhh2u2PG0OiQtczS1H38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715718152; c=relaxed/simple;
-	bh=d+VcjteYj9SNA9aGf0rBf0JG873t1FLnFV29qq/mXjI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=tHrdSOML9uRSPVocZoT3b/v/rF1EdH6EJe0s38/haQ9uGu9jW6zMNRAwL2Ki+t6zLzVgdpchOw49WQMFTUylATtfuseP7HuRoYqDN1Pnp42KLvDWuHSFG44N3f0sd4VJHBVvAgZyLtOa5QZg8zSY5qNNYNFdTa6JViWHKRh74No=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca; spf=none smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=ZF1wg4ws; arc=none smtp.client-ip=209.85.219.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ndufresne.ca
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-de603e3072dso6744560276.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 13:22:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1715718150; x=1716322950; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=d+VcjteYj9SNA9aGf0rBf0JG873t1FLnFV29qq/mXjI=;
-        b=ZF1wg4wsOGgwZKVe0bSFdfwyENKqsBfsY3CcdSS5S6xw4sptc7LRW/Mxx1VL06k6Z6
-         Fy0ScD3vAT9/FpZuI7p3oIhH66S0AlnbzfWNN0+09CzanqBt1SS5qiPc/eLd6zRJwsEm
-         IuXL098LOUkjfE1JScXfaDkOhsVWoQduDaIzYNG7qv5SU0ISH6u0FY4u1YkUrp3YRCfh
-         BDkdu/HS+/dpQRrzajaDnI3mqAIQTURNAAV7JgujwUCLnR6FY1t8TYmWlKouY5uvwqyR
-         QUnztHFrdCpgIdsCBEdVll0vIPPrHpUqv2Wmz88fGWDrCfMQpJfneLsbH5coc0LQIuDq
-         thWA==
+	s=arc-20240116; t=1715718214; c=relaxed/simple;
+	bh=VTIB/7/r0A+xbsKG6d6v06OLFByjsDiqG8BqgoHWkcE=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=WDOlXyjaxIA57vrBN6NVBnd/hOey0iNn/UOZfzmkKNmWPoGYJhQp8ZgJzRZnNU1YETI/368VwDlQUHdsjmp7P+yAAW4RX4+0LYHCN9mi2J8K0F8wm0rgs7UEqnadoSjwrff49Q9/toCC4tJVbMdsqnIPJ/KOGtB1e/RkVhgGJpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-7e1c22e7280so557586439f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 13:23:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715718150; x=1716322950;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+        d=1e100.net; s=20230601; t=1715718212; x=1716323012;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=d+VcjteYj9SNA9aGf0rBf0JG873t1FLnFV29qq/mXjI=;
-        b=u497+1A0Z/p4wBRa3rN6PUenZVQKG60D3s12y2/MCvCh+gVfWoUPJir2QV2I62s2FZ
-         ox1l7WhpNSAC66PHIopxNXbVe+Sd8xBCFYCHCoVozAwfenJdAPnfW2oTvSzG3XrE63Uj
-         AWrnhSW7bSog4V+XjdgvExiiJ0O2yjlQbtnwiosBOE8MuKno/whYyNO4pfcpaohMZ2SO
-         350RHq7ERvUeNWshqXTPG2mH5502OkDw1KJVjkauy7t4aWa4IUUZgcRkhXHy4VzpyuUC
-         YVmrelY1W/sR6oDik8/hAzavryJa6Y7QNxDqbdAyaGZQ99cWVenxIrSR7vvAYRFTKxJX
-         IFbw==
-X-Forwarded-Encrypted: i=1; AJvYcCXRQHYbkgpkfSZqPrZoPvmWnjXGb0XfeMWJg9S1r50IPaNQKaeimo+VrYq898d/Aem3NrCG700wlHY00grzle++rLabteyjxp7TUvMo
-X-Gm-Message-State: AOJu0YyIppd92D7wWQa2nUzo7r/kriihXpyuOgzK+rwaA4h6gQPJh0aj
-	KhLF7FLLbN1fAVLrNfLrgp5f1/FC3F01C+pBbMJLbB83QSF0LvrAK+dXEKn/Ni4=
-X-Google-Smtp-Source: AGHT+IGKbrei/hBF59KPSMuKtm8FOwgj1uruWeGRRZhnJ24IqE3wDufQHwIuC3NPjleyRye7SlHKsQ==
-X-Received: by 2002:a25:a322:0:b0:de1:2843:9465 with SMTP id 3f1490d57ef6-dee4f3089e4mr12934632276.30.1715718150626;
-        Tue, 14 May 2024 13:22:30 -0700 (PDT)
-Received: from nicolas-tpx395.lan ([2606:6d00:17:6448::7a9])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6a15f1ccd42sm56648326d6.91.2024.05.14.13.22.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 May 2024 13:22:30 -0700 (PDT)
-Message-ID: <432f336e6d4b0666cfbb431591624d0e1fefd773.camel@ndufresne.ca>
-Subject: Re: [PATCH v7 7/8] media: imagination: Round to closest multiple
- for cropping region
-From: Nicolas Dufresne <nicolas@ndufresne.ca>
-To: Devarsh Thakkar <devarsht@ti.com>, Andy Shevchenko
-	 <andriy.shevchenko@linux.intel.com>
-Cc: mchehab@kernel.org, hverkuil-cisco@xs4all.nl,
- linux-media@vger.kernel.org,  linux-kernel@vger.kernel.org,
- benjamin.gaignard@collabora.com,  sebastian.fricke@collabora.com,
- dri-devel@lists.freedesktop.org,  laurent.pinchart@ideasonboard.com,
- praneeth@ti.com, nm@ti.com, vigneshr@ti.com,  a-bhatia1@ti.com,
- j-luthra@ti.com, b-brnich@ti.com, detheridge@ti.com,  p-mantena@ti.com,
- vijayp@ti.com, andrzej.p@collabora.com, p.zabel@pengutronix.de, 
- airlied@gmail.com, daniel@ffwll.ch, akpm@linux-foundation.org, 
- gregkh@linuxfoundation.org, adobriyan@gmail.com, jani.nikula@intel.com
-Date: Tue, 14 May 2024 16:22:28 -0400
-In-Reply-To: <7e3ad816-6a2a-4e02-9b41-03a8562812ad@ti.com>
-References: <20240509184001.4064820-1-devarsht@ti.com>
-	 <Zj447ePSnccbj76v@smile.fi.intel.com>
-	 <7e3ad816-6a2a-4e02-9b41-03a8562812ad@ti.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.1 (3.52.1-1.fc40) 
+        bh=rq9iUgKR4TDRB9grFF21zTQBEC+sDHsGn0+DR4a1KJ8=;
+        b=WmQFAdvAsygu3YapeL084o8pK/GrPYf8EGkiDD8PSGDkPTHI2KKnYhh5655dVwDdG+
+         5jUSToGc4EzluLU5G+3ruCvvdc4d+Oiorn1cDhFxi+muM4DfBalrDgv595Ch7vOUipfF
+         VVASgxfU4SGzPzEyAZo7RCtehT+V5m3zELpyiQ1cZLqNhLB/Fm8jZ4p0j4Yzg49Hr4ZO
+         3KcbBA4DHgREaZ0bNlqY+0wEBhww5Bt2A8FnE+lTK6cSMUz55cpgD3PahDnRA1pnd62g
+         fJvHRQXLBV4zklycAXSliXmpheuPi7UOhniYISVs6Yd8Yk9iwn/F9qKBrkhe/DCj3tpG
+         b1Bg==
+X-Forwarded-Encrypted: i=1; AJvYcCV1FQ9uaUmBKS6GMcWNHZLnylcsdXknbq+Eukp3YKXpfp8xjk/dpDbtCxkUdyUvBphEbfSWNhdjACrrKEDamhkwXP4ul9CpQpcU2DqT
+X-Gm-Message-State: AOJu0YxEFDSGQdLe+VnOVwWLJ5mqeB1YnHUfoU4tk7urHnp8l3+ykLKt
+	4a+0Orxbf9SIE+v4uAyj8keC+hQdS3FHmQsNQTsCP5nulpsVcH4LxP34yw7dKujOP5cGMpVAoh0
+	YbzNoHzQAseN6ib91VC+Qk0/AnPWIelvSQSETvLC9EREqLVeXutTfNQY=
+X-Google-Smtp-Source: AGHT+IHzyAjAze8ucBFpJ9ILU+skjgB+zENaWw3sMcBXYuE7KUnc9o3EAvaN8ewmpanBaAW+I9fbDxZJPHxkhwJT2Wrr5lMtKMdy
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Received: by 2002:a05:6638:248e:b0:488:7f72:b3ac with SMTP id
+ 8926c6da1cb9f-489585764d4mr831595173.2.1715718212415; Tue, 14 May 2024
+ 13:23:32 -0700 (PDT)
+Date: Tue, 14 May 2024 13:23:32 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000096049806186fc6f9@google.com>
+Subject: [syzbot] [btrfs?] general protection fault in btrfs_stop_all_workers (2)
+From: syzbot <syzbot+05fd41caa517e957851d@syzkaller.appspotmail.com>
+To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Le samedi 11 mai 2024 =C3=A0 22:38 +0530, Devarsh Thakkar a =C3=A9crit=C2=
-=A0:
-> Hi Andy,
->=20
-> Thanks for the quick review.
-> On 10/05/24 20:40, Andy Shevchenko wrote:
-> > On Fri, May 10, 2024 at 12:10:01AM +0530, Devarsh Thakkar wrote:
-> > > If neither of the flags to round down (V4L2_SEL_FLAG_LE) or round up
-> > > (V4L2_SEL_FLAG_GE) are specified by the user, then round to nearest
-> > > multiple of requested value while updating the crop rectangle coordin=
-ates.
-> > >=20
-> > > Use the rounding macro which gives preference to rounding down in cas=
-e two
-> > > nearest values (high and low) are possible to raise the probability o=
-f
-> > > cropping rectangle falling inside the bound region.
-> >=20
-> > This is arguable. How do we know that the bigger range is supported?
-> > The safest side is to go smaller than bigger.
-> >=20
->=20
-> Yes and that's what the driver does when do when application passes
-> V4L2_SEL_FLAG_LE while doing the selection. If application does not
-> specify explicitly whether to round down or round up the cropping
-> parameters requested by it (i.e app is neither passing V4L2_SEL_FLAG_LE
-> nor V4L2_SEL_FLAG_GE flags), then it is preferred by driver to round the
-> cropping parameters to nearest possible value by either rounding down or
-> rounding up to align with hardware requirements.
->=20
-> For e.g. If requested width for cropping region is 127 and HW requires
-> width to be multiple of 64 then we would prefer to round it up to 128
-> rather than rounding down to a more distant value (i.e. 64), but if
-> requested cropping width is 129 then we would prefer to instead round it
-> down to 128. But if requested cropping width is 160 then there are two
-> nearest possible values 160 - 32 =3D 128 and 160 + 32 =3D 192 and in whic=
-h
-> case we prefer the smaller value as you suggested and that's why the
-> driver uses round_closest_down.
->=20
-> For any reason, if still the cropping rectangle falls beyond the bound
-> region, then driver will return out of range error (-ERANGE) to
-> application.
+Hello,
 
-I would appreciate if this change was based on specification text, meaning
-improving the next if that behaviour is undefined. We might not be able to =
-fix
-it everywhere, but we can recommend something.
+syzbot found the following issue on:
 
-Nicolas
+HEAD commit:    f03359bca01b Merge tag 'for-6.9-rc6-tag' of git://git.kern..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17a0fbc4980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3310e643b6ef5d69
+dashboard link: https://syzkaller.appspot.com/bug?extid=05fd41caa517e957851d
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
->=20
-> Regards
-> Devarsh
->=20
->=20
+Unfortunately, I don't have any reproducer for this issue yet.
 
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/1b4deeb2639b/disk-f03359bc.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/f3c3d98db8ef/vmlinux-f03359bc.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/6f79ee1ae20f/bzImage-f03359bc.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+05fd41caa517e957851d@syzkaller.appspotmail.com
+
+BTRFS info (device loop2): last unmount of filesystem c9fe44da-de57-406a-8241-57ec7d4412cf
+general protection fault, probably for non-canonical address 0xe01ffbf11002a143: 0000 [#1] PREEMPT SMP KASAN PTI
+KASAN: maybe wild-memory-access in range [0x00ffff8880150a18-0x00ffff8880150a1f]
+CPU: 1 PID: 5087 Comm: syz-executor.2 Not tainted 6.9.0-rc6-syzkaller-00131-gf03359bca01b #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+RIP: 0010:__lock_acquire+0xe3e/0x3b30 kernel/locking/lockdep.c:5005
+Code: 11 00 00 39 05 f3 80 de 11 0f 82 be 05 00 00 ba 01 00 00 00 e9 e4 00 00 00 48 b8 00 00 00 00 00 fc ff df 4c 89 e2 48 c1 ea 03 <80> 3c 02 00 0f 85 82 1f 00 00 49 81 3c 24 a0 2c a1 92 0f 84 98 f2
+RSP: 0018:ffffc9000327f938 EFLAGS: 00010002
+RAX: dffffc0000000000 RBX: 0000000000000001 RCX: 0000000000000000
+RDX: 001ffff11002a143 RSI: ffff888029405a00 RDI: 00ffff8880150a18
+RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000001
+R10: ffffffff8f9f4fd7 R11: 0000000000000001 R12: 00ffff8880150a18
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000001
+FS:  000055556dc0c480(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000c002bb5000 CR3: 00000000668d6000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ lock_acquire kernel/locking/lockdep.c:5754 [inline]
+ lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
+ __raw_spin_lock_irq include/linux/spinlock_api_smp.h:119 [inline]
+ _raw_spin_lock_irq+0x36/0x50 kernel/locking/spinlock.c:170
+ put_pwq_unlocked kernel/workqueue.c:1671 [inline]
+ put_pwq_unlocked kernel/workqueue.c:1664 [inline]
+ destroy_workqueue+0x5df/0xaa0 kernel/workqueue.c:5739
+ btrfs_stop_all_workers+0x29f/0x370 fs/btrfs/disk-io.c:1800
+ close_ctree+0x4e3/0xfd0 fs/btrfs/disk-io.c:4371
+ generic_shutdown_super+0x159/0x3d0 fs/super.c:641
+ kill_anon_super+0x3a/0x60 fs/super.c:1225
+ btrfs_kill_super+0x3b/0x50 fs/btrfs/super.c:2091
+ deactivate_locked_super+0xbe/0x1a0 fs/super.c:472
+ deactivate_super+0xde/0x100 fs/super.c:505
+ cleanup_mnt+0x222/0x450 fs/namespace.c:1267
+ task_work_run+0x14e/0x250 kernel/task_work.c:180
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x278/0x2a0 kernel/entry/common.c:218
+ do_syscall_64+0xdc/0x260 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f53b047f057
+Code: b0 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 0f 1f 44 00 00 31 f6 e9 09 00 00 00 66 0f 1f 84 00 00 00 00 00 b8 a6 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 c7 c2 b0 ff ff ff f7 d8 64 89 02 b8
+RSP: 002b:00007ffdaeab7cf8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 00007f53b047f057
+RDX: 0000000000000000 RSI: 0000000000000009 RDI: 00007ffdaeab7db0
+RBP: 00007ffdaeab7db0 R08: 0000000000000000 R09: 0000000000000000
+R10: 00000000ffffffff R11: 0000000000000246 R12: 00007ffdaeab8e70
+R13: 00007f53b04c93b9 R14: 000000000001ac84 R15: 0000000000000007
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:__lock_acquire+0xe3e/0x3b30 kernel/locking/lockdep.c:5005
+Code: 11 00 00 39 05 f3 80 de 11 0f 82 be 05 00 00 ba 01 00 00 00 e9 e4 00 00 00 48 b8 00 00 00 00 00 fc ff df 4c 89 e2 48 c1 ea 03 <80> 3c 02 00 0f 85 82 1f 00 00 49 81 3c 24 a0 2c a1 92 0f 84 98 f2
+RSP: 0018:ffffc9000327f938 EFLAGS: 00010002
+RAX: dffffc0000000000 RBX: 0000000000000001 RCX: 0000000000000000
+RDX: 001ffff11002a143 RSI: ffff888029405a00 RDI: 00ffff8880150a18
+RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000001
+R10: ffffffff8f9f4fd7 R11: 0000000000000001 R12: 00ffff8880150a18
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000001
+FS:  000055556dc0c480(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000c002bb5000 CR3: 00000000668d6000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	11 00                	adc    %eax,(%rax)
+   2:	00 39                	add    %bh,(%rcx)
+   4:	05 f3 80 de 11       	add    $0x11de80f3,%eax
+   9:	0f 82 be 05 00 00    	jb     0x5cd
+   f:	ba 01 00 00 00       	mov    $0x1,%edx
+  14:	e9 e4 00 00 00       	jmp    0xfd
+  19:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
+  20:	fc ff df
+  23:	4c 89 e2             	mov    %r12,%rdx
+  26:	48 c1 ea 03          	shr    $0x3,%rdx
+* 2a:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1) <-- trapping instruction
+  2e:	0f 85 82 1f 00 00    	jne    0x1fb6
+  34:	49 81 3c 24 a0 2c a1 	cmpq   $0xffffffff92a12ca0,(%r12)
+  3b:	92
+  3c:	0f                   	.byte 0xf
+  3d:	84                   	.byte 0x84
+  3e:	98                   	cwtl
+  3f:	f2                   	repnz
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
