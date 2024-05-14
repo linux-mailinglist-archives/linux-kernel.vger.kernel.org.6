@@ -1,682 +1,276 @@
-Return-Path: <linux-kernel+bounces-178258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F8AC8C4B3D
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 04:40:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93A478C4B41
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 04:42:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D723C1F22193
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 02:40:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAAEB2839E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 02:42:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 851CC6FC5;
-	Tue, 14 May 2024 02:40:14 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7769979D2;
-	Tue, 14 May 2024 02:40:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715654413; cv=none; b=ILKjfu2odfhn/S41HNtaVgM3tJ04fajjbD1ChgCHPe5mDPoqxqSeNr51GkaDKqB0bx0puC6c3MMmaecZcT2Lx9I05CBnFlSe0oG35U50ncWkjUNwESHVTJgi+zNEG17OOUdMGh0W7YG0p3VfCRQRe3zQeiucaOZNZtHiJVJo+vw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715654413; c=relaxed/simple;
-	bh=49imwV6WUdh+yS7uwTfJWZwOb0YYsy78BQbYRKCjCag=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=SSBixRQ9F+4kLAE+85ft7PVl/OGghw0pzwOtFeqW5GCNJPLozSceDhuYl8SCsbVly5H8ZTLi/qlgOjwhdiEu1cy0Jp3hkzN5bvvtgrWBWVEb4prnuOqFwQMKO/rCkAAJPu+9kUYHbhNzqUcrT1LWB8NE29/GfLmd6yFhzqawrik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.24])
-	by gateway (Coremail) with SMTP id _____8AxiPABz0JmPYAMAA--.30276S3;
-	Tue, 14 May 2024 10:40:02 +0800 (CST)
-Received: from [10.20.42.24] (unknown [10.20.42.24])
-	by localhost.localdomain (Coremail) with SMTP id AQAAf8Bx0VX4zkJmTcodAA--.36775S3;
-	Tue, 14 May 2024 10:39:54 +0800 (CST)
-Subject: Re: [PATCH 2/2] Loongarch:Support loongarch avec
-To: Thomas Gleixner <tglx@linutronix.de>, chenhuacai@kernel.org,
- kernel@xen0n.name, jiaxun.yang@flygoat.com, gaoliang@loongson.cn,
- wangliupu@loongson.cn, lvjianmin@loongson.cn, yijun@loongson.cn,
- mhocko@suse.com, akpm@linux-foundation.org, dianders@chromium.org,
- maobibo@loongson.cn, xry111@xry111.site, zhaotianrui@loongson.cn,
- nathan@kernel.org, yangtiezhu@loongson.cn, zhoubinbin@loongson.cn
-Cc: loongarch@lists.linux.dev, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240507125953.9117-1-zhangtianyang@loongson.cn>
- <87a5l0prkc.ffs@tglx>
-From: Tianyang Zhang <zhangtianyang@loongson.cn>
-Message-ID: <27cd7657-e30b-845e-33f3-3cf55aa8540f@loongson.cn>
-Date: Tue, 14 May 2024 10:39:52 +0800
-User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 808F3B66F;
+	Tue, 14 May 2024 02:42:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="IScnx4Wo"
+Received: from esa16.fujitsucc.c3s2.iphmx.com (esa16.fujitsucc.c3s2.iphmx.com [216.71.158.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3725628;
+	Tue, 14 May 2024 02:42:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=216.71.158.33
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715654529; cv=fail; b=CPyJgJErCkjt71PPKizsLzMH/MiDeMAB/t/M4wOixN/Tjaqx7wcPAFuxoI5vVaDyXcZ4usy/GvcghdZIEatvApl7/DPV8hMscUdyAACqnk4NdsY09yK3/JbcWX7hZIeJlu8a55WjT+O3AqoFukHsYBBoe2DlC9pPuwZoNBu8Vq8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715654529; c=relaxed/simple;
+	bh=kFskBzRMg2k5QCkYVfJ69UeChn6owfkskl7XHfvkiZM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=AGog0SJvGRQPPl5uU7BWSYiUBEuCIL+Tx2IY+rZHsMThNAmaZey8gEzYPA0bE2Mm8ZlNTp8MCvQQBgpOVLFdM+D13AIs83INAyzE2vMTmEBTPQq6oTKdXFKItunMMPnzH1d0tWbFUmaP7WQxrcdBEBEmsVopwsRKo0BZnfZuXLM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=IScnx4Wo; arc=fail smtp.client-ip=216.71.158.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fujitsu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj1;
+  t=1715654526; x=1747190526;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=kFskBzRMg2k5QCkYVfJ69UeChn6owfkskl7XHfvkiZM=;
+  b=IScnx4WoAqrl8S2yd63Qmou9U1YGv0B9a+nYG9N0N8LFWpNlS60iUMKE
+   VIW8NxT0J9B9SuFY7vs04abC3dEd/FkacJs9rw5/yQZxRLDWgs/XAUNGg
+   VmRUM1MZ+dv3VIZr4EvhEda7JF/qBlTI8v0OlyTkCEW3fFg7kFbbn4xXl
+   UtBx0c9qZI5HBwfoWrvx+KunHzQhzFE2SZJ2L4fWkqxwMtYY9JCrMnMoE
+   aiJorBcWNk0lf0/L5JoIRBYZFrzjDkO6dz0fMY/ZWrqSXO6KDizG5SEZ1
+   355O5g+GZNaPx92VhJ58YVUsnXQAzal9W07CZFrenwWgtmrkvNWiiKzL0
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,11072"; a="119238479"
+X-IronPort-AV: E=Sophos;i="6.08,159,1712588400"; 
+   d="scan'208";a="119238479"
+Received: from mail-os0jpn01lp2104.outbound.protection.outlook.com (HELO JPN01-OS0-obe.outbound.protection.outlook.com) ([104.47.23.104])
+  by ob1.fujitsucc.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2024 11:40:50 +0900
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=GtMh3FBvY6ljobX1osgCeNi6X1TkSM5NHk+PUGZyrGh7+6PW2TvIAxsYcRYKD5gmq2apqCn0E8kSKLZdijUT2EXiyYQLPxfbQzXW/t89UgrRfGIP939dTJTRf3hrM1IINRgm76CdMY6sFDQ53G8OMWvj2bl849f09J5v7k4XwqknNBSmhpDUJmwWyAnD3TUhCzlTkvnu0/tY+kTm1I1dlwhqLjVIGWUsgNw7TZrzusOIyqo/hNkZzJg+i0EGrA3vYf0sct2H+Jrd7dLxbuwR7G/P9Y3QIu/lSRyucNlXnESMtXR3EDM3i+f/W9IpjeXSMG6DZu/7YenHW2NY6edXqQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kFskBzRMg2k5QCkYVfJ69UeChn6owfkskl7XHfvkiZM=;
+ b=G8K83MrYW6WjanzBg9Nup8SpbdXxROx67vojLk1DTA7lc3ioLDSteEvvCc0BLa6cvY1jRBGstslmsBD6Vb5XNKgpCvMzIOb7V88yeBh9F9VogRE7lNMkeukMHFFAMUJtUutwn4tktW8nMcbwyORyEvQd13mzUgI31vDWyAOwN6jdcJzBn/id5BSo1s5jnxVvWuqjQ0inUEa95yfpGuuvAfnNEBKxwzQ4/zEaz93fgVPFEfZllZucwWOxxIcsCecrKfFgg8gI8ULPHobxJ3ocz2Ucdo2eHloObaiMJGfqjnGtBhMTzQblkQdNH9mUZZat1nyAoA7NheQXUKHm0HLB0g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fujitsu.com; dmarc=pass action=none header.from=fujitsu.com;
+ dkim=pass header.d=fujitsu.com; arc=none
+Received: from TY1PR01MB1562.jpnprd01.prod.outlook.com (2603:1096:403:6::12)
+ by OS3PR01MB10090.jpnprd01.prod.outlook.com (2603:1096:604:1e6::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Tue, 14 May
+ 2024 02:40:47 +0000
+Received: from TY1PR01MB1562.jpnprd01.prod.outlook.com
+ ([fe80::d9ba:425a:7044:6377]) by TY1PR01MB1562.jpnprd01.prod.outlook.com
+ ([fe80::d9ba:425a:7044:6377%6]) with mapi id 15.20.7544.052; Tue, 14 May 2024
+ 02:40:47 +0000
+From: "Zhijian Li (Fujitsu)" <lizhijian@fujitsu.com>
+To: "ira.weiny@intel.com" <ira.weiny@intel.com>, Dave Jiang
+	<dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>, Jonathan Cameron
+	<Jonathan.Cameron@huawei.com>, Navneet Singh <navneet.singh@intel.com>
+CC: Dan Williams <dan.j.williams@intel.com>, Davidlohr Bueso
+	<dave@stgolabs.net>, Alison Schofield <alison.schofield@intel.com>, Vishal
+ Verma <vishal.l.verma@intel.com>, "linux-btrfs@vger.kernel.org"
+	<linux-btrfs@vger.kernel.org>, "linux-cxl@vger.kernel.org"
+	<linux-cxl@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 04/26] cxl/region: Add dynamic capacity decoder and region
+ modes
+Thread-Topic: [PATCH 04/26] cxl/region: Add dynamic capacity decoder and
+ region modes
+Thread-Index: AQHafmelyG7ZI2N/WUGUutu20kdUILGWU20A
+Date: Tue, 14 May 2024 02:40:47 +0000
+Message-ID: <a70bfe29-292d-40f5-b963-ea2637b5f07a@fujitsu.com>
+References: <20240324-dcd-type2-upstream-v1-0-b7b00d623625@intel.com>
+ <20240324-dcd-type2-upstream-v1-4-b7b00d623625@intel.com>
+In-Reply-To: <20240324-dcd-type2-upstream-v1-4-b7b00d623625@intel.com>
+Accept-Language: en-US, zh-CN
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Mozilla Thunderbird
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=fujitsu.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY1PR01MB1562:EE_|OS3PR01MB10090:EE_
+x-ms-office365-filtering-correlation-id: e713d35d-e4c1-4724-fb8d-08dc73bf4288
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230031|7416005|376005|1800799015|366007|1580799018|38070700009;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?dVU4WWlSeUJYYTlNTmpHZXMrM3RnQm9aNmduTUE2L0I4R2txMStMZ05SVUwx?=
+ =?utf-8?B?R0xLbm5CVi9uSlBEYVFaZ2M0VzJkdWsxQlh3S3hoYTBqUkg5L1ZNbG12elpP?=
+ =?utf-8?B?VGx0NmhlOTBCV0VDd0lZZ3VQZUYxN25aVE4wSU80b20zbGdRRnNtcWU5YlBj?=
+ =?utf-8?B?UUVlekFreURjakFKUzVHSlVWRFphTk5OazBPY1VnK3NhMUt6SW5tMGJTdkZo?=
+ =?utf-8?B?amZBYkhtOGtkUC9nRmdaMkM4ZFZhaDhiUDRQOUJpSUJDVlBMbXFjVWtUVE9U?=
+ =?utf-8?B?Sld2RTJJRGVlZEgrRDVUaXo4Z2ZiWjZUbTlvSk1VOUl1QS9UVGhCRi9YemJq?=
+ =?utf-8?B?akM1bHVna0RDTGRxOVJ4Zld0NEVweVpCekR6Z0JXSGhTaTRMaVE5SlBGalQz?=
+ =?utf-8?B?ZmxQdGtadm1GZ01aZ2NXNFR2d2lUZkozR1hmd3p5WXhLNFEyZG9WcExieUt5?=
+ =?utf-8?B?ZDlmRFZHdGR3bTg2OGZPZFZHYlVJcThqTXFiVXgySTNXbHNrSys3NGFUeWl2?=
+ =?utf-8?B?ZFh4eEVyRWFJM2c4NFhIS3hwb3NudkJFTnRaNzZ0clJWWHBsZnBIUVJSYW40?=
+ =?utf-8?B?b2o3aTZ5amY5V2o4R3NqRlNnZTVnNTVjcmUvR3phQ21uTXRHUUlHa2JRN3lY?=
+ =?utf-8?B?RldUZ0pDK2RnclZjZzVhWGFzY3BCQzJwN2hNUzRVcFQzU0JLYVZGSEhtMmxN?=
+ =?utf-8?B?ZXpISkdCbzBWVWxONkp3OWxPald3NHlIK3VQWi90a2cyWUtyaERRZUIrWjVk?=
+ =?utf-8?B?NGdocXhEcUh4V2ZZZlloZHozM09KUWFhNjc1Q1h5QUlUSlRXc0I4c3dNRCtz?=
+ =?utf-8?B?UUhoblFBbGFvRjJyQ1VUblZReDc4TWhtcTFUb1NHclN6SWQ3a1dIZzNGdjJX?=
+ =?utf-8?B?Q1dsaFh3U1hmV2hUc240aUpQQ0N0RkRLWnc0aVN6Y1A5NlVRZE9zQmVqa2R5?=
+ =?utf-8?B?c2x4QTlWbzg5OEdBaE9qV0VZZEU4dTdvY0lMS1kwMWxNUlJ2NXF2MXAxMG54?=
+ =?utf-8?B?UlRhSURIVWJpOGlUYmV1QWRMT1hWcVBSaVFHTWRScWZ3RVRxTTc4dERVZXVk?=
+ =?utf-8?B?aWZlaEZFZTlaSHJYTkQwRFN2VjZDK25Nek1PcGp4ZmIzU1F1OWoyNVV5bEVh?=
+ =?utf-8?B?MktVblJZd3ZyMklTam1XNmNrbklSUGRUUngwRElON20ya3E1UDhva3gzNjRa?=
+ =?utf-8?B?UFNPU3ZMOFhhbnRLSkFZdzBaaGpFMVdTUjdBNVRFVHFvekNrdWt6ZlpIbDVL?=
+ =?utf-8?B?SW1abkN2T2xZY1g3MUE3bk9qNmc2VTd3TG1DdjcvdUcwR3RIT0s4K3gwK2F1?=
+ =?utf-8?B?SjZic0swZmhBMW1jbFVrT051RklQNHByVHErY0tMSSttZDQzZVYxYlRhQ0pD?=
+ =?utf-8?B?NDRITEs1bHlKSDdUMCtkMk92dXZ5YkF3K0hnQVM3SFZ1aTlSdTNYc2txR2J5?=
+ =?utf-8?B?QlRlaWp0YUZZSWM0TUJHcHduVDQyc1BZM2EveW9KM1NoNEFpUmhFWHVldzdy?=
+ =?utf-8?B?alZXQmQxZ0RMdWFCMjlDSVdTK3ZUNndDSXFja0ZHNFBrRzZGejlpWjN0OC9M?=
+ =?utf-8?B?ZGVxMlFQaWNONUJncy9sVFF6YS9xdk9XT3k2ekJXTENCV2JqNWdBckJOcVd4?=
+ =?utf-8?B?WW5aVVBZNnAyUHh3cVNEVlZYeFd4UHJFeU16TDJ6WnZpdUtZd1lTcFlBWktr?=
+ =?utf-8?B?NkFpWDlsdUJad1Vta0oyTUZKWDNiV0l6Y0pCY2l0cllBMWM4Qk1SNzNGY090?=
+ =?utf-8?B?Q0xXVmpLYThsdUtYcGtSTTFJeGdtWFJwQ0gyYnlEYkR3aW9STWxZV1JlaHNu?=
+ =?utf-8?Q?LTky5xcp6aJ/CS4c8TyYfEXAikaCDbmccS2Js=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY1PR01MB1562.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7416005)(376005)(1800799015)(366007)(1580799018)(38070700009);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?QUF0NGM0OSsrSktQRGQ4MEpYQ01PWmlUTy9GTDY5aE8rSkUwdzVPYSs3QlBv?=
+ =?utf-8?B?dkZ2SG5xcjhvQ3c5ZFpvRTF6bkJkZHozc052TnNxclhIVWc3M1pBWEp0VmQ2?=
+ =?utf-8?B?eFB1N0VFY2h2MXg5OSt6Y1NrTmt1V3ZLb0hZZHBzbmZoM1paOWM3T3dlcktB?=
+ =?utf-8?B?Z01IVFRqKzl4Q3lQUFFzQ2tydy8rZmgybzBjNXphanF6Uk1qVGN4bDBRb1Rx?=
+ =?utf-8?B?WWNjdXpRbkhGcVNlUDViaDFnaS96RVpXenZTYUxTcmxiY0dOSndwUDI0cU9T?=
+ =?utf-8?B?TEFKUE94U1lFWjdrL1NzeUZYOHBXNDhwSFFMd2V1M0J2eDRGZGsxR29Ndjhr?=
+ =?utf-8?B?eE9ibTJkeGw1YXVHZC9jWXlMLzU1eDhwaGVyYmRBTC8rdmhZaHJJVG1DSjNr?=
+ =?utf-8?B?UGEyMUQybUhMT1Zoc2FsMHR3YW01Ry9FWUxZUDlpb2QyeU1mdWJEbXR3a3Az?=
+ =?utf-8?B?Mk1SNi91dGU3UGJkR0F4dXliUEZaTnRVTWhGRWxtbW01eVN2ZnY5eHVMT0pB?=
+ =?utf-8?B?dXdXKzBzU3o3ZUhJd3BtNlkvRCtiMFVkQnJvS0dCVmRBcUFtY0cvcDVhOUxs?=
+ =?utf-8?B?ZTYzb0wwZ2Y2MFhoc3pOTW1DdGtxRVVnWDdEMHJmUjFkNjZURWJDQnM1UzhJ?=
+ =?utf-8?B?aXEySGtoQXZOUjJYeWZjTktWOWRBMW03L0dpUy95WlVXbHBFOHBzS1VScUsw?=
+ =?utf-8?B?M0duR0F6cUEwUEJwclJ6NG1LZmpzRFZTU2J1SENXNFRTbWc1ZXI5UVQ5YTcr?=
+ =?utf-8?B?Q0NNZXRlNDBmYWdSdTE3bjczVTM5WUdYZ0Vld1owcjFXdDcwZitWWDNVODAw?=
+ =?utf-8?B?RGM0TlVHRStoZkgyaGZ5SzdRbDJjSHVabkFHTVk4S2xZVFBnV3dQTFJ3N2V6?=
+ =?utf-8?B?b3VERlBhME5LYjVFcjl5L3NNM0JHZk5OcUlmcGNMWXJxemRYTXZNWkFBbi90?=
+ =?utf-8?B?MnhnM1ZxTVh4dnpJcERVWTAzTjdxa2ExZUhvVmdQWE1tUjZscmpNR1NJREM1?=
+ =?utf-8?B?M01IQkZNbWVwcEFEcVNONmtqb2NGcVFwQzkxc2V2TnRtVEU4R2xMREhCdDM3?=
+ =?utf-8?B?dWFVTXVQL3NhRWZUeEpabmNhaDB0Q3J2VkVVemVnY2dmempPUlpjM1VSMDZk?=
+ =?utf-8?B?Zmd6WFpRemM1aFppVUhxSzl3clY5ZE44UEVucTkwQTdqS3ZsTUZzWEMxaDRs?=
+ =?utf-8?B?V3JHZzRZT0NEMVNLcHFOdnhpMFlGQllsY3NuUktOeFZseUovZkx4S091WDJs?=
+ =?utf-8?B?Q0xOa2NJcXhpa3RjamVaOTkwL2NJS2ZjNGFNck15NmE0NXhtVEFDMWFzK0JZ?=
+ =?utf-8?B?OUpxYXpJWU50Tk5NM1NYRFdFQXUvNGx4SjFGYUNWY0NHMGlCSVp1TWVMMElZ?=
+ =?utf-8?B?VGdlQThBdHlZN0srbVhIckhCYnQ5MVRWMi8rQ1d0TXlSaWJpT1ZDTVVYRUhI?=
+ =?utf-8?B?cE1sdDRHb1N4blJlaGxEUC8rQnNtNVVCMnNRNTZYTG9VYkJ0RXU2R3cyMEoz?=
+ =?utf-8?B?OEhxUlEyR0tjck8wR0JXdk5jLy8xSnc1dFJidEVZMHB4M0gzRGxMQXdwYUxk?=
+ =?utf-8?B?cDZpcGpSWjBmandEL3MwT3hlU01FL3lMTGRsOHozcC85b2FINTgxYWwxVnd5?=
+ =?utf-8?B?SG43WU96VldHamdHU2l6Y2tvd0F0MVQzN3c4RjVPOUNhVW41Yi9DK1JRNU1T?=
+ =?utf-8?B?d1JWZHNvc201eXpaaGxFK3cxN0VKcU50OWpPRWRMZmdHRExjaWxUT2JYaXRW?=
+ =?utf-8?B?M05ZU0FjWmZmSjNDbzQ0d3lrTVl5SDA0b0NlR1FsWFR3WENXeHNBVFNwNTlZ?=
+ =?utf-8?B?U0QwOHNyTW1jWXpQYlFGM1FtUm1HWDFCR3VFU1N2WlVBSTNFNTNHOVZwWVFo?=
+ =?utf-8?B?QmFaVWRlUCtsWUtUbUsycGtkNDVaT0dsclBUZFJlSXkwZHFCNU5OcUdXZGdZ?=
+ =?utf-8?B?dE14clgwNjlGZGhPK2tRYkVBRmNSaEVpS1NjdkZ4dWZZeXpoZHE1aFFmMTRy?=
+ =?utf-8?B?MVBxMThaSlZMb281NVBGYlpua2FaUGZSZ2JRNjNoYkZ0OVNUd3hSelV2dU1H?=
+ =?utf-8?B?d0ZUUGhuWXRPZTVFWHVoZnNielJpSXAvRjBSQ2lXOVNrWkphOGErbGdIOEZ6?=
+ =?utf-8?B?T0JSekxSbTF1VkR6dEFiK1FEK2xrYWZOQlErTkhSK21oY2dBRVN0RSs3Q2hZ?=
+ =?utf-8?B?eEE9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <157AAB5DA2C1CF41B8A52FD00004CAFA@jpnprd01.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <87a5l0prkc.ffs@tglx>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-CM-TRANSID:AQAAf8Bx0VX4zkJmTcodAA--.36775S3
-X-CM-SenderInfo: x2kd0wxwld05hdqjqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj9fXoW3Zr1fKr1UXr4rur48JF43Arc_yoW8Aw1kCo
-	WfWF18Zw1xGr1UGrW5Gr95tFyYv345CrWUA3Z3ZanF9F45ta1qk3y3G3y3AFW3Ga18GF4D
-	Ja4UJr1SkFW7tr1fl-sFpf9Il3svdjkaLaAFLSUrUUUUeb8apTn2vfkv8UJUUUU8wcxFpf
-	9Il3svdxBIdaVrn0xqx4xG64xvF2IEw4CE5I8CrVC2j2Jv73VFW2AGmfu7bjvjm3AaLaJ3
-	UjIYCTnIWjp_UUUO17kC6x804xWl14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI
-	8IcIk0rVWrJVCq3wAFIxvE14AKwVWUXVWUAwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xG
-	Y2AK021l84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2IY6xkF7I0E14
-	v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8JVW8Jr1ln4kS14v26r126r1DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12
-	xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r12
-	6r1DMcIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr4
-	1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxG
-	rwCFx2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWUAVWUtwC20s026c02F40E14
-	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkG
-	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI
-	0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4U
-	MIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8Dl1DUUUU
-	U==
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	434FGgPKm0ZJtc5O3P39OA7q/NmCCc4oSrocKukWByJKitTjyXkgIkF9AvCOKX9Nr3setBu6k12ypO4F/pdkr1wnwgG0PqANLpU+hfc9uK1oxeRtvBaMjcY8phXMkSnRA56nCj7dtPKAfYpmO33m3PeutAHtbE8Ok3nqhdQWX3p0MoHtzc3Z2s0Ij4GwmDHqmFg+YThRGdrnqrYYni7gKxEvRn5UMfKsDJQ17vU1Y8JWBU0C4IxngrpVkGELncwM24dxApsVxvCchilVB6Y228MtU3jAmD9f3AgqwRcykNm704R9U3txyqCdNLbdI0WVgTUtlcS3BqnzksheJegXBUCW9KCseyBv/QW+rWPehVIeW7ujMO6KuC7fHVb226Y9VDhpo2hBMb06sMSllk0yTUgq5LhkN0Pv2e7QfujGsLOuyM91JM7xig+cJne8CCIi3T2W81KJWxAY6EFWnnsn8fRUObAAbiX4vPGQ0fKNkBZx/YVdtiEnmmK2SHocsbjKzpPZkVGK7DXZzwpJtGJckBhXMztIKcd5FyiNjXrCW+gXIhG4vqLDiqAUD29WBm+JyAk2CduXY84RFubUQR1NGEb4h6OjL2c1joC1IJtCbgd4z7u0iFjYRjW1jbTggGIE
+X-OriginatorOrg: fujitsu.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY1PR01MB1562.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e713d35d-e4c1-4724-fb8d-08dc73bf4288
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 May 2024 02:40:47.1553
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a19f121d-81e1-4858-a9d8-736e267fd4c7
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: K5Euq4dTsonk/4hDHVRMguOi4FlB0LwwPRTOPkXGB6o826qX2ueRUVroZue3FwCuvqifeSAVcPObonyUymevhw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB10090
 
-Hi ,Thomas
-
-Thank you for your patient reply,I will make unified corrections to some 
-format and
-
-specification issues in subsequent patches.
-
-在 2024/5/8 下午5:43, Thomas Gleixner 写道:
-> On Tue, May 07 2024 at 20:59, Tianyang Zhang wrote:
->> From: zhangtianyang <zhangtianyang@loongson.cn>
-> Please use your real name for the From line.
->
->> +
->> +#include <linux/init.h>
->> +#include <linux/interrupt.h>
->> +#include <linux/kernel.h>
->> +#include <linux/irq.h>
->> +#include <linux/irqchip.h>
->> +#include <linux/irqdomain.h>
->> +#include <linux/spinlock.h>
->> +#include <linux/msi.h>
->> +#include <linux/irqchip/chained_irq.h>
->> +#include <linux/cpuhotplug.h>
->> +#include <linux/radix-tree.h>
-> Please put the includes in alphabethical order.
->
->> +#include <asm/loongarch.h>
->> +#include <asm/setup.h>
->> +
->> +static phys_addr_t msi_base_v2;
->> +
->> +typedef struct irq_data *irq_map_t[NR_VECTORS];
-> No new pointless typedefs please.
->
-> struct irq_map {
-> 	struct irq_data irqd[NR_VECTORS];
-> };
->
->> +DECLARE_PER_CPU(irq_map_t, irq_map);
-> What's this declaration for?
->
->> +DEFINE_PER_CPU(irq_map_t, irq_map) = {
-> Why is this global and not static?
->
->> +	[0 ... NR_VECTORS - 1] = NULL,
-> No need to initialize to NULL. It's zeroed by default.
->
->> +};
->> +
->> +struct pending_list {
->> +	struct list_head head;
->> +	raw_spinlock_t	lock;
->> +};
-> https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#struct-declarations-and-initializers
->
->> +DEFINE_PER_CPU(struct pending_list, pending_list);
-> Why is this global?
->
->> +struct loongarch_avec_chip {
->> +	struct fwnode_handle	*fwnode;
->> +	struct irq_domain	*domain;
->> +	struct irq_matrix	*vector_matrix;
->> +	raw_spinlock_t		lock;
->> +} loongarch_avec;
->> +
->> +struct loongarch_avec_data {
->> +	struct list_head entry;
->> +	unsigned int cpu;
->> +	unsigned int vec;
->> +	unsigned int prev_cpu;
->> +	unsigned int prev_vec;
->> +};
-> See link above.
->
->> +static int assign_irq_vector(struct irq_data *irqd, const struct cpumask *dest,
->> +		unsigned int *cpu, int *vector)
-> Please read the line break section in the tip docomentation
->
->> +{
->> +	int ret;
->> +
->> +	ret = irq_matrix_alloc(loongarch_avec.vector_matrix, dest, false, cpu);
->> +	if (ret < 0)
->> +		return ret;
->> +	*vector = ret;
->> +
->> +	return 0;
-> Why not simply returning the result of irq_matrix_alloc() and checking
-> it for negative value at the call site. If not negative then use it as
-> vector. That spares the whole indirection and makes the code readable.
-ok, I will simplify this part of the code
->
->> +static void loongarch_avec_sync(struct loongarch_avec_data *adata)
->> +{
->> +	struct loongarch_avec_data *data;
->> +	struct pending_list *plist;
->> +
->> +	if (cpu_online(adata->prev_cpu)) {
->> +		plist = per_cpu_ptr(&pending_list, adata->prev_cpu);
->> +
->> +		data = kmalloc(sizeof(struct loongarch_avec_data), GFP_KERNEL);
-> This is called from loongarch_avec_set_affinity() with raw spinlocks
-> held and interrupts disabled. So GFP_KERNEL cannot work. You clearly did
-> not test that code with proper debug options enabled.
->
-> But even GFP_ATOMIC won't work when you want to support PREEMPT_RT as
-> that does not allow allocations in such contexts.
->
-> Look how x86 solves exactly this problem without allocations required.
-
-I did not consider it thoroughly here. I have read the documentation and 
-code of
-
-kernel memory management and will make corrections here in future versions
-
->
->> +		if (!data) {
->> +			pr_warn("NO space for clean data\n");
->> +			return;
->> +		}
->> +		memcpy(data, adata, sizeof(struct loongarch_avec_data));
->> +		INIT_LIST_HEAD(&data->entry);
->> +
->> +		list_add_tail(&data->entry, &plist->head);
->> +		loongson_send_ipi_single(adata->prev_cpu, SMP_CLEAR_VECT);
->> +	}
->> +	adata->prev_cpu = adata->cpu;
->> +	adata->prev_vec = adata->vec;
->> +}
->> +
->> +static int loongarch_avec_set_affinity(struct irq_data *data,
->> +		const struct cpumask *dest, bool force)
->> +{
->> +	struct cpumask intersect_mask;
-> No cpumasks on stack please. You can make that static as usage is always
-> serialized via loongarch_avec.lock
-Ok, I will correct this
->
->> +	struct loongarch_avec_data *adata;
->> +	unsigned int cpu, vector;
->> +	unsigned long flags;
->> +	int ret = 0;
->> +
->> +	raw_spin_lock_irqsave(&loongarch_avec.lock, flags);
->> +	adata = irq_data_get_irq_chip_data(data);
->> +
->> +	if (adata->vec && cpu_online(adata->cpu)
->> +			&& cpumask_test_cpu(adata->cpu, dest)) {
-> Please align the condition proper when you need a line break:
->
-> 	if (adata->vec && cpu_online(adata->cpu) &&
-> 	    cpumask_test_cpu(adata->cpu, dest)) {
->
-> But you don't need a line break here because
->
-> 	if (adata->vec && cpu_online(adata->cpu) && cpumask_test_cpu(adata->cpu, dest)) {
->
-> fits into the 100 character line width limit.
->
->> +		raw_spin_unlock_irqrestore(&loongarch_avec.lock, flags);
->> +		return 0;
->> +	}
->> +
->> +	if (!cpumask_intersects(dest, cpu_online_mask)) {
->> +		raw_spin_unlock_irqrestore(&loongarch_avec.lock, flags);
->> +		return -EINVAL;
->> +	}
->> +
->> +	cpumask_and(&intersect_mask, dest, cpu_online_mask);
-> The above intersect check is pointless as the matrix allocator already
-> checks the cpumask and returns -EINVAL if empty.
->
->> +
->> +	ret = assign_irq_vector(data, &intersect_mask, &cpu, &vector);
->> +	if (ret) {
->> +		raw_spin_unlock_irqrestore(&loongarch_avec.lock, flags);
->> +		return ret;
->> +	}
->> +void complete_irq_moving(int *restart)
-> What is the 'restart' argument for?
-Sorry, This is the remaining part of the code evolution, which will be 
-removed in the future
->
->> +{
->> +	struct pending_list *plist = this_cpu_ptr(&pending_list);
->> +	struct loongarch_avec_data *adata, *tmp;
->> +	int cpu, vector;
->> +	u32 bias;
->> +	u64 irr;
->> +
->> +	raw_spin_lock(&loongarch_avec.lock);
->> +
->> +	list_for_each_entry_safe(adata, tmp, &plist->head, entry) {
->> +
->> +		cpu = adata->prev_cpu;
->> +		vector = adata->prev_vec;
->> +		bias = vector/64;
->> +
->> +		switch (bias) {
->> +		case 0x0:
->> +			irr = csr_read64(LOONGARCH_CSR_IRR0);
->> +			break;
->> +		case 0x1:
->> +			irr = csr_read64(LOONGARCH_CSR_IRR1);
->> +			break;
->> +		case 0x2:
->> +			irr = csr_read64(LOONGARCH_CSR_IRR2);
->> +			break;
->> +		case 0x3:
->> +			irr = csr_read64(LOONGARCH_CSR_IRR3);
->> +			break;
->> +		default:
->> +			return;
-> How can that happen ?
->
->> +		}
->                  irr = csr_read64(LOONGARCH_CSR_IRR0 + vector / 64);
->
-> should be good enough, no?
-
-Our initial idea was to increase the readability of the code,
-
-but it does seem more cumbersome. Perhaps we should define macros as
-
-LOONGARCH_CSR_IRR_BASE
-
-and adopt your approach, thanks
-
->
-> Also please use a proper constant instead of '64', e.g. VECTORS_PER_IRR
->
->> +
->> +		if (irr & (1UL << (vector % 64))) {
->> +			loongson_send_ipi_single(cpu, SMP_CLEAR_VECT);
-> So this sends an IPI to the current CPU. What guarantees that the
-> pending interrupt is handled _before_ the IPI is handled again?
-
-In fact, LA adopts a software query interrupt method at the core 
-interrupt domain,
-
-while IPI is routed to ip-12 and AVEC is routed to ip-14, ensuring that 
-the AVEC interrupt can receive a response after IPI
-
-driver/irqchip/irq-loongson-cpu.c:
-
-static void handle_cpu_irq(struct pt_regs *regs)
-{
-         int hwirq;
-         unsigned int estat = read_csr_estat() & CSR_ESTAT_IS;
-
-         while ((hwirq = ffs(estat))) {
-                 estat &= ~BIT(hwirq - 1);
-                 generic_handle_domain_irq(irq_domain, hwirq - 1);
-         }
-}
-
->
->> +			continue;
->> +		}
->> +		list_del(&adata->entry);
->> +		irq_matrix_free(loongarch_avec.vector_matrix, cpu, vector, false);
->> +		this_cpu_ptr(irq_map)[vector] = 0;
-> s/0/NULL/ as this writes a pointer.
->
->                  this_cpu_write(irq_map.irqd[vector], NULL);
->
-> avoids the whole pointer indirection.
->
->> +		kfree(adata);
-> Again this won't work with PREEMPT_RT.
->
->> +	}
->> +	raw_spin_unlock(&loongarch_avec.lock);
->> +}
->> +
->> +static void loongarch_avec_dispatch(struct irq_desc *desc)
->> +{
->> +	struct irq_chip *chip = irq_desc_get_chip(desc);
->> +	struct irq_data *d;
->> +	unsigned long vector;
->> +
->> +	chained_irq_enter(chip, desc);
->> +	vector = csr_read64(LOONGARCH_CSR_ILR);
->> +	if (vector & 0x80000000)
-> No magic numbers. Please use proper constant defines.
->
->> +		return;
->> +
->> +	vector &= 0xff;
-> Ditto.
->
->> +
->> +	d = raw_cpu_ptr(irq_map)[vector];
-> Why raw?
->
->          d = __this_cpu_read(...);
->
-> Also, what is the point of storing irqdata in the irq_map if the only
-> thing you use is d->irq. You can simply store the interrupt number, no?
->
-> If you want to spare cycles for the lookup, then you want to store the
-> interrupt descriptor like x86 does.
-We will reconsider the implementation details of this section, thanks
->
->> +	if (d)
->> +		generic_handle_irq(d->irq);
->> +	else
->> +		pr_warn("IRQ ERROR:Unexpected irq  occur on cpu %d[vector %d]\n",
->> +				smp_processor_id(), vector);
-> See bracket rules in the tip documentation.
->
->> +	chained_irq_exit(chip, desc);
->> +}
->> +
->> +static int loongarch_avec_alloc(struct irq_domain *domain, unsigned int virq,
->> +		unsigned int nr_irqs, void *arg)
->> +{
->> +	struct loongarch_avec_data *adata;
->> +	struct irq_data *irqd;
->> +	unsigned int cpu, vector;
->> +	unsigned long flags;
->> +	int i, err;
-> See variable declaration rules in the tip documentation
->
->> +	raw_spin_lock_irqsave(&loongarch_avec.lock, flags);
->> +	for (i = 0; i < nr_irqs; i++) {
->> +		irqd = irq_domain_get_irq_data(domain, virq + i);
->> +		adata = kzalloc(sizeof(*adata), GFP_KERNEL);
->> +		if (!adata) {
->> +			raw_spin_unlock_irqrestore(&loongarch_avec.lock, flags);
->> +			return -ENOMEM;
->> +		}
->> +		err = assign_irq_vector(irqd, cpu_online_mask, &cpu, &vector);
->> +		if (err) {
->> +			raw_spin_unlock_irqrestore(&loongarch_avec.lock, flags);
->> +			return err;
->> +		}
->> +		adata->prev_cpu = adata->cpu = cpu;
->> +		adata->prev_vec = adata->vec = vector;
->> +
->> +		per_cpu_ptr(irq_map, adata->cpu)[adata->vec] = irqd;
-> This needs to be set last, no?
->
->> +		irq_domain_set_info(domain, virq + i, virq, &loongarch_avec_controller,
->> +				adata, handle_edge_irq, NULL, NULL);
->> +		irqd_set_single_target(irqd);
->> +		irqd_set_affinity_on_activate(irqd);
->> +	}
->> +	raw_spin_unlock_irqrestore(&loongarch_avec.lock, flags);
->> +
->> +	return err;
->> +}
->> +
->> +static void loongarch_avec_free(struct irq_domain *domain, unsigned int virq,
->> +		unsigned int nr_irqs)
->> +{
->> +	struct loongarch_avec_data *adata;
->> +	struct irq_data *d;
->> +	unsigned long flags;
->> +	unsigned int i;
->> +
->> +	raw_spin_lock_irqsave(&loongarch_avec.lock, flags);
->> +	for (i = 0; i < nr_irqs; i++) {
->> +		d = irq_domain_get_irq_data(domain, virq + i);
->> +		adata = irq_data_get_irq_chip_data(d);
->> +		if (d) {
->> +			irq_matrix_free(loongarch_avec.vector_matrix,
->> +					adata->cpu,
->> +					adata->vec, false);
->> +			irq_domain_reset_irq_data(d);
->> +		}
-> What cleans up the irq_map and pending cleanups? There is a UAF waiting
-> around the corner.
->
->> +	}
->> +
->> +	raw_spin_unlock_irqrestore(&loongarch_avec.lock, flags);
->> +}
->> +static int __init loongarch_avec_init(struct irq_domain *parent)
->> +{
->> +	int ret = 0, parent_irq;
->> +	unsigned long tmp;
->> +
->> +	tmp = iocsr_read64(LOONGARCH_IOCSR_MISC_FUNC);
->> +	tmp |= IOCSR_MISC_FUNC_AVEC_EN;
->> +	iocsr_write64(tmp, LOONGARCH_IOCSR_MISC_FUNC);
-> Enabling AVEC _before_ everything is set up is a patently bad idea.
->
->> +	raw_spin_lock_init(&loongarch_avec.lock);
->> +
->> +	loongarch_avec.fwnode = irq_domain_alloc_named_fwnode("CORE_AVEC");
->> +	if (!loongarch_avec.fwnode) {
->> +		pr_err("Unable to allocate domain handle\n");
->> +		ret = -ENOMEM;
->> +		goto out;
->> +	}
->> +
->> +	loongarch_avec.domain = irq_domain_create_tree(loongarch_avec.fwnode,
->> +			&loongarch_avec_domain_ops, NULL);
->> +	if (!loongarch_avec.domain) {
->> +		pr_err("core-vec: cannot create IRQ domain\n");
->> +		ret = -ENOMEM;
->> +		goto out_free_handle;
->> +	}
->> +
->> +	parent_irq = irq_create_mapping(parent, INT_AVEC);
->> +	if (!parent_irq) {
->> +		pr_err("Failed to mapping hwirq\n");
->> +		ret = -EINVAL;
->> +		goto out_remove_domain;
->> +	}
->> +	irq_set_chained_handler_and_data(parent_irq, loongarch_avec_dispatch, NULL);
->> +
->> +	ret = irq_matrix_init();
->> +	if (ret) {
->> +		pr_err("Failed to init irq matrix\n");
->> +		goto out_free_matrix;
->> +	}
->> +
->> +	return ret;
->> +
->> +out_free_matrix:
->> +	kfree(loongarch_avec.vector_matrix);
->> +out_remove_domain:
->> +	irq_domain_remove(loongarch_avec.domain);
->> +out_free_handle:
->> +	irq_domain_free_fwnode(loongarch_avec.fwnode);
->> +out:
->> +	return ret;
->> +}
->> +
->> +static int loongarch_avec_offline_cpu(unsigned int cpu)
->> +{
->> +	unsigned long flags;
->> +	struct pending_list *plist = per_cpu_ptr(&pending_list, cpu);
->> +
->> +	raw_spin_lock_irqsave(&loongarch_avec.lock, flags);
->> +	if (list_empty(&plist->head)) {
->> +		irq_matrix_offline(loongarch_avec.vector_matrix);
->> +	} else {
->> +		pr_warn("cpu %d advanced extioi is busy\n");
->> +		raw_spin_unlock_irqrestore(&loongarch_avec.lock, flags);
->> +		return -EBUSY;
->> +	}
->> +	raw_spin_unlock_irqrestore(&loongarch_avec.lock, flags);
->> +	return 0;
->> +}
->> +
->> +static int loongarch_avec_online_cpu(unsigned int cpu)
->> +{
->> +	struct pending_list *plist = per_cpu_ptr(&pending_list, cpu);
->> +	unsigned long flags;
->> +
->> +	raw_spin_lock_irqsave(&loongarch_avec.lock, flags);
->> +
->> +	irq_matrix_online(loongarch_avec.vector_matrix);
->> +
->> +	INIT_LIST_HEAD(&plist->head);
->> +
->> +	raw_spin_unlock_irqrestore(&loongarch_avec.lock, flags);
->> +	return 0;
->> +}
->> +#if defined(CONFIG_ACPI)
-> Missing newline before #if and also please use #ifdef CONFIG_ACPI
->
->> +static int __init pch_msi_parse_madt(union acpi_subtable_headers *header,
->> +		const unsigned long end)
->> +{
->> +	struct acpi_madt_msi_pic *pchmsi_entry = (struct acpi_madt_msi_pic *)header;
->> +
->> +	msi_base_v2 = pchmsi_entry->msg_address;
->> +	return pch_msi_acpi_init_v2(loongarch_avec.domain, pchmsi_entry);
->> +}
->> +
->> +static inline int __init acpi_cascade_irqdomain_init(void)
->> +{
->> +	return acpi_table_parse_madt(ACPI_MADT_TYPE_MSI_PIC, pch_msi_parse_madt, 1);
->> +}
->> +
->> +int __init loongarch_avec_acpi_init(struct irq_domain *parent)
->> +{
->> +	int ret = 0;
->> +
->> +	ret = loongarch_avec_init(parent);
->> +	if (ret) {
->> +		pr_err("Failed to init irq domain\n");
->> +		return ret;
->> +	}
->> +
->> +	ret = acpi_cascade_irqdomain_init();
->> +	if (ret) {
->> +		pr_err("Failed to cascade IRQ domain\n");
->> +		return ret;
->> +	}
->> +
->> +	ret = cpuhp_setup_state_nocalls(CPUHP_AP_ONLINE_DYN,
->> +			"loongarch_avec:online",
->> +			loongarch_avec_online_cpu, loongarch_avec_offline_cpu);
-> You cannot online/offline the matrix and handle eventually pending
-> cleanups from a CPUHP_AP_ONLINE_DYN state. That needs to happen in the
-> STARTING section between CPUHP_AP_OFFLINE and CPUHP_AP_ONLINE
-We will readjust the code for the CPU on/offline section. Thank you for 
-your correction
->
->> +	if (ret < 0) {
->> +		pr_err("loongarch_avec: failed to register hotplug callbacks.\n");
->> +		return ret;
->> +	}
->> +
->> +	return ret;
-> So if CONFIG_ACPI is disabled then loongarch_avec_init() is unused and
-> results in a defined but not used build warning...
->
->> diff --git a/drivers/irqchip/irq-loongson-pch-msi.c b/drivers/irqchip/irq-loongson-pch-msi.c
->> index 6e1e1f011bb2..d1706080b4f4 100644
->> --- a/drivers/irqchip/irq-loongson-pch-msi.c
->> +++ b/drivers/irqchip/irq-loongson-pch-msi.c
->> @@ -16,7 +16,6 @@
->>   #include <linux/slab.h>
->>   
->>   static int nr_pics;
->> -
->>   struct pch_msi_data {
->>   	struct mutex	msi_map_lock;
->>   	phys_addr_t	doorbell;
->> @@ -100,6 +99,17 @@ static struct irq_chip middle_irq_chip = {
->>   	.irq_compose_msi_msg	= pch_msi_compose_msi_msg,
->>   };
->>   
->> +static struct irq_chip pch_msi_irq_chip_v2 = {
->> +	.name			= "MSI",
->> +	.irq_ack		= irq_chip_ack_parent,
->> +};
->> +
->> +static struct msi_domain_info pch_msi_domain_info_v2 = {
->> +	.flags		= MSI_FLAG_USE_DEF_DOM_OPS | MSI_FLAG_USE_DEF_CHIP_OPS |
->> +			MSI_FLAG_MULTI_PCI_MSI | MSI_FLAG_PCI_MSIX,
->> +	.chip	= &pch_msi_irq_chip_v2,
->> +};
->> +
->>   static int pch_msi_parent_domain_alloc(struct irq_domain *domain,
->>   					unsigned int virq, int hwirq)
->>   {
->> @@ -268,6 +278,9 @@ struct fwnode_handle *get_pch_msi_handle(int pci_segment)
->>   {
->>   	int i;
->>   
->> +	if (cpu_has_avecint)
->> +		return pch_msi_handle[0];
->> +
->>   	for (i = 0; i < MAX_IO_PICS; i++) {
->>   		if (msi_group[i].pci_segment == pci_segment)
->>   			return pch_msi_handle[i];
->> @@ -289,4 +302,34 @@ int __init pch_msi_acpi_init(struct irq_domain *parent,
->>   
->>   	return ret;
->>   }
->> +
->> +int __init pch_msi_acpi_init_v2(struct irq_domain *parent,
->> +		struct acpi_madt_msi_pic *msi_entry)
->> +{
->> +	struct irq_domain *msi_domain;
->> +
->> +	if (pch_msi_handle[0])
->> +		return 0;
->> +
->> +	pch_msi_handle[0] = irq_domain_alloc_named_fwnode("msipic-v2");
->> +	if (!pch_msi_handle[0]) {
->> +		pr_err("Unable to allocate domain handle\n");
->> +		kfree(pch_msi_handle[0]);
->> +		return -ENOMEM;
->> +	}
->> +
->> +	msi_domain = pci_msi_create_irq_domain(pch_msi_handle[0],
->> +			&pch_msi_domain_info_v2,
->> +			parent);
->> +	if (!msi_domain) {
->> +		pr_err("Failed to create PCI MSI domain\n");
->> +		kfree(pch_msi_handle[0]);
->> +		return -ENOMEM;
->> +	}
->> +
->> +	pr_info("IRQ domain MSIPIC-V2 init done.\n");
->> +	return 0;
->> +}
->> +
->> +
-> Stray newlines. But as with the other CONFIG_ACPI part above a build
-> with CONFIG_ACPI=n will result in defined but not used warnings ....
-We will readjust the code for the CPU on/offline section. Thank you for 
-your correction
->
-> Thanks,
->
->          tglx
-
-Thanks
-
-          Tianyang
-
+DQpUaGUgZm9sbG93aW5nIGNoYW5nZSBpcyBwcmVmZXJyZWQgdG8gc2hvdyB0aGUgY29ycmVjdCBt
+b2RlIG5hbWUuDQoNCg0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvY3hsL2NvcmUvaGRtLmMgYi9kcml2
+ZXJzL2N4bC9jb3JlL2hkbS5jDQppbmRleCAzNWVlNTY1ZTI3YzkuLjcyOTAwNmNhNDk5NyAxMDA2
+NDQNCi0tLSBhL2RyaXZlcnMvY3hsL2NvcmUvaGRtLmMNCisrKyBiL2RyaXZlcnMvY3hsL2NvcmUv
+aGRtLmMNCkBAIC02ODQsNyArNjg0LDcgQEAgaW50IGN4bF9kcGFfYWxsb2Moc3RydWN0IGN4bF9l
+bmRwb2ludF9kZWNvZGVyICpjeGxlZCwgdW5zaWduZWQgbG9uZyBsb25nIHNpemUpDQogIA0KICAg
+ICAgICAgaWYgKHNpemUgPiBhdmFpbCkgew0KICAgICAgICAgICAgICAgICBkZXZfZGJnKGRldiwg
+IiVwYSBleGNlZWRzIGF2YWlsYWJsZSAlcyBjYXBhY2l0eTogJXBhXG4iLCAmc2l6ZSwNCi0gICAg
+ICAgICAgICAgICAgICAgICAgIGN4bGVkLT5tb2RlID09IENYTF9ERUNPREVSX1JBTSA/ICJyYW0i
+IDogInBtZW0iLA0KKyAgICAgICAgICAgICAgICAgICAgICAgY3hsX2RlY29kZXJfbW9kZV9uYW1l
+KGN4bGVkLT5tb2RlKSwNCiAgICAgICAgICAgICAgICAgICAgICAgICAmYXZhaWwpOw0KICAgICAg
+ICAgICAgICAgICByYyA9IC1FTk9TUEM7DQogICAgICAgICAgICAgICAgIGdvdG8gb3V0Ow0KDQoN
+Cg0KT24gMjUvMDMvMjAyNCAwNzoxOCwgaXJhLndlaW55QGludGVsLmNvbSB3cm90ZToNCj4gRnJv
+bTogTmF2bmVldCBTaW5naCA8bmF2bmVldC5zaW5naEBpbnRlbC5jb20+DQo+IA0KPiBSZWdpb24g
+bW9kZSBtdXN0IHJlZmxlY3QgYSBnZW5lcmFsIGR5bmFtaWMgY2FwYWNpdHkgdHlwZSB3aGljaCBp
+cw0KPiBhc3NvY2lhdGVkIHdpdGggYSBzcGVjaWZpYyBEeW5hbWljIENhcGFjaXR5IChEQykgcGFy
+dGl0aW9ucyBpbiBlYWNoDQo+IGRldmljZSBkZWNvZGVyIHdpdGhpbiB0aGUgcmVnaW9uLiAgREMg
+cGFydGl0aW9ucyBhcmUgYWxzbyBrbm93IGFzIERDDQo+IHJlZ2lvbnMgcGVyIENYTCAzLjEuDQo+
+IA0KPiBEZWNvZGVyIG1vZGUgcmVmbGVjdHMgYSBzcGVjaWZpYyBEQyBwYXJ0aXRpb24uDQo+IA0K
+PiBEZWZpbmUgdGhlIG5ldyBtb2RlcyB0byB1c2UgaW4gc3Vic2VxdWVudCBwYXRjaGVzIGFuZCB0
+aGUgaGVscGVyDQo+IGZ1bmN0aW9ucyByZXF1aXJlZCB0byBtYWtlIHRoZSBhc3NvY2lhdGlvbiBi
+ZXR3ZWVuIHRoZXNlIG5ldyBtb2Rlcy4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IE5hdm5lZXQgU2lu
+Z2ggPG5hdm5lZXQuc2luZ2hAaW50ZWwuY29tPg0KPiBDby1kZXZlbG9wZWQtYnk6IElyYSBXZWlu
+eSA8aXJhLndlaW55QGludGVsLmNvbT4NCj4gU2lnbmVkLW9mZi1ieTogSXJhIFdlaW55IDxpcmEu
+d2VpbnlAaW50ZWwuY29tPg0KPiAtLS0NCj4gQ2hhbmdlcyBmb3IgdjENCj4gW2l3ZWlueTogc3Bs
+aXQgb3V0IGZyb206IEFkZCBkeW5hbWljIGNhcGFjaXR5IGN4bCByZWdpb24gc3VwcG9ydC5dDQo+
+IC0tLQ0KPiAgIGRyaXZlcnMvY3hsL2NvcmUvcmVnaW9uLmMgfCAgNCArKysrDQo+ICAgZHJpdmVy
+cy9jeGwvY3hsLmggICAgICAgICB8IDIzICsrKysrKysrKysrKysrKysrKysrKysrDQo+ICAgMiBm
+aWxlcyBjaGFuZ2VkLCAyNyBpbnNlcnRpb25zKCspDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVy
+cy9jeGwvY29yZS9yZWdpb24uYyBiL2RyaXZlcnMvY3hsL2NvcmUvcmVnaW9uLmMNCj4gaW5kZXgg
+MTcyM2QxN2YxMjFlLi5lYzNiOGM2OTQ4ZTkgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvY3hsL2Nv
+cmUvcmVnaW9uLmMNCj4gKysrIGIvZHJpdmVycy9jeGwvY29yZS9yZWdpb24uYw0KPiBAQCAtMTY5
+MCw2ICsxNjkwLDggQEAgc3RhdGljIGJvb2wgY3hsX21vZGVzX2NvbXBhdGlibGUoZW51bSBjeGxf
+cmVnaW9uX21vZGUgcm1vZGUsDQo+ICAgCQlyZXR1cm4gdHJ1ZTsNCj4gICAJaWYgKHJtb2RlID09
+IENYTF9SRUdJT05fUE1FTSAmJiBkbW9kZSA9PSBDWExfREVDT0RFUl9QTUVNKQ0KPiAgIAkJcmV0
+dXJuIHRydWU7DQo+ICsJaWYgKHJtb2RlID09IENYTF9SRUdJT05fREMgJiYgY3hsX2RlY29kZXJf
+bW9kZV9pc19kYyhkbW9kZSkpDQo+ICsJCXJldHVybiB0cnVlOw0KPiAgIA0KPiAgIAlyZXR1cm4g
+ZmFsc2U7DQo+ICAgfQ0KPiBAQCAtMjgyNCw2ICsyODI2LDggQEAgY3hsX2RlY29kZXJfdG9fcmVn
+aW9uX21vZGUoZW51bSBjeGxfZGVjb2Rlcl9tb2RlIG1vZGUpDQo+ICAgCQlyZXR1cm4gQ1hMX1JF
+R0lPTl9SQU07DQo+ICAgCWNhc2UgQ1hMX0RFQ09ERVJfUE1FTToNCj4gICAJCXJldHVybiBDWExf
+UkVHSU9OX1BNRU07DQo+ICsJY2FzZSBDWExfREVDT0RFUl9EQzAgLi4uIENYTF9ERUNPREVSX0RD
+NzoNCj4gKwkJcmV0dXJuIENYTF9SRUdJT05fREM7DQo+ICAgCWNhc2UgQ1hMX0RFQ09ERVJfTUlY
+RUQ6DQo+ICAgCWRlZmF1bHQ6DQo+ICAgCQlyZXR1cm4gQ1hMX1JFR0lPTl9NSVhFRDsNCj4gZGlm
+ZiAtLWdpdCBhL2RyaXZlcnMvY3hsL2N4bC5oIGIvZHJpdmVycy9jeGwvY3hsLmgNCj4gaW5kZXgg
+OWEwY2NlMWU2ZmNhLi4zYjg5MzUwODljMGMgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvY3hsL2N4
+bC5oDQo+ICsrKyBiL2RyaXZlcnMvY3hsL2N4bC5oDQo+IEBAIC0zNjUsNiArMzY1LDE0IEBAIGVu
+dW0gY3hsX2RlY29kZXJfbW9kZSB7DQo+ICAgCUNYTF9ERUNPREVSX05PTkUsDQo+ICAgCUNYTF9E
+RUNPREVSX1JBTSwNCj4gICAJQ1hMX0RFQ09ERVJfUE1FTSwNCj4gKwlDWExfREVDT0RFUl9EQzAs
+DQo+ICsJQ1hMX0RFQ09ERVJfREMxLA0KPiArCUNYTF9ERUNPREVSX0RDMiwNCj4gKwlDWExfREVD
+T0RFUl9EQzMsDQo+ICsJQ1hMX0RFQ09ERVJfREM0LA0KPiArCUNYTF9ERUNPREVSX0RDNSwNCj4g
+KwlDWExfREVDT0RFUl9EQzYsDQo+ICsJQ1hMX0RFQ09ERVJfREM3LA0KPiAgIAlDWExfREVDT0RF
+Ul9NSVhFRCwNCj4gICAJQ1hMX0RFQ09ERVJfREVBRCwNCj4gICB9Ow0KPiBAQCAtMzc1LDYgKzM4
+MywxNCBAQCBzdGF0aWMgaW5saW5lIGNvbnN0IGNoYXIgKmN4bF9kZWNvZGVyX21vZGVfbmFtZShl
+bnVtIGN4bF9kZWNvZGVyX21vZGUgbW9kZSkNCj4gICAJCVtDWExfREVDT0RFUl9OT05FXSA9ICJu
+b25lIiwNCj4gICAJCVtDWExfREVDT0RFUl9SQU1dID0gInJhbSIsDQo+ICAgCQlbQ1hMX0RFQ09E
+RVJfUE1FTV0gPSAicG1lbSIsDQo+ICsJCVtDWExfREVDT0RFUl9EQzBdID0gImRjMCIsDQo+ICsJ
+CVtDWExfREVDT0RFUl9EQzFdID0gImRjMSIsDQo+ICsJCVtDWExfREVDT0RFUl9EQzJdID0gImRj
+MiIsDQo+ICsJCVtDWExfREVDT0RFUl9EQzNdID0gImRjMyIsDQo+ICsJCVtDWExfREVDT0RFUl9E
+QzRdID0gImRjNCIsDQo+ICsJCVtDWExfREVDT0RFUl9EQzVdID0gImRjNSIsDQo+ICsJCVtDWExf
+REVDT0RFUl9EQzZdID0gImRjNiIsDQo+ICsJCVtDWExfREVDT0RFUl9EQzddID0gImRjNyIsDQo+
+ICAgCQlbQ1hMX0RFQ09ERVJfTUlYRURdID0gIm1peGVkIiwNCj4gICAJfTsNCj4gICANCj4gQEAg
+LTM4MywxMCArMzk5LDE2IEBAIHN0YXRpYyBpbmxpbmUgY29uc3QgY2hhciAqY3hsX2RlY29kZXJf
+bW9kZV9uYW1lKGVudW0gY3hsX2RlY29kZXJfbW9kZSBtb2RlKQ0KPiAgIAlyZXR1cm4gIm1peGVk
+IjsNCj4gICB9DQo+ICAgDQo+ICtzdGF0aWMgaW5saW5lIGJvb2wgY3hsX2RlY29kZXJfbW9kZV9p
+c19kYyhlbnVtIGN4bF9kZWNvZGVyX21vZGUgbW9kZSkNCj4gK3sNCj4gKwlyZXR1cm4gKG1vZGUg
+Pj0gQ1hMX0RFQ09ERVJfREMwICYmIG1vZGUgPD0gQ1hMX0RFQ09ERVJfREM3KTsNCj4gK30NCj4g
+Kw0KPiAgIGVudW0gY3hsX3JlZ2lvbl9tb2RlIHsNCj4gICAJQ1hMX1JFR0lPTl9OT05FLA0KPiAg
+IAlDWExfUkVHSU9OX1JBTSwNCj4gICAJQ1hMX1JFR0lPTl9QTUVNLA0KPiArCUNYTF9SRUdJT05f
+REMsDQo+ICAgCUNYTF9SRUdJT05fTUlYRUQsDQo+ICAgfTsNCj4gICANCj4gQEAgLTM5Niw2ICs0
+MTgsNyBAQCBzdGF0aWMgaW5saW5lIGNvbnN0IGNoYXIgKmN4bF9yZWdpb25fbW9kZV9uYW1lKGVu
+dW0gY3hsX3JlZ2lvbl9tb2RlIG1vZGUpDQo+ICAgCQlbQ1hMX1JFR0lPTl9OT05FXSA9ICJub25l
+IiwNCj4gICAJCVtDWExfUkVHSU9OX1JBTV0gPSAicmFtIiwNCj4gICAJCVtDWExfUkVHSU9OX1BN
+RU1dID0gInBtZW0iLA0KPiArCQlbQ1hMX1JFR0lPTl9EQ10gPSAiZGMiLA0KPiAgIAkJW0NYTF9S
+RUdJT05fTUlYRURdID0gIm1peGVkIiwNCj4gICAJfTsNCj4gICANCj4g
 
