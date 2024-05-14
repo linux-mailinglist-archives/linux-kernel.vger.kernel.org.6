@@ -1,169 +1,184 @@
-Return-Path: <linux-kernel+bounces-178514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44F638C4EDB
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:21:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F23B8C4EE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:23:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 716A7B21BEE
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 10:21:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 126FA282EA9
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 10:23:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6DDF12DDAB;
-	Tue, 14 May 2024 09:33:33 +0000 (UTC)
-Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A0CA12F398;
+	Tue, 14 May 2024 09:37:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TKSFLRfY"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E58BE12D761
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 09:33:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05CC6DDC0;
+	Tue, 14 May 2024 09:37:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715679213; cv=none; b=L+f83EkWc2sCod/ByvmsgPSF+wjzRdErv4LSfnoqETBa0KOFaeihkgpcmv+oj82ux4usJwjmtr5pu040aD6grBopEgiBy/7Y6zYhzbdQYUqkPJBZ4eFOIfhJjotsUx99Ea9zKS0F7YEZ+Ypjj3hMmYP+qMNPNjBafTO4/hUugN4=
+	t=1715679426; cv=none; b=qCFgGGHcGetEHxmkdW4hRKJxelGOwRTkF+2qR7LxmIciaekL4EfYwcxJtPa7ClafQWDJuDCbje6ftd65I8QpVdy1lmNZtwnhfn7ehyEcPPLR5OQKr5JAtGgy0OcrnbVMMg8Zc8J0R1ggvQun+2WwBMXNa+O/BqOJdoBcjU+xX8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715679213; c=relaxed/simple;
-	bh=kURtlY5cDvzhTq9BlSF93mSqPcR3Ib3pu/yxpA7syRo=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Vqm9GBiL4boc1tYaIKGIe2RtcDbAfUUGesh92Qv1Il9em7iMBwekrqvzWdkvZ5y5KvZCfAJfmtdvSF5O1ISsnZYnUUcFevqPrG4uUo//eZoOAe1Rc9RYhaf6DkwAHHCbVsFDDsbDJOeqjPpMuo1WgG/XRoxZXL/gbcdeBqckNic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-7e1c22e7280so484822139f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 02:33:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715679211; x=1716284011;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kAB1jUJaPwwIIZCl7ic94AmiI9/S/BxVDLghu+WIUYQ=;
-        b=ObcgyFHENZ3chRyZ1oEiPFgNvFJw9svqY6rByR7vV98/bzZOxvt1/q/EVPscUiNrty
-         Z+lD/+2PvnT8F0XtTooKpUp/wlccN+3tDWNcBR4D432zLi5QHIOUEdZJdhAmdTb1w1Ud
-         4e7UjkPbdALLsl6DQZ1rdiuM00ffDshoaFB1VXPnmDLWHOVREWo2+y1VkzvNsgE9C2oD
-         ezz3a6uM6q7ETbCrCs5ZOgDP/MsiCqxQHVRpZBXzLrHvYagHr5bWgmZx/y0CGoX/m8dF
-         gtv27k3wHiMVZDwAMyBhR2o+O8LVYHgeZ0WppsSvBsBJ/6yjmsB5nUl3KfOWfSfKLaSs
-         dYHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXxcgpEkpW8Z2HUcxbPmB5GfVJGyr3GYKFiiFuP8Ged/BsZPuQ8q1MlgfVrcy7D2c7rM0exp4Ra8IhGyed/+Tdr8bcOwNu9zAqTrB+d
-X-Gm-Message-State: AOJu0YwrPbWNQfZB+V4jFoVxpI1bqwywD3Pm9I0git1AQRkBLbsqOr+y
-	Idw+rnHthVUu4yVNRDNB5aWN+YWnu8GU3Z+8sdLA7OCTUAehk50vu6y3JQMIeFGfZWY4ViTamd9
-	eNbVdnB992k0qIf8J46z/oUMFkBgsmKW2x5fdcMEMlpqq1gforcqOMc8=
-X-Google-Smtp-Source: AGHT+IHlE7LVzAW3RsUeVHqIZ0qSn+eH++WU1uD97Wi3J9INxjWyaSgSR1m8nYkrFV6eioFLo/H805lpgzqGGPAr+GrTioa0vAGc
+	s=arc-20240116; t=1715679426; c=relaxed/simple;
+	bh=YDR0OvydU7zH2Id5zmwZ16EB+ivVJacr3n+CDgO1iOQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=c2+kQ5j43HCt2DMM2Bn+t3Hm7lDEZbJCJHy+wWylWQ3mvRir5Qh02hhlfc9RDkI2Frf0FpeQWoalyGlVteYPoAUq0sGqID9DFH8GGqsBSdmU+2aEdmpB4T8/1OAfYp5p/6Tg9yNdYwgZcpcyyWZgerAaOHlnjn3SSVoOXjwj2lw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TKSFLRfY; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44E92trP023178;
+	Tue, 14 May 2024 09:36:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=BI5+3M4Cp+napxmir/qdBGnqzOR0kZqQTJ2+o6G6IA0=; b=TK
+	SFLRfYlD6dI9dBhQA0ndoaBqLnU+oAXvJQ3C2xElFiqpKkZ8Krgar22YdmCadsd3
+	+YENBZrt0UtmahWV568UP/5vTLAhebaTo52IMIiDajjvTOOnWUNinG3m6vxsl304
+	7oN2X5/HotK6iSpK4fBxrnG3Caozh4caueoy5Wu7xrIDOUlS2qdvAhqPs8Yo91f0
+	Cqq1C6TSmknlBzSghxSx6kSqrrr2Y7XoOyhHQplpN6KEgbYvP+MELSbJOogv+Yzp
+	gY2F/kMHPI4eI1FhKKgRabPVL8uBvrm+/RhwSiJiRx5RgDZ0RIw8c7HF2XfyFGS3
+	n3su5kJJmSvi7A5jY7+w==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y21eddq8w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 14 May 2024 09:36:11 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44E9aAXA017970
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 14 May 2024 09:36:10 GMT
+Received: from [10.216.46.205] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 14 May
+ 2024 02:36:03 -0700
+Message-ID: <8b690d8f-986a-7806-b274-523b351e6e55@quicinc.com>
+Date: Tue, 14 May 2024 15:05:59 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:48f:b0:7de:e172:3d4e with SMTP id
- ca18e2360f4ac-7e1b5208481mr66921939f.3.1715679211020; Tue, 14 May 2024
- 02:33:31 -0700 (PDT)
-Date: Tue, 14 May 2024 02:33:31 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ebf2e0061866b102@google.com>
-Subject: [syzbot] [bcachefs?] UBSAN: shift-out-of-bounds in bch2_sb_dev_has_data
-From: syzbot <syzbot+249018ea545364f78d04@syzkaller.appspotmail.com>
-To: bfoster@redhat.com, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    cf87f46fd34d Merge tag 'drm-fixes-2024-05-11' of https://g..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=162f8fbc980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9d7ea7de0cb32587
-dashboard link: https://syzkaller.appspot.com/bug?extid=249018ea545364f78d04
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13a40d04980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=102e5b70980000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/9c147953fc8e/disk-cf87f46f.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/a55c9d1f91fc/vmlinux-cf87f46f.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/f8dab47ae8c2/bzImage-cf87f46f.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/2c5c030a256e/mount_0.gz
-
-The issue was bisected to:
-
-commit 03ef80b469d5d83530ce1ce15be78a40e5300f9b
-Author: Kent Overstreet <kent.overstreet@linux.dev>
-Date:   Sat Sep 23 22:41:51 2023 +0000
-
-    bcachefs: Ignore unknown mount options
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13d673d4980000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=103673d4980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=17d673d4980000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+249018ea545364f78d04@syzkaller.appspotmail.com
-Fixes: 03ef80b469d5 ("bcachefs: Ignore unknown mount options")
-
-loop0: detected capacity change from 0 to 32768
-------------[ cut here ]------------
-UBSAN: shift-out-of-bounds in fs/bcachefs/replicas.c:1010:20
-shift exponent 155 is too large for 32-bit type 'int'
-CPU: 0 PID: 5075 Comm: syz-executor397 Not tainted 6.9.0-rc7-syzkaller-00183-gcf87f46fd34d #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
- ubsan_epilogue lib/ubsan.c:231 [inline]
- __ubsan_handle_shift_out_of_bounds+0x3c8/0x420 lib/ubsan.c:468
- bch2_sb_dev_has_data+0x22a/0x5f0 fs/bcachefs/replicas.c:1010
- member_to_text+0xcb/0x1030 fs/bcachefs/sb-members.c:163
- bch2_sb_members_v1_to_text+0x1aa/0x2f0 fs/bcachefs/sb-members.c:317
- bch2_sb_field_validate+0x1f7/0x2d0 fs/bcachefs/super-io.c:1228
- bch2_sb_validate+0x9b6/0xe10 fs/bcachefs/super-io.c:460
- __bch2_read_super+0xc9a/0x1460 fs/bcachefs/super-io.c:822
- bch2_fs_open+0x246/0xdf0 fs/bcachefs/super.c:2052
- bch2_mount+0x71d/0x1320 fs/bcachefs/fs.c:1903
- legacy_get_tree+0xee/0x190 fs/fs_context.c:662
- vfs_get_tree+0x90/0x2a0 fs/super.c:1779
- do_new_mount+0x2be/0xb40 fs/namespace.c:3352
- do_mount fs/namespace.c:3692 [inline]
- __do_sys_mount fs/namespace.c:3898 [inline]
- __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3875
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f16b990d8ba
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffdd930ef68 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007ffdd930ef80 RCX: 00007f16b990d8ba
-RDX: 0000000020011a00 RSI: 0000000020011a40 RDI: 00007ffdd930ef80
-RBP: 0000000000000004 R08: 00007ffdd930efc0 R09: 00000000000119f3
-R10: 0000000001200014 R11: 0000000000000282 R12: 0000000001200014
-R13: 00007ffdd930efc0 R14: 0000000000000003 R15: 0000000001000000
- </TASK>
----[ end trace ]---
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.1
+Subject: Re: [PATCH v12 6/6] PCI: qcom: Add OPP support to scale performance
+Content-Language: en-US
+To: Manivannan Sadhasivam <mani@kernel.org>
+CC: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Lorenzo Pieralisi
+	<lpieralisi@kernel.org>,
+        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?=
+	<kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, <johan+linaro@kernel.org>,
+        <bmasney@redhat.com>, <djakov@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <vireshk@kernel.org>, <quic_vbadigan@quicinc.com>,
+        <quic_skananth@quicinc.com>, <quic_nitegupt@quicinc.com>,
+        <quic_parass@quicinc.com>, <krzysztof.kozlowski@linaro.org>
+References: <20240427-opp_support-v12-0-f6beb0a1f2fc@quicinc.com>
+ <20240427-opp_support-v12-6-f6beb0a1f2fc@quicinc.com>
+ <20240430052613.GD3301@thinkpad>
+ <8b213eba-7ab6-ae9c-7683-937a9d6aaf08@quicinc.com>
+ <20240514092838.GE2463@thinkpad>
+From: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
+In-Reply-To: <20240514092838.GE2463@thinkpad>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: k7TJaNxJ_yzDYhzkbemJI7DquIRd-h6P
+X-Proofpoint-ORIG-GUID: k7TJaNxJ_yzDYhzkbemJI7DquIRd-h6P
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-14_04,2024-05-10_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 adultscore=0
+ priorityscore=1501 bulkscore=0 spamscore=0 mlxscore=0 malwarescore=0
+ suspectscore=0 impostorscore=0 clxscore=1015 lowpriorityscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405010000 definitions=main-2405140067
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+On 5/14/2024 2:58 PM, Manivannan Sadhasivam wrote:
+> On Thu, May 09, 2024 at 09:21:55PM +0530, Krishna Chaitanya Chundru wrote:
+>>
+>>
+>> On 4/30/2024 10:56 AM, Manivannan Sadhasivam wrote:
+>>> On Sat, Apr 27, 2024 at 07:22:39AM +0530, Krishna chaitanya chundru wrote:
+>>>> QCOM Resource Power Manager-hardened (RPMh) is a hardware block which
+>>>> maintains hardware state of a regulator by performing max aggregation of
+>>>> the requests made by all of the clients.
+>>>>
+>>>> PCIe controller can operate on different RPMh performance state of power
+>>>> domain based on the speed of the link. And this performance state varies
+>>>> from target to target, like some controllers support GEN3 in NOM (Nominal)
+>>>> voltage corner, while some other supports GEN3 in low SVS (static voltage
+>>>> scaling).
+>>>>
+>>>> The SoC can be more power efficient if we scale the performance state
+>>>> based on the aggregate PCIe link bandwidth.
+>>>>
+>>>> Add Operating Performance Points (OPP) support to vote for RPMh state based
+>>>> on the aggregate link bandwidth.
+>>>>
+>>>> OPP can handle ICC bw voting also, so move ICC bw voting through OPP
+>>>> framework if OPP entries are present.
+>>>>
+>>>> As we are moving ICC voting as part of OPP, don't initialize ICC if OPP
+>>>> is supported.
+>>>>
+>>>> Before PCIe link is initialized vote for highest OPP in the OPP table,
+>>>> so that we are voting for maximum voltage corner for the link to come up
+>>>> in maximum supported speed.
+>>>>
+>>>> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+>>>> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+>>>> ---
+>>>>    drivers/pci/controller/dwc/pcie-qcom.c | 81 ++++++++++++++++++++++++++++------
+>>>>    1 file changed, 67 insertions(+), 14 deletions(-)
+>>>>
+>>>> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+>>>> index 465d63b4be1c..40c875c518d8 100644
+>>>> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+>>>> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+>>>
+>>> [...]
+>>>
+>>>> @@ -1661,6 +1711,9 @@ static int qcom_pcie_suspend_noirq(struct device *dev)
+>>>>    		ret = icc_disable(pcie->icc_cpu);
+>>>>    		if (ret)
+>>>>    			dev_err(dev, "Failed to disable CPU-PCIe interconnect path: %d\n", ret);
+>>>> +
+>>>> +		if (!pcie->icc_mem)
+>>>> +			dev_pm_opp_set_opp(pcie->pci->dev, NULL);
+>>>
+>>> At the start of the suspend, there is a call to icc_set_bw() for PCIe-MEM path.
+>>> Don't you want to update it too?
+>>>
+>>> - Mani
+>>>
+>> if opp is supported we just need to call dev_pm_opp_set_opp() only once
+>> which will take care for both PCIe-MEM & CPU-PCIe path.
+>> so we are not adding explicitly there.
+> 
+> No, I was asking you why you are not adding a check for the existing
+> icc_set_bw() at the start like you were doing elsewhere.
+>Got it I will add the check in the next patch series.
+- Krishna Chaitanya.
+> - Mani
+> 
 
