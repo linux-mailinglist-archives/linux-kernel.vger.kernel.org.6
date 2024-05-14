@@ -1,94 +1,163 @@
-Return-Path: <linux-kernel+bounces-178644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56FBA8C55C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:06:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 58E568C55C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:08:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E82F8B21AA5
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:06:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ECFA8B20D29
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:07:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C42343D971;
-	Tue, 14 May 2024 12:06:32 +0000 (UTC)
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F40C3F9D2;
+	Tue, 14 May 2024 12:07:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jM88O5ZQ"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB2B647F4B;
-	Tue, 14 May 2024 12:06:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D19A320F;
+	Tue, 14 May 2024 12:07:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715688392; cv=none; b=ik+2TF6mxlGLHc1uvJ8qy8YhW7xSdkUrx+7YwON7r8jEjTp0UDMzzYxgllcNe3o2Nn0qHu2QqrhPNm54xVjxyfwTD5s/BVIZwcYE/5YUUHhgfPUGc/fiyKz/UxjjP+4u/0suLdFRBY5vzTK/QywPw2K1BGzO+6kuSHgatMhw4fQ=
+	t=1715688469; cv=none; b=NPndq+zoImSvfzWA/YASDF1O7fDEBzTZekF9721RFpMYHbReITXb6CQdKG0SWo0Gbw1a9QlLCuFFzORXW+2hV5vCapNCkvC0Mhks1muS7M0zcXOCd/DsTnOkdEuFU7jd5pCMbzm/YJXlPVuW2fTnArzy/qHGDNPgs8ztjxGPvz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715688392; c=relaxed/simple;
-	bh=9155WRY98DaWbSA/SvQg5vVQwzBmCC5BMumb5sZl11Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XoLMqbiRz5tYKTdUg1zTMLKN/rxUuD9sDarrCOExxSKcsARDyrCMhPvoMRZTjTqB2E8JdhXx8by41y+8rZfiD9g4b4p9vVSKuXgrgFkRukihqa6h5pjmay7w2Nm0FeoUMzZTh5NCg5zcH3Hx9M0NQOEG7kQBa7A8uKjGFJe2txg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+	s=arc-20240116; t=1715688469; c=relaxed/simple;
+	bh=mLL7B8vDyCDH8vmnqNlRJpEkXI6Ms8si8mOelAOXJwA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g5W2/gEV8xCWA8TWK00vNVhBmK8IyYkphcjPP5wfpgpSpngy1M9/TYe+o3TaozyAcHf2YykIhEOCka6BJxePY++zA99DPboROFZ6NKT0HxsVNXSdEFH3HxLW5Jco788TbXOdRWXioMcnt+7FZ8826dHqj1S2p5ehRXHz/z4E2MI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jM88O5ZQ; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-51f12ccff5eso7584007e87.1;
-        Tue, 14 May 2024 05:06:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715688389; x=1716293189;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a59c0a6415fso23314666b.1;
+        Tue, 14 May 2024 05:07:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715688466; x=1716293266; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=JGkgGEHSqVLLz9R443YRfxbCiDfzB4VKiKAy/L5beOQ=;
-        b=hbE63WYkYw2MOUhF87qDBuouYmARVPnTIxOGEjANiJHwLGBz7MZthZcNI24/YNwXJa
-         mHpFw/Xd3hsVARmze9LNkcYR7ND08AB841HImY+L/5nxg1xO/VzjCsQYjVG9Uav/G5mT
-         gvIIQBO/kVAAyEiDnxSMYtyqJi72O1BwlYYr9MAF1x4VAsG4W0P/bGgOS+/aSZE3B8mk
-         D6YjyIVVle9EZe07BAOKp6g/YKzyE6mvHJqN56Lm1vbcdB1gVRE+pyBUd3tWkKPWXNnO
-         ojOsLjR5GKsTVR33aRP9CVmVG6d1hcx5jVavpXFHrHcUeDL2it1dINu1LLcQxc0VSAIh
-         t6Yg==
-X-Forwarded-Encrypted: i=1; AJvYcCXfIWWoBwi2jBeNAWo8Qk/g5WLi8vMyqlM+9A7KTocEPzzt0u3fx5gsM3vZ9jN1jbJjWgl3VlTAyO/pUeQqaPjqiq8xLwHmNJMa/IVAHqsY5KuhhxCZWkrgEVu7fbajP3uFLj9n
-X-Gm-Message-State: AOJu0YwXzOnfVBuobxSakPnSWe1J44lfxSynd3wdbOHfU5S60kQU/6T0
-	GaPZG1FRW73eGqjdXWB0dyAE6QLnGXyVzawvPbknfbaQXWvmST6L
-X-Google-Smtp-Source: AGHT+IGMr05Y60lrruFUFnI8kXR9DXre6tVIZf/nmdvmabZ4MKTWKPmXc2BV0Vh2JS6zNm6KK7f/yA==
-X-Received: by 2002:a05:6512:a91:b0:51c:a0e1:2a44 with SMTP id 2adb3069b0e04-5221006fde3mr9451845e87.26.1715688388551;
-        Tue, 14 May 2024 05:06:28 -0700 (PDT)
-Received: from gmail.com (fwdproxy-lla-118.fbsv.net. [2a03:2880:30ff:76::face:b00c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a1787c6ffsm711848766b.49.2024.05.14.05.06.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 May 2024 05:06:28 -0700 (PDT)
-Date: Tue, 14 May 2024 05:06:26 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	thepacketgeek@gmail.com, Aijay Adams <aijay@meta.com>,
-	"open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next] netconsole: Do not shutdown dynamic
- configuration if cmdline is invalid
-Message-ID: <ZkNTwrlLLol1w4gw@gmail.com>
-References: <20240510103005.3001545-1-leitao@debian.org>
- <20240513145129.6f094f92@kernel.org>
+        bh=spJhcMCJLLZ5XYu12iV4bIRUrYgxZ4FzOTF2itKzb8U=;
+        b=jM88O5ZQYK4FiYSvnsvy6Tk1goyb06yBKHacC6xdxswpm9LlZSMjhdMcQpA9GWUi5f
+         vR5UXBfGTJx2hilanCi2foJKoXPj9Yqzf+cMiAPyte4FxXVTc8WdEkeJ8LjxzFofAw/b
+         ZqF4DVyhxAdjG+crhG6ntgDewYYjrcphRryjk71wby0sG8RSPQ3yVg+PueSwcEQ3rx1F
+         Rg3MmIsyKkWpS1qrVbPl2d8OTBo6NrLOi69rR7VRwZ7n7EQoGGX1OUMwuWfW+kVbLv6y
+         zndb48RhrJFTEj33p8K8dXyZ+hYL75moEk8T3Dn2oTewEef8aNzcjkQ5xfmGCDfDAjvm
+         Vhiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715688466; x=1716293266;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=spJhcMCJLLZ5XYu12iV4bIRUrYgxZ4FzOTF2itKzb8U=;
+        b=IoHX0areuj4wh8tAhieLjeQiCdsrHeQAKFtXZ6Yud+U70mZZA2Caqna/Ck8DHk7AnB
+         CoxlMUSXAGVeTOj6TcvXijkLtlC5WzgDC3lGQvLL6uT0FJFeEqG8YkTNDw5LrubYVp3M
+         hNZy/fdIwoPHfeBB6HeZ3i6uKPoupyY/glR+U4NEfgj8qhNi6K5JM3haqh3FbDpYd+M2
+         lS17GV3BXYKiYJXFGHpfwkN4vg85nSeUt0TGoPUId6vw9dqtKES+lbIx2oq5XxzsYMiP
+         awazdIxzQD0U2A2DvRlmtlBOKm65VsVa2pS7vdUvYj0eKx3qwYIBKhkekDpRP4FQrBr7
+         1z5A==
+X-Forwarded-Encrypted: i=1; AJvYcCUJvovLLvsb+cBkSr5HXuPPUvkqDRxGUQuFBAQ6fuR8fzeq7XSpGDxUa8AMhDhjqT2LrgSOTdgIDUJRfOJTtWc8fOxj8DZIBxxmxD4=
+X-Gm-Message-State: AOJu0Yzyjf1TLHtOje4r1SJ1GglK88lTxmpFYcCzCfXZzoY2sizg58wu
+	pSxfUlVsSkCk9GSxVClTrBNfEoRL2wC529LHJmVY6QMQy/wYWBUw5FcM/Z3WuS5eovBCdkcLGjb
+	SA0u0+dYLA+1V/aRDMzPu1G5+npg=
+X-Google-Smtp-Source: AGHT+IHJuloMH1XSDHVgTqa/HlyWJaT93NPV8YsGUHp1LosKD76lHUgKrGDPCc7F4L5qVYKU2iSiFjkXnFF6c1o/eTM=
+X-Received: by 2002:a17:907:7757:b0:a59:c9ce:3389 with SMTP id
+ a640c23a62f3a-a5a2d673aa6mr751324566b.67.1715688466430; Tue, 14 May 2024
+ 05:07:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240513145129.6f094f92@kernel.org>
+References: <CAEkJfYMhv8AxxHSVdPT9bCX1cJZXw39+bMFh=2N9uNOB4Hcr=w@mail.gmail.com>
+ <20240514103742.3137-1-hdanton@sina.com>
+In-Reply-To: <20240514103742.3137-1-hdanton@sina.com>
+From: Sam Sun <samsun1006219@gmail.com>
+Date: Tue, 14 May 2024 20:07:34 +0800
+Message-ID: <CAEkJfYPH3SJ6J3kLSjMGqkWOzgbgKZV_f2Hq05cpZZv7RmhvOg@mail.gmail.com>
+Subject: Re: [Linux kernel bug] INFO: task hung in blk_mq_get_tag
+To: Hillf Danton <hdanton@sina.com>, Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, axboe@kernel.dk, 
+	syzkaller-bugs@googlegroups.com, xrivendell7@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 13, 2024 at 02:51:29PM -0700, Jakub Kicinski wrote:
-> On Fri, 10 May 2024 03:30:05 -0700 Breno Leitao wrote:
-> > +static inline bool dynamic_netconsole_enabled(void)
-> > +{
-> > +	return IS_ENABLED(CONFIG_NETCONSOLE_DYNAMIC);
-> > +}
-> 
-> Why the separate static inline?
+On Tue, May 14, 2024 at 6:37=E2=80=AFPM Hillf Danton <hdanton@sina.com> wro=
+te:
+>
+> On Tue, 14 May 2024 10:05:21 +0800 Sam Sun <samsun1006219@gmail.com>
+> > On Tue, May 14, 2024 at 6:54=E2=80=AFAM Hillf Danton <hdanton@sina.com>=
+ wrote:
+> > > On Mon, 13 May 2024 20:57:44 +0800 Sam Sun <samsun1006219@gmail.com>
+> > > >
+> > > > I applied this patch and tried using the C repro, but it still cras=
+hed
+> > > > with the same task hang kernel dump log.
+> > >
+> > > Oh low-hanging pear is sour, and try again seeing if there is missing
+> > > wakeup due to wake batch.
+> > >
+> > > --- x/lib/sbitmap.c
+> > > +++ y/lib/sbitmap.c
+> > > @@ -579,6 +579,8 @@ void sbitmap_queue_wake_up(struct sbitma
+> > >         unsigned int wake_batch =3D READ_ONCE(sbq->wake_batch);
+> > >         unsigned int wakeups;
+> > >
+> > > +       __sbitmap_queue_wake_up(sbq, nr);
+> > > +
+> > >         if (!atomic_read(&sbq->ws_active))
+> > >                 return;
+> > >
+> > > --
+> >
+> > I applied this patch together with the last patch. Unfortunately it
+> > still crashed.
+>
+> After two rounds of test, what is clear now so far is -- it is IOs
+> in flight that caused the task hung reported, though without spotting
+> why they failed to complete within 120 seconds.
+> >
+> > Pointed out by Tetsuo, this kernel panic might be caused by sending
+> > NMI between cpus. As dump log shows:
+> > ```
+> > [  429.046960][   T32] NMI backtrace for cpu 0
+> > [  429.047499][   T32] CPU: 0 PID: 32 Comm: khungtaskd Not tainted 6.9.=
+0-dirty #6
+> > [  429.048417][   T32] Hardware name: QEMU Standard PC (i440FX + PIIX,
+> > 1996), BIOS rel-1.16.1-0-g3208b098f51a-prebuilt.qemu.org 04/01/2014
+> > [  429.049873][   T32] Call Trace:
+> > [  429.050299][   T32]  <TASK>
+> > [  429.050672][   T32]  dump_stack_lvl+0x201/0x300
+> > ...
+> > [  429.063133][   T32]  ret_from_fork_asm+0x11/0x20
+> > [  429.063735][   T32]  </TASK>
+> > [  429.064168][   T32] Sending NMI from CPU 0 to CPUs 1:
+> > [  429.064833][   T32] BUG: unable to handle page fault for address:
+> > ffffffff813d4cf1
+>
+> Given many syzbot reports without gpf like this one, I have difficulty
+> understanding it. If it is printed after task hung detected, it should
+> be a seperate issue.
+>
 
-I thought it would make the code easier to read.
+I tried to run
 
-> We can put IS_ENABLED.. directly in the if condition.
+# echo 0 > /proc/sys/kernel/hung_task_all_cpu_backtrace
 
-Sure. I will send a v2 with the IS_ENABLED() inside the if condition.
+before running the reproducer, the kernel stops panic. But still, even
+if I terminate the execution of the reproducer, kernel continues
+dumping task hung logs. After setting bung_task_all_cpu_backtrace back
+to 1, it panic immediately during next dump. So I guess it is still a
+task hung instead of general protection fault.
 
-Thanks for the review.
+> > [  429.065765][   T32] #PF: supervisor write access in kernel mode
+> > [  429.066502][   T32] #PF: error_code(0x0003) - permissions violation
+> > [  429.067274][   T32] PGD db38067 P4D db38067 PUD db39063 PMD 12001a1
+> > [  429.068068][   T32] Oops: 0003 [#1] PREEMPT SMP KASAN NOPTI
+> > [  429.068767][   T32] CPU: 0 PID: 32 Comm: khungtaskd Not tainted
+> > 6.9.0-dirty #6
+> > [  429.069666][   T32] Hardware name: QEMU Standard PC (i440FX + PIIX,
+> > 1996), BIOS rel-1.16.1-0-g3208b098f51a-prebuilt.qemu.org 04/01/2014
+> > [  429.071142][   T32] RIP: 0010:__send_ipi_mask+0x541/0x690
 
