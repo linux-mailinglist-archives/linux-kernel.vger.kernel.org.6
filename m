@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-178895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC8F68C592E
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 17:58:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 599808C592F
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 17:59:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 830FE285A9B
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 15:58:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C9F71C21B88
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 15:59:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25AAE17EBB9;
-	Tue, 14 May 2024 15:58:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFA6817EBB9;
+	Tue, 14 May 2024 15:58:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Sk8Lvnh+"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QXE2POuO"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5CB717EB82
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 15:58:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABB7217EB82
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 15:58:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715702289; cv=none; b=NIt9QFM/rHE/O4P/VmgR8jKOBCCOZOK20gxnqcujAmr7SSQGireCqWxk+I0w4DSwUSptXiT8xYdba18uzwnqci4oUjCkv03WMg4AYHyw20KZ3jpjx7nPVVBQbFWFq7HA2IJVaclLgN5tvbC7ZLIgcyZ9BBeZPNm4vGKTdcpiulw=
+	t=1715702334; cv=none; b=NgdLbSEigu1efwFXvvgfEezHAymQN4Z6eAP9JibLXniXlnfQcrPN716BP+ifxl7ovHi59bGMatljLcsWOrL4HN5jnUZ29sDVCWJJoWYrLeisRdyAoFpqOvkXsUg6Wf11q/achA+sKf0rVEoj1t0eDaFUeCnzCalAldRhUBnLFb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715702289; c=relaxed/simple;
-	bh=zT17jq1ESsKCxuHpaoXUkdMPkR4Exgf3s7RzFjUHYtM=;
+	s=arc-20240116; t=1715702334; c=relaxed/simple;
+	bh=T/7tNw3OCSBexRio3ZeLhVbYRbHi05hyDMHnz4+jW6A=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uUYnlGDv62RU0vef7bTbVXQnxoGK/LajBOpwpd3Y7lyg1/jogp+JUNsx0FxyWCAOGhUmwfjmToBn518mm33H9D4TBNxbajNYA8bt+1EHZwPpDPt2bw2CriP3R5I+2S/9ZO7LZ/9zIooTzD1GkVYxrDeh6VQtu/4HomP1lCnh2wY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Sk8Lvnh+; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=c8QbDJzOHfHid80f8iPtTU+olficDk/jOBIkD0a/npMXOwu1Ux4JDR0PnUDVoadkteaFCyyICzhsemX5ihYdx7yt/3p2VaTp4e/tEYSSSWNBiomQe7+gj+jPY78IUspoInK6TQ3pRVdEveT2gMLTZIIH5D6XWVOAazaWt1gYrYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QXE2POuO; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715702286;
+	s=mimecast20190719; t=1715702331;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=bqrlRJNafQyJHdgH1KpdNVL6dTLfmVAhQ2Ho9SfW90E=;
-	b=Sk8Lvnh+QoG6VYyYCdLEnhJ6uFet6CJ6fGfQhghEz6q2ZF3U6U9MtLkXI4Mlok1HCIIs30
-	cJFUL7D20T4EpdFL6XU8m8T/aqufHss8zcMVSZW8M/rRLczLSQRRuaAuZYTx9UirhOS05O
-	kGWvY+qDhTEi3RoDPLBvNOi51Gp/+u0=
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com
- [209.85.215.198]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=kvyD+47vDiVZ1HqZCWc8GW6dp7A4/9KWl6vG9zgnVfU=;
+	b=QXE2POuOnHHskgdYzMmBcwemIBVfydDvAHHeSPEqUezxHQdQPvNBOjYkZVLVW1nKnQ3Lwe
+	n3Yxl0lA3pXeimmiLuONWgPmPIOrV+WgJj/86YiEURWFKE067zZvrcdb4jlzqVgsRL2rW6
+	aIdUNp5V5xNKhuipabhZjSG5C6z9yvs=
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
+ [209.85.210.199]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-45-mjZUxC5fO8aD9mJv8LbWJw-1; Tue, 14 May 2024 11:58:03 -0400
-X-MC-Unique: mjZUxC5fO8aD9mJv8LbWJw-1
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-5d8df7c5500so5256288a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 08:58:03 -0700 (PDT)
+ us-mta-490-G_FASNTBNh2kMD0pyW_7UA-1; Tue, 14 May 2024 11:58:50 -0400
+X-MC-Unique: G_FASNTBNh2kMD0pyW_7UA-1
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-6f4739ba7dcso2550795b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 08:58:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715702280; x=1716307080;
+        d=1e100.net; s=20230601; t=1715702329; x=1716307129;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=bqrlRJNafQyJHdgH1KpdNVL6dTLfmVAhQ2Ho9SfW90E=;
-        b=CWU/Fl5SCi69IqHqOvEwRQzz7Xug6Gq2zfWmAjJRysDruMJQtvzh4BLDQmL+SYuDbP
-         VPBcH56XzOdi1hot4Uq+7zYDi7lWZ4v+US6FZZH7866hcggClE7kYVy4xXC1M8MPsFIG
-         MNwud0PxsLIqxmShwXK3S70qM6udj960X1xKfx10aeA+3mYEU0T1CG/8P7/Uf8bLfLTj
-         BRYk/opgd1JD90gZMOh0PtoQpsIPzM+mAH0DQqVDkt0GLMzNj/Nl/8yMkWc7TOCMeS5F
-         Tom5Pp5podbpSyHB+y7QlrGg/Ml7xB4d2aij4krbpdkI8hgHZrKbiO4k1VXfGcc6R+pF
-         x2FA==
-X-Forwarded-Encrypted: i=1; AJvYcCVvGPZcjSJU3Wa+nPYSGvJvFO8mnKdjX9zMeSHTR8pdf65W/cnlREBBhOdqmaF4dx+mBJUbpnyr8zechzcxeiNOVeJ+5iv1kXZE4sGM
-X-Gm-Message-State: AOJu0YygX+G/7UQ9qnKARgOtdhhEKXmXqnUk0j4Rl/7Ggl/rsXlHPqYj
-	vlf2JMyePHM9nmJXfWXspCJI3vOOc/KAHGl0xp0Y29aXp9QD9A2klYEXwIgXIwCAgDc7YekvMnT
-	frTpxCIxLObi7G10v0BEbeiqsrUMfAk6RjtElh772HmTS7Ld7SuKUV6mm2YgB4A==
-X-Received: by 2002:a05:6a21:789c:b0:1af:cecb:b64a with SMTP id adf61e73a8af0-1afde0af156mr14024885637.9.1715702280311;
-        Tue, 14 May 2024 08:58:00 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFOA4+iNQa1n9S/4UBr9eFOf508dhs/YigFAhH1ZwBGEa7xJs3zDQZQrZfPqFxkb+kzuHIqFA==
-X-Received: by 2002:a05:6a21:789c:b0:1af:cecb:b64a with SMTP id adf61e73a8af0-1afde0af156mr14024865637.9.1715702279879;
-        Tue, 14 May 2024 08:57:59 -0700 (PDT)
+        bh=kvyD+47vDiVZ1HqZCWc8GW6dp7A4/9KWl6vG9zgnVfU=;
+        b=pKsbb3NcJOQol0vd+Gymll9bLpTI09PZh5Ymiy3NKpKuZs4fjN7e7qbSnn7jMCBKTN
+         iW1TS5ZttckzqG4Jwy37ICPhjen+uHX5nzrLfpmRiBEVThT4mihtBe8kicnF+brEP0AB
+         UAoDTlOwqfntt+QRIFb6KEESknvaa0vitRtrUeevYz0TgIovmQJrVfZeQWmCuxX1Qww+
+         ZVhZTH/PvzVeuMr2k7ms7D1hTbY5dFiHb89f7clNxVH+5zKp3qsfhUBrQLYqWq3Q5N6W
+         N2fYeivL5y8OVU2iWThH/x/i9dvdGF9/ReZ1Wc5a6GDJ7Ia5iZ85rTuquJuKM/Z+UOgW
+         qPCw==
+X-Forwarded-Encrypted: i=1; AJvYcCWpuLUcxc1jvnOUF4kfaxS5uqXp+1QjVzjoevvv1/ZPdFJgyGZu6Jt2BPqN5+i8uVxTFnRJaPh8hG/5hC44cKg55CB/XANUsgTd5Rn3
+X-Gm-Message-State: AOJu0YxARfVElWuDdNM4N6RTTBtLrZToQuI4W1a6o7/yZf3qzLDTdLXL
+	+Iwow7Nqe5wb1bEsDkvdgByRcKckYkNF0bVIajMRGnOnOWaIu88JQONIkmbLv//MJ5ES1zqXRlG
+	w3iq5Ay50ZtyyFTs6kL1Qvz2gLveAHbRwtPBo7K6RU1ZomEiuCJy/ER8RB3qooQ==
+X-Received: by 2002:a05:6a00:4f86:b0:6f3:e6ac:1a3f with SMTP id d2e1a72fcca58-6f4e02ad970mr15828916b3a.11.1715702329001;
+        Tue, 14 May 2024 08:58:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGQISvA42hinyusbGdUd1dvzSXFpQXpfUwTKAu99wTKU0rBBgYY71Nyic/65cySNe0tBJdx5g==
+X-Received: by 2002:a05:6a00:4f86:b0:6f3:e6ac:1a3f with SMTP id d2e1a72fcca58-6f4e02ad970mr15828889b3a.11.1715702328570;
+        Tue, 14 May 2024 08:58:48 -0700 (PDT)
 Received: from [172.21.1.2] ([50.204.89.31])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0b1b1d13sm99438985ad.0.2024.05.14.08.57.59
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2a66590sm9695600b3a.1.2024.05.14.08.58.47
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 May 2024 08:57:59 -0700 (PDT)
-Message-ID: <a8571d06-67db-450a-a3e4-d5bc9350a9ab@redhat.com>
-Date: Tue, 14 May 2024 17:57:58 +0200
+        Tue, 14 May 2024 08:58:48 -0700 (PDT)
+Message-ID: <8b7de899-4150-4da0-8242-507977169bbc@redhat.com>
+Date: Tue, 14 May 2024 17:58:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,15 +82,21 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: mm: force write fault for atomic RMW instructions
-To: Catalin Marinas <catalin.marinas@arm.com>,
- Yang Shi <yang@os.amperecomputing.com>
-Cc: will@kernel.org, scott@os.amperecomputing.com, cl@gentwo.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240507223558.3039562-1-yang@os.amperecomputing.com>
- <Zj4O8q9-bliXE435@arm.com>
- <6066e0da-f00a-40fd-a5e2-d4d78786c227@os.amperecomputing.com>
- <ZkM_WXxEQo51mrK5@arm.com>
+Subject: Re: [PATCH v2 7/8] virtio-mem: Enable virtio-mem for RISC-V
+To: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>,
+ Alexandre Ghiti <alexghiti@rivosinc.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley
+ <paul.walmsley@sifive.com>, linux-riscv@lists.infradead.org
+Cc: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>,
+ Andrew Bresticker <abrestic@rivosinc.com>,
+ Chethan Seshadri <Chethan.Seshadri@catalinasystems.io>,
+ Lorenzo Stoakes <lstoakes@gmail.com>, Oscar Salvador <osalvador@suse.de>,
+ Santosh Mamila <santosh.mamila@catalinasystems.io>,
+ Sivakumar Munnangi <siva.munnangi@catalinasystems.io>,
+ Sunil V L <sunilvl@ventanamicro.com>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, virtualization@lists.linux-foundation.org
+References: <20240514140446.538622-1-bjorn@kernel.org>
+ <20240514140446.538622-8-bjorn@kernel.org>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -138,42 +144,39 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <ZkM_WXxEQo51mrK5@arm.com>
+In-Reply-To: <20240514140446.538622-8-bjorn@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 14.05.24 12:39, Catalin Marinas wrote:
-> On Fri, May 10, 2024 at 10:13:02AM -0700, Yang Shi wrote:
->> On 5/10/24 5:11 AM, Catalin Marinas wrote:
->>> On Tue, May 07, 2024 at 03:35:58PM -0700, Yang Shi wrote:
->>>> The atomic RMW instructions, for example, ldadd, actually does load +
->>>> add + store in one instruction, it may trigger two page faults, the
->>>> first fault is a read fault, the second fault is a write fault.
->>>>
->>>> Some applications use atomic RMW instructions to populate memory, for
->>>> example, openjdk uses atomic-add-0 to do pretouch (populate heap memory
->>>> at launch time) between v18 and v22.
->>> I'd also argue that this should be optimised in openjdk. Is an LDADD
->>> more efficient on your hardware than a plain STR? I hope it only does
->>> one operation per page rather than per long. There's also MAP_POPULATE
->>> that openjdk can use to pre-fault the pages with no additional fault.
->>> This would be even more efficient than any store or atomic operation.
->>
->> It is not about whether atomic is more efficient than plain store on our
->> hardware or not. It is arch-independent solution used by openjdk.
+On 14.05.24 16:04, Björn Töpel wrote:
+> From: Björn Töpel <bjorn@rivosinc.com>
 > 
-> It may be arch independent but it's not a great choice. If you run this
-> on pre-LSE atomics hardware (ARMv8.0), this operation would involve
-> LDXR+STXR and there's no way for the kernel to "upgrade" it to a write
-> operation on the first LDXR fault.
+> Now that RISC-V has memory hotplugging support, virtio-mem can be used
+> on the platform.
 > 
-> It would be good to understand why openjdk is doing this instead of a
-> plain write. Is it because it may be racing with some other threads
-> already using the heap? That would be a valid pattern.
+> Signed-off-by: Björn Töpel <bjorn@rivosinc.com>
+> ---
+>   drivers/virtio/Kconfig | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/virtio/Kconfig b/drivers/virtio/Kconfig
+> index c17193544268..4e5cebf1b82a 100644
+> --- a/drivers/virtio/Kconfig
+> +++ b/drivers/virtio/Kconfig
+> @@ -122,7 +122,7 @@ config VIRTIO_BALLOON
+>   
+>   config VIRTIO_MEM
+>   	tristate "Virtio mem driver"
+> -	depends on X86_64 || ARM64
+> +	depends on X86_64 || ARM64 || RISCV
+>   	depends on VIRTIO
+>   	depends on MEMORY_HOTPLUG
+>   	depends on MEMORY_HOTREMOVE
 
-Maybe openjdk should be switching to MADV_POPULATE_WRITE. QEMU did that 
-for the preallocate/populate use case.
 
+Nice!
+
+Acked-by: David Hildenbrand <david@redhat.com>
 -- 
 Cheers,
 
