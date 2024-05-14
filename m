@@ -1,212 +1,137 @@
-Return-Path: <linux-kernel+bounces-178654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D5018C55E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:16:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C37D48C55F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:20:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFEC41C227BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:16:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E28D281A49
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:20:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C14A943AB4;
-	Tue, 14 May 2024 12:16:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00F4047F5D;
+	Tue, 14 May 2024 12:20:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="KRT/ov4r"
-Received: from smtp-bc0e.mail.infomaniak.ch (smtp-bc0e.mail.infomaniak.ch [45.157.188.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sUVlJvbL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0895C3F9D2
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 12:15:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B3EB2D60A;
+	Tue, 14 May 2024 12:20:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715688962; cv=none; b=uJ3A4JcFl4QgkeZ6LNRBMPL/KAcwPgyUY3/eetGBNNtwEtP46OpWDhKFjZpQQmIsGyhBFMydRATMguIpq7LSUg+KCCvm/7WpX63FPRkMnDO/hUsW9nRt0Plt+njUJYeO1SjQhyVU5sZG0qTiVHW8Tt9EkJeaDyP/wfRyAcUh8xk=
+	t=1715689211; cv=none; b=IQhmLH1+5XCagUgA5YPr6IdrRyqlKQdCnqZGBqEYQcSLkgJ03XEsXxIvahtuTpIdE414X+6PK+KQnc0mdnNdYGQFf8wnnCyPe+RMQr8K70fbTUAK1yTqElXrjzJlbrANhUdD2sEH1r3OoLAcuqdEdca12zmKvdTQwCqfXC/DPz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715688962; c=relaxed/simple;
-	bh=KcsaRXgxovc8ui3ySSOrB8S+YDkJ4qNfVcefwZBV3F4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HvZisms264h++Z2gFeVqZsNdD/AY7O3BhvXl5XhFjXEHXqqYJ11OF5NjPpZUx2LwTN6L42bo4+t8Su+RMrERhmn3XsADerStXhR7ANlVBWv8Z8JBfNuGS8H5x9D5Z129YsgT49RJ+J80Ia+0sjB+p5KXKBVQO1geTjSysY97iIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=KRT/ov4r; arc=none smtp.client-ip=45.157.188.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4VdwLH3dTwzN03;
-	Tue, 14 May 2024 14:15:51 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1715688951;
-	bh=6cLb3jtwfOqoRKJtvZPYLahhceLlkxg39lBtYJITgWQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KRT/ov4rWMykef9xMhIwSZhHfcSSN6GQwPRDurzMGPbliQsS0VO6zSHgJ9Wbadi3l
-	 OGIHTWGzorzDqVpD81oSg4u9D970KQGA1j7nSMc8pi7COPs75RE7gvSRn175mFw02a
-	 0K4edTjsnRc2MHxsDF/mZpD6rApUOvuun3U3rT6U=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4VdwLD3B6RzB4h;
-	Tue, 14 May 2024 14:15:48 +0200 (CEST)
-Date: Tue, 14 May 2024 14:15:46 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Sean Christopherson <seanjc@google.com>, 
-	Nicolas Saenz Julienne <nsaenz@amazon.com>
-Cc: Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H . Peter Anvin" <hpa@zytor.com>, 
-	Ingo Molnar <mingo@redhat.com>, Kees Cook <keescook@chromium.org>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Vitaly Kuznetsov <vkuznets@redhat.com>, Wanpeng Li <wanpengli@tencent.com>, 
-	Rick P Edgecombe <rick.p.edgecombe@intel.com>, Alexander Graf <graf@amazon.com>, 
-	Angelina Vu <angelinavu@linux.microsoft.com>, Anna Trikalinou <atrikalinou@microsoft.com>, 
-	Chao Peng <chao.p.peng@linux.intel.com>, Forrest Yuan Yu <yuanyu@google.com>, 
-	James Gowans <jgowans@amazon.com>, James Morris <jamorris@linux.microsoft.com>, 
-	John Andersen <john.s.andersen@intel.com>, "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, 
-	Marian Rotariu <marian.c.rotariu@gmail.com>, Mihai =?utf-8?B?RG9uyJt1?= <mdontu@bitdefender.com>, 
-	=?utf-8?B?TmljdciZb3IgQ8OuyJt1?= <nicu.citu@icloud.com>, Thara Gopinath <tgopinath@microsoft.com>, 
-	Trilok Soni <quic_tsoni@quicinc.com>, Wei Liu <wei.liu@kernel.org>, Will Deacon <will@kernel.org>, 
-	Yu Zhang <yu.c.zhang@linux.intel.com>, =?utf-8?Q?=C8=98tefan_=C8=98icleru?= <ssicleru@bitdefender.com>, 
-	dev@lists.cloudhypervisor.org, kvm@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, qemu-devel@nongnu.org, virtualization@lists.linux-foundation.org, 
-	x86@kernel.org, xen-devel@lists.xenproject.org
-Subject: Re: [RFC PATCH v3 3/5] KVM: x86: Add notifications for Heki policy
- configuration and violation
-Message-ID: <20240514.OoPohLaejai6@digikod.net>
-References: <20240503131910.307630-1-mic@digikod.net>
- <20240503131910.307630-4-mic@digikod.net>
- <ZjTuqV-AxQQRWwUW@google.com>
- <20240506.ohwe7eewu0oB@digikod.net>
- <ZjmFPZd5q_hEBdBz@google.com>
- <20240507.ieghomae0UoC@digikod.net>
- <ZjpTxt-Bxia3bRwB@google.com>
+	s=arc-20240116; t=1715689211; c=relaxed/simple;
+	bh=obSDg9eXO8e+fTU+HDY+zB/5/5ss2adUhKUPzf6dSAQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=shkGcrbZWE+Rp8qSCsflL6oyu4T9LpClVkoo7OYo2tZ7FdzOZkEn6YhJJ4TZlmXi5VLoT4/KVfWoczSLoWqLfhSchm2uqgovIr/JfRJVyEbdymJVph71TOYc4S6MgaSpMlcZdd2RMPjlg8nLe/EKh3YLz5Lj6iRZ34rqy6qCxCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sUVlJvbL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 384B2C2BD10;
+	Tue, 14 May 2024 12:20:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715689210;
+	bh=obSDg9eXO8e+fTU+HDY+zB/5/5ss2adUhKUPzf6dSAQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=sUVlJvbLDHFFQVdNDvNLxb6SbKJvUoQxFlHMxlDt9oyJNwsbnjlnHD6sApYm+tGIu
+	 Dz0E2qEePDXxhCk90BtwYMe1JvbQY3Kh6t0MmbdC50hTwlNXfgRNEyb0uWdNEmFflo
+	 doP2BxC+wAM06Myb8yI2Van73/yQ1Ob+uH21gveMcAuraJAyJCAKXQBIi/g0800AhK
+	 aJvw8rb9DFnCxIhphCQHT1ZI6CdbXPDEGvevzNVQAPF1UyDqeIeu6ceYsgYWCfwBwz
+	 so/Im7iyOwFeV5+r2gmqkBQBMAhBwjkoeAqfo2oZKZZfiWwN7a+SxBmTUmpuz4nXok
+	 ill1zMx8crXUA==
+Message-ID: <e4123697-3e6e-4d4a-8b06-f69e1c453225@kernel.org>
+Date: Tue, 14 May 2024 14:20:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZjpTxt-Bxia3bRwB@google.com>
-X-Infomaniak-Routing: alpha
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 14/15 v2] net: Reference bpf_redirect_info via
+ task_struct on PREEMPT_RT.
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+ =?UTF-8?Q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
+ LKML <linux-kernel@vger.kernel.org>,
+ Network Development <netdev@vger.kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, Boqun Feng <boqun.feng@gmail.com>,
+ Daniel Borkmann <daniel@iogearbox.net>, Eric Dumazet <edumazet@google.com>,
+ Frederic Weisbecker <frederic@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>,
+ Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
+ Eduard Zingerman <eddyz87@gmail.com>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, John Fastabend <john.fastabend@gmail.com>,
+ KP Singh <kpsingh@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
+ Song Liu <song@kernel.org>, Stanislav Fomichev <sdf@google.com>,
+ Yonghong Song <yonghong.song@linux.dev>, bpf <bpf@vger.kernel.org>
+References: <20240503182957.1042122-1-bigeasy@linutronix.de>
+ <20240503182957.1042122-15-bigeasy@linutronix.de> <87y18mohhp.fsf@toke.dk>
+ <CAADnVQJkiwaYXUo+LyKoV96VFFCFL0VY5Jgpuv_0oypksrnciA@mail.gmail.com>
+ <20240507123636.cTnT7TvU@linutronix.de>
+ <93062ce7-8dfa-48a9-a4ad-24c5a3993b41@kernel.org>
+ <20240510162121.f-tvqcyf@linutronix.de>
+ <20240510162214.zNWRKgFU@linutronix.de>
+ <4949dca0-377a-45b1-a0fd-17bdf5a6ab10@kernel.org>
+ <20240514054345.DZkx7fJs@linutronix.de>
+Content-Language: en-US
+From: Jesper Dangaard Brouer <hawk@kernel.org>
+In-Reply-To: <20240514054345.DZkx7fJs@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, May 07, 2024 at 09:16:06AM -0700, Sean Christopherson wrote:
-> On Tue, May 07, 2024, Mickaël Salaün wrote:
-> > > Actually, potential bad/crazy idea.  Why does the _host_ need to define policy?
-> > > Linux already knows what assets it wants to (un)protect and when.  What's missing
-> > > is a way for the guest kernel to effectively deprivilege and re-authenticate
-> > > itself as needed.  We've been tossing around the idea of paired VMs+vCPUs to
-> > > support VTLs and SEV's VMPLs, what if we usurped/piggybacked those ideas, with a
-> > > bit of pKVM mixed in?
-> > > 
-> > > Borrowing VTL terminology, where VTL0 is the least privileged, userspace launches
-> > > the VM at VTL0.  At some point, the guest triggers the deprivileging sequence and
-> > > userspace creates VTL1.  Userpace also provides a way for VTL0 restrict access to
-> > > its memory, e.g. to effectively make the page tables for the kernel's direct map
-> > > writable only from VTL1, to make kernel text RO (or XO), etc.  And VTL0 could then
-> > > also completely remove its access to code that changes CR0/CR4.
-> > > 
-> > > It would obviously require a _lot_ more upfront work, e.g. to isolate the kernel
-> > > text that modifies CR0/CR4 so that it can be removed from VTL0, but that should
-> > > be doable with annotations, e.g. tag relevant functions with __magic or whatever,
-> > > throw them in a dedicated section, and then free/protect the section(s) at the
-> > > appropriate time.
-> > > 
-> > > KVM would likely need to provide the ability to switch VTLs (or whatever they get
-> > > called), and host userspace would need to provide a decent amount of the backend
-> > > mechanisms and "core" policies, e.g. to manage VTL0 memory, teardown (turn off?)
-> > > VTL1 on kexec(), etc.  But everything else could live in the guest kernel itself.
-> > > E.g. to have CR pinning play nice with kexec(), toss the relevant kexec() code into
-> > > VTL1.  That way VTL1 can verify the kexec() target and tear itself down before
-> > > jumping into the new kernel. 
-> > > 
-> > > This is very off the cuff and have-wavy, e.g. I don't have much of an idea what
-> > > it would take to harden kernel text patching, but keeping the policy in the guest
-> > > seems like it'd make everything more tractable than trying to define an ABI
-> > > between Linux and a VMM that is rich and flexible enough to support all the
-> > > fancy things Linux does (and will do in the future).
-> > 
-> > Yes, we agree that the guest needs to manage its own policy.  That's why
-> > we implemented Heki for KVM this way, but without VTLs because KVM
-> > doesn't support them.
-> > 
-> > To sum up, is the VTL approach the only one that would be acceptable for
-> > KVM?  
-> 
-> Heh, that's not a question you want to be asking.  You're effectively asking me
-> to make an authorative, "final" decision on a topic which I am only passingly
-> familiar with.
-> 
-> But since you asked it... :-)  Probably?
-> 
-> I see a lot of advantages to a VTL/VSM-like approach:
-> 
->  1. Provides Linux-as-a guest the flexibility it needs to meaningfully advance
->     its security, with the least amount of policy built into the guest/host ABI.
-> 
->  2. Largely decouples guest policy from the host, i.e. should allow the guest to
->     evolve/update it's policy without needing to coordinate changes with the host.
-> 
->  3. The KVM implementation can be generic enough to be reusable for other features.
-> 
->  4. Other groups are already working on VTL-like support in KVM, e.g. for VSM
->     itself, and potentially for VMPL/SVSM support.
-> 
-> IMO, #2 is a *huge* selling point.  Not having to coordinate changes across
-> multiple code bases and/or organizations and/or maintainers is a big win for
-> velocity, long term maintenance, and probably the very viability of HEKI.
 
-Agree, this is our goal.
 
+On 14/05/2024 07.43, Sebastian Andrzej Siewior wrote:
+> On 2024-05-14 07:07:21 [+0200], Jesper Dangaard Brouer wrote:
+>>> pktgen_sample03_burst_single_flow.sh has been used to send packets and
+>>> "xdp-bench drop $nic -e" to receive them.
+>>>
+>>
+>> Sorry, but a XDP_DROP test will not activate the code you are modifying.
+>> Thus, this test is invalid and doesn't tell us anything about your code
+>> changes.
+>>
+>> The code is modifying the XDP_REDIRECT handling system. Thus, the
+>> benchmark test needs to activate this code.
 > 
-> Providing the guest with the tools to define and implement its own policy means
-> end users don't have to way for some third party, e.g. CSPs, to deploy the
-> accompanying host-side changes, because there are no host-side changes.
+> This was a misunderstanding on my side then. What do you suggest
+> instead? Same setup but "redirect" on the same interface instead of
+> "drop"?
 > 
-> And encapsulating everything in the guest drastically reduces the friction with
-> changes in the kernel that interact with hardening, both from a technical and a
-> social perspective.  I.e. giving the kernel (near) complete control over its
-> destiny minimizes the number of moving parts, and will be far, far easier to sell
-> to maintainers.  I would expect maintainers to react much more favorably to being
-> handed tools to harden the kernel, as opposed to being presented a set of APIs
-> that can be used to make the kernel compliant with _someone else's_ vision of
-> what kernel hardening should look like.
-> 
-> E.g. imagine a new feature comes along that requires overriding CR0/CR4 pinning
-> in a way that doesn't fit into existing policy.  If the VMM is involved in
-> defining/enforcing the CR pinning policy, then supporting said new feature would
-> require new guest/host ABI and an updated host VMM in order to make the new
-> feature compatible with HEKI.  Inevitably, even if everything goes smoothly from
-> an upstreaming perspective, that will result in guests that have to choose between
-> HEKI and new feature X, because there is zero chance that all hosts that run Linux
-> as a guest will be updated in advance of new feature X being deployed.
 
-Sure. We need to find a generic-enough KVM interface to be able to
-restrict a wide range of virtualization/hardware mechanisms (to not rely
-too much on KVM changes) and delegate most of enforcement/emulation to
-VTL1.  In short, policy definition owned by VTL0/guest, and policy
-enforcement shared between KVM (coarse grained) and VTL1 (fine grained).
+Redirect is more flexible, but redirect back-out same interface is one
+option, but I've often seen this will give issues, because it will
+overload the traffic generator (without people realizing this) leading
+to false-results. Thus, verify packet generator is sending faster than
+results you are collecting. (I use this tool[2] on generator machine, in
+another terminal, to see of something funky is happening with ethtool
+stats).
 
-> 
-> And if/when things don't go smoothly, odds are very good that kernel maintainers
-> will eventually tire of having to coordinate and negotiate with QEMU and other
-> VMMs, and will become resistant to continuing to support/extend HEKI.
+To workaround this issue, I've previously redirected to device 'lo'
+localhost, which is obviously invalid so packet gets dropped, but I can
+see that when we converted from kernel samples/bpf/ to this tool, this
+trick/hack is no longer supported.
 
-Yes, that was our concern too and another reason why we choose to let
-the guest handle its own security policy.
+The xdp-bench[1] tool also provide a number of redirect sub-commands.
+E.g. redirect / redirect-cpu / redirect-map / redirect-multi.
+Given you also modify CPU-map code, I would say we also need a
+'redirect-cpu' test case.
 
-> 
-> > If yes, that would indeed require a *lot* of work for something we're not
-> > sure will be accepted later on.
-> 
-> Yes and no.  The AWS folks are pursuing VSM support in KVM+QEMU, and SVSM support
-> is trending toward the paired VM+vCPU model.  IMO, it's entirely feasible to
-> design KVM support such that much of the development load can be shared between
-> the projects.  And having 2+ use cases for a feature (set) makes it _much_ more
-> likely that the feature(s) will be accepted.
-> 
-> And similar to what Paolo said regarding HEKI not having a complete story, I
-> don't see a clear line of sight for landing host-defined policy enforcement, as
-> there are many open, non-trivial questions that need answers. I.e. upstreaming
-> HEKI in its current form is also far from a done deal, and isn't guaranteed to
-> be substantially less work when all is said and done.
+Trick for CPU-map to do early drop on remote CPU:
 
-I'm not sure to understand why "Heki not having a complete story".  The
-goal is the same as the current kernel self-protection mechanisms.
+  # ./xdp-bench redirect-cpu --cpu 3 --remote-action drop ixgbe1
+
+I recommend using Ctrl+\ while running to show more info like CPUs being
+used and what kthread consumes.  To catch issues e.g. if you are CPU
+redirecting to same CPU as RX happen to run on.
+
+--Jesper
+
+[1] https://github.com/xdp-project/xdp-tools/tree/master/xdp-bench
+[2] 
+https://github.com/netoptimizer/network-testing/blob/master/bin/ethtool_stats.pl
 
