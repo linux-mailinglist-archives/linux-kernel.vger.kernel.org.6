@@ -1,166 +1,267 @@
-Return-Path: <linux-kernel+bounces-178365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6390A8C4C9D
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 09:10:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 91FCA8C4C9A
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 09:09:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B5EE2821AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 07:10:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46B3528233C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 07:09:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A685B10A1C;
-	Tue, 14 May 2024 07:10:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0205710A22;
+	Tue, 14 May 2024 07:09:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C2FTA2Ds"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="vNSbGIGp"
+Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1035F9F5;
-	Tue, 14 May 2024 07:10:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C91CF9F5
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 07:09:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715670629; cv=none; b=TowYw8xPk2HlZAtoKMhHAITiZ4MXXmIsZBnCtcsQDbq/xTNDxTELoBIpQVsDb0oKGDex3qsB2JHFyZYwyNPukNKIc8YsDKOAgbuW1U1jL6Fq3A+NbbSlSdlnB6wkJBuZ1vo27HRMBif8O49TK+b8Pe/I+uuaMVmh0cI5jixyUIk=
+	t=1715670592; cv=none; b=WAKqkB3LIAqlSeSGcWx6HgSjKmpk25Rqf14b/l7Hl4VClJ+Zxe6qw+K/rN7cqHIkkKha9Vudy6hQy0IrqqJpudCMZPAMwAAxXP9ateaknDmCipLmRjdHCC3Zc5UdxjRFpTEywsRo/kNcXCyCjZ811mh6ORM9bJyH2mAmp0eE0eg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715670629; c=relaxed/simple;
-	bh=zdNUasxvJx2ymttYyTXszLP8zbd0eSQT87cFGXnRuu8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gyTZA+EqiJlDppmzAX5FbSEOZ4LRUCeuzXMVss+XwaoV6oG4Bfp40r9Y7uTdbvkQXQuOnDOk3XVnpUVI7EeP/vh0Fl8Z90zKTqa73iZ+ZD6B419ZqQY7PR9+aWFydiTHvX4jj9lamu5952lu3MsofDG8Ctpyrm/DHIM4uOAGPAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C2FTA2Ds; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715670627; x=1747206627;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=zdNUasxvJx2ymttYyTXszLP8zbd0eSQT87cFGXnRuu8=;
-  b=C2FTA2DsCTC+EfeHkrpwCwWQqC/yLmlUN4Hi3MIG0/tb4pU11A+iW9dZ
-   4BttdP28dJlFcHGaLILBnNbBW+m5QgsRMHRknQLfwLcsMm9w4TFzsofY5
-   4MareU1u0QvNrw/fdyuQ+qGmvX4Qgf9tH3JFea9h7KmwDALRQPs5SsT0g
-   VOerXv86n+sK+zGbNHqDS7jcyNnt6p5h8JC/I+kNTJNihtizhJg8etRf9
-   TblV858V3B2O7jQXYAUz3w6gKC83dt26Dw4+ZdQAgdT9rueYs3qIYKFdc
-   A7i1C2D64fjpWe2zMV3A17W7OlvtIBkWefk5z02dNwz0A/dpAc0nEKBvw
-   A==;
-X-CSE-ConnectionGUID: 5tWW/wQgSzaJm0h75tSRbA==
-X-CSE-MsgGUID: bShBIFGeSq+NCO2PjIQfCQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11072"; a="23039888"
-X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
-   d="scan'208";a="23039888"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2024 00:10:26 -0700
-X-CSE-ConnectionGUID: yByfDjycSuy9TW0L2BpcbA==
-X-CSE-MsgGUID: zGLPV32cQqC5arFh/tkN2w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
-   d="scan'208";a="30540229"
-Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 14 May 2024 00:10:24 -0700
-Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s6mIn-000BDb-2l;
-	Tue, 14 May 2024 07:10:21 +0000
-Date: Tue, 14 May 2024 15:09:30 +0800
-From: kernel test robot <lkp@intel.com>
-To: Richard Genoud <richard.genoud@bootlin.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: oe-kbuild-all@lists.linux.dev, Esteban Blanc <eblanc@baylibre.com>,
-	linux-rtc@vger.kernel.org, Lee Jones <lee@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Richard Genoud <richard.genoud@bootlin.com>
-Subject: Re: [PATCH] rtc: tps6594: Add power management support
-Message-ID: <202405141408.o5jSp8nU-lkp@intel.com>
-References: <20240513162942.68484-1-richard.genoud@bootlin.com>
+	s=arc-20240116; t=1715670592; c=relaxed/simple;
+	bh=v+0oAWHsIv9vnLTWYZ9i+V46JUXTu4Vxy3Jo+j45eqg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iL+SVO0eD/dFZdjYYanABgdoULOLqiHFEKE1+7dqVlii4+DMcbz1t1NrX7ZJkZYvQ29gRdgfvbJ8ksO2W+7DJbxVQQdpk2xCwiLXLEEgwYEQ3viaKFX0PXIVHp8ngixPkqvtoNZPylFXJE3TQePqGiUmRbvGCVwPxPyGM4A6fPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=vNSbGIGp; arc=none smtp.client-ip=115.124.30.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1715670587; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=Jo5rH5YIlhlSc6vEql9IJ3mfVIRNd/BxXYvuoQUAM7I=;
+	b=vNSbGIGpR3Op2b0QxeeJu/NsvNqnb5py0VayHiC1dYLVm4HGaT+B0BKczsmDFP3KsLPfpyg9RH9aCkoSOt5uiHXqvrjTdwoahavvfqfegqSeWdj9bNGHiHBc3zdy6SVfmHihZN1oyFmU1g+4XGLLAkw0Kjyl4uTY3ZdnbyE62BM=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033032014031;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=21;SR=0;TI=SMTPD_---0W6U4g0e_1715670584;
+Received: from 30.97.56.67(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W6U4g0e_1715670584)
+          by smtp.aliyun-inc.com;
+          Tue, 14 May 2024 15:09:45 +0800
+Message-ID: <c8f52a60-94a4-48cc-be0c-824b26956934@linux.alibaba.com>
+Date: Tue, 14 May 2024 15:09:43 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240513162942.68484-1-richard.genoud@bootlin.com>
-
-Hi Richard,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on abelloni/rtc-next]
-[also build test WARNING on lee-mfd/for-mfd-next lee-leds/for-leds-next lee-mfd/for-mfd-fixes linus/master v6.9 next-20240513]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Richard-Genoud/rtc-tps6594-Add-power-management-support/20240514-003053
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux.git rtc-next
-patch link:    https://lore.kernel.org/r/20240513162942.68484-1-richard.genoud%40bootlin.com
-patch subject: [PATCH] rtc: tps6594: Add power management support
-config: sparc-randconfig-r081-20240514 (https://download.01.org/0day-ci/archive/20240514/202405141408.o5jSp8nU-lkp@intel.com/config)
-compiler: sparc64-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240514/202405141408.o5jSp8nU-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405141408.o5jSp8nU-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/rtc/rtc-tps6594.c:471:12: warning: 'tps6594_rtc_suspend' defined but not used [-Wunused-function]
-     471 | static int tps6594_rtc_suspend(struct device *dev)
-         |            ^~~~~~~~~~~~~~~~~~~
->> drivers/rtc/rtc-tps6594.c:439:12: warning: 'tps6594_rtc_resume' defined but not used [-Wunused-function]
-     439 | static int tps6594_rtc_resume(struct device *dev)
-         |            ^~~~~~~~~~~~~~~~~~
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND v5 4/4] mm/vmscan: avoid split lazyfree THP during
+ shrink_folio_list()
+To: Lance Yang <ioworker0@gmail.com>, akpm@linux-foundation.org
+Cc: willy@infradead.org, sj@kernel.org, maskray@google.com, ziy@nvidia.com,
+ ryan.roberts@arm.com, david@redhat.com, 21cnbao@gmail.com, mhocko@suse.com,
+ fengwei.yin@intel.com, zokeefe@google.com, shy828301@gmail.com,
+ xiehuan09@gmail.com, libang.li@antgroup.com, wangkefeng.wang@huawei.com,
+ songmuchun@bytedance.com, peterx@redhat.com, minchan@kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20240513074712.7608-1-ioworker0@gmail.com>
+ <20240513074712.7608-5-ioworker0@gmail.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <20240513074712.7608-5-ioworker0@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
-vim +/tps6594_rtc_suspend +471 drivers/rtc/rtc-tps6594.c
 
-   438	
- > 439	static int tps6594_rtc_resume(struct device *dev)
-   440	{
-   441		struct tps6594 *tps = dev_get_drvdata(dev->parent);
-   442		struct rtc_device *rtc_dev = dev_get_drvdata(dev);
-   443		int ret;
-   444	
-   445		ret = regmap_test_bits(tps->regmap, TPS6594_REG_INT_STARTUP,
-   446				       TPS6594_BIT_RTC_INT);
-   447		if (ret < 0) {
-   448			dev_err(dev, "failed to read REG_INT_STARTUP: %d\n", ret);
-   449			goto out;
-   450		}
-   451	
-   452		if (ret > 0) {
-   453			/*
-   454			 * If the alarm bit is set, it means that the IRQ has been
-   455			 * fired. But, the kernel may not have woke up yet when it
-   456			 * happened. So, we have to clear it.
-   457			 */
-   458			ret = regmap_write(tps->regmap, TPS6594_REG_RTC_STATUS,
-   459					   TPS6594_BIT_ALARM);
-   460			if (ret < 0)
-   461				dev_err(dev, "error clearing alarm bit: %d", ret);
-   462	
-   463			rtc_update_irq(rtc_dev, 1, RTC_IRQF | RTC_AF);
-   464		}
-   465	out:
-   466		disable_irq_wake(tps->irq_rtc);
-   467	
-   468		return 0;
-   469	}
-   470	
- > 471	static int tps6594_rtc_suspend(struct device *dev)
-   472	{
-   473		struct tps6594 *tps = dev_get_drvdata(dev->parent);
-   474	
-   475		enable_irq_wake(tps->irq_rtc);
-   476	
-   477		return 0;
-   478	}
-   479	
+On 2024/5/13 15:47, Lance Yang wrote:
+> When the user no longer requires the pages, they would use
+> madvise(MADV_FREE) to mark the pages as lazy free. Subsequently, they
+> typically would not re-write to that memory again.
+> 
+> During memory reclaim, if we detect that the large folio and its PMD are
+> both still marked as clean and there are no unexpected references
+> (such as GUP), so we can just discard the memory lazily, improving the
+> efficiency of memory reclamation in this case.
+> 
+> On an Intel i5 CPU, reclaiming 1GiB of lazyfree THPs using
+> mem_cgroup_force_empty() results in the following runtimes in seconds
+> (shorter is better):
+> 
+> --------------------------------------------
+> |     Old       |      New       |  Change  |
+> --------------------------------------------
+> |   0.683426    |    0.049197    |  -92.80% |
+> --------------------------------------------
+> 
+> Suggested-by: Zi Yan <ziy@nvidia.com>
+> Suggested-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Lance Yang <ioworker0@gmail.com>
+> ---
+>   include/linux/huge_mm.h |  9 +++++
+>   mm/huge_memory.c        | 75 +++++++++++++++++++++++++++++++++++++++++
+>   mm/rmap.c               | 31 ++++++++++-------
+>   3 files changed, 103 insertions(+), 12 deletions(-)
+> 
+> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> index 9fcb0b0b6ed1..cfd7ec2b6d0a 100644
+> --- a/include/linux/huge_mm.h
+> +++ b/include/linux/huge_mm.h
+> @@ -411,6 +411,8 @@ static inline bool thp_migration_supported(void)
+>   
+>   void split_huge_pmd_locked(struct vm_area_struct *vma, unsigned long address,
+>   			   pmd_t *pmd, bool freeze, struct folio *folio);
+> +bool unmap_huge_pmd_locked(struct vm_area_struct *vma, unsigned long addr,
+> +			   pmd_t *pmdp, struct folio *folio);
+>   
+>   #else /* CONFIG_TRANSPARENT_HUGEPAGE */
+>   
+> @@ -478,6 +480,13 @@ static inline void split_huge_pmd_locked(struct vm_area_struct *vma,
+>   					 unsigned long address, pmd_t *pmd,
+>   					 bool freeze, struct folio *folio) {}
+>   
+> +static inline bool unmap_huge_pmd_locked(struct vm_area_struct *vma,
+> +					 unsigned long addr, pmd_t *pmdp,
+> +					 struct folio *folio)
+> +{
+> +	return false;
+> +}
+> +
+>   #define split_huge_pud(__vma, __pmd, __address)	\
+>   	do { } while (0)
+>   
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 425272c6c50b..3ceeeb2f42d4 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -2687,6 +2687,81 @@ static void unmap_folio(struct folio *folio)
+>   	try_to_unmap_flush();
+>   }
+>   
+> +static bool __discard_trans_pmd_locked(struct vm_area_struct *vma,
+> +				       unsigned long addr, pmd_t *pmdp,
+> +				       struct folio *folio)
+> +{
+> +	struct mm_struct *mm = vma->vm_mm;
+> +	int ref_count, map_count;
+> +	pmd_t orig_pmd = *pmdp;
+> +	struct mmu_gather tlb;
+> +	struct page *page;
+> +
+> +	if (pmd_dirty(orig_pmd) || folio_test_dirty(folio))
+> +		return false;
+> +	if (unlikely(!pmd_present(orig_pmd) || !pmd_trans_huge(orig_pmd)))
+> +		return false;
+> +
+> +	page = pmd_page(orig_pmd);
+> +	if (unlikely(page_folio(page) != folio))
+> +		return false;
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+The function is called under the ptl lock, so I have no idea why the pmd 
+value can be changed, seems above validation is useless.
+
+> +
+> +	tlb_gather_mmu(&tlb, mm);
+
+You missed tlb_finish_mmu() to do tlb flushing, and ...
+
+> +	orig_pmd = pmdp_huge_get_and_clear(mm, addr, pmdp);
+> +	tlb_remove_pmd_tlb_entry(&tlb, pmdp, addr);
+
+I don't think tlb gather is helpful here, since you just flush one PMD 
+entry. Just using pmdp_huge_clear_flush() seems enough.
+
+> +
+> +	/*
+> +	 * Syncing against concurrent GUP-fast:
+> +	 * - clear PMD; barrier; read refcount
+> +	 * - inc refcount; barrier; read PMD
+> +	 */
+> +	smp_mb();
+> +
+> +	ref_count = folio_ref_count(folio);
+> +	map_count = folio_mapcount(folio);
+> +
+> +	/*
+> +	 * Order reads for folio refcount and dirty flag
+> +	 * (see comments in __remove_mapping()).
+> +	 */
+> +	smp_rmb();
+> +
+> +	/*
+> +	 * If the PMD or folio is redirtied at this point, or if there are
+> +	 * unexpected references, we will give up to discard this folio
+> +	 * and remap it.
+> +	 *
+> +	 * The only folio refs must be one from isolation plus the rmap(s).
+> +	 */
+> +	if (ref_count != map_count + 1 || folio_test_dirty(folio) ||
+> +	    pmd_dirty(orig_pmd)) {
+> +		set_pmd_at(mm, addr, pmdp, orig_pmd);
+
+Should we also call 'folio_set_swapbacked()' if the folio was redirtied?
+
+> +		return false;
+> +	}
+> +
+> +	folio_remove_rmap_pmd(folio, page, vma);
+> +	zap_deposited_table(mm, pmdp);
+> +	add_mm_counter(mm, MM_ANONPAGES, -HPAGE_PMD_NR);
+> +	if (vma->vm_flags & VM_LOCKED)
+> +		mlock_drain_local();
+> +	folio_put(folio);
+> +
+> +	return true;
+> +}
+> +
+> +bool unmap_huge_pmd_locked(struct vm_area_struct *vma, unsigned long addr,
+> +			   pmd_t *pmdp, struct folio *folio)
+> +{
+> +	VM_WARN_ON_FOLIO(!folio_test_pmd_mappable(folio), folio);
+> +	VM_WARN_ON_FOLIO(!folio_test_locked(folio), folio);
+> +	VM_WARN_ON_ONCE(!IS_ALIGNED(addr, HPAGE_PMD_SIZE));
+> +
+> +	if (folio_test_anon(folio) && !folio_test_swapbacked(folio))
+> +		return __discard_trans_pmd_locked(vma, addr, pmdp, folio);
+> +
+> +	return false;
+> +}
+> +
+>   static void remap_page(struct folio *folio, unsigned long nr)
+>   {
+>   	int i = 0;
+> diff --git a/mm/rmap.c b/mm/rmap.c
+> index 08a93347f283..e09f2141b8dc 100644
+> --- a/mm/rmap.c
+> +++ b/mm/rmap.c
+> @@ -1677,18 +1677,25 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
+>   			goto walk_done_err;
+>   		}
+>   
+> -		if (!pvmw.pte && (flags & TTU_SPLIT_HUGE_PMD)) {
+> -			/*
+> -			 * We temporarily have to drop the PTL and start once
+> -			 * again from that now-PTE-mapped page table.
+> -			 */
+> -			split_huge_pmd_locked(vma, range.start, pvmw.pmd, false,
+> -					      folio);
+> -			pvmw.pmd = NULL;
+> -			spin_unlock(pvmw.ptl);
+> -			pvmw.ptl = NULL;
+> -			flags &= ~TTU_SPLIT_HUGE_PMD;
+> -			continue;
+> +		if (!pvmw.pte) {
+> +			if (unmap_huge_pmd_locked(vma, range.start, pvmw.pmd,
+> +						  folio))
+> +				goto walk_done;
+> +
+> +			if (flags & TTU_SPLIT_HUGE_PMD) {
+> +				/*
+> +				 * We temporarily have to drop the PTL and start
+> +				 * once again from that now-PTE-mapped page
+> +				 * table.
+> +				 */
+> +				split_huge_pmd_locked(vma, range.start,
+> +						      pvmw.pmd, false, folio);
+> +				pvmw.pmd = NULL;
+> +				spin_unlock(pvmw.ptl);
+> +				pvmw.ptl = NULL;
+> +				flags &= ~TTU_SPLIT_HUGE_PMD;
+> +				continue;
+> +			}
+>   		}
+>   
+>   		/* Unexpected PMD-mapped THP? */
 
