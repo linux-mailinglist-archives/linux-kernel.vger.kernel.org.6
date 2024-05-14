@@ -1,178 +1,86 @@
-Return-Path: <linux-kernel+bounces-178749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BF128C5725
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 15:30:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 141E48C5726
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 15:31:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61EBAB241C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 13:30:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9AA60B2447B
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 13:31:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AADD8146D7F;
-	Tue, 14 May 2024 13:23:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEE1E1487CD;
+	Tue, 14 May 2024 13:24:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="eV/6kj3W"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qgBjSd2o"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4205B1448F4;
-	Tue, 14 May 2024 13:23:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E72B114430A;
+	Tue, 14 May 2024 13:24:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715693029; cv=none; b=LyEqiRl8QGAcm1Gx8mqbwdg+nGGagZYXXHZzGCBZZQYfKqhv7Qjezq2w0pwLJ03O7kY7FLONXCjop6nl/1J16g0cPBYO6Gmd4Nyv9KO9EHfw6DzmWNfI+iNdz5LhiKIpZVUbMYUn8xGkvyaeDQu9eZaNFOPzQVhgbzsAHOQRg4k=
+	t=1715693072; cv=none; b=iuFchRqlf+0GJnz0rxF/3rfrZUYgr3twiF1q8Gl3omNMWoNKNoQxlBGeNYiE3qQR4LczTyoQyuYRCK85bOJMYOGPvzeFR+oNnTV9/OWtohhw/dloiuHoe4C3COlZNYqZ0cxNjaXgp607sFWg2it+e31d25S4IEIZ8NTvHNY18kg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715693029; c=relaxed/simple;
-	bh=i4pIjJe0x16spaf+Nby5Vt3rvwu45Ga15QdtD4TELDw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gtGrUmopzCdamW1vxmoTgmstDAdO0YtrEa/RYbE6QTsNnca/g0K7v4mQWBy+i5ExD/3C7VNaAHj3GMSi6KFBlt2J517nlaoULO0rqnnyLXK7gq8s1es5R7IlJ379YN7/OehtF0/DUr9/Itk4rppfYHY4Yo9C2E+SxkSQWsjxZWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=eV/6kj3W; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-41fc2f7fbb5so30820075e9.1;
-        Tue, 14 May 2024 06:23:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1715693026; x=1716297826; darn=vger.kernel.org;
-        h=in-reply-to:autocrypt:from:references:cc:to:content-language
-         :subject:user-agent:mime-version:date:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=i4pIjJe0x16spaf+Nby5Vt3rvwu45Ga15QdtD4TELDw=;
-        b=eV/6kj3WmbNW45slkirTm8SoP1UngqDtc2U+us7koJLzFKjt6yoSRv+0t/9MW47fwC
-         ArQxx0HCKi2rNGSKd5LOvlFVC7pQGCamY88bWOJ6IIsu76xQtb6/K/QVZyic7//N1YrN
-         JwjnLAu2ETI5yHnRNQl8g3DMoar15hiLW/ilLGPYaydyY2iWAKjZU4aAvNq6T9NIwAQ/
-         y26v8F8tFNU/EGwq0RnJxJcnx+yDRhYIKn4vOcI6MCkBwpV7AyaBnM7+6YpjWYqxGTO+
-         q6jf/TLOGxAiYLXvGUQq7PUnACftzN+u7MA00LWP8yXCLmJfKCzmUYLfF7JTQq62mF5Z
-         MTDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715693026; x=1716297826;
-        h=in-reply-to:autocrypt:from:references:cc:to:content-language
-         :subject:user-agent:mime-version:date:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=i4pIjJe0x16spaf+Nby5Vt3rvwu45Ga15QdtD4TELDw=;
-        b=gHpsE1gIYKSP7eirzHpmBUHHbD8fJVz4P7tIA7YWsKuNcArwKQs35URdbS6wceMHcx
-         hBa+1scEZJ32QILFAHLyzxL2+7KDh6FGs4M2/azdmrn5EY/a5KStZE0Nfh6u/Z4TNpP0
-         l0KzotZChibTvmfWbx9Dyi5b3fmKqcRolVAB7AyR6ULX7VLVutaF4WYdOdDidX7QrbU4
-         dejeAIQeHWsQ+5bGmyXdHDfz1Xgr8CCqgo0lj1rn/kVsyMM2WcA1cZ9X+2EFoNatdeWk
-         DvMeQkTv2Q5MpLaQFvk2+VAEVz9eX6ffnmGKkYM1t1A+kiW32IWjJpnV+GfQ65BGCW9U
-         kP4g==
-X-Forwarded-Encrypted: i=1; AJvYcCXtxJkMQpigSHSldfRAEKldK0DCLt45HHAZKI13+dIWDZ75BaFCBtz2r8hCYhpodxKUXtuQMJ6kP532p5WTSxRBHOlGyEKAEX/vsW+vJyvRJchg7DPv5IPGtZHIVLqlnmddpi8s
-X-Gm-Message-State: AOJu0YxJ/Pcu4X4E5iBi3wpg3QA0JnNkcSXFVCDnsx7K3kGTe+iZ5/ff
-	tUQjW1tdyMiH2rGyO2zr7KkpzHamBDkMZIfdO5g+xgf+2QYoJ7A=
-X-Google-Smtp-Source: AGHT+IGBidFu3u5LcN0dwJ1l7jTnwnSr7ddHSRHFj1Wk5Lf/7XWy1WnDvx4EYx1pSVYG/e2K7Idp9w==
-X-Received: by 2002:a05:600c:511f:b0:418:5ef3:4a04 with SMTP id 5b1f17b1804b1-41fead59f07mr119358965e9.18.1715693026173;
-        Tue, 14 May 2024 06:23:46 -0700 (PDT)
-Received: from [192.168.1.3] (p5b2b40c2.dip0.t-ipconnect.de. [91.43.64.194])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42013c5fa61sm88956135e9.40.2024.05.14.06.23.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 May 2024 06:23:45 -0700 (PDT)
-Message-ID: <f08ad152-eefa-4748-8a71-6b84117e19b3@googlemail.com>
-Date: Tue, 14 May 2024 15:23:44 +0200
+	s=arc-20240116; t=1715693072; c=relaxed/simple;
+	bh=EbXUyLPzVf2Qs04ZBeB7sglb2l63aesvqV1ukVQsRgk=;
+	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
+	 Cc:Message-ID:Date; b=tujQVS+LMEdhuv6sghLQKH/NgtMBPc88JSI3+OejKUnzPEGWoGPgFkLlwzuJ/LsZR/1MixCYkfBqrs18oRdsVnZwunnWveXFCgPrmF7iS9Zudyh6Lei1UpNgGejOt5zfOS6BLCwbNC/r4OCg/Kp5BsKJAhFnhr07meIR0X32dQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qgBjSd2o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92279C2BD10;
+	Tue, 14 May 2024 13:24:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715693071;
+	bh=EbXUyLPzVf2Qs04ZBeB7sglb2l63aesvqV1ukVQsRgk=;
+	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+	b=qgBjSd2oEvIkfEN62NOmnXs5vsBqCuQ2xJ6Xu3fuP7dWWKq0qWTG7FXVqF3IBn9OF
+	 hpNLxSa32lBaGjwQga6rIv4NNpEqYe18r6T90HY2BROs55HoxrQEKr0VGvMssbHO1A
+	 ZDFJ3KXm1aFRPDqjaiY4+l8cFVxdmTLj/jbbpvt2KElnGJi+flEVzjE8QzZm8W/PtD
+	 BDjhcZaUWQeMEh97Ra2lzWj6+YXiuMRcxQB6I2sIMlCoZYOp4GjPWDxZJQ1zQZwVHq
+	 U6W7tste388hEaYkYOs+/xufyEd4eyT/LVqMnlvsNius3agawYdD1HCfYUuM+2bQk1
+	 hMYD7kYjaHlxA==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: Kernel 6.8.4 regression: aacraid controller not initialized any
- more, system boot hangs
-Content-Language: de-DE
-To: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org, stable@vger.kernel.org,
- linux-kernel@vger.kernel.org, regressions@leemhuis.info,
- regressions@lists.linux.dev
-References: <eec6ebbf-061b-4a7b-96dc-ea748aa4d035@googlemail.com>
- <yq1cypvwz5o.fsf@ca-mkp.ca.oracle.com>
- <c4e8e0b5-fc32-4e26-8c0e-27a996769903@googlemail.com>
- <yq14jb0twk6.fsf@ca-mkp.ca.oracle.com>
-From: Peter Schneider <pschneider1968@googlemail.com>
-Autocrypt: addr=pschneider1968@googlemail.com; keydata=
- xjMEY58biBYJKwYBBAHaRw8BAQdADPnoGTrfCUCyH7SZVkFtnlzsFpeKANckofR4WVLMtMzN
- L1BldGVyIFNjaG5laWRlciA8cHNjaG5laWRlcjE5NjhAZ29vZ2xlbWFpbC5jb20+wpwEExYK
- AEQCGyMFCQW15qgFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQSjgovXlszhGoyt6IZu
- OpLJLD/yRAUCY58b8AIZAQAKCRBuOpLJLD/yRIeIAQD0+/LMdKHM6AJdPCt+e9Z92BMybfnN
- RtGqkdZWtvdhDQD9FJkGh/3PFtDinimB8UOB7Gi6AGxt9Nu9ne7PvHa0KQXOOARjnxuIEgor
- BgEEAZdVAQUBAQdAw2GRwTf5HJlO6CCigzqH6GUKOjqR1xJ+3nR5EbBze0sDAQgHwn4EGBYK
- ACYWIQSjgovXlszhGoyt6IZuOpLJLD/yRAUCY58biAIbDAUJBbXmqAAKCRBuOpLJLD/yRONS
- AQCwB9qiEQoSnxHodu8kRuvUxXKIqN7701W+INXtFGtJygEAyPZH3/vSBJ4A7GUG7BZyQRcr
- ryS0CUq77B7ZkcI1Nwo=
-In-Reply-To: <yq14jb0twk6.fsf@ca-mkp.ca.oracle.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------PnG437ECAAr56hnFUTpvgz20"
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH wireless-next] ath11k: Fix error path in
+ ath11k_pcic_ext_irq_config
+From: Kalle Valo <kvalo@kernel.org>
+In-Reply-To: <20240508185902.70975-1-leitao@debian.org>
+References: <20240508185902.70975-1-leitao@debian.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: horms@kernel.org, Jeff Johnson <jjohnson@kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+ linux-wireless@vger.kernel.org (open list:NETWORKING DRIVERS (WIRELESS)),
+ ath11k@lists.infradead.org (open list:QUALCOMM ATHEROS ATH11K WIRELESS
+ DRIVER), linux-kernel@vger.kernel.org (open list)
+User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
+Message-ID: <171569306687.2017278.16792087877494747045.kvalo@kernel.org>
+Date: Tue, 14 May 2024 13:24:28 +0000 (UTC)
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------PnG437ECAAr56hnFUTpvgz20
-Content-Type: multipart/mixed; boundary="------------cdi051ZZSIdFXMDMKWhP8wq0";
- protected-headers="v1"
-From: Peter Schneider <pschneider1968@googlemail.com>
-To: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org, stable@vger.kernel.org,
- linux-kernel@vger.kernel.org, regressions@leemhuis.info,
- regressions@lists.linux.dev
-Message-ID: <f08ad152-eefa-4748-8a71-6b84117e19b3@googlemail.com>
-Subject: Re: Kernel 6.8.4 regression: aacraid controller not initialized any
- more, system boot hangs
-References: <eec6ebbf-061b-4a7b-96dc-ea748aa4d035@googlemail.com>
- <yq1cypvwz5o.fsf@ca-mkp.ca.oracle.com>
- <c4e8e0b5-fc32-4e26-8c0e-27a996769903@googlemail.com>
- <yq14jb0twk6.fsf@ca-mkp.ca.oracle.com>
-In-Reply-To: <yq14jb0twk6.fsf@ca-mkp.ca.oracle.com>
+Breno Leitao <leitao@debian.org> wrote:
 
---------------cdi051ZZSIdFXMDMKWhP8wq0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+> If one of the dummy allocation fails in ath11k_pcic_ext_irq_config(),
+> the previous allocated devices might leak due to returning without
+> deallocating the devices.
+> 
+> Instead of returning on the error path, deallocate all the previously
+> allocated net_devices and then return.
+> 
+> Fixes: bca592ead825 ("wifi: ath11k: allocate dummy net_device dynamically")
+> Signed-off-by: Breno Leitao <leitao@debian.org>
+> Reviewed-by: Simon Horman <horms@kernel.org>
 
-SGkgTWFydGluLA0KDQpBbSAxNC4wNS4yMDI0IHVtIDE0OjU0IHNjaHJpZWIgTWFydGluIEsu
-IFBldGVyc2VuOg0KPiANCj4gUGV0ZXIsDQo+IA0KPj4gRGlkIHlvdSBoYXZlIGFueSBjaGFu
-Y2UgdG8gbG9vayBpbnRvIHRoaXMgaW4gbW9yZSBkZXB0aD8gRG8geW91IG5lZWQNCj4+IG1v
-cmUgaW5mb3JtYXRpb24gZnJvbSBtZSB0byB0YWNrbGUgdGhpcyBpc3N1ZT8gSSdtIG5vdCBh
-IGtlcm5lbA0KPj4gZGV2ZWxvcGVyLCBqdXN0IGEgdXNlciwgYnV0IEkgZ3Vlc3Mgd2l0aCBw
-cm9wZXIgaW5zdHJ1Y3Rpb24gSSB3b3VsZCBiZQ0KPj4gYWJsZSB0byBjb21waWxlIGFuZCB0
-ZXN0IHBhdGNoZXMuDQo+IA0KPiBJIGFtIGFmcmFpZCBJIGhhdmVuJ3QgaGFkIGEgdGltZSB0
-byBsb29rIGZ1cnRoZXIgaW50byB0aGlzIHlldCBkdWUgdG8NCj4gdHJhdmVsLiBUaGUgYW5u
-dWFsIExTRi9NTS9CUEYgY29uZmVyZW5jZSBpcyB0YWtpbmcgcGxhY2UgdGhpcyB3ZWVrLiBJ
-DQo+IHdpbGwgZ2V0IGJhY2sgdG8geW91IGFzIHNvb24gYXMgcG9zc2libGUuDQoNCk9rLCBn
-cmVhdCwgc28gaGF2ZSBhIGdvb2QgdGltZSB3aGVyZWV2ZXIgdGhpcyBjb25mZXJlbmNlIGlz
-IGdvaW5nIHRvIHRha2UgcGxhY2UhIEl0IGlzbid0IA0KdmVyeSB1cmdlbnQsIGJlY2F1c2Ug
-aW4gdGhlIG1lYW50aW1lIEkgY2FuIGp1c3QgY29udGludWUgdG8gdXNlIHRoZSA2LjUuMTMg
-a2VybmVsIG9uIG15IA0KUHJveG1veCBtYWNoaW5lLiBJIGp1c3Qgd2FudGVkIHRvIHBpbmcg
-eW91IGFnYWluIHNvIHRoaXMgd291bGRuJ3QgZmFsbCB0aHJvdWdoIHRoZSBjcmFja3MuDQoN
-Cj4gQmVmb3JlIEkgbWFrZSBhbnkgcmVjb21tZW5kYXRpb25zIHdydC4gZmlybXdhcmUgdXBk
-YXRlcyBJIHdvdWxkIGxpa2UgdG8NCj4gdW5kZXJzdGFuZCB3aHkgYSBjaGFuZ2UgaW50ZW5k
-ZWQgdG8gbWFrZSBzY2FubmluZyBtb3JlIHJlc2lsaWVudCBhZ2FpbnN0DQo+IGRldmljZSBp
-bXBsZW1lbnRhdGlvbiBlcnJvcnMgaGFzIGhhZCB0aGUgb3Bwb3NpdGUgZWZmZWN0LiBFc3Bl
-Y2lhbGx5DQo+IHNpbmNlIHRoZSBjaGFuZ2UgaW4gcXVlc3Rpb24gcmV2ZXJ0cyB0byBob3cg
-TGludXggaGFzIHNjYW5uZWQgZm9yDQo+IGRldmljZXMgZm9yIGRlY2FkZXMuDQoNCkknbGwg
-bGVhdmUgZXZlcnl0aGluZyBhcyBpdCBpcyBub3csIGFuZCB3b24ndCBjaGFuZ2UgdGhlIGNy
-aW1lIHNjZW5lIHVudGlsIHlvdSB0ZWxsIG1lIA0Kd2hhdCB0byBkbyBuZXh0Lg0KDQoNCkJl
-c3RlIEdyw7zDn2UsDQpQZXRlciBTY2huZWlkZXINCg0KLS0gDQpDbGltYiB0aGUgbW91bnRh
-aW4gbm90IHRvIHBsYW50IHlvdXIgZmxhZywgYnV0IHRvIGVtYnJhY2UgdGhlIGNoYWxsZW5n
-ZSwNCmVuam95IHRoZSBhaXIgYW5kIGJlaG9sZCB0aGUgdmlldy4gQ2xpbWIgaXQgc28geW91
-IGNhbiBzZWUgdGhlIHdvcmxkLA0Kbm90IHNvIHRoZSB3b3JsZCBjYW4gc2VlIHlvdS4gICAg
-ICAgICAgICAgICAgICAgIC0tIERhdmlkIE1jQ3VsbG91Z2ggSnIuDQoNCk9wZW5QR1A6ICAw
-eEEzODI4QkQ3OTZDQ0UxMUE4Q0FERTg4NjZFM0E5MkM5MkMzRkYyNDQNCkRvd25sb2FkOiBo
-dHRwczovL3d3dy5wZXRlcnMtbmV0enBsYXR6LmRlL2Rvd25sb2FkL3BzY2huZWlkZXIxOTY4
-X3B1Yi5hc2MNCmh0dHBzOi8va2V5cy5tYWlsdmVsb3BlLmNvbS9wa3MvbG9va3VwP29wPWdl
-dCZzZWFyY2g9cHNjaG5laWRlcjE5NjhAZ29vZ2xlbWFpbC5jb20NCmh0dHBzOi8va2V5cy5t
-YWlsdmVsb3BlLmNvbS9wa3MvbG9va3VwP29wPWdldCZzZWFyY2g9cHNjaG5laWRlcjE5NjhA
-Z21haWwuY29tDQo=
+As commit bca592ead825 is in net-next I think this patch needs to go to v6.10, right?
 
---------------cdi051ZZSIdFXMDMKWhP8wq0--
+-- 
+https://patchwork.kernel.org/project/linux-wireless/patch/20240508185902.70975-1-leitao@debian.org/
 
---------------PnG437ECAAr56hnFUTpvgz20
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
------BEGIN PGP SIGNATURE-----
-
-wnsEABYIACMWIQSjgovXlszhGoyt6IZuOpLJLD/yRAUCZkNl4AUDAAAAAAAKCRBuOpLJLD/yRLgl
-APoD1O8x6JDCdgoVHfWedEebUCEpHyuaySPGluRk+qzg3wEAxs6J01Ge68f9KIYi176XiURPg0z8
-NZq5v8L4RHPSwwY=
-=r9NY
------END PGP SIGNATURE-----
-
---------------PnG437ECAAr56hnFUTpvgz20--
 
