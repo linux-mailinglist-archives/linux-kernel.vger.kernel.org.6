@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-178782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF0A38C579A
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:05:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47FE48C579E
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:06:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B7231C222A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:05:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BC6C1C222A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:06:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C2361459F4;
-	Tue, 14 May 2024 14:05:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5298C145327;
+	Tue, 14 May 2024 14:05:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tutFg42F"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qJp+pNmr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 747101459E2
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 14:05:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F9D3145322
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 14:05:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715695518; cv=none; b=DmfEtWG82pbUp8Srk0xsgyLQEWIKII60uIatiVasSUA7MgmEmqCHXJdGExTaTPrrxypkPTyq+76amVelN8X9AiwiF2Gvtcbvf4/yzivXQs/xm7bHGFMP+d0nBXd9o4BRbq0raDuMxx7eOwTIyxx/ZmIKOwWOMuYOUIgRiVe2hnI=
+	t=1715695522; cv=none; b=QnxfiaD3VVLfJmIB6rGZpD8Y9ygZ3EzoT+1KJX+wiA7cE8aejv4/EcwoIk1YhFn38eZ1+VQSrumWZsXC1lzra5Ml7zr/20LBVtgel9GtHhqZ3tIeYiApiEzLbaa4jdK/K0zyfefv4tuYUtIzm+5NOm3AeIv1NU7ZkOqwdEHzkcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715695518; c=relaxed/simple;
-	bh=pGRP84KXNHRvDwj4d3tBEvZ5yXWiOvKEJ5ie6tEwIpw=;
+	s=arc-20240116; t=1715695522; c=relaxed/simple;
+	bh=KrXLi2kuhfXzcPr+BoNvWMq+KlIFOy4AuLG7kxwToYM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pTQrcCyYMvJz3tMZf7lW9xTeMIm6DACioCdsAZwMae+BRKRGxt8MXPAeN0IYJu8dgin7e82MRgiGgqVxEaKghx/W07nx2b2dBuGt8tBxo3XC4WSNaV+dbq2Plonsgm8uEwGV3BJe/m8Iem+Spy1vvo/2b4cg4e7uzc8Fe422riw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tutFg42F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B219C32781;
-	Tue, 14 May 2024 14:05:13 +0000 (UTC)
+	 MIME-Version:Content-Type; b=oud5DPSt9KdAe0kL1TSqbxcPK8gmwrVC2Qblym1qqLg6ZFZMiiqHnnvWWMJNEs6jbtrbUxTX+uuTTTAWXYijtaHbDRth4arVuhD+9DDbsgpjm2jTArkUsczO7EgnAaMzZ1hC1dq0YQvX3gTddNXDksuhvTo4fYrQUSzcjVvbCKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qJp+pNmr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71035C32782;
+	Tue, 14 May 2024 14:05:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715695518;
-	bh=pGRP84KXNHRvDwj4d3tBEvZ5yXWiOvKEJ5ie6tEwIpw=;
+	s=k20201202; t=1715695522;
+	bh=KrXLi2kuhfXzcPr+BoNvWMq+KlIFOy4AuLG7kxwToYM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=tutFg42F+WZxo8OqjmYracQbf76JUHyChIpewLcaBxxXzAHL9f9NzUzxKpCwPQPMp
-	 JAOf7a5DMjRYICN6Zd3nayVU2QucQqYBCAI8sN3NmvDZjznrg3QP+0FsKPkhBf5X1d
-	 DjQUz7i2J5ltDjh2koA8AsRmQ0kDN4rVWu0JQFdPf4Vmy6PaVJo12jabRGD99LsIn6
-	 QsnhffWfY2J+BIqE97O1tmA6XlKvqzaJOazwfm63YK7bQUZNkTJ0dnTNMdXBkL3W1n
-	 IXNollIatVKhq1PFO/MKuIo9s9ffetE+5TaxWGUT6CgxwvGg7EYhSFKTurXIn/mT0T
-	 2VnjGlsE++ceA==
+	b=qJp+pNmrnz2hVpw3ad/kdlC3wpDSy94U8cdclU7Y7AHoh1yrK5uwu7FPeuJrmjv8m
+	 DFM/uYWS2H44l8qKMC+uOJeRNLMQyPOGghW7IuFo7YZPggnkJxEh44Gg3ZQAQSFrSq
+	 QOe4J2HCtPFecfwfKl8+/b6GjnF90naa+RZ3qRbWrLNrrF6zi/rxpo62MieP1NpgDj
+	 9JPmB0ipQUv3I+2c7oUx9omig2cfqp+yG7/qs+VfFFwgfBf3Xs4/2Q8xjmcxox33H0
+	 LtH2mRL8D/SX2fgmIEwUvBMZVQOYb5npRRDc2cGRpvSqdVzBllfNTxAQ/SIeEm0mcd
+	 bkyQaYhcOsyPw==
 From: =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@kernel.org>
 To: Alexandre Ghiti <alexghiti@rivosinc.com>,
 	Albert Ou <aou@eecs.berkeley.edu>,
@@ -58,9 +58,9 @@ Cc: =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@rivosinc.com>,
 	linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org,
 	virtualization@lists.linux-foundation.org
-Subject: [PATCH v2 3/8] riscv: mm: Refactor create_linear_mapping_range() for memory hot add
-Date: Tue, 14 May 2024 16:04:41 +0200
-Message-Id: <20240514140446.538622-4-bjorn@kernel.org>
+Subject: [PATCH v2 4/8] riscv: mm: Add memory hotplugging support
+Date: Tue, 14 May 2024 16:04:42 +0200
+Message-Id: <20240514140446.538622-5-bjorn@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20240514140446.538622-1-bjorn@kernel.org>
 References: <20240514140446.538622-1-bjorn@kernel.org>
@@ -75,63 +75,291 @@ Content-Transfer-Encoding: 8bit
 
 From: Björn Töpel <bjorn@rivosinc.com>
 
-Add a parameter to the direct map setup function, so it can be used in
-arch_add_memory() later.
+For an architecture to support memory hotplugging, a couple of
+callbacks needs to be implemented:
+
+ arch_add_memory()
+  This callback is responsible for adding the physical memory into the
+  direct map, and call into the memory hotplugging generic code via
+  __add_pages() that adds the corresponding struct page entries, and
+  updates the vmemmap mapping.
+
+ arch_remove_memory()
+  This is the inverse of the callback above.
+
+ vmemmap_free()
+  This function tears down the vmemmap mappings (if
+  CONFIG_SPARSEMEM_VMEMMAP is enabled), and also deallocates the
+  backing vmemmap pages. Note that for persistent memory, an
+  alternative allocator for the backing pages can be used; The
+  vmem_altmap. This means that when the backing pages are cleared,
+  extra care is needed so that the correct deallocation method is
+  used.
+
+ arch_get_mappable_range()
+  This functions returns the PA range that the direct map can map.
+  Used by the MHP internals for sanity checks.
+
+The page table unmap/teardown functions are heavily based on code from
+the x86 tree. The same remove_pgd_mapping() function is used in both
+vmemmap_free() and arch_remove_memory(), but in the latter function
+the backing pages are not removed.
 
 Signed-off-by: Björn Töpel <bjorn@rivosinc.com>
 ---
- arch/riscv/mm/init.c | 15 ++++++---------
- 1 file changed, 6 insertions(+), 9 deletions(-)
+ arch/riscv/mm/init.c | 242 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 242 insertions(+)
 
 diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-index c969427eab88..6f72b0b2b854 100644
+index 6f72b0b2b854..7f0b921a3d3a 100644
 --- a/arch/riscv/mm/init.c
 +++ b/arch/riscv/mm/init.c
-@@ -1227,7 +1227,7 @@ asmlinkage void __init setup_vm(uintptr_t dtb_pa)
- }
- 
- static void __meminit create_linear_mapping_range(phys_addr_t start, phys_addr_t end,
--						  uintptr_t fixed_map_size)
-+						  uintptr_t fixed_map_size, const pgprot_t *pgprot)
- {
- 	phys_addr_t pa;
- 	uintptr_t va, map_size;
-@@ -1238,7 +1238,7 @@ static void __meminit create_linear_mapping_range(phys_addr_t start, phys_addr_t
- 					    best_map_size(pa, va, end - pa);
- 
- 		create_pgd_mapping(swapper_pg_dir, va, pa, map_size,
--				   pgprot_from_va(va));
-+				   pgprot ? *pgprot : pgprot_from_va(va));
+@@ -1493,3 +1493,245 @@ void __init pgtable_cache_init(void)
  	}
  }
- 
-@@ -1282,22 +1282,19 @@ static void __init create_linear_mapping_page_table(void)
- 		if (end >= __pa(PAGE_OFFSET) + memory_limit)
- 			end = __pa(PAGE_OFFSET) + memory_limit;
- 
--		create_linear_mapping_range(start, end, 0);
-+		create_linear_mapping_range(start, end, 0, NULL);
- 	}
- 
- #ifdef CONFIG_STRICT_KERNEL_RWX
--	create_linear_mapping_range(ktext_start, ktext_start + ktext_size, 0);
--	create_linear_mapping_range(krodata_start,
--				    krodata_start + krodata_size, 0);
-+	create_linear_mapping_range(ktext_start, ktext_start + ktext_size, 0, NULL);
-+	create_linear_mapping_range(krodata_start, krodata_start + krodata_size, 0, NULL);
- 
- 	memblock_clear_nomap(ktext_start,  ktext_size);
- 	memblock_clear_nomap(krodata_start, krodata_size);
  #endif
- 
- #ifdef CONFIG_KFENCE
--	create_linear_mapping_range(kfence_pool,
--				    kfence_pool + KFENCE_POOL_SIZE,
--				    PAGE_SIZE);
-+	create_linear_mapping_range(kfence_pool, kfence_pool + KFENCE_POOL_SIZE, PAGE_SIZE, NULL);
- 
- 	memblock_clear_nomap(kfence_pool, KFENCE_POOL_SIZE);
- #endif
++
++#ifdef CONFIG_MEMORY_HOTPLUG
++static void __meminit free_pte_table(pte_t *pte_start, pmd_t *pmd)
++{
++	pte_t *pte;
++	int i;
++
++	for (i = 0; i < PTRS_PER_PTE; i++) {
++		pte = pte_start + i;
++		if (!pte_none(*pte))
++			return;
++	}
++
++	free_pages((unsigned long)page_address(pmd_page(*pmd)), 0);
++	pmd_clear(pmd);
++}
++
++static void __meminit free_pmd_table(pmd_t *pmd_start, pud_t *pud)
++{
++	pmd_t *pmd;
++	int i;
++
++	for (i = 0; i < PTRS_PER_PMD; i++) {
++		pmd = pmd_start + i;
++		if (!pmd_none(*pmd))
++			return;
++	}
++
++	free_pages((unsigned long)page_address(pud_page(*pud)), 0);
++	pud_clear(pud);
++}
++
++static void __meminit free_pud_table(pud_t *pud_start, p4d_t *p4d)
++{
++	pud_t *pud;
++	int i;
++
++	for (i = 0; i < PTRS_PER_PUD; i++) {
++		pud = pud_start + i;
++		if (!pud_none(*pud))
++			return;
++	}
++
++	free_pages((unsigned long)page_address(p4d_page(*p4d)), 0);
++	p4d_clear(p4d);
++}
++
++static void __meminit free_vmemmap_storage(struct page *page, size_t size,
++					   struct vmem_altmap *altmap)
++{
++	if (altmap)
++		vmem_altmap_free(altmap, size >> PAGE_SHIFT);
++	else
++		free_pages((unsigned long)page_address(page), get_order(size));
++}
++
++static void __meminit remove_pte_mapping(pte_t *pte_base, unsigned long addr, unsigned long end,
++					 bool is_vmemmap, struct vmem_altmap *altmap)
++{
++	unsigned long next;
++	pte_t *ptep, pte;
++
++	for (; addr < end; addr = next) {
++		next = (addr + PAGE_SIZE) & PAGE_MASK;
++		if (next > end)
++			next = end;
++
++		ptep = pte_base + pte_index(addr);
++		pte = READ_ONCE(*ptep);
++
++		if (!pte_present(*ptep))
++			continue;
++
++		pte_clear(&init_mm, addr, ptep);
++		if (is_vmemmap)
++			free_vmemmap_storage(pte_page(pte), PAGE_SIZE, altmap);
++	}
++}
++
++static void __meminit remove_pmd_mapping(pmd_t *pmd_base, unsigned long addr, unsigned long end,
++					 bool is_vmemmap, struct vmem_altmap *altmap)
++{
++	unsigned long next;
++	pte_t *pte_base;
++	pmd_t *pmdp, pmd;
++
++	for (; addr < end; addr = next) {
++		next = pmd_addr_end(addr, end);
++		pmdp = pmd_base + pmd_index(addr);
++		pmd = READ_ONCE(*pmdp);
++
++		if (!pmd_present(pmd))
++			continue;
++
++		if (pmd_leaf(pmd)) {
++			pmd_clear(pmdp);
++			if (is_vmemmap)
++				free_vmemmap_storage(pmd_page(pmd), PMD_SIZE, altmap);
++			continue;
++		}
++
++		pte_base = (pte_t *)pmd_page_vaddr(*pmdp);
++		remove_pte_mapping(pte_base, addr, next, is_vmemmap, altmap);
++		free_pte_table(pte_base, pmdp);
++	}
++}
++
++static void __meminit remove_pud_mapping(pud_t *pud_base, unsigned long addr, unsigned long end,
++					 bool is_vmemmap, struct vmem_altmap *altmap)
++{
++	unsigned long next;
++	pud_t *pudp, pud;
++	pmd_t *pmd_base;
++
++	for (; addr < end; addr = next) {
++		next = pud_addr_end(addr, end);
++		pudp = pud_base + pud_index(addr);
++		pud = READ_ONCE(*pudp);
++
++		if (!pud_present(pud))
++			continue;
++
++		if (pud_leaf(pud)) {
++			if (pgtable_l4_enabled) {
++				pud_clear(pudp);
++				if (is_vmemmap)
++					free_vmemmap_storage(pud_page(pud), PUD_SIZE, altmap);
++			}
++			continue;
++		}
++
++		pmd_base = pmd_offset(pudp, 0);
++		remove_pmd_mapping(pmd_base, addr, next, is_vmemmap, altmap);
++
++		if (pgtable_l4_enabled)
++			free_pmd_table(pmd_base, pudp);
++	}
++}
++
++static void __meminit remove_p4d_mapping(p4d_t *p4d_base, unsigned long addr, unsigned long end,
++					 bool is_vmemmap, struct vmem_altmap *altmap)
++{
++	unsigned long next;
++	p4d_t *p4dp, p4d;
++	pud_t *pud_base;
++
++	for (; addr < end; addr = next) {
++		next = p4d_addr_end(addr, end);
++		p4dp = p4d_base + p4d_index(addr);
++		p4d = READ_ONCE(*p4dp);
++
++		if (!p4d_present(p4d))
++			continue;
++
++		if (p4d_leaf(p4d)) {
++			if (pgtable_l5_enabled) {
++				p4d_clear(p4dp);
++				if (is_vmemmap)
++					free_vmemmap_storage(p4d_page(p4d), P4D_SIZE, altmap);
++			}
++			continue;
++		}
++
++		pud_base = pud_offset(p4dp, 0);
++		remove_pud_mapping(pud_base, addr, next, is_vmemmap, altmap);
++
++		if (pgtable_l5_enabled)
++			free_pud_table(pud_base, p4dp);
++	}
++}
++
++static void __meminit remove_pgd_mapping(unsigned long va, unsigned long end, bool is_vmemmap,
++					 struct vmem_altmap *altmap)
++{
++	unsigned long addr, next;
++	p4d_t *p4d_base;
++	pgd_t *pgd;
++
++	for (addr = va; addr < end; addr = next) {
++		next = pgd_addr_end(addr, end);
++		pgd = pgd_offset_k(addr);
++
++		if (!pgd_present(*pgd))
++			continue;
++
++		if (pgd_leaf(*pgd))
++			continue;
++
++		p4d_base = p4d_offset(pgd, 0);
++		remove_p4d_mapping(p4d_base, addr, next, is_vmemmap, altmap);
++	}
++
++	flush_tlb_all();
++}
++
++static void __meminit remove_linear_mapping(phys_addr_t start, u64 size)
++{
++	unsigned long va = (unsigned long)__va(start);
++	unsigned long end = (unsigned long)__va(start + size);
++
++	remove_pgd_mapping(va, end, false, NULL);
++}
++
++struct range arch_get_mappable_range(void)
++{
++	struct range mhp_range;
++
++	mhp_range.start = __pa(PAGE_OFFSET);
++	mhp_range.end = __pa(PAGE_END - 1);
++	return mhp_range;
++}
++
++int __ref arch_add_memory(int nid, u64 start, u64 size, struct mhp_params *params)
++{
++	int ret;
++
++	create_linear_mapping_range(start, start + size, 0, &params->pgprot);
++	flush_tlb_all();
++	ret = __add_pages(nid, start >> PAGE_SHIFT, size >> PAGE_SHIFT, params);
++	if (ret) {
++		remove_linear_mapping(start, size);
++		return ret;
++	}
++
++	max_pfn = PFN_UP(start + size);
++	max_low_pfn = max_pfn;
++	return 0;
++}
++
++void __ref arch_remove_memory(u64 start, u64 size, struct vmem_altmap *altmap)
++{
++	__remove_pages(start >> PAGE_SHIFT, size >> PAGE_SHIFT, altmap);
++	remove_linear_mapping(start, size);
++}
++
++#ifdef CONFIG_SPARSEMEM_VMEMMAP
++void __ref vmemmap_free(unsigned long start, unsigned long end, struct vmem_altmap *altmap)
++{
++	remove_pgd_mapping(start, end, true, altmap);
++}
++#endif /* CONFIG_SPARSEMEM_VMEMMAP */
++#endif /* CONFIG_MEMORY_HOTPLUG */
 -- 
 2.40.1
 
