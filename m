@@ -1,128 +1,352 @@
-Return-Path: <linux-kernel+bounces-178656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D1248C55F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:23:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CBBB8C55FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:24:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F1FE1C222D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:23:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A25DBB21A7C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:24:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96C6145014;
-	Tue, 14 May 2024 12:23:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="HUYIhJQS"
-Received: from smtp-bc08.mail.infomaniak.ch (smtp-bc08.mail.infomaniak.ch [45.157.188.8])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E2CB4F1F8;
+	Tue, 14 May 2024 12:24:12 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 571CADDC0
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 12:23:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A7F94594C
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 12:24:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715689430; cv=none; b=AuNPB4Xv73sZKeyK2aKhOlvJ8mTbPBnW54hK726xBpegeWHPubxm2mwLFMkRN407VuUkHrnndH3IkQ6vUoNIqUqlzLh/At0xpZHbxQBwbVzZX9L1k81aEznQFCnbFqKd9zohM1IOfahR8XJ61W1PxUVko/7bPMgqNIlnOMpDGMI=
+	t=1715689451; cv=none; b=pYE52e7STar7MLfsFKxV0paM3tEwZjqf7AjnfKXa7R3NlfUIX5oyH/hKQ7vNpjs7BiUsv17dHf+L9AHQp4HQ5GFR3ccb/MK9DS9KSm4yj8wJzgPZhkIuLaMxKeQf4rH6zDWSkoVTgzju8rMleU7qPhkIY/In/o4vIFqMGtJ8rAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715689430; c=relaxed/simple;
-	bh=bRkarWPZPXCcGNKnN/GFmEsDu3L8Us8oWBdG536diIA=;
+	s=arc-20240116; t=1715689451; c=relaxed/simple;
+	bh=EqHKt9WXkMKHHRU+UyQBV3cuavqzOgeguLjutSMzT0c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aDqmsVx0AWGclm5pnYXmL5HnW/GobpyaT/hnZbwO/hgwc7kzNiFG/bS83SkbbuR9HYtYF/nzSmKjxq/Ar6kRASj9kQtvdPG8ObNeL7aAPl8A4BFAuPF4XPDNCQ77MljM9pXjaf2MWsEsFY+pDN7gFfJvIPs0DiJmQZp0y5239Ps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=HUYIhJQS; arc=none smtp.client-ip=45.157.188.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4VdwWP64pbzTXk;
-	Tue, 14 May 2024 14:23:45 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1715689425;
-	bh=I0eZWdP4Q+KPu4Hx3s3mpwHuoQ0UvkeO9/nafOAr82w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HUYIhJQSGxJF3jwUizanlmonUX7sygOvcV8noUaAFzN0V3a3iKwuGB8/GEum6Clxq
-	 EcKo1qBH3Un5VS8jWoGkoTi3TiKlCjIcaIL1kB+8poVzqExKvp5IQ2ywDDPeKqlugY
-	 OVZlyAPCKt5gtA5k6143lcqKUer3NgtqPGvwYp+A=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4VdwWN5tzlzF2L;
-	Tue, 14 May 2024 14:23:44 +0200 (CEST)
-Date: Tue, 14 May 2024 14:23:42 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Nicolas Saenz Julienne <nsaenz@amazon.com>
-Cc: Sean Christopherson <seanjc@google.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	"H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, 
-	Kees Cook <keescook@chromium.org>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Vitaly Kuznetsov <vkuznets@redhat.com>, 
-	Wanpeng Li <wanpengli@tencent.com>, Rick P Edgecombe <rick.p.edgecombe@intel.com>, 
-	Alexander Graf <graf@amazon.com>, Angelina Vu <angelinavu@linux.microsoft.com>, 
-	Anna Trikalinou <atrikalinou@microsoft.com>, Chao Peng <chao.p.peng@linux.intel.com>, 
-	Forrest Yuan Yu <yuanyu@google.com>, James Gowans <jgowans@amazon.com>, 
-	James Morris <jamorris@linux.microsoft.com>, John Andersen <john.s.andersen@intel.com>, 
-	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Marian Rotariu <marian.c.rotariu@gmail.com>, 
-	Mihai =?utf-8?B?RG9uyJt1?= <mdontu@bitdefender.com>, =?utf-8?B?TmljdciZb3IgQ8OuyJt1?= <nicu.citu@icloud.com>, 
-	Thara Gopinath <tgopinath@microsoft.com>, Trilok Soni <quic_tsoni@quicinc.com>, 
-	Wei Liu <wei.liu@kernel.org>, Will Deacon <will@kernel.org>, 
-	Yu Zhang <yu.c.zhang@linux.intel.com>, =?utf-8?Q?=C8=98tefan_=C8=98icleru?= <ssicleru@bitdefender.com>, 
-	dev@lists.cloudhypervisor.org, kvm@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, qemu-devel@nongnu.org, virtualization@lists.linux-foundation.org, 
-	x86@kernel.org, xen-devel@lists.xenproject.org
-Subject: Re: [RFC PATCH v3 3/5] KVM: x86: Add notifications for Heki policy
- configuration and violation
-Message-ID: <20240514.mai3Ahdoo2qu@digikod.net>
-References: <20240503131910.307630-1-mic@digikod.net>
- <20240503131910.307630-4-mic@digikod.net>
- <ZjTuqV-AxQQRWwUW@google.com>
- <20240506.ohwe7eewu0oB@digikod.net>
- <ZjmFPZd5q_hEBdBz@google.com>
- <20240507.ieghomae0UoC@digikod.net>
- <ZjpTxt-Bxia3bRwB@google.com>
- <D15VQ97L5M8J.1TDNQE6KLW6JO@amazon.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rEJgym0VFa+2/I+yAkZdA8Yv2INKE32c8pBk+fGo1Pfm92zJvJQXVeJjv/V9pkaQ8dGsyBdHPd9ouVeP0BT99kr0Lc1s+YH2IEM9k/tlBPMRe0+liqJOKj987EVG6b46dvjvyBLGLHF/yhBX2Xqoc/qAek4Z7LQzW5ac+nUWGhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1s6rC8-0003TQ-R9; Tue, 14 May 2024 14:23:48 +0200
+Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1s6rC6-001Lsl-ON; Tue, 14 May 2024 14:23:46 +0200
+Received: from pengutronix.de (unknown [172.20.34.65])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 4F9712D1385;
+	Tue, 14 May 2024 12:23:46 +0000 (UTC)
+Date: Tue, 14 May 2024 14:23:45 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Vitor Soares <ivitro@gmail.com>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Thomas Kopp <thomas.kopp@microchip.com>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Vitor Soares <vitor.soares@toradex.com>, linux-can@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v5] can: mcp251xfd: fix infinite loop when xmit fails
+Message-ID: <20240514-corgi-of-marvelous-peace-968f5c-mkl@pengutronix.de>
+References: <20240514105822.99986-1-ivitro@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="tzjc4qdq45al67io"
+Content-Disposition: inline
+In-Reply-To: <20240514105822.99986-1-ivitro@gmail.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+
+
+--tzjc4qdq45al67io
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <D15VQ97L5M8J.1TDNQE6KLW6JO@amazon.com>
-X-Infomaniak-Routing: alpha
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 10, 2024 at 10:07:00AM +0000, Nicolas Saenz Julienne wrote:
-> On Tue May 7, 2024 at 4:16 PM UTC, Sean Christopherson wrote:
-> > > If yes, that would indeed require a *lot* of work for something we're not
-> > > sure will be accepted later on.
-> >
-> > Yes and no.  The AWS folks are pursuing VSM support in KVM+QEMU, and SVSM support
-> > is trending toward the paired VM+vCPU model.  IMO, it's entirely feasible to
-> > design KVM support such that much of the development load can be shared between
-> > the projects.  And having 2+ use cases for a feature (set) makes it _much_ more
-> > likely that the feature(s) will be accepted.
-> 
-> Since Sean mentioned our VSM efforts, a small update. We were able to
-> validate the concept of one KVM VM per VTL as discussed in LPC. Right
-> now only for single CPU guests, but are in the late stages of bringing
-> up MP support. The resulting KVM code is small, and most will be
-> uncontroversial (I hope). If other obligations allow it, we plan on
-> having something suitable for review in the coming months.
+On 14.05.2024 11:58:22, Vitor Soares wrote:
+> From: Vitor Soares <vitor.soares@toradex.com>
+>=20
+> When the mcp251xfd_start_xmit() function fails, the driver stops
+> processing messages, and the interrupt routine does not return,
+> running indefinitely even after killing the running application.
+>=20
+> Error messages:
+> [  441.298819] mcp251xfd spi2.0 can0: ERROR in mcp251xfd_start_xmit: -16
+> [  441.306498] mcp251xfd spi2.0 can0: Transmit Event FIFO buffer not empt=
+y. (seq=3D0x000017c7, tef_tail=3D0x000017cf, tef_head=3D0x000017d0, tx_head=
+=3D0x000017d3).
+> ... and repeat forever.
+>=20
+> The issue can be triggered when multiple devices share the same
+> SPI interface. And there is concurrent access to the bus.
+>=20
+> The problem occurs because tx_ring->head increments even if
+> mcp251xfd_start_xmit() fails. Consequently, the driver skips one
+> TX package while still expecting a response in
+> mcp251xfd_handle_tefif_one().
+>=20
+> This patch resolves the issue by starting a workqueue to write
+> the tx obj synchronously if err =3D -EBUSY. In case of another error,
+> it decrements tx_ring->head, removes skb from the echo stack, and
+> drops the message.
 
-Looks good!
+This looks quite good! Good work!
 
-> 
-> Our implementation aims to implement all the VSM spec necessary to run
-> with Microsoft Credential Guard. But note that some aspects necessary
-> for HVCI are not covered, especially the ones that depend on MBEC
-> support, or some categories of secure intercepts.
+I think you better move the allocation/destroy of the wq into the open()
+and stop() callbacks. You have to destroy the workqueue before putting
+the interface to sleep.
 
-We already implemented support for MBEC, so that should not be an issue.
-We just need to find the best interface to configure it.
+>=20
+> Fixes: 55e5b97f003e ("can: mcp25xxfd: add driver for Microchip MCP25xxFD =
+SPI CAN")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Vitor Soares <vitor.soares@toradex.com>
+> ---
+>=20
+> V4->V5:
+>   - Start a workqueue to write tx obj with spi_sync() when spi_async() =
+=3D=3D -EBUSY.
+>=20
+> V3->V4:
+>   - Leave can_put_echo_skb() and stop the queue if needed, before mcp251x=
+fd_tx_obj_write().
+>   - Re-sync head and remove echo skb if mcp251xfd_tx_obj_write() fails.
+>   - Revert -> return NETDEV_TX_BUSY if mcp251xfd_tx_obj_write() =3D=3D -E=
+BUSY.
+>=20
+> V2->V3:
+>   - Add tx_dropped stats.
+>   - netdev_sent_queue() only if can_put_echo_skb() succeed.
+>=20
+> V1->V2:
+>   - Return NETDEV_TX_BUSY if mcp251xfd_tx_obj_write() =3D=3D -EBUSY.
+>   - Rework the commit message to address the change above.
+>   - Change can_put_echo_skb() to be called after mcp251xfd_tx_obj_write()=
+ succeed.
+>     Otherwise, we get Kernel NULL pointer dereference error.
+>=20
+>  .../net/can/spi/mcp251xfd/mcp251xfd-core.c    | 13 ++++-
+>  drivers/net/can/spi/mcp251xfd/mcp251xfd-tx.c  | 51 ++++++++++++++++---
+>  drivers/net/can/spi/mcp251xfd/mcp251xfd.h     |  5 ++
+>  3 files changed, 60 insertions(+), 9 deletions(-)
+>=20
+> diff --git a/drivers/net/can/spi/mcp251xfd/mcp251xfd-core.c b/drivers/net=
+/can/spi/mcp251xfd/mcp251xfd-core.c
+> index 1d9057dc44f2..6cca853f2b1e 100644
+> --- a/drivers/net/can/spi/mcp251xfd/mcp251xfd-core.c
+> +++ b/drivers/net/can/spi/mcp251xfd/mcp251xfd-core.c
+> @@ -2141,15 +2141,25 @@ static int mcp251xfd_probe(struct spi_device *spi)
+>  	if (err)
+>  		goto out_free_candev;
+> =20
+> +	priv->tx_work_obj =3D NULL;
+> +	priv->wq =3D alloc_workqueue("mcp251xfd_wq", WQ_FREEZABLE, 0);
 
-> 
-> Development happens
-> https://github.com/vianpl/{linux,qemu,kvm-unit-tests} and the vsm-next
-> branch, but I'd advice against looking into it until we add some order
-> to the rework. Regardless, feel free to get in touch.
+The m_can driver uses a ordered workqueue and you can add the name of
+the spi device to the wq's name :)
 
-Thanks for the update.
+        priv->wq =3D alloc_ordered_workqueue("%s-mcp251xfd_wq", WQ_FREEZABL=
+E | WQ_MEM_RECLAIM, dev_name(&spi->dev));
 
-Could we schedule a PUCK meeting to synchronize and help each other?
-What about June 12?
+> +	if (!priv->wq) {
+> +		err =3D -ENOMEM;
+> +		goto out_can_rx_offload_del;
+> +	}
+> +	INIT_WORK(&priv->tx_work, mcp251xfd_tx_obj_write_sync);
+> +
+>  	err =3D mcp251xfd_register(priv);
+>  	if (err) {
+>  		dev_err_probe(&spi->dev, err, "Failed to detect %s.\n",
+>  			      mcp251xfd_get_model_str(priv));
+> -		goto out_can_rx_offload_del;
+> +		goto out_can_free_wq;
+
+nitpick:
+                     out_destroy_workqueue;
+
+to match the function call.
+
+>  	}
+> =20
+>  	return 0;
+> =20
+> + out_can_free_wq:
+> +	destroy_workqueue(priv->wq);
+>   out_can_rx_offload_del:
+>  	can_rx_offload_del(&priv->offload);
+>   out_free_candev:
+> @@ -2165,6 +2175,7 @@ static void mcp251xfd_remove(struct spi_device *spi)
+>  	struct mcp251xfd_priv *priv =3D spi_get_drvdata(spi);
+>  	struct net_device *ndev =3D priv->ndev;
+> =20
+> +	destroy_workqueue(priv->wq);
+>  	can_rx_offload_del(&priv->offload);
+>  	mcp251xfd_unregister(priv);
+>  	spi->max_speed_hz =3D priv->spi_max_speed_hz_orig;
+> diff --git a/drivers/net/can/spi/mcp251xfd/mcp251xfd-tx.c b/drivers/net/c=
+an/spi/mcp251xfd/mcp251xfd-tx.c
+> index 160528d3cc26..1e7ddf316643 100644
+> --- a/drivers/net/can/spi/mcp251xfd/mcp251xfd-tx.c
+> +++ b/drivers/net/can/spi/mcp251xfd/mcp251xfd-tx.c
+> @@ -131,6 +131,41 @@ mcp251xfd_tx_obj_from_skb(const struct mcp251xfd_pri=
+v *priv,
+>  	tx_obj->xfer[0].len =3D len;
+>  }
+> =20
+> +static void mcp251xfd_tx_failure_drop(const struct mcp251xfd_priv *priv,
+> +				      struct mcp251xfd_tx_ring *tx_ring,
+> +				      int err)
+> +{
+> +	struct net_device *ndev =3D priv->ndev;
+> +	struct net_device_stats *stats =3D &ndev->stats;
+> +	unsigned int frame_len =3D 0;
+> +	u8 tx_head;
+> +
+> +	tx_ring->head--;
+> +	stats->tx_dropped++;
+> +	tx_head =3D mcp251xfd_get_tx_head(tx_ring);
+> +	can_free_echo_skb(ndev, tx_head, &frame_len);
+> +	netdev_completed_queue(ndev, 1, frame_len);
+> +	netif_wake_queue(ndev);
+> +
+> +	if (net_ratelimit())
+> +		netdev_err(priv->ndev, "ERROR in %s: %d\n", __func__, err);
+> +}
+> +
+> +void mcp251xfd_tx_obj_write_sync(struct work_struct *ws)
+> +{
+> +	struct mcp251xfd_priv *priv =3D container_of(ws, struct mcp251xfd_priv,
+> +						   tx_work);
+> +	struct mcp251xfd_tx_obj *tx_obj =3D priv->tx_work_obj;
+> +	struct mcp251xfd_tx_ring *tx_ring =3D priv->tx;
+> +	int err;
+> +
+> +	err =3D spi_sync(priv->spi, &tx_obj->msg);
+> +	if (err)
+> +		mcp251xfd_tx_failure_drop(priv, tx_ring, err);
+> +
+> +	priv->tx_work_obj =3D NULL;
+
+Race condition:
+- after spi_sync() the CAN frame is send
+- after the TX complete IRQ the TX queue is restarted
+- the xmit handler might get BUSY
+- fill the tx_work_obj again
+
+> +}
+> +
+>  static int mcp251xfd_tx_obj_write(const struct mcp251xfd_priv *priv,
+>  				  struct mcp251xfd_tx_obj *tx_obj)
+>  {
+> @@ -175,7 +210,7 @@ netdev_tx_t mcp251xfd_start_xmit(struct sk_buff *skb,
+>  	if (can_dev_dropped_skb(ndev, skb))
+>  		return NETDEV_TX_OK;
+> =20
+> -	if (mcp251xfd_tx_busy(priv, tx_ring))
+> +	if (mcp251xfd_tx_busy(priv, tx_ring) || priv->tx_work_obj)
+
+This should not happen, but better save than sorry.
+
+>  		return NETDEV_TX_BUSY;
+> =20
+>  	tx_obj =3D mcp251xfd_get_tx_obj_next(tx_ring);
+> @@ -193,13 +228,13 @@ netdev_tx_t mcp251xfd_start_xmit(struct sk_buff *sk=
+b,
+>  		netdev_sent_queue(priv->ndev, frame_len);
+> =20
+>  	err =3D mcp251xfd_tx_obj_write(priv, tx_obj);
+> -	if (err)
+> -		goto out_err;
+> -
+> -	return NETDEV_TX_OK;
+> -
+> - out_err:
+> -	netdev_err(priv->ndev, "ERROR in %s: %d\n", __func__, err);
+> +	if (err =3D=3D -EBUSY) {
+> +		priv->tx_work_obj =3D tx_obj;
+> +		netif_stop_queue(ndev);
+> +		queue_work(priv->wq, &priv->tx_work);
+
+nitpick: I would do "netif_stop_queue(ndev);" first.
+
+My mental idea of the code flow is:
+- stop the queue
+- do everything to start the workqueue.
+
+> +	} else if (err) {
+> +		mcp251xfd_tx_failure_drop(priv, tx_ring, err);
+> +	}
+> =20
+>  	return NETDEV_TX_OK;
+>  }
+> diff --git a/drivers/net/can/spi/mcp251xfd/mcp251xfd.h b/drivers/net/can/=
+spi/mcp251xfd/mcp251xfd.h
+> index 24510b3b8020..4e27a33f4030 100644
+> --- a/drivers/net/can/spi/mcp251xfd/mcp251xfd.h
+> +++ b/drivers/net/can/spi/mcp251xfd/mcp251xfd.h
+> @@ -633,6 +633,10 @@ struct mcp251xfd_priv {
+>  	struct mcp251xfd_rx_ring *rx[MCP251XFD_FIFO_RX_NUM];
+>  	struct mcp251xfd_tx_ring tx[MCP251XFD_FIFO_TX_NUM];
+> =20
+> +	struct workqueue_struct *wq;
+> +	struct work_struct tx_work;
+> +	struct mcp251xfd_tx_obj *tx_work_obj;
+> +
+>  	DECLARE_BITMAP(flags, __MCP251XFD_FLAGS_SIZE__);
+> =20
+>  	u8 rx_ring_num;
+> @@ -952,6 +956,7 @@ void mcp251xfd_skb_set_timestamp(const struct mcp251x=
+fd_priv *priv,
+>  void mcp251xfd_timestamp_init(struct mcp251xfd_priv *priv);
+>  void mcp251xfd_timestamp_stop(struct mcp251xfd_priv *priv);
+> =20
+> +void mcp251xfd_tx_obj_write_sync(struct work_struct *ws);
+>  netdev_tx_t mcp251xfd_start_xmit(struct sk_buff *skb,
+>  				 struct net_device *ndev);
+> =20
+> --=20
+> 2.34.1
+>=20
+>=20
+
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--tzjc4qdq45al67io
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmZDV88ACgkQKDiiPnot
+vG9hCwf/dI6WtY94bpYBU7R4g5F39HD1ptIEai1TYo8QYR9r+V8DD0PcSzmoB1oS
+FcBQXDrYlPTbgm4rmGwC4ojYB66+CX48tJMh2vDLvmW9jXr6Q0Fh+O4G0MpSHAAC
+a8/TLVjD833N3wxnBCofsAr95wpkUoflOGMB9pGW2B8b38XC+G9f/drpGDYMvo+l
+Hn4FJCjPFuU9dUagUM3DPYSk0xjvoEDfY4tSU7XOafUsZ/qWbyt0H5B15iNAo07z
+vFAiJm/PvVK2UNFcnAvXs5koi5+CywlcruCZaPF+YiWoBWIeOZ6brRKNNUSeywCl
+pIi7ocWf97wyljokRaER2fgiMvU6RA==
+=GG7y
+-----END PGP SIGNATURE-----
+
+--tzjc4qdq45al67io--
 
