@@ -1,146 +1,255 @@
-Return-Path: <linux-kernel+bounces-178816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EDA18C581E
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:37:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59DAD8C5822
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:39:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE8C5283F00
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:37:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10E8D283D80
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:39:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C401617BB37;
-	Tue, 14 May 2024 14:37:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 182B417EB82;
+	Tue, 14 May 2024 14:39:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aBe7lPEQ"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="hf2ZhyaL"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70830154C10
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 14:37:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EB18154C10
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 14:39:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715697466; cv=none; b=gOS7bkpugyb77QYhvRupmNXBctEVLo1PKDY2aDrqhDYPw+0EwqrLnnkHJ9kFjkcBeQCviM0bJOFRDwnq8sg61StigeDol9UzFafmDdacZtKKUTg/67fLS00pX3nnwLnfD/bJGKSSjP/kiLXFVzHB12ahkqQh5F0fjYnvPL6BcpE=
+	t=1715697545; cv=none; b=ilNMBnEWQZiyt3cOhLOdVKAoz0uaWokMJwX46VVsZmoJfYvrnb9m8xgBcJ/KB/sduWkAf1bEIATOaFojbjQnWvhkpwnudjaTZdaj2ZMBGpYQkp/o5h7GPfyelEdynwZ7sYlK0j/KQztSqcjE6L3WjQOtzivTmg1taus5vdqitFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715697466; c=relaxed/simple;
-	bh=cCN6oAFPt/mZTrQVhHoM8Poynt/Vme2RK/JjKPD/hGw=;
+	s=arc-20240116; t=1715697545; c=relaxed/simple;
+	bh=WNcVowLF738bBUYU9q9s1F6x75YSSD23yiDfQaIObKk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PQ5aC5HHUppGiisDv1kEAGrFTGnkjFeuGMpUW0jEZPlfyYEa+h2iA/NsFyy6Nezresk74IoNOlNTMHwXEU6AJpD1TpGS9KLgE6x4NPCZTp8MQdXAp8PCXIfPL2Rm4sbFI33Z7/yNB7UiS/oz3C5C0dhPvqyLvRPBXHuNyEiVLgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aBe7lPEQ; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-420116a6652so21006755e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 07:37:44 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=n4u4Ngq/VpA8ABy3kCIbXB8Ch72qQzmHXXVCPbsGEQLJ6LMHj+RILtyVe3lvWr2ZkCffM9FyVdpKbttQs5Abrt66nTGAJI4Gy9TcOj06tbf7/6rYzXLVLxFKHTJ8aKDGsoxfdGEYmOd0UUk8wX4XqmruuuiQXwYUR7uq6zBch60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=hf2ZhyaL; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-6f4521ad6c0so4624035b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 07:39:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715697463; x=1716302263; darn=vger.kernel.org;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1715697542; x=1716302342; darn=vger.kernel.org;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=TAc7NjihDXzocbPFDcPShOeBfL8pHSiZ3S9lbKbtkK4=;
-        b=aBe7lPEQFgZdsmP2LG2EGU/JJdnmeeW3/YzPo6MHMTPP95csKglfgHUoFpWM6y4N4A
-         gGROjzfvUS1eNecECCG/ccTfsX6JvW0dssXF8M1794/QZ6AIcB6k2Ghv/XlgMO0DVXrS
-         il/hP49SHHwknWrJtdk3uc+u4S2PLuTbX7Eah7seO4REgoSTZ2/wa6J76Xc+bbrzbqNu
-         NcIXqDLeigfqeL956XYkiSKJzUuar+M7URg7bQ7huL+BlGSQNMB2rEWSfWoel4CVLveu
-         woUE2qmpoT6kaN4YREosN1G4Khv4LhblEOAfzwyIPIt0T6LLEqYsc1NC5VN0q5pp8e/u
-         PStw==
+        bh=WNcVowLF738bBUYU9q9s1F6x75YSSD23yiDfQaIObKk=;
+        b=hf2ZhyaLwrr+qO/oaKUFMagLFXBzs6PTYrkee0DviHfHAYr7sV8MBmFCNNRd/HuLw4
+         FQ0yh3R4XCWoE9dcPSG47LS/SoNQrHLl9oI0SnzlifxmTf5ji2Fti6gdK1NgCvcCvPCL
+         eDReSiaMYhMTmRSBCaW1OjU1ep4brBnhXS+ImulkMrbJ6PKDM7uX8RyG7lNC831AezJM
+         pdDiIMbYVvNaabbnViLrGEmm1/3bwTUcXDyOXszTBnCAbvgtVPpFIYQdunIt+R8J6zRY
+         Yls7qZ4ynbs/RmHAtYopeUGNqksqsj/s5IIeYUXTCNha1sT1OcT7HmFFFmqcJqqFUQRg
+         7jOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715697463; x=1716302263;
+        d=1e100.net; s=20230601; t=1715697542; x=1716302342;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TAc7NjihDXzocbPFDcPShOeBfL8pHSiZ3S9lbKbtkK4=;
-        b=ojnVVZgR3dRT0OQudw0/9W5DDr4otixWbzDIYnhkW5S3824CUC+dXqANFxHWd4Xv0D
-         2eXHdhCpLRvCnZm/yr61VwNNqrFO+xdTTwAZ201YpbKN6lmgRoE7r0gWS3PVyMjI8FuS
-         zulVbw5/Kr5G3z8VTn9k4LHH1GkNBwphG1qEaX/p5C3kwxogJDrrYJKqacYnpOV2qCQj
-         h0PzgDQOtSUGmp0y3WVIS1tu2j3hrENqUINh82EPeuYHiU6Ah4PzzTb4nCd7vHv9MGtk
-         wgwL8uLF/+mUwYhHFg9Llr7PyUrEDd4YbC35aaq0YJ3t+PDyuP9k4C2u6JynyePRtlst
-         hVtw==
-X-Forwarded-Encrypted: i=1; AJvYcCWhXd6Xw03SWfZ2tkSBa5us91+Rsx5eqh/zi8vf1iU9W35DIhP20JzeCgza7RWDAnEfPqmhtm+k21A7UIrFNvlDMYmN/RoIE4nNko2/
-X-Gm-Message-State: AOJu0Yxvw6Xu3z+k7sRJu+qEgLJRwEnFyRPyL89aSmJ+kTkuFYwYa9Fz
-	sEP+7xjapE9toUAhu0Sulnzj1sdsdEUrDNz2/J3t2l40bGkbzbV2FFIArPmV8Q==
-X-Google-Smtp-Source: AGHT+IGPyRX8qtOMt+JESevQaTVma23gUecjuwUc1IYuJbTTmpZ+UJ3tSQ0+ECufdM0ZY1qj8EQ5xg==
-X-Received: by 2002:a05:600c:1c9f:b0:41c:35c:2da7 with SMTP id 5b1f17b1804b1-41feac551a0mr100665255e9.30.1715697462515;
-        Tue, 14 May 2024 07:37:42 -0700 (PDT)
-Received: from thinkpad ([149.14.240.163])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35045583669sm12283626f8f.106.2024.05.14.07.37.41
+        bh=WNcVowLF738bBUYU9q9s1F6x75YSSD23yiDfQaIObKk=;
+        b=oW4XEiB1fTAkOkYW/icsx0dBzcCQpXrB7IeB3sLXAiVKA9rFUqmtr2mwL9GuDN/Rzt
+         qIcVfWtikeZ6zSybVXBh4GYqJE/eLiRO5n+sMjipCsqxq+rCpNns+wTOLm98jojEhw8f
+         NYqbatYMwMeFR/sUgv6+W6J4MdPwIlUjckWngz6FKrJd3qtknBUqTmkrNTpidaDPb9Fb
+         Pf39Upumld0AHl82iXWHyziQkx18leyYWLRJAHFdqAwU1+TwYa/FcjT2OqL2qmnnzN7y
+         /4neMKS6GGa7eY08ae+Dr1AxRpFt10NHqoR0YkZfm3yKO/3iotKvxSxRFbuQ2v+Pab9c
+         56tQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVBdnHRZznUGYkyHQfEHF756vSuhul9KeEgdwojShUMzD6S7C6nsLkEXotX/RmpuYTFzvYldkyo5P+Wvl+RHOq57yc4HIgbHYLinEvk
+X-Gm-Message-State: AOJu0YxPijssiu88z1FNRwm6f+fqVg9qnq019Z98Zkvr3qN6/tCyzGYj
+	37lQk0fL6a0M2lt1Tx6qi7M735qRChSlcJr6mTfcE/Liv8lFSf4AaD0RK7MTcYs=
+X-Google-Smtp-Source: AGHT+IHdkOKBG0DyoFSxyrRHAS+ghpUAA5spIffvQqpiXqFnRsKCPZ4PJ12xD5NX3np4aQAOmlluRg==
+X-Received: by 2002:a05:6a00:14d1:b0:6e7:20a7:9fc0 with SMTP id d2e1a72fcca58-6f4e03a70c4mr15441852b3a.34.1715697541813;
+        Tue, 14 May 2024 07:39:01 -0700 (PDT)
+Received: from debug.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2b26ceasm9183891b3a.187.2024.05.14.07.39.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 May 2024 07:37:42 -0700 (PDT)
-Date: Tue, 14 May 2024 16:37:41 +0200
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Slark Xiao <slark_xiao@163.com>
-Cc: loic.poulain@linaro.org, mhi@lists.linux.dev,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] bus: mhi: host: Add Foxconn SDX72 related support
-Message-ID: <20240514143741.GA2306@thinkpad>
-References: <20240510032657.789629-1-slark_xiao@163.com>
+        Tue, 14 May 2024 07:39:01 -0700 (PDT)
+Date: Tue, 14 May 2024 07:38:59 -0700
+From: Deepak Gupta <debug@rivosinc.com>
+To: =?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>
+Cc: Conor Dooley <conor@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Anup Patel <anup@brainfault.org>,
+	Atish Patra <atishp@atishpatra.org>,
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+	kvm-riscv@lists.infradead.org, Ved Shanbhogue <ved@rivosinc.com>
+Subject: Re: [RFC PATCH 5/7] riscv: add double trap driver
+Message-ID: <ZkN3gyfL1hUcjPgD@debug.ba.rivosinc.com>
+References: <20240418142701.1493091-1-cleger@rivosinc.com>
+ <20240418142701.1493091-6-cleger@rivosinc.com>
+ <Ziw//90J0WfOY/tl@debug.ba.rivosinc.com>
+ <e33b8eba-85f0-44b7-8a6f-802a6979f6c8@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240510032657.789629-1-slark_xiao@163.com>
+In-Reply-To: <e33b8eba-85f0-44b7-8a6f-802a6979f6c8@rivosinc.com>
 
-On Fri, May 10, 2024 at 11:26:57AM +0800, Slark Xiao wrote:
-> Align with Qcom SDX72, add ready timeout item for Foxconn SDX72.
-> And also, add firehose support since SDX72.
-> 
-> Signed-off-by: Slark Xiao <slark_xiao@163.com>
-> ---
->  drivers/bus/mhi/host/pci_generic.c | 31 ++++++++++++++++++++++++++++++
->  1 file changed, 31 insertions(+)
-> 
-> diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
-> index 08844ee79654..0fd94c193fc6 100644
-> --- a/drivers/bus/mhi/host/pci_generic.c
-> +++ b/drivers/bus/mhi/host/pci_generic.c
-> @@ -399,6 +399,8 @@ static const struct mhi_channel_config mhi_foxconn_sdx55_channels[] = {
->  	MHI_CHANNEL_CONFIG_DL(13, "MBIM", 32, 0),
->  	MHI_CHANNEL_CONFIG_UL(32, "DUN", 32, 0),
->  	MHI_CHANNEL_CONFIG_DL(33, "DUN", 32, 0),
-> +	MHI_CHANNEL_CONFIG_UL_FP(34, "FIREHOSE", 32, 0),
-> +	MHI_CHANNEL_CONFIG_DL_FP(35, "FIREHOSE", 32, 0),
+On Tue, May 14, 2024 at 10:06:31AM +0200, Clément Léger wrote:
+>
+>
+>On 27/04/2024 01:59, Deepak Gupta wrote:
+>> On Thu, Apr 18, 2024 at 04:26:44PM +0200, Clément Léger wrote:
+>>> Add a small driver to request double trap enabling as well as
+>>> registering a SSE handler for double trap. This will also be used by KVM
+>>> SBI FWFT extension support to detect if it is possible to enable double
+>>> trap in VS-mode.
+>>>
+>>> Signed-off-by: Clément Léger <cleger@rivosinc.com>
+>>> ---
+>>> arch/riscv/include/asm/sbi.h    |  1 +
+>>> drivers/firmware/Kconfig        |  7 +++
+>>> drivers/firmware/Makefile       |  1 +
+>>> drivers/firmware/riscv_dbltrp.c | 95 +++++++++++++++++++++++++++++++++
+>>> include/linux/riscv_dbltrp.h    | 19 +++++++
+>>> 5 files changed, 123 insertions(+)
+>>> create mode 100644 drivers/firmware/riscv_dbltrp.c
+>>> create mode 100644 include/linux/riscv_dbltrp.h
+>>>
+>>> diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
+>>> index 744aa1796c92..9cd4ca66487c 100644
+>>> --- a/arch/riscv/include/asm/sbi.h
+>>> +++ b/arch/riscv/include/asm/sbi.h
+>>> @@ -314,6 +314,7 @@ enum sbi_sse_attr_id {
+>>> #define SBI_SSE_ATTR_INTERRUPTED_FLAGS_SPIE    (1 << 2)
+>>>
+>>> #define SBI_SSE_EVENT_LOCAL_RAS        0x00000000
+>>> +#define SBI_SSE_EVENT_LOCAL_DOUBLE_TRAP    0x00000001
+>>> #define SBI_SSE_EVENT_GLOBAL_RAS    0x00008000
+>>> #define SBI_SSE_EVENT_LOCAL_PMU        0x00010000
+>>> #define SBI_SSE_EVENT_LOCAL_SOFTWARE    0xffff0000
+>>> diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
+>>> index 59f611288807..a037f6e89942 100644
+>>> --- a/drivers/firmware/Kconfig
+>>> +++ b/drivers/firmware/Kconfig
+>>> @@ -197,6 +197,13 @@ config RISCV_SSE_TEST
+>>>       Select if you want to enable SSE extension testing at boot time.
+>>>       This will run a series of test which verifies SSE sanity.
+>>>
+>>> +config RISCV_DBLTRP
+>>> +    bool "Enable Double trap handling"
+>>> +    depends on RISCV_SSE && RISCV_SBI
+>>> +    default n
+>>> +    help
+>>> +      Select if you want to enable SSE double trap handler.
+>>> +
+>>> config SYSFB
+>>>     bool
+>>>     select BOOT_VESA_SUPPORT
+>>> diff --git a/drivers/firmware/Makefile b/drivers/firmware/Makefile
+>>> index fb7b0c08c56d..ad67a1738c0f 100644
+>>> --- a/drivers/firmware/Makefile
+>>> +++ b/drivers/firmware/Makefile
+>>> @@ -18,6 +18,7 @@ obj-$(CONFIG_RASPBERRYPI_FIRMWARE) += raspberrypi.o
+>>> obj-$(CONFIG_FW_CFG_SYSFS)    += qemu_fw_cfg.o
+>>> obj-$(CONFIG_RISCV_SSE)        += riscv_sse.o
+>>> obj-$(CONFIG_RISCV_SSE_TEST)    += riscv_sse_test.o
+>>> +obj-$(CONFIG_RISCV_DBLTRP)    += riscv_dbltrp.o
+>>> obj-$(CONFIG_SYSFB)        += sysfb.o
+>>> obj-$(CONFIG_SYSFB_SIMPLEFB)    += sysfb_simplefb.o
+>>> obj-$(CONFIG_TI_SCI_PROTOCOL)    += ti_sci.o
+>>> diff --git a/drivers/firmware/riscv_dbltrp.c
+>>> b/drivers/firmware/riscv_dbltrp.c
+>>> new file mode 100644
+>>> index 000000000000..72f9a067e87a
+>>> --- /dev/null
+>>> +++ b/drivers/firmware/riscv_dbltrp.c
+>>> @@ -0,0 +1,95 @@
+>>> +// SPDX-License-Identifier: GPL-2.0-only
+>>> +/*
+>>> + * Copyright (C) 2023 Rivos Inc.
+>>> + */
+>>
+>> nit: fix copyright year
+>>> +
+>>> +#define pr_fmt(fmt) "riscv-dbltrp: " fmt
+>>> +
+>>> +#include <linux/cpu.h>
+>>> +#include <linux/init.h>
+>>> +#include <linux/riscv_dbltrp.h>
+>>> +#include <linux/riscv_sse.h>
+>>> +
+>>> +#include <asm/sbi.h>
+>>> +
+>>> +static bool double_trap_enabled;
+>>> +
+>>> +static int riscv_sse_dbltrp_handle(uint32_t evt, void *arg,
+>>> +                   struct pt_regs *regs)
+>>> +{
+>>> +    __show_regs(regs);
+>>> +    panic("Double trap !\n");
+>>> +
+>>> +    return 0;
+>> Curious:
+>> Does panic return?
+>> What's the point of returning from here?
+>
+>Hi Deepak,
+>
+>No, panic() does not return and indeed, the "return 0" is useless. It's
+>a leftover of a previous implementation without panic in order to keep
+>GCC mouth shut ;).
+>
+>>
+>>> +}
+>>> +
+>>> +struct cpu_dbltrp_data {
+>>> +    int error;
+>>> +};
+>>> +
+>>> +static void
+>>> +sbi_cpu_enable_double_trap(void *data)
+>>> +{
+>>> +    struct sbiret ret;
+>>> +    struct cpu_dbltrp_data *cdd = data;
+>>> +
+>>> +    ret = sbi_ecall(SBI_EXT_FWFT, SBI_EXT_FWFT_SET,
+>>> +            SBI_FWFT_DOUBLE_TRAP_ENABLE, 1, 0, 0, 0, 0);
+>>> +
+>>> +    if (ret.error) {
+>>> +        cdd->error = 1;
+>>> +        pr_err("Failed to enable double trap on cpu %d\n",
+>>> smp_processor_id());
+>>> +    }
+>>> +}
+>>> +
+>>> +static int sbi_enable_double_trap(void)
+>>> +{
+>>> +    struct cpu_dbltrp_data cdd = {0};
+>>> +
+>>> +    on_each_cpu(sbi_cpu_enable_double_trap, &cdd, 1);
+>>> +    if (cdd.error)
+>>> +        return -1;
+>>
+>> There is a bug here. If `sbi_cpu_enable_double_trap` failed on all cpus
+>> but last cpu.
+>> Then cdd.error would not record error and will be reflect as if double
+>> trap was enabled.
+>
+>cdd.error is only written in case of error by the per-cpu callbacks, so
+>it is only set if enabled failed. Is there something I'm missing ?
 
-This means SDX55 is also supporting FIREHOSE channels, which is not true I
-believe.
+No. Sorry I missed that detail. lgtm.
 
->  	MHI_CHANNEL_CONFIG_HW_UL(100, "IP_HW0_MBIM", 128, 2),
->  	MHI_CHANNEL_CONFIG_HW_DL(101, "IP_HW0_MBIM", 128, 3),
->  };
-> @@ -419,6 +421,16 @@ static const struct mhi_controller_config modem_foxconn_sdx55_config = {
->  	.event_cfg = mhi_foxconn_sdx55_events,
->  };
->  
-> +static const struct mhi_controller_config modem_foxconn_sdx72_config = {
-> +	.max_channels = 128,
-> +	.timeout_ms = 20000,
-> +	.ready_timeout_ms = 50000,
-> +	.num_channels = ARRAY_SIZE(mhi_foxconn_sdx55_channels),
-> +	.ch_cfg = mhi_foxconn_sdx55_channels,
-> +	.num_events = ARRAY_SIZE(mhi_foxconn_sdx55_events),
-> +	.event_cfg = mhi_foxconn_sdx55_events,
-> +};
-> +
->  static const struct mhi_pci_dev_info mhi_foxconn_sdx24_info = {
->  	.name = "foxconn-sdx24",
->  	.config = &modem_foxconn_sdx55_config,
-> @@ -448,6 +460,16 @@ static const struct mhi_pci_dev_info mhi_foxconn_sdx65_info = {
->  	.sideband_wake = false,
->  };
->  
-> +static const struct mhi_pci_dev_info mhi_foxconn_sdx72_info = {
-> +	.name = "foxconn-sdx72",
-> +	.edl = "qcom/sdx72m/xbl_s_devprg_ns.melf",
-
-What is '.melf'? Is the firmware available somewhere? Did you plan to upstream
-it to linux-firmware?
-
-- Mani
-
--- 
-à®®à®£à®¿à®µà®£à¯à®£à®©à¯ à®šà®¤à®¾à®šà®¿à®µà®®à¯
+>
+>Thanks,
+>
+>Clément
+>
+>>
+>> Its less likely to happen that FW would return success for one cpu and
+>> fail for others.
+>> But there is non-zero probablity here.
+>>
+>
 
