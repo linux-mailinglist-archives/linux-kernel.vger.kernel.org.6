@@ -1,277 +1,166 @@
-Return-Path: <linux-kernel+bounces-178829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA1F58C5853
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:54:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B6678C5854
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:54:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E695284680
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:54:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF2691F23701
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:54:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94F1B17EB83;
-	Tue, 14 May 2024 14:54:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9270E17EB85;
+	Tue, 14 May 2024 14:54:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="BW+HZHgi"
-Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dbxi77x7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 356BD17B518
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 14:54:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B939D1E487;
+	Tue, 14 May 2024 14:54:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715698469; cv=none; b=tdNDREj7tx8kPfYKY4rATi2ECmYe3oO+J9iPHIcxewI799D0KsIJ3nElApXxZ76H0JSWmo/yhIBiyEK7RWQCHz0fWh4qzhTqwZ8Jvh4ViXxXJIniDRcG3+CVezI+Fxfsz6z3mkHvrYOdmwIFFBazPx4otv4Ec0A+c8QA26dwInA=
+	t=1715698481; cv=none; b=mHoNvTulEG0w/XkT7E9WPK2JSd5CTpQ2C9T+JEHRqEGYvt8qKPgVCJZ+/WVcO8US8YxsIVj2hHf4Vqteu6OaD/NZrs0ZxmKqu9vp+H4IwvEHN4eesLGzdka1o5qrfP5liaeI49KQ1nbCE8yZBHqX/vzdekVw51EvX7jtwPip0w8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715698469; c=relaxed/simple;
-	bh=iOTjV7jy9yp8FGBKgS/k3XwbuqTG8obRwB+v96Gsw5c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lH9K2alFhinbCPCimTJ0aNQmyulDYgJYU7yk6wxkkHStE1unpRl0M86U2/a9cwaSb2/qQbmahznoTiHoJ4KUY7wtM7aX3LDXQZDR/h2IQFRYCw1tcs4vD5PGsjnfFHK++gK8pu1ltOBC6KRO6vs+1qgcUJoelvq9ht+FqKjUb1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=BW+HZHgi; arc=none smtp.client-ip=209.85.166.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
-Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-36c7004daecso21997975ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 07:54:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1715698467; x=1716303267; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2Z82cBCgLMv0ZYRz/HRSf8L92nhc1deFHJBIJjw5gOc=;
-        b=BW+HZHgifWyxMgKr80/6GK3SRQ5sdDHABKMK721ad/mPvPVGhhIR9vEAjnzA01I66J
-         UCIC2+1VqMzmpLYrS4CmKt2yYm+UnqbN7f7vb+kD64BWiJQfVGN30AbrXIZFcvzpIuDy
-         ytXIJwZLS+kV3IkSc3CapfIC74+qRy1UeYWcWtYzlEYH0ONm7bLUdzIkPA3MY7tuiGzC
-         7FsIaIj6sFcITJ2D2Rd1nPoyrnoy1s0jH3TS3xyzjRjOWwWcq4GdYiHVdRwaWgrJIkJl
-         +/aV2cmy3G8DhSNpR9KRaN/RHNl5mvPmUIIMpNKTEDapH4v/KIMFHAeuF1XQBtRuhwmm
-         igig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715698467; x=1716303267;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2Z82cBCgLMv0ZYRz/HRSf8L92nhc1deFHJBIJjw5gOc=;
-        b=skCbzGm72iwzmZlC0WGj69fve7W00iR6G40ssdCMKvCWbLPncf39ZQZuBhmBo+5YZ8
-         zK1Y/pXRKwh+qL3NfcSTH429OEgbX7fPl2FNGFncIe2M3rqoJi2l88DoZNjfPfSREOy0
-         T1Rg6FCXBD6uzhOp8EEL6PqpfSdZJc+IzAoeh1WwNXV5U07bFuGIxLDLeIKy2dIOyVGk
-         W+IhpTWCI3ohWMXVwKakL1HigjMx4vrOxRd/cjTHtGhwvEXm8co5B2IlF2c53WTPIer3
-         KiyS4hrs1Lgd15WQl3mtElohpG3ACGlxOqOIo4/sFYPcXfkCc0oCLnzdA7rVTMhR5H6R
-         JUoA==
-X-Forwarded-Encrypted: i=1; AJvYcCXBQgOY2sLWKFragKNq2JfZpN5mYaFmYgOCxxl1X6XPLdl7QlBoND2IvFqxwN2T9cIaMc5AUTZbsy6NaAKJpLfEGAebPudNxb+UQyhQ
-X-Gm-Message-State: AOJu0Yz4Sv3zVERb4zJbXqPojcCVaQK3JXLqSvdKwlLIumabPoMuMsMH
-	np7sqWZQTS9J4ZCrbT/FsQZNGwFA2f9wylvpjNo3rbxpQCiPRP0kMrykhp0GtQbqQUmjGlG2nPL
-	CLvXwj/HQhLjGg7v81v8f1IXXVny8xrmJQ1slRg==
-X-Google-Smtp-Source: AGHT+IGCHJkMeiCD73H8EU7f+DvHYW9crMlnudeHRZ1GpJ+PgJcHJr4CDLf335JWUQeU2X9JLK6YCyrTqcy9lzrchQ8=
-X-Received: by 2002:a05:6e02:1385:b0:369:976a:584a with SMTP id
- e9e14a558f8ab-36cc12aaaeemr122086975ab.6.1715698467288; Tue, 14 May 2024
- 07:54:27 -0700 (PDT)
+	s=arc-20240116; t=1715698481; c=relaxed/simple;
+	bh=HOwIRMzpnJvkClQKoEnwY3A/tf2uA45b0gQU7xVPuLo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l/unLr5S6+CH8FjQexKx7id4h88oIRMskKBvzxh6vAaAJxMv1XGTrfut1UPJItOem5tO0Pj7lYYdXuH08biF+n9/hVMcqIv4w8M4hr4KRA61z8DfxmcOVIAwwagEp32GefXAoWiiM5YIZJhXkzZfeSrCMQuyG5wUPGYPS7d0pM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dbxi77x7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36722C2BD10;
+	Tue, 14 May 2024 14:54:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715698481;
+	bh=HOwIRMzpnJvkClQKoEnwY3A/tf2uA45b0gQU7xVPuLo=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=dbxi77x7ysfb1XlxjZ53exVbupkB1lKBKAGyu5gPCO+gWdO0IPJ9g3nBOuXlP4KJ1
+	 ORTA3QQZSrD5VGgCSxRcJfFaKJo755kYtoyXWPSCIWnv0y9QdVowQK3mCd0S8Yjnln
+	 hq5nHXaFmz2o7sGYePrcmE281Ct+pxTWqPmM8bOzd285Ei+4vLlk2zgRtodj3L8YOC
+	 CYv2otGNxgulmhMO87qhCi2UK5WzRvD/rPUWpFbWccVimxxZq2vQo2f2g2KzDLNCQv
+	 v7FmKqwIkbM8xypuOi2KRAQ5NtdfdFuB8EpYhD7tsjaZ5j/aJCC1jvk/eGBlGl4ath
+	 reRyX8aZAT8WQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 98CA7CE0443; Tue, 14 May 2024 07:54:40 -0700 (PDT)
+Date: Tue, 14 May 2024 07:54:40 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Zqiang <qiang.zhang1211@gmail.com>
+Cc: frederic@kernel.org, neeraj.upadhyay@kernel.org, joel@joelfernandes.org,
+	rcu@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rcu/nocb: Fix using smp_processor_id() in preemptible
+ warning
+Message-ID: <d2a9a579-ffcf-4812-a857-2f091f7c65b5@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20240509074046.15629-1-qiang.zhang1211@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240226065113.1690534-1-nick.hu@sifive.com> <CAPDyKFph3WsZMmALnzBQKE4S_80Ji5h386Wi0vHda37QUsjMtg@mail.gmail.com>
- <CAKddAkDcdaXKzpcKN=LCCx9S4Trv+joLX2s=nyhzaRtM5HorqA@mail.gmail.com>
- <CAKddAkC6N=Cfo0z+F8herKTuJzCyt_MA0vWNbLCr6CbQnj0y8g@mail.gmail.com>
- <CAPDyKFr_M0NDH0gaunBpybnALOFfz4LpX4_JW2GCUxjwGzdZsg@mail.gmail.com>
- <CAKddAkC5CRX+ZTh=MgzPYU72SY13+AQYhknhV_CC+=XX9=DKyg@mail.gmail.com> <CAAhSdy1SDd=VUqDQA0T5n9LwHo=3uGzFq1dUcbDFcB3aBdaioA@mail.gmail.com>
-In-Reply-To: <CAAhSdy1SDd=VUqDQA0T5n9LwHo=3uGzFq1dUcbDFcB3aBdaioA@mail.gmail.com>
-From: Anup Patel <anup@brainfault.org>
-Date: Tue, 14 May 2024 20:24:15 +0530
-Message-ID: <CAAhSdy33DcNw+pbDRrR=hBH86kwvu3xZbomQby8XhRXcc-exqQ@mail.gmail.com>
-Subject: Re: [PATCH] cpuidle: riscv-sbi: Add cluster_pm_enter()/exit()
-To: Nick Hu <nick.hu@sifive.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, palmer@dabbelt.com, rafael@kernel.org, 
-	daniel.lezcano@linaro.org, paul.walmsley@sifive.com, linux-pm@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	zong.li@sifive.com, Cyan Yang <cyan.yang@sifive.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240509074046.15629-1-qiang.zhang1211@gmail.com>
 
-On Tue, May 14, 2024 at 7:53=E2=80=AFPM Anup Patel <anup@brainfault.org> wr=
-ote:
->
-> Hi Nick,
->
-> On Tue, May 14, 2024 at 3:20=E2=80=AFPM Nick Hu <nick.hu@sifive.com> wrot=
-e:
-> >
-> > Hi Ulf,
-> >
-> > Thank you for your valuable suggestion.
-> > I sincerely apologize for the delay in responding to your message. We
-> > have diligently worked on experimenting with the suggestion you
-> > provided.
-> >
-> > As per your recommendation, we have incorporated the "power-domains=3D<=
->
-> > property" into the consumer's node, resulting in modifications to the
-> > DTS as illustrated below:
-> >
-> > cpus {
-> >     ...
-> >      domain-idle-states {
-> >            CLUSTER_SLEEP:cluster-sleep {
-> >                         compatible =3D "domain-idle-state";
-> >                         ...
-> >             }
-> >      }
-> >      power-domains {
-> >             ...
-> >             ...
-> >             CLUSTER_PD: clusterpd {
-> >                     domain-idle-states =3D <&CLUSTER_SLEEP>;
-> >             };
-> >      }
-> > }
-> > soc {
-> >       deviceA@xxx{
-> >              ...
-> >              power-domains =3D <&CLUSTER_PD>;
-> >              ...
-> >       }
-> > }
-> >
-> > However, this adjustment has led to an issue where the probe for
-> > 'deviceA' is deferred by 'device_links_check_suppliers()' within
-> > 'really_probe()'. In an attempt to mitigate this issue, we
-> > experimented with a workaround by adding the attribute
-> > "status=3D"disabled"" to the 'CLUSTER_PD' node. This action aimed to
-> > prevent the creation of a device link between 'deviceA' and
-> > 'CLUSTER_PD'. Nevertheless, we remain uncertain about the
-> > appropriateness of this solution.
-> >
-> > Do you have suggestions on how to effectively address this issue?
->
-> I totally missed this email since I was not CC'ed sorry about that. Pleas=
-e
-> use get_maintainers.pl when sending patches.
+On Thu, May 09, 2024 at 03:40:46PM +0800, Zqiang wrote:
+> Currently, the this_cpu_ptr(&rcu_data) in rcu_rdp_is_offloaded() is called
+> before the condition "!(IS_ENABLED(CONFIG_PREEMPT_COUNT) && preemptible())"
+> is checked, and occurs in preemptible task context, this will trigger the
+> following warning.
+> 
+> [ 4.106221][ T18] BUG: using smp_processor_id() in preemptible [00000000] code: rcuop/0/18
+> [ 4.107796][ T18] caller is debug_smp_processor_id (lib/smp_processor_id.c:61)
+> [ 4.108547][ T18] CPU: 0 PID: 18 Comm: rcuop/0 Not tainted 6.9.0-rc2-00079-g4c66bc7cacc0 #1
+> [ 4.109667][ T18] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+> [ 4.111064][ T18] Call Trace:
+> [ 4.111064][ T18]  <TASK>
+> [ 4.111064][ T18] dump_stack_lvl (lib/dump_stack.c:116)
+> [ 4.111064][ T18] dump_stack (lib/dump_stack.c:124)
+> [ 4.111064][ T18] check_preemption_disabled (arch/x86/include/asm/preempt.h:84 (discriminator 15) lib/smp_processor_id.c:53 (discriminator 15))
+> [ 4.111064][ T18] debug_smp_processor_id (lib/smp_processor_id.c:61)
+> [ 4.111064][ T18] rcu_rdp_is_offloaded (kernel/rcu/tree_plugin.h:27 (discriminator 1))
+> [ 4.111064][ T18] nocb_cb_wait (kernel/rcu/tree_nocb.h:936 (discriminator 2))
+> [ 4.111064][ T18] rcu_nocb_cb_kthread (kernel/rcu/tree_nocb.h:983 (discriminator 1))
+> [ 4.111064][ T18] ? nocb_cb_wait (kernel/rcu/tree_nocb.h:976)
+> [ 4.111064][ T18] kthread (kernel/kthread.c:388)
+> [ 4.111064][ T18] ? kthread (kernel/kthread.c:373 (discriminator 2))
+> [ 4.111064][ T18] ? kthread_complete_and_exit (kernel/kthread.c:341)
+> [ 4.111064][ T18] ret_from_fork (arch/x86/kernel/process.c:153)
+> [ 4.111064][ T18] ? kthread_complete_and_exit (kernel/kthread.c:341)
+> [ 4.111064][ T18] ret_from_fork_asm (arch/x86/entry/entry_64.S:256)
+> [ 4.111064][ T18]  </TASK>
+> 
+> This commit fix this warning by priority check the condition 
+> "!(IS_ENABLED(CONFIG_PREEMPT_COUNT) && preemptible())" , to
+> ensure whether the this_cpu_ptr(&rcu_data) can be executed in
+> rcu_rdp_is_offloaded().
+> 
+> Fixes: 8feeeba60711 ("rcu/nocb: Use kthread parking instead of ad-hoc implementation")
+> Tested-by: kernel test robot <oliver.sang@intel.com>
+> Signed-off-by: Zqiang <qiang.zhang1211@gmail.com>
 
-I stand corrected. This patch had landed in the "spam" folder. I don't know=
- why.
+Hearing no objections, I have queued this wordsmithed version.  As always,
+please let me know if I have messed anything up.
 
-Regards,
-Anup
+							Thanx, Paul
 
->
-> The genpd_add_provider() (called by of_genpd_add_provider_simple())
-> does mark the power-domain DT node as initialized (fwnode_dev_initialized=
-())
-> so after the cpuidle-riscv-sbi driver is probed the 'deviceA' dependency =
-is
-> resolved and 'deviceA' should be probed unless there are other unmet
-> dependencies.
->
-> Try adding "#define DEBUG" before all includes in drivers/core/base.c
-> and add "loglevel=3D8" in kernel parameters, this will print producer-con=
-sumer
-> linkage of all devices.
->
-> Marking the power-domain DT node as "disabled" is certainly not the
-> right way.
->
-> Regards,
-> Anup
->
-> >
-> > Regards,
-> > Nick
-> >
-> > On Tue, Apr 30, 2024 at 4:13=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro=
-org> wrote:
-> > >
-> > > On Mon, 29 Apr 2024 at 18:26, Nick Hu <nick.hu@sifive.com> wrote:
-> > > >
-> > > > On Tue, Apr 30, 2024 at 12:22=E2=80=AFAM Nick Hu <nick.hu@sifive.co=
-m> wrote:
-> > > > >
-> > > > > Hi Ulf
-> > > > >
-> > > > > On Mon, Apr 29, 2024 at 10:32=E2=80=AFPM Ulf Hansson <ulf.hansson=
-@linaro.org> wrote:
-> > > > > >
-> > > > > > On Mon, 26 Feb 2024 at 07:51, Nick Hu <nick.hu@sifive.com> wrot=
-e:
-> > > > > > >
-> > > > > > > When the cpus in the same cluster are all in the idle state, =
-the kernel
-> > > > > > > might put the cluster into a deeper low power state. Call the
-> > > > > > > cluster_pm_enter() before entering the low power state and ca=
-ll the
-> > > > > > > cluster_pm_exit() after the cluster woken up.
-> > > > > > >
-> > > > > > > Signed-off-by: Nick Hu <nick.hu@sifive.com>
-> > > > > >
-> > > > > > I was not cced this patch, but noticed that this patch got queu=
-ed up
-> > > > > > recently. Sorry for not noticing earlier.
-> > > > > >
-> > > > > > If not too late, can you please drop/revert it? We should reall=
-y move
-> > > > > > away from the CPU cluster notifiers. See more information below=
-.
-> > > > > >
-> > > > > > > ---
-> > > > > > >  drivers/cpuidle/cpuidle-riscv-sbi.c | 24 +++++++++++++++++++=
-+++--
-> > > > > > >  1 file changed, 22 insertions(+), 2 deletions(-)
-> > > > > > >
-> > > > > > > diff --git a/drivers/cpuidle/cpuidle-riscv-sbi.c b/drivers/cp=
-uidle/cpuidle-riscv-sbi.c
-> > > > > > > index e8094fc92491..298dc76a00cf 100644
-> > > > > > > --- a/drivers/cpuidle/cpuidle-riscv-sbi.c
-> > > > > > > +++ b/drivers/cpuidle/cpuidle-riscv-sbi.c
-> > > > > > > @@ -394,6 +394,7 @@ static int sbi_cpuidle_pd_power_off(struc=
-t generic_pm_domain *pd)
-> > > > > > >  {
-> > > > > > >         struct genpd_power_state *state =3D &pd->states[pd->s=
-tate_idx];
-> > > > > > >         u32 *pd_state;
-> > > > > > > +       int ret;
-> > > > > > >
-> > > > > > >         if (!state->data)
-> > > > > > >                 return 0;
-> > > > > > > @@ -401,6 +402,10 @@ static int sbi_cpuidle_pd_power_off(stru=
-ct generic_pm_domain *pd)
-> > > > > > >         if (!sbi_cpuidle_pd_allow_domain_state)
-> > > > > > >                 return -EBUSY;
-> > > > > > >
-> > > > > > > +       ret =3D cpu_cluster_pm_enter();
-> > > > > > > +       if (ret)
-> > > > > > > +               return ret;
-> > > > > >
-> > > > > > Rather than using the CPU cluster notifiers, consumers of the g=
-enpd
-> > > > > > can register themselves to receive genpd on/off notifiers.
-> > > > > >
-> > > > > > In other words, none of this should be needed, right?
-> > > > > >
-> > > > > Thanks for the feedback!
-> > > > > Maybe I miss something, I'm wondering about a case like below:
-> > > > > If we have a shared L2 cache controller inside the cpu cluster po=
-wer
-> > > > > domain and we add this controller to be a consumer of the power
-> > > > > domain, Shouldn't the genpd invoke the domain idle only after the
-> > > > > shared L2 cache controller is suspended?
-> > > > > Is there a way that we can put the L2 cache down while all cpus i=
-n the
-> > > > > same cluster are idle?
-> > > > > > [...]
-> > > > Sorry, I made some mistake in my second question.
-> > > > Update the question here:
-> > > > Is there a way that we can save the L2 cache states while all cpus =
-in the
-> > > > same cluster are idle and the cluster could be powered down?
-> > >
-> > > If the L2 cache is a consumer of the cluster, the consumer driver for
-> > > the L2 cache should register for genpd on/off notifiers.
-> > >
-> > > The device representing the L2 cache needs to be enabled for runtime
-> > > PM, to be taken into account correctly by the cluster genpd. In this
-> > > case, the device should most likely remain runtime suspended, but
-> > > instead rely on the genpd on/off notifiers to understand when
-> > > save/restore of the cache states should be done.
-> > >
-> > > Kind regards
-> > > Uffe
+------------------------------------------------------------------------
+
+commit 5271ad1de0fbcf0bd9caebcf721670c164e5fa9c
+Author: Zqiang <qiang.zhang1211@gmail.com>
+Date:   Thu May 9 15:40:46 2024 +0800
+
+    rcu/nocb: Don't use smp_processor_id() in preemptible code
+    
+    Currently, rcu_rdp_is_offloaded() invokes this_cpu_ptr(&rcu_data) before
+    the condition "!(IS_ENABLED(CONFIG_PREEMPT_COUNT) && preemptible())"
+    is checked.  When invoked in preemptible context in preemptible kernels,
+    this will trigger the following warning:
+    
+    [ 4.106221][ T18] BUG: using smp_processor_id() in preemptible [00000000] code: rcuop/0/18
+    [ 4.107796][ T18] caller is debug_smp_processor_id (lib/smp_processor_id.c:61)
+    [ 4.108547][ T18] CPU: 0 PID: 18 Comm: rcuop/0 Not tainted 6.9.0-rc2-00079-g4c66bc7cacc0 #1
+    [ 4.109667][ T18] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+    [ 4.111064][ T18] Call Trace:
+    [ 4.111064][ T18]  <TASK>
+    [ 4.111064][ T18] dump_stack_lvl (lib/dump_stack.c:116)
+    [ 4.111064][ T18] dump_stack (lib/dump_stack.c:124)
+    [ 4.111064][ T18] check_preemption_disabled (arch/x86/include/asm/preempt.h:84 (discriminator 15) lib/smp_processor_id.c:53 (discriminator 15))
+    [ 4.111064][ T18] debug_smp_processor_id (lib/smp_processor_id.c:61)
+    [ 4.111064][ T18] rcu_rdp_is_offloaded (kernel/rcu/tree_plugin.h:27 (discriminator 1))
+    [ 4.111064][ T18] nocb_cb_wait (kernel/rcu/tree_nocb.h:936 (discriminator 2))
+    [ 4.111064][ T18] rcu_nocb_cb_kthread (kernel/rcu/tree_nocb.h:983 (discriminator 1))
+    [ 4.111064][ T18] ? nocb_cb_wait (kernel/rcu/tree_nocb.h:976)
+    [ 4.111064][ T18] kthread (kernel/kthread.c:388)
+    [ 4.111064][ T18] ? kthread (kernel/kthread.c:373 (discriminator 2))
+    [ 4.111064][ T18] ? kthread_complete_and_exit (kernel/kthread.c:341)
+    [ 4.111064][ T18] ret_from_fork (arch/x86/kernel/process.c:153)
+    [ 4.111064][ T18] ? kthread_complete_and_exit (kernel/kthread.c:341)
+    [ 4.111064][ T18] ret_from_fork_asm (arch/x86/entry/entry_64.S:256)
+    [ 4.111064][ T18]  </TASK>
+    
+    This commit therefore fixes this warning by checking the condition
+    "!(IS_ENABLED(CONFIG_PREEMPT_COUNT) && preemptible())" before invoking
+    this_cpu_ptr(), thus avoiding preemptible invocations.
+    
+    Fixes: 8feeeba60711 ("rcu/nocb: Use kthread parking instead of ad-hoc implementation")
+    Tested-by: kernel test robot <oliver.sang@intel.com>
+    Signed-off-by: Zqiang <qiang.zhang1211@gmail.com>
+    Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+
+diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+index 31c539f09c150..475e20ebec5a5 100644
+--- a/kernel/rcu/tree_plugin.h
++++ b/kernel/rcu/tree_plugin.h
+@@ -28,8 +28,8 @@ static bool rcu_rdp_is_offloaded(struct rcu_data *rdp)
+ 		!(lockdep_is_held(&rcu_state.barrier_mutex) ||
+ 		  (IS_ENABLED(CONFIG_HOTPLUG_CPU) && lockdep_is_cpus_held()) ||
+ 		  rcu_lockdep_is_held_nocb(rdp) ||
+-		  (rdp == this_cpu_ptr(&rcu_data) &&
+-		   !(IS_ENABLED(CONFIG_PREEMPT_COUNT) && preemptible())) ||
++		   (!(IS_ENABLED(CONFIG_PREEMPT_COUNT) && preemptible()) &&
++		    rdp == this_cpu_ptr(&rcu_data)) ||
+ 		  rcu_current_is_nocb_kthread(rdp)),
+ 		"Unsafe read of RCU_NOCB offloaded state"
+ 	);
 
