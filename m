@@ -1,98 +1,97 @@
-Return-Path: <linux-kernel+bounces-179007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF7178C5A4D
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 19:28:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 433278C5A57
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 19:37:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B88F1F24248
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 17:28:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7457A1C210C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 17:37:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B82371802A5;
-	Tue, 14 May 2024 17:28:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8834C1802AA;
+	Tue, 14 May 2024 17:37:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="1/qr7dii"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OnNNCeR8"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA68117F378;
-	Tue, 14 May 2024 17:28:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 923605A0F9;
+	Tue, 14 May 2024 17:37:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715707685; cv=none; b=NZEVaq4UsELjf4YyLf7Ph0kg1vONKmE1zRLfvQX8srgBu7mMJOwc7lMFq83D7p/Pba8LDAIKTTO7RAiXHFpabmoIHjkHirs1uXAQD1wKlzSpGelft0JUuhOccMu3ApUa0jTZD9TgbcEOGLq1/zSBG4PaMhmfrmQaVlU52JBNiRQ=
+	t=1715708225; cv=none; b=tvc9uP+eJa+YdkDlDEOmOI1qdmxhSiPCgbsgdi442IyzxeR7VDp+6/KYLadaYrqVgQzysC5VbjNzVQoxxrBSudDF10Uak6g4FR+TNFjsI1jp+/3FwTxU2ViJGz9YIfXZWgU0htmSOFoYV7LhKTFXPoDknOBpZJHjUUe9bbXAnuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715707685; c=relaxed/simple;
-	bh=Ex1jECYg9YCi18DK+c5M5YI2kVJQ/OqqOZjhQriYWAA=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=NI1WQN/+UjKaVBNGP79AUYxh4m6ECo80aBu9TFoTlDaVAGt7i8XPk4qR/DlWkK3pqayg7GrvrOqulG/fYHqZ15TQ69LWKK6I6x5Esws+acuBIgPiOoNQZ9BuwlzVoFGk+olFvylcXSn3eSnmW+wEE/CdTG4D0C6ZZca4WC1eELI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=1/qr7dii; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 646BCC2BD10;
-	Tue, 14 May 2024 17:28:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1715707684;
-	bh=Ex1jECYg9YCi18DK+c5M5YI2kVJQ/OqqOZjhQriYWAA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=1/qr7diiZFoMOkRRQAHecS9twVK6/XddQVf6LcYQfZ8frrVMFvQPtesA7vPTTbTlS
-	 b6lXYLnfiexNKGDEEeSSHJNv82F9Xc9xqceX5XyBR/td70xNUY8HsYwTZHF9+ceK3T
-	 eeiBtwEtzFdoNRXSrh9s41596Job3PtivO6KBaXw=
-Date: Tue, 14 May 2024 10:27:57 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Matthew Wilcox <willy@infradead.org>,
- Al Viro <viro@zeniv.linux.org.uk>, Kees Cook <keescook@chromium.org>, Alex
- Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?ISO-8859-1?Q?"Bj=F6rn_Roy_Baron"?= <bjorn3_gh@protonmail.com>, Benno
- Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?ISO-8859-1?Q?"Arve_Hj?=
- =?ISO-8859-1?Q?=F8nnev=E5g"?= <arve@android.com>, Todd Kjos
- <tkjos@android.com>, Martijn Coenen <maco@android.com>, Joel Fernandes
- <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, Suren
- Baghdasaryan <surenb@google.com>, Arnd Bergmann <arnd@arndb.de>, Trevor
- Gross <tmgross@umich.edu>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, Christian
- Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v6 2/4] uaccess: always export _copy_[from|to]_user with
- CONFIG_RUST
-Message-Id: <20240514102757.b7034966a58e6cf44d75dc7d@linux-foundation.org>
-In-Reply-To: <20240418-alice-mm-v6-2-cb8f3e5d688f@google.com>
-References: <20240418-alice-mm-v6-0-cb8f3e5d688f@google.com>
-	<20240418-alice-mm-v6-2-cb8f3e5d688f@google.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1715708225; c=relaxed/simple;
+	bh=wPB6xa73wP34r6zbh4porjOgJAG59GDOLNIbRQDTbQ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ARCPvhC/6dX3CBmogXq76/KP0bfmdp9Pxug30GTHjGfRsPC88tqw0ngCeut1XGhnrch3lM9LHIu8LuwZYDzzGJhjSIsdpnvCsToKYrcgWwTmTc3t9kEks/8Upd7Q5oV6YTW3jphTqhGwDs2T+YF365ixQH7zrYfr0HIciBmmghs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OnNNCeR8; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715708225; x=1747244225;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=wPB6xa73wP34r6zbh4porjOgJAG59GDOLNIbRQDTbQ0=;
+  b=OnNNCeR8YN+UBaVD6hnhBG+N7XddIaHQ+nzAgv7hSLlU8XolB88ITn8f
+   DnXAbTaFDJqdnF3uAwSw7kHXi6aARF5h0aY1qdbfG8+wZNE0HNxctsPsb
+   p5nL7Qpz5ae89DLn1PqtouFMuvGyFIQb2tc+ygmogD7t97ZmXqDW2YS3M
+   e4IKL+xYAuoyjuwztUVta++CDNN6UAxoxhY9Kxrv4PKSqHCg1o6Y8jlAk
+   NiJykDF06cVsXqgHFrbrvA55TZo/uv42kK/MEu0Rife8p0sOurUwuMfEz
+   luMxSRtmhM7gJ9EXxYZrHSSQVCrmD0SpTT2EVVy4dQ9VXEl79kybmTAei
+   g==;
+X-CSE-ConnectionGUID: QrQzmpSjSq+Gr334/mh7PA==
+X-CSE-MsgGUID: TPELW5kHQdOzMGEVT/SjHw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11073"; a="11567019"
+X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
+   d="scan'208";a="11567019"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2024 10:37:04 -0700
+X-CSE-ConnectionGUID: WTAK3KpsRSyOj+59XQqPsQ==
+X-CSE-MsgGUID: 4XFxSp5ASCSeknca0ToY4Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
+   d="scan'208";a="35640473"
+Received: from coreypet-mobl.amr.corp.intel.com (HELO desk) ([10.209.66.221])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2024 10:37:03 -0700
+Date: Tue, 14 May 2024 10:36:44 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Kalle Valo <kvalo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>, x86@kernel.org,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	regressions@lists.linux.dev,
+	Jeff Johnson <quic_jjohnson@quicinc.com>
+Subject: Re: [regression] suspend stress test stalls within 30 minutes
+Message-ID: <20240514173644.ej56ve2bkk22e7r4@desk>
+References: <87o79cjjik.fsf@kernel.org>
+ <20240511184847.GCZj-9j2sh1Akpt9iS@fat_crate.local>
+ <20240511184945.GDZj-9yaOEWqf1ng8u@fat_crate.local>
+ <87h6f4jdrq.fsf@kernel.org>
+ <878r0djxgc.fsf@kernel.org>
+ <874jb0jzx5.fsf@kernel.org>
+ <20240514160555.GCZkOL41oB3hBt45eO@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240514160555.GCZkOL41oB3hBt45eO@fat_crate.local>
 
-On Thu, 18 Apr 2024 08:59:18 +0000 Alice Ryhl <aliceryhl@google.com> wrote:
-
-> From: Arnd Bergmann <arnd@arndb.de>
+On Tue, May 14, 2024 at 06:05:55PM +0200, Borislav Petkov wrote:
+> + Pawan.
 > 
-> Rust code needs to be able to access _copy_from_user and _copy_to_user
-> so that it can skip the check_copy_size check in cases where the length
-> is known at compile-time, mirroring the logic for when C code will skip
-> check_copy_size. To do this, we ensure that exported versions of these
-> methods are available when CONFIG_RUST is enabled.
+> Top-posting so that the whole email is unchanged.
 > 
-> Alice has verified that this patch passes the CONFIG_TEST_USER_COPY test
-> on x86 using the Android cuttlefish emulator.
-> 
->  ...
->
-> -#ifdef INLINE_COPY_TO_USER
->  static inline __must_check unsigned long
-> -_copy_to_user(void __user *to, const void *from, unsigned long n)
-> +_inline_copy_to_user(void __user *to, const void *from, unsigned long n)
->  {
+> Pawan, do you have a box like that to try to reproduce it on?
 
-I think it would be helpful to have some comments in here describing
-why we're doing this _inline_* thing.  What problem is it avoiding?
-
-
+I just saw this, I am trying to reproduce this on my end.
 
