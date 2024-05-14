@@ -1,197 +1,142 @@
-Return-Path: <linux-kernel+bounces-178540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27AF98C4F32
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:39:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EAB48C4F47
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:44:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 342221C20E76
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 10:39:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 130D41F214BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 10:44:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B94CD13D28C;
-	Tue, 14 May 2024 10:04:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BAAD13E04F;
+	Tue, 14 May 2024 10:12:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="bxMfk41b";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="dyWZne+p"
-Received: from fhigh5-smtp.messagingengine.com (fhigh5-smtp.messagingengine.com [103.168.172.156])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="A7lfD8OZ"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0FB45CDF0
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 10:04:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B80866B5E
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 10:12:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715681066; cv=none; b=CEBuI3RpggW7q4DDwDpRXcDE0ewU+y/84YMxnWWYGHZqoMgAaGzHuylQ1CqAaNJ1WhxuqzL3u79CKsMs4ImRWuOjxVOw1z0rFNFTkRj99U+EMhTdF/AufcWtUt4BI+KAU3PXCTmwjK4oB5Ije0RKLYwIurmbwqw6KTdRVizqr4E=
+	t=1715681526; cv=none; b=qe+JZxJZfmYjQxMRQxokSuTJ0CuL05lx7v2i1CZk3nX1AmL/OuuOxDZjtWhB+W711sHomo9169ve4JFPS2mhZk4eAH34xc34v0oZBvZmDYEbdFJHnnOEGJCO3D9M5N7RM9jhWAg21LeLvMb7+Yz9Jiz6EJcxjmlbCmt0J+OhOSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715681066; c=relaxed/simple;
-	bh=6OJIOyMTfIXgBoq0fS6wbecGUkAEW6z+MnJbYsQDwWA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=lp7Vxn/2Ylr3ygB5SQP6L+DyIXP3IPK0avnEbS6NezKL3vCy1HN8jwomkYdEzw0k5GVgxXQmKDGd1rN4m8kpbInnV1U23ptbM5AWJilnZL40hjhC3wkRwauii5oFYKT9yENs4hGD7E74Z2q36OJ77LHic5H7ORUsONDXGUPWjs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=bxMfk41b; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=dyWZne+p; arc=none smtp.client-ip=103.168.172.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id D2C8A1140183;
-	Tue, 14 May 2024 06:04:22 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Tue, 14 May 2024 06:04:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=fm3; t=1715681062; x=1715767462; bh=BVpwueAcvJAsCC2GVmhfS
-	yVrFXijg21zaPEOzVgT+Pk=; b=bxMfk41bTjA8GQ/X4aLL9gKfd71TkusavooNK
-	DaajTMkPECc048g8xqaKkwqDOMqxJ9xC19Y7Sra+hzPnlAXwVwMcLcN+/eNElknJ
-	vkv08yfWxmdAG2VLQeD6L97n3BZMy0LvbYRbxDATmNsP6y+4H96Uo7lUHZakLY4a
-	xni8IslkUonEWfogpydPlQa0k+44YUS/fhvadxAZ/R4OAF1f3TkoDfX5nVHTXyf5
-	jKHd4bgaX7mN1dLki764JGfiJGcLyK5pFQw6ItIfha0+7RfEhTWdn0zUPXpzRTeN
-	X7jZ8BVl7YLPrJOEVkgAsg5ci2F4HdRs/tci6oXGbDEopuV5w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:message-id
-	:mime-version:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1715681062; x=1715767462; bh=BVpwueAcvJAsCC2GVmhfSyVrFXijg21zaPE
-	OzVgT+Pk=; b=dyWZne+pFA0d8/PaQ14J+HpZ4LcWmxCQchZfXWsigEPT/kWh9Pb
-	WwsWAyAVYQgdXHK9C157SebIDNPGT5w4g7Nwtc7zTkFXZZ5c1wSmOquHLJWczomD
-	us14kw7SRB9jZRnWg32CviWtR3Abb4p05d8zuySNbWVnr/pqUAYRuM+9YjAJEvxa
-	CqCGz45W77RrEIplDklwU0Di7iJHFj+tydmAwWZfOmmglAymcktc7Qm6XDb2y09X
-	lHUKl0GuPhMYwD1QDhAJ6vmC19bNiHUfdYmSHO8GnxFLQzux6USEMxMTv6jwObG4
-	vd/FPSIcfqudKwjGloMDbG1DnVsQmHZ+4pg==
-X-ME-Sender: <xms:JjdDZmr8GJsVby9sK-lHkWQBo8Fp86B_bwjJALLlJK__49JnAwWVtg>
-    <xme:JjdDZkrRGGIi3s3bLet7bBcFEUNjXdWA5SdnajVfx36lWw-T1NhEsSG_0MjsoTXgA
-    JzPTudCIuCauvgWgHg>
-X-ME-Received: <xmr:JjdDZrPwMSTn_HTGf3bjz6LDeW-8o_gYjROEQ2-KLrmIV8JeD0VduZvzwASUP5JbrKemPLk2MWGSMYQ-cmt3FvgfcjaUwiBasdw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdegiedgvdefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucenucfjughrpeffhffvvefukfggtggusehttdertd
-    dttddvnecuhfhrohhmpefvrghkrghshhhiucfurghkrghmohhtohcuoehoqdhtrghkrghs
-    hhhisehsrghkrghmohgttghhihdrjhhpqeenucggtffrrghtthgvrhhnpeetfeeiteefve
-    egvdfggeffheetleejkeekleeugeffffdtgfdtteetkeevvddvgfenucffohhmrghinhep
-    khgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrg
-    hilhhfrhhomhepohdqthgrkhgrshhhihesshgrkhgrmhhotggthhhirdhjph
-X-ME-Proxy: <xmx:JjdDZl66a6tjqgQK3pq-opOznNYfAFF8N7LJO8_YERruYzsOrG7h2g>
-    <xmx:JjdDZl6SOlUnrskQtIWWDZNBH9qUObS5juM8vfluIvYznslevz48EQ>
-    <xmx:JjdDZlhi_9zfIT7AGcVfac1Gt5DfbRU2nxJ-iYVnnVMgh5ntqgs9xA>
-    <xmx:JjdDZv6A1fa4eQSE78wzUHh0bGwIUZSKKwiU0cGk40oNZOuzyUFzPA>
-    <xmx:JjdDZvm6YN_svNnIqEdOezVeAHyVis_I1hD4rbm418UCbmh4nkZNnUGi>
-Feedback-ID: ie8e14432:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 14 May 2024 06:04:21 -0400 (EDT)
-Date: Tue, 14 May 2024 19:04:18 +0900
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-To: torvalds@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, linux1394-devel@lists.sourceforge.net
-Subject: [GIT PULL] firewire updates for v6.10
-Message-ID: <20240514100418.GA198864@workstation.local>
-Mail-Followup-To: torvalds@linux-foundation.org,
-	linux-kernel@vger.kernel.org, linux1394-devel@lists.sourceforge.net
+	s=arc-20240116; t=1715681526; c=relaxed/simple;
+	bh=vgcc5SNw8TCNHx4MBVO6dtvgRh+jHnOxOxGcXN1PKzQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tWt+2JyqR7pYnOfrEZugQ4Yqs22CRIxSUu2GL1a7YdPn1QUSaC8xLpDTbkmoCVdT0+YQ/xoMFgMEvRCdfXtT4tnwd8596LUuj/OdOBEZVGJz0bA7Qw+a4kaaMbY6nC3rmzm6lTMDu0a/6jee/kdqYrUhPPieQtm2rCeG7w1bQWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=A7lfD8OZ; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44EA2vr8006787;
+	Tue, 14 May 2024 10:05:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding; s=pp1;
+ bh=gGxQ91Axlxx23byS5Dc2PLh8wMyfpqwYAXQ6C5lw/9c=;
+ b=A7lfD8OZI1loLA1j5kjbhnF7QF4MUkISm+EOPVZLjpDKUz0eUHYKOGPP9EgGoZMfhZGG
+ CUGYzcrQ6lLVs3a4o25lRLN5rxPQ7uYsDPa89kU+04nfA4Q5+HhLsDvdFH/HzKEBV7ex
+ hs/ZSX4FQxA3ACcbOSYtyfUiBwLj3ny3F9WyPEHTy4iE1vaUj2uDDBBoN418lsnWR8wC
+ 5bALS6LOHDaYxEncioJ11oWU20f0bsRhcxDfYOooO7ROFQn5zihrRqlgnkUllFQO0Y4J
+ kUaTV5MyTYqqn1/td01Jr7gmOQetFmKR11SQYZdO6NDg8kwnJtmHmo8zDCpsY4OgfL+y Ag== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y45urr09n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 14 May 2024 10:05:19 +0000
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44EA5JHk010137;
+	Tue, 14 May 2024 10:05:19 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y45urr09j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 14 May 2024 10:05:19 +0000
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44E9TM7Q029603;
+	Tue, 14 May 2024 10:05:18 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3y2n7kmeft-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 14 May 2024 10:05:18 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44EA5CQK45547884
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 14 May 2024 10:05:14 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C6B1A20075;
+	Tue, 14 May 2024 10:05:12 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 57C1F20071;
+	Tue, 14 May 2024 10:05:11 +0000 (GMT)
+Received: from li-c6426e4c-27cf-11b2-a85c-95d65bc0de0e.in.ibm.com (unknown [9.204.206.66])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 14 May 2024 10:05:11 +0000 (GMT)
+From: Gautam Menghani <gautam@linux.ibm.com>
+To: mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
+        naveen.n.rao@linux.ibm.com
+Cc: Gautam Menghani <gautam@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] arch/powerpc: Remove the definition of unused cede function
+Date: Tue, 14 May 2024 15:35:03 +0530
+Message-ID: <20240514100507.271681-1-gautam@linux.ibm.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: mbN2y1aKuSdvXTmoMoRmioguwuAxtATH
+X-Proofpoint-GUID: RKI_YwUqWiqI5eskDM1V7UKXBGt5gC5o
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-14_04,2024-05-10_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
+ lowpriorityscore=0 spamscore=0 impostorscore=0 bulkscore=0 malwarescore=0
+ mlxlogscore=598 adultscore=0 phishscore=0 priorityscore=1501
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2405010000 definitions=main-2405140071
 
-Hi Linus,
+Remove extended_cede_processor() definition as it has no callers since
+commit 48f6e7f6d948("powerpc/pseries: remove cede offline state for CPUs")
 
-Please pull the updates for firewire subsystem to your tree.
+Signed-off-by: Gautam Menghani <gautam@linux.ibm.com>
+---
+ arch/powerpc/include/asm/plpar_wrappers.h | 18 ------------------
+ 1 file changed, 18 deletions(-)
 
-The following changes since commit dd5a440a31fae6e459c0d6271dddd62825505361:
+diff --git a/arch/powerpc/include/asm/plpar_wrappers.h b/arch/powerpc/include/asm/plpar_wrappers.h
+index b3ee44a40c2f..6431fa1e1cb1 100644
+--- a/arch/powerpc/include/asm/plpar_wrappers.h
++++ b/arch/powerpc/include/asm/plpar_wrappers.h
+@@ -37,24 +37,6 @@ static inline long cede_processor(void)
+ 	return plpar_hcall_norets_notrace(H_CEDE);
+ }
+ 
+-static inline long extended_cede_processor(unsigned long latency_hint)
+-{
+-	long rc;
+-	u8 old_latency_hint = get_cede_latency_hint();
+-
+-	set_cede_latency_hint(latency_hint);
+-
+-	rc = cede_processor();
+-
+-	/* Ensure that H_CEDE returns with IRQs on */
+-	if (WARN_ON(IS_ENABLED(CONFIG_PPC_IRQ_SOFT_MASK_DEBUG) && !(mfmsr() & MSR_EE)))
+-		__hard_irq_enable();
+-
+-	set_cede_latency_hint(old_latency_hint);
+-
+-	return rc;
+-}
+-
+ static inline long vpa_call(unsigned long flags, unsigned long cpu,
+ 		unsigned long vpa)
+ {
+-- 
+2.45.0
 
-  Linux 6.9-rc7 (2024-05-05 14:06:01 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/ieee1394/linux1394.git tags/firewire-updates-6.10
-
-for you to fetch changes up to 21151fd8f0ea5dcff27e8db25b65bf892d408bdc:
-
-  firewire: obsolete usage of *-objs in Makefile for KUnit test (2024-05-09 08:06:22 +0900)
-
-----------------------------------------------------------------
-firewire updates for v6.10
-
-During the development period of v6.8 kernel, it became evident that there
-was a lack of helper utilities to trace the initial state of bus, while
-investigating certain PHYs compliant with different versions of IEEE 1394
-specification.
-
-This series of changes includes the addition of tracepoints events,
-provided by 'firewire' subsystem. These events enable tracing of how
-firewire core functions during bus reset and asynchronous communication
-over IEEE 1394 bus.
-
-When implementing the tracepoints events, it was found that the existing
-serialization and deserialization helpers for several types of
-asynchronous packets are scattered across both firewire-core and
-firewire-ohci kernel modules. A set of inline functions is newly added
-to address it, along with some KUnit tests, serving as the foundation for
-the tracepoints events. This renders the dispersed code obsolete.
-
-The remaining changes constitute the final steps in phasing out the usage
-of deprecated PCI MSI APIs, in continuation from the previous version.
-
-----------------------------------------------------------------
-Adam Goldman (1):
-      firewire: core: option to log bus reset initiation
-
-Gustavo A. R. Silva (1):
-      firewire: Annotate struct fw_iso_packet with __counted_by()
-
-Takashi Sakamoto (27):
-      Revert "firewire: ohci: use devres for requested IRQ"
-      firewire: ohci: replace request_irq() with request_threaded_irq()
-      firewire: ohci: obsolete usage of deprecated API for MSI
-      firewire: ohci: use pci_irq_vector() to retrieve allocated interrupt line
-      firewire: core: add common inline functions to serialize/deserialize asynchronous packet header
-      firewire: core: replace local macros with common inline functions for asynchronous packet header
-      firewire: ohci: replace local macros with common inline functions for asynchronous packet header
-      firewire: ohci: replace hard-coded values with inline functions for asynchronous packet header
-      firewire: ohci: replace hard-coded values with common macros
-      firewire: core: obsolete tcode check macros with inline functions
-      firewire: core: add common macro to serialize/deserialize isochronous packet header
-      firewire: core: replace local macros with common inline functions for isochronous packet header
-      firewire: core: add support for Linux kernel tracepoints
-      firewire: core: add tracepoints events for asynchronous outbound request
-      firewire: core: add tracepoints event for asynchronous inbound response
-      firewire: core: add tracepoint event for asynchronous inbound request
-      firewire: core: add tracepoints events for asynchronous outbound response
-      firewire: core/cdev: add tracepoints events for asynchronous phy packet
-      firewire: core: add tracepoints event for asynchronous inbound phy packet
-      firewire: ohci: add bus-reset event for initial set of handled irq
-      firewire: ohci: obsolete OHCI_PARAM_DEBUG_BUSRESETS from debug module parameter
-      firewire: core: add tracepoints events for initiating bus reset
-      Revert "firewire: core: option to log bus reset initiation"
-      firewire: core: add tracepoint event for handling bus reset
-      firewire: core: fix type of timestamp for async_inbound_template tracepoints events
-      firewire: core: remove flag and width from u64 formats of tracepoints events
-      firewire: obsolete usage of *-objs in Makefile for KUnit test
-
- drivers/firewire/.kunitconfig                |   1 +
- drivers/firewire/Kconfig                     |  16 ++++++
- drivers/firewire/Makefile                    |   6 +-
- drivers/firewire/core-card.c                 |   7 +++
- drivers/firewire/core-cdev.c                 |   7 +++
- drivers/firewire/core-topology.c             |   3 +
- drivers/firewire/core-trace.c                |   5 ++
- drivers/firewire/core-transaction.c          | 251 ++++++++++++++++++++++++++++++++++++++++++----------------------------------------
- drivers/firewire/core.h                      |  21 ++++---
- drivers/firewire/ohci.c                      | 131 +++++++++++++++++++++++--------------------
- drivers/firewire/packet-header-definitions.h | 234 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- drivers/firewire/packet-serdes-test.c        | 582 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/firewire.h                     |   3 +-
- include/trace/events/firewire.h              | 348 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 14 files changed, 1420 insertions(+), 195 deletions(-)
- create mode 100644 drivers/firewire/core-trace.c
- create mode 100644 drivers/firewire/packet-header-definitions.h
- create mode 100644 drivers/firewire/packet-serdes-test.c
- create mode 100644 include/trace/events/firewire.h
-
-
-Regards
-
-Takashi Sakamoto
 
