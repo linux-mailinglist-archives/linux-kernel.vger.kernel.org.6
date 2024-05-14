@@ -1,123 +1,111 @@
-Return-Path: <linux-kernel+bounces-179081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C44618C5B5D
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 20:50:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76B8F8C5B65
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 20:55:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 618D3B213B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 18:50:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EF96282E57
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 18:55:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F92D181325;
-	Tue, 14 May 2024 18:50:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 563DF181304;
+	Tue, 14 May 2024 18:55:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KmPEz8LP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mEQXshWq"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B429418AEA;
-	Tue, 14 May 2024 18:50:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 234DE1E88D;
+	Tue, 14 May 2024 18:55:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715712620; cv=none; b=pbE/4wpbFN7TlFjxJI6d4+qrtDv2OY4bXEX/8Twk/fzUTGNs27B7hGx0lks6JwHeHLziCxDtSRMmjSs3NVl8PCvKuXR4mrNCRuHXB8s7BT9TEh4OPpyXunT53Q7DpBQy8+3bdq8PFLCV9E4rDF1l6DHozCnGPN2jtbZcD3oc2bw=
+	t=1715712944; cv=none; b=KzLrhH189hnLHfFMQMepMJQNv6UZO2pN0Lurw/DXMCe9Q++cqifX3Ob4KwRQyzsblknZTTvoUMtmOLsEfW659WStwwGlaOuBL/iIiHE2U1QkF8OcubDSAbxoniCzgScj6IXXbKpjvR/aQ+khJfw1FB3td1e0fmbkW2QzlgVh4WM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715712620; c=relaxed/simple;
-	bh=CVX9i/4HCz3SLBmAajNapHumvmHnQgYc6x4rzeWE9EM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QYiDxTT4wD7/AWNNBQ7oxHylVFdEFI590F9Pk6Vx1jb3YK3WNzv+ZsI+SNpcjNUzsf0tx2YVEsl7tTRXzjnZNPuWsQKzxlEqI39M3ahveLE7DuDpt/nmBYeSBxIWKzg6vDqts010p51iyrsvDV+XJj86dKo49c1d/aQe84x5Wg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KmPEz8LP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56DFFC4AF09;
-	Tue, 14 May 2024 18:50:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715712620;
-	bh=CVX9i/4HCz3SLBmAajNapHumvmHnQgYc6x4rzeWE9EM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KmPEz8LPUN8XVDdnTcMHzajInJgBaxO57t36APCa4nCQEQdrc8vRVM63lbnB9ORfA
-	 N0bFe7ThSi8tHLM9QuMLIyZeJEMV2q/ZEYRT2VQcr7taSMjOfikwGx8oEmL2WZSO8R
-	 qGeZnGlmLi/wlzTAKJXobAZDK2OkBw4LECDdvkP8EQsNY33Pko0SHmakb7JGJPZ7Z6
-	 WAKn5vEx6QDX0YGNrMvTjSaMRNreWXa1Mdbw9vz25NS9EaZenajYvcmgQgaVqgqqfz
-	 xFzv8CAPVIAM2tgRlmSJJhVHEkGypGKjmPuPbJKp00StlqvIkohvWI513e7YUKDhPp
-	 C2VfuJi9zxOrA==
-Date: Tue, 14 May 2024 19:50:15 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Avri Altman <avri.altman@wdc.com>,
-	Bart Van Assche <bvanassche@acm.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, Andy Gross <agross@kernel.org>,
-	cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
-	linux-scsi@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: ufs: qcom: Use 'ufshc' as the node name
- for UFS controller nodes
-Message-ID: <20240514-buggy-sighing-1573000e3f52@spud>
-References: <20240514-ufs-nodename-fix-v1-0-4c55483ac401@linaro.org>
- <20240514-ufs-nodename-fix-v1-1-4c55483ac401@linaro.org>
+	s=arc-20240116; t=1715712944; c=relaxed/simple;
+	bh=TxuqIu3e2EFPMV+34yJQkIWnIE1+hACr2KaJ1NiXlmA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FrvXG/bIXbOm61uq33LmXcWrNfscx0IYkCZB6p2xGfYXSYeBpStinVXyOgnEnRYw7V4fiRGSRxiHPuBhsYh7sLzUDVui3Ug7x2n1x8O7A+Fb1+0DGodDZjm6zQv3c0GBDxQcaHKrEYciW+uB21bs9udK1FpQ7RfJr2/chQhCy/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mEQXshWq; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-34db6a29a1eso4790469f8f.1;
+        Tue, 14 May 2024 11:55:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715712941; x=1716317741; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Y7Oo9YahnQFZHzOwJoUrSXdH2NtFloyrj46IdMn32Ao=;
+        b=mEQXshWqfzu5sk8VcPOb6PlDcNNhRHihd+l6BYijCZxg7+vNKziYShWjWZirP6wlGt
+         u3m54Sgwp74l1Uc54gA1wPFD2Xg4w4XuaicqehN/k2L3Nrzvlwxr5SZDuxlsC3EkPSTm
+         xqoDvKLq8xOY7F6GCxIJeJfBTG+om2rCeziJd13PZGe00cYxEnr/qAAwxw1MJS4U8K1t
+         zsgoWGVppCgBm8c2VYN15edT4L+S8Z2dv1I3ulHH126tICbxiUnYq9UmH9fiZa/GRUn7
+         IChvNIIRoATzkfKS6MFgFueyhZf4Lw/KwjQAzI/4vX0x8lJvvXoa9pyTetXPjQq/F39e
+         EtbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715712941; x=1716317741;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y7Oo9YahnQFZHzOwJoUrSXdH2NtFloyrj46IdMn32Ao=;
+        b=HTIz/L02SYFL80Dm9PzKvdrF4B+uqlmuTBvF/u2O21qftWtVYPV+J6n8xt3FTdByXR
+         e4XVySwtV8etXDwhpOuzByi7vLJPzLJMaKGrXibCgjkcpROV6wvCW7cqsbGWpw+x47GO
+         p4FR3/pr93iYgMC/DjssdGJEOJwTjIk6fMOZGg5QWcFAYNQzwMu4WuumuNogGoOXhfOq
+         IN7nnbuz84Dh6LJ1KuRrjr3IxVOj7y/xW/rGNZzWnyXyb7rxUfqkPPDv+mxayICVNS/e
+         5MjZJvmOYk84fKrLj+Ub1/Ht7MAGw2g5v3N0N7/W5OKpu4IIGua/T7ICothSeelVIv7N
+         eLTw==
+X-Forwarded-Encrypted: i=1; AJvYcCWHB30vLzha5rQbyfc6ZggUQD9C+bTN0tNoUCF+kc47eYfoz2yhqYF1bo54I5gArUjxKOg1tnUnDIOmVA8iirTe3accyzAy+BnF+VQDATMRHmaRBxmzSUo1nHtSvKZjquB89dLaD4gSMmER1t5MR9Ff3OWOKnqQBLLcNhvVZdVntQ==
+X-Gm-Message-State: AOJu0YzpmY6GKfGB310ZenH4ft7CVnB2L+ur/o3yDsKLRQySkKkeL9AZ
+	dnjsyFmI40/fxGcraQfIl715p4iFSqbt9MYhvNVssLjN1v28Pv4g
+X-Google-Smtp-Source: AGHT+IGNkCtzE/Iiz5DXAhHblOEJmpApRQVsn2jigYFY1/Yyg75oBgFXUVZ9vWcrLPC4RxTIW6zxLA==
+X-Received: by 2002:adf:e582:0:b0:34d:a738:30b8 with SMTP id ffacd0b85a97d-3504a62ff93mr8418176f8f.12.1715712941303;
+        Tue, 14 May 2024 11:55:41 -0700 (PDT)
+Received: from [172.27.21.185] ([193.47.165.251])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502bbbc077sm14253552f8f.104.2024.05.14.11.55.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 May 2024 11:55:40 -0700 (PDT)
+Message-ID: <4a331dcb-5635-46de-9638-1fc32d143721@gmail.com>
+Date: Tue, 14 May 2024 21:55:38 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="GRbsOrovulyyCxUp"
-Content-Disposition: inline
-In-Reply-To: <20240514-ufs-nodename-fix-v1-1-4c55483ac401@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v5 2/3] net/mlx4: link NAPI instances to queues
+ and IRQs
+To: Joe Damato <jdamato@fastly.com>, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org
+Cc: mkarsten@uwaterloo.ca, nalramli@fastly.com,
+ Jakub Kicinski <kuba@kernel.org>, Tariq Toukan <tariqt@nvidia.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>,
+ "open list:MELLANOX MLX4 core VPI driver" <linux-rdma@vger.kernel.org>
+References: <20240513172909.473066-1-jdamato@fastly.com>
+ <20240513172909.473066-3-jdamato@fastly.com>
+Content-Language: en-US
+From: Tariq Toukan <ttoukan.linux@gmail.com>
+In-Reply-To: <20240513172909.473066-3-jdamato@fastly.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
---GRbsOrovulyyCxUp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 14, 2024 at 03:08:40PM +0200, Manivannan Sadhasivam wrote:
-> Devicetree binding has documented the node name for UFS controllers as
-> 'ufshc'. So let's use it instead of 'ufs' which is for the UFS devices.
-
-Can you point out where that's been documented?
-Thanks,
-Conor.
-
->=20
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+On 13/05/2024 20:29, Joe Damato wrote:
+> Make mlx4 compatible with the newly added netlink queue GET APIs.
+> 
+> Signed-off-by: Joe Damato <jdamato@fastly.com>
+> Tested-by: Martin Karsten <mkarsten@uwaterloo.ca>
+> Acked-by: Jakub Kicinski <kuba@kernel.org>
 > ---
->  Documentation/devicetree/bindings/ufs/qcom,ufs.yaml | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml b/Docume=
-ntation/devicetree/bindings/ufs/qcom,ufs.yaml
-> index 10c146424baa..37112e17e474 100644
-> --- a/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml
-> +++ b/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml
-> @@ -273,7 +273,7 @@ examples:
->          #address-cells =3D <2>;
->          #size-cells =3D <2>;
-> =20
-> -        ufs@1d84000 {
-> +        ufshc@1d84000 {
->              compatible =3D "qcom,sm8450-ufshc", "qcom,ufshc",
->                           "jedec,ufs-2.0";
->              reg =3D <0 0x01d84000 0 0x3000>;
->=20
-> --=20
-> 2.25.1
->=20
+>   drivers/net/ethernet/mellanox/mlx4/en_cq.c   | 14 ++++++++++++++
+>   drivers/net/ethernet/mellanox/mlx4/mlx4_en.h |  1 +
+>   2 files changed, 15 insertions(+)
+> 
 
---GRbsOrovulyyCxUp
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZkOyZwAKCRB4tDGHoIJi
-0uTOAQD3efl763usqhQlsGDLj5MrpeQyejG1k0iJ4Z8uVzGJkgD/U5f9mtLPsM2i
-xObl4643kFDN0oUD1N+vPB41K3TJDQY=
-=o+dl
------END PGP SIGNATURE-----
-
---GRbsOrovulyyCxUp--
+Reviewed-by: Tariq Toukan <tariqt@nvidia.com>
 
