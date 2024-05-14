@@ -1,176 +1,277 @@
-Return-Path: <linux-kernel+bounces-178828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90C558C5851
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:54:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA1F58C5853
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:54:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF5F11F236FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:54:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E695284680
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:54:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AC3317EB81;
-	Tue, 14 May 2024 14:54:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94F1B17EB83;
+	Tue, 14 May 2024 14:54:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="YRJ6+luM"
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="BW+HZHgi"
+Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26ED617B518
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 14:54:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 356BD17B518
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 14:54:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715698454; cv=none; b=NJXyokdbzjWxrltazgsUh7dhE/87zMbhT5KrIxpH1fZV9K0pGb7zxLSjetpzs2K9xBuqE0GU8KOX1WcQfc3pjB8HHIErm0cWcUBa3YCJPHeh0tEcoJHDlWD61vkD/2vbjwZ0KULPoPiMqT95CpUIYK0MRO00qeGhkMqqdK96Ls0=
+	t=1715698469; cv=none; b=tdNDREj7tx8kPfYKY4rATi2ECmYe3oO+J9iPHIcxewI799D0KsIJ3nElApXxZ76H0JSWmo/yhIBiyEK7RWQCHz0fWh4qzhTqwZ8Jvh4ViXxXJIniDRcG3+CVezI+Fxfsz6z3mkHvrYOdmwIFFBazPx4otv4Ec0A+c8QA26dwInA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715698454; c=relaxed/simple;
-	bh=MJ+z3nFXsNvqU4RpICcjSdTIlE37ym0IdiJZ2gNDNrY=;
+	s=arc-20240116; t=1715698469; c=relaxed/simple;
+	bh=iOTjV7jy9yp8FGBKgS/k3XwbuqTG8obRwB+v96Gsw5c=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=B4BqR/DbutsV3VgWYKak7Sjb3JaTWtpFWsuA04qQGs3GXUmLn86k2Kz/5zWcJuymHnqlff070m6lPMG1ZhEoTQLz57zeq86WHaR7bwyOyoxY05BR692AU1PngURfrgBZIb0onAsr9am9qBNo5VLtH9REYA8UsqYxEhfos3htysE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=YRJ6+luM; arc=none smtp.client-ip=209.85.210.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
-Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-6f0ede03023so1799984a34.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 07:54:12 -0700 (PDT)
+	 To:Cc:Content-Type; b=lH9K2alFhinbCPCimTJ0aNQmyulDYgJYU7yk6wxkkHStE1unpRl0M86U2/a9cwaSb2/qQbmahznoTiHoJ4KUY7wtM7aX3LDXQZDR/h2IQFRYCw1tcs4vD5PGsjnfFHK++gK8pu1ltOBC6KRO6vs+1qgcUJoelvq9ht+FqKjUb1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=BW+HZHgi; arc=none smtp.client-ip=209.85.166.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
+Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-36c7004daecso21997975ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 07:54:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1715698452; x=1716303252; darn=vger.kernel.org;
+        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1715698467; x=1716303267; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Wpwk5gqnxfMpdpFSeAltyRUGvYXRaQMydwK8u+++1cM=;
-        b=YRJ6+luMPQe4TxEilwXUUqerihrapxMPF0jtum2jm9aGFq05XB0zGEvqtrxV38Z8xy
-         6zREwpSNh+cnixUCPiBdLBFWtBvraKHsDkcDHf5gqB6F6jPmjHsU1kPYsh2u+YQvDjb6
-         ZzLkonFwzICJk/51fioQ+9Rw7PcNXoC1OQcfy5J2psK3T1ZdOqvjqa2oV0mLDSbRVMJY
-         v350K7jwIKB6HRtPZ4N0Su7SqVsfKSYskqUNcrKLhbz9731E9GzfMcoERM6EG6sRoI0Y
-         z4BEBMIgIXRHUTGrXxWqzuOBb42w4fUfA2F4rW3KD73Ns57U4aRnOUQAsJAt9AGLmiKS
-         kErQ==
+        bh=2Z82cBCgLMv0ZYRz/HRSf8L92nhc1deFHJBIJjw5gOc=;
+        b=BW+HZHgifWyxMgKr80/6GK3SRQ5sdDHABKMK721ad/mPvPVGhhIR9vEAjnzA01I66J
+         UCIC2+1VqMzmpLYrS4CmKt2yYm+UnqbN7f7vb+kD64BWiJQfVGN30AbrXIZFcvzpIuDy
+         ytXIJwZLS+kV3IkSc3CapfIC74+qRy1UeYWcWtYzlEYH0ONm7bLUdzIkPA3MY7tuiGzC
+         7FsIaIj6sFcITJ2D2Rd1nPoyrnoy1s0jH3TS3xyzjRjOWwWcq4GdYiHVdRwaWgrJIkJl
+         +/aV2cmy3G8DhSNpR9KRaN/RHNl5mvPmUIIMpNKTEDapH4v/KIMFHAeuF1XQBtRuhwmm
+         igig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715698452; x=1716303252;
+        d=1e100.net; s=20230601; t=1715698467; x=1716303267;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Wpwk5gqnxfMpdpFSeAltyRUGvYXRaQMydwK8u+++1cM=;
-        b=L1Rh+tRIdyVIz5oS59ZMxafAChJjrkcSO5U00CqslFiEZ2AhxkrBU3vuBcCgvYdvSe
-         1Eqkbq7Uh0k4pUiUehR1o47bOXHopyN7rXGKQJmK7TnHakmiEpZXytJnfy1krAlhtajm
-         4iHZD4qDiwuGYRzZDbnXxOL9qCCxHYsY+plDzmtksyrf8t8qaqLDjD5C+fIJrd7E7ZY8
-         172jsiOmywUFShw69pSiYakulzBdhaHrxfoLQ0KkYCtok67fad1e/uv0pymqcm4sypLP
-         kOqIS1D+UUASXWDC1Cv0I9H6A8cr4iepD5n52on0o2zPyHtPOJ1UgyTq/cSAeozMJajU
-         /iAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW4MLKLgx7d6RIS2RMPzgPTQFdSwnuUisXHZTSOOIH0g7tNB/CysgHvYJGuNkeP04+9Xm9gM+9JgD3jAfHDEaII4waFbtXUpMAskJrd
-X-Gm-Message-State: AOJu0YzZZaW152RPSgV+iZGXJLPi03nYk59ookc2AcfXLDcqwgeXb9OD
-	Z7U6J0SBPCvKiHsI+a91NuspoAro8yw5/pjTd7T3HEFXKub7v8q640nhE93j5gwrEc7T98xym5C
-	mafBz24tvMEVxyXp/P7YNfDdlteD3/79TmQML/w==
-X-Google-Smtp-Source: AGHT+IGQnTMYr06AevH4jz+0Hl80twZxNa0hBXvLSl9Vls1Uucyej7vIQSvyuP6fpP8+OmTmyPVjz5InylwD098Z7Ak=
-X-Received: by 2002:a05:6830:1e72:b0:6f1:1946:9c6d with SMTP id
- 46e09a7af769-6f11946a5fbmr772361a34.13.1715698452263; Tue, 14 May 2024
- 07:54:12 -0700 (PDT)
+        bh=2Z82cBCgLMv0ZYRz/HRSf8L92nhc1deFHJBIJjw5gOc=;
+        b=skCbzGm72iwzmZlC0WGj69fve7W00iR6G40ssdCMKvCWbLPncf39ZQZuBhmBo+5YZ8
+         zK1Y/pXRKwh+qL3NfcSTH429OEgbX7fPl2FNGFncIe2M3rqoJi2l88DoZNjfPfSREOy0
+         T1Rg6FCXBD6uzhOp8EEL6PqpfSdZJc+IzAoeh1WwNXV5U07bFuGIxLDLeIKy2dIOyVGk
+         W+IhpTWCI3ohWMXVwKakL1HigjMx4vrOxRd/cjTHtGhwvEXm8co5B2IlF2c53WTPIer3
+         KiyS4hrs1Lgd15WQl3mtElohpG3ACGlxOqOIo4/sFYPcXfkCc0oCLnzdA7rVTMhR5H6R
+         JUoA==
+X-Forwarded-Encrypted: i=1; AJvYcCXBQgOY2sLWKFragKNq2JfZpN5mYaFmYgOCxxl1X6XPLdl7QlBoND2IvFqxwN2T9cIaMc5AUTZbsy6NaAKJpLfEGAebPudNxb+UQyhQ
+X-Gm-Message-State: AOJu0Yz4Sv3zVERb4zJbXqPojcCVaQK3JXLqSvdKwlLIumabPoMuMsMH
+	np7sqWZQTS9J4ZCrbT/FsQZNGwFA2f9wylvpjNo3rbxpQCiPRP0kMrykhp0GtQbqQUmjGlG2nPL
+	CLvXwj/HQhLjGg7v81v8f1IXXVny8xrmJQ1slRg==
+X-Google-Smtp-Source: AGHT+IGCHJkMeiCD73H8EU7f+DvHYW9crMlnudeHRZ1GpJ+PgJcHJr4CDLf335JWUQeU2X9JLK6YCyrTqcy9lzrchQ8=
+X-Received: by 2002:a05:6e02:1385:b0:369:976a:584a with SMTP id
+ e9e14a558f8ab-36cc12aaaeemr122086975ab.6.1715698467288; Tue, 14 May 2024
+ 07:54:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240503221634.44274-1-ignat@cloudflare.com> <D10FIGJ84Q71.2VT5MH1VUDP0R@kernel.org>
- <ZjY-UU8pROnwlTuH@farprobe> <D10Y0V64JXG8.1F6S3OZDACCGF@kernel.org>
- <D10YYQKT9P1S.25CE053K7MQKI@kernel.org> <CALrw=nFLa5=bPbYKijNsEo0Kk77_TEpdPmPe3CJ3VJqGNMmBeg@mail.gmail.com>
- <44cd50b60a0a4e376d01544d25187556b8badf94.camel@HansenPartnership.com>
- <CALrw=nFOh0=TXGx-z_oTkLWshVU_AfGRQzcC3zxVTzcRbuRqQQ@mail.gmail.com> <b53f9fa263e65cd6b23677d9f7a385e5eb85cfdd.camel@HansenPartnership.com>
-In-Reply-To: <b53f9fa263e65cd6b23677d9f7a385e5eb85cfdd.camel@HansenPartnership.com>
-From: Ignat Korchagin <ignat@cloudflare.com>
-Date: Tue, 14 May 2024 15:54:00 +0100
-Message-ID: <CALrw=nGg7c39Hsb7nX5hCM23_qqeWFMTRJWmvyu+rKgyC75LPg@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/2] TPM derived keys
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: Jarkko Sakkinen <jarkko@kernel.org>, Ben Boeckel <me@benboeckel.net>, 
-	Mimi Zohar <zohar@linux.ibm.com>, David Howells <dhowells@redhat.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, serge@hallyn.com, 
-	linux-integrity@vger.kernel.org, keyrings@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel-team@cloudflare.com
+References: <20240226065113.1690534-1-nick.hu@sifive.com> <CAPDyKFph3WsZMmALnzBQKE4S_80Ji5h386Wi0vHda37QUsjMtg@mail.gmail.com>
+ <CAKddAkDcdaXKzpcKN=LCCx9S4Trv+joLX2s=nyhzaRtM5HorqA@mail.gmail.com>
+ <CAKddAkC6N=Cfo0z+F8herKTuJzCyt_MA0vWNbLCr6CbQnj0y8g@mail.gmail.com>
+ <CAPDyKFr_M0NDH0gaunBpybnALOFfz4LpX4_JW2GCUxjwGzdZsg@mail.gmail.com>
+ <CAKddAkC5CRX+ZTh=MgzPYU72SY13+AQYhknhV_CC+=XX9=DKyg@mail.gmail.com> <CAAhSdy1SDd=VUqDQA0T5n9LwHo=3uGzFq1dUcbDFcB3aBdaioA@mail.gmail.com>
+In-Reply-To: <CAAhSdy1SDd=VUqDQA0T5n9LwHo=3uGzFq1dUcbDFcB3aBdaioA@mail.gmail.com>
+From: Anup Patel <anup@brainfault.org>
+Date: Tue, 14 May 2024 20:24:15 +0530
+Message-ID: <CAAhSdy33DcNw+pbDRrR=hBH86kwvu3xZbomQby8XhRXcc-exqQ@mail.gmail.com>
+Subject: Re: [PATCH] cpuidle: riscv-sbi: Add cluster_pm_enter()/exit()
+To: Nick Hu <nick.hu@sifive.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, palmer@dabbelt.com, rafael@kernel.org, 
+	daniel.lezcano@linaro.org, paul.walmsley@sifive.com, linux-pm@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	zong.li@sifive.com, Cyan Yang <cyan.yang@sifive.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 14, 2024 at 3:11=E2=80=AFPM James Bottomley
-<James.Bottomley@hansenpartnership.com> wrote:
+On Tue, May 14, 2024 at 7:53=E2=80=AFPM Anup Patel <anup@brainfault.org> wr=
+ote:
 >
-> On Tue, 2024-05-14 at 10:50 +0100, Ignat Korchagin wrote:
-> > On Mon, May 13, 2024 at 11:33=E2=80=AFPM James Bottomley
-> > <James.Bottomley@hansenpartnership.com> wrote:
-> > >
-> > > On Mon, 2024-05-13 at 18:09 +0100, Ignat Korchagin wrote:
-> > > [...]
-> > > > TPM derived keys attempt to address the above use cases by
-> > > > allowing applications to deterministically derive unique
-> > > > cryptographic keys for their own purposes directly from the TPM
-> > > > seed in the owner hierarchy. The idea is that when an application
-> > > > requests a new key, instead of generating a random key and
-> > > > wrapping it with the TPM, the implementation generates a key via
-> > > > KDF(hierarchy seed, application specific info). Therefore, the
-> > > > resulting keys will always be cryptographically bound to the
-> > > > application itself and the device they were generated on.
-> > >
-> > > So I think what confuses me is what the expected cryptographic
-> > > secrecy properties of the derived keys are.  I get they're a KDF of
-> > > seed and deterministic properties, but if those mixing values are
-> > > well known (as the path or binary checksum cases) then anyone with
-> > > access to the TPM can derive the key from user space because they
-> > > can easily obtain the mixing parameters and there's no protection
-> > > to the TPM keyed hash operation.
-> > >
-> > > Consider the use case where two users are using derived keys on the
-> > > same system (so same TPM).  Assuming they use them to protect
-> > > sensitive information, what prevents user1 from simply deriving
-> > > user2's key and getting the information, or am I missing the point
-> > > of this?
+> Hi Nick,
+>
+> On Tue, May 14, 2024 at 3:20=E2=80=AFPM Nick Hu <nick.hu@sifive.com> wrot=
+e:
 > >
-> > You are correct: it is possible, but in practice it would be limited
-> > only to privileged users/applications. I remember there was a push to
-> > set a 666 mask for the TPM device file, but it is not how it is done
-> > today by default.
+> > Hi Ulf,
+> >
+> > Thank you for your valuable suggestion.
+> > I sincerely apologize for the delay in responding to your message. We
+> > have diligently worked on experimenting with the suggestion you
+> > provided.
+> >
+> > As per your recommendation, we have incorporated the "power-domains=3D<=
 >
-> No, it's 660, but in consequence of that every user of the TPM is a
-> member of the tpm group which, since TPM use from userspace is growing,
-> is everyone, so it might as well have been 666.  In other words relying
-> on access restrictions to the TPM itself is largely useless.
+> > property" into the consumer's node, resulting in modifications to the
+> > DTS as illustrated below:
+> >
+> > cpus {
+> >     ...
+> >      domain-idle-states {
+> >            CLUSTER_SLEEP:cluster-sleep {
+> >                         compatible =3D "domain-idle-state";
+> >                         ...
+> >             }
+> >      }
+> >      power-domains {
+> >             ...
+> >             ...
+> >             CLUSTER_PD: clusterpd {
+> >                     domain-idle-states =3D <&CLUSTER_SLEEP>;
+> >             };
+> >      }
+> > }
+> > soc {
+> >       deviceA@xxx{
+> >              ...
+> >              power-domains =3D <&CLUSTER_PD>;
+> >              ...
+> >       }
+> > }
+> >
+> > However, this adjustment has led to an issue where the probe for
+> > 'deviceA' is deferred by 'device_links_check_suppliers()' within
+> > 'really_probe()'. In an attempt to mitigate this issue, we
+> > experimented with a workaround by adding the attribute
+> > "status=3D"disabled"" to the 'CLUSTER_PD' node. This action aimed to
+> > prevent the creation of a device link between 'deviceA' and
+> > 'CLUSTER_PD'. Nevertheless, we remain uncertain about the
+> > appropriateness of this solution.
+> >
+> > Do you have suggestions on how to effectively address this issue?
 >
-> >  Also I think the same applies to trusted keys as well, at least
-> > without any additional authorizations or PCR restrictions on the blob
-> > (I remember I could manually unwrap a trusted key blob in userspace
-> > as root).
->
-> Well, that's correct, but a TPM key file without policy still has two
-> protections: the file itself (so the key owner can choose what
-> permissions and where it is) and the key authority (or password)
-> although for the mechanical (unsupervised insertion) use case keys tend
-> not to have an authority.
->
-> > It would be fixed if we could limit access to some TPM ops only from
-> > the kernel, but I remember from one of your presentations that it is
-> > generally a hard problem and that some solution was in the works (was
-> > it based on limiting access to a resettable PCR?). I'm happy to
-> > consider adopting it here as well somehow.
->
-> Well, that was based on constructing a policy that meant only the
-> kernel could access the data (so it requires PCR policy).
->
-> In addition to the expected secrecy property question which I don't
-> think is fully answered I did think of another issue: what if the
-> application needs to rotate keys because of a suspected compromise?
-> For sealed keys, we just generate a new one an use that in place of the
-> old, but for your derived keys we'd have to change one of the mixing
-> values, which all look to be based on fairly permanent properties of
-> the system.
+> I totally missed this email since I was not CC'ed sorry about that. Pleas=
+e
+> use get_maintainers.pl when sending patches.
 
-For our current (non-TPM based) derived key hierarchy we do allow
-applications to specify a "freeform" mixing value, which in practice
-may contain a key version, like "v1"/"v2" etc. This also allows
-applications to derive multiple different keys for different purposes.
-Perhaps, we can do the same here, for example keyctl add derived test
-"<key len> (path|csum) <the rest is used as is as another mixin>". We
-can also "just ship" a new version of the code (for the csum case),
-which would rotate the key. Another option could be using some
-optional xattr as a mixin, which can specify the version of the key or
-just be a freeform input.
+I stand corrected. This patch had landed in the "spam" folder. I don't know=
+ why.
 
-> James
+Regards,
+Anup
+
 >
+> The genpd_add_provider() (called by of_genpd_add_provider_simple())
+> does mark the power-domain DT node as initialized (fwnode_dev_initialized=
+())
+> so after the cpuidle-riscv-sbi driver is probed the 'deviceA' dependency =
+is
+> resolved and 'deviceA' should be probed unless there are other unmet
+> dependencies.
+>
+> Try adding "#define DEBUG" before all includes in drivers/core/base.c
+> and add "loglevel=3D8" in kernel parameters, this will print producer-con=
+sumer
+> linkage of all devices.
+>
+> Marking the power-domain DT node as "disabled" is certainly not the
+> right way.
+>
+> Regards,
+> Anup
+>
+> >
+> > Regards,
+> > Nick
+> >
+> > On Tue, Apr 30, 2024 at 4:13=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro=
+org> wrote:
+> > >
+> > > On Mon, 29 Apr 2024 at 18:26, Nick Hu <nick.hu@sifive.com> wrote:
+> > > >
+> > > > On Tue, Apr 30, 2024 at 12:22=E2=80=AFAM Nick Hu <nick.hu@sifive.co=
+m> wrote:
+> > > > >
+> > > > > Hi Ulf
+> > > > >
+> > > > > On Mon, Apr 29, 2024 at 10:32=E2=80=AFPM Ulf Hansson <ulf.hansson=
+@linaro.org> wrote:
+> > > > > >
+> > > > > > On Mon, 26 Feb 2024 at 07:51, Nick Hu <nick.hu@sifive.com> wrot=
+e:
+> > > > > > >
+> > > > > > > When the cpus in the same cluster are all in the idle state, =
+the kernel
+> > > > > > > might put the cluster into a deeper low power state. Call the
+> > > > > > > cluster_pm_enter() before entering the low power state and ca=
+ll the
+> > > > > > > cluster_pm_exit() after the cluster woken up.
+> > > > > > >
+> > > > > > > Signed-off-by: Nick Hu <nick.hu@sifive.com>
+> > > > > >
+> > > > > > I was not cced this patch, but noticed that this patch got queu=
+ed up
+> > > > > > recently. Sorry for not noticing earlier.
+> > > > > >
+> > > > > > If not too late, can you please drop/revert it? We should reall=
+y move
+> > > > > > away from the CPU cluster notifiers. See more information below=
+.
+> > > > > >
+> > > > > > > ---
+> > > > > > >  drivers/cpuidle/cpuidle-riscv-sbi.c | 24 +++++++++++++++++++=
++++--
+> > > > > > >  1 file changed, 22 insertions(+), 2 deletions(-)
+> > > > > > >
+> > > > > > > diff --git a/drivers/cpuidle/cpuidle-riscv-sbi.c b/drivers/cp=
+uidle/cpuidle-riscv-sbi.c
+> > > > > > > index e8094fc92491..298dc76a00cf 100644
+> > > > > > > --- a/drivers/cpuidle/cpuidle-riscv-sbi.c
+> > > > > > > +++ b/drivers/cpuidle/cpuidle-riscv-sbi.c
+> > > > > > > @@ -394,6 +394,7 @@ static int sbi_cpuidle_pd_power_off(struc=
+t generic_pm_domain *pd)
+> > > > > > >  {
+> > > > > > >         struct genpd_power_state *state =3D &pd->states[pd->s=
+tate_idx];
+> > > > > > >         u32 *pd_state;
+> > > > > > > +       int ret;
+> > > > > > >
+> > > > > > >         if (!state->data)
+> > > > > > >                 return 0;
+> > > > > > > @@ -401,6 +402,10 @@ static int sbi_cpuidle_pd_power_off(stru=
+ct generic_pm_domain *pd)
+> > > > > > >         if (!sbi_cpuidle_pd_allow_domain_state)
+> > > > > > >                 return -EBUSY;
+> > > > > > >
+> > > > > > > +       ret =3D cpu_cluster_pm_enter();
+> > > > > > > +       if (ret)
+> > > > > > > +               return ret;
+> > > > > >
+> > > > > > Rather than using the CPU cluster notifiers, consumers of the g=
+enpd
+> > > > > > can register themselves to receive genpd on/off notifiers.
+> > > > > >
+> > > > > > In other words, none of this should be needed, right?
+> > > > > >
+> > > > > Thanks for the feedback!
+> > > > > Maybe I miss something, I'm wondering about a case like below:
+> > > > > If we have a shared L2 cache controller inside the cpu cluster po=
+wer
+> > > > > domain and we add this controller to be a consumer of the power
+> > > > > domain, Shouldn't the genpd invoke the domain idle only after the
+> > > > > shared L2 cache controller is suspended?
+> > > > > Is there a way that we can put the L2 cache down while all cpus i=
+n the
+> > > > > same cluster are idle?
+> > > > > > [...]
+> > > > Sorry, I made some mistake in my second question.
+> > > > Update the question here:
+> > > > Is there a way that we can save the L2 cache states while all cpus =
+in the
+> > > > same cluster are idle and the cluster could be powered down?
+> > >
+> > > If the L2 cache is a consumer of the cluster, the consumer driver for
+> > > the L2 cache should register for genpd on/off notifiers.
+> > >
+> > > The device representing the L2 cache needs to be enabled for runtime
+> > > PM, to be taken into account correctly by the cluster genpd. In this
+> > > case, the device should most likely remain runtime suspended, but
+> > > instead rely on the genpd on/off notifiers to understand when
+> > > save/restore of the cache states should be done.
+> > >
+> > > Kind regards
+> > > Uffe
 
