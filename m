@@ -1,255 +1,337 @@
-Return-Path: <linux-kernel+bounces-178951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A4B38C59B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 18:29:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18D688C59B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 18:29:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80FD2282F53
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:29:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 882A01F23745
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:29:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FD5517F378;
-	Tue, 14 May 2024 16:29:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1E3217F388;
+	Tue, 14 May 2024 16:29:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="hn+rO/uW";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="UJ4LLRcu"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DwWhV/LI"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 746E52E644;
-	Tue, 14 May 2024 16:29:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715704152; cv=fail; b=Ydu2Qr+TYw8B1uz4QmjjT+Ia4KL++zGMQ7rr2qHBdW0+oSuNxMhWXNSiP6XFqiJbg6Of3nZYuqnNGRaEtkNmZiobmEAF24a9hZnUAav+ZAFlvu2uhDQ8OTzCCBMPxXP+/bjOXYw4Ppz0frwKWefao1+xj8uZRKbOrMNfXb6BrGg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715704152; c=relaxed/simple;
-	bh=4Ovpb6z0Qg3sAlnal77p3T40C6smd7zfYJkeoTft7Wo=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=DVWfrQuNWTDQkguaZ2C0hCveyo9OFc2zRKywk/aya0QVr43nrP/nMb6FgVCXo8IY6SDadG+rW+xZlRXMucrMy9IuZVb59aOxyqP4C9EweJYakCwhbBNg7Gkd0GgesLlQ+VXckNBZ37yceU8jsCNzj0oW0FO0cIU2GMQE+CtvVPk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=hn+rO/uW; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=UJ4LLRcu; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44ECgBbC008672;
-	Tue, 14 May 2024 16:28:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=message-id : date :
- subject : to : cc : references : from : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=corp-2023-11-20;
- bh=rXkS6KktaIzbMVTBz5mNLWIPldc5wq5FxLNpg3tedlA=;
- b=hn+rO/uWP/6bRrcoZaBqP6mJgxMd70bw3wrXnhQC0YKe+PUlhtr5Z2r4/bABqDFg7uEo
- wC5dNHDxBAShoVftlCjsTx45SVgXuBDJvvavt3RCNxM+X0vnir6ldlpJHQ5bel3hYdUc
- inBnNK7vA93aXf69tnxNMTvqYtm0bUtn34WmOR2gzd4dlfUCQRvTWe7pRAdhJH4icaqU
- qfOAB/3MepbX43/WHnY1lC46F4FlVI82ZySx1MlvCYbbFF5NVWPTewzWU0PmC0OoAQ8H
- +LxxNzimWMBYEGsIinMkvu/eZdr+2emBI3wSs4DTRWCRHaPlp+5cbAFnVTbAdzeGX7qP eg== 
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3y3tx8hrf9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 14 May 2024 16:28:40 +0000
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 44EFnt6A019232;
-	Tue, 14 May 2024 16:28:39 GMT
-Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2101.outbound.protection.outlook.com [104.47.70.101])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3y3r8523rc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 14 May 2024 16:28:39 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Ewx8d+jNEhKitrGQl4F034vD+CfwXBLHINgYjKER11ZvSm1yXo5UmEJckl/7tXbuZwOzo6gW9dtiE22MjYNhkDUYLNilfaKs8wcjzWevEq5rRiSM7kor3CaXvcpqLPCizzGWL+u1t16HBHg9EaDYNfYnGrw/V6URL+UHoo9mDUfkA71ViCRGZFl9b68k7BuycpgUsT1xF0nMspGDUHhJqbEoSvpUJJZUeYHHRovzxn8/MmSXqBa7F9sGgbL5eVYv2pW1XXhn3xLgiyzPqLPTvY+pq1Ntg1FDNymbXwYogtWBIbeL6gGD0/+TvJCPhtiDcdBZ3Gkzgu9L7Cl9N0vB8w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rXkS6KktaIzbMVTBz5mNLWIPldc5wq5FxLNpg3tedlA=;
- b=Kqr6IbfcAlxCzQVyS0RBbzYjzkkMh9Rw08OC/cIa0yzQ+zn8dGZuy/DMsU696F5zVgV6Hc9VwP30438jwUMxtH5PZxs4UJW8geMv+APYp+4q0cXy19H6OXshCq9Ep5e6tv9f+hKrLyvS0LlviiQgEvNTYQSPcePz2hlTZPAPe1mOvpforel0t4jp2h7vzxNnZFFUHC5jT712dKnXo+xQK1rjWCTQP2aM0sW9e3o6DmbHiuiVioWUvZVhhrVbKiTWCc6drRnz6d9RsvGZuV4YInOn3LtIWAb8sZArcl7crbjdqRUj9l94m2vHcG4BX3z3d7xR2WzItYEQto7AITVIfQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rXkS6KktaIzbMVTBz5mNLWIPldc5wq5FxLNpg3tedlA=;
- b=UJ4LLRcupIVux9LlWOVHu36jG9exHfCv07Sib9FO2DB4gFRVhgOawI2I+riha9Che8tzAX0dq5ISWEIyzHMQ2/WVoGkf7mN4jfW/xGQTW7uJH3YMbWCc4oQcOLxkmKyx37S2FKZi3DbdmcxQnGFYWI7tHgyWZSF6lCF0J5BQy8s=
-Received: from PH8PR10MB6290.namprd10.prod.outlook.com (2603:10b6:510:1c1::7)
- by CO1PR10MB4594.namprd10.prod.outlook.com (2603:10b6:303:9a::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Tue, 14 May
- 2024 16:27:58 +0000
-Received: from PH8PR10MB6290.namprd10.prod.outlook.com
- ([fe80::309b:26bb:11d5:cc76]) by PH8PR10MB6290.namprd10.prod.outlook.com
- ([fe80::309b:26bb:11d5:cc76%7]) with mapi id 15.20.7544.052; Tue, 14 May 2024
- 16:27:58 +0000
-Message-ID: <5beea8ed-b92b-4bee-b77b-4a3d57a5c001@oracle.com>
-Date: Tue, 14 May 2024 21:57:44 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5.15 000/168] 5.15.159-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
-        f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
-        rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com,
-        broonie@kernel.org, Vegard Nossum <vegard.nossum@oracle.com>,
-        Darren Kenny <darren.kenny@oracle.com>
-References: <20240514101006.678521560@linuxfoundation.org>
-Content-Language: en-US
-From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-In-Reply-To: <20240514101006.678521560@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: KL1PR01CA0065.apcprd01.prod.exchangelabs.com
- (2603:1096:820:5::29) To PH8PR10MB6290.namprd10.prod.outlook.com
- (2603:10b6:510:1c1::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0A5C17EBBB;
+	Tue, 14 May 2024 16:29:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715704186; cv=none; b=hlTz0sz5h+H2b/1MUuvBZvyx+0Zuf+bvkiFGkUH6WIXph7ydktIK4armtccdTU8L+NZ5NB/AF50r7sVoE+FVYuwckBXQ5yDDX7XwaWXwRa7EHdr3wAylp3Xo4ipfT2dPAjopARVpUzzF+AO6WNvDAI0UP+vwSSHZF5hDyg6U3MA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715704186; c=relaxed/simple;
+	bh=ZUtbBWgYRd0pANlIxZoHMSqXFkm9pcMBTd/oMd9ezVw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xqydf2P8P7ZDboCU15o5ZEnoEVzUbUTrPrp/8ZP8gTrerT5XsNNJ9ZCgirHyTlpz6UwQW1nGCik9I8TeRQ43XqQBv9IRr3UsDRhBY+ZITZ/tkv/IbKJpoa16U+ZRiHaCj2JQE/yAz0ZWcHFFZwJgJVrsR+jKLKy9ejsRF1eRHLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DwWhV/LI; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715704184; x=1747240184;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ZUtbBWgYRd0pANlIxZoHMSqXFkm9pcMBTd/oMd9ezVw=;
+  b=DwWhV/LI1MUkeWmiRlKcfj+5SqMAeKLj29mOXDUmJ6xeKYR350f/oN30
+   4gn6UsiGHuXLCC60dWOL5NN0X/So8wgtoslmHD5bmQuFQ3aM0LhKzDu28
+   XAXdHicozZ/664iIviESGoLFMCVrUFuooYR3loZoLIcp5rn7dG/1EuMQV
+   oa552HI6xHSTKLG1GUOn6TJ1JTGI2gBSHdl/0EuOxITW5DkdpXHOUfS7l
+   HRSSBWOEmUDoRBgFyGPGciBufdeWpNuP45jgqDNK0eNgEBwk+CTAX+tFj
+   5tEakh27KlHqLsE0VoJw/LgQ/de4lky5iqccxXBZWoZix9KaxPYqO1gd4
+   w==;
+X-CSE-ConnectionGUID: SOMYqSKzR6a56jRw7XQtPw==
+X-CSE-MsgGUID: i2nqJhR9R5iqYh+p6WEQ0w==
+X-IronPort-AV: E=McAfee;i="6600,9927,11073"; a="15537506"
+X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
+   d="scan'208";a="15537506"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2024 09:29:43 -0700
+X-CSE-ConnectionGUID: KhRgxgDvQx+xfZT4IMviVg==
+X-CSE-MsgGUID: ZKfdsTKPScagGKYhwbTIxg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
+   d="scan'208";a="61560966"
+Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 14 May 2024 09:29:40 -0700
+Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s6v21-000BcF-2z;
+	Tue, 14 May 2024 16:29:37 +0000
+Date: Wed, 15 May 2024 00:29:01 +0800
+From: kernel test robot <lkp@intel.com>
+To: admiyo@os.amperecomputing.com, Jeremy Kerr <jk@codeconstruct.com.au>,
+	Matt Johnston <matt@codeconstruct.com.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Adam Young <admiyo@os.amperecomputing.com>
+Subject: Re: [PATCH 1/3] mctp pcc: Implement MCTP over PCC Transport
+Message-ID: <202405150032.NpUqkzOG-lkp@intel.com>
+References: <20240513173546.679061-2-admiyo@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR10MB6290:EE_|CO1PR10MB4594:EE_
-X-MS-Office365-Filtering-Correlation-Id: f04aee43-9dae-446b-910f-08dc7432d0b0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|366007|376005|7416005;
-X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?OUxySWlhR2gxK1RnRmVYdk1rb2xLWitYS1RIMlFVbkhVazVCZVkrV2JXeTZj?=
- =?utf-8?B?aGJDT0llemZRYzFxd01vQkU1K3NFVjF3UFF3V1YyM2QrNGxOOXZLdUVQaDRD?=
- =?utf-8?B?NEdQZGE3TTRMQ3ErSjBOdXk5dlREYzZheWdGVFd3MktWWDNnVU5TNkp2cUZv?=
- =?utf-8?B?UVRIbHY5aElEVk1va3hFNW5SczUwR2ZReTNLK0lKVkxMQm5XMEhldURyQ2cy?=
- =?utf-8?B?a2Eva2Q2ZjgwcmtoUmphR2pKTjhkUExqTnA0WVQvMFBidVozQmhwT3FKNDVR?=
- =?utf-8?B?TUhRQjVyREFRT3J0N0lzNmtYbFhDNHQ2bWM5RXJ1M2k4OS9UY2hITnVsdkhv?=
- =?utf-8?B?a2lNUDFMVEhwY1BIWlZoTGVjTVoxTm9QL3NSVzdqbXpFaHdPbWowenhYUzRu?=
- =?utf-8?B?TW1mbW9uc2Jma3hkc0xNdEQweVJrWlVRV2FUaW9mcnQyWEVRamVsTUJjSG1J?=
- =?utf-8?B?THlHSjk3WUxWYWMzdXFVTEVZSGl1NVh5bm1CSThHRW40UU01bkhnK3BPRXd1?=
- =?utf-8?B?NElNc3dNaURQK25XcjIvYk9OZGJVZ3hvNTg4a1ZpdTFnTGhWT3p2dTdKM2FB?=
- =?utf-8?B?QUlqWW1DcWlXbUI4ZEI4OTB1OGNPenQrMHRVN0Z2elpsaE1XQ0dIUStzRURF?=
- =?utf-8?B?aTBwZ1FMT0hkamlOekYvQnhabzdVODI5L0ZZaU9UTmFRc1JQbTVlTnBkYi9P?=
- =?utf-8?B?djdWbzhHWW0zVWEwRlJ2RUVwZ2tkdEowTXcxb0JBRVE1TjRoanc5cnd3ZEdm?=
- =?utf-8?B?elFQdHJUb2g4TC9sd1M4RE0rejloa3ZIdGhoeHZaMFdmaklSdmpTUVdRWFBR?=
- =?utf-8?B?L3BuYTNqU1pTSkphSC9Tb2J5N3FzbTh0TDlpenN1YW1BNmlCcHhham01S245?=
- =?utf-8?B?eFJ0dTNFRlVVSDdIV2wvOU8wQTJBRC9LK0tHeUdrUVY3R0xhNnVGbnhFR0tw?=
- =?utf-8?B?bTQ4UzIvU2pnTk9vaTJkSldoNWIvZ1ZCMXpEZVVEdENDaFpHSUtGV1Jia1Y0?=
- =?utf-8?B?MUhNb1FMbXNBSUtOcEhSeFpzeHdlY0wyQmRSMkdaa0JtcnBGeXBsUVZqcjdt?=
- =?utf-8?B?V2FWQ3RjQjNQSmkzQ2pPdXRsMU0yTWQ5REVhY3VIUWNnWXY3akoxQjRmd0ta?=
- =?utf-8?B?Zk9JbnIraU5hc3Q4TzFPL3NyV3QwUVpnYUJLVUFpUCtab3QrSnFjU0xwbUww?=
- =?utf-8?B?Mi95NUg0Sy9acVFFV2N3ckhIY2h1N1M3cVNNNnowWnJ5OFdBWjNBeFpJeERs?=
- =?utf-8?B?QUFJL3Y3WDFDeDJUOWZJWGlVSHVmMG1Id29XeUJycVFNeGozUmlCZmRjOGgr?=
- =?utf-8?B?RC9lY0p2eDVvOUY1QWJwMjNSdlQyWjB1RDFwYjFZN3B4K2ZSemJmVWNBMFBM?=
- =?utf-8?B?aDVpVUdoQ2VEVEZOTmZRZUNDa0pQeU5DeU1oREVkalY1Kzhta3lSWmdBSjQx?=
- =?utf-8?B?QmNkTUE2WWFWQ0dnUCt1UkJFRFhhNnBEOEo4eGFRZXFYa0xoZXZkWW85c292?=
- =?utf-8?B?WnQwY2dwK1JQc3VmdDhISk8zOEVvdWVyM2MvK3NSSm40VXNSTkNtTnlHcFBx?=
- =?utf-8?B?cDVRa0luV2RKUEtveGplU0plRG04eVV6T2kzSEh4cHpNY012aU9PTkJKWldY?=
- =?utf-8?Q?/NtaBPzp7fqO74UUHQsX7IWtq4rV5srd0a1teXgV5vSo=3D?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR10MB6290.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(366007)(376005)(7416005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?YnE1Q0orcWRySWlCY0lsdU94SkZkaGlMcEdjdG1HdzdvTWkyd290Y3gyNEts?=
- =?utf-8?B?ZGR6M1ZEbHh0b1g3UEZHdENBQVlJS0ltZ2podm9lWVpGMGNIM2JETSsvWWhT?=
- =?utf-8?B?Q0ZnbzNxenB0SWZicHFUeWtoSW1MR3o3b3c5S2x2WEVpaC9yK1BqQlF1ZFB1?=
- =?utf-8?B?SzgxQWZsZjQ4ZXQrRks5K1dEZTc2M2hRZzJ5Z1k2UzZDWjZzZ3F3UzhrU0d5?=
- =?utf-8?B?QW5PYUdxd1NkUnpwTDZNNy9CRmNWOUM4N1lNRURydGdMT0luVVNuSHlLdVR2?=
- =?utf-8?B?MUNhekJURW1NV04wbldacnhVKzFKUzlYWVZTWXhBamJjeGcySkVia3BZRk05?=
- =?utf-8?B?OFV5MVR4WGxmd3hqcklnVWhoZVhLem95ZnlSejR6U0w3a2ZSaTdnSWxKU21U?=
- =?utf-8?B?QmQyMEt5cUUwVlcrZ2Fta2sybTg5M1NidHFIRkxyM2hSRmhMT1M4WkhpbWlV?=
- =?utf-8?B?a00wOGtLT0w5bGwzclBWckh4WVpxQVFEYytZWE9KUVM4Y3d4Z1drR2x4Wk5o?=
- =?utf-8?B?TUlBOGZTOEk2ekplaUxhdHNyN3Fkb2ZGYVozZThoWVBZMUlXVUx4YTVMWi9k?=
- =?utf-8?B?SzRPRkJFUFFPWVIyaFJRbTVHVVpuRlF6d2drNUlkam9jSEpQSFlMUDlYV1JM?=
- =?utf-8?B?ckVkZXdDVGFiYjNSRE54bndtSjFRM3g1NHhFVSt6MFBsT0M1WDF1VFhLWTJR?=
- =?utf-8?B?OVkxRnQxUUdNVzZuZ2FOOGpteHk5QXFEak9QUDd2ZGtuZEhhMXlOK1ZSMzQw?=
- =?utf-8?B?MkUvc3pLdDdlOXc0amJIRFJyRURLcm9NTDU3QURwZGVHSkVKZFBzajVOSjFJ?=
- =?utf-8?B?K1hwMXJpNlFldEFGdW5QckljN0lpRFFUajRROTNTKytUQnRZNUxHNXZlNUNE?=
- =?utf-8?B?ZGFrOVlzaWNWeitZL1lkY1krZDFEZ3FkRkJ1QVdrYnFJaFlIZDdtOFNFNUJp?=
- =?utf-8?B?aDJOVHUyMDk2WmJiQllVQ0k4Mys3ZkJlRnFoSmRmckkxSXVkZ1V6Qmo2d2t2?=
- =?utf-8?B?ZjlJME1BQnNvb2JkMXY3cEhweVVWUGRJRWhJaS9hWGRnRks1RmF4bUZQWTJ2?=
- =?utf-8?B?dVNQL2NsbDIwalBaYnhuVzFEbmN1dXFXaTlOOE5RWUpnM3FJVGsybjY2eUta?=
- =?utf-8?B?WjE4eGd6Nkx1dXRnU2tYNzF3VEM3NzBaRldiSlZqbmFld1JTSGROT1NyMER3?=
- =?utf-8?B?MVZiSW41dkJVTm1zaVp5VDAvKzgyRFdHS2owVFVCWUV2THVCNjVRUG1GZGlo?=
- =?utf-8?B?UVBvTFRsRkhsZlRFeno0Szl5TFpjdTFUem5HU2hpU2pIcHFTUXM4QXBaZCty?=
- =?utf-8?B?OUt3N3lWejJQUlVSUVV2eGh2ZzBOQkRnSTNCb29aSS8ySVpwR1ErbDdrOWk5?=
- =?utf-8?B?QjU1UWY5VjNPRUJFOVBPQUZidm1jWTBUR1JSRTUvbjZJajF3Q0lTaUtMUlZN?=
- =?utf-8?B?OUV4cDlSZk1lNWNFKzRvNUNXNEprYUZ0d0FNd0tURFRzeWh0UHAzTElHajhk?=
- =?utf-8?B?NWRIVkZDV2plWkMya0xFbkVvTDJmaW5CRkplRmJ5Qlh2L2J5Z3M3c2F5cXNX?=
- =?utf-8?B?M29Jek9TbUZJY3k0Zy8vdFlEQ2MwYzdnRmVuOStSN0thR3FVNlRqamlOVkl3?=
- =?utf-8?B?TkhBOWk3VDM5eVlUZi9jS2hXdVRwY0NDQURDejVhUGp3RDkzSEJyRVgyZXIw?=
- =?utf-8?B?MmsyaENlZUFMSys0dGEvUWluUGRGVnRrMFh2eXhSN1BHbE4zcjJ2ajRPa1lM?=
- =?utf-8?B?b0wxdW93S3VabWY1NUkvQWVxbHJMQWdBS3Q1QzlsYm1USUtodGw3dlJKNFRE?=
- =?utf-8?B?eW51bkRWdndGZWNja3pWSFlmWlMyQUdPaUw1dCtia29oY2pOM1Fqb05VOUdY?=
- =?utf-8?B?SlFFS3pGRkd5d1ZrSk5sRGxrNG1nMG11WEsyU1pLQWRBcFNiUG9TYkNmYXJm?=
- =?utf-8?B?dFBTNEFraUdNc05ybGRJaGp0bUQyUnVWQi8yODFtTW1BT2pPcWRMenlyam00?=
- =?utf-8?B?alFMV3BFZGVqQy9nNjdIQXZ3dzVtUGJnUVhDQUgvdjJPOEEzcjBRZmVicno4?=
- =?utf-8?B?TWJYMVowcmcrUjBsTmRXQlIwYnBPcWkvTFhtNDE0eTBTVFhLcmswMU9VSWdl?=
- =?utf-8?B?bXZVV0g0Rm93VjZhNTNhVVNaSWw1UUpLTktaWDZRUEtCb1FLbkQ2amFsMG1G?=
- =?utf-8?Q?+VR4UFi165DoQNNr+CKguq0=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
-	eA9rzOz3eZhOWsaAbaJLS0nd6VtIKw58NqGH4lfVkBmVjg+AI6oaMoL2l9qXwaIjQ7NkVFJUlXJTNkkKI7CjT3R68KzKLYLiuon3dLD23ioZVh7nfyneWv9K7Ptjt8fbJDOqs9AO9zJBwJtsHe43lktaraJn0KewN/ebJeKrNUMFhCkOyCMsYWjqRwvDvuMYJudfzoh5MS7N/d13g3aYJc4MMRZSRe4G9QGyW0G46Uwg8FyXxljsgmUm5tHLovzlwiMYexgffCGGfyelRuf/yXW3onbh9auCTvuxHYceH3QQ/IlM43ImDKnr2ImHPq1majH0+fZo/T1cBhxhacxfGe0+vHuLUU9hbkoRbIZ/x1fcTdcwB/cEhQuBVipjJNip7yhv5sLVDEp5GDmiXDX5BOHpiCFC+L8fprWIOtzrmp5eb4DGeKoJTUXIP18Hf3XbFJ9KhmQ/fUVOGyqO+sIxz5twN7gVFgC6CGFatNwXm5zi5z418Ji4KQ6Fj6v/okbK5m2Mjw+z0alNQMwEwtIHvQLKdj5XLpKsH9aLFFB6U9i3DJhzs1hv8YYqsh8mkgwzVO15c1oKaRVlyoBfqlrEQ/X0HZrZzkIIFL7XSS+z7H8=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f04aee43-9dae-446b-910f-08dc7432d0b0
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR10MB6290.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 May 2024 16:27:58.1156
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: R4+Y1ghP9+jvMG6FDzIXrJs7JAVU1J1AzMGU4xxd16zIW1S4wHmDHYAXvNbG9h2qqO/zIxxtVzgQyVj/xxvMFCxvAHZnQE+qE5dA/JZ93KkimxwiX3JFa+JgZiWeiPkm
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR10MB4594
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-14_09,2024-05-14_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0
- mlxlogscore=999 spamscore=0 suspectscore=0 mlxscore=0 malwarescore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2405010000 definitions=main-2405140115
-X-Proofpoint-GUID: uBpSMiJsnD6bmInPHzyzRTeiagB6uaJR
-X-Proofpoint-ORIG-GUID: uBpSMiJsnD6bmInPHzyzRTeiagB6uaJR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240513173546.679061-2-admiyo@os.amperecomputing.com>
 
-Hi Greg,
+Hi,
 
-On 14/05/24 15:48, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.15.159 release.
-> There are 168 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 16 May 2024 10:09:32 +0000.
-> Anything received after that time might be too late.
-> 
+kernel test robot noticed the following build errors:
 
-No problems seen on x86_64 and aarch64 with our testing.
+[auto build test ERROR on rafael-pm/linux-next]
+[also build test ERROR on rafael-pm/bleeding-edge linus/master v6.9 next-20240514]
+[cannot apply to horms-ipvs/master]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Tested-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+url:    https://github.com/intel-lab-lkp/linux/commits/admiyo-os-amperecomputing-com/mctp-pcc-Implement-MCTP-over-PCC-Transport/20240514-013734
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
+patch link:    https://lore.kernel.org/r/20240513173546.679061-2-admiyo%40os.amperecomputing.com
+patch subject: [PATCH 1/3] mctp pcc: Implement MCTP over PCC Transport
+config: alpha-allyesconfig (https://download.01.org/0day-ci/archive/20240515/202405150032.NpUqkzOG-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240515/202405150032.NpUqkzOG-lkp@intel.com/reproduce)
 
-Note: selftests have a build problem in 5.15.y, 5.10.y, 5.4.y, 4.19.y
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405150032.NpUqkzOG-lkp@intel.com/
 
-5.15.y revert: 
-https://lore.kernel.org/all/20240506084635.2942238-1-harshit.m.mogalapalli@oracle.com/
+All errors (new ones prefixed by >>):
 
-This is not a regression in this tag but from somewhere around 5.15.152 tag.
+   In file included from drivers/net/mctp/mctp-pcc.c:17:
+   include/acpi/acpi_drivers.h:72:43: warning: 'struct acpi_pci_root' declared inside parameter list will not be visible outside of this definition or declaration
+      72 | struct pci_bus *pci_acpi_scan_root(struct acpi_pci_root *root);
+         |                                           ^~~~~~~~~~~~~
+   drivers/net/mctp/mctp-pcc.c: In function 'mctp_pcc_client_rx_callback':
+   drivers/net/mctp/mctp-pcc.c:96:23: warning: variable 'buf_ptr_val' set but not used [-Wunused-but-set-variable]
+      96 |         unsigned long buf_ptr_val;
+         |                       ^~~~~~~~~~~
+   drivers/net/mctp/mctp-pcc.c: In function 'mctp_pcc_tx':
+   drivers/net/mctp/mctp-pcc.c:122:24: warning: variable 'buffer' set but not used [-Wunused-but-set-variable]
+     122 |         unsigned char *buffer;
+         |                        ^~~~~~
+   In file included from include/linux/device.h:15,
+                    from include/linux/acpi.h:14,
+                    from drivers/net/mctp/mctp-pcc.c:7:
+   drivers/net/mctp/mctp-pcc.c: In function 'mctp_pcc_driver_add':
+>> drivers/net/mctp/mctp-pcc.c:287:23: error: invalid use of undefined type 'struct acpi_device'
+     287 |         dev_info(&adev->dev, "Adding mctp_pcc device for HID  %s\n", acpi_device_hid(adev));
+         |                       ^~
+   include/linux/dev_printk.h:110:25: note: in definition of macro 'dev_printk_index_wrap'
+     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
+         |                         ^~~
+   drivers/net/mctp/mctp-pcc.c:287:9: note: in expansion of macro 'dev_info'
+     287 |         dev_info(&adev->dev, "Adding mctp_pcc device for HID  %s\n", acpi_device_hid(adev));
+         |         ^~~~~~~~
+>> drivers/net/mctp/mctp-pcc.c:287:70: error: implicit declaration of function 'acpi_device_hid'; did you mean 'acpi_device_dep'? [-Werror=implicit-function-declaration]
+     287 |         dev_info(&adev->dev, "Adding mctp_pcc device for HID  %s\n", acpi_device_hid(adev));
+         |                                                                      ^~~~~~~~~~~~~~~
+   include/linux/dev_printk.h:110:37: note: in definition of macro 'dev_printk_index_wrap'
+     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
+         |                                     ^~~~~~~~~~~
+   drivers/net/mctp/mctp-pcc.c:287:9: note: in expansion of macro 'dev_info'
+     287 |         dev_info(&adev->dev, "Adding mctp_pcc device for HID  %s\n", acpi_device_hid(adev));
+         |         ^~~~~~~~
+>> drivers/net/mctp/mctp-pcc.c:288:22: error: implicit declaration of function 'acpi_device_handle'; did you mean 'acpi_device_dep'? [-Werror=implicit-function-declaration]
+     288 |         dev_handle = acpi_device_handle(adev);
+         |                      ^~~~~~~~~~~~~~~~~~
+         |                      acpi_device_dep
+   drivers/net/mctp/mctp-pcc.c:288:20: warning: assignment to 'acpi_handle' {aka 'void *'} from 'int' makes pointer from integer without a cast [-Wint-conversion]
+     288 |         dev_handle = acpi_device_handle(adev);
+         |                    ^
+   drivers/net/mctp/mctp-pcc.c:293:58: error: invalid use of undefined type 'struct acpi_device'
+     293 |                 return create_mctp_pcc_netdev(adev, &adev->dev, inbox_index, outbox_index);
+         |                                                          ^~
+   drivers/net/mctp/mctp-pcc.c:295:22: error: invalid use of undefined type 'struct acpi_device'
+     295 |         dev_err(&adev->dev, "FAILURE to lookup PCC indexes from CRS");
+         |                      ^~
+   include/linux/dev_printk.h:110:25: note: in definition of macro 'dev_printk_index_wrap'
+     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
+         |                         ^~~
+   drivers/net/mctp/mctp-pcc.c:295:9: note: in expansion of macro 'dev_err'
+     295 |         dev_err(&adev->dev, "FAILURE to lookup PCC indexes from CRS");
+         |         ^~~~~~~
+   drivers/net/mctp/mctp-pcc.c: At top level:
+>> drivers/net/mctp/mctp-pcc.c:329:15: error: variable 'mctp_pcc_driver' has initializer but incomplete type
+     329 | static struct acpi_driver mctp_pcc_driver = {
+         |               ^~~~~~~~~~~
+>> drivers/net/mctp/mctp-pcc.c:330:10: error: 'struct acpi_driver' has no member named 'name'
+     330 |         .name = "mctp_pcc",
+         |          ^~~~
+   drivers/net/mctp/mctp-pcc.c:330:17: warning: excess elements in struct initializer
+     330 |         .name = "mctp_pcc",
+         |                 ^~~~~~~~~~
+   drivers/net/mctp/mctp-pcc.c:330:17: note: (near initialization for 'mctp_pcc_driver')
+>> drivers/net/mctp/mctp-pcc.c:331:10: error: 'struct acpi_driver' has no member named 'class'
+     331 |         .class = "Unknown",
+         |          ^~~~~
+   drivers/net/mctp/mctp-pcc.c:331:18: warning: excess elements in struct initializer
+     331 |         .class = "Unknown",
+         |                  ^~~~~~~~~
+   drivers/net/mctp/mctp-pcc.c:331:18: note: (near initialization for 'mctp_pcc_driver')
+>> drivers/net/mctp/mctp-pcc.c:332:10: error: 'struct acpi_driver' has no member named 'ids'
+     332 |         .ids = mctp_pcc_device_ids,
+         |          ^~~
+   drivers/net/mctp/mctp-pcc.c:332:16: warning: excess elements in struct initializer
+     332 |         .ids = mctp_pcc_device_ids,
+         |                ^~~~~~~~~~~~~~~~~~~
+   drivers/net/mctp/mctp-pcc.c:332:16: note: (near initialization for 'mctp_pcc_driver')
+>> drivers/net/mctp/mctp-pcc.c:333:10: error: 'struct acpi_driver' has no member named 'ops'
+     333 |         .ops = {
+         |          ^~~
+>> drivers/net/mctp/mctp-pcc.c:333:16: error: extra brace group at end of initializer
+     333 |         .ops = {
+         |                ^
+   drivers/net/mctp/mctp-pcc.c:333:16: note: (near initialization for 'mctp_pcc_driver')
+   drivers/net/mctp/mctp-pcc.c:333:16: warning: excess elements in struct initializer
+   drivers/net/mctp/mctp-pcc.c:333:16: note: (near initialization for 'mctp_pcc_driver')
+>> drivers/net/mctp/mctp-pcc.c:338:10: error: 'struct acpi_driver' has no member named 'owner'
+     338 |         .owner = THIS_MODULE,
+         |          ^~~~~
+   In file included from include/linux/printk.h:6,
+                    from include/asm-generic/bug.h:22,
+                    from arch/alpha/include/asm/bug.h:23,
+                    from include/linux/bug.h:5,
+                    from include/linux/thread_info.h:13,
+                    from include/asm-generic/preempt.h:5,
+                    from ./arch/alpha/include/generated/asm/preempt.h:1,
+                    from include/linux/preempt.h:79,
+                    from include/linux/spinlock.h:56,
+                    from include/linux/mmzone.h:8,
+                    from include/linux/gfp.h:7,
+                    from include/linux/slab.h:16,
+                    from include/linux/resource_ext.h:11,
+                    from include/linux/acpi.h:13:
+   include/linux/init.h:182:21: warning: excess elements in struct initializer
+     182 | #define THIS_MODULE ((struct module *)0)
+         |                     ^
+   drivers/net/mctp/mctp-pcc.c:338:18: note: in expansion of macro 'THIS_MODULE'
+     338 |         .owner = THIS_MODULE,
+         |                  ^~~~~~~~~~~
+   include/linux/init.h:182:21: note: (near initialization for 'mctp_pcc_driver')
+     182 | #define THIS_MODULE ((struct module *)0)
+         |                     ^
+   drivers/net/mctp/mctp-pcc.c:338:18: note: in expansion of macro 'THIS_MODULE'
+     338 |         .owner = THIS_MODULE,
+         |                  ^~~~~~~~~~~
+   drivers/net/mctp/mctp-pcc.c: In function 'mctp_pcc_mod_init':
+>> drivers/net/mctp/mctp-pcc.c:348:14: error: implicit declaration of function 'acpi_bus_register_driver' [-Werror=implicit-function-declaration]
+     348 |         rc = acpi_bus_register_driver(&mctp_pcc_driver);
+         |              ^~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/net/mctp/mctp-pcc.c:350:80: warning: suggest braces around empty body in an 'if' statement [-Wempty-body]
+     350 |                 ACPI_DEBUG_PRINT((ACPI_DB_ERROR, "Error registering driver\n"));
+         |                                                                                ^
+   drivers/net/mctp/mctp-pcc.c: In function 'mctp_pcc_mod_exit':
+>> drivers/net/mctp/mctp-pcc.c:358:9: error: implicit declaration of function 'acpi_bus_unregister_driver'; did you mean 'platform_unregister_drivers'? [-Werror=implicit-function-declaration]
+     358 |         acpi_bus_unregister_driver(&mctp_pcc_driver);
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+         |         platform_unregister_drivers
+   drivers/net/mctp/mctp-pcc.c: At top level:
+>> drivers/net/mctp/mctp-pcc.c:329:27: error: storage size of 'mctp_pcc_driver' isn't known
+     329 | static struct acpi_driver mctp_pcc_driver = {
+         |                           ^~~~~~~~~~~~~~~
+   cc1: some warnings being treated as errors
 
-Reverts for other stable releases:
-5.10.y: 
-https://lore.kernel.org/all/20240506084926.2943076-1-harshit.m.mogalapalli@oracle.com/
-5.4.y: 
-https://lore.kernel.org/all/20240506085044.2943648-1-harshit.m.mogalapalli@oracle.com/
-4.19.y: 
-https://lore.kernel.org/all/20240506105724.3068232-1-harshit.m.mogalapalli@oracle.com/
 
-Could you please queue these up for future releases.
+vim +287 drivers/net/mctp/mctp-pcc.c
 
+   278	
+   279	static int mctp_pcc_driver_add(struct acpi_device *adev)
+   280	{
+   281		int inbox_index;
+   282		int outbox_index;
+   283		acpi_handle dev_handle;
+   284		acpi_status status;
+   285		struct lookup_context context = {0, 0, 0};
+   286	
+ > 287		dev_info(&adev->dev, "Adding mctp_pcc device for HID  %s\n", acpi_device_hid(adev));
+ > 288		dev_handle = acpi_device_handle(adev);
+   289		status = acpi_walk_resources(dev_handle, "_CRS", lookup_pcct_indices, &context);
+   290		if (ACPI_SUCCESS(status)) {
+   291			inbox_index = context.inbox_index;
+   292			outbox_index = context.outbox_index;
+   293			return create_mctp_pcc_netdev(adev, &adev->dev, inbox_index, outbox_index);
+   294		}
+   295		dev_err(&adev->dev, "FAILURE to lookup PCC indexes from CRS");
+   296		return -EINVAL;
+   297	};
+   298	
+   299	/* pass in adev=NULL to remove all devices
+   300	 */
+   301	static void mctp_pcc_driver_remove(struct acpi_device *adev)
+   302	{
+   303		struct mctp_pcc_ndev *mctp_pcc_dev = NULL;
+   304		struct list_head *ptr;
+   305		struct list_head *tmp;
+   306	
+   307		list_for_each_safe(ptr, tmp, &mctp_pcc_ndevs) {
+   308			mctp_pcc_dev = list_entry(ptr, struct mctp_pcc_ndev, head);
+   309			if (!adev || mctp_pcc_dev->acpi_device == adev) {
+   310				struct net_device *ndev;
+   311	
+   312				mctp_pcc_dev->cleanup_channel(mctp_pcc_dev->out_chan);
+   313				mctp_pcc_dev->cleanup_channel(mctp_pcc_dev->in_chan);
+   314				ndev = mctp_pcc_dev->mdev.dev;
+   315				if (ndev)
+   316					mctp_unregister_netdev(ndev);
+   317				list_del(ptr);
+   318				if (adev)
+   319					break;
+   320			}
+   321		}
+   322	};
+   323	
+   324	static const struct acpi_device_id mctp_pcc_device_ids[] = {
+   325		{ "DMT0001", 0},
+   326		{ "", 0},
+   327	};
+   328	
+ > 329	static struct acpi_driver mctp_pcc_driver = {
+ > 330		.name = "mctp_pcc",
+ > 331		.class = "Unknown",
+ > 332		.ids = mctp_pcc_device_ids,
+ > 333		.ops = {
+   334			.add = mctp_pcc_driver_add,
+   335			.remove = mctp_pcc_driver_remove,
+   336			.notify = NULL,
+   337		},
+ > 338		.owner = THIS_MODULE,
+   339	
+   340	};
+   341	
+   342	static int __init mctp_pcc_mod_init(void)
+   343	{
+   344		int rc;
+   345	
+   346		pr_info("initializing MCTP over PCC\n");
+   347		INIT_LIST_HEAD(&mctp_pcc_ndevs);
+ > 348		rc = acpi_bus_register_driver(&mctp_pcc_driver);
+   349		if (rc < 0)
+   350			ACPI_DEBUG_PRINT((ACPI_DB_ERROR, "Error registering driver\n"));
+   351		return rc;
+   352	}
+   353	
+   354	static __exit void mctp_pcc_mod_exit(void)
+   355	{
+   356		pr_info("Removing MCTP over PCC transport driver\n");
+   357		mctp_pcc_driver_remove(NULL);
+ > 358		acpi_bus_unregister_driver(&mctp_pcc_driver);
+   359	}
+   360	
 
-Thanks,
-Harshit
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.159-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
