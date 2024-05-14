@@ -1,136 +1,136 @@
-Return-Path: <linux-kernel+bounces-178490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE3368C4E70
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 11:11:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0772A8C4E73
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 11:13:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A216282325
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 09:11:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B13C41F22A70
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 09:13:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6156423776;
-	Tue, 14 May 2024 09:11:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4721028DA4;
+	Tue, 14 May 2024 09:13:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tc9nh6CM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="vnM7OYNI"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98BD62D638;
-	Tue, 14 May 2024 09:11:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7FCF208CE;
+	Tue, 14 May 2024 09:13:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715677900; cv=none; b=pBXitaoJoTolaxknMIW/b9SCmjfVoxkNyKgB2sRw+jtmO4OCZj0hZq9ovJgVzE/i5c7rVky4FZYXT3CY0wCA5S6mED45gLyxjr3ljvoVRew00JX3ykBilsc2xN4v8zTjcU7F48YSnGqFTsLoTLeQhWjRlKnsVPPY5IMCgJDVbpg=
+	t=1715678005; cv=none; b=VWp1bXUkRFUgW8lY7N/HJVbJ+CYICho3L8wbV4oYireD/Ht29wjGD4MGZza/1BWDUCCKebUhnf57xZ0SMeZ+5csdyOcZRnXardX2WdH2QrjA30x+OuKKhahbx9BkkkloNMOk25fcRx3opSYS8HGmMjcV3OlcsQDLoO6SlXn8nSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715677900; c=relaxed/simple;
-	bh=F9CTk7uU8n6fRJ0Xnv0+mixI59zdsXErdDdwI6mj28s=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=fZasuqNYojwVN6suU8phJ6VsPps8X+1i/xkas7ri3OhIzd43EBFqlQwjCaY95oe85WPmsGwvEVlhJb6bpVJnOVwPwz7Dnk9H5KAO66yFn1Zs+EpT+DQdUKRhDrAQeBZ4ipu73W4Ok6cCgYxn4DKclH7+I+qGgFaja29Pcc2dSfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tc9nh6CM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C9ECC2BD10;
-	Tue, 14 May 2024 09:11:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715677900;
-	bh=F9CTk7uU8n6fRJ0Xnv0+mixI59zdsXErdDdwI6mj28s=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=tc9nh6CMDgVd2IwyTwSXs3N/M4z+bOY6K2jFB/XgVkmcQnKWtC2R0rbdUkdOnT9SR
-	 tFeH+8DccEt4tWjRGORHb93EOCeja30X0pJJBJqvgtUH/ysxCOllUQe4DM4l+BewDN
-	 VHULZ3VrMUk+4OGi6pguUp2Uv63spPGdV+FRgrix78XLhrtGHciD1aQ0GSd5MkWXAi
-	 T/zMf0OFinRG6GYhS4NwSlTnrj0pm315p4oqduOa1cPbug6c915lmJ3kT1t32O8TEd
-	 TMx/WOwz4yokvlVp4sfBau1w/TRwpN5di1w6dYnKSiANhidqt69sKjRwZ6GgD9u42I
-	 SGgKn7n5lUM9w==
-Message-ID: <31769e8d-ab52-4f4c-84ca-2f546287d006@kernel.org>
-Date: Tue, 14 May 2024 11:11:36 +0200
+	s=arc-20240116; t=1715678005; c=relaxed/simple;
+	bh=thgfflq3vyytkFirvfAMIlSAofGiCK0BkXWApSixBZ4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WgROkwx6G4QCp4Df0EteGFP1u18Bzbu4FGAnbLQWd0sJmfmDKTwZPBp9e2A0h68D9hiMoh7CrziUaiskgDW8oRQAMzs6OHzjwviN2FlKH1EKC2/nf4If6kl2OyIpcdiyNxIrM8Um/6WnRXWfbKZuq+CSwcUGWBeomn7vg3ZEJHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=vnM7OYNI; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from localhost.localdomain (85-222-111-42.dynamic.chello.pl [85.222.111.42])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	(Authenticated sender: lukma@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 4F05288291;
+	Tue, 14 May 2024 11:13:19 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1715678000;
+	bh=uo2Z30cLQBXU/idKopCpSV4pE9+tgaq/9xcBaJbOqgU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=vnM7OYNI4t24ZKK3i1Wi4E//MRMGxO+cJ96r1Tn8YiCRRIGYrAMMMVdDIg4xsuFry
+	 zMhPzOJ4c8JEYmt1e7ITm4aaOc8OiGBhDCUlJ4D8itYVJ9iVTybZDBReO3akVAnlth
+	 vo2cEUqb82PTN2rg+NG7nWIxeOYYhakM9jvQNAdc/we/iXkWg+ejaH5HWIEnPeJJqJ
+	 4VeG8FcACxDfDWAOBKXw8iFqH5p97Y48Ooi6UeOYHoh8/HC5CqXn0PSW+HparRbI7+
+	 OchEa6iDmZILT+htaaHBJdan9qjvLa6vIDtFmqiD3k1GTddzSuhJB1ZYAGuxHyFlyi
+	 TWL2ltvdj3sQQ==
+From: Lukasz Majewski <lukma@denx.de>
+To: Jakub Kicinski <kuba@kernel.org>,
+	netdev@vger.kernel.org,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Eric Dumazet <edumazet@google.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	Tristram.Ha@microchip.com,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Ravi Gunasekaran <r-gunasekaran@ti.com>,
+	Simon Horman <horms@kernel.org>,
+	Nikita Zhandarovich <n.zhandarovich@fintech.ru>,
+	Murali Karicheri <m-karicheri2@ti.com>,
+	Arvid Brodin <Arvid.Brodin@xdin.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	"Ricardo B. Marliere" <ricardo@marliere.net>,
+	Casper Andersson <casper.casan@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	Lukasz Majewski <lukma@denx.de>
+Subject: [PATCH] net: hsr: Setup and delete proxy prune timer only when RedBox is enabled
+Date: Tue, 14 May 2024 11:13:06 +0200
+Message-Id: <20240514091306.229444-1-lukma@denx.de>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: mfd: syscon: Add
- img,boston-platform-regs
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>, Lee Jones <lee@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Paul Burton <paulburton@kernel.org>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mips@vger.kernel.org
-References: <20240513-boston-syscon-v1-0-93ff557d3548@flygoat.com>
- <20240513-boston-syscon-v1-1-93ff557d3548@flygoat.com>
- <c7317ea0-fcd6-40e0-9d90-bb1ff349c0e0@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <c7317ea0-fcd6-40e0-9d90-bb1ff349c0e0@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-On 14/05/2024 11:08, Krzysztof Kozlowski wrote:
-> On 13/05/2024 20:58, Jiaxun Yang wrote:
->> This compatible has been used in arch/mips/boot/dts/img/boston.dts
->> for a while but never documented properly.
->>
->> Add it to simple syscon binding.
->>
->> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
->> ---
->>  Documentation/devicetree/bindings/mfd/syscon.yaml | 1 +
-> 
-> It is documented in clock/img,boston-clock.txt. Please fix/convert/work
-> on that.
+The timer for removing entries in the ProxyNodeTable shall be only active
+when the HSR driver works as RedBox (HSR-SAN).
 
-No, that's different device.
+Moreover, the obsolete del_timer_sync() is replaced with
+timer_delete_sync().
 
-Anyway, this is wrong - does no work with your second patch. Please test
-them before sending.
+This patch improves fix from commit 3c668cef61ad
+("net: hsr: init prune_proxy_timer sooner") as the prune node
+timer shall be setup only when HSR RedBox is supported in the node.
 
-You need proper, dedicated schema.
+Signed-off-by: Lukasz Majewski <lukma@denx.de>
+---
+ net/hsr/hsr_device.c  | 2 +-
+ net/hsr/hsr_netlink.c | 3 ++-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-Best regards,
-Krzysztof
+diff --git a/net/hsr/hsr_device.c b/net/hsr/hsr_device.c
+index e6904288d40d..d234e4134a9d 100644
+--- a/net/hsr/hsr_device.c
++++ b/net/hsr/hsr_device.c
+@@ -589,7 +589,6 @@ int hsr_dev_finalize(struct net_device *hsr_dev, struct net_device *slave[2],
+ 
+ 	timer_setup(&hsr->announce_timer, hsr_announce, 0);
+ 	timer_setup(&hsr->prune_timer, hsr_prune_nodes, 0);
+-	timer_setup(&hsr->prune_proxy_timer, hsr_prune_proxy_nodes, 0);
+ 
+ 	ether_addr_copy(hsr->sup_multicast_addr, def_multicast_addr);
+ 	hsr->sup_multicast_addr[ETH_ALEN - 1] = multicast_spec;
+@@ -629,6 +628,7 @@ int hsr_dev_finalize(struct net_device *hsr_dev, struct net_device *slave[2],
+ 
+ 		hsr->redbox = true;
+ 		ether_addr_copy(hsr->macaddress_redbox, interlink->dev_addr);
++		timer_setup(&hsr->prune_proxy_timer, hsr_prune_proxy_nodes, 0);
+ 		mod_timer(&hsr->prune_proxy_timer,
+ 			  jiffies + msecs_to_jiffies(PRUNE_PROXY_PERIOD));
+ 	}
+diff --git a/net/hsr/hsr_netlink.c b/net/hsr/hsr_netlink.c
+index 898f18c6da53..c1bd1e6eb955 100644
+--- a/net/hsr/hsr_netlink.c
++++ b/net/hsr/hsr_netlink.c
+@@ -129,8 +129,9 @@ static void hsr_dellink(struct net_device *dev, struct list_head *head)
+ 	struct hsr_priv *hsr = netdev_priv(dev);
+ 
+ 	del_timer_sync(&hsr->prune_timer);
+-	del_timer_sync(&hsr->prune_proxy_timer);
+ 	del_timer_sync(&hsr->announce_timer);
++	if (hsr->redbox)
++		timer_delete_sync(&hsr->prune_proxy_timer);
+ 
+ 	hsr_debugfs_term(hsr);
+ 	hsr_del_ports(hsr);
+-- 
+2.20.1
 
 
