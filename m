@@ -1,95 +1,180 @@
-Return-Path: <linux-kernel+bounces-178663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76B798C5614
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:40:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 142BB8C5619
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:42:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AD871C21C22
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:40:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F493282B7F
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:42:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 211446EB4E;
-	Tue, 14 May 2024 12:40:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2461C6CDA3;
+	Tue, 14 May 2024 12:42:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rmamt7X6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HdUBJOcy"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C2756DCE3;
-	Tue, 14 May 2024 12:40:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A4BE42A98;
+	Tue, 14 May 2024 12:42:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715690429; cv=none; b=cGCzgqFs86e5MlAN/20QVGAcxVSugLfe12+oRxj9rWe/TraQMlsqb9A1emXVqS65fPHSBAjtVNKqXboX4l1Kq1GM+2b7PZD1omFcYYw7lu70WRyIbevNrJKxHs73aBVU5lLhAwZAo/033qp3yMSCCtKiUOGvPDOWYAgI7gACZz8=
+	t=1715690548; cv=none; b=lUIfwZaJGv54NMhEsUXb+qDI+Z1a263fvPRMIV2vhc5jdDDgt7FyKj6WsvUbcqJ3NDQeUbsXXGZ2S9iOVxlLgAtPj87XnZcQQTiayEaDVl3ohC99OMJphIPRg/LLJh2wuMKYO4jkxtqEH/D2+3Jql905MvNZazXN94FKJS3MFJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715690429; c=relaxed/simple;
-	bh=T9Ltzm8KKpY7+v7syaJKnm9A1DzbhS7LgReD1pOSZ6k=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=EMULd9yUuX08hV1yJ/jl4Cw7chwtGraTHuXCE+p8lOdWHmGG8Q8nH3F0UfyeMX1yeI3hAabwm9/Q/AniGbfor0fJyx2Wb1JU56nqUIKnA5RTYC00IfI5YxUXH+ieeDQ5ZRB+cYR84XackfOpJj/Fxnzdf5IkL3bK6Dh9/Ifgc00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rmamt7X6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id CFFF8C32781;
-	Tue, 14 May 2024 12:40:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715690428;
-	bh=T9Ltzm8KKpY7+v7syaJKnm9A1DzbhS7LgReD1pOSZ6k=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=rmamt7X6n5jefVglSoMHsi8NJVDg+DY3c1AV1ZBR0oOZ//kuUulkxnz9eoBVh1x/H
-	 e0eArBlPoxFE8Fmu/jKZN4P0n+g3lHuUHtLm2i1bAjkO1wAd54HWchztmKoYXOgl3z
-	 f/wQlfDal8zYkgaWWNXOxcFDGdypGXENX71JL+Go/VPB6lKqj5SPztYSuQcBsG6vTE
-	 /1vixt5YTiMHewUGPyzF+RQRYlBgfYyo66HhHxSkoCIkjRFXoW/H/3uxMk30aCJi77
-	 5EegKpd7LoZVriZj6MjVC99bMoqTuwoVyCrtgGeufq4hAP7csLXUKXpcQozGyAtNHg
-	 KFPklutMOld/Q==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id B843CC43339;
-	Tue, 14 May 2024 12:40:28 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1715690548; c=relaxed/simple;
+	bh=Hzybv0ZnTrpR4AWXuutVofcBl76owQvTU7LlgMcj/9M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Iln9Q+//le6OsqAkCfGyRkEj59X0ZFcQhjmy6qOn921wQzwQ6Mt+8bOFKFv20iKCecctyEhoXC965Y6zwVsN3y4QMdIpTNUZdEzy4yvV/sX4ZKPhCwbie+xPw1RI1lSzoqkYPF98r9foUP/flsWyj8AfFu2xBbBssaNDNftk40Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HdUBJOcy; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-6f457853950so4318221b3a.0;
+        Tue, 14 May 2024 05:42:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715690546; x=1716295346; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=l1YeAwgqmGFiWDHi7YEeyDDdEvor4QpkzTYylwt6Hos=;
+        b=HdUBJOcy7YGZ+GGNLDJwNtKPARHWh9SeZJ3qR72qGtORwapHpDdgEbjPLZl8tvucs8
+         ZQ/jSES+Mrbw+w1x93wiFNVQFa76DLea1Sf1pwM8tf0hVgsn/HP43gy17kiGrrRzmjWp
+         ygDs21kKxF1HG5dWym8MhcTFgMWoClO8iEsL2ADavCvA5Vbkq+eL2F0cODOAo5oB7ev3
+         ckQqyemCPWLGZCOPbmxVoRlTwN6k/h1i1KRFJi3z/9vVPrMHJh7y/fseerC/DdrnQxk5
+         Vul9LLJgi7j372u7Vbj8Oy/fFE/yWZIsgv+BcH2u7yxzrPDiFJtuxOPKL3HaVpg7SjVR
+         Uxtw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715690546; x=1716295346;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=l1YeAwgqmGFiWDHi7YEeyDDdEvor4QpkzTYylwt6Hos=;
+        b=Tf+km28Spt/N/jShEOiXXDi+5umz7xrONnk26/v8D6y9KWKdsuyS5jBiki45yZ215K
+         Yy9DNDUgHwk+Cv+tNn5ja2Nq47dwUKDxDIX7fOzi0Cc7yzD2MzLtS1GA2AtCyM03ciFP
+         q3np0XRcyb5B9HPSaYO3hTsqwC/r4j3SHuk/qB0C0LKqjzNvkJ0Guf90tM+S9k/z9Nie
+         iLxAA8GAK8wsNRj+VVzu7xMVyq6cwa3f4SST4NwFavPUizXOMQg4VC20NpqH8/ewcd+V
+         P1nApm5alZuYfKhFl0XrhQ/Fn0hSKm1WaPOdjdB+38IOZwGCIabDopisdXKhpWV3OXJR
+         jXCA==
+X-Forwarded-Encrypted: i=1; AJvYcCXXfCPmRe2bFuPMlJb6q63spxfbTPnDbQtRiNXIfRHQsGIpoC1F9+8mm7C+LFr8LF0dzxbmgqW76OVE2uz8Ud8sdlqSstBb3dVtdhYZA7if3RqY8ZTO8Y8K7wKx5UkVedcN9umOqvLnRg==
+X-Gm-Message-State: AOJu0YxG2nt+upx/LoNke4QZFpULnHbpfwcfjgLlOSCwf3zTKcbBWFOu
+	1Db/Y2CwhmGRQjqaQH0kI7BHyTB/27gPf+xCUGt3e1msljSYt9PN
+X-Google-Smtp-Source: AGHT+IEuZgBfRlCELuju1acZdAR4f9lKleu9hlxeVkY1yJpmYFzfQ6+FCyCrOVgQNrs6ma/IXaYl9w==
+X-Received: by 2002:a05:6a20:3cab:b0:1af:fff9:1c59 with SMTP id adf61e73a8af0-1affff91d50mr6018016637.2.1715690546454;
+        Tue, 14 May 2024 05:42:26 -0700 (PDT)
+Received: from rigel (60-241-107-82.static.tpgi.com.au. [60.241.107.82])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2b300d9sm9009831b3a.215.2024.05.14.05.42.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 May 2024 05:42:26 -0700 (PDT)
+Date: Tue, 14 May 2024 20:42:21 +0800
+From: Kent Gibson <warthog618@gmail.com>
+To: Hagar Hemdan <hagarhem@amazon.com>
+Cc: Norbert Manthey <nmanthey@amazon.de>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gpio: prevent potential speculation leaks in
+ gpio_device_get_desc()
+Message-ID: <20240514124221.GA76024@rigel>
+References: <20240514122601.15261-1-hagarhem@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] net: micrel: Fix receiving the timestamp in the frame for
- lan8841
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171569042875.21890.7113805948748540771.git-patchwork-notify@kernel.org>
-Date: Tue, 14 May 2024 12:40:28 +0000
-References: <20240513192157.3917664-1-horatiu.vultur@microchip.com>
-In-Reply-To: <20240513192157.3917664-1-horatiu.vultur@microchip.com>
-To: Horatiu Vultur <horatiu.vultur@microchip.com>
-Cc: andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- richardcochran@gmail.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240514122601.15261-1-hagarhem@amazon.com>
 
-Hello:
+On Tue, May 14, 2024 at 12:26:01PM +0000, Hagar Hemdan wrote:
+> Users can call the gpio_ioctl() interface to get information about gpio
+> chip lines.
 
-This patch was applied to netdev/net.git (main)
-by David S. Miller <davem@davemloft.net>:
+Indeed they can, assuming they have access to the gpiochip device. So what?
 
-On Mon, 13 May 2024 21:21:57 +0200 you wrote:
-> The blamed commit started to use the ptp workqueue to get the second
-> part of the timestamp. And when the port was set down, then this
-> workqueue is stopped. But if the config option NETWORK_PHY_TIMESTAMPING
-> is not enabled, then the ptp_clock is not initialized so then it would
-> crash when it would try to access the delayed work.
-> So then basically by setting up and then down the port, it would crash.
-> The fix consists in checking if the ptp_clock is initialized and only
-> then cancel the delayed work.
-> 
-> [...]
+> Lines on the chip are identified by an offset in the range
+> of [0,chip.lines).
+> Offset is copied from user and then used as an array index to get
+> the gpio descriptor without sanitization.
 
-Here is the summary with links:
-  - [net] net: micrel: Fix receiving the timestamp in the frame for lan8841
-    https://git.kernel.org/netdev/net/c/aea27a92a41d
+Yup, and it returns an -EINVAL, via gpio_device_get_desc(), if it is out
+of range.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+>
+> This change ensures that the offset is sanitized by
+> using "array_index_nospec" to mitigate any possibility of speculative
+> information leaks.
+>
 
+Speculative leaks of what?  The size of the array?
+That is explicitly public knowledge - if they call GPIO_GET_CHIPINFO_IOCTL
+it will tell them.
 
+> This bug was discovered and resolved using Coverity Static Analysis
+> Security Testing (SAST) by Synopsys, Inc.
+>
+> Fixes: aad955842d1c ("gpiolib: cdev: support GPIO_V2_GET_LINEINFO_IOCTL and GPIO_V2_GET_LINEINFO_WATCH_IOCTL")
+> Signed-off-by: Hagar Hemdan <hagarhem@amazon.com>
+> ---
+> Only compile tested, no access to HW.
+> ---
+>  drivers/gpio/gpiolib-cdev.c | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
+> index 9dad67ea2597..215c03e6808f 100644
+> --- a/drivers/gpio/gpiolib-cdev.c
+> +++ b/drivers/gpio/gpiolib-cdev.c
+> @@ -20,6 +20,7 @@
+>  #include <linux/kfifo.h>
+>  #include <linux/module.h>
+>  #include <linux/mutex.h>
+> +#include <linux/nospec.h>
+>  #include <linux/overflow.h>
+>  #include <linux/pinctrl/consumer.h>
+>  #include <linux/poll.h>
+> @@ -2170,7 +2171,8 @@ static int lineevent_create(struct gpio_device *gdev, void __user *ip)
+>  	lflags = eventreq.handleflags;
+>  	eflags = eventreq.eventflags;
+>
+> -	desc = gpio_device_get_desc(gdev, offset);
+> +	desc = gpio_device_get_desc(gdev,
+> +				array_index_nospec(offset, gdev->ngpio));
+
+Moving an out of bounds index INTO bounds here is totally wrong.
+That is NOT what the user asked for, and in that case they should get an
+error, as they currently do, no an actual different line - which is what
+this change does.
+
+NACK.
+
+Cheers,
+Kent.
+
+>  	if (IS_ERR(desc))
+>  		return PTR_ERR(desc);
+>
+> @@ -2477,7 +2479,8 @@ static int lineinfo_get_v1(struct gpio_chardev_data *cdev, void __user *ip,
+>  		return -EFAULT;
+>
+>  	/* this doubles as a range check on line_offset */
+> -	desc = gpio_device_get_desc(cdev->gdev, lineinfo.line_offset);
+> +	desc = gpio_device_get_desc(cdev->gdev,
+> +				array_index_nospec(lineinfo.line_offset, cdev->gdev->ngpio));
+>  	if (IS_ERR(desc))
+>  		return PTR_ERR(desc);
+>
+> @@ -2514,7 +2517,8 @@ static int lineinfo_get(struct gpio_chardev_data *cdev, void __user *ip,
+>  	if (memchr_inv(lineinfo.padding, 0, sizeof(lineinfo.padding)))
+>  		return -EINVAL;
+>
+> -	desc = gpio_device_get_desc(cdev->gdev, lineinfo.offset);
+> +	desc = gpio_device_get_desc(cdev->gdev,
+> +				array_index_nospec(lineinfo.offset, cdev->gdev->ngpio));
+>  	if (IS_ERR(desc))
+>  		return PTR_ERR(desc);
+>
+> --
+> 2.40.1
+>
 
