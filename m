@@ -1,142 +1,256 @@
-Return-Path: <linux-kernel+bounces-178545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A1008C4F41
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:42:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 201068C4F46
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:43:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BCC71C20B90
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 10:42:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43DA81C2092D
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 10:43:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F58B13DDAB;
-	Tue, 14 May 2024 10:08:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13BB013E028;
+	Tue, 14 May 2024 10:11:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="IkZtOLmk"
-Received: from mail-40130.protonmail.ch (mail-40130.protonmail.ch [185.70.40.130])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BwnlICT/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56BCA64CCC;
-	Tue, 14 May 2024 10:08:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E2B666B5E;
+	Tue, 14 May 2024 10:11:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715681302; cv=none; b=ARBOJRmpSfxF2GhMxgibbKwz2OXfU7NuR9VQQoTRUCI19yD/90KXH/cdBvYrH2YghtYUFPbmCutrA8IsAObcF6tV+UjyP1z17dJFzDs2Kuncl+npCEATf4nLJn1Zg3nPZ/OodEj0PEFNJFRX9roYYUJzPGOOo0D9tGNLS+S00ig=
+	t=1715681510; cv=none; b=Kbb4Sr2T5m8S1/Y6K7UgEhIIPRu5g8ldlBY/KMjVj54Nz0OeDYF49lu5q0qlE8GN5HLLMSfT8O2ZxuRdmeLS4sZGBzPOhTRI28RwaxwKI+xjAUPGsfu6GmeLnkaWS5xMvejya+9uDA1TVfWdsi0IgXea7XXCdJn63+gQaIfe7fk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715681302; c=relaxed/simple;
-	bh=QyKYD3PwPSFlPeTWf1A6/mdsJu/IVZlMnqS0/afEXBA=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=huUI9fyTh5yHg44kXyQsULDqS/RtId4bQbvnWf9OMTPJYpmc0zxaEaCIUFwfut/T/MayGZ7ilt4XrPbDeJXpoMGYzXGcDPC38Z6TkB5k4SAO1I3lr4qTiI1TF/mKF3E90nH/zXU29mhOj3GgBD+mwxA7fd/cPUXD4ucE8ycHRIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=IkZtOLmk; arc=none smtp.client-ip=185.70.40.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1715681292; x=1715940492;
-	bh=pDQ/GZuN6/xzmKr4VIr850YYvdaKXfcBGi96KdzKmCs=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=IkZtOLmkcBx1CuMDvnT4u5THBvtDjLxi5uL5N9xM3lWpy/X2S6Lau3LNPzfodDras
-	 zIJexQyRrWhfd+fWQPANY4nsrYGZ3FoL38tEwMU/KEVQjJvZNRGlk69yokNgiW8lPG
-	 /NIbM289FXLpq9ltjROYy2nYFgwKzLT6GmOPY0qSx/hCeXZqYptHDmRwECp+5EuY5B
-	 uhnrNd8UKvsoFHsrAGOx0r3Jgx2N32cg+LPG5QyGl530fsKk6Z4YpYANtu1C1xi0nj
-	 9fYlnRcB+wReQj3vmz6CXdgLm3WRBSdXPdDBu56XYEmvACli58kuiaK4P4Gz8wBMMa
-	 mI+Ae52wWREBQ==
-Date: Tue, 14 May 2024 10:08:06 +0000
-To: "marcel@holtmann.org" <marcel@holtmann.org>, "luiz.dentz@gmail.com" <luiz.dentz@gmail.com>
-From: "SoloSaravanan@proton.me" <SoloSaravanan@proton.me>
-Cc: "linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH] Bluetooth: btusb: Add device 13d3:3606 as MT7921 device
-Message-ID: <JXwMChGqaA3oLmTz9wy26FlzjhHGqOWSO0HRbgYAeoy7jX3jcAaHmbwR6Dl-aMdkPzhdHO_kgV4MqoYahTdhn39W_GCOo-GbP1kU0C6kx2o=@proton.me>
-Feedback-ID: 84438951:user:proton
-X-Pm-Message-ID: a01415225bb1c36746ba7ebddec821c4357c5703
+	s=arc-20240116; t=1715681510; c=relaxed/simple;
+	bh=uKQmHevj9qgPxSEUKRxkpZkuCmA3D/KeuYFmxfhUbEU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pQSbp99hEzpgKGhlZw1ivsyJBUCI1FG/h5fJJ5FRh8VSy6cLQuL6Q03l3L0AtAWNor2Qf4rN2j830MffnNNb25/wEt9hLbVivxyJuKU+jStvoyGVwZk6wCiiD5d2ArDbGE+XcWbSBq9cwzNQKggpLEeO76hJudGEEmBIKowsDkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BwnlICT/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD3FCC2BD10;
+	Tue, 14 May 2024 10:11:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715681509;
+	bh=uKQmHevj9qgPxSEUKRxkpZkuCmA3D/KeuYFmxfhUbEU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=BwnlICT/+bN+Wr7PMITNaw/PGTvG98iAfF3073CDGjWzTxFnguKCoUtA8eTXz2KOM
+	 ENuMlXWyQygcaI/ixhkb6+WCFSt/hm7kH10vPV3yxjvvo/FpOXCG0dYynC3ijkdypp
+	 yxEpPGyAB1dg7ysEYIFwJlUK+I9MuUU7Owkr/8xSOEN+s8hMjCKttNonPQ70mKxVNm
+	 V50X2FosDN1QtiR5KwKHARb/QMQkjrQttsNfw6xa2ix+KDmzF33ioTz10Ui1H5G5BI
+	 tgaB3UGffX9PDbQ1cJ/7W27NkWTWIFAYeGKxD8FSEqkPGAS1hWQhslibLfpNopX2qf
+	 Y0YspErr7AQBg==
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a59a9d66a51so1255312466b.2;
+        Tue, 14 May 2024 03:11:49 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXkJepZTmvoy8psnJNVwAXkR7OQ8P9WfLEOKyurYO1XJnOS8e/cQ3jpn7lJ1v9T8riNGzrZjYk6DZ29wzRGWix13egAgW9gE/j7T42ivGPoHfMpJL6wL3oxyCICZWqN37LYIIfBWKcFlA==
+X-Gm-Message-State: AOJu0YxNPe3OZQuT0pXsN5XNkAtScejXhH7rnozi3WDxuvp7t8/rI/Ce
+	zK8jCog7llDsFBARio76k/gPZ5hZBZIhGKaMeebSr2Fwa+YkaGeNZ8llDdd9AS8ZEqRu0UBsQAl
+	Ni4l4unhWUqYVvP4HM3IfwxLDHdg=
+X-Google-Smtp-Source: AGHT+IG2SJLZeJv9E723RPMYkjAggoAqnNUcuBjZL5KPzQ7ueRWKLf2UEtaPgF8M+K9KWHrfkkwXldPNn9gLjNl+WUk=
+X-Received: by 2002:a50:a40c:0:b0:56d:c928:ad76 with SMTP id
+ 4fb4d7f45d1cf-5734d67e8d0mr8314326a12.26.1715681508279; Tue, 14 May 2024
+ 03:11:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20240514073232.3694867-1-chenhuacai@loongson.cn>
+In-Reply-To: <20240514073232.3694867-1-chenhuacai@loongson.cn>
+From: Guo Ren <guoren@kernel.org>
+Date: Tue, 14 May 2024 18:11:36 +0800
+X-Gmail-Original-Message-ID: <CAJF2gTTUmpm+aTQL7gNyLEe57X=v-it3MT5TOCViCOEiEyraBA@mail.gmail.com>
+Message-ID: <CAJF2gTTUmpm+aTQL7gNyLEe57X=v-it3MT5TOCViCOEiEyraBA@mail.gmail.com>
+Subject: Re: [PATCH] LoongArch: Add irq_work support via self IPIs
+To: Huacai Chen <chenhuacai@loongson.cn>
+Cc: Arnd Bergmann <arnd@arndb.de>, Huacai Chen <chenhuacai@kernel.org>, loongarch@lists.linux.dev, 
+	linux-arch@vger.kernel.org, Xuefeng Li <lixuefeng@loongson.cn>, 
+	Xuerui Wang <kernel@xen0n.name>, Jiaxun Yang <jiaxun.yang@flygoat.com>, 
+	linux-kernel@vger.kernel.org, loongson-kernel@lists.loongnix.cn
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-From 6c5cec6d7a84c140958786bcb082d94f1b147ece Mon Sep 17 00:00:00 2001
-From: SoloSaravanan <SoloSaravanan@proton.me>
-Date: Tue, 14 May 2024 15:01:29 +0530
-Subject: [PATCH] Bluetooth: btusb: Add device 13d3:3606 as MT7921 device
+On Tue, May 14, 2024 at 3:32=E2=80=AFPM Huacai Chen <chenhuacai@loongson.cn=
+> wrote:
+>
+> Add irq_work support for LoongArch via self IPIs. This make it possible
+> to run works in hardware interrupt context, which is a prerequisite for
+> NOHZ_FULL.
+>
+> Implement:
+>  - arch_irq_work_raise()
+>  - arch_irq_work_has_interrupt()
+>
+> Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+> ---
+>  arch/loongarch/include/asm/hardirq.h  |  3 ++-
+>  arch/loongarch/include/asm/irq_work.h | 10 ++++++++++
+>  arch/loongarch/include/asm/smp.h      |  2 ++
+>  arch/loongarch/kernel/paravirt.c      |  6 ++++++
+>  arch/loongarch/kernel/smp.c           | 14 ++++++++++++++
+>  5 files changed, 34 insertions(+), 1 deletion(-)
+>  create mode 100644 arch/loongarch/include/asm/irq_work.h
+>
+> diff --git a/arch/loongarch/include/asm/hardirq.h b/arch/loongarch/includ=
+e/asm/hardirq.h
+> index d41138abcf26..1d7feb719515 100644
+> --- a/arch/loongarch/include/asm/hardirq.h
+> +++ b/arch/loongarch/include/asm/hardirq.h
+> @@ -12,11 +12,12 @@
+>  extern void ack_bad_irq(unsigned int irq);
+>  #define ack_bad_irq ack_bad_irq
+>
+> -#define NR_IPI 2
+> +#define NR_IPI 3
+>
+>  enum ipi_msg_type {
+>         IPI_RESCHEDULE,
+>         IPI_CALL_FUNCTION,
+> +       IPI_IRQ_WORK,
+>  };
+>
+>  typedef struct {
+> diff --git a/arch/loongarch/include/asm/irq_work.h b/arch/loongarch/inclu=
+de/asm/irq_work.h
+> new file mode 100644
+> index 000000000000..d63076e9160d
+> --- /dev/null
+> +++ b/arch/loongarch/include/asm/irq_work.h
+> @@ -0,0 +1,10 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#ifndef _ASM_LOONGARCH_IRQ_WORK_H
+> +#define _ASM_LOONGARCH_IRQ_WORK_H
+> +
+> +static inline bool arch_irq_work_has_interrupt(void)
+> +{
+> +       return IS_ENABLED(CONFIG_SMP);
+I think it is "return true," or it will cause the warning.
 
-Add VendorID 13d3 & ProdID 3606 for MediaTek MT7921 USB Bluetooth chip.
+void __init tick_nohz_init(void)
+{
+        int cpu, ret;
 
-The information in /sys/kernel/debug/usb/devices about the Bluetooth device=
- is listed as the below.
+        if (!tick_nohz_full_running)
+                return;
 
-T: Bus=3D03 Lev=3D01 Prnt=3D01 Port=3D09 Cnt=3D03 Dev#=3D 4 Spd=3D480 MxCh=
-=3D 0 D: Ver=3D 2.10 Cls=3Def(misc ) Sub=3D02 Prot=3D01 MxPS=3D64 #Cfgs=3D =
-1 P: Vendor=3D13d3 ProdID=3D3606 Rev=3D 1.00
-S: Manufacturer=3DMediaTek Inc.
-S: Product=3DWireless_Device
-S: SerialNumber=3D000000000
-C:* #Ifs=3D 3 Cfg#=3D 1 Atr=3De0 MxPwr=3D100mA
-A: FirstIf#=3D 0 IfCount=3D 3 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 I:* If#=3D=
- 0 Alt=3D 0 #EPs=3D 3 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=3Dbtusb E: =
-Ad=3D81(I) Atr=3D03(Int.) MxPS=3D 16 Ivl=3D125us
-E: Ad=3D82(I) Atr=3D02(Bulk) MxPS=3D 512 Ivl=3D0ms
-E: Ad=3D02(O) Atr=3D02(Bulk) MxPS=3D 512 Ivl=3D0ms
-I:* If#=3D 1 Alt=3D 0 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
-=3Dbtusb
-E: Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D 0 Ivl=3D1ms
-E: Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D 0 Ivl=3D1ms
-I: If#=3D 1 Alt=3D 1 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=3D=
-btusb
-E: Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D 9 Ivl=3D1ms
-E: Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D 9 Ivl=3D1ms
-I: If#=3D 1 Alt=3D 2 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=3D=
-btusb
-E: Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D 17 Ivl=3D1ms
-E: Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D 17 Ivl=3D1ms
-I: If#=3D 1 Alt=3D 3 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=3D=
-btusb
-E: Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D 25 Ivl=3D1ms
-E: Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D 25 Ivl=3D1ms
-I: If#=3D 1 Alt=3D 4 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=3D=
-btusb
-E: Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D 33 Ivl=3D1ms
-E: Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D 33 Ivl=3D1ms
-I: If#=3D 1 Alt=3D 5 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=3D=
-btusb
-E: Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D 49 Ivl=3D1ms
-E: Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D 49 Ivl=3D1ms
-I: If#=3D 1 Alt=3D 6 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=3D=
-btusb
-E: Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D 63 Ivl=3D1ms
-E: Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D 63 Ivl=3D1ms
-I:* If#=3D 2 Alt=3D 0 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
-=3D(none)
-E: Ad=3D8a(I) Atr=3D03(Int.) MxPS=3D 64 Ivl=3D125us
-E: Ad=3D0a(O) Atr=3D03(Int.) MxPS=3D 64 Ivl=3D125us
-I: If#=3D 2 Alt=3D 1 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=3D=
-(none)
-E: Ad=3D8a(I) Atr=3D03(Int.) MxPS=3D 512 Ivl=3D125us
-E: Ad=3D0a(O) Atr=3D03(Int.) MxPS=3D 512 Ivl=3D125us
+        /*
+         * Full dynticks uses IRQ work to drive the tick rescheduling on sa=
+fe
+         * locking contexts. But then we need IRQ work to raise its own
+         * interrupts to avoid circular dependency on the tick.
+         */
+        if (!arch_irq_work_has_interrupt()) {
+                pr_warn("NO_HZ: Can't run full dynticks because arch
+doesn't support IRQ work self-IPIs\n");
+                cpumask_clear(tick_nohz_full_mask);
+                tick_nohz_full_running =3D false;
+                return;
+        }
 
-Signed-off-by: SoloSaravanan <SoloSaravanan@proton.me>
----
- drivers/bluetooth/btusb.c | 3 +++
- 1 file changed, 3 insertions(+)
+Others LGTM!
 
-diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index effa54629..65e4b7fc6 100644
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -615,6 +615,9 @@ static const struct usb_device_id quirks_table[] =3D {
- =09{ USB_DEVICE(0x0e8d, 0x0608), .driver_info =3D BTUSB_MEDIATEK |
- =09=09=09=09=09=09     BTUSB_WIDEBAND_SPEECH |
- =09=09=09=09=09=09     BTUSB_VALID_LE_STATES },
-+=09{ USB_DEVICE(0x13d3, 0x3606), .driver_info =3D BTUSB_MEDIATEK |
-+=09=09=09=09=09=09     BTUSB_WIDEBAND_SPEECH |
-+=09=09=09=09=09=09     BTUSB_VALID_LE_STATES },
-=20
- =09/* MediaTek MT7922A Bluetooth devices */
- =09{ USB_DEVICE(0x0489, 0xe0d8), .driver_info =3D BTUSB_MEDIATEK |
+Reviewed-by: Guo Ren <guoren@kernel.org>
+
+> +}
+> +
+> +#endif /* _ASM_LOONGARCH_IRQ_WORK_H */
+> diff --git a/arch/loongarch/include/asm/smp.h b/arch/loongarch/include/as=
+m/smp.h
+> index 278700cfee88..50db503f44e3 100644
+> --- a/arch/loongarch/include/asm/smp.h
+> +++ b/arch/loongarch/include/asm/smp.h
+> @@ -69,9 +69,11 @@ extern int __cpu_logical_map[NR_CPUS];
+>  #define ACTION_BOOT_CPU        0
+>  #define ACTION_RESCHEDULE      1
+>  #define ACTION_CALL_FUNCTION   2
+> +#define ACTION_IRQ_WORK                3
+>  #define SMP_BOOT_CPU           BIT(ACTION_BOOT_CPU)
+>  #define SMP_RESCHEDULE         BIT(ACTION_RESCHEDULE)
+>  #define SMP_CALL_FUNCTION      BIT(ACTION_CALL_FUNCTION)
+> +#define SMP_IRQ_WORK           BIT(ACTION_IRQ_WORK)
+>
+>  struct secondary_data {
+>         unsigned long stack;
+> diff --git a/arch/loongarch/kernel/paravirt.c b/arch/loongarch/kernel/par=
+avirt.c
+> index 1633ed4f692f..4272d2447445 100644
+> --- a/arch/loongarch/kernel/paravirt.c
+> +++ b/arch/loongarch/kernel/paravirt.c
+> @@ -2,6 +2,7 @@
+>  #include <linux/export.h>
+>  #include <linux/types.h>
+>  #include <linux/interrupt.h>
+> +#include <linux/irq_work.h>
+>  #include <linux/jump_label.h>
+>  #include <linux/kvm_para.h>
+>  #include <linux/static_call.h>
+> @@ -97,6 +98,11 @@ static irqreturn_t pv_ipi_interrupt(int irq, void *dev=
+)
+>                 info->ipi_irqs[IPI_CALL_FUNCTION]++;
+>         }
+>
+> +       if (action & SMP_IRQ_WORK) {
+> +               irq_work_run();
+> +               info->ipi_irqs[IPI_IRQ_WORK]++;
+> +       }
+> +
+>         return IRQ_HANDLED;
+>  }
+>
+> diff --git a/arch/loongarch/kernel/smp.c b/arch/loongarch/kernel/smp.c
+> index 0dfe2388ef41..7366de776f6e 100644
+> --- a/arch/loongarch/kernel/smp.c
+> +++ b/arch/loongarch/kernel/smp.c
+> @@ -13,6 +13,7 @@
+>  #include <linux/cpumask.h>
+>  #include <linux/init.h>
+>  #include <linux/interrupt.h>
+> +#include <linux/irq_work.h>
+>  #include <linux/profile.h>
+>  #include <linux/seq_file.h>
+>  #include <linux/smp.h>
+> @@ -70,6 +71,7 @@ static DEFINE_PER_CPU(int, cpu_state);
+>  static const char *ipi_types[NR_IPI] __tracepoint_string =3D {
+>         [IPI_RESCHEDULE] =3D "Rescheduling interrupts",
+>         [IPI_CALL_FUNCTION] =3D "Function call interrupts",
+> +       [IPI_IRQ_WORK] =3D "IRQ work interrupts",
+>  };
+>
+>  void show_ipi_list(struct seq_file *p, int prec)
+> @@ -217,6 +219,13 @@ void arch_smp_send_reschedule(int cpu)
+>  }
+>  EXPORT_SYMBOL_GPL(arch_smp_send_reschedule);
+>
+> +#ifdef CONFIG_IRQ_WORK
+> +void arch_irq_work_raise(void)
+> +{
+> +       mp_ops.send_ipi_single(smp_processor_id(), ACTION_IRQ_WORK);
+> +}
+> +#endif
+> +
+>  static irqreturn_t loongson_ipi_interrupt(int irq, void *dev)
+>  {
+>         unsigned int action;
+> @@ -234,6 +243,11 @@ static irqreturn_t loongson_ipi_interrupt(int irq, v=
+oid *dev)
+>                 per_cpu(irq_stat, cpu).ipi_irqs[IPI_CALL_FUNCTION]++;
+>         }
+>
+> +       if (action & SMP_IRQ_WORK) {
+> +               irq_work_run();
+> +               per_cpu(irq_stat, cpu).ipi_irqs[IPI_IRQ_WORK]++;
+> +       }
+> +
+>         return IRQ_HANDLED;
+>  }
+>
+> --
+> 2.43.0
+>
+
+
 --=20
-2.45.0
-
-
+Best Regards
+ Guo Ren
 
