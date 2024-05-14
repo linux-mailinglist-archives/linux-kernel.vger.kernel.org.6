@@ -1,241 +1,289 @@
-Return-Path: <linux-kernel+bounces-178590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F11B08C5201
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 13:34:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6C838C522D
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 13:35:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AECD28296A
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 11:33:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EEA7282865
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 11:35:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7EDD1272AE;
-	Tue, 14 May 2024 11:15:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A573112D77F;
+	Tue, 14 May 2024 11:20:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y++PrCAI"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="S5v6QpNc"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F195A7174F
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 11:15:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715685324; cv=fail; b=fSiC7jFjhl3jzqsX18z++dR3OGb4jVu+0yAnQwgTBXNc8Ijlhf92ktDMhHn3PFT7Rv4Tq1WVJebyeX35i/PobTaHSyV0G5LA5G0OiBuSI1lE97pZmZrpyxC6dCJUZQCvW78dOz39Eag1mVblHkZT+9UDlBvAvSOMUl1P5NuxcJs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715685324; c=relaxed/simple;
-	bh=YKjtDShw1uyiod7MM7RWIUxdHKooop6rtzaw1TzIKDQ=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=buXXbY710VVVShhbnUq+nSFOFN6zOWJPeLd1gqBBP3asYVFg1OmZRxyxtNOwcEV10SHhRKuCGlvp+VLBdyxKfIpf5eO5M4Jd22GSVF83fp1Q2zIxE19xBjD/q6EOxfN4DcHcYzGgsYwdT2kYDMg/HpUNpt8OfUX/v0x0tl4Y/rA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y++PrCAI; arc=fail smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715685323; x=1747221323;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=YKjtDShw1uyiod7MM7RWIUxdHKooop6rtzaw1TzIKDQ=;
-  b=Y++PrCAIGGvpggNhd785fhBgLTG/rap3ykwQLG3/QbFTsJ2rw/5fQH0/
-   JMiYHTuNltLYptCtz+f51MqLQHVUJV5KH0chNm6rkQvCpZx1RTJE0Lz0M
-   dccEWLqq9it3I9xyjUb6pg8GIvo2UfPH60ba4NQX6Uuh8RwqhQ1mkIZPL
-   UT+0idBHuOzbqoWrn4iB3L/8Xe+vjlcY89w4qGe2uxrynuc/fpLzVzygU
-   ent8/ti+RHHBfuYevfzBfu+dns6zED4jwC2EzaotQkrusQN/R3r7Yw+i+
-   3tMA4ee9lwFbDcV/0zBbUM9XvEqZeCxErP9fIpQKfJaOwIy9wgc5deQcX
-   w==;
-X-CSE-ConnectionGUID: GWedc5uGR/KaKb7MLpISng==
-X-CSE-MsgGUID: ydIUGN1jTMiruauXTwgdAQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11072"; a="11826042"
-X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
-   d="scan'208";a="11826042"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2024 04:15:22 -0700
-X-CSE-ConnectionGUID: YlL1Vf6FSMyzaP/IsM944Q==
-X-CSE-MsgGUID: ttHX3rZ0TsKd/fz+o8i4bQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
-   d="scan'208";a="35542788"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by orviesa004.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 14 May 2024 04:15:22 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Tue, 14 May 2024 04:15:20 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35 via Frontend Transport; Tue, 14 May 2024 04:15:20 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.168)
- by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Tue, 14 May 2024 04:15:20 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=DX5EInigE9UuaLIDXiKnejcVMN5i8Ser/RhAMuDJhaDSfyos/E1f3dsJN5t3UZLsiVXQKg1mLzPT4/pwGVXC5LdotGdxt1U33Ej09tqiYRlt0jHQ6HJvsIyFrTOlvZpXmp6P/0FlGCtct4jg/vnDFimIVG8wOOJFf1HzkAgn/uiuGS9ci2eW9WcGteWambGq3PRtKMfeF1KbiyF9KuH699M2LzZmOaOCwRaqq2H6mpVY2QHoKSZtYnXsZFN23AhArnVK91oCH/PcBwBF6cUhAP76BbKrOs97muMDS6plUk1zucpN6py5sT7jHMmTR2gA4PIZ2dtphHKEaHGytSFJNA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=t5FzGOyrIo9L3UMD/ONfZ8xc2Yvn4b349jLMlbIvVeM=;
- b=LWHLWDF+YO17LJaCPynoZrhgz4yXpFiQvxgq+KlZaMy29LFL4yf5UfInI86ZfJy5GzDyjoUb4dnxN+6KAzHIAu7GqyKvGR7TN3/Wdl2UNBVqBrZ6wv7BG2kk4y5+KW6qrc1Dv8U1gZHFLq9NqvaWw1mG0NxfBBLZ57MGvnWmllKJAFBilnAfGJMbAhXuQfrdqkvBHG3aeMiixjbOHqJNwWxF+KxCFc0j9TVxeXEMW6vEZBizTPu6or4fmB2Y3Wdfouq+ZeZi6D9bRd0yn11oQNtz/DVHEAQSAb1lB7ZuPs1W0RXrT+Jy5Y4XFcmuyqjTphwnWWyoTuqNmSZDmFBKKw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DM4PR11MB6020.namprd11.prod.outlook.com (2603:10b6:8:61::19) by
- SA0PR11MB4701.namprd11.prod.outlook.com (2603:10b6:806:9a::10) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7544.55; Tue, 14 May 2024 11:15:19 +0000
-Received: from DM4PR11MB6020.namprd11.prod.outlook.com
- ([fe80::4af6:d44e:b6b0:fdce]) by DM4PR11MB6020.namprd11.prod.outlook.com
- ([fe80::4af6:d44e:b6b0:fdce%5]) with mapi id 15.20.7544.052; Tue, 14 May 2024
- 11:15:18 +0000
-Date: Tue, 14 May 2024 19:14:58 +0800
-From: Chen Yu <yu.c.chen@intel.com>
-To: Swapnil Sapkal <swapnil.sapkal@amd.com>
-CC: <linux-kernel@vger.kernel.org>, <mingo@redhat.com>,
-	<peterz@infradead.org>, <torvalds@linux-foundation.org>,
-	<juri.lelli@redhat.com>, <dietmar.eggemann@arm.com>, <rostedt@goodmis.org>,
-	<mgorman@suse.de>, <bristot@redhat.com>, <vschneid@redhat.com>,
-	<vincent.guittot@linaro.org>, <gautham.shenoy@amd.com>,
-	<sshegde@linux.ibm.com>, <kprateek.nayak@amd.com>
-Subject: Re: [RESEND][PATCH v3 1/1] sched: Report the different kinds of
- imbalances in /proc/schedstat
-Message-ID: <ZkNHshuGhY6nBGmJ@chenyu5-mobl2>
-References: <20240514044445.1409976-1-swapnil.sapkal@amd.com>
- <20240514044445.1409976-2-swapnil.sapkal@amd.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240514044445.1409976-2-swapnil.sapkal@amd.com>
-X-ClientProxiedBy: KU1PR03CA0035.apcprd03.prod.outlook.com
- (2603:1096:802:19::23) To DM4PR11MB6020.namprd11.prod.outlook.com
- (2603:10b6:8:61::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8509E53E30;
+	Tue, 14 May 2024 11:20:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715685610; cv=none; b=pSlkvp7QqrCOcaVKV8UajrJz50/xqd+TD1BjKc0aZQdknt6wTQr6JtUI9JV7CozAH3HrFBnlsTSLzvtU6aujmmo2k7AZfFzSDR3RSd4dt0cApbRWx4MOoLMM+qwBiBxTiGcNKghGoMOuPCbSsd5BNYWyig078fpSEWKTxFJWy0E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715685610; c=relaxed/simple;
+	bh=XyFKyyciBLAngkmK68/fR6eZNy1P+tJIELRli0u+emk=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=IxWFcPbWnuC5uWjdvKcW0iB8lbcV8E9umQKOQJsMGowEdW3fmaHXK8VNu6YetfIavO5G+6tEUjdKv3mALBQWS/piqXnIXQOgRQZkxb40wtDdHZNqICK7qpUi2vKEoKueN/gmX+G5qzHN50sLQMegOXbENLdUyj43cpPySvrxEsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=S5v6QpNc; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44E849JD024016;
+	Tue, 14 May 2024 11:20:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:from:to:cc:references
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=SVlVPEfTD6tQYDnw8/PDRROwMu37COEhPHGsPjiczE8=; b=S5
+	v6QpNc5J/S87wlPpBEYsCUpGKhSBFJufkWmrUbqUTqIfQu3BBDgSAJkfg3LxnDAh
+	kBm3a9/2SGaQrLzsgUbFZxYrDOdk1YA2wI6fg4+UAUqdM3sxxhyDS9j17sPJuQWM
+	zzL7db2Z7QCDihHpHvu0LN6mXVqgCtpYfoMSYBsYDKvMD+TSs3uDdlEl1ahHDoof
+	yPmOjVN8cwpjJFGAdHj41xUE87One225MOcBG3pyxCJTw2EqPhM+JumIV3lgwOL3
+	fFXnf3R4PtMoLFJcbMcqGX26MsG/nsN4NCmCKP3VNogjsHdsBtHhVutw1TYlUoUY
+	jnVugIsd++dCGZnpb1UA==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y2125e2pp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 14 May 2024 11:20:04 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44EBK2Of004764
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 14 May 2024 11:20:02 GMT
+Received: from [10.131.33.37] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 14 May
+ 2024 04:19:41 -0700
+Message-ID: <d113adc9-2192-44af-a5df-7bbaa6907ac8@quicinc.com>
+Date: Tue, 14 May 2024 16:49:06 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR11MB6020:EE_|SA0PR11MB4701:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3fb363b6-b21a-466b-45b7-08dc7407235d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|1800799015|376005|7416005;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?rfXv8/a7rBQcQ80bsdBOyyB+7hla1n+DHxGSrzQWbswiRu4JSwDyzN+/7NK4?=
- =?us-ascii?Q?jYT0O43nhFttvEm12puKrggHoTzA6AionOppT2U53wTh7DjVX6nVk8rsuwie?=
- =?us-ascii?Q?1S5tEekqP1ILoMrgIfd+zTX6etCFbGR0puVZiHDwp6rSEErALHx8f7yC4Dxd?=
- =?us-ascii?Q?lML/TxHRaHH7i2RLovV9Af4k5FvsoDnzajllMBI2lFE2F8h349A61VUJJBQW?=
- =?us-ascii?Q?Q4bq67nsMKBAB7os3V9hfCQmJ9SKwUxjfFGqRENQ8N0bA9c7wB3S0JvkbGYG?=
- =?us-ascii?Q?7lnN2AMORIMCXFU75tzysKKFLEfi+mVg+EaukrbtmG+s0EWhskJEZZdL827M?=
- =?us-ascii?Q?tmcwxLRow0y82HiQn+3Kxv+/LxArRDOrZIZ7UYV1wdcxhGI8YFrZkCOXyuJ6?=
- =?us-ascii?Q?4KWAuLWntP9hf3WpiwYj4jrYYUmPAWBT/KuQw1fQPtcaAoia+xEO/ta8l6Qt?=
- =?us-ascii?Q?MoiKeW+NsD99qpVQ/mB00VnCDl3DAC3Re5sSuvmmVcGpvtHri7tHQ+Fur7zZ?=
- =?us-ascii?Q?9tMahKtsAdwvRxOb3XvOn7nTvVqPSe4md12nnbma58oO+qCKpY6+WZR5owp7?=
- =?us-ascii?Q?HqVm3vIc1lHPYAcgJVp41DaLrvWVZWfAydk25XQARXhIHYa7wSdVqHnPtQqN?=
- =?us-ascii?Q?VPAJ9t2RFG3rgB0H0c2vZEXyTU+7I8LoKAnx9D5V00OX9uGus9rA4LjGOZty?=
- =?us-ascii?Q?AdpV8V40w+cjn27lLJMHNr6dMwtwaTtTXYcpfsLIhwjYzOkkcCpY7sqQ9uYw?=
- =?us-ascii?Q?Ddj4YgLLwuhn+lCufh/zVla3FoxHMM8lwv68KV+/tj1boKzl30hx+wWrDRfc?=
- =?us-ascii?Q?X8IOuT46hptl9exzuU0EmUR4pkIAJXm8HRToMNFL2JkDLAa9n/oCdBNfsUI9?=
- =?us-ascii?Q?n8Mn90MCqh2M9Xwzm+4ecYqMYFAYFckIqHqWa9Niu/3C3SjZmKNfpwlj1isQ?=
- =?us-ascii?Q?q4FCpndsGlu+T6zeLLmo0Rbb7Wj8Z8UeNlzM92/cyFF9JutDCRPj5O1798oy?=
- =?us-ascii?Q?lqmlabJH7yCF1CKiw5fXG8Glx4rbelxDSGBKdYIFHwls80EWEDt3kAk0QBAL?=
- =?us-ascii?Q?0RDkMbqlJSkEablXjvrHcdOROcZXEamTosT3Im8U/i4/F+nwnGuxP6pyxY11?=
- =?us-ascii?Q?RAvPLw/Uzo/Tgu6tW57iOBeL8nSFDTuPTqrcFmKAItpRb+/Wncd1HIHdW21g?=
- =?us-ascii?Q?Wvxjb3L/FsLIyO5uAr/WJmVhiwwtrVpzYz6XjQPUEPomZXPJOwS+FE5fk+MR?=
- =?us-ascii?Q?zrQWjAg9Vx2hx0lAsWryPOdL6k8XrezMLFmToG7xWw=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB6020.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(376005)(7416005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?nmKR00iYCPY0oiF1Pf6aSQ3gOfdZo2pu5HYVQMFRTm7tPc+hgmBAaFR18C1F?=
- =?us-ascii?Q?s1Cuy6mx404B6j9EMbXpqaKDmERXL+RuaFySVRPcnAoRh7NFRw/bmlXxSLs0?=
- =?us-ascii?Q?S0BN0bjIg8PFSTfsU9dpDyoefz36enq3j0B9OrnSoUZ71aG6zc+D/eoVL0c1?=
- =?us-ascii?Q?4pscVZcoRSTmlvlsA4MKY9iohlZ7zdKlvvmTSA0evZJT0dK97+ymnThu9o+H?=
- =?us-ascii?Q?o7PUoSri60QY9hQgyAWatMzo7Ms9De8HSWcqYRF3iFJ3iJB4Kb9jzYBkyHNs?=
- =?us-ascii?Q?eFoBO6267UkBJpuKgMvtgCXmNyAcrUmEvVye62SC0fXefkWWBL73cis8mR6N?=
- =?us-ascii?Q?pQ28uGuEiDjpLQJWKeod9W1xVh6oYStL209QI8lgQSGdz+hrNv6vTZdrkssh?=
- =?us-ascii?Q?/MqsT6mRCK6P52Cmzzh02BZJQamElq1hyCeqqdQ0oThMExqj+f8PUZoy7dPK?=
- =?us-ascii?Q?OVM3wsbt3dsK46n5QzqsJ/BB1GUcYURUgYVoF6wI9FEOPvZcwvyFwUfdVqtL?=
- =?us-ascii?Q?EOUBDSmjuTSLr5arX/y4hq4byGf8yDoYIJT3sr4NbyOkws2CfNP092aRSErI?=
- =?us-ascii?Q?uemCLplMs84sw5bMDR2tI9KSUDg2wK4WdVk12auV7Q+DeoHxE+2kfglHggc3?=
- =?us-ascii?Q?yiNXU1PojZtbkVsB94XTZ8ggbBOhhCZdiJh09aywMqtU8bv8W1SYFFk2cORL?=
- =?us-ascii?Q?A4YFCRIQifIKWlwM2GPAwaNncJa4kQL21XNuf8nnWYRRj56X0jTFYsYB5jqE?=
- =?us-ascii?Q?OofNeaI5zglYBlW7c+G1K+U3aeBVbzYEjLbqmQv+crTj1lJf8kJOtkRpG5IX?=
- =?us-ascii?Q?5PlvB3S7WGBItJ/M/GBDr4USQq3zC9Deknp1aaSFibTwS7zhnsWAwtRdJMG/?=
- =?us-ascii?Q?Sz0mV/pHSLv0g+j/qooNeaGKK03phRIlrg26azvnnIYcDTjLTw8Dli47wDwe?=
- =?us-ascii?Q?qjcrCIQ2O5Ayvwd1eOW292+VYCll7pK3P7r4Lqf/EdJVH6cjcUjVzwGKQBzf?=
- =?us-ascii?Q?2c9lGe1jZksZUMdgtS29mj7OWlrJrsrGqv6tJCCsMsX3ICO0Fps42KZ/XnXo?=
- =?us-ascii?Q?AeAuUbYjFzI7oVNBu1rYdP/AEpITv+Dv6tdBcVTm13jU1eDzU2hN+RInCA5W?=
- =?us-ascii?Q?oV/b7DDLllbQs8eFG+o6hX/cbIMwsaxb8w9GRpGWgndLzLbZFgflw1OozZw8?=
- =?us-ascii?Q?rkNRhsCTUic4E35MPJx6MI8huZoqLW3tEV+M0xvMN9xb5shzhSLTMRfPhdpU?=
- =?us-ascii?Q?jkxBa0jI/TBR1bqKqPO+9mBAKb+1Fg3LF1kdszvWL8wCmyEtGhwH/+faXvH+?=
- =?us-ascii?Q?HHM094xh4j3iO8XCVDiyyK4ciAv29uGnNWyvC7NKDIqLV9FasbM9um3dpQ3m?=
- =?us-ascii?Q?Yccp9UnS0qUd+Ny1Zwf+JEHCJm6H5CYaBDLtNGmdzLG8kZFXu9miiC2IjNZt?=
- =?us-ascii?Q?FfPoktCPw1Beuie2kYrjt+wSSLnCBTTwV4SF9N1weVs+N/KToEyt5igct1lF?=
- =?us-ascii?Q?SfkzBq+LOhA3zvKHOb6qHob8vuzGgyHB0RDaUkB9hfIZ673CytwpcCIGawYD?=
- =?us-ascii?Q?D3eb7g9XD0GYoR8EsRw/tIr93QOmgQzW/Z9npLej?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3fb363b6-b21a-466b-45b7-08dc7407235d
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6020.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 May 2024 11:15:18.8305
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: JvUSsY2PZvnnPhkcJXXMKvtRqWNlovNYIAgABSc9NTY3O+zgEu5By8ik3DVGAV5X9HhVkXZGBijAOkMiPfmr4g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR11MB4701
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH V4 2/5] mailbox: Add support for QTI CPUCP mailbox
+ controller
+Content-Language: en-US
+From: Sibi Sankar <quic_sibis@quicinc.com>
+To: Konrad Dybcio <konrad.dybcio@linaro.org>, <sudeep.holla@arm.com>,
+        <cristian.marussi@arm.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <quic_rgottimu@quicinc.com>,
+        <quic_kshivnan@quicinc.com>
+References: <20240422164035.1045501-1-quic_sibis@quicinc.com>
+ <20240422164035.1045501-3-quic_sibis@quicinc.com>
+ <d6052413-5706-446b-b508-2a5ed839acc4@linaro.org>
+ <d5581614-71ad-5f7f-e948-bdbab3ef854e@quicinc.com>
+In-Reply-To: <d5581614-71ad-5f7f-e948-bdbab3ef854e@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: NJYgaQtE3hCQlT887lNeQ0fuDrv6fH5j
+X-Proofpoint-ORIG-GUID: NJYgaQtE3hCQlT887lNeQ0fuDrv6fH5j
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-14_06,2024-05-10_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
+ lowpriorityscore=0 mlxlogscore=999 clxscore=1015 bulkscore=0
+ priorityscore=1501 impostorscore=0 phishscore=0 adultscore=0
+ suspectscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405010000 definitions=main-2405140079
 
-On 2024-05-14 at 04:44:45 +0000, Swapnil Sapkal wrote:
-> In /proc/schedstat, lb_imbalance reports the sum of imbalances
-> discovered in sched domains with each call to sched_balance_rq(), which is
-> not very useful because lb_imbalance does not mention whether the imbalance
-> is due to load, utilization, nr_tasks or misfit_tasks. Remove this field
-> from /proc/schedstat.
+
+
+On 4/23/24 22:40, Sibi Sankar wrote:
 > 
-> Currently there is no field in /proc/schedstat to report different types
-> of imbalances. Introduce new fields in /proc/schedstat to report the
-> total imbalances in load, utilization, nr_tasks or misfit_tasks.
 > 
-> Added fields to /proc/schedstat:
->  	- lb_imbalance_load: Total imbalance due to load.
-> 	- lb_imbalance_util: Total imbalance due to utilization.
-> 	- lb_imbalance_task: Total imbalance due to number of tasks.
-> 	- lb_imbalance_misfit: Total imbalance due to misfit tasks.
+> On 4/23/24 04:47, Konrad Dybcio wrote:
+>>
+>>
+>> On 4/22/24 18:40, Sibi Sankar wrote:
+>>> Add support for CPUSS Control Processor (CPUCP) mailbox controller,
+>>> this driver enables communication between AP and CPUCP by acting as
+>>> a doorbell between them.
+>>>
+>>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
+>>> ---
+>>
+>> [...]
+>>
+>>> +
+>>> +static int qcom_cpucp_mbox_send_data(struct mbox_chan *chan, void 
+>>> *data)
+>>> +{
+>>> +    struct qcom_cpucp_mbox *cpucp = container_of(chan->mbox, struct 
+>>> qcom_cpucp_mbox, mbox);
+>>> +    unsigned long chan_id = channel_number(chan);
+>>> +    u32 *val = data;
+>>> +
+>>> +    writel(*val, cpucp->tx_base + APSS_CPUCP_TX_MBOX_CMD(chan_id) + 
+>>> APSS_CPUCP_MBOX_CMD_OFF);
+>>
 > 
-> Reviewed-by: Shrikanth Hegde <sshegde@linux.ibm.com>
-> Signed-off-by: Swapnil Sapkal <swapnil.sapkal@amd.com>
-> ---
->  Documentation/scheduler/sched-stats.rst | 121 ++++++++++++++----------
->  include/linux/sched/topology.h          |   5 +-
->  kernel/sched/fair.c                     |  21 +++-
->  kernel/sched/stats.c                    |   7 +-
->  4 files changed, 99 insertions(+), 55 deletions(-)
+> Hey Konrad,
+> 
+> Thanks for taking time to review the series.
+> 
+>> Just checking in, is *this access only* supposed to be 32b instead of 
+>> 64 like others?
+> 
+> yeah, the readl and writely in the driver were used intentionally.
+> 
+>>
+>> [...]
+>>
+>>> +
+>>> +    writeq(0, cpucp->rx_base + APSS_CPUCP_RX_MBOX_EN);
+>>> +    writeq(0, cpucp->rx_base + APSS_CPUCP_RX_MBOX_CLEAR);
+>>> +    writeq(0, cpucp->rx_base + APSS_CPUCP_RX_MBOX_MAP);
+>>
+>> If these writes are here to prevent a possible interrupt storm type 
+>> tragedy,
+>> you need to read back these registers to ensure the writes have left 
+>> the CPU
+>> complex and reached the observer at the other end of the bus (not to be
+>> confused with barriers which only ensure that such accesses are ordered
+>> *when still possibly within the CPU complex*).
+> 
+> I couldn't find anything alluding to ^^. This sequence was just
+> meant to reset the mailbox. Looks like we do need to preserve the
+> ordering so relaxed read/writes aren't an option.
+> 
+> -Sibi
+> 
+>>
+>> Moreover, if the order of them arriving (en/clear/mask) doesn't 
+>> matter, you
+>> can add _relaxed for a possible nanosecond-order perf gain
+>>
+>>> +
+>>> +    irq = platform_get_irq(pdev, 0);
+>>> +    if (irq < 0)
+>>> +        return irq;
+>>> +
+>>> +    ret = devm_request_irq(dev, irq, qcom_cpucp_mbox_irq_fn,
+>>> +                   IRQF_TRIGGER_HIGH, "apss_cpucp_mbox", cpucp);
+>>> +    if (ret < 0)
+>>> +        return dev_err_probe(dev, ret, "Failed to register irq: 
+>>> %d\n", irq);
+>>> +
+>>> +    writeq(APSS_CPUCP_RX_MBOX_CMD_MASK, cpucp->rx_base + 
+>>> APSS_CPUCP_RX_MBOX_MAP);
+>>
+>> Similarly here, unless read back, we may potentially miss some 
+>> interrupts if
+>> e.g. a channel is opened and that write "is decided" (by the silicon) 
+>> to leave
+>> the internal buffer first
+> 
+> At this point in time we don't expect any interrupts. They are expected
+> only after channel activation. Also there were no recommendations for
+> reading it back here as well.
+> 
+> -Sibi
+> 
+>>
+>>
+>>> +
+>>> +    mbox = &cpucp->mbox;
+>>> +    mbox->dev = dev;
+>>> +    mbox->num_chans = APSS_CPUCP_IPC_CHAN_SUPPORTED;
+>>> +    mbox->chans = cpucp->chans;
+>>> +    mbox->ops = &qcom_cpucp_mbox_chan_ops;
+>>> +    mbox->txdone_irq = false;
+>>> +    mbox->txdone_poll = false;
+>>
+>> "false" == 0 is the default value (as you're using k*z*alloc)
+>>
+>>
+>>> +
+>>> +    ret = devm_mbox_controller_register(dev, mbox);
+>>> +    if (ret)
+>>> +        return dev_err_probe(dev, ret, "Failed to create mailbox\n");
+>>> +
+>>> +    return 0;
+>>> +}
+>>> +
+>>> +static const struct of_device_id qcom_cpucp_mbox_of_match[] = {
+>>> +    { .compatible = "qcom,x1e80100-cpucp-mbox" },
+>>> +    {}
+>>> +};
+>>> +MODULE_DEVICE_TABLE(of, qcom_cpucp_mbox_of_match);
+>>> +
+>>> +static struct platform_driver qcom_cpucp_mbox_driver = {
+>>> +    .probe = qcom_cpucp_mbox_probe,
+>>> +    .driver = {
+>>> +        .name = "qcom_cpucp_mbox",
+>>> +        .of_match_table = qcom_cpucp_mbox_of_match,
+>>> +    },
+>>> +};
+>>> +module_platform_driver(qcom_cpucp_mbox_driver);
+>>
+>> That's turbo late. Go core_initcall.
 
-[...]
+Christian/Sudeep,
 
-> diff --git a/kernel/sched/stats.c b/kernel/sched/stats.c
-> index 78e48f5426ee..a02bc9db2f1c 100644
-> --- a/kernel/sched/stats.c
-> +++ b/kernel/sched/stats.c
-> @@ -151,11 +151,14 @@ static int show_schedstat(struct seq_file *seq, void *v)
->  			seq_printf(seq, "domain%d %*pb", dcount++,
->  				   cpumask_pr_args(sched_domain_span(sd)));
->  			for (itype = 0; itype < CPU_MAX_IDLE_TYPES; itype++) {
-> -				seq_printf(seq, " %u %u %u %u %u %u %u %u",
-> +				seq_printf(seq, " %u %u %u %u %u %u %u %u %u %u %u",
->  				    sd->lb_count[itype],
->  				    sd->lb_balanced[itype],
->  				    sd->lb_failed[itype],
-> -				    sd->lb_imbalance[itype],
-> +				    sd->lb_imbalance_load[itype],
-> +				    sd->lb_imbalance_util[itype],
-> +				    sd->lb_imbalance_task[itype],
-> +				    sd->lb_imbalance_misfit[itype],
->  				    sd->lb_gained[itype],
->  				    sd->lb_hot_gained[itype],
->  				    sd->lb_nobusyq[itype],
+Looks like making the cpucp mbox as part of the core initcall and having
+the vendor protocol as a module_scmi_driver causes a race as follows:
 
-Do we need to increase SCHEDSTAT_VERSION to 16?
+scmi_core: SCMI protocol bus registered
+scmi_core: Requesting SCMI device (clocks) for protocol 14
+scmi_core: Registered new scmi driver scmi-clocks
+scmi_core: Requesting SCMI device (qcom_scmi_vendor_protocol) for 
+protocol 80
+scmi_core: Registered new scmi driver qcom-scmi-driver
+scmi_core: Requesting SCMI device (perf) for protocol 13
+scmi_core: Registered new scmi driver scmi-perf-domain
+scmi_core: Requesting SCMI device (genpd) for protocol 11
+scmi_core: Registered new scmi driver scmi-power-domain
+scmi_core: Requesting SCMI device (reset) for protocol 16
+scmi_core: Registered new scmi driver scmi-reset
+scmi_core: Requesting SCMI device (hwmon) for protocol 15
+scmi_core: Registered new scmi driver scmi-hwmon
+scmi_core: Requesting SCMI device (cpufreq) for protocol 13
+scmi_core: Registered new scmi driver scmi-cpufreq
+scmi_module: Registered SCMI Protocol 0x10
+scmi_module: Registered SCMI Protocol 0x14
+scmi_module: Registered SCMI Protocol 0x13
+scmi_module: Registered SCMI Protocol 0x11
+scmi_module: Registered SCMI Protocol 0x16
+scmi_module: Registered SCMI Protocol 0x15
+scmi_module: Registered SCMI Protocol 0x17
+scmi_module: Registered SCMI Protocol 0x12
+scmi_module: Registered SCMI Protocol 0x18
+scmi_module: Registered SCMI Protocol 0x19
+scmi_core: (scmi) Created SCMI device 'scmi_dev.1' for protocol 0x10 
+(__scmi_transport_device_tx_10)
+scmi_core: (scmi) Created SCMI device 'scmi_dev.2' for protocol 0x10 
+(__scmi_transport_device_rx_10)
+arm-scmi firmware:scmi: SCMI Notifications - Core Enabled.
+scmi_module: Found SCMI Protocol 0x10
+arm-scmi firmware:scmi: SCMI Protocol v2.0 'Qualcomm:' Firmware version 
+0x20000
+scmi_module: Found SCMI Protocol 0x13
+scmi_core: (scmi) Created SCMI device 'scmi_dev.3' for protocol 0x13 
+(cpufreq)
+scmi-perf-domain scmi_dev.4: Initialized 3 performance domains
+scmi_core: (scmi) Created SCMI device 'scmi_dev.4' for protocol 0x13 (perf)
+scmi_module: SCMI Protocol 0x80 not found!
+scmi_core: (scmi) Created SCMI device 'scmi_dev.5' for protocol 0x80 
+(qcom_scmi_vendor_protocol)
+scmi_module: Registered SCMI Protocol 0x80
 
-thanks,
-Chenyu
+By the time the vendor protocol get's registered it's already reported
+as not found.
+
+-Sibi
+
+>>
+>> Konrad
+> 
 
