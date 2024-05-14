@@ -1,180 +1,118 @@
-Return-Path: <linux-kernel+bounces-178332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 727748C4C05
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 07:42:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EAD68C4C08
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 07:44:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EEB1DB23D66
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 05:42:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97A57B23BA0
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 05:44:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71A431DA4E;
-	Tue, 14 May 2024 05:42:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0980A1AACC;
+	Tue, 14 May 2024 05:43:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XaI0RDxJ"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Y5Ekx+uP";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="7LbllTbg"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 699221B7FD;
-	Tue, 14 May 2024 05:42:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B385217FF;
+	Tue, 14 May 2024 05:43:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715665343; cv=none; b=A3wLq12pEKpw0mtPxihCkwsaZn4yMrRxqXkA4pjwj5qXj+0Crv8OPNvhp1Nj5WDwLQ+KjbXh2WVSl6Nxh9o15YwRdYGhmP1LGPjoVz0HmZ/bLS5wIXa0Gq2O0QN1hXhn4TuU8RTzceQyv+gbWkwglcWqcnSf0tXawNGxdRPIlDM=
+	t=1715665428; cv=none; b=H2mRRgc09XJxe/+Uag98xiMwdlVXktXHPynbug/q7+X77KztY2JjYCxX4BNYiqJIAOMPQgFdbdJDIBzSoKx0zJFyEJF1z5aXZLz5mr4Y0gsUaYqy4F5Z1kHwpanOQD1N+fd4RTBMMpDXinbvQ41CpAsXNf/WqzJXOA4fciNhwUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715665343; c=relaxed/simple;
-	bh=ozr7xl62K7WbuarAMLArxLdpqPBL/FThgfzdQev4Djg=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=NueMGxMWGqaCj+5+1pGe90DeYr3Z3z6w8g4qKSSAJs8gFyPNIxEXDmWLe7mJtKcO+80sOZClM6sXXaQWX+BP1m6KXSUtbA92+6/j0SPWorx2A01SwnciI4g499r5thca4oKrNQ83ZdcUKT9EImIkdEZM4aqzKeHU+yxe4bQfRco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XaI0RDxJ; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1ec486198b6so38660115ad.1;
-        Mon, 13 May 2024 22:42:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715665342; x=1716270142; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RL6hZzpsePBF8+b5Yat6PN6BeezEI8EqZPW0XQO1tBQ=;
-        b=XaI0RDxJqjocb/iQ3XBV9cYoXGFKCbiZcgAWT8kehVNiQ8dVOteX3WG7wp7bej3Clv
-         b873A3A/wdagVcbfoobCOuK4qOK2xgSwYCXbmH2yr76OiXk0bfJoNfxq4vK1BvWgvgzt
-         96T9Euarp/jtoVkI5wp6A7CtKQk+Fvm0rEfJdKdRI1CZ2clV+qHxyr5A5ypnhwoEJI7b
-         nEBri4UkLlHGMbB2uEQ+dBIzzlmjSeaEmVchSzhXcI2copvdUEPNtRc0aOOT26sRwN+G
-         badXez2LbAb23rBiAWnQ9h4ESuJOvAvBeOdcnp0iYhSEh5y1ItN1/hRQi5ssooUAj9nd
-         XgKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715665342; x=1716270142;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RL6hZzpsePBF8+b5Yat6PN6BeezEI8EqZPW0XQO1tBQ=;
-        b=TcHVU27iYTw8xpEjT9FQHMrgvDZJov0ByHUYyTCDR5WA2cD0ohEK8HSLG4YqgzcJjW
-         lx4nAp87si0vB9VR1ye+VsopRLBZjIi21JwH5mXbATOWvpeHzD3+tFt6OCGvLDGEhndw
-         eyIc4jwN94MpXG558O8fPRmB4YiK2R3jDyfzSun8hzOn/N+rnN016ryETKFa4FdIHVQp
-         PE9lUstR59OqwoTx5kH88RENKKdRlIEmVoCGHS6AoyiRJ1T8qJaJnHWaGQHRAfC1gLYo
-         gXx4tBBUxny6XvlF7o94od3lXh0S69P6K5mEbIGm3pejA1Yw0m4/GdiNJW6vRh+fhnxW
-         Sosw==
-X-Forwarded-Encrypted: i=1; AJvYcCVkqZ5QWOGbYB0SSI7gjCnndjsaGf4fra8yFYX4JnTniYO4CKOZh0hecqHjoFh+CLkEOoCPoIIzdwNH6AvlLQPEBJheFSXezJ2NnptRiWczbsLSD7ELMe5KtSwmwhni8kQU/k2kv6dGfG0=
-X-Gm-Message-State: AOJu0YxlgiqSFrozP4jl4m8uiAk76K1Tr4VfJUNyaNqzcj5OcAeI37sh
-	KaVop/nXaNf0zEbea6HesnvBZY6cHVQQovFotSHg3oYCJ0tqxI+l
-X-Google-Smtp-Source: AGHT+IEsvha7h9nRTcCLJvkLcGy21PI2oRDl8Ay3px1r4qUrnFrH/FZwKdz1JivQkJMfamFfFHFoDQ==
-X-Received: by 2002:a17:902:e5cb:b0:1eb:63d9:8d85 with SMTP id d9443c01a7336-1ef43d2e27bmr151384955ad.14.1715665341601;
-        Mon, 13 May 2024 22:42:21 -0700 (PDT)
-Received: from linux-l9pv.suse ([124.11.22.254])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0c160a1esm89202935ad.279.2024.05.13.22.42.19
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 13 May 2024 22:42:21 -0700 (PDT)
-From: "Lee, Chun-Yi" <joeyli.kernel@gmail.com>
-X-Google-Original-From: "Lee, Chun-Yi" <jlee@suse.com>
-To: Justin Sanders <justin@coraid.com>
-Cc: Jens Axboe <axboe@kernel.dk>,
-	Pavel Emelianov <xemul@openvz.org>,
-	Kirill Korotaev <dev@openvz.org>,
-	"David S . Miller" <davem@davemloft.net>,
-	Markus Elfring <Markus.Elfring@web.de>,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chun-Yi Lee <jlee@suse.com>
-Subject: [PATCH] aoe: fix the potential use-after-free problem in more places
-Date: Tue, 14 May 2024 13:42:14 +0800
-Message-Id: <20240514054214.924-1-jlee@suse.com>
-X-Mailer: git-send-email 2.12.3
+	s=arc-20240116; t=1715665428; c=relaxed/simple;
+	bh=UJ0ZvK/WSzetvXXNGTyaHtYTIc+ARlYjLld/hzVS+Ho=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xam6H+rbWvo3HaBCfrD4JSF6u3DRvJjY1NBRVg8vTHDFzL0T5CZB0AI8fsegKRJSqXMgGvQFmZ8eW9MQfpZ5bAVU7Y4oBHL4QJlJVRjVZw5H6UPcRdXnL7HC2Bvs7PLdpN1/DnTRfu5z+6r/SDoiWTIUgrUtqQt0Te6QoldLAuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Y5Ekx+uP; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=7LbllTbg; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 14 May 2024 07:43:45 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1715665424;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9O9Ejw22nDJ+XJ+5sgwYg4fopr3qkoG1FgsTPvT968U=;
+	b=Y5Ekx+uPvpFUOBQdfxueDtmM2GHFez2zSU71zsXGSTvyC1Iha5A4Zb6IXE+nvZyJyuiOa7
+	cSGEzWevZcnnJdLGCJTE/POcINFVE5e4yXQZgYHWw+QA1fLVeipye8tiy8da4wVo0TapVz
+	+g1ZUj9skwCRVE9Bi7K43oY34SrnPs1oumoxHkrMZe7Le44XYOQS6YHDGRMEfjUUxebADB
+	Hfz4ZYThqeb4hhjGD+COEgHby8wv0Q5BzUKfw0mJuOdQnddDSj6nrRkHU8Tmvj3KXsoLhe
+	IlF6WqDGSbl2G4k1SDadOTDijQsznmjgJ8/a2UG/iw5zpu/vxP6amr9IscUC1g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1715665424;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9O9Ejw22nDJ+XJ+5sgwYg4fopr3qkoG1FgsTPvT968U=;
+	b=7LbllTbgkamC+qJqVaY87jy5HU7T3t65CvMCyr6Per5fjFpPDRHgSszV9x9/aLahtJ4qIW
+	p768q+BCI0o9b/Bw==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Jesper Dangaard Brouer <hawk@kernel.org>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+	Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Network Development <netdev@vger.kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Eduard Zingerman <eddyz87@gmail.com>, Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+	Stanislav Fomichev <sdf@google.com>,
+	Yonghong Song <yonghong.song@linux.dev>, bpf <bpf@vger.kernel.org>
+Subject: Re: [PATCH net-next 14/15 v2] net: Reference bpf_redirect_info via
+ task_struct on PREEMPT_RT.
+Message-ID: <20240514054345.DZkx7fJs@linutronix.de>
+References: <20240503182957.1042122-1-bigeasy@linutronix.de>
+ <20240503182957.1042122-15-bigeasy@linutronix.de>
+ <87y18mohhp.fsf@toke.dk>
+ <CAADnVQJkiwaYXUo+LyKoV96VFFCFL0VY5Jgpuv_0oypksrnciA@mail.gmail.com>
+ <20240507123636.cTnT7TvU@linutronix.de>
+ <93062ce7-8dfa-48a9-a4ad-24c5a3993b41@kernel.org>
+ <20240510162121.f-tvqcyf@linutronix.de>
+ <20240510162214.zNWRKgFU@linutronix.de>
+ <4949dca0-377a-45b1-a0fd-17bdf5a6ab10@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <4949dca0-377a-45b1-a0fd-17bdf5a6ab10@kernel.org>
 
-From: Chun-Yi Lee <jlee@suse.com>
+On 2024-05-14 07:07:21 [+0200], Jesper Dangaard Brouer wrote:
+> > pktgen_sample03_burst_single_flow.sh has been used to send packets and
+> > "xdp-bench drop $nic -e" to receive them.
+> > 
+> 
+> Sorry, but a XDP_DROP test will not activate the code you are modifying.
+> Thus, this test is invalid and doesn't tell us anything about your code
+> changes.
+> 
+> The code is modifying the XDP_REDIRECT handling system. Thus, the
+> benchmark test needs to activate this code.
 
-For fixing CVE-2023-6270, f98364e92662 ("aoe: fix the potential
-use-after-free problem in aoecmd_cfg_pkts") make tx() do dev_put()
-instead of doing in aoecmd_cfg_pkts(). It avoids that the tx() runs
-into use-after-free.
+This was a misunderstanding on my side then. What do you suggest
+instead? Same setup but "redirect" on the same interface instead of
+"drop"?
 
-But Nicolai Stange found more places in aoe have potential use-after-free
-problem with tx(). e.g. revalidate(), aoecmd_ata_rw(), resend(), probe()
-and aoecmd_cfg_rsp(). Those functions also use aoenet_xmit() to push
-packet to tx queue. So they should also use dev_hold() to increase the
-refcnt of skb->dev.
-
-This patch adds dev_hold() to those functions and also uses dev_put()
-when the skb_clone() returns NULL.
-
-v2:
-- Base on submitting-patches.rst document to improve patch description.
-- Used curly brackets in the if-else blocks.
-
-Link: https://nvd.nist.gov/vuln/detail/CVE-2023-6270
-Fixes: f98364e92662 ("aoe: fix the potential use-after-free problem in aoecmd_cfg_pkts")
-Reported-by: Nicolai Stange <nstange@suse.com>
-Signed-off-by: Chun-Yi Lee <jlee@suse.com>
----
- drivers/block/aoe/aoecmd.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/block/aoe/aoecmd.c b/drivers/block/aoe/aoecmd.c
-index cc9077b588d7..d1f4ddc57645 100644
---- a/drivers/block/aoe/aoecmd.c
-+++ b/drivers/block/aoe/aoecmd.c
-@@ -361,6 +361,7 @@ ata_rw_frameinit(struct frame *f)
- 	}
- 
- 	ah->cmdstat = ATA_CMD_PIO_READ | writebit | extbit;
-+	dev_hold(t->ifp->nd);
- 	skb->dev = t->ifp->nd;
- }
- 
-@@ -401,6 +402,8 @@ aoecmd_ata_rw(struct aoedev *d)
- 		__skb_queue_head_init(&queue);
- 		__skb_queue_tail(&queue, skb);
- 		aoenet_xmit(&queue);
-+	} else {
-+		dev_put(f->t->ifp->nd);
- 	}
- 	return 1;
- }
-@@ -483,10 +486,13 @@ resend(struct aoedev *d, struct frame *f)
- 	memcpy(h->dst, t->addr, sizeof h->dst);
- 	memcpy(h->src, t->ifp->nd->dev_addr, sizeof h->src);
- 
-+	dev_hold(t->ifp->nd);
- 	skb->dev = t->ifp->nd;
- 	skb = skb_clone(skb, GFP_ATOMIC);
--	if (skb == NULL)
-+	if (skb == NULL) {
-+		dev_put(t->ifp->nd);
- 		return;
-+	}
- 	f->sent = ktime_get();
- 	__skb_queue_head_init(&queue);
- 	__skb_queue_tail(&queue, skb);
-@@ -617,6 +623,8 @@ probe(struct aoetgt *t)
- 		__skb_queue_head_init(&queue);
- 		__skb_queue_tail(&queue, skb);
- 		aoenet_xmit(&queue);
-+	} else {
-+		dev_put(f->t->ifp->nd);
- 	}
- }
- 
-@@ -1395,6 +1403,7 @@ aoecmd_ata_id(struct aoedev *d)
- 	ah->cmdstat = ATA_CMD_ID_ATA;
- 	ah->lba3 = 0xa0;
- 
-+	dev_hold(t->ifp->nd);
- 	skb->dev = t->ifp->nd;
- 
- 	d->rttavg = RTTAVG_INIT;
-@@ -1404,6 +1413,8 @@ aoecmd_ata_id(struct aoedev *d)
- 	skb = skb_clone(skb, GFP_ATOMIC);
- 	if (skb)
- 		f->sent = ktime_get();
-+	else
-+		dev_put(t->ifp->nd);
- 
- 	return skb;
- }
--- 
-2.35.3
-
+Sebastian
 
