@@ -1,205 +1,102 @@
-Return-Path: <linux-kernel+bounces-178666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B6788C561F
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:44:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27EB58C5623
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:46:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8ADFDB20DD5
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:44:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2C4F284F72
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:45:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 697186EB5B;
-	Tue, 14 May 2024 12:44:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2E6B6CDCF;
+	Tue, 14 May 2024 12:45:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WHZuW4sr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OhlRL33X"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8214D66B5E;
-	Tue, 14 May 2024 12:44:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F262B47F5D;
+	Tue, 14 May 2024 12:45:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715690640; cv=none; b=LEfwU0SDe/JOXlS4YyAr5bQXiRMMZLRMdQUikAFI5hvCtAwE5FQyJd8Taq/iIr11SfztWOgx6lNMS9o2JzwOBjg3hTJCoUsvHxgaoQlQAs0fXjjL7DACTUgM68NhvxQ4t7la7WJFPgjAnOT1HM5rKMesjKyFVMgrwrH4oKizQ6g=
+	t=1715690750; cv=none; b=Zw3njXyTG56/3USY2WaUqN7AFUXhY01M6Bcw46pfarIx78Fenl5EzmlhdXZSGcn5ZRLqy6HrSfZwOnZPTLWkzLDGqGC1XTDBvKZOzvH5+0vYlVl+kmLKjYwDnmt9ZNXQpeHQvMEXZGGCQSVgpR5urfh7chg9gBVDmFWAYSCyUnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715690640; c=relaxed/simple;
-	bh=frcCTz483GMnhYg7RWj0qSs/9NEH9LvHXWO5H2Yy4ig=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jYG+XxTi2aTzB2x5jFpynWgHV1E4GbdsmIyRUdE+3eTH/HKACY35xAST5DbAhIvf2N+n/Eabjwg9Vrw+Rd6j5d/+HnM1GHL9pH9pl9EVQVKzpzIjUV6Gt618UB3TozCi/Eba7+naslobFQZCiBNCq6YRDLSoEGSV5QfOn2HSVs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WHZuW4sr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2213C2BD10;
-	Tue, 14 May 2024 12:43:56 +0000 (UTC)
+	s=arc-20240116; t=1715690750; c=relaxed/simple;
+	bh=wYe+IcdZ5sAPvomkLeOMajQNaay/H+daZsNnHYswfPw=;
+	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
+	 Cc:Message-ID:Date; b=B6QYAtYbvWnO7cL0p5vI4JmyEuaiG5ji7YR1R0aHwebD7DVdCg+yDzVjCinovR0ztAUEU0x+L4q8HpChbVUxH+plgPp6NDFKzt6z9HGulRxKBDd8fe5VGlEoZUZvJtFbZ7NXA8raU27WgbLNeJDXcsccGpvv/maS8bdN4jLfAHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OhlRL33X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07C93C2BD10;
+	Tue, 14 May 2024 12:45:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715690640;
-	bh=frcCTz483GMnhYg7RWj0qSs/9NEH9LvHXWO5H2Yy4ig=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WHZuW4srm0yCDfSbJUt5JCAxCjKy7cx7Q1H3MbIduBZqdIECmEiWfF/AXzRGjYxME
-	 GW2/CRUxcrQ0bQp8yDXScoMqdoZG0/KtGNE7ImqeXvan3fS7YfUL+u14bqag6i3gzD
-	 IQLtGQazfqcdl/DkfSnxxX38HL4cvm/vuT0/djBaE1+wID4tOnzwJVIBw10ppTJ9HX
-	 p/xSP4MFZp8AMV/0GEAo/MsORo1RdQ3eZlmsx1m3OHYIBqUZJyv42UczQ5JPWf6Liq
-	 XfyKyJ10c0bVUZns5frYAgeCGUVeoLkF7BQR7t4Q0qaEOD7XpZblYZ0iouWN5YvG2W
-	 jk2uzrlyC7etw==
-Date: Tue, 14 May 2024 13:43:54 +0100
-From: Conor Dooley <conor@kernel.org>
-To: =?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>
-Cc: Conor Dooley <conor.dooley@microchip.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Anup Patel <anup@brainfault.org>, Shuah Khan <shuah@kernel.org>,
-	Atish Patra <atishp@atishpatra.org>, linux-doc@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, kvm@vger.kernel.org,
-	kvm-riscv@lists.infradead.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v4 02/11] riscv: add ISA extensions validation
-Message-ID: <20240514-sip-exclusion-014b07b01f4c@spud>
-References: <20240429150553.625165-1-cleger@rivosinc.com>
- <20240429150553.625165-3-cleger@rivosinc.com>
- <20240429-subtext-tabby-3a1532f058a5@spud>
- <5d5febd5-d113-4e8c-9535-9e75acf23398@rivosinc.com>
- <20240430-payable-famished-6711765d5ca4@wendy>
- <e57f8b70-7981-42c1-bb04-2060054dd796@rivosinc.com>
+	s=k20201202; t=1715690749;
+	bh=wYe+IcdZ5sAPvomkLeOMajQNaay/H+daZsNnHYswfPw=;
+	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+	b=OhlRL33X47dxZOmzQKr1jHTao8pWiTIsxT6CuVBAIy41IePXpyOV35qN2xZOsKA6T
+	 OTQVcNnSKAZJBWQ+vJkm5g8qclRctWA4rY7KMVFDHx0u5GmUzVqkw5GbFhHcHRc6pq
+	 veh2dHUQ1XNK79xiWmv2KNjbkpmGUiDbEQn4ZTBi6kBE1zwRX0uPx466F1FKfY/AVF
+	 JzfDRnpf57wQ3ZJ/Y5cPhx+8DOQNP5C1hDuFAWn1nd+8VAAVen9PJv9GGU0lyncZIr
+	 TUN9zKrkxU5CapT5zPKVCm8fQl1xMiFWeRZbjivHQyqcS3zwhfi61/sBT6SEPTj98K
+	 TBgHlkOHv5fTQ==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="d4LtUScPc142c/dS"
-Content-Disposition: inline
-In-Reply-To: <e57f8b70-7981-42c1-bb04-2060054dd796@rivosinc.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH 1/6] wifi: wilc1000: set net device registration as last
+ step during interface creation
+From: Kalle Valo <kvalo@kernel.org>
+In-Reply-To: <20240417-mac_addr_at_probe-v1-1-67d6c9b3bc2b@bootlin.com>
+References: <20240417-mac_addr_at_probe-v1-1-67d6c9b3bc2b@bootlin.com>
+To: =?utf-8?q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
+Cc: Ajay Singh <ajay.kathat@microchip.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, =?utf-8?q?Al?=
+	=?utf-8?q?exis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
+User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
+Message-ID: <171569074600.2017278.13914732662896657638.kvalo@kernel.org>
+Date: Tue, 14 May 2024 12:45:47 +0000 (UTC)
 
+Alexis Lothoré <alexis.lothore@bootlin.com> wrote:
 
---d4LtUScPc142c/dS
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> net device registration is currently done in wilc_netdev_ifc_init but
+> other initialization operations are still done after this registration.
+> Since net device is assumed to be usable right after registration, it
+> should be the very last step of initialization.
+> 
+> Move netdev registration at the very end of wilc_netdev_ifc_init to let
+> this function completely initialize netdevice before registering it.
+> 
+> Signed-off-by: Alexis Lothoré <alexis.lothore@bootlin.com>
 
-On Tue, May 14, 2024 at 09:53:08AM +0200, Cl=E9ment L=E9ger wrote:
->=20
->=20
-> On 30/04/2024 13:44, Conor Dooley wrote:
-> > On Tue, Apr 30, 2024 at 09:18:47AM +0200, Cl=E9ment L=E9ger wrote:
-> >>
-> >>
-> >> On 30/04/2024 00:15, Conor Dooley wrote:
-> >>> On Mon, Apr 29, 2024 at 05:04:55PM +0200, Cl=E9ment L=E9ger wrote:
-> >>>> Since a few extensions (Zicbom/Zicboz) already needs validation and
-> >>>> future ones will need it as well (Zc*) add a validate() callback to
-> >>>> struct riscv_isa_ext_data. This require to rework the way extensions=
- are
-> >>>> parsed and split it in two phases. First phase is isa string or isa
-> >>>> extension list parsing and consists in enabling all the extensions i=
-n a
-> >>>> temporary bitmask without any validation. The second step "resolves"=
- the
-> >>>> final isa bitmap, handling potential missing dependencies. The mecha=
-nism
-> >>>> is quite simple and simply validate each extension described in the
-> >>>> temporary bitmap before enabling it in the final isa bitmap. validat=
-e()
-> >>>> callbacks can return either 0 for success, -EPROBEDEFER if extension
-> >>>> needs to be validated again at next loop. A previous ISA bitmap is k=
-ept
-> >>>> to avoid looping mutliple times if an extension dependencies are nev=
-er
-> >>>> satisfied until we reach a stable state. In order to avoid any poten=
-tial
-> >>>> infinite looping, allow looping a maximum of the number of extension=
- we
-> >>>> handle. Zicboz and Zicbom extensions are modified to use this valida=
-tion
-> >>>> mechanism.
-> >>>
-> >>> Your reply to my last review only talked about part of my comments,
-> >>> which is usually what you do when you're gonna implement the rest, but
-> >>> you haven't.
-> >>> I like the change you've made to shorten looping, but I'd at least li=
-ke
-> >>> a response to why a split is not worth doing :)
-> >>
-> >> Hi Conor,
-> >>
-> >> Missed that point since I was feeling that my solution actually
-> >> addresses your concerns. Your argument was that there is no reason to
-> >> loop for Zicbom/Zicboz but that would also apply to Zcf in case we are
-> >> on RV64 as well (since zcf is not supported on RV64). So for Zcf, that
-> >> would lead to using both mecanism or additional ifdefery with little to
-> >> no added value since the current solution actually solves both cases:
-> >>
-> >> - We don't have any extra looping if all validation callback returns 0
-> >> (except the initial one on riscv_isa_ext, which is kind of unavoidable=
-).
-> >> - Zicbom, Zicboz callbacks will be called only once (which was one of
-> >> your concern).
-> >>
-> >> Adding a second kind of callback for after loop validation would only
-> >> lead to a bunch of additional macros/ifdefery for extensions with
-> >> validate() callback, with validate_end() or with both (ie Zcf)). For
-> >> these reasons, I do not think there is a need for a separate mechanism
-> >> nor additional callback for such extensions except adding extra code
-> >> with no real added functionality.
-> >>
-> >> AFAIK, the platform driver probing mechanism works the same, the probe=
-()
-> >> callback is actually called even if for some reason properties are
-> >> missing from nodes for platform devices and thus the probe() returns
-> >> -EINVAL or whatever.
-> >>
-> >> Hope this answers your question,
-> >=20
-> > Yeah, pretty much I am happy with just an "it's not worth doing it"
-> > response. Given it wasn't your first choice, I doubt you're overly happy
-> > with it either, but I really would like to avoid looping to closure to
-> > sort out dependencies - particularly on the boot CPU before we bring
-> > anyone else up, but if the code is now more proactive about breaking
-> > out, I suppose that'll have to do :)
-> > I kinda wish we didn't do this at all, but I think we've brought this
-> > upon ourselves via hwprobe. I'm still on the fence as to whether things
-> > that are implied need to be handled in this way. I think I'll bring this
-> > up tomorrow at the weekly call, because so far it's only been you and I
-> > discussing this really and it's a policy decision that hwprobe-ists
-> > should be involved in I think.
->=20
-> Hi Conor,
->=20
-> Were you able to discuss that topic ?
+I see errors:
 
-I realised last night that I'd not got back to this thread and meant to
-do that today (I had accidentally deleted it from my mailbox), but I had
-a migraine this morning and so didn't.
-I did bring it up and IIRC Palmer was of the opinion that we should try
-our best to infer extensions.
+ERROR: modpost: "wilc_load_mac_from_nv" [drivers/net/wireless/microchip/wilc1000/wilc1000-sdio.ko] undefined!
+ERROR: modpost: "wilc_netdev_ifc_init" [drivers/net/wireless/microchip/wilc1000/wilc1000-sdio.ko] undefined!
+ERROR: modpost: "wilc_load_mac_from_nv" [drivers/net/wireless/microchip/wilc1000/wilc1000-spi.ko] undefined!
+ERROR: modpost: "wilc_netdev_ifc_init" [drivers/net/wireless/microchip/wilc1000/wilc1000-spi.ko] undefined!
+make[2]: *** [scripts/Makefile.modpost:145: Module.symvers] Error 1
+make[1]: *** [/home/kvalo/projects/personal/wireless-drivers/src/wireless-next/Makefile:1871: modpost] Error 2
+make: *** [Makefile:240: __sub-make] Error 2
 
-> > Implied extensions aside, I think we will eventually need this stuff
-> > anyway, for extensions that make no sense to consider if a config option
-> > for a dependency is disabled.
-> > From talking to Eric Biggers the other week about
-> > riscv_isa_extension_available() I'm of the opinion that we need to do
-> > better with that interface w.r.t. extension and config dependencies,
-> > and what seems like a good idea to me at the moment is putting tests for
-> > IS_ENABLED(RISCV_ISA_FOO) into these validate hooks.
-> >=20
-> > I'll try to look at the actual implementation here tomorrow.
->=20
-> Did you found time to look at the implementation ?
+6 patches set to Changes Requested.
 
-No, with the above excuse. I'll try to get to it today or tomorrow...
+13633102 [1/6] wifi: wilc1000: set net device registration as last step during interface creation
+13633103 [2/6] wifi: wilc1000: register net device only after bus being fully initialized
+13633104 [3/6] wifi: wilc1000: set wilc_set_mac_address parameter as const
+13633105 [4/6] wifi: wilc1000: add function to read mac address from eFuse
+13633106 [5/6] wifi: wilc1000: make sdio deinit function really deinit the sdio card
+13633107 [6/6] wifi: wilc1000: read MAC address from fuse at probe
 
---d4LtUScPc142c/dS
-Content-Type: application/pgp-signature; name="signature.asc"
+-- 
+https://patchwork.kernel.org/project/linux-wireless/patch/20240417-mac_addr_at_probe-v1-1-67d6c9b3bc2b@bootlin.com/
 
------BEGIN PGP SIGNATURE-----
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZkNcigAKCRB4tDGHoIJi
-0kA2AQDbZCPdb5B0I8LI5ibKy3ZRNF+UdA1ZiQXHtgoETMFd0gEA1hljHOnzoE/w
-C3Pfa2PGHUyVZgXKvpMsjyz8TWUNpQE=
-=uWRj
------END PGP SIGNATURE-----
-
---d4LtUScPc142c/dS--
 
