@@ -1,156 +1,200 @@
-Return-Path: <linux-kernel+bounces-178381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20D518C4CDD
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 09:24:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D26B08C4CC3
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 09:23:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52DEB1C2093A
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 07:24:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EC721F216BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 07:23:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E767437152;
-	Tue, 14 May 2024 07:23:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81BB011723;
+	Tue, 14 May 2024 07:23:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oPWbEGHy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SGyU4jV5"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F135820DD3;
-	Tue, 14 May 2024 07:23:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 228091DA2F
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 07:23:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715671399; cv=none; b=ONr/mnZ07AgSYSGuQCsnfD6eZagpdEmsvRBdLBa2TTGgEHqdoe7HdrDY7EqZyYF4Rtw7Jr2eI3aFApcWX4i95uFJpU/O5a8SJBCZPSGO5yXcuoCzz/oSUFbAzkJ3MSUGW2HVPVcQz+l3eXBwoSgB6qq0bXdWQmUC3gvzOgC9QfM=
+	t=1715671386; cv=none; b=Ny63u6gwmPeTCJIwvGbzM4mCHDQB8FxdpUjK8PbmgnuTc08DJQrX1clI1bzjdrc1YGTcQIQEPSrQN1vQDDZ6e9Se7KSmlAecJQ/uZFCS3njRZkiEqcD4i0KK/hsScN1aopMzhL48LKMhCclCc/EQ0rE3kKPLa3Vj0ApmENuM0DE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715671399; c=relaxed/simple;
-	bh=fijWPI5Ec9mEIeEHh6gbcrhWz9IcjE4n8o8vNnEa8uM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=YDPrMBSWsXaRLB/jnBlWAErJLFQDY8l0cafWVAiWgFYP/u41hzvtROnffwnZQNmw0xF0vzVUF088UvBjXS/pjurIQRI/CI79tvHyyz5+Qpm+qmC0sjaXJZb1Z0spmcjLcQ6lciNGl50VJ6DAKCxPUmLGN9rComIy212w1tBYU8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oPWbEGHy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 5CBBCC4AF12;
-	Tue, 14 May 2024 07:23:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715671398;
-	bh=fijWPI5Ec9mEIeEHh6gbcrhWz9IcjE4n8o8vNnEa8uM=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=oPWbEGHyoeP73p0zqQ755sVGAjS+QMEh3EczsCgUZ67D65CkSD1ujiFawo495BlId
-	 UFjfv57/PL51MYQiB10gRE4sBWFgkS3msMimaB1+iokNIrqX6a1V2IMsgEbjgH4imf
-	 dWBC3eKAmg7zzhD0K1//YwLoxtGbVFmrxWKHQNeDZ38TB09jwtztjXnvLhTIhYqNdX
-	 sk3SMtqNbU3mA58wXcuTFbJWydLdoKRgdhEnIL90jPa9n200ZU0AVPu8mOBJNf4T67
-	 vpngU6EONr3X0OccFP11Hpe9zvWYy1OUSk2WiLMZSGGOpdJHtYcIW60WMUv70jtKt2
-	 hyBDTqluc7iGg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 495CCC25B78;
-	Tue, 14 May 2024 07:23:18 +0000 (UTC)
-From: Dumitru Ceclan via B4 Relay <devnull+dumitru.ceclan.analog.com@kernel.org>
-Date: Tue, 14 May 2024 10:22:48 +0300
-Subject: [PATCH v2 3/9] iio: adc: ad7173: refactor channel configuration
- parsing
+	s=arc-20240116; t=1715671386; c=relaxed/simple;
+	bh=dLdaCow7P2Xib4OcE/09HYpSkp4Gr7+ElTge/KPtjtg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Lew1AloBmzNt92005lpJB+DkvvxN7utSL71kjKdtMBUJtCCm0EnjqNKBF2jXtAnNoL6kvEPEaK7vTaICkVr28X22lBjLi4FXRpb79YvC6hyNxLQkYi7/NniCpkGtJkMtxXdEHVBWAg6tcIfamDssDt7Ui5FIUa+NCaeHuJe5qkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SGyU4jV5; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715671384;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4wO7UP5uZ9GbYlk7RUrHboh34vCyWLtZOIaQcDBJ5dg=;
+	b=SGyU4jV5c+l3E88dldqILC7h5HdXU6lHb/7hcsr5kNB8pcBs89pbAJzc1E/yvAeSzJ/5Dr
+	P+ezDXoaG7STtxpqSwG++HQ0HgQoC9te8R3Dr/j5ah+kpMIKMxfDuE2IdXzsPTySnAaX7m
+	iwa2sVvDK+jM4uxOMKunzSy2NxSJneI=
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
+ [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-489-rL4hHq40NwKgNbe-w82gdA-1; Tue, 14 May 2024 03:23:02 -0400
+X-MC-Unique: rL4hHq40NwKgNbe-w82gdA-1
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6a1530209deso123552706d6.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 00:23:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715671382; x=1716276182;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4wO7UP5uZ9GbYlk7RUrHboh34vCyWLtZOIaQcDBJ5dg=;
+        b=Et4H7vKmJYCTUa5/Ytr95E1Bx8RJ8cTHUvPveUEbNro9sG3w5MzgdnbmLtNJMVy14N
+         l3//Beq6ehtzDXDW7bAK43zjWd2KJYNJHMHqPcBlcniHFq7059PXQXs67a0zdVInXXzm
+         yZle+EkKQqWNuurrrWBFSA1ux0dv5WWm3Kg4mj4QqVHOxl5PCCDaUEwqSmwEybAYkY8k
+         zZW6vITpfPE5H1724g6Zfw2lQH6fbymOrSBpz2wB4eKnoePKLxN0qblbIFfwsCbklkJE
+         cJr7JG4wKMzWOJaSjJCO/JHehwgMER/fgeIq/WgVLce5W1W+1XdPv4JBqW5puseyBYv+
+         tAhw==
+X-Forwarded-Encrypted: i=1; AJvYcCW/mEeq7vrRblqeBid1byJZNXZ0n0+F7rDlACa0wJOviOR7yjo2vcZQ9CIEp5BNDdmtvSGXV6hJ6tk1XKJvI07PS+yMjzDsljR9Uof1
+X-Gm-Message-State: AOJu0YwsZQ0AgyBicWdrCkCeTvIBjlD77g18X9l7PWZs9+ejtMpWcpTd
+	xTQbpwmCskSzGN/cq7BjQWhFHaKz9DaMSD3326qa+aRvABOF/cr3CFOY6hOL5LGjRVohZXbH0Vs
+	59hm43DK/33gA790E0atJowBZRfZ/WgrVZNfXIvUuArYOjW0RzKJbphM91lFIOQ==
+X-Received: by 2002:a0c:eec6:0:b0:6a0:e8ed:49a6 with SMTP id 6a1803df08f44-6a15cc96cedmr264843776d6.27.1715671381819;
+        Tue, 14 May 2024 00:23:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHL+IuDEP1OeSc3CrfYuG8GF7qjHL+o2EAfKbDGMN9FevsDKBoeIuPMJwzJc0jicKEcMQt2kw==
+X-Received: by 2002:a0c:eec6:0:b0:6a0:e8ed:49a6 with SMTP id 6a1803df08f44-6a15cc96cedmr264843506d6.27.1715671381475;
+        Tue, 14 May 2024 00:23:01 -0700 (PDT)
+Received: from rh.redhat.com (p200300c93f4cc600a5cdf10de606b5e2.dip0.t-ipconnect.de. [2003:c9:3f4c:c600:a5cd:f10d:e606:b5e2])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6a15f1ccd4esm50917516d6.97.2024.05.14.00.22.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 May 2024 00:23:01 -0700 (PDT)
+From: Sebastian Ott <sebott@redhat.com>
+To: linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>
+Subject: [PATCH v3 2/6] KVM: arm64: maintain per VM value for CTR_EL0
+Date: Tue, 14 May 2024 09:22:48 +0200
+Message-ID: <20240514072252.5657-3-sebott@redhat.com>
+X-Mailer: git-send-email 2.45.0
+In-Reply-To: <20240514072252.5657-1-sebott@redhat.com>
+References: <20240514072252.5657-1-sebott@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240514-ad4111-v2-3-29be6a55efb5@analog.com>
-References: <20240514-ad4111-v2-0-29be6a55efb5@analog.com>
-In-Reply-To: <20240514-ad4111-v2-0-29be6a55efb5@analog.com>
-To: Ceclan Dumitru <dumitru.ceclan@analog.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, 
- Michael Hennerich <Michael.Hennerich@analog.com>, 
- Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>, David Lechner <dlechner@baylibre.com>, 
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Dumitru Ceclan <mitrutzceclan@gmail.com>, 
- Jonathan Cameron <Jonathan.Cameron@huawei.com>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1715671396; l=2349;
- i=dumitru.ceclan@analog.com; s=20240313; h=from:subject:message-id;
- bh=NkOJfDpfW75y+yj/rbukNrI85PrmYYK7YW9pUZT9xYs=;
- b=1QSxLACQYvSmI8UU/HN9sUKQoXeoAz1ee8CiXOpj8RlV25aQV31ZkXXmhUaf3ToUv+Sj8bl96
- krrGPH2nXvGDIPl5vzWnxO1AJvV9aDD9ZsPmsl59Z0VgrPD9KsVcNw7
-X-Developer-Key: i=dumitru.ceclan@analog.com; a=ed25519;
- pk=HdqMlVyrcazwoiai7oN6ghU+Bj1pusGUFRl30jhS7Bo=
-X-Endpoint-Received: by B4 Relay for dumitru.ceclan@analog.com/20240313
- with auth_id=140
-X-Original-From: Dumitru Ceclan <dumitru.ceclan@analog.com>
-Reply-To: dumitru.ceclan@analog.com
+Content-Transfer-Encoding: 8bit
 
-From: Dumitru Ceclan <dumitru.ceclan@analog.com>
+In preparation for CTR_EL0 emulation maintain a per VM for this
+register and use it where appropriate.
 
-Move configurations regarding number of channels from
-*_fw_parse_device_config to *_fw_parse_channel_config.
-
-Suggested-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Link: https://lore.kernel.org/all/20240303162148.3ad91aa2@jic23-huawei/
-
-Reviewed-by: David Lechner <dlechner@baylibre.com>
-Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
+Signed-off-by: Sebastian Ott <sebott@redhat.com>
 ---
- drivers/iio/adc/ad7173.c | 29 +++++++++++++++++------------
- 1 file changed, 17 insertions(+), 12 deletions(-)
+ arch/arm64/include/asm/kvm_host.h |  2 ++
+ arch/arm64/kvm/sys_regs.c         | 21 ++++++++++++++-------
+ 2 files changed, 16 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
-index 850574437bda..d5ad3f01dec7 100644
---- a/drivers/iio/adc/ad7173.c
-+++ b/drivers/iio/adc/ad7173.c
-@@ -918,7 +918,23 @@ static int ad7173_fw_parse_channel_config(struct iio_dev *indio_dev)
- 	struct device *dev = indio_dev->dev.parent;
- 	struct iio_chan_spec *chan_arr, *chan;
- 	unsigned int ain[2], chan_index = 0;
--	int ref_sel, ret;
-+	int ref_sel, ret, num_channels;
-+
-+	num_channels = device_get_child_node_count(dev);
-+
-+	if (st->info->has_temp)
-+		num_channels++;
-+
-+	if (num_channels == 0)
-+		return dev_err_probe(dev, -ENODATA, "No channels specified\n");
-+
-+	if (num_channels > st->info->num_channels)
-+		return dev_err_probe(dev, -EINVAL,
-+			"Too many channels specified. Maximum is %d, not including temperature channel if supported.\n",
-+			st->info->num_channels);
-+
-+	indio_dev->num_channels = num_channels;
-+	st->num_channels = num_channels;
+diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+index 212ae77eefaf..1259be5e2f3e 100644
+--- a/arch/arm64/include/asm/kvm_host.h
++++ b/arch/arm64/include/asm/kvm_host.h
+@@ -331,6 +331,8 @@ struct kvm_arch {
+ #define KVM_ARM_ID_REG_NUM	(IDREG_IDX(sys_reg(3, 0, 0, 7, 7)) + 1)
+ 	u64 id_regs[KVM_ARM_ID_REG_NUM];
  
- 	chan_arr = devm_kcalloc(dev, sizeof(*indio_dev->channels),
- 				st->num_channels, GFP_KERNEL);
-@@ -1013,7 +1029,6 @@ static int ad7173_fw_parse_device_config(struct iio_dev *indio_dev)
++	u64 ctr_el0;
++
+ 	/* Masks for VNCR-baked sysregs */
+ 	struct kvm_sysreg_masks	*sysreg_masks;
+ 
+diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
+index 41741bf4d2b2..0213c96f73f2 100644
+--- a/arch/arm64/kvm/sys_regs.c
++++ b/arch/arm64/kvm/sys_regs.c
+@@ -219,9 +219,9 @@ void vcpu_write_sys_reg(struct kvm_vcpu *vcpu, u64 val, int reg)
+  * Returns the minimum line size for the selected cache, expressed as
+  * Log2(bytes).
+  */
+-static u8 get_min_cache_line_size(bool icache)
++static u8 get_min_cache_line_size(struct kvm *kvm, bool icache)
  {
- 	struct ad7173_state *st = iio_priv(indio_dev);
- 	struct device *dev = indio_dev->dev.parent;
--	unsigned int num_channels;
- 	int ret;
+-	u64 ctr = read_sanitised_ftr_reg(SYS_CTR_EL0);
++	u64 ctr = kvm->arch.ctr_el0;
+ 	u8 field;
  
- 	st->regulators[0].supply = ad7173_ref_sel_str[AD7173_SETUP_REF_SEL_EXT_REF];
-@@ -1072,16 +1087,6 @@ static int ad7173_fw_parse_device_config(struct iio_dev *indio_dev)
+ 	if (icache)
+@@ -248,7 +248,7 @@ static u32 get_ccsidr(struct kvm_vcpu *vcpu, u32 csselr)
+ 	if (vcpu->arch.ccsidr)
+ 		return vcpu->arch.ccsidr[csselr];
  
- 	ad7173_sigma_delta_info.irq_line = ret;
+-	line_size = get_min_cache_line_size(csselr & CSSELR_EL1_InD);
++	line_size = get_min_cache_line_size(vcpu->kvm, csselr & CSSELR_EL1_InD);
  
--	num_channels = device_get_child_node_count(dev);
--
--	if (st->info->has_temp)
--		num_channels++;
--
--	if (num_channels == 0)
--		return dev_err_probe(dev, -ENODATA, "No channels specified\n");
--	indio_dev->num_channels = num_channels;
--	st->num_channels = num_channels;
--
- 	return ad7173_fw_parse_channel_config(indio_dev);
+ 	/*
+ 	 * Fabricate a CCSIDR value as the overriding value does not exist.
+@@ -283,7 +283,7 @@ static int set_ccsidr(struct kvm_vcpu *vcpu, u32 csselr, u32 val)
+ 	u32 i;
+ 
+ 	if ((val & CCSIDR_EL1_RES0) ||
+-	    line_size < get_min_cache_line_size(csselr & CSSELR_EL1_InD))
++	    line_size < get_min_cache_line_size(vcpu->kvm, csselr & CSSELR_EL1_InD))
+ 		return -EINVAL;
+ 
+ 	if (!ccsidr) {
+@@ -1886,7 +1886,7 @@ static bool access_ctr(struct kvm_vcpu *vcpu, struct sys_reg_params *p,
+ 	if (p->is_write)
+ 		return write_to_read_only(vcpu, p, r);
+ 
+-	p->regval = read_sanitised_ftr_reg(SYS_CTR_EL0);
++	p->regval = vcpu->kvm->arch.ctr_el0;
+ 	return true;
  }
  
-
+@@ -1906,7 +1906,7 @@ static bool access_clidr(struct kvm_vcpu *vcpu, struct sys_reg_params *p,
+  */
+ static u64 reset_clidr(struct kvm_vcpu *vcpu, const struct sys_reg_desc *r)
+ {
+-	u64 ctr_el0 = read_sanitised_ftr_reg(SYS_CTR_EL0);
++	u64 ctr_el0 = vcpu->kvm->arch.ctr_el0;
+ 	u64 clidr;
+ 	u8 loc;
+ 
+@@ -1959,8 +1959,8 @@ static u64 reset_clidr(struct kvm_vcpu *vcpu, const struct sys_reg_desc *r)
+ static int set_clidr(struct kvm_vcpu *vcpu, const struct sys_reg_desc *rd,
+ 		      u64 val)
+ {
+-	u64 ctr_el0 = read_sanitised_ftr_reg(SYS_CTR_EL0);
+ 	u64 idc = !CLIDR_LOC(val) || (!CLIDR_LOUIS(val) && !CLIDR_LOUU(val));
++	u64 ctr_el0 = vcpu->kvm->arch.ctr_el0;
+ 
+ 	if ((val & CLIDR_EL1_RES0) || (!(ctr_el0 & CTR_EL0_IDC) && idc))
+ 		return -EINVAL;
+@@ -3557,6 +3557,13 @@ void kvm_reset_sys_regs(struct kvm_vcpu *vcpu)
+ 	struct kvm *kvm = vcpu->kvm;
+ 	unsigned long i;
+ 
++	if (!kvm_vcpu_initialized(vcpu))
++		/*
++		 * Make sure CTR_EL0 is initialized before registers
++		 * that depend on it are reset.
++		 */
++		kvm->arch.ctr_el0 = read_sanitised_ftr_reg(SYS_CTR_EL0);
++
+ 	for (i = 0; i < ARRAY_SIZE(sys_reg_descs); i++) {
+ 		const struct sys_reg_desc *r = &sys_reg_descs[i];
+ 
 -- 
-2.43.0
-
+2.42.0
 
 
