@@ -1,252 +1,391 @@
-Return-Path: <linux-kernel+bounces-178947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7FD38C59A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 18:20:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 049A88C59A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 18:21:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C7B8283FB5
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:20:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 278801C21E22
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:21:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E297C17EB9A;
-	Tue, 14 May 2024 16:20:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6115017F388;
+	Tue, 14 May 2024 16:21:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="dlA82Jfx"
-Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com [209.85.161.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="NwCEZ+9o"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 260022E644
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 16:20:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 183BF5B1FB;
+	Tue, 14 May 2024 16:21:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715703614; cv=none; b=C+UL5gbjYCyH7iLdXd4f25ysF07kjojPVIQsAL2gQ6ik+2BnhSb5xVQz9mlloB5ug+UT+lmTQDqpYVsEj/5ZaZ7HoF3zeAY5lMKAV+d0VJ35fH/2buQwbXiBh1CRjDV9EkiFJMRi0lWH74Kib9v2u70QRKiSmO1gN0ZdnpC/7oc=
+	t=1715703664; cv=none; b=Q0GxEXPziAW/3QbsbKUzLP4Zo7hoLOwztgX9evK1AcWIEX6Nl2kFym0CKCywb8vVIWz5RbZVhB8+pvyO4nKXTI7TUujHQsXBzVybo76Mw+qbPND5kRGzeCnBkIirGjgNrSwMUNY9rjJC2b2/k/QYFi/jOUxmqhC+vjeL9HinEFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715703614; c=relaxed/simple;
-	bh=sBddaltgijYxOlwTiY8lIxG5A8nnnzWqjBV9WdsiQ4A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FC+0DcQEKWaLVjPTwmLaLH7nLCTZl83XWVczJPHsARKGqcyyPuE1qO+MZLCWNTAalcbUWWSdGel7QgN0yR77fvO7AvU47G7updIwI2oFm7x7Vh4Y3ZjjYooP8lQcu4jV2hqFMkJrJqgryz8wB0FWoDVwAbf4c4M1CKSNKhE3aVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=dlA82Jfx; arc=none smtp.client-ip=209.85.161.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-5b27ad74c40so2915597eaf.3
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 09:20:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1715703611; x=1716308411; darn=vger.kernel.org;
-        h=in-reply-to:autocrypt:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UYXKNdfSmwQhSg5U5ughUywC3JHzrWvrSGmvFe4e+Pw=;
-        b=dlA82JfxV3uUeESaoUAG3OLMuleLyhcSUE/0Pzq/T3G1xGYcGtmQOxtAyiOEsc5/eT
-         t8AzzwaG9lHvyInBxQRKqfWQ+mntGfB5zGZWtnzT4FR/dEbRvPTRTDl33/cRxcOULlaF
-         Qkz6Wnb0oM3smBIuORdl3M1fchFyKGt1zzU2A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715703611; x=1716308411;
-        h=in-reply-to:autocrypt:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=UYXKNdfSmwQhSg5U5ughUywC3JHzrWvrSGmvFe4e+Pw=;
-        b=BGTSrewd43NoT5lCHTt00EW4SheTtqaCG8GZ9c8g12iaIKZuMAgKHSpAXZ0b6o1JkV
-         iHnaZD6+ltKmwNqmz+xnhg6j1OdnbmIEtnFvBsOHEs8ZN4UgW3WTx9/coAUbTnBgq2/U
-         6ngUhNz37jbH93466FUxgRLMWteSXkCERJBi177daUWMsC6p+QtxWnkARXobufZFhako
-         CPWjm8aHxhPIOS1rcJDvukmTC2vnYN9rPj1md2fcLVSVQodyoFXQImcESWctnZcZSJA8
-         t4NaiJaBNxykfpPTPR1EvI9T4HKfYmdB7bpucKzrcf1eR94/XSSOap9zvvIJ3f15fw8C
-         n/6A==
-X-Forwarded-Encrypted: i=1; AJvYcCXwmRALwFm5w/kkx9o9FbVVLWYOQDW65qByY+0oypcWAyTUKDfB9d4qCTJlico4TPKNRIaTjln8wGOBwhtwiMtzxRjoichcl3GwaqHT
-X-Gm-Message-State: AOJu0Yw1Z7pM8y26yuuEF2rFPUmOSBirrwJ38SGAKcQeRh4Ov1US/fee
-	CJQ3nIQn6TDMEtZPXt5Nsu5majWRR7EFvwyFYJQZSL/RjF+qQ6aJCn8rzicxGQ==
-X-Google-Smtp-Source: AGHT+IE2BLWE5ABAZRECtE1xjBTuI1pAPZhcbzCeFfxHlrxH+2pdv4W1Pr8uQB73yE3jmNcWbOcjqQ==
-X-Received: by 2002:a05:6871:6aa:b0:22e:bcfd:deb0 with SMTP id 586e51a60fabf-24172e41c70mr15883818fac.41.1715703611230;
-        Tue, 14 May 2024 09:20:11 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43df77e0c77sm68208541cf.96.2024.05.14.09.20.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 May 2024 09:20:10 -0700 (PDT)
-Message-ID: <b422f395-7554-4596-b779-268718b34383@broadcom.com>
-Date: Tue, 14 May 2024 09:20:06 -0700
+	s=arc-20240116; t=1715703664; c=relaxed/simple;
+	bh=sOi7W1+C/MDe4EJSbvHzQbwK+uiTr+8hwJd8RjWm/Vs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PLw+HIjyHOEN7bxBtRP96AwQHVC+Nd+2L6UqSCv6CpXmw9xbuFuacsKEb+d1PopUWhzBpwBhSrmlZh1r0YOMy7fiNYoUcoS8b6B1xgYYRC6LOStzeAP4SEpLGbiOdWrKDIgkRx1CutQYKde7/PhlMl6i3t3lk5uWLHsq4sd+vtc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=NwCEZ+9o; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1715703660;
+	bh=sOi7W1+C/MDe4EJSbvHzQbwK+uiTr+8hwJd8RjWm/Vs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=NwCEZ+9oc8a1VzMSJMAfCYGtb+t+Jhxqq5Cp9OUetTgKC8JuQOkDcOxvLLBLRsydg
+	 +9PAeJlG7v02fi3WE+7cZsLLhsb0JWiSlV7ZTOe5ymghYHDhvOvVLSMApPeaGPB4bj
+	 XjjAZR8FDWJAppiro3rdRCf42jHIfA3iYWOYeY9C6P39ZlF0/AbPecW3o/Lfv+hCgY
+	 e9rNYU3CPMshM8/8wRhJrbnhLMO4toxRHHv1QYPZe7IDaOdOzlyDwFbs0cnx20N9lA
+	 +p7htZnHEzXbTuUknXKG6hV/aviYM3OAPMklsIJgUl479mRUfF2X5qKYGSlMw8YVp2
+	 ekRiMAkNbv2aw==
+Received: from benjamin-XPS-13-9310.. (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: benjamin.gaignard)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 00D893780A0B;
+	Tue, 14 May 2024 16:20:59 +0000 (UTC)
+From: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+To: ezequiel@vanguardiasur.com.ar,
+	p.zabel@pengutronix.de,
+	mchehab@kernel.org,
+	nicolas.dufresne@collabora.com
+Cc: linux-media@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	kernel@collabora.com,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>
+Subject: [PATCH] media: verisilicon: Add reference buffers compression
+Date: Tue, 14 May 2024 18:20:54 +0200
+Message-Id: <20240514162054.294002-1-benjamin.gaignard@collabora.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] mailbox: Make BCM2835_MBOX default to ARCH_BCM2835
-To: Conor Dooley <conor@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>,
- Bjorn Andersson <quic_bjorande@quicinc.com>,
- Maximilian Luz <luzmaximilian@gmail.com>, Ard Biesheuvel <ardb@kernel.org>,
- Johan Hovold <johan+linaro@kernel.org>, "Michael S. Tsirkin"
- <mst@redhat.com>, Sudeep Holla <sudeep.holla@arm.com>,
- Conor Dooley <conor.dooley@microchip.com>,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
- "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>, Stefan Wahren <wahrenst@gmx.net>
-References: <20240513235234.1474619-1-florian.fainelli@broadcom.com>
- <20240513235234.1474619-2-florian.fainelli@broadcom.com>
- <20240514-amiable-unequal-d4133956c80c@spud>
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20240514-amiable-unequal-d4133956c80c@spud>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="0000000000004e332806186c6012"
+Content-Transfer-Encoding: 8bit
 
---0000000000004e332806186c6012
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Reference frame compression is a feature added in G2 decoder to compress
+frame buffers so that the bandwidth of storing/loading reference frames
+can be reduced, especially when the resolution of decoded stream is of
+high definition.
 
-On 5/14/24 05:29, Conor Dooley wrote:
-> On Mon, May 13, 2024 at 04:52:32PM -0700, Florian Fainelli wrote:
->> This driver is depended on by CONFIG_FIRMWARE_RASPBERRYPI which provides
->> a number of essential services, including but not limited to a Linux
->> common clock framework provider. Make sure that enable
->> CONFIG_ARCH_BCM2835 does enable the corresponding mailbox driver.
->>
->> Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
->> ---
->>   drivers/mailbox/Kconfig | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/mailbox/Kconfig b/drivers/mailbox/Kconfig
->> index 42940108a187..2b4cde562a90 100644
->> --- a/drivers/mailbox/Kconfig
->> +++ b/drivers/mailbox/Kconfig
->> @@ -109,6 +109,7 @@ config ALTERA_MBOX
->>   config BCM2835_MBOX
->>   	tristate "BCM2835 Mailbox"
->>   	depends on ARCH_BCM2835
->> +	default ARCH_BCM2835
-> 
-> This is just "default y", since I doubt ARCH_BCM2835 can be a module?
+The impact of compressed frames is confirmed when using perf to monitor
+the number of memory accesses with or without compression feature.
+The following command
+perf stat -a -e imx8_ddr0/cycles/,imx8_ddr0/read-cycles/,imx8_ddr0/write-cycles/ gst-launch-1.0 filesrc location=Jockey_3840x2160_120fps_420_8bit_HEVC_RAW.hevc ! queue ! h265parse ! v4l2slh265dec ! fakesink
 
-Right, although I intend to also add COMPILE_TEST, by then, it might be 
-preferable to have it "default ARCH_BCM2835".
+give us these results
+without compression feature:
+Performance counter stats for 'system wide':
 
-> 
-> If so, patch 2 could also just be "default y" and I think patch 3 can
-> have the same logic applied to it, given you're defaulting it to a
-> dependency also?
+        1711300345      imx8_ddr0/cycles/
+         892207924      imx8_ddr0/read-cycles/
+        1291785864      imx8_ddr0/write-cycles/
 
-Right.
+      13.760048353 seconds time elapsed
+
+with compression feature:
+Performance counter stats for 'system wide':
+
+         274526799      imx8_ddr0/cycles/
+         453120194      imx8_ddr0/read-cycles/
+         833391434      imx8_ddr0/write-cycles/
+
+      18.257831534 seconds time elapsed
+
+As expected the number of read/write cycles are really lower when compression
+is used.
+
+Since storing compression data requires more memory a module
+parameter named 'hevc_use_compression' is used to enable/disable
+this feature and, by default, compression isn't used.
+
+Enabling compression feature means that decoder output frames
+are stored with a specific compression pixel format. Since this
+pixel format is unknown, this patch restrain compression feature
+usage to the cases where post-processor pixels formats (NV12 or NV15)
+are selected by the applications.
+
+Fluster compliance HEVC test suite score is still 141/147 after this patch.
+
+Signed-off-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+---
+ .../media/platform/verisilicon/hantro_g2.c    | 35 +++++++++++++++++
+ .../platform/verisilicon/hantro_g2_hevc_dec.c | 20 ++++++++--
+ .../platform/verisilicon/hantro_g2_regs.h     |  4 ++
+ .../media/platform/verisilicon/hantro_hevc.c  |  8 ++++
+ .../media/platform/verisilicon/hantro_hw.h    | 39 +++++++++++++++++++
+ .../platform/verisilicon/hantro_postproc.c    |  6 ++-
+ 6 files changed, 108 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/media/platform/verisilicon/hantro_g2.c b/drivers/media/platform/verisilicon/hantro_g2.c
+index b880a6849d58..62ca91427360 100644
+--- a/drivers/media/platform/verisilicon/hantro_g2.c
++++ b/drivers/media/platform/verisilicon/hantro_g2.c
+@@ -9,6 +9,12 @@
+ #include "hantro_g2_regs.h"
+ 
+ #define G2_ALIGN	16
++#define CBS_SIZE	16	/* compression table size in bytes */
++#define CBS_LUMA	8	/* luminance CBS is composed of 1 8x8 coded block */
++#define CBS_CHROMA_W	(8 * 2)	/* chrominance CBS is composed of two 8x4 coded
++				 * blocks, with Cb CB first then Cr CB following
++				 */
++#define CBS_CHROMA_H	4
+ 
+ void hantro_g2_check_idle(struct hantro_dev *vpu)
+ {
+@@ -56,3 +62,32 @@ size_t hantro_g2_motion_vectors_offset(struct hantro_ctx *ctx)
+ 
+ 	return ALIGN((cr_offset * 3) / 2, G2_ALIGN);
+ }
++
++static size_t hantro_g2_mv_size(struct hantro_ctx *ctx)
++{
++	const struct hantro_hevc_dec_ctrls *ctrls = &ctx->hevc_dec.ctrls;
++	const struct v4l2_ctrl_hevc_sps *sps = ctrls->sps;
++	unsigned int pic_width_in_ctbs, pic_height_in_ctbs;
++	unsigned int max_log2_ctb_size;
++
++	max_log2_ctb_size = sps->log2_min_luma_coding_block_size_minus3 + 3 +
++			    sps->log2_diff_max_min_luma_coding_block_size;
++	pic_width_in_ctbs = (sps->pic_width_in_luma_samples +
++			    (1 << max_log2_ctb_size) - 1) >> max_log2_ctb_size;
++	pic_height_in_ctbs = (sps->pic_height_in_luma_samples + (1 << max_log2_ctb_size) - 1)
++			     >> max_log2_ctb_size;
++
++	return pic_width_in_ctbs * pic_height_in_ctbs * (1 << (2 * (max_log2_ctb_size - 4))) * 16;
++}
++
++size_t hantro_g2_luma_compress_offset(struct hantro_ctx *ctx)
++{
++	return hantro_g2_motion_vectors_offset(ctx) +
++	       hantro_g2_mv_size(ctx);
++}
++
++size_t hantro_g2_chroma_compress_offset(struct hantro_ctx *ctx)
++{
++	return hantro_g2_luma_compress_offset(ctx) +
++	       hantro_hevc_luma_compressed_size(ctx->dst_fmt.width, ctx->dst_fmt.height);
++}
+diff --git a/drivers/media/platform/verisilicon/hantro_g2_hevc_dec.c b/drivers/media/platform/verisilicon/hantro_g2_hevc_dec.c
+index d3f8c33eb16c..85a44143b378 100644
+--- a/drivers/media/platform/verisilicon/hantro_g2_hevc_dec.c
++++ b/drivers/media/platform/verisilicon/hantro_g2_hevc_dec.c
+@@ -367,11 +367,14 @@ static int set_ref(struct hantro_ctx *ctx)
+ 	const struct v4l2_ctrl_hevc_decode_params *decode_params = ctrls->decode_params;
+ 	const struct v4l2_hevc_dpb_entry *dpb = decode_params->dpb;
+ 	dma_addr_t luma_addr, chroma_addr, mv_addr = 0;
++	dma_addr_t compress_luma_addr, compress_chroma_addr = 0;
+ 	struct hantro_dev *vpu = ctx->dev;
+ 	struct vb2_v4l2_buffer *vb2_dst;
+ 	struct hantro_decoded_buffer *dst;
+ 	size_t cr_offset = hantro_g2_chroma_offset(ctx);
+ 	size_t mv_offset = hantro_g2_motion_vectors_offset(ctx);
++	size_t compress_luma_offset = hantro_g2_luma_compress_offset(ctx);
++	size_t compress_chroma_offset = hantro_g2_chroma_compress_offset(ctx);
+ 	u32 max_ref_frames;
+ 	u16 dpb_longterm_e;
+ 	static const struct hantro_reg cur_poc[] = {
+@@ -445,6 +448,8 @@ static int set_ref(struct hantro_ctx *ctx)
+ 
+ 		chroma_addr = luma_addr + cr_offset;
+ 		mv_addr = luma_addr + mv_offset;
++		compress_luma_addr = luma_addr + compress_luma_offset;
++		compress_chroma_addr = luma_addr + compress_chroma_offset;
+ 
+ 		if (dpb[i].flags & V4L2_HEVC_DPB_ENTRY_LONG_TERM_REFERENCE)
+ 			dpb_longterm_e |= BIT(V4L2_HEVC_DPB_ENTRIES_NUM_MAX - 1 - i);
+@@ -452,6 +457,8 @@ static int set_ref(struct hantro_ctx *ctx)
+ 		hantro_write_addr(vpu, G2_REF_LUMA_ADDR(i), luma_addr);
+ 		hantro_write_addr(vpu, G2_REF_CHROMA_ADDR(i), chroma_addr);
+ 		hantro_write_addr(vpu, G2_REF_MV_ADDR(i), mv_addr);
++		hantro_write_addr(vpu, G2_REF_COMP_LUMA_ADDR(i), compress_luma_addr);
++		hantro_write_addr(vpu, G2_REF_COMP_CHROMA_ADDR(i), compress_chroma_addr);
+ 	}
+ 
+ 	vb2_dst = hantro_get_dst_buf(ctx);
+@@ -465,19 +472,27 @@ static int set_ref(struct hantro_ctx *ctx)
+ 
+ 	chroma_addr = luma_addr + cr_offset;
+ 	mv_addr = luma_addr + mv_offset;
++	compress_luma_addr = luma_addr + compress_luma_offset;
++	compress_chroma_addr = luma_addr + compress_chroma_offset;
+ 
+ 	hantro_write_addr(vpu, G2_REF_LUMA_ADDR(i), luma_addr);
+ 	hantro_write_addr(vpu, G2_REF_CHROMA_ADDR(i), chroma_addr);
+-	hantro_write_addr(vpu, G2_REF_MV_ADDR(i++), mv_addr);
++	hantro_write_addr(vpu, G2_REF_MV_ADDR(i), mv_addr);
++	hantro_write_addr(vpu, G2_REF_COMP_LUMA_ADDR(i), compress_luma_addr);
++	hantro_write_addr(vpu, G2_REF_COMP_CHROMA_ADDR(i++), compress_chroma_addr);
+ 
+ 	hantro_write_addr(vpu, G2_OUT_LUMA_ADDR, luma_addr);
+ 	hantro_write_addr(vpu, G2_OUT_CHROMA_ADDR, chroma_addr);
+ 	hantro_write_addr(vpu, G2_OUT_MV_ADDR, mv_addr);
++	hantro_write_addr(vpu, G2_OUT_COMP_LUMA_ADDR, compress_luma_addr);
++	hantro_write_addr(vpu, G2_OUT_COMP_CHROMA_ADDR, compress_chroma_addr);
+ 
+ 	for (; i < V4L2_HEVC_DPB_ENTRIES_NUM_MAX; i++) {
+ 		hantro_write_addr(vpu, G2_REF_LUMA_ADDR(i), 0);
+ 		hantro_write_addr(vpu, G2_REF_CHROMA_ADDR(i), 0);
+ 		hantro_write_addr(vpu, G2_REF_MV_ADDR(i), 0);
++		hantro_write_addr(vpu, G2_REF_COMP_LUMA_ADDR(i), 0);
++		hantro_write_addr(vpu, G2_REF_COMP_CHROMA_ADDR(i), 0);
+ 	}
+ 
+ 	hantro_reg_write(vpu, &g2_refer_lterm_e, dpb_longterm_e);
+@@ -594,8 +609,7 @@ int hantro_g2_hevc_dec_run(struct hantro_ctx *ctx)
+ 	/* Don't disable output */
+ 	hantro_reg_write(vpu, &g2_out_dis, 0);
+ 
+-	/* Don't compress buffers */
+-	hantro_reg_write(vpu, &g2_ref_compress_bypass, 1);
++	hantro_reg_write(vpu, &g2_ref_compress_bypass, !ctx->hevc_dec.use_compression);
+ 
+ 	/* Bus width and max burst */
+ 	hantro_reg_write(vpu, &g2_buswidth, BUS_WIDTH_128);
+diff --git a/drivers/media/platform/verisilicon/hantro_g2_regs.h b/drivers/media/platform/verisilicon/hantro_g2_regs.h
+index 82606783591a..b943b1816db7 100644
+--- a/drivers/media/platform/verisilicon/hantro_g2_regs.h
++++ b/drivers/media/platform/verisilicon/hantro_g2_regs.h
+@@ -318,6 +318,10 @@
+ #define G2_TILE_BSD_ADDR		(G2_SWREG(183))
+ #define G2_DS_DST			(G2_SWREG(186))
+ #define G2_DS_DST_CHR			(G2_SWREG(188))
++#define G2_OUT_COMP_LUMA_ADDR		(G2_SWREG(190))
++#define G2_REF_COMP_LUMA_ADDR(i)	(G2_SWREG(192) + ((i) * 0x8))
++#define G2_OUT_COMP_CHROMA_ADDR		(G2_SWREG(224))
++#define G2_REF_COMP_CHROMA_ADDR(i)	(G2_SWREG(226) + ((i) * 0x8))
+ 
+ #define g2_strm_buffer_len	G2_DEC_REG(258, 0, 0xffffffff)
+ #define g2_strm_start_offset	G2_DEC_REG(259, 0, 0xffffffff)
+diff --git a/drivers/media/platform/verisilicon/hantro_hevc.c b/drivers/media/platform/verisilicon/hantro_hevc.c
+index 2c14330bc562..895dc0c76c74 100644
+--- a/drivers/media/platform/verisilicon/hantro_hevc.c
++++ b/drivers/media/platform/verisilicon/hantro_hevc.c
+@@ -25,6 +25,11 @@
+ #define MAX_TILE_COLS 20
+ #define MAX_TILE_ROWS 22
+ 
++bool hevc_use_compression;
++module_param_named(hevc_use_compression, hevc_use_compression, bool, 0644);
++MODULE_PARM_DESC(hevc_use_compression,
++		 "Use reference frame compression for HEVC");
++
+ void hantro_hevc_ref_init(struct hantro_ctx *ctx)
+ {
+ 	struct hantro_hevc_dec_hw_ctx *hevc_dec = &ctx->hevc_dec;
+@@ -275,5 +280,8 @@ int hantro_hevc_dec_init(struct hantro_ctx *ctx)
+ 
+ 	hantro_hevc_ref_init(ctx);
+ 
++	hevc_dec->use_compression =
++		hevc_use_compression & hantro_needs_postproc(ctx, ctx->vpu_dst_fmt);
++
+ 	return 0;
+ }
+diff --git a/drivers/media/platform/verisilicon/hantro_hw.h b/drivers/media/platform/verisilicon/hantro_hw.h
+index 7737320cc8cc..43d4ff637376 100644
+--- a/drivers/media/platform/verisilicon/hantro_hw.h
++++ b/drivers/media/platform/verisilicon/hantro_hw.h
+@@ -42,6 +42,14 @@
+ 
+ #define MAX_POSTPROC_BUFFERS	64
+ 
++#define G2_ALIGN	16
++#define CBS_SIZE	16	/* compression table size in bytes */
++#define CBS_LUMA	8	/* luminance CBS is composed of 1 8x8 coded block */
++#define CBS_CHROMA_W	(8 * 2)	/* chrominance CBS is composed of two 8x4 coded
++				 * blocks, with Cb CB first then Cr CB following
++				 */
++#define CBS_CHROMA_H	4
++
+ struct hantro_dev;
+ struct hantro_ctx;
+ struct hantro_buf;
+@@ -144,6 +152,7 @@ struct hantro_hevc_dec_ctrls {
+  * @ref_bufs_used:	Bitfield of used reference buffers
+  * @ctrls:		V4L2 controls attached to a run
+  * @num_tile_cols_allocated: number of allocated tiles
++ * @use_compression:	use reference buffer compression
+  */
+ struct hantro_hevc_dec_hw_ctx {
+ 	struct hantro_aux_buf tile_sizes;
+@@ -156,6 +165,7 @@ struct hantro_hevc_dec_hw_ctx {
+ 	u32 ref_bufs_used;
+ 	struct hantro_hevc_dec_ctrls ctrls;
+ 	unsigned int num_tile_cols_allocated;
++	bool use_compression;
+ };
+ 
+ /**
+@@ -510,6 +520,33 @@ hantro_hevc_mv_size(unsigned int width, unsigned int height)
+ 	return width * height / 16;
+ }
+ 
++static inline size_t
++hantro_hevc_luma_compressed_size(unsigned int width, unsigned int height)
++{
++	u32 pic_width_in_cbsy =
++		round_up((width + CBS_LUMA - 1) / CBS_LUMA, CBS_SIZE);
++	u32 pic_height_in_cbsy = (height + CBS_LUMA - 1) / CBS_LUMA;
++
++	return round_up(pic_width_in_cbsy * pic_height_in_cbsy, CBS_SIZE);
++}
++
++static inline size_t
++hantro_hevc_chroma_compressed_size(unsigned int width, unsigned int height)
++{
++	u32 pic_width_in_cbsc =
++		round_up((width + CBS_CHROMA_W - 1) / CBS_CHROMA_W, CBS_SIZE);
++	u32 pic_height_in_cbsc = (height / 2 + CBS_CHROMA_H - 1) / CBS_CHROMA_H;
++
++	return round_up(pic_width_in_cbsc * pic_height_in_cbsc, CBS_SIZE);
++}
++
++static inline size_t
++hantro_hevc_compressed_size(unsigned int width, unsigned int height)
++{
++	return hantro_hevc_luma_compressed_size(width, height) +
++	       hantro_hevc_chroma_compressed_size(width, height);
++}
++
+ static inline unsigned short hantro_av1_num_sbs(unsigned short dimension)
+ {
+ 	return DIV_ROUND_UP(dimension, 64);
+@@ -525,6 +562,8 @@ hantro_av1_mv_size(unsigned int width, unsigned int height)
+ 
+ size_t hantro_g2_chroma_offset(struct hantro_ctx *ctx);
+ size_t hantro_g2_motion_vectors_offset(struct hantro_ctx *ctx);
++size_t hantro_g2_luma_compress_offset(struct hantro_ctx *ctx);
++size_t hantro_g2_chroma_compress_offset(struct hantro_ctx *ctx);
+ 
+ int hantro_g1_mpeg2_dec_run(struct hantro_ctx *ctx);
+ int rockchip_vpu2_mpeg2_dec_run(struct hantro_ctx *ctx);
+diff --git a/drivers/media/platform/verisilicon/hantro_postproc.c b/drivers/media/platform/verisilicon/hantro_postproc.c
+index 41e93176300b..232c93eea7ee 100644
+--- a/drivers/media/platform/verisilicon/hantro_postproc.c
++++ b/drivers/media/platform/verisilicon/hantro_postproc.c
+@@ -213,9 +213,13 @@ static unsigned int hantro_postproc_buffer_size(struct hantro_ctx *ctx)
+ 	else if (ctx->vpu_src_fmt->fourcc == V4L2_PIX_FMT_VP9_FRAME)
+ 		buf_size += hantro_vp9_mv_size(pix_mp.width,
+ 					       pix_mp.height);
+-	else if (ctx->vpu_src_fmt->fourcc == V4L2_PIX_FMT_HEVC_SLICE)
++	else if (ctx->vpu_src_fmt->fourcc == V4L2_PIX_FMT_HEVC_SLICE) {
+ 		buf_size += hantro_hevc_mv_size(pix_mp.width,
+ 						pix_mp.height);
++		if (ctx->hevc_dec.use_compression)
++			buf_size += hantro_hevc_compressed_size(pix_mp.width,
++								pix_mp.height);
++	}
+ 	else if (ctx->vpu_src_fmt->fourcc == V4L2_PIX_FMT_AV1_FRAME)
+ 		buf_size += hantro_av1_mv_size(pix_mp.width,
+ 					       pix_mp.height);
 -- 
-Florian
+2.40.1
 
-
---0000000000004e332806186c6012
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-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
-riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
-QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
-UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
-M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
-Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
-14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
-a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
-XzCCBVgwggRAoAMCAQICDBP8P9hKRVySg3Qv5DANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
-RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
-UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAxMjE4MTFaFw0yNTA5MTAxMjE4MTFaMIGW
-MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
-BgNVBAoTDUJyb2FkY29tIEluYy4xGTAXBgNVBAMTEEZsb3JpYW4gRmFpbmVsbGkxLDAqBgkqhkiG
-9w0BCQEWHWZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tMIIBIjANBgkqhkiG9w0BAQEFAAOC
-AQ8AMIIBCgKCAQEA+oi3jMmHltY4LMUy8Up5+1zjd1iSgUBXhwCJLj1GJQF+GwP8InemBbk5rjlC
-UwbQDeIlOfb8xGqHoQFGSW8p9V1XUw+cthISLkycex0AJ09ufePshLZygRLREU0H4ecNPMejxCte
-KdtB4COST4uhBkUCo9BSy1gkl8DJ8j/BQ1KNUx6oYe0CntRag+EnHv9TM9BeXBBLfmMRnWNhvOSk
-nSmRX0J3d9/G2A3FIC6WY2XnLW7eAZCQPa1Tz3n2B5BGOxwqhwKLGLNu2SRCPHwOdD6e0drURF7/
-Vax85/EqkVnFNlfxtZhS0ugx5gn2pta7bTdBm1IG4TX+A3B1G57rVwIDAQABo4IB3jCCAdowDgYD
-VR0PAQH/BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZCaHR0cDovL3NlY3Vy
-ZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAuY3J0MEEG
-CCsGAQUFBzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWdu
-MmNhMjAyMDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcCARYmaHR0cHM6Ly93
-d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNVHR8EQjBAMD6gPKA6
-hjhodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNy
-bDAoBgNVHREEITAfgR1mbG9yaWFuLmZhaW5lbGxpQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggr
-BgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQUUwwfJ6/F
-KL0fRdVROal/Lp4lAF0wDQYJKoZIhvcNAQELBQADggEBAKBgfteDc1mChZjKBY4xAplC6uXGyBrZ
-kNGap1mHJ+JngGzZCz+dDiHRQKGpXLxkHX0BvEDZLW6LGOJ83ImrW38YMOo3ZYnCYNHA9qDOakiw
-2s1RH00JOkO5SkYdwCHj4DB9B7KEnLatJtD8MBorvt+QxTuSh4ze96Jz3kEIoHMvwGFkgObWblsc
-3/YcLBmCgaWpZ3Ksev1vJPr5n8riG3/N4on8gO5qinmmr9Y7vGeuf5dmZrYMbnb+yCBalkUmZQwY
-NxADYvcRBA0ySL6sZpj8BIIhWiXiuusuBmt2Mak2eEv0xDbovE6Z6hYyl/ZnRadbgK/ClgbY3w+O
-AfUXEZ0xggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52
-LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgwT
-/D/YSkVckoN0L+QwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIKtOPiQ5+eQI89aB
-bxSBr68QHnx7A5YRbTmdxEpdw8pOMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcN
-AQkFMQ8XDTI0MDUxNDE2MjAxMVowaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZI
-AWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEH
-MAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQCujj4rlpnMB4v/j8XygzMa+zsx52o4Ncr+
-wGfYS4RJ7BYcm3z2+ZK54f4hrRd4ZoB1Ye73A77z/V/pgVsJ//emlOLiMP0KQ92LMElWeZAfgWAu
-kpF8j7MTzzx7FS7qjL2udwvmTut+x+hbEZOSLJAwToTqFsX+J5gOr1r1wHS4doR2zIpxc/Ygrvox
-gEZPxcP9DVb9ejpghmp7fGNbYk1n3jHRGxjI0HEmj9eRBZZGQWiZ3FTo4gw1NwJwsi9KEUW/btor
-CmlpHRkLI3GCNeWXgPLgrQDjLAdApQjK9+tVdxiM69BplY+MtcknXMkLlTqlfdqBqJKMAXGn023y
-jqPY
---0000000000004e332806186c6012--
 
