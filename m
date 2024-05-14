@@ -1,182 +1,132 @@
-Return-Path: <linux-kernel+bounces-178986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6927C8C5A0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 19:06:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D9F68C5A10
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 19:07:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E22E285EA0
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 17:06:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C4DB1F22A6F
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 17:07:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3824617F396;
-	Tue, 14 May 2024 17:06:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E465717F39F;
+	Tue, 14 May 2024 17:06:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=pobox.com header.i=@pobox.com header.b="RG6JTOPZ"
-Received: from pb-smtp2.pobox.com (pb-smtp2.pobox.com [64.147.108.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nmYMBgAX"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 153311E481;
-	Tue, 14 May 2024 17:06:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.108.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA3332AD1C;
+	Tue, 14 May 2024 17:06:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715706374; cv=none; b=khsPx7Z09prcdeVuAdNd17uVu1a9vezoV/WEnJ4gSmDim5NDyz+KDwcJvBCPqI7A4j9hzR/V1B77rww58qIeaNxMb8f/T6uVHupa8Yz4Us6oyXegMX/CxkRsZX6NEqnhKZsnxCbNwd1RwXHFH17QSXFxtN1WXyp7jlao8fRSxNY=
+	t=1715706411; cv=none; b=jSJviLZpre0l6USxF3WHLsFLx4WRixrPfpGxMD7sM9usNw+6y1CXXDwSeKF4Lu4+QFIY2fk2VRsjmbS831pJ12PN0Aw9mCX8LrcxI8qHTCufhp9JclmDfWVVUntxIhEqqcfIj8jbylTqJBFuKLcxVKrzMK2fe1eyAiC5KqjsIKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715706374; c=relaxed/simple;
-	bh=OlcChcA2au/wBXzMTkA1+TK5Grh+/q6FUIeZZ8fVvvw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=r3Bct62O9tmYPqmUXeNRa7JPiwZzu9q3/CKmByHT7YlUDeN44tEbBRICirhgo0SuVzwQjO21e3jrpshA7D4XznYF+ZKlQx3Mt1jpr/RLh7vUaJjdjTXbcFJYkrf1zH0Vj3gFg6ktJFcnqcfGqo6W96aZnXBHivpq67ugE6oFaQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=pobox.com; spf=pass smtp.mailfrom=pobox.com; dkim=pass (1024-bit key) header.d=pobox.com header.i=@pobox.com header.b=RG6JTOPZ; arc=none smtp.client-ip=64.147.108.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=pobox.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pobox.com
-Received: from pb-smtp2.pobox.com (unknown [127.0.0.1])
-	by pb-smtp2.pobox.com (Postfix) with ESMTP id 5B7352F749;
-	Tue, 14 May 2024 13:06:06 -0400 (EDT)
-	(envelope-from junio@pobox.com)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=pobox.com; h=from:to:cc
-	:subject:date:message-id:mime-version:content-type; s=sasl; bh=O
-	lcChcA2au/wBXzMTkA1+TK5Grh+/q6FUIeZZ8fVvvw=; b=RG6JTOPZJRyMhJfz7
-	eQx2wzenifCmJaEfYB2i64kmkWumHJRsiD3Y4PxTWWJ0isw6yT9GlaFzzYnyPUop
-	WfUFXzqDcivJ3FrxJa+BPG0+oTlNGS7FRdHLt1bf+ww7oFwNg1+rFYP0vTWMdIxj
-	GEFxLRTG3PnuENpTJ5hPcIgq6g=
-Received: from pb-smtp2.nyi.icgroup.com (unknown [127.0.0.1])
-	by pb-smtp2.pobox.com (Postfix) with ESMTP id 507732F748;
-	Tue, 14 May 2024 13:06:06 -0400 (EDT)
-	(envelope-from junio@pobox.com)
-Received: from pobox.com (unknown [34.125.153.120])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by pb-smtp2.pobox.com (Postfix) with ESMTPSA id 9D8242F747;
-	Tue, 14 May 2024 13:06:05 -0400 (EDT)
-	(envelope-from junio@pobox.com)
-From: Junio C Hamano <gitster@pobox.com>
-To: git@vger.kernel.org
-Cc: Linux Kernel <linux-kernel@vger.kernel.org>,
-    git-packagers@googlegroups.com
-Subject: [ANNOUNCE] Git v2.45.1 and friends
-Date: Tue, 14 May 2024 10:06:04 -0700
-Message-ID: <xmqqv83g4937.fsf@gitster.g>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1715706411; c=relaxed/simple;
+	bh=myXA2G0Xw49AlkC8lVgzyk8+knCG4OkEt2v5csHBEko=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ApLAaVGo2IxpHknBrLhvh4IMBQyKi962HxohM13gq43mXEI9gi6IYxo+4oYwy3L0yDNx1ZZCb9zGwA40Ga+D/jt8NOs5ExBkB1/zdt/9ez/Tl8VFKcttCcB+eoOVMFgCa4M3cz9gN/0EU3zdx7R3xEzC0p+F+vp3EHJIg+9JHrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nmYMBgAX; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2e4939c5323so72550981fa.2;
+        Tue, 14 May 2024 10:06:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715706408; x=1716311208; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IyHBRVBgS14zuN34iI4Hkq/dBvDFESfJ7FWpiCIUk30=;
+        b=nmYMBgAXJwQQwspu2thFkbWzSVc6frVBDjM1TkbAlU8B2vLWNB+mgJCJw4ewf/yVMX
+         gagbgBsiODvs9WHoguZNBidno8DgRGtuCeaNfqZVMR8V3PDcS8S/2BgBC7M4yjYQlOEU
+         Af7qDMT4YQ0p5oF0U8T39qKX170bQHqNeOknP9z1ZRfL8FFDF4MY/wDhoPKTwb70xL57
+         dnskLhwqM/rpfuyERCxD3bT5grUupseGF9TL6EWhqbgd646XDNMO49vVodozyKKx3C9n
+         +LFfIiIJlLaBOZE072Eoytu9bFWGPlo0ilNGRtTzhcgjD53SU7JgMeG5XDtZPVI/KrDD
+         c1mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715706408; x=1716311208;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=IyHBRVBgS14zuN34iI4Hkq/dBvDFESfJ7FWpiCIUk30=;
+        b=k1OHMdoXD1105/Z0Nd9meUsfXDBXhQb4W6lIno9WE6BV75RshQkahsDFHzvK973qeL
+         vVBexq6db/JZeT4Wm0oIQQgY1mePSntwsa/dKsZpuAk+xSmK8LKWRQqsd3dOr/X8BFfi
+         MQ2g5f2WmeyB9h+ge0AVQ7KieRuDkpVVqy6fQIslod9L872BR5P8GCB7S346PbHhGkow
+         9abpmcn3IdNZXlQT3WSMwy1Kg98kWSAa/P6fVkeXJy2BAbunpUP7Oom5gr1TQNZ3Rq9s
+         VYeXE/bqS88Auww6StTuzrfLeQNu+2SlpxsCAHLK4P/7ficRtXE5T+Njoj/GSGSDxhY4
+         zYmg==
+X-Forwarded-Encrypted: i=1; AJvYcCUABGs5wMK+oAHRrkQC/PYxZpWETyTBi/RGmR1cShv7ztaGchrRKbvsGbgWagMWU2x+i2q2lCVPMTDOec2zIaMYdgKbCYuF89AtircORK9gXYUITXsnRYW7+Tg95Y6iYllivkNhYuicQd+jMAxXfCL2PTFEonhRsOkN8jLZKbJT/sWrCDNm
+X-Gm-Message-State: AOJu0YziRM1equUBD8s7HjOL8H+SpnBrc9qGkejJU5150JKQ0JwEE44G
+	RB7P83N0JpMHCA8SG2IoGaFhDb8NMeyFwfqU2LJiQQL0AYYraIbM9d9Wfw==
+X-Google-Smtp-Source: AGHT+IHKAHrJL4JHb2eSoXriNeAEkmodYMxHBrXgi2GmZTZ2VQ5iPMRlbIK3ZWZJUPMkViu8V2WqnA==
+X-Received: by 2002:a2e:7c0d:0:b0:2e3:7121:aba6 with SMTP id 38308e7fff4ca-2e5205c61a3mr108576151fa.46.1715706407529;
+        Tue, 14 May 2024 10:06:47 -0700 (PDT)
+Received: from debian ([146.70.204.204])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42015deac1asm80799915e9.17.2024.05.14.10.06.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 May 2024 10:06:47 -0700 (PDT)
+Message-ID: <fca08735-c245-49e5-af72-82900634f144@gmail.com>
+Date: Tue, 14 May 2024 19:06:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Pobox-Relay-ID:
- 4025AFF6-1214-11EF-80E0-25B3960A682E-77302942!pb-smtp2.pobox.com
+Subject: [PATCH] net: gro: fix napi_gro_cb zeroed alignment
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, davem@davemloft.net,
+ edumazet@google.com, pabeni@redhat.com, willemdebruijn.kernel@gmail.com,
+ dsahern@kernel.org, alexander.duyck@gmail.com, shuah@kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+References: <20240509190819.2985-1-richardbgobert@gmail.com>
+ <20240509190819.2985-3-richardbgobert@gmail.com>
+ <CAMuHMdXFJwxexojG+41ppD=2EmyXsVM6bwh+-cxCxfSsM_yJiw@mail.gmail.com>
+ <20240514071407.257c0003@kernel.org>
+ <8e0b027d-4d30-4f0f-82ef-113287f17c6a@gmail.com>
+ <20240514090626.69676cb5@kernel.org>
+From: Richard Gobert <richardbgobert@gmail.com>
+In-Reply-To: <20240514090626.69676cb5@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-A maintenance release Git v2.45.1, together with releases for older
-maintenance tracks v2.44.1, v2.43.4, v2.42.2, v2.41.1, v2.40.2, and
-v2.39.4, are now available at the usual places.  These are to address
-a handful of security issues.
+Add 2 byte padding to napi_gro_cb struct to ensure zeroed member is
+aligned after flush_id member was removed in the original commit.
 
-The tarballs are found at:
+Fixes: 4b0ebbca3e16 ("net: gro: move L3 flush checks to tcp_gro_receive and udp_gro_receive_segment")
+Suggested-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Richard Gobert <richardbgobert@gmail.com>
+---
+ include/net/gro.h | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-    https://www.kernel.org/pub/software/scm/git/
-
-The following public repositories all have a copy of the 'v2.45.1'
-tag, as well as the tags for older maintenance tracks listed above.
-
-  url = https://git.kernel.org/pub/scm/git/git
-  url = https://kernel.googlesource.com/pub/scm/git/git
-  url = git://repo.or.cz/alt-git.git
-  url = https://github.com/gitster/git
-
-The addressed issues are all listed in the release notes for Git
-2.39.4, attached below.
-
-Note: There is a regression for Git LFS users.  The defense-in-depth
-protection this update contains is at odds with the way Git LFS
-currently works when cloning a new repository that wants to use the
-post-checkout hook during the initial cloning.  The users can fix it
-after the fact by running `git lfs pull`, if the checkout stage is
-stopped, as a workaround.  The error message given after a failed
-clone also gives an alternative workaround to disable the added
-safety with the use of the GIT_CLONE_PROTECTION_ACTIVE environment
-variable that the users and the scripts can use.
-
---------------------------------------------------
-Git v2.39.4 Release Notes
-=========================
-
-This addresses the security issues CVE-2024-32002, CVE-2024-32004,
-CVE-2024-32020 and CVE-2024-32021.
-
-This release also backports fixes necessary to let the CI builds pass
-successfully.
-
-Fixes since v2.39.3
--------------------
-
- * CVE-2024-32002:
-
-   Recursive clones on case-insensitive filesystems that support symbolic
-   links are susceptible to case confusion that can be exploited to
-   execute just-cloned code during the clone operation.
-
- * CVE-2024-32004:
-
-   Repositories can be configured to execute arbitrary code during local
-   clones. To address this, the ownership checks introduced in v2.30.3
-   are now extended to cover cloning local repositories.
-
- * CVE-2024-32020:
-
-   Local clones may end up hardlinking files into the target repository's
-   object database when source and target repository reside on the same
-   disk. If the source repository is owned by a different user, then
-   those hardlinked files may be rewritten at any point in time by the
-   untrusted user.
-
- * CVE-2024-32021:
-
-   When cloning a local source repository that contains symlinks via the
-   filesystem, Git may create hardlinks to arbitrary user-readable files
-   on the same filesystem as the target repository in the objects/
-   directory.
-
- * CVE-2024-32465:
-
-   It is supposed to be safe to clone untrusted repositories, even those
-   unpacked from zip archives or tarballs originating from untrusted
-   sources, but Git can be tricked to run arbitrary code as part of the
-   clone.
-
- * Defense-in-depth: submodule: require the submodule path to contain
-   directories only.
-
- * Defense-in-depth: clone: when symbolic links collide with directories, keep
-   the latter.
-
- * Defense-in-depth: clone: prevent hooks from running during a clone.
-
- * Defense-in-depth: core.hooksPath: add some protection while cloning.
-
- * Defense-in-depth: fsck: warn about symlink pointing inside a gitdir.
-
- * Various fix-ups on HTTP tests.
-
- * Test update.
-
- * HTTP Header redaction code has been adjusted for a newer version of
-   cURL library that shows its traces differently from earlier
-   versions.
-
- * Fix was added to work around a regression in libcURL 8.7.0 (which has
-   already been fixed in their tip of the tree).
-
- * Replace macos-12 used at GitHub CI with macos-13.
-
- * ci(linux-asan/linux-ubsan): let's save some time
-
- * Tests with LSan from time to time seem to emit harmless message that makes
-   our tests unnecessarily flakey; we work it around by filtering the
-   uninteresting output.
-
- * Update GitHub Actions jobs to avoid warnings against using deprecated
-   version of Node.js.
-
+diff --git a/include/net/gro.h b/include/net/gro.h
+index f13634b1f4c1..b9b58c1f8d19 100644
+--- a/include/net/gro.h
++++ b/include/net/gro.h
+@@ -42,8 +42,7 @@ struct napi_gro_cb {
+ 	/* Used in ipv6_gro_receive() and foo-over-udp and esp-in-udp */
+ 	u16	proto;
+ 
+-	/* used to support CHECKSUM_COMPLETE for tunneling protocols */
+-	__wsum	csum;
++	u16	pad;
+ 
+ /* Used in napi_gro_cb::free */
+ #define NAPI_GRO_FREE             1
+@@ -85,6 +84,9 @@ struct napi_gro_cb {
+ 		u8	is_flist:1;
+ 	);
+ 
++	/* used to support CHECKSUM_COMPLETE for tunneling protocols */
++	__wsum	csum;
++
+ 	/* L3 offsets */
+ 	union {
+ 		struct {
+-- 
+2.36.1
 
 
