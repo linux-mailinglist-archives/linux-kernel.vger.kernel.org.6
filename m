@@ -1,201 +1,96 @@
-Return-Path: <linux-kernel+bounces-179080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B1638C5B59
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 20:50:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52A8F8C5B52
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 20:46:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44A2928356A
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 18:50:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D78E4B20AD9
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 18:46:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54C85180A85;
-	Tue, 14 May 2024 18:50:18 +0000 (UTC)
-Received: from domac.alu.hr (domac.alu.hr [161.53.235.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B01D180A94;
+	Tue, 14 May 2024 18:46:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="RDG2Lk2J"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ABEE18AEA;
-	Tue, 14 May 2024 18:50:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=161.53.235.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA3A3180A78
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 18:46:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715712617; cv=none; b=TYW2kfSVUyxzBVkVX55ZYo00bq4SxKjB+H6fbUjK4Two5nR4E3Ua+Al+CqrQGxyIvGpS4gVHIwELrG8gCDNkjUsN4BerHTL/lme47Ntvi5X+2CT2uSFwlQflMlZ4Auan6Bs44g7C9Sibzhg/wM7eMmAR5qrS7vs3/WHAwxI0P9w=
+	t=1715712374; cv=none; b=Id/tWiqAMnf0AWM8p/yyVfXPp3N8Px0XkkgiztpqkTSGls+PTgJuYQwUfvC54RBAhY7bHSfaJmcHrTr+WRog3b9wsTwQ2ERgHUoLq50IkItPDVSr+/YD8T50lEd+d0MP2UH0226uZ3RBCQV8Jiyi1rAVSYdwCgBKDykby1NsOk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715712617; c=relaxed/simple;
-	bh=hzBxnqhD5HTem+7UibDma0pD0CCxEuMCvVESuHswiZc=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Rg+yHNN2Q8BViqyufnNP4M7p5w/+r1V7kBRWkAVF1IK1nvxdG/RhKX/8uWqKL1OfAbRbW9GuzCIY3qOuh3xTdIVsKu6LcMuRwrYEtc0DQ+XoIhkgClbIZdH27k38igbgAzqe2t41p3v67cE47P8nZZMpR8NhsJRFyEhp55u/Mz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=161.53.235.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-Received: from localhost (localhost [127.0.0.1])
-	by domac.alu.hr (Postfix) with ESMTP id E699D601CD;
-	Tue, 14 May 2024 20:45:00 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at domac.alu.hr
-Received: from domac.alu.hr ([127.0.0.1])
-	by localhost (domac.alu.hr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id EV8DmCB-b6ym; Tue, 14 May 2024 20:44:58 +0200 (CEST)
-Received: from [192.168.178.20] (dh207-43-52.xnet.hr [88.207.43.52])
-	by domac.alu.hr (Postfix) with ESMTPSA id EF45D6018D;
-	Tue, 14 May 2024 20:44:57 +0200 (CEST)
-Message-ID: <466ee9f8-c87e-40c0-bafc-77e6c630a56a@gmail.com>
-Date: Tue, 14 May 2024 20:44:52 +0200
+	s=arc-20240116; t=1715712374; c=relaxed/simple;
+	bh=9/KPdGRlEJrAT1NZpQ7pcVvJ7WKkVMm+m6cd6ZNvkDk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Ymxpkahx9oy8+gr/fqLwySpmzw9f6W0oP1pnajEYbhXkdZruK2t2lsj3hKU4DRlV8LPJizLedueR1XPeHM+mtdEZTF4KkFJjeGgD7pFRcGPg5/OTQvpyCmd479jLVAFoWMmqNxgqUNeLW9QYN9/YJppXuHdwN2xf19c8FRNVGPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=RDG2Lk2J; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1ed0abbf706so44151245ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 11:46:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1715712372; x=1716317172; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9/KPdGRlEJrAT1NZpQ7pcVvJ7WKkVMm+m6cd6ZNvkDk=;
+        b=RDG2Lk2Jl+CSjnkyy/M4Al/TYbFs43XjviclVxy7zmIdQ1nZ+cGHq4uN1Rp+4m6lhL
+         TIfZylGLA5uNGVIuFU6GWGntyLfKreSYPzieErscZHyA7JjuNajoXqXQXlfAYinf73Oh
+         yWwo1zpFxke3/wQW0yGnMjmSi61MH7/1SYBgHT+0CiUk2V/s076fTD8/IW4rQKkmq5gC
+         VVRnM4lEzq7U2xuv5h+3990D4fQ38yenObXIkDTZg+JedP9/5CvWXLeZoRYygly64bhU
+         qtfxVYXy+oceuZLwzotr+gCfIhWTqfDKUwDO09oh5dcfb3XP7aY2A1GjupHjwSksZAS+
+         Mnfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715712372; x=1716317172;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9/KPdGRlEJrAT1NZpQ7pcVvJ7WKkVMm+m6cd6ZNvkDk=;
+        b=q4S25PDA7hkqV/LYG5LNBFCN7SSl0qk+QO7nMoO8MOy0jE+3xRH7NpOxcaIHtXTE6X
+         7pFRl56YNPQfbh/drsuqG9mqUM2ofcX/pXJhZ0IeJtXPehnv+wOTqLngOJHY+CGDpYIs
+         G0Q5jVu0SvacIYhGBr7zTGDi4XktRIXc7bisKqUrFGOfooY2at/T6Xy+KqRBNlnpO7rm
+         BX3mVlFWcE2dWpmfxkWNCuk0QnxNM7t90YQGnvSHn4QCDBiGwEfNCbYlfcnBQiSK1utD
+         vhYyq5G0fv0Vb+erXzfQGscJHmxFILBFyAW8m/z27aXfqTvNhUs+CNxe5RUt1eHRMclb
+         mIeg==
+X-Forwarded-Encrypted: i=1; AJvYcCWT7QkO3BDxD+U3GC37d6ttmPb1lmVBOF5JTLLIKhV45OlTCe4/RHAFCzIJKE2dkvbt62eVBsLDMqy8ogp2PwYWylduXbGU0W+NrZmm
+X-Gm-Message-State: AOJu0YzPLbQ9WahhzmAuwwprxR1z/tp4uKE+j7vJnGgPhqWy6kVUVY6l
+	+6LqJGp/7cECt5u1Scuv/0LQcU9ZDaPvyFmpR6SbSH+LbSe1ImzQfzXrut/xjgw=
+X-Google-Smtp-Source: AGHT+IEoObsEKnrH0xx3C0KUfwJWip12l93lYXbuldDs11Wqv7w3vbecPBywu++IWnpGBnVA7Y7dRg==
+X-Received: by 2002:a17:902:8f87:b0:1ef:35d5:e3ea with SMTP id d9443c01a7336-1ef44059ad9mr143683265ad.59.1715712372044;
+        Tue, 14 May 2024 11:46:12 -0700 (PDT)
+Received: from localhost (75-172-111-169.tukw.qwest.net. [75.172.111.169])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0bf316f7sm101161005ad.164.2024.05.14.11.46.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 May 2024 11:46:11 -0700 (PDT)
+From: Kevin Hilman <khilman@baylibre.com>
+To: Vibhore Vardhan <vibhore@ti.com>, Nishanth Menon <nm@ti.com>, Vignesh
+ Raghavendra <vigneshr@ti.com>, Tero
+ Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: msp@baylibre.com, d-gole@ti.com, Vibhore
+ Vardhan <vibhore@ti.com>, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: ti: k3-am62a-wakeup: Enable RTC node
+In-Reply-To: <20240429184445.14876-1-vibhore@ti.com>
+References: <20240429184445.14876-1-vibhore@ti.com>
+Date: Tue, 14 May 2024 11:46:10 -0700
+Message-ID: <7hcypo44gd.fsf@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PROBLEM linux-next] Error in "make olddefconfig" and "make
- menuconfig"
-From: Mirsad Todorovac <mtodorovac69@gmail.com>
-To: Bagas Sanjaya <bagasdotme@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Kernel Build System <linux-kbuild@vger.kernel.org>
-References: <b948b14b-1543-4314-9e9e-58a54cf2b734@gmail.com>
-Content-Language: en-US
-In-Reply-To: <b948b14b-1543-4314-9e9e-58a54cf2b734@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 5/14/24 20:37, Mirsad Todorovac wrote:
-> Hi, Mr. Bagas,
-> 
-> While bisecting a problem in linux-next tree, I came across the problem:
-> 
-> marvin@defiant:~/linux/kernel/linux-next$ git describe
-> v6.7-rc5-2761-gefc11f34e25f
-> marvin@defiant:~/linux/kernel/linux-next$ make olddefconfig
-> make[2]: *** No targets.  Stop.
-> make[1]: *** [/home/marvin/linux/kernel/linux-next/Makefile:621: scripts_basic] Error 2
-> make: *** [Makefile:234: __sub-make] Error 2
-> marvin@defiant:~/linux/kernel/linux-next$ make menuconfig
-> make[2]: *** No targets.  Stop.
-> make[1]: *** [/home/marvin/linux/kernel/linux-next/Makefile:621: scripts_basic] Error 2
-> make: *** [Makefile:234: __sub-make] Error 2
-> marvin@defiant:~/linux/kernel/linux-next$ 
-> 
-> Now, this occurred for the first time, and I don't know how to bail out.
-> 
-> I recall in past couple of years you have some insightful advice.
-> 
-> Thank you very much.
+Vibhore Vardhan <vibhore@ti.com> writes:
 
-P.S.
+> On-chip RTC is used as a wakeup source on am62a board designs. This
+> patch removes the disabled status property to enable the RTC node.
+>
+> Signed-off-by: Vibhore Vardhan <vibhore@ti.com>
 
-If this can help, I thought that the debug info the Makefile might be useful, but I am
-unable to see what goes wrong ...
-
-
-marvin@defiant:~/linux/kernel/linux-next$ make -d olddefconfig
-GNU Make 4.3
-Built for x86_64-pc-linux-gnu
-Copyright (C) 1988-2020 Free Software Foundation, Inc.
-License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
-This is free software: you are free to change and redistribute it.
-There is NO WARRANTY, to the extent permitted by law.
-Reading makefiles...
-Reading makefile 'Makefile'...
-Updating makefiles....
- Considering target file 'Makefile'.
-  Looking for an implicit rule for 'Makefile'.
-  No implicit rule found for 'Makefile'.
-  Finished prerequisites of target file 'Makefile'.
- No need to remake target 'Makefile'.
-Updating goal targets....
-Considering target file 'olddefconfig'.
- File 'olddefconfig' does not exist.
-  Considering target file '__sub-make'.
-   File '__sub-make' does not exist.
-   Finished prerequisites of target file '__sub-make'.
-  Must remake target '__sub-make'.
-Putting child 0x56da685e5ea0 (__sub-make) PID 12141 on the chain.
-Live child 0x56da685e5ea0 (__sub-make) PID 12141 
-GNU Make 4.3
-Built for x86_64-pc-linux-gnu
-Copyright (C) 1988-2020 Free Software Foundation, Inc.
-License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
-This is free software: you are free to change and redistribute it.
-There is NO WARRANTY, to the extent permitted by law.
-Reading makefiles...
-Reading makefile '/home/marvin/linux/kernel/linux-next/Makefile'...
-Reading makefile 'scripts/Kbuild.include' (search path) (no ~ expansion)...
-Reading makefile 'scripts/subarch.include' (search path) (no ~ expansion)...
-Reading makefile 'scripts/Makefile.compiler' (search path) (no ~ expansion)...
-Reading makefile 'arch/x86/Makefile' (search path) (no ~ expansion)...
-Updating makefiles....
- Considering target file 'arch/x86/Makefile'.
-  Looking for an implicit rule for 'arch/x86/Makefile'.
-  No implicit rule found for 'arch/x86/Makefile'.
-  Finished prerequisites of target file 'arch/x86/Makefile'.
- No need to remake target 'arch/x86/Makefile'.
- Considering target file 'scripts/Makefile.compiler'.
-  Looking for an implicit rule for 'scripts/Makefile.compiler'.
-  No implicit rule found for 'scripts/Makefile.compiler'.
-  Finished prerequisites of target file 'scripts/Makefile.compiler'.
- No need to remake target 'scripts/Makefile.compiler'.
- Considering target file 'scripts/subarch.include'.
-  Looking for an implicit rule for 'scripts/subarch.include'.
-  No implicit rule found for 'scripts/subarch.include'.
-  Finished prerequisites of target file 'scripts/subarch.include'.
- No need to remake target 'scripts/subarch.include'.
- Considering target file 'scripts/Kbuild.include'.
-  Looking for an implicit rule for 'scripts/Kbuild.include'.
-  No implicit rule found for 'scripts/Kbuild.include'.
-  Finished prerequisites of target file 'scripts/Kbuild.include'.
- No need to remake target 'scripts/Kbuild.include'.
- Considering target file '/home/marvin/linux/kernel/linux-next/Makefile'.
-  Looking for an implicit rule for '/home/marvin/linux/kernel/linux-next/Makefile'.
-  No implicit rule found for '/home/marvin/linux/kernel/linux-next/Makefile'.
-  Finished prerequisites of target file '/home/marvin/linux/kernel/linux-next/Makefile'.
- No need to remake target '/home/marvin/linux/kernel/linux-next/Makefile'.
-Updating goal targets....
-Considering target file 'olddefconfig'.
- File 'olddefconfig' does not exist.
- Looking for an implicit rule for 'olddefconfig'.
- Trying pattern rule with stem 'olddef'.
- Trying rule prerequisite 'outputmakefile'.
- Trying rule prerequisite 'scripts_basic'.
- Trying rule prerequisite 'FORCE'.
- Found an implicit rule for 'olddefconfig'.
-  Considering target file 'outputmakefile'.
-   File 'outputmakefile' does not exist.
-   Finished prerequisites of target file 'outputmakefile'.
-  Must remake target 'outputmakefile'.
-  Successfully remade target file 'outputmakefile'.
-  Considering target file 'scripts_basic'.
-   File 'scripts_basic' does not exist.
-   Finished prerequisites of target file 'scripts_basic'.
-  Must remake target 'scripts_basic'.
-Putting child 0x5f53318546e0 (scripts_basic) PID 12208 on the chain.
-Live child 0x5f53318546e0 (scripts_basic) PID 12208 
-GNU Make 4.3
-Built for x86_64-pc-linux-gnu
-Copyright (C) 1988-2020 Free Software Foundation, Inc.
-License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
-This is free software: you are free to change and redistribute it.
-There is NO WARRANTY, to the extent permitted by law.
-Reading makefiles...
-Reading makefile 'scripts/Makefile.build'...
-Updating makefiles....
- Considering target file 'scripts/Makefile.build'.
-  Looking for an implicit rule for 'scripts/Makefile.build'.
-  No implicit rule found for 'scripts/Makefile.build'.
-  Finished prerequisites of target file 'scripts/Makefile.build'.
- No need to remake target 'scripts/Makefile.build'.
-make[2]: *** No targets.  Stop.
-Reaping losing child 0x5f53318546e0 PID 12208 
-make[1]: *** [/home/marvin/linux/kernel/linux-next/Makefile:621: scripts_basic] Error 2
-Removing child 0x5f53318546e0 PID 12208 from chain.
-Reaping losing child 0x56da685e5ea0 PID 12141 
-make: *** [Makefile:234: __sub-make] Error 2
-Removing child 0x56da685e5ea0 PID 12141 from chain.
-marvin@defiant:~/linux/kernel/linux-next$ 
-
-Hope this helps.
-
-Best regards,
-Mirsad Todorovac
-
+Tested-by: Kevin Hilman <khilman@baylibre.com>
 
