@@ -1,226 +1,110 @@
-Return-Path: <linux-kernel+bounces-178434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CE418C4DAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 10:24:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E6D18C4DAE
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 10:25:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09C901F22B34
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 08:24:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 344001F226F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 08:25:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A8DA1CFBE;
-	Tue, 14 May 2024 08:24:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DAA01CD38;
+	Tue, 14 May 2024 08:25:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="l+sTuJkT"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2077.outbound.protection.outlook.com [40.107.96.77])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZpO5p/Ei";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="I/3Db3S8"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3491317BD2;
-	Tue, 14 May 2024 08:24:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.77
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715675047; cv=fail; b=dzGfts4KIgQD2b/eKWUY741ohkcGxSBIckg4wO2gkZwy68fNfXoTn6RNJaOrXqq3dXT4tRpv/2kVPnqLyi/Leo0EXTCMsyJwMJvLVt3LK4SZQWZiy75urcgXWTQ7vMZBn0CHeJcwkDUCAfTKQQK5R/mpECaKO32+nSkS1An4m2E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715675047; c=relaxed/simple;
-	bh=iLWZECNgMjZKFC+vm/p9HRoP8NnU3ufnaHmHbTfFi14=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=P968fWZr8buj1RUCPWf3P8BGZC2fY4Vxev2X7uu6tIH132NpM3yME6LpcCO5rRI+LrTmqjv90UCx4QTww2iblgucoJrPou3FFPVyt5ZZPu2Y62kN1rF4TaIonk+cZM2XIJSysxCM23vqVB/9LFWQjsvaMkqRqZn1HtSyi31vBY8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=l+sTuJkT; arc=fail smtp.client-ip=40.107.96.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=innOey4DQxew7b218o3VO6qZ4cUkBuXUJ/AwxbJOOMa4n7GQ4XzVTevtTJU6ha/TJ/70jEua6snEXLZ1rwRxdbRqmgl860IlEBkp+fObEIKtb1kscN/UJJ6vgiSFVg2NsXU8dXGJMAcjbVztn58wQ0rKFBpDoJSvCFCrFIE+0t4y/ny4SkwKnAC5PHxef/kiOrprxfStax4ZxmOH+b2pxaPiQj5GYI3pRl8auRK3iCqb91ae296d7YKG9ssqkciN9QOEOw8PbRZZ4F0HsxBAPIKcl9hg9KXY2LKsJOzYSCWQLVQfstdl6O7LUdcKeUrvd7mKGC69+eKBBTA1M1PFrQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZAfJMZqVQ2vX8qw2mM9nYBfzAoiJ9HwLth6fswI1aqE=;
- b=Pi/HcCtVFIz37RNrAGyETbHXuCJ/FgPFVMfyEOdpwy6M8HfTB6hiqc+56giONN7S1GaiEK5IKPcI1ktYScA08NA5N3n0nHMikpCrwWcSjtpNvGMMXFlPqhdd9fUJkJFqVBvRrrQFINq06dquzARQOBKWPB62mBdrETxk4Mg8Hd/LOAVFH1DfENr4qJonjSoHUhocDJDPkypk7N6+OsqKmb3Qh5qYGY7kAdshXv5zESvYwLI4Je3UVPBE5aWCJdsJzZWTlL+Ao6t8cULxV0YC14rpwcl/9SESV/UXlSkyUfFq1q+W+78Ubj0Siqjqlg/H+125PveiNMsQXhElqOXMGA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZAfJMZqVQ2vX8qw2mM9nYBfzAoiJ9HwLth6fswI1aqE=;
- b=l+sTuJkT/Qtb5Lxqs2NgUh8RxEyojIjjNWo4+kOYaVgBZYm5KEceaMZdEJVB+2IVxzo32AhHz8L+Ud8L1330mv5crFQhqd/ptqWi+gcsRI0ARqarqxmTu/QFnkjYuif/vBe4eiTE9uaePIrMQ3o4pyWochE3KwN5tyOB54m/yO8=
-Received: from CYYPR12MB8655.namprd12.prod.outlook.com (2603:10b6:930:c4::19)
- by BL1PR12MB5755.namprd12.prod.outlook.com (2603:10b6:208:392::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Tue, 14 May
- 2024 08:24:02 +0000
-Received: from CYYPR12MB8655.namprd12.prod.outlook.com
- ([fe80::7fa2:65b3:1c73:cdbf]) by CYYPR12MB8655.namprd12.prod.outlook.com
- ([fe80::7fa2:65b3:1c73:cdbf%6]) with mapi id 15.20.7544.052; Tue, 14 May 2024
- 08:24:02 +0000
-From: "Yuan, Perry" <Perry.Yuan@amd.com>
-To: "zhida312@outlook.com" <zhida312@outlook.com>
-CC: andypma <andypma@tencent.com>, "Huang, Ray" <Ray.Huang@amd.com>, "Shenoy,
- Gautham Ranjal" <gautham.shenoy@amd.com>, "Limonciello, Mario"
-	<Mario.Limonciello@amd.com>, "linux-pm@vger.kernel.org"
-	<linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "viresh.kumar@linaro.org"
-	<viresh.kumar@linaro.org>, "rafael@kernel.org" <rafael@kernel.org>
-Subject: RE: [v2] cpufreq: amd-pstate: fix the memory to free after epp exist
-Thread-Topic: [v2] cpufreq: amd-pstate: fix the memory to free after epp exist
-Thread-Index: AQHapcohLUw4ziXiGE6Ecaw1Y44u67GWYe7g
-Date: Tue, 14 May 2024 08:24:02 +0000
-Message-ID:
- <CYYPR12MB865591A37BC2582E247D0A1C9CE32@CYYPR12MB8655.namprd12.prod.outlook.com>
-References:
- <PUZPR01MB51206C1D9F3E2005B5BECCBA92E32@PUZPR01MB5120.apcprd01.prod.exchangelabs.com>
-In-Reply-To:
- <PUZPR01MB51206C1D9F3E2005B5BECCBA92E32@PUZPR01MB5120.apcprd01.prod.exchangelabs.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ActionId=4d401377-1f34-40da-bd43-6e75a16ca611;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ContentBits=0;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Enabled=true;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Method=Standard;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Name=AMD
- Internal Distribution
- Only;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SetDate=2024-05-14T08:14:34Z;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CYYPR12MB8655:EE_|BL1PR12MB5755:EE_
-x-ms-office365-filtering-correlation-id: 2f0209c5-3f28-4f4c-2663-08dc73ef363f
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230031|1800799015|376005|366007|38070700009;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?bJqZ2pEyBu8oLVHEMGdrAomFB8+sUtdpjyiDaujyvV6emuFxclEGaIIKf9JW?=
- =?us-ascii?Q?JPWH/WHXx4Qc6BzJtvjYKUC+dzFKYUj+ICuxApoLaXDSLsGXsDRWI14F1OfG?=
- =?us-ascii?Q?Y+KN6HcT1+LC72YkKDrbCmhjZtSo+3Vjqki6aPc7PMLf2p1L+DgpyQbbVdYY?=
- =?us-ascii?Q?+3jqXZ+ujSkid/jJDbvRIoADdgxUXA91heOOjIYUmc1F9ejRXyfpWSyJx+31?=
- =?us-ascii?Q?3gGBqpsLi9GvaBXTFgoTj7xfKjvEDVhjP9bEgGH2I3QdAEABoqHRCypQxzlO?=
- =?us-ascii?Q?c2EJ8fXWWpbOKBiNFhNrZ8bSIPA7UT2pWHmiJgjfmCjes1rIRcrT78U+oYsf?=
- =?us-ascii?Q?Z7lLqoi+jq0++U1FPnMiAiCnS1KxPbjIr2SMNYz82WpVGp6fddY3f2Al61xR?=
- =?us-ascii?Q?mljAZ4HlztKbZV1EHl977ZWbuMAvoI51X8VKF3KIoV7tGeMZUk7OOLHOaLnt?=
- =?us-ascii?Q?98t4UMEzJTYtZP0UPfPN7H1iYgRoNas6ORpNEzUm8w8rdGQIX3DzCy8kDQ+K?=
- =?us-ascii?Q?ve4J/mgy7xVK3XlgcSOouFVOIQ2fenyFIK0qgLxG8zctvKI78Jn4MeX9tBHS?=
- =?us-ascii?Q?8OBdvhNRqn/jBTu81Dp7c5qZerXnP673rCSgcTFk0ze3+JJubWdF30SNiFA9?=
- =?us-ascii?Q?SHUcOiCMCPHeuTHxk8gmg+uLCjsZjzCsu5/0WQ4FsYXHHhI0EfkOQtDrGZ9e?=
- =?us-ascii?Q?wMNbkq6c+WIoO7kO/EK4afkqL33dm73S+pjkp6EyDUMZTmJvs+No/vISQ8n0?=
- =?us-ascii?Q?6DA6WUujfxqoZNzi4vKWcwsctxsbw/WxiTL5inkr5BoHGI6dj2LvhaPt9cMU?=
- =?us-ascii?Q?L94bRM7yKISmUjlVoHAoKghDJFcwBx6xc1jNA6pmOgdAekfZwpXKVV9RZdGG?=
- =?us-ascii?Q?cF7InNWYgL85NdyJDC9oGeYukSU8wYAfIXXmZLxH+td+wPaMYnRgbLKiP0h+?=
- =?us-ascii?Q?gLRnO+b5WUgWkI1ksFlArn8OGayuA9idH6RwZIUEIqKRnd4fWIaq+5jpRAMJ?=
- =?us-ascii?Q?RwzIQqq8z5HU8YRfmZM+7O1+/bBH81Pz/zrJ/q5D0M55XUqgeXmqLYp1Jc/M?=
- =?us-ascii?Q?sj/+uZzjbPR0nC0rSDgvwgnw99I7apVyRVBzladZOYzniDjSNMw3dVnpM39M?=
- =?us-ascii?Q?BfKvtw+LN+swqF2rcJQ+0Ex3Y6MCMMw/9Dppek+OLBGjRLfyhqbM3c+FBZR5?=
- =?us-ascii?Q?acRlLYM5wRIe5Wyj7IsNbDldDQ9dZLW4R8ggTd6LGQjFF01Cj9LGjr8YuY6s?=
- =?us-ascii?Q?CddK/y6uGzm5QkT9D1o25cHDXbtDe9HkzMHJxinoqZIPCMFxhOrQUDSa1rdL?=
- =?us-ascii?Q?ADgf5Qqq5Vt6DiLaU9KyzLMOvF6df83laEwIuk5bp4ELcw=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CYYPR12MB8655.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(366007)(38070700009);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?55SVp5Njf6wkgm2kpQOraX6rT+47qlZnq5734uOVBsjRcAUK8ZFvFlBNbdn6?=
- =?us-ascii?Q?Z0PPI763d+2AS41NHOHh4Yg9vJ3Mp+QiF+p85rKvsOdKdlbaH4gjGL/fep1b?=
- =?us-ascii?Q?GJTy//1aWDXwcPNDjgh1SU657dA5ORE3gMlpvkm7VvONUgrNpU+FpGTUL05U?=
- =?us-ascii?Q?MzKImLb9jQpTUQrCEFgj5fyfKOrfENSamYX3+80Ic3i7Gs7y5uwW3W5TVvKX?=
- =?us-ascii?Q?KhBJ+DqzcMgccZE+Qua+O8fxVEJ1CUXrezHa4Yt0a04DQWCgIvU7mr29UhwN?=
- =?us-ascii?Q?BCPahE0wwNIdYbnl6o6xaN0geAVE1EMY64uo48hGxz2IEYPw+Xp4vCDTaNX1?=
- =?us-ascii?Q?lfB51iIw6LbmeK/tVV9w31vMzFkF0/0qXZ0pK2G2uqt2FHDnOCEQ0uhWR8Bu?=
- =?us-ascii?Q?qIwVaPHcsuYvYW8poEgjcqrgE0y/RQc94ZFcJF+yvGdAmVSx09ojvD2p6C7b?=
- =?us-ascii?Q?xHw5/btHD+hSRGDu2mfeRFCVEMW8892bFysl8fFRlv+akYxjcVYrUl/07XJK?=
- =?us-ascii?Q?5MDHAzqE69pwjroGqAABOLJh+XnnK3pt5A5Pkn8Rh3OwhCaETzf334UpK9LS?=
- =?us-ascii?Q?6rqjbP48vq3SyDAzJSDAsLJYt14Y0YaQul0THRm6xmE8HALDUXIZ/RosBeB9?=
- =?us-ascii?Q?d/JAbQ55uf6QI9k5c7KyU2VJHVJctXNo6iJ2oGdZ26WpxC5Kh37IQPQljlZx?=
- =?us-ascii?Q?fDbC4ZXdftYWTW7vsd6QLr/n2SpqJ1S6HNbTcFzbgtbIMNFum1EYTUYOmzH8?=
- =?us-ascii?Q?oPyPHTY8p6mhMg6iBuW4iYxKtvZ6QOSZJC7SPwEWJ/62iWllwy8orDNNa6m4?=
- =?us-ascii?Q?/freh30P9h3xZz4eLThkNh+n+d8RJBL9HUBLtWc9pkGZmaK9LJJ8qkiA6MH7?=
- =?us-ascii?Q?0nHCo53Y0ZeTd8PsEC5jh5Z91cOpbeRyKioKMF6KLb4TciDWcdrE4jUne58q?=
- =?us-ascii?Q?HgYJCUSvy/P12DJti0VqMsPMpmppBcbcJGkp1+YeYlHlfMxGh5TePdijJ7Ji?=
- =?us-ascii?Q?CXrNcTji6O+sAdC1lla02pS2pWRh1S4JPAGSmmfATND4cU8sn1GqtF7YpNk0?=
- =?us-ascii?Q?CwEXLHJIltvIc54omg8XNm3+M+ELynfbfxPd02MQtYGCmOSJmSQlT50wo4ma?=
- =?us-ascii?Q?DVE0U/N1BOMTCOHUYZZ5OADRqmRLQfxC45TUTHO/fxwOMsb9NLOr6Ug2958X?=
- =?us-ascii?Q?zuaSZReGhigw504wGU2U6olKzSboptLwm91hs3nx12SSyi0IZ2yZIyL8Xu5t?=
- =?us-ascii?Q?V9bHcqSBSMv42ZfPHjOgGybyrvErqtqXnF9ZTzXsrcQSwhBZjoZkBneLOgNU?=
- =?us-ascii?Q?L6i6JcXpVDQbmBqDK98Lid24XxG3SxvDoG+Ln4feYquk1pK2rMJ2smSYJiLr?=
- =?us-ascii?Q?PPK/HcFhh9RWTZN8Wgjby5/lTzRuIcEZyfyCUelAUEyXoFajLFDxHK4oPH1k?=
- =?us-ascii?Q?o6JCTHGLrSZCwODQRBZ0RF4aFiw0voo1JCE8uzkB0H4XhThexEInsHADLFBx?=
- =?us-ascii?Q?8R83RZAo3jW+qsqb5FBrSSnSV3JT2VKX2dX0/9AVnM+lQyJn0w6lLSw66GB0?=
- =?us-ascii?Q?FSQ3ID7SW5rtja3Y0PY=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FCF9182B5
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 08:25:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715675110; cv=none; b=eJp9j468Ud7jnSnKug6xn3BIH79D2mzPdeL1DSsenK1q7cAIKUmTHPLjbezkfZJFb5ssKtQFaDBoUFyAugOZ4+lVIyOIEIAyxm87Kp58ecydq5yF66H1/c1eM6NdXjZvf43672kYsrjoAHup6MO6rY4is4E2IotsooGFbIY8W+c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715675110; c=relaxed/simple;
+	bh=E1jl8ZjAyUFlpawQFcuvFX7RI2JhugpIXhQkNMW7VGY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=pKbJOldKiJqgxmStrufjhfdXfVjz8t7O5GwvPiAiTQBIKIvj5nNklnR1gvwIB44e1N6QD76gh+ueAacT7UlvlQpk8Gvbtspqito94yu4SrKEIZTTLyOiEgsWRa6t1LwBBj2TvlYfT4JoYQ35pkK++e8NE+ZLbNQ+qXCX3AeAan4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZpO5p/Ei; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=I/3Db3S8; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1715675101;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Rya9VEOvXpJSVd+MOeMBD/eFCeJ8PzLNGegzNQCqGfg=;
+	b=ZpO5p/EiAzz3rLhJ2lV+LlIt412WOp8MZJC72zUBUsK3PJ/t1M3LlAovqh2X3hBrJtz4BE
+	gnIV/MV5uy0nPm+cdknW0IBEkfq97oy+Uof5x/IB5himmUyaYE5bMftqSYzXwX+LsaftAy
+	Sayq7VixBOX9LbPLFaMmJ6+IdN+I35WPAlZIgkbhCPEC/xXd8i1EAaZI4Dce9avHjroIlJ
+	h5VrhYRvw/mhYmlpe37XGsWNpBTP3JL4SaQ7Z9DK3kilxv+/j3WKG7cl6sHyCjO5r75OtE
+	hj1PM7z8ozE3qN870DQ6yz9KfCNo/ZNu+laqXdA7jOmNmND0CivHDTLaiH1/Og==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1715675101;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Rya9VEOvXpJSVd+MOeMBD/eFCeJ8PzLNGegzNQCqGfg=;
+	b=I/3Db3S8nfD54rKc6DNf8xY5f6sjY5bu7j8MBrYa+hE3qNoBpEBJ0pxgf87pe1KlAMM2/K
+	GcOvMnWOAB5aWEDg==
+To: Lyude Paul <lyude@redhat.com>, "Linux regression tracking
+ (Thorsten Leemhuis)" <regressions@leemhuis.info>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, Mario Limonciello
+ <mario.limonciello@amd.com>, Borislav Petkov <bp@alien8.de>, Linux kernel
+ regressions list <regressions@lists.linux.dev>
+Subject: Re: Early boot regression from f0551af0213 ("x86/topology: Ignore
+ non-present APIC IDs in a present package")
+In-Reply-To: <97bd95480a8b9951edc9ee2d2648d1b9c574e3b0.camel@redhat.com>
+References: <3d77cb89857ee43a9c31249f4eab7196013bc4b4.camel@redhat.com>
+ <20240418082703.GCZiDZVyra7qOQbyqn@fat_crate.local>
+ <fd040809d95b3e12b2fdc78a2409e187716bc66f.camel@redhat.com>
+ <87plumxz4x.ffs@tglx>
+ <abbb7d7ca781f6c664e4c5b1dffc19394ac79691.camel@redhat.com>
+ <87le59vw1y.ffs@tglx>
+ <3a0afe545747e5314a9cb6bbaa9ce90b259ddfac.camel@redhat.com>
+ <87edautcmz.ffs@tglx>
+ <3b1d16e357c1f9badeef405366492f05af26c085.camel@redhat.com>
+ <878r11t8zu.ffs@tglx> <016902d9-3858-4c65-b3ec-f7a5103af63c@amd.com>
+ <51d0dff8-2888-463c-95ab-71b491f12a8f@leemhuis.info> <877cg4ppd5.ffs@tglx>
+ <ea927dad269cc21de1d0baf3d6c9f66ee025b862.camel@redhat.com>
+ <d2c6f335a6eb5892b0d894d5df4a6e713fa013b5.camel@redhat.com>
+ <87jzjxn6s5.ffs@tglx>
+ <d3fe5278e7cd5af6c62b470b281b547b67e3959a.camel@redhat.com>
+ <97bd95480a8b9951edc9ee2d2648d1b9c574e3b0.camel@redhat.com>
+Date: Tue, 14 May 2024 10:25:01 +0200
+Message-ID: <87bk58n6le.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CYYPR12MB8655.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2f0209c5-3f28-4f4c-2663-08dc73ef363f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 May 2024 08:24:02.3707
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: dyZDTlDDVlLFWryWcCBTT4n7WQjlnCPuCUfGXN5ty9xXYU3zEnIiCa7gO5An9c0FxNw3dl1FHys5rI93aeH6hQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5755
+Content-Type: text/plain
 
-[AMD Official Use Only - AMD Internal Distribution Only]
+Lyude!
 
-> -----Original Message-----
-> From: zhida312@outlook.com <zhida312@outlook.com>
-> Sent: Tuesday, May 14, 2024 2:43 PM
-> To: rafael@kernel.org; viresh.kumar@linaro.org
-> Cc: andypma <andypma@tencent.com>; Huang, Ray
-> <Ray.Huang@amd.com>; Shenoy, Gautham Ranjal
-> <gautham.shenoy@amd.com>; Limonciello, Mario
-> <Mario.Limonciello@amd.com>; Yuan, Perry <Perry.Yuan@amd.com>; linux-
-> pm@vger.kernel.org; linux-kernel@vger.kernel.org
-> Subject: [v2] cpufreq: amd-pstate: fix the memory to free after epp exist
->
-> From: andypma <andypma.tencent.com>
->
-> the cpudata memory from kzmalloc in epp init function is not free after e=
-pp
-> exist, so we should free it.
->
-> Signed-off-by: andypma <andypma@tencent.com>
+On Mon, May 13 2024 at 19:32, Lyude Paul wrote:
+> Oh! I am not sure what changed, but I realized that you might also want to see
+> the serial output from the debugging patch that you had sent me a while ago.
+> So I just built that against the 6.9 kernel and it actually seems to boot
+> without needing me to pass intremap=off. So it seems like that might actually
+> be a fix!
 
-Looks like you need to fix the format of the `Signed-off-by` line in your c=
-ommit, you need to ensure that it follows the correct format of including y=
-our full name and email address. Here's how you can fix it:
+Which one of the debug patches did you use?
 
-Signed-off-by: Your Full Name <your_email@example.com>
+>> Yes - it still boots. As well I finally got the serial console adapter in, but
+>> I don't see any additional output:
 
-So maybe you want to change like this.
-Signed-off-by: Andy Pma <andypma@tencent.com>
+That's fine, but now I can provide you debug patches which dump
+information during early boot.
 
-Perry.
+Can you please provide the output of 'cpuid -r' ?
 
->
-> Changes since v1:
->       check whether it is empty before releasing.
->       set driver_data is NULL after free.
-> ---
->  drivers/cpufreq/amd-pstate.c | 7 +++++++
->  1 file changed, 7 insertions(+)
->
-> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
-> index 6a342b0c0140..e100c5b6c9b2 100644
-> --- a/drivers/cpufreq/amd-pstate.c
-> +++ b/drivers/cpufreq/amd-pstate.c
-> @@ -1441,6 +1441,13 @@ static int amd_pstate_epp_cpu_init(struct
-> cpufreq_policy *policy)
->
->  static int amd_pstate_epp_cpu_exit(struct cpufreq_policy *policy)  {
-> +     struct amd_cpudata *cpudata =3D policy->driver_data;
-> +
-> +     if(cpudata) {
-> +             kfree(cpudata);
-> +             policy->driver_data =3D NULL;
-> +     }
-> +
->       pr_debug("CPU %d exiting\n", policy->cpu);
->       return 0;
->  }
-> --
-> 2.33.0
+Thanks,
 
+        tglx
 
