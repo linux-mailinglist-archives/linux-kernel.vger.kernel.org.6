@@ -1,164 +1,353 @@
-Return-Path: <linux-kernel+bounces-179016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D16B08C5A80
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 19:46:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5885E8C5A7B
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 19:45:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 880DD1F2317C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 17:46:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C75561F231E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 17:45:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF8C01802BF;
-	Tue, 14 May 2024 17:45:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F00F1802A5;
+	Tue, 14 May 2024 17:45:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VKImCysY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G054jbzd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D67D5A0F9;
-	Tue, 14 May 2024 17:45:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 537555A0F9
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 17:45:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715708748; cv=none; b=PHj437TJ03Z0kWdWcsuDv8sWdicLFaEDWWTvXWwXu4ZaHu7vKulqdmpflrFNHfgSWNm9TDgGfdDLgKqtq1qkR2FDuQD7Kpce4UEYzmy/fuA2tQLwL3uGAe3Sjo0oOE5fneyAyqIq9zLO0ZVpmIYtp50XcH4f0YdnDLVSA4nD7/o=
+	t=1715708732; cv=none; b=eyN3tuC4O9kYaviQjw2gyTThe9rUscFA+pZDo220RcOnJ6qxGSa8wNETv9RPapCyIdqtzIq04ras3U2eu2jQWFuD8YXNckjO+M0A02fCgaafyk7c6yKr0pUj8TlHQUTYNlvo8BhbYLVnemff6nyIzAiJbyn7KTLC9erhIEmhxjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715708748; c=relaxed/simple;
-	bh=FOjLC9GTIUd1WGRSxLT8Kv9gyt6FdbEbbp3ZmLp/5Pw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a0JLYv3//AGLVFq+PR2RHGbsw4khfILjB/7YuSDT9S/MZUcQseqcThIgaDUUZU159SchypuYkDgRVXfH0GH3xaLiwyjRDAU4Xul0Br5ttVzYMdI12UeJ05U4ve+GBI0FE3qUngXIqTYmrSfYRMj88GWKdHsWGAdxRvCQIxMbQdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VKImCysY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99583C4AF0B;
-	Tue, 14 May 2024 17:45:47 +0000 (UTC)
+	s=arc-20240116; t=1715708732; c=relaxed/simple;
+	bh=Y5u1qb3o8jFWtGibc8YJEuaQWEpyo58a0wSHycQXleQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Pm0llDQTMErgGX5scu6plmk0vr3/OSZGtc1SvUWRgVFTW9O4018kxszjoq1TbamA3KemWVnPerHhxkZOHnmvD7LvzH/aWZcTtXIL0mUTLTCvPjLsZze1YXOwD2KN9aKJ/BmV0PzJIa/ESv7d0Q0/7stk4qd79t9bIUiCGPD/XB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G054jbzd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7236BC2BD10;
+	Tue, 14 May 2024 17:45:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715708747;
-	bh=FOjLC9GTIUd1WGRSxLT8Kv9gyt6FdbEbbp3ZmLp/5Pw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=VKImCysY3bcey58jwKO+qoQW0bnHVN/etyfwMudeR25DbYzK3YhTvWmr+708I78H5
-	 D+awgxvAly3K1xsLtDkDRg63v4rcI0H6IsJD5h45j8oGdQwqlDINPektsflqTDqMwe
-	 ECiDPAgaAkZgANH/wGE68CXphZKkSwNH6rjkwMQCeuKa9J1eoYRzu0bWrProSMYzrL
-	 d3U1BghkuKONFSdgXJpIBALNCuhKOBXlAendOTCxizkioLVt7hv7tFgHrf6u05wvY8
-	 6P70X6yHq3fs19WW6xZDGI4g8LAgCiKineGFS9Nql2tCuIequp45hrqIUz32/yGau7
-	 dd5V/fRiJ9FEA==
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-51f12ccff5eso8138918e87.1;
-        Tue, 14 May 2024 10:45:47 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVz4iirYGHdGthKxNWTgMmc8yYskotFiN2d/SsMDqL2qgeP8+MTylczpxR3z1yAd9ZKMNi/nFrfIgREKGhtWA7kaIYuXiPcDItMTDgRNsdlXXeX4Ane+ufLj7ThegIsMoA3vXIUbBbli+ZwzCB+xHWyJPNnnpYO5AzqjAdw5G1YEvGEoAMhF3pqcvHZP0yZzjA2VPTRsBBUrgaKSX5IX5ZFdCU=
-X-Gm-Message-State: AOJu0YzFYFBJiGGQ8A34d7mU3V7uSDiNgZeFqgIQBc8y8AOlXiSFZwZ0
-	a7b+6/iaHyqiaBseUzBB9aqrVci6pL65UIClQUCqzyYDdkFLVNdRuDT7DiXClUZOSu7ITe85Lf4
-	+tr00S3Y/0q+U0fg6GKZ4GVlng90=
-X-Google-Smtp-Source: AGHT+IFNbI6Bd5BRsGSVHMrS8noqYrRTepjcaaqy5bW0mLMfJcq2tUemTq2/g8JEYAe2AL1nwXz7wo3BaTt9cfiD81I=
-X-Received: by 2002:a05:6512:b15:b0:51a:ca75:9ffe with SMTP id
- 2adb3069b0e04-5221057b50bmr12345399e87.42.1715708746044; Tue, 14 May 2024
- 10:45:46 -0700 (PDT)
+	s=k20201202; t=1715708730;
+	bh=Y5u1qb3o8jFWtGibc8YJEuaQWEpyo58a0wSHycQXleQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=G054jbzd+J9V/nAGuyYQaXf4T9BMH783EEmaCmvg66SJTcqK7jZ9+ElWJEwLEyt7E
+	 XJmKsFWNKmYKPmovj1YBED2fdBYb6tbJGguRkEogzYlK7PJcLWf8OfpMAlW7x47MgL
+	 yPS0EFZGjP3X8yK93NmWAecIbgT5z3OitiNLoeE5aKPnIYqvtEUiMt/wKbWDbOwXVg
+	 0GoKGunjUjvRldCr09m0npf42Kd/q8BsJpdid5urLb7jWZLOTH03MgJ1VLFKaDCOXh
+	 0LtUamA7Cke/CuemSovSYmQhF8MqtV3WpsnY+06nu1P1tQFj2G2eUv8NhNuRHGV7uB
+	 c9PCS0Vmow/gQ==
+From: =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
+To: Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: Albert Ou <aou@eecs.berkeley.edu>, David Hildenbrand <david@redhat.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley
+ <paul.walmsley@sifive.com>, linux-riscv@lists.infradead.org,
+ =?utf-8?B?QmrDtnJuIFTDtnBlbA==?=
+ <bjorn@rivosinc.com>, Andrew Bresticker <abrestic@rivosinc.com>, Chethan
+ Seshadri <Chethan.Seshadri@catalinasystems.io>, Lorenzo Stoakes
+ <lstoakes@gmail.com>, Oscar Salvador <osalvador@suse.de>, Santosh Mamila
+ <santosh.mamila@catalinasystems.io>, Sivakumar Munnangi
+ <siva.munnangi@catalinasystems.io>, Sunil V L <sunilvl@ventanamicro.com>,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ virtualization@lists.linux-foundation.org
+Subject: Re: [PATCH v2 2/8] riscv: mm: Change attribute from __init to
+ __meminit for page functions
+In-Reply-To: <CAHVXubgYfi6hNjUAGeXoOcAbAS8Bvd_TtrTD8FhJP1EpPGDKMw@mail.gmail.com>
+References: <20240514140446.538622-1-bjorn@kernel.org>
+ <20240514140446.538622-3-bjorn@kernel.org>
+ <CAHVXubgYfi6hNjUAGeXoOcAbAS8Bvd_TtrTD8FhJP1EpPGDKMw@mail.gmail.com>
+Date: Tue, 14 May 2024 19:45:27 +0200
+Message-ID: <87ikzg479k.fsf@all.your.base.are.belong.to.us>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240511-ath10k-snoc-dep-v1-1-9666e3af5c27@linaro.org> <12a208d7-f36b-4953-abff-323a15452b3c@quicinc.com>
-In-Reply-To: <12a208d7-f36b-4953-abff-323a15452b3c@quicinc.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Wed, 15 May 2024 02:45:09 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASyBNbxm-e+iZ=7pOJg-a-Zm84O6RNcqiUjZQH7f9r3Lw@mail.gmail.com>
-Message-ID: <CAK7LNASyBNbxm-e+iZ=7pOJg-a-Zm84O6RNcqiUjZQH7f9r3Lw@mail.gmail.com>
-Subject: Re: [PATCH] wifi: ath10k: fix QCOM_RPROC_COMMON dependency
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Kalle Valo <kvalo@kernel.org>, 
-	Jeff Johnson <jjohnson@kernel.org>, Stephen Boyd <swboyd@chromium.org>, 
-	Rakesh Pillai <quic_pillair@quicinc.com>, linux-wireless@vger.kernel.org, 
-	ath10k@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org, linux-kbuild@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 14, 2024 at 11:43=E2=80=AFPM Jeff Johnson <quic_jjohnson@quicin=
-c.com> wrote:
+Alexandre Ghiti <alexghiti@rivosinc.com> writes:
+
+> On Tue, May 14, 2024 at 4:05=E2=80=AFPM Bj=C3=B6rn T=C3=B6pel <bjorn@kern=
+el.org> wrote:
+>>
+>> From: Bj=C3=B6rn T=C3=B6pel <bjorn@rivosinc.com>
+>>
+>> Prepare for memory hotplugging support by changing from __init to
+>> __meminit for the page table functions that are used by the upcoming
+>> architecture specific callbacks.
+>>
+>> Changing the __init attribute to __meminit, avoids that the functions
+>> are removed after init. The __meminit attribute makes sure the
+>> functions are kept in the kernel text post init, but only if memory
+>> hotplugging is enabled for the build.
+>>
+>> Also, make sure that the altmap parameter is properly passed on to
+>> vmemmap_populate_hugepages().
+>>
+>> Signed-off-by: Bj=C3=B6rn T=C3=B6pel <bjorn@rivosinc.com>
+>> ---
+>>  arch/riscv/include/asm/mmu.h     |  4 +--
+>>  arch/riscv/include/asm/pgtable.h |  2 +-
+>>  arch/riscv/mm/init.c             | 58 ++++++++++++++------------------
+>>  3 files changed, 29 insertions(+), 35 deletions(-)
+>>
+>> diff --git a/arch/riscv/include/asm/mmu.h b/arch/riscv/include/asm/mmu.h
+>> index 60be458e94da..c09c3c79f496 100644
+>> --- a/arch/riscv/include/asm/mmu.h
+>> +++ b/arch/riscv/include/asm/mmu.h
+>> @@ -28,8 +28,8 @@ typedef struct {
+>>  #endif
+>>  } mm_context_t;
+>>
+>> -void __init create_pgd_mapping(pgd_t *pgdp, uintptr_t va, phys_addr_t p=
+a,
+>> -                              phys_addr_t sz, pgprot_t prot);
+>> +void __meminit create_pgd_mapping(pgd_t *pgdp, uintptr_t va, phys_addr_=
+t pa, phys_addr_t sz,
+>> +                                 pgprot_t prot);
+>>  #endif /* __ASSEMBLY__ */
+>>
+>>  #endif /* _ASM_RISCV_MMU_H */
+>> diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/p=
+gtable.h
+>> index 58fd7b70b903..7933f493db71 100644
+>> --- a/arch/riscv/include/asm/pgtable.h
+>> +++ b/arch/riscv/include/asm/pgtable.h
+>> @@ -162,7 +162,7 @@ struct pt_alloc_ops {
+>>  #endif
+>>  };
+>>
+>> -extern struct pt_alloc_ops pt_ops __initdata;
+>> +extern struct pt_alloc_ops pt_ops __meminitdata;
+>>
+>>  #ifdef CONFIG_MMU
+>>  /* Number of PGD entries that a user-mode program can use */
+>> diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
+>> index 5b8cdfafb52a..c969427eab88 100644
+>> --- a/arch/riscv/mm/init.c
+>> +++ b/arch/riscv/mm/init.c
+>> @@ -295,7 +295,7 @@ static void __init setup_bootmem(void)
+>>  }
+>>
+>>  #ifdef CONFIG_MMU
+>> -struct pt_alloc_ops pt_ops __initdata;
+>> +struct pt_alloc_ops pt_ops __meminitdata;
+>>
+>>  pgd_t swapper_pg_dir[PTRS_PER_PGD] __page_aligned_bss;
+>>  pgd_t trampoline_pg_dir[PTRS_PER_PGD] __page_aligned_bss;
+>> @@ -357,7 +357,7 @@ static inline pte_t *__init get_pte_virt_fixmap(phys=
+_addr_t pa)
+>>         return (pte_t *)set_fixmap_offset(FIX_PTE, pa);
+>>  }
+>>
+>> -static inline pte_t *__init get_pte_virt_late(phys_addr_t pa)
+>> +static inline pte_t *__meminit get_pte_virt_late(phys_addr_t pa)
+>>  {
+>>         return (pte_t *) __va(pa);
+>>  }
+>> @@ -376,7 +376,7 @@ static inline phys_addr_t __init alloc_pte_fixmap(ui=
+ntptr_t va)
+>>         return memblock_phys_alloc(PAGE_SIZE, PAGE_SIZE);
+>>  }
+>>
+>> -static phys_addr_t __init alloc_pte_late(uintptr_t va)
+>> +static phys_addr_t __meminit alloc_pte_late(uintptr_t va)
+>>  {
+>>         struct ptdesc *ptdesc =3D pagetable_alloc(GFP_KERNEL & ~__GFP_HI=
+GHMEM, 0);
+>>
+>> @@ -384,9 +384,8 @@ static phys_addr_t __init alloc_pte_late(uintptr_t v=
+a)
+>>         return __pa((pte_t *)ptdesc_address(ptdesc));
+>>  }
+>>
+>> -static void __init create_pte_mapping(pte_t *ptep,
+>> -                                     uintptr_t va, phys_addr_t pa,
+>> -                                     phys_addr_t sz, pgprot_t prot)
+>> +static void __meminit create_pte_mapping(pte_t *ptep, uintptr_t va, phy=
+s_addr_t pa, phys_addr_t sz,
+>> +                                        pgprot_t prot)
+>>  {
+>>         uintptr_t pte_idx =3D pte_index(va);
+>>
+>> @@ -440,7 +439,7 @@ static pmd_t *__init get_pmd_virt_fixmap(phys_addr_t=
+ pa)
+>>         return (pmd_t *)set_fixmap_offset(FIX_PMD, pa);
+>>  }
+>>
+>> -static pmd_t *__init get_pmd_virt_late(phys_addr_t pa)
+>> +static pmd_t *__meminit get_pmd_virt_late(phys_addr_t pa)
+>>  {
+>>         return (pmd_t *) __va(pa);
+>>  }
+>> @@ -457,7 +456,7 @@ static phys_addr_t __init alloc_pmd_fixmap(uintptr_t=
+ va)
+>>         return memblock_phys_alloc(PAGE_SIZE, PAGE_SIZE);
+>>  }
+>>
+>> -static phys_addr_t __init alloc_pmd_late(uintptr_t va)
+>> +static phys_addr_t __meminit alloc_pmd_late(uintptr_t va)
+>>  {
+>>         struct ptdesc *ptdesc =3D pagetable_alloc(GFP_KERNEL & ~__GFP_HI=
+GHMEM, 0);
+>>
+>> @@ -465,9 +464,9 @@ static phys_addr_t __init alloc_pmd_late(uintptr_t v=
+a)
+>>         return __pa((pmd_t *)ptdesc_address(ptdesc));
+>>  }
+>>
+>> -static void __init create_pmd_mapping(pmd_t *pmdp,
+>> -                                     uintptr_t va, phys_addr_t pa,
+>> -                                     phys_addr_t sz, pgprot_t prot)
+>> +static void __meminit create_pmd_mapping(pmd_t *pmdp,
+>> +                                        uintptr_t va, phys_addr_t pa,
+>> +                                        phys_addr_t sz, pgprot_t prot)
+>>  {
+>>         pte_t *ptep;
+>>         phys_addr_t pte_phys;
+>> @@ -503,7 +502,7 @@ static pud_t *__init get_pud_virt_fixmap(phys_addr_t=
+ pa)
+>>         return (pud_t *)set_fixmap_offset(FIX_PUD, pa);
+>>  }
+>>
+>> -static pud_t *__init get_pud_virt_late(phys_addr_t pa)
+>> +static pud_t *__meminit get_pud_virt_late(phys_addr_t pa)
+>>  {
+>>         return (pud_t *)__va(pa);
+>>  }
+>> @@ -521,7 +520,7 @@ static phys_addr_t __init alloc_pud_fixmap(uintptr_t=
+ va)
+>>         return memblock_phys_alloc(PAGE_SIZE, PAGE_SIZE);
+>>  }
+>>
+>> -static phys_addr_t alloc_pud_late(uintptr_t va)
+>> +static phys_addr_t __meminit alloc_pud_late(uintptr_t va)
+>>  {
+>>         unsigned long vaddr;
+>>
+>> @@ -541,7 +540,7 @@ static p4d_t *__init get_p4d_virt_fixmap(phys_addr_t=
+ pa)
+>>         return (p4d_t *)set_fixmap_offset(FIX_P4D, pa);
+>>  }
+>>
+>> -static p4d_t *__init get_p4d_virt_late(phys_addr_t pa)
+>> +static p4d_t *__meminit get_p4d_virt_late(phys_addr_t pa)
+>>  {
+>>         return (p4d_t *)__va(pa);
+>>  }
+>> @@ -559,7 +558,7 @@ static phys_addr_t __init alloc_p4d_fixmap(uintptr_t=
+ va)
+>>         return memblock_phys_alloc(PAGE_SIZE, PAGE_SIZE);
+>>  }
+>>
+>> -static phys_addr_t alloc_p4d_late(uintptr_t va)
+>> +static phys_addr_t __meminit alloc_p4d_late(uintptr_t va)
+>>  {
+>>         unsigned long vaddr;
+>>
+>> @@ -568,9 +567,8 @@ static phys_addr_t alloc_p4d_late(uintptr_t va)
+>>         return __pa(vaddr);
+>>  }
+>>
+>> -static void __init create_pud_mapping(pud_t *pudp,
+>> -                                     uintptr_t va, phys_addr_t pa,
+>> -                                     phys_addr_t sz, pgprot_t prot)
+>> +static void __meminit create_pud_mapping(pud_t *pudp, uintptr_t va, phy=
+s_addr_t pa, phys_addr_t sz,
+>> +                                        pgprot_t prot)
+>>  {
+>>         pmd_t *nextp;
+>>         phys_addr_t next_phys;
+>> @@ -595,9 +593,8 @@ static void __init create_pud_mapping(pud_t *pudp,
+>>         create_pmd_mapping(nextp, va, pa, sz, prot);
+>>  }
+>>
+>> -static void __init create_p4d_mapping(p4d_t *p4dp,
+>> -                                     uintptr_t va, phys_addr_t pa,
+>> -                                     phys_addr_t sz, pgprot_t prot)
+>> +static void __meminit create_p4d_mapping(p4d_t *p4dp, uintptr_t va, phy=
+s_addr_t pa, phys_addr_t sz,
+>> +                                        pgprot_t prot)
+>>  {
+>>         pud_t *nextp;
+>>         phys_addr_t next_phys;
+>> @@ -653,9 +650,8 @@ static void __init create_p4d_mapping(p4d_t *p4dp,
+>>  #define create_pmd_mapping(__pmdp, __va, __pa, __sz, __prot) do {} whil=
+e(0)
+>>  #endif /* __PAGETABLE_PMD_FOLDED */
+>>
+>> -void __init create_pgd_mapping(pgd_t *pgdp,
+>> -                                     uintptr_t va, phys_addr_t pa,
+>> -                                     phys_addr_t sz, pgprot_t prot)
+>> +void __meminit create_pgd_mapping(pgd_t *pgdp, uintptr_t va, phys_addr_=
+t pa, phys_addr_t sz,
+>> +                                 pgprot_t prot)
+>>  {
+>>         pgd_next_t *nextp;
+>>         phys_addr_t next_phys;
+>> @@ -680,8 +676,7 @@ void __init create_pgd_mapping(pgd_t *pgdp,
+>>         create_pgd_next_mapping(nextp, va, pa, sz, prot);
+>>  }
+>>
+>> -static uintptr_t __init best_map_size(phys_addr_t pa, uintptr_t va,
+>> -                                     phys_addr_t size)
+>> +static uintptr_t __meminit best_map_size(phys_addr_t pa, uintptr_t va, =
+phys_addr_t size)
+>>  {
+>>         if (pgtable_l5_enabled &&
+>>             !(pa & (P4D_SIZE - 1)) && !(va & (P4D_SIZE - 1)) && size >=
+=3D P4D_SIZE)
+>> @@ -714,7 +709,7 @@ asmlinkage void __init __copy_data(void)
+>>  #endif
+>>
+>>  #ifdef CONFIG_STRICT_KERNEL_RWX
+>> -static __init pgprot_t pgprot_from_va(uintptr_t va)
+>> +static __meminit pgprot_t pgprot_from_va(uintptr_t va)
+>>  {
+>>         if (is_va_kernel_text(va))
+>>                 return PAGE_KERNEL_READ_EXEC;
+>> @@ -739,7 +734,7 @@ void mark_rodata_ro(void)
+>>                                   set_memory_ro);
+>>  }
+>>  #else
+>> -static __init pgprot_t pgprot_from_va(uintptr_t va)
+>> +static __meminit pgprot_t pgprot_from_va(uintptr_t va)
+>>  {
+>>         if (IS_ENABLED(CONFIG_64BIT) && !is_kernel_mapping(va))
+>>                 return PAGE_KERNEL;
+>> @@ -1231,9 +1226,8 @@ asmlinkage void __init setup_vm(uintptr_t dtb_pa)
+>>         pt_ops_set_fixmap();
+>>  }
+>>
+>> -static void __init create_linear_mapping_range(phys_addr_t start,
+>> -                                              phys_addr_t end,
+>> -                                              uintptr_t fixed_map_size)
+>> +static void __meminit create_linear_mapping_range(phys_addr_t start, ph=
+ys_addr_t end,
+>> +                                                 uintptr_t fixed_map_si=
+ze)
+>>  {
+>>         phys_addr_t pa;
+>>         uintptr_t va, map_size;
+>> @@ -1435,7 +1429,7 @@ int __meminit vmemmap_populate(unsigned long start=
+, unsigned long end, int node,
+>>          * memory hotplug, we are not able to update all the page tables=
+ with
+>>          * the new PMDs.
+>>          */
+>> -       return vmemmap_populate_hugepages(start, end, node, NULL);
+>> +       return vmemmap_populate_hugepages(start, end, node, altmap);
 >
-> On 5/11/2024 3:49 AM, Dmitry Baryshkov wrote:
-> > If ath10k_snoc is built-in, while Qualcomm remoteprocs are built as
-> > modules, compilation fails with:
-> >
-> > /usr/bin/aarch64-linux-gnu-ld: drivers/net/wireless/ath/ath10k/snoc.o: =
-in function `ath10k_modem_init':
-> > drivers/net/wireless/ath/ath10k/snoc.c:1534: undefined reference to `qc=
-om_register_ssr_notifier'
-> > /usr/bin/aarch64-linux-gnu-ld: drivers/net/wireless/ath/ath10k/snoc.o: =
-in function `ath10k_modem_deinit':
-> > drivers/net/wireless/ath/ath10k/snoc.c:1551: undefined reference to `qc=
-om_unregister_ssr_notifier'
-> >
-> > Add corresponding dependency to ATH10K_SNOC Kconfig entry so that it's
-> > built as module if QCOM_RPROC_COMMON is built as module too.
-> >
-> > Fixes: 747ff7d3d742 ("ath10k: Don't always treat modem stop events as c=
-rashes")
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > ---
-> >  drivers/net/wireless/ath/ath10k/Kconfig | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/drivers/net/wireless/ath/ath10k/Kconfig b/drivers/net/wire=
-less/ath/ath10k/Kconfig
-> > index e6ea884cafc1..4f385f4a8cef 100644
-> > --- a/drivers/net/wireless/ath/ath10k/Kconfig
-> > +++ b/drivers/net/wireless/ath/ath10k/Kconfig
-> > @@ -45,6 +45,7 @@ config ATH10K_SNOC
-> >       depends on ATH10K
-> >       depends on ARCH_QCOM || COMPILE_TEST
-> >       depends on QCOM_SMEM
-> > +     depends on QCOM_RPROC_COMMON || QCOM_RPROC_COMMON=3Dn
-> >       select QCOM_SCM
-> >       select QCOM_QMI_HELPERS
-> >       help
-> >
-> > ---
-> > base-commit: 75fa778d74b786a1608d55d655d42b480a6fa8bd
-> > change-id: 20240511-ath10k-snoc-dep-862a9da2e6bb
->
-> I see how this fixes the problem, but this doesn't seem like an ideal
-> solution. The fact that the *_ssr_notifier() functions are correctly prot=
-ected
-> by conditional compilation ideally should mean that clients don't need to=
- call
-> call out this as a dependency. Otherwise, it would mean we'd need to do t=
-his
-> for all feature flags.
+> Is this a fix? Does this deserve to be split into another patch then?
+
+It's enablement. The altmap can't be used unless there's ZONE_DEVICE
+support AFAIU.
 
 
-It depends on if qcom_common.c is optional for ath10k_snoc.
-
-If it is optional, this patch is correct.
-
-
-If it is mandatory
-depends on QCOM_RPROC_COMMON
-
-
->
-> +linux-kbuild just to make sure there isn't a better approach.
-
-
-Commit 28d49e171676afb7df7f47798391364af9abed7f suggested
-
-  depends on BAR || !BAR
-
-but
-
-  depends on BAR || BAR=3Dn
-
-works equivalently.
-
-
-
->
-> /jeff
->
->
-
-
---=20
-Best Regards
-Masahiro Yamada
+Bj=C3=B6rn
 
