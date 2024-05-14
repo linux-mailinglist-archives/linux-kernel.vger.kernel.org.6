@@ -1,119 +1,91 @@
-Return-Path: <linux-kernel+bounces-178219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E37F48C4A93
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 02:48:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F28AB8C4AA0
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 02:51:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C5032870A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 00:48:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92CAF1F237C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 00:51:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B734217F7;
-	Tue, 14 May 2024 00:48:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A10EA3FF1;
+	Tue, 14 May 2024 00:50:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S8wmgnmY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kT2r/08A"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6AD480B;
-	Tue, 14 May 2024 00:48:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5FE8EC5;
+	Tue, 14 May 2024 00:50:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715647699; cv=none; b=QM8RLQUUL8J7WOkWRdLy1/JViwSDe1HX0XpbbDeNblnjyChmOBwjOAOy2wh8QbGAxlMv6beox/kMOmEoQcYflkQwDgozS0LSy6hwC25c8vhmKZk6mYr/+h4jhl7xiOVZf398ofiDECqT+DEOsAfJouiABUVa46HXRvu5SnfongE=
+	t=1715647858; cv=none; b=ca6uHv9fuJl84RMoPJ2IUDPU1zOKFrUpHj4ZdxON7s+b4gCVT0J750ZkM8S9/v8hPgstt26TMH7av8158EoDBc9PmaDpHoc+nXz/LkvSTQDzfuN678BoNnMfGWoWBNYiCtmf58qGWV/Nz/lVFRfdNc7uAZce7BoLz3MXFtfxkHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715647699; c=relaxed/simple;
-	bh=NvwhydFzvnCR2FLY56Y19UMPqpBXTv0snNN2JgKkl10=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rEqoXpx/xVVPXKgJfw1MBL3AwP0eAZAGQrhfMbFWzl4QiFLXYu9zpCDPAA/AYg9olYinnOmQHl5h7foQhSktBcSJsTlaGNVaOV2h7rX+AW5bZ05iTSfZME5nwj4ZkEx760qqfkEsqglzewAtaVLLnt0faY3Fb0KRgwrjyvGmXXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S8wmgnmY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 033CDC113CC;
-	Tue, 14 May 2024 00:48:17 +0000 (UTC)
+	s=arc-20240116; t=1715647858; c=relaxed/simple;
+	bh=U3S4rHf/j/59RgQxyd4HaMChiWtKURrQKrKmn8TPmxQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EctRA0rV0I/xrFDZhjJCcnpDdllMuGZfuZlq1y+dGuILwcv4QgbLZekoaixqlwIsauSX/FFDTIMd5qGmcfTOYOSSx3RWp+r5etqTsPyGb4GYbWrgyIaxHzLn7XF5AYdECAb7VJHdQXwANLEbLEuZwp26VGXasc62ThMLQOIvTLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kT2r/08A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4F08C113CC;
+	Tue, 14 May 2024 00:50:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715647698;
-	bh=NvwhydFzvnCR2FLY56Y19UMPqpBXTv0snNN2JgKkl10=;
-	h=From:To:Cc:Subject:Date:From;
-	b=S8wmgnmYjHmWGfw/F1UO9Q5/amk6LiFoo7hIbhPcCsqO+Fvgg2Sf/XjqbJZ23++VY
-	 rPmY4fFujv7r67cArqlSlIgO98fh0mZRPab7Z3KfZfBSaQNCvLH0r6QCLO6rrB0lEg
-	 Naq1qGhxp4+xBQ5BAne5t7fBSLs6Adn1wZsHiXa3phjVsDBTi72ZgskxU68AJqmeNC
-	 v7WBrLTbzgKwbDwgMZUoJ2WFoE/Fuy2iZaObk5P4GwzYhl7U2Oafui631mfe5XypXN
-	 TEzEzmpTCc5+7io9CAzleQR3qYijuBOP3NJoWdLf40p6Rs+n3E3/ssbOqMorSlyJnT
-	 gk3h8cMKvbH8g==
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: linux-integrity@vger.kernel.org
-Cc: Jarkko Sakkinen <jarkko@kernel.org>,
-	stable@vger.kernel.org,
-	James Bottomley <James.Bottomley@HansenPartnership.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	keyrings@vger.kernel.org (open list:KEYS-TRUSTED),
-	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2] KEYS: trusted: Do not use WARN when encode fails
-Date: Tue, 14 May 2024 03:47:59 +0300
-Message-ID: <20240514004759.6625-1-jarkko@kernel.org>
-X-Mailer: git-send-email 2.45.0
+	s=k20201202; t=1715647857;
+	bh=U3S4rHf/j/59RgQxyd4HaMChiWtKURrQKrKmn8TPmxQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=kT2r/08A0fhbvtLpd1DROJX2GPmh11mxdVLwTwiqBEAC9urd5RkswWXw4RYjOqzcT
+	 jAuw3k61K2WRHfcP3qI5Fsuirb5mfC5dgLTtnYAW7QfoI5EHvx8Y1MQFdi7yFBFXo3
+	 XvIXvR818fjCKXDCi6fDK1cr0m4uYTEyi5X+4sMYtmRMZz6zwYRXpoP5eB7DUXuWfx
+	 3NCYA2+DzGoi9kb6dDsuiZ0ZTBgh3Pfm/SLt4cY+/QuDCk9Ux8DtR86e6UJV9mjc9p
+	 /soqA7GHDR6wD1Slkda4JR7m6SMiGOLvjlrWpPtGgsmFPG1UxnrTAfoBuiu3BTvztZ
+	 2UJgbwcmnLPqg==
+Date: Mon, 13 May 2024 17:50:55 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Haiyang Zhang <haiyangz@microsoft.com>
+Cc: "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Dexuan Cui
+ <decui@microsoft.com>, "stephen@networkplumber.org"
+ <stephen@networkplumber.org>, KY Srinivasan <kys@microsoft.com>, Paul
+ Rosswurm <paulros@microsoft.com>, "olaf@aepfle.de" <olaf@aepfle.de>,
+ vkuznets <vkuznets@redhat.com>, "davem@davemloft.net"
+ <davem@davemloft.net>, "wei.liu@kernel.org" <wei.liu@kernel.org>,
+ "edumazet@google.com" <edumazet@google.com>, "pabeni@redhat.com"
+ <pabeni@redhat.com>, "leon@kernel.org" <leon@kernel.org>, Long Li
+ <longli@microsoft.com>, "ssengar@linux.microsoft.com"
+ <ssengar@linux.microsoft.com>, "linux-rdma@vger.kernel.org"
+ <linux-rdma@vger.kernel.org>, "daniel@iogearbox.net"
+ <daniel@iogearbox.net>, "john.fastabend@gmail.com"
+ <john.fastabend@gmail.com>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+ "ast@kernel.org" <ast@kernel.org>, "hawk@kernel.org" <hawk@kernel.org>,
+ "tglx@linutronix.de" <tglx@linutronix.de>,
+ "shradhagupta@linux.microsoft.com" <shradhagupta@linux.microsoft.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next] net: mana: Enable MANA driver on ARM64 with 4K
+ page size
+Message-ID: <20240513175055.0f537fe4@kernel.org>
+In-Reply-To: <DM6PR21MB1481F5EE04BAB66E380A0706CAE22@DM6PR21MB1481.namprd21.prod.outlook.com>
+References: <1715632141-8089-1-git-send-email-haiyangz@microsoft.com>
+	<20240513134201.5f5acbae@kernel.org>
+	<DM6PR21MB1481F5EE04BAB66E380A0706CAE22@DM6PR21MB1481.namprd21.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-When asn1_encode_sequence() fails, WARN is not the correct solution.
+On Mon, 13 May 2024 20:50:37 +0000 Haiyang Zhang wrote:
+> From the document, it can be:
+> "ARM cores support both modes, but are most commonly used in, and typically default to little-endian mode. Most Linux distributions for ARM tend to be little-endian only." 
+> https://developer.arm.com/documentation/den0042/a/Coding-for-Cortex-R-Processors/Endianness
+> 
+> MANA driver doesn't support big endian.
 
-1. asn1_encode_sequence() is not an internal function (located
-   in lib/asn1_encode.c).
-2. Location is known, which makes the stack trace useless.
-3. Results a crash if panic_on_warn is set.
-
-It is also noteworthy that the use of WARN is undocumented, and it
-should be avoided unless there is a carefully considered rationale to
-use it.
-
-Replace WARN with pr_err, and print the return value instead, which is
-only useful piece of information.
-
-Cc: stable@vger.kernel.org # v5.13+
-Fixes: f2219745250f ("security: keys: trusted: use ASN.1 TPM2 key format for the blobs")
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
-v2: Fix typos in the commit message
----
- security/keys/trusted-keys/trusted_tpm2.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
-index dfeec06301ce..dbdd6a318b8b 100644
---- a/security/keys/trusted-keys/trusted_tpm2.c
-+++ b/security/keys/trusted-keys/trusted_tpm2.c
-@@ -38,6 +38,7 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
- 	u8 *end_work = scratch + SCRATCH_SIZE;
- 	u8 *priv, *pub;
- 	u16 priv_len, pub_len;
-+	int ret;
- 
- 	priv_len = get_unaligned_be16(src) + 2;
- 	priv = src;
-@@ -79,8 +80,11 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
- 	work1 = payload->blob;
- 	work1 = asn1_encode_sequence(work1, work1 + sizeof(payload->blob),
- 				     scratch, work - scratch);
--	if (WARN(IS_ERR(work1), "BUG: ASN.1 encoder failed"))
--		return PTR_ERR(work1);
-+	if (IS_ERR(work1)) {
-+		ret = PTR_ERR(work1);
-+		pr_err("ASN.1 encode error %d\n", ret);
-+		return ret;
-+	}
- 
- 	return work1 - payload->blob;
- }
--- 
-2.45.0
-
+Alright, but please prioritize at least adding the 64k page support.
+Linux drivers are supposed to be as platform independent as possible.
+If you use the right APIs you shouldn't have to worry about the endian
+or the page size.
 
