@@ -1,152 +1,145 @@
-Return-Path: <linux-kernel+bounces-178426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7175C8C4D76
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 10:07:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3CCE8C4D7C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 10:07:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E4081C21550
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 08:07:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88ABE282EE2
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 08:07:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3FAE1F60A;
-	Tue, 14 May 2024 08:06:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qFC9MbDA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 724A71BC5C;
+	Tue, 14 May 2024 08:07:19 +0000 (UTC)
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1FD5125A9;
-	Tue, 14 May 2024 08:06:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 916F417996;
+	Tue, 14 May 2024 08:07:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715674001; cv=none; b=J9JTwKBgAxdwcf93uOPtLM/afsC2Gq69IHuF+CCHa0t3b2CJIOooEp/4NLwCf9m5v10BQ5Ops7GrQFN7hfoFkVHE9lwWuEA/VwRvROk1RcFfv1plOqkesQdbQg+iLRiFbclXpKSncYORq3ZOQuaVyM1fJc+owW8mBq3TkaMLAwg=
+	t=1715674038; cv=none; b=hU2FRyLRnxZKkiLov9y/zS6ulLg4MU21gwRrwGh9w2OBKoezjLS2eCI0Dalu3V8/fJe+2A/F/l+5iT89jXfCHrYllzzQYCfxaiUhH16QpTojXBCDol1XtrrJbwygX4iGVShz5kyPi3dTs+o8wWfRGp8uzeyGQkGw/FSZrNyCb+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715674001; c=relaxed/simple;
-	bh=N34ThgQd0DAt0wVs05B2Jna+Ohlf1SF698RKdtXprvQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bYHaUgGnej1xyz/2AUJbG0K9wW6OQM8koKGN6FLbNwdjeJ+Tz2NbnS4HdudEyl7441aGfVzucoZzyX7VLzJCi3+QeJHQos7oXA9IPAKW7Kla5Cc75sELrd/Q8qWy9AoPaAKFLf3WcaQxPgry+g5zn4Lxn6SaW9NQZQEGcwxWKBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qFC9MbDA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71464C2BD10;
-	Tue, 14 May 2024 08:06:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715674001;
-	bh=N34ThgQd0DAt0wVs05B2Jna+Ohlf1SF698RKdtXprvQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qFC9MbDAqXMBEKQOAZcQKthbdtSWGuG13AGjjl4wN61HX2uQa0flzwQRhjMHucY6p
-	 OG9WbbNBKmaDuCqHtk19AyD7FjuXklOhhWbvEw1SMKDfYJKmtZ/pzxVcC8/ifCcC6K
-	 QBCR6+J3Z42dd1Vkv3dxYNivkKiG1Ao8lPuqGlgYFz5P3HiFoI6ayzuo2HBXzNfPO/
-	 bnJepdgfUyYKZadHNHBBsu4uINkXW2cRfcLeo6ERT6kRrMWfwMT0Mq+KeV8I5rFEJq
-	 tWrmBOIsUDIb2rAtSXeQc2HIzJ42Rw8FiW8jf4H2jKUSLOX6scIFbIX440XbW4jrTb
-	 EKHkmdlykHO5Q==
-Message-ID: <76755d03-04a7-4489-a155-355026ad998f@kernel.org>
-Date: Tue, 14 May 2024 10:06:34 +0200
+	s=arc-20240116; t=1715674038; c=relaxed/simple;
+	bh=toj7avCrdtDP66sy+w2xPyKX8oobvvymnd+3vjyORlc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lLn8jUm/ThhrMH/0cvUl/XwG/bigkmUavSS00ZbkfFOVPN2We+O7C+aQa9zyE5SLkQhpMHjl0Ew2FRC0Bz1RMhOhVzI0IsblVINKNJUBz5liWYSc4kj00fDIgsiNXYxwUhoSSUZyRje3ur6AGVHo5zgaZGz4f6xXFDT+Vp3e09k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-61e04fcf813so59817737b3.3;
+        Tue, 14 May 2024 01:07:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715674035; x=1716278835;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mAZGt+1Rc/qtuBUqNnzX2rBGCR5XoalBEqWaRtcOihM=;
+        b=Iw4IaWQY1QwhFqN+npKwJG6R2WAEeKh/7wlU8M1zhh6zgPMYBbGCExna4NVD4azTm2
+         fwcKDtUEXl0HqHUAhJeYa56jbl8Ilr5hqhzJYdBJjOjOz4lS1VjwVwcVWPKFryULM3kd
+         8EkeI7m4Lk1AGR11inXpvAGG2ZLOByZ85HGaedoH5h7CT+fEz1AvRpuzDCUXcSFa8b4X
+         y5Ak4b5GtpLe3RTb69FxGFVCg4KPNLKvBqJUe4VHHsIHAX3YJED/QRakA3lOgyKiJJ8L
+         m9Ou9u2uyIoC4qZdxiQQM6Ljg+ANlTB8RcvxEm1tMSLL//+bx4CBSgEa0jQrKNJXO7Xd
+         jwHw==
+X-Forwarded-Encrypted: i=1; AJvYcCWj8vv9qRX44nJZ2fw4LRrvwF7M5pA0HhNQZZs4ZXqrKbTJxhqfZA4nC8gYayDLDDir9fGS+NP/4OXL1s1hGDSONAEGWDp3jTz9SxLyUpFtn81jHfE/T32IBQoJNe7yv83Gdq/E1s9PMXbL928bfmVHdxuqXpnjQed79nk5S02RUCLrIDnwAZAPRNfrGXL12cqnWB4xTmEJcV4SPVASQAihITB6Sqm7XYOsO8ehDWCSoA1lOslXnQio+kJksQP+X+tPIBOpXw5wdglkIA==
+X-Gm-Message-State: AOJu0YxnaZVK0299AffwWYdOxj9UBafosFEXrkv9FjLhrpn4BqXDLNJZ
+	eLfR1wQin7f+hCBJkxKEEquE+W685McUel/HjrKsxLUx3LVs82v9w1eXnELn
+X-Google-Smtp-Source: AGHT+IGxjxDOYrEBfWACS3xb4tBhGmMofLxxMuAzFLCqhT/U50fNTCZGyD79+TBrcCbgSwQTnN+5tw==
+X-Received: by 2002:a25:7909:0:b0:dd0:c866:ec3a with SMTP id 3f1490d57ef6-dee4f344357mr9991216276.22.1715674035592;
+        Tue, 14 May 2024 01:07:15 -0700 (PDT)
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com. [209.85.222.175])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6a15f194c3asm50576136d6.69.2024.05.14.01.07.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 May 2024 01:07:15 -0700 (PDT)
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-792b8d31702so339701585a.3;
+        Tue, 14 May 2024 01:07:15 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVf5DFfZPLOyhchVtkqQQEau6PvVJvWpWfK6MH7evdfLUxtEBMaJRn/MqBWZHm2IsKsPS5UpziVP+gAUJaHPZsAk9yLBg/5ORozWICwSjP96i136aq9D+mQhjaGpFuF4QgVFjGI7ZjzqF7FHzRuv3L3ICCvatIPMMHvJLxmM6fHMnT+HDRF1J0D70RyBrXRq/g+btRfPctdwxEeMpwijhD9oqPUUcAvcE5CKahhBTpOvOhE6IBaA5zWmK6e8Ex35u1CEl7jnnKLVxALfQ==
+X-Received: by 2002:a05:690c:fd0:b0:611:7132:e6ba with SMTP id
+ 00721157ae682-622b0147778mr138786587b3.40.1715674014345; Tue, 14 May 2024
+ 01:06:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH net-next 0/8] mptcp: small improvements, fix and clean-ups
-Content-Language: en-GB
-To: Mat Martineau <martineau@kernel.org>, Jakub Kicinski <kuba@kernel.org>
-Cc: mptcp@lists.linux.dev, Geliang Tang <geliang@kernel.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Florian Westphal <fw@strlen.de>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Gregory Detal <gregory.detal@gmail.com>
-References: <20240510-upstream-net-next-20240509-misc-improvements-v1-0-4f25579e62ba@kernel.org>
- <20240513160630.545c3024@kernel.org>
- <f60cac35-5a2b-16cf-4706-b2e41acfacae@kernel.org>
- <20240513172941.290cc5cd@kernel.org>
- <8829dfe5-d05a-4103-34af-90f0434ef390@kernel.org>
-From: Matthieu Baerts <matttbe@kernel.org>
-Autocrypt: addr=matttbe@kernel.org; keydata=
- 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
- lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
-Organization: NGI0 Core
-In-Reply-To: <8829dfe5-d05a-4103-34af-90f0434ef390@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240504-pinctrl-cleanup-v2-0-26c5f2dc1181@nxp.com>
+ <20240504-pinctrl-cleanup-v2-7-26c5f2dc1181@nxp.com> <CAMuHMdUD=1rpns_mLF2rMM-x5EnOK7TExaJxoJVkbXjVz1H8uQ@mail.gmail.com>
+ <CACRpkdaUecnwvHFdtGkuM80SObvXpXZkWGYoUMgnNHcvObYF0g@mail.gmail.com>
+ <CAMuHMdWCD+k8=iX8+tcK76DU_m9quR8BV+K68K73SygJzCz5VA@mail.gmail.com> <CACRpkdYS8=cHT=7tGbzWZ73jbLhjqdpssbaHH-qREe=bcHYe2A@mail.gmail.com>
+In-Reply-To: <CACRpkdYS8=cHT=7tGbzWZ73jbLhjqdpssbaHH-qREe=bcHYe2A@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 14 May 2024 10:06:42 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUucOu-c7tbeBBCMaoouFcUnJi0aRU--pc2Gk9QWNrANg@mail.gmail.com>
+Message-ID: <CAMuHMdUucOu-c7tbeBBCMaoouFcUnJi0aRU--pc2Gk9QWNrANg@mail.gmail.com>
+Subject: Re: [PATCH v2 07/20] pinctrl: renesas: Use scope based of_node_put() cleanups
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Dvorkin Dmitry <dvorkin@tibbo.com>, Wells Lu <wellslutw@gmail.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Emil Renner Berthing <kernel@esmil.dk>, Jianlong Huang <jianlong.huang@starfivetech.com>, 
+	Hal Feng <hal.feng@starfivetech.com>, Orson Zhai <orsonzhai@gmail.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, 
+	Viresh Kumar <vireshk@kernel.org>, Shiraz Hashim <shiraz.linux.kernel@gmail.com>, soc@kernel.org, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Patrice Chotard <patrice.chotard@foss.st.com>, Heiko Stuebner <heiko@sntech.de>, 
+	Damien Le Moal <dlemoal@kernel.org>, Ludovic Desroches <ludovic.desroches@microchip.com>, 
+	Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
+	Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Chester Lin <chester62515@gmail.com>, 
+	Matthias Brugger <mbrugger@suse.com>, Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>, 
+	Sean Wang <sean.wang@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
+	Joel Stanley <joel@jms.id.au>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	Tony Lindgren <tony@atomide.com>, Stephen Warren <swarren@wwwdotorg.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-samsung-soc@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	imx@lists.linux.dev, linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org, 
+	Peng Fan <peng.fan@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Mat, Jakub,
+On Tue, May 14, 2024 at 9:33=E2=80=AFAM Linus Walleij <linus.walleij@linaro=
+org> wrote:
+> On Tue, May 14, 2024 at 8:36=E2=80=AFAM Geert Uytterhoeven <geert@linux-m=
+68k.org> wrote:
+> > > Does this go into the Renesas patch stack?
+> > > I think the patch stands fine without the rest of the series.
+> >
+> > Sure, I can do that.
+>
+> Please apply it!
 
-On 14/05/2024 02:33, Mat Martineau wrote:
-> On Mon, 13 May 2024, Jakub Kicinski wrote:
-> 
->> On Mon, 13 May 2024 17:24:08 -0700 (PDT) Mat Martineau wrote:
->>> The conflict here is purely in the diff context, patch 2 of this series
->>> and "tcp: socket option to check for MPTCP fallback to TCP" add cases to
->>> the same switch statement and have a couple of unmodified lines between
->>> their additions.
->>>
->>> "git am -3" handles it cleanly in this case, if you have time and
->>> inclination for a second attempt. But I realize you're working through a
->>> backlog and net-next is now closed, so that time might not be available.
->>> We'll try again when net-next reopens if needed.
->>
->> Your -3 must be more powerful somehow, or my scripts are broken because
->> it isn't enough on my end.
->>
->> If you can do a quick resend there's still a chance. The patches look
->> quite simple.
-> 
-> 
-> Thanks Jakub! Spinning a quick v2 right now.
+OK, will queue in renesas-pinctrl for v6.11.
 
-Thank you for having sent a v2, and for having applied them!
+> > From your positive response to v1, I thought that perhaps you just
+> > wanted to take the full series yourself?
+>
+> Sorry, I always prefer submaintainers to pick their stuff, they
+> know what they are doing and they can test the entire patch
+> stack properly.
 
-I'm sorry about the conflicts: I moved the code around on purpose to
-avoid them, but it looks like it was not enough. Like Mat, I didn't have
-these conflicts locally when I tested before sending the patches. I will
-check if there is something I can do to have the same error as the one
-you had, to prevent such issues next time.
+OK, will (try to ;-) remember...
 
-Cheers,
-Matt
--- 
-Sponsored by the NGI0 Core fund.
+Gr{oetje,eeting}s,
 
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
