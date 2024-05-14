@@ -1,225 +1,307 @@
-Return-Path: <linux-kernel+bounces-178826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E2D38C5845
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:50:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C5F28C584E
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:53:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D5091C219F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:50:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DA2C28464F
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:53:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62D2817EB8A;
-	Tue, 14 May 2024 14:50:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A83B717EB81;
+	Tue, 14 May 2024 14:53:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XJT2dliR"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mBri0pjY"
+Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1A3017B518
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 14:50:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CC711E487;
+	Tue, 14 May 2024 14:53:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715698210; cv=none; b=sisuRP4XWdMIZu9szEKW0UVAryLFrplA6vjBumTpYsAzrUcCy5J9ImtCU8WN1Cx54S0whfdMf2JD0+TxNAoiwgDeTpp40Tks82GF3QsbzALAxQ5+MYZ8EwpwcUQr5O9tClbS3afWQB1qVADXC/MJ5ZPXb3AzhCJi6htNxwgsuBU=
+	t=1715698416; cv=none; b=UbV5LgoDUq5NQVRczdhnc4GUUuim6rMnnD/vvxyWjWOsFZYL6gnM92g0FQGvj3/EHffUDCOrZxvq400iet4jnT+wBG/7ajyfdkvDh6IQHbs5WERytSDiVz1K31htvq76rPPGC+mZSl7JkQ5xM+xzFe40ep6oYUsTu5WGUoj/g/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715698210; c=relaxed/simple;
-	bh=HTuosK5KAw7yvUHZJC+cw0gBJf4t8e/08mopzqrJz+4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z3uD8Xam0F36N5AttGluKEUo6kpfybqCp6hpA8A6qm+HagJ7ub8AFgkgSGTnVcmO0jRQ0P7mJVTfxQ0cfBC2IW+NTaTnkgeo/QEliT/MMc77M8aiKYIb8J4Ah2uaqJwBIdgcwwNFz67IH189jaJgD4n7CikzLj/dpg2077hhOAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XJT2dliR; arc=none smtp.client-ip=209.85.208.50
+	s=arc-20240116; t=1715698416; c=relaxed/simple;
+	bh=OZGLkT0oDKEotX35CeqO+sNDpE6JrfeT19NwbZb8gK8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Om6kIdDgIdqmJw38jqN6vGDIs3uUyqqJ77GjyxgdksYJPLzwgeRLE0MSyzLEbVnIMrKWHOWcOkX10EkR3ZpOEQVTL/DjAwgW/pqM16aFCU6cyfWibsktdnPE5GNIszRaVtLwgDsJh9hRHLHQtFiI68rIRvvf5+KIQkqxInJeJ0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mBri0pjY; arc=none smtp.client-ip=209.85.210.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5731ffcc905so322301a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 07:50:08 -0700 (PDT)
+Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-6ed3587b93bso3160942a34.1;
+        Tue, 14 May 2024 07:53:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715698207; x=1716303007; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1715698414; x=1716303214; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8weezbce1chIPNAjmlh4Y40a69OCRhuQpQAgvmJPtVM=;
-        b=XJT2dliRenYk4IKjVFY5uhEJHgFNEAfcuCM87YrLGSF89sERJCx+gKvERcaClXGwQ5
-         KPPtSjvTSYL0zFxoR7ieEL0Rs68TM/pzyJqcltc1uHZoi1U/E/2ZQkcWanz6TnlvhSDQ
-         htTVxFLL0DAzbvSv8J1MKK6L6DB2XH/ZuVcz8Pr7+05wL35as8EmY5y+D4DFu3l3cmeW
-         yHzRYCq3zc4WsZCIszqa9MnvyIod23S/MiXw0AJzizoJqQ0BlllqLJCG+XxxEkKabdd/
-         ksdL1GPtfl0pDDMVAZlBzg4O8CrF2fmiA44uJZwjv+BIST5/699ia/edM/CU3539P6IA
-         vMEw==
+        bh=bXisbGudY3dtAzfjTejwyHwzxNqxmrPI7H48Yup1GB0=;
+        b=mBri0pjYo7q+T0V1N9J0s3g6M8qYHi95GtTYokR0/ucAfWbihx6iT8+NgWtF+oMDKv
+         Am+W3b6jYOUgcyvgB/23++CYxXtDwJkMhUM37O3VdD6y9kYefdQ/s3S47eg0OGkJO5p0
+         QVq5AdIov8rjBE+3qXqOwLsOPLvSnj02QHDb6PgbyzPO6GbNeK9lPXEEr/RoxcRUAT96
+         TiDfFI5shTogEu9CLVLV6Z56aPnska1pVQR+q87/0NmBsn5i4TpQCnS1D5yHuF0/n4nw
+         ngO+RuSOvajWp5zu4dORTt14NSJmjRdg2kYkeDXjX6YctSufBRjDm9hPYDeWKNSkKPXg
+         QqQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715698207; x=1716303007;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1715698414; x=1716303214;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8weezbce1chIPNAjmlh4Y40a69OCRhuQpQAgvmJPtVM=;
-        b=Cb94Bjp8wt4+890B86mpfcxDJbjotzmwsT7DwhEWrHJLm6AAzyFEn2yijT+Nv0dvNt
-         yv8AHw7KoYDo9mNdxY/LrmnvYrHPqjTPgiLwFBNsd7XK0D4pChSA459/Yz3xizHzqw+z
-         Sk6hmz+2XCJwJF/jIBJD5i5TpuMhwwTM5brZJK00e+6oqxqG9PuyapeO4O4d3K9OfRik
-         LfPLl2N6Fv9yoPdJNizBRFQWQuPmpb97ViHucYcherAEk/rcsRg9qJbK5IZ4b6cfxWHm
-         YhVBUXhzWzumy9hyqZlKTprbrJjumHTPPPUKJpng6xA/ZfaIEz7Xpuqx+f/fi873k389
-         mr4g==
-X-Forwarded-Encrypted: i=1; AJvYcCWgwG8HjGFiazdlw2CBIc6zH9mB0xFwCYZnmt8YfVAZ2hw20BoKHl/i6TMvw2pg5ALNw4dOeVIFVQxoRoBSa+/V/+yEQB2H7YM+Op+m
-X-Gm-Message-State: AOJu0Yz0oesuj/ZL22XubZl5Vg/xpGUWqGuzRVZNqVGQeK1xvlkrd33r
-	tMtIrr0fLebaRARZ4X+oxMtWzCrOA8J+UnqoR5ACNABCbvF+uOR+SAlQv0yAPODh5dRhgOkX9yW
-	dhZ19K7I2NKOhQkmqPSu6TH2EvCE=
-X-Google-Smtp-Source: AGHT+IFilomLYc85uAZnrYnzW/q4t2Ff1CPHHNg6/nJRgYwW18yfWpCgFToKCC3HM5O9nkzwLrVTnhCBulJo9/SNy7Q=
-X-Received: by 2002:a50:cd5d:0:b0:574:f26f:cb63 with SMTP id
- 4fb4d7f45d1cf-574f26fd504mr17921a12.27.1715698206867; Tue, 14 May 2024
- 07:50:06 -0700 (PDT)
+        bh=bXisbGudY3dtAzfjTejwyHwzxNqxmrPI7H48Yup1GB0=;
+        b=vNDGTjIJL+twqCQAaOJCi3I8fEf5fQd0J9QHWT+/mmzHsc2Em7lpde4f6PQ/j6sTCI
+         /PTJKddgU034l9ZI5cmkUsWEAVrdLWpfbMi72xKcPNIr9kmANcABRL9cb1Ud+UUrK85o
+         UaHq+T5ip/GPM+8TK5BlVs3qKbd/je7z8fY+RXL96dX2NpWw6dHFy/iIIMr5Do8IrK6d
+         oy4qh3CBPQd+AwRwPbcL9585GXN6xK8LQz6zfv2Wd1gbqja3EP3xNCiirI2fmihdO/BA
+         m0wZomXnNUWYDHs3UAtP3li9TARoqwJQpu6Dc5f5mrIp7UC0T16huUNvT6VKS9vtCn3+
+         EvQw==
+X-Forwarded-Encrypted: i=1; AJvYcCWvpppGwyOrSysO+yZEij3/lChOx0++ZUsG/4cjABZliQU7eo8hvOuVA6x8tvPKRJGy0o4gxRTfRyBvhc3J/gYxNlvahjWA/s6FRThT
+X-Gm-Message-State: AOJu0YzPrVW2GeiQT6k9v3ks9gSwsP2YmPAOL13XIwNgiXyxWJFvb5YO
+	O6a78taFqjR7LjMSWCaArhktb/M4mK4In72C1kvh/qJo6BMCrCdN
+X-Google-Smtp-Source: AGHT+IEAzv28vr3QpIJhr8CE5FZuNRCyskVfNxOa/BQlDd4Mcc3IJah3rBONoPpvEt1e2OsSANirIA==
+X-Received: by 2002:a05:6871:1c3:b0:22e:d324:b888 with SMTP id 586e51a60fabf-24172f6b584mr13773119fac.56.1715698414222;
+        Tue, 14 May 2024 07:53:34 -0700 (PDT)
+Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43e046467a4sm53067841cf.83.2024.05.14.07.53.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 May 2024 07:53:33 -0700 (PDT)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id 0122D1200069;
+	Tue, 14 May 2024 10:53:33 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Tue, 14 May 2024 10:53:33 -0400
+X-ME-Sender: <xms:7HpDZvNCTL3FROdqKKeLuEmgM2oTz9TdexX8jhQkgUmvarTRjv8rHw>
+    <xme:7HpDZp_vmNex3p1L34dA4kSbnqgjqAGYPn_XLUtxMriZ7J7x0Rj2-qpWpuuwoOV9g
+    1f9QqGus0nxnJWsBQ>
+X-ME-Received: <xmr:7HpDZuQ4W_M66MfbxJ9ZeBT0v5uqZTk__f5Ne1LSiNEoOF2e8dkR5LHSsFQsQA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdegiedgkeduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhu
+    nhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrg
+    htthgvrhhnpeehudfgudffffetuedtvdehueevledvhfelleeivedtgeeuhfegueeviedu
+    ffeivdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    gsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdei
+    gedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfih
+    igmhgvrdhnrghmvg
+X-ME-Proxy: <xmx:7HpDZjt9BwLVg56D1emvrs-lQLI-b6KMVQVjjCA-9JT3g3JrIfLgYw>
+    <xmx:7HpDZncYW3Cq0hLnjVVVHXQJChAqRqvLxrnOCDdfsVEwFPV6S-WvMg>
+    <xmx:7HpDZv3wXu96_bJAZ4Cv7bG9UluNTMr0L0qxaJcmDd4RWee58_mg9w>
+    <xmx:7HpDZj97yTm38BlGU6MAIeVyG9YkiWJmU_w6f0kXd6CKtFNb0AX0ZA>
+    <xmx:7HpDZq_gSOhNuo9-15LZGMlAABXW58_LaoU6DSSLmdtnwIWdyYYw18ST>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 14 May 2024 10:53:32 -0400 (EDT)
+Date: Tue, 14 May 2024 07:53:20 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+	elver@google.com, akpm@linux-foundation.org, tglx@linutronix.de,
+	peterz@infradead.org, dianders@chromium.org, pmladek@suse.com,
+	arnd@arndb.de, torvalds@linux-foundation.org, kernel-team@meta.com,
+	Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v2 cmpxchg 09/13] lib: Add one-byte emulation function
+Message-ID: <ZkN64LAeOfHAXyUM@boqun-archlinux>
+References: <b67e79d4-06cb-4a45-a906-b9e0fbae22c5@paulmck-laptop>
+ <20240501230130.1111603-9-paulmck@kernel.org>
+ <ZkInMNOsLO5XbDj5@boqun-archlinux>
+ <9f0ff126-2806-488e-97cc-7258eff0c574@paulmck-laptop>
+ <ZkI4XPJLeCtabfGh@boqun-archlinux>
+ <ZkKD6UqXZozp1p-W@boqun-archlinux>
+ <29f1d801-9fb4-4ecb-8d5e-cecb7d7a76e1@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1715571279.git.baolin.wang@linux.alibaba.com> <b9babe1857917ff217ed0988d95ba3468845479c.1715571279.git.baolin.wang@linux.alibaba.com>
-In-Reply-To: <b9babe1857917ff217ed0988d95ba3468845479c.1715571279.git.baolin.wang@linux.alibaba.com>
-From: Lance Yang <ioworker0@gmail.com>
-Date: Tue, 14 May 2024 22:49:55 +0800
-Message-ID: <CAK1f24kfR-LOk_vvhBWddVnDdiDZYh8aZeknknWkhi7_5fhQ=A@mail.gmail.com>
-Subject: Re: [PATCH v2 7/7] mm: shmem: add mTHP counters for anonymous shmem
-To: Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: akpm@linux-foundation.org, hughd@google.com, willy@infradead.org, 
-	david@redhat.com, wangkefeng.wang@huawei.com, ying.huang@intel.com, 
-	21cnbao@gmail.com, ryan.roberts@arm.com, shy828301@gmail.com, ziy@nvidia.com, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <29f1d801-9fb4-4ecb-8d5e-cecb7d7a76e1@paulmck-laptop>
 
-Hi Baolin,
+On Tue, May 14, 2024 at 07:22:47AM -0700, Paul E. McKenney wrote:
+> On Mon, May 13, 2024 at 02:19:37PM -0700, Boqun Feng wrote:
+> > On Mon, May 13, 2024 at 08:57:16AM -0700, Boqun Feng wrote:
+> > > On Mon, May 13, 2024 at 08:41:27AM -0700, Paul E. McKenney wrote:
+> > > [...]
+> > > > > > +#include <linux/types.h>
+> > > > > > +#include <linux/export.h>
+> > > > > > +#include <linux/instrumented.h>
+> > > > > > +#include <linux/atomic.h>
+> > > > > > +#include <linux/panic.h>
+> > > > > > +#include <linux/bug.h>
+> > > > > > +#include <asm-generic/rwonce.h>
+> > > > > > +#include <linux/cmpxchg-emu.h>
+> > > > > > +
+> > > > > > +union u8_32 {
+> > > > > > +	u8 b[4];
+> > > > > > +	u32 w;
+> > > > > > +};
+> > > > > > +
+> > > > > > +/* Emulate one-byte cmpxchg() in terms of 4-byte cmpxchg. */
+> > > > > > +uintptr_t cmpxchg_emu_u8(volatile u8 *p, uintptr_t old, uintptr_t new)
+> > > > > > +{
+> > > > > > +	u32 *p32 = (u32 *)(((uintptr_t)p) & ~0x3);
+> > > > > > +	int i = ((uintptr_t)p) & 0x3;
+> > > > > > +	union u8_32 old32;
+> > > > > > +	union u8_32 new32;
+> > > > > > +	u32 ret;
+> > > > > > +
+> > > > > > +	ret = READ_ONCE(*p32);
+> > > > > > +	do {
+> > > > > > +		old32.w = ret;
+> > > > > > +		if (old32.b[i] != old)
+> > > > > > +			return old32.b[i];
+> > > > > > +		new32.w = old32.w;
+> > > > > > +		new32.b[i] = new;
+> > > > > > +		instrument_atomic_read_write(p, 1);
+> > > > > > +		ret = data_race(cmpxchg(p32, old32.w, new32.w)); // Overridden above.
+> > > > > 
+> > > > > Just out of curiosity, why is this `data_race` needed? cmpxchg is atomic
+> > > > > so there should be no chance for a data race?
+> > > > 
+> > > > That is what I thought, too.  ;-)
+> > > > 
+> > > > The problem is that the cmpxchg() covers 32 bits, and so without that
+> > > > data_race(), KCSAN would complain about data races with perfectly
+> > > > legitimate concurrent accesses to the other three bytes.
+> > > > 
+> > > > The instrument_atomic_read_write(p, 1) beforehand tells KCSAN to complain
+> > > > about concurrent accesses, but only to that one byte.
+> > > > 
+> > > 
+> > > Oh, I see. For that purpose, maybe we can just use raw_cmpxchg() here,
+> > > i.e. a cmpxchg() without any instrument in it. Cc Mark in case I'm
+> > > missing something.
+> > > 
+> > 
+> > I just realized that the KCSAN instrumentation is already done in
+> > cmpxchg() layer:
+> > 
+> > 	#define cmpxchg(ptr, ...) \
+> > 	({ \
+> > 		typeof(ptr) __ai_ptr = (ptr); \
+> > 		kcsan_mb(); \
+> > 		instrument_atomic_read_write(__ai_ptr, sizeof(*__ai_ptr)); \
+> > 		raw_cmpxchg(__ai_ptr, __VA_ARGS__); \
+> > 	})
+> > 
+> > and, this function is lower in the layer, so it shouldn't have the
+> > instrumentation itself. How about the following (based on today's RCU
+> > dev branch)?
+> 
+> The raw_cmpxchg() looks nicer than the added data_race()!
+> 
+> One question below, though.
+> 
+> 							Thanx, Paul
+> 
+> > Regards,
+> > Boqun
+> > 
+> > -------------------------------------------->8
+> > Subject: [PATCH] lib: cmpxchg-emu: Make cmpxchg_emu_u8() noinstr
+> > 
+> > Currently, cmpxchg_emu_u8() is called via cmpxchg() or raw_cmpxchg()
+> > which already makes the instrumentation decision:
+> > 
+> > * cmpxchg() case:
+> > 
+> > 	cmpxchg():
+> > 	  kcsan_mb();
+> > 	  instrument_atomic_read_write(...);
+> > 	  raw_cmpxchg():
+> > 	    arch_cmpxchg():
+> > 	      cmpxchg_emu_u8();
+> > 
+> > ... should have KCSAN instrumentation.
+> > 
+> > * raw_cmpxchg() case:
+> > 
+> > 	raw_cmpxchg():
+> > 	  arch_cmpxchg():
+> > 	    cmpxchg_emu_u8();
+> > 
+> > ... shouldn't have KCSAN instrumentation.
+> > 
+> > Therefore it's redundant to put KCSAN instrumentation in
+> > cmpxchg_emu_u8() (along with the data_race() to get away the
+> > instrumentation).
+> > 
+> > So make cmpxchg_emu_u8() a noinstr function, and remove the KCSAN
+> > instrumentation inside it.
+> > 
+> > Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+> > ---
+> >  include/linux/cmpxchg-emu.h |  4 +++-
+> >  lib/cmpxchg-emu.c           | 14 ++++++++++----
+> >  2 files changed, 13 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/include/linux/cmpxchg-emu.h b/include/linux/cmpxchg-emu.h
+> > index 998deec67740..c4c85f41d9f4 100644
+> > --- a/include/linux/cmpxchg-emu.h
+> > +++ b/include/linux/cmpxchg-emu.h
+> > @@ -10,6 +10,8 @@
+> >  #ifndef __LINUX_CMPXCHG_EMU_H
+> >  #define __LINUX_CMPXCHG_EMU_H
+> >  
+> > -uintptr_t cmpxchg_emu_u8(volatile u8 *p, uintptr_t old, uintptr_t new);
+> > +#include <linux/compiler.h>
+> > +
+> > +noinstr uintptr_t cmpxchg_emu_u8(volatile u8 *p, uintptr_t old, uintptr_t new);
+> >  
+> >  #endif /* __LINUX_CMPXCHG_EMU_H */
+> > diff --git a/lib/cmpxchg-emu.c b/lib/cmpxchg-emu.c
+> > index 27f6f97cb60d..788c22cd4462 100644
+> > --- a/lib/cmpxchg-emu.c
+> > +++ b/lib/cmpxchg-emu.c
+> > @@ -21,8 +21,13 @@ union u8_32 {
+> >  	u32 w;
+> >  };
+> >  
+> > -/* Emulate one-byte cmpxchg() in terms of 4-byte cmpxchg. */
+> > -uintptr_t cmpxchg_emu_u8(volatile u8 *p, uintptr_t old, uintptr_t new)
+> > +/*
+> > + * Emulate one-byte cmpxchg() in terms of 4-byte cmpxchg.
+> > + *
+> > + * This function is marked as 'noinstr' as the instrumentation should be done at
+> > + * outer layer.
+> > + */
+> > +noinstr uintptr_t cmpxchg_emu_u8(volatile u8 *p, uintptr_t old, uintptr_t new)
+> >  {
+> >  	u32 *p32 = (u32 *)(((uintptr_t)p) & ~0x3);
+> >  	int i = ((uintptr_t)p) & 0x3;
+> > @@ -37,8 +42,9 @@ uintptr_t cmpxchg_emu_u8(volatile u8 *p, uintptr_t old, uintptr_t new)
+> >  			return old32.b[i];
+> >  		new32.w = old32.w;
+> >  		new32.b[i] = new;
+> > -		instrument_atomic_read_write(p, 1);
+> 
+> Don't we need to keep that instrument_atomic_read_write() in order
+> to allow KCSAN to detect data races with plain C-language reads?
+> Or is that being handled some other way?
+> 
 
-On Mon, May 13, 2024 at 1:08=E2=80=AFPM Baolin Wang
-<baolin.wang@linux.alibaba.com> wrote:
->
-> Add mTHP counters for anonymous shmem.
->
-> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-> ---
->  include/linux/huge_mm.h |  3 +++
->  mm/huge_memory.c        |  6 ++++++
->  mm/shmem.c              | 18 +++++++++++++++---
->  3 files changed, 24 insertions(+), 3 deletions(-)
->
-> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> index b5339210268d..e162498fef82 100644
-> --- a/include/linux/huge_mm.h
-> +++ b/include/linux/huge_mm.h
-> @@ -281,6 +281,9 @@ enum mthp_stat_item {
->         MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE,
->         MTHP_STAT_ANON_SWPOUT,
->         MTHP_STAT_ANON_SWPOUT_FALLBACK,
-> +       MTHP_STAT_FILE_ALLOC,
-> +       MTHP_STAT_FILE_FALLBACK,
-> +       MTHP_STAT_FILE_FALLBACK_CHARGE,
->         __MTHP_STAT_COUNT
->  };
->
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index d3080a8843f2..fcda6ae604f6 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -555,6 +555,9 @@ DEFINE_MTHP_STAT_ATTR(anon_fault_fallback, MTHP_STAT_=
-ANON_FAULT_FALLBACK);
->  DEFINE_MTHP_STAT_ATTR(anon_fault_fallback_charge, MTHP_STAT_ANON_FAULT_F=
-ALLBACK_CHARGE);
->  DEFINE_MTHP_STAT_ATTR(anon_swpout, MTHP_STAT_ANON_SWPOUT);
->  DEFINE_MTHP_STAT_ATTR(anon_swpout_fallback, MTHP_STAT_ANON_SWPOUT_FALLBA=
-CK);
-> +DEFINE_MTHP_STAT_ATTR(file_alloc, MTHP_STAT_FILE_ALLOC);
-> +DEFINE_MTHP_STAT_ATTR(file_fallback, MTHP_STAT_FILE_FALLBACK);
-> +DEFINE_MTHP_STAT_ATTR(file_fallback_charge, MTHP_STAT_FILE_FALLBACK_CHAR=
-GE);
->
->  static struct attribute *stats_attrs[] =3D {
->         &anon_fault_alloc_attr.attr,
-> @@ -562,6 +565,9 @@ static struct attribute *stats_attrs[] =3D {
->         &anon_fault_fallback_charge_attr.attr,
->         &anon_swpout_attr.attr,
->         &anon_swpout_fallback_attr.attr,
-> +       &file_alloc_attr.attr,
-> +       &file_fallback_attr.attr,
-> +       &file_fallback_charge_attr.attr,
->         NULL,
->  };
->
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index 8b020ff09c72..fd2cb2e73a21 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -1786,6 +1786,9 @@ static struct folio *shmem_alloc_and_add_folio(stru=
-ct vm_fault *vmf,
->
->                         if (pages =3D=3D HPAGE_PMD_NR)
->                                 count_vm_event(THP_FILE_FALLBACK);
-> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> +                       count_mthp_stat(order, MTHP_STAT_FILE_FALLBACK);
-> +#endif
+I think that's already covered by the current code, cmpxchg_emu_u8() is
+called from cmpxchg() macro, which has a:
 
-Seems like we don't need these conditional compilation directives here.
+	instrument_atomic_read_write(p, sizeof(*p));
 
-The THP_FILE_FALLBACK above will result in a compilation error if
-CONFIG_TRANSPARENT_HUGEPAGE is not defined. So we don't
-worry about that :)
+in it, and in the cmpxchg((u8*), ..) case, 'sizeof(*p)' is obviously 1
+;-)
 
-See THP_FILE_FALLBACK in include/linux/vm_event_item.h.
+Regards,
+Boqun
 
->                         order =3D next_order(&suitable_orders, order);
->                 }
->         } else {
-> @@ -1805,9 +1808,15 @@ static struct folio *shmem_alloc_and_add_folio(str=
-uct vm_fault *vmf,
->                 if (xa_find(&mapping->i_pages, &index,
->                                 index + pages - 1, XA_PRESENT)) {
->                         error =3D -EEXIST;
-> -               } else if (pages =3D=3D HPAGE_PMD_NR) {
-> -                       count_vm_event(THP_FILE_FALLBACK);
-> -                       count_vm_event(THP_FILE_FALLBACK_CHARGE);
-> +               } else if (pages > 1) {
-> +                       if (pages =3D=3D HPAGE_PMD_NR) {
-> +                               count_vm_event(THP_FILE_FALLBACK);
-> +                               count_vm_event(THP_FILE_FALLBACK_CHARGE);
-> +                       }
-> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> +                       count_mthp_stat(folio_order(folio), MTHP_STAT_FIL=
-E_FALLBACK);
-> +                       count_mthp_stat(folio_order(folio), MTHP_STAT_FIL=
-E_FALLBACK_CHARGE);
-> +#endif
-
-As above.
-
->                 }
->                 goto unlock;
->         }
-> @@ -2178,6 +2187,9 @@ static int shmem_get_folio_gfp(struct inode *inode,=
- pgoff_t index,
->                 if (!IS_ERR(folio)) {
->                         if (folio_test_pmd_mappable(folio))
->                                 count_vm_event(THP_FILE_ALLOC);
-> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> +                       count_mthp_stat(folio_order(folio), MTHP_STAT_FIL=
-E_ALLOC);
-> +#endif
-
-As above.
-
-Perhaps we need to define MTHP_STAT_FILE_ALLOC and friends
-using a same way as THP_FILE_ALLOC, set as '{ BUILD_BUG(); 0; }'
-If CONFIG_TRANSPARENT_HUGEPAGE is not defined.
-
-Likely:
-
-#ifndef CONFIG_TRANSPARENT_HUGEPAGE
-#define MTHP_STAT_FILE_ALLOC ({ BUILD_BUG(); 0; })
-..
-#endif
-
-Thanks,
-Lance
-
-
->                         goto alloced;
->                 }
->                 if (PTR_ERR(folio) =3D=3D -EEXIST)
-> --
-> 2.39.3
->
+> > -		ret = data_race(cmpxchg(p32, old32.w, new32.w)); // Overridden above.
+> > +
+> > +		// raw_cmpxchg() is used here to avoid instrumentation.
+> > +		ret = raw_cmpxchg(p32, old32.w, new32.w); // Overridden above.
+> >  	} while (ret != old32.w);
+> >  	return old;
+> >  }
+> > -- 
+> > 2.44.0
+> > 
 
