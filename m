@@ -1,164 +1,166 @@
-Return-Path: <linux-kernel+bounces-178301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 532F78C4BAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 06:23:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3B908C4BAC
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 06:26:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EA6A2863D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 04:23:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F6B91C20D87
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 04:26:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5DC112B89;
-	Tue, 14 May 2024 04:22:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BB8E11CA1;
+	Tue, 14 May 2024 04:25:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="cXpF7Y3q"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h/wxj0XS"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49E8B1879;
-	Tue, 14 May 2024 04:22:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1C681879;
+	Tue, 14 May 2024 04:25:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715660572; cv=none; b=WrQCFhGyYnwSEk3heve/2SLPN6GExEcR6vFPwD9QyAB279hz4aSIJI3e0j1Paaot+lxcLyZf3biemtn9ZojvjY+6nGjPBzycN51bko1J/Yd28bKFp1eGmHhPR/5dypqtvi7iqXNpf2ATbL5P0g4a25QnXLyHfye0fezNFGHBPj0=
+	t=1715660758; cv=none; b=IY6OAge/yQ+xDvCmNLoiBEhgHtVBRfcvA8e3NlWWW5ytJCHrfS4jHtmIQOtQMrLo56GMWU8PlHpTvbl3r4ALyf4Nt1kv7G8fEXJXasNUVHAnFYXFWU3/wYtjAbViDFSYlljAOxpSP1FAy9jfZtWh1ZDHnAbYw1ucWcbNTd36KU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715660572; c=relaxed/simple;
-	bh=QoKsGdXZS0B6Nj7Jvxwcoscgt7kWUmbSCYPw2leGIak=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gYpOUbWXvgXgkr1GU4VkHx1GBcS8ODOPlw2oRNQ4ynGxF6H/JJ1DaUzqogE3TnarfHB0CgallIv8gu/hR8qFs7QVdvXdvR1CZ1DiDJ5IVh73D2RVMW1gfGVe9MTmJaeuGE2oUyBNERfsvdi22/Y2ooRAKfuIWUdSBSpVvUndw4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=cXpF7Y3q; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1715660567;
-	bh=iAOCyJKi+2/8125nMqNtr3l6ARg/uQFutn/P4zyso2I=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=cXpF7Y3q+Q+2FzTk7LPuoeiKOJ10iS6kahIUSYOm4GcI964ijpkTWKYKrJvjmiGx8
-	 06TrgBJEqTMWQNuMBxbmgeMn9oRURRqmL4oVWFwFyrC6nGb+ZgcphV+wL21JgbRxnl
-	 eWFeQP+PeLe2ND60nlya1mvWGWT3mBRYImxp56p3bzPP16cNjIUmBCbgwubboxtYv+
-	 E3Sbm6lpXD12cE4fLK3WTMIbrXB3a+NLZZ+1ntpgFaVw9bMB0+86KbqftcjJncjUaE
-	 gaiSftcAtIpT3R18lebrabpBcM8UgZerX92GqYVOpYg7AKs/car5YusfNQhb0RE05v
-	 TWbvYZaRzDR5w==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VdjrP2N8Fz4wby;
-	Tue, 14 May 2024 14:22:45 +1000 (AEST)
-Date: Tue, 14 May 2024 14:22:44 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Rob Herring <robh@kernel.org>, David Miller <davem@davemloft.net>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Alexandre
- Torgue <alexandre.torgue@st.com>
-Cc: Networking <netdev@vger.kernel.org>, Alexandre Torgue
- <alexandre.torgue@foss.st.com>, Gatien Chevallier
- <gatien.chevallier@foss.st.com>, "Kory Maincent (Dent Project)"
- <kory.maincent@bootlin.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Saravana Kannan <saravanak@google.com>
-Subject: Re: linux-next: manual merge of the devicetree tree with the
- net-next, stm32 trees
-Message-ID: <20240514142244.26010149@canb.auug.org.au>
-In-Reply-To: <20240424134038.28532f2f@canb.auug.org.au>
-References: <20240424134038.28532f2f@canb.auug.org.au>
+	s=arc-20240116; t=1715660758; c=relaxed/simple;
+	bh=lGGF6Zu/yTv80zk6p1pbSg/NpKuwrVgMc2jqi0ss/+g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nZPwr1dgbxBGPkww0N6lebwclwFBkFG/TaxrVFf5ZffMrwhkpXJiQn4NKu1zxx7O12uu/MVp7fqdcgqtc99IJYVhjT/I1FSl9n1ZsyNHkwwzGH4SHGRMkVHqD7CpNPgucantPp88nTfaZAQ3cEzQ7l5tvQhWiTGrlMtLJtT+2oc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h/wxj0XS; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715660756; x=1747196756;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=lGGF6Zu/yTv80zk6p1pbSg/NpKuwrVgMc2jqi0ss/+g=;
+  b=h/wxj0XSHpeJAU99AIkrSqpmZh7mu8GV/U9U8/ESA0U7w773cSydUZ3q
+   JZYi2LSs0jGROB9U8HEw5FDlsemmO5gnSm6W4BxhQhGw1cSSIVY/hsPBF
+   Mc0etiSBRD/Ur5oxX3+FH1rGbyvXrkMmPSCTXMDAv9wMYbPBNKFX11bDn
+   nHkuf5NTTX3ZDAUej16HWvfwj3GLw+JtZ9jgBuEG1okmBOpI0He0/hhKD
+   XdT6mguWhbcsbXQq6+6WKklPx81qocGwNJVeQhYfxcPoab3WVLNCSdpSD
+   MAm4segydjH7Dzap1yKvRFcY82g22FbwyhREItG58luJhHZL/BRFu62T4
+   w==;
+X-CSE-ConnectionGUID: 8nuOPs7pR4uorhyioMB7kg==
+X-CSE-MsgGUID: isXKuJmuQV+I81NkJaDW0g==
+X-IronPort-AV: E=McAfee;i="6600,9927,11072"; a="11567206"
+X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
+   d="scan'208";a="11567206"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2024 21:25:56 -0700
+X-CSE-ConnectionGUID: cFfoXh4yTzWpPhDH7ge5Tw==
+X-CSE-MsgGUID: ThbL82CCSN2Faz1aJdDJgw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
+   d="scan'208";a="35098358"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.125.243.198]) ([10.125.243.198])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2024 21:25:52 -0700
+Message-ID: <55d00dc8-bfa3-4cf2-9c6a-1d81e5cfd7b3@intel.com>
+Date: Tue, 14 May 2024 12:25:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/wR5ZyYnSJ+GNMNmf.=HWaa4";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 04/17] KVM: x86: Move synthetic PFERR_* sanity checks to
+ SVM's #NPF handler
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
+ kvm@vger.kernel.org, Kai Huang <kai.huang@intel.com>,
+ Binbin Wu <binbin.wu@linux.intel.com>
+References: <20240507155817.3951344-1-pbonzini@redhat.com>
+ <20240507155817.3951344-5-pbonzini@redhat.com>
+ <3b6bc6ac-276f-4a83-8972-68b98db672c7@intel.com>
+ <ZkJOb4zJJnOAYnTi@google.com>
+Content-Language: en-US
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <ZkJOb4zJJnOAYnTi@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
---Sig_/wR5ZyYnSJ+GNMNmf.=HWaa4
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 5/14/2024 1:31 AM, Sean Christopherson wrote:
+> On Mon, May 13, 2024, Xiaoyao Li wrote:
+>> On 5/7/2024 11:58 PM, Paolo Bonzini wrote:
+>>> From: Sean Christopherson <seanjc@google.com>
+>>>
+>>> Move the sanity check that hardware never sets bits that collide with KVM-
+>>> define synthetic bits from kvm_mmu_page_fault() to npf_interception(),
+>>> i.e. make the sanity check #NPF specific.  The legacy #PF path already
+>>> WARNs if _any_ of bits 63:32 are set, and the error code that comes from
+>>> VMX's EPT Violatation and Misconfig is 100% synthesized (KVM morphs VMX's
+>>> EXIT_QUALIFICATION into error code flags).
+>>>
+>>> Add a compile-time assert in the legacy #PF handler to make sure that KVM-
+>>> define flags are covered by its existing sanity check on the upper bits.
+>>>
+>>> Opportunistically add a description of PFERR_IMPLICIT_ACCESS, since we
+>>> are removing the comment that defined it.
+>>>
+>>> Signed-off-by: Sean Christopherson <seanjc@google.com>
+>>> Reviewed-by: Kai Huang <kai.huang@intel.com>
+>>> Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
+>>> Message-ID: <20240228024147.41573-8-seanjc@google.com>
+>>> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+>>> ---
+>>>    arch/x86/include/asm/kvm_host.h |  6 ++++++
+>>>    arch/x86/kvm/mmu/mmu.c          | 14 +++-----------
+>>>    arch/x86/kvm/svm/svm.c          |  9 +++++++++
+>>>    3 files changed, 18 insertions(+), 11 deletions(-)
+>>>
+>>> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+>>> index 58bbcf76ad1e..12e727301262 100644
+>>> --- a/arch/x86/include/asm/kvm_host.h
+>>> +++ b/arch/x86/include/asm/kvm_host.h
+>>> @@ -267,7 +267,13 @@ enum x86_intercept_stage;
+>>>    #define PFERR_GUEST_ENC_MASK	BIT_ULL(34)
+>>>    #define PFERR_GUEST_SIZEM_MASK	BIT_ULL(35)
+>>>    #define PFERR_GUEST_VMPL_MASK	BIT_ULL(36)
+>>> +
+>>> +/*
+>>> + * IMPLICIT_ACCESS is a KVM-defined flag used to correctly perform SMAP checks
+>>> + * when emulating instructions that triggers implicit access.
+>>> + */
+>>>    #define PFERR_IMPLICIT_ACCESS	BIT_ULL(48)
+>>> +#define PFERR_SYNTHETIC_MASK	(PFERR_IMPLICIT_ACCESS)
+>>>    #define PFERR_NESTED_GUEST_PAGE (PFERR_GUEST_PAGE_MASK |	\
+>>>    				 PFERR_WRITE_MASK |		\
+>>> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+>>> index c72a2033ca96..5562d693880a 100644
+>>> --- a/arch/x86/kvm/mmu/mmu.c
+>>> +++ b/arch/x86/kvm/mmu/mmu.c
+>>> @@ -4502,6 +4502,9 @@ int kvm_handle_page_fault(struct kvm_vcpu *vcpu, u64 error_code,
+>>>    		return -EFAULT;
+>>>    #endif
+>>> +	/* Ensure the above sanity check also covers KVM-defined flags. */
+>>
+>> 1. There is no sanity check above related to KVM-defined flags yet. It has
+>> to be after Patch 6.
+> 
+> Ya, it's not just the comment, the entire changelog expects this patch to land
+> after patch 6.
+>>
+>> 2. I somehow cannot parse the comment properly, though I know it's to ensure
+>> KVM-defined PFERR_SYNTHETIC_MASK not contain any bit below 32-bits.
+> 
+> Hmm, how about this?
+> 
+> 	/*
+> 	 * Ensure that the above sanity check on hardware error code bits 63:32
+> 	 * also prevents false positives on KVM-defined flags.
+> 	 */
+> 
 
-Hi all,
+Maybe it's just myself inability, I still cannot interpret it well.
 
-On Wed, 24 Apr 2024 13:40:38 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> Today's linux-next merge of the devicetree tree got a conflict in:
->=20
->   drivers/of/property.c
->=20
-> between commits:
->=20
->   6a15368c1c6d ("of: property: fw_devlink: Add support for "access-contro=
-ller"")
->   93c0d8c0ac30 ("of: property: Add fw_devlink support for pse parent")
->=20
-> from the net-next, stm32 trees and commit:
->=20
->   669430b183fc ("of: property: fw_devlink: Add support for "power-supplie=
-s" binding")
->=20
-> from the devicetree tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+Can't we put it above the sanity check of error code, and just with a 
+comment like
 
-Due to the addition of commit
-
-  d976c6f4b32c ("of: property: Add fw_devlink support for interrupt-map pro=
-perty")
-
-to the devicetree tree, the resolution now looks like below.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/of/property.c
-index 0320f1ae9b4d,21f59e3cd6aa..000000000000
---- a/drivers/of/property.c
-+++ b/drivers/of/property.c
-@@@ -1252,8 -1241,7 +1241,9 @@@ DEFINE_SIMPLE_PROP(backlight, "backligh
-  DEFINE_SIMPLE_PROP(panel, "panel", NULL)
-  DEFINE_SIMPLE_PROP(msi_parent, "msi-parent", "#msi-cells")
-  DEFINE_SIMPLE_PROP(post_init_providers, "post-init-providers", NULL)
- +DEFINE_SIMPLE_PROP(access_controllers, "access-controllers", "#access-con=
-troller-cells")
- +DEFINE_SIMPLE_PROP(pses, "pses", "#pse-cells")
-+ DEFINE_SIMPLE_PROP(power_supplies, "power-supplies", NULL)
-  DEFINE_SUFFIX_PROP(regulators, "-supply", NULL)
-  DEFINE_SUFFIX_PROP(gpio, "-gpio", "#gpio-cells")
- =20
-@@@ -1359,10 -1398,10 +1400,12 @@@ static const struct supplier_bindings o
-  	{ .parse_prop =3D parse_backlight, },
-  	{ .parse_prop =3D parse_panel, },
-  	{ .parse_prop =3D parse_msi_parent, },
- +	{ .parse_prop =3D parse_pses, },
-+ 	{ .parse_prop =3D parse_power_supplies, },
-  	{ .parse_prop =3D parse_gpio_compat, },
-  	{ .parse_prop =3D parse_interrupts, },
-+ 	{ .parse_prop =3D parse_interrupt_map, },
- +	{ .parse_prop =3D parse_access_controllers, },
-  	{ .parse_prop =3D parse_regulators, },
-  	{ .parse_prop =3D parse_gpio, },
-  	{ .parse_prop =3D parse_gpios, },
-
---Sig_/wR5ZyYnSJ+GNMNmf.=HWaa4
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZC5xQACgkQAVBC80lX
-0Gzv1Qf+PrVZES3IAyzKbzajZbZJC4kEgAdW2nCeyMfcsTOFMIDIhoX6qbSmtM5c
-lqzjU5G6HcJp3xmNLRHpnckQteCdDYqbcfL+dhKp8b2tlwX5v/FiRir1uTZI9xe7
-tiioiReCopq2niygDmn7ZlBIppbGCEmcDM5OOAP34Z51J2iAp3lSY18ms2fx01Of
-rvLGTEVEL52rKFRUWiqqvSCkpErVl/WdBj+gD8YiBQpeW1/eJk472JV78ojoVN0+
-V4BC8SaeboYgErtn8i+m6pBIEuVuavkF9ZCPAINIZ9rHrZzvsGBb8fZmev/NS3ql
-m502uxAcP3c+SMLNDB5xfMTyfphx3Q==
-=Ts1P
------END PGP SIGNATURE-----
-
---Sig_/wR5ZyYnSJ+GNMNmf.=HWaa4--
+	/*
+  	 * Ensure KVM-defined flags not occupied any bits below 32-bits,
+          * that are used by hardware.
+	 * /
 
