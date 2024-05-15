@@ -1,101 +1,95 @@
-Return-Path: <linux-kernel+bounces-179937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DCF08C67BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 15:49:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DE198C67C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 15:50:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A0342824C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 13:49:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28BE8281497
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 13:50:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B094313F003;
-	Wed, 15 May 2024 13:49:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="qhG1Whfe"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BDE313F00A;
+	Wed, 15 May 2024 13:50:13 +0000 (UTC)
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB1548595C;
-	Wed, 15 May 2024 13:49:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F74813EFE4;
+	Wed, 15 May 2024 13:50:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715780981; cv=none; b=nmyBRUylMdCbgaFmzHBgv1Bl+fh+vGWjaQVwgh5v89rkRDEBb+mrRsxHebwtjr66ZIl6LqKRZymELmZ/FlXYM8GM9mm/gf2hNWehsQVXdkxWnnwUrZ0Rkx/TFSEI/B3sMxSOw4sCXlRyRmbz+fUF4mRJaCrZXDdPkhIlAtSw2Z4=
+	t=1715781012; cv=none; b=XkWJSUPPOIbHc6jKKZ52rN8iJYl9phASCZLHmGyluokF18WdX1Oo4HGxPj8LXHGDEyUemlxRSDkpkzKG7gT4RfbXqG7p+uSOHas98Fw4t8DKVGHM2HcCS/U4xZqtMpd5iuGTYpsKnzxMsERtjxrU7W5dWIK/SHAmfv8+wwrLS7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715780981; c=relaxed/simple;
-	bh=0MlvzVZzue7/R2CDCoNlouGliEq8QcFEwGfHzAdAXIM=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=W/FIi7C5URVOAYGjNxG/CiiTX1MFgHQcEJTy6iifEGBsu91Ahb6N5FTHRq/xJCiy+z7/jLU0+PmlnKUC4ovGCuM5QqQrRCQmRMx1qYpj3S795bf9j4SReNJEB6VKfUnGHZpw8F8kzWGc50IQ3Is2Dx5g3bLhEC8W0yfCISYAdYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=qhG1Whfe; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:Cc:To:
-	Subject:From:MIME-Version:Date:Message-ID:From:Sender:Reply-To:Subject:Date:
-	Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=0MlvzVZzue7/R2CDCoNlouGliEq8QcFEwGfHzAdAXIM=; t=1715780979; x=1716212979;
-	 b=qhG1WhfeFZ21Yx9+s8EOusIxSQBzgZmbWfWyARR9rJ3THxANPtfQSWtCNH3tAxia/z/ds2vAX8
-	OsW3wi6U3jDS1V6uIj/bonluN6Hu2ojKrYypal2Sb93QLqSpcqrc0LB+P9uG1w89YUoUhHp/AZIUs
-	GUSTHspDeTOb/GeGezJJYaAZ6PqfMOA6GI/70HGPD19Y+AAmfrwbu0zckeIyh+0huC7dCneZxxor0
-	GHRVmATyuSFqF1HIRY+oRPhZ0LoPUMtaiGHJb+yz53RxJ76PEPPoAePunipRS9WbSgOe2BtstrGiC
-	0XLdm1f4tdhWImYggj5RjX4Ig7lf7C/AsjMxQ==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1s7F0c-0003mR-L4; Wed, 15 May 2024 15:49:30 +0200
-Message-ID: <9e40badb-c4fa-4828-a4c5-3a170f624215@leemhuis.info>
-Date: Wed, 15 May 2024 15:49:30 +0200
+	s=arc-20240116; t=1715781012; c=relaxed/simple;
+	bh=JQeceI7KRdiS8UWUN9fH6U/W/ft9PgtgeyIn6rv5Ubs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fFrlbLyB3191qZsmd+21W2zx7uszlVt66sRVCeDvuVS9v9fy/xmyGY9jE0lIzoLubcU63zXFFrDLyjQfafejZ3nh4M8FT8wEHtPKLQjoX9Bu6htfftr9Hn9dc87zwENWQE6yakCvDEBbID3UiINLjExZbD4Xb5Cmc2rEaUqVzWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1ee12baa01cso56945715ad.0;
+        Wed, 15 May 2024 06:50:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715781010; x=1716385810;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=c42AMKwgSzOR66r+AjpIMgvaXg2qsxBzL19pIa1VZeA=;
+        b=Mk2XgpnjMejbb4PJjtsofeHe8dy8hjjiDOkXzCTaDhKuw/V5g6e9JccISC7iYEVUcg
+         d4cFSWHoNmqo5ib0+ztINuqiFf2vnlcm6q7gjNk2vFCem1aazLPlyLcR0/2WxczBzQC4
+         M6X/A9BlbLSPv/AKhAFtwyLEI57dEs3pNoY9ukY4P+UuH3MH64tCGWzq8EX1giEDz1bJ
+         DoFvUGr0eC+ZToFmuloauw9Kw1fZhnKeXcO00OhHjgvLqVWds49SYjEFeZ4V/OMtDRTa
+         LiSN61iZhiVfClcZNbicZ/SjwDW/wZq0G4/aICkZBDxbjaA8uOgJbYEXDVHq63zl8HPB
+         4/qg==
+X-Forwarded-Encrypted: i=1; AJvYcCXpdjT8xdY00/yIJR42I6srlob4njxthJXJPNbujLEbdFc5Z538bxTqZB/9RV43WO/R2I8sruNJesMUYIaKeSgC7yN4JtMLBPNzN+TL49Z+F6nhaogJ63p+VpssAPCv6TW59hDi2H7P0g==
+X-Gm-Message-State: AOJu0Yys94GIslYr0jNK9uKmtb9XwEkSqumMi2Ab/1C3rV0G4Y+Uk7Fn
+	nzozYDOgfi0bm84nwpX08Yk7GWcEqUAMViCg82pfojdQTGCy7Z92
+X-Google-Smtp-Source: AGHT+IFyYmeziyZSLQCNAch657pNyMyIvP8fHXe1QYaHasb9Fm412ALTshQGUOeHFOQ7oNPpwrGVVQ==
+X-Received: by 2002:a17:902:c407:b0:1eb:61a4:a2bc with SMTP id d9443c01a7336-1ef43f4d1e0mr177965365ad.43.1715781010303;
+        Wed, 15 May 2024 06:50:10 -0700 (PDT)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0bada405sm118808525ad.92.2024.05.15.06.50.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 May 2024 06:50:10 -0700 (PDT)
+Date: Wed, 15 May 2024 22:50:08 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: duplicate patches in the devicetree tree
+Message-ID: <20240515135008.GA450088@rocinante>
+References: <20240515130139.2da899c0@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Thorsten Leemhuis <regressions@leemhuis.info>
-Content-Language: en-US, de-DE
-Subject: three commits you might or might not want to pick up for 6.9.y
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: "stable@vger.kernel.org" <stable@vger.kernel.org>,
- Linux kernel regressions list <regressions@lists.linux.dev>,
- LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1715780979;b452fbda;
-X-HE-SMSGID: 1s7F0c-0003mR-L4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240515130139.2da899c0@canb.auug.org.au>
 
-Hi Greg. Here are three reports for regressions introduced during the
-6.9 cycle that were not fixed for 6.9 for one reason or another, but are
-fixed in mainline now. So they might be good candidates to pick up early
-for 6.9.y -- or maybe not, not sure. You are the better judge here. I
-just thought you might wanted to know about them.
+Hello,
 
+> The following commits are also in the pci tree as different commits
+> (but the same patches):
+> 
+>   15be4f7ce5de ("dt-bindings: Drop unnecessary quotes on keys")
+>   28081ebd17fb ("dt-bindings: PCI: qcom,pcie-sm8350: Drop redundant 'oneOf' sub-schema")
+>   649bad67d4b1 ("dt-bindings: PCI: microchip: increase number of items in ranges property")
+> 
+> These are commits
+> 
+>   d7890a80e037 ("dt-bindings: Drop unnecessary quotes on keys")
+>   301e978b9eb7 ("dt-bindings: PCI: qcom,pcie-sm8350: Drop redundant 'oneOf' sub-schema")
+>   247edade4b4b ("dt-bindings: PCI: microchip: Increase number of items in ranges property")
+> 
+> in the pci tree.
 
-* net: Bluetooth: firmware loading problems with older firmware:
-https://lore.kernel.org/lkml/20240401144424.1714-1-mike@fireburn.co.uk/
+I took the last two, and dropped the first one, per feedback from Rob.
 
-Fixed by 958cd6beab693f ("Bluetooth: btusb: Fix the patch for MT7920 the
-affected to MT7921") – which likely should have gone into 6.9, but did
-not due to lack of fixes: an stable tags:
-https://lore.kernel.org/all/CABBYNZK1QWNHpmXUyne1Vmqqvy7csmivL7q7N2Mu=2fmrUV4jg@mail.gmail.com/
-
-
-* leds/iwlwifi: hangs on boot:
-https://lore.kernel.org/lkml/30f757e3-73c5-5473-c1f8-328bab98fd7d@candelatech.com/
-
-Fixed by 3d913719df14c2 ("wifi: iwlwifi: Use request_module_nowait") –
-not sure if that one is worth it, the regression might be an exotic
-corner case.
-
-
-* Ryzen 7840HS CPU single core never boosts to max frequency:
-https://bugzilla.kernel.org/show_bug.cgi?id=218759
-
-Fixed by bf202e654bfa57 ("cpufreq: amd-pstate: fix the highest frequency
-issue which limits performance") – which was broken out of a patch-set
-by the developers to send it in for 6.9, but then was only merged for
-6.10 by the maintainer.
-
-
-Ciao, Thorsten
+	Krzysztof
 
