@@ -1,78 +1,83 @@
-Return-Path: <linux-kernel+bounces-179285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C19A8C5E72
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 02:53:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 512048C5E7A
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 02:57:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A771B21A60
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 00:53:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C1931C212CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 00:57:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24A8418E3F;
-	Wed, 15 May 2024 00:53:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E89C1C17;
+	Wed, 15 May 2024 00:57:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nCcnf7xl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=openbsd.org header.i=@openbsd.org header.b="lxaPLprY"
+Received: from cvs.openbsd.org (cvs.openbsd.org [199.185.137.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 608AAF9C1;
-	Wed, 15 May 2024 00:53:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C4A54A23;
+	Wed, 15 May 2024 00:57:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.185.137.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715734395; cv=none; b=rf26FwH4oTB001JRND2aO2vkgGwWcSSEFclQ9jz43EW1c/FKaCt0wmGlGImW4wQ7dhysMg1Flj7IZLnYC7XwYnVYVHIg3BZc6KzzhrZje7aVxRlLSQ0OyFjpLOcIZDJjdV0yOpn/iXee+nHmDKItSJ8zp42l5OZd1IPvejxn2RI=
+	t=1715734635; cv=none; b=f5vUrc4L69taWfK34tWNqfz2Mj2a3E+7a4QfyFDi8WavIiudvsUZsLn/wM/yUollD4hMNVd5oC3b4TdxyfwktyFafU+8Pj55ohgEn7ZB8bjd95DMh7D41z1r+NPl14N6FYxnl+35kEecSc5VYfPtfWIZUQ8XvDmN4wchJCSngkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715734395; c=relaxed/simple;
-	bh=NEGKILO0fuH0LE65AFdQHCVNd3NixqerNJPLG83FawI=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=Kqxbng/E4jSl7POTFbZQiw4bFmt6GUk5DAUbEoS/1kU61MvsP0cuO7Kpea5p1WXfnXdKp3GU0o0Tjhvg04W8x8uMqTX3zRiR8DcPc5a19U4u0OR6toucM+qF+S7dvsthzMXQoTGfqk/PfKF3/hFNt8L4ouPTfdG6pyh1gZTbKik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nCcnf7xl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 42F8EC4AF09;
-	Wed, 15 May 2024 00:53:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715734395;
-	bh=NEGKILO0fuH0LE65AFdQHCVNd3NixqerNJPLG83FawI=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=nCcnf7xlo4obIvPUXelZz6K6GTN5V8yxsBjwGAeBlIa0lYHYqnPpGSyA8VVaImLtZ
-	 g2kCXeDQFLFocugbKb7jWwqouR0eFiPsF+P7sNo0NDil8C+zB4SlTePRhrNvua8tqB
-	 uI8yapH2H/eUQGxyxVYOS1IhaeZNJbX6aQvm2Rg7j4+yftjaenZrWqnOjjBh/tgRft
-	 VUS9rFhZOlJ7O82bN2ihfPfG9eVtSUJN+ptdWraBTlu2w7B3DkD0JqGgJ7G+or9MyI
-	 VFf1vCzwU5C+o4B7YLYsLyy20/aMb0TNsL5bPmkvoBrV6JPYrBAigUq7MRurZXO+kw
-	 JyIw9myLRl2OA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 3C89CC433A2;
-	Wed, 15 May 2024 00:53:15 +0000 (UTC)
-Subject: Re: [GIT PULL] dlm updates for 6.10
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <ZkJ1PTW7V25ePbLF@redhat.com>
-References: <ZkJ1PTW7V25ePbLF@redhat.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <ZkJ1PTW7V25ePbLF@redhat.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/teigland/linux-dlm.git dlm-6.10
-X-PR-Tracked-Commit-Id: 7b72ab2c6a468305449db8f204bf1e406fd3e147
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 6fffab6676853d52cfdbb030365354252a66a20a
-Message-Id: <171573439524.24206.15082558027067952645.pr-tracker-bot@kernel.org>
-Date: Wed, 15 May 2024 00:53:15 +0000
-To: David Teigland <teigland@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, gfs2@lists.linux.dev
+	s=arc-20240116; t=1715734635; c=relaxed/simple;
+	bh=Tp+H0K5QBoSVdZXwfKgYZIjpg1XuSAWBXwAx1DzF8sA=;
+	h=From:To:cc:Subject:In-reply-to:References:MIME-Version:
+	 Content-Type:Date:Message-ID; b=VlBDmx7VEe8N9PHNwg0+o9Lwe4gxc4+YzCkmwSjCnsGuhStqcSXHtNV6SDRd+oWyW1RwKyv5FlXRmbML4DQ4rc3t+2GFA2P86KDvWoVNjL/TXHxhp20FwBHd9pMUIBcX+HKmm/9ow7om2a5+RBg8JWFWIXeTOpf+Oc9rSG5mWpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=openbsd.org; spf=pass smtp.mailfrom=openbsd.org; dkim=pass (2048-bit key) header.d=openbsd.org header.i=@openbsd.org header.b=lxaPLprY; arc=none smtp.client-ip=199.185.137.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=openbsd.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openbsd.org
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; s=selector1; bh=Tp+H0K5QBo
+	SVdZXwfKgYZIjpg1XuSAWBXwAx1DzF8sA=; h=date:references:in-reply-to:
+	subject:cc:to:from; d=openbsd.org; b=lxaPLprYzJ00fSaQHk9PaY/XjyG/TOiry
+	J4aaFgmXuVu9/f7WAP4UTqygXQYY60grub5GX6StNo9F20PFWuVvzlLNAFKEKNuObq0gH4
+	gPVJaTyi/52KYiWEhrtOpmxprKp0rlqHFgbrvpP0A4PganEEqosTTvlIZYDN2GYsh0kQOh
+	Kjz1mRunyAOmb9+lxOz2/YkF/7FGyUAcdwO+7ai1fU1MU3XRP4QWjUuYye9/BJ2qgCBQJm
+	x5RiA8+29lUIceuRq9Gz3Uj8Dgke64xBlqTn5sNUFK/PibzPIjqM7HwzRYS8IRvCuvZtm7
+	uWpIpZ52XSRNhrZreWzkAG/KtWo/g==
+Received: from cvs.openbsd.org (localhost [127.0.0.1])
+	by cvs.openbsd.org (OpenSMTPD) with ESMTP id 4b91908f;
+	Tue, 14 May 2024 18:57:12 -0600 (MDT)
+From: "Theo de Raadt" <deraadt@openbsd.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+cc: Matthew Wilcox <willy@infradead.org>,
+    Jonathan Corbet <corbet@lwn.net>,
+    Andrew Morton <akpm@linux-foundation.org>, jeffxu@chromium.org,
+    keescook@chromium.org, jannh@google.com, sroettger@google.com,
+    gregkh@linuxfoundation.org, usama.anjum@collabora.com,
+    Liam.Howlett@oracle.com, surenb@google.com, merimus@google.com,
+    rdunlap@infradead.org, jeffxu@google.com, jorgelo@chromium.org,
+    groeck@chromium.org, linux-kernel@vger.kernel.org,
+    linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+    pedro.falcato@gmail.com, dave.hansen@intel.com,
+    linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v10 0/5] Introduce mseal
+In-reply-to: <CAHk-=wgsGCKvN0Db6ZRZqJwXQrmhZyWB6RmABaOp4DiZbXgNew@mail.gmail.com>
+References: <20240415163527.626541-1-jeffxu@chromium.org> <20240514104646.e6af4292f19b834777ec1e32@linux-foundation.org> <871q646rea.fsf@meer.lwn.net> <ZkPXcT_JuQeZCAv0@casper.infradead.org> <56001.1715726927@cvs.openbsd.org> <CAHk-=wgsGCKvN0Db6ZRZqJwXQrmhZyWB6RmABaOp4DiZbXgNew@mail.gmail.com>
+Comments: In-reply-to Linus Torvalds <torvalds@linux-foundation.org>
+   message dated "Tue, 14 May 2024 17:43:47 -0700."
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <28994.1715734632.1@cvs.openbsd.org>
+Date: Tue, 14 May 2024 18:57:12 -0600
+Message-ID: <16982.1715734632@cvs.openbsd.org>
 
-The pull request you sent on Mon, 13 May 2024 15:17:01 -0500:
+> > I worry that the non-atomicity will one day be used by an attacker.
+> 
+> Blah blah blah. That's a made-up scare tactic if I ever heard one.
+> It's unworthy of you.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/teigland/linux-dlm.git dlm-6.10
+Let's wait and see.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/6fffab6676853d52cfdbb030365354252a66a20a
+(Linus, don't be a jerk)
 
-Thank you!
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
 
