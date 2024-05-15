@@ -1,193 +1,140 @@
-Return-Path: <linux-kernel+bounces-179878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 432F48C66DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 15:06:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CCB6C8C66DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 15:06:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FD161C21E25
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 13:06:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A1DB1C211B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 13:06:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A730285C42;
-	Wed, 15 May 2024 13:06:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D46485C41;
+	Wed, 15 May 2024 13:06:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rvdY/AXK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ma4PFVCS"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C83BC3B79F;
-	Wed, 15 May 2024 13:06:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1F963BBED;
+	Wed, 15 May 2024 13:06:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715778384; cv=none; b=qrqgKUqXZWe11TY/0pSrYvwWsrlr7haB7rOW9WVb9vORm/+tO5svQAPIS92Z72uqfSllCzdKFpdLEFG+e7UB6nqqLndNv5ja2WKX0gm0A2FLRq01VeLQtc07xyvO5+HuNSo4cLeiylpEss5gUri5gRMa74tjXSQ8pccNxYvX3KY=
+	t=1715778408; cv=none; b=QOvW4a52o7dSQO3NdzVrPgLvSulGjJ1hZO39M35EV5FoKTClPujiWfvEquS1v5RqrqloiGo6xCy55lBE2ViPX/xLaOh8O3I9+gCaWuPFe5OLaFV8OPY5fQe+7M0nJZJvHgy47GGG22W/uCR9w6Ywzpm+uEXnVKs+lIFRmHN9fX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715778384; c=relaxed/simple;
-	bh=A0YxFuuJShHBQ3xCPsMtAedx1f9EA+YbMAddHPRKwiU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DJI28n8oetkNZIbK1w6QW0OcRLgyLp6m8QySNjzudO3DLr14APAfLFCrS5fVSFJ5wnbFDbm5qg+Ayngy7Xm33ts2jWGzzZRzx5iOkuOqkO+021v4rD/b/jedd0LtNF8sX7EZq1lNuLXwDdlJzv33p/M7tucBfEJfKVhnFz42sTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rvdY/AXK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DC19C32782;
-	Wed, 15 May 2024 13:06:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715778384;
-	bh=A0YxFuuJShHBQ3xCPsMtAedx1f9EA+YbMAddHPRKwiU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=rvdY/AXKAcsO8WrapFPJs3ADz99OtdbHGqSxheuLegvO/mgbeU30ahKSaF0QhsY5y
-	 jVWBU2e1R8nM9RKtuKLZcyqRzLPvxodOMT9Kmx/4PVwKtjQfAg8Ia4yOAPG6t03QY1
-	 mVii6+i5lWDUW1jIt0dUYlNy9XJEErw5WRExs39M8NU2NhhJnZUw2VYMgelfBTGTkV
-	 ySX7RroJD4hhnzC/U9+2V4v92uR81h/Lp/b3KAXUqW/Vw2Z2SmwUUL1ILSBplQOqrZ
-	 19upOy+ZKuH9uiMVeafnaM9h5/9salMdrPI7ugdL7UYnZiZIrZeTt99w8AHySqIpzv
-	 uR7gXmEpq/TMQ==
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-51fc01b6fe7so7446299e87.0;
-        Wed, 15 May 2024 06:06:24 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWSamnP/7Eq+iYgJmvO5wMFAqT6dvzqzSp9oY81DtiehGrZvKJdP+mRj25hKUP2V5uptOJ2wQZVEh73IMyweO2N19hQiheHTO0GWLj7d4DOF2s/qkf3/pL2c3MAV38suTunsNcb3dNN9KlOElyHt5CNmJcuj5t9ez6JlcEmlADQOINfMG5SnWGMAAG9Y/rkwDb9gtJUpX9n6mg+oCJGlGPEd9KPRg==
-X-Gm-Message-State: AOJu0YzaVqzID+FYY9qjWamroUlh7MX38yjnRVpW0lNeU7TjZ0R/5qd+
-	PMRYQP7ub3U1BwQDWYVMU4QqMGIW/8gU+ExFt8L/R4LP7/JDDNaxUaw7ld0asnVHcmJOIu3cYDf
-	rX7yPNqv5oqpbAeDCCO42TZVP/A==
-X-Google-Smtp-Source: AGHT+IFx85HwyGkq7nhuxIMzVBaBcFT+g2jH7StU0bEW7eR8FFo2zOGOMnX4dCVgnkGHDb6Fk2RaGnQFsJxSXXkyhAc=
-X-Received: by 2002:a05:6512:3043:b0:522:36f7:3660 with SMTP id
- 2adb3069b0e04-52236f739f8mr11158575e87.36.1715778382780; Wed, 15 May 2024
- 06:06:22 -0700 (PDT)
+	s=arc-20240116; t=1715778408; c=relaxed/simple;
+	bh=bOt7jiJjqvR3Xb0uZ0VGKUcbibFf3eOrvAtuGYaYrrk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Yn2pXIJOAf7Nyv1rrl3mPAYn6UbYjf1Ug59/brJp1iyXSaahWhihMGh0jrdnlQrTT9GwjXnQo+UtKLsetbHsW2K57iPY6bPS2uUsoE43i3tP99HnX2HCyjKWOOV3jaDXrMdwSCbN1okeJzuyXCyVZCjhaqmqaiIRt9WomoPt4cQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ma4PFVCS; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44FD6Uoq022929;
+	Wed, 15 May 2024 13:06:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=XcohvDplrYpovplc1395I8uKQ9hZtisQ4Yf3MvSI9os=;
+ b=ma4PFVCSkulcVFsM6IKjcUTcubcPiK/Y3takDTz1XX6jYsudj8E5/RmQR1vZCtz3FQ0T
+ yrx1kIhOvaPT2oWic5gXDK8xhJEu+kfPXAdvW6LGsJPA4sGVrq17is1jfvLGFToWChaU
+ y6GTDI5H3DMhR/FYzHe+DP60/pVX7XUZuwfiXsnzc1KhuQ6oIBZfkgr49aFsZHK5KYHP
+ dsy+ybcbNftKnn1DiVNl1CRtAN0AyGvb+5QADdbiGDUFaucPTsarH9hbPGVxvOMR/l22
+ pi43taPddzKPZU3exTmzl3XYlEZpvsJN88D82VBYN4NoyeXp1cY9ryIgAYAUgQfuaFrB 4g== 
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y4te9rh2f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 15 May 2024 13:06:29 +0000
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44FBVlui020403;
+	Wed, 15 May 2024 13:06:28 GMT
+Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3y2kd03v8w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 15 May 2024 13:06:28 +0000
+Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
+	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44FD6QrW24969812
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 15 May 2024 13:06:28 GMT
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3071058070;
+	Wed, 15 May 2024 13:06:26 +0000 (GMT)
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B8DA058068;
+	Wed, 15 May 2024 13:06:25 +0000 (GMT)
+Received: from [9.61.107.19] (unknown [9.61.107.19])
+	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 15 May 2024 13:06:25 +0000 (GMT)
+Message-ID: <3128df9c-0883-4aad-a959-76f175e8e9a4@linux.ibm.com>
+Date: Wed, 15 May 2024 08:06:25 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240422232404.213174-1-sboyd@kernel.org> <CABVgOSmgUJp3FijpYGCphi1OzRUNvmYQmPDdL6mN59YnbkR2iQ@mail.gmail.com>
- <b822c6a5488c4098059b6d3c35eecbbd.sboyd@kernel.org> <5c919f0d3d72fe1592a11c45545e8a60.sboyd@kernel.org>
-In-Reply-To: <5c919f0d3d72fe1592a11c45545e8a60.sboyd@kernel.org>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 15 May 2024 08:06:09 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqK4EZ0RhYCw6ZaeYSJu5Ps1J+J25vjwQy2XvNa5F5d7Pw@mail.gmail.com>
-Message-ID: <CAL_JsqK4EZ0RhYCw6ZaeYSJu5Ps1J+J25vjwQy2XvNa5F5d7Pw@mail.gmail.com>
-Subject: Re: [PATCH v4 00/10] clk: Add kunit tests for fixed rate and parent data
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: David Gow <davidgow@google.com>, Michael Turquette <mturquette@baylibre.com>, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	patches@lists.linux.dev, kunit-dev@googlegroups.com, 
-	linux-kselftest@vger.kernel.org, devicetree@vger.kernel.org, 
-	Brendan Higgins <brendan.higgins@linux.dev>, Rae Moar <rmoar@google.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J . Wysocki" <rafael@kernel.org>, 
-	Saravana Kannan <saravanak@google.com>, Daniel Latypov <dlatypov@google.com>, 
-	Christian Marangi <ansuelsmth@gmail.com>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Maxime Ripard <maxime@cerno.tech>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/9] dt-bindings: fsi: fsi2spi: Document SPI controller
+ child nodes
+To: Krzysztof Kozlowski <krzk@kernel.org>, linux-fsi@lists.ozlabs.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org, robh@kernel.org,
+        joel@jms.id.au, andrew@codeconstruct.com.au
+References: <20240514195435.155372-1-eajames@linux.ibm.com>
+ <20240514195435.155372-2-eajames@linux.ibm.com>
+ <5e8eb8a7-c497-4960-8c1c-e58586f53c9f@kernel.org>
+Content-Language: en-US
+From: Eddie James <eajames@linux.ibm.com>
+In-Reply-To: <5e8eb8a7-c497-4960-8c1c-e58586f53c9f@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 6o8wOsYhCb8iLLCIcPeWZCkMHNww2G5H
+X-Proofpoint-ORIG-GUID: 6o8wOsYhCb8iLLCIcPeWZCkMHNww2G5H
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-15_06,2024-05-15_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=999
+ phishscore=0 adultscore=0 priorityscore=1501 malwarescore=0 clxscore=1015
+ bulkscore=0 spamscore=0 suspectscore=0 impostorscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
+ definitions=main-2405150092
 
-On Tue, May 14, 2024 at 4:29=E2=80=AFPM Stephen Boyd <sboyd@kernel.org> wro=
-te:
->
-> Quoting Stephen Boyd (2024-05-02 18:27:42)
-> > Quoting David Gow (2024-05-01 01:08:11)
-> > >
-> > > The other thing I've noted so far is that the
-> > > of_apply_kunit_platform_device and of_overlay_apply_kunit_cleanup
-> > > tests fail (and BUG() with a NULL pointer) on powerpc:
-> > > > [15:18:51]     # of_overlay_apply_kunit_platform_device: EXPECTATIO=
-N FAILED at drivers/of/overlay_test.c:47
-> > > > [15:18:51]     Expected pdev is not null, but is
-> > > > [15:18:51] BUG: Kernel NULL pointer dereference at 0x0000004c
-> >
-> > This seems to be because pdev is NULL and we call put_device(&pdev->dev=
-)
-> > on it. We could be nicer and have an 'if (pdev)' check there. I wonder
-> > if that fixes the other two below?
-> >
-> > ---8<---
-> > diff --git a/drivers/of/overlay_test.c b/drivers/of/overlay_test.c
-> > index 223e5a5c23c5..85cfbe6bb132 100644
-> > --- a/drivers/of/overlay_test.c
-> > +++ b/drivers/of/overlay_test.c
-> > @@ -91,7 +92,8 @@ static void of_overlay_apply_kunit_cleanup(struct kun=
-it *test)
-> >         dev =3D bus_find_device(&platform_bus_type, NULL, kunit_compati=
-ble,
-> >                               of_overlay_bus_match_compatible);
-> >         KUNIT_EXPECT_PTR_EQ(test, NULL, dev);
-> > -       put_device(dev);
-> > +       if (dev)
-> > +               put_device(dev);
-> >  }
->
-> This last hunk isn't needed.
->
-> >
-> >  static struct kunit_case of_overlay_apply_kunit_test_cases[] =3D {
-> >
-> > > > [15:18:51]     # of_overlay_apply_kunit_platform_device: try faulte=
-d: last line seen lib/kunit/resource.c:99
-> > > > [15:18:51]     # of_overlay_apply_kunit_platform_device: internal e=
-rror occurred preventing test case from running: -4
-> > > > [15:18:51] [FAILED] of_overlay_apply_kunit_platform_device
-> > >
-> > > > [15:18:51] BUG: Kernel NULL pointer dereference at 0x0000004c
-> > > > [15:18:51] note: kunit_try_catch[698] exited with irqs disabled
-> > > > [15:18:51]     # of_overlay_apply_kunit_cleanup: try faulted: last =
-line seen drivers/of/overlay_test.c:77
-> > > > [15:18:51]     # of_overlay_apply_kunit_cleanup: internal error occ=
-urred preventing test case from running: -4
-> > > > [15:18:51] [FAILED] of_overlay_apply_kunit_cleanup
-> > >
-> > > I've not had a chance to dig into it any further, yet, but it appears
-> > > to work on all of the other architectures I tried.
-> >
-> > Cool. I don't know why powerpc doesn't make devices. Maybe it has a
-> > similar design to sparc to create resources. I'll check it out.
-> >
->
-> powerpc doesn't mark the root node with OF_POPULATED_BUS. If I set that
-> in of_platform_default_populate_init() then the overlays can be applied.
->
-> ---8<----
-> diff --git a/drivers/of/platform.c b/drivers/of/platform.c
-> index 389d4ea6bfc1..fa7b439e9402 100644
-> --- a/drivers/of/platform.c
-> +++ b/drivers/of/platform.c
-> @@ -565,6 +565,10 @@ static int __init of_platform_default_populate_init(=
-void)
->                                 of_platform_device_create(node, buf, NULL=
-);
->                 }
->
-> +               node =3D of_find_node_by_path("/");
-> +               if (node)
-> +                       of_node_set_flag(node, OF_POPULATED_BUS);
 
-I think you want to do this in of_platform_bus_probe() instead to
-mirror of_platform_populate(). These are supposed to be the same
-except that 'populate' only creates devices for nodes with compatible
-while 'probe' will create devices for all child nodes. Looks like we
-are missing some devlink stuff too. There may have been some issue for
-PPC with it.
-
-> +               of_node_put(node);
->         } else {
->                 /*
->                  * Handle certain compatibles explicitly, since we don't =
-want to create
+On 5/15/24 03:14, Krzysztof Kozlowski wrote:
+> On 14/05/2024 21:54, Eddie James wrote:
 >
-> I'm guessing this is wrong though, because I see bunch of powerpc specifi=
-c code
-> calling of_platform_bus_probe() which will set the flag on the actual pla=
-tform
-> bus nodes. Maybe we should just allow overlays to create devices at the r=
-oot
-> node regardless? Of course, the flag doc says "platform bus created for
-> children" and if we never populated the root then that isn't entirely acc=
-urate.
+>>   properties:
+>>     compatible:
+>> @@ -24,6 +23,17 @@ properties:
+>>       items:
+>>         - description: FSI slave address
+>>   
+>> +  "#address-cells":
+>> +    const: 1
+>> +
+>> +  "#size-cells":
+>> +    const: 0
+>> +
+>> +patternProperties:
+>> +  "^spi@[0-9a-f]+$":
+>> +    type: object
+>> +    $ref: /schemas/spi/ibm,spi-fsi.yaml
+> Are you sure you do not have dependencies? Nothing was explained about
+> this in the cover letter or changelog.
+
+
+I did mention that it depends on the SPI binding change below the commit 
+message in this patch. I guess I should have kept these two together...
+
+Thanks,
+
+Eddie
+
+
 >
-> Rob, can you point me in the right direction? Do we need to use simple-bu=
-s in
-> the test overlays and teach overlay code to populate that bus?
-
-Overlays adding things to the root node might be suspect, but probably
-there are some valid reasons to do so. If simple-bus makes sense here,
-then yes, you should use it. But if what's on it is not MMIO devices,
-don't. That's a warning in the schema now.
-
-Rob
+> Best regards,
+> Krzysztof
+>
 
