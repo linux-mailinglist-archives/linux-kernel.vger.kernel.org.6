@@ -1,104 +1,118 @@
-Return-Path: <linux-kernel+bounces-180047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D23D88C6946
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:08:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6065A8C6949
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:08:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16C9D1C22098
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 15:08:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB24BB22B2D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 15:08:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 534F7155753;
-	Wed, 15 May 2024 15:08:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EA5B155740;
+	Wed, 15 May 2024 15:08:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZEkraM2V"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Yps7hFEL"
+Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D5A215573D;
-	Wed, 15 May 2024 15:08:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43ED515572C
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 15:08:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715785689; cv=none; b=qCFLfsdsuCDFwazeDoKUVrM70NhKEXpRyWYLgMRpgwRjy14h0pDvAG0PSMkWW1otXSvwz1V5tW9LcwpLWL2fipjhlwvMJEIo0NFcrMM1hRZjx7TK+iP8Csj/RYzaaqW4D1oHeaDuatXhj/twL4wpQGvAMkatIgs0g7Td1McmJzQ=
+	t=1715785700; cv=none; b=MHx3X85j7KcBuqwz++JFX6xB8wTgy7JmqApzQx396i8Etks76EcFkcuAXg7nFev//iIQ3r0maU2fwwpXp3mquGM7/K9ECnMYqD2cv8ZvpKIGGsXkVoNswfApHEpFEXsYg/97nUaV3+lVzalEUOPUIwPleMrVY4Qb7a9lvpvxTPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715785689; c=relaxed/simple;
-	bh=J6MPXBTlWKwxGO96Tz96YxtwSODWhWwkjd44N0B7Qz4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CfnQ00ZCKWcn1OUdkM4p/UP46vn/A7rEbzyR+THxaykUqY7Jn28ch7VcTc4BUr9GGsWc2RzjxnhmlreD8XC3vsCzZN/ONmY9M+7wtwegG5OLDLHwwwQ4FX3wTUUaMhrUGnKShOjnkyv3Er8qFo33EGTDS3ZJb1P/6EgqJzbTwYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZEkraM2V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E368C116B1;
-	Wed, 15 May 2024 15:08:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715785689;
-	bh=J6MPXBTlWKwxGO96Tz96YxtwSODWhWwkjd44N0B7Qz4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ZEkraM2VY2lnWkM5470A9PJIsWMVF2+t5KtDIOkU/Z4ZPqeEHP8qG6kSknFc56Ver
-	 q2Kw7CV5UVmUdgq2L0iSTPMWJDiH6ZK/gBuzMWbZep4YpmhyLCCP3i9NoMbxMMwLzc
-	 KsZs4DWUCCOGWREjW2OSeKjcaluJffWvpZOwrOuhYw9qvuPc3ygrI+24B1qNoXKiJh
-	 nAbeUAzr8brSC5BTs87Q5JKuyZsP5vM0xjJkZKXUe7hwdXdybf8l4k7kncFcypucQ/
-	 BQeMesu90MVB1AqY2qC3RueXeMwfN2ty0+TFiChF0JzzN7KPHDMF3XwJzLlUDdrtnn
-	 wLyMVabTfQhwA==
-From: Borislav Petkov <bp@kernel.org>
-To: KVM <kvm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	"Borislav Petkov (AMD)" <bp@alien8.de>
-Subject: [PATCH] KVM: Unexport kvm_debugfs_dir
-Date: Wed, 15 May 2024 17:08:04 +0200
-Message-ID: <20240515150804.9354-1-bp@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1715785700; c=relaxed/simple;
+	bh=gRfOWhIoSyKemrb8DtpuxFtzGN1XUH+ReA+JPh8EG88=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pPMwGmKfTvngKILwHSIGhbh8w5Wiq8fBfDhVRfNsAQvEbJwBSWzvvtAWAq6bxqyiF+srcWbXsEzDZz4Av635N63370jaHX/p+K/N6v7PvSHu5mbLz22LapOlHYJwU4kiuk7LFkkCVDcUkhta9mtmpu0fXesS6o0qBmwDwMy3T+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Yps7hFEL; arc=none smtp.client-ip=209.85.166.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-7e195fd1d8eso57590439f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 08:08:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1715785698; x=1716390498; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PBLlj71inZ8mMsFWn7dN44R4dEBX7/1kMetgzAWjhNY=;
+        b=Yps7hFELP2I2d10bw5brR1EU3cejg80xJc06R3dnIrbd1QC03R+KyuWqbuqKMlgfJB
+         X7R1t8HXVSCKaQ+fAahEdajoXyCOVaNWmMS+iS3Mwh3x3MgZA3P41F1DSZWQ3wZ/3OPR
+         uLoDKNHOw8kYK93ZO4lTOC5iYhnnkbJ8kF6Kc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715785698; x=1716390498;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PBLlj71inZ8mMsFWn7dN44R4dEBX7/1kMetgzAWjhNY=;
+        b=UOeCR/mv6LFWBw2mWWRrcrhkayc5QWoWLF4MdFJ77j07snQ70E25y34h41bsaijIoR
+         wvOnRaK8KpnC6QUrV93yOCR2FXbemRqI8Qp97wG0EHtbL4gDwtLeAPY08Mcz5m3spOjb
+         nuVUA72TVCrGcOo537NW2q5TgDJILLGEuX8bpif+B0r55A7by65/i3+D1ZlughUBl/yB
+         Deu0qKf/mWG5bGqA2SXcNFLPy74XSnBklq0aWV11cgx4mpmOGJjtKxoQ9XAtfC4tFsC3
+         H89mzS6IFY8J2JX3gDuTGNVM8VE0SQ/b9GJJ9FCxE2zPEHuu9uR9nUCVVMSupDmrW5KG
+         xS+w==
+X-Forwarded-Encrypted: i=1; AJvYcCXlCzS3QpisKwAyQUOQ1DMGoXsBZj6doc4oUuDpsQhkGdXAN7ZVqJnvamRSlyWR34vbkOzOg3wMFiTsjSqzpzmMeR4HKT14pzVJ7bTQ
+X-Gm-Message-State: AOJu0Yxy+FKpoCG4H6dSvOT9oWMAY1ANqWcEl9BNNaUpZJj99dsOqiUk
+	tFbb0EajZC6brRWE6fLXQcyHMIb9lb7PpFWUN0YTePWKuG4KWSX8sbn2DaMcGe0oRsDKnjhgnno
+	78Xg=
+X-Google-Smtp-Source: AGHT+IFoS53qNQlUZHcoRAS86QlHWEiEiVWLsUoMhJOpc31no4AJSKfNUCayuVN6kr8LqkjR11VsYQ==
+X-Received: by 2002:a92:d3d1:0:b0:36b:2a68:d7ee with SMTP id e9e14a558f8ab-36cc1444baemr159606765ab.1.1715785698377;
+        Wed, 15 May 2024 08:08:18 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-36cb9d3fa8fsm31774145ab.8.2024.05.15.08.08.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 May 2024 08:08:17 -0700 (PDT)
+Message-ID: <bf443782-3dc7-4c98-839f-bcc7ea95d727@linuxfoundation.org>
+Date: Wed, 15 May 2024 09:08:16 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5.15 000/168] 5.15.159-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240514101006.678521560@linuxfoundation.org>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240514101006.678521560@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: "Borislav Petkov (AMD)" <bp@alien8.de>
+On 5/14/24 04:18, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.15.159 release.
+> There are 168 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 16 May 2024 10:09:32 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.159-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-After
+Compiled and booted on my test system. No dmesg regressions.
 
-  faf01aef0570 ("KVM: PPC: Merge powerpc's debugfs entry content into generic entry")
+Tested-by: Shuah Khan <skhan@linuxfoundation.org>
 
-kvm_debugfs_dir is not used anywhere else outside of kvm_main.c
-
-Unexport it and make it static.
-
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
----
- include/linux/kvm_host.h | 2 --
- virt/kvm/kvm_main.c      | 3 +--
- 2 files changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-index 48f31dcd318a..c8bc33aab26a 100644
---- a/include/linux/kvm_host.h
-+++ b/include/linux/kvm_host.h
-@@ -1959,8 +1959,6 @@ struct _kvm_stats_desc {
- 			HALT_POLL_HIST_COUNT),				       \
- 	STATS_DESC_IBOOLEAN(VCPU_GENERIC, blocking)
- 
--extern struct dentry *kvm_debugfs_dir;
--
- ssize_t kvm_stats_read(char *id, const struct kvm_stats_header *header,
- 		       const struct _kvm_stats_desc *desc,
- 		       void *stats, size_t size_stats,
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index ff0a20565f90..382e2ab14137 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -110,8 +110,7 @@ static struct kmem_cache *kvm_vcpu_cache;
- static __read_mostly struct preempt_ops kvm_preempt_ops;
- static DEFINE_PER_CPU(struct kvm_vcpu *, kvm_running_vcpu);
- 
--struct dentry *kvm_debugfs_dir;
--EXPORT_SYMBOL_GPL(kvm_debugfs_dir);
-+static struct dentry *kvm_debugfs_dir;
- 
- static const struct file_operations stat_fops_per_vm;
- 
--- 
-2.43.0
-
+thanks,
+-- Shuah
 
