@@ -1,105 +1,149 @@
-Return-Path: <linux-kernel+bounces-179549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8B718C613C
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:15:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F11C8C613E
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:15:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 608B6281BC0
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 07:15:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F212DB22471
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 07:15:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32BD043AB2;
-	Wed, 15 May 2024 07:14:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0839344391;
+	Wed, 15 May 2024 07:15:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Pywic27G";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2zLTLqej"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b="R2pLt/FY"
+Received: from prime.voidband.net (prime.voidband.net [199.247.17.104])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 269F741C6D;
-	Wed, 15 May 2024 07:14:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEB1D43AA4;
+	Wed, 15 May 2024 07:15:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.247.17.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715757294; cv=none; b=bTqKGZoRpaWfDHtIBghfUevDGRjqpHwHNlWcKFWkVol9quW8uJzY1TSyZHlhhkGCfYTWBp/oGCiYS/gAUg017nZtqAuCFAUIRVreKCx+FNDZSlHoVAwrFI7QA+mpWtAfZXbQq2N2LR5+gJHBlx6qlXmb+pZRYEfW0YUhDgDK/sc=
+	t=1715757330; cv=none; b=jmLjixoqltouEXNSI15vgdaZWHUGR5N74zIHjrzhl76eZUESzzbn47ARHvj787OgiY2MzRk7HVfUo0HdqAeI9Juzj4dT9RKhVObwBrHM2ai4gWwXIWoXkjW1qe2BtljzU2t/gG5Z9/ygDB3uxLtGUEW26PE+ZpTHHeH5FB0gOsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715757294; c=relaxed/simple;
-	bh=fSBL+I7mlttw6laOfhj4mqwmELbbr3O5aHueDsMdMS8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GF6qtX6MbvgWP+litRDv+K+TmmHVimRi+4t8UC+jH+U6Um2VoLb3AFTpCRW4QJZXtL+0Kbz9CG8+neB1iLSG9XZ/2YLpP7igtWSvbxanXkt655j6zRJRb+VbuRWIXOTjdzp6mR0QGS0Q+5Ak9wZEP+C7R+tHr3ry0IXuaTat+hg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Pywic27G; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2zLTLqej; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 15 May 2024 09:14:48 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1715757289;
+	s=arc-20240116; t=1715757330; c=relaxed/simple;
+	bh=MQDUZN0OMyoox6Z93YbNjehKhvRKHn2tu12DYd6IG4c=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ghFr2urQg1ppKa6+inJK5x5SI7qLFzU7y+gkq/i6o5o2QclGQlKc0EaCfFXwd7oNddrsmSjY8j++LOY8npricnCNHCe0PDi2WKCNka7duI5hUUYzbiTJjQsnYjecapxrdqlSwZ1byWBaNrsSNmutMPXPNj2W+PmZPMf+x9/6zCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=natalenko.name; spf=pass smtp.mailfrom=natalenko.name; dkim=pass (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b=R2pLt/FY; arc=none smtp.client-ip=199.247.17.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=natalenko.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=natalenko.name
+Received: from spock.localnet (unknown [94.142.239.106])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by prime.voidband.net (Postfix) with ESMTPSA id E595E6356CD1;
+	Wed, 15 May 2024 09:15:24 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
+	s=dkim-20170712; t=1715757325;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=OjxbuDWr0zOcw90ZsB0EVCRcP/VSMs6LQbSERYEb5HM=;
-	b=Pywic27G6qu/Lw3kltaLmpHlBJ8NSDpUkGLrQpH7xRcd3YGPculNrQE8UARStG1Fbp4YOk
-	AqvgJcnM8H0efgQEl1bIJXyMPnoSKa/MB5yVj5uR/4Fr9c7pbh65aa8Fd7Wc9ExvMfJ7k9
-	f5WvWMTqCCriiQwqugz1oaOUL7vbk17vSJVl6REFne7o6O6c4Rg37frg0yyX8gQs9ssUmG
-	GriN41mjcNW+kz400ugIm6gxHfYxZpouNevrPKUgBJe8KsjHvpfCHPvLi5sS3gENjCSDh4
-	XOpKd7Bvq8SeWukkxJ7hGRGANAHGgQ4u7GWww/lQjHaZq+mYB4WRtF6REj1BiA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1715757289;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OjxbuDWr0zOcw90ZsB0EVCRcP/VSMs6LQbSERYEb5HM=;
-	b=2zLTLqejJl0Ua9Ga9kjSrJSd2+cmRRiET9BtcLwZPEgkSF6WMtC2NL6nFsMyD+/fMvpHFz
-	aCS2g4nSnd29RpCg==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Lukasz Majewski <lukma@denx.de>
-Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-	Paolo Abeni <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Oleksij Rempel <o.rempel@pengutronix.de>, Tristram.Ha@microchip.com,
-	Ravi Gunasekaran <r-gunasekaran@ti.com>,
-	Simon Horman <horms@kernel.org>,
-	Nikita Zhandarovich <n.zhandarovich@fintech.ru>,
-	Murali Karicheri <m-karicheri2@ti.com>,
-	Arvid Brodin <Arvid.Brodin@xdin.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	"Ricardo B. Marliere" <ricardo@marliere.net>,
-	Casper Andersson <casper.casan@gmail.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: hsr: Setup and delete proxy prune timer only when
- RedBox is enabled
-Message-ID: <20240515071448.Vf_t99dI@linutronix.de>
-References: <20240514091306.229444-1-lukma@denx.de>
- <20240515064139.-B-_Hf0_@linutronix.de>
- <20240515090904.477c6b5f@wsk>
+	bh=MQDUZN0OMyoox6Z93YbNjehKhvRKHn2tu12DYd6IG4c=;
+	b=R2pLt/FYUh5KewsQxU5COKqCEmn9Ug1dJfcyz6XCkQVzGWAgY6RTxKZsQ1ubJWTjXFc4rB
+	JvAY6X3Y0cgHtC/c95eZQKKg50iKAHuomQrTPUjDcxcr+LwKJv9OHodC5nt453x7DZ74KX
+	Z3yaVPZmfRloZIom6ZcitNrAqAMcWLE=
+From: Oleksandr Natalenko <oleksandr@natalenko.name>
+To: linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
+ "Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>,
+ Johannes Berg <johannes@sipsolutions.net>
+Cc: linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ Felix Fietkau <nbd@nbd.name>, Lorenzo Bianconi <lorenzo@kernel.org>,
+ Ryder Lee <ryder.lee@mediatek.com>, Shayne Chen <shayne.chen@mediatek.com>,
+ Sean Wang <sean.wang@mediatek.com>, Kalle Valo <kvalo@kernel.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Peter Chiu <chui-hao.chiu@mediatek.com>,
+ StanleyYP Wang <StanleyYP.Wang@mediatek.com>,
+ Linux regressions mailing list <regressions@lists.linux.dev>
+Subject: Re: [REGRESSION] MT7915E doesn't work any more with v6.9
+Date: Wed, 15 May 2024 09:15:12 +0200
+Message-ID: <2200096.irdbgypaU6@natalenko.name>
+In-Reply-To: <60fe8df750a74331b8a54a76d55d5e8349ac46b4.camel@sipsolutions.net>
+References:
+ <6061263.lOV4Wx5bFT@natalenko.name> <2341660.ElGaqSPkdT@natalenko.name>
+ <60fe8df750a74331b8a54a76d55d5e8349ac46b4.camel@sipsolutions.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240515090904.477c6b5f@wsk>
+Content-Type: multipart/signed; boundary="nextPart13529873.uLZWGnKmhe";
+ micalg="pgp-sha256"; protocol="application/pgp-signature"
 
-On 2024-05-15 09:09:04 [+0200], Lukasz Majewski wrote:
-> Hi Sebastian,
-Hi Lukasz,
+--nextPart13529873.uLZWGnKmhe
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
+From: Oleksandr Natalenko <oleksandr@natalenko.name>
+Subject: Re: [REGRESSION] MT7915E doesn't work any more with v6.9
+Date: Wed, 15 May 2024 09:15:12 +0200
+Message-ID: <2200096.irdbgypaU6@natalenko.name>
+MIME-Version: 1.0
 
-> My concern is only with resource allocation - when RedBox is not
-> enabled the resources for this particular, not used timer are allocated
-> anyway.
+Hello Johannes.
 
-timer_setup() does not allocate any resources. The initialisation is
-pure static assignment. The timer subsystem does not look at this timer
-until mod_timer() is invoked (or something similar).
+On st=C5=99eda 15. kv=C4=9Btna 2024 8:23:35, SEL=C4=8C Johannes Berg wrote:
+> On Wed, 2024-05-15 at 00:51 +0200, Oleksandr Natalenko wrote:
+> > Also /cc Johannes because of this commit:
+> >=20
+> > 6092077ad09ce wifi: mac80211: introduce 'channel request'
+> >=20
+> > On st=C5=99eda 15. kv=C4=9Btna 2024 0:43:40, SEL=C4=8C Oleksandr Natale=
+nko wrote:
+> > > Hello Felix, Lorenzo et al.
+> > >=20
+> > > With v6.9 kernel the following card:
+> > >=20
+> > > 01:00.0 Unclassified device [0002]: MEDIATEK Corp. MT7915E 802.11ax P=
+CI Express Wireless Network Adapter [14c3:7915]
+> > >=20
+> > > doesn't work any more. Upon mt7915e module insertion the following sp=
+lat happens:
+> > >=20
+>=20
+> 6.9 didn't get commit 2f7cf3b61d85 ("wifi: mt76: mt7915: add missing
+> chanctx ops")? Huh?
 
-> If this can be omitted - then we can drop the patch.
-> 
-> Best regards,
-> 
-> Lukasz Majewski
+Yes, you are right, this commit is not present in v6.9, and I can find it i=
+n the "next" branch only.
 
-Sebastian
+I can also confirm this commit fixes the regression for me.
+
+Thank you.
+
+> johannes
+>=20
+
+
+=2D-=20
+Oleksandr Natalenko (post-factum)
+--nextPart13529873.uLZWGnKmhe
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEZUOOw5ESFLHZZtOKil/iNcg8M0sFAmZEYQAACgkQil/iNcg8
+M0vELBAAtzFurVLA2p05EBkdZqnYzYFZSF1PqO+Gl9ycGnsEtOrfdBLnJX68Fe3Y
+2ALMWI/SiP+nY16RnLH74Zv1vZPZ4cCraP2RcsZx7foWX3/5Vp6HXZNCTft4mY/z
+ukh1bYGL22wgMYzcdxcsYzNWx8hPPBWtcQBLlI135gWwsFMWLceLqSxdSArycjjM
+RgmmKUYWC7hicfeQ2IusZ+KIETvOadet1mW5Jkgtb0Xl7BD2bdeWmTEaPudRye4/
+alYhrMEKUDWRr48uV5KohVlj4SR06t3RF2TVg9bGfupyhD80DRobXE2MqTsQ04ve
+2X9XeXPkfhVzo1MjZMqNhbln1tG1C9v3E+yQIqyZ4N9hrCZ4T6RMztz/OooHkNqq
+NfVnZFf59FTPfkd4kCb4gzJ6bcxT2DVnbnBndeGSQ3yh+4xA5uokbezQBUuw9ub/
+iVoPo6bTo15GE3uM47+LEGQcahYG6PC798n5megvVCuBepFvVEkOW4Tku6vI3rx+
+ox+NpWdgm7u0262OdwpMXBEQzj0aCJC8KafE9TmfAMF+5DNdD6r+gqR+4SL0A90l
+GJHudrVX0MD9ZixIq5Nc0rVpT2i167xZHgMfq24Uw04M2awxSZIb9oyEiwYCP9QL
+svxPKWThbWw8uZB2yWKDUqzotS1Xo6cYZEV/MrgN28czKZlvA0Q=
+=EtZ6
+-----END PGP SIGNATURE-----
+
+--nextPart13529873.uLZWGnKmhe--
+
+
+
 
