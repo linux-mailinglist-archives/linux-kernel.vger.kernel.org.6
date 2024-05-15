@@ -1,115 +1,135 @@
-Return-Path: <linux-kernel+bounces-180372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D5E78C6D9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 23:14:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D69688C6DA2
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 23:14:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E38A11F22500
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 21:14:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 134031C222E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 21:14:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A6E415B571;
-	Wed, 15 May 2024 21:13:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D7FE15B546;
+	Wed, 15 May 2024 21:14:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S8BA31QH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yzckX8xk"
+Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5808A155A57;
-	Wed, 15 May 2024 21:13:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 469C915B544
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 21:14:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715807632; cv=none; b=LJcL4LGQyd2zhfmv6EMUJsAttA/v+3i7HB+hYCRVUtxExHGXZKofW6IrWaiMxoh0UwqBbdT7p6pDUGqBNcenDLnZH2/u6WZodPlxk0Wk4dKbY7XdceeXCP7vNc5X9VNgv5rOB3XOS8guIhfWSNSdyFpTGuDK4Taklj+EY+aUpRQ=
+	t=1715807672; cv=none; b=kwALLSukS5Zg/01r3ntq8PkmfjnlsfAy+zaalmu3uA/A4Q24aVT45a/mqLCKtVFH0xAKmc8Y6kTaXMUxxxclIdJ6tbTRc58gCipLaXRCC2nAgEFrnzWU6dNAfa+Bmjuy1Zy6UZ9jlyiEzxMzoSsDGx+VinJMnsyhC+dIOqBCWSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715807632; c=relaxed/simple;
-	bh=92Bg9W1jfudPogCMHlnwGwZOFXqjwzrhqg+gfddCvgc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=fgCUxqSoF9NTkRBfO9sc3evTmZPajhqf/FDchCjO80CDX2Zx53wfr16DY8fVal+e/XgYzVIqxKRIwo6j08sekf5tnnkrs+as/PyXLxuD7eZyJgzZ9Gh891xZhBaUJHVu98CS8Ie42JJgVlMkw1VaIf5GeTHlc7U3VCHWsm9hn8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S8BA31QH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 990FAC32781;
-	Wed, 15 May 2024 21:13:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715807631;
-	bh=92Bg9W1jfudPogCMHlnwGwZOFXqjwzrhqg+gfddCvgc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=S8BA31QH7LK+QVdeB6Mu1tL7+oDDrVuB4pRkhH06CYUtwMegzUFlB095Sb4Zwbpxw
-	 VCTDALqX31X7kPYjnVtfuNvBOfAMqp4H+tFZ51c8ck9ZLD/PZJon2wzFZUaVnmgwPf
-	 VymrE+aaYcnRQ18OYFpYbHeRsJvbpYkdkY0+nSbVdVAXVDHlPcV27HTs0JBMc1e9lE
-	 Kmnw5ArBPlB1/loKB0GII383RGiB5aqWOZEhmn0bP2SaYXt6Jobj78xGr5ImNgYquk
-	 tWoxD5bSzr/EzVgKknGN1ep3dhmHUtvGcD+NiTrtSTfBHHnmmCL3IrgrobAWP4w3yG
-	 ZWxO6cM77OF/g==
-Date: Wed, 15 May 2024 16:13:50 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Rick Wertenbroek <rick.wertenbroek@gmail.com>
-Cc: rick.wertenbroek@heig-vd.ch, dlemoal@kernel.org, stable@vger.kernel.org,
-	Shawn Lin <shawn.lin@rock-chips.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Heiko Stuebner <heiko@sntech.de>, linux-pci@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: rockchip-ep: Remove wrong mask on subsys_vendor_id
-Message-ID: <20240515211350.GA2139074@bhelgaas>
+	s=arc-20240116; t=1715807672; c=relaxed/simple;
+	bh=KaRp03zPMicROwGMtQ24BK5CzqpLG2F6m7G378tiArU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BJVYZl0BVbM6gLFTTs13qAhdldcm+QIzUl1lwGa3dvvlrgp6aYxtx59b191VoUDz2YUEJM+Bv3HLpejTxC7+9IupCfq9hK6hvyHcfnYcr5Yx+W+Qkb1PmRnzD92EXozgDMS3O526jO/KlmugeProTf7rUyygN1k1oELezf53UHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yzckX8xk; arc=none smtp.client-ip=209.85.166.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-36db863679bso91425ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 14:14:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715807669; x=1716412469; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ASfis+VjxPRoonpfr9uzosJOMgG1sBNuU5vYcng9bn8=;
+        b=yzckX8xkL8Zki6q6lA03WU1eTmHEcdNNp9EJzOxq0ruAVkfW1KBaSLL0s4eP+3bMoH
+         69qzgHkqqb6OJt+mpYFQmZLzvpvi8x9cg3veE2XEs+Mw54/09xMh1mvU8lXvitD0b89S
+         MEkm/Culk27XWANSOYK7MC0cVyoC1TRBCMySoemH5hM0zaVNiPuwrVOaYo9hesajWBFJ
+         Gd8moZKuFhjPVec4EDRlPHGXP2CMAomyVVVShR6eIKRo2HBbb7pm9n1z732PwfY5clvh
+         DCvs0RK01hH/PykPj1VVHPRaSVXKm/4BLVsiB3cFjgQ2mJSCxJU5yWH78zuwkmYLOw/p
+         0+Qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715807669; x=1716412469;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ASfis+VjxPRoonpfr9uzosJOMgG1sBNuU5vYcng9bn8=;
+        b=rZ7Sj1b3HndGXwYnqi4nvMfi64EG3nTAiOaUAsiX9YXp+fcGwRh0UMfOJFyS1QJilR
+         do8buBIGGfWmNSoLW0m+GS9Pg5OB78UL6JPn3KNA5qjdSY4m5OS+YeBowByTWVApl0yj
+         yt1O1TZCFz+mYzvbumfe52ZtYf8fF+PuxG6o1dv55zhpLMMP54jZ5HY9O0sMksYzfilg
+         agXfdW9ITRB5IU+9Shy+8g3bbPxC+8VJYDhIuJhuUJR2WlB9cAX4HlZVCnOvg9qAwr8K
+         Wn7NRBX/sdqgm7diuSqOy6tecZTygPCZmqgGXeFK/WDXqjNHCNsz0F35Rn1c2UNIAOwH
+         4Eow==
+X-Forwarded-Encrypted: i=1; AJvYcCXDvvyohX+fI7aer9Ah9FPL6K7mfaS/e1DFPiKY7cUz3NgdOcDDoLBJjZBh7wfX5j3Towcq+VP52mCYFPfsRLyLk7a93vkibGscyEBQ
+X-Gm-Message-State: AOJu0YzQRJNjbdosgd7XxW7160FTtvWrxUTJ1Zj0BxO/vmcCAZs5LYwF
+	3/BrgDKTdVBpC4aSZ+OIBJetCDMnwQUbYAMcWESeNCdOMpt1nk+8wApimPCKP+kowwNszNSoqJa
+	1TGDtFBeipxt9RBfXqgDF5Kf9S5cbIf3jE+Dc
+X-Google-Smtp-Source: AGHT+IGrRZmlO1u+WsKnjcXi/EjMPXEXONMgggY4vksZMB23Kb/hjAKD9NLqszxPw7VV9kUKvixDW3AxzwgJfmVDrqk=
+X-Received: by 2002:a92:de03:0:b0:36d:b340:330 with SMTP id
+ e9e14a558f8ab-36db3400540mr4953095ab.26.1715807668933; Wed, 15 May 2024
+ 14:14:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240515205547.GA2137633@bhelgaas>
+References: <20240515182750.489472-1-samasth.norway.ananda@oracle.com>
+In-Reply-To: <20240515182750.489472-1-samasth.norway.ananda@oracle.com>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 15 May 2024 14:14:15 -0700
+Message-ID: <CAP-5=fWBVwnhoeCtDTvHqZ6SGeOLAhD2GrshCRnwUvnNdyApQA@mail.gmail.com>
+Subject: Re: [PATCH RESEND] perf test pmu: Fix file Leak in test_format_dir_get
+To: Samasth Norway Ananda <samasth.norway.ananda@oracle.com>
+Cc: namhyung@kernel.org, acme@kernel.org, peterz@infradead.org, 
+	mingo@redhat.com, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, 
+	jolsa@kernel.org, adrian.hunter@intel.com, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 15, 2024 at 03:55:49PM -0500, Bjorn Helgaas wrote:
-> On Wed, Apr 03, 2024 at 04:45:08PM +0200, Rick Wertenbroek wrote:
-> > Remove wrong mask on subsys_vendor_id. Both the Vendor ID and Subsystem
-> > Vendor ID are u16 variables and are written to a u32 register of the
-> > controller. The Subsystem Vendor ID was always 0 because the u16 value
-> > was masked incorrectly with GENMASK(31,16) resulting in all lower 16
-> > bits being set to 0 prior to the shift.
-> > 
-> > Remove both masks as they are unnecessary and set the register correctly
-> > i.e., the lower 16-bits are the Vendor ID and the upper 16-bits are the
-> > Subsystem Vendor ID.
-> > 
-> > This is documented in the RK3399 TRM section 17.6.7.1.17
-> > 
-> > Fixes: cf590b078391 ("PCI: rockchip: Add EP driver for Rockchip PCIe controller")
-> > Signed-off-by: Rick Wertenbroek <rick.wertenbroek@gmail.com>
-> > Cc: stable@vger.kernel.org
-> 
-> Applied to pci/controller/rockchip by Krzysztof, but his outgoing mail
-> queue got stuck.  I added Damien's Reviewed-by.  Trying to squeeze
-> into v6.9.
+On Wed, May 15, 2024 at 11:27=E2=80=AFAM Samasth Norway Ananda
+<samasth.norway.ananda@oracle.com> wrote:
+>
+> File is opened inside the for loop. But if the 'if' condition is
+> successful then 'break' statement will be reached, exiting the
+> 'for' loop prior to reaching 'fclose'.
+>
+> Signed-off-by: Samasth Norway Ananda <samasth.norway.ananda@oracle.com>
+> ---
+> Found this error through static analysis. This has only been compile
+> tested.
 
-Sorry, I meant v6.10.  v6.9 is already done.
+Thanks Samasth, I agree with the fix however this code was recently
+deleted and isn't in our next tree:
+https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
+ee/tools/perf/tests/pmu.c?h=3Dperf-tools-next
+the change that removed the code is:
+https://lore.kernel.org/all/20240502213507.2339733-4-irogers@google.com/
 
-> > ---
-> >  drivers/pci/controller/pcie-rockchip-ep.c | 7 +++----
-> >  1 file changed, 3 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/pci/controller/pcie-rockchip-ep.c b/drivers/pci/controller/pcie-rockchip-ep.c
-> > index c9046e97a1d2..37d4bcb8bd5b 100644
-> > --- a/drivers/pci/controller/pcie-rockchip-ep.c
-> > +++ b/drivers/pci/controller/pcie-rockchip-ep.c
-> > @@ -98,10 +98,9 @@ static int rockchip_pcie_ep_write_header(struct pci_epc *epc, u8 fn, u8 vfn,
-> >  
-> >  	/* All functions share the same vendor ID with function 0 */
-> >  	if (fn == 0) {
-> > -		u32 vid_regs = (hdr->vendorid & GENMASK(15, 0)) |
-> > -			       (hdr->subsys_vendor_id & GENMASK(31, 16)) << 16;
-> > -
-> > -		rockchip_pcie_write(rockchip, vid_regs,
-> > +		rockchip_pcie_write(rockchip,
-> > +				    hdr->vendorid |
-> > +				    hdr->subsys_vendor_id << 16,
-> >  				    PCIE_CORE_CONFIG_VENDOR);
-> >  	}
-> >  
-> > -- 
-> > 2.25.1
-> > 
+Thanks,
+Ian
+
+> ---
+>  tools/perf/tests/pmu.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/tools/perf/tests/pmu.c b/tools/perf/tests/pmu.c
+> index 8f18127d876a..f751e6cb6ac0 100644
+> --- a/tools/perf/tests/pmu.c
+> +++ b/tools/perf/tests/pmu.c
+> @@ -106,8 +106,10 @@ static char *test_format_dir_get(char *dir, size_t s=
+z)
+>                 if (!file)
+>                         return NULL;
+>
+> -               if (1 !=3D fwrite(format->value, strlen(format->value), 1=
+, file))
+> +               if (1 !=3D fwrite(format->value, strlen(format->value), 1=
+, file)) {
+> +                       fclose(file);
+>                         break;
+> +               }
+>
+>                 fclose(file);
+>         }
+> --
+> 2.43.0
+>
 
