@@ -1,295 +1,172 @@
-Return-Path: <linux-kernel+bounces-180451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C6C38C6EB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 00:43:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51A708C6EBF
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 00:44:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F746284ADE
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 22:43:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7507B1C22284
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 22:44:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6F904204B;
-	Wed, 15 May 2024 22:43:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 678434086A;
+	Wed, 15 May 2024 22:43:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u24GfXM+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Gcf9673q"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1B9E2A8D7;
-	Wed, 15 May 2024 22:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A5C639FEC;
+	Wed, 15 May 2024 22:43:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715812983; cv=none; b=kDMWLZBLoc26pgEZNw01UmVYQjsBvygApwNdOM3s75IhfzP1UqJBnUsIhoTaDNAu/8Rj99+z5NXlnucqvphTFy4aqMMhFeWMNoB6Wh3w93mB+r7eqjdw4qPy2yu5HT+kytwVxgifsP1ZVajEK2Qor/mBVQh7OzCN4LcaqeGv7uc=
+	t=1715813032; cv=none; b=i1DODQy3x3oCZDZdQJW8NbVBgRH4ymx6wva5HVxbPwme4qGjMpDzhR1fWAazYKwMHzF8r+6ZlxiubjsTHd9Fd6I/2R/423A9ZZOVcF+/UZqBhPGe45CHFzpMdQZqb5ZUm+U6Tdrvs7YvUHiQ/k9+1a0zbPIeLmzKHVaQtiuR64M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715812983; c=relaxed/simple;
-	bh=3B2QPX/ga/0AMCH1IWm6CBpgkx7uEqSubo5omjdhkDk=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=jgbp6HAEzZcF7fG46BlXlgoQUf9hMYbdoIEiuVDQc139M40kUfeFKlXZf1VMCXSPwaVLLtovvDHnGBoFuZiymOdew1Um1FT8SCqp+6jCqTcB1XLRg2sKPGQ/X0gnAZDEQ+Xfg5lHfqR7QWoHRWXBlY2q1886+m/jw9g7wxXqZoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u24GfXM+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69AB4C116B1;
-	Wed, 15 May 2024 22:43:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715812983;
-	bh=3B2QPX/ga/0AMCH1IWm6CBpgkx7uEqSubo5omjdhkDk=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=u24GfXM+55qXQfRDSHTj7tOt/UBYWn8d03ITH9yqoUOUz0DE9ym3wps5ouvjLqkD8
-	 a1Yo1fBSyHCnYd7/XXMFHpIEPBIlWziMzzM617W3iH/CCwKUbob/SfKDQQFBCqO+I5
-	 cSJWq9JMkxCPG2hywt13urQRLcmrXjnr3+trK26+x7qCWykCHZ7DonYu1hNcxrGY5N
-	 LeewcLRKzPkQ2dRgR1wnQn16N4UnhjQowcp7q9e7ariyXbSrCx8sXBgnvGYt5vdlzW
-	 qGUA4tymb2FEjFyBe28qFtit/JYt+Ib2P9ldeKMU/6Tj02VYyi33wFsIzhcqI7c4wD
-	 sgEZAyaSOmU4A==
-Date: Wed, 15 May 2024 15:42:59 -0700 (PDT)
-From: Stefano Stabellini <sstabellini@kernel.org>
-X-X-Sender: sstabellini@ubuntu-linux-20-04-desktop
-To: Jiqian Chen <Jiqian.Chen@amd.com>
-cc: Juergen Gross <jgross@suse.com>, 
-    Stefano Stabellini <sstabellini@kernel.org>, 
-    Bjorn Helgaas <bhelgaas@google.com>, 
-    "Rafael J . Wysocki" <rafael@kernel.org>, 
-    =?UTF-8?Q?Roger_Pau_Monn=C3=A9?= <roger.pau@citrix.com>, 
-    xen-devel@lists.xenproject.org, linux-pci@vger.kernel.org, 
-    linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, 
-    Huang Rui <Ray.Huang@amd.com>, Huang Rui <ray.huang@amd.com>
-Subject: Re: [RFC KERNEL PATCH v7 2/2] xen/privcmd: Add new syscall to get
- gsi from dev
-In-Reply-To: <20240515065011.13797-3-Jiqian.Chen@amd.com>
-Message-ID: <alpine.DEB.2.22.394.2405151537430.2544314@ubuntu-linux-20-04-desktop>
-References: <20240515065011.13797-1-Jiqian.Chen@amd.com> <20240515065011.13797-3-Jiqian.Chen@amd.com>
-User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
+	s=arc-20240116; t=1715813032; c=relaxed/simple;
+	bh=oKchVcPehzuYki4OTeXXqHW9MQl47AW4/PLCYjSexzs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Gp0hrCwkBBeInCVEmH6DaEQebwkpTx4SHC19SCK1qWXInhbuPhUcxUi24Q/qLzSLwytsUXKlgBgIaPqd2iEngGdKyV0n59VarCqIKaZRd0x90IT9ufO7LTrQ4ZO6FPnXKotIRvJMdTwJ/fK0RbhWzfKLo9iXolw4/XK7cRbDuvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Gcf9673q; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44FL9ex3023672;
+	Wed, 15 May 2024 22:43:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=wBLXCgEnr6gzv+kDg5m82yPO1uvCwTswI6/CjKGoDxg=; b=Gc
+	f9673qHVZAMwaG8XwJQsRpMRb+0t9Zcvchzsu8jKCo2qpxYindfiXvCP6rLuEcWR
+	h2RElb7iQZVm4KJedsYnL+TfYGkyBP6aiNgGIGzB06c2RLoxFjQp6ZgccUiySKZN
+	EU6X4C0U/YYrdmtuLjqUFnK5/h0A7tZPn5tm6FPxYbP40msI6Of5WWHf0hhUCoZe
+	6hxHRm/4Wwg9GR6tGDalFsqnYfGif8tIwdiPrhk0Mwb12xcu/bEzSs/Ib4AHvBy4
+	tSK1y+lBGXVCfMJu3T3Cr05U4H/YL1c8Q73A7o9+layupBnujMz6d1t93IA/iJCT
+	/PcFXbSaBKbj05er4ufg==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y49gdupb0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 15 May 2024 22:43:45 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44FMhiZT031868
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 15 May 2024 22:43:44 GMT
+Received: from [10.110.0.4] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 15 May
+ 2024 15:43:43 -0700
+Message-ID: <01c8dc05-76d1-478e-a4e4-3eab8d6aeaf9@quicinc.com>
+Date: Wed, 15 May 2024 15:43:42 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] wifi: ath10k: fix QCOM_RPROC_COMMON dependency
+Content-Language: en-US
+To: Masahiro Yamada <masahiroy@kernel.org>
+CC: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Kalle Valo
+	<kvalo@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
+        Stephen Boyd
+	<swboyd@chromium.org>,
+        Rakesh Pillai <quic_pillair@quicinc.com>,
+        <linux-wireless@vger.kernel.org>, <ath10k@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>,
+        <linux-kbuild@vger.kernel.org>
+References: <20240511-ath10k-snoc-dep-v1-1-9666e3af5c27@linaro.org>
+ <12a208d7-f36b-4953-abff-323a15452b3c@quicinc.com>
+ <CAK7LNASyBNbxm-e+iZ=7pOJg-a-Zm84O6RNcqiUjZQH7f9r3Lw@mail.gmail.com>
+ <e5edd92e-ab47-4a55-9276-5a7d160fd399@quicinc.com>
+ <CAK7LNAQ11Pt85_T9kvYYbqfnjMSH_Yjwvz52E+Tcmw8jS-wvDw@mail.gmail.com>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <CAK7LNAQ11Pt85_T9kvYYbqfnjMSH_Yjwvz52E+Tcmw8jS-wvDw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: rrHJ38Yb-Gpp-m0ozMswyzE1KhhcJIWA
+X-Proofpoint-ORIG-GUID: rrHJ38Yb-Gpp-m0ozMswyzE1KhhcJIWA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-15_14,2024-05-15_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=836
+ impostorscore=0 clxscore=1015 priorityscore=1501 phishscore=0 spamscore=0
+ mlxscore=0 lowpriorityscore=0 suspectscore=0 bulkscore=0 adultscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405010000 definitions=main-2405150161
 
-On Wed, 15 May 2024, Jiqian Chen wrote:
-> In PVH dom0, it uses the linux local interrupt mechanism,
-> when it allocs irq for a gsi, it is dynamic, and follow
-> the principle of applying first, distributing first. And
-> the irq number is alloced from small to large, but the
-> applying gsi number is not, may gsi 38 comes before gsi 28,
-> it causes the irq number is not equal with the gsi number.
-> And when passthrough a device, QEMU will use device's gsi
-> number to do pirq mapping, but the gsi number is got from
-> file /sys/bus/pci/devices/<sbdf>/irq, irq!= gsi, so it will
-> fail when mapping.
-> And in current linux codes, there is no method to get gsi
-> for userspace.
+On 5/14/2024 9:10 PM, Masahiro Yamada wrote:
+> On Wed, May 15, 2024 at 3:14 AM Jeff Johnson <quic_jjohnson@quicinc.com> wrote:
+>>
+>> On 5/14/2024 10:45 AM, Masahiro Yamada wrote:
+>>> On Tue, May 14, 2024 at 11:43 PM Jeff Johnson <quic_jjohnson@quicinc.com> wrote:
+>>>>
+>>>> On 5/11/2024 3:49 AM, Dmitry Baryshkov wrote:
+>>>>> If ath10k_snoc is built-in, while Qualcomm remoteprocs are built as
+>>>>> modules, compilation fails with:
+>>>>>
+>>>>> /usr/bin/aarch64-linux-gnu-ld: drivers/net/wireless/ath/ath10k/snoc.o: in function `ath10k_modem_init':
+>>>>> drivers/net/wireless/ath/ath10k/snoc.c:1534: undefined reference to `qcom_register_ssr_notifier'
+>>>>> /usr/bin/aarch64-linux-gnu-ld: drivers/net/wireless/ath/ath10k/snoc.o: in function `ath10k_modem_deinit':
+>>>>> drivers/net/wireless/ath/ath10k/snoc.c:1551: undefined reference to `qcom_unregister_ssr_notifier'
+>>>>>
+>>>>> Add corresponding dependency to ATH10K_SNOC Kconfig entry so that it's
+>>>>> built as module if QCOM_RPROC_COMMON is built as module too.
+>>>>>
+>>>>> Fixes: 747ff7d3d742 ("ath10k: Don't always treat modem stop events as crashes")
+>>>>> Cc: stable@vger.kernel.org
+>>>>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>>>> ---
+>>>>>  drivers/net/wireless/ath/ath10k/Kconfig | 1 +
+>>>>>  1 file changed, 1 insertion(+)
+>>>>>
+>>>>> diff --git a/drivers/net/wireless/ath/ath10k/Kconfig b/drivers/net/wireless/ath/ath10k/Kconfig
+>>>>> index e6ea884cafc1..4f385f4a8cef 100644
+>>>>> --- a/drivers/net/wireless/ath/ath10k/Kconfig
+>>>>> +++ b/drivers/net/wireless/ath/ath10k/Kconfig
+>>>>> @@ -45,6 +45,7 @@ config ATH10K_SNOC
+>>>>>       depends on ATH10K
+>>>>>       depends on ARCH_QCOM || COMPILE_TEST
+>>>>>       depends on QCOM_SMEM
+>>>>> +     depends on QCOM_RPROC_COMMON || QCOM_RPROC_COMMON=n
+>>>>>       select QCOM_SCM
+>>>>>       select QCOM_QMI_HELPERS
+>>>>>       help
+>>>>>
+>>>>> ---
+>>>>> base-commit: 75fa778d74b786a1608d55d655d42b480a6fa8bd
+>>>>> change-id: 20240511-ath10k-snoc-dep-862a9da2e6bb
+>>>>
+>>>> I see how this fixes the problem, but this doesn't seem like an ideal
+>>>> solution. The fact that the *_ssr_notifier() functions are correctly protected
+>>>> by conditional compilation ideally should mean that clients don't need to call
+>>>> call out this as a dependency. Otherwise, it would mean we'd need to do this
+>>>> for all feature flags.
+>>>
+>>>
+>>> It depends on if qcom_common.c is optional for ath10k_snoc.
+>>>
+>>> If it is optional, this patch is correct.
+>>
+>> At least from a build perspective it is optional
 > 
-> For above purpose, record gsi of pcistub devices when init
-> pcistub and add a new syscall into privcmd to let userspace
-> can get gsi when they have a need.
 > 
-> Co-developed-by: Huang Rui <ray.huang@amd.com>
-> Signed-off-by: Jiqian Chen <Jiqian.Chen@amd.com>
-> ---
->  drivers/xen/privcmd.c              | 28 ++++++++++++++++++++++
->  drivers/xen/xen-pciback/pci_stub.c | 38 +++++++++++++++++++++++++++---
->  include/uapi/xen/privcmd.h         |  7 ++++++
->  include/xen/acpi.h                 |  2 ++
->  4 files changed, 72 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/xen/privcmd.c b/drivers/xen/privcmd.c
-> index 67dfa4778864..5953a03b5cb0 100644
-> --- a/drivers/xen/privcmd.c
-> +++ b/drivers/xen/privcmd.c
-> @@ -45,6 +45,9 @@
->  #include <xen/page.h>
->  #include <xen/xen-ops.h>
->  #include <xen/balloon.h>
-> +#ifdef CONFIG_ACPI
-> +#include <xen/acpi.h>
-> +#endif
->  
->  #include "privcmd.h"
->  
-> @@ -842,6 +845,27 @@ static long privcmd_ioctl_mmap_resource(struct file *file,
->  	return rc;
->  }
->  
-> +static long privcmd_ioctl_gsi_from_dev(struct file *file, void __user *udata)
-> +{
-> +	struct privcmd_gsi_from_dev kdata;
-> +
-> +	if (copy_from_user(&kdata, udata, sizeof(kdata)))
-> +		return -EFAULT;
-> +
-> +#ifdef CONFIG_ACPI
-> +	kdata.gsi = pcistub_get_gsi_from_sbdf(kdata.sbdf);
-> +	if (kdata.gsi == -1)
-> +		return -EINVAL;
-> +#else
-> +	kdata.gsi = -1;
-
-Should we return an error instead, like -EINVAL, to make the behavior
-more similar to the CONFIG_ACPI case?
-
-
-> +#endif
-> +
-> +	if (copy_to_user(udata, &kdata, sizeof(kdata)))
-> +		return -EFAULT;
-> +
-> +	return 0;
-> +}
-> +
->  #ifdef CONFIG_XEN_PRIVCMD_EVENTFD
->  /* Irqfd support */
->  static struct workqueue_struct *irqfd_cleanup_wq;
-> @@ -1529,6 +1553,10 @@ static long privcmd_ioctl(struct file *file,
->  		ret = privcmd_ioctl_ioeventfd(file, udata);
->  		break;
->  
-> +	case IOCTL_PRIVCMD_GSI_FROM_DEV:
-> +		ret = privcmd_ioctl_gsi_from_dev(file, udata);
-> +		break;
-> +
->  	default:
->  		break;
->  	}
-> diff --git a/drivers/xen/xen-pciback/pci_stub.c b/drivers/xen/xen-pciback/pci_stub.c
-> index 2b90d832d0a7..4b62b4d377a9 100644
-> --- a/drivers/xen/xen-pciback/pci_stub.c
-> +++ b/drivers/xen/xen-pciback/pci_stub.c
-> @@ -56,6 +56,9 @@ struct pcistub_device {
->  
->  	struct pci_dev *dev;
->  	struct xen_pcibk_device *pdev;/* non-NULL if struct pci_dev is in use */
-> +#ifdef CONFIG_ACPI
-> +	int gsi;
-> +#endif
->  };
->  
->  /* Access to pcistub_devices & seized_devices lists and the initialize_devices
-> @@ -88,6 +91,9 @@ static struct pcistub_device *pcistub_device_alloc(struct pci_dev *dev)
->  
->  	kref_init(&psdev->kref);
->  	spin_lock_init(&psdev->lock);
-> +#ifdef CONFIG_ACPI
-> +	psdev->gsi = -1;
-> +#endif
->  
->  	return psdev;
->  }
-> @@ -220,6 +226,25 @@ static struct pci_dev *pcistub_device_get_pci_dev(struct xen_pcibk_device *pdev,
->  	return pci_dev;
->  }
->  
-> +#ifdef CONFIG_ACPI
-> +int pcistub_get_gsi_from_sbdf(unsigned int sbdf)
-> +{
-> +	struct pcistub_device *psdev;
-> +	int domain = sbdf >> 16;
-> +	int bus = (sbdf >> 8) & 0xff;
-> +	int slot = (sbdf >> 3) & 0x1f;
-> +	int func = sbdf & 0x7;
-
-you can use PCI_DEVFN PCI_SLOT PCI_FUNC pci_domain_nr instead of open
-coding.
-
-
-> +
-> +	psdev = pcistub_device_find(domain, bus, slot, func);
-> +
-> +	if (!psdev)
-> +		return -1;
-> +
-> +	return psdev->gsi;
-> +}
-> +EXPORT_SYMBOL_GPL(pcistub_get_gsi_from_sbdf);
-> +#endif
-> +
->  struct pci_dev *pcistub_get_pci_dev_by_slot(struct xen_pcibk_device *pdev,
->  					    int domain, int bus,
->  					    int slot, int func)
-> @@ -367,14 +392,20 @@ static int pcistub_match(struct pci_dev *dev)
->  	return found;
->  }
->  
-> -static int pcistub_init_device(struct pci_dev *dev)
-> +static int pcistub_init_device(struct pcistub_device *psdev)
->  {
->  	struct xen_pcibk_dev_data *dev_data;
-> +	struct pci_dev *dev;
->  #ifdef CONFIG_ACPI
->  	int gsi, trigger, polarity;
->  #endif
->  	int err = 0;
->  
-> +	if (!psdev)
-> +		return -EINVAL;
-> +
-> +	dev = psdev->dev;
-> +
->  	dev_dbg(&dev->dev, "initializing...\n");
->  
->  	/* The PCI backend is not intended to be a module (or to work with
-> @@ -448,6 +479,7 @@ static int pcistub_init_device(struct pci_dev *dev)
->  		dev_err(&dev->dev, "Fail to get gsi info!\n");
->  		goto config_release;
->  	}
-> +	psdev->gsi = gsi;
->  
->  	if (xen_initial_domain() && xen_pvh_domain()) {
->  		err = xen_pvh_setup_gsi(gsi, trigger, polarity);
-> @@ -495,7 +527,7 @@ static int __init pcistub_init_devices_late(void)
->  
->  		spin_unlock_irqrestore(&pcistub_devices_lock, flags);
->  
-> -		err = pcistub_init_device(psdev->dev);
-> +		err = pcistub_init_device(psdev);
->  		if (err) {
->  			dev_err(&psdev->dev->dev,
->  				"error %d initializing device\n", err);
-> @@ -565,7 +597,7 @@ static int pcistub_seize(struct pci_dev *dev,
->  		spin_unlock_irqrestore(&pcistub_devices_lock, flags);
->  
->  		/* don't want irqs disabled when calling pcistub_init_device */
-> -		err = pcistub_init_device(psdev->dev);
-> +		err = pcistub_init_device(psdev);
->  
->  		spin_lock_irqsave(&pcistub_devices_lock, flags);
->  
-> diff --git a/include/uapi/xen/privcmd.h b/include/uapi/xen/privcmd.h
-> index 8b8c5d1420fe..220e7670a113 100644
-> --- a/include/uapi/xen/privcmd.h
-> +++ b/include/uapi/xen/privcmd.h
-> @@ -126,6 +126,11 @@ struct privcmd_ioeventfd {
->  	__u8 pad[2];
->  };
->  
-> +struct privcmd_gsi_from_dev {
-> +	__u32 sbdf;
-> +	int gsi;
-> +};
-> +
->  /*
->   * @cmd: IOCTL_PRIVCMD_HYPERCALL
->   * @arg: &privcmd_hypercall_t
-> @@ -157,5 +162,7 @@ struct privcmd_ioeventfd {
->  	_IOW('P', 8, struct privcmd_irqfd)
->  #define IOCTL_PRIVCMD_IOEVENTFD					\
->  	_IOW('P', 9, struct privcmd_ioeventfd)
-> +#define IOCTL_PRIVCMD_GSI_FROM_DEV				\
-> +	_IOC(_IOC_NONE, 'P', 10, sizeof(struct privcmd_gsi_from_dev))
->  
->  #endif /* __LINUX_PUBLIC_PRIVCMD_H__ */
-> diff --git a/include/xen/acpi.h b/include/xen/acpi.h
-> index 9b50027113f3..0bf5f4884456 100644
-> --- a/include/xen/acpi.h
-> +++ b/include/xen/acpi.h
-> @@ -83,4 +83,6 @@ int xen_acpi_get_gsi_info(struct pci_dev *dev,
->  						  int *gsi_out,
->  						  int *trigger_out,
->  						  int *polarity_out);
-> +
-> +int pcistub_get_gsi_from_sbdf(unsigned int sbdf);
->  #endif	/* _XEN_ACPI_H */
-> -- 
-> 2.34.1
+> You need to make a decision from a run-time perspective
+> (that is, whether you are fine with having
+> ar_snoc->notifier == NULL)
 > 
+> 
+> If you are able to build the kernel successfully
+> but you get a run-time error (e.g. NULL pointer dereference),
+> it is even worse because run-time debugging is generally more
+> difficult than compile-time debugging.
+
+The current patch maintains the existing logic, so that is my preference.
+
 
