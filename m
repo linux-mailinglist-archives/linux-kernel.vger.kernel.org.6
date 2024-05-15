@@ -1,222 +1,136 @@
-Return-Path: <linux-kernel+bounces-179314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AE588C5EB5
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 03:20:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E74D8C5EB7
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 03:20:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CB6E1C2105F
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 01:20:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 368A71F22036
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 01:20:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60F3B1FC4;
-	Wed, 15 May 2024 01:20:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44E431FB5;
+	Wed, 15 May 2024 01:20:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="OGwWqRvF"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2069.outbound.protection.outlook.com [40.107.220.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Op3q2pUw"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A90B4803;
-	Wed, 15 May 2024 01:20:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715736030; cv=fail; b=hJ3IyVzdc9MG2/VJbhtxu6Krt4YUihxL/G0yZKV7ARyzprb7IsXeRAQcVHwcdkAEHk6DZv6pzhxoP9txa4tI4V6MQlutHUHJRWZFjMBfN1euPaRh3p2qkySE4ef+D66KjNDr/mcYa5WRlRXxgJZB8NeK6K97OxHLVEuY+IUtBio=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715736030; c=relaxed/simple;
-	bh=TSqcDCEAYLHgUg5zIEM18n32l4x43YMcMrFJZBeind4=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZDzHAsZzUP2xqQei6c9tfkK2+iE2O/RaYC2prUvw5Vgm5151e/CvQZhS6R+SDDaMvDu2o0vTjM6jcUsUGJsF6Y2kQQrgEupI9ONEi/hWiMNWOILSxQe1Sr/Rj1KhT24suW+a0t9idykyq+r83QWnEq3vItf0lwVIj2WFFL1XEo0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=OGwWqRvF; arc=fail smtp.client-ip=40.107.220.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=RB6oHXoM2g/NmOXQ7LL0ZLhP4+7K4Mjj2ELRBw5dAULoVQL2l7+tua9TV9H2heuBNblRyQWyR0ZehwLuSzvbN6ZtHeT4D2JIAHaY9v76/3s8I4RQaGVyAFr6gbKmNbwOMNnPbREmRI1B6lq19+G1jHsvvkEpU9YalobzC7OPQhxJ7d+eP7N1CZ87/cDLqLRWQ5nQJzh3DSPP40jirhYrt/wM+y/CzZ6pIMa1ZtY7984H74kusYdsXJyPtRXlaQD98KZRI5EqZA6evcj33hxRR2pb6PCFkedNS3wQ51MPac4mlJp+Kx2G6J9oXaPs3tiOr49LpMoAg1pPq1pMLmOeKA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=UOsI/ihgGxrGbRTD8SEjC00omYfmW8VZETVBM24GTEA=;
- b=MUvNNUkZul/refZF0k/DwNhW7gHYjQg9cR4QCOfXSieV5Re5xdsf/fkGemOMS94dzswcCz0spljCQjRqEN4gIETrKoYORWbaynwQGlLnuAaGCnDXUmJJaQX8Sy1i/X1adQDsyOXipTYkKBluMHCQsoUJRFpM6u1BAowi2jZsVawPjfWQXBsdk9JMbKVxISq5w8vedwAGfTiUUc19EaZFxDEheWqA/REwztJUNYu6cJncNhOASVU0+WRvgILj+X6IzZ6XcHqCLAFc4gRS7xKRIX+D3JGqaXhjIsYNTcMTxq8Wa6gVgfvQCBBn71qWtspFlGom7GkgpC0gEREzXlJ9Rg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=amd.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UOsI/ihgGxrGbRTD8SEjC00omYfmW8VZETVBM24GTEA=;
- b=OGwWqRvFaDdHik69MYiHmMYSAihBD1XDYEFWEd9TEaFKfk6IvIqsok+WiGtV6TeHHnwuBORYTlOEh2DtM9eEfVwy0SgjEiplte21EIYlSMlZhAYNxMh7VJOsIPBbaTG3eeIlKvfq5LIfk+ue5v/ui35AUaybj2HZhrXHfsCFqX1rNDv0Wjz8THw3CR8sDvVpYiUSR7p/L86VedzJcNTSDc4d4hJRzFaOtfUDIt8ctRVOEskRPmz7xbAWE4czCxQNxVj72Wis6rLFANTWLJ9wO6iGcRBVOBSWosbW+UZbks+PO6/frIiw2LcNr/Ny4Hd/uTGYIf5Z2oVXDztK6euLRw==
-Received: from BN0PR04CA0106.namprd04.prod.outlook.com (2603:10b6:408:ec::21)
- by LV3PR12MB9439.namprd12.prod.outlook.com (2603:10b6:408:20e::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Wed, 15 May
- 2024 01:20:23 +0000
-Received: from BN1PEPF00004683.namprd03.prod.outlook.com
- (2603:10b6:408:ec:cafe::e) by BN0PR04CA0106.outlook.office365.com
- (2603:10b6:408:ec::21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.25 via Frontend
- Transport; Wed, 15 May 2024 01:20:23 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- BN1PEPF00004683.mail.protection.outlook.com (10.167.243.89) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7587.21 via Frontend Transport; Wed, 15 May 2024 01:20:23 +0000
-Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 14 May
- 2024 18:20:12 -0700
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Tue, 14 May 2024 18:20:12 -0700
-Received: from nvidia.com (10.127.8.11) by mail.nvidia.com (10.126.190.182)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
- Transport; Tue, 14 May 2024 18:20:07 -0700
-Date: Tue, 14 May 2024 18:20:06 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-CC: <will@kernel.org>, <robin.murphy@arm.com>, <kevin.tian@intel.com>,
-	<suravee.suthikulpanit@amd.com>, <joro@8bytes.org>,
-	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-tegra@vger.kernel.org>,
-	<yi.l.liu@intel.com>, <eric.auger@redhat.com>, <vasant.hegde@amd.com>,
-	<jon.grimm@amd.com>, <santosh.shukla@amd.com>, <Dhaval.Giani@amd.com>,
-	<shameerali.kolothum.thodi@huawei.com>
-Subject: Re: [PATCH RFCv1 05/14] iommufd: Add IOMMUFD_OBJ_VIOMMU and
- IOMMUFD_CMD_VIOMMU_ALLOC
-Message-ID: <ZkQNxkYv23z7i6e0@nvidia.com>
-References: <cover.1712978212.git.nicolinc@nvidia.com>
- <3aa9bc1df6a2ee58a03c6ea6ededbc210a2d23a8.1712978212.git.nicolinc@nvidia.com>
- <ZkDR4Rp57cy9qSqP@nvidia.com>
- <ZkGYN36N7sh2vUmv@nvidia.com>
- <ZkOFkfHhG2h2fv/c@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 906316FC3
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 01:20:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715736046; cv=none; b=lCQv0gBYAlisxGb71iyACb/C5DruoQTJhwA3f4lPalCUuEumuUQz18ll0v2HO6nGIzt5a4GNFwpFT9sSV1CjcH6r79sYsQjdtKVxmDMfO4HJRAsLA0RzgfHxqjt9L4hFY/OOIUEYVihj0pbeaiyvdX/0Q1xNbiV1qMp0dvfMxmY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715736046; c=relaxed/simple;
+	bh=RWL2uQhi8Ed+uiGVKCNPstf3I/C9ZgqT5ZURnuftkQw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ApuHBMgBl3YzRdyVzmhtTogLH4SvbvNOVGMdd9YW2Hcy7ps5GIFm67Un5+o8TdvdA6k/gCyj3Afcq4lXmLM87TgBOe4rvZwsQH/l7TDyy5ymaiqxTYfh6JetwBKo2MMfve90o4BWZlaJhd8UAA+qwao82QCqZ/17UJ368V8TJrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Op3q2pUw; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52327368e59so3562013e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 18:20:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1715736042; x=1716340842; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=nr8iJJBMAoKbZhUVSQrEstzktHb70Vrcza52uLAmnxg=;
+        b=Op3q2pUw/FveAsXldNsihwe4bWCq/TKqiFu5nvQdpspLc2d/Xp7Q+9vhFiX+Bvlzt6
+         iBOV/zqAIuESzU2zAchTrnSuQSrSKWtOzZW31bOfu4o/GRbxE9PWhRsaTtU7GHqj1VXe
+         tPIBf6uCh6vgy2E8vL+h7YIdi9ejnWYjsTVQs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715736042; x=1716340842;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nr8iJJBMAoKbZhUVSQrEstzktHb70Vrcza52uLAmnxg=;
+        b=Y2lhp869Cmx1qKYtFNgS4EQZZaim8XYZJlj+MxDy/21znWrAtGTQ+j4Tw0YSWUFQ8D
+         i5D0+MoK689Glz9fkD5j/ig+SRPntvrwBbKaETqMnr9M/70GvpFyvFd0WoGOVQdipsoG
+         hPfCw/jC+Fbg1y9aICSPeCROVU7DHDf0SzvYopStxmvpf+ru+m9tqr3DH767ries0aAs
+         g+8ulEChga1evJzF9kWCPschixBVqIk5Tb3ar97XiIQhuqUB2VFW7MZq0LRh0i+RmanS
+         j+NmzYfHG7D7PTOSRzbIMa5UScSM1iS1fj1LQp9Qk/kxP5rj3VNOr1EnPM4eVf9RLbi4
+         w0sQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXiA1C01iTqBeOT6GHpltRFVGu4zHfogTZWkezNnLbF0wwyslOUc9TDASLb+vGTiOUC7PBHEAcDvofoTZqX2fXiTb+remgJNvZNaEWP
+X-Gm-Message-State: AOJu0YxCGlg3yHFxUGHbpXh8RsdmR/1x6OcbsQaI7qzKXbGLrSLl0448
+	jXrnypSiZIfk575N72QXbiYoBtl+JneKlMZPV8bUkvDT7ZoIXbDcb+1kZSZMHhGnR4pQQp8MFEL
+	SjOO6GA==
+X-Google-Smtp-Source: AGHT+IFBPSp68+QAofhmcWE6hMqq/9kpdKJZHmwzC+KWElMp46JuPS0sO+kd1kiceBnGna/8LgNn2g==
+X-Received: by 2002:a19:691e:0:b0:518:c057:6ab1 with SMTP id 2adb3069b0e04-52210275f30mr8035057e87.66.1715736042526;
+        Tue, 14 May 2024 18:20:42 -0700 (PDT)
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com. [209.85.218.45])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b01724sm786660166b.162.2024.05.14.18.20.40
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 May 2024 18:20:41 -0700 (PDT)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a59c448b44aso119226866b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 18:20:40 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVcttWOFarO5qLFToVK9QixPMbQszuvnyRdJky0dGHJBb5Jn2cTmjiTUdB+MTe5YCJERilC+CZ9kWMufi7mU6aqBXXVUaJlSlmtcJkM
+X-Received: by 2002:a17:907:9625:b0:a59:db0f:6bdd with SMTP id
+ a640c23a62f3a-a5a2d5d56b7mr1123543366b.44.1715736040490; Tue, 14 May 2024
+ 18:20:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <ZkOFkfHhG2h2fv/c@nvidia.com>
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN1PEPF00004683:EE_|LV3PR12MB9439:EE_
-X-MS-Office365-Filtering-Correlation-Id: 859b7dd6-078a-4930-8b71-08dc747d31cd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|7416005|376005|1800799015|36860700004|82310400017;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?LCCYxgg6ACJ7hLMuLHN2ZVm630wE1sNsEGF9CVZvEbnKDDmabMaKofiQSsK4?=
- =?us-ascii?Q?A6s1k2Xgfyody3ERvzCBAQoQGnUelNSkMo/Q0gS1w5HSMHDCIiOtUPCTyHYu?=
- =?us-ascii?Q?5bs5zbW7iPiW+2Y3q8VqOmt9S0mc2uiZFS6TS8UtHzPmyP4d6mWADJXj9j0d?=
- =?us-ascii?Q?Q4QUtOOeBqH/G/LZrmlHBuXJBlGxRc+rX7BZcF6/kVkngPQ/06/WFFmKIQFT?=
- =?us-ascii?Q?A055LX0N99YNLljbWNDCF3y2PZ2RP1vegVKBwAlLb4S3myne74wV0kNOemsU?=
- =?us-ascii?Q?TYMeIAiAjyRJImkxmHHxtrfC+NiRIcp5WcVfw/PIgkpgyJr9pYEZJqIRklVz?=
- =?us-ascii?Q?D/h4ZRbccvaR6q1HMDfm1cxB2PSfC5R9IoO1tT1FPz1yYjLJrmH6pLZq8D1U?=
- =?us-ascii?Q?yTEXTxbbo9K+GQg96Tg3h7Oh27NiW9UkLKJiUFisc0HJnv6gk7WZ8lEA/4VU?=
- =?us-ascii?Q?jcvHWV1dYunAgYvO1bMIEpLmzVQqc3Txjzm31wZXK3JIonQ2yOZ/sx9TG0+R?=
- =?us-ascii?Q?e3vGXWLJmOoMHm/R0F5m8LqqHrIE9JceGHd0FbGrDf6xGB7+kZeHjzbm604/?=
- =?us-ascii?Q?fKWmUFfZZvY3vF3IyPENVTsWLlmAAtrLj/k4+HEiBYvkXrv4rG0EqFlzkOT7?=
- =?us-ascii?Q?fy/b038R8V4Zsk7wowVWABWuPZFwLBB6L83ALa7pAoKnVGg9t6yBsPsb9GTR?=
- =?us-ascii?Q?RNBhmzUQuoFeh1K3lfpPrrGz/zc9sKunxoKaOGLeDdNqyTQIC8INp66GssYP?=
- =?us-ascii?Q?XT9d7wdvH0dBeY04HllZ/9fgGcIp7MoAahMCa4NIQTJKoLYqLRQUuEKBr098?=
- =?us-ascii?Q?7wFpq1m2JJ4X0s7vyXYJUvQE38qyq4X0e6lSdE/ZHQpg1TY7gu2nxN0Ez+Xl?=
- =?us-ascii?Q?EHux0LVMdkJeLsYTk6QbkPKAhiM9ALW37/DzsGdAgKOjhle2IPGrxcQm2QWN?=
- =?us-ascii?Q?Ydondc19U0qdTFim+EMdlaAz2ywd3Emr1gmmNvUXQLJxdDggBn+d5UeNjhgu?=
- =?us-ascii?Q?y/wkJ0v0jdJ+J/Co+QPGO/mENxpK/6HgBEMV1wyQI8grgkQ7kH/xP2orWrpp?=
- =?us-ascii?Q?3IraE5PgeJJ0SDllkAyXeZ4o0zdyfOSSchmDoO1xwYxvf4Npu31zwGB4vEFc?=
- =?us-ascii?Q?YxyZ2ECXJwhE3rd/pgRkDKYvDt5KyCpsrFpDVuJ/2L6Oz0vFikUieOxDXvL/?=
- =?us-ascii?Q?mH+euMWVlFWs9XEAofqtX1QkF9VO0j9GPCMppVCfKQ3igX4yDvjcEuXpzuK7?=
- =?us-ascii?Q?pqoVPnrbKNypOFyFp5m36YmghxpS674w70krzlj3xF8m0xVSPR7l5Io8Fab6?=
- =?us-ascii?Q?EHk4mbXDfX//30UCsVhiY4hCqRjvO6uyPOdERTvUjM1GCAKWh3ejPkexD5Le?=
- =?us-ascii?Q?JMD43YdGp36PaXRisnfBMnZYV63o?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230031)(7416005)(376005)(1800799015)(36860700004)(82310400017);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 May 2024 01:20:23.3180
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 859b7dd6-078a-4930-8b71-08dc747d31cd
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN1PEPF00004683.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9439
+References: <20240415163527.626541-1-jeffxu@chromium.org> <20240514104646.e6af4292f19b834777ec1e32@linux-foundation.org>
+ <871q646rea.fsf@meer.lwn.net> <ZkPXcT_JuQeZCAv0@casper.infradead.org>
+ <56001.1715726927@cvs.openbsd.org> <CAHk-=wgsGCKvN0Db6ZRZqJwXQrmhZyWB6RmABaOp4DiZbXgNew@mail.gmail.com>
+ <16982.1715734632@cvs.openbsd.org>
+In-Reply-To: <16982.1715734632@cvs.openbsd.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 14 May 2024 18:20:23 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wi04ZCm3vTtkcVnAUdiOpX3a0hBZ-aQWONwCubOJQEdXw@mail.gmail.com>
+Message-ID: <CAHk-=wi04ZCm3vTtkcVnAUdiOpX3a0hBZ-aQWONwCubOJQEdXw@mail.gmail.com>
+Subject: Re: [PATCH v10 0/5] Introduce mseal
+To: Theo de Raadt <deraadt@openbsd.org>
+Cc: Matthew Wilcox <willy@infradead.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Andrew Morton <akpm@linux-foundation.org>, jeffxu@chromium.org, keescook@chromium.org, 
+	jannh@google.com, sroettger@google.com, gregkh@linuxfoundation.org, 
+	usama.anjum@collabora.com, Liam.Howlett@oracle.com, surenb@google.com, 
+	merimus@google.com, rdunlap@infradead.org, jeffxu@google.com, 
+	jorgelo@chromium.org, groeck@chromium.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org, pedro.falcato@gmail.com, 
+	dave.hansen@intel.com, linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, May 14, 2024 at 12:38:57PM -0300, Jason Gunthorpe wrote:
-> > > > +
-> > > > +/**
-> > > > + * enum iommu_viommu_type - VIOMMU Type
-> > > > + * @IOMMU_VIOMMU_TEGRA241_CMDQV: NVIDIA Tegra241 CMDQV Extension for SMMUv3
-> > > > + */
-> > > > +enum iommu_viommu_type {
-> > > > +	IOMMU_VIOMMU_TYPE_TEGRA241_CMDQV,
-> > > > +};
-> > > 
-> > > At least the 241 line should be in a following patch
-> > 
-> > It's for the "enum iommu_viommu_type" mentioned in the following
-> > structure. Yi told me that you don't like an empty enum, and he
-> > did something like this in HWPT_INVALIDATE series:
-> > https://lore.kernel.org/linux-iommu/20240111041015.47920-3-yi.l.liu@intel.com/
-> 
-> I suspect 0 should be reserved as a non-set value for some
-> basic sanity in all these driver type enums.
+On Tue, 14 May 2024 at 17:57, Theo de Raadt <deraadt@openbsd.org> wrote:
+>
+> Let's wait and see.
 
-We have an IOMMU_HWPT_DATA_NONE for HWPT_ALLOC to compatible
-with an S2 hwpt, since it doesn't need a data.
+You may not be aware, but the Open Group literally endorses the Linux model:
 
-Maybe we can have an IOMMU_VIOMMU_TYPE_DEFAULT to be 0, for
-an IOMMU driver (e.g. VT-d) that doesn't need to handle nor
-be aware of any viommu object?
+  "When mprotect() fails for reasons other than [EINVAL], the
+protections on some of the pages in the range [addr,addr+len) may have
+been changed"
 
-So, VMM can have a unified "attach-to-viommu" practice with
-different IOMMUs, v.s. some still doing "attach-to-s2"?
+at least according to this:
 
-> > > So, to make this all work perfectly we need approx the following
-> > >  - S2 sharing across instances in ARM - meaning the VMID is allocated
-> > >    at attach not domain alloc
-> > >  - S2 hwpt is refcounted by the VIOMMU in the iommufd layer
-> > >  - VIOMMU is refcounted by every nesting child in the iommufd layer
-> > >  - The nesting child holds a pointer to both the S2 and the VIOMMU
-> > >    (viommu optional)
-> > >  - When the nesting child attaches to a device the STE will source the
-> > >    VMID from the VIOMMU if present otherwise from the S2
-> > >  - "RID" attach (ie naked S2) will have to be done with a Nesting
-> > >    Child using a vSTE that indicates Identity. Then the attach logic
-> > >    will have enough information to get the VMID from the VIOMMU
-> > 
-> > What is this RID attach (naked S2) case? S1DSS_BYPASS + SVA?
-> 
-> No, when the guest installs a vSTE that simply says bypass with no CD
-> table pointer. That should result in a pSTE that is the S2 with on CD
-> pointer.
-> 
-> I was originally thinking that the VMM would simply directly attach
-> the S2 HWPT in this caes, but given the above issue with the VMID lifetime
-> it makes more sense to 'attach' the viommu which holds the correct
-> VMID. 
-> 
-> The issue with direct attach the S2 HWPT is the VMID lifetime, as it
-> would have to borrow the VMID from the viommu but then the lifetime
-> becomes more complex as it has to live beyond VIOMMU destruction. Not
-> unsolvable but it seems easier to just avoid it entirely.
+    https://pubs.opengroup.org/onlinepubs/9699919799/functions/mprotect.html
 
-That makes a lot sense. I'd need to go through QEMU code and
-see how we will accommodate these two more naturally: likely
-the QEMU core should allocate an S2 HWPT for a VM, while the
-viommu code should allocate a VIOMMU for each instance.
+so I think your atomicity arguments have always been misleading. At
+least for mprotect, POSIX is very explicit about this not being
+atomic.
 
-Thanks
-Nicolin
+I find very similar wording in mmap:
+
+  "If mmap() fails for reasons other than [EBADF], [EINVAL], or
+[ENOTSUP], some of the mappings in the address range starting at addr
+and continuing for len bytes may have been unmapped"
+
+Maybe some atomicity rules have always been true for BSD, but they've
+never been true for Linux, and while I don't know how authoritative
+that opengroup thing is, it's what google found.
+
+> (Linus, don't be a jerk)
+
+I'm not the one who makes unsubstantiated statements and uses scare
+tactics to try to make said arguments sound more valid than they are.
+
+So keep your arguments real, please.
+
+               Linus
 
