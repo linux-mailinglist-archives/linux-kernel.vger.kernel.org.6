@@ -1,113 +1,74 @@
-Return-Path: <linux-kernel+bounces-179389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB5418C5F9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:06:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FFDC8C5F9F
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:09:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA74E1C21DF8
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 04:06:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8E1B283689
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 04:09:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B5B338DF9;
-	Wed, 15 May 2024 04:06:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E0DC38DD1;
+	Wed, 15 May 2024 04:09:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ba/rrUgM"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="q4MzV1Uj"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04E0038FA1
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 04:06:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6522E23D7;
+	Wed, 15 May 2024 04:09:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715745988; cv=none; b=jhdx2C0M/CAV8uy1bnM0tsyKAQoXWQ+NJE9d7aQoGq+wa4Uwpn9POktC50R8fjIj3NBV8iQnP6HESZlax4HkAUWSKkOs3SQNXgJ2DQBp5+sQr38594SGLk2bmb0iChOvEKBIn2R8HGS8+tLyH7BjU4rJ4TkONmr3RK/GipThxE8=
+	t=1715746179; cv=none; b=kb8dyLcHOdhXiACBllA/HQYvP+Ar+ffDRU12GMhplZtN1Bj2zuCuiwU+di8GTKIxFGuDJo/tt2zOa2HQiUeTuzcEPqrAPfbmHE/qNxP3dWsfOgYRco7uKQSM5pKUgwTBiN5UoTdWhfOviY+XjYoe00lLl85x38uRFqCkSqmNoeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715745988; c=relaxed/simple;
-	bh=oDK0dZjxuFm0H+MXlbyx+nVtTUik/dIpxYkVCNyTtUw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SDhlSqxlU/yFNeFL5dQsO4ZYWaZ7QhC6fH8pd0RpdLIs/6dL2o2q+XTru3L+3Eo9X2yrt8FTplwRte24BhA37sfgrLFQs6rqqykKLeqWH86TyEfTbSFEyqYWQpcv4VZjXTkY0opO8bR09a0rczgqc3N89xReAHaIS/kZGxZ32X0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ba/rrUgM; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a599a298990so135978266b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 21:06:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1715745985; x=1716350785; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=+u4pNlcSDf7Fk1kCACrrWSs8MI1xPyfKcfZOZfur+Vc=;
-        b=ba/rrUgMqTY3COfZZjp0hpAesSpYB71Oi6ydTUngd4rWDWzhCFGmaNI5K6Bi1nfxmw
-         h9KKZY3XlUYkn7IbXDib1H0auNWB2+ZPcVEjKJh39ZUygevs4kXjA/cYkR8QXJMrpGI7
-         yPAUe8xfCRBsFcMkkQ9fcCq65dMvLhpUPhDm0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715745985; x=1716350785;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+u4pNlcSDf7Fk1kCACrrWSs8MI1xPyfKcfZOZfur+Vc=;
-        b=uh63z0FtHcNgKBIVuZBrMNQ+CrIj7mBqmXceQX4kEmJYzQA/Vc2y9jcFaZIUapYYs1
-         +vnr5cobFnccj8K64dgoV26UrTr1o44RKMdQBtmXDJEH+pBohdcdBDiWVZSl7oj7vizA
-         dbBKE2xcvFjw5z122bxtiOinTA0ZtGNljCM9S+kdUpjZSabJryiYw4n6SoM9vA1PZUXg
-         Dg7pRT7FZNbmxKtLjRQK9/WoRWVj/qiuLnEtHt83kY//pFUt40QYQn13SUtfm2cEQV08
-         J/nVhc0B8LtSuQqvuf9ZVx41atzcmwd934KItI+WJK17zxKP8a6o8xXPrlLBmBmE7vrj
-         ANOA==
-X-Forwarded-Encrypted: i=1; AJvYcCVjp24+uZ+xsiyI2uU40W+uycG48cI4cjQMOWdFAP4LrMmHZ3kwNGvuXnM0d7z8VPsbk4ppfqx0dmWZL98GuKJg7CxU+yENQYKQsSDf
-X-Gm-Message-State: AOJu0Yzne4hkzBDuCEes8p7cFW5//u0fmHsO07n+YxWdrvhPs0309B+1
-	O+ZynTxEvGYRoPw+BbHMsQ7OLckzt+4MWfDEHatlpBaHgR3Zpsc4NDVSAIe+NkpW17Vwg4LOnPy
-	p77NVyw==
-X-Google-Smtp-Source: AGHT+IEy2poJf/m1YaTz15+Yh3CK6P61XpvRwVewTZ2WyrtDxdA5wjBBmg3kkWW5zEzHAug8bpRx0Q==
-X-Received: by 2002:a17:906:f296:b0:a59:c833:d272 with SMTP id a640c23a62f3a-a5a2d5356eamr1048514466b.13.1715745984956;
-        Tue, 14 May 2024 21:06:24 -0700 (PDT)
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com. [209.85.218.41])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a179c81b4sm798177566b.113.2024.05.14.21.06.23
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 May 2024 21:06:23 -0700 (PDT)
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a59b49162aeso100259166b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 21:06:23 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVYRaSLTnl6XB6ux1ZrYitl8PWD0TGBB6nYeCnW+TNhMse0ATekrbhS249BUjnW/LeFtkPYRK6BL52fB6gsk3Mk59Aw/q5SRiKkX+q3
-X-Received: by 2002:a17:906:7196:b0:a55:5ba7:2889 with SMTP id
- a640c23a62f3a-a5a2d5c9f69mr956803166b.42.1715745983374; Tue, 14 May 2024
- 21:06:23 -0700 (PDT)
+	s=arc-20240116; t=1715746179; c=relaxed/simple;
+	bh=wGOV1mZ+pdVrfptpS5boXGVzJ4/MpBPVNFEfmzjHpSU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fZWDtwaDBYK0RtqDOjNfq71sAVqB4f4J7CBuw/cFty32RNjBGfMsW9ABt9RYhrttjL7sGiHhfZkACSRuFEqHrBUfOki6biKILkqCh4WwhZKK22S//mZ1jcyx4qAxarfgAgtZ4MFUMoD+PhX4/OWdw+onQfdrtLIIBauuklm8dys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=q4MzV1Uj; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=fLAgEShe7dMtqipBc1HSHbcuyfF24sU6RugfONHtSCs=; b=q4MzV1UjJV63c3p5yjjaLOQ3SI
+	eVeE0HWSGanF4JappNKQfh2wg7MY1fgJmkusADZl3RREZBJJgYVc1Er68xB+od/I0rlDEGTyJNuPg
+	uOHTyH/yGMtJLJFuJcq39IDEJTdqvq2wUKlRYixClLNy55kyf5wsjyPcoxQnJM2jnJSQLQBE4UA7m
+	0zqYvZTxbbMymV4hneBRwBVJEh+GOTLP+cceocAO/XbOHtcaJGKUVa5xmPLtM56Na1s+ybX2Vue4v
+	hGV4C/jUR0hRZr5e4iN0WxsHsBGuuE4z1Pe1/v7t2raHVCJjIwL0U72wsG2djNggFIeXo33z44dF9
+	iFlnBwGw==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1s75xG-00000009uEl-10EI;
+	Wed, 15 May 2024 04:09:26 +0000
+Date: Wed, 15 May 2024 05:09:26 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>,
+	Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>, linux-mm@kvack.org,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org, Zhaoyang Huang <huangzhaoyang@gmail.com>,
+	steve.kang@unisoc.com
+Subject: Re: [RFC PATCH 2/2] mm: introduce budgt control in readahead
+Message-ID: <ZkQ1dsHKVttb7y4_@casper.infradead.org>
+References: <20240515012350.1166350-1-zhaoyang.huang@unisoc.com>
+ <20240515012350.1166350-3-zhaoyang.huang@unisoc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240514231155.1004295-1-kuba@kernel.org> <CAHk-=wiSiGppp-J25Ww-gN6qgpc7gZRb_cP+dn3Q8_zdntzgYQ@mail.gmail.com>
-In-Reply-To: <CAHk-=wiSiGppp-J25Ww-gN6qgpc7gZRb_cP+dn3Q8_zdntzgYQ@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 14 May 2024 21:06:06 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wj2ZJ_YE2CWJ6TXNQoOm+Q6H5LpQNLWmfft+SO21PW5Bg@mail.gmail.com>
-Message-ID: <CAHk-=wj2ZJ_YE2CWJ6TXNQoOm+Q6H5LpQNLWmfft+SO21PW5Bg@mail.gmail.com>
-Subject: Re: [GIT PULL] Networking for v6.10
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: davem@davemloft.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	pabeni@redhat.com, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240515012350.1166350-3-zhaoyang.huang@unisoc.com>
 
-On Tue, 14 May 2024 at 20:32, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> Why does it do that disgusting
->
->         struct bpf_array *array = container_of(map, struct bpf_array, map);
->         ...
->                 *insn++ = BPF_ALU32_IMM(BPF_AND, BPF_REG_0, array->index_mask);
->
-> thing? As far as I can tell, a bpf map can be embedded in many
-> different structures, not just that 'bpf_array' thing.
+On Wed, May 15, 2024 at 09:23:50AM +0800, zhaoyang.huang wrote:
+> +	unsigned long budgt = inode->i_sb->s_bdev ?
+> +			blk_throttle_budgt(inode->i_sb->s_bdev) : 0;
 
-Bah. It still needs to do that array->elem_size, so it's not just the
-spectre-v1 code that needs that 'bpf_array' thing.
-
-And the non-percpu case seems to do all the same contortions, so I
-don't know why the new percpu array would show issues.
-
-Oh well. I guess the bpf people will figure it out once they come back
-from "partying at LSFMM" as you put it.
-
-           Linus
+NAK as previously explained.
 
