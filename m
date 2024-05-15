@@ -1,119 +1,130 @@
-Return-Path: <linux-kernel+bounces-179775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 877338C6520
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 12:48:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D7B08C6522
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 12:49:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B95E21C20ED4
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 10:48:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02329281F70
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 10:49:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1066E604C8;
-	Wed, 15 May 2024 10:48:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FDFA5FDA6;
+	Wed, 15 May 2024 10:49:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sQT08CTq"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TfjiadzY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 584E45EE82
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 10:48:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FBE85EE67;
+	Wed, 15 May 2024 10:49:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715770090; cv=none; b=DeoA1zeJDBJQ4CL9b2PDJekZz5XYirMjW0wKUX/b8PZP/ftMWKxpelLoSgo2QyzwbS6mYGFBr7q0uSDTuxAKyvxvwUs1DDDlUjB7amNAGhFrxcpFg4/l7Rr/MRkE3cKXF/fTUM9VvcrD0Jfqi+7RnBKfYWfAfKH3UJHm3O1jgsA=
+	t=1715770160; cv=none; b=QfyQtAMUZ+3QPlI6kdlMn6mKDTDDVc67DabQFpeMBQxmJICb3IOkmlvdalaMSbpH5XtaP8CEebP3ErGtLj+mKXjTGojXJT4lGmxW0/VL68kpqyBD0zmRH+hNI7P1M4mMqkJOB2C1+BkEzsw2IXb4xHntjEBWQC77U7Bt0mKofYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715770090; c=relaxed/simple;
-	bh=cJsCowm24pHU8O1Fj+KfzZ3M0w4ZHFAvFQxKmt/ilis=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XAqtuhrKlWliaZ6wsLPlxFretAbuEJV//ca58VbRLyf/D4y3TLjuUtnkBHUMYUnfryg/5uTD1gZUDMnJt/WXorHnjOLS4XFLJs17cEWNmpSNK3DSjeCGxlknQCI8Bn53zeeK8EqMtaQ2GTw9ermuuUngYLlY8+ydnoZRxkJ54ZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sQT08CTq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A841C116B1;
-	Wed, 15 May 2024 10:48:08 +0000 (UTC)
+	s=arc-20240116; t=1715770160; c=relaxed/simple;
+	bh=eZAyx5iTU3+yTtK+BTheHtFXAm3+sugNJ4tGK3cekzg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lmvts8uhQdj6rBdb5PXh5rDkbmPfwS1h8tkuxdUXraomFwH3u8l5miBWencLvPhoPzBqDUYmJdl4m+MzDcdY5nAZb7DL0N/CO1BDtvcNXzHGJ8Qc4LqI1U5id18i3zcouqTe1h0AFKLLeGbHrzxu6IhBp7hPWuZ+XblnF1UOzd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TfjiadzY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59F07C116B1;
+	Wed, 15 May 2024 10:49:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715770089;
-	bh=cJsCowm24pHU8O1Fj+KfzZ3M0w4ZHFAvFQxKmt/ilis=;
-	h=From:To:Cc:Subject:Date:From;
-	b=sQT08CTqIYH+H4EsDlEn0mNKQDSEKAS/oLggFTe8dzi3ll/zUsyfBoJ7HRJzVsbfD
-	 mf5xiwoh0ROAJlpJOyNOqK9di8Q4olb4pdssrlJE0J7Ok7DL8m4ZJh2qDPcLPOhg9b
-	 CUNgh9GOS6jNxkwSiGeAS4GvBH5Qzb9Z+3jJclGlPY1DEwiawHYaNtvcI3bWjZifUg
-	 OoSuzETViJWo0Lawk8pdY+ZGasMdBP8jQxoSOhM9eCYVwPaVUyMCRsabMwD8uKR3Yb
-	 B+saqmtTtLzqsJkDjdUFijKsUitAxLgcYit/A5ftD7A3y1HBP06ltfscmD3e8O5nXu
-	 nMM5VSwOa8jug==
-From: Borislav Petkov <bp@kernel.org>
-To: X86 ML <x86@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	"Borislav Petkov (AMD)" <bp@alien8.de>
-Subject: [PATCH] x86/alternative: Use the correct length when optimizing NOPs
-Date: Wed, 15 May 2024 12:48:04 +0200
-Message-ID: <20240515104804.32004-1-bp@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=k20201202; t=1715770160;
+	bh=eZAyx5iTU3+yTtK+BTheHtFXAm3+sugNJ4tGK3cekzg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TfjiadzYc0Ni5F6hqm5RXpiqACkDCI7cbL0UjZMj9KOLXCmvOHqK3PRXKUuKPP0yz
+	 s3x5bzvQAwrfFpt3JgrxhF3zRilfLHC9QGhk16hUznJyKA2Q8jGAMUgBXGSh+m7Z91
+	 DDhFiKzURsSbxqPAMcISjvO+J9a8Y6t/x/M0tikzAISNbeBGlHrtXXGEbzXB+Qb0mv
+	 MeMpcmjjvKfgN3u0xX2ROzZulbOeuuzWx2pLirrHJgbqNc4pht8lq9kFV0gCOgFJO+
+	 d7brvsm80y5ZM9n277aL2YQq1fD9qcaNXAji6M0W7g6eFfkLlFpTeShX/QcvSuH9xj
+	 C0BQGsnG4Q3ig==
+Date: Wed, 15 May 2024 11:49:16 +0100
+From: Simon Horman <horms@kernel.org>
+To: Ronak Doshi <ronak.doshi@broadcom.com>
+Cc: netdev@vger.kernel.org,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next 4/4] vmxnet3: update to version 9
+Message-ID: <20240515104916.GG154012@kernel.org>
+References: <20240514182050.20931-1-ronak.doshi@broadcom.com>
+ <20240514182050.20931-5-ronak.doshi@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240514182050.20931-5-ronak.doshi@broadcom.com>
 
-From: "Borislav Petkov (AMD)" <bp@alien8.de>
+On Tue, May 14, 2024 at 11:20:49AM -0700, Ronak Doshi wrote:
+> With all vmxnet3 version 9 changes incorporated in the vmxnet3 driver,
+> the driver can configure emulation to run at vmxnet3 version 9, provided
+> the emulation advertises support for version 9.
+> 
+> Signed-off-by: Ronak Doshi <ronak.doshi@broadcom.com>
+> Acked-by: Guolin Yang <guolin.yang@broadcom.com>
 
-Commit in Fixes moved the optimize_nops() call inside apply_relocation()
-and made it a second optimization pass after the relocations have been
-done.
+..
 
-Since optimize_nops() works only on NOPs, that is fine and it'll simply
-jump over instructions which are not NOPs.
+> @@ -4019,42 +4019,14 @@ vmxnet3_probe_device(struct pci_dev *pdev,
+>  		goto err_alloc_pci;
+>  
+>  	ver = VMXNET3_READ_BAR1_REG(adapter, VMXNET3_REG_VRRS);
+> -	if (ver & (1 << VMXNET3_REV_7)) {
+> -		VMXNET3_WRITE_BAR1_REG(adapter,
+> -				       VMXNET3_REG_VRRS,
+> -				       1 << VMXNET3_REV_7);
+> -		adapter->version = VMXNET3_REV_7 + 1;
+> -	} else if (ver & (1 << VMXNET3_REV_6)) {
+> -		VMXNET3_WRITE_BAR1_REG(adapter,
+> -				       VMXNET3_REG_VRRS,
+> -				       1 << VMXNET3_REV_6);
+> -		adapter->version = VMXNET3_REV_6 + 1;
+> -	} else if (ver & (1 << VMXNET3_REV_5)) {
+> -		VMXNET3_WRITE_BAR1_REG(adapter,
+> -				       VMXNET3_REG_VRRS,
+> -				       1 << VMXNET3_REV_5);
+> -		adapter->version = VMXNET3_REV_5 + 1;
+> -	} else if (ver & (1 << VMXNET3_REV_4)) {
+> -		VMXNET3_WRITE_BAR1_REG(adapter,
+> -				       VMXNET3_REG_VRRS,
+> -				       1 << VMXNET3_REV_4);
+> -		adapter->version = VMXNET3_REV_4 + 1;
+> -	} else if (ver & (1 << VMXNET3_REV_3)) {
+> -		VMXNET3_WRITE_BAR1_REG(adapter,
+> -				       VMXNET3_REG_VRRS,
+> -				       1 << VMXNET3_REV_3);
+> -		adapter->version = VMXNET3_REV_3 + 1;
+> -	} else if (ver & (1 << VMXNET3_REV_2)) {
+> -		VMXNET3_WRITE_BAR1_REG(adapter,
+> -				       VMXNET3_REG_VRRS,
+> -				       1 << VMXNET3_REV_2);
+> -		adapter->version = VMXNET3_REV_2 + 1;
+> -	} else if (ver & (1 << VMXNET3_REV_1)) {
+> -		VMXNET3_WRITE_BAR1_REG(adapter,
+> -				       VMXNET3_REG_VRRS,
+> -				       1 << VMXNET3_REV_1);
+> -		adapter->version = VMXNET3_REV_1 + 1;
+> -	} else {
+> +	for (i = VMXNET3_REV_9; i >= VMXNET3_REV_1; i--) {
+> +		if (ver & (1 << i)) {
+> +			VMXNET3_WRITE_BAR1_REG(adapter, VMXNET3_REG_VRRS, 1 << i);
 
-However, it made that call with repl_len as the buffer length to
-optimize.
+nit: Please consider using the BIT() macro.
 
-However, it can happen that there are alternatives calls like this one:
-
-  alternative("mfence; lfence", "", ALT_NOT(X86_FEATURE_APIC_MSRS_FENCE));
-
-where the replacement length is 0. And using repl_len is wrong because
-apply_alternatives() expands the buffer size to the length of the source
-insn that is being patched, by padding it with one-byte NOPs:
-
-	for (; insn_buff_sz < a->instrlen; insn_buff_sz++)
-		insn_buff[insn_buff_sz] = 0x90;
-
-Long story short: pass the length of the original instruction(s) as the
-length of the temporary buffer which to optimize.
-
-Result:
-
-  SMP alternatives: feat: 11*32+27, old: (lapic_next_deadline+0x9/0x50 (ffffffff81061829) len: 6), repl: (ffffffff89b1cc60, len: 0) flags: 0x1
-  SMP alternatives: ffffffff81061829:   old_insn: 0f ae f0 0f ae e8
-  SMP alternatives: ffffffff81061829: final_insn: 90 90 90 90 90 90
-
-=>
-
-  SMP alternatives: feat: 11*32+27, old: (lapic_next_deadline+0x9/0x50 (ffffffff81061839) len: 6), repl: (ffffffff89b1cc60, len: 0) flags: 0x1
-  SMP alternatives: ffffffff81061839: [0:6) optimized NOPs: 66 0f 1f 44 00 00
-  SMP alternatives: ffffffff81061839:   old_insn: 0f ae f0 0f ae e8
-  SMP alternatives: ffffffff81061839: final_insn: 66 0f 1f 44 00 00
-
-Fixes: da8f9cf7e721 ("x86/alternatives: Get rid of __optimize_nops()")
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
----
- arch/x86/kernel/alternative.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index 7555c15b7183..89de61243272 100644
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -372,7 +372,7 @@ static void __apply_relocation(u8 *buf, const u8 * const instr, size_t instrlen,
- void apply_relocation(u8 *buf, const u8 * const instr, size_t instrlen, u8 *repl, size_t repl_len)
- {
- 	__apply_relocation(buf, instr, instrlen, repl, repl_len);
--	optimize_nops(instr, buf, repl_len);
-+	optimize_nops(instr, buf, instrlen);
- }
- 
- /* Low-level backend functions usable from alternative code replacements. */
--- 
-2.43.0
-
+> +			adapter->version = i + 1;
+> +			break;
+> +		}
+> +	}
+> +	if (i < VMXNET3_REV_1) {
+>  		dev_err(&pdev->dev,
+>  			"Incompatible h/w version (0x%x) for adapter\n", ver);
+>  		err = -EBUSY;
 
