@@ -1,218 +1,244 @@
-Return-Path: <linux-kernel+bounces-180196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E80DE8C6B57
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 19:15:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BB608C6B5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 19:18:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 173E01C229F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:15:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AB1A1F24145
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:18:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 161CF38DE9;
-	Wed, 15 May 2024 17:15:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 437A93B2A1;
+	Wed, 15 May 2024 17:18:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="K0eVMjs/";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2IiCYPHD";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="K0eVMjs/";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2IiCYPHD"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KSVXwOoB"
+Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5272C47F69;
-	Wed, 15 May 2024 17:15:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1E024C3CD
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 17:18:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715793309; cv=none; b=c59kX0F9sRqZgadJp6eSk6RyOL0vss056FiXUjK7QxUDE5F1WVDfie51fsiDJGWNzEGc0AwlwADMXGzZ2XdeTNCjVubcImVbzoHZfQdxGjP40GjrUMpfk4dr9DThV9OR91keYPrLWLTgOn0/DNPji8gZxGGq5RaHGb4ibvOcWAU=
+	t=1715793513; cv=none; b=FlghVU5Y3IXCowZo/SezpDzoIX5cBSISDmECB5ikGyYo6mWUWKVu1NIT15m9VJSQgjZPy8p2TaMxt36XHBO3eiDuA1rAL1eCz6NYXJbJ8AmUwK5rwgYW2vZAQ7e/MZ5grqJDIbzgLnuiukhLj+r4a7AYi1ZV/yPX7oizVIhwEic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715793309; c=relaxed/simple;
-	bh=p/MSJ7E3D8J/h+ziDbndYVP90C09UgrDpaGa6w/oFcA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kdv2X+V7GMQp6Xd0vyzD4k+on3RlGpyVdNJz8TpaJntN09/EbF415eMNbOlI828X1YleCz65TyUON/jv1bgEXofLJlB+jYiKQPwZHJBeviVbC/CjjOXsgrUBAkhDkVAum+P8FjmYpiTp53yIEIWdm+5k3rbMXUSR/xqhw82IimM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=K0eVMjs/; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2IiCYPHD; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=K0eVMjs/; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2IiCYPHD; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 825BC20986;
-	Wed, 15 May 2024 17:15:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1715793305; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hdo6u8NmBIZC/iZG3MEh7x2L2hP8V7/hk4kCETY+KHg=;
-	b=K0eVMjs/dx4cQV9iCs3oLesmlKRvb8dK2CcO8hYSPoPFDG32jd/iFWN1okMzFvZty29QFX
-	k57MzuKGcAXLTImJcUwGlIraSKCP+j8G01gnAxeKbApZJ058E0BxFTPYuYNkOKzqWH200v
-	i3y3Q0X/bjf+63YXXwJpjUX7KpSwen8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1715793305;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hdo6u8NmBIZC/iZG3MEh7x2L2hP8V7/hk4kCETY+KHg=;
-	b=2IiCYPHDXrVEhvpPjlIok6A2/vCZwbdkN9v68oiq6GbqwIDLU9vjX8hZ6dKZjpwqD+nN+Z
-	hMGt9VPFsTQNPFBg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1715793305; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hdo6u8NmBIZC/iZG3MEh7x2L2hP8V7/hk4kCETY+KHg=;
-	b=K0eVMjs/dx4cQV9iCs3oLesmlKRvb8dK2CcO8hYSPoPFDG32jd/iFWN1okMzFvZty29QFX
-	k57MzuKGcAXLTImJcUwGlIraSKCP+j8G01gnAxeKbApZJ058E0BxFTPYuYNkOKzqWH200v
-	i3y3Q0X/bjf+63YXXwJpjUX7KpSwen8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1715793305;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hdo6u8NmBIZC/iZG3MEh7x2L2hP8V7/hk4kCETY+KHg=;
-	b=2IiCYPHDXrVEhvpPjlIok6A2/vCZwbdkN9v68oiq6GbqwIDLU9vjX8hZ6dKZjpwqD+nN+Z
-	hMGt9VPFsTQNPFBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 54527136A8;
-	Wed, 15 May 2024 17:15:05 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id YbKEFJntRGZHcgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 15 May 2024 17:15:05 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id D156CA08B5; Wed, 15 May 2024 19:15:03 +0200 (CEST)
-Date: Wed, 15 May 2024 19:15:03 +0200
-From: Jan Kara <jack@suse.cz>
-To: Stephen Brennan <stephen.s.brennan@oracle.com>
-Cc: Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/1] fsnotify: clear PARENT_WATCHED flags lazily
-Message-ID: <20240515171503.loxpdv3xumgbc44w@quack3>
-References: <20240510221901.520546-1-stephen.s.brennan@oracle.com>
- <CAOQ4uxjKdkXLi6w2az9a3dnEkX1-w771ZUz1Lr2ToFFUGvf8Ng@mail.gmail.com>
- <87bk59gsxv.fsf@oracle.com>
+	s=arc-20240116; t=1715793513; c=relaxed/simple;
+	bh=aL2nK/i3BB6X5qzvnzSRJ8P+ee8WR1poImdpf7guM7s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=bB6UFBphFlb+S+ABMpfIbc/1qbMbsCXkaGGeVbSJz7ebl5wkbUtbwOXtX9/W7a+Jll9oX2CaWWtU2eSHbH2Fo3oIuG2toeC7m+AjJSppfowWOUwMOfIPYrbxAT7MPn4HsR8Ajn5YF321YEgPW/PI3EKRm2o/uSxSIz5jPE/tSP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=KSVXwOoB; arc=none smtp.client-ip=209.85.210.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-6f0277767fbso3233549a34.3
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 10:18:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1715793510; x=1716398310; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1kSpx0TF7V8XRznvBi6NaCxQRB6qASfwSCeSNwtytn4=;
+        b=KSVXwOoBbOKvr4dpGSj7ofuhSvhALgzT3M07RBk2KWFu5vt6X9nTqYaHTrT2W/HySO
+         eg18p8DNFKYpvAmG3LVUyEmiaBxONBIWcCkQM79BmbvTvouJUtTpcVi8hbuLVgM/lc3P
+         JqjEDvOMtwsnjulT3SQfrAQNuY/96LGW/xeRI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715793510; x=1716398310;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1kSpx0TF7V8XRznvBi6NaCxQRB6qASfwSCeSNwtytn4=;
+        b=OFPZRYQzfhE37mvDxi2TIIdPmkZ0EP2SUpNkH0Q2nIwsdvMG/KeFb4A442dA/iVOWZ
+         S7PLvXdoR2A8wrXTSYxmaszr5Npme2qVnCc5Ljy6111uxWd/WUbvyyd+OboSOrSsjTOF
+         hUugT/eYh6TOKRT5X0BpcygWnpxGBebAmvQMCT4ENUbnvSYHhSpG47+ZY0z0SRmSmZbe
+         sepT/aEU6au6q2BCeO2HLKAyD7a+Up2pf9rNt05Dw6tN3CLDxLc+Rp5eS/82gKXqVS93
+         p3h1+UiGyOD8q4CGt4xOIyCRKRNKfydDBatLQtA+elqQWKsZkyS5Kmj6+1m6XyXqh0pp
+         /l0A==
+X-Forwarded-Encrypted: i=1; AJvYcCVjMUNAnnsi4FycO1jH7bhn0Y9tkfCKeuVp/apOcB6Oz68sqt+gjtyX0yWnIsQs/2b1G2wZ3YnicgQdoy/yGt5i3Vfi015UGahwGxx0
+X-Gm-Message-State: AOJu0YzZluaBpfdeL73HaR4i8jqAEjtZvxaA8ydA3mFzVwL15B+cohxh
+	wN29KBrztmEKuJneGM1LugGoQHYVIJqGr64SemPFDNNW4pCLsY0sRke3mox3kk9iyy4fqo2g04a
+	T+yrU7M4FtWOpgzh7CRFb7XfEkbFB0NLjzEC/
+X-Google-Smtp-Source: AGHT+IFvQPJjrTXcLK6Kyq6tdjLmP8vEcUBjvGZaxJF6agN8oYjhXCIwg9mxXl8wWfcwew7PtMbJ6rHwa7uDq/2mAtQ=
+X-Received: by 2002:a05:6870:4692:b0:23c:eddc:65a2 with SMTP id
+ 586e51a60fabf-2417bb8119cmr18599425fac.43.1715793510070; Wed, 15 May 2024
+ 10:18:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87bk59gsxv.fsf@oracle.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_CC(0.00)[gmail.com,suse.cz,vger.kernel.org];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -3.80
-X-Spam-Flag: NO
+References: <20240415163527.626541-1-jeffxu@chromium.org> <20240514104646.e6af4292f19b834777ec1e32@linux-foundation.org>
+ <d46qb2rkfsagw22u6ishgagsvsmqsu5nrmf5up5mhi6xrwolyt@6ir6g2v63of7>
+In-Reply-To: <d46qb2rkfsagw22u6ishgagsvsmqsu5nrmf5up5mhi6xrwolyt@6ir6g2v63of7>
+From: Jeff Xu <jeffxu@chromium.org>
+Date: Wed, 15 May 2024 10:18:17 -0700
+Message-ID: <CABi2SkXBpL8qdSMTwe5njWasqidsWDkhme6xw2_38JARrhPRwA@mail.gmail.com>
+Subject: Re: [PATCH v10 0/5] Introduce mseal
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	jeffxu@chromium.org, keescook@chromium.org, jannh@google.com, 
+	sroettger@google.com, willy@infradead.org, gregkh@linuxfoundation.org, 
+	torvalds@linux-foundation.org, usama.anjum@collabora.com, corbet@lwn.net, 
+	surenb@google.com, merimus@google.com, rdunlap@infradead.org, 
+	jeffxu@google.com, jorgelo@chromium.org, groeck@chromium.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-mm@kvack.org, pedro.falcato@gmail.com, dave.hansen@intel.com, 
+	linux-hardening@vger.kernel.org, deraadt@openbsd.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon 13-05-24 17:04:12, Stephen Brennan wrote:
-> Amir Goldstein <amir73il@gmail.com> writes:
-> 
-> > On Fri, May 10, 2024 at 6:21 PM Stephen Brennan
-> > <stephen.s.brennan@oracle.com> wrote:
-> >>
-> >> Hi Amir, Jan, et al,
+On Tue, May 14, 2024 at 2:28=E2=80=AFPM Liam R. Howlett <Liam.Howlett@oracl=
+e.com> wrote:
+>
+> * Andrew Morton <akpm@linux-foundation.org> [240514 13:47]:
+> > On Mon, 15 Apr 2024 16:35:19 +0000 jeffxu@chromium.org wrote:
 > >
-> > Hi Stephen,
+> > > This patchset proposes a new mseal() syscall for the Linux kernel.
 > >
-> >>
-> >> It's been a while since I worked with you on the patch series[1] that aimed to
-> >> make __fsnotify_update_child_dentry_flags() a sleepable function. That work got
-> >> to a point that it was close to ready, but there were some locking issues which
-> >> Jan found, and the kernel test robot reported, and I didn't find myself able to
-> >> tackle them in the amount of time I had.
-> >>
-> >> But looking back on that series, I think I threw out the baby with the
-> >> bathwater. While I may not have resolved the locking issues associated with the
-> >> larger change, there was one patch which Amir shared, that probably resolves
-> >> more than 90% of the issues that people may see. I'm sending that here, since it
-> >> still applies to the latest master branch, and I think it's a very good idea.
-> >>
-> >> To refresh you, the underlying issue I was trying to resolve was when
-> >> directories have many dentries (frequently, a ton of negative dentries), the
-> >> __fsnotify_update_child_dentry_flags() operation can take a while, and it
-> >> happens under spinlock.
-> >>
-> >> Case #1 - if the directory has tens of millions of dentries, then you could get
-> >> a soft lockup from a single call to this function. I have seen some cases where
-> >> a single directory had this many dentries, but it's pretty rare.
-> >>
-> >> Case #2 - suppose you have a system with many CPUs and a busy directory. Suppose
-> >> the directory watch is removed. The caller will begin executing
-> >> __fsnotify_update_child_dentry_flags() to clear the PARENT_WATCHED flag, but in
-> >> parallel, many other CPUs could wind up in __fsnotify_parent() and decide that
-> >> they, too, must call __fsnotify_update_child_dentry_flags() to clear the flags.
-> >> These CPUs will all spin waiting their turn, at which point they'll re-do the
-> >> long (and likely, useless) call. Even if the original call only took a second or
-> >> two, if you have a dozen or so CPUs that end up in that call, some CPUs will
-> >> spin a long time.
-> >>
-> >> Amir's patch to clear PARENT_WATCHED flags lazily resolves that easily. In
-> >> __fsnotify_parent(), if callers notice that the parent is no longer watching,
-> >> they merely update the flags for the current dentry (not all the other
-> >> children). The __fsnotify_recalc_mask() function further avoids excess calls by
-> >> only updating children if the parent started watching. This easily handles case
-> >> #2 above. Perhaps case #1 could still cause issues, for the cases of truly huge
-> >> dentry counts, but we shouldn't let "perfect" get in the way of "good enough" :)
-> >>
+> > I have not moved this into mm-stable for a 6.10 merge.  Mainly because
+> > of the total lack of Reviewed-by:s and Acked-by:s.
 > >
-> > The story sounds good :)
-> > Only thing I am worried about is: was case #2 tested to prove that
-> > the patch really imploves in practice and not only in theory?
+> > The code appears to be stable enough for a merge.
 > >
-> > I am not asking that you write a test for this or even a reproducer
-> > just evidence that you collected from a case where improvement is observed
-> > and measurable.
-> 
-> I had not done so when you sent this, but I should have done it
-> beforehand. In any case, now I have. I got my hands on a 384-CPU machine
-> and extended my negative dentry creation tool so that it can run a
-> workload in which it constantly runs "open()" followed by "close()" on
-> 1000 files in the same directory, per thread (so a total of 384,000
-> files, a large but not unreasonable amount of dentries).
-> 
-> Then I simply run "inotifywait /path/to/dir" a few times. Without the
-> patch, softlockups are easy to reproduce. With the patch, I haven't been
-> able to get a single soft lockup.
+> > It's awkward that we're in conference this week, but I ask people to
+> > give consideration to the desirability of moving mseal() into mainline
+> > sometime over the next week, please.
+>
+> I have looked at this code a fair bit at this point, but I wanted to get
+> some clarification on the fact that we now have mseal doing checks
+> upfront while others fail in the middle.
+>
+> mbind:
+>                 /*
+>                  * If any vma in the range got policy other than MPOL_BIN=
+D
+>                  * or MPOL_PREFERRED_MANY we return error. We don't reset
+>                  * the home node for vmas we already updated before.
+>                  */
+>
+>
+> mlock:
+> mlock will abort (through one path), when it sees a gap in mapped areas,
+> but will not undo what it did so far.
+>
+> mlock_fixup can fail on vma_modify_flags(), but previous vmas are not
+> updated.  This can fail due to allocation failures on the splitting of
+> VMAs (or failed merging).  The allocations could happen before, but this
+> is more work (but doable, no doubt).
+>
+> userfaultfd is... complicated.
+>
+> And even munmap() can fail and NOT undo the previous split(s).
+> mmap.c:
+>                         /*
+>                          * If userfaultfd_unmap_prep returns an error the=
+ vmas
+>                          * will remain split, but userland will get a
+>                          * highly unexpected error anyway. This is no
+>                          * different than the case where the first of the=
+ two
+>                          * __split_vma fails, but we don't undo the first
+>                          * split, despite we could. This is unlikely enou=
+gh
+>                          * failure that it's not worth optimizing it for.
+>                          */
+>
+>
+> But this one is different form the others..
+> madvise:
+>         /*
+>          * If the interval [start,end) covers some unmapped address
+>          * ranges, just ignore them, but return -ENOMEM at the end.
+>          * - different from the way of handling in mlock etc.
+>          */
+>
+Thanks.
 
-Thanks for the patch and for testing! I've added your patch to my tree (not
-for this merge window though) with a cosmetic tweak that instead of
-fsnotify_update_child_dentry_flags() we just have
-fsnotify_clear_child_dentry_flag() and fsnotify_set_children_dentry_flags()
-functions to make naming somewhat clearer.
+The current mseal patch does up-front checking in two different situations:
+1 when applying mseal()
+   Checking for unallocated memory in the given memory range.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2 When checking mseal flag during mprotect/unmap/remap/mmap
+  Checking mseal flag is placed ahead of the main business logic, and
+treated the same as input arguments check.
+
+> Either we are planning to clean this up and do what we can up-front, or
+> just move the mseal check with the rest.  Otherwise we are making a
+> larger mess with more technical dept for a single user, and I think this
+> is not an acceptable trade-off.
+>
+The sealing use case  is different  from regular mm API and this
+didn't create additional technical debt.  Please allow me to explain
+those separately.
+
+The main use case and threat model is that an attacker exploits a
+vulnerability and has arbitrary write access to the process, and can
+manipulate some arguments to syscalls from some threads. Placing the
+checking of mseal flag ahead of mprotect main business logic is
+stricter compared with doing it in-place. It is meant to be harder for
+the attacker, e.g. blocking the  opportunistically attempt of munmap
+by modifying the size argument.
+
+The legit app code won't call mprotect/munmap on sealed memory.  It is
+irrelevant for both precheck and in-place check approaches, from a
+legit app code point of view.
+
+The regular mm API (other than sealing)'s user-case is  for legit
+code, a legit code knows the whole picture of memory mappings and is
+unlikely to rely on the opportunist return.
+
+The user-cases are different, I hope we look into the difference and
+not force them into one direction.
+
+About tech debt, code-wise , placing pre-check ahead of the main
+business logic of mprotect/munmap APIs, reduces the size of code
+change, and is easy to carry from release to release, or backporting.
+
+But let's compare  the alternatives - doing it in-place without precheck.
+- munmap
+munmap calls arch_unmap(mm, start, end) ahead of main business logic,
+the checking of sealing flags would need to be architect specific. In
+addition, if arch_unmap return fails due to sealing, the code should
+still proceed, till the main business logic fails again.
+
+- mremap/mmap
+The check of sealing would be scattered, e.g. checking the src address
+range in-place, dest arrange in-place, unmap in-place, etc. The code
+is complex and prone to error.
+
+-mprotect/madvice
+Easy to change to in-place.
+
+- mseal
+mseal() check unallocated memory in the given memory range in the
+pre-check. Easy to change to in-place (same as mprotect)
+
+The situation in munmap and mremap/mmap make in-place checks less desirable=
+ imo.
+
+> Considering the benchmarks that were provided, performance arguments
+> seem like they are not a concern.
+>
+Yes. Performance is not a factor in making a design choice on this.
+
+> I want to know if we are planning to sort and move existing checks if we
+> proceed with this change?
+>
+I would argue that we should not change the existing mm code. mseal is
+new and no backward compatible problem. That is not the case for
+mprotect and other mm api. E.g. if we were to change mprotect to add a
+precheck for memory gap, some badly written application might break.
+
+The 'atomic' approach is also really difficult to enforce to the whole
+MM area, mseal() doesn't claim it is atomic. Most regular mm API might
+go deeper in mm data structure to update page tables and HW, etc. The
+rollback in handling those error cases, and performance cost. I'm not
+sure if the benefit is worth the cost. However, atomicity is another
+topic to discuss unrelated to mm sealing.  The current design of mm
+sealing is due to its use case and practical coding reason.
+
+Thanks
+-Jeff
+
+> Thanks,
+> Liam
 
