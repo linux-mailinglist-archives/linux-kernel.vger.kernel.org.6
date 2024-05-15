@@ -1,187 +1,125 @@
-Return-Path: <linux-kernel+bounces-180392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40F3A8C6DD2
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 23:39:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D955F8C6DD5
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 23:40:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADA581F22593
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 21:39:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 149301C21D68
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 21:40:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23BE115B54E;
-	Wed, 15 May 2024 21:39:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0278615B567;
+	Wed, 15 May 2024 21:40:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FvMan9CS"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gkxEuH4c"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D51B61FC4;
-	Wed, 15 May 2024 21:39:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2936F15B544;
+	Wed, 15 May 2024 21:40:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715809189; cv=none; b=E9T4cV6FKo8FQECNNWkyeCmgPZ2hLf3jdCFNAydRFun6zcf7xbKqoRO8ki/Ve+mm3//yxm1N/tbsal/D7ntgW3I+OZI+L/MVR+tz6hDOCmtvBoPRU7MAHapeo06mCwuL+fT2/36L8wJ5lKAqD8KeclLnuHt5Jmj1AfThCeO/ue4=
+	t=1715809214; cv=none; b=MBnodDhG/02sUALg/8mP1W9s1XmgqVb2AfWdQOMNIzIX1nIkn0bgEsZDHKVSHMoOtshkNDBwfI5RSe4qme1rbthEuv+YX1ZCfb+9qzk0yFyWrPk5B8ICqj1THWGWxNkEKmio6iwt3XCLLiY8fCsGXQ9rEPa1O3C4gu++wW/RphY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715809189; c=relaxed/simple;
-	bh=dqlLpsKrsm5SEmrZ7kdUr2WtIzsxXW0VZCTTFo3Mkyk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=GJ4cNbFqTcaRK7EL1HbU0bopTo5u0cOMsqnSq2SfmLPgKYGpdg/7Qlr24yxCkYban6bD3RLysU6IM22anxhQnFRW/lnSdqIOIXnzsx8E1egbpTlKSadbrWfaLH3qYDBruZarpnnIr/43tk9z26RWL/Vlly8fIdTWDUJA3JJwCEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FvMan9CS; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-6f4e59081e6so4369875b3a.3;
-        Wed, 15 May 2024 14:39:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715809187; x=1716413987; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :message-id:subject:cc:to:from:date:sender:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=huR6E6DplpuTonlyO5Iy16lkmZdsmdBUeUabW5Y3K3w=;
-        b=FvMan9CSl4eyZg387Jvu6xfvR6nYAGYO0lm/E1IoqPgzYbHJLcyyalj/gAMwuiSAiX
-         msgE5IKIppSrqRgX2YtpHLlX8hXuRxiJeGvmYJbpZi2w8CGDz1dWY+zCZgR/hiHNOCF4
-         5KlUEM7NehIbZzctyFImw7POgrrWdqetYVmaAGlHcFmrqLusXztGi8sbaUOvLC63MhR/
-         yGy/oXEuOwm8BcihNYUB6lFDWtDwQF+qMmJcMdn7gD2nRxSUrKn6TXJkyNolM+m7maGQ
-         XmIcJmdN8DRIMKoExbqD9r+3Nx5pMbomWBFF2ARY/h5FE4T2HmLeKoOfRNxlzvlr4IxF
-         6r8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715809187; x=1716413987;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :message-id:subject:cc:to:from:date:sender:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=huR6E6DplpuTonlyO5Iy16lkmZdsmdBUeUabW5Y3K3w=;
-        b=aHECqnZBZ6juV7zDda5m0J5Y+N9zsMWpKQQ7c2qcY0mgTc/vQtUtpYNdX/YAioVXu3
-         u2T6yAhQwKlukteBamn/Nin84wNWJlAqzOovgnxMMWHOFhEQZLMm5uD+X0FoUxNquv6o
-         r8tvI+B/7N5rbx4Q0c5feOum000bBrNVuCm39Yl0V4E8xiLZuXTcseTy7rYymF92ZBjU
-         hYvzFFSD/c2ZB/k/4mx+Td/scxRsDBvZaVZ5WlS9pLqMFF19OD0QJvsRQPSQ8lv8Ln52
-         7uH4OzpqmR4ibJnuxKTmEz/1KxlWLfp+ZS6sn8eDeicXa+53nZpZJLPHHWuM3rAZITaU
-         d1gw==
-X-Forwarded-Encrypted: i=1; AJvYcCWrE76iKXPHaa3h2lrGes7rNEPPhQO0BwbcsGjKFR4JZrrv4rj2fZ4omsbzvbZlhMN/idr6CwxYyjJ7WaSvmFFydIMGBdkPfA==
-X-Gm-Message-State: AOJu0Yy8zhv3s42Y/vLUZxlcNbveDU4GB/CGnQarkKKsZcQefbCxW6sm
-	Or4RAW1xzWLU8oKyAs2KX6ZW8c6p6YVsNK6CRMZl1mQcWsDduIDamT4XYw==
-X-Google-Smtp-Source: AGHT+IFCHBqIgZKQVk4jCPT4G6f0osnOzphta6SNS9jqOuqn2m6WWcTp4RwLa3Ff0RbADR8f12Eo0g==
-X-Received: by 2002:a05:6a00:2e11:b0:6f3:e6dc:5484 with SMTP id d2e1a72fcca58-6f4e029bddemr19842758b3a.6.1715809186908;
-        Wed, 15 May 2024 14:39:46 -0700 (PDT)
-Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2ae2fcasm11605735b3a.123.2024.05.15.14.39.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 May 2024 14:39:46 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Wed, 15 May 2024 11:39:45 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-	Zefan Li <lizefan.x@bytedance.com>,
-	Johannes Weiner <hannes@cmpxchg.org>
-Subject: [GIT PULL] cgroup: Changes for v6.10
-Message-ID: <ZkUrofC2xdDndwxO@slm.duckdns.org>
+	s=arc-20240116; t=1715809214; c=relaxed/simple;
+	bh=ZA9yOMn+MhqqxmDcjB9tY8qraread9zVz7DmZffV1hI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pp+Py+wPsP96NYJ4LYBCiPmhFZblS0uVbdXRMBxykTspvPKh4gpOl1hXpEdalt/rlRMnNTz4q26oWMFNZGbULjuM+Ya+YMYDZgCpcejY+ZML2ENVxhLUNMQL0g1sL+qtlHdls4akogrmQn76+mvude8J9pUoX8F3k3cDuUnb+PQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gkxEuH4c; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715809211; x=1747345211;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ZA9yOMn+MhqqxmDcjB9tY8qraread9zVz7DmZffV1hI=;
+  b=gkxEuH4cFmcl9L/MOk8gqBuzejFgUk6txd5BSAoVJRCsx0sfnHlXAsqi
+   j9PcE8pb6/1cryvuOt0ZcV1cn0YttH6e82U/u4U0gvb8mQxQXGbkkZVhK
+   TwdTTnf7bcEdGx1Gf4VDXM/qCu9f6iJnkmgo8S9F2CkXjTTdgUylVsiXe
+   b/c4GvdNAu19Lt8ftf7WYrUiyYvyd9lA71JOxpDWpEO4jTMSqTJNLNVuR
+   BmHbi5bycNrM+hRw0fAnn2JHS5zKtWFL5jccjokZ+DRehdcle1MOaPTt4
+   5DutPLyQVExrY1eVLDH4orFQjyVNgXpttu4uuS+RqaPMSQhQFApC2rOaV
+   A==;
+X-CSE-ConnectionGUID: 3tMTA3C7TUin1IsopPJyKQ==
+X-CSE-MsgGUID: OVdTU0qRSq2gkbNjOhZMXQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="29377285"
+X-IronPort-AV: E=Sophos;i="6.08,162,1712646000"; 
+   d="scan'208";a="29377285"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 14:40:10 -0700
+X-CSE-ConnectionGUID: AnnXY3RQT/aRXH/EpxdQAg==
+X-CSE-MsgGUID: j/DfK47aQCK74OmwZ7Bw2A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,162,1712646000"; 
+   d="scan'208";a="35976151"
+Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 15 May 2024 14:40:09 -0700
+Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s7MM1-000DI7-2y;
+	Wed, 15 May 2024 21:40:05 +0000
+Date: Thu, 16 May 2024 05:39:48 +0800
+From: kernel test robot <lkp@intel.com>
+To: Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+	ezequiel@vanguardiasur.com.ar, p.zabel@pengutronix.de,
+	mchehab@kernel.org, nicolas.dufresne@collabora.com
+Cc: oe-kbuild-all@lists.linux.dev, linux-media@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kernel@collabora.com,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>
+Subject: Re: [PATCH] media: verisilicon: Add reference buffers compression
+Message-ID: <202405160544.3hBso24H-lkp@intel.com>
+References: <20240514162054.294002-1-benjamin.gaignard@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240514162054.294002-1-benjamin.gaignard@collabora.com>
 
-The following changes since commit 4cece764965020c22cff7665b18a012006359095:
+Hi Benjamin,
 
-  Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
+kernel test robot noticed the following build warnings:
 
-are available in the Git repository at:
+[auto build test WARNING on media-tree/master]
+[also build test WARNING on pza/reset/next linuxtv-media-stage/master linus/master v6.9 next-20240515]
+[cannot apply to pza/imx-drm/next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git/ tags/cgroup-for-6.10
+url:    https://github.com/intel-lab-lkp/linux/commits/Benjamin-Gaignard/media-verisilicon-Add-reference-buffers-compression/20240515-002208
+base:   git://linuxtv.org/media_tree.git master
+patch link:    https://lore.kernel.org/r/20240514162054.294002-1-benjamin.gaignard%40collabora.com
+patch subject: [PATCH] media: verisilicon: Add reference buffers compression
+config: alpha-randconfig-r133-20240515 (https://download.01.org/0day-ci/archive/20240516/202405160544.3hBso24H-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 13.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20240516/202405160544.3hBso24H-lkp@intel.com/reproduce)
 
-for you to fetch changes up to 21c38a3bd4ee3fb7337d013a638302fb5e5f9dc2:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405160544.3hBso24H-lkp@intel.com/
 
-  cgroup/rstat: add cgroup_rstat_cpu_lock helpers and tracepoints (2024-05-14 09:43:17 -1000)
+sparse warnings: (new ones prefixed by >>)
+>> drivers/media/platform/verisilicon/hantro_hevc.c:28:6: sparse: sparse: symbol 'hevc_use_compression' was not declared. Should it be static?
 
-----------------------------------------------------------------
-cgroup: Changes for v6.10
+vim +/hevc_use_compression +28 drivers/media/platform/verisilicon/hantro_hevc.c
 
-- The locking around cpuset hotplug processing has always been a bit of mess
-  which was worked around by making hotplug processing asynchronous. The
-  asynchronity isn't great and led to other issues. We tried to make the
-  behavior synchronous a while ago but that led to lockdep splats. Waiman
-  took another stab at cleaning up and making it synchronous. The patch has
-  been in -next for well over a month and there haven't been any complaints,
-  so fingers crossed.
+    27	
+  > 28	bool hevc_use_compression;
+    29	module_param_named(hevc_use_compression, hevc_use_compression, bool, 0644);
+    30	MODULE_PARM_DESC(hevc_use_compression,
+    31			 "Use reference frame compression for HEVC");
+    32	
 
-- Tracepoints added to help understanding rstat lock contentions.
-
-- A bunch of minor changes - doc updates, code cleanups and selftests.
-
-----------------------------------------------------------------
-Edward Liaw (1):
-      selftests/cgroup: Drop define _GNU_SOURCE
-
-I Hsin Cheng (1):
-      docs: cgroup-v1: Fix description for css_online
-
-Illia Ostapyshyn (1):
-      docs: cgroup-v1: Update page cache removal functions
-
-Jesper Dangaard Brouer (3):
-      cgroup/rstat: add cgroup_rstat_lock helpers and tracepoints
-      cgroup/rstat: desc member cgrp in cgroup_rstat_flush_release
-      cgroup/rstat: add cgroup_rstat_cpu_lock helpers and tracepoints
-
-John Hubbard (4):
-      selftests/cgroup: fix clang build failures for abs() calls
-      selftests/cgroup: fix clang warnings: uninitialized fd variable
-      selftests/cgroup: cpu_hogger init: use {} instead of {NULL}
-      selftests/cgroup: fix uninitialized variables in test_zswap.c
-
-Michal Koutný (1):
-      cgroup/pids: Remove superfluous zeroing
-
-Tianchen Ding (1):
-      selftests: cgroup: skip test_cgcore_lesser_ns_open when cgroup2 mounted without nsdelegate
-
-Waiman Long (4):
-      cgroup, docs: Clarify limitation of RT processes with cgroup v2 cpu controller
-      cgroup/cpuset: Make cpuset hotplug processing synchronous
-      cgroup/cpuset: Add test_cpuset_v1_hp.sh
-      cgroup/cpuset: Fix incorrect top_cpuset flags
-
-Xiu Jianfeng (8):
-      cgroup_freezer: update comment for freezer_css_online()
-      cgroup: don't call cgroup1_pidlist_destroy_all() for v2
-      docs, cgroup: add entries for pids to cgroup-v2.rst
-      cgroup, legacy_freezer: update comment for freezer_css_offline()
-      cgroup: Avoid unnecessary looping in cgroup_no_v1()
-      cgroup/cpuset: Statically initialize more members of top_cpuset
-      cgroup/cpuset: Avoid clearing CS_SCHED_LOAD_BALANCE twice
-      cgroup/cpuset: Remove outdated comment in sched_partition_write()
-
- Documentation/admin-guide/cgroup-v1/cgroups.rst    |   2 +-
- Documentation/admin-guide/cgroup-v1/memcg_test.rst |   2 +-
- Documentation/admin-guide/cgroup-v2.rst            |  31 +++-
- include/linux/cgroup.h                             |   2 +-
- include/linux/cpuset.h                             |   3 -
- include/trace/events/cgroup.h                      |  92 ++++++++++++
- kernel/cgroup/cgroup-v1.c                          |   1 +
- kernel/cgroup/cgroup.c                             |   3 +-
- kernel/cgroup/cpuset.c                             | 156 ++++++++-------------
- kernel/cgroup/legacy_freezer.c                     |   5 +-
- kernel/cgroup/pids.c                               |   2 -
- kernel/cgroup/rstat.c                              | 118 +++++++++++++---
- kernel/cpu.c                                       |  48 -------
- kernel/power/process.c                             |   2 -
- tools/testing/selftests/cgroup/Makefile            |   2 +-
- tools/testing/selftests/cgroup/cgroup_util.c       |  11 +-
- tools/testing/selftests/cgroup/cgroup_util.h       |   4 +-
- tools/testing/selftests/cgroup/test_core.c         |   9 +-
- tools/testing/selftests/cgroup/test_cpu.c          |   8 +-
- tools/testing/selftests/cgroup/test_cpuset.c       |   2 +-
- .../testing/selftests/cgroup/test_cpuset_v1_hp.sh  |  46 ++++++
- tools/testing/selftests/cgroup/test_freezer.c      |   2 +-
- .../testing/selftests/cgroup/test_hugetlb_memcg.c  |   4 +-
- tools/testing/selftests/cgroup/test_kill.c         |   2 +-
- tools/testing/selftests/cgroup/test_kmem.c         |   8 +-
- tools/testing/selftests/cgroup/test_memcontrol.c   |   8 +-
- tools/testing/selftests/cgroup/test_zswap.c        |   8 +-
- 27 files changed, 358 insertions(+), 223 deletions(-)
- create mode 100755 tools/testing/selftests/cgroup/test_cpuset_v1_hp.sh
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
