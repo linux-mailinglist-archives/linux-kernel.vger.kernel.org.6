@@ -1,126 +1,111 @@
-Return-Path: <linux-kernel+bounces-180028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C08DE8C6904
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:51:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8A188C6909
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:53:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C26428378E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 14:51:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEED81C21489
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 14:53:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35FD115574D;
-	Wed, 15 May 2024 14:50:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22B6215573B;
+	Wed, 15 May 2024 14:53:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zbx7+7IS"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qteS1gDj"
+Received: from out-175.mta1.migadu.com (out-175.mta1.migadu.com [95.215.58.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2778155723
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 14:50:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A86E957CA1
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 14:53:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715784653; cv=none; b=BxoBKcIOCUicEDeWZ8rYVGMhG+l3s9K12PSQH6+sggjFWh1mJHI0v44TXRxvpKdZkQ1Zo1gzqT4VI5yWq7Apw/zwHrs9abD7BgsPO6uGimIZSbC0laR/pHOfng6ZzXGIgf3Vm4uMebAb1MHgojyu7Vgkj/SzYKLSEA1shuDK+Vs=
+	t=1715784793; cv=none; b=InSDZqh6ItK9dTugtALjlIFzOh6iWkG5hM5iwTVxUEmYB07XG/CqCimLq2+fklHvymFX8X0Az7Vin1ao7NNWaypnxMQr7i8kx6hQnNCa+SgFP1mnw/5kzGW/oB/YcY1cuyab4CrvNrUaZH9UO2A2S8kgZ2k5jHHBTKT4MPMxXtQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715784653; c=relaxed/simple;
-	bh=5TCp5CXvuptPmYaBhT5jPeD5TXNBV/1+PLyuz7yUB3E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tuWkPgNSGa0PX9Ua/K1tQheCDDkSOZk+ZDl3u+1l2ugGqj2b6mcIYqGndWtSTNIHM/fF/3BK0CyITVbmNr8qi0/hTNS0RoKQoqqHyfgGarYd9q4lFo0YCM/FldA6UK1LAJ4/pcQnMFmwwznrWg/5uny5XG018qwoXk+4QyQnGwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zbx7+7IS; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4200ee78f33so34201235e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 07:50:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715784650; x=1716389450; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Mm2oQckW7dl+Jy0xL0CP8kgBBxNAcYsRe32+op0a91g=;
-        b=zbx7+7ISHCCqkG5AC7HaiHzS71Te2zaBV42OUjPY+ceSz5DlR3aljW28eUu26s/wPk
-         KHGaig/Rns+tZjWhTmXWRMkCxoVu3iduVgLpiT9YxmJGyrLGCJESQ8ESQ03you9uuwsE
-         hxRZMelNgjxZ6NbH9BvbjrC5Zlywz9P0VmzSTst62t0bJFxXBzXiUZen0RypWLwtUTqB
-         mdN0+yUeEUEblHWb5QwFgs1Ep2AAYan2XKQmnida/kjxA3P8gbZVG0ZvFjLa7h0zcIl5
-         uq9t3KsXbcisEjDA2zJ7o68MiE0VsbhV9DFlNHLDBEJo1n6GOT3OEBfi/kHknyABvNd6
-         Qq/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715784650; x=1716389450;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Mm2oQckW7dl+Jy0xL0CP8kgBBxNAcYsRe32+op0a91g=;
-        b=f1caeDmQ+FERVBhrjD7b2KsCKbA8/+tsAfMR8ZuR8aOqFBw+D8/bAGDrtSKpz8uHjv
-         a8UMjfCIOjuVPe6y8LEAyCV/grkKwwZ6tGpkjD5FGqAmUuVJVu1cMwrGk1C2L4XbkWoo
-         K2lf2fpgcVD/ZSwzV+8413GOyqpj+Cz6XWNvNmNQHdG3FOkL6d9yotAgGV2pnWdgW4x+
-         ZxRT57iigqA8eROd8W/0Og/+AP7SDEac0C1srpv4wlh3NdzyHeQk+70qozvTxPg0davL
-         qW0mnHu2mSk+8CyilXBVO2edW7JUL10d8sHGWPfQkLzayPPv36pn9qiahMnddGm8QDkG
-         kPuw==
-X-Forwarded-Encrypted: i=1; AJvYcCXINwjSSdDhWOwdr53dxf8bmJkYObasoeMhB6QhBDYC7e35tlUAWddpwQFAV3dfAIftsB9uE9oNf0e/x0TcR5lKHK9RAQIv9VZ5cbJj
-X-Gm-Message-State: AOJu0YxTDfWY99vj6rSLMjHQC57TAoStFw1USS3jOxPuU2umtNqFx+6m
-	ODvH3giAItqMvL3qAqk67wDa2cUmorqfORxyRnQwXdSxvUGeUE5kp7dFmMwYZjw=
-X-Google-Smtp-Source: AGHT+IHc88s0jQf5xDyEKdeY62SQPNAtebdb3EiQmKtKM1DRT1aZC4sH7hbL/Wt0Qqg56kktMNhVNQ==
-X-Received: by 2002:a05:600c:3502:b0:41f:d4e1:5abc with SMTP id 5b1f17b1804b1-41fea927ea9mr107194485e9.8.1715784649874;
-        Wed, 15 May 2024 07:50:49 -0700 (PDT)
-Received: from localhost ([149.14.240.163])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41ff063d8cesm202702315e9.46.2024.05.15.07.50.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 May 2024 07:50:49 -0700 (PDT)
-Date: Wed, 15 May 2024 16:50:48 +0200
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Jason Wang <jasowang@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	virtualization@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net-next] virtio_net: Fix error code in
- __virtnet_get_hw_stats()
-Message-ID: <1682873e-eb14-48e4-9ac6-c0a69ea62959@suswa.mountain>
-References: <3762ac53-5911-4792-b277-1f1ead2e90a3@moroto.mountain>
- <20240512115645-mutt-send-email-mst@kernel.org>
+	s=arc-20240116; t=1715784793; c=relaxed/simple;
+	bh=rRYOEWpUPnx9yP+R+8XJ107O/AntMZiGuDGOA1YFrec=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P7grQuLaq6oINyOqPBb6knn/aQylkdTYejun3GgVrPrfEysIEBo9bSz1IImsUj+hkn4nVemCcICDJ9tlj94Cwx897azmZqUx/OjhcdQYeQOjJCj+0DndNhTIzq7AAsN5RNePAy/0nZJ7fof00DZ9orl+DByC4uZ4K4u2MvvaTa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qteS1gDj; arc=none smtp.client-ip=95.215.58.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <d394ee32-4fa4-41a8-a5ca-c1c7f77f44d2@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1715784788;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ji80YrVOn0CdzRUEfTOoKRvKIhm1LRO8qrYRQvN0VUA=;
+	b=qteS1gDjKTwRJ40kT2ZSurGfr/ETwkhm8guWIa6oZqwY7EDyJEr6UzG8W8ZGp3Qumefycs
+	UaCABkvUzDSq3qQ1DQY1eg6yYRJAsrg7GtTEK3HhglmI19LgDsYeiytemH6wwFB/uDIhVu
+	5/mw5uxLSUMwe+JNYEdxDiVR5NwoTxk=
+Date: Wed, 15 May 2024 22:53:00 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240512115645-mutt-send-email-mst@kernel.org>
+Subject: Re: [PATCH 0/2] drm/bridge: Add 'struct device *' field to the
+ drm_bridge structure
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20240514154045.309925-1-sui.jingfeng@linux.dev>
+ <20240514-scarlet-corgi-of-efficiency-faf2bb@penduick>
+ <c44480ab-8d6b-4334-8eba-83db9b30ff1a@linux.dev>
+ <20240515-fair-satisfied-myna-480dea@penduick>
+Content-Language: en-US, en-AU
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sui Jingfeng <sui.jingfeng@linux.dev>
+In-Reply-To: <20240515-fair-satisfied-myna-480dea@penduick>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Sun, May 12, 2024 at 12:01:55PM -0400, Michael S. Tsirkin wrote:
-> On Fri, May 10, 2024 at 03:50:45PM +0300, Dan Carpenter wrote:
-> > The virtnet_send_command_reply() function returns true on success or
-> > false on failure.  The "ok" variable is true/false depending on whether
-> > it succeeds or not.  It's up to the caller to translate the true/false
-> > into -EINVAL on failure or zero for success.
-> > 
-> > The bug is that __virtnet_get_hw_stats() returns false for both
-> > errors and success.  It's not a bug, but it is confusing that the caller
-> > virtnet_get_hw_stats() uses an "ok" variable to store negative error
-> > codes.
+Hi,
+
+
+On 5/15/24 22:30, Maxime Ripard wrote:
+> On Wed, May 15, 2024 at 12:53:33AM +0800, Sui Jingfeng wrote:
+>> Hi,
+>>
+>> On 2024/5/15 00:22, Maxime Ripard wrote:
+>>> Hi,
+>>>
+>>> On Tue, May 14, 2024 at 11:40:43PM +0800, Sui Jingfeng wrote:
+>>>> Because a lot of implementations has already added it into their drived
+>>>> class, promote it into drm_bridge core may benifits a lot. drm bridge is
+>>>> a driver, it should know the underlying hardware entity.
+>>> Is there some actual benefits, or is it theoretical at this point?
+>>
+>>
+>> I think, DRM bridge drivers could remove the 'struct device *dev'
+>> member from their derived structure. Rely on the drm bridge core
+>> when they need the 'struct device *' pointer.
 > 
-> The bug is ... It's not a bug ....
+> Sure, but why do we need to do so?
 > 
-> I think what you are trying to say is that the error isn't
-> really handled anyway, except for printing a warning,
-> so it's not a big deal.
+> The other thread you had with Jani points out that it turns out that
+> things are more complicated than "every bridge driver has a struct
+> device anyway", it creates inconsistency in the API (bridges would have
+> a struct device, but not other entities), and it looks like there's no
+> use for it anyway.
 > 
-> Right?
+> None of these things are deal-breaker by themselves, but if there's only
+> downsides and no upside, it's not clear to me why we should do it at all.
 > 
 
-No, I'm sorry, that was confusing.  The change to __virtnet_get_hw_stats()
-is a bugfix but the change to virtnet_get_hw_stats() was not a bugfix.
-I viewed this all as really one thing, because it's cleaning up the
-error codes which happens to fix a bug.  It seems very related.  At the
-same time, I can also see how people would disagree.
 
-I'm traveling until May 23.  I can resend this.  Probably as two patches
-for simpler review.
+It can reduce boilerplate.
 
-regards,
-dan carpenter
- 
+
+> Maxime
+
+-- 
+Best regards
+Sui
 
