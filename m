@@ -1,131 +1,155 @@
-Return-Path: <linux-kernel+bounces-180395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE8938C6DD6
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 23:42:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1301F8C6DDA
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 23:43:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C5121F22500
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 21:42:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB983281E8B
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 21:43:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FA0715B548;
-	Wed, 15 May 2024 21:42:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CD6515B559;
+	Wed, 15 May 2024 21:42:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cwvtWq94"
-Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="0QOtEJSq"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 907801FC4
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 21:42:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9872015B540
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 21:42:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715809346; cv=none; b=Avn5soeAtZm5Hb+NODnvCyUAZMwf0HUsa7IoJybTRHpBEficcNlur5JrL8nPudBTdNZUCUYieCYdnGzY2RATXLuPr2WePIKjvR72KvBlznpZSgTWRHrU2J5YJht0sp9c5EjnMnBi/nXqzq9msUXWv4ZR31UXn4vGNcBj5W8M91I=
+	t=1715809374; cv=none; b=JYEJOffiQY88UeCij1e+DDCM/roSKhwPAoRpSwUko21Wml12K3TFIzfWsdGXxPn4p0zWD1f75BPrqfTvEA02KIfBDNwPYbsE0meOpTuu9BZVMqQIR22RQ2HWxOBv+dVOJ1IkhErTjqhLbprqoXO3ih0d1CR1FZERiZGWp4IuWDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715809346; c=relaxed/simple;
-	bh=MK0GT5U6TGjZWZCbbcndd1n1OAqP1jMr72KmQoMHoso=;
+	s=arc-20240116; t=1715809374; c=relaxed/simple;
+	bh=KiSQc1JiF1aFCWtXL6ki6+sQulb5IdXpzvrOpZ5e52g=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mAePf1iCMLK7yA5lBnnE5ZLjVwLi2VJyHykUd1cgkdkJI3xBPW45DqgLlq0rsCySCc1yAYkrpPCsaFpMo7Ee8CrVzwrdEkQDx2gAElOYK+T7Iw9RbFF7Z0JTwgH8yReg1ggEWgzjo7W/LwD73xrBkPc+0DHDaviLNOseKDq5Nhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cwvtWq94; arc=none smtp.client-ip=209.85.222.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-7f34ebbcde4so2265390241.3
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 14:42:24 -0700 (PDT)
+	 To:Cc:Content-Type; b=u7xua+H89dOrGTZEIcgXtbxf0UyJzXssps+NDt/RPZgSjxMBhDv80wflRcFBGJRcEUM9cpJutsy/lHjZQroTyt7p1I9yrvVknINUXsVkIErI45SXif7hDcZrw/hQiwE+p2NYjyGSm8kXSDveN2F/uSftEK21SkP8yU/JuxUXy8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=0QOtEJSq; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2e564cad1f1so878411fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 14:42:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715809343; x=1716414143; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1715809370; x=1716414170; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tuWaZOrYxVBktYIPE8wQ9/5sOB1xMLG0jqqM5TYjEm8=;
-        b=cwvtWq94SwDFYs0pPfsiS7X9ceWF8WkX1cvPc7dzDlAicJ21s8MlihDdaSwE8ty2s/
-         kPNW44JReIACblv+zXsyUy5GcRwV/haMxFOMgdYs1b+IQcy4YHS/WGAevyGtS168R90K
-         o3BA0JVBqAC+65UdLt/8dxZsg9wskt5CN12f0+7eFAntwYYlJnoyONoM/5+WhRabGErV
-         3fUoDd5hRX8gEOOTIDPk0qY7dgzWDkUckfzL/QiREed3y65yrMWdrvxaxAorW3bHdz2u
-         xoTSlBxA3MV51LBXK08pB/q23WXZE59d09MhfbV3wJX2LSVi68bERIHtSo1+0wkX6G45
-         ZHOw==
+        bh=P9TfeFMGzDggFyesSkjXt3hsg/J9ww73zqsP1azRQZA=;
+        b=0QOtEJSqS+Eg+xF9kTmTsbL5TKLrRVeRRfuTWB0SBxayVlCbJKCcZW7U4f6XrFCOka
+         iSeN5U22t2J1crAerabEFIWld2iWMr6A05MC02rwdgkZsY9eGV6ypBLUBfL4RGN1VQl2
+         wTFzLGtaBbDgg3V0+huoK9r0z5j0WH2yyaUwtNF+oZ9sPRhk+oHTy98PvB2sD9He37X2
+         aPTorNU7+QwJCHVIn+1wPTTys/SqXZjxk2mO3qbZyDvugbPgOCyue7opxINHDgozx9Ao
+         zdtikShOz0U2sTEp8FTdeK7snkX22NtCiv2fyWMugKZkNOvUc2zFokN+IaDaiOt0dD+X
+         rdOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715809343; x=1716414143;
+        d=1e100.net; s=20230601; t=1715809370; x=1716414170;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=tuWaZOrYxVBktYIPE8wQ9/5sOB1xMLG0jqqM5TYjEm8=;
-        b=KEUqIaTXDUpU7wwphDGenOLEoRIHPSFc38fF06BrX2UFK/F/ZwsyyB4x3ifz12coZr
-         LAfZHoIQDNsc4Q0VymOktk36k10XnGYZcjmwB1yH2FbpnaY03zO64Zj7hsqwPnN7SR/W
-         KCY8ZoYo1lv+zPTY8wQg2kPIF5oxkXJ/vfjcoEW38sYTotC5t25zNqfG5bwdQBi5mue4
-         mP+m9ogZhS2sCfMD65ewBq1PgJdg0B6QFLfvIJJih5LJdIrLNaRGBONuJpNX8rlO2QS+
-         hmdi0PfSoD39Q5tw2nNkvv9V2vZcUqK4zCobGXvy59Fpm3ljudypkiEa4Cfjv7moFQuV
-         gdhg==
-X-Forwarded-Encrypted: i=1; AJvYcCXASm6zRrP0PYhoqdSJXW8kscef1JH87wfqVHsB5i2D0mnSpfDMHc7sOb5bSNSdnOITcAsnx+pCFKu2woxzJYhl7iS9rwGpm96/SwDu
-X-Gm-Message-State: AOJu0YzUmYhVntKCcsTtF1BM3OCFSk7v20j3GAIp2lWnaDEFCJbjA6+J
-	+U72MqZpzhPH97NSfjRHtRL9EK5QFkFvSmWCECsDfg1UJxUwS+mIDZ2TwyxED3XOsf6w9ZcIB/f
-	iO0aeiCH21jNORcgBOrG84/tBjhO8HVC45zo0
-X-Google-Smtp-Source: AGHT+IGTR+bti0CQLCOZ5eyh2lgs75ddRrOKhCJ1KKNZmIYzL/+erBlRT7fIv+p78lv4lO+RDEBRJUjnefqT30gubco=
-X-Received: by 2002:a05:6122:1699:b0:4df:1a28:5e3c with SMTP id
- 71dfb90a1353d-4df88138a64mr16748298e0c.0.1715809343258; Wed, 15 May 2024
- 14:42:23 -0700 (PDT)
+        bh=P9TfeFMGzDggFyesSkjXt3hsg/J9ww73zqsP1azRQZA=;
+        b=YoI6w04FpUb1JZc4K3cIVK7ZO+ZUZv2fZRPQk/PZUGeVoZ7vqXY0dD9KUrGOWSI18/
+         TWzvCzOZZAWmU4t8UHGDWf/FYNP8tcng+nNfjKvrPvkiSUOBF0SbbCI/SqS6Fbv6a+Le
+         CVZ25+IzBV2dUGXrF5di8VzW2/4HMn/pQ7xU7yOdq71gINrKczu0dOWPPqID3Z92M04j
+         nlEr4LEx94HLieYKB5UQ/HmX7RY/PVgrtnFlaOEZhtEeOdvAMU3h/D6O2UWumRK8jqX+
+         DsgFlDf3bItxcgkzIynx4r8UNO/tRwmjYmpuq7ETdmdNiHPlEKN8GJTRUPbBcRtf7zH1
+         tLJw==
+X-Forwarded-Encrypted: i=1; AJvYcCWC6wGE76ZCU0hNjrtvWnuCYUCyqXg+Bq0n8Z0Ek6dvAIP0yQ58S7PzQbBAyMMroBVw+tvCQfzobX6B18qAm76Brxln4eNNNW4P8x3N
+X-Gm-Message-State: AOJu0YwlyXQdDvX8P7jtqWVos/tO2x/uzl8nONya6zs5Ju62gcWNGDda
+	AFyobfxRtUFOCzoo+8PdEL5Iy25oWx/QWQSZIPHJ59SjRNR0i04B3Rladj2IEEjx+661bM1L3r0
+	zlygO52txtWiRyKWkxY51HdYz76qyN5FcK00wRJN1B6zolpY5+HI=
+X-Google-Smtp-Source: AGHT+IGpxIiwcjdpifjmdvRLi4LFm9ed7boSODEZiMBXMdO6n9tTtimmmZlUZkosahIDXDhpvE+zOtAwD/uTbM4pshc=
+X-Received: by 2002:a2e:b88c:0:b0:2e0:4a32:1f41 with SMTP id
+ 38308e7fff4ca-2e51fd46457mr124091161fa.19.1715809370626; Wed, 15 May 2024
+ 14:42:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240514160926.1309778-1-cmllamas@google.com> <CAH5fLgjzVHSAQBF5-C1BthK1jspAGRr1z4SQXdQepkeVL9Eq2A@mail.gmail.com>
- <ZkTlG-ZNHRYXnHLQ@google.com> <ZkTmNLxhlPlHdQCW@google.com>
-In-Reply-To: <ZkTmNLxhlPlHdQCW@google.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Wed, 15 May 2024 23:42:11 +0200
-Message-ID: <CAH5fLgi1YUE7DHV86GcZaaUKX+RDkOXwHqKBRVR3YFyj0T6dLQ@mail.gmail.com>
-Subject: Re: [PATCH v2] binder: use bitmap for faster descriptor lookup
-To: Carlos Llamas <cmllamas@google.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Christian Brauner <brauner@kernel.org>, 
-	Suren Baghdasaryan <surenb@google.com>, linux-kernel@vger.kernel.org, kernel-team@android.com, 
-	Tim Murray <timmurray@google.com>, John Stultz <jstultz@google.com>, 
-	Steven Moreland <smoreland@google.com>, Nick Chen <chenjia3@oppo.com>
+References: <20240401-ad4111-v1-0-34618a9cc502@analog.com> <20240401-ad4111-v1-1-34618a9cc502@analog.com>
+ <CAMknhBHeKAQ45=5-dL1T1tv-mZcPN+bNo3vxWJYgWpEPE+8p3Q@mail.gmail.com>
+ <25cb3514-1281-49a8-9e9b-40ead9b050dc@gmail.com> <CAMknhBHu8DveBgV3cor8RP2Up4Zs-+QRx7S2aoHZ_3iKiErVjg@mail.gmail.com>
+ <20240406155328.447b594f@jic23-huawei> <64b7fd83-f226-4b1f-a801-0fe1cf20f842@gmail.com>
+ <20240413114825.74e7f3fa@jic23-huawei> <89e93f4d-e569-46ee-802d-a1668a01b882@gmail.com>
+ <20240420153310.7876cb8a@jic23-huawei>
+In-Reply-To: <20240420153310.7876cb8a@jic23-huawei>
+From: David Lechner <dlechner@baylibre.com>
+Date: Wed, 15 May 2024 16:42:39 -0500
+Message-ID: <CAMknhBGxEfGJhi+0Pxi+XqCSKLAKLzhLOt_rZo+vP=XqQDqWGA@mail.gmail.com>
+Subject: Re: [PATCH 1/6] dt-bindings: adc: ad7173: add support for ad411x
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: "Ceclan, Dumitru" <mitrutzceclan@gmail.com>, dumitru.ceclan@analog.com, 
+	Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 15, 2024 at 6:43=E2=80=AFPM Carlos Llamas <cmllamas@google.com>=
+On Sat, Apr 20, 2024 at 9:33=E2=80=AFAM Jonathan Cameron <jic23@kernel.org>=
  wrote:
 >
-> On Wed, May 15, 2024 at 04:38:51PM +0000, Carlos Llamas wrote:
-> > On Wed, May 15, 2024 at 05:29:29PM +0200, Alice Ryhl wrote:
-> > > On Tue, May 14, 2024 at 6:09=E2=80=AFPM Carlos Llamas <cmllamas@googl=
-e.com> wrote:
-> > > > +static inline int
-> > > > +dbitmap_get_first_zero_bit(struct dbitmap *dmap, unsigned long *bi=
-t)
-> > > > +{
-> > > > +       unsigned long n;
-> > > > +
-> > > > +       n =3D find_first_zero_bit(dmap->map, dmap->nbits);
-> > > > +       if (unlikely(n =3D=3D dmap->nbits))
-> > > > +               return -ENOSPC;
-> > > > +
-> > > > +       *bit =3D n;
-> > > > +       set_bit(n, dmap->map);
-> > > > +
-> > > > +       return 0;
-> > > > +}
-> > >
-> > > Could we rename this method to something that makes it more clear tha=
-t
-> > > it's not just a getter, but that it actually also sets the bit?
-> > >
-> > > Alice
-> >
-> > Sure, what were you thinking? I had picked "get" and not just "find" to
-> > indicate this behavior. However, I'll take any better ideas. The option
-> > of dbitmap_find_and_set_first_zero_bit() seemed too long for me.
-> >
-> > --
-> > Carlos Llamas
+> On Mon, 15 Apr 2024 21:42:50 +0300
+> "Ceclan, Dumitru" <mitrutzceclan@gmail.com> wrote:
 >
-> I like dbitmap_acquire_first_zero_bit(). Sounds better?
+> > On 13/04/2024 13:49, Jonathan Cameron wrote:
+> > > On Tue, 9 Apr 2024 11:08:28 +0300
+> > > "Ceclan, Dumitru" <mitrutzceclan@gmail.com> wrote:
+> > >
+> > >> On 06/04/2024 17:53, Jonathan Cameron wrote:
+> > >>> On Wed, 3 Apr 2024 10:40:39 -0500
+> > >>> David Lechner <dlechner@baylibre.com> wrote:
+> > >>>
+> > >>>> On Wed, Apr 3, 2024 at 2:43=E2=80=AFAM Ceclan, Dumitru <mitrutzcec=
+lan@gmail.com> wrote:
+> > >>>>>
+> > >>>>> On 01/04/2024 22:37, David Lechner wrote:
+> > >>>>>> On Mon, Apr 1, 2024 at 10:10=E2=80=AFAM Dumitru Ceclan via B4 Re=
+lay
+> > >>>>>> <devnull+dumitru.ceclan.analog.com@kernel.org> wrote:
+> > >>>>>>>
+> > >>>>>>> From: Dumitru Ceclan <dumitru.ceclan@analog.com>
+> > >>>>>
+> > ...
+> > >>
+> > >>>>> Other alternative that came to my mind: attribute "adi,current-ch=
+annel".
+> > >>>>
+> > >>>> Having a boolean flag like this would make more sense to me if we
+> > >>>> don't agree that the suggestion below is simpler.
+> > >>>>
+> >
+> > ...
+> >
+> > >
+> > > We do directly relate reg to channel numbers in drivers like the ad72=
+92 (where not
+> > > all channels are differential)  I'm not convinced either way on what =
+is best
+> > > here where reg is currently just an index into a channel specificatio=
+n, not
+> > > meaningful for which pins are involved.
+> > >
+> > > It doesn't seem worth adding an equivalent of diff-channels for a sin=
+gle channel
+> > > setup but I guess it would be more consistent.
+> > >
+> >
+> > Would you agree with the attribute adi,current-channel within the chann=
+el and
+> >  diff-channels set to the correspondent current inputs (13 10 for pair =
+IN2)?
+>
+> From another thread today I've concluded we do need a single-channel
+> equivalent of diff-channels, but you are right that here it is a differen=
+tial
+> channel so <13 10> seems like the best option to me.
+>
 
-acquire sounds good!
-
-Alice
+Current inputs are differential? It seems like we would need 4 input
+pins for that.
 
