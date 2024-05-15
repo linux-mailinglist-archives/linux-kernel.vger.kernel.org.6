@@ -1,73 +1,39 @@
-Return-Path: <linux-kernel+bounces-179733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD56A8C6460
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 11:54:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 636028C6466
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 12:00:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22A98B22719
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:54:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23F091F221C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 10:00:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 449495F874;
-	Wed, 15 May 2024 09:53:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="CyTK+oMk"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5582859168
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 09:53:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D54A35A11D;
+	Wed, 15 May 2024 10:00:47 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A469E54645;
+	Wed, 15 May 2024 10:00:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715766786; cv=none; b=QiN1J8V5TWTLelS6Sgo1diPZxz+G266cprJkQTbZfzAnifgSomxAb9kF49K+AN+GWnRnR5yrg5shK1o/hYCXN+gzTrYmBBMfGQNV0NJkqfvC87+/9E8Y5bPdOjZwOXRY5vbdowqUNuzTuvfZw6N7nnp881BSzWhyiLCVrRYj8+U=
+	t=1715767247; cv=none; b=GTJKhnKvfpaQ/GnH2LPX4PS/WuJi/fPDQVDb/GTBum0Dhp2B3YqEn44b8BJ1yQSrpDJbOeSFYBS2R8EkpSltYiPTcTe2j3jUw3XT1BVtgceuQGVbTtdrLzOvKIgv0Ok24B2gtUDFN5Xh5LaIHihJiVuBCG9J7ZmO791+Ml1riq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715766786; c=relaxed/simple;
-	bh=TsOk3vFqremJkiKTf83L+7lVwN7NONoMxe4kSI6IvYw=;
+	s=arc-20240116; t=1715767247; c=relaxed/simple;
+	bh=UP6ARF9IZdzS2kDPVK4Ew0G7gxoE0lxuEJNvLxI+258=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hUH+VaeeQY8v78nhQiLIEV0I/yPfLowggK9dGgeYm+8foJGaKDUM9P3eq/WlO/NGzW0a3gwLfDuUF25lFfxV9iaYXgAKQyiR3w1tvq0c7bEdUHODCSPuPwGIqS3f+xHSPveziyQMVuY2H4W/AbpIftJfqY+ulGbgzoE+nvTflkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=CyTK+oMk; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-572ba002a6bso1457729a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 02:53:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1715766782; x=1716371582; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=S1lmRXypy+tgqjJjCBelLKezDGdnEAnnPizIiNZdruM=;
-        b=CyTK+oMkbUZvJX+UEpXD2WFMSiEdaF9FbbEkHgrzxqIOXJh3IjX7fUED53WyhtfNCd
-         n2EIRkb6K9WTdMARS9VuK3lIcwCF+typcSHLH8KJGqwuPma5t+cvhe1NS61b8h6qwBS9
-         mwkIWHGaxIqTXF7Z16UhZF5rk3gXWnzQYKdn3/bSx+l9CaYvAZ7b1mGjre/zhtmIw1DR
-         RKNJlKAICoTaHxukGyzYNIJyvWGUzOle01tTAWgalCoZoqZ6ZcgK2yzNZGrfyW/vCVKi
-         Cqm3jpwjE0S+sh5WKfhm6aGR9HpoF3H7IOUypLZ8RwI1GxjJa/GYPwQbzgxCpJMUYCBL
-         n9Bg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715766782; x=1716371582;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=S1lmRXypy+tgqjJjCBelLKezDGdnEAnnPizIiNZdruM=;
-        b=u4JG383m2Uj5gqiKuP267i6LJ2sdlBHRfxfbsNiUfQDppTBCkMc3rwIQJQFzPq8lAT
-         65qGguaumQY3UNWdzf949FzoHB1tNrjk+qjk7nAA4xKOmddqiH3qgSLmiHyj5WPaZys+
-         NyuRJly2HR0eeyx836S99IAosVDRUweW+HbauFdsIRvSjdpw0wfpiVQZmG/P5INRRnnW
-         CEc5wcu7LsmxrtoMXQqJQLYlCUwdYM1ixMmtkXK75fVbrbH8Fw1EmXGQFqcKz409h+hK
-         FmRqsRsQRHHg8EsuZPd/d541cgii/5wyIyy/LIGLT+i2joWRdRggEwHSRhKievfiffhX
-         l9GQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVesqm5hvYPYRzoArOUJ/JNGYhPf2l4CaH2SNVVRHf/6GQeMzbQGyTaqxEL5jrUmZDiSSNGfTxuHJ3XpRcejKA/NA5m8u5/UXfIyT5t
-X-Gm-Message-State: AOJu0Ywugpzzhr256SiYEdm40h088b1hcqfVUVJ19VkZTDX0AxuHpAgV
-	foUbKerWCRhfLmn0iPOzj+oZa7RlNZR1soR6JSWZWGM4/z/w0AJtmHeDLUYvqxI=
-X-Google-Smtp-Source: AGHT+IHJ/nIQ9Mj+hR5RkGPoGTlj6+iE5Zdg+QT5yPe2HHYjGXYAnkxMww7zPjsNTDTMLKdw2VFCRA==
-X-Received: by 2002:a50:f699:0:b0:56e:f64:aaf6 with SMTP id 4fb4d7f45d1cf-5734d5c16dfmr11167023a12.5.1715766781663;
-        Wed, 15 May 2024 02:53:01 -0700 (PDT)
-Received: from [192.168.0.245] ([62.73.69.208])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733bebb687sm8592378a12.25.2024.05.15.02.52.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 May 2024 02:53:01 -0700 (PDT)
-Message-ID: <0e5007fb-2d95-4cbb-b0a6-baa0d20e9469@blackwall.org>
-Date: Wed, 15 May 2024 12:52:57 +0300
+	 In-Reply-To:Content-Type; b=Ikqv8lUb4tdXnS9TIFL0V87jnW2ocqhqaSZXP9y9v0G/WMYGAhuuAEV/A/2YnUJhBNbUWEojLSWKbu1UeGd6fqs/qfZEEXXvegEE+IkpZjQ7E+xI6pmwSs1HcO5b5x6mKzSIu/62bfO5P85NrkqphQVb5Y4o9ZZMY8MQ95XEo/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9BB0E1007;
+	Wed, 15 May 2024 03:01:09 -0700 (PDT)
+Received: from [192.168.178.6] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7B6EF3F762;
+	Wed, 15 May 2024 03:00:42 -0700 (PDT)
+Message-ID: <09717ad7-2a4b-486c-a4f5-e3f09a212add@arm.com>
+Date: Wed, 15 May 2024 12:00:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,179 +41,91 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v9 12/14] net: add SO_DEVMEM_DONTNEED setsockopt
- to release RX frags
-To: Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org,
- linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
- bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: Donald Hunter <donald.hunter@gmail.com>, Jakub Kicinski
- <kuba@kernel.org>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Jonathan Corbet <corbet@lwn.net>,
- Richard Henderson <richard.henderson@linaro.org>,
- Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner
- <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- Helge Deller <deller@gmx.de>, Andreas Larsson <andreas@gaisler.com>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- Ilias Apalodimas <ilias.apalodimas@linaro.org>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Steffen Klassert
- <steffen.klassert@secunet.com>, Herbert Xu <herbert@gondor.apana.org.au>,
- David Ahern <dsahern@kernel.org>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- Shuah Khan <shuah@kernel.org>, Sumit Semwal <sumit.semwal@linaro.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Pavel Begunkov <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>,
- Jason Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin <linyunsheng@huawei.com>,
- Shailend Chand <shailend@google.com>,
- Harshitha Ramamurthy <hramamurthy@google.com>,
- Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst
- <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>,
- Willem de Bruijn <willemb@google.com>, Kaiyuan Zhang <kaiyuanz@google.com>
-References: <20240510232128.1105145-1-almasrymina@google.com>
- <20240510232128.1105145-13-almasrymina@google.com>
+Subject: Re: [PATCH v3] sched: Consolidate cpufreq updates
+To: Qais Yousef <qyousef@layalina.io>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>, Ingo Molnar <mingo@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Juri Lelli <juri.lelli@redhat.com>, Steven Rostedt <rostedt@goodmis.org>,
+ Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+ Daniel Bristot de Oliveira <bristot@redhat.com>,
+ Valentin Schneider <vschneid@redhat.com>,
+ Christian Loehle <christian.loehle@arm.com>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240512190018.531820-1-qyousef@layalina.io>
+ <9e845146-8a31-407c-a5ee-e2e32f1655e5@arm.com>
+ <20240513220903.no2j6zl4tk7lr6um@airbuntu>
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
 Content-Language: en-US
-From: Nikolay Aleksandrov <razor@blackwall.org>
-In-Reply-To: <20240510232128.1105145-13-almasrymina@google.com>
+In-Reply-To: <20240513220903.no2j6zl4tk7lr6um@airbuntu>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 11/05/2024 02:21, Mina Almasry wrote:
-> Add an interface for the user to notify the kernel that it is done
-> reading the devmem dmabuf frags returned as cmsg. The kernel will
-> drop the reference on the frags to make them available for reuse.
+On 14/05/2024 00:09, Qais Yousef wrote:
+> On 05/13/24 14:43, Dietmar Eggemann wrote:
+>> On 12/05/2024 21:00, Qais Yousef wrote:
+>>
+>> [...]
+>>
+>>> @@ -4682,7 +4659,7 @@ static void attach_entity_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *s
+>>>  
+>>>  	add_tg_cfs_propagate(cfs_rq, se->avg.load_sum);
+>>>  
+>>> -	cfs_rq_util_change(cfs_rq, 0);
+>>> +	cpufreq_update_util(rq_of(cfs_rq), 0);
+>>
+>> Isn't this slighlty different now?
+>>
+>> before:
+>>
+>>    if (&rq->cfs == cfs_rq) {
+>>        cpufreq_update_util(rq, ....)
+>>    }
+>>
+>> now:
+>>
+>>    cpufreq_update_util(rq_of(cfs_rq), ...)
+>>
+>> You should get way more updates from attach/detach now.
 > 
-> Signed-off-by: Willem de Bruijn <willemb@google.com>
-> Signed-off-by: Kaiyuan Zhang <kaiyuanz@google.com>
-> Signed-off-by: Mina Almasry <almasrymina@google.com>
+> Yes, well spotted!
 > 
-> ---
-> 
-> v7:
-> - Updated SO_DEVMEM_* uapi to use the next available entry (Arnd).
-> 
-> v6:
-> - Squash in locking optimizations from edumazet@google.com. With his
->   changes we lock the xarray once per sock_devmem_dontneed operation
->   rather than once per frag.
-> 
-> Changes in v1:
-> - devmemtoken -> dmabuf_token (David).
-> - Use napi_pp_put_page() for refcounting (Yunsheng).
-> - Fix build error with missing socket options on other asms.
-> 
-> ---
->  arch/alpha/include/uapi/asm/socket.h  |  1 +
->  arch/mips/include/uapi/asm/socket.h   |  1 +
->  arch/parisc/include/uapi/asm/socket.h |  1 +
->  arch/sparc/include/uapi/asm/socket.h  |  1 +
->  include/uapi/asm-generic/socket.h     |  1 +
->  include/uapi/linux/uio.h              |  4 ++
->  net/core/sock.c                       | 61 +++++++++++++++++++++++++++
->  7 files changed, 70 insertions(+)
-> 
-[snip]
-> diff --git a/net/core/sock.c b/net/core/sock.c
-> index 8d6e638b5426d..2edb988259e8d 100644
-> --- a/net/core/sock.c
-> +++ b/net/core/sock.c
-> @@ -124,6 +124,7 @@
->  #include <linux/netdevice.h>
->  #include <net/protocol.h>
->  #include <linux/skbuff.h>
-> +#include <linux/skbuff_ref.h>
->  #include <net/net_namespace.h>
->  #include <net/request_sock.h>
->  #include <net/sock.h>
-> @@ -1049,6 +1050,62 @@ static int sock_reserve_memory(struct sock *sk, int bytes)
->  	return 0;
->  }
->  
-> +#ifdef CONFIG_PAGE_POOL
-> +static noinline_for_stack int
-> +sock_devmem_dontneed(struct sock *sk, sockptr_t optval, unsigned int optlen)
-> +{
-> +	unsigned int num_tokens, i, j, k, netmem_num = 0;
-> +	struct dmabuf_token *tokens;
-> +	netmem_ref netmems[16];
-> +	int ret;
-> +
-> +	if (sk->sk_type != SOCK_STREAM || sk->sk_protocol != IPPROTO_TCP)
-> +		return -EBADF;
-> +
-> +	if (optlen % sizeof(struct dmabuf_token) ||
-> +	    optlen > sizeof(*tokens) * 128)
-> +		return -EINVAL;
-> +
-> +	tokens = kvmalloc_array(128, sizeof(*tokens), GFP_KERNEL);
-> +	if (!tokens)
-> +		return -ENOMEM;
-> +
-> +	num_tokens = optlen / sizeof(struct dmabuf_token);
-> +	if (copy_from_sockptr(tokens, optval, optlen))
-> +		return -EFAULT;
+> Looking at the path more closely, I can see this is called from
+> enqueue_task_fair() path when a task migrates to new CPU. And when
+> attach_task_cfs_rq() which is called when we switch_to_fair(), which I already
+> cover in the policy change for the RUNNING task, or when
+> task_change_group_fair() which what I originally understood Vincent was
+> referring to. I moved the update to this function after the detach/attach
+> operations with better guards to avoid unnecessary update.
 
-tokens isn't freed in this error case
+Yeah, all !root cfs_rq attach or detach wouldn't change anything since
+the util_avg wouldn't have propagated to the root cfs_rq yet. So
+sugov_get_util() wouldn't see a difference.
 
-> +
-> +	ret = 0;
-> +
-> +	xa_lock_bh(&sk->sk_user_frags);
-> +	for (i = 0; i < num_tokens; i++) {
-> +		for (j = 0; j < tokens[i].token_count; j++) {
-> +			netmem_ref netmem = (__force netmem_ref)__xa_erase(
-> +				&sk->sk_user_frags, tokens[i].token_start + j);
-> +
-> +			if (netmem &&
-> +			    !WARN_ON_ONCE(!netmem_is_net_iov(netmem))) {
-> +				netmems[netmem_num++] = netmem;
-> +				if (netmem_num == ARRAY_SIZE(netmems)) {
-> +					xa_unlock_bh(&sk->sk_user_frags);
-> +					for (k = 0; k < netmem_num; k++)
-> +						WARN_ON_ONCE(!napi_pp_put_page(netmems[k]));
-> +					netmem_num = 0;
-> +					xa_lock_bh(&sk->sk_user_frags);
-> +				}
-> +				ret++;
-> +			}
-> +		}
-> +	}
-> +
-> +	xa_unlock_bh(&sk->sk_user_frags);
-> +	for (k = 0; k < netmem_num; k++)
-> +		WARN_ON_ONCE(!napi_pp_put_page(netmems[k]));
-> +
-> +	kvfree(tokens);
-> +	return ret;
-> +}
-> +#endif
-> +
->  void sockopt_lock_sock(struct sock *sk)
->  {
->  	/* When current->bpf_ctx is set, the setsockopt is called from
-> @@ -1200,6 +1257,10 @@ int sk_setsockopt(struct sock *sk, int level, int optname,
->  			ret = -EOPNOTSUPP;
->  		return ret;
->  		}
-> +#ifdef CONFIG_PAGE_POOL
-> +	case SO_DEVMEM_DONTNEED:
-> +		return sock_devmem_dontneed(sk, optval, optlen);
-> +#endif
->  	}
->  
->  	sockopt_lock_sock(sk);
+Yes, enqueue_entity() sets DO_ATTACH unconditionally.
 
+And dequeue_entity() sets DO_DETACH for a migrating (!wakeup migrating)
+task.
+
+For a wakeup migrating task we have remove_entity_load_avg() but this
+can't remove util_avg from the cfs_rq. This is deferred to
+update_cfs_rq_load_avg() in update_load_avg() or __update_blocked_fair().
+
+And switched_{to,from}_fair() (check_class_changed()) and
+task_change_group_fair() are the other 2 users of
+{attach,detach}_entity_load_avg(). (plus online_fair_sched_group() for
+attach).
+
+> I understood this will lead to big change and better apply immediately vs
+> wait for the next context switch. But I'll ask the question again, can we drop
+> this and defer to context switch?
+
+Hard to say really, probably we can. All benchmarks with score numbers
+will create plenty of context switches so you wont see a diff. And for
+more lighter testcases you would have to study the differences in trace
+files and reason about the implications of potentially kick CPUfreq a
+little bit later.
+
+[...]
 
