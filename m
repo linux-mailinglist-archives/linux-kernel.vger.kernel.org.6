@@ -1,105 +1,245 @@
-Return-Path: <linux-kernel+bounces-180455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34E8E8C6ECC
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 00:49:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5379C8C6ECF
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 00:52:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E128F282F4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 22:49:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85B08B22663
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 22:52:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 070A4405D8;
-	Wed, 15 May 2024 22:49:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 452F842058;
+	Wed, 15 May 2024 22:51:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="DDMDkBCi"
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="h3wadNns"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E99DB3D984
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 22:49:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DAB339FEC;
+	Wed, 15 May 2024 22:51:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715813392; cv=none; b=YmhuQ+mdqmGb6x978IGZ6V1cYw9DfiTcCGrYpePyLOAkkIOXmGjI/sAALxnB+I298UjexHxjXOKk2NYHrF/uQD/th6WqL6ylhrM6A1GfjSr1S7dYJmKcTEYUH386d7v7F0rZ6ozH+ke1y3fvk0zS7L0xNvwtXcJ+aZx/6OnELbI=
+	t=1715813512; cv=none; b=BA2X74UqqGYLHtb6xO6418fd7hX1cjkiVClAkgtFeUpIita2wlroPxU0iTaGigAjdNsmg/n7IuYtWkCe+eYqG30bAHpxd/1kUlTHEAfSxKQ1X/uKh+8d4ammCaiNWRQulv0fJ2dC/NjRJHLfQCNZbMz5OkEbkY0eldtyZBk+mkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715813392; c=relaxed/simple;
-	bh=nFx0SdOMLkM+nsMfxxNhWM1sBx8raudMXU3lIbaOfXE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SYWWWV95cYZhnxkzJrp/OnJEdyzJksh7cOHY29TxbOs01yKbVx9gnmK2YzLeCgvobveZ+hzuaXTQCG7w1axCBNPM7gcjhgU/TC7L+FayEB3O46nGpY4G3EqZ4r8W3RTmqculAPOBicdqxsUHegiU6K7TRA4kpWWoS5ErJkLC6AU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=DDMDkBCi; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from macsyma.thunk.org ([50.204.89.32])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 44FMnWA5003065
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 15 May 2024 18:49:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1715813375; bh=IDp9awHqMdDqb4AZiCirIR/+Tlisixd9MYsSbbqvk/o=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=DDMDkBCijJfJz6LNdQSsfnTLjA5NjATipndgHyE50ZDJzCoeobrHjRHZ1C99OZ1xI
-	 Isx/QGbjba03MVFDpPUkk6JcLsHzWu5FC4hECd3hqXrnKSGrsIjiKxUp6SKZvrBTnQ
-	 F/ESw0a52evMwugfec5Vncsv5M25TnTnvL1pDy2/IRpkcSEBsUqa519pm9xT7v7I/+
-	 HHxfJuBW5k70yrUwSC3aIEVZkI/TFik+93O63ztEa5nRZam2mXGB4FkqaqrhHVtgC4
-	 JH0Feir7vDHiEUnjeQA/i4921s9HlT90cFMf4N1Dnay/iem4kHbNLmP/XTfv+pr4HJ
-	 NhdvUaSd+DRug==
-Received: by macsyma.thunk.org (Postfix, from userid 15806)
-	id 6A5043407D2; Wed, 15 May 2024 16:49:32 -0600 (MDT)
-Date: Wed, 15 May 2024 16:49:32 -0600
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Shuangpeng Bai <shuangpengbai@gmail.com>
-Cc: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller@googlegroups.com
-Subject: Re: KASAN: use-after-free in ext4_find_extent in v6.9
-Message-ID: <20240515224932.GA202157@mit.edu>
-References: <5B9F0C1F-C804-4A9C-8597-4E1A7D16B983@gmail.com>
+	s=arc-20240116; t=1715813512; c=relaxed/simple;
+	bh=Mb72hI9N1q8f905w29oQTMBpXZa5SO8MKRbxn0FqpKY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eFYCTiYnDNqB501IUoMrj1GEi2bM7YA6oIfLzjH46iTGzanyFZB865EmBaSWP9nrR0b5Jgkwf9zjbXeEFwZLdKdvBZzV4rMSd01DPJ8hNst8tIV6aHjbYbGAthpwpQp2iAqYdI3U8xzQO8c6T5sZyR8Qc+emkbg4A6ZTnuRGK1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=h3wadNns; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1715813505;
+	bh=jEboa18Osj+JPyOBHPHbfv1Gl7l9oo0jlh+QKu/Hg7I=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=h3wadNnsrKeFTTlI+huVPSgxFEA7LMoJe4Gb3LEBslhfLigmCqmCHUdQwfhQkmN+U
+	 xkx+tRHY+vY0nuUbQ/SPSqhn9jf/ezOXAU1zYiLjrrupchLHhGxpHmQcF8YahJVLW+
+	 BDYugLN3F3XWEo0oh7AAtUOUaV8qNdZJB2i0JtF1roMoD23f10gdIk4JoJVtJ+jHHR
+	 uwH11rM04NIOVxDaDbtpCC14Nm3RQeAi/1IgsY0KvHKvKaPKImmf1sV3xI4QaU4m3l
+	 q7yLOkcghbSTEQaKTOvTDJ+W/ULZ6+NDgsqPlwlj+tnunRPudC/+r0dMjbWn83w8CF
+	 jcdyrDuF3aT8g==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VfpPW6tkpz4wc8;
+	Thu, 16 May 2024 08:51:43 +1000 (AEST)
+Date: Thu, 16 May 2024 08:51:40 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Networking <netdev@vger.kernel.org>,
+ Alexander Lobakin <aleksander.lobakin@intel.com>, Kent Overstreet
+ <kent.overstreet@linux.dev>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Randy Dunlap <rdunlap@infradead.org>, Suren
+ Baghdasaryan <surenb@google.com>, Tony Nguyen <anthony.l.nguyen@intel.com>
+Subject: Re: linux-next: manual merge of the net-next tree with the mm tree
+Message-ID: <20240516085140.5c654de5@canb.auug.org.au>
+In-Reply-To: <20240429114302.7af809e8@canb.auug.org.au>
+References: <20240429114302.7af809e8@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5B9F0C1F-C804-4A9C-8597-4E1A7D16B983@gmail.com>
+Content-Type: multipart/signed; boundary="Sig_/kC3KBzbwlzX2dVVi_nF4cEt";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Tue, May 14, 2024 at 08:40:36PM -0400, Shuangpeng Bai wrote:
-> Hi Kernel Maintainers,
-> 
-> Our tool found a kernel bug KASAN: use-after-free in ext4_find_extent. Please see the details below.
-> 
-> Kernel commit: v6.9 (Commits on May 12, 2024)
-> Kernel config: attachment
-> C/Syz reproducer: attachment
-> 
-> We find this bug was reported and marked as fixed. (https://syzkaller.appspot.com/bug?extid=7ec4ebe875a7076ebb31)
-> 
-> Our reproducer can trigger this bug in v6.9, so the bug may have not been fixed correctly.
+--Sig_/kC3KBzbwlzX2dVVi_nF4cEt
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-The reason why it was marked as fixed is because the reproducer no
-longer reproduces with CONFIG_BLK_DEV_WRITE_MOUNTED disabled.
-Upstream syzkaller unconditionally disables this config, and we don't
-consider reproducers that have CONFIG_BLK_DEV_WRITE_MOUNTED enabled to
-be a bug.
+Hi all,
 
-If the reproducer is actively modifying the block device (or the
-underlying file for a loop device) while it is mounted, we don't
-consider this a bug.  This is requires root, and it's no more a
-"security bug" than someone complaining that root can execute a
-reboot(2) system call and calling it a "security bug".
+On Mon, 29 Apr 2024 11:43:02 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Today's linux-next merge of the net-next tree got a conflict in:
+>=20
+>   include/linux/slab.h
+>=20
+> between commit:
+>=20
+>   7bd230a26648 ("mm/slab: enable slab allocation tagging for kmalloc and =
+friends")
+>=20
+> from the mm_unstable branch of the mm tree and commit:
+>=20
+>   a1d6063d9f2f ("slab: introduce kvmalloc_array_node() and kvcalloc_node(=
+)")
+>=20
+> from the net-next tree.
+>=20
+> I fixed it up (maybe? see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+>=20
+> diff --cc include/linux/slab.h
+> index 4cc37ef22aae,d1d1fa5e7983..000000000000
+> --- a/include/linux/slab.h
+> +++ b/include/linux/slab.h
+> @@@ -773,40 -744,66 +773,47 @@@ static inline __alloc_size(1, 2) void *
+>    * @size: how many bytes of memory are required.
+>    * @flags: the type of memory to allocate (see kmalloc).
+>    */
+>  -static inline __alloc_size(1) void *kzalloc(size_t size, gfp_t flags)
+>  +static inline __alloc_size(1) void *kzalloc_noprof(size_t size, gfp_t f=
+lags)
+>   {
+>  -	return kmalloc(size, flags | __GFP_ZERO);
+>  +	return kmalloc_noprof(size, flags | __GFP_ZERO);
+>   }
+>  +#define kzalloc(...)				alloc_hooks(kzalloc_noprof(__VA_ARGS__))
+>  +#define kzalloc_node(_size, _flags, _node)	kmalloc_node(_size, (_flags)=
+|__GFP_ZERO, _node)
+>  =20
+>  -/**
+>  - * kzalloc_node - allocate zeroed memory from a particular memory node.
+>  - * @size: how many bytes of memory are required.
+>  - * @flags: the type of memory to allocate (see kmalloc).
+>  - * @node: memory node from which to allocate
+>  - */
+>  -static inline __alloc_size(1) void *kzalloc_node(size_t size, gfp_t fla=
+gs, int node)
+>  -{
+>  -	return kmalloc_node(size, flags | __GFP_ZERO, node);
+>  -}
+>  +extern void *kvmalloc_node_noprof(size_t size, gfp_t flags, int node) _=
+_alloc_size(1);
+>  +#define kvmalloc_node(...)			alloc_hooks(kvmalloc_node_noprof(__VA_ARGS=
+__))
+>  =20
+>  -extern void *kvmalloc_node(size_t size, gfp_t flags, int node) __alloc_=
+size(1);
+>  -static inline __alloc_size(1) void *kvmalloc(size_t size, gfp_t flags)
+>  -{
+>  -	return kvmalloc_node(size, flags, NUMA_NO_NODE);
+>  -}
+>  -static inline __alloc_size(1) void *kvzalloc_node(size_t size, gfp_t fl=
+ags, int node)
+>  -{
+>  -	return kvmalloc_node(size, flags | __GFP_ZERO, node);
+>  -}
+>  -static inline __alloc_size(1) void *kvzalloc(size_t size, gfp_t flags)
+>  -{
+>  -	return kvmalloc(size, flags | __GFP_ZERO);
+>  -}
+>  +#define kvmalloc(_size, _flags)			kvmalloc_node(_size, _flags, NUMA_NO_=
+NODE)
+>  +#define kvmalloc_noprof(_size, _flags)		kvmalloc_node_noprof(_size, _fl=
+ags, NUMA_NO_NODE)
+>  +#define kvzalloc(_size, _flags)			kvmalloc(_size, _flags|__GFP_ZERO)
+>  =20
+>  -static inline __alloc_size(1, 2) void *
+>  -kvmalloc_array_node(size_t n, size_t size, gfp_t flags, int node)
+>  +#define kvzalloc_node(_size, _flags, _node)	kvmalloc_node(_size, _flags=
+|__GFP_ZERO, _node)
+>  +
+> - static inline __alloc_size(1, 2) void *kvmalloc_array_noprof(size_t n, =
+size_t size, gfp_t flags)
+> ++static inline __alloc_size(1, 2) void *kvmalloc_array_node_noprof(size_=
+t n, size_t size, gfp_t flags)
+>   {
+>   	size_t bytes;
+>  =20
+>   	if (unlikely(check_mul_overflow(n, size, &bytes)))
+>   		return NULL;
+>  =20
+>  -	return kvmalloc_node(bytes, flags, node);
+>  -}
+>  -
+>  -static inline __alloc_size(1, 2) void *
+>  -kvmalloc_array(size_t n, size_t size, gfp_t flags)
+>  -{
+>  -	return kvmalloc_array_node(n, size, flags, NUMA_NO_NODE);
+>  +	return kvmalloc_node_noprof(bytes, flags, NUMA_NO_NODE);
+>   }
+>  =20
+> - #define kvmalloc_array(...)			alloc_hooks(kvmalloc_array_noprof(__VA_AR=
+GS__))
+> + static inline __alloc_size(1, 2) void *
+> + kvcalloc_node(size_t n, size_t size, gfp_t flags, int node)
+> + {
+>  -	return kvmalloc_array_node(n, size, flags | __GFP_ZERO, node);
+> ++	return kvmalloc_array_node_noprof(n, size, flags | __GFP_ZERO, node);
+> + }
+> +=20
+>  -static inline __alloc_size(1, 2) void *kvcalloc(size_t n, size_t size, =
+gfp_t flags)
+>  -{
+>  -	return kvmalloc_array(n, size, flags | __GFP_ZERO);
+>  -}
+> ++#define kvmalloc_array(...)			alloc_hooks(kvmalloc_array_node_noprof(__=
+VA_ARGS__))
+> ++#define kvmalloc_array_noprof(_n, _size, _flags))	kvmalloc_array(_n, _s=
+ize, _flags)
+>  +#define kvcalloc(_n, _size, _flags)		kvmalloc_array(_n, _size, _flags|_=
+_GFP_ZERO)
+> - #define kvcalloc_noprof(_n, _size, _flags)	kvmalloc_array_noprof(_n, _s=
+ize, _flags|__GFP_ZERO)
+> ++#define kvcalloc_noprof(_n, _size, _flags)	kvmalloc_array_node_noprof(_=
+n, _size, _flags|__GFP_ZERO)
+>  =20
+>  -extern void *kvrealloc(const void *p, size_t oldsize, size_t newsize, g=
+fp_t flags)
+>  +extern void *kvrealloc_noprof(const void *p, size_t oldsize, size_t new=
+size, gfp_t flags)
+>   		      __realloc_size(3);
+>  +#define kvrealloc(...)				alloc_hooks(kvrealloc_noprof(__VA_ARGS__))
+>  +
+>   extern void kvfree(const void *addr);
+>   DEFINE_FREE(kvfree, void *, if (_T) kvfree(_T))
+>  =20
 
-I've looked at your "reproducer" and it does appear to be modifying
-the block device while it is mounted, and the config does have
-CONFIG_BLK_DEV_WRITE_MOUNTED enabled.  So I don't care (tm).  If you
-want to put an engineer to work on addressing the bug, and the patch
-is a clean and maintable code fix, I'll certainly consider the change.
-But it's not something that upstream will work on a volunteer basis;
-no company I am aware of is willing to pay for engineers to work on
-this sort of issue.
+This is now a conflict between the mm-stable tree and Linus' tree.
 
+--=20
 Cheers,
+Stephen Rothwell
 
-						- Ted
+--Sig_/kC3KBzbwlzX2dVVi_nF4cEt
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZFPHwACgkQAVBC80lX
+0GzJgQf/XD+z7kZfxjn9vvDwKAP7ZsDJ++faVg/Qkpy7RZiJ84tXimu7hanHLkpe
+9Wmkz5iWRKnKfb2UnEE13faHjb90lK5oDc36V0DaGXi3sJ04ETsRjWpeWpZDXjob
+grzA+d8yIsVsnzaklt6y9njWsEpXmsTdVBQF5DFvrNFFYV9lSf8CbUNNlhDFezIK
+zvszIpQHLHJWMwwOLVZy/tutRUo2fDb33Tsp54tUlLEneOSfleeZqCFqXk0ZBL1L
+Xk9HuJcsXtdL4LZPQfKQotHsjqf/3Y3//chHONApxi7PpU2m++cyK7efQrkiu2hn
+RBAak/GYqDolJo2u3qN1w05YQ904Mw==
+=WSvc
+-----END PGP SIGNATURE-----
+
+--Sig_/kC3KBzbwlzX2dVVi_nF4cEt--
 
