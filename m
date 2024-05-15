@@ -1,211 +1,105 @@
-Return-Path: <linux-kernel+bounces-179829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43ADA8C661B
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 14:08:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29F728C662D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 14:11:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E00EB20E01
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 12:08:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9C722847A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 12:11:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B4447174F;
-	Wed, 15 May 2024 12:08:46 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1A1D219E8
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 12:08:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D50C47EEF5;
+	Wed, 15 May 2024 12:10:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CA89P5O5"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC2487317C;
+	Wed, 15 May 2024 12:10:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715774926; cv=none; b=D1bTog6W6BDUXlEUo9A1PR5mmDeEDrKL66FB4E3QGZjbv/qTIGh3yvcNVYGBCIWeW6wgeaYAPvSEpZOTQpCJSyJJCe3ZRBQ58FJ6tNY8RKdEitdhfg+4tgMrwZGlasQYakkTXgkyLFf8GIlgaMqymlbZ7e5nGnQu/jIr/26zcUQ=
+	t=1715775045; cv=none; b=lU8vgs0s/BaP/r9EA6ZB+6XBEZ69jmwvjxZCMZ5gKiKLP1s+Is5rkmWnqDca2pSifSRONxEdMpTm5NyViK5w0YIDEBr1XFfEZYJEZz0GU26QSAs/8gMJihUm2l8uiDSwv+n0NXi0o124xsLKBG8Nzf5r2Lt2tapO34YngMyN/DQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715774926; c=relaxed/simple;
-	bh=E09BI2bRtacpWF/Hd7z+jWHKG0mv8YRjmcl6+NCVnb8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tzLCXqXcx438fYlYSb1y/FY5c3stwnpJdI4IcBYDy0WJqwCccHgfkVpHZ4pzR7pPQL9pHnuxZ58NrZgwled1hbrIkyY0xffLcBQc/auWC3bhgcnVqW8/LOy6BkDkSyXROLJUGz8AkBSx4hyFwBrh9qp7g+iZB420RYThDK0Yxjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5757B1042;
-	Wed, 15 May 2024 05:09:02 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 14B7C3F641;
-	Wed, 15 May 2024 05:08:36 -0700 (PDT)
-From: Mark Rutland <mark.rutland@arm.com>
-To: linux-kernel@vger.kernel.org
-Cc: keescook@chromium.org,
-	mark.rutland@arm.com,
-	paulmck@kernel.org
-Subject: [PATCH v2] lkdtm/bugs: add test for hung smp_call_function_single()
-Date: Wed, 15 May 2024 13:08:28 +0100
-Message-Id: <20240515120828.375585-1-mark.rutland@arm.com>
-X-Mailer: git-send-email 2.30.2
+	s=arc-20240116; t=1715775045; c=relaxed/simple;
+	bh=pJqvjsgCvNBkKyzYsgEoP0V2lPFJZrSdd7i0P9EDSt0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ir8mfexq85VfUWvs/yW94H4fwEg+l2/qBHkfnedKJMDRBDZyjUQkaLXYKFi1Ov04uy4tIQBkkume+SxiOK3D/N1mTgz6drCsNTjG8jbv52oJCH2H5rW4GiwUTsY7B69AMEUmVj32fh7hRQz44rKplKrjommjJmHCoNCRm/RP9mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CA89P5O5; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44F90XOe007493;
+	Wed, 15 May 2024 12:10:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	from:to:cc:subject:date:message-id:mime-version:content-type; s=
+	qcppdkim1; bh=xEF+xDSBfTCHhiYaODH9Zu9Pp0jwfoPRn50l2ESd8fA=; b=CA
+	89P5O5VHLBw8cJIdFacZ8WKVzv/BafF9cPRBAambzhOPSUa6nc1o4r/SKE5FdiHf
+	rZggD+q5bAkEg9ekLX8eRBWeIQhckzQRCnGVvDraHX9uwrvhnKMAjJiBIp5HkCMS
+	/mnh/c//ZXL3Xr34IonKNTb/ahVFExaI+Xd02thFTqVoD8ZWezVmP1kfafStKQBL
+	F94jtpAOki3+HcEG9/isL2WFjN/Bxs7BZEqP9G/4kn5HITyGL9F5h1zh6mH66H4z
+	BySjJWo91WrWZLaE7Meqe+y3s0HJ/mXhVkn+JO+OzC9imGtGCSPgluDnCCr16bEg
+	/n9H7kjiIqYVb0w/nx4A==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y47f42q7d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 15 May 2024 12:10:27 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44FCAO2G022765
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 15 May 2024 12:10:24 GMT
+Received: from hyd-e160-a01-3-01.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 15 May 2024 05:10:20 -0700
+From: Naina Mehta <quic_nainmeht@quicinc.com>
+To: <ulf.hansson@linaro.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <bhupesh.sharma@linaro.org>
+CC: <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        Naina Mehta
+	<quic_nainmeht@quicinc.com>
+Subject: [PATCH 0/3] Add SDHCI support for SDX75 SoC
+Date: Wed, 15 May 2024 17:39:55 +0530
+Message-ID: <20240515120958.32032-1-quic_nainmeht@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 9pyKq2YjbFl6FZBU8xxNWWVMCLdjkkXm
+X-Proofpoint-ORIG-GUID: 9pyKq2YjbFl6FZBU8xxNWWVMCLdjkkXm
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-15_06,2024-05-15_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ phishscore=0 bulkscore=0 clxscore=1011 malwarescore=0 adultscore=0
+ lowpriorityscore=0 impostorscore=0 suspectscore=0 mlxlogscore=873
+ mlxscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405010000 definitions=main-2405150084
 
-The CONFIG_CSD_LOCK_WAIT_DEBUG option enables debugging of hung
-smp_call_function*() calls (e.g. when the target CPU gets stuck within
-the callback function). Testing this option requires triggering such
-hangs.
+Add SDHC instance for supporting SD card on SDX75 SoC.
 
-This patch adds an lkdtm test with a hung smp_call_function_single()
-callback, which can be used to test CONFIG_CSD_LOCK_WAIT_DEBUG and NMI
-backtraces (as CONFIG_CSD_LOCK_WAIT_DEBUG will attempt an NMI backtrace
-of the hung target CPU).
+Naina Mehta (3):
+  dt-bindings: mmc: sdhci-msm: Document the SDX75 compatible
+  arm64: dts: qcom: sdx75: Add SDHCI node
+  arm64: dts: qcom: sdx75-idp: add SDHCI for SD Card
 
-On arm64 using pseudo-NMI, this looks like:
+ .../devicetree/bindings/mmc/sdhci-msm.yaml    |  1 +
+ arch/arm64/boot/dts/qcom/sdx75-idp.dts        | 45 ++++++++++
+ arch/arm64/boot/dts/qcom/sdx75.dtsi           | 89 +++++++++++++++++++
+ 3 files changed, 135 insertions(+)
 
-| # mount -t debugfs none /sys/kernel/debug/
-| # echo SMP_CALL_LOCKUP > /sys/kernel/debug/provoke-crash/DIRECT
-| lkdtm: Performing direct entry SMP_CALL_LOCKUP
-| smp: csd: Detected non-responsive CSD lock (#1) on CPU#1, waiting 5000000176 ns for CPU#00 __lkdtm_SMP_CALL_LOCKUP+0x0/0x8(0x0).
-| smp:     csd: CSD lock (#1) handling this request.
-| Sending NMI from CPU 1 to CPUs 0:
-| NMI backtrace for cpu 0
-| CPU: 0 PID: 0 Comm: swapper/0 Not tainted 6.9.0-rc4-00001-gfdfd281212ec #1
-| Hardware name: linux,dummy-virt (DT)
-| pstate: 60401005 (nZCv daif +PAN -UAO -TCO -DIT +SSBS BTYPE=--)
-| pc : __lkdtm_SMP_CALL_LOCKUP+0x0/0x8
-| lr : __flush_smp_call_function_queue+0x1b0/0x290
-| sp : ffff800080003f30
-| pmr_save: 00000060
-| x29: ffff800080003f30 x28: ffffa4ce961a4900 x27: 0000000000000000
-| x26: fff000003fcfa0c0 x25: ffffa4ce961a4900 x24: ffffa4ce959aa140
-| x23: ffffa4ce959aa140 x22: 0000000000000000 x21: ffff800080523c40
-| x20: 0000000000000000 x19: 0000000000000000 x18: fff05b31aa323000
-| x17: fff05b31aa323000 x16: ffff800080000000 x15: 0000330fc3fe6b2c
-| x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000279
-| x11: 0000000000000040 x10: fff000000302d0a8 x9 : fff000000302d0a0
-| x8 : fff0000003400270 x7 : 0000000000000000 x6 : ffffa4ce9451b810
-| x5 : 0000000000000000 x4 : fff05b31aa323000 x3 : ffff800080003f30
-| x2 : fff05b31aa323000 x1 : ffffa4ce959aa140 x0 : 0000000000000000
-| Call trace:
-|  __lkdtm_SMP_CALL_LOCKUP+0x0/0x8
-|  generic_smp_call_function_single_interrupt+0x14/0x20
-|  ipi_handler+0xb8/0x178
-|  handle_percpu_devid_irq+0x84/0x130
-|  generic_handle_domain_irq+0x2c/0x44
-|  gic_handle_irq+0x118/0x240
-|  call_on_irq_stack+0x24/0x4c
-|  do_interrupt_handler+0x80/0x84
-|  el1_interrupt+0x44/0xc0
-|  el1h_64_irq_handler+0x18/0x24
-|  el1h_64_irq+0x78/0x7c
-|  default_idle_call+0x40/0x60
-|  do_idle+0x23c/0x2d0
-|  cpu_startup_entry+0x38/0x3c
-|  kernel_init+0x0/0x1d8
-|  start_kernel+0x51c/0x608
-|  __primary_switched+0x80/0x88
-| CPU: 1 PID: 128 Comm: sh Not tainted 6.9.0-rc4-00001-gfdfd281212ec #1
-| Hardware name: linux,dummy-virt (DT)
-| Call trace:
-|  dump_backtrace+0x90/0xe8
-|  show_stack+0x18/0x24
-|  dump_stack_lvl+0xac/0xe8
-|  dump_stack+0x18/0x24
-|  csd_lock_wait_toolong+0x268/0x338
-|  smp_call_function_single+0x1dc/0x2f0
-|  lkdtm_SMP_CALL_LOCKUP+0xcc/0xfc
-|  lkdtm_do_action+0x1c/0x38
-|  direct_entry+0xbc/0x14c
-|  full_proxy_write+0x60/0xb4
-|  vfs_write+0xd0/0x35c
-|  ksys_write+0x70/0x104
-|  __arm64_sys_write+0x1c/0x28
-|  invoke_syscall+0x48/0x114
-|  el0_svc_common.constprop.0+0x40/0xe0
-|  do_el0_svc+0x1c/0x28
-|  el0_svc+0x38/0x108
-|  el0t_64_sync_handler+0x120/0x12c
-|  el0t_64_sync+0x1a4/0x1a8
-| smp: csd: Continued non-responsive CSD lock (#1) on CPU#1, waiting 10000064272 ns for CPU#00 __lkdtm_SMP_CALL_LOCKUP+0x0/0x8(0x0).
-| smp:     csd: CSD lock (#1) handling this request.
-| smp: csd: Continued non-responsive CSD lock (#1) on CPU#1, waiting 15000064384 ns for CPU#00 __lkdtm_SMP_CALL_LOCKUP+0x0/0x8(0x0).
-| smp:     csd: CSD lock (#1) handling this request.
-
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Acked-by: Paul E. McKenney <paulmck@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
----
- drivers/misc/lkdtm/bugs.c               | 30 +++++++++++++++++++++++++
- tools/testing/selftests/lkdtm/tests.txt |  1 +
- 2 files changed, 31 insertions(+)
-
-Since v1 [1]:
-* Rename option CSDLOCKUP -> SMP_CALL_LOCKUP
-* Add entry to tests.txt
-* Fix typo in commit message
-* Add Paul's Acked-by tag
-
-[1] https://lore.kernel.org/lkml/20240419103452.3530155-1-mark.rutland@arm.com/
-
-diff --git a/drivers/misc/lkdtm/bugs.c b/drivers/misc/lkdtm/bugs.c
-index 5178c02b21eba..62ba015254797 100644
---- a/drivers/misc/lkdtm/bugs.c
-+++ b/drivers/misc/lkdtm/bugs.c
-@@ -286,6 +286,35 @@ static void lkdtm_HARDLOCKUP(void)
- 		cpu_relax();
- }
- 
-+static void __lkdtm_SMP_CALL_LOCKUP(void *unused)
-+{
-+	for (;;)
-+		cpu_relax();
-+}
-+
-+static void lkdtm_SMP_CALL_LOCKUP(void)
-+{
-+	unsigned int cpu, target;
-+
-+	cpus_read_lock();
-+
-+	cpu = get_cpu();
-+	target = cpumask_any_but(cpu_online_mask, cpu);
-+
-+	if (target >= nr_cpu_ids) {
-+		pr_err("FAIL: no other online CPUs\n");
-+		goto out_put_cpus;
-+	}
-+
-+	smp_call_function_single(target, __lkdtm_SMP_CALL_LOCKUP, NULL, 1);
-+
-+	pr_err("FAIL: did not hang\n");
-+
-+out_put_cpus:
-+	put_cpu();
-+	cpus_read_unlock();
-+}
-+
- static void lkdtm_SPINLOCKUP(void)
- {
- 	/* Must be called twice to trigger. */
-@@ -680,6 +709,7 @@ static struct crashtype crashtypes[] = {
- 	CRASHTYPE(UNALIGNED_LOAD_STORE_WRITE),
- 	CRASHTYPE(SOFTLOCKUP),
- 	CRASHTYPE(HARDLOCKUP),
-+	CRASHTYPE(SMP_CALL_LOCKUP),
- 	CRASHTYPE(SPINLOCKUP),
- 	CRASHTYPE(HUNG_TASK),
- 	CRASHTYPE(OVERFLOW_SIGNED),
-diff --git a/tools/testing/selftests/lkdtm/tests.txt b/tools/testing/selftests/lkdtm/tests.txt
-index 368973f05250f..cff124c1eddd3 100644
---- a/tools/testing/selftests/lkdtm/tests.txt
-+++ b/tools/testing/selftests/lkdtm/tests.txt
-@@ -31,6 +31,7 @@ SLAB_FREE_CROSS
- SLAB_FREE_PAGE
- #SOFTLOCKUP Hangs the system
- #HARDLOCKUP Hangs the system
-+#SMP_CALL_LOCKUP Hangs the system
- #SPINLOCKUP Hangs the system
- #HUNG_TASK Hangs the system
- EXEC_DATA
--- 
-2.30.2
+--
+2.17.1
 
 
