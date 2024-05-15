@@ -1,215 +1,168 @@
-Return-Path: <linux-kernel+bounces-179644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B27838C62AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 10:19:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 209BC8C62B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 10:20:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D58751C21B6B
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:19:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EEAF1F2134C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:20:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24A674EB23;
-	Wed, 15 May 2024 08:19:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56CDC4D9F5;
+	Wed, 15 May 2024 08:20:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="eoB6MZCa"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="dYUJuOCI"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A2F94C61C
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 08:19:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 344A84C627;
+	Wed, 15 May 2024 08:20:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715761160; cv=none; b=Y7iBUzZlwj7KevEAcVIBafeTP1c/ZdHaRpTV/a77o6xNQvzXRCbQldAf+sQuFdcgpaU6QWe3DC4OY7/ojEheFLDZwoDjAaBbQOzxJpveyG2OMBH/RQLAUTONVJiaCen9CSRq3skLSg2lk5PioSvYM1j8RQ9do8ySFPfEdoko/bg=
+	t=1715761215; cv=none; b=RMThYnWb0tBCHwj639qy8C2QioBuahhvcGP4XRnWfCJcrcp97o3i6fc5baO6Fzq0VL6nLyB4Q4gqFQx8ABLoTkift9nN0cf6fzeCzJCQRMcqKx/0VAYXa/G4yC+t9WV1E49CSmN0Mq7E2muLvYQ6jHUnllkDUwFFUxFwOX6pbsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715761160; c=relaxed/simple;
-	bh=z0zhb+QV5hbyDviqfqShLmfRPBX/cjad8dM1YySRgs0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RmskgTWcOq1FtmR52/DlRMicxt7xRPDtu4LZJ7Zze7Job+kkeW+IVPF/ZKLS2+NgajrSq2VO+RMWR5XNbpIizP1oMx9zJKxDG4iwUzTlz0HJufEBRoJSwOs5lJIqaddCmpzMYR15LldMQCsv5W96Vp3eBRv7kdh2TMJWbhxg3NU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=eoB6MZCa; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1f05b669b6cso37035925ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 01:19:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1715761157; x=1716365957; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6o942XCtPQjJiLKQGAB2J6bVbP8KodkalImgwSTnKDA=;
-        b=eoB6MZCa7wHl/a21R4eOuLGD9Dbzy8ctbadhXKIVghpUnJhdQ4LQpGip8bVe7boojU
-         pdLZvuFTDrTQRAD/S9Hu8Os2OwdTZScmi5vLrMCuwyaIjbXPxX/B0407M4JVYa1qmu57
-         /5gllz8UFvpI4x6NlQj5BWz/SdnW3ZY8EwWmJDc1Uywptp/IecNA6UfS80RmxqoFc1Y1
-         QPxVM2sjQHqja9ON8IgVangV8fs4hPaDaV1niw5N0HOJL3PhruWLZeLvMPjwwa+xFCd4
-         SYOdZigioQjJQm5J4cUUL0cxHxTapu2l3I7E7jP3zZ5AOV5s/PoRWpn0BHm93gRCl0kM
-         /ITg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715761157; x=1716365957;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6o942XCtPQjJiLKQGAB2J6bVbP8KodkalImgwSTnKDA=;
-        b=mi60tTxKykkeCbKVAjiZnRkUl4CleYyg1fz3fQkNHvPqnLqvo1tPdjQ0nYaXQ8wpYN
-         kiubLDTD/pSJ4z0G0ypAvRK2ATmq4o3mPDjs0OrNTKYuoI1oavMHX/y+90UHXEnnlCCf
-         ZNiFTOHV8ZnPEzN6CBEo7xB7H2AKBZxllQ58KlD5c/O3GN6+I13IUG1oBLyedN+vRlCK
-         KSlmGQxnsaY9JAXNwEwGqOuNU6Sn4ZC2X5I0IFKDPbk0ii3zpLhNMPzLxPG5NntCml57
-         uatMKbldCODph9pVMdx222Z2dHW2n0qpJgd7tZMfNinLg3bwYTTTRFHKOX7SKAEMiigm
-         tp/g==
-X-Forwarded-Encrypted: i=1; AJvYcCUquTK16KMGL/UdFu/PM0WBpwpt7ZPDVx7n7m7ZdqQ3GJWKWPXSAqOvNXZqE8V1eE8IvSB7+N/bYcdIAFLLuso6QMqoQbswPyB3v/cc
-X-Gm-Message-State: AOJu0YwgkMCe8BvZFxyfRHvX9FmglvThsy+EzVzC43WEHnRrjgBXTxpS
-	UYLslLcTFYInmMCHLeZ4QTpBn3qpCtlf7ieJNNYUyjf8TGZFxSnLEJhg7e5zwuw=
-X-Google-Smtp-Source: AGHT+IFOULpzfkEKoKEGmcSN0BoNscI93ZPof/9O69rlmHT7S8HVoLA+6CXd6uunVdUipbdH0C4ExQ==
-X-Received: by 2002:a17:902:6546:b0:1ea:cb6f:ee5b with SMTP id d9443c01a7336-1ef43e2796fmr155486445ad.38.1715761156601;
-        Wed, 15 May 2024 01:19:16 -0700 (PDT)
-Received: from C02F52LSML85.bytedance.net ([203.208.167.150])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0bad62fesm112051265ad.83.2024.05.15.01.19.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 May 2024 01:19:16 -0700 (PDT)
-From: Feng zhou <zhoufeng.zf@bytedance.com>
-To: edumazet@google.com,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@google.com,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	davem@davemloft.net,
-	dsahern@kernel.org,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	laoar.shao@gmail.com
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	yangzhenze@bytedance.com,
-	wangdongdong.6@bytedance.com,
-	zhoufeng.zf@bytedance.com
-Subject: [PATCH bpf-next] bpf: tcp: Improve bpf write tcp opt performance
-Date: Wed, 15 May 2024 16:19:01 +0800
-Message-Id: <20240515081901.91058-1-zhoufeng.zf@bytedance.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
+	s=arc-20240116; t=1715761215; c=relaxed/simple;
+	bh=ISlf6Oang1bIb3NO5GiCyu6dI90A4hgSsCEF1qXyjhM=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ArqaBRabbKNZVfYxQj1zyy75bk2LUH0N+NymIFHeLLPkbiHH+35QM2p2q0RdsIc2qJlxyT25PNBqOhNmCXFcYVnW0f5gFGlBHMmaY/yt3x8QVo2+T++I72Uz9Op8NaYU4aJPWC072oW09Kw8xIt3SS4HDmB12uy+6hLSafPe454=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=dYUJuOCI; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1715761214; x=1747297214;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ISlf6Oang1bIb3NO5GiCyu6dI90A4hgSsCEF1qXyjhM=;
+  b=dYUJuOCIkC+YxbJ878n4kUTHelvSPJhhx7nD8jrs7Ug8CGYSj8RiB7ko
+   4UkTICBt1MTSiYabgz1X2qVIxJQr1CjtrM+wICF/xzqS9JEeBZdGKIgdT
+   GuD5csHaSzrYeeBKhn4obpGG2etxGkgD8M/oXyjdiXN2VlMV/+J+PLfB6
+   m8k6JJM2CGNNWK8fYktQ4QiwW+jjjtkf17wCbxcbZ83wOxtpKL2YMMznP
+   rxlN+Eg5pOgBHwp9gUYPsJdOpXdhx4+bVy+hL4T8lPcHiNyItIXPP7uWK
+   sS8IPcgem3BxXaZ0txymcdzAUdMuXk/eZ5i9jjVPHIUT8nlKzaMm6CapB
+   A==;
+X-CSE-ConnectionGUID: abhP6raiRY2CWqedFddvng==
+X-CSE-MsgGUID: 4iB1jHs7SKKoyuFQP8+Gpg==
+X-IronPort-AV: E=Sophos;i="6.08,161,1712646000"; 
+   d="asc'?scan'208";a="255643733"
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 15 May 2024 01:20:13 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Wed, 15 May 2024 01:20:04 -0700
+Received: from wendy (10.10.85.11) by chn-vm-ex02.mchp-main.com (10.10.85.144)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
+ Transport; Wed, 15 May 2024 01:20:00 -0700
+Date: Wed, 15 May 2024 09:19:46 +0100
+From: Conor Dooley <conor.dooley@microchip.com>
+To: Andrew Jones <ajones@ventanamicro.com>
+CC: "Wang, Xiao W" <xiao.w.wang@intel.com>, "paul.walmsley@sifive.com"
+	<paul.walmsley@sifive.com>, "palmer@dabbelt.com" <palmer@dabbelt.com>,
+	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, "luke.r.nels@gmail.com"
+	<luke.r.nels@gmail.com>, "xi.wang@gmail.com" <xi.wang@gmail.com>,
+	"bjorn@kernel.org" <bjorn@kernel.org>, "ast@kernel.org" <ast@kernel.org>,
+	"daniel@iogearbox.net" <daniel@iogearbox.net>, "andrii@kernel.org"
+	<andrii@kernel.org>, "martin.lau@linux.dev" <martin.lau@linux.dev>,
+	"eddyz87@gmail.com" <eddyz87@gmail.com>, "song@kernel.org" <song@kernel.org>,
+	"yonghong.song@linux.dev" <yonghong.song@linux.dev>,
+	"john.fastabend@gmail.com" <john.fastabend@gmail.com>, "kpsingh@kernel.org"
+	<kpsingh@kernel.org>, "sdf@google.com" <sdf@google.com>, "haoluo@google.com"
+	<haoluo@google.com>, "jolsa@kernel.org" <jolsa@kernel.org>,
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"bpf@vger.kernel.org" <bpf@vger.kernel.org>, "pulehui@huawei.com"
+	<pulehui@huawei.com>, "Li, Haicheng" <haicheng.li@intel.com>,
+	"conor@kernel.org" <conor@kernel.org>, Ben Dooks <ben.dooks@codethink.co.uk>
+Subject: Re: [PATCH v2] riscv, bpf: Optimize zextw insn with Zba extension
+Message-ID: <20240515-cone-getting-d17037b51e97@wendy>
+References: <20240511023436.3282285-1-xiao.w.wang@intel.com>
+ <20240513-5c6f04fb4a29963c63d09aa2@orel>
+ <DM8PR11MB575179A3EB8D056B3EEECA74B8E32@DM8PR11MB5751.namprd11.prod.outlook.com>
+ <20240514-944dec90b2c531d8b6c783f7@orel>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="PCtwkfT5UTiocbOE"
+Content-Disposition: inline
+In-Reply-To: <20240514-944dec90b2c531d8b6c783f7@orel>
 
-From: Feng Zhou <zhoufeng.zf@bytedance.com>
+--PCtwkfT5UTiocbOE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Set the full package write tcp option, the test found that the loss
-will be 20%. If a package wants to write tcp option, it will trigger
-bpf prog three times, and call "tcp_send_mss" calculate mss_cache,
-call "tcp_established_options" to reserve tcp opt len, call
-"bpf_skops_write_hdr_opt" to write tcp opt, but "tcp_send_mss" before
-TSO. Through bpftrace tracking, it was found that during the pressure
-test, "tcp_send_mss" call frequency was 90w/s. Considering that opt
-len does not change often, consider caching opt len for optimization.
+On Tue, May 14, 2024 at 03:37:02PM +0200, Andrew Jones wrote:
+> On Tue, May 14, 2024 at 07:36:04AM GMT, Wang, Xiao W wrote:
+> > > From: Andrew Jones <ajones@ventanamicro.com>
+>> > > > +config RISCV_ISA_ZBA
+> > > > +	bool "Zba extension support for bit manipulation instructions"
+> > > > +	depends on TOOLCHAIN_HAS_ZBA
+> > >=20
+> > > We handcraft the instruction, so why do we need toolchain support?
+> >=20
+> > Good point, we don't need toolchain support for this bpf jit case.
+> >=20
+> > >=20
+> > > > +	depends on RISCV_ALTERNATIVE
+> > >=20
+> > > Also, while riscv_has_extension_likely() will be accelerated with
+> > > RISCV_ALTERNATIVE, it's not required.
+> >=20
+> > Agree, it's not required. For this bpf jit case, we should drop these t=
+wo dependencies.
+> >=20
+> > BTW, Zbb is used in bpf jit, the usage there also doesn't depend on too=
+lchain and
+> > RISCV_ALTERNATIVE, but the Kconfig for RISCV_ISA_ZBB has forced the dep=
+endencies
+> > due to Zbb assembly programming elsewhere.
+> > Maybe we could just dynamically check the existence of RISCV_ISA_ZB* be=
+fore jit code
+> > emission? or introduce new config options for bpf jit? I prefer the fir=
+st method and
+> > welcome any comments.
+>=20
+> My preferences is to remove as much of the TOOLCHAIN_HAS_ stuff as
+> possible. We should audit the extensions which have them to see if
+> they're really necessary.
 
-Signed-off-by: Feng Zhou <zhoufeng.zf@bytedance.com>
----
- include/linux/tcp.h            |  3 +++
- include/uapi/linux/bpf.h       |  8 +++++++-
- net/ipv4/tcp_output.c          | 12 +++++++++++-
- tools/include/uapi/linux/bpf.h |  8 +++++++-
- 4 files changed, 28 insertions(+), 3 deletions(-)
+While I think it is reasonable to allow the "RISCV_ISA_ZBB" option to
+control whether or not bpf is allowed to use it for optimisations, only
+allowing bpf to do that if there's toolchain support feels odd to me..
+Maybe we need to sorta steal from Charlie's patchset and introduce
+some hidden options that have the toolchain dep that are used by the
+alternative macros etc?
 
-diff --git a/include/linux/tcp.h b/include/linux/tcp.h
-index 6a5e08b937b3..74437fcf94a2 100644
---- a/include/linux/tcp.h
-+++ b/include/linux/tcp.h
-@@ -455,6 +455,9 @@ struct tcp_sock {
- 					  * to recur itself by calling
- 					  * bpf_setsockopt(TCP_CONGESTION, "itself").
- 					  */
-+	u8	bpf_opt_len;		/* save tcp opt len implementation
-+					 * BPF_SOCK_OPS_HDR_OPT_LEN_CB fast path
-+					 */
- #define BPF_SOCK_OPS_TEST_FLAG(TP, ARG) (TP->bpf_sock_ops_cb_flags & ARG)
- #else
- #define BPF_SOCK_OPS_TEST_FLAG(TP, ARG) 0
-diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
-index 90706a47f6ff..f2092de1f432 100644
---- a/include/uapi/linux/bpf.h
-+++ b/include/uapi/linux/bpf.h
-@@ -6892,8 +6892,14 @@ enum {
- 	 * options first before the BPF program does.
- 	 */
- 	BPF_SOCK_OPS_WRITE_HDR_OPT_CB_FLAG = (1<<6),
-+	/* Fast path to reserve space in a skb under
-+	 * sock_ops->op == BPF_SOCK_OPS_HDR_OPT_LEN_CB.
-+	 * opt length doesn't change often, so it can save in the tcp_sock. And
-+	 * set BPF_SOCK_OPS_HDR_OPT_LEN_CACHE_CB_FLAG to no bpf call.
-+	 */
-+	BPF_SOCK_OPS_HDR_OPT_LEN_CACHE_CB_FLAG = (1<<7),
- /* Mask of all currently supported cb flags */
--	BPF_SOCK_OPS_ALL_CB_FLAGS       = 0x7F,
-+	BPF_SOCK_OPS_ALL_CB_FLAGS       = 0xFF,
- };
- 
- /* List of known BPF sock_ops operators.
-diff --git a/net/ipv4/tcp_output.c b/net/ipv4/tcp_output.c
-index ea7ad7d99245..0e7480a58012 100644
---- a/net/ipv4/tcp_output.c
-+++ b/net/ipv4/tcp_output.c
-@@ -488,12 +488,21 @@ static void bpf_skops_hdr_opt_len(struct sock *sk, struct sk_buff *skb,
- {
- 	struct bpf_sock_ops_kern sock_ops;
- 	int err;
-+	struct tcp_sock *th = (struct tcp_sock *)sk;
- 
--	if (likely(!BPF_SOCK_OPS_TEST_FLAG(tcp_sk(sk),
-+	if (likely(!BPF_SOCK_OPS_TEST_FLAG(th,
- 					   BPF_SOCK_OPS_WRITE_HDR_OPT_CB_FLAG)) ||
- 	    !*remaining)
- 		return;
- 
-+	if (likely(BPF_SOCK_OPS_TEST_FLAG(th,
-+					  BPF_SOCK_OPS_HDR_OPT_LEN_CACHE_CB_FLAG)) &&
-+	    th->bpf_opt_len) {
-+		*remaining -= th->bpf_opt_len;
-+		opts->bpf_opt_len = th->bpf_opt_len;
-+		return;
-+	}
-+
- 	/* *remaining has already been aligned to 4 bytes, so *remaining >= 4 */
- 
- 	/* init sock_ops */
-@@ -538,6 +547,7 @@ static void bpf_skops_hdr_opt_len(struct sock *sk, struct sk_buff *skb,
- 	opts->bpf_opt_len = *remaining - sock_ops.remaining_opt_len;
- 	/* round up to 4 bytes */
- 	opts->bpf_opt_len = (opts->bpf_opt_len + 3) & ~3;
-+	th->bpf_opt_len = opts->bpf_opt_len;
- 
- 	*remaining -= opts->bpf_opt_len;
- }
-diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bpf.h
-index 90706a47f6ff..f2092de1f432 100644
---- a/tools/include/uapi/linux/bpf.h
-+++ b/tools/include/uapi/linux/bpf.h
-@@ -6892,8 +6892,14 @@ enum {
- 	 * options first before the BPF program does.
- 	 */
- 	BPF_SOCK_OPS_WRITE_HDR_OPT_CB_FLAG = (1<<6),
-+	/* Fast path to reserve space in a skb under
-+	 * sock_ops->op == BPF_SOCK_OPS_HDR_OPT_LEN_CB.
-+	 * opt length doesn't change often, so it can save in the tcp_sock. And
-+	 * set BPF_SOCK_OPS_HDR_OPT_LEN_CACHE_CB_FLAG to no bpf call.
-+	 */
-+	BPF_SOCK_OPS_HDR_OPT_LEN_CACHE_CB_FLAG = (1<<7),
- /* Mask of all currently supported cb flags */
--	BPF_SOCK_OPS_ALL_CB_FLAGS       = 0x7F,
-+	BPF_SOCK_OPS_ALL_CB_FLAGS       = 0xFF,
- };
- 
- /* List of known BPF sock_ops operators.
--- 
-2.30.2
+I'll have a poke at how bad that looks I think.
 
+> I don't mind depending on RISCV_ALTERNATIVE,
+> since it's almost required for riscv at this point anyway.
+
+As you say, using on riscv_has_extension_likely() doesn't mean you
+depend on alternatives so effectively all this does is rule out use
+with XIP, since alternatives are selected when !XIP. Does BPF even work
+for XIP?
+
+--PCtwkfT5UTiocbOE
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZkRwIgAKCRB4tDGHoIJi
+0oNrAP9q45vV3szU20JF9S6wc6DveShfdByLH9gPMYtr7jfQJwEAgOlRs5bh/aUj
+XQBTHLztm+XoKiwl2Q24JAHreZtb9Ac=
+=/lH/
+-----END PGP SIGNATURE-----
+
+--PCtwkfT5UTiocbOE--
 
