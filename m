@@ -1,197 +1,151 @@
-Return-Path: <linux-kernel+bounces-180378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CEDC8C6DB4
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 23:17:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E11568C6DB7
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 23:18:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD24D1F24982
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 21:17:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B7191F24CCF
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 21:18:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 127F515B541;
-	Wed, 15 May 2024 21:17:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB63E15B54A;
+	Wed, 15 May 2024 21:18:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bHKjO6+a"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P3dFccox"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9680815B134
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 21:17:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FD92155A57;
+	Wed, 15 May 2024 21:18:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715807841; cv=none; b=ksSFM4vvCyn4ZqDnqfKW7vGLBdqsGhqJIPuE+mVGUWKPbjNmwJJgC21HihHLY3FKEgVKJQtOj8pVr/ZsijRj+nwVRiD6gbQ1c1VFKUpB31hngbTuMFrmsKLTegjRccY+58+flH33zH5gRt3jB1OZkCfj6SYrGh2xS8pfK8ZkChY=
+	t=1715807929; cv=none; b=WNk5N8UeVu90ZGOwUDAoXQpL97h6UINlSUr44mS3tlFN6BOUsup7mL+Z7a2Vrkz0li9jATQNdFZESMaa1PzlCZX0t/zUMNwPANmK0l5kS9ppn3aXEu8Dd5JaE7K9a7xKY86c+sZOamk0DnPIKrQ0gRRiFIE+u01taCXzkdhCrNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715807841; c=relaxed/simple;
-	bh=1uPoM8M5AFnNA/aSK75lckJJ0XXBCxElxSBf+HLF4/Q=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ChlVG/qw06o8ntsDT14K6wSOdWENDivBgyFNDREgPG7kYDFdLWXj9j0hD5rZelNVIq1OxdK7H5xcKH/T3pJqpMRrZf4HN7E7iLT2oi12Bka22csY9nvOYUCQjBV1T03m1JyTZKmwJo1Z2YD6HHZPK2HZAHN+18e8XInOdq0Q2Z4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bHKjO6+a; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-34da04e44a2so5743387f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 14:17:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715807838; x=1716412638; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=D0ecu82tuX1ni98ypLLsTpUA0kFlxPhIqL4+3/EGxOA=;
-        b=bHKjO6+aDOUhEVD+aJCFXw6ntVRO0vX9hU9v85U6XbKR8WLrcyEGvwcny8k5PTjVwn
-         /aFeRmHJeMYD6afjYvFydPsAHsQcCUXOOmcy318HuqXQpxrzoYSk/Sxn8XzOtAZNpg7b
-         CrMRjp1UChcveu8KMLq/B9p46mqcrcIiAXkpfk+ZsU5UbMozSyl7stzcOf+e1G8aRpv7
-         ERP64mWqnhFuL8PGsRCpBVZyc1sfFzVN5oEFexfQ1ZII1dYK0RCKQi25FmAuh80GzLVH
-         6eog7+kOBs6Mij1A6Bu9rvJnOxnHpbQ7wjoLdqr3y6wy/PMMUG74vgjFoJbvpU7qlggI
-         t4Vw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715807838; x=1716412638;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=D0ecu82tuX1ni98ypLLsTpUA0kFlxPhIqL4+3/EGxOA=;
-        b=N2lzVO3jTGg7ScMgYWr3lWtuGNVV6pLpHYRJqKxPNN68PJDTr3JP12oti8mmYX/Y8m
-         TDenphanLeTYC1znQ3tkQtY2Q2OBidr8TERe/lzE6F7s5cCw+/Kyt9bq6M91H7tdBqKL
-         HwTJu/DprMaEn8FvdPIDLFM6qPD4Fo7H8eLjqYeGJfB2u6rrZ52UacyfEJ2agcts9m+O
-         /4ClDytTnyKGWwN2X4vG/bWCjaMGOvPjQOD/URSgr7tJwcaNXU0zs1XCUUNAaQo207ZI
-         8w6dyq2Oyy7feA+++lh/ugNndodpdMnR/PNbCicCdnbWRNB/xgH4HPk/4vcwVkWcK/1a
-         a4wA==
-X-Forwarded-Encrypted: i=1; AJvYcCWgqW7vKd7B4SssQeNghONF93wXLcwp2uIJDBPLCk/bhdRJOuV84pGOnyegQOqxY75/H7/76vBipTruzk512pBUuupYZ/O/8Ybe3qsm
-X-Gm-Message-State: AOJu0YyPtFu1MXl7RrBd5BrBNHx/tDXk7Dmnz3l0QIxapSTLqxiWUdZD
-	2RusKiaVSsYzodSiD0WHM5i6crXwyLkpUIgV+EcIjDljfrmI6qcpp8iGfnaLfQQ=
-X-Google-Smtp-Source: AGHT+IH8Iu67CkoC7/nlTrdtjmS8OSpJsiAUHCgKh2Xh/6pKxrhVkmBbpcisbLl6bNrjDPNWu/keEw==
-X-Received: by 2002:adf:f791:0:b0:343:8e85:dd7c with SMTP id ffacd0b85a97d-3504a9580bamr12811320f8f.55.1715807837876;
-        Wed, 15 May 2024 14:17:17 -0700 (PDT)
-Received: from [10.1.2.176] ([149.14.240.163])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502bbbca98sm17355196f8f.112.2024.05.15.14.17.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 May 2024 14:17:17 -0700 (PDT)
-Message-ID: <eb65ad1a-04df-42bf-8683-ba8876bb885e@linaro.org>
-Date: Wed, 15 May 2024 23:17:16 +0200
+	s=arc-20240116; t=1715807929; c=relaxed/simple;
+	bh=GV4ctJ7S6o2h1VMQ6K3QvFDmjV30mayxRlqtKeBqg1o=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=LGyevu7B8TA9LuKM5eFCIB1N1T9gVFROSFnNTUuP7IAJPMl7RJfsy3o6jGOqxm4ZfkksnwqyQaCxupQcPh5XUBLKkzqm8Wa85MBeVFJXuTMk8B5gmXwkUvW46J048nE2xGF7AZnTg0qq9PL1m6chVKhEaHk+3tZrvXpbwbE019A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P3dFccox; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64A86C116B1;
+	Wed, 15 May 2024 21:18:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715807928;
+	bh=GV4ctJ7S6o2h1VMQ6K3QvFDmjV30mayxRlqtKeBqg1o=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=P3dFccoxomCIHJqy4XeaDnH+WifIbD1n9DRECJaYOjnB+pHNmRRXshO4DdAU+2FLb
+	 NlhEW6MafzcM0Jbcj+2VwkslZzf09wUlmRFmnFGeMCKCGuQiSiCXRyuvUskvBfYJ4L
+	 9YDfoS7RbZBpcdhYecRCenElUV5ttxPpFcjhji8zret1J/jejjnGAfsCGAzIrywguU
+	 RNfW1bWqB9RHZNuQilAHblPZjMOR8GJcShYynFvRsCD97XsAt6bNHqTsLBltZ8qsUC
+	 nffGptSFneFjepbnxK3AjYyTduFnuCsBgq/8XBr0adLLkcxWlvo9sKO/GwSRTDbP98
+	 2Q6fb1M5tmZeg==
+Date: Wed, 15 May 2024 16:18:46 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Shawn Lin <shawn.lin@rock-chips.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Brian Norris <briannorris@chromium.org>, linux-pci@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	mhi@lists.linux.dev, stable@vger.kernel.org,
+	Slark Xiao <slark_xiao@163.com>
+Subject: Re: [PATCH] PCI: rockchip: Use GPIOD_OUT_LOW flag while requesting
+ ep_gpio
+Message-ID: <20240515211846.GA2139223@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v3 6/6] drm/panel: simple: Add Microtips Technology
- MF-103HIEB0GA0 panel
-To: Aradhya Bhatia <a-bhatia1@ti.com>,
- Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Liu Ying <victor.liu@nxp.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: DRI Development List <dri-devel@lists.freedesktop.org>,
- Devicetree List <devicetree@vger.kernel.org>,
- Linux Kernel List <linux-kernel@vger.kernel.org>, Nishanth Menon
- <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
- Praneeth Bajjuri <praneeth@ti.com>, Udit Kumar <u-kumar1@ti.com>,
- Devarsh Thakkar <devarsht@ti.com>, Jai Luthra <j-luthra@ti.com>
-References: <20240515095133.745492-1-a-bhatia1@ti.com>
- <20240515095133.745492-7-a-bhatia1@ti.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20240515095133.745492-7-a-bhatia1@ti.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240416-pci-rockchip-perst-fix-v1-1-4800b1d4d954@linaro.org>
 
-On 15/05/2024 11:51, Aradhya Bhatia wrote:
-> Add support for Microtips Technology USA MF-103HIEB0GA0 10.25"[0],
-> 1920x720, 8-bit TFT LCD with LVDS interface. Its a Dual-LVDS Panel and
-> does not support touch.
+On Tue, Apr 16, 2024 at 11:12:35AM +0530, Manivannan Sadhasivam wrote:
+> Rockchip platforms use 'GPIO_ACTIVE_HIGH' flag in the devicetree definition
+> for ep_gpio. This means, whatever the logical value set by the driver for
+> the ep_gpio, physical line will output the same logic level.
 > 
-> [0]: Panel Datasheet
-> https://simplespec.microtipsusa.com/uploads/spec/datasheetFile/2660/13-103HIEB0GA0-S_V1.0_20211206.pdf
+> For instance,
 > 
-> Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
+> 	gpiod_set_value_cansleep(rockchip->ep_gpio, 0); --> Level low
+> 	gpiod_set_value_cansleep(rockchip->ep_gpio, 1); --> Level high
+> 
+> But while requesting the ep_gpio, GPIOD_OUT_HIGH flag is currently used.
+> Now, this also causes the physical line to output 'high' creating trouble
+> for endpoint devices during host reboot.
+> 
+> When host reboot happens, the ep_gpio will initially output 'low' due to
+> the GPIO getting reset to its POR value. Then during host controller probe,
+> it will output 'high' due to GPIOD_OUT_HIGH flag. Then during
+> rockchip_pcie_host_init_port(), it will first output 'low' and then 'high'
+> indicating the completion of controller initialization.
+> 
+> On the endpoint side, each output 'low' of ep_gpio is accounted for PERST#
+> assert and 'high' for PERST# deassert. With the above mentioned flow during
+> host reboot, endpoint will witness below state changes for PERST#:
+> 
+> 	(1) PERST# assert - GPIO POR state
+> 	(2) PERST# deassert - GPIOD_OUT_HIGH while requesting GPIO
+> 	(3) PERST# assert - rockchip_pcie_host_init_port()
+> 	(4) PERST# deassert - rockchip_pcie_host_init_port()
+> 
+> Now the time interval between (2) and (3) is very short as both happen
+> during the driver probe(), and this results in a race in the endpoint.
+> Because, before completing the PERST# deassertion in (2), endpoint got
+> another PERST# assert in (3).
+> 
+> A proper way to fix this issue is to change the GPIOD_OUT_HIGH flag in (2)
+> to GPIOD_OUT_LOW. Because the usual convention is to request the GPIO with
+> a state corresponding to its 'initial/default' value and let the driver
+> change the state of the GPIO when required.
+> 
+> As per that, the ep_gpio should be requested with GPIOD_OUT_LOW as it
+> corresponds to the POR value of '0' (PERST# assert in the endpoint). Then
+> the driver can change the state of the ep_gpio later in
+> rockchip_pcie_host_init_port() as per the initialization sequence.
+> 
+> This fixes the firmware crash issue in Qcom based modems connected to
+> Rockpro64 based board.
+> 
+> Cc:  <stable@vger.kernel.org> # 4.9
+> Reported-by: Slark Xiao <slark_xiao@163.com>
+> Closes: https://lore.kernel.org/mhi/20240402045647.GG2933@thinkpad/
+> Fixes: e77f847df54c ("PCI: rockchip: Add Rockchip PCIe controller support")
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+
+Applied by Krzysztof to pci/controller/rockchip, but his outgoing mail
+queue was broken.  Trying to squeeze it into v6.10.
+
 > ---
->   drivers/gpu/drm/panel/panel-simple.c | 32 ++++++++++++++++++++++++++++
->   1 file changed, 32 insertions(+)
+>  drivers/pci/controller/pcie-rockchip.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-> index 3a0d8f0ff267..1b0a6b4e034c 100644
-> --- a/drivers/gpu/drm/panel/panel-simple.c
-> +++ b/drivers/gpu/drm/panel/panel-simple.c
-> @@ -3084,6 +3084,35 @@ static const struct panel_desc microtips_mf_101hiebcaf0_c = {
->   	.connector_type = DRM_MODE_CONNECTOR_LVDS,
->   };
->   
-> +static const struct drm_display_mode microtips_mf_103hieb0ga0_mode = {
-> +	.clock = 93301,
-> +	.hdisplay = 1920,
-> +	.hsync_start = 1920 + 72,
-> +	.hsync_end = 1920 + 72 + 72,
-> +	.htotal = 1920 + 72 + 72 + 72,
-> +	.vdisplay = 720,
-> +	.vsync_start = 720 + 3,
-> +	.vsync_end = 720 + 3 + 3,
-> +	.vtotal = 720 + 3 + 3 + 2,
-> +};
-> +
-> +static const struct panel_desc microtips_mf_103hieb0ga0 = {
-> +	.modes = &microtips_mf_103hieb0ga0_mode,
-> +	.bpc = 8,
-> +	.num_modes = 1,
-> +	.size = {
-> +		.width = 244,
-> +		.height = 92,
-> +	},
-> +	.delay = {
-> +		.prepare = 50,
-> +		.disable = 50,
-> +	},
-> +	.bus_flags = DRM_BUS_FLAG_DE_HIGH,
-> +	.bus_format = MEDIA_BUS_FMT_RGB888_1X7X4_SPWG,
-> +	.connector_type = DRM_MODE_CONNECTOR_LVDS,
-> +};
-> +
->   static const struct drm_display_mode mitsubishi_aa070mc01_mode = {
->   	.clock = 30400,
->   	.hdisplay = 800,
-> @@ -4726,6 +4755,9 @@ static const struct of_device_id platform_of_match[] = {
->   	}, {
->   		.compatible = "microtips,mf-101hiebcaf0",
->   		.data = &microtips_mf_101hiebcaf0_c,
-> +	}, {
-> +		.compatible = "microtips,mf-103hieb0ga0",
-> +		.data = &microtips_mf_103hieb0ga0,
->   	}, {
->   		.compatible = "mitsubishi,aa070mc01-ca1",
->   		.data = &mitsubishi_aa070mc01,
-
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+> diff --git a/drivers/pci/controller/pcie-rockchip.c b/drivers/pci/controller/pcie-rockchip.c
+> index 0ef2e622d36e..c07d7129f1c7 100644
+> --- a/drivers/pci/controller/pcie-rockchip.c
+> +++ b/drivers/pci/controller/pcie-rockchip.c
+> @@ -121,7 +121,7 @@ int rockchip_pcie_parse_dt(struct rockchip_pcie *rockchip)
+>  
+>  	if (rockchip->is_rc) {
+>  		rockchip->ep_gpio = devm_gpiod_get_optional(dev, "ep",
+> -							    GPIOD_OUT_HIGH);
+> +							    GPIOD_OUT_LOW);
+>  		if (IS_ERR(rockchip->ep_gpio))
+>  			return dev_err_probe(dev, PTR_ERR(rockchip->ep_gpio),
+>  					     "failed to get ep GPIO\n");
+> 
+> ---
+> base-commit: 4cece764965020c22cff7665b18a012006359095
+> change-id: 20240416-pci-rockchip-perst-fix-88c922621d9a
+> 
+> Best regards,
+> -- 
+> Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> 
 
