@@ -1,218 +1,211 @@
-Return-Path: <linux-kernel+bounces-179828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DC0E8C6619
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 14:06:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43ADA8C661B
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 14:08:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 253F41F23470
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 12:06:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E00EB20E01
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 12:08:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A69487581D;
-	Wed, 15 May 2024 12:06:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jE1G4tFl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D908F2CCD0;
-	Wed, 15 May 2024 12:06:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B4447174F;
+	Wed, 15 May 2024 12:08:46 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1A1D219E8
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 12:08:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715774782; cv=none; b=ebk0BQ3kyeZiKnj5W5oAxe7Ud0+zY0pfb4NhATAiS6nxW10CLwjR6AsbP6P+FpAkMJILZBHQuczFFyMpz1p0Kkw9ATr5Jy0mLdfKnlzMfodsn7Mn7j8uboDUyyqRcrboj+Q+R+FQENmrt5Zhzwk1jF5MaOI9Rc+EeHa2K/QzMK8=
+	t=1715774926; cv=none; b=D1bTog6W6BDUXlEUo9A1PR5mmDeEDrKL66FB4E3QGZjbv/qTIGh3yvcNVYGBCIWeW6wgeaYAPvSEpZOTQpCJSyJJCe3ZRBQ58FJ6tNY8RKdEitdhfg+4tgMrwZGlasQYakkTXgkyLFf8GIlgaMqymlbZ7e5nGnQu/jIr/26zcUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715774782; c=relaxed/simple;
-	bh=fBp/tINIW/W/kb+0aD/MBS7XiS6Vf70YTcOdC+Nzzu8=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=BHLV35ZHNN07j06ioT0a3nC+KE6PQFCVbbkTgH6lcFj0zAnWh5I7UVr6BUa/xMazhwJujuDWkv3Hbrl/EGdvAH0bGIcaELmiPX+GIoTvDD2bQBu2QIy9+1CZEjWmNj+9g1LBPVa8swvZ7t+u1VB/G+t0XB3I7mKvF+DVxP0EzAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jE1G4tFl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11B7BC32782;
-	Wed, 15 May 2024 12:06:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715774781;
-	bh=fBp/tINIW/W/kb+0aD/MBS7XiS6Vf70YTcOdC+Nzzu8=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=jE1G4tFlE8+tZ8b7ToRce/5HR6xRftU+pd65LJYbajyMV/mZYwddKcvqi4HmBn/05
-	 tTqZMTURRct4InNdr4d3cRWODupifG2OZvahfm2gYqAiXwLfqmJRMSSWsYUgrb4RwA
-	 mpE1zQHh54/LLouqht5Fm5a2Xq2gxZTAX3xu0TB2eCZNCr5bwocuywfoWuYmVCaflz
-	 4ox3qPgixEQ8oyUbeTcZtwrZ/WEFvxBZs6vlTzn5l5MzKmZzBR1RkuALCEmAmGnmTF
-	 SIW69+AvQTznfCIabF1Xi1L57+rnWomUPJ+FljglAsJ9Aou+Z+W60A9JAIDhryJBui
-	 LeMNcZfMH2WBA==
+	s=arc-20240116; t=1715774926; c=relaxed/simple;
+	bh=E09BI2bRtacpWF/Hd7z+jWHKG0mv8YRjmcl6+NCVnb8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tzLCXqXcx438fYlYSb1y/FY5c3stwnpJdI4IcBYDy0WJqwCccHgfkVpHZ4pzR7pPQL9pHnuxZ58NrZgwled1hbrIkyY0xffLcBQc/auWC3bhgcnVqW8/LOy6BkDkSyXROLJUGz8AkBSx4hyFwBrh9qp7g+iZB420RYThDK0Yxjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5757B1042;
+	Wed, 15 May 2024 05:09:02 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 14B7C3F641;
+	Wed, 15 May 2024 05:08:36 -0700 (PDT)
+From: Mark Rutland <mark.rutland@arm.com>
+To: linux-kernel@vger.kernel.org
+Cc: keescook@chromium.org,
+	mark.rutland@arm.com,
+	paulmck@kernel.org
+Subject: [PATCH v2] lkdtm/bugs: add test for hung smp_call_function_single()
+Date: Wed, 15 May 2024 13:08:28 +0100
+Message-Id: <20240515120828.375585-1-mark.rutland@arm.com>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 15 May 2024 15:06:18 +0300
-Message-Id: <D1A7EBO71WXC.P08C5KQ97AA0@kernel.org>
-Cc: <reinette.chatre@intel.com>, =?utf-8?b?5YiY5Y+MKOi9qeWxuSk=?=
- <ls123674@antgroup.com>
-Subject: Re: [RFC PATCH v3 1/1] x86/sgx: Explicitly give up the CPU in
- EDMM's ioctl() to avoid softlockup
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Bojun Zhu" <zhubojun.zbj@antgroup.com>, <linux-kernel@vger.kernel.org>,
- <linux-sgx@vger.kernel.org>, <dave.hansen@linux.intel.com>
-X-Mailer: aerc 0.17.0
-References: <20240515065521.67908-1-zhubojun.zbj@antgroup.com>
- <20240515065521.67908-2-zhubojun.zbj@antgroup.com>
-In-Reply-To: <20240515065521.67908-2-zhubojun.zbj@antgroup.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed May 15, 2024 at 9:55 AM EEST, Bojun Zhu wrote:
-> EDMM's ioctl()s support batch operations, which may be
-> time-consuming. Try to explicitly give up the CPU as the prefix
-> operation at the every begin of "for loop" in
-> sgx_enclave_{ modify_types | restrict_permissions | remove_pages}
-> to give other tasks a chance to run, and avoid softlockup warning.
->
-> Additionally perform pending signals check as the prefix operation,
-> and introduce sgx_check_signal_and_resched(),
-> which wraps all the checks.
->
-> The following has been observed on Linux v6.9-rc5 with kernel
-> preemptions disabled(by configuring "PREEMPT_NONE=3Dy"), when kernel
-> is requested to restrict page permissions of a large number of EPC pages.
->
->     ------------[ cut here ]------------
->     watchdog: BUG: soft lockup - CPU#45 stuck for 22s!
->     ...
->     RIP: 0010:sgx_enclave_restrict_permissions+0xba/0x1f0
->     ...
->     Call Trace:
->      sgx_ioctl
->      __x64_sys_ioctl
->      x64_sys_call
->      do_syscall_64
->      entry_SYSCALL_64_after_hwframe
->     ------------[ end trace ]------------
->
+The CONFIG_CSD_LOCK_WAIT_DEBUG option enables debugging of hung
+smp_call_function*() calls (e.g. when the target CPU gets stuck within
+the callback function). Testing this option requires triggering such
+hangs.
 
-Suggested-by: Jarkko Sakkinen <jarkko@kernel.org>
+This patch adds an lkdtm test with a hung smp_call_function_single()
+callback, which can be used to test CONFIG_CSD_LOCK_WAIT_DEBUG and NMI
+backtraces (as CONFIG_CSD_LOCK_WAIT_DEBUG will attempt an NMI backtrace
+of the hung target CPU).
 
-> Signed-off-by: Bojun Zhu <zhubojun.zbj@antgroup.com>
-> ---
->  arch/x86/kernel/cpu/sgx/ioctl.c | 40 +++++++++++++++++++++++----------
->  1 file changed, 28 insertions(+), 12 deletions(-)
->
-> diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/io=
-ctl.c
-> index b65ab214bdf5..6199f483143e 100644
-> --- a/arch/x86/kernel/cpu/sgx/ioctl.c
-> +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-> @@ -365,6 +365,20 @@ static int sgx_validate_offset_length(struct sgx_enc=
-l *encl,
->  	return 0;
->  }
-> =20
-> +/*
-> + * Check signals and invoke scheduler. Return true for a pending signal.
-> + */
-> +static bool sgx_check_signal_and_resched(void)
-> +{
-> +	if (signal_pending(current))
-> +		return true;
-> +
-> +	if (need_resched())
-> +		cond_resched();
-> +
-> +	return false;
-> +}
-> +
->  /**
->   * sgx_ioc_enclave_add_pages() - The handler for %SGX_IOC_ENCLAVE_ADD_PA=
-GES
->   * @encl:       an enclave pointer
-> @@ -409,7 +423,7 @@ static long sgx_ioc_enclave_add_pages(struct sgx_encl=
- *encl, void __user *arg)
->  	struct sgx_enclave_add_pages add_arg;
->  	struct sgx_secinfo secinfo;
->  	unsigned long c;
-> -	int ret;
-> +	int ret =3D -ERESTARTSYS;
-> =20
->  	if (!test_bit(SGX_ENCL_CREATED, &encl->flags) ||
->  	    test_bit(SGX_ENCL_INITIALIZED, &encl->flags))
-> @@ -432,15 +446,8 @@ static long sgx_ioc_enclave_add_pages(struct sgx_enc=
-l *encl, void __user *arg)
->  		return -EINVAL;
-> =20
->  	for (c =3D 0 ; c < add_arg.length; c +=3D PAGE_SIZE) {
-> -		if (signal_pending(current)) {
-> -			if (!c)
-> -				ret =3D -ERESTARTSYS;
-> -
-> +		if (sgx_check_signal_and_resched())
->  			break;
-> -		}
-> -
-> -		if (need_resched())
-> -			cond_resched();
-> =20
->  		ret =3D sgx_encl_add_page(encl, add_arg.src + c, add_arg.offset + c,
->  					&secinfo, add_arg.flags);
-> @@ -740,12 +747,15 @@ sgx_enclave_restrict_permissions(struct sgx_encl *e=
-ncl,
->  	unsigned long addr;
->  	unsigned long c;
->  	void *epc_virt;
-> -	int ret;
-> +	int ret =3D -ERESTARTSYS;
-> =20
->  	memset(&secinfo, 0, sizeof(secinfo));
->  	secinfo.flags =3D modp->permissions & SGX_SECINFO_PERMISSION_MASK;
-> =20
->  	for (c =3D 0 ; c < modp->length; c +=3D PAGE_SIZE) {
-> +		if (sgx_check_signal_and_resched())
-> +			goto out;
-> +
->  		addr =3D encl->base + modp->offset + c;
-> =20
->  		sgx_reclaim_direct();
-> @@ -898,7 +908,7 @@ static long sgx_enclave_modify_types(struct sgx_encl =
-*encl,
->  	unsigned long addr;
->  	unsigned long c;
->  	void *epc_virt;
-> -	int ret;
-> +	int ret =3D -ERESTARTSYS;
-> =20
->  	page_type =3D modt->page_type & SGX_PAGE_TYPE_MASK;
-> =20
-> @@ -913,6 +923,9 @@ static long sgx_enclave_modify_types(struct sgx_encl =
-*encl,
->  	secinfo.flags =3D page_type << 8;
-> =20
->  	for (c =3D 0 ; c < modt->length; c +=3D PAGE_SIZE) {
-> +		if (sgx_check_signal_and_resched())
-> +			goto out;
-> +
->  		addr =3D encl->base + modt->offset + c;
-> =20
->  		sgx_reclaim_direct();
-> @@ -1095,12 +1108,15 @@ static long sgx_encl_remove_pages(struct sgx_encl=
- *encl,
->  	unsigned long addr;
->  	unsigned long c;
->  	void *epc_virt;
-> -	int ret;
-> +	int ret =3D -ERESTARTSYS;
-> =20
->  	memset(&secinfo, 0, sizeof(secinfo));
->  	secinfo.flags =3D SGX_SECINFO_R | SGX_SECINFO_W | SGX_SECINFO_X;
-> =20
->  	for (c =3D 0 ; c < params->length; c +=3D PAGE_SIZE) {
-> +		if (sgx_check_signal_and_resched())
-> +			goto out;
-> +
->  		addr =3D encl->base + params->offset + c;
-> =20
->  		sgx_reclaim_direct();
+On arm64 using pseudo-NMI, this looks like:
 
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+| # mount -t debugfs none /sys/kernel/debug/
+| # echo SMP_CALL_LOCKUP > /sys/kernel/debug/provoke-crash/DIRECT
+| lkdtm: Performing direct entry SMP_CALL_LOCKUP
+| smp: csd: Detected non-responsive CSD lock (#1) on CPU#1, waiting 5000000176 ns for CPU#00 __lkdtm_SMP_CALL_LOCKUP+0x0/0x8(0x0).
+| smp:     csd: CSD lock (#1) handling this request.
+| Sending NMI from CPU 1 to CPUs 0:
+| NMI backtrace for cpu 0
+| CPU: 0 PID: 0 Comm: swapper/0 Not tainted 6.9.0-rc4-00001-gfdfd281212ec #1
+| Hardware name: linux,dummy-virt (DT)
+| pstate: 60401005 (nZCv daif +PAN -UAO -TCO -DIT +SSBS BTYPE=--)
+| pc : __lkdtm_SMP_CALL_LOCKUP+0x0/0x8
+| lr : __flush_smp_call_function_queue+0x1b0/0x290
+| sp : ffff800080003f30
+| pmr_save: 00000060
+| x29: ffff800080003f30 x28: ffffa4ce961a4900 x27: 0000000000000000
+| x26: fff000003fcfa0c0 x25: ffffa4ce961a4900 x24: ffffa4ce959aa140
+| x23: ffffa4ce959aa140 x22: 0000000000000000 x21: ffff800080523c40
+| x20: 0000000000000000 x19: 0000000000000000 x18: fff05b31aa323000
+| x17: fff05b31aa323000 x16: ffff800080000000 x15: 0000330fc3fe6b2c
+| x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000279
+| x11: 0000000000000040 x10: fff000000302d0a8 x9 : fff000000302d0a0
+| x8 : fff0000003400270 x7 : 0000000000000000 x6 : ffffa4ce9451b810
+| x5 : 0000000000000000 x4 : fff05b31aa323000 x3 : ffff800080003f30
+| x2 : fff05b31aa323000 x1 : ffffa4ce959aa140 x0 : 0000000000000000
+| Call trace:
+|  __lkdtm_SMP_CALL_LOCKUP+0x0/0x8
+|  generic_smp_call_function_single_interrupt+0x14/0x20
+|  ipi_handler+0xb8/0x178
+|  handle_percpu_devid_irq+0x84/0x130
+|  generic_handle_domain_irq+0x2c/0x44
+|  gic_handle_irq+0x118/0x240
+|  call_on_irq_stack+0x24/0x4c
+|  do_interrupt_handler+0x80/0x84
+|  el1_interrupt+0x44/0xc0
+|  el1h_64_irq_handler+0x18/0x24
+|  el1h_64_irq+0x78/0x7c
+|  default_idle_call+0x40/0x60
+|  do_idle+0x23c/0x2d0
+|  cpu_startup_entry+0x38/0x3c
+|  kernel_init+0x0/0x1d8
+|  start_kernel+0x51c/0x608
+|  __primary_switched+0x80/0x88
+| CPU: 1 PID: 128 Comm: sh Not tainted 6.9.0-rc4-00001-gfdfd281212ec #1
+| Hardware name: linux,dummy-virt (DT)
+| Call trace:
+|  dump_backtrace+0x90/0xe8
+|  show_stack+0x18/0x24
+|  dump_stack_lvl+0xac/0xe8
+|  dump_stack+0x18/0x24
+|  csd_lock_wait_toolong+0x268/0x338
+|  smp_call_function_single+0x1dc/0x2f0
+|  lkdtm_SMP_CALL_LOCKUP+0xcc/0xfc
+|  lkdtm_do_action+0x1c/0x38
+|  direct_entry+0xbc/0x14c
+|  full_proxy_write+0x60/0xb4
+|  vfs_write+0xd0/0x35c
+|  ksys_write+0x70/0x104
+|  __arm64_sys_write+0x1c/0x28
+|  invoke_syscall+0x48/0x114
+|  el0_svc_common.constprop.0+0x40/0xe0
+|  do_el0_svc+0x1c/0x28
+|  el0_svc+0x38/0x108
+|  el0t_64_sync_handler+0x120/0x12c
+|  el0t_64_sync+0x1a4/0x1a8
+| smp: csd: Continued non-responsive CSD lock (#1) on CPU#1, waiting 10000064272 ns for CPU#00 __lkdtm_SMP_CALL_LOCKUP+0x0/0x8(0x0).
+| smp:     csd: CSD lock (#1) handling this request.
+| smp: csd: Continued non-responsive CSD lock (#1) on CPU#1, waiting 15000064384 ns for CPU#00 __lkdtm_SMP_CALL_LOCKUP+0x0/0x8(0x0).
+| smp:     csd: CSD lock (#1) handling this request.
 
-BR, Jarkko
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Acked-by: Paul E. McKenney <paulmck@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>
+---
+ drivers/misc/lkdtm/bugs.c               | 30 +++++++++++++++++++++++++
+ tools/testing/selftests/lkdtm/tests.txt |  1 +
+ 2 files changed, 31 insertions(+)
+
+Since v1 [1]:
+* Rename option CSDLOCKUP -> SMP_CALL_LOCKUP
+* Add entry to tests.txt
+* Fix typo in commit message
+* Add Paul's Acked-by tag
+
+[1] https://lore.kernel.org/lkml/20240419103452.3530155-1-mark.rutland@arm.com/
+
+diff --git a/drivers/misc/lkdtm/bugs.c b/drivers/misc/lkdtm/bugs.c
+index 5178c02b21eba..62ba015254797 100644
+--- a/drivers/misc/lkdtm/bugs.c
++++ b/drivers/misc/lkdtm/bugs.c
+@@ -286,6 +286,35 @@ static void lkdtm_HARDLOCKUP(void)
+ 		cpu_relax();
+ }
+ 
++static void __lkdtm_SMP_CALL_LOCKUP(void *unused)
++{
++	for (;;)
++		cpu_relax();
++}
++
++static void lkdtm_SMP_CALL_LOCKUP(void)
++{
++	unsigned int cpu, target;
++
++	cpus_read_lock();
++
++	cpu = get_cpu();
++	target = cpumask_any_but(cpu_online_mask, cpu);
++
++	if (target >= nr_cpu_ids) {
++		pr_err("FAIL: no other online CPUs\n");
++		goto out_put_cpus;
++	}
++
++	smp_call_function_single(target, __lkdtm_SMP_CALL_LOCKUP, NULL, 1);
++
++	pr_err("FAIL: did not hang\n");
++
++out_put_cpus:
++	put_cpu();
++	cpus_read_unlock();
++}
++
+ static void lkdtm_SPINLOCKUP(void)
+ {
+ 	/* Must be called twice to trigger. */
+@@ -680,6 +709,7 @@ static struct crashtype crashtypes[] = {
+ 	CRASHTYPE(UNALIGNED_LOAD_STORE_WRITE),
+ 	CRASHTYPE(SOFTLOCKUP),
+ 	CRASHTYPE(HARDLOCKUP),
++	CRASHTYPE(SMP_CALL_LOCKUP),
+ 	CRASHTYPE(SPINLOCKUP),
+ 	CRASHTYPE(HUNG_TASK),
+ 	CRASHTYPE(OVERFLOW_SIGNED),
+diff --git a/tools/testing/selftests/lkdtm/tests.txt b/tools/testing/selftests/lkdtm/tests.txt
+index 368973f05250f..cff124c1eddd3 100644
+--- a/tools/testing/selftests/lkdtm/tests.txt
++++ b/tools/testing/selftests/lkdtm/tests.txt
+@@ -31,6 +31,7 @@ SLAB_FREE_CROSS
+ SLAB_FREE_PAGE
+ #SOFTLOCKUP Hangs the system
+ #HARDLOCKUP Hangs the system
++#SMP_CALL_LOCKUP Hangs the system
+ #SPINLOCKUP Hangs the system
+ #HUNG_TASK Hangs the system
+ EXEC_DATA
+-- 
+2.30.2
+
 
