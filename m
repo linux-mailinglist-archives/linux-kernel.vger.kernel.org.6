@@ -1,240 +1,137 @@
-Return-Path: <linux-kernel+bounces-179647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA9678C62B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 10:25:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E29C08C62CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 10:26:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3BF5B21B9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:25:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11A3B1C215A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:26:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 393224D5AB;
-	Wed, 15 May 2024 08:25:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 999304D58E;
+	Wed, 15 May 2024 08:26:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="pagpeMSf"
-Received: from HK3PR03CU002.outbound.protection.outlook.com (mail-eastasiaazon11011005.outbound.protection.outlook.com [52.101.128.5])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ZAEHkl5F"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AB1A482E9
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 08:25:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.128.5
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715761508; cv=fail; b=s13wsXakclSTEJZGL27fl/Mtpq44JSPwcq/W+uq1lyjlHKEKpnue9jTv21uA9X6ns17+Lwwa2w3FMkCFq1uZzBIrSrXgXdQ/5cQacnSiJKIVAcf01WI1k21xAIDJONfj5Fvpl8ssylpkRIpc+Sd0zXIh/gkFwNnmY1WKk6ZqIaI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715761508; c=relaxed/simple;
-	bh=1+H+6z3jLIh4GHX8eJO4ndE/mWwv4wlwASScbkXsNQ4=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=ND48zEaX5toKlFn4N+ZXOuwgycLzefCYiGOXXpIta0366ZKXqGKreAlsQSP5+s4a7W41O8HlCtJcqJ1SYxc8cULD8XGDH7wNvcovqL948fYKdOXE9N+4/OaigKJzxA62EqIIo+1AnpF+3xBo5pIpd02XCfUU8IlPAYIUCqeR30o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=pagpeMSf; arc=fail smtp.client-ip=52.101.128.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=aXfrBBOPbRIOPGnIvHz19cTHyDnyPcevDDGT6fXflSp1fCyuTiZQWCs7A936wnCeNG5bB0XM10HjP/97xX/y9xotl6fSHpS8fnQhm/fs8+dLYJ3jhJAC2A/qUCEQZ2qPfpIo15LmZZARsPKVzGBlXkXwoXGZJKFrtYaq3Tvfc9LZhN46DOY2+9gfxHijPrbmG07a1OHX93IlzX1R7y/drJkKn/2p8QNNWNbr+sVRyj579fJT2q+KoEMB6VQXbxN/67gndZ7eVn+3xAHfW+mNUB3dayhLZHOdiGr2+c8FO+rfLGd8AEEQyRXQmP4FlCcz5xA3Xgk5RIKxglJiouUkLQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=eLb19zrwrtWxdUekpCcCFsMvmSfizVpyDVNcEFOfkzo=;
- b=FRd/8n4Z7uJ04gxVg4SaEVH2W609fdD6qmvzk3xZxK0Dv/QDXAVhKhpnubNeA/nTZV5lK8x066XLRRjLZwEZ57rjUj6cTNfPKQizgNb6idLB0S3DqgUp5iBABz7bewAyAtepA0lnN+NQIipe87CcSYRxOhUfJcsStfvg0Fiy+t2Zey/p1pnuViW09iOEk+ytqtDt3cLjcm0912W/UsIgXefgfTO71wZpBZwyFFgUzYIGwgXIfrjFnMq8q01vdrkdDqlpqPFbCXsJP7bAMvG0rdg5hgiY8Dh0yMSOmCC3CO/qw2Pwug3rznIaCTbUSpc3s95lv6dB6NnVvLlSKZqnfQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eLb19zrwrtWxdUekpCcCFsMvmSfizVpyDVNcEFOfkzo=;
- b=pagpeMSf+Axjjx2vdBi9vc7xA6Vyfv5IwTJFadYldMmSzmSyWRIC47+1mQJkUkiLGIU86DWRw7KRwAY0u3kWfOHicSNN7oeq0Vmc4Ckqkzc8Dp0lUMopWLdGM6ddRgQPnrBoGJbv0r8owhNLOk4pmO3bB9Op50zNe924k4VrE0tn2wuLF8h3nVpeEdbH+MzBrOcjAjtvunUbPqi1gygtgjlmZu/ts3JV7cQa3bZFwciYF5j4GcnWYrwwX6Ou43PkoSChn53fiLuKj4dVysecU3XLDreaqY0D52j4f20IQowhelLmDr/mJMynQOrniZ2WOf0hQuTvpzjyK82CUVyKEA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
- by SEYPR06MB6034.apcprd06.prod.outlook.com (2603:1096:101:d8::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.27; Wed, 15 May
- 2024 08:25:02 +0000
-Received: from SEZPR06MB5576.apcprd06.prod.outlook.com
- ([fe80::5c0a:2748:6a72:99b6]) by SEZPR06MB5576.apcprd06.prod.outlook.com
- ([fe80::5c0a:2748:6a72:99b6%6]) with mapi id 15.20.7544.052; Wed, 15 May 2024
- 08:25:02 +0000
-From: Liao Yuanhong <liaoyuanhong@vivo.com>
-To: Jaegeuk Kim <jaegeuk@kernel.org>,
-	Chao Yu <chao@kernel.org>
-Cc: bo.wu@vivo.com,
-	linux-f2fs-devel@lists.sourceforge.net,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBFC0482E9;
+	Wed, 15 May 2024 08:26:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715761607; cv=none; b=o14qdZX8oCS+08cLb+DrbJ7/ORHluhpsHK1mM6zXEbN3FEAZPo6KidsWscGoR/z+M/t/BtnZqwIa1CG+3HVwPQT8n6XlQiAXmJMu9FIo7+yogGcorD2PA0gAcsKri9ByxYsiFFVRvjNm9uTCbxyZMOTevEBZzED6hy8p6zL8vJE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715761607; c=relaxed/simple;
+	bh=oBjUWM9Ueajikuvb1TVY6pQjtCf2aE1BFiQMqZCZ8Yk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IRHykIHXnR8gD7a8P8d3gBz8boMIklCxxD1Qzn07OggVGEBujfEPtfPGJNwm4pq2ktf7J3Cvu9NHP1ureMLKmua8XX+1R8/hgdr4gmB2v0SpfTDqGdRQ1m1T0KcT9OlJHZBom6buFlJuA/gmmBlGaHPSVbT0tLSuHY9OEhTpmpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ZAEHkl5F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CB70C116B1;
+	Wed, 15 May 2024 08:26:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1715761607;
+	bh=oBjUWM9Ueajikuvb1TVY6pQjtCf2aE1BFiQMqZCZ8Yk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ZAEHkl5F6AvMBaIQJ+PH0UcVSPbqYSvbnhEg90Szxx9NC5AQXdZCMQOk/wwRqCeYP
+	 EMMXvlwnuEa156QxA3UEdAD4j8e840I/Z9zsTaa/I89ip+vnqHorVBMW9un+HJ0Z7H
+	 PPshhBFp0zeCGN4DfnQyT69189VVjtvr3lx0tbxM=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	patches@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
-	Liao Yuanhong <liaoyuanhong@vivo.com>
-Subject: [PATCH] f2fs:modify the entering condition for f2fs_migrate_blocks()
-Date: Wed, 15 May 2024 16:24:33 +0800
-Message-Id: <20240515082433.24411-1-liaoyuanhong@vivo.com>
-X-Mailer: git-send-email 2.25.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR04CA0177.apcprd04.prod.outlook.com
- (2603:1096:4:14::15) To SEZPR06MB5576.apcprd06.prod.outlook.com
- (2603:1096:101:c9::14)
+	torvalds@linux-foundation.org,
+	akpm@linux-foundation.org,
+	linux@roeck-us.net,
+	shuah@kernel.org,
+	patches@kernelci.org,
+	lkft-triage@lists.linaro.org,
+	pavel@denx.de,
+	jonathanh@nvidia.com,
+	f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net,
+	rwarsow@gmx.de,
+	conor@kernel.org,
+	allen.lkml@gmail.com,
+	broonie@kernel.org
+Subject: [PATCH 6.9 0/5] 6.9.1-rc1 review
+Date: Wed, 15 May 2024 10:26:37 +0200
+Message-ID: <20240515082345.213796290@linuxfoundation.org>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5576:EE_|SEYPR06MB6034:EE_
-X-MS-Office365-Filtering-Correlation-Id: 47b4a625-fba0-4604-3d66-08dc74b8845b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|366007|376005|1800799015|52116005|38350700005;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?WhdEF8XT/F9of28aE5XF/cKiZl9CfFaqK6LuxemC7vosozfWPOv8GpaiNRHT?=
- =?us-ascii?Q?oilL/uION7q2t94PW10DFQudTRiDG2NfczhP8B22pxzzO+qojAZZU2C2zVMy?=
- =?us-ascii?Q?gSFNA2IITHF59QJJ04XfTC5lxTrPvNVJWqEsJP/WwtSih++h2WDB4GgaT/QH?=
- =?us-ascii?Q?7NczsHx46CA2ZPJDCs1/ZRmPhpMEP1ZgHQYmgNk7dYo4DBmbtwieZDudujiV?=
- =?us-ascii?Q?h0kVp7TnHJW6PTkJCuBvZTaqLwFgn6qSkFU536Iozq2ZVQT340k8M8BbRlhS?=
- =?us-ascii?Q?AFmNUF+SyCqd7WrRkcBQzjSfjRzDS57zutpOR8Vu4xYB5YUHDQG0yKk6qbuj?=
- =?us-ascii?Q?ifvB2bEL9N8y8Jb0JzBIbDlIq0WMfgBDi0YEHDEVP/lXZfzW3Z4TBfNbociJ?=
- =?us-ascii?Q?vNb2EC1hpl+3xVy+7M3guPetAShANG5NRkIkDlyUYaT8lZO/kgoUfgcJIX0Z?=
- =?us-ascii?Q?dB2GUg9wNsmhUU8Jd46rw+ONkC0DOpm95nbHN1HsyxKXVVQPl8nhihXpRHOq?=
- =?us-ascii?Q?GoP7jx6vuxNyty1NI50F5vjgUT/riFsSawnUjVyinvnBSLCtOZ4B6WJudZMv?=
- =?us-ascii?Q?bpsdi5kuluYpaxXbeMRLcoufTB29HgAGm4u/C5RNoiLNYSNdEl6u2YUuCXYP?=
- =?us-ascii?Q?rL8GrBTsf7Yn4J/dwUx4WDHY2fk1fZqTXtc9A4LTXkYHaKGwVxHwhYcuY1Ia?=
- =?us-ascii?Q?RvqJ8JXNUfz8lujA6YyMfbmzq08mVpfBis96MpqvzeWj/xz+UL/HWGRuiXYW?=
- =?us-ascii?Q?YU8peyODDwelqQ1cseNylQNUEuXd2J/N7fROmruTCTLQ64KhxRvIMEu2jFDN?=
- =?us-ascii?Q?B5C728YMNd2lvUIDGcd+Nx2bMtITsqEnDdzn/NynX+Y2WQ8yvn7PwD5tt+pm?=
- =?us-ascii?Q?zch4/3/7gfT/VSein4VDLdsCXOLqjRefa3j2CLcPYcPtyrgl4WkE1Cv5QoTz?=
- =?us-ascii?Q?lu8NDWyZ5odvbT6jsPpIT+RKWwfzGy+X4yeio219Ey7YvilXojxZC3kT/Eul?=
- =?us-ascii?Q?xSH7iZ32yD7qiKym8aSJhsjRXRjTcZnQjcy/+HaHc6DRC5W7aCeBLf6Xzsen?=
- =?us-ascii?Q?2xYjebZstFidueipgisJwW5itT9xKB4XacEXm1JCM5LJFU8xlixvvdPUqtIc?=
- =?us-ascii?Q?JVCn+wxyOtIWquLINvddzB3qSo5AynM+ZQUvTFKk1uEEMaHa86XNkm0+4xrs?=
- =?us-ascii?Q?bvfjxNtAvfF9JNQr0j2m5eWAXbb5Qf7g+QaqnqHYBJ/uIjsm3n3GDRapEvmb?=
- =?us-ascii?Q?lKiVDADPwWlOY0BM9JAYXjLEwMStZj8YnQGHR019VECmn1lEouj3r6IoyiGV?=
- =?us-ascii?Q?iE3GxtH5YGxxRV2vkLTfmFZBNSUhqoRMGODUt2lkOjQVgg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5576.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(1800799015)(52116005)(38350700005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?GiSNvt+xHbh/neSpHfvhwOEReMNZk2m+E3Fq/xsSECyZuZJAmYnDYnd5Uyy+?=
- =?us-ascii?Q?qqIJcNALAGsfUATbUH8ozRDZdKEkTRqKGuZwlEUQVslKNP8bW/Aqcf8bGxYZ?=
- =?us-ascii?Q?NjyPmIn1Gm9oRdKiTbwLTMJUvucbG8Y7S9picD4Ik6WJiYPM49x1OmfV0Znz?=
- =?us-ascii?Q?o269q4xoaDLkyQYBMSClCgIoUi6N8KBXGBQUzzIqlirzeUvC3nkOX1GbW4Ap?=
- =?us-ascii?Q?vJij8f0Rc1TegBpUmWq7MJHdzdtaODbDESxh53JJQsg4dz7Cs+QYqa+E538y?=
- =?us-ascii?Q?iWRXvP0pkAAO0ipUR3vBOcmfeDHbPcAVEolX6CO3tEPw0F97SRuMsKp6ij2J?=
- =?us-ascii?Q?b2Yk7WeqXwOL3q2b1pzQWWTYM6a4E5LT0lI1DiftPcxcDAd+kwVlEu6Oa5Xb?=
- =?us-ascii?Q?peEhH4yGgkGPWeU+F+h7s82Cz3HC3+yoj54oCbJMO7CmKj3bR9hVzInMwlND?=
- =?us-ascii?Q?9R4EftC1vuzeuKQQ/Ffzf7e4EYehJ1Hn8DAEnLpb4GtGMjEUlBHPquGJ4DNb?=
- =?us-ascii?Q?KgPSoI+abYdEKwlW4T+aDa65N73n2Jzj75bxrFvdEiBOF7AXBTRMI11TQCfS?=
- =?us-ascii?Q?P3wSs+FniXUW0F2IkAwh7j9UbmkTD2jsXO7Zc8Or/3Ex82LQQZ8m4HumuKOw?=
- =?us-ascii?Q?ZrvxJCHJSWFC5tUpA0lrhItqQvkl1nYT95RTe9TW8zaCGjed24zbEq4Y7/jc?=
- =?us-ascii?Q?wj5SZ1CrFS5hZI5jpNd96sh3NzoN17gucBmrui4PiCsZyasTQ7tban0vrv46?=
- =?us-ascii?Q?EYyI30gcxUU9bK9TLfRevWzEsc0wg41BEFfvW1K+YUDEfltlVnKWJnFphbDo?=
- =?us-ascii?Q?yXLonj66H0wbW/7NjuSE+aSQ89M4kYn8alPQ4V2kWT6/Oh4zjJf36Pj2fN5y?=
- =?us-ascii?Q?ZohBa7hnCBC5Tw8iVCG8x0tygqvy7snAL0U2N2+jA0+6oaitefiAml21pf2m?=
- =?us-ascii?Q?7nn5qNq0bLJyfFr9mb+5BlAMoKf/oPnzZtODZ7xZOoSTc2jolboAYP0IjyN3?=
- =?us-ascii?Q?yEJQ++ApaDLTCAdvNjY9qwvVRdGxaQ91QgZ+GBWVYDHdSfGBB8atlNJ4sejQ?=
- =?us-ascii?Q?Bf/1e5eVlkfwK1+gzRwBqYQILySqZsvvcdRt4llBzFs/UijwAhdwaNKxzkRk?=
- =?us-ascii?Q?QYf1gdbTzA3jw07hrdlvGH5wTj9a9FTRGPKNvxxgDvt1ztuD5uHlDPFiw4jn?=
- =?us-ascii?Q?4dye8gfbQj2wHJz7XvQIjJ87ckoNS/bhcz2ovVjXO+pTbcycykd3X1bzVPbx?=
- =?us-ascii?Q?BlHcHo7X3uJ4QYhkuvKt2relLjvgLtkjUlevBd+paSoTCUGbYn8vrXaYshs4?=
- =?us-ascii?Q?dtGtWPjUGC+ZiwNDnYR4t+aowIc1S6TicKMMs/uVBtB1GKHxi9US0VTnt51r?=
- =?us-ascii?Q?K3LvGvyDMRUmPryb9/MpUisHUwouo80Enagb9OBnUBoVz0dppmEWDHjqjG+9?=
- =?us-ascii?Q?dLfZN4MoVkSKgk1zCK9nb8vQhP7nrGA7kNC0m64ukZV+xQfrAKyylTMwJRev?=
- =?us-ascii?Q?TBPgQGpiMR26N6gGuBjBhEaAVD9G/PvX5Tlz0pWiFTFdqqfBotwF5eLMevGu?=
- =?us-ascii?Q?Z3BSJhhZeH1dCHfZqO8JCl65UIweTSGZ/SjfLsVK?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 47b4a625-fba0-4604-3d66-08dc74b8845b
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5576.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 May 2024 08:25:02.5512
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: o4srkLdgiOKQcPI1wow6M1irGtRSV4ZFBdiqx/ZtgImQuJxv46cs2zIUT2XJCov6YQ1rzEoymc0YlnfdkjDB+Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB6034
+User-Agent: quilt/0.67
+X-stable: review
+X-Patchwork-Hint: ignore
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.9.1-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-6.9.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 6.9.1-rc1
+X-KernelTest-Deadline: 2024-05-17T08:23+00:00
+Content-Transfer-Encoding: 8bit
 
-Currently, when we allocating a swap file on zone UFS, this file will
-created on conventional UFS. If the swap file size is not aligned with the
-zone size, the last extent will enter f2fs_migrate_blocks(), resulting in
-significant additional I/O overhead and prolonged lock occupancy. In most
-cases, this is unnecessary, because on Conventional UFS, as long as the
-start block of the swap file is aligned with zone, it is sequentially
-aligned.To circumvent this issue, we have altered the conditions for
-entering f2fs_migrate_blocks(). Now, if the start block of the last extent
-is aligned with the start of zone, we avoids entering
-f2fs_migrate_blocks().
+This is the start of the stable review cycle for the 6.9.1 release.
+There are 5 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
-Signed-off-by: Wu Bo <bo.wu@vivo.com>
----
- fs/f2fs/data.c | 23 +++++++++++++++++++++--
- 1 file changed, 21 insertions(+), 2 deletions(-)
+Responses should be made by Fri, 17 May 2024 08:23:27 +0000.
+Anything received after that time might be too late.
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 50ceb25b3..4d58fb6c2 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -3925,10 +3925,12 @@ static int check_swap_activate(struct swap_info_struct *sis,
- 	block_t pblock;
- 	block_t lowest_pblock = -1;
- 	block_t highest_pblock = 0;
-+	block_t blk_start;
- 	int nr_extents = 0;
- 	unsigned int nr_pblocks;
- 	unsigned int blks_per_sec = BLKS_PER_SEC(sbi);
- 	unsigned int not_aligned = 0;
-+	unsigned int cur_sec;
- 	int ret = 0;
- 
- 	/*
-@@ -3965,23 +3967,39 @@ static int check_swap_activate(struct swap_info_struct *sis,
- 		pblock = map.m_pblk;
- 		nr_pblocks = map.m_len;
- 
--		if ((pblock - SM_I(sbi)->main_blkaddr) % blks_per_sec ||
-+		blk_start = pblock - SM_I(sbi)->main_blkaddr;
-+
-+		if (blk_start % blks_per_sec ||
- 				nr_pblocks % blks_per_sec ||
- 				!f2fs_valid_pinned_area(sbi, pblock)) {
- 			bool last_extent = false;
- 
- 			not_aligned++;
- 
-+			cur_sec = (blk_start + nr_pblocks) / BLKS_PER_SEC(sbi);
- 			nr_pblocks = roundup(nr_pblocks, blks_per_sec);
--			if (cur_lblock + nr_pblocks > sis->max)
-+			if (cur_lblock + nr_pblocks > sis->max) {
- 				nr_pblocks -= blks_per_sec;
- 
-+				/* the start address is aligned to section */
-+				if (!(blk_start % blks_per_sec))
-+					last_extent = true;
-+			}
-+
- 			/* this extent is last one */
- 			if (!nr_pblocks) {
- 				nr_pblocks = last_lblock - cur_lblock;
- 				last_extent = true;
- 			}
- 
-+			/*
-+			 * the last extent which located on conventional UFS doesn't
-+			 * need migrate
-+			 */
-+			if (last_extent && f2fs_sb_has_blkzoned(sbi) &&
-+				cur_sec < GET_SEC_FROM_SEG(sbi, first_zoned_segno(sbi)))
-+				goto next;
-+
- 			ret = f2fs_migrate_blocks(inode, cur_lblock,
- 							nr_pblocks);
- 			if (ret) {
-@@ -3994,6 +4012,7 @@ static int check_swap_activate(struct swap_info_struct *sis,
- 				goto retry;
- 		}
- 
-+next:
- 		if (cur_lblock + nr_pblocks >= sis->max)
- 			nr_pblocks = sis->max - cur_lblock;
- 
--- 
-2.25.1
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.9.1-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.9.y
+and the diffstat can be found below.
+
+thanks,
+
+greg k-h
+
+-------------
+Pseudo-Shortlog of commits:
+
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 6.9.1-rc1
+
+Ben Greear <greearb@candelatech.com>
+    wifi: mt76: mt7915: add missing chanctx ops
+
+Silvio Gissi <sifonsec@amazon.com>
+    keys: Fix overwrite of key expiration on instantiation
+
+Nikhil Rao <nikhil.rao@intel.com>
+    dmaengine: idxd: add a write() method for applications to submit work
+
+Arjan van de Ven <arjan@linux.intel.com>
+    dmaengine: idxd: add a new security check to deal with a hardware erratum
+
+Arjan van de Ven <arjan@linux.intel.com>
+    VFIO: Add the SPR_DSA and SPR_IAX devices to the denylist
+
+
+-------------
+
+Diffstat:
+
+ Makefile                                         |  4 +-
+ drivers/dma/idxd/cdev.c                          | 77 ++++++++++++++++++++++++
+ drivers/dma/idxd/idxd.h                          |  3 +
+ drivers/dma/idxd/init.c                          |  4 ++
+ drivers/dma/idxd/registers.h                     |  3 -
+ drivers/dma/idxd/sysfs.c                         | 27 ++++++++-
+ drivers/net/wireless/mediatek/mt76/mt7915/main.c |  4 ++
+ drivers/vfio/pci/vfio_pci.c                      |  2 +
+ include/linux/pci_ids.h                          |  2 +
+ security/keys/key.c                              |  3 +-
+ 10 files changed, 121 insertions(+), 8 deletions(-)
+
 
 
