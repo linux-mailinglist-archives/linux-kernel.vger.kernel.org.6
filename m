@@ -1,168 +1,96 @@
-Return-Path: <linux-kernel+bounces-180071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BC918C69B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:29:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B1C78C69BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:29:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C96D51F21DDE
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 15:29:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45CDE282D6A
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 15:29:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D317015665D;
-	Wed, 15 May 2024 15:28:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="bUgQvOrj"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23A31156C47;
+	Wed, 15 May 2024 15:29:06 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AF8615575F;
-	Wed, 15 May 2024 15:28:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6257B15687C
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 15:29:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715786937; cv=none; b=iyORO3GSYODnkHmwfc7Efhd9Tlq6V1Fy5xKKEyoe2bbsRYkNVOuBq4sq7raLBNxLNa2MN/Pz+RICJNRTXBLehy48enPyAGdCf9LZaSlnKsY92/06MjyOms6qLxm32coqvYJYNgSZY6sOROvGHYbg5moqsEnn91kC862f4vfGXjo=
+	t=1715786945; cv=none; b=Gcjp2EvyXcRVCM4DxWoBrMgS3BezPeNG8jeSQ+MrL7HgNZgVS8g1hbzlc1/DoNop9sH00KZLuEjgXXFKHtzWXdP0jP2JHzlsMgJojDYUuHNpVSOs1NrT33uAimc9qgPe5U1dx7YjbKEBttE3tivY6CWz1EAD1b9wQ2kmodEoDwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715786937; c=relaxed/simple;
-	bh=8YL66bsWkz2AW96ECNKOd49i/yZZr9f3kfZeFQUXMkI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=V5w8+ZezKRhumZE6RbEccZZZH+tscqHitQpQ+YSDEOAX6wPCqGKZWfGQNl024Zqi1NbLBGH/ASGL/xgzoy7OgHQ/0tvfJPy+NyzuUz7vnIA02xOpgc0M+Hjg3Ah28Mdd892+0UuRQHRgExS0qRh6u9sFrjBPYhLvbpVvVc1M5aA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=bUgQvOrj; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 53D266000B;
-	Wed, 15 May 2024 15:28:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1715786926;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eO3nG/DrQ1g+IenZhOHJGj8Lxxg06+LKOJZq71iT/vI=;
-	b=bUgQvOrjjM/iKza7f3flM6WMiECq8IpZ6VqgV6QXrLG9Vg5N6dC2vJ2GfDlqTkw/xv8oY5
-	ZBZR3Lr11IzDp7/B+bOMYnA9jA3HniBf3e4HyOHu7aoH9oSb9Y//8mLqgwQbCvW4+tsX/T
-	x+wGnWG1wOEnEOM6cs4cOz63V3TX2kkbZiht3CNo38hlvK8CMH3xhfNHeHOdPLCfGaz5F1
-	VAGPxuhp3peoWJcZnVKVbAHl2sPidXc4ydETjmjEXCIEho6XLrxMiXp05V1emRkJAQEY6l
-	AZggCfvgobWmxCE7RtodyNH/7AhcszKCstogYfVTYjCDCDdBEMpNTHR9Lm40gg==
-From: Richard Genoud <richard.genoud@bootlin.com>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Udit Kumar <u-kumar1@ti.com>,
-	Thomas Richard <thomas.richard@bootlin.com>,
-	Gregory CLEMENT <gregory.clement@bootlin.com>,
-	Esteban Blanc <eblanc@baylibre.com>,
-	linux-rtc@vger.kernel.org,
-	Lee Jones <lee@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Richard Genoud <richard.genoud@bootlin.com>
-Subject: [PATCH v2 1/1] rtc: tps6594: Add power management support
-Date: Wed, 15 May 2024 17:28:27 +0200
-Message-ID: <20240515152827.80185-2-richard.genoud@bootlin.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240515152827.80185-1-richard.genoud@bootlin.com>
-References: <20240515152827.80185-1-richard.genoud@bootlin.com>
+	s=arc-20240116; t=1715786945; c=relaxed/simple;
+	bh=PqF49Gws6c8IE8QBsjCzrN5yCRLZFu/Gy9G1aU4u6TQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=HtJVml2yu4CdiGn4E0uhKCIHfzknPKonlsMu72JG5rrD4kDbZL2HEgLza43diZWvhxlCi8+UNColmX2obAxpGCJm0+IjYJh5+kQg9AeAjGruRF/IZMX8s/NAhsqPf1YIqFTwNqKjdKLdxa6WmLz6y8KK/gr5YQMKxo4eMpzFvqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7e1d807cfbaso499405839f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 08:29:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715786943; x=1716391743;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qNhrORouLQq0zE8Q1N3mawbELctD4U2yYjN8CbPX7CM=;
+        b=luFsGZ/KB4ZnEP5r8sbADdWZqIYQJ35NwloYT6NeLPawHbWS2J9jEMpad8xaNOPtEG
+         1QxANse3F6TtzfnIxCtv8dXxjxxEeyEgYk3HaT518RtN9vm+wk8TrC9ZdEdZjjSlSxj8
+         znm4q8RxlyLuWYiuuy+4e+EwhsJ5L/qJBVIW3Co2lG1U19VPasL2C853oZw5JgGl0Zt1
+         cH6P3EI1rD0aJ7CeFWgM2yL/GTOZXA0CKD08M4r5ZwqzFreVCh+EDd/YMDKcMs7kv7KG
+         nEkpn5zdIQSqb5gKzj4Iv8/nhxLof9ibzpvMiX/aZtHRxiC65k2CYjz6lMUVjJMo6IG2
+         3SGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV3j5KIuP7ywazMkIWfHNtBVBVgsrw40kAgKUNBjlBAkO17pnjWrFndBSK4eWj6hS5caY/ngjjJPRdmdSXX7oCskgZGzogeL6+CXaUC
+X-Gm-Message-State: AOJu0YzYx4s4JC2894RO68/sVCza2VyTk3tM68mUeIT14ik7MIbqZ9m+
+	VwfMCa3T57E6S1TEtz16w9M6/Y1NhR7tJV890PdlW5xMrieOmqqlv+DN47Ek9piJVCn2lIOPfb5
+	46nyAunY0sA0vSOhJ81uIOvKGbynYmm00wJHKiAZO3dsmNsg5yW5KHGE=
+X-Google-Smtp-Source: AGHT+IH+Xte0typid77mQsPKT2woVUNNSCR05/igZC6Db/CLD0HuhNNjfiuJzefv2sWGB81JP6W0lDIe2IrKsModHuY5ZxKJgzzk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: richard.genoud@bootlin.com
+X-Received: by 2002:a05:6638:8725:b0:488:cdbc:72c0 with SMTP id
+ 8926c6da1cb9f-489586993ecmr1725942173.2.1715786943579; Wed, 15 May 2024
+ 08:29:03 -0700 (PDT)
+Date: Wed, 15 May 2024 08:29:03 -0700
+In-Reply-To: <000000000000b97fba06156dc57b@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000485a2d06187fc7a7@google.com>
+Subject: Re: [syzbot] [bpf?] KASAN: stack-out-of-bounds Read in hash
+From: syzbot <syzbot+9459b5d7fab774cf182f@syzkaller.appspotmail.com>
+To: alexei.starovoitov@gmail.com, andrii@kernel.org, ast@kernel.org, 
+	bpf@vger.kernel.org, daniel@iogearbox.net, eddyz87@gmail.com, 
+	haoluo@google.com, houtao@huaweicloud.com, joannekoong@fb.com, 
+	john.fastabend@gmail.com, jolsa@kernel.org, kafai@fb.com, kpsingh@kernel.org, 
+	linux-kernel@vger.kernel.org, martin.lau@linux.dev, netdev@vger.kernel.org, 
+	sdf@google.com, song@kernel.org, songliubraving@fb.com, 
+	syzkaller-bugs@googlegroups.com, yhs@fb.com, yonghong.song@linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-Add power management support to the driver. This allows a SoC to wake
-from suspend using the nINT provided by the RTC.
-It takes care of the case when the interrupt has not been caught because
-the kernel has not yet woke up.
-(This is the case when only edges interrupt are caught)
+syzbot has bisected this issue to:
 
-Signed-off-by: Richard Genoud <richard.genoud@bootlin.com>
----
- drivers/rtc/rtc-tps6594.c   | 46 +++++++++++++++++++++++++++++++++++++
- include/linux/mfd/tps6594.h |  1 +
- 2 files changed, 47 insertions(+)
+commit 9330986c03006ab1d33d243b7cfe598a7a3c1baa
+Author: Joanne Koong <joannekoong@fb.com>
+Date:   Wed Oct 27 23:45:00 2021 +0000
 
-diff --git a/drivers/rtc/rtc-tps6594.c b/drivers/rtc/rtc-tps6594.c
-index 838ae8562a35..d221dc560682 100644
---- a/drivers/rtc/rtc-tps6594.c
-+++ b/drivers/rtc/rtc-tps6594.c
-@@ -415,6 +415,8 @@ static int tps6594_rtc_probe(struct platform_device *pdev)
- 	if (irq < 0)
- 		return dev_err_probe(dev, irq, "Failed to get irq\n");
- 
-+	tps->irq_rtc = irq;
-+
- 	ret = devm_request_threaded_irq(dev, irq, NULL, tps6594_rtc_interrupt,
- 					IRQF_ONESHOT, TPS6594_IRQ_NAME_ALARM,
- 					dev);
-@@ -434,6 +436,49 @@ static int tps6594_rtc_probe(struct platform_device *pdev)
- 	return devm_rtc_register_device(rtc);
- }
- 
-+static int tps6594_rtc_resume(struct device *dev)
-+{
-+	struct tps6594 *tps = dev_get_drvdata(dev->parent);
-+	struct rtc_device *rtc_dev = dev_get_drvdata(dev);
-+	int ret;
-+
-+	ret = regmap_test_bits(tps->regmap, TPS6594_REG_INT_STARTUP,
-+			       TPS6594_BIT_RTC_INT);
-+	if (ret < 0) {
-+		dev_err(dev, "failed to read REG_INT_STARTUP: %d\n", ret);
-+		goto out;
-+	}
-+
-+	if (ret > 0) {
-+		/*
-+		 * If the alarm bit is set, it means that the IRQ has been
-+		 * fired. But, the kernel may not have woke up yet when it
-+		 * happened. So, we have to clear it.
-+		 */
-+		ret = regmap_write(tps->regmap, TPS6594_REG_RTC_STATUS,
-+				   TPS6594_BIT_ALARM);
-+		if (ret < 0)
-+			dev_err(dev, "error clearing alarm bit: %d", ret);
-+
-+		rtc_update_irq(rtc_dev, 1, RTC_IRQF | RTC_AF);
-+	}
-+out:
-+	disable_irq_wake(tps->irq_rtc);
-+
-+	return 0;
-+}
-+
-+static int tps6594_rtc_suspend(struct device *dev)
-+{
-+	struct tps6594 *tps = dev_get_drvdata(dev->parent);
-+
-+	enable_irq_wake(tps->irq_rtc);
-+
-+	return 0;
-+}
-+
-+static DEFINE_SIMPLE_DEV_PM_OPS(tps6594_rtc_pm_ops, tps6594_rtc_suspend, tps6594_rtc_resume);
-+
- static const struct platform_device_id tps6594_rtc_id_table[] = {
- 	{ "tps6594-rtc", },
- 	{}
-@@ -444,6 +489,7 @@ static struct platform_driver tps6594_rtc_driver = {
- 	.probe		= tps6594_rtc_probe,
- 	.driver		= {
- 		.name	= "tps6594-rtc",
-+		.pm = pm_sleep_ptr(&tps6594_rtc_pm_ops),
- 	},
- 	.id_table = tps6594_rtc_id_table,
- };
-diff --git a/include/linux/mfd/tps6594.h b/include/linux/mfd/tps6594.h
-index 3f7c5e23cd4c..85933f1519c4 100644
---- a/include/linux/mfd/tps6594.h
-+++ b/include/linux/mfd/tps6594.h
-@@ -1011,6 +1011,7 @@ struct tps6594 {
- 	bool use_crc;
- 	struct regmap *regmap;
- 	int irq;
-+	int irq_rtc;
- 	struct regmap_irq_chip_data *irq_data;
- };
- 
+    bpf: Add bloom filter map implementation
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1543bd5c980000
+start commit:   443574b03387 riscv, bpf: Fix kfunc parameters incompatibil..
+git tree:       bpf
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=1743bd5c980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1343bd5c980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6fb1be60a193d440
+dashboard link: https://syzkaller.appspot.com/bug?extid=9459b5d7fab774cf182f
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13d86795180000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=143eff76180000
+
+Reported-by: syzbot+9459b5d7fab774cf182f@syzkaller.appspotmail.com
+Fixes: 9330986c0300 ("bpf: Add bloom filter map implementation")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
