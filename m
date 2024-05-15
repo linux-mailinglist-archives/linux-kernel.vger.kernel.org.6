@@ -1,125 +1,295 @@
-Return-Path: <linux-kernel+bounces-180243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEC2D8C6BDE
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 20:09:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9281A8C6BE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 20:11:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AA161C21155
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:09:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AB581F21D39
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:11:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3568B158DDE;
-	Wed, 15 May 2024 18:09:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D301B158DBF;
+	Wed, 15 May 2024 18:11:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="lWh02XTr"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CDE1158DD1
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 18:09:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="czDFgkkI"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 633C9158DA9;
+	Wed, 15 May 2024 18:11:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715796552; cv=none; b=VsWMDsTYzfzwhO6k/dIXY0BLUprxxSivm1I7QCkE21yB+32/wWF1bAH/QJZlXRxqQ/OJSjJ8sDsh2EQK6hVMJdDH1hMK5vOR6zn1WG04lOppZui47U7s+umcFBpf0MnMxXk0rAGb1xSsRdMElhtsvwbYAAn08wSbKLMO4Ag4ds0=
+	t=1715796695; cv=none; b=NcBDmhCmfoCgSvXQ5fdNlnQ3tT7WyQm4zoIvJS7Bunkb52jiE6Bv5yEbl3cAs7u3AVsBQ9+OKmoDJp9xvXqga8UKFGC0r9hG12ykrF6myy+stVkTWVhKiaeCp7TNxK3IHR6YZglmzn9n4U3VOGhP/+7Wa0lt8dTWvWJT3gMoaE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715796552; c=relaxed/simple;
-	bh=X1eilwXIKYi2Sto9hlcv4frs8weoVtU1FJdWCJMKQ9I=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=qu8D5sNjtvpp3+VnGjXoduX9lSYfM3hUAeLEVvUB9/hhV2Y8uwedaKQiUKWF+qm5AgtVeH7HM5w4JrRSU/TCsJ0+eElsMhKmp8VaNv8BP5fAJMhrG3VERJua3d++VoMBTlgyvQlWxgPMW0kr4jvCP9C8j9utUm7BrKWWx5zBPPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lWh02XTr; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-6f45487858eso4501576b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 11:09:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715796550; x=1716401350; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FM+YbThW51PyC7TBL8oH362GzalyAxIIJmwZ5MG51WM=;
-        b=lWh02XTr+xq3tJNFf7gr+QYX8v3YZas7ms6T79oRsjGeOExFgwmzucUpmFlHovUu5v
-         Y1vlq1MrEYBwUaCq72kIsIKOJA2BhL1ZCoLc+/9u245VIFB0tAqcVycMaFnUHR3Fp0NZ
-         eNt2h/rcICcfS4squdVDQqGuQUTbAls3hBKpybOnPaM7tWMecdS+RNtGGQtbjh1F+Kg8
-         WvGUtaAbNjvIRf4gapGTNRPvXLubyBRykejY5CXynD0AMSyhKCLV5QbI1s7IuH5yUT2j
-         9va/h+a9gbzwrqOaqYPHdiJ22JdAw2WhthzCJe7QXUx5QYSKXH6mspHplxG+rIf7TLzv
-         NxOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715796550; x=1716401350;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=FM+YbThW51PyC7TBL8oH362GzalyAxIIJmwZ5MG51WM=;
-        b=PVGt6PNsZLt1F26H2GDC96+Zs3nSsj8/l6iWCzn1T26zYyVhqH0kbst3GuQ8VkCa8U
-         fpn/S+IvQnal9CEVtysfavKPisyLMlN1G8/K4NwIBwJQt+RFsJV1RPTbPen+4oM0XHIW
-         FAWjgS+o1+bNtnoYc4XUPKrsBDL5ZNul8vjoyMTXBJWHQPg4amlTy3bURhtFLMpbVc9q
-         h//OaGuwvwK6MShgYlLQ+vYkisRIU5pfjff3GhE5FszW+GohL3DvhCDFKvxRqStM+5cT
-         +TvruHrk7GVBVPA1WN1Cg0AxGnaJW+VRGgbHOLKmR4mmBOaPr78NF55ShjZdDJTy84iw
-         Qmhw==
-X-Gm-Message-State: AOJu0Yx7Rhc9IiI4w+rbJ78gmTIsamwPnuZacAlfktBBynCDRVrcqOnx
-	GlNSnQ9uI+CTxKO1JLsucC/0W5MY6wzw0HOJeWHVLyef5xp5/Guxd1Vk3Qt2KSq5K+QFC4+bPh3
-	KDA==
-X-Google-Smtp-Source: AGHT+IHWSG85riIKdpeEb0HWEOQwn6FHYwGWC7RjCoXrSFVl84zF2QgZF1t+hVwwKYKqLd1YI1CN+V+lPSY=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6a00:3a0f:b0:6f4:9fc7:d1f3 with SMTP id
- d2e1a72fcca58-6f4e037d8fdmr713941b3a.3.1715796550399; Wed, 15 May 2024
- 11:09:10 -0700 (PDT)
-Date: Wed, 15 May 2024 11:09:09 -0700
-In-Reply-To: <de3cb02ae9e639f423ae47ef2fad1e89aa9dd3d8.camel@intel.com>
+	s=arc-20240116; t=1715796695; c=relaxed/simple;
+	bh=kolY4gpqxNTi/z3uoL9Ny4J6tz26tbXoHj2/11jf3So=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=almQU6F8tQ4vJKmnks0d8XyMykcSmz+b4skub8UAXUIQ+HpNjvDXfR5sC52i0eG7/e298IbLOLa95ug/jXajGGqNtGEWRePxhAafyVH3MSQoIRqJ3J3GclI8G2rV79fe7dwR2iVEcmM0kO+cis7d8w/iZZb8cXdSi5kJXQq0deg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=czDFgkkI; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.137.186.190] (unknown [131.107.159.62])
+	by linux.microsoft.com (Postfix) with ESMTPSA id B7626201F184;
+	Wed, 15 May 2024 11:11:33 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B7626201F184
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1715796694;
+	bh=MHbsM3k9BYDPr7S4yZzl1y3oe2899Tt/+6ok7Nit0qk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=czDFgkkINuAcFnSu4m+Ap5N9pyy68duo4nurnPoyvlAVcY6rGyd65WojtjBWTkByu
+	 aFtS8SFIEYfDnB5szxuIAqa2QNEcQgP780rvqkZBoz5XbkOH2/J5pThc/FgEf71ipS
+	 ze2mc0DqPUy7Aq+rymAD6isq01PFDCl9LkerDy3Y=
+Message-ID: <d758d09a-0956-4090-829b-c6bf0b0c1d4d@linux.microsoft.com>
+Date: Wed, 15 May 2024 11:11:33 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240515005952.3410568-1-rick.p.edgecombe@intel.com>
- <20240515005952.3410568-9-rick.p.edgecombe@intel.com> <ZkTWDfuYD-ThdYe6@google.com>
- <f64c7da52a849cd9697b944769c200dfa3ee7db7.camel@intel.com>
- <747192d5fe769ae5d28bbb6c701ee9be4ad09415.camel@intel.com>
- <ZkTcbPowDSLVgGft@google.com> <de3cb02ae9e639f423ae47ef2fad1e89aa9dd3d8.camel@intel.com>
-Message-ID: <ZkT4RC_l_F_9Rk-M@google.com>
-Subject: Re: [PATCH 08/16] KVM: x86/mmu: Bug the VM if kvm_zap_gfn_range() is
- called for TDX
-From: Sean Christopherson <seanjc@google.com>
-To: Rick P Edgecombe <rick.p.edgecombe@intel.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "sagis@google.com" <sagis@google.com>, 
-	"isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>, Erdem Aktas <erdemaktas@google.com>, 
-	Yan Zhao <yan.y.zhao@intel.com>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "dmatlack@google.com" <dmatlack@google.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/6] drivers/hv: arch-neutral implementation of
+ get_vtl()
+To: Michael Kelley <mhklinux@outlook.com>, "arnd@arndb.de" <arnd@arndb.de>,
+ "bhelgaas@google.com" <bhelgaas@google.com>, "bp@alien8.de" <bp@alien8.de>,
+ "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "decui@microsoft.com" <decui@microsoft.com>,
+ "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+ "hpa@zytor.com" <hpa@zytor.com>, "kw@linux.com" <kw@linux.com>,
+ "kys@microsoft.com" <kys@microsoft.com>, "lenb@kernel.org"
+ <lenb@kernel.org>, "lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+ "mingo@redhat.com" <mingo@redhat.com>, "rafael@kernel.org"
+ <rafael@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
+ "tglx@linutronix.de" <tglx@linutronix.de>,
+ "wei.liu@kernel.org" <wei.liu@kernel.org>, "will@kernel.org"
+ <will@kernel.org>, "linux-acpi@vger.kernel.org"
+ <linux-acpi@vger.kernel.org>,
+ "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+ "x86@kernel.org" <x86@kernel.org>
+Cc: "ssengar@microsoft.com" <ssengar@microsoft.com>,
+ "sunilmut@microsoft.com" <sunilmut@microsoft.com>,
+ "vdso@hexbites.dev" <vdso@hexbites.dev>
+References: <20240514224508.212318-1-romank@linux.microsoft.com>
+ <20240514224508.212318-4-romank@linux.microsoft.com>
+ <SN6PR02MB4157A676809A7A97313C909DD4EC2@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Language: en-US
+From: Roman Kisel <romank@linux.microsoft.com>
+In-Reply-To: <SN6PR02MB4157A676809A7A97313C909DD4EC2@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, May 15, 2024, Rick P Edgecombe wrote:
-> On Wed, 2024-05-15 at 09:02 -0700, Sean Christopherson wrote:
-> > > Or most specifically, we only need this zapping if we *try* to have
-> > > consistent cache attributes between private and shared. In the
-> > > non-coherent DMA case we can't have them be consistent because TDX
-> > > doesn't support changing the private memory in this way.
-> >=20
-> > Huh?=C2=A0 That makes no sense.=C2=A0 A physical page can't be simultan=
-eously mapped
-> > SHARED and PRIVATE, so there can't be meaningful cache attribute aliasi=
-ng
-> > between private and shared EPT entries.
-> >=20
-> > Trying to provide consistency for the GPA is like worrying about having
-> > matching PAT entires for the virtual address in two different processes=
-.
->=20
-> No, not matching between the private and shared mappings of the same page=
- The
-> whole private memory will be WB, and the whole shared half will honor PAT=
-.
 
-I'm still failing to see why that's at all interesting.  The non-coherent D=
-MA
-trainwreck is all about KVM worrying about the guest and host having differ=
-ent
-memtypes for the same physical page.
 
-If the host is accessing TDX private memory, we have far, far bigger proble=
-ms
-than aliased memtypes.  And so the fact that TDX private memory is forced W=
-B is
-interesting only to the guest, not KVM.
+On 5/15/2024 6:38 AM, Michael Kelley wrote:
+> From: Roman Kisel <romank@linux.microsoft.com> Sent: Tuesday, May 14, 2024 3:44 PM
+>>
+>> To run in the VTL mode, Hyper-V drivers have to know what
+>> VTL the system boots in, and the arm64/hyperv code does not
+>> have the means to compute that.
+>>
+>> Refactor the code to hoist the function that detects VTL,
+>> make it arch-neutral to be able to employ it to get the VTL
+>> on arm64.
+> 
+> Nit:  In patches that just refactor and move some code around,
+> patch authors will often include a statement like "No functional
+> changes" (or the slightly more doubtful "No functional changes
+> intended") as a separate line at the end of the commit message.
+> It's just something the reader/reviewer can cross-check against.
+> 
+>>
+>> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
+>> ---
+>>   arch/x86/hyperv/hv_init.c          | 34 -----------------------
+>>   arch/x86/include/asm/hyperv-tlfs.h |  7 -----
+>>   drivers/hv/hv_common.c             | 43 ++++++++++++++++++++++++++++++
+>>   include/asm-generic/hyperv-tlfs.h  |  7 +++++
+>>   include/asm-generic/mshyperv.h     |  6 +++++
+>>   5 files changed, 56 insertions(+), 41 deletions(-)
+>>
+>> diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
+>> index 17a71e92a343..c350fa05ee59 100644
+>> --- a/arch/x86/hyperv/hv_init.c
+>> +++ b/arch/x86/hyperv/hv_init.c
+>> @@ -413,40 +413,6 @@ static void __init hv_get_partition_id(void)
+>>   	local_irq_restore(flags);
+>>   }
+>>
+>> -#if IS_ENABLED(CONFIG_HYPERV_VTL_MODE)
+>> -static u8 __init get_vtl(void)
+>> -{
+>> -	u64 control = HV_HYPERCALL_REP_COMP_1 | HVCALL_GET_VP_REGISTERS;
+>> -	struct hv_get_vp_registers_input *input;
+>> -	struct hv_get_vp_registers_output *output;
+>> -	unsigned long flags;
+>> -	u64 ret;
+>> -
+>> -	local_irq_save(flags);
+>> -	input = *this_cpu_ptr(hyperv_pcpu_input_arg);
+>> -	output = (struct hv_get_vp_registers_output *)input;
+>> -
+>> -	memset(input, 0, struct_size(input, element, 1));
+>> -	input->header.partitionid = HV_PARTITION_ID_SELF;
+>> -	input->header.vpindex = HV_VP_INDEX_SELF;
+>> -	input->header.inputvtl = 0;
+>> -	input->element[0].name0 = HV_X64_REGISTER_VSM_VP_STATUS;
+>> -
+>> -	ret = hv_do_hypercall(control, input, output);
+>> -	if (hv_result_success(ret)) {
+>> -		ret = output->as64.low & HV_X64_VTL_MASK;
+>> -	} else {
+>> -		pr_err("Failed to get VTL(error: %lld) exiting...\n", ret);
+>> -		BUG();
+>> -	}
+>> -
+>> -	local_irq_restore(flags);
+>> -	return ret;
+>> -}
+>> -#else
+>> -static inline u8 get_vtl(void) { return 0; }
+>> -#endif
+>> -
+>>   /*
+>>    * This function is to be invoked early in the boot sequence after the
+>>    * hypervisor has been detected.
+>> diff --git a/arch/x86/include/asm/hyperv-tlfs.h b/arch/x86/include/asm/hyperv-tlfs.h
+>> index 3787d26810c1..9ee68eb8e6ff 100644
+>> --- a/arch/x86/include/asm/hyperv-tlfs.h
+>> +++ b/arch/x86/include/asm/hyperv-tlfs.h
+>> @@ -309,13 +309,6 @@ enum hv_isolation_type {
+>>   #define HV_MSR_STIMER0_CONFIG	(HV_X64_MSR_STIMER0_CONFIG)
+>>   #define HV_MSR_STIMER0_COUNT	(HV_X64_MSR_STIMER0_COUNT)
+>>
+>> -/*
+>> - * Registers are only accessible via HVCALL_GET_VP_REGISTERS hvcall and
+>> - * there is not associated MSR address.
+>> - */
+>> -#define	HV_X64_REGISTER_VSM_VP_STATUS	0x000D0003
+>> -#define	HV_X64_VTL_MASK			GENMASK(3, 0)
+>> -
+>>   /* Hyper-V memory host visibility */
+>>   enum hv_mem_host_visibility {
+>>   	VMBUS_PAGE_NOT_VISIBLE		= 0,
+>> diff --git a/drivers/hv/hv_common.c b/drivers/hv/hv_common.c
+>> index dde3f9b6871a..d4cf477a4d0c 100644
+>> --- a/drivers/hv/hv_common.c
+>> +++ b/drivers/hv/hv_common.c
+>> @@ -660,3 +660,46 @@ u64 __weak hv_tdx_hypercall(u64 control, u64 param1, u64
+>> param2)
+>>   	return HV_STATUS_INVALID_PARAMETER;
+>>   }
+>>   EXPORT_SYMBOL_GPL(hv_tdx_hypercall);
+>> +
+>> +#if IS_ENABLED(CONFIG_HYPERV_VTL_MODE)
+>> +u8 __init get_vtl(void)
+>> +{
+>> +	u64 control = HV_HYPERCALL_REP_COMP_1 | HVCALL_GET_VP_REGISTERS;
+>> +	struct hv_get_vp_registers_input *input;
+>> +	struct hv_get_vp_registers_output *output;
+>> +	unsigned long flags;
+>> +	u64 ret;
+>> +
+>> +	local_irq_save(flags);
+>> +	input = *this_cpu_ptr(hyperv_pcpu_input_arg);
+>> +	output = (struct hv_get_vp_registers_output *)input;
+> 
+> I gave some bad advice on the original version of the above code.  Rather
+> than allocating a separate hypercall output area, I had suggested just setting
+> the hypercall output to be the same as the input area, which is done
+> above.  While the overlap doesn't cause any problems for a hypercall returning
+> the value of single register, the TLFS says to never set up such an overlap.
+> 
+> Since this code is being moved anyway, there's an opportunity to fix
+> this by setting output to "input" + "struct_size(input, element, 1)".  Or
+> put the output at the start of the second half of the page (note that the
+> size is HY_HYP_PAGE_SIZE, not PAGE_SIZE).  The input and output for 1
+> register are relatively small and both easily fit with either approach. They
+> just shouldn't overlap.
+> 
+> Some might argue this tweak should be made in a separate patch, but
+> in my judgment, it's OK to do it here if you note it in the commit
+> message.  Your call.  Of course, if you make this change, my previous
+> comment about "No functional changes" no longer applies. :-)
+I'll update the code to adhere to the TLFS requirements, thank you :)
+
+> 
+> Michael
+> 
+>> +
+>> +	memset(input, 0, struct_size(input, element, 1));
+>> +	input->header.partitionid = HV_PARTITION_ID_SELF;
+>> +	input->header.vpindex = HV_VP_INDEX_SELF;
+>> +	input->header.inputvtl = 0;
+>> +	input->element[0].name0 = HV_REGISTER_VSM_VP_STATUS;
+>> +
+>> +	ret = hv_do_hypercall(control, input, output);
+>> +	if (hv_result_success(ret)) {
+>> +		ret = output->as64.low & HV_VTL_MASK;
+>> +	} else {
+>> +		pr_err("Failed to get VTL(error: %lld) exiting...\n", ret);
+>> +
+>> +		/*
+>> +		 * This is a dead end, something fundamental is broken.
+>> +		 *
+>> +		 * There is no sensible way of continuing as the Hyper-V drivers
+>> +		 * transitively depend via the vmbus driver on knowing which VTL
+>> +		 * they run in to establish communication with the host. The kernel
+>> +		 * is going to be worse off if continued booting than a panicked one,
+>> +		 * just hung and stuck, producing second-order failures, with neither
+>> +		 * a way to recover nor to provide expected services.
+>> +		 */
+>> +		BUG();
+>> +	}
+>> +
+>> +	local_irq_restore(flags);
+>> +	return ret;
+>> +}
+>> +#endif
+>> diff --git a/include/asm-generic/hyperv-tlfs.h b/include/asm-generic/hyperv-tlfs.h
+>> index 87e3d49a4e29..682bcda3124f 100644
+>> --- a/include/asm-generic/hyperv-tlfs.h
+>> +++ b/include/asm-generic/hyperv-tlfs.h
+>> @@ -75,6 +75,13 @@
+>>   /* AccessTscInvariantControls privilege */
+>>   #define HV_ACCESS_TSC_INVARIANT			BIT(15)
+>>
+>> +/*
+>> + * This synthetic register is only accessible via the HVCALL_GET_VP_REGISTERS
+>> + * hvcall, and there is no an associated MSR on x86.
+>> + */
+>> +#define	HV_REGISTER_VSM_VP_STATUS	0x000D0003
+>> +#define	HV_VTL_MASK			GENMASK(3, 0)
+>> +
+>>   /*
+>>    * Group B features.
+>>    */
+>> diff --git a/include/asm-generic/mshyperv.h b/include/asm-generic/mshyperv.h
+>> index 99935779682d..ea434186d765 100644
+>> --- a/include/asm-generic/mshyperv.h
+>> +++ b/include/asm-generic/mshyperv.h
+>> @@ -301,4 +301,10 @@ static inline enum hv_isolation_type
+>> hv_get_isolation_type(void)
+>>   }
+>>   #endif /* CONFIG_HYPERV */
+>>
+>> +#if IS_ENABLED(CONFIG_HYPERV_VTL_MODE)
+>> +u8 __init get_vtl(void);
+>> +#else
+>> +static inline u8 get_vtl(void) { return 0; }
+>> +#endif
+>> +
+>>   #endif
+>> --
+>> 2.45.0
+>>
+
+-- 
+Thank you,
+Roman
 
