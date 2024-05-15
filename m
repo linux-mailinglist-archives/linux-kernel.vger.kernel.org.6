@@ -1,139 +1,126 @@
-Return-Path: <linux-kernel+bounces-179457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD1488C6024
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 07:20:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E31F8C6027
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 07:29:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FB222833CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 05:20:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CFD81F2286E
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 05:29:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A53133A1CA;
-	Wed, 15 May 2024 05:20:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C58CA3A1B0;
+	Wed, 15 May 2024 05:29:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="maqVHR4T"
-Received: from mail-4319.protonmail.ch (mail-4319.protonmail.ch [185.70.43.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L408mwvU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C2563B781;
-	Wed, 15 May 2024 05:20:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 184AD39ACD
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 05:29:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715750429; cv=none; b=NWWCQuJLOjaeVOPSlJdjEQ4nioePK3/TAfHz7oH2HmoB5+hnU090FeH7SVBjcNavW3HIBGX3NmvdSxiuLQVykbj1xyBwkhpqdsf8uCh7cV0ER3x8gQHkyjdyW20ye9QagzmMLheXWHcgOKWt6XNxoTHi9Z/wieQdQVRkTj2ZFIk=
+	t=1715750951; cv=none; b=QQMlokrN544JxgBJpzCwVyymU/kf+/cYzEudQ9HU+9kkC7wMqSmgdWOe38T4y6pxSPkVrhapLAohODJBpM1t5bX6iwiouCo/GFiNjT2ZSGZcroYIcVTwM0FQBE1rnSmgJXZlVoASThfwmTz12p3pmtOSOTPS0gsMWI64d9E36rA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715750429; c=relaxed/simple;
-	bh=V0CL+qiUvzh6X0RKz2fh2QYpcGmK9Sw0cRDT9OcI1mk=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=CCX9J01OTwP70dhWqHar8Nh/nKB/tOnUaWeVs3FnTizZL49HWaJmm+kDzZqz5hAJgrrnFUok3kSWaOYnVCRmbjeC81xigVPXSM4Wy79gVa+GlmfuSJ1clGNqM9gE04Ok5IsbF3Mzu916P4ivvCrwPKWmyhc7CeZoZEGsMTgMZGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=maqVHR4T; arc=none smtp.client-ip=185.70.43.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1715750423; x=1716009623;
-	bh=8vRTPRR0M+lcE5nilmvOjofZCeaHwVS+EpmPaDYHIEQ=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=maqVHR4TfM4VFL5lSJzFD5tjecoMx9tZXeHrjgggwrWeq5nGziYqwMRr5QeXx+JjX
-	 JIwKl2zcrnZ/g1AJzsM1+TM1Xj3u4DX4La7+CYZAt/UOHIoFVkWdfYLMcePbVc66Bd
-	 ZJ8kxYq7kthtZ9q1KuA/TfWNKXrknKOd4gaGAu5DH8BwuDNkbr+3N9kSXFCP+IytaE
-	 dly6CWXwwgQY9+scBDMpO6bKLKhlrpRMeuzu2VgF+MWdJhIWpTl4tY3wjMNheLpM6g
-	 llq5ptOfcO5my8fyJ8aBqSm6T2SgaEpKJ5wo6me+4hRqA6E54H2N1Emjx+HXv7ui2G
-	 GC0oddHJ42flg==
-Date: Wed, 15 May 2024 05:20:17 +0000
-To: "marcel@holtmann.org" <marcel@holtmann.org>, "luiz.dentz@gmail.com" <luiz.dentz@gmail.com>
-From: "SoloSaravanan@proton.me" <SoloSaravanan@proton.me>
-Cc: "linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH] Bluetooth: btusb: Add device 13d3:3606 as MT7921 device
-Message-ID: <hSVMHbHDWyp2u1NE5NY-bayU-w0Kxcqxyv2eIsJWYWNWB8jl3rHPMe1EWS0scP7hqKIZ7e2Eqvyl9LFzHdJdkZp5iSSmnNmSAHg_TL95DJ8=@proton.me>
-Feedback-ID: 84438951:user:proton
-X-Pm-Message-ID: 7ec0c2e2d02e6a3a57ea7366072d299b2763989b
+	s=arc-20240116; t=1715750951; c=relaxed/simple;
+	bh=KYV3IyS77KkYiDrdE4Rp2al8luhE12DTz/ap5AMIVKA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bTgxEx5mKsB4TrEoaUPecurKUESZEWIEiC/GnX3Wk4zCswrkdoPRx4KbWZmCRytwSW/KwJ5U8E5L7TPOBYEPDxgdc28gTqS8F1Pxpw7iwS2q7HHQWnhOi02fV/QNfmsL1QqEZ+uWZCU0BEwg8N5WVpjZxKo5Gk/fcIYoy4rHhNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L408mwvU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E080FC2BD11;
+	Wed, 15 May 2024 05:29:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715750950;
+	bh=KYV3IyS77KkYiDrdE4Rp2al8luhE12DTz/ap5AMIVKA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=L408mwvUMOeIe8NIh1DXQD4E9z4z9dV1uQCbEeR/h5oHuaALVr3+KyJVOuWQ1fDBv
+	 5kkZKC1c57bnpNb2BZfCzwdB/xxsMnOcn+5Af2yfMOKAXhg7+DI++l09N08TleJaje
+	 o86OlC881cWpA1QS5wvrBKBmm0GcnqaWCjpTUHUYwkPKrk47JlfQgJYKCHQT1Ijj9/
+	 iMJmkKXjnBF3qYkPlFQF+/eZkIQiueMYbkM2bu5t8ifD0Je6SgKnzPgXjxbt0ZpugZ
+	 uDegFDq8prIXnEv2AgBx6drbwQsWJnPLerYGysi8SOo1Sw+qMiabXGeDYnAh54KDZa
+	 WJu6guhn66vnQ==
+Date: Wed, 15 May 2024 10:53:42 +0530
+From: Naveen N Rao <naveen@kernel.org>
+To: Gautam Menghani <gautam@linux.ibm.com>
+Cc: mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu, 
+	aboorvad@linux.vnet.ibm.com, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] arch/powerpc: Remove unused cede related functions
+Message-ID: <cdzbxdhl2cj754m2erxdt5wwsztdsvrjvhq54szow4ufst44j7@bx2i4w7hpo5v>
+References: <20240514132457.292865-1-gautam@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240514132457.292865-1-gautam@linux.ibm.com>
 
-Add VendorID 13d3 & ProdID 3606 for MediaTek MT7921 USB Bluetooth chip.
+On Tue, May 14, 2024 at 06:54:55PM GMT, Gautam Menghani wrote:
+> Remove extended_cede_processor() and its helpers as
+> extended_cede_processor() has no callers since
+> commit 48f6e7f6d948("powerpc/pseries: remove cede offline state for CPUs")
+> 
+> Signed-off-by: Gautam Menghani <gautam@linux.ibm.com>
+> ---
+> v1 -> v2:
+> 1. Remove helpers of extended_cede_processor()
 
-The information in /sys/kernel/debug/usb/devices about the Bluetooth
-device is listed as the below.
+Acked-by: Naveen N Rao <naveen@kernel.org>
 
-T:  Bus=3D03 Lev=3D01 Prnt=3D01 Port=3D09 Cnt=3D03 Dev#=3D  4 Spd=3D480  Mx=
-Ch=3D 0
-D:  Ver=3D 2.10 Cls=3Def(misc ) Sub=3D02 Prot=3D01 MxPS=3D64 #Cfgs=3D  1
-P:  Vendor=3D13d3 ProdID=3D3606 Rev=3D 1.00
-S:  Manufacturer=3DMediaTek Inc.
-S:  Product=3DWireless_Device
-S:  SerialNumber=3D000000000
-C:* #Ifs=3D 3 Cfg#=3D 1 Atr=3De0 MxPwr=3D100mA
-A:  FirstIf#=3D 0 IfCount=3D 3 Cls=3De0(wlcon) Sub=3D01 Prot=3D01
-I:* If#=3D 0 Alt=3D 0 #EPs=3D 3 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
-=3Dbtusb
-E:  Ad=3D81(I) Atr=3D03(Int.) MxPS=3D  16 Ivl=3D125us
-E:  Ad=3D82(I) Atr=3D02(Bulk) MxPS=3D 512 Ivl=3D0ms
-E:  Ad=3D02(O) Atr=3D02(Bulk) MxPS=3D 512 Ivl=3D0ms
-I:* If#=3D 1 Alt=3D 0 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
-=3Dbtusb
-E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D   0 Ivl=3D1ms
-E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D   0 Ivl=3D1ms
-I:  If#=3D 1 Alt=3D 1 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
-=3Dbtusb
-E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D   9 Ivl=3D1ms
-E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D   9 Ivl=3D1ms
-I:  If#=3D 1 Alt=3D 2 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
-=3Dbtusb
-E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D  17 Ivl=3D1ms
-E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D  17 Ivl=3D1ms
-I:  If#=3D 1 Alt=3D 3 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
-=3Dbtusb
-E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D  25 Ivl=3D1ms
-E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D  25 Ivl=3D1ms
-I:  If#=3D 1 Alt=3D 4 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
-=3Dbtusb
-E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D  33 Ivl=3D1ms
-E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D  33 Ivl=3D1ms
-I:  If#=3D 1 Alt=3D 5 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
-=3Dbtusb
-E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D  49 Ivl=3D1ms
-E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D  49 Ivl=3D1ms
-I:  If#=3D 1 Alt=3D 6 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
-=3Dbtusb
-E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D  63 Ivl=3D1ms
-E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D  63 Ivl=3D1ms
-I:* If#=3D 2 Alt=3D 0 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
-=3D(none)
-E:  Ad=3D8a(I) Atr=3D03(Int.) MxPS=3D  64 Ivl=3D125us
-E:  Ad=3D0a(O) Atr=3D03(Int.) MxPS=3D  64 Ivl=3D125us
-I:  If#=3D 2 Alt=3D 1 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
-=3D(none)
-E:  Ad=3D8a(I) Atr=3D03(Int.) MxPS=3D 512 Ivl=3D125us
-E:  Ad=3D0a(O) Atr=3D03(Int.) MxPS=3D 512 Ivl=3D125us
-
-Signed-off-by: SoloSaravanan <SoloSaravanan@proton.me>
----
- drivers/bluetooth/btusb.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index effa54629..65e4b7fc6 100644
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -615,6 +615,9 @@ static const struct usb_device_id quirks_table[] =3D {
- =09{ USB_DEVICE(0x0e8d, 0x0608), .driver_info =3D BTUSB_MEDIATEK |
- =09=09=09=09=09=09     BTUSB_WIDEBAND_SPEECH |
- =09=09=09=09=09=09     BTUSB_VALID_LE_STATES },
-+=09{ USB_DEVICE(0x13d3, 0x3606), .driver_info =3D BTUSB_MEDIATEK |
-+=09=09=09=09=09=09     BTUSB_WIDEBAND_SPEECH |
-+=09=09=09=09=09=09     BTUSB_VALID_LE_STATES },
-=20
- =09/* MediaTek MT7922A Bluetooth devices */
- =09{ USB_DEVICE(0x0489, 0xe0d8), .driver_info =3D BTUSB_MEDIATEK |
---=20
-2.45.0
-
-
+> 
+>  arch/powerpc/include/asm/plpar_wrappers.h | 28 -----------------------
+>  1 file changed, 28 deletions(-)
+> 
+> diff --git a/arch/powerpc/include/asm/plpar_wrappers.h b/arch/powerpc/include/asm/plpar_wrappers.h
+> index b3ee44a40c2f..71648c126970 100644
+> --- a/arch/powerpc/include/asm/plpar_wrappers.h
+> +++ b/arch/powerpc/include/asm/plpar_wrappers.h
+> @@ -18,16 +18,6 @@ static inline long poll_pending(void)
+>  	return plpar_hcall_norets(H_POLL_PENDING);
+>  }
+>  
+> -static inline u8 get_cede_latency_hint(void)
+> -{
+> -	return get_lppaca()->cede_latency_hint;
+> -}
+> -
+> -static inline void set_cede_latency_hint(u8 latency_hint)
+> -{
+> -	get_lppaca()->cede_latency_hint = latency_hint;
+> -}
+> -
+>  static inline long cede_processor(void)
+>  {
+>  	/*
+> @@ -37,24 +27,6 @@ static inline long cede_processor(void)
+>  	return plpar_hcall_norets_notrace(H_CEDE);
+>  }
+>  
+> -static inline long extended_cede_processor(unsigned long latency_hint)
+> -{
+> -	long rc;
+> -	u8 old_latency_hint = get_cede_latency_hint();
+> -
+> -	set_cede_latency_hint(latency_hint);
+> -
+> -	rc = cede_processor();
+> -
+> -	/* Ensure that H_CEDE returns with IRQs on */
+> -	if (WARN_ON(IS_ENABLED(CONFIG_PPC_IRQ_SOFT_MASK_DEBUG) && !(mfmsr() & MSR_EE)))
+> -		__hard_irq_enable();
+> -
+> -	set_cede_latency_hint(old_latency_hint);
+> -
+> -	return rc;
+> -}
+> -
+>  static inline long vpa_call(unsigned long flags, unsigned long cpu,
+>  		unsigned long vpa)
+>  {
+> -- 
+> 2.45.0
+> 
 
