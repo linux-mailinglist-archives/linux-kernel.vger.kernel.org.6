@@ -1,131 +1,201 @@
-Return-Path: <linux-kernel+bounces-179734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 636028C6466
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 12:00:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C79298C647B
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 12:02:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23F091F221C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 10:00:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E3A21F24702
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 10:02:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D54A35A11D;
-	Wed, 15 May 2024 10:00:47 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A469E54645;
-	Wed, 15 May 2024 10:00:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E597D5C613;
+	Wed, 15 May 2024 10:01:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="f4CxYDhD"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DAC05A11A;
+	Wed, 15 May 2024 10:01:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715767247; cv=none; b=GTJKhnKvfpaQ/GnH2LPX4PS/WuJi/fPDQVDb/GTBum0Dhp2B3YqEn44b8BJ1yQSrpDJbOeSFYBS2R8EkpSltYiPTcTe2j3jUw3XT1BVtgceuQGVbTtdrLzOvKIgv0Ok24B2gtUDFN5Xh5LaIHihJiVuBCG9J7ZmO791+Ml1riq4=
+	t=1715767293; cv=none; b=nwwr4rM1QHJHo3PNmwws4Kx9O/SNZkixJVhAb3xoUQj13XMveKRhAuttl13UDbhdZwLdyPFwoBjRaBnDDs9fDIqz5Gsf3H5VBlIDlL5IWDHG0LvnkYqD5CY90A4FfCaoTJAo/gtsnGHQP5sEPpxet4GNonPWOCCICnk7VOJmYtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715767247; c=relaxed/simple;
-	bh=UP6ARF9IZdzS2kDPVK4Ew0G7gxoE0lxuEJNvLxI+258=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ikqv8lUb4tdXnS9TIFL0V87jnW2ocqhqaSZXP9y9v0G/WMYGAhuuAEV/A/2YnUJhBNbUWEojLSWKbu1UeGd6fqs/qfZEEXXvegEE+IkpZjQ7E+xI6pmwSs1HcO5b5x6mKzSIu/62bfO5P85NrkqphQVb5Y4o9ZZMY8MQ95XEo/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9BB0E1007;
-	Wed, 15 May 2024 03:01:09 -0700 (PDT)
-Received: from [192.168.178.6] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7B6EF3F762;
-	Wed, 15 May 2024 03:00:42 -0700 (PDT)
-Message-ID: <09717ad7-2a4b-486c-a4f5-e3f09a212add@arm.com>
-Date: Wed, 15 May 2024 12:00:40 +0200
+	s=arc-20240116; t=1715767293; c=relaxed/simple;
+	bh=2ANJF+sVZ9U/gFFWItijEZdox3eT2Yq0xZP8gY/Ylks=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=VxQ3QuZ4tc6ujxAusqT9V1lff6u/D5m3I/vSoivspndCvzAOisblKvYdJzYuGsXhZ+odDNUPtHgLgAhejF2Tas5v/W8k8Dl9OA5QKpwFHtM9+IGaCXw1OhHL6541NtC+U8ACDjptyaZzLp5l9RBGdklw3dtk00xOMSVkH59ThR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=f4CxYDhD; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id CB85F1BF20F;
+	Wed, 15 May 2024 10:01:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1715767282;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=/Tq48lIYa1mOy6g80ZOBX+iF4hlu1ufcE8TIs/96ovo=;
+	b=f4CxYDhDZ698OMTEiqRorYG8oJMx6MuqJzAPvcYVzvA1P6oiZpWjtIAAiS13q2n2N3zorf
+	fTMHpkJ3hPmS+gY3qJBZNRbOflrMMBeFZkdTfu82mb2MO5XzmDrXWJ9VmSZFqJypE+9GH/
+	xjYOllL9CrlVmEAtOSPy5uYFx3pyzFsctsUIRy/5GZVPiHKGxI2PEXiCEZEDToUE8d0DU4
+	EBjRh+ty+7r1bI+Yj5A8V+gBY/pLmaNlGd6RexoOA5q0u1DV3vUEkM/DTVC/XiAmEAfvqP
+	4YjT8t0ZXzIQ1AGtkCVjTOlII6/g8+LsuVybrXFTkG4NRss5I3RhFlFeHjvEpA==
+From: Thomas Richard <thomas.richard@bootlin.com>
+Subject: [PATCH v6 00/12] Add suspend to ram support for PCIe on J7200
+Date: Wed, 15 May 2024 12:01:01 +0200
+Message-Id: <20240102-j7200-pcie-s2r-v6-0-4656ef6e6d66@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] sched: Consolidate cpufreq updates
-To: Qais Yousef <qyousef@layalina.io>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>, Ingo Molnar <mingo@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Juri Lelli <juri.lelli@redhat.com>, Steven Rostedt <rostedt@goodmis.org>,
- Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
- Daniel Bristot de Oliveira <bristot@redhat.com>,
- Valentin Schneider <vschneid@redhat.com>,
- Christian Loehle <christian.loehle@arm.com>, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240512190018.531820-1-qyousef@layalina.io>
- <9e845146-8a31-407c-a5ee-e2e32f1655e5@arm.com>
- <20240513220903.no2j6zl4tk7lr6um@airbuntu>
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Content-Language: en-US
-In-Reply-To: <20240513220903.no2j6zl4tk7lr6um@airbuntu>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAN2HRGYC/33NzU7EIBQF4FeZsBYDFyitK9/DuIDLxWKcMoGm0
+ Uz67sLsTGOX5/58584qlUSVvVzurNCWaspLC8PTheHslg/iKbTMQIAWUgD/tCAEv2EiXqFwQi/
+ dZCdSxrL25F0l7otbcO5vV1dXKn1xKxTT96Pp7b3lOdU1l59H8Sb79N+OTXLBR03GBGfaiXj1O
+ a9faXnGfGUd2+AcgA6QjjYAjIRwBNQ5oBpgEEg7FR3KeAT0OaAbMEQZjVKTwNEcAXMOmAZoP6I
+ erJSBwl9g3/dffb7tKMsBAAA=
+To: Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, Tony Lindgren <tony@atomide.com>, 
+ Aaro Koskinen <aaro.koskinen@iki.fi>, 
+ Janusz Krzysztofik <jmkrzyszt@gmail.com>, Vignesh R <vigneshr@ti.com>, 
+ Andi Shyti <andi.shyti@kernel.org>, Peter Rosin <peda@axentia.se>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+ Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+ Siddharth Vadapalli <s-vadapalli@ti.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-omap@vger.kernel.org, linux-i2c@vger.kernel.org, 
+ linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ gregory.clement@bootlin.com, theo.lebrun@bootlin.com, 
+ thomas.petazzoni@bootlin.com, u-kumar1@ti.com, 
+ Thomas Richard <thomas.richard@bootlin.com>, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+ Andy Shevchenko <andy.shevchenko@gmail.com>, 
+ Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+ Francesco Dolcini <francesco.dolcini@toradex.com>
+X-Mailer: b4 0.12.0
+X-GND-Sasl: thomas.richard@bootlin.com
 
-On 14/05/2024 00:09, Qais Yousef wrote:
-> On 05/13/24 14:43, Dietmar Eggemann wrote:
->> On 12/05/2024 21:00, Qais Yousef wrote:
->>
->> [...]
->>
->>> @@ -4682,7 +4659,7 @@ static void attach_entity_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *s
->>>  
->>>  	add_tg_cfs_propagate(cfs_rq, se->avg.load_sum);
->>>  
->>> -	cfs_rq_util_change(cfs_rq, 0);
->>> +	cpufreq_update_util(rq_of(cfs_rq), 0);
->>
->> Isn't this slighlty different now?
->>
->> before:
->>
->>    if (&rq->cfs == cfs_rq) {
->>        cpufreq_update_util(rq, ....)
->>    }
->>
->> now:
->>
->>    cpufreq_update_util(rq_of(cfs_rq), ...)
->>
->> You should get way more updates from attach/detach now.
-> 
-> Yes, well spotted!
-> 
-> Looking at the path more closely, I can see this is called from
-> enqueue_task_fair() path when a task migrates to new CPU. And when
-> attach_task_cfs_rq() which is called when we switch_to_fair(), which I already
-> cover in the policy change for the RUNNING task, or when
-> task_change_group_fair() which what I originally understood Vincent was
-> referring to. I moved the update to this function after the detach/attach
-> operations with better guards to avoid unnecessary update.
+This adds suspend to ram support for the PCIe (RC mode) on J7200 platform.
 
-Yeah, all !root cfs_rq attach or detach wouldn't change anything since
-the util_avg wouldn't have propagated to the root cfs_rq yet. So
-sugov_get_util() wouldn't see a difference.
+This 6th iteration fixes a compile issue in the i2c-omap driver if
+CONFIG_PM_SLEEP is not set.
+A new patch was added to remove the __maybe_unused attribute of
+omap_i2c_runtime_suspend() and omap_i2c_runtime_resume().
 
-Yes, enqueue_entity() sets DO_ATTACH unconditionally.
+Regards,
 
-And dequeue_entity() sets DO_DETACH for a migrating (!wakeup migrating)
-task.
+Thomas
 
-For a wakeup migrating task we have remove_entity_load_avg() but this
-can't remove util_avg from the cfs_rq. This is deferred to
-update_cfs_rq_load_avg() in update_load_avg() or __update_blocked_fair().
+Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
+---
+Changes in v6:
+- i2c-omap: add a patch to remove __maybe_unused attribute of
+  omap_i2c_runtime_suspend() and omap_i2c_runtime_resume()
+- i2c-omap: fix compile issue if CONFIG_PM_SLEEP is not set
+- Link to v5: https://lore.kernel.org/r/20240102-j7200-pcie-s2r-v5-0-4b8c46711ded@bootlin.com
 
-And switched_{to,from}_fair() (check_class_changed()) and
-task_change_group_fair() are the other 2 users of
-{attach,detach}_entity_load_avg(). (plus online_fair_sched_group() for
-attach).
+Changes in v5:
+- all: series rebased on Linux 6.9-rc1
+- pinctrl-single: patch removed (already applied to the pinctrl tree)
+- phy: patches moved to a dedicated series.
+- pci: add T_PERST_CLK_US macro.
+- pci-j721e: update the comments about T_PERST_CLK_US.
+- Link to v4: https://lore.kernel.org/r/20240102-j7200-pcie-s2r-v4-0-6f1f53390c85@bootlin.com
 
-> I understood this will lead to big change and better apply immediately vs
-> wait for the next context switch. But I'll ask the question again, can we drop
-> this and defer to context switch?
+Changes in v4:
+- all: use SoB/Co-developed-by for patches initially developed by Théo
+  Lebrun.
+- pinctrl-single: squash the two commits.
+- i2c-omap: fix line lenghts of the comment in omap_i2c_suspend().
+- mux: mux_chip_resume() return 0 or at the first error.
+- phy-j721e-wiz: clean code around dev_err_probe().
+- phy-j721e-wiz: use REF_CLK_100MHZ macros.
+- pci: fix subject line for all PCI patches.
+- pci-cadence: use fsleep() instead of usleep_range().
+- pci-cadence: remove cdns_torrent_clk_cleanup() call in
+  cdns_torrent_phy_resume_noirq().
+- pci-j721e: add a patch to use dev_err_probe() instead of dev_err() in the probe().
+- pci-j721e: fix unordered header files.
+- pci-j721e: remove some log spammers.
+- pci-j721e: add a missing clock disable in j721e_pcie_resume_noirq().
+- pci-j721e: simplify the patch "Add reset GPIO to struct j721e_pcie"
+- Link to v3: https://lore.kernel.org/r/20240102-j7200-pcie-s2r-v3-0-5c2e4a3fac1f@bootlin.com
 
-Hard to say really, probably we can. All benchmarks with score numbers
-will create plenty of context switches so you wont see a diff. And for
-more lighter testcases you would have to study the differences in trace
-files and reason about the implications of potentially kick CPUfreq a
-little bit later.
+Changes in v3:
+- pinctrl-single: split patch in two parts, a first patch to remove the
+  dead code, a second to move suspend()/resume() callbacks to noirq.
+- i2c-omap: add a comments above the suspend_noirq() callback.
+- mux: now mux_chip_resume() try to restores all muxes, then return 0 if
+  all is ok or the first failure.
+- mmio: fix commit message.
+- phy-j721e-wiz: add a patch to use dev_err_probe() instead of dev_err() in
+  the wiz_clock_init() function.
+- phy-j721e-wiz: remove probe boolean for the wiz_clock_init(), rename the
+  function to wiz_clock_probe(), extract hardware configuration part in a
+  new function wiz_clock_init().
+- phy-cadence-torrent: use dev_err_probe() and fix commit messages
+- pcie-cadence-host: remove probe boolean for the cdns_pcie_host_setup()
+  function and extract the link setup part in a new function
+  cdns_pcie_host_link_setup().
+- pcie-cadence-host: make cdns_pcie_host_init() global.
+- pci-j721e: use the cdns_pcie_host_link_setup() cdns_pcie_host_init()
+  functions in the resume_noirq() callback.
+- Link to v2: https://lore.kernel.org/r/20240102-j7200-pcie-s2r-v2-0-8e4f7d228ec2@bootlin.com
 
-[...]
+Changes in v2:
+- all: fix commits messages.
+- all: use DEFINE_NOIRQ_DEV_PM_OPS and pm_sleep_ptr macros.
+- all: remove useless #ifdef CONFIG_PM.
+- pinctrl-single: drop dead code
+- mux: add mux_chip_resume() function in mux core.
+- mmio: resume sequence is now a call to mux_chip_resume().
+- phy-cadence-torrent: fix typo in resume sequence (reset_control_assert()
+  instead of reset_control_put()).
+- phy-cadence-torrent: use PHY instead of phy.
+- pci-j721e: do not shadow cdns_pcie_host_setup return code in resume
+  sequence.
+- pci-j721e: drop dead code.
+- Link to v1: https://lore.kernel.org/r/20240102-j7200-pcie-s2r-v1-0-84e55da52400@bootlin.com
+
+---
+Thomas Richard (9):
+      gpio: pca953x: move suspend()/resume() to suspend_noirq()/resume_noirq()
+      i2c: omap: switch to NOIRQ_SYSTEM_SLEEP_PM_OPS() and RUNTIME_PM_OPS()
+      i2c: omap: wakeup the controller during suspend() callback
+      mux: add mux_chip_resume() function
+      PCI: cadence: Extract link setup sequence from cdns_pcie_host_setup()
+      PCI: cadence: Set cdns_pcie_host_init() global
+      PCI: j721e: Use dev_err_probe() in the probe() function
+      PCI: Add T_PERST_CLK_US macro
+      PCI: j721e: Use T_PERST_CLK_US macro
+
+Théo Lebrun (3):
+      mux: mmio: add resume support
+      PCI: j721e: Add reset GPIO to struct j721e_pcie
+      PCI: j721e: Add suspend and resume support
+
+ drivers/gpio/gpio-pca953x.c                        |   7 +-
+ drivers/i2c/busses/i2c-omap.c                      |  36 ++++--
+ drivers/mux/core.c                                 |  29 +++++
+ drivers/mux/mmio.c                                 |  12 ++
+ drivers/pci/controller/cadence/pci-j721e.c         | 121 ++++++++++++++++++---
+ drivers/pci/controller/cadence/pcie-cadence-host.c |  44 +++++---
+ drivers/pci/controller/cadence/pcie-cadence.h      |  12 ++
+ drivers/pci/pci.h                                  |   3 +
+ include/linux/mux/driver.h                         |   1 +
+ 9 files changed, 221 insertions(+), 44 deletions(-)
+---
+base-commit: cebffb4fba6177b15e60e28e1ac17fc4efb2f86f
+change-id: 20240102-j7200-pcie-s2r-ecb1a979e357
+
+Best regards,
+-- 
+Thomas Richard <thomas.richard@bootlin.com>
+
 
