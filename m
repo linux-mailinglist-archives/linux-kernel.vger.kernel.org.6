@@ -1,273 +1,145 @@
-Return-Path: <linux-kernel+bounces-180348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75CF58C6D4D
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 22:34:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA8138C6D51
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 22:35:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99E721C213D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 20:34:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 829DC1F23BCF
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 20:35:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04B426FBF;
-	Wed, 15 May 2024 20:33:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="ptJPMDK8"
-Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 863EB15B11F;
+	Wed, 15 May 2024 20:35:30 +0000 (UTC)
+Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 824622E851
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 20:33:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4689E6FBF;
+	Wed, 15 May 2024 20:35:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715805233; cv=none; b=TnVRsBtV+DkK9G28GlO9Jej87P8AMQhm55QwWERY6tWW+gn3tnBiCPiIpHVQ7/I1oNXiOvQYQ315H6b5hlEwqlKAsVwQBNUoMrVRi309eRLBvIs8FMaLuF8odV4hx1ApfLAq7gCx5exJ/Ebi7dHnwrM22q9GlIJI6tvSTDvSlV8=
+	t=1715805330; cv=none; b=flyTZIVJoC9C5pqS6eVuwk7b+ZQMvdNyT64rjOvisALF49u5KBDKeYC69Mt+HbLq+J3kPnWMRMORwBjhwu1Xx35Qpg0h91Fe0Af5AhS2okIyzLafId1Gn73EvJTw+MC0XNXJSTzkgzxikfTJ39I2u3F/Okk9rC1XhoDRixo041M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715805233; c=relaxed/simple;
-	bh=unoD9KSsYghiIyikiLUO9ZsAceK1LUIcQnCto0v01V4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=JvYGqfWWk539JcqzW/ZbNU6G6paIn1Gt6Z9fQ25hPB+QKOj0Pj2tLBEEZH+bp59qsVP6oY4PDFFnCLp8K/oR0I/zsurjmrMQ6cEUTMO9uZg0rPOqVN2eHbKFbZtXFlXURY1jen+UWf846eCjJrvgsDRtrYmSd881EbBAeNPyEHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca; spf=none smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=ptJPMDK8; arc=none smtp.client-ip=209.85.161.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ndufresne.ca
-Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-5b27e8ad4b6so3660882eaf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 13:33:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1715805230; x=1716410030; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Kjh0Q8ae4fGItVRTadlqDebE3ObDhCbpPXshw412Shw=;
-        b=ptJPMDK8i5bYs4khc+R1YtB2bXGNmf62TyhQSWg+uikIaLCWtz8XeaILhWWP9NPqAA
-         KYLOivYvz6MUXWrGjJS73ko/vrd/Vl3thPSRjjO9ws9j1r0psbg5ThpOaDaqVb4Ayt51
-         47paXfiSCSPiLBmQo/6nvT1Qn0t1MRMeSPn4APn8jj53lenkSEfvJBeNZTV+gvXXAfuQ
-         OC6r492dbZnAmME1GmcpLW+Wl7a0t6C+AW0E2vdVhUQFtQ9phatM1UG2IlV/Ud/+84s/
-         bNIUgFo5SQhIyg8v9P5/duwzqiyAuwEWCMYuw8+bc2SWV/NhSeziZEmf99PL91S7GRYt
-         bEMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715805230; x=1716410030;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Kjh0Q8ae4fGItVRTadlqDebE3ObDhCbpPXshw412Shw=;
-        b=BgC2vzDIpJ9I+3htzF5FgUqFSoSpISFdJcRQclphsQMXblRXKHtSksg5SIbnaGYEfJ
-         wT7R8XUlys9TCs9Iubh8VKM4iMWMx+XhDpQTDlDSz9/5fmu566CN8SH6ulEpZWMeZQpG
-         AVwQKWsAxqtVZWSzLDyX2USFRFQ/7DP+D82Y4WLwpAktckGCRRgzBUfRU7fraBzIUb8z
-         k4ZYtz1TfNO5HDPHLAcC5I7Ca+HHSIeSqu8+ArDFI8gZZZxo6cJlDUq0tuAzar8cYNwb
-         Cif+asQEkhEwt8Ag/2H4Dv+3Tiv7R84/UG/G8djBFtLIaSB0Us1QXMVgPkho7QqAGYx3
-         QpEg==
-X-Forwarded-Encrypted: i=1; AJvYcCWytuV4oUNbxChXTUj/WeLDP3SNAh7yMovhiC1efN6uZX5g/5hylq03Pr2K6QMR6C3PtioUZnVak/vIcKrkcG42KX82Btu3Vcw+DqiI
-X-Gm-Message-State: AOJu0YzVZgwdiDnbRKYenk9BOzfuFxGq9uJH0RfKEYO0Ld62Z9/vNb/H
-	gXOeV+iBdwSYxUbdT2N5FMW7lW3i9O6o9T/1/gc5eVm1sAJrm/2qWRkxNHX704w=
-X-Google-Smtp-Source: AGHT+IGpuNGz67BonKM3QEPB/sFZYIcZEENCozaweY28mlNI0H0mMZjoKi3C7CRWJO8ukegBjF2hbA==
-X-Received: by 2002:a05:6358:4301:b0:192:ba37:f9f1 with SMTP id e5c5f4694b2df-193bb3fc89amr2052014655d.5.1715805230432;
-        Wed, 15 May 2024 13:33:50 -0700 (PDT)
-Received: from nicolas-tpx395.lan ([2606:6d00:17:5985::580])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6a15f1cdb25sm67691666d6.76.2024.05.15.13.33.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 May 2024 13:33:50 -0700 (PDT)
-Message-ID: <a60ee3505e551f3def6cdd7c76942d0fd74bc656.camel@ndufresne.ca>
-Subject: Re: [PATCH v15 00/16] Add audio support in v4l2 framework
-From: Nicolas Dufresne <nicolas@ndufresne.ca>
-To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>, Shengjiu Wang
- <shengjiu.wang@gmail.com>,  Amadeusz =?UTF-8?Q?S=C5=82awi=C5=84ski?=
- <amadeuszx.slawinski@linux.intel.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Mark Brown <broonie@kernel.org>, Sebastian Fricke
- <sebastian.fricke@collabora.com>, Shengjiu Wang <shengjiu.wang@nxp.com>, 
- sakari.ailus@iki.fi, tfiga@chromium.org, m.szyprowski@samsung.com, 
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- Xiubo.Lee@gmail.com,  festevam@gmail.com, nicoleotsuka@gmail.com,
- lgirdwood@gmail.com, tiwai@suse.com,  alsa-devel@alsa-project.org,
- linuxppc-dev@lists.ozlabs.org
-Date: Wed, 15 May 2024 16:33:48 -0400
-In-Reply-To: <e63ec6c8-7da7-4b87-b7ff-a71ff12dcfc1@perex.cz>
-References: <1710834674-3285-1-git-send-email-shengjiu.wang@nxp.com>
-	 <87sez0k661.wl-tiwai@suse.de> <20240502095956.0a8c5b26@sal.lan>
-	 <20240502102643.4ee7f6c2@sal.lan>
-	 <ZjRCJ2ZcmKOIo7_p@finisterre.sirena.org.uk>
-	 <20240503094225.47fe4836@sal.lan>
-	 <CAA+D8APfM3ayXHAPadHLty52PYE9soQM6o780=mZs+R4px-AOQ@mail.gmail.com>
-	 <22d94c69-7e9f-4aba-ae71-50cc2e5dd8ab@xs4all.nl>
-	 <51408e79-646d-4d23-bc5b-cd173d363327@linux.intel.com>
-	 <CAA+D8AM7+SvXBi=LKRqvJkLsrYW=nkHTfFe957z2Qzm89bc48g@mail.gmail.com>
-	 <cd71e8e8-b4dc-40ed-935e-a84c222997e6@linux.intel.com>
-	 <CAA+D8AMpLB0N++_iLWLN_qettNz-gKGQz2c2yLsY8qSycibkYg@mail.gmail.com>
-	 <2f771fe9-7c09-4e74-9b04-de52581133fd@linux.intel.com>
-	 <CAA+D8AMJKPVR99jzYCR5EsbMa8P95jQrDL=4ayYMuz+Cu1d2mQ@mail.gmail.com>
-	 <28d423b1-49d8-4180-8394-622b1afd9cd9@perex.cz>
-	 <850a80b2-d952-4c14-bd0b-98cb5a5c0233@perex.cz>
-	 <c5dbb765-8c93-4050-84e1-c0f63b43d6c2@xs4all.nl>
-	 <8a6f84ac-5813-4954-b852-84f5118e607c@perex.cz>
-	 <87o7975qcw.wl-tiwai@suse.de>
-	 <e63ec6c8-7da7-4b87-b7ff-a71ff12dcfc1@perex.cz>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.1 (3.52.1-1.fc40) 
+	s=arc-20240116; t=1715805330; c=relaxed/simple;
+	bh=1ROaqHeKea4ES3++aMaMcby/3PQ4/hiCneLKczow8pE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IJXz8qfN7tqUXY9E/yStxRrH9IbG/OcO+2mCxzC2UKn4NacNeB+xMW2cJQWsIZMtSgPMb3KGheGV22RrAWsRk+gElYMPhCBrKx/YNXHRPrlFyIACzOcRlqBouV0sheQbRg4B3spt/iCJ27QXemTnQIl5n851A2ZD0ucdt6cDLcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout3.hostsharing.net (Postfix) with ESMTPS id 9C66C100B04B8;
+	Wed, 15 May 2024 22:35:22 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 61E274A9A7F; Wed, 15 May 2024 22:35:22 +0200 (CEST)
+Date: Wed, 15 May 2024 22:35:22 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: Esther Shimanovich <eshimanovich@chromium.org>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Rajat Jain <rajatja@google.com>
+Subject: Re: [PATCH v4] PCI: Relabel JHL6540 on Lenovo X1 Carbon 7,8
+Message-ID: <ZkUcihZR_ZUUEsZp@wunner.de>
+References: <20240424085608.GE112498@black.fi.intel.com>
+ <CA+Y6NJFyi6e7ype6dTAjxsy5aC80NdVOt+Vg-a0O0y_JsfwSGg@mail.gmail.com>
+ <Zi0VLrvUWH6P1_or@wunner.de>
+ <CA+Y6NJE8hA+wt+auW1wJBWA6EGMc6CGpmdExr3475E_Yys-Zdw@mail.gmail.com>
+ <ZjsKPSgV39SF0gdX@wunner.de>
+ <20240510052616.GC4162345@black.fi.intel.com>
+ <CA+Y6NJF2Ex6Rwxw0a5V1aMY2OH4=MP5KTtat9x9Ge7y-JBdapw@mail.gmail.com>
+ <20240511043832.GD4162345@black.fi.intel.com>
+ <20240511054323.GE4162345@black.fi.intel.com>
+ <CA+Y6NJF+sJs_zQEF7se5QVMBAhoXJR3Y7x0PHfnBQZyCBbbrQg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+Y6NJF+sJs_zQEF7se5QVMBAhoXJR3Y7x0PHfnBQZyCBbbrQg@mail.gmail.com>
 
-Hi,
+On Wed, May 15, 2024 at 02:53:54PM -0400, Esther Shimanovich wrote:
+> On Wed, May 8, 2024 at 1:23???AM Lukas Wunner <lukas@wunner.de> wrote:
+> > On Wed, May 01, 2024 at 06:23:28PM -0400, Esther Shimanovich wrote:
+> > > On Sat, Apr 27, 2024 at 3:17AM Lukas Wunner <lukas@wunner.de> wrote:
+> > > That is correct, when the user-visible issue occurs, no driver is
+> > > bound to the NHI and XHCI. The discrete JHL chip is not permitted to
+> > > attach to the external-facing root port because of the security
+> > > policy, so the NHI and XHCI are not seen by the computer.
+> >
+> > Could you rework your patch to only rectify the NHI's and XHCI's
+> > device properties and leave the bridges untouched?
+> 
+> So I tried a build with that patch, but it never reached the
+> tb_pci_fixup function
 
-GStreamer hat on ...
+That means that for some reason, the PCI devices are not associated with
+the Thunderbolt ports.  Could you add this to the command line:
 
-Le mercredi 15 mai 2024 =C3=A0 12:46 +0200, Jaroslav Kysela a =C3=A9crit=C2=
-=A0:
-> On 15. 05. 24 12:19, Takashi Iwai wrote:
-> > On Wed, 15 May 2024 11:50:52 +0200,
-> > Jaroslav Kysela wrote:
-> > >=20
-> > > On 15. 05. 24 11:17, Hans Verkuil wrote:
-> > > > Hi Jaroslav,
-> > > >=20
-> > > > On 5/13/24 13:56, Jaroslav Kysela wrote:
-> > > > > On 09. 05. 24 13:13, Jaroslav Kysela wrote:
-> > > > > > On 09. 05. 24 12:44, Shengjiu Wang wrote:
-> > > > > > > > > mem2mem is just like the decoder in the compress pipeline=
- which is
-> > > > > > > > > one of the components in the pipeline.
-> > > > > > > >=20
-> > > > > > > > I was thinking of loopback with endpoints using compress st=
-reams,
-> > > > > > > > without physical endpoint, something like:
-> > > > > > > >=20
-> > > > > > > > compress playback (to feed data from userspace) -> DSP (pro=
-cessing) ->
-> > > > > > > > compress capture (send data back to userspace)
-> > > > > > > >=20
-> > > > > > > > Unless I'm missing something, you should be able to process=
- data as fast
-> > > > > > > > as you can feed it and consume it in such case.
-> > > > > > > >=20
-> > > > > > >=20
-> > > > > > > Actually in the beginning I tried this,  but it did not work =
-well.
-> > > > > > > ALSA needs time control for playback and capture, playback an=
-d capture
-> > > > > > > needs to synchronize.  Usually the playback and capture pipel=
-ine is
-> > > > > > > independent in ALSA design,  but in this case, the playback a=
-nd capture
-> > > > > > > should synchronize, they are not independent.
-> > > > > >=20
-> > > > > > The core compress API core no strict timing constraints. You ca=
-n eventually0
-> > > > > > have two half-duplex compress devices, if you like to have real=
-ly independent
-> > > > > > mechanism. If something is missing in API, you can extend this =
-API (like to
-> > > > > > inform the user space that it's a producer/consumer processing =
-without any
-> > > > > > relation to the real time). I like this idea.
-> > > > >=20
-> > > > > I was thinking more about this. If I am right, the mentioned use =
-in gstreamer
-> > > > > is supposed to run the conversion (DSP) job in "one shot" (can be=
- handled
-> > > > > using one system call like blocking ioctl).  The goal is just to =
-offload the
-> > > > > CPU work to the DSP (co-processor). If there are no requirements =
-for the
-> > > > > queuing, we can implement this ioctl in the compress ALSA API eas=
-ily using the
-> > > > > data management through the dma-buf API. We can eventually define=
- a new
-> > > > > direction (enum snd_compr_direction) like SND_COMPRESS_CONVERT or=
- so to allow
-> > > > > handle this new data scheme. The API may be extended later on rea=
-l demand, of
-> > > > > course.
-> > > > >=20
-> > > > > Otherwise all pieces are already in the current ALSA compress API
-> > > > > (capabilities, params, enumeration). The realtime controls may be=
- created
-> > > > > using ALSA control API.
-> > > >=20
-> > > > So does this mean that Shengjiu should attempt to use this ALSA app=
-roach first?
-> > >=20
-> > > I've not seen any argument to use v4l2 mem2mem buffer scheme for this
-> > > data conversion forcefully. It looks like a simple job and ALSA APIs
-> > > may be extended for this simple purpose.
-> > >=20
-> > > Shengjiu, what are your requirements for gstreamer support? Would be =
-a
-> > > new blocking ioctl enough for the initial support in the compress ALS=
-A
-> > > API?
-> >=20
-> > If it works with compress API, it'd be great, yeah.
-> > So, your idea is to open compress-offload devices for read and write,
-> > then and let them convert a la batch jobs without timing control?
-> >=20
-> > For full-duplex usages, we might need some more extensions, so that
-> > both read and write parameters can be synchronized.  (So far the
-> > compress stream is a unidirectional, and the runtime buffer for a
-> > single stream.)
-> >=20
-> > And the buffer management is based on the fixed size fragments.  I
-> > hope this doesn't matter much for the intended operation?
->=20
-> It's a question, if the standard I/O is really required for this case. My=
-=20
-> quick idea was to just implement a new "direction" for this job supportin=
-g=20
-> only one ioctl for the data processing which will execute the job in "one=
-=20
-> shot" at the moment. The I/O may be handled through dma-buf API (which se=
-ems=20
-> to be standard nowadays for this purpose and allows future chaining).
->=20
-> So something like:
->=20
-> struct dsp_job {
->     int source_fd;     /* dma-buf FD with source data - for dma_buf_get()=
- */
->     int target_fd;     /* dma-buf FD for target data - for dma_buf_get() =
-*/
->     ... maybe some extra data size members here ...
->     ... maybe some special parameters here ...
-> };
->=20
-> #define SNDRV_COMPRESS_DSPJOB _IOWR('C', 0x60, struct dsp_job)
->=20
-> This ioctl will be blocking (thus synced). My question is, if it's feasib=
-le=20
-> for gstreamer or not. For this particular case, if the rate conversion is=
-=20
-> implemented in software, it will block the gstreamer data processing, too=
-.
+  thunderbolt.dyndbg ignore_loglevel log_buf_len=10M
 
-Yes, GStreamer threading is using a push-back model, so blocking for the ti=
-me of
-the processing is fine. Note that the extra simplicity will suffer from ioc=
-tl()
-latency.
+and this to your kernel config:
 
-In GFX, they solve this issue with fences. That allow setting up the next
-operation in the chain before the data has been produced.
+  CONFIG_DYNAMIC_DEBUG=y
 
-In V4L2, we solve this with queues. It allows preparing the next job, while=
- the
-processing of the current job is happening. If you look at v4l2convert code=
- in
-gstreamer (for simple m2m), it currently makes no use of the queues, it sim=
-ply
-synchronously process the frames. There is two option, where it does not ma=
-tter
-that much, or no one is using it :-D Video decoders and encoders (stateful)=
- do
-run input / output from different thread to benefit from the queued.
+You should see "... is associated with ..." messages in dmesg.
+This did work for Mika during his testing with recent Thunderbolt chips.
+I amended the patches after his testing but wouldn't expect that to
+cause issues.
 
-regards,
-Nicolas
+@Mika, would you mind re-testing if you've got cycles to spare?
 
->=20
-> 						Jaroslav
->=20
 
+> even when NHI and XHCI were both labeled as
+> fixed and external facing in the quirk.
+
+Setting the two as fixed and trusted should be sufficient.
+The external_facing bit should not be needed on the NHI and XHCI.
+
+
+> Also, I don't see where you distinguish between an integrated
+> Thunderbolt PCIe root port and a root port with no thunderbolt
+> functionality built in. Could you point that out to me?
+
+Hm, why would I have to distinguish between the two?
+
+I distinguish between Thunderbolt PCIe Adapters on the root switch
+and ones on non-root switches.  The latter are attached Device Routers,
+the former is the Host Router.  I just set the ones on the former to
+external_facing, fixed and trusted.  Everything downstream is untrusted
+and removable.
+
+
+> I'm not sure how your patch protects against the following case
+> scenario I described earlier:
+> > Let's say we have a TigerLake CPU, which has integrated
+> > Thunderbolt/USB4 capabilities:
+> >
+> > TigerLake_ThunderboltCPU -> USB-C Port
+> > This device also has the ExternalFacingPort property in ACPI and lacks
+> > the usb4-host-interface property in the ACPI.
+> >
+> > My worry is that someone could take an Alpine Ridge Chip Thunderbolt
+> > Dock and attach it to the TigerLake CPU
+> >
+> > TigerLake_ThunderboltCPU -> USB-C Port -> AlpineRidge_Dock
+> >
+> > If that were to happen, this quirk would incorrectly label the Alpine
+> > Ridge Dock as "fixed" instead of "removable".
+
+See above, the Alpine Ridge Dock is never the root switch.
+The Tiger Lake CPU is.
+
+Thanks,
+
+Lukas
 
