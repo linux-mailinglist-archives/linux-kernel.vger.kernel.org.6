@@ -1,234 +1,126 @@
-Return-Path: <linux-kernel+bounces-179748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A560B8C64BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 12:05:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AE9A8C64C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 12:05:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34B4B1F21446
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 10:05:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C715028332C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 10:05:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FA6785C65;
-	Wed, 15 May 2024 10:01:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D67B65BAFC;
+	Wed, 15 May 2024 10:04:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ExyH4UuP"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EUUyRmEm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BD848121B;
-	Wed, 15 May 2024 10:01:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1989D59154;
+	Wed, 15 May 2024 10:04:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715767311; cv=none; b=UJLiVvAh/WgfoHwtAHb+dYcpH3z5KGO4zbu5sTHw3ioPDXUl3/BN1Jc4sGpsxdJfhh6FAvRCAABZ8/r9nkZhFbN6MDRUgMIPjuPr90ikTMsjPTprHIIWeSu1YryBmgoHYLOHtq0hu+HLZIfFQrZZP5YfxJZJ7VipoVFGoaodFlc=
+	t=1715767488; cv=none; b=UntFw3GBPYplOBuDA75HSG+3vU0GesruCF0QI7/IYEnKYyE5mYv4lexRIrZ8LcYnRJV3o25LdhcxZsrbVMsBlMd5a062R/tddmqAZ6YA6u7h40wYh4neqxE1Y0J3R4AT/JelS9GEwfVQp4FG2Zy5+RVcy7G28Ap4EwFz8m4FLjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715767311; c=relaxed/simple;
-	bh=lpcRI6pbJ32meL/VjTzpGOcoWSJTYnk21moIdV1Kpxk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=VpODlNmn2CVcNI/gvtxP5qPE46X3z/w8/qUUPsxUZGLSawFiLX/vDPJvcHMi73yjCCaETRvxQsF7ChuneQ4PaNsL8NAubtq/u/aj9crRn1guEMq3uuJ68ZK0rACW1cCKTmA/Dk1MtnldMo0TfWzE8x6KS6n/s6pODDPvFaerafQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ExyH4UuP; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 996BB1BF20B;
-	Wed, 15 May 2024 10:01:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1715767307;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=M72jZYyV65DqxQX89BNQFEE+r0wyDWzohfJY2wWVXuo=;
-	b=ExyH4UuPFAgSmMV9C4UNjzQmZuuNJKVcVAg7O2v3KjsFLD0vKpUfL11zUL3OxxqZ6Mw1Qx
-	979f3niomtNL8rm7PHDTpV6uBwScnOmsdtXV1MjJSOEffWWAwbWuT5zEyQTrIR6YTXZCW6
-	FDEK0cdRpuLu3y1GBMo0m+tajN7qGx0x/1PYS+nXgvRV9HJnObncVdiTw04frKlzceI4Ra
-	Skdr2LszbcQBMYkf3KXnDb2+2/C0dZMIsiF31TmZCKd3TqWBmXTuChiaVatgS2lBSGPF8q
-	PHpB6jupV/gfnKdMJVQ6smH2hFlHBOIC2LWKoqNPHUdR4tXqQLGZitcIFkMFkA==
-From: Thomas Richard <thomas.richard@bootlin.com>
-Date: Wed, 15 May 2024 12:01:13 +0200
-Subject: [PATCH v6 12/12] PCI: j721e: Add suspend and resume support
+	s=arc-20240116; t=1715767488; c=relaxed/simple;
+	bh=RYe526lR6G+ZpwtoxXEihuTAaL1DrZXqa1zXyyP3F2Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=M3dtufq8IkfDp63NfIoZg8wNFn2YiVob/e3Wefgs7Z3GIIZfES4vZ1TFIgjqss2lKDdugDjwNCbKqIZOuJFv/DI8VV44gkwRvRoWwxToEbaqLImQDCe7PPOgUo0cugu+yGRjkjUlFU4bWkEQ/m1Hb5Lj2UjeV8y4PBDWZ22z7qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EUUyRmEm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0900C32786;
+	Wed, 15 May 2024 10:04:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715767487;
+	bh=RYe526lR6G+ZpwtoxXEihuTAaL1DrZXqa1zXyyP3F2Y=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=EUUyRmEm0rNVZyiTV2Up3fDqRhGHDCVPLBsQiN1fGGtTnjVQ8ZtZHo8oA+vo8ceFg
+	 9aAmQBfi+BDVWTEI/G7xGNQeUVSJiH0Bv4yTuWttSroxqwmRoafEpUc0lEMQQKVt96
+	 +BQlJZJZIwjC0kxxJulW4DF52HOM+Uoq94fHeM8liVZi7cyIfjYIJP9jjmp3yMiK6+
+	 wda7vQk1ZvlXH2izadtkYbTEvhfn73ujPafKH1so0BhpT6FxI9kQH8nIWCVNc2+yHC
+	 9AU83C/wFkw440amCmOyx+na3i/z+JIoVpb+j8VqRH6ntfu9hRkhd66ksCciHPVmQo
+	 rrjFtUXVYNJ+w==
+Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-5ac4470de3bso1034768eaf.0;
+        Wed, 15 May 2024 03:04:47 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXtlJ1D6/zX4ZXHDysxyaIfdrYGEaSgtery1htNlmRTGjB/xyUQ3UbfmsXajjHqKgGHBRw06N++nitE3n8uacraoyzBoeqvDbXKtkvFWPnzOr32jDpHybeiUqT9rtEbzowIv6pAXs4=
+X-Gm-Message-State: AOJu0Yz7fHS4BdX43qjNBvYmPveP+RfzzMUUE52kapibkh9w8JE+bAae
+	mKK9B1IJT7Z7dj03Wd21z4n4FU/ZYrU/IyaEOaHPxkg/lJ9e8SQ67TnelKwi4taZ7cHaUHP5UKn
+	dOTNtxZ13uhWxvTuVJKGSokoplos=
+X-Google-Smtp-Source: AGHT+IFLmIoa1kjthdFne9cPU+Cgy3M/9F26C1/7JjSFpI0XJYbRgVCPRmEW/RscRhAC6qwm3Tq23thmhy6BpyAdVME=
+X-Received: by 2002:a05:6870:5246:b0:23c:350c:f157 with SMTP id
+ 586e51a60fabf-24172fc1a06mr20779283fac.4.1715767486840; Wed, 15 May 2024
+ 03:04:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240102-j7200-pcie-s2r-v6-12-4656ef6e6d66@bootlin.com>
-References: <20240102-j7200-pcie-s2r-v6-0-4656ef6e6d66@bootlin.com>
-In-Reply-To: <20240102-j7200-pcie-s2r-v6-0-4656ef6e6d66@bootlin.com>
-To: Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, Tony Lindgren <tony@atomide.com>, 
- Aaro Koskinen <aaro.koskinen@iki.fi>, 
- Janusz Krzysztofik <jmkrzyszt@gmail.com>, Vignesh R <vigneshr@ti.com>, 
- Andi Shyti <andi.shyti@kernel.org>, Peter Rosin <peda@axentia.se>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
- Siddharth Vadapalli <s-vadapalli@ti.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-omap@vger.kernel.org, linux-i2c@vger.kernel.org, 
- linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- gregory.clement@bootlin.com, theo.lebrun@bootlin.com, 
- thomas.petazzoni@bootlin.com, u-kumar1@ti.com, 
- Thomas Richard <thomas.richard@bootlin.com>
-X-Mailer: b4 0.12.0
-X-GND-Sasl: thomas.richard@bootlin.com
+References: <1a27254d-110b-4c01-89a0-e5e7b7c986ca@linaro.org>
+In-Reply-To: <1a27254d-110b-4c01-89a0-e5e7b7c986ca@linaro.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 15 May 2024 12:04:35 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0i8n2AwSXLGhLJjRiu-=tXjdCN4dEiJm8-uC2gRCHW0RQ@mail.gmail.com>
+Message-ID: <CAJZ5v0i8n2AwSXLGhLJjRiu-=tXjdCN4dEiJm8-uC2gRCHW0RQ@mail.gmail.com>
+Subject: Re: [GIT PULL] thermal drivers fixes for v6.10-rc1
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux PM mailing list <linux-pm@vger.kernel.org>, Julien Panis <jpanis@baylibre.com>, 
+	Lukasz Luba <Lukasz.Luba@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Théo Lebrun <theo.lebrun@bootlin.com>
+Hi Daniel,
 
-Add suspend and resume support. Only the rc mode is supported.
+On Tue, May 14, 2024 at 11:38=E2=80=AFAM Daniel Lezcano
+<daniel.lezcano@linaro.org> wrote:
+>
+>
+> Hi Rafael,
+>
+> The following changes since commit 734b5def91b594d3aa1147d60c45eded139ce2=
+eb:
+>
+>    thermal/drivers/loongson2: Add Loongson-2K2000 support (2024-04-23
+> 12:40:30 +0200)
+>
+> are available in the Git repository at:
+>
+>
+> ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/thermal/linux.git
+> tags/thermal-v6.10-rc1-2
+>
+> for you to fetch changes up to b66c079aabdff3954e93fdd7f52bd8f9ad6482c7:
+>
+>    thermal/drivers/mediatek/lvts_thermal: Fix wrong lvts_ctrl index
+> (2024-05-06 10:33:26 +0200)
+>
+> ----------------------------------------------------------------
+> - Check for a NULL pointer before using it in the probe routine of the
+>    Mediatek LVTS driver (Julien Panis)
+>
+> - Remove the num_lvts_sensor and cal_offset fields of the
+>    lvts_ctrl_data as they are not used. These are not functional fixes
+>    but slight memory usage fix of the Mediatek LVTS driver (Julien
+>    Panis)
+>
+> - Fix wrong lvts_ctrl index leading to a NULL pointer dereference in
+>    the Mediatek LVTS driver (Julien Panis)
+>
+> ----------------------------------------------------------------
+> Julien Panis (3):
+>        thermal/drivers/mediatek/lvts_thermal: Check NULL ptr on lvts_data
+>        thermal/drivers/mediatek/lvts_thermal: Remove unused members from
+> struct lvts_ctrl_data
+>        thermal/drivers/mediatek/lvts_thermal: Fix wrong lvts_ctrl index
+>
+>   drivers/thermal/mediatek/lvts_thermal.c | 15 +++++++++------
+>   1 file changed, 9 insertions(+), 6 deletions(-)
+>
+> --
 
-During the suspend stage PERST# is asserted, then deasserted during the
-resume stage.
+Pulled and added to the thermal branch in linux-pm.git.
 
-Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
-Reviewed-by: Siddharth Vadapalli <s-vadapalli@ti.com>
-Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
----
- drivers/pci/controller/cadence/pci-j721e.c | 98 ++++++++++++++++++++++++++++--
- 1 file changed, 92 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/pci/controller/cadence/pci-j721e.c b/drivers/pci/controller/cadence/pci-j721e.c
-index 967a5bf38e26..96316a79ab8a 100644
---- a/drivers/pci/controller/cadence/pci-j721e.c
-+++ b/drivers/pci/controller/cadence/pci-j721e.c
-@@ -7,6 +7,8 @@
-  */
- 
- #include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/container_of.h>
- #include <linux/delay.h>
- #include <linux/gpio/consumer.h>
- #include <linux/io.h>
-@@ -22,6 +24,8 @@
- #include "../../pci.h"
- #include "pcie-cadence.h"
- 
-+#define cdns_pcie_to_rc(p) container_of(p, struct cdns_pcie_rc, pcie)
-+
- #define ENABLE_REG_SYS_2	0x108
- #define STATUS_REG_SYS_2	0x508
- #define STATUS_CLR_REG_SYS_2	0x708
-@@ -531,12 +535,12 @@ static int j721e_pcie_probe(struct platform_device *pdev)
- 		pcie->refclk = clk;
- 
- 		/*
--		 * "Power Sequencing and Reset Signal Timings" table in
--		 * PCI EXPRESS CARD ELECTROMECHANICAL SPECIFICATION, REV. 3.0
--		 * indicates PERST# should be deasserted after minimum of 100us
--		 * once REFCLK is stable. The REFCLK to the connector in RC
--		 * mode is selected while enabling the PHY. So deassert PERST#
--		 * after 100 us.
-+		 * "Power Sequencing and Reset Signal Timings" table (section
-+		 * 2.9.2) in PCI EXPRESS CARD ELECTROMECHANICAL SPECIFICATION,
-+		 * REV. 5.1 indicates PERST# should be deasserted after minimum
-+		 * of 100us once REFCLK is stable (symbol T_PERST-CLK).
-+		 * The REFCLK to the connector in RC mode is selected while
-+		 * enabling the PHY. So deassert PERST# after 100 us.
- 		 */
- 		if (gpiod) {
- 			fsleep(PCIE_T_PERST_CLK_US);
-@@ -588,6 +592,87 @@ static void j721e_pcie_remove(struct platform_device *pdev)
- 	pm_runtime_disable(dev);
- }
- 
-+static int j721e_pcie_suspend_noirq(struct device *dev)
-+{
-+	struct j721e_pcie *pcie = dev_get_drvdata(dev);
-+
-+	if (pcie->mode == PCI_MODE_RC) {
-+		gpiod_set_value_cansleep(pcie->reset_gpio, 0);
-+		clk_disable_unprepare(pcie->refclk);
-+	}
-+
-+	cdns_pcie_disable_phy(pcie->cdns_pcie);
-+
-+	return 0;
-+}
-+
-+static int j721e_pcie_resume_noirq(struct device *dev)
-+{
-+	struct j721e_pcie *pcie = dev_get_drvdata(dev);
-+	struct cdns_pcie *cdns_pcie = pcie->cdns_pcie;
-+	int ret;
-+
-+	ret = j721e_pcie_ctrl_init(pcie);
-+	if (ret < 0)
-+		return ret;
-+
-+	j721e_pcie_config_link_irq(pcie);
-+
-+	/*
-+	 * This is not called explicitly in the probe, it is called by
-+	 * cdns_pcie_init_phy().
-+	 */
-+	ret = cdns_pcie_enable_phy(pcie->cdns_pcie);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (pcie->mode == PCI_MODE_RC) {
-+		struct cdns_pcie_rc *rc = cdns_pcie_to_rc(cdns_pcie);
-+
-+		ret = clk_prepare_enable(pcie->refclk);
-+		if (ret < 0)
-+			return ret;
-+
-+		/*
-+		 * "Power Sequencing and Reset Signal Timings" table (section
-+		 * 2.9.2) in PCI EXPRESS CARD ELECTROMECHANICAL SPECIFICATION,
-+		 * REV. 5.1 indicates PERST# should be deasserted after minimum
-+		 * of 100us once REFCLK is stable (symbol T_PERST-CLK).
-+		 * The REFCLK to the connector in RC mode is selected while
-+		 * enabling the PHY. So deassert PERST# after 100 us.
-+		 */
-+		if (pcie->reset_gpio) {
-+			fsleep(PCIE_T_PERST_CLK_US);
-+			gpiod_set_value_cansleep(pcie->reset_gpio, 1);
-+		}
-+
-+		ret = cdns_pcie_host_link_setup(rc);
-+		if (ret < 0) {
-+			clk_disable_unprepare(pcie->refclk);
-+			return ret;
-+		}
-+
-+		/*
-+		 * Reset internal status of BARs to force reinitialization in
-+		 * cdns_pcie_host_init().
-+		 */
-+		for (enum cdns_pcie_rp_bar bar = RP_BAR0; bar <= RP_NO_BAR; bar++)
-+			rc->avail_ib_bar[bar] = true;
-+
-+		ret = cdns_pcie_host_init(rc);
-+		if (ret) {
-+			clk_disable_unprepare(pcie->refclk);
-+			return ret;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static DEFINE_NOIRQ_DEV_PM_OPS(j721e_pcie_pm_ops,
-+			       j721e_pcie_suspend_noirq,
-+			       j721e_pcie_resume_noirq);
-+
- static struct platform_driver j721e_pcie_driver = {
- 	.probe  = j721e_pcie_probe,
- 	.remove_new = j721e_pcie_remove,
-@@ -595,6 +680,7 @@ static struct platform_driver j721e_pcie_driver = {
- 		.name	= "j721e-pcie",
- 		.of_match_table = of_j721e_pcie_match,
- 		.suppress_bind_attrs = true,
-+		.pm	= pm_sleep_ptr(&j721e_pcie_pm_ops),
- 	},
- };
- builtin_platform_driver(j721e_pcie_driver);
-
--- 
-2.39.2
-
+Thanks!
 
