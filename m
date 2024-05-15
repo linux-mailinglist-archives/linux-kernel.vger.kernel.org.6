@@ -1,112 +1,134 @@
-Return-Path: <linux-kernel+bounces-179404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E5988C5FD4
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:49:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CEF18C5FD6
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:52:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAAEB2831EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 04:49:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 401C41C2100C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 04:52:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5263F38FA3;
-	Wed, 15 May 2024 04:49:39 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 436D139FED;
+	Wed, 15 May 2024 04:52:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=darkphysics.net header.i=@darkphysics.net header.b="MnjLmRpP"
+Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9CCE20314;
-	Wed, 15 May 2024 04:49:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99EDC20314
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 04:52:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715748578; cv=none; b=BasBgFotBsyaSgFRTFyQJgIguKzdfZ65qP81fNmg/3j3WF/EtaCJc6ARgXe/YN6FvlA0xIXnsFlQmjrkiiwo5tpPgNwOmPcKBkw2uxQlW8LYXiDIsQfXlQcs0lj5plPpf+LK7lr+DSavfr40rkm5hT8YCR5pwdJvHfWO8jf7vl0=
+	t=1715748757; cv=none; b=AA8O6RYLvYATSOfYbPk24+ezi9MHTR+Y0N/SfQvCZsrNZ9ERJlWUr3A3u2t+Ub7b6ZZpBFmiT4H8+b7/1ltNbD+8qza2Pi0JPICMDsOZzd1ka2tKhNQ+qqAGnXk4CX4E6W1j1efHBcMLcjQUorK2jOVtj+Mg+e2eOczYmIN9Dvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715748578; c=relaxed/simple;
-	bh=AVkqO/R8PDeeUExvLM3elvubZXwPS1QR3t18bGSbOlI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sNYE9xoXlINlUOhIbyDhXu77+mqgVnqS7blFTLiL65n8Aseb4ZacZbZYOu6t9NDN+sd+KXh2QbQTSqwhAX/KVt2L0evt2S/w2WbHrNIGiefAHkQPfFZkG8K8Q6NMUfSd35dwCTLOoxY4iVo3vgYchwjoHkXnW3rF1/GhOFXdK64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E3AAC116B1;
-	Wed, 15 May 2024 04:49:38 +0000 (UTC)
-Date: Wed, 15 May 2024 00:49:31 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Vincent Donnefort
- <vdonnefort@google.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the ftrace tree
-Message-ID: <20240515004931.0d2e7af3@rorschach.local.home>
-In-Reply-To: <20240515124808.06279d04@canb.auug.org.au>
-References: <20240515124808.06279d04@canb.auug.org.au>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1715748757; c=relaxed/simple;
+	bh=qXSzaE9bVH2Q8DDXlnO3VvXrcu9RLi+wQbEvYhWZFao=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=b9r3wOFN4VQ7O2rGojX25c1a0sM5ZmnkkIGhiBxIptKQEpuW58vA/lW+z763KrnklPlgKkQxIwkK3YF/2pEznqAN357XY0GX7/I+Zrwze/0kznWK4SY1QWwpgkbT4pTnfW+dL4vRFjIUHhWLq9+x788huOtg0sn0UhI9QWWh5Mw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=darkphysics.net; spf=pass smtp.mailfrom=darkphysics.net; dkim=pass (2048-bit key) header.d=darkphysics.net header.i=@darkphysics.net header.b=MnjLmRpP; arc=none smtp.client-ip=209.85.161.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=darkphysics.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=darkphysics.net
+Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-5ad2da2196aso4110416eaf.2
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 21:52:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=darkphysics.net; s=google; t=1715748753; x=1716353553; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mGK0Y+Ay79UTLYMwgp4ltlyyvJGTL7iwngRnNpkI1QM=;
+        b=MnjLmRpPBSzrhNDkwu2OeA0rTEWkjb/ddtjGxZYt634r67CCG1C9YooAW0GBKe6HYH
+         qMO0tgwi5Bv3EqAGBuxvYs7wZ4WV7rc3TZg1lGFhMBy4obj7DwuGwpSWEcmVK0h4HB55
+         ZWqiD5X8P9acaz3a9DvbpA0TtCRq7Tau5Eg+YwOL6E9zMhKxfYGFKRaMHteR1/N4omkO
+         QUENAohpOUbeyJzMeNL/gayAnJvLO5O6O4RzMudFwz4/zWk9GgycQniYR83AWwetOzW4
+         xPt4XRI7lX/T1xdg2p6FA4mT+m6LCiqmQepGTU+zF2LjUR4n1/HV22njeFoVoiA8HchT
+         y4Hg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715748753; x=1716353553;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mGK0Y+Ay79UTLYMwgp4ltlyyvJGTL7iwngRnNpkI1QM=;
+        b=E+/EI8SqTPvxUeXXYsBslQiSZNp9jWS+Xy2QaKFu7qpODEPLhECct3wa/rVKlFwuIv
+         F+Rpm7p51pL515qR4F7nbI+RKbuAlsO6PNcFT8zqZ7ZsXxlvdmlzf2vEWQzf2Yh9LeRN
+         vzLBGMIpDzFj6kX+ytOJe34oMga2ZAyPRkoRQtFh9av1vXErS09Q1YaL7ZI+asv+3+KO
+         7nOhLuYxounnd/LdOlnDzrG+CeOujEErC/al7CcDT5C9JJ9nOrxtVavEMTo/4pnWXLbF
+         dB3MR+sGxTP6EYQrZ8V4B2bBRdzYaDeaMpaGjZRDokxUSez9w98VcLPxzuplJxbnCIc2
+         E3yg==
+X-Forwarded-Encrypted: i=1; AJvYcCUSVc08HMK2+PYDQ05hwbTjHKpPJE9LxpWnGQeLWU1qv+27iPSNtMROpyt/vlM6Ct60OWHcnz4NzMO5z9vtLv9tjXb4D7JFDEJ3kYhk
+X-Gm-Message-State: AOJu0Yyh2Ax1raZaDrCeN7XPNaM4Fyn19A5fTgTzzxDxwZOxTAmgqQx8
+	aTxUGai1XFwjqqg3ZbhLW02GIwoFiljnZUreEyqBvT5kM86hi/LkDgtFqpdBspM=
+X-Google-Smtp-Source: AGHT+IFxuM53qOVs3ZUC+MFrcNzBV3wB/ku0AmJDncPC0wqaV/WkA3xgyK8oeZ3c9x4vTfzd6YGnBA==
+X-Received: by 2002:a05:6870:452:b0:23f:dd5:f89b with SMTP id 586e51a60fabf-24172c2fad7mr17839507fac.51.1715748753515;
+        Tue, 14 May 2024 21:52:33 -0700 (PDT)
+Received: from lunchbox.darkphysics (c-76-146-178-2.hsd1.wa.comcast.net. [76.146.178.2])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2a827fdsm10135035b3a.60.2024.05.14.21.52.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 May 2024 21:52:33 -0700 (PDT)
+From: Tree Davies <tdavies@darkphysics.net>
+To: gregkh@linuxfoundation.org,
+	philipp.g.hortmann@gmail.com,
+	anjan@momi.ca
+Cc: linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Tree Davies <tdavies@darkphysics.net>
+Subject: [PATCH 00/31] Staging: rtl8192e: rtllib_rx.c Rename camelcase variables
+Date: Tue, 14 May 2024 21:51:57 -0700
+Message-Id: <20240515045228.35928-1-tdavies@darkphysics.net>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Wed, 15 May 2024 12:48:08 +1000
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+This series renames camelcase variables to meet style
+guide requirements. Thank you in advance to reviewers.
+~ Tree
 
-> Hi all,
-> 
-> After merging the ftrace tree, today's linux-next build (powerpc
-> ppc64_defconfig) produced this warning:
+Tree Davies (31):
+  Staging: rtl8192e: Rename variable IsPassiveChannel
+  Staging: rtl8192e: Rename variable CountryIeBuf
+  Staging: rtl8192e: Rename variable CountryIeLen
+  Staging: rtl8192e: Rename variable bWithAironetIE
+  Staging: rtl8192e: Rename variable bContainHTC
+  Staging: rtl8192e: Rename variable MBssid
+  Staging: rtl8192e: Rename variable MBssidMask
+  Staging: rtl8192e: Rename variable elementID
+  Staging: rtl8192e: Rename variable rtllib_rx_Monitor
+  Staging: rtl8192e: Rename variable rtllib_rx_InfraAdhoc
+  Staging: rtl8192e: Rename variable IsLegacyDataFrame
+  Staging: rtl8192e: Rename variable RxReorderIndicatePacket
+  Staging: rtl8192e: Rename variable RfdArray
+  Staging: rtl8192e: Rename variable Decrypted
+  Staging: rtl8192e: Rename variable AddReorderEntry
+  Staging: rtl8192e: Rename variable pList
+  Staging: rtl8192e: Rename variable nPadding_Length
+  Staging: rtl8192e: Rename variable LLCOffset
+  Staging: rtl8192e: Rename variable ChkLength
+  Staging: rtl8192e: Rename variable WinEnd
+  Staging: rtl8192e: Rename variable WinSize
+  Staging: rtl8192e: Rename variable IsDataFrame
+  Staging: rtl8192e: Rename variable bMatchWinStart
+  Staging: rtl8192e: Rename variable bMBssidValid
+  Staging: rtl8192e: Rename variable bWithCcxVerNum
+  Staging: rtl8192e: Rename variable Frame_QoSTID
+  Staging: rtl8192e: Rename variable CcxRmState
+  Staging: rtl8192e: Rename variable IsQoSDataFrame
+  Staging: rtl8192e: Rename variable RfdCnt
+  Staging: rtl8192e: Rename variable prxbIndicateArray
+  Staging: rtl8192e: Rename variable bPktInBuf
 
-Interesting, as I didn't get reports from it via zero-day bot.
+ .../staging/rtl8192e/rtl8192e/r8192E_dev.c    |   2 +-
+ drivers/staging/rtl8192e/rtl819x_HTProc.c     |   2 +-
+ drivers/staging/rtl8192e/rtl819x_TSProc.c     |   8 +-
+ drivers/staging/rtl8192e/rtllib.h             |  36 ++--
+ drivers/staging/rtl8192e/rtllib_rx.c          | 184 +++++++++---------
+ drivers/staging/rtl8192e/rtllib_tx.c          |   4 +-
+ 6 files changed, 118 insertions(+), 118 deletions(-)
 
-> 
-> In file included from arch/powerpc/include/asm/page.h:332,
->                  from arch/powerpc/include/asm/mmu.h:144,
->                  from arch/powerpc/include/asm/paca.h:18,
->                  from arch/powerpc/include/asm/current.h:13,
->                  from include/linux/thread_info.h:23,
->                  from include/asm-generic/preempt.h:5,
->                  from ./arch/powerpc/include/generated/asm/preempt.h:1,
->                  from include/linux/preempt.h:79,
->                  from include/linux/alloc_tag.h:11,
->                  from include/linux/percpu.h:5,
->                  from include/linux/context_tracking_state.h:5,
->                  from include/linux/hardirq.h:5,
->                  from include/linux/interrupt.h:11,
->                  from include/linux/trace_recursion.h:5,
->                  from kernel/trace/ring_buffer.c:7:
-> kernel/trace/ring_buffer.c: In function '__rb_map_vma':
-> kernel/trace/ring_buffer.c:6286:72: warning: passing argument 1 of 'virt_to_pfn' makes pointer from integer without a cast [-Wint-conversion]
->  6286 |                 struct page *page = virt_to_page(cpu_buffer->subbuf_ids[s]);
->       |                                                  ~~~~~~~~~~~~~~~~~~~~~~^~~
->       |                                                                        |
->       |                                                                        long unsigned int
-> include/asm-generic/memory_model.h:37:45: note: in definition of macro '__pfn_to_page'
->    37 | #define __pfn_to_page(pfn)      (vmemmap + (pfn))
->       |                                             ^~~
-> kernel/trace/ring_buffer.c:6286:37: note: in expansion of macro 'virt_to_page'
->  6286 |                 struct page *page = virt_to_page(cpu_buffer->subbuf_ids[s]);
->       |                                     ^~~~~~~~~~~~
-> arch/powerpc/include/asm/page.h:228:53: note: expected 'const void *' but argument is of type 'long unsigned int'
->   228 | static inline unsigned long virt_to_pfn(const void *kaddr)
->       |                                         ~~~~~~~~~~~~^~~~~
-> 
-> Introduced by commit
-> 
->   117c39200d9d ("ring-buffer: Introducing ring-buffer mapping functions")
-> 
-> My arm multi_v7_defconfig build produced a similar warning.
-> 
-> Is this really intended for v6.10?  It seems a bit late.
-> 
+-- 
+2.30.2
 
-Well, I submitted this for the v6.9 merge window, and Linus had issues
-with it. So we've been tweaking it for the entire time and it was ready
-a bit earlier, but due to my vacation and traveling I missed pushing it
-to next. :-p
-
-Most the code has been well tested, but because it is late, I kept it
-as a separate topic branch in case Linus still isn't happy with it.
-
--- Steve
 
