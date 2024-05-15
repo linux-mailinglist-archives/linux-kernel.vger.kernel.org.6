@@ -1,335 +1,422 @@
-Return-Path: <linux-kernel+bounces-179494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 291EE8C6071
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:00:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 219878C6070
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:00:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2CDF282DCC
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:00:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A40631F23A3B
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:00:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB6EE55C3B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A626154903;
 	Wed, 15 May 2024 05:57:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mZtMXN4f"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="U9Enp2W+"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E4584E1C3;
-	Wed, 15 May 2024 05:57:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715752662; cv=fail; b=jAEjKsT/t5ya/YjL+R43RM3/s+VASngx12akdeAOc2m+Iyu3BKoiqY1dVgwJ0tmLvE8DDHuJOcsbk6fwZNjJRqd58Qo8GWP/4avAUSFsA+Rt9eiLzC2a2DuLhuEFi11chaXRLBPxu+xZkloImV1jaE8kofBCTJ26vGpH4xhy9lU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 614654EB30
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 05:57:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715752662; cv=none; b=qHLpDn8WQU/YvbB/na5BDY19memc0ElCJoIn0anPLzvjVeYVKZY0923Uzy2rfi+KsqPffvzbcPiRA1VW9dpp3fs0YC8cE0u2sefcUJ6zRzei9ihFx8+Eicm5V5CupLO/EaFCD7KkSxBE6nvU0YztH8a6H5gKNpx2f6tqqTIZFZ0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1715752662; c=relaxed/simple;
-	bh=SY8DuBNkqIK0de4yRMMt2mt0lVOFsqn4vQYwd5eEIOc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=SFoUUG5qXidOve/Eo1BJTbadgaxl1bsjzzNYeFM1ECI/aYWRZPBdagy8iz/3cluOLmqTqjxaz3cWxuUniCq+xvQK8VDdG+bgmWKXwAbWkXjG52UwDRsMsp7i4znp68ZKmbDj3n+KPATeEicv3XsUW5tLQVHWmb72EuAc6bLyjuc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mZtMXN4f; arc=fail smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715752660; x=1747288660;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=SY8DuBNkqIK0de4yRMMt2mt0lVOFsqn4vQYwd5eEIOc=;
-  b=mZtMXN4fwJbMrnG8QMFM7RX4kfAr8aWyHydHIQzcqi6Xt9O8z9QujjVN
-   mc4Hz/ddbTCgrPXsLUk/umikq8E2eiZ/kpYFPpOC8lJfchCzhUI/qNFJl
-   L7h+mVD/t7OcPdRG/H9yeWZ5gXY65l/RGaQ/dDmYyVUrTDIARtRvn8tvW
-   cpjyQ//W7Z1wyIsoT818aAuK/U2DEwt8uFLTX9x4ZvZxi9hNPpyETm6v9
-   4KcAjJa0WDWaopRvd0WDZ9Bq1tzhPkcjpr4XBjYCOaJzbX51jO7LtP/s8
-   yzU0p53yi1JqOpD6dUH2AIMpLkfzVojSxVPxCF9hDXpneU3JwljxYDwJ/
-   g==;
-X-CSE-ConnectionGUID: 2tqaFW0HSFeA+MCNCaHyLA==
-X-CSE-MsgGUID: ZPZslmCPQiqDk2/9ZEfAsA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11073"; a="11996373"
-X-IronPort-AV: E=Sophos;i="6.08,160,1712646000"; 
-   d="scan'208";a="11996373"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2024 22:57:39 -0700
-X-CSE-ConnectionGUID: x3CktciAS8yEpyH8vmTHgw==
-X-CSE-MsgGUID: 56o4DkHFRJugFvU0aK4ppw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,160,1712646000"; 
-   d="scan'208";a="30872469"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 14 May 2024 22:57:39 -0700
-Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Tue, 14 May 2024 22:57:38 -0700
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- orsmsx612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35 via Frontend Transport; Tue, 14 May 2024 22:57:38 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.170)
- by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Tue, 14 May 2024 22:57:38 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=YBii3kZrlRNx6wKErVkp9A7RXs44VC2rUvNhgjnmWzUKQXokaGj58KTsrqoUVAoIU1sSjuR0JATB7gURcTP3CEe9DZ5dyicOeC1fN0BqQmCo7vaDs651cHakrE0f7STn+kHBABG5R0+b6GWsoy5GICkytbVuQ2PSSGDwAdnknCXI2uql4IZG5jsShnmeca6O/ZVA7vec23u17Nj2ljaNDOhdp6jmyHefplcrYyysIYIuYgWNg3WhsRsdy42XsguVnvTHwFI31AE/vCq46aF1wGyqnioBgXEzmC/5Qb5hpJt/CfGasXJ1yfSMD1C0zlyOCw3JAZyfAwyvQkbAOk2mhg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SY8DuBNkqIK0de4yRMMt2mt0lVOFsqn4vQYwd5eEIOc=;
- b=Rxt7J+0taNI+g7/aA6nkFY0Th5BJMu3Vlgj8tT1iOJjg5yJ3GsS0iZanPTxnrF4l8Bc1jGSK/0f78IY85Z5+4/rsbAqnNHdjhIw6fTkmAoOobhAOesSuXWgSy764Xx4L2byh36+qDlgssGkNTs+AUL88SncFlZ8kgwS0gyfl5gWVoI5ldmKuCNbX67u8fyzv3MRTynSzJcCviOW+pHfBPOh3SLgFM3x5Xsr5si3QVdBCdh9bWZ325eFz5FcpJr5twkiUgpVi7dUQNv8dKJGJ5+Y3vRlq8sHDzM6YAOPb5PxPjJAbCi+rG+0shKm+Sz4cg9YVmCbm/zpGnoGYaGWJnQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from CO6PR11MB5635.namprd11.prod.outlook.com (2603:10b6:5:35f::14)
- by CH3PR11MB8592.namprd11.prod.outlook.com (2603:10b6:610:1b1::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Wed, 15 May
- 2024 05:57:36 +0000
-Received: from CO6PR11MB5635.namprd11.prod.outlook.com
- ([fe80::8cfa:1a7f:d9ee:42cf]) by CO6PR11MB5635.namprd11.prod.outlook.com
- ([fe80::8cfa:1a7f:d9ee:42cf%4]) with mapi id 15.20.7587.026; Wed, 15 May 2024
- 05:57:36 +0000
-From: "Wang, Weilin" <weilin.wang@intel.com>
-To: Namhyung Kim <namhyung@kernel.org>
-CC: Ian Rogers <irogers@google.com>, Arnaldo Carvalho de Melo
-	<acme@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar
-	<mingo@redhat.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, "Hunter, Adrian" <adrian.hunter@intel.com>, Kan
- Liang <kan.liang@linux.intel.com>, "linux-perf-users@vger.kernel.org"
-	<linux-perf-users@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "Taylor, Perry" <perry.taylor@intel.com>,
-	"Alt, Samantha" <samantha.alt@intel.com>, "Biggers, Caleb"
-	<caleb.biggers@intel.com>
-Subject: RE: [RFC PATCH v6 2/5] perf stat: Fork and launch perf record when
- perf stat needs to get retire latency value for a metric.
-Thread-Topic: [RFC PATCH v6 2/5] perf stat: Fork and launch perf record when
- perf stat needs to get retire latency value for a metric.
-Thread-Index: AQHagg0bJu1HXMAx+EKTfolw5tlMzLFT6nUAgAADChCAIpCggIAAE36ggAAP1wCAAStEAIAAH34AgCAmeLA=
+	bh=ysNTQu2FZmxm2DeMyyYooKIt081V6zV0r+ddDudM9pQ=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:Content-Type:
+	 MIME-Version:References; b=Oy+1d1R/h9RwyzqvaVvmYC9pyIMt66B6K/xlD2C8Q7jeB1ZhuQOTF/IngGsta5tbKaBE5WnhC599Lx7QUAnYbRkK12c0mmLwEQrgXJGoyX9u0spts07fC0I3vnDdeJhkyPijZ4gC3VtlxvvHS790abM7B7HiDWlVUj4WyQbqD5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=U9Enp2W+; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240515055739euoutp02fdb5c266e4596bd2bb2cddb17f91049f~Pk-P6Ufwe2018620186euoutp02S
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 05:57:39 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240515055739euoutp02fdb5c266e4596bd2bb2cddb17f91049f~Pk-P6Ufwe2018620186euoutp02S
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1715752659;
+	bh=YnJglILKqFkdTEiFzR72jsMog/cpgSZTzUSnpJww0Pw=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References:From;
+	b=U9Enp2W+Lk709O62hv/eifsGkq8F1T0sf+tU1Dy4hamOZKVWmPbcclBPJ+kNHSU0N
+	 2O5HlteJ/HiOo9ctcvkG9N5/pZXo9EH7pTbAZAN5SdB+2gXHGu7Yz2xNahommkyvfu
+	 uUR15N41Ab7XFV4FDD9ghctG+FI6p7gfoQCz81cI=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20240515055738eucas1p2ee046cb2cbd220fc7d567cbe8c42157c~Pk-PmR0te1241412414eucas1p2E;
+	Wed, 15 May 2024 05:57:38 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges3new.samsung.com (EUCPMTA) with SMTP id B3.97.09620.2DE44466; Wed, 15
+	May 2024 06:57:38 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240515055738eucas1p15335a32c790b731aa5857193bbddf92d~Pk-POZAf12872228722eucas1p1l;
+	Wed, 15 May 2024 05:57:38 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240515055738eusmtrp2b09bc45b45a944e66f031ac0931385d5~Pk-PNwuEc0256302563eusmtrp2U;
+	Wed, 15 May 2024 05:57:38 +0000 (GMT)
+X-AuditID: cbfec7f5-d31ff70000002594-cf-66444ed2cdbd
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id C4.26.08810.2DE44466; Wed, 15
+	May 2024 06:57:38 +0100 (BST)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240515055738eusmtip13dda217c4b57766f5e88e5a9ca71a2c7~Pk-O_ejJe0562305623eusmtip1V;
+	Wed, 15 May 2024 05:57:38 +0000 (GMT)
+Received: from CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348) by
+	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348) with Microsoft SMTP
+	Server (TLS) id 15.0.1497.2; Wed, 15 May 2024 06:57:37 +0100
+Received: from CAMSVWEXC02.scsc.local ([::1]) by CAMSVWEXC02.scsc.local
+	([fe80::3c08:6c51:fa0a:6384%13]) with mapi id 15.00.1497.012; Wed, 15 May
+	2024 06:57:37 +0100
+From: Daniel Gomez <da.gomez@samsung.com>
+To: "hughd@google.com" <hughd@google.com>, "akpm@linux-foundation.org"
+	<akpm@linux-foundation.org>, "willy@infradead.org" <willy@infradead.org>,
+	"jack@suse.cz" <jack@suse.cz>, "mcgrof@kernel.org" <mcgrof@kernel.org>
+CC: "linux-mm@kvack.org" <linux-mm@kvack.org>, "linux-xfs@vger.kernel.org"
+	<linux-xfs@vger.kernel.org>, "djwong@kernel.org" <djwong@kernel.org>,
+	"Pankaj Raghav" <p.raghav@samsung.com>, "dagmcr@gmail.com"
+	<dagmcr@gmail.com>, "yosryahmed@google.com" <yosryahmed@google.com>,
+	"baolin.wang@linux.alibaba.com" <baolin.wang@linux.alibaba.com>,
+	"ritesh.list@gmail.com" <ritesh.list@gmail.com>,
+	"lsf-pc@lists.linux-foundation.org" <lsf-pc@lists.linux-foundation.org>,
+	"david@redhat.com" <david@redhat.com>, "chandan.babu@oracle.com"
+	<chandan.babu@oracle.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "brauner@kernel.org" <brauner@kernel.org>,
+	Daniel Gomez <da.gomez@samsung.com>
+Subject: [PATCH 11/12] shmem: add file length arg in shmem_get_folio() path
+Thread-Topic: [PATCH 11/12] shmem: add file length arg in shmem_get_folio()
+	path
+Thread-Index: AQHapozJF6Lbb0RRX0KKO162vQDDlA==
 Date: Wed, 15 May 2024 05:57:36 +0000
-Message-ID: <CO6PR11MB5635CC88D0855FA485C383A9EEEC2@CO6PR11MB5635.namprd11.prod.outlook.com>
-References: <20240329191224.1046866-1-weilin.wang@intel.com>
- <20240329191224.1046866-3-weilin.wang@intel.com>
- <CAM9d7cjBfTM2bjkrvN5XWcXJ=OyBOU06fBN=+eWnDSdP2dkD4A@mail.gmail.com>
- <CO6PR11MB56351C2AB4BE15C5371E29C2EE3F2@CO6PR11MB5635.namprd11.prod.outlook.com>
- <CAM9d7cjORNS9h7v6p2fg8OXsZMpeBODzTSCQNZ5zAea-baFKNQ@mail.gmail.com>
- <CO6PR11MB5635C7D8C91FEDA17EC4BCDEEE112@CO6PR11MB5635.namprd11.prod.outlook.com>
- <CAM9d7chSCQViX=VjgqdVn5un0J5MpGsGDGncUyY-K4=oPvvfQA@mail.gmail.com>
- <CO6PR11MB56359754A01778EA3EA53981EE102@CO6PR11MB5635.namprd11.prod.outlook.com>
- <CAM9d7cj2Zmd_FMBzf=H6K6jRmYLYuR6mpcyhC0_neTvur0=pyw@mail.gmail.com>
-In-Reply-To: <CAM9d7cj2Zmd_FMBzf=H6K6jRmYLYuR6mpcyhC0_neTvur0=pyw@mail.gmail.com>
-Accept-Language: en-US
+Message-ID: <20240515055719.32577-12-da.gomez@samsung.com>
+In-Reply-To: <20240515055719.32577-1-da.gomez@samsung.com>
+Accept-Language: en-US, en-GB
 Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CO6PR11MB5635:EE_|CH3PR11MB8592:EE_
-x-ms-office365-filtering-correlation-id: 9103f773-2916-4fff-c830-08dc74a3eb9b
-x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230031|1800799015|7416005|366007|376005|38070700009;
-x-microsoft-antispam-message-info: =?utf-8?B?Z3RrbW9iWE0rNXovVlJZckk2YTlURlN6K1VBY2pobXpJTVU4eFBGeTRKclNu?=
- =?utf-8?B?MzJZaUhWVndoL3dHV2ZOVFNSdnpUWG81bFZPM2EzK1VmTjdzVjZ4NzBRQlVZ?=
- =?utf-8?B?TnlWOS84ZjNNUHV2N1U2V1RnVDBZZ2o0UnJyVXJ3NWVrQTFPTGptc2orOHNI?=
- =?utf-8?B?Uk9WUHUwWG5NOTdDeTRyZ1ppT29GWE5wUXU4RVFITVNGTzl1TmNYc1htcW5h?=
- =?utf-8?B?WjJkcUk0dFlQR1BVeHByd1VlM0FLU1Z4eHBZdENTTjVaNmF1S00zZjZJeWE3?=
- =?utf-8?B?Q0wzdkNWSThDQW5OWFZiK3dtSGVRcUJTM21oSUpFeGs0dlBPaWFuOHpkZjY3?=
- =?utf-8?B?Z2h4Qm13MmJkMExUQXNiVUR0b1ltdVowalpxc2JiNFUrV09uU09xZ1M3Yk1D?=
- =?utf-8?B?M1E2TnpudWI2NHArRTQ3RGJqUW9UL3EvVnpTTE1GSXUvSkl0bElGK3NndGJ4?=
- =?utf-8?B?aUhTY1ZxaGowcE9xL0ZSeU9XODZIMHVvbEhsUitiKzRpZU5LYnd0elVEbCtZ?=
- =?utf-8?B?VE1Na082dUhOb1U2SlRPQ1ZpUnNjY3c2ZjJva1NPaHVUOXdsNUorcXNONiti?=
- =?utf-8?B?L05EMmN3Y0FoanZaVTZGQ2xYSGFza1Vid3d3Ukk0NlBFclpEYWg1eFJIdXhT?=
- =?utf-8?B?b1AwTXRJQitvNDVmWktxa29jRVprOXJwWU80NVZ4RlI2cUVJbUIzSFdXQ0dI?=
- =?utf-8?B?K2pNLzNCZytBWnd3cUZTS1JtUzhXdHZmY3llZmlGMTNtZ1krS2JyUkxGSU5h?=
- =?utf-8?B?TDI2RVZwcnJOd1VYbCtpcklLY3R4RDZ6QlZBVGVsM0RITE8wWFNhejRLSGNE?=
- =?utf-8?B?SUM5SFY2RlJ1WldsTjBwSzMzL3BUelBjMzhXRGhYNGRIcUlnNWRWV3hBWGJQ?=
- =?utf-8?B?aXB6MWNWSGVMcDRtTm5aekdNRG8yaXFKMk1zYWROQlB0bGRPeDRvbEI5eHNw?=
- =?utf-8?B?T0s3amZkQkpqRUFacjZTUDZsREhvQU1pT2NMVFl6K1UzYUdYUWxsVlNtNjRZ?=
- =?utf-8?B?dHNsS2J2eU1vdS9EcFVjVzdubURKemw0UkhDMFdmVlNmdU9JWlZieklOV0pt?=
- =?utf-8?B?RWNuWC9KUDF6dTFicmY5Y3dHRjU4UGV3WHNWMkpGYU9vWitJY2NPdVdNdVpr?=
- =?utf-8?B?NWM1S1dpWk9wWC9DRTF0QmlMcjF1SnRrT2tQT2NiMnU5T20wZW5kbmVnYWhF?=
- =?utf-8?B?S29sTUdMZ1BDZFRkU1liRFV1UHU0RSt6Rldvb1hBLzgwcDByNU4wTGpFTEpi?=
- =?utf-8?B?amhjM1JtVEF3QkVOcEhpQllrREtOQnNlT29JZDRKeXU5OU1IR0l3d2Flb0pW?=
- =?utf-8?B?WGk1OUdWYTJDS293VGVNRTJ2TG03UDFETWZUSUlTSnFEZUt4WnBYWjRYZ2xt?=
- =?utf-8?B?T1ZJc0ViS2JkZTF4cDhneE9ZZ2xxRUNoS0ZXV0x5aVJYSVc4a0ZDeEZ5S25l?=
- =?utf-8?B?Ykx3SjFqWWNYRFBjOExpVGhuUXo4d0k1VzcwdWNCblg3U242TkhWMFZHVHlm?=
- =?utf-8?B?TW01aG5WeE95QWtpbFVMUFNncFhJeFU2STdGL29TSkN5dVVxRWlTWG0zVjFw?=
- =?utf-8?B?Y0gwTjduaWhUWGZEaXhZUUtvT1BlMTZLTFpidG5lSVpFck5OMkVLTlZJeXgz?=
- =?utf-8?B?dUhIT2I5a2hqSFllRWQrV2xJVUhYdFNTejVwTXJyR05PWk40dUJNRUdDYVRq?=
- =?utf-8?B?OWJjMmxHcGxnZXpLZ1NRaWg4eG1YYVYzOVhoSHkyLy9nU1p2cFNzWnZMUk9m?=
- =?utf-8?B?NUFaTkdrVkVWMTFQaXBOckM1dFNmbTlmdTdBdG1JRXlScGwzYnlQVHFxUHpu?=
- =?utf-8?B?NzBLeVFnZE9zRmNIOWJQUT09?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR11MB5635.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(7416005)(366007)(376005)(38070700009);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?NnFSN3JpRnBZMUF2ckRFT1pJZlVBNit0STgwTkZtT2FhSjUrYWZlQVpYbDlD?=
- =?utf-8?B?T2lBV0tlQnV5VGlEb3VTRFA1SEkyNVNiUjhEYjlXY3BzUWdLMDI0Ym9YVkdB?=
- =?utf-8?B?cHpCa1lnOWVGZ0hDUFRYeFhrc2RKZWV4T05NeDFuSE1laENJS212SEUvQ0dZ?=
- =?utf-8?B?WWZWZW1ESENURWhuZ3VXQllNNWsvQW9XUVBpMEs3bktTQUkwTkNNcXpPYVhm?=
- =?utf-8?B?aHlrN2diN0s0WCt6TVBUTC9sbnh2MEdYRFoxLzVsVG9zTkRhN1cxUEdtWEFq?=
- =?utf-8?B?dmppa0RvYUJLcnZEYnBwQktXb1p0bk9qeFVZNkhWNWxxZXU4WWRnTXVIQ3lC?=
- =?utf-8?B?dzhveDNxSXpmVkRselVYMnZCcDFmaWtKYnFWR2JrbXpjbjl0UkdWTWFWTW9V?=
- =?utf-8?B?QU94d3ZWQkNiU2M5MXZ2NDJnWkFROEZwZ2xvQ29ScTBKSmJUZXlNR09HMHZw?=
- =?utf-8?B?b2JvbnN0SjZFNUt4dlMzd3BERVNSTWd1ZW1GRkdLdzZSMkVaeGVWblk5amk2?=
- =?utf-8?B?RkJuYndHU3Z4ZGROZ2V3a2QvalpuSVBJWVZMQ210K3FIY1FtWGY4dEdZc1Z2?=
- =?utf-8?B?RzRyVkdhU1lPR0pqUmRXTGpHZjkzZVFTVUxkaUJoZWdyZzcySE5VUlRuMHU3?=
- =?utf-8?B?RE5pVlBvem9VYUw1YW9oZ1NYSGcvMG5wdzA4cjdCWUE0aWN4VzI0WUlUNGND?=
- =?utf-8?B?ZjJJT3JKdmxJQlN4cm5sVE03WEVQZFdtZm9YeFVTQm51dFptOUc2VERQMnpW?=
- =?utf-8?B?OXp2dFFiTE5QYXJvc3R3Y3hKeUJVODRPbzJieUNKNkl0V2dhQ0JaZnl0anEz?=
- =?utf-8?B?NG5RK3IrZEswL0xXdnIzZXVuU2JzdzVqbkwvUzNzT0JHNko3ZytYZVM2VXdY?=
- =?utf-8?B?Q2ZWUXJZK1lmdTJiTkpwK0p0dzNEYzl0UW94TFNOV3J4TllEdjJvS2xIdkxY?=
- =?utf-8?B?UlFaUVo2OERnajBZenRwN1lFd2JGZXIzTWhmUlp4ZUV1SU1qVlJkQzBkY29B?=
- =?utf-8?B?WHpWWGtSVEZtZElpUngwSnE2cTFhbzB2eW1zdmhCdFJjMjUyTmFiL0FGaEd5?=
- =?utf-8?B?WW4xbW5Kc3pzb3VNa1ZoMVl3RThSckh6N2hTWmx6WHptZE5PVjJ4MEdqT3Jz?=
- =?utf-8?B?WXVVVnUvRnJpWldXbmNYdy8yOE1EcHdPd09Pa2w3YTlpazhLMUwrOUlhZ0Vl?=
- =?utf-8?B?N051RWlQaXozeUhwd1AyMkp5NkkzOHVPQ2RzL1d3MWRHSXJjMjd0UDZKbk9L?=
- =?utf-8?B?MGt6djJ1dXIzMzdLK2U1WG9MdUdZVmhtVW8xemNQN2paM0hJMFBudU9HNGdw?=
- =?utf-8?B?T1VWMHFKQjRpWTZGOTZHWVl4Y0dMa254SU9QS3pndXFRMDJFcVRWZWRoZlFu?=
- =?utf-8?B?UGMrbWRMRFNqNUNSTTJ3T3NMQzdKc2IzMU9Cb3Q1bXNldzR6VGpMODJzaUtY?=
- =?utf-8?B?Y0w1eGkwRE8xdVQ1OFkySjMyMFJWWXN4N3MxMnZTVGtQdUphWHZjR3RIUG5B?=
- =?utf-8?B?OUI5dDY2b3oyK0drRmRXYmt6aklZZDdVOUpEWncwNFpuRTNnVVl4ZXYvMjhs?=
- =?utf-8?B?TCsvMVE0d2U3S1JpdUo1S1g4am5rd04rd2tTSVdxeTNGbVdxZlA0NHRkeG5S?=
- =?utf-8?B?amxFM2NKMnRpSjRhQzVTdng1dkZ0ajJFOVAvbDBHZlJNTHAwWXFod0p2bXpZ?=
- =?utf-8?B?ekpoU1lCa1NLbURxUE52VHlzNk5nd1kwL1FTOXVOUmtHUHdRYnZzWHA1WXM3?=
- =?utf-8?B?dEhobGNzUnh6VVdKcGpZeWlnOEszTjFOcCtlTG1EbnlraWpweFFnWFB5aTBS?=
- =?utf-8?B?RzM5Qy9jUUVnSHZnU210NTBFLzkzcng2bjlZT3VPMFl5TDZXTDRibDg3Wkwy?=
- =?utf-8?B?c2tzU0cxanc0OHBoaklmQjhBUDdrM2NEWmF5RmhkK3NkSEtKTG5nQXd1NkJD?=
- =?utf-8?B?ZjhDNmprenFBTzVkR2I2U2xGV01BSHVvUXN5eTZOREV5aHZIcEZvQ3lYNWhC?=
- =?utf-8?B?cEtoTkhPN1I5aDdTT21pcHpwb3lhR2tLM3RZZTUxVnRVTW4wNldRRnA4NGxC?=
- =?utf-8?B?NTZNY2tXRTR5YUwzNVJiTmJaYnlMM0l5WW1rcXlCbWhKa0NJRXR3MG5sclJI?=
- =?utf-8?Q?UIKSWaaXpY4L/C76kibvdQb5m?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CO6PR11MB5635.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9103f773-2916-4fff-c830-08dc74a3eb9b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 May 2024 05:57:36.0896
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Zup0F+01vtA1x9vDeZ30jMEeKgdFvgksvXdKiA3ALTbLfTEF5r43Ge30d2WxgNDA04fnRpHc1BPO19ugOV87gQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB8592
-X-OriginatorOrg: intel.com
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrEKsWRmVeSWpSXmKPExsWy7djP87qX/FzSDKbM0raYs34Nm8X/vccY
+	LV4f/sRocemonMXZvt9sFl/X/2K2uPyEz+Lppz4Wi9nTm5ksLu+aw2Zxb81/Votdf3awW+x7
+	vZfZ4saEp4wWB091sFv8/gGU3b4r0kHQY+esu+weCzaVemxeoeWxaVUnm8emT5PYPU7M+M3i
+	sfOhpcfkG8sZPT4+vcXi8X7fVTaPMwuOsHt83iQXwBPFZZOSmpNZllqkb5fAlTH5YQd7QaNH
+	xY6POxkbGM9YdjFyckgImEj0nO5nArGFBFYwSvyaodrFyAVkf2GUeNt+jxHC+cwocfDlYUaY
+	jnPNn1kgEssZJT7N/M8MV9XxciMThHOGUaLxxy6ozEpGiVO/14H1swloSuw7uYkdJCEicJtR
+	4umpM2AOs8BJVok/m3eygFQJC3hLHD+3ixXEFhEIkrh84yRQNweQrSfxcrIsSJhFQFXizZ0z
+	zCA2r4CVxIfPX8FaOYHsu/O/soHYjAKyEo9W/mIHsZkFxCVuPZnPBPGEoMSi2XuYIWwxiX+7
+	HrJB2DoSZ68/gXrUQGLr0n0sELayxPp3bUwQc/QkbkydwgZha0ssW/ga6gZBiZMzn4ADRkJg
+	L5fElvZJUM0uEueOTIUaKizx6vgWdghbRuL/zvlMExi1ZyG5bxaSHbOQ7JiFZMcCRpZVjOKp
+	pcW56anFxnmp5XrFibnFpXnpesn5uZsYgcny9L/jX3cwrnj1Ue8QIxMH4yFGCQ5mJRFekTTn
+	NCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8qinyqUIC6YklqdmpqQWpRTBZJg5OqQYmacYDHDlq
+	ymanV8UdnnfZaqNc7+vHk47LTdW8/VNf1urzx6W/o/fVTzYXWi+zRLYpTVsv3f3c7bpjolsv
+	p6wznvTSxrtOI37Zt117IpRLDTRZef6onleod1dwPSr41Js3qDpY+uuvT7czsw1uKn3j0m38
+	491x6Pwk1hxXPnWd/20/fe21Lln4HYxc16x5UeBk2vkZH6WKKvhWbjZf1uhnmn3v6at1GSU9
+	MtfW2byePN2iY+r7e9rWTclK2bKhu3g9Nd4bp4b9aL7icH2jjo9Ci/y01Wret93vqqiZ20nt
+	f7v/7v83F9Urg475MmUYcUUfe37zUK5kRNJ66W2yKxyeLP0okD75Qu/8GRUeX6KUWIozEg21
+	mIuKEwHuP7eRBQQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrLKsWRmVeSWpSXmKPExsVy+t/xu7qX/FzSDFqe81vMWb+GzeL/3mOM
+	Fq8Pf2K0uHRUzuJs3282i6/rfzFbXH7CZ/H0Ux+LxezpzUwWl3fNYbO4t+Y/q8WuPzvYLfa9
+	3stscWPCU0aLg6c62C1+/wDKbt8V6SDosXPWXXaPBZtKPTav0PLYtKqTzWPTp0nsHidm/Gbx
+	2PnQ0mPyjeWMHh+f3mLxeL/vKpvHmQVH2D0+b5IL4InSsynKLy1JVcjILy6xVYo2tDDSM7S0
+	0DMysdQzNDaPtTIyVdK3s0lJzcksSy3St0vQy5j8sIO9oNGjYsfHnYwNjGcsuxg5OSQETCTO
+	NX9m6WLk4hASWMoosWPLazaIhIzExi9XWSFsYYk/17rYIIo+MkqcWfkSquMMo8Sutp/sEM5K
+	RomNC2eDtbMJaErsO7kJLCEicJtR4umpM2AOs8BJVokDpz+zg1QJC3hLHD+3C2gJB1BVkMSb
+	ZVwQpp7Ey8myIBUsAqoSb+6cYQaxeQWsJD58/soCYgsJWEpcerWdEcTmBIrfnf8VbC+jgKzE
+	o5W/wKYzC4hL3HoynwniBQGJJXvOM0PYohIvH/+Dek1H4uz1J4wQtoHE1qX7WCBsZYn179qY
+	IOboSdyYOoUNwtaWWLbwNdQ9ghInZz5hmcAoPQvJullIWmYhaZmFpGUBI8sqRpHU0uLc9Nxi
+	Q73ixNzi0rx0veT83E2MwHS37djPzTsY5736qHeIkYmD8RCjBAezkgivSJpzmhBvSmJlVWpR
+	fnxRaU5q8SFGU2AYTWSWEk3OBybcvJJ4QzMDU0MTM0sDU0szYyVxXs+CjkQhgfTEktTs1NSC
+	1CKYPiYOTqkGJm3xhav3XuXjOtuTN9NX5kfootTNXQks34OZbrbM/y6zfd+FoM0OE2t2LZdo
+	2DlppdhB9oPXZpp1C78vuOOqql2TdkP52CmrOx1HRV1n7+Rc9TVDSkvjqELZ4RPONmueKQb1
+	i8ZtPtz/6ufRfxxZHe7N+7JSn1Uc3tqa7m6iEvpYcd4+/dCGtb9iq/g9lhkeWT97/3yHv+yv
+	Nk5lLLs1b9KzRTGHd2qdTrqx+oXxvZQf/7ZtP75n4kdvhe99Uwv2LTvZtHryu+uGy+Q/+79+
+	+f6s30/b+4rn1OuUHXRE7+oLcrvKf9VkvfuW44EF80UtXfNLPbskZgrZnstMe3VlY86cf99P
+	6v26GbnStP9iqguHEktxRqKhFnNRcSIAJzOFFgAEAAA=
+X-CMS-MailID: 20240515055738eucas1p15335a32c790b731aa5857193bbddf92d
+X-Msg-Generator: CA
+X-RootMTR: 20240515055738eucas1p15335a32c790b731aa5857193bbddf92d
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240515055738eucas1p15335a32c790b731aa5857193bbddf92d
+References: <20240515055719.32577-1-da.gomez@samsung.com>
+	<CGME20240515055738eucas1p15335a32c790b731aa5857193bbddf92d@eucas1p1.samsung.com>
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogTmFtaHl1bmcgS2ltIDxu
-YW1oeXVuZ0BrZXJuZWwub3JnPg0KPiBTZW50OiBXZWRuZXNkYXksIEFwcmlsIDI0LCAyMDI0IDEx
-OjUwIEFNDQo+IFRvOiBXYW5nLCBXZWlsaW4gPHdlaWxpbi53YW5nQGludGVsLmNvbT4NCj4gQ2M6
-IElhbiBSb2dlcnMgPGlyb2dlcnNAZ29vZ2xlLmNvbT47IEFybmFsZG8gQ2FydmFsaG8gZGUgTWVs
-bw0KPiA8YWNtZUBrZXJuZWwub3JnPjsgUGV0ZXIgWmlqbHN0cmEgPHBldGVyekBpbmZyYWRlYWQu
-b3JnPjsgSW5nbyBNb2xuYXINCj4gPG1pbmdvQHJlZGhhdC5jb20+OyBBbGV4YW5kZXIgU2hpc2hr
-aW4NCj4gPGFsZXhhbmRlci5zaGlzaGtpbkBsaW51eC5pbnRlbC5jb20+OyBKaXJpIE9sc2EgPGpv
-bHNhQGtlcm5lbC5vcmc+OyBIdW50ZXIsDQo+IEFkcmlhbiA8YWRyaWFuLmh1bnRlckBpbnRlbC5j
-b20+OyBLYW4gTGlhbmcgPGthbi5saWFuZ0BsaW51eC5pbnRlbC5jb20+Ow0KPiBsaW51eC1wZXJm
-LXVzZXJzQHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgVGF5
-bG9yLCBQZXJyeQ0KPiA8cGVycnkudGF5bG9yQGludGVsLmNvbT47IEFsdCwgU2FtYW50aGEgPHNh
-bWFudGhhLmFsdEBpbnRlbC5jb20+OyBCaWdnZXJzLA0KPiBDYWxlYiA8Y2FsZWIuYmlnZ2Vyc0Bp
-bnRlbC5jb20+DQo+IFN1YmplY3Q6IFJlOiBbUkZDIFBBVENIIHY2IDIvNV0gcGVyZiBzdGF0OiBG
-b3JrIGFuZCBsYXVuY2ggcGVyZiByZWNvcmQgd2hlbg0KPiBwZXJmIHN0YXQgbmVlZHMgdG8gZ2V0
-IHJldGlyZSBsYXRlbmN5IHZhbHVlIGZvciBhIG1ldHJpYy4NCj4gDQo+IE9uIFdlZCwgQXByIDI0
-LCAyMDI0IGF0IDEwOjA44oCvQU0gV2FuZywgV2VpbGluIDx3ZWlsaW4ud2FuZ0BpbnRlbC5jb20+
-DQo+IHdyb3RlOg0KPiA+DQo+ID4NCj4gPg0KPiA+ID4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0t
-LS0NCj4gPiA+IEZyb206IE5hbWh5dW5nIEtpbSA8bmFtaHl1bmdAa2VybmVsLm9yZz4NCj4gPiA+
-IFNlbnQ6IFR1ZXNkYXksIEFwcmlsIDIzLCAyMDI0IDQ6MDYgUE0NCj4gPiA+IFRvOiBXYW5nLCBX
-ZWlsaW4gPHdlaWxpbi53YW5nQGludGVsLmNvbT4NCj4gPiA+IENjOiBJYW4gUm9nZXJzIDxpcm9n
-ZXJzQGdvb2dsZS5jb20+OyBBcm5hbGRvIENhcnZhbGhvIGRlIE1lbG8NCj4gPiA+IDxhY21lQGtl
-cm5lbC5vcmc+OyBQZXRlciBaaWpsc3RyYSA8cGV0ZXJ6QGluZnJhZGVhZC5vcmc+OyBJbmdvIE1v
-bG5hcg0KPiA+ID4gPG1pbmdvQHJlZGhhdC5jb20+OyBBbGV4YW5kZXIgU2hpc2hraW4NCj4gPiA+
-IDxhbGV4YW5kZXIuc2hpc2hraW5AbGludXguaW50ZWwuY29tPjsgSmlyaSBPbHNhIDxqb2xzYUBr
-ZXJuZWwub3JnPjsgSHVudGVyLA0KPiA+ID4gQWRyaWFuIDxhZHJpYW4uaHVudGVyQGludGVsLmNv
-bT47IEthbiBMaWFuZyA8a2FuLmxpYW5nQGxpbnV4LmludGVsLmNvbT47DQo+ID4gPiBsaW51eC1w
-ZXJmLXVzZXJzQHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsg
-VGF5bG9yLA0KPiBQZXJyeQ0KPiA+ID4gPHBlcnJ5LnRheWxvckBpbnRlbC5jb20+OyBBbHQsIFNh
-bWFudGhhIDxzYW1hbnRoYS5hbHRAaW50ZWwuY29tPjsNCj4gQmlnZ2VycywNCj4gPiA+IENhbGVi
-IDxjYWxlYi5iaWdnZXJzQGludGVsLmNvbT4NCj4gPiA+IFN1YmplY3Q6IFJlOiBbUkZDIFBBVENI
-IHY2IDIvNV0gcGVyZiBzdGF0OiBGb3JrIGFuZCBsYXVuY2ggcGVyZiByZWNvcmQNCj4gd2hlbg0K
-PiA+ID4gcGVyZiBzdGF0IG5lZWRzIHRvIGdldCByZXRpcmUgbGF0ZW5jeSB2YWx1ZSBmb3IgYSBt
-ZXRyaWMuDQo+ID4gPg0KPiA+ID4gT24gVHVlLCBBcHIgMjMsIDIwMjQgYXQgMzoxNuKAr1BNIFdh
-bmcsIFdlaWxpbiA8d2VpbGluLndhbmdAaW50ZWwuY29tPg0KPiA+ID4gd3JvdGU6DQo+ID4gPiA+
-ID4gPiA+ID4gLXN0YXRpYyBpbnQgX19ydW5fcGVyZl9yZWNvcmQodm9pZCkNCj4gPiA+ID4gPiA+
-ID4gPiArc3RhdGljIGludCBfX3J1bl9wZXJmX3JlY29yZChjb25zdCBjaGFyICoqcmVjb3JkX2Fy
-Z3YpDQo+ID4gPiA+ID4gPiA+ID4gIHsNCj4gPiA+ID4gPiA+ID4gPiArICAgICAgIGludCBpID0g
-MDsNCj4gPiA+ID4gPiA+ID4gPiArICAgICAgIHN0cnVjdCB0cGVic19ldmVudCAqZTsNCj4gPiA+
-ID4gPiA+ID4gPiArDQo+ID4gPiA+ID4gPiA+ID4gICAgICAgICBwcl9kZWJ1ZygiUHJlcGFyZSBw
-ZXJmIHJlY29yZCBmb3IgcmV0aXJlX2xhdGVuY3lcbiIpOw0KPiA+ID4gPiA+ID4gPiA+ICsNCj4g
-PiA+ID4gPiA+ID4gPiArICAgICAgIHJlY29yZF9hcmd2W2krK10gPSAicGVyZiI7DQo+ID4gPiA+
-ID4gPiA+ID4gKyAgICAgICByZWNvcmRfYXJndltpKytdID0gInJlY29yZCI7DQo+ID4gPiA+ID4g
-PiA+ID4gKyAgICAgICByZWNvcmRfYXJndltpKytdID0gIi1XIjsNCj4gPiA+ID4gPiA+ID4gPiAr
-ICAgICAgIHJlY29yZF9hcmd2W2krK10gPSAiLS1zeW50aD1ubyI7DQo+ID4gPiA+ID4gPiA+ID4g
-Kw0KPiA+ID4gPiA+ID4gPiA+ICsgICAgICAgaWYgKHN0YXRfY29uZmlnLnVzZXJfcmVxdWVzdGVk
-X2NwdV9saXN0KSB7DQo+ID4gPiA+ID4gPiA+ID4gKyAgICAgICAgICAgICAgIHJlY29yZF9hcmd2
-W2krK10gPSAiLUMiOw0KPiA+ID4gPiA+ID4gPiA+ICsgICAgICAgICAgICAgICByZWNvcmRfYXJn
-dltpKytdID0gc3RhdF9jb25maWcudXNlcl9yZXF1ZXN0ZWRfY3B1X2xpc3Q7DQo+ID4gPiA+ID4g
-PiA+ID4gKyAgICAgICB9DQo+ID4gPiA+ID4gPiA+ID4gKw0KPiA+ID4gPiA+ID4gPiA+ICsgICAg
-ICAgaWYgKHN0YXRfY29uZmlnLnN5c3RlbV93aWRlKQ0KPiA+ID4gPiA+ID4gPiA+ICsgICAgICAg
-ICAgICAgICByZWNvcmRfYXJndltpKytdID0gIi1hIjsNCj4gPiA+ID4gPiA+ID4gPiArDQo+ID4g
-PiA+ID4gPiA+ID4gKyAgICAgICBpZiAoIXN0YXRfY29uZmlnLnN5c3RlbV93aWRlDQo+ID4gPiA+
-ID4gJiYgIXN0YXRfY29uZmlnLnVzZXJfcmVxdWVzdGVkX2NwdV9saXN0KQ0KPiA+ID4gPiA+ID4g
-PiB7DQo+ID4gPiA+ID4gPiA+ID4gKyAgICAgICAgICAgICAgIHByX2VycigiUmVxdWlyZSAtYSBv
-ciAtQyBvcHRpb24gdG8gcnVuIHNhbXBsaW5nLlxuIik7DQo+ID4gPiA+ID4gPiA+ID4gKyAgICAg
-ICAgICAgICAgIHJldHVybiAtRUNBTkNFTEVEOw0KPiA+ID4gPiA+ID4gPiA+ICsgICAgICAgfQ0K
-PiA+ID4gPiA+ID4gPiA+ICsNCj4gPiA+ID4gPiA+ID4gPiArICAgICAgIGxpc3RfZm9yX2VhY2hf
-ZW50cnkoZSwgJnN0YXRfY29uZmlnLnRwZWJzX2V2ZW50cywgbmQpIHsNCj4gPiA+ID4gPiA+ID4g
-PiArICAgICAgICAgICAgICAgcmVjb3JkX2FyZ3ZbaSsrXSA9ICItZSI7DQo+ID4gPiA+ID4gPiA+
-ID4gKyAgICAgICAgICAgICAgIHJlY29yZF9hcmd2W2krK10gPSBlLT5uYW1lOw0KPiA+ID4gPiA+
-ID4gPiA+ICsgICAgICAgfQ0KPiA+ID4gPiA+ID4gPiA+ICsNCj4gPiA+ID4gPiA+ID4gPiArICAg
-ICAgIHJlY29yZF9hcmd2W2krK10gPSAiLW8iOw0KPiA+ID4gPiA+ID4gPiA+ICsgICAgICAgcmVj
-b3JkX2FyZ3ZbaSsrXSA9IFBFUkZfREFUQTsNCj4gPiA+ID4gPiA+ID4gPiArDQo+ID4gPiA+ID4g
-PiA+ID4gICAgICAgICByZXR1cm4gMDsNCj4gPiA+ID4gPiA+ID4gPiAgfQ0KPiA+ID4gPiA+ID4g
-Pg0KPiA+ID4gPiA+ID4gPiBTdGlsbCBJIHRoaW5rIGl0J3Mgd2VpcmQgaXQgaGFzICdwZXJmIHJl
-Y29yZCcgaW4gcGVyZiBzdGF0IChkZXNwaXRlIHRoZQ0KPiA+ID4gPiA+ID4gPiAncGVyZiBzdGF0
-IHJlY29yZCcpLiAgSWYgaXQncyBvbmx5IEludGVsIHRoaW5nIGFuZCB3ZSBkb24ndCBoYXZlIGEg
-cGxhbg0KPiA+ID4gPiA+ID4gPiB0byBkbyB0aGUgc2FtZSBvbiBvdGhlciBhcmNoZXMsIHdlIGNh
-biBtb3ZlIGl0IHRvIHRoZSBhcmNoDQo+ID4gPiA+ID4gPiA+IGRpcmVjdG9yeSBhbmQga2VlcCB0
-aGUgcGVyZiBzdGF0IGNvZGUgc2ltcGxlLg0KPiA+ID4gPiA+ID4NCj4gPiA+ID4gPiA+IEknbSBu
-b3Qgc3VyZSB3aGF0IGlzIHRoZSBwcm9wZXIgd2F5IHRvIHNvbHZlIHRoaXMuIEFuZCBJYW4gbWVu
-dGlvbmVkDQo+ID4gPiA+ID4gPiB0aGF0IHB1dCBjb2RlIGluIGFyY2ggZGlyZWN0b3J5IGNvdWxk
-IHBvdGVudGlhbGx5IGNhdXNlIG90aGVyIGJ1Z3MuDQo+ID4gPiA+ID4gPiBTbyBJJ20gd29uZGVy
-aW5nIGlmIHdlIGNvdWxkIGtlZXAgdGhpcyBjb2RlIGhlcmUgZm9yIG5vdy4gSSBjb3VsZA0KPiB3
-b3JrDQo+ID4gPiA+ID4gPiBvbiBpdCBsYXRlciBpZiB3ZSBmb3VuZCBpdCdzIGJldHRlciB0byBi
-ZSBpbiBhcmNoIGRpcmVjdG9yeS4NCj4gPiA+ID4gPg0KPiA+ID4gPiA+IE1heWJlIHNvbWV3aGVy
-ZSBpbiB0aGUgdXRpbC8gYW5kIGtlZXAgdGhlIG1haW4gY29kZSBtaW5pbWFsLg0KPiA+ID4gPiA+
-IElJVUMgaXQncyBvbmx5IGZvciB2ZXJ5IHJlY2VudCAob3IgdXBjb21pbmc/KSBJbnRlbCBDUFVz
-IGFuZCB3ZQ0KPiA+ID4gPiA+IGRvbid0IGhhdmUgdGVzdHMgKGhvcGVmdWxseSBjYW4gcnVuIG9u
-IG90aGVyIGFyY2gvQ1BVcykuDQo+ID4gPiA+ID4NCj4gPiA+ID4gPiBTbyBJIGRvbid0IHRoaW5r
-IGhhdmluZyBpdCBoZXJlIHdvdWxkIGhlbHAgZml4aW5nIHBvdGVudGlhbCBidWdzLg0KPiA+ID4g
-Pg0KPiA+ID4gPiBEbyB5b3UgbWVhbiBieSBjcmVhdGluZyBhIG5ldyBmaWxlIGluIHV0aWwvIHRv
-IGhvbGQgdGhpcyBjb2RlPw0KPiA+ID4NCj4gPiA+IFllYWgsIG1heWJlIHV0aWwvaW50ZWwtdHBl
-YnMuYyAoaWYgaXQncyBiZXR0ZXIgdGhhbiBhcmNoL3g4Ni8uLi4pID8NCj4gPiA+DQo+ID4gPiA+
-DQo+ID4gPiA+IFllcywgdGhpcyBmZWF0dXJlIGlzIGZvciB2ZXJ5IHJlY2VudCBJbnRlbCBDUFVz
-LiBJdCBzaG91bGQgb25seSBiZSB0cmlnZ2VyZWQgaWYNCj4gPiA+ID4gYSBtZXRyaWMgdXNlcyBl
-dmVudChzKSB0aGF0IGhhcyB0aGUgUiBtb2RpZmllciBpbiB0aGUgZm9ybXVsYS4NCj4gPiA+DQo+
-ID4gPiBDYW4gd2UgaGF2ZSBhIHRlc3Qgd2l0aCBhIGZha2UgbWV0cmljIHNvIHRoYXQgd2UgY2Fu
-IHRlc3QNCj4gPiA+IHRoZSBjb2RlIG9uIG5vbi0ob3Igb2xkLSlJbnRlbCBtYWNoaW5lcz8NCj4g
-Pg0KPiA+IEFsbCB0aGUgZXhpc3RpbmcgbWV0cmljcyBpbiBub24tKG9yIG9sZC0pSW50ZWwgQ1BV
-cyBzaG91bGQgd29yayBhcyB1c3VhbC4gU28gSQ0KPiB0aGluaw0KPiA+IGV4aXN0aW5nIG1ldHJp
-YyB0ZXN0cyBzaG91bGQgd29yayBmb3IgaXQuDQo+ID4NCj4gPiBJZiB3ZSB3YW50IHRvIGFkZCBh
-IGZha2UgbWV0cmljIHVzZXMgdGhlIDpSIG1vZGlmaWVyIGZvciB0aG9zZSBwbGF0Zm9ybXMsIHRo
-ZQ0KPiBtZXRyaWMNCj4gPiBzaG91bGQgZWl0aGVyIGZhaWwgKGlmIHRoZSBmYWtlIG1ldHJpYyB1
-c2VzIGFuIGV2ZW50IG5vdCBleGlzdCBvbiB0aGUgdGVzdA0KPiBwbGF0Zm9ybSkgb3INCj4gPiBy
-ZXR1cm4gYWxsIDAgcmV0aXJlIGxhdGVuY3kgZGF0YS4NCj4gPg0KPiA+IFNvLCBJJ20gbm90IHF1
-aXRlIHN1cmUgd2hhdCB3ZSB3YW50IHRoZSBmYWtlIG1ldHJpYyB0byB0ZXN0IGZvci4gTWF5YmUg
-d2UNCj4gY291bGQNCj4gPiBjb250aW51ZSB1c2luZyBleGlzdGluZyBtZXRyaWMgdGVzdHMgdG8g
-ZW5zdXJlIGFsbCB0aGUgZGVmaW5lZCBtZXRyaWNzIHdvcmsNCj4gY29ycmVjdGx5DQo+ID4gaW4g
-ZWFjaCBtYWNoaW5lIHVuZGVyIHRlc3Q/DQo+IA0KPiBJIHRoaW5rIGl0J3Mgb2sgdG8gcmV0dXJu
-IGFsbCAwIHJldGlyZSBsYXRlbmN5IGZvciBmYWtlIHRQRUJTIG1ldHJpY3MuDQo+IEl0J3MganVz
-dCB0byB2ZXJpZnkgdGhlIGJhY2tncm91bmQgcmVjb3JkICsgcmVwb3J0IGxvZ2ljIHdvcmtzIG9r
-Lg0KDQpIaSBOYW1oeXVuZywNCg0KQWZ0ZXIgdGhpbmsgbW9yZSBhYm91dCBob3cgVFBFQlMgYW5k
-IG1ldHJpY3Mgd29yaywgSSBmZWVsIHNob3VsZCBkaXNjdXNzIG1vcmUgDQphYm91dCBkZWZpbmlu
-ZyBhIGZha2UgVFBFQlMgbWV0cmljIGluIHVuc3VwcG9ydGVkIHBsYXRmb3Jtcy4gDQpJZiB3ZSdk
-IGxpa2UgYSBhZGQgZmFrZSBtZXRyaWNzLCB3aGVyZSBzaG91bGQgd2UgZGVmaW5lIGFuZCBzdG9y
-ZSB0aGVzZSBtZXRyaWNzPyANClNob3VsZCB3ZSBhZGQgdGhpcyB0eXBlIG9mIG1ldHJpY3MgZm9y
-IGV2ZXJ5IHBsYXRmb3JtPyBBbGwgdGhlIG9mZmljaWFsIG1ldHJpY3MgDQp3ZSBwdWJsaXNoIGFy
-ZSBkZWZpbmVkIGJ5IGFyY2hpdGVjdCBhbmQgc3RvcmVkIGluIEpTT04gZmlsZXMgdW5kZXIgc2Vw
-YXJhdGUgDQpkaXJlY3RvcmllcyBmb3IgZWFjaCBwbGF0Zm9ybS4gSSB0aGluayBpdCBpcyBub3Qg
-YSBnb29kIGlkZWEgdG8gcGxhY2UgZmFrZSBtZXRyaWNzIA0KdG9nZXRoZXIgd2l0aCByZWFsIG1l
-dHJpY3MuIENvdWxkIHlvdSBwbGVhc2UgbGV0IG1lIGtub3cgaWYgdGhlcmUgaXMgYW55IG90aGVy
-IA0KbWV0aG9kIHRvIGRlZmluZSBmYWtlIG1ldHJpY3MgZm9yIHRlc3Rpbmc/DQoNClRoYW5rcywN
-CldlaWxpbg0KDQo+IA0KPiBUaGFua3MsDQo+IE5hbWh5dW5nDQo=
+In preparation for large folio in the write and fallocate paths, add
+file length argument in shmem_get_folio() path to be able to calculate
+the folio order based on the file size. Use of order-0 (PAGE_SIZE) for
+read, page cache read, and vm fault.
+
+This enables high order folios in the write and fallocate path once the
+folio order is calculated based on the length.
+
+Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
+---
+ fs/xfs/scrub/xfile.c     |  6 +++---
+ fs/xfs/xfs_buf_mem.c     |  3 ++-
+ include/linux/shmem_fs.h |  2 +-
+ mm/khugepaged.c          |  3 ++-
+ mm/shmem.c               | 35 ++++++++++++++++++++---------------
+ mm/userfaultfd.c         |  2 +-
+ 6 files changed, 29 insertions(+), 22 deletions(-)
+
+diff --git a/fs/xfs/scrub/xfile.c b/fs/xfs/scrub/xfile.c
+index 8cdd863db585..4905f5e4cb5d 100644
+--- a/fs/xfs/scrub/xfile.c
++++ b/fs/xfs/scrub/xfile.c
+@@ -127,7 +127,7 @@ xfile_load(
+ 		unsigned int	offset;
+=20
+ 		if (shmem_get_folio(inode, pos >> PAGE_SHIFT, &folio,
+-				SGP_READ) < 0)
++				SGP_READ, PAGE_SIZE) < 0)
+ 			break;
+ 		if (!folio) {
+ 			/*
+@@ -197,7 +197,7 @@ xfile_store(
+ 		unsigned int	offset;
+=20
+ 		if (shmem_get_folio(inode, pos >> PAGE_SHIFT, &folio,
+-				SGP_CACHE) < 0)
++				SGP_CACHE, PAGE_SIZE) < 0)
+ 			break;
+ 		if (filemap_check_wb_err(inode->i_mapping, 0)) {
+ 			folio_unlock(folio);
+@@ -268,7 +268,7 @@ xfile_get_folio(
+=20
+ 	pflags =3D memalloc_nofs_save();
+ 	error =3D shmem_get_folio(inode, pos >> PAGE_SHIFT, &folio,
+-			(flags & XFILE_ALLOC) ? SGP_CACHE : SGP_READ);
++			(flags & XFILE_ALLOC) ? SGP_CACHE : SGP_READ, PAGE_SIZE);
+ 	memalloc_nofs_restore(pflags);
+ 	if (error)
+ 		return ERR_PTR(error);
+diff --git a/fs/xfs/xfs_buf_mem.c b/fs/xfs/xfs_buf_mem.c
+index 9bb2d24de709..784c81d35a1f 100644
+--- a/fs/xfs/xfs_buf_mem.c
++++ b/fs/xfs/xfs_buf_mem.c
+@@ -149,7 +149,8 @@ xmbuf_map_page(
+ 		return -ENOMEM;
+ 	}
+=20
+-	error =3D shmem_get_folio(inode, pos >> PAGE_SHIFT, &folio, SGP_CACHE);
++	error =3D shmem_get_folio(inode, pos >> PAGE_SHIFT, &folio, SGP_CACHE,
++				PAGE_SIZE);
+ 	if (error)
+ 		return error;
+=20
+diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
+index 3fb18f7eb73e..bc59b4a00228 100644
+--- a/include/linux/shmem_fs.h
++++ b/include/linux/shmem_fs.h
+@@ -142,7 +142,7 @@ enum sgp_type {
+ };
+=20
+ int shmem_get_folio(struct inode *inode, pgoff_t index, struct folio **fol=
+iop,
+-		enum sgp_type sgp);
++		enum sgp_type sgp, size_t len);
+ struct folio *shmem_read_folio_gfp(struct address_space *mapping,
+ 		pgoff_t index, gfp_t gfp);
+=20
+diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+index 38830174608f..947770ded68c 100644
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -1863,7 +1863,8 @@ static int collapse_file(struct mm_struct *mm, unsign=
+ed long addr,
+ 				xas_unlock_irq(&xas);
+ 				/* swap in or instantiate fallocated page */
+ 				if (shmem_get_folio(mapping->host, index,
+-						&folio, SGP_NOALLOC)) {
++						    &folio, SGP_NOALLOC,
++						    PAGE_SIZE)) {
+ 					result =3D SCAN_FAIL;
+ 					goto xa_unlocked;
+ 				}
+diff --git a/mm/shmem.c b/mm/shmem.c
+index d531018ffece..fcd2c9befe19 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -1134,7 +1134,7 @@ static struct folio *shmem_get_partial_folio(struct i=
+node *inode, pgoff_t index)
+ 	 * (although in some cases this is just a waste of time).
+ 	 */
+ 	folio =3D NULL;
+-	shmem_get_folio(inode, index, &folio, SGP_READ);
++	shmem_get_folio(inode, index, &folio, SGP_READ, PAGE_SIZE);
+ 	return folio;
+ }
+=20
+@@ -1844,7 +1844,7 @@ static struct folio *shmem_alloc_folio(gfp_t gfp, str=
+uct shmem_inode_info *info,
+=20
+ static struct folio *shmem_alloc_and_add_folio(gfp_t gfp,
+ 		struct inode *inode, pgoff_t index,
+-		struct mm_struct *fault_mm, bool huge)
++		struct mm_struct *fault_mm, bool huge, size_t len)
+ {
+ 	struct address_space *mapping =3D inode->i_mapping;
+ 	struct shmem_inode_info *info =3D SHMEM_I(inode);
+@@ -2173,7 +2173,7 @@ static int shmem_swapin_folio(struct inode *inode, pg=
+off_t index,
+  */
+ static int shmem_get_folio_gfp(struct inode *inode, pgoff_t index,
+ 		struct folio **foliop, enum sgp_type sgp, gfp_t gfp,
+-		struct vm_fault *vmf, vm_fault_t *fault_type)
++		struct vm_fault *vmf, vm_fault_t *fault_type, size_t len)
+ {
+ 	struct vm_area_struct *vma =3D vmf ? vmf->vma : NULL;
+ 	struct mm_struct *fault_mm;
+@@ -2258,7 +2258,7 @@ static int shmem_get_folio_gfp(struct inode *inode, p=
+goff_t index,
+ 		huge_gfp =3D vma_thp_gfp_mask(vma);
+ 		huge_gfp =3D limit_gfp_mask(huge_gfp, gfp);
+ 		folio =3D shmem_alloc_and_add_folio(huge_gfp,
+-				inode, index, fault_mm, true);
++				inode, index, fault_mm, true, len);
+ 		if (!IS_ERR(folio)) {
+ 			count_vm_event(THP_FILE_ALLOC);
+ 			goto alloced;
+@@ -2267,7 +2267,8 @@ static int shmem_get_folio_gfp(struct inode *inode, p=
+goff_t index,
+ 			goto repeat;
+ 	}
+=20
+-	folio =3D shmem_alloc_and_add_folio(gfp, inode, index, fault_mm, false);
++	folio =3D shmem_alloc_and_add_folio(gfp, inode, index, fault_mm, false,
++					  len);
+ 	if (IS_ERR(folio)) {
+ 		error =3D PTR_ERR(folio);
+ 		if (error =3D=3D -EEXIST)
+@@ -2377,10 +2378,10 @@ static int shmem_get_folio_gfp(struct inode *inode,=
+ pgoff_t index,
+  * Return: 0 if successful, else a negative error code.
+  */
+ int shmem_get_folio(struct inode *inode, pgoff_t index, struct folio **fol=
+iop,
+-		enum sgp_type sgp)
++		enum sgp_type sgp, size_t len)
+ {
+ 	return shmem_get_folio_gfp(inode, index, foliop, sgp,
+-			mapping_gfp_mask(inode->i_mapping), NULL, NULL);
++			mapping_gfp_mask(inode->i_mapping), NULL, NULL, len);
+ }
+ EXPORT_SYMBOL_GPL(shmem_get_folio);
+=20
+@@ -2475,7 +2476,7 @@ static vm_fault_t shmem_fault(struct vm_fault *vmf)
+=20
+ 	WARN_ON_ONCE(vmf->page !=3D NULL);
+ 	err =3D shmem_get_folio_gfp(inode, vmf->pgoff, &folio, SGP_CACHE,
+-				  gfp, vmf, &ret);
++				  gfp, vmf, &ret, PAGE_SIZE);
+ 	if (err)
+ 		return vmf_error(err);
+ 	if (folio) {
+@@ -2954,6 +2955,9 @@ shmem_write_begin(struct file *file, struct address_s=
+pace *mapping,
+ 	struct folio *folio;
+ 	int ret =3D 0;
+=20
++	if (!mapping_large_folio_support(mapping))
++		len =3D min_t(size_t, len, PAGE_SIZE - offset_in_page(pos));
++
+ 	/* i_rwsem is held by caller */
+ 	if (unlikely(info->seals & (F_SEAL_GROW |
+ 				   F_SEAL_WRITE | F_SEAL_FUTURE_WRITE))) {
+@@ -2963,7 +2967,7 @@ shmem_write_begin(struct file *file, struct address_s=
+pace *mapping,
+ 			return -EPERM;
+ 	}
+=20
+-	ret =3D shmem_get_folio(inode, index, &folio, SGP_WRITE);
++	ret =3D shmem_get_folio(inode, index, &folio, SGP_WRITE, len);
+ 	if (ret)
+ 		return ret;
+=20
+@@ -3083,7 +3087,7 @@ static ssize_t shmem_file_read_iter(struct kiocb *ioc=
+b, struct iov_iter *to)
+ 				break;
+ 		}
+=20
+-		error =3D shmem_get_folio(inode, index, &folio, SGP_READ);
++		error =3D shmem_get_folio(inode, index, &folio, SGP_READ, PAGE_SIZE);
+ 		if (error) {
+ 			if (error =3D=3D -EINVAL)
+ 				error =3D 0;
+@@ -3260,7 +3264,7 @@ static ssize_t shmem_file_splice_read(struct file *in=
+, loff_t *ppos,
+ 			break;
+=20
+ 		error =3D shmem_get_folio(inode, *ppos / PAGE_SIZE, &folio,
+-					SGP_READ);
++					SGP_READ, PAGE_SIZE);
+ 		if (error) {
+ 			if (error =3D=3D -EINVAL)
+ 				error =3D 0;
+@@ -3469,7 +3473,8 @@ static long shmem_fallocate(struct file *file, int mo=
+de, loff_t offset,
+ 			error =3D -ENOMEM;
+ 		else
+ 			error =3D shmem_get_folio(inode, index, &folio,
+-						SGP_FALLOC);
++						SGP_FALLOC,
++						(end - index) << PAGE_SHIFT);
+ 		if (error) {
+ 			info->fallocend =3D undo_fallocend;
+ 			/* Remove the !uptodate folios we added */
+@@ -3822,7 +3827,7 @@ static int shmem_symlink(struct mnt_idmap *idmap, str=
+uct inode *dir,
+ 	} else {
+ 		inode_nohighmem(inode);
+ 		inode->i_mapping->a_ops =3D &shmem_aops;
+-		error =3D shmem_get_folio(inode, 0, &folio, SGP_WRITE);
++		error =3D shmem_get_folio(inode, 0, &folio, SGP_WRITE, PAGE_SIZE);
+ 		if (error)
+ 			goto out_remove_offset;
+ 		inode->i_op =3D &shmem_symlink_inode_operations;
+@@ -3868,7 +3873,7 @@ static const char *shmem_get_link(struct dentry *dent=
+ry, struct inode *inode,
+ 			return ERR_PTR(-ECHILD);
+ 		}
+ 	} else {
+-		error =3D shmem_get_folio(inode, 0, &folio, SGP_READ);
++		error =3D shmem_get_folio(inode, 0, &folio, SGP_READ, PAGE_SIZE);
+ 		if (error)
+ 			return ERR_PTR(error);
+ 		if (!folio)
+@@ -5255,7 +5260,7 @@ struct folio *shmem_read_folio_gfp(struct address_spa=
+ce *mapping,
+ 	int error;
+=20
+ 	error =3D shmem_get_folio_gfp(inode, index, &folio, SGP_CACHE,
+-				    gfp, NULL, NULL);
++				    gfp, NULL, NULL, PAGE_SIZE);
+ 	if (error)
+ 		return ERR_PTR(error);
+=20
+diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+index 3c3539c573e7..540a0c2d4325 100644
+--- a/mm/userfaultfd.c
++++ b/mm/userfaultfd.c
+@@ -359,7 +359,7 @@ static int mfill_atomic_pte_continue(pmd_t *dst_pmd,
+ 	struct page *page;
+ 	int ret;
+=20
+-	ret =3D shmem_get_folio(inode, pgoff, &folio, SGP_NOALLOC);
++	ret =3D shmem_get_folio(inode, pgoff, &folio, SGP_NOALLOC, PAGE_SIZE);
+ 	/* Our caller expects us to return -EFAULT if we failed to find folio */
+ 	if (ret =3D=3D -ENOENT)
+ 		ret =3D -EFAULT;
+--=20
+2.43.0
 
