@@ -1,124 +1,234 @@
-Return-Path: <linux-kernel+bounces-180485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 236CD8C6F27
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 01:26:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 848398C6F2C
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 01:28:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9FC8EB21780
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 23:26:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ABE81B21938
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 23:27:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D5BF4F8BC;
-	Wed, 15 May 2024 23:26:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F25DD4F8BC;
+	Wed, 15 May 2024 23:27:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Bxqb4oyn"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ijm3BpHA"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80A392A8D7
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 23:26:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E03C439FEC
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 23:27:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715815579; cv=none; b=JnUyEh3tnV/EOV9Zpe3NXSuGvrU0lRXmQQcfhQAw/k7kBVIcydqUXoH5ZIkq71FEMN5Aj7yJh85eRB6mclVhO5kL1y3BOvRj+iaHnxifKF9RBK2G4FDjksfQXpZbxqowjC9NQfq6MOL5rqcEcO16w4DooT9XH58bbPXvofnCBHI=
+	t=1715815669; cv=none; b=gBQ7EKCaFgOqJstIsIYyRkyOwV7nomP1qPsM32GUfHptdtwm0uhudiobe5c5DxIStgTY9nfReRKOc+cSTBex1vJsZ5oXhThaiTzitrZNTDlQhsU1tEAeVX772pd93WF1iwD5Gqmm7ZOmk2a5pfOHAeTbVFvxKiebRymWIPli6VI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715815579; c=relaxed/simple;
-	bh=2Y9HYnVAi1MX2b83pHesfVOmcysatjNtN2ksEqhG4Gg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=CEaq5REocVbRiMkaiCd4NKsJDX3uBbo4v/1czG9Pcs+1WRnAxwZA2WcSC8885E4onjRfkq33kCfL7+oayeATC9E92nJvhVcIZ4sQlZo7H0IUPR4X1eFHKldnYkzF4JuIjrTHrIB+xXDkOfYfIhwwcq/wYtwQ3WeUxbJ5cAPptP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Bxqb4oyn; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-1eea09ec7ecso73528335ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 16:26:18 -0700 (PDT)
+	s=arc-20240116; t=1715815669; c=relaxed/simple;
+	bh=jMCf65n6mZ9Lh1wcVdqz3IcOWbhY/JMPATbvY5TnZNg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aPX08TNQR9kaoBxbmfpgm4XeDgm+fLq9mwVsYQ5g6G6XjC1AQnoMt+iRCc/LuX432tp5IuQVTWKAHzRab2m6H80NeTIhZoLQMXQdeGZ13PauKjfCVU47qDCvO9oUYYL+r1pYgEL7FbDym97w7mnBd+dP4a0Vkeb+fm5+MDNVmkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ijm3BpHA; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2e3efa18e6aso1177281fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 16:27:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715815578; x=1716420378; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2Y9HYnVAi1MX2b83pHesfVOmcysatjNtN2ksEqhG4Gg=;
-        b=Bxqb4oynMQqIRcuj5r880CXfuw2YOillXM1xLTybMhvy25wQt+LPrBnXL7hevpfy3/
-         zxTTbbCFHb4O7RBMsuI0qutXWs6WmbZspApLkzEa/KyBsoYKjzrII0U/7WHu8yywXk0E
-         EoqZ1EbjRS7EMPO5R5PKk3h+FTegwJXGF8SYltL65GOwwm4LAQO7jZBJDn7FfdnUKesh
-         zwxN/Pis0VhrjHWDOkESZ5x8YJ1RcG5kKIMESa/yKjWMlFAK0qoqtCqDyYJ78ZrnAM9y
-         VN+KMdt+F6t7ZdivsMfAaFa6dF5owq4ma1AjgfpazCOSeDUd2I5rPO0pAjfMUbt0ukZj
-         OCVw==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1715815664; x=1716420464; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iRsDSovNQ6qr5UiueXhcNuD8AQiDxUzPcRjU5GwfeDI=;
+        b=ijm3BpHAjO5ZRm8qK936yBfaORsehiXAqIXb2P0ev4jPI+ixOpffPwqdUL0aMNbPHG
+         p8ft2whMHgKbbJveSWTcrIgyxIhNdTNk9HIM3gXk1EAZOi0WEdoijrHuVH6Jw4GAKDYB
+         TTaaTZahOTQ3pfTiB+BNiyut1SUeNPed0JYWTY7KHEQ5CLRtQ6OykERGgA9OSMKBT7MM
+         fgFx8nYAKp746BkpImgIk3i3Euxa9koYkAA5Ap64ra0K1aOeM6Zbcu6+53ZHIPFBbfFE
+         ZH8yFpgbjIIL14Pao4Jg2uGBWdMGgPb7M95RaCZVWc5gedYh6DsFWpYPK9wa2b1YYcNl
+         1HXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715815578; x=1716420378;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=2Y9HYnVAi1MX2b83pHesfVOmcysatjNtN2ksEqhG4Gg=;
-        b=G8Z0VQNrZf1BO2QBSBFmkYQcQA68d7Th4m+UTyUW/ZPqZLQfZNkBIaRCx8kfV+IY7D
-         5ogCTT8cAoCFzNoJAIwK8jeFIpBhZIzZ3ndSDYgfLMboKglS3j04JLcm4J98XGgApPOh
-         qM9EV6NPVHBEc1fjL9pNTyuYEGB5hQjUog/5mJSpyB0yya2mTSfyyPcJ8KbPYckxnEKS
-         1sz8Ci9/UjcRYLHCrcZpHWGMMk2i1xmQViatLDh1T18ToZPvCu4wXZq2cSmJWtdSEgg1
-         uijqseMVHLEjFF1/b3UvWCOyA2HsoGNaXuEH8tB8kVv3wG7hphAplc9H7zxFf1Jp6hYI
-         iHFw==
-X-Gm-Message-State: AOJu0YyulCeVyTgBO1bxjfxssY0qO2WJOQiKrj+jFubhUQmRyDenEAPU
-	7Sx0ZB0cPVNWkKABxj1Y67HwaUc+CGxwfVPBe+VjiiPzYw6irRtGilGNEXrYHJHxRsTjXkAOoDT
-	KHw==
-X-Google-Smtp-Source: AGHT+IGtoOQokIuMOtZ7I+wsyi2BzCuze/GDRj0Nh5Z//Qxk8bO9FH7B0H10f4cquEg9Kl6dt9ebJ91/CRQ=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:902:d2c8:b0:1eb:d72e:82aa with SMTP id
- d9443c01a7336-1ef43d2eb43mr3260165ad.7.1715815577568; Wed, 15 May 2024
- 16:26:17 -0700 (PDT)
-Date: Wed, 15 May 2024 16:26:16 -0700
-In-Reply-To: <72a18e11e09e949e730d01a084ee9f1a94c452ad.camel@intel.com>
+        d=1e100.net; s=20230601; t=1715815664; x=1716420464;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iRsDSovNQ6qr5UiueXhcNuD8AQiDxUzPcRjU5GwfeDI=;
+        b=quX6zmeBpSJkmJ18fT/3GFr4ILd64MoCTz15xgVd4H4HIYk1sYfWiifMkqRTJxYRDj
+         OoXmxjQ8LECpswFoHHoASqkaO5wYqdSTPZTNZEo8PWUYe3NWTW3WmalhfXB439rLVlLr
+         mm25o61RtJYS1a8SyaAsKu/3B9IpnquUpd/Pq/6S9BK7x7MofAgi8jRkDaOF+cV9ZTb0
+         6NnIWTHj5QOtTsMvyRRgY53D6OghGSSPIjAKbwZ2Nob3Kg+97O4wnM6ndppRUr7wc4JI
+         FyHr2f1YkhStIUd0CgQ7e5PnHCtYfmRXRblaAme86rPsIENQiwMNZLyvs3SrcR227kqZ
+         nSLg==
+X-Forwarded-Encrypted: i=1; AJvYcCULxLoG3Ul5Tt76cBYIJe3JymKbZR73DeUNZcAeQnBYyBzN6KMOitJGL2uXRMxaHnthFJv57IRCTVdfLF2wJrK2DDs3YHiH5XVRNbRA
+X-Gm-Message-State: AOJu0Yy4J/TFQqQ92buGo7n/ys43w1S+mri+zj5P+jldu4AUKjs6m6E8
+	i8PePalYFHYYr9xrR1ltA3ykk8pWjCB15yndw8zPQZSXqoNbwqDG3qhVsxXJt38Vcn1cykmcEzw
+	QRtItdV83Gqjie1d3QLKAPoRU/12V8OUuuW35w0QoWrwahQlcumovTw==
+X-Google-Smtp-Source: AGHT+IGRYcDzysaEwMs+dmPXujOd5i72e9GniJRiB6FMPFjIQye9F3m69svhY+htiwz29H+tbPNaQgzqko6PuocNOxE=
+X-Received: by 2002:a2e:1319:0:b0:2d8:4892:bee2 with SMTP id
+ 38308e7fff4ca-2e51b17f931mr63457721fa.20.1715815664025; Wed, 15 May 2024
+ 16:27:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240515005952.3410568-9-rick.p.edgecombe@intel.com>
- <ZkTWDfuYD-ThdYe6@google.com> <f64c7da52a849cd9697b944769c200dfa3ee7db7.camel@intel.com>
- <747192d5fe769ae5d28bbb6c701ee9be4ad09415.camel@intel.com>
- <ZkTcbPowDSLVgGft@google.com> <de3cb02ae9e639f423ae47ef2fad1e89aa9dd3d8.camel@intel.com>
- <ZkT4RC_l_F_9Rk-M@google.com> <77ae4629139784e7239ce7c03db2c2db730ab4e9.camel@intel.com>
- <ZkURaxF57kybgMm0@google.com> <72a18e11e09e949e730d01a084ee9f1a94c452ad.camel@intel.com>
-Message-ID: <ZkVDnUhMafRox9rw@google.com>
-Subject: Re: [PATCH 08/16] KVM: x86/mmu: Bug the VM if kvm_zap_gfn_range() is
- called for TDX
-From: Sean Christopherson <seanjc@google.com>
-To: Rick P Edgecombe <rick.p.edgecombe@intel.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "sagis@google.com" <sagis@google.com>, 
-	"isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>, Erdem Aktas <erdemaktas@google.com>, 
-	Yan Zhao <yan.y.zhao@intel.com>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "dmatlack@google.com" <dmatlack@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+References: <20240514-ad4111-v2-0-29be6a55efb5@analog.com> <20240514-ad4111-v2-5-29be6a55efb5@analog.com>
+In-Reply-To: <20240514-ad4111-v2-5-29be6a55efb5@analog.com>
+From: David Lechner <dlechner@baylibre.com>
+Date: Wed, 15 May 2024 18:27:32 -0500
+Message-ID: <CAMknhBF8D3YCro4duKrBoEkdc-SiCGwvHTg4SFb17ympUsG1nA@mail.gmail.com>
+Subject: Re: [PATCH v2 5/9] iio: adc: ad7173: add support for special inputs
+To: dumitru.ceclan@analog.com
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
+	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Dumitru Ceclan <mitrutzceclan@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 15, 2024, Rick P Edgecombe wrote:
-> On Wed, 2024-05-15 at 12:48 -0700, Sean Christopherson wrote:
-> > > It's just another little quirk in an already complicated solution. Th=
-ey
-> > > third
-> > > thing we discussed was somehow rejecting or not supporting non-cohere=
-nt DMA.
-> > > This seemed simpler than that.
-> >=20
-> > Again, huh?=C2=A0 This has _nothing_ to do with non-coherent DMA.=C2=A0=
- Devices can't
-> > DMA
-> > into TDX private memory.
->=20
-> Hmm... I'm confused how you are confused... :)
->=20
-> For normal VMs (after that change you linked), guests will honor guest PA=
-T on
-> newer HW. On older HW it will only honor guest PAT if non-coherent DMA is
-> attached.
->=20
-> For TDX we can't honor guest PAT for private memory. So we can either hav=
-e:
-> 1. Have shared honor PAT and private not.
-> 2. Have private and shared both not honor PAT and be consistent. Unless n=
-on-
-> coherent DMA is attached. In that case KVM could zap shared only and swit=
-ch to
-> 1.
+On Tue, May 14, 2024 at 2:23=E2=80=AFAM Dumitru Ceclan via B4 Relay
+<devnull+dumitru.ceclan.analog.com@kernel.org> wrote:
+>
+> From: Dumitru Ceclan <dumitru.ceclan@analog.com>
+>
+>  Add support for selecting REF+ and REF- inputs on all models.
+>  Add support for selecting ((AVDD1 =E2=88=92 AVSS)/5) inputs
+>   on supported models.
+>
+> Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
+> ---
+>  drivers/iio/adc/ad7173.c | 21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
+>
+> diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
+> index fb33534d63a9..1e9ba3070770 100644
+> --- a/drivers/iio/adc/ad7173.c
+> +++ b/drivers/iio/adc/ad7173.c
+> @@ -65,6 +65,10 @@
+>          FIELD_PREP(AD7173_CH_SETUP_AINNEG_MASK, neg))
+>  #define AD7173_AIN_TEMP_POS    17
+>  #define AD7173_AIN_TEMP_NEG    18
+> +#define AD7173_AIN_COM_IN_POS  19
+> +#define AD7173_AIN_COM_IN_NEG  20
+> +#define AD7173_AIN_REF_POS     21
+> +#define AD7173_AIN_REF_NEG     22
+>
+>  #define AD7172_2_ID                    0x00d0
+>  #define AD7175_ID                      0x0cd0
+> @@ -145,6 +149,8 @@ struct ad7173_device_info {
+>         unsigned int id;
+>         char *name;
+>         bool has_temp;
+> +       /* ((AVDD1 =E2=88=92 AVSS)/5) */
+> +       bool has_common_input;
+>         bool has_input_buf;
+>         bool has_int_ref;
+>         bool has_ref2;
+> @@ -215,6 +221,7 @@ static const struct ad7173_device_info ad7173_device_=
+info[] =3D {
+>                 .has_temp =3D true,
+>                 .has_input_buf =3D true,
+>                 .has_int_ref =3D true,
+> +               .has_common_input =3D true,
+>                 .clock =3D 2 * HZ_PER_MHZ,
+>                 .sinc5_data_rates =3D ad7173_sinc5_data_rates,
+>                 .num_sinc5_data_rates =3D ARRAY_SIZE(ad7173_sinc5_data_ra=
+tes),
+> @@ -228,6 +235,7 @@ static const struct ad7173_device_info ad7173_device_=
+info[] =3D {
+>                 .has_temp =3D false,
+>                 .has_input_buf =3D true,
+>                 .has_ref2 =3D true,
+> +               .has_common_input =3D true,
+>                 .clock =3D 2 * HZ_PER_MHZ,
+>                 .sinc5_data_rates =3D ad7173_sinc5_data_rates,
+>                 .num_sinc5_data_rates =3D ARRAY_SIZE(ad7173_sinc5_data_ra=
+tes),
+> @@ -243,6 +251,7 @@ static const struct ad7173_device_info ad7173_device_=
+info[] =3D {
+>                 .has_input_buf =3D true,
+>                 .has_int_ref =3D true,
+>                 .has_ref2 =3D true,
+> +               .has_common_input =3D false,
+>                 .clock =3D 2 * HZ_PER_MHZ,
+>                 .sinc5_data_rates =3D ad7173_sinc5_data_rates,
+>                 .num_sinc5_data_rates =3D ARRAY_SIZE(ad7173_sinc5_data_ra=
+tes),
+> @@ -257,6 +266,7 @@ static const struct ad7173_device_info ad7173_device_=
+info[] =3D {
+>                 .has_temp =3D true,
+>                 .has_input_buf =3D true,
+>                 .has_int_ref =3D true,
+> +               .has_common_input =3D true,
+>                 .clock =3D 16 * HZ_PER_MHZ,
+>                 .sinc5_data_rates =3D ad7175_sinc5_data_rates,
+>                 .num_sinc5_data_rates =3D ARRAY_SIZE(ad7175_sinc5_data_ra=
+tes),
+> @@ -271,6 +281,7 @@ static const struct ad7173_device_info ad7173_device_=
+info[] =3D {
+>                 .has_input_buf =3D true,
+>                 .has_int_ref =3D true,
+>                 .has_ref2 =3D true,
+> +               .has_common_input =3D true,
+>                 .clock =3D 16 * HZ_PER_MHZ,
+>                 .sinc5_data_rates =3D ad7175_sinc5_data_rates,
+>                 .num_sinc5_data_rates =3D ARRAY_SIZE(ad7175_sinc5_data_ra=
+tes),
+> @@ -285,6 +296,7 @@ static const struct ad7173_device_info ad7173_device_=
+info[] =3D {
+>                 .has_temp =3D false,
+>                 .has_input_buf =3D false,
+>                 .has_int_ref =3D true,
+> +               .has_common_input =3D false,
+>                 .clock =3D 16 * HZ_PER_MHZ,
+>                 .sinc5_data_rates =3D ad7175_sinc5_data_rates,
+>                 .num_sinc5_data_rates =3D ARRAY_SIZE(ad7175_sinc5_data_ra=
+tes),
+> @@ -298,6 +310,7 @@ static const struct ad7173_device_info ad7173_device_=
+info[] =3D {
+>                 .has_temp =3D true,
+>                 .has_input_buf =3D true,
+>                 .has_int_ref =3D true,
+> +               .has_common_input =3D true,
+>                 .clock =3D 16 * HZ_PER_MHZ,
+>                 .odr_start_value =3D AD7177_ODR_START_VALUE,
+>                 .sinc5_data_rates =3D ad7175_sinc5_data_rates,
+> @@ -920,6 +933,14 @@ static int ad7173_validate_voltage_ain_inputs(struct=
+ ad7173_state *st,
+>                 if (ain[i] < st->info->num_inputs)
+>                         continue;
+>
+> +               if (ain[i] =3D=3D AD7173_AIN_REF_POS || ain[i] =3D=3D AD7=
+173_AIN_REF_NEG)
+> +                       continue;
+> +
+> +               if ((ain[i] =3D=3D AD7173_AIN_COM_IN_POS ||
+> +                    ain[i] =3D=3D AD7173_AIN_COM_IN_NEG) &&
+> +                   st->info->has_common_input)
+> +                       continue;
+> +
 
-Oh good gravy, hell no :-)
+If there is only one valid combination, it seems like these should be
+fixed channels like the temperature input rather than something coming
+from the device tree.
+
+It looks like on AD411x, it is the case that there is only one valid
+option for the reference input in the channel configuration. But in
+the case of AD717x since both REF+ and REF- are listed as possible
+inputs for both AINPOS0 and AINNEG0, it seems like they could be mixed
+and matched with other channels. The datasheet doesn't seem very clear
+on this though.
+
+If it is valid to combine, say AIN0 with REF+ though, then the
+validation would need to be relaxed. But I'm guessing that is not
+actually the case?
+
+>                 return dev_err_probe(dev, -EINVAL,
+>                         "Input pin number out of range for pair (%d %d).\=
+n",
+>                         ain[0], ain[1]);
+>
+> --
+> 2.43.0
+>
+>
 
