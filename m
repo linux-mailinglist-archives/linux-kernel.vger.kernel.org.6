@@ -1,121 +1,111 @@
-Return-Path: <linux-kernel+bounces-179631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1410E8C628C
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 10:10:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 943DE8C628D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 10:11:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE9BF1F22B8F
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:10:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 132F4281BE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:11:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF91A4C627;
-	Wed, 15 May 2024 08:10:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC8E94AEF7;
+	Wed, 15 May 2024 08:11:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QTySWFtr"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	dkim=pass (2048-bit key) header.d=cryptogams.org header.i=@cryptogams.org header.b="hqJCZA4D"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66EF6482C8
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 08:10:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62E72482C8
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 08:11:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715760602; cv=none; b=sk9khNdkt6Wr7B2V0oVsz/h0xqO1zGgLVmr4cOb1AkI6kGk6v7aCQErJALP0EEGsK7FCyHmJOivtjBXazH+rLc+fB2mWnm4QrZwSGWG9diM/5uLC0DtWEq/vl8drZq6eqpCYLTwX+wfwFM7KU2kbnjIHws4UifBIu/JZcwIreFk=
+	t=1715760691; cv=none; b=M+fBy2bxApMe20MhDFI1NH3JionbFaqnvrEtVt2AfRx6EUAqxcTtJ/MbqN2OC8lJsxNpiG7wgU8Znu97rV5MIVNyqt+lg9JeuztZWPiin2fXKb8WzzgtCPq2VptS6UNEj3pBKCvi4dk4Zm7w84do5tSiWPLX0VoG2e2C/DzPEtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715760602; c=relaxed/simple;
-	bh=KaO31ie8+TTFdpvxyLbHb6rNxvqQ5J6sXJPKDa2RNBE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N0J8dBdYaghcmIguvcwFrK+H03HmdIEG9/iPbQShx/8171zRK8Wl6KJY8TQvuqFh0iyWYCtcxEmzAMOGqj7EzUVwROkWKBELfg0AEdINs/DSpRT/cBxZ+6QsvK+quizzU50CC2DBxB6Ku/WKXYbhbEDUbd8wVarsCuUC5W4yM1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QTySWFtr; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a59a64db066so113863066b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 01:10:00 -0700 (PDT)
+	s=arc-20240116; t=1715760691; c=relaxed/simple;
+	bh=wgLVDZfo7OUNUCa/aFvVw7eI10FXyDQIuqG4Ml5oaIg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JJSp/dioSIe5zSDLL8VRnZDaXVoUEQtCJVpQeEuGHihY+62VqCU28wX6Por5udGkGEpRpKwiDQqHFa9Y6q/A5uNACQXbNmL6B0prtBvGwhRCOx/gaUahEOF7jnDK5EFcICx0Rbdfw/kNWAqURXZFRpVenzvln9zU0aNm90yJFUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cryptogams.org; spf=pass smtp.mailfrom=cryptogams.org; dkim=pass (2048-bit key) header.d=cryptogams.org header.i=@cryptogams.org header.b=hqJCZA4D; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cryptogams.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cryptogams.org
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-51ffff16400so10735968e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 01:11:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715760599; x=1716365399; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6O2kVoYtQ3FhhhHvKJ0ZHKUww8sQRpmhgptxqLh3T/s=;
-        b=QTySWFtrxuhLAx1quJUB4Kc918EPL2ooL6R8plR1BjICLq+tEhkPbmyr+4Vlxyt0N5
-         N6jFyzNU7vo3CX1+oY15slI1PwEEaGCtOSN9Hkhm6oUF3zebCh/IYIlLnZqMsfofT+Uc
-         X4cGx7ARJLgxidrfJmG+rDJVr9tzs7QzQylXco/gix7mP7yxkQSH8FCpMdrVtsLRwHrr
-         RpIXUjwZoYwM1Ojkp0vYCINnqNg8ly3y7KG3/VmExG89c2Jg09JPAXe1OfL2t7Q+xXNz
-         UYSo3GMAFW40D5LR8qaUvCYiuLOl891pQKOjr/NrOKyEth1KueiR2zNveT1ry/Wu2Fkt
-         sR2A==
+        d=cryptogams.org; s=gmail; t=1715760687; x=1716365487; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Nadn3nJhbpbUcGRwW1AG+AKX8Tqss/4B5lqeqiiCsI4=;
+        b=hqJCZA4DdZA/CwAcI7ltBYUJyTvK1J/SEZbazsgOzYKYjDUlS+OUbPPhKqMpDiIgef
+         IGKgkbgq8EVhlWqMGBWnXx5mh9GXVazftKK+hVplkKYaRzgViruau5k00yUvDFiunAdk
+         R4mASkiFQ/qz3W8Y1kS2J++GjSWQy8p+IlgVN11rCcjM0/ztUWJGnT9wVgyIbknsLcM7
+         M8CUBm3LxXSCX94W6gJT3a82BSK1fp5foSDgCcJCmHPyrdSZqJnoQiATlvYk3dptUvpK
+         0131mV52A34vO26Lp8ZHFXXrbm/+o+uY98syQzXW6xFxpVNWj4iWYS9Z8ECP/S391oKZ
+         I9Hw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715760599; x=1716365399;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6O2kVoYtQ3FhhhHvKJ0ZHKUww8sQRpmhgptxqLh3T/s=;
-        b=SFkRrL8x/bX6YvXMBI/o3N5YAI2co7xCwkQmGe3kZRjN72FF03EpNBK25b97gUJioR
-         z8AA5MJuga9s347ZtD6iIbLUZb3SgfdRo9eClF6kwSZILlJHRn6dWiwbbstfFlL5JpyL
-         CmkrSdGfke8r9PKHB9F6L6NVSnpShNMTrKL7yMtSOzp92h302l/fbM8pH4r0Eu+ujYz3
-         atUJV0kweTN38u5pJLmGTa2Qx+DWHSLXXcn28IDw/BJsK2A1XgfpARXZtUkgwWU2pnDi
-         P7OPaBHsUZNgmmjMOSw7b1T3+IevfOCpSv2Nl+P1tT7FkttNsIuNU1Yd15TgXqyDmJYB
-         sF7A==
-X-Forwarded-Encrypted: i=1; AJvYcCXlx22KjZnEWw7j41aGIoZ3FsTvz3HbEWm15Re/rKcdfoIUIZeyHCG+1ut+TR4rj1m9RDbZpUjU+Mtjh6ZNLlXmN20wHhtUI/MAbbQC
-X-Gm-Message-State: AOJu0YxczOpDZxD2RXOqbn3/o4jQZQ1h7S9xf1cxUIMez60eVqwNuKbU
-	MX/+Bjj0bL1H4Rbw7VArrhrRUa1trXvYjhA7K8rnm955Dag2lHT/
-X-Google-Smtp-Source: AGHT+IH/B6z3e2c5RAbzLszJJnpexfiNGNBc8XahF+3UlaV2PXRJ9oCWOBwdWC2Dv0V22wNWtrd0vw==
-X-Received: by 2002:a17:907:3203:b0:a59:ca7e:e1f with SMTP id a640c23a62f3a-a5a2d53b76amr1347669166b.15.1715760598537;
-        Wed, 15 May 2024 01:09:58 -0700 (PDT)
-Received: from gmail.com (1F2EF1AE.unconfigured.pool.telekom.hu. [31.46.241.174])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a179263d9sm829635866b.95.2024.05.15.01.09.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 May 2024 01:09:58 -0700 (PDT)
-Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
-Date: Wed, 15 May 2024 10:09:56 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kernel@vger.kernel.org,
-	the arch/x86 maintainers <x86@kernel.org>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [GIT PULL] x86/boot changes for v6.10
-Message-ID: <ZkRt1IpAdtBBk0e4@gmail.com>
-References: <ZkG4cMe1TFI5w7sc@gmail.com>
- <CAHk-=wgf=jwo1HZjQN7UeFw7iYPtQ_i0ri7JNOci+7Rn5-pDcg@mail.gmail.com>
- <CAMj1kXHm_tmBPNTvnvn3r6myeRo5x1fX3_J73UA1j4bVBo_PSg@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1715760687; x=1716365487;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Nadn3nJhbpbUcGRwW1AG+AKX8Tqss/4B5lqeqiiCsI4=;
+        b=YtsKN2/WtIwoe1ojf34vVxGY9HXbDylfPR0l472yJ7qbLUKKOa7kt91+iIxO+tr/l7
+         64cCUqDPxpLYXHTplX7crEg1GsK4AP7xYoeCDFyeGJVNetDVrQyfeY0FC3mTX6ZVF8mc
+         INCI1q7AWH8/usGDAVmfzvTqCoxuKrObc3EPQ/9YxnGRayhXEYy6NpZgg2Igwz/fHFVZ
+         E56mY0zEgIE8CD1H5XnEFDKUvQfKw7eO9DW2aPzJugsnFP4gUwUJFHCwCMzImsakdTOH
+         cb0iD8tzD5wziQeuvkGHkBc8sMPk1xAIq07jb00c/DbO8ndgEaBFlZN89503t44VarZx
+         JR7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXsPOl7ft71zK7rv0OyEjYQRtlq4C9Ct/iipivlBXmm3bOQ7A5NMtSY8G/6ipMPuLbk4k3I283Fdh+LxkqGWFokQErnBeLFctm8wdxF
+X-Gm-Message-State: AOJu0YzcOrHfZ9JqiWkQ6ekes/QcwLeJR9YDhlVxytVeCawm4Ovr3TRO
+	KpIr1QAi6sU4sPaLij7ih0M9nANpK0zY974b+uM4YHsrOOHZWsHEhAtAAUbdunc=
+X-Google-Smtp-Source: AGHT+IEm4tt3o20ljc2e1O4yFuBQYTb/i4s4EPsBk0XZkzFkv52SwrrVPTrrVXZR+8C3wJP6qscL5Q==
+X-Received: by 2002:a05:6512:61:b0:51c:5570:f570 with SMTP id 2adb3069b0e04-52210473d4fmr11529720e87.59.1715760687525;
+        Wed, 15 May 2024 01:11:27 -0700 (PDT)
+Received: from [10.0.1.129] (c-922370d5.012-252-67626723.bbcust.telenor.se. [213.112.35.146])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-521f35ba8e6sm2400086e87.108.2024.05.15.01.11.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 May 2024 01:11:27 -0700 (PDT)
+Message-ID: <dc5aadc2-308d-4f24-8a59-45da21b8b2e5@cryptogams.org>
+Date: Wed, 15 May 2024 10:11:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMj1kXHm_tmBPNTvnvn3r6myeRo5x1fX3_J73UA1j4bVBo_PSg@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] crypto: X25519 low-level primitives for ppc64le.
+To: Danny Tsen <dtsen@linux.ibm.com>, linux-crypto@vger.kernel.org
+Cc: herbert@gondor.apana.org.au, leitao@debian.org, nayna@linux.ibm.com,
+ linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ mpe@ellerman.id.au, ltcgcw@linux.vnet.ibm.com, dtsen@us.ibm.com
+References: <20240514173835.4814-1-dtsen@linux.ibm.com>
+ <20240514173835.4814-2-dtsen@linux.ibm.com>
+Content-Language: en-US
+From: Andy Polyakov <appro@cryptogams.org>
+In-Reply-To: <20240514173835.4814-2-dtsen@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+Hi,
 
-* Ard Biesheuvel <ardb@kernel.org> wrote:
+Couple of remarks inline.
 
-> On Tue, 14 May 2024 at 03:03, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > On Sun, 12 May 2024 at 23:51, Ingo Molnar <mingo@kernel.org> wrote:
-> > >
-> > >  - Re-introduce a bootloader quirk wrt. CR4 handling
-> >
-> > I've pulled this, but shouldn't the compressed boot also just stop
-> > setting the G flag that it didn't understand?
-> >
-> 
-> I agree. But not setting CR4 to a known value is what caused the
-> regression, and that could cause other problems down the road, so
-> fixing it was arguably more important.
-> 
-> More than happy to send another patch to clear the G bit from the page
-> table entries created by the decompressor, but at this point, it
-> shouldn't make a difference.
+> +# [1] https://www.openssl.org/~appro/cryptogams/
 
-Please - we shouldn't be creating page table entries with random G bits set 
-in them. The boot code should at least pretend to maintain the illusion 
-that it knows what it's doing. ;-)
+https://github.com/dot-asm/cryptogams/ is arguably better reference.
 
-Thanks,
+> +SYM_FUNC_START(x25519_fe51_mul)
+> +.align	5
 
-	Ingo
+The goal is to align the label, not the first instruction after the 
+directive. It's not a problem in this spot, in the beginning of the 
+module that is, but further below it's likely to inject redundant nops 
+between the label and meaningful code. But since the directive in 
+question is not position-sensitive one can resolve this by changing the 
+order of the directive and the SYM_FUNC_START macro.
+
+Cheers.
+
 
