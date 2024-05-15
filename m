@@ -1,139 +1,118 @@
-Return-Path: <linux-kernel+bounces-180441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 113C98C6EA0
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 00:26:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C99468C6EA2
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 00:27:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4325D1C21929
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 22:26:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AD4F1F20C16
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 22:27:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4C3615B986;
-	Wed, 15 May 2024 22:23:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 522D115B97C;
+	Wed, 15 May 2024 22:25:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mY9bkmPR"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=jrtc27.com header.i=@jrtc27.com header.b="kQTsj3Ej"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5230016D9D0
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 22:23:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E254315B55E
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 22:25:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715811828; cv=none; b=j/EmMwjjhLpPPu3kRdC1lVeLQYgAYpIOBObPuPcLWtYrq9qflM6LYcV9OMTwL3LUWo2v59/iX4t4MGqLDfx92rs4Le0gz9XbpZZMCfV9h6i9bPZEx8MJrOeXqFH6r2rHmmR9tGPC18RMudoHgQykTBuNpjxfFoi1AdScVSgAcWs=
+	t=1715811930; cv=none; b=nEoIHutlDxnw2cFCjuXYzw1FFNgS+k3gEiMayu/GVUNGN7v/0QMzuCDR6/67yrbzBgQgeGVzLnTSyb3S5vKIC7g1NC/c3SHrDjlZWG/CtIb1KCaUK7xM73eFH+QKxf9BV4fu4hfe+wECs/G927XBAa86fpF+I6sCc2VqrkADMhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715811828; c=relaxed/simple;
-	bh=qTA6gl03vEuZNwR+0yktOI8EhYVtmjYM4Gw1yRj+4sA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=l3D2PoveVTdul8cJ7Z5McI6ion60pdy+Gq/gVyqlbYQRg653PtIJ1aOHIQY5gvlfDlwU1wNhgstC4TtOte6d5UKzBL2jBnd7BsTKcrtLkN1xyWn/Nk9Zh5K6cIG0TBFKk5HjG04Nm5A+qYHB8/+1IHONKiEsYeBx8ruXVuUyalU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mY9bkmPR; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715811826; x=1747347826;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=qTA6gl03vEuZNwR+0yktOI8EhYVtmjYM4Gw1yRj+4sA=;
-  b=mY9bkmPRMdteDAVtziNFHiPZZNJ9SpVtJG/OUbnP8dXQuS3ZL10kIF8O
-   WINl+OaBUkxlBB2kINUeD5hzvtpd71vWxXapeaksyman/YJtkVF0vOA6M
-   xl4Vfd1ZOOFuK/iSkODUZeRw5bEw36vz0jpL7VtWXT1g4ROpBAMXHEN28
-   ySmfR8DpKGnVn06HZ/4TrUPr90nQJG98RCxoZlsXyYOOjP5n2trtrIoMi
-   xL56UIfcTjQWhgKlNnuTfEMPPu7tuAlsDERuIFYeMhqXdmdbOWlUW5jsH
-   Lnqfk2IQlA426t65gcYCsDbZngbXePoJPanWkVk3jzKKhu/ezZeYkZ7VB
-   w==;
-X-CSE-ConnectionGUID: 6xtp+7jJREiPDRzMlwnCUw==
-X-CSE-MsgGUID: CbNFrj17QsWT/Pzp8lg/pA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="15671749"
-X-IronPort-AV: E=Sophos;i="6.08,162,1712646000"; 
-   d="scan'208";a="15671749"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 15:23:37 -0700
-X-CSE-ConnectionGUID: gPDEvwLEQNusl5AbC9hXqw==
-X-CSE-MsgGUID: yyvEtaVQTBO97Tpx2we+jA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,162,1712646000"; 
-   d="scan'208";a="35989202"
-Received: from agluck-desk3.sc.intel.com ([172.25.222.105])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 15:23:37 -0700
-From: Tony Luck <tony.luck@intel.com>
-To: Fenghua Yu <fenghua.yu@intel.com>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
-	Peter Newman <peternewman@google.com>,
-	James Morse <james.morse@arm.com>,
-	Babu Moger <babu.moger@amd.com>,
-	Drew Fustini <dfustini@baylibre.com>,
-	Dave Martin <Dave.Martin@arm.com>
-Cc: x86@kernel.org,
-	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev,
-	Tony Luck <tony.luck@intel.com>
-Subject: [PATCH v18 17/17] x86/resctrl: Update documentation with Sub-NUMA cluster changes
-Date: Wed, 15 May 2024 15:23:25 -0700
-Message-ID: <20240515222326.74166-18-tony.luck@intel.com>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240515222326.74166-1-tony.luck@intel.com>
-References: <20240515222326.74166-1-tony.luck@intel.com>
+	s=arc-20240116; t=1715811930; c=relaxed/simple;
+	bh=BI857sayZDwQNSg5pPJ106rwXLFaEfhCLfpMtQ/x5oA=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=ZX8v/tNSBASlTPIorL0stwa74lCSOUvQ9LF/cvEJV9tUJxIVMWVWPWg16Mo++An00L8azcFLjqOEvco+/r9DkButYSV8CSkXVsD/7FoJt1sd3NQcKtfhPRIOtEtQt+bMSkAtRlM7B6Inyifbpa067IMSXrHqoabvbqa//Jfe45U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jrtc27.com; spf=pass smtp.mailfrom=jrtc27.com; dkim=pass (2048-bit key) header.d=jrtc27.com header.i=@jrtc27.com header.b=kQTsj3Ej; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jrtc27.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jrtc27.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42011507a57so34227655e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 15:25:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=jrtc27.com; s=gmail.jrtc27.user; t=1715811927; x=1716416727; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BI857sayZDwQNSg5pPJ106rwXLFaEfhCLfpMtQ/x5oA=;
+        b=kQTsj3EjTCl3kq435XZFvBqK524GVyd+rmqRw7H6+Zwga0Mf41bgh74EJv8ZbeFRyB
+         donfkAeMOuB/gSTDOOoX1Bdc38n7apmKQqgoBIdn55pwPwVQhfZE2QxT/jIYpl2eMkHm
+         zryG2nNWoX9IwjFaFmdEJLsg+AsndqKALdNEFxPYMxDVfwIpTglBJuvKStfeCRLuYWJs
+         ov5Jz+FQdpwMg62DyutUDgPaawOfxQlOKzM7nI4yW6PFA4nEYo35XoMwjnENDRZ4hpTM
+         py7yZo2rcNQFuR9kpLRiAiy5hxeCJyUub6X4VkZq/lGeSUarcJopRjmJEA3+RDQhozGJ
+         LbEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715811927; x=1716416727;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BI857sayZDwQNSg5pPJ106rwXLFaEfhCLfpMtQ/x5oA=;
+        b=JH3TnQNwPtrThPQmpOmoPtnvJi9GR3FVtYRhGiVO8wE2xGbvg8x5RqCitOd5IotI7u
+         cJTDBENaygpny5mUde4+HdtoE7vBroQzyLLJA6lXAFBP8SsGp4EV0P+tnCz/Js3bRoNN
+         n70uwUt61t7eKWj1SBcPzQmIr5hYO+9gC328ZHFUIBP9RqpP0V9i77X6l4wZNJv8UUHy
+         J5BC2K4eDQCdevZN3zFgjTDsnp+wFOGkiXo7I+ZcXnHGv3Mh5m9Gb/VsVZxIIi8nIknc
+         a6gzzZU5jlsy8U95YBLXb5I9udKLt4DurumSOcyL4uvfIodHp8sezXzUJJeIp5JMccJc
+         upUw==
+X-Forwarded-Encrypted: i=1; AJvYcCUzRxRotU4azdEnH6lQaCua3d4GceUNvY24yAZiWESZ9WOeSZ44bSiDqHthPyI9RUMaQXagStWT7hL1s/qPmfWVyVV+fWf5jAjq6Td4
+X-Gm-Message-State: AOJu0YxRLoQY+96DI3vCHMU3TrXo9exMpWCGeXFt1qdnkJgGsiQmgC6k
+	iFG+xs/mT+85Svd/z5hxWJr9QJYRnbGvHs6+YhhDhNDLe46Fe+85QCEc4mNVFO0=
+X-Google-Smtp-Source: AGHT+IENgjSLQxs5gKBtSC3SHE6IkKb3zYvJJgsyZKLJ07yLL95UOkkK/ds1ZAYyov1qy7vJDUKK1A==
+X-Received: by 2002:a05:600c:1d1c:b0:420:98d:e101 with SMTP id 5b1f17b1804b1-420098de3c7mr107812905e9.15.1715811927173;
+        Wed, 15 May 2024 15:25:27 -0700 (PDT)
+Received: from smtpclient.apple ([131.111.5.246])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42009eda143sm184412385e9.14.2024.05.15.15.25.26
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 15 May 2024 15:25:26 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
+Subject: Re: [PATCH 0/2] riscv: Allow vlenb to be probed from DT
+From: Jessica Clarke <jrtc27@jrtc27.com>
+In-Reply-To: <20240515-add_vlenb_to_dt-v1-0-4ebd7cba0aa1@rivosinc.com>
+Date: Wed, 15 May 2024 23:25:16 +0100
+Cc: Conor Dooley <conor@kernel.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>,
+ Palmer Dabbelt <palmer@sifive.com>,
+ linux-riscv <linux-riscv@lists.infradead.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>,
+ Conor Dooley <conor.dooley@microchip.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <A9EDD470-B8EC-4644-82A0-7444729EF885@jrtc27.com>
+References: <20240515-add_vlenb_to_dt-v1-0-4ebd7cba0aa1@rivosinc.com>
+To: Charlie Jenkins <charlie@rivosinc.com>
+X-Mailer: Apple Mail (2.3774.500.171.1.1)
 
-*** This patch needs updating for new files for monitoring ***
+On 15 May 2024, at 22:50, Charlie Jenkins <charlie@rivosinc.com> wrote:
+>=20
+> The kernel currently requires all harts to have the same value in the
+> vlenb csr that is present when a hart supports vector. In order to =
+read
+> this csr, the kernel needs to boot the hart. Adding vlenb to the DT =
+will
+> allow the kernel to detect the inconsistency early and not waste time
+> trying to boot harts that it doesn't support.
 
-With Sub-NUMA Cluster mode enabled the scope of monitoring resources is
-per-NODE instead of per-L3 cache. Suffixes of directories with "L3" in
-their name refer to Sub-NUMA nodes instead of L3 cache ids.
+That doesn=E2=80=99t seem sufficient justification to me. If it can be =
+read
+from the hardware, why should we have to put it in the FDT? The whole
+point of the FDT is to communicate the hardware configuration that
+isn=E2=80=99t otherwise discoverable.
 
-Users should be aware that SNC mode also affects the amount of L3 cache
-available for allocation within each SNC node.
+As for T-HEAD stuff, if they need it they can have a custom property.
+Though naively I=E2=80=99d assume there=E2=80=99s a way to avoid it =
+still...
 
-Signed-off-by: Tony Luck <tony.luck@intel.com>
----
- Documentation/arch/x86/resctrl.rst | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
-
-diff --git a/Documentation/arch/x86/resctrl.rst b/Documentation/arch/x86/resctrl.rst
-index 627e23869bca..401f6bfb4a3c 100644
---- a/Documentation/arch/x86/resctrl.rst
-+++ b/Documentation/arch/x86/resctrl.rst
-@@ -375,6 +375,10 @@ When monitoring is enabled all MON groups will also contain:
- 	all tasks in the group. In CTRL_MON groups these files provide
- 	the sum for all tasks in the CTRL_MON group and all tasks in
- 	MON groups. Please see example section for more details on usage.
-+	On systems with Sub-NUMA (SNC) cluster enabled there are extra
-+	directories for each node (located within the "mon_L3_XX" directory
-+	for the L3 cache they occupy). These are named "mon_sub_L3_YY"
-+	where "YY" is the node number.
- 
- "mon_hw_id":
- 	Available only with debug option. The identifier used by hardware
-@@ -484,6 +488,19 @@ if non-contiguous 1s value is supported. On a system with a 20-bit mask
- each bit represents 5% of the capacity of the cache. You could partition
- the cache into four equal parts with masks: 0x1f, 0x3e0, 0x7c00, 0xf8000.
- 
-+Notes on Sub-NUMA Cluster mode
-+==============================
-+When SNC mode is enabled, Linux may load balance tasks between Sub-NUMA
-+nodes much more readily than between regular NUMA nodes since the CPUs
-+on Sub-NUMA nodes share the same L3 cache and the system may report
-+the NUMA distance between Sub-NUMA nodes with a lower value than used
-+for regular NUMA nodes.
-+The top-level monitoring files in each "mon_L3_XX" directory provide
-+the sum of data across all SNC nodes sharing an L3 cache instance.
-+Users who bind tasks to the CPUs of a specific Sub-NUMA node can read
-+the "llc_occupancy", "mbm_total_bytes", and "mbm_local_bytes" in the
-+"mon_sub_L3_YY" directories to get node local data.
-+
- Memory bandwidth Allocation and monitoring
- ==========================================
- 
--- 
-2.44.0
+Jess
 
 
