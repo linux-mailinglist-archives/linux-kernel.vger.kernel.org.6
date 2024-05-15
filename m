@@ -1,243 +1,150 @@
-Return-Path: <linux-kernel+bounces-180325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C00628C6CF4
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 21:46:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BDC08C6CF6
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 21:48:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 727D928173A
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 19:46:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4309C284048
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 19:48:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B11A15ADAA;
-	Wed, 15 May 2024 19:46:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB58615ADB1;
+	Wed, 15 May 2024 19:48:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="gHUXpVaG"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="V+fuC2lD"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C5FC1591FD
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 19:46:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B045E3BBEA
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 19:48:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715802406; cv=none; b=q6uG1VUd45VGyXs4KtbMbJaDpDBwA22sMV/OiT143MEICGdyQal2xOAPS41KK3PYoNOCczLMl28m9/rKQe3818HzBNaj1qssdgT3czdkW8VKPT+ZacDj65yYu+UPDprdBro1SnknEIuPnoKY3bYDJJZ53KSD086pklNDQkJ1gWE=
+	t=1715802506; cv=none; b=hkRou3dQXwSuOAc9VwjxrGIOix4Ngp+3MXTmgt6TOnA1cbii+PY3S4bPrPpWbnkPtZDPY4pikvdhDPgYA+DKljEmBOttrhWdZu7W0YHj81Icc0qj1JhfwS4+hMd2A/hglRX0BX9WRvGjEt6LiDO6nVBpC7Ev+JvxjEFZ4Yzkko8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715802406; c=relaxed/simple;
-	bh=ZU0LLUkDKe4hotOeLQTX3xAre1998hxmgubDjgMnWPc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=vGL9rD/M3VamyriNS0hBm2cKCsMAhELDYbXC9+BP+/DQrjhKlrPMeyXxYBO+C4rjsMXmCiOn0MZyEYaIYwUgC3a5ULD2aXTET7WvIXMqgoZ3yyZH60cVsA69zgfHBYr3jNquGjNXzHbuy61GoTXJzPtgKBW7X8mOoH4EUeFFKqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=gHUXpVaG; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-43e13b87c4bso24028461cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 12:46:44 -0700 (PDT)
+	s=arc-20240116; t=1715802506; c=relaxed/simple;
+	bh=LhuG2prDzHD7FiRNOpEILqpVbpbUT/MhZyE+R28q/c8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=DBseLSBhk5txYsr+6yzl0+NQRl7ytg3xx+gQ95l5BsHphUGILvpGFl1BP5psVmlpnEe+rjEYicSf0e+WxTZ/LNfyNDW6jAOVFQvI1eBjYasi9sBCiz4kBQMfmZUVmVmAq2isF+m1NtSc9NDHoQNDEq0u6eQb5/kfBAdGXvMO58w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=V+fuC2lD; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-5e4df21f22dso5817884a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 12:48:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1715802403; x=1716407203; darn=vger.kernel.org;
-        h=in-reply-to:autocrypt:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+        d=google.com; s=20230601; t=1715802504; x=1716407304; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=x7lrpyJZDIKQ1ZPsRPsdZvzkOeU3j3oGtJvZRRaP4t4=;
-        b=gHUXpVaGMGyULpwMpgKNuLpo3UlYyeByBjy/XiMleV4lWhIapYF9cdN2MvI8J7oMVT
-         DPl7pVpNdGbKljpgBSRYFoTjOUvAp+7u/O0M6ZszEYzx4G0FM9a+GDx8MnJgY13vtoYf
-         AL6FlQ9AV7OjUACItcTbojspEcY+9i2GO72mc=
+        bh=DuXPEzGaaZtFfJIXFswfN/K4R/gxi6rRkUbBSTMNW4c=;
+        b=V+fuC2lDXDEeBH0nGI0lvrnAz5QO94zNYfeS15bBA/HXogEqNYvitlHEGIUmURf2gu
+         6dOFSVWqiNFXzLFHG74dApKTvQ8dASVtIVUGn31af1wBewjT0aSpAL2tuB4aWTx3meWe
+         SPbRIDSyM4JzyhCFajjo2ek7WykbbapOqIftCpmVfnMWVEII3mMqQfxf/aLi5z8Bksrw
+         mNlle9vNc490eYHXLr4yvIuS1CAJeDthGHZCrzS9blx4BITfvGiqFZfyGb9S0UBAcdLO
+         5OYkEdAJaWeMnrk+5WeThmQLLXzkk0TtapjFnC3DW0Cx+3hUNIO2LqUoUoF7y+F3FfRA
+         ufGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715802403; x=1716407203;
-        h=in-reply-to:autocrypt:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+        d=1e100.net; s=20230601; t=1715802504; x=1716407304;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=x7lrpyJZDIKQ1ZPsRPsdZvzkOeU3j3oGtJvZRRaP4t4=;
-        b=Z8O5TjAN5tT1uCFXIkyi01mg8hR4EBJNaQfeGqPSESLqr57UaOtROAgW79eEOTJLv1
-         DYAvM6CdwnrH9si5vWlkuniZO6aUEYUfQGQe3ViLoFpjeEDMon8999N9c6Zpiu3YJjbh
-         L4P48OHCDNiySNO0SnfYr0qXVfonjICVaNsIvZoYklFHu8XldKKTFUbSM+qusTWfzTyL
-         80J4wE5WC3X/vGBai9gZvYKz6BsMN6WUIWuAMs3U/zOcaTyeDnKElbqLNnfaefksC6Rp
-         EsEBYZm1YhKnU/8sbWxjh/llRODkSNnJcBNvqtaCUzoYzZHH8mnlwr1+oZJnaua9UCdU
-         G7yQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVcGouieME3SrunCfdsYAYhE1tcFSXBMg1uOrb5Wud/fcPIgyePF+nOdImNshKr4ommzZwroTfrcwDI/Qb9H7DCA39nppMkIdWfqPF3
-X-Gm-Message-State: AOJu0YyPlD63CKnPprh+BQ1ElXPbqA9OfRMdMHJWAcbQAUgSfkW76nFL
-	6vuv6H7fe5ZZDJbF8GkJAJpQ5nqceBcwkIhQDRO8VXyMnMA3Lyb2ApNvqZS0ng==
-X-Google-Smtp-Source: AGHT+IFa3ZvtWYsplJKKUaXqoALsHjWiqriF+fv4t5TW29YCRrWu3iYWNSkxxtEH6VMqyY1q920akA==
-X-Received: by 2002:ac8:590a:0:b0:43d:fc62:f0b4 with SMTP id d75a77b69052e-43dfdcd6ef2mr206002391cf.54.1715802403358;
-        Wed, 15 May 2024 12:46:43 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43df54b590csm87024181cf.13.2024.05.15.12.46.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 May 2024 12:46:42 -0700 (PDT)
-Message-ID: <8ef97b5d-2053-4051-b2da-6c2887c7b394@broadcom.com>
-Date: Wed, 15 May 2024 12:46:38 -0700
+        bh=DuXPEzGaaZtFfJIXFswfN/K4R/gxi6rRkUbBSTMNW4c=;
+        b=NTpYXCpzaJPhfUB2dezQ5FH5k6924r/EOsz1mSPtu7mVHyaqNAWddHEOv6lW/NFJC4
+         LiSjuuGvtKC8+Tf3AhO+1jLwaVOeQCc2PfhhW5ByNcfqejEmCZdlwBnJfCPM5tTpUDei
+         KwDTZuSF688OwgNVwTqEuwidpZ3psOe8fLNCqmBd5ASPELxQDb0ikQdDgDMnf6fGSEPA
+         DjKpfFH2BDbTlRjFH7y8hRM9OWsnno6EMdn1PJasNLqmHAugV9CMSsmU1m3dCGQLq0OC
+         LKgCKzD56WuwmV2Sn+wrO35Jy6EkVbPjQqi6qDjtKBULRfCdJsQBoA0cASrS4jU9z3C8
+         B8HA==
+X-Gm-Message-State: AOJu0YxBkT8EjzvLG9PTGrv6InoI8ZiamVGcRDcoL0Co+VFNOIrs3qvA
+	0K8v0/AEWeXZPQfj3VqH+bfh0972/o4w6mEkeAhMrS4qlJOr7R+/5WB6ltjJi6k5c6Sx8fGqyFQ
+	XyA==
+X-Google-Smtp-Source: AGHT+IHg+7nKgv1J+G75aQuiIGXRKnJ9zRrb6RNegMzgu94C/HSLmw+4P4o9YO+4q5fseUzQM8jw+bYFNOI=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a63:5a4b:0:b0:656:fe50:5c70 with SMTP id
+ 41be03b00d2f7-656fe505d64mr3712a12.4.1715802503735; Wed, 15 May 2024 12:48:23
+ -0700 (PDT)
+Date: Wed, 15 May 2024 12:48:22 -0700
+In-Reply-To: <77ae4629139784e7239ce7c03db2c2db730ab4e9.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ARM: Fix userspace enter on LPAE with
- CC_OPTIMIZE_FOR_SIZE=y
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
- Russell King <linux@armlinux.org.uk>,
- Linus Walleij <linus.walleij@linaro.org>,
- Catalin Marinas <catalin.marinas@arm.com>, Kees Cook
- <keescook@chromium.org>, Russell King <rmk+kernel@armlinux.org.uk>,
- Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
- Stefan Wahren <wahrenst@gmx.net>
-Cc: linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <200d273a83906a68a1c4a9298c415980737be811.1715781469.git.geert+renesas@glider.be>
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <200d273a83906a68a1c4a9298c415980737be811.1715781469.git.geert+renesas@glider.be>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000c81e1206188360b7"
+Mime-Version: 1.0
+References: <20240515005952.3410568-1-rick.p.edgecombe@intel.com>
+ <20240515005952.3410568-9-rick.p.edgecombe@intel.com> <ZkTWDfuYD-ThdYe6@google.com>
+ <f64c7da52a849cd9697b944769c200dfa3ee7db7.camel@intel.com>
+ <747192d5fe769ae5d28bbb6c701ee9be4ad09415.camel@intel.com>
+ <ZkTcbPowDSLVgGft@google.com> <de3cb02ae9e639f423ae47ef2fad1e89aa9dd3d8.camel@intel.com>
+ <ZkT4RC_l_F_9Rk-M@google.com> <77ae4629139784e7239ce7c03db2c2db730ab4e9.camel@intel.com>
+Message-ID: <ZkURaxF57kybgMm0@google.com>
+Subject: Re: [PATCH 08/16] KVM: x86/mmu: Bug the VM if kvm_zap_gfn_range() is
+ called for TDX
+From: Sean Christopherson <seanjc@google.com>
+To: Rick P Edgecombe <rick.p.edgecombe@intel.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "sagis@google.com" <sagis@google.com>, 
+	"isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>, Erdem Aktas <erdemaktas@google.com>, 
+	Yan Zhao <yan.y.zhao@intel.com>, "dmatlack@google.com" <dmatlack@google.com>, 
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "pbonzini@redhat.com" <pbonzini@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
---000000000000c81e1206188360b7
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+On Wed, May 15, 2024, Rick P Edgecombe wrote:
+> On Wed, 2024-05-15 at 11:09 -0700, Sean Christopherson wrote:
+> > On Wed, May 15, 2024, Rick P Edgecombe wrote:
+> > > On Wed, 2024-05-15 at 09:02 -0700, Sean Christopherson wrote:
+> > > > > Or most specifically, we only need this zapping if we *try* to ha=
+ve
+> > > > > consistent cache attributes between private and shared. In the
+> > > > > non-coherent DMA case we can't have them be consistent because TD=
+X
+> > > > > doesn't support changing the private memory in this way.
+> > > >=20
+> > > > Huh?=C2=A0 That makes no sense.=C2=A0 A physical page can't be simu=
+ltaneously mapped
+> > > > SHARED and PRIVATE, so there can't be meaningful cache attribute al=
+iasing
+> > > > between private and shared EPT entries.
+> > > >=20
+> > > > Trying to provide consistency for the GPA is like worrying about ha=
+ving
+> > > > matching PAT entires for the virtual address in two different proce=
+sses.
+> > >=20
+> > > No, not matching between the private and shared mappings of the same =
+page.
+> > > The
+> > > whole private memory will be WB, and the whole shared half will honor=
+ PAT.
+> >=20
+> > I'm still failing to see why that's at all interesting.=C2=A0 The non-c=
+oherent DMA
+> > trainwreck is all about KVM worrying about the guest and host having di=
+fferent
+> > memtypes for the same physical page.
+>=20
+> Ok. The split seemed a little odd and special. I'm not sure it's the most
+> interesting thing in the world, but there was some debate internally abou=
+t it.
+>=20
+> >=20
+> > If the host is accessing TDX private memory, we have far, far bigger pr=
+oblems
+> > than aliased memtypes.
+>=20
+> This wasn't the concern.
+>=20
+> > =C2=A0 And so the fact that TDX private memory is forced WB is
+> > interesting only to the guest, not KVM.
+>=20
+> It's just another little quirk in an already complicated solution. They t=
+hird
+> thing we discussed was somehow rejecting or not supporting non-coherent D=
+MA.
+> This seemed simpler than that.
 
-On 5/15/24 07:02, Geert Uytterhoeven wrote:
-> Booting an LPAE-enabled kernel built with CONFIG_CC_OPTIMIZE_FOR_SIZE=y
-> fails when starting userspace:
-> 
->      Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000004
->      CPU: 1 PID: 1 Comm: init Tainted: G        W        N 6.9.0-rc1-koelsch-00004-g7af5b901e847 #1930
->      Hardware name: Generic R-Car Gen2 (Flattened Device Tree)
->      Call trace:
->       unwind_backtrace from show_stack+0x10/0x14
->       show_stack from dump_stack_lvl+0x78/0xa8
->       dump_stack_lvl from panic+0x118/0x398
->       panic from do_exit+0x1ec/0x938
->       do_exit from sys_exit_group+0x0/0x10
->      ---[ end Kernel panic - not syncing: Attempted to kill init!  exitcode=0x00000004 ]---
-> 
-> Add the missing memory clobber to cpu_set_ttbcr(), as suggested by
-> Russell King.
-> 
-> Force inlining of uaccess_save_and_enable(), as suggested by Ard
-> Biesheuvel.
-> 
-> The latter fixes booting on Koelsch.
-> 
-> Fixes: 7af5b901e84743c6 ("ARM: 9358/2: Implement PAN for LPAE by TTBR0 page table walks disablement")
-> Closes: https://lore.kernel.org/r/CAMuHMdWTAJcZ9BReWNhpmsgkOzQxLNb5OhNYxzxv6D5TSh2fwQ@mail.gmail.com/
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
-
-
---000000000000c81e1206188360b7
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-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
-riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
-QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
-UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
-M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
-Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
-14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
-a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
-XzCCBVgwggRAoAMCAQICDBP8P9hKRVySg3Qv5DANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
-RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
-UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAxMjE4MTFaFw0yNTA5MTAxMjE4MTFaMIGW
-MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
-BgNVBAoTDUJyb2FkY29tIEluYy4xGTAXBgNVBAMTEEZsb3JpYW4gRmFpbmVsbGkxLDAqBgkqhkiG
-9w0BCQEWHWZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tMIIBIjANBgkqhkiG9w0BAQEFAAOC
-AQ8AMIIBCgKCAQEA+oi3jMmHltY4LMUy8Up5+1zjd1iSgUBXhwCJLj1GJQF+GwP8InemBbk5rjlC
-UwbQDeIlOfb8xGqHoQFGSW8p9V1XUw+cthISLkycex0AJ09ufePshLZygRLREU0H4ecNPMejxCte
-KdtB4COST4uhBkUCo9BSy1gkl8DJ8j/BQ1KNUx6oYe0CntRag+EnHv9TM9BeXBBLfmMRnWNhvOSk
-nSmRX0J3d9/G2A3FIC6WY2XnLW7eAZCQPa1Tz3n2B5BGOxwqhwKLGLNu2SRCPHwOdD6e0drURF7/
-Vax85/EqkVnFNlfxtZhS0ugx5gn2pta7bTdBm1IG4TX+A3B1G57rVwIDAQABo4IB3jCCAdowDgYD
-VR0PAQH/BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZCaHR0cDovL3NlY3Vy
-ZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAuY3J0MEEG
-CCsGAQUFBzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWdu
-MmNhMjAyMDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcCARYmaHR0cHM6Ly93
-d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNVHR8EQjBAMD6gPKA6
-hjhodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNy
-bDAoBgNVHREEITAfgR1mbG9yaWFuLmZhaW5lbGxpQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggr
-BgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQUUwwfJ6/F
-KL0fRdVROal/Lp4lAF0wDQYJKoZIhvcNAQELBQADggEBAKBgfteDc1mChZjKBY4xAplC6uXGyBrZ
-kNGap1mHJ+JngGzZCz+dDiHRQKGpXLxkHX0BvEDZLW6LGOJ83ImrW38YMOo3ZYnCYNHA9qDOakiw
-2s1RH00JOkO5SkYdwCHj4DB9B7KEnLatJtD8MBorvt+QxTuSh4ze96Jz3kEIoHMvwGFkgObWblsc
-3/YcLBmCgaWpZ3Ksev1vJPr5n8riG3/N4on8gO5qinmmr9Y7vGeuf5dmZrYMbnb+yCBalkUmZQwY
-NxADYvcRBA0ySL6sZpj8BIIhWiXiuusuBmt2Mak2eEv0xDbovE6Z6hYyl/ZnRadbgK/ClgbY3w+O
-AfUXEZ0xggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52
-LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgwT
-/D/YSkVckoN0L+QwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIFGHfvY18uVpSHg0
-W2sS1DzI3DEvIDN+pm7MwxaDGNUiMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcN
-AQkFMQ8XDTI0MDUxNTE5NDY0M1owaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZI
-AWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEH
-MAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQCa8SnGMU0hLeb43aFhbyzb53WIOAq9wXbQ
-UYpEpkPAfL9BXbCQyMQQe8KH2m4sVz1T+gxzqZBOv43qA9uUXKvVlklVLDHTSjkFW46queDEhtHa
-qyKe3AHRu2olnexFWKga2oYSbZHppFX1nDBv5dsnXQzAZvY1o0bW4mMbDMfJXqv5oEDnI2dOzb2b
-qtkscuOh1rqxvnPf/J/NjgjX+8V12WCrFBQhfsdny3+BMgM3XY8+EpX2OTp86EF4djKI0X/Hd/rk
-LGJCHAii4tGUeOdTvHgAUbPRpqqz28IXuWBcOWC55r0i9FqV0LiJfpjIFOt8D6bzUa0N9vj+lPl6
-59Rp
---000000000000c81e1206188360b7--
+Again, huh?  This has _nothing_ to do with non-coherent DMA.  Devices can't=
+ DMA
+into TDX private memory.
 
