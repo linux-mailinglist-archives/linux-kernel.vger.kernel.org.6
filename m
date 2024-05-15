@@ -1,173 +1,153 @@
-Return-Path: <linux-kernel+bounces-180144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 143A08C6AAE
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:34:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 400998C6AB3
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:34:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 436621C21450
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:34:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 710601C218C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:34:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E95421103;
-	Wed, 15 May 2024 16:34:03 +0000 (UTC)
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0514F1392;
-	Wed, 15 May 2024 16:33:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65DC9383BF;
+	Wed, 15 May 2024 16:34:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="HFuwoPQ5"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B590CA7A;
+	Wed, 15 May 2024 16:34:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715790842; cv=none; b=QCICXFolli57D4HWCrEKxUqPOfC5uNSF6tdvlryzblVHqIqXgqeZgxTF+crJ9ZDAy7MEAeuDb3tl44vkSRgP9/nIzNV1qy5nt2K6V4WkoR4XouDodNxPVlL6F41Cu4RFbMZjdUPMNg0mkLdy4MC5/Xxb7CYR0UnExV10jmeUy3o=
+	t=1715790851; cv=none; b=bK8RvIBWfXTMg58VXqLpF0Vx0PJagJeZAkHaU5gQnrrZiPn3v3sCyGSZJm0WRaSvix8dWgCCsXVcTIB+1LvjUtd1TDoTFwuu6PrekG9uyZXERJ6oTFghzQjZhvokhoGDDPp7xb8/3yJO3D00XQMAtxH4+30eJhzzEQTVPFIYNFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715790842; c=relaxed/simple;
-	bh=LstZVtS7mTOW34aC+wGMxQNmFlltAtZihtWnahDgL14=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=b11OlA3Opa0ykECHvka72HJrYz6dfIdcL7JNistCUaiDsS73XhYbGjz9bYFGzEyYBY2bevK7lAnu28+vLvWo+g+2c0AO8qpPyV2oDAHm8R7InPcnaxgPprQ9kFH+le100UF4RdQ+l/tlbJpzWSuTB/930AXwzAfR64SCIxOwUzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from i53875b5d.versanet.de ([83.135.91.93] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1s7HZD-00078Z-Sj; Wed, 15 May 2024 18:33:23 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Detlev Casanova <detlev.casanova@collabora.com>,
- Conor Dooley <conor@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Sandy Huang <hjc@rock-chips.com>,
- Andy Yan <andy.yan@rock-chips.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Heiko Stuebner <heiko.stuebner@cherry.de>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Dragan Simic <dsimic@manjaro.org>, Chris Morgan <macromorgan@hotmail.com>,
- Diederik de Haas <didi.debian@cknow.org>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 3/3] dt-bindings: display: vop2: Add VP clock resets
-Date: Wed, 15 May 2024 18:33:22 +0200
-Message-ID: <2182693.irdbgypaU6@diego>
-In-Reply-To: <20240515-risk-exes-13db315da6bb@spud>
-References:
- <20240514152328.21415-1-detlev.casanova@collabora.com>
- <20240514152328.21415-4-detlev.casanova@collabora.com>
- <20240515-risk-exes-13db315da6bb@spud>
+	s=arc-20240116; t=1715790851; c=relaxed/simple;
+	bh=GU6KJDrwVaAZGvd4YyiDXiCH4Cu0goHSX5Qv1cNq2nY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LhizJwOV+VEHVTu5VAFZuuUNFE3nU6frdw+R1z1yEsvhBBgoBakEUg+coTkd/Egn3x5D1vZjW5pUHZYOsycsGwPoRDQ3C8PZJqfwuy+tuvGZT4lyMjWkyT3lSvhFHJCHU8WOvLFfULtRnTv5nVduhG2PN75tEFJjKfU88lF/Xr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=HFuwoPQ5; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.137.186.190] (unknown [131.107.159.62])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 9CFD120BE54C;
+	Wed, 15 May 2024 09:34:09 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 9CFD120BE54C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1715790849;
+	bh=LgGoEoCHc+tmuUHwV72O4w5DS5evewRoGKEngQZTkQw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=HFuwoPQ5g1K3tnZKOH9/B5XNG9OpwxZJVSOTlMoZAY3YUVwYJWDUpZLViiDQtOLXM
+	 RF50tZekXZrLHIHIcY3x4azhgGO118LAatJ0iiSe91sxtFWwtf5g5PwaaOCZq6vrle
+	 74Dv+Hu/xVGAnFlpZ8lOpSayuYNe/006pxfc5wM8=
+Message-ID: <ea91140a-d0df-4efd-aef8-34f00b82cf74@linux.microsoft.com>
+Date: Wed, 15 May 2024 09:34:09 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 6/6] drivers/pci/hyperv/arm64: vPCI MSI IRQ domain from
+ DT
+To: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
+Cc: arnd@arndb.de, bhelgaas@google.com, bp@alien8.de,
+ catalin.marinas@arm.com, dave.hansen@linux.intel.com, decui@microsoft.com,
+ haiyangz@microsoft.com, hpa@zytor.com, kw@linux.com, kys@microsoft.com,
+ lenb@kernel.org, lpieralisi@kernel.org, mingo@redhat.com,
+ mhklinux@outlook.com, rafael@kernel.org, robh@kernel.org,
+ tglx@linutronix.de, wei.liu@kernel.org, will@kernel.org,
+ linux-acpi@vger.kernel.org, linux-arch@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, x86@kernel.org,
+ ssengar@microsoft.com, sunilmut@microsoft.com, vdso@hexbites.dev
+References: <20240514224508.212318-1-romank@linux.microsoft.com>
+ <20240514224508.212318-7-romank@linux.microsoft.com>
+ <20240515094820.GB22844@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+Content-Language: en-US
+From: Roman Kisel <romank@linux.microsoft.com>
+In-Reply-To: <20240515094820.GB22844@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Am Mittwoch, 15. Mai 2024, 18:19:29 CEST schrieb Conor Dooley:
-> On Tue, May 14, 2024 at 11:19:47AM -0400, Detlev Casanova wrote:
-> > Add the documentation for VOP2 video ports reset clocks.
-> > One reset can be set per video port.
-> > 
-> > Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+
+
+On 5/15/2024 2:48 AM, Saurabh Singh Sengar wrote:
+> On Tue, May 14, 2024 at 03:43:53PM -0700, Roman Kisel wrote:
+>> The hyperv-pci driver uses ACPI for MSI IRQ domain configuration
+>> on arm64 thereby it won't be able to do that in the VTL mode where
+>> only DeviceTree can be used.
+>>
+>> Update the hyperv-pci driver to discover interrupt configuration
+>> via DeviceTree.
 > 
-> Are these resets valid for all VOPs or just the one on 3588?
-
-Not in that form.
-I.e. rk3588 has 4 video-ports (0-3), while rk3568 has 3 (0-2).
-
-So the binding should take into account that rk3568 also has the
-SRST_VOP0 ... SRST_VOP2.
-
-
-Also, I guess we might not want to limit ourself to stuff we use?
-I.e. the new VOP-design is one block with multiple video-ports
-
-So for rk3568 I see
-#define SRST_A_VOP
-#define SRST_H_VOP
-#define SRST_VOP0
-#define SRST_VOP1
-#define SRST_VOP2
-
-similarly rk3588 has
-
-#define SRST_H_VOP
-#define SRST_A_VOP
-#define SRST_D_VOP0
-#define SRST_D_VOP1
-#define SRST_D_VOP2
-#define SRST_D_VOP3
-
-as generalized reset lines.
-
-
-
-
-
+> Subject prefix should be "PCI: hv:"
 > 
-> > ---
-> >  .../display/rockchip/rockchip-vop2.yaml       | 27 +++++++++++++++++++
-> >  1 file changed, 27 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/display/rockchip/rockchip-vop2.yaml b/Documentation/devicetree/bindings/display/rockchip/rockchip-vop2.yaml
-> > index 2531726af306b..941fd059498d4 100644
-> > --- a/Documentation/devicetree/bindings/display/rockchip/rockchip-vop2.yaml
-> > +++ b/Documentation/devicetree/bindings/display/rockchip/rockchip-vop2.yaml
-> > @@ -65,6 +65,22 @@ properties:
-> >        - const: dclk_vp3
-> >        - const: pclk_vop
-> >  
-> > +  resets:
-> > +    minItems: 3
-> > +    items:
-> > +      - description: Pixel clock reset for video port 0.
-> > +      - description: Pixel clock reset for video port 1.
-> > +      - description: Pixel clock reset for video port 2.
-> > +      - description: Pixel clock reset for video port 3.
-> > +
-> > +  reset-names:
-> > +    minItems: 3
-> > +    items:
-> > +      - const: dclk_vp0
-> > +      - const: dclk_vp1
-> > +      - const: dclk_vp2
-> > +      - const: dclk_vp3
-> > +
-> >    rockchip,grf:
-> >      $ref: /schemas/types.yaml#/definitions/phandle
-> >      description:
-> > @@ -128,6 +144,11 @@ allOf:
-> >          clock-names:
-> >            minItems: 7
-> >  
-> > +        resets:
-> > +          minItems: 4
-> > +        reset-names:
-> > +          minItems: 4
-> > +
-> >          ports:
-> >            required:
-> >              - port@0
-> > @@ -183,6 +204,12 @@ examples:
-> >                                "dclk_vp0",
-> >                                "dclk_vp1",
-> >                                "dclk_vp2";
-> > +                resets = <&cru SRST_VOP0>,
-> > +                         <&cru SRST_VOP1>,
-> > +                         <&cru SRST_VOP2>;
-> > +                reset-names = "dclk_vp0",
-> > +                              "dclk_vp1",
-> > +                              "dclk_vp2";
-> >                  power-domains = <&power RK3568_PD_VO>;
-> >                  iommus = <&vop_mmu>;
-> >                  vop_out: ports {
+Thanks!
+
+>>
+>> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
+>> ---
+>>   drivers/pci/controller/pci-hyperv.c | 13 ++++++++++---
+>>   include/linux/acpi.h                |  9 +++++++++
+>>   2 files changed, 19 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/pci/controller/pci-hyperv.c b/drivers/pci/controller/pci-hyperv.c
+>> index 1eaffff40b8d..ccc2b54206f4 100644
+>> --- a/drivers/pci/controller/pci-hyperv.c
+>> +++ b/drivers/pci/controller/pci-hyperv.c
+>> @@ -906,9 +906,16 @@ static int hv_pci_irqchip_init(void)
+>>   	 * way to ensure that all the corresponding devices are also gone and
+>>   	 * no interrupts will be generated.
+>>   	 */
+>> -	hv_msi_gic_irq_domain = acpi_irq_create_hierarchy(0, HV_PCI_MSI_SPI_NR,
+>> -							  fn, &hv_pci_domain_ops,
+>> -							  chip_data);
+>> +	if (acpi_disabled)
+>> +		hv_msi_gic_irq_domain = irq_domain_create_hierarchy(
+>> +			irq_find_matching_fwnode(fn, DOMAIN_BUS_ANY),
+>> +			0, HV_PCI_MSI_SPI_NR,
+>> +			fn, &hv_pci_domain_ops,
+>> +			chip_data);
+>> +	else
+>> +		hv_msi_gic_irq_domain = acpi_irq_create_hierarchy(0, HV_PCI_MSI_SPI_NR,
+>> +			fn, &hv_pci_domain_ops,
+>> +			chip_data);
 > 
+> Upto 100 characters per line are supported now, we can have less
+> line breaks.
+> 
+Fewer line breaks would make this look nicer, let me know if you had any 
+particular style in mind.
 
+>>   
+>>   	if (!hv_msi_gic_irq_domain) {
+>>   		pr_err("Failed to create Hyper-V arm64 vPCI MSI IRQ domain\n");
+>> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+>> index b7165e52b3c6..498cbb2c40a1 100644
+>> --- a/include/linux/acpi.h
+>> +++ b/include/linux/acpi.h
+>> @@ -1077,6 +1077,15 @@ static inline bool acpi_sleep_state_supported(u8 sleep_state)
+>>   	return false;
+>>   }
+>>   
+>> +static inline struct irq_domain *acpi_irq_create_hierarchy(unsigned int flags,
+>> +					     unsigned int size,
+>> +					     struct fwnode_handle *fwnode,
+>> +					     const struct irq_domain_ops *ops,
+>> +					     void *host_data)
+>> +{
+>> +	return NULL;
+>> +}
+>> +
+>>   #endif	/* !CONFIG_ACPI */
+>>   
+>>   extern void arch_post_acpi_subsys_init(void);
+>> -- 
+>> 2.45.0
+>>
 
-
-
+-- 
+Thank you,
+Roman
 
