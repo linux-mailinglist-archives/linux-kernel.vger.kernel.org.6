@@ -1,64 +1,64 @@
-Return-Path: <linux-kernel+bounces-179526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 708668C60E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:41:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC9548C60F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:44:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F96D1F212E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:41:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE1411C20C05
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:44:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F1FE40848;
-	Wed, 15 May 2024 06:41:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A08B4438F;
+	Wed, 15 May 2024 06:42:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="mBAkrGGB"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="AnV1AyPa"
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90F453C488
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 06:41:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5922945943;
+	Wed, 15 May 2024 06:42:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715755303; cv=none; b=rv+2tODS8FNihTivA1pRnU9w4Byb5VUHaCBtCNu21YyWGkOEJaJfIkDqfryHqGD684Z1eQDHTpMirMVbE0JbseT6J9kJQ6evh+1rergLCO8YA0/HPT3kIPE0dzJcAOPSn7QGpPig3ZU9NDbvEG1ABfXhlTsmOCLHNtycOWVmdvg=
+	t=1715755352; cv=none; b=HLDEqAQ1BS7Sr04PqJv0PuQvhfmXcMedZJSNRYmeJ9m2kA/VH9nVDBBWaHR5QHobCsl4IWL5OEgwHovJwQITPgC8Q2XpV/Cmp8eX7sd043r7I6rNR8LR+M3Y/uDLSP18OuA8dXssNPd6ZfK4xGrgjryVeFIadV8LUlcOE+MPbLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715755303; c=relaxed/simple;
-	bh=TJKrpcrkUxV5ZjMdLlFyHc7tyMjEZpRrDQ7anUNUSxE=;
+	s=arc-20240116; t=1715755352; c=relaxed/simple;
+	bh=iMlYr0Ewm77pHtY7jXSiKck36oYwConGZ1b9AGzBtP4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=AMVrJfGO97tlJAVfZyvoUqVzePPZ3ci2ZQP5yXMwmI1zCQAX/owH46rxPjjxWJCEgdCVoQ7asF/gYur00VKlFwCbuUok602zRyHm3c38/oQwMGkBaBR1UHv5OqviRVY7hAsegWMuhABPJB97zGerL+m+A550YMSHnIa7+1PD+3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=mBAkrGGB; arc=none smtp.client-ip=91.207.212.93
+	 In-Reply-To:Content-Type; b=VZ6GiBq+o3KmhjF23ki9h/p+oixOXd42/3/oT7dpXfznsx6L3EPnAnhuNTJy8n4ApL3MjPHVRfriCHMPKbxzpg28jo0xDOTiU1Taqx3ARS6iB9V40/AeoXW2AIpqMcQAg868UP0UOFG2LdvTrbxoFa9cCAqNdnMqEMqjk1ZLw7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=AnV1AyPa; arc=none smtp.client-ip=91.207.212.93
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44F056TZ012890;
-	Wed, 15 May 2024 08:40:49 +0200
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44F05PSM029365;
+	Wed, 15 May 2024 08:42:12 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
 	message-id:date:mime-version:subject:to:cc:references:from
 	:in-reply-to:content-type:content-transfer-encoding; s=
-	selector1; bh=grZoncYN/Ex6YBE6MWMsZg3hoMkBe2yN4z13XwIKYPs=; b=mB
-	AkrGGBA18gIrlZuvQmXNp+jkBFd/Ny1YXK83q03Q/JTRfAIhLZF24O0vxgOAthnz
-	YpgtayqGlszvQD0STawOg0Hs04I2Vzo0F0iA7jnyXrQsJ9fnHXT8yJD6FLzwscgy
-	GbNrcFpyE4Xm/XCLSWS/vlGQFi1JbTVcEhvm4ukk0HZPoiF9QwKywqdlQk+SGV6y
-	IQuC9c8UrCuCcLh0Z+teECj+Ntxa89V4xGcDuiHfxzfSiTOM5jRethunhQ9CV0Xo
-	DOb8x8dHxrT7QzrPjjPAhnOh+suDdQibNMgTBh9k9JpUQ1UkpX0LRR49ePaFAInK
-	4lDJGc4oC67xjHGoIFJw==
+	selector1; bh=/JIVYxvq9mCRglxSh2kdGVPT8AdWYNNp6KoGXjOv+kA=; b=An
+	V1AyPaWYFcTG7Q/oR5JcWofslVX6rydGTYF6mdkKpO+SzGiG0VDRj5MOUbry5yHL
+	y0ECkguVqBLqFqMeCxZhxgM75T4D5B/ioU81qZ9SILcNEX03dm3SK6sFIJ+ERDyd
+	XcK4PslZ8kg08z5l8/AYpS7sJ7e8pxd5CRIUq2wsrZXNJoKP/FgS2hGvFksGefNZ
+	g0hDlgY4M8xdZY4fNcHZvDkQw6fvgGLd6wUVMK2CtXEJ6XJBlcbqQwKvY4CG2V7U
+	EGls+Wnlu+vO0aCj9E8BYn+Ox2hMf1TsA+Rxlh2GXz2UvcJNqaykrOlcFBimDpL3
+	enZUVxQ808WhW+DLUSCA==
 Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3y1yjbe0u8-1
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3y2kmhv6ux-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 15 May 2024 08:40:48 +0200 (MEST)
+	Wed, 15 May 2024 08:42:12 +0200 (MEST)
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id C5C5740044;
-	Wed, 15 May 2024 08:40:41 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 52EA920DD93;
-	Wed, 15 May 2024 08:39:51 +0200 (CEST)
-Received: from [10.252.19.151] (10.252.19.151) by SHFDAG1NODE3.st.com
- (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id AD9214002D;
+	Wed, 15 May 2024 08:42:08 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 5DC2A20DD93;
+	Wed, 15 May 2024 08:41:19 +0200 (CEST)
+Received: from [10.48.87.209] (10.48.87.209) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Wed, 15 May
- 2024 08:39:50 +0200
-Message-ID: <b58c9073-02c6-4b5e-9082-fb11f388842d@foss.st.com>
-Date: Wed, 15 May 2024 08:39:49 +0200
+ 2024 08:41:18 +0200
+Message-ID: <73a9d56c-9e8d-4859-b3a2-dba1531b57e5@foss.st.com>
+Date: Wed, 15 May 2024 08:41:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,93 +66,58 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/stm: dsi: relax mode_valid clock tolerance
-To: Sean Nyekjaer <sean@geanix.com>,
-        Raphael Gallais-Pou
-	<raphael.gallais-pou@foss.st.com>,
-        Philippe Cornu
-	<philippe.cornu@foss.st.com>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Robert Foss
-	<rfoss@kernel.org>,
-        Antonio Borneo <antonio.borneo@foss.st.com>
-CC: <dri-devel@lists.freedesktop.org>,
+Subject: Re: [PATCH 2/4] clk: stm32mp2: use of STM32 access controller
+To: Stephen Boyd <sboyd@kernel.org>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Krzysztof
+ Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>
+CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20240322104732.2327060-1-sean@geanix.com>
- <lkrxoqhcitmvjvzslhx6mrdjaa6lpxtpmdjt7wwollm6z4h65q@jk5esjje6ppy>
+References: <20240419152723.570159-1-gabriel.fernandez@foss.st.com>
+ <20240419152723.570159-3-gabriel.fernandez@foss.st.com>
+ <332c845c17e24e2eb660e18680f2626f.sboyd@kernel.org>
 Content-Language: en-US
-From: Yannick FERTRE <yannick.fertre@foss.st.com>
-In-Reply-To: <lkrxoqhcitmvjvzslhx6mrdjaa6lpxtpmdjt7wwollm6z4h65q@jk5esjje6ppy>
+From: Gabriel FERNANDEZ <gabriel.fernandez@foss.st.com>
+In-Reply-To: <332c845c17e24e2eb660e18680f2626f.sboyd@kernel.org>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE3.st.com
- (10.75.129.71)
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
  definitions=2024-05-15_02,2024-05-14_01,2023-05-22_02
 
-Hi Sean,
 
-thanks for your patch.
-
-Tested-by: Yannick Fertre <yannick.fertre@foss.st.com>
-
-I think that a helper could be useful in simplifying this part.
-This might be reworked when a new helper will be implemented.
-
-Best regards
-
-
-On 4/22/24 16:05, Sean Nyekjaer wrote:
-> On Fri, Mar 22, 2024 at 11:47:31AM +0100, Sean Nyekjaer wrote:
->> When using the DSI interface via DSI2LVDS bridge, it seems a bit harsh
->> to reguire the requested and the actual px clock to be within
->> 50Hz. A typical LVDS display requires the px clock to be within +-10%.
->>
->> In case for HDMI .5% tolerance is required.
->>
->> Fixes: e01356d18273 ("drm/stm: dsi: provide the implementation of mode_valid()")
->> Signed-off-by: Sean Nyekjaer <sean@geanix.com>
->> ---
-> Any feedback on this?
->
->>   drivers/gpu/drm/stm/dw_mipi_dsi-stm.c | 7 +++----
->>   1 file changed, 3 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/stm/dw_mipi_dsi-stm.c b/drivers/gpu/drm/stm/dw_mipi_dsi-stm.c
->> index d5f8c923d7bc..97936b0ef702 100644
->> --- a/drivers/gpu/drm/stm/dw_mipi_dsi-stm.c
->> +++ b/drivers/gpu/drm/stm/dw_mipi_dsi-stm.c
->> @@ -322,8 +322,6 @@ dw_mipi_dsi_phy_get_timing(void *priv_data, unsigned int lane_mbps,
->>   	return 0;
->>   }
+On 5/8/24 00:02, Stephen Boyd wrote:
+> Quoting gabriel.fernandez@foss.st.com (2024-04-19 08:27:21)
+>> diff --git a/drivers/clk/stm32/clk-stm32mp25.c b/drivers/clk/stm32/clk-stm32mp25.c
+>> index 210b75b39e50..a37ee9f707e3 100644
+>> --- a/drivers/clk/stm32/clk-stm32mp25.c
+>> +++ b/drivers/clk/stm32/clk-stm32mp25.c
+>> @@ -4,7 +4,9 @@
+>>    * Author: Gabriel Fernandez <gabriel.fernandez@foss.st.com> for STMicroelectronics.
+>>    */
 >>   
->> -#define CLK_TOLERANCE_HZ 50
->> -
->>   static enum drm_mode_status
->>   dw_mipi_dsi_stm_mode_valid(void *priv_data,
->>   			   const struct drm_display_mode *mode,
->> @@ -375,9 +373,10 @@ dw_mipi_dsi_stm_mode_valid(void *priv_data,
->>   		/*
->>   		 * Filter modes according to the clock value, particularly useful for
->>   		 * hdmi modes that require precise pixel clocks.
->> +		 * Check that px_clock is within .5% tolerance.
->>   		 */
->> -		if (px_clock_hz < target_px_clock_hz - CLK_TOLERANCE_HZ ||
->> -		    px_clock_hz > target_px_clock_hz + CLK_TOLERANCE_HZ)
->> +		if (px_clock_hz < mult_frac(target_px_clock_hz, 995, 1000) ||
->> +		    px_clock_hz > mult_frac(target_px_clock_hz, 1005, 1000))
->>   			return MODE_CLOCK_RANGE;
->>   
->>   		/* sync packets are codes as DSI short packets (4 bytes) */
->> -- 
->> 2.44.0
->>
+>> +#include <linux/bus/stm32_firewall_device.h>
+> I don't have this include. I either need a signed tag or this needs to
+> wait until next merge window.
+
+Sorry for the delay, i was off.
+
+I was based on tag next-20240419
+
+>>   #include <linux/clk-provider.h>
+>> +#include <linux/of_address.h>
+> What is this include for?
+
+yes #include <linux/io.h> is more appropriate.
+
 
