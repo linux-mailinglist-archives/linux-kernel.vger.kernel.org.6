@@ -1,160 +1,97 @@
-Return-Path: <linux-kernel+bounces-179971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 377548C6848
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:08:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BD548C684E
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:09:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40D0A1C20B59
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 14:08:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE2D51F21068
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 14:09:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BEDD13F43C;
-	Wed, 15 May 2024 14:07:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D18713F432;
+	Wed, 15 May 2024 14:09:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qdam2JMZ"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="NXUi7vH6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9201B6214D;
-	Wed, 15 May 2024 14:07:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6423557CA1;
+	Wed, 15 May 2024 14:09:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715782069; cv=none; b=IuMuQ61O6PoibkXYw+6K5c+U3h4o0X8h0mZRJB0n1o0gMUlvs12kaqwV4ShO5Rg+RjlTlldM8/0cyzMVu3kBlun+yVIGleWyu4y8HdqdTFxqiyMfi4fUkTyNJBc41nAqn2unIZ2TLmgZoNSlqs79vdzqweP2SnBkrH1oyhhRvdQ=
+	t=1715782160; cv=none; b=mzG9AsTwGm7DRAG9AOWn3QlNU/DCbyR+g5ktE3yLsMlkBqM5pD4aqwIw8aBM/KQZNVKSa5PIoCca+rTm+De8BYhF1jyOXCRx0lqKiajwZB80p2aX9+HiWooVBYcOALRViP0BWu8wJhSx97mFSr6fxVmYCH2GO9fTPxPsKEDdFwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715782069; c=relaxed/simple;
-	bh=5XK22oGF43aTBtYVtVevKA+9XL0Nm1J86+MOL1JE8cE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rSayo4PXb9fGWpWOUYsM3UY8foEJ+dEyRwC5wiCXngiLAbtunVTUnDkfJi0Pc5tU1YGF0/GzgliqMOPELDFn2C5lxSyyhIqAyrCflW80wp8pecTTnq2wQUy2hDawV5cYzv1lhx3yJ6kHUKDGZJVKwUS0fhU0GKPkfhvFxAGggQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qdam2JMZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70162C116B1;
-	Wed, 15 May 2024 14:07:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715782069;
-	bh=5XK22oGF43aTBtYVtVevKA+9XL0Nm1J86+MOL1JE8cE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Qdam2JMZWYlMg6fZG+OM1oyMX/91PgrGmn49nAz1gYci9A9PewiicfagGfN0hyfFv
-	 Xy9Sm0cKdUGaYFogJengnVdVQlK8JzvNmYgsipxVWfdDNwgcGTCTXfpBFbz7P57LS+
-	 kM9qU3t/u8n7fWGY0DciGbAKo+NbaK0Ih0op4Jfv4MYDwMCXulH2qbvuHFuek3uJIg
-	 +RCrQ9VNNfQshsE6ybhZm4jbpIJWKcALG3N+QSs8TTfsQfs31AhOVo4+s4OdwCtuhr
-	 otJJUh9soGqJo2VN0kUPnOPyZewV5AmS4k7yQelEuh8t67dNxAA7WcgLOCMByGQkqA
-	 WKAhytBBAoOFg==
-Message-ID: <4ae4d926-73f0-4f30-9d83-908a92046829@kernel.org>
-Date: Wed, 15 May 2024 16:07:43 +0200
+	s=arc-20240116; t=1715782160; c=relaxed/simple;
+	bh=m3ubuPGkIWjaq0e2Nny5BGf1VDtiMnclz4YCAR4yDug=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=my9fAy+8yiGSxIpZ9syZNyPEHpSfhqLnI+IaQkOE3rlJeDoGYYrr2GhyKmAyycJ2LYxS4tri7e7NQL8N2IbfsI7E+dKSdXpVsi6VdT13B5WJMhrpFyVsxZirWTKFXs4upmW+TFQB9S0IJF5uI4VQlvhturuCxC8edUojxKmBHpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=NXUi7vH6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9387FC116B1;
+	Wed, 15 May 2024 14:09:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1715782160;
+	bh=m3ubuPGkIWjaq0e2Nny5BGf1VDtiMnclz4YCAR4yDug=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NXUi7vH6RB+h6Wu+wdMVJrCWs6D6IFkD4Wrs1ZIjA0byVSiHQ0Ru2qEgGmoAAHYZP
+	 Sas+ALcxa7JAXPnSgQK/ezfTrBwTADmp3oEofHqBUt33L+hg4sUJBYVedMj6hnK6No
+	 v/7U3324M+0bnhFRzRT+tUFLDPX/wqZisXcR/MEw=
+Date: Wed, 15 May 2024 16:09:17 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Thorsten Leemhuis <regressions@leemhuis.info>
+Cc: "stable@vger.kernel.org" <stable@vger.kernel.org>,
+	Linux kernel regressions list <regressions@lists.linux.dev>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: three commits you might or might not want to pick up for 6.9.y
+Message-ID: <2024051501-dropkick-landmark-5db0@gregkh>
+References: <9e40badb-c4fa-4828-a4c5-3a170f624215@leemhuis.info>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATH net-next 1/2] dt-bindings: net: xilinx_gmii2rgmii: Add
- clock support
-To: Vineeth Karumanchi <vineeth.karumanchi@amd.com>, git@amd.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- harini.katakam@amd.com, andrew@lunn.ch, hkallweit1@gmail.com,
- linux@armlinux.org.uk, michal.simek@amd.com
-Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20240515094645.3691877-1-vineeth.karumanchi@amd.com>
- <20240515094645.3691877-2-vineeth.karumanchi@amd.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240515094645.3691877-2-vineeth.karumanchi@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9e40badb-c4fa-4828-a4c5-3a170f624215@leemhuis.info>
 
-On 15/05/2024 11:46, Vineeth Karumanchi wrote:
-> Add input clock support to gmii_to_rgmii IP.
-
-Why? Wasn't it there before?
-
-> Add "clocks" and "clock_names" bindings, "clkin" is the input clock name.
-
-Please use standard email subjects, so with the PATCH keyword in the
-title. `git format-patch` helps here to create proper versioned patches.
-Another useful tool is b4. Skipping the PATCH keyword makes filtering of
-emails more difficult thus making the review process less convenient.
-
-Don't write it by yourself....
-
-Please use subject prefixes matching the subsystem. You can get them for
-example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
-your patch is touching. For bindings, the preferred subjects are
-explained here:
-https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
-
+On Wed, May 15, 2024 at 03:49:30PM +0200, Thorsten Leemhuis wrote:
+> Hi Greg. Here are three reports for regressions introduced during the
+> 6.9 cycle that were not fixed for 6.9 for one reason or another, but are
+> fixed in mainline now. So they might be good candidates to pick up early
+> for 6.9.y -- or maybe not, not sure. You are the better judge here. I
+> just thought you might wanted to know about them.
 > 
-> Signed-off-by: Vineeth Karumanchi <vineeth.karumanchi@amd.com>
-> ---
->  .../devicetree/bindings/net/xlnx,gmii-to-rgmii.yaml      | 9 +++++++++
->  1 file changed, 9 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/net/xlnx,gmii-to-rgmii.yaml b/Documentation/devicetree/bindings/net/xlnx,gmii-to-rgmii.yaml
-> index 0f781dac6717..d84d13fb2c54 100644
-> --- a/Documentation/devicetree/bindings/net/xlnx,gmii-to-rgmii.yaml
-> +++ b/Documentation/devicetree/bindings/net/xlnx,gmii-to-rgmii.yaml
-> @@ -31,6 +31,13 @@ properties:
->    phy-handle:
->      $ref: ethernet-controller.yaml#/properties/phy-handle
->  
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  clock-names:
-> +    const: clkin
-> +    description: 200/375 MHz free-running clock is used as a input clock.
+> * net: Bluetooth: firmware loading problems with older firmware:
+> https://lore.kernel.org/lkml/20240401144424.1714-1-mike@fireburn.co.uk/
+> 
+> Fixed by 958cd6beab693f ("Bluetooth: btusb: Fix the patch for MT7920 the
+> affected to MT7921") – which likely should have gone into 6.9, but did
+> not due to lack of fixes: an stable tags:
+> https://lore.kernel.org/all/CABBYNZK1QWNHpmXUyne1Vmqqvy7csmivL7q7N2Mu=2fmrUV4jg@mail.gmail.com/
+> 
+> 
+> * leds/iwlwifi: hangs on boot:
+> https://lore.kernel.org/lkml/30f757e3-73c5-5473-c1f8-328bab98fd7d@candelatech.com/
+> 
+> Fixed by 3d913719df14c2 ("wifi: iwlwifi: Use request_module_nowait") –
+> not sure if that one is worth it, the regression might be an exotic
+> corner case.
+> 
+> 
+> * Ryzen 7840HS CPU single core never boosts to max frequency:
+> https://bugzilla.kernel.org/show_bug.cgi?id=218759
+> 
+> Fixed by bf202e654bfa57 ("cpufreq: amd-pstate: fix the highest frequency
+> issue which limits performance") – which was broken out of a patch-set
+> by the developers to send it in for 6.9, but then was only merged for
+> 6.10 by the maintainer.
 
-Nope, just write the description as items in clocks, instead of
-maxItems. And drop clock-names, not needed and kind of obvious.
+Nice, thanks for these!  I'll look at them after this round of -rcs is
+out.
 
-
-Best regards,
-Krzysztof
-
+greg k-h
 
