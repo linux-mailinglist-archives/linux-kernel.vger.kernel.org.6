@@ -1,105 +1,196 @@
-Return-Path: <linux-kernel+bounces-180138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA8738C6A8F
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:28:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 158398C6A94
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:29:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 907F21F2359D
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:28:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CC151C22422
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:29:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D10415665D;
-	Wed, 15 May 2024 16:28:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A053156677;
+	Wed, 15 May 2024 16:29:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Rhnems0K"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PvPLn1wK"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BEB5156652;
-	Wed, 15 May 2024 16:27:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E618113EFE5;
+	Wed, 15 May 2024 16:29:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715790480; cv=none; b=QzIhj0+OAuOJegSohwCF7z6G4ld9B3fKtq6VrtJolk0wckCd8TiwniIvDD6k1tiUpfEZ8U/bkUkd6G+w6uSU5mngabI1T7HiFYxqTX93agzb9PFHF07RfxVe0iCzaeoHLukfzZbCp3uLDcGyn8AeqHyETxdO0Smmdg8h5E6MVAA=
+	t=1715790583; cv=none; b=F24c/v2oBywfTw1nNjhPJx+IkWfBAb1a05g445B5B5xJAr4E+d9X5lwXC4+L0LVvkryx+dORSdcvQNHfUTLBcRwFdh6oENY2QQCkoDt5noqX7QCTjqx3G/qvS+UZgEwvYrKFdY3+PxDoUHxOzSTk+AYCGqNOfrORwiyJkCtDZKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715790480; c=relaxed/simple;
-	bh=jLTwDE2tM1RrSMLzY08Yl8r39TfnNu26qJx9fvP8zdw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j8GCwhrYlm1F8pbk/NywRuKzXhCDdp4iMdJtFvqT6KQWYOMpOKkJkhUXhmrHMS+fJCukro8DkXgdu78vi6FZUE6DT5175AjBmyK2zuND9YJqVzLoQAM4dHcSzEmbR1ywxRV+CGZyw/4c8DLNDOubIX6u7cp7GXaU5ZBFjxgITDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Rhnems0K; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715790479; x=1747326479;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=jLTwDE2tM1RrSMLzY08Yl8r39TfnNu26qJx9fvP8zdw=;
-  b=Rhnems0K+Y8G1c+SF81BL2A0zgZXaQ5NzoqO4FP2Y9gkDhREiufNM6yO
-   usMGQb9s8qzKteleSZMqaABsZY1+1ycHaQumbmINuXmXWIsD6Izq0J6Cc
-   aYQPTNuDb0rlq8ocDxUW0Qmi8s7JE/IlwCEQbEa1uylq5ld35KQ6IGDAC
-   ck7kfYPB2kelbJq4r4hijNQqN4o20eKeIZ6uGOOv5XZcXJ2k6Joujg/pg
-   HECrysUuse996a6lms9WrCCorZ14bE+okzJfW4KJb+58mNQ4F3YvpDHld
-   C9Jvq3wTrVWvIkigx9y0DuUDJKdvdwKDJ86PrH0YU+eHu7aGPexcsN5A5
-   w==;
-X-CSE-ConnectionGUID: 1EMRilOWT5+Huc2M3oodRQ==
-X-CSE-MsgGUID: bYfVUZH2RY2n8pCdQ3B/Hg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="29343176"
-X-IronPort-AV: E=Sophos;i="6.08,162,1712646000"; 
-   d="scan'208";a="29343176"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 09:27:58 -0700
-X-CSE-ConnectionGUID: SIbQWgwTQyusvYfSkXdnZw==
-X-CSE-MsgGUID: n1X5JlgXRmaFH7/gG0TZhw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,162,1712646000"; 
-   d="scan'208";a="68571500"
-Received: from aalamats-mobl1.amr.corp.intel.com (HELO desk) ([10.209.18.14])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 09:27:57 -0700
-Date: Wed, 15 May 2024 09:27:47 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@intel.com>, Kalle Valo <kvalo@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>, x86@kernel.org,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	regressions@lists.linux.dev,
-	Jeff Johnson <quic_jjohnson@quicinc.com>,
-	Daniel Sneddon <daniel.sneddon@linux.intel.com>
-Subject: Re: [regression] suspend stress test stalls within 30 minutes
-Message-ID: <20240515162747.6shmaoelc4mt7nro@desk>
-References: <87o79cjjik.fsf@kernel.org>
- <20240511184847.GCZj-9j2sh1Akpt9iS@fat_crate.local>
- <20240511184945.GDZj-9yaOEWqf1ng8u@fat_crate.local>
- <87h6f4jdrq.fsf@kernel.org>
- <878r0djxgc.fsf@kernel.org>
- <874jb0jzx5.fsf@kernel.org>
- <feaefaae-e25b-4a48-b6be-e20054f2c8df@intel.com>
- <20240515072231.z3wlyoblyc34ldmr@desk>
- <529C9374-DA6F-49C8-9B32-91741800F8E4@alien8.de>
+	s=arc-20240116; t=1715790583; c=relaxed/simple;
+	bh=rBBC+aSahEmVK7ZPwrfWO9sJBrFh5xxG85dkqntLIq8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Le4iUkKVIlE8V44OKta/dyxXZiNE5ffXPwU/E3+BzkOEhixb7SWLGvGZ7nlgfHov1dy7JZAPyaLgPucCUSNU+iQPsISKwNsr0a59ZIx5zB4imehyO04V9wjHLnhyA5UGIT4suZoaXw4mcqhdlWp7qlAB6G1nBmmGipwIncqXsWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PvPLn1wK; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a59a9d66a51so189768266b.2;
+        Wed, 15 May 2024 09:29:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715790580; x=1716395380; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=rBBC+aSahEmVK7ZPwrfWO9sJBrFh5xxG85dkqntLIq8=;
+        b=PvPLn1wKsSO9PJVvmVG+2WmNPx8vq5hWDU4auhlA+p075eYdXAfaLq0cSh8ebRZQEX
+         aU67e6aD63RAaQndV5fDagv90+iSY8BfRlnBJmUqnwnWjKPUahwuP5RjL8s7OYIx05QK
+         9avF+sslYmvsjgzJExtf0LSnWgG/mi6DM5647Ap7i1pjR963CjiV5msa9zCEd3Ix7Xtn
+         0dCA/fK3+7pEYbmW4WVVEFR0dXHF6a2ZehfE84xM57TOgv/0NUPbtk9sOzDFVE4PeBSa
+         rDrQXL7Ub1qlxkaBec/xZQTgJJ27FofvkLgG9I88Om8C+qLCj1MAwfRTpByASTC0/vEY
+         9G7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715790580; x=1716395380;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rBBC+aSahEmVK7ZPwrfWO9sJBrFh5xxG85dkqntLIq8=;
+        b=H4HBUuHVP6LLL7XYQYagi8vCAdSGiYDt9YJk/Rnvm5Z88H5wbDcq3HQkR1XRled9mq
+         x4/3f5+rR7HEXUzxdnPeff39/40A7VTg03YCYiaO37NvIGV+2IjhdYL0BRrQMU/x2csv
+         eGmE40WISuC93cCeqbHcroCJ1fU836LuZgxBtVOFEZiNZ2txt9pBdxTUBia+PLN5zZe6
+         5/4M0+xhL//ObCGfE3k1F64nen7ArzaKl/Z6OtJB06I2PXV6yODckxJTc/SEzoDY7zpL
+         4fyzFjlkVDzIRhVTdb2g6cEWD5UVZTmTq6wIOWe4TtWeU9wC9g/wxWBjARD6Y/I+nkrm
+         4ULA==
+X-Forwarded-Encrypted: i=1; AJvYcCUTmdvU/A3yTrG2z3HqinXdKMMC9Gavd6G45mqrAWtG03M9llrDCwUdw5gTiGV5cSPzYg3SX6DivBAwEjgvlUTAiGSaeJZh19HHPokckzyCFA33kuK8V+oe5yBcOUC2ETSgjnP9Y/M/IM6tysIqCNPmosBIAvDe8Y8cy/LYVIpU37xd3fLO5R/5RD4Z1lZwlLeJHORpzbqt
+X-Gm-Message-State: AOJu0Yy3+sQg2e9qrUe4P+mNXvGZzTEx/Reqi9W3KwzuWA7kE//A4Hyu
+	Ydk++98GubBj37aM8ppIrhNUREXDiFqdCFe2lsBX7dXbsMJEk750
+X-Google-Smtp-Source: AGHT+IFKimaUstziNEwfRQmnoURBuwCag4JfaSU65VBAInR3zjN+zSk8n2vTRLiJ26j9RrK4poO98A==
+X-Received: by 2002:a17:906:5a5a:b0:a5a:34ae:10ea with SMTP id a640c23a62f3a-a5a34ae118emr924333366b.76.1715790579864;
+        Wed, 15 May 2024 09:29:39 -0700 (PDT)
+Received: from [192.168.10.8] (31-10-206-125.static.upc.ch. [31.10.206.125])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17894d57sm881641966b.73.2024.05.15.09.29.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 May 2024 09:29:39 -0700 (PDT)
+Message-ID: <11e4ff07ad6c0e9077326cf288665922ccfc0afd.camel@gmail.com>
+Subject: Re: [PATCH v5] can: mcp251xfd: fix infinite loop when xmit fails
+From: Vitor Soares <ivitro@gmail.com>
+To: Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Thomas Kopp
+ <thomas.kopp@microchip.com>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>, Vitor Soares <vitor.soares@toradex.com>,
+ linux-can@vger.kernel.org,  netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Date: Wed, 15 May 2024 17:29:38 +0100
+In-Reply-To: <20240515-athletic-sensible-swine-4e7692-mkl@pengutronix.de>
+References: <20240514105822.99986-1-ivitro@gmail.com>
+	 <20240514-corgi-of-marvelous-peace-968f5c-mkl@pengutronix.de>
+	 <465a2ddb222beed7c90b36c523633fc5648715bb.camel@gmail.com>
+	 <20240515-athletic-sensible-swine-4e7692-mkl@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <529C9374-DA6F-49C8-9B32-91741800F8E4@alien8.de>
 
-On Wed, May 15, 2024 at 09:44:42AM +0200, Borislav Petkov wrote:
-> On May 15, 2024 9:22:31 AM GMT+02:00, Pawan Gupta <pawan.kumar.gupta@linux.intel.com> wrote:
-> > Other interesting thing to try is cmdline
-> >"dis_ucode_ldr".
-> 
-> Right, is his microcode revision 0xf4 the right one for that model?
+On Wed, 2024-05-15 at 13:12 +0200, Marc Kleine-Budde wrote:
+> On 14.05.2024 15:34:01, Vitor Soares wrote:
+> > > > +void mcp251xfd_tx_obj_write_sync(struct work_struct *ws)
+> > > > +{
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct mcp251xfd_priv *priv =
+=3D container_of(ws, struct
+> > > > mcp251xfd_priv,
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 tx_work);
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct mcp251xfd_tx_obj *tx_o=
+bj =3D priv->tx_work_obj;
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct mcp251xfd_tx_ring *tx_=
+ring =3D priv->tx;
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int err;
+> > > > +
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 err =3D spi_sync(priv->spi, &=
+tx_obj->msg);
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (err)
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 mcp251xfd_tx_failure_drop(priv, tx_ring, err);
+> > > > +
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 priv->tx_work_obj =3D NULL;
+> > >=20
+> > > Race condition:
+> > > - after spi_sync() the CAN frame is send
+> > > - after the TX complete IRQ the TX queue is restarted
+> > > - the xmit handler might get BUSY
+> > > - fill the tx_work_obj again
+>=20
+> You can avoid the race condition by moving "priv->tx_work_obj =3D NULL;"
+> in front of the "spi_sync();". Right?
+>=20
+> > > > +}
+> > > > +
+> > > > =C2=A0static int mcp251xfd_tx_obj_write(const struct mcp251xfd_priv=
+ *priv,
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct mcp251xfd_=
+tx_obj *tx_obj)
+> > > > =C2=A0{
+> > > > @@ -175,7 +210,7 @@ netdev_tx_t mcp251xfd_start_xmit(struct sk_buff
+> > > > *skb,
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (can_dev_dropped_skb(=
+ndev, skb))
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 return NETDEV_TX_OK;
+> > > > =C2=A0
+> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (mcp251xfd_tx_busy(priv, t=
+x_ring))
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (mcp251xfd_tx_busy(priv, t=
+x_ring) || priv->tx_work_obj)
+> > >=20
+> > > This should not happen, but better save than sorry.
+> >=20
+> > As there is the race condition you mentioned above, on this condition:
+> > priv->tx_work_obj =3D tx_obj --> xmit will return NETDEV_TX_BUSY
+> >=20
+> > or
+> >=20
+> > priv->tx_work_obj =3D NULL --> It goes through the rest of the code or
+> > the workqueue may sleep after setting tx_work_obj to NULL. Should I
+> > use work_busy() here instead or do you have another suggestion?
+>=20
+> Yes, introduce mcp251xfd_work_busy().
+>=20
 
-0xf4 microcode is not the latest one, the latest is 0xf8:
+I'll implement it.
 
-https://github.com/intel/Intel-Linux-Processor-Microcode-Data-Files/blob/main/intel-ucode/06-9e-09
+> I'm not sure what happens if the xmit is called between the
+> "priv->tx_work_obj =3D NULL" and the end of the work. Will queue_work()
+> return false, as the queue is still running?
 
-Kalle, can you please try with 0xf8 and see if the issue is still present?
+From the test I did so far, my understanding is the following:
+
+If mcp251xfd_tx_obj_write doesn't fail, everything is OK.
+
+if mcp251xfd_tx_obj_write fails with EBUSY=20
+ - stop netif queue
+ - fill the tx_work_obj
+ - start worker
+
+queue_work() doesn't return false even when work_busy() =3D true.=20
+ - xmit handler return, and wait netif_wake_queue()
+ - the work handler waits until the previous job gets done before starting =
+the=20
+next one.
+ - after the TX completes IRQ, the TX queue is restarted
+
+If the TX queue is restarted immediately after queue_work(), tx_work_obj is
+filled, making the xmit handler return NETDEV_TX_BUSY.
+
+The tests were done with a delay after priv->tx_work_obj =3D NULL.
+
+
+Best regards,
+Vitor Soares
 
