@@ -1,116 +1,185 @@
-Return-Path: <linux-kernel+bounces-180342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A969F8C6D3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 22:29:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77DB58C6D53
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 22:35:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97CB1B232A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 20:29:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AFDA1C221DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 20:35:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9054A15B0E3;
-	Wed, 15 May 2024 20:29:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04B4B15B542;
+	Wed, 15 May 2024 20:35:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="GHzWuSOl"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dDClOATh"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC28C3219F
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 20:29:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A0615B14E;
+	Wed, 15 May 2024 20:35:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715804973; cv=none; b=SoyfGFUwQdS6ZIFBYMUoZYjUkCJNTIfVYKrHveg90RstT6dBtcOu4MtGTfB9KYfxhGRvQb/CnHrkmumuIYFMU74JzETvqCanfRf1RbhEWGjmliqhU5ShFQMAxr+9069GgaP8wpxb2Wpy/TKUHMtpH+NNVfocfxbTjRrKWP+6WD4=
+	t=1715805333; cv=none; b=aDoGSUBhGVFsmMgQpyuBga88oIcZzG37SgXctVoksmNYDzVUkjBTxbedxDactg+Z5nX5gDXETFa0LvEiugsu1w2R8ZZ9IBJJmTEw79FXgV7ZcG8mmWsjrNhd2G6rR6PdMJrbpW6/ysLkVNkE5LvXRSZRt9CzC4Sh8TdwP5o1g9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715804973; c=relaxed/simple;
-	bh=JcsUVdV/cLE3Uz80yLif+S+bHleZ4fbqQSw7wPa4nvY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X7IqAHhZxnaQ56vZmVTu8LyfJZNH0e0iJxprBUi1kSbsrqmHsNuBJ3WnmzxZqguUACVjSibvRPGbYd6E3QUkJGM4cGw13DdUvN/dYCFQEFmuwm4Gca3LguqM1ByAWEHHpbMi/Ov4Mhl2CJ2O4LVbwa8xMLknQK/NWKfNmm8rPGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=GHzWuSOl; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52388d9ca98so2926660e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 13:29:31 -0700 (PDT)
+	s=arc-20240116; t=1715805333; c=relaxed/simple;
+	bh=VbGJP2NaAz4tBqRFEIPiguZVuuL1Evp7KZQ6dB94Z3Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bWOIwOyVLfjxwlkgZPXom/ZHBuFarYUqkF1lwLfZANos2BvEhfuZdOhlBe/BsKtVYqy8pCQPmuJdbVwhZxgP/zZEsX4BRCsMSgN18ueGWMb5GGRXOAp9T/6tPID0e0uUnwnttgzt5YJnjlTRU6tsyp/eR7i6NulN7QAnm2VqAQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dDClOATh; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-6f4ed9dc7beso3257313b3a.1;
+        Wed, 15 May 2024 13:35:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1715804970; x=1716409770; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=HySmuUBRFJcyBMiUjWtXa9eokDnDTjSCJ7VGY9yEOOE=;
-        b=GHzWuSOlNsTbWthId/21pHZVYOY7cepZzd3g8s7aRMMuFZWZ6/oSQKslXO09uohjrt
-         tJkIiOW3xqagIFc+YWs/HJXF9MHBjMSx1aJgYhEq7ZAlLL3+IPExCmlmV7+uCaEQaGW9
-         807xwXKpBxvrKEVjMnSJ343V7HknrgLZjGbfk=
+        d=gmail.com; s=20230601; t=1715805331; x=1716410131; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EhDrIIYuqrWkc8JCUvRQERr8uFUaepc3V2Gr+6xnLX4=;
+        b=dDClOATh6LxoRt6euC9hn3ObXHpBScNM6Qhj3zA04Lq/0Dj/1P/cLca3hRCFPy8KQP
+         n/5q89DZrmMws50grmEXZfy7FJ08OjM1KPiNK/O3B07IseNh1TEfj9G4CmmmryDTR0Yr
+         v0KqnYSRCp7t6CVvKlublPtf7B+Z19JFsVXB/gbdqmdako4Ve5I6Ob1UVv8qwABYAwn2
+         eurWwCj12GPsu3t1SwGgLnSj79f/RSN92577pP+2l/JxPKFNaZ/wtE6hHsP0bKxF9+iA
+         wPfMdqc+lAGGeDkIMDkVBBQsqh0fJrBwrrcRZ7Jzz2IfIpQbXkvnoz4HYvY8QgtTqWY0
+         R2lQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715804970; x=1716409770;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1715805331; x=1716410131;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=HySmuUBRFJcyBMiUjWtXa9eokDnDTjSCJ7VGY9yEOOE=;
-        b=qjeUjuRxDiwklrc75frLbZJvYwWeTjAws4m17jqxjiiqn+Xt8KHAyVHLAFbxqlH6fi
-         KzthvUx6IUDrQsaUedBcvC7Vc5X+UvHPWF2HuYpOKLA/HTyo+/zAmXYfiMkoY1rPBvCS
-         bnNriRcMhOycBRUxpI0bV5bmjYKkF0D5VA8+bx6J40kdYMFAvFOQwojn0U3g9Nz5cLrX
-         121vZSAG5fhX2jjTB7zoTBBpCPRXAhxVtfMpu1jlxLK8yhN9YV4bIlvLnU5CukX5wEta
-         bkMqdz2RyHSfzOO5MYvwX/ubO7V4/nWQPs03BrUk1+KygLZbsR2rwRyegKbl/V0CILwc
-         8vHw==
-X-Forwarded-Encrypted: i=1; AJvYcCVTv14kBHMHEK/ybpNwVr0M8SFeFZbcrZd+H9e6nfALtfawwruIjpFjctNtiilg60o31xGyOYV+eWqNa2j1wl9IJshfPr/R6bJOHDgS
-X-Gm-Message-State: AOJu0YwnYVriCG4iGXtZdac40wvomZcNqyZGvhNKn73rVmfbXeVJJYoi
-	qF9/oZ5WECsTVUk3WkbHjogLsGA3/bh0U1+BE8xaHPk4qPdBEM+g1dqJmvnw7nlTnizKpBZiBBy
-	LDmDrsg==
-X-Google-Smtp-Source: AGHT+IHIJD2Z2LmuCsoeVZl1vHCZg54dr3ByuC5eNgdpR7xteIavWDMMWkEKKcpCnuEFpJY7yxrl7w==
-X-Received: by 2002:a05:6512:3c9a:b0:521:7846:69d3 with SMTP id 2adb3069b0e04-5221027858amr17430183e87.55.1715804969914;
-        Wed, 15 May 2024 13:29:29 -0700 (PDT)
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com. [209.85.128.52])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a1781d294sm894981866b.28.2024.05.15.13.29.29
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 May 2024 13:29:29 -0700 (PDT)
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-41f9ce16ed8so72273885e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 13:29:29 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW1vMgqdMcvG1MRmptL1S6gkd5AkDiyL2YO35krJJK3XDW5d5bZBcCOck/308Rz9kGiRh3qp6e70PMhdJQ+8n+zF0VZiITU7goOtogu
-X-Received: by 2002:a5d:5549:0:b0:351:c68e:48c5 with SMTP id
- ffacd0b85a97d-351c68e4aabmr5614302f8f.29.1715804968926; Wed, 15 May 2024
- 13:29:28 -0700 (PDT)
+        bh=EhDrIIYuqrWkc8JCUvRQERr8uFUaepc3V2Gr+6xnLX4=;
+        b=BM+WTbNQkqKsDceKrXrdpPZR6ytkd+n3CR8sFuSaWGTlpsL2fXifraJ+TDVAbcYRlr
+         gDhLIlLXYFYziOPgOV/kLceptyyxffW0Xfuf+XMVr6kqE2lacHYbyf62kizHBM94dpuj
+         GmexUXEvGE8UsjCQQUXtck52pLWU3KknONAvRjKwaTPLvWaMo2iwzaJuTYd+T0oSXHjz
+         QY8cq9Rs33qG1vZ/zzbnmJ2q4dEXzbvyHHHMDoK1AkivSgMX0yu9CFgT5kicVLG+fULm
+         qhzP4tm+OD9SYhbQmpwMKdvl1/LjZxgY0O81wdkPrQFiv5D7WhcpWFqShcrCGQAsfpy0
+         kQaA==
+X-Forwarded-Encrypted: i=1; AJvYcCUwK9B90Qdok1xFWx/V1wbfQMck9HcEaIF7HmCjUF5Da/KkB0f1UErKK6mfQ0cGBAdwkPZNlYIJTZK9t/xuPveH+sTEzwI/MbYeC9xm
+X-Gm-Message-State: AOJu0YzyWT/+QVGIy4+KBCV07OfQVBzfefDF3UzjEOI2RvIYIkpBbF3n
+	A4n9XjZVs1GOxD3jB8GgRTplZ4Np7NryekXm4sQpwlOxYGkAD4uf
+X-Google-Smtp-Source: AGHT+IF0o6WWf6UvTgF3lWv/RBGNu8xNI5DYiRd/Nmjl4X7DaPdiPg7wEsbu3KkqXkQYPdMRaVvzdw==
+X-Received: by 2002:a05:6a00:98d:b0:6f4:9fc7:d239 with SMTP id d2e1a72fcca58-6f4c9334e39mr31522883b3a.14.1715805331160;
+        Wed, 15 May 2024 13:35:31 -0700 (PDT)
+Received: from localhost.localdomain ([106.195.57.212])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2a66691sm11892785b3a.16.2024.05.15.13.35.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 May 2024 13:35:30 -0700 (PDT)
+From: Shresth Prasad <shresthprasad7@gmail.com>
+To: robh@kernel.org,
+	saravanak@google.com
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	javier.carrasco.cruz@gmail.com,
+	julia.lawall@inria.fr,
+	Shresth Prasad <shresthprasad7@gmail.com>
+Subject: [PATCH][next] of: property: Remove calls to of_node_put
+Date: Thu, 16 May 2024 01:59:17 +0530
+Message-ID: <20240515202915.16214-3-shresthprasad7@gmail.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAPM=9tw-53PCvveRcdLUUQ+mjq2X2er5zp6n1KeE8Nu8x=VP2g@mail.gmail.com>
- <CAHk-=wge0et+3PP47OBnNx66Q=i_XgqfGfrSmDGHSyp=Jn-CgQ@mail.gmail.com>
- <CAHk-=whTqHgXZ4Aj8dNO3Peg9Rf0sh2F7zGWRUOmBwfMDxgvbQ@mail.gmail.com> <CAHk-=wgWJCcJRLBZ1xoAATFyvp6YKN+qzrePhxQbN1SFrno7pQ@mail.gmail.com>
-In-Reply-To: <CAHk-=wgWJCcJRLBZ1xoAATFyvp6YKN+qzrePhxQbN1SFrno7pQ@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 15 May 2024 13:29:12 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjm4BcsMrvgXocATBVvZ7N6LAjSvLTzTXWg9EFzyip_cA@mail.gmail.com>
-Message-ID: <CAHk-=wjm4BcsMrvgXocATBVvZ7N6LAjSvLTzTXWg9EFzyip_cA@mail.gmail.com>
-Subject: Re: [git pull] drm for 6.10-rc1
-To: Dave Airlie <airlied@gmail.com>, 
-	Arunpravin Paneer Selvam <Arunpravin.PaneerSelvam@amd.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Matthew Auld <matthew.auld@intel.com>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, dri-devel <dri-devel@lists.freedesktop.org>, 
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, 15 May 2024 at 13:24, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> I have to revert both
->
->   a68c7eaa7a8f ("drm/amdgpu: Enable clear page functionality")
->   e362b7c8f8c7 ("drm/amdgpu: Modify the contiguous flags behaviour")
->
-> to make things build cleanly. Next step: see if it boots and fixes the
-> problem for me.
+Add __free cleanup handler to some variable initialisations, which
+ensures that the resource is freed as soon as the variable goes out of
+scope. Thus removing the need to manually free up the resource using
+of_node_put.
 
-Well, perhaps not surprisingly, the WARN_ON() no longer triggers with
-this, and everything looks fine.
+Suggested-by: Julia Lawall <julia.lawall@inria.fr>
+Signed-off-by: Shresth Prasad <shresthprasad7@gmail.com>
+---
+I had submitted a similar patch a couple weeks ago addressing the same 
+issue, but as it turns out I wasn't thorough enough and had left a couple
+instances.
 
-Let's see if the machine ends up being stable now. It took several
-hours for the "scary messages" state to turn into the "hung machine"
-state, so they *could* have been independent issues, but it seems a
-bit unlikely.
+I hope this isn't too big an issue.
+---
+ drivers/of/property.c | 27 +++++++++++----------------
+ 1 file changed, 11 insertions(+), 16 deletions(-)
 
-               Linus
+diff --git a/drivers/of/property.c b/drivers/of/property.c
+index 17b294e16c56..96a74f6a8d64 100644
+--- a/drivers/of/property.c
++++ b/drivers/of/property.c
+@@ -773,15 +773,14 @@ EXPORT_SYMBOL(of_graph_get_port_parent);
+ struct device_node *of_graph_get_remote_port_parent(
+ 			       const struct device_node *node)
+ {
+-	struct device_node *np, *pp;
++	struct device_node *pp;
+ 
+ 	/* Get remote endpoint node. */
+-	np = of_graph_get_remote_endpoint(node);
++	struct device_node *np __free(device_node) =
++			    of_graph_get_remote_endpoint(node);
+ 
+ 	pp = of_graph_get_port_parent(np);
+ 
+-	of_node_put(np);
+-
+ 	return pp;
+ }
+ EXPORT_SYMBOL(of_graph_get_remote_port_parent);
+@@ -835,17 +834,18 @@ EXPORT_SYMBOL(of_graph_get_endpoint_count);
+ struct device_node *of_graph_get_remote_node(const struct device_node *node,
+ 					     u32 port, u32 endpoint)
+ {
+-	struct device_node *endpoint_node, *remote;
++	struct device_node *endpoint_node __free(device_node) =
++			    of_graph_get_endpoint_by_regs(node, port, endpoint);
++
++	struct device_node *remote __free(device_node) =
++			    of_graph_get_remote_port_parent(endpoint_node);
+ 
+-	endpoint_node = of_graph_get_endpoint_by_regs(node, port, endpoint);
+ 	if (!endpoint_node) {
+ 		pr_debug("no valid endpoint (%d, %d) for node %pOF\n",
+ 			 port, endpoint, node);
+ 		return NULL;
+ 	}
+ 
+-	remote = of_graph_get_remote_port_parent(endpoint_node);
+-	of_node_put(endpoint_node);
+ 	if (!remote) {
+ 		pr_debug("no valid remote node\n");
+ 		return NULL;
+@@ -853,7 +853,6 @@ struct device_node *of_graph_get_remote_node(const struct device_node *node,
+ 
+ 	if (!of_device_is_available(remote)) {
+ 		pr_debug("not available for remote node\n");
+-		of_node_put(remote);
+ 		return NULL;
+ 	}
+ 
+@@ -1064,19 +1063,15 @@ static void of_link_to_phandle(struct device_node *con_np,
+ 			      struct device_node *sup_np,
+ 			      u8 flags)
+ {
+-	struct device_node *tmp_np = of_node_get(sup_np);
++	struct device_node *tmp_np __free(device_node) = of_node_get(sup_np);
+ 
+ 	/* Check that sup_np and its ancestors are available. */
+ 	while (tmp_np) {
+-		if (of_fwnode_handle(tmp_np)->dev) {
+-			of_node_put(tmp_np);
++		if (of_fwnode_handle(tmp_np)->dev)
+ 			break;
+-		}
+ 
+-		if (!of_device_is_available(tmp_np)) {
+-			of_node_put(tmp_np);
++		if (!of_device_is_available(tmp_np))
+ 			return;
+-		}
+ 
+ 		tmp_np = of_get_next_parent(tmp_np);
+ 	}
+-- 
+2.45.1
+
 
