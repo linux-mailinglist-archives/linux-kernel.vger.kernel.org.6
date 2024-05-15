@@ -1,348 +1,295 @@
-Return-Path: <linux-kernel+bounces-180450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2E218C6EB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 00:38:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C6C38C6EB9
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 00:43:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34AD61F2363C
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 22:38:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F746284ADE
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 22:43:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61CE93FB89;
-	Wed, 15 May 2024 22:37:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6F904204B;
+	Wed, 15 May 2024 22:43:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="CHC7+ZFK"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u24GfXM+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9445E39FEC
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 22:37:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1B9E2A8D7;
+	Wed, 15 May 2024 22:43:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715812678; cv=none; b=KX3lBbrZw+9lDNYeHL+YGZItLIVU0c4UgEWY7lZoWY4IrCWjPaQUvabtIdbgAjw9NxreuoicQWHY1twqkZV1Zr5PisquMuvUGItafjwQebfpWzWsH0AezArjQgQx2jbkr+fTFkHKRyp8p/oabKU9N1HwdJAOKZ5w2iizJMKHuoU=
+	t=1715812983; cv=none; b=kDMWLZBLoc26pgEZNw01UmVYQjsBvygApwNdOM3s75IhfzP1UqJBnUsIhoTaDNAu/8Rj99+z5NXlnucqvphTFy4aqMMhFeWMNoB6Wh3w93mB+r7eqjdw4qPy2yu5HT+kytwVxgifsP1ZVajEK2Qor/mBVQh7OzCN4LcaqeGv7uc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715812678; c=relaxed/simple;
-	bh=LAK9gqeeRypr0CEQ5aDcyGWZ/tUpIrRph0fJnrpzPLA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CW06M+TzRvPGrqla015kVruCrS7Ubi6B+RiZt+f0AnfVwT5m/0ev0qzvl9Qsb5lhKh8ozE8vTl+RpsSjENLWNfMbZ75Fsx3bBreQP3JlosBEQK2OeqoYNXJzSpUZp5ReMBgEtdllVgTxnLYobp1ABa5K/1yToZ5ScRERZTTfjPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=CHC7+ZFK; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2e3efa18e6aso907171fa.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 15:37:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1715812675; x=1716417475; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TEgmrYZedq/+04pEwI8dkVxH/OdcAS6xqIEmbrHWo0Q=;
-        b=CHC7+ZFKOR4jBfKKsKKbWmik++sbf9eOWQEhBsHVP1Q9wxD4f369ss7R+i+Yw+MdO9
-         WeOIVDmnw5hVeAALY4GIEWgVaJcrKac/+RlkPHv8OjesuIuXUaJuNLVI4bSEwPFUNQ/l
-         lqkRHUcFnt3jZdVYveqisF6GxouSmP+5luwuKOtOQTRM95Wcrwvjkh74rZ4WO9luw77k
-         6AtAEI/P28doiqCzYDU378BQMTEAcmFqrBZ5WFyzStrD/24shlCH8SZNR8WdH9TNuqjD
-         yGUn2Vb4GE4s6orNwnSu2nKvx4jE5xH8J+ogdH6BfNVwXt6fk1LM/yxWMVoFwTcPa5dL
-         LqMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715812675; x=1716417475;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TEgmrYZedq/+04pEwI8dkVxH/OdcAS6xqIEmbrHWo0Q=;
-        b=Hco2VSadjSUnxttdkj3E24WaFpjo6NQ7wfFew/IsBAbh8iqnRiFWBwVtLzpNrYN9HV
-         CjrJPunDe0cVc2l2mexHwAvv5MKwRox5eL55fqj0FqWuTjO0rFh4f985d/SSmTWswzYk
-         0Ohpf17bD4cyM1qfcKq90UW9T5tG68VNnaS2cZnxehlWkGSIQNUmKuPV9RlPDaENVRUx
-         kIy7eCtQDCJUEZJz7tmoED9i7rGniH4us/XrAJRAJxl5LFLKTi+l4OZn3ymcB3aVcOld
-         suVZy6kaHBxRXdnMQrNkXb+Te/5ru2WdH0B7HX1Rg8KH9rD+BLWkWXhsklXh5cnMV0fO
-         OzXg==
-X-Forwarded-Encrypted: i=1; AJvYcCUzFOrq9hsccM734UH0XK8cFqHI1dY+OUlYy76VVjqeRD8BOaiIh/eoPgR5MPQ9T9leM4chTmjFAi1ZjY4aNxmJEn3P8tkNRDtdwHla
-X-Gm-Message-State: AOJu0YxefXryFtPknH6LwaCBSQeZhzsS8+hcouMTcASNJrZbsUBvB2vd
-	1RiZldOrXH2V+HbOzCOAN4yeN3Mgzvl6JRiYjS1fQla+Wci92HBzexTNSwCzeGsXrHfSIw8kSaN
-	cp64xpfajyJJ0/tSIwsp8xLhd+7X/kQIq1WJHpw==
-X-Google-Smtp-Source: AGHT+IEA5Xebu+d/Kazl51uTWY4Wh2PV4hE69tsoGDHyjJbf8kuPYIFrAGIwg3u8xDi54yb67790MNscNLLyZWBFuAw=
-X-Received: by 2002:a2e:868f:0:b0:2df:8e58:d05c with SMTP id
- 38308e7fff4ca-2e51ad435admr55107431fa.15.1715812674616; Wed, 15 May 2024
- 15:37:54 -0700 (PDT)
+	s=arc-20240116; t=1715812983; c=relaxed/simple;
+	bh=3B2QPX/ga/0AMCH1IWm6CBpgkx7uEqSubo5omjdhkDk=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=jgbp6HAEzZcF7fG46BlXlgoQUf9hMYbdoIEiuVDQc139M40kUfeFKlXZf1VMCXSPwaVLLtovvDHnGBoFuZiymOdew1Um1FT8SCqp+6jCqTcB1XLRg2sKPGQ/X0gnAZDEQ+Xfg5lHfqR7QWoHRWXBlY2q1886+m/jw9g7wxXqZoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u24GfXM+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69AB4C116B1;
+	Wed, 15 May 2024 22:43:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715812983;
+	bh=3B2QPX/ga/0AMCH1IWm6CBpgkx7uEqSubo5omjdhkDk=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=u24GfXM+55qXQfRDSHTj7tOt/UBYWn8d03ITH9yqoUOUz0DE9ym3wps5ouvjLqkD8
+	 a1Yo1fBSyHCnYd7/XXMFHpIEPBIlWziMzzM617W3iH/CCwKUbob/SfKDQQFBCqO+I5
+	 cSJWq9JMkxCPG2hywt13urQRLcmrXjnr3+trK26+x7qCWykCHZ7DonYu1hNcxrGY5N
+	 LeewcLRKzPkQ2dRgR1wnQn16N4UnhjQowcp7q9e7ariyXbSrCx8sXBgnvGYt5vdlzW
+	 qGUA4tymb2FEjFyBe28qFtit/JYt+Ib2P9ldeKMU/6Tj02VYyi33wFsIzhcqI7c4wD
+	 sgEZAyaSOmU4A==
+Date: Wed, 15 May 2024 15:42:59 -0700 (PDT)
+From: Stefano Stabellini <sstabellini@kernel.org>
+X-X-Sender: sstabellini@ubuntu-linux-20-04-desktop
+To: Jiqian Chen <Jiqian.Chen@amd.com>
+cc: Juergen Gross <jgross@suse.com>, 
+    Stefano Stabellini <sstabellini@kernel.org>, 
+    Bjorn Helgaas <bhelgaas@google.com>, 
+    "Rafael J . Wysocki" <rafael@kernel.org>, 
+    =?UTF-8?Q?Roger_Pau_Monn=C3=A9?= <roger.pau@citrix.com>, 
+    xen-devel@lists.xenproject.org, linux-pci@vger.kernel.org, 
+    linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, 
+    Huang Rui <Ray.Huang@amd.com>, Huang Rui <ray.huang@amd.com>
+Subject: Re: [RFC KERNEL PATCH v7 2/2] xen/privcmd: Add new syscall to get
+ gsi from dev
+In-Reply-To: <20240515065011.13797-3-Jiqian.Chen@amd.com>
+Message-ID: <alpine.DEB.2.22.394.2405151537430.2544314@ubuntu-linux-20-04-desktop>
+References: <20240515065011.13797-1-Jiqian.Chen@amd.com> <20240515065011.13797-3-Jiqian.Chen@amd.com>
+User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240514-ad4111-v2-0-29be6a55efb5@analog.com> <20240514-ad4111-v2-1-29be6a55efb5@analog.com>
-In-Reply-To: <20240514-ad4111-v2-1-29be6a55efb5@analog.com>
-From: David Lechner <dlechner@baylibre.com>
-Date: Wed, 15 May 2024 17:37:43 -0500
-Message-ID: <CAMknhBGNPvxegL+YbnLGoKjA=P3Vx=x+39aXuMgq+cv2KgdeLw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/9] dt-bindings: adc: ad7173: add support for ad411x
-To: dumitru.ceclan@analog.com
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
-	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Dumitru Ceclan <mitrutzceclan@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
 
-On Tue, May 14, 2024 at 2:23=E2=80=AFAM Dumitru Ceclan via B4 Relay
-<devnull+dumitru.ceclan.analog.com@kernel.org> wrote:
->
-> From: Dumitru Ceclan <dumitru.ceclan@analog.com>
->
-> Add support for: AD4111, AD4112, AD4114, AD4115, AD4116.
->
-> AD411x family ADCs support a VCOM pin, dedicated for single-ended usage.
-> AD4111/AD4112 support current channels, usage is implemented by
->  specifying channel reg values bigger than 15.
->
-> Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
+On Wed, 15 May 2024, Jiqian Chen wrote:
+> In PVH dom0, it uses the linux local interrupt mechanism,
+> when it allocs irq for a gsi, it is dynamic, and follow
+> the principle of applying first, distributing first. And
+> the irq number is alloced from small to large, but the
+> applying gsi number is not, may gsi 38 comes before gsi 28,
+> it causes the irq number is not equal with the gsi number.
+> And when passthrough a device, QEMU will use device's gsi
+> number to do pirq mapping, but the gsi number is got from
+> file /sys/bus/pci/devices/<sbdf>/irq, irq!= gsi, so it will
+> fail when mapping.
+> And in current linux codes, there is no method to get gsi
+> for userspace.
+> 
+> For above purpose, record gsi of pcistub devices when init
+> pcistub and add a new syscall into privcmd to let userspace
+> can get gsi when they have a need.
+> 
+> Co-developed-by: Huang Rui <ray.huang@amd.com>
+> Signed-off-by: Jiqian Chen <Jiqian.Chen@amd.com>
 > ---
->  .../devicetree/bindings/iio/adc/adi,ad7173.yaml    | 118 +++++++++++++++=
-+++++-
->  1 file changed, 117 insertions(+), 1 deletion(-)
->
-> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml b/=
-Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml
-> index ea6cfcd0aff4..6cc3514f5ed8 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml
-> @@ -19,7 +19,18 @@ description: |
->    primarily for measurement of signals close to DC but also delivers
->    outstanding performance with input bandwidths out to ~10kHz.
->
-> +  Analog Devices AD411x ADC's:
-> +  The AD411X family encompasses a series of low power, low noise, 24-bit=
-,
-> +  sigma-delta analog-to-digital converters that offer a versatile range =
-of
-> +  specifications. They integrate an analog front end suitable for proces=
-sing
-> +  fully differential/single-ended and bipolar voltage inputs.
+>  drivers/xen/privcmd.c              | 28 ++++++++++++++++++++++
+>  drivers/xen/xen-pciback/pci_stub.c | 38 +++++++++++++++++++++++++++---
+>  include/uapi/xen/privcmd.h         |  7 ++++++
+>  include/xen/acpi.h                 |  2 ++
+>  4 files changed, 72 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/xen/privcmd.c b/drivers/xen/privcmd.c
+> index 67dfa4778864..5953a03b5cb0 100644
+> --- a/drivers/xen/privcmd.c
+> +++ b/drivers/xen/privcmd.c
+> @@ -45,6 +45,9 @@
+>  #include <xen/page.h>
+>  #include <xen/xen-ops.h>
+>  #include <xen/balloon.h>
+> +#ifdef CONFIG_ACPI
+> +#include <xen/acpi.h>
+> +#endif
+>  
+>  #include "privcmd.h"
+>  
+> @@ -842,6 +845,27 @@ static long privcmd_ioctl_mmap_resource(struct file *file,
+>  	return rc;
+>  }
+>  
+> +static long privcmd_ioctl_gsi_from_dev(struct file *file, void __user *udata)
+> +{
+> +	struct privcmd_gsi_from_dev kdata;
 > +
->    Datasheets for supported chips:
-> +    https://www.analog.com/media/en/technical-documentation/data-sheets/=
-AD4111.pdf
-> +    https://www.analog.com/media/en/technical-documentation/data-sheets/=
-AD4112.pdf
-> +    https://www.analog.com/media/en/technical-documentation/data-sheets/=
-AD4114.pdf
-> +    https://www.analog.com/media/en/technical-documentation/data-sheets/=
-AD4115.pdf
-> +    https://www.analog.com/media/en/technical-documentation/data-sheets/=
-AD4116.pdf
->      https://www.analog.com/media/en/technical-documentation/data-sheets/=
-AD7172-2.pdf
->      https://www.analog.com/media/en/technical-documentation/data-sheets/=
-AD7172-4.pdf
->      https://www.analog.com/media/en/technical-documentation/data-sheets/=
-AD7173-8.pdf
-> @@ -31,6 +42,11 @@ description: |
->  properties:
->    compatible:
->      enum:
-> +      - adi,ad4111
-> +      - adi,ad4112
-> +      - adi,ad4114
-> +      - adi,ad4115
-> +      - adi,ad4116
->        - adi,ad7172-2
->        - adi,ad7172-4
->        - adi,ad7173-8
-> @@ -129,6 +145,31 @@ patternProperties:
->          maximum: 15
->
->        diff-channels:
-> +        description: |
-> +          For using current channels specify select the current inputs
-> +           and enable the adi,current-channel property.
+> +	if (copy_from_user(&kdata, udata, sizeof(kdata)))
+> +		return -EFAULT;
 > +
-> +          Family AD411x supports a dedicated VCOM voltage input.
+> +#ifdef CONFIG_ACPI
+> +	kdata.gsi = pcistub_get_gsi_from_sbdf(kdata.sbdf);
+> +	if (kdata.gsi == -1)
+> +		return -EINVAL;
+> +#else
+> +	kdata.gsi = -1;
 
-Did you mean VINCOM? Searching the datasheets for "VCOM" comes up empty.
+Should we return an error instead, like -EINVAL, to make the behavior
+more similar to the CONFIG_ACPI case?
 
-> +          To select it set the second channel to 16.
-> +            (VIN2, VCOM) -> diff-channels =3D <2 16>
 
-Jonathan mentioned this in v1 with regard to the current inputs, but
-it applies here too. There is a new proposed single-channel property
-[1] that would be preferred when an input is used as a single-ended or
-pseudo-differential input (i.e. with VINCOM or ADCIN15).
-
-[1]: https://lore.kernel.org/linux-iio/20240514120222.56488-5-alisa.roman@a=
-nalog.com/
-
+> +#endif
 > +
-> +          There are special values that can be selected besides the volt=
-age
-> +          analog inputs:
-> +            21: REF+
-> +            22: REF=E2=88=92
-> +          Supported only by AD7172-2, AD7172-4, AD7175-2, AD7175-8, AD71=
-77-2:
-> +            19: ((AVDD1 =E2=88=92 AVSS)/5)+
-> +            20: ((AVDD1 =E2=88=92 AVSS)/5)=E2=88=92
-> +          Supported only by AD4111, AD4112:
-> +            12: IIN3+
-> +            11: IIN3=E2=88=92
-> +            13: IIN2+
-> +            10: IIN2=E2=88=92
-> +            14: IIN1+
-> +             9: IIN1=E2=88=92
-> +            15: IIN0+
-> +             8: IIN0=E2=88=92
-
-I just made a late reply on v1 where Jonathan suggested that the
-current inputs are differential with a similar comment to this:
-
-It doesn't seem to me like current inputs are differential if they are
-only measuring one current. They take 2 pins because you need a way
-for current to come in and go back out, but the datasheet calls them
-single-ended inputs.
-
+> +	if (copy_to_user(udata, &kdata, sizeof(kdata)))
+> +		return -EFAULT;
 > +
->          items:
->            minimum: 0
->            maximum: 31
-> @@ -154,6 +195,23 @@ patternProperties:
->            - avdd
->          default: refout-avss
->
-> +      adi,current-channel:
-> +        description: |
-> +          Signal that the selected inputs are current channels.
-> +          Only available on AD4111 and AD4112.
-> +        type: boolean
+> +	return 0;
+> +}
 > +
-> +      adi,channel-type:
-> +        description:
-> +          Used to differentiate between different channel types as the d=
-evice
-> +           register configurations are the same for all usage types.
-> +        $ref: /schemas/types.yaml#/definitions/string
-> +        enum:
-> +          - single-ended
-> +          - pseudo-differential
-> +          - differential
-> +        default: differential
+>  #ifdef CONFIG_XEN_PRIVCMD_EVENTFD
+>  /* Irqfd support */
+>  static struct workqueue_struct *irqfd_cleanup_wq;
+> @@ -1529,6 +1553,10 @@ static long privcmd_ioctl(struct file *file,
+>  		ret = privcmd_ioctl_ioeventfd(file, udata);
+>  		break;
+>  
+> +	case IOCTL_PRIVCMD_GSI_FROM_DEV:
+> +		ret = privcmd_ioctl_gsi_from_dev(file, udata);
+> +		break;
 > +
+>  	default:
+>  		break;
+>  	}
+> diff --git a/drivers/xen/xen-pciback/pci_stub.c b/drivers/xen/xen-pciback/pci_stub.c
+> index 2b90d832d0a7..4b62b4d377a9 100644
+> --- a/drivers/xen/xen-pciback/pci_stub.c
+> +++ b/drivers/xen/xen-pciback/pci_stub.c
+> @@ -56,6 +56,9 @@ struct pcistub_device {
+>  
+>  	struct pci_dev *dev;
+>  	struct xen_pcibk_device *pdev;/* non-NULL if struct pci_dev is in use */
+> +#ifdef CONFIG_ACPI
+> +	int gsi;
+> +#endif
+>  };
+>  
+>  /* Access to pcistub_devices & seized_devices lists and the initialize_devices
+> @@ -88,6 +91,9 @@ static struct pcistub_device *pcistub_device_alloc(struct pci_dev *dev)
+>  
+>  	kref_init(&psdev->kref);
+>  	spin_lock_init(&psdev->lock);
+> +#ifdef CONFIG_ACPI
+> +	psdev->gsi = -1;
+> +#endif
+>  
+>  	return psdev;
+>  }
+> @@ -220,6 +226,25 @@ static struct pci_dev *pcistub_device_get_pci_dev(struct xen_pcibk_device *pdev,
+>  	return pci_dev;
+>  }
+>  
+> +#ifdef CONFIG_ACPI
+> +int pcistub_get_gsi_from_sbdf(unsigned int sbdf)
+> +{
+> +	struct pcistub_device *psdev;
+> +	int domain = sbdf >> 16;
+> +	int bus = (sbdf >> 8) & 0xff;
+> +	int slot = (sbdf >> 3) & 0x1f;
+> +	int func = sbdf & 0x7;
 
-As suggested above, we should soon have diff-channels and
-single-channel to differentiate between (fully) differential and
-single-ended. Do we actually need to differentiate between
-single-ended and pseudo-differential though?
-
-I think the AD4116 datasheet is the only one that uses both of those
-terms. It gives the examples that for "single-ended" ADCIN15 would be
-connected to AVSS and for "pseudo-differential" ADCIN15 would be
-connected to REFOUT (AVSS + 2.5 V). So the only difference seems to be
-if the voltage on ADCIN15 is =3D=3D 0V or !=3D 0V.
-
-To make this like other pseudo-differential chips we have done
-recently, it seems to me like we should have an adcin15-supply
-property to describe the ADCIN15 input. Then we could use that
-property to determine single-ended vs. pseudo-differential (if there
-actually is a need for that) and we wouldn't need the adi,channel-type
-property.
-
->      required:
->        - reg
->        - diff-channels
-> @@ -166,7 +224,6 @@ allOf:
->    - $ref: /schemas/spi/spi-peripheral-props.yaml#
->
->    # Only ad7172-4, ad7173-8 and ad7175-8 support vref2
-> -  # Other models have [0-3] channel registers
->    - if:
->        properties:
->          compatible:
-> @@ -187,6 +244,37 @@ allOf:
->                  - vref
->                  - refout-avss
->                  - avdd
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - adi,ad4114
-> +              - adi,ad4115
-> +              - adi,ad4116
-> +              - adi,ad7173-8
-> +              - adi,ad7175-8
-> +    then:
-> +      patternProperties:
-> +        "^channel@[0-9a-f]$":
-> +          properties:
-> +            reg:
-> +              maximum: 15
-
-As discussed recently in the the very similar ad719x bindings [2], we
-may have been misunderstanding this limit so far. 15 is a bit
-artificially low since input pins can be used more than once in
-different "channels". But that is really an issues with the existing
-bindings, not just this patch.
-
-[2]: https://lore.kernel.org/linux-iio/20240511122955.2372f56e@jic23-huawei=
-/
+you can use PCI_DEVFN PCI_SLOT PCI_FUNC pci_domain_nr instead of open
+coding.
 
 
 > +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - adi,ad7172-2
-> +              - adi,ad7175-2
-> +              - adi,ad7176-2
-> +              - adi,ad7177-2
-> +    then:
-> +      patternProperties:
-> +        "^channel@[0-9a-f]$":
-> +          properties:
->              reg:
->                maximum: 3
->
-> @@ -210,6 +298,34 @@ allOf:
->            required:
->              - adi,reference-select
->
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - adi,ad4111
-> +              - adi,ad4112
-> +              - adi,ad4114
-> +              - adi,ad4115
-> +              - adi,ad4116
-> +    then:
-> +      properties:
-> +        avdd2-supply: false
+> +	psdev = pcistub_device_find(domain, bus, slot, func);
 > +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          not:
-> +            contains:
-> +              enum:
-> +                - adi,ad4111
-> +                - adi,ad4112
-> +    then:
-> +      patternProperties:
-> +        "^channel@[0-9a-f]$":
-> +          properties:
-> +            adi,current-channel: false
+> +	if (!psdev)
+> +		return -1;
 > +
->    - if:
->        anyOf:
->          - required: [clock-names]
->
-> --
-> 2.43.0
->
->
+> +	return psdev->gsi;
+> +}
+> +EXPORT_SYMBOL_GPL(pcistub_get_gsi_from_sbdf);
+> +#endif
+> +
+>  struct pci_dev *pcistub_get_pci_dev_by_slot(struct xen_pcibk_device *pdev,
+>  					    int domain, int bus,
+>  					    int slot, int func)
+> @@ -367,14 +392,20 @@ static int pcistub_match(struct pci_dev *dev)
+>  	return found;
+>  }
+>  
+> -static int pcistub_init_device(struct pci_dev *dev)
+> +static int pcistub_init_device(struct pcistub_device *psdev)
+>  {
+>  	struct xen_pcibk_dev_data *dev_data;
+> +	struct pci_dev *dev;
+>  #ifdef CONFIG_ACPI
+>  	int gsi, trigger, polarity;
+>  #endif
+>  	int err = 0;
+>  
+> +	if (!psdev)
+> +		return -EINVAL;
+> +
+> +	dev = psdev->dev;
+> +
+>  	dev_dbg(&dev->dev, "initializing...\n");
+>  
+>  	/* The PCI backend is not intended to be a module (or to work with
+> @@ -448,6 +479,7 @@ static int pcistub_init_device(struct pci_dev *dev)
+>  		dev_err(&dev->dev, "Fail to get gsi info!\n");
+>  		goto config_release;
+>  	}
+> +	psdev->gsi = gsi;
+>  
+>  	if (xen_initial_domain() && xen_pvh_domain()) {
+>  		err = xen_pvh_setup_gsi(gsi, trigger, polarity);
+> @@ -495,7 +527,7 @@ static int __init pcistub_init_devices_late(void)
+>  
+>  		spin_unlock_irqrestore(&pcistub_devices_lock, flags);
+>  
+> -		err = pcistub_init_device(psdev->dev);
+> +		err = pcistub_init_device(psdev);
+>  		if (err) {
+>  			dev_err(&psdev->dev->dev,
+>  				"error %d initializing device\n", err);
+> @@ -565,7 +597,7 @@ static int pcistub_seize(struct pci_dev *dev,
+>  		spin_unlock_irqrestore(&pcistub_devices_lock, flags);
+>  
+>  		/* don't want irqs disabled when calling pcistub_init_device */
+> -		err = pcistub_init_device(psdev->dev);
+> +		err = pcistub_init_device(psdev);
+>  
+>  		spin_lock_irqsave(&pcistub_devices_lock, flags);
+>  
+> diff --git a/include/uapi/xen/privcmd.h b/include/uapi/xen/privcmd.h
+> index 8b8c5d1420fe..220e7670a113 100644
+> --- a/include/uapi/xen/privcmd.h
+> +++ b/include/uapi/xen/privcmd.h
+> @@ -126,6 +126,11 @@ struct privcmd_ioeventfd {
+>  	__u8 pad[2];
+>  };
+>  
+> +struct privcmd_gsi_from_dev {
+> +	__u32 sbdf;
+> +	int gsi;
+> +};
+> +
+>  /*
+>   * @cmd: IOCTL_PRIVCMD_HYPERCALL
+>   * @arg: &privcmd_hypercall_t
+> @@ -157,5 +162,7 @@ struct privcmd_ioeventfd {
+>  	_IOW('P', 8, struct privcmd_irqfd)
+>  #define IOCTL_PRIVCMD_IOEVENTFD					\
+>  	_IOW('P', 9, struct privcmd_ioeventfd)
+> +#define IOCTL_PRIVCMD_GSI_FROM_DEV				\
+> +	_IOC(_IOC_NONE, 'P', 10, sizeof(struct privcmd_gsi_from_dev))
+>  
+>  #endif /* __LINUX_PUBLIC_PRIVCMD_H__ */
+> diff --git a/include/xen/acpi.h b/include/xen/acpi.h
+> index 9b50027113f3..0bf5f4884456 100644
+> --- a/include/xen/acpi.h
+> +++ b/include/xen/acpi.h
+> @@ -83,4 +83,6 @@ int xen_acpi_get_gsi_info(struct pci_dev *dev,
+>  						  int *gsi_out,
+>  						  int *trigger_out,
+>  						  int *polarity_out);
+> +
+> +int pcistub_get_gsi_from_sbdf(unsigned int sbdf);
+>  #endif	/* _XEN_ACPI_H */
+> -- 
+> 2.34.1
+> 
 
