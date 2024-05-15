@@ -1,128 +1,147 @@
-Return-Path: <linux-kernel+bounces-179930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BE388C67A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 15:43:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DE018C67AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 15:45:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 467F02812CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 13:43:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1A221C21AC3
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 13:45:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FDB813F012;
-	Wed, 15 May 2024 13:43:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A5AF13EFEE;
+	Wed, 15 May 2024 13:45:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FTi282HB";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZGm6S6Vm"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=web.de header.i=frank.scheiner@web.de header.b="CP+A1NYe"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 539B11386AD;
-	Wed, 15 May 2024 13:43:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB27D136983;
+	Wed, 15 May 2024 13:45:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715780611; cv=none; b=h26hdF5aVmzOPDMno4D4FeHsVrFLJJ19SA2Ncm+kHmTFiBaRIwfluUqgjEiJnK3/c/2aiHoJjloVhM6fsSlec6HZwHZX/Huhd/+vCpbEiAz5gq15MY+ZV3zfDK5xDW7AitFI+GOUtLXYPlJQyI2cqwk+HoUB4DlVgLn21K3fRO4=
+	t=1715780738; cv=none; b=CAVwoQsqN7HHBHMPSg117U/H2w3FnbnsFUcKCgoNfqhDgKO7qAQVBAKtfpcqJxF5SHnWPv08VtZLILpsqJO85w7oqAv5dpLtieEROu6OyOBAal0fT6pgFeHqOhAiHBPnqGwHEAp8xsZTnn9chYq4ldNAjQAfarqV08GePY1OT4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715780611; c=relaxed/simple;
-	bh=TRd4hhNnYO8xgPIyqCyl4FMG7ggnR9P6dr6VfxbM808=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=txj/ebfL/NSobjOvihEqms9xBv5Ldo6Z0/kJAEfHRNREJEsNPxRDjz5lOp0SGgHCLqDQiNaH1qYJwoOw8i8k4/ybsX+L1hpQAFQYpD0hXwIB3O4oCsxOtkZxmgrIgMlJzFBffkr/PkpgAoNpSob+5OpC9eOVuOSWufhKJmoNojc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FTi282HB; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZGm6S6Vm; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 15 May 2024 15:43:26 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1715780608;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jdU69UoyhJ1zQ0SWWUqZX4B1Wd/oEqna6YOmzjb1SQg=;
-	b=FTi282HBZPmh7c6WSn/S4W0VoXiezouodE+uKWxcNgMky5OxF8h3uS021U7PJHtAP39Mp5
-	dWLAhTE1v4uYd7TcVk57La8G+rWUkM5OIKxDqEkSAIhzB3nAFpd6YhixeKpB/4oiKb4yJg
-	1srE4D4+NwxIOoymWVuWDzQqjk1hn9ZKsMfPcvBIwmExIuDh2aD3Lx8tPhOl4krgup6CTe
-	agYP4M79xR7awcNAyzbm80mTuKLCdEtQD6k0ck+ApCEU/d/nHp+2tKMZrXMZA8Tsr1QHGV
-	ABEhsV09T6MHTvT6s1ZNycxEWWnuYOF+cxALNh1ZVyjYU1qQQf+p7+axJva5VQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1715780608;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jdU69UoyhJ1zQ0SWWUqZX4B1Wd/oEqna6YOmzjb1SQg=;
-	b=ZGm6S6Vm9lEMBk7wMxLxmbVEvokYejJincM8TEVPpN2oaUje3MvkHH1NzflfDEs1mdQvSB
-	Q+STKOt4MnoOH9Bg==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
-Cc: Jesper Dangaard Brouer <hawk@kernel.org>,
-	Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Network Development <netdev@vger.kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Eduard Zingerman <eddyz87@gmail.com>, Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
-	Stanislav Fomichev <sdf@google.com>,
-	Yonghong Song <yonghong.song@linux.dev>, bpf <bpf@vger.kernel.org>
-Subject: Re: [PATCH net-next 14/15 v2] net: Reference bpf_redirect_info via
- task_struct on PREEMPT_RT.
-Message-ID: <20240515134326.14x755Wb@linutronix.de>
-References: <20240503182957.1042122-1-bigeasy@linutronix.de>
- <20240503182957.1042122-15-bigeasy@linutronix.de>
- <87y18mohhp.fsf@toke.dk>
- <CAADnVQJkiwaYXUo+LyKoV96VFFCFL0VY5Jgpuv_0oypksrnciA@mail.gmail.com>
- <20240507123636.cTnT7TvU@linutronix.de>
- <93062ce7-8dfa-48a9-a4ad-24c5a3993b41@kernel.org>
- <20240510162121.f-tvqcyf@linutronix.de>
- <87le4cd2ws.fsf@toke.dk>
+	s=arc-20240116; t=1715780738; c=relaxed/simple;
+	bh=YE7mdJ69I1zEoXQBaNcngBx75+rQO1q57VLEI4yySyM=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=G+b045Sax4wq+etayFKOvi/IyAwpOBvdElFW9uhgEq5AGuPFVZSDMXRlQJRQ6t5rXSOYkbtASMP4iBo/2c3JmTvblpEf+ap0Wt3KjO4UtGmuG2t6preLsh+fgHWWffyzJallFFVsVJXWGNxdXgXir0kQBgYM95DwkrPD9yNXVpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=frank.scheiner@web.de header.b=CP+A1NYe; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1715780688; x=1716385488; i=frank.scheiner@web.de;
+	bh=YE7mdJ69I1zEoXQBaNcngBx75+rQO1q57VLEI4yySyM=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:Subject:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=CP+A1NYeKHy13DD7flBGsl0mfI+mkdiE2QcY76l2iMUPcSvPhVYl1XBPTTQAN4um
+	 w9mUTYH+FB/PrfJfDwu7MrBP2lhwSOCMzlyg/rseJ6ZZO1xKzOZsxjgci6MdvbUe2
+	 wzRIIk0OT/gwUWEH3aQHqwWrO/yHqIAbw9qOTntXdD7LCcR9m0H1RKXLZLctoTaPh
+	 9pcGRdY0aiEEQT7EStyGQdaDIGjuM49Yt486DnsOV2QEYuxF7jl3UjAdUrtTjp8+x
+	 dW35GPzHmYyewo+XVkBRdnvbjTQmJ+tdEZs98i8TlhlTNwECqp2aytBNz4LgWCbQy
+	 h+Yql96IKjck/jMGDA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.30] ([84.152.252.20]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mty5u-1sPrDg21mu-016P9E; Wed, 15
+ May 2024 15:44:48 +0200
+Message-ID: <d308ad95-bee4-4401-a6f5-27bcf5bcc52d@web.de>
+Date: Wed, 15 May 2024 15:44:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+From: Frank Scheiner <frank.scheiner@web.de>
+Subject: Re: Linux 6.9
+To: torvalds@linux-foundation.org
+Cc: =?UTF-8?B?VG9tw6HFoSBHbG96YXI=?= <tglozar@gmail.com>,
+ linux-kernel@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>,
+ linux-ia64@vger.kernel.org, debian-ia64 <debian-ia64@lists.debian.org>,
+ t2@t2sde.org
+References: <CAHk-=whnKYL-WARzrZhVTZ8RP3WZc24C9_DT7JMJooONNT2udQ@mail.gmail.com>
+Content-Language: en-US
+In-Reply-To: <CAHk-=whnKYL-WARzrZhVTZ8RP3WZc24C9_DT7JMJooONNT2udQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <87le4cd2ws.fsf@toke.dk>
+X-Provags-ID: V03:K1:PpT30J7xl4RRoKLU5DgYkRSnzhpsr3kgxmbWkAflkk40x0/SdOt
+ UDqnmRjYK1Mg44M02VHNgpo8Pli6mru6Kt1mORjv30zVXZxHSxFQ9J76SszJXOBbzrtW2Ki
+ 6JIqo5DIQTdBrPUf29CSvMRzIarPttcDWEnvZmLoax6AnLie4lLj9uJykvxXexGH9Y9yRlE
+ A7JfGJs84BymHzrSqAXiA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:loiOJGidEi4=;IIpzaHGk0bUhcjcdXTYEUKBLt3K
+ TUajYuU82VbE1GlP8e3BTtxtpMcXcDOvDeCk6hUjyy51aIny9taA0L3JDxC+Fmbl0t73XonV3
+ Ig386hiUYscgI0YZuHWFc3bhe8l1UkG2EbUqtBlo9gOnZIaxmgj063Y+TaOBA5E+pIFavhK26
+ ifAjejU6duXKAtFX3DW9X52jArTIyN7HQX0E3ufW3KNPBt0U7lCEFiyERUq0gc6ETcCknSCgY
+ YFqXgYDc1kZczYiSBn5kKshGikrP248vKf7gO/syXIpFE+Da1mwzqnjR7EtjAvpDqGxCTLNec
+ Xe/rdPtnAHGsp5T05Tq5FRGw1tZbMwhGtsZoGwkhTESvD7UW2jEEkMXb9CGANrVjjuG/83PIA
+ MSTTRljiiB0+Nk2dPBqBfAgPzuPnfX6KjK3YFKKuy6PSuzeTzVI6g1siIEufZuZLQ0CrIdGU9
+ WB/Z6h7P64YMSri1/pv2Jiu67sye/xWNaQag9AtQvduqa6LSec+Nryl25OaBVEe52BynaYdi4
+ hqY1CYyzHiYQ2gEGPdtXxlrnF+UQldoylU43kBcygaqTnACmeG4MedlAYlRon6+502AIPwoYU
+ zgCFBWnU78p1VMXOsPGjcVRGNHMzMAnMWXlmlB3wYNessY6SD7IVVgON/8C993tJRB//JjuX2
+ bWSNs/dtHOB6+NfsvEDmSS68TIp8pm/bPA7XJZ0AUehbIkIsB4f/2kmhcldFN/te6uTJDrkKW
+ 5Ao5ETNkLCjHULSAIv28Sa2CF6bhIp/LWjFMhofr0FUrXqNNgFVevjRNbBjj46bIXFzZ+2rAW
+ lQUT/S1SgeWIiElcpV62a7VAqbw99hWqGeMc6hrvjFOH8=
 
-On 2024-05-14 13:54:43 [+0200], Toke H=C3=B8iland-J=C3=B8rgensen wrote:
-> > --- a/include/linux/sched.h
-> > +++ b/include/linux/sched.h
-> > @@ -1504,6 +1505,8 @@ struct task_struct {
-> >  	/* Used for BPF run context */
-> >  	struct bpf_run_ctx		*bpf_ctx;
-> >  #endif
-> > +	/* Used by BPF for per-TASK xdp storage */
-> > +	struct bpf_net_context		*bpf_net_context;
->=20
-> Okay, so if we are going the route of always putting this in 'current',
-> why not just embed the whole struct bpf_net_context inside task_struct,
-> instead of mucking about with the stack-allocated structures and
-> setting/clearing of pointers?
+Dear all,
 
-The whole struct bpf_net_context has 112 bytes. task_struct has 12352
-bytes in my debug-config or 7296 bytes with defconfig on x86-64. Adding
-it unconditionally would grow task_struct by ~1% but it would make
-things way easier: The NULL case goes away, the assignment and cleanup
-goes away, the INIT_LIST_HEAD can be moved to fork(). If the size
-increase is not an issue then why not. Let me prepare=E2=80=A6
+here comes the usual update on Linux/ia64:
 
-> -Toke
+The reason for the userland regression we mentioned last time (in [1])
+was found and fixed shortly after the release of v6.8.
 
-Sebastian
+[1]:
+https://lore.kernel.org/all/145da253-b3bc-43da-a262-a3ebdfbea5a2@web.de/
+
+Furthermore there were no new hard regressions detected in addition to
+what was reported in [2] already. If you have an ia64 machine with more
+than 64 hardware threads and want to run Linux on it, get in touch with
+us. :-)
+
+[2]:
+https://lore.kernel.org/linux-ia64/CAHtyXDdy5Lub_UeMQRgr8O_G-XK0_XRD3J7wVB=
+9t9rRD5x6d4g@mail.gmail.com/
+
+Again all ia64 machines (see [3] for a list) and platforms (HP Sim on
+Ski) we have available for testing continue to work, no system support
+was lost during this cycle.
+
+[3]:
+https://lore.kernel.org/all/fe5f6e9b-02a2-42e9-8151-ae4b6fdba7e3@web.de/
+
+In the meantime gcc-14 was released, meaning that the regular
+compilation and testing of Linux mainline release (candidates) switched
+to gcc-15 snapshots now (starting with v6.9-rc6). Enabling LRA for the
+cross-compiler continues to make **no problems** for ia64 kernels. The
+same is true with the switch to binutils 2.42 since v6.9-rc2.
+
+****
+
+Last time ([1]) we had to report about an approaching decrease in the
+number of available Linux distributions with support for ia64. This was
+sad to report, also because options are important.
+
+But don't worry, the distro options for your ia64 gear just have
+increased again:
+
+Enter **EPIC Slack** ([4]) - an unofficial "port" of Slackware for ia64
+that was started recently and - though still work in progress - is
+already network booting on all test machines available to us. If you're
+too young to know what Slackware is, head over to [5] and learn more
+about it (-;.
+
+[4]: http://epic-slack.org/
+
+[5]: http://www.slackware.com/
+
+****
+
+Thank you all for your hard work on Linux!
+
+Cheers,
+Frank et al
 
