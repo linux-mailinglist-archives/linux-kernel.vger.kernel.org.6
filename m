@@ -1,129 +1,125 @@
-Return-Path: <linux-kernel+bounces-180151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 176FE8C6AC4
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:37:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 857E98C6AC5
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:39:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5622B214E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:37:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BDF11C2130C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:39:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29191208C1;
-	Wed, 15 May 2024 16:37:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35423182D2;
+	Wed, 15 May 2024 16:38:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QCkFq80x"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Jav1Vgna"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FF961392;
-	Wed, 15 May 2024 16:37:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AC7F1392
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 16:38:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715791042; cv=none; b=lRFQRR4rHEJFJoKIT3JwIu79gzErJLbDlir65avi5khyYw0pi6FGz8M5z5xI0Kqu3cxMaffhInPe/cIVSHUOo5t6CHGohMP9vA4DtHfz9Qa+mRzLZwiAAWubP/jNwupRmkX+dretaE/LshJ2Mvjl1UF1GQ/oGGN3/Gij+hOa/qA=
+	t=1715791137; cv=none; b=QirwY+zl+4FLRXhTgmANuvseBwDWInHAUXMOgTkGkWV30WZ2X38nNom6Hq9Q1dhqRRAnZzp7UGRRCVHKbYoqRIphHVxMA9qIbdeFPaxRNMmenazK4DaXWAl1oQ597zs19oPTmniHMCoMjkp2H4jwPJ7z2oqPyH+oyrtHYcQEWCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715791042; c=relaxed/simple;
-	bh=0tMiEjtIhhrV6qWrxU9Ts0un5z/tlxtQpnB1bCtwcdE=;
+	s=arc-20240116; t=1715791137; c=relaxed/simple;
+	bh=KPI9VgZ2mmd0dX0hVK8w9UXjBrAqVcPAvxeB5ge/uTs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ws2IA/pJ41gCz9Gq+MKiU0NqxLWRsm4IwRSsW5HiePuTXakLPyn6dP2lCsgcMC8FlKb9l1i9jSpolEwmw5cvocLuasg19DTWUvs3C0TRfcMNnTlsGS8AERARmizaEostCfmkPEedD2DEvk6gifAUWkLorwk2XUJvV+zH8ApaHhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QCkFq80x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72C7BC2BD11;
-	Wed, 15 May 2024 16:37:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715791042;
-	bh=0tMiEjtIhhrV6qWrxU9Ts0un5z/tlxtQpnB1bCtwcdE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QCkFq80xx9jfySlsxc6UB2usPxKfAk143Uv8xl8duDNZ8T8jGcYvihZHn8qgpVnLv
-	 VVC13bfxnKzIqUyEtp/a4diDY5Y+gIQwZThB2T3WSRZRv6lIfftjaaCFxscIeAsP2c
-	 3zcLqSPTFHl09q5fSjSYHLGrEQBWVyA1aNntwnC9eVo8qlNHp9Yi/GlzDyHCF1szvK
-	 07ltFu63sb/od6LcYpuUruNlxTPWvnTsSKc88FOxcQ18TgE4/zTisC1NdvMiamfEOW
-	 ILdDrV/lz8fMkD7AVt1zF3Pa99xviIGNZrrLL0fTwpNpEoBlpBu8ri+XaqrQx1L9TE
-	 taH+P2u6EPorg==
-Date: Wed, 15 May 2024 17:37:15 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com,
-	Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH 6.8 000/340] 6.8.10-rc2 review
-Message-ID: <8221e12b-4def-4faf-84c6-f2fe208a4bf3@sirena.org.uk>
-References: <20240515082517.910544858@linuxfoundation.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=igcRH+htmgmnqnusEjSEqZHyraAblmAsTBVK8cePTgz7Usm//+3+C+wzwv5Nu8unWIOtnGMGPBf1OPH9wXBzOKCHxE5Ktx2gE9rn6prKK1wwmoh47gWfEeF1sIj3ydUBsNUwt9oZ1Xh2wVo7fa3S02kk3FdWLcaOVtqlIi9P7ww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Jav1Vgna; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1f0537e39b3so42079725ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 09:38:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715791135; x=1716395935; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=0dgdHCrIMriPbVZP/nU1ryCwZdRHPOElBl89QeX8QAc=;
+        b=Jav1Vgna5yvdpP4Zcc6UsrHJ5OIQ2q4uC+69G52m9lPt4UZeNEcfS5LFcC6j8SGgQn
+         9bTSSuwNrnS4psCaEqpCf9fTCOjOUNJB0Aol9IkTHoxbExTOiQZGbEZ3QhQzoovNUWJk
+         kxZ32cfxLjNc8FdKAwk+2NhjdJO5MzOA/QdWacE80luXQMEwK+kpmj3Gi2FF/dUP2tJg
+         ey43wUKHp2aEgn/DJjVSFE0a7Y3gx8zKLpKwZxMVLszXaUz6jCh05jrkV/zbUU6DV5ct
+         SrOnQCrSjFQgXZkkPe22bwDWjZMUWA+DhUT/4hL8pdyUJ9Oj05bL1pHRqve9R/AQp+vB
+         FYTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715791135; x=1716395935;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0dgdHCrIMriPbVZP/nU1ryCwZdRHPOElBl89QeX8QAc=;
+        b=HCMbeu7Q42rkrFQcK5nruKHgUWs23wMk+iZhG5+pc84NpfI1ln0j4uyMXWPyo2wN/v
+         A7dJggLAlJcaCdTpqPh2bsA6R3Y6REEeojlaPLmlfnrd+rkkb4rBpWQjJz3ILAV2QsTh
+         L7SF5W4nS6ez5JMXnYESc0s7OCTBNhE7TwjxrCBH18c35IxO+BN81ur7xQejbB53XHSB
+         qZvzAq2PErsHs4SOOAWIZKgA5XQmXjF/XKicsqgVWRIhGQ0H50O7XAwfZ40N/AKJYu8n
+         LQWggaKGFFhRQVrRd2HUnzZbini4Qh18/mPBM7A16nVPk23Ypjnz5lAOSmnmqrJads80
+         IWsg==
+X-Forwarded-Encrypted: i=1; AJvYcCXPYZ8aUwOBAX+LUEpHUITu+imEwWQC/Pa7ooc+uGXaoUQC24rrvurv4VAYZAvUs7zH1yl8qDQev1VfhDxFnL/KsSBZ8uYDvSeO+qk8
+X-Gm-Message-State: AOJu0YyN3t3Sq4qqWPjdQkj/prBQD1Lgafz1IEd3fGvUbvEezDS4DubQ
+	tZMQZBlZctICsxcemqNAXAzcNdF5ROk/nvi3Op21sGZwuEzFdsM0xSXzgnEf4w==
+X-Google-Smtp-Source: AGHT+IH1RABBzSMouk4zqpSJf7xnHoKLuohGH/drZuiqbnsmiYEtZvAOUFI8wYHw0Ptc3i/xfmAxbw==
+X-Received: by 2002:a17:902:dacf:b0:1ec:c9e0:c749 with SMTP id d9443c01a7336-1ef440505a0mr195053005ad.48.1715791135242;
+        Wed, 15 May 2024 09:38:55 -0700 (PDT)
+Received: from google.com (57.92.83.34.bc.googleusercontent.com. [34.83.92.57])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f09742d272sm5444925ad.168.2024.05.15.09.38.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 May 2024 09:38:54 -0700 (PDT)
+Date: Wed, 15 May 2024 16:38:51 +0000
+From: Carlos Llamas <cmllamas@google.com>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	linux-kernel@vger.kernel.org, kernel-team@android.com,
+	Tim Murray <timmurray@google.com>, John Stultz <jstultz@google.com>,
+	Steven Moreland <smoreland@google.com>,
+	Nick Chen <chenjia3@oppo.com>
+Subject: Re: [PATCH v2] binder: use bitmap for faster descriptor lookup
+Message-ID: <ZkTlG-ZNHRYXnHLQ@google.com>
+References: <20240514160926.1309778-1-cmllamas@google.com>
+ <CAH5fLgjzVHSAQBF5-C1BthK1jspAGRr1z4SQXdQepkeVL9Eq2A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="BuVOGyPH4VUwyT8Q"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240515082517.910544858@linuxfoundation.org>
-X-Cookie: When in doubt, lead trump.
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH5fLgjzVHSAQBF5-C1BthK1jspAGRr1z4SQXdQepkeVL9Eq2A@mail.gmail.com>
 
+On Wed, May 15, 2024 at 05:29:29PM +0200, Alice Ryhl wrote:
+> On Tue, May 14, 2024 at 6:09 PM Carlos Llamas <cmllamas@google.com> wrote:
+> > +static inline int
+> > +dbitmap_get_first_zero_bit(struct dbitmap *dmap, unsigned long *bit)
+> > +{
+> > +       unsigned long n;
+> > +
+> > +       n = find_first_zero_bit(dmap->map, dmap->nbits);
+> > +       if (unlikely(n == dmap->nbits))
+> > +               return -ENOSPC;
+> > +
+> > +       *bit = n;
+> > +       set_bit(n, dmap->map);
+> > +
+> > +       return 0;
+> > +}
+> 
+> Could we rename this method to something that makes it more clear that
+> it's not just a getter, but that it actually also sets the bit?
+> 
+> Alice
 
---BuVOGyPH4VUwyT8Q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Sure, what were you thinking? I had picked "get" and not just "find" to
+indicate this behavior. However, I'll take any better ideas. The option
+of dbitmap_find_and_set_first_zero_bit() seemed too long for me.
 
-On Wed, May 15, 2024 at 10:27:21AM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.8.10 release.
-> There are 340 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-
-I'm seeing issues with the ftrace "Test file and directory owership
-changes for eventfs" test on several platforms, including both 32 Arm
-and whatever random x86_64 box Linaro have in their lab.  The logs
-aren't terribly helpful since they just log a "not ok", example here:
-
-  https://lava.sirena.org.uk/scheduler/job/265221#L3252
-
-Bisects land on "eventfs: Do not differentiate the toplevel events
-directory" as having introduced the issue.  Other stables don't seem to
-be affected.
-
-Bisect log (this one from a Raspberry Pi 3 in 32 bit mode):
-
-# bad: [cfe824b75b3d9d13a891ad1c4a2d6fe0eceed1e9] Linux 6.8.10-rc2
-# good: [f3d61438b613b87afb63118bea6fb18c50ba7a6b] Linux 6.8.9
-# good: [428b806127e00d1c39ed72cbae36dbb4598e58dd] usb: dwc3: core: Prevent phy suspend during init
-# good: [a336529a6498c3e7208415b1c2710872aebf04aa] drm/vmwgfx: Fix invalid reads in fence signaled events
-# good: [dcca5ac4f5de7cca371138049a4a5877a6a3af97] hv_netvsc: Don't free decrypted memory
-git bisect start 'cfe824b75b3d9d13a891ad1c4a2d6fe0eceed1e9' 'f3d61438b613b87afb63118bea6fb18c50ba7a6b' '428b806127e00d1c39ed72cbae36dbb4598e58dd' 'a336529a6498c3e7208415b1c2710872aebf04aa' 'dcca5ac4f5de7cca371138049a4a5877a6a3af97'
-# bad: [cfe824b75b3d9d13a891ad1c4a2d6fe0eceed1e9] Linux 6.8.10-rc2
-git bisect bad cfe824b75b3d9d13a891ad1c4a2d6fe0eceed1e9
-# good: [00dfda4fc19df6f2235723e9529efa94cbc122a2] nvme-pci: Add quirk for broken MSIs
-git bisect good 00dfda4fc19df6f2235723e9529efa94cbc122a2
-# bad: [1239a1c5dc96166a0010de49e4769e08bc6d75b3] Bluetooth: qca: fix wcn3991 device address check
-git bisect bad 1239a1c5dc96166a0010de49e4769e08bc6d75b3
-# good: [a2ede3c7da39a8ab359cd23ebba04603e119ac59] ksmbd: do not grant v2 lease if parent lease key and epoch are not set
-git bisect good a2ede3c7da39a8ab359cd23ebba04603e119ac59
-# bad: [21b410a9ae24348d143dbfe3062eae67d52d5a76] eventfs: Do not differentiate the toplevel events directory
-git bisect bad 21b410a9ae24348d143dbfe3062eae67d52d5a76
-# good: [801cdc1467e661f2b151eeb8a25042593a487c78] tracefs: Still use mount point as default permissions for instances
-git bisect good 801cdc1467e661f2b151eeb8a25042593a487c78
-# first bad commit: [21b410a9ae24348d143dbfe3062eae67d52d5a76] eventfs: Do not differentiate the toplevel events directory
-
---BuVOGyPH4VUwyT8Q
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZE5LoACgkQJNaLcl1U
-h9Bz3gf+NZwH9fS8Zly4ugFPSuJdr2X8oB6oOs2En+Q+WMs/sKaPaZw6ID39TXBJ
-kACi9y6beMOJdN0Fb7VLvtZGF5P+DNuDM12fjg1dhfx0BmUBH99nPDCVUKRL3YPj
-mF4T0chbiJGQoxugDS2ClicbDLYuyWOyLBLeB9xgMy4k1uZbI2k4OASMhHLF7yqc
-+BsMb1CVqUoy6076IJxr9d6nBRhUS1uDGBROmE2yKC1wLMOoLTB9i1E+0suBQTJD
-rbDu4mKNe3X42NKljvFNchzBI3TRqCAotlOqYDGU90CB4JAlF1StkTh8uCLK/T47
-6g4dmECdPHR0uAQK6/3L66UvCIMIGg==
-=Zxw0
------END PGP SIGNATURE-----
-
---BuVOGyPH4VUwyT8Q--
+--
+Carlos Llamas
 
