@@ -1,193 +1,243 @@
-Return-Path: <linux-kernel+bounces-180322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46B948C6CEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 21:45:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C00628C6CF4
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 21:46:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE9E9282F32
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 19:45:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 727D928173A
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 19:46:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6C5615ADAF;
-	Wed, 15 May 2024 19:44:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B11A15ADAA;
+	Wed, 15 May 2024 19:46:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="wCPatG3A"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="gHUXpVaG"
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E87AF3BBEA;
-	Wed, 15 May 2024 19:44:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C5FC1591FD
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 19:46:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715802294; cv=none; b=Fjbna76cFgE8nWaWtld77SYBgOL6EFrViX6tkp1hEN3UWHAc4g88JnMm3LOinv1RsyOmp4lS6cbGC4F+EquRXSPAA7lfGo5Rn3qjYVsOa9sJMs41Fc4EJ4y9bsE7OnZnn+PgfP7rkcsglBg0f39fNCrP0SZ+gukH4QMYEHJ014Y=
+	t=1715802406; cv=none; b=q6uG1VUd45VGyXs4KtbMbJaDpDBwA22sMV/OiT143MEICGdyQal2xOAPS41KK3PYoNOCczLMl28m9/rKQe3818HzBNaj1qssdgT3czdkW8VKPT+ZacDj65yYu+UPDprdBro1SnknEIuPnoKY3bYDJJZ53KSD086pklNDQkJ1gWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715802294; c=relaxed/simple;
-	bh=Ky8hZAwsZSe40oI2qnfiBQS5VZELG1bjpD5an4EKILM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iwqNCMgNCVfjGiVtgobzSGCMW2TVzwf5BOhIzyp/8YiQ8qSOkNcDgXUKZhJswyaT46U5GybH91uHIcp6JMZ0UnsxKY7UPtBT71nDwbD4pYq1/NPfZd6U2Nd98WGw6U16CWiyUwwXmfOvI0oPZw7iRx2XWHavc0Y8hDuYDG6cIyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=wCPatG3A reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.1.0)
- id b5439ae811171418; Wed, 15 May 2024 21:44:44 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id CD20B7F3A73;
-	Wed, 15 May 2024 21:44:43 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1715802284;
-	bh=Ky8hZAwsZSe40oI2qnfiBQS5VZELG1bjpD5an4EKILM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=wCPatG3AF5YFzy+D1rXEI9VG/YjPnB7XVwcjZTKsXXesLakcGiJzJclOkmp0xGhzh
-	 3Ra9SulVylnkUv65VuM+cX4EEBQpI9AWyC0eOtX9Iho6AMVzoSuOIsAePm0eqMC6bm
-	 WTNm8fErdHI3s4ymBdlc4bx3CYKMt48hyPxVI/psAK+ognhdOJR18ekVk9s9CTlxWn
-	 TUudQYYliG8t7ud1NRwNRq+3ePyF00WtlYyLwCyX3DpsLBa7GU0vhdaBVu4BMezPrD
-	 HPcRufLKh/elg1ceZ6w/g7GDNKqfE+qs4S/nqcvQsXMTbi2v72dfDjWoyghoOtmIsA
-	 ZNHRehWduGaHg==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux ACPI <linux-acpi@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Hans de Goede <hdegoede@redhat.com>,
- Mario Limonciello <mario.limonciello@amd.com>, Armin Wolf <w_armin@gmx.de>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Subject:
- [PATCH v2 2/2] platform/x86: wmi: Remove custom EC address space handler
-Date: Wed, 15 May 2024 21:43:54 +0200
-Message-ID: <1887981.tdWV9SEqCh@kreacher>
-In-Reply-To: <12437901.O9o76ZdvQC@kreacher>
-References: <12437901.O9o76ZdvQC@kreacher>
+	s=arc-20240116; t=1715802406; c=relaxed/simple;
+	bh=ZU0LLUkDKe4hotOeLQTX3xAre1998hxmgubDjgMnWPc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=vGL9rD/M3VamyriNS0hBm2cKCsMAhELDYbXC9+BP+/DQrjhKlrPMeyXxYBO+C4rjsMXmCiOn0MZyEYaIYwUgC3a5ULD2aXTET7WvIXMqgoZ3yyZH60cVsA69zgfHBYr3jNquGjNXzHbuy61GoTXJzPtgKBW7X8mOoH4EUeFFKqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=gHUXpVaG; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-43e13b87c4bso24028461cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 12:46:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1715802403; x=1716407203; darn=vger.kernel.org;
+        h=in-reply-to:autocrypt:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=x7lrpyJZDIKQ1ZPsRPsdZvzkOeU3j3oGtJvZRRaP4t4=;
+        b=gHUXpVaGMGyULpwMpgKNuLpo3UlYyeByBjy/XiMleV4lWhIapYF9cdN2MvI8J7oMVT
+         DPl7pVpNdGbKljpgBSRYFoTjOUvAp+7u/O0M6ZszEYzx4G0FM9a+GDx8MnJgY13vtoYf
+         AL6FlQ9AV7OjUACItcTbojspEcY+9i2GO72mc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715802403; x=1716407203;
+        h=in-reply-to:autocrypt:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=x7lrpyJZDIKQ1ZPsRPsdZvzkOeU3j3oGtJvZRRaP4t4=;
+        b=Z8O5TjAN5tT1uCFXIkyi01mg8hR4EBJNaQfeGqPSESLqr57UaOtROAgW79eEOTJLv1
+         DYAvM6CdwnrH9si5vWlkuniZO6aUEYUfQGQe3ViLoFpjeEDMon8999N9c6Zpiu3YJjbh
+         L4P48OHCDNiySNO0SnfYr0qXVfonjICVaNsIvZoYklFHu8XldKKTFUbSM+qusTWfzTyL
+         80J4wE5WC3X/vGBai9gZvYKz6BsMN6WUIWuAMs3U/zOcaTyeDnKElbqLNnfaefksC6Rp
+         EsEBYZm1YhKnU/8sbWxjh/llRODkSNnJcBNvqtaCUzoYzZHH8mnlwr1+oZJnaua9UCdU
+         G7yQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVcGouieME3SrunCfdsYAYhE1tcFSXBMg1uOrb5Wud/fcPIgyePF+nOdImNshKr4ommzZwroTfrcwDI/Qb9H7DCA39nppMkIdWfqPF3
+X-Gm-Message-State: AOJu0YyPlD63CKnPprh+BQ1ElXPbqA9OfRMdMHJWAcbQAUgSfkW76nFL
+	6vuv6H7fe5ZZDJbF8GkJAJpQ5nqceBcwkIhQDRO8VXyMnMA3Lyb2ApNvqZS0ng==
+X-Google-Smtp-Source: AGHT+IFa3ZvtWYsplJKKUaXqoALsHjWiqriF+fv4t5TW29YCRrWu3iYWNSkxxtEH6VMqyY1q920akA==
+X-Received: by 2002:ac8:590a:0:b0:43d:fc62:f0b4 with SMTP id d75a77b69052e-43dfdcd6ef2mr206002391cf.54.1715802403358;
+        Wed, 15 May 2024 12:46:43 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43df54b590csm87024181cf.13.2024.05.15.12.46.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 May 2024 12:46:42 -0700 (PDT)
+Message-ID: <8ef97b5d-2053-4051-b2da-6c2887c7b394@broadcom.com>
+Date: Wed, 15 May 2024 12:46:38 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvledrvdegkedgudefhecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpedvffeuiedtgfdvtddugeeujedtffetteegfeekffdvfedttddtuefhgeefvdejhfenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqpdhnsggprhgtphhtthhopeejpdhrtghpthhtoheplhhinhhugidqrggtphhisehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghnughrihihrdhshhgvvhgthhgvnhhkoheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehhuggvghhovgguvgesrhgvughhrghtrdgtohhm
- pdhrtghpthhtohepmhgrrhhiohdrlhhimhhonhgtihgvlhhlohesrghmugdrtghomhdprhgtphhtthhopeifpggrrhhmihhnsehgmhigrdguvg
-X-DCC--Metrics: v370.home.net.pl 1024; Body=7 Fuz1=7 Fuz2=7
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ARM: Fix userspace enter on LPAE with
+ CC_OPTIMIZE_FOR_SIZE=y
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Russell King <linux@armlinux.org.uk>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Catalin Marinas <catalin.marinas@arm.com>, Kees Cook
+ <keescook@chromium.org>, Russell King <rmk+kernel@armlinux.org.uk>,
+ Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ Stefan Wahren <wahrenst@gmx.net>
+Cc: linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <200d273a83906a68a1c4a9298c415980737be811.1715781469.git.geert+renesas@glider.be>
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <200d273a83906a68a1c4a9298c415980737be811.1715781469.git.geert+renesas@glider.be>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="000000000000c81e1206188360b7"
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+--000000000000c81e1206188360b7
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The custom EC address space handler in the WMI driver was only needed
-because the EC driver did not install its address space handler for
-EC operation regions beyond the EC device scope in the ACPI namespace.
+On 5/15/24 07:02, Geert Uytterhoeven wrote:
+> Booting an LPAE-enabled kernel built with CONFIG_CC_OPTIMIZE_FOR_SIZE=y
+> fails when starting userspace:
+> 
+>      Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000004
+>      CPU: 1 PID: 1 Comm: init Tainted: G        W        N 6.9.0-rc1-koelsch-00004-g7af5b901e847 #1930
+>      Hardware name: Generic R-Car Gen2 (Flattened Device Tree)
+>      Call trace:
+>       unwind_backtrace from show_stack+0x10/0x14
+>       show_stack from dump_stack_lvl+0x78/0xa8
+>       dump_stack_lvl from panic+0x118/0x398
+>       panic from do_exit+0x1ec/0x938
+>       do_exit from sys_exit_group+0x0/0x10
+>      ---[ end Kernel panic - not syncing: Attempted to kill init!  exitcode=0x00000004 ]---
+> 
+> Add the missing memory clobber to cpu_set_ttbcr(), as suggested by
+> Russell King.
+> 
+> Force inlining of uaccess_save_and_enable(), as suggested by Ard
+> Biesheuvel.
+> 
+> The latter fixes booting on Koelsch.
+> 
+> Fixes: 7af5b901e84743c6 ("ARM: 9358/2: Implement PAN for LPAE by TTBR0 page table walks disablement")
+> Closes: https://lore.kernel.org/r/CAMuHMdWTAJcZ9BReWNhpmsgkOzQxLNb5OhNYxzxv6D5TSh2fwQ@mail.gmail.com/
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-That has just changed, so the custom EC address handler is not needed
-any more and it can be removed.
-
-Reviewed-by: Armin Wolf <W_Armin@gmx.de>
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
-
-v1 -> v2: Add R-by tags from Heikki and Armin.
-
-Note that this is on top of acpi-6.9-rc1, so it may need to be rebased
-before applying.
-
----
- drivers/platform/x86/wmi.c |   62 ---------------------------------------------
- 1 file changed, 62 deletions(-)
-
-Index: linux-pm/drivers/platform/x86/wmi.c
-===================================================================
---- linux-pm.orig/drivers/platform/x86/wmi.c
-+++ linux-pm/drivers/platform/x86/wmi.c
-@@ -1153,47 +1153,6 @@ static int parse_wdg(struct device *wmi_
- 	return 0;
- }
- 
--/*
-- * WMI can have EmbeddedControl access regions. In which case, we just want to
-- * hand these off to the EC driver.
-- */
--static acpi_status
--acpi_wmi_ec_space_handler(u32 function, acpi_physical_address address,
--			  u32 bits, u64 *value,
--			  void *handler_context, void *region_context)
--{
--	int result = 0;
--	u8 temp = 0;
--
--	if ((address > 0xFF) || !value)
--		return AE_BAD_PARAMETER;
--
--	if (function != ACPI_READ && function != ACPI_WRITE)
--		return AE_BAD_PARAMETER;
--
--	if (bits != 8)
--		return AE_BAD_PARAMETER;
--
--	if (function == ACPI_READ) {
--		result = ec_read(address, &temp);
--		*value = temp;
--	} else {
--		temp = 0xff & *value;
--		result = ec_write(address, temp);
--	}
--
--	switch (result) {
--	case -EINVAL:
--		return AE_BAD_PARAMETER;
--	case -ENODEV:
--		return AE_NOT_FOUND;
--	case -ETIME:
--		return AE_TIME;
--	default:
--		return AE_OK;
--	}
--}
--
- static int wmi_get_notify_data(struct wmi_block *wblock, union acpi_object **obj)
- {
- 	struct acpi_buffer data = { ACPI_ALLOCATE_BUFFER, NULL };
-@@ -1308,14 +1267,6 @@ static void acpi_wmi_remove_notify_handl
- 	acpi_remove_notify_handler(acpi_device->handle, ACPI_ALL_NOTIFY, acpi_wmi_notify_handler);
- }
- 
--static void acpi_wmi_remove_address_space_handler(void *data)
--{
--	struct acpi_device *acpi_device = data;
--
--	acpi_remove_address_space_handler(acpi_device->handle, ACPI_ADR_SPACE_EC,
--					  &acpi_wmi_ec_space_handler);
--}
--
- static void acpi_wmi_remove_bus_device(void *data)
- {
- 	struct device *wmi_bus_dev = data;
-@@ -1347,19 +1298,6 @@ static int acpi_wmi_probe(struct platfor
- 
- 	dev_set_drvdata(&device->dev, wmi_bus_dev);
- 
--	status = acpi_install_address_space_handler(acpi_device->handle,
--						    ACPI_ADR_SPACE_EC,
--						    &acpi_wmi_ec_space_handler,
--						    NULL, NULL);
--	if (ACPI_FAILURE(status)) {
--		dev_err(&device->dev, "Error installing EC region handler\n");
--		return -ENODEV;
--	}
--	error = devm_add_action_or_reset(&device->dev, acpi_wmi_remove_address_space_handler,
--					 acpi_device);
--	if (error < 0)
--		return error;
--
- 	status = acpi_install_notify_handler(acpi_device->handle, ACPI_ALL_NOTIFY,
- 					     acpi_wmi_notify_handler, wmi_bus_dev);
- 	if (ACPI_FAILURE(status)) {
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
 
+--000000000000c81e1206188360b7
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
 
+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
+riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
+QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
+UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
+M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
+Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
+14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
+a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
+XzCCBVgwggRAoAMCAQICDBP8P9hKRVySg3Qv5DANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
+RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
+UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAxMjE4MTFaFw0yNTA5MTAxMjE4MTFaMIGW
+MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
+BgNVBAoTDUJyb2FkY29tIEluYy4xGTAXBgNVBAMTEEZsb3JpYW4gRmFpbmVsbGkxLDAqBgkqhkiG
+9w0BCQEWHWZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tMIIBIjANBgkqhkiG9w0BAQEFAAOC
+AQ8AMIIBCgKCAQEA+oi3jMmHltY4LMUy8Up5+1zjd1iSgUBXhwCJLj1GJQF+GwP8InemBbk5rjlC
+UwbQDeIlOfb8xGqHoQFGSW8p9V1XUw+cthISLkycex0AJ09ufePshLZygRLREU0H4ecNPMejxCte
+KdtB4COST4uhBkUCo9BSy1gkl8DJ8j/BQ1KNUx6oYe0CntRag+EnHv9TM9BeXBBLfmMRnWNhvOSk
+nSmRX0J3d9/G2A3FIC6WY2XnLW7eAZCQPa1Tz3n2B5BGOxwqhwKLGLNu2SRCPHwOdD6e0drURF7/
+Vax85/EqkVnFNlfxtZhS0ugx5gn2pta7bTdBm1IG4TX+A3B1G57rVwIDAQABo4IB3jCCAdowDgYD
+VR0PAQH/BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZCaHR0cDovL3NlY3Vy
+ZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAuY3J0MEEG
+CCsGAQUFBzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWdu
+MmNhMjAyMDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcCARYmaHR0cHM6Ly93
+d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNVHR8EQjBAMD6gPKA6
+hjhodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNy
+bDAoBgNVHREEITAfgR1mbG9yaWFuLmZhaW5lbGxpQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggr
+BgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQUUwwfJ6/F
+KL0fRdVROal/Lp4lAF0wDQYJKoZIhvcNAQELBQADggEBAKBgfteDc1mChZjKBY4xAplC6uXGyBrZ
+kNGap1mHJ+JngGzZCz+dDiHRQKGpXLxkHX0BvEDZLW6LGOJ83ImrW38YMOo3ZYnCYNHA9qDOakiw
+2s1RH00JOkO5SkYdwCHj4DB9B7KEnLatJtD8MBorvt+QxTuSh4ze96Jz3kEIoHMvwGFkgObWblsc
+3/YcLBmCgaWpZ3Ksev1vJPr5n8riG3/N4on8gO5qinmmr9Y7vGeuf5dmZrYMbnb+yCBalkUmZQwY
+NxADYvcRBA0ySL6sZpj8BIIhWiXiuusuBmt2Mak2eEv0xDbovE6Z6hYyl/ZnRadbgK/ClgbY3w+O
+AfUXEZ0xggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52
+LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgwT
+/D/YSkVckoN0L+QwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIFGHfvY18uVpSHg0
+W2sS1DzI3DEvIDN+pm7MwxaDGNUiMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcN
+AQkFMQ8XDTI0MDUxNTE5NDY0M1owaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZI
+AWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEH
+MAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQCa8SnGMU0hLeb43aFhbyzb53WIOAq9wXbQ
+UYpEpkPAfL9BXbCQyMQQe8KH2m4sVz1T+gxzqZBOv43qA9uUXKvVlklVLDHTSjkFW46queDEhtHa
+qyKe3AHRu2olnexFWKga2oYSbZHppFX1nDBv5dsnXQzAZvY1o0bW4mMbDMfJXqv5oEDnI2dOzb2b
+qtkscuOh1rqxvnPf/J/NjgjX+8V12WCrFBQhfsdny3+BMgM3XY8+EpX2OTp86EF4djKI0X/Hd/rk
+LGJCHAii4tGUeOdTvHgAUbPRpqqz28IXuWBcOWC55r0i9FqV0LiJfpjIFOt8D6bzUa0N9vj+lPl6
+59Rp
+--000000000000c81e1206188360b7--
 
