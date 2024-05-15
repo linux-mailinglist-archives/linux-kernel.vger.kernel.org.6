@@ -1,171 +1,172 @@
-Return-Path: <linux-kernel+bounces-180400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 582F68C6DEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 23:45:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 047E78C6DEC
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 23:45:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09F55283EF7
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 21:45:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E0961F22959
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 21:45:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0B1515B55E;
-	Wed, 15 May 2024 21:45:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E15D915B567;
+	Wed, 15 May 2024 21:45:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="ERT99NLN";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="MgOwK9gW"
-Received: from wfhigh3-smtp.messagingengine.com (wfhigh3-smtp.messagingengine.com [64.147.123.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ferroamp-se.20230601.gappssmtp.com header.i=@ferroamp-se.20230601.gappssmtp.com header.b="kMnOfE9x"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55A3F1591EC;
-	Wed, 15 May 2024 21:45:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AC931591EC
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 21:45:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715809532; cv=none; b=PTZsex0EzKbFdXXYcJhUHHB1/saJvjQR65QGklzyjjEGbdg0Ksmi0t8tZMXHPEtvHE+nfM/il/IdTdYpvJ0qIl2epvDcgBrwymzx6je+KxUBNMWk5qCjX+ehpTqJfNAc3Smj0NveD0gQ8Q+VRRws4yv4kQfMeVyk/oNcX9gdfcU=
+	t=1715809523; cv=none; b=IROWThsoShRdgooj7cSloCm4iDQfGCogxkSqhVjty3ZRfUrQxyJB/4SbqLlDnYzbJ9xLM8w6nk/oIPQN/jqPFoWSPb2KJIWlW/MRTV1LJP06Omt9TxYfSucSQP8HpAwoqtelgy1xpI8iisjmVF7WaPK6MKOj+O578yG9VCvGE8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715809532; c=relaxed/simple;
-	bh=yhT8qH87UFLaU0oO9HTe6eN8eKuVid3cRTVIc+jIXAs=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=VtG3pbbmcBRQx1HHLPYcw6UX8l21N6Q0TI48vf5lGFmzI6pSYHjb6OCDi0F7xaGItasSE+nD6W9s77vlA1ZDRTstlxVR4DzRusv5P7dqGePqwM/XTIiNKgZLlF5/KC2LcxK9gxu+JMwjdW+zYRP1zmDmVoDlMQyI6rpnN2w1+Pw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=ERT99NLN; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=MgOwK9gW; arc=none smtp.client-ip=64.147.123.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailfhigh.west.internal (Postfix) with ESMTP id D8BAF1800132;
-	Wed, 15 May 2024 17:45:29 -0400 (EDT)
-Received: from imap44 ([10.202.2.94])
-  by compute3.internal (MEProxy); Wed, 15 May 2024 17:45:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1715809529;
-	 x=1715895929; bh=DYfY0QLhy4/rRWL7kh0u1T/d2BAKUWKyXAVHHKbZmaw=; b=
-	ERT99NLNvaEezIzDDFT0UXdcx7BbZrozkgm/DkZWKZPaFV8X2xCknjdLXZ++Yqw3
-	EASsxozJqSkUSk30OPe1EU05gfmT9YHuDo1VDohHmW46QSj8BPz2WDyvnLlPKB5S
-	rrkSiI9hldImW0vLrX0MSzBhqPzK229MLjgjTAWbIq0NrNvTlhnCAAMJk8/8gkP6
-	DjNfFoL3fk0kysHYEMyAQHA57gWJ/+aJsUePENc8pJxm6OYI8XHxUvd5crB5O9qy
-	Vr1dKnUWLhrYvFChKZ9a0m1NBrASAQZ3T0C+7sWTlXY6y9NYYdyX3MiwCDrxBpae
-	LHVkXUQ2skkaJgSgxL3H3A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1715809529; x=
-	1715895929; bh=DYfY0QLhy4/rRWL7kh0u1T/d2BAKUWKyXAVHHKbZmaw=; b=M
-	gOwK9gW26E5deyuZdMckL0EHDqzk3qsrTm+f1m93fehvBwejE2fj7SYkakM5me7P
-	PFFFsPxaI3ucuzvKoh54GO91v426XAUnyKRMwFwYlOUjk6MVLyEaTXGRw4LfPriB
-	FxSBYe4YxurBUY2FXR7OyOBmFkg1lV/1YccJJwwq3EPu09zA/p+19lZ2JAhFLFdy
-	pFwuj9pAF/81//9q8L5ZYORBYz5McAT4tJ01xB6m9MwT6u7ITFxRnQo8/55i7fy7
-	p38aCy/zuXIylUskZAn/9groJVPY/nklfSx7cE2LugbvA3zjJ4M04APU5+cPEl7E
-	jnTpF6PQVwEAIGQmL9B3g==
-X-ME-Sender: <xms:-SxFZmLJbFR0nWQw2kNTOOGUcFn4KYJtr2WH83zzJJ0A5tFxLE97Ww>
-    <xme:-SxFZuLmjZn3itRQkRvsbv2CE46zFkyWDgUMkT4UxBYR7G69AP0e8t19wz__lXAed
-    Zp7k6xM0ovAO3QZ6BE>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdegledgtdduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdfl
-    ihgrgihunhcujggrnhhgfdcuoehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtoh
-    hmqeenucggtffrrghtthgvrhhnpeejuddtuefhvdejvefgheduiedtheeigfevleehffdu
-    udelhfekiefhheduhefgveenucffohhmrghinhepuggvvhhitggvthhrvggvrdhorhhgne
-    cuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepjhhirgig
-    uhhnrdihrghnghesfhhlhihgohgrthdrtghomh
-X-ME-Proxy: <xmx:-SxFZmuykqqzXTbCa4HPtnYlXjtt0mN8Ex5UAbbDIC5RJXtpTTZPeg>
-    <xmx:-SxFZraFSfajIxYvKtjwR7FE6441EkFEXucinRsBjWKDNKrA-Nzynw>
-    <xmx:-SxFZtY2ez9qpnea6HDOpQTDQkFdD578P7gyd3U1rpm4Aj1LV6Cq-Q>
-    <xmx:-SxFZnA56Vy738mX7sTA1VUdGVOFoTkpWPTIoX4HxY09bFn9sibgiw>
-    <xmx:-SxFZvl_Qw_W4r3XPZe9UdcMK3N3r3_UKLs8VLkCi7AeAlpZKqM2yOWv>
-Feedback-ID: ifd894703:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 353AE36A0077; Wed, 15 May 2024 17:45:29 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-456-gcd147058c-fm-hotfix-20240509.001-g0aad06e4
+	s=arc-20240116; t=1715809523; c=relaxed/simple;
+	bh=rWVXe8EK8zuor5fASSIBJOrz7ixoDWOPIz67x1T8VEg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OQF8VoNPEz26yR5ulfJYKXZwseTBSFwBAWDjejrEhafF1DbfC4BxLJs8Xr2B41hDbo674r1IVnsS5ZlYSyz3rKEi6Yf4nn+zfelBUoZjfkI/HhyJiaJFSct85WdoFxw7y7U7+Ev62NNM7QTxNRbKZ9rAEMij5RtoFPnK9UM8j7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ferroamp.se; spf=pass smtp.mailfrom=ferroamp.se; dkim=pass (2048-bit key) header.d=ferroamp-se.20230601.gappssmtp.com header.i=@ferroamp-se.20230601.gappssmtp.com header.b=kMnOfE9x; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ferroamp.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ferroamp.se
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-51f40b5e059so91625e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 14:45:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ferroamp-se.20230601.gappssmtp.com; s=20230601; t=1715809520; x=1716414320; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XjmRDxQfwrSVo7FgVNJ9NzsqQ8BDBTlwFbjqeW7nvHk=;
+        b=kMnOfE9xoPQaoYOQRSstkYToyB6e0gEVuvN5aRaSYcOXe8yiwaP2euFBnZIcx8FUug
+         wl0y8q0EkPMTDEf/7uS1ofaRlOhMLfgCs+qqNWMqtRA99W/MklfJStSOQyIb4s3jFz0r
+         DBhFoXe2tNBQwgNVd75Z15U7zbI4D68dUddk6s7juyUUstmF9PM7GLaO4SYppihA6SJp
+         +9lk7OPv0uovqmMXD5VvcJWPEPnaqC0K9iPgFkFpj/24XVyX/7JN0B3pl/XxPudsfaxO
+         S9tvHVvoHspNa8HIYPD7xnhDZ/2QzPiRLs/g5crWZI8wppbLRkLjVY+P9bCEhNhTeVuB
+         UbFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715809520; x=1716414320;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XjmRDxQfwrSVo7FgVNJ9NzsqQ8BDBTlwFbjqeW7nvHk=;
+        b=oT3sQSoMB+pU7baaOqMTzkzRXMTrciKj+Q/3yd0I7YLb3DC1JnU/cSm4xKHhgXyesN
+         OHfzkKWMzoQhCqsodTgCvthTWN2XxzavFUc7CX0ESwH5XNnOKwVdqqvWr14531OlafhJ
+         icXy6VXPEkQa12NOanO1sCqu87CKDioVT8fZp3k5h/MBOOuiv/ac0YUBxdkNYsyJpPy1
+         kru+0lvJTFbUMQfh0X2+m3dDaHz9qeKMF8+8pnDI6zV7I2bZ3caGvF28bBaWSj78BHGC
+         gkdG0I2xpEzGr3KIzws2cMaQmB/52LUdHdEDSTyQ7wnpaBwKHcG0U/jHT72W42infbSb
+         5K0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWy5s3V55uIaMdbFV3f04ENL5NpHvQaplcTeRgiyp2J5M3hf5c9ZSuhbMzBISP+TEpmG1Ld83wyKuSV9pKJVu2jXTA7tCmOlm2BffWu
+X-Gm-Message-State: AOJu0Yzvl9r55LDEmFfV4YeVquTLWUD9cemfBsRzesUJrBZirqnLRjLO
+	kFKx5pgJWrAFCR6gUFZMI/D6pDHOkIk+C8DFELYVFXWlEM4LXX74u3pWq0r+pHE=
+X-Google-Smtp-Source: AGHT+IEnYE9TDIr0bsxv8FHQ2ZX4z1MlzqN0fUSdhL1PVlWbtVNLfhI90eUHt9V5HsojMo9Ofq9YGQ==
+X-Received: by 2002:a05:6512:3ee:b0:51b:518e:5679 with SMTP id 2adb3069b0e04-5220fb74281mr10650877e87.18.1715809517579;
+        Wed, 15 May 2024 14:45:17 -0700 (PDT)
+Received: from minibuilder (c188-149-135-220.bredband.tele2.se. [188.149.135.220])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-521f35ba41fsm2636895e87.114.2024.05.15.14.45.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 May 2024 14:45:16 -0700 (PDT)
+Date: Wed, 15 May 2024 23:45:15 +0200
+From: =?iso-8859-1?Q?Ram=F3n?= Nordin Rodriguez <ramon.nordin.rodriguez@ferroamp.se>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Piergiorgio Beruto <Pier.Beruto@onsemi.com>,
+	"Parthiban.Veerasooran@microchip.com" <Parthiban.Veerasooran@microchip.com>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	"horms@kernel.org" <horms@kernel.org>,
+	"saeedm@nvidia.com" <saeedm@nvidia.com>,
+	"anthony.l.nguyen@intel.com" <anthony.l.nguyen@intel.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"corbet@lwn.net" <corbet@lwn.net>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"robh+dt@kernel.org" <robh+dt@kernel.org>,
+	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"Horatiu.Vultur@microchip.com" <Horatiu.Vultur@microchip.com>,
+	"ruanjinjie@huawei.com" <ruanjinjie@huawei.com>,
+	"Steen.Hegelund@microchip.com" <Steen.Hegelund@microchip.com>,
+	"vladimir.oltean@nxp.com" <vladimir.oltean@nxp.com>,
+	"UNGLinuxDriver@microchip.com" <UNGLinuxDriver@microchip.com>,
+	"Thorsten.Kummermehr@microchip.com" <Thorsten.Kummermehr@microchip.com>,
+	Selvamani Rajagopal <Selvamani.Rajagopal@onsemi.com>,
+	"Nicolas.Ferre@microchip.com" <Nicolas.Ferre@microchip.com>,
+	"benjamin.bigler@bernformulastudent.ch" <benjamin.bigler@bernformulastudent.ch>
+Subject: Re: [PATCH net-next v4 05/12] net: ethernet: oa_tc6: implement error
+ interrupts unmasking
+Message-ID: <ZkUs6-QC8RypslF0@minibuilder>
+References: <ZjKJ93uPjSgoMOM7@builder>
+ <b7c7aad7-3e93-4c57-82e9-cb3f9e7adf64@microchip.com>
+ <ZjNorUP-sEyMCTG0@builder>
+ <ae801fb9-09e0-49a3-a928-8975fe25a893@microchip.com>
+ <fd5d0d2a-7562-4fb1-b552-6a11d024da2f@lunn.ch>
+ <BY5PR02MB678683EADBC47A29A4F545A59D1C2@BY5PR02MB6786.namprd02.prod.outlook.com>
+ <ZkG2Kb_1YsD8T1BF@minibuilder>
+ <708d29de-b54a-40a4-8879-67f6e246f851@lunn.ch>
+ <ZkIakC6ixYpRMiUV@minibuilder>
+ <81170ef6-2b16-4d7f-85b1-4c3fecdc8853@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <61445fe0-9137-44a6-ab36-ffb8985254df@app.fastmail.com>
-In-Reply-To: <31769e8d-ab52-4f4c-84ca-2f546287d006@kernel.org>
-References: <20240513-boston-syscon-v1-0-93ff557d3548@flygoat.com>
- <20240513-boston-syscon-v1-1-93ff557d3548@flygoat.com>
- <c7317ea0-fcd6-40e0-9d90-bb1ff349c0e0@kernel.org>
- <31769e8d-ab52-4f4c-84ca-2f546287d006@kernel.org>
-Date: Wed, 15 May 2024 22:44:28 +0100
-From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
-To: "Krzysztof Kozlowski" <krzk@kernel.org>, "Lee Jones" <lee@kernel.org>,
- "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>,
- "paulburton@kernel.org" <paulburton@kernel.org>,
- "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: mfd: syscon: Add img,boston-platform-regs
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <81170ef6-2b16-4d7f-85b1-4c3fecdc8853@lunn.ch>
 
+> > Good input. I'll add some instrumentation/stats for how many jiffies
+> > have elapsed between releases of the worker thread and for the irq
+> > handler. I can probably find a gpio to toggle as well if it's really
+> > tight timings.
+> 
+> What might be more interesting is the interrupt status registers. Is
+> there a bit always set which the driver is not clearly correctly?
+> 
 
+Ah great point, I'll dump the irq status registers when things go awry.
 
-=E5=9C=A82024=E5=B9=B45=E6=9C=8814=E6=97=A5=E4=BA=94=E6=9C=88 =E4=B8=8A=E5=
-=8D=8810:11=EF=BC=8CKrzysztof Kozlowski=E5=86=99=E9=81=93=EF=BC=9A
-> On 14/05/2024 11:08, Krzysztof Kozlowski wrote:
->> On 13/05/2024 20:58, Jiaxun Yang wrote:
->>> This compatible has been used in arch/mips/boot/dts/img/boston.dts
->>> for a while but never documented properly.
->>>
->>> Add it to simple syscon binding.
->>>
->>> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
->>> ---
->>>  Documentation/devicetree/bindings/mfd/syscon.yaml | 1 +
->>=20
->> It is documented in clock/img,boston-clock.txt. Please fix/convert/wo=
-rk
->> on that.
->
-> No, that's different device.
->
-> Anyway, this is wrong - does no work with your second patch. Please te=
-st
-> them before sending.
+> You can try printing the values. But that might upset the timing so
+> you cannot reproduce the issue.
+> 
+> If the printk() does upset the timing, what i have done before is
+> allocate an array of u32 values. Write the interrupt status into it,
+> looping around when you get to the end of the array. And then use
+> debugfs_create_u32_array() to export the array in /sys/kernel/debugfs.
+> Trigger the problem and then look at the values.
 
-Hi Krzysztof,
+Good tip, sounds like the exact strategy I need. Appreciate the hands on
+suggestions!
 
-Do you mind telling dumb as me how to test bindings properly?
+> 
+> > > Is this your dual device board? Do you have both devices on the same
+> > > SPI bus? Do they share interrupt lines?
+> > > 
+> > 
+> > It's on the dual device board, the macphys are using separate spi buses,
+> > one chip shares the bus with another spi device, but the other is the
+> > only tenant on the bus.
+> > 
+> > No device shares an irq line.
+> 
+> I was just wondering how your setup differs so you can trigger the
+> issue, but others have not been able to reproduce it. It might be
+> another clue as to what is going on. I don't think you need to do
+> anything with respect to this, its just information to keep in mind.
+> 
 
-I tried to run make check_dtbs after applying this patch and that's all
-the warnings I got:
-```
-arch/mips/boot/dts/img/boston.dtb: Warning (interrupt_map): Failed prere=
-quisite 'interrupt_provider'
-/home/flygoat/linux-next/arch/mips/boot/dts/img/boston.dtb: /: 'model' i=
-s a required property
-        from schema $id: http://devicetree.org/schemas/root-node.yaml#
-arch/mips/boot/dts/img/boston.dtb: /: failed to match any schema with co=
-mpatible: ['img,boston']
-arch/mips/boot/dts/img/boston.dtb: /cpus/cpu@0: failed to match any sche=
-ma with compatible: ['img,mips']
-arch/mips/boot/dts/img/boston.dtb: /system-controller@17ffd000/clock: fa=
-iled to match any schema with compatible: ['img,boston-clock']
-/home/flygoat/linux-next/arch/mips/boot/dts/img/boston.dtb: uart@17ffe00=
-0: $nodename:0: 'uart@17ffe000' does not match '^serial(@.*)?$'
-        from schema $id: http://devicetree.org/schemas/serial/8250.yaml#
-```
+My typical setup is weird for sure, I skip the initramfs and load a
+kernel and dtb into ram (which means I don't have DMA, due to missing fw),
+but I'm in the habit of occasionally flashing and running a 'normal system'
+every once in a while for verifcation.
 
-I think there is no new warning introduced by this patch.
-Did I miss anything here?
+I can't think of anything on top of my head that would set my system in
+a unique position. But since I don't get the failure when I have a UDP
+multicast running I'm guessing different networking daemons might affect
+things, in this case we're running systemd-networkd and I manually set
+an ipv4 address on the interfaces.
 
-Thanks
-- Jiaxun
->
-> You need proper, dedicated schema.
->
-> Best regards,
-> Krzysztof
-
---=20
-- Jiaxun
+R
 
