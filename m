@@ -1,172 +1,194 @@
-Return-Path: <linux-kernel+bounces-180423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AB188C6E8E
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 00:20:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D0B78C6E8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 00:23:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D29E41F23362
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 22:20:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AD082816D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 22:23:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D92C715B968;
-	Wed, 15 May 2024 22:20:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63F7315B96A;
+	Wed, 15 May 2024 22:23:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="2D0xzGf6"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lizKP0TB"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E59415B578
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 22:20:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8DC415B14D
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 22:23:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715811624; cv=none; b=OVLnD4q9OKKiqC4pU4q0KS4s4I3a+f4r/ARaH1XI+DplD0V2Cv0Ow5q528UBg21Lyd+djs7xE2fEB3PFGV9TT/ztP+EGS0TTWzeWi8rRjZ81SLG88KSfr7u6FLtXNBJYiqfju+awO6OuZSNgN9YfhPNV6C0z2G9LSGtZz543O5k=
+	t=1715811814; cv=none; b=NVEaZn17BXaOOMIAvl5m0MtiIWb9Yzxq8y7pjTcWYs7aFJ8NqjtNI4so/MM7J+u8ShymLn8CiV/OjhaaV1FiV3JSSkQl0Hw5lDbsV+6N6RWuTQnc1aJVj5pubabui5ASHQZZB+YDgAIpVGK2/3G1whgXpW3lv8ChYLPqIbgREnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715811624; c=relaxed/simple;
-	bh=zHDyKDJHC6NugxP4s4BCf1sMZ+O+QoU46wnbbwkXAfY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hA7/kneHtW8Ez+ppHGDtCklbqmli+bgTfX/Z1Jq1TcSq3AMayebYbhgvj3wGAcMzSX198RzhCyqiYE/BNw6k+VDNg8DjuFBBqxm9kM8pvvpVUrs3GHr1ewAXdiKePbv9OZY4wTYvfdqE/cFLG0Psf5VvMdxlAPMfRysH1RIOONA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2D0xzGf6; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-572f6c56cdaso46203a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 15:20:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715811621; x=1716416421; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/JjCgBiQoM5fCyA+EXfpGyLzGnNJOcvDx0VjNNMaI6A=;
-        b=2D0xzGf6OMzXwyb+wVioCY2vBL97Y+1AuMvxaUkM8wmRva/aFUOTShy6ZYibxtRpS8
-         8TKYt8dcK6TQWhDRLcBipBcEHGn6cmahZJl37qr+/9LsKiS5oe8tc6k8zUx2eyBvwwAw
-         hvx4vN9dmkY3t1TbTK1HbJOCgwm1Ij1/tzRzEC5VEOy0sp92GS3eEjmO8eNcPnGyh0I3
-         q5NhIWb7ICNQRRa64ZiyKwQWOoLlZ3+oNn7UsVOLqKHb68/XMIqFOCQBrpQ8oO3GAO2J
-         nEc/2x9dM4tc8eryPZZqDwyXEXOXrNVGEN3Q1q0e0wgES+GTJv9PMqB3eyJ5oyMafnuI
-         VEpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715811621; x=1716416421;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/JjCgBiQoM5fCyA+EXfpGyLzGnNJOcvDx0VjNNMaI6A=;
-        b=LJCunJn0PXAeT2+7zubHhfef/G+wtuEyD8agCSlHiC8NePmMHsYLkjaI6PtwRb2k5d
-         mabrZXMmbOCUmduxjgPKMXszyjVjl3HLYaiEGcXbAV8vi6EVnN0+fK5EtzXT7KNEogan
-         Aw42fJGzYb0rssT/C438ywwf2aP15VFgLEIQGVFL5QVVIA4eZUyD9arCnPpaMibb2KXB
-         uzOBazkW8wx8jqoh+JN8GWq6sl81XCPVjjQLpWkYGgD+nYe4VF7q2IZKMyf5JiZOLp0q
-         2mxicWcSkLBiV586DJLRCVchngc+6NOSIY7sC+Keiwu/Lwo4s47m3GS66YWTzTMYdig5
-         Wscw==
-X-Forwarded-Encrypted: i=1; AJvYcCU79zHNG1o6cIdTXnn/MwkivgY4TflN9jsTg/JXfLSFgUKe44ATaCfbuqdh3h9AllzsB9idl1898lHhSa4c5+Hvh/iAieS1rS2MEJpp
-X-Gm-Message-State: AOJu0YwSJghPg+i5fju5DcNs1fDqfCpLZ9fdkDvHK9KPzZwRD7U7LVeg
-	a9Hb9izjJ38idSmjYUkjJxgaBn2DrgZx34NsV0PvSwpIssFNwhTwudt/7i8Ipp4KSyNLr8OUB6d
-	1X54NO5pM2mlETxhFpyTn2XaPBA/B4XSxKKVI
-X-Google-Smtp-Source: AGHT+IGZ3GJvtzMop9dwqIvXre4rgfTZO15wpGDTxHvaHQ7WHetdGZHHg53H8t3pQXebBpag/n52DXaZ7drKVOiwJFA=
-X-Received: by 2002:a50:c943:0:b0:573:4a04:619 with SMTP id
- 4fb4d7f45d1cf-57443d30f6cmr899677a12.4.1715811618461; Wed, 15 May 2024
- 15:20:18 -0700 (PDT)
+	s=arc-20240116; t=1715811814; c=relaxed/simple;
+	bh=3LjmC1IavTCrqU6x6ALfLuDQU7+uE9sxvD5LaeTkgqo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sCTqgq3u/t4MIfFMlJszEFz70GZhF9jj/5M+sIlm0RBMwexvva6gGpWmzBzcLjP2HyXps1znBqo1D6H8OMsY1ELRGyaL9L+QKV4st2KjC07c+I5ZSh+bxaiUQO0pQyFINt5uhsrPlKwEItQ8ju4o8OdHS2vdKGREyPeboyIHb6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lizKP0TB; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715811813; x=1747347813;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=3LjmC1IavTCrqU6x6ALfLuDQU7+uE9sxvD5LaeTkgqo=;
+  b=lizKP0TB1TAdjplKGewOzjCeyGA+Epuwu4neR0Tna8XczksA79wSXSKU
+   HkhklFrDxUq4uq9z370+FbTq5torBKqiZgGyi0NjBzZHoDhQcLWQ+uZDK
+   qemfkfpKqdcnr4Fnp0InGHIJB+D/k/s3Yux1HO9pKoY+V4dW7FjP5ga5V
+   PjEtBrKmkaUcZ5WF7dcVVb9yNLboNhCpRwMBh2Teg0dJ8HLqhG2qIZP/Q
+   kzNExRxSMZH74M9PoG08FTVlCnsr+l7Aj5SVSpJ1o9/zhtP5oYP76w9Uj
+   scGW0pZxTYKmBUJ3B46C1BKgMQNKWgLrclMBbKbFSo6LX74ODaoMLZzAR
+   Q==;
+X-CSE-ConnectionGUID: C4SeybeWTaWEnPanX93XKw==
+X-CSE-MsgGUID: xjeqPVzpQkSb6VaESnVBvQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="15671578"
+X-IronPort-AV: E=Sophos;i="6.08,162,1712646000"; 
+   d="scan'208";a="15671578"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 15:23:32 -0700
+X-CSE-ConnectionGUID: cUco/v6aSz+kVgr8ZEa+LQ==
+X-CSE-MsgGUID: x3Km09sKQUyQrI1z/lE6Tw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,162,1712646000"; 
+   d="scan'208";a="35989126"
+Received: from agluck-desk3.sc.intel.com ([172.25.222.105])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 15:23:32 -0700
+From: Tony Luck <tony.luck@intel.com>
+To: Fenghua Yu <fenghua.yu@intel.com>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
+	Peter Newman <peternewman@google.com>,
+	James Morse <james.morse@arm.com>,
+	Babu Moger <babu.moger@amd.com>,
+	Drew Fustini <dfustini@baylibre.com>,
+	Dave Martin <Dave.Martin@arm.com>
+Cc: x86@kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev,
+	Tony Luck <tony.luck@intel.com>
+Subject: [PATCH v18 00/17] Add support for Sub-NUMA cluster (SNC) systems
+Date: Wed, 15 May 2024 15:23:08 -0700
+Message-ID: <20240515222326.74166-1-tony.luck@intel.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240501122918.3831734-1-usama.anjum@collabora.com> <CAFP8O3JkgQsH-4Lmr2W_teuvLjOCPi1htr9r3CO1O0yLyw=Azg@mail.gmail.com>
-In-Reply-To: <CAFP8O3JkgQsH-4Lmr2W_teuvLjOCPi1htr9r3CO1O0yLyw=Azg@mail.gmail.com>
-From: Fangrui Song <maskray@google.com>
-Date: Wed, 15 May 2024 15:20:04 -0700
-Message-ID: <CAFP8O3LaEAuUtEERr_Loxazw1wDO1ufVL_-g+XoBsZgseT3QCQ@mail.gmail.com>
-Subject: Re: [PATCH 0/8] selftests: x86: build suite with clang
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc: Shuah Khan <shuah@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	"Mike Rapoport (IBM)" <rppt@kernel.org>, Ingo Molnar <mingo@kernel.org>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Alexey Dobriyan <adobriyan@gmail.com>, 
-	Binbin Wu <binbin.wu@linux.intel.com>, "Chang S. Bae" <chang.seok.bae@intel.com>, 
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, kernel@collabora.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, May 6, 2024 at 4:26=E2=80=AFPM Fangrui Song <maskray@google.com> wr=
-ote:
->
-> On Wed, May 1, 2024 at 5:29=E2=80=AFAM Muhammad Usama Anjum
-> <usama.anjum@collabora.com> wrote:
-> >
-> > This series fixes build errors found by clang to allow the x86 suite to
-> > get built with the clang.
-> >
-> > Unfortunately, there is one bug [1] in the clang becuase of which
-> > extended asm isn't handled correctly by it and build fails for
-> > sysret_rip.c. Hence even after this series the build of this test would
-> > fail with clang. Should we disable this test for now when clang is used
-> > until the bug is fixed in clang? Not sure. Any opinions?
-> >
-> > [1] https://github.com/llvm/llvm-project/issues/53728
->
-> I've closed https://github.com/llvm/llvm-project/issues/53728
-> (constant expression folding for relocatable file output
-> (MCObjectStreamer)).
->
-> I've sent a patch to address https://github.com/llvm/llvm-project/issues/=
-62520
-> (constant expression folding for relocatable file output  when inline
-> assembly is used).
->
-> (I am subscribed to llvm@lists.linux.dev but rarely read it. I noticed
-> this message accidentally :) )
+This series based on top of Linus upstream commit 33e02dc69afb ("Merge
+tag 'sound-6.10-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound")
 
-On the LLVM/Clang side, I've landed
-https://github.com/llvm/llvm-project/pull/91082 to make the following
-if directive work for clang -c. clang -S still doesn't work
-(https://discourse.llvm.org/t/rfc-clang-assembly-object-equivalence-for-fil=
-es-with-inline-assembly/78841/4?u=3Dmaskray)
-but people can probably live with that
+The Sub-NUMA cluster feature on some Intel processors partitions the CPUs
+that share an L3 cache into two or more sets. This plays havoc with the
+Resource Director Technology (RDT) monitoring features.  Prior to this
+patch Intel has advised that SNC and RDT are incompatible.
 
-```
-% cat b.cc
-asm(R"(
-pushsection .text,"ax"
-globl _start; _start: ret
-if . -_start =3D=3D 1
-  ret
-endif
-popsection
-)");
+Some of these CPUs support an MSR that can partition the RMID counters
+in the same way. This allows monitoring features to be used. Legacy
+monitoring files provide the sum of counters from each SNC node for
+backwards compatibility. Additional  files per SNC node provide details
+per node.
 
-% clang -c b.cc     # succeeded with this patch
-% clang -S b.cc     # still failed
-<inline asm>:4:5: error: expected absolute expression
-    4 | .if . -_start =3D=3D 1
-      |     ^
-1 error generated.
-```
+Cache and memory bandwidth allocation features continue to operate at
+the scope of the L3 cache.
+
+Signed-off-by: Tony Luck <tony.luck@intel.com>
+
+---
+Changes since v17: https://lore.kernel.org/all/20240503203325.21512-1-tony.luck@intel.com/
+
+Reinette: This is still using the per-domain display_id field as
+discussed. Would a better name make the intent clearer?
+
+Patch 7 in previous version included virtually all of the new changes.
+But that meant it was doing a lot of thinngs in a single patch
+(including reverting a dozen lines from patch 6!)
+
+So this series breaks patch 7 into nine pieces (0007..0015) for
+better documentation in commit comments of the changes, and hopefully
+easier review.
+
+Patches 0001 ... 0005:  Unchanged
+Patch 0006:             Dropped change that was reverted in v17.0007
+
+Next nine are the split of the original patch v17.0007
+Patch 0007:             Added bigger commit comment describing where
+                        this part of the series is heading and why.
+Patch 0008:             Added justification for new display_id field in struct rdt_mon_domain
+Patch 0009:             Split out a helper from mkdir_mondata_subdir()
+                        so real changes in patch 0011 are easier to see.
+Patch 0010:             Comment stealing a bit from union mon_data_bits.evtid
+Patch 0011:             Save display_id instead of a random d->id in
+                        meta data for monitor files that must sum SNC nodes
+                        Don't call mon_event_read() to initialize "sum" files
+Patch 0012:             Set domid for "sum" files to the display id, not
+			to whatever SNC domain ID is in use here. Don't
+			call mon_event_read() for "sum" files.
+Patch 0013:             No change (apart from being split out from old patch 7)
+Patch 0014:             Because of change in patch 0011 to save the
+                        display_id can no longer look up a domain using
+                        rdt_find_domain(). Instead search r->mon_domains
+                        for a match with d->display_id or d->hdr.id
+                        Drop extra arg to ___mon_event_count() also
+                        the "tmp" variable in __mon_event_count()
+Patch 0015:             Put #include <linux/cacheinfo.h> in alphabetical order
+			When SNC is disabled, keep the old check that
+			the current CPU is in the domain being read.
+			For the SNC case add comment about reading
+			monitor values from any CPU in the same L3 domain.
+
+Patch 0016:             Took alternate SNC detection algorithm from:
+                        https://lore.kernel.org/all/20240327200352.236835-11-tony.luck@intel.com/
+                        as it is simpler. But merged in the sanity
+                        checks that make sense.
+			Converted the X86_MATCH*() usage to new model
+			that supports Intel families other than "6".
+Patch 0017:             No change
 
 
-> > Muhammad Usama Anjum (8):
-> >   selftests: x86: Remove dependence of headers file
-> >   selftests: x86: check_initial_reg_state: remove -no-pie while using
-> >     -static
-> >   selftests: x86: test_vsyscall: remove unused function
-> >   selftests: x86: fsgsbase_restore: fix asm directive from =3Drm to =3D=
-r
-> >   selftests: x86: syscall_arg_fault_32: remove unused variable
-> >   selftests: x86: test_FISTTP: use fisttps instead of ambigous fisttp
-> >   selftests: x86: fsgsbase: Remove unused function and variable
-> >   selftests: x86: amx: Remove unused functions
-> >
-> >  tools/testing/selftests/x86/Makefile            |  9 +++++----
-> >  tools/testing/selftests/x86/amx.c               | 16 ----------------
-> >  tools/testing/selftests/x86/fsgsbase.c          |  6 ------
-> >  tools/testing/selftests/x86/fsgsbase_restore.c  |  2 +-
-> >  tools/testing/selftests/x86/syscall_arg_fault.c |  1 -
-> >  tools/testing/selftests/x86/test_FISTTP.c       |  8 ++++----
-> >  tools/testing/selftests/x86/test_vsyscall.c     |  5 -----
-> >  7 files changed, 10 insertions(+), 37 deletions(-)
-> >
-> > --
-> > 2.39.2
-> >
-> >
+Tony Luck (17):
+  x86/resctrl: Prepare for new domain scope
+  x86/resctrl: Prepare to split rdt_domain structure
+  x86/resctrl: Prepare for different scope for control/monitor
+    operations
+  x86/resctrl: Split the rdt_domain and rdt_hw_domain structures
+  x86/resctrl: Add node-scope to the options for feature scope
+  x86/resctrl: Introduce snc_nodes_per_l3_cache
+  x86/resctrl: Prepare for new Sub-NUMA (SNC) cluster monitor files
+  x86/resctrl: Add and initialize display_id field to struct
+    rdt_mon_domain
+  x86/resctrl: Add new fields to struct rmid_read for summation of
+    domains
+  x86/resctrl: Refactor mkdir_mondata_subdir() with a helper function
+  x86/resctrl: Allocate a new bit in union mon_data_bits
+  x86/resctrl: Create Sub-NUMA (SNC) monitor files
+  x86/resctrl: Handle removing directories in Sub-NUMA (SNC) mode
+  x86/resctrl: Sum monitor data acrss Sub-NUMA (SNC) nodes when needed
+  x86/resctrl: Fix RMID reading sanity check for Sub-NUMA (SNC) mode
+  x86/resctrl: Sub NUMA Cluster detection and enable
+  x86/resctrl: Update documentation with Sub-NUMA cluster changes
+
+ Documentation/arch/x86/resctrl.rst        |  17 +
+ include/linux/resctrl.h                   |  89 +++--
+ arch/x86/include/asm/msr-index.h          |   1 +
+ arch/x86/kernel/cpu/resctrl/internal.h    |  78 ++--
+ arch/x86/kernel/cpu/resctrl/core.c        | 422 ++++++++++++++++++----
+ arch/x86/kernel/cpu/resctrl/ctrlmondata.c |  70 ++--
+ arch/x86/kernel/cpu/resctrl/monitor.c     | 106 ++++--
+ arch/x86/kernel/cpu/resctrl/pseudo_lock.c |  26 +-
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c    | 267 +++++++++-----
+ 9 files changed, 779 insertions(+), 297 deletions(-)
+
+
+base-commit: 33e02dc69afbd8f1b85a51d74d72f139ba4ca623
+-- 
+2.44.0
+
 
