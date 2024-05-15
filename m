@@ -1,184 +1,166 @@
-Return-Path: <linux-kernel+bounces-180445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 209968C6EA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 00:30:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B0AA8C6EA9
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 00:30:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6936CB22F5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 22:30:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE6DC1F237FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 22:30:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FEA415B964;
-	Wed, 15 May 2024 22:29:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4566F3C062;
+	Wed, 15 May 2024 22:30:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VhS6CU/j"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DC2NxJVE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F16A15B14D;
-	Wed, 15 May 2024 22:29:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C3CF2A8D7
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 22:30:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715812194; cv=none; b=Rcifc4xEyZpeUp7WQ/r8PtPeOPoc+FM2jaIBrY9gYLPVXfs/mZiUblvVMqBha06A5nycgEjWugLn88RgTxZljxal9v5Y8gL9kN6wiz4TPfftdIKvc2rp1J4DNxmXWiOg7zADobs6avaiKfZ9vzyOFGZSp/1+lUOODTFfY9Nw5e0=
+	t=1715812237; cv=none; b=h2zMADEMMyQdEHIWouLD0dM2vwUZbO40KRqh7C2MlhSdJCeEf2YcTW4dpN/amYr6GH12AlLY87ooR9sRg84Ln84nFa3l58ffgs4NcyOKWA/m+ntyg2GZjSvEW8+ninrIusJykZHCo5dXeSJYwoGWK7iCrzM1c7d5MXV520iKxKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715812194; c=relaxed/simple;
-	bh=27nbdem5s/AwTYYPl6s7NGoH7kWLD+sGJfMyucZ8ZPk=;
-	h=Content-Type:To:Cc:Subject:References:Date:MIME-Version:From:
-	 Message-ID:In-Reply-To; b=svs4FxO5AmJZZp9HZUqgHfiplNnn9AnKkLH9qKGXYJATrYBEJ2Df52kDrEUmxIH6ax+B7DHDvul/mqlglV9+ZyKa3YUxEmw4uxp9bM5TeUth1EN/aZCTrMY16UczxKUXJE1D7bDnOy9Ep9PLiYZg0YQrm+J1NThrs0q1EeXN1xM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VhS6CU/j; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715812193; x=1747348193;
-  h=to:cc:subject:references:date:mime-version:
-   content-transfer-encoding:from:message-id:in-reply-to;
-  bh=27nbdem5s/AwTYYPl6s7NGoH7kWLD+sGJfMyucZ8ZPk=;
-  b=VhS6CU/j0z/nrOlPm/il6MlJCNfyZKqcuOMFnKV6KvWXYQKylBdsmB3g
-   5S5toQvmt8Oo2Q0d88raTaAloSm1rKDJ88hdVG/dEfxSk6rMmVwnJkaxi
-   rzddLwHJFUai0KsMM1BnasF+zQAQmH+MAN8tEtLqUMFf7VcAz8jZqiH5X
-   flCcKcBMbI+NZA1kwFIvOqLEhsl9J+/x8mS+hKVYIUdpIRTNKQpswgal+
-   K2ruxPvj64IFDRTM9T0LrJQHmszuaOnvcilo1dC9sCzE8GafyxcULq3ir
-   du30jEQOAQrtgBWgr0N6q8zy9JUM8PXTIcOrvKzl7Tm4cwHQHtU01nhP5
-   A==;
-X-CSE-ConnectionGUID: zJVugIJmTk+RWK0IXNhLjg==
-X-CSE-MsgGUID: 44Tg4jqqS1yFoHG1wNe6ig==
-X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="15717249"
-X-IronPort-AV: E=Sophos;i="6.08,162,1712646000"; 
-   d="scan'208";a="15717249"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 15:29:52 -0700
-X-CSE-ConnectionGUID: 4y3j4iNfSqumB1FLBRfLQQ==
-X-CSE-MsgGUID: ewgLClsLRLSHoebrAS+Hyg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,162,1712646000"; 
-   d="scan'208";a="31040329"
-Received: from hhuan26-mobl.amr.corp.intel.com ([10.92.17.168])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/AES256-SHA; 15 May 2024 15:29:51 -0700
-Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
-To: linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
- jarkko@kernel.org, dave.hansen@linux.intel.com, "Bojun Zhu"
- <zhubojun.zbj@antgroup.com>
-Cc: reinette.chatre@intel.com, =?utf-8?B?5YiY5Y+MKOi9qeWxuSk=?=
- <ls123674@antgroup.com>
-Subject: Re: [RFC PATCH v3 1/1] x86/sgx: Explicitly give up the CPU in EDMM's
- ioctl() to avoid softlockup
-References: <20240515065521.67908-1-zhubojun.zbj@antgroup.com>
- <20240515065521.67908-2-zhubojun.zbj@antgroup.com>
- <op.2nt1vls9wjvjmi@hhuan26-mobl.amr.corp.intel.com>
-Date: Wed, 15 May 2024 17:29:49 -0500
+	s=arc-20240116; t=1715812237; c=relaxed/simple;
+	bh=BhaxKrSJ2V074gHXzgPwRKtFyji5OeLt5R3Sl21D4t0=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=iutCIJLWgROsFN4a6brlrBp3ZengIrPdVjimT79LbVTgxqsKWqfG3FyulPAIaXOqvLoZvzSHnh64/ZBu7BQPX8M2LOUiEqc0ytUCdrYgMiwxSPKq847lco7oFg897cEE9u3GZ9P3mL/uBbXT4N9U+4F+P36IOpU1bwcaTYlU6aU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DC2NxJVE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3D22C116B1;
+	Wed, 15 May 2024 22:30:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715812237;
+	bh=BhaxKrSJ2V074gHXzgPwRKtFyji5OeLt5R3Sl21D4t0=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=DC2NxJVEy31yOLjZq9huooHYPwBBmjBjscRNb0ZIy3x6OEpnlOzGNuQT92ALOTRRV
+	 1NNhrZjfbKC0lEtLDZOmnnkdgi080nHff9IsAxUVb/vA1ieHqy5fJddxyiP7BlRu07
+	 HG78AuDwrZh9dO0iHbi3gN/jF1hi1vGY/F/9TLhql3jUuWpIr9rRHNB99sBSVcfHte
+	 0joH++aTxyWzb7rwjAJ0PSCxJrYrGnt6ObW8dQm/61+/4UlfEcEzW7mcCJgjOv2vxt
+	 OcBtySvKnw9a3yyXI8RbwBEuusgl/lGV/8pqUE8U0okm/NYcsTjYEWnd+a8Bzvuj3M
+	 kdb3NJxOwTmtg==
+Date: Wed, 15 May 2024 15:30:34 -0700 (PDT)
+From: Stefano Stabellini <sstabellini@kernel.org>
+X-X-Sender: sstabellini@ubuntu-linux-20-04-desktop
+To: Henry Wang <xin.wang2@amd.com>
+cc: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org, 
+    Juergen Gross <jgross@suse.com>, 
+    Stefano Stabellini <sstabellini@kernel.org>, 
+    Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>, 
+    Michal Orzel <michal.orzel@amd.com>
+Subject: Re: [PATCH] drivers/xen: Improve the late XenStore init protocol
+In-Reply-To: <20240515014330.1044617-1-xin.wang2@amd.com>
+Message-ID: <alpine.DEB.2.22.394.2405151524270.2544314@ubuntu-linux-20-04-desktop>
+References: <20240515014330.1044617-1-xin.wang2@amd.com>
+User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-From: "Haitao Huang" <haitao.huang@linux.intel.com>
-Organization: Intel
-Message-ID: <op.2nt3fzsnwjvjmi@hhuan26-mobl.amr.corp.intel.com>
-In-Reply-To: <op.2nt1vls9wjvjmi@hhuan26-mobl.amr.corp.intel.com>
-User-Agent: Opera Mail/1.0 (Win32)
+Content-Type: text/plain; charset=US-ASCII
 
-On Wed, 15 May 2024 16:55:59 -0500, Haitao Huang  
-<haitao.huang@linux.intel.com> wrote:
+On Wed, 15 May 2024, Henry Wang wrote:
+> Currently, the late XenStore init protocol is only triggered properly
+> for the case that HVM_PARAM_STORE_PFN is ~0ULL (invalid). For the
+> case that XenStore interface is allocated but not ready (the connection
+> status is not XENSTORE_CONNECTED), Linux should also wait until the
+> XenStore is set up properly.
+> 
+> Introduce a macro to describe the XenStore interface is ready, use
+> it in xenbus_probe_initcall() and xenbus_probe() to select the code
+> path of doing the late XenStore init protocol or not.
+> 
+> Take the opportunity to enhance the check of the allocated XenStore
+> interface can be properly mapped, and return error early if the
+> memremap() fails.
+> 
+> Signed-off-by: Henry Wang <xin.wang2@amd.com>
+> Signed-off-by: Michal Orzel <michal.orzel@amd.com>
 
-> On Wed, 15 May 2024 01:55:21 -0500, Bojun Zhu  
-> <zhubojun.zbj@antgroup.com> wrote:
->
->> EDMM's ioctl()s support batch operations, which may be
->> time-consuming. Try to explicitly give up the CPU as the prefix
->> operation at the every begin of "for loop" in
->> sgx_enclave_{ modify_types | restrict_permissions | remove_pages}
->> to give other tasks a chance to run, and avoid softlockup warning.
->>
->> Additionally perform pending signals check as the prefix operation,
->> and introduce sgx_check_signal_and_resched(),
->> which wraps all the checks.
->>
->> The following has been observed on Linux v6.9-rc5 with kernel
->> preemptions disabled(by configuring "PREEMPT_NONE=y"), when kernel
->> is requested to restrict page permissions of a large number of EPC  
->> pages.
->>
->>     ------------[ cut here ]------------
->>     watchdog: BUG: soft lockup - CPU#45 stuck for 22s!
->>     ...
->>     RIP: 0010:sgx_enclave_restrict_permissions+0xba/0x1f0
->>     ...
->>     Call Trace:
->>      sgx_ioctl
->>      __x64_sys_ioctl
->>      x64_sys_call
->>      do_syscall_64
->>      entry_SYSCALL_64_after_hwframe
->>     ------------[ end trace ]------------
->>
->> Signed-off-by: Bojun Zhu <zhubojun.zbj@antgroup.com>
->> ---
->>  arch/x86/kernel/cpu/sgx/ioctl.c | 40 +++++++++++++++++++++++----------
->>  1 file changed, 28 insertions(+), 12 deletions(-)
->>
->> diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c  
->> b/arch/x86/kernel/cpu/sgx/ioctl.c
->> index b65ab214bdf5..6199f483143e 100644
->> --- a/arch/x86/kernel/cpu/sgx/ioctl.c
->> +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
->> @@ -365,6 +365,20 @@ static int sgx_validate_offset_length(struct  
->> sgx_encl *encl,
->>  	return 0;
->>  }
->> +/*
->> + * Check signals and invoke scheduler. Return true for a pending  
->> signal.
->> + */
->> +static bool sgx_check_signal_and_resched(void)
->> +{
->> +	if (signal_pending(current))
->> +		return true;
->> +
->> +	if (need_resched())
->> +		cond_resched();
->> +
->> +	return false;
->> +}
->> +
->>  /**
->>   * sgx_ioc_enclave_add_pages() - The handler for  
->> %SGX_IOC_ENCLAVE_ADD_PAGES
->>   * @encl:       an enclave pointer
->> @@ -409,7 +423,7 @@ static long sgx_ioc_enclave_add_pages(struct  
->> sgx_encl *encl, void __user *arg)
->>  	struct sgx_enclave_add_pages add_arg;
->>  	struct sgx_secinfo secinfo;
->>  	unsigned long c;
->> -	int ret;
->> +	int ret = -ERESTARTSYS;
->> 	if (!test_bit(SGX_ENCL_CREATED, &encl->flags) ||
->>  	    test_bit(SGX_ENCL_INITIALIZED, &encl->flags))
->> @@ -432,15 +446,8 @@ static long sgx_ioc_enclave_add_pages(struct  
->> sgx_encl *encl, void __user *arg)
->>  		return -EINVAL;
->> 	for (c = 0 ; c < add_arg.length; c += PAGE_SIZE) {
->> -		if (signal_pending(current)) {
->> -			if (!c)
->> -				ret = -ERESTARTSYS;
->> -
->> +		if (sgx_check_signal_and_resched())
->>  			break;
->> -		}
->
-> ERESTARTSYS is only appropriate if we have not EADDed any pages yet.
-> If we got interrupted in the middle, we should return 0. User space  
-> would check the 'count' returned and decide to recall this ioctl() with  
-> 'offset'  reset to the next page, and adjust length.
+Please add a Fixes: tag
 
-NVM, I misread it. ret will be changed to zero in subsequent iteration.
 
-Reviewed-by: Haitao Huang <haitao.huang@linux.intel.com>
+> ---
+>  drivers/xen/xenbus/xenbus_probe.c | 21 ++++++++++++++++-----
+>  1 file changed, 16 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/xen/xenbus/xenbus_probe.c b/drivers/xen/xenbus/xenbus_probe.c
+> index 3205e5d724c8..8aec0ed1d047 100644
+> --- a/drivers/xen/xenbus/xenbus_probe.c
+> +++ b/drivers/xen/xenbus/xenbus_probe.c
+> @@ -72,6 +72,10 @@ EXPORT_SYMBOL_GPL(xen_store_evtchn);
+>  struct xenstore_domain_interface *xen_store_interface;
+>  EXPORT_SYMBOL_GPL(xen_store_interface);
+>  
+> +#define XS_INTERFACE_READY \
+> +	((xen_store_interface != NULL) && \
+> +	 (xen_store_interface->connection == XENSTORE_CONNECTED))
+> +
+>  enum xenstore_init xen_store_domain_type;
+>  EXPORT_SYMBOL_GPL(xen_store_domain_type);
+>  
+> @@ -751,9 +755,10 @@ static void xenbus_probe(void)
+>  {
+>  	xenstored_ready = 1;
+>  
+> -	if (!xen_store_interface) {
+> -		xen_store_interface = memremap(xen_store_gfn << XEN_PAGE_SHIFT,
+> -					       XEN_PAGE_SIZE, MEMREMAP_WB);
+> +	if (!xen_store_interface || XS_INTERFACE_READY) {
+> +		if (!xen_store_interface)
 
-Thanks
-Haitao
+These two nested if's don't make sense to me. If XS_INTERFACE_READY
+succeeds, it means that  ((xen_store_interface != NULL) &&
+(xen_store_interface->connection == XENSTORE_CONNECTED)).
+
+So it is not possible that xen_store_interface == NULL immediately
+after. Right?
+
+
+> +			xen_store_interface = memremap(xen_store_gfn << XEN_PAGE_SHIFT,
+> +						       XEN_PAGE_SIZE, MEMREMAP_WB);
+>  		/*
+>  		 * Now it is safe to free the IRQ used for xenstore late
+>  		 * initialization. No need to unbind: it is about to be
+> @@ -822,7 +827,7 @@ static int __init xenbus_probe_initcall(void)
+>  	if (xen_store_domain_type == XS_PV ||
+>  	    (xen_store_domain_type == XS_HVM &&
+>  	     !xs_hvm_defer_init_for_callback() &&
+> -	     xen_store_interface != NULL))
+> +	     XS_INTERFACE_READY))
+>  		xenbus_probe();
+>  
+>  	/*
+> @@ -831,7 +836,7 @@ static int __init xenbus_probe_initcall(void)
+>  	 * started, then probe.  It will be triggered when communication
+>  	 * starts happening, by waiting on xb_waitq.
+>  	 */
+> -	if (xen_store_domain_type == XS_LOCAL || xen_store_interface == NULL) {
+> +	if (xen_store_domain_type == XS_LOCAL || !XS_INTERFACE_READY) {
+>  		struct task_struct *probe_task;
+>  
+>  		probe_task = kthread_run(xenbus_probe_thread, NULL,
+> @@ -1014,6 +1019,12 @@ static int __init xenbus_init(void)
+>  			xen_store_interface =
+>  				memremap(xen_store_gfn << XEN_PAGE_SHIFT,
+>  					 XEN_PAGE_SIZE, MEMREMAP_WB);
+> +			if (!xen_store_interface) {
+> +				pr_err("%s: cannot map HVM_PARAM_STORE_PFN=%llx\n",
+> +				       __func__, v);
+> +				err = -ENOMEM;
+
+I think this should -EINVAL
+
+
+> +				goto out_error;
+> +			}
+>  			if (xen_store_interface->connection != XENSTORE_CONNECTED)
+>  				wait = true;
+>  		}
+> -- 
+> 2.34.1
+> 
 
