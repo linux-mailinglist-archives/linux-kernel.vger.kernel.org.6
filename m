@@ -1,130 +1,172 @@
-Return-Path: <linux-kernel+bounces-179513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C16C58C60A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:15:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AF208C60B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:20:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C29FB20F88
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:15:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41E1E1F21957
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:20:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B9FA3BBC1;
-	Wed, 15 May 2024 06:15:47 +0000 (UTC)
-Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 380603A29F;
-	Wed, 15 May 2024 06:15:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=163.172.96.212
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 047E43BBD4;
+	Wed, 15 May 2024 06:20:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="bkpscqxp"
+Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C06E13BB22
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 06:20:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715753747; cv=none; b=AHChM/1PtCg5l9qnt4eMUfqf3ysXBSycmF63MRrLiB9j7YdbjeMfjFVVExR+8nNEAzvZgkfvRjFU0qqp2wWRn7qQQkdDwwsmRY7F34ROzvinvOwxk8hsNdWxjUAKmNDvps1nQYRiAsStxP+yex0vj1haH/g4DQc/v2aMFE5FMxY=
+	t=1715754003; cv=none; b=tWj7DW4Q95J/zlZPQbyDwflgN+r5uuvdjwTR0HvY/fp4mND9cHawzMsp6e8w1hcu+lxaiKnIm19maoHlr4+ApETu5QXmT9CuRbHFOAnfZE+7Th73QKD2v7Mn2hxHL8oDJvTio7f2moFpr1IE+IEAnK0Tln+yIdu8/Nsyzz03VXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715753747; c=relaxed/simple;
-	bh=5pN0Bv3ggxcBHrTLeGSKhEB6L3Vo7V64rQH/kwktpaA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WJGpv7IBpyTPRgpXlw8guNJUpl37FnGFOUUAyMZ4FMiPpywDwOMQxqetrstGXjaW72dujYwse+0bNZWOrYvDlgmqoqneq/u1a3tOEjJrXV1qrVnCDYs7qfLPukJcWAcQugz20NU77pFPRVy7q1yEFcxQ8QrOminjUZEkLXtiYGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; arc=none smtp.client-ip=163.172.96.212
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
-Received: (from willy@localhost)
-	by mail.home.local (8.17.1/8.17.1/Submit) id 44F6EquX027885;
-	Wed, 15 May 2024 08:14:52 +0200
-Date: Wed, 15 May 2024 08:14:52 +0200
-From: Willy Tarreau <w@1wt.eu>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Theo de Raadt <deraadt@openbsd.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>, Jonathan Corbet <corbet@lwn.net>,
-        jeffxu@chromium.org, keescook@chromium.org, jannh@google.com,
-        sroettger@google.com, gregkh@linuxfoundation.org,
-        usama.anjum@collabora.com, Liam.Howlett@oracle.com, surenb@google.com,
-        merimus@google.com, rdunlap@infradead.org, jeffxu@google.com,
-        jorgelo@chromium.org, groeck@chromium.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-mm@kvack.org, pedro.falcato@gmail.com, dave.hansen@intel.com,
-        linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v10 0/5] Introduce mseal
-Message-ID: <ZkRS3DJQWgUnEBKo@1wt.eu>
-References: <20240415163527.626541-1-jeffxu@chromium.org>
- <20240514104646.e6af4292f19b834777ec1e32@linux-foundation.org>
- <871q646rea.fsf@meer.lwn.net>
- <ZkPXcT_JuQeZCAv0@casper.infradead.org>
- <56001.1715726927@cvs.openbsd.org>
- <20240514160150.3ed0fda8af5cbd2f17c625e6@linux-foundation.org>
- <92453.1715730450@cvs.openbsd.org>
- <20240515025811.GA1232@1wt.eu>
- <CAHk-=wiW4V5HRQ5Jm_MnSMVTeivS_4kdm1dnc08d03UKzmyp+A@mail.gmail.com>
- <CAHk-=wh_GHCwCiC-ZR=idjNEb0xZq20=fQnQxnjGkiq-ba5DLg@mail.gmail.com>
+	s=arc-20240116; t=1715754003; c=relaxed/simple;
+	bh=UyrQgiGxpVTwgJtSrbHRBf9lE+OZP6cY2tzhDaA4YlM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RXYBeoBfFzYWtx1xvTSR07NoTCdaudjwOZUMm29paASTYUwPru7v8r8hZgJdZyIbsdCTWBBsts80jdpVTAW2zI9h7x+0qoWH+/T7S8vsmPeTnfYV00iFFulZkc4KXlPyUf1vi8gC38oO1KwejMoG8rrIgMLRAvNuZsxKYuESDs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=bkpscqxp; arc=none smtp.client-ip=209.85.166.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
+Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-36c90b7f4a5so22487205ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 23:20:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1715754000; x=1716358800; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DXBk01eAYtbUsAxjAP5iGYBzxJrtGgpchSjyGGop1NU=;
+        b=bkpscqxpboI0T8i3xvZR8yiGwgMJq5IXEBKUfkc6jsgH2QQVDn7im6PXOqmyngrZme
+         8Bt8ZQ7yCgADITlNp5E9aAXPY30MFlv/wP8X5Ef8eJKuw6L7ciFuhZn9i3OBqAcWlEmc
+         2E8XdPuXfKvV8eouyH52hY/1aqpvJzYkuVm78idGZ8RQ58dvAtWWlKYP9urtSuzu+E8H
+         9YG8H8wtfQRGmEbyiuM5xHfG5Kiv11hYLyVCvLlAsxRohktKfpcnPrJb0Md7TiOzNL4E
+         5MlZxBcgPVxv6B3rl3dXFKecB1VdTs8teWzHZr+eLREVAeLceO395wiSrImmOjNe0K6W
+         H9qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715754000; x=1716358800;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DXBk01eAYtbUsAxjAP5iGYBzxJrtGgpchSjyGGop1NU=;
+        b=CCbZ5RHSeOre/5wR5fdD3ajFkPxEKAl2+pxgP37zwtaKCCPZUjNDIz5YRrodB4bNlJ
+         OjbSO1iTPmKQn8wzGNDKmZpmR+05/1SJFH3fWiXdtfpwz3xlurhtFZgDQZ92orPtmddV
+         K0nvLIWyf2P7bhtvDbLfNM+klvFzWOYTbP5lpXM3KDFgIK4cWfDYay3sYh1CtEGeToRw
+         nADwiJCKMqh1hqCdQNS5TFlkQoNddYPGYnGW6NCzk9MIK6wdte1iKBh9tnxBvn4qVC7R
+         FeHN/cQQLhATWjISfc+LDPJHudYfiFcbQiSAqWvMnUwEXAreabIAoOD9rP5JqMDGbVg8
+         clEg==
+X-Forwarded-Encrypted: i=1; AJvYcCVZmK96mt+w/xVMyYRj0u6CErRLgTsh6U5iK82NEBZbmCFvrkdT9k3VSBUmAyK+5UuBBQnM52c2rV8C8d9y6i66kjFg7xk5bQJWc6Lt
+X-Gm-Message-State: AOJu0YzjnM1hzGoRScKSgbdT4+dgUym7Ic0Fdc/mU7fJ6jHCnEODN3Ks
+	FkwKirb1Rzcr9Tcq2+wGruvqzM9ORpixiqoGmlVEK7GfJuRTJ7c6VM8eCRRk1sn6jKFrBHLc4h8
+	GYzHEZIaMREwdp/hEH1IS/5la01Ot++auqGsiCA==
+X-Google-Smtp-Source: AGHT+IFkE8DQwyCj3o5jxhZZChCPfs/heM6LGJLIaFfgGkAUVO7wCCuZJPaCHqr48cEbTVMpVAMjeT1LwCMTCZfprkA=
+X-Received: by 2002:a05:6e02:1a01:b0:36b:31d2:f148 with SMTP id
+ e9e14a558f8ab-36cb7757227mr129234915ab.15.1715753999877; Tue, 14 May 2024
+ 23:19:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wh_GHCwCiC-ZR=idjNEb0xZq20=fQnQxnjGkiq-ba5DLg@mail.gmail.com>
+References: <PH7PR20MB4962C6D8FD6989BC79F9483FBB1D2@PH7PR20MB4962.namprd20.prod.outlook.com>
+ <IA1PR20MB4953F852CB7A9C5FE45E18EBBB1D2@IA1PR20MB4953.namprd20.prod.outlook.com>
+In-Reply-To: <IA1PR20MB4953F852CB7A9C5FE45E18EBBB1D2@IA1PR20MB4953.namprd20.prod.outlook.com>
+From: Anup Patel <anup@brainfault.org>
+Date: Wed, 15 May 2024 11:49:48 +0530
+Message-ID: <CAAhSdy2uSAA4TLmCvjuLsZT26wJyCQ0L61m5vg3BbBCSvHxVqg@mail.gmail.com>
+Subject: Re: [PATCH v5 1/2] dt-bindings: hwmon: Add Sophgo SG2042 external
+ hardware monitor support
+To: Inochi Amaoto <inochiama@outlook.com>
+Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Chen Wang <unicorn_wang@outlook.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, linux-hwmon@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 14, 2024 at 09:14:37PM -0700, Linus Torvalds wrote:
-> On Tue, 14 May 2024 at 20:36, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > Guys, if you let untrusted code execute random system calls, the whole
-> > "look, now unmap() acts oddly" IS THE LEAST OF YOUR ISSUES.
+On Sun, May 5, 2024 at 6:48=E2=80=AFAM Inochi Amaoto <inochiama@outlook.com=
+> wrote:
+>
+> Due to the design, Sophgo SG2042 use an external MCU to provide
+> hardware information, thermal information and reset control.
+>
+> Add bindings for this monitor device.
+>
+> Signed-off-by: Inochi Amaoto <inochiama@outlook.com>
 
-I totally agree with this, I'm more speaking about a more general
-hardening measure, like what is commonly offered via prctl() and that,
-for example, manages to mitigate the consequences of a successful RCE.
+LGTM.
 
-> Side note: it doesn't even help to make things "atomic". munmap() acts
-> oddly whether it fals completely or whether it fails partially, and if
-> the user doesn't check the result, neither case is great.
+Reviewed-by: Anup Patel <anup@brainfault.org>
 
-I don't find the "atomic" aspect that important either, however the
-munmap() man page says:
+Applied this patch to the riscv/opensbi repo.
 
-  All  pages containing a part of the indicated range are un-
-  mapped, and subsequent references to these pages will generate SIGSEGV.
-  It  is  not an error if the indicated range does not contain any mapped
-  pages.
+Thanks,
+Anup
 
-This alone is an encouragement to not check the result. And BTW, what
-should one do to try to repair the situation after a failed munmap() ?
-It reads as "best effort" above: usually upon return, anything that
-could be unmapped was unmapped. That's how I'm reading it. I think it's
-a nice property that makes this syscall trustable by its users, and
-contrary to the atomic aspect I would find it nice if munmap() would
-properly unmap everything it can then return the error caused by the
-encounter of a sealed area. For me that's even the opposite of an
-atomic approach, it's really about making sure to best follow the
-developer's intent regardless of any obstacles.
-
-> If you want to have some "hardened mseal()", you make any attempt to
-> change a mseal'ed memory area be a fatal error. The whole "atomic or
-> not" is a complete red herring.
-
-Yep, agreed.
-
-> I'd certainly be ok with that. If the point of mseal is "you can't
-> change this mapping", then anybody who tries to change it is obviously
-> untrustworthy, and killing the whole thing sounds perfectly sane to
-> me.
-> 
-> Maybe that's a first valid use-case for the flags argument.
-
-That could be for that use case (developer doing mseal, attacker
-trying munmap), indeed, though that couldn't cover for the other
-way around (attacker doing mseal() in hope to make a future munmap()
-fail).
-
-That's what I like with prctl(), it offers the developer a panoply of
-options to decide when and how to lock down a process in order to
-mitigate consequences of exploited bugs.
-
-And it could be independent on this series, by essentially focusing on
-the ability to kill a process that fails to munmap() a sealed area. I.e.
-no need to that that property on the area itself, it's a matter of whether
-we consider the process sensitive enough or not.
-
-Willy
+> ---
+>  .../hwmon/sophgo,sg2042-hwmon-mcu.yaml        | 43 +++++++++++++++++++
+>  1 file changed, 43 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/hwmon/sophgo,sg2042=
+-hwmon-mcu.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/hwmon/sophgo,sg2042-hwmon-=
+mcu.yaml b/Documentation/devicetree/bindings/hwmon/sophgo,sg2042-hwmon-mcu.=
+yaml
+> new file mode 100644
+> index 000000000000..f0667ac41d75
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/hwmon/sophgo,sg2042-hwmon-mcu.yam=
+l
+> @@ -0,0 +1,43 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/hwmon/sophgo,sg2042-hwmon-mcu.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Sophgo SG2042 onboard MCU support
+> +
+> +maintainers:
+> +  - Inochi Amaoto <inochiama@outlook.com>
+> +
+> +properties:
+> +  compatible:
+> +    const: sophgo,sg2042-hwmon-mcu
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  "#thermal-sensor-cells":
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - "#thermal-sensor-cells"
+> +
+> +allOf:
+> +  - $ref: /schemas/thermal/thermal-sensor.yaml#
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    i2c {
+> +        #address-cells =3D <1>;
+> +        #size-cells =3D <0>;
+> +
+> +        hwmon@17 {
+> +            compatible =3D "sophgo,sg2042-hwmon-mcu";
+> +            reg =3D <0x17>;
+> +            #thermal-sensor-cells =3D <1>;
+> +        };
+> +    };
+> --
+> 2.45.0
+>
+>
 
