@@ -1,134 +1,88 @@
-Return-Path: <linux-kernel+bounces-179394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35C278C5FA9
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:17:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAF0E8C5FAB
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:20:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E7391F221CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 04:17:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66752283A69
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 04:20:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8EA3383B2;
-	Wed, 15 May 2024 04:17:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49997383B0;
+	Wed, 15 May 2024 04:20:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FCpVdjcC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lg3KclTg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D8A138398;
-	Wed, 15 May 2024 04:17:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B0DE8488
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 04:20:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715746662; cv=none; b=TbcUGYRZ75282c3B9O3l9FNmqnLc8hMRJQfOjElQU0piewmWekP2TCCJ6GV1SIq0uSpHVsokQYZTwJNz/fz/nm0x6z16VcxSoVqB/q6KRuR5DuW95qYlOmTsAV9QB2RW3w7HojHSi07lvi22G+tjlThJDMoL5YVnaPofAM0IkLc=
+	t=1715746830; cv=none; b=RrO2OemPa3Hd0NdFdPAz6FXN/ToB82yZEL5F7/fQ6uo7xZaKP96CyeUDtxi9lQK/Bx/hDkamwfXoPBDwYLNsANTWyjkmJJ12uYSvJ8MiVARXccnxnjb5tMCvzgdfGtINdpfg4j057YWa8oC+AqCpoEhBVqH67t2vZq2Bn/6+e+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715746662; c=relaxed/simple;
-	bh=o8xlyoTwasKN6ToM9uc7PDvEdUddA5cXnljoZKZ9vpM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=c/rjX8ArwRV0m6TE2mnB27BTS22cD8YtxesYDST6MqW3R1ARPy9lUfGLIUsyuKKifi+9EQiyQYgWbMt5q/s7QbtsTRF99fpwj2fAIUQvkEr3YmVaLk3/ojkVKHoqQcWA/rbh6awI069e0A4IsWiPa8nnaqZ9mjECEw5aXuLldHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FCpVdjcC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC093C116B1;
-	Wed, 15 May 2024 04:17:40 +0000 (UTC)
+	s=arc-20240116; t=1715746830; c=relaxed/simple;
+	bh=IPVEhIi6lCtFGo0sCu4Gf678CrgSqtPa+8kjZYLJNZs=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=r/S3VUMXXJVNuGfU48fqococ714uz8QuuoiiwIrasAxnIxl9/U0YcOMNXDF1VYUzmi5gJ3WS38gCymKDXKj/EI/IQuBFjj5/nflpCTcXWx/2ASBBcczg9w+5W0R63CI3HyOdvkfbrIPhrlIyRmhPASmbH9IUlA0lyZUrMDLSFjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lg3KclTg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 0B2C9C2BD11;
+	Wed, 15 May 2024 04:20:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715746660;
-	bh=o8xlyoTwasKN6ToM9uc7PDvEdUddA5cXnljoZKZ9vpM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=FCpVdjcCp0OtgEk1rkJFNu/BgQyghY0NhS0lKg4hirLKKqFoppfPfx8mkb5r2n06C
-	 fP3Phd9ctUKlhW7YQyFh6/KA63uqji35E+B+JECEgXti88NP9mXhS1ceXPmt+njJyh
-	 DkBrKoixQLQq8FdYnuzKK6bbIBeBkGif2Cum31MYqNja2DwHsgL+WYtvyKjqqyVQtB
-	 1+e1wbzIwZYpVu/7WM+WynHJSTqXhIEeXQpliLa78wc0VWMx+f0rFLnr7sxemncTt6
-	 r808xMb7vty05r/JWDea0BMkzvnIlZJ+4iGZJwFi9EZKhDvEAJRwVd+ybjP55Bj+ka
-	 Cs/GS/FS1g5PQ==
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5238b7d0494so718852e87.3;
-        Tue, 14 May 2024 21:17:40 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUqev3i7jAEwGl+n9pLwotFvKWd+Ta9BAfXg4rfDDQl8B5MbHzkucrbFzW1QXGVsghQkztwITKH0hZbJhvpVSdwLSv3ri/2x+PnK8I4t/D2TfXC8FBqH6XkzAGXWoC+7BGJzqYJ+i4x9WLE
-X-Gm-Message-State: AOJu0YxxNnhiZAHoVRNXmAPKu56sNHoJUoG/cZVrkm/y6ppYsBW1EZYd
-	7vTq7Z1/U9gdRuflBntdTIPaJlQOkQZb2dRk5HixSHlRQVOhNKjWUDHM49QUzXbS9OGHMfUlwGY
-	VXv/I9UynSa0NpbOFLauGFHhySvA=
-X-Google-Smtp-Source: AGHT+IESSLsGjW88xIqliogNGDxgxvKWhuWkxYP31Rdm3gmKprqZhOCCqwQtAdIyH4BUsw/KkwPyyrxbqlAYjIgGGM8=
-X-Received: by 2002:a05:6512:3d1a:b0:51e:f0e8:d70d with SMTP id
- 2adb3069b0e04-5220fc7d1camr19011140e87.21.1715746659584; Tue, 14 May 2024
- 21:17:39 -0700 (PDT)
+	s=k20201202; t=1715746830;
+	bh=IPVEhIi6lCtFGo0sCu4Gf678CrgSqtPa+8kjZYLJNZs=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=Lg3KclTg23Q4Ta5axXjPBz51TQyZCIUD+8ScpGpJNRiPzthEQeUYkRetchUhjG2Q3
+	 CWOlKqQTrAGVY6T1CElyF5yG6B7rYx+umwLmHTvnklZTQRp08Y4UEneaWIwUS60Kpb
+	 HydpbsF9vR2YD8KflZeP2HVj1E/C2Vsu7v0GezkmMIbXUUypWURlVpZSIq/OGcu76o
+	 3G/dAO5NvY59NipDXeIm6Gk1X7J5D5ByIS3Ac7JSUJqwJ/WGjQA4rOOfrRMzjWhxWT
+	 iPBeYQlXnTCIJiIAYT61AJgaefnci4pQnEaovRQ+vrqINd6V4Pqv+mgR/HzwtXDx1u
+	 clmq1V1/p+LIQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id EF361CF21DF;
+	Wed, 15 May 2024 04:20:29 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <b948b14b-1543-4314-9e9e-58a54cf2b734@gmail.com>
-In-Reply-To: <b948b14b-1543-4314-9e9e-58a54cf2b734@gmail.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Wed, 15 May 2024 13:17:03 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASTaxPDH4_wozMc9G6NE+HwFXgLiUAM5Ki9mc-Gwf4vmA@mail.gmail.com>
-Message-ID: <CAK7LNASTaxPDH4_wozMc9G6NE+HwFXgLiUAM5Ki9mc-Gwf4vmA@mail.gmail.com>
-Subject: Re: [PROBLEM linux-next] Error in "make olddefconfig" and "make menuconfig"
-To: Mirsad Todorovac <mtodorovac69@gmail.com>
-Cc: Bagas Sanjaya <bagasdotme@gmail.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Kernel Build System <linux-kbuild@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Subject: Re: [f2fs-dev] [PATCH] f2fs: initialize last_block_in_bio variable
+From: patchwork-bot+f2fs@kernel.org
+Message-Id: 
+ <171574682997.29254.10154206807293240549.git-patchwork-notify@kernel.org>
+Date: Wed, 15 May 2024 04:20:29 +0000
+References: <20240514113529.1498545-1-bo.wu@vivo.com>
+In-Reply-To: <20240514113529.1498545-1-bo.wu@vivo.com>
+To: Wu Bo <bo.wu@vivo.com>
+Cc: jaegeuk@kernel.org, chao@kernel.org, wubo.oduw@gmail.com,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On Wed, May 15, 2024 at 3:37=E2=80=AFAM Mirsad Todorovac <mtodorovac69@gmai=
-l.com> wrote:
->
-> Hi, Mr. Bagas,
->
-> While bisecting a problem in linux-next tree, I came across the problem:
+Hello:
 
+This patch was applied to jaegeuk/f2fs.git (dev)
+by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-I checked out v6.7-rc5-2761-gefc11f34e25f
-but 'make olddefconfig' worked fine with me.
+On Tue, 14 May 2024 05:35:29 -0600 you wrote:
+> Initialize last_block_in_bio of struct f2fs_bio_info and clean up code.
+> 
+> Signed-off-by: Wu Bo <bo.wu@vivo.com>
+> ---
+>  fs/f2fs/data.c | 23 +++++++++++++----------
+>  1 file changed, 13 insertions(+), 10 deletions(-)
 
+Here is the summary with links:
+  - [f2fs-dev] f2fs: initialize last_block_in_bio variable
+    https://git.kernel.org/jaegeuk/f2fs/c/16409fdbb882
 
-If this issue occurs only during 'git bisect',
-I need full steps to reproduce it because I do not
-know what you did before v6.7-rc5-2761-gefc11f34e25f.
-
-
-  $ git checkout <some commit>
-  $ [ do something ]
-  $ git v6.7-rc5-2761-gefc11f34e25f
-  $ make olddefconfig
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
-If I am able to reproduce the issue that way,
-maybe I can have more insight.
-
-
-
-
-
-
-
->
-> marvin@defiant:~/linux/kernel/linux-next$ git describe
-> v6.7-rc5-2761-gefc11f34e25f
-> marvin@defiant:~/linux/kernel/linux-next$ make olddefconfig
-> make[2]: *** No targets.  Stop.
-> make[1]: *** [/home/marvin/linux/kernel/linux-next/Makefile:621: scripts_=
-basic] Error 2
-> make: *** [Makefile:234: __sub-make] Error 2
-> marvin@defiant:~/linux/kernel/linux-next$ make menuconfig
-> make[2]: *** No targets.  Stop.
-> make[1]: *** [/home/marvin/linux/kernel/linux-next/Makefile:621: scripts_=
-basic] Error 2
-> make: *** [Makefile:234: __sub-make] Error 2
-> marvin@defiant:~/linux/kernel/linux-next$
->
-> Now, this occurred for the first time, and I don't know how to bail out.
->
-> I recall in past couple of years you have some insightful advice.
->
-> Thank you very much.
->
-> Best regards,
-> Mirsad Todorovac
->
-
-
---=20
-Best Regards
-Masahiro Yamada
 
