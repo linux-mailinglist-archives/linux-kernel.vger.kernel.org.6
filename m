@@ -1,133 +1,210 @@
-Return-Path: <linux-kernel+bounces-179694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12F728C6381
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 11:17:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7002D8C6384
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 11:17:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C33C12833E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:17:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 946831C217B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:17:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 094A557CB8;
-	Wed, 15 May 2024 09:17:19 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E1BE57CBA;
+	Wed, 15 May 2024 09:17:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KJ6ceIxw"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FC8957C94;
-	Wed, 15 May 2024 09:17:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5804157C8D;
+	Wed, 15 May 2024 09:17:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715764638; cv=none; b=XfUTa9J+VDKQxBNvZG4sWSNPxpuO034pDeTpOVUrxdeUOkWJR9G0o5/9uNtGNL90NwuVIH/TtL1ku7BjBfeYXiTr7zYPuDm/3q7GvLjLmA5Sx4FNhBZ/OArKs2Skgxtn78YJqrHwIKPWRPvIx2T03Eh5Qwqdh6pQUQ6nky0iZYc=
+	t=1715764667; cv=none; b=X4hy3rf7+5z/ZTlAqUQsXsKwYcJ7T2nqavmN6Z1FoiOOXMqrQBE2ttVgo8NhTre7/3dimq09FeByWfA7vQ69ZimQ4jdIy2AfZQ4XRqJZx7VJ5wZbOKOexWc9YM6YawzJ0Zv8dlJy6KZHqrp8GLLFH+JIsd70J7yLJMlWQhxZ/wQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715764638; c=relaxed/simple;
-	bh=vLCdWJiZuxlL9/ekQEzEY6Py6sNMfC/b3bvB1D5ygPg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E/wqSmMqzNE7wfmSUAHbskRHbEM/CTKhj4s5wf+12m3p1eGe1zwWYaU9dC88atLvpnBDGa7wlxjQ0JEqmjrFSRt3X3D6PSe0iw6lvBFvbjd+ffQdGtL1TnlWr10Fc9wf8mOZOJLk4DF7zsRkoa5aUlSIL+9YgOnl4m6GIkY8XFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 579ABC116B1;
-	Wed, 15 May 2024 09:17:14 +0000 (UTC)
-Message-ID: <c5dbb765-8c93-4050-84e1-c0f63b43d6c2@xs4all.nl>
-Date: Wed, 15 May 2024 11:17:12 +0200
+	s=arc-20240116; t=1715764667; c=relaxed/simple;
+	bh=97fJlRl8dJOpcgfN1cVebIQsfS1pVOcf9fB3mVSPx5Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=swnr3r+xtWMvlOmLUlXPgyNrx+jYATMDbULCKgqmUR/6eHkssxhkLF3oDQhFWGUFLEzr4KmW9sgctOw05hIo0gj/asWh2pRg6ifaRKHydrcWr4B6IBcarLm7LvLOhFm1urP6D9XkT5Zh8tfcMoV3HOTnB5RZx+Cl8sTPyyxB2Tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KJ6ceIxw; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1ed835f3c3cso57207185ad.3;
+        Wed, 15 May 2024 02:17:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715764665; x=1716369465; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5Wv8rV2tKPThsseCMW82u6ARIGWeqVn1KtBaNU4oLcc=;
+        b=KJ6ceIxw6eDuVGLik8cMQCftF/XcDBDwtVe/ffdaxPmRVfMq+tLDtoCaALSnxw0Z6m
+         ZWTAwzfwS753qSETjfTwZCQp2gqju4Vqor5nlRMabAp1+cHJ237EzQWDARmOLPQG/ui8
+         6Uw6J/WZslyiDhv1Z0oKUaJGO2K6GgstHhWkZIYT+oYHp3KrrKAr7kelVmuWKtAmPncR
+         +SPC1Fk6VBbhcBsVUdWX9aWDBSMwd49TeEf7LjUA9jFsTaOc1S7s+N4idQbm/ByzyygZ
+         +AmL8rHGL072ljSzcAn6RbUj/Q9fp+09RXucO2M3l/w4/LbD/R6pnJxX2K7L/7oqNg4e
+         D5wQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715764665; x=1716369465;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5Wv8rV2tKPThsseCMW82u6ARIGWeqVn1KtBaNU4oLcc=;
+        b=Qpe9g3jUDDNq9Z6e++IRhU4yI364ZmRpAx3qa7PZURLs3/9Jj/OSXtAZu/2vV9QNEj
+         8u1gBskuuXyldmnvijuMHCeBju9xMtA8il7zhid2sab/tkhn5TwiYEoxTppzyxDnZCHF
+         xM0XlYzNv1UKI/xaW/wOoNcygmk+xZUO/mxjoRCYUJfTubPd/QfWibThqd7wTwIpHdkX
+         Z8DKZjovLhkgmYxelwivVzjvSo7D/frSu+GMdisf0TQnZMAaGXsL1i9EqsUOhV7fNl1w
+         RGeBWYUzMaWTSkadq0J9cwP/PXkCsT6YpbvCSWyZq+rPtLuJdqJpN1lpYIcaP/7dx28r
+         Tvaw==
+X-Forwarded-Encrypted: i=1; AJvYcCVu5feVg8knOSRGsxQrt45s2UBjpWl0B9B8UAL83FMI+79X5DrsEZyTrFsMDCtBqyYHr4ClzCqBFtT+p1yO/igPBpxY3jTT64WDvM5CwE1aim+H+D8nI0dNwoHcuKZRucxppcWHyzTuSteT3Q==
+X-Gm-Message-State: AOJu0YxDBV1Xm506XiCYCSFkikwwi9stbDNK1XFcPZTWl07bOch2Q3Ib
+	N4v9zhjnLSMKB5WCQ1zjAdbBcIseZLERWmv3ahAbqnALv9HUUMj0
+X-Google-Smtp-Source: AGHT+IFtmVf7oEws1uF1l3m/5X3gzrEYi5mE17gV2Q6owMBXhDKxbWShPbXhK8zPO76YBGJxCnbDkQ==
+X-Received: by 2002:a17:902:ec8b:b0:1eb:1129:7f15 with SMTP id d9443c01a7336-1ef4404a272mr202174455ad.46.1715764664621;
+        Wed, 15 May 2024 02:17:44 -0700 (PDT)
+Received: from localhost.localdomain ([39.144.45.254])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0bf30fb1sm113304135ad.177.2024.05.15.02.17.40
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 15 May 2024 02:17:44 -0700 (PDT)
+From: Yafang Shao <laoar.shao@gmail.com>
+To: torvalds@linux-foundation.org
+Cc: brauner@kernel.org,
+	jack@suse.cz,
+	laoar.shao@gmail.com,
+	linux-fsdevel@vger.kernel.org,
+	longman@redhat.com,
+	viro@zeniv.linux.org.uk,
+	walters@verbum.org,
+	wangkai86@huawei.com,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH] vfs: Delete the associated dentry when deleting a file
+Date: Wed, 15 May 2024 17:17:27 +0800
+Message-Id: <20240515091727.22034-1-laoar.shao@gmail.com>
+X-Mailer: git-send-email 2.30.1 (Apple Git-130)
+In-Reply-To: <CAHk-=whHsCLoBsCdv2TiaQB+2TUR+wm2EPkaPHxF=g9Ofki7AQ@mail.gmail.com>
+References: <CAHk-=whHsCLoBsCdv2TiaQB+2TUR+wm2EPkaPHxF=g9Ofki7AQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v15 00/16] Add audio support in v4l2 framework
-Content-Language: en-US
-To: Jaroslav Kysela <perex@perex.cz>, Shengjiu Wang
- <shengjiu.wang@gmail.com>,
- =?UTF-8?Q?Amadeusz_S=C5=82awi=C5=84ski?=
- <amadeuszx.slawinski@linux.intel.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
- Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.de>,
- Sebastian Fricke <sebastian.fricke@collabora.com>,
- Shengjiu Wang <shengjiu.wang@nxp.com>, sakari.ailus@iki.fi,
- tfiga@chromium.org, m.szyprowski@samsung.com, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org, Xiubo.Lee@gmail.com, festevam@gmail.com,
- nicoleotsuka@gmail.com, lgirdwood@gmail.com, tiwai@suse.com,
- alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org
-References: <1710834674-3285-1-git-send-email-shengjiu.wang@nxp.com>
- <ZjEEKyvb02CWz3l4@finisterre.sirena.org.uk> <20240430172752.20ffcd56@sal.lan>
- <ZjGhPz-bokg6ZbDJ@finisterre.sirena.org.uk> <87sez0k661.wl-tiwai@suse.de>
- <20240502095956.0a8c5b26@sal.lan> <20240502102643.4ee7f6c2@sal.lan>
- <ZjRCJ2ZcmKOIo7_p@finisterre.sirena.org.uk> <20240503094225.47fe4836@sal.lan>
- <CAA+D8APfM3ayXHAPadHLty52PYE9soQM6o780=mZs+R4px-AOQ@mail.gmail.com>
- <22d94c69-7e9f-4aba-ae71-50cc2e5dd8ab@xs4all.nl>
- <51408e79-646d-4d23-bc5b-cd173d363327@linux.intel.com>
- <CAA+D8AM7+SvXBi=LKRqvJkLsrYW=nkHTfFe957z2Qzm89bc48g@mail.gmail.com>
- <cd71e8e8-b4dc-40ed-935e-a84c222997e6@linux.intel.com>
- <CAA+D8AMpLB0N++_iLWLN_qettNz-gKGQz2c2yLsY8qSycibkYg@mail.gmail.com>
- <2f771fe9-7c09-4e74-9b04-de52581133fd@linux.intel.com>
- <CAA+D8AMJKPVR99jzYCR5EsbMa8P95jQrDL=4ayYMuz+Cu1d2mQ@mail.gmail.com>
- <28d423b1-49d8-4180-8394-622b1afd9cd9@perex.cz>
- <850a80b2-d952-4c14-bd0b-98cb5a5c0233@perex.cz>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-In-Reply-To: <850a80b2-d952-4c14-bd0b-98cb5a5c0233@perex.cz>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Jaroslav,
+Our applications, built on Elasticsearch[0], frequently create and delete
+files. These applications operate within containers, some with a memory
+limit exceeding 100GB. Over prolonged periods, the accumulation of negative
+dentries within these containers can amount to tens of gigabytes.
 
-On 5/13/24 13:56, Jaroslav Kysela wrote:
-> On 09. 05. 24 13:13, Jaroslav Kysela wrote:
->> On 09. 05. 24 12:44, Shengjiu Wang wrote:
->>>>> mem2mem is just like the decoder in the compress pipeline. which is
->>>>> one of the components in the pipeline.
->>>>
->>>> I was thinking of loopback with endpoints using compress streams,
->>>> without physical endpoint, something like:
->>>>
->>>> compress playback (to feed data from userspace) -> DSP (processing) ->
->>>> compress capture (send data back to userspace)
->>>>
->>>> Unless I'm missing something, you should be able to process data as fast
->>>> as you can feed it and consume it in such case.
->>>>
->>>
->>> Actually in the beginning I tried this,  but it did not work well.
->>> ALSA needs time control for playback and capture, playback and capture
->>> needs to synchronize.  Usually the playback and capture pipeline is
->>> independent in ALSA design,  but in this case, the playback and capture
->>> should synchronize, they are not independent.
->>
->> The core compress API core no strict timing constraints. You can eventually0
->> have two half-duplex compress devices, if you like to have really independent
->> mechanism. If something is missing in API, you can extend this API (like to
->> inform the user space that it's a producer/consumer processing without any
->> relation to the real time). I like this idea.
-> 
-> I was thinking more about this. If I am right, the mentioned use in gstreamer 
-> is supposed to run the conversion (DSP) job in "one shot" (can be handled 
-> using one system call like blocking ioctl).  The goal is just to offload the 
-> CPU work to the DSP (co-processor). If there are no requirements for the 
-> queuing, we can implement this ioctl in the compress ALSA API easily using the 
-> data management through the dma-buf API. We can eventually define a new 
-> direction (enum snd_compr_direction) like SND_COMPRESS_CONVERT or so to allow 
-> handle this new data scheme. The API may be extended later on real demand, of 
-> course.
-> 
-> Otherwise all pieces are already in the current ALSA compress API 
-> (capabilities, params, enumeration). The realtime controls may be created 
-> using ALSA control API.
+Upon container exit, directories are deleted. However, due to the numerous
+associated dentries, this process can be time-consuming. Our users have
+expressed frustration with this prolonged exit duration, which constitutes
+our first issue.
 
-So does this mean that Shengjiu should attempt to use this ALSA approach first?
+Simultaneously, other processes may attempt to access the parent directory
+of the Elasticsearch directories. Since the task responsible for deleting
+the dentries holds the inode lock, processes attempting directory lookup
+experience significant delays. This issue, our second problem, is easily
+demonstrated:
 
-If there is a way to do this reasonably cleanly in the ALSA API, then that
-obviously is much better from my perspective as a media maintainer.
+  - Task 1 generates negative dentries:
+  $ pwd
+  ~/test
+  $ mkdir es && cd es/ && ./create_and_delete_files.sh
 
-My understanding was always that it can't be done (or at least not without
-a major effort) in ALSA, and in that case V4L2 is a decent plan B, but based
-on this I gather that it is possible in ALSA after all.
+  [ After generating tens of GB dentries ]
 
-So can I shelf this patch series for now?
+  $ cd ~/test && rm -rf es
 
-Regards,
+  [ It will take a long duration to finish ]
 
-	Hans
+  - Task 2 attempts to lookup the 'test/' directory
+  $ pwd
+  ~/test
+  $ ls
+
+  The 'ls' command in Task 2 experiences prolonged execution as Task 1
+  is deleting the dentries.
+
+We've devised a solution to address both issues by deleting associated
+dentry when removing a file. Interestingly, we've noted that a similar
+patch was proposed years ago[1], although it was rejected citing the
+absence of tangible issues caused by negative dentries. Given our current
+challenges, we're resubmitting the proposal. All relevant stakeholders from
+previous discussions have been included for reference.
+
+Some alternative solutions are also under discussion[2][3], such as
+shrinking child dentries outside of the parent inode lock or even
+asynchronously shrinking child dentries. However, given the straightforward
+nature of the current solution, I believe this approach is still necessary.
+
+[0]. https://github.com/elastic/elasticsearch
+[1]. https://patchwork.kernel.org/project/linux-fsdevel/patch/1502099673-31620-1-git-send-email-wangkai86@huawei.com
+[2]. https://lore.kernel.org/linux-fsdevel/20240511200240.6354-2-torvalds@linux-foundation.org/
+[3]. https://lore.kernel.org/linux-fsdevel/CAHk-=wjEMf8Du4UFzxuToGDnF3yLaMcrYeyNAaH1NJWa6fwcNQ@mail.gmail.com/
+
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Waiman Long <longman@redhat.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Wangkai <wangkai86@huawei.com>
+Cc: Colin Walters <walters@verbum.org>
+---
+ fs/dcache.c | 16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
+
+diff --git a/fs/dcache.c b/fs/dcache.c
+index 71a8e943a0fa..2ffdb98e9166 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -2360,19 +2360,17 @@ EXPORT_SYMBOL(d_hash_and_lookup);
+  * - unhash this dentry and free it.
+  *
+  * Usually, we want to just turn this into
+- * a negative dentry, but if anybody else is
+- * currently using the dentry or the inode
+- * we can't do that and we fall back on removing
+- * it from the hash queues and waiting for
+- * it to be deleted later when it has no users
++ * a negative dentry, but certain workloads can
++ * generate a large number of negative dentries.
++ * Therefore, it would be better to simply
++ * unhash it.
+  */
+  
+ /**
+  * d_delete - delete a dentry
+  * @dentry: The dentry to delete
+  *
+- * Turn the dentry into a negative dentry if possible, otherwise
+- * remove it from the hash queues so it can be deleted later
++ * Remove the dentry from the hash queues so it can be deleted later.
+  */
+  
+ void d_delete(struct dentry * dentry)
+@@ -2381,14 +2379,14 @@ void d_delete(struct dentry * dentry)
+ 
+ 	spin_lock(&inode->i_lock);
+ 	spin_lock(&dentry->d_lock);
++	__d_drop(dentry);
++
+ 	/*
+ 	 * Are we the only user?
+ 	 */
+ 	if (dentry->d_lockref.count == 1) {
+-		dentry->d_flags &= ~DCACHE_CANT_MOUNT;
+ 		dentry_unlink_inode(dentry);
+ 	} else {
+-		__d_drop(dentry);
+ 		spin_unlock(&dentry->d_lock);
+ 		spin_unlock(&inode->i_lock);
+ 	}
+-- 
+2.30.1 (Apple Git-130)
 
 
