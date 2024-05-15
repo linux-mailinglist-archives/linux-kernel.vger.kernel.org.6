@@ -1,118 +1,101 @@
-Return-Path: <linux-kernel+bounces-180049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11AB18C694A
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:09:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F0DB8C695A
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:11:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1B982845BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 15:09:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F9E8B209C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 15:11:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D5EC155744;
-	Wed, 15 May 2024 15:08:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86E27155752;
+	Wed, 15 May 2024 15:11:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="b6UterXN"
-Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Movt4rzK"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06B8415572F
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 15:08:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37B185DF3B;
+	Wed, 15 May 2024 15:11:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715785738; cv=none; b=ilsS+oRkRt/7Gt6aWMqaJ8OwrTrkUkA+x6rO567WO5+VCEgF/FDHHtd+LiCgips46RBgCl/0r6IqzC3kc1bacKvR4A0J4cqbZmAFcbjRcVLN4KpfoqUaSbmirVqZZuTZj3Z5bVa9V4nqqVi5oZ/t60Cnncsex1VqD7zNuefmJ98=
+	t=1715785868; cv=none; b=lJfJAFmas6usBkBoiucyUJKkYoeFTkVzC0/hd8RzkGWjXwSl8lr89DB8HKEgbLLR3mNtxWEG3hBbfnFV0RQuM/AN6gojsCtOHFJSUUJo4cYQ9ipKAsgs+GQTi9ixslO/wajJVOAypSwHCOU7M6C5Q8DnUqvpHvgz1aaSoLVk68I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715785738; c=relaxed/simple;
-	bh=qNAQ/s9LlzreCAmAb2oxC6fUH9eKBTNvC1uNwC5sLXI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DxqyPTHk4momfApArPzyHd7j3Jd88Hbn6dd3+O/mPCjd9SjVnYeMfRrR99Z7msYx7jr/iT+jVKxB00y0Ld7TFKHyINKAVSnFyGh07JZVx+Mpsp7VWrhf8miPzeZf7FO7pNNipfVAOEsncA4mtQGK9q7DmU/eeAIh9a61D59AApM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=b6UterXN; arc=none smtp.client-ip=209.85.166.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-36c86ad15caso317365ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 08:08:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1715785736; x=1716390536; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DSqN4wQpwk4yqsoWhaj7lKmacqnY0+0Y5JLQgrtZQTw=;
-        b=b6UterXNIs9rCeC6GoL8pIpxSqfWsm9tr/ureKrdLqNyUlLaZ1FP1ixB+e6aLyaZ/Q
-         tjsL+jIn+QMxsUe6hHW3M8ZutQCYdxDZ3JH5zlrBx+0QXgK2EWYiMJAm28l8Tj/cSjpe
-         fBC9C/iq9hz484/1FUnUcz+86eAdfi5XY4dvs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715785736; x=1716390536;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DSqN4wQpwk4yqsoWhaj7lKmacqnY0+0Y5JLQgrtZQTw=;
-        b=cFh1DdY5I/LoG2e3Ogqb3hFGVYzOHYhe+69roieifv2Zg6CDJrvym3ZvrZ34vgFdiQ
-         Sl3QskXsCVZNHpcMAlfVFTzry5hStdsDlN2HfOtB7bmJS7p+5c5dtHXqAKY2ddWP+oJo
-         Fd1ok0k+H6XorzEDLkR/lmwd+0vmZdzTWuIpMOeyv2vKG8JG5NTfNYTYl6k4FMmkAKkG
-         lHfFbvVhfWSJKJnL50s9hdBtDYvPA8btDQkmGIU4cQeDdCfLR02GFYIZvZ9I56NXhZCa
-         atsNS8tOQzoOW1BIG5cF0ipJ+li4QKNGU5qxkUX2RE+Kgt9pHFM5X15Vy4AnHrSJoVpb
-         B1/w==
-X-Forwarded-Encrypted: i=1; AJvYcCVSQnUovkQ/E/wbCJwedXJfH18+r9M7a2b0aXEqPHXvhcDjyR/KLwU53GWfJwSZoh9tcpQawvrmHJs1HOdeCheVLT7e1rE+wlrbpzL3
-X-Gm-Message-State: AOJu0Yw8oFo5zlO75VEybCvniVg41JO5uGOJJ5ktJjtFPrQAsS8ew3W5
-	nGhReyWJMzuhsIQagdb3ZFM0q14YmSGwhFZETqDXX1s6Frpt80jg0rlaX+OZWbU=
-X-Google-Smtp-Source: AGHT+IE/TJsiKBWLJTlooCuqIiZxdPbkyGL4Rv6ykctpuLdFe8Bh1zg+5HLkDYmp6zvnD13qcOfSQw==
-X-Received: by 2002:a5d:8c8e:0:b0:7de:f48e:36c3 with SMTP id ca18e2360f4ac-7e1b500fbb0mr1695553439f.0.1715785736133;
-        Wed, 15 May 2024 08:08:56 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-489376fc67csm3631174173.175.2024.05.15.08.08.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 May 2024 08:08:55 -0700 (PDT)
-Message-ID: <77d93d15-c9cb-46fa-8299-3e990be2e4e2@linuxfoundation.org>
-Date: Wed, 15 May 2024 09:08:53 -0600
+	s=arc-20240116; t=1715785868; c=relaxed/simple;
+	bh=29PrztJZldYF2W2DVZi/w2+hJZPuUm3z2k2Ch5n3sjw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P5Lq4H2dwq+mwY6oeIq+zAqikVbAE+lTXWydauBGMEQUU3bUj35kIPm7ZByejJZQOlVbLthVToMLpAtrmvksYgX4roj03LkMJkUHQq4KHP8EuCgkyQG30qVTCQjB21ZKXzmUW71VnAMWPiqZp8cPxumQgYJ18RnwhdSeR992WOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Movt4rzK; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+	In-Reply-To:References; bh=1e9w9yqkxxgBKEE7I+MvdChO+ZAZRqAgVmll2NsjAr8=; b=Mo
+	vt4rzKoVlCN2wfo++WXtU3LCg5ZuCVBl1CD0HbT4ueshfpTaWzmLafUQ8HNKF9GgCgC8Z6uanupSy
+	jOWUW2Siy8fycsiebaA8l0b4E6xw24SBYbUZGecTXC/RamsY+mF0WQLCj0lQwrHrGYrnd5XQYAq8e
+	ocA70c1n+DAUU0c=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1s7GHL-00FSaI-2I; Wed, 15 May 2024 17:10:51 +0200
+Date: Wed, 15 May 2024 17:10:51 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Thomas =?iso-8859-1?Q?Ge=DFler?= <gessler_t@brueckmann-gmbh.de>
+Cc: Thomas Gessler <thomas.gessler@brueckmann-gmbh.de>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	MD Danish Anwar <danishanwar@ti.com>,
+	Ravi Gunasekaran <r-gunasekaran@ti.com>
+Subject: Re: [PATCH 2/2] net: phy: dp83869: Fix RGMII-SGMII and 1000BASE-X
+Message-ID: <7b951904-6193-45f1-8878-7bf3ecf83b74@lunn.ch>
+References: <20240514122728.1490156-1-thomas.gessler@brueckmann-gmbh.de>
+ <20240514122728.1490156-2-thomas.gessler@brueckmann-gmbh.de>
+ <38bc6947-391b-478d-ab71-6cc8d9428275@lunn.ch>
+ <338669-229a-5eac-3170-3477e5ae840@brueckmann-gmbh.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5.4 00/84] 5.4.276-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240514100951.686412426@linuxfoundation.org>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240514100951.686412426@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <338669-229a-5eac-3170-3477e5ae840@brueckmann-gmbh.de>
 
-On 5/14/24 04:19, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.4.276 release.
-> There are 84 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Wed, May 15, 2024 at 10:15:33AM +0200, Thomas Geßler wrote:
+> On Tue, 14 May 2024, Andrew Lunn wrote:
+> > On Tue, May 14, 2024 at 02:27:28PM +0200, Thomas Gessler wrote:
+> > > The RGMII-to-SGMII mode is special, because the chip does not really act
+> > > as a PHY in this mode but rather as a bridge.
+> > 
+> > It is known as a media converter. You see them used between an RGMII
+> > port and an SFP cage. Is that your use case?
 > 
-> Responses should be made by Thu, 16 May 2024 10:09:32 +0000.
-> Anything received after that time might be too late.
+> Basically. I would call this an RGMII-SGMII bridge. A "media converter" I
+> would call a device that changes the physical medium, like 1000BASE-T
+> copper/RJ45 to 1000BASE-X fiber/SFP.
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.276-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+> We have this chip on a daughter card with exposed SGMII lines that can be
+> plugged into customer-specific motherboards. The motherboard will have
+> either an SGMII-copper PHY (this can also be a DP83869) with 10/100/1000
+> auto-neg enabled but without MDIO exposed to the CPU on the daughter card;
+> or an SFP cage. The SFP module, in turn, can be for 1000BASE-X fiber,
+> 1000BASE-X-to-1000-BASE-T copper, or SGMII copper supporting 10/100/1000
+> auto-neg.
 
-Compiled and booted on my test system. No dmesg regressions.
+The SFP use case is probably not too hard to support. There are PHYs
+drivers today which have the needed plumbing for this. Look at the
+marvell10g driver, its mv3310_sfp_ops. qcom/qca807x.c: qca807x_sfp_ops
+etc.
 
-Tested-by: Shuah Khan <skhan@linuxfoundation.org>
-
-thanks,
--- Shuah
-
+	Andrew
 
