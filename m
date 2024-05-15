@@ -1,139 +1,153 @@
-Return-Path: <linux-kernel+bounces-179982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2DB48C686E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:20:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 345EC8C683D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:05:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69889B23E85
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 14:19:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6559A1C20BC5
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 14:04:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0029813F45D;
-	Wed, 15 May 2024 14:19:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B15013F427;
+	Wed, 15 May 2024 14:04:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="INEPCQmx"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZwY79/UJ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2AA913F43D;
-	Wed, 15 May 2024 14:19:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24AD06214D;
+	Wed, 15 May 2024 14:04:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715782787; cv=none; b=X0DZWsHnzDnICUSfW03QNWnl7gB2UFnNm+tzHR4TuGYe6CtEoogDTYXHu8Q+EjFKovpm/IAZEKtZXCmSkp8lqgqDH53GiWzjLZ4c6FnN/UnjMqmK1V6AUNeWhP0ZfkwLGIvJPBhGmHl04mcTbyMJcI1zpw1m6O1WCVaHsiehvlw=
+	t=1715781888; cv=none; b=f0kXX0kbCgmr2XGWNfVmE1CSwuw50CYvAm0dm8l8IfctBStPDVNqpWDq+okgU/mnSJn1ag66S8MVrVVh/Y0BJ2BZrFQMeqhDBlgiCS7y3zZGXlZe6AmyiErNl3ifoH18mwJCFVV+Ek6gvhPcyCTalNUmrrLvrfCzPFpnOhfLuMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715782787; c=relaxed/simple;
-	bh=e+p8RDk6UwCW/o9hvuO0idARqRopXax2P77SzHlLk1g=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=II4DrTic6Z/EYda95fl52PbPhinqkYHfZ/dmXDB2je5I0KPIEkAOmh2YHt5wsv5P/zOnbs7vrZePVzdhsSBJ3y5YmQhbRFhbwmRP4fZekYUxQjmI3xW8fuZtz4HCEh2OoHDQ7UJWwm3GKzxzV6ygT6304stST3NgwyAxYDbxiMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=INEPCQmx; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44F7nnaT008005;
-	Wed, 15 May 2024 12:53:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-type :
- content-transfer-encoding; s=corp-2023-11-20;
- bh=uCYHK17hrJDOfXBR96uhZxWSEWnjI89SyGP2oY566u4=;
- b=INEPCQmxH/ndA0QPvint7zqkUM0BXXaa/DAo/6BOkmwm/B47MYt+xft2oqKQeiNxHxUe
- XSDtnfreq8R2lJpYMFAVwX34WAl1rnR21JZT+16Wem4QHqteSHuTBkejE65EzK5HcmeA
- Vhd23WTnUe1voEEZSGrC7uoyllBqi890u271pR6ZPUfeQzcv4L/Vi/vbWdZpQvbLpgXH
- j2JAisKK0CaQsVXsjlVsn7CGVpxt315KZ95jO6QB5F07+eG5X9wdyNZ7cPT8tJF8WNVj
- h2gdFQPpQo6jwXefKtXzcx6zcbCtSVz8A5Xzd18xlumLRcWnef6gkn0JOwU3Wy7iVM2g cQ== 
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3y3txc2xxf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 15 May 2024 12:53:49 +0000
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 44FC60pr038324;
-	Wed, 15 May 2024 12:53:48 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3y24pxgugg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 15 May 2024 12:53:48 +0000
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44FCmlrX038458;
-	Wed, 15 May 2024 12:53:47 GMT
-Received: from lab61.no.oracle.com (lab61.no.oracle.com [10.172.144.82])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3y24pxgud9-1;
-	Wed, 15 May 2024 12:53:47 +0000
-From: =?UTF-8?q?H=C3=A5kon=20Bugge?= <haakon.bugge@oracle.com>
-To: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, rds-devel@oss.oracle.com
-Cc: Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
-        Saeed Mahameed <saeedm@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Tejun Heo <tj@kernel.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Allison Henderson <allison.henderson@oracle.com>,
-        Manjunath Patil <manjunath.b.patil@oracle.com>,
-        Mark Zhang <markzhang@nvidia.com>,
-        =?UTF-8?q?H=C3=A5kon=20Bugge?= <haakon.bugge@oracle.com>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Shiraz Saleem <shiraz.saleem@intel.com>,
-        Yang Li <yang.lee@linux.alibaba.com>
-Subject: [PATCH v2 0/6] rds: rdma: Add ability to force GFP_NOIO
-Date: Wed, 15 May 2024 14:53:36 +0200
-Message-Id: <20240515125342.1069999-1-haakon.bugge@oracle.com>
-X-Mailer: git-send-email 2.39.3
+	s=arc-20240116; t=1715781888; c=relaxed/simple;
+	bh=Is9J5YRpNzvklFE+cfQ23ylGaJ3nXqCLhHCxIrAy0f4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BpAEwhHXtgMQeJWvXRw0ezEYu/LT5OcgwXuuOFofMdjvTaJ5Nw2QPpLSzmUIyY1fWdoXzVz7KEn6//x3dhht+l/BY4Zqo6i+hPyD6S6oSdgfsLucSiIIhvyaZsPXube7zTTLI4b/MqxWjbYpfxh/d9SGhzPqbknJzvsgziOzr7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZwY79/UJ; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715781887; x=1747317887;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Is9J5YRpNzvklFE+cfQ23ylGaJ3nXqCLhHCxIrAy0f4=;
+  b=ZwY79/UJODTXIOszgPAvXlQCE2CI+RHkktzaQ6hozv8XtIR+cj7P++B/
+   Ukrtl1Knv2Hvs2pxJeTPV+IbK8jdFBCe0siPMBEiTak303RVReFZFue3Y
+   alUfMac48hun+x0VO7EYb8ZhJzs6u8yXHzFShYmK1PSGVlezPS3YSVcjP
+   k+PEfkKj5vj2/npxoJdWCWZz/RIiwxNLfSHNNwffplHLM2tdllH5y2gzY
+   mxqaSRt0wuiz6wZqS/3QVwtgnhsXCOkTfYwyROZ6Rmfq84rN60fRJmilV
+   XWxA8tXBOVs/PbZZCGDhDCqmKh/nrntH3zzQ2NJJBEjhvEQ/Ac27yJFed
+   A==;
+X-CSE-ConnectionGUID: +MS07ncgTK6Y9I9m1WYj9g==
+X-CSE-MsgGUID: EM2rUlSOTAiVu94RnD8guw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="23234031"
+X-IronPort-AV: E=Sophos;i="6.08,162,1712646000"; 
+   d="scan'208";a="23234031"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 07:04:44 -0700
+X-CSE-ConnectionGUID: ureli23YTFOv+UNUpcaPtw==
+X-CSE-MsgGUID: 4mxvp+5zQbCHGtglpG+BDA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,162,1712646000"; 
+   d="scan'208";a="35778478"
+Received: from wtcline-desk12.amr.corp.intel.com (HELO [10.125.108.49]) ([10.125.108.49])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 07:04:42 -0700
+Message-ID: <4170720a-f7bb-484e-9235-a8720cec92c1@linux.intel.com>
+Date: Wed, 15 May 2024 09:04:41 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v15 00/16] Add audio support in v4l2 framework
+To: Jaroslav Kysela <perex@perex.cz>, Shengjiu Wang
+ <shengjiu.wang@gmail.com>,
+ =?UTF-8?Q?Amadeusz_S=C5=82awi=C5=84ski?=
+ <amadeuszx.slawinski@linux.intel.com>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Mark Brown <broonie@kernel.org>,
+ Takashi Iwai <tiwai@suse.de>,
+ Sebastian Fricke <sebastian.fricke@collabora.com>,
+ Shengjiu Wang <shengjiu.wang@nxp.com>, sakari.ailus@iki.fi,
+ tfiga@chromium.org, m.szyprowski@samsung.com, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Xiubo.Lee@gmail.com, festevam@gmail.com,
+ nicoleotsuka@gmail.com, lgirdwood@gmail.com, tiwai@suse.com,
+ alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org
+References: <1710834674-3285-1-git-send-email-shengjiu.wang@nxp.com>
+ <20240430082112.jrovosb6lgblgpfg@basti-XPS-13-9310>
+ <ZjEEKyvb02CWz3l4@finisterre.sirena.org.uk> <20240430172752.20ffcd56@sal.lan>
+ <ZjGhPz-bokg6ZbDJ@finisterre.sirena.org.uk> <87sez0k661.wl-tiwai@suse.de>
+ <20240502095956.0a8c5b26@sal.lan> <20240502102643.4ee7f6c2@sal.lan>
+ <ZjRCJ2ZcmKOIo7_p@finisterre.sirena.org.uk> <20240503094225.47fe4836@sal.lan>
+ <CAA+D8APfM3ayXHAPadHLty52PYE9soQM6o780=mZs+R4px-AOQ@mail.gmail.com>
+ <22d94c69-7e9f-4aba-ae71-50cc2e5dd8ab@xs4all.nl>
+ <51408e79-646d-4d23-bc5b-cd173d363327@linux.intel.com>
+ <CAA+D8AM7+SvXBi=LKRqvJkLsrYW=nkHTfFe957z2Qzm89bc48g@mail.gmail.com>
+ <cd71e8e8-b4dc-40ed-935e-a84c222997e6@linux.intel.com>
+ <CAA+D8AMpLB0N++_iLWLN_qettNz-gKGQz2c2yLsY8qSycibkYg@mail.gmail.com>
+ <2f771fe9-7c09-4e74-9b04-de52581133fd@linux.intel.com>
+ <CAA+D8AMJKPVR99jzYCR5EsbMa8P95jQrDL=4ayYMuz+Cu1d2mQ@mail.gmail.com>
+ <28d423b1-49d8-4180-8394-622b1afd9cd9@perex.cz>
+Content-Language: en-US
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+In-Reply-To: <28d423b1-49d8-4180-8394-622b1afd9cd9@perex.cz>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-15_06,2024-05-15_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 adultscore=0 mlxscore=0
- spamscore=0 phishscore=0 suspectscore=0 mlxlogscore=999 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
- definitions=main-2405150090
-X-Proofpoint-GUID: 0CdHtR4Rw4q5f5UdYabwerpWAtTHmgJV
-X-Proofpoint-ORIG-GUID: 0CdHtR4Rw4q5f5UdYabwerpWAtTHmgJV
 
-This series enables RDS and the RDMA stack to be used as a block I/O
-device. This to support a filesystem on top of a raw block device
-which uses RDS and the RDMA stack as the network transport layer.
 
-Under intense memory pressure, we get memory reclaims. Assume the
-filesystem reclaims memory, goes to the raw block device, which calls
-into RDS, which calls the RDMA stack. Now, if regular GFP_KERNEL
-allocations in RDS or the RDMA stack require reclaims to be fulfilled,
-we end up in a circular dependency.
 
-We break this circular dependency by:
+On 5/9/24 06:13, Jaroslav Kysela wrote:
+> On 09. 05. 24 12:44, Shengjiu Wang wrote:
+>>>> mem2mem is just like the decoder in the compress pipeline. which is
+>>>> one of the components in the pipeline.
+>>>
+>>> I was thinking of loopback with endpoints using compress streams,
+>>> without physical endpoint, something like:
+>>>
+>>> compress playback (to feed data from userspace) -> DSP (processing) ->
+>>> compress capture (send data back to userspace)
+>>>
+>>> Unless I'm missing something, you should be able to process data as fast
+>>> as you can feed it and consume it in such case.
+>>>
+>>
+>> Actually in the beginning I tried this,  but it did not work well.
+>> ALSA needs time control for playback and capture, playback and capture
+>> needs to synchronize.  Usually the playback and capture pipeline is
+>> independent in ALSA design,  but in this case, the playback and capture
+>> should synchronize, they are not independent.
+> 
+> The core compress API core no strict timing constraints. You can
+> eventually0 have two half-duplex compress devices, if you like to have
+> really independent mechanism. If something is missing in API, you can
+> extend this API (like to inform the user space that it's a
+> producer/consumer processing without any relation to the real time). I
+> like this idea.
 
-1. Force all allocations in RDS and the relevant RDMA stack to use
-   GFP_NOIO, by means of a parenthetic use of
-   memalloc_noio_{save,restore} on all relevant entry points.
+The compress API was never intended to be used this way. It was meant to
+send compressed data to a DSP for rendering, and keep the host processor
+in a low-power state while the DSP local buffer was drained. There was
+no intent to do a loop back to the host, because that keeps the host in
+a high-power state and probably negates the power savings due to a DSP.
 
-2. Make sure work-queues inherits current->flags
-   wrt. PF_MEMALLOC_{NOIO,NOFS}, such that work executed on the
-   work-queue inherits the same flag(s).
+The other problem with the loopback is that the compress stuff is
+usually a "Front-End" in ASoC/DPCM parlance, and we don't have a good
+way to do a loopback between Front-Ends. The entire framework is based
+on FEs being connected to BEs.
 
-Håkon Bugge (6):
-  workqueue: Inherit NOIO and NOFS alloc flags
-  rds: Brute force GFP_NOIO
-  RDMA/cma: Brute force GFP_NOIO
-  RDMA/cm: Brute force GFP_NOIO
-  RDMA/mlx5: Brute force GFP_NOIO
-  net/mlx5: Brute force GFP_NOIO
+One problem that I can see for ASRC is that it's not clear when the data
+will be completely processed on the "capture" stream when you stop the
+"playback" stream. There's a non-zero risk of having a truncated output
+or waiting for data that will never be generated.
 
- drivers/infiniband/core/cm.c                  | 15 ++++-
- drivers/infiniband/core/cma.c                 | 20 ++++++-
- drivers/infiniband/hw/mlx5/main.c             | 22 +++++--
- .../net/ethernet/mellanox/mlx5/core/main.c    | 14 ++++-
- include/linux/workqueue.h                     |  2 +
- kernel/workqueue.c                            | 21 +++++++
- net/rds/af_rds.c                              | 59 ++++++++++++++++++-
- 7 files changed, 141 insertions(+), 12 deletions(-)
-
---
-2.45.0
-
+In other words, it might be possible to reuse/extend the compress API
+for a 'coprocessor' approach without any rendering to traditional
+interfaces, but it's uncharted territory.
 
