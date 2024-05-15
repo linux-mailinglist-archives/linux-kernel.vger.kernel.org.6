@@ -1,130 +1,262 @@
-Return-Path: <linux-kernel+bounces-180295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD62A8C6C92
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 21:02:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4BBB8C6C94
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 21:05:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 294CE2826E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 19:02:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2A1D1C21ABB
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 19:05:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F13CD159562;
-	Wed, 15 May 2024 19:02:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5652159217;
+	Wed, 15 May 2024 19:05:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="wMLtMQpm"
-Received: from omta40.uswest2.a.cloudfilter.net (omta40.uswest2.a.cloudfilter.net [35.89.44.39])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g6cjvVuI"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40D87158DD1
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 19:02:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0672515920F;
+	Wed, 15 May 2024 19:05:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715799772; cv=none; b=MsZTF4ktAzQgmRA1Hjx8hzgc9Hsaqx6mR9eeho9ud7yj9YRuPjAHIYHBGu+8npDA2ouW7g6Rab2/hFLS0JXUVrSbGRUETdIouIgfXLG07H+7GCGHBfpIynLO+BiexX7XoRYVfh74omLs+ohZLCSwHBQAFx+cYecOpSd4Gs+trQg=
+	t=1715799937; cv=none; b=utHmVTPkOxOvGRdthAgQjYdPglZYmVEjamar6UQ1gUzel0r60ZYtF/8xzCx0FmH5J2cPfZpudNrl/QF3qs6eCHtmO1SB2MlcFRVJep47jbbrbYqZaDcpxIFwochCwFOl8IQcdq7HX66dxX0uJcvukyfcZNvL5PJedNur9WijmdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715799772; c=relaxed/simple;
-	bh=mikBtoW97YbCBwyvNRnJ38Sg2mM7CDdV4ls2mCBZsd0=;
-	h=Subject:To:Cc:References:In-Reply-To:From:Message-ID:Date:
-	 MIME-Version:Content-Type; b=ufqzDG4oJ2c4wbSFHbBl3D0y81k2C1pMwEkorLsgqiQzC8Rw3YSspzdHov9E2IKoimitd8PAeJiZIo0nma+cx7j4ggiGnlvCU4NAaz2J9624dz6UsnE12kd+OaLaE2lOmmJzHWuj6gxDcnoxJwBqS1DURKqtB3/y3ZIy1IEzB3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=wMLtMQpm; arc=none smtp.client-ip=35.89.44.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-5005a.ext.cloudfilter.net ([10.0.29.234])
-	by cmsmtp with ESMTPS
-	id 6tplsXjafrtmg7JtpszTb2; Wed, 15 May 2024 19:02:50 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id 7JtosOXlXYakK7JtpswCJ7; Wed, 15 May 2024 19:02:49 +0000
-X-Authority-Analysis: v=2.4 cv=a4T79lSF c=1 sm=1 tr=0 ts=664506d9
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=TpHVaj0NuXgA:10 a=-Ou01B_BuAIA:10 a=VwQbUJbxAAAA:8
- a=HaFmDPmJAAAA:8 a=49j0FZ7RFL9ueZfULrUA:9 a=QEXdDO2ut3YA:10
- a=AjGcO6oz07-iQ99wixmX:22 a=nmWuMzfKamIsx3l42hEX:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
-	Message-ID:From:In-Reply-To:References:Cc:To:Subject:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=sKG1F6rhpqV48qN/JCq4XUf3fNgKXT99hRxa+V7xlp0=; b=wMLtMQpmdIzGIU5G+C3YKuWjIE
-	UeRUetp3RdkJ7HylqiM2r0dBGEeJWuqnpgzdtcFQPJyoPh2kd/EISbLkqa090dWphocT6puzEV1z9
-	I8tlTPnwHvaT0VSadIHbxAkbp9RSJlCoZYASJQrIrZ+vQ5ezNLCXaWkiO0z+FpXSpYJxJLlZz1kqI
-	qeBkz3urzZlah1pkn/pX+8c7LdRv1w/MhysJfGLKJzaOOLN5BA4TVErO52EiJmOgSCSLSa2mnfbb9
-	hbKy/qpMDQGSkFu9R4Zc7ANaWX8echZPcaJ7Cj/+tf4PBBTHEYP03UDD3IzXll8xla7sFaYAm2ewr
-	/edVhRHA==;
-Received: from c-98-207-139-8.hsd1.ca.comcast.net ([98.207.139.8]:35798 helo=[10.0.1.47])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <re@w6rz.net>)
-	id 1s7Jtm-002QwV-0X;
-	Wed, 15 May 2024 13:02:46 -0600
-Subject: Re: [PATCH 6.1 000/243] 6.1.91-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240515082456.986812732@linuxfoundation.org>
-In-Reply-To: <20240515082456.986812732@linuxfoundation.org>
-From: Ron Economos <re@w6rz.net>
-Message-ID: <d96667d0-f15b-ead0-5451-00471bbefd6e@w6rz.net>
-Date: Wed, 15 May 2024 12:02:43 -0700
-User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+	s=arc-20240116; t=1715799937; c=relaxed/simple;
+	bh=laZ0jdqMJAF+BWwo2QBUXCOErYnUVf745QIeCu3kAC4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VDoOAMqS/84MauZ9A2BEm3I9Ep1q6hUF5Ddf1aM+cMqwtbUjAU4rIuFusdxCt92r0Mm4iRgOKpHlxJ86AlZF7ij6ypscjpvUQjX7LcYcDp71HYUJexDCaI6DE5GKK5+HXMU6790A0viFB4sYDQkoVPfi7528LMwKF/FL5m/qcsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g6cjvVuI; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715799935; x=1747335935;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=laZ0jdqMJAF+BWwo2QBUXCOErYnUVf745QIeCu3kAC4=;
+  b=g6cjvVuI7aSoBe0kG3fz8ZEanrVXLLE0cI6hDx2tK60hRDGMklBkPa/j
+   0TgAvSZYEm+TxFbRGvvPdn1izzQEM0i+MeqcfHGvsue0+vdwz2ZQKw5C3
+   7BhF9kixLTkPH2l4C9Qh/MR770nfveY4LAZhIlWX2K/IFX0SvF/Dyzpm4
+   sONdHLwYzKStLfsyIa9oNgHr9IYkMOS/N9AX5xtXDiq78yzzRUS4Dq0Ln
+   MGN4Q0HHGOKtnaO1Xx+4H9hYWeq7hNPOSDaBb2NNP9Ry9EO9+Xr+dX3nI
+   I2AoMNJHGwYiLbgbnYj9SwuZPkVaSsStiyfGDh4mdKMUYUrp97QsGUhCK
+   g==;
+X-CSE-ConnectionGUID: PJL5asiGQpCEiE1lFmeyhA==
+X-CSE-MsgGUID: gXzy3F6XS8mci0gdc9a5Jw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="12087715"
+X-IronPort-AV: E=Sophos;i="6.08,162,1712646000"; 
+   d="scan'208";a="12087715"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 12:05:34 -0700
+X-CSE-ConnectionGUID: eLPKxAOPSXKeKvzjCU8phQ==
+X-CSE-MsgGUID: D+/gXxhYTOi14qZ/bbzPtw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,162,1712646000"; 
+   d="scan'208";a="68612715"
+Received: from fdefranc-mobl3.ger.corp.intel.com (HELO localhost.localdomain) ([10.245.246.173])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 12:05:30 -0700
+From: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
+To: Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
+Subject: [PATCH] cxl/events: Use a common struct for DRAM and General Media events
+Date: Wed, 15 May 2024 21:04:53 +0200
+Message-ID: <20240515190512.3480817-1-fabio.m.de.francesco@linux.intel.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 98.207.139.8
-X-Source-L: No
-X-Exim-ID: 1s7Jtm-002QwV-0X
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-98-207-139-8.hsd1.ca.comcast.net ([10.0.1.47]) [98.207.139.8]:35798
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 4
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfOfNz3EYg4Tjh8XUZaYKg3QIp+kzsNqZnVKGn8VYWje721PG2ZBMmZyqPXCzFX/DkGGdFIsyYYOGflV2td7P3x75UfChxCTKpEH38AUTq3h9MyWBFMPi
- 6FHmkec20s4R6ZL5u0R9La7hCxPUzZPkMeZWfsoovmiGrxItoZjRBEkB5hLeUFeUXGIY6yIWx440mejwqcDclBBHoGQqSBQfDcU=
+Content-Transfer-Encoding: 8bit
 
-On 5/15/24 1:27 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.91 release.
-> There are 243 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Fri, 17 May 2024 08:23:27 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.91-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+Use cxl_event_media as a common structure to record information about DRAM
+and General Media events because it simplifies handling the two events.
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+Suggested-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.com>
+---
+ drivers/cxl/core/mbox.c      |  6 ++--
+ drivers/cxl/core/trace.h     |  4 +--
+ include/linux/cxl-event.h    | 70 +++++++++++++++---------------------
+ tools/testing/cxl/test/mem.c |  4 +--
+ 4 files changed, 36 insertions(+), 48 deletions(-)
 
-Tested-by: Ron Economos <re@w6rz.net>
+diff --git a/drivers/cxl/core/mbox.c b/drivers/cxl/core/mbox.c
+index 2626f3fff201..ad4d7b0f7f4d 100644
+--- a/drivers/cxl/core/mbox.c
++++ b/drivers/cxl/core/mbox.c
+@@ -875,16 +875,16 @@ void cxl_event_trace_record(const struct cxl_memdev *cxlmd,
+ 		guard(rwsem_read)(&cxl_region_rwsem);
+ 		guard(rwsem_read)(&cxl_dpa_rwsem);
+ 
+-		dpa = le64_to_cpu(evt->common.phys_addr) & CXL_DPA_MASK;
++		dpa = le64_to_cpu(evt->media_common.phys_addr) & CXL_DPA_MASK;
+ 		cxlr = cxl_dpa_to_region(cxlmd, dpa);
+ 		if (cxlr)
+ 			hpa = cxl_trace_hpa(cxlr, cxlmd, dpa);
+ 
+ 		if (event_type == CXL_CPER_EVENT_GEN_MEDIA)
+ 			trace_cxl_general_media(cxlmd, type, cxlr, hpa,
+-						&evt->gen_media);
++						&evt->media_general);
+ 		else if (event_type == CXL_CPER_EVENT_DRAM)
+-			trace_cxl_dram(cxlmd, type, cxlr, hpa, &evt->dram);
++			trace_cxl_dram(cxlmd, type, cxlr, hpa, &evt->media_dram);
+ 	}
+ }
+ EXPORT_SYMBOL_NS_GPL(cxl_event_trace_record, CXL);
+diff --git a/drivers/cxl/core/trace.h b/drivers/cxl/core/trace.h
+index 07a0394b1d99..2c7293761bb2 100644
+--- a/drivers/cxl/core/trace.h
++++ b/drivers/cxl/core/trace.h
+@@ -316,7 +316,7 @@ TRACE_EVENT(cxl_generic_event,
+ TRACE_EVENT(cxl_general_media,
+ 
+ 	TP_PROTO(const struct cxl_memdev *cxlmd, enum cxl_event_log_type log,
+-		 struct cxl_region *cxlr, u64 hpa, struct cxl_event_gen_media *rec),
++		 struct cxl_region *cxlr, u64 hpa, struct cxl_event_media *rec),
+ 
+ 	TP_ARGS(cxlmd, log, cxlr, hpa, rec),
+ 
+@@ -413,7 +413,7 @@ TRACE_EVENT(cxl_general_media,
+ TRACE_EVENT(cxl_dram,
+ 
+ 	TP_PROTO(const struct cxl_memdev *cxlmd, enum cxl_event_log_type log,
+-		 struct cxl_region *cxlr, u64 hpa, struct cxl_event_dram *rec),
++		 struct cxl_region *cxlr, u64 hpa, struct cxl_event_media *rec),
+ 
+ 	TP_ARGS(cxlmd, log, cxlr, hpa, rec),
+ 
+diff --git a/include/linux/cxl-event.h b/include/linux/cxl-event.h
+index 60b25020281f..e417556cc120 100644
+--- a/include/linux/cxl-event.h
++++ b/include/linux/cxl-event.h
+@@ -32,41 +32,38 @@ struct cxl_event_generic {
+  * CXL rev 3.0 Section 8.2.9.2.1.1; Table 8-43
+  */
+ #define CXL_EVENT_GEN_MED_COMP_ID_SIZE	0x10
+-struct cxl_event_gen_media {
+-	struct cxl_event_record_hdr hdr;
+-	__le64 phys_addr;
+-	u8 descriptor;
+-	u8 type;
+-	u8 transaction_type;
+-	u8 validity_flags[2];
+-	u8 channel;
+-	u8 rank;
+-	u8 device[3];
+-	u8 component_id[CXL_EVENT_GEN_MED_COMP_ID_SIZE];
+-	u8 reserved[46];
+-} __packed;
+-
+ /*
+  * DRAM Event Record - DER
+  * CXL rev 3.0 section 8.2.9.2.1.2; Table 3-44
+  */
+ #define CXL_EVENT_DER_CORRECTION_MASK_SIZE	0x20
+-struct cxl_event_dram {
++struct cxl_event_media {
+ 	struct cxl_event_record_hdr hdr;
+-	__le64 phys_addr;
+-	u8 descriptor;
+-	u8 type;
+-	u8 transaction_type;
+-	u8 validity_flags[2];
+-	u8 channel;
+-	u8 rank;
+-	u8 nibble_mask[3];
+-	u8 bank_group;
+-	u8 bank;
+-	u8 row[3];
+-	u8 column[2];
+-	u8 correction_mask[CXL_EVENT_DER_CORRECTION_MASK_SIZE];
+-	u8 reserved[0x17];
++	struct_group_tagged(cxl_event_media_hdr, media_hdr,
++		__le64 phys_addr;
++		u8 descriptor;
++		u8 type;
++		u8 transaction_type;
++		u8 validity_flags[2];
++		u8 channel;
++		u8 rank;
++	);
++	union {
++		struct_group(general,
++			u8 device[3];
++			u8 component_id[CXL_EVENT_GEN_MED_COMP_ID_SIZE];
++			u8 gen_reserved[46];
++		);
++		struct_group(dram,
++			u8 nibble_mask[3];
++			u8 bank_group;
++			u8 bank;
++			u8 row[3];
++			u8 column[2];
++			u8 correction_mask[CXL_EVENT_DER_CORRECTION_MASK_SIZE];
++			u8 dram_reserved[0x17];
++		);
++	};
+ } __packed;
+ 
+ /*
+@@ -95,21 +92,12 @@ struct cxl_event_mem_module {
+ 	u8 reserved[0x3d];
+ } __packed;
+ 
+-/*
+- * General Media or DRAM Event Common Fields
+- * - provides common access to phys_addr
+- */
+-struct cxl_event_common {
+-	struct cxl_event_record_hdr hdr;
+-	__le64 phys_addr;
+-} __packed;
+-
+ union cxl_event {
+ 	struct cxl_event_generic generic;
+-	struct cxl_event_gen_media gen_media;
+-	struct cxl_event_dram dram;
++	struct cxl_event_media media_general;
++	struct cxl_event_media media_dram;
+ 	struct cxl_event_mem_module mem_module;
+-	struct cxl_event_common common;
++	struct cxl_event_media media_common;
+ } __packed;
+ 
+ /*
+diff --git a/tools/testing/cxl/test/mem.c b/tools/testing/cxl/test/mem.c
+index 6584443144de..0a8fd145c391 100644
+--- a/tools/testing/cxl/test/mem.c
++++ b/tools/testing/cxl/test/mem.c
+@@ -378,7 +378,7 @@ struct cxl_event_record_raw hardware_replace = {
+ 
+ struct cxl_test_gen_media {
+ 	uuid_t id;
+-	struct cxl_event_gen_media rec;
++	struct cxl_event_media rec;
+ } __packed;
+ 
+ struct cxl_test_gen_media gen_media = {
+@@ -402,7 +402,7 @@ struct cxl_test_gen_media gen_media = {
+ 
+ struct cxl_test_dram {
+ 	uuid_t id;
+-	struct cxl_event_dram rec;
++	struct cxl_event_media rec;
+ } __packed;
+ 
+ struct cxl_test_dram dram = {
+-- 
+2.45.0
 
 
