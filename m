@@ -1,79 +1,46 @@
-Return-Path: <linux-kernel+bounces-180216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 778B98C6B83
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 19:33:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A03798C6B90
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 19:34:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0849C1F234AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:33:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1248FB25271
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:34:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FD704879B;
-	Wed, 15 May 2024 17:33:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03A3645014;
+	Wed, 15 May 2024 17:33:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HXebnCtB"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A9B247F69
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 17:33:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="EplThCPg"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D603C3EA7B;
+	Wed, 15 May 2024 17:33:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715794400; cv=none; b=SZV27X+HPGjYxj2usJCGCWIHc7pB8UQrfU2z6VIGwWy4InKySMPXzSHfMql0QvqXvSU3bvu6bC2PpO/QMugU8fNseYAQGg84f6CK1EL7GRZ+CiorrmBFH4oe7QPQSl1S55oM60CvNNq3LMq5jV3friz8TWE9mYjT+nl745u1oC8=
+	t=1715794434; cv=none; b=G7EM+/367FMRXjvJRNpE8YGWlvpRJRta3z+FufFNsTnnmK9SBV/R8iokpZdFAvlJ0MAjrcqlbisMyo1JKZxnny4xAkamfKTi/OmcdjPus2/CT04kTyjs2cfrZAt7hD0LoLYATSgbtg6Z+Vq2DXu4WxzVE3EZMQv3QxUSFEc47h0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715794400; c=relaxed/simple;
-	bh=KQ7vgtIHJ0lCY1+lYQaLcR526DvemfZD38rR0OBQSp8=;
+	s=arc-20240116; t=1715794434; c=relaxed/simple;
+	bh=VdtVLFpZYA4b3uZzQCUTGVxEaXrt+6asF5DBt0OQKLQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rT51Rr7I7bvDed0OCoAiLd2efTJN8uUzNdB1s6fi0oUc6+i2OjXfSesS+yXTRF81nU1OACy/vIYkWRHgF+J/Aj7us3VQdzorCc53tv4tAMz3TWIINkyAt6YDhu3AT5IL+ckdnyo67T2oRnnIV9ln5AYT4RAZyKExNS9DNkPyx24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HXebnCtB; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715794397;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=LfUbT0bqMFevfxtZ83fq1OENBuxrXgJtBQk+DKSrhj8=;
-	b=HXebnCtBqAbOpMjQP0jkMH6pqfR20DKuWjfUjcd+LA2+ErZ36yG1WsOnj6zxCp/9GfC7Fy
-	bOBPCwHz0cU973voDf2rMqJa6VOGb1MG29VaKJt+t3jsTgFBHwRSKzTwojc9UNr6ioofT8
-	y80KpiCOBYuBIn5WKZjHnsVZfkXtprQ=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-353-Wn6veW2PP-e4X2kTZJk3uw-1; Wed, 15 May 2024 13:33:16 -0400
-X-MC-Unique: Wn6veW2PP-e4X2kTZJk3uw-1
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-351cb5b7649so1013801f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 10:33:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715794395; x=1716399195;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LfUbT0bqMFevfxtZ83fq1OENBuxrXgJtBQk+DKSrhj8=;
-        b=B5NWg5j4WeGk/rn8QGakUDCn87b2pe2FFjs/fs5vndikqD9OFGAL5dUMP4TY6zINdO
-         oT0jptGF4AKlb1F7XcHUl2NaA7ynNf+wP9juGqz2rbCiHFjNOSNgEzuJ0zXCeAU13nQN
-         lNQ2tq1ytHD8/5/2PWEi/zuGsjxbN6T8lWiZyIwReNZ4f+Ejyvyt6rvQ9q1j771Ld/Sv
-         xmZQVnzd7yrrHlBj9IsdpZZoaqJ118pBpQSw6ZaaOGKR9PsqT2+hbtYG//Z1nUcnB+LB
-         Rj4kz3fZnn4vBC4pamuH2VkrcvAZUBuF92HgK7cV4xiZ1D7Jd4L/NHXOs6iNXYKnlOhE
-         7BmA==
-X-Gm-Message-State: AOJu0YwbZ+hSWpt5hCp4Ig8dsadoZDYM/fHNhmSDeQd7f9nlYT7/E+zK
-	RzvFa5iX2sB+3IYfMbk8iSZiBKkacOE9HZWmecp+esxLSRgKk3vAcz5uXDaY6izouRlkBtX2RCp
-	bpqWNTjZDgBTga8Iu/b5obCUPuFRbkUPPMqw22aFpQqZeOgMeYUDi94gQ6rarqw==
-X-Received: by 2002:a05:600c:a46:b0:41f:f144:5623 with SMTP id 5b1f17b1804b1-41ff1445732mr130137655e9.14.1715794394970;
-        Wed, 15 May 2024 10:33:14 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEn29gC0xlHgiaGlcHKOXEBPkcWc5GqRKQ+sTlTUnbCHKlL078H8MP3ATQM4jwusDZdn2rlnw==
-X-Received: by 2002:a05:600c:a46:b0:41f:f144:5623 with SMTP id 5b1f17b1804b1-41ff1445732mr130137545e9.14.1715794394619;
-        Wed, 15 May 2024 10:33:14 -0700 (PDT)
-Received: from [192.168.10.81] ([151.95.155.52])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-41fccee92c7sm248384785e9.34.2024.05.15.10.33.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 May 2024 10:33:14 -0700 (PDT)
-Message-ID: <4d80cec1-9505-4a8c-8bd3-c996b5a42790@redhat.com>
-Date: Wed, 15 May 2024 19:33:13 +0200
+	 In-Reply-To:Content-Type; b=e6400zXRHfiTZoZSC5xHdgV9OdltxWFNBNECK/RuaN/dRINmxDJJKJ2TQ2ma7fk1AuBpPm4Cdar9BBQfLPZSEaDp/B9Ek8ZUSdNOrs4spddbX4FpKi4d2BJvZycXpRln9Ith/Xo8/3w0XDARPChh0pd9c/xlSgmS2qFC94Pwmb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=EplThCPg; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.137.186.190] (unknown [131.107.159.62])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 60AFD20BE570;
+	Wed, 15 May 2024 10:33:46 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 60AFD20BE570
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1715794426;
+	bh=6znshs1azYcVfLPlekdOCordB4FAVfBn0O3niN9s+zc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=EplThCPgxf2K/F8p5LTNBB2FpK+/bTpXukCuYhXyOYYlCqRIQfd1AiYryJzcSEWgl
+	 do+VYONXpz2SmVJUnMOFCJEWS/WmfZ+cUgYk3Rc9B+4zraitQvTQHirrfupbFHpAS6
+	 qeNcZTp64f+P2tdvuN9exTKusSQCv8GS8E4jKlCM=
+Message-ID: <267ef0e2-2384-44bd-81f9-f33dda7bb9d2@linux.microsoft.com>
+Date: Wed, 15 May 2024 10:33:46 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,90 +48,85 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/7] KVM: x86/mmu: Replace hardcoded value 0 for the
- initial value for SPTE
-To: Isaku Yamahata <isaku.yamahata@intel.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
- Sean Christopherson <seanjc@google.com>, Xiaoyao Li <xiaoyao.li@intel.com>,
- Binbin Wu <binbin.wu@linux.intel.com>, rick.p.edgecombe@intel.com
-References: <20240507154459.3950778-1-pbonzini@redhat.com>
- <20240507154459.3950778-3-pbonzini@redhat.com>
- <20240515173209.GD168153@ls.amr.corp.intel.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [PATCH v2 1/6] arm64/hyperv: Support DeviceTree
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, arnd@arndb.de,
+ bhelgaas@google.com, bp@alien8.de, catalin.marinas@arm.com,
+ dave.hansen@linux.intel.com, decui@microsoft.com, haiyangz@microsoft.com,
+ hpa@zytor.com, kw@linux.com, kys@microsoft.com, lenb@kernel.org,
+ lpieralisi@kernel.org, mingo@redhat.com, mhklinux@outlook.com,
+ rafael@kernel.org, robh@kernel.org, tglx@linutronix.de, wei.liu@kernel.org,
+ will@kernel.org, linux-acpi@vger.kernel.org, linux-arch@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, x86@kernel.org
+Cc: ssengar@microsoft.com, sunilmut@microsoft.com, vdso@hexbites.dev
+References: <20240514224508.212318-1-romank@linux.microsoft.com>
+ <20240514224508.212318-2-romank@linux.microsoft.com>
+ <1766fc9a-1d10-4c93-a9db-a7e0db8b01e7@linaro.org>
 Content-Language: en-US
-Autocrypt: addr=pbonzini@redhat.com; keydata=
- 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
-In-Reply-To: <20240515173209.GD168153@ls.amr.corp.intel.com>
+From: Roman Kisel <romank@linux.microsoft.com>
+In-Reply-To: <1766fc9a-1d10-4c93-a9db-a7e0db8b01e7@linaro.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 5/15/24 19:32, Isaku Yamahata wrote:
-> Paolo, how do you want me to proceed? I can send a updated patch or you can
-> directly fix the patch in kvm-coco-queue.  I'm fine with either way.
 
-I'll fix it, thanks!
 
-Paolo
-
-> From 7910130c0a3f2c5d814d6f14d663b4b692a2c7e4 Mon Sep 17 00:00:00 2001
-> Message-ID:<7910130c0a3f2c5d814d6f14d663b4b692a2c7e4.1715793643.git.isaku.yamahata@intel.com>
-> From: Isaku Yamahata<isaku.yamahata@intel.com>
-> Date: Wed, 15 May 2024 10:19:08 -0700
-> Subject: [PATCH] fixup! KVM: x86/mmu: Replace hardcoded value 0 for the
->   initial value for SPTE
+On 5/15/2024 12:45 AM, Krzysztof Kozlowski wrote:
+> On 15/05/2024 00:43, Roman Kisel wrote:
+>> The Virtual Trust Level platforms rely on DeviceTree, and the
+>> arm64/hyperv code supports ACPI only. Update the logic to
+>> support DeviceTree on boot as well as ACPI.
+>>
+>> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
+>> ---
+>>   arch/arm64/hyperv/mshyperv.c | 34 +++++++++++++++++++++++++++++-----
+>>   1 file changed, 29 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/arch/arm64/hyperv/mshyperv.c b/arch/arm64/hyperv/mshyperv.c
+>> index b1a4de4eee29..208a3bcb9686 100644
+>> --- a/arch/arm64/hyperv/mshyperv.c
+>> +++ b/arch/arm64/hyperv/mshyperv.c
+>> @@ -15,6 +15,9 @@
+>>   #include <linux/errno.h>
+>>   #include <linux/version.h>
+>>   #include <linux/cpuhotplug.h>
+>> +#include <linux/libfdt.h>
+>> +#include <linux/of.h>
+>> +#include <linux/of_fdt.h>
+>>   #include <asm/mshyperv.h>
+>>   
+>>   static bool hyperv_initialized;
+>> @@ -27,6 +30,29 @@ int hv_get_hypervisor_version(union hv_hypervisor_version_info *info)
+>>   	return 0;
+>>   }
+>>   
+>> +static bool hyperv_detect_fdt(void)
+>> +{
+>> +#ifdef CONFIG_OF
+>> +	const unsigned long hyp_node = of_get_flat_dt_subnode_by_name(
+>> +			of_get_flat_dt_root(), "hypervisor");
 > 
-> ---
->   arch/x86/kvm/mmu/tdp_mmu.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
-> index 1259dd63defc..36539c1b36cd 100644
-> --- a/arch/x86/kvm/mmu/tdp_mmu.c
-> +++ b/arch/x86/kvm/mmu/tdp_mmu.c
-> @@ -626,7 +626,7 @@ static inline int tdp_mmu_zap_spte_atomic(struct kvm *kvm,
->   	 * SPTEs.
->   	 */
->   	handle_changed_spte(kvm, iter->as_id, iter->gfn, iter->old_spte,
-> -			    0, iter->level, true);
-> +			    SHADOW_NONPRESENT_VALUE, iter->level, true);
->   
->   	return 0;
->   }
-> 
-> base-commit: 698ca1e403579ca00e16a5b28ae4d576d9f1b20e
+> Why do you add an ABI for node name? Although name looks OK, but is it
+> really described in the spec that you depend on it? I really do not like
+> name dependencies...
 
+Followed the existing DeviceTree's of naming and approaches in the 
+kernel to surprise less and "invent" even less. As for the spec, the 
+Hyper-V TLFS'es part discussing Hypervisor Discovery talks about x86 
+(https://learn.microsoft.com/en-us/virtualization/hyper-v-on-windows/tlfs/feature-discovery) 
+only and via the ISA-provided means only. For arm64, Hyper-V code 
+discovers the hypervisor presence via ACPI. Felt only natural to do the 
+same for DeviceTree and arm64.
 
+> 
+> Where is the binding for this?
+> 
+Have not added, my mistake. Will place under 
+Documentation/devicetree/bindings/bus/microsoft,hyperv.yaml
+
+> Best regards,
+> Krzysztof
+
+-- 
+Thank you,
+Roman
 
