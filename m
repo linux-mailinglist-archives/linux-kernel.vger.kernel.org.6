@@ -1,146 +1,344 @@
-Return-Path: <linux-kernel+bounces-180207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFA9F8C6B70
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 19:24:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B24F8C6B6A
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 19:23:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39EA81F21ED7
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:24:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77D0C1F2513A
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:23:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EA06157481;
-	Wed, 15 May 2024 17:23:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D2695D8E4;
+	Wed, 15 May 2024 17:23:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wiVAIdKE"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iWAu/hOS"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6BA7156F53
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 17:23:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF5D39FD4
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 17:23:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715793800; cv=none; b=dYo3bcG8zVS2T853U2hX8shCviwoa8IObaC99D1G6gcVcf/uwbE9jFOGP3uAY5gx6+YYOcnV01X1a6BjHmBSZoyb3+4qShW7NBIjdJ51t8Ukiv1/20lTDu7tWa5SM6NykiX9VRbEqXoGfJ3Sos2GWOo5DBX5B4+z5IJzRZswb78=
+	t=1715793789; cv=none; b=shAMoyJbWVMTUb9LjnCKzcbk053IkK0b0IdTMA1dsHNQ1vRKj9we1qlB/I2NwGQRmFLjKM9R2kpdi62y0eifxn5A9UtrAJaAOZutuS0HTQP4+VrTs4PxFQ8GFidzyQWTApbKjyPq8LYrltBjgKi7kQyhWOd9dI/Aq8VS0GKh/YY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715793800; c=relaxed/simple;
-	bh=Mmpk3cTXYb9Cytx2OXyWdNPcR2iwoJfjJ8SD4AaSDlM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=fq4HwSpYwBDzzyMI+4UXnOV8b+v8wd5nuBflix6cA7tJqE8hN/UMr3Z+Ev8OCeQMx9UE7gC5h/S4HjY/6YqbhQJP23VvVcmyOYTSsvbVkBVUNQAGQJrE9/w/7ltnlYztvUcWuTvU00ooPOyC2IQw0sO37w2mBDfinzVLi2pPveQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--sebastianene.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wiVAIdKE; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--sebastianene.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-41dc9c831acso38466745e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 10:23:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715793797; x=1716398597; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9HVNMjO2akSMcTTiBfbdxnnFw0wMMSm8FW4gVmT1QRI=;
-        b=wiVAIdKEAU9n4Ac4/Fu8IcH5llGe9EE5a2z71co+UoqlwZDcvuBA2Gs5A61Fz6foGh
-         zTN4bLnrt2piQEAC0dPNQakXyoWTj8uwKJgurnGMLcOasJHMCtJzgdlAlU+v38f1+FwQ
-         pUxQUlwjzkKKnKDd/pYhJEY8kQ12fdMtiI933hQYPESdV6gM2cBGaH+js9EVbmrbWheY
-         xitpRJ9fnvuXR3999B/t6y31n4uKprk7k6JER3+q9W3/HUg/9o+kR0FtsQ9GA//ypb0q
-         N48ZrfTVB727pDNur+gXs8D78iw2vIfpv7a6BQCHePNJlmYg/kOrM1INpGLdC2Uzc5hR
-         AK6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715793797; x=1716398597;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9HVNMjO2akSMcTTiBfbdxnnFw0wMMSm8FW4gVmT1QRI=;
-        b=SgSMh2VufTdt5suP4vrdqG96SszpDDlYQcegUzqKrY9f5A/XJkv1fhMGLFWp7+N5LO
-         XhPmc2bk+XEIQ1Uxja0Xs4Lf8IghFYdY0PZ15X7E9Sg6naXTvIg77sm3CYf5BfYAqVAf
-         Pwm1pZx5rfswzQvZv9/mDzfl8mXt7LrxC7L6rO04rtrJSv6NacgnZaYERx02RTb5Y/3x
-         oWsQxYVuFQ0+2mRv/OwesFGgiBdOlHWHW84Iqi1taolaB8pJdK7KDWxPSAqkzcYKJ7T5
-         ziBvk/6AXyav+OC5Wt37ubZfxDFgvhIs8GF+VWWHt3lZo0NnkpRoEySJTobRpJl1/pA1
-         umTw==
-X-Forwarded-Encrypted: i=1; AJvYcCUAQAhE5+8vXRWEah/HgOMFZntpMzD5nzJXu2w1VieiQkqNyHJg1QfGXQohUimZPgh/g3GM81clWkYEr/UrT4mc1n+IMymRrLQVLJ+e
-X-Gm-Message-State: AOJu0YxOpKsbT/O6NzDs+99m2wzbbZ97Fw7DB42LaViXu0O++xQekK0z
-	FRU+x+1uPEC4m9XozY0SoKg48RXEn6mW4djYFyxOapXs33mWYP2ITpUIZI3YLOMOaA2XvJu95s8
-	x0G0HfsJjKrJ8Ezbp3xVLj0L/dw==
-X-Google-Smtp-Source: AGHT+IF2+ZdhABrnKPyUROWJCaWhOUajRbqGLHWL21MZQxT/ip0TW6XIGdVRzaMZh4Ur0gPZC6lIS0u4//WU4M/kut0=
-X-Received: from sebkvm.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:cd5])
- (user=sebastianene job=sendgmr) by 2002:a05:600c:511d:b0:41e:8c00:94a4 with
- SMTP id 5b1f17b1804b1-41fead6accamr2395155e9.3.1715793797270; Wed, 15 May
- 2024 10:23:17 -0700 (PDT)
-Date: Wed, 15 May 2024 17:22:58 +0000
-In-Reply-To: <20240515172258.1680881-1-sebastianene@google.com>
+	s=arc-20240116; t=1715793789; c=relaxed/simple;
+	bh=saOhvCKUEgcFey82Kci69bV1jdk4J6sSMDYGD2dNYlc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hmqicMqtqaXeqCxAV4SB7CiIgTlKz+czLOtUiCv/EAvGhZk/yinqLTZZB7GW928P8jAE9gm3193ovKagp7eoojMcAb1eip6JSotzAhfgZorpK2jXJagWPHKbnrt5YimWNL2a6uzYh7WFhGCqFJcYjOlDGVmOCyAoxBL6XcIuoWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iWAu/hOS; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715793785; x=1747329785;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=saOhvCKUEgcFey82Kci69bV1jdk4J6sSMDYGD2dNYlc=;
+  b=iWAu/hOSZMdTtPmSfFrebAO45Pam9z+x+PQT59uWYVuVJFBzKUS68HGl
+   39hT/JZUOUxPX9FwBvT6lJeE+Elyc+R7sk5SeEr8OZ3CoBxD75uNPysWT
+   SP0bUhTYrSQGyVH91W8wO6QJxm1ZJX1eK2V9R7zXG9slR3JH0uyLcpxlg
+   5FPcXzbxxuBGP27kJTRYl74CKFVmVEF+igA6zOojFXqF0/2mqSKnJ0U4V
+   HXeOuA6mXSSjffoqwZ4BVob89rpaa5Rw4MtCMTap4fjYOgDOAf/4OcbBG
+   ht9R/bRYbPKc9vFyknA5pzf5E3u7OPwjog2s49ypK8Qp2Cqfe/5T0v/3h
+   w==;
+X-CSE-ConnectionGUID: JyYg/4tjSI+vXQuSPXOPwg==
+X-CSE-MsgGUID: phDIplfXRl6CsshCQ2RGXA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="12034448"
+X-IronPort-AV: E=Sophos;i="6.08,162,1712646000"; 
+   d="scan'208";a="12034448"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 10:23:04 -0700
+X-CSE-ConnectionGUID: XGC1ClPRSGaZRQaN91mZPw==
+X-CSE-MsgGUID: Q+zEai0zQxy9w+wTFGA7YQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,162,1712646000"; 
+   d="scan'208";a="36010447"
+Received: from agluck-desk3.sc.intel.com (HELO agluck-desk3) ([172.25.222.105])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 10:23:04 -0700
+Date: Wed, 15 May 2024 10:23:02 -0700
+From: Tony Luck <tony.luck@intel.com>
+To: Reinette Chatre <reinette.chatre@intel.com>
+Cc: "Yu, Fenghua" <fenghua.yu@intel.com>,
+	"Wieczor-Retman, Maciej" <maciej.wieczor-retman@intel.com>,
+	Peter Newman <peternewman@google.com>,
+	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>,
+	Drew Fustini <dfustini@baylibre.com>,
+	Dave Martin <Dave.Martin@arm.com>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"patches@lists.linux.dev" <patches@lists.linux.dev>
+Subject: Re: [PATCH v17 7/9] x86/resctrl: Add new monitor files for Sub-NUMA
+ cluster (SNC) monitoring
+Message-ID: <ZkTvdtzhlCg7SOQo@agluck-desk3>
+References: <20240503203325.21512-8-tony.luck@intel.com>
+ <0178e84e-d55f-47bf-b8b0-58e05fcaa108@intel.com>
+ <ZkJIZdU2knEUJN7Q@agluck-desk3>
+ <f49931b0-d9bf-45f0-ab35-93b1a78f6b97@intel.com>
+ <ZkKupOKRu5S7Rkgx@agluck-desk3>
+ <2efcae46-736a-4809-8530-7dde3977f3ce@intel.com>
+ <SJ1PR11MB60838E2DB2984EF95D34C692FCE32@SJ1PR11MB6083.namprd11.prod.outlook.com>
+ <b718c70b-21ea-4c4d-9ecf-387b8276a721@intel.com>
+ <ZkPdPTbgH-0EpBc4@agluck-desk3>
+ <666470f0-e8c0-423e-bcb3-ea16359f5cfd@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240515172258.1680881-1-sebastianene@google.com>
-X-Mailer: git-send-email 2.45.0.rc1.225.g2a3ae87e7f-goog
-Message-ID: <20240515172258.1680881-5-sebastianene@google.com>
-Subject: [PATCH v2 4/4] KVM: arm64: Use FF-A 1.1 with pKVM
-From: Sebastian Ene <sebastianene@google.com>
-To: catalin.marinas@arm.com, james.morse@arm.com, jean-philippe@linaro.org, 
-	maz@kernel.org, oliver.upton@linux.dev, qperret@google.com, 
-	qwandor@google.com, sudeep.holla@arm.com, suzuki.poulose@arm.com, 
-	tabba@google.com, will@kernel.org, yuzenghui@huawei.com, 
-	lpieralisi@kernel.org
-Cc: kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, kernel-team@android.com, 
-	Sebastian Ene <sebastianene@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <666470f0-e8c0-423e-bcb3-ea16359f5cfd@intel.com>
 
-Now that the layout of the structures is compatible with 1.1 it is time
-to probe the 1.1 version of the FF-A protocol inside the hypervisor. If
-the TEE doesn't support it, it should return the minimum supported
-version.
+On Wed, May 15, 2024 at 09:47:28AM -0700, Reinette Chatre wrote:
+> Hi Tony,
+> 
+> On 5/14/2024 2:53 PM, Tony Luck wrote:
+> > On Tue, May 14, 2024 at 01:30:05PM -0700, Reinette Chatre wrote:
+> >> Hi Tony,
+> >>
+> >> On 5/14/2024 11:26 AM, Luck, Tony wrote:
+> >>>> On 5/13/2024 5:21 PM, Tony Luck wrote:
+> >>>>> On Mon, May 13, 2024 at 11:53:17AM -0700, Reinette Chatre wrote:
+> >>>>>> On 5/13/2024 10:05 AM, Tony Luck wrote:
+> >>>>>>> On Fri, May 10, 2024 at 02:24:13PM -0700, Reinette Chatre wrote:
+> >>>>>>> Thanks for the review. Detailed comments below. But overall I'm
+> >>>>>>> going to split patch 7 into a bunch of smaller changes, each with
+> >>>>>>> a better commit message.
+> >>>>>>>
+> >>>>>>>> On 5/3/2024 1:33 PM, Tony Luck wrote:
+> >>>>>>>>
+> >>>>>>>> (Could you please start the changelog with some context?)
+> >>>>>>>>
+> >>>>>>>>> Add a field to the rdt_resource structure to track whether monitoring
+> >>>>>>>>> resources are tracked by hardware at a different scope (NODE) from
+> >>>>>>>>> the legacy L3 scope.
+> >>>>>>>>
+> >>>>>>>> This seems to describe @mon_scope that was introduced in patch #3?
+> >>>>>>>
+> >>>>>>> Not really. Patch #3 made the change so that control an monitor
+> >>>>>>> functions can have different scope. That's still needed as with SNC
+> >>>>>>> enabled the underlying data collection is at the node level for
+> >>>>>>> monitoring, while control stays at the L3 cache scope.
+> >>>>>>>
+> >>>>>>> This new field describes the legacy scope of monitoring, so that
+> >>>>>>> resctrl can provide correctly scoped monitor files for legacy
+> >>>>>>> applications that aren't aware of SNC. So I'm using this both
+> >>>>>>> to indicate when SNC is enabled (with mon_scope != mon_display_scope)
+> >>>>>>> or disabled (when they are the same).
+> >>>>>>
+> >>>>>> This seems to enforce the idea that these new additions aim to be
+> >>>>>> generic on the surface but the only goal is to support SNC.
+> >>>>>
+> >>>>> If you have some more ideas on how to make this more generic and
+> >>>>> less SNC specific I'm all ears.
+> >>>>
+> >>>> It may not end up being totally generic. It should not pretend to be
+> >>>> when it is not. It makes the flows difficult to follow when there are
+> >>>> these unexpected checks/quirks in what claims to be core code.
+> >>>
+> >>> Do you want some sort of warning comments in pieces of code
+> >>> that are SNC specific?
+> >>
+> >> I cannot think now where warnings will be appropriate but if you
+> >> find instances then please do. To start the quirks can at least be
+> >> documented. For example, "Only user of <feature> is SNC, which does
+> >> not require <custom> so simplify by <describe shortcut> ..."
+> > 
+> > The main spot that triggered this line of discussion was changing the
+> > sanity check that operations to read monitors is being done from a
+> > CPU within the right domain. I've added a short comment on the new
+> > check:
+> > 
+> > -       if (!cpumask_test_cpu(smp_processor_id(), &d->hdr.cpu_mask))
+> > +       /* Event counts can only be read from a CPU on the same L3 cache */
+> > +       if (d->display_id != get_cpu_cacheinfo_id(smp_processor_id(), r->mon_display_scope))
+> >                 return -EINVAL;
+> > 
+> > But my change embeds the assumption that monitor events are L3 scoped.
+> > 
+> > Should it be something like this (to keep the non-SNC case generic):
+> > 
+> > 	if (r->mon_scope == r->mon_display_scope) {
+> > 		if (!cpumask_test_cpu(smp_processor_id(), &d->hdr.cpu_mask))
+> > 			return -EINVAL;
+> 
+> Yes, keeping this check looks good to me ...
+> 
+> > 	} else {
+> > 		/*
+> > 		 * SNC: OK to read events on any CPU sharing same L3
+> > 		 * cache instance.
+> > 		 */
+> > 		 if (d->display_id != get_cpu_cacheinfo_id(smp_processor_id(), r->mon_display_scope))
+> > 		 	return -EINVAL;
+> > 	}
+> 
+> ... while I remain unsure about where "display_id" fits in.
 
-Signed-off-by: Sebastian Ene <sebastianene@google.com>
----
- arch/arm64/kvm/hyp/nvhe/ffa.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+See below.
 
-diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
-index f9664c4a348e..bdd70eb4114e 100644
---- a/arch/arm64/kvm/hyp/nvhe/ffa.c
-+++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
-@@ -458,7 +458,7 @@ static __always_inline void do_ffa_mem_xfer(const u64 func_id,
- 	memcpy(buf, host_buffers.tx, fraglen);
- 
- 	ep_mem_access = (void *)buf +
--			ffa_mem_desc_offset(buf, 0, FFA_VERSION_1_0);
-+			ffa_mem_desc_offset(buf, 0, hyp_ffa_version);
- 	offset = ep_mem_access->composite_off;
- 	if (!offset || buf->ep_count != 1 || buf->sender_id != HOST_FFA_ID) {
- 		ret = FFA_RET_INVALID_PARAMETERS;
-@@ -537,7 +537,7 @@ static void do_ffa_mem_reclaim(struct arm_smccc_res *res,
- 	fraglen = res->a2;
- 
- 	ep_mem_access = (void *)buf +
--			ffa_mem_desc_offset(buf, 0, FFA_VERSION_1_0);
-+			ffa_mem_desc_offset(buf, 0, hyp_ffa_version);
- 	offset = ep_mem_access->composite_off;
- 	/*
- 	 * We can trust the SPMD to get this right, but let's at least
-@@ -846,7 +846,7 @@ int hyp_ffa_init(void *pages)
- 	if (kvm_host_psci_config.smccc_version < ARM_SMCCC_VERSION_1_2)
- 		return 0;
- 
--	arm_smccc_1_1_smc(FFA_VERSION, FFA_VERSION_1_0, 0, 0, 0, 0, 0, 0, &res);
-+	arm_smccc_1_1_smc(FFA_VERSION, FFA_VERSION_1_1, 0, 0, 0, 0, 0, 0, &res);
- 	if (res.a0 == FFA_RET_NOT_SUPPORTED)
- 		return 0;
- 
-@@ -866,7 +866,11 @@ int hyp_ffa_init(void *pages)
- 	if (FFA_MAJOR_VERSION(res.a0) != 1)
- 		return -EOPNOTSUPP;
- 
--	hyp_ffa_version = FFA_VERSION_1_0;
-+	if (FFA_MINOR_VERSION(res.a0) < FFA_MINOR_VERSION(FFA_VERSION_1_1))
-+		hyp_ffa_version = res.a0;
-+	else
-+		hyp_ffa_version = FFA_VERSION_1_1;
-+
- 	tx = pages;
- 	pages += KVM_FFA_MBOX_NR_PAGES * PAGE_SIZE;
- 	rx = pages;
--- 
-2.45.0.rc1.225.g2a3ae87e7f-goog
+> > 
+> >>
+> >>>
+> >>>>
+> >>>>>>>>>         }
+> >>>>>>>>> +
+> >>>>>>>>> +       return 0;
+> >>>>>>>>> +}
+> >>>>>>>>> +
+> >>>>>>>>> +static int mkdir_mondata_subdir(struct kernfs_node *parent_kn,
+> >>>>>>>>> +                               struct rdt_mon_domain *d,
+> >>>>>>>>> +                               struct rdt_resource *r, struct rdtgroup *prgrp)
+> >>>>>>>>> +{
+> >>>>>>>>> +       struct kernfs_node *kn, *ckn;
+> >>>>>>>>> +       char name[32];
+> >>>>>>>>> +       bool do_sum;
+> >>>>>>>>> +       int ret;
+> >>>>>>>>> +
+> >>>>>>>>> +       do_sum = r->mon_scope != r->mon_display_scope;
+> >>>>>>>>> +       sprintf(name, "mon_%s_%02d", r->name, d->display_id);
+> >>>>>>>>> +       kn = kernfs_find_and_get_ns(parent_kn, name, NULL);
+> >>>>>>>>> +       if (!kn) {
+> >>>>>>>>> +               /* create the directory */
+> >>>>>>>>> +               kn = kernfs_create_dir(parent_kn, name, parent_kn->mode, prgrp);
+> >>>>>>>>> +               if (IS_ERR(kn))
+> >>>>>>>>> +                       return PTR_ERR(kn);
+> >>>>>>>>> +
+> >>>>>>>>> +               ret = rdtgroup_kn_set_ugid(kn);
+> >>>>>>>>> +               if (ret)
+> >>>>>>>>> +                       goto out_destroy;
+> >>>>>>>>> +               ret = mon_add_all_files(kn, d, r, prgrp, do_sum);
+> >>>>>>>>
+> >>>>>>>> This does not look right. If I understand correctly the private data
+> >>>>>>>> of these event files will have whichever mon domain came up first as
+> >>>>>>>> its domain id. That seems completely arbitrary and does not reflect
+> >>>>>>>> accurate state for this file. Since "do_sum" is essentially a "flag"
+> >>>>>>>> on how this file can be treated, can its "dom_id" not rather be
+> >>>>>>>> the "monitor scope domain id"? Could that not help to eliminate
+> >>>>>>>
+> >>>>>>> You are correct that this should be the "monitor scope domain id" rather
+> >>>>>>> than the first SNC domain that appears. I'll change to use that. I don't
+> >>>>>>> think it helps in removing the per-domain display_id.
+> >>>>>>
+> >>>>>> Wouldn't the file metadata then be the "display_id"?
+> >>>>>
+> >>>>> Yes. The metadata is the display_id for files that need to sum across
+> >>>>> SNC nodes, but the domain id for ones where no summation is needed.
+> >>>>
+> >>>> Right ... and there is a "sum" flag to tell which is which?
+> >>>
+> >>> Yes. sum==0 means the domid field is the one and only domain to
+> >>> report for this resctrl monitor file. sum==1 means the domid field is
+> >>> the display_id - all domains with this display_id must be summed to
+> >>> provide the result to present to the user.
+> >>>
+> >>> I've tried to capture that in the kerneldoc comment for struct mon_event.
+> >>> Here's what I'm planning to include in v18 (Outlook will probably mangle
+> >>> the formatting ... just imagine that the text lines up neatly):
+> >>>
+> >>> diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
+> >>> index 49440f194253..3411557d761a 100644
+> >>> --- a/arch/x86/kernel/cpu/resctrl/internal.h
+> >>> +++ b/arch/x86/kernel/cpu/resctrl/internal.h
+> >>> @@ -132,14 +132,19 @@ struct mon_evt {
+> >>>   *                     as kernfs private data
+> >>>   * @rid:               Resource id associated with the event file
+> >>>   * @evtid:             Event id associated with the event file
+> >>> - * @domid:             The domain to which the event file belongs
+> >>> + * @sum:               Set when event must be summed across multiple
+> >>> + *                     domains.
+> >>> + * @domid:             When @sum is zero this is the domain to which
+> >>> + *                     the event file belongs. When sum is one this
+> >>> + *                     is the display_id of all domains to be summed
+> >>
+> >> Here is where I would like to understand why it cannot just be
+> >> "When sum is one this is the domain id of the scope at which (for which?)
+> >> the events must be summed." Although, you already mentioned this will be
+> >> clear in next posting.
+> >>
+> >>>   * @u:                 Name of the bit fields struct
+> >>>   */
+> >>>  union mon_data_bits {
+> >>>         void *priv;
+> >>>         struct {
+> >>>                 unsigned int rid                : 10;
+> >>> -               enum resctrl_event_id evtid     : 8;
+> >>> +               enum resctrl_event_id evtid     : 7;
+> >>> +               unsigned int sum                : 1;
+> >>>                 unsigned int domid              : 14;
+> >>>         } u;
+> >>>  };
+> >>>
+> >>> -Tony
+> > 
+> > Maybe an example might help. Assume an SNC system with two sockets,
+> > three SNC nodes per socket, only supporting monitoring. The only domain
+> > list created by resctrl is the mon_domains list on the RDT_RESOURCE_L3
+> > resource. And it looks like this (with "disply_list" abbreviated to
+> > "dspl" to keep the picture small):
+> > 
+> > 
+> >        <------ SNC NODES ON SOCKET 0 ----->   <------ SNC NODES ON SOCKET 1 ------>
+> > ----> +----------+ +----------+ +----------+ +----------+ +----------+ +----------+
+> >       | id = 0   | | id = 1   | | id = 2   | | id = 3   | | id = 4   | | id = 5   |
+> >       |          | |          | |          | |          | |          | |          |
+> >       | dspl = 0 | | dspl = 0 | | dspl = 0 | | dspl = 1 | | dspl = 1 | | dspl = 1 |
+> >       |          | |          | |          | |          | |          | |          |
+> >       +----------+ +----------+ +----------+ +----------+ +----------+ +----------+
+> > 
+> > Reading the per-SNC node monitor values looks just the same as the
+> > non-SNC case. The struct rmid_read passed across the smp_call*() has
+> > the resource, domain, event, and reading the counters is essentially
+> > unchanged.
+> > 
+> > Reading a file to sum event counts for SNC nodes on socket 1 needs to
+> > find each of the "struct rdt_mon_domain" that are part of socket 1.
+> > I'm doing that with meta data in the file that says sum=1 (need to add
+> > up something) and domid=1 (the things to be added are those with
+> > display_id = 1). So the code reads:
+> > 
+> > 	list_for_each_entry(d, &rr->r->mon_domains, hdr.list) {
+> > 		if (d->display_id == rr->d->display_id) {
+> > 			... call stuff to read and sum for domain "d"
+> > 		}
+> > 	}
+> > 
+> > The display_id is "the domain id of the scope at which (for which?)
+> > the events must be summed." in your text above.
+> 
+> My point remains that it is not clear (to me) why it is required to
+> carry the display_id around.
+> 
+>  	list_for_each_entry(d, &rr->r->mon_domains, hdr.list) {
+> 		/* determine @id of @d at rr->r->mon_display_scope */
+>  		if (id == domid) {
+>  			... call stuff to read and sum for domain "d"
+>  		}
+>  	}
 
+That "determine @id of @d at rr->r->mon_display_scope" is:
+
+	display_id = get_domain_id_from_scope(cpumask_first(rr->d->hdr.cpu_mask), rr->r->mon_display_scope);
+	if (display_id < 0) {
+		take some error action
+	}
+
+So it certainly isn't *required* to carry display_id around. But doing
+so makes the code simpler. I could bury the long line into a helper
+macro/function. But I can't bury the error check.
+
+I'd also need to change get_domain_id_from_scope() from "static" to
+global so it can be used in other files besides core.c
+
+Note that there are several places where I need to use display_id,
+computing it at run time in each place, but it seems so much easier to
+do it once at domain creation time.
+
+> 
+> Reinette
+
+-Tony
 
