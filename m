@@ -1,203 +1,118 @@
-Return-Path: <linux-kernel+bounces-180054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B2E58C6978
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:13:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CE5A8C693D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:07:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DCB30B2276E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 15:13:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E8DC1C216D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 15:07:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B27D915622F;
-	Wed, 15 May 2024 15:13:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81A1615574C;
+	Wed, 15 May 2024 15:06:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=z3ntu.xyz header.i=@z3ntu.xyz header.b="IOeJVtlu"
-Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="S4nuTNKJ"
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD9A2155A59;
-	Wed, 15 May 2024 15:13:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 822F415572C
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 15:06:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715786002; cv=none; b=eXsICKNpPYjPexfyvgI1DDMU1lgVIcU36WqXHARBsr7w9Lsm0ZIQiJrPnC1Sqaj44vUu5dxttlCcY7thS+FJYhrGiMsLVb4RWUGmurmTQwd1FxoiTkGBrs6mfpgSDpcmjK50kVUVn6JF/rLVTOQ+H6nQ9494kH5jccbDEvU+99s=
+	t=1715785617; cv=none; b=grE3UPG5L4Wiki2RNh6KwYB9n7ELHKyGrG/+hceU79a9kI7zHGIhHgiCs+Ash5HcnUagc24K31Cuobo/RH9oBrcD+Nol6KGPD1EuhBFxuukSDrAzr1FmMNGJ15fpjYBPc58bB4y0GzbfQSRwQ92Bo/qpHtFmc8oix66fJnbAfRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715786002; c=relaxed/simple;
-	bh=XBZfuj02Zl9OrcMLaFsUectUl18cI/gGovODQu/ccCs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LmNtEI/9nsG1Edbp+Mv0520ehb7v+0NjVLsfyCEmlnNvinWcFOfQmCtFRFOrccalvOXPwgEdWep3PnkvCGwZ1JMqSxI97rnVVkBu0a2LGeBGiS9Z/84jpdON6RlMruLx+PgYRbEhsFtoQHe9b5IX3236++CO0UxFF7k8Gq+HCmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=z3ntu.xyz; spf=pass smtp.mailfrom=z3ntu.xyz; dkim=pass (1024-bit key) header.d=z3ntu.xyz header.i=@z3ntu.xyz header.b=IOeJVtlu; arc=none smtp.client-ip=128.199.32.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=z3ntu.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=z3ntu.xyz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=z3ntu.xyz; s=s1;
-	t=1715785594; bh=XBZfuj02Zl9OrcMLaFsUectUl18cI/gGovODQu/ccCs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=IOeJVtluz2V1StordWuTnwVe3CKDAMeIwkF+qLZ4MaxQFPOsQ63JQiMUzdXIrM+gz
-	 lYO2Gn6NUEfa5giuKWyoOtBBeDIxEG02TmMyn8pKxMNsG4bRff6yk6XOsVM5OFSBZB
-	 3xmQnvFLswmT2343I6mDd0EfPJgqqbO0MnsO0miE=
-From: Luca Weiss <luca@z3ntu.xyz>
-To: Rob Herring <robh@kernel.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Andy Gross <agross@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject:
- Re: [PATCH RFC 1/2] dt-bindings: soc: qcom,smsm: Allow specifying mboxes
- instead of qcom,ipc
-Date: Wed, 15 May 2024 17:06:33 +0200
-Message-ID: <2729475.mvXUDI8C0e@g550jk>
-In-Reply-To: <5087455.31r3eYUQgx@g550jk>
-References:
- <20240424-smsm-mbox-v1-0-555f3f442841@z3ntu.xyz>
- <20240425161715.GA2759240-robh@kernel.org> <5087455.31r3eYUQgx@g550jk>
+	s=arc-20240116; t=1715785617; c=relaxed/simple;
+	bh=RIAoqjM14Fu2GXpQuniUrr5udioxLXnLSlEc1B8cx3Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=owhF+Py53WkYIK4eAOfUkSRpHE3RPJcqR7y2ptxo/tlhTUI/btpxhBtH+DCpwEpUergGewv9MYts1rs1swGA3YhXyWxrz3/EwyQaisMsy7B3rtU7O/wvdcgpwsET/ZxNwEjVpH5k8pHXEZ/BdV3guYFVhEDvvVfn52rC5tYxhW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=S4nuTNKJ; arc=none smtp.client-ip=209.85.166.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-7e1b8606bfdso39666639f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 08:06:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1715785615; x=1716390415; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YcYN10FfDn14US5p3x/TxdGIIki13NwqcWmNX431Yx8=;
+        b=S4nuTNKJPVHEdwgJr6WwWEJ3KsTAnCEjAfbJB5fHQsEnwzvgUY++Nf943JGEXq8AdD
+         H9pm/n1JpmNvM0WUBooUZ1jM2s1w6KGMwuxUvuo/gs4vq3HJKkpj4WKblDNm3G6EKVYz
+         gyHOFzhPfYViv0+0KRKRJ2eRVUGOJbR3IVGJg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715785615; x=1716390415;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YcYN10FfDn14US5p3x/TxdGIIki13NwqcWmNX431Yx8=;
+        b=q1AQFFmcKDzVRe6Ks7TMiOsOaRvnjZQRsi5C7AzRq6ly1FVAPb1EVAYbcEmKh16Arp
+         J/Supbb/ZmeGsd5+HbANDPXofIYyY20J5FX6dc5cB9p8VuLZW1g0TQBee2h4pVPHDsdg
+         gQwcV8xxEsaDLoLN1zZdlMo7H5U/4kUa/1RdGiqgEa2RL9UiV+Iugij07NlaNGZml0dg
+         Zs4unWKRHW+BB0r7mre0Hka0Hym3b7XiWq8ijcewnY0gSRs8u4/jhwJTDqWppBUH9Yvm
+         HP2RRczhoBmEwjnFwfU/mOUWPE2YGF/lFofPF5DSTmvzw3h8hwcH25HXtNMlS0lcyNEt
+         jO7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUXwxG1/UQGBFDnpfrOR4aArWu7bNFFfIcCKiW+8aZHTJYBVgBcSceEizBIDdhtqUKqg3uATZUVVQ2RsC/tCU9zZAQqLwpu8jnOoFyr
+X-Gm-Message-State: AOJu0YzAU95GFc1FrB8RszZ3Qu6F4vJz6rO3R/6pcH+L9xV0KbwZbB6J
+	KNM8JTG7UDMUhWjJX2CtSWfXwg8cZhyrufOFqLrQTnNDv2mIplehtddq7Lqei+k=
+X-Google-Smtp-Source: AGHT+IHswPwsFnweSMcvLm+AWWS2t1fafeIrDiKAyKpwgDgiLQqvE94t9I8Os3WbhkkDOZrFGH3Ucw==
+X-Received: by 2002:a92:cb0f:0:b0:36c:532c:d088 with SMTP id e9e14a558f8ab-36cc1391118mr158636705ab.0.1715785615724;
+        Wed, 15 May 2024 08:06:55 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4893700e469sm3634804173.30.2024.05.15.08.06.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 May 2024 08:06:55 -0700 (PDT)
+Message-ID: <97dec171-048e-44c2-bf19-7d1a1c8694d3@linuxfoundation.org>
+Date: Wed, 15 May 2024 09:06:54 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.6 000/301] 6.6.31-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240514101032.219857983@linuxfoundation.org>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240514101032.219857983@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Rob,
-
-Any feedback on the below topic?
-
-Regards
-Luca
-
-On Donnerstag, 25. April 2024 20:54:40 MESZ Luca Weiss wrote:
-> On Donnerstag, 25. April 2024 18:17:15 MESZ Rob Herring wrote:
-> > On Wed, Apr 24, 2024 at 07:21:51PM +0200, Luca Weiss wrote:
-> > > The qcom,ipc-N properties are essentially providing a reference to a
-> > > mailbox, so allow using the mboxes property to do the same in a more
-> > > structured way.
-> > 
-> > Can we mark qcom,ipc-N as deprecated then?
+On 5/14/24 04:14, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.31 release.
+> There are 301 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Yes, that should be ok. Will also send a similar change to the other bindings
-> that support both qcom,ipc and mboxes.
+> Responses should be made by Thu, 16 May 2024 10:09:32 +0000.
+> Anything received after that time might be too late.
 > 
-> >  
-> > > Since multiple SMSM hosts are supported, we need to be able to provide
-> > > the correct mailbox for each host. The old qcom,ipc-N properties map to
-> > > the mboxes property by index, starting at 0 since that's a valid SMSM
-> > > host also.
-> > > 
-> > > The new example shows how an smsm node with just qcom,ipc-3 should be
-> > > specified with the mboxes property.
-> > > 
-> > > Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
-> > > ---
-> > >  .../devicetree/bindings/soc/qcom/qcom,smsm.yaml    | 48 ++++++++++++++++++----
-> > >  1 file changed, 40 insertions(+), 8 deletions(-)
-> > > 
-> > > diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,smsm.yaml b/Documentation/devicetree/bindings/soc/qcom/qcom,smsm.yaml
-> > > index db67cf043256..b12589171169 100644
-> > > --- a/Documentation/devicetree/bindings/soc/qcom/qcom,smsm.yaml
-> > > +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,smsm.yaml
-> > > @@ -33,6 +33,13 @@ properties:
-> > >        specifier of the column in the subscription matrix representing the local
-> > >        processor.
-> > >  
-> > > +  mboxes:
-> > > +    minItems: 1
-> > > +    maxItems: 5
-> > 
-> > Need to define what each entry is.
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.31-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
 > 
-> The entry is (description from qcom,ipc-N)
+> thanks,
 > 
->   "the outgoing ipc bit used for signaling the N:th remote processor."
-> 
-> So you want me to add 5 times e.g.
-> 
-> - the IPC mailbox used for signaling the 0th remote processor
-> - the IPC mailbox used for signaling the 1st remote processor
-> 
-> etc? I don't really have any extra knowledge on smsm to be able to write
-> something better there..
-> 
-> Also what are your thoughts on this binding vs the alternative I wrote
-> in the cover letter? I'm not really happy about how the properties are
-> represented.
-> 
-> Regards
-> Luca
-> 
-> 
-> > 
-> > > +    description:
-> > > +      Reference to the mailbox representing the outgoing doorbell in APCS for
-> > > +      this client.
-> > > +
-> > >    '#size-cells':
-> > >      const: 0
-> > >  
-> > > @@ -98,15 +105,18 @@ required:
-> > >    - '#address-cells'
-> > >    - '#size-cells'
-> > >  
-> > > -anyOf:
-> > > +oneOf:
-> > >    - required:
-> > > -      - qcom,ipc-1
-> > > -  - required:
-> > > -      - qcom,ipc-2
-> > > -  - required:
-> > > -      - qcom,ipc-3
-> > > -  - required:
-> > > -      - qcom,ipc-4
-> > > +      - mboxes
-> > > +  - anyOf:
-> > > +      - required:
-> > > +          - qcom,ipc-1
-> > > +      - required:
-> > > +          - qcom,ipc-2
-> > > +      - required:
-> > > +          - qcom,ipc-3
-> > > +      - required:
-> > > +          - qcom,ipc-4
-> > >  
-> > >  additionalProperties: false
-> > >  
-> > > @@ -136,3 +146,25 @@ examples:
-> > >              #interrupt-cells = <2>;
-> > >          };
-> > >      };
-> > > +  # Example using mboxes property
-> > > +  - |
-> > > +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> > > +
-> > > +    shared-memory {
-> > > +        compatible = "qcom,smsm";
-> > > +        #address-cells = <1>;
-> > > +        #size-cells = <0>;
-> > > +        mboxes = <0>, <0>, <0>, <&apcs 19>;
-> > > +
-> > > +        apps@0 {
-> > > +            reg = <0>;
-> > > +            #qcom,smem-state-cells = <1>;
-> > > +        };
-> > > +
-> > > +        wcnss@7 {
-> > > +            reg = <7>;
-> > > +            interrupts = <GIC_SPI 144 IRQ_TYPE_EDGE_RISING>;
-> > > +            interrupt-controller;
-> > > +            #interrupt-cells = <2>;
-> > > +        };
-> > > +    };
-> > > 
-> > 
-> 
+> greg k-h
 > 
 
+Compiled and booted on my test system. No dmesg regressions.
 
+Tested-by: Shuah Khan <skhan@linuxfoundation.org>
 
+thanks,
+-- Shuah
 
 
