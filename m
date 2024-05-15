@@ -1,155 +1,117 @@
-Return-Path: <linux-kernel+bounces-180396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1301F8C6DDA
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 23:43:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BBDF8C6DE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 23:44:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB983281E8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 21:43:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9ECE1B227C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 21:44:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CD6515B559;
-	Wed, 15 May 2024 21:42:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7334615B552;
+	Wed, 15 May 2024 21:44:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="0QOtEJSq"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VXz+v8EP"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9872015B540
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 21:42:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3F011591EC
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 21:44:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715809374; cv=none; b=JYEJOffiQY88UeCij1e+DDCM/roSKhwPAoRpSwUko21Wml12K3TFIzfWsdGXxPn4p0zWD1f75BPrqfTvEA02KIfBDNwPYbsE0meOpTuu9BZVMqQIR22RQ2HWxOBv+dVOJ1IkhErTjqhLbprqoXO3ih0d1CR1FZERiZGWp4IuWDA=
+	t=1715809447; cv=none; b=PjS5bmByIP+CS9Uhxia622BVaVUkmsBVc39RCi/C0e2tGM6VrBvUzNX1SP9kObzrOEznz20P0mJs0rldyOpBLZlsWo+QbVO8zq7RiK6/FBuGiZcvPuwVZL8KtljGoSksAR92qdbcDs5q36FCdkwjM+FZ1zmOV9PrJ69+kWefqu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715809374; c=relaxed/simple;
-	bh=KiSQc1JiF1aFCWtXL6ki6+sQulb5IdXpzvrOpZ5e52g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u7xua+H89dOrGTZEIcgXtbxf0UyJzXssps+NDt/RPZgSjxMBhDv80wflRcFBGJRcEUM9cpJutsy/lHjZQroTyt7p1I9yrvVknINUXsVkIErI45SXif7hDcZrw/hQiwE+p2NYjyGSm8kXSDveN2F/uSftEK21SkP8yU/JuxUXy8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=0QOtEJSq; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2e564cad1f1so878411fa.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 14:42:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1715809370; x=1716414170; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P9TfeFMGzDggFyesSkjXt3hsg/J9ww73zqsP1azRQZA=;
-        b=0QOtEJSqS+Eg+xF9kTmTsbL5TKLrRVeRRfuTWB0SBxayVlCbJKCcZW7U4f6XrFCOka
-         iSeN5U22t2J1crAerabEFIWld2iWMr6A05MC02rwdgkZsY9eGV6ypBLUBfL4RGN1VQl2
-         wTFzLGtaBbDgg3V0+huoK9r0z5j0WH2yyaUwtNF+oZ9sPRhk+oHTy98PvB2sD9He37X2
-         aPTorNU7+QwJCHVIn+1wPTTys/SqXZjxk2mO3qbZyDvugbPgOCyue7opxINHDgozx9Ao
-         zdtikShOz0U2sTEp8FTdeK7snkX22NtCiv2fyWMugKZkNOvUc2zFokN+IaDaiOt0dD+X
-         rdOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715809370; x=1716414170;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=P9TfeFMGzDggFyesSkjXt3hsg/J9ww73zqsP1azRQZA=;
-        b=YoI6w04FpUb1JZc4K3cIVK7ZO+ZUZv2fZRPQk/PZUGeVoZ7vqXY0dD9KUrGOWSI18/
-         TWzvCzOZZAWmU4t8UHGDWf/FYNP8tcng+nNfjKvrPvkiSUOBF0SbbCI/SqS6Fbv6a+Le
-         CVZ25+IzBV2dUGXrF5di8VzW2/4HMn/pQ7xU7yOdq71gINrKczu0dOWPPqID3Z92M04j
-         nlEr4LEx94HLieYKB5UQ/HmX7RY/PVgrtnFlaOEZhtEeOdvAMU3h/D6O2UWumRK8jqX+
-         DsgFlDf3bItxcgkzIynx4r8UNO/tRwmjYmpuq7ETdmdNiHPlEKN8GJTRUPbBcRtf7zH1
-         tLJw==
-X-Forwarded-Encrypted: i=1; AJvYcCWC6wGE76ZCU0hNjrtvWnuCYUCyqXg+Bq0n8Z0Ek6dvAIP0yQ58S7PzQbBAyMMroBVw+tvCQfzobX6B18qAm76Brxln4eNNNW4P8x3N
-X-Gm-Message-State: AOJu0YwlyXQdDvX8P7jtqWVos/tO2x/uzl8nONya6zs5Ju62gcWNGDda
-	AFyobfxRtUFOCzoo+8PdEL5Iy25oWx/QWQSZIPHJ59SjRNR0i04B3Rladj2IEEjx+661bM1L3r0
-	zlygO52txtWiRyKWkxY51HdYz76qyN5FcK00wRJN1B6zolpY5+HI=
-X-Google-Smtp-Source: AGHT+IGpxIiwcjdpifjmdvRLi4LFm9ed7boSODEZiMBXMdO6n9tTtimmmZlUZkosahIDXDhpvE+zOtAwD/uTbM4pshc=
-X-Received: by 2002:a2e:b88c:0:b0:2e0:4a32:1f41 with SMTP id
- 38308e7fff4ca-2e51fd46457mr124091161fa.19.1715809370626; Wed, 15 May 2024
- 14:42:50 -0700 (PDT)
+	s=arc-20240116; t=1715809447; c=relaxed/simple;
+	bh=5qEbwkLcOrEvBA+Jfj2Sig7VdcHS47eVtQcB3Ya+vhA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=quxy7cgwdBPM0H32e3g0l2TFNKfrYIy4R6JG/rv1OONadvRhCPifrR0wY4wQbkCWBgdGBL6FSv2+1md/K/DzXBeSQb+NQ73tQNw6uFuw3UDU3zZWwn+rtjxMVv0d6kvn2R22OApqxWoAiuBseEILLP5WMYXAiAlgXXMm+A3znn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VXz+v8EP; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715809446; x=1747345446;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=5qEbwkLcOrEvBA+Jfj2Sig7VdcHS47eVtQcB3Ya+vhA=;
+  b=VXz+v8EPpngZBgJNZZVggACf/ll3vzq/T6NpVa9gY2LNYoZkF3Qmi8z0
+   zKevjhmw6Sam+IMed9JXH8a3wdRLWTnqu46Vng/zirmQxoYO8ChNOSvyu
+   eVH+2yUloXodxmCo7yUHucUHQjPRSPT0P6UO09hLO50uaBARoI/LMpCyr
+   Cr4ZnaNl/JcgPihgLwhxVG0jV49twEThmoCehwGOeDnojhgqKwOlPuZiR
+   rkY7lxdbgv88Bw9WovyXkROKeXBIt6i+kLh+zuf8fVyE2zuhEKPyA1uLq
+   1+8abVYtg9/C5LCY7EYjeG62DCqsvxMexGMjXsR72KVKgeLYmuLc3n3UJ
+   Q==;
+X-CSE-ConnectionGUID: AWb6eLXTTcea9AfPDaISKg==
+X-CSE-MsgGUID: jiN3dK2pTlC/KsgNDu7C5Q==
+X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="12062139"
+X-IronPort-AV: E=Sophos;i="6.08,162,1712646000"; 
+   d="scan'208";a="12062139"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 14:44:06 -0700
+X-CSE-ConnectionGUID: y+PWi6rLQryn5aDZO4Uggw==
+X-CSE-MsgGUID: t4cKo+MIRHKBGvkLVjhNHg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,162,1712646000"; 
+   d="scan'208";a="31253888"
+Received: from agluck-desk3.sc.intel.com ([172.25.222.105])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 14:44:05 -0700
+From: Tony Luck <tony.luck@intel.com>
+To: x86@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev,
+	Tony Luck <tony.luck@intel.com>
+Subject: [PATCH] x86/cpu: Fix x86_match_cpu() to match just X86_VENDOR_INTEL
+Date: Wed, 15 May 2024 14:43:57 -0700
+Message-ID: <20240515214357.73798-1-tony.luck@intel.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240401-ad4111-v1-0-34618a9cc502@analog.com> <20240401-ad4111-v1-1-34618a9cc502@analog.com>
- <CAMknhBHeKAQ45=5-dL1T1tv-mZcPN+bNo3vxWJYgWpEPE+8p3Q@mail.gmail.com>
- <25cb3514-1281-49a8-9e9b-40ead9b050dc@gmail.com> <CAMknhBHu8DveBgV3cor8RP2Up4Zs-+QRx7S2aoHZ_3iKiErVjg@mail.gmail.com>
- <20240406155328.447b594f@jic23-huawei> <64b7fd83-f226-4b1f-a801-0fe1cf20f842@gmail.com>
- <20240413114825.74e7f3fa@jic23-huawei> <89e93f4d-e569-46ee-802d-a1668a01b882@gmail.com>
- <20240420153310.7876cb8a@jic23-huawei>
-In-Reply-To: <20240420153310.7876cb8a@jic23-huawei>
-From: David Lechner <dlechner@baylibre.com>
-Date: Wed, 15 May 2024 16:42:39 -0500
-Message-ID: <CAMknhBGxEfGJhi+0Pxi+XqCSKLAKLzhLOt_rZo+vP=XqQDqWGA@mail.gmail.com>
-Subject: Re: [PATCH 1/6] dt-bindings: adc: ad7173: add support for ad411x
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: "Ceclan, Dumitru" <mitrutzceclan@gmail.com>, dumitru.ceclan@analog.com, 
-	Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sat, Apr 20, 2024 at 9:33=E2=80=AFAM Jonathan Cameron <jic23@kernel.org>=
- wrote:
->
-> On Mon, 15 Apr 2024 21:42:50 +0300
-> "Ceclan, Dumitru" <mitrutzceclan@gmail.com> wrote:
->
-> > On 13/04/2024 13:49, Jonathan Cameron wrote:
-> > > On Tue, 9 Apr 2024 11:08:28 +0300
-> > > "Ceclan, Dumitru" <mitrutzceclan@gmail.com> wrote:
-> > >
-> > >> On 06/04/2024 17:53, Jonathan Cameron wrote:
-> > >>> On Wed, 3 Apr 2024 10:40:39 -0500
-> > >>> David Lechner <dlechner@baylibre.com> wrote:
-> > >>>
-> > >>>> On Wed, Apr 3, 2024 at 2:43=E2=80=AFAM Ceclan, Dumitru <mitrutzcec=
-lan@gmail.com> wrote:
-> > >>>>>
-> > >>>>> On 01/04/2024 22:37, David Lechner wrote:
-> > >>>>>> On Mon, Apr 1, 2024 at 10:10=E2=80=AFAM Dumitru Ceclan via B4 Re=
-lay
-> > >>>>>> <devnull+dumitru.ceclan.analog.com@kernel.org> wrote:
-> > >>>>>>>
-> > >>>>>>> From: Dumitru Ceclan <dumitru.ceclan@analog.com>
-> > >>>>>
-> > ...
-> > >>
-> > >>>>> Other alternative that came to my mind: attribute "adi,current-ch=
-annel".
-> > >>>>
-> > >>>> Having a boolean flag like this would make more sense to me if we
-> > >>>> don't agree that the suggestion below is simpler.
-> > >>>>
-> >
-> > ...
-> >
-> > >
-> > > We do directly relate reg to channel numbers in drivers like the ad72=
-92 (where not
-> > > all channels are differential)  I'm not convinced either way on what =
-is best
-> > > here where reg is currently just an index into a channel specificatio=
-n, not
-> > > meaningful for which pins are involved.
-> > >
-> > > It doesn't seem worth adding an equivalent of diff-channels for a sin=
-gle channel
-> > > setup but I guess it would be more consistent.
-> > >
-> >
-> > Would you agree with the attribute adi,current-channel within the chann=
-el and
-> >  diff-channels set to the correspondent current inputs (13 10 for pair =
-IN2)?
->
-> From another thread today I've concluded we do need a single-channel
-> equivalent of diff-channels, but you are right that here it is a differen=
-tial
-> channel so <13 10> seems like the best option to me.
->
+There's a wildcard match in arch/x86/kernel/smpboot.c that wants
+to hit on any CPU made by Intel. The match used to work because
+the check was actually looking for any Intel CPU in family 6.
 
-Current inputs are differential? It seems like we would need 4 input
-pins for that.
+With the change to ease support for families other than 6,
+this wildcard match failed because every entry in the struct x86_cpu_id
+was zero. This is used as the end-marker in arrays of x86_cpu_id
+structures, so can never match.
+
+Failure to match meant the logic to detect Intel Sub-NUMA cluster
+mode didn't operate and there were boot messages about insane
+cache configuration.
+
+Fix by changing X86_VENDOR_INTEL to a non-zero value (4 was lowest
+unused value, so I picked that).
+
+Fixes: 4db64279bc2b ("x86/cpu: Switch to new Intel CPU model defines")
+Signed-off-by: Tony Luck <tony.luck@intel.com>
+---
+ arch/x86/include/asm/processor.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
+index cb4f6c513c48..271c4c95bc37 100644
+--- a/arch/x86/include/asm/processor.h
++++ b/arch/x86/include/asm/processor.h
+@@ -175,10 +175,10 @@ struct cpuinfo_x86 {
+ 	unsigned		initialized : 1;
+ } __randomize_layout;
+ 
+-#define X86_VENDOR_INTEL	0
+ #define X86_VENDOR_CYRIX	1
+ #define X86_VENDOR_AMD		2
+ #define X86_VENDOR_UMC		3
++#define X86_VENDOR_INTEL	4
+ #define X86_VENDOR_CENTAUR	5
+ #define X86_VENDOR_TRANSMETA	7
+ #define X86_VENDOR_NSC		8
+-- 
+2.44.0
+
 
