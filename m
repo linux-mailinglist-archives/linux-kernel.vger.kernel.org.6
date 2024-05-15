@@ -1,127 +1,241 @@
-Return-Path: <linux-kernel+bounces-180480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ACCB8C6F17
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 01:20:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E708A8C6F1A
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 01:21:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2470B20E63
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 23:20:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 633781F232F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 23:21:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 010AD4EB3D;
-	Wed, 15 May 2024 23:20:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C7DB4EB20;
+	Wed, 15 May 2024 23:20:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tO8Vnxz0"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="FKmkZqve"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDC94101C8
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 23:20:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E0CC3C48E;
+	Wed, 15 May 2024 23:20:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715815206; cv=none; b=mfiS96W0STolkpqGspM7Xmov4B1FL07rS5lhIi9V88tdvhBy5tRSCYLIzJd6sCNk9pG1uZN7ppLFZopubTvhOB4FDmhjbu589t3U0RDh4JabC0zIyd1KY0bfWgOS6gc/o59lq3xjxmp+JWzFWvQmKcDkra9D4i+M0pOu97j0G+c=
+	t=1715815257; cv=none; b=czz4mql7kzq6rWiaXSgFCoPJXwDfgoHAT4HgnuRj3EF3J12Ob9f5Z6kHt1PH66zdhG9ot4dW9c3lDzJU4BNE8RLYrEvluJpcA2+uEMWrpeOtyzoa9Z5QrWjEjs5EgtFUrW3Z2C5IXh7IIv5kecWGMb3c2Im1ZHZ1UY7x4K3/B9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715815206; c=relaxed/simple;
-	bh=uq5jbcln+jzH/PLpZe9wXnSOTlm0FyFFVFCwKP91LGM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=AP5iHa861vCcdbrFwEK9CnDC8CrgRFeoF8GdN6bFq9y54s7eJvUcX3KpX9v96eJoshPh3VFQWoznAHoV11BM0BihODX2Hi7w0ffIWY6tkekzR0+hRgEbMdyRi0u1GJBejnbelYPsmmHsOPcMghyDtwO4mfJ4odB7ZC+KkjlS01c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tO8Vnxz0; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-61c9e36888bso127579007b3.2
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 16:20:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715815204; x=1716420004; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6YDxr3hZHHTclQ7zyLq/DlJKdNF735yaym0zXBzZRNw=;
-        b=tO8Vnxz0RfBY/mNvbNtPWd4K2gSh2CgO+SRNJGPZr4rR88zouqmbr1b0UGPz999XK5
-         d3xC4dMuhLcq02EWdOqAruF8Wmn/U4RJneLIY7tIuEK1rjKJWHFRck622i57C4qwFKTH
-         i7xZokKgUN4cl8M+c7Dn9D7TECcH/NUQeiEMw4taLS/zXULc8spiuKW4xzNURG+FQ729
-         +ir12zF7ohScN2dCHTKlQqcbb1jj9RgQuV7bTtUZ5E4+ibt33qaN/VHZSv3w6ohp24hU
-         iv4SxAdGRgxCYDqQmpWKakN/qwGdi7NJHNIU89YB+mx3wUss7Fcz7Cbh0Mh/TUrkIPV/
-         pisQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715815204; x=1716420004;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6YDxr3hZHHTclQ7zyLq/DlJKdNF735yaym0zXBzZRNw=;
-        b=mUQfFM6AkKegAKgnKOaulcOHQjPiRDeZSiPVPPD2B88jwwnmqTon6I8fdWyfsiCwra
-         hwd7mBvtsySUFuJq6POFFHwJxD3MhHliUsLexjk5KXH5BhwE9MkeE/VFlkT1xbVXZErr
-         1538qTBTSAG/+VpLneoSGxHeRRJ5NstiC6Q11RQLRoGEDl8oC/HDZnnyWFYkKNdz3uAj
-         v3IHR11/+AdSxy9c7/7vDEeBz9eJaBY2IBLCtIsrBVKkRl16pvZsmrP0BXwCcYYCz0Q7
-         ESM8uzq0/rx29UXxU4xSD4t6QTMZHlQHg2/M+K8+gzCKR1+IgA4nVTFOMvhHvX83Gpqg
-         P6TA==
-X-Forwarded-Encrypted: i=1; AJvYcCX07ODyx9+exIB2mRSb2GRgUu26PJw6j5qBpMaX+KPJHjur2kCGOsC7pBrNVYWe1+d3Ym40HLb7D2Wbvv7BimdJqv8ihj4XYAih8m77
-X-Gm-Message-State: AOJu0YyVnYJVY3ZHPqL3QQyXLtXGrX2A/vQphEPZnRxxuknz1j2aaaFw
-	/A6ovHs1yAX5CRbv/o1XHHIbkuWKxRCabJXo9RXGh0cb5+R8DHXvBYSpQPMFHlGEYVxj5iNPV2T
-	PIA==
-X-Google-Smtp-Source: AGHT+IGiMIigOSDrrlOBnbxaKLq8/8hmGFpm1Scz2UDZMrMDNsO773Ch249W9pUKNNAsjSgFGmuSjLu7ZmU=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a81:6d97:0:b0:627:3c45:4a90 with SMTP id
- 00721157ae682-6273c454b1emr4527527b3.4.1715815203978; Wed, 15 May 2024
- 16:20:03 -0700 (PDT)
-Date: Wed, 15 May 2024 16:20:02 -0700
-In-Reply-To: <175989e7-2275-4775-9ad8-65c4134184dd@intel.com>
+	s=arc-20240116; t=1715815257; c=relaxed/simple;
+	bh=6lC+EB8PMnn7w7tVrIFZKflEl1HH73+L4eUsnoKu1A4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GtR1VSikzGUYs6EkO072vYTTLTudaW27asTsWoz9CjykHVzO3btPrmkPeLFfhPNjmbLK+hFhVFS0TuCowWoax2/ECAV213/fQ8PIXeTOVL/+aL7bUvFQ0pnUKLCgkQrLO4GrfFPfM2UhhucPFfv/xiG9vXpkXzvUkNn7Vq/1PKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=FKmkZqve; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1715815252;
+	bh=0LbV+Pj+2FBLlnHt+buhweww+h1gkW8waguXYfTAQFU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=FKmkZqveqZ7PNZX6UW1TFH5/rAXkflxjF2cO+eKPcuZQnEbi8aRqms4BedQMoOYzY
+	 B9qLOp/9L58I7kECBmZjTktIpYH0xPzU6Wn7+iMiXLkVUTzfwizdzJtk6x7DzGbcYu
+	 c1s7KnObWYSNffyIm7DORmvgOUhCDzwRhayWVR+gYEhsv07GQXgnUuO1q5ZG5EvniZ
+	 yzLitHAhQOpj6wLI0hvQib3dl2XP5XH50f29T1FqIlXgvcW1pNMI/NXbCg1Fm++tUb
+	 vUvPsqtbqcgGSGxzmQyAVizVLO/psTwMgMaIbRhL3vXYO0oB0HqH1tQEsqDrNv66d8
+	 tn/Go6wg0Dmfg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Vfq373LMkz4x1T;
+	Thu, 16 May 2024 09:20:51 +1000 (AEST)
+Date: Thu, 16 May 2024 09:20:50 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Dave Airlie <airlied@redhat.com>, Rob Clark <robdclark@gmail.com>, Sean
+ Paul <seanpaul@chromium.org>, Dmitry Baryshkov
+ <dmitry.baryshkov@linaro.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Rob Clark <robdclark@chromium.org>, DRI
+ <dri-devel@lists.freedesktop.org>
+Subject: Re: linux-next: manual merge of the drm-msm tree with the kbuild
+ tree
+Message-ID: <20240516092050.2a258c6f@canb.auug.org.au>
+In-Reply-To: <20240513120312.55d97d04@canb.auug.org.au>
+References: <20240507125132.2af57c71@canb.auug.org.au>
+	<20240513120312.55d97d04@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240515005952.3410568-1-rick.p.edgecombe@intel.com>
- <20240515005952.3410568-3-rick.p.edgecombe@intel.com> <b89385e5c7f4c3e5bc97045ec909455c33652fb1.camel@intel.com>
- <ZkUIMKxhhYbrvS8I@google.com> <1257b7b43472fad6287b648ec96fc27a89766eb9.camel@intel.com>
- <ZkUVcjYhgVpVcGAV@google.com> <ac5cab4a25d3a1e022a6a1892e59e670e5fff560.camel@intel.com>
- <ZkU7dl3BDXpwYwza@google.com> <175989e7-2275-4775-9ad8-65c4134184dd@intel.com>
-Message-ID: <ZkVDIkgj3lWKymfR@google.com>
-Subject: Re: [PATCH 02/16] KVM: x86/mmu: Introduce a slot flag to zap only
- slot leafs on slot deletion
-From: Sean Christopherson <seanjc@google.com>
-To: Kai Huang <kai.huang@intel.com>
-Cc: Rick P Edgecombe <rick.p.edgecombe@intel.com>, "dmatlack@google.com" <dmatlack@google.com>, 
-	"sagis@google.com" <sagis@google.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Yan Y Zhao <yan.y.zhao@intel.com>, 
-	Erdem Aktas <erdemaktas@google.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"pbonzini@redhat.com" <pbonzini@redhat.com>, "isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/sSD=YDmJ8SjJ=sPXEg5_OuR";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Thu, May 16, 2024, Kai Huang wrote:
-> > > You had said up the thread, why not opt all non-normal VMs into the new
-> > > behavior. It will work great for TDX. But why do SEV and others want this
-> > > automatically?
-> > 
-> > Because I want flexibility in KVM, i.e. I want to take the opportunity to try and
-> > break away from KVM's godawful ABI.  It might be a pipe dream, as keying off the
-> > VM type obviously has similar risks to giving userspace a memslot flag.  The one
-> > sliver of hope is that the VM types really are quite new (though less so for SEV
-> > and SEV-ES), whereas a memslot flag would be easily applied to existing VMs.
-> 
-> Btw, does the "zap-leaf-only" approach always have better performance,
-> assuming we have to hold MMU write lock for that?
+--Sig_/sSD=YDmJ8SjJ=sPXEg5_OuR
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I highly doubt it, especially given how much the TDP MMU can now do with mmu_lock
-held for read.
+Hi all,
 
-> Consider a huge memslot being deleted/moved.
-> 
-> If we can always have a better performance for "zap-leaf-only", then instead
-> of letting userspace to opt-in this feature, we perhaps can do the opposite:
-> 
-> We always do the "zap-leaf-only" in KVM, but add a quirk for the VMs that
-> userspace know can have such bug and apply this quirk.
+On Mon, 13 May 2024 12:03:12 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> On Tue, 7 May 2024 12:51:32 +1000 Stephen Rothwell <sfr@canb.auug.org.au>=
+ wrote:
+> >
+> > Today's linux-next merge of the drm-msm tree got a conflict in:
+> >=20
+> >   drivers/gpu/drm/msm/Makefile
+> >=20
+> > between commit:
+> >=20
+> >   7c972986689b ("kbuild: use $(src) instead of $(srctree)/$(src) for so=
+urce directory")
+> >=20
+> > from the kbuild tree and commits:
+> >=20
+> >   0fddd045f88e ("drm/msm: generate headers on the fly")
+> >   07a2f8716c41 ("drm/msm/gen_header: allow skipping the validation")
+> >=20
+> > from the drm-msm tree.
+> >=20
+> > I fixed it up (see below) and can carry the fix as necessary. This
+> > is now fixed as far as linux-next is concerned, but any non trivial
+> > conflicts should be mentioned to your upstream maintainer when your tree
+> > is submitted for merging.  You may also want to consider cooperating
+> > with the maintainer of the conflicting tree to minimise any particularly
+> > complex conflicts.
+> >=20
+> > diff --cc drivers/gpu/drm/msm/Makefile
+> > index b8cc007fc1b9,718968717ad5..000000000000
+> > --- a/drivers/gpu/drm/msm/Makefile
+> > +++ b/drivers/gpu/drm/msm/Makefile
+> > @@@ -1,10 -1,11 +1,11 @@@
+> >   # SPDX-License-Identifier: GPL-2.0
+> >  -ccflags-y :=3D -I $(srctree)/$(src)
+> >  +ccflags-y :=3D -I $(src)
+> > + ccflags-y +=3D -I $(obj)/generated
+> >  -ccflags-y +=3D -I $(srctree)/$(src)/disp/dpu1
+> >  -ccflags-$(CONFIG_DRM_MSM_DSI) +=3D -I $(srctree)/$(src)/dsi
+> >  -ccflags-$(CONFIG_DRM_MSM_DP) +=3D -I $(srctree)/$(src)/dp
+> >  +ccflags-y +=3D -I $(src)/disp/dpu1
+> >  +ccflags-$(CONFIG_DRM_MSM_DSI) +=3D -I $(src)/dsi
+> >  +ccflags-$(CONFIG_DRM_MSM_DP) +=3D -I $(src)/dp
+> >  =20
+> > - msm-y :=3D \
+> > + adreno-y :=3D \
+> >   	adreno/adreno_device.o \
+> >   	adreno/adreno_gpu.o \
+> >   	adreno/a2xx_gpu.o \
+> > @@@ -140,11 -145,68 +145,68 @@@ msm-display-$(CONFIG_DRM_MSM_DSI) +=3D =
+ds
+> >   			dsi/dsi_manager.o \
+> >   			dsi/phy/dsi_phy.o
+> >  =20
+> > - msm-$(CONFIG_DRM_MSM_DSI_28NM_PHY) +=3D dsi/phy/dsi_phy_28nm.o
+> > - msm-$(CONFIG_DRM_MSM_DSI_20NM_PHY) +=3D dsi/phy/dsi_phy_20nm.o
+> > - msm-$(CONFIG_DRM_MSM_DSI_28NM_8960_PHY) +=3D dsi/phy/dsi_phy_28nm_896=
+0.o
+> > - msm-$(CONFIG_DRM_MSM_DSI_14NM_PHY) +=3D dsi/phy/dsi_phy_14nm.o
+> > - msm-$(CONFIG_DRM_MSM_DSI_10NM_PHY) +=3D dsi/phy/dsi_phy_10nm.o
+> > - msm-$(CONFIG_DRM_MSM_DSI_7NM_PHY) +=3D dsi/phy/dsi_phy_7nm.o
+> > + msm-display-$(CONFIG_DRM_MSM_DSI_28NM_PHY) +=3D dsi/phy/dsi_phy_28nm.o
+> > + msm-display-$(CONFIG_DRM_MSM_DSI_20NM_PHY) +=3D dsi/phy/dsi_phy_20nm.o
+> > + msm-display-$(CONFIG_DRM_MSM_DSI_28NM_8960_PHY) +=3D dsi/phy/dsi_phy_=
+28nm_8960.o
+> > + msm-display-$(CONFIG_DRM_MSM_DSI_14NM_PHY) +=3D dsi/phy/dsi_phy_14nm.o
+> > + msm-display-$(CONFIG_DRM_MSM_DSI_10NM_PHY) +=3D dsi/phy/dsi_phy_10nm.o
+> > + msm-display-$(CONFIG_DRM_MSM_DSI_7NM_PHY) +=3D dsi/phy/dsi_phy_7nm.o
+> > +=20
+> > + msm-y +=3D $(adreno-y) $(msm-display-y)
+> >  =20
+> >   obj-$(CONFIG_DRM_MSM)	+=3D msm.o
+> > +=20
+> > + ifeq (y,$(CONFIG_DRM_MSM_VALIDATE_XML))
+> > + 	headergen-opts +=3D --validate
+> > + else
+> > + 	headergen-opts +=3D --no-validate
+> > + endif
+> > +=20
+> > + quiet_cmd_headergen =3D GENHDR  $@
+> >  -      cmd_headergen =3D mkdir -p $(obj)/generated && $(PYTHON3) $(src=
+tree)/$(src)/registers/gen_header.py \
+> >  -		      $(headergen-opts) --rnn $(srctree)/$(src)/registers --xml $< =
+c-defines > $@
+> > ++      cmd_headergen =3D mkdir -p $(obj)/generated && $(PYTHON3) $(src=
+)/registers/gen_header.py \
+> > ++		      $(headergen-opts) --rnn $(src)/registers --xml $< c-defines >=
+ $@
+> > +=20
+> > + $(obj)/generated/%.xml.h: $(src)/registers/adreno/%.xml \
+> > + 		$(src)/registers/adreno/adreno_common.xml \
+> > + 		$(src)/registers/adreno/adreno_pm4.xml \
+> > + 		$(src)/registers/freedreno_copyright.xml \
+> > + 		$(src)/registers/gen_header.py \
+> > + 		$(src)/registers/rules-fd.xsd \
+> > + 		FORCE
+> > + 	$(call if_changed,headergen)
+> > +=20
+> > + $(obj)/generated/%.xml.h: $(src)/registers/display/%.xml \
+> > + 		$(src)/registers/freedreno_copyright.xml \
+> > + 		$(src)/registers/gen_header.py \
+> > + 		$(src)/registers/rules-fd.xsd \
+> > + 		FORCE
+> > + 	$(call if_changed,headergen)
+> > +=20
+> > + ADRENO_HEADERS =3D \
+> > + 	generated/a2xx.xml.h \
+> > + 	generated/a3xx.xml.h \
+> > + 	generated/a4xx.xml.h \
+> > + 	generated/a5xx.xml.h \
+> > + 	generated/a6xx.xml.h \
+> > + 	generated/a6xx_gmu.xml.h \
+> > + 	generated/adreno_common.xml.h \
+> > + 	generated/adreno_pm4.xml.h \
+> > +=20
+> > + DISPLAY_HEADERS =3D \
+> > + 	generated/dsi_phy_7nm.xml.h \
+> > + 	generated/dsi_phy_10nm.xml.h \
+> > + 	generated/dsi_phy_14nm.xml.h \
+> > + 	generated/dsi_phy_20nm.xml.h \
+> > + 	generated/dsi_phy_28nm_8960.xml.h \
+> > + 	generated/dsi_phy_28nm.xml.h \
+> > + 	generated/dsi.xml.h \
+> > + 	generated/hdmi.xml.h \
+> > + 	generated/mdp4.xml.h \
+> > + 	generated/mdp5.xml.h \
+> > + 	generated/mdp_common.xml.h \
+> > + 	generated/sfpb.xml.h
+> > +=20
+> > + $(addprefix $(obj)/,$(adreno-y)): $(addprefix $(obj)/,$(ADRENO_HEADER=
+S))
+> > + $(addprefix $(obj)/,$(msm-display-y)): $(addprefix $(obj)/,$(DISPLAY_=
+HEADERS))
+> > +=20
+> > + targets +=3D $(ADRENO_HEADERS) $(DISPLAY_HEADERS) =20
+>=20
+> This is now  conflict between the drm tree and the kbuild tree.
 
-Hmm, a quirk isn't a bad idea.  It suffers the same problems as a memslot flag,
-i.e. who knows when it's safe to disable the quirk, but I would hope userspace
-would be much, much cautious about disabling a quirk that comes with a massive
-disclaimer.
+And now a conflict between the kbuild tree and Linus' tree.
 
-Though I suspect Paolo will shoot this down too ;-)
+--=20
+Cheers,
+Stephen Rothwell
 
-> But again, I think it's just too overkill for TDX.  We can just set the
-> ZAP_LEAF_ONLY flag for the slot when it is created in KVM.
+--Sig_/sSD=YDmJ8SjJ=sPXEg5_OuR
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Ya, I'm convinced that adding uAPI is overkill at this point.
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZFQ1IACgkQAVBC80lX
+0Gy1pQf+LyZCjL7Hww6fBJsBQno7RSeYrTdWGuFi56VJVbQnO/8g1tEgkhS3bb8c
+vsry0RPJkVckPWHZZ9XewogQ+qHU/DRm3sXDC/BVQ76cFscxGjxoIN77ZFyhtF4W
+CNk6QFFdujafGCuK+nS3klKcC/LqffzoubsihmR/AKW+LFTtSSjaqnQtIW4QseIc
+ElgdmWtWJlFaZJzmKgd7w6kHqe7e9Rt3E4nScs9XkwAN30AEtuRD8bvfhhLNjTpe
+wVZyw09FeCMVkvh+06Egcwk5Kggiukua+wXCY7z5Eh0sRPcWaGQrFdJHZNCpj13R
+eNOrup6Cy6SczWCAgRoQE2R8SqgOLQ==
+=08ja
+-----END PGP SIGNATURE-----
+
+--Sig_/sSD=YDmJ8SjJ=sPXEg5_OuR--
 
