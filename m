@@ -1,101 +1,112 @@
-Return-Path: <linux-kernel+bounces-179369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3029E8C5F5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 05:14:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 061B98C5F4E
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 05:01:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB9361F22757
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 03:14:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EC1D1F223C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 03:01:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E2AD37703;
-	Wed, 15 May 2024 03:14:08 +0000 (UTC)
-Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66EBC38385;
-	Wed, 15 May 2024 03:14:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=163.172.96.212
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9259A374EA;
+	Wed, 15 May 2024 03:01:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="QC9Qne1q"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D035BEBE;
+	Wed, 15 May 2024 03:01:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715742848; cv=none; b=ULx1r9RpVRm2lDYhoLZu3c3eijKn7ECF9JLKo6XLbDbzakkewPsW8IedOTRUxaNNbOAvZOd3QqjRcBNnPk+KhwTBJuZCoLqUPpRMVNqJLlWJvUyTUKrYWLCNXohlJcl+owyH83PJYdOIguGLfsjEq90hcxzJOKxvK8cDdQ1fyo4=
+	t=1715742103; cv=none; b=Ex+nSlQaFKVOztMqzmf6bx5bycUX2J8OhtPLeF1uy9SKWkCpKIrQihWWuIQn9rcdxjIouo8bb5ROnZG9po7eNSKmHnoE/ilplhQ4JzpMaO5fOeXM5xwocru1ld2DlqPH9tTzEFamMA4Qf1efacRwfk+qx0T8BK7WK8xzES1utO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715742848; c=relaxed/simple;
-	bh=nB1m7j2Q3vEqktywIoGVfNTqMXYMw9gbBScV7i4x0AE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K5IWINe3Bvxy+8GeP5La3r1srhnFtBODgDit+jlRdpk7XAiTa4muAuiQ9iLny1R7YM77Pejh50IQO+4gtP96kFEFwPtKF0uhdGmMBw4GjUwFq86UD1728ydU1EX3BaM3mByps/HHPFVchln3847CsilYzBs9AboKP0dw4HCvGuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; arc=none smtp.client-ip=163.172.96.212
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
-Received: (from willy@localhost)
-	by pcw.home.local (8.15.2/8.15.2/Submit) id 44F2wB5O001379;
-	Wed, 15 May 2024 04:58:11 +0200
-Date: Wed, 15 May 2024 04:58:11 +0200
-From: Willy Tarreau <w@1wt.eu>
-To: Theo de Raadt <deraadt@openbsd.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>, Jonathan Corbet <corbet@lwn.net>,
-        jeffxu@chromium.org, keescook@chromium.org, jannh@google.com,
-        sroettger@google.com, gregkh@linuxfoundation.org,
-        torvalds@linux-foundation.org, usama.anjum@collabora.com,
-        Liam.Howlett@oracle.com, surenb@google.com, merimus@google.com,
-        rdunlap@infradead.org, jeffxu@google.com, jorgelo@chromium.org,
-        groeck@chromium.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-        pedro.falcato@gmail.com, dave.hansen@intel.com,
-        linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v10 0/5] Introduce mseal
-Message-ID: <20240515025811.GA1232@1wt.eu>
-References: <20240415163527.626541-1-jeffxu@chromium.org>
- <20240514104646.e6af4292f19b834777ec1e32@linux-foundation.org>
- <871q646rea.fsf@meer.lwn.net>
- <ZkPXcT_JuQeZCAv0@casper.infradead.org>
- <56001.1715726927@cvs.openbsd.org>
- <20240514160150.3ed0fda8af5cbd2f17c625e6@linux-foundation.org>
- <92453.1715730450@cvs.openbsd.org>
+	s=arc-20240116; t=1715742103; c=relaxed/simple;
+	bh=TFpUKjm2KQMOFGqP3Ii1R6bJBU7YiuKVyiKvtntFSFI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=G96ZbmcJLVqolik66fLY0Cb+/h+vKVe7juLT+pQw7yfgDwIJG81oG+HKQtLCI2w/51A7CeBujWkzhr/DxyYlSVByiy+C57FyaNFGL2mmO3hpaCL0sV4Y/PgUFZh8qtkuAtLMJwJwV27QY5uZuq5FaCre777sJslI0rnPH78MLv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=QC9Qne1q; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1715742100;
+	bh=BFkqFI5o0BLG54rrGKzsZF252OOPOBuIwFR06/FINbg=;
+	h=Date:From:To:Cc:Subject:From;
+	b=QC9Qne1qEAYOsOAhqxlrkr7BuJSvqCBNLeM8WiUrJcBjolj3xx89M2J/B6M8UuXC5
+	 GO27M5PhA2EOEH1Eqp7qtRiAKC2MZtprkYAMDzf1bJNICnghY8jbSWxzpHKKmKZ7rk
+	 g8+8Q5Y6IzRlECqOhHdWZKWAARhoqmQ5KPY9QhI61XVu1PMBbtTuR9HxzpkeveObn/
+	 civzBDIpYV3Mv1dCabxKsnnVwry690bFzlGZ8lTXwl2yvzGBEX/Udc7v2YOYCb9znR
+	 nq6Y9WHoZjnAcrAxi8pm37rZLcbWH6/kycQ5+cbi2HwFfSkhIJawRFSgU9kozKf/sP
+	 do1g5BGTLbCtw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VfJ0N0FwFz4wc8;
+	Wed, 15 May 2024 13:01:40 +1000 (AEST)
+Date: Wed, 15 May 2024 13:01:39 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?UTF-8?B?V2lsY3p5?=
+ =?UTF-8?B?xYRza2k=?= <kw@linux.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patches in the devicetree tree
+Message-ID: <20240515130139.2da899c0@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <92453.1715730450@cvs.openbsd.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/signed; boundary="Sig_/oU49Y5wj+bzkszgbDReCbsn";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Tue, May 14, 2024 at 05:47:30PM -0600, Theo de Raadt wrote:
-> Andrew Morton <akpm@linux-foundation.org> wrote:
-> 
-> > > I worry that the non-atomicity will one day be used by an attacker.
-> > 
-> > How might an attacker exploit this?
-> 
-> Various ways which are going to be very application specific. Most ways
-> will depend on munmap / mprotect arguments being incorrect for some
-> reason, and callers not checking the return values.
-> 
-> After the system call, the memory is in a very surprising configuration.
-> 
-> Consider a larger memory region containing the following sections:
-> 
->   [regular memory]  [sealed memory]  [regular memory containing a secret]
-> 
-> unmap() gets called on the whole region, for some reason.  The first
-> section is removed.  It hits the sealed memory, and returns EPERM.  It does
-> not unmap the sealed reason, not the memory containing the secret.
+--Sig_/oU49Y5wj+bzkszgbDReCbsn
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-If we consider that the attack consists, for an attacker, in mseal()ing
-the beginning of an area to make sure to pin the whole area by making a
-future munmap() fail, maybe we could make munmap() not stop anymore on
-such errors and continue to unmap the rest of the area, for the purpose
-of not leaving such a theoretical attack vector work ? After all, munmap()
-currently skips wholes and continues to unmap the area. But then what
-would prevent the attacker from doing mseal() on the whole area in this
-case, to prevent it from being unmapped ?
+Hi all,
 
-Wouldn't it be more effective to have a non-resettable prctl() allowing
-the application to prefer to be killed upon such an munmap() failure in
-order to stay consistent and more robust against such class of attacks?
+The following commits are also in the pci tree as different commits
+(but the same patches):
 
-Willy
+  15be4f7ce5de ("dt-bindings: Drop unnecessary quotes on keys")
+  28081ebd17fb ("dt-bindings: PCI: qcom,pcie-sm8350: Drop redundant 'oneOf'=
+ sub-schema")
+  649bad67d4b1 ("dt-bindings: PCI: microchip: increase number of items in r=
+anges property")
+
+These are commits
+
+  d7890a80e037 ("dt-bindings: Drop unnecessary quotes on keys")
+  301e978b9eb7 ("dt-bindings: PCI: qcom,pcie-sm8350: Drop redundant 'oneOf'=
+ sub-schema")
+  247edade4b4b ("dt-bindings: PCI: microchip: Increase number of items in r=
+anges property")
+
+in the pci tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/oU49Y5wj+bzkszgbDReCbsn
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZEJZMACgkQAVBC80lX
+0Gz8dAf+OBoYqX2Yi1xhE6Qg4aaIjOUvPPVaypzXJ76/1Q6VQkeSWOYULLokZVJp
+o3NF4BsbBY/LU9T/UuRiY0h6W0WI8fd5lDwzuuMY8uO2S2NGl30r74YX8qGWJlML
+D33e5/Q9eZoOoSjy3p5JJH3GLgylkMhYsekW22NOyrSQ3iq2FZEz/8tTItwhF/gI
+L5kiK2QTz8opBzXHlo2PUbFnyMCyStaG/aAZ5P/z1+j63YRmxN5SZykrg+jBR5ss
+/1hQOgZYBf6tKMnQ7cFDMLEFkvMFa7maqzZQEfzsNmSRFwnSr62rr0i/7eRuu1Yo
+hrVfjEeXd7mpyOGPLbceIDGzXrvq8A==
+=RhQz
+-----END PGP SIGNATURE-----
+
+--Sig_/oU49Y5wj+bzkszgbDReCbsn--
 
