@@ -1,265 +1,107 @@
-Return-Path: <linux-kernel+bounces-179599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A96608C61F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:43:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF45E8C61F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:44:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C18431C20EF3
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 07:43:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74754B20DD5
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 07:44:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7AAA481D3;
-	Wed, 15 May 2024 07:43:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 095124D9F2;
+	Wed, 15 May 2024 07:44:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bdf3HOvE"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sOe8MBb0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D68647F6B
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 07:43:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715759014; cv=fail; b=S1m4i4GRWo/G8/W5ECzBnAt2/Nq6qV5mklSw5vq8QmbC0Z9r6SZzkiaP14aTD6MuhgazNE+IKgOA8ZVrvQXzA4/6/aPL6XVX0dpSsPhqA33+xxLO+fqFzu7vq5swQJSvALovO8y8VxkC/epVBGpkQ521zRmCtYb+J4k9o6Ioo1o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715759014; c=relaxed/simple;
-	bh=XL9UUDFoJe+KaX4MmvNB2/GDp5fsNVY8Lz3UXPNwUnw=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=qU10KtaH0EvBExaBWyjn4JNUY2pfIPJY+j+DG463RwR11EP46ZkJx3uics3Q27g3oQIHFpJkxGYH6t4kRaNjE59/+DKiP2yg1GoevG5JsYjFpt7ZCwhL3Fynv+GNH5eFi/jyjqMP27HwQ2ZHPWvBqX/NosU811dFA0w9ytm4pmE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bdf3HOvE; arc=fail smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715759013; x=1747295013;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=XL9UUDFoJe+KaX4MmvNB2/GDp5fsNVY8Lz3UXPNwUnw=;
-  b=bdf3HOvExzcSpcLr1T8J2Zg5gDZw9gwykSnsVUvy7rwpGCtgK4lw9GTy
-   XClrhDQmJpcTjI0kpZaFQiZfeeulbIn7XvtFM0eEKh88r/13S+G6mjcPp
-   m5yFSkUbqUmkAwSWzh6zLkvZFBgLvwYGNvNiWLHG8d7d2iSkMv87eq+QK
-   NPwpKv6WxYULvHJZiA140g2h/Dz+u13sZeHhHvb9zx6MPkCdg98qvFtNy
-   wvSqHxOEG6REIvR9xWZtHtjHmXV9odr6MUKKYmF6yTuoD0Dzp5gi1xldV
-   9WUy4ejcwN8IM/FP9VEFgaSKKePSLyhYZ9z4ZWigvCzWZofEXX5Xclxik
-   A==;
-X-CSE-ConnectionGUID: lCPQ5O0rS7uJsKsmABYw6A==
-X-CSE-MsgGUID: D5seM61TQJa0YQhLLarFjg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11073"; a="22393172"
-X-IronPort-AV: E=Sophos;i="6.08,161,1712646000"; 
-   d="scan'208";a="22393172"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 00:43:33 -0700
-X-CSE-ConnectionGUID: pJzZO3NySt6qWVUxrWblBg==
-X-CSE-MsgGUID: EtdW4eheTmGy4drrubtCEg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,161,1712646000"; 
-   d="scan'208";a="31076262"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by orviesa009.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 15 May 2024 00:43:32 -0700
-Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Wed, 15 May 2024 00:43:32 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Wed, 15 May 2024 00:43:31 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Wed, 15 May 2024 00:43:31 -0700
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.169)
- by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Wed, 15 May 2024 00:43:31 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=U165PDbKwR0bsiQlFAoWei7r+Q5s0zYMTHk07p8LTYl1y5Rh8Umowhy2nGcNehTl2I023nWSgNCQHWj7negd3ZaSYe+vTtme9QFDIwgmFClOS/0Mgaeq1Qes9jaoE7mLXjr7SH7gzsrHgxOvWMccMb6C/ApAEDPJ2m/Y6UkPb9sHRPWolwivfCvyP+rMtaDWBNcYFjXHaX2rthH1AdSgJR7fpkkfU2MxJARS6J1r87NP72fVk7RhvQaZHBG4m/IaJ3qC9yzyWPirKeEH0I9fhU8UoyhMk0Pnjjq38IlIADSqJ9bNMk57oijGzUdzjyj+9+cmJL/jFNu9EnFYQo3/3Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GJx225mHJbTMM2cGLxd9PIGxsftsBPQbb/4GqUjzf/Y=;
- b=F/fOE/hKTt4rtNwVW4PvKD0JYdrr2eMTUAxLI8indxnn6EzW1hCrw/NIHXkwW88xi/zOr3uZyd92wWrbKb1zEkzjdotMFqjBjn9jWyJGDEfkbsWA6h883bT1AJgQ6oeiYnhCxPYSvg/jOKrzeEBighB6CBWGI9FKvvEnaFXWICwXcO12ezvhC3PI2VanuxMFE6dZkPY72zoyOiufOGQlV3taAfxtqsdrHux3t7Rlj8ufOwELqxw7gtn09tW06N6A1xsglKOTbXWYxvyeceEWHTHhATVWaX0BtcxlGNUVGHCD01Dwyy0WW+bCD4pQxFJgmbrYLmTAEMKrIxoSizk9EQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com (2603:10b6:408:135::18)
- by SN7PR11MB7115.namprd11.prod.outlook.com (2603:10b6:806:29a::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.27; Wed, 15 May
- 2024 07:43:29 +0000
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1]) by BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1%5]) with mapi id 15.20.7587.026; Wed, 15 May 2024
- 07:43:28 +0000
-From: "Tian, Kevin" <kevin.tian@intel.com>
-To: Lu Baolu <baolu.lu@linux.intel.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-	"Joerg Roedel" <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy
-	<robin.murphy@arm.com>, Jean-Philippe Brucker <jean-philippe@linaro.org>,
-	Nicolin Chen <nicolinc@nvidia.com>, "Liu, Yi L" <yi.l.liu@intel.com>, "Jacob
- Pan" <jacob.jun.pan@linux.intel.com>, Joel Granados <j.granados@samsung.com>
-CC: "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"virtualization@lists.linux-foundation.org"
-	<virtualization@lists.linux-foundation.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v5 4/9] iommufd: Add fault and response message
- definitions
-Thread-Topic: [PATCH v5 4/9] iommufd: Add fault and response message
- definitions
-Thread-Index: AQHamw8bLYtOgdprmEKnPZxoJChdq7GX/cMw
-Date: Wed, 15 May 2024 07:43:28 +0000
-Message-ID: <BN9PR11MB52762F2AF16AA5833D61AFF68CEC2@BN9PR11MB5276.namprd11.prod.outlook.com>
-References: <20240430145710.68112-1-baolu.lu@linux.intel.com>
- <20240430145710.68112-5-baolu.lu@linux.intel.com>
-In-Reply-To: <20240430145710.68112-5-baolu.lu@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BN9PR11MB5276:EE_|SN7PR11MB7115:EE_
-x-ms-office365-filtering-correlation-id: fe715f36-1a74-4555-3306-08dc74b2b60e
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230031|366007|376005|7416005|1800799015|921011|38070700009;
-x-microsoft-antispam-message-info: =?us-ascii?Q?ZCEcuFgvJtVWSEcVSOU4vYjARQfYOZtXM4/D5Qw6eHb49dlqghlcTw6GsCQh?=
- =?us-ascii?Q?lsgGo4XDXXyfUDmxIJqsINziQq83Hoq/mV655NJSA91bxxnS3KVYH0DcA3B7?=
- =?us-ascii?Q?ZRyoJu9rrf+XBcm3uSrkja4SiG9eeY/NCWVqvSPtI/pVKVZesX2aGgLgTci1?=
- =?us-ascii?Q?VDqXpULZ/D6WY4iyWf7ifW+YahNil7zHbo4IdbfYUo7C0n5w5a9JVmPQfNg2?=
- =?us-ascii?Q?hoPU19uV9Le3uMrDJ1lIrltQk9TzjDKbYXJUHp1pU7oZwUbdvlq6v2A6tqpj?=
- =?us-ascii?Q?wZ3qO7Hf/tu/m75tTpNCCq7iX/xeC4AyWd8UG64bmM/o4e07BQlToqOfLBdz?=
- =?us-ascii?Q?i/oZd3KZ3b3XFM1Q0W5MrFZOhdjoxklE9OUf4XdMTfqqmt8OnRduN/ucledH?=
- =?us-ascii?Q?XoyihjItAgaa/7XKKVqLoOH8J6bTD5K+AF4w+H34wmFgvcSPcmUPLYJcCihi?=
- =?us-ascii?Q?TE0RUF9iRkTy+ed4IVx1RH/5e+X3m89pop/9ykjpavTKB39PVWXAtKB5XH42?=
- =?us-ascii?Q?hK3Q480mfJMLI6Mg2XQCBtEV72MWbqmI+uiMD1MtvNDOK/Cw85kRWnrWtcZ+?=
- =?us-ascii?Q?6+uRjK6NtbGKk5eqkK7i2XC6p5VsLMODLAQut75CvVz9ryOsm3IYvrqKrCzj?=
- =?us-ascii?Q?EnF8mpcQm0R69MopSamwqguu63Zpe7EApv0KSmTUGPvHwaW2apBLiUVBZsgk?=
- =?us-ascii?Q?SO0U38lsFqmRfXTUnylKnOzCb/iu5ytmtOsyQ8wi3pgPji5cLZToU8yXQ4T9?=
- =?us-ascii?Q?wQfWGh+AB2MBjG7G0BPxeMTAtJGvbuJyxQ3mupeYSTxOc3thMrjC9/1HV39j?=
- =?us-ascii?Q?0PkaivfYlol4RQH8VXPg7Ka/5a8ceLLH9Zed2iwkGNbYaRJcMxnHgS+sieZs?=
- =?us-ascii?Q?URjpUIHfrtM5NRp1A6rQw1Giya3GzbrcurJbCs25srv1TxD0U3TDlooU/G1u?=
- =?us-ascii?Q?225DOnTbSaAAqLnSuXrebXnS40ZwPJ2U+lTIpTq1+7uUy6WCxIjj6hmn2jFO?=
- =?us-ascii?Q?X/hCvvXarYG+ncGOpHCBEGXXog0YAFEhHQxVPrBV0v6uTueOvxmabcqo4DUg?=
- =?us-ascii?Q?OqLhjLp9MqevMqAbkM5AQH0g5cTU18iXy6vgLiUczJ95PGFlbttkGbCrLOdd?=
- =?us-ascii?Q?V0k0KKFQu7rhCjHztwhRr9AN08bST9QAPrUa23h6toRo2VroTlN3iMSaGr4O?=
- =?us-ascii?Q?3p8Fm3O+3Jc0WhpXEv1MOWCsDVvruqM0Uv699TD8GZ5PbPpDpK/EvNSL4kyI?=
- =?us-ascii?Q?nP4v5tMQvDwplEtmgQBcuMnghy/E3IfMK9+emlniEojA8FzhKM9P4MsXXIqh?=
- =?us-ascii?Q?D/wvLsutCpcMBwUF90CZwGYbXDJ5joS1u1KBsGCjXqqmgIGyxL9As4b06MG0?=
- =?us-ascii?Q?hoSJSrg=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5276.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(7416005)(1800799015)(921011)(38070700009);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?NdLG9ZCFofhKqR/L+u5+rUKWFdI311sjeAFkipe2IfP8EZOPIYoLQGTonE5u?=
- =?us-ascii?Q?ItS4sAXpDH54N5qD9QduEQy6PnS5ySV7kTTEgnpYPiOCFJ/gzFDMCDKo72kC?=
- =?us-ascii?Q?GAcXv3pe6OpzSES/lGN2QPTWQWQKCMZHEY7miATFrabhOPfUn8dcQrewP2OK?=
- =?us-ascii?Q?0c/LzHkGW+HLLmaZMMExAMGa7eWSNMV1lzNCeRr2mD858aCN1AkNlkCdaIj3?=
- =?us-ascii?Q?pmajkdOBhePlZjVDU9lccLcjlqvj/Z4ngYLNGN9rWGbMMoITBrCkeKfCGGXE?=
- =?us-ascii?Q?lmD/hg7I3Bo1jMqfqDI0htzBL7nI9VWRXejo4Sgzg+BgpvFr65osCg4UzrMQ?=
- =?us-ascii?Q?2oaa0+E/BGZU50nF+wvwXGTn+YNi6KL6DdaBSTJyZz3aUrwzM1Q58G1fUG1E?=
- =?us-ascii?Q?f4l+Om1YF07ZC28AO9upWFW+A3prpWJym/xQ/TVb1p+oMmtCtekvBASSICoF?=
- =?us-ascii?Q?+c+o2ElJdVY7vElzmjvER6zYzwSSfguERe2cqGWI4RyhaxtpKAOvhDTepVDf?=
- =?us-ascii?Q?9RqCt9kcxbVtbauP+9d3H/iulitM6NLGMwLe+nI7xKRVPoQf02ICcDo6O/aU?=
- =?us-ascii?Q?2ehqltoNbalSmiy08IboSBYHOJyiyE3Ykc/+zag0Ul0ivF0ZJPYiPJHoYfWL?=
- =?us-ascii?Q?jvZO9k8/IUfq3h4flL1x/lgY2CMjQs0Sl9cMrg69H3tCnrhpXbYl1mIElWlV?=
- =?us-ascii?Q?BziFGg5XoTMJqTPsYUpJej/MfZP/DpgmtzLvTZ+SiYUdDRv/OyBM2hPkSKg2?=
- =?us-ascii?Q?WjryLfzVKBuRGVutyA3a1zFXFlA21EbPfMaO0Ut8odXpLgjb4fcnQMx+siUe?=
- =?us-ascii?Q?xvBFG0k0HlDXN9OARjR6RFpiMS9wrwt0jvQexG9gUnRnks/uQsZCk+SxMqaD?=
- =?us-ascii?Q?qI7hS85P1vUpYMEFG2qgsmBwaKOVo4O9g/4x64d6D1MApx+zrwXUf1g566SQ?=
- =?us-ascii?Q?f0ldkmOm/MjsbUAEDoVEp0dr87xEuRA/hoFqhUayYw99AFR1lZIz701sd9OQ?=
- =?us-ascii?Q?ySBg9bcYvIoRSM78BGANb477qxmURro/di0gF+BIh5+0LHteK+M59LzR2r3v?=
- =?us-ascii?Q?qOxqsfREpJ6WppgGt3Ub9yf2xLE4zWXL8Q9cGIrY5qmzhjc0k6VnJTVa4Xqj?=
- =?us-ascii?Q?MEFPdYkBfHmI1wVJXkz9vLLfCuEAyuZtel3JFx1ajftOXtsPyqchMpqDWg0k?=
- =?us-ascii?Q?1nS7zYHbW37Ef3GSD3T1RUiqKLdDg0obbmlISPKDVpejq2q7RzPfBxKSBhhN?=
- =?us-ascii?Q?G7QOv/PJsZ5KZn4t6Oho5V4sO4WKOPjp04Gy5dbvLLLAiDhwl/P57/HdCWs7?=
- =?us-ascii?Q?S+wicJ16huY63OQd35nAJKK0YtMqbCemK1B8Xqx8YWKw5EywfhieDPwTKjCf?=
- =?us-ascii?Q?iFqkPg5gfEFuYC+K7OdkoQXs7NAwRNwJflDaja8gwZgjeWUBKN6/6ksoe+5+?=
- =?us-ascii?Q?gT//+sF4lp1OhnlDMYfnSKEkkuAo6Pg28yF29G+IyxfV+yNFhbPX9v4ihe04?=
- =?us-ascii?Q?UQcV0+68t6SwLboba2E+5u2PuZXzgBGCOa+ha2D8FyhYr0j30rcjjBCcLmUx?=
- =?us-ascii?Q?80i3+BfhV0/ePR3qA6yfmojgS5A5ZM18ASr5Q+0F?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4122D4CB23;
+	Wed, 15 May 2024 07:44:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715759076; cv=none; b=uhOqbkFu3Xoi5IhsV/7NWXNZ3w9Ev26eBGRGhgKzDtQlW7dUfVLUipbW7/vmCMhR9TWCRVwrbJZP6Rix7PN5i7uVtzhj9OmItcKJQwo9VmQnDGm4YRFqxlqx4dV/Oj2I8TDOo/yu6KeNg7TPwgNHIdkczSVCrxM61zVW/Tp8dFI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715759076; c=relaxed/simple;
+	bh=bvTKlTmj4iTQSjVMzLXaiH2Pp4nfPaIIc8afPGUhn9g=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=MqhM2lK+69Frg6rDY/fDJ35M6RpFidoMtXphLXqxR3OC5YKm7KVGNf9Orx71ulRig80ZdG295m+X2ESa97Ng6I/VrY4J52DTjh1ovpbECMj0cqhdEC1ZDYWC6a1fRxr5/TvbWO3mFcZrXmmOw4SJ7roSyIbT5qUyXr2nX8SryZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sOe8MBb0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F155C116B1;
+	Wed, 15 May 2024 07:44:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715759075;
+	bh=bvTKlTmj4iTQSjVMzLXaiH2Pp4nfPaIIc8afPGUhn9g=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=sOe8MBb0GMi8B6RNArHYHnn2wmfj8iW153/Op1yqauk4dwL3qiShXk37OjJymaY2B
+	 WmrRoXZup873BV0nAf7ZQ/H7SDXcuzuKT0Z3AshBZi3VRcxGRMQyG225K1gySZ8/QA
+	 VTcs2IYcK6Wu+mFudlUkszb852+Ws3TcaZxeQg+d02OVf9cI6H/6gaxiVdL1S01iTC
+	 qfT9+OiXmn6MJWgLekN4pSs/QoyO593MpHoINMWfTx6KbMUfbLAN5Y+xtWDrFm5buq
+	 IYd7O33mYQHVb2pfhi0/uTIgqRRlvgz6PmN4LcYSbyPQptHEr8plLSmk/c6P8QuxF8
+	 Gm8GpBFV3DP8A==
+From: Kalle Valo <kvalo@kernel.org>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: Oleksandr Natalenko <oleksandr@natalenko.name>,
+  linux-kernel@vger.kernel.org,  linux-wireless@vger.kernel.org,  "Linux
+ regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>,
+  linux-mediatek@lists.infradead.org,
+  linux-arm-kernel@lists.infradead.org,  Felix Fietkau <nbd@nbd.name>,
+  Lorenzo Bianconi <lorenzo@kernel.org>,  Ryder Lee
+ <ryder.lee@mediatek.com>,  Shayne Chen <shayne.chen@mediatek.com>,  Sean
+ Wang <sean.wang@mediatek.com>,  Matthias Brugger <matthias.bgg@gmail.com>,
+  AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+  Peter Chiu <chui-hao.chiu@mediatek.com>,  StanleyYP Wang
+ <StanleyYP.Wang@mediatek.com>,  Linux regressions mailing list
+ <regressions@lists.linux.dev>
+Subject: Re: [REGRESSION] MT7915E doesn't work any more with v6.9
+References: <6061263.lOV4Wx5bFT@natalenko.name>
+	<2341660.ElGaqSPkdT@natalenko.name>
+	<60fe8df750a74331b8a54a76d55d5e8349ac46b4.camel@sipsolutions.net>
+Date: Wed, 15 May 2024 10:44:30 +0300
+In-Reply-To: <60fe8df750a74331b8a54a76d55d5e8349ac46b4.camel@sipsolutions.net>
+	(Johannes Berg's message of "Wed, 15 May 2024 08:23:35 +0200")
+Message-ID: <87zfsrcye9.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5276.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fe715f36-1a74-4555-3306-08dc74b2b60e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 May 2024 07:43:28.6691
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 2L17noDIg3zDNtnn9RKrrRa/dR9bVShcWsUHsLFvi0NayKI8QdNFhEVPUTHMx/rYnG62VaDt6hTWrFAZrqgdlQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB7115
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-> From: Lu Baolu <baolu.lu@linux.intel.com>
-> Sent: Tuesday, April 30, 2024 10:57 PM
->=20
-> iommu_hwpt_pgfaults represent fault messages that the userspace can
-> retrieve. Multiple iommu_hwpt_pgfaults might be put in an iopf group,
-> with the IOMMU_PGFAULT_FLAGS_LAST_PAGE flag set only for the last
-> iommu_hwpt_pgfault.
+Johannes Berg <johannes@sipsolutions.net> writes:
 
-Do you envision extending the same structure to report unrecoverable
-fault in the future?
+> On Wed, 2024-05-15 at 00:51 +0200, Oleksandr Natalenko wrote:
+>> Also /cc Johannes because of this commit:
+>>=20
+>> 6092077ad09ce wifi: mac80211: introduce 'channel request'
+>>=20
+>> On st=C5=99eda 15. kv=C4=9Btna 2024 0:43:40, SEL=C4=8C Oleksandr Natalen=
+ko wrote:
+>> > Hello Felix, Lorenzo et al.
+>> >=20
+>> > With v6.9 kernel the following card:
+>> >=20
+>> > 01:00.0 Unclassified device [0002]: MEDIATEK Corp. MT7915E 802.11ax PC=
+I Express Wireless Network Adapter [14c3:7915]
+>> >=20
+>> > doesn't work any more. Upon mt7915e module insertion the following spl=
+at happens:
+>> >=20
+>
+> 6.9 didn't get commit 2f7cf3b61d85 ("wifi: mt76: mt7915: add missing
+> chanctx ops")? Huh?
 
-If yes this could be named more neutral e.g. iommu_hwpt_faults with
-flags to indicate it's a recoverable PRI request.
+Ah, it will be only in v6.10-rc1. Oleksandr, can you try this commit:
 
-If it's only for PRI probably iommu_hwpt_pgreqs is clearer.
+https://git.kernel.org/linus/2f7cf3b61d85
 
-> +
-> +/**
-> + * struct iommu_hwpt_pgfault - iommu page fault data
-> + * @size: sizeof(struct iommu_hwpt_pgfault)
-> + * @flags: Combination of enum iommu_hwpt_pgfault_flags
-> + * @dev_id: id of the originated device
-> + * @pasid: Process Address Space ID
-> + * @grpid: Page Request Group Index
-> + * @perm: Combination of enum iommu_hwpt_pgfault_perm
-> + * @addr: Page address
+--=20
+https://patchwork.kernel.org/project/linux-wireless/list/
 
-'Fault address'
-
-> + * @length: a hint of how much data the requestor is expecting to fetch.=
- For
-> + *          example, if the PRI initiator knows it is going to do a 10MB
-> + *          transfer, it could fill in 10MB and the OS could pre-fault i=
-n
-> + *          10MB of IOVA. It's default to 0 if there's no such hint.
-
-This is not clear to me and I don't remember PCIe spec defines such
-mechanism.
-
-> +/**
-> + * enum iommufd_page_response_code - Return status of fault handlers
-> + * @IOMMUFD_PAGE_RESP_SUCCESS: Fault has been handled and the page
-> tables
-> + *                             populated, retry the access. This is the
-> + *                             "Success" defined in PCI 10.4.2.1.
-> + * @IOMMUFD_PAGE_RESP_INVALID: General error. Drop all subsequent
-> faults
-> + *                             from this device if possible. This is the
-> + *                             "Response Failure" in PCI 10.4.2.1.
-> + * @IOMMUFD_PAGE_RESP_FAILURE: Could not handle this fault, don't
-> retry the
-> + *                             access. This is the "Invalid Request" in =
-PCI
-> + *                             10.4.2.1.
-
-the comment for 'INVALID' and 'FAILURE' are misplaced. Also I'd more
-use the spec words to be accurate.
-
-> + */
-> +enum iommufd_page_response_code {
-> +	IOMMUFD_PAGE_RESP_SUCCESS =3D 0,
-> +	IOMMUFD_PAGE_RESP_INVALID,
-> +	IOMMUFD_PAGE_RESP_FAILURE,
-> +};
-> +
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatc=
+hes
 
