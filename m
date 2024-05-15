@@ -1,153 +1,253 @@
-Return-Path: <linux-kernel+bounces-180155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 368DD8C6ACF
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:41:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E0878C6AD1
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:42:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9392284BB3
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:41:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 978401F21A06
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:42:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CEE61BF53;
-	Wed, 15 May 2024 16:41:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAED62209B;
+	Wed, 15 May 2024 16:41:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iShIHz4P"
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L4AQT9DK"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E95C823776
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 16:41:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715791307; cv=none; b=dIQfGZVcIKRVrrDdw0Zx+mXK+T+1JiqGA8FtOWG9+NgRrLSyRXaTzrmSWXb+DNfJ1XzgUIZpHyxpL7vDmJ9ZGGKf7g2pi7Pgz+6VGSefbBPYURT5qnrSfaR2dqZ3mnVYwV2EoEL0bY84WBpgaht2erbAzeJBZPPZyaNS3jLk6Gg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715791307; c=relaxed/simple;
-	bh=epqSKX0tx62SmV+sXmr4kmPKa2bRIzghg2ir2HWmSG0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K5jWGBMHT2vtytGX0qwgtD1dKhsukUPmSk7YqwkGDyQ3+yJUqd1oKXHr/j1kwlbwx0jUxac6CXRR7760HjsHMgo+o+s9WnvrTAfGOU1uXYzYaJYpRhUJaAyc7BNkhxrZpuQhMyBdRX+I0B7A4XkIMqD1sIQWp9kvFDjv+k0fkeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iShIHz4P; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-61b4cbb8834so71486737b3.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 09:41:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715791305; x=1716396105; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kwNT8ZL+ZrmeX5xZd+8ZhxRRmnXUR/OD21AGVm6ajjg=;
-        b=iShIHz4P6DdCcCe3S6Qc751t3bircSWY8MgIwW2Rw0Qqy7O+K049zUVjKQUoa5bD22
-         +a5KMw3vscIwUguAYGteOidpNqbvwClySo+P3FF24FMvs1094moHljbMcN0ax50zjeRa
-         Y/AQLt1IscJA/pDDsFRWjIa+Ou2ObDnfY3gNzZXjXvoeM1+QxuQfgg2lNnlf5iGFcgC/
-         tkq0hLoXj+0etXelnL7y+6ltSRFHHYX7+c45PTV0WmIH4ZWCxodrKOdKnBRgv1lhDhOB
-         I7YWpAo0QIDIE4SrKy3ur8wuyF5NwWXUdKp7cApxkijPtpS7M/5ytAtjrB1oTmeTlu1H
-         LSTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715791305; x=1716396105;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kwNT8ZL+ZrmeX5xZd+8ZhxRRmnXUR/OD21AGVm6ajjg=;
-        b=g1U4y1CHXS2Co/k7FusFXWrEj/MdI0grycQREI3Shfjo6qarebBCq8oAIie9jsJVVf
-         bAs+67IuUdPwoRaNFq7MCcr8j6bcVUzVp8Ge1VvtYgz/8xoBbtFeT/97gNIHMXLsGpB7
-         MVBBbYzJsOjniNtFUbEnIrK/mxNAmZ0ARDrrATKU2SNgR+V7NZNfmkaqrAEWHuWNMBOx
-         DysIr4dSSUlLbijkVChujRpf/dHPmVlUvN5TgPIdpM8H3wtYqogHwIcdSWsvme448PkU
-         gaVZauY6ozL9dBaNEUhgjaWKXVEBKgBg45/cZvf/FTDsCjaJIJ97Z1IwwDvUbz9qCC5A
-         XD4A==
-X-Gm-Message-State: AOJu0YwRQYkl197tfnRJvOaEnVAIIzJGTdDyRTJ20f5RlK3SCYzEKPb/
-	jx7fdKC7al0CfDW/y7IYXyAGnnbpJxG+7aAFCrQRmqew5WEM4EbDbkLCqoajjDOB/CFUi/SbAWs
-	UoZMeMxb+ExJXpn3MMeAkBbtJwmTEbA==
-X-Google-Smtp-Source: AGHT+IGBSWNTuYrTLQYr3EHR41G3+3oxYomw36wRC/+aAhGaeuq/gY9B2ejH05/nB8AU4tkhnk3QeX7P+RLVaGkZKOM=
-X-Received: by 2002:a81:ac21:0:b0:61b:16d9:47cd with SMTP id
- 00721157ae682-622aff90091mr157557587b3.11.1715791304773; Wed, 15 May 2024
- 09:41:44 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F64E374FA
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 16:41:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715791315; cv=fail; b=LnyXOBMnmErjMdG5jhTXApmZ4H+cW/NEWVhDY/dD3n3HHkZfP7++iq5DdJlAHs5XNwuYALpSA+oEzOOS1QA8+G3gNLvEPx6thOhSFD1GJT4Mve8nkb6JClalVOiOJ90yVjTlxmy/O77h0lznw0fBltxI0T4okSbilFMP/VXElSY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715791315; c=relaxed/simple;
+	bh=ZrgNTtntLHhvtwkzWZFy2FIlHDZ6UZFwMa9m3uQIC94=;
+	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
+	 Content-Disposition:MIME-Version; b=Lpg3lc6T9hbU5KH2S8eB/6TLGbOSj4TsU3siUI63sfqnMFzBk0UJFaITe1ZDzyVQw5XQAMLoia5CtvTMffWR9AbfQ8waG6MJfN4HOcMC1GFdvNHlq90a9Oc+ee7+olM7leOmBqrGr/q/VDHPJ7LV9PO996QtaMa4+5XGpabMprE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L4AQT9DK; arc=fail smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715791313; x=1747327313;
+  h=date:from:to:cc:subject:message-id:
+   content-transfer-encoding:mime-version;
+  bh=ZrgNTtntLHhvtwkzWZFy2FIlHDZ6UZFwMa9m3uQIC94=;
+  b=L4AQT9DKtynncwl0ccS+NE/41DeJpSAhOhxC4VGNjMdTkSJR0d0DBJA/
+   8N9cwNJ9aXPainxFoCGZRnR5qSUwrmE7YTpLUR+NCpcfZr+37+ZwCuND9
+   3f70cquOVPXIyycE7rJYeV1UdEDT+wDo9b+GBVcbtccAGBhd+V8mdWSy8
+   6feeUZ61+GLh/iy6rOtHhAdZBg9u1Aq+aLJkY+iPQ8b0bVrI/2AvC7BEU
+   WHOI5xTgOC8fTv2HE8E8U0Ss6xzQ+2NI4pOyjiydcOt6LYq0Skjii/Mk6
+   xRdK6vi9HmKY2zlQFQk/y2uGpuqK3eH2NHsXioQOYWvDC2yEbVG8d3RhQ
+   w==;
+X-CSE-ConnectionGUID: feRvN2wqTTOwcRoro8u1sQ==
+X-CSE-MsgGUID: QUtZ28HhQIeV2RVPRauevA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="29345159"
+X-IronPort-AV: E=Sophos;i="6.08,162,1712646000"; 
+   d="scan'208";a="29345159"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 09:41:52 -0700
+X-CSE-ConnectionGUID: EKy1I4y4S9+kDpM3bIjbzQ==
+X-CSE-MsgGUID: qajxe2awTHGovCiBsUN/BA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,162,1712646000"; 
+   d="scan'208";a="31546098"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by orviesa006.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 15 May 2024 09:41:53 -0700
+Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Wed, 15 May 2024 09:41:51 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Wed, 15 May 2024 09:41:51 -0700
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Wed, 15 May 2024 09:41:51 -0700
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.172)
+ by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Wed, 15 May 2024 09:41:51 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=WQc1N8V+7tTXQGGiUik3B6g2KLEIsP/68XwW5ZqEpnb/aSuo26Ef/1KDr5UTuFpKKVFqEZIUdblf95yKOt4ZgfX+jf6FYjw9Hkc+5+WGWPyfJ1mSEC7QAS4tGDxclSaAHQXDyUYppbEG0n3iPLT/jF3YMmxKHwW2ZJDNpS4VOOsPUOOXTOOaATUnx64R5bqdXukKKQwI7BZN2z660SzBZORa9Kfims82Ls+G2/gyrdSYcAJ7czLvAIuvrqmyCJ6kiU7nEyuBMkqIrAtvd6+NiTajFYzpmlQeWQ/omTMq2eIbj1TfVZxk8TMeo0i0lyDHTbjoGZHZxYvxIMNvS90svQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zYsSQtlLxAcdrcCuaUqvTtAXZerFHTmH3L4jE1TRM4A=;
+ b=jsX+Z7NXtUKK5MCHGfHQyW2e+EZWgDBIIm/tWW+Jzyh9gq8Kfk6+Mh1IlHg3kRvN6SByA3/TfOMC8gMSNjiCCl+x9At9ZcskUAnRPBadxpz+tfQ3hDDNYMDiVRFCtkvYFm73AbqaBnzLXaAlkn15JBzJSdio4l57p9uBYBQHA3EJhFOIG25qGmo6QMr4deSCV6JBKtUWJ1sZlwNkbMa4P5vyRF/hO+LN8Y1v0M5SMVANLfOGC1iAzmPH3cPnlCOG/zFtWGB/ywqnZuL6T6rXTQKBWvFZKcHmEDsh+jhfgUkeAIJw63McTXLprpyeoN6HIxSCNNLOMLFVb9ItFgCveA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SA1PR11MB6733.namprd11.prod.outlook.com (2603:10b6:806:25c::17)
+ by SA0PR11MB4717.namprd11.prod.outlook.com (2603:10b6:806:9f::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Wed, 15 May
+ 2024 16:41:49 +0000
+Received: from SA1PR11MB6733.namprd11.prod.outlook.com
+ ([fe80::cf7d:9363:38f4:8c57]) by SA1PR11MB6733.namprd11.prod.outlook.com
+ ([fe80::cf7d:9363:38f4:8c57%4]) with mapi id 15.20.7544.052; Wed, 15 May 2024
+ 16:41:49 +0000
+Date: Wed, 15 May 2024 09:41:46 -0700
+From: Ira Weiny <ira.weiny@intel.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+CC: <linux-kernel@vger.kernel.org>, <nvdimm@lists.linux.dev>, Dan Williams
+	<dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>, Vishal Verma
+	<vishal.l.verma@intel.com>
+Subject: [GIT PULL] NVDIMM and DAX for 6.10
+Message-ID: <6644e5ca3a1a7_7467294a@iweiny-mobl.notmuch>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SJ0PR05CA0125.namprd05.prod.outlook.com
+ (2603:10b6:a03:33d::10) To SA1PR11MB6733.namprd11.prod.outlook.com
+ (2603:10b6:806:25c::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240508172621.30069-1-ppbuk5246@gmail.com> <20240509092931.35209-2-ppbuk5246@gmail.com>
-In-Reply-To: <20240509092931.35209-2-ppbuk5246@gmail.com>
-From: Yun Levi <ppbuk5246@gmail.com>
-Date: Wed, 15 May 2024 17:41:33 +0100
-Message-ID: <CAM7-yPRS7-6sQbpn0NxU0hqtvAWf4F=AF61oHGbcBV9U2eAhSA@mail.gmail.com>
-Subject: Re: [PATCH v4] time/tick-sched: idle load balancing when nohz_full
- cpu becomes idle.
-To: anna-maria@linutronix.de, frederic@kernel.org, mingo@kernel.org, 
-	tglx@linutronix.de, Markus.Elfring@web.de
-Cc: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA1PR11MB6733:EE_|SA0PR11MB4717:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3b63bc8d-5cf3-4a6e-16d1-08dc74fdea9d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|366007|376005;
+X-Microsoft-Antispam-Message-Info: =?iso-8859-1?Q?Gn9w3KIQewHgQ0KwlF/gNkDck0VBfhM7qiZKPd0oXdgnjg02panmmramei?=
+ =?iso-8859-1?Q?+NWOwNIMuHshlbxCVb3ISw/aPl9NZsCcSmUgElfrC7AV8piLTT7Na7CIlY?=
+ =?iso-8859-1?Q?1/lpDSF42eRtx/hK6l72MAngKiNtFvC3OKU4bTpC0C17tJlrykKkpIIgGV?=
+ =?iso-8859-1?Q?mK2bT2C+3t6t+XdHuczn6LEo6uG2HtOqm/eIaYeMM2gSbg4ARNfy9l2qMW?=
+ =?iso-8859-1?Q?fxdOi5F1RwQU4JeXrki1EmT5KNvRHO8IX71CIOyqkIjZcldGIlV3B5+nyu?=
+ =?iso-8859-1?Q?9Eo1VXhsO+TlJHEj2lon8VIkdLHPCZBMkpeATcg3XyHKcC7AJHo59C7Px0?=
+ =?iso-8859-1?Q?1s6zk4jUULxPMbKoPZvSGMLXL1CRdeMqvESIsnUQAOdiGlOiKxjirb7dPA?=
+ =?iso-8859-1?Q?PyGEQ3b6+4jPQJTdN4FbJ2ZHUEsFL55WmV0dGwJnl5RWp0f87AW2pOVtw+?=
+ =?iso-8859-1?Q?Oe9xA0HvXodvzGHx/xKQftEA7OLDMit83eFtLMcx+i88WR/xxfrPq+hQCk?=
+ =?iso-8859-1?Q?+UrjXhrzdhy7vNkDQpRR0ZcSLDcnkAej65uMws4dmaFMD36aYGZ9DL1a/S?=
+ =?iso-8859-1?Q?tQotHosPT3tuZLtcRYbXtbn2eIsOVO/pl/6Z42SFlPde2o469Kf0VAuHqs?=
+ =?iso-8859-1?Q?25kHPwjCBscyR+R3DfwsZPtX2O0aC/Y9fusdeVZTHAaI2znBSyyhmC33Re?=
+ =?iso-8859-1?Q?AjJdI5qzDGatlu+yhc0QkaGzjIkTtwjwTjKuE6GeaeE0DT6PdvbQqPc0UQ?=
+ =?iso-8859-1?Q?Q9XNYRUExv9tDWbQMEF+MNdRRF7NnKnaBNIiw7HYhc4PxVWcCUn9w9Jkji?=
+ =?iso-8859-1?Q?wCJM/4DOEpQb18OWYjag39ny4zfDn7zaqilcM1nVQAeB2ruvfgmkrSodA0?=
+ =?iso-8859-1?Q?QGjq08Hu2JKFTDYcVVjdftKun5+YQXGqUQBfNi+N5XCwT1YLvJqVM11ytX?=
+ =?iso-8859-1?Q?BbRFvvLIKWpyvp9yT0clJ6TAG6h+vJif7y2QPo+XGBUIfhZpUrh3PuE0hu?=
+ =?iso-8859-1?Q?UU4wbOThw+X9DyB56NQnlrw0oogTncP8i4SYseDfE81UHxPj7faiR4M1UD?=
+ =?iso-8859-1?Q?a84CrNzPx9adIWWlmWlcXuV3Fzc0/U7o/u5FjRo6i6m3wk4abI4agLjU6L?=
+ =?iso-8859-1?Q?ombIOPJk+PXoPhRi/T7DxR3Bw4CDcpLqkC6mOlyj0BM6c7KV6Gwwx1MCE+?=
+ =?iso-8859-1?Q?nnTg6N6+qJ90rxrAeUL6d2uAlwu41CtMEPsCUYw32n+ZhmvPNH9p3zF17i?=
+ =?iso-8859-1?Q?ZrMuUBOeWNpJ3OZIOYe7U5MMrP8WBNT6qFrXP7tKpfjbdptakP7BgxOl8S?=
+ =?iso-8859-1?Q?euT4n5u4MLiK6u2MA9NBNezaYg=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB6733.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(366007)(376005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?V1mFpGGDW8Pf7qqPlxOLK757ZfvFCDdw1otsbNYWcF+byMf/4tF9+C+qz9?=
+ =?iso-8859-1?Q?DHss+fBCkRDy51lJfhMaRBwBS1WVlL7e8/hGvrhilH4nnU7D4JhBNFO/MM?=
+ =?iso-8859-1?Q?EhSyhfCvNeRKUgkxKpLh4qCEADnKrYQ6v9Bkg49HU8/8vRlwUmHkzeK3fq?=
+ =?iso-8859-1?Q?ES6wlCmg5sXT60xQq5zuc1tauztuSsR5U9rFKtnVvV5V7y1N+zkUMp/w64?=
+ =?iso-8859-1?Q?ofvYlCCHeM2cISRnQ3L4exqjoKPiUZaJTzXczxzjoxGdiwrbd7L29phYyI?=
+ =?iso-8859-1?Q?itgIdTdlU++6LzAdn8sBbskvRpwimlDN/QSB5xsz6C/CYmj3fM9YFbmJN7?=
+ =?iso-8859-1?Q?2jO7sDFMaVWtAkwHRpfi3jxVFrSYeNB55enL/XgwEHVSA4ftwfkEpJUNhD?=
+ =?iso-8859-1?Q?V0cndlUtyli8aC/j+zilLPG+fDqbIQTvqy1rE+VIWlKLmjOgcvbvzDDjv2?=
+ =?iso-8859-1?Q?uawnUIfnIOQWaQYwAZereVne9dYoGGWvlz1Vi/RBej40pttkwmafeGVNlb?=
+ =?iso-8859-1?Q?mDFwp4Z6bl0+N2kUslLGxEiDgsomJ359S97FI4cnIkqMNw8efM+rashAJm?=
+ =?iso-8859-1?Q?XD3FSHrCQZ/e7DcAEHD9ffmKc4bNfIlxf7TPRrbaHND2XBPZJNQHsccBSa?=
+ =?iso-8859-1?Q?v/RzpoHjAHvQKpprH2ZVbYu7vX9Yyc34xICWR4rB4bkVg6YtfOfYj2uf2t?=
+ =?iso-8859-1?Q?m9WMke75t8utYenvRFipAADgBS4bH/1YmQCsurhAJVmjwtOGRLl+arPSYC?=
+ =?iso-8859-1?Q?t3Z5R9+9fWV3Jm4X0ixRah9iy7+t++xLfUFeuK/sP3pxYR0RgTcRxwfc93?=
+ =?iso-8859-1?Q?YW5XGeH6h1+YtpUV54ZeOk8p1INEfnQLCBBzpVzh8zZVJTUMM6wcr1SChm?=
+ =?iso-8859-1?Q?OSDx1WhN1+/Z355lQQjN6aZD4vvcMY/t0h7+ysd0/qJj2wDIqWDDOV/RRJ?=
+ =?iso-8859-1?Q?22NSnfbsw9ExTdv4ISe8e7Q7jCxM2HaKVU/8lBbYriVRikVUJSo7QQowUo?=
+ =?iso-8859-1?Q?IvbeJ9lCTxFJhpVKMeh6voPpzBMn3JkPERZka0mrWeKPoiLSlG2aGPUn6V?=
+ =?iso-8859-1?Q?asUV4IZeXfLKo/bnb4Nx4TkdrFRi6D9pqv8tFGxXkshJu7Vvn5quPX0NNm?=
+ =?iso-8859-1?Q?JMWZIAyfklqzOqnHu/WumJXYrtetkFKJgjWtwOCRX+t8/jvk3Kphill/W6?=
+ =?iso-8859-1?Q?z0WkblCKDCqnwgZShVO8IfQ8CPP0aWBXcps/klyTNLPo8Puwmjx8C79KZH?=
+ =?iso-8859-1?Q?JuOZeuEZ6aQQFAPh2qI9W3SMIi4uJmxAsy7zk+Kauniil3IomSSaZU9mGe?=
+ =?iso-8859-1?Q?wDzaPokbBQeQ1h5orrz81DWlWwB6P6my4At5CALarQO1m9lJvtdVNFwi4w?=
+ =?iso-8859-1?Q?YsOMKTjbgUeRmHVyK7kTgBNL2PTGdxDBvesXpNqcU/ufzRrNos6C7RrN5a?=
+ =?iso-8859-1?Q?gWpTWrB0RnJpUZYn296LrRKIv7J5sc2yEuRyHarMP2+r45CdQPgsuALz7z?=
+ =?iso-8859-1?Q?bn20+AsEBVv9YrvDkdwKbKlIpaxZqLNiuDuqIpwt58UYeQU+X5YQjKhi+Q?=
+ =?iso-8859-1?Q?Ic8pcwxFmk7YNDRjBiRZ3BfTsRIgneMfrTH7s9pIQaLqPZa467qiFG5dq3?=
+ =?iso-8859-1?Q?ILloJQ/k1hcQ15DMW57n0F8gNexDhVwULNeyq3rgLfQcuWkjZpb1Nz1XH3?=
+ =?iso-8859-1?Q?IeUP6Noa1OhKsZYPpPE=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3b63bc8d-5cf3-4a6e-16d1-08dc74fdea9d
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB6733.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 May 2024 16:41:49.3634
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: QJyuRiK6DqIltsxvV0oXSUYMkFmge3bYvetvMCV1M35FouMYASSpcEytLwFlSDrYhAYbUep0Ktp2zScWgvgNvg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR11MB4717
+X-OriginatorOrg: intel.com
 
-Gentle ping..?
+Hi Linus, Please pull from 
 
-Am I missing something?
+  git://git.kernel.org/pub/scm/linux/kernel/git/nvdimm/nvdimm.git tags/libnvdimm-for-6.10
 
-Thanks.
+.. to get code updates for the nvdimm tree.  These have been in
+linux-next for a couple of weeks.  The changes include removing duplicate
+code and updating the nvdimm tree to the current kernel interfaces such as
+using const for struct device_type and changing the platform remove
+callback signature.
 
-On Thu, May 9, 2024 at 10:29=E2=80=AFAM Levi Yun <ppbuk5246@gmail.com> wrot=
-e:
->
-> When nohz_full CPU stops tick in tick_nohz_irq_exit(),
-> It wouldn't be chosen to perform idle load balancing because it doesn't
-> call nohz_balance_enter_idle() in tick_nohz_idle_stop_tick() when it
-> becomes idle.
->
-> Formerly, __tick_nohz_idle_enter() is called in both
-> tick_nohz_irq_exit() and in do_idle().
-> That's why commit a0db971e4eb6 ("nohz: Move idle balancer registration
-> to the idle path") prevents nohz_full cpu which isn't yet
-> idle state but tick is stopped from entering idle balance.
->
-> However, this prevents nohz_full cpu which already stops tick from
-> entering idle balacne when this cpu really becomes idle state.
->
-> Currently, tick_nohz_idle_stop_tick() is only called in idle state and
-> it calls nohz_balance_enter_idle(). this function tracks the CPU
-> which is part of nohz.idle_cpus_mask with rq->nohz_tick_stopped properly.
->
-> Therefore, Change tick_nohz_idle_stop_tick() to call nohz_balance_enter_i=
-dle()
-> without checking !was_stopped so that nohz_full cpu can be chosen to
-> perform idle load balancing when it enters idle state.
->
-> Fixes: a0db971e4eb6 ("nohz: Move idle balancer registration to the idle p=
-ath")
-> Signed-off-by: Levi Yun <ppbuk5246@gmail.com>
-> ---
-> v4:
->         - Add fixes tags.
->
-> v3:
->         - Rewording commit message.
->
-> v2:
->         - Fix typos in commit message.
->
->  kernel/time/tick-sched.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
-> index 71a792cd8936..31a4cd89782f 100644
-> --- a/kernel/time/tick-sched.c
-> +++ b/kernel/time/tick-sched.c
-> @@ -1228,8 +1228,10 @@ void tick_nohz_idle_stop_tick(void)
->                 ts->idle_sleeps++;
->                 ts->idle_expires =3D expires;
->
-> -               if (!was_stopped && tick_sched_flag_test(ts, TS_FLAG_STOP=
-PED)) {
-> -                       ts->idle_jiffies =3D ts->last_jiffies;
-> +               if (tick_sched_flag_test(ts, TS_FLAG_STOPPED)) {
-> +                       if (!was_stopped)
-> +                               ts->idle_jiffies =3D ts->last_jiffies;
-> +
->                         nohz_balance_enter_idle(cpu);
->                 }
->         } else {
-> --
-> 2.41.0
+Thank you,
+Ira Weiny
+
+---
+
+The following changes since commit ed30a4a51bb196781c8058073ea720133a65596f:
+
+  Linux 6.9-rc5 (2024-04-21 12:35:54 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/nvdimm/nvdimm.git tags/libnvdimm-for-6.10
+
+for you to fetch changes up to 41147b006be2174b825a54b0620ecf4cc7ec5c84:
+
+  dax: remove redundant assignment to variable rc (2024-04-25 14:11:11 -0700)
+
+----------------------------------------------------------------
+Updates for nvdimm for 6.10
+
+Code cleanups, remove duplicate code, and updates for current
+interfaces.
+
+----------------------------------------------------------------
+Christoph Hellwig (2):
+      nvdimm: remove nd_integrity_init
+      nvdimm/btt: always set max_integrity_segments
+
+Colin Ian King (1):
+      dax: remove redundant assignment to variable rc
+
+Ricardo B. Marliere (1):
+      dax: constify the struct device_type usage
+
+Shivaprasad G Bhat (1):
+      powerpc/papr_scm: Move duplicate definitions to common header files
+
+Uwe Kleine-König (1):
+      ndtest: Convert to platform remove callback returning void
+
+ MAINTAINERS                                        |  2 +
+ arch/powerpc/platforms/pseries/papr_scm.c          | 43 +------------------
+ drivers/dax/bus.c                                  |  3 +-
+ drivers/nvdimm/btt.c                               | 12 ++++--
+ drivers/nvdimm/core.c                              | 30 -------------
+ drivers/nvdimm/nd.h                                |  1 -
+ include/linux/papr_scm.h                           | 49 ++++++++++++++++++++++
+ .../uapi/asm => include/uapi/linux}/papr_pdsm.h    |  0
+ tools/testing/nvdimm/test/ndtest.c                 |  7 ++--
+ tools/testing/nvdimm/test/ndtest.h                 | 31 --------------
+ 10 files changed, 66 insertions(+), 112 deletions(-)
+ create mode 100644 include/linux/papr_scm.h
+ rename {arch/powerpc/include/uapi/asm => include/uapi/linux}/papr_pdsm.h (100%)
+
 
