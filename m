@@ -1,258 +1,113 @@
-Return-Path: <linux-kernel+bounces-179949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F3118C67E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 15:56:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F9068C67E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 15:56:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3BD51F23865
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 13:56:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCB40282480
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 13:56:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E85071411F8;
-	Wed, 15 May 2024 13:54:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 037FC1419AD;
+	Wed, 15 May 2024 13:54:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=savoirfairelinux.com header.i=@savoirfairelinux.com header.b="pdQ4Mq0i"
-Received: from mail.savoirfairelinux.com (mail.savoirfairelinux.com [208.88.110.44])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qg7R0Khw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0B981411DD;
-	Wed, 15 May 2024 13:54:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=208.88.110.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B4B113F427;
+	Wed, 15 May 2024 13:54:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715781282; cv=none; b=Ww2AFYSYTf2pgG2QippgSMvBKwtPHEs8eseULFR07QisRlaJT5H/+K/U6DR8c1qa92qKdNrpd+cyDTQPr0veBd8iIqQ8T8ehSntPQszSrRdN3TpX5W7KAhfzpJsNdLvmf2uobDC/lHRX1/nFSpGnaxUckQXZXyZOF0vRrOWTHnY=
+	t=1715781288; cv=none; b=NmGZlvCf+aHz5pZTW/Yxoch5W/EeG+120Wespd7n2UW54Y3bA9WuLitxiTpjpjmJE1juzCR5rUm0KgeTEs+4uXorTOyzKc01eODLK4ZzxktxWd0+ug7UAvzkiDxa7CcYeoH25hKoudwzudLePn02uh1eEqST71UVxz7MZeS0RVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715781282; c=relaxed/simple;
-	bh=eabz4GgYDn942CfDZ8D26pfk1npa546nY9iinZnWrdU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qxky3cWrWz38WN69NF+Rp+exeTpx1qmEvhNfj2YGqCZIN7xlUWfZ6I/1U3C2sH0EDatK4cCg3pDmEYbmi9NDkz1C/DU0lgHBNYK+Vz0tSoXDqtqrUlm+6tdqGE+KO9CpLw4nmEtPpZA7SemHUBi642AOSV2av77BwWzL3n9CuZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=savoirfairelinux.com; spf=pass smtp.mailfrom=savoirfairelinux.com; dkim=pass (2048-bit key) header.d=savoirfairelinux.com header.i=@savoirfairelinux.com header.b=pdQ4Mq0i; arc=none smtp.client-ip=208.88.110.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=savoirfairelinux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=savoirfairelinux.com
-Received: from localhost (localhost [127.0.0.1])
-	by mail.savoirfairelinux.com (Postfix) with ESMTP id D2B9A9C5919;
-	Wed, 15 May 2024 09:54:39 -0400 (EDT)
-Received: from mail.savoirfairelinux.com ([127.0.0.1])
- by localhost (mail.savoirfairelinux.com [127.0.0.1]) (amavis, port 10032)
- with ESMTP id B-UyXQ4qtgDB; Wed, 15 May 2024 09:54:38 -0400 (EDT)
-Received: from localhost (localhost [127.0.0.1])
-	by mail.savoirfairelinux.com (Postfix) with ESMTP id 9A8799C5914;
-	Wed, 15 May 2024 09:54:38 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.savoirfairelinux.com 9A8799C5914
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=savoirfairelinux.com; s=DFC430D2-D198-11EC-948E-34200CB392D2;
-	t=1715781278; bh=TiWe8m0yVFVcnZsPsZe5x6KEea1KRMwl0I5JQakBY2M=;
-	h=From:To:Date:Message-Id:MIME-Version;
-	b=pdQ4Mq0iZjl2TkzmOf4FJxLg2Sl4UBb6l54c+UBcIUPliB/6rYLFRWBja3GGT8ToT
-	 nHAMTYqrLAKrpgSLdwgRFxC2XG0IgnMYLBpx/lZzOS+Ot0PG3ANDJrOIXRHSkyQFBa
-	 YXkldlHJ26PucTH7Mv5L+z/N1GnL4pcQic+c1o2s7pMrh+F41Vh0JSMRR9owghL3ce
-	 ePu/SVrj7emJBXkoQkmMzCPEhuykRHdN7OW+DBe3FtoM5d3BgZBB3k2nsikuvOAyEs
-	 GWraoEnfNcToIgyl20UqGd5BbPdeo3lQrKHXUtvPtcGeAyjZC9cawAd2yA2+kSeCJd
-	 iSU/p3NCOyp4w==
-X-Virus-Scanned: amavis at mail.savoirfairelinux.com
-Received: from mail.savoirfairelinux.com ([127.0.0.1])
- by localhost (mail.savoirfairelinux.com [127.0.0.1]) (amavis, port 10026)
- with ESMTP id urI44xdnneys; Wed, 15 May 2024 09:54:38 -0400 (EDT)
-Received: from gerard.rennes.sfl (lmontsouris-657-1-69-118.w80-15.abo.wanadoo.fr [80.15.101.118])
-	by mail.savoirfairelinux.com (Postfix) with ESMTPSA id A3E069C5915;
-	Wed, 15 May 2024 09:54:36 -0400 (EDT)
-From: Elinor Montmasson <elinor.montmasson@savoirfairelinux.com>
-To: Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shengjiu Wang <shengjiu.wang@gmail.com>,
-	Xiubo Li <Xiubo.Lee@gmail.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Nicolin Chen <nicoleotsuka@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>
-Cc: linux-sound@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	linuxppc-dev@lists.ozlabs.org,
-	Elinor Montmasson <elinor.montmasson@savoirfairelinux.com>
-Subject: [PATCHv4 9/9] ASoC: dt-bindings: fsl-asoc-card: add compatible for generic codec
-Date: Wed, 15 May 2024 15:54:11 +0200
-Message-Id: <20240515135411.343333-10-elinor.montmasson@savoirfairelinux.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240515135411.343333-1-elinor.montmasson@savoirfairelinux.com>
-References: <20240515135411.343333-1-elinor.montmasson@savoirfairelinux.com>
+	s=arc-20240116; t=1715781288; c=relaxed/simple;
+	bh=aNGBFfluPLrID2GK0RnkRS1qTZInjc6Ydx13s+5hfbY=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=NZ1GOI/0Y3qa4GKbMb5Eu+MmmaN7ITI+PD6EdpP3TsBP0X4X89LCA42RETaYckd9eMJ5AUoMqwSnj6y8lCQQh6KKM61s1G3RJOouV4RzI2G866OF/FTfzbTPEMNJnvwITgG4oMlMLy31Q6b7C/obcwLijiCE/GaBfo9waX7Z+8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qg7R0Khw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 844BFC4AF08;
+	Wed, 15 May 2024 13:54:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715781287;
+	bh=aNGBFfluPLrID2GK0RnkRS1qTZInjc6Ydx13s+5hfbY=;
+	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
+	b=qg7R0KhwJOI0A/AvL36SPK+Qh66Ef8ejT5DyfwwtQ6eH1jTDB/WUrwpYBBYbbGbII
+	 OtNgRWbiYV6Vjssp5wX5QJ0OLYDIspefBu9FLFy8YfmOCBsSMxD+6Xcofh0sU6lr9m
+	 BdRqP1P+gSnKdFxLMTdK85oRIWjVwZdU10FA0JWruh56cmrnrf60SMXXp7l2blGW9B
+	 MR+HXRL+/wwmS5BOcjly54WEI6Lf88d6I84HzQuLKDwy29lr4Ks17ze0e2tGOJekSk
+	 YJvWgqSD0J59TVIGrqip2zb6fs9CaPMQ3b3bbNz6PEeHd3ZBF0oOtpF3B1ZbTJQIJO
+	 h61WTfPBrKFOw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 15 May 2024 16:54:43 +0300
+Message-Id: <D1A9PC6LWL2S.38KB2X3EL9X79@kernel.org>
+To: "Dmitrii Kuvaiskii" <dmitrii.kuvaiskii@intel.com>,
+ <dave.hansen@linux.intel.com>, <kai.huang@intel.com>,
+ <haitao.huang@linux.intel.com>, <reinette.chatre@intel.com>,
+ <linux-sgx@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Cc: <mona.vij@intel.com>, <kailun.qin@intel.com>, <stable@vger.kernel.org>,
+ =?utf-8?q?Marcelina_Ko=C5=9Bcielnicka?= <mwk@invisiblethingslab.com>
+Subject: Re: [PATCH v2 1/2] x86/sgx: Resolve EAUG race where losing thread
+ returns SIGBUS
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+X-Mailer: aerc 0.17.0
+References: <20240515131240.1304824-1-dmitrii.kuvaiskii@intel.com>
+ <20240515131240.1304824-2-dmitrii.kuvaiskii@intel.com>
+In-Reply-To: <20240515131240.1304824-2-dmitrii.kuvaiskii@intel.com>
 
-Add documentation about new dts bindings following new support
-for compatible "fsl,imx-audio-generic".
+On Wed May 15, 2024 at 4:12 PM EEST, Dmitrii Kuvaiskii wrote:
+> diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/enc=
+l.c
+> index 279148e72459..41f14b1a3025 100644
+> --- a/arch/x86/kernel/cpu/sgx/encl.c
+> +++ b/arch/x86/kernel/cpu/sgx/encl.c
+> @@ -382,8 +382,11 @@ static vm_fault_t sgx_encl_eaug_page(struct vm_area_=
+struct *vma,
+>  	 * If ret =3D=3D -EBUSY then page was created in another flow while
+>  	 * running without encl->lock
+>  	 */
+> -	if (ret)
+> +	if (ret) {
+> +		if (ret =3D=3D -EBUSY)
+> +			vmret =3D VM_FAULT_NOPAGE;
+>  		goto err_out_shrink;
+> +	}
 
-Some CPU DAI don't require a real audio codec. The new compatible
-"fsl,imx-audio-generic" allows using the driver with codec drivers
-SPDIF DIT and SPDIF DIR as dummy codecs.
-It also allows using not pre-configured audio codecs which
-don't require specific control through a codec driver.
+I agree that there is a bug but it does not categorize as race
+condition.
 
-The new dts properties give the possibility to set some parameters
-about the CPU DAI usually set through the codec configuration.
+The bug is simply that for a valid page SIGBUS might be returned.
+The fix is correct but the claim is not.
 
-Signed-off-by: Elinor Montmasson <elinor.montmasson@savoirfairelinux.com>
----
- .../bindings/sound/fsl-asoc-card.yaml         | 96 ++++++++++++++++++-
- 1 file changed, 92 insertions(+), 4 deletions(-)
+> =20
+>  	pginfo.secs =3D (unsigned long)sgx_get_epc_virt_addr(encl->secs.epc_pag=
+e);
+>  	pginfo.addr =3D encl_page->desc & PAGE_MASK;
+> @@ -419,7 +422,7 @@ static vm_fault_t sgx_encl_eaug_page(struct vm_area_s=
+truct *vma,
+>  err_out_shrink:
+>  	sgx_encl_shrink(encl, va_page);
+>  err_out_epc:
+> -	sgx_encl_free_epc_page(epc_page);
+> +	sgx_free_epc_page(epc_page);
+>  err_out_unlock:
+>  	mutex_unlock(&encl->lock);
+>  	kfree(encl_page);
 
-diff --git a/Documentation/devicetree/bindings/sound/fsl-asoc-card.yaml b/D=
-ocumentation/devicetree/bindings/sound/fsl-asoc-card.yaml
-index 9922664d5ccc..332d8bf96e06 100644
---- a/Documentation/devicetree/bindings/sound/fsl-asoc-card.yaml
-+++ b/Documentation/devicetree/bindings/sound/fsl-asoc-card.yaml
-@@ -23,6 +23,16 @@ description:
-   and PCM DAI formats. However, it'll be also possible to support those non
-   AC'97/I2S/PCM type sound cards, such as S/PDIF audio and HDMI audio, as
-   long as the driver has been properly upgraded.
-+  To use CPU DAIs that do not require a codec such as an S/PDIF controller,
-+  or to use a DAI to output or capture raw I2S/TDM data, you can
-+  use the compatible "fsl,imx-audio-generic".
-+
-+definitions:
-+  imx-audio-generic-dependency:
-+    properties:
-+      compatible:
-+        contains:
-+          const: fsl,imx-audio-generic
-=20
- maintainers:
-   - Shengjiu Wang <shengjiu.wang@nxp.com>
-@@ -81,6 +91,7 @@ properties:
-               - fsl,imx-audio-wm8960
-               - fsl,imx-audio-wm8962
-               - fsl,imx-audio-wm8958
-+              - fsl,imx-audio-generic
-=20
-   model:
-     $ref: /schemas/types.yaml#/definitions/string
-@@ -93,8 +104,14 @@ properties:
-       need to add ASRC support via DPCM.
-=20
-   audio-codec:
--    $ref: /schemas/types.yaml#/definitions/phandle
--    description: The phandle of an audio codec
-+    $ref: /schemas/types.yaml#/definitions/phandle-array
-+    description: |
-+      The phandle of an audio codec.
-+      If using the "fsl,imx-audio-generic" compatible, give instead a pair=
- of
-+      phandles with the spdif_transmitter first (driver SPDIF DIT) and the
-+      spdif_receiver second (driver SPDIF DIR).
-+    items:
-+      maxItems: 1
-=20
-   audio-cpu:
-     $ref: /schemas/types.yaml#/definitions/phandle
-@@ -150,8 +167,8 @@ properties:
-     description: dai-link uses bit clock inversion.
-=20
-   mclk-id:
--    $ref: /schemas/types.yaml#/definitions/uint32
--    description: main clock id, specific for each card configuration.
-+    $ref: /schemas/types.yaml#/definitions/uint32-array
-+    description: Main clock id for each codec, specific for each card conf=
-iguration.
-=20
-   mux-int-port:
-     $ref: /schemas/types.yaml#/definitions/uint32
-@@ -167,10 +184,68 @@ properties:
-     $ref: /schemas/types.yaml#/definitions/phandle
-     description: The phandle of an CPU DAI controller
-=20
-+  # Properties relevant only with "fsl,imx-audio-generic" compatible
-+  dai-tdm-slot-width:
-+    description: See tdm-slot.txt.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+
-+  dai-tdm-slot-num:
-+    description: See tdm-slot.txt.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+
-+  clocks:
-+    description: |
-+      The CPU DAI system clock, used to retrieve
-+      the CPU DAI system clock frequency with the generic codec.
-+    maxItems: 1
-+
-+  clock-names:
-+    items:
-+      - const: cpu_sysclk
-+
-+  cpu-system-clock-direction-out:
-+    description: |
-+      Specifies cpu system clock direction as 'out' on initialization.
-+      If not set, direction is 'in'.
-+    $ref: /schemas/types.yaml#/definitions/flag
-+
-+dependencies:
-+  dai-tdm-slot-width:
-+    $ref: "#/definitions/imx-audio-generic-dependency"
-+  dai-tdm-slot-num:
-+    $ref: "#/definitions/imx-audio-generic-dependency"
-+  clocks:
-+    $ref: "#/definitions/imx-audio-generic-dependency"
-+  cpu-system-clock-direction-out:
-+    $ref: "#/definitions/imx-audio-generic-dependency"
-+
- required:
-   - compatible
-   - model
-=20
-+allOf:
-+  - if:
-+      $ref: "#/definitions/imx-audio-generic-dependency"
-+    then:
-+      properties:
-+        audio-codec:
-+          items:
-+            - description: SPDIF DIT phandle
-+            - description: SPDIF DIR phandle
-+        mclk-id:
-+          maxItems: 1
-+          items:
-+            minItems: 1
-+            maxItems: 2
-+    else:
-+      properties:
-+        audio-codec:
-+          maxItems: 1
-+        mclk-id:
-+          maxItems: 1
-+          items:
-+            maxItems: 1
-+
- unevaluatedProperties: false
-=20
- examples:
-@@ -195,3 +270,16 @@ examples:
-              "AIN2L", "Line In Jack",
-              "AIN2R", "Line In Jack";
-     };
-+
-+  - |
-+    #include <dt-bindings/clock/imx8mn-clock.h>
-+    sound-spdif-asrc {
-+      compatible =3D "fsl,imx-audio-generic";
-+      model =3D "spdif-asrc-audio";
-+      audio-cpu =3D <&spdif>;
-+      audio-asrc =3D <&easrc>;
-+      audio-codec =3D <&spdifdit>, <&spdifdir>;
-+      clocks =3D <&clk IMX8MN_CLK_SAI5_ROOT>;
-+      clock-names =3D "cpu_sysclk";
-+      cpu-system-clock-direction-out;
-+    };
---=20
-2.34.1
+Agree with code change 100% but not with the description.
 
+I'd cut out 90% of the description out and just make the argument of
+the wrong error code, and done. The sequence is great for showing
+how this could happen. The prose makes my head hurt tbh.
+
+BR, Jarkko
 
