@@ -1,168 +1,212 @@
-Return-Path: <linux-kernel+bounces-180254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49E828C6C13
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 20:21:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDB308C6C18
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 20:22:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3AAE283105
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:21:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20801B2147B
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:21:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D935158DBF;
-	Wed, 15 May 2024 18:21:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 234C0158DD6;
+	Wed, 15 May 2024 18:21:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H/Tanh7z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD335158845
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 18:21:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="SGy/SNbL"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AD6F158DB7;
+	Wed, 15 May 2024 18:21:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715797281; cv=none; b=AE3KmBp18EqZn7PO4iC6mLuVboEa3JB+fzy3L2RaQUPydsVpsOLv7UsH3PY/nL+t94ojjymEvHtQB9mDQvc+33S7qZv77tjvaTY8eIIZ76e4wh7Uik+5xKZYrE7aRIj/XxR0T9CmabdzHluRw+3symucRRxcEhBFrQ+PzUYe/z4=
+	t=1715797308; cv=none; b=RDL0mOJwahRgZGD9NvDdC6NXRXjCFM0ZSuyIPDZdCD6YLoEDBC/dPWiFoYYXPIsBn3VLUvDP/wNl6ZfxsZAxmTffixWXXJP+V+idt6Ov7YDxVHcisGjNjGwfG+O+mQzo3u4sdnj3F9zhAC77Ze5YE00kPbYF96dG83oUtIgksuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715797281; c=relaxed/simple;
-	bh=iHD0UyuivF0i6K1yPM2fcXtvuDCZkUObbv4SHRUgfxM=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=qUqXldYXNcm+1W6frw76+sTA3MsFS4RT+qYkoQtt8xMi1GyXjMNWhOwctKY8JspSXiMYnV9ze7o7YWBgpc/Q7ZUdl1TyJnV6+U/aMSY5+4PughZwG/28NEZH+cP66VsFju8EXMH0Wa1XZyHD01DbrGiWaxAWm6Vec9pRD2HblSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H/Tanh7z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A87CBC116B1;
-	Wed, 15 May 2024 18:21:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715797281;
-	bh=iHD0UyuivF0i6K1yPM2fcXtvuDCZkUObbv4SHRUgfxM=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=H/Tanh7zlVXO/XkPU5wjs/TcpDqzgSFP5zgAknY2/lMMXC1wJulIoJAfPCp3Y9dFd
-	 WawIgKFkdMU9xeYwb8KumloKYo/NJ4riorfx6iU4BERfGi6YBnLGTgZDuYA6/+vnB0
-	 tYjwtu0MQSPCE/QU4sCPKZtFV9A5wrj7AlFEXvMOO7RhnqO/upXdEdrnfvgxbAG2zs
-	 gWBHVuh8EprYAO15PLmq4dIxmO8rfq7r4EtYuGo06k8ywEX0pUd2Ven5bxGN20minr
-	 e8w1wkFvhByaQTOzH+I/mYdz2s0NlgqcQYHq1mj+uZPeP0xc5RKrRndHdtBqX6ufDW
-	 KBocOPT/K/OEg==
-Date: Wed, 15 May 2024 19:21:16 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Charlie Jenkins <charlie@rivosinc.com>
-CC: linux-riscv@lists.infradead.org, Conor Dooley <conor.dooley@microchip.com>,
- Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] RISC-V: fix Andes errata build issues
-User-Agent: K-9 Mail for Android
-In-Reply-To: <ZkT1K/c9hWsfOwWf@ghost>
-References: <20240515-comic-sketch-3b40e6676f55@spud> <ZkTnlEnoFFrQdXi2@ghost> <20240515-slander-stranger-683758537aee@spud> <ZkTuc4fxXcS/g7hC@ghost> <20240515-bootie-patriarch-769c0ebff4b1@spud> <ZkT1K/c9hWsfOwWf@ghost>
-Message-ID: <39FEF902-2495-42A2-B279-C9FC95828F00@kernel.org>
+	s=arc-20240116; t=1715797308; c=relaxed/simple;
+	bh=e8ttiAemtFgcKjlFj7AZuGWtGde8VsUbQHI5auT9tmM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DClNFzXjoGCNTr9mLHwT4Hq/QQOviYsK+iJipzla3Ao3OHxWLZ/rS+yVy/onFiHsH22LWT+Y/lch1Iz5NnDWQ8oR4F/6ZNKl4yT2FLqhI+h6B3AbhlHr547ohKwBGH/5wtFRAhDWjGy0zKg6es1Epn+iwz2wVuR32IM6LSIsfnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=SGy/SNbL; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.137.186.190] (unknown [131.107.159.62])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 4FE7720B915A;
+	Wed, 15 May 2024 11:21:46 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 4FE7720B915A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1715797306;
+	bh=UvII0U5FgfFQDZQ3NT21zj0ni0imPoIcxup69WeWcAI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=SGy/SNbL/qrNmz/echRqY+IgHUmBp1Sr4HAj9GhSGwUddaTaWqqAOdjxRhVX+wwjz
+	 2ixfAFv7q3V5BD7ewz16gbekjG9lIj4U/edzjWduKCcNKcAUwgSxU8BZs/fQ5tgc1D
+	 ENhasCnVgsDXRep8wKswSKV4mn0kETt5sVYYLXxQ=
+Message-ID: <dc7db611-c4f7-412d-8ace-f675a068f966@linux.microsoft.com>
+Date: Wed, 15 May 2024 11:21:46 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/6] drivers/hv/vmbus: Get the irq number from
+ DeviceTree
+To: Michael Kelley <mhklinux@outlook.com>, "arnd@arndb.de" <arnd@arndb.de>,
+ "bhelgaas@google.com" <bhelgaas@google.com>, "bp@alien8.de" <bp@alien8.de>,
+ "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "decui@microsoft.com" <decui@microsoft.com>,
+ "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+ "hpa@zytor.com" <hpa@zytor.com>, "kw@linux.com" <kw@linux.com>,
+ "kys@microsoft.com" <kys@microsoft.com>, "lenb@kernel.org"
+ <lenb@kernel.org>, "lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+ "mingo@redhat.com" <mingo@redhat.com>, "rafael@kernel.org"
+ <rafael@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
+ "tglx@linutronix.de" <tglx@linutronix.de>,
+ "wei.liu@kernel.org" <wei.liu@kernel.org>, "will@kernel.org"
+ <will@kernel.org>, "linux-acpi@vger.kernel.org"
+ <linux-acpi@vger.kernel.org>,
+ "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+ "x86@kernel.org" <x86@kernel.org>
+Cc: "ssengar@microsoft.com" <ssengar@microsoft.com>,
+ "sunilmut@microsoft.com" <sunilmut@microsoft.com>,
+ "vdso@hexbites.dev" <vdso@hexbites.dev>
+References: <20240514224508.212318-1-romank@linux.microsoft.com>
+ <20240514224508.212318-6-romank@linux.microsoft.com>
+ <SN6PR02MB4157473A48D58D545102614BD4EC2@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Language: en-US
+From: Roman Kisel <romank@linux.microsoft.com>
+In-Reply-To: <SN6PR02MB4157473A48D58D545102614BD4EC2@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
 
-On 15 May 2024 18:47:23 IST, Charlie Jenkins <charlie@rivosinc=2Ecom> wrot=
-e:
->On Wed, May 15, 2024 at 06:30:36PM +0100, Conor Dooley wrote:
->> On Wed, May 15, 2024 at 10:18:43AM -0700, Charlie Jenkins wrote:
->> > On Wed, May 15, 2024 at 05:56:30PM +0100, Conor Dooley wrote:
->> > > On Wed, May 15, 2024 at 09:49:24AM -0700, Charlie Jenkins wrote:
->> > > > On Wed, May 15, 2024 at 05:09:34PM +0100, Conor Dooley wrote:
->> > > > > From: Conor Dooley <conor=2Edooley@microchip=2Ecom>
->> > > > >=20
->> > > > > Commit e47c37c24024 ("riscv: Introduce vendor variants of exten=
-sion
->> > > > > helpers") added includes for the new vendor_extensions=2Eh head=
-er in
->> > > > > the T-Head and SiFive errata handling code but didn't do so for=
- Andes,
->> > > > > resulting in allmodconfig build issues when commit 589e2fc85850
->> > > > > ("riscv: Convert xandespmu to use the vendor extension framewor=
-k")
->> > > > > added a user of a macro defined there=2E
->> > > > >=20
->> > > > > Fixes: 589e2fc85850 ("riscv: Convert xandespmu to use the vendo=
-r extension framework")
->> > > > > Signed-off-by: Conor Dooley <conor=2Edooley@microchip=2Ecom>
->> > >=20
->> > > >=20
->> > > > I was going to fix this in my next version but was waiting for th=
-e
->> > > > reviews on the thead stuff=2E I wasn't anticipating these patches=
- to be
->> > > > able to jump the queue :)
->> > >=20
->> > > Yah, the reason for that is I asked him to take the non-vector part=
-s of
->> > > the series as 6=2E10 material so that we'd have less stuff movin' a=
-round
->> > > in cpufeatures=2Ec so that Clement's Zc* + validation changes would=
-n't run
->> > > into a bunch of conflicts etc=2E Same reason that I pushed for gett=
-ing
->> > > Andy's vector subset stuff merged today, but that mighta been befor=
-e you
->> > > hopped in=2E
->> > >=20
->> > > Cheers,
->> > > Conor=2E
->> >=20
->> > Yes I was a couple minutes late to the meeting, whoops=2E
->>=20
->>=20
->> It's prob at like 0600 for you, so w/e=2E
->>=20
->> > The subset of
->> > patches that was pulled into for-next is odd to me because there is s=
-ome
->> > of the thead enablement code as part of the vendor extension enableme=
-nt
->> > so that there was a user for it=2E Since the subset on Palmer's for-n=
-ext
->> > does not have the rest of the thead code there is only a
->> > half-implementation of the thead code, it allows the kernel to probe =
-for
->> > xtheadvector but it doesn't probe anywhere=2E
->>=20
->> I dunno, I think that reporting that the extension is there constitutes=
- a
->> user, it's not gonna be dead code=2E There's plenty of extensions for
->> which all we do is detect them and nothing more=2E
->>=20
->> > In my opinion, a better solution would be for me to get rid of the th=
-ead
->> > code entirely from those patches=2E So that there is still a user, I =
-can
->> > replace the thead code with the andes versions=2E
->>=20
->> The Andes stuff is in the subset he applied though, so=2E=2E=2E
->> >=20
->> > Since Palmer already pulled in those changes maybe it's too late=2E T=
-here
->> > is not a critical problem here, but it seems like it's bad practice t=
-o
->> > introduce code without a user=2E
->>=20
->> =2E=2E=2Ethere is actually a "real" user in xandespmu=2E I did miss tha=
-t
->
->I meant there is no user of the xtheadvector addition=2E
->
->> "riscv: Extend cpufeature=2Ec to detect vendor extensions" actually
->> contained the xtheadvector detection though, rather than just the
->> infrastructure=2E I think it is probably harmless to have it, but
->> shouldn't be too hard to quickly drop the thead bits either I suppose
->> if you're worried about it=2E
->
->And the adding vlenb to the DT patches is unrelated to the subset of the
->series that was pulled into Palmer's for-next so spinning that off into
->a different series would be more logical=2E This is kind of a pointless
->rabbit hole I am getting into, but when we start splitting up series
->the code contained in the patches start to diverge from the cover
->letters that end up in the merge commits=2E
+On 5/15/2024 6:44 AM, Michael Kelley wrote:
+> From: Roman Kisel <romank@linux.microsoft.com> Sent: Tuesday, May 14, 2024 3:44 PM
+>>
+>> The vmbus driver uses ACPI for interrupt assignment on
+>> arm64 hence it won't function in the VTL mode where only
+>> DeviceTree can be used.
+>>
+>> Update the vmbus driver to discover interrupt configuration
+>> via DeviceTree.
+>>
+>> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
+>> ---
+>>   drivers/hv/vmbus_drv.c | 37 +++++++++++++++++++++++++++++++++++++
+>>   1 file changed, 37 insertions(+)
+>>
+>> diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
+>> index e25223cee3ab..52f01bd1c947 100644
+>> --- a/drivers/hv/vmbus_drv.c
+>> +++ b/drivers/hv/vmbus_drv.c
+>> @@ -36,6 +36,7 @@
+>>   #include <linux/syscore_ops.h>
+>>   #include <linux/dma-map-ops.h>
+>>   #include <linux/pci.h>
+>> +#include <linux/of_irq.h>
+>>   #include <clocksource/hyperv_timer.h>
+>>   #include <asm/mshyperv.h>
+>>   #include "hyperv_vmbus.h"
+>> @@ -2316,6 +2317,34 @@ static int vmbus_acpi_add(struct platform_device *pdev)
+>>   }
+>>   #endif
+>>
+>> +static int __maybe_unused vmbus_of_set_irq(struct device_node *np)
+>> +{
+>> +	struct irq_desc *desc;
+>> +	int irq;
+>> +
+>> +	irq = of_irq_get(np, 0);
+>> +	if (irq == 0) {
+>> +		pr_err("VMBus interrupt mapping failure\n");
+>> +		return -EINVAL;
+>> +	}
+>> +	if (irq < 0) {
+>> +		pr_err("VMBus interrupt data can't be read from DeviceTree, error %d\n", irq);
+>> +		return irq;
+>> +	}
+>> +
+>> +	desc = irq_to_desc(irq);
+>> +	if (!desc) {
+>> +		pr_err("VMBus interrupt description can't be found for virq %d\n", irq);
+> 
+> s/description/descriptor/
+> 
+> Or maybe slightly more compact overall:  "No interrupt descriptor for VMBus virq %d\n".
+> 
+Yep, thanks!
 
- The vlenb stuff is also one of the things that I want, it's useful for th=
-e validation stuff that Clement is adding=2E
+>> +		return -ENODEV;
+>> +	}
+>> +
+>> +	vmbus_irq = irq;
+>> +	vmbus_interrupt = desc->irq_data.hwirq;
+>> +	pr_debug("VMBus virq %d, hwirq %d\n", vmbus_irq, vmbus_interrupt);
+> 
+> How does device DMA cache coherency get handled in the DeviceTree case on
+> arm64? For vmbus_acpi_add(), there's code to look at the _CCA flag, which is
+> required in ACPI for arm64.  (There's also code to handle the Hyper-V bug where
+> _CCA is omitted.)  I don't know DeviceTree, but is there a similar flag to indicate
+> device cache coherency?  Of course, Hyper-V always assumes DMA cache
+> coherency, and that's a valid assumption for the server-class systems that
+> would run Hyper-V VMs on arm64.  But the Linux DMA subsystem needs to be
+> told, and vmbus_dma_configure() needs to propagate the setting from the
+> VMBus device to the child VMBus devices. Everything still works if the Linux
+> DMA subsystem isn't told, but you end up with a perf hit.  The DMA code
+> defaults to "not coherent" on arm64, and you'll get a lot of high-cost cache
+> coherency maintenance done by the CPU when it is unnecessary.  This issue
+> doesn't arise on x86 since the architecture requires DMA cache coherency, and
+> the Linux default is "coherent".
+> 
+Appreciate the indispensable insight! I'll straighten this out.
+
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>   static int vmbus_device_add(struct platform_device *pdev)
+>>   {
+>>   	struct resource **cur_res = &hyperv_mmio;
+>> @@ -2324,12 +2353,20 @@ static int vmbus_device_add(struct platform_device *pdev)
+>>   	struct device_node *np = pdev->dev.of_node;
+>>   	int ret;
+>>
+>> +	pr_debug("VMBus is present in DeviceTree\n");
+>> +
+> 
+> I'm not clear on how interpret this debug message.  Reaching this point in the code
+> path just means that acpi_disabled is "true".  DeviceTree hasn't yet been searched to
+> see if VMBus is found.
+> 
+True. Will remove.
+
+>>   	hv_dev = &pdev->dev;
+>>
+>>   	ret = of_range_parser_init(&parser, np);
+>>   	if (ret)
+>>   		return ret;
+>>
+>> +#ifndef HYPERVISOR_CALLBACK_VECTOR
+>> +	ret = vmbus_of_set_irq(np);
+>> +	if (ret)
+>> +		return ret;
+>> +#endif
+>> +
+>>   	for_each_of_range(&parser, &range) {
+>>   		struct resource *res;
+>>
+>> --
+>> 2.45.0
+>>
+> 
+
+-- 
+Thank you,
+Roman
 
