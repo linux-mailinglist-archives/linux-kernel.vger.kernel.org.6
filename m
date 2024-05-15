@@ -1,153 +1,78 @@
-Return-Path: <linux-kernel+bounces-180145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 400998C6AB3
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:34:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE7B68C6AB6
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:35:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 710601C218C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:34:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6527D1F21596
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:35:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65DC9383BF;
-	Wed, 15 May 2024 16:34:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4660D208C1;
+	Wed, 15 May 2024 16:35:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="HFuwoPQ5"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B590CA7A;
-	Wed, 15 May 2024 16:34:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i+BO7M0Y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84683800;
+	Wed, 15 May 2024 16:35:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715790851; cv=none; b=bK8RvIBWfXTMg58VXqLpF0Vx0PJagJeZAkHaU5gQnrrZiPn3v3sCyGSZJm0WRaSvix8dWgCCsXVcTIB+1LvjUtd1TDoTFwuu6PrekG9uyZXERJ6oTFghzQjZhvokhoGDDPp7xb8/3yJO3D00XQMAtxH4+30eJhzzEQTVPFIYNFU=
+	t=1715790907; cv=none; b=iG6g/ueFfvMLgkBn/epT3yDoNBI3tS6vg3hv9vStAa2CZy67kXGCqlqw2zieyj/YwD7A897TgHClYslvsR16NB+LHpvRoEY9+owdX/HLNr1Zb3y8y311b9G3ZuVzzhlkNnb4EkIuGOfOyxEdEj8WtOomdRLA4Fnw7haMWi8KsdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715790851; c=relaxed/simple;
-	bh=GU6KJDrwVaAZGvd4YyiDXiCH4Cu0goHSX5Qv1cNq2nY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LhizJwOV+VEHVTu5VAFZuuUNFE3nU6frdw+R1z1yEsvhBBgoBakEUg+coTkd/Egn3x5D1vZjW5pUHZYOsycsGwPoRDQ3C8PZJqfwuy+tuvGZT4lyMjWkyT3lSvhFHJCHU8WOvLFfULtRnTv5nVduhG2PN75tEFJjKfU88lF/Xr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=HFuwoPQ5; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.137.186.190] (unknown [131.107.159.62])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 9CFD120BE54C;
-	Wed, 15 May 2024 09:34:09 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 9CFD120BE54C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1715790849;
-	bh=LgGoEoCHc+tmuUHwV72O4w5DS5evewRoGKEngQZTkQw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HFuwoPQ5g1K3tnZKOH9/B5XNG9OpwxZJVSOTlMoZAY3YUVwYJWDUpZLViiDQtOLXM
-	 RF50tZekXZrLHIHIcY3x4azhgGO118LAatJ0iiSe91sxtFWwtf5g5PwaaOCZq6vrle
-	 74Dv+Hu/xVGAnFlpZ8lOpSayuYNe/006pxfc5wM8=
-Message-ID: <ea91140a-d0df-4efd-aef8-34f00b82cf74@linux.microsoft.com>
-Date: Wed, 15 May 2024 09:34:09 -0700
+	s=arc-20240116; t=1715790907; c=relaxed/simple;
+	bh=PoivPBOAhAAaQPcPeSYxBCrpVaH2Dxvmlh72fQacjy0=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=oKNrOi+8LtlIdMl3wUVBzxlzqvqfG6YZfbIc1+caRU4bDE3idR3fKfWRn2SWYKHtOvf7pzln75CCFB7PK77xPEFrDTrVJtQoS+Ld7hlQ1ss6hBzUMzcsMFhUJIapBftpVtbTaMczdvUxqzzoIAsVDRPHoc1Zu5X9v0gwO1KbZFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i+BO7M0Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 631FAC116B1;
+	Wed, 15 May 2024 16:35:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715790907;
+	bh=PoivPBOAhAAaQPcPeSYxBCrpVaH2Dxvmlh72fQacjy0=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=i+BO7M0Yi5kg6PyKIPG48oywJoh9XI7SE/K7f5EfIF8Zf0Xt7AAemOsznXTrcYHnr
+	 PWNBGZvlFwc/JgK5YfOOHD1dwHDP1ikgdpWHEWODRBsiE6f+EQ9jK3nyVB3Zma8sOf
+	 qPpmHVjB8lrgg11JC9i6POEg+dBQLQRyX7PvX3LwwnJWKQTbulg2Tgczng8cUZXy0U
+	 RsqZNiHziIt6TKCgfc6k67tkulpsFJazY0tFRuiy1YhIEAP5fDGErSyHOjnCLdKqd7
+	 aipouS95e+9nPCVCNMk00qLotMkasjAQGZvdZXICmOvPmSPC1LOO6fg3C20IE31kh3
+	 HUppaVHHyXKcw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 594FEC433A2;
+	Wed, 15 May 2024 16:35:07 +0000 (UTC)
+Subject: Re: [GIT PULL] selinux/selinux-pr-20240513
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <32b581d2da1208a912f4ad200b08bdf1@paul-moore.com>
+References: <32b581d2da1208a912f4ad200b08bdf1@paul-moore.com>
+X-PR-Tracked-List-Id: <selinux.vger.kernel.org>
+X-PR-Tracked-Message-Id: <32b581d2da1208a912f4ad200b08bdf1@paul-moore.com>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git tags/selinux-pr-20240513
+X-PR-Tracked-Commit-Id: 581646c3fb98494009671f6d347ea125bc0e663a
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: ccae19c6239ae810242d2edc03b02bdcc12fc5ab
+Message-Id: <171579090735.28973.14194535403813876767.pr-tracker-bot@kernel.org>
+Date: Wed, 15 May 2024 16:35:07 +0000
+To: Paul Moore <paul@paul-moore.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, selinux@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6/6] drivers/pci/hyperv/arm64: vPCI MSI IRQ domain from
- DT
-To: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
-Cc: arnd@arndb.de, bhelgaas@google.com, bp@alien8.de,
- catalin.marinas@arm.com, dave.hansen@linux.intel.com, decui@microsoft.com,
- haiyangz@microsoft.com, hpa@zytor.com, kw@linux.com, kys@microsoft.com,
- lenb@kernel.org, lpieralisi@kernel.org, mingo@redhat.com,
- mhklinux@outlook.com, rafael@kernel.org, robh@kernel.org,
- tglx@linutronix.de, wei.liu@kernel.org, will@kernel.org,
- linux-acpi@vger.kernel.org, linux-arch@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, x86@kernel.org,
- ssengar@microsoft.com, sunilmut@microsoft.com, vdso@hexbites.dev
-References: <20240514224508.212318-1-romank@linux.microsoft.com>
- <20240514224508.212318-7-romank@linux.microsoft.com>
- <20240515094820.GB22844@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-Content-Language: en-US
-From: Roman Kisel <romank@linux.microsoft.com>
-In-Reply-To: <20240515094820.GB22844@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
+The pull request you sent on Mon, 13 May 2024 17:23:02 -0400:
 
+> https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git tags/selinux-pr-20240513
 
-On 5/15/2024 2:48 AM, Saurabh Singh Sengar wrote:
-> On Tue, May 14, 2024 at 03:43:53PM -0700, Roman Kisel wrote:
->> The hyperv-pci driver uses ACPI for MSI IRQ domain configuration
->> on arm64 thereby it won't be able to do that in the VTL mode where
->> only DeviceTree can be used.
->>
->> Update the hyperv-pci driver to discover interrupt configuration
->> via DeviceTree.
-> 
-> Subject prefix should be "PCI: hv:"
-> 
-Thanks!
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/ccae19c6239ae810242d2edc03b02bdcc12fc5ab
 
->>
->> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
->> ---
->>   drivers/pci/controller/pci-hyperv.c | 13 ++++++++++---
->>   include/linux/acpi.h                |  9 +++++++++
->>   2 files changed, 19 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/pci/controller/pci-hyperv.c b/drivers/pci/controller/pci-hyperv.c
->> index 1eaffff40b8d..ccc2b54206f4 100644
->> --- a/drivers/pci/controller/pci-hyperv.c
->> +++ b/drivers/pci/controller/pci-hyperv.c
->> @@ -906,9 +906,16 @@ static int hv_pci_irqchip_init(void)
->>   	 * way to ensure that all the corresponding devices are also gone and
->>   	 * no interrupts will be generated.
->>   	 */
->> -	hv_msi_gic_irq_domain = acpi_irq_create_hierarchy(0, HV_PCI_MSI_SPI_NR,
->> -							  fn, &hv_pci_domain_ops,
->> -							  chip_data);
->> +	if (acpi_disabled)
->> +		hv_msi_gic_irq_domain = irq_domain_create_hierarchy(
->> +			irq_find_matching_fwnode(fn, DOMAIN_BUS_ANY),
->> +			0, HV_PCI_MSI_SPI_NR,
->> +			fn, &hv_pci_domain_ops,
->> +			chip_data);
->> +	else
->> +		hv_msi_gic_irq_domain = acpi_irq_create_hierarchy(0, HV_PCI_MSI_SPI_NR,
->> +			fn, &hv_pci_domain_ops,
->> +			chip_data);
-> 
-> Upto 100 characters per line are supported now, we can have less
-> line breaks.
-> 
-Fewer line breaks would make this look nicer, let me know if you had any 
-particular style in mind.
-
->>   
->>   	if (!hv_msi_gic_irq_domain) {
->>   		pr_err("Failed to create Hyper-V arm64 vPCI MSI IRQ domain\n");
->> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
->> index b7165e52b3c6..498cbb2c40a1 100644
->> --- a/include/linux/acpi.h
->> +++ b/include/linux/acpi.h
->> @@ -1077,6 +1077,15 @@ static inline bool acpi_sleep_state_supported(u8 sleep_state)
->>   	return false;
->>   }
->>   
->> +static inline struct irq_domain *acpi_irq_create_hierarchy(unsigned int flags,
->> +					     unsigned int size,
->> +					     struct fwnode_handle *fwnode,
->> +					     const struct irq_domain_ops *ops,
->> +					     void *host_data)
->> +{
->> +	return NULL;
->> +}
->> +
->>   #endif	/* !CONFIG_ACPI */
->>   
->>   extern void arch_post_acpi_subsys_init(void);
->> -- 
->> 2.45.0
->>
+Thank you!
 
 -- 
-Thank you,
-Roman
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
