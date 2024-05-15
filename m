@@ -1,145 +1,82 @@
-Return-Path: <linux-kernel+bounces-179976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 340F88C6858
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:12:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D30248C685C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:14:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE0D6282EE7
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 14:12:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D0A0B23037
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 14:14:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D108413F43C;
-	Wed, 15 May 2024 14:12:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A236913F43D;
+	Wed, 15 May 2024 14:14:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PFarJ7FY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ThykNrT9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17C626214D;
-	Wed, 15 May 2024 14:12:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2F8713F012;
+	Wed, 15 May 2024 14:14:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715782333; cv=none; b=sz812CUZFb+dnyWaFfwOk7/rWBxCRMP/1dXFDiLgNrfC5cj1aaynmMC1Ck5h63vPzF2qDWdIPiX7CxSVkapOhZaqlRIcE431dlK1tMbBsdTCbx8sXkU93g5pxvJdIechZ9X2XlqohdAKm/umzSqwnuxakYauYF823QpMs7Dgu44=
+	t=1715782457; cv=none; b=eOpzt2h//xqG7PUmafAsroOPjs2h6zgsYtmY16HG3z4JZPf1gOZsuNzIcSPYPUjey4v7yGRVnrpJlaXTLW+5cqUtil244L+kkAos09OliJBKfN93OmIwDy3wIuoHyGcn0+MMzoWhVd4nLniI3j6Wfy2bHceLSslA0g9mbfTLLGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715782333; c=relaxed/simple;
-	bh=3j8QUPT4n3WlJha4ay+imu5LoW+yfviO6ziI3FbuU8s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VgEwI3dbJ8SvEpMrOZ8GkrhjRewQj2apXe7IyeoKmTh0e/vttrQEaBJxmRB402v8jsPa0EZ8Dv/7M+vig6uzMGXw21SMICa6bjy7ieA7mPpf7/CS9QEEVca8mpBpmzrDnhtQtiINK72gXqIXMRNvLFg8kMYExt9eX6la1mKuZ/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PFarJ7FY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92135C32789;
-	Wed, 15 May 2024 14:12:10 +0000 (UTC)
+	s=arc-20240116; t=1715782457; c=relaxed/simple;
+	bh=hYvG4BZJM2sDn6KG6DSiEfpwVN3PBWYFV5jfWq39tzQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fZ8BfY/yHBDUlJx4VjenmEcSOHeu5I07XJGH+Ohzu13ao7Pudi8gMNknG8fkajbDkA3eK8pzSXjsS2JyVzo1/wAMB6nEY/w106F8trcipabUu9z3Wb2LdVFlU3JzR5dKM5vfKft8qJy2uy4sWOgr7X3tfretBwyFkdjSTds8uog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ThykNrT9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1699CC32789;
+	Wed, 15 May 2024 14:14:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715782332;
-	bh=3j8QUPT4n3WlJha4ay+imu5LoW+yfviO6ziI3FbuU8s=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=PFarJ7FY87W+2jdj6prpknGvVlNMagie4ROVj3YkBhlhoA0PzLgvQis9ynwSXkmCo
-	 N1CeXZv76izZpPtignMzL1ysx+Cv4wc96HAacDLWXWv8HBl5Xahah1azaTlg9foM1s
-	 otCgKSqy7GUIq9PFn+2btWyiXGb8ec0BuAWzZ9qmXb1vnBAZhh4VEbixKxBwVjWCUr
-	 V4JCCTlaPfYaykjn34NbMl2wmwqbLrBCu27YGDCAHnVyM/o1WORXw4UFlDD57NRrbV
-	 iYuc9gUGhUd8m8Xnaq2s9zUGiAgMK1zRKSB5sru97E1/tZgcw7Pdh6A/rk66009rCo
-	 WivXfqiG377Dw==
-Message-ID: <2e3b20d1-114b-4fbe-819c-437b1530db4f@kernel.org>
-Date: Wed, 15 May 2024 16:12:09 +0200
+	s=k20201202; t=1715782456;
+	bh=hYvG4BZJM2sDn6KG6DSiEfpwVN3PBWYFV5jfWq39tzQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ThykNrT9n8ZKE1OD3zLWQYd0g89YBsgOsU4Gt4H1MEKadRGtgYS8yfBkMU5BmVHby
+	 NT0sxv+ILI9YZ33ETKcp9Jhq1Iu+jX4eVyU3K7snWorp3SbNibDpe8MZ5DE3wQFxsS
+	 jRVx9j5hx7Z6q41BFah9ZQWoVo3SF6QwcBRFRTcoAQPPrUSG9UxiICSwtq+0Dn5e7N
+	 yCDBdByBr2NfvpP7ANSbjJXhTfA0xvgFnplal556S/N7x3supqIJffgZ7ZYn1A5PU3
+	 iKnlIGVnj+r+9wpRdfLpXODMGyeBDqly2ES8QKJ5K70S0smN3YBjDA3OWu95EYnLPN
+	 o4gPjDd3MQ2QQ==
+Date: Wed, 15 May 2024 16:14:14 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: kernel test robot <oliver.sang@intel.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>, ying.huang@intel.com,
+	feng.tang@intel.com, fengwei.yin@intel.com
+Subject: Re: [linus:master] [timers/migration]  61f7fdf8fd:
+ netperf.Throughput_Mbps 2.7% improvement
+Message-ID: <ZkTDNsKXs0VCHiaf@localhost.localdomain>
+References: <202405151553.6423572f-oliver.sang@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/9] dt-bindings: fsi: fsi2spi: Document SPI controller
- child nodes
-To: Eddie James <eajames@linux.ibm.com>, linux-fsi@lists.ozlabs.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, robh@kernel.org, joel@jms.id.au,
- andrew@codeconstruct.com.au
-References: <20240514195435.155372-1-eajames@linux.ibm.com>
- <20240514195435.155372-2-eajames@linux.ibm.com>
- <5e8eb8a7-c497-4960-8c1c-e58586f53c9f@kernel.org>
- <3128df9c-0883-4aad-a959-76f175e8e9a4@linux.ibm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <3128df9c-0883-4aad-a959-76f175e8e9a4@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <202405151553.6423572f-oliver.sang@intel.com>
 
-On 15/05/2024 15:06, Eddie James wrote:
-> 
-> On 5/15/24 03:14, Krzysztof Kozlowski wrote:
->> On 14/05/2024 21:54, Eddie James wrote:
->>
->>>   properties:
->>>     compatible:
->>> @@ -24,6 +23,17 @@ properties:
->>>       items:
->>>         - description: FSI slave address
->>>   
->>> +  "#address-cells":
->>> +    const: 1
->>> +
->>> +  "#size-cells":
->>> +    const: 0
->>> +
->>> +patternProperties:
->>> +  "^spi@[0-9a-f]+$":
->>> +    type: object
->>> +    $ref: /schemas/spi/ibm,spi-fsi.yaml
->> Are you sure you do not have dependencies? Nothing was explained about
->> this in the cover letter or changelog.
+Le Wed, May 15, 2024 at 04:06:50PM +0800, kernel test robot a écrit :
 > 
 > 
-> I did mention that it depends on the SPI binding change below the commit 
-> message in this patch. I guess I should have kept these two together...
+> Hello,
+> 
+> kernel test robot noticed a 2.7% improvement of netperf.Throughput_Mbps on:
+> 
+> 
+> commit: 61f7fdf8fd00ce33d30ca3fae8d643c0850ce945 ("timers/migration: Fix ignored event due to missing CPU update")
+> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
 
-Ah, I missed that. Yeah, you must keep them together or wait one more
-cycle... Just test bisectability of your patchset.
+Nice, so this means the previously reported regression with netperf due to the
+new timer migration code is gone, right?
 
-Best regards,
-Krzysztof
+For reference: https://lore.kernel.org/all/202403011511.24defbbd-oliver.sang@intel.com/
 
+Thanks.
 
