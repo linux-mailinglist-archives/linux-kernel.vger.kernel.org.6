@@ -1,180 +1,243 @@
-Return-Path: <linux-kernel+bounces-180034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F5B58C6923
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:01:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B11248C6926
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:02:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DADE51F21D81
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 15:01:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F9501F21E8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 15:02:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CFBE155747;
-	Wed, 15 May 2024 15:01:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8A3D155A27;
+	Wed, 15 May 2024 15:01:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p53Sex6r"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dJl3MCaF"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 956A45C8EF;
-	Wed, 15 May 2024 15:01:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AB2C155A2B
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 15:01:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715785308; cv=none; b=ierG6GP2VXYZo7G+X4E3RP6laVCGAhlWriqTk7vUrNBBz9s5TEsnaCtRQtSJqdLi2ZUFruAfb3/XVgoGypOID5KYmEYNaLvx68MiTAd+r7DyTeSL5sR4alBJeXIwrG8xJvu1TjESweePDvUZeeuPeeJ0l456o+CoXnYTNB54Bkk=
+	t=1715785313; cv=none; b=UYYGWkLMKKJtS875d7KJANpHWZVaAjK6/fWsgnQHnpcVLHDEBkIYHlhSvasU7g8vJYWA1snpTf9sslXWs1RKRh2RUGV/jOQS/Kdf4NjCn1FYeptFcaEoouY8+497szoMwv0pLkERWubE9DmedSuPNtpg/ZJYFzScrgFEaQTjCck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715785308; c=relaxed/simple;
-	bh=FJbNPnUkasyY9TzP1ZUPLSyD2EQcKz/cqB3DDwyBxrc=;
+	s=arc-20240116; t=1715785313; c=relaxed/simple;
+	bh=ScHBNCjfwH0hgsz8GZny0v3ytqV7J3w0ocDS7d+1VoI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ahi1Ewq7l7pT+PSTxymo4KKUmz1ssJZCMUyTi0Fy+UrVW9CUxG7PWaViguovr0sQsiluxGn8j7+U0Hnrx1poc7GZfdABC8NH0eYYm+MKfWC6jATVXq3Bfj3hipTAoPIL6ZZ2zWXfU3u7Hr6VkE+qXOEvUMy2Cb0/tX/N6qVMHEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p53Sex6r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 161AAC116B1;
-	Wed, 15 May 2024 15:01:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715785308;
-	bh=FJbNPnUkasyY9TzP1ZUPLSyD2EQcKz/cqB3DDwyBxrc=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=p53Sex6r84tdCIPl4BKe8v4+wVZwH3i1kXGQA51tPbcxHNRCmfj9oqZqi7lh2w/gH
-	 ewnv8vMSNDJy3getAiNWy38VGTjrg/MlkVFW1YJawnKNtlpkJS8XfmbrfhRD8zoTLy
-	 WfNSjUfwLQE50KSnVCSVdlJ47EjbuIL6f9qo63pSeP1DJidSyASR0SCX1Nnp2kjq39
-	 7vpXxLoL5DqM815YWO1ptyStUCOEw2dfZNg9boTD0Cy/ziT9gWxUcpS7m5MOwZ2pn5
-	 sqpdbVruaMGa0bMrIaYkPKlMUnOFCoCrWX89rQvrbJjuoVmOVOKOzG3RjH4OsEkZyJ
-	 NKh/qad+ZenJg==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 90968CE098A; Wed, 15 May 2024 08:01:37 -0700 (PDT)
-Date: Wed, 15 May 2024 08:01:37 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>
-Cc: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	kernel-team@meta.com, mingo@kernel.org, stern@rowland.harvard.edu,
-	parri.andrea@gmail.com, will@kernel.org, peterz@infradead.org,
-	boqun.feng@gmail.com, npiggin@gmail.com, dhowells@redhat.com,
-	j.alglave@ucl.ac.uk, luc.maranget@inria.fr, akiyks@gmail.com,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Daniel Lustig <dlustig@nvidia.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
-Subject: Re: [PATCH memory-model 2/4] Documentation/litmus-tests: Demonstrate
- unordered failing cmpxchg
-Message-ID: <49f61e62-dbd8-449d-9166-11da43db76a6@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <42a43181-a431-44bd-8aff-6b305f8111ba@paulmck-laptop>
- <20240501232132.1785861-2-paulmck@kernel.org>
- <c97f0529-5a8f-4a82-8e14-0078d4372bdc@huaweicloud.com>
- <16381d02-cb70-4ae5-b24e-aa73afad9aed@huaweicloud.com>
- <2a695f63-6c9a-4837-ac03-f0a5c63daaaf@paulmck-laptop>
- <143273e9-1243-60bc-4fb0-eea6fb3de355@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=o7gY7rQv2Se9Q1JnRMJxUZlmLMUi9aMd+pCMuPhqgOT3oYO94VSgB9qMqDb5pi4E7v7Jms/BoOnpotbNtXVDH+AUOYRtBfvCeax4ntAgQ6sesyRTclRn9n+qrkkPrgcqmwIDdrbQjJBbe+LBs5E8luIOU9W4r3rONy8/G5sKFkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dJl3MCaF; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2e4b90b03a9so76802241fa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 08:01:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715785310; x=1716390110; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1UyqZmUfboktWppmzlMbge493UhsV2Qc8tBPPHmQa0s=;
+        b=dJl3MCaFt/4v3FygCxRHjHN9zOqmdNhNlo1EPkCzVGKI9Yi25D5IHgLeZJaq++ZH01
+         gtVEnJXXNjYebR9EnogSbPVbiLUPUWfjN68+O2q5z4SK98/SK23PyD85QL4ceiNAcFqV
+         VeTYjL5JwY3TP2mGtPFCubqeqsRkAznyJKFNesuaTZSrZU86ONCdi4fyVMsPZnko0VsF
+         4pFACOc8Of/WQHIw5WpRUsww+qo678orS68qP4NaJtJiqIAxrYjw/RYz4zpJRgLW9P0l
+         qsR3r7S+FrtprUzB14vU+93bcgn/LmIyB9wAB/EENKdlZUZp59hTsRsY68fCNbWRtdVY
+         LbzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715785310; x=1716390110;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1UyqZmUfboktWppmzlMbge493UhsV2Qc8tBPPHmQa0s=;
+        b=O9DfJTY7W39vK7rSz2z1w5wK9VVbAgaZ1DJ/5+gZHt+JhqeTMjd5GB/QiFqLvelhhd
+         oVjtCNn96MkMC1hWYXRoFcq8SHV4L1CHhZFfEpMuAFiGK+EJooB+hbgO+PRMvAdCERRN
+         j+ZtXLprM1ULYpBx24oSwfqxkvP2iYc+vMht2nWYnXRtrJwyGhn+IWkYeUBClSt6ZjWD
+         0R4vpCSxjQa/EEFrqnCvi0XpN7chi4bRtaPY7FvvXXpax8NZ2DOHJizIfi2Gz6WZ1pVG
+         8yiBvBILA3S8F8F3PmmZ7x0Y4PuWy7BcjGoCiP+PQRYU6zkWmfq/A1iBmrkJHh4iFLuB
+         JmTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUJgvLgTVf0r1AWxlyBKCy3Sn12cgKCWZpRLPxDYxsekRfkVBDE5uD+j9XDHfa2pO1/TyfVKQZPA37Umz2kKlAinST+UwFiip4LEw5e
+X-Gm-Message-State: AOJu0YxGreyxab89jk7Et9BbvCucqfAgW1hJarDiw3SPHYnWqVQmLScV
+	n9Sg3f+h1sa4eiXhlNPFPHMiPpPPqe/KclYlg1kDdr7dFJ4FqH05qK9SNvCXsEHUyygHcEoMdsK
+	M2qQ=
+X-Google-Smtp-Source: AGHT+IHbwp2iYCqmHM0R9xejEb13mh3r9CmNNOPKVYnou4CH7qz3D3yCaBHkx24yNkzM8v3qHfsyGg==
+X-Received: by 2002:a2e:f1a:0:b0:2e6:a7c3:775a with SMTP id 38308e7fff4ca-2e6a7c37977mr49132481fa.52.1715785310131;
+        Wed, 15 May 2024 08:01:50 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2e4d1622740sm21039371fa.119.2024.05.15.08.01.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 May 2024 08:01:49 -0700 (PDT)
+Date: Wed, 15 May 2024 18:01:48 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 7/8] usb: typec: ucsi: glink: merge pmic_glink_altmode
+ driver
+Message-ID: <f2bqgtoll3j6pseg6hzvwtyqiwfwcaepuhcnq4nrshux2bnluh@rte67mi7zcey>
+References: <20240416-ucsi-glink-altmode-v1-0-890db00877ac@linaro.org>
+ <20240416-ucsi-glink-altmode-v1-7-890db00877ac@linaro.org>
+ <ZiZC/l9nOmzWx+j6@kuha.fi.intel.com>
+ <46fktwtp3xers6tcpov3qo4zswptvajewsdltm45zbz2kmmpzp@cthu6ylttup3>
+ <ZiZ8El4779l0W1Ig@kuha.fi.intel.com>
+ <CAA8EJppMKFSbe-EZLELy+dnd4BZeg24crotH95hpCwcvoEbw5Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <143273e9-1243-60bc-4fb0-eea6fb3de355@huaweicloud.com>
+In-Reply-To: <CAA8EJppMKFSbe-EZLELy+dnd4BZeg24crotH95hpCwcvoEbw5Q@mail.gmail.com>
 
-On Wed, May 15, 2024 at 08:44:30AM +0200, Hernan Ponce de Leon wrote:
-> On 5/6/2024 8:00 PM, Paul E. McKenney wrote:
-> > On Mon, May 06, 2024 at 06:30:45PM +0200, Jonas Oberhauser wrote:
-> > > Am 5/6/2024 um 12:05 PM schrieb Jonas Oberhauser:
-> > > > Am 5/2/2024 um 1:21 AM schrieb Paul E. McKenney:
-> > > > > This commit adds four litmus tests showing that a failing cmpxchg()
-> > > > > operation is unordered unless followed by an smp_mb__after_atomic()
-> > > > > operation.
-> > > > 
-> > > > So far, my understanding was that all RMW operations without suffix
-> > > > (xchg(), cmpxchg(), ...) will be interpreted as F[Mb];...;F[Mb].
-> > > > 
-> > > > I guess this shows again how important it is to model these full
-> > > > barriers explicitly inside the cat model, instead of relying on implicit
-> > > > conversions internal to herd.
-> > > > 
-> > > > I'd like to propose a patch to this effect.
-> > > > 
-> > > > What is the intended behavior of a failed cmpxchg()? Is it the same as a
-> > > > relaxed one?
-> > 
-> > Yes, and unless I am too confused, LKMM currently does implement this.
-> > Please let me know if I am missing something.
-> > 
-> > > > My suggestion would be in the direction of marking read and write events
-> > > > of these operations as Mb, and then defining
-> > > > 
-> > > > (* full barrier events that appear in non-failing RMW *)
-> > > > let RMW_MB = Mb & (dom(rmw) | range(rmw))
-> > > > 
-> > > > 
-> > > > let mb =
-> > > >       [M] ; fencerel(Mb) ; [M]
-> > > >     | [M] ; (po \ rmw) ; [RMW_MB] ; po^? ; [M]
-> > > >     | [M] ; po^? ; [RMW_MB] ; (po \ rmw) ; [M]
-> > > >     | ...
-> > > > 
-> > > > The po \ rmw is because ordering is not provided internally of the rmw
-> > > 
-> > > (removed the unnecessary si since LKMM is still non-mixed-accesses)
-> > 
-> > Addition of mixed-access support would be quite welcome!
-> > 
-> > > This could also be written with a single rule:
-> > > 
-> > >       | [M] ; (po \ rmw) & (po^?; [RMW_MB] ; po^?) ; [M]
-> > > 
-> > > > I suspect that after we added [rmw] sequences it could perhaps be
-> > > > simplified [...]
-> > > 
-> > > No, my suspicion is wrong - this would incorrectly let full-barrier RMWs
-> > > act like strong fences when they appear in an rmw sequence.
-> > > 
-> > >   if (z==1)  ||  x = 2;     ||  xchg(&y,2)  || if (y==2)
-> > >     x = 1;   ||  y =_rel 1; ||              ||    z=1;
-> > > 
-> > > 
-> > > right now, we allow x=2 overwriting x=1 (in case the last thread does not
-> > > propagate x=2 along with z=1) because on power, the xchg might be
-> > > implemented with a sync that doesn't get executed until the very end
-> > > of the program run.
-> > > 
-> > > 
-> > > Instead of its negative form (everything other than inside the rmw),
-> > > it could also be rewritten positively. Here's a somewhat short form:
-> > > 
-> > > let mb =
-> > >       [M] ; fencerel(Mb) ; [M]
-> > >     (* everything across a full barrier RMW is ordered. This includes up to
-> > > one event inside the RMW. *)
-> > >     | [M] ; po ; [RMW_MB] ; po ; [M]
-> > >     (* full barrier RMW writes are ordered with everything behind the RMW *)
-> > >     | [W & RMW_MB] ; po ; [M]
-> > >     (* full barrier RMW reads are ordered with everything before the RMW *)
-> > >     | [M] ; po ; [R & RMW_MB]
-> > >     | ...
-> > 
-> > Does this produce the results expected by the litmus tests in the Linux
-> > kernel source tree and also those at https://github.com/paulmckrcu/litmus?
-> > 
-> > 							Thanx, Paul
-> 
-> I implemented in the dartagnan tool the changes proposed by Jonas (i.e.
-> changing the mb definition in the cat model and removing the fences that
-> were added programmatically).
-> 
-> I run this using the ~5K litmus test I have (it should include everything
-> from the source tree + the non-LISA ones from your repo). I also checked
-> with the version of qspinlock discussed in [1].
-> 
-> I do get the expected results.
+Hi Heikki,
 
-Thank you very much, Hernan!!!  And good show, Puranjay!!!
 
-							Thanx, Paul
+On Sat, May 04, 2024 at 09:49:42AM +0300, Dmitry Baryshkov wrote:
+> On Mon, 22 Apr 2024 at 18:02, Heikki Krogerus
+> <heikki.krogerus@linux.intel.com> wrote:
+> >
+> > Hi Dmitry,
+> >
+> > On Mon, Apr 22, 2024 at 03:45:22PM +0300, Dmitry Baryshkov wrote:
+> > > On Mon, Apr 22, 2024 at 01:59:10PM +0300, Heikki Krogerus wrote:
+> > > > Hi Dmitry,
+> > > >
+> > > > On Tue, Apr 16, 2024 at 05:20:56AM +0300, Dmitry Baryshkov wrote:
+> > > > > Move handling of USB Altmode to the ucsi_glink driver. This way the
+> > > > > altmode is properly registered in the Type-C framework, the altmode
+> > > > > handlers can use generic typec calls, the UCSI driver can use
+> > > > > orientation information from altmode messages and vice versa, the
+> > > > > altmode handlers can use GPIO-based orientation inormation from UCSI
+> > > > > GLINK driver.
+> > > > >
 
-> Hernan
+[skipped]
+
+> > > Note, the existing UCSI displayport AltMode driver depends on the UCSI
+> > > actually handling the altomode. It needs a partner, etc.
+> > >
+
+[skipped the patch]
+
+> > > > > +static void pmic_glink_ucsi_set_state(struct ucsi_connector *con,
+> > > > > +                               struct pmic_glink_ucsi_port *port)
+> > > > > +{
+> > > > > + struct typec_displayport_data dp_data = {};
+> > > > > + struct typec_altmode *altmode = NULL;
+> > > > > + unsigned long flags;
+> > > > > + void *data = NULL;
+> > > > > + int mode;
+> > > > > +
+> > > > > + spin_lock_irqsave(&port->lock, flags);
+> > > > > +
+> > > > > + if (port->svid == USB_SID_PD) {
+> > > > > +         mode = TYPEC_STATE_USB;
+> > > > > + } else if (port->svid == USB_TYPEC_DP_SID && port->mode == DPAM_HPD_OUT) {
+> > > > > +         mode = TYPEC_STATE_SAFE;
+> > > > > + } else if (port->svid == USB_TYPEC_DP_SID) {
+> > > > > +         altmode = find_altmode(con, port->svid);
+> > > > > +         if (!altmode) {
+> > > > > +                 dev_err(con->ucsi->dev, "altmode woth SVID 0x%04x not found\n",
+> > > > > +                         port->svid);
+> > > > > +                 spin_unlock_irqrestore(&port->lock, flags);
+> > > > > +                 return;
+> > > > > +         }
+> > > > > +
+> > > > > +         mode = TYPEC_MODAL_STATE(port->mode - DPAM_HPD_A);
+> > > > > +
+> > > > > +         dp_data.status = DP_STATUS_ENABLED;
+> > > > > +         dp_data.status |= DP_STATUS_CON_DFP_D;
+> > > > > +         if (port->hpd_state)
+> > > > > +                 dp_data.status |= DP_STATUS_HPD_STATE;
+> > > > > +         if (port->hpd_irq)
+> > > > > +                 dp_data.status |= DP_STATUS_IRQ_HPD;
+> > > > > +         dp_data.conf = DP_CONF_SET_PIN_ASSIGN(port->mode - DPAM_HPD_A);
+> > > > > +
+> > > > > +         data = &dp_data;
+> > > > > + } else {
+> > > > > +         dev_err(con->ucsi->dev, "Unsupported SVID 0x%04x\n", port->svid);
+> > > > > +         spin_unlock_irqrestore(&port->lock, flags);
+> > > > > +         return;
+> > > > > + }
+> > > > > +
+> > > > > + spin_unlock_irqrestore(&port->lock, flags);
+> > > > > +
+> > > > > + if (altmode)
+> > > > > +         typec_altmode_set_port(altmode, mode, data);
+> > > >
+> > > > So if the port altmode is using the ucsi_displayport_ops, you can
+> > > > simply register the partner altmode here instead. That should
+> > > > guarantee that it'll bind to the DP altmode driver which will take
+> > > > care of typec_altmode_enter() etc.
+> > >
+> > > In our case the altmode is unfortunately completely hidden inside the
+> > > firmware. It is not exported via the native UCSI interface. Even if I
+> > > plug the DP dongle, there is no partner / altmode being reported by the
+> > > PPM. All DP events are reported via additional GLINK messages.
+> >
+> > I understand that there is no alt mode being reported, but I assumed
+> > that there is a notification about connections.
+> >
+> > If that's not the case, then you need to use this code path to
+> > register the partner device as well I think. The partner really has to
+> > be registered somehow.
+> >
+> > > The goal is to use the core Type-C altmode handling, while keeping UCSI
+> > > out of the altmode business.
+> > >
+> > > This allows the core to handle switches / muxes / retimers, report the
+> > > altmode to the userspace via sysfs, keep the link between the DP part of
+> > > the stack and the typec port, but at the same time we don't get errors
+> > > from UCSI because of the PPM reporting unsupported commands, etc.
+> >
+> > I understand, and just to be clear, I don't have a problem with
+> > bypassing UCSI. But that does not mean you can skip the alt mode
+> > registration.
+> >
+> > The primary purpose of drivers/usb/typec/ucsi/displayport.c is to
+> > emulate the partner DP alt mode device a little so that the actual DP
+> > alt mode driver drivers/usb/typec/altmodes/displayport.c is happy. The
+> > altmode driver will then make sure that all the muxes, switches and
+> > what have you, are configured as they should, and more importantly,
+> > make sure the DP alt mode is exposed to the user space exactly the
+> > same way as it's exposed on all the other systems.
+> >
+> > There are a couple of UCSI commands that are being used there yes, but
+> > by modifying it so that those UCSI commands are executed conditionally
+> > - by checking the ALT_MODE_DETAILS feature - you should be able to use
+> > it also in this case.
 > 
-> [1] https://lkml.org/lkml/2022/8/26/597
+> I have played with the DP AltMode driver. I got it somewhat working,
+> but I think I'm facing a control issue.
+> Basically, the altmode driver wants to control pin assignment on its
+> own. It works with the software TCPM, as we control it.
+> It works with the normal UCSI, because it still can configure pin
+> config. However with PMIC GLINK implementation there is no way to
+> control pin assignment from the Linux side. The firmware does that for
+> us.
+> What would be the recommended way to handle it? Is it okay to override
+> status_update to return just the selected pin config? Or is there any
+> other (better) way to handle such an issue?
+
+Any suggestions or further comments? Is it better to extend the
+DisplayPort Altmode driver with the 'forced' transitions? Or it would be
+fine to just register a partner device, emulate the userspace events,
+but completely ignore the existing displayport driver?
+
 > 
+> >
+> > You really need to register the partner alt mode(s) one way or the
+> > other in any case, and the partner device itself you absolutely must
+> > register. The user space interface needs to be consistent.
+> 
+> For reference, the partner is being reported and registered by the
+> UCSI firmware. It's only the altmode itself where I'm facing the
+> issue.
+
+-- 
+With best wishes
+Dmitry
 
