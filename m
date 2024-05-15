@@ -1,115 +1,168 @@
-Return-Path: <linux-kernel+bounces-179595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BAA18C61E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:41:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AED818C61E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:41:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C0971F21FDA
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 07:41:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D836282A45
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 07:41:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B92747F53;
-	Wed, 15 May 2024 07:41:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67AAE44C67;
+	Wed, 15 May 2024 07:41:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e8+pZEkW"
-Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QkfXWV1N"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 176FA44391;
-	Wed, 15 May 2024 07:40:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3E25446A9
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 07:41:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715758861; cv=none; b=q8BTcAh8fJdXht7TmCsZfCR2SMC+PFb+aEqYWFS/mWIvIOmWmv19pvpGYUF73xuEOBAjsab9g96seZ5pbm0MHEG+Celd+B0h1sxDv2rCgH/YsPHW5OEBEan5QbUkZnzbyjWL5GEZW0M2gN7bdu+csuenAO4SSoJYpeXaIg9WsaM=
+	t=1715758884; cv=none; b=sCVyrp/lb89fIrz4dY8mvYfzhezMxBQtDNvOkRiRQEUI8gGdnO8HlZ1YBCwNxd/pq3G9plgts0CYlGNTuJjJgnu1Fd1Lky6C9L0/Rt6T7pbySuS7rFNjB+ncL0zddjLyn0RbRi75oNCKpep3B46SakxgV6TTX22LAmMz5cZve0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715758861; c=relaxed/simple;
-	bh=t9RspgqG+F2PVlmvWuEQ0GLhwwngFJ3ao73Evv6IOpc=;
+	s=arc-20240116; t=1715758884; c=relaxed/simple;
+	bh=RFW3BR0Fx+ilvq56Z5emz/Ta0NJMDiHFx1b3U+5kH5A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lycdBEhIjUgeahdFvxQWIdRdbrzKpTcR4FJwkqQH0/3i49ZR6WH5oXRcSutYRZdsNhVcRVWK81MCRz/Yi/vGBH91bL7PT8myyU+mH8ujy+Vqlyhbq8t9I+0Id9R8ENmWEs33yB2A4iBMgMspKyZIf9X4kWdt4wbbgZ4b3NefdwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e8+pZEkW; arc=none smtp.client-ip=209.85.210.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-6f0f5645c68so2211271a34.1;
-        Wed, 15 May 2024 00:40:59 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=FHZKX0BBqKrR9qSo1LqgRQj9WYU3NUUZd72ysLLFVdZbyD4ymrkSzylMlXjBz/sIc/xR6on2tVJTZ5VRDtxupsaortxZoGBBrVI77T2/GGw8RNHOEe/EqfbzwlUaFZitlGAd4AWlWIHA//VZ/qrfDcuZGKpwjSAuI7j9EOw2iiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QkfXWV1N; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-34d7d04808bso4971410f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 00:41:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715758859; x=1716363659; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TLhn4fqdh7o5svdDGhY37fd8hSl+dswnienDJA3jE4w=;
-        b=e8+pZEkWRrmirjaxLS/JuS0I+LZprA9UzY2I1lgAHtV7JaJoWwp1sOvka8kN/b/V8B
-         0md3lEy3wv8jJHUH271MxrtdZTERZLp7vu/5Orfn7DiBzV6yRE3jkeYgIMYBArevzh86
-         eIiVlL4adsC6kpkQOr+f1mrjf11H+7gzCeLmZlCG1z3G6nbd9/bYO06telsZCFXj5Q+w
-         A6AjussYuWZkGjket7wxkUd25Hcl92adqxxKtByIcaCsUgwgaMIB2LS+K89mIkjbt4mV
-         fJ4yv871NzFE7phzB4UiNrvkCAOZ4PMIeHzlp6RVtIYswRoVvgQTE5kLtO9JBZrUcCa1
-         UMuQ==
+        d=linaro.org; s=google; t=1715758881; x=1716363681; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=3JHt5mzBMB3tfzCLNPXhZ+TCuVkqxJvVqoFszdx1YnQ=;
+        b=QkfXWV1NKNeuGJ6yKXRSBozVvJZztDzFc41BYDGcQN43KgC5miOk/nKqj2+dM1NU60
+         6q+bQREeizoq6dVoMFuBV21IX3TvQudlYWkFGvY6EySWl5dqVo9/2sWs4NOkET2ggoqM
+         nVnkS9sEHj81ETnUxPutIIN3g72oY11o+iy/E5YGrUnF3Uy1AJTUqr5tPeXagARApU6A
+         4I4bTcWK+/wcKYHZpwYRbiGT6c5A+2ane311AeA1KO0W2niM4lrxXuIQobw0E5zLX16A
+         qDwaNKeoztqZ7semPSxuZUh/1u1wS+5DW1HG9Iwr8bI7Cx9OOa45SYg/ofCDSchfqCCA
+         of7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715758859; x=1716363659;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TLhn4fqdh7o5svdDGhY37fd8hSl+dswnienDJA3jE4w=;
-        b=OTY7I8PskVeO/rgBpDSwS4bdXjYizR6njNgpLfizv0ktga/OlOXODtn/cTLbqcf/Ew
-         YTAqCFFY5UuLJVy0GNYR7uQDU2DKcAH6jomK6VRa/ddrpOGw68qFIFRTNpTbpkZkAnY4
-         B37fAwz0ODajWocgblRqLSD9sW9dwleMzswOhAO7e1GuAfEtG+/qLeP05QkWDuhC0pFK
-         uVzN3zBSzNdpAKLXYSiWeH6SM/jY10rBRslRBy5Tp8ZojRcOvOuBz4Lo0F90QQOJhCG0
-         bPoAQfSlnVEMFBcD+SX7tAf7ee/+Wts6w2qv0WNcomcxYP1ncbqRX1pVdQdFp8z1jPJ5
-         q8bQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWC6IOCdu5Mjah025IGxZ6SZkXkjDxAEkdheBZseQBSTw3dBq63G5HmQJhgHdEWsu0BvQ2DlZzsdPU+vz4rN82l/XqlZnxGrxXNjD2emHDeW/4ly55coq2dbM/lLBYsoX14enj69qCk418DOYfiRkW+wv/joXOwip59ZrEAeu6kVndH
-X-Gm-Message-State: AOJu0Yzpbgq6OpmkK5aowEtbWxaU7/G3PV7mFHzsYkvhg/lGjkJIkkpa
-	Av/E9Qm1WDfiPBJW1w1o+F8XdaOfD4ufk8tG8t44zzcDuE+bnR6K
-X-Google-Smtp-Source: AGHT+IFAoB28Oxhj1Qe9IKvpyG7rsjUv6rTIqwphEgorIUy9cjMuH127glK9Bi63tCvYIjYKLEYIaQ==
-X-Received: by 2002:a05:6830:f8c:b0:6f1:23cc:b4ff with SMTP id 46e09a7af769-6f123ccbc9amr1247245a34.11.1715758859033;
-        Wed, 15 May 2024 00:40:59 -0700 (PDT)
-Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-63411530b0esm10843078a12.88.2024.05.15.00.40.57
+        d=1e100.net; s=20230601; t=1715758881; x=1716363681;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3JHt5mzBMB3tfzCLNPXhZ+TCuVkqxJvVqoFszdx1YnQ=;
+        b=g5LfIT56z2lm2RFakAU8FknIDbb65bEksOOEuopYXGfoUdiGA5GA3o+ZzfrFtLltFx
+         yL3pqCFWKtpyJNhqc+meXOKEIEKtUi5hDx7Q8ifmFqkk4xHryHQjDXiDNIwglaYOLvF6
+         9rXohtiqGEJ5o+Ns9o16FnzzlpmavuNmLW0fuYn7IN6ZJYJyTAMQqGqJtujYQvCt/9y8
+         jtBFNf6UlJ8FzdrzdYn/ENorgq4Seqz5VhWJMSR0tUpjqhe6U5i5GHlV1GEruaJ5jYyB
+         vjIlIOczv7mCLXf3vqudRpXu1K/rF+nNl2skV/HHFNOvCtvvjZIkHo25SY3FMSjMpmR/
+         ZOsw==
+X-Forwarded-Encrypted: i=1; AJvYcCVLoTD0uFA8VCstRqIkNS4f8qlZX+JMY0z0cgwNFGdA34AzdWhEQOlNVpNlxwl4aL8zVBu74asBmEYssatKCFW9bJjg8ogNX2qJo4fw
+X-Gm-Message-State: AOJu0YwZNYmiNs4wfSXm9sChsHoMZED3F1lApiYEoi+ltWr+nQe06OZa
+	NUXxQQPH4pVibgfYT5rLabyyN9Agot8I1uFtGnsNetpXVQ4IDQGl1WaZToAskw==
+X-Google-Smtp-Source: AGHT+IGBVDu0Law5aI1G/S0fHUin98INzJfLX8XCfcsUILHBusKucgtQy7yBdtXwtqjuuDPb4IhRpQ==
+X-Received: by 2002:adf:eb49:0:b0:345:816c:6e16 with SMTP id ffacd0b85a97d-3504a632b68mr13926271f8f.25.1715758880897;
+        Wed, 15 May 2024 00:41:20 -0700 (PDT)
+Received: from thinkpad ([149.14.240.163])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502b8a78cdsm15608272f8f.58.2024.05.15.00.41.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 May 2024 00:40:58 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Tue, 14 May 2024 21:40:56 -1000
-From: Tejun Heo <tj@kernel.org>
-To: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Matthew Wilcox <willy@infradead.org>, Jens Axboe <axboe@kernel.dk>,
-	Josef Bacik <josef@toxicpanda.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>, linux-mm@kvack.org,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	cgroups@vger.kernel.org, Zhaoyang Huang <huangzhaoyang@gmail.com>,
-	steve.kang@unisoc.com
-Subject: Re: [RFC PATCH 2/2] mm: introduce budgt control in readahead
-Message-ID: <ZkRnCDasZNvFQUaY@slm.duckdns.org>
-References: <20240515012350.1166350-1-zhaoyang.huang@unisoc.com>
- <20240515012350.1166350-3-zhaoyang.huang@unisoc.com>
+        Wed, 15 May 2024 00:41:20 -0700 (PDT)
+Date: Wed, 15 May 2024 09:41:19 +0200
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Slark Xiao <slark_xiao@163.com>
+Cc: loic.poulain@linaro.org, mhi@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	quic_qianyu@quicinc.com
+Subject: Re: Re: [PATCH] bus: mhi: host: Add Foxconn SDX72 related support
+Message-ID: <20240515074119.GA2445@thinkpad>
+References: <20240510032657.789629-1-slark_xiao@163.com>
+ <20240514143741.GA2306@thinkpad>
+ <541de8e4.1600.18f79de44f3.Coremail.slark_xiao@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240515012350.1166350-3-zhaoyang.huang@unisoc.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <541de8e4.1600.18f79de44f3.Coremail.slark_xiao@163.com>
 
-Hello,
++ Qiang
 
-On Wed, May 15, 2024 at 09:23:50AM +0800, zhaoyang.huang wrote:
-> +static unsigned long get_next_ra_size(struct readahead_control *ractl,
->  				      unsigned long max)
->  {
-> +	unsigned long cur = ractl->ra->size;
-> +	struct inode *inode = ractl->mapping->host;
-> +	unsigned long budgt = inode->i_sb->s_bdev ?
-> +			blk_throttle_budgt(inode->i_sb->s_bdev) : 0;
+On Wed, May 15, 2024 at 09:29:20AM +0800, Slark Xiao wrote:
+> At 2024-05-14 22:37:41, "Manivannan Sadhasivam" <manivannan.sadhasivam@linaro.org> wrote:
+> >On Fri, May 10, 2024 at 11:26:57AM +0800, Slark Xiao wrote:
+> >> Align with Qcom SDX72, add ready timeout item for Foxconn SDX72.
+> >> And also, add firehose support since SDX72.
+> >> 
+> >> Signed-off-by: Slark Xiao <slark_xiao@163.com>
+> >> ---
+> >>  drivers/bus/mhi/host/pci_generic.c | 31 ++++++++++++++++++++++++++++++
+> >>  1 file changed, 31 insertions(+)
+> >> 
+> >> diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
+> >> index 08844ee79654..0fd94c193fc6 100644
+> >> --- a/drivers/bus/mhi/host/pci_generic.c
+> >> +++ b/drivers/bus/mhi/host/pci_generic.c
+> >> @@ -399,6 +399,8 @@ static const struct mhi_channel_config mhi_foxconn_sdx55_channels[] = {
+> >>  	MHI_CHANNEL_CONFIG_DL(13, "MBIM", 32, 0),
+> >>  	MHI_CHANNEL_CONFIG_UL(32, "DUN", 32, 0),
+> >>  	MHI_CHANNEL_CONFIG_DL(33, "DUN", 32, 0),
+> >> +	MHI_CHANNEL_CONFIG_UL_FP(34, "FIREHOSE", 32, 0),
+> >> +	MHI_CHANNEL_CONFIG_DL_FP(35, "FIREHOSE", 32, 0),
+> >
+> >This means SDX55 is also supporting FIREHOSE channels, which is not true I
+> >believe.
+> Actually, I just verified it with my sdx55 and the answer is Yes. These channels
+> are common settings for Qcom device which support PCIe mode. BTW, the
+> default settings of Qcom and Quectel support firehose for their sdx55 products.
 
-Technical correctness aside, I'm not convinced it's generally a good idea to
-bubble up one specific IO control mechanism's detail all the way upto RA
-layer. Besides what's the gain here? For continuous IO stream, whether some
-RA bios are oversized or not shouldn't matter, no? Doesn't this just affect
-the accuracy of the last RA IO of a finite read stream?
+Qiang, can you please confirm that SDX55 supports FIREHOSE channels?
 
-Thanks.
+> >
+> >>  	MHI_CHANNEL_CONFIG_HW_UL(100, "IP_HW0_MBIM", 128, 2),
+> >>  	MHI_CHANNEL_CONFIG_HW_DL(101, "IP_HW0_MBIM", 128, 3),
+> >>  };
+> >> @@ -419,6 +421,16 @@ static const struct mhi_controller_config modem_foxconn_sdx55_config = {
+> >>  	.event_cfg = mhi_foxconn_sdx55_events,
+> >>  };
+> >>  
+> >> +static const struct mhi_controller_config modem_foxconn_sdx72_config = {
+> >> +	.max_channels = 128,
+> >> +	.timeout_ms = 20000,
+> >> +	.ready_timeout_ms = 50000,
+> >> +	.num_channels = ARRAY_SIZE(mhi_foxconn_sdx55_channels),
+> >> +	.ch_cfg = mhi_foxconn_sdx55_channels,
+> >> +	.num_events = ARRAY_SIZE(mhi_foxconn_sdx55_events),
+> >> +	.event_cfg = mhi_foxconn_sdx55_events,
+> >> +};
+> >> +
+> >>  static const struct mhi_pci_dev_info mhi_foxconn_sdx24_info = {
+> >>  	.name = "foxconn-sdx24",
+> >>  	.config = &modem_foxconn_sdx55_config,
+> >> @@ -448,6 +460,16 @@ static const struct mhi_pci_dev_info mhi_foxconn_sdx65_info = {
+> >>  	.sideband_wake = false,
+> >>  };
+> >>  
+> >> +static const struct mhi_pci_dev_info mhi_foxconn_sdx72_info = {
+> >> +	.name = "foxconn-sdx72",
+> >> +	.edl = "qcom/sdx72m/xbl_s_devprg_ns.melf",
+> >
+> >What is '.melf'? Is the firmware available somewhere? Did you plan to upstream
+> >it to linux-firmware?
+> >
+> This file similar with "edl.mbn". In SDX72 product, the default "edl" file name is
+> "xbl_s_devprg_ns.melf". Currently we don't plan to upstream it to linux-firmware
+> since 2 reasons: 1: we share the same fold name sdx72m with qcom or other vendors
+> 2: this file may be changed since sdx72 product still under developing in our side. we
+> may change the base line according to QCOM release.
+
+Then I would ask you to add support when you have a stable firmware. I do not
+want to change the firmware name after some time as it will confuse users.
+
+- Mani
 
 -- 
-tejun
+மணிவண்ணன் சதாசிவம்
 
