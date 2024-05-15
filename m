@@ -1,120 +1,121 @@
-Return-Path: <linux-kernel+bounces-179341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF7208C5EFF
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 03:50:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DA648C5EF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 03:49:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 851F01F224E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 01:50:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B944C281E4C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 01:49:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45DB938DD9;
-	Wed, 15 May 2024 01:49:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCA9E2209B;
+	Wed, 15 May 2024 01:48:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kk9X4Fsz"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=openbsd.org header.i=@openbsd.org header.b="58HSJxwI"
+Received: from cvs.openbsd.org (cvs.openbsd.org [199.185.137.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA4874F1FE;
-	Wed, 15 May 2024 01:49:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74C102C848;
+	Wed, 15 May 2024 01:47:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.185.137.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715737779; cv=none; b=mKZpx7qzkfq36EW3JnvvdxEoQvZvUcX20Ce4YfjDiaXa3eNsVWK/vQjqsy46gTH4aKFxFv7t0j2H8ZCDguZMQ70S25h0HhQhWt9hK170PM8Xc7/GVWd/l7xI3lpdTVyvyXBzJSCfrnI1Toiq551VCwMEvZfmZCMkJ+4JoZc7Mjo=
+	t=1715737702; cv=none; b=rFdN4/IcJYAstzNl1oJhNrNO4cVF58MDeILBsFNIs5F7lS4xJHFu4NX8ZrJzhN5VfOEy0jAtXxNi62RR4sv0e+FX4GNK4/JrrYJOPHYlVDesNp7XERF1PFkvcMMVQmH3pQRS8wddJ2IIrlkAtftcJnJBi8EbK/SWGLI1AH1AuaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715737779; c=relaxed/simple;
-	bh=pvzjn5+bbR0c+haL5/MVAidccpj+9o808LC0Z+cMxlA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Tex4lYlEszIWTCTVI+wzH5xocgkFIWTEGcbiJ9nlBz3+woT4MpjGBH6HjqIs5EFLfG5dtC9mXYcAEiXWJxPGs6rRtr7LKlUGDPTvXFOigop1oxXlguulHf3RnM4So45/a0sypBH/vxTvjydcdGHwaADISMH2A/nqNuYvEeLaYl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kk9X4Fsz; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1ee0132a6f3so48007805ad.0;
-        Tue, 14 May 2024 18:49:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715737743; x=1716342543; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5kQ1NfQplOskT4B5ZqgIky4P0ExeAiR7M84edP4J3wY=;
-        b=kk9X4Fszq0tV3IL+k7hTWhXPkHh4ka1Kljqs2c+Lds8YnVEw9tNRobHQ2NU0vpHIdq
-         V+nBJ6R1h1NSt0KTMEIT1DflD8LDCmSNxT4ch+/wT3+lGT4KyWshKLTKRwtK3q5n7mtc
-         mDeFUTc8lxxlhgTyBsh8iC+hQp4Xcdt44agxsCiihMt7Qp05TxHOuuB3fMQCt8YxE4Cq
-         J2v1fxh8BuXokHpR7K0R51MsizMWiZ303+ulKbv8yleGftn1nnoP/u2GE+BoovvJMnmL
-         zJknkt94W1TX1uT3nlhSyzVeQcHbc3X1vJa6SF/TjFJKJiEae1bjWRptI2YNyM6QeAAh
-         lsuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715737743; x=1716342543;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5kQ1NfQplOskT4B5ZqgIky4P0ExeAiR7M84edP4J3wY=;
-        b=czpqkvkef9etExJXPi44akYjMTI2WmpevDwBOTwSQySGLonH943GJVTrXJwP0gwtAn
-         VW25c6JAbTO4M0lfAyfgAi43W0Idok0j/rgDA58FSH5KOHouM4Q8tq5EwKx5JBj1mzZF
-         woIB6pkNVzWIW6wdFYw9eN/7ROn042x/CARlIb9lCdUmCfrk9AOSgvLIZX6rPfuOm88J
-         EP2ZuheLjwSCy9JuSDP7xfByvCltNv02D3VPEtmx4DHAV43wIICpnGT+0n1d+wgMyIAt
-         TQh5A8Fcxt94BK8bGhazfAfJa5cOf0ibmJ4yxPEJmK/fd99LGqAqEv0xO3Rb+G1Q+vnT
-         Juzg==
-X-Forwarded-Encrypted: i=1; AJvYcCVxJiood5vmHPTpnEhhHNYLYRAHVjTeJ/jr7JkYg7u5J40biI3mkEp4+aDgrpNaPVQRdPlOlS9jMsD8mDZK+RSvHlYBohkS8doELDm8Ptxcdl4osKudzF29g9p/yY+8K0/05DFhib366e4s09E=
-X-Gm-Message-State: AOJu0Yzh5BLrGxHk5XrKqbpT/EsyeSwrX6JumgIMkwOS2ybm6ySNcrOv
-	RGe8x1vtzIDXyMRxvoINV8QtMzP3aimDQieWKOU0hXemLALECqD6
-X-Google-Smtp-Source: AGHT+IEYhfu4JIQARBLlRTK82jbbq24FhpCzudO3FGRm+9VC8IHIV63l+67Dn1fzRpfFXaPAb+xLfQ==
-X-Received: by 2002:a17:902:82c8:b0:1ec:5f1f:364f with SMTP id d9443c01a7336-1ef43d18196mr132940295ad.26.1715737742825;
-        Tue, 14 May 2024 18:49:02 -0700 (PDT)
-Received: from localhost.localdomain ([190.196.103.34])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0c160b1asm105738195ad.275.2024.05.14.18.49.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 May 2024 18:49:02 -0700 (PDT)
-From: Camila Alvarez <cam.alvarez.i@gmail.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Brian Foster <bfoster@redhat.com>,
-	linux-bcachefs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Camila Alvarez <cam.alvarez.i@gmail.com>,
-	syzbot+249018ea545364f78d04@syzkaller.appspotmail.com
-Subject: [PATCH] guard against unknown r->data_type in bch2_sb_dev_has_data()
-Date: Tue, 14 May 2024 21:47:22 -0400
-Message-Id: <20240515014720.2482142-1-cam.alvarez.i@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1715737702; c=relaxed/simple;
+	bh=nwi7XSp87KyMBhuDwVzMUgWk96d9Z2Gf+1P/43zA+uU=;
+	h=From:To:cc:Subject:In-reply-to:References:MIME-Version:
+	 Content-Type:Date:Message-ID; b=QojHrjX3NS0irPja6JwjcDn8ukuAPS1uma0aarUXoS7U3dhM8VjzSjg5pbfJ/hw/ZgZuyr7FSgVYcr/yw8uGlbV5klkYAER8H2c24kFK9649NU7dMpOV5LbUwTpYOohHpyrx3R8TMDHmZFzd8S2Tmba2vWes90iD1kSQei99nRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=openbsd.org; spf=pass smtp.mailfrom=openbsd.org; dkim=pass (2048-bit key) header.d=openbsd.org header.i=@openbsd.org header.b=58HSJxwI; arc=none smtp.client-ip=199.185.137.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=openbsd.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openbsd.org
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; s=selector1; bh=nwi7XSp87K
+	yMBhuDwVzMUgWk96d9Z2Gf+1P/43zA+uU=; h=date:references:in-reply-to:
+	subject:cc:to:from; d=openbsd.org; b=58HSJxwIFFDunvAa6ffAS+xegRSfK9Kml
+	vIQU3QINWU0zu0uNNtl/ENkzETD9jZ0lhJ06nfZdsJes7RXcWA6OhA9yzOm7tnw8OBTYw2
+	nkhlSw6lB6LwhOXn2y0DPj+Iu9/Aq6Usg3TElJUvwWK9cZ3CdGHOTs55P7DYpnWVh7LocG
+	TnO4X+Hs1BUsMQAYK6Gffm4lLs1scWLFvnrAhO199CaYsqcXZFdp+k+ZN84LSLI1k6/2WQ
+	u3B1Ommwx+T/L3JIgcTsk8IM0iNy1iHRGpnBfBuIlnCWUEXEOB5vJR0nqyx0MJSkzcIocI
+	DW/cwgN0Gm7PWphRbO3/Y3uOveMEA==
+Received: from cvs.openbsd.org (localhost [127.0.0.1])
+	by cvs.openbsd.org (OpenSMTPD) with ESMTP id 55a0975a;
+	Tue, 14 May 2024 19:47:46 -0600 (MDT)
+From: "Theo de Raadt" <deraadt@openbsd.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+cc: Matthew Wilcox <willy@infradead.org>,
+    Jonathan Corbet <corbet@lwn.net>,
+    Andrew Morton <akpm@linux-foundation.org>, jeffxu@chromium.org,
+    keescook@chromium.org, jannh@google.com, sroettger@google.com,
+    gregkh@linuxfoundation.org, usama.anjum@collabora.com,
+    Liam.Howlett@oracle.com, surenb@google.com, merimus@google.com,
+    rdunlap@infradead.org, jeffxu@google.com, jorgelo@chromium.org,
+    groeck@chromium.org, linux-kernel@vger.kernel.org,
+    linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+    pedro.falcato@gmail.com, dave.hansen@intel.com,
+    linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v10 0/5] Introduce mseal
+In-reply-to: <CAHk-=wi04ZCm3vTtkcVnAUdiOpX3a0hBZ-aQWONwCubOJQEdXw@mail.gmail.com>
+References: <20240415163527.626541-1-jeffxu@chromium.org> <20240514104646.e6af4292f19b834777ec1e32@linux-foundation.org> <871q646rea.fsf@meer.lwn.net> <ZkPXcT_JuQeZCAv0@casper.infradead.org> <56001.1715726927@cvs.openbsd.org> <CAHk-=wgsGCKvN0Db6ZRZqJwXQrmhZyWB6RmABaOp4DiZbXgNew@mail.gmail.com> <16982.1715734632@cvs.openbsd.org> <CAHk-=wi04ZCm3vTtkcVnAUdiOpX3a0hBZ-aQWONwCubOJQEdXw@mail.gmail.com>
+Comments: In-reply-to Linus Torvalds <torvalds@linux-foundation.org>
+   message dated "Tue, 14 May 2024 18:20:23 -0700."
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <31351.1715737666.1@cvs.openbsd.org>
+Date: Tue, 14 May 2024 19:47:46 -0600
+Message-ID: <84192.1715737666@cvs.openbsd.org>
 
-Shift is perfomed only when the data type makes sense.
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-Fix a missing guard on r->data_type being known.
+Regarding mprotect(), POSIX also says:
 
-Reported-by: syzbot+249018ea545364f78d04@syzkaller.appspotmail.com
-Signed-off-by: Camila Alvarez <cam.alvarez.i@gmail.com>
----
- fs/bcachefs/replicas.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+    An implementation may permit accesses other than those specified by
+    prot; however, no implementation shall permit a write to succeed where
+    PROT_WRITE has not been set or shall permit any access where PROT_NONE
+    alone has been set.
 
-diff --git a/fs/bcachefs/replicas.c b/fs/bcachefs/replicas.c
-index 678b9c20e251..0fa91d0bf951 100644
---- a/fs/bcachefs/replicas.c
-+++ b/fs/bcachefs/replicas.c
-@@ -1006,14 +1006,14 @@ unsigned bch2_sb_dev_has_data(struct bch_sb *sb, unsigned dev)
- 
- 		for_each_replicas_entry(replicas, r)
- 			for (i = 0; i < r->nr_devs; i++)
--				if (r->devs[i] == dev)
-+				if (r->devs[i] == dev && r->data_type < BCH_DATA_NR)
- 					data_has |= 1 << r->data_type;
- 	} else if (replicas_v0) {
- 		struct bch_replicas_entry_v0 *r;
- 
- 		for_each_replicas_entry_v0(replicas_v0, r)
- 			for (i = 0; i < r->nr_devs; i++)
--				if (r->devs[i] == dev)
-+				if (r->devs[i] == dev && r->data_type < BCH_DATA_NR)
- 					data_has |= 1 << r->data_type;
- 	}
- 
--- 
-2.34.1
+When sealed memory is encountered in the middle of a range, an error
+will be returned (which almost noone looks at). Memory after the sealed
+region will not be fixed to follow this rule.
 
+It may retain higher permission.
+
+> Maybe some atomicity rules have always been true for BSD, but they've
+> never been true for Linux, and while I don't know how authoritative
+> that opengroup thing is, it's what google found.
+
+It is not a BSD thing.  I searched many kernels.  I did not find the
+Linux behaviour anywhere else.
+
+> > (Linus, don't be a jerk)
+> 
+> I'm not the one who makes unsubstantiated statements and uses scare
+> tactics to try to make said arguments sound more valid than they are.
+> 
+> So keep your arguments real, please.
+
+
+CAN YOU PLEASE SHUT IT WITH THE PERSONAL ATTACKS?  ARE YOU SO INSECURE
+THAT YOU NEED TO TAKE A TECHNICAL DISCUSSION AND MAKE IT PERSONAL?
+
+
+In a new world of immutable / sealed memory, I believe there is a much
+bigger problem and I would appreciate if the Linux team would give it
+some consideration.
+
+mprotect and munmap (and other calls) can now fail, due to intentional
+address space manipulation requested by a process (previously).
+
+The other previous errors have been transient system effects, like ENOMEM.
+
+This EPERM with partial change is not transient.  A 5 line test program
+can show memory which is not released, or which memory will retain
+incorrect permissions.
+
+Have any of you written test programs?
 
