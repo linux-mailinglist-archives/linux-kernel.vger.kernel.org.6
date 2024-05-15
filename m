@@ -1,71 +1,65 @@
-Return-Path: <linux-kernel+bounces-179477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2CF98C604E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 07:51:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21E078C6055
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 07:56:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8815A282947
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 05:51:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2A60B2127E
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 05:56:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 197443BB4D;
-	Wed, 15 May 2024 05:50:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 100653B290;
+	Wed, 15 May 2024 05:56:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BBp/I4aA";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xw64g/ie"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=jubnut.com header.i=@jubnut.com header.b="IlnHUtuN"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9589F39ADD;
-	Wed, 15 May 2024 05:50:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86B083838F
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 05:56:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715752252; cv=none; b=GQgcUW9RqeYJ6UCOIa8cZS0Z2reoqqAyJ1H/GKZhRE+KV1oh/67/+uVpB3X0kUdhrRYKm0WB7do8uL4t5FhUGQqkp9UfL/WtqWWcKIW0iX+ULFKC3boUhYdoPK13XJQNbknb3H6IwyivnO6eT2ldsluO5jKusaM76m2hL/AgQ7c=
+	t=1715752604; cv=none; b=H7UNEpY9iec4eeJn2dgSsptO7k7L5bYUJN0s39kZLvFLlAYaooF3Zj+QHQyUral7R67ZgvTF0/WR40k/jnGO8xU6rmvb6nKgGZZKE6NR5mOKeoCWoLQZNSxvZ3gcPfbUYSHmX8HsSwzIyNqPAWum6AWcj8vKqxF4+ljHyq2csNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715752252; c=relaxed/simple;
-	bh=HF5toEqhQfrhLTSEZCj88KO6yHunqQvh6aTZ1D1a8+w=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=HSyn/qz4MDaoIH4tf7nwySVNf5HlrRRcSW9WUDpgGGX6e1vBuFgN0fSt+trFvzLCVS5w1dqtF87dB9Ux+JLK+pxmemvhvitzcdkwmBqzAwmwA+H47VkKHZkL7+wCGTypViI8K+I/ErB9/7jKCfgrpCpRmDfPRP+8wPuvcIwFA6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BBp/I4aA; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xw64g/ie; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Nam Cao <namcao@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1715752248;
+	s=arc-20240116; t=1715752604; c=relaxed/simple;
+	bh=9Hl91SIEd+s34idGW5CgOFE3Rr6Y6mx8V9dIfdZbL6Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KnmEEg1kBlyxW/Ymei7vrkVacBu/a0eGW8SYg5N8RyxyZahpX4f6cvCk/WG2di6bravZfJLPPbUgCCvB4jWotSzI8hBXccRJzGkoGsMAJp610vaIYpL1STdMMVihfNwcc8wbMBrspgp+UZMM9G3oP8pQJgGIS5pQyoj5iLmHKCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jubnut.com; spf=pass smtp.mailfrom=jubnut.com; dkim=pass (2048-bit key) header.d=jubnut.com header.i=@jubnut.com header.b=IlnHUtuN; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jubnut.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jubnut.com
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4VfMtC24D6z9sxM;
+	Wed, 15 May 2024 07:56:35 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jubnut.com; s=MBO0001;
+	t=1715752595;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FcCWvr4SYjjrlRwhgChA7o17sApj+WC9QqfSYFJ7iw8=;
-	b=BBp/I4aAMOJZAn0wYG2Ov3GZZFd3p39GWccszwcrm6q7whrnMNp+LT633bIzm7vK7JPRza
-	UIFJALiiqKN+Lc2IlqzVYYNB8yP1J5c2wgXfvy8w2rUhEcYXS/776ppePa3vyo4v+96rhX
-	zKMB47qE07KbmgDAm/bJxjdTdpNt5M4vpN8xHxOq1UHmwO4CMYg0kqZfZrGXmH/hZwp6hU
-	X4hiMiChusRVwIrS6TTt3MVJkUQ+rKmctwIv4J2igd2hE3f6f8XmIGOtVKOEKw6ATNjCYj
-	twvrbySbUFgkAzoBSRwXR+wsmeAu218sF1lMxiKzc5ybIBkuVdUIJcFl0WXdtg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1715752248;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FcCWvr4SYjjrlRwhgChA7o17sApj+WC9QqfSYFJ7iw8=;
-	b=xw64g/ieiCfH+JsJAphRQgD5n4QcjPNhfUwFJaLtQ81Kzet3RCCy3Z8NJgbJMfQ13Kg7ai
-	56K9Ek3XHbUwS6Dw==
-To: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	linux-riscv@lists.infradead.org,
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=SAAnJB39oETaobvjyNLVzZbiebH8e/Lpq7MQVzYIcpA=;
+	b=IlnHUtuNMpAwt104OSGNFknvLXGajo744vCksNh5dSdEyJJ5Q7qTFMyN7iWK+foRs2g3xX
+	wIWh4ikjMl8trMNoestn6Z3w8x4GPEDdsTVAhgtSTab2h1R5tsbgjmOgqXQB7yqOqRkja4
+	XwiHUFArDF3wHJQbm2UJIWOE2Pj7SgQdy89UnMyj9BPPUSfZ3FRtArVj/yQ/JBakmyMzYy
+	y/DOn/BEsWPCRr7zVREsV0bx0FTKD5TFwPFYf6P60NR00iRHZl4kRPXTm/meG5abQlSDov
+	ik4PeuTXu/9Ck+idGyMU7GSrDiYhlePZsS3m0/Tvn7BeQH1LT5CLBTQLwJ/q+Q==
+From: Ben Walsh <ben@jubnut.com>
+To: Benson Leung <bleung@chromium.org>,
+	Tzung-Bi Shih <tzungbi@kernel.org>,
+	Guenter Roeck <groeck@chromium.org>,
+	"Dustin L. Howett" <dustin@howett.net>,
+	Kieran Levin <ktl@frame.work>,
+	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	chrome-platform@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Cc: Nam Cao <namcao@linutronix.de>,
-	stable@vger.kernel.org
-Subject: [PATCH 2/2] riscv: rewrite __kernel_map_pages() to fix sleeping in invalid context
-Date: Wed, 15 May 2024 07:50:40 +0200
-Message-Id: <1289ecba9606a19917bc12b6c27da8aa23e1e5ae.1715750938.git.namcao@linutronix.de>
-In-Reply-To: <cover.1715750938.git.namcao@linutronix.de>
-References: <cover.1715750938.git.namcao@linutronix.de>
+Cc: Ben Walsh <ben@jubnut.com>
+Subject: [PATCH 0/6] Fix MEC concurrency problems for Framework Laptop
+Date: Wed, 15 May 2024 06:56:25 +0100
+Message-ID: <20240515055631.5775-1-ben@jubnut.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,95 +68,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-__kernel_map_pages() is a debug function which clears the valid bit in page
-table entry for deallocated pages to detect illegal memory accesses to
-freed pages.
+Framework Laptops with the Microchip EC have a problem where the EC
+"stops working" after a while. Symptoms include the Fn key not
+working, and "bad packet checksum" errors appearing in the system log.
 
-This function set/clear the valid bit using __set_memory(). __set_memory()
-acquires init_mm's semaphore, and this operation may sleep. This is
-problematic, because  __kernel_map_pages() can be called in atomic context,
-and thus is illegal to sleep. An example warning that this causes:
+The problem is caused by ACPI code which accesses the Microchip EC
+(MEC) memory using the Microchip EMI protocol. It uses an AML mutex to
+prevent concurrent access. But the cros_ec_lpc driver is not aware of
+this mutex. The ACPI code and LPC driver both attempt to talk to the
+EC at the same time, messing up communication with the EC.
 
-BUG: sleeping function called from invalid context at kernel/locking/rwsem.c:1578
-in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 2, name: kthreadd
-preempt_count: 2, expected: 0
-CPU: 0 PID: 2 Comm: kthreadd Not tainted 6.9.0-g1d4c6d784ef6 #37
-Hardware name: riscv-virtio,qemu (DT)
-Call Trace:
-[<ffffffff800060dc>] dump_backtrace+0x1c/0x24
-[<ffffffff8091ef6e>] show_stack+0x2c/0x38
-[<ffffffff8092baf8>] dump_stack_lvl+0x5a/0x72
-[<ffffffff8092bb24>] dump_stack+0x14/0x1c
-[<ffffffff8003b7ac>] __might_resched+0x104/0x10e
-[<ffffffff8003b7f4>] __might_sleep+0x3e/0x62
-[<ffffffff8093276a>] down_write+0x20/0x72
-[<ffffffff8000cf00>] __set_memory+0x82/0x2fa
-[<ffffffff8000d324>] __kernel_map_pages+0x5a/0xd4
-[<ffffffff80196cca>] __alloc_pages_bulk+0x3b2/0x43a
-[<ffffffff8018ee82>] __vmalloc_node_range+0x196/0x6ba
-[<ffffffff80011904>] copy_process+0x72c/0x17ec
-[<ffffffff80012ab4>] kernel_clone+0x60/0x2fe
-[<ffffffff80012f62>] kernel_thread+0x82/0xa0
-[<ffffffff8003552c>] kthreadd+0x14a/0x1be
-[<ffffffff809357de>] ret_from_fork+0xe/0x1c
+The solution is to have the cros_ec_lpc_mec code find and use the AML
+mutex. But to make it all work we have to do a few more things:
 
-Rewrite this function with apply_to_existing_page_range(). It is fine to
-not have any locking, because __kernel_map_pages() works with pages being
-allocated/deallocated and those pages are not changed by anyone else in the
-meantime.
+  * Allow the cros_ec_lpc_mec code to return error codes in case it
+    can't lock the mutex.
 
-Fixes: 5fde3db5eb02 ("riscv: add ARCH_SUPPORTS_DEBUG_PAGEALLOC support")
-Signed-off-by: Nam Cao <namcao@linutronix.de>
-Cc: stable@vger.kernel.org
----
- arch/riscv/mm/pageattr.c | 28 ++++++++++++++++++++++------
- 1 file changed, 22 insertions(+), 6 deletions(-)
+  * Have the cros_ec_lpc code find the correct ACPI device (PNP0C09)
+    and then the AML mutex itself.
 
-diff --git a/arch/riscv/mm/pageattr.c b/arch/riscv/mm/pageattr.c
-index 410056a50aa9..271d01a5ba4d 100644
---- a/arch/riscv/mm/pageattr.c
-+++ b/arch/riscv/mm/pageattr.c
-@@ -387,17 +387,33 @@ int set_direct_map_default_noflush(struct page *page)
- }
- 
- #ifdef CONFIG_DEBUG_PAGEALLOC
-+static int debug_pagealloc_set_page(pte_t *pte, unsigned long addr, void *data)
-+{
-+	int enable = *(int *)data;
-+
-+	unsigned long val = pte_val(ptep_get(pte));
-+
-+	if (enable)
-+		val |= _PAGE_PRESENT;
-+	else
-+		val &= ~_PAGE_PRESENT;
-+
-+	set_pte(pte, __pte(val));
-+
-+	return 0;
-+}
-+
- void __kernel_map_pages(struct page *page, int numpages, int enable)
- {
- 	if (!debug_pagealloc_enabled())
- 		return;
- 
--	if (enable)
--		__set_memory((unsigned long)page_address(page), numpages,
--			     __pgprot(_PAGE_PRESENT), __pgprot(0));
--	else
--		__set_memory((unsigned long)page_address(page), numpages,
--			     __pgprot(0), __pgprot(_PAGE_PRESENT));
-+	unsigned long start = (unsigned long)page_address(page);
-+	unsigned long size = PAGE_SIZE * numpages;
-+
-+	apply_to_existing_page_range(&init_mm, start, size, debug_pagealloc_set_page, &enable);
-+
-+	flush_tlb_kernel_range(start, start + size);
- }
- #endif
- 
+  * Use the quirks mechanism to specify the AML mutex name.
+
+The code has been tested on an 11th-generation Intel Framework Laptop
+(with Microchip EC) and an AMD Framework Laptop (without Microchip
+EC). It has _not_ been tested on any Chromebook devices.
+
+Ben Walsh (6):
+  platform/chrome: cros_ec_lpc: MEC access can return error code
+  platform/chrome: cros_ec_lpc: MEC access can use an AML mutex
+  platform/chrome: cros_ec_lpc: Pass driver_data in static variable
+  platform/chrome: cros_ec_lpc: Add a new quirk for AML mutex
+  platform/chrome: cros_ec_lpc: Correct ACPI name for Framework Laptop
+  platform/chrome: cros_ec_lpc: Add AML mutex for Framework Laptop
+
+ drivers/platform/chrome/cros_ec_lpc.c      | 232 ++++++++++++++-------
+ drivers/platform/chrome/cros_ec_lpc_mec.c  |  89 +++++++-
+ drivers/platform/chrome/cros_ec_lpc_mec.h  |  18 +-
+ drivers/platform/chrome/wilco_ec/mailbox.c |  22 +-
+ 4 files changed, 272 insertions(+), 89 deletions(-)
+
+
+base-commit: 2fbe479c0024e1c6b992184a799055e19932aa48
 -- 
-2.39.2
+2.45.0
 
 
