@@ -1,173 +1,130 @@
-Return-Path: <linux-kernel+bounces-180293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC6B58C6C8C
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 21:00:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD62A8C6C92
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 21:02:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 604251F2179D
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 19:00:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 294CE2826E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 19:02:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AB5C15921D;
-	Wed, 15 May 2024 19:00:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F13CD159562;
+	Wed, 15 May 2024 19:02:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="G9h+Yh3V"
-Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="wMLtMQpm"
+Received: from omta40.uswest2.a.cloudfilter.net (omta40.uswest2.a.cloudfilter.net [35.89.44.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 157463BBF6;
-	Wed, 15 May 2024 19:00:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40D87158DD1
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 19:02:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715799623; cv=none; b=Qs8XzCvAjFCqwjxqgpgX6MfBLbyCj4aZY1qQ3QwKXz9oq5IWJkBzvvhqreR+u0PyNWAixaOcYHZHttXIbBuQEZ+Vper3Lh03pXKzUgRK2h64qYQxdFoyfUubhz9zihC1gueK6HuBruCdVcjWyZx0QdSNqoTWL06ckDeC2/mlRf8=
+	t=1715799772; cv=none; b=MsZTF4ktAzQgmRA1Hjx8hzgc9Hsaqx6mR9eeho9ud7yj9YRuPjAHIYHBGu+8npDA2ouW7g6Rab2/hFLS0JXUVrSbGRUETdIouIgfXLG07H+7GCGHBfpIynLO+BiexX7XoRYVfh74omLs+ohZLCSwHBQAFx+cYecOpSd4Gs+trQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715799623; c=relaxed/simple;
-	bh=+CdgUsXw1OhIz25aaCIoQRzZkGyYOFy1X/rExwEpLhQ=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fnqTi4KIynLhx25BQ5BFOrvwK3GPBVMyEol812qyObGJ2cWGIbz7dyD1V05gaC9C4XzY4Bza0ILhVX2bIvF2sTDTkW+nEbgaOXrd+htJ4cM2k9qyKd1d3ygChkXJnJ5hBOCi7W7nKlWWNJxlWiRFzKffdiXZl/+XGswew4in/E4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=G9h+Yh3V; arc=none smtp.client-ip=45.89.224.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
-Received: from p-infra-ksmg-sc-msk02 (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 043FE120027;
-	Wed, 15 May 2024 22:00:09 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 043FE120027
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1715799609;
-	bh=ckMuf6MQpe0iaEm+Ee1bWyCe6cbGhXBFqyXa+u+DXDg=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:From;
-	b=G9h+Yh3V6+EoUpaCL8Gx2lI6b1PAKwPVu4jv+o5GSnstdVQRIsZtZTDfZIF/Gx62e
-	 unpe5MWUmH102RY8ptwZ43jwEr1D6ftLkN5iDLMM768Jp8mUn1JoviQL9nLFVJptn/
-	 JKIrWOT0m4j/B2Fx1XBv+hZnbKhw4oUY4Jq1PRYNzF633XkHNAFpPtANax8uvlGGT6
-	 K8l18vtp0Ya6OHmu7yslcvY4nozwY908gGSpQMRV1b/8cB0ovj12RpcautQr9xFf1w
-	 QKbZXNaA7Lk4W/GNaFRJhaBVV4sSEqV91qIjubBVcbQdFJ7RPj1q2DH6wPPQEbNLuG
-	 l8MNx3y5IuX3g==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Wed, 15 May 2024 22:00:08 +0300 (MSK)
-Received: from localhost (100.64.160.123) by p-i-exch-sc-m02.sberdevices.ru
- (172.16.192.103) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Wed, 15 May
- 2024 22:00:08 +0300
-Date: Wed, 15 May 2024 22:00:08 +0300
-From: Dmitry Rokosov <ddrokosov@salutedevices.com>
-To: <conor@kernel.org>
-CC: <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
-	<mturquette@baylibre.com>, <sboyd@kernel.org>, <robh+dt@kernel.org>,
-	<krzysztof.kozlowski+dt@linaro.org>, <khilman@baylibre.com>,
-	<martin.blumenstingl@googlemail.com>, <jian.hu@amlogic.com>,
-	<kernel@sberdevices.ru>, <rockosov@gmail.com>,
-	<linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3 4/7] dt-bindings: clock: meson: a1: peripherals:
- support sys_pll input
-Message-ID: <20240515190008.cbv4kj4inkg2bm56@CAB-WSD-L081021>
-References: <20240515185103.20256-1-ddrokosov@salutedevices.com>
- <20240515185103.20256-5-ddrokosov@salutedevices.com>
+	s=arc-20240116; t=1715799772; c=relaxed/simple;
+	bh=mikBtoW97YbCBwyvNRnJ38Sg2mM7CDdV4ls2mCBZsd0=;
+	h=Subject:To:Cc:References:In-Reply-To:From:Message-ID:Date:
+	 MIME-Version:Content-Type; b=ufqzDG4oJ2c4wbSFHbBl3D0y81k2C1pMwEkorLsgqiQzC8Rw3YSspzdHov9E2IKoimitd8PAeJiZIo0nma+cx7j4ggiGnlvCU4NAaz2J9624dz6UsnE12kd+OaLaE2lOmmJzHWuj6gxDcnoxJwBqS1DURKqtB3/y3ZIy1IEzB3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=wMLtMQpm; arc=none smtp.client-ip=35.89.44.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-5005a.ext.cloudfilter.net ([10.0.29.234])
+	by cmsmtp with ESMTPS
+	id 6tplsXjafrtmg7JtpszTb2; Wed, 15 May 2024 19:02:50 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id 7JtosOXlXYakK7JtpswCJ7; Wed, 15 May 2024 19:02:49 +0000
+X-Authority-Analysis: v=2.4 cv=a4T79lSF c=1 sm=1 tr=0 ts=664506d9
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=TpHVaj0NuXgA:10 a=-Ou01B_BuAIA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=49j0FZ7RFL9ueZfULrUA:9 a=QEXdDO2ut3YA:10
+ a=AjGcO6oz07-iQ99wixmX:22 a=nmWuMzfKamIsx3l42hEX:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
+	Message-ID:From:In-Reply-To:References:Cc:To:Subject:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=sKG1F6rhpqV48qN/JCq4XUf3fNgKXT99hRxa+V7xlp0=; b=wMLtMQpmdIzGIU5G+C3YKuWjIE
+	UeRUetp3RdkJ7HylqiM2r0dBGEeJWuqnpgzdtcFQPJyoPh2kd/EISbLkqa090dWphocT6puzEV1z9
+	I8tlTPnwHvaT0VSadIHbxAkbp9RSJlCoZYASJQrIrZ+vQ5ezNLCXaWkiO0z+FpXSpYJxJLlZz1kqI
+	qeBkz3urzZlah1pkn/pX+8c7LdRv1w/MhysJfGLKJzaOOLN5BA4TVErO52EiJmOgSCSLSa2mnfbb9
+	hbKy/qpMDQGSkFu9R4Zc7ANaWX8echZPcaJ7Cj/+tf4PBBTHEYP03UDD3IzXll8xla7sFaYAm2ewr
+	/edVhRHA==;
+Received: from c-98-207-139-8.hsd1.ca.comcast.net ([98.207.139.8]:35798 helo=[10.0.1.47])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <re@w6rz.net>)
+	id 1s7Jtm-002QwV-0X;
+	Wed, 15 May 2024 13:02:46 -0600
+Subject: Re: [PATCH 6.1 000/243] 6.1.91-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240515082456.986812732@linuxfoundation.org>
+In-Reply-To: <20240515082456.986812732@linuxfoundation.org>
+From: Ron Economos <re@w6rz.net>
+Message-ID: <d96667d0-f15b-ead0-5451-00471bbefd6e@w6rz.net>
+Date: Wed, 15 May 2024 12:02:43 -0700
+User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240515185103.20256-5-ddrokosov@salutedevices.com>
-User-Agent: NeoMutt/20220415
-X-ClientProxiedBy: p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) To
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 185260 [May 15 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: ddrokosov@salutedevices.com
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 20 0.3.20 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f, {Track_E25351}, {Tracking_from_domain_doesnt_match_to}, 127.0.0.199:7.1.2;smtp.sberdevices.ru:7.1.1,5.0.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;100.64.160.123:7.1.2;salutedevices.com:7.1.1, FromAlignment: s, ApMailHostAddress: 100.64.160.123
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/05/15 13:12:00 #25231738
-X-KSMG-AntiVirus-Status: Clean, skipped
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 98.207.139.8
+X-Source-L: No
+X-Exim-ID: 1s7Jtm-002QwV-0X
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-98-207-139-8.hsd1.ca.comcast.net ([10.0.1.47]) [98.207.139.8]:35798
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 4
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfOfNz3EYg4Tjh8XUZaYKg3QIp+kzsNqZnVKGn8VYWje721PG2ZBMmZyqPXCzFX/DkGGdFIsyYYOGflV2td7P3x75UfChxCTKpEH38AUTq3h9MyWBFMPi
+ 6FHmkec20s4R6ZL5u0R9La7hCxPUzZPkMeZWfsoovmiGrxItoZjRBEkB5hLeUFeUXGIY6yIWx440mejwqcDclBBHoGQqSBQfDcU=
 
-Hello Conor,
+On 5/15/24 1:27 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.91 release.
+> There are 243 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Fri, 17 May 2024 08:23:27 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.91-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-On Wed, May 15, 2024 at 09:47:27PM +0300, Dmitry Rokosov wrote:
-> The 'sys_pll' input is an optional clock that can be used to generate
-> 'sys_pll_div16', which serves as one of the sources for the GEN clock.
-> 
-> Signed-off-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
-I didn't tag this patch with your Acked-by because I've changed the
-connection between the A1 PLL and the A1 peripherals controllers from
-'sys_pll_div16' to 'sys_pll'.
+Tested-by: Ron Economos <re@w6rz.net>
 
-Please review this patch again, if possible.
-
-> ---
->  .../bindings/clock/amlogic,a1-peripherals-clkc.yaml      | 9 +++++++--
->  include/dt-bindings/clock/amlogic,a1-peripherals-clkc.h  | 1 +
->  2 files changed, 8 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/amlogic,a1-peripherals-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,a1-peripherals-clkc.yaml
-> index 6d84cee1bd75..2568ad7dd0ac 100644
-> --- a/Documentation/devicetree/bindings/clock/amlogic,a1-peripherals-clkc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/amlogic,a1-peripherals-clkc.yaml
-> @@ -30,6 +30,8 @@ properties:
->        - description: input fixed pll div7
->        - description: input hifi pll
->        - description: input oscillator (usually at 24MHz)
-> +      - description: input sys pll
-> +    minItems: 6 # sys_pll is optional
->  
->    clock-names:
->      items:
-> @@ -39,6 +41,8 @@ properties:
->        - const: fclk_div7
->        - const: hifi_pll
->        - const: xtal
-> +      - const: sys_pll
-> +    minItems: 6 # sys_pll is optional
->  
->  required:
->    - compatible
-> @@ -65,9 +69,10 @@ examples:
->                       <&clkc_pll CLKID_FCLK_DIV5>,
->                       <&clkc_pll CLKID_FCLK_DIV7>,
->                       <&clkc_pll CLKID_HIFI_PLL>,
-> -                     <&xtal>;
-> +                     <&xtal>,
-> +                     <&clkc_pll CLKID_SYS_PLL>;
->              clock-names = "fclk_div2", "fclk_div3",
->                            "fclk_div5", "fclk_div7",
-> -                          "hifi_pll", "xtal";
-> +                          "hifi_pll", "xtal", "sys_pll";
->          };
->      };
-> diff --git a/include/dt-bindings/clock/amlogic,a1-peripherals-clkc.h b/include/dt-bindings/clock/amlogic,a1-peripherals-clkc.h
-> index 06f198ee7623..2ce1a06dc735 100644
-> --- a/include/dt-bindings/clock/amlogic,a1-peripherals-clkc.h
-> +++ b/include/dt-bindings/clock/amlogic,a1-peripherals-clkc.h
-> @@ -164,5 +164,6 @@
->  #define CLKID_DMC_SEL		151
->  #define CLKID_DMC_DIV		152
->  #define CLKID_DMC_SEL2		153
-> +#define CLKID_SYS_PLL_DIV16	154
->  
->  #endif /* __A1_PERIPHERALS_CLKC_H */
-> -- 
-> 2.43.0
-> 
-
--- 
-Thank you,
-Dmitry
 
