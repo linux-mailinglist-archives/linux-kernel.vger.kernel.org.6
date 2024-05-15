@@ -1,337 +1,187 @@
-Return-Path: <linux-kernel+bounces-179811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B146B8C65BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 13:26:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E1E568C658F
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 13:24:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 443EB1F26D6A
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 11:26:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 709141F25809
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 11:24:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D95A27D3EF;
-	Wed, 15 May 2024 11:25:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E42B7174F;
+	Wed, 15 May 2024 11:24:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="XTraS+Ia"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="3AyuV5Ne"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2077.outbound.protection.outlook.com [40.107.236.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5D626EB55;
-	Wed, 15 May 2024 11:25:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715772331; cv=none; b=L8m1Eh8dOwyqYj9IAhgI4MsmzOii0UYlM0uPkplAYGWfmTFXxO8GgefnysU/ZwWck64DW0SSWNjE4rEEUnorD7Tk+xn+ED8Wgkl/BhSZHUSyQ6zLSurryAMcZ9GBgtxbroWvjZHR7jQYCWBzoSVCbtMTUXWdjcKCCowDMum9R9I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715772331; c=relaxed/simple;
-	bh=0LqFjAIjsAuQUoO9CBziVYMXRN16bN6eWv52dYNZA04=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cU5truB72YW63x+IfwXWtVOOE8YJzeeWO+vlXgsr0QP8kEmx8/wpG/BhWKq8Tj1Db8Efxa559+5LBrgk0209wzWUq70/+io/zH5VPElU8mH2itb+KQ/Pkqq4rAeM9/55/egi41xZyPeEeoYLMCWuxKfgPUu28wyH9jk+kXdwucU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=XTraS+Ia; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: d119445c12ad11efb92737409a0e9459-20240515
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=pRII+MwEMjc7IBIb7T65bLDNnOYGy8L1r5/7E1ySfEk=;
-	b=XTraS+Ia6U18kmDn890Uqw9sPEXJ3+G4x6Z4OJ9YFg2lLlvgPEoe4++0PR+c03dyKyqhMYz+VY56NyruHhFskQFY42k1jFiHTACtCglSm/Ws38y9HGTZcz3mLa3px67WfHumiqlHs6HYMJq8Z8NBDsplHWxfc/o9ZcI+EkdHJSk=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:ffd7906c-23c2-49b4-90b3-c4a06efc92bb,IP:0,U
-	RL:0,TC:0,Content:-25,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:-25
-X-CID-META: VersionHash:82c5f88,CLOUDID:bb2ce383-4f93-4875-95e7-8c66ea833d57,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
-	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: d119445c12ad11efb92737409a0e9459-20240515
-Received: from mtkmbs11n2.mediatek.inc [(172.21.101.187)] by mailgw01.mediatek.com
-	(envelope-from <yong.wu@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 75818985; Wed, 15 May 2024 19:25:21 +0800
-Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
- mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Wed, 15 May 2024 19:25:20 +0800
-Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
- mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Wed, 15 May 2024 19:25:19 +0800
-From: Yong Wu <yong.wu@mediatek.com>
-To: Rob Herring <robh+dt@kernel.org>, Matthias Brugger
-	<matthias.bgg@gmail.com>, <christian.koenig@amd.com>, Sumit Semwal
-	<sumit.semwal@linaro.org>, Andrew Morton <akpm@linux-foundation.org>
-CC: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley
-	<conor+dt@kernel.org>, Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>,
-	<tjmercier@google.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Yong Wu <yong.wu@mediatek.com>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-media@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-	<linaro-mm-sig@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>, Robin Murphy <robin.murphy@arm.com>,
-	Vijayanand Jitta <quic_vjitta@quicinc.com>, Joakim Bech
-	<joakim.bech@linaro.org>, Jeffrey Kardatzke <jkardatzke@google.com>, Pavel
- Machek <pavel@ucw.cz>, Simon Ser <contact@emersion.fr>, Pekka Paalanen
-	<ppaalanen@gmail.com>, <willy@infradead.org>, Logan Gunthorpe
-	<logang@deltatee.com>, Daniel Vetter <daniel@ffwll.ch>,
-	<jianjiao.zeng@mediatek.com>, <kuohong.wang@mediatek.com>,
-	<youlin.pei@mediatek.com>
-Subject: [PATCH v5 9/9] dma_buf: heaps: restricted_heap_mtk: Add a new CMA heap
-Date: Wed, 15 May 2024 19:23:08 +0800
-Message-ID: <20240515112308.10171-10-yong.wu@mediatek.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240515112308.10171-1-yong.wu@mediatek.com>
-References: <20240515112308.10171-1-yong.wu@mediatek.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 235556A005;
+	Wed, 15 May 2024 11:24:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.77
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715772251; cv=fail; b=SrNhRhAWiUFvlejBVjwnDoQJ2E/RfBACLMaR14Py+2S1hnHdhOdftHkd8QfbHrJhiQbIV+Fh5iL19ROSBT/sodowg/3cpLDQk9xJuqp8W7dAQLkayjjb0I9w0WoWNwFeq1hvWPM7SqW7METwxzp+4VSgSuJyvpkWpoI7YAxyFmE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715772251; c=relaxed/simple;
+	bh=DMO3F6aCNQtwyjXnpWpKK3y5VEszzdlulV5ahxO3lxw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=E0UyAPLL3XDZVreGZGVjulSH20Q0UiR4WcAcw4II3vxhiYLPqD7GmOR6XPWLdYlaJ62s1QLs6jyc7GwiHiuWP+BhpMc2ljRIiB9T8/x5cKzsKYkA4poIfHB07B4DGf4J5tqkM3H2ESZ2oUAPi1IpibWcYSwByTLXpMhTYXf3CEw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=3AyuV5Ne; arc=fail smtp.client-ip=40.107.236.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=TKWVVKa6p+TRYGU3C1Zxpa2/bWi/LzgFL2JglhwTfu99NVRVPrJ2rrXENiL6yKPh88mZm0i4D3tgA+Pt9TMtUbZ03zyZJdqeLkp4g9s3h/VTpD+q2+whrkwFZ6T7roFbf2N8+suOoBqv97d/ki+RrsmTorFZgbF3Sc0EKu2meIQ0VCf6yPxxz1cf5n23h4OxcpfLEqB2FEPwR/rmNGnghf8E3bYGRyTBsmgZb2a3Un4RykKOS1fDhuxHiziq0Duid3w5yyZDFAr0buMM008L18C/kbOzNbUTnt/VFRSiwoPHn2wvmhX7aP+ttG3KJ1HMBZd5BjXazf/DreCU9cReaw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IxS50D6WIV2nsBUdq+i3kGRHpg5tcqiBPMMnzq6/a1s=;
+ b=nnSoNb6gKTF8asqnX3lR+8rbC5IMdV4/dlzl6CD9fBiPyk0lBu94x1g9tMZAISKzB7cwDLh6qGDvQxNxAA/4yGt+iDV6039CKnlpM1sg9b8XhKGBztGj8aJgikBpI1pop28p7bzJk3zNMKpsp3VFnXaiAIA3AW3a8vbprVxRq+LAc8GXb3B6eNFgPIk27pw4KkQDS9F9EL3Pgt+CiMdLwxlhBxOogqwSyqk08nYTb6iusT9fLAQ8aOokWK3YLHjoj2iwx4vdGN0HDQVDqast+vLilpffM1dpyyX2JsNo46LRQC3S2s0gPoPj9+6h+QDSqVgfiV+KfQ/8QxiVjEmpBg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linuxfoundation.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IxS50D6WIV2nsBUdq+i3kGRHpg5tcqiBPMMnzq6/a1s=;
+ b=3AyuV5NeJqlnyKFw6jGLKTYWtGxY8rzrCiniUNziwZXfMcUcvcL4ktw5KaZ4m9JqflrtszPtp26IBWzbeXykQ49uPexRohGugTETgHkHdehQt1gytFjhZL4Q8NM2pnH9UGhZlvaSNjag6GABuEDvKC9i4Q3vyzNLHtnMVKoH16o=
+Received: from SJ0PR03CA0010.namprd03.prod.outlook.com (2603:10b6:a03:33a::15)
+ by IA0PR12MB8976.namprd12.prod.outlook.com (2603:10b6:208:485::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.27; Wed, 15 May
+ 2024 11:24:06 +0000
+Received: from SJ1PEPF00001CE1.namprd05.prod.outlook.com
+ (2603:10b6:a03:33a:cafe::74) by SJ0PR03CA0010.outlook.office365.com
+ (2603:10b6:a03:33a::15) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.26 via Frontend
+ Transport; Wed, 15 May 2024 11:24:05 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SJ1PEPF00001CE1.mail.protection.outlook.com (10.167.242.9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7587.21 via Frontend Transport; Wed, 15 May 2024 11:24:05 +0000
+Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Wed, 15 May
+ 2024 06:24:04 -0500
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB05.amd.com
+ (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Wed, 15 May
+ 2024 06:24:04 -0500
+Received: from xsjarunbala50.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Wed, 15 May 2024 06:24:04 -0500
+From: Jay Buddhabhatti <jay.buddhabhatti@amd.com>
+To: <michal.simek@amd.com>, <gregkh@linuxfoundation.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	Jay Buddhabhatti <jay.buddhabhatti@amd.com>, <stable@vger.kernel.org>
+Subject: [PATCH v3] drivers: soc: xilinx: check return status of get_api_version()
+Date: Wed, 15 May 2024 04:23:45 -0700
+Message-ID: <20240515112345.24673-1-jay.buddhabhatti@amd.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-MTK: N
+Received-SPF: None (SATLEXMB05.amd.com: jay.buddhabhatti@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00001CE1:EE_|IA0PR12MB8976:EE_
+X-MS-Office365-Filtering-Correlation-Id: b43c727c-c2ea-4e6c-5093-08dc74d187d7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|82310400017|1800799015|376005|36860700004;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?jR6o3yCRnoZm/noWQ7Ji3GxZNYY9gFRhCeS+1mKvMaoLjHDQ+pqPoZu/JZsr?=
+ =?us-ascii?Q?qF5V5MvxUi8YEEixkH6xDzCmEsOmZkRS/hZE08duwV+lZIMutUCXbwbrhE1x?=
+ =?us-ascii?Q?ZpgpvVY5Lics8e+C3nruyVv7vl3AJi9+4B+pEUdsFO3I+Txu55mcc2u4pQKK?=
+ =?us-ascii?Q?TMRlil0wzPbjnWD6slstYdVGvw5/2T1IHX21zJdu+ub2RBSqz1k3JgHfmevU?=
+ =?us-ascii?Q?/MXVHpAQ1LGd0mW8RmGkmdB5BlZV58W+KGvRnZmxONxMJjU34dz0XXDAtvKw?=
+ =?us-ascii?Q?9Gcc6AJoqsyLvxzTyWjL1ZpFXJ6nl7vk9x4uo0hJYyamvh8iV7GjAYd4qWfv?=
+ =?us-ascii?Q?YbozqzmNubruPWkUX0TsDZ88ZS0Y3BAuiC/+4R0rmXwqOyDRSel/SxUG83qK?=
+ =?us-ascii?Q?tjPGiNn+Z2SWt+KXLDUDahw06g0YFfvYuKLYV428zK2ckcE02AM3bLLFB9YY?=
+ =?us-ascii?Q?nFNbp11Zd6Sn7kBhcG7QpdwFHkXOug8UK1BR3RW2dMarXYcjvWQatTHxeq50?=
+ =?us-ascii?Q?ayc4FldughaTmErNWJ6iSQjcTnmGMmNcv7nSq6MLxxUXtllF24yzLU6fWQhg?=
+ =?us-ascii?Q?de4vEpFhVii56XIBtuzNpUhcyBS89YcDlX1zAKBcoWJlcA/ae9ZtIFvVCweQ?=
+ =?us-ascii?Q?xphFlPlCBHsMy393SaK0j6mH5kqk3f5+jInY7OODoWiL2MxUAzZdMralFFC/?=
+ =?us-ascii?Q?kRzZFvwL0I/xO6iFPAkJsGDEND6ckU9cpq5CgvQj7wUr5ol41XGcgSoaVAED?=
+ =?us-ascii?Q?3swj+NXl0TF3QstMZeH50FlU7Cql+XFLrRITbHMvx7L+6VcItUqPEuyNj1lO?=
+ =?us-ascii?Q?TeTOSpUvNBymJouBP7FExg/stUhGSZ5yFLRQoohKQZ52idQ8+mNZHPG2mvXh?=
+ =?us-ascii?Q?AJG2iu7sii9wN5KoR0roEvrwLqtlZQ/v6zRI0wLVQa8Z4reU0BhDbQc2qKgI?=
+ =?us-ascii?Q?5zA3HA44E2KPSfS+lUVZGYAYlzUuhZs86+cTlJ5pCjczA/GQ7+Sv9kyKYLDJ?=
+ =?us-ascii?Q?Ccgeeu81JYxVPGE4SyqrKszVosYwjvQkfHLTjeRrVHbtJArrkuWZZw0xyNTN?=
+ =?us-ascii?Q?/Z89ZqaCdrl0joCssVxlO+Rf9JY4AaNaUjQuRbQ/RVTogQqoGrn0VyU9voY0?=
+ =?us-ascii?Q?0qThhpePOqAy3PgAh4l2HnNJkZR6qX2D/ifjnffUYnLXWutvrZ4efFbBvI4e?=
+ =?us-ascii?Q?Mbio2XwQMv3VfmDElJ3AoBjgdUgLFyxNQN+zVo7C5Qq5vf91c+JQpGEnUH3r?=
+ =?us-ascii?Q?ZLTHs1cvsHRCkqKGsKbpDHpQhb8XEbY/jgGUOh87fNMR25nO0XGCdyYBQ3QY?=
+ =?us-ascii?Q?MRk1JeeTRTasNVTQQGAQWYhS1EhMiSiL9bNZwWCS+ij09A=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(82310400017)(1800799015)(376005)(36860700004);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 May 2024 11:24:05.4383
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b43c727c-c2ea-4e6c-5093-08dc74d187d7
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF00001CE1.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8976
 
-Create a new MediaTek CMA heap from the CMA reserved buffer.
+Currently return status is not getting checked for get_api_version
+and because of that for x86 arch we are getting below smatch error.
 
-In this heap, When the first allocating buffer, use cma_alloc to prepare
-whole the CMA range, then send its range to TEE to protect and manage.
-For the later allocating, we just adds the cma_used_size.
+    CC      drivers/soc/xilinx/zynqmp_power.o
+drivers/soc/xilinx/zynqmp_power.c: In function 'zynqmp_pm_probe':
+drivers/soc/xilinx/zynqmp_power.c:295:12: warning: 'pm_api_version' is
+used uninitialized [-Wuninitialized]
+    295 |         if (pm_api_version < ZYNQMP_PM_VERSION)
+        |            ^
+    CHECK   drivers/soc/xilinx/zynqmp_power.c
+drivers/soc/xilinx/zynqmp_power.c:295 zynqmp_pm_probe() error:
+uninitialized symbol 'pm_api_version'.
 
-When SVP done, cma_release will release the buffer, then kernel may
-reuse it.
+So, check return status of pm_get_api_version and return error in case
+of failure to avoid checking uninitialized pm_api_version variable.
 
-For the "CMA" restricted heap, "struct cma *cma" is a common property,
-not just for MediaTek, so put it into "struct restricted_heap" instead of
-our private data.
-
-Signed-off-by: Yong Wu <yong.wu@mediatek.com>
+Fixes: b9b3a8be28b3 ("firmware: xilinx: Remove eemi ops for get_api_version")
+Signed-off-by: Jay Buddhabhatti <jay.buddhabhatti@amd.com>
+Cc: stable@vger.kernel.org
 ---
- drivers/dma-buf/heaps/Kconfig               |   2 +-
- drivers/dma-buf/heaps/restricted_heap.h     |   4 +
- drivers/dma-buf/heaps/restricted_heap_mtk.c | 121 +++++++++++++++++++-
- 3 files changed, 123 insertions(+), 4 deletions(-)
+V1: https://lore.kernel.org/lkml/20240424063118.23200-1-jay.buddhabhatti@amd.com/
+V2: https://lore.kernel.org/lkml/20240509045616.22338-1-jay.buddhabhatti@amd.com/
+V2->V3: Added stable tree email in cc
+V1->V2: Removed AMD copyright
+---
+ drivers/soc/xilinx/zynqmp_power.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/dma-buf/heaps/Kconfig b/drivers/dma-buf/heaps/Kconfig
-index 84f748fb2856..58903bc62ac8 100644
---- a/drivers/dma-buf/heaps/Kconfig
-+++ b/drivers/dma-buf/heaps/Kconfig
-@@ -24,7 +24,7 @@ config DMABUF_HEAPS_RESTRICTED
+diff --git a/drivers/soc/xilinx/zynqmp_power.c b/drivers/soc/xilinx/zynqmp_power.c
+index 965b1143936a..b82c01373f53 100644
+--- a/drivers/soc/xilinx/zynqmp_power.c
++++ b/drivers/soc/xilinx/zynqmp_power.c
+@@ -190,7 +190,9 @@ static int zynqmp_pm_probe(struct platform_device *pdev)
+ 	u32 pm_api_version;
+ 	struct mbox_client *client;
  
- config DMABUF_HEAPS_RESTRICTED_MTK
- 	bool "MediaTek DMA-BUF Restricted Heap"
--	depends on DMABUF_HEAPS_RESTRICTED && TEE=y
-+	depends on DMABUF_HEAPS_RESTRICTED && DMA_CMA && TEE=y
- 	help
- 	  Enable restricted dma-buf heaps for MediaTek platform. This heap is backed by
- 	  TEE client interfaces. If in doubt, say N.
-diff --git a/drivers/dma-buf/heaps/restricted_heap.h b/drivers/dma-buf/heaps/restricted_heap.h
-index 8cb9211093c5..7dec4b8a471b 100644
---- a/drivers/dma-buf/heaps/restricted_heap.h
-+++ b/drivers/dma-buf/heaps/restricted_heap.h
-@@ -23,6 +23,10 @@ struct restricted_heap {
- 
- 	const struct restricted_heap_ops *ops;
- 
-+	struct cma		*cma;
-+	unsigned long		cma_paddr;
-+	unsigned long		cma_size;
-+
- 	void			*priv_data;
- };
- 
-diff --git a/drivers/dma-buf/heaps/restricted_heap_mtk.c b/drivers/dma-buf/heaps/restricted_heap_mtk.c
-index e571eae719e0..6d8119828485 100644
---- a/drivers/dma-buf/heaps/restricted_heap_mtk.c
-+++ b/drivers/dma-buf/heaps/restricted_heap_mtk.c
-@@ -6,9 +6,11 @@
-  */
- #define pr_fmt(fmt)     "rheap_mtk: " fmt
- 
-+#include <linux/cma.h>
- #include <linux/dma-buf.h>
- #include <linux/err.h>
- #include <linux/module.h>
-+#include <linux/of_reserved_mem.h>
- #include <linux/slab.h>
- #include <linux/tee_drv.h>
- #include <linux/uuid.h>
-@@ -25,6 +27,13 @@ enum mtk_secure_mem_type {
- 	 * management is inside the TEE.
- 	 */
- 	MTK_SECURE_MEMORY_TYPE_CM_TZ	= 1,
-+	/*
-+	 * MediaTek dynamic chunk memory carved out from CMA.
-+	 * In normal case, the CMA could be used in kernel; When SVP start, we will
-+	 * allocate whole this CMA and pass whole the CMA PA and size into TEE to
-+	 * protect it, then the detail memory management also is inside the TEE.
-+	 */
-+	MTK_SECURE_MEMORY_TYPE_CM_CMA	= 2,
- };
- 
- /* This structure also is synchronized with tee, thus not use the phys_addr_t */
-@@ -40,7 +49,8 @@ enum mtk_secure_buffer_tee_cmd {
- 	 * [in]  value[0].a: The buffer size.
- 	 *       value[0].b: alignment.
- 	 * [in]  value[1].a: enum mtk_secure_mem_type.
--	 * [inout]
-+	 * [inout] [in]  value[2].a: pa base in cma case.
-+	 *               value[2].b: The buffer size in cma case.
- 	 *         [out] value[2].a: entry number of memory block.
- 	 *                           If this is 1, it means the memory is continuous.
- 	 *               value[2].b: buffer PA base.
-@@ -73,6 +83,9 @@ struct mtk_restricted_heap_data {
- 
- 	const enum mtk_secure_mem_type mem_type;
- 
-+	struct page		*cma_page;
-+	unsigned long		cma_used_size;
-+	struct mutex		lock; /* lock for cma_used_size */
- };
- 
- static int mtk_tee_ctx_match(struct tee_ioctl_version_data *ver, const void *data)
-@@ -173,6 +186,10 @@ static int mtk_tee_restrict_memory(struct restricted_heap *rheap, struct restric
- 	params[1].attr = TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_INPUT;
- 	params[1].u.value.a = data->mem_type;
- 	params[2].attr = TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_INOUT;
-+	if (rheap->cma && data->mem_type == MTK_SECURE_MEMORY_TYPE_CM_CMA) {
-+		params[2].u.value.a = rheap->cma_paddr;
-+		params[2].u.value.b = rheap->cma_size;
-+	}
- 	params[3].attr = TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_OUTPUT;
- 	ret = mtk_tee_service_call(data->tee_ctx, data->tee_session,
- 				   MTK_TZCMD_SECMEM_ZALLOC, params);
-@@ -265,6 +282,48 @@ mtk_restricted_memory_free(struct restricted_heap *rheap, struct restricted_buff
- {
- }
- 
-+static int mtk_restricted_memory_cma_allocate(struct restricted_heap *rheap,
-+					      struct restricted_buffer *buf)
-+{
-+	struct mtk_restricted_heap_data *data = rheap->priv_data;
-+	int ret = 0;
-+	/*
-+	 * Allocate CMA only when allocating buffer for the first time, and just
-+	 * increase cma_used_size at the other time, Actually the memory
-+	 * allocating is within the TEE.
-+	 */
-+	mutex_lock(&data->lock);
-+	if (!data->cma_used_size) {
-+		data->cma_page = cma_alloc(rheap->cma, rheap->cma_size >> PAGE_SHIFT,
-+					   get_order(PAGE_SIZE), false);
-+		if (!data->cma_page) {
-+			ret = -ENOMEM;
-+			goto out_unlock;
-+		}
-+	} else if (data->cma_used_size + buf->size > rheap->cma_size) {
-+		ret = -EINVAL;
-+		goto out_unlock;
-+	}
-+	data->cma_used_size += buf->size;
-+
-+out_unlock:
-+	mutex_unlock(&data->lock);
-+	return ret;
-+}
-+
-+static void mtk_restricted_memory_cma_free(struct restricted_heap *rheap,
-+					   struct restricted_buffer *buf)
-+{
-+	struct mtk_restricted_heap_data *data = rheap->priv_data;
-+
-+	mutex_lock(&data->lock);
-+	data->cma_used_size -= buf->size;
-+	if (!data->cma_used_size)
-+		cma_release(rheap->cma, data->cma_page,
-+			    rheap->cma_size >> PAGE_SHIFT);
-+	mutex_unlock(&data->lock);
-+}
-+
- static int mtk_restricted_heap_init(struct restricted_heap *rheap)
- {
- 	struct mtk_restricted_heap_data *data = rheap->priv_data;
-@@ -286,21 +345,77 @@ static struct mtk_restricted_heap_data mtk_restricted_heap_data = {
- 	.mem_type		= MTK_SECURE_MEMORY_TYPE_CM_TZ,
- };
- 
-+static const struct restricted_heap_ops mtk_restricted_heap_ops_cma = {
-+	.heap_init		= mtk_restricted_heap_init,
-+	.alloc			= mtk_restricted_memory_cma_allocate,
-+	.free			= mtk_restricted_memory_cma_free,
-+	.restrict_buf		= mtk_tee_restrict_memory,
-+	.unrestrict_buf		= mtk_tee_unrestrict_memory,
-+};
-+
-+static struct mtk_restricted_heap_data mtk_restricted_heap_data_cma = {
-+	.mem_type		= MTK_SECURE_MEMORY_TYPE_CM_CMA,
-+};
-+
- static struct restricted_heap mtk_restricted_heaps[] = {
- 	{
- 		.name		= "restricted_mtk_cm",
- 		.ops		= &mtk_restricted_heap_ops,
- 		.priv_data	= &mtk_restricted_heap_data,
- 	},
-+	{
-+		.name		= "restricted_mtk_cma",
-+		.ops		= &mtk_restricted_heap_ops_cma,
-+		.priv_data	= &mtk_restricted_heap_data_cma,
-+	},
- };
- 
-+static int __init mtk_restricted_cma_init(struct reserved_mem *rmem)
-+{
-+	struct restricted_heap *rheap = mtk_restricted_heaps, *rheap_cma = NULL;
-+	struct mtk_restricted_heap_data *data;
-+	struct cma *cma;
-+	int ret, i;
-+
-+	for (i = 0; i < ARRAY_SIZE(mtk_restricted_heaps); i++, rheap++) {
-+		data = rheap->priv_data;
-+		if (data->mem_type == MTK_SECURE_MEMORY_TYPE_CM_CMA) {
-+			rheap_cma = rheap;
-+			break;
-+		}
-+	}
-+	if (!rheap_cma)
-+		return -EINVAL;
-+
-+	ret = cma_init_reserved_mem(rmem->base, rmem->size, 0, rmem->name,
-+				    &cma);
-+	if (ret) {
-+		pr_err("%s: %s set up CMA fail. ret %d.\n", __func__, rmem->name, ret);
+-	zynqmp_pm_get_api_version(&pm_api_version);
++	ret = zynqmp_pm_get_api_version(&pm_api_version);
++	if (ret)
 +		return ret;
-+	}
-+
-+	rheap_cma->cma = cma;
-+	rheap_cma->cma_paddr = rmem->base;
-+	rheap_cma->cma_size = rmem->size;
-+	return 0;
-+}
-+
-+RESERVEDMEM_OF_DECLARE(restricted_cma, "mediatek,dynamic-restricted-region",
-+		       mtk_restricted_cma_init);
-+
- static int mtk_restricted_heap_initialize(void)
- {
- 	struct restricted_heap *rheap = mtk_restricted_heaps;
-+	struct mtk_restricted_heap_data *data;
- 	unsigned int i;
  
--	for (i = 0; i < ARRAY_SIZE(mtk_restricted_heaps); i++, rheap++)
--		restricted_heap_add(rheap);
-+	for (i = 0; i < ARRAY_SIZE(mtk_restricted_heaps); i++, rheap++) {
-+		data = rheap->priv_data;
-+		if (data->mem_type == MTK_SECURE_MEMORY_TYPE_CM_CMA && !rheap->cma)
-+			continue;
-+		if (!restricted_heap_add(rheap))
-+			mutex_init(&data->lock);
-+	}
- 	return 0;
- }
- module_init(mtk_restricted_heap_initialize);
+ 	/* Check PM API version number */
+ 	if (pm_api_version < ZYNQMP_PM_VERSION)
 -- 
-2.25.1
+2.17.1
 
 
