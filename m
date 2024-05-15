@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-180146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE7B68C6AB6
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:35:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1F9F8C6AB9
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:35:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6527D1F21596
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:35:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EC001C20C18
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:35:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4660D208C1;
-	Wed, 15 May 2024 16:35:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69CC9364A0;
+	Wed, 15 May 2024 16:35:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i+BO7M0Y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QjbN3xZn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84683800;
-	Wed, 15 May 2024 16:35:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A683D22F03;
+	Wed, 15 May 2024 16:35:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715790907; cv=none; b=iG6g/ueFfvMLgkBn/epT3yDoNBI3tS6vg3hv9vStAa2CZy67kXGCqlqw2zieyj/YwD7A897TgHClYslvsR16NB+LHpvRoEY9+owdX/HLNr1Zb3y8y311b9G3ZuVzzhlkNnb4EkIuGOfOyxEdEj8WtOomdRLA4Fnw7haMWi8KsdY=
+	t=1715790908; cv=none; b=h3GtanB5dF/SjjPrPymQRS66p19Ap9yw/unThQ0XviZuTIMMrh4AkwvIAxmt/R2WEB4zRWcIXFut3nudw9u+kWTWtScexZTX47Igrt3zy3kzlcwPxVIEkdnhpc18kts7TJFSZ91oWZy+wDmQT+TTrnCnjnPzQi0ONILvf70dZ3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715790907; c=relaxed/simple;
-	bh=PoivPBOAhAAaQPcPeSYxBCrpVaH2Dxvmlh72fQacjy0=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=oKNrOi+8LtlIdMl3wUVBzxlzqvqfG6YZfbIc1+caRU4bDE3idR3fKfWRn2SWYKHtOvf7pzln75CCFB7PK77xPEFrDTrVJtQoS+Ld7hlQ1ss6hBzUMzcsMFhUJIapBftpVtbTaMczdvUxqzzoIAsVDRPHoc1Zu5X9v0gwO1KbZFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i+BO7M0Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 631FAC116B1;
-	Wed, 15 May 2024 16:35:07 +0000 (UTC)
+	s=arc-20240116; t=1715790908; c=relaxed/simple;
+	bh=nSEdk46XFZkgCNkeugff7e4E3cc9kb1cfjk3Mnel1CU=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=F5mdtgbRKNEPck3h7pwCAz+MG0wMxfY5EK+7TzR2Leva7nN67cA6+za2xNnGkaJJngSejuoMqsTJFUgz8riarN48DO6gObJNB+c1FNt4JarUFtOmW5Nh7L36hPNx4PozY7aCb52q5bico6crcaBMGKHO93tWS7GAS+vMMF15joA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QjbN3xZn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 73CB7C116B1;
+	Wed, 15 May 2024 16:35:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715790907;
-	bh=PoivPBOAhAAaQPcPeSYxBCrpVaH2Dxvmlh72fQacjy0=;
+	s=k20201202; t=1715790908;
+	bh=nSEdk46XFZkgCNkeugff7e4E3cc9kb1cfjk3Mnel1CU=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=i+BO7M0Yi5kg6PyKIPG48oywJoh9XI7SE/K7f5EfIF8Zf0Xt7AAemOsznXTrcYHnr
-	 PWNBGZvlFwc/JgK5YfOOHD1dwHDP1ikgdpWHEWODRBsiE6f+EQ9jK3nyVB3Zma8sOf
-	 qPpmHVjB8lrgg11JC9i6POEg+dBQLQRyX7PvX3LwwnJWKQTbulg2Tgczng8cUZXy0U
-	 RsqZNiHziIt6TKCgfc6k67tkulpsFJazY0tFRuiy1YhIEAP5fDGErSyHOjnCLdKqd7
-	 aipouS95e+9nPCVCNMk00qLotMkasjAQGZvdZXICmOvPmSPC1LOO6fg3C20IE31kh3
-	 HUppaVHHyXKcw==
+	b=QjbN3xZntB/jet76rwfcY9+FZbMJLrhCglEbFHUowx9CWUBRwPSNbVy9+ci8xkOR7
+	 /JL34tb0Tjf4SHH6q0ly85/I0geeL0uQceKuscMZRU0KJM9Oz7OurbWwACu7nDjFK7
+	 sPSj6GDp7TX2JYY+/iYALEit2DZt6ClXhDjAyw1q+yOkbUcxan4ZNrf26+SKvRx3yT
+	 gPnXZ9EzuAw3Q/Lr/qdEgKbGYKoAiDdzpIOosDPFHYDpiunpN7xCNnSUNITTXzwSQv
+	 XP705dTcnlb7gzwT65TZzTKx2Ehi0OMGCkI3mLJj1SAV1OCzVh1kaNleuKUr2ZOyMn
+	 sPgBBRxR43uyQ==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 594FEC433A2;
-	Wed, 15 May 2024 16:35:07 +0000 (UTC)
-Subject: Re: [GIT PULL] selinux/selinux-pr-20240513
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 6D117C43332;
+	Wed, 15 May 2024 16:35:08 +0000 (UTC)
+Subject: Re: [GIT PULL] ASYMMETRIC KEYS: asymmetric-keys-next-6.10-rc1
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <32b581d2da1208a912f4ad200b08bdf1@paul-moore.com>
-References: <32b581d2da1208a912f4ad200b08bdf1@paul-moore.com>
-X-PR-Tracked-List-Id: <selinux.vger.kernel.org>
-X-PR-Tracked-Message-Id: <32b581d2da1208a912f4ad200b08bdf1@paul-moore.com>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git tags/selinux-pr-20240513
-X-PR-Tracked-Commit-Id: 581646c3fb98494009671f6d347ea125bc0e663a
+In-Reply-To: <D1909NYKXM11.3VLXHOO4NA7RA@kernel.org>
+References: <D1909NYKXM11.3VLXHOO4NA7RA@kernel.org>
+X-PR-Tracked-List-Id: <linux-crypto.vger.kernel.org>
+X-PR-Tracked-Message-Id: <D1909NYKXM11.3VLXHOO4NA7RA@kernel.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/asymmetric-keys-next-6.10-rc1
+X-PR-Tracked-Commit-Id: 747ae81883d21595b162cc40523a982024700fed
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: ccae19c6239ae810242d2edc03b02bdcc12fc5ab
-Message-Id: <171579090735.28973.14194535403813876767.pr-tracker-bot@kernel.org>
-Date: Wed, 15 May 2024 16:35:07 +0000
-To: Paul Moore <paul@paul-moore.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, selinux@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+X-PR-Merge-Commit-Id: 46c6d2b186915176be5acc5d4b6f9793eb32a0c7
+Message-Id: <171579090844.28973.97804562965046429.pr-tracker-bot@kernel.org>
+Date: Wed, 15 May 2024 16:35:08 +0000
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, David Howells <dhowells@redhat.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, keyrings@vger.kernel.org, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Mon, 13 May 2024 17:23:02 -0400:
+The pull request you sent on Tue, 14 May 2024 05:18:25 +0300:
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git tags/selinux-pr-20240513
+> git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/asymmetric-keys-next-6.10-rc1
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/ccae19c6239ae810242d2edc03b02bdcc12fc5ab
+https://git.kernel.org/torvalds/c/46c6d2b186915176be5acc5d4b6f9793eb32a0c7
 
 Thank you!
 
