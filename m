@@ -1,97 +1,130 @@
-Return-Path: <linux-kernel+bounces-179917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78D1D8C6765
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 15:30:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2B3B8C676B
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 15:33:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9D051C217B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 13:30:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5ED611F235F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 13:33:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC84812A14C;
-	Wed, 15 May 2024 13:30:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C1438595F;
+	Wed, 15 May 2024 13:33:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="kZC3RbZF"
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cryptogams.org header.i=@cryptogams.org header.b="fwmCmxIO"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B7D2127E12
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 13:29:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C146E85C59
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 13:33:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715779801; cv=none; b=qmUWHH1QL+LY+vveBiSzL6YTYbPVEP8xLE9VKHp8Ct1zQvyiFE4GY/tkzZQXo/fe8LhCNRGojNXOJ34ZFb1znQO93tpwXoLNSqHhpKWb3kpwbUeKzY8EJQ76MIv2+zxTABh7aHQ1vean1+T4Saz3ihwrXDJ3gjVRW61RZ/9gD6c=
+	t=1715779991; cv=none; b=EG0WyunOTflA06iKuL3YBcxjUGzYsVLBHp2uSJY+MAa9sSDmjHVHafhsCUHm2DcIQ9DTpR74DREQDDVHSEkM/tV5x76Qa60XGjNVOJfrxzAwQZMerXU9dceBAusF876ob7YaTC7xIzlDuWb3JV2AsB10vSjVAA6GEAPNd7HE5zI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715779801; c=relaxed/simple;
-	bh=mkKjpPpuGEd4/WEi+kqlcv0kfuYm/u5RzqJD/2y2c7s=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=u6etoMGRXtajYNYnaj66rROBNvlzpfreBK3K4tcGM2I5hJhdpdKbYtahQ9iDZiyFlZ3Aa1CukhgckwBkQoqVYuoW7m6UtWEGG5cB6f0cw2Dp9KsZxHYex3Ouc7kkSpH+Qwmw0yJ4Nvr254h7y87MxRP9x756AfGrnuPLW49YMvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=kZC3RbZF; arc=none smtp.client-ip=115.124.30.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1715779791; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=YOi4tDk8CK2U3Nzvqq2F2lyNfJlKybMBPqcVB0ycB68=;
-	b=kZC3RbZFslVMWf3Ld/HrBcoWKi8PLU5Vy5R7wo56KPUQA/zP7z6wQSPKRM7hwNuCivYlDOE6fNQsAjMLFG8FZebZSxs8/SOZ6NrbyxT5b/sGnGn7RCoVpLKM0vloGyibp3xrOL2IYcG4V6JtjxBAWewD4pdUL81UArqkoGACtQc=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067110;MF=mengferry@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0W6YDIG7_1715779788;
-Received: from j66c13357.sqa.eu95.tbsite.net(mailfrom:mengferry@linux.alibaba.com fp:SMTPD_---0W6YDIG7_1715779788)
-          by smtp.aliyun-inc.com;
-          Wed, 15 May 2024 21:29:50 +0800
-From: Ferry Meng <mengferry@linux.alibaba.com>
-To: Mark Fasheh <mark@fasheh.com>,
-	Joel Becker <jlbec@evilplan.org>,
-	Joseph Qi <joseph.qi@linux.alibaba.com>,
-	ocfs2-devel@lists.linux.dev
-Cc: linux-kernel@vger.kernel.org,
-	Ferry Meng <mengferry@linux.alibaba.com>
-Subject: [PATCH 2/2] ocfs2: strict bound check before memcmp in ocfs2_xattr_find_entry()
-Date: Wed, 15 May 2024 21:29:34 +0800
-Message-Id: <20240515132934.69511-3-mengferry@linux.alibaba.com>
-X-Mailer: git-send-email 2.32.0.3.g01195cf9f
-In-Reply-To: <20240515132934.69511-1-mengferry@linux.alibaba.com>
-References: <20240515132934.69511-1-mengferry@linux.alibaba.com>
+	s=arc-20240116; t=1715779991; c=relaxed/simple;
+	bh=9S7DSw9sHbiB+sYt8oWVLOv/m7dBhEgy7oKSHCb0BPo=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=t1nsYdQlYz7onUZUF6CiUSftfkitC0/H//n8LfmYN+ZpX7hzexEsKA11wCwQAxTMj1MUpc9VoMmKB5Ij0/Aj31OaFtGjUrwu8iJs+uBXf9IXEpkTx/V0HuwSkHVs7n3BeNleulI/VvoScH46ZJaEUvLLPl+4GFqAPV0cbMyhOkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cryptogams.org; spf=pass smtp.mailfrom=cryptogams.org; dkim=pass (2048-bit key) header.d=cryptogams.org header.i=@cryptogams.org header.b=fwmCmxIO; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cryptogams.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cryptogams.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5238cb1e3bbso1201276e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 06:33:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cryptogams.org; s=gmail; t=1715779988; x=1716384788; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=IZnKfmHcaXKfk4mANRDz90u7oAjx4Am3VbR95ZF3WgM=;
+        b=fwmCmxIOXMpSoN224HbUI9m5AikYcgUMSH0yBtwoVUsbdQTWt8lV9PIOXBP1oA6SWC
+         ZVjNfCvgdrfVnk4L040Ht/o3THevHP4OkuEQ75zWDdj5c1BKsVdX0u7RdDuMUnDvqKVH
+         6zadIi/8YEaVghG74JGhQpMLBBo1TpmL8RPtFNwJr1SH5K+e0SRNAE/rG3dEyjgJU9rd
+         XWdT9fheoyLdAh5zjBR5BjfKGHO5CcXvOsjpCaokxBEluMVdyfVCZrWURcPFYy6J08Ug
+         bYU0/6ntjl7QCZhq7q9Bwt4V1k9eHH4whGXOmkUTmCDOVqyBKYwuxHuFdLYGbC40yvDR
+         GIig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715779988; x=1716384788;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IZnKfmHcaXKfk4mANRDz90u7oAjx4Am3VbR95ZF3WgM=;
+        b=FHuZh23LW7fV5JhWLVIROc5J6M6J+qg9Qf3kLLS0OGb4GRpQGx5mV/nrvgViNUZ78f
+         c2R9gOZf0U45ScXalAClxPpeIR/6qAOTZgZnwKxKR+hFoX+96jSDKTBTi4pWLwpbGDRz
+         iqNgV94SHgvV3e9of6iWP/ebUyJcDm7Sd9Hgn6agoY4TtY86Usn4wGpYT7XTuR76ZXIp
+         RmWfuk98UBm84m4zmYRppXdZPUecEskESlZp5/cA08f9p7kVxdqSY83C0PPBz9ORh7OO
+         l1bOMBSh2f2EeHWQ1Oo8NrCYfyBgtRGbGYto4Ksi2hpjXNZxbkV8MLfVmEayy1/QZS2U
+         kfcg==
+X-Forwarded-Encrypted: i=1; AJvYcCXWDE81Q3aN/lz+bwku1ohZT0gavMsF1dPrr22Vh6A+YkjTjqwwHE/uOuBuSN0sCk2uZXPBxjAWqwNYhOO+8xTVWFJP1LMUPEECwtS4
+X-Gm-Message-State: AOJu0YzIo2Le5GqvbwXp+fyL85NPbFAjgFw8FYWoQmrUWTfNcsy7Y4Tj
+	V2j+uwO88kbQCvPnAUIFHHU0QSlnhyXkturh+xDnQxQQ3Jl75Vb49DJbO2K+zS8=
+X-Google-Smtp-Source: AGHT+IHARK6h98zaZeHwpQW3CC/oAdRtrkGoOz4whPQzV2TK8WECwB1HF5F/+Wjw4JdTyvdc6/Eqyw==
+X-Received: by 2002:a05:6512:3e10:b0:51a:f16d:52a8 with SMTP id 2adb3069b0e04-52210070178mr14110770e87.50.1715779987823;
+        Wed, 15 May 2024 06:33:07 -0700 (PDT)
+Received: from [10.0.1.129] (c-922370d5.012-252-67626723.bbcust.telenor.se. [213.112.35.146])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-521f38d86b3sm2613126e87.210.2024.05.15.06.33.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 May 2024 06:33:07 -0700 (PDT)
+Message-ID: <7eb6bf4b-5510-48fe-aa6c-ac5207d5a2c1@cryptogams.org>
+Date: Wed, 15 May 2024 15:33:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] crypto: X25519 core functions for ppc64le
+From: Andy Polyakov <appro@cryptogams.org>
+To: Danny Tsen <dtsen@linux.ibm.com>, linux-crypto@vger.kernel.org
+Cc: herbert@gondor.apana.org.au, leitao@debian.org, nayna@linux.ibm.com,
+ linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ mpe@ellerman.id.au, ltcgcw@linux.vnet.ibm.com, dtsen@us.ibm.com
+References: <20240514173835.4814-1-dtsen@linux.ibm.com>
+ <20240514173835.4814-3-dtsen@linux.ibm.com>
+ <847f2e4f-ace1-415d-b129-ed2751429eec@cryptogams.org>
+Content-Language: en-US
+In-Reply-To: <847f2e4f-ace1-415d-b129-ed2751429eec@cryptogams.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-xattr in ocfs2 maybe not INLINE, but saved with additional space
-requested. It's better to check if the memory is out of bound before
-memcmp, although this possibility mainly comes from custom poisonous
-images.
+>> +static void cswap(fe51 p, fe51 q, unsigned int bit)
+>> +{
+>> +    u64 t, i;
+>> +    u64 c = 0 - (u64) bit;
+>> +
+>> +    for (i = 0; i < 5; ++i) {
+>> +        t = c & (p[i] ^ q[i]);
+>> +        p[i] ^= t;
+>> +        q[i] ^= t;
+>> +    }
+>> +}
+> 
+> The "c" in cswap stands for "constant-time," and the problem is that 
+> contemporary compilers have exhibited the ability to produce 
+> non-constant-time machine code as result of compilation of the above 
+> kind of technique. The outcome is platform-specific and ironically some 
+> of PPC code generators were observed to generate "most" 
+> non-constant-time code. "Most" in sense that execution time variations 
+> would be most easy to catch.
 
-Signed-off-by: Ferry Meng <mengferry@linux.alibaba.com>
----
- fs/ocfs2/xattr.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+Just to substantiate the point, consider 
+https://godbolt.org/z/faYnEcPT7, and note the conditional branch in the 
+middle of the loop, which flies in the face of constant-time-ness. In 
+case you object 'bit &= 1' on line 7 in the C code. Indeed, if you 
+comment it out, the generated code will be fine. But the point is that 
+the compiler is capable of and was in fact observed to figure out that 
+the caller passes either one or zero and generate the machine code in 
+the assembly window. In other words 'bit &= 1' is just a reflection of 
+what the caller does.
 
-diff --git a/fs/ocfs2/xattr.c b/fs/ocfs2/xattr.c
-index 37be4a286faf..4ceb0cb4cb71 100644
---- a/fs/ocfs2/xattr.c
-+++ b/fs/ocfs2/xattr.c
-@@ -1083,10 +1083,15 @@ static int ocfs2_xattr_find_entry(struct inode *inode, void *end,
- 		cmp = name_index - ocfs2_xattr_get_type(entry);
- 		if (!cmp)
- 			cmp = name_len - entry->xe_name_len;
--		if (!cmp)
-+		if (!cmp) {
-+			if ((xs->base + le16_to_cpu(entry->xe_name_offset) + name_len) > end) {
-+				ocfs2_error(inode->i_sb, "corrupted xattr entries");
-+				return -EFSCORRUPTED;
-+			}
- 			cmp = memcmp(name, (xs->base +
- 				     le16_to_cpu(entry->xe_name_offset)),
- 				     name_len);
-+		}
- 		if (cmp == 0)
- 			break;
- 		entry += 1;
--- 
-2.32.0.3.g01195cf9f
+> ... the permanent solution is to do it 
+> in assembly. I can put together something...
+
+Though you should be able to do this just as well :-) So should I or 
+would you?
+
+Cheers.
 
 
