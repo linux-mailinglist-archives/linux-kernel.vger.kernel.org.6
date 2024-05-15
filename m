@@ -1,188 +1,186 @@
-Return-Path: <linux-kernel+bounces-179530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92DC98C60F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:45:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3BDE8C60FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:45:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25AB61F210E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:45:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98A3B2836F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:45:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0823B43144;
-	Wed, 15 May 2024 06:44:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="Kztt4isx"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FD063FB89;
+	Wed, 15 May 2024 06:45:10 +0000 (UTC)
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B44763D551
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 06:44:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 243ACEA4;
+	Wed, 15 May 2024 06:45:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715755461; cv=none; b=C4jTDJpl3eVHxCja4uB6MpR5IMPkV6SwMvSPH1Ypvqn4loHU7J84CcET7gxayxqgu1yGJHwgnfIKNYnkg8xyz0HKUzXMo7L/igZrmI7her5Ko9jkoPOBm+K3jaSR0JBi2lJP0wdc3YAYpfpwIFMhQzVSzE5mVMM2vbbKiT4idwI=
+	t=1715755509; cv=none; b=jPlJMzVVseD3xH5KvpVHIvQWxVM7y/0rq9YvtgdM/vFDLCfjx3RG+Vc6e8MnvDz02s2NYZZxVcRuRwWDtBnm4ehnPD0PjkWBS7nkVFwxiLQorP6zd2Y/CkHpR17grwMoEofI5l6RjOVexqBMkk6nYpEZGjVhrss3mHQKI0g6P/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715755461; c=relaxed/simple;
-	bh=Fajia5z7P12kLeYYIqCKzSxxUzjVfBhm34t9XrY0/yk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZuQgsSQeIKT+gSTiflcHv5jA1/CMhhf+vAxZv6DxL/RwqgqxKfbjGgyq/VHX7AdM2WKhA010OEJiGrH/HkXr5PrVPV0b4JrnYORBAdyBlIYM1Eq0AHYnKgDgGpupFyqh7kH7SVeq6bcwdO+jRRkq4uWkqOXFcnEaQARsFT0793s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=Kztt4isx; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-5ce2aada130so4599036a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 23:44:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1715755459; x=1716360259; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cHt6iIdLhW0U7BUX4DS9zeBTZluih3jaSJ3akZl6570=;
-        b=Kztt4isx1Mubyl8Fpbrxwcx7WVR/jnojP6TJ/5wHuCSUbd3W7go/1zLZOGFd7EYr9B
-         2JRFvVaeSeLQgeDmG7DQyoVaGjJ5idyNDN/T6gM4R5QII+2aOfhgucxc5udCRHCFDnlm
-         8HhhrDV2Jel12WEzipoWc1i9V/Cxd04w1SjiDtZezIW34m2ccc3ubDhYaf+5rs4tCpzC
-         NPzztGmKeDVXxO1oSGH3VHw6OOR39bwCNEL/xN1cjxn7tTp8aRIBLjuBln8QmhZed7Gt
-         hIP1mGuDVx+q0kUb0BGcRBsBSn9hDLcQDmbTtvYsnJz7bH+teVKQAWJLm1VzM8nZaDo1
-         pJBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715755459; x=1716360259;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cHt6iIdLhW0U7BUX4DS9zeBTZluih3jaSJ3akZl6570=;
-        b=FmONlzhxtZJo8S61l5++wYEiJrjv8h4UEdBS/ImFH3do5xhoOclwUtlibDoIj9KNOg
-         bHSdBjn1axofEUVjx3WfjqGQCzCt9SBxKWvLxLixgGN1P0XWeldnEMBQJySJrVt7Y2AL
-         e2jX+vt43bfUgpeR1APw+RE8b0nip7NaKeB8uD6+cJiMLFG1jVUVoffru1oLuaeDyDMp
-         6fDuoB/0hn7CxwX0XIwlRS3wrkb2tsar9/8Ny92Tddt1G6QtyfhgE0td7xvbjDNPDkO9
-         8H0fAtz8Ff+7PtPb28S+sAm/657eg8J2Yv5R7itxuYYGJkW4QhQ4EIAWYKQtmQO4hRb2
-         luOA==
-X-Forwarded-Encrypted: i=1; AJvYcCWTFpf8NvfkVAg/1JQyNuwF6UJY7tpk06V+UNExixKuJsscU+3FmM/8EJARx+7qRVBHQPmpNpXqETEMSmoAhT8+F7fetCn2BbmgBtD5
-X-Gm-Message-State: AOJu0Yw6orDjVH5yzMWTQWoNFjNpud8XckSOf0qr6evJx1x45jpUvJtF
-	NxI2lW/lrnsEdcg/WRzspmIvJ967qkTFGLXOwLZWhscZAa/PODPXpFpIFVks8lWIgiLpPnLSgJq
-	2awstTsh/Wo/zBkPCj8mVH1F7PsqvEtlIjxO3BA==
-X-Google-Smtp-Source: AGHT+IFEtAJZ2VfYRn/ENkTjxi26mgbfcvdMy4KCuQ8gQasIEb6jSLE6aTIv+LC20CsuGZBINyFevEeFRMr7E7pWuzI=
-X-Received: by 2002:a17:90b:3715:b0:2b3:9ce8:1239 with SMTP id
- 98e67ed59e1d1-2b6cc1438dbmr12551957a91.6.1715755458902; Tue, 14 May 2024
- 23:44:18 -0700 (PDT)
+	s=arc-20240116; t=1715755509; c=relaxed/simple;
+	bh=rr/1kVdootVVGU7hj5fWVS2fCteWe7tsqWLCJvLLKkU=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=U0fARLmRDdCvyf3/a3yc8ZKP1U1orMmpCZXFrvi08wnGlD88Vu0f24ee2o9f7KuJvaSd3PiHcfYa0C/q63yd8udhvi6lmjVU+oEmHRcmxR/0Qy/eD69Be8b+kw8TSh354KmhShExDXlN9SR1iQdJHgGJnz7Lg1AyzZTLuV3Jwuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4VfNZN0Twxz9v7Hl;
+	Wed, 15 May 2024 14:27:56 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id F0B4A1404D9;
+	Wed, 15 May 2024 14:44:48 +0800 (CST)
+Received: from [10.221.98.131] (unknown [10.221.98.131])
+	by APP2 (Coremail) with SMTP id GxC2BwBnoCTQWURm3bwvCA--.4342S2;
+	Wed, 15 May 2024 07:44:48 +0100 (CET)
+Message-ID: <143273e9-1243-60bc-4fb0-eea6fb3de355@huaweicloud.com>
+Date: Wed, 15 May 2024 08:44:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240503221634.44274-1-ignat@cloudflare.com> <20240503221634.44274-3-ignat@cloudflare.com>
- <D19QW70177QG.2YC9XL0FT7VME@kernel.org> <D19RM0OV7YUW.1ZEI72XQUREMQ@kernel.org>
-In-Reply-To: <D19RM0OV7YUW.1ZEI72XQUREMQ@kernel.org>
-From: Ignat Korchagin <ignat@cloudflare.com>
-Date: Wed, 15 May 2024 07:44:07 +0100
-Message-ID: <CALrw=nEnqBCBQKhK9ACc7tbicqkXaDD+Bjc1d90xizMvbb--oA@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/2] KEYS: implement derived keys
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: James Bottomley <James.Bottomley@hansenpartnership.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	David Howells <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, serge@hallyn.com, linux-integrity@vger.kernel.org, 
-	keyrings@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-team@cloudflare.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+From: Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>
+Subject: Re: [PATCH memory-model 2/4] Documentation/litmus-tests: Demonstrate
+ unordered failing cmpxchg
+To: paulmck@kernel.org, Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+ kernel-team@meta.com, mingo@kernel.org, stern@rowland.harvard.edu,
+ parri.andrea@gmail.com, will@kernel.org, peterz@infradead.org,
+ boqun.feng@gmail.com, npiggin@gmail.com, dhowells@redhat.com,
+ j.alglave@ucl.ac.uk, luc.maranget@inria.fr, akiyks@gmail.com,
+ Frederic Weisbecker <frederic@kernel.org>, Daniel Lustig
+ <dlustig@nvidia.com>, Joel Fernandes <joel@joelfernandes.org>,
+ Mark Rutland <mark.rutland@arm.com>, Jonathan Corbet <corbet@lwn.net>,
+ linux-doc@vger.kernel.org
+References: <42a43181-a431-44bd-8aff-6b305f8111ba@paulmck-laptop>
+ <20240501232132.1785861-2-paulmck@kernel.org>
+ <c97f0529-5a8f-4a82-8e14-0078d4372bdc@huaweicloud.com>
+ <16381d02-cb70-4ae5-b24e-aa73afad9aed@huaweicloud.com>
+ <2a695f63-6c9a-4837-ac03-f0a5c63daaaf@paulmck-laptop>
+Content-Language: en-US
+In-Reply-To: <2a695f63-6c9a-4837-ac03-f0a5c63daaaf@paulmck-laptop>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:GxC2BwBnoCTQWURm3bwvCA--.4342S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxAryDXF4kKFy3Wr1fAFW3Awb_yoW5uw4kpF
+	yrKayUKrs7JrWUAw4Iva1jqF10vrZ3JFW5Xw15tryUAan8GF1FvFyYqrW5ury2yrsaka1j
+	vr1Y9347Zry5AaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvKb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
+	07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c
+	02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_
+	WrylIxkvb40E47kJMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcV
+	C0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF
+	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
+	VjvjDU0xZFpf9x07boZ2-UUUUU=
+X-CM-SenderInfo: xkhu0tnqos00pfhgvzhhrqqx5xdzvxpfor3voofrz/
 
-On Wed, May 15, 2024 at 12:44=E2=80=AFAM Jarkko Sakkinen <jarkko@kernel.org=
-> wrote:
->
-> On Wed May 15, 2024 at 2:10 AM EEST, Jarkko Sakkinen wrote:
-> > On Sat May 4, 2024 at 1:16 AM EEST, Ignat Korchagin wrote:
-> > > Derived keys are similar to user keys, but their payload is derived f=
-rom the
-> > > primary TPM seed and some metadata of the requesting process. This wa=
-y every
-> >
-> > What is exactly "some metadata"?
-> >
-> > > application can get a unique secret/key, which is cryptographically b=
-ound to
-> >
-> > What is "cryptographically bound". Please go straight to the point and
-> > cut out *all* white paper'ish phrases. We do not need it and will make
-> > painful to backtrack this commit once in the mainline.
-> >
-> > > the TPM without the need to provide the key material externally (unli=
-ke trusted
-> > > keys). Also, the whole key derivation process is deterministic, so as=
- long as
-> >
-> > Why trusted keys is inside braces. It is not important for the point
-> > you are trying to make here?
-> >
-> > > the TPM is available, applications can always recover their keys, whi=
-ch may
-> > > allow for easier key management on stateless systems.
-> >
-> > Please drop "stateless system" unless you provide a rigid definition
-> > what it is. I have no idea what you mean by it. Probably not that
-> > important, right?
-> >
-> > >
-> > > In this implementation the following factors will be used as a key de=
-rivation
-> > > factor:
-> > >   * requested key length
-> > >   * requesting process effective user id
-> > >   * either the application executable path or the application integri=
-ty
-> > >     metadata (if available)
-> >
-> > NAK for path for any possible key derivation. They are racy and
-> > and ambiguous.
-> >
-> > This should have been in the beginning instead of "some data". What
-> > other implementations exist. For me "this implementation" implies
-> > that this one competing alternative to multiple implementations
-> > of the same thing.
-> >
-> > I do not like this science/white paper style at all. Just express
-> > short, open code everything right at start when you need and cut
-> > extras like "stateless system" unless you can provide exact, sound
-> > and unambiguous definiton of it.
-> >
-> > Just want to underline how this really needs a complete rewrite with
-> > clear and concise explanation :-) This won't ever work.
-> >
-> > >
-> > > Key length is used so requests for keys with different sizes result i=
-n keys
-> > > with different cryptographic material.
-> >
-> > What is "key length"? Please refer the exact attribute.
-> >
-> > >
-> > > User id is mixed, so different users get different keys even when exe=
-cuting the
-> >
-> > First of all it would be more clear to just s/User id/UID/
-> >
-> > And make obvious whether we are talking about ruid or euid and how
-> > this interacts with GIDs.
-> >
-> > I'll look at the code change next round if the commit message starts
-> > making any sense.
->
-> Right and neither UIDs and GIDs are applicable for key derivation for
-> quite obvious reasons. So NAK for that too.
+On 5/6/2024 8:00 PM, Paul E. McKenney wrote:
+> On Mon, May 06, 2024 at 06:30:45PM +0200, Jonas Oberhauser wrote:
+>> Am 5/6/2024 um 12:05 PM schrieb Jonas Oberhauser:
+>>> Am 5/2/2024 um 1:21 AM schrieb Paul E. McKenney:
+>>>> This commit adds four litmus tests showing that a failing cmpxchg()
+>>>> operation is unordered unless followed by an smp_mb__after_atomic()
+>>>> operation.
+>>>
+>>> So far, my understanding was that all RMW operations without suffix
+>>> (xchg(), cmpxchg(), ...) will be interpreted as F[Mb];...;F[Mb].
+>>>
+>>> I guess this shows again how important it is to model these full
+>>> barriers explicitly inside the cat model, instead of relying on implicit
+>>> conversions internal to herd.
+>>>
+>>> I'd like to propose a patch to this effect.
+>>>
+>>> What is the intended behavior of a failed cmpxchg()? Is it the same as a
+>>> relaxed one?
+> 
+> Yes, and unless I am too confused, LKMM currently does implement this.
+> Please let me know if I am missing something.
+> 
+>>> My suggestion would be in the direction of marking read and write events
+>>> of these operations as Mb, and then defining
+>>>
+>>> (* full barrier events that appear in non-failing RMW *)
+>>> let RMW_MB = Mb & (dom(rmw) | range(rmw))
+>>>
+>>>
+>>> let mb =
+>>>       [M] ; fencerel(Mb) ; [M]
+>>>     | [M] ; (po \ rmw) ; [RMW_MB] ; po^? ; [M]
+>>>     | [M] ; po^? ; [RMW_MB] ; (po \ rmw) ; [M]
+>>>     | ...
+>>>
+>>> The po \ rmw is because ordering is not provided internally of the rmw
+>>
+>> (removed the unnecessary si since LKMM is still non-mixed-accesses)
+> 
+> Addition of mixed-access support would be quite welcome!
+> 
+>> This could also be written with a single rule:
+>>
+>>       | [M] ; (po \ rmw) & (po^?; [RMW_MB] ; po^?) ; [M]
+>>
+>>> I suspect that after we added [rmw] sequences it could perhaps be
+>>> simplified [...]
+>>
+>> No, my suspicion is wrong - this would incorrectly let full-barrier RMWs
+>> act like strong fences when they appear in an rmw sequence.
+>>
+>>   if (z==1)  ||  x = 2;     ||  xchg(&y,2)  || if (y==2)
+>>     x = 1;   ||  y =_rel 1; ||              ||    z=1;
+>>
+>>
+>> right now, we allow x=2 overwriting x=1 (in case the last thread does not
+>> propagate x=2 along with z=1) because on power, the xchg might be
+>> implemented with a sync that doesn't get executed until the very end
+>> of the program run.
+>>
+>>
+>> Instead of its negative form (everything other than inside the rmw),
+>> it could also be rewritten positively. Here's a somewhat short form:
+>>
+>> let mb =
+>>       [M] ; fencerel(Mb) ; [M]
+>>     (* everything across a full barrier RMW is ordered. This includes up to
+>> one event inside the RMW. *)
+>>     | [M] ; po ; [RMW_MB] ; po ; [M]
+>>     (* full barrier RMW writes are ordered with everything behind the RMW *)
+>>     | [W & RMW_MB] ; po ; [M]
+>>     (* full barrier RMW reads are ordered with everything before the RMW *)
+>>     | [M] ; po ; [R & RMW_MB]
+>>     | ...
+> 
+> Does this produce the results expected by the litmus tests in the Linux
+> kernel source tree and also those at https://github.com/paulmckrcu/litmus?
+> 
+> 							Thanx, Paul
 
-Can you, please, clarify a bit here? Not very obvious for me. I added
-euid for two reasons:
-  * an unprivileged user might run a normally privileged application,
-for example /usr/sbin/sshd, and depending on the code could "leak" the
-key
-  * without it and with unprivileged user namespaces it is possible to
-create an unprivileged container with code at the same path as a
-privileged application
+I implemented in the dartagnan tool the changes proposed by Jonas (i.e. 
+changing the mb definition in the cat model and removing the fences that 
+were added programmatically).
 
-Why do you think UIDs/GIDs are not applicable as mixins?
+I run this using the ~5K litmus test I have (it should include 
+everything from the source tree + the non-LISA ones from your repo). I 
+also checked with the version of qspinlock discussed in [1].
 
-Ignat
+I do get the expected results.
 
-> You can make them point out unlimited different identities...
->
-> BR, Jarkko
+Hernan
+
+[1] https://lkml.org/lkml/2022/8/26/597
+
 
