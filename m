@@ -1,149 +1,203 @@
-Return-Path: <linux-kernel+bounces-179996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DECBE8C68A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:28:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3762D8C68AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:29:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53AB31F23D9C
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 14:28:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28BAD1C22059
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 14:29:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 321E813FD63;
-	Wed, 15 May 2024 14:28:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBAB013FD9C;
+	Wed, 15 May 2024 14:28:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hN4+gtRn"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="jguI5Um/"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F43713FD61
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 14:28:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AA9D13FD76;
+	Wed, 15 May 2024 14:28:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715783285; cv=none; b=gDVKAFpXssuKP/PCQbSkDXDKRfH8jZFRaQ3kGM8pfE3bzjTr1Hiq4mpZ3KOZpwdWxALGBw67Xu1+HCNqeEBONJZD3RII5pd91uQOhQ+ShkvFk2/wQqRe2Ry/zIIBojaUYEg0Za3anyAm/+EaMQgPw8t7iSMNMSaI0GDsKIeQe4Q=
+	t=1715783331; cv=none; b=eIQWOs1pwmgY13jwfMrNXF5vQ8Tf4LOVvL8n3SCTf60z2DqSnk6kwZKNmPVO6H1fRDB/FYKpFxEhcbTtKQnnt4Xdo/0nrpJ0ygjNM6wVmCcEEEqyOYLCm3cydn9JCe9W2k2ifG7reDZi4HZWHyxQntELctfHh+oKzlHKGVZJgpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715783285; c=relaxed/simple;
-	bh=HG2E5ZzzY3Lbc+03GvuD+dWOrLJSMoB11TmWujlsBcQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=X/VhkM6pm8aOkL3uHalvaXMC39UKWxxbp62i9KBhRA0kPPT3ZV4Qv4E6uqxo3wc4IopuURpXAfEXpBUuPI27rojEGJ6k9FO9csPjSXPf2ZYMdXCYJp11xMFIWB0KZlnE9si3s2zcqFjhX29ZGWvnJCnpZxvuL9xAQy0o5cbT55o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hN4+gtRn; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-41fd5dc0480so43451235e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 07:28:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715783282; x=1716388082; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zpkv1XFXbjz013sYUtzM2chC9OslxeXahIcL6Fre16A=;
-        b=hN4+gtRnXBGvlljPGLcDjVg6FAOiWTkPvxVoQdoQ2gWyl2vSjVlAQR2TF49uQzPP29
-         FZ4HvxvpEyOcKe4nrdnkpdNso/Ge5OwUmBflPVBh8brpRYOI3OqxiU5PQbfUsdmYsBVn
-         +/zNoVBOT4NcWUuezkIA3QcHNCkOYArsbg+e3xHS48JrrFKgoVQj3+0x17cOWJnfrqr0
-         EA006MQLYDYCSVe2fGLqyAqUt0j/9cIE+L2bpzU1ZIu1hKiD6yeMttlS5vcz6rWI4k6L
-         Xx9vS6dSST3Luo2unIN8NvZsmUJuae0GLMHIaK8MpvxC+zkrbmgbqZDAo0Jz+OzzM45j
-         HQ0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715783282; x=1716388082;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Zpkv1XFXbjz013sYUtzM2chC9OslxeXahIcL6Fre16A=;
-        b=sTibxp8yfXIeVDnxBDpfRUJpsaWp/BNEtdfYxz5vViSIovNd3b+GKn0xUt0xfUcv6n
-         wpSG9r2+IZVEUs4fasuJlrMmVGnk2t692zPU73EppvEGNlh6AIqt4TOlp9gVhTl3Y9M+
-         Hzgz8SCzwA8vXXPKnlwbJX7QZpx93+yu/WTgTFv27jD1zgsK/5tgThWtGwGcw2BVnncR
-         u5+TZORszs9JiIHwNCXPKkK3LjSxfwxe2Hwm5KCRmZbh4R3Txxby0s39iWIywIFlNub4
-         2IWBjw8p9RuvwDM1Nz1GPF4udH0TX+pTptIl/k34ru/DzmHQEG4wRzfFT14EZO0pBd9Q
-         I0ig==
-X-Forwarded-Encrypted: i=1; AJvYcCW9d76mYs1aUZZlD3p6g0Nikvnh5/LvxuR0wOYQ7AZNcP4aeMIDIwxOujrCtoU6sBstkBLPFiOnzLHTY9johed6ICe8hr7A63gLHzPJ
-X-Gm-Message-State: AOJu0YzfRIoIUVIMdQp5RVC8gdxIJKTxqTLVCUk87w+5BVtIuc8Vsaa3
-	aXt2E6ErkFlWWK3PGDDsGTLhkPYXA/7LzINC1u6VCmn4j5KSOVqblphyA8bGlHLRr0gSkZhOmkY
-	Z
-X-Google-Smtp-Source: AGHT+IEpa3TUE9I1rxGs398WImHaUYEZ/FcJ/c2lRyyHuQn6Pe5/4WN9tj8KS+nu2zboruPUmw5DXg==
-X-Received: by 2002:a05:600c:4689:b0:420:509:714f with SMTP id 5b1f17b1804b1-4200509728bmr104553345e9.14.1715783281672;
-        Wed, 15 May 2024 07:28:01 -0700 (PDT)
-Received: from localhost ([149.14.240.163])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42014f563adsm122363295e9.38.2024.05.15.07.28.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 May 2024 07:28:01 -0700 (PDT)
-Date: Wed, 15 May 2024 16:28:00 +0200
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, srinivas.kandagatla@linaro.org,
-	broonie@kernel.org
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev, perex@perex.cz,
-	tiwai@suse.com, alsa-devel@alsa-project.org, lgirdwood@gmail.com,
-	linux-kernel@vger.kernel.org, krzysztof.kozlowski@linaro.org,
-	neil.armstrong@linaro.org,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: Re: [PATCH 1/2] ASoC: codecs: lpass-macro: add helpers to get codec
- version
-Message-ID: <d77a7d51-8357-4cc0-b233-be2e18d16908@suswa.mountain>
+	s=arc-20240116; t=1715783331; c=relaxed/simple;
+	bh=X3ugixuFmBKbH+/wg1V0mJmlxSm09dgUnVw7YrwvAjg=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=UGeahNrn16dNPar6gr+S0Dh1ZAvSoKLb8GCIl1JcYp2aQiuPvHigTOG7Jq39AkeQAliPx+GZ2mLL0XNC/+Oi0HclTulhLbP2CrXDA5HikRSN281eDuYnuXlajaMJUxt0jLgsfAsFK8xXwzjkWs8ZgbaExh40gbyjV/RvpJaCIVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=jguI5Um/; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44FERScT006433;
+	Wed, 15 May 2024 14:28:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ subject : to : cc : references : from : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=QdT6CG/5OFKK9w/WzsRK8OHNtwYZpkXWBaKtLQ+53xg=;
+ b=jguI5Um/gEEUEv4ZkIXwnKVTYTd4EsyW1I/UN41RbhTInaxnGVUwPAd6ZiWZGssLMTAu
+ RyPxjcP5ZHaD3xHaWFCRCnaRP1iglkNnkG9QVO857dzBsrcYel2yXAiJJQMlmcHhv8tm
+ 6SU8cycdbKj754uUFIyYMR2OY9aVH8GCaj8W+/Ef4NlcQOrSJ01Cej+5Xfc/uSiGZuJJ
+ sfyO2ZWzDBXKUy0PZXqdp8CUfzvQG8PB06H/xPNRE98gKzCAj51T2g03WbQVRWfXR4sg
+ Ee1ePyrnnRYkX8vemQiekfZwm4kmfv8Ef0J/jh7CNvlXcHEyYpDIiEupk7nCEcavJ5PF Yw== 
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y4xtvr03x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 15 May 2024 14:28:37 +0000
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44FEJEQe018828;
+	Wed, 15 May 2024 14:28:36 GMT
+Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3y2k0tm93r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 15 May 2024 14:28:36 +0000
+Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
+	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44FESXv929360748
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 15 May 2024 14:28:35 GMT
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 81EFF58059;
+	Wed, 15 May 2024 14:28:33 +0000 (GMT)
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0524E58053;
+	Wed, 15 May 2024 14:28:33 +0000 (GMT)
+Received: from [9.61.107.19] (unknown [9.61.107.19])
+	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 15 May 2024 14:28:32 +0000 (GMT)
+Message-ID: <a219f01e-a856-46cb-83c4-4fde99b8addd@linux.ibm.com>
+Date: Wed, 15 May 2024 09:28:32 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 5/9] dt-bindings: fsi: Document the FSI controller
+ common properties
+To: Krzysztof Kozlowski <krzk@kernel.org>, linux-fsi@lists.ozlabs.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org, robh@kernel.org,
+        joel@jms.id.au, andrew@codeconstruct.com.au
+References: <20240514195435.155372-1-eajames@linux.ibm.com>
+ <20240514195435.155372-6-eajames@linux.ibm.com>
+ <9200e46a-3cb5-4363-a560-ee3d88e05ced@kernel.org>
+Content-Language: en-US
+From: Eddie James <eajames@linux.ibm.com>
+In-Reply-To: <9200e46a-3cb5-4363-a560-ee3d88e05ced@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: Vw8CO38aYMjrGg8gTlgdHUreZq6_3bfN
+X-Proofpoint-GUID: Vw8CO38aYMjrGg8gTlgdHUreZq6_3bfN
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240510175835.286775-2-srinivas.kandagatla@linaro.org>
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-15_07,2024-05-15_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
+ bulkscore=0 clxscore=1015 impostorscore=0 lowpriorityscore=0 mlxscore=0
+ priorityscore=1501 spamscore=0 mlxlogscore=999 malwarescore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
+ definitions=main-2405150101
 
-Hi,
 
-kernel test robot noticed the following build warnings:
+On 5/15/24 09:18, Krzysztof Kozlowski wrote:
+> On 14/05/2024 21:54, Eddie James wrote:
+>> Since there are multiple FSI controllers documented, the common
+>> properties should be documented separately and then referenced
+>> from the specific controller documentation.
+>>
+>> Signed-off-by: Eddie James <eajames@linux.ibm.com>
+>> ---
+>> Changes since v4:
+>>   - Add interrupt controller properties
+>>   - Add clock-frequency property to FSI controller and CFAM
+>>   - Add detail to chip-id property description
+>>
+>>   .../bindings/fsi/fsi-controller.yaml          | 66 +++++++++++++++++++
+>>   1 file changed, 66 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/fsi/fsi-controller.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/fsi/fsi-controller.yaml b/Documentation/devicetree/bindings/fsi/fsi-controller.yaml
+>> new file mode 100644
+>> index 0000000000000..8620e4da6de77
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/fsi/fsi-controller.yaml
+>> @@ -0,0 +1,66 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/fsi/fsi-controller.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: FSI Controller Common Properties
+>> +
+>> +maintainers:
+>> +  - Eddie James <eajames@linux.ibm.com>
+>> +
+>> +description:
+>> +  FSI (FRU (Field Replaceable Unit) Service Interface) is a two wire bus. The
+>> +  FSI bus is connected to a CFAM (Common FRU Access Macro) which contains
+>> +  various engines such as I2C controllers, SPI controllers, etc.
+>> +
+>> +properties:
+>> +  "#address-cells":
+>> +    const: 2
+>> +
+>> +  "#size-cells":
+>> +    const: 0
+>> +
+>> +  '#interrupt-cells':
+>> +    const: 1
+>> +
+>> +  clock-frequency:
+>> +    minimum: 1
+>> +    maximum: 200000000
+> This is a deprecated property in general. Why did it appear? It does not
+> exist in current bindings and nothing in commit msg suggests changes in
+> the bindings themselves.
 
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/srinivas-kandagatla-linaro-org/ASoC-codecs-lpass-macro-add-helpers-to-get-codec-version/20240511-020042
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-patch link:    https://lore.kernel.org/r/20240510175835.286775-2-srinivas.kandagatla%40linaro.org
-patch subject: [PATCH 1/2] ASoC: codecs: lpass-macro: add helpers to get codec version
-config: sparc-randconfig-r081-20240512 (https://download.01.org/0day-ci/archive/20240512/202405120735.qbbiUPaX-lkp@intel.com/config)
-compiler: sparc64-linux-gcc (GCC) 13.2.0
+OK, is there some document that describes what properties are 
+deprecated? Because it's used all over the place in the bindings. Anyway 
+I need this property, I can rename it if you like. I can also update the 
+commit message to indicate that I'm adding it.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202405120735.qbbiUPaX-lkp@intel.com/
 
-smatch warnings:
-sound/soc/codecs/lpass-va-macro.c:1485 va_macro_set_lpass_codec_version() error: uninitialized symbol 'version'.
+Thanks,
 
-vim +/version +1485 sound/soc/codecs/lpass-va-macro.c
+Eddie
 
-787a4e6d2bc156 Srinivas Kandagatla 2024-05-10  1464  static void va_macro_set_lpass_codec_version(struct va_macro *va)
-787a4e6d2bc156 Srinivas Kandagatla 2024-05-10  1465  {
-787a4e6d2bc156 Srinivas Kandagatla 2024-05-10  1466  	int core_id_0 = 0, core_id_1 = 0, core_id_2 = 0, version;
-787a4e6d2bc156 Srinivas Kandagatla 2024-05-10  1467  
-787a4e6d2bc156 Srinivas Kandagatla 2024-05-10  1468  	regmap_read(va->regmap, CDC_VA_TOP_CSR_CORE_ID_0, &core_id_0);
-787a4e6d2bc156 Srinivas Kandagatla 2024-05-10  1469  	regmap_read(va->regmap, CDC_VA_TOP_CSR_CORE_ID_1, &core_id_1);
-787a4e6d2bc156 Srinivas Kandagatla 2024-05-10  1470  	regmap_read(va->regmap, CDC_VA_TOP_CSR_CORE_ID_2, &core_id_2);
-787a4e6d2bc156 Srinivas Kandagatla 2024-05-10  1471  
-787a4e6d2bc156 Srinivas Kandagatla 2024-05-10  1472  	if ((core_id_0 == 0x01) && (core_id_1 == 0x0F))
-787a4e6d2bc156 Srinivas Kandagatla 2024-05-10  1473  		version = LPASS_CODEC_VERSION_2_0;
-787a4e6d2bc156 Srinivas Kandagatla 2024-05-10  1474  	if ((core_id_0 == 0x02) && (core_id_1 == 0x0E))
-787a4e6d2bc156 Srinivas Kandagatla 2024-05-10  1475  		version = LPASS_CODEC_VERSION_2_1;
-787a4e6d2bc156 Srinivas Kandagatla 2024-05-10  1476  	if ((core_id_0 == 0x02) && (core_id_1 == 0x0F) && (core_id_2 == 0x50 || core_id_2 == 0x51))
-787a4e6d2bc156 Srinivas Kandagatla 2024-05-10  1477  		version = LPASS_CODEC_VERSION_2_5;
-787a4e6d2bc156 Srinivas Kandagatla 2024-05-10  1478  	if ((core_id_0 == 0x02) && (core_id_1 == 0x0F) && (core_id_2 == 0x60 || core_id_2 == 0x61))
-787a4e6d2bc156 Srinivas Kandagatla 2024-05-10  1479  		version = LPASS_CODEC_VERSION_2_6;
-787a4e6d2bc156 Srinivas Kandagatla 2024-05-10  1480  	if ((core_id_0 == 0x02) && (core_id_1 == 0x0F) && (core_id_2 == 0x70 || core_id_2 == 0x71))
-787a4e6d2bc156 Srinivas Kandagatla 2024-05-10  1481  		version = LPASS_CODEC_VERSION_2_7;
-787a4e6d2bc156 Srinivas Kandagatla 2024-05-10  1482  	if ((core_id_0 == 0x02) && (core_id_1 == 0x0F) && (core_id_2 == 0x80 || core_id_2 == 0x81))
-787a4e6d2bc156 Srinivas Kandagatla 2024-05-10  1483  		version = LPASS_CODEC_VERSION_2_8;
 
-Uninitialized on else path.
 
-787a4e6d2bc156 Srinivas Kandagatla 2024-05-10  1484  
-787a4e6d2bc156 Srinivas Kandagatla 2024-05-10 @1485  	lpass_macro_set_codec_version(version);
-787a4e6d2bc156 Srinivas Kandagatla 2024-05-10  1486  
-787a4e6d2bc156 Srinivas Kandagatla 2024-05-10  1487  	dev_info(va->dev, "LPASS Codec Version %s\n",
-787a4e6d2bc156 Srinivas Kandagatla 2024-05-10  1488  			lpass_macro_get_codec_version_string(version));
-787a4e6d2bc156 Srinivas Kandagatla 2024-05-10  1489  }
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
-
+>
+>> +
+>> +  interrupt-controller: true
+>> +
+>> +  no-scan-on-init:
+>> +    $ref: /schemas/types.yaml#/definitions/flag
+>> +    description:
+>> +      The FSI controller cannot scan the bus during initialization.
+>> +
+>> +patternProperties:
+>> +  "cfam@[0-9a-f],[0-9a-f]":
+>> +    type: object
+>> +    properties:
+>> +      chip-id:
+>> +        $ref: /schemas/types.yaml#/definitions/uint32
+>> +        description:
+>> +          Processor index, a global unique chip ID which is used to identify
+>> +          the physical location of the chip in a system specific way.
+>> +
+>> +      clock-frequency:
+>> +        minimum: 1
+>> +        maximum: 100000000
+> Same question.
+>
+>
+> Best regards,
+> Krzysztof
+>
 
