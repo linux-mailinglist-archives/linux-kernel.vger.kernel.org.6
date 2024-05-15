@@ -1,88 +1,127 @@
-Return-Path: <linux-kernel+bounces-179867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB1558C66AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 14:59:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E6428C66B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 15:00:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9283E1F2358C
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 12:59:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18592283EE9
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 13:00:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 158488564F;
-	Wed, 15 May 2024 12:59:06 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59A4F85959;
+	Wed, 15 May 2024 13:00:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="TEeTVv7C"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A3063BB4D
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 12:59:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 102BA3BB4D;
+	Wed, 15 May 2024 13:00:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715777945; cv=none; b=s/O+8FN55O10rtU4da8xaxPOMNBFe/XpD02G8kBy3S3zW1ATQ9AoQRVyH/tW8cpYXt1r2dYcsprmkIXB516W1THFyKqnbVVMyzBPAnuJl+Neh7SjFmIqBJMQPsP7SIoQEob/dqsxzNjvHIjoTJ68ndi+BBhjQMSkDcKDhUy6MUM=
+	t=1715778003; cv=none; b=ui0/NL5Cxg0ZX/kA0hsM8mHMdLtXnlHv8PWOrHFafWqoSUm2roBLKDPYg3+YeY/P9K9CzvVFKw5KtnOuNKDdZZ3qCVmeMXBD+u8R78H+QbxKqNZXC5dILltw0vc7BKQCJkR7NfmwOaZUD4ylR2pwwlFmx2uJFCyUbeMaxT9rYXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715777945; c=relaxed/simple;
-	bh=pU0KDP8PaOrGc7nhuKl9eruKdWFqqXHiWy9Dth7iatU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=WpmY0ff/UfgBgQJ49rsacbt99eQUa4BMWAwZFxkkYSIlTAljpuHkrqbPlcqtkOYBnsGP7drJexVR2cOmX+xniCLMKPY0VNnnOYUvH1IJGKoYE8kPPqTi3ToBIF/F6n2uJQpGHXqSiROBiCrle5u74Vi5NLiIWngocne6mCw4ORY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7e1d6c70aeaso456043039f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 05:59:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715777943; x=1716382743;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3PdFyk99KlLZYyjH5ckDM9d4Mbdv6L9rZe9o8cYGsMQ=;
-        b=vQVMTnmzdBABO0YkqdMpnDMwJQ2epcbmbDP8cXc6VnycwtB9qBwQUrLBZSRdPmDwD3
-         Invw3VN88gXa3wGEjOVSjAt5t8HG/Jm9en94+VPKACZGn37UbOVlLBdDkX1ZRgDnq8FE
-         eCACvdOp/U/2HRnHJgBxf1H4ohTMcnOXJJe3qJN0MRQexL9UGEjCSnRHkTbaJyolbwtN
-         vgxTW2fpjQjb3eH8T2mY4niNURb2XtWAW/nEdzpQ3tCN8aPJIUrvL/depHrSZvo4ZEZ1
-         G+91m6ESVBBio6NQPuA1wq42pUAnKrx5vTyhtx2hhj8bbh7O2erjWa1BeiqRMxisGYpH
-         Rxzw==
-X-Forwarded-Encrypted: i=1; AJvYcCXXls5oJEMpcMrZl5pzU77JbMHMOmc1LoyrO2eeVjbOJxxc+/AySGiTXjndHKLl8GJP+WzXfy1sMXgmhzVgZKTuZNJXuDPS4FnQmtDH
-X-Gm-Message-State: AOJu0YxoNGPdBe8I2NjDfKeGEAghtjqrjxA+Cp5cxw3GsF+CHiGkc/Oq
-	BCCxJ0WY6DLobB3fkQ+pk6s93Z5ECzI1asnG0KTeBMqQjw1OcRKLmlfMNb25kfVi0sniY4fYFaz
-	uCI7X5B65t2L4NH78KTu98QoAUzPRvcYevUtDgnGex7bk3kJWWiVMUho=
-X-Google-Smtp-Source: AGHT+IGZaAUobKyp/kGTV7THt978f/NL99WtCI80kanlZYj9xf9fMiK/SHuTneYWfG0Bcc4mFoW2xRU0e7OFh7WGF+spPvbLpaY9
+	s=arc-20240116; t=1715778003; c=relaxed/simple;
+	bh=zywkICdLaNTDXdJI/rwjuI6SI68uWOHYP+ueXmHrQbM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=FbN64hBqCdJJk73OJEZiiu0la/m9Sa4OX1hS18g7xUWPU/24iXxrgBjBBm3CKbZ/nxTkAoCxHxbQySYMHv+H9zFuA7WW93lrHXISw3HRcOY3E7YiFp85uFhiUo612hvbSVc5SfHkXPW2v/MY/fMN4A75nq2x6rrFH5vdaSgYG+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=TEeTVv7C; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44F9SrQx016508;
+	Wed, 15 May 2024 12:59:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ subject : to : cc : references : from : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=utdxrJinQ3y3ssW67uY8/Vj2gKWk7dVKOdUrx/aByzo=;
+ b=TEeTVv7CfS7LIh1J0XHjvyUbr/hk3lJtfWgJK0M0nTGdwCUknp1BqL+wceuIqAcU56rl
+ i/w9NPn6fKdkLJFkVBhCc4gLIN0vMgeLJ3M3G4DtLfJxpW1DwiX5+myGBuvikgNIiF7Z
+ xLF5VJNsE01TrfA5sVJk5Po/XT/L3Ha+QmJ6ERDvdP0W4zeH2i0QQbxsBTfWWAovEXXm
+ DOnG1Z99Xy6ayDR3909a8HVMbG3dQZ9bExJuHp8YrMJI7DA1MCMZQjAo1YnNB0a+CnqZ
+ sHCbE8sTSqejJCFKb+Se1wgar/krjASe0jHD39t9nFckKgzKaA9T8gTpTGtmcoL1sK3+ sA== 
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y4te9rgrt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 15 May 2024 12:59:44 +0000
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44FA70pQ006132;
+	Wed, 15 May 2024 12:59:43 GMT
+Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3y2nq2u836-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 15 May 2024 12:59:43 +0000
+Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
+	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44FCxeB450856216
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 15 May 2024 12:59:42 GMT
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 064FD58054;
+	Wed, 15 May 2024 12:59:40 +0000 (GMT)
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C27A45805D;
+	Wed, 15 May 2024 12:59:38 +0000 (GMT)
+Received: from [9.67.88.41] (unknown [9.67.88.41])
+	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 15 May 2024 12:59:38 +0000 (GMT)
+Message-ID: <3d857119-8eb4-4dc0-8543-f30922d53187@linux.ibm.com>
+Date: Wed, 15 May 2024 07:59:38 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] crypto: X25519 low-level primitives for ppc64le.
+To: Andy Polyakov <appro@cryptogams.org>, linux-crypto@vger.kernel.org
+Cc: herbert@gondor.apana.org.au, leitao@debian.org, nayna@linux.ibm.com,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        mpe@ellerman.id.au, ltcgcw@linux.vnet.ibm.com, dtsen@us.ibm.com
+References: <20240514173835.4814-1-dtsen@linux.ibm.com>
+ <20240514173835.4814-2-dtsen@linux.ibm.com>
+ <dc5aadc2-308d-4f24-8a59-45da21b8b2e5@cryptogams.org>
+Content-Language: en-US
+From: Danny Tsen <dtsen@linux.ibm.com>
+In-Reply-To: <dc5aadc2-308d-4f24-8a59-45da21b8b2e5@cryptogams.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: DlR67ri-zm08JTzNj0Bkvc7vRlejwpzl
+X-Proofpoint-ORIG-GUID: DlR67ri-zm08JTzNj0Bkvc7vRlejwpzl
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:8305:b0:488:e34a:5f76 with SMTP id
- 8926c6da1cb9f-4895955b89cmr1154319173.1.1715777943434; Wed, 15 May 2024
- 05:59:03 -0700 (PDT)
-Date: Wed, 15 May 2024 05:59:03 -0700
-In-Reply-To: <20240515123946.874688-1-andrewjballance@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d50ab606187dae67@google.com>
-Subject: Re: [syzbot] [ntfs3?] UBSAN: array-index-out-of-bounds in decompress_lznt
-From: syzbot <syzbot+39b2fb0f2638669008ec@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, andrewjballance@gmail.com, 
-	linux-kernel-mentees@lists.linuxfoundation.org, linux-kernel@vger.kernel.org, 
-	ntfs3@lists.linux.dev, skhan@linuxfoundation.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-15_06,2024-05-15_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=999
+ phishscore=0 adultscore=0 priorityscore=1501 malwarescore=0 clxscore=1015
+ bulkscore=0 spamscore=0 suspectscore=0 impostorscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
+ definitions=main-2405150090
 
-Hello,
+Thank you Andy.  Will fix this.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
-
-Reported-and-tested-by: syzbot+39b2fb0f2638669008ec@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         1b294a1f Merge tag 'net-next-6.10' of git://git.kernel..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15998648980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c0cd0c5dbf8ea592
-dashboard link: https://syzkaller.appspot.com/bug?extid=39b2fb0f2638669008ec
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=115b78f0980000
-
-Note: testing is done by a robot and is best-effort only.
+On 5/15/24 3:11 AM, Andy Polyakov wrote:
+> Hi,
+>
+> Couple of remarks inline.
+>
+>> +# [1] https://www.openssl.org/~appro/cryptogams/
+>
+> https://github.com/dot-asm/cryptogams/ is arguably better reference.
+>
+>> +SYM_FUNC_START(x25519_fe51_mul)
+>> +.align    5
+>
+> The goal is to align the label, not the first instruction after the 
+> directive. It's not a problem in this spot, in the beginning of the 
+> module that is, but further below it's likely to inject redundant nops 
+> between the label and meaningful code. But since the directive in 
+> question is not position-sensitive one can resolve this by changing 
+> the order of the directive and the SYM_FUNC_START macro.
+>
+> Cheers.
+>
 
