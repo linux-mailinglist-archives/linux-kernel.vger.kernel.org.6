@@ -1,101 +1,188 @@
-Return-Path: <linux-kernel+bounces-179527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E92098C60E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:41:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92DC98C60F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:45:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 268D61C20AFF
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:41:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25AB61F210E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:45:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FB1140875;
-	Wed, 15 May 2024 06:41:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0823B43144;
+	Wed, 15 May 2024 06:44:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Pd75HkEm";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="varEdGvP"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="Kztt4isx"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82C0D3D57D;
-	Wed, 15 May 2024 06:41:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B44763D551
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 06:44:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715755304; cv=none; b=dveRcIIblKMtOJcfGcTYYKud4vDdQnXDmwjQwpGWGfS19invTrv9e3qgfwzOs5sTdWGMSi2j2w+gnPixIXSKMT5B5N6r6lNzUYluO0bFsNCHT9gQGD3PE2zKvWZBrFd9V4iFK/RPCxd+4/SYXw8WELt77iK4DxAqHcM2E97bR6U=
+	t=1715755461; cv=none; b=C4jTDJpl3eVHxCja4uB6MpR5IMPkV6SwMvSPH1Ypvqn4loHU7J84CcET7gxayxqgu1yGJHwgnfIKNYnkg8xyz0HKUzXMo7L/igZrmI7her5Ko9jkoPOBm+K3jaSR0JBi2lJP0wdc3YAYpfpwIFMhQzVSzE5mVMM2vbbKiT4idwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715755304; c=relaxed/simple;
-	bh=Ohn1QWuD3hXSwNdh6G51TarJNpVtb+Kw3FSPuiN8i50=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ia5FFsozes7PMod2Y3d+eypdID100pbbnWnl7duq1N+1xm4qRIkOwGf69i+JSkJv63hgjL06jmkxzfVe1K6fDHAhEI3U/48Ltc3PjI/+urK31Wdjia/lyHitQ78ffbVZL0OgC5ZBKi+n+5Qz7HSvj+6ug0SQrh/WrTLJFXukDsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Pd75HkEm; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=varEdGvP; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 15 May 2024 08:41:39 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1715755300;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sio4TZAEBlWZFidC5qng46z8XhrKeWRYfPlszR0wiFY=;
-	b=Pd75HkEm8Fk++MIPte3Ib689xrqTVqJnkvEYJkgsDvUzbpysVYUPHV2/jlMU8HlODuWg/r
-	UHDoxca5tLQEnRxqaT7gb0J9/aApdcCR6lnEZQDiYkuzl2WrGFKgX26tBnSJn/Wf1DAbpI
-	cfYAi6JcKF11x77OCaB59KpALE/jz7YogPZBp4gy1nlDVA+MY+oSIdEbcTiGlB4nxvodg3
-	w4Julu2a4bC2p1SCdcVTQw7EeGkJkWxVTHmbUXNPVqnKoxeK7+px4MlJjoVLl1m0lmZvU/
-	cp1qpsiqNvB2yKkF3SNOr1yrtziKXQ+tmtpLLR3xB8e4Z6Mphki6MeyKd64jOw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1715755300;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sio4TZAEBlWZFidC5qng46z8XhrKeWRYfPlszR0wiFY=;
-	b=varEdGvPU/kzLsy/+oGCdvuJBJ6bJV0koxFc0gab29K7iX/zd0709MV4JyUarw3AP4GDYV
-	eW8ICv2ZuMMqVuBw==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Lukasz Majewski <lukma@denx.de>
-Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-	Paolo Abeni <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Oleksij Rempel <o.rempel@pengutronix.de>, Tristram.Ha@microchip.com,
-	Ravi Gunasekaran <r-gunasekaran@ti.com>,
-	Simon Horman <horms@kernel.org>,
-	Nikita Zhandarovich <n.zhandarovich@fintech.ru>,
-	Murali Karicheri <m-karicheri2@ti.com>,
-	Arvid Brodin <Arvid.Brodin@xdin.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	"Ricardo B. Marliere" <ricardo@marliere.net>,
-	Casper Andersson <casper.casan@gmail.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: hsr: Setup and delete proxy prune timer only when
- RedBox is enabled
-Message-ID: <20240515064139.-B-_Hf0_@linutronix.de>
-References: <20240514091306.229444-1-lukma@denx.de>
+	s=arc-20240116; t=1715755461; c=relaxed/simple;
+	bh=Fajia5z7P12kLeYYIqCKzSxxUzjVfBhm34t9XrY0/yk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZuQgsSQeIKT+gSTiflcHv5jA1/CMhhf+vAxZv6DxL/RwqgqxKfbjGgyq/VHX7AdM2WKhA010OEJiGrH/HkXr5PrVPV0b4JrnYORBAdyBlIYM1Eq0AHYnKgDgGpupFyqh7kH7SVeq6bcwdO+jRRkq4uWkqOXFcnEaQARsFT0793s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=Kztt4isx; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-5ce2aada130so4599036a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 23:44:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google09082023; t=1715755459; x=1716360259; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cHt6iIdLhW0U7BUX4DS9zeBTZluih3jaSJ3akZl6570=;
+        b=Kztt4isx1Mubyl8Fpbrxwcx7WVR/jnojP6TJ/5wHuCSUbd3W7go/1zLZOGFd7EYr9B
+         2JRFvVaeSeLQgeDmG7DQyoVaGjJ5idyNDN/T6gM4R5QII+2aOfhgucxc5udCRHCFDnlm
+         8HhhrDV2Jel12WEzipoWc1i9V/Cxd04w1SjiDtZezIW34m2ccc3ubDhYaf+5rs4tCpzC
+         NPzztGmKeDVXxO1oSGH3VHw6OOR39bwCNEL/xN1cjxn7tTp8aRIBLjuBln8QmhZed7Gt
+         hIP1mGuDVx+q0kUb0BGcRBsBSn9hDLcQDmbTtvYsnJz7bH+teVKQAWJLm1VzM8nZaDo1
+         pJBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715755459; x=1716360259;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cHt6iIdLhW0U7BUX4DS9zeBTZluih3jaSJ3akZl6570=;
+        b=FmONlzhxtZJo8S61l5++wYEiJrjv8h4UEdBS/ImFH3do5xhoOclwUtlibDoIj9KNOg
+         bHSdBjn1axofEUVjx3WfjqGQCzCt9SBxKWvLxLixgGN1P0XWeldnEMBQJySJrVt7Y2AL
+         e2jX+vt43bfUgpeR1APw+RE8b0nip7NaKeB8uD6+cJiMLFG1jVUVoffru1oLuaeDyDMp
+         6fDuoB/0hn7CxwX0XIwlRS3wrkb2tsar9/8Ny92Tddt1G6QtyfhgE0td7xvbjDNPDkO9
+         8H0fAtz8Ff+7PtPb28S+sAm/657eg8J2Yv5R7itxuYYGJkW4QhQ4EIAWYKQtmQO4hRb2
+         luOA==
+X-Forwarded-Encrypted: i=1; AJvYcCWTFpf8NvfkVAg/1JQyNuwF6UJY7tpk06V+UNExixKuJsscU+3FmM/8EJARx+7qRVBHQPmpNpXqETEMSmoAhT8+F7fetCn2BbmgBtD5
+X-Gm-Message-State: AOJu0Yw6orDjVH5yzMWTQWoNFjNpud8XckSOf0qr6evJx1x45jpUvJtF
+	NxI2lW/lrnsEdcg/WRzspmIvJ967qkTFGLXOwLZWhscZAa/PODPXpFpIFVks8lWIgiLpPnLSgJq
+	2awstTsh/Wo/zBkPCj8mVH1F7PsqvEtlIjxO3BA==
+X-Google-Smtp-Source: AGHT+IFEtAJZ2VfYRn/ENkTjxi26mgbfcvdMy4KCuQ8gQasIEb6jSLE6aTIv+LC20CsuGZBINyFevEeFRMr7E7pWuzI=
+X-Received: by 2002:a17:90b:3715:b0:2b3:9ce8:1239 with SMTP id
+ 98e67ed59e1d1-2b6cc1438dbmr12551957a91.6.1715755458902; Tue, 14 May 2024
+ 23:44:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240514091306.229444-1-lukma@denx.de>
+References: <20240503221634.44274-1-ignat@cloudflare.com> <20240503221634.44274-3-ignat@cloudflare.com>
+ <D19QW70177QG.2YC9XL0FT7VME@kernel.org> <D19RM0OV7YUW.1ZEI72XQUREMQ@kernel.org>
+In-Reply-To: <D19RM0OV7YUW.1ZEI72XQUREMQ@kernel.org>
+From: Ignat Korchagin <ignat@cloudflare.com>
+Date: Wed, 15 May 2024 07:44:07 +0100
+Message-ID: <CALrw=nEnqBCBQKhK9ACc7tbicqkXaDD+Bjc1d90xizMvbb--oA@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/2] KEYS: implement derived keys
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: James Bottomley <James.Bottomley@hansenpartnership.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	David Howells <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, serge@hallyn.com, linux-integrity@vger.kernel.org, 
+	keyrings@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel-team@cloudflare.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024-05-14 11:13:06 [+0200], Lukasz Majewski wrote:
-> The timer for removing entries in the ProxyNodeTable shall be only active
-> when the HSR driver works as RedBox (HSR-SAN).
-> 
-> Moreover, the obsolete del_timer_sync() is replaced with
-> timer_delete_sync().
-> 
-> This patch improves fix from commit 3c668cef61ad
-> ("net: hsr: init prune_proxy_timer sooner") as the prune node
-> timer shall be setup only when HSR RedBox is supported in the node.
+On Wed, May 15, 2024 at 12:44=E2=80=AFAM Jarkko Sakkinen <jarkko@kernel.org=
+> wrote:
+>
+> On Wed May 15, 2024 at 2:10 AM EEST, Jarkko Sakkinen wrote:
+> > On Sat May 4, 2024 at 1:16 AM EEST, Ignat Korchagin wrote:
+> > > Derived keys are similar to user keys, but their payload is derived f=
+rom the
+> > > primary TPM seed and some metadata of the requesting process. This wa=
+y every
+> >
+> > What is exactly "some metadata"?
+> >
+> > > application can get a unique secret/key, which is cryptographically b=
+ound to
+> >
+> > What is "cryptographically bound". Please go straight to the point and
+> > cut out *all* white paper'ish phrases. We do not need it and will make
+> > painful to backtrack this commit once in the mainline.
+> >
+> > > the TPM without the need to provide the key material externally (unli=
+ke trusted
+> > > keys). Also, the whole key derivation process is deterministic, so as=
+ long as
+> >
+> > Why trusted keys is inside braces. It is not important for the point
+> > you are trying to make here?
+> >
+> > > the TPM is available, applications can always recover their keys, whi=
+ch may
+> > > allow for easier key management on stateless systems.
+> >
+> > Please drop "stateless system" unless you provide a rigid definition
+> > what it is. I have no idea what you mean by it. Probably not that
+> > important, right?
+> >
+> > >
+> > > In this implementation the following factors will be used as a key de=
+rivation
+> > > factor:
+> > >   * requested key length
+> > >   * requesting process effective user id
+> > >   * either the application executable path or the application integri=
+ty
+> > >     metadata (if available)
+> >
+> > NAK for path for any possible key derivation. They are racy and
+> > and ambiguous.
+> >
+> > This should have been in the beginning instead of "some data". What
+> > other implementations exist. For me "this implementation" implies
+> > that this one competing alternative to multiple implementations
+> > of the same thing.
+> >
+> > I do not like this science/white paper style at all. Just express
+> > short, open code everything right at start when you need and cut
+> > extras like "stateless system" unless you can provide exact, sound
+> > and unambiguous definiton of it.
+> >
+> > Just want to underline how this really needs a complete rewrite with
+> > clear and concise explanation :-) This won't ever work.
+> >
+> > >
+> > > Key length is used so requests for keys with different sizes result i=
+n keys
+> > > with different cryptographic material.
+> >
+> > What is "key length"? Please refer the exact attribute.
+> >
+> > >
+> > > User id is mixed, so different users get different keys even when exe=
+cuting the
+> >
+> > First of all it would be more clear to just s/User id/UID/
+> >
+> > And make obvious whether we are talking about ruid or euid and how
+> > this interacts with GIDs.
+> >
+> > I'll look at the code change next round if the commit message starts
+> > making any sense.
+>
+> Right and neither UIDs and GIDs are applicable for key derivation for
+> quite obvious reasons. So NAK for that too.
 
-Is it problematic to init/ delete the timer in non-redbox mode? It looks
-easier and it is not a hotpath.
+Can you, please, clarify a bit here? Not very obvious for me. I added
+euid for two reasons:
+  * an unprivileged user might run a normally privileged application,
+for example /usr/sbin/sshd, and depending on the code could "leak" the
+key
+  * without it and with unprivileged user namespaces it is possible to
+create an unprivileged container with code at the same path as a
+privileged application
 
-> Signed-off-by: Lukasz Majewski <lukma@denx.de>
+Why do you think UIDs/GIDs are not applicable as mixins?
 
-Sebastian
+Ignat
+
+> You can make them point out unlimited different identities...
+>
+> BR, Jarkko
 
