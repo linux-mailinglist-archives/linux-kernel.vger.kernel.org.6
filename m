@@ -1,200 +1,135 @@
-Return-Path: <linux-kernel+bounces-180339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 810E98C6D23
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 22:19:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 367238C6D2B
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 22:22:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0981F283FD7
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 20:19:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59B661C221F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 20:22:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90E2A15B0E4;
-	Wed, 15 May 2024 20:19:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E67E515B0E3;
+	Wed, 15 May 2024 20:22:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Az+1uV24"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="DLbEWNFj"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B6D24206F;
-	Wed, 15 May 2024 20:19:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A3A21591E8
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 20:22:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715804355; cv=none; b=OcgwWwDWUKrd1hjEQ1ERKIznH74fHhIWYQKwwW8fCAx32X/ttuUyZgiMj9fIKkYqkIh9j4dFqXoKCinkVazdF2Ig1CY5tuhzRBaINNpyHagsKkHXL3RmZug387+uyUgwIkKAkPXhptN/omHkPf4OtW0WzI0ntWcpQ4DsPeQvoLg=
+	t=1715804540; cv=none; b=mxGqJf8B0HNxkHhrrigV6xWsN1FiSDlHnyyoVlGAoHj7sP3ljH6ZPaC5IOU47ll4xYgt0pd1Enr/UKwLD6NObgZ/EYcTNLMtEWRF5PMPp+wh1zxtl/nfHUkrBqhTfqEoKae8hUn9siYiuUaM474tPg0Y9iwgSqMBqtG2Op7tMFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715804355; c=relaxed/simple;
-	bh=9goRToJ5OiITq+QXW6KIsVlsdZ7LiiRiNSA8UJa/MAU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c5rAZSvuB/L6AdwoVRGaYFhm4RnUguWZ2EyTa495hzvFg/hk5YbwskMs3rU4k04+iNTKl9GqTO7H6YzwPUz49TDnUK2P6/AMPtDO/fG2wCSspacTDUwe6suEX/f7ykJVhIq3C+hszcAy0ooMfPT2cB8QwaZiN8iuGKKchuMHRtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Az+1uV24; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 5877940E01F6;
-	Wed, 15 May 2024 20:19:10 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id Zw2uAITgrclB; Wed, 15 May 2024 20:19:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1715804346; bh=I+TM5XxPjG4Qj70u6A2s8F0ZAG2e+3pm2+5E6j0Lpho=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Az+1uV24MRhctKN9lhn5WrN0m6bLZJW5T1B5QK7KdnCkfR8tiY0xvI9TI3J+7QMA2
-	 Jc7aZ7V7U5MYr8ZSqAVux5K8Gwyru9TGzP80Estj5jxpPr82TnMdJlJohr5wjMcW14
-	 NNGJM59tyMkXpgMyHI2JL5vCleOogoChGPxNx+14IVz2JI5L5FwCTKxLDVC9T8pPic
-	 DTh+3HvaDA6N5J5X2UYtv7JCmvPce0lBy+aBjUcdck8TbyW8jpLsbJRMwQiua6jWMq
-	 6D9QJalBAQNftXhOXdt+d3tWXSzMxE4e6LFHzD9Y3XwTmQS5Aent2y9vLnifF/MQWf
-	 Z3L5OrHhoJtODBs7P9Q+UrBA4f4LADIOlXN6VnB8Y0GqFPnznDp4yZN07b2CR9gNK7
-	 cfjtqhCOYBbJEfTJt3PLQJCehLdHKI6T3W+25Td/Mi6QWwt2lBbz3y4YJrv4VEcmY+
-	 AhMaTvuSlCLocYJMCRSk6XeFJWioa81qeUuZrTQ0eztjVMYoMV4CX53dt7U0PjySDC
-	 EXEq0t8oh4oNPOzt4xXusfuOn9lF8ILJQeWUHiNvO/XvNgwKAsVelSBopUMx20Rxqg
-	 JfTuMNeGc8g/iZr5sDQGXgXALNOxkFMdRBlpYdyYPtkW2LfId/nM8T1YT5ICdhuaTp
-	 AIvm4Gkabd1B7ukayuBdD2NQ=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id BB1C540E016A;
-	Wed, 15 May 2024 20:18:37 +0000 (UTC)
-Date: Wed, 15 May 2024 22:18:31 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Axel Rasmussen <axelrasmussen@google.com>
-Cc: Oscar Salvador <osalvador@suse.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	David Hildenbrand <david@redhat.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, Helge Deller <deller@gmx.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Liu Shixin <liushixin2@huawei.com>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Muchun Song <muchun.song@linux.dev>,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	Nicholas Piggin <npiggin@gmail.com>, Peter Xu <peterx@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, linux-parisc@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, x86@kernel.org
-Subject: Re: [PATCH v2 1/1] arch/fault: don't print logs for pte marker
- poison errors
-Message-ID: <20240515201831.GDZkUYlybfejSh79ix@fat_crate.local>
-References: <20240510182926.763131-1-axelrasmussen@google.com>
- <20240510182926.763131-2-axelrasmussen@google.com>
- <20240515104142.GBZkSRZsa3cxJ3DKVy@fat_crate.local>
- <ZkSUaVx3uCIPkpkJ@localhost.localdomain>
- <CAJHvVchGGJkEX=qroW=+N-RJDMDGuxM4xoGe7iOtRu9YcfxEEw@mail.gmail.com>
- <20240515183222.GCZkT_tvEffgYtah4T@fat_crate.local>
- <CAJHvVcj+YBpLbjLy+M+b8K7fj0XvFSZLpsuY-RbCCn9ouV1WjQ@mail.gmail.com>
+	s=arc-20240116; t=1715804540; c=relaxed/simple;
+	bh=ipqP/BB7kFw3L7SYXlCoEWELU8i09uvc2ZITsN0s6dI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RPjUxAWOzeD1oQ71dpnxO2S6yRSieWgyY4HZ6pk+zgN7wi/W/WtYNU2bvPvnFNeXEk9Zj7V5rScMzoi7z6joCRF7an27VLl2siR7Eo07GR4ec/5dnX7/fhnnajTOaQmBOVZXgAqrbault4Yyto0R1264cLhjUqxDQVPkvzdC4iQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=DLbEWNFj; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a59e4136010so231393666b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 13:22:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1715804536; x=1716409336; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZlA7HkqGGky3+qx2udfV2DjY9LzoSxvenoXojxQkMi8=;
+        b=DLbEWNFjmUP34E3N6lCSsDOYOTLrOb8LBrryXfWt2Ey4MW2a/zO/17G49dIfFJBE7s
+         JGcLUyW3/wBwqVyQlSgIrbaRr5R25TtbqXI4MdnUCQKTQwjuNOosGSoiP2UQkMIKwMcS
+         uwXQuUREtl91uqwP6GvZL4ET8ZnS/FMiD7nPw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715804536; x=1716409336;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZlA7HkqGGky3+qx2udfV2DjY9LzoSxvenoXojxQkMi8=;
+        b=YTbzVk/DTdZ9A4EURER9+UvVhpPD+qwDnYhS8NGOQ3GXxKfXH/ryQ6vIWFFlwyAytx
+         pR17Cr96ANi84q2wlociAT143zj6AouoRBuc3N60EJ0ic1PEBUq/0CN9Ab5Kk6AB1YLn
+         nG+VntmkVqIUt7o1I4EJiHG5g3NktWiCL5bAnxqLxb2W2v5GQaV50lHm7KcDNMeg/3bS
+         WaIcfiF7JT1JmoC5rG9teOzMFXsw/HPomI80xwSU2S9uC9SP//6lQvkv2yzx6+t6MzgG
+         FIJjkkPgqSaYjMaUQtQn1g5/1fB9HRCk1lZxE6RZIpKuoCz5XTY0DBaI1KiVaLbdFREH
+         QZqg==
+X-Forwarded-Encrypted: i=1; AJvYcCWPhAEF9IXWxSAS2lKTjeC+eeoqTZzCnMUBHMrcgT+72pSYHF5pvFvVAkyzFguKkAKxCpqtt9j0SzIvSkXxGPwTikETq1Dci8VqI766
+X-Gm-Message-State: AOJu0YwlLYz2wNllWUNl8zRTGODEFfZlIFLCK8VeBowJUbn1L4lJxdML
+	qxBtX08WKfU7m+SreZjAKOcE2o7j6adDRJ/UmhCq4oezbL6BgYweXaMkHg+nB4/aqml5Rd9jaz1
+	fVMr4ww==
+X-Google-Smtp-Source: AGHT+IGJjQsD/D+T3zxhT/tWyklYzbY0lMQ3Nc7V350rZDOhe0dOWNeO6pnIsrhZyLssdFAxBZSAnw==
+X-Received: by 2002:a17:906:289b:b0:a5a:8bc4:f503 with SMTP id a640c23a62f3a-a5a8bc4f988mr279195466b.25.1715804536331;
+        Wed, 15 May 2024 13:22:16 -0700 (PDT)
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com. [209.85.218.47])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b17f2csm893134966b.197.2024.05.15.13.22.15
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 May 2024 13:22:15 -0700 (PDT)
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a59a0168c75so248493966b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 13:22:15 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUxnJWGE9PUlIggjqsCxcYTPiHvbXsd0DRSdRUKGW40bIip8OUUblhicQ755GdpX6Wsxry4uO0IX/npaNxoZQy7abk4gnaUkkubLrhp
+X-Received: by 2002:a17:906:eb18:b0:a59:c844:beea with SMTP id
+ a640c23a62f3a-a5a2d676a37mr1093027066b.73.1715804534952; Wed, 15 May 2024
+ 13:22:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAJHvVcj+YBpLbjLy+M+b8K7fj0XvFSZLpsuY-RbCCn9ouV1WjQ@mail.gmail.com>
+References: <CAPM=9tw-53PCvveRcdLUUQ+mjq2X2er5zp6n1KeE8Nu8x=VP2g@mail.gmail.com>
+ <CAHk-=wge0et+3PP47OBnNx66Q=i_XgqfGfrSmDGHSyp=Jn-CgQ@mail.gmail.com>
+In-Reply-To: <CAHk-=wge0et+3PP47OBnNx66Q=i_XgqfGfrSmDGHSyp=Jn-CgQ@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 15 May 2024 13:21:58 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whTqHgXZ4Aj8dNO3Peg9Rf0sh2F7zGWRUOmBwfMDxgvbQ@mail.gmail.com>
+Message-ID: <CAHk-=whTqHgXZ4Aj8dNO3Peg9Rf0sh2F7zGWRUOmBwfMDxgvbQ@mail.gmail.com>
+Subject: Re: [git pull] drm for 6.10-rc1
+To: Dave Airlie <airlied@gmail.com>, 
+	Arunpravin Paneer Selvam <Arunpravin.PaneerSelvam@amd.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Matthew Auld <matthew.auld@intel.com>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, dri-devel <dri-devel@lists.freedesktop.org>, 
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, May 15, 2024 at 12:19:16PM -0700, Axel Rasmussen wrote:
-> An unprivileged process can allocate a VMA, use the userfaultfd API to
-> install one of these PTE markers, and then register a no-op SIGBUS
-> handler. Now it can access that address in a tight loop,
+On Wed, 15 May 2024 at 13:06, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> Hmm. There's something seriously wrong with amdgpu.
+>
+> I'm getting a ton of__force_merge warnings:
+>
+>   WARNING: CPU: 0 PID: 1069 at drivers/gpu/drm/drm_buddy.c:199
+> __force_merge+0x14f/0x180 [drm_buddy]
 
-Maybe the userfaultfd should not allow this, I dunno. You made me look
-at this thing and to me it all sounds weird. One thread does page fault
-handling for the other and that helps with live migration somehow. OMG,
-whaaat?
+Adding likely culprits to the participants, since it looks like this
+is all new with commit 96950929eb23 ("drm/buddy: Implement tracking
+clear page feature").
 
-Maybe I don't understand it and probably never will...
+Sadly I can't juist revert that commit to check, because there are
+many subsequent commits that then depend on it.
 
-But, for example, membarrier used do to a stupid thing of allowing one
-thread to hammer another with an IPI storm. Bad bad idea. So it got
-fixed.
+I guess I'll try to revert the later commit that enables it for amdgpu
+(commit a68c7eaa7a8f) and see if it at least makes the horrendous
+messages go away.
 
-All I'm saying is, if unprivileged processes can do crap, they should be
-prevented from doing crap. Like ratelimiting the pagefaults or whatnot.
+Anyway, this is some old Radeon graphics card in my Threadripper:
 
-One of the recovery action strategies from memory poison is, well, you
-kill the process. If you can detect the hammering process which
-installed that page marker, you kill it. Problem solved.
+49:00.0 VGA compatible controller: Advanced Micro Devices, Inc.
+[AMD/ATI] Ellesmere [Radeon RX 470/480/570/570X/580/580X/590] (rev e7)
+(prog-if 00 [VGA controller])
+        Subsystem: Sapphire Technology Limited Radeon RX 570 Pulse 4GB
+        Flags: bus master, fast devsel, latency 0, IRQ 130, IOMMU group 32
+        Memory at c0000000 (64-bit, prefetchable) [size=256M]
+        Memory at d0000000 (64-bit, prefetchable) [size=2M]
+        I/O ports at 8000 [size=256]
+        Memory at d1c00000 (32-bit, non-prefetchable) [size=256K]
+        Expansion ROM at 000c0000 [disabled] [size=128K]
+        Capabilities: <access denied>
+        Kernel driver in use: amdgpu
+        Kernel modules: amdgpu
 
-But again, this userfaultfd thing sounds really weird so I could very
-well be way wrong.
+I think it's a "Sapphire Radeon Pulse RX 580" or something like that.
 
-> Even in a non-contrived / non-malicious case, use of this API could
-> have similar effects. If nothing else, the log message can be
-> confusing to administrators: they state that an MCE occurred, whereas
-> with the simulated poison API, this is not the case; it isn't a "real"
-> MCE / hardware error.
-
-Yeah, I read that part in
-
-Documentation/admin-guide/mm/userfaultfd.rst
-
-Simulated poison huh? Another WTF.
-
-> In the KVM use case, the host can't just allocate a new page, because
-> it doesn't know what the guest might have had stored there. Best we
-
-Ok, let's think of real hw poison.
-
-When doing the recovery, you don't care what's stored there because as
-far as the hardware is concerned, if you consume that poison the *whole*
-machine might go down.
-
-So you lose the page. Plain and simple. And the guest can go visit the
-bureau of complaints and grievances.
-
-Still better than killing the guest or even the whole host with other
-guests running on it.
-
-> can do is propagate the poison into the guest, and let the guest OS
-> deal with it as it sees fit, and mark the page poisoned on the host.
-
-You mark the page as poison on the host and you yank it from under the
-guest. That physical frame is gone and the faster all the actors
-involved understand that, the better.
-
-> I don't disagree the guest *shouldn't* reaccess it in this case. :)
-> But if it did, it should get another poison event just as you say.
-
-Yes, it shouldn't. Look at memory_failure(). This will kill whole
-processes if it has to, depending on what the page is used for.
-
-> And, live migration between physical hosts should be transparent to
-> the guest. So if the guest gets a poison, and then we live migrate it,
-
-So if I were to design this, I'd do it this way:
-
-0. guest gets hw poison injected
-
-1. it runs memory_failure() and it kills the processes using the page.
-
-2. page is marked poisoned on the host so no other guest gets it.
-
-That's it. No second accesses whatsoever. At least this is how it works
-on baremetal.
-
-This hw poisoning emulation is just silly and unnecessary.
-
-But again, I probably am missing some aspects. It all just sounded
-really weird to me that's why I thought I should ask what's behind all
-that.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+                Linus
 
