@@ -1,180 +1,237 @@
-Return-Path: <linux-kernel+bounces-179626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 301578C6281
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 10:06:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B16B08C627E
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 10:06:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3C2B282089
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:06:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11981B219CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:06:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1282B4A99C;
-	Wed, 15 May 2024 08:06:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBC644A99C;
+	Wed, 15 May 2024 08:06:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="nzUFl2Kx"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JRC3ZEEc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1188B4C62E;
-	Wed, 15 May 2024 08:06:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02E971DFE3;
+	Wed, 15 May 2024 08:06:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715760400; cv=none; b=Qe97Mu+6R47RSngnBB/jErRbu7Gr3R754IL6HvFWzCgXkWwN/E5Sedwm4OQxjB67uOpcTFJdHeXkz3GBBtQJLgUHd3azgQrQQCQJx64OZwDYqD7rTCU8pBtTTzTHSICAbJEda/86JcoG6KpVWrPtwpcNf35vy59+jx6KX1N4Y4w=
+	t=1715760380; cv=none; b=jVSX1kwwTKu5rMBTIELsJRsBRWvUtAwMRyCLjjWLFlS8BMNMjNP4f8JS87XttK8sMfbVlTIsdErmCUO0igC4ZxU/j7NLpByJuQnCeTOItruK/PdOFcGU47c6RPsQhDP3UFI5Nt7zqEK+6n76XZbkyU96fQkb7LW3HgPNAeTeo3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715760400; c=relaxed/simple;
-	bh=h0Sqhr4ifyZrC1b5lPNa6Gyug/wpM7myXaQxIuh3AZ4=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GqC11zrJcf19aZ6ktVGTNzOAAHSpsxEaeKL9zmcYHU63b8ffQdT6O4g3SwoP5TOefiN8NpechCAuu0psOoQI0JvtKK1pm83Xw0pBVYNsjIdW/ruYsXV1E8jE9GXnL4fPQsxajz/nP4Cu9uPmtqQSgQlf0kW4AUHsjf7gk1clDf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=nzUFl2Kx; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1715760398; x=1747296398;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=h0Sqhr4ifyZrC1b5lPNa6Gyug/wpM7myXaQxIuh3AZ4=;
-  b=nzUFl2KxHPlZyCxSu7RzeKN3iZy4YGBVDp/ohKEDRKIQu/j1Ia1QrFby
-   QCCdAQBsllYyRSV8S2wOBdj1Sf7aScUsbByFWD45upZr2UyUF2nvJTJF1
-   nztaDtcXU09yEpBEfHk/BwGMqlF9PVEmH4aZKpQbTh/CEMBYFksafRB31
-   uSRXnVH8k+mtOtVnfcRE9YufAkfLArWa8+SMJa2APjtKkWcAX4oVMMQWW
-   LcOpBp/mGajcFORdRfsw6ngR6V3Crtm8SenK9rzOG6GcBrt501SxkzfhX
-   IfFA8k/GEKMLWVLPwihI+amyN8Oxu4NJ8K08MkiGMa1plI42ELgz7IQCL
-   g==;
-X-CSE-ConnectionGUID: EvxhA01VQR6BcbhVcVTEIw==
-X-CSE-MsgGUID: gMj862SdQQKslckEPmEeNQ==
-X-IronPort-AV: E=Sophos;i="6.08,161,1712646000"; 
-   d="asc'?scan'208";a="25383960"
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 15 May 2024 01:06:37 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Wed, 15 May 2024 01:06:22 -0700
-Received: from wendy (10.10.85.11) by chn-vm-ex01.mchp-main.com (10.10.85.143)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
- Transport; Wed, 15 May 2024 01:06:20 -0700
-Date: Wed, 15 May 2024 09:06:06 +0100
-From: Conor Dooley <conor.dooley@microchip.com>
-To: Alina Yu <alina_yu@richtek.com>
-CC: Conor Dooley <conor@kernel.org>, Mark Brown <broonie@kernel.org>,
-	<lgirdwood@gmail.com>, <robh+dt@kernel.org>,
-	<krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<johnny_lai@richtek.com>, <cy_huang@richtek.com>
-Subject: Re: [PATCH v3 6/6] regulator: dt-bindings: rtq2208: Add property to
- get ldo of RTQ2208 is adjustable or not
-Message-ID: <20240515-wrinkle-engross-ab6b089baae3@wendy>
-References: <cover.1715340537.git.alina_yu@richtek.com>
- <6a3a90d9aa2022dfb92e124e417f3e72c2f28b0b.1715340537.git.alina_yu@richtek.com>
- <20240513-tissue-repave-13d2e3bf88fd@spud>
- <d97752ed-4032-4681-b28f-17f149fdc3d4@sirena.org.uk>
- <20240514-plunging-chair-803d9e342e6f@spud>
- <20240515073830.GA12525@linuxcarl2.richtek.com>
+	s=arc-20240116; t=1715760380; c=relaxed/simple;
+	bh=MtNcYj+7KtNGif4wrUtp7tfwwHUg6OeRHWBVhbdrXcM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=c3wSSHP77GymPXkAtte7XaT9mkvO+AdlwI5AzRIkjsxNr5yJKNkR6yRsIG3ZbIDu1qHQYbMm+9db8VLn2KXE7wNam4hLqcN3qTC0kv/1HyHdMldkdMPUhukn8LAIlcZzFt5yLH71WpznAP7xdHLWNsWC468cu/5edL5gAJ/ZR/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JRC3ZEEc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8320BC116B1;
+	Wed, 15 May 2024 08:06:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715760379;
+	bh=MtNcYj+7KtNGif4wrUtp7tfwwHUg6OeRHWBVhbdrXcM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JRC3ZEEcfAXhurUSRo4h4h+A9fTN/GIUyJ1PF7huWOMeZ16DF6etSmHOIjL4OO8Ha
+	 MBnrsNZ7JEA6VXe29P2PiekdQFShjErxFN4frMciXU3UoxYxqBDmTwuF7PZc0EbR8i
+	 qKWq3whoFsDRvpGiLK3+RBu1mZ0VbVvUsbCsF0KWx3jTK565c9Ow3Jbkym5hgvcQ56
+	 WZjrsdkANqcHlZ5Lei1TGjNaVRfF+dAgHu7xwmBP5cOwTdp0Cl3vDET9pOsPbBFW+U
+	 zzUibWTvbGWHv9sWYKWf377bE+ZYXI8pqP13Z7AQIW7DRwd+NPYyTbNU06MMhaHBo8
+	 Gh8Tfk44AQgjQ==
+Message-ID: <29fa61c3-f7c7-4769-a5eb-75783086cb9f@kernel.org>
+Date: Wed, 15 May 2024 10:06:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="0FcHBb/wqZoBsRLq"
-Content-Disposition: inline
-In-Reply-To: <20240515073830.GA12525@linuxcarl2.richtek.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/2] dt-bindings:iio:proximity: Add hx9031as binding
+To: Yasin Lee <yasin.lee.x@outlook.com>, jic23@kernel.org
+Cc: andy.shevchenko@gmail.com, lars@metafoo.de, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, nuno.a@analog.com, swboyd@chromium.org,
+ u.kleine-koenig@pengutronix.de, yasin.lee.x@gmail.com
+References: <20240511170143.7ca6a410@jic23-huawei>
+ <20240514202540.341103-1-yasin.lee.x@outlook.com>
+ <SN7PR12MB81012845A114E1FE7C49DFC3A4E32@SN7PR12MB8101.namprd12.prod.outlook.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <SN7PR12MB81012845A114E1FE7C49DFC3A4E32@SN7PR12MB8101.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
---0FcHBb/wqZoBsRLq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 14/05/2024 22:25, Yasin Lee wrote:
+> From: Yasin Lee <yasin.lee.x@gmail.com>
+> 
+> A capacitive proximity sensor with 5 channels
+> 
+> Signed-off-by: Yasin Lee <yasin.lee.x@gmail.com>
 
-On Wed, May 15, 2024 at 03:38:30PM +0800, Alina Yu wrote:
-> On Tue, May 14, 2024 at 07:01:21PM +0100, Conor Dooley wrote:
-> > On Tue, May 14, 2024 at 11:34:29AM +0100, Mark Brown wrote:
-> > > On Mon, May 13, 2024 at 05:22:54PM +0100, Conor Dooley wrote:
-> > > > On Fri, May 10, 2024 at 08:06:25PM +0800, Alina Yu wrote:
-> > >=20
-> > > > > +            richtek,fixed-microvolt =3D <1200000>;
-> > > > >              regulator-min-microvolt =3D <1200000>;
-> > > > >              regulator-max-microvolt =3D <1200000>;
-> > >=20
-> > > > I'm dumb and this example seemed odd to me. Can you explain to me w=
-hy
-> > > > it is not sufficient to set min-microvolt =3D=3D max-microvolt to a=
-chieve
-> > > > the same thing?
-> > >=20
-> > > This is for a special mode where the voltage being configured is out =
-of
-> > > the range usually supported by the regulator, requiring a hardware
-> > > design change to achieve.  The separate property is because otherwise=
- we
-> > > can't distinguish the case where the mode is in use from the case whe=
-re
-> > > the constraints are nonsense, and we need to handle setting a fixed
-> > > voltage on a configurable regulator differently to there being a
-> > > hardware fixed voltage on a normally configurable regulator.
-> >=20
-> > Cool, I think an improved comment message and description would be
-> > helpful then to describe the desired behaviour that you mention here.
-> > The commit message in particular isn't great:
-> > | Since there is no way to check is ldo is adjustable or not.
-> > | As discussing in v2 series, 'richtek,fixed-microvolt' is added for th=
-at.
-> > | user is supposed to know whether vout of ldo is adjustable.
-> >=20
-> > It also doesn't seem like this sort of behaviour would be limited to
-> > Richtek either, should this actually be a common property in
-> > regulator.yaml w/o the vendor prefix?
-> >=20
-> > Cheers,
-> > Conor.
->=20
->=20
-> Hi Conor,
->=20
->=20
-> Should I update v4 to fix the commit message ?
-> I will modify it as follows.
->=20
->=20
-> There are two types of LDO VOUT: fixed voltage mode and adjustable voltag=
-e mode.
->=20
-> As the fixed voltage for the LDO is outside the range of the adjustable v=
-oltage mode,
-> the constraints for this scenario are not suitable to represent both mode=
-s.
+Do not attach (thread) your patchsets to some other threads (unrelated
+or older versions). This buries them deep in the mailbox and might
+interfere with applying entire sets.
 
-That's definitely an improvement, yes. The property description could
-also do with an update to explain that this is for a situation where the
-fixed voltage is out of the adjustable range, it doesn't mention that at
-all right now.
+A nit, subject: drop second/last, redundant "bindings". The
+"dt-bindings" prefix is already stating that these are bindings.
+See also:
+https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
 
-> In version 3, a property has been added to specify the fixed voltage.
+Subject: missing spaces. See  `git log --oneline -- DIRECTORY_OR_FILE`
+on the directory your patch is touching.
 
-Don't refer to previous versions of the patchset in your commit message,
-that doesn't help people reading a commit log in the future etc. If
-there's some relevant information in a previous version patchset, put it
-in the commit message directly.
+Please use scripts/get_maintainers.pl to get a list of necessary people
+and lists to CC. It might happen, that command when run on an older
+kernel, gives you outdated entries. Therefore please be sure you base
+your patches on recent Linux kernel.
 
-Cheers,
-Conor.
+Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+people, so fix your workflow. Tools might also fail if you work on some
+ancient tree (don't, instead use mainline), work on fork of kernel
+(don't, instead use mainline) or you ignore some maintainers (really
+don't). Just use b4 and everything should be fine, although remember
+about `b4 prep --auto-to-cc` if you added new patches to the patchset.
 
---0FcHBb/wqZoBsRLq
-Content-Type: application/pgp-signature; name="signature.asc"
+You missed at least devicetree list (maybe more), so this won't be
+tested by automated tooling. Performing review on untested code might be
+a waste of time, thus I will skip this patch entirely till you follow
+the process allowing the patch to be tested.
 
------BEGIN PGP SIGNATURE-----
+Please kindly resend and include all necessary To/Cc entries.
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZkRs7gAKCRB4tDGHoIJi
-0vH7AQD9Pv88a/PkA91egE2kjvXH7h48NPsjCN8xwJ8vNsM5XgEAuD17AiUn8eu7
-CNpGygjTUdxaBxaAC0nC6jR2+XMgXwg=
-=ELYJ
------END PGP SIGNATURE-----
+Limited review follows.
 
---0FcHBb/wqZoBsRLq--
+> ---
+>  .../bindings/iio/proximity/tyhx,hx9031as.yaml | 60 +++++++++++++++++++
+>  .../devicetree/bindings/vendor-prefixes.yaml  |  2 +
+>  2 files changed, 62 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/proximity/tyhx,hx9031as.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/proximity/tyhx,hx9031as.yaml b/Documentation/devicetree/bindings/iio/proximity/tyhx,hx9031as.yaml
+> new file mode 100644
+> index 000000000000..62a71c0c4d04
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/proximity/tyhx,hx9031as.yaml
+> @@ -0,0 +1,60 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/proximity/tyhx,hx9031as.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Tyhx's HX9031AS capacitive proximity sensor
+> +
+> +maintainers:
+> +  - Yasin Lee <yasin.lee.x@gmail.com>
+> +
+> +description: |
+> +  Tyhx's HX9031AS proximity sensor.
+> +
+> +allOf:
+> +  - $ref: /schemas/iio/iio.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    const: tyhx,hx9031as
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    description:
+> +      Generated by device to announce preceding read request has finished
+> +      and data is available or that a close/far proximity event has happened.
+> +    maxItems: 1
+> +
+> +  vdd-supply:
+> +    description: Main power supply
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    i2c {
+> +      #address-cells = <1>;
+> +      #size-cells = <0>;
+> +      hx9031as@2a {
+
+Node names should be generic. See also an explanation and list of
+examples (not exhaustive) in DT specification:
+https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+
+
+> +        compatible = "tyhx,hx9031as";
+> +        reg = <0x2a>;
+> +        interrupt-parent = <&pio>;
+> +        interrupts = <16 IRQ_TYPE_EDGE_FALLING 16 0>;
+> +        vdd-supply = <&pp3300_a>;
+> +        status = "okay";
+
+Drop
+
+> +      };
+> +    };
+> +
+> +
+> +
+> +
+> +
+> +
+
+Drop useless blank lines...
+
+
+Best regards,
+Krzysztof
+
 
