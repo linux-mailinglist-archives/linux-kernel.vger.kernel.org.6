@@ -1,47 +1,64 @@
-Return-Path: <linux-kernel+bounces-179523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C2B88C60DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:38:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 708668C60E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:41:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BA171F21EE7
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:38:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F96D1F212E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:41:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 030FE3D3BF;
-	Wed, 15 May 2024 06:38:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F1FE40848;
+	Wed, 15 May 2024 06:41:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kw38awke"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="mBAkrGGB"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2295F3BBDE
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 06:38:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90F453C488
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 06:41:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715755124; cv=none; b=YdlUwkujM7L7fsfNP7rdSlpJp47MmrxP/kMoP1jW1E6NeGjzyE/hFIpWqBCtflKMIe1eJ3THHkh+LROItosSkZrcKyIPtUsq0QCu6SPLxo1xFmsJFm0kqZ2OAg+zGRYD9FfSF9fbQFi2k6cS18YowUgGwisV7DqXZLPwrBPy9SI=
+	t=1715755303; cv=none; b=rv+2tODS8FNihTivA1pRnU9w4Byb5VUHaCBtCNu21YyWGkOEJaJfIkDqfryHqGD684Z1eQDHTpMirMVbE0JbseT6J9kJQ6evh+1rergLCO8YA0/HPT3kIPE0dzJcAOPSn7QGpPig3ZU9NDbvEG1ABfXhlTsmOCLHNtycOWVmdvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715755124; c=relaxed/simple;
-	bh=DUBK5FSNdWNxIcO5szuLJHHIpvf4ofWE4u9LBUSeSS0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Zei1EyFWvyJnkjBj5KzL0n6NiyzO8dM+TF14pzZHjuVd7WKc05aTuDpvhFo6/Kx2hLbYIpoF1sfmd3sVfRywyhuZoYF+UhkqUjeXwvetWJ4tQGeHFtCrtSdAk95C8nJ13Z3Q0rd0ZS8FrjL/d7lvHY9zPVXuJ31Xc6oDgNNoN4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kw38awke; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A090DC116B1;
-	Wed, 15 May 2024 06:38:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715755123;
-	bh=DUBK5FSNdWNxIcO5szuLJHHIpvf4ofWE4u9LBUSeSS0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=kw38awkeWt7DClqOHsChHLNDfetR+rpkBv+orOciCmrKvdkwDHPf7OujHxpx2EKAj
-	 98n7e5GAEVyEPuQ4kPOaU7KbCmX3XVZfVe9MdfDgqUX5Jwh8RtKbV7TzGC5tV8yYCl
-	 QGgb/n8B3o8SXbNkOQiKagom5oRlwAHyuxtY/GZXLjpxsT0psyK/GgVVCsWmKQ/zAm
-	 viUXgxZZFYISGJgASO4r+dhIncFalX47rtSeXV0hN2cVrN/+qdWvdM6Xyz2ssN9bGR
-	 KBY+PmXmx/50GaUpkAiREXmC75q3ufVZbxCFjS3B9ZAPXIkAmVvV9kM85q0nIJJXG/
-	 9/9OIG00LuvQw==
-Message-ID: <efae597c-d334-498b-9050-1a21bf40e21d@kernel.org>
-Date: Wed, 15 May 2024 14:38:39 +0800
+	s=arc-20240116; t=1715755303; c=relaxed/simple;
+	bh=TJKrpcrkUxV5ZjMdLlFyHc7tyMjEZpRrDQ7anUNUSxE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=AMVrJfGO97tlJAVfZyvoUqVzePPZ3ci2ZQP5yXMwmI1zCQAX/owH46rxPjjxWJCEgdCVoQ7asF/gYur00VKlFwCbuUok602zRyHm3c38/oQwMGkBaBR1UHv5OqviRVY7hAsegWMuhABPJB97zGerL+m+A550YMSHnIa7+1PD+3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=mBAkrGGB; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44F056TZ012890;
+	Wed, 15 May 2024 08:40:49 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	selector1; bh=grZoncYN/Ex6YBE6MWMsZg3hoMkBe2yN4z13XwIKYPs=; b=mB
+	AkrGGBA18gIrlZuvQmXNp+jkBFd/Ny1YXK83q03Q/JTRfAIhLZF24O0vxgOAthnz
+	YpgtayqGlszvQD0STawOg0Hs04I2Vzo0F0iA7jnyXrQsJ9fnHXT8yJD6FLzwscgy
+	GbNrcFpyE4Xm/XCLSWS/vlGQFi1JbTVcEhvm4ukk0HZPoiF9QwKywqdlQk+SGV6y
+	IQuC9c8UrCuCcLh0Z+teECj+Ntxa89V4xGcDuiHfxzfSiTOM5jRethunhQ9CV0Xo
+	DOb8x8dHxrT7QzrPjjPAhnOh+suDdQibNMgTBh9k9JpUQ1UkpX0LRR49ePaFAInK
+	4lDJGc4oC67xjHGoIFJw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3y1yjbe0u8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 15 May 2024 08:40:48 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id C5C5740044;
+	Wed, 15 May 2024 08:40:41 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 52EA920DD93;
+	Wed, 15 May 2024 08:39:51 +0200 (CEST)
+Received: from [10.252.19.151] (10.252.19.151) by SHFDAG1NODE3.st.com
+ (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Wed, 15 May
+ 2024 08:39:50 +0200
+Message-ID: <b58c9073-02c6-4b5e-9082-fb11f388842d@foss.st.com>
+Date: Wed, 15 May 2024 08:39:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,205 +66,93 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] f2fs: fix to avoid racing in between read and OPU dio
- write
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-References: <20240510023906.281700-1-chao@kernel.org>
- <ZkOMwKAcKmEPQ4Xz@google.com>
- <fc0d8b1f-0c54-4447-8ceb-3722645f71c2@kernel.org>
- <ZkQ9Uo5713Xpr2n7@google.com>
+Subject: Re: [PATCH] drm/stm: dsi: relax mode_valid clock tolerance
+To: Sean Nyekjaer <sean@geanix.com>,
+        Raphael Gallais-Pou
+	<raphael.gallais-pou@foss.st.com>,
+        Philippe Cornu
+	<philippe.cornu@foss.st.com>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Robert Foss
+	<rfoss@kernel.org>,
+        Antonio Borneo <antonio.borneo@foss.st.com>
+CC: <dri-devel@lists.freedesktop.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20240322104732.2327060-1-sean@geanix.com>
+ <lkrxoqhcitmvjvzslhx6mrdjaa6lpxtpmdjt7wwollm6z4h65q@jk5esjje6ppy>
 Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <ZkQ9Uo5713Xpr2n7@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Yannick FERTRE <yannick.fertre@foss.st.com>
+In-Reply-To: <lkrxoqhcitmvjvzslhx6mrdjaa6lpxtpmdjt7wwollm6z4h65q@jk5esjje6ppy>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE3.st.com
+ (10.75.129.71)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-15_02,2024-05-14_01,2023-05-22_02
 
-On 2024/5/15 12:42, Jaegeuk Kim wrote:
-> On 05/15, Chao Yu wrote:
->> On 2024/5/15 0:09, Jaegeuk Kim wrote:
->>> On 05/10, Chao Yu wrote:
->>>> If lfs mode is on, buffered read may race w/ OPU dio write as below,
->>>> it may cause buffered read hits unwritten data unexpectly, and for
->>>> dio read, the race condition exists as well.
->>>>
->>>> Thread A                      Thread B
->>>> - f2fs_file_write_iter
->>>>    - f2fs_dio_write_iter
->>>>     - __iomap_dio_rw
->>>>      - f2fs_iomap_begin
->>>>       - f2fs_map_blocks
->>>>        - __allocate_data_block
->>>>         - allocated blkaddr #x
->>>>          - iomap_dio_submit_bio
->>>>                                 - f2fs_file_read_iter
->>>>                                  - filemap_read
->>>>                                   - f2fs_read_data_folio
->>>>                                    - f2fs_mpage_readpages
->>>>                                     - f2fs_map_blocks
->>>>                                      : get blkaddr #x
->>>>                                     - f2fs_submit_read_bio
->>>>                                 IRQ
->>>>                                 - f2fs_read_end_io
->>>>                                  : read IO on blkaddr #x complete
->>>> IRQ
->>>> - iomap_dio_bio_end_io
->>>>    : direct write IO on blkaddr #x complete
->>>>
->>>> This patch introduces a new per-inode i_opu_rwsem lock to avoid
->>>> such race condition.
->>>
->>> Wasn't this supposed to be managed by user-land?
->>
->> Actually, the test case is:
->>
->> 1. mount w/ lfs mode
->> 2. touch file;
->> 3. initialize file w/ 4k zeroed data; fsync;
->> 4. continue triggering dio write 4k zeroed data to file;
->> 5. and meanwhile, continue triggering buf/dio 4k read in file,
->> use md5sum to verify the 4k data;
->>
->> It expects data is all zero, however it turned out it's not.
-> 
-> Can we check outstanding write bios instead of abusing locks?
+Hi Sean,
 
-I didn't figure out a way to solve this w/o lock, due to:
-- write bios can be issued after outstanding write bios check condition,
-result in the race.
-- once read() detects that there are outstanding write bios, we need to
-delay read flow rather than fail it, right? It looks using a lock is more
-proper here?
+thanks for your patch.
 
-Any suggestion?
+Tested-by: Yannick Fertre <yannick.fertre@foss.st.com>
 
-Thanks,
+I think that a helper could be useful in simplifying this part.
+This might be reworked when a new helper will be implemented.
 
-> 
+Best regards
+
+
+On 4/22/24 16:05, Sean Nyekjaer wrote:
+> On Fri, Mar 22, 2024 at 11:47:31AM +0100, Sean Nyekjaer wrote:
+>> When using the DSI interface via DSI2LVDS bridge, it seems a bit harsh
+>> to reguire the requested and the actual px clock to be within
+>> 50Hz. A typical LVDS display requires the px clock to be within +-10%.
 >>
->> Thanks,
+>> In case for HDMI .5% tolerance is required.
 >>
->>>
->>>>
->>>> Fixes: f847c699cff3 ("f2fs: allow out-place-update for direct IO in LFS mode")
->>>> Signed-off-by: Chao Yu <chao@kernel.org>
->>>> ---
->>>> v2:
->>>> - fix to cover dio read path w/ i_opu_rwsem as well.
->>>>    fs/f2fs/f2fs.h  |  1 +
->>>>    fs/f2fs/file.c  | 28 ++++++++++++++++++++++++++--
->>>>    fs/f2fs/super.c |  1 +
->>>>    3 files changed, 28 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->>>> index 30058e16a5d0..91cf4b3d6bc6 100644
->>>> --- a/fs/f2fs/f2fs.h
->>>> +++ b/fs/f2fs/f2fs.h
->>>> @@ -847,6 +847,7 @@ struct f2fs_inode_info {
->>>>         /* avoid racing between foreground op and gc */
->>>>         struct f2fs_rwsem i_gc_rwsem[2];
->>>>         struct f2fs_rwsem i_xattr_sem; /* avoid racing between reading and changing EAs */
->>>> +     struct f2fs_rwsem i_opu_rwsem;  /* avoid racing between buf read and opu dio write */
->>>>
->>>>         int i_extra_isize;              /* size of extra space located in i_addr */
->>>>         kprojid_t i_projid;             /* id for project quota */
->>>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
->>>> index 72ce1a522fb2..4ec260af321f 100644
->>>> --- a/fs/f2fs/file.c
->>>> +++ b/fs/f2fs/file.c
->>>> @@ -4445,6 +4445,7 @@ static ssize_t f2fs_dio_read_iter(struct kiocb *iocb, struct iov_iter *to)
->>>>         const loff_t pos = iocb->ki_pos;
->>>>         const size_t count = iov_iter_count(to);
->>>>         struct iomap_dio *dio;
->>>> +     bool do_opu = f2fs_lfs_mode(sbi);
->>>>         ssize_t ret;
->>>>
->>>>         if (count == 0)
->>>> @@ -4457,8 +4458,14 @@ static ssize_t f2fs_dio_read_iter(struct kiocb *iocb, struct iov_iter *to)
->>>>                         ret = -EAGAIN;
->>>>                         goto out;
->>>>                 }
->>>> +             if (do_opu && !f2fs_down_read_trylock(&fi->i_opu_rwsem)) {
->>>> +                     f2fs_up_read(&fi->i_gc_rwsem[READ]);
->>>> +                     ret = -EAGAIN;
->>>> +                     goto out;
->>>> +             }
->>>>         } else {
->>>>                 f2fs_down_read(&fi->i_gc_rwsem[READ]);
->>>> +             f2fs_down_read(&fi->i_opu_rwsem);
->>>>         }
->>>>
->>>>         /*
->>>> @@ -4477,6 +4484,7 @@ static ssize_t f2fs_dio_read_iter(struct kiocb *iocb, struct iov_iter *to)
->>>>                 ret = iomap_dio_complete(dio);
->>>>         }
->>>>
->>>> +     f2fs_up_read(&fi->i_opu_rwsem);
->>>>         f2fs_up_read(&fi->i_gc_rwsem[READ]);
->>>>
->>>>         file_accessed(file);
->>>> @@ -4523,7 +4531,13 @@ static ssize_t f2fs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
->>>>         if (f2fs_should_use_dio(inode, iocb, to)) {
->>>>                 ret = f2fs_dio_read_iter(iocb, to);
->>>>         } else {
->>>> +             bool do_opu = f2fs_lfs_mode(F2FS_I_SB(inode));
->>>> +
->>>> +             if (do_opu)
->>>> +                     f2fs_down_read(&F2FS_I(inode)->i_opu_rwsem);
->>>>                 ret = filemap_read(iocb, to, 0);
->>>> +             if (do_opu)
->>>> +                     f2fs_up_read(&F2FS_I(inode)->i_opu_rwsem);
->>>>                 if (ret > 0)
->>>>                         f2fs_update_iostat(F2FS_I_SB(inode), inode,
->>>>                                                 APP_BUFFERED_READ_IO, ret);
->>>> @@ -4748,14 +4762,22 @@ static ssize_t f2fs_dio_write_iter(struct kiocb *iocb, struct iov_iter *from,
->>>>                         ret = -EAGAIN;
->>>>                         goto out;
->>>>                 }
->>>> +             if (do_opu && !f2fs_down_write_trylock(&fi->i_opu_rwsem)) {
->>>> +                     f2fs_up_read(&fi->i_gc_rwsem[READ]);
->>>> +                     f2fs_up_read(&fi->i_gc_rwsem[WRITE]);
->>>> +                     ret = -EAGAIN;
->>>> +                     goto out;
->>>> +             }
->>>>         } else {
->>>>                 ret = f2fs_convert_inline_inode(inode);
->>>>                 if (ret)
->>>>                         goto out;
->>>>
->>>>                 f2fs_down_read(&fi->i_gc_rwsem[WRITE]);
->>>> -             if (do_opu)
->>>> +             if (do_opu) {
->>>>                         f2fs_down_read(&fi->i_gc_rwsem[READ]);
->>>> +                     f2fs_down_write(&fi->i_opu_rwsem);
->>>> +             }
->>>>         }
->>>>
->>>>         /*
->>>> @@ -4779,8 +4801,10 @@ static ssize_t f2fs_dio_write_iter(struct kiocb *iocb, struct iov_iter *from,
->>>>                 ret = iomap_dio_complete(dio);
->>>>         }
->>>>
->>>> -     if (do_opu)
->>>> +     if (do_opu) {
->>>> +             f2fs_up_write(&fi->i_opu_rwsem);
->>>>                 f2fs_up_read(&fi->i_gc_rwsem[READ]);
->>>> +     }
->>>>         f2fs_up_read(&fi->i_gc_rwsem[WRITE]);
->>>>
->>>>         if (ret < 0)
->>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->>>> index daf2c4dbe150..b4ed3b094366 100644
->>>> --- a/fs/f2fs/super.c
->>>> +++ b/fs/f2fs/super.c
->>>> @@ -1428,6 +1428,7 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
->>>>         init_f2fs_rwsem(&fi->i_gc_rwsem[READ]);
->>>>         init_f2fs_rwsem(&fi->i_gc_rwsem[WRITE]);
->>>>         init_f2fs_rwsem(&fi->i_xattr_sem);
->>>> +     init_f2fs_rwsem(&fi->i_opu_rwsem);
->>>>
->>>>         /* Will be used by directory only */
->>>>         fi->i_dir_level = F2FS_SB(sb)->dir_level;
->>>> --
->>>> 2.40.1
+>> Fixes: e01356d18273 ("drm/stm: dsi: provide the implementation of mode_valid()")
+>> Signed-off-by: Sean Nyekjaer <sean@geanix.com>
+>> ---
+> Any feedback on this?
+>
+>>   drivers/gpu/drm/stm/dw_mipi_dsi-stm.c | 7 +++----
+>>   1 file changed, 3 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/stm/dw_mipi_dsi-stm.c b/drivers/gpu/drm/stm/dw_mipi_dsi-stm.c
+>> index d5f8c923d7bc..97936b0ef702 100644
+>> --- a/drivers/gpu/drm/stm/dw_mipi_dsi-stm.c
+>> +++ b/drivers/gpu/drm/stm/dw_mipi_dsi-stm.c
+>> @@ -322,8 +322,6 @@ dw_mipi_dsi_phy_get_timing(void *priv_data, unsigned int lane_mbps,
+>>   	return 0;
+>>   }
+>>   
+>> -#define CLK_TOLERANCE_HZ 50
+>> -
+>>   static enum drm_mode_status
+>>   dw_mipi_dsi_stm_mode_valid(void *priv_data,
+>>   			   const struct drm_display_mode *mode,
+>> @@ -375,9 +373,10 @@ dw_mipi_dsi_stm_mode_valid(void *priv_data,
+>>   		/*
+>>   		 * Filter modes according to the clock value, particularly useful for
+>>   		 * hdmi modes that require precise pixel clocks.
+>> +		 * Check that px_clock is within .5% tolerance.
+>>   		 */
+>> -		if (px_clock_hz < target_px_clock_hz - CLK_TOLERANCE_HZ ||
+>> -		    px_clock_hz > target_px_clock_hz + CLK_TOLERANCE_HZ)
+>> +		if (px_clock_hz < mult_frac(target_px_clock_hz, 995, 1000) ||
+>> +		    px_clock_hz > mult_frac(target_px_clock_hz, 1005, 1000))
+>>   			return MODE_CLOCK_RANGE;
+>>   
+>>   		/* sync packets are codes as DSI short packets (4 bytes) */
+>> -- 
+>> 2.44.0
+>>
 
