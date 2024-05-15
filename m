@@ -1,172 +1,244 @@
-Return-Path: <linux-kernel+bounces-179622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A52E8C6278
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 10:03:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F0CE8C627C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 10:04:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F31A92853EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:03:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C21431C21CB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:04:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A6384CB5B;
-	Wed, 15 May 2024 08:03:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 852FB4A990;
+	Wed, 15 May 2024 08:04:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rO6y9sDE"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="bMvEhrfB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B32D84A9B0
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 08:03:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9635241A81;
+	Wed, 15 May 2024 08:04:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715760222; cv=none; b=eseudQgbOptICVaDs/0xB6bTxqFtUvr7KYGL+raHH3P2lUhruKrZl0TGBrMgRvD55aV4+MhGN0XJYq+bCjsKlxtjzV8Sx4c5ZVKdGUoYb4HM7jIWLZ4eEUkpBF5/rKWj44NmnLhQqFQGJrrGIcEVf+04N1okmnhxQ/jQifjfYIs=
+	t=1715760289; cv=none; b=WClsduHvo3Xx5lw7P6BJdShxDUyomVGqm1H/VckUDhRKfzhmWv8NipgNWBNnOFgMRy2z17WKfMQf4OtQvj7qxk4jqdfJdx4N9NQ0x4juMuDlll/URefF3v1AyxcCtD2IQNQ5hrGlpxfwI/8Pjb3MRK+BDUqMW2PqZ5CBffwDLys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715760222; c=relaxed/simple;
-	bh=VH9txt46L4P36L40P+7h3wObatnHZuVpGod7pcvsnpg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=krL4LBF2C7wsfN40ywrOxheEtduWCyTsxgOjHl0bK6oOA7ulSTvt98zcScJOIFOV9GwunXvvJXj9czyFCl/zzHL3RIvHxhY6LrKpIG4uVclFeRUglemRJEas8f5d7iH6IkpSJiSOjxWXAIhgxVIrsaZfNNicgaN0+/JbzLIvx2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rO6y9sDE; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2e6f2534e41so10348881fa.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 01:03:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715760219; x=1716365019; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=R04O4/+uapb3Pagg8ZXSnZwmMA9rR8+o1ejwqMPkjdk=;
-        b=rO6y9sDER7lQl7VEYZaDGtYgROFvUBW96HRWjFyGOlO/OTov6G1iQsWXrIWUrGGMCR
-         XhiqI2DnSgWzD5Ws3/x/ac6OQTp25CtbbThmt472C/0WXhNSrPLZ3aDe6bWD9He1Yr2l
-         05qqXe7SU40uZxFJmOw92re9GYaIZqCNynErvLvKI8OEWYJfh5qGvlrDJBu1dtKtMTUA
-         EC/Sk5EOEDbvWmMDKXR63Uqx/GjwQCFlID3bnEZpnfBpE6BBXObnMsmBaf5hC5RxXwR3
-         HLEc9HkGidxPGgu1oX+xAPPTkmtK0c97Kg6XdXzFqo+ZocXiWNdVF11Nz8oQqu20I316
-         ij5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715760219; x=1716365019;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=R04O4/+uapb3Pagg8ZXSnZwmMA9rR8+o1ejwqMPkjdk=;
-        b=PxUre+nzHWNWOvdeRgy0NNNqK9MWDKx02F+urm8G2mtw5CyZSoZ0+X9gDOGl6N2mLW
-         tfLzVMzgat/xN3hTpdd2PMmpyZKl+tMpM2nu+PXVjaPlzGNBMOzNc8YBdrqXUHVu8k2z
-         vWWoCcuD2SWtbcW5AZvExXdQpHqtlyfUCOIPEDK+uH8+9MwBTK/ydcSIVx5JPgHROHbf
-         VCqYcVwbxHEPw8+YIqGvtekRxR+KSv2CLrdCQo5xzItiE8A0UeyRCNtofTE8XfkHH9nn
-         KsGrBjMp+nOTO1hEVoN17gHSWc0HuDdT3Jxnqg39o1qIE+Kwm9njIauTX73y5BVvmO2L
-         ftjA==
-X-Forwarded-Encrypted: i=1; AJvYcCUGMq/hxZ2oxtIb4WEcz34Q+neHvlEfnMj/boyj7157UgmLhiZLRDmKC6z+F/FJHS3RKwgYiTvQVJentdBtj70iSo4LOAJDr3vr1aM9
-X-Gm-Message-State: AOJu0YxpTnIp+DsJLfeIdsrcQn4yISzmq3f7xZuuZ0ichU93WoN5rvkR
-	6pLWDlbSHHWl1DaFVAhqsW3D+UyLRIt5qYundfz166CnD4UNSa853yuk1ZiOp0o=
-X-Google-Smtp-Source: AGHT+IFtdXWk+XPXvaBplFUmiQVxNdck1a7Vh7kOUzVnhb7FDeeuJyPAnxtf1CxsBH0hkDIPvgRv2w==
-X-Received: by 2002:a2e:a98a:0:b0:2e6:f769:5124 with SMTP id 38308e7fff4ca-2e6f769532emr8715491fa.39.1715760218543;
-        Wed, 15 May 2024 01:03:38 -0700 (PDT)
-Received: from [10.91.0.75] ([149.14.240.163])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502bbbbec5sm15620651f8f.95.2024.05.15.01.03.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 May 2024 01:03:38 -0700 (PDT)
-Message-ID: <f6de4e1a-b3fa-457e-8819-041b2fb8739a@linaro.org>
-Date: Wed, 15 May 2024 10:03:36 +0200
+	s=arc-20240116; t=1715760289; c=relaxed/simple;
+	bh=wuudiOglpt4DKThuTsQfr2VxE75TJXgXe+nOKLcrb2s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lmV1L4XZ+uq8EceEvIunBsyjggT2VSor58aVOOZfKeVKoUIHaRZTAE7WGrQi2ipf3UxbE9o8SUKj+qcClFCM1sQreBTMHXYmkoxbh+7yuAYgoTjOjsrI7Wn53Sn29V+KMaJfIdo6gv7JZbirkIUx3sguZcDm0G7gbwsY+Dt9GsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=bMvEhrfB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96358C116B1;
+	Wed, 15 May 2024 08:04:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1715760289;
+	bh=wuudiOglpt4DKThuTsQfr2VxE75TJXgXe+nOKLcrb2s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bMvEhrfBqRiY2euQIMEkNUl+hu9/oe7AG09doTeoKUeu3QaebnrnVeeo/nYim0r28
+	 Jh8v1B7k0WGqpu8CywYKlhAjQHmqG3E3E97youlEhLuVqh904ZS/joQA7t+hS/EvCa
+	 sjhexrDmt75QkYxIJ3j3dzH63Ij9Az99VbmfgW+o=
+Date: Wed, 15 May 2024 10:04:46 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Jens Wiklander <jens.wiklander@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
+	op-tee@lists.trustedfirmware.org,
+	Shyam Saini <shyamsaini@linux.microsoft.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Jerome Forissier <jerome.forissier@linaro.org>,
+	Sumit Garg <sumit.garg@linaro.org>,
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+	Bart Van Assche <bvanassche@acm.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Manuel Traut <manut@mecka.net>,
+	Tomas Winkler <tomas.winkler@intel.com>,
+	Alex =?iso-8859-1?Q?Benn=E9e?= <alex.bennee@linaro.org>
+Subject: Re: [PATCH v6 1/3] rpmb: add Replay Protected Memory Block (RPMB)
+ subsystem
+Message-ID: <2024051544-clarinet-baffle-c9d6@gregkh>
+References: <20240507091619.2208810-1-jens.wiklander@linaro.org>
+ <20240507091619.2208810-2-jens.wiklander@linaro.org>
+ <2024051424-shack-blinking-547a@gregkh>
+ <CAHUa44FepEVKYPhmH1zvSHOiCMPBwagLSgMmqMyDxewsTxT_-w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: ufs: qcom: Use 'ufshc' as the node name
- for UFS controller nodes
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Conor Dooley <conor@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
- Bart Van Assche <bvanassche@acm.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Andy Gross <agross@kernel.org>,
- cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
- linux-scsi@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240514-ufs-nodename-fix-v1-0-4c55483ac401@linaro.org>
- <20240514-ufs-nodename-fix-v1-1-4c55483ac401@linaro.org>
- <20240514-buggy-sighing-1573000e3f52@spud> <20240515075005.GC2445@thinkpad>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240515075005.GC2445@thinkpad>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHUa44FepEVKYPhmH1zvSHOiCMPBwagLSgMmqMyDxewsTxT_-w@mail.gmail.com>
 
-On 15/05/2024 09:50, Manivannan Sadhasivam wrote:
-> On Tue, May 14, 2024 at 07:50:15PM +0100, Conor Dooley wrote:
->> On Tue, May 14, 2024 at 03:08:40PM +0200, Manivannan Sadhasivam wrote:
->>> Devicetree binding has documented the node name for UFS controllers as
->>> 'ufshc'. So let's use it instead of 'ufs' which is for the UFS devices.
->>
->> Can you point out where that's been documented?
+On Wed, May 15, 2024 at 09:51:32AM +0200, Jens Wiklander wrote:
+> On Tue, May 14, 2024 at 5:45 PM Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Tue, May 07, 2024 at 11:16:17AM +0200, Jens Wiklander wrote:
+> > > A number of storage technologies support a specialised hardware
+> > > partition designed to be resistant to replay attacks. The underlying
+> > > HW protocols differ but the operations are common. The RPMB partition
+> > > cannot be accessed via standard block layer, but by a set of specific
+> > > RPMB commands. Such a partition provides authenticated and replay
+> > > protected access, hence suitable as a secure storage.
+> > >
+> > > The initial aim of this patch is to provide a simple RPMB driver
+> > > interface which can be accessed by the optee driver to facilitate early
+> > > RPMB access to OP-TEE OS (secure OS) during the boot time.
+> > >
+> > > A TEE device driver can claim the RPMB interface, for example, via
+> > > rpmb_interface_register() or rpmb_dev_find_device(). The RPMB driver
+> > > provides a callback to route RPMB frames to the RPMB device accessible
+> > > via rpmb_route_frames().
+> > >
+> > > The detailed operation of implementing the access is left to the TEE
+> > > device driver itself.
+> > >
+> > > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> > > Signed-off-by: Alex Bennée <alex.bennee@linaro.org>
+> > > Signed-off-by: Shyam Saini <shyamsaini@linux.microsoft.com>
+> > > Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
+> > > Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> > > ---
+> > >  MAINTAINERS              |   7 ++
+> > >  drivers/misc/Kconfig     |  10 ++
+> > >  drivers/misc/Makefile    |   1 +
+> > >  drivers/misc/rpmb-core.c | 233 +++++++++++++++++++++++++++++++++++++++
+> > >  include/linux/rpmb.h     | 136 +++++++++++++++++++++++
+> > >  5 files changed, 387 insertions(+)
+> > >  create mode 100644 drivers/misc/rpmb-core.c
+> > >  create mode 100644 include/linux/rpmb.h
+> > >
+> > > diff --git a/MAINTAINERS b/MAINTAINERS
+> > > index 8999497011a2..e83152c42499 100644
+> > > --- a/MAINTAINERS
+> > > +++ b/MAINTAINERS
+> > > @@ -19012,6 +19012,13 @@ T:   git git://linuxtv.org/media_tree.git
+> > >  F:   Documentation/devicetree/bindings/media/allwinner,sun8i-a83t-de2-rotate.yaml
+> > >  F:   drivers/media/platform/sunxi/sun8i-rotate/
+> > >
+> > > +RPMB SUBSYSTEM
+> > > +M:   Jens Wiklander <jens.wiklander@linaro.org>
+> > > +L:   linux-kernel@vger.kernel.org
+> > > +S:   Supported
+> > > +F:   drivers/misc/rpmb-core.c
+> > > +F:   include/linux/rpmb.h
+> > > +
+> > >  RPMSG TTY DRIVER
+> > >  M:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> > >  L:   linux-remoteproc@vger.kernel.org
+> > > diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
+> > > index 4fb291f0bf7c..dbff9e8c3a03 100644
+> > > --- a/drivers/misc/Kconfig
+> > > +++ b/drivers/misc/Kconfig
+> > > @@ -104,6 +104,16 @@ config PHANTOM
+> > >         If you choose to build module, its name will be phantom. If unsure,
+> > >         say N here.
+> > >
+> > > +config RPMB
+> > > +     tristate "RPMB partition interface"
+> > > +     depends on MMC
+> > > +     help
+> > > +       Unified RPMB unit interface for RPMB capable devices such as eMMC and
+> > > +       UFS. Provides interface for in-kernel security controllers to access
+> > > +       RPMB unit.
+> > > +
+> > > +       If unsure, select N.
+> > > +
+> > >  config TIFM_CORE
+> > >       tristate "TI Flash Media interface support"
+> > >       depends on PCI
+> > > diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
+> > > index ea6ea5bbbc9c..8af058ad1df4 100644
+> > > --- a/drivers/misc/Makefile
+> > > +++ b/drivers/misc/Makefile
+> > > @@ -15,6 +15,7 @@ obj-$(CONFIG_LKDTM)         += lkdtm/
+> > >  obj-$(CONFIG_TIFM_CORE)              += tifm_core.o
+> > >  obj-$(CONFIG_TIFM_7XX1)              += tifm_7xx1.o
+> > >  obj-$(CONFIG_PHANTOM)                += phantom.o
+> > > +obj-$(CONFIG_RPMB)           += rpmb-core.o
+> > >  obj-$(CONFIG_QCOM_COINCELL)  += qcom-coincell.o
+> > >  obj-$(CONFIG_QCOM_FASTRPC)   += fastrpc.o
+> > >  obj-$(CONFIG_SENSORS_BH1770) += bh1770glc.o
+> > > diff --git a/drivers/misc/rpmb-core.c b/drivers/misc/rpmb-core.c
+> > > new file mode 100644
+> > > index 000000000000..e42a45debc76
+> > > --- /dev/null
+> > > +++ b/drivers/misc/rpmb-core.c
+> > > @@ -0,0 +1,233 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > > +/*
+> > > + * Copyright(c) 2015 - 2019 Intel Corporation. All rights reserved.
+> > > + * Copyright(c) 2021 - 2024 Linaro Ltd.
+> > > + */
+> > > +#include <linux/device.h>
+> > > +#include <linux/init.h>
+> > > +#include <linux/kernel.h>
+> > > +#include <linux/list.h>
+> > > +#include <linux/module.h>
+> > > +#include <linux/mutex.h>
+> > > +#include <linux/rpmb.h>
+> > > +#include <linux/slab.h>
+> > > +
+> > > +static struct list_head rpmb_dev_list;
+> > > +static DEFINE_MUTEX(rpmb_mutex);
+> > > +static struct blocking_notifier_head rpmb_interface =
+> > > +     BLOCKING_NOTIFIER_INIT(rpmb_interface);
+> > > +
+> > > +/**
+> > > + * rpmb_dev_get() - increase rpmb device ref counter
+> > > + * @rdev: rpmb device
+> > > + */
+> > > +struct rpmb_dev *rpmb_dev_get(struct rpmb_dev *rdev)
+> > > +{
+> > > +     if (rdev)
+> > > +             get_device(rdev->parent_dev);
+> >
+> > Odd, why are you thinking the parent reference has anything to do with
+> > this device's reference?
+> >
+> > Why isn't this a "real" device and part of the driver model properly?
+> > This way of "hanging onto" a device and attempting to influence it's
+> > reference count is odd, please make this real and not "fake".
 > 
-> Typo here. s/Devicetree binding/Devicetree spec
+> I did this in response to
+> https://lore.kernel.org/lkml/CAPDyKFqNhGWKm=+7niNsjXOjEJE3U=o7dRNG=JqpptUSo9G-ug@mail.gmail.com/
+
+And I would argue, "Yes, we do need yet-another class and sysfs entry".
+
+This is a "device" that a driver controls, it is NOT the parent device,
+it is a class device, so as such, make it one.  That's what the driver
+model is for.  Trying to avoid it causes problems.
+
+> Perhaps "parent_dev" isn't the best name. The struct rpmb_dev can be
+> seen as another representation of the underlying device.
+
+I.e. a class device.  So use that :)
+
+> The life
+> cycle of struct rpmb_dev is tied to the underlying device with
+> rpmb_dev_register() and rpmb_dev_unregister(). Just as
+> rpmb_route_frames() forwards the frames to the device, rpmb_dev_{get,
+> put}() does the corresponding thing.
+
+You should never be modifying the reference count of a device you really
+do not control, unless you are trying to make sure it is present to use
+it yourself.
+
+> > Bonus, you get that notifier callback "for free" if you do that.  But
+> > really, notifier callbacks are a pain, are you sure you want that?
 > 
-> https://github.com/devicetree-org/devicetree-specification/blob/main/source/chapter2-devicetree-basics.rst#generic-names-recommendation
+> Yes, they are needed because the device may show up late and the
+> OP-TEE driver doesn't know if any device will show up. As Ulf pointed
+> out in the link above, at this point, there's no need to tell user
+> space about this kernel internal abstraction.
 
-I read your explanation in DT spec commit:
+If this is a representation of how the device is interacted with, then
+yes, you do need to represent that.
 
-"In a lot of places, 'ufs' is used as the node name to identify the host
-    controller, but it is wrong since 'ufs' denotes 'UFS device'."
+thanks,
 
-but isn't this the same as with MMC? We do not call the nodes "mmchc" or
-"mmch", even though all of them are hosts, because "mmc" is the card.
-The same for most of other storage devices. Or USB. The term
-"controller" appears only for few cases like clocks, resets and power.
-
-When looking at storage nodes, ufsHC is an exception here.
-
-Best regards,
-Krzysztof
-
+greg k-h
 
