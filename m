@@ -1,140 +1,293 @@
-Return-Path: <linux-kernel+bounces-180172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C79C8C6B09
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:54:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEF638C6B0B
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:55:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 222DA28159E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:54:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85C8B1F23655
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:55:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00218381BA;
-	Wed, 15 May 2024 16:54:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F908376F5;
+	Wed, 15 May 2024 16:54:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G4Hku+1V"
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="C7H4kWPS"
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C091425745;
-	Wed, 15 May 2024 16:54:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21562374FA
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 16:54:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715792073; cv=none; b=es4tpsUa7uZudX037/+p7e1x74niBxxlQv+HghjNGBkVdQct2B2GqLvF6UOioaIln3rOgEtrH1hKY++Xvfl92e28X+0jtdFUSpzotBwm6wq4Ml0aVz339HKbvaVsP8/TLx8mj9BvLVd1+svOjw/ysWgT1Pp6XixNBpv2j4OOx3E=
+	t=1715792097; cv=none; b=MaZ4POfH9rMVAx9/VYvcPs4n1QGQ2urebil8yiToXmRt+JhlGx6Dw6Ko3U18bEORu1SB0brBFa5asV25FmWglBPhiO6/TjrsAqKJfD1vO3PNBmUySoC5RvReMe8QaRaJglde1o333GILWc1oRaLDzBLuewv23QTnWvnn5uNgcDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715792073; c=relaxed/simple;
-	bh=GIs5f+xsHD3yOfMod+xbtSvQ2IUmiMI6wy1enZJNPhU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iRcsOVBiJZWF9/n8W9eeErUOnKMnFDsEdmB3SA6BqGrM7IYTKFuGrb6WtT5gMRK1lDbaQlAfO5kUVv9e3k2ePpM9ULXAV1tw03EdQD1Q4mse23Hr4HIO1MoifAzyVWO/RqokwUWf1K5dmjt0mp7DZN7HfP3/La/+UADCXRzTVnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G4Hku+1V; arc=none smtp.client-ip=209.85.219.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-69b5a87505cso35165476d6.2;
-        Wed, 15 May 2024 09:54:31 -0700 (PDT)
+	s=arc-20240116; t=1715792097; c=relaxed/simple;
+	bh=XA52/RpoI3c1/1QVfvf0bVlV03orpPPmLSUFOZsUtFk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WXx4y5PsvbCtykqJgIEIwXIRtMobwbyls1xzAalQJ9P1NEWnxd2p6Ij33XDQuLdSpEgRWTXzC3RtXzULAtToa35MdLh0b80LWaoZEZzWyAHpzO+mfO2GcEpK81Ucb44vcaItm8StqoNxtILl5ZNLhItd0W9bWzLCkZrjq39dCe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=C7H4kWPS; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-61816fc256dso71710887b3.0
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 09:54:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715792070; x=1716396870; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xQJvos9LzUCKd6k0Vowf3gtRs6yQddQLHilrv8BeO1M=;
-        b=G4Hku+1VFLIjUe0hk9oOZKBywo4AYPOr8FJ5h2+L4t3zLlm5rfXqENOpDoZmhIBojP
-         Zk3wLgQx2Z+0iU2SaRT6d+TAXUWJemnw9GEcb3q81ipFHn7VWa1zfp2FTy3+dxp/Z8l+
-         IGb7EY9uDAUNVkbs0wUZIDHL+47iTLj1T2cIzZBK+ZYaHAv7H4dvrKlAqufR+ICcrLtG
-         0pMdvjTbx9MAaM32R3m88aUt/fINVNLZcWUj1i5abwdHN+8RZlTo3kHCWDJ0rtyA6Nh1
-         IGW7b9OuY5Bcgc2qIbkbaINZcfTaxuPidWE84EIWxdNy84DlH5L21N0s5qLL+/3fmTml
-         8Wsg==
+        d=broadcom.com; s=google; t=1715792094; x=1716396894; darn=vger.kernel.org;
+        h=in-reply-to:autocrypt:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RLX7ObEbhK+8Ah8ZNKFrCyvDwXV1Cere03GWsoPcMOs=;
+        b=C7H4kWPSiFtG0dMxm3aWiKkXiFg6dfJ4vAa2heVMQcM4Q1MggCY0+F2+xBAtA2iOes
+         qGbo3TQHdXX8tSZdTEqF+AZX1QAQUMQHMEI0KCCF4nxOIX+LA9aZ8169jwqmaNqDSX96
+         VczExUzYs1NRuKUlAixXUgi2pkU9lWPVBF19U=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715792070; x=1716396870;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xQJvos9LzUCKd6k0Vowf3gtRs6yQddQLHilrv8BeO1M=;
-        b=aSRlZKphSDhqt7iJLb8UAStPhvjQqoKP9TOHBS/Gl3O39+3/6AhZR7kxlf9cb5Gjxy
-         nteUCS5LIvd3gDWCFlfrmZPWzforC3IdpX7HFa01A162atJI1M5ncD29qsa5n9bYbVzL
-         I7m6lIZeyeY+CbchbUIhvOdRbV59+KBFAeI6ipmSfCIZQAJkaPxPHxQVWwF3nwExBVW0
-         qw5x2WEVKyTTiB7RyvNrHMi1lXKG2/7gCrSCX4jXkVjbno9vrZPV2JJ+Gqa37cWvY8El
-         nDgjIbLLi/u4q4Uq2vrzSjHIDf6kXLJ4ZvQ/BGWOoMCgi4YDA53kwsgLdG5qTWUFkbHn
-         Wxug==
-X-Forwarded-Encrypted: i=1; AJvYcCWpzyHwSz6WQdCUp/pHk3He0yfXtqdMNfWy7cK5ywdjquIO4CVsLTSUP2360yxELmSLhzpoVsx9MPpPDnelRfNcrn4Yd47nOJXoSPE+jYdYX8GA9Um9YF3xPZigDaetbjCUQeiAzEoeIrV2MnYKNuzS58cOppLOSiMDIFthAoxU75I1
-X-Gm-Message-State: AOJu0YwGsP+qCt7rXHd8WXVQfb+eGiusPhXyQo7OguNFi3aW5qXgQRxL
-	ahRAbk3GkifL1mYUerWDlmDpXnssdXIq6DTFuvSpiVEhKe1g6JB5
-X-Google-Smtp-Source: AGHT+IEE1oYzjigoTHOCCbcBU4OmR2uyKJi2zA5od8ycqoeHeXEqOxYf4KpPPsXy34ZTS2qvCgoKyA==
-X-Received: by 2002:a05:6214:4602:b0:6a0:e827:d8e with SMTP id 6a1803df08f44-6a16822b743mr199727976d6.40.1715792070616;
-        Wed, 15 May 2024 09:54:30 -0700 (PDT)
-Received: from dschatzberg-fedora-PF3DHTBV ([2620:10d:c091:500::4:d26])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6a15f194da1sm65087116d6.67.2024.05.15.09.54.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 May 2024 09:54:29 -0700 (PDT)
-Date: Wed, 15 May 2024 12:54:28 -0400
-From: Dan Schatzberg <schatzberg.dan@gmail.com>
-To: Waiman Long <longman@redhat.com>
-Cc: Tejun Heo <tj@kernel.org>, linux-block@vger.kernel.org,
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: cgroup io.stat propagation regression
-Message-ID: <ZkToxDuKxSPEg5aP@dschatzberg-fedora-PF3DHTBV>
-References: <ZkO6l/ODzadSgdhC@dschatzberg-fedora-PF3DHTBV>
- <3ed32279-904a-411d-91a4-a62f4ca2dde2@redhat.com>
- <11b8c1e4-45a7-4895-a1f3-6626744cee1e@redhat.com>
+        d=1e100.net; s=20230601; t=1715792094; x=1716396894;
+        h=in-reply-to:autocrypt:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=RLX7ObEbhK+8Ah8ZNKFrCyvDwXV1Cere03GWsoPcMOs=;
+        b=p0CI5p+TeVWdF0m01ld9w0sXTTBPvOTvFKugugEelrjJG2FB4VdcpkzmJRRAoFCq3z
+         1vN2xOGcgBIUWYoy0RmkZwHTQafpgHiEGQJbhna7x4sPrhZSFRv+r22DcgvagqjFUUvG
+         jrccBqW0k6xqZsO35amBWuvndX8IiGspx9pRbpo5VJI/h76SRe++woBM2EIXRtdY9+NI
+         QVfZPAIOx0zf2qd1cKsnOUP/5eOzzjEsKHjvLjsICHNn1shD/e4lLPwjETuNvjaUtt27
+         LGME9k8Mmcg5r7RnOJLV7Pndc2rn4esUqhuuZSN3F21tQf/e9nH2HJG40sOQoO+IKkYH
+         m76g==
+X-Forwarded-Encrypted: i=1; AJvYcCX3E3jJGeDfSvRW8sU3GKSCVGUPLSe9isr2S8buChM8MYwAGZ7HRUmkFjrBDefQzWpdbn6FgSZb8mjrj6BkwMTl5//G2smFNkL8K4rO
+X-Gm-Message-State: AOJu0YweBk/UkuSBb8r0neWaH5lYtelK+ISkFz9wDVK6qlttuSpiDOGK
+	oxzpCU0ddFsen2+yaseJpkpTeDCzycXU9rPPU8v47BGvNa4qQlVpc75gByAsLUYJKfDuaej7ZgU
+	=
+X-Google-Smtp-Source: AGHT+IFG/RefC9v42q4fLzqiW7Mrcu+m6b/sB0h52xZJ72Q6OvpV5lcM04lhy5CQ9P4KTpf9GmfOdg==
+X-Received: by 2002:a81:4912:0:b0:617:c9b0:e12c with SMTP id 00721157ae682-622b0147eb7mr138306247b3.38.1715792093994;
+        Wed, 15 May 2024 09:54:53 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43df97d2c3csm80248791cf.78.2024.05.15.09.54.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 May 2024 09:54:53 -0700 (PDT)
+Message-ID: <d52e7e4a-2b60-4fdf-9006-12528a91dabf@broadcom.com>
+Date: Wed, 15 May 2024 09:54:49 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <11b8c1e4-45a7-4895-a1f3-6626744cee1e@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.1 000/243] 6.1.91-rc2 review
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+ Mark Brown <broonie@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org,
+ patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+ patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+ jonathanh@nvidia.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com,
+ Doug Berger <opendmb@gmail.com>
+References: <20240515082456.986812732@linuxfoundation.org>
+ <39483cfc-4345-4fbd-87c2-9d618c6fdbc6@sirena.org.uk>
+ <CAHk-=wjntFiQ=mM-zDHTMnrqki3MN3+6aSXhjnJozBaKqLLUDQ@mail.gmail.com>
+ <c1ebf243-00c6-48eb-bb66-b7ca13ecac17@broadcom.com>
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <c1ebf243-00c6-48eb-bb66-b7ca13ecac17@broadcom.com>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="0000000000004c3800061880fa62"
 
-On Wed, May 15, 2024 at 10:26:31AM -0400, Waiman Long wrote:
-> 
-> On 5/14/24 23:59, Waiman Long wrote:
-> > On 5/14/24 15:25, Dan Schatzberg wrote:
-> > > Hi Waiman,
-> > > 
-> > > I've noticed that on recent kernels io.stat metrics don't propagate
-> > > all the way up the hierarchy. Specifically, io.stat metrics of some
-> > > leaf cgroup will be propagated to the parent, but not its grandparent.
-> > > 
-> > > For a simple repro, run the following:
-> > > 
-> > > systemd-run --slice test-test dd if=/dev/urandom of=/tmp/test
-> > > bs=4096 count=1
-> > > 
-> > > Then:
-> > > 
-> > > cat /sys/fs/cgroup/test.slice/test-test.slice/io.stat
-> > > 
-> > > Shows the parent cgroup stats and I see wbytes=4096 but the
-> > > grandparent cgroup:
-> > > 
-> > > cat /sys/fs/cgroup/test.slice/io.stat
-> > > 
-> > > shows no writes.
-> > > 
-> > > I believe this was caused by the change in "blk-cgroup: Optimize
-> > > blkcg_rstat_flush()". When blkcg_rstat_flush is called on the parent
-> > > cgroup, it exits early because the lockless list is empty since the
-> > > parent cgroup never issued writes itself (e.g. in
-> > > blk_cgroup_bio_start). However, in doing so it never propagated stats
-> > > to its parent.
-> > > 
-> > > Can you confirm if my understanding of the logic here is correct and
-> > > advise on a fix?
-> > 
-> > Yes, I believe your analysis is correct. Thanks for spotting this iostat
-> > propagation problem.
-> > 
-> > I am working on a fix to address this problem and will post a patch once
-> > I have finished my testing.
-> 
-> Actually, I can only reproduce the issue with a 3-level
-> (child-parent-grandparent) cgroup hierarchy below the root cgroup. The dd
-> command is run test.slice/test-test.slice. So both test.slice/io.stat and
-> test.slice/test-test.slice/io.stat are properly updated.
+--0000000000004c3800061880fa62
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-That's correct, this repros with a 3-level cgroup hierarchy (or
-more). systemd-run should create an ephemeral .scope cgroup under
-test-test.slice and then delete it when the dd command finishes. So
-test.slice/test-test.slice was the parent (2nd level) and test.slice
-is the grandparent.
+On 5/15/24 09:40, Florian Fainelli wrote:
+> On 5/15/24 09:20, Linus Torvalds wrote:
+>> On Wed, 15 May 2024 at 09:17, Mark Brown <broonie@kernel.org> wrote:
+>>>
+>>>      A bisect claims that "net: bcmgenet:
+>>> synchronize EXT_RGMII_OOB_CTRL access" is the first commit that breaks,
+>>> I'm not seeing issues with other stables.
+>>
+>> That's d85cf67a3396 ("net: bcmgenet: synchronize EXT_RGMII_OOB_CTRL
+>> access") upstream. Is upstream ok?
+> 
+> Yes, upstream is OK.
+> 
+> Exact same issue on 6.1 not just on Raspberry Pi chips but also on 
+> ARCH_BRCMSTB systems as well that also make use of the GENET driver.
+> 
+> Doug and I will take a look and provide an updated set of fixes, 
+> meanwhile, I would recommend dropping all of Doug's patches for now 
+> until we can post a revised series and/or missing dependencies.
+
+OK, I think I see the problem. The upstream patch was applied to the 
+wrong context. In upstream, the critical section is added to 
+bcmgenet_mii_config() which did not run with the phy_device::mutex_lock 
+held before, and that was the race that we are trying to close. In 
+linux-stable-rc/linux-6.1.y however the context somehow resolved to 
+applying the critical section to the bcmgenet_mac_config() section where 
+we are already running with phy_device::lock being held by virtue of the 
+PHY library running our bcmgenet_mac_config() callback.
+
+The corrected incremental diff would look like this:
+
+diff --git a/drivers/net/ethernet/broadcom/genet/bcmmii.c 
+b/drivers/net/ethernet/broadcom/genet/bcmmii.c
+index 94e0e858266e..46252d96b90e 100644
+--- a/drivers/net/ethernet/broadcom/genet/bcmmii.c
++++ b/drivers/net/ethernet/broadcom/genet/bcmmii.c
+@@ -71,12 +71,10 @@ static void bcmgenet_mac_config(struct net_device *dev)
+          * transmit -- 25MHz(100Mbps) or 125MHz(1Gbps).
+          * Receive clock is provided by the PHY.
+          */
+-       mutex_lock(&phydev->lock);
+         reg = bcmgenet_ext_readl(priv, EXT_RGMII_OOB_CTRL);
+         reg &= ~OOB_DISABLE;
+         reg |= RGMII_LINK;
+         bcmgenet_ext_writel(priv, reg, EXT_RGMII_OOB_CTRL);
+-       mutex_unlock(&phydev->lock);
+
+         spin_lock_bh(&priv->reg_lock);
+         reg = bcmgenet_umac_readl(priv, UMAC_CMD);
+@@ -271,6 +269,7 @@ int bcmgenet_mii_config(struct net_device *dev, bool 
+init)
+          * block for the interface to work
+          */
+         if (priv->ext_phy) {
++               mutex_lock(&phydev->lock);
+                 reg = bcmgenet_ext_readl(priv, EXT_RGMII_OOB_CTRL);
+                 reg &= ~ID_MODE_DIS;
+                 reg |= id_mode_dis;
+@@ -279,6 +278,7 @@ int bcmgenet_mii_config(struct net_device *dev, bool 
+init)
+                 else
+                         reg |= RGMII_MODE_EN;
+                 bcmgenet_ext_writel(priv, reg, EXT_RGMII_OOB_CTRL);
++               mutex_unlock(&phydev->lock);
+         }
+
+         if (init)
+
+We could, and should consider taking 
+696450c05181559a35d4d5bee55c465b1ac6fe2e ("net: bcmgenet: Clear 
+RGMII_LINK upon link down") as a prerequisite as well to provide the 
+right context while applying  d85cf67a339685beae1d0aee27b7f61da95455be 
+("net: bcmgenet: synchronize EXT_RGMII_OOB_CTRL access")
+
+Mark, can you try that, too?
+-- 
+Florian
+
+
+--0000000000004c3800061880fa62
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+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
+riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
+QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
+UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
+M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
+Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
+14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
+a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
+XzCCBVgwggRAoAMCAQICDBP8P9hKRVySg3Qv5DANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
+RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
+UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAxMjE4MTFaFw0yNTA5MTAxMjE4MTFaMIGW
+MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
+BgNVBAoTDUJyb2FkY29tIEluYy4xGTAXBgNVBAMTEEZsb3JpYW4gRmFpbmVsbGkxLDAqBgkqhkiG
+9w0BCQEWHWZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tMIIBIjANBgkqhkiG9w0BAQEFAAOC
+AQ8AMIIBCgKCAQEA+oi3jMmHltY4LMUy8Up5+1zjd1iSgUBXhwCJLj1GJQF+GwP8InemBbk5rjlC
+UwbQDeIlOfb8xGqHoQFGSW8p9V1XUw+cthISLkycex0AJ09ufePshLZygRLREU0H4ecNPMejxCte
+KdtB4COST4uhBkUCo9BSy1gkl8DJ8j/BQ1KNUx6oYe0CntRag+EnHv9TM9BeXBBLfmMRnWNhvOSk
+nSmRX0J3d9/G2A3FIC6WY2XnLW7eAZCQPa1Tz3n2B5BGOxwqhwKLGLNu2SRCPHwOdD6e0drURF7/
+Vax85/EqkVnFNlfxtZhS0ugx5gn2pta7bTdBm1IG4TX+A3B1G57rVwIDAQABo4IB3jCCAdowDgYD
+VR0PAQH/BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZCaHR0cDovL3NlY3Vy
+ZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAuY3J0MEEG
+CCsGAQUFBzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWdu
+MmNhMjAyMDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcCARYmaHR0cHM6Ly93
+d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNVHR8EQjBAMD6gPKA6
+hjhodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNy
+bDAoBgNVHREEITAfgR1mbG9yaWFuLmZhaW5lbGxpQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggr
+BgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQUUwwfJ6/F
+KL0fRdVROal/Lp4lAF0wDQYJKoZIhvcNAQELBQADggEBAKBgfteDc1mChZjKBY4xAplC6uXGyBrZ
+kNGap1mHJ+JngGzZCz+dDiHRQKGpXLxkHX0BvEDZLW6LGOJ83ImrW38YMOo3ZYnCYNHA9qDOakiw
+2s1RH00JOkO5SkYdwCHj4DB9B7KEnLatJtD8MBorvt+QxTuSh4ze96Jz3kEIoHMvwGFkgObWblsc
+3/YcLBmCgaWpZ3Ksev1vJPr5n8riG3/N4on8gO5qinmmr9Y7vGeuf5dmZrYMbnb+yCBalkUmZQwY
+NxADYvcRBA0ySL6sZpj8BIIhWiXiuusuBmt2Mak2eEv0xDbovE6Z6hYyl/ZnRadbgK/ClgbY3w+O
+AfUXEZ0xggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52
+LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgwT
+/D/YSkVckoN0L+QwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIOPp26icoDiSL0gb
+uKMG98f89Nom0NT7db3TYVh7J1+LMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcN
+AQkFMQ8XDTI0MDUxNTE2NTQ1NFowaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZI
+AWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEH
+MAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQCVymdzFLvstjf0/KbmZlN3mXj4IxFTDsJx
+dmNUaNiDLyLyLkI/9UgKCoIbLJAYQNHsUcSZgYEgVfGKaqZRwvkvVKuwmRsEi7oBSd9cnrSsuGZj
+x5hVs5DzHa3jIM1l4B7nfIfUEMIeNzxRPxzzZNk7krKu9S4QF+5a4RzXn1pnI2IeNE5H11wiD7PD
+STQNWxPGkL2/Yh75VzVelGwl+6yTXs+swpy7ElaFOUEMgWrimLNO63bqBoFPGyCNQgPZ7A81Ecp6
+BCVpyhG/Vhnrf7N/WqL0+br+0P/PoZU71qHQUgzjg58udqZgrJBvWaZnswpEERVkiVr2R5X5HErY
+J6/G
+--0000000000004c3800061880fa62--
 
