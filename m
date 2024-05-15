@@ -1,173 +1,165 @@
-Return-Path: <linux-kernel+bounces-179779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9D688C6533
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 12:54:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44C758C6535
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 12:55:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D8E11F22117
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 10:54:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2FD2282872
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 10:55:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F7AB629E4;
-	Wed, 15 May 2024 10:54:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2576C6518F;
+	Wed, 15 May 2024 10:55:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="wghMJcAX";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="adNbIuSh";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="wghMJcAX";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="adNbIuSh"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IJJqbP93"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0066B5F876;
-	Wed, 15 May 2024 10:54:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9F0D5F876
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 10:55:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715770479; cv=none; b=Ma3Ut9WklDT8aYHAc9IAoRXNyfIw+lmK7MI8R0r2fexMEt2c87iCqskhk7bNxm0BSIEQut4Wcz6lA1vUoxUADJz0J1BYhUjTuH9YT7Ag86RwTl1AAbqW3VNOcCzjro4KVyCCiWPH10gcynWHzemMBY+bgu7nzcfmdR/0HVBbUqg=
+	t=1715770502; cv=none; b=I1Rdsh5ix4fqsOC34lmYfMpJWqnz5mXQvDVJezrKPVSl4R5+EL2xyH662w0OWOyd3H5/wJBZ2h1/LMDO4mmnxEkN0Prpk/YEkEyGUVeTvcu8FvLDUACz1iH5SN8QvXh3P/CjKSQpRL8SeqcAVZsj5rmO9kjygs+HzKeSQJbxH2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715770479; c=relaxed/simple;
-	bh=Djb46qMbw8em2zSmuFBKViQD/CJimPI2Syj+DiIkc94=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kahur0CV6TC10eKefsfvbjh5PJfxpvbRTEAXoc7H6K6LSwlsX/Nk6m3XUq/qZAQF3LGEbORRtCxtZ5EOkjUQgJzbABpym1W69tNHPUuJ3oD9lQ/WLBrHwf3Tn3zKP8M+qbJhYgREKCbgsddlkiUK4awn8dFfrqncDquc6VSAZeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=wghMJcAX; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=adNbIuSh; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=wghMJcAX; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=adNbIuSh; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 10EB721FEC;
-	Wed, 15 May 2024 10:54:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1715770476; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6jv9xWgEcYiTZtZfk0F4GwA5Qmgsj9Sim5edw+In6xE=;
-	b=wghMJcAX1wHVTVEJ1QoIFPZ0piA5e1uAq6rd4zr0RvXLe47i8WOcZLRMKa6sDG9du9370A
-	z0v4gplJD4re2RH6KD95ZbJF5/mdF1AGFIl8xlIMptY3WoNO2DAqZ1LaA+yRXIGqPRhLjz
-	696eY0ewpYovgoKTq1sXOTQVpuNeyhk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1715770476;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6jv9xWgEcYiTZtZfk0F4GwA5Qmgsj9Sim5edw+In6xE=;
-	b=adNbIuShkFQwATA7ZymPl5DsSsG4uMUOfJXP6evMuVG0F2gCwQVnvirSvt7wOMeW8SRAQa
-	C6aNNNl/uwLKy3CA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1715770476; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6jv9xWgEcYiTZtZfk0F4GwA5Qmgsj9Sim5edw+In6xE=;
-	b=wghMJcAX1wHVTVEJ1QoIFPZ0piA5e1uAq6rd4zr0RvXLe47i8WOcZLRMKa6sDG9du9370A
-	z0v4gplJD4re2RH6KD95ZbJF5/mdF1AGFIl8xlIMptY3WoNO2DAqZ1LaA+yRXIGqPRhLjz
-	696eY0ewpYovgoKTq1sXOTQVpuNeyhk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1715770476;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6jv9xWgEcYiTZtZfk0F4GwA5Qmgsj9Sim5edw+In6xE=;
-	b=adNbIuShkFQwATA7ZymPl5DsSsG4uMUOfJXP6evMuVG0F2gCwQVnvirSvt7wOMeW8SRAQa
-	C6aNNNl/uwLKy3CA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7CCF7139B3;
-	Wed, 15 May 2024 10:54:34 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id UPO9G2qURGZLSgAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Wed, 15 May 2024 10:54:34 +0000
-Date: Wed, 15 May 2024 12:54:33 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Axel Rasmussen <axelrasmussen@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	David Hildenbrand <david@redhat.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, Helge Deller <deller@gmx.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Liu Shixin <liushixin2@huawei.com>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Muchun Song <muchun.song@linux.dev>,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	Nicholas Piggin <npiggin@gmail.com>, Peter Xu <peterx@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, linux-parisc@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, x86@kernel.org
-Subject: Re: [PATCH v2 1/1] arch/fault: don't print logs for pte marker
- poison errors
-Message-ID: <ZkSUaVx3uCIPkpkJ@localhost.localdomain>
-References: <20240510182926.763131-1-axelrasmussen@google.com>
- <20240510182926.763131-2-axelrasmussen@google.com>
- <20240515104142.GBZkSRZsa3cxJ3DKVy@fat_crate.local>
+	s=arc-20240116; t=1715770502; c=relaxed/simple;
+	bh=QQOwsJIqbn/sH6QWOe5NAW476GND/Y4m9LnS8t8IvAg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=q8/5xg3fnTy0wvmm3Mp7xxLvWNDo8lcupzSz5UwT8/2rrviQTATldj7ZmhF17tVe+5FEqbm9BwH0nCj4kCpOUBlykQ7am12l3XJHEMZy9dE2Sifjpo6T2QFqoTTXID57H3dpt3OwSg0oX06jD36bvbfQIwljQ8PhaP4Mu9RLLx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IJJqbP93; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1eeb1a4c10aso40878135ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 03:55:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715770500; x=1716375300; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=v8PahdsTaxrvJsdtCNtln2KbqBTimvNp7eghq2QDJGQ=;
+        b=IJJqbP938E2fxf44VWQUURP62CGOcQQ05sPea+rhMasBmrkP5AyVFV8LxW+83Tv37Z
+         PPNXkF+GYK/+VbYeUrTjXAfcgngeR0C8+izsQIe9dJSqC3CGsPD4qFg6pwxqjNjAmBBv
+         Ybh6z/nPiKPWuCyaqgs/zLi33OcUZslCApCvJ6ysACbeXi8d46Lgz5PaxzolodL50BJt
+         UWKDIFuItDBr2qhAhEDsXZJvOke2H2vc50f7OAMw9Z4cjeEnkD9bZKwBJ/pDGXATH9um
+         hiLysbMG4xOBfbe2QVne+zePcHVQdhnswomq/hOpk4KiDf3YAXeVv9KIWAU6a1ljyKXL
+         Wj8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715770500; x=1716375300;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=v8PahdsTaxrvJsdtCNtln2KbqBTimvNp7eghq2QDJGQ=;
+        b=kcKq3lBr1VE55AaOa9OQRvlUqK3ygEhWGXkoAeK1M9hrrgWoJ/SamWbIJF0MJS0qqM
+         TW4bS5G1Pxl4+ViGHDKlW3X6djdvcnkt7H2jbweTUJUH+jxpG05P7exonehd69q09VIe
+         2F+GjG3ihkqzKp4YeyuUWUAc8q9vJ1c7Rahmd+XvrEkHphoiyt2ZLuah+WFXQsZC9PrK
+         W0Ga9TK9/HRR0jydmvz2nGzqlKyKWTaUq5NLZtgYHHdCxsI65KLok+7/+ToLEbmAR8x4
+         m8FPPIJZ3Jw5bz15JsPKoXdYqJvOygKjz45HZCgxGchFx8l5WKwNrQZ4D4XQ9S9vrHYE
+         Ihtw==
+X-Forwarded-Encrypted: i=1; AJvYcCWlgKpN2N4n1JvyEDMI0MZ3ySKRoeygz4EQB77xZ4DSAOdj9M2LKlXcVIAwxcJFzsRH7SAh140BvZ093DlCp8r3J/lCTN+MKyC8JB7G
+X-Gm-Message-State: AOJu0Yy9pmyd5nk1lSE4BP5ph8XG7rWcrieXWN4/GEXHwLB+LcZxqzpT
+	DTKGck7JEtAIW4BeEgjcKe1wruoawFfXQwJLBcZZGLISb+myYxdJyUMK+xfpgQQ=
+X-Google-Smtp-Source: AGHT+IH7jVsFEK/WViebanM6yM0hwAGJFTpQyeaaJhHLcyB+wlePKbxg/ptxeWRkJLnl73OzyfnVmA==
+X-Received: by 2002:a17:902:dad2:b0:1eb:5293:dc37 with SMTP id d9443c01a7336-1ef43c0cf65mr174485285ad.10.1715770500209;
+        Wed, 15 May 2024 03:55:00 -0700 (PDT)
+Received: from sumit-X1.. ([223.178.209.205])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0bf30bb9sm115092425ad.135.2024.05.15.03.54.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 May 2024 03:54:59 -0700 (PDT)
+From: Sumit Garg <sumit.garg@linaro.org>
+To: andersson@kernel.org,
+	konrad.dybcio@linaro.org,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org
+Cc: robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org,
+	stephan@gerhold.net,
+	caleb.connolly@linaro.org,
+	neil.armstrong@linaro.org,
+	dmitry.baryshkov@linaro.org,
+	laetitia.mariottini@se.com,
+	pascal.eberhard@se.com,
+	abdou.saker@se.com,
+	jimmy.lalande@se.com,
+	benjamin.missey@non.se.com,
+	daniel.thompson@linaro.org,
+	linux-kernel@vger.kernel.org,
+	Sumit Garg <sumit.garg@linaro.org>
+Subject: [PATCH RESEND v5 0/3] arm64: dts: qcom: apq8016: Add Schneider HMIBSC board DTS
+Date: Wed, 15 May 2024 16:24:43 +0530
+Message-Id: <20240515105446.3944629-1-sumit.garg@linaro.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240515104142.GBZkSRZsa3cxJ3DKVy@fat_crate.local>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[28];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,gmx.de];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[google.com,linux-foundation.org,kernel.org,csgroup.eu,linux.intel.com,redhat.com,zytor.com,gmx.de,hansenpartnership.com,nvidia.com,huawei.com,infradead.org,ellerman.id.au,linux.dev,linux.ibm.com,gmail.com,linutronix.de,vger.kernel.org,kvack.org,lists.ozlabs.org];
-	RCVD_COUNT_TWO(0.00)[2];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+Content-Transfer-Encoding: 8bit
 
-On Wed, May 15, 2024 at 12:41:42PM +0200, Borislav Petkov wrote:
-> On Fri, May 10, 2024 at 11:29:26AM -0700, Axel Rasmussen wrote:
-> > @@ -3938,7 +3938,7 @@ static vm_fault_t handle_pte_marker(struct vm_fault *vmf)
-> >  
-> >  	/* Higher priority than uffd-wp when data corrupted */
-> >  	if (marker & PTE_MARKER_POISONED)
-> > -		return VM_FAULT_HWPOISON;
-> > +		return VM_FAULT_HWPOISON | VM_FAULT_HWPOISON_SILENT;
-> 
-> If you know here that this poisoning should be silent, why do you have
-> to make it all complicated and propagate it into arch code, waste
-> a separate VM_FAULT flag just for that instead of simply returning here
-> a VM_FAULT_COMPLETED or some other innocuous value which would stop
-> processing the fault?
+Add Schneider Electric HMIBSC board DTS. The HMIBSC board is an IIoT Edge
+Box Core board based on the Qualcomm APQ8016E SoC. For more information
+refer to the product page [1].
 
-AFAIK, He only wants it to be silent wrt. the arch fault handler not screaming,
-but he still wants to be able to trigger force_sig_mceerr().
+One of the major difference from db410c is serial port where HMIBSC board
+uses UART1 as the debug console with a default RS232 mode (UART1 mode mux
+configured via gpio99 and gpio100).
 
+Support for Schneider Electric HMIBSC. Features:
+- Qualcomm Snapdragon 410C SoC - APQ8016 (4xCortex A53, Adreno 306)
+- 1GiB RAM
+- 8GiB eMMC, SD slot
+- WiFi and Bluetooth
+- 2x Host, 1x Device USB port
+- HDMI
+- Discrete TPM2 chip over SPI
+- USB ethernet adaptors (soldered)
+
+This series is a v2 since v1 of this DTS file has been reviewed on the
+U-Boot mailing list [2].
+
+Changes in v5:
+- Addressed another nitpick from Stephen.
+- Collected Stephen's review tag.
+- Warnings reported by Rob's DT check bot aren't related to HMIBSC
+  board DTS but rather they are due to msm8916.dtsi or extcon-usb-gpio.txt
+  still not converted to YAML format.
+
+Changes in v4:
+- Dropped IRQ_TYPE_EDGE_FALLING for pm8916_resin given the expectations
+  of Linux kernel driver. Instead depend on systemd workaround suggested
+  by Caleb to get expected HMIBSC reset behaviour.
+- Incorporated further DT coding style comments from Stephen.
+- Warnings reported by Rob's DT check bot aren't related to HMIBSC
+  board DTS but rather they are due to msm8916.dtsi or extcon-usb-gpio.txt
+  still not converted to YAML format.
+
+Changes in v3:
+- Picked up tags.
+- Fixed further DT schema warnings.
+- Configure resin/power button interrupt as falling edge.
+- Incorporate DTS coding style comments from Krzysztof and Konrad.
+
+Changes in v2:
+- Fix DT schema warnings.
+- Incorporate suggestions from Stephan.
+- Document UART1 mode GPIOs based mux.
+
+[1] https://www.se.com/us/en/product/HMIBSCEA53D1L0T/iiot-edge-box-core-harmony-ipc-emmc-dc-linux-tpm/
+[2] https://patchwork.ozlabs.org/project/uboot/patch/20240311111027.44577-6-sumit.garg@linaro.org/
+
+Sumit Garg (3):
+  dt-bindings: vendor-prefixes: Add Schneider Electric
+  dt-bindings: arm: qcom: Add Schneider Electric HMIBSC board
+  arm64: dts: qcom: apq8016: Add Schneider HMIBSC board DTS
+
+ .../devicetree/bindings/arm/qcom.yaml         |   1 +
+ .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+ arch/arm64/boot/dts/qcom/Makefile             |   1 +
+ .../dts/qcom/apq8016-schneider-hmibsc.dts     | 491 ++++++++++++++++++
+ 4 files changed, 495 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/qcom/apq8016-schneider-hmibsc.dts
 
 -- 
-Oscar Salvador
-SUSE Labs
+2.34.1
+
 
