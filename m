@@ -1,124 +1,123 @@
-Return-Path: <linux-kernel+bounces-179638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EBD98C629C
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 10:15:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B981F8C629F
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 10:16:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27D2D1F21A25
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:15:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49A561F22567
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:16:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5C804CB2E;
-	Wed, 15 May 2024 08:14:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H/8ARNUA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3C1C4D10A;
+	Wed, 15 May 2024 08:16:45 +0000 (UTC)
+Received: from mxout37.expurgate.net (mxout37.expurgate.net [91.198.224.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 256814AEF2;
-	Wed, 15 May 2024 08:14:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B49C38394;
+	Wed, 15 May 2024 08:16:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.198.224.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715760896; cv=none; b=J651zeeubojQKwJf48C08xvD6MR37HEwq/De01+vUevzbcyRp0bksyxnL+klaWHj4gpQ40Fn2J/n0sJjANLd0BkfFqQTjJ3vd2/blrs75M7WLe52TfvqKzn5C+iQD1V+MhHkzQH+e8hhj6E5CXHhyT9RtacW6TJFRXVnYXhKIwM=
+	t=1715761005; cv=none; b=Pag61lRWsOL36Syds1O3urp8jaZhZ9ly7HfJrbaVHcZOsfmTtEBAi2S4J57plg0hzK2dsduoB/ezIeHMEkGrCFBVfGYPXGc+Wj/YkJOb9Yis3EPS1pwgbLFRrhtwwFJVfJyqosEuIz2L6KpRrUtBVRqd1ZK1ahAYGqhhKHP3n78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715760896; c=relaxed/simple;
-	bh=VYvCydyN3ORJuuPFX7tPPo8OkLfbloVUtiI7kPSgkNU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AqX1bh3W+2fYKOdCwCnjF2J+HYtaW2nrJcOTxoW0WlCBaCmjTqFkT/LhIzkRyoBtxCnupW4K4V/1FCRONnkefAa39JIyWAgLR9tJ8ijcfvZ912Jvp6mGRW85wWhuc1W/OO4MokHHjMJR3SMIl5aiabsFfSFKabE9KBcaliMauxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H/8ARNUA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 304ADC116B1;
-	Wed, 15 May 2024 08:14:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715760896;
-	bh=VYvCydyN3ORJuuPFX7tPPo8OkLfbloVUtiI7kPSgkNU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=H/8ARNUA+VqWAKR/LTrE5bCmIIOCApsr9zItltE2N7ez7uQxxtjqMr6hz9m9ogPx0
-	 76wTqfaAFMTkrFEcSr+Cah//bcampEuXPElc46Bws8GGB/R2JFnAk+1X8SD+iMsRs4
-	 GT0xc/FRTWxAOrugXzbPmkMF2DhqAhQRp+S9dGDBulXiT3j+OEIxYy+BeKr9lMWQOs
-	 GmIIji8vtBPWzd/MKYn5OwzKIdUfFXlXBiIRI67MaLZ2+EQMCDjpRsu2lWHIruEy1m
-	 jIlGNgktVacxXq7++DbQyZaZ5kef7C2sT8mwNymDI7xijiY9SILIR6W7MEDv5jQ7i+
-	 AfDZgmI7ujNpg==
-Message-ID: <b1d3ca34-3aaf-444d-816b-eab7c0626461@kernel.org>
-Date: Wed, 15 May 2024 10:14:52 +0200
+	s=arc-20240116; t=1715761005; c=relaxed/simple;
+	bh=0CMSPU5h0J/+LSIFiRA0tPZIyssveOFv2H3maVZ1/UE=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=nkDJ/R4gsoeCHlMK9NBpszOu67lmjgRA6eg2QeHxNxaNry/ZnarzKFHtffEaWJnQMJc2GL3SylY89Pi8lbXJ7mCJhboiPS+CiCTWa1XjEeR0esJCuP5YhRY2vbUJ1j1gZ+eIWQSb3LCCOt4lm4vfHDoKKT5hi1d5FDLrbYad4rM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=brueckmann-gmbh.de; spf=pass smtp.mailfrom=brueckmann-gmbh.de; arc=none smtp.client-ip=91.198.224.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=brueckmann-gmbh.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=brueckmann-gmbh.de
+Received: from [127.0.0.1] (helo=localhost)
+	by relay.expurgate.net with smtp (Exim 4.92)
+	(envelope-from <gessler_t@brueckmann-gmbh.de>)
+	id 1s79oI-00GvF1-Jj; Wed, 15 May 2024 10:16:26 +0200
+Received: from [217.239.223.202] (helo=zimbra.brueckmann-gmbh.de)
+	by relay.expurgate.net with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <gessler_t@brueckmann-gmbh.de>)
+	id 1s79oH-00FeBY-7h; Wed, 15 May 2024 10:16:25 +0200
+Received: from zimbra.brueckmann-gmbh.de (localhost [127.0.0.1])
+	by zimbra.brueckmann-gmbh.de (Postfix) with ESMTPS id 16524CA6082;
+	Wed, 15 May 2024 10:16:24 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by zimbra.brueckmann-gmbh.de (Postfix) with ESMTP id 073C6CA6122;
+	Wed, 15 May 2024 10:16:24 +0200 (CEST)
+Received: from zimbra.brueckmann-gmbh.de ([127.0.0.1])
+ by localhost (zimbra.brueckmann-gmbh.de [127.0.0.1]) (amavis, port 10026)
+ with ESMTP id Tando0cXENj8; Wed, 15 May 2024 10:16:24 +0200 (CEST)
+Received: from [10.0.11.14] (unknown [10.0.11.14])
+	by zimbra.brueckmann-gmbh.de (Postfix) with ESMTPSA id DE4B5CA6082;
+	Wed, 15 May 2024 10:16:23 +0200 (CEST)
+Date: Wed, 15 May 2024 10:15:33 +0200 (CEST)
+From: =?ISO-8859-15?Q?Thomas_Ge=DFler?= <gessler_t@brueckmann-gmbh.de>
+To: Andrew Lunn <andrew@lunn.ch>
+cc: Thomas Gessler <thomas.gessler@brueckmann-gmbh.de>, 
+    Heiner Kallweit <hkallweit1@gmail.com>, 
+    Russell King <linux@armlinux.org.uk>, 
+    "David S. Miller" <davem@davemloft.net>, 
+    Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+    Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, 
+    linux-kernel@vger.kernel.org, MD Danish Anwar <danishanwar@ti.com>, 
+    Ravi Gunasekaran <r-gunasekaran@ti.com>
+Subject: Re: [PATCH 2/2] net: phy: dp83869: Fix RGMII-SGMII and 1000BASE-X
+In-Reply-To: <38bc6947-391b-478d-ab71-6cc8d9428275@lunn.ch>
+Message-ID: <338669-229a-5eac-3170-3477e5ae840@brueckmann-gmbh.de>
+References: <20240514122728.1490156-1-thomas.gessler@brueckmann-gmbh.de> <20240514122728.1490156-2-thomas.gessler@brueckmann-gmbh.de> <38bc6947-391b-478d-ab71-6cc8d9428275@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/9] dt-bindings: fsi: p9-occ: Convert to json-schema
-To: Eddie James <eajames@linux.ibm.com>, linux-fsi@lists.ozlabs.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, robh@kernel.org, joel@jms.id.au,
- andrew@codeconstruct.com.au
-References: <20240514195435.155372-1-eajames@linux.ibm.com>
- <20240514195435.155372-4-eajames@linux.ibm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240514195435.155372-4-eajames@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+X-purgate: clean
+X-purgate-type: clean
+X-purgate-ID: 151534::1715760986-FD9A0776-272ED94F/0/0
 
-On 14/05/2024 21:54, Eddie James wrote:
-> Conver to json-schema for the OCC documentation. Also document the fact
-> that the OCC "bridge" device will often have the hwmon node as a
-> child.
+On Tue, 14 May 2024, Andrew Lunn wrote:
+> On Tue, May 14, 2024 at 02:27:28PM +0200, Thomas Gessler wrote:
+> > The RGMII-to-SGMII mode is special, because the chip does not really act
+> > as a PHY in this mode but rather as a bridge.
 > 
-> Signed-off-by: Eddie James <eajames@linux.ibm.com>
-> ---
-> Changes since v4:
->  - Drop pattern properties for hwmon node
+> It is known as a media converter. You see them used between an RGMII
+> port and an SFP cage. Is that your use case?
+
+Basically. I would call this an RGMII-SGMII bridge. A "media converter" I
+would call a device that changes the physical medium, like 1000BASE-T
+copper/RJ45 to 1000BASE-X fiber/SFP.
+
+We have this chip on a daughter card with exposed SGMII lines that can be
+plugged into customer-specific motherboards. The motherboard will have
+either an SGMII-copper PHY (this can also be a DP83869) with 10/100/1000
+auto-neg enabled but without MDIO exposed to the CPU on the daughter card;
+or an SFP cage. The SFP module, in turn, can be for 1000BASE-X fiber,
+1000BASE-X-to-1000-BASE-T copper, or SGMII copper supporting 10/100/1000
+auto-neg.
+
+So I would like to support all those configurations, which can be done
+with this chip.
+
+> > SGMII PHY and gets the negotiated speed and duplex from it through SGMII
+> > auto-negotiation. To use the DP83869 as a virtual PHY, we assume that
+> > the connected SGMII PHY supports 10/100/1000M half/full duplex and
+> > therefore support and always advertise those settings.
 > 
+> Not all copper SFP modules support auto-neg. This is all really messy
+> because there is no standardisation. Also 1000BaseT_Half is often not
+> supported.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+I agree. Is there a better way to implement this use case? The problem
+remains that in this mode the chip is not really a PHY, but rather a
+bridge to an external PHY. See also Russell's e-mail.
 
-Best regards,
-Krzysztof
+I actually started out by NOT supporting or advertising any of the
+10/100/1000BASE-T speeds when in RGMII-to-SGMII mode. This also works for
+the SGMII auto-negotiation, since all it does is get the negotiated
+speed/duplex from the connected PHY. However, this leads to a problem when
+trying to disable auto-neg and force speed with ethtool.
+phy_sanitize_settings() will then limit the speed to 10M because 100M and
+1000M do not match any supported speeds.
 
+Thomas
 
