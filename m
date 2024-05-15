@@ -1,194 +1,186 @@
-Return-Path: <linux-kernel+bounces-179277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B9DA8C5E4F
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 02:25:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DAA18C5E56
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 02:37:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDB471F22208
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 00:25:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 439D41C20CCE
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 00:37:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F139F23D2;
-	Wed, 15 May 2024 00:25:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABAAD3C0D;
+	Wed, 15 May 2024 00:37:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dKxHkkbf";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RUmsnmKQ";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dKxHkkbf";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RUmsnmKQ"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="vyyshJvY"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C979370;
-	Wed, 15 May 2024 00:25:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A82A1FA3
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 00:37:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715732721; cv=none; b=dGejtmVuuANEuMmWVblD2NgvYXJg6u0GOht47lWQ0K9HefHVYi2oM7SFjvqslF9L8b9e+GNGp/LndvUXX2s/snRjSAH4W7hFD2dnkj/lW+yBiub6AX66QpK8rwb+BqtuXewCqySUC+8bc0VZsv4hSpfELPpSoTttBUCfAfRMM6M=
+	t=1715733423; cv=none; b=d4ogx036AllvMsgjai0TTZS7H1A/ex2O6Cp3rGEXflhyBHgrRw1Awcq33GsxEdqCrhr7bIQNWZO6z0dtuj7OJrf/oYoZgcna5+fjRyjn/3WP2X8qsdEMY9wk86cPO+WcOc4EjAUY8OYhMQGX8pl6rS2rlouNsf8tvovWbJ5550s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715732721; c=relaxed/simple;
-	bh=UwwJLzqENrZle2Y4/i+YEoQ9LtfalYqLwPCpLhSIrUc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DOIMAOBeCsvwNS764W0otCZPTsLpvwt/NYR/J6ruUvDDXWct3m3kku49Jd1+P2TE3NhRrfKDJsHTJwMfoSzeBJ9XIdXnMeJIT2lJVEmPrvGw3C58F4YQUa1nVoYv/b4eOhS9/MgWKf/DS/mhwe9Oo7oxL/q+VkU0h/HlVEv0O+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dKxHkkbf; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RUmsnmKQ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dKxHkkbf; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RUmsnmKQ; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 8151C22907;
-	Wed, 15 May 2024 00:25:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1715732717; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UHZT2BoZr0ijthsLDchrpbeknRtm/GuvmkXc1Pxxy/Q=;
-	b=dKxHkkbfWr/geiKeNoSlV1mVmQf5zQreuILpWf9/GLWY/3/a5NyfxWXMVEB8uHBkbbqfa6
-	In94j0lIZ4i/3BbACEBrA8VoBTbC3qis5t8x2oQbTilbwCkp4ZR9ZRVKy9KYHeeOEpbh0a
-	9X08WDtx6L44QuzOi9TL9da9LeE9I9Q=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1715732717;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UHZT2BoZr0ijthsLDchrpbeknRtm/GuvmkXc1Pxxy/Q=;
-	b=RUmsnmKQCuQfioWktYkb0msP1mHO2iwm8FFWoYA7jgNOe0RAiTN4e1xS6in7Eg4NoXJsP2
-	89RlT9BPhNwCPpBg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1715732717; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UHZT2BoZr0ijthsLDchrpbeknRtm/GuvmkXc1Pxxy/Q=;
-	b=dKxHkkbfWr/geiKeNoSlV1mVmQf5zQreuILpWf9/GLWY/3/a5NyfxWXMVEB8uHBkbbqfa6
-	In94j0lIZ4i/3BbACEBrA8VoBTbC3qis5t8x2oQbTilbwCkp4ZR9ZRVKy9KYHeeOEpbh0a
-	9X08WDtx6L44QuzOi9TL9da9LeE9I9Q=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1715732717;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UHZT2BoZr0ijthsLDchrpbeknRtm/GuvmkXc1Pxxy/Q=;
-	b=RUmsnmKQCuQfioWktYkb0msP1mHO2iwm8FFWoYA7jgNOe0RAiTN4e1xS6in7Eg4NoXJsP2
-	89RlT9BPhNwCPpBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D668F13A56;
-	Wed, 15 May 2024 00:25:16 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 5i9SNOwARGbpVwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 15 May 2024 00:25:16 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 41AECA08B5; Wed, 15 May 2024 02:25:13 +0200 (CEST)
-Date: Wed, 15 May 2024 02:25:13 +0200
-From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, tytso@mit.edu,
-	adilger.kernel@dilger.ca, jack@suse.cz, ritesh.list@gmail.com,
-	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
-Subject: Re: [PATCH] ext4/jbd2: drop jbd2_transaction_committed()
-Message-ID: <20240515002513.yaglghza4i4ldmr5@quack3>
-References: <20240513072119.2335346-1-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1715733423; c=relaxed/simple;
+	bh=oBWUlEWluAHTiq7x5PmtdIOTVCfEATl1uVh/AdUEqHk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VMvdrgcZ69QEXCdVZ8yaO8uM72GeZGXAL1tn0nvJSebG1D4haACrK0XC2El4broAx/WSVa25GBYTKpN463AvR05HbaJtDUEUpr7UJ0m5WbfLEHDHQRUwTyx3pOrZE8IOaDkSWCpPSMmlb4zz+RJ1S9+u7JR8Y/T/P3CEYRN2Juk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vyyshJvY; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2b33d011e5dso4216561a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 17:37:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715733422; x=1716338222; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Vk8qZUNPyTPW/A1KHzQN8z/XqvExIz1hHrnYNu4UtMQ=;
+        b=vyyshJvYs8yAkZLGu0uP89N4TA5+hDmJIQacYBc+6tRafITwWoLnHAKhRUEnfJTB2X
+         a3FyFsHxXbM0Cq2D4bb6XUizE47+fcEz9rGmakLRoiOCCI8KfR6+vOID1NW2q2UBLAN6
+         vzxklkpoaA9DCHJruxhVDmQCz80CpdiKajtwL/fwZACECgl3v4xNzVVfM2uEndErhcHk
+         IV8lFhxeoRCw+5ZBGONnJA0x+BwWHeP3VkErLhvWMzccugMWV4/BiPwCuPb6MAkEsf6f
+         a130fqrlBHBVKTKKJNRdVkLTSEFw1i+d4ROA0rEDW3peA4GMfAIDs81kQrUVz4UKTxW7
+         gu+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715733422; x=1716338222;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Vk8qZUNPyTPW/A1KHzQN8z/XqvExIz1hHrnYNu4UtMQ=;
+        b=agVzZ7YAWBwhXTDRRPM97PfTeP715cIhco3wITJKiA/00XgybbiZv7tAGUL45g5Rsr
+         RsYhbgeM7aNab3mXYJIe62+vUvIlXEGKXHYVgm/pv4YnGYvplHrir2d6qIXa0lqFfWVT
+         l03jhfa6Lgkwh6NpAchhdBOKq370Ifri305ZY803MaB1aGTV8r/AFCpttpE2yHkYesOO
+         zckSE/uA67r6kGX1ts4PzkEJx1gqUDvUUkkzytHxd3TAGY5egnKU+1Q0Xsu+fguZpJya
+         KB6h7n2UhHwHyngnX/6mCEmcKSSKf40jOrHEg97cisOEEqFzSWrU1UPVzSPaovxRfsLk
+         5tOw==
+X-Forwarded-Encrypted: i=1; AJvYcCXMQrsTSYxm+xOMKNRQDvUmg1mb0Suo6xz0e9PTiEhFTh0kYFSIuSp+/RskLHbTG0qoH3kD3S61QHxv8S30sS7oBD9GROPNt0jma1a8
+X-Gm-Message-State: AOJu0YzbKPXD19MDy1PrEyqjLe4yehfWj0//AK88p3nP3E5ZjlYS1N2d
+	4Upf2zkQKzQbX4K9WhCLK8b1Z/rZk0yUjfEi61be/7n5yUAcuaataW/NAA5O0XMuL98bOf0iBzq
+	j5x6SxkJpH4rVmZIsKvWkus/JG93Asp7d7ol7
+X-Google-Smtp-Source: AGHT+IHeqrDxqHwSqE8LkP9zNnO4aoIPfWbbw91OWLX6RaFgTT+3fK4f+394LqJxYkdL3RuANgpc2LoWG62WKveVJjY=
+X-Received: by 2002:a17:90b:438d:b0:2a2:f4f4:2c4a with SMTP id
+ 98e67ed59e1d1-2b66001a442mr24360414a91.21.1715733421460; Tue, 14 May 2024
+ 17:37:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240513072119.2335346-1-yi.zhang@huaweicloud.com>
-X-Spam-Flag: NO
-X-Spam-Score: -2.29
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.29 / 50.00];
-	BAYES_HAM(-2.99)[99.96%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,gmail.com,huawei.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
+References: <20240514101006.678521560@linuxfoundation.org> <5beea8ed-b92b-4bee-b77b-4a3d57a5c001@oracle.com>
+In-Reply-To: <5beea8ed-b92b-4bee-b77b-4a3d57a5c001@oracle.com>
+From: Martin Faltesek <mfaltesek@google.com>
+Date: Tue, 14 May 2024 19:36:24 -0500
+Message-ID: <CAOiWkA8SNRbCPZ_gHQRczZovokZbFSJXQc1vUmtD0quZV9tp0Q@mail.gmail.com>
+Subject: Re: [PATCH 5.15 000/168] 5.15.159-rc1 review
+To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, 
+	patches@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, 
+	shuah@kernel.org, patches@kernelci.org, lkft-triage@lists.linaro.org, 
+	pavel@denx.de, jonathanh@nvidia.com, f.fainelli@gmail.com, 
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de, 
+	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org, 
+	Vegard Nossum <vegard.nossum@oracle.com>, Darren Kenny <darren.kenny@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon 13-05-24 15:21:19, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
-> 
-> jbd2_transaction_committed() is used to check whether a transaction with
-> the given tid has already committed, it hold j_state_lock in read mode
-> and check the tid of current running transaction and committing
-> transaction, but holding the j_state_lock is expensive.
-> 
-> We have already stored the sequence number of the most recently
-> committed transaction in journal t->j_commit_sequence, we could do this
-> check by comparing it with the given tid instead. If the given tid isn't
-> smaller than j_commit_sequence, we can ensure that the given transaction
-> has been committed. That way we could drop the expensive lock and
-> achieve about 10% ~ 20% performance gains in concurrent DIOs on may
-> virtual machine with 100G ramdisk.
-> 
-> fio -filename=/mnt/foo -direct=1 -iodepth=10 -rw=$rw -ioengine=libaio \
->     -bs=4k -size=10G -numjobs=10 -runtime=60 -overwrite=1 -name=test \
->     -group_reporting
-> 
-> Before:
->   overwrite       IOPS=88.2k, BW=344MiB/s
->   read            IOPS=95.7k, BW=374MiB/s
->   rand overwrite  IOPS=98.7k, BW=386MiB/s
->   randread        IOPS=102k, BW=397MiB/s
-> 
-> After:
->   verwrite:       IOPS=105k, BW=410MiB/s
->   read:           IOPS=112k, BW=436MiB/s
->   rand overwrite: IOPS=104k, BW=404MiB/s
->   randread:       IOPS=111k, BW=432MiB/s
-> 
-> CC: Dave Chinner <david@fromorbit.com>
-> Suggested-by: Dave Chinner <david@fromorbit.com>
-> Link: https://lore.kernel.org/linux-ext4/493ab4c5-505c-a351-eefa-7d2677cdf800@huaweicloud.com/T/#m6a14df5d085527a188c5a151191e87a3252dc4e2
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+Build failure on arm:
 
-I agree this is workable solution and the performance benefits are nice. But
-I have some comments regarding the implementation:
+In file included from drivers/iommu/mtk_iommu_v1.c:22:
+drivers/iommu/mtk_iommu_v1.c:579:25: error: 'mtk_iommu_v1_of_ids'
+undeclared here (not in a function); did you mean 'mtk_iommu_of_ids'?
+  579 | MODULE_DEVICE_TABLE(of, mtk_iommu_v1_of_ids);
+      |                         ^~~~~~~~~~~~~~~~~~~
+/include/linux/module.h:244:15: note: in definition of macro
+'MODULE_DEVICE_TABLE'
+  244 | extern typeof(name) __mod_##type##__##name##_device_table
+         \
+      |               ^~~~
+/include/linux/module.h:244:21: error:
+'__mod_of__mtk_iommu_v1_of_ids_device_table' aliased to undefined
+symbol 'mtk_iommu_v1_of_ids'
+  244 | extern typeof(name) __mod_##type##__##name##_device_table
+         \
+      |                     ^~~~~~
+drivers/iommu/mtk_iommu_v1.c:579:1: note: in expansion of macro
+'MODULE_DEVICE_TABLE'
+  579 | MODULE_DEVICE_TABLE(of, mtk_iommu_v1_of_ids);
+      | ^~~~~~~~~~~~~~~~~~~
+make[2]: *** [scripts/Makefile.build:289: drivers/iommu/mtk_iommu_v1.o] Err=
+or 1
+make[1]: *** [scripts/Makefile.build:552: drivers/iommu] Error 2
 
-> @@ -3199,8 +3199,8 @@ static bool ext4_inode_datasync_dirty(struct inode *inode)
->  	journal_t *journal = EXT4_SB(inode->i_sb)->s_journal;
->  
->  	if (journal) {
-> -		if (jbd2_transaction_committed(journal,
-> -			EXT4_I(inode)->i_datasync_tid))
-> +		if (tid_geq(journal->j_commit_sequence,
-> +			    EXT4_I(inode)->i_datasync_tid))
+This is from patch:
 
-Please leave the helper jbd2_transaction_committed(), just make the
-implementation more efficient. Also accessing j_commit_sequence without any
-lock is theoretically problematic wrt compiler optimization. You should have
-READ_ONCE() there and the places modifying j_commit_sequence need to use
-WRITE_ONCE().
+bce893a92324  krzk@kernel.org           2024-05-14  iommu: mtk: fix
+module autoloading
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
++MODULE_DEVICE_TABLE(of, mtk_iommu_v1_of_ids);
+
+should be, I think:
+
++MODULE_DEVICE_TABLE(of, mtk_iommu_of_ids);
+
+
+On Tue, May 14, 2024 at 11:29=E2=80=AFAM Harshit Mogalapalli
+<harshit.m.mogalapalli@oracle.com> wrote:
+>
+> Hi Greg,
+>
+> On 14/05/24 15:48, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.15.159 release.
+> > There are 168 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> >
+> > Responses should be made by Thu, 16 May 2024 10:09:32 +0000.
+> > Anything received after that time might be too late.
+> >
+>
+> No problems seen on x86_64 and aarch64 with our testing.
+>
+> Tested-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+>
+> Note: selftests have a build problem in 5.15.y, 5.10.y, 5.4.y, 4.19.y
+>
+> 5.15.y revert:
+> https://lore.kernel.org/all/20240506084635.2942238-1-harshit.m.mogalapall=
+i@oracle.com/
+>
+> This is not a regression in this tag but from somewhere around 5.15.152 t=
+ag.
+>
+> Reverts for other stable releases:
+> 5.10.y:
+> https://lore.kernel.org/all/20240506084926.2943076-1-harshit.m.mogalapall=
+i@oracle.com/
+> 5.4.y:
+> https://lore.kernel.org/all/20240506085044.2943648-1-harshit.m.mogalapall=
+i@oracle.com/
+> 4.19.y:
+> https://lore.kernel.org/all/20240506105724.3068232-1-harshit.m.mogalapall=
+i@oracle.com/
+>
+> Could you please queue these up for future releases.
+>
+>
+> Thanks,
+> Harshit
+> > The whole patch series can be found in one patch at:
+> >       https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-=
+5.15.159-rc1.gz
+> > or in the git tree and branch at:
+> >       git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-5.15.y
+> > and the diffstat can be found below.
+> >
+> > thanks,
+> >
+> > greg k-h
+> >
+>
 
