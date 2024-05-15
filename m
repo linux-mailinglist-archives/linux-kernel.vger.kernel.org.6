@@ -1,198 +1,101 @@
-Return-Path: <linux-kernel+bounces-179528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B249B8C60E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:42:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E92098C60E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:41:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 629D7282FDE
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:42:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 268D61C20AFF
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:41:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04B1D4084C;
-	Wed, 15 May 2024 06:41:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FB1140875;
+	Wed, 15 May 2024 06:41:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kurWJ3MS"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Pd75HkEm";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="varEdGvP"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAD7A3EA9B;
-	Wed, 15 May 2024 06:41:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82C0D3D57D;
+	Wed, 15 May 2024 06:41:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715755318; cv=none; b=Wn6NxzcQir0TRKRvO2F2zpOr5hhhau6fpRHhS+7p2NpA5+nW0a/ILD1lZGMaAc+TQGNwW0CDKUUz9fkcXltldkm6eBsoJ6gqoxr3kNMyAsTp+IPx5utiVYKLt22Saw2HGXxIFlDRv7HfBAC+lBOvbne+QOsJK29ZvUZT/ixJLwA=
+	t=1715755304; cv=none; b=dveRcIIblKMtOJcfGcTYYKud4vDdQnXDmwjQwpGWGfS19invTrv9e3qgfwzOs5sTdWGMSi2j2w+gnPixIXSKMT5B5N6r6lNzUYluO0bFsNCHT9gQGD3PE2zKvWZBrFd9V4iFK/RPCxd+4/SYXw8WELt77iK4DxAqHcM2E97bR6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715755318; c=relaxed/simple;
-	bh=GJ6J9YyFmj5g0mLE7msIu5MKiPfm2okuFb6jCKJOrlM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=IjhhOHYHg4Dv7NPPfuOFAC5jeZhSQZlZG5H/QlM5VkuT4dulHGFe7S8NLUkzqWFifL7V8+EXfUqnWXhl/mY/WsIIP8RBMkfGf9qZ04ohmJGS1hgo5SLzmxghqKlRaCVDM2jl+TqVirpQw29/U8xXIMoRyX2xX09t+vWaThBnfhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kurWJ3MS; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1ecddf96313so55199835ad.2;
-        Tue, 14 May 2024 23:41:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715755315; x=1716360115; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2vbAesE2cgL0USUqqC14KPMjK7GiW9OFjlcB1Mo1yRY=;
-        b=kurWJ3MS3zNIzyBVKFOT4KL9L3YcSiej077cQKz3QzSq8MzpgZxUSVVv9GL42SRofy
-         kM3SITdGtgo/uGBM+SSQ0sYNXdj1u63NSpcc4sGASDdv1xDd4NMSlVIbK+0SP0e63bs3
-         7Y1WxHQ9W8xiads3Bi3r4iMFQVXuhWpBfpL5BsF8oDYUrUPW7EdM6o3+fNAkHXWmfNjF
-         /iGOY6doQTsAKE97nLqKqqNG0upwn3jFR2ME3Mb4gt32obhNUckZYf3Fs71I5j616NQt
-         wyE5XMfesv0EPYtsVPE0rgtAza0U28KL7GpNoSxvCgDvyEGC24H0Ia/s0Xlsqf7qx8Yn
-         bLPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715755315; x=1716360115;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2vbAesE2cgL0USUqqC14KPMjK7GiW9OFjlcB1Mo1yRY=;
-        b=ivLDYqf8uK7+Yr4TgUxQTiepF/bJQei5a4FWzFRjLBJLk/fDkYRRfTF/pxXoqOhV/e
-         to93dgyKhBLBBcDyd3O8tByoSsAiwxp9YLFibtQhCuw1ruCB637V2mMDFYJEptDBbhpz
-         TBdKMLBNkP8VVsaRwfpoW9+Q34/dlYDueTjM5CQgef69rCUqXEbhqsK7J09rzc/gA1Ir
-         2kuzf4OVdju3BSTDCuN62VgyMByBr8oFNRmIXLi7+hzgGtkocoN93LWDrSiAT7pR06ub
-         PIqgKRt24bS15VVdLkvOMOV0qwy0x/cnuwEsCOP98EuMNC/zTS4bfJkG07xOHEq7uqXN
-         2odQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVoMbv+GXzH/oLx4KSM7ViII0jzD3YMm0bpVX94zLQWJnk0QGz3B8nbalob2aqZ8BaW8TRFCDZYrBnfJB4I745JU25lA3ZMjhhqTr8tGkgBR7jYGmT96eEu4pluB7d+lSG1E2xCuBdXlZY=
-X-Gm-Message-State: AOJu0YxQzDvmyzXzSRteWGy4fFsGE5auWcQcB+IxFiR3LJc7Q4ee5YOI
-	4QTuUAqD/mr8U0qABoTnUUb6vm9lAIwtIHhnGH2120S01qglsSs3zze9Xkc9KeM=
-X-Google-Smtp-Source: AGHT+IE+WGr6yPwajwKZrvVsEuPpSp4fcpQ4EjJnE9CHFCSlun+DnehwrGK/Fql+9T0Sui9S+jpm/w==
-X-Received: by 2002:a17:902:ccc6:b0:1e9:470:87e3 with SMTP id d9443c01a7336-1ef43f4e323mr254736905ad.45.1715755315224;
-        Tue, 14 May 2024 23:41:55 -0700 (PDT)
-Received: from xiaxiShen-ThinkPad.gigstreem.net ([66.160.179.28])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f08c5f0294sm17177315ad.208.2024.05.14.23.41.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 May 2024 23:41:54 -0700 (PDT)
-From: Xiaxi Shen <shenxiaxi26@gmail.com>
-To: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org
-Cc: shenxiaxi26@gmail.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	javier.carrasco.cruz@gmail.com,
-	skhan@linuxfoundation.org
-Subject: [PATCH v3] ASoC: dt-bindings: ak4104: convert to dt schema
-Date: Tue, 14 May 2024 23:41:39 -0700
-Message-Id: <20240515064139.456735-1-shenxiaxi26@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <ab4186fa-5a2f-4f97-9aa7-75a6c55bc142@kernel.org>
-References: <ab4186fa-5a2f-4f97-9aa7-75a6c55bc142@kernel.org>
+	s=arc-20240116; t=1715755304; c=relaxed/simple;
+	bh=Ohn1QWuD3hXSwNdh6G51TarJNpVtb+Kw3FSPuiN8i50=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ia5FFsozes7PMod2Y3d+eypdID100pbbnWnl7duq1N+1xm4qRIkOwGf69i+JSkJv63hgjL06jmkxzfVe1K6fDHAhEI3U/48Ltc3PjI/+urK31Wdjia/lyHitQ78ffbVZL0OgC5ZBKi+n+5Qz7HSvj+6ug0SQrh/WrTLJFXukDsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Pd75HkEm; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=varEdGvP; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 15 May 2024 08:41:39 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1715755300;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sio4TZAEBlWZFidC5qng46z8XhrKeWRYfPlszR0wiFY=;
+	b=Pd75HkEm8Fk++MIPte3Ib689xrqTVqJnkvEYJkgsDvUzbpysVYUPHV2/jlMU8HlODuWg/r
+	UHDoxca5tLQEnRxqaT7gb0J9/aApdcCR6lnEZQDiYkuzl2WrGFKgX26tBnSJn/Wf1DAbpI
+	cfYAi6JcKF11x77OCaB59KpALE/jz7YogPZBp4gy1nlDVA+MY+oSIdEbcTiGlB4nxvodg3
+	w4Julu2a4bC2p1SCdcVTQw7EeGkJkWxVTHmbUXNPVqnKoxeK7+px4MlJjoVLl1m0lmZvU/
+	cp1qpsiqNvB2yKkF3SNOr1yrtziKXQ+tmtpLLR3xB8e4Z6Mphki6MeyKd64jOw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1715755300;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sio4TZAEBlWZFidC5qng46z8XhrKeWRYfPlszR0wiFY=;
+	b=varEdGvPU/kzLsy/+oGCdvuJBJ6bJV0koxFc0gab29K7iX/zd0709MV4JyUarw3AP4GDYV
+	eW8ICv2ZuMMqVuBw==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Lukasz Majewski <lukma@denx.de>
+Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+	Paolo Abeni <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Oleksij Rempel <o.rempel@pengutronix.de>, Tristram.Ha@microchip.com,
+	Ravi Gunasekaran <r-gunasekaran@ti.com>,
+	Simon Horman <horms@kernel.org>,
+	Nikita Zhandarovich <n.zhandarovich@fintech.ru>,
+	Murali Karicheri <m-karicheri2@ti.com>,
+	Arvid Brodin <Arvid.Brodin@xdin.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	"Ricardo B. Marliere" <ricardo@marliere.net>,
+	Casper Andersson <casper.casan@gmail.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: hsr: Setup and delete proxy prune timer only when
+ RedBox is enabled
+Message-ID: <20240515064139.-B-_Hf0_@linutronix.de>
+References: <20240514091306.229444-1-lukma@denx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240514091306.229444-1-lukma@denx.de>
 
-Convert ak4104 binding to DT schema
+On 2024-05-14 11:13:06 [+0200], Lukasz Majewski wrote:
+> The timer for removing entries in the ProxyNodeTable shall be only active
+> when the HSR driver works as RedBox (HSR-SAN).
+> 
+> Moreover, the obsolete del_timer_sync() is replaced with
+> timer_delete_sync().
+> 
+> This patch improves fix from commit 3c668cef61ad
+> ("net: hsr: init prune_proxy_timer sooner") as the prune node
+> timer shall be setup only when HSR RedBox is supported in the node.
 
-Changes in v3:
- - Use unevaluatedProperties instead
- - Fix indentations in the example
+Is it problematic to init/ delete the timer in non-redbox mode? It looks
+easier and it is not a hotpath.
 
-Signed-off-by: Xiaxi Shen <shenxiaxi26@gmail.com>
----
- .../devicetree/bindings/sound/ak4104.txt      | 25 ----------
- .../bindings/sound/asahi-kasei,ak4104.yaml    | 49 +++++++++++++++++++
- 2 files changed, 49 insertions(+), 25 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/sound/ak4104.txt
- create mode 100644 Documentation/devicetree/bindings/sound/asahi-kasei,ak4104.yaml
+> Signed-off-by: Lukasz Majewski <lukma@denx.de>
 
-diff --git a/Documentation/devicetree/bindings/sound/ak4104.txt b/Documentation/devicetree/bindings/sound/ak4104.txt
-deleted file mode 100644
-index ae5f7f057dc3..000000000000
---- a/Documentation/devicetree/bindings/sound/ak4104.txt
-+++ /dev/null
-@@ -1,25 +0,0 @@
--AK4104 S/PDIF transmitter
--
--This device supports SPI mode only.
--
--Required properties:
--
--  - compatible : "asahi-kasei,ak4104"
--
--  - reg : The chip select number on the SPI bus
--
--  - vdd-supply : A regulator node, providing 2.7V - 3.6V
--
--Optional properties:
--
--  - reset-gpios : a GPIO spec for the reset pin. If specified, it will be
--		  deasserted before communication to the device starts.
--
--Example:
--
--spdif: ak4104@0 {
--	compatible = "asahi-kasei,ak4104";
--	reg = <0>;
--	spi-max-frequency = <5000000>;
--	vdd-supply = <&vdd_3v3_reg>;
--};
-diff --git a/Documentation/devicetree/bindings/sound/asahi-kasei,ak4104.yaml b/Documentation/devicetree/bindings/sound/asahi-kasei,ak4104.yaml
-new file mode 100644
-index 000000000000..86f6061d3c50
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/asahi-kasei,ak4104.yaml
-@@ -0,0 +1,49 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/sound/asahi-kasei,ak4104.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: AK4104 S/PDIF transmitter
-+
-+allOf:
-+  - $ref: dai-common.yaml#
-+
-+maintainers:
-+  - Daniel Mack <github@zonque.org>
-+  - Xiaxi Shen <shenxiaxi26@gmail.com>
-+
-+properties:
-+  compatible:
-+    const: asahi-kasei,ak4104
-+
-+  reg:
-+    description: Chip select number on the SPI bus 
-+    maxItems: 1
-+
-+  vdd-supply:
-+    description: A regulator node providing between 2.7V and 3.6V.
-+
-+  reset-gpios:
-+    maxItems: 1
-+    description: Optional GPIO spec for the reset pin, deasserted 
-+                  before communication starts.
-+    
-+required:
-+  - compatible
-+  - reg
-+  - vdd-supply
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+        codec@0 {
-+            compatible = "asahi-kasei,ak4104";
-+            reg = <0>;
-+            vdd-supply = <&vdd_3v3_reg>;
-+        };
-+    };
--- 
-2.34.1
-
+Sebastian
 
