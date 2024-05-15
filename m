@@ -1,132 +1,112 @@
-Return-Path: <linux-kernel+bounces-180218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A03798C6B90
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 19:34:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F1E58C6B93
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 19:35:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1248FB25271
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:34:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C3B2B2556E
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:35:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03A3645014;
-	Wed, 15 May 2024 17:33:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CA60481B1;
+	Wed, 15 May 2024 17:35:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="EplThCPg"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D603C3EA7B;
-	Wed, 15 May 2024 17:33:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SxVWhf0d"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9527D28680;
+	Wed, 15 May 2024 17:35:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715794434; cv=none; b=G7EM+/367FMRXjvJRNpE8YGWlvpRJRta3z+FufFNsTnnmK9SBV/R8iokpZdFAvlJ0MAjrcqlbisMyo1JKZxnny4xAkamfKTi/OmcdjPus2/CT04kTyjs2cfrZAt7hD0LoLYATSgbtg6Z+Vq2DXu4WxzVE3EZMQv3QxUSFEc47h0=
+	t=1715794539; cv=none; b=WrFM+UaMIFMXzaRDA5qu373kcShkVRgfXaN2rM9vWhjob7IGJKC5ZXqe9ZBDTcXlVYNrYI6q7b/kDoAEklj3EWE/Y3S6xTP9Amuy4FxwfYLuUqp3BpKkTq0eH1cMoPMaa1cMvae01xcKQTZraFs6kJdUTww9SDTw46LXCnc65rI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715794434; c=relaxed/simple;
-	bh=VdtVLFpZYA4b3uZzQCUTGVxEaXrt+6asF5DBt0OQKLQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e6400zXRHfiTZoZSC5xHdgV9OdltxWFNBNECK/RuaN/dRINmxDJJKJ2TQ2ma7fk1AuBpPm4Cdar9BBQfLPZSEaDp/B9Ek8ZUSdNOrs4spddbX4FpKi4d2BJvZycXpRln9Ith/Xo8/3w0XDARPChh0pd9c/xlSgmS2qFC94Pwmb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=EplThCPg; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.137.186.190] (unknown [131.107.159.62])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 60AFD20BE570;
-	Wed, 15 May 2024 10:33:46 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 60AFD20BE570
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1715794426;
-	bh=6znshs1azYcVfLPlekdOCordB4FAVfBn0O3niN9s+zc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=EplThCPgxf2K/F8p5LTNBB2FpK+/bTpXukCuYhXyOYYlCqRIQfd1AiYryJzcSEWgl
-	 do+VYONXpz2SmVJUnMOFCJEWS/WmfZ+cUgYk3Rc9B+4zraitQvTQHirrfupbFHpAS6
-	 qeNcZTp64f+P2tdvuN9exTKusSQCv8GS8E4jKlCM=
-Message-ID: <267ef0e2-2384-44bd-81f9-f33dda7bb9d2@linux.microsoft.com>
-Date: Wed, 15 May 2024 10:33:46 -0700
+	s=arc-20240116; t=1715794539; c=relaxed/simple;
+	bh=bMXMTNE3OZS4/T3Ia9cod0oRbe/kxZEwCK4cz+pCvPE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KOInMzX42h/ixD6+8waVkHBCBk1f+JsQPBkhR55mlF3YqqUxFTJTvEYgY8leNx8jw4QpQsCarzNq3lD5K/ktqQVBo85zsxK9T+ubhyAXXzXUyNaq8e+hxgIFkWG58DTqZ6bl/dB7RG5cjC6tAqsQiHY8IeeE+/yvbSMGVbyVzRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SxVWhf0d; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715794537; x=1747330537;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=bMXMTNE3OZS4/T3Ia9cod0oRbe/kxZEwCK4cz+pCvPE=;
+  b=SxVWhf0dOQ9u3zYiOlxY8I9KjC2xO4s8iMlBs6WPaeyBKVVDPvIiRor+
+   bgH4f9yaUbaAXIYtnZquD5vejUYKnXLEK3eCykxleWccIerygPFcrF6wy
+   C4n2OFMTNtb8CriIvgRPsZzpX19VGlGjDEiyliAjv4sc9oR1pVeMGp50n
+   O1z2zrZ2BB7XHLZ7p8TQ/PH0ePc2szFRdKbpOcbtLsXlxNXuqsKK5I8aI
+   iPKW0nZGvlwTm0U8HIMdQi7bEv19FCQrdDcIEsHfKP1wyPnvK4vfsljeU
+   EIRtQmItTy4+lMX6+GY1nchMXm7G1GIvZoO+betIIRMWdPE7VePzStpXn
+   g==;
+X-CSE-ConnectionGUID: 7Knlw3k5TsOQ80L0Mx6cTQ==
+X-CSE-MsgGUID: 2DJn9QUWTgmtZk1r708OCA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="22465741"
+X-IronPort-AV: E=Sophos;i="6.08,162,1712646000"; 
+   d="scan'208";a="22465741"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 10:35:36 -0700
+X-CSE-ConnectionGUID: ChK8VZQxRjCKrNmXGhQmDg==
+X-CSE-MsgGUID: 8/AIo60qTcq2zS8LstgONg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,162,1712646000"; 
+   d="scan'208";a="31263346"
+Received: from ls.sc.intel.com (HELO localhost) ([172.25.112.31])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 10:35:36 -0700
+Date: Wed, 15 May 2024 10:35:36 -0700
+From: Isaku Yamahata <isaku.yamahata@intel.com>
+To: Rick Edgecombe <rick.p.edgecombe@intel.com>
+Cc: pbonzini@redhat.com, seanjc@google.com, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, isaku.yamahata@gmail.com,
+	erdemaktas@google.com, sagis@google.com, yan.y.zhao@intel.com,
+	dmatlack@google.com
+Subject: Re: [PATCH 10/16] KVM: x86/tdp_mmu: Support TDX private mapping for
+ TDP MMU
+Message-ID: <20240515173536.GE168153@ls.amr.corp.intel.com>
+References: <20240515005952.3410568-1-rick.p.edgecombe@intel.com>
+ <20240515005952.3410568-11-rick.p.edgecombe@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/6] arm64/hyperv: Support DeviceTree
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, arnd@arndb.de,
- bhelgaas@google.com, bp@alien8.de, catalin.marinas@arm.com,
- dave.hansen@linux.intel.com, decui@microsoft.com, haiyangz@microsoft.com,
- hpa@zytor.com, kw@linux.com, kys@microsoft.com, lenb@kernel.org,
- lpieralisi@kernel.org, mingo@redhat.com, mhklinux@outlook.com,
- rafael@kernel.org, robh@kernel.org, tglx@linutronix.de, wei.liu@kernel.org,
- will@kernel.org, linux-acpi@vger.kernel.org, linux-arch@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, x86@kernel.org
-Cc: ssengar@microsoft.com, sunilmut@microsoft.com, vdso@hexbites.dev
-References: <20240514224508.212318-1-romank@linux.microsoft.com>
- <20240514224508.212318-2-romank@linux.microsoft.com>
- <1766fc9a-1d10-4c93-a9db-a7e0db8b01e7@linaro.org>
-Content-Language: en-US
-From: Roman Kisel <romank@linux.microsoft.com>
-In-Reply-To: <1766fc9a-1d10-4c93-a9db-a7e0db8b01e7@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240515005952.3410568-11-rick.p.edgecombe@intel.com>
 
+On Tue, May 14, 2024 at 05:59:46PM -0700,
+Rick Edgecombe <rick.p.edgecombe@intel.com> wrote:
 
+..snip...
 
-On 5/15/2024 12:45 AM, Krzysztof Kozlowski wrote:
-> On 15/05/2024 00:43, Roman Kisel wrote:
->> The Virtual Trust Level platforms rely on DeviceTree, and the
->> arm64/hyperv code supports ACPI only. Update the logic to
->> support DeviceTree on boot as well as ACPI.
->>
->> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
->> ---
->>   arch/arm64/hyperv/mshyperv.c | 34 +++++++++++++++++++++++++++++-----
->>   1 file changed, 29 insertions(+), 5 deletions(-)
->>
->> diff --git a/arch/arm64/hyperv/mshyperv.c b/arch/arm64/hyperv/mshyperv.c
->> index b1a4de4eee29..208a3bcb9686 100644
->> --- a/arch/arm64/hyperv/mshyperv.c
->> +++ b/arch/arm64/hyperv/mshyperv.c
->> @@ -15,6 +15,9 @@
->>   #include <linux/errno.h>
->>   #include <linux/version.h>
->>   #include <linux/cpuhotplug.h>
->> +#include <linux/libfdt.h>
->> +#include <linux/of.h>
->> +#include <linux/of_fdt.h>
->>   #include <asm/mshyperv.h>
->>   
->>   static bool hyperv_initialized;
->> @@ -27,6 +30,29 @@ int hv_get_hypervisor_version(union hv_hypervisor_version_info *info)
->>   	return 0;
->>   }
->>   
->> +static bool hyperv_detect_fdt(void)
->> +{
->> +#ifdef CONFIG_OF
->> +	const unsigned long hyp_node = of_get_flat_dt_subnode_by_name(
->> +			of_get_flat_dt_root(), "hypervisor");
-> 
-> Why do you add an ABI for node name? Although name looks OK, but is it
-> really described in the spec that you depend on it? I really do not like
-> name dependencies...
+> @@ -619,6 +776,8 @@ static inline int tdp_mmu_zap_spte_atomic(struct kvm *kvm,
+>  	 */
+>  	__kvm_tdp_mmu_write_spte(iter->sptep, SHADOW_NONPRESENT_VALUE);
+>  
+> +
+> +	role = sptep_to_sp(iter->sptep)->role;
+>  	/*
+>  	 * Process the zapped SPTE after flushing TLBs, and after replacing
+>  	 * REMOVED_SPTE with 0. This minimizes the amount of time vCPUs are
+> @@ -626,7 +785,7 @@ static inline int tdp_mmu_zap_spte_atomic(struct kvm *kvm,
+>  	 * SPTEs.
+>  	 */
+>  	handle_changed_spte(kvm, iter->as_id, iter->gfn, iter->old_spte,
+> -			    0, iter->level, true);
+> +			    SHADOW_NONPRESENT_VALUE, role, true);
+>  
+>  	return 0;
+>  }
 
-Followed the existing DeviceTree's of naming and approaches in the 
-kernel to surprise less and "invent" even less. As for the spec, the 
-Hyper-V TLFS'es part discussing Hypervisor Discovery talks about x86 
-(https://learn.microsoft.com/en-us/virtualization/hyper-v-on-windows/tlfs/feature-discovery) 
-only and via the ISA-provided means only. For arm64, Hyper-V code 
-discovers the hypervisor presence via ACPI. Felt only natural to do the 
-same for DeviceTree and arm64.
+This SHADOW_NONPRESENT_VALUE change should go to another patch at [1]
+I replied to [1].
 
-> 
-> Where is the binding for this?
-> 
-Have not added, my mistake. Will place under 
-Documentation/devicetree/bindings/bus/microsoft,hyperv.yaml
-
-> Best regards,
-> Krzysztof
-
+[1] https://lore.kernel.org/kvm/20240507154459.3950778-3-pbonzini@redhat.com/
 -- 
-Thank you,
-Roman
+Isaku Yamahata <isaku.yamahata@intel.com>
 
