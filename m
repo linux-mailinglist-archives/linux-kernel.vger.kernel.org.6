@@ -1,155 +1,193 @@
-Return-Path: <linux-kernel+bounces-180263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A155F8C6C2A
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 20:30:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4FA28C6C30
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 20:31:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AAC128322F
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:30:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E86F91C219F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:31:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C13BF32182;
-	Wed, 15 May 2024 18:30:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFDDE158DD6;
+	Wed, 15 May 2024 18:31:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fs5EHQGs"
-Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F11F54654;
-	Wed, 15 May 2024 18:30:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Tc3R7BFI"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE63B2E622;
+	Wed, 15 May 2024 18:31:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715797847; cv=none; b=QJ7G6Yey47EeJVGUKol/x0rH8I4RmJSPG1CB55s5/VL/MYCUiEngw2S/pN/R01aUJPcJPYxZHRlViJlaslpBNCzviUYvdm3ImGrSWHSN4486kOH6Ae8dnmW+KFbr5KvS99XNbCQiIqjfZZWYXKbLhghA4/QG3dFfgJQ91bPb9EE=
+	t=1715797905; cv=none; b=j+lnVpBXSe/8fy+BLCmpuCHtzSE6ASSU1j+HuCpBebUINQLUb6VvmWIUUEFrHcCoCsyLvIm6m9NxpIOArGfzDTCPl2p2PdkiXXRlWdJbrTCLls4/pr66DEr3RgtgAhn2ERpF/g4VfAEfAqfduqK57hTDiy3h3nEwMm8Dr6AGgHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715797847; c=relaxed/simple;
-	bh=zPphWFwqaOTWGFAzeLRXiv8kIODySpaDn5j45el3tt8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GwglUoskyTvEcDeobNvkjR8KVtousY3WYCPsgrsi8W9Neb7WhGSv8m2YtOsw0j0KuVpgo5h8qpvdMoCJpH6vrTO5fxGLrbt4/xG4IdjPAvfQuTQrOnTy8Q5vMnIcF1xMn3kuIJ1LkAHpVZvspdBYV2RJbbPa/lgNYeMrVDoy650=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fs5EHQGs; arc=none smtp.client-ip=209.85.167.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3c9b94951d5so1032124b6e.3;
-        Wed, 15 May 2024 11:30:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715797844; x=1716402644; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=M3fZRWZsu8lHo34cetgWPq75hTHkyfAQuDiVipVSsT0=;
-        b=fs5EHQGsXXyOvUV8SypDAijx6eFaAWnziYXMgU40pBf//AxtHFNuuxUBM2MnuQ2BeK
-         1V1cEceOl+g+9pd1cFYUClsw/SGwcTfWo04h6zVZeRXAAg0jKZskRTLaajBAe+DtZHr2
-         i2N8md024WFgRXwSM5EOijpe9i8Yt/GwpT8XwCGoSrLG1v+shBDcjqRrcQi2VWXyMZJ7
-         XSw0iVDuHQLokF1NsBrYiIfxfF8d+nWifENg9yoVTlbDQLnINW9nds+BbPSYLfX+iM1c
-         HPZ9JRB+oD+0yFolLHo7ajwysSNJa6Aw8XgtiEv8qGY0KfiTb6vVXWo3tZj0rj8/UnQd
-         XN/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715797844; x=1716402644;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=M3fZRWZsu8lHo34cetgWPq75hTHkyfAQuDiVipVSsT0=;
-        b=uH+iUpDFrqZ2PrhznABe4Ehuyp7LNOQvKziue6h9v70u1TXuZPcMEn0844UEYnOAgh
-         zfFD0GAcERoGtckWWbiIsGfQKElHs5CEo01WjiVR7qKB+lfPPqNzK/PKcgH8PGJrQR/f
-         j+wzKgfhd0LGFnKw4AexZ1Fx0pHsa4XtEP5X8dGfmSm5/A9apnFmv2XXs13A8431/fx+
-         ykdOius+0bL8VZ533V8umEWOAbGdmkuBZ0TXxUfXPJO0oRDN9/Rhg/2T5CqlaEFpfVT2
-         HCkp+Ri06vwnZDQZfzKQycaTXuO9/ggjqD6Mp7dRRKc7O78QUeJoGrof2aens6soHQMY
-         Iw/A==
-X-Forwarded-Encrypted: i=1; AJvYcCWwrQghLq2nu/KNuUgqSjkjC2saV3M5/CgAAIs/TLcstsSnK5QK2ZGNf5UTGJtn4q8WKr5p4Os6S4zYlFNFAurh0sreWkjplvd/Q5QQjIsug6wGUGdmPzrgiLJhl0F/CWHRZDy0LeMwKw2GW2egyBs=
-X-Gm-Message-State: AOJu0YynNMvS4x8yIj9vRm12OzXRbTnaJVj/UTxMOxL2PVucOw2fE3bJ
-	0P+naf5K8EwfvUq+YuiJw3Hklbl0ra6b3JA2zjJCg5CNI0d/jrar
-X-Google-Smtp-Source: AGHT+IFLLZodY9LgbwTN2BxPcRs1Kw01JxOK0LCD1TpFFbWHiroVI32ShR+CCM9J4fytt6jF+6uNjw==
-X-Received: by 2002:a05:6870:b296:b0:240:7904:f5b6 with SMTP id 586e51a60fabf-24172bd0727mr17765866fac.28.1715797844453;
-        Wed, 15 May 2024 11:30:44 -0700 (PDT)
-Received: from fionn.redhat.com ([74.12.5.183])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43e25f3ec65sm28965351cf.81.2024.05.15.11.30.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 May 2024 11:30:43 -0700 (PDT)
-Sender: John Kacur <jkacur@gmail.com>
-From: John Kacur <jkacur@redhat.com>
-To: Daniel Bristot de Oliveria <bristot@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	lkml <linux-kernel@vger.kernel.org>,
-	linux-trace-devel@vger.kernel.org
-Cc: John Kacur <jkacur@redhat.com>
-Subject: [PATCH v3 2/2] rtla: Documentation: Fix -t, --trace
-Date: Wed, 15 May 2024 14:30:24 -0400
-Message-ID: <20240515183024.59985-2-jkacur@redhat.com>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240515183024.59985-1-jkacur@redhat.com>
-References: <20240515183024.59985-1-jkacur@redhat.com>
+	s=arc-20240116; t=1715797905; c=relaxed/simple;
+	bh=0s166d8ThyJRF0LtvNv+ynksW8/S0kyDn4niUSmV/iA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=i3u1k1GIcOJKSD+ddbjGnUOvMpCbR7UfFBxqcAgS8S1+nNOSskTIqkpO8tUV5EqcbKVD/a2l37fRoqZG8jokoF19Ce28GgCjOeMrjDlp8+JAnvYiPNmoRZjTe7Ft4qkPwjB35zx4ztgLVdUewWaS1N5vHIBKGR5YL7ZMaFCE/Us=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Tc3R7BFI; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.137.186.190] (unknown [131.107.159.62])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 34AC020B915A;
+	Wed, 15 May 2024 11:31:43 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 34AC020B915A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1715797903;
+	bh=82+zV7NnktZKrrYz3USZfplzcKttP0Idb0GycX7Cnns=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Tc3R7BFIR2JNViaO9qjq3uMvYmVM1AuZf2gw+k3NhgatKmiADz5GUQr/Eq9W1WBlL
+	 ZXrQASe7tJ9ID2ozV8S8j/EYA8Hw4l8d6prnBSoHJqPPMI/maKBH/REjqXQEALiFL4
+	 BYGxZ6oMD949FeCXUzspRET6wJZbMOQE7S14v4Ag=
+Message-ID: <9bd0f136-40d0-460f-8d40-39f33511e3cf@linux.microsoft.com>
+Date: Wed, 15 May 2024 11:31:43 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 6/6] drivers/pci/hyperv/arm64: vPCI MSI IRQ domain from
+ DT
+To: Michael Kelley <mhklinux@outlook.com>, "arnd@arndb.de" <arnd@arndb.de>,
+ "bhelgaas@google.com" <bhelgaas@google.com>, "bp@alien8.de" <bp@alien8.de>,
+ "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "decui@microsoft.com" <decui@microsoft.com>,
+ "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+ "hpa@zytor.com" <hpa@zytor.com>, "kw@linux.com" <kw@linux.com>,
+ "kys@microsoft.com" <kys@microsoft.com>, "lenb@kernel.org"
+ <lenb@kernel.org>, "lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+ "mingo@redhat.com" <mingo@redhat.com>, "rafael@kernel.org"
+ <rafael@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
+ "tglx@linutronix.de" <tglx@linutronix.de>,
+ "wei.liu@kernel.org" <wei.liu@kernel.org>, "will@kernel.org"
+ <will@kernel.org>, "linux-acpi@vger.kernel.org"
+ <linux-acpi@vger.kernel.org>,
+ "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+ "x86@kernel.org" <x86@kernel.org>
+Cc: "ssengar@microsoft.com" <ssengar@microsoft.com>,
+ "sunilmut@microsoft.com" <sunilmut@microsoft.com>,
+ "vdso@hexbites.dev" <vdso@hexbites.dev>
+References: <20240514224508.212318-1-romank@linux.microsoft.com>
+ <20240514224508.212318-7-romank@linux.microsoft.com>
+ <SN6PR02MB4157EDCF4C5989F155EA8DA1D4EC2@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Language: en-US
+From: Roman Kisel <romank@linux.microsoft.com>
+In-Reply-To: <SN6PR02MB4157EDCF4C5989F155EA8DA1D4EC2@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Move -t, --trace from common_options.rst to
-common_osnoise_options.rst and
-common_timerlat_options.rst
 
-so that it will appear in the man pages
 
-rtla-timerlat-hist.1
-rtla-timerlat-top.1
-rtla-osnoise-hist.1
-rtla-osnoise-top.1
+On 5/15/2024 6:47 AM, Michael Kelley wrote:
+> From: Roman Kisel <romank@linux.microsoft.com> Sent: Tuesday, May 14, 2024 3:44 PM
+>>
+>> The hyperv-pci driver uses ACPI for MSI IRQ domain configuration
+>> on arm64 thereby it won't be able to do that in the VTL mode where
+>> only DeviceTree can be used.
+> 
+> That sentence seems a bit weird.  How about:
+> 
+>     The hyperv-pci driver uses ACPI for MSI IRQ domain configuration on arm64.
+>     It won't be able to do that in the VTL mode where only DeviceTree can be used.
+> 
+Agreed, appreciate your wordsmithing :)
 
-Remove the equals ('=') sign and add a space.
+>>
+>> Update the hyperv-pci driver to discover interrupt configuration
+>> via DeviceTree.
+> 
+> "discover interrupt configuration"?   I think that's a cut-and-paste error
+> from the previous patch.
+> 
+Guilty as charged :) Will fix.
 
-Signed-off-by: John Kacur <jkacur@redhat.com>
----
- Documentation/tools/rtla/common_options.rst          | 4 ----
- Documentation/tools/rtla/common_osnoise_options.rst  | 4 ++++
- Documentation/tools/rtla/common_timerlat_options.rst | 4 ++++
- 3 files changed, 8 insertions(+), 4 deletions(-)
+>>
+>> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
+>> ---
+>>   drivers/pci/controller/pci-hyperv.c | 13 ++++++++++---
+>>   include/linux/acpi.h                |  9 +++++++++
+>>   2 files changed, 19 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/pci/controller/pci-hyperv.c b/drivers/pci/controller/pci-hyperv.c
+>> index 1eaffff40b8d..ccc2b54206f4 100644
+>> --- a/drivers/pci/controller/pci-hyperv.c
+>> +++ b/drivers/pci/controller/pci-hyperv.c
+>> @@ -906,9 +906,16 @@ static int hv_pci_irqchip_init(void)
+>>   	 * way to ensure that all the corresponding devices are also gone and
+>>   	 * no interrupts will be generated.
+>>   	 */
+>> -	hv_msi_gic_irq_domain = acpi_irq_create_hierarchy(0, HV_PCI_MSI_SPI_NR,
+>> -							  fn, &hv_pci_domain_ops,
+>> -							  chip_data);
+>> +	if (acpi_disabled)
+>> +		hv_msi_gic_irq_domain = irq_domain_create_hierarchy(
+>> +			irq_find_matching_fwnode(fn, DOMAIN_BUS_ANY),
+>> +			0, HV_PCI_MSI_SPI_NR,
+>> +			fn, &hv_pci_domain_ops,
+>> +			chip_data);
+> 
+> Does the above really work?  It seems doubtful to me that irq_find_matching_fwnode()
+> always finds the parent domain that you want.  But I don't have a deep understanding
+> of how this works or is supposed to work, so I don't know for sure.
+> 
+> If the above *does* actually work for all cases, then should it also work for the ACPI
+> case?  Then you could avoid the messiness when acpi_irq_create_hierarchy() doesn't
+> exist.
+> 
+Have not got a system to validate this on. Conceptually (at my level of 
+ignorance) didn't look very off... Will use the "collapsed" version 
+you're suggesting as the litmus test.
 
-diff --git a/Documentation/tools/rtla/common_options.rst b/Documentation/tools/rtla/common_options.rst
-index 7ac7b7581466..2dc1575210aa 100644
---- a/Documentation/tools/rtla/common_options.rst
-+++ b/Documentation/tools/rtla/common_options.rst
-@@ -14,10 +14,6 @@
- 
-         Print debug info.
- 
--**-t**, **--trace**\[*=file*]
--
--        Save the stopped trace to [*file|osnoise_trace.txt*].
--
- **-e**, **--event** *sys:event*
- 
-         Enable an event in the trace (**-t**) session. The argument can be a specific event, e.g., **-e** *sched:sched_switch*, or all events of a system group, e.g., **-e** *sched*. Multiple **-e** are allowed. It is only active when **-t** or **-a** are set.
-diff --git a/Documentation/tools/rtla/common_osnoise_options.rst b/Documentation/tools/rtla/common_osnoise_options.rst
-index f792ca58c211..d73de2d58f5f 100644
---- a/Documentation/tools/rtla/common_osnoise_options.rst
-+++ b/Documentation/tools/rtla/common_osnoise_options.rst
-@@ -25,3 +25,7 @@
- 
-         Specify the minimum delta between two time reads to be considered noise.
-         The default threshold is *5 us*.
-+
-+**-t**, **--trace** \[*file*]
-+
-+        Save the stopped trace to [*file|osnoise_trace.txt*].
-diff --git a/Documentation/tools/rtla/common_timerlat_options.rst b/Documentation/tools/rtla/common_timerlat_options.rst
-index 090700a6ae9f..b12f232f7499 100644
---- a/Documentation/tools/rtla/common_timerlat_options.rst
-+++ b/Documentation/tools/rtla/common_timerlat_options.rst
-@@ -22,6 +22,10 @@
-         Save the stack trace at the *IRQ* if a *Thread* latency is higher than the
-         argument in us.
- 
-+**-t**, **--trace** \[*file*]
-+
-+        Save the stopped trace to [*file|osnoise_trace.txt*].
-+
- **--dma-latency** *us*
-         Set the /dev/cpu_dma_latency to *us*, aiming to bound exit from idle latencies.
-         *cyclictest* sets this value to *0* by default, use **--dma-latency** *0* to have
+>> +	else
+>> +		hv_msi_gic_irq_domain = acpi_irq_create_hierarchy(0, HV_PCI_MSI_SPI_NR,
+>> +			fn, &hv_pci_domain_ops,
+>> +			chip_data);
+>>
+>>   	if (!hv_msi_gic_irq_domain) {
+>>   		pr_err("Failed to create Hyper-V arm64 vPCI MSI IRQ domain\n");
+> 
+> I'm wondering if these are the only changes needed to make vPCI work on
+> arm64 with DeviceTree.  The DMA coherence issue I mentioned in the previous patch
+> definitely affects vPCI devices, so it needs to be fully understood and verified to work
+> correctly.
+> 
+Likely not all as the code is venturing into the new territory composed 
+of the pieces never snapped in place together before. Will work on the 
+previous patch to resolve as many concerns as possible.
+
+>> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+>> index b7165e52b3c6..498cbb2c40a1 100644
+>> --- a/include/linux/acpi.h
+>> +++ b/include/linux/acpi.h
+>> @@ -1077,6 +1077,15 @@ static inline bool acpi_sleep_state_supported(u8 sleep_state)
+>>   	return false;
+>>   }
+>>
+>> +static inline struct irq_domain *acpi_irq_create_hierarchy(unsigned int flags,
+>> +					     unsigned int size,
+>> +					     struct fwnode_handle *fwnode,
+>> +					     const struct irq_domain_ops *ops,
+>> +					     void *host_data)
+>> +{
+>> +	return NULL;
+>> +}
+>> +
+>>   #endif	/* !CONFIG_ACPI */
+>>
+>>   extern void arch_post_acpi_subsys_init(void);
+>> --
+>> 2.45.0
+>>
+
 -- 
-2.44.0
-
+Thank you,
+Roman
 
