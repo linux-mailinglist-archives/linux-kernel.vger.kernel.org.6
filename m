@@ -1,117 +1,248 @@
-Return-Path: <linux-kernel+bounces-180040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70B778C6930
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:05:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD77C8C6934
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:05:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11F75282512
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 15:05:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31E5BB21DE1
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 15:05:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34523155744;
-	Wed, 15 May 2024 15:04:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB1C515574F;
+	Wed, 15 May 2024 15:05:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="LIycBO1R"
-Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="EgVufc0X"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5161C15573A
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 15:04:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A7C015572C;
+	Wed, 15 May 2024 15:05:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715785496; cv=none; b=XiiF46/U25OWaYbfXD/au9rbtCTcX8eSJuOiuDJ4IFG1Y/3aG8bI2PM/FLe3qaumol4uFnj1F2X1UcdmpcEDrnOKBEqpd2h0NsoG8Wf/YT0zlhznRHw7sxWp1lkWGpbtK90BWOyBj4MlCsQJ+nXiswo9NRK2p35RNj/O+HkGf7g=
+	t=1715785537; cv=none; b=PX5fyfl1CQQPTDFmZE4jdGV6dWnnoVYFl2pfZZ3jVAPOlIVnG5UMpJ+TaC6M1xZSxMDohaUl+yHZynFwSdOuySBIYrdfptwEUoGavwQ7Eikzs2yaouHkkfk+fU3iR36DitnZ4F7LqiGNi8B1xuH0PlwItHGxeAz4FVFLo/HU+GA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715785496; c=relaxed/simple;
-	bh=KflAjJacvHjs1RVSIHnQWp2/DStGL16WtVDIhgf6ZbM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B3G0spPeJjEicfp6+39773/H904gZHrIlv8a78RXe82mmCEgZ/dZFSfbu6avWzObuV3e7p9Q24gY6s4yeDhtYmdWcIfUINUCZYBvt8LxWDU0WMmZjbje0IeyajGZ2IlMs6hlpOmH1C8oAsrLHOcKSOd1m6tX9GO960ocv/pCZs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=LIycBO1R; arc=none smtp.client-ip=209.85.166.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-7e1b520812fso45790839f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 08:04:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1715785493; x=1716390293; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ARNv4myOiz34n2955O0D3STgOGbvJhvrIoPTodeqsuE=;
-        b=LIycBO1RWrXGVOeIQwPYdq4UQt8AXsypaKeWh2eMBDhi+UJAA7dkKyKWRk+eFSrBOb
-         dQuuycnuI55jGLY3TBlFKXdmjB+qSyTak3K6P6s4R4wITPl/hxFtJVMO6QySjsT3iyPJ
-         7y8zPXffkCzv8w6P0H/XP+OFqeRFB9hSW6d58=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715785493; x=1716390293;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ARNv4myOiz34n2955O0D3STgOGbvJhvrIoPTodeqsuE=;
-        b=KxV6LNNKAhrjmBWvT9y5PUiXzHZdPBcV3oerGxNmce6QZJIGKwncsdYI7uAS2vhwye
-         qJtI2ghclgVA4zrmbBs6gvW+hUDnfZHRjZoOCH/y/uTDg1c8kaUXl6UHC80FDeV9TgAn
-         yBAP+lcZZr4FpIO+dFsO56Dwkc5m3xaFDTJ5hl9n2hLWlGn/SyNYiZ8XNegKPS86rzGX
-         s5rbqZEhOJaS+tOMlcSwPplj34OHkwHZNWAbnjroLhp24EdAbfcSQ5ytvh3uK6Ji7FRi
-         YhSCYhsJ6CWg/Jlm+U3mO6aArlJ1LOoWgEVTkgj2of204xYw2284A+1HC1iUhrR3eTty
-         BPDA==
-X-Forwarded-Encrypted: i=1; AJvYcCVkF7UVTbqlwgEDrzXR1m2bD3TZIJJ8CCrgxrctCXpDYWoizd9J3N80rXA7N0lkxB2jQOC8BydTwpCpM1FieHQ6tuh1SXfZUFOUbOqO
-X-Gm-Message-State: AOJu0YwkAfbOKkWG7VAfYcqyahrjGDuVwQYcyBSIqxso4JlEB94CmaOI
-	nvi93vIyTTPPSR53b8OYmNKhLRfSpHNI8fi2e2KHPz8qi52xmMOIGv4W1SooEYU=
-X-Google-Smtp-Source: AGHT+IF8hT10bt/12xnGpOweZNoPPER50rWWNs0TSukXJHWHG43ACWEkvi58mLCmBdpT853ZkzCpmA==
-X-Received: by 2002:a92:c988:0:b0:36c:c86b:9181 with SMTP id e9e14a558f8ab-36cc86b9470mr143647785ab.0.1715785493475;
-        Wed, 15 May 2024 08:04:53 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-489376dc9a6sm3548097173.140.2024.05.15.08.04.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 May 2024 08:04:53 -0700 (PDT)
-Message-ID: <1eaf604d-097e-4512-b279-6ce2aca79cd1@linuxfoundation.org>
-Date: Wed, 15 May 2024 09:04:52 -0600
+	s=arc-20240116; t=1715785537; c=relaxed/simple;
+	bh=U7niQY55rvFzkJOC+RqcBOjATswiErUvW4E7z0V9IBg=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YZQJR2n0TWDvbci8/JoDcDA/zYeT3e2Ap85Mu/biwJ6CZ5VtjBsUfBgCAQHZMmnbAraN2amSE7jGo3054gyQbkqPimBAVLU/UJTX6mxhRPy19+7fBvlyTFReTcWHRQGeuhYxtKfF0XpwnIw92c/3+ow3ASYcxlDWWgYsxrwOBRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=EgVufc0X; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44F90bPA024822;
+	Wed, 15 May 2024 15:05:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	date:from:to:cc:subject:message-id:references:mime-version
+	:content-type:in-reply-to; s=qcppdkim1; bh=52vDSGdtcjDH8WF65be74
+	PgpKPFMf4YRwooDlqrX7dU=; b=EgVufc0XF77ElchlfAVZi4hndGoWs8fZ7VW08
+	hrgnrFOR/PQwd85RRnXUjAF5AGhSBD6jTIX1MBABRldJP4vILqGUVJ+CTvjlCOWY
+	er0KLIxAgD9v7ohndLm5La+uFP0OLLpjYcosSPQk2Gfj2iF3qnBidWJj6z0jN0Kv
+	34sYj7e7L2JP39yaEtNbneBKm0bumYHhY1wVSOHeev7GrT5zl2cBcZgyzfa8a3jv
+	1q+kZkqGrSfXyX7e+l6eVhNnA6kXzh5ygLjUIQ5Fz8l8one6RgpYjfMuphMVF9z/
+	AwLrq9a38jUWE+iSjN7ajy8MWeUSCDK/w4IGuBgw9gbePeLtw==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y49gdtqsr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 15 May 2024 15:05:24 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44FF567h015633
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 15 May 2024 15:05:06 GMT
+Received: from hu-vvalluru-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 15 May 2024 08:05:03 -0700
+Date: Wed, 15 May 2024 20:34:59 +0530
+From: Prahlad Valluru <quic_vvalluru@quicinc.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+CC: Bjorn Andersson <andersson@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_nankam@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <quic_abhinavk@quicinc.com>, <konrad.dybcio@linaro.org>,
+        <conor+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v2] arm64: dts: qcom: qcs6490-rb3gen2: enable hdmi bridge
+Message-ID: <20240515150459.GA32547@hu-vvalluru-hyd.qualcomm.com>
+References: <171405653305.2527744.3813895380659072690.robh@kernel.org>
+ <20240426142442.7769-1-quic_vvalluru@quicinc.com>
+ <jr3ble6sxr5mr6cvm6ldvpyk5j4rucj3xy6vbha6ttoecte3d7@llu6qf6oasuc>
+ <171517823376.1753082.4070659246393696781.robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4.19 00/63] 4.19.314-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240514100948.010148088@linuxfoundation.org>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240514100948.010148088@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <171517823376.1753082.4070659246393696781.robh@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 6P98kOzxC02abmPA6fNy5xaHYv8ulUrU
+X-Proofpoint-ORIG-GUID: 6P98kOzxC02abmPA6fNy5xaHYv8ulUrU
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-15_07,2024-05-15_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ impostorscore=0 clxscore=1015 priorityscore=1501 phishscore=0 spamscore=0
+ mlxscore=0 lowpriorityscore=0 suspectscore=0 bulkscore=0 adultscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405010000 definitions=main-2405150106
 
-On 5/14/24 04:19, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.19.314 release.
-> There are 63 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Wed, May 08, 2024 at 09:31:24AM -0500, Rob Herring (Arm) wrote:
 > 
-> Responses should be made by Thu, 16 May 2024 10:09:32 +0000.
-> Anything received after that time might be too late.
+> On Mon, 06 May 2024 18:14:10 -0500, Bjorn Andersson wrote:
+> > On Fri, Apr 26, 2024 at 07:54:42PM GMT, Prahlad Valluru wrote:
+> > > From: Venkata Prahlad Valluru <quic_vvalluru@quicinc.com>
+> > >
+> > 
+> > Please don't thread new versions off existing version. b4 helps you with
+> > getting these things right, please check go/upstream for more details.
+> > 
+> > > Enable lt9611uxc bridge for qcs6490 rb3 gen2 platform.
+> > >
+> > 
+> > Even if it's clear what this is, I would prefer if you described the
+> > hardware a little bit in your commit message.
+> > "Rb3Gen2 has a HDMI connector, connected to DSI via a LT on i2cX.... reset and
+> > irq pins comes from x and y. Describe this."
+> > 
+> > > Signed-off-by: Prahlad Valluru <quic_vvalluru@quicinc.com>
+> > > ---
+> > > v2: Addressed dtschema errors
+> > > 	- Fixed lt9611-irq
+> > > 	- vdd-supply error to be ignored, as it is connected to
+> > > 	  input supply directly, on rb3gen2
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.314-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+> The choice is either fix the dts or fix the binding. 
 
-Compiled and booted on my test system. No dmesg regressions.
+vdd-supply is mandatory for lt9611. Only in case of rb3gen2, we are seeing this
+error, since it is connected to supply directly. Will add dummy vreg to address this.
 
-Tested-by: Shuah Khan <skhan@linuxfoundation.org>
-
-thanks,
--- Shuah
+> 
+> > > ---
+> > >  arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 86 ++++++++++++++++++++
+> > >  1 file changed, 86 insertions(+)
+> > >
+> > > diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> > > index a085ff5b5fb2..c14d4a4bb3ce 100644
+> > > --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> > > +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> > > @@ -51,6 +51,18 @@
+> > >  			};
+> > >  		};
+> > >  	};
+> > > +
+> > 
+> > There's a stray tab here, please run checkpatch --strict on your
+> > patches.
+> > 
+> > > +	hdmi-connector {
+> > > +		compatible = "hdmi-connector";
+> > > +		label = "HDMI";
+> > > +		type = "a";
+> > > +
+> > > +		port {
+> > > +			hdmi_con: endpoint {
+> > > +				remote-endpoint = <&lt9611_out>;
+> > > +			};
+> > > +		};
+> > > +	};
+> > >
+> > >  	reserved-memory {
+> > >  		xbl_mem: xbl@80700000 {
+> > > @@ -530,6 +542,45 @@
+> > [..]
+> > > @@ -602,6 +653,21 @@
+> > >  	status = "okay";
+> > >  };
+> > >
+> > > +&mdss_dsi {
+> > 
+> > We want to keep nodes sorted (by address if applicable, otherwise
+> > alphabetically on node names and on labels). "mdss_dsi" < "mdss_edp".
+> > 
+> > So please move this up where it belongs.
+> > 
+> > > +        vdda-supply = <&vreg_l6b_1p2>;
+> > > +        status = "okay";
+> > > +};
+> > > +
+> > > +&mdss_dsi0_out {
+> > > +        remote-endpoint = <&lt9611_a>;
+> > > +        data-lanes = <0 1 2 3>;
+> > > +};
+> > > +
+> > > +&mdss_dsi_phy {
+> > > +        vdds-supply = <&vreg_l10c_0p88>;
+> > > +        status = "okay";
+> > > +};
+> > > +
+> > >  &qupv3_id_0 {
+> > >  	status = "okay";
+> > >  };
+> > > @@ -711,3 +777,23 @@
+> > >  	function = "gpio";
+> > >  	bias-disable;
+> > >  };
+> > > +
+> > > +&pm7250b_gpios {
+> > > +        lt9611_rst_pin: lt9611-rst-state {
+> > > +                pins = "gpio2";
+> > > +                function = "normal";
+> > > +
+> > > +                output-high;
+> > > +                input-disable;
+> > > +                power-source = <0>;
+> > > +        };
+> > > +};
+> > > +
+> > > +&tlmm {
+> > > +        lt9611_irq_pin: lt9611-irq-state {
+> > > +                pins = "gpio24";
+> > > +                function = "gpio";
+> > > +                drive-strength = <8>;
+> > 
+> > I'd expect a 2 here, so please document why this is 8.
+> > 
+> > Regards,
+> > Bjorn
+> > 
+> > > +                bias-disable;
+> > > +        };
+> > > +};
+> > > --
+> > > 2.17.1
+> > >
+> > 
+> > 
+> 
+> 
+> My bot found new DTB warnings on the .dts files added or changed in this
+> series.
+> 
+> Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+> are fixed by another series. Ultimately, it is up to the platform
+> maintainer whether these warnings are acceptable or not. No need to reply
+> unless the platform maintainer has comments.
+> 
+> If you already ran DT checks and didn't see these error(s), then
+> make sure dt-schema is up to date:
+> 
+>   pip3 install dtschema --upgrade
+> 
+> 
+> New warnings running 'make CHECK_DTBS=y qcom/qcs6490-rb3gen2.dtb' for jr3ble6sxr5mr6cvm6ldvpyk5j4rucj3xy6vbha6ttoecte3d7@llu6qf6oasuc:
+> 
+> arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dtb: hdmi-bridge@2b: 'vdd-supply' is a required property
+> 	from schema $id: http://devicetree.org/schemas/display/bridge/lontium,lt9611.yaml#
+> 
+> 
+> 
+> 
+> 
 
