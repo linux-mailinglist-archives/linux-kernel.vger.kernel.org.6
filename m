@@ -1,77 +1,56 @@
-Return-Path: <linux-kernel+bounces-180101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C17358C6A1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:00:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D0BE98C6A1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:01:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4E5D1C20F85
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:00:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E07A1C22259
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:01:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C7C4156231;
-	Wed, 15 May 2024 16:00:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4ED215624B;
+	Wed, 15 May 2024 16:00:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UUYPQmb4"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="J9El22d1"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A977155723
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 16:00:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72BEC155A53;
+	Wed, 15 May 2024 16:00:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715788840; cv=none; b=UFtNaVYyLxAILbyRt2RobShrLrKH7BwTVK4bfG691fulaFuL4oZQDlHDUQAQ/UO5bfbxMOaHyednEX3spT1vlgDNiZSiZ0mKzOG++WfUY+5Ks/a1Q7lx7D0kX6SH34rgpnQ96zGGII/OL+fL88PDCB9jttqxtnXg0+2+InVmTjI=
+	t=1715788856; cv=none; b=EOUCJdkWk7gq9+tsmXZZUTJGoREFVo1fmVeBojv498d0fcv160AkrYZ+0OaT6O47MoHZFV5w0YAgeg4cOzx1ucM527oLKP9qxEr0nxYHCQcJohjhaSXZbQVq30Q3OR27LOG6bMmEDpjMMCqhyiR/qxVgT8df1FXDT5pG3gwQ4IM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715788840; c=relaxed/simple;
-	bh=vSZLadVXxqpR4dC7K/Hoqnf7AMMN3R3Jvpg2OocRMww=;
+	s=arc-20240116; t=1715788856; c=relaxed/simple;
+	bh=k/puBfybqGdRr3s0WvxOTD3Uq//G7F2oQm8GUykR+Bg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=blaK+4Z6CE2llFD3amWBqapXyUjHOM52e6BKb46IV8D8sTvMBTeQLjxNiVUyw1rRIJtyeZFFqIV17wyNDYQBRdrOhj6bsq9YJmUQwkX7gDiCsl1/ccMclAH3IoGY9gWyBpv4XrhKf8keEUzNgyxdMtJNd079cpJ5jUBklHwOGyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UUYPQmb4; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715788837;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yt8DsUxFz497IwJBgOgaEyff2Zjn77BCwz7q5rgLuW0=;
-	b=UUYPQmb43gGEIB73cLv6xi2HguMjnwwuH9btCbhiMePrqEy0l8nxTvKX0YWhkpsEPj6VPd
-	mBK8CSujQ2IrETl52WhHYVOc/ihFL+f9XjM3zMEVtyuzEnQ2FC3CT80XDJwj1n1bnN6wvQ
-	hF3BAdhiOLrINc1hJFLFZsoVGiKF/0s=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-692-7hRf04vjNHiCrAOya3-RTw-1; Wed, 15 May 2024 12:00:29 -0400
-X-MC-Unique: 7hRf04vjNHiCrAOya3-RTw-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id C15B98025FC;
-	Wed, 15 May 2024 16:00:28 +0000 (UTC)
-Received: from bmarzins-01.fast.eng.rdu2.dc.redhat.com (bmarzins-01.fast.eng.rdu2.dc.redhat.com [10.6.23.12])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id AC6F2C15BB1;
-	Wed, 15 May 2024 16:00:28 +0000 (UTC)
-Received: from bmarzins-01.fast.eng.rdu2.dc.redhat.com (localhost [127.0.0.1])
-	by bmarzins-01.fast.eng.rdu2.dc.redhat.com (8.17.2/8.17.1) with ESMTPS id 44FG0S7l119889
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Wed, 15 May 2024 12:00:28 -0400
-Received: (from bmarzins@localhost)
-	by bmarzins-01.fast.eng.rdu2.dc.redhat.com (8.17.2/8.17.2/Submit) id 44FG0Sq3119888;
-	Wed, 15 May 2024 12:00:28 -0400
-Date: Wed, 15 May 2024 12:00:28 -0400
-From: Benjamin Marzinski <bmarzins@redhat.com>
-To: Yang Yang <yang.yang@vivo.com>
-Cc: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
-        Mikulas Patocka <mpatocka@redhat.com>, dm-devel@lists.linux.dev,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/5] dm: support retrieving struct dm_target from struct
- dm_dev
-Message-ID: <ZkTcHCM49DDqhaYD@redhat.com>
-References: <20240514090445.2847-1-yang.yang@vivo.com>
- <20240514090445.2847-4-yang.yang@vivo.com>
- <ZkTXzG1yrPmW64Z6@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rHOYF7PalhZ6ym+wNvh1HeRYlspn4FK9wBIcC/mDrCvGM95JkRbEdXqBRfqexBRsDqPK9TDeGkNCQjFv/yPmJ3EpQPcX0fiDnKIAvmhpRCnd0IAymfQeEyKSVnjOdsA5xWY5NG1H6n/1IuNPQq6r1OT8uheeqyRtpDkiXIwsNL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=J9El22d1; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=k/puBfybqGdRr3s0WvxOTD3Uq//G7F2oQm8GUykR+Bg=; b=J9El22d1eLEvXYRqeMrIo/on1Y
+	xKAb0pZjsq5PVXgThiBl41GRr0BHp7i/pJK9+wlrkWI+MAcv1d+GKcDZVno/b2lv6J2dz7dJMq0u5
+	f8aZB4jeZrAZ0qKTW0uP49kEVwMib1KR8qHxsb7MGaFUZaLHzGRhlzolaD99EYQZiqoumUb4381bY
+	wlzvjyoBK+eA3eO87XiJlOudtLYFK0MLsM/7QMVXaeI7gxX5hevKWaQyUIiaCCwHaqVXhEatxH7IX
+	KcIPWfR59DT3w66YccTf+I1Xx3Ai30S0Md1p32AxY0vqhjS51mW4xTPXQ1+1kdJ8aWMY192U2kBPj
+	WItA821Q==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1s7H3Y-007XlO-0F;
+	Wed, 15 May 2024 16:00:40 +0000
+Date: Wed, 15 May 2024 17:00:40 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Jiasheng Jiang <jiashengjiangcool@outlook.com>
+Cc: brauner@kernel.org, jack@suse.cz, arnd@arndb.de, gregkh@suse.de,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] libfs: fix implicitly cast in simple_attr_write_xsigned()
+Message-ID: <20240515160040.GL2118490@ZenIV>
+References: <BYAPR03MB41685A92DCDD499A2B1369F0ADEC2@BYAPR03MB4168.namprd03.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,25 +59,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZkTXzG1yrPmW64Z6@redhat.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.8
+In-Reply-To: <BYAPR03MB41685A92DCDD499A2B1369F0ADEC2@BYAPR03MB4168.namprd03.prod.outlook.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Wed, May 15, 2024 at 11:42:04AM -0400, Benjamin Marzinski wrote:
-> When a target calls dm_get_device(), if it adds a new table device to
-> t->devices, then it's the first target in this table to use that device.
-> If flush_pass_around is set for this target, then it also sets
-> sends_pass_around_flush. In __send_empty_flush() if the table has
-> flush_pass_around set, when you iterate through the devices, you only
+On Wed, May 15, 2024 at 03:17:25PM +0000, Jiasheng Jiang wrote:
+> Return 0 to indicate failure and return "len" to indicate success.
+> It was hard to distinguish success or failure if "len" equals the error
+> code after the implicit cast.
+> Moreover, eliminating implicit cast is a better practice.
 
-Err, "When you iterate through the *targets*, you only ..." In this
-method you don't iterate through the list of devices (which is supposed
-to be protected by t->devices_lock).
+According to whom?
 
-> call __send_empty_flush_bios() for the ones with sends_pass_around_flush
-> set.
-> 
-> Or am I overlooking something?
-> 
-> -Ben
+Merits of your ex cathedra claims aside, you do realize that functions
+have calling conventions because they are, well, called, right?
+And changing the value returned in such and such case should be
+accompanied with the corresponding change in the _callers_.
 
+Al, wondering if somebody had decided to play with LLM...
 
