@@ -1,105 +1,83 @@
-Return-Path: <linux-kernel+bounces-180169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E61FA8C6AF3
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:50:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAA9C8C6AF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:52:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 100831C21347
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:50:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70A402815BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:52:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BA6328E11;
-	Wed, 15 May 2024 16:50:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF481374FA;
+	Wed, 15 May 2024 16:52:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="K6HTAu+E";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="iMROvKei"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Uk3nyQRA"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2062.outbound.protection.outlook.com [40.107.243.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBBE8C8FB;
-	Wed, 15 May 2024 16:50:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCAC022F03;
+	Wed, 15 May 2024 16:52:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.62
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715791839; cv=fail; b=cJF1ZVWZJ4mqkMFhgSmdGXDFp45sgwvAruiF6scVOlnnrIjMql+qkm8ND12MyeK4eMxiiLSkrSKB5VXnO5u2JHzaKKajSlIaRCQn3Hd35qhtkhvwFR3puF9RpwzADaFSEr+jRxnOji8lhtrdE3wAbVFF0xggyZyx7Q83MOue9Rk=
+	t=1715791962; cv=fail; b=C2Zp6mhjqYW3AiRfQ/W1dLOaJAsDVQ5Z47phWt7vHUkgja20AupL1rjKCEJvElWCOv8tSTxC6ZbpcWBq8QJVj8EBD1MKTXPnAtAof44f0uua+GS4nunFNcNhdYnHctT4xQrRSZkLFZBtKYSlRxpUTmK54wESjKjOtmSn/dl+FWg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715791839; c=relaxed/simple;
-	bh=VCiE4ORiSWJA2MYIlcjuu6xXwygKsYXyt2vDdEkIQn8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=YSVYPuhoLjDv1M/DqbbKEiGTKG23j+1ThsHsvMrOExZhD1kcJuJV91qafFlchFQxYHKwE8CVAVlDBCGVyktWHF7IqK7IBH/RB2YHaDLmiHGTI/A2ooYpG/T40/O91srmHFCJws0VhVQkpM4Sa7fHoZrIk7N6uWr5pukUwKeSRmo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=K6HTAu+E; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=iMROvKei; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44FGT3gn015164;
-	Wed, 15 May 2024 16:50:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : content-type : in-reply-to :
- mime-version; s=corp-2023-11-20;
- bh=KwTsbmsgVUJG/TeRoaPr56E5PNz7IM8XNz+MZI1XEOA=;
- b=K6HTAu+Ef8/Go0aw7MgW0FIJco1IM0sYtMjKLOCAb1IUpVDEoDkK+eSaO4miR5BHkpLC
- hokFpJEBX3jbuZWSBb0LwclhqrcmYorp/LO3VN0zUqdTWE2c9HG+GRkm7cTP4YPdbZRX
- 6XAzzd9F2dPI5qAE0rJjdZCY86bKHuBcCelzx99yI8j8MndfeFybzfU77Wmjwa5Quge6
- ayRDxKenCM+Vh3eRYOHOsTF919MRklhqIvtCkI/KlAAQ6z4X8Y351E4+Gk6x3TyImnuR
- Gw31CjuZuV/Q3Xjg3YDo5zJugWToNwJ3F5cSYAzuf7Jgdvb3vHO11P7ms2yl77Pvv8vn EA== 
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3y3t4fdj6y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 15 May 2024 16:50:17 +0000
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 44FFXWIp019386;
-	Wed, 15 May 2024 16:50:16 GMT
-Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2168.outbound.protection.outlook.com [104.47.57.168])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3y3r86ks4y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 15 May 2024 16:50:16 +0000
+	s=arc-20240116; t=1715791962; c=relaxed/simple;
+	bh=05oA51NiMHFoXMhlHr9L5XkoejTFtFfpOgEejGJrnKQ=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=qC5NbkTlGtYYsHEtof3mGEQHLvXicDORgg6WA1ckBYjeGV/gdbPApkRSrdLiW4ZOWh3UPEa0RnkOYNbr1p9P90DfiIsdhKHLEMj8i8Rxvd3VJ+nMWtqiRH9N9bQQjwowWKGFeD2qB6jfTplnTGsmpmHzzEYvqmJFSi6YsyziYPI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Uk3nyQRA; arc=fail smtp.client-ip=40.107.243.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Ztm2b1a+bjSROtbhDuc/p/sCgSxVl2pLACo95WR5SHEqh6qyIa3+ABBF5/i+X9r+WE2eDBIRYez9SgCa0d+Vu/Yd1anBb3jGk48YG1FzTqOZGQQHUX1htx58ZZcxV49oohyML0gFXtJHGZyt39HfAmZ6W9UJKw44obQtBWA3MrDWNQvfR6RFBcPz/wLjF+zRxmt+d05ARe6LV/8Xk+SQKSWTO8tBij1kS6baywsL/NXfTBFSxo9rfpimTW0oUHSB24+zj8SaaeCCap2cB2QbtRNJKVRMshNIeSeSC80gJWENWCTd2qShsV5+LXYQUylrlvh/7E+V3tqXUaoGpgFQ/Q==
+ b=aM34o1n01VzKK6hSxudIgxYAw6v6DMIyE0BogFN3desm1QIk9szPw9gKqdvay6XjfKKA62AGrpuly0GMZ5Ezycq7Hu1i3xnBOE55CrqTNu6m8Xb0dA85AZ/ZVKv7D84Up3epj0faZ3yGd34eunBatSniXWPI9EVgSVpAX8BQv99hbDs+bVjDFFzBczixwCxoH5HJCY1w3a7LWUtt1e9XlEU+78oJyeUtEkq4ycs2WoU9I+pY8TVIcEn2n5TQYgzTDNvVYjGstpNsuZsleZFeLdPYcn4T4cJ/4Q0YlIwb9x9MMWqDRtAtN/gVkqFsENW6xbsjlEuiJnGyr5y9TOl7kg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KwTsbmsgVUJG/TeRoaPr56E5PNz7IM8XNz+MZI1XEOA=;
- b=BL4QevnMfGke2eSbcXZHfMMDAY/RXqFFWgDCvgHOQu54xfszDi8zg9XHbn4IxdQGYjGd4/b1fLX/Tjdiij1yeSlJ2BcUtosRBVmeBr5J2mn5XRwoFiTVGvwQx72NPjFGo0pXe5/1Uq8gMO9E7/H/CuScE61g/irlLuB0rKsK6k/E89cdGK/oXHwwLjQ6PnmIj5rk+j8xEIV13NcbM2Be+5BNds82efk+brwB0RUhBDrbOBDZrJ+HQdAGdZn8hoqDMRdIF09pXzQxbKVIZDYKUbaHPyxb1uCuL45ClQE28H8YKHsj+oASqbSyNKGp7QkzEd+LJsmZLu5gJEq+T8wkeg==
+ bh=7YOAoM86uWle2yDyBI4rAxsD8DAOguq8ml+K7eiU5yA=;
+ b=fUd1aPV0GAj0IrImg5zbC3kZBg8isBhmNaqHWMxpIpfdlU/Hh0AShYXaRTkAP0/X+rp68ZM5AKFxmbytQhnPwtYMqrvTzX7ru/nswDSyLNd2WzP1GYUtVU24mXEcr5XppH5ZITphnafNNI0Yt+pHzBBN/tjypX56/i9V8wG6RITEh25p8al4qC+Hn/ygKzkrDK83WU3AeSNhjtsu1g3elpIEK/GSd1JCarBIlD4mt0BNkjv4xprVSw+iVSkJSm1vrcY9fj+XiaRC28nv2TPyQYBoqzAdnhFEHW+pvT7jLvLNzjSzeb30y5jS/fLWQ0fxM8Zcm7VYcprCckkn+HjCQg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KwTsbmsgVUJG/TeRoaPr56E5PNz7IM8XNz+MZI1XEOA=;
- b=iMROvKeixNpJ6h7jfOV95ZwbMeXe9JEJaUMdUh4iUx78gPORhGfzKjm5O7j9AiGST0RXAmA8NT0xeFG/tNvU1ZI2zUY7NCEB7gLURh5S4Oc1tcwPkJlXzqAY2pkixRXTDW62jIVj4dLK1omOqtDw4B3SQ25xQsaM+inGtLRnWm8=
-Received: from SN7PR10MB6287.namprd10.prod.outlook.com (2603:10b6:806:26d::14)
- by DS7PR10MB5198.namprd10.prod.outlook.com (2603:10b6:5:3a5::24) with
+ bh=7YOAoM86uWle2yDyBI4rAxsD8DAOguq8ml+K7eiU5yA=;
+ b=Uk3nyQRA7vClYDDAL0R73Kti1kgYYe577Cfm5DcIs1tjGAx1KP0upU0s2nKIq+IEMH5B0l8Ke36OocrUo5Iqs33XY4cB4zx7bLnZkB4uE+tEnL5xT+bld8FS23Sl9FhJQgXECMlc4LMQJJ7SVKMiN1R7mhz9/YEeRBhmMzVb9H8=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH0PR12MB7982.namprd12.prod.outlook.com (2603:10b6:510:28d::5)
+ by MN2PR12MB4317.namprd12.prod.outlook.com (2603:10b6:208:1d0::16) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.27; Wed, 15 May
- 2024 16:50:14 +0000
-Received: from SN7PR10MB6287.namprd10.prod.outlook.com
- ([fe80::6c60:5db4:7058:1440]) by SN7PR10MB6287.namprd10.prod.outlook.com
- ([fe80::6c60:5db4:7058:1440%6]) with mapi id 15.20.7587.026; Wed, 15 May 2024
- 16:50:14 +0000
-Date: Wed, 15 May 2024 12:50:11 -0400
-From: Kris Van Hees <kris.van.hees@oracle.com>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Kris Van Hees <kris.van.hees@oracle.com>, linux-kernel@vger.kernel.org,
-        linux-kbuild@vger.kernel.org, linux-modules@vger.kernel.org,
-        linux-trace-kernel@vger.kernel.org,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Jiri Olsa <olsajiri@gmail.com>,
-        Elena Zannoni <elena.zannoni@oracle.com>
-Subject: Re: [PATCH v2 0/6] Generate address range data for built-in modules
-Message-ID: <ZkTnwwyTF0WSMmqI@oracle.com>
-References: <20240511224035.27775-1-kris.van.hees@oracle.com>
- <CAK7LNATwSDyAWR2FqccF5RFLpw5CYFyndR0N814nC7G7EaL2Tw@mail.gmail.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK7LNATwSDyAWR2FqccF5RFLpw5CYFyndR0N814nC7G7EaL2Tw@mail.gmail.com>
-X-ClientProxiedBy: MN2PR10CA0023.namprd10.prod.outlook.com
- (2603:10b6:208:120::36) To SN7PR10MB6287.namprd10.prod.outlook.com
- (2603:10b6:806:26d::14)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.26; Wed, 15 May
+ 2024 16:52:36 +0000
+Received: from PH0PR12MB7982.namprd12.prod.outlook.com
+ ([fe80::bfd5:ffcf:f153:636a]) by PH0PR12MB7982.namprd12.prod.outlook.com
+ ([fe80::bfd5:ffcf:f153:636a%5]) with mapi id 15.20.7544.052; Wed, 15 May 2024
+ 16:52:36 +0000
+Message-ID: <26b64d11-9cd2-4e60-b7ce-be2dea0f2caa@amd.com>
+Date: Wed, 15 May 2024 09:52:33 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH iwl-next v9] ice: Add get/set hw address for VFs using
+ devlink commands
+To: Karthik Sundaravel <ksundara@redhat.com>, jesse.brandeburg@intel.com,
+ wojciech.drewek@intel.com, sumang@marvell.com, jacob.e.keller@intel.com,
+ anthony.l.nguyen@intel.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, intel-wired-lan@lists.osuosl.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, horms@kernel.org
+Cc: pmenzel@molgen.mpg.de, jiri@resnulli.us,
+ michal.swiatkowski@linux.intel.com, rjarry@redhat.com, aharivel@redhat.com,
+ vchundur@redhat.com, cfontain@redhat.com
+References: <20240515142207.27369-1-ksundara@redhat.com>
+ <20240515142207.27369-2-ksundara@redhat.com>
+Content-Language: en-US
+From: Brett Creeley <bcreeley@amd.com>
+In-Reply-To: <20240515142207.27369-2-ksundara@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SJ0PR05CA0002.namprd05.prod.outlook.com
+ (2603:10b6:a03:33b::7) To PH0PR12MB7982.namprd12.prod.outlook.com
+ (2603:10b6:510:28d::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -107,263 +85,309 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR10MB6287:EE_|DS7PR10MB5198:EE_
-X-MS-Office365-Filtering-Correlation-Id: c7771cd4-329f-43b9-44c5-08dc74ff17b5
+X-MS-TrafficTypeDiagnostic: PH0PR12MB7982:EE_|MN2PR12MB4317:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8a9caf4a-7c75-4d94-5a01-08dc74ff6c5b
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|7416005|376005|366007;
-X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?5JW+ycprlHwMMVJY/UNwrWZq6zFaKJKsFDh0w7ST5UbiNfrJD2vaEtgt7BY5?=
- =?us-ascii?Q?MxygFlhixklUnVkeqcv3WaJcVDxwer3Gmpq+aVeOV6mwN8b/o+6xHPZHULW8?=
- =?us-ascii?Q?rOE/kZ8gqCJ7Sd3pa6E3zuiU3ECaijonK9TfnfISqQ2KPqtKjm0Gid+6pZmY?=
- =?us-ascii?Q?pVt2qEGFHK3NvWQy+hKSI/EFXUIAcYhRocmqhTM8OwR4IxO/iTY31Ch4KTl8?=
- =?us-ascii?Q?mOakdMVyxNOuskcIdzLQcIZEhWgNmY0C/17UC87j3y4YjIzUZHOeSLnN+XXk?=
- =?us-ascii?Q?SAShhAEGOojx4/ZiIneEzglUMjIgi7BsrqLYO+k/tr6Ywtk8Hptzqv8/Klp4?=
- =?us-ascii?Q?9UbRHxWaMto5l9BvaYfTRxNbIPEiv7PMY/RILJU0gXN3Il5F9CN5bUuxALmz?=
- =?us-ascii?Q?oqaRDnLk95iY+gzwauOQO/aGm915WkAuXOeKE6l/uN2ActagKIk6MF+I3j6s?=
- =?us-ascii?Q?diMrTNMbauwGeriGZcxYjeAL0n00rUTETbhYyjDw/umEWA6+hKszgGVVfo8k?=
- =?us-ascii?Q?hE7/4b35UihRAL+f39w6zuQYiP8XD7uhl09aOO6Q7wz1jD3HQHB6dj90ndTr?=
- =?us-ascii?Q?Qb6pG9ZooXOEGT3PjAiyL60ta2lEs140PRsJrEtBVb1fjcFMVOHOe/ZuNHp0?=
- =?us-ascii?Q?Wtdau3WHejeHJ13H4PtSh8bP/TQLkIFNerYwM9JlMIFFZYHZFSqVK+Dm0fJv?=
- =?us-ascii?Q?XGt6CPAof3ZmWMmbzQ+yjdzGvWKIXLxLd7oJDTEUGY6m/8RvAk3lRmtBV++L?=
- =?us-ascii?Q?rZgAtkEQLvhKlnG1hMdU5ZUj3utfYJ51vFRcdgW4Q+2wtbkb9mG71ebNAkd+?=
- =?us-ascii?Q?Q5cneJm0NCQ5uDhiqIs//QJBRGDdsjFnDHKFTeqcxkSfuqGuU2O4RLlwpOfO?=
- =?us-ascii?Q?yrJwyHxUo4BDO4mdSV8vx8NWlfFBaoAQoIoymafl2O69OhAtj/oy53oDdCPd?=
- =?us-ascii?Q?BqrHPl/Xp9VlLECwkKx00ynjNuxZTt9ZfiIzEGAapokSLKTi5CTu3cfQjxXl?=
- =?us-ascii?Q?q/hzlDhHUreNnqFhjLfOijnXn2iD1DJAnrz/1TGQOiqa21uY7tyfmP9rOQNt?=
- =?us-ascii?Q?YXuRCbxHtuwbjohz1xe8WfHffmpN/iivxuyPlW8gV0WKjuybaRWWSnLh3j1i?=
- =?us-ascii?Q?dTW7Iyj9l4gmTLOQ1H35LKCFIz7qYdag9DXQD7ahLGwOPJ+/6f9R6LxbS6Lz?=
- =?us-ascii?Q?jZrt0AI4YREtsBB55g7ZIZBNhRcb4oxvA89QiUzZ61COGnqk4bZbDnz/Bcw?=
- =?us-ascii?Q?=3D?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR10MB6287.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(7416005)(376005)(366007);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|1800799015|366007|7416005|376005|921011;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?RVlYdmVodDc4UllsZFJuOXBDMDlhcFJOMHZ3L0FJK3JwQ0tRSXFkZTRvUjZO?=
+ =?utf-8?B?TDhoTHNzbldqMXZSZWwyMkN0OUZmdzFTL1FJVElsYysvU1Jzdkdoa09qaW9C?=
+ =?utf-8?B?cDhONXVoMS9ZM2ZOWXZYRytYNkgrN05Za3ZuTGNsVTVYQk4yWURLekVsNTRn?=
+ =?utf-8?B?dEN3SFgyNm1IOSs3bnJKSnUzdHRjeFoyN2U2c1MvelZGQ1dWZ0JpZnl2b21R?=
+ =?utf-8?B?dU1EeWM5SldtRjAyNGoyYjBmdG1QNGdrc3BUbWVQZGZGRGVOL0Nhd2wyR2pP?=
+ =?utf-8?B?VkNlbzBiTEpzaVpySzNuRzFSRDNyZmxaL0FZeEx1QWM2eHhzWTlPMy9hbjdT?=
+ =?utf-8?B?MGJZbENHVWhxRDhWNFFPaUZxNlNPRFBTRG1yN2l6d3ZvL2FUMkUwZ2FxMTFs?=
+ =?utf-8?B?UVNkU3kraXNPSEJhbjRZL3ExMW5RUzFCY2dxVWFJQjZwM1BZQUcwVFJhTmdy?=
+ =?utf-8?B?MG5tc3g3RHlzS0xSenFwS0JUTmxZbHRQUWJWeWREKzZZNWlSMXlFOENCQ2dh?=
+ =?utf-8?B?Rk80TGE2TE0rbnhJTHpWOWUxUW9pLzNCbFpGYmI4Wk5HZkVuK2pMZXZqbWta?=
+ =?utf-8?B?dWlkTUR2aU03dkozTlJjU2VEb3NqaVB1eHcreTFTbzAxeWxoQmFhUHQ1T21P?=
+ =?utf-8?B?N3ZFWFFtMlRzbDBXWnVJNUp4MWRDdlNWRjZub3VBUHNDSmlKaGpUZFhRMDVo?=
+ =?utf-8?B?L2NpaUQ5bys4KzJiM0tUamU5cjBSMkVjNTRydGNIcUwzMGNwRTBiSkFzQXJB?=
+ =?utf-8?B?eDBIRXVrVldZTUJtVE5pSk8rMWxRaU5CeEJJbVlhZG0va2oyTmR1bEVBSlUr?=
+ =?utf-8?B?a2JYM21WYkoxRlp1L2Q3QkJBWDJTSU5LNU9kZGU0N3BxM2dlTmNzQVB2Q0Y5?=
+ =?utf-8?B?OHRNS3JjSGxkQTRSd0M5c1lLNnJZU2thczZySVFSZzZtNkZFN3J1WFFsQ0hL?=
+ =?utf-8?B?UFBPS1VNc1VIQm4wMW1OTTJNZFZHNDJCNHVpT05nYXZYYWYxbEM2ZjdXM3Fx?=
+ =?utf-8?B?ZnlMak5wZG1MQnBRQUF1Y291clNKN0VPSkVkWS8xNU8rSlcxV3hSRWl6amNC?=
+ =?utf-8?B?aWM1NVJwcHh4allHVllUQ0l5NjFXeVUraklJZHFMR3BHaGE5S1UybDlSeTFa?=
+ =?utf-8?B?RHBGRnRsN3JvRDNYY0V1NVJCczh1RTVrV0dSekVnWHdrY2tTY3ZxZHZFWnNt?=
+ =?utf-8?B?OVhHWURiTDl1VVU4Q21QaFF3anBJZ3FycE80VGhzdnArVHZUZnNtbzhuNTVl?=
+ =?utf-8?B?WHNWY2lIRDVZaG5jMTFPU1RRdGhUc0ZtV1JhTDJ5UGNhd09zMjJ1VjFSbjU4?=
+ =?utf-8?B?eVZpUTd2bXJqRWhlTkd2YW9OY1NERktjSjkxQnBOQUNrQndnYkdkV2RqYytB?=
+ =?utf-8?B?N0VxcWZkZ2JEczN4Q1VoT2dFM1NhUGFBcFByTlZNVkpTRGRWaG94WlpKc3NS?=
+ =?utf-8?B?elBvYnUzZll1c3ZRQ09rS3NQd0oyT1VHaFpVQkZ1NjdPYnJkS0dYR2pYNUdm?=
+ =?utf-8?B?YkV2MWhRQWNnUFJSTkhvL3lVb01LS1FBWXhtVy9jZ3R6WGZXMHdRREVVSDM3?=
+ =?utf-8?B?YkFVWTZONnlKWmU0cWxsalVrT3YvNlBST1BqOTVtTXZVQUlzZjNtV0ZWSHFn?=
+ =?utf-8?B?ck9ZVmhHTjVIYlE0NTJ0LzZzUHQ4Sks5cGEwa05iamIzMnBJc0g4WnkwaXNM?=
+ =?utf-8?B?RXNsOVdBaEk2ZWVFakRoUkRQeXN0VGtSSDBQOGRKamU4Q2JLQzZnVytIUzY3?=
+ =?utf-8?Q?RDNhmKihsAIcay3wKK0SIv525SIZmoZ0ZnvQfv4?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR12MB7982.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(366007)(7416005)(376005)(921011);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?E6YBDXRQilAMBslu7mYe+2EoHzQ/9ckrLY73EWYP9MXFuc67YXQqderLVWP8?=
- =?us-ascii?Q?O9XTUoB/qu49zBM+cVjrff5WMIqQo8LNs/OlE4y2hg8r1s/P4D3CXr0pCviP?=
- =?us-ascii?Q?lWHyquj1ErEGUXmwKM8xiLWv8DERBh7C7CT9YSya2wTybFuW/nPQWtPVZqS6?=
- =?us-ascii?Q?9g4U/2Mzll5ZOtEyUYCA3R3ReA7wujj/TPzlMUj9H9f3OSmQHk6SDHw8vzAq?=
- =?us-ascii?Q?EezqGGLGWus9Hk/EVAKzXr8SYb4bIyvXsMoIQWG69CIVmtjr9ikNygV4z59T?=
- =?us-ascii?Q?VZcqk3bM6uaUjR+Ffnq2pyEA8DMXmh1W/76ZiSVB8EDogeOmXJnIOIma8+6n?=
- =?us-ascii?Q?PDkQYkNaU0zNwu/+QvXyUNzZ4WaSmft9mTuZbnKW1fXRXIR/nOJPVcXb879S?=
- =?us-ascii?Q?NDVrKW7cE4H8hxNs25OgsRw0M4aAqULePkA83iuiVOGfOb71Dus7Y+x4vE95?=
- =?us-ascii?Q?RHcs4ET6b6y+auyzo3DlLwX7P4+j5letw0345keAMdg/3cPSwS8bWWgfjTQJ?=
- =?us-ascii?Q?Sc0D5oBgiDUZglQdSQIHmZF5nMj+to58UI6GtI1KlurV0JqbFImYzoSgtnQX?=
- =?us-ascii?Q?U5d+ETQ53qhbL6j3Rje/H8vLSUnMObnNxI/eSi0fDKuFjpeB0uvtDisgNCU4?=
- =?us-ascii?Q?ewG9jI2OWSIdb7p41lgMN8W4fLUaH3IK3kQzw0Ssy6IegsWBci0VypNnq/If?=
- =?us-ascii?Q?5oa8+9z2FXAq5g8/B2KjfSkjwd0mrV+MlTw80E9oKlIYh6UlSw2bXb74ApfT?=
- =?us-ascii?Q?L2SsxfrNIov0Vk3hyzBAZbwx5YBxsyAbFOtzWJ4oKGnExihqi6OD6sCZ2O12?=
- =?us-ascii?Q?2u5obRJgrfNGoRB/2p46YmLtvONYDYr2lYfb3ctPr4HclhCSzdALqTn8rQws?=
- =?us-ascii?Q?Lqu/GnVlfQxqMRoBr3xcVJ9seU0iCByzVFljFmMrEUlgOABpq7tOpUh6cmot?=
- =?us-ascii?Q?Q6Xs6LRZd4XtQPLgn9Q9qT5/AhOpXFSnHgq7G8W8qwv0HNi+JS9a5zxzxr8u?=
- =?us-ascii?Q?6lAsx6YeKSgpqX6bk7aFCItH3Q3t3qfUfqq26R0sixcbC9i656GsbjwoMS1/?=
- =?us-ascii?Q?hx3K18LPhqfgt+B9ENrx1gPA9qWn25luftzzB0uIoQ13xXyKqhjW+VQWZu3N?=
- =?us-ascii?Q?C4DHaYzAfko1fyUXhyq0qHPQr4OpLtUNPtAkKYumOZIMenLS/aQ4WrOIcNCl?=
- =?us-ascii?Q?vTsk+ugiqMCTr/JpwXS8XNLEh2SEpjP3p4ABzEYYiHSYGwoyo4y8LUUnSyiW?=
- =?us-ascii?Q?rz7XX0gGq2LGeTk1r3+IJSA2OEozq4ckIHVzV7wi5eQ30mQve7/Os5N0LHGW?=
- =?us-ascii?Q?peoBFt5Lok4lqmmxZUNnkgDy5pP99pb+ijlol7PikapPhQkjyPvL6/cs1e8n?=
- =?us-ascii?Q?y23245Lt0Cea0wteUaMbmTc0V0RZc+tB3x+AY2ewCEg9Er3RhGhqFfc8kdO6?=
- =?us-ascii?Q?f/XZ5TdHeBUIfiBSGUDQwYwSnB4FhRW5nt7j78cSOxEk7C/GaHFv+Sh6SiTx?=
- =?us-ascii?Q?fkq4CsmXYoThjEueI76Dhy+x+PFq8qMaQeM01rqz9QEXyUZzatxOYLiX1L0W?=
- =?us-ascii?Q?V+K3+ZEU8oc2fHM/EBx+VSlzW38INvCABH7Qg5zWPOaMRpz8D00JfomA9zWf?=
- =?us-ascii?Q?AA=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
-	QFcebcwYRl5LM9h8Bv1IlftDA2f/4Ud0yQPVSenylKeL+8NC6xgDmrdNJ7cJgOsZvzvW77Sw/EAcku9WOENCYVWPyhxfqQF5trD2a83hshImFxqdo8Q9flulrnZY5dNwLYBGJpKrw5CsDwua5QjMTFzWYdK+riivj7wIrKEo/DuenO7fOLJ5kVGYBwWun//k3zFCyts5+8IusbphX8hBB0wsqDelXDXqYmBoFQrxMumwmMDwDVMQHoQwkkaJdPYr7XyzoOAHz0nrCdCW2erfiNKN70C1Nq2mcu3k6BZI8uQdWenticEwdmjhZyHybNxPt1n4zH4+ot5mwxNsASeJbvs2fed27CQj00Qb5MiSFwhQgiAbYilmAEZg3FiZfNujx/Y+LfmGGRiMsybZMc7iJVAYAH40bqGnO0OTe4XpFmfl0ihspvfp8Nx35BDigInlES7gNyvqb45G4wsp9v8ZozdXU97d5+CwVK6Mfp/cFwSVnfJSeJ47QcLFN55BWDddjqRklGEg1yG2V695wpFMxrR2QQ3CxyNkSzpoqzt/VFkabVTZS6OCumFs05XTtY8xTQ+KCg1vnYXbSrOExuErhCPeJ6g/BwqvlNs411KUPb4=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c7771cd4-329f-43b9-44c5-08dc74ff17b5
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR10MB6287.namprd10.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?cmcrcU1VYUI0bzNGdy85dVdXVDRBc05OTmlaN2FpdWU1d3JkWlVrQ2ZSNCtS?=
+ =?utf-8?B?aFRhOEkzaitkK1pkdkM0clVtcmZ0eUJraThGRE1jQ0htaGpWQnBZOVRGUDUz?=
+ =?utf-8?B?dFFqcXJLT21xWjRuSmpBSm1xd3lBSlRBc3FqRW9QS240eWIrOXF0bzFkdVR3?=
+ =?utf-8?B?cHE1ZUcrVitaa0FLZG5OZ1NpeWxvaHVTUUpoZHVqdVdsbm1UMHY1a2wyeUNU?=
+ =?utf-8?B?K0FqNFdSSG0wVDhqaC9LbTVXK3ljSVJjYmxKaUJPSVpuOGI1b1hkNFhHTExm?=
+ =?utf-8?B?OFVJZk1TMFRLWi9hMWs1WnNwaEF2V0JTWmR2a3ZWclh5SWg0SlR4cXhGbHds?=
+ =?utf-8?B?L2gzSW1IU2Q0eE1GNWl2QUJXZG1hZDNpOXlDNmo3SmErMVhoQ0NsdGtrdzRC?=
+ =?utf-8?B?NnFrSTlFdzJPNTdVOGYvTXpYaW5HRW4rd3U4eGZzTi96Sy9NcmVRaHJoc3Fl?=
+ =?utf-8?B?a2hxbllmYUhMbnBzakVYOS9jWW1RdWtxU2lQODBWYnZZcE85STN2NmFud1hO?=
+ =?utf-8?B?U2pEOTB3T05YVTRhUERjdEdrY3krQm0xUzVBZWFIcStUYzA3MzNzM0lSWDQ5?=
+ =?utf-8?B?dmpMdWZsdEtOMXhXajFwblU2TFVhaksrVnZUdmcxR2g2TTRSdmw1VXdzYkJv?=
+ =?utf-8?B?TUE2L25MVDNXeFBqVWNTMWxSem93Sy94NnRnRVFxL1NaZmgydmNuWmYyVlhZ?=
+ =?utf-8?B?Qm1mSjRaMWljSmhNSjdCVDNQS1dodVkzWlZhMUhUV0ZTUndaeDNlVmNUbDJa?=
+ =?utf-8?B?OGVOL0x2Z2psT2E3QWRObi8rZ29ybFR5TTZsQnZySzVBNE8yWXArYTcrUGww?=
+ =?utf-8?B?MnlwbjZIcGdDWXU4VkNvV0xBOU1wM2F3NGYyV3hNSkxUTzUvRUV5QWxNdnhF?=
+ =?utf-8?B?cXlxRWF5eml0a3ZiQUZxS0MzbnQ1YmdmeWFpMGNmWWJ3ckUwZkJMeEZqMDM2?=
+ =?utf-8?B?cFpuaVFzWFpjYzh2Y05oR0dvM2lDSGZMTzdsdStQalFTblFRZE5uUEdpd2NV?=
+ =?utf-8?B?Y1EvdDVzRDF3dmovSk1GT0krN1dibHI5MVF6Qk9EeFVUK2VFOG9lamwrSXpZ?=
+ =?utf-8?B?Z0Z1eUgzUUd3RFpOb1VwUkIwclN4L0lGQTYrTmhYYi9vbU5tSkhVMWZjajRZ?=
+ =?utf-8?B?WTZSbFluRmdSWkxGUTFQZjdvZGlsQVc5N05Eamc2MndrS3d4eVFIeW56NzV1?=
+ =?utf-8?B?UWhSOGJyNTUzM2U5cFFRdms0V1BxSDA4Tlh3d0Rvb3A0a2s1d2tFdTIxZEpR?=
+ =?utf-8?B?VmgzdGFWWmh0Y04zdFFoTDFGa0JkNWVGNWhYZ1piZFJvZnk3U2RBYlFQVnZh?=
+ =?utf-8?B?dkxCNTZ0ZVRpR3N2ZzF3OHlUVW03N3kzN3duZ1pwamRxZGN0WC84UStNSmU1?=
+ =?utf-8?B?cXBKK2k0S01rQ3lFRVFMUDQ1L0Z3aHlRVXVRZjlmb0JoZHBhdWtCRWt0ZG13?=
+ =?utf-8?B?b0N2RG9OcnVvdDdybFFxTmx4dWJ4Z3dMczZSemFIdTRyaU4xNlFMZzFnck5q?=
+ =?utf-8?B?YVhFVzYvRW1XRXdkOGlKT0xEVWpIK0Z5Rm9iTkxYNkJmWnFTcDV0VmtrL1or?=
+ =?utf-8?B?Y243Z2FKcDJINS9SdFUyZkNKaXNzazZ5L1dYeFUzbG4wUDdVOS95U3BzWmta?=
+ =?utf-8?B?bzNzVkZGTkZsSzJkN1UvSkgwUFlqdUZNUWdRanJmQnQ0UFBmTzAyRDBHaTlD?=
+ =?utf-8?B?bFZ1UEk5Y05YN0J6ZXYyT0xoeldtRXpuTHpLSVpMQTVjR0tYaFhyNDJ4TFFu?=
+ =?utf-8?B?eGRDY1gyTk1aKzVkZG5ud0JBY2VMeTdwQ2svdkpWOVpHeEVPRFJ1NjlQRGw1?=
+ =?utf-8?B?RE1ONERDZWo2TjdWZ3VJc2hwZ1ZITHBaVEVBYTBBY2tKUjYwMWxNS3YyaXha?=
+ =?utf-8?B?NWhZMkczc3NXWFpPYmJkbnZEbXQvaW0wVEF2ZEphTjIrY05FM2gvbi9EN3JO?=
+ =?utf-8?B?dWpkekFSRUgvVlpBelduVWhOMmJnakZ5ZHJ0ZG9Xb2dpa2JvSmxFQTN4endt?=
+ =?utf-8?B?VFA4OEcrYUNLek5Xa2I0R1piWFB2NXlpYjBYOHliSkEvOWVlT016TFhpVUth?=
+ =?utf-8?B?dnBybm1XTWQxM0U4dld5enNaQ0VvZzNXRm5lVTB5bWNGdjBtbldFZ1ltZFRM?=
+ =?utf-8?Q?IwgY1/GENCwiEawt/GL47WL1O?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8a9caf4a-7c75-4d94-5a01-08dc74ff6c5b
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR12MB7982.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 May 2024 16:50:14.3705
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 May 2024 16:52:36.4590
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: n492pvsz9DqNcdkVe8cpM2W4JY/W6nkA1ASuemS2LNgnEjVabtOPOL7D0mgqifTbMWLELbYrif3TmJETkuJ3UKEJSaUGiyiLf2pr6FkQjm4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR10MB5198
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-15_10,2024-05-15_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0
- mlxlogscore=999 spamscore=0 suspectscore=0 mlxscore=0 malwarescore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2405010000 definitions=main-2405150119
-X-Proofpoint-ORIG-GUID: vzFI6vPEyGzqD8TLOaMSbDOSpSDHHoyw
-X-Proofpoint-GUID: vzFI6vPEyGzqD8TLOaMSbDOSpSDHHoyw
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6rdPhc/Cj8j3vr5d5LVTf3rpnyzs7kte7no2qxmoEw/1sAJvTQJuHHx5522zoZFKoRDdMpxyh43m98dNlBbv5w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4317
 
-On Mon, May 13, 2024 at 01:43:15PM +0900, Masahiro Yamada wrote:
-> On Sun, May 12, 2024 at 7:42???AM Kris Van Hees <kris.van.hees@oracle.com> wrote:
-> >
-> > Especially for tracing applications, it is convenient to be able to
-> > refer to a symbol using a <module name, symbol name> pair and to be able
-> > to translate an address into a <nodule mname, symbol name> pair.  But
-> > that does not work if the module is built into the kernel because the
-> > object files that comprise the built-in module implementation are simply
-> > linked into the kernel image along with all other kernel object files.
-> >
-> > This is especially visible when providing tracing scripts for support
-> > purposes, where the developer of the script targets a particular kernel
-> > version, but does not have control over whether the target system has
-> > a particular module as loadable module or built-in module.  When tracing
-> > symbols within a module, referring them by <module name, symbol name>
-> > pairs is both convenient and aids symbol lookup.  But that naming will
-> > not work if the module name information is lost if the module is built
-> > into the kernel on the target system.
-> >
-> > Earlier work addressing this loss of information for built-in modules
-> > involved adding module name information to the kallsyms data, but that
-> > required more invasive code in the kernel proper.  This work never did
-> > get merged into the kernel tree.
-> >
-> > All that is really needed is knowing whether a given address belongs to
-> > a particular module (or multiple modules if they share an object file).
-> > Or in other words, whether that address falls within an address range
-> > that is associated with one or more modules.
-> >
-> > This patch series is baaed on Luis Chamberlain's patch to generate
-> > modules.builtin.objs, associating built-in modules with their object
-> > files.  Using this data, vmlinux.o.map and vmlinux.map can be parsed in
-> > a single pass to generate a modules.buitin.ranges file with offset range
-> > information (relative to the base address of the associated section) for
-> > built-in modules.  The file gets installed along with the other
-> > modules.builtin.* files.
-> 
-> 
-> 
-> I still do not want to see modules.builtin.objs.
-> 
-> 
-> During the vmlinux.o.map parse, every time an object path
-> is encountered, you can open the corresponding .cmd file.
-> 
-> 
-> 
-> Let's say, you have the following in vmlinux.o.map:
-> 
-> .text          0x00000000007d4fe0     0x46c8 drivers/i2c/i2c-core-base.o
-> 
-> 
-> 
-> You can check drivers/i2c/.i2c-core-base.o.cmd
-> 
-> 
-> $ cat drivers/i2c/.i2c-core-base.o.cmd | tr ' ' '\n' | grep KBUILD_MODFILE
-> -DKBUILD_MODFILE='"drivers/i2c/i2c-core"'
-> 
-> 
-> Now you know this object is part of drivers/i2c/i2c-core
-> (that is, its modname is "i2c-core")
-> 
-> 
-> 
-> 
-> Next, you will get the following:
-> 
->  .text          0x00000000007dc550     0x13c4 drivers/i2c/i2c-core-acpi.o
-> 
-> 
-> $ cat drivers/i2c/.i2c-core-acpi.o.cmd | tr ' ' '\n' | grep KBUILD_MODFILE
-> -DKBUILD_MODFILE='"drivers/i2c/i2c-core"'
-> 
-> 
-> This one is also a part of drivers/i2c/i2c-core
->
-> 
-> You will get the address range of "i2c-core" without changing Makefiles.
 
-Thank you for this suggestion.  I have this approach now implemented, making
-use of both KBUILD_MODFILE and KBUILD_MODNAME (both are needed to conclusively
-determine that an object belongs to a module).
 
-However, this is not catching objects that are compiled from assembler source,
-because modfile_flags and modname_flags are not added to the assembler flags,
-and thus KBUILD_MODFILE and KBUILD_MODNAME are not present in the .cmd file
-for those objects.
+On 5/15/2024 7:22 AM, Karthik Sundaravel wrote:
+> Caution: This message originated from an External Source. Use proper caution when opening attachments, clicking links, or responding.
+> 
+> 
+> Changing the MAC address of the VFs is currently unsupported via devlink.
+> Add the function handlers to set and get the HW address for the VFs.
+> 
+> Signed-off-by: Karthik Sundaravel <ksundara@redhat.com>
+> ---
+>   .../ethernet/intel/ice/devlink/devlink_port.c | 59 +++++++++++++++++-
+>   drivers/net/ethernet/intel/ice/ice_sriov.c    | 62 +++++++++++++++++++
+>   drivers/net/ethernet/intel/ice/ice_sriov.h    |  8 +++
+>   3 files changed, 128 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/ethernet/intel/ice/devlink/devlink_port.c b/drivers/net/ethernet/intel/ice/devlink/devlink_port.c
+> index c9fbeebf7fb9..6ff7cba3f630 100644
+> --- a/drivers/net/ethernet/intel/ice/devlink/devlink_port.c
+> +++ b/drivers/net/ethernet/intel/ice/devlink/devlink_port.c
+> @@ -372,6 +372,62 @@ void ice_devlink_destroy_pf_port(struct ice_pf *pf)
+>          devl_port_unregister(&pf->devlink_port);
+>   }
+> 
+> +/**
+> + * ice_devlink_port_get_vf_fn_mac - .port_fn_hw_addr_get devlink handler
+> + * @port: devlink port structure
+> + * @hw_addr: MAC address of the port
+> + * @hw_addr_len: length of MAC address
+> + * @extack: extended netdev ack structure
+> + *
+> + * Callback for the devlink .port_fn_hw_addr_get operation
+> + * Return: zero on success or an error code on failure.
+> + */
+> +static int ice_devlink_port_get_vf_fn_mac(struct devlink_port *port,
+> +                                         u8 *hw_addr, int *hw_addr_len,
+> +                                         struct netlink_ext_ack *extack)
+> +{
+> +       struct ice_vf *vf = container_of(port, struct ice_vf, devlink_port);
+> +
+> +       ether_addr_copy(hw_addr, vf->dev_lan_addr);
+> +       *hw_addr_len = ETH_ALEN;
+> +
+> +       return 0;
+> +}
+> +
+> +/**
+> + * ice_devlink_port_set_vf_fn_mac - .port_fn_hw_addr_set devlink handler
+> + * @port: devlink port structure
+> + * @hw_addr: MAC address of the port
+> + * @hw_addr_len: length of MAC address
+> + * @extack: extended netdev ack structure
+> + *
+> + * Callback for the devlink .port_fn_hw_addr_set operation
+> + * Return: zero on success or an error code on failure.
+> + */
+> +static int ice_devlink_port_set_vf_fn_mac(struct devlink_port *port,
+> +                                         const u8 *hw_addr,
+> +                                         int hw_addr_len,
+> +                                         struct netlink_ext_ack *extack)
+> +
+> +{
+> +       struct devlink_port_attrs *attrs = &port->attrs;
+> +       struct devlink_port_pci_vf_attrs *pci_vf;
+> +       struct devlink *devlink = port->devlink;
+> +       struct ice_pf *pf;
+> +       u16 vf_id;
+> +
+> +       pf = devlink_priv(devlink);
+> +       pci_vf = &attrs->pci_vf;
+> +       vf_id = pci_vf->vf;
+> +
+> +       return ice_set_vf_fn_mac(pf, vf_id, hw_addr);
 
-It would seem that it is harmless to add those flags to assembler flags, so
-would that be an acceptable solution?  It definitely would provide consistency
-with non-asm objects.  And we already pass modfile and modname flags to the
-non-asm builds for objects that most certainly do not belong in modules amnyway,
-e.g.
+Instead of creating a duplicate function, it seems like you can do the 
+following instead:
 
-$ cat arch/x86/boot/.cmdline.o.cmd| tr ' ' '\n' | grep -- -DKBUILD_MOD
--DKBUILD_MODFILE='"arch/x86/boot/cmdline"'
--DKBUILD_MODNAME='"cmdline"'
+pf = devlink_priv(devlink);
+vsi = ice_get_main_vsi(pf);
+if (!vsi)
+	return -ENODEV;
 
-> You still need to modify scripts/Makefile.vmlinux(_o)
-> but you can implement everything else in your script,
-> although I did not fully understand the gawk script.
+[...]
+
+return ice_set_vf_mac(vsi->netdev, vf_id, hw_addr);
+
+> +}
+> +
+> +static const struct devlink_port_ops ice_devlink_vf_port_ops = {
+> +       .port_fn_hw_addr_get = ice_devlink_port_get_vf_fn_mac,
+> +       .port_fn_hw_addr_set = ice_devlink_port_set_vf_fn_mac,
+> +};
+> +
+>   /**
+>    * ice_devlink_create_vf_port - Create a devlink port for this VF
+>    * @vf: the VF to create a port for
+> @@ -407,7 +463,8 @@ int ice_devlink_create_vf_port(struct ice_vf *vf)
+>          devlink_port_attrs_set(devlink_port, &attrs);
+>          devlink = priv_to_devlink(pf);
+> 
+> -       err = devl_port_register(devlink, devlink_port, vsi->idx);
+> +       err = devl_port_register_with_ops(devlink, devlink_port, vsi->idx,
+> +                                         &ice_devlink_vf_port_ops);
+>          if (err) {
+>                  dev_err(dev, "Failed to create devlink port for VF %d, error %d\n",
+>                          vf->vf_id, err);
+> diff --git a/drivers/net/ethernet/intel/ice/ice_sriov.c b/drivers/net/ethernet/intel/ice/ice_sriov.c
+> index 067712f4923f..dc40be741be0 100644
+> --- a/drivers/net/ethernet/intel/ice/ice_sriov.c
+> +++ b/drivers/net/ethernet/intel/ice/ice_sriov.c
+> @@ -1415,6 +1415,68 @@ ice_get_vf_cfg(struct net_device *netdev, int vf_id, struct ifla_vf_info *ivi)
+>          return ret;
+>   }
+> 
+> +/**
+> + * ice_set_vf_fn_mac
+> + * @pf: PF to be configure
+> + * @vf_id: VF identifier
+> + * @mac: MAC address
+> + *
+> + * program VF MAC address
+> + */
+> +int ice_set_vf_fn_mac(struct ice_pf *pf, u16 vf_id, const u8 *mac)
+> +{
+> +       struct device *dev;
+> +       struct ice_vf *vf;
+> +       int ret;
+> +
+> +       dev = ice_pf_to_dev(pf);
+> +       if (is_multicast_ether_addr(mac)) {
+> +               dev_err(dev, "%pM not a valid unicast address\n", mac);
+> +               return -EINVAL;
+> +       }
+> +
+> +       vf = ice_get_vf_by_id(pf, vf_id);
+> +       if (!vf)
+> +               return -EINVAL;
+> +
+> +       /* nothing left to do, unicast MAC already set */
+> +       if (ether_addr_equal(vf->dev_lan_addr, mac) &&
+> +           ether_addr_equal(vf->hw_lan_addr, mac)) {
+> +               ret = 0;
+> +               goto out_put_vf;
+> +       }
+> +
+> +       ret = ice_check_vf_ready_for_cfg(vf);
+> +       if (ret)
+> +               goto out_put_vf;
+> +
+> +       mutex_lock(&vf->cfg_lock);
+> +
+> +       /* VF is notified of its new MAC via the PF's response to the
+> +        * VIRTCHNL_OP_GET_VF_RESOURCES message after the VF has been reset
+> +        */
+> +       ether_addr_copy(vf->dev_lan_addr, mac);
+> +       ether_addr_copy(vf->hw_lan_addr, mac);
+> +       if (is_zero_ether_addr(mac)) {
+> +               /* VF will send VIRTCHNL_OP_ADD_ETH_ADDR message with its MAC */
+> +               vf->pf_set_mac = false;
+> +               dev_info(dev, "Removing MAC on VF %d. VF driver will be reinitialized\n",
+> +                        vf->vf_id);
+> +       } else {
+> +               /* PF will add MAC rule for the VF */
+> +               vf->pf_set_mac = true;
+> +               dev_info(dev, "Setting MAC %pM on VF %d. VF driver will be reinitialized\n",
+> +                        mac, vf_id);
+> +       }
+> +
+> +       ice_reset_vf(vf, ICE_VF_RESET_NOTIFY);
+> +       mutex_unlock(&vf->cfg_lock);
+> +
+> +out_put_vf:
+> +       ice_put_vf(vf);
+> +       return ret;
+> +}
+
+This is almost an exact copy of ice_set_vf_mac(). The only difference 
+being the function arguments.
+
+Was there any reason to not use ice_set_vf_mac()? Why can't you pass the 
+PF's netdev?
+
+> +
+>   /**
+>    * ice_set_vf_mac
+>    * @netdev: network interface device structure
+> diff --git a/drivers/net/ethernet/intel/ice/ice_sriov.h b/drivers/net/ethernet/intel/ice/ice_sriov.h
+> index 8f22313474d6..2ecbacfa8cfc 100644
+> --- a/drivers/net/ethernet/intel/ice/ice_sriov.h
+> +++ b/drivers/net/ethernet/intel/ice/ice_sriov.h
+> @@ -28,6 +28,7 @@
+>   #ifdef CONFIG_PCI_IOV
+>   void ice_process_vflr_event(struct ice_pf *pf);
+>   int ice_sriov_configure(struct pci_dev *pdev, int num_vfs);
+> +int ice_set_vf_fn_mac(struct ice_pf *pf, u16 vf_id, const u8 *mac);
+>   int ice_set_vf_mac(struct net_device *netdev, int vf_id, u8 *mac);
+>   int
+>   ice_get_vf_cfg(struct net_device *netdev, int vf_id, struct ifla_vf_info *ivi);
+> @@ -80,6 +81,13 @@ ice_sriov_configure(struct pci_dev __always_unused *pdev,
+>          return -EOPNOTSUPP;
+>   }
+> 
+> +static inline int
+> +ice_set_vf_fn_mac(struct ice_pf __always_unused *pf,
+> +                 u16 __always_unused vf_id, const u8 __always_unused *mac)
+> +{
+> +       return -EOPNOTSUPP;
+> +}
+> +
+>   static inline int
+>   ice_set_vf_mac(struct net_device __always_unused *netdev,
+>                 int __always_unused vf_id, u8 __always_unused *mac)
+> --
+> 2.39.3 (Apple Git-146)
 > 
 > 
-> Now, you can use Python if you like:
-> 
->   https://lore.kernel.org/lkml/20240512-python-version-v2-1-382870a1fa1d@linaro.org/
-> 
-> Presumably, python code will be more readable for many people.
-> 
-> 
-> GNU awk is not documented in Documentation/process/changes.rst
-> If you insist on using gawk, you need to add it to the doc.
-> 
-> 
-> 
-> 
-> 
-> Having said that, I often hope to filter traced functions
-> by an object path instead of a modname because modname
-> filtering is only useful tristate code.
-> For example, filter by "path:drivers/i2c/" or "path:drivers/i2c/i2c-core*"
-> rather than "mod:i2c-core"
-> 
-> <object path, symbol name> reference will be useful for always-builtin code.
-> 
-> 
-> 
-> 
-> >
-> > The impact on the kernel build is minimal because everything is done
-> > using a single-pass AWK script.  The generated data size is minimal as
-> > well, (depending on the exact kernel configuration) usually in the range
-> > of 500-700 lines, with a file size of 20-40KB.
-> >
-> > Changes since v1:
-> >  - Renamed CONFIG_BUILTIN_RANGES to CONFIG_BUILTIN_MODULE_RANGES
-> >  - Moved the config option to the tracers section
-> >  - 2nd arg to generate_builtin_ranges.awk should be vmlinux.map
-> >
-> > Kris Van Hees (5):
-> >   trace: add CONFIG_BUILTIN_MODULE_RANGES option
-> >   kbuild: generate a linker map for vmlinux.o
-> >   module: script to generate offset ranges for builtin modules
-> >   kbuild: generate modules.builtin.ranges when linking the kernel
-> >   module: add install target for modules.builtin.ranges
-> >
-> > Luis Chamberlain (1):
-> >   kbuild: add modules.builtin.objs
-> >
-> >  .gitignore                          |   2 +-
-> >  Documentation/dontdiff              |   2 +-
-> >  Documentation/kbuild/kbuild.rst     |   5 ++
-> >  Makefile                            |   8 +-
-> >  include/linux/module.h              |   4 +-
-> >  kernel/trace/Kconfig                |  17 ++++
-> >  scripts/Makefile.lib                |   5 +-
-> >  scripts/Makefile.modinst            |  11 ++-
-> >  scripts/Makefile.vmlinux            |  17 ++++
-> >  scripts/Makefile.vmlinux_o          |  18 ++++-
-> >  scripts/generate_builtin_ranges.awk | 149 ++++++++++++++++++++++++++++++++++++
-> >  11 files changed, 228 insertions(+), 10 deletions(-)
-> >  create mode 100755 scripts/generate_builtin_ranges.awk
-> >
-> >
-> > base-commit: dd5a440a31fae6e459c0d6271dddd62825505361
-> > --
-> > 2.42.0
-> >
-> >
-> 
-> 
-> -- 
-> Best Regards
-> Masahiro Yamada
 
