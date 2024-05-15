@@ -1,126 +1,106 @@
-Return-Path: <linux-kernel+bounces-179398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C3818C5FC0
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:27:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E0B98C5FC2
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:33:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D8721F229EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 04:27:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2165E282968
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 04:33:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6498E39851;
-	Wed, 15 May 2024 04:27:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14EC939ACD;
+	Wed, 15 May 2024 04:32:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P9SSwhNF"
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="kBXOlXgZ"
+Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6213238F82;
-	Wed, 15 May 2024 04:27:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB767EA4;
+	Wed, 15 May 2024 04:32:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715747236; cv=none; b=P96Bp0fl31p4dTFuBZrXbIc7hxoJjmLKaxHgfscD+3lcUIOjuI2ULsIOqt06GSENEjnYQXhyJP7X2CBI8eEdJm1Vi5C7m/ATrEpnW92jrJb5n2f0XYdTlMzQ6t/NwUe/6989lL0pypUKPjkpiigTLiKteQDdqGCSfEeHlbP0Pws=
+	t=1715747577; cv=none; b=lo3kMGyl/SEu3CoGTfHtGt9uQ6+ZknvrzqM2s97vpTFdS/9ZTKlnOUjrG4PH3CpEHZlsX9rLkLmv7Sfmy/l6IQIUJtOSQJeLVIPKNcdhAtfXB3q4AevpGO2A1eI0TE8cDhs6Azy++Ul9l+a3A4PQjFGagB76L7avxZRn22wnC1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715747236; c=relaxed/simple;
-	bh=uG3TlZQYwVsJzNK3nRYCiUcbCmFyKeITsFWYtpbGuRM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fFNFZTzZwhCbKcXFUIOpqIFZfCDx+1TLZZl7IAibkmRjySuBGTbbF2whutPrfhtwrks2KPpn+uEhfDYAOHP7eHzsfA0LjU2kUt/wan3UUyL1uBtlMXy9CHbZNK+3FdTZb8TMpgfTkzUw26Gws0jgj0EdQRD1I7Qd9iJ0QZrdEmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P9SSwhNF; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6181d032bf9so63004687b3.3;
-        Tue, 14 May 2024 21:27:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715747234; x=1716352034; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WiEIOLpsixcgy3ozP40X2dZ487g1O4kcCzqIi9RaQQg=;
-        b=P9SSwhNF4AY36TObyP05CQNMXzOu7ELaYori7nka/fA7uIssxQy4OUuFPVdd/fyniH
-         arZ+tQoGPQptUIopSPQEkb53al4J6JwXw0/aK3e+7toA8m9aeyT/J/f8B8TFpl6LYqwd
-         wGiOxxOBzFx919/Ut0pOsBGaCsnLLE0SHPOPfJDihg3Tgr2424Mg1bCY2pp3uN+f2vwB
-         MUoBnnXguRid9VkNO55UW3js8FUAAXCocSsIchJP+VRxn+sqbR8r4CoKbJVAG/x3e+4o
-         0tyHilRAygLWxPervDckQcco3XSzS1kHqCAGZrmUQ4I6xft0XaHXME8Clj3TZK2jbSpE
-         H+wg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715747234; x=1716352034;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WiEIOLpsixcgy3ozP40X2dZ487g1O4kcCzqIi9RaQQg=;
-        b=wO/y9qA8Uz6aujkDYmFUEmBl2akWqc3En0WpboiiVcawGmv0V+7198lwXyWKCNoLgg
-         HhhUGWtpe8+r8KbVkiL1gItFyHJBX/GggU2W8hX/qVpEWRrlYTB5Y7XdjlDT+Tus50OH
-         ZSAps54nqx/7+k0qzCIfCfRx2mXhwnM02SKes0HHZDAayUwkJ32NaG7WwWwPKtWkYJ+7
-         5Q7HgPgV92s9CWxueAuPHY3apqFiV0w5QQavnMy0dE781sL519ph4ttMayt88Gghrnzj
-         xlALvCiw7uxi1opt5Sa7YlfwPhjQb1UcskzByXPHsw8zKBEM2//ZsCd7Y02F0BSvoSoz
-         ffUw==
-X-Forwarded-Encrypted: i=1; AJvYcCW6ZS8R8F5h9nRG6dLZTqIBM4/EEYUrg4EqcVM5b18OaIi+mu6x0U8Oa3oWNke/fw248jhMm3TkGEa8ikQ5OMabSlcAqONkU8qj2CP6
-X-Gm-Message-State: AOJu0YwnNRceXyOyc+e7dhn/rqK6T0R27g9nbEU1INb9OSYut5sGJmKe
-	H5VGCm8/Y5j9lG7cLH84DuqYcqryzgbsCdGFShDeXxL/uf9P62T/tzPi91pIJv8=
-X-Google-Smtp-Source: AGHT+IE9EzcDblcgyUuBQZl41P24ypu366NHZpYiJI7vY8L3WexEfNpzbwPKX6UF0opw3iJhK9/P0g==
-X-Received: by 2002:a05:690c:f87:b0:61b:1e81:4f65 with SMTP id 00721157ae682-622afd979demr174326217b3.0.1715747234119;
-        Tue, 14 May 2024 21:27:14 -0700 (PDT)
-Received: from server (S0106f85e42401d5e.cg.shawcable.net. [174.0.240.170])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2ade2besm10350742b3a.98.2024.05.14.21.27.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 May 2024 21:27:13 -0700 (PDT)
-Date: Wed, 15 May 2024 04:27:11 +0000
-From: Abhinav Saxena <xandfury@gmail.com>
-To: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Cc: Shuah Khan <shuah@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Shuah Khan <skhan@linuxfoundation.org>
-Subject: Re: [RFC PATCH 0/4] selftests/binderfs: Fixes to binderfs_test
-Message-ID: <ZkQ5n4pZYv2PfwmH@server>
-References: <20240515010805.605511-1-xandfury@gmail.com>
+	s=arc-20240116; t=1715747577; c=relaxed/simple;
+	bh=Yo39EB6jrUbAacBHPv9rywt0Ai871FVruWXcOiDl+4E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gfpHAgDs74aD4TyYDZGC+tkFRu3AWh0bZ4ndJvbEwy9GDg6fGUei+i3Vjga+EJFU7VM4t1yQzB7VEMCOuaPu9WMzXxHz46ksUZ+d3a5Y5PvEHfqpihCotyp2MNUjPPQWQ8iF8Xbz9GPk5RGkKdaxNCF+qaEGqUn60wPfa9ZWc8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=kBXOlXgZ; arc=none smtp.client-ip=199.89.1.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 009.lax.mailroute.net (Postfix) with ESMTP id 4VfL1Y15CkzlgT1M;
+	Wed, 15 May 2024 04:32:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1715747567; x=1718339568; bh=Yo39EB6jrUbAacBHPv9rywt0
+	Ai871FVruWXcOiDl+4E=; b=kBXOlXgZJAHps4T8aAmKvg5inNn66MhJTttx2fpa
+	uczaUU3WXnsbOu9B7uCN9K8TizsBQojJB7csXtnRiLSMaFSB6TUzBCiGBjqfOA6V
+	QKfDzGvoA8Bt2407dkjBe5LonGcCHDoFRaJujtB1w2w39abpr0NU4GlwscYsa00w
+	V9L+eI+fbMRS5dPBIPZ2nLP4n+oZf0hVj3wSilTPFRxWrSL/fp084w5mgePvgdzR
+	p6VPU0xboUwszMWhgu1jPJgZ3cwk5+blSP2kZYfBEMbUlS+kY3o4lXZYEh7sLZ0N
+	5Z/GiscBTqkhmhiGlp6nQiVItqY2PElbvO7afVHBVS5T7A==
+X-Virus-Scanned: by MailRoute
+Received: from 009.lax.mailroute.net ([127.0.0.1])
+ by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id VSczGBCQHKou; Wed, 15 May 2024 04:32:47 +0000 (UTC)
+Received: from [172.20.0.79] (unknown [8.9.45.205])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4VfL1V43gMzlgT1K;
+	Wed, 15 May 2024 04:32:46 +0000 (UTC)
+Message-ID: <de19c4be-ef6d-4b1a-be26-fb697ac29026@acm.org>
+Date: Tue, 14 May 2024 22:32:40 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240515010805.605511-1-xandfury@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] scsi: ufs: Allow RTT negotiation
+To: Avri Altman <Avri.Altman@wdc.com>,
+ "Martin K . Petersen" <martin.petersen@oracle.com>
+Cc: Bean Huo <beanhuo@micron.com>, Peter Wang <peter.wang@mediatek.com>,
+ "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20240514050823.735-1-avri.altman@wdc.com>
+ <34c50f23-82dc-4b53-b8cb-e5c07c6e0106@acm.org>
+ <DM6PR04MB6575CE65772D92073360FE64FCE32@DM6PR04MB6575.namprd04.prod.outlook.com>
+ <0300cd4e-46d6-499a-98d5-72360c94ae49@acm.org>
+ <DM6PR04MB65759D4064B9FBF13BBFCF72FCE32@DM6PR04MB6575.namprd04.prod.outlook.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <DM6PR04MB65759D4064B9FBF13BBFCF72FCE32@DM6PR04MB6575.namprd04.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Adding Shuah Khan<skhan@linuxfoundation.org> to cc.
+On 5/14/24 15:07, Avri Altman wrote:
+> Bart Van Assche wrote:
+>> My understanding is that the above check won't work as intended if
+>> ufshcd_rtt_set() does not modify the RTT value. Wouldn't it be better
+>> to add a boolean in struct ufs_hba that indicates whether or not
+>> ufshcd_rtt_set() has been called before?
+ >
+> My intension was to not override RTT should it was written, e.g. from user space.
+> As this attribute is persistent.
 
--Abhinav.
+How can RTT be written from user space? There is no sysfs attribute for
+configuring the RTT value. If the above refers to a mechanism that
+bypasses the UFSHCI kernel driver: I don't think that we should preserve
+any configuration changes applied this way. As an example, the SCSI core
+does not care about configuration changes applied via the SG interface.
 
-On Wed, May 15, 2024 at 01:08:01AM +0000, Abhinav Saxena wrote:
-> Hi everyone,
-> 
-> My name is Abhinav Saxena. I am a graduate student at the University
-> of Calgary. This is my first patch series for the Linux kernel. I am
-> applying for the "Linux kernel Bug Fixing Summer Unpaid
-> 2024". Apologies in advance if I made any trivial mistakes :)
-> 
-> This patch mainly includes issues reported by checkpatch.pl.  The
-> changes include:
-> - Running clang-format on `binderfs_test.c` to fix formatting issues.
-> - Updates the macro close_prot_errno_disarm macro.
-> 
-> Testing: I tested patches on my local machine (ARM64 ubuntu) with
-> checkpatch.pl and running the selftests.
-> 
-> Best,
-> Abhinav
-> 
-> Abhinav Saxena (4):
->   run clang-format on bindergfs test
->   update close_prot_errno_disarm macro to do{...}while(false) structure
->     for safety
->   Macro argument 'fd' may be better as '(fd)' to avoid precedence issues
->   add missing a blank line after declarations; fix alignment formatting
-> 
->  .../filesystems/binderfs/binderfs_test.c      | 204 +++++++++++-------
->  1 file changed, 126 insertions(+), 78 deletions(-)
-> 
-> --
-> 2.34.1
-> 
+Additionally, what does "persistent" mean in this context?
+
+Thanks,
+
+Bart.
+
 
