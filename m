@@ -1,154 +1,105 @@
-Return-Path: <linux-kernel+bounces-179586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55B0A8C61C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:35:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 569338C6225
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:52:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 787271C21CC5
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 07:35:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CEAC1F22488
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 07:52:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E80BA446BD;
-	Wed, 15 May 2024 07:34:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E73548CF2;
+	Wed, 15 May 2024 07:52:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="fBh8nkRi";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="AsX96VWV"
-Received: from wfout7-smtp.messagingengine.com (wfout7-smtp.messagingengine.com [64.147.123.150])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="SmgL9IFq"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 153D342061;
-	Wed, 15 May 2024 07:34:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CEC342AAD;
+	Wed, 15 May 2024 07:52:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715758498; cv=none; b=l5l02ae6uBLiiGSuqedtNsds/njp/KhNDoK49XI9t54JT72p7+gQmRYEBmf78Qr4ji8XCzqX7ShtUar2qJ8nkZIL9Nq+2q/bpz4eEaj0GKh7TWKCuySFsiX5LxhN06CQxN1cAruer833rXuIIYkylLy4LrteNBUoH7sHd5BX7mw=
+	t=1715759545; cv=none; b=VFitBySnrJdp5Z/HItbjwYODDmvkU0HKM2uSmaNDJBcTQgZBwJYMb/8gorfrrQcw6KtKILoIZ2HpfMYas33+z/TikXrYdKGvLOP0pJIv5pvEK4BoQW97RD5nPr0Emm8nl0fL4R/m9Pc45aQngXS7P6gX5VhSWpWlBBt//JI6lWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715758498; c=relaxed/simple;
-	bh=o0K8SOZhFFx3AbDud2mrFyHDdGrcVFTLMD9MdfObI+0=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=T1gtPYyMWuNmwoPeuEV2b98s2GeOonp/ShQIUc2u7FNP49cB5wh8RzlzXo3eXHIob5nMBDUPqG9dzjwI7dhLw2Tb963e6bHUhn9zlVGvCdmZrYD6cjejcwqeqI5RLvqEYG/Xnsz1IDgt7jQB4FGRAfqYfhlYfy6J1yDmlL+Ndqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=fBh8nkRi; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=AsX96VWV; arc=none smtp.client-ip=64.147.123.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfout.west.internal (Postfix) with ESMTP id 664B51C000EC;
-	Wed, 15 May 2024 03:34:53 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Wed, 15 May 2024 03:34:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1715758493; x=1715844893; bh=vYBANP9AhE
-	/d4SYDAtFqOYHR51zF89WgGBJY4yYfEbU=; b=fBh8nkRioN2mg4e68WVi/3USgv
-	+hXgKI9+wvlzhnDN/BsJAkWcdpd4vm8XxJ1ytSeV9eA5dJPGsYAHiwAWKBkiqI0o
-	Z/nnMXdhVsQeu31HeBjkvfsw4y90IS20zEd1XXS6LklsF5IhWirTXBibO9GGpTgO
-	OosXcJG1YXO9uhW/OiIwAwyLnwrbLzE+TxQA/ilRj2/eS/eK/TQ0iElSpEJfQx5Y
-	1kprX8MUZlkdQcPwZoG5tK67SyZ11d0Y+W+D3vzDK86aTsXACzwjRQBt6v2o8OKh
-	r0lyugNyjYdec86oSIv5CyPIKMxBXWEstiyFwNtQAKa/87HigMWHWSmotCrQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1715758493; x=1715844893; bh=vYBANP9AhE/d4SYDAtFqOYHR51zF
-	89WgGBJY4yYfEbU=; b=AsX96VWVBUDft5ySkos/jCnMBF+Jq5h6nP2QvMhrDCL/
-	J27ZPMy9V8syoXKAfZN3bHQuKnpvYsBH7BfF81NGWq6bzD2/y+tM+zLjaZk8qh1K
-	78uckXnN7U6hMCOAMlC+rL3VxX2ikeqlmpUZx3hw1zRAu8toxyTAjgCZsfvc3SY/
-	BnfGNNpX17ggOEbdYUm5gmpyq703jVGoQPvs6QVDKKZFzr/NLZkUWWnC0k7lW4g7
-	9idkhMwYDmCMjSuLxKXqlkx8UaEsCUmC72B2YKc0wsUAnmYwGrq/G8Du5vrHHLuF
-	f4fV/bfY4HWal34oyDp92MK43avjyJTOfqfo3GId1w==
-X-ME-Sender: <xms:nGVEZrTWXeO-r8Q2ZkDMO7k0wgBnmpFJZfBVoLPZoN4K5RgUU9bF-Q>
-    <xme:nGVEZsw-wGtDI211XsS1nUc5k_52Ue7M9J3DuiTYGDWaZD_aJJTbfVPIm1zFmGZ--
-    egzIGyEPXDnfyvkTAg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdegjedguddujecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdet
-    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
-    htthgvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedt
-    keetffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    grrhhnugesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:nGVEZg1dtlyn73t6SSZDCWleJ4f6fVHqNX91Oh4wgX-ZF2ZFc67Cnw>
-    <xmx:nGVEZrC4HqRqXaolYHiHL0fI16fXbFBLc-0kAJaKf34bECT17kXqmw>
-    <xmx:nGVEZkiHhpkzRvcSRDMRhoZ111s-M0KagK3KST73zwXZeDYopa2EBQ>
-    <xmx:nGVEZvrlGOP-h5H9ccuKDmycdu6Mh7YZOUX7FBImidU7sEv-K9wGTg>
-    <xmx:nWVEZrTJGabmz0WlGvhGr4yxxbHT4SGICnzcZ4SHDhWNLtrMqiCUSkAv>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id E9B46B6008D; Wed, 15 May 2024 03:34:51 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-455-g0aad06e44-fm-20240509.001-g0aad06e4
+	s=arc-20240116; t=1715759545; c=relaxed/simple;
+	bh=EseU8l9i6FsdcgIhuNlxtMXNzYYXWc+xZzlPU9p9RDA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Dw+x1fR5L4OGXAjfsmY8tp7NK6mISF4FmQD23iqwcmxW6sZQZbcbOxTvvVw4KtXk2+Gp7OU+EAdKVdHZf6gU9ZIyltlwLSuA6Wwk7c7yRel3JbjBW3p7ByQi8HmcZImoAWBv8R4Pvro+ftVMhE0bvEr9dmHu1osXO7j5vrwD1Pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=SmgL9IFq; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: f2f16930128d11efb92737409a0e9459-20240515
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=+Kk+4ccaigRSqLMLy3uDs3B3e9ohN0+aD87eOWCOx5o=;
+	b=SmgL9IFq2Ru43vBV3kmX/sDe/qXSzHH8X6hknfXWr0a1+8WLEs0BRbGCCE1GP32Yvs/HlDboT5q4IJy79/NTU/oxe3J54EE3LBn/YMS6SQW/DqnmCGHIf8YE1K1MHpoa7n1EQvRglaRq7MdXAKcxgeS9ZQG95zihT50AGG9LM+Q=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:4ac413ad-28e7-4a18-815d-eae2a2a796df,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:82c5f88,CLOUDID:5a3a1dfc-ed05-4274-9204-014369d201e8,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: f2f16930128d11efb92737409a0e9459-20240515
+Received: from mtkmbs09n1.mediatek.inc [(172.21.101.35)] by mailgw01.mediatek.com
+	(envelope-from <yenchia.chen@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 410055962; Wed, 15 May 2024 15:37:14 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Wed, 15 May 2024 15:37:13 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Wed, 15 May 2024 15:37:13 +0800
+From: Yenchia Chen <yenchia.chen@mediatek.com>
+To: <stable@vger.kernel.org>
+CC: yenchia.chen <yenchia.chen@mediatek.com>, "David S. Miller"
+	<davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Matthias Brugger
+	<matthias.bgg@gmail.com>, Eric Dumazet <edumazet@google.com>, Sasha Levin
+	<sashal@kernel.org>, Simon Horman <horms@kernel.org>, Pedro Tammela
+	<pctammela@mojatatu.com>, Zhengchao Shao <shaozhengchao@huawei.com>, Ryosuke
+ Yasuoka <ryasuoka@redhat.com>, Thomas Graf <tgraf@suug.ch>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>
+Subject: [PATCH 5.15 0/2] netlink, fix issues caught by syzbot
+Date: Wed, 15 May 2024 15:36:36 +0800
+Message-ID: <20240515073644.32503-1-yenchia.chen@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <ace5ac5c-88d2-43be-9236-11d3913886b9@app.fastmail.com>
-In-Reply-To: <20240514102757.b7034966a58e6cf44d75dc7d@linux-foundation.org>
-References: <20240418-alice-mm-v6-0-cb8f3e5d688f@google.com>
- <20240418-alice-mm-v6-2-cb8f3e5d688f@google.com>
- <20240514102757.b7034966a58e6cf44d75dc7d@linux-foundation.org>
-Date: Wed, 15 May 2024 07:34:31 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Andrew Morton" <akpm@linux-foundation.org>,
- "Alice Ryhl" <aliceryhl@google.com>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Matthew Wilcox" <willy@infradead.org>,
- "Alexander Viro" <viro@zeniv.linux.org.uk>,
- "Kees Cook" <keescook@chromium.org>, "Alex Gaynor" <alex.gaynor@gmail.com>,
- "Wedson Almeida Filho" <wedsonaf@gmail.com>,
- "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- "Benno Lossin" <benno.lossin@proton.me>,
- "Andreas Hindborg" <a.hindborg@samsung.com>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- =?UTF-8?Q?Arve_Hj=C3=B8nnev=C3=A5g?= <arve@android.com>,
- "Todd Kjos" <tkjos@android.com>, "Martijn Coenen" <maco@android.com>,
- "Joel Fernandes" <joel@joelfernandes.org>,
- "Carlos Llamas" <cmllamas@google.com>,
- "Suren Baghdasaryan" <surenb@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org, "Christian Brauner" <brauner@kernel.org>
-Subject: Re: [PATCH v6 2/4] uaccess: always export _copy_[from|to]_user with
- CONFIG_RUST
 Content-Type: text/plain
 
+From: "yenchia.chen" <yenchia.chen@mediatek.com>
 
+Hi,
 
-On Tue, May 14, 2024, at 17:27, Andrew Morton wrote:
-> On Thu, 18 Apr 2024 08:59:18 +0000 Alice Ryhl <aliceryhl@google.com> wrote:
->
->> From: Arnd Bergmann <arnd@arndb.de>
->> 
->> Rust code needs to be able to access _copy_from_user and _copy_to_user
->> so that it can skip the check_copy_size check in cases where the length
->> is known at compile-time, mirroring the logic for when C code will skip
->> check_copy_size. To do this, we ensure that exported versions of these
->> methods are available when CONFIG_RUST is enabled.
->> 
->> Alice has verified that this patch passes the CONFIG_TEST_USER_COPY test
->> on x86 using the Android cuttlefish emulator.
->> 
->>  ...
->>
->> -#ifdef INLINE_COPY_TO_USER
->>  static inline __must_check unsigned long
->> -_copy_to_user(void __user *to, const void *from, unsigned long n)
->> +_inline_copy_to_user(void __user *to, const void *from, unsigned long n)
->>  {
->
-> I think it would be helpful to have some comments in here describing
-> why we're doing this _inline_* thing.  What problem is it avoiding?
+We think 5.15.y could pick these commits.
 
-How about
+Below is the mainline commit:
 
-/*
- * Architectures that #define INLINE_COPY_TO_USER use this function
- * directly in the normal copy_to_user(), the other ones go through
- * an extern _copy_to_user(), which expands the same code here.
- * Rust code always uses the extern definition.
- */
+netlink: annotate lockless accesses to nlk->max_recvmsg_len
+[ Upstream commit a1865f2e7d10dde00d35a2122b38d2e469ae67ed ]
 
-       Arnd
+netlink: annotate data-races around sk->sk_err
+[ Upstream commit d0f95894fda7d4f895b29c1097f92d7fee278cb2 ]
+
+Eric Dumazet (2):
+  netlink: annotate lockless accesses to nlk->max_recvmsg_len
+  netlink: annotate data-races around sk->sk_err
+
+ net/netlink/af_netlink.c | 23 +++++++++++++----------
+ 1 file changed, 13 insertions(+), 10 deletions(-)
+
+-- 
+2.18.0
+
 
