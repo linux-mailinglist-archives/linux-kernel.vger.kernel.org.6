@@ -1,131 +1,301 @@
-Return-Path: <linux-kernel+bounces-179910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB3AC8C6743
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26A318C6742
 	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 15:23:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6949AB237A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 13:23:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AB641C218BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 13:23:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D84A9126F1B;
-	Wed, 15 May 2024 13:23:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22EE81272D5;
+	Wed, 15 May 2024 13:23:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U5QiQDgM"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JOQowZM2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C46DA14AB4;
-	Wed, 15 May 2024 13:23:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27D1F8595C;
+	Wed, 15 May 2024 13:23:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715779383; cv=none; b=d260i0Mu/Gisf8JaLJ5uN0wzU0ngFytJLt6K/OejHeBhSxoJvSFaGRrqRFRJwVBwcZL/Cy9haqhriit+cT//PLbWKF9gdCxJd87dAfxYqi7WKjoGRAy1nidHHr458V100Ipn9Eota0rKT6FF0Dc0izYsEsYq4ClFQkcZYRku+qw=
+	t=1715779383; cv=none; b=LGWWHZhFwcmyf29u0TGClO3wqORRE6g+XOgdjl9BF3kL7pnMmCdkAw1rygVQsPDDr4aXMxpw4kU5wo0eo75NKjdbv0tnLTugz66W5PGtm/TSu2LALe2QiyoGfX1F3xD7MC0BVwHs37o/POT2zyCWwNngvJQC/7+Ommc7TP3wj6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1715779383; c=relaxed/simple;
-	bh=Wbg7b4ydt/+8jq5wvj6n6dJOlOXthP31qnywghWhedM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pXGqMLi7Y/H08U+PetUJL/gouzi0Q+f8hFBQZeXUOnIKsTkob+grR09MVFpY079CiOdyia3EyKSZ6BInt96DeR9NakMzsDBj5KkOJcj2fBmqDyXjSQ9sn+45hd0uNl8R+A0sFjSfROukBHOtHqRozakfVxUpeuo3RreTEBnoq9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U5QiQDgM; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715779382; x=1747315382;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=Wbg7b4ydt/+8jq5wvj6n6dJOlOXthP31qnywghWhedM=;
-  b=U5QiQDgMPcwIhvE7mimXvooiRK6ny5Co6AzhsB3A74WZHJtYPOlNgAkq
-   JwNnH5897DQEBuA4Mk7DrmTUJYTtbq8b+QR2sQzo1aTfKqH0jB4FdcMbt
-   L/UmTcXEVOLeQPMoxzmXtzQoGmzvTbxshZLTXrfNFn5PweM2YQd8daFoQ
-   bO7gxwBCWpQPjSIHnRPA9nALQSrssbFqaUfwq97YFv4XMZoGuR581s8Dz
-   Q0QYdV4aFWZwy0ON6vy9dkZfggxAbm6CDTzpXZKgNY+7ZJuPESuF75FNj
-   Jqx/9DX0kgqPaB6eykr5njYaOhCOJ5TgvPNZr4Lt0iwOkIh9AtLmyYnrM
-   g==;
-X-CSE-ConnectionGUID: nO8IaYXvTMarceGd4Y0kVA==
-X-CSE-MsgGUID: GmtG3dNpSN+IzNbjGr67uQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11073"; a="14774802"
-X-IronPort-AV: E=Sophos;i="6.08,161,1712646000"; 
-   d="scan'208";a="14774802"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 06:23:01 -0700
-X-CSE-ConnectionGUID: E0PZQ22fSbaKasd2DoLfUg==
-X-CSE-MsgGUID: +xP9Ra5UQF2dyU0evu9TUg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,161,1712646000"; 
-   d="scan'208";a="35935779"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa004.jf.intel.com with ESMTP; 15 May 2024 06:22:59 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 96B6197D; Wed, 15 May 2024 16:22:57 +0300 (EEST)
-Date: Wed, 15 May 2024 16:22:57 +0300
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Nikolay Borisov <nik.borisov@suse.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, linux-coco@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCHv4 3/4] x86/tdx: Dynamically disable SEPT violations from
- causing #VEs
-Message-ID: <l3yziplqp6cj7bwmimzzsld22bedmtnyj67q5tolbwez6jmpor@35xye7pkfd47>
-References: <20240512122154.2655269-1-kirill.shutemov@linux.intel.com>
- <20240512122154.2655269-4-kirill.shutemov@linux.intel.com>
- <4019eff6-18a9-49b2-9567-096cdb498fb0@suse.com>
- <hlif565xmuj4oqdpap3boizepwg5ch3dssb67zzvy7i7smzp3n@x6hzdyc2qk4y>
- <8a5fa107-a055-4c05-bcb1-dc4044be841d@suse.com>
+	bh=/1ql0lp3IRfwkroLtW8SZjr/aw2tbe/M4JN2n88C0pI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gIiC3280iwrg/2QnA9FoNDv+xzp6YK2d/O6oqFWXTd6KpF4MBSSERzoGsbrRyEa3qDluoRP7U6Yo+ceV2GtoXgiULPeFOZdczYfFJCar5exGm/t8pf8KWpEiBgZ3R2ZH9hDZPAul/FaEUYUHWreBIzyWxAdMuvUCXgsPSZCtVKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JOQowZM2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDE7CC32786;
+	Wed, 15 May 2024 13:23:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715779383;
+	bh=/1ql0lp3IRfwkroLtW8SZjr/aw2tbe/M4JN2n88C0pI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JOQowZM2zPpj5Zn+nBe6PpKs3XfOn213vnjsfOA8k6+pbFmB13d2GwzYZEEAJWK7Q
+	 LKhMdC8qQVTnNZKUGm4IMb9Wb3xjcCiDVJ828aZTL/IQsfztFmvs/UsF2fKMA4Fgyh
+	 C+ftkhlv6mQ/TzkbBKVcnz/30fE/EKi/CQHN9BD1ybLxZvp+R58dQqXXh9Pcv+yjoh
+	 BgPy8jJ6DbUwpCs3t4556wbBcVLApNIlluoEQz8ZcpSUuhKFpfXWJbw5PzvRtiFJ01
+	 QeUQYGG1zF6pm2wh8p136If85jqhGngJpqkr9RxR7MT3HdzDALCieGlhV0ferNBPCk
+	 EoR4Hpf/g2flg==
+Message-ID: <29f8a5ab-8b6a-4bd5-9fc3-715f8f3d3213@kernel.org>
+Date: Wed, 15 May 2024 15:22:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8a5fa107-a055-4c05-bcb1-dc4044be841d@suse.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] rtla: Fix -t/--trace[=file]
+To: John Kacur <jkacur@redhat.com>
+Cc: lkml <linux-kernel@vger.kernel.org>, Steven Rostedt
+ <rostedt@goodmis.org>, linux-trace-devel@vger.kernel.org
+References: <20240510213619.53529-1-jkacur@redhat.com>
+Content-Language: en-US, pt-BR, it-IT
+From: Daniel Bristot de Oliveira <bristot@kernel.org>
+In-Reply-To: <20240510213619.53529-1-jkacur@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, May 15, 2024 at 04:14:18PM +0300, Nikolay Borisov wrote:
-> 
-> 
-> On 15.05.24 г. 12:30 ч., Kirill A. Shutemov wrote:
-> > On Tue, May 14, 2024 at 05:56:21PM +0300, Nikolay Borisov wrote:
-> > > > diff --git a/arch/x86/coco/tdx/tdx.c b/arch/x86/coco/tdx/tdx.c
-> > > > index 1ff571cb9177..ba37f4306f4e 100644
-> > > > --- a/arch/x86/coco/tdx/tdx.c
-> > > > +++ b/arch/x86/coco/tdx/tdx.c
-> > > > @@ -77,6 +77,20 @@ static inline void tdcall(u64 fn, struct tdx_module_args *args)
-> > > >    		panic("TDCALL %lld failed (Buggy TDX module!)\n", fn);
-> > > >    }
-> > > > +/* Read TD-scoped metadata */
-> > > > +static inline u64 tdg_vm_rd(u64 field, u64 *value)
-> > > > +{
-> > > > +	struct tdx_module_args args = {
-> > > > +		.rdx = field,
-> > > > +	};
-> > > > +	u64 ret;
-> > > > +
-> > > > +	ret = __tdcall_ret(TDG_VM_RD, &args);
-> > > > +	*value = args.r8;
-> > > > +
-> > > > +	return ret;
-> > > > +}
-> > > 
-> > > nit: Perhaps this function can be put in the first patch and the description
-> > > there be made more generic, something along the lines of "introduce
-> > > functions for tdg_rd/tdg_wr" ?
-> > 
-> > A static function without an user will generate a build warning. I don't
-> > think it is good idea.
-> > 
-> 
-> But are those 2 wrappers really static-worthy? Those two interfaces seem to
-> be rather generic and could be used by more things in the future? OTOH when
-> the time comes they can be exposed as needed.
+Hi John
 
-Generally, functions have to static unless they used outside of the
-translation unit.
+I was applying it, and doing some small corrections in the log myself,
+but I noticed some points we need to address in the code. So I am
+replying also with suggestions about the log.
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+Nothing critical, we do need this patch :-)
+
+On 5/10/24 23:36, John Kacur wrote:
+> Normally with a short option we don't provide an equals sign like this
+> -tfile.txt
+> -t file.txt
+> 
+> But we do provide an equals sign with the long option like this
+> --trace=file.txt
+> 
+> A good parser should also work with a space instead of an equals sign
+> --trace file.txt
+> 
+> Most of these are broken!
+
+While on discussions some more emphasis is required when people are
+not in agreement, I'd prefer to keep the log flat on emphasis. A phrase
+without the ! is better.
+
+I generally follow script that Arnaldo once explained me:
+
+1 - decribe the current expected beahvior.
+2 - describe the issue - with a reproducer if possible (like you did).
+3 - explain the solution
+4 - show the expected results.
+
+So, I would write something like this.
+
+The -t option has an optional argument, specified after an = sign.
+
+Ex:
+
+  # rtla timerlat hist -u -T50 -t=file.txt
+
+[ noticed that I removed the non-excential commands, e.g., P:95 is the default ]
+
+
+Normally with a short option we don't provide an equals sign like this:
+-tfile.txt -t file.txt. Moreover some other ways of using it are broken.
+
+For example:
+
+[ your examples ]
+> 
+> ./rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 -tfile.txt
+> Saving trace to ile.txt
+> File name truncated
+> 
+> ./rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 -t file.txt
+> Saving trace to timerlat_trace.txt
+> Default file name used instead of the requested one.
+> 
+> ./rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 -t=file.txt
+> Saving trace to file.txt
+> This works, but people normally don't use '=' with a short option
+> 
+> /rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 --trace=file.txt
+> Saving trace to ile.txt
+> File name truncated
+> 
+> ./rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 --trace file.txt
+> timerlat_trace.txt
+> Default file name used instead of the requested one.
+
+Here you should describe the fix, i can be an simple phrase like:
+
+Properly parse the optional argument, considering the cases with and without =.
+
+After the fix:>
+> ./rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 -tfile.txt
+> Saving trace to file.txt
+> 
+> ./rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 -t file.txt
+> Saving trace to file.txt
+> 
+> ./rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 -t=file.txt
+> Saving trace to file.txt
+> 
+> ./rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 --trace=file.txt
+> Saving trace to file.txt
+> 
+> ./rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 --trace file.txt
+> Saving trace to file.txt
+> 
+> I also tested -t and --trace without providing a file name both as the
+> last requested option and with a following long and short option
+
+My personal preference is also to speak in third person, about the code, or in imperative
+mode. Like:
+
+Tested using...
+
+> For example
+For example:
+> 
+> ./rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 -t -u
+> ./rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 --trace -u
+> ./rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 -t
+> ./rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 --trace
+> 
+> And all correctly do Saving trace to timerlat_trace.txt as expected
+> 
+> This fix is applied to both timerlat top and hist
+> and to osnoise top and hist
+> 
+
+To make my life easier: the changes for each version will not show up
+in the final log, so it is a good practice to place them after the "---".
+
+> Version 2
+> 
+> - Remove the '=' from [=file] in the on line help. Do the same thing
+> for the manpages.
+> 
+> Signed-off-by: John Kacur <jkacur@redhat.com>
+> ---
+
+[ here you place the changes when it is a single patch, for a patch ]
+[ for a patch set it is enough to keep them only at the cover ]
+
+>  Documentation/tools/rtla/common_options.rst       |  4 ----
+>  .../tools/rtla/common_osnoise_options.rst         |  5 +++++
+>  .../tools/rtla/common_timerlat_options.rst        |  4 ++++
+>  tools/tracing/rtla/src/osnoise_hist.c             | 15 ++++++++++-----
+>  tools/tracing/rtla/src/osnoise_top.c              | 15 ++++++++++-----
+>  tools/tracing/rtla/src/timerlat_hist.c            | 15 ++++++++++-----
+>  tools/tracing/rtla/src/timerlat_top.c             | 15 ++++++++++-----
+>  7 files changed, 49 insertions(+), 24 deletions(-)
+> 
+> diff --git a/Documentation/tools/rtla/common_options.rst b/Documentation/tools/rtla/common_options.rst
+> index aeb91ff3bd68..5d28ba61245c 100644
+> --- a/Documentation/tools/rtla/common_options.rst
+> +++ b/Documentation/tools/rtla/common_options.rst
+> @@ -14,10 +14,6 @@
+>  
+>          Print debug info.
+>  
+> -**-t**, **--trace**\[*=file*]
+> -
+> -        Save the stopped trace to [*file|osnoise_trace.txt*].
+> -
+>  **-e**, **--event** *sys:event*
+>  
+>          Enable an event in the trace (**-t**) session. The argument can be a specific event, e.g., **-e** *sched:sched_switch*, or all events of a system group, e.g., **-e** *sched*. Multiple **-e** are allowed. It is only active when **-t** or **-a** are set.
+> diff --git a/Documentation/tools/rtla/common_osnoise_options.rst b/Documentation/tools/rtla/common_osnoise_options.rst
+> index f792ca58c211..b05eee23b539 100644
+> --- a/Documentation/tools/rtla/common_osnoise_options.rst
+> +++ b/Documentation/tools/rtla/common_osnoise_options.rst
+> @@ -25,3 +25,8 @@
+>  
+>          Specify the minimum delta between two time reads to be considered noise.
+>          The default threshold is *5 us*.
+> +
+> +**-t**, **--trace**\[*file*]
+> +
+> +        Save the pretty stopped trace to [*file|osnoise_trace.txt*].
+> +
+> diff --git a/Documentation/tools/rtla/common_timerlat_options.rst b/Documentation/tools/rtla/common_timerlat_options.rst
+> index d3255ed70195..e4eca500b6a7 100644
+> --- a/Documentation/tools/rtla/common_timerlat_options.rst
+> +++ b/Documentation/tools/rtla/common_timerlat_options.rst
+> @@ -22,6 +22,10 @@
+>          Save the stack trace at the *IRQ* if a *Thread* latency is higher than the
+>          argument in us.
+>  
+> +**-t**, **--trace**\[*file*]
+> +
+> +        Save the pretty stopped trace to [*file|timerlat_trace.txt*].
+> +
+>  **--dma-latency** *us*
+>          Set the /dev/cpu_dma_latency to *us*, aiming to bound exit from idle latencies.
+>          *cyclictest* sets this value to *0* by default, use **--dma-latency** *0* to have
+> diff --git a/tools/tracing/rtla/src/osnoise_hist.c b/tools/tracing/rtla/src/osnoise_hist.c
+> index 01870d50942a..ede8bb44919c 100644
+> --- a/tools/tracing/rtla/src/osnoise_hist.c
+> +++ b/tools/tracing/rtla/src/osnoise_hist.c
+> @@ -436,7 +436,7 @@ static void osnoise_hist_usage(char *usage)
+>  	static const char * const msg[] = {
+>  		"",
+>  		"  usage: rtla osnoise hist [-h] [-D] [-d s] [-a us] [-p us] [-r us] [-s us] [-S us] \\",
+> -		"	  [-T us] [-t[=file]] [-e sys[:event]] [--filter <filter>] [--trigger <trigger>] \\",
+> +		"	  [-T us] [-t[file]] [-e sys[:event]] [--filter <filter>] [--trigger <trigger>] \\",
+>  		"	  [-c cpu-list] [-H cpu-list] [-P priority] [-b N] [-E N] [--no-header] [--no-summary] \\",
+>  		"	  [--no-index] [--with-zeros] [-C[=cgroup_name]]",
+>  		"",
+> @@ -452,7 +452,7 @@ static void osnoise_hist_usage(char *usage)
+>  		"	  -C/--cgroup[=cgroup_name]: set cgroup, if no cgroup_name is passed, the rtla's cgroup will be inherited",
+>  		"	  -d/--duration time[s|m|h|d]: duration of the session",
+>  		"	  -D/--debug: print debug info",
+> -		"	  -t/--trace[=file]: save the stopped trace to [file|osnoise_trace.txt]",
+> +		"	  -t/--trace[file]: save the stopped trace to [file|osnoise_trace.txt]",
+>  		"	  -e/--event <sys:event>: enable the <sys:event> in the trace instance, multiple -e are allowed",
+>  		"	     --filter <filter>: enable a trace event filter to the previous -e event",
+>  		"	     --trigger <trigger>: enable a trace event trigger to the previous -e event",
+> @@ -640,9 +640,14 @@ static struct osnoise_hist_params
+>  			params->threshold = get_llong_from_str(optarg);
+>  			break;
+>  		case 't':
+> -			if (optarg)
+> -				/* skip = */
+> -				params->trace_output = &optarg[1];
+> +			if (optarg) {
+> +				if (optarg[0] == '=')
+> +					params->trace_output = &optarg[1];
+> +				else
+> +					params->trace_output = &optarg[0];
+> +			}
+> +			else if (optind < argc && argv[optind][0] != '0')
+> +				params->trace_output = argv[optind];
+
+
+checkpatch complained about these:
+	}
+	else
+
+i.e.,
+
+  ERROR: else should follow close brace '}'
+  #231: FILE: tools/tracing/rtla/src/osnoise_hist.c:649:
+  +			}
+  +			else if (optind < argc && argv[optind][0] != '0')
+
+
+it should be:
+  +			} else if (optind < argc && argv[optind][0] != '0')
+
+Finally, rebase it on top of:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/bristot/linux.git/log/?h=devel/rtla-for-6.10
+
+Thanks!
+-- Daniel
 
