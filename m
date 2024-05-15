@@ -1,72 +1,71 @@
-Return-Path: <linux-kernel+bounces-179420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8BF68C5FE4
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:55:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C9958C5FE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:55:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 819C31F23DD9
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 04:55:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0230A1F23EB3
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 04:55:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ED8C5914D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD66259B78;
 	Wed, 15 May 2024 04:52:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=darkphysics.net header.i=@darkphysics.net header.b="aerk6ort"
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
+	dkim=pass (2048-bit key) header.d=darkphysics.net header.i=@darkphysics.net header.b="grJNDEJd"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 025564E1C3
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 04:52:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F80B4F608
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 04:52:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715748767; cv=none; b=jMxB9iNJuX0NbtC5V+SrJI6Ij1XKyWkWleUNg2CMeqGjwwtUOJBzrsy5I1clQc0CfuXk32qbPlXh8v2BrxFXDFukHAeJPWSBrjuWkps9jPI11T9BW3a2PalajmVbhOH9Cil82ykwoCXCXlgCItqrTaLJxIp891zIwbmcHbjD4J0=
+	t=1715748767; cv=none; b=YpPOnU/tF47bjatLC42U04zXE9/D0yriwUGyb53+BLxhassk9rOus1zN2TF0yiC66yXp7Mli3k99M38gcR5a716ClEgipg5eANvmGxaqw8hVK9ZWjKfVZfHDHd5a1RX8YybipTsb51T0aLus0tPkQO7y8EK2VqRUa2i7cQWzaVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1715748767; c=relaxed/simple;
-	bh=W7YanCirN9wvp2zde5wv/2tgJrgt1xFhjhHajSKuSHA=;
+	bh=ew7QTjnBQLH0PTpIA8W7zoW+lQRRUkKEJUaHs9Sl+38=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=gJpsi7hKt+lhuwYrRcIBig43mZQX4hp7ei8k4ESZEb4gRuDIhCUZ24yRaoatJyuEmjBI01dIs5aYEUGb5DxLUDzXJed3mlmAiOvOVfffigEnIBr0ipdDGgRT1rbMVX26sDJ7LvNQSNUM5QK4t3RxwcY3z2rZ08UFtg5sze+U/wo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=darkphysics.net; spf=pass smtp.mailfrom=darkphysics.net; dkim=pass (2048-bit key) header.d=darkphysics.net header.i=@darkphysics.net header.b=aerk6ort; arc=none smtp.client-ip=209.85.167.181
+	 MIME-Version; b=VG1UFpEon1MQcDTtpelfCzUpB8LUxdUNBOGeOSPghWLZpMcnn4DFsH/z+Mr3XyGeyr1Oi4O2KXqaFDdQkWGSBHt1ufchwCFtFYFbsxgNH/CQH9TGhpxsGmoPZRyvb6D96g9qYsJ3nZ5c4JKKV7+O9vJM42iMx3b4GJilgqH1eAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=darkphysics.net; spf=pass smtp.mailfrom=darkphysics.net; dkim=pass (2048-bit key) header.d=darkphysics.net header.i=@darkphysics.net header.b=grJNDEJd; arc=none smtp.client-ip=209.85.210.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=darkphysics.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=darkphysics.net
-Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3c9a1d294cfso2205430b6e.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 21:52:45 -0700 (PDT)
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-6f4603237e0so4475954b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 21:52:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=darkphysics.net; s=google; t=1715748765; x=1716353565; darn=vger.kernel.org;
+        d=darkphysics.net; s=google; t=1715748766; x=1716353566; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Q5uBXo5orQcdm4k609Ve5/BzbHzbX6bMArVHYg6Cjbw=;
-        b=aerk6ortgfArtSL985FnFwfLRjUF3SVVPM+Q8BybF5HqnG0D9unCJ4XOBDQ1dUkUpW
-         IZEQmMt3I106oSq2RIF8y3l+yBhpDBcgfmJOJ0QJxxYLMVLra9q3odEm8x/bcRAZjxUA
-         GiOuNagtBbR9vIU2RhMCLeDdUDowZfKXm2bAVU5UGDdHDTggjulsA3wSJgeigcIwQpn+
-         Ywmyyav5X1N7SpfRvbPetUqyW27LtisIzOq3ndtcv/F0cNZjKZ11g7Et3inMNI3wahhv
-         StONpbWMQII/4vjZ0P38YKXCYvld8C8nMT5M7gI79PkYA5ImkiJu5JL36Y7fjTfPQCHp
-         EIFQ==
+        bh=DEx6vAr52pGxysjGe3jw5iXqLZA63B3Rf1CnGustKUE=;
+        b=grJNDEJdPYY8keTzTaIU+evAYEZyXQdK4aOjGtVJtvQ1BlZjvf8NNfD7DHLuxBn5QT
+         6By7cEuNkopaWdt7BnIQD+u60QqNRQODjPqYKuoE+eOC3g1sBQqquP9getohWBp8ZasL
+         bHEMARTsJqH70FBT67rKASFFue8tGlHJsyyA6Z+8XYxJNPtaFodgzFLr2vUTkMmvlO1K
+         fhY2JT4ytbtWUbFVirmNufUp0zWUpuRXnv/eaiQmZrddsaRg+MWZBr/PQKr1OIa7zDRp
+         NXsn5CG2631Gq3QF+ePsDmILMH58OmyCSSBEcYGilrRfds0iFWrKBJskhy3fpnLrajSP
+         ZXiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715748765; x=1716353565;
+        d=1e100.net; s=20230601; t=1715748766; x=1716353566;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Q5uBXo5orQcdm4k609Ve5/BzbHzbX6bMArVHYg6Cjbw=;
-        b=DsvWpOzvvC/sodBuSuTk6Kj5oZux7Kt955EId2TncTwOS6nGRPKpXDeu/kY0F0YcRe
-         lwKXbmL4DTGGp1UdL0xNj9xhsTWmndO8hvigcOU446jC6KFyCKErJ3NuXB9TBLLClDSv
-         XtKcFubzif/dkaOZN15BBvweWfiXjkkfy6h9ZbbC8XOyZIUJQlqvhv7jrm12kTMAjIpe
-         Fvnu/BVL2TxZyE6xq+p8tZ5TUO+hnrQ7TQ5gvCR8VNWRad8E9lCIlrln7T7IJIBPK8iw
-         Tp7hPSCsuY0oHONG63//sKtaWG+K/OuJ+htKDGEYU1b3/UsaZRHlXMZ5kFzd0jd67klT
-         pcLA==
-X-Forwarded-Encrypted: i=1; AJvYcCW0IZN0JXh2fpiaqMqewwpAYNCnGnb95sV7K68lAnURdUNqL8hNeG2dcdUVz55xXVgcUFHkOdK9blHdh/Oipbjzeq2ioG4D7T4MSOEU
-X-Gm-Message-State: AOJu0YwlrBricTCmdm6Tk+NXyZjocfuAa7b4aE3c5K3BPmUpkMtgPjIO
-	iEBREAy8gH2Ii62AyJE9rHFeiCJaesRGMx1JB/XICTy4GX1ycdfWazU7a1suYRJ3lrnNloonQo3
-	w
-X-Google-Smtp-Source: AGHT+IGd8pJGmwnbAEWl4DdU9jN9a9BZE7BDE2KjzGYE95GascgoKwP00mKOm6PzR9TUCs2ysEYhsQ==
-X-Received: by 2002:a05:6808:144e:b0:3c9:63d1:6fce with SMTP id 5614622812f47-3c9970ba8camr21808933b6e.40.1715748765203;
+        bh=DEx6vAr52pGxysjGe3jw5iXqLZA63B3Rf1CnGustKUE=;
+        b=t4KLkQA+1MoTc16zBY8SyX4ainHsR2M925psgDfSGVdNNqCrl/02qC+Rhl9yEega5V
+         a+rpoOQAzOXE/B65NmDgCqH0z8A5uFqgzRplvQP4lx7sGixMKEETvkiJsraFwV7hD6/b
+         kE49RJlS83CzBwDnKESXtnw0sfbOLW5mzvnK2P0HwEZ33Ws5TvQdvF5+3jubYuTVhOB8
+         gIT2GlddCLhptxtP5NMxhAkjQx5xyMT8U6RpFqH4IaHDALJ3OGCFYgv1tU3ss/FUak6q
+         7Tb6cHN/+woE5KwNltWdz7rDEcRPTy9sN+0IMrxsN/BChg6gESE6AFhfL2X2SZrpmcW6
+         uaQw==
+X-Forwarded-Encrypted: i=1; AJvYcCUZzhtRozuPhi6aZSyU6Wk2nizD8Z7nIjWnUiKut0/qCcpuMsasFCshEwBEJOng72QnXzav82luXBZfn2qGx9t+0k+ZVhghYkEsvtXG
+X-Gm-Message-State: AOJu0Ywxn7xHszFPQE3G+mZktt8YbgtIUg/7oXHujzZ9V71RoppojaCh
+	uAgap4yCXSybmXcRhgf+F6OmYDRdYvEP/q2I/I5sUXOzSt3OpajUCUbPUrknw8g=
+X-Google-Smtp-Source: AGHT+IEU3v7pENlKhFG6PdHM+Xs0TQ2WLZQ8Zb7U6UcQlLVQL8MHf7S6XzWlBzqSwaDRgqPpu67fmg==
+X-Received: by 2002:a05:6a00:4613:b0:6ed:41f4:1886 with SMTP id d2e1a72fcca58-6f4df3db383mr25644408b3a.8.1715748765879;
         Tue, 14 May 2024 21:52:45 -0700 (PDT)
 Received: from lunchbox.darkphysics (c-76-146-178-2.hsd1.wa.comcast.net. [76.146.178.2])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2a827fdsm10135035b3a.60.2024.05.14.21.52.44
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2a827fdsm10135035b3a.60.2024.05.14.21.52.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 May 2024 21:52:44 -0700 (PDT)
+        Tue, 14 May 2024 21:52:45 -0700 (PDT)
 From: Tree Davies <tdavies@darkphysics.net>
 To: gregkh@linuxfoundation.org,
 	philipp.g.hortmann@gmail.com,
@@ -74,9 +73,9 @@ To: gregkh@linuxfoundation.org,
 Cc: linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
 	Tree Davies <tdavies@darkphysics.net>
-Subject: [PATCH 15/31] Staging: rtl8192e: Rename variable AddReorderEntry
-Date: Tue, 14 May 2024 21:52:12 -0700
-Message-Id: <20240515045228.35928-16-tdavies@darkphysics.net>
+Subject: [PATCH 16/31] Staging: rtl8192e: Rename variable pList
+Date: Tue, 14 May 2024 21:52:13 -0700
+Message-Id: <20240515045228.35928-17-tdavies@darkphysics.net>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20240515045228.35928-1-tdavies@darkphysics.net>
 References: <20240515045228.35928-1-tdavies@darkphysics.net>
@@ -88,36 +87,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Rename variable AddReorderEntry to add_reorder_entry
+Rename variable pList to plist
 to fix checkpatch warning Avoid CamelCase.
 
 Signed-off-by: Tree Davies <tdavies@darkphysics.net>
 ---
- drivers/staging/rtl8192e/rtllib_rx.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/staging/rtl8192e/rtllib_rx.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/staging/rtl8192e/rtllib_rx.c b/drivers/staging/rtl8192e/rtllib_rx.c
-index 3afce436a5d8..30bd6f49e915 100644
+index 30bd6f49e915..fb679229f173 100644
 --- a/drivers/staging/rtl8192e/rtllib_rx.c
 +++ b/drivers/staging/rtl8192e/rtllib_rx.c
-@@ -403,7 +403,7 @@ static int is_duplicate_packet(struct rtllib_device *ieee,
- 	return 1;
- }
- 
--static bool AddReorderEntry(struct rx_ts_record *ts,
-+static bool add_reorder_entry(struct rx_ts_record *ts,
+@@ -406,24 +406,24 @@ static int is_duplicate_packet(struct rtllib_device *ieee,
+ static bool add_reorder_entry(struct rx_ts_record *ts,
  			    struct rx_reorder_entry *pReorderEntry)
  {
- 	struct list_head *pList = &ts->rx_pending_pkt_list;
-@@ -610,7 +610,7 @@ static void rx_reorder_indicate_packet(struct rtllib_device *ieee,
- 			pReorderEntry->SeqNum = SeqNum;
- 			pReorderEntry->prxb = prxb;
+-	struct list_head *pList = &ts->rx_pending_pkt_list;
++	struct list_head *plist = &ts->rx_pending_pkt_list;
  
--			if (!AddReorderEntry(ts, pReorderEntry)) {
-+			if (!add_reorder_entry(ts, pReorderEntry)) {
- 				int i;
+-	while (pList->next != &ts->rx_pending_pkt_list) {
++	while (plist->next != &ts->rx_pending_pkt_list) {
+ 		if (SN_LESS(pReorderEntry->SeqNum, ((struct rx_reorder_entry *)
+-		    list_entry(pList->next, struct rx_reorder_entry,
++		    list_entry(plist->next, struct rx_reorder_entry,
+ 		    list))->SeqNum))
+-			pList = pList->next;
++			plist = plist->next;
+ 		else if (SN_EQUAL(pReorderEntry->SeqNum,
+-			((struct rx_reorder_entry *)list_entry(pList->next,
++			((struct rx_reorder_entry *)list_entry(plist->next,
+ 			struct rx_reorder_entry, list))->SeqNum))
+ 			return false;
+ 		else
+ 			break;
+ 	}
+-	pReorderEntry->list.next = pList->next;
++	pReorderEntry->list.next = plist->next;
+ 	pReorderEntry->list.next->prev = &pReorderEntry->list;
+-	pReorderEntry->list.prev = pList;
+-	pList->next = &pReorderEntry->list;
++	pReorderEntry->list.prev = plist;
++	plist->next = &pReorderEntry->list;
  
- 				netdev_dbg(ieee->dev,
+ 	return true;
+ }
 -- 
 2.30.2
 
