@@ -1,159 +1,86 @@
-Return-Path: <linux-kernel+bounces-180239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D79F8C6BD7
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 20:04:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3B768C6BDD
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 20:09:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D6BB1C213EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:04:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A368C284906
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:09:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6365F158DBD;
-	Wed, 15 May 2024 18:04:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="glvQcZr9"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56450158845;
-	Wed, 15 May 2024 18:04:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5AD1158DB2;
+	Wed, 15 May 2024 18:09:08 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1EEB158845
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 18:09:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715796255; cv=none; b=Vz4nCJo5PXFhssP05YEIfm9br9vzEIiqM5mQjECyYhG1XnzOvpibt7U4dc4qoDPPfHl4UjL3FoeJkiUKY9F+hwr1AmLM1k0QGGsM8boqrDwHcx0zs7ShAtfvWs4BxP+N1tY6tz/ORkG5iKg72/LUwyO3njh+3p/iwueiw+bHDDQ=
+	t=1715796548; cv=none; b=tJQIwdy1TUOQW0IddPDX6sZHhnsjEBK5ZL2GhfwgPu2lehpcLqqOA2hqU2SVEQXsxeceM7Dz01ibOtzTMOpb1zR47lnrwGCcMZ/obrS6rPXBCaOvWqh7VCYtQdelqKXOTg3lhp8UUClMiKEzqA1UTzhdUDS9Cd0aq+7IY9Ige4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715796255; c=relaxed/simple;
-	bh=/uC6r8iw//SMzZ8NGS9Vxf3Rfafd5om3I6TH7HLW1bE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RyrENekSeySU8OUGBkzkt5renl5WR0Y1y726T33TMzWFw/PQqZ8+alSfBkoOuNHtM4hZpjNmVs6EhdaRpB7B1r4IFKFH1tS55AT1xJ5HnIM5iF6vsmJjWc35u6+/sgk9tyYkOfnY+JymqQNGxtwRD2QYi0++RWNrnflpLKPK7RU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=glvQcZr9; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.137.186.190] (unknown [131.107.159.62])
-	by linux.microsoft.com (Postfix) with ESMTPSA id B467520B915A;
-	Wed, 15 May 2024 11:04:13 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B467520B915A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1715796253;
-	bh=ScMr1hwCVv5qZHMAEN659FeB99CmF3S+HpysOb7Qq6Q=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=glvQcZr9UxFyBDZUkJ7h/dhCU29YraLKpJcAkfJiZcmA7IocRiKi6vhKB6QrQ3ugC
-	 MtRTGJZEX2gEJkbhFfm53wk/2lXFWpEVFopy5XF6Lq5R4keOUg8kwHKf/VS5ObjeUZ
-	 EqGMgquAB+DH/UnDqqIknS6Sw5SB71iyb3keFUc0=
-Message-ID: <a232ddf5-e6ac-41ec-9f53-d5f76f31e970@linux.microsoft.com>
-Date: Wed, 15 May 2024 11:04:13 -0700
+	s=arc-20240116; t=1715796548; c=relaxed/simple;
+	bh=ueDbItGrH33QV5pwvOmlravQoxM3OzojO/of6mwTwVw=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=iKsGa8Lv5tLk9Kf3OsTei7XUQYxLnMrhZv3IJH7mcT/vSdDkLnPP85hQe8aYeYWCU+NWtelLC8xcIsD3al1X6R4ehOsC9j9KRpOxhTWiNh5OuLe9/NmSlp91m1nhlVib8S/CixrMtDUSFafGu5gVk0Xvy5sKPl3B4t8VS2ljjWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7e1e05c39easo417668639f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 11:09:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715796546; x=1716401346;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TP/Zme8K3zbj65CmkwRzzBghWXaR4LwXbXZFUjpvzgQ=;
+        b=mHYXo7fxTjdQlXGKfmL7AkJzqbBcDSo0T6tFDaBUFC/svGQ5HkS2Mkl9rAfmTkxyR9
+         SI4LCQqpgRo54o045bRorC4ArWFH/cBb/a5wy0X6qwmeMw6XU6tc/ZTFfBv6miiXKQ4Z
+         1xtjhuPJXbISaXipz2yVn9k6Uk0XfgV6Hg7nA5tvP0DT4J2hHjtxgpsOWe1U7bCFfO1A
+         YsVQ3eN9/N+g+Cudyd4OWAIoqJO+ZuABAvzrYdhXKQd6A3MBFkgVxfap3hWTp6ikos20
+         WJH2yR/Zu5S0qconaU44sN44vZaSmx9DOFDi5H4dtv8l3yG4E8xtknLERcmVwCpHWPdn
+         TNeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW+ag9fH8NtfEQPyda/knwNFQ4r5VflKJFXLlnN2Y+asjjJ+vqQdMnVln1V1cEu3GY+dHGB9KlZSiEHBnfYX8Xj2fbjBlRhbX3a2RJy
+X-Gm-Message-State: AOJu0YyW+uhJQBw1OvuAuFEO/ktlKAEFsfv7t2P8joXewoG35M508IeY
+	aPkVa0hFxotMf+48vIlMzeSmuqQN8bSgbaAv9WaQr/rN3RTp5rGruluGiTVSEoCu3DDY6fBFXyA
+	JlKm85XYh6FKp2c8R6fuFTZolGwBUlEiaXuBcZWio0M2qPl4dJ9e1o3s=
+X-Google-Smtp-Source: AGHT+IHOCF27ZW2apmHXxCAoQnwxV4k4QFP68S37o2Wer4Pe+c8vuaPuujGjKICC6/1Amh/kyfL4GE8KDPFWP/DaV2DfVcXts2Z7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/6] drivers/hv: Enable VTL mode for arm64
-To: Michael Kelley <mhklinux@outlook.com>, "arnd@arndb.de" <arnd@arndb.de>,
- "bhelgaas@google.com" <bhelgaas@google.com>, "bp@alien8.de" <bp@alien8.de>,
- "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
- "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
- "decui@microsoft.com" <decui@microsoft.com>,
- "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
- "hpa@zytor.com" <hpa@zytor.com>, "kw@linux.com" <kw@linux.com>,
- "kys@microsoft.com" <kys@microsoft.com>, "lenb@kernel.org"
- <lenb@kernel.org>, "lpieralisi@kernel.org" <lpieralisi@kernel.org>,
- "mingo@redhat.com" <mingo@redhat.com>, "rafael@kernel.org"
- <rafael@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
- "tglx@linutronix.de" <tglx@linutronix.de>,
- "wei.liu@kernel.org" <wei.liu@kernel.org>, "will@kernel.org"
- <will@kernel.org>, "linux-acpi@vger.kernel.org"
- <linux-acpi@vger.kernel.org>,
- "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
- "x86@kernel.org" <x86@kernel.org>
-Cc: "ssengar@microsoft.com" <ssengar@microsoft.com>,
- "sunilmut@microsoft.com" <sunilmut@microsoft.com>,
- "vdso@hexbites.dev" <vdso@hexbites.dev>
-References: <20240514224508.212318-1-romank@linux.microsoft.com>
- <20240514224508.212318-3-romank@linux.microsoft.com>
- <SN6PR02MB4157E15EFE263BBA3D8DFC51D4EC2@SN6PR02MB4157.namprd02.prod.outlook.com>
-Content-Language: en-US
-From: Roman Kisel <romank@linux.microsoft.com>
-In-Reply-To: <SN6PR02MB4157E15EFE263BBA3D8DFC51D4EC2@SN6PR02MB4157.namprd02.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6602:3f85:b0:7da:18b8:2790 with SMTP id
+ ca18e2360f4ac-7e1b52175e3mr74949039f.3.1715796546040; Wed, 15 May 2024
+ 11:09:06 -0700 (PDT)
+Date: Wed, 15 May 2024 11:09:06 -0700
+In-Reply-To: <20240515103325.3308-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000a245fb0618820327@google.com>
+Subject: Re: [syzbot] [kernfs?] [usb?] WARNING in kernfs_get (5)
+From: syzbot <syzbot+2f44671e54488d20f0e6@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+Hello,
 
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-On 5/15/2024 6:37 AM, Michael Kelley wrote:
-> From: Roman Kisel <romank@linux.microsoft.com> Sent: Tuesday, May 14, 2024 3:44 PM
->>
->> Kconfig dependencies for arm64 guests on Hyper-V require that be ACPI enabled,
->> and limit VTL mode to x86/x64. To enable VTL mode on arm64 as well, update the
->> dependencies. Since VTL mode requires DeviceTree instead of ACPI, don't require
->> arm64 guests on Hyper-V to have ACPI.
->>
->> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
->> ---
->>   drivers/hv/Kconfig | 6 +++---
->>   1 file changed, 3 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/hv/Kconfig b/drivers/hv/Kconfig
->> index 862c47b191af..a5cd1365e248 100644
->> --- a/drivers/hv/Kconfig
->> +++ b/drivers/hv/Kconfig
->> @@ -5,7 +5,7 @@ menu "Microsoft Hyper-V guest support"
->>   config HYPERV
->>   	tristate "Microsoft Hyper-V client drivers"
->>   	depends on (X86 && X86_LOCAL_APIC && HYPERVISOR_GUEST) \
->> -		|| (ACPI && ARM64 && !CPU_BIG_ENDIAN)
->> +		|| (ARM64 && !CPU_BIG_ENDIAN)
->>   	select PARAVIRT
->>   	select X86_HV_CALLBACK_VECTOR if X86
->>   	select OF_EARLY_FLATTREE if OF
->> @@ -15,7 +15,7 @@ config HYPERV
->>
->>   config HYPERV_VTL_MODE
->>   	bool "Enable Linux to boot in VTL context"
->> -	depends on X86_64 && HYPERV
->> +	depends on HYPERV
->>   	depends on SMP
->>   	default n
->>   	help
-> 
-> These changes make it possible to build a normal VTL 0 Hyper-V
-> guest (i.e., CONFIG_HYPERV_VTL_MODE=n) if CONFIG_ACPI is
-> not set, which won't work.  While we can say "don't do that", it
-> would be better if the Kconfig dependencies expressed that
-> requirement.
-> 
-> A possible fix is to remove the "depends on HYPERV" from
-> HYPERV_VTL_MODE.  Then for HYPERV, make
-> the "depends on ACPI" be conditional on !HYPERV_VTL_MODE
-> (for both ARM64 and X86).
-> 
-> I think we originally had "depends on HYPERV" in
-> HYPERV_VTL_MODE because there was a VTL-related function
-> in a non-Hyper-V code path, and we wanted to prevent that code
-> from running in non-Hyper-V environments.  But in practice, that
-> turned out not to work well because occasionally people would
-> do an "all config" build where both CONFIG_HYPERV and
-> CONFIG_HYPERV_VTL_MODE were set, and it would panic during
-> boot in their non-Hyper-V environment.  Such people were not
-> happy. :-(  So Saurabh made a relatively simple change (see commit
-> 14058f72cf13e) that got the VTL code out of that non-Hyper-V code
-> path.  With that change, it shouldn't matter if someone sets
-> CONFIG_HYPERV_VTL_MODE=y in a build where
-> CONFIG_HYPERV=n.
-> 
-> At least that's my theory. :-)  Someone would need to check
-> it carefully.
-I'll explore that, appreciate sharing the context!
+Reported-and-tested-by: syzbot+2f44671e54488d20f0e6@syzkaller.appspotmail.com
 
-> 
-> Michael
+Tested on:
 
--- 
-Thank you,
-Roman
+commit:         26dd54d0 Add linux-next specific files for 20240514
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=10bfc034980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c8af44e051929224
+dashboard link: https://syzkaller.appspot.com/bug?extid=2f44671e54488d20f0e6
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1208dc7c980000
+
+Note: testing is done by a robot and is best-effort only.
 
