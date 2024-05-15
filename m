@@ -1,220 +1,267 @@
-Return-Path: <linux-kernel+bounces-180237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2155D8C6BCD
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 20:03:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D80E98C6BCF
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 20:03:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAAD9284848
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:03:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B37B1F2233E
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:03:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 798E3158DBA;
-	Wed, 15 May 2024 18:03:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30E77158DB7;
+	Wed, 15 May 2024 18:03:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BE+WV4uC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NvWoVpgH"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AD70158845;
-	Wed, 15 May 2024 18:03:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 069DC158858;
+	Wed, 15 May 2024 18:03:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715796195; cv=none; b=Ejjpo7M8OSKMN7eVaoVb0vkP7hFjYQU5umF/peQAdZ4YUvWfwCFDk9h6PIPCAKnXocBec4yGAad9OlA/mzNaJu3sW6Lc3s4BuwJrJuNNp21iIPDTUWgaAGH+i5zjnV9Ufcv04UqKRHVhSE98K+5GwV4IJlz7KRaHAxyjezbp22M=
+	t=1715796208; cv=none; b=aFkHdbu48e+Z1UImfqdpY/IEdTrLe1ZRrLVrcT9j+CuvL3DHvdDu+nJ4YM8O5hXQPh42WyGMaa92LNyqp0DfmGT0TU1q0omE5piC3DAE1djDD6AZdlI6epOpSwfTMiJpaddzEGdwpd8tBshaKYX2BPaovXKkR4n/hXD+5Izl0hI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715796195; c=relaxed/simple;
-	bh=txhE9yLbvyINoFRx5oOhUzn9ez170Ndrwlt6oJvNTlQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=qEsRPobBvbzufstsPWfidunbsZtyUXjxOydt7UP3EByJdZLuQ9Bm2YtF8Pw+BmYI5vbPbVD7Z381lOo7h8LugX09L7ECHDM5Gz9wag6pPdY6ctRUsm1KakPWlq474LxSKXSkntXcjWnR7Ex1UR0afewa6IgEhTDqrHQy9VyJh/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BE+WV4uC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 16D13C116B1;
-	Wed, 15 May 2024 18:03:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715796195;
-	bh=txhE9yLbvyINoFRx5oOhUzn9ez170Ndrwlt6oJvNTlQ=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=BE+WV4uChXDQFO14BluQcqHrF5XnHC0NSLWQDElFDAcPGzEFiJEmu+wI9pCIeX8FX
-	 /HF1gZTCIAvYculxY2UNhMxUNsp9DEkLallesCcAHBoLCm9NaxXZuSDSYMqVgLH1Q0
-	 WDK3Wd5oNYEkSVdKql/wKfoR2bIee5at2huxyVhFBP9cE6LlFUOiX7DrQzQQk/cAHP
-	 YAdptMkkdPUXFUgmvD1+kVOFwRLUJHTOf3fsxKhXpDLwnZ1J6V92/ON9Gu1ITMLSI1
-	 Mzk09eORgRPY7lSLRxMYdFnYfwcOPC3mNVLes8TWkCFaZ6zNpDeLx5H9Te0Qjz46EU
-	 lpM2NZHaz/ATg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09E88C25B75;
-	Wed, 15 May 2024 18:03:15 +0000 (UTC)
-From: Sven Peter via B4 Relay <devnull+sven.svenpeter.dev@kernel.org>
-Date: Wed, 15 May 2024 18:02:58 +0000
-Subject: [PATCH] Bluetooth: Add quirk to ignore reserved PHY bits in LE
- Extended Adv Report
+	s=arc-20240116; t=1715796208; c=relaxed/simple;
+	bh=Z7Hdp2hnQbitj1OHNbeyDt8mh9FgzxK3ag8pko+XpZo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RMxd7zeDvN7g6WG+dTdFo6XqlpKAGVHmm8rE+2t2zYtnbtFCrmFM0xcCtkRZyfcKfNDpDbqtBvb4dqCPyx8HmmtpRXnKomAn00A97H726vgZ8BBNp1+MpSYWeCOYX9xBPnvgU9z09hxGhQN6n70zhXAmKRR8Mv1FvvRtmnZ4qN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NvWoVpgH; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715796206; x=1747332206;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Z7Hdp2hnQbitj1OHNbeyDt8mh9FgzxK3ag8pko+XpZo=;
+  b=NvWoVpgHrdrEQnga9QtGvK3e6CjwXwRr2UlGyQa/Eh038iSzFNe8EGBp
+   iv2XFH2LuW5zBIOUjky9tg/7Kh4ZtO7Yuz5gIYBJmDDlf24S8UJhNBd2p
+   xnMkcB96IdQBOhUEAUTLhKOiYAaN6IZQEPxODr/FJveyNX88IDfp0ffuQ
+   DO9sJx5ZD9BWDNcEBim4CWm2ppfGuz6sksXtFJWqXfiCkPX7MpzBQ30n6
+   0VlDVYFBOXcKl/41CXE9HMiLrfYQevIum4ycd9mRgsJWCiFeAs9dbjaUd
+   N003kyX+7o8uTmEXRHtfn7Xc2qdZbfFrwTNWyeyowY2Ttnq79PPSB86zw
+   w==;
+X-CSE-ConnectionGUID: 7xLPnLgoSfq5KuuC9SS3qw==
+X-CSE-MsgGUID: WHnJIgTuQluHH0eKG9VaQQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="12030556"
+X-IronPort-AV: E=Sophos;i="6.08,162,1712646000"; 
+   d="scan'208";a="12030556"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 11:03:26 -0700
+X-CSE-ConnectionGUID: OHum9dFHReeK1/arUG9wAQ==
+X-CSE-MsgGUID: SRyI60eJTjaSQ31F3Lhz1w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,162,1712646000"; 
+   d="scan'208";a="31566173"
+Received: from ls.sc.intel.com (HELO localhost) ([172.25.112.31])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 11:03:25 -0700
+Date: Wed, 15 May 2024 11:03:24 -0700
+From: Isaku Yamahata <isaku.yamahata@intel.com>
+To: Rick Edgecombe <rick.p.edgecombe@intel.com>
+Cc: pbonzini@redhat.com, seanjc@google.com, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, isaku.yamahata@gmail.com,
+	erdemaktas@google.com, sagis@google.com, yan.y.zhao@intel.com,
+	dmatlack@google.com
+Subject: Re: [PATCH 02/16] KVM: x86/mmu: Introduce a slot flag to zap only
+ slot leafs on slot deletion
+Message-ID: <20240515180324.GF168153@ls.amr.corp.intel.com>
+References: <20240515005952.3410568-1-rick.p.edgecombe@intel.com>
+ <20240515005952.3410568-3-rick.p.edgecombe@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240515-btfix-v1-1-d88caf3d5a3f@svenpeter.dev>
-X-B4-Tracking: v=1; b=H4sIANH4RGYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDU0Mj3aSStMwKXUvTZEODZBNTszRDcyWg2oKiVKAw2Jzo2NpaAPN4C8p
- XAAAA
-To: Hector Martin <marcan@marcan.st>, 
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
- Marcel Holtmann <marcel@holtmann.org>, 
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
- Johan Hedberg <johan.hedberg@gmail.com>
-Cc: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>, 
- asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, Janne Grunau <j@jannau.net>, 
- Sven Peter <sven@svenpeter.dev>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1715796194; l=5308;
- i=sven@svenpeter.dev; s=20240512; h=from:subject:message-id;
- bh=N3jPT0a7Bc9Iqlik/IqY6WdxMUFPNtu8Dd/3uc+uB5g=;
- b=s2gbtsDtqS4P/rxXMSdSDrD77BS9mVPDMrQNTs/T26DiVTOaYpPNVCvVmTJS4ue4+bKcLSqzD
- 3Sj7oGaNKtQAfVYitPpVvscgk0rLlBCz3lcTWpTFytXAY6P2hDVxhSH
-X-Developer-Key: i=sven@svenpeter.dev; a=ed25519;
- pk=jIiCK29HFM4fFOT2YTiA6N+4N7W+xZYQDGiO0E37bNU=
-X-Endpoint-Received: by B4 Relay for sven@svenpeter.dev/20240512 with
- auth_id=159
-X-Original-From: Sven Peter <sven@svenpeter.dev>
-Reply-To: sven@svenpeter.dev
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240515005952.3410568-3-rick.p.edgecombe@intel.com>
 
-From: Sven Peter <sven@svenpeter.dev>
+On Tue, May 14, 2024 at 05:59:38PM -0700,
+Rick Edgecombe <rick.p.edgecombe@intel.com> wrote:
 
-Some Broadcom controllers found on Apple Silicon machines abuse the
-reserved bits inside the PHY fields of LE Extended Advertising Report
-events for additional flags. Add a quirk to drop these and correctly
-extract the Primary/Secondary_PHY field.
+> From: Yan Zhao <yan.y.zhao@intel.com>
+> 
+> Introduce a per-memslot flag KVM_MEM_ZAP_LEAFS_ONLY to permit zap only leaf
+> SPTEs when deleting a memslot.
+> 
+> Today "zapping only memslot leaf SPTEs" on memslot deletion is not done.
+> Instead KVM will invalidate all old TDPs (i.e. EPT for Intel or NPT for
+> AMD) and generate fresh new TDPs based on the new memslot layout. This is
+> because zapping and re-generating TDPs is low overhead for most use cases,
+> and  more importantly, it's due to a bug [1] which caused VM instability
+> when a VM is with Nvidia Geforce GPU assigned.
+> 
+> There's a previous attempt [2] to introduce a per-VM flag to workaround bug
+> [1] by only allowing "zapping only memslot leaf SPTEs" for specific VMs.
+> However, [2] was not merged due to lacking of a clear explanation of
+> exactly what is broken [3] and it's not wise to "have a bug that is known
+> to happen when you enable the capability".
+> 
+> However, for some specific scenarios, e.g. TDX, invalidating and
+> re-generating a new page table is not viable for reasons:
+> - TDX requires root page of private page table remains unaltered throughout
+>   the TD life cycle.
+> - TDX mandates that leaf entries in private page table must be zapped prior
+>   to non-leaf entries.
+> 
+> So, Sean re-considered about introducing a per-VM flag or per-memslot flag
+> again for VMs like TDX. [4]
+> 
+> This patch is an implementation of per-memslot flag.
+> Compared to per-VM flag approach,
+> Pros:
+> (1) By allowing userspace to control the zapping behavior in fine-grained
+>     granularity, optimizations for specific use cases can be developed
+>     without future kernel changes.
+> (2) Allows developing new zapping behaviors without risking regressions by
+>     changing KVM behavior, as seen previously.
+> 
+> Cons:
+> (1) Users need to ensure all necessary memslots are with flag
+>     KVM_MEM_ZAP_LEAFS_ONLY set.e.g. QEMU needs to ensure all GUEST_MEMFD
+>     memslot is with ZAP_LEAFS_ONLY flag for TDX VM.
+> (2) Opens up the possibility that userspace could configure memslots for
+>     normal VM in such a way that the bug [1] is seen.
+> 
+> However, one thing deserves noting for TDX, is that TDX may potentially
+> meet bug [1] for either per-memslot flag or per-VM flag approach, since
+> there's a usage in radar to assign an untrusted & passthrough GPU device
+> in TDX. If that happens, it can be treated as a bug (not regression) and
+> fixed accordingly.
+> 
+> An alternative approach we can also consider is to always invalidate &
+> rebuild all shared page tables and zap only memslot leaf SPTEs for mirrored
+> and private page tables on memslot deletion. This approach could exempt TDX
+> from bug [1] when "untrusted & passthrough" devices are involved. But
+> downside is that this approach requires creating new very specific KVM
+> zapping ABI that could limit future changes in the same way that the bug
+> did for normal VMs.
+> 
+> Link: https://patchwork.kernel.org/project/kvm/patch/20190205210137.1377-11-sean.j.christopherson@intel.com [1]
+> Link: https://lore.kernel.org/kvm/20200713190649.GE29725@linux.intel.com/T/#mabc0119583dacf621025e9d873c85f4fbaa66d5c [2]
+> Link: https://lore.kernel.org/kvm/20200713190649.GE29725@linux.intel.com/T/#m1839c85392a7a022df9e507876bb241c022c4f06 [3]
+> Link: https://lore.kernel.org/kvm/ZhSYEVCHqSOpVKMh@google.com [4]
+> Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
+> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> ---
+> TDX MMU Part 1:
+>  - New patch
+> ---
+>  arch/x86/kvm/mmu/mmu.c   | 30 +++++++++++++++++++++++++++++-
+>  arch/x86/kvm/x86.c       | 17 +++++++++++++++++
+>  include/uapi/linux/kvm.h |  1 +
+>  virt/kvm/kvm_main.c      |  5 ++++-
+>  4 files changed, 51 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+> index 61982da8c8b2..4a8e819794db 100644
+> --- a/arch/x86/kvm/mmu/mmu.c
+> +++ b/arch/x86/kvm/mmu/mmu.c
+> @@ -6962,10 +6962,38 @@ void kvm_arch_flush_shadow_all(struct kvm *kvm)
+>  	kvm_mmu_zap_all(kvm);
+>  }
+>  
+> +static void kvm_mmu_zap_memslot_leafs(struct kvm *kvm, struct kvm_memory_slot *slot)
+> +{
+> +	if (KVM_BUG_ON(!tdp_mmu_enabled, kvm))
+> +		return;
+> +
+> +	write_lock(&kvm->mmu_lock);
+> +
+> +	/*
+> +	 * Zapping non-leaf SPTEs, a.k.a. not-last SPTEs, isn't required, worst
+> +	 * case scenario we'll have unused shadow pages lying around until they
+> +	 * are recycled due to age or when the VM is destroyed.
+> +	 */
+> +	struct kvm_gfn_range range = {
+> +		.slot = slot,
+> +		.start = slot->base_gfn,
+> +		.end = slot->base_gfn + slot->npages,
+> +		.may_block = true,
+> +	};
 
-The following excerpt from a btmon trace shows a report received with
-"Reserved" for "Primary PHY" on a 4388 controller:
+nit: move this up at the beginning of this function.
+Compiler didn't complain?
 
-> HCI Event: LE Meta Event (0x3e) plen 26
-      LE Extended Advertising Report (0x0d)
-        Num reports: 1
-        Entry 0
-          Event type: 0x2515
-            Props: 0x0015
-              Connectable
-              Directed
-              Use legacy advertising PDUs
-            Data status: Complete
-            Reserved (0x2500)
-         Legacy PDU Type: Reserved (0x2515)
-          Address type: Random (0x01)
-          Address: 00:00:00:00:00:00 (Static)
-          Primary PHY: Reserved
-          Secondary PHY: No packets
-          SID: no ADI field (0xff)
-          TX power: 127 dBm
-          RSSI: -60 dBm (0xc4)
-          Periodic advertising interval: 0.00 msec (0x0000)
-          Direct address type: Public (0x00)
-          Direct address: 00:00:00:00:00:00 (Apple, Inc.)
-          Data length: 0x00
 
-Cc: stable@vger.kernel.org
-Fixes: 2e7ed5f5e69b ("Bluetooth: hci_sync: Use advertised PHYs on hci_le_ext_create_conn_sync")
-Reported-by: Janne Grunau <j@jannau.net>
-Closes: https://lore.kernel.org/all/Zjz0atzRhFykROM9@robin
-Tested-by: Janne Grunau <j@jannau.net>
-Signed-off-by: Sven Peter <sven@svenpeter.dev>
----
- drivers/bluetooth/hci_bcm4377.c |  8 ++++++++
- include/net/bluetooth/hci.h     | 11 +++++++++++
- net/bluetooth/hci_event.c       |  7 +++++++
- 3 files changed, 26 insertions(+)
+> +
+> +	if (kvm_tdp_mmu_unmap_gfn_range(kvm, &range, false))
+> +		kvm_flush_remote_tlbs(kvm);
+> +
+> +	write_unlock(&kvm->mmu_lock);
+> +}
+> +
+>  void kvm_arch_flush_shadow_memslot(struct kvm *kvm,
+>  				   struct kvm_memory_slot *slot)
+>  {
+> -	kvm_mmu_zap_all_fast(kvm);
+> +	if (slot->flags & KVM_MEM_ZAP_LEAFS_ONLY)
+> +		kvm_mmu_zap_memslot_leafs(kvm, slot);
+> +	else
+> +		kvm_mmu_zap_all_fast(kvm);
+>  }
+>  
+>  void kvm_mmu_invalidate_mmio_sptes(struct kvm *kvm, u64 gen)
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 7c593a081eba..4b3ec2ec79e9 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -12952,6 +12952,23 @@ int kvm_arch_prepare_memory_region(struct kvm *kvm,
+>  		if ((new->base_gfn + new->npages - 1) > kvm_mmu_max_gfn())
+>  			return -EINVAL;
+>  
+> +		/*
+> +		 * Since TDX private pages requires re-accepting after zap,
+> +		 * and TDX private root page should not be zapped, TDX requires
+> +		 * memslots for private memory must have flag
+> +		 * KVM_MEM_ZAP_LEAFS_ONLY set too, so that only leaf SPTEs of
+> +		 * the deleting memslot will be zapped and SPTEs in other
+> +		 * memslots would not be affected.
+> +		 */
+> +		if (kvm->arch.vm_type == KVM_X86_TDX_VM &&
+> +		    (new->flags & KVM_MEM_GUEST_MEMFD) &&
+> +		    !(new->flags & KVM_MEM_ZAP_LEAFS_ONLY))
+> +			return -EINVAL;
+> +
+> +		/* zap-leafs-only works only when TDP MMU is enabled for now */
+> +		if ((new->flags & KVM_MEM_ZAP_LEAFS_ONLY) && !tdp_mmu_enabled)
+> +			return -EINVAL;
+> +
+>  		return kvm_alloc_memslot_metadata(kvm, new);
+>  	}
+>  
+> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+> index aee67912e71c..d53648c19b26 100644
+> --- a/include/uapi/linux/kvm.h
+> +++ b/include/uapi/linux/kvm.h
+> @@ -51,6 +51,7 @@ struct kvm_userspace_memory_region2 {
+>  #define KVM_MEM_LOG_DIRTY_PAGES	(1UL << 0)
+>  #define KVM_MEM_READONLY	(1UL << 1)
+>  #define KVM_MEM_GUEST_MEMFD	(1UL << 2)
+> +#define KVM_MEM_ZAP_LEAFS_ONLY	(1UL << 3)
 
-diff --git a/drivers/bluetooth/hci_bcm4377.c b/drivers/bluetooth/hci_bcm4377.c
-index 9a7243d5db71..55109ad45115 100644
---- a/drivers/bluetooth/hci_bcm4377.c
-+++ b/drivers/bluetooth/hci_bcm4377.c
-@@ -495,6 +495,10 @@ struct bcm4377_data;
-  *                  extended scanning
-  * broken_mws_transport_config: Set to true if the chip erroneously claims to
-  *                              support MWS Transport Configuration
-+ * broken_le_ext_adv_report_phy: Set to true if this chip stuffs flags inside
-+ *                               reserved bits of Primary/Secondary_PHY inside
-+ *                               LE Extended Advertising Report events which
-+ *                               have to be ignored
-  * send_calibration: Optional callback to send calibration data
-  * send_ptb: Callback to send "PTB" regulatory/calibration data
-  */
-@@ -513,6 +517,7 @@ struct bcm4377_hw {
- 	unsigned long broken_ext_scan : 1;
- 	unsigned long broken_mws_transport_config : 1;
- 	unsigned long broken_le_coded : 1;
-+	unsigned long broken_le_ext_adv_report_phy : 1;
- 
- 	int (*send_calibration)(struct bcm4377_data *bcm4377);
- 	int (*send_ptb)(struct bcm4377_data *bcm4377,
-@@ -2374,6 +2379,8 @@ static int bcm4377_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 		set_bit(HCI_QUIRK_BROKEN_EXT_SCAN, &hdev->quirks);
- 	if (bcm4377->hw->broken_le_coded)
- 		set_bit(HCI_QUIRK_BROKEN_LE_CODED, &hdev->quirks);
-+	if (bcm4377->hw->broken_le_ext_adv_report_phy)
-+		set_bit(HCI_QUIRK_FIXUP_LE_EXT_ADV_REPORT_PHY, &hdev->quirks);
- 
- 	pci_set_drvdata(pdev, bcm4377);
- 	hci_set_drvdata(hdev, bcm4377);
-@@ -2478,6 +2485,7 @@ static const struct bcm4377_hw bcm4377_hw_variants[] = {
- 		.clear_pciecfg_subsystem_ctrl_bit19 = true,
- 		.broken_mws_transport_config = true,
- 		.broken_le_coded = true,
-+		.broken_le_ext_adv_report_phy = true,
- 		.send_calibration = bcm4387_send_calibration,
- 		.send_ptb = bcm4378_send_ptb,
- 	},
-diff --git a/include/net/bluetooth/hci.h b/include/net/bluetooth/hci.h
-index 5c12761cbc0e..342aab86dad6 100644
---- a/include/net/bluetooth/hci.h
-+++ b/include/net/bluetooth/hci.h
-@@ -347,6 +347,17 @@ enum {
- 	 * claim to support it.
- 	 */
- 	HCI_QUIRK_BROKEN_READ_ENC_KEY_SIZE,
-+
-+	/*
-+	 * When this quirk is set, the reserved bits of Primary/Secondary_PHY
-+	 * inside the LE Extended Advertising Report events are discarded.
-+	 * This is required for some Apple/Broadcom controllers which
-+	 * abuse these reserved bits for unrelated flags.
-+	 *
-+	 * This quirk can be set before hci_register_dev is called or
-+	 * during the hdev->setup vendor callback.
-+	 */
-+	HCI_QUIRK_FIXUP_LE_EXT_ADV_REPORT_PHY,
- };
- 
- /* HCI device flags */
-diff --git a/net/bluetooth/hci_event.c b/net/bluetooth/hci_event.c
-index d72d238c1656..01d3a8d343f1 100644
---- a/net/bluetooth/hci_event.c
-+++ b/net/bluetooth/hci_event.c
-@@ -6446,6 +6446,13 @@ static void hci_le_ext_adv_report_evt(struct hci_dev *hdev, void *data,
- 
- 		evt_type = __le16_to_cpu(info->type) & LE_EXT_ADV_EVT_TYPE_MASK;
- 		legacy_evt_type = ext_evt_type_to_legacy(hdev, evt_type);
-+
-+		if (test_bit(HCI_QUIRK_FIXUP_LE_EXT_ADV_REPORT_PHY,
-+			     &hdev->quirks)) {
-+			info->primary_phy &= 0x1f;
-+			info->secondary_phy &= 0x1f;
-+		}
-+
- 		if (legacy_evt_type != LE_ADV_INVALID) {
- 			process_adv_report(hdev, legacy_evt_type, &info->bdaddr,
- 					   info->bdaddr_type, NULL, 0,
+If we make this uAPI, please update Documentation/virt/kvm/api.rst too.
 
----
-base-commit: a38297e3fb012ddfa7ce0321a7e5a8daeb1872b6
-change-id: 20240512-btfix-95c10c456f17
 
-Best regards,
+>  
+>  /* for KVM_IRQ_LINE */
+>  struct kvm_irq_level {
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index 81b90bf03f2f..1b1ffb6fc786 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -1568,6 +1568,8 @@ static int check_memory_region_flags(struct kvm *kvm,
+>  	if (kvm_arch_has_private_mem(kvm))
+>  		valid_flags |= KVM_MEM_GUEST_MEMFD;
+>  
+> +	valid_flags |= KVM_MEM_ZAP_LEAFS_ONLY;
+> +
+
+This is arch common code. We need a guard for other arch (non-x86).
+Also feature enumeration. KVM_CAP_USER_MEMORY2 can be used?
 -- 
-Sven Peter <sven@svenpeter.dev>
-
-
+Isaku Yamahata <isaku.yamahata@intel.com>
 
