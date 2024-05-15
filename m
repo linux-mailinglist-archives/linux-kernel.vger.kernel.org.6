@@ -1,151 +1,201 @@
-Return-Path: <linux-kernel+bounces-179502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8A208C6090
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:03:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41E608C6093
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:04:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 620861F21BBA
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:03:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65CCF1C21EE4
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:04:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EF933B785;
-	Wed, 15 May 2024 06:03:35 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 270833BBDC;
+	Wed, 15 May 2024 06:04:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="NMI1A9Cr"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 426E33A29F
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 06:03:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 987323A29F;
+	Wed, 15 May 2024 06:04:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715753014; cv=none; b=mLXVLTdgeHe8uGlG66R7CX/7IkgpmoQgh0dQymvahZNHtCr68KOZ2V+yiFEXmLiM+rJjmkL1j5CjK0tJ4+Tbfgo5T8bJRDLO67ADkQIMyZhO5IXhpeHMlxr3H6X3n6c/dubRcs5FgxA+IS8Izr5Awu240ZLctLo/RuHyiJP74x8=
+	t=1715753053; cv=none; b=lcJjnMwfDIHJqFeD17jXgBS4vaq3AGaWO/0lIIlDKnDj54AEEhiMVQFwPDmXCVNoIbvYT9On9KE/X9JygR68SOv0lALfrGQmsnXEx0ymRFIt3CDSmRifuUvfmQlUAcdPnH71I48nTnmbayBnj5CEvNwPgBb/ODJ8g5I7/78yZ2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715753014; c=relaxed/simple;
-	bh=A0JCQ/+cjp3ne63Df0ewOWwu5MRtXQ66AotJ2DruUR0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iRjBdtXxMocMFyzlgRgyLMiju6f8QxGYtPPtg5VPiUtdiaia7a5KZSfispW6ry4Q6g6qobcbkrI2p0tArh07wxBAZ8v2ZVYM3xxkegw7ZtIkVKKyb6gfTQatnqvKTba18ETE73sgacXQPpQN9uqgG7Ya151ymrkxyznR24GHj6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [192.168.0.2] (ip5f5af258.dynamic.kabel-deutschland.de [95.90.242.88])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 32BCD61E5FE07;
-	Wed, 15 May 2024 08:02:56 +0200 (CEST)
-Message-ID: <b12ae551-e7a4-435b-b7ff-368d6c1ae7a1@molgen.mpg.de>
-Date: Wed, 15 May 2024 08:02:55 +0200
+	s=arc-20240116; t=1715753053; c=relaxed/simple;
+	bh=VWwmMUM1Lbfr5IA5967p41DjlUsSHLh42TM5+wQa6Jw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BWS6pt2mMNC4zHz0LgG84r2nv7slqLpIig9KCPkw1OVdaDr0Okr6ncyEJAm0I7HOUmZx3CTh/fB3zX+BLAVWDLQHcXTyzi3STvFKOrcs+Q2ISPg3ifQIbVeziWWl5UlTnWZMBT+ZzCWBYZ2wShPFMUP7zyNhDHtiStrP42L04OY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=NMI1A9Cr; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44F63OUw111891;
+	Wed, 15 May 2024 01:03:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1715753004;
+	bh=DJC3n4YBr4mraORAIsBV0BhFeTokOltNjlCbCW87Qpo=;
+	h=From:To:CC:Subject:Date;
+	b=NMI1A9CrM1xKiE7bU+EGIphgRyeIH1qCWfZCb8yBlMGkey+WSNxJsVVw+Cn7eT1RI
+	 FCMqnoO+/Ztjr5t0YR85Q3jVltaUvDaLzumZ4CGIXE8btuAEMJCCTsmEKrFfrbXXeG
+	 2lwH8oO7CO4SNjSq7xYPM7puQWbG1oLgRk8ySt1Q=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44F63OPO068741
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 15 May 2024 01:03:24 -0500
+Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 15
+ May 2024 01:03:24 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 15 May 2024 01:03:24 -0500
+Received: from fllv0122.itg.ti.com (fllv0122.itg.ti.com [10.247.120.72])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44F63OhW038209;
+	Wed, 15 May 2024 01:03:24 -0500
+Received: from localhost (danish-tpc.dhcp.ti.com [10.24.69.25])
+	by fllv0122.itg.ti.com (8.14.7/8.14.7) with ESMTP id 44F63NVI021283;
+	Wed, 15 May 2024 01:03:23 -0500
+From: MD Danish Anwar <danishanwar@ti.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+        Jan Kiszka
+	<jan.kiszka@siemens.com>, Andrew Lunn <andrew@lunn.ch>,
+        Simon Horman
+	<horms@kernel.org>,
+        Niklas Schnelle <schnelle@linux.ibm.com>,
+        Wolfram Sang
+	<wsa+renesas@sang-engineering.com>,
+        Arnd Bergmann <arnd@arndb.de>, Diogo Ivo
+	<diogo.ivo@siemens.com>,
+        Vladimir Oltean <vladimir.oltean@nxp.com>,
+        Roger
+ Quadros <rogerq@kernel.org>,
+        MD Danish Anwar <danishanwar@ti.com>, Paolo
+ Abeni <pabeni@redhat.com>,
+        Jakub Kicinski <kuba@kernel.org>, Eric Dumazet
+	<edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+CC: <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <srk@ti.com>,
+        Vignesh Raghavendra
+	<vigneshr@ti.com>, <r-gunasekaran@ti.com>
+Subject: [RFC PATCH net-next v4 0/3] Introduce switch mode support for ICSSG driver
+Date: Wed, 15 May 2024 11:33:17 +0530
+Message-ID: <20240515060320.2783244-1-danishanwar@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: DMAR-IR: IRQ remapping was enabled on dmar6 but we are not in
- kdump mode
-To: Baolu Lu <baolu.lu@linux.intel.com>
-Cc: =?UTF-8?B?SsO2cmcgUsO2ZGVs?= <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, iommu@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <5517f76a-94ad-452c-bae6-34ecc0ec4831@molgen.mpg.de>
- <433452d0-589a-49c8-8044-dcc93d5be90a@linux.intel.com>
- <24bf9a11-6abd-4ccf-9ca1-3cf75c45d374@molgen.mpg.de>
- <42b53bff-4027-4cb6-a457-e26fd62895e5@linux.intel.com>
- <61ce93c7-e89c-4217-8095-dde9fb01763c@molgen.mpg.de>
- <7eb01b85-9233-4f21-865e-6d128f39fb46@linux.intel.com>
-Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <7eb01b85-9233-4f21-865e-6d128f39fb46@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Dear Baolu,
+This series adds support for switch-mode for ICSSG driver. This series
+also introduces helper APIs to configure firmware maintained FDB
+(Forwarding Database) and VLAN tables. These APIs are later used by ICSSG
+driver in switch mode.
 
+Now the driver will boot by default in dual EMAC mode. When first ICSSG
+interface is added to bridge driver will still be in EMAC mode. As soon as
+second ICSSG interface is added to same bridge, switch-mode will be
+enabled and switch firmwares will be loaded to PRU cores. The driver will
+remain in dual EMAC mode if ICSSG interfaces are added to two different
+bridges or if two differnet interfaces (One ICSSG, one other) is added to
+the same bridge. We'll only enable is_switch_mode flag when two ICSSG
+interfaces are added to same bridge.
 
-Am 15.05.24 um 04:13 schrieb Baolu Lu:
-> On 5/15/24 3:46 AM, Paul Menzel wrote:
->> Am 23.01.24 um 01:55 schrieb Baolu Lu:
->>> On 2024/1/22 22:53, Paul Menzel wrote:
->>>> Am 22.01.24 um 13:38 schrieb Baolu Lu:
->>>>> On 2024/1/19 22:45, Paul Menzel wrote:
->>>>>>
->>>>>> On a Dell PowerEdge T640, Linux 5.9 and 6.6.12 warn about kdump:
->>>>>>
->>>>>>      [    2.728445] DMAR-IR: IRQ remapping was enabled on dmar6 but we are not in kdump mode
->>>>>>      [    2.736544] DMAR-IR: IRQ remapping was enabled on dmar5 but we are not in kdump mode
->>>>>>      [    2.744620] DMAR-IR: IRQ remapping was enabled on dmar4 but we are not in kdump mode
->>>>>>      [    2.752695] DMAR-IR: IRQ remapping was enabled on dmar3 but we are not in kdump mode
->>>>>>      [    2.760774] DMAR-IR: IRQ remapping was enabled on dmar2 but we are not in kdump mode
->>>>>>      [    2.768847] DMAR-IR: IRQ remapping was enabled on dmar1 but we are not in kdump mode
->>>>>>      [    2.776922] DMAR-IR: IRQ remapping was enabled on dmar0 but we are not in kdump mode
->>>>>>      [    2.784999] DMAR-IR: IRQ remapping was enabled on dmar7 but we are not in kdump mode
->>>>>>
->>>>>> Looking through the logs, this only happens when using kexec to 
->>>>>> restart the system.
->>>>>
->>>>> The code that warned this is,
->>>>>
->>>>>   599         if (ir_pre_enabled(iommu)) {
->>>>>   600                 if (!is_kdump_kernel()) {
->>>>>   601                         pr_warn("IRQ remapping was enabled on %s but we are not in kdump mode\n",
->>>>>   602                                 iommu->name);
->>>>>   603                         clear_ir_pre_enabled(iommu);
->>>>>   604                         iommu_disable_irq_remapping(iommu);
->>>>>   605                 }
->>>>>
->>>>> The VT-d interrupt remapping is enabled during boot, but this is not a
->>>>> kdump kernel.
->>>>>
->>>>> Do you mind checking whether the disable interrupt remapping callback
->>>>> was called during kexec reboot?
->>>>>
->>>>> 1121 struct irq_remap_ops intel_irq_remap_ops = {
->>>>> 1122         .prepare                = intel_prepare_irq_remapping,
->>>>> 1123         .enable                 = intel_enable_irq_remapping,
->>>>> 1124         .disable                = disable_irq_remapping,
->>>>> 1125         .reenable               = reenable_irq_remapping,
->>>>> 1126         .enable_faulting        = enable_drhd_fault_handling,
->>>>> 1127 };
->>>>
->>>> Is there a way to check this without rebuilding the Linux kernel?
->>>
->>> I am not sure, but you can check whether any messages are dumped in the
->>> path of .disable callback? or try to use ftrace?
->>
->> With
->>
->> ```
->> diff --git a/drivers/iommu/intel/irq_remapping.c 
->> b/drivers/iommu/intel/irq_remapping.c
->> index 712ebfc9870c6..146f19ae5b5f1 100644
->> --- a/drivers/iommu/intel/irq_remapping.c
->> +++ b/drivers/iommu/intel/irq_remapping.c
->> @@ -1030,6 +1030,7 @@ static void disable_irq_remapping(void)
->>       struct dmar_drhd_unit *drhd;
->>       struct intel_iommu *iommu = NULL;
->>
->> +     pr_warn("XXX: Called %s\n", __func__);
->>       /*
->>        * Disable Interrupt-remapping for all the DRHD's now.
->>        */
->> ```
->>
->> I can’t see anything in the logs, so it does not seem to be called.
->>
->> Can you reproduce the issue?
-> 
-> How did you reproduce this?
+We start in dual MAC mode. Let's say lan0 and lan1 are ICSSG interfaces
 
-On a “server” (with Intel Xeon?), in my case Dell PowerEdge T640 and 
-Dell PowerEdge R930 (Intel E7-8891 v3), run
+ip link add name br0 type bridge
+ip link set lan0 master br0
 
-     kexec /boot/bzImage --initrd=/boot/grub/initramfs.igz --reuse-cmdline
+At this point, we get a CHANGEUPPER event. Only one port is a member of
+the bridge, so we will still be in dual MAC mode.
 
+ip link set lan1 master br0
 
-Kind regards,
+We get a second CHANGEUPPER event, the second interface lan1 is also ICSSG
+interface so we will set the is_switch_mode flag and when interfaces are
+brought up again, ICSSG switch firmwares will be loaded to PRU Cores.
 
-Paul
+There are some other cases to consider as well. 
+
+ip link add name br0 type bridge
+ip link add name br1 type bridge
+
+ip link set lan0 master br0
+ip link set ppp0 master br0
+
+Here we are adding lan0 (ICSSG) and ppp0 (non ICSSG) to same bridge, as
+they both are not ICSSG, we will still be running in dual EMAC mode.
+
+ip link set lan1 master br1
+ip link set vpn0 master br1
+
+Here we are adding lan1 (ICSSG) and vpn0 (non ICSSG) to same bridge, as
+they both are not ICSSG, we will still be running in dual EMAC mode.
+
+This is v4 of the series. It addresses commenst made on v3.
+Changes from v3 to v4:
+*) Added RFC tag as net-next is closed now.
+*) Modified the driver to remove the need of bringing interfaces up / down
+   for enabling / disabling siwtch mode. Now switch mode can be enabled
+   without bringig interfaces up / down as requested by Andrew Lunn
+   <andrew@lunn.ch>
+*) Modified commit message of patch 3/3.
+
+Changes from v2 to v3:
+*) Dropped RFC tag.
+*) Used ether_addr_copy() instead of manually copying mac address using
+   for loop in patch 1/3 as suggested by Andrew Lunn <andrew@lunn.ch>
+*) Added helper API icssg_fdb_setup() in patch 1/3 to reduce code
+   duplication as suggested by Andrew Lunn <andrew@lunn.ch>
+*) In prueth_switchdev_stp_state_set() removed BR_STATE_LEARNING as
+   learning without forwarding is not supported by ICSSG firmware.
+*) Used ether_addr_equal() wherever possible in patch 2/3 as suggested
+   by Andrew Lunn <andrew@lunn.ch>
+*) Fixed typo "nit: s/prueth_switchdevice_nb/prueth_switchdev_nb/" in
+   patch 2/3 as suggested by Simon Horman <horms@kernel.org>
+*) Squashed "#include "icssg_mii_rt.h" to patch 2/3 from patch 3/3 as
+   suggested by Simon Horman <horms@kernel.org>
+*) Rebased on latest net-next/main.
+
+Changes from v1 to v2:
+*) Removed TAPRIO support patch from this series.
+*) Stopped using devlink for enabling switch-mode as suggested by Andrew L
+*) Added read_poll_timeout() in patch 1 / 3 as suggested by Andrew L.
+
+v1 https://lore.kernel.org/all/20230830110847.1219515-4-danishanwar@ti.com/
+v2 https://lore.kernel.org/all/20240118071005.1514498-1-danishanwar@ti.com/
+v3 https://lore.kernel.org/all/20240327114054.1907278-1-danishanwar@ti.com/
+
+Thanks and Regards,
+Md Danish Anwar
+
+MD Danish Anwar (3):
+  net: ti: icssg-prueth: Add helper functions to configure FDB
+  net: ti: icssg-switch: Add switchdev based driver for ethernet switch
+    support
+  net: ti: icssg-prueth: Add support for ICSSG switch firmware
+
+ drivers/net/ethernet/ti/Kconfig               |   1 +
+ drivers/net/ethernet/ti/Makefile              |   3 +-
+ drivers/net/ethernet/ti/icssg/icssg_common.c  |   2 +
+ drivers/net/ethernet/ti/icssg/icssg_config.c  | 306 ++++++++++-
+ drivers/net/ethernet/ti/icssg/icssg_config.h  |  26 +
+ drivers/net/ethernet/ti/icssg/icssg_prueth.c  | 250 ++++++++-
+ drivers/net/ethernet/ti/icssg/icssg_prueth.h  |  36 ++
+ .../net/ethernet/ti/icssg/icssg_switchdev.c   | 477 ++++++++++++++++++
+ .../net/ethernet/ti/icssg/icssg_switchdev.h   |  13 +
+ 9 files changed, 1099 insertions(+), 15 deletions(-)
+ create mode 100644 drivers/net/ethernet/ti/icssg/icssg_switchdev.c
+ create mode 100644 drivers/net/ethernet/ti/icssg/icssg_switchdev.h
+
+-- 
+2.34.1
+
 
