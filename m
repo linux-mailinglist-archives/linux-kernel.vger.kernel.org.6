@@ -1,414 +1,212 @@
-Return-Path: <linux-kernel+bounces-180414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8616E8C6E69
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 00:07:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D77A8C6E6A
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 00:08:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A95051C22942
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 22:07:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F2911C22219
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 22:08:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A30015B56C;
-	Wed, 15 May 2024 22:07:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81ADB15B56C;
+	Wed, 15 May 2024 22:08:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="w9sNIJ3y"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d+QxfRpN"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D4E3BBEA
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 22:07:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715810837; cv=none; b=WaI2puavILg76Vwm/ZvvbQkGqXweeAL20dhUkVJHT4kFyKxSXCeD+hJTxSAl9CU1YHSih5EKJDdg6bjtHkZtSpqsX5ekMj31N1mVNvgFSJ6/odW/XZTflyKEBq1oOU09JPFL7pte9vsoU2v5zxXQluZ3VgO0d7FyBPnimHY9qnY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715810837; c=relaxed/simple;
-	bh=jsilqE3efpKVc6XIFDIXXvj8zuPLADsovku0CYo3qPA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LbiPnmJJ54fSwcqauxVs1ioP86xupPGp/IBHgRrYGK+3ZHALwSI9Z7mZqXvjXGhYEdegJZEdHkM2gfFYHHnm7YrJ0DF32qBnJcdCwDtliLF5LVTKEUikGb+YGYQinaATozJeC18iCNev5Fqq9vMY2vPJbZgWo7dQgf+8ycerb6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=w9sNIJ3y; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42012c85e61so317575e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 15:07:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715810833; x=1716415633; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OscmHwMONkjYXaXcy4YkhdqQvq8LZLvZAntCwp0ktck=;
-        b=w9sNIJ3ya75OexANQCI44F5evoiiR00TOnKP9hMi7DU0YscKzI+KyOZmTmcR+BmYxd
-         fD4REn/ID7DLt8RaYCOodAiKrJjXnM23HC5YEBQmUT6zVym0MrPp0It1z7Fx8IXCAkYh
-         GLElAV+vkTnXQkwzeqrAuObKgVrDiZoccwwuUYxilcD/EyQZYa5S845EDiSbGfdAq7XT
-         Xsl/EAS8tnUqXkZCV4xNnPlH/yCyg8KSYV2VH1e7QaDpNoXBBrzCRxNSHJ8ZCmd0CFzj
-         7LH6+6ZUM4F506TxZidO8cXxgYj/qTK8B3f44dLP8yMYd3fhiAH61n+VN5LfPPiIkUbA
-         EsRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715810833; x=1716415633;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OscmHwMONkjYXaXcy4YkhdqQvq8LZLvZAntCwp0ktck=;
-        b=xN9Y+xvi/JGmlZHV6Rvxe89AZEmDzmbHNDahOCPJxvaoZIAN0+f+BvkVX21ZlzWiLB
-         u5mCbKeMategcbM1AJrL0d2RrvAIlKlX0W5wmNkQR0aeA4E2qfzb6Y26cWVe8TTdwCFc
-         Sw7TCLzSaunJT9HY09sTrFLBCVADHuLfWI7jQKoip7W1ksIQbUKTgKw32xJuCQbC/0Pn
-         C7jJvhdOpBe/XuYoUTghPj15qH3ZMs3oWw/ybw7f+/LEZQ3mVPQ/rqNb9ksJzmScwcyF
-         ePfLCosLCcdoFrb+c+oSahS0ra1Q9g88pzSRO8T1m7OnYvm9c9iLWyHw4IvVZWqJ8PbT
-         4iXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU18n2CRKYdO0uym/6vDxkurIf0MIAtHgNZqI0MRIP2SdK+8X5IqX+hU+009xtCZsIwuB8DmHPIue/H7dAW8La8KOcPvmBbBS2oAO5a
-X-Gm-Message-State: AOJu0YwXMT19mDoQokWbS1KoTWZ0Y9bNqB4XCQehDgcJWeYSJgF/6scC
-	65fvHtESBQhl/R5yWkXeA0f001SSZby6KHFx9wqQnCKFkfDCo9/x0JEttbgl9iy9+X6szmbVRmq
-	//R3Cf5k5F6gka20FHW3n4IJ+HOYorURxiQ2gXx6KNALqjfROCg==
-X-Google-Smtp-Source: AGHT+IF7Hew74c1YSBbVSLgKFrCt8F4DORG+tQE7/A4IxOPrJJQuJjuG9iKeqPfUk+ZYNnYDjzcvOEqifHqGV6ME20I=
-X-Received: by 2002:a05:600c:3d9a:b0:41f:a15d:2228 with SMTP id
- 5b1f17b1804b1-4200ebea389mr10040285e9.0.1715810832956; Wed, 15 May 2024
- 15:07:12 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F0DE25757
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 22:07:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.21
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715810880; cv=fail; b=aCHQRiynklffPgl8kUpvdsx1DVT6fTrAzR0i/r9kKuBQF3Oyc+VXrBkTFqzZRu5EPHf9I8piN7Rx06Wz502qgMK2BqxkWpUTKgnri61yhkfHvKeaPgkdGnnpZoFrkTD6bLN8samb2jGnxkKTdQqvZX+/2OwvuheY+9aMOKXbyTU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715810880; c=relaxed/simple;
+	bh=Wt8xSTjhHNK720mXFIhOl7vcy38uoDz8QTBIK+QVMsE=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=HQK37sNXAZ+SdmDtclOiu92R7bKADF2qIFXn2btk1CNJwFxePQ68WyOZr8jKCdmRftsF6sFB3ZmXsNTkLne6m+OHb0uQcFfdg1BrDHyNKBzUTNpkQ44qPlBdbqjIKKFlpev3COKMWEBfmeS7uQHsfpQw0t6arFOKzckbF82u1y8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d+QxfRpN; arc=fail smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715810879; x=1747346879;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=Wt8xSTjhHNK720mXFIhOl7vcy38uoDz8QTBIK+QVMsE=;
+  b=d+QxfRpNOAvmDcZ6nUw05kFEC52bkyc0yk1Alvx2XJG6Ke4sCkLgtqsG
+   hTyMROd/WjsxK9xdsPhid5Oqc0kIabKB4wzBpDQ74KCk9o2hN1ea6ghQp
+   KmeoxoqIxj+bZfkvv69jAR4VRLrscucohVt4lGaWfwEVbNsR6hBT6l1a9
+   nOmhexQHUJD5eb5WogAGcrcwSh473svriCl26LNDv01IGubAvoXucRv+2
+   UJAsapEPw3GxXliyqg7waOAsURU/cIA6Q368PG0S2B87cKadDghmr4FLs
+   04HgHLO9OkJwib3p+MdDWOIcUlH//76YgoVoRjA8g4mjX2t3crJCeXVPI
+   w==;
+X-CSE-ConnectionGUID: tdjWvbP/QPu2mLW/mkD3Ug==
+X-CSE-MsgGUID: O5P6ieZ7RiG+LT3c+yGM1g==
+X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="11837045"
+X-IronPort-AV: E=Sophos;i="6.08,162,1712646000"; 
+   d="scan'208";a="11837045"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 15:07:59 -0700
+X-CSE-ConnectionGUID: JuS4W7AWSW+fXBB3toxU4Q==
+X-CSE-MsgGUID: 4Am65n8rSFa+mzDrWeZR+A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,162,1712646000"; 
+   d="scan'208";a="35926668"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by orviesa003.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 15 May 2024 15:07:59 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Wed, 15 May 2024 15:07:58 -0700
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Wed, 15 May 2024 15:07:58 -0700
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (104.47.56.41) by
+ edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Wed, 15 May 2024 15:07:57 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=fk5e4Pm+9jFp/vHziMW3LnzDyusRPhs+AXFPcNuHmOa9nWVd5heqGP5B08pTA8vbKo2V4mUNjK6jhrS0hFuZe69Pb/f7e8JnAZDE+sHdDSWsoK51lhipZKOwzCrNVGr0sD8EZN5IMro2uHjCNK7iJN/g4+vKOPr3xwwzi+qfCWt2Ta8L+iwwyxWMaMFrsNVhNUN36KfTz49Q1osCqwj0biHzkrcncbJJIHBrpawT7989aT0M5PG5nj23R2/910viVPg/Gc978ZOu46Uwdc3RjVKLWO8GtTL7f8iJJYdwgPJ+61fzFBHBj6BXhNvn4U9pijsx28Ie/pPSX6yKrXDiVA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Wt8xSTjhHNK720mXFIhOl7vcy38uoDz8QTBIK+QVMsE=;
+ b=RfgSbppqVV69MetP7zcNMB/fBthxhXXJqUEkAp9uBDYRG6bgV8oIy6hrLDMtxIj/9xi2pWi6wshJBhTIGkJlqQZQeoX8I9RGRPBSzFm/A+P7WhOGR1KKjg0wKlS6IahWCMLMVEi9YRkpr2OcXYsPslIAtD0d66tJYO36PLcft8ym7y1ovY5iP8DsLx7wZgOk0UsxFoFRSX9bYUvj788F85FsbtK6yDBQ5ekZHcTx/g1fIp//rLrBE9g/eKcgYoHR4uZqgE2iM8H4ml5n+HkGKboKpWSdLQO9EbLdHk3HAb3T4kxnGP3CXNeg+FVHEm6M+DhETF4MHN54YP3NGyUSXg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from SJ1PR11MB6083.namprd11.prod.outlook.com (2603:10b6:a03:48a::9)
+ by CYYPR11MB8388.namprd11.prod.outlook.com (2603:10b6:930:c2::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Wed, 15 May
+ 2024 22:07:56 +0000
+Received: from SJ1PR11MB6083.namprd11.prod.outlook.com
+ ([fe80::acfd:b7e:b73b:9361]) by SJ1PR11MB6083.namprd11.prod.outlook.com
+ ([fe80::acfd:b7e:b73b:9361%4]) with mapi id 15.20.7587.028; Wed, 15 May 2024
+ 22:07:56 +0000
+From: "Luck, Tony" <tony.luck@intel.com>
+To: Borislav Petkov <bp@alien8.de>
+CC: "x86@kernel.org" <x86@kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "patches@lists.linux.dev"
+	<patches@lists.linux.dev>
+Subject: RE: [PATCH] x86/cpu: Fix x86_match_cpu() to match just
+ X86_VENDOR_INTEL
+Thread-Topic: [PATCH] x86/cpu: Fix x86_match_cpu() to match just
+ X86_VENDOR_INTEL
+Thread-Index: AQHapxEK4jkPis1WW0yjK7d+25yhhbGY2JkAgAABhjA=
+Date: Wed, 15 May 2024 22:07:56 +0000
+Message-ID: <SJ1PR11MB6083D455CE90AFC3251703B8FCEC2@SJ1PR11MB6083.namprd11.prod.outlook.com>
+References: <20240515214357.73798-1-tony.luck@intel.com>
+ <20240515220058.GEZkUwmtNazjQaLdDn@fat_crate.local>
+In-Reply-To: <20240515220058.GEZkUwmtNazjQaLdDn@fat_crate.local>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SJ1PR11MB6083:EE_|CYYPR11MB8388:EE_
+x-ms-office365-filtering-correlation-id: 7b6d7387-7bd3-4d87-2d95-08dc752b7971
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230031|1800799015|376005|366007|38070700009;
+x-microsoft-antispam-message-info: =?utf-8?B?Q3BYZjRLQjRCQ2hXRWV5N3QzdEV0dmc1YVRoa1NyajJYbFBGc2hkTG1adjcy?=
+ =?utf-8?B?QWpsN0RkRGNTNWlQUDJrMnQ5MTkzajUxUGR1Nkc2SmhNcTgvVmpzWGtZalNF?=
+ =?utf-8?B?ZEVPSDMrOCtGbURXYXBqSklwTU9na00ydERzdXZMNUJ2bXM1UXRMY1BnSlhB?=
+ =?utf-8?B?S1dHZGpDakw0WGNlaGs0OEw1K1M1OGF2bFBGMVFNVm13cGIwb291TFJ5MG5D?=
+ =?utf-8?B?S05xQnp4U1hhbjNVbFhYa0JBYVpQeFAybnJTZWtha2RqbVVLak1TamJqaEJQ?=
+ =?utf-8?B?QXJHZzFWdUx6YnVkb3NXTG1EV2RqZ1ZiRlh1SEc1NUxSQ2dPT0tDNVQyc3l6?=
+ =?utf-8?B?TkpWQ29rUVNSb3AvNVBhMWNsU3B3aDllTkhoWlVHZkxsaVRzUXhSWVYyRjBF?=
+ =?utf-8?B?RHZqaTZqTnB3VjlHRFJqV01oSFluNW8yUFBINDFNL3VOL2c1b3ZxNUlaeG9V?=
+ =?utf-8?B?ZEtPRFBXVmNKUENBOEQxcThjV3N5cnFZZ3BlL3dPbUw2T3BzU2djNVVnak5j?=
+ =?utf-8?B?S2N2UDNBaWxUUC8vNFVSaFRXWU5BSk05YTNtZDBpc3pLVEY0eVIyNTJCQUZI?=
+ =?utf-8?B?U3ZLMG1BRkg5VmNHVFYyOVVhay9aZ2o0djVmR0FYbFdLaXRhaFhSNHhtL3ZL?=
+ =?utf-8?B?WTdOWTZOOU1HUUhOWGFkOTZWOVR6ZDk0ZnZvcmFnK2p0Sy9VNVptT0RBa1Aw?=
+ =?utf-8?B?SDdCbStNdWJod0RmRHh0QmVISjJQWFdyUXV2cUVhS3FrWHEybHltNHJBK1Yv?=
+ =?utf-8?B?VlFwc0xrYkFVdURnc1VUamw2c3JNTnNjclM3UjJOb3BnbmhTYkRQcXJwWXEy?=
+ =?utf-8?B?MkJYUEZGU2R2Rm12dUVpUFpSOGZDSGpNb2twN2crcVc3K3dBM21CcllVenUy?=
+ =?utf-8?B?SG50WkI5SEVWOUZCQ0hmcHJYcFQvcG1DWjFSZS9hcWlrM1YydG54OG9ZODV4?=
+ =?utf-8?B?b050dUtPUngySk9CNXoyWjFJbDQ0MWlWN3JmdmlSaFdMT3cxRERGRDJaZGE3?=
+ =?utf-8?B?NEhnV2JSZGl6ZkVydGVMdEdUR00wYkpmc1F4VnV5V2k2OGNvR2duUDRTMEl5?=
+ =?utf-8?B?bFg4Ri90Z2dmdm9wSGhtbGpnZXYrTnYvLzZrWVBuYWVzTUFBM0NkUHZEMGJH?=
+ =?utf-8?B?YjJWZTJ6aGRTSzA1ckgxdjJZQ1RHUE5oUzFkemNnOWZyQVFPa1JycVR1TXhH?=
+ =?utf-8?B?aVpJUEtnN0JsTTlLc2EzOXJaT3lDamVDWnlvcHI0WnlGeVhsMWlnU2VNdGlC?=
+ =?utf-8?B?MUFDUU1HS2Nld3pjbkQ1MWVXTmRpOFRkRFRLdmxEelhmcWsycUgwbC8zWGhG?=
+ =?utf-8?B?aE9PeUxvVmswMzhwMW1vdjFmdzN3SWhJRmE2T2d3WkRYNi8xLzZtK0NiY1Vx?=
+ =?utf-8?B?Nmh3d0VSb2EzSzh3QTNaNTZqa0dQUXQ2MTJEdG5zbXdaYkhTVk94a3N0bXN3?=
+ =?utf-8?B?elU3R1J2TjJKYVZNVkhQSUV5ZVNYaU1iekU0N2M5RXZyekV0SjVFTTUvQnYw?=
+ =?utf-8?B?UkIwdXlTT1VnNUQwSlMvYjd3RGFuUWdjWnQ5Z0QvdjVXUll3ay9qVXBKeksz?=
+ =?utf-8?B?Q0lpYWI1VXdPRkdhL0haVkREZUFNRFhySFM1OFVjelZnL244Wk55a3ZEOW11?=
+ =?utf-8?B?QzI0U2hQREdXQ3VnQWd6L0pQMVduQUVNVEFtcEJSZWFhTVcrYUU1R0h2UjBY?=
+ =?utf-8?B?dnQxZDduT0pOSnVGV0NOakZ5NTA5MWxwdjNYcktPTmVJODUzcmNzVllIYUJv?=
+ =?utf-8?B?cnY5Y3RkejlGMjRNNTAzQWJXbjVQSC94RXI3NHRTZDJjUnBqN2FNVTBQTUNG?=
+ =?utf-8?B?RjZRdkM2UEhyc3Q2M1h1UT09?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR11MB6083.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(366007)(38070700009);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?SmFqU2ZRYllYeENuTFJNV2lZc1o2Ky9zNENjTXo2MDN6MFZBa08xcW94Mmdy?=
+ =?utf-8?B?azMwTWtiUkQ5d1JqUnQvM3IyV0lacHFsZS9ITDREcWQzblQwemdBVjFiZ0dB?=
+ =?utf-8?B?a3RSM0VObEFleGhsajBjWUY3ZWUvT3VuSktwMytYSktRN3dFZC80TEFCVHht?=
+ =?utf-8?B?MC9HRzZwMGd1RmswdGF4OWRqUHFYMlVXUHFtV1JKb3ZFQmRsOXZNd3NrdE90?=
+ =?utf-8?B?Y0dOQ1FGckJSWlJhSnJwbG90SDNDbW1NS0NpZHRvY2lwZEFFYnM0RytIVHcr?=
+ =?utf-8?B?SkNhNEMvbDYwWWY0QVJGTEVTUzJyNGN4Y3JTZ1VaSks1QUUvU2dIeDJxdkpV?=
+ =?utf-8?B?bE42MzZwVTN5N3k0a001WFV1TmJIelU0VGQxcFFwbit6dy8zV1hJSU5VZ2Fm?=
+ =?utf-8?B?VHZvakc3djl6K3RwZHF4TzhpaUFOakl4OGFWczgxUVkwUEJhMkxIZWsyazdK?=
+ =?utf-8?B?ejJER29UWkM1Z0FpRXJTMnR3VlpIc0U2eUtNWnUzQ2RhczNGTE44WnJuTE82?=
+ =?utf-8?B?WHJSVHA3UkJYKzVpQUNkWXJVYm0vZEwrb2lDeWVRL2pZU1NTUS9zZGNuWDFM?=
+ =?utf-8?B?UEg0UEkrcFBmS1MvVFlFYVZac0U1dStaM09FdFNqNWI1SmZEZlBwYlB1TDhW?=
+ =?utf-8?B?TE9HUWMyTUNERldkOThvam1Dc3BPREVka2xNb1pOUXRlSE9pRFZXR09mbHRz?=
+ =?utf-8?B?S2FRNkNLV3VsOWRyOEFraGRHeXg0K3N2SFFTUHdOdjZQNWoxbVU5Y3VVVjVK?=
+ =?utf-8?B?MGU3cmJ5Ym0zbTlsVkx4dkxlUTJCTmNzVjU2TlpuaGVReXoxUW9VVEtmNTZo?=
+ =?utf-8?B?RlEzVS8yUTZaRnRFQzJRaldhaThNMDl5aFlweWdGOWxkcDNYTHA2L3puYU4y?=
+ =?utf-8?B?SXJ3YVp0dTAvUUZxZUFtYWZzUTJrTmRHYkJRYUg5aDQ3MTRRcnl0OUZFdThS?=
+ =?utf-8?B?OGRaRm1tLzlXTGZlUVlrUmxmdGU5dGhWSDh4VG5SQ241cElvTExRTXZUV09R?=
+ =?utf-8?B?SzVnYXNEeHpkQVFsZS9jUjRQTGZrdWw3ZE5pYUxvZk9ycVdmN21ZTHhFdnRW?=
+ =?utf-8?B?STMxSVpwdXloNHByZHpGcUJnWmR1RTBLWWRCVXhHMTIwQzNTZjFEaW1taXJw?=
+ =?utf-8?B?WUtpWEJZd1luNGtYZlNyQUxYd2MrRDZhQ09aRWlLWmhMWDdSNUNhL0FacDJm?=
+ =?utf-8?B?SWtIR2tHdWs2UXNsbFFIOXlKTXE5UnJjbnRJQkp1QVFFYjVlYkJWSWdJY2Uw?=
+ =?utf-8?B?WjdUWlRpWjkwU0F2dWNVOWhEam5tcjBpem1BWmg4QVVPTmtZZjIybytUOGlr?=
+ =?utf-8?B?Z3lzV2pQbzdPZjhrenl6VEkvby9XbGY2M0g0ZEVMMDBBay9adGVOQVBLbVlW?=
+ =?utf-8?B?dTRuWktVekN2VUVKTWlLZmNwZDJpOVhxdXkydkcrNGgxODQzU2hsWUVIQjBR?=
+ =?utf-8?B?bG9JVHg5RCtKNFU0S3FqWjVDY2x3MjBZREZjNTdVMW85UjFhdDFwZ1VvNVFM?=
+ =?utf-8?B?M214QkJXL2pFWFJ2MjFYZkVyajB1N1NkSFpEVTNmZU1OQko5VFp5ZFl3cTRX?=
+ =?utf-8?B?VHRGZVVFU25BcWh4Z1B5UThEWHBIajkwdm1CUmcwakZCd2s0NHZZcituL29Q?=
+ =?utf-8?B?WFBQR3MzSG1tdHJvZ01wTTVOUG5FRS9PK1lYZ1QvVzhadldGNHJZSGx2SVd0?=
+ =?utf-8?B?MVhiT1g1bzdXTTFhSTYzZHJKTk0xTkxUc1dRbDQrWjBqaDhrZU4yOGtYbUk1?=
+ =?utf-8?B?UFhjUGFmT3ZQVmZ2WVZXZ2hmVDgybFZEcjBEWWlPQzJ5Z3Z3S3lGNlorOFpl?=
+ =?utf-8?B?ODB3NHJ6L1dWQTdvdlU2aXFYNWpkcDRXRkkvaytuWmNFN3ZpVy9OUVBEZUFz?=
+ =?utf-8?B?KzZ2WmhjVFpOSGRmVjFuSXdPZ1ptd1N3ZTg0VVhNamxYN25DL2lHTFFBV0Nk?=
+ =?utf-8?B?b2dPNnBRQ0NpVlFzaWM2b2tabW1RU1FxVDAwNWs5Z2d3QlczY25HLzZIeTR3?=
+ =?utf-8?B?cDFkNlZlcGJTeFFtV08zR3BtZHdZM29wNUJBaXNjbHZxWFJSY05OWHJtRE40?=
+ =?utf-8?B?MFRzWGd6ZCtHL3hZeXlhMVBLRS9iSmppTEF1STU4SXI5UDAyMzEwT3BwT3pW?=
+ =?utf-8?Q?mdY85XjlgsZScwKzM4jEuVyOD?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240508202111.768b7a4d@yea> <20240515224524.1c8befbe@yea>
-In-Reply-To: <20240515224524.1c8befbe@yea>
-From: Yu Zhao <yuzhao@google.com>
-Date: Wed, 15 May 2024 16:06:35 -0600
-Message-ID: <CAOUHufZ-9NmzOKjLedvZFp0=N0LvRZn77qC6k1WXK+NHtKr=0w@mail.gmail.com>
-Subject: Re: kswapd0: page allocation failure: order:0, mode:0x820(GFP_ATOMIC),
- nodemask=(null),cpuset=/,mems_allowed=0 (Kernel v6.5.9, 32bit ppc)
-To: Erhard Furtner <erhard_f@mailbox.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SJ1PR11MB6083.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7b6d7387-7bd3-4d87-2d95-08dc752b7971
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 May 2024 22:07:56.1205
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 7lVB7AGLi1D6RKBDf2GSKp5rOU+cvAb9Rgf91r+oTp+0zycoZpWw8RHntzS50DasFnGEF5jjuefZv/LcCgS8QQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR11MB8388
+X-OriginatorOrg: intel.com
 
-On Wed, May 15, 2024 at 2:45=E2=80=AFPM Erhard Furtner <erhard_f@mailbox.or=
-g> wrote:
->
-> On Wed, 8 May 2024 20:21:11 +0200
-> Erhard Furtner <erhard_f@mailbox.org> wrote:
->
-> > Greetings!
-> >
-> > Got that on my dual CPU PowerMac G4 DP shortly after boot. This does no=
-t happen every time at bootup though:
-> >
-> > [...]
-> > kswapd0: page allocation failure: order:0, mode:0x820(GFP_ATOMIC), node=
-mask=3D(null),cpuset=3D/,mems_allowed=3D0
-> > CPU: 1 PID: 40 Comm: kswapd0 Not tainted 6.8.9-gentoo-PMacG4 #1
-> > Hardware name: PowerMac3,6 7455 0x80010303 PowerMac
->
-> Very similar page allocation failure on the same machine on kernel 6.9.0 =
-too. Seems it can easily be provoked by running a memory stressor, e.g. "st=
-ress-ng --vm 2 --vm-bytes 1930M --verify -v":
->
-> [...]
-> kswapd0: page allocation failure: order:0, mode:0xcc0(GFP_KERNEL), nodema=
-sk=3D(null),cpuset=3D/,mems_allowed=3D0
-> CPU: 0 PID: 41 Comm: kswapd0 Not tainted 6.9.0-gentoo-PMacG4 #1
-> Hardware name: PowerMac3,6 7455 0x80010303 PowerMac
-> Call Trace:
-> [c1c65940] [c07926d4] dump_stack_lvl+0x80/0xac (unreliable)
-> [c1c65960] [c01b6234] warn_alloc+0x100/0x178
-> [c1c659c0] [c01b661c] __alloc_pages+0x370/0x8d0
-> [c1c65a80] [c01c4854] __read_swap_cache_async+0xc0/0x1cc
-> [c1c65ad0] [c01cb580] zswap_writeback_entry+0x50/0x154
-> [c1c65be0] [c01cb6f4] shrink_memcg_cb+0x70/0xec
-> [c1c65c10] [c019518c] __list_lru_walk_one+0xa0/0x154
-> [c1c65c70] [c01952a4] list_lru_walk_one+0x64/0x7c
-> [c1c65ca0] [c01cad00] zswap_shrinker_scan+0xac/0xc4
-> [c1c65cd0] [c018052c] do_shrink_slab+0x18c/0x304
-> [c1c65d20] [c0180a40] shrink_slab+0x174/0x260
-> [c1c65da0] [c017cb0c] shrink_one+0xbc/0x134
-> [c1c65dd0] [c017e3e4] shrink_node+0x238/0x84c
-> [c1c65e50] [c017ed38] balance_pgdat+0x340/0x650
-> [c1c65f50] [c017f270] kswapd+0x228/0x25c
-> [c1c65fc0] [c006bbac] kthread+0xe4/0xe8
-> [c1c65ff0] [c0015304] start_kernel_thread+0x10/0x14
-> SLUB: Unable to allocate memory on node -1, gfp=3D0x820(GFP_ATOMIC)
->   cache: skbuff_small_head, object size: 480, buffer size: 544, default o=
-rder: 1, min order: 0
->   node 0: slabs: 15, objs: 225, free: 0
-> SLUB: Unable to allocate memory on node -1, gfp=3D0x820(GFP_ATOMIC)
->   cache: skbuff_small_head, object size: 480, buffer size: 544, default o=
-rder: 1, min order: 0
->   node 0: slabs: 15, objs: 225, free: 0
-> SLUB: Unable to allocate memory on node -1, gfp=3D0x820(GFP_ATOMIC)
->   cache: skbuff_small_head, object size: 480, buffer size: 544, default o=
-rder: 1, min order: 0
->   node 0: slabs: 15, objs: 225, free: 0
-> SLUB: Unable to allocate memory on node -1, gfp=3D0x820(GFP_ATOMIC)
->   cache: skbuff_small_head, object size: 480, buffer size: 544, default o=
-rder: 1, min order: 0
->   node 0: slabs: 15, objs: 225, free: 0
-> SLUB: Unable to allocate memory on node -1, gfp=3D0x820(GFP_ATOMIC)
->   cache: skbuff_small_head, object size: 480, buffer size: 544, default o=
-rder: 1, min order: 0
->   node 0: slabs: 15, objs: 225, free: 0
-> SLUB: Unable to allocate memory on node -1, gfp=3D0x820(GFP_ATOMIC)
->   cache: kmalloc-rnd-15-2k, object size: 2048, buffer size: 6144, default=
- order: 3, min order: 1
->   kmalloc-rnd-15-2k debugging increased min order, use slab_debug=3DO to =
-disable.
->   node 0: slabs: 33, objs: 165, free: 0
-> SLUB: Unable to allocate memory on node -1, gfp=3D0x820(GFP_ATOMIC)
->   cache: skbuff_small_head, object size: 480, buffer size: 544, default o=
-rder: 1, min order: 0
->   node 0: slabs: 15, objs: 225, free: 0
-> SLUB: Unable to allocate memory on node -1, gfp=3D0x820(GFP_ATOMIC)
->   cache: kmalloc-rnd-15-2k, object size: 2048, buffer size: 6144, default=
- order: 3, min order: 1
->   kmalloc-rnd-15-2k debugging increased min order, use slab_debug=3DO to =
-disable.
->   node 0: slabs: 33, objs: 165, free: 0
-> SLUB: Unable to allocate memory on node -1, gfp=3D0x820(GFP_ATOMIC)
->   cache: skbuff_small_head, object size: 480, buffer size: 544, default o=
-rder: 1, min order: 0
->   node 0: slabs: 15, objs: 225, free: 0
-> SLUB: Unable to allocate memory on node -1, gfp=3D0x820(GFP_ATOMIC)
->   cache: kmalloc-rnd-15-2k, object size: 2048, buffer size: 6144, default=
- order: 3, min order: 1
->   kmalloc-rnd-15-2k debugging increased min order, use slab_debug=3DO to =
-disable.
->   node 0: slabs: 33, objs: 165, free: 0
-> Mem-Info:
-> active_anon:340071 inactive_anon:139179 isolated_anon:0
->  active_file:8297 inactive_file:2506 isolated_file:0
->  unevictable:4 dirty:1 writeback:18
->  slab_reclaimable:1377 slab_unreclaimable:7426
->  mapped:6804 shmem:112 pagetables:946
->  sec_pagetables:0 bounce:0
->  kernel_misc_reclaimable:0
->  free:1141 free_pcp:7 free_cma:0
-> Node 0 active_anon:1360284kB inactive_anon:556716kB active_file:33188kB i=
-nactive_file:10024kB unevictable:16kB isolated(anon):0kB isolated(file):0kB=
- mapped:27216kB dirty:4kB writeback:72kB shmem:448kB writeback_tmp:0kB kern=
-el_stack:1560kB pagetables:3784kB sec_pagetables:0kB all_unreclaimable? no
-> DMA free:56kB boost:7756kB min:11208kB low:12068kB high:12928kB reserved_=
-highatomic:0KB active_anon:635128kB inactive_anon:58260kB active_file:268kB=
- inactive_file:3000kB unevictable:0kB writepending:324kB present:786432kB m=
-anaged:746644kB mlocked:0kB bounce:0kB free_pcp:28kB local_pcp:28kB free_cm=
-a:0kB
-> lowmem_reserve[]: 0 0 1280 1280
-> DMA: 0*4kB 0*8kB 0*16kB 0*32kB 0*64kB 0*128kB 0*256kB 0*512kB 0*1024kB 0*=
-2048kB 0*4096kB =3D 0kB
-> 63943 total pagecache pages
-> 53024 pages in swap cache
-> Free swap  =3D 8057248kB
-> Total swap =3D 8388604kB
-> 524288 pages RAM
-> 327680 pages HighMem/MovableOnly
-> 9947 pages reserved
-> warn_alloc: 396 callbacks suppressed
-> kswapd0: page allocation failure: order:0, mode:0xcc0(GFP_KERNEL), nodema=
-sk=3D(null),cpuset=3D/,mems_allowed=3D0
-> CPU: 1 PID: 41 Comm: kswapd0 Not tainted 6.9.0-gentoo-PMacG4 #1
-> Hardware name: PowerMac3,6 7455 0x80010303 PowerMac
-> Call Trace:
-> [c1c65940] [c07926d4] dump_stack_lvl+0x80/0xac (unreliable)
-> [c1c65960] [c01b6234] warn_alloc+0x100/0x178
-> [c1c659c0] [c01b661c] __alloc_pages+0x370/0x8d0
-> [c1c65a80] [c01c4854] __read_swap_cache_async+0xc0/0x1cc
-> [c1c65ad0] [c01cb580] zswap_writeback_entry+0x50/0x154
-> [c1c65be0] [c01cb6f4] shrink_memcg_cb+0x70/0xec
-> [c1c65c10] [c019518c] __list_lru_walk_one+0xa0/0x154
-> [c1c65c70] [c01952a4] list_lru_walk_one+0x64/0x7c
-> [c1c65ca0] [c01cad00] zswap_shrinker_scan+0xac/0xc4
-> [c1c65cd0] [c018052c] do_shrink_slab+0x18c/0x304
-> [c1c65d20] [c0180a40] shrink_slab+0x174/0x260
-> [c1c65da0] [c017cb0c] shrink_one+0xbc/0x134
-> [c1c65dd0] [c017e3e4] shrink_node+0x238/0x84c
-> [c1c65e50] [c017ed38] balance_pgdat+0x340/0x650
-> [c1c65f50] [c017f270] kswapd+0x228/0x25c
-> slab_out_of_memory: 53 callbacks suppressed
-> SLUB: Unable to allocate memory on node -1, gfp=3D0x820(GFP_ATOMIC)
->   cache: skbuff_small_head, object size: 480, buffer size: 544, default o=
-rder: 1, min order: 0
->   node 0: slabs: 18, objs: 270, free: 0
-> SLUB: Unable to allocate memory on node -1, gfp=3D0x820(GFP_ATOMIC)
->   cache: skbuff_small_head, object size: 480, buffer size: 544, default o=
-rder: 1, min order: 0
->   node 0: slabs: 18, objs: 270, free: 0
-> SLUB: Unable to allocate memory on node -1, gfp=3D0x820(GFP_ATOMIC)
->   cache: skbuff_small_head, object size: 480, buffer size: 544, default o=
-rder: 1, min order: 0
->   node 0: slabs: 18, objs: 270, free: 0
-> SLUB: Unable to allocate memory on node -1, gfp=3D0x820(GFP_ATOMIC)
->   cache: skbuff_small_head, object size: 480, buffer size: 544, default o=
-rder: 1, min order: 0
->   node 0: slabs: 18, objs: 270, free: 0
-> SLUB: Unable to allocate memory on node -1, gfp=3D0x820(GFP_ATOMIC)
->   cache: skbuff_small_head, object size: 480, buffer size: 544, default o=
-rder: 1, min order: 0
->   node 0: slabs: 18, objs: 270, free: 0
-> SLUB: Unable to allocate memory on node -1, gfp=3D0x820(GFP_ATOMIC)
->   cache: kmalloc-rnd-15-2k, object size: 2048, buffer size: 6144, default=
- order: 3, min order: 1
->   kmalloc-rnd-15-2k debugging increased min order, use slab_debug=3DO to =
-disable.
->   node 0: slabs: 33, objs: 165, free: 0
-> SLUB: Unable to allocate memory on node -1, gfp=3D0x820(GFP_ATOMIC)
->   cache: skbuff_small_head, object size: 480, buffer size: 544, default o=
-rder: 1, min order: 0
->   node 0: slabs: 18, objs: 270, free: 0
-> SLUB: Unable to allocate memory on node -1, gfp=3D0x820(GFP_ATOMIC)
->   cache: kmalloc-rnd-15-2k, object size: 2048, buffer size: 6144, default=
- order: 3, min order: 1
->   kmalloc-rnd-15-2k debugging increased min order, use slab_debug=3DO to =
-disable.
->   node 0: slabs: 33, objs: 165, free: 0
-> SLUB: Unable to allocate memory on node -1, gfp=3D0x820(GFP_ATOMIC)
->   cache: skbuff_small_head, object size: 480, buffer size: 544, default o=
-rder: 1, min order: 0
->   node 0: slabs: 18, objs: 270, free: 0
-> SLUB: Unable to allocate memory on node -1, gfp=3D0x820(GFP_ATOMIC)
->   cache: kmalloc-rnd-15-2k, object size: 2048, buffer size: 6144, default=
- order: 3, min order: 1
->   kmalloc-rnd-15-2k debugging increased min order, use slab_debug=3DO to =
-disable.
->   node 0: slabs: 33, objs: 165, free: 0
-> [c1c65fc0] [c006bbac] kthread+0xe4/0xe8
-> [c1c65ff0] [c0015304] start_kernel_thread+0x10/0x14
-> Mem-Info:
-> active_anon:351976 inactive_anon:123514 isolated_anon:0
->  active_file:4648 inactive_file:2081 isolated_file:0
->  unevictable:4 dirty:1 writeback:39
->  slab_reclaimable:918 slab_unreclaimable:7222
->  mapped:5359 shmem:21 pagetables:940
->  sec_pagetables:0 bounce:0
->  kernel_misc_reclaimable:0
->  free:2563 free_pcp:142 free_cma:0
-> Node 0 active_anon:1407904kB inactive_anon:494056kB active_file:18592kB i=
-nactive_file:8324kB unevictable:16kB isolated(anon):0kB isolated(file):0kB =
-mapped:21436kB dirty:4kB writeback:156kB shmem:84kB writeback_tmp:0kB kerne=
-l_stack:1552kB pagetables:3760kB sec_pagetables:0kB all_unreclaimable? no
-> DMA free:0kB boost:7756kB min:11208kB low:12068kB high:12928kB reserved_h=
-ighatomic:0KB active_anon:199336kB inactive_anon:491432kB active_file:4612k=
-B inactive_file:5980kB unevictable:0kB writepending:660kB present:786432kB =
-managed:746644kB mlocked:0kB bounce:0kB free_pcp:568kB local_pcp:20kB free_=
-cma:0kB
-> lowmem_reserve[]: 0 0 1280 1280
-> DMA: 0*4kB 0*8kB 0*16kB 0*32kB 0*64kB 0*128kB 0*256kB 0*512kB 0*1024kB 0*=
-2048kB 0*4096kB =3D 0kB
-> 45961 total pagecache pages
-> 39207 pages in swap cache
-> Free swap  =3D 8093096kB
-> Total swap =3D 8388604kB
-> 524288 pages RAM
-> 327680 pages HighMem/MovableOnly
-> 9947 pages reserved
-> warn_alloc: 343 callbacks suppressed
-> kswapd0: page allocation failure: order:0, mode:0xcc0(GFP_KERNEL), nodema=
-sk=3D(null),cpuset=3D/,mems_allowed=3D0
-> CPU: 0 PID: 41 Comm: kswapd0 Not tainted 6.9.0-gentoo-PMacG4 #1
-> Hardware name: PowerMac3,6 7455 0x80010303 PowerMac
-> Call Trace:
-> [c1c65940] [c07926d4] dump_stack_lvl+0x80/0xac (unreliable)
-> [c1c65960] [c01b6234] warn_alloc+0x100/0x178
-> [c1c659c0] [c01b661c] __alloc_pages+0x370/0x8d0
-> [c1c65a80] [c01c4854] __read_swap_cache_async+0xc0/0x1cc
-> [c1c65ad0] [c01cb580] zswap_writeback_entry+0x50/0x154
-> [c1c65be0] [c01cb6f4] shrink_memcg_cb+0x70/0xec
-> [c1c65c10] [c019518c] __list_lru_walk_one+0xa0/0x154
-> slab_out_of_memory: 59 callbacks suppressed
-> SLUB: Unable to allocate memory on node -1, gfp=3D0x820(GFP_ATOMIC)
->   cache: skbuff_small_head, object size: 480, buffer size: 544, default o=
-rder: 1, min order: 0
->   node 0: slabs: 18, objs: 270, free: 0
-> SLUB: Unable to allocate memory on node -1, gfp=3D0x820(GFP_ATOMIC)
->   cache: skbuff_small_head, object size: 480, buffer size: 544, default o=
-rder: 1, min order: 0
->   node 0: slabs: 18, objs: 270, free: 0
-> SLUB: Unable to allocate memory on node -1, gfp=3D0x820(GFP_ATOMIC)
->   cache: skbuff_small_head, object size: 480, buffer size: 544, default o=
-rder: 1, min order: 0
->   node 0: slabs: 18, objs: 270, free: 0
-> SLUB: Unable to allocate memory on node -1, gfp=3D0x820(GFP_ATOMIC)
->   cache: skbuff_small_head, object size: 480, buffer size: 544, default o=
-rder: 1, min order: 0
->   node 0: slabs: 18, objs: 270, free: 0
-> SLUB: Unable to allocate memory on node -1, gfp=3D0x820(GFP_ATOMIC)
->   cache: skbuff_small_head, object size: 480, buffer size: 544, default o=
-rder: 1, min order: 0
->   node 0: slabs: 18, objs: 270, free: 0
-> SLUB: Unable to allocate memory on node -1, gfp=3D0x820(GFP_ATOMIC)
->   cache: kmalloc-rnd-15-2k, object size: 2048, buffer size: 6144, default=
- order: 3, min order: 1
->   kmalloc-rnd-15-2k debugging increased min order, use slab_debug=3DO to =
-disable.
->   node 0: slabs: 33, objs: 165, free: 0
-> SLUB: Unable to allocate memory on node -1, gfp=3D0x820(GFP_ATOMIC)
->   cache: skbuff_small_head, object size: 480, buffer size: 544, default o=
-rder: 1, min order: 0
->   node 0: slabs: 18, objs: 270, free: 0
-> SLUB: Unable to allocate memory on node -1, gfp=3D0x820(GFP_ATOMIC)
->   cache: kmalloc-rnd-15-2k, object size: 2048, buffer size: 6144, default=
- order: 3, min order: 1
->   kmalloc-rnd-15-2k debugging increased min order, use slab_debug=3DO to =
-disable.
->   node 0: slabs: 33, objs: 165, free: 0
-> SLUB: Unable to allocate memory on node -1, gfp=3D0x820(GFP_ATOMIC)
->   cache: skbuff_small_head, object size: 480, buffer size: 544, default o=
-rder: 1, min order: 0
->   node 0: slabs: 18, objs: 270, free: 0
-> SLUB: Unable to allocate memory on node -1, gfp=3D0x820(GFP_ATOMIC)
->   cache: kmalloc-rnd-15-2k, object size: 2048, buffer size: 6144, default=
- order: 3, min order: 1
->   kmalloc-rnd-15-2k debugging increased min order, use slab_debug=3DO to =
-disable.
->   node 0: slabs: 33, objs: 165, free: 0
-> [c1c65c70] [c01952a4] list_lru_walk_one+0x64/0x7c
-> [c1c65ca0] [c01cad00] zswap_shrinker_scan+0xac/0xc4
-> [c1c65cd0] [c018052c] do_shrink_slab+0x18c/0x304
-> [c1c65d20] [c0180a40] shrink_slab+0x174/0x260
-> [c1c65da0] [c017cb0c] shrink_one+0xbc/0x134
-> [c1c65dd0] [c017e3e4] shrink_node+0x238/0x84c
-> [c1c65e50] [c017ed38] balance_pgdat+0x340/0x650
-> [c1c65f50] [c017f270] kswapd+0x228/0x25c
-> [c1c65fc0] [c006bbac] kthread+0xe4/0xe8
-> [c1c65ff0] [c0015304] start_kernel_thread+0x10/0x14
-> Mem-Info:
-> active_anon:235002 inactive_anon:240975 isolated_anon:0
->  active_file:4356 inactive_file:2551 isolated_file:0
->  unevictable:4 dirty:7 writeback:19
->  slab_reclaimable:1008 slab_unreclaimable:7218
->  mapped:5601 shmem:21 pagetables:939
->  sec_pagetables:0 bounce:0
->  kernel_misc_reclaimable:0
->  free:1340 free_pcp:23 free_cma:0
-> Node 0 active_anon:940008kB inactive_anon:963900kB active_file:17424kB in=
-active_file:10204kB unevictable:16kB isolated(anon):0kB isolated(file):0kB =
-mapped:22404kB dirty:28kB writeback:76kB shmem:84kB writeback_tmp:0kB kerne=
-l_stack:1552kB pagetables:3756kB sec_pagetables:0kB all_unreclaimable? no
-> DMA free:0kB boost:7756kB min:11208kB low:12068kB high:12928kB reserved_h=
-ighatomic:0KB active_anon:644060kB inactive_anon:36332kB active_file:5276kB=
- inactive_file:5516kB unevictable:0kB writepending:348kB present:786432kB m=
-anaged:746644kB mlocked:0kB bounce:0kB free_pcp:92kB local_pcp:92kB free_cm=
-a:0kB
-> lowmem_reserve[]: 0 0 1280 1280
-> DMA: 0*4kB 0*8kB 0*16kB 0*32kB 0*64kB 0*128kB 0*256kB 0*512kB 0*1024kB 0*=
-2048kB 0*4096kB =3D 0kB
-> 116345 total pagecache pages
-> 109413 pages in swap cache
-> Free swap  =3D 7819300kB
-> Total swap =3D 8388604kB
-> 524288 pages RAM
-> 327680 pages HighMem/MovableOnly
-> 9947 pages reserved
->
->
-> I switched from zstd to lzo as zswap default compressor so zstd does not =
-show up on the dmesg. But the rest looks pretty similar.
->
-> Full dmesg and kernel .config attached.
->
-> Regards,
-> Erhard
-
-Hi Erhard,
-
-Thanks for the reports. I'll take a look at them and get back to you
-in a few days.
+Pj4gVGhlcmUncyBhIHdpbGRjYXJkIG1hdGNoIGluIGFyY2gveDg2L2tlcm5lbC9zbXBib290LmMg
+dGhhdCB3YW50cw0KPj4gdG8gaGl0IG9uIGFueSBDUFUgbWFkZSBieSBJbnRlbC4gVGhlIG1hdGNo
+IHVzZWQgdG8gd29yayBiZWNhdXNlDQo+DQo+IGludGVsX2NvZF9jcHVbXSBvciB3aGljaCBvbmU/
+DQo+DQo+IFBsZWFzZSBiZSBtb3JlIHNwZWNpZmljLg0KDQppbnRlbF9jb2RfY3B1W10gaXMgdGhl
+IG9ubHkgb25lIGluIGFyY2gveDg2L2tlcm5lbC9zbXBib290LmMNCg0KLVRvbnkNCg0K
 
