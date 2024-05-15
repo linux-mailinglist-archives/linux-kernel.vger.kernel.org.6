@@ -1,61 +1,47 @@
-Return-Path: <linux-kernel+bounces-180014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E20108C68DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:35:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9E568C68E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:36:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77E4D1F22AC0
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 14:35:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B4F11F227C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 14:36:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD61A15572C;
-	Wed, 15 May 2024 14:35:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E234155A25;
+	Wed, 15 May 2024 14:35:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S/TsJrOE"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="APFFQZf2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88601154BEC
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 14:35:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52E98155749;
+	Wed, 15 May 2024 14:35:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715783737; cv=none; b=sVK1hgwJCJqDQOmsyAho9lZov8jIcELsHoWoo1F0A1qpkQT+8nrBqBAF5UPvDtUQzUb2GSKtAvKLTVwSYFeSgFVUag+BxJ0K/bd7xCeiQy7Z5sAq1MNWa1CZaB2pG4dgeog4I5gsJ9zqBbytTosc//Hn37BELC/eM4W3mQF6XH4=
+	t=1715783742; cv=none; b=e0H4iM/0wsYde649OANx+5m2iy3jMRse8EtIMR5BxQe3oR8tq01DBIwL/MNoHZrcyDd0oPWCR+XMP6pEtU6IV5FO26bigBZsm3dKe+rcOgpsHGPpkL3570VhksxXoJmlmFJ7VT25bJb0sRDtb2Lp2CUdWwBb19QHIkcpvk4FqS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715783737; c=relaxed/simple;
-	bh=XrEHWXzHYH414DvlVESjOtx15TYA6noXORpfTNUMgRU=;
+	s=arc-20240116; t=1715783742; c=relaxed/simple;
+	bh=o1k/xgmlCNQgq0CzkfNhpYuPEw2IgPrERI5Hqv5OGA0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aiNuZkNbSrvZTD3HDRqVNKHk3BWg1IGdOMxeKZait6zKCPt7JGJk8kE5qco3zfGfqKn6K+O733qpNwdWdquOa71sO6ktNHCZMWV4PN27oX/pE4mxxsypqThA4xBi58qAhO8FzJy9QtFlI1+VC3muJad/ZRQF6wxZjuj0LCU//OY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S/TsJrOE; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715783734;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Sc9fEb2mK7PfNta2o/2kA9lq5+CKKqFEWMN/clrZxT8=;
-	b=S/TsJrOE3TJ7wf9kbNxBSBoHT0g33UJiPpskQPuZhE8npc/UFb1zL3CbovXDG9RAPozKiD
-	ywQZI0EtxTA76MWdEztdTDftCOZVuGvxUl1k67TS+EMPb/xb/0NSv2RBo9ea3657dmTirt
-	FAc4FFHX63OA4lBKGifBcYMmXKJTp+c=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-658-OvT26MQQMRis29XSB5ZWXA-1; Wed,
- 15 May 2024 10:35:21 -0400
-X-MC-Unique: OvT26MQQMRis29XSB5ZWXA-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 77A5D1C3F0EE;
-	Wed, 15 May 2024 14:35:20 +0000 (UTC)
-Received: from [10.22.33.50] (unknown [10.22.33.50])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id CD231200A08E;
-	Wed, 15 May 2024 14:35:19 +0000 (UTC)
-Message-ID: <7ab67d43-84af-4328-8aca-9383afa2d6df@redhat.com>
-Date: Wed, 15 May 2024 10:35:19 -0400
+	 In-Reply-To:Content-Type; b=V3p4Qbh3ustezpS8+CGpwAywrCUgA7/XsmYQFO2yQuQ2QXPVIU8KgOdO3HAdbfMNyq0HfJyBym/8G+7Uk4i1Va1e8KoPW4VlUrO3dRSTIx6Wg/yAJAEZU8j7cSe0Yb78er/iHgUr9ziXQmFXBLGlXdjWoU2UoOOcSDIpNozbqlk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=APFFQZf2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2AC8C2BD11;
+	Wed, 15 May 2024 14:35:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715783741;
+	bh=o1k/xgmlCNQgq0CzkfNhpYuPEw2IgPrERI5Hqv5OGA0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=APFFQZf2t31GrwMjXOPjpgr0445eftKSVfjlC173tmdGBv3lptYdU9NRLveI205il
+	 YxvkmlyRMH1u8g8Jus8MfIHH0FK2ZPaM0WAlioATWw3Xr+1IYazepGGj8BUMyQyPLF
+	 wjRTJZqh/FRYP3/gqLXv5KaxP6v6cxNnnH8ImmCYpLlsWIshvLC1CnKHsLrHocsTWu
+	 eDNTm7pusJUZy3OMmrYoZ4crcvQZjGAAOJcow/IZNQ7EumGkMOJ4EhwfRRlfkogzbz
+	 BD/BvBr8T5+QrtZceuI5qHkw4jG0xGnAgKp8Q1tmeFGSmMkSSJyDXBEpLzIZmIarQs
+	 T6oO3sU1awNDA==
+Message-ID: <eb6e2b5b-f341-404b-9215-6e80f21a6842@kernel.org>
+Date: Wed, 15 May 2024 16:35:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,98 +49,142 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] blk-cgroup: Properly propagate the iostat update up the
- hierarchy
-To: Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
- Josef Bacik <josef@toxicpanda.com>
-Cc: cgroups@vger.kernel.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, Dan Schatzberg <schatzberg.dan@gmail.com>,
- Ming Lei <ming.lei@redhat.com>
-References: <20240515143059.276677-1-longman@redhat.com>
+Subject: Re: [PATCH v5 5/9] dt-bindings: fsi: Document the FSI controller
+ common properties
+To: Eddie James <eajames@linux.ibm.com>, linux-fsi@lists.ozlabs.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, robh@kernel.org, joel@jms.id.au,
+ andrew@codeconstruct.com.au
+References: <20240514195435.155372-1-eajames@linux.ibm.com>
+ <20240514195435.155372-6-eajames@linux.ibm.com>
+ <9200e46a-3cb5-4363-a560-ee3d88e05ced@kernel.org>
+ <a219f01e-a856-46cb-83c4-4fde99b8addd@linux.ibm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <20240515143059.276677-1-longman@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <a219f01e-a856-46cb-83c4-4fde99b8addd@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
 
-On 5/15/24 10:30, Waiman Long wrote:
-> During a cgroup_rstat_flush() call, the lowest level of nodes are flushed
-> first before their parents. Since commit 3b8cc6298724 ("blk-cgroup:
-> Optimize blkcg_rstat_flush()"), iostat propagation was still done to
-> the parent. Grandparent, however, may not get the iostat update if the
-> parent has no blkg_iostat_set queued in its lhead lockless list.
->
-> Fix this iostat propagation problem by queuing the parent's global
-> blkg->iostat into one of its percpu lockless lists to make sure that
-> the delta will always be propagated up to the grandparent and so on
-> toward the root blkcg.
->
-> Note that successive calls to __blkcg_rstat_flush() are serialized by
-> the cgroup_rstat_lock. So no special barrier is used in the reading
-> and writing of blkg->iostat.lqueued.
->
-> Fixes: 3b8cc6298724 ("blk-cgroup: Optimize blkcg_rstat_flush()")
-> Reported-by: Dan Schatzberg <schatzberg.dan@gmail.com>
-> Closes: https://lore.kernel.org/lkml/ZkO6l%2FODzadSgdhC@dschatzberg-fedora-PF3DHTBV/
-> Signed-off-by: Waiman Long <longman@redhat.com>
-> ---
->   block/blk-cgroup.c | 19 ++++++++++++++++++-
->   1 file changed, 18 insertions(+), 1 deletion(-)
->
-> diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
-> index 059467086b13..2a7624c32a1a 100644
-> --- a/block/blk-cgroup.c
-> +++ b/block/blk-cgroup.c
-> @@ -323,6 +323,7 @@ static struct blkcg_gq *blkg_alloc(struct blkcg *blkcg, struct gendisk *disk,
->   	blkg->q = disk->queue;
->   	INIT_LIST_HEAD(&blkg->q_node);
->   	blkg->blkcg = blkcg;
-> +	blkg->iostat.blkg = blkg;
->   #ifdef CONFIG_BLK_CGROUP_PUNT_BIO
->   	spin_lock_init(&blkg->async_bio_lock);
->   	bio_list_init(&blkg->async_bios);
-> @@ -1025,6 +1026,8 @@ static void __blkcg_rstat_flush(struct blkcg *blkcg, int cpu)
->   		unsigned int seq;
->   
->   		WRITE_ONCE(bisc->lqueued, false);
-> +		if (bisc == &blkg->iostat)
-> +			goto propagate_up; /* propagate up to parent only */
->   
->   		/* fetch the current per-cpu values */
->   		do {
-> @@ -1034,10 +1037,24 @@ static void __blkcg_rstat_flush(struct blkcg *blkcg, int cpu)
->   
->   		blkcg_iostat_update(blkg, &cur, &bisc->last);
->   
-> +propagate_up:
->   		/* propagate global delta to parent (unless that's root) */
-> -		if (parent && parent->parent)
-> +		if (parent && parent->parent) {
->   			blkcg_iostat_update(parent, &blkg->iostat.cur,
->   					    &blkg->iostat.last);
-> +			/*
-> +			 * Queue parent->iostat to its blkcg's lockless
-> +			 * list to propagate up to the grandparent if the
-> +			 * iostat hasn't been queued yet.
-> +			 */
-> +			if (!parent->iostat.lqueued) {
-> +				struct llist_head *plhead;
-> +
-> +				plhead = per_cpu_ptr(parent->blkcg->lhead, cpu);
-> +				llist_add(&parent->iostat.lnode, plhead);
-> +				parent->iostat.lqueued = true;
-> +			}
-> +		}
->   	}
->   	raw_spin_unlock_irqrestore(&blkg_stat_lock, flags);
->   out:
+On 15/05/2024 16:28, Eddie James wrote:
+> 
+> On 5/15/24 09:18, Krzysztof Kozlowski wrote:
+>> On 14/05/2024 21:54, Eddie James wrote:
+>>> Since there are multiple FSI controllers documented, the common
+>>> properties should be documented separately and then referenced
+>>> from the specific controller documentation.
+>>>
+>>> Signed-off-by: Eddie James <eajames@linux.ibm.com>
+>>> ---
+>>> Changes since v4:
+>>>   - Add interrupt controller properties
+>>>   - Add clock-frequency property to FSI controller and CFAM
+>>>   - Add detail to chip-id property description
+>>>
+>>>   .../bindings/fsi/fsi-controller.yaml          | 66 +++++++++++++++++++
+>>>   1 file changed, 66 insertions(+)
+>>>   create mode 100644 Documentation/devicetree/bindings/fsi/fsi-controller.yaml
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/fsi/fsi-controller.yaml b/Documentation/devicetree/bindings/fsi/fsi-controller.yaml
+>>> new file mode 100644
+>>> index 0000000000000..8620e4da6de77
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/fsi/fsi-controller.yaml
+>>> @@ -0,0 +1,66 @@
+>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>> +%YAML 1.2
+>>> +---
+>>> +$id: http://devicetree.org/schemas/fsi/fsi-controller.yaml#
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>> +
+>>> +title: FSI Controller Common Properties
+>>> +
+>>> +maintainers:
+>>> +  - Eddie James <eajames@linux.ibm.com>
+>>> +
+>>> +description:
+>>> +  FSI (FRU (Field Replaceable Unit) Service Interface) is a two wire bus. The
+>>> +  FSI bus is connected to a CFAM (Common FRU Access Macro) which contains
+>>> +  various engines such as I2C controllers, SPI controllers, etc.
+>>> +
+>>> +properties:
+>>> +  "#address-cells":
+>>> +    const: 2
+>>> +
+>>> +  "#size-cells":
+>>> +    const: 0
+>>> +
+>>> +  '#interrupt-cells':
+>>> +    const: 1
+>>> +
+>>> +  clock-frequency:
+>>> +    minimum: 1
+>>> +    maximum: 200000000
+>> This is a deprecated property in general. Why did it appear? It does not
+>> exist in current bindings and nothing in commit msg suggests changes in
+>> the bindings themselves.
+> 
+> 
+> OK, is there some document that describes what properties are 
+> deprecated? Because it's used all over the place in the bindings. Anyway 
 
-Note that this patch will conflict with Ming's patch 
-(https://lore.kernel.org/linux-block/20240515013157.443672-3-ming.lei@redhat.com/). 
-Will send out an updated version later on to synchronize with his patch.
+dtschema: dtschema/schemas/clock/clock.yaml
 
-Cheers,
-Longman
+buses anyway should use bus-frequency but it is also legacy one.
+
+> I need this property, I can rename it if you like. I can also update the 
+
+Why do you need it? Why clocks cannot be chosen by drivers and initial
+state selected by assigned-clock-rates?
+
+
+> commit message to indicate that I'm adding it.
+
+
+
+Best regards,
+Krzysztof
 
 
