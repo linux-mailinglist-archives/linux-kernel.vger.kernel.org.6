@@ -1,136 +1,112 @@
-Return-Path: <linux-kernel+bounces-179315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E74D8C5EB7
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 03:20:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 924208C5EB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 03:22:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 368A71F22036
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 01:20:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3C641C20D77
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 01:22:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44E431FB5;
-	Wed, 15 May 2024 01:20:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBBE8BA5E;
+	Wed, 15 May 2024 01:22:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Op3q2pUw"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ASe7zdLS"
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 906316FC3
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 01:20:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA916A932
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 01:22:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715736046; cv=none; b=lCQv0gBYAlisxGb71iyACb/C5DruoQTJhwA3f4lPalCUuEumuUQz18ll0v2HO6nGIzt5a4GNFwpFT9sSV1CjcH6r79sYsQjdtKVxmDMfO4HJRAsLA0RzgfHxqjt9L4hFY/OOIUEYVihj0pbeaiyvdX/0Q1xNbiV1qMp0dvfMxmY=
+	t=1715736134; cv=none; b=QJDBTcP9T17J3bE7zj7T+djuJ9PZF3x+UNSqaaVDH3x2pmO47HGgQixc0HmeeS/x5vcafZ4Zdlg86J3xwJMPr5/FVwFfJllG642+2Y2+E2bE0nty48hteL315sNqez2n8zCDUAifUuLD1uEjGy3KeAVPj1jnDO0Bv5zbdC1O4/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715736046; c=relaxed/simple;
-	bh=RWL2uQhi8Ed+uiGVKCNPstf3I/C9ZgqT5ZURnuftkQw=;
+	s=arc-20240116; t=1715736134; c=relaxed/simple;
+	bh=PjmdoL8aK6SpmWV+gcuuagXO08GZB4SplEuasH9OLnY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ApuHBMgBl3YzRdyVzmhtTogLH4SvbvNOVGMdd9YW2Hcy7ps5GIFm67Un5+o8TdvdA6k/gCyj3Afcq4lXmLM87TgBOe4rvZwsQH/l7TDyy5ymaiqxTYfh6JetwBKo2MMfve90o4BWZlaJhd8UAA+qwao82QCqZ/17UJ368V8TJrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Op3q2pUw; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52327368e59so3562013e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 18:20:44 -0700 (PDT)
+	 To:Cc:Content-Type; b=b4LAmAAs2hB4s/fztCMqMOyu19hrJAZlSqQMnwbgo4qKILxIn1I7yVv7TS0nC6gbxpIdU1s0v7welCgSc1ncxWXBORM/6loFeqofPjOOB/D0YK+SPm5rkw3pJFhZ3s/2q/jJRd66cTcdSE2CrRyFkO16mjH4KHf5ZiRjww9S8T8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ASe7zdLS; arc=none smtp.client-ip=209.85.219.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-de603e3072dso6988650276.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 18:22:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1715736042; x=1716340842; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=nr8iJJBMAoKbZhUVSQrEstzktHb70Vrcza52uLAmnxg=;
-        b=Op3q2pUw/FveAsXldNsihwe4bWCq/TKqiFu5nvQdpspLc2d/Xp7Q+9vhFiX+Bvlzt6
-         iBOV/zqAIuESzU2zAchTrnSuQSrSKWtOzZW31bOfu4o/GRbxE9PWhRsaTtU7GHqj1VXe
-         tPIBf6uCh6vgy2E8vL+h7YIdi9ejnWYjsTVQs=
+        d=google.com; s=20230601; t=1715736131; x=1716340931; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PjmdoL8aK6SpmWV+gcuuagXO08GZB4SplEuasH9OLnY=;
+        b=ASe7zdLSA6BwDWb84ni3pLUF7iQ+z1sAxwlV0FQOGh3tspLa+sppejMt7N1fmaxGoc
+         y9nxGCWGjHBsKooPpmhqCyi03Ary3qmK9HyxlHmhDRbgDqlD+nYghiCk0p8kOTMYboAO
+         Dt8j/hXr/IyOiDDZeqenz5O4M7ZR2L2v4KqYQIZpQSeL5KMqZXZSQPAOK4/NcRmnDYtl
+         u7V5b0Ay2XYAZ8NExg01yOSBhw6WIbH2aBavWO2tr41lFSV20a9mrUIWTDcNX0/xCHGT
+         I+2N8BrB+ckevkHQg13wxUvNmLfs4Mr6rA79sjRYElo0Li/3a2JkhXIrYL0cne57T2hC
+         QMzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715736042; x=1716340842;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nr8iJJBMAoKbZhUVSQrEstzktHb70Vrcza52uLAmnxg=;
-        b=Y2lhp869Cmx1qKYtFNgS4EQZZaim8XYZJlj+MxDy/21znWrAtGTQ+j4Tw0YSWUFQ8D
-         i5D0+MoK689Glz9fkD5j/ig+SRPntvrwBbKaETqMnr9M/70GvpFyvFd0WoGOVQdipsoG
-         hPfCw/jC+Fbg1y9aICSPeCROVU7DHDf0SzvYopStxmvpf+ru+m9tqr3DH767ries0aAs
-         g+8ulEChga1evJzF9kWCPschixBVqIk5Tb3ar97XiIQhuqUB2VFW7MZq0LRh0i+RmanS
-         j+NmzYfHG7D7PTOSRzbIMa5UScSM1iS1fj1LQp9Qk/kxP5rj3VNOr1EnPM4eVf9RLbi4
-         w0sQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXiA1C01iTqBeOT6GHpltRFVGu4zHfogTZWkezNnLbF0wwyslOUc9TDASLb+vGTiOUC7PBHEAcDvofoTZqX2fXiTb+remgJNvZNaEWP
-X-Gm-Message-State: AOJu0YxCGlg3yHFxUGHbpXh8RsdmR/1x6OcbsQaI7qzKXbGLrSLl0448
-	jXrnypSiZIfk575N72QXbiYoBtl+JneKlMZPV8bUkvDT7ZoIXbDcb+1kZSZMHhGnR4pQQp8MFEL
-	SjOO6GA==
-X-Google-Smtp-Source: AGHT+IFBPSp68+QAofhmcWE6hMqq/9kpdKJZHmwzC+KWElMp46JuPS0sO+kd1kiceBnGna/8LgNn2g==
-X-Received: by 2002:a19:691e:0:b0:518:c057:6ab1 with SMTP id 2adb3069b0e04-52210275f30mr8035057e87.66.1715736042526;
-        Tue, 14 May 2024 18:20:42 -0700 (PDT)
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com. [209.85.218.45])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b01724sm786660166b.162.2024.05.14.18.20.40
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 May 2024 18:20:41 -0700 (PDT)
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a59c448b44aso119226866b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 18:20:40 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVcttWOFarO5qLFToVK9QixPMbQszuvnyRdJky0dGHJBb5Jn2cTmjiTUdB+MTe5YCJERilC+CZ9kWMufi7mU6aqBXXVUaJlSlmtcJkM
-X-Received: by 2002:a17:907:9625:b0:a59:db0f:6bdd with SMTP id
- a640c23a62f3a-a5a2d5d56b7mr1123543366b.44.1715736040490; Tue, 14 May 2024
- 18:20:40 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715736132; x=1716340932;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PjmdoL8aK6SpmWV+gcuuagXO08GZB4SplEuasH9OLnY=;
+        b=YZ4lNNL1zTqv0yUgV8n0JF04kiqjZEVnqtlxBfvbQgM66kjM/VC1RDOQmQpL3IMDjr
+         FcXbSkntHRUPgMYDM4ZC2lNhYvgIqBXUssSZHz9XOLQ8JnS3OS01WnXY9DYtpk8HX1dK
+         FR7g7AtD/3KHSibynxs7JwuzkzWmhGQehopEFiL0Yeq9KXlhdbrz7HgG43EycqfL0SRW
+         56qCqiGjcyNqzbWPtK43p91iKafPhmgWGRu/hk0XumzyC1F54g5XEiOjoFFkaoBOqVM2
+         aVJbZ1Q8ZHNha43/KNSUBeghZW9rdSAjSuOMhG5VZQk1z4jpSj6GLaSN/F60VeMbxVz9
+         eCKg==
+X-Forwarded-Encrypted: i=1; AJvYcCX5Hig7yBUtVjTEUbmmHYNhmCFfNmgMAouHFQv49dhV6oqrVjDhZ+oFD3yP7pitygdUXbxSFLCCZERKX6vYnIO1LTa67Ckw/f3GZ2WL
+X-Gm-Message-State: AOJu0YwPPdlW5hQV8C8fITqSa/WuOvHCplU2lofI5NXziypIq7ar3G2M
+	mYOn3vXwbhK64rVmojqveU9xGd/nex7cMl1/llbQVE4hV2qmuzu4WkrmoC2FVsaq7cH0MHPxZcj
+	NQG9FAuQlrt20rQA7TrhWhCnhpo7SrQTyS5xU
+X-Google-Smtp-Source: AGHT+IFWUUjU6sUNOq/Evye+BgmL3GiqmZBAyQyzUv6knnlnP8bIsfU6R8l0apQ6lQi0JL7TPW8eDB/LOqLphZSlreA=
+X-Received: by 2002:a25:b1a3:0:b0:dee:5cb6:483c with SMTP id
+ 3f1490d57ef6-dee5cb64977mr12258845276.49.1715736131408; Tue, 14 May 2024
+ 18:22:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240415163527.626541-1-jeffxu@chromium.org> <20240514104646.e6af4292f19b834777ec1e32@linux-foundation.org>
- <871q646rea.fsf@meer.lwn.net> <ZkPXcT_JuQeZCAv0@casper.infradead.org>
- <56001.1715726927@cvs.openbsd.org> <CAHk-=wgsGCKvN0Db6ZRZqJwXQrmhZyWB6RmABaOp4DiZbXgNew@mail.gmail.com>
- <16982.1715734632@cvs.openbsd.org>
-In-Reply-To: <16982.1715734632@cvs.openbsd.org>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 14 May 2024 18:20:23 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wi04ZCm3vTtkcVnAUdiOpX3a0hBZ-aQWONwCubOJQEdXw@mail.gmail.com>
-Message-ID: <CAHk-=wi04ZCm3vTtkcVnAUdiOpX3a0hBZ-aQWONwCubOJQEdXw@mail.gmail.com>
-Subject: Re: [PATCH v10 0/5] Introduce mseal
-To: Theo de Raadt <deraadt@openbsd.org>
-Cc: Matthew Wilcox <willy@infradead.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Andrew Morton <akpm@linux-foundation.org>, jeffxu@chromium.org, keescook@chromium.org, 
-	jannh@google.com, sroettger@google.com, gregkh@linuxfoundation.org, 
-	usama.anjum@collabora.com, Liam.Howlett@oracle.com, surenb@google.com, 
-	merimus@google.com, rdunlap@infradead.org, jeffxu@google.com, 
-	jorgelo@chromium.org, groeck@chromium.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org, pedro.falcato@gmail.com, 
-	dave.hansen@intel.com, linux-hardening@vger.kernel.org
+References: <20240514020301.1835794-1-yuanchu@google.com> <2024051414-untie-deviant-ed35@gregkh>
+In-Reply-To: <2024051414-untie-deviant-ed35@gregkh>
+From: Yuanchu Xie <yuanchu@google.com>
+Date: Tue, 14 May 2024 18:21:57 -0700
+Message-ID: <CAJj2-QFnOjzwbsMrTcrzPsbCFchtJLM0hiJDbR-xe1HcmV+ytw@mail.gmail.com>
+Subject: Re: [RFC PATCH v1 1/2] virt: memctl: control guest physical memory properties
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Wei Liu <liuwe@microsoft.com>, Rob Bradford <rbradford@rivosinc.com>, 
+	"Theodore Ts'o" <tytso@mit.edu>, Pasha Tatashin <pasha.tatashin@soleen.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Dan Williams <dan.j.williams@intel.com>, Tom Lendacky <thomas.lendacky@amd.com>, 
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, virtualization@lists.linux.dev, 
+	dev@lists.cloudhypervisor.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 14 May 2024 at 17:57, Theo de Raadt <deraadt@openbsd.org> wrote:
+On Tue, May 14, 2024 at 9:06=E2=80=AFAM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
 >
-> Let's wait and see.
+> On Mon, May 13, 2024 at 07:03:00PM -0700, Yuanchu Xie wrote:
+> > Memctl provides a way for the guest to control its physical memory
+> > properties, and enables optimizations and security features. For
+> > example, the guest can provide information to the host where parts of a
+> > hugepage may be unbacked, or sensitive data may not be swapped out, etc=
+.
+> >...
+> Pretty generic name for a hardware-specific driver :(
+It's not for real hardware btw. Its use case is similar to pvpanic
+where the device is emulated by the VMM. I can change the name if it's
+a problem.
 
-You may not be aware, but the Open Group literally endorses the Linux model:
+> Yup, you write this to hardware, please use proper structures and types
+> for that, otherwise you will have problems in the near future.
+Thanks for the review and comments on endianness and using proper
+types. Will do.
 
-  "When mprotect() fails for reasons other than [EINVAL], the
-protections on some of the pages in the range [addr,addr+len) may have
-been changed"
-
-at least according to this:
-
-    https://pubs.opengroup.org/onlinepubs/9699919799/functions/mprotect.html
-
-so I think your atomicity arguments have always been misleading. At
-least for mprotect, POSIX is very explicit about this not being
-atomic.
-
-I find very similar wording in mmap:
-
-  "If mmap() fails for reasons other than [EBADF], [EINVAL], or
-[ENOTSUP], some of the mappings in the address range starting at addr
-and continuing for len bytes may have been unmapped"
-
-Maybe some atomicity rules have always been true for BSD, but they've
-never been true for Linux, and while I don't know how authoritative
-that opengroup thing is, it's what google found.
-
-> (Linus, don't be a jerk)
-
-I'm not the one who makes unsubstantiated statements and uses scare
-tactics to try to make said arguments sound more valid than they are.
-
-So keep your arguments real, please.
-
-               Linus
+Thanks,
+Yuanchu
 
