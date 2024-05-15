@@ -1,152 +1,84 @@
-Return-Path: <linux-kernel+bounces-179960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6126C8C6821
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:00:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E38A48C6822
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:00:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19A591F23E7E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 14:00:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C99CB24EC2
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 14:00:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5346B13F450;
-	Wed, 15 May 2024 13:58:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AABC13FD65;
+	Wed, 15 May 2024 13:58:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TwfJbMJr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="woyymNwH";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Fs12Qqsw"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EE6C1420CC;
-	Wed, 15 May 2024 13:58:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21C5B13EFEF
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 13:58:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715781487; cv=none; b=HQVnhEuWKx0IpOtHQC8Djt4NBwxrmJ3bSVwVpZh5+zsX85FNdkv+oj8fOkkexdr9vMic1qCOSQa91EB7yDNfKku9ZfPqGsBWzSFMByfVQ33qypD82WPi31EG4ze/ssqs90AGn8H6JJAgf5/JDxrO/LHBE4342TIxx11D1REyaTU=
+	t=1715781508; cv=none; b=iRGoj+iHwalWVl0RHAkZ1WCZOdFoaAmKrOlYd/ZyGZ3vQqiiwpLgRis+VFLc2yD9QIf0wMawE8g8X/P0g/xLFwIDVKxvtmHs263hlooDc34nOJZsWluDQYNOeCxenNxp/0M1/P8TRCHMeK3N92FJ7GFdSLX6G4mk5FyfMthIye8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715781487; c=relaxed/simple;
-	bh=N5UwfZ1hKMI6+ZrGSh9smBi+SvvW9VpZtds2AMuGHos=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=o8D51Wh/k2IJB0Y8ddDaI5l3C1gp2twFCqztAG+1lvm6GtrOp/o3qgZBx4ppqyh4BhqGfHSnHJ+aI/wNlc5eexL37L3MTXRNJya6tXKGiNd22AYt3eqGMlM7jSIdeJb8UrkIfdJizYNT8PvTsw/OaSZ1Cbk3vlcSMpiBGHtydnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TwfJbMJr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE3B1C2BD11;
-	Wed, 15 May 2024 13:58:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715781487;
-	bh=N5UwfZ1hKMI6+ZrGSh9smBi+SvvW9VpZtds2AMuGHos=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=TwfJbMJr2eudO50gB4jtqCfWmhQ4amIjE1zaF6WRdIcpHwO5rxvJbZJuVPBjUSigc
-	 8TO0sFjBMWieujTeWTcuXI80s/WdCooRLCshP+Q/b0ITdjgasFFSNbNxExZovj+gwM
-	 MqxQyWjQ9L4GKUH5za52rqgOSxbjtXji1bS6WDBU09KLKF6xXnGxBua7W8KBwKwYTv
-	 kTyJG45a37w38lAwA6FHp1phbWKUmqeti4YPxDNtGMpGRIPOYhZd/GFlbyoIEyxavY
-	 r47jnKx51PjUmobjfH+JRFKkFOOn0ocJkOqbql9gO5OBozz9g9Hmqn6m9vT+dk6kVi
-	 oqdf60asXfERQ==
-From: Maxime Ripard <mripard@kernel.org>
-Date: Wed, 15 May 2024 15:57:03 +0200
-Subject: [PATCH 8/8] dma-buf: heaps: carveout: Handle ECC flags
+	s=arc-20240116; t=1715781508; c=relaxed/simple;
+	bh=E+7nNphptL+TRxLMeDw1zOU56LjsxRvw8zXBEuRZdSQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=s0Aofdkk/J0cjLOHC8WlPyILCFyhb8RujMVW4nqkttmwHfr2e7u6ZaZm0Q5cegKx//FZKT8vyXbvzlu2iD3irEu1RTnEq7RgiNADPvhILtnjFncG4TLBM09xqxvfeJPvAfCAeUVvgf8ybHDlvvXjHV8pjqI2Lm/OoKOG2pNmUY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=woyymNwH; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Fs12Qqsw; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1715781505;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=euVTqk1JuslrNTa2ntwqAAJS2vk5/4vkRaGenZcgtGo=;
+	b=woyymNwHwLxP3SdUdoRpLVltVmovaHxb7Aay4zhgvewNIyXUZVWg80vpfTh9nrbGf3XMgo
+	gJmVEK8Kn6l+IrsrHg2rNkg7jDK07Z4isVPAVcven+PHscs24NGt4NNJxytUDZFHa9h9di
+	ZFP8ITJHoBPYh4Km/oN0ZYvKCg5JMACg/WaVhlX5tx/Z3xS+xTL8kclLqMSQv+rt6IWBl2
+	SiLY81+BDjG5MhJSQJeet7pGDgeph2AKUrRXBIaCQtBzgod2r5EhWFkwJfWcj3nNMUcV7b
+	jBs2EI40xnmD/sIrF5YRioD4cMbC6bGQQ2u1gEeEWpGUnP7XbcRMFGgBDkiuZA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1715781505;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=euVTqk1JuslrNTa2ntwqAAJS2vk5/4vkRaGenZcgtGo=;
+	b=Fs12Qqsw3ysH5OtmG1qZHCI+NQdsaRY19dPaWBBOd4EqkSNGLVLFpHfXsZJqzAaPtOY6c/
+	NVEFuHgRs7Og/pAg==
+To: Xi Ruoyao <xry111@xry111.site>, Dave Hansen
+ <dave.hansen@linux.intel.com>, Michael Kelley <mhklinux@outlook.com>,
+ Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
+ <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org, Sean
+ Christopherson <seanjc@google.com>, Andrew Cooper
+ <andrew.cooper3@citrix.com>
+Subject: Re: [PATCH v9 1/2] x86/mm: Don't disable PCID if "incomplete Global
+ INVLPG flushes" is fixed by microcode
+In-Reply-To: <32e53b74f382f691fb8f60d68b093901964bd1c9.camel@xry111.site>
+References: <20240418205414.67735-1-xry111@xry111.site>
+ <32e53b74f382f691fb8f60d68b093901964bd1c9.camel@xry111.site>
+Date: Wed, 15 May 2024 15:58:24 +0200
+Message-ID: <87bk57kwhr.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240515-dma-buf-ecc-heap-v1-8-54cbbd049511@kernel.org>
-References: <20240515-dma-buf-ecc-heap-v1-0-54cbbd049511@kernel.org>
-In-Reply-To: <20240515-dma-buf-ecc-heap-v1-0-54cbbd049511@kernel.org>
-To: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
- Sumit Semwal <sumit.semwal@linaro.org>, 
- Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
- Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>, 
- "T.J. Mercier" <tjmercier@google.com>, 
- =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-Cc: Mattijs Korpershoek <mkorpershoek@baylibre.com>, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- linaro-mm-sig@lists.linaro.org, Maxime Ripard <mripard@kernel.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2094; i=mripard@kernel.org;
- h=from:subject:message-id; bh=N5UwfZ1hKMI6+ZrGSh9smBi+SvvW9VpZtds2AMuGHos=;
- b=owGbwMvMwCmsHn9OcpHtvjLG02pJDGku+wOVf9vPYLP0PMqdtrWoJ7LZR7Lp+cNXh60Z5vbwa
- D3c2HqlYyoLgzAng6yYIssTmbDTy9sXVznYr/wBM4eVCWQIAxenAExkbh5jnYYCo0VUtc+Dd+uE
- 2daUX+142sf9ZzNr7g5joTNPPvPvWLjxoFSLysFas91tCT8vZjzoYaxmSWWJajqzSnUrN69XyMV
- 0Lukrn8/LlLqZ6FROnnTgt2SU9adC6ZaXZtJ3NbLWr572kQ0A
-X-Developer-Key: i=mripard@kernel.org; a=openpgp;
- fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
+Content-Type: text/plain
 
-Now that we have introduced ECC-related flags for the dma-heaps buffer
-allocations, let's honour these flags depending on the memory setup.
+On Wed, May 15 2024 at 18:46, Xi Ruoyao wrote:
+>
+> Linux 6.9 is released.  Is this suitable as 6.10 material or do I need
+> to update something?
 
-Signed-off-by: Maxime Ripard <mripard@kernel.org>
----
- drivers/dma-buf/heaps/carveout_heap.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
-
-diff --git a/drivers/dma-buf/heaps/carveout_heap.c b/drivers/dma-buf/heaps/carveout_heap.c
-index 896ca67e6bd9..81b167785999 100644
---- a/drivers/dma-buf/heaps/carveout_heap.c
-+++ b/drivers/dma-buf/heaps/carveout_heap.c
-@@ -6,10 +6,11 @@
- #include <linux/of_reserved_mem.h>
- 
- struct carveout_heap_priv {
- 	struct dma_heap *heap;
- 	struct gen_pool *pool;
-+	bool ecc_enabled;
- };
- 
- struct carveout_heap_buffer_priv {
- 	struct mutex lock;
- 	struct list_head attachments;
-@@ -182,10 +183,16 @@ static struct dma_buf *carveout_heap_allocate(struct dma_heap *heap,
- 	struct dma_buf *buf;
- 	dma_addr_t daddr;
- 	void *buffer;
- 	int ret;
- 
-+	if (!heap_priv->ecc_enabled && (heap_flags & DMA_HEAP_FLAG_ECC_PROTECTED))
-+		return ERR_PTR(-EINVAL);
-+
-+	if (heap_priv->ecc_enabled && (heap_flags & DMA_HEAP_FLAG_ECC_UNPROTECTED))
-+		return ERR_PTR(-EINVAL);
-+
- 	buffer_priv = kzalloc(sizeof(*buffer_priv), GFP_KERNEL);
- 	if (!buffer_priv)
- 		return ERR_PTR(-ENOMEM);
- 
- 	INIT_LIST_HEAD(&buffer_priv->attachments);
-@@ -235,20 +242,29 @@ static int __init carveout_heap_setup(struct device_node *node)
- 	const struct reserved_mem *rmem;
- 	struct carveout_heap_priv *priv;
- 	struct dma_heap *heap;
- 	struct gen_pool *pool;
- 	void *base;
-+	u32 val = 0;
- 	int ret;
- 
- 	rmem = of_reserved_mem_lookup(node);
- 	if (!rmem)
- 		return -EINVAL;
- 
- 	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
- 	if (!priv)
- 		return -ENOMEM;
- 
-+	of_property_read_u32(node, "ecc-correction-bits", &val);
-+	if (val <= 0) {
-+		if (of_memory_get_ecc_correction_bits() > 0)
-+			priv->ecc_enabled = true;
-+	} else {
-+		priv->ecc_enabled = true;
-+	}
-+
- 	pool = gen_pool_create(PAGE_SHIFT, NUMA_NO_NODE);
- 	if (!pool) {
- 		ret = -ENOMEM;
- 		goto err_cleanup_heap;
- 	}
-
--- 
-2.44.0
-
+If it still applies. Nothing to do.
 
