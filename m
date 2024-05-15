@@ -1,219 +1,127 @@
-Return-Path: <linux-kernel+bounces-180223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36DAB8C6B9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 19:42:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D85298C6BA2
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 19:43:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B798B23106
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:42:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 64955B240F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:43:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A930B47F69;
-	Wed, 15 May 2024 17:42:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 934974879B;
+	Wed, 15 May 2024 17:43:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VpOqpK4M"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nxvPnn0P"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B1CF28680;
-	Wed, 15 May 2024 17:42:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C927928680;
+	Wed, 15 May 2024 17:43:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715794928; cv=none; b=OM1wn5JUvsvvHsoZMJHCUbmNqd5HVegK1OTGD79JYmaLY1YWIaEuVFwwlKvNriIvOJMeSqlxDLfC/ngXGwcp6tATgagPxy4/SVHLsnNR96gL4wGBEvvHh+arhziPuwAFBtzkXhq2mEPwqlaEBseXVlzFKtF/lWc9ItbobEghw7k=
+	t=1715794983; cv=none; b=XbpCFIY46vw26LRLEG279XMGl8IwVNwX10sTuPIH8zv/voVJktjrOf1L2/0MlQqvcRGqmaf/MljLoQSqGDYB9RWzXdeQeB73oR6vzsJNFaTJNWZgU1XjnyRrGb9Y6GFam5yzL8K2EVa73hLKeZ4tcuCE3ZexvapbEO2EwlCW36Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715794928; c=relaxed/simple;
-	bh=8yFwQFqY7nFSNnMmWdr9xFSkxUvwNuY1boF6Y0JMpSQ=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=ay6qGL6603Hk41gnV2xvlul2KC2OUsbDkIfMuEE4djeMZpYV/htpzN1bUlgKe2NvLLNwt62lUyUR05raF73yguiTkcAoVZJbU60TYmabSeKoitBxsiaVNyoMLpky+6keipkBxwP9hbVtNH5d+5V2Y+msQTeeAcax8Om7o0NSypM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VpOqpK4M; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715794927; x=1747330927;
-  h=message-id:date:mime-version:to:cc:from:subject:
-   content-transfer-encoding;
-  bh=8yFwQFqY7nFSNnMmWdr9xFSkxUvwNuY1boF6Y0JMpSQ=;
-  b=VpOqpK4M6Ls9TB6JWdlkPTz3XgdjkJRPuJ1gp9nt8W897WVP/D/LozOR
-   godG94AfUk2qRNsReG596MrqxTRKT8g4MMRLET8BjcF4AoKgeY9kJJnrE
-   mrLhsNmmxHzLK2HO+my7J0F72Et50rMR2roCohRDz0GHhZoViPuI2soNC
-   AUhmGzqgl8xkEXbHwPON4lWrzHtrHORMmSGbg9JsCNj9NVB93jlGetrhp
-   stfdSWRparfsztymXywoj8M88cT0cS24PeVQPVIIW7gJtgBiU3t0Fn4KA
-   v//SQIVdcMdf0MaxJe7DUh02KGVbWUI3i3uQsWpk8CdDfqbpPoTqelQXY
-   g==;
-X-CSE-ConnectionGUID: YjieAHdBRsSDMHKRsJQZ3Q==
-X-CSE-MsgGUID: x3wZNKxITEyfQFFvnZgGgQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="11676908"
-X-IronPort-AV: E=Sophos;i="6.08,162,1712646000"; 
-   d="scan'208";a="11676908"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 10:42:06 -0700
-X-CSE-ConnectionGUID: EyEgZ7vjSQGs6ajSTGIv6A==
-X-CSE-MsgGUID: 9YIJB80hT2ONOk50X/lFTA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,162,1712646000"; 
-   d="scan'208";a="31719459"
-Received: from djiang5-mobl3.amr.corp.intel.com (HELO [10.125.108.65]) ([10.125.108.65])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 10:42:05 -0700
-Message-ID: <99729afb-d538-4172-9659-ea12b993c6c3@intel.com>
-Date: Wed, 15 May 2024 10:42:04 -0700
+	s=arc-20240116; t=1715794983; c=relaxed/simple;
+	bh=+2jezA4tzmackJBF0Q+owMmDvh4B99B+iW1Z69bVj6w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PIUbL5M9e5+8KQ/DCvV+rgnTE5/Or+BSVnj54Y78FEXdycBDw+B0Iiutka0/egApUM7u9O7plTas+0ZGcBZe88m+sNCba1ytuB8nhFLvt2pOZ6tiH8ARQYjBLshzYhlJMDWRkykt6pyzIEdjxzoH/e7vA1gAnbdP2/gxNiFvLsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nxvPnn0P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C9EBC32781;
+	Wed, 15 May 2024 17:43:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715794982;
+	bh=+2jezA4tzmackJBF0Q+owMmDvh4B99B+iW1Z69bVj6w=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=nxvPnn0PS27/q0qKZr1ddhC9LXUdOUl+SWOd1aGrGurKTFz6ODBnMNkKe8Ok4J21y
+	 bD/L0by2HC6wh6DAbOdz7oldAIIc9X72Cbh9pu0vqNdE2+udJ3d7agzDvVOsY6BmfH
+	 rPEDy2CRpO4hJQaCiCk1qRICcyjoCwL7UPZ3tIXmuim3MtR8mA6VPFOVFnPqukGklB
+	 Rbdrz4wX2yxhIRzd719vYk4y9p8AmuxS3prAgs0uHh5s7fCajAwdDX6xpC1y7fsWNJ
+	 3FRdflX8oyqZpV++1WYj3OofKWpDIrI2gMM/+pI3G/WSvp8OXV4/RxCoaFaP37YJ8w
+	 A04G/KoKPRMbQ==
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-51f1bf83f06so9018732e87.1;
+        Wed, 15 May 2024 10:43:02 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWJDwUq3DOuMC+RnnOvKN2xqMzsrB3EHqiKieRqlLePNZXcRjRGmeaFRDq6aYUZxefyC3XajBpz0Hl7Sfo4dJcUB2EjQdFKB9AFbFNcW2jOWkGrklpbtp3G6p/+OEeI9p8a5gGfViBVB1IBU5iqXh3tTQelh3KBiNL8iTAQeK/a
+X-Gm-Message-State: AOJu0YwLtb5rYbHHbTvCrXYcU+Ha0eACsU7fQ4yVYpOhE1TFDYgMZMnM
+	pisKRS/sYZ2vFcekN+sQg5XPRySrx2H/r9vfPXQpe0k/gKJnUtbsNFpyjqzMe4r/pBerboXgaw8
+	Azhyu9YlUdJcLtCPJoecwmZMmdJg=
+X-Google-Smtp-Source: AGHT+IG3JT/3EHxo6OFaMXZ0gQCWCAhBcDpT+zlsqflYcTKqqQvfS9Ucv/AtAQ4sOeWbWtvrJiUZwbPxKfVK9WarPTI=
+X-Received: by 2002:a05:6512:2356:b0:519:6953:2ffc with SMTP id
+ 2adb3069b0e04-5221007027amr12979190e87.42.1715794980678; Wed, 15 May 2024
+ 10:43:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
- linux-kernel <linux-kernel@vger.kernel.org>,
- Dan Williams <dan.j.williams@intel.com>, Davidlohr Bueso
- <dave@stgolabs.net>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Ira Weiny <ira.weiny@intel.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>
-From: Dave Jiang <dave.jiang@intel.com>
-Subject: [GIT PULL] Compute Express Link (CXL) for 6.10
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <FA5F6719-8824-4B04-803E-82990E65E627@akamai.com>
+In-Reply-To: <FA5F6719-8824-4B04-803E-82990E65E627@akamai.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Wed, 15 May 2024 19:42:49 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXE2ZvaKout=nSfv08Hn5yvf8SRGhQeTikZcUeQOmyDgnw@mail.gmail.com>
+Message-ID: <CAMj1kXE2ZvaKout=nSfv08Hn5yvf8SRGhQeTikZcUeQOmyDgnw@mail.gmail.com>
+Subject: Re: Regression in 6.1.81: Missing memory in pmem device
+To: "Chaney, Ben" <bchaney@akamai.com>, Kees Cook <keescook@chromium.org>
+Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, 
+	"linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>, 
+	"stable@vger.kernel.org" <stable@vger.kernel.org>, "bp@alien8.de" <bp@alien8.de>, 
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "mingo@redhat.com" <mingo@redhat.com>, 
+	"tglx@linutronix.de" <tglx@linutronix.de>, "Tottenham, Max" <mtottenh@akamai.com>, 
+	"Hunt, Joshua" <johunt@akamai.com>, "Galaxy, Michael" <mgalaxy@akamai.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Linus, please pull from:
+(cc Kees)
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/cxl/cxl.git tags/cxl-for-6.10
+On Wed, 15 May 2024 at 19:32, Chaney, Ben <bchaney@akamai.com> wrote:
+>
+> Hello,
+>                 I encountered an issue when upgrading to 6.1.89 from 6.1.=
+77. This upgrade caused a breakage in emulated persistent memory. Significa=
+nt amounts of memory are missing from a pmem device:
+>
+> fdisk -l /dev/pmem*
+> Disk /dev/pmem0: 355.9 GiB, 382117871616 bytes, 746323968 sectors
+> Units: sectors of 1 * 512 =3D 512 bytes
+> Sector size (logical/physical): 512 bytes / 4096 bytes
+> I/O size (minimum/optimal): 4096 bytes / 4096 bytes
+>
+> Disk /dev/pmem1: 25.38 GiB, 27246198784 bytes, 53215232 sectors
+> Units: sectors of 1 * 512 =3D 512 bytes
+> Sector size (logical/physical): 512 bytes / 4096 bytes
+> I/O size (minimum/optimal): 4096 bytes / 4096 bytes
+>
+>         The memmap parameter that created these pmem devices is =E2=80=9C=
+memmap=3D364416M!28672M,367488M!419840M=E2=80=9D, which should cause a much=
+ larger amount of memory to be allocated to /dev/pmem1. The amount of missi=
+ng memory and the device it is missing from is randomized on each reboot. T=
+here is some amount of memory missing in almost all cases, but not 100% of =
+the time. Notably, the memory that is missing from these devices is not rec=
+laimed by the system for general use. This system in question has 768GB of =
+memory split evenly across two NUMA nodes.
+>
+>         When the error occurs, there are also the following error message=
+s showing up in dmesg:
+>
+> [    5.318317] nd_pmem namespace1.0: [mem 0x5c2042c000-0x5ff7ffffff flags=
+ 0x200] misaligned, unable to map
+> [    5.335073] nd_pmem: probe of namespace1.0 failed with error -95
+>
+>         Bisection implicates 2dfaeac3f38e4e550d215204eedd97a061fdc118 as =
+the patch that first caused the issue. I believe the cause of the issue is =
+that the EFI stub is randomizing the location of the decompressed kernel wi=
+thout accounting for the memory map, and it is clobbering some of the memor=
+y that has been reserved for pmem.
+>
 
-..to receive 3 feature updates and some fixes and cleanups for CXL.
+Does using 'nokaslr' on the kernel command line work around this?
 
-Three CXL mailbox passthrough commands are added to support the populating and clearing
-of vendor debug logs.
-
-The second feature is adding support of Device Phyiscal Address (DPA) to Host Physical
-Address (HPA) translation for CXL events of cxl_dram and cxl_general media. The support
-allows user space to figure out which CXL region the event occured via trace event.
-
-The third feature connects CXL to CPER reporting. If a device is configured for firmware
-first, CXL event records are not sent directly to the host. Those records are reported
-through EFI Common Platform Error Records (CPER). Support is added to route the CPER
-records through the CXL sub-system in order to provide DPA to HPA translation and also
-event decoding and tracing. This is useful for users to determine which system issues
-may correspond to specific hardware events.
-
-A number of misc cleanups and fixes are also included in this pull request.
-
-The following commits have late tags that were submitted after the commits have been
-pushed to cxl/next branch:
-
-866c0674541f cxl: Fix use of phys_to_target_node() for x86
-Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
-
-d357dd8ad2f1 ("cxl/region: Convert cxl_pmem_region_alloc to scope-based resource management")
-Reviewed-by: Li Zhijian <lizhijian@fujitsu.com>
-Tested-by: Li Zhijian <lizhijian@fujitsu.com>
-
-This pull request has appeared in the linux-next for more than a week and has build
-success notification from kbuild-robot.
-
----
-
-The following changes since commit e67572cd2204894179d89bd7b984072f19313b03:
-
-  Linux 6.9-rc6 (2024-04-28 13:47:24 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/cxl/cxl.git tags/cxl-for-6.10
-
-for you to fetch changes up to d99f13843237cf9dbdc1bd873a901662b4aee16f:
-
-  cxl/cper: Remove duplicated GUID defines (2024-05-02 12:12:45 -0700)
-
-----------------------------------------------------------------
-CXL changes for v6.10 merge window
-
-Topics:
-- Add CXL log related mailbox commands
-  - Add Get Log Capabilities command
-  - Add Get Supported Log Sub-List Commands command
-  - Add Clear Log command
-- Add series for DPA to HPA translation for CXL events cxl_dram and cxl_general_media
-- Add support to send CPER records to CXL for more detailed parsing.
-
-Misc changes and fixes:
-- Fix for compile warning of cxl_security_ops
-- Add debug message for invalid interleave granularity
-- Enhancement to cxl-test event testing
-- Add dev_warn() on unsupported mixed mode decoder
-- Fix use of phys_to_target_node() for x86
-- Use helper function for decoder enum instead of open coding
-- Include missing headers for cxl-event
-- Fix MAINTAINERS file entry
-- Fix cxlr_pmem memory leak
-- Cleanup __cxl_parse_cfmws via scope-based resource menagement
-- Convert cxl_pmem_region_alloc() to scope-based resource management
-
-----------------------------------------------------------------
-Alison Schofield (5):
-      cxl/hdm: dev_warn() on unsupported mixed mode decoder
-      cxl/trace: Correct DPA field masks for general_media & dram events
-      cxl/region: Move cxl_dpa_to_region() work to the region driver
-      cxl/region: Move cxl_trace_hpa() work to the region driver
-      cxl/core: Add region info to cxl_general_media and cxl_dram events
-
-Dan Williams (2):
-      cxl/acpi: Cleanup __cxl_parse_cfmws()
-      cxl/region: Convert cxl_pmem_region_alloc to scope-based resource management
-
-Dave Jiang (4):
-      cxl: Fix compile warning for cxl_security_ops extern
-      Merge remote-tracking branch 'cxl/for-6.10/add-log-mbox-cmds' into cxl-for-next
-      Merge remote-tracking branch 'cxl/for-6.10/dpa-to-hpa' into cxl-for-next
-      Merge remote-tracking branch 'cxl/for-6.10/cper' into cxl-for-next
-
-Huang Ying (1):
-      cxl/hdm: Add debug message for invalid interleave granularity
-
-Ira Weiny (6):
-      cxl/test: Enhance event testing
-      cxl/hdm: Debug, use decoder name function
-      acpi/ghes: Process CXL Component Events
-      cxl/pci: Process CPER events
-      cxl/cper: Fix non-ACPI-APEI-GHES build
-      cxl/cper: Remove duplicated GUID defines
-
-Li Zhijian (1):
-      cxl/region: Fix cxlr_pmem leaks
-
-Lukas Bulwahn (1):
-      MAINTAINERS: repair file entry in COMPUTE EXPRESS LINK
-
-Robert Richter (1):
-      cxl: Fix use of phys_to_target_node() for x86
-
-Sangyun Kim (1):
-      cxl/cxl-event: include missing <linux/types.h> and <linux/uuid.h>
-
-Srinivasulu Thanneeru (2):
-      cxl/mbox: Add Get Log Capabilities and Get Supported Logs Sub-List commands
-      cxl/mbox: Add Clear Log mailbox command
-
- MAINTAINERS                  |   2 +-
- drivers/acpi/apei/ghes.c     |  84 ++++++++++++++++++++
- drivers/cxl/Kconfig          |   1 +
- drivers/cxl/acpi.c           |  93 +++++++++++++----------
- drivers/cxl/core/core.h      |  14 ++++
- drivers/cxl/core/hdm.c       |  13 ++--
- drivers/cxl/core/mbox.c      |  48 ++++++++++--
- drivers/cxl/core/memdev.c    |  44 -----------
- drivers/cxl/core/region.c    | 177 +++++++++++++++++++++++++++++++++++++------
- drivers/cxl/core/trace.c     |  91 ----------------------
- drivers/cxl/core/trace.h     |  50 ++++++++----
- drivers/cxl/cxl.h            |   7 ++
- drivers/cxl/cxlmem.h         |   3 +
- drivers/cxl/pci.c            |  71 ++++++++++++++++-
- drivers/cxl/pmem.c           |   2 -
- include/linux/cxl-event.h    |  39 ++++++++++
- include/uapi/linux/cxl_mem.h |   3 +
- tools/testing/cxl/test/mem.c |  19 ++++-
- 18 files changed, 527 insertions(+), 234 deletions(-)
+I think in this particular case, we could just disable physical KASLR
+(but retain virtual KASLR) if memmap=3D appears on the kernel command
+line, on the basis that emulated persistent memory is somewhat of a
+niche use case, and physical KASLR is not as important as virtual
+KASLR (which shouldn't be implicated in this).
 
