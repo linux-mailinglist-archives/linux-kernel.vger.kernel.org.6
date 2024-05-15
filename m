@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-180214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A94948C6B80
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 19:32:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91A0F8C6B81
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 19:33:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34144B249E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:32:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45E1928393B
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:33:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0100E45014;
-	Wed, 15 May 2024 17:32:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2234D39FD4;
+	Wed, 15 May 2024 17:32:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QG4m/p0r"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Nd/TQBXO"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA7723032A
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 17:32:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 809BF4EB3A
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 17:32:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715794368; cv=none; b=DciR8s1XBB2EtHWWM59O1bo9/8AIWAXDOaJ1lPkEnPytxvsrCTx8HejGGNVKRXbJEGDbuGkykV+MphqRpS1Ng07e2cS9I8DTdaiO/VecKUOp/ih6Yscdr2zaBlYHR+ccAQoteghte0VQr1mpFbeYbKinsNW1ilmZrfrMush4BC4=
+	t=1715794376; cv=none; b=pvopyk8dPunfKi4g0JB+hMCK+tsSiYkmeCk27MAjaeCxI/zqFkZ6FNpWDv3AAwfbKpxzGKZlNGf1iPzlvPSb8Cu54PlNFOyYROJf3N1H7MrSik+RmbTolWXbHfgFIzT1OQJBOiXGaSW26JvzL0HYfh1rcOU+QBNaBlaH3a1xFV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715794368; c=relaxed/simple;
-	bh=kiBu9aDX7EL9QTt1G+6SJu1okG8LZwH7rPudLYo5UBA=;
+	s=arc-20240116; t=1715794376; c=relaxed/simple;
+	bh=qEcSw3lILLGvhKIjJLG6VoBEYR2tfcg32/p64k58ON8=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=k0P9Peda4KiOJd3bR99SlgU4HwXLtA8Q5xFWs+Ps0KkiKJDM9qDDbJSamRHSlWBFXYe6mOU9VL/xMoDo7lDktq31j0T/3rtCButJANSyQMi6rXDhAMYlOnvf+hVnVq0GbAKWxwimMSQHVSh/AmFPy6Ho5nG5Tq6ufEyc4pyxeOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QG4m/p0r; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version:Content-Type; b=NQ9M/5Y48T4dZ127Hy/hsoJyXJ4fWNgqpSBK8hvWd5A2cc6qBhA+ccAzQ4CsOsksCssaQ6TkCVPclrorVZHBEexNwelzZUMTOVmWMxF+eSPqhZoo3llnybm2R9O+/OV3s2h//LNDs4d2y1et0DAAFySLBfdcR06k+B0Kp4sbWeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Nd/TQBXO; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715794366;
+	s=mimecast20190719; t=1715794373;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=K3zrJi+7L7SmSVpO4sJC/EifqPPPG8oHimbPsdQiY8I=;
-	b=QG4m/p0rSw5KL7Zk7vTtoGkiT/YjVWX2YlpkPiyYtdtfF/txWVGhntCWNLvPX9T7hHCynX
-	VIJzDU4pgaSJkZGxpDEZm4q962L0vKvU032+WcJ3gr3tDrwxndOuFO7muSy8fYxwtHtHkk
-	XBoe5SWpyjRb8+E667GtFppshVUQcz4=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=oOwdeJhBjSGNCAussjsFY04Bth4aIM7eWnKu5IfNLOU=;
+	b=Nd/TQBXOK7qs9Lal+vutoItKN2UwzAuNtihaTe9nkJvLQR1njhw8ObCVJGt7d4OM7+3w0Q
+	G4G0eiu8GBK/2rjXpO7CVyo3GScsLLt0FWry0nGCa7I2L6klkxvXXSByzihLMm/Hqi2qRS
+	L0pxSj3BC2KF++ag0qSQUrpeOBflEVg=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-230-dRY6s8-qMZyw8X6nMuC-Vg-1; Wed, 15 May 2024 13:32:34 -0400
-X-MC-Unique: dRY6s8-qMZyw8X6nMuC-Vg-1
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-792ff352462so69698285a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 10:32:34 -0700 (PDT)
+ us-mta-509-SpQ7e2JDPX6uSPnR_ErIZg-1; Wed, 15 May 2024 13:32:52 -0400
+X-MC-Unique: SpQ7e2JDPX6uSPnR_ErIZg-1
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-792cefecd00so940488785a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 10:32:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715794354; x=1716399154;
+        d=1e100.net; s=20230601; t=1715794370; x=1716399170;
         h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
          :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=K3zrJi+7L7SmSVpO4sJC/EifqPPPG8oHimbPsdQiY8I=;
-        b=nFd0hotZk2O0Mv5a79bRFvrInv9T5OnQNapsqkHnvu/dGnZYkB/EH6mx3bxbauDT1I
-         0To++JA6UcU1OKSYsfb3VR3m+n2w3M550vgiCfGi6gaiWyCn/KpfdpcDGm578O/IBrKf
-         LdZRBi99pVuaU6XyCnbsKb9FUOFhcwWXGl8dzIwuz4K0WRIudiWAc5r6uCgeNwsNCHKv
-         CKmxQchvQpWhaYCNAR3zIzKD+oWxxSDm64ONN2B3p4IDVVSHcy2BvOHpHycDQN6L4Dge
-         IFUmHEVndfn3epakZqZGbY2+jjbfaiBhQmgqi0xAav0lmvRGhBELt2nsRChuvywfJAkp
-         mb+w==
-X-Forwarded-Encrypted: i=1; AJvYcCUN8ap2rDgm09Il8yGe5Jtu8pN5DAU5bR8xVlUfcjp5LQpPqk3840OEarlzr1UucW9Uph0ttJXTYKkjuLaAPGg057qlB9/e/TAPhNK4
-X-Gm-Message-State: AOJu0YzAXbI7mpHCmHsrUuCzLGELKmtjv4Tbju3jnHLhO9jaFqmR6c+t
-	g7RQuC4Zb4l+InDD5Z3TW5YVyE1DyfxpediTtYFO49foMoYLjmWIK7+5wLGmckvbSVLEIKISJHL
-	QjBfxLYOLueWOdmncxSGMIA0qF+MlfegeQGzWsU6Pi1ft2BObf3DbChcN/GRgsg==
-X-Received: by 2002:a05:620a:4946:b0:790:e6bf:23c8 with SMTP id af79cd13be357-792c757421bmr1697142685a.15.1715794354095;
-        Wed, 15 May 2024 10:32:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGhuFXJCFrAqP1KpGavlBwSPWZKTHyKGVO9HIx7RJlDer6r8nEi85JyvPgFGo7LrS4jndsTSg==
-X-Received: by 2002:a05:620a:4946:b0:790:e6bf:23c8 with SMTP id af79cd13be357-792c757421bmr1697139985a.15.1715794353706;
-        Wed, 15 May 2024 10:32:33 -0700 (PDT)
+        bh=oOwdeJhBjSGNCAussjsFY04Bth4aIM7eWnKu5IfNLOU=;
+        b=TSp/NHTxxJLB6QXnNPJCl/FFk7xmQt1kf0tnmU66auLNEvi7chDZs4CbGXJCWoz+CV
+         zccQkYH+3FyZMjbXhpdvmb2SQ2PgtLl1I9jlbSn8tQavSTKJalXSxef8DhwtjD3oIhfG
+         S7haOFGlPj2mbDd7+Mru2qC+n/7Y4IiL7s2NmAcwxHKJ6N08XYVnKmPsH5I58+NVv5wk
+         qkOfJqxW8JI7FFHFljHucMNceZscvsaPzMYCCB1Rvxz+IiGEN8QfFdKZpoCI1BEMYdOl
+         mR+IjPcKknRo6CoLUPGa0dBjbW4FNo9YEkto1Dk56ZTZcBUVmuahaHveQ/x1gYT2S/k2
+         0yUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUO9NXoP7b0zKeGXfOvNgsnjmqOnkQtjqKD4D7ucGv89EwuV3x4OiJdo642iPXqcv41iiUdoLElOw8KYOba6i26fb6ObtqM3zfyVhlJ
+X-Gm-Message-State: AOJu0YwJxs/g0xyVbPibBbMVnfq6JH607OAjXaQol22bHSyc0zkbMk5F
+	Yr5WijQXi1m1xsp3NWVTjil7AHzCti40w6iKJ2/MmWyvUfgVBlMkk41Ft/WZAkOSv78dl+HLkdO
+	4NcYEkubps1p217Dt9aWqrkniEIRWVMHIJsxTU+8OtgYaHeX7LGiVvInkmggEKA==
+X-Received: by 2002:a05:622a:109:b0:43a:3502:8446 with SMTP id d75a77b69052e-43dec39be29mr341473721cf.28.1715794370170;
+        Wed, 15 May 2024 10:32:50 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE3J4mJbmHn1T6bjHxpYTkK8dZATZQr5Sa13WzDnCmuqUStezho5/sEVpt2rJSDEKrAgOg5Bw==
+X-Received: by 2002:a05:622a:109:b0:43a:3502:8446 with SMTP id d75a77b69052e-43dec39be29mr341473421cf.28.1715794369830;
+        Wed, 15 May 2024 10:32:49 -0700 (PDT)
 Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-141-166.abo.bbox.fr. [213.44.141.166])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-792bf27f99dsm703976085a.37.2024.05.15.10.32.31
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43e0e421dccsm54794051cf.53.2024.05.15.10.32.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 May 2024 10:32:32 -0700 (PDT)
+        Wed, 15 May 2024 10:32:49 -0700 (PDT)
 From: Valentin Schneider <vschneid@redhat.com>
 To: Frederic Weisbecker <frederic@kernel.org>, LKML
  <linux-kernel@vger.kernel.org>
@@ -78,11 +78,12 @@ Cc: Frederic Weisbecker <frederic@kernel.org>, "Paul E . McKenney"
  <joel@joelfernandes.org>, Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
  Uladzislau Rezki <urezki@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
  rcu <rcu@vger.kernel.org>
-Subject: Re: [PATCH 0/6] rcu: Remove several redundant memory barriers
-In-Reply-To: <20240515125332.9306-1-frederic@kernel.org>
+Subject: Re: [PATCH 1/6] rcu: Remove full ordering on second EQS snapshot
+In-Reply-To: <20240515125332.9306-2-frederic@kernel.org>
 References: <20240515125332.9306-1-frederic@kernel.org>
-Date: Wed, 15 May 2024 19:32:30 +0200
-Message-ID: <xhsmhjzjvgevl.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <20240515125332.9306-2-frederic@kernel.org>
+Date: Wed, 15 May 2024 19:32:45 +0200
+Message-ID: <xhsmhikzfgev6.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,34 +93,81 @@ MIME-Version: 1.0
 Content-Type: text/plain
 
 On 15/05/24 14:53, Frederic Weisbecker wrote:
-> Reviewing Valentin's patchset made me stare at some memory barriers
-> on the way.
+> When the grace period kthread checks the extended quiescent state
+> counter of a CPU, full ordering is necessary to ensure that either:
+>
+> * If the GP kthread observes the remote target in an extended quiescent
+>   state, then that target must observe all accesses prior to the current
+>   grace period, including the current grace period sequence number, once
+>   it exits that extended quiescent state. Also the GP kthread must
+>   observe all accesses performed by the target prior it entering in
+>   EQS.
+>
+> or:
+>
+> * If the GP kthread observes the remote target NOT in an extended
+>   quiescent state, then the target further entering in an extended
+>   quiescent state must observe all accesses prior to the current
+>   grace period, including the current grace period sequence number, once
+>   it enters that extended quiescent state. Also the GP kthread later
+>   observing that EQS must also observe all accesses performed by the
+>   target prior it entering in EQS.
+>
+> This ordering is explicitly performed both on the first EQS snapshot
+> and on the second one as well through the combination of a preceding
+> full barrier followed by an acquire read. However the second snapshot's
+> full memory barrier is redundant and not needed to enforce the above
+> guarantees:
+>
+>     GP kthread                  Remote target
+>     ----                        -----
+>     // Access prior GP
+>     WRITE_ONCE(A, 1)
+>     // first snapshot
+>     smp_mb()
+>     x = smp_load_acquire(EQS)
+>                                // Access prior GP
+>                                WRITE_ONCE(B, 1)
+>                                // EQS enter
+>                                // implied full barrier by atomic_add_return()
+>                                atomic_add_return(RCU_DYNTICKS_IDX, EQS)
+>                                // implied full barrier by atomic_add_return()
+>                                READ_ONCE(A)
+>     // second snapshot
+>     y = smp_load_acquire(EQS)
+>     z = READ_ONCE(B)
+>
+> If the GP kthread above fails to observe the remote target in EQS
+> (x not in EQS), the remote target will observe A == 1 after further
+> entering in EQS. Then the second snapshot taken by the GP kthread only
+> need to be an acquire read in order to observe z == 1.
+>
+> Therefore remove the needless full memory barrier on second snapshot.
+>
+> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 
-Sorry not sorry? :-)
+Still looking at the rest, but at least so far I'm convinced this one makes
+sense.
 
-> Here is some removal proposal. Some may be beneficial on
-> runtime (fqs snapshot with potentially as many smp_mb() as the number
-> of online CPUs for each GP). Some happen on more rare path. In any
-> case they clarify code reviews so we don't stumble upon mysterious
-> barriers.
+Reviewed-by: Valentin Schneider <vschneid@redhat.com>
+
+> ---
+>  kernel/rcu/tree.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> Thanks.
+> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> index 5e6828132007..58415cdc54f8 100644
+> --- a/kernel/rcu/tree.c
+> +++ b/kernel/rcu/tree.c
+> @@ -325,7 +325,7 @@ static bool rcu_dynticks_in_eqs(int snap)
+>   */
+>  static bool rcu_dynticks_in_eqs_since(struct rcu_data *rdp, int snap)
+>  {
+> -	return snap != rcu_dynticks_snap(rdp->cpu);
+> +	return snap != ct_dynticks_cpu_acquire(rdp->cpu);
+>  }
 >
-> Frederic Weisbecker (6):
->   rcu: Remove full ordering on second EQS snapshot
->   rcu: Remove superfluous full memory barrier upon first EQS snapshot
->   rcu/exp: Remove superfluous full memory barrier upon first EQS
->     snapshot
->   rcu: Remove full memory barrier on boot time eqs sanity check
->   rcu: Remove full memory barrier on RCU stall printout
->   rcu/exp: Remove redundant full memory barrier at the end of GP
->
->  .../Tree-RCU-Memory-Ordering.rst              |  6 +++---
->  kernel/rcu/tree.c                             | 21 +++++++------------
->  kernel/rcu/tree_exp.h                         | 16 +++++++++++---
->  kernel/rcu/tree_stall.h                       |  4 ++--
->  4 files changed, 26 insertions(+), 21 deletions(-)
->
+>  /*
 > --
 > 2.44.0
 
