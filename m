@@ -1,153 +1,173 @@
-Return-Path: <linux-kernel+bounces-179653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D726F8C62DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 10:28:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1B6C8C62E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 10:28:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FD7F1F21EEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:28:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D35111C217B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:28:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E68C150283;
-	Wed, 15 May 2024 08:28:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F3BA4E1A8;
+	Wed, 15 May 2024 08:28:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="s22HlCf6";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="i5K/s5a8"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="LBV2uXET"
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7964F4F1E2;
-	Wed, 15 May 2024 08:28:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 190F757C8D
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 08:28:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715761683; cv=none; b=RZTnYfG8Edl49a+OhbFtNaSh5+h5TUuJBs+H3ZctBnhb1YK7lS9triPEWt88j5aLpngB1edhMYA/5mmowgfYEzqAp1Plzsh5+mXR2Vqsql2CK82l8VlVnkqDzjNA3Sb0IcDqRLL0KaiUkmoVuoU/QYffOg5cE98bLxOuSn+u92k=
+	t=1715761718; cv=none; b=sAbsh8Wg/DEkBHQvmiwHS0ORsRr00kkiCyluSiOo0dl23w9DzQo9oCaMHnVxON5C7OsC2q+9bVAComtHNHTF9RLb8ESweWyIuNJporw4jpqsRDLbdrltFMbbtPJ9FEBL/nObKzqeQ3v5nq/gJJqdC831h0II4PMmu9481XOn23M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715761683; c=relaxed/simple;
-	bh=TaBpvCXyVXCLluWt3oSvvI3u62844mjY3sXTsdCCQww=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=TqeTCp+bIZc4In2dbCtBYRKIVbQRXDWmN3mGVPmvuiCyru3r7xpRapJlpLNH44C4Aj+RJuxq3/JRnS1+WDw3ZnGSoym0stnxoXafzQ+yakwG7U+xJMKvjnKCfSZ1PeHwuizufXxkuhlMyD3/2guV5gHcgcqvz+yHscrYaa6+n50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=s22HlCf6; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=i5K/s5a8; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 15 May 2024 08:27:53 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1715761673;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
+	s=arc-20240116; t=1715761718; c=relaxed/simple;
+	bh=qZ5PtdWQwnrI+qm84to52NV4hML71OxaLXehqbhio2M=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=iq7fYXEvo/SCImbtuKvZooZFdOEEKUbjVRLlx6lqo8Q9ywcZfklJswh0hk28J6+8g/WsGyOd9qh2JGnnkal+Oq9SGfmqCJgHNKhGJ85nlmVy/WFgkJ7ynMTelqQoEISv+M45e1z5AeBr6YJO2TyPLB3lS+TsnoyT1U2vUvbL1Qs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=LBV2uXET; arc=none smtp.client-ip=91.218.175.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1715761712;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=/MLBMflH6V1beYLEOpcr8SjmKUf1+Bmzp4Nn9lxHYoQ=;
-	b=s22HlCf6jqzmAfHEyr9HV5qNO4E1+vWyGudTlk8Z2U9BeYj75cCYKilzEHnFw+ADL6OwjK
-	9wrjGBkqSGVXI56Pe93Bx63xJniS+3Z5brgOhGvxmFp3Hcy9FFQ/INA0cp1ZSKT/UIzUkw
-	OrVHrMaegGosVoMYVAUosyrIaVzfHkwb3jUutB9H16+PFoAEObra4EFSyliJ7J67ZTp6IS
-	8XKQ/RPUWcis9MRC9n7BdL+NKGS+nV4U0ho6xXLzGTGROGvzHy143+/Acau/ngBwMMR1sf
-	Kz/8bbXpZG70iwSYhVakT3B8WCYGKskmeOwuCAlNgmzoI16TeZp/mLKUr6husw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1715761673;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/MLBMflH6V1beYLEOpcr8SjmKUf1+Bmzp4Nn9lxHYoQ=;
-	b=i5K/s5a8KMUXvA5psWcp8veB7dGRczpbFGcabKR1Fk6XE/HBLhs46JLi+km6Xrt7eCgu1Q
-	Hc0/F037ny0VZGDA==
-From: "tip-bot2 for Vincent Guittot" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: sched/urgent] arch/topology: Fix variable naming to avoid shadowing
-Cc: kernel test robot <lkp@intel.com>,
- Vincent Guittot <vincent.guittot@linaro.org>, Ingo Molnar <mingo@kernel.org>,
- Lukasz Luba <lukasz.luba@arm.com>, Konrad Dybcio <konrad.dybcio@linaro.org>,
- Sudeep Holla <sudeep.holla@arm.com>,
- Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240425073709.379016-1-vincent.guittot@linaro.org>
-References: <20240425073709.379016-1-vincent.guittot@linaro.org>
+	bh=m6z880RTWT/eDmvxKbDohNBeKThIr9MgD7aClITZ0Z0=;
+	b=LBV2uXETyClr80szE82gnOvrLvArVrSj4Ql0lbQlyLwFCY+GbGcfiN627fvxwMyDB9FMK4
+	stRRTf739PW2YfPgfYoydWPrMUj9NM0HmZm/jVs5H6A+P22X/w+gTeXroaGrnnU+XcUoH8
+	ouoaH2OOZt3HZ8/EJWr4FHKj0TfPebg=
+From: Luis Henriques <luis.henriques@linux.dev>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: Luis Henriques <luis.henriques@linux.dev>,  linux-ext4@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  Theodore Ts'o <tytso@mit.edu>,  Andreas
+ Dilger <adilger@dilger.ca>,  Harshad Shirwadkar
+ <harshadshirwadkar@gmail.com>
+Subject: Re: [PATCH] ext4: fix infinite loop when replaying fast_commit
+In-Reply-To: <a49a72d2-98aa-1c87-fc3a-58cae0f90257@huaweicloud.com> (Zhang
+	Yi's message of "Wed, 15 May 2024 12:59:26 +0800")
+References: <20240510115252.11850-1-luis.henriques@linux.dev>
+	<2ee78957-b0a6-f346-5957-c4b2ebcea4ce@huaweicloud.com>
+	<87o798a6k5.fsf@brahms.olymp>
+	<a49a72d2-98aa-1c87-fc3a-58cae0f90257@huaweicloud.com>
+Date: Wed, 15 May 2024 09:28:29 +0100
+Message-ID: <87pltniimq.fsf@brahms.olymp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <171576167329.10875.14382447662148651409.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Migadu-Flow: FLOW_OUT
 
-The following commit has been merged into the sched/urgent branch of tip:
+On Wed 15 May 2024 12:59:26 PM +08, Zhang Yi wrote;
 
-Commit-ID:     e5bc44e47c531860be96ac615314b1ab23d5aa2b
-Gitweb:        https://git.kernel.org/tip/e5bc44e47c531860be96ac615314b1ab23d5aa2b
-Author:        Vincent Guittot <vincent.guittot@linaro.org>
-AuthorDate:    Thu, 25 Apr 2024 09:37:09 +02:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Wed, 15 May 2024 10:22:16 +02:00
+> On 2024/5/14 21:04, Luis Henriques wrote:
+>> On Sat 11 May 2024 02:24:17 PM +08, Zhang Yi wrote;
+>> 
+>>> On 2024/5/10 19:52, Luis Henriques (SUSE) wrote:
+>>>> When doing fast_commit replay an infinite loop may occur due to an
+>>>> uninitialized extent_status struct.  ext4_ext_determine_insert_hole() does
+>>>> not detect the replay and calls ext4_es_find_extent_range(), which will
+>>>> return immediately without initializing the 'es' variable.
+>>>>
+>>>> Because 'es' contains garbage, an integer overflow may happen causing an
+>>>> infinite loop in this function, easily reproducible using fstest generic/039.
+>>>>
+>>>> This commit fixes this issue by detecting the replay in function
+>>>> ext4_ext_determine_insert_hole().  It also adds initialization code to the
+>>>> error path in function ext4_es_find_extent_range().
+>>>>
+>>>> Thanks to Zhang Yi, for figuring out the real problem!
+>>>>
+>>>> Fixes: 8016e29f4362 ("ext4: fast commit recovery path")
+>>>> Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
+>>>> ---
+>>>> Hi!
+>>>>
+>>>> Two comments:
+>>>> 1) The change in ext4_ext_map_blocks() could probably use the min_not_zero
+>>>>    macro instead.  I decided not to do so simply because I wasn't sure if
+>>>>    that would be safe, but I'm fine changing that if you think it is.
+>>>>
+>>>> 2) I thought about returning 'EXT_MAX_BLOCKS' instead of '0' in
+>>>>    ext4_lblk_t ext4_ext_determine_insert_hole(), which would then avoid
+>>>>    the extra change to ext4_ext_map_blocks().  '0' sounds like the right
+>>>>    value to return, but I'm also OK using 'EXT_MAX_BLOCKS' instead.
+>>>>
+>>>> And again thanks to Zhang Yi for pointing me the *real* problem!
+>>>>
+>>>>  fs/ext4/extents.c        | 6 +++++-
+>>>>  fs/ext4/extents_status.c | 5 ++++-
+>>>>  2 files changed, 9 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+>>>> index e57054bdc5fd..b5bfcb6c18a0 100644
+>>>> --- a/fs/ext4/extents.c
+>>>> +++ b/fs/ext4/extents.c
+>>>> @@ -4052,6 +4052,9 @@ static ext4_lblk_t ext4_ext_determine_insert_hole(struct inode *inode,
+>>>>  	ext4_lblk_t hole_start, len;
+>>>>  	struct extent_status es;
+>>>>  
+>>>> +	if (EXT4_SB(inode->i_sb)->s_mount_state & EXT4_FC_REPLAY)
+>>>> +		return 0;
+>>>> +
+>>>
+>>> Sorry, I think it's may not correct. When replaying the jouranl, although
+>>> we don't use the extent statue tree, we still need to query the accurate
+>>> hole length, e.g. please see skip_hole(). If you do this, the hole length
+>>> becomes incorrect, right?
+>> 
+>> Thank you for your review (and sorry for my delay replying).
+>> 
+>> So, I see three different options to follow your suggestion:
+>> 
+>> 1) Initialize 'es' immediately when declaring it in function
+>>    ext4_ext_determine_insert_hole():
+>> 
+>> 	es.es_lblk = es.es_len = es.es_pblk = 0;
+>> 
+>> 2) Initialize 'es' only in ext4_es_find_extent_range() when checking if an
+>>    fc replay is in progress (my patch was already doing something like
+>>    that):
+>> 
+>> 	if (EXT4_SB(inode->i_sb)->s_mount_state & EXT4_FC_REPLAY) {
+>> 		/* Initialize extent to zero */
+>> 		es->es_lblk = es->es_len = es->es_pblk = 0;
+>> 		return;
+>> 	}
+>> 
+>> 3) Remove the check for fc replay in function ext4_es_find_extent_range(),
+>>    which will then unconditionally call __es_find_extent_range().  This
+>>    will effectively also initialize the 'es' fields to '0' and, because
+>>    __es_tree_search() will return NULL (at least in generic/039 test!),
+>>    nothing else will be done.
+>> 
+>> Since all these 3 options seem to have the same result, I believe option
+>> 1) is probably the best as it initializes the structure shortly after it's
+>> declaration.  Would you agree?  Or did I misunderstood you?
+>> 
+>
+> Both 1 and 2 are looks fine to me, but I would prefer to initialize it
+> unconditionally in ext4_es_find_extent_range().
+>
+> @@ -310,6 +310,8 @@ void ext4_es_find_extent_range(struct inode *inode,
+> 				ext4_lblk_t lblk, ext4_lblk_t end,
+> 				struct extent_status *es)
+>  {
+> +	es->es_lblk = es->es_len = es->es_pblk = 0;
+> +
+> 	if (EXT4_SB(inode->i_sb)->s_mount_state & EXT4_FC_REPLAY)
+> 		return;
 
-arch/topology: Fix variable naming to avoid shadowing
+Thank you, Yi.  I'll send out v2 shortly.  Although, to be fair, the real
+patch author shouldn't be me. :-)
 
-Using 'hw_pressure' for local variable name is confusing in regard to the
-per-CPU 'hw_pressure' variable that uses the same name:
-
-  include/linux/arch_topology.h:DECLARE_PER_CPU(unsigned long, hw_pressure);
-
-.. which puts it into a global scope for all code that includes
-<linux/topology.h>, shadowing the local variable.
-
-Rename it to avoid compiler confusion & Sparse warnings.
-
-[ mingo: Expanded the changelog. ]
-
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-Acked-by: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Link: https://lore.kernel.org/r/20240425073709.379016-1-vincent.guittot@linaro.org
-Closes: https://lore.kernel.org/oe-kbuild-all/202404250740.VhQQoD7N-lkp@intel.com/
-Fixes: d4dbc991714e ("sched/cpufreq: Rename arch_update_thermal_pressure() => arch_update_hw_pressure()")
-Tested-by: Konrad Dybcio <konrad.dybcio@linaro.org> # QC SM8550 QRD
----
- drivers/base/arch_topology.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/base/arch_topology.c b/drivers/base/arch_topology.c
-index 0248912..c66d070 100644
---- a/drivers/base/arch_topology.c
-+++ b/drivers/base/arch_topology.c
-@@ -179,7 +179,7 @@ DEFINE_PER_CPU(unsigned long, hw_pressure);
- void topology_update_hw_pressure(const struct cpumask *cpus,
- 				      unsigned long capped_freq)
- {
--	unsigned long max_capacity, capacity, hw_pressure;
-+	unsigned long max_capacity, capacity, pressure;
- 	u32 max_freq;
- 	int cpu;
- 
-@@ -196,12 +196,12 @@ void topology_update_hw_pressure(const struct cpumask *cpus,
- 	else
- 		capacity = mult_frac(max_capacity, capped_freq, max_freq);
- 
--	hw_pressure = max_capacity - capacity;
-+	pressure = max_capacity - capacity;
- 
--	trace_hw_pressure_update(cpu, hw_pressure);
-+	trace_hw_pressure_update(cpu, pressure);
- 
- 	for_each_cpu(cpu, cpus)
--		WRITE_ONCE(per_cpu(hw_pressure, cpu), hw_pressure);
-+		WRITE_ONCE(per_cpu(hw_pressure, cpu), pressure);
- }
- EXPORT_SYMBOL_GPL(topology_update_hw_pressure);
- 
+Cheers,
+-- 
+Luis
 
