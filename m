@@ -1,391 +1,166 @@
-Return-Path: <linux-kernel+bounces-179842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE7898C6647
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 14:19:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D9688C6642
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 14:18:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4635EB237B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 12:18:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF1D4B22876
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 12:18:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34E998003A;
-	Wed, 15 May 2024 12:17:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 442B378C61;
+	Wed, 15 May 2024 12:17:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LymaZ6GT"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 245C477F12;
-	Wed, 15 May 2024 12:17:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="ar/MmW0n"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52651745D6;
+	Wed, 15 May 2024 12:17:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715775474; cv=none; b=TmekGHpcr1wDaplzhUrbTrifYtVjubK7JB2Nr6WAjYQ2wrkkaTCXFbpNfc9CgXiEghrM99y0X/4sVm3yFSqDNxKeiIPcvGVf0PAzxBy/K8V0oV0QY8TqinEvezU8V9HdIzUuoKeBNT3X7wra18jw/T5skvjiyg1PcXUKzfjnAZ0=
+	t=1715775471; cv=none; b=MvUO46KGlUl0ltdbc9McfHKEbfxiHKugcxorjsdSUp7hGzSjvjnxU88Gc54T94n3duSv8bmPjwG+5hQhTRb6DiDcqaFq4sISJvvoz+Y/FsQGwAMeflbz+NAmjQQPEb9s+DdGMJvh2CqmhRI3CDfNcFDiaGvAXQ1pkMLJwHo1cpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715775474; c=relaxed/simple;
-	bh=Zo7xb1sJzDhoCt8TTVH1Ff6XUyWXmqiqEO9mwffj5n4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DlCYyzPFInJAwoT1BUkqw22oCtbpl2raqyLhueKKtoNqy373II3Sxst0kgssI4SmggT6vAc5iztCKbEKRI9WBFQL8BGT5FVbH+AN+c2iAqYZhyDDJ+uD8qG/iEAuOmPDzQPe8p2R/FbcVgs8FLUgrI6ZSmG+XGlLMbisfVc7guE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LymaZ6GT; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-51f3a49ff7dso8834426e87.2;
-        Wed, 15 May 2024 05:17:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715775470; x=1716380270; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3FfTd+IhcseVz82kX8cl5ddq+uO0WysRifQ/UtsUnsk=;
-        b=LymaZ6GTMkA5CW1QJmmIQ4LSrPt/71+tAKQbk5N3vIvi5scjXAHT6cCLce7XGJZY0U
-         H6zPBPcA7pHOWKmhryzXGm7h6bS+xT6Sn9YQwsM19dcmBJOyjQPIEThKX6PczAxAs6Y2
-         8xK45cgKDRQSlxsNrlHYUXEl6JkFCU3aCB423MnK+6FCWpGm20WgbZXvCPswlUeCvEZC
-         D2be1EqigQITBaGMwUjeNVzOJHHS7G44ov4Z/Cus1LMPjz4y3COKwpruq+GCA4FRr9cF
-         2LvSA2zqH8tlnJ3fWPen6sV4it/x67t3Sl7yp3WZoKp84i1yPCwz9DVg1wco4dCPaS1s
-         JUkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715775470; x=1716380270;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3FfTd+IhcseVz82kX8cl5ddq+uO0WysRifQ/UtsUnsk=;
-        b=d54nl9htLr2AlVn+XTYbjp7tQoDnr3mb/V2NGODDLNPDpQq5Jtj6xuhn7Fo8S/E43h
-         DR0T4YY3F+E9g59stQmLse+qcbZ+UP3d/522eToP1ZRAoRLdJIf1pPkSFD6+2F18z0ws
-         CfIRDxgS1IKRiTiSrebep+5lecARXd35b8XaEW9fViu+lPR4N3YgA/fgYe4sFjjExaAT
-         zg5Q0WF38N1aun/XhaDanloUqmizlms0B59kIpVshOWtUK1oMBiyGk1JW16UhWxPLcYC
-         ZUmARvTPKj1kgFTJE97s6FbGTObwQDn7CaxwobK9UPCgWAvO9vRnAnZyxPOAtZpvSH/0
-         Mftw==
-X-Forwarded-Encrypted: i=1; AJvYcCVO0yiuEkdLtKeihnAx2IDOA68hMTrFUignBHcXLeuOCpVFNddT10l1TxMFjbnqeW+FwxtTc3AMhVQk1KJzvZHhqfebnqwPigI/VSApntg6HqW7bFgzi666dPwz+yfpwSJVDWifLTnzF1JW/Rm9aAxr9SdrsmxJUnGLG5MuVyERwTVa4tc=
-X-Gm-Message-State: AOJu0YxEeiBD6mr8Fwj5yEt5BkrsdXpsudp7aKhiI3nXMGBnltm8AWIT
-	EYYFwSg12lfEvfrKGWYWyJ3cP9vsSGF8+I5Vsqvf+hgiGjQuIjzk
-X-Google-Smtp-Source: AGHT+IH+qSj1I/O3GPU5wteh8h6ytdiJYjGehctJATlTyw6eYCkMHo7xMnVO4bDJk5abmxizMhiDPA==
-X-Received: by 2002:a05:6512:3135:b0:51b:e42c:2ec4 with SMTP id 2adb3069b0e04-5220fc7dc49mr9132357e87.24.1715775470277;
-        Wed, 15 May 2024 05:17:50 -0700 (PDT)
-Received: from yoga-710.tas.nnz-ipc.net ([178.218.200.115])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-521f35ad684sm2515614e87.3.2024.05.15.05.17.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 May 2024 05:17:50 -0700 (PDT)
-From: Dmitry Yashin <dmt.yashin@gmail.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Rob Herring <robh@kernel.org>
-Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Jianqun Xu <jay.xu@rock-chips.com>,
-	devicetree@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Dmitry Yashin <dmt.yashin@gmail.com>
-Subject: [PATCH 3/3] pinctrl: rockchip: add rk3308b SoC support
-Date: Wed, 15 May 2024 17:16:34 +0500
-Message-ID: <20240515121634.23945-4-dmt.yashin@gmail.com>
-X-Mailer: git-send-email 2.45.0
-In-Reply-To: <20240515121634.23945-1-dmt.yashin@gmail.com>
-References: <20240515121634.23945-1-dmt.yashin@gmail.com>
+	s=arc-20240116; t=1715775471; c=relaxed/simple;
+	bh=kIrXXfLs1VN1FNZyXDFHR3/pqM8Kq3RYwEEvkVJrfhY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=WDT20N9FRFuxyFY7LvhHkOOKzmNawz5TZbvVy6iKhylEhJD8a8vg6Lz1d+WQpHK36BFkNQWB44DpJrIw38NY32e2ZdLZvKgeYmoIbmPUiL6tIgHN7jNLIozOskTJUQGDxe8V6gU+BSSf7pllagrz/2GGtpS8nZi1j4XE7aqbMJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=ar/MmW0n reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=Qr8y9VujmtGdZGdj9glcB1Bx1KCTeohG0AzG0YCdoXs=; b=a
+	r/MmW0na7cbsW/dx9rAQLNQsX8hJYTezj9SL8aFW7WjsQ3DWfJ30EYCZajRR8Y+C
+	AeHV1opBBkVVRjeHmrOAoD9OvSsmY1Y8P8lxZSMKRsP6gwuJ1GOJw3U1Euzja3ed
+	CX5UztNpMM/0Alnn5zH54CfsGFmzaijoAsOw6wUUtw=
+Received: from slark_xiao$163.com ( [112.97.57.72] ) by
+ ajax-webmail-wmsvr-40-109 (Coremail) ; Wed, 15 May 2024 20:17:23 +0800
+ (CST)
+Date: Wed, 15 May 2024 20:17:23 +0800 (CST)
+From: "Slark Xiao" <slark_xiao@163.com>
+To: "Manivannan Sadhasivam" <mani@kernel.org>
+Cc: "Manivannan Sadhasivam" <manivannan.sadhasivam@linaro.org>, 
+	loic.poulain@linaro.org, mhi@lists.linux.dev, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	quic_qianyu@quicinc.com
+Subject: Re:Re: Re: Re: [PATCH] bus: mhi: host: Add Foxconn SDX72 related
+ support
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20230109(dcb5de15)
+ Copyright (c) 2002-2024 www.mailtech.cn 163com
+In-Reply-To: <20240515115239.GD4488@thinkpad>
+References: <20240510032657.789629-1-slark_xiao@163.com>
+ <20240514143741.GA2306@thinkpad>
+ <541de8e4.1600.18f79de44f3.Coremail.slark_xiao@163.com>
+ <20240515074119.GA2445@thinkpad>
+ <5eee5967.7bdf.18f7b4567b7.Coremail.slark_xiao@163.com>
+ <20240515115239.GD4488@thinkpad>
+X-NTES-SC: AL_Qu2aB/ucukwv5SGabOkfm0kaj+c/WMGzu/8m3oFXO51wjCPp1gwsYEBzNlDQ8uaiChq+kSinfRJQ0uNTeKx7XIgohyisvubGBat/+fNwLde3Zw==
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <58fb648d.ab03.18f7c2f90bd.Coremail.slark_xiao@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:_____wD3X0_Tp0RmxF0sAA--.3665W
+X-CM-SenderInfo: xvod2y5b0lt0i6rwjhhfrp/1tbiNRffZGV4HmslfwAFsu
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-Add pinctrl support for rk3308b. This pin controller much the same as
-rk3308's, but with additional iomux routes and 3bit iomuxes selected
-via gpio##_sel_src_ctrl registers. Set them up in the function
-rk3308b_soc_sel_src_init to use new 3bit iomuxes over some 2bit old ones.
-
-Fixes: 1f3e25a06883 ("pinctrl: rockchip: fix RK3308 pinmux bits")
-Signed-off-by: Dmitry Yashin <dmt.yashin@gmail.com>
----
- drivers/pinctrl/pinctrl-rockchip.c | 200 +++++++++++++++++++++++++++++
- drivers/pinctrl/pinctrl-rockchip.h |   1 +
- 2 files changed, 201 insertions(+)
-
-diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-index cc647db76927..15d2045f929e 100644
---- a/drivers/pinctrl/pinctrl-rockchip.c
-+++ b/drivers/pinctrl/pinctrl-rockchip.c
-@@ -632,6 +632,115 @@ static struct rockchip_mux_recalced_data rk3308_mux_recalced_data[] = {
- 	},
- };
- 
-+static struct rockchip_mux_recalced_data rk3308b_mux_recalced_data[] = {
-+	{
-+		/* gpio1b6_sel */
-+		.num = 1,
-+		.pin = 14,
-+		.reg = 0x28,
-+		.bit = 12,
-+		.mask = 0xf
-+	}, {
-+		/* gpio1b7_sel */
-+		.num = 1,
-+		.pin = 15,
-+		.reg = 0x2c,
-+		.bit = 0,
-+		.mask = 0x3
-+	}, {
-+		/* gpio1c2_sel */
-+		.num = 1,
-+		.pin = 18,
-+		.reg = 0x30,
-+		.bit = 4,
-+		.mask = 0xf
-+	}, {
-+		/* gpio1c3_sel */
-+		.num = 1,
-+		.pin = 19,
-+		.reg = 0x30,
-+		.bit = 8,
-+		.mask = 0xf
-+	}, {
-+		/* gpio1c4_sel */
-+		.num = 1,
-+		.pin = 20,
-+		.reg = 0x30,
-+		.bit = 12,
-+		.mask = 0xf
-+	}, {
-+		/* gpio1c5_sel */
-+		.num = 1,
-+		.pin = 21,
-+		.reg = 0x34,
-+		.bit = 0,
-+		.mask = 0xf
-+	}, {
-+		/* gpio1c6_sel */
-+		.num = 1,
-+		.pin = 22,
-+		.reg = 0x34,
-+		.bit = 4,
-+		.mask = 0xf
-+	}, {
-+		/* gpio1c7_sel */
-+		.num = 1,
-+		.pin = 23,
-+		.reg = 0x34,
-+		.bit = 8,
-+		.mask = 0xf
-+	}, {
-+		/* gpio2a2_sel_plus */
-+		.num = 2,
-+		.pin = 2,
-+		.reg = 0x608,
-+		.bit = 0,
-+		.mask = 0x7
-+	}, {
-+		/* gpio2a3_sel_plus */
-+		.num = 2,
-+		.pin = 3,
-+		.reg = 0x608,
-+		.bit = 4,
-+		.mask = 0x7
-+	}, {
-+		/* gpio2c0_sel_plus */
-+		.num = 2,
-+		.pin = 16,
-+		.reg = 0x610,
-+		.bit = 8,
-+		.mask = 0x7
-+	}, {
-+		/* gpio3b2_sel_plus */
-+		.num = 3,
-+		.pin = 10,
-+		.reg = 0x610,
-+		.bit = 0,
-+		.mask = 0x7
-+	}, {
-+		/* gpio3b3_sel_plus */
-+		.num = 3,
-+		.pin = 11,
-+		.reg = 0x610,
-+		.bit = 4,
-+		.mask = 0x7
-+	}, {
-+		/* gpio3b4_sel */
-+		.num = 3,
-+		.pin = 12,
-+		.reg = 0x68,
-+		.bit = 8,
-+		.mask = 0xf
-+	}, {
-+		/* gpio3b5_sel */
-+		.num = 3,
-+		.pin = 13,
-+		.reg = 0x68,
-+		.bit = 12,
-+		.mask = 0xf
-+	},
-+};
-+
- static struct rockchip_mux_recalced_data rk3328_mux_recalced_data[] = {
- 	{
- 		.num = 2,
-@@ -882,6 +991,35 @@ static struct rockchip_mux_route_data rk3308_mux_route_data[] = {
- 	RK_MUXROUTE_SAME(2, RK_PA4, 3, 0x600, BIT(16 + 2) | BIT(2)), /* pdm-clkm-m2 */
- };
- 
-+static struct rockchip_mux_route_data rk3308b_mux_route_data[] = {
-+	RK_MUXROUTE_SAME(0, RK_PC3, 1, 0x314, BIT(16 + 0) | BIT(0)), /* rtc_clk */
-+	RK_MUXROUTE_SAME(1, RK_PC6, 2, 0x314, BIT(16 + 2) | BIT(16 + 3)), /* uart2_rxm0 */
-+	RK_MUXROUTE_SAME(4, RK_PD2, 2, 0x314, BIT(16 + 2) | BIT(16 + 3) | BIT(2)), /* uart2_rxm1 */
-+	RK_MUXROUTE_SAME(0, RK_PB7, 2, 0x608, BIT(16 + 8) | BIT(16 + 9)), /* i2c3_sdam0 */
-+	RK_MUXROUTE_SAME(3, RK_PB4, 2, 0x608, BIT(16 + 8) | BIT(16 + 9) | BIT(8)), /* i2c3_sdam1 */
-+	RK_MUXROUTE_SAME(2, RK_PA0, 3, 0x608, BIT(16 + 8) | BIT(16 + 9) | BIT(9)), /* i2c3_sdam2 */
-+	RK_MUXROUTE_SAME(1, RK_PA3, 2, 0x308, BIT(16 + 3)), /* i2s-8ch-1-sclktxm0 */
-+	RK_MUXROUTE_SAME(1, RK_PA4, 2, 0x308, BIT(16 + 3)), /* i2s-8ch-1-sclkrxm0 */
-+	RK_MUXROUTE_SAME(1, RK_PB5, 2, 0x308, BIT(16 + 3) | BIT(3)), /* i2s-8ch-1-sclktxm1 */
-+	RK_MUXROUTE_SAME(1, RK_PB6, 2, 0x308, BIT(16 + 3) | BIT(3)), /* i2s-8ch-1-sclkrxm1 */
-+	RK_MUXROUTE_SAME(1, RK_PA4, 3, 0x308, BIT(16 + 12) | BIT(16 + 13)), /* pdm-clkm0 */
-+	RK_MUXROUTE_SAME(1, RK_PB6, 4, 0x308, BIT(16 + 12) | BIT(16 + 13) | BIT(12)), /* pdm-clkm1 */
-+	RK_MUXROUTE_SAME(2, RK_PA6, 2, 0x308, BIT(16 + 12) | BIT(16 + 13) | BIT(13)), /* pdm-clkm2 */
-+	RK_MUXROUTE_SAME(2, RK_PA4, 3, 0x600, BIT(16 + 2) | BIT(2)), /* pdm-clkm-m2 */
-+	RK_MUXROUTE_SAME(3, RK_PB2, 3, 0x314, BIT(16 + 9)), /* spi1_miso */
-+	RK_MUXROUTE_SAME(2, RK_PA4, 2, 0x314, BIT(16 + 9) | BIT(9)), /* spi1_miso_m1 */
-+	RK_MUXROUTE_SAME(0, RK_PB3, 3, 0x314, BIT(16 + 10) | BIT(16 + 11)), /* owire_m0 */
-+	RK_MUXROUTE_SAME(1, RK_PC6, 7, 0x314, BIT(16 + 10) | BIT(16 + 11) | BIT(10)), /* owire_m1 */
-+	RK_MUXROUTE_SAME(2, RK_PA2, 5, 0x314, BIT(16 + 10) | BIT(16 + 11) | BIT(11)), /* owire_m2 */
-+	RK_MUXROUTE_SAME(0, RK_PB3, 2, 0x314, BIT(16 + 12) | BIT(16 + 13)), /* can_rxd_m0 */
-+	RK_MUXROUTE_SAME(1, RK_PC6, 5, 0x314, BIT(16 + 12) | BIT(16 + 13) | BIT(12)), /* can_rxd_m1 */
-+	RK_MUXROUTE_SAME(2, RK_PA2, 4, 0x314, BIT(16 + 12) | BIT(16 + 13) | BIT(13)), /* can_rxd_m2 */
-+	RK_MUXROUTE_SAME(1, RK_PC4, 3, 0x314, BIT(16 + 14)), /* mac_rxd0_m0 */
-+	RK_MUXROUTE_SAME(4, RK_PA2, 2, 0x314, BIT(16 + 14) | BIT(14)), /* mac_rxd0_m1 */
-+	RK_MUXROUTE_SAME(3, RK_PB4, 4, 0x314, BIT(16 + 15)), /* uart3_rx */
-+	RK_MUXROUTE_SAME(0, RK_PC1, 3, 0x314, BIT(16 + 15) | BIT(15)), /* uart3_rx_m1 */
-+};
-+
- static struct rockchip_mux_route_data rk3328_mux_route_data[] = {
- 	RK_MUXROUTE_SAME(1, RK_PA1, 2, 0x50, BIT(16) | BIT(16 + 1)), /* uart2dbg_rxm0 */
- 	RK_MUXROUTE_SAME(2, RK_PA1, 1, 0x50, BIT(16) | BIT(16 + 1) | BIT(0)), /* uart2dbg_rxm1 */
-@@ -2420,6 +2558,7 @@ static int rockchip_get_pull(struct rockchip_pin_bank *bank, int pin_num)
- 	case RK3188:
- 	case RK3288:
- 	case RK3308:
-+	case RK3308B:
- 	case RK3368:
- 	case RK3399:
- 	case RK3568:
-@@ -2478,6 +2617,7 @@ static int rockchip_set_pull(struct rockchip_pin_bank *bank,
- 	case RK3188:
- 	case RK3288:
- 	case RK3308:
-+	case RK3308B:
- 	case RK3368:
- 	case RK3399:
- 	case RK3568:
-@@ -2740,6 +2880,7 @@ static bool rockchip_pinconf_pull_valid(struct rockchip_pin_ctrl *ctrl,
- 	case RK3188:
- 	case RK3288:
- 	case RK3308:
-+	case RK3308B:
- 	case RK3368:
- 	case RK3399:
- 	case RK3568:
-@@ -3338,6 +3479,42 @@ static int __maybe_unused rockchip_pinctrl_resume(struct device *dev)
- static SIMPLE_DEV_PM_OPS(rockchip_pinctrl_dev_pm_ops, rockchip_pinctrl_suspend,
- 			 rockchip_pinctrl_resume);
- 
-+#define RK3308B_GRF_SOC_CON13			0x608
-+#define RK3308B_GRF_SOC_CON15			0x610
-+
-+/* RK3308B_GRF_SOC_CON13 */
-+#define RK3308B_GRF_I2C3_IOFUNC_SRC_CTRL	(BIT(16 + 10) | BIT(10))
-+#define RK3308B_GRF_GPIO2A3_SEL_SRC_CTRL	(BIT(16 + 7)  | BIT(7))
-+#define RK3308B_GRF_GPIO2A2_SEL_SRC_CTRL	(BIT(16 + 3)  | BIT(3))
-+
-+/* RK3308B_GRF_SOC_CON15 */
-+#define RK3308B_GRF_GPIO2C0_SEL_SRC_CTRL	(BIT(16 + 11) | BIT(11))
-+#define RK3308B_GRF_GPIO3B3_SEL_SRC_CTRL	(BIT(16 + 7)  | BIT(7))
-+#define RK3308B_GRF_GPIO3B2_SEL_SRC_CTRL	(BIT(16 + 3)  | BIT(3))
-+
-+/*
-+ * RK3308B has 3bit gpio##_sel_plus iomuxes over some 2bit old ones.
-+ * Put them in use by initializing gpio##_sel_src_ctrl registers.
-+ */
-+static int rk3308b_soc_sel_src_init(struct rockchip_pinctrl *info)
-+{
-+	int ret;
-+
-+	ret = regmap_write(info->regmap_base, RK3308B_GRF_SOC_CON13,
-+			   RK3308B_GRF_I2C3_IOFUNC_SRC_CTRL |
-+			   RK3308B_GRF_GPIO2A3_SEL_SRC_CTRL |
-+			   RK3308B_GRF_GPIO2A2_SEL_SRC_CTRL);
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_write(info->regmap_base, RK3308B_GRF_SOC_CON15,
-+			   RK3308B_GRF_GPIO2C0_SEL_SRC_CTRL |
-+			   RK3308B_GRF_GPIO3B3_SEL_SRC_CTRL |
-+			   RK3308B_GRF_GPIO3B2_SEL_SRC_CTRL);
-+
-+	return ret;
-+};
-+
- static int rockchip_pinctrl_probe(struct platform_device *pdev)
- {
- 	struct rockchip_pinctrl *info;
-@@ -3403,6 +3580,12 @@ static int rockchip_pinctrl_probe(struct platform_device *pdev)
- 			return PTR_ERR(info->regmap_pmu);
- 	}
- 
-+	if (ctrl->type == RK3308B) {
-+		ret = rk3308b_soc_sel_src_init(info);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	ret = rockchip_pinctrl_register(pdev, info);
- 	if (ret)
- 		return ret;
-@@ -3746,6 +3929,21 @@ static struct rockchip_pin_ctrl rk3308_pin_ctrl = {
- 		.schmitt_calc_reg	= rk3308_calc_schmitt_reg_and_bit,
- };
- 
-+static struct rockchip_pin_ctrl rk3308b_pin_ctrl = {
-+		.pin_banks		= rk3308_pin_banks,
-+		.nr_banks		= ARRAY_SIZE(rk3308_pin_banks),
-+		.label			= "RK3308b-GPIO",
-+		.type			= RK3308B,
-+		.grf_mux_offset		= 0x0,
-+		.iomux_recalced		= rk3308b_mux_recalced_data,
-+		.niomux_recalced	= ARRAY_SIZE(rk3308b_mux_recalced_data),
-+		.iomux_routes		= rk3308b_mux_route_data,
-+		.niomux_routes		= ARRAY_SIZE(rk3308b_mux_route_data),
-+		.pull_calc_reg		= rk3308_calc_pull_reg_and_bit,
-+		.drv_calc_reg		= rk3308_calc_drv_reg_and_bit,
-+		.schmitt_calc_reg	= rk3308_calc_schmitt_reg_and_bit,
-+};
-+
- static struct rockchip_pin_bank rk3328_pin_banks[] = {
- 	PIN_BANK_IOMUX_FLAGS(0, 32, "gpio0", 0, 0, 0, 0),
- 	PIN_BANK_IOMUX_FLAGS(1, 32, "gpio1", 0, 0, 0, 0),
-@@ -3952,6 +4150,8 @@ static const struct of_device_id rockchip_pinctrl_dt_match[] = {
- 		.data = &rk3288_pin_ctrl },
- 	{ .compatible = "rockchip,rk3308-pinctrl",
- 		.data = &rk3308_pin_ctrl },
-+	{ .compatible = "rockchip,rk3308b-pinctrl",
-+		.data = &rk3308b_pin_ctrl },
- 	{ .compatible = "rockchip,rk3328-pinctrl",
- 		.data = &rk3328_pin_ctrl },
- 	{ .compatible = "rockchip,rk3368-pinctrl",
-diff --git a/drivers/pinctrl/pinctrl-rockchip.h b/drivers/pinctrl/pinctrl-rockchip.h
-index 4759f336941e..3af5b1bd626b 100644
---- a/drivers/pinctrl/pinctrl-rockchip.h
-+++ b/drivers/pinctrl/pinctrl-rockchip.h
-@@ -193,6 +193,7 @@ enum rockchip_pinctrl_type {
- 	RK3188,
- 	RK3288,
- 	RK3308,
-+	RK3308B,
- 	RK3368,
- 	RK3399,
- 	RK3568,
--- 
-2.39.2
-
+CgpBdCAyMDI0LTA1LTE1IDE5OjUyOjM5LCAiTWFuaXZhbm5hbiBTYWRoYXNpdmFtIiA8bWFuaUBr
+ZXJuZWwub3JnPiB3cm90ZToKPk9uIFdlZCwgTWF5IDE1LCAyMDI0IGF0IDA0OjAxOjM3UE0gKzA4
+MDAsIFNsYXJrIFhpYW8gd3JvdGU6Cj4+IAo+PiBBdCAyMDI0LTA1LTE1IDE1OjQxOjE5LCAiTWFu
+aXZhbm5hbiBTYWRoYXNpdmFtIiA8bWFuaXZhbm5hbi5zYWRoYXNpdmFtQGxpbmFyby5vcmc+IHdy
+b3RlOgo+PiA+KyBRaWFuZwo+PiA+Cj4+ID5PbiBXZWQsIE1heSAxNSwgMjAyNCBhdCAwOToyOToy
+MEFNICswODAwLCBTbGFyayBYaWFvIHdyb3RlOgo+PiA+PiBBdCAyMDI0LTA1LTE0IDIyOjM3OjQx
+LCAiTWFuaXZhbm5hbiBTYWRoYXNpdmFtIiA8bWFuaXZhbm5hbi5zYWRoYXNpdmFtQGxpbmFyby5v
+cmc+IHdyb3RlOgo+PiA+PiA+T24gRnJpLCBNYXkgMTAsIDIwMjQgYXQgMTE6MjY6NTdBTSArMDgw
+MCwgU2xhcmsgWGlhbyB3cm90ZToKPj4gPj4gPj4gQWxpZ24gd2l0aCBRY29tIFNEWDcyLCBhZGQg
+cmVhZHkgdGltZW91dCBpdGVtIGZvciBGb3hjb25uIFNEWDcyLgo+PiA+PiA+PiBBbmQgYWxzbywg
+YWRkIGZpcmVob3NlIHN1cHBvcnQgc2luY2UgU0RYNzIuCj4+ID4+ID4+IAo+PiA+PiA+PiBTaWdu
+ZWQtb2ZmLWJ5OiBTbGFyayBYaWFvIDxzbGFya194aWFvQDE2My5jb20+Cj4+ID4+ID4+IC0tLQo+
+PiA+PiA+PiAgZHJpdmVycy9idXMvbWhpL2hvc3QvcGNpX2dlbmVyaWMuYyB8IDMxICsrKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKwo+PiA+PiA+PiAgMSBmaWxlIGNoYW5nZWQsIDMxIGluc2Vy
+dGlvbnMoKykKPj4gPj4gPj4gCj4+ID4+ID4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2J1cy9taGkv
+aG9zdC9wY2lfZ2VuZXJpYy5jIGIvZHJpdmVycy9idXMvbWhpL2hvc3QvcGNpX2dlbmVyaWMuYwo+
+PiA+PiA+PiBpbmRleCAwODg0NGVlNzk2NTQuLjBmZDk0YzE5M2ZjNiAxMDA2NDQKPj4gPj4gPj4g
+LS0tIGEvZHJpdmVycy9idXMvbWhpL2hvc3QvcGNpX2dlbmVyaWMuYwo+PiA+PiA+PiArKysgYi9k
+cml2ZXJzL2J1cy9taGkvaG9zdC9wY2lfZ2VuZXJpYy5jCj4+ID4+ID4+IEBAIC0zOTksNiArMzk5
+LDggQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBtaGlfY2hhbm5lbF9jb25maWcgbWhpX2ZveGNvbm5f
+c2R4NTVfY2hhbm5lbHNbXSA9IHsKPj4gPj4gPj4gIAlNSElfQ0hBTk5FTF9DT05GSUdfREwoMTMs
+ICJNQklNIiwgMzIsIDApLAo+PiA+PiA+PiAgCU1ISV9DSEFOTkVMX0NPTkZJR19VTCgzMiwgIkRV
+TiIsIDMyLCAwKSwKPj4gPj4gPj4gIAlNSElfQ0hBTk5FTF9DT05GSUdfREwoMzMsICJEVU4iLCAz
+MiwgMCksCj4+ID4+ID4+ICsJTUhJX0NIQU5ORUxfQ09ORklHX1VMX0ZQKDM0LCAiRklSRUhPU0Ui
+LCAzMiwgMCksCj4+ID4+ID4+ICsJTUhJX0NIQU5ORUxfQ09ORklHX0RMX0ZQKDM1LCAiRklSRUhP
+U0UiLCAzMiwgMCksCj4+ID4+ID4KPj4gPj4gPlRoaXMgbWVhbnMgU0RYNTUgaXMgYWxzbyBzdXBw
+b3J0aW5nIEZJUkVIT1NFIGNoYW5uZWxzLCB3aGljaCBpcyBub3QgdHJ1ZSBJCj4+ID4+ID5iZWxp
+ZXZlLgo+PiA+PiBBY3R1YWxseSwgSSBqdXN0IHZlcmlmaWVkIGl0IHdpdGggbXkgc2R4NTUgYW5k
+IHRoZSBhbnN3ZXIgaXMgWWVzLiBUaGVzZSBjaGFubmVscwo+PiA+PiBhcmUgY29tbW9uIHNldHRp
+bmdzIGZvciBRY29tIGRldmljZSB3aGljaCBzdXBwb3J0IFBDSWUgbW9kZS4gQlRXLCB0aGUKPj4g
+Pj4gZGVmYXVsdCBzZXR0aW5ncyBvZiBRY29tIGFuZCBRdWVjdGVsIHN1cHBvcnQgZmlyZWhvc2Ug
+Zm9yIHRoZWlyIHNkeDU1IHByb2R1Y3RzLgo+PiA+Cj4+ID5RaWFuZywgY2FuIHlvdSBwbGVhc2Ug
+Y29uZmlybSB0aGF0IFNEWDU1IHN1cHBvcnRzIEZJUkVIT1NFIGNoYW5uZWxzPwo+PiA+Cj4+ID4+
+ID4KPj4gPj4gPj4gIAlNSElfQ0hBTk5FTF9DT05GSUdfSFdfVUwoMTAwLCAiSVBfSFcwX01CSU0i
+LCAxMjgsIDIpLAo+PiA+PiA+PiAgCU1ISV9DSEFOTkVMX0NPTkZJR19IV19ETCgxMDEsICJJUF9I
+VzBfTUJJTSIsIDEyOCwgMyksCj4+ID4+ID4+ICB9Owo+PiA+PiA+PiBAQCAtNDE5LDYgKzQyMSwx
+NiBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IG1oaV9jb250cm9sbGVyX2NvbmZpZyBtb2RlbV9mb3hj
+b25uX3NkeDU1X2NvbmZpZyA9IHsKPj4gPj4gPj4gIAkuZXZlbnRfY2ZnID0gbWhpX2ZveGNvbm5f
+c2R4NTVfZXZlbnRzLAo+PiA+PiA+PiAgfTsKPj4gPj4gPj4gIAo+PiA+PiA+PiArc3RhdGljIGNv
+bnN0IHN0cnVjdCBtaGlfY29udHJvbGxlcl9jb25maWcgbW9kZW1fZm94Y29ubl9zZHg3Ml9jb25m
+aWcgPSB7Cj4+ID4+ID4+ICsJLm1heF9jaGFubmVscyA9IDEyOCwKPj4gPj4gPj4gKwkudGltZW91
+dF9tcyA9IDIwMDAwLAo+PiA+PiA+PiArCS5yZWFkeV90aW1lb3V0X21zID0gNTAwMDAsCj4+ID4+
+ID4+ICsJLm51bV9jaGFubmVscyA9IEFSUkFZX1NJWkUobWhpX2ZveGNvbm5fc2R4NTVfY2hhbm5l
+bHMpLAo+PiA+PiA+PiArCS5jaF9jZmcgPSBtaGlfZm94Y29ubl9zZHg1NV9jaGFubmVscywKPj4g
+Pj4gPj4gKwkubnVtX2V2ZW50cyA9IEFSUkFZX1NJWkUobWhpX2ZveGNvbm5fc2R4NTVfZXZlbnRz
+KSwKPj4gPj4gPj4gKwkuZXZlbnRfY2ZnID0gbWhpX2ZveGNvbm5fc2R4NTVfZXZlbnRzLAo+PiA+
+PiA+PiArfTsKPj4gPj4gPj4gKwo+PiA+PiA+PiAgc3RhdGljIGNvbnN0IHN0cnVjdCBtaGlfcGNp
+X2Rldl9pbmZvIG1oaV9mb3hjb25uX3NkeDI0X2luZm8gPSB7Cj4+ID4+ID4+ICAJLm5hbWUgPSAi
+Zm94Y29ubi1zZHgyNCIsCj4+ID4+ID4+ICAJLmNvbmZpZyA9ICZtb2RlbV9mb3hjb25uX3NkeDU1
+X2NvbmZpZywKPj4gPj4gPj4gQEAgLTQ0OCw2ICs0NjAsMTYgQEAgc3RhdGljIGNvbnN0IHN0cnVj
+dCBtaGlfcGNpX2Rldl9pbmZvIG1oaV9mb3hjb25uX3NkeDY1X2luZm8gPSB7Cj4+ID4+ID4+ICAJ
+LnNpZGViYW5kX3dha2UgPSBmYWxzZSwKPj4gPj4gPj4gIH07Cj4+ID4+ID4+ICAKPj4gPj4gPj4g
+K3N0YXRpYyBjb25zdCBzdHJ1Y3QgbWhpX3BjaV9kZXZfaW5mbyBtaGlfZm94Y29ubl9zZHg3Ml9p
+bmZvID0gewo+PiA+PiA+PiArCS5uYW1lID0gImZveGNvbm4tc2R4NzIiLAo+PiA+PiA+PiArCS5l
+ZGwgPSAicWNvbS9zZHg3Mm0veGJsX3NfZGV2cHJnX25zLm1lbGYiLAo+PiA+PiA+Cj4+ID4+ID5X
+aGF0IGlzICcubWVsZic/IElzIHRoZSBmaXJtd2FyZSBhdmFpbGFibGUgc29tZXdoZXJlPyBEaWQg
+eW91IHBsYW4gdG8gdXBzdHJlYW0KPj4gPj4gPml0IHRvIGxpbnV4LWZpcm13YXJlPwo+PiA+PiA+
+Cj4+ID4+IFRoaXMgZmlsZSBzaW1pbGFyIHdpdGggImVkbC5tYm4iLiBJbiBTRFg3MiBwcm9kdWN0
+LCB0aGUgZGVmYXVsdCAiZWRsIiBmaWxlIG5hbWUgaXMKPj4gPj4gInhibF9zX2RldnByZ19ucy5t
+ZWxmIi4gQ3VycmVudGx5IHdlIGRvbid0IHBsYW4gdG8gdXBzdHJlYW0gaXQgdG8gbGludXgtZmly
+bXdhcmUKPj4gPj4gc2luY2UgMiByZWFzb25zOiAxOiB3ZSBzaGFyZSB0aGUgc2FtZSBmb2xkIG5h
+bWUgc2R4NzJtIHdpdGggcWNvbSBvciBvdGhlciB2ZW5kb3JzCj4+ID4+IDI6IHRoaXMgZmlsZSBt
+YXkgYmUgY2hhbmdlZCBzaW5jZSBzZHg3MiBwcm9kdWN0IHN0aWxsIHVuZGVyIGRldmVsb3Bpbmcg
+aW4gb3VyIHNpZGUuIHdlCj4+ID4+IG1heSBjaGFuZ2UgdGhlIGJhc2UgbGluZSBhY2NvcmRpbmcg
+dG8gUUNPTSByZWxlYXNlLgo+PiA+Cj4+ID5UaGVuIEkgd291bGQgYXNrIHlvdSB0byBhZGQgc3Vw
+cG9ydCB3aGVuIHlvdSBoYXZlIGEgc3RhYmxlIGZpcm13YXJlLiBJIGRvIG5vdAo+PiA+d2FudCB0
+byBjaGFuZ2UgdGhlIGZpcm13YXJlIG5hbWUgYWZ0ZXIgc29tZSB0aW1lIGFzIGl0IHdpbGwgY29u
+ZnVzZSB1c2Vycy4KPj4gPgo+PiA+LSBNYW5pCj4+IElmIGEgc3RhYmxlIGZpcm13YXJlIG11c3Qg
+YmUgcHJvdmlkZWQsIEkgdGhpbmsgSSBzaGFsbCBjaGFuZ2UgdGhlIGZvbGRlciBuYW1lIGZyb20g
+cWNvbSB0bwo+PiBmb3gsIGRvIHlvdSBhZ3JlZSB0aGlzPwo+Cj5FdmVuIGluIHRoYXQgY2FzZSwg
+d2hlcmUgY2FuIHRoZSB1c2VyIGZpbmQgdGhlIGZpcm13YXJlPwo+CkkgdGhpbmsgdGhpcyBlZGwg
+ZmlsZSBjb3VsZCBoZWxwIHVzZXIgbGV0IGRldmljZSBlbnRlciBpbnRvIGVkbCBtb2RlKHd3YW4w
+ZmlyZWhvc2UwKS4KRm9yIFBDSUUgZGV2aWNlLCB0aGVyZSBpcyBubyBvcGVuc291cmNlIHRvb2wg
+dG8gc3VwcG9ydCBQQ0lFIGVkbCBkb3dubG9hZC4gSWYgdXNlcgpjb3VsZCBnZXQgdGhlIHRvb2wg
+dG8gZG8gdGhlIGZpcmVob3NlIGRvd25sb2FkLCBJIHRoaW5rIGl0J3Mgbm90IGhhcmQgdG8gZ2V0
+IGNvbXBsZXRlIGZpcm13YXJlCmZyb20gUEMgdmVuZG9yIG9yIHNvbWV3aGVyZSBlbHNlLgo+PiBC
+VFcsIEkgbmVlZCB0byBjaGVjayBpZiBpdCB3b3JrcyBhZnRlciB1cGRhdGluZyAnZWRsIGZ3JyBm
+cm9tICB4Ymxfc19kZXZwcmdfbnMubWVsZiB0bwo+PiBlZGwubWJuLiAKCj4KPk9rYXkuIElNTywg
+d2Ugc2hvdWxkIHVwc3RyZWFtIHRoZSBwcm9kdWN0IHN1cHBvcnQgb25seSBhZnRlciBhIHN0YWJs
+ZSBmaXJtd2FyZQo+cmVsZWFzZSAod2VsbCBzdGFibGUgaW4gdGhlIHNlbnNlIGEgc3RhYmxlIG5h
+bWUgYXQgbGVhc3QpLgo+Cj4tIE1hbmkKVGhlIGNoZWNrIHJlc3VsdCBpcyB3ZSBjYW4gcmVuYW1l
+IGl0IHRvIGFsaWduIHdpdGggcHJldmlvdXMgZm9ybWF0LiBVbnRpbCBub3csIApJIGRpZG4ndCBz
+ZWUgYW55IG1oaSBkZXZpY2UgaGFzIHVwc3RyZWFtIHRoZWlyIGZpcm13YXJlIHRvIC9saWIvZmly
+bXdhcmUvcWNvbSBmb2xkZXIuCklmIGl0J3MgYSBtdXN0LCBJIHRoaW5rIHdlIGNhbiB1cHN0cmVh
+bSB0aGUgZWRsIGZpbGUgbGF0ZXIuICBBbnl3YXksIHdlIGhvcGUgd2UgY2FuCm1lcmdlIHRoaXMg
+c2R4NzIgc3VwcG9ydCBpbnRvIDYuMTAgc2luY2UgY3VzdG9tZXIoRGVsbCkgd291bGQgdXNlIHRo
+aXMga2VybmVsIGZvciBvZmZpY2lhbApyZWxlYXNlLiBCdXQgbm8gd29ycnksIHdlIGNhbiBtYWtl
+IHN1cmUgdGhpcyBmaXJlaG9zZSBkb3dubG9hZCBtZXRob2Qgd29ya3Mgd2VsbCBpbgogb3VyIGxv
+Y2FsIHNpZGUuCkFuZCBhbHNvLCBwbGVhc2UgaGVscCBhIHJldmlldyBhYm91dCBteSBwcmV2aW91
+cyBlbWFpbCBhYm91dCBmaXggc2R4NzIgcGluZyBmYWlsdXJlIGlzc3VlLgpUaGVyZSBpcyBhIGZp
+eCBzb2x1dGlvbiBmcm9tIHVzLiAKClRoYW5rcwoKPgo+LS0gCj7grq7grqPgrr/grrXgrqPgr43g
+rqPgrqngr40g4K6a4K6k4K6+4K6a4K6/4K614K6u4K+NCg==
 
