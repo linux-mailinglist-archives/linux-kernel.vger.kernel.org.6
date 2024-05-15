@@ -1,249 +1,222 @@
-Return-Path: <linux-kernel+bounces-179754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E58448C64D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 12:14:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CEF68C64DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 12:18:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B69C285B6B
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 10:14:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D72BB284262
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 10:18:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FA665A116;
-	Wed, 15 May 2024 10:14:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 116A75B5D6;
+	Wed, 15 May 2024 10:18:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rrRGK/os"
-Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Ln2EYHxh"
+Received: from out-175.mta1.migadu.com (out-175.mta1.migadu.com [95.215.58.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E0C457CB5
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 10:14:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 434B457CB5
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 10:18:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715768082; cv=none; b=CB+ZygltgKVv5d/od+lLVxKZ53mhDsmrUeFT/9U9n6aqciu3ePgcFsQGOWomRg59SAifEFosE7bsoTSkVnoxjVX/uDH3TuD/KsMiyJiqpZ9Dd2oxka4dh0u7Hmkf0sDeprS3XTiiDGje/roEO9kfhab2x9T3K7GJ+YmANSLShdA=
+	t=1715768286; cv=none; b=Uac7q70NdJ+RtR9Ez3+tXmgR2QoedVa38IVWvyfDkIiMmcwb3n+MBgidXtB1RBfhDksHjCPxZg3/r3Zk1508W5kLzeVxYUsOn2E2MbP+OZ5ndu6R6mpkXkHOes5W3fN8PE2sXOfkEZBE7qiRBNbsXDudP4OXYJNwtKDCe0jVk0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715768082; c=relaxed/simple;
-	bh=5wtdxMtUjgkHkKK7sTxUtfYaL6yVZ/kWJBpAoHlaM3Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uwt1Rvs1sFb+ppTlNZPBqnru7fn0uBMHDSL4F8cjIPd6svPk9/QFxt4VCLcIJcs00Y4c5zgZCDWLSt1TfCrLLG0967WIb8sNY+90S7gcYv3kE1CZ2v0Q+Rtrib7NsgoA1ZFwVi5PhF5MlcAYruCJgbUnMjsuVeEj7rSg6Ww5TtQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rrRGK/os; arc=none smtp.client-ip=209.85.217.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-47f02dfe3adso1907664137.3
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 03:14:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715768080; x=1716372880; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lXGxS8kWCZgF4bWh/7xTUx4JaoOaC7zO0XIHLxVCXBQ=;
-        b=rrRGK/osAh5Jzex3pKDnFt0BmhYUuAUNPCrqYoF/f19lrnjMABJaimajEbZ7HweWrs
-         MaOH6evmsamc3bSHF7WK/wlIMJs6roj1XPPsfo9XNf0UhuUvIdUxd5az4qcAzt3+n5M/
-         EgHOC+fTteXkSZynkrx4zG6ksjF7oo07dtPa7qaeqEJIYie+Ym/muCwEDw0oA2FwhKAK
-         gOTYuiEjwSs5dUnKRCW5hwJyHBws1WgFXTREylfJ30eeeHNXDLrHLaEv2LHQWxHjpSXj
-         BMEhvFy2yew5pPoFhlUFH7uAIj8CV9oVoofgXKxZeKUGBQY86QHhruxCzchvyn31jeC3
-         lmyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715768080; x=1716372880;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lXGxS8kWCZgF4bWh/7xTUx4JaoOaC7zO0XIHLxVCXBQ=;
-        b=A3rhEY6ruXPasvj+bMVJQIfmSUBka1IzcC6thWhwZ5RFOcWJrYmne88ncGXUYzbFz8
-         UVMHrw8RBm5cg0C8U83I/l+9LNbNxdG/KjMOxFdmnRJLLtJInelB0smUM1wM3tTD9VNg
-         G+ACvvmb12l9+x3Hw5U0qWhR8D/18oXUr2pXCPYcwsb00pAnIFkqc8bj9a5ZtIbyW+qQ
-         JIOUGqGatoBWbD8Rq7Teq6ngYVFlpPPDpDwBHU5Wf6IdZ32cO32Nc73Gklw4PP4tLCI1
-         VWpIq6XWwLhVJyn21IV1ofTC4nHBeQK0fmUCLPMoii1Z5gIxT6iQSJh1KTbRge+rvOF3
-         aAGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV1Ref1fhYMwv2NcA0+OQ7DMkuldXTDi8lzZkq2iApUvBrP9OHXISDMeu9dPMFcFfW5Xif1vKGdmDRhL9L0ZsgCOioDXFA6YCidpjTR
-X-Gm-Message-State: AOJu0YxZQirc2WrbKDL+xTD8YugaoZ5nXRUq/9seC4WHlx1JKbfN/X6h
-	8AvYBb2BIVohTDgOPquXSJcU67i7p+9i4Zt+xI1nEN4EjOy8iFu/Ng8q4GwWXybN7oskDO617+T
-	z9YBykMUKP169qPhTXrk4eR8L6Q+Ntr721V0Krg==
-X-Google-Smtp-Source: AGHT+IEVpMhmub5m6a9M/m2evfzG91ZJZ2NOQ5D/LOxy9Bt9jbhdLVIAkRrHrJ+bK1yW4lSYjjuYxperSFLER0epIyE=
-X-Received: by 2002:a05:6102:26c6:b0:47f:fe4:a38c with SMTP id
- ada2fe7eead31-48077db7149mr15601912137.1.1715768080002; Wed, 15 May 2024
- 03:14:40 -0700 (PDT)
+	s=arc-20240116; t=1715768286; c=relaxed/simple;
+	bh=HZmSbXyU3hpvHdoAzRPMgQxxbjAHbble9Zvbis0GGM4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aMkGTiOAe0nJb8D8vd8cW7OFio49uf96MemwNWLeIDJyDq2jF3pHJwcLeYNJN39gxrijfAxYiIUwBZu62r/IE7MTOWcs4KUSzzwCa7t4JDMUcL42tpIn3PUnMXO78+HvDVi5gG1nf9qwi7kq28x462MYqGS05Z13LNqpozsmzR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Ln2EYHxh; arc=none smtp.client-ip=95.215.58.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <cd81893c-ef0b-4906-8c9c-a98b1e4669e6@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1715768281;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=l4bPo+Qa7F8LO4Fc7UnSEAOeiesDvsWpSbzqmxMaNJ8=;
+	b=Ln2EYHxhwFGpKwfS/XLNBsne9LO+m3A/HUSpX7uERE6RNJb3V677vVfWXfrPYTqe/EY4p/
+	FuTIL18AKvEfPUoDiFODaJAg1U2iCBJXupbLIfWuy7bM8o9t4uzdALugjtu58AEn/Xpqbv
+	+oya1XNUuClJTAKwGXIpUhvawy2OcYo=
+Date: Wed, 15 May 2024 18:17:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240514100957.114746054@linuxfoundation.org>
-In-Reply-To: <20240514100957.114746054@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Wed, 15 May 2024 12:14:28 +0200
-Message-ID: <CA+G9fYsUEuzptCHsdpz53kefAzJRD3Hp-2nfn4f_osXkwQnOqA@mail.gmail.com>
-Subject: Re: [PATCH 5.10 000/111] 5.10.217-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 1/2] drm/bridge: Support finding bridge with struct device
+To: Jani Nikula <jani.nikula@linux.intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Maxime Ripard <mripard@kernel.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20240514154045.309925-1-sui.jingfeng@linux.dev>
+ <20240514154045.309925-2-sui.jingfeng@linux.dev> <87v83fct2e.fsf@intel.com>
+Content-Language: en-US, en-AU
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sui Jingfeng <sui.jingfeng@linux.dev>
+In-Reply-To: <87v83fct2e.fsf@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, 14 May 2024 at 13:47, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 5.10.217 release.
-> There are 111 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 16 May 2024 10:09:32 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-=
-5.10.217-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-5.10.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+Hi,
 
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+On 5/15/24 17:39, Jani Nikula wrote:
+> On Tue, 14 May 2024, Sui Jingfeng <sui.jingfeng@linux.dev> wrote:
+>> The pointer of 'struct device' can also be used as a key to search drm
+>> bridge instance from the global bridge list, traditionally, fwnode and
+>> 'OF' based APIs requires the system has decent fwnode/OF Graph support.
+>> While the drm_find_bridge_by_dev() function introduced in this series
+>> don't has such a restriction. It only require you has a pointer to the
+>> backing device. Hence, it may suitable for some small and/or limited
+>> display subsystems.
+>>
+>> Also add the drm_bridge_add_with_dev() as a helper, which automatically
+>> set the .of_node field of drm_bridge instances if you call it. But it
+>> suitable for simple bridge drivers which one device backing one drm_bridge
+>> instance.
+>>
+>> Signed-off-by: Sui Jingfeng <sui.jingfeng@linux.dev>
+>> ---
+>>   drivers/gpu/drm/drm_bridge.c | 39 ++++++++++++++++++++++++++++++++++++
+>>   include/drm/drm_bridge.h     |  5 +++++
+>>   2 files changed, 44 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
+>> index 584d109330ab..1928d9d0dd3c 100644
+>> --- a/drivers/gpu/drm/drm_bridge.c
+>> +++ b/drivers/gpu/drm/drm_bridge.c
+>> @@ -213,6 +213,23 @@ void drm_bridge_add(struct drm_bridge *bridge)
+>>   }
+>>   EXPORT_SYMBOL(drm_bridge_add);
+>>   
+>> +/**
+>> + * drm_bridge_add_with_dev - add the given bridge to the global bridge list
+>> + *
+>> + * @bridge: bridge control structure
+>> + * @dev: pointer to the kernel device that this bridge is backed.
+>> + */
+>> +void drm_bridge_add_with_dev(struct drm_bridge *bridge, struct device *dev)
+>> +{
+>> +	if (dev) {
+>> +		bridge->kdev = dev;
+>> +		bridge->of_node = dev->of_node;
+>> +	}
+>> +
+>> +	drm_bridge_add(bridge);
+>> +}
+>> +EXPORT_SYMBOL_GPL(drm_bridge_add_with_dev);
+> 
+> I don't actually have an opinion on whether the dev parameter is useful
+> or not.
+> 
+> But please don't add a drm_bridge_add_with_dev() and then convert more
+> than half the drm_bridge_add() users to that. Please just add a struct
+> device *dev parameter to drm_bridge_add(), and pass NULL if it's not
+> relevant.
+> 
 
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+To be honest, previously, I'm just do it exactly same as the way you
+told me here. But I'm exhausted and finally give up.
 
-## Build
-* kernel: 5.10.217-rc1
-* git: https://gitlab.com/Linaro/lkft/mirrors/stable/linux-stable-rc
-* git branch: linux-5.10.y
-* git commit: dc5817072861cb3cb0d4af7f071afc3a69abd690
-* git describe: v5.10.216-112-gdc5817072861
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.10.y/build/v5.10=
-216-112-gdc5817072861
+Because this is again need me to modify *all* callers of 
+drm_bridge_add(), not only those bridges in drm/bridge/, but also
+bridge instances in various KMS drivers.
 
-## Test Regressions (compared to v5.10.216)
+However, their some exceptions just don't fit!
 
-## Metric Regressions (compared to v5.10.216)
+For example, the imx/imx8qxp-pixel-combiner.c just don't fit our
+simple model. Our helper function assume that one device backing
+one drm_bridge instance (1 to 1). Yet, that driver backing two or
+more bridges with one platform device (1 to 2, 1 to 3, ..., ).
+Hence, the imx/imx8qxp-pixel-combiner.c just can't use 
+drm_bridge_add_with_dev().
 
-## Test Fixes (compared to v5.10.216)
+The aux_hpd_bridge.c is also bad, it store the of_node of struct device 
+at the .platform_data member of the struct device.
 
-## Metric Fixes (compared to v5.10.216)
+> BR,
+> Jani.
+> 
+> 
+>> +
+>>   static void drm_bridge_remove_void(void *bridge)
+>>   {
+>>   	drm_bridge_remove(bridge);
+>> @@ -1334,6 +1351,27 @@ void drm_bridge_hpd_notify(struct drm_bridge *bridge,
+>>   }
+>>   EXPORT_SYMBOL_GPL(drm_bridge_hpd_notify);
+>>   
+>> +struct drm_bridge *drm_find_bridge_by_dev(struct device *kdev)
+>> +{
+>> +	struct drm_bridge *bridge;
+>> +
+>> +	if (!kdev)
+>> +		return NULL;
+>> +
+>> +	mutex_lock(&bridge_lock);
+>> +
+>> +	list_for_each_entry(bridge, &bridge_list, list) {
+>> +		if (bridge->kdev == kdev) {
+>> +			mutex_unlock(&bridge_lock);
+>> +			return bridge;
+>> +		}
+>> +	}
+>> +
+>> +	mutex_unlock(&bridge_lock);
+>> +	return NULL;
+>> +}
+>> +EXPORT_SYMBOL_GPL(drm_find_bridge_by_dev);
+>> +
+>>   #ifdef CONFIG_OF
+>>   /**
+>>    * of_drm_find_bridge - find the bridge corresponding to the device node in
+>> @@ -1361,6 +1399,7 @@ struct drm_bridge *of_drm_find_bridge(struct device_node *np)
+>>   	return NULL;
+>>   }
+>>   EXPORT_SYMBOL(of_drm_find_bridge);
+>> +
+>>   #endif
+>>   
+>>   MODULE_AUTHOR("Ajay Kumar <ajaykumar.rs@samsung.com>");
+>> diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
+>> index 4baca0d9107b..70d8393bbd9c 100644
+>> --- a/include/drm/drm_bridge.h
+>> +++ b/include/drm/drm_bridge.h
+>> @@ -715,6 +715,8 @@ struct drm_bridge {
+>>   	struct drm_private_obj base;
+>>   	/** @dev: DRM device this bridge belongs to */
+>>   	struct drm_device *dev;
+>> +	/** @kdev: pointer to the kernel device backing this bridge */
+>> +	struct device *kdev;
+>>   	/** @encoder: encoder to which this bridge is connected */
+>>   	struct drm_encoder *encoder;
+>>   	/** @chain_node: used to form a bridge chain */
+>> @@ -782,12 +784,15 @@ drm_priv_to_bridge(struct drm_private_obj *priv)
+>>   }
+>>   
+>>   void drm_bridge_add(struct drm_bridge *bridge);
+>> +void drm_bridge_add_with_dev(struct drm_bridge *bridge, struct device *dev);
+>>   int devm_drm_bridge_add(struct device *dev, struct drm_bridge *bridge);
+>>   void drm_bridge_remove(struct drm_bridge *bridge);
+>>   int drm_bridge_attach(struct drm_encoder *encoder, struct drm_bridge *bridge,
+>>   		      struct drm_bridge *previous,
+>>   		      enum drm_bridge_attach_flags flags);
+>>   
+>> +struct drm_bridge *drm_find_bridge_by_dev(struct device *kdev);
+>> +
+>>   #ifdef CONFIG_OF
+>>   struct drm_bridge *of_drm_find_bridge(struct device_node *np);
+>>   #else
+> 
 
-## Test result summary
-total: 72324, pass: 57510, fail: 1877, skip: 12891, xfail: 46
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 103 total, 103 passed, 0 failed
-* arm64: 30 total, 30 passed, 0 failed
-* i386: 25 total, 25 passed, 0 failed
-* mips: 22 total, 22 passed, 0 failed
-* parisc: 3 total, 0 passed, 3 failed
-* powerpc: 23 total, 23 passed, 0 failed
-* riscv: 9 total, 9 passed, 0 failed
-* s390: 9 total, 9 passed, 0 failed
-* sh: 10 total, 10 passed, 0 failed
-* sparc: 6 total, 6 passed, 0 failed
-* x86_64: 27 total, 27 passed, 0 failed
-
-## Test suites summary
-* boot
-* kselftest-android
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-drivers-dma-buf
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-filesystems
-* kselftest-filesystems-binderfs
-* kselftest-filesystems-epoll
-* kselftest-firmware
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-ir
-* kselftest-kcmp
-* kselftest-kexec
-* kselftest-kvm
-* kselftest-lib
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-memory-hotplug
-* kselftest-mincore
-* kselftest-mount
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-forwarding
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-pid_namespace
-* kselftest-pidfd
-* kselftest-proc
-* kselftest-pstore
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-splice
-* kselftest-static_keys
-* kselftest-sync
-* kselftest-sysctl
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-watchdog
-* kselftest-x86
-* kunit
-* kvm-unit-tests
-* libgpiod
-* log-parser-boot
-* log-parser-test
-* ltp-cap_bounds
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-crypto
-* ltp-cve
-* ltp-fcntl-locktests
-* ltp-filecaps
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-io
-* ltp-ipc
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-securebits
-* ltp-smoke
-* ltp-smoketest
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-
---
-Linaro LKFT
-https://lkft.linaro.org
+-- 
+Best regards
+Sui
 
