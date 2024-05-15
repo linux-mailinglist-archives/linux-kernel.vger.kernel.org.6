@@ -1,278 +1,174 @@
-Return-Path: <linux-kernel+bounces-180098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF03A8C6A12
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:57:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96CD68C6A15
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:59:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31F45B231AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 15:57:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A8281F233EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 15:59:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C977156245;
-	Wed, 15 May 2024 15:57:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0A14156221;
+	Wed, 15 May 2024 15:58:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E7zSR5Xk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NAsBbdQT"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F2CD155723;
-	Wed, 15 May 2024 15:57:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62EB1156653
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 15:58:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715788665; cv=none; b=Yuti7alAqO3uhpkY19D5E42CMh7kLwy0EspwvO5KzQfj6WQeYI0B+Q5ke3GkUSZSiXq80GEeciJSTa5iJmKnJXynjZ4dvOurBi49Cl+oIGrPFsxa+HzuuWTanyQuaQWS/i9z2nFklfrMOt+19xVdxPbjoaRs/A7Jg2ARBzmoz9Y=
+	t=1715788729; cv=none; b=l1RWwRPvx6tLqIpjZyh9a9tvf6uNNp2mVsYmGJBBxAZ5KD5Dyys9zUsG5YCcf3JEGm3F0ttp21BRTcMI+PlPzf4rtrju9ltwfgGUkXSrX3lBcaI+jLkoY+BGstcWaurCs/Dv15TjDyG4F4bmIm2Xo+nce6nXqxhw7w1Wh+FcVDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715788665; c=relaxed/simple;
-	bh=3Ksx8gj3Hc4Bol620FloWNAz8V3sPL8VH+OdOADSaBI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ecRen81ki0MG753ivxEFqE0XAhzYnZMF6K+cZQb1muqhhFiP9SIXab0YeXQEGaZE/pSslUbxTHi9bA+mAuRBs2DAFxbi4G3/NFQ8pa6KDWIKfiNDGNqfXRSY6m8HMWnqzx1oLZob/BgiCXAxLkQ0SRSUTiWsPwkmZwydklH4EXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E7zSR5Xk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDFABC116B1;
-	Wed, 15 May 2024 15:57:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715788664;
-	bh=3Ksx8gj3Hc4Bol620FloWNAz8V3sPL8VH+OdOADSaBI=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=E7zSR5XkxswZAtso5HWWHvZwd1zOkzfKb1GRWtxHSNXE0AWWgNUO/MhLSX9/G3jrV
-	 J8xRTc3YdmEG2q+0uX4gCvVVO+hkqErl0+lDhP2AJwL5oP0FnZ8OKfMOBBi27zpBkT
-	 X+CsPYcjtX4He0Q614suhzxXwb8R7aaMh5iAvQ8I2ngOjJTdc8yhraK7wbFAlse7yD
-	 mglug1+Itxggt1GZHWckJfoaxvZUfDsC1bTWlo0fIRQqJgfzA7EmCt1OwneltnZiDM
-	 mLdY/T6w0Rfu91Frnsu6Af5ydewY3V0f0Cehvxh5c9yg/0uwkuIdhsXEIY169bcjJ/
-	 bSkrH3AGHI7hg==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 2F1D1CE098A; Wed, 15 May 2024 08:57:44 -0700 (PDT)
-Date: Wed, 15 May 2024 08:57:44 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Marco Elver <elver@google.com>
-Cc: Bart Van Assche <bvanassche@acm.org>, Breno Leitao <leitao@debian.org>,
-	Jens Axboe <axboe@kernel.dk>,
-	"open list:BLOCK LAYER" <linux-block@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] block: Annotate a racy read in blk_do_io_stat()
-Message-ID: <75421237-4c5a-48bc-849e-87a216ee9d32@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <de92101c-f9c4-4af4-95f4-19a6f59b636f@paulmck-laptop>
- <d037f37a-4722-4a1d-a282-63355a97a1a1@acm.org>
- <c83d9c25-b839-4e31-8dd4-85f3cb938653@paulmck-laptop>
- <4d230bac-bdb0-4a01-8006-e95156965aa8@acm.org>
- <447ad732-3ff8-40bf-bd82-f7be66899cee@paulmck-laptop>
- <ca7c2ef0-7e21-4fb3-ac6b-3dae652a7a0e@acm.org>
- <59ec96c2-52ce-4da1-92c3-9fe38053cd3d@paulmck-laptop>
- <CANpmjNMj9r1V6Z63fcJxrFC1v4i2vUCEhm1HT77ikxhx0Rghdw@mail.gmail.com>
- <dd251dba-0a63-4b57-a05b-bfa02615fae5@paulmck-laptop>
- <CANpmjNMqRUNUs1mZEhrOSyK0Hk+PdGOi+VAs22qYD+1zTkwfhg@mail.gmail.com>
+	s=arc-20240116; t=1715788729; c=relaxed/simple;
+	bh=pGEkzf1qcpDKbJPPzrmpblwq6zQnfwhuHrqMW2Q8p3c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PUeNBQT49ptcTcqTIIi59zO68rbZH8IaU4n0m10+yBm9KHNtgfWrn9HJ0i4k/+7iWEVFc0fBsh+bXCTNHljxj6GY0HPSZL6KR7udaW/8Bbv7SM5xiq+0uxCJDPsJ5mBjxh7Prr+k1fzpn7yVHlxpQrtoF14l6hFoaBIih3uCuII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NAsBbdQT; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-574bf7ab218so2163626a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 08:58:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715788726; x=1716393526; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6iRHbyNTGvr9sjRduejmHoKiGmzFnKEKB6uzL8EQKYw=;
+        b=NAsBbdQTcdQhwAGLBtlhNfK09LweAKI7klmAVqVsriAPvuA9vfqjmUSQPiWve2ls8X
+         n97YSM47IakOn1puzdjHvMSrkQx+NjfNkpMqqbPcInoY7RytG36yWMWWlw4Tm2sk+Lhg
+         pWwVff+/cAZcnB/n3XIUKQfaDWj3cmvEN7MoBp5Pbc+DEOTLzek9yAmMW6w84okShdIc
+         /Q6lXgKxWJ2qFnVy5mP6NfKRsoVF1GxjR6FyLFDIY18RmidAnhp1dpgquZwHdZaTOr0R
+         1pd+rNBN92iVfQR1N4aL7zQegaB7cA4QblztVFjZ4ZrgauhdUzuQlR8an0NstzdEVeP0
+         npmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715788726; x=1716393526;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6iRHbyNTGvr9sjRduejmHoKiGmzFnKEKB6uzL8EQKYw=;
+        b=c59br9af9lqUd6atUqxbb+DUnxYJjOGOdmVYAoPTq4IXw8lNJGq6xK6zGazZnNoxtx
+         +ISfKVldJu77ZBbUZCX5e0gf1od93eIGObx50hLnF0kSd8QFm0RRilafRsJ0RgwdIUyn
+         i+bhdyQDCg5DR2gxk2BY94nmJUvQCyNtiRc5jintd5OtWDO4EsoN56KurqXKaxAOspr0
+         6NwTclqvDwzvc4RXuH4nRlKEu8ekrQoeBqb8ifKtlZH2uUvjB8nZ8ZRBYV4nzQ/6c7++
+         VKznHXDByuvQ4K56tfXpYtmhMHuRj8SYf0QKJlVaXQgV6DIpO6uBLlZ4gT21kUyCZgsq
+         lD4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVskd3iE96SiB+qEk4Aoj7djXGxJBEXasJCWiRKRhVmPSNaPBxlRFFc84878FU+YhQ7NKwXTmPBlwMETcuHLkP9omQp5olF1J+YD16X
+X-Gm-Message-State: AOJu0Yyxwl6H3ycgRMyhQmyh/CCU6WIjlH2UAvsGGQ9FIdJiAoDLhHOK
+	uoC6Fcfyjstfrxq3t/CmUlGVJaH6Zfga1WputBQy1pLru/4DaG+oKcNP3nG9At7LD78Mk1kyOUa
+	v7udODfxsgLE+0MWPa2J0imxAf+s=
+X-Google-Smtp-Source: AGHT+IEWavW0b5hH9Os46OQ//THLw953i+0xH4jkXXGxq/ZWERzJILGCxJY2Bdd4m6uSBXvQUtJ4tkMu+D5/qpgWivc=
+X-Received: by 2002:a50:d684:0:b0:572:a13c:30ca with SMTP id
+ 4fb4d7f45d1cf-5734d5de823mr11907722a12.20.1715788725606; Wed, 15 May 2024
+ 08:58:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANpmjNMqRUNUs1mZEhrOSyK0Hk+PdGOi+VAs22qYD+1zTkwfhg@mail.gmail.com>
+References: <20240515023607.870022-1-linmiaohe@huawei.com>
+In-Reply-To: <20240515023607.870022-1-linmiaohe@huawei.com>
+From: Yang Shi <shy828301@gmail.com>
+Date: Wed, 15 May 2024 09:58:32 -0600
+Message-ID: <CAHbLzkrO9-yWRFrWoE0idWwMffkBWNSku6iO2vdPLCpWAY7wQg@mail.gmail.com>
+Subject: Re: [PATCH v2] mm/huge_memory: don't unpoison huge_zero_folio
+To: Miaohe Lin <linmiaohe@huawei.com>
+Cc: akpm@linux-foundation.org, nao.horiguchi@gmail.com, xuyu@linux.alibaba.com, 
+	david@redhat.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 15, 2024 at 09:58:35AM +0200, Marco Elver wrote:
-> On Wed, 15 May 2024 at 01:47, Paul E. McKenney <paulmck@kernel.org> wrote:
-> > On Mon, May 13, 2024 at 10:13:49AM +0200, Marco Elver wrote:
-> > > On Sat, 11 May 2024 at 02:41, Paul E. McKenney <paulmck@kernel.org> wrote:
-> > > [...]
-> > > > ------------------------------------------------------------------------
-> > > >
-> > > > commit 930cb5f711443d8044e88080ee21b0a5edda33bd
-> > > > Author: Paul E. McKenney <paulmck@kernel.org>
-> > > > Date:   Fri May 10 15:36:57 2024 -0700
-> > > >
-> > > >     kcsan: Add example to data_race() kerneldoc header
-> > > >
-> > > >     Although the data_race() kerneldoc header accurately states what it does,
-> > > >     some of the implications and usage patterns are non-obvious.  Therefore,
-> > > >     add a brief locking example and also state how to have KCSAN ignore
-> > > >     accesses while also preventing the compiler from folding, spindling,
-> > > >     or otherwise mutilating the access.
-> > > >
-> > > >     [ paulmck: Apply Bart Van Assche feedback. ]
-> > > >
-> > > >     Reported-by: Bart Van Assche <bvanassche@acm.org>
-> > > >     Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> > > >     Cc: Marco Elver <elver@google.com>
-> > > >     Cc: Breno Leitao <leitao@debian.org>
-> > > >     Cc: Jens Axboe <axboe@kernel.dk>
-> > > >
-> > > > diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-> > > > index c00cc6c0878a1..9249768ec7a26 100644
-> > > > --- a/include/linux/compiler.h
-> > > > +++ b/include/linux/compiler.h
-> > > > @@ -194,9 +194,17 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
-> > > >   * This data_race() macro is useful for situations in which data races
-> > > >   * should be forgiven.  One example is diagnostic code that accesses
-> > > >   * shared variables but is not a part of the core synchronization design.
-> > > > + * For example, if accesses to a given variable are protected by a lock,
-> > > > + * except for diagnostic code, then the accesses under the lock should
-> > > > + * be plain C-language accesses and those in the diagnostic code should
-> > > > + * use data_race().  This way, KCSAN will complain if buggy lockless
-> > > > + * accesses to that variable are introduced, even if the buggy accesses
-> > > > + * are protected by READ_ONCE() or WRITE_ONCE().
-> > > >   *
-> > > > - * This macro *does not* affect normal code generation, but is a hint
-> > > > - * to tooling that data races here are to be ignored.
-> > > > + * This macro *does not* affect normal code generation, but is a hint to
-> > > > + * tooling that data races here are to be ignored.  If code generation must
-> > > > + * be protected *and* KCSAN should ignore the access, use both data_race()
-> > >
-> > > "code generation must be protected" seems ambiguous, because
-> > > protecting code generation could mean a lot of different things to
-> > > different people.
-> > >
-> > > The more precise thing would be to write that "If the access must be
-> > > atomic *and* KCSAN should ignore the access, use both ...".
-> >
-> > Good point, and I took your wording, thank you.
-> >
-> > > I've also had trouble in the past referring to "miscompilation" or
-> > > similar, because that also entirely depends on the promised vs.
-> > > expected semantics: if the code in question assumes for the access to
-> > > be atomic, the compiler compiling the code in a way that the access is
-> > > no longer atomic would be a "miscompilation". Although is it still a
-> > > "miscompilation" if the compiler generated code according to specified
-> > > language semantics (say according to our own LKMM) - and that's where
-> > > opinions can diverge because it depends on which side we stand
-> > > (compiler vs. our code).
-> >
-> > Agreed, use of words like "miscompilation" can annoy people.  What
-> > word would you suggest using instead?
-> 
-> Not sure. As suggested above, I try to just stick to "atomic" vs
-> "non-atomic" because that's ultimately the functional end result of
-> such a miscompilation. Although I've also had people be confused as in
-> "what atomic?! as in atomic RMW?!", but I don't know how to remove
-> that kind of confusion.
-> 
-> If, however, our intended model is the LKMM and e.g. a compiler breaks
-> a dependency-chain, then we could talk about miscompilation, because
-> the compiler violates our desired language semantics. Of course the
-> compiler writers then will say that we try to do things that are
-> outside any implemented language semantics the compiler is aware of,
-> so it's not a miscompilation again. So it all depends on which side
-> we're arguing for. Fun times.
+On Tue, May 14, 2024 at 8:39=E2=80=AFPM Miaohe Lin <linmiaohe@huawei.com> w=
+rote:
+>
+> When I did memory failure tests recently, below panic occurs:
+>
+>  kernel BUG at include/linux/mm.h:1135!
+>  invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
+>  CPU: 9 PID: 137 Comm: kswapd1 Not tainted 6.9.0-rc4-00491-gd5ce28f156fe-=
+dirty #14
+>  RIP: 0010:shrink_huge_zero_page_scan+0x168/0x1a0
+>  RSP: 0018:ffff9933c6c57bd0 EFLAGS: 00000246
+>  RAX: 000000000000003e RBX: 0000000000000000 RCX: ffff88f61fc5c9c8
+>  RDX: 0000000000000000 RSI: 0000000000000027 RDI: ffff88f61fc5c9c0
+>  RBP: ffffcd7c446b0000 R08: ffffffff9a9405f0 R09: 0000000000005492
+>  R10: 00000000000030ea R11: ffffffff9a9405f0 R12: 0000000000000000
+>  R13: 0000000000000000 R14: 0000000000000000 R15: ffff88e703c4ac00
+>  FS:  0000000000000000(0000) GS:ffff88f61fc40000(0000) knlGS:000000000000=
+0000
+>  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>  CR2: 000055f4da6e9878 CR3: 0000000c71048000 CR4: 00000000000006f0
+>  Call Trace:
+>   <TASK>
+>   do_shrink_slab+0x14f/0x6a0
+>   shrink_slab+0xca/0x8c0
+>   shrink_node+0x2d0/0x7d0
+>   balance_pgdat+0x33a/0x720
+>   kswapd+0x1f3/0x410
+>   kthread+0xd5/0x100
+>   ret_from_fork+0x2f/0x50
+>   ret_from_fork_asm+0x1a/0x30
+>   </TASK>
+>  Modules linked in: mce_inject hwpoison_inject
+>  ---[ end trace 0000000000000000 ]---
+>  RIP: 0010:shrink_huge_zero_page_scan+0x168/0x1a0
+>  RSP: 0018:ffff9933c6c57bd0 EFLAGS: 00000246
+>  RAX: 000000000000003e RBX: 0000000000000000 RCX: ffff88f61fc5c9c8
+>  RDX: 0000000000000000 RSI: 0000000000000027 RDI: ffff88f61fc5c9c0
+>  RBP: ffffcd7c446b0000 R08: ffffffff9a9405f0 R09: 0000000000005492
+>  R10: 00000000000030ea R11: ffffffff9a9405f0 R12: 0000000000000000
+>  R13: 0000000000000000 R14: 0000000000000000 R15: ffff88e703c4ac00
+>  FS:  0000000000000000(0000) GS:ffff88f61fc40000(0000) knlGS:000000000000=
+0000
+>  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>  CR2: 000055f4da6e9878 CR3: 0000000c71048000 CR4: 00000000000006f0
+>
+> The root cause is that HWPoison flag will be set for huge_zero_folio
+> without increasing the folio refcnt. But then unpoison_memory() will
+> decrease the folio refcnt unexpectly as it appears like a successfully
+> hwpoisoned folio leading to VM_BUG_ON_PAGE(page_ref_count(page) =3D=3D 0)
+> when releasing huge_zero_folio.
+>
+> Skip unpoisoning huge_zero_folio in unpoison_memory() to fix this issue.
+> We're not prepared to unpoison huge_zero_folio yet.
+>
+> Fixes: 478d134e9506 ("mm/huge_memory: do not overkill when splitting huge=
+_zero_page")
+> Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
+> Cc: <stable@vger.kernel.org>
 
-;-) ;-) ;-)
+Reviewed-by: Yang Shi <shy828301@gmail.com>
 
-> > > > + * and READ_ONCE(), for example, data_race(READ_ONCE(x)).
-> > >
-> > > Having more documentation sounds good to me, thanks for adding!
-> > >
-> > > This extra bit of documentation also exists in a longer form in
-> > > access-marking.txt, correct? I wonder how it would be possible to
-> > > refer to it, in case the reader wants to learn even more.
-> >
-> > Good point, especially given that I had forgotten about it.
-> >
-> > I don't have any immediate ideas for calling attention to this file,
-> > but would the following update be helpful?
-> 
-> Mentioning __data_racy along with data_race() could be helpful, thank
-> you. See comments below.
-
-I did add a mention of it in "Linux-Kernel RCU Shared-Variable Marking"
-[1], but just a mention, given that I do not expect that we will use it
-within RCU.
-
-> Thanks,
-> -- Marco
-> 
-> >                                                         Thanx, Paul
-> >
-> > ------------------------------------------------------------------------
-> >
-> > diff --git a/tools/memory-model/Documentation/access-marking.txt b/tools/memory-model/Documentation/access-marking.txt
-> > index 65778222183e3..690dd59b7ac59 100644
-> > --- a/tools/memory-model/Documentation/access-marking.txt
-> > +++ b/tools/memory-model/Documentation/access-marking.txt
-> > @@ -24,6 +24,12 @@ The Linux kernel provides the following access-marking options:
-> >  4.     WRITE_ONCE(), for example, "WRITE_ONCE(a, b);"
-> >         The various forms of atomic_set() also fit in here.
-> >
-> > +5.     ASSERT_EXCLUSIVE_ACCESS() and ASSERT_EXCLUSIVE_WRITER().
-> 
-> Perhaps worth mentioning, but they aren't strictly access-marking
-> options. In the interest of simplicity could leave it out.
-
-Interestingly enough, they can be said to be implicitly marking other
-concurrent accesses to the variable.  ;-)
-
-I believe that the do need to be mentioned more prominently, though.
-
-Maybe a second list following this one?  In that case, what do we name
-the list?  I suppose the other alternative would be to leave them in
-this list, and change the preceding sentence to say something like
-"The Linux kernel provides the following access-marking-related primitives"
-
-Thoughts?
-
-> > +6.     The volatile keyword, for example, "int volatile a;"
-> 
-> See below - I'm not sure we should mention volatile. It may set the
-> wrong example.
-
-Good point.  I removed this item from this list.
-
-> > +7.     __data_racy, for example "int __data_racy a;"
-> > +
-> >
-> >  These may be used in combination, as shown in this admittedly improbable
-> >  example:
-> > @@ -205,6 +211,27 @@ because doing otherwise prevents KCSAN from detecting violations of your
-> >  code's synchronization rules.
-> >
-> >
-> > +Use of volatile and __data_racy
-> > +-------------------------------
-> > +
-> > +Adding the volatile keyword to the declaration of a variable causes both
-> > +the compiler and KCSAN to treat all reads from that variable as if they
-> > +were protected by READ_ONCE() and all writes to that variable as if they
-> > +were protected by WRITE_ONCE().
-> 
-> "volatile" isn't something we encourage, right? In which case, I think
-> to avoid confusion we should not mention volatile. After all we have
-> this: Documentation/process/volatile-considered-harmful.rst
-
-Good point, I removed this paragraph.  But we do sometimes use volatile,
-for example for atomic_t and jiffies.  Nevertheless, agreed, we don't
-want to encourage it and additions of this keyword should be subjected
-to serious scrutiny.
-
-> > +Adding the __data_racy type qualifier to the declaration of a variable
-> > +causes KCSAN to treat all accesses to that variable as if they were
-> > +enclosed by data_race().  However, __data_racy does not affect the
-> > +compiler, though one could imagine hardened kernel builds treating the
-> > +__data_racy type qualifier as if it was the volatile keyword.
-> > +
-> > +Note well that __data_racy is subject to the same pointer-declaration
-> > +rules as is the volatile keyword.  For example:
-> 
-> To avoid referring to volatile could make it more general and say "..
-> rules as other type qualifiers like const and volatile".
-
-Very good, thank you!  I happily took your wording.
-
-							Thanx, Paul
-
-> > +       int __data_racy *p; // Pointer to data-racy data.
-> > +       int *__data_racy p; // Data-racy pointer to non-data-racy data.
-> > +
-> > +
-> >  ACCESS-DOCUMENTATION OPTIONS
-> >  ============================
-> >
-> > @@ -342,7 +369,7 @@ as follows:
-> >
-> >  Because foo is read locklessly, all accesses are marked.  The purpose
-> >  of the ASSERT_EXCLUSIVE_WRITER() is to allow KCSAN to check for a buggy
-> > -concurrent lockless write.
-> > +concurrent write, whether marked or not.
-> >
-> >
-> >  Lock-Protected Writes With Heuristic Lockless Reads
+> ---
+> v2:
+>  Change to simply check for the huge zero page. Thanks.
+> ---
+>  mm/memory-failure.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>
+> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+> index 16ada4fb02b7..68bc8d7ff53d 100644
+> --- a/mm/memory-failure.c
+> +++ b/mm/memory-failure.c
+> @@ -2558,6 +2558,12 @@ int unpoison_memory(unsigned long pfn)
+>                 goto unlock_mutex;
+>         }
+>
+> +       if (is_huge_zero_folio(folio)) {
+> +               unpoison_pr_info("Unpoison: huge zero page is not support=
+ed %#lx\n",
+> +                                pfn, &unpoison_rs);
+> +               goto unlock_mutex;
+> +       }
+> +
+>         if (folio_test_slab(folio) || folio_test_pgtable(folio) ||
+>             folio_test_reserved(folio) || folio_test_offline(folio))
+>                 goto unlock_mutex;
+> --
+> 2.33.0
+>
 
