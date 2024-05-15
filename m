@@ -1,158 +1,86 @@
-Return-Path: <linux-kernel+bounces-179709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C897C8C63C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 11:34:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A32DE8C63CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 11:37:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 814E72819E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:34:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43ECF1F21B01
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:37:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68B945914C;
-	Wed, 15 May 2024 09:34:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DCC9ZrZK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A444B58AA5
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 09:34:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF1D95915C;
+	Wed, 15 May 2024 09:37:02 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10A7A2744C;
+	Wed, 15 May 2024 09:37:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715765689; cv=none; b=TdFKhlaDqU+dmAFhhwZCJd9UGtEXMa3VNyDGar5IlS0xZQl3rtzI0r23ygwASYLKIX8mlLaRTxelzNQGhACOZbv57zGrXfLo21kTuboSNWb+ZJE0EZuqhOC+qh9HYASkBhhk1Ua86QVnkpm5/WYIF9Jh09nHXYCXCgLYP/9y1II=
+	t=1715765822; cv=none; b=o03TjexphOKe/QJlZrahOPishue19oOOgFFLrj4Y2ZFW5U/Tme5vkpwFfmBvDxspQxhWfO/YGUTNb7rNTaB9ttGnWL7UJr0VI+YTUCjEPrH+g+gbp2/sm8J8P6xgtufqP1846+vy/CtINGAiyAztkDNqxRPCKRGrGkvxVWwqsfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715765689; c=relaxed/simple;
-	bh=iV4NuC8nZ4r/lSpibzwon8OU9TtP6uytv5bsFJ9FtjM=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ed9EEDbY1ADWebjEDH4ee5AoIP+k9bo3IYd+r+5vDOmTYTNeco13ahoORlHWH3gR5+xk6Q3KPmbHztwVa+9V4ter/UYANnkEvMthEy2oNKZQQHFc956NCowsFsa2PYJrxV8ltirxWiQCxDQEQy863WmUAaV229HnFxcZ+CZHWGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DCC9ZrZK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AC15C116B1;
-	Wed, 15 May 2024 09:34:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715765689;
-	bh=iV4NuC8nZ4r/lSpibzwon8OU9TtP6uytv5bsFJ9FtjM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=DCC9ZrZKJhjrHUGxSfUVC2SuZ/tmBB59hL5/Wh8NqddWcYautGz3WQ69a5e8pLkGn
-	 nMZ7E8pOcxh1xFVnUvjzA60346MoR8A0GHaJisGGaeOxpy7dL/7LWaQN/EgeAizqS1
-	 MK8PUVYS0P29ElLaicDr/h33+k/GLH8RU9LavbY2+yOEPkq/ZxuU6T6YdA4rHvN3FB
-	 q6c8e6Rp1mOxj7clTnGfTRYUhSLEWY8j4UuT8vaWVDyKq+hMdLmp5pW4GKMyje73U2
-	 JvRBemGIJKvhaUm3J42+RRGYbki0P/cvzN82S10m76a0N7ijK5BqXwWXAYP/5YyAZu
-	 ZtMJJ949/OUKg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1s7B26-00DLRm-L5;
-	Wed, 15 May 2024 10:34:46 +0100
-Date: Wed, 15 May 2024 10:34:46 +0100
-Message-ID: <86v83fmn9l.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Tangnianyao <tangnianyao@huawei.com>
-Cc: <tglx@linutronix.de>,
-	<linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<guoyang2@huawei.com>,
-	<wangwudi@hisilicon.com>,
-	jiangkunkun <jiangkunkun@huawei.com>
-Subject: Re: [PATCH] irqchip/gic-v4.1:Check whether indirect table is supported in allocate_vpe_l1_table
-In-Reply-To: <de3c10be-f4d4-75d0-bc70-0791e5217516@huawei.com>
-References: <20240122160607.1078960-1-tangnianyao@huawei.com>
-	<86sf2p91zt.wl-maz@kernel.org>
-	<5de3da53-9c0d-2a2d-876b-2181e540fa2f@huawei.com>
-	<86r0i98o0a.wl-maz@kernel.org>
-	<de3c10be-f4d4-75d0-bc70-0791e5217516@huawei.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1715765822; c=relaxed/simple;
+	bh=6lYJ7+avvs8sN6tr0U2vFGdDZ0rZ2/OE+Hj/WS2n9+c=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YivJiDDbI93lxSxobPFhzRj9hWletRMzC402HMSa5XvS2eOc9yPtvQrTaE4X16ySzJ47J52Cjzj+J0UVyOqNJmr9iNPb2upJAsXEZsJnu4nvXpbNnu9+DFBMVkaYzRitl/ioADudsNJqEgyN715HUSxkaFDaZwIT5Ed+OQeXy7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 168861007;
+	Wed, 15 May 2024 02:37:19 -0700 (PDT)
+Received: from e116581.blr.arm.com (e116581.arm.com [10.162.42.15])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 70ADD3F7A6;
+	Wed, 15 May 2024 02:36:51 -0700 (PDT)
+From: Dev Jain <dev.jain@arm.com>
+To: akpm@linux-foundation.org,
+	shuah@kernel.org
+Cc: linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Anshuman.Khandual@arm.com,
+	sjayaram@akamai.com,
+	Dev Jain <dev.jain@arm.com>
+Subject: [PATCH 0/2] Fixes for compaction_test
+Date: Wed, 15 May 2024 15:06:31 +0530
+Message-Id: <20240515093633.54814-1-dev.jain@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: tangnianyao@huawei.com, tglx@linutronix.de, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, guoyang2@huawei.com, wangwudi@hisilicon.com, jiangkunkun@huawei.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed, 15 May 2024 09:56:10 +0100,
-Tangnianyao <tangnianyao@huawei.com> wrote:
-> 
-> 
-> 
-> On 1/22/2024 22:02, Marc Zyngier wrote:
-> > On Mon, 22 Jan 2024 13:13:09 +0000,
-> > Tangnianyao <tangnianyao@huawei.com> wrote:
-> >> On 1/22/2024 17:00, Marc Zyngier wrote:
-> >>> [Fixing the LKML address, which has bits of Stephan's address embedded
-> >>> in it...]
-> >>>
-> >>> On Mon, 22 Jan 2024 16:06:07 +0000,
-> >>> Nianyao Tang <tangnianyao@huawei.com> wrote:
-> >>>> In allocate_vpe_l1_table, when we fail to inherit VPE table from other
-> >>>> redistributors or ITSs, and we allocate a new vpe table for current common 
-> >>>> affinity field without checking whether indirect table is supported.
-> >>>> Let's fix it.
-> >>> Is there an actual implementation that doesn't support the indirect
-> >>> property for the VPE table? I know this is allowed for consistency
-> >>> with the original revision of the architecture, but I never expected
-> >>> an actual GICv4.1 implementation to be *that* bad.
-> >>>
-> >>> If that's the case, I'm a bit puzzled/worried.
-> >> I met this problem in a developing implementation and find it's allowed by GIC spec.
-> >> In such environment,  in a common affinity field with only redistributors and without
-> >> any ITS in it, forcing its_vpe_id_alloc to allocate a large vpeid(like 65000), and there
-> >> comes an error message "VPE IRQ allocation failure". It originally comes from
-> >> allocate_vpe_l2_table, reading GICR_VPROPBASER with GICR_VPROPBASER_4_1_SIZE=1
-> >> and GICR_VPROPBASER_4_1_INDIRECT=0.
-> > Really, you should get your HW engineers to fix their GIC
-> > implementation.  I'm OK with working around this issue for
-> > completeness, but shipping such an implementation would be a mistake.
-> >
-> > [...]
-> >
-> >> I have another question here. The max number of pages  for GITS_BASER
-> >> and GICR_VPROPBASER is different here, while GITS_BASER.Size is
-> >> bit[7:0] with max 256, and GICR_4_1_VPROPBASER.Size is bit[6:0] with max 128.
-> >> Kernel usually probe ITS basers first and then probe GICR_4_1_VPROPBASER in
-> >> a common affinity group. Maybe we need to check this in "inherit_vpe_l1_table_from_its" ?
-> > This is because GITS_BASER[] is generic (also works for devices and
-> > collections), while GICR_VPROPBASER is tailored to the VPE table which
-> > is usually smaller.
-> >
-> > I would expect that GICD_TYPER2.VID reports something that cannot
-> > result in something going wrong (in this case, the L1 allocation
-> > cannot be more than 128 pages).
-> >
-> > Overall, the kernel isn't a validation suite for the HW, and we expect
-> > it to have some level of sanity. So if none of this is in shipping HW
-> > but only in some model with crazy parameters, I don't think we should
-> > go out of our way to support it.
-> >
-> > Thanks,
-> >
-> > 	M.
-> >
-> 
-> Hi Marc,
-> Friendly ping. Do we have plan to fix this problem on kernel, or any other plan ?
+The compaction_test memory selftest introduces fragmentation in memory
+and then tries to allocate as many hugepages as possible. This series
+addresses some problems.
 
-Hi Nianyao,
+First off, correctly set the number of hugepages to zero before trying
+to set a large number of them.
 
-My earlier question still stand: is this something that affects a
-shipping implementation? If not, then I don't think we should support
-this upstream, as this doesn't seem like a realistic configuration.
+Now, consider a situation in which, at the start of the test, a non-zero
+number of hugepages have been already set (while running the entire
+selftests/mm suite, or manually by the admin). The test operates on 80%
+of memory to avoid OOM-killer invocation, and because some memory is
+already blocked by hugepages, it would increase the chance of OOM-killing.
+Also, since mem_free used in check_compaction() is the value before we
+set nr_hugepages to zero, the chance that the compaction_index will
+be small is very high if the preset nr_hugepages was high, leading to a
+bogus test success.
 
-If your employer has actually built this (which I still consider as a
-mistake), then we can add the workaround I suggested.
+This series applies on top of the stable 6.9 kernel.
+ 
+Dev Jain (2):
+  selftests/mm: compaction_test: Fix incorrect write of zero to
+    nr_hugepages
+  selftests/mm: compaction_test: Fix trivial test success and reduce
+    probability of OOM-killer invocation
 
-Thanks,
-
-	M.
+ tools/testing/selftests/mm/compaction_test.c | 70 ++++++++++++++------
+ 1 file changed, 50 insertions(+), 20 deletions(-)
 
 -- 
-Without deviation from the norm, progress is not possible.
+2.30.2
+
 
