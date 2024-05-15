@@ -1,131 +1,116 @@
-Return-Path: <linux-kernel+bounces-180001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9716E8C68B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:30:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D15858C68B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:30:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24AC3B241B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 14:30:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CF332836D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 14:30:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E7E913FD88;
-	Wed, 15 May 2024 14:29:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B940A3236;
+	Wed, 15 May 2024 14:30:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DYOiEbSy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BFeI6Eu4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B809513FD87;
-	Wed, 15 May 2024 14:29:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 081BB13E8BA
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 14:30:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715783381; cv=none; b=NbTKDyGU4mQLSW+7zguzVYIdiSvmm/26qB9ky4b/R6uyLejwWz4sl+uHjuFKrpFdSxSzP0zHVqs9dYyGhxXLzd0HoV/FvRASqPKPle9PNU1OFV3HJ7MM7mmkvc9okQxPQ0201CckTlxhyZnl7ukgbjOXkQ+/orWBr8uNS+tRSuw=
+	t=1715783425; cv=none; b=Hu4201J07QBYkWfAAk9O8FNNvutC5bkdmHOB1EuTihIAN9K16nqQcPr72lsv6N3knwGqp4GNHLgLkdBolvRCyCGQHHnm1D0phabT2firBA6PlQn0GlJ/UsGf8hckklIJ5g32Nkxlz50SO57j0LU0GNhuWO3lnivsWU2VkAXkJ0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715783381; c=relaxed/simple;
-	bh=Lufu77vaoVnU9hbhqpFWCA3qLI6Nx+Z012xwppmHOwc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pyugz/J5R88TTyhdNkxKtHiQAz+wE0aGH9rFTABreeilTL9O8zRSU4J7mRj4h8Db2UUxzD2EnRHyecBs3XJ1m5DcSn7WqUsk+96zodU2a7Vw8B2omLniIn2Id9vYU0M2HTSTSObQE5dOZ8FCbSV6XsqAeuTn5uMsqSD7Y3eKM0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DYOiEbSy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7720EC116B1;
-	Wed, 15 May 2024 14:29:39 +0000 (UTC)
+	s=arc-20240116; t=1715783425; c=relaxed/simple;
+	bh=gGILRtmhPe2nXKaL9dnOVNi7GPppKkCM2B0TLvSQGHI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X4a8cXaHadwdqPK7reGvHEspNzhkwsZoKctb+EBWsJzPuaFKN9JMX5JYVg2wDgTQ4A6NuUB6qbyBiUGhu9hjSFuX7EjdfNk3Xj6KRY/5//8zn6HRLcSerqsjgl6xwOQJZXgfMMd/sRE7fIwyMADBGmO8BNSRZrMuAyBNvN8ZqF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BFeI6Eu4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56DE7C116B1;
+	Wed, 15 May 2024 14:30:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715783381;
-	bh=Lufu77vaoVnU9hbhqpFWCA3qLI6Nx+Z012xwppmHOwc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=DYOiEbSyu8jktia08AHqFtRCxWlieX+OP5hVeJI1qtA7+QETH5Re1tVDg0/bV+FgZ
-	 +/j7q1W/CnuRkBs/br9fuOoR4o7ov0o5POoqSfiregzP8S4DxK5L1dXzgGwg52JImQ
-	 rJ1byWCb/o2HL5DzXedi/OYOZpy3zoPP1So2LfwMxjhLzSO0TsfLctiSfnfYwq5I8D
-	 EP5xnZCh2jiTFuz04U+hKz4mA0KdDe9Two+c1OtiggREMLv6g4r/2udQ9jkRd+Icec
-	 WMAPa/MCCwPi8MxPM8nP8GVbaK96CVblCpRdU8UJt2w8wgI9ukmEaBRbCC0gYIIGEv
-	 Ib1y7MF4YaoZw==
-Message-ID: <433350f0-65c4-4940-8209-ef7dd8846504@kernel.org>
-Date: Wed, 15 May 2024 16:29:38 +0200
+	s=k20201202; t=1715783424;
+	bh=gGILRtmhPe2nXKaL9dnOVNi7GPppKkCM2B0TLvSQGHI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BFeI6Eu4/ENBl7p4/B3tUMbhrrYB0ZIH9VwgJ4QcR36GJ70rvvP5pZEoFulPZa4+X
+	 If29+7uJE3cTRI/8Sg7eUVm6wJ6aHJ87/SBLMizK3TUsQg8uku0UlLSd+Pmm9Vqkr4
+	 wAEnn378WXX0IU6AoYsjWlWvCJeRq8BuPX2uMzLc4JS+JPvejqfw7Rgd2PGZcHJa7h
+	 bjojAWrxP2wi/mmcdSTHMSG1lVIATMQN/ZSvPDk+8Xix7WhthK4LvLtXOcai0EJkpf
+	 CX1Ui41Bsg6cBUVTxmxcfA83TD6VzBWbqKsFucCbbO/xjhzCOp4Ifb7zRMXIWPNUuR
+	 5XpwxAaspOoKw==
+Date: Wed, 15 May 2024 16:30:21 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Sui Jingfeng <sui.jingfeng@linux.dev>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] drm/bridge: Add 'struct device *' field to the
+ drm_bridge structure
+Message-ID: <20240515-fair-satisfied-myna-480dea@penduick>
+References: <20240514154045.309925-1-sui.jingfeng@linux.dev>
+ <20240514-scarlet-corgi-of-efficiency-faf2bb@penduick>
+ <c44480ab-8d6b-4334-8eba-83db9b30ff1a@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 7/9] dt-bindings: fsi: ast2600-fsi-master: Convert to
- json-schema
-To: Eddie James <eajames@linux.ibm.com>, linux-fsi@lists.ozlabs.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, robh@kernel.org, joel@jms.id.au,
- andrew@codeconstruct.com.au
-References: <20240514195435.155372-1-eajames@linux.ibm.com>
- <20240514195435.155372-8-eajames@linux.ibm.com>
- <4f8a29a0-b31a-485a-90af-4a8df35fd48d@kernel.org>
- <4c370b26-9b23-4d14-961d-885f88dc4cd5@linux.ibm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <4c370b26-9b23-4d14-961d-885f88dc4cd5@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="llrm42vacf3vqq5y"
+Content-Disposition: inline
+In-Reply-To: <c44480ab-8d6b-4334-8eba-83db9b30ff1a@linux.dev>
 
-On 15/05/2024 16:24, Eddie James wrote:
-> 
-> On 5/15/24 09:21, Krzysztof Kozlowski wrote:
->> On 14/05/2024 21:54, Eddie James wrote:
->>> Convert to json-schema for the AST2600 FSI master documentation.
->> Nothing explains dropping fsi-master compatible. Every deviation from
->> conversion should be explained in the commit msg. Otherwise it is not
->> conversion but a change...
-> 
-> 
-> The fsi-master compatible was not in the previous documentation. It was 
-> in the example, not in the description of what compatible strings are 
-> allowed, so this is a pure conversion.
-> 
 
-Hm, indeed. Still could be mentioned, but it's also fine.
+--llrm42vacf3vqq5y
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Best regards,
-Krzysztof
+On Wed, May 15, 2024 at 12:53:33AM +0800, Sui Jingfeng wrote:
+> Hi,
+>=20
+> On 2024/5/15 00:22, Maxime Ripard wrote:
+> > Hi,
+> >=20
+> > On Tue, May 14, 2024 at 11:40:43PM +0800, Sui Jingfeng wrote:
+> > > Because a lot of implementations has already added it into their driv=
+ed
+> > > class, promote it into drm_bridge core may benifits a lot. drm bridge=
+ is
+> > > a driver, it should know the underlying hardware entity.
+> > Is there some actual benefits, or is it theoretical at this point?
+>=20
+>=20
+> I think, DRM bridge drivers could remove the 'struct device *dev'
+> member from their derived structure. Rely on the drm bridge core
+> when they need the 'struct device *' pointer.
 
+Sure, but why do we need to do so?
+
+The other thread you had with Jani points out that it turns out that
+things are more complicated than "every bridge driver has a struct
+device anyway", it creates inconsistency in the API (bridges would have
+a struct device, but not other entities), and it looks like there's no
+use for it anyway.
+
+None of these things are deal-breaker by themselves, but if there's only
+downsides and no upside, it's not clear to me why we should do it at all.
+
+Maxime
+
+--llrm42vacf3vqq5y
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZkTG/QAKCRAnX84Zoj2+
+dvo9AX9a5QiWezo2NOJlySdtUAQyNsdzN/lWX5aLvyVRCmJNkK/V1srS75EVegBF
+nGFUoyABgPBWQK5lWVLa+U3wwCyNoYQ2gTgS6QR2Ggrusqvkk3zxOXvaf2spQ0V2
+xv6kQMUBLQ==
+=pCFD
+-----END PGP SIGNATURE-----
+
+--llrm42vacf3vqq5y--
 
