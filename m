@@ -1,211 +1,151 @@
-Return-Path: <linux-kernel+bounces-180082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08C3C8C69E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:42:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E3E88C69E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:44:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BF431C213DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 15:42:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 370AF1F237B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 15:44:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAF20155A53;
-	Wed, 15 May 2024 15:42:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A537015622E;
+	Wed, 15 May 2024 15:44:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R/pnp8Ze"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gnAKmxkT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76C44155749
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 15:42:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E063E155A4F;
+	Wed, 15 May 2024 15:44:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715787739; cv=none; b=gZySfurlfOmq0kElTeqOiU9sizlZaz0MO6ZocldY8K3Md7aHCF8uT8S2+qTdPz6fpSs1S7QBS/qYa7YEVNHNNEJ/RW8Tb/OP/U6CH17SFMYbR+82jwTv2/wFfK0ES8mDdXUuvQKE8/Cl1lFSMXTW6oiUWy25kHWyT1gH6Bj+ee8=
+	t=1715787845; cv=none; b=AVvXx12K4ZAf8qP+iNhWuAGZKU20cnqzss+udY0zo0fpjNXgQ2A0DDIpXEUMU2sUPbu2bYynNZfjkEPOKXzjpPyu0V6V2CrHtVrY79DYAncVUv9oN1zrSWyeJIaheTfoTeBn5K3R7K8/qAouVq14nKKK+Rt61h1Xj9Cmei83qT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715787739; c=relaxed/simple;
-	bh=/deTcq+w80Cb17xbYuE3uBl4Y02GhqRR0ENPYtWyjOI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a4wxt9GyeW2UAgxLOxr4ywHS5/WjnIQ5wOLcPnnL80UANfjSg2Nclx6/7kTYxL52mkRH+844kGs5jMDXsWVCcHOlCKBBSO0fy6joGx1SWHuCQ4HEvcAQV7pMXNiOxJYxtInSWkFcoKJGQ/Q4r8SDqoop5kHuNDkpDHwhdqphd9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R/pnp8Ze; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715787736;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KDC9yVDJQXh1VBgH8zcKx1ck2Zow97M73RPc1/GvQ4U=;
-	b=R/pnp8Zeyq+adzat/cco2i0vqQCWeWgF7cEtNGqjDiyqi+sbKFk/KnHpyazxSll6eXyAYP
-	bvMijIaOgOU8bAlFEugwiR6M9RhXK1qrmcHMMNinol3pJ8hJzKk5NuX9utWOLsc+35IK56
-	2ESQ7vj470wrB1AWZu3JjcsvDja+SjI=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-524-ewEautHJMya3PrE8ptHmoQ-1; Wed, 15 May 2024 11:42:05 -0400
-X-MC-Unique: ewEautHJMya3PrE8ptHmoQ-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 7218E80118E;
-	Wed, 15 May 2024 15:42:04 +0000 (UTC)
-Received: from bmarzins-01.fast.eng.rdu2.dc.redhat.com (bmarzins-01.fast.eng.rdu2.dc.redhat.com [10.6.23.12])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id 6641028E2;
-	Wed, 15 May 2024 15:42:04 +0000 (UTC)
-Received: from bmarzins-01.fast.eng.rdu2.dc.redhat.com (localhost [127.0.0.1])
-	by bmarzins-01.fast.eng.rdu2.dc.redhat.com (8.17.2/8.17.1) with ESMTPS id 44FFg4f3119750
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Wed, 15 May 2024 11:42:04 -0400
-Received: (from bmarzins@localhost)
-	by bmarzins-01.fast.eng.rdu2.dc.redhat.com (8.17.2/8.17.2/Submit) id 44FFg4q7119749;
-	Wed, 15 May 2024 11:42:04 -0400
-Date: Wed, 15 May 2024 11:42:04 -0400
-From: Benjamin Marzinski <bmarzins@redhat.com>
-To: Yang Yang <yang.yang@vivo.com>
-Cc: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
-        Mikulas Patocka <mpatocka@redhat.com>, dm-devel@lists.linux.dev,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/5] dm: support retrieving struct dm_target from struct
- dm_dev
-Message-ID: <ZkTXzG1yrPmW64Z6@redhat.com>
-References: <20240514090445.2847-1-yang.yang@vivo.com>
- <20240514090445.2847-4-yang.yang@vivo.com>
+	s=arc-20240116; t=1715787845; c=relaxed/simple;
+	bh=VyPLhSs86jn7k0Wyf379x2auUMCzO4Vjfb/ZY9fCbio=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=R5WNNnyjYs3uL9KC61TxvQvh1rBF1hAnfvc0Bsr5AmAvykgKyMsb045bl7PhFatXzMYw4E6OC92CrXLVc93VyzTcpSTrrwRkY/9Nf4aoIzeV+8YPvnwT3NJGn32pIZndBUJdr9s9P76POnsjgFprUrTDjc0QCZEHCOQsB/Zdg/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gnAKmxkT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78F4BC4AF07;
+	Wed, 15 May 2024 15:44:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715787844;
+	bh=VyPLhSs86jn7k0Wyf379x2auUMCzO4Vjfb/ZY9fCbio=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=gnAKmxkTzT6ldywcJZfubR1DUiTiM0NOxYrwJhzFxh05H8QOY4OdGrKEIqlIHMqCd
+	 /LVt74c1vJnNflQwm2ucYNp5XbVhBA6gmODeNqHQ7jzuDCab+6DIs5xHJnXgmGOT6c
+	 YqGndBsR6mlpXiv02X91dy91QLK/luP7FYKBnlDMeYHcr8qPjGndMKN8DC3Dso6EFH
+	 lL+/CRVG2BZM8zLpsUF+XdZzyf/djL+l+Ix2ISoeYDNS/SwKR6GsV7mD9HMyIAtWWd
+	 4yvOfQed58rvMsn3CX12ytlOj2oImA/p4p4p8R3yh64dCUMRT+6aWvvFlWtWoUg0wS
+	 52FA/P7HUkp6w==
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2e0933d3b5fso104596471fa.2;
+        Wed, 15 May 2024 08:44:04 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVzffVV3smpeS7k5Dm+BeTu50AZ1P+JiGd+CcDEuWMnCacn/LQ5CgRT3iPWDF2VzZfUla0qOOuWBspQWBJwrrd5BtXun5i8TzyOX0hb/OZ37zREqevO40e8WX3duxlVUrg/+BzZHbMX05RWEoXYzm0=
+X-Gm-Message-State: AOJu0YzFxwFC/KedqSDgoQnyzL0VOhDYjti2PdzmOzEXyXiG+Sk0f2Rl
+	B8Vi5t9K6tUK0rAOk99BrGJvoDHOh6sFbkmW4soEd5JvJMW5KPcnJF49hZDjB0s58tGXj1we/qj
+	Yv4SZm67rh+zjTJWexAJ4I+UVnRI=
+X-Google-Smtp-Source: AGHT+IEG9Pi5RYQYmU94hJvMF0ljnnODEoOc6w+NP4apBt7czmZrR81mPLVgEe5NETinznGzePpXC2WPrvtBqgmsblE=
+X-Received: by 2002:a05:651c:23c:b0:2e0:e470:882f with SMTP id
+ 38308e7fff4ca-2e51ff5ffebmr112422491fa.28.1715787842865; Wed, 15 May 2024
+ 08:44:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240514090445.2847-4-yang.yang@vivo.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.5
+References: <200d273a83906a68a1c4a9298c415980737be811.1715781469.git.geert+renesas@glider.be>
+In-Reply-To: <200d273a83906a68a1c4a9298c415980737be811.1715781469.git.geert+renesas@glider.be>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Wed, 15 May 2024 17:43:51 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXEzmUFmYyHiT5h1ZT8v+nWiP_0_MMdtT0y8vsTC-drjNQ@mail.gmail.com>
+Message-ID: <CAMj1kXEzmUFmYyHiT5h1ZT8v+nWiP_0_MMdtT0y8vsTC-drjNQ@mail.gmail.com>
+Subject: Re: [PATCH] ARM: Fix userspace enter on LPAE with CC_OPTIMIZE_FOR_SIZE=y
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Russell King <linux@armlinux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Kees Cook <keescook@chromium.org>, 
+	Russell King <rmk+kernel@armlinux.org.uk>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Stefan Wahren <wahrenst@gmx.net>, linux-arm-kernel@lists.infradead.org, 
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, May 14, 2024 at 05:04:42PM +0800, Yang Yang wrote:
-> Add a list to the struct dm_dev structure to store the associated
-> targets, while also allowing differentiation between different target
-> types.
+On Wed, 15 May 2024 at 16:02, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+>
+> Booting an LPAE-enabled kernel built with CONFIG_CC_OPTIMIZE_FOR_SIZE=y
+> fails when starting userspace:
+>
+>     Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000004
+>     CPU: 1 PID: 1 Comm: init Tainted: G        W        N 6.9.0-rc1-koelsch-00004-g7af5b901e847 #1930
+>     Hardware name: Generic R-Car Gen2 (Flattened Device Tree)
+>     Call trace:
+>      unwind_backtrace from show_stack+0x10/0x14
+>      show_stack from dump_stack_lvl+0x78/0xa8
+>      dump_stack_lvl from panic+0x118/0x398
+>      panic from do_exit+0x1ec/0x938
+>      do_exit from sys_exit_group+0x0/0x10
+>     ---[ end Kernel panic - not syncing: Attempted to kill init!  exitcode=0x00000004 ]---
+>
+> Add the missing memory clobber to cpu_set_ttbcr(), as suggested by
+> Russell King.
+>
+> Force inlining of uaccess_save_and_enable(), as suggested by Ard
+> Biesheuvel.
+>
+> The latter fixes booting on Koelsch.
+>
+> Fixes: 7af5b901e84743c6 ("ARM: 9358/2: Implement PAN for LPAE by TTBR0 page table walks disablement")
+> Closes: https://lore.kernel.org/r/CAMuHMdWTAJcZ9BReWNhpmsgkOzQxLNb5OhNYxzxv6D5TSh2fwQ@mail.gmail.com/
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-I still think this is more complex than it needs to be. If devices that
-support flush_pass_around can guarantee that:
+This works around what appears to be a compiler bug (see my reply to
+the other thread), and this change (the __always_inline in particular)
+seems to work around it, so
 
-1. They will send a flush bio to all of their table devices
-2. They are fine with another target sending the flush bio to their
-   table devices
+Acked-by: Ard Biesheuvel <ardb@kernel.org>
 
-Then I don't see why we need the table devices to keep track of all the
-different target types that are using them. Am I missing something here?
 
-If we don't need to worry about sending a flush bio to a target of each
-type that is using a table device, then all we need to do is call
-__send_empty_flush_bios() for enough targets to cover all the table
-devices. This seems a lot easier to track. We just need another flag in
-dm_target, something like sends_pass_around_flush.
-
-When a target calls dm_get_device(), if it adds a new table device to
-t->devices, then it's the first target in this table to use that device.
-If flush_pass_around is set for this target, then it also sets
-sends_pass_around_flush. In __send_empty_flush() if the table has
-flush_pass_around set, when you iterate through the devices, you only
-call __send_empty_flush_bios() for the ones with sends_pass_around_flush
-set.
-
-Or am I overlooking something?
-
--Ben
-
-> 
-> Signed-off-by: Yang Yang <yang.yang@vivo.com>
 > ---
->  drivers/md/dm-table.c         | 36 +++++++++++++++++++++++++++++++++++
->  include/linux/device-mapper.h |  3 +++
->  2 files changed, 39 insertions(+)
-> 
-> diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
-> index bd68af10afed..f6554590b7af 100644
-> --- a/drivers/md/dm-table.c
-> +++ b/drivers/md/dm-table.c
-> @@ -741,6 +741,8 @@ int dm_table_add_target(struct dm_table *t, const char *type,
->  	if (ti->flush_pass_around == 0)
->  		t->flush_pass_around = 0;
->  
-> +	INIT_LIST_HEAD(&ti->list);
-> +
->  	return 0;
->  
->   bad:
-> @@ -2134,6 +2136,25 @@ void dm_table_postsuspend_targets(struct dm_table *t)
->  	suspend_targets(t, POSTSUSPEND);
->  }
->  
-> +static int dm_link_dev_to_target(struct dm_target *ti, struct dm_dev *dev,
-> +		sector_t start, sector_t len, void *data)
-> +{
-> +	struct list_head *targets = &dev->targets;
-> +	struct dm_target *pti;
-> +
-> +	if (!list_empty(targets)) {
-> +		list_for_each_entry(pti, targets, list) {
-> +			if (pti->type == ti->type)
-> +				return 0;
-> +		}
-> +	}
-> +
-> +	if (list_empty(&ti->list))
-> +		list_add_tail(&ti->list, targets);
-> +
-> +	return 0;
-> +}
-> +
->  int dm_table_resume_targets(struct dm_table *t)
+> Feel free to fold into the original commit.
+>
+> Apparently the "From: Catalin Marinas <catalin.marinas@arm.com>" in
+> https://lore.kernel.org/r/20240312-arm32-lpae-pan-v3-4-532647afcd38@linaro.org
+> is not reflected in commit 7af5b901e84743c6?
+> ---
+>  arch/arm/include/asm/proc-fns.h | 2 +-
+>  arch/arm/include/asm/uaccess.h  | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/arm/include/asm/proc-fns.h b/arch/arm/include/asm/proc-fns.h
+> index 9b3105a2a5e0691e..b4986a23d8528a50 100644
+> --- a/arch/arm/include/asm/proc-fns.h
+> +++ b/arch/arm/include/asm/proc-fns.h
+> @@ -187,7 +187,7 @@ static inline unsigned int cpu_get_ttbcr(void)
+>
+>  static inline void cpu_set_ttbcr(unsigned int ttbcr)
 >  {
->  	unsigned int i;
-> @@ -2162,6 +2183,21 @@ int dm_table_resume_targets(struct dm_table *t)
->  			ti->type->resume(ti);
->  	}
->  
-> +	if (t->flush_pass_around) {
-> +		struct list_head *devices = &t->devices;
-> +		struct dm_dev_internal *dd;
-> +
-> +		list_for_each_entry(dd, devices, list)
-> +			INIT_LIST_HEAD(&dd->dm_dev->targets);
-> +
-> +		for (i = 0; i < t->num_targets; i++) {
-> +			struct dm_target *ti = dm_table_get_target(t, i);
-> +
-> +			if (ti->type->iterate_devices)
-> +				ti->type->iterate_devices(ti, dm_link_dev_to_target, NULL);
-> +		}
-> +	}
-> +
->  	return 0;
+> -       asm("mcr p15, 0, %0, c2, c0, 2" : : "r" (ttbcr));
+> +       asm volatile("mcr p15, 0, %0, c2, c0, 2" : : "r" (ttbcr) : "memory");
 >  }
->  
-> diff --git a/include/linux/device-mapper.h b/include/linux/device-mapper.h
-> index 0893ff8c01b6..19e03f9b2589 100644
-> --- a/include/linux/device-mapper.h
-> +++ b/include/linux/device-mapper.h
-> @@ -169,6 +169,7 @@ struct dm_dev {
->  	struct dax_device *dax_dev;
->  	blk_mode_t mode;
->  	char name[16];
-> +	struct list_head targets;
->  };
->  
->  /*
-> @@ -298,6 +299,8 @@ struct dm_target {
->  	struct dm_table *table;
->  	struct target_type *type;
->  
-> +	struct list_head list;
-> +
->  	/* target limits */
->  	sector_t begin;
->  	sector_t len;
-> -- 
+>
+>  #else  /*!CONFIG_MMU */
+> diff --git a/arch/arm/include/asm/uaccess.h b/arch/arm/include/asm/uaccess.h
+> index 25d21d7d6e3efee0..6c9c16d767cfd5df 100644
+> --- a/arch/arm/include/asm/uaccess.h
+> +++ b/arch/arm/include/asm/uaccess.h
+> @@ -47,7 +47,7 @@ static __always_inline void uaccess_restore(unsigned int flags)
+>
+>  #elif defined(CONFIG_CPU_TTBR0_PAN)
+>
+> -static inline unsigned int uaccess_save_and_enable(void)
+> +static __always_inline unsigned int uaccess_save_and_enable(void)
+>  {
+>         unsigned int old_ttbcr = cpu_get_ttbcr();
+>
+> --
 > 2.34.1
-> 
-
+>
 
