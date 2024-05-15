@@ -1,88 +1,93 @@
-Return-Path: <linux-kernel+bounces-180227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 883748C6BB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 19:45:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B7948C6BB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 19:48:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26C99B22F84
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:45:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE21B1C22146
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:48:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F619158865;
-	Wed, 15 May 2024 17:45:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6E6E158862;
+	Wed, 15 May 2024 17:48:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uB9QVarF"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AKYetB93"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1C475660
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 17:45:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FB25158860;
+	Wed, 15 May 2024 17:48:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715795137; cv=none; b=a35Js6euX/LT1aW2qeuoto3AaUpJtLMCodAyjPh5BBKZ7D3sgXbTCvieQJ+1hYaak7gvIRM/9IaWlJt1TrAEoMkck2p1EYxjhHs0t4VmGhNCzSDM8RTd4B97vqlS/GOMcN7rHc5oC2Guf0BjDDd54SJbo7oLcVw3Iqqh716MMF8=
+	t=1715795288; cv=none; b=CyoJgP+dAzH5cCPj6PqyQ5p+6ZLmKQyTks+8dAVcQ0w9DodJX95p6c0YwFDB+MNRU4oa0wUtUvY2ScQgii2jAenyqOqQuWH/imm01J+EvYCDtj1wqgzNgdESSgEhTncR0GZW+lFwN2JVhAtY0r46EJ2E/Ixj0sj0u6Dh+gYjzsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715795137; c=relaxed/simple;
-	bh=4/Ooyl624TPv9kwXfjH+lDC71HS+OXDH+JgzPAYD2uM=;
+	s=arc-20240116; t=1715795288; c=relaxed/simple;
+	bh=xMrmqGZHOFO0FBB5gl+pygCJcHRq/yHK9bJC5kINOGg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rSJJKQ3URqojPkph7HPhbNzJX56+igxKUBRTjKAQ6JtA0/tNCZNzK2Im3fKyQIrI3k3/rGP3SfNFhU6Pi+ygAMFrfAG8T/Rpb98pENq/UViz22aAMK74UPwnW5lTckK/w/xj7IPGtQ9Hp3eupsVPHyDLOKfyLrHfNVrwDCqOSno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uB9QVarF; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-6f44dd41a5cso7042248b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 10:45:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715795135; x=1716399935; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Inmc+syrxkqK6aZQdAoIkvH5UOxtf+2Na/UaXVJLBFc=;
-        b=uB9QVarF9WLvj0e5WVOHnuGsT4TqCGGo5RmhUtWjXCWY1BVR6n5kkyJtwBRMnzM/MF
-         euunpYdjb1LA8eKBRVoFGytmRrXrX+i4tuDnPjUpxWqjm7TJY0BJfkxgBup+o6ZaflPZ
-         g7s21VvIlP93kTaDb4Fm6TQfmc5Y83UgJYI1UypSjOoq6lfKQoT9ksZmoZxfPdjH4qDO
-         OEaGdB71kyFqAPqPLmJKfV4BerByzLwgroow7UFyh08y2/UcN+bGHIxYpeat9sNnEXqc
-         dWqqPu4tOJ7OZaXC2hM5ttAgH3rCG1CFzuSHmLr8N5kT+3ITVRy17V77i5EPKBv3jkdv
-         JJ5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715795135; x=1716399935;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Inmc+syrxkqK6aZQdAoIkvH5UOxtf+2Na/UaXVJLBFc=;
-        b=j8NU2v1df1gIaumnja7Xlga/fTV2TvkXdXU6TjPryRmQ7FgWL7Z1YxhADpiElefeZx
-         nV6yjmLDBrDvEcK4jcfLY1b6JGC4iX5pzGL7CDud5IqjVX8x+mZzop0oIpIweAfK9LFG
-         2gIjPNnvXd2fJsFs+Np9Ih5jpuyH0brK26IueOZ9yH5/Pr6tY7KdKzHuy0j0MvR9Agl9
-         b1asJbfpJzfECvkCSkxFtfvI8+G+PA26Zznmd6/MNIhEaWmeHhnRw9G8BbwwmCb8jXqU
-         /OjABZ7yAjN9o4ZEJLUBmLcCODuc10M6js0BB5PdASgLV082X2EIC0bWrSFJqAaS/I2E
-         OQ2A==
-X-Forwarded-Encrypted: i=1; AJvYcCUx11W9k2M4QuQNARHtE62vRQ5jHX5Ezs60FKQ4NxPpJQIzXAsZWMGgRqltsgXBOfXac5eP8ihX54DMI31TBfS+8PhMvMyck73p+VuU
-X-Gm-Message-State: AOJu0YyX+Ax+IXEELwzn8kJ3lXe+R3HLotP7dat65+vYRpBlkMTSahzE
-	GzXlb6Pcllso3T1y4wZELsNg/qWm8QcMc4qL4F2L2cBtD22/OYdEz7V+NYhRZw==
-X-Google-Smtp-Source: AGHT+IHqT+V07QT8d8OIJOetBXVRP2MvqJqTkiAGp4q63p16McqvNFOMMSJe88kfRvnGTsQMprg35Q==
-X-Received: by 2002:a05:6a00:270f:b0:6f6:7b6c:51f6 with SMTP id d2e1a72fcca58-6f67b6c5295mr995107b3a.24.1715795135090;
-        Wed, 15 May 2024 10:45:35 -0700 (PDT)
-Received: from google.com (57.92.83.34.bc.googleusercontent.com. [34.83.92.57])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2a828e2sm11379011b3a.72.2024.05.15.10.45.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 May 2024 10:45:34 -0700 (PDT)
-Date: Wed, 15 May 2024 17:45:31 +0000
-From: Carlos Llamas <cmllamas@google.com>
-To: Yenchia Chen <yenchia.chen@mediatek.com>
-Cc: stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Sasha Levin <sashal@kernel.org>, Simon Horman <horms@kernel.org>,
-	Zhengchao Shao <shaozhengchao@huawei.com>,
-	Pedro Tammela <pctammela@mojatatu.com>,
-	Ryosuke Yasuoka <ryasuoka@redhat.com>, Thomas Graf <tgraf@suug.ch>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH 5.15 2/2] netlink: annotate data-races around sk->sk_err
-Message-ID: <ZkT0u3RMc89Fe6PV@google.com>
-References: <20240515073644.32503-1-yenchia.chen@mediatek.com>
- <20240515073644.32503-3-yenchia.chen@mediatek.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=f+sldQiMxKdMKKwW2WAT/1qB/j0JVpRS8g9+VfIck4eV/8/+AcqH37CvGP6AtsO6T7NQpy5hFaZfMoSGjhs8mKSBZuJFVA5F4xqHlzLgp3YcYdRpySoDixx/hYIQVrSl6eGcH/jFoBUuS61fWdM7IymjTBSwqjvfUbXOSujq3Kg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AKYetB93; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715795286; x=1747331286;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=xMrmqGZHOFO0FBB5gl+pygCJcHRq/yHK9bJC5kINOGg=;
+  b=AKYetB93aeRHL4liWdUeJ/4O8Z4IGNSPbjv0TRa1mb8Pn2rrL/Vm4ciz
+   FDjYmUFnaftu/FngCM4lA8ZpugDYsr7vkYZgL3eXSPa4jslx5cv5a9WG0
+   YoHkS/ampttlhefT5SA8eeaktYr40Swv90XC9d+QK8afea+vbYMXqU+iT
+   a/syZ9xYBjI6iHdtlqIxyukUbJzAzXqeXqrWjhwpa4RU3NBiEjEY5b/D+
+   9msHFI6akHpxuf6skR0DDBL9EihpKgox3n2O8C1XISt1ds9TcTbcr8Rt3
+   eqTUgBUOpbRXDXxqEQK4KDblm8t3LfIKHDaVAb3xC6w7jrc/2OBzc/cYm
+   w==;
+X-CSE-ConnectionGUID: hSAAVt/QRRiZm2tj3F0e8w==
+X-CSE-MsgGUID: i7fLzU+RS+aLQHimJxb/0Q==
+X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="23266189"
+X-IronPort-AV: E=Sophos;i="6.08,162,1712646000"; 
+   d="scan'208";a="23266189"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 10:48:01 -0700
+X-CSE-ConnectionGUID: vrKLvf9nSoWN9pcJPKbFLw==
+X-CSE-MsgGUID: lIOSSUD+Ra2E1OgS3yl50Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,162,1712646000"; 
+   d="scan'208";a="36019653"
+Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 15 May 2024 10:47:57 -0700
+Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s7IjK-000D6H-1O;
+	Wed, 15 May 2024 17:47:54 +0000
+Date: Thu, 16 May 2024 01:47:09 +0800
+From: kernel test robot <lkp@intel.com>
+To: Daniel Gomez <da.gomez@samsung.com>,
+	"hughd@google.com" <hughd@google.com>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"willy@infradead.org" <willy@infradead.org>,
+	"jack@suse.cz" <jack@suse.cz>,
+	"mcgrof@kernel.org" <mcgrof@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+	"djwong@kernel.org" <djwong@kernel.org>,
+	Pankaj Raghav <p.raghav@samsung.com>,
+	"dagmcr@gmail.com" <dagmcr@gmail.com>,
+	"yosryahmed@google.com" <yosryahmed@google.com>,
+	"baolin.wang@linux.alibaba.com" <baolin.wang@linux.alibaba.com>,
+	"ritesh.list@gmail.com" <ritesh.list@gmail.com>,
+	"lsf-pc@lists.linux-foundation.org" <lsf-pc@lists.linux-foundation.org>,
+	"david@redhat.com" <david@redhat.com>,
+	"chandan.babu@oracle.com" <chandan.babu@oracle.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"brauner@kernel.org" <brauner@kernel.org>,
+	Daniel Gomez <da.gomez@samsung.com>
+Subject: Re: [PATCH 11/12] shmem: add file length arg in shmem_get_folio()
+ path
+Message-ID: <202405160144.a9ad9CX5-lkp@intel.com>
+References: <20240515055719.32577-12-da.gomez@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,58 +96,72 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240515073644.32503-3-yenchia.chen@mediatek.com>
+In-Reply-To: <20240515055719.32577-12-da.gomez@samsung.com>
 
-On Wed, May 15, 2024 at 03:36:38PM +0800, Yenchia Chen wrote:
-> From: Eric Dumazet <edumazet@google.com>
-> 
-> syzbot caught another data-race in netlink when
-> setting sk->sk_err.
-> 
-> Annotate all of them for good measure.
-> 
-> BUG: KCSAN: data-race in netlink_recvmsg / netlink_recvmsg
-> 
-> write to 0xffff8881613bb220 of 4 bytes by task 28147 on cpu 0:
-> netlink_recvmsg+0x448/0x780 net/netlink/af_netlink.c:1994
-> sock_recvmsg_nosec net/socket.c:1027 [inline]
-> sock_recvmsg net/socket.c:1049 [inline]
-> __sys_recvfrom+0x1f4/0x2e0 net/socket.c:2229
-> __do_sys_recvfrom net/socket.c:2247 [inline]
-> __se_sys_recvfrom net/socket.c:2243 [inline]
-> __x64_sys_recvfrom+0x78/0x90 net/socket.c:2243
-> do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-> do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
-> entry_SYSCALL_64_after_hwframe+0x63/0xcd
-> 
-> write to 0xffff8881613bb220 of 4 bytes by task 28146 on cpu 1:
-> netlink_recvmsg+0x448/0x780 net/netlink/af_netlink.c:1994
-> sock_recvmsg_nosec net/socket.c:1027 [inline]
-> sock_recvmsg net/socket.c:1049 [inline]
-> __sys_recvfrom+0x1f4/0x2e0 net/socket.c:2229
-> __do_sys_recvfrom net/socket.c:2247 [inline]
-> __se_sys_recvfrom net/socket.c:2243 [inline]
-> __x64_sys_recvfrom+0x78/0x90 net/socket.c:2243
-> do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-> do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
-> entry_SYSCALL_64_after_hwframe+0x63/0xcd
-> 
-> value changed: 0x00000000 -> 0x00000016
-> 
-> Reported by Kernel Concurrency Sanitizer on:
-> CPU: 1 PID: 28146 Comm: syz-executor.0 Not tainted 6.6.0-rc3-syzkaller-00055-g9ed22ae6be81 #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/06/2023
-> 
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> Signed-off-by: Eric Dumazet <edumazet@google.com>
-> Reported-by: syzbot <syzkaller@googlegroups.com>
-> Reviewed-by: Simon Horman <horms@kernel.org>
-> Link: https://lore.kernel.org/r/20231003183455.3410550-1-edumazet@google.com
-> Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-> Signed-off-by: yenchia.chen <yenchia.chen@mediatek.com>
-> ---
+Hi Daniel,
 
-The conflict resolution looks good to me, thanks!
+kernel test robot noticed the following build warnings:
 
-Reviewed-by: Carlos Llamas <cmllamas@google.com>
+[auto build test WARNING on akpm-mm/mm-everything]
+[also build test WARNING on xfs-linux/for-next brauner-vfs/vfs.all linus/master v6.9 next-20240515]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Daniel-Gomez/splice-don-t-check-for-uptodate-if-partially-uptodate-is-impl/20240515-135925
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20240515055719.32577-12-da.gomez%40samsung.com
+patch subject: [PATCH 11/12] shmem: add file length arg in shmem_get_folio() path
+config: openrisc-defconfig (https://download.01.org/0day-ci/archive/20240516/202405160144.a9ad9CX5-lkp@intel.com/config)
+compiler: or1k-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240516/202405160144.a9ad9CX5-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405160144.a9ad9CX5-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> mm/shmem.c:2382: warning: Function parameter or struct member 'len' not described in 'shmem_get_folio'
+
+
+vim +2382 mm/shmem.c
+
+^1da177e4c3f41 Linus Torvalds          2005-04-16  2356  
+d7468609ee0f90 Christoph Hellwig       2024-02-19  2357  /**
+d7468609ee0f90 Christoph Hellwig       2024-02-19  2358   * shmem_get_folio - find, and lock a shmem folio.
+d7468609ee0f90 Christoph Hellwig       2024-02-19  2359   * @inode:	inode to search
+d7468609ee0f90 Christoph Hellwig       2024-02-19  2360   * @index:	the page index.
+d7468609ee0f90 Christoph Hellwig       2024-02-19  2361   * @foliop:	pointer to the folio if found
+d7468609ee0f90 Christoph Hellwig       2024-02-19  2362   * @sgp:	SGP_* flags to control behavior
+d7468609ee0f90 Christoph Hellwig       2024-02-19  2363   *
+d7468609ee0f90 Christoph Hellwig       2024-02-19  2364   * Looks up the page cache entry at @inode & @index.  If a folio is
+d7468609ee0f90 Christoph Hellwig       2024-02-19  2365   * present, it is returned locked with an increased refcount.
+d7468609ee0f90 Christoph Hellwig       2024-02-19  2366   *
+9d8b36744935f8 Christoph Hellwig       2024-02-19  2367   * If the caller modifies data in the folio, it must call folio_mark_dirty()
+9d8b36744935f8 Christoph Hellwig       2024-02-19  2368   * before unlocking the folio to ensure that the folio is not reclaimed.
+9d8b36744935f8 Christoph Hellwig       2024-02-19  2369   * There is no need to reserve space before calling folio_mark_dirty().
+9d8b36744935f8 Christoph Hellwig       2024-02-19  2370   *
+d7468609ee0f90 Christoph Hellwig       2024-02-19  2371   * When no folio is found, the behavior depends on @sgp:
+8d4dd9d741c330 Akira Yokosawa          2024-02-27  2372   *  - for SGP_READ, *@foliop is %NULL and 0 is returned
+8d4dd9d741c330 Akira Yokosawa          2024-02-27  2373   *  - for SGP_NOALLOC, *@foliop is %NULL and -ENOENT is returned
+d7468609ee0f90 Christoph Hellwig       2024-02-19  2374   *  - for all other flags a new folio is allocated, inserted into the
+d7468609ee0f90 Christoph Hellwig       2024-02-19  2375   *    page cache and returned locked in @foliop.
+d7468609ee0f90 Christoph Hellwig       2024-02-19  2376   *
+d7468609ee0f90 Christoph Hellwig       2024-02-19  2377   * Context: May sleep.
+d7468609ee0f90 Christoph Hellwig       2024-02-19  2378   * Return: 0 if successful, else a negative error code.
+d7468609ee0f90 Christoph Hellwig       2024-02-19  2379   */
+4e1fc793ad9892 Matthew Wilcox (Oracle  2022-09-02  2380) int shmem_get_folio(struct inode *inode, pgoff_t index, struct folio **foliop,
+02efe2fbe45ffd Daniel Gomez            2024-05-15  2381  		enum sgp_type sgp, size_t len)
+4e1fc793ad9892 Matthew Wilcox (Oracle  2022-09-02 @2382) {
+4e1fc793ad9892 Matthew Wilcox (Oracle  2022-09-02  2383) 	return shmem_get_folio_gfp(inode, index, foliop, sgp,
+02efe2fbe45ffd Daniel Gomez            2024-05-15  2384  			mapping_gfp_mask(inode->i_mapping), NULL, NULL, len);
+4e1fc793ad9892 Matthew Wilcox (Oracle  2022-09-02  2385) }
+d7468609ee0f90 Christoph Hellwig       2024-02-19  2386  EXPORT_SYMBOL_GPL(shmem_get_folio);
+4e1fc793ad9892 Matthew Wilcox (Oracle  2022-09-02  2387) 
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
