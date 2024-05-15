@@ -1,101 +1,102 @@
-Return-Path: <linux-kernel+bounces-180050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F0DB8C695A
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:11:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67A408C696D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:13:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F9E8B209C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 15:11:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08B511F22358
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 15:13:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86E27155752;
-	Wed, 15 May 2024 15:11:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Movt4rzK"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37B185DF3B;
-	Wed, 15 May 2024 15:11:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24E8A155752;
+	Wed, 15 May 2024 15:12:56 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2636B5DF3B;
+	Wed, 15 May 2024 15:12:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715785868; cv=none; b=lJfJAFmas6usBkBoiucyUJKkYoeFTkVzC0/hd8RzkGWjXwSl8lr89DB8HKEgbLLR3mNtxWEG3hBbfnFV0RQuM/AN6gojsCtOHFJSUUJo4cYQ9ipKAsgs+GQTi9ixslO/wajJVOAypSwHCOU7M6C5Q8DnUqvpHvgz1aaSoLVk68I=
+	t=1715785975; cv=none; b=mnb8I8/u1jNUbHH+87va+NTe4EauKqXSe5okGcUAP2w0cofb8256EJ1Z1yEUU8JSm8IUeUTlVPQ3cRrCm/G/aXeKzCwuL50EIOpZYY8JH1AfbQeN2cM9POnBVTHbagMymN20Jf0LswPfInHxc01CY7fuAGXzausIWSo5QZGVYAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715785868; c=relaxed/simple;
-	bh=29PrztJZldYF2W2DVZi/w2+hJZPuUm3z2k2Ch5n3sjw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P5Lq4H2dwq+mwY6oeIq+zAqikVbAE+lTXWydauBGMEQUU3bUj35kIPm7ZByejJZQOlVbLthVToMLpAtrmvksYgX4roj03LkMJkUHQq4KHP8EuCgkyQG30qVTCQjB21ZKXzmUW71VnAMWPiqZp8cPxumQgYJ18RnwhdSeR992WOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Movt4rzK; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
-	In-Reply-To:References; bh=1e9w9yqkxxgBKEE7I+MvdChO+ZAZRqAgVmll2NsjAr8=; b=Mo
-	vt4rzKoVlCN2wfo++WXtU3LCg5ZuCVBl1CD0HbT4ueshfpTaWzmLafUQ8HNKF9GgCgC8Z6uanupSy
-	jOWUW2Siy8fycsiebaA8l0b4E6xw24SBYbUZGecTXC/RamsY+mF0WQLCj0lQwrHrGYrnd5XQYAq8e
-	ocA70c1n+DAUU0c=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1s7GHL-00FSaI-2I; Wed, 15 May 2024 17:10:51 +0200
-Date: Wed, 15 May 2024 17:10:51 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Thomas =?iso-8859-1?Q?Ge=DFler?= <gessler_t@brueckmann-gmbh.de>
-Cc: Thomas Gessler <thomas.gessler@brueckmann-gmbh.de>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	MD Danish Anwar <danishanwar@ti.com>,
-	Ravi Gunasekaran <r-gunasekaran@ti.com>
-Subject: Re: [PATCH 2/2] net: phy: dp83869: Fix RGMII-SGMII and 1000BASE-X
-Message-ID: <7b951904-6193-45f1-8878-7bf3ecf83b74@lunn.ch>
-References: <20240514122728.1490156-1-thomas.gessler@brueckmann-gmbh.de>
- <20240514122728.1490156-2-thomas.gessler@brueckmann-gmbh.de>
- <38bc6947-391b-478d-ab71-6cc8d9428275@lunn.ch>
- <338669-229a-5eac-3170-3477e5ae840@brueckmann-gmbh.de>
+	s=arc-20240116; t=1715785975; c=relaxed/simple;
+	bh=KPfaFcwSv4AAosi3TF8IMY04Xs3ZbwuWqxspN57gxmo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eyEKQjdpxRQSOvSYheV7vPw7rppORJ8kPyeZeSCfZf5EyTXKHX59lywpN0CI2h4+VGzrtyaMymChFlD2nLQ2W3yNQnhICCLfG5hdj0qNN0d3R6KaaxiowXtP0NpH97h2g0u7jH9AOqLGCdd1EtbqJ4eCdg4yhASX5Ni6CqbmSnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EAF0D1042;
+	Wed, 15 May 2024 08:13:17 -0700 (PDT)
+Received: from e127643.arm.com (unknown [10.57.35.76])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 0CB5F3F7A6;
+	Wed, 15 May 2024 08:12:49 -0700 (PDT)
+From: James Clark <james.clark@arm.com>
+To: linux-perf-users@vger.kernel.org
+Cc: gregkh@linuxfoundation.org,
+	James Clark <james.clark@arm.com>,
+	John Garry <john.g.garry@oracle.com>,
+	Will Deacon <will@kernel.org>,
+	Mike Leach <mike.leach@linaro.org>,
+	Leo Yan <leo.yan@linux.dev>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] MAINTAINERS: perf: arm64: Catch all Arm files and folders
+Date: Wed, 15 May 2024 17:12:20 +0200
+Message-Id: <20240515151221.204163-1-james.clark@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <338669-229a-5eac-3170-3477e5ae840@brueckmann-gmbh.de>
 
-On Wed, May 15, 2024 at 10:15:33AM +0200, Thomas Geßler wrote:
-> On Tue, 14 May 2024, Andrew Lunn wrote:
-> > On Tue, May 14, 2024 at 02:27:28PM +0200, Thomas Gessler wrote:
-> > > The RGMII-to-SGMII mode is special, because the chip does not really act
-> > > as a PHY in this mode but rather as a bridge.
-> > 
-> > It is known as a media converter. You see them used between an RGMII
-> > port and an SFP cage. Is that your use case?
-> 
-> Basically. I would call this an RGMII-SGMII bridge. A "media converter" I
-> would call a device that changes the physical medium, like 1000BASE-T
-> copper/RJ45 to 1000BASE-X fiber/SFP.
-> 
-> We have this chip on a daughter card with exposed SGMII lines that can be
-> plugged into customer-specific motherboards. The motherboard will have
-> either an SGMII-copper PHY (this can also be a DP83869) with 10/100/1000
-> auto-neg enabled but without MDIO exposed to the CPU on the daughter card;
-> or an SFP cage. The SFP module, in turn, can be for 1000BASE-X fiber,
-> 1000BASE-X-to-1000-BASE-T copper, or SGMII copper supporting 10/100/1000
-> auto-neg.
+Catch all files and folders with Arm in the name in tools/perf/ up to
+two levels deep. There currently no false positives.
 
-The SFP use case is probably not too hard to support. There are PHYs
-drivers today which have the needed plumbing for this. Look at the
-marvell10g driver, its mv3310_sfp_ops. qcom/qca807x.c: qca807x_sfp_ops
-etc.
+This catches lots of missing items like these and more:
 
-	Andrew
+  * util/arm-spe-decoder/
+    (The existing util/arm-spe* entry only matched files not folders)
+  * util/perf-regs-arch/perf_regs_arm.c
+  * scripts/python/arm-cs-trace-disasm.py
+  * tests/shell/test_arm_spe.sh
+
+Signed-off-by: James Clark <james.clark@arm.com>
+---
+ MAINTAINERS | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index ec0284125e8f..c5d0256d32dd 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -17318,9 +17318,10 @@ R:	Leo Yan <leo.yan@linux.dev>
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ S:	Supported
+ F:	tools/build/feature/test-libopencsd.c
+-F:	tools/perf/arch/arm*/
+-F:	tools/perf/pmu-events/arch/arm64/
+-F:	tools/perf/util/arm-spe*
++F:	tools/perf/*/*/*arm*
++F:	tools/perf/*/*/*arm*/
++F:	tools/perf/*/*arm*
++F:	tools/perf/*/*arm*/
+ F:	tools/perf/util/cs-etm*
+ 
+ PERSONALITY HANDLING
+-- 
+2.34.1
+
 
