@@ -1,98 +1,165 @@
-Return-Path: <linux-kernel+bounces-179687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A53E78C6352
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 11:01:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B01E8C635B
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 11:03:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 455E91F2353B
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:01:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DED01C225D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:03:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18E2457C8A;
-	Wed, 15 May 2024 09:01:26 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98E7E2AF0E;
-	Wed, 15 May 2024 09:01:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB6E457CB6;
+	Wed, 15 May 2024 09:02:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b="FoY/q1zS"
+Received: from mg.richtek.com (mg.richtek.com [220.130.44.152])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79ADC43144;
+	Wed, 15 May 2024 09:02:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.130.44.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715763685; cv=none; b=byp15qARUjrw1GdOs9gnM1VVnJQCe4hZjvjeBXSIhn9PwCChJahuqC9wPBeJV7MVJ0GTIeCHQSc5JK6vDXM5jXVGpRnvu+dW/YQvzftnFrcUmx7PwSQ8OzEKfcw0i7Dffbs9XzC8ThYmpryQEWSBHxybzag/dQyTrR0D2d0m7f0=
+	t=1715763769; cv=none; b=suslMWzJuAQ4ISXlBUkN4+R4OHmm5ieZZHN++3XqMonWteboPGgS7PuQ2eJ5aKmuSSan6ec/wtN+yDFyfBHTVtUWG1dEfFfexypQGzaCnAN2OUusNNuku33j1RC6zifavPBWHTSmRcpEvMXlC9NaIKMJKzwGeLqjQGuSvWieTLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715763685; c=relaxed/simple;
-	bh=VYvg12eai6+57lr4OCKIvPizXBy8aVBEYV3yUW48rY8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pKWObDykzL13/nVJpq+RaTYU0IC+hz6cLsm6d1zOkE5+8BhgmJYHhFSCTzIFLFYjoqR6wsYRkfFa0KnitBtFC6k3UbDMZbQS2eIkUG/Sp3Ijpm3uwzWIt/pANecKVGOXpn92pGnavT0Am8aDT+w/KZ0G5qJuduNkJXXyZnP+Two=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26F46C32781;
-	Wed, 15 May 2024 09:01:21 +0000 (UTC)
-Date: Wed, 15 May 2024 10:01:19 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Steven Price <steven.price@arm.com>
-Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Joey Gouly <joey.gouly@arm.com>,
-	Alexandru Elisei <alexandru.elisei@arm.com>,
-	Christoffer Dall <christoffer.dall@arm.com>,
-	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
-	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
-Subject: Re: [PATCH v2 10/14] arm64: Force device mappings to be non-secure
- shared
-Message-ID: <ZkR535Hmh3WkMYai@arm.com>
-References: <20240412084213.1733764-1-steven.price@arm.com>
- <20240412084213.1733764-11-steven.price@arm.com>
+	s=arc-20240116; t=1715763769; c=relaxed/simple;
+	bh=/VuNJcv05SfTwBFyWswb2YfPZ2EOktMAj3D+B5OcUcY=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AwenUxk98gR269Hz5q+fgLt7DzpxIHR+Dnk/R/saKGEbmh4f14mjYtFGTCX0IbbaRRoJ1Pv+ELgEVGMKOGhuq/AoJOgZtoiiXcylXOUtOufpWHshoj0O6AADJeXXjLcJf98o9ieQu/uI5SdNqi7YT1zlFAc043zdrY+A36ROFnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com; spf=pass smtp.mailfrom=richtek.com; dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b=FoY/q1zS; arc=none smtp.client-ip=220.130.44.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=richtek.com
+X-MailGates: (SIP:2,PASS,NONE)(compute_score:DELIVER,40,3)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=richtek.com;
+	s=richtek; t=1715763762;
+	bh=i1+/WjWovmhqSn2DxEiDFC8cbnMZSlltFGKOqzlSZhM=; l=3603;
+	h=Date:From:To:Subject:Message-ID:MIME-Version;
+	b=FoY/q1zSUCCc9IUMYk6ImKvSdKjx9ZZrHgFaDChb98bTkywLjSOpHWleq+D7K2kJD
+	 SejbRdi2lff/JH1J3EXAGgqIIAVxJFxf4C7Gqv+0TdTQu8eyKT8NeJT8xs1vP1OzHL
+	 y9eec8uzBHSGnKofLCjxNMiBxUH+rI5b2ljG4sbpzqa4ucWZ4L6xZGabwTpS7I7oG2
+	 khQ95Wis63Ldw2ObRnoL5eBUyGBAJ9oj5CF2fM3BcXUmvMzEHIaXDP9P+XwSW7djZy
+	 Y9OrWzDFOMQwT6V6Zd0MYFgK75lkfPOQMnoJIMzC5tzKA4pgkzrsYbqhvSI1V74kR+
+	 5r8f6jey5jcyw==
+Received: from 192.168.10.47
+	by mg.richtek.com with MailGates ESMTPS Server V6.0(3213217:0:AUTH_RELAY)
+	(envelope-from <alina_yu@richtek.com>)
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256/256); Wed, 15 May 2024 17:02:30 +0800 (CST)
+Received: from ex3.rt.l (192.168.10.46) by ex4.rt.l (192.168.10.47) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 15 May
+ 2024 17:02:29 +0800
+Received: from linuxcarl2.richtek.com (192.168.10.154) by ex3.rt.l
+ (192.168.10.45) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Wed, 15 May 2024 17:02:29 +0800
+Date: Wed, 15 May 2024 17:02:29 +0800
+From: Alina Yu <alina_yu@richtek.com>
+To: Conor Dooley <conor.dooley@microchip.com>
+CC: Conor Dooley <conor@kernel.org>, Mark Brown <broonie@kernel.org>,
+	<lgirdwood@gmail.com>, <robh+dt@kernel.org>,
+	<krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<johnny_lai@richtek.com>, <cy_huang@richtek.com>
+Subject: Re: [PATCH v3 6/6] regulator: dt-bindings: rtq2208: Add property to
+ get ldo of RTQ2208 is adjustable or not
+Message-ID: <20240515090229.GA15889@linuxcarl2.richtek.com>
+References: <cover.1715340537.git.alina_yu@richtek.com>
+ <6a3a90d9aa2022dfb92e124e417f3e72c2f28b0b.1715340537.git.alina_yu@richtek.com>
+ <20240513-tissue-repave-13d2e3bf88fd@spud>
+ <d97752ed-4032-4681-b28f-17f149fdc3d4@sirena.org.uk>
+ <20240514-plunging-chair-803d9e342e6f@spud>
+ <20240515073830.GA12525@linuxcarl2.richtek.com>
+ <20240515-wrinkle-engross-ab6b089baae3@wendy>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20240412084213.1733764-11-steven.price@arm.com>
+In-Reply-To: <20240515-wrinkle-engross-ab6b089baae3@wendy>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
-On Fri, Apr 12, 2024 at 09:42:09AM +0100, Steven Price wrote:
-> From: Suzuki K Poulose <suzuki.poulose@arm.com>
+On Wed, May 15, 2024 at 09:06:06AM +0100, Conor Dooley wrote:
+> On Wed, May 15, 2024 at 03:38:30PM +0800, Alina Yu wrote:
+> > On Tue, May 14, 2024 at 07:01:21PM +0100, Conor Dooley wrote:
+> > > On Tue, May 14, 2024 at 11:34:29AM +0100, Mark Brown wrote:
+> > > > On Mon, May 13, 2024 at 05:22:54PM +0100, Conor Dooley wrote:
+> > > > > On Fri, May 10, 2024 at 08:06:25PM +0800, Alina Yu wrote:
+> > > > 
+> > > > > > +            richtek,fixed-microvolt = <1200000>;
+> > > > > >              regulator-min-microvolt = <1200000>;
+> > > > > >              regulator-max-microvolt = <1200000>;
+> > > > 
+> > > > > I'm dumb and this example seemed odd to me. Can you explain to me why
+> > > > > it is not sufficient to set min-microvolt == max-microvolt to achieve
+> > > > > the same thing?
+> > > > 
+> > > > This is for a special mode where the voltage being configured is out of
+> > > > the range usually supported by the regulator, requiring a hardware
+> > > > design change to achieve.  The separate property is because otherwise we
+> > > > can't distinguish the case where the mode is in use from the case where
+> > > > the constraints are nonsense, and we need to handle setting a fixed
+> > > > voltage on a configurable regulator differently to there being a
+> > > > hardware fixed voltage on a normally configurable regulator.
+> > > 
+> > > Cool, I think an improved comment message and description would be
+> > > helpful then to describe the desired behaviour that you mention here.
+> > > The commit message in particular isn't great:
+> > > | Since there is no way to check is ldo is adjustable or not.
+> > > | As discussing in v2 series, 'richtek,fixed-microvolt' is added for that.
+> > > | user is supposed to know whether vout of ldo is adjustable.
+> > > 
+> > > It also doesn't seem like this sort of behaviour would be limited to
+> > > Richtek either, should this actually be a common property in
+> > > regulator.yaml w/o the vendor prefix?
+> > > 
+> > > Cheers,
+> > > Conor.
+> > 
+> > 
+> > Hi Conor,
+> > 
+> > 
+> > Should I update v4 to fix the commit message ?
+> > I will modify it as follows.
+> > 
+> > 
+> > There are two types of LDO VOUT: fixed voltage mode and adjustable voltage mode.
+> > 
+> > As the fixed voltage for the LDO is outside the range of the adjustable voltage mode,
+> > the constraints for this scenario are not suitable to represent both modes.
 > 
-> Device mappings (currently) need to be emulated by the VMM so must be
-> mapped shared with the host.
-
-You say "currently". What's the plan when the device is not emulated?
-How would the guest distinguish what's emulated and what's not to avoid
-setting the PROT_NS_SHARED bit?
-
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Signed-off-by: Steven Price <steven.price@arm.com>
-> ---
->  arch/arm64/include/asm/pgtable.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> That's definitely an improvement, yes. The property description could
+> also do with an update to explain that this is for a situation where the
+> fixed voltage is out of the adjustable range, it doesn't mention that at
+> all right now.
 > 
-> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-> index f5376bd567a1..db71c564ec21 100644
-> --- a/arch/arm64/include/asm/pgtable.h
-> +++ b/arch/arm64/include/asm/pgtable.h
-> @@ -598,7 +598,7 @@ static inline void set_pud_at(struct mm_struct *mm, unsigned long addr,
->  #define pgprot_writecombine(prot) \
->  	__pgprot_modify(prot, PTE_ATTRINDX_MASK, PTE_ATTRINDX(MT_NORMAL_NC) | PTE_PXN | PTE_UXN)
->  #define pgprot_device(prot) \
-> -	__pgprot_modify(prot, PTE_ATTRINDX_MASK, PTE_ATTRINDX(MT_DEVICE_nGnRE) | PTE_PXN | PTE_UXN)
-> +	__pgprot_modify(prot, PTE_ATTRINDX_MASK, PTE_ATTRINDX(MT_DEVICE_nGnRE) | PTE_PXN | PTE_UXN | PROT_NS_SHARED)
+> > In version 3, a property has been added to specify the fixed voltage.
+> 
+> Don't refer to previous versions of the patchset in your commit message,
+> that doesn't help people reading a commit log in the future etc. If
+> there's some relevant information in a previous version patchset, put it
+> in the commit message directly.
+> 
+> Cheers,
+> Conor.
 
-This pgprot_device() is not the only one used to map device resources.
-pgprot_writecombine() is another commonly macro. It feels like a hack to
-plug one but not the other and without any way for the guest to figure
-out what's emulated.
+Hi Conor,
 
-Can the DT actually place those emulated ranges in the higher IPA space
-so that we avoid randomly adding this attribute for devices?
+May I modify the description as follows ?
 
--- 
-Catalin
+        properties:
+          richtek,fixed-microvolt:
+            description: |
+-              If it exists, the voltage is unadjustable.
+-              There is no risk-free method for software to determine whether the ldo vout is fixed or not.
+-              Therefore, it can only be done in this way.
++
++              There are two types of LDO VOUT: fixed voltage mode and adjustable voltage mode.
++              For fixed voltage mode, the working voltage is out side the range of the adjustable mode.
++              The constraints are unsuitable to describe both modes.
++              Therefore, this property is added to specify the fixed LDO VOUT.
+
+Thanks,
+Alina
 
