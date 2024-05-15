@@ -1,93 +1,155 @@
-Return-Path: <linux-kernel+bounces-179580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1560E8C61A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:25:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 26DC28C6121
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:05:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 455201C21DD2
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 07:25:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CB5C1C21C5D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 07:05:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AFCE5915C;
-	Wed, 15 May 2024 07:22:50 +0000 (UTC)
-Received: from mxout37.expurgate.net (mxout37.expurgate.net [91.198.224.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB6A141C7F;
+	Wed, 15 May 2024 07:05:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HIZkmPNZ"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 325924AEDD;
-	Wed, 15 May 2024 07:22:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.198.224.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A2E241760
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 07:05:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715757769; cv=none; b=KKPlggd2MPhjbI8EiP3I5cFb9AHAhRVbwXxEBd4lLk+5iNwbfBujhs1yTPWVjjjLC8vOCAfIFuit5eaYy/DkSC2rkLStJk+whjdt8APBhdDGU7noH2Xo6yJTOfyjDDeRta+6FEJSecj2pmOb/yA8XomNgEGCne+sqS3K9M6xfm8=
+	t=1715756744; cv=none; b=YcyFvUDn5574tF5N39QsQZNhzqBhkaea93Baf80h8YO2ZJbthuoyDo7ZJ0FyGXH5UvB61a+m72rE9iZZlcg8+9w2C0PkTeRRNvge6xV9ZU/ZZGrCNBWtajsSE/8cEizw3iOTwmMpIfirysAdcZgqtUOKUFSNrxEvbf6IUDaaW44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715757769; c=relaxed/simple;
-	bh=MMJTxIse0XMR2yy8WVH7zqEil4nlE4hSMxlj11n2foc=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Ks7yy1+t4FiW1UsiVNPLcFV1GrUKN5bhsSFEBaDs8ST7nNAzVtl0tN+eVDngCjoIJ7mxdgyslAJVBNxSh6JPCv/stUUGbnxZ4JMnTDHMNl5HKT/Uo334sJ/torq3pj8ZSyJze5+n0qRm5z0w2p8O8RRYBgdiBTDUtSkcHreOWFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=brueckmann-gmbh.de; spf=pass smtp.mailfrom=brueckmann-gmbh.de; arc=none smtp.client-ip=91.198.224.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=brueckmann-gmbh.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=brueckmann-gmbh.de
-Received: from [127.0.0.1] (helo=localhost)
-	by relay.expurgate.net with smtp (Exim 4.92)
-	(envelope-from <gessler_t@brueckmann-gmbh.de>)
-	id 1s78hU-0025li-Fc; Wed, 15 May 2024 09:05:20 +0200
-Received: from [217.239.223.202] (helo=zimbra.brueckmann-gmbh.de)
-	by relay.expurgate.net with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <gessler_t@brueckmann-gmbh.de>)
-	id 1s78hT-00B0ZK-5Q; Wed, 15 May 2024 09:05:19 +0200
-Received: from zimbra.brueckmann-gmbh.de (localhost [127.0.0.1])
-	by zimbra.brueckmann-gmbh.de (Postfix) with ESMTPS id 0A0ECCA5DDD;
-	Wed, 15 May 2024 09:05:18 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by zimbra.brueckmann-gmbh.de (Postfix) with ESMTP id EE310CA6122;
-	Wed, 15 May 2024 09:05:17 +0200 (CEST)
-Received: from zimbra.brueckmann-gmbh.de ([127.0.0.1])
- by localhost (zimbra.brueckmann-gmbh.de [127.0.0.1]) (amavis, port 10026)
- with ESMTP id j1AwKLY4gM0P; Wed, 15 May 2024 09:05:17 +0200 (CEST)
-Received: from [10.0.11.14] (unknown [10.0.11.14])
-	by zimbra.brueckmann-gmbh.de (Postfix) with ESMTPSA id D325FCA5DDD;
-	Wed, 15 May 2024 09:05:17 +0200 (CEST)
-Date: Wed, 15 May 2024 09:04:27 +0200 (CEST)
-From: =?ISO-8859-15?Q?Thomas_Ge=DFler?= <gessler_t@brueckmann-gmbh.de>
-To: Andrew Lunn <andrew@lunn.ch>
-cc: Thomas Gessler <thomas.gessler@brueckmann-gmbh.de>, 
-    Heiner Kallweit <hkallweit1@gmail.com>, 
-    Russell King <linux@armlinux.org.uk>, 
-    "David S. Miller" <davem@davemloft.net>, 
-    Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-    Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, 
-    linux-kernel@vger.kernel.org, MD Danish Anwar <danishanwar@ti.com>, 
-    Ravi Gunasekaran <r-gunasekaran@ti.com>
-Subject: Re: [PATCH 1/2] net: phy: dp83869: Add PHY ID for chip revision 3
-In-Reply-To: <b2db4e61-8bc1-4076-a2b9-7b6a028461aa@lunn.ch>
-Message-ID: <54725d-4c84-2a25-54bf-5a56aa17edc5@brueckmann-gmbh.de>
-References: <20240514122728.1490156-1-thomas.gessler@brueckmann-gmbh.de> <b2db4e61-8bc1-4076-a2b9-7b6a028461aa@lunn.ch>
+	s=arc-20240116; t=1715756744; c=relaxed/simple;
+	bh=RtKyoqiDLhVTAKC8deDb8sf4vqkR0RW+M2pcJe2zDNs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WlIhoYXCCwvmiuhe9r5LtpQ7iVuHNCPZjeUzy4SJbrTLWiaTvr9rtgHVUQOaX7PW7wdHhxfec+82qkeGmvS7tsPCVAwdman/iEH7xeNjJdNHGOU+uR1Nw3P/nUNuff9T2KyRXS4vVtgW3nhKJDAl40Gb2Sj/KRYzMCKLiSRf1oo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HIZkmPNZ; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42017f8de7aso19014385e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 00:05:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715756741; x=1716361541; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ntMSL/st0iLS0tnCXAPXzy7ZhcKJCMyFAGnRoDypkYA=;
+        b=HIZkmPNZ/yejRdoAx6tBdtuYpzfeaIRHuD3v5RdKFrEOA/ZZzqN2y/w0p/NcZdiwjp
+         OUoCiMQFvHI4dNNbTO1TmCl8CZ3iXTJFFdXzRNyd7iO2sls8Q0dLiAAqbtE5wW4Lhxqs
+         qY3RprLQQebc0ySSDenhzB5x4SL4vukhA0DRtOnppzLCd24ehUT7EPpArYRCFHe70YMT
+         Ravyl7+G6FJCOO0fRoLKhZctx2ARm+HcztRr3K0lOCjXgrGyjRfjJW4OIoV+b/UCxH0m
+         cXfeln6X8RogBZ8HYiEbHOxtqwFZ8ua1R6LOSv/KpegA7D9UYLHL3eG9cb+MhgOLR6a+
+         /M4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715756741; x=1716361541;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ntMSL/st0iLS0tnCXAPXzy7ZhcKJCMyFAGnRoDypkYA=;
+        b=L2qNR7ZoPbegmRrxnsVJdrCC2C+ZHQ6wsfGqptjIJ7yZS1++fNpHhwJnkE6Em14ib0
+         9VfGQf2hdyQ1SAHt85JrSyxM5/zgx10nvH8E3Sjh+ofLDCq/qMn+FJurz3RQnpRfbLb1
+         FPocs3MF95ZS3cM9XHTb6oF9VcPdduPK+oSPuEtAcTvKatOmgvQDhYGEiNn20JCaBzwl
+         JENMLjMS0svlouRmE0fiKGCcXC1T3y75JyON43RNaE6VRNh1MSFg98/KUWW8IwZjdgC2
+         NJn/7s2tWMYUMYgkVYd4baJJIvi4uYpOGmoMcl99v44c8kS3sue9C1GyfdE4yy8tS46A
+         fOYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUcyFWc+md+dOfgUHWkv/Ks1OKG0FTQgU1MHcvVNNpL1yyJcVsDQi6vO2e0YbCsVc9c/tXysoWSYGbxiBsuumnJpTp6P4fZjkgP4glS
+X-Gm-Message-State: AOJu0Yxkz0PCWvqsHUYcKJ+NXc8Extk4+BoL4pcNpEs2R7IAseomf5Rz
+	FCT5uBx9rpLhtcqRQggMg92jaPFihe1JOZiaeiPguZWFvm2wwpwnecVZDkJT5MQ=
+X-Google-Smtp-Source: AGHT+IG7fOzxfMdPYwa7Ec8fNnQWuOlyBziHShIetO8nEu6c++Wn3p0WJyf7YVbIYB9frPW8Z+99pw==
+X-Received: by 2002:a05:600c:4686:b0:419:d5cd:5ba with SMTP id 5b1f17b1804b1-41feaa2f45cmr97326285e9.7.1715756740631;
+        Wed, 15 May 2024 00:05:40 -0700 (PDT)
+Received: from localhost ([149.14.240.163])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41fccee9292sm221053815e9.37.2024.05.15.00.05.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 May 2024 00:05:40 -0700 (PDT)
+Date: Wed, 15 May 2024 09:05:37 +0200
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Thomas Richard <thomas.richard@bootlin.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Tony Lindgren <tony@atomide.com>,
+	Aaro Koskinen <aaro.koskinen@iki.fi>,
+	Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+	Vignesh R <vigneshr@ti.com>, Andi Shyti <andi.shyti@kernel.org>,
+	Peter Rosin <peda@axentia.se>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Siddharth Vadapalli <s-vadapalli@ti.com>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-omap@vger.kernel.org, linux-i2c@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	gregory.clement@bootlin.com, theo.lebrun@bootlin.com,
+	thomas.petazzoni@bootlin.com, u-kumar1@ti.com
+Subject: Re: [PATCH v5 05/11] PCI: cadence: Extract link setup sequence from
+ cdns_pcie_host_setup()
+Message-ID: <0bee2d4b-b190-4353-ab29-003364721a3c@suswa.mountain>
+References: <20240102-j7200-pcie-s2r-v5-0-4b8c46711ded@bootlin.com>
+ <20240102-j7200-pcie-s2r-v5-5-4b8c46711ded@bootlin.com>
+ <111df2a5-7e05-480c-a5a5-57cf8d83c0d0@moroto.mountain>
+ <56b2bbcb-7181-4640-93b3-0cf3e2029367@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-purgate-type: clean
-X-purgate: clean
-X-purgate-ID: 151534::1715756719-A76F8356-60AE8429/0/0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <56b2bbcb-7181-4640-93b3-0cf3e2029367@bootlin.com>
 
-Hi Andrew,
+On Tue, May 14, 2024 at 03:15:34PM +0200, Thomas Richard wrote:
+> On 4/16/24 16:16, Dan Carpenter wrote:
+> > On Tue, Apr 16, 2024 at 03:29:54PM +0200, Thomas Richard wrote:
+> >> diff --git a/drivers/pci/controller/cadence/pcie-cadence-host.c b/drivers/pci/controller/cadence/pcie-cadence-host.c
+> >> index 5b14f7ee3c79..93d9922730af 100644
+> >> --- a/drivers/pci/controller/cadence/pcie-cadence-host.c
+> >> +++ b/drivers/pci/controller/cadence/pcie-cadence-host.c
+> >> @@ -497,6 +497,30 @@ static int cdns_pcie_host_init(struct device *dev,
+> >>  	return cdns_pcie_host_init_address_translation(rc);
+> >>  }
+> >>  
+> >> +int cdns_pcie_host_link_setup(struct cdns_pcie_rc *rc)
+> >> +{
+> >> +	struct cdns_pcie *pcie = &rc->pcie;
+> >> +	struct device *dev = rc->pcie.dev;
+> >> +	int ret;
+> >> +
+> >> +	if (rc->quirk_detect_quiet_flag)
+> >> +		cdns_pcie_detect_quiet_min_delay_set(&rc->pcie);
+> >> +
+> >> +	cdns_pcie_host_enable_ptm_response(pcie);
+> >> +
+> >> +	ret = cdns_pcie_start_link(pcie);
+> >> +	if (ret) {
+> >> +		dev_err(dev, "Failed to start link\n");
+> >> +		return ret;
+> >> +	}
+> >> +
+> >> +	ret = cdns_pcie_host_start_link(rc);
+> >> +	if (ret)
+> >> +		dev_dbg(dev, "PCIe link never came up\n");
+> > 
+> > If we're going to ignore this error the message should be a dev_err()
+> > at least.
+> 
+> Hello Dan,
+> 
+> In fact it could not be really an error.
+> If you physically don't have a device on the PCIe bus,
+> cdns_pcie_host_start_link() will not return 0.
+> 
+> So if we use dev_err(), we will always have the error if there is no
+> device on the PCIe bus.
 
-On Tue, 14 May 2024, Andrew Lunn wrote:
-> As the name suggests, it matches on the model. The revision is
-> ignored. A mask is applied to ignore the lower nibble. So this change
-> looks pointless.
+Ah okay.  Thanks for looking at this.  It feels like maybe
+cdns_pcie_host_start_link() should just check for that at the start and
+return 0 instead of doing waiting 1 second and returning -ETIMEOUT.
+But I don't know this code well enough to say if that's even possible.
 
-Ah, I see. I did not realize that the match ignores the lower bits. I was
-having trouble getting the driver to match when first experimenting with
-the chip and thought this was part of the problem. As it turns out, it now
-works without this patch.
-
-Please disregard it.
-
-Thomas
+regards,
+dan carpenter
 
