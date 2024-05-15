@@ -1,84 +1,153 @@
-Return-Path: <linux-kernel+bounces-179961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E38A48C6822
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:00:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CCFC8C6824
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:00:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C99CB24EC2
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 14:00:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBA012844C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 14:00:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AABC13FD65;
-	Wed, 15 May 2024 13:58:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F16FC13F45D;
+	Wed, 15 May 2024 13:58:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="woyymNwH";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Fs12Qqsw"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Bz+kHhm3"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21C5B13EFEF
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 13:58:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 146B913F00F;
+	Wed, 15 May 2024 13:58:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715781508; cv=none; b=iRGoj+iHwalWVl0RHAkZ1WCZOdFoaAmKrOlYd/ZyGZ3vQqiiwpLgRis+VFLc2yD9QIf0wMawE8g8X/P0g/xLFwIDVKxvtmHs263hlooDc34nOJZsWluDQYNOeCxenNxp/0M1/P8TRCHMeK3N92FJ7GFdSLX6G4mk5FyfMthIye8=
+	t=1715781534; cv=none; b=Nmqo8obTccoNNg9cBsIEKomaVhFWPOz12s46TQXqxIAyVIRf8n2B+tQUUeXyRBy615cxtQyamy3CunE1VMl7dbJTDyhmv6lOxMCqxTU78ihtSlCi8kOcLeEZL8A8VQyOn9mpJkxjVOyBmtJFF7HhmrJ9RsGo1MsQESONstjPji4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715781508; c=relaxed/simple;
-	bh=E+7nNphptL+TRxLMeDw1zOU56LjsxRvw8zXBEuRZdSQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=s0Aofdkk/J0cjLOHC8WlPyILCFyhb8RujMVW4nqkttmwHfr2e7u6ZaZm0Q5cegKx//FZKT8vyXbvzlu2iD3irEu1RTnEq7RgiNADPvhILtnjFncG4TLBM09xqxvfeJPvAfCAeUVvgf8ybHDlvvXjHV8pjqI2Lm/OoKOG2pNmUY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=woyymNwH; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Fs12Qqsw; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1715781505;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=euVTqk1JuslrNTa2ntwqAAJS2vk5/4vkRaGenZcgtGo=;
-	b=woyymNwHwLxP3SdUdoRpLVltVmovaHxb7Aay4zhgvewNIyXUZVWg80vpfTh9nrbGf3XMgo
-	gJmVEK8Kn6l+IrsrHg2rNkg7jDK07Z4isVPAVcven+PHscs24NGt4NNJxytUDZFHa9h9di
-	ZFP8ITJHoBPYh4Km/oN0ZYvKCg5JMACg/WaVhlX5tx/Z3xS+xTL8kclLqMSQv+rt6IWBl2
-	SiLY81+BDjG5MhJSQJeet7pGDgeph2AKUrRXBIaCQtBzgod2r5EhWFkwJfWcj3nNMUcV7b
-	jBs2EI40xnmD/sIrF5YRioD4cMbC6bGQQ2u1gEeEWpGUnP7XbcRMFGgBDkiuZA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1715781505;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=euVTqk1JuslrNTa2ntwqAAJS2vk5/4vkRaGenZcgtGo=;
-	b=Fs12Qqsw3ysH5OtmG1qZHCI+NQdsaRY19dPaWBBOd4EqkSNGLVLFpHfXsZJqzAaPtOY6c/
-	NVEFuHgRs7Og/pAg==
-To: Xi Ruoyao <xry111@xry111.site>, Dave Hansen
- <dave.hansen@linux.intel.com>, Michael Kelley <mhklinux@outlook.com>,
- Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
- <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org, Sean
- Christopherson <seanjc@google.com>, Andrew Cooper
- <andrew.cooper3@citrix.com>
-Subject: Re: [PATCH v9 1/2] x86/mm: Don't disable PCID if "incomplete Global
- INVLPG flushes" is fixed by microcode
-In-Reply-To: <32e53b74f382f691fb8f60d68b093901964bd1c9.camel@xry111.site>
-References: <20240418205414.67735-1-xry111@xry111.site>
- <32e53b74f382f691fb8f60d68b093901964bd1c9.camel@xry111.site>
-Date: Wed, 15 May 2024 15:58:24 +0200
-Message-ID: <87bk57kwhr.ffs@tglx>
+	s=arc-20240116; t=1715781534; c=relaxed/simple;
+	bh=qJbRaR6NkJBfjzwKxbQqvsyLU2P2MTCvM6hGxUt4TRc=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=jjDWi85DHNx1l7wE7X49t9NdMKYjhLe1Wlm25wTobBvGIHkJJ+jf9pHVXcG8vQJIAhx4yiiRpqiSbsVU+m5/Bz/CoYBU18HZEQFG26jlXiwMutLq9NTcgq5xx7LvNL2qwg2+Jvy5CR+RTewlXPguUxB9kFRBYfQKcKjGl9Buyc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Bz+kHhm3; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353724.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44FDfX0D023613;
+	Wed, 15 May 2024 13:58:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ subject : to : cc : references : from : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=zPt37DEPyt+WFz7Qhwmd8YhDjXwM3w+eiE4uQ3f7kEo=;
+ b=Bz+kHhm3r5w7i5M7D6850hAvlijpvflEnP5mI80VknGWmLmmIInb5x+cK7USTNKL9hPp
+ a7PZm/6lcCD5DQQvRBpx8/xSZsdcgbx28GYScE8FuLiiEX+CcCaqUOmkGH5hvjxtoLQO
+ 36P94EjSxJlhXPq9qQXedalcm3SrFWk/VLNuj1V6QcDxAyjueYTZWcrq9A2TGNrZxu1y
+ sn7PKD4Q3I0FEyPaZbe5lgHstr2o3BqGISaUbo+3NS32edWv6y4MTv7JArTYnM7rubD5
+ Mjp8VeUFjmGAvVXFn6661X6R6RbWg6PH/jPO4G09q54xYtR0UfHCqeisUYefFA6l/ieR aA== 
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y4x5681nx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 15 May 2024 13:58:37 +0000
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44FAiFlv018764;
+	Wed, 15 May 2024 13:58:36 GMT
+Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3y2k0tm50m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 15 May 2024 13:58:36 +0000
+Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
+	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44FDwXnp44499700
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 15 May 2024 13:58:35 GMT
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 18E845806A;
+	Wed, 15 May 2024 13:58:33 +0000 (GMT)
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id CBA5F58068;
+	Wed, 15 May 2024 13:58:31 +0000 (GMT)
+Received: from [9.67.88.41] (unknown [9.67.88.41])
+	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 15 May 2024 13:58:31 +0000 (GMT)
+Message-ID: <7859e867-ddf4-494f-8ddb-2949aafbb40a@linux.ibm.com>
+Date: Wed, 15 May 2024 08:58:31 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] crypto: X25519 core functions for ppc64le
+To: Andy Polyakov <appro@cryptogams.org>, linux-crypto@vger.kernel.org
+Cc: herbert@gondor.apana.org.au, leitao@debian.org, nayna@linux.ibm.com,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        mpe@ellerman.id.au, ltcgcw@linux.vnet.ibm.com, dtsen@us.ibm.com
+References: <20240514173835.4814-1-dtsen@linux.ibm.com>
+ <20240514173835.4814-3-dtsen@linux.ibm.com>
+ <847f2e4f-ace1-415d-b129-ed2751429eec@cryptogams.org>
+ <7eb6bf4b-5510-48fe-aa6c-ac5207d5a2c1@cryptogams.org>
+Content-Language: en-US
+From: Danny Tsen <dtsen@linux.ibm.com>
+In-Reply-To: <7eb6bf4b-5510-48fe-aa6c-ac5207d5a2c1@cryptogams.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 44D4IcrovAzxQUN07xlYZFX7Nka1sESy
+X-Proofpoint-GUID: 44D4IcrovAzxQUN07xlYZFX7Nka1sESy
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-15_07,2024-05-15_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1015
+ phishscore=0 lowpriorityscore=0 priorityscore=1501 suspectscore=0
+ malwarescore=0 mlxscore=0 spamscore=0 adultscore=0 mlxlogscore=945
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2405010000 definitions=main-2405150098
 
-On Wed, May 15 2024 at 18:46, Xi Ruoyao wrote:
+Hi Andy,
+
+Thanks for the info.  I should be able to do it.  I was hoping an 
+assembly guru like you can show me some tricks here if there is :)
+
+Thanks.
+
+-Danny
+
+On 5/15/24 8:33 AM, Andy Polyakov wrote:
+>>> +static void cswap(fe51 p, fe51 q, unsigned int bit)
+>>> +{
+>>> +    u64 t, i;
+>>> +    u64 c = 0 - (u64) bit;
+>>> +
+>>> +    for (i = 0; i < 5; ++i) {
+>>> +        t = c & (p[i] ^ q[i]);
+>>> +        p[i] ^= t;
+>>> +        q[i] ^= t;
+>>> +    }
+>>> +}
+>>
+>> The "c" in cswap stands for "constant-time," and the problem is that 
+>> contemporary compilers have exhibited the ability to produce 
+>> non-constant-time machine code as result of compilation of the above 
+>> kind of technique. The outcome is platform-specific and ironically 
+>> some of PPC code generators were observed to generate "most" 
+>> non-constant-time code. "Most" in sense that execution time 
+>> variations would be most easy to catch.
 >
-> Linux 6.9 is released.  Is this suitable as 6.10 material or do I need
-> to update something?
-
-If it still applies. Nothing to do.
+> Just to substantiate the point, consider 
+> https://godbolt.org/z/faYnEcPT7, and note the conditional branch in 
+> the middle of the loop, which flies in the face of constant-time-ness. 
+> In case you object 'bit &= 1' on line 7 in the C code. Indeed, if you 
+> comment it out, the generated code will be fine. But the point is that 
+> the compiler is capable of and was in fact observed to figure out that 
+> the caller passes either one or zero and generate the machine code in 
+> the assembly window. In other words 'bit &= 1' is just a reflection of 
+> what the caller does.
+>
+>> ... the permanent solution is to do it in assembly. I can put 
+>> together something...
+>
+> Though you should be able to do this just as well :-) So should I or 
+> would you?
+>
+> Cheers.
+>
 
