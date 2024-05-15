@@ -1,133 +1,95 @@
-Return-Path: <linux-kernel+bounces-179825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09C6F8C6610
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 14:03:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E1178C6613
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 14:03:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AF861C21C5D
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 12:03:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A34B1C21C14
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 12:03:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09D1F5A788;
-	Wed, 15 May 2024 12:03:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9629E757FD;
+	Wed, 15 May 2024 12:03:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=futuring-girl-com.20230601.gappssmtp.com header.i=@futuring-girl-com.20230601.gappssmtp.com header.b="HXt9wlOf"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tWm0WQZG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 092EA58AC3
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 12:03:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D214A58AC3;
+	Wed, 15 May 2024 12:03:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715774595; cv=none; b=EFYpAHVMGXAn+5eSVkKtDiCaMAdtGFBBF9W4QvddLph7jjIMHXObV/teBMRkblQ1/BttdchEz4tI1eRtFFOilnMWzTj+SJA7GloxXMyih5pKtGU0Vz9KmuccbHQ9Rog8KVplNJ6emOQrHeELP3lQWCHNgq4g1HHA7/QPttp0tvo=
+	t=1715774600; cv=none; b=UQ1xti6rwQKDx9D10Qo7vqwHpXfhJu2pUyA+CvS4abwIluFCmf9XfM69z1bBqkxfFSCHJyae+cepjwDaDwcv3Q8yTN0u4u69TTQa9LxNAvmYg+nPhmyL69BM99EPf+Gg+ln9D7pn0HH+PCkOZQ5bU8fSXnAkowaExZ6pcngiIG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715774595; c=relaxed/simple;
-	bh=cZULlQnzOZ2Pej2Sv06sBDw4hjTWF4t0tcOP2mtKUnY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XvmKlpwmD7Xu0BMSnQovBTB0BNL2lNatu3uo2nas4P67yDi8E5v94JuofMas68IC/TEDAnoV8YhJG1zGHQ+1Zqh/3zxR2iweQ7qEi0WMMYaDWDANs3EBVS4YbloE802kTtwwklDq0xWMtyok3s8vCCjc52MHGGoEqfiHujiBDHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=futuring-girl.com; spf=pass smtp.mailfrom=futuring-girl.com; dkim=pass (2048-bit key) header.d=futuring-girl-com.20230601.gappssmtp.com header.i=@futuring-girl-com.20230601.gappssmtp.com header.b=HXt9wlOf; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=futuring-girl.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=futuring-girl.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1eeabda8590so48991485ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 05:03:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=futuring-girl-com.20230601.gappssmtp.com; s=20230601; t=1715774593; x=1716379393; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4DcB2okqnAgkynFg9jcCuDayVN3zRAZHBcQStj5iFBs=;
-        b=HXt9wlOfvs2sIRCSWTFaAjblrRrOvJuDvO2b0jj921ZVX171pJfznv4gg1GbM2ChQ3
-         1Eli4ccfayEr4h5692lDV4dw3qJlzO6Ge+ZEFiFKmGMwSSz2XcSO2sNuESJtg9M+ygYn
-         LMSfq/+xtllH4zUx+YX+P1+tgRCCbWQSYve8vCYIId7vooCR5DcGplIsevzo1OubgYez
-         36Xv5TscXEy+rXBBYwuyOvTN5nWkzZxSrqZ6Gi6B2a7ik4YIqg9pe9Mwp38BmjaNl2MY
-         U8iamyKj3xZs8Pvh+VcuWZVNtjdnu2cxDCfuf2fHNwjvuEADflbf3Zxxj8wcaeMT85Yq
-         4qOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715774593; x=1716379393;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4DcB2okqnAgkynFg9jcCuDayVN3zRAZHBcQStj5iFBs=;
-        b=rEPAUf0OTjItkJhWl7ad7VgGfK4rwGL3g+mFDcy1XKBaUB7OnPVYGHIOGxa34ZFeza
-         BGg8Nl5NEqVEtIhblsIC5N/ExVQwcOJGoJgCIwoDT3XPb95Nf1MBVvz4vZZvYiFaQhSq
-         snMe6fDEDxw/B7vVNPDLOmCq7NRTz9FKSoMZrguQtG+SbfAI6Y4qWpKh9GhIOkXqenv4
-         bqrywvRy31tb1BPM/uguFJulbRLkzIDVlNFAq8fH8JgwehDKvtViSt7aZkXHYj/0XGIS
-         QgHgF4Vxe0FXKwOMML6Gs9Kj6gMCf6lRVPa2wrhtHeExgdinSM3KCpF+I9E2NQ1pPZvp
-         W0Ug==
-X-Forwarded-Encrypted: i=1; AJvYcCUDzTkWw3ycyAZhlMgmh0Jrr6Bn3VoAOCfIm4E03zQ99ZTtcCrY8cPmPjLksyIS4A+xHXcRS8E44h8IulvEJA/Yeoak5szD2XDvO7+k
-X-Gm-Message-State: AOJu0YwG+6Lgh2PneFyCvf9wYOc+UPCl7uoFgjXWDGDDXAP2f8Pg5951
-	844Ztet4A7JM2koR6023pUHdXi96R2QTHeLyo9iAXreCkqj2n76sqHIAjZOzP6VgUf97siRRo7D
-	Q3mNZ9klOO46j1rkvDgatLajqLDy5f346zxMZOA==
-X-Google-Smtp-Source: AGHT+IFy3gmVgZkNpyZFzjDzx0VAz+u8/kXHpLODxZzc9kj++XjUCO678HSP+AFx1+KEX/6z3WmoITL5ipamNpy1768=
-X-Received: by 2002:a17:902:7d95:b0:1ee:b2ff:c93a with SMTP id
- d9443c01a7336-1ef43f3e4admr144321025ad.40.1715774593154; Wed, 15 May 2024
- 05:03:13 -0700 (PDT)
+	s=arc-20240116; t=1715774600; c=relaxed/simple;
+	bh=kfxt6JsqCE1IzZSlDw/+iyGpDKdZQRGvvHfBK97525Y=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=dGBzZG6F1mkO3RtxOipafTZCZPJLINTEEfMQa3VEsey6DTx2QPgWkyCiVUhcUSxqSERPsRidWWEhra38VncSpu0u6Ady1RXSk4aiMbWFOh2wdt+3LsEfaUHYcOYH7p+Q0ALAJrs32camPgi1hSVPH+wXWr/qTeevVy/QZHRiB+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tWm0WQZG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F27BC4AF07;
+	Wed, 15 May 2024 12:03:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715774599;
+	bh=kfxt6JsqCE1IzZSlDw/+iyGpDKdZQRGvvHfBK97525Y=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=tWm0WQZGtAjM8hMW47UD5kIiDpCVHnZyLFQ9wltS1Ljao2EyCXRroQV8DQooL3ub2
+	 Sq1F+0qxhn0u7tfXKNXYBoXbmaEEQHU5MpbxT3kujk0r8CU7QRP0mlprMV51COSh9T
+	 k7Muo8iDAC41WaqgvYYXMXgGEItOV9MI9ZhHgAa4NSPXcAiZu+nW9aBO35YIX6xAE2
+	 UC7nz1kUYDJdxbFGYgAldS24sd4eiDGYa7dR0eXxr9++V37bW61z60um1vgdwRTvlN
+	 M3UMbRejCh2dIlzH1luw0TtNALBQFK5MSV+rBTZSclsTm3FEMDFc9MucC3Z72zUvQQ
+	 p5KWr2DOaS6QA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240515082510.431870507@linuxfoundation.org>
-In-Reply-To: <20240515082510.431870507@linuxfoundation.org>
-From: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
-Date: Wed, 15 May 2024 21:03:01 +0900
-Message-ID: <CAKL4bV5YkLqnZJsLB6t-n0ZeSSZAHYsaE0c6=-=ohK8PBG8AvQ@mail.gmail.com>
-Subject: Re: [PATCH 6.6 000/309] 6.6.31-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 15 May 2024 15:03:15 +0300
+Message-Id: <D1A7BZNCNPW8.281BRWPJVW0JX@kernel.org>
+Cc: "James Bottomley" <James.Bottomley@hansenpartnership.com>, "Mimi Zohar"
+ <zohar@linux.ibm.com>, "David Howells" <dhowells@redhat.com>, "Paul Moore"
+ <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>,
+ <serge@hallyn.com>, <linux-integrity@vger.kernel.org>,
+ <keyrings@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <kernel-team@cloudflare.com>
+Subject: Re: [RFC PATCH 2/2] KEYS: implement derived keys
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Jarkko Sakkinen" <jarkko@kernel.org>, "Ignat Korchagin"
+ <ignat@cloudflare.com>
+X-Mailer: aerc 0.17.0
+References: <20240503221634.44274-1-ignat@cloudflare.com>
+ <20240503221634.44274-3-ignat@cloudflare.com>
+ <D19QW70177QG.2YC9XL0FT7VME@kernel.org>
+ <D19RM0OV7YUW.1ZEI72XQUREMQ@kernel.org>
+ <CALrw=nEnqBCBQKhK9ACc7tbicqkXaDD+Bjc1d90xizMvbb--oA@mail.gmail.com>
+ <D1A79NQ33IGG.OYIRO9S4YWZS@kernel.org>
+In-Reply-To: <D1A79NQ33IGG.OYIRO9S4YWZS@kernel.org>
 
-Hi Greg
-
-On Wed, May 15, 2024 at 5:27=E2=80=AFPM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+On Wed May 15, 2024 at 3:00 PM EEST, Jarkko Sakkinen wrote:
+> I did as much clarification as I possibly can.
 >
-> This is the start of the stable review cycle for the 6.6.31 release.
-> There are 309 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+> Also, if you look at confidential computing platforms there's exactly
+> two assets that they use lock into machine:
 >
-> Responses should be made by Fri, 17 May 2024 08:23:27 +0000.
-> Anything received after that time might be too late.
+> - Binary
+> - CPU material
 >
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.6.31-rc2.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.6.y
-> and the diffstat can be found below.
+> Only carved into stone immutable material for key derivation.
 >
-> thanks,
->
-> greg k-h
->
+> You can use mm_struct->exe_file binary if that will work out for you.
+> I'm done with this version.
 
-6.6.31-rc2 tested.
+Pretty good case for having SGX, TDX and SNP in something else than just
+Xeon's and EPYC's ;-)
 
-Build successfully completed.
-Boot successfully completed.
-No dmesg regressions.
-Video output normal.
-Sound output normal.
+But yeah within time limits I have I've used more quota for this
+than I should have.
 
-Lenovo ThinkPad X1 Carbon Gen10(Intel i7-1260P(x86_64) arch linux)
+I look at +1 (if there is one).
 
-[    0.000000] Linux version 6.6.31-rc2rv
-(takeshi@ThinkPadX1Gen10J0764) (gcc (GCC) 14.1.1 20240507, GNU ld (GNU
-Binutils) 2.42.0) #1 SMP PREEMPT_DYNAMIC Wed May 15 20:35:08 JST 2024
-
-Thanks
-
-Tested-by: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
+BR, Jarkko
 
