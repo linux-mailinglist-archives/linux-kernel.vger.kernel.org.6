@@ -1,196 +1,162 @@
-Return-Path: <linux-kernel+bounces-180139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 158398C6A94
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:29:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 545338C6A95
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:30:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CC151C22422
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:29:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D80B01F23616
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:30:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A053156677;
-	Wed, 15 May 2024 16:29:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7314D156978;
+	Wed, 15 May 2024 16:29:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PvPLn1wK"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xAk2LgJB";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6YyWOsQH";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XeiTY/KG";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="72Qj9JNV"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E618113EFE5;
-	Wed, 15 May 2024 16:29:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F41FC13EFE5
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 16:29:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715790583; cv=none; b=F24c/v2oBywfTw1nNjhPJx+IkWfBAb1a05g445B5B5xJAr4E+d9X5lwXC4+L0LVvkryx+dORSdcvQNHfUTLBcRwFdh6oENY2QQCkoDt5noqX7QCTjqx3G/qvS+UZgEwvYrKFdY3+PxDoUHxOzSTk+AYCGqNOfrORwiyJkCtDZKU=
+	t=1715790589; cv=none; b=m0YldSdDQoQBd1mTrKUgVf1F7/4g3OgPHnrydaJtRososyxud11WRdrdX/zZpHSTJFWEak5AhhKfb30MfMyzCKivvELww0sSavitBHRg6HsC4/KeRPpiQGdZ3xQlslvDrEdPnD17HciZFBRLtNDqe4vI/UHfw0tf88MfsyvpdaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715790583; c=relaxed/simple;
-	bh=rBBC+aSahEmVK7ZPwrfWO9sJBrFh5xxG85dkqntLIq8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Le4iUkKVIlE8V44OKta/dyxXZiNE5ffXPwU/E3+BzkOEhixb7SWLGvGZ7nlgfHov1dy7JZAPyaLgPucCUSNU+iQPsISKwNsr0a59ZIx5zB4imehyO04V9wjHLnhyA5UGIT4suZoaXw4mcqhdlWp7qlAB6G1nBmmGipwIncqXsWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PvPLn1wK; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a59a9d66a51so189768266b.2;
-        Wed, 15 May 2024 09:29:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715790580; x=1716395380; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=rBBC+aSahEmVK7ZPwrfWO9sJBrFh5xxG85dkqntLIq8=;
-        b=PvPLn1wKsSO9PJVvmVG+2WmNPx8vq5hWDU4auhlA+p075eYdXAfaLq0cSh8ebRZQEX
-         aU67e6aD63RAaQndV5fDagv90+iSY8BfRlnBJmUqnwnWjKPUahwuP5RjL8s7OYIx05QK
-         9avF+sslYmvsjgzJExtf0LSnWgG/mi6DM5647Ap7i1pjR963CjiV5msa9zCEd3Ix7Xtn
-         0dCA/fK3+7pEYbmW4WVVEFR0dXHF6a2ZehfE84xM57TOgv/0NUPbtk9sOzDFVE4PeBSa
-         rDrQXL7Ub1qlxkaBec/xZQTgJJ27FofvkLgG9I88Om8C+qLCj1MAwfRTpByASTC0/vEY
-         9G7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715790580; x=1716395380;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rBBC+aSahEmVK7ZPwrfWO9sJBrFh5xxG85dkqntLIq8=;
-        b=H4HBUuHVP6LLL7XYQYagi8vCAdSGiYDt9YJk/Rnvm5Z88H5wbDcq3HQkR1XRled9mq
-         x4/3f5+rR7HEXUzxdnPeff39/40A7VTg03YCYiaO37NvIGV+2IjhdYL0BRrQMU/x2csv
-         eGmE40WISuC93cCeqbHcroCJ1fU836LuZgxBtVOFEZiNZ2txt9pBdxTUBia+PLN5zZe6
-         5/4M0+xhL//ObCGfE3k1F64nen7ArzaKl/Z6OtJB06I2PXV6yODckxJTc/SEzoDY7zpL
-         4fyzFjlkVDzIRhVTdb2g6cEWD5UVZTmTq6wIOWe4TtWeU9wC9g/wxWBjARD6Y/I+nkrm
-         4ULA==
-X-Forwarded-Encrypted: i=1; AJvYcCUTmdvU/A3yTrG2z3HqinXdKMMC9Gavd6G45mqrAWtG03M9llrDCwUdw5gTiGV5cSPzYg3SX6DivBAwEjgvlUTAiGSaeJZh19HHPokckzyCFA33kuK8V+oe5yBcOUC2ETSgjnP9Y/M/IM6tysIqCNPmosBIAvDe8Y8cy/LYVIpU37xd3fLO5R/5RD4Z1lZwlLeJHORpzbqt
-X-Gm-Message-State: AOJu0Yy3+sQg2e9qrUe4P+mNXvGZzTEx/Reqi9W3KwzuWA7kE//A4Hyu
-	Ydk++98GubBj37aM8ppIrhNUREXDiFqdCFe2lsBX7dXbsMJEk750
-X-Google-Smtp-Source: AGHT+IFKimaUstziNEwfRQmnoURBuwCag4JfaSU65VBAInR3zjN+zSk8n2vTRLiJ26j9RrK4poO98A==
-X-Received: by 2002:a17:906:5a5a:b0:a5a:34ae:10ea with SMTP id a640c23a62f3a-a5a34ae118emr924333366b.76.1715790579864;
-        Wed, 15 May 2024 09:29:39 -0700 (PDT)
-Received: from [192.168.10.8] (31-10-206-125.static.upc.ch. [31.10.206.125])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17894d57sm881641966b.73.2024.05.15.09.29.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 May 2024 09:29:39 -0700 (PDT)
-Message-ID: <11e4ff07ad6c0e9077326cf288665922ccfc0afd.camel@gmail.com>
-Subject: Re: [PATCH v5] can: mcp251xfd: fix infinite loop when xmit fails
-From: Vitor Soares <ivitro@gmail.com>
-To: Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Thomas Kopp
- <thomas.kopp@microchip.com>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>, Vitor Soares <vitor.soares@toradex.com>,
- linux-can@vger.kernel.org,  netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Date: Wed, 15 May 2024 17:29:38 +0100
-In-Reply-To: <20240515-athletic-sensible-swine-4e7692-mkl@pengutronix.de>
-References: <20240514105822.99986-1-ivitro@gmail.com>
-	 <20240514-corgi-of-marvelous-peace-968f5c-mkl@pengutronix.de>
-	 <465a2ddb222beed7c90b36c523633fc5648715bb.camel@gmail.com>
-	 <20240515-athletic-sensible-swine-4e7692-mkl@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1715790589; c=relaxed/simple;
+	bh=OJxGoKrjfqlK/MUgk1i9U5Q/Yg8IRzNWwgxtSetyJsY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e7oJk79iKoWEqFS0D44yaMcIdcvbFKerXgZQ1SqEq1DneVpgeDPI/o0VY9RuSKeE2DKShoyyEDNmEHe1wNfEAlWmePJ5iJ8Tx1FnsC/md0jbPYDO2Kbhk/smMoyImynOabjs4xMnrhYyXaS3Prqm6GM7NHO9tpoVFuzHtyN2pFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xAk2LgJB; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=6YyWOsQH; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XeiTY/KG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=72Qj9JNV; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id E8A20208E9;
+	Wed, 15 May 2024 16:29:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1715790586;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=V0jxss9V3AeagCi7uN8ZfpOTCNV12gVUbXNo/Msryv4=;
+	b=xAk2LgJBh5BjtZhYRDFqUTuLDyYBSnMOkW1TvWgURfTyGY4OOgEq/Jm+d6XRAtZpxISoDy
+	CSwdzYqkIp9SfnSFUCDmju+FpTI7eNkdIhp6lyMxZ9X9M/oagAiwmQMSN2UbOinFoFxACA
+	qWWxCfgqmH+bbzy4ZJwt8XUynzAx0YQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1715790586;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=V0jxss9V3AeagCi7uN8ZfpOTCNV12gVUbXNo/Msryv4=;
+	b=6YyWOsQHYDi+S+4JEq8FhnMivO1mvxmmbnMIVZiOsxQ+HeSsr66HdoRIO+ISFIez5YoVDv
+	4AGyRkhPDmMThzDQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1715790585;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=V0jxss9V3AeagCi7uN8ZfpOTCNV12gVUbXNo/Msryv4=;
+	b=XeiTY/KGWFOgUCfP3ojvAHwdVRT3DC/Lk2oc57drMmfJunYP0zuSru7s99PfVb/2Fyk657
+	Hd1UOgVj3Ohb9HtOSa7WMXeo1B900DHgRJR4iw6usu2uSR04V0VzH+QaX8cQSKkJxpXsnr
+	YwWZk7tr5Vnnl2AftxwhgTKTaO+Lcfk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1715790585;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=V0jxss9V3AeagCi7uN8ZfpOTCNV12gVUbXNo/Msryv4=;
+	b=72Qj9JNVYu2+F6gryyPrY+s7k7XppIQXhvJqBzTM3IldZrx+g0jx0g8QScxsHoRMkbudLo
+	8EMXd/DGEGWsG9Aw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D13131372E;
+	Wed, 15 May 2024 16:29:45 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id SkrlMvniRGYgHgAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Wed, 15 May 2024 16:29:45 +0000
+Date: Wed, 15 May 2024 18:29:44 +0200
+From: David Sterba <dsterba@suse.cz>
+To: syzbot <syzbot+93cbdd0ab421adc5275d@syzkaller.appspotmail.com>
+Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com, tj@kernel.org
+Subject: Re: [syzbot] WARNING in kernfs_remove_by_name_ns (3)
+Message-ID: <20240515162944.GQ4449@suse.cz>
+Reply-To: dsterba@suse.cz
+References: <00000000000047624505d0453c58@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <00000000000047624505d0453c58@google.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Flag: NO
+X-Spam-Score: 0.60
+X-Spam-Level: 
+X-Spamd-Result: default: False [0.60 / 50.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=647adc5a101c9bf3];
+	BAYES_HAM(-0.90)[85.97%];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TAGGED_RCPT(0.00)[93cbdd0ab421adc5275d];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[syzkaller.appspot.com:url,appspotmail.com:email,imap1.dmz-prg2.suse.org:helo];
+	RCVD_COUNT_TWO(0.00)[2];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5]
 
-On Wed, 2024-05-15 at 13:12 +0200, Marc Kleine-Budde wrote:
-> On 14.05.2024 15:34:01, Vitor Soares wrote:
-> > > > +void mcp251xfd_tx_obj_write_sync(struct work_struct *ws)
-> > > > +{
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct mcp251xfd_priv *priv =
-=3D container_of(ws, struct
-> > > > mcp251xfd_priv,
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 tx_work);
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct mcp251xfd_tx_obj *tx_o=
-bj =3D priv->tx_work_obj;
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct mcp251xfd_tx_ring *tx_=
-ring =3D priv->tx;
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int err;
-> > > > +
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 err =3D spi_sync(priv->spi, &=
-tx_obj->msg);
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (err)
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 mcp251xfd_tx_failure_drop(priv, tx_ring, err);
-> > > > +
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 priv->tx_work_obj =3D NULL;
-> > >=20
-> > > Race condition:
-> > > - after spi_sync() the CAN frame is send
-> > > - after the TX complete IRQ the TX queue is restarted
-> > > - the xmit handler might get BUSY
-> > > - fill the tx_work_obj again
->=20
-> You can avoid the race condition by moving "priv->tx_work_obj =3D NULL;"
-> in front of the "spi_sync();". Right?
->=20
-> > > > +}
-> > > > +
-> > > > =C2=A0static int mcp251xfd_tx_obj_write(const struct mcp251xfd_priv=
- *priv,
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct mcp251xfd_=
-tx_obj *tx_obj)
-> > > > =C2=A0{
-> > > > @@ -175,7 +210,7 @@ netdev_tx_t mcp251xfd_start_xmit(struct sk_buff
-> > > > *skb,
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (can_dev_dropped_skb(=
-ndev, skb))
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 return NETDEV_TX_OK;
-> > > > =C2=A0
-> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (mcp251xfd_tx_busy(priv, t=
-x_ring))
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (mcp251xfd_tx_busy(priv, t=
-x_ring) || priv->tx_work_obj)
-> > >=20
-> > > This should not happen, but better save than sorry.
-> >=20
-> > As there is the race condition you mentioned above, on this condition:
-> > priv->tx_work_obj =3D tx_obj --> xmit will return NETDEV_TX_BUSY
-> >=20
-> > or
-> >=20
-> > priv->tx_work_obj =3D NULL --> It goes through the rest of the code or
-> > the workqueue may sleep after setting tx_work_obj to NULL. Should I
-> > use work_busy() here instead or do you have another suggestion?
->=20
-> Yes, introduce mcp251xfd_work_busy().
->=20
+On Mon, Nov 08, 2021 at 03:24:26AM -0800, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    ce840177930f Merge tag 'defconfig-5.16' of git://git.kerne..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1516eb12b00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=647adc5a101c9bf3
+> dashboard link: https://syzkaller.appspot.com/bug?extid=93cbdd0ab421adc5275d
+> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+93cbdd0ab421adc5275d@syzkaller.appspotmail.com
+> 
+> ------------[ cut here ]------------
+> kernfs: can not remove 'nr_tags', no directory
+> WARNING: CPU: 0 PID: 352 at fs/kernfs/dir.c:1535 kernfs_remove_by_name_ns+0x96/0xa0 fs/kernfs/dir.c:1535
 
-I'll implement it.
+#syz set subsystems: kernfs
 
-> I'm not sure what happens if the xmit is called between the
-> "priv->tx_work_obj =3D NULL" and the end of the work. Will queue_work()
-> return false, as the queue is still running?
+Remove btrfs from subsystems.  Multiple reports, injected ENOMEM and
+sysfs cannot remove the files and warns
 
-From the test I did so far, my understanding is the following:
-
-If mcp251xfd_tx_obj_write doesn't fail, everything is OK.
-
-if mcp251xfd_tx_obj_write fails with EBUSY=20
- - stop netif queue
- - fill the tx_work_obj
- - start worker
-
-queue_work() doesn't return false even when work_busy() =3D true.=20
- - xmit handler return, and wait netif_wake_queue()
- - the work handler waits until the previous job gets done before starting =
-the=20
-next one.
- - after the TX completes IRQ, the TX queue is restarted
-
-If the TX queue is restarted immediately after queue_work(), tx_work_obj is
-filled, making the xmit handler return NETDEV_TX_BUSY.
-
-The tests were done with a delay after priv->tx_work_obj =3D NULL.
-
-
-Best regards,
-Vitor Soares
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/kernfs/dir.c?id=d3fa86b1a7b4cdc4367acacea16b72e0a200b3d7#n1662
 
