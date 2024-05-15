@@ -1,135 +1,118 @@
-Return-Path: <linux-kernel+bounces-179357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DC008C5F34
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 04:42:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 420948C5F36
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 04:45:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BF391F222EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 02:42:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2FBB1F223D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 02:45:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3802C36AFB;
-	Wed, 15 May 2024 02:42:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=openbsd.org header.i=@openbsd.org header.b="EVzA9XNP"
-Received: from cvs.openbsd.org (cvs.openbsd.org [199.185.137.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45A8936AFB;
+	Wed, 15 May 2024 02:45:11 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 743B917C96;
-	Wed, 15 May 2024 02:42:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.185.137.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD9478F5A;
+	Wed, 15 May 2024 02:45:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715740961; cv=none; b=QFZp6jR7FV2rEdphHfDQoRwnz+Tj6MqaKDOA4LPFb//2tXK9JrjhSiX9jfWbbowwvfPorLocg7dmzovk2uISNiAHfOJsHu6tc8s9PziRVhkkVNfzISoGCPGWZoOnkRDtmSD9tr5BRsCsm/FTALuRM6KIqntsWwdBWWsUH7jPHnc=
+	t=1715741110; cv=none; b=oo4eGMP8PzNQhgvCMCLC+YKb+dkadCPwXe/BNHrijL56meZl8cj/o8chtEBUDiFhdA2iX12yZwkU7DwLkx5IilJzL5GF5Ct8LfwjNW/hqn6wKuMT5RgYtTkPIagGPdlhLR3tv4xvfwdONxe0dImo/F9a96sLFNngQEdnoBpovB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715740961; c=relaxed/simple;
-	bh=E/eITmSfv/hukN66zjfP822dc02uc7jnjBNrPzQ6vNk=;
-	h=From:To:cc:Subject:In-reply-to:References:MIME-Version:
-	 Content-Type:Date:Message-ID; b=dYrEr6iDgTgdyzfkVQdp3ksjSCW7ATRGn7/3HEmS/xI8a+xV0nF8iw18r0gPl1mdzK9OE0xMj5YA1DOs0htzhdZDoV+wq52kNR7oT/w6LMN2Tu1HsO1Zjrncen7n+2ccAtKDM3Xo68nN4ReJgDvUT+v0CkzJWMSzo94wzGtMT4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=openbsd.org; spf=pass smtp.mailfrom=openbsd.org; dkim=pass (2048-bit key) header.d=openbsd.org header.i=@openbsd.org header.b=EVzA9XNP; arc=none smtp.client-ip=199.185.137.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=openbsd.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openbsd.org
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; s=selector1; bh=E/eITmSfv/
-	hukN66zjfP822dc02uc7jnjBNrPzQ6vNk=; h=date:references:in-reply-to:
-	subject:cc:to:from; d=openbsd.org; b=EVzA9XNPb+gPk9asC5OFVNyHR+i0fVDrX
-	z9ATBDqxXlTOWBjRzskA+p4lrJb8vGvkmGIahadIO+N6X9VTQdg+upE34qLc8nykHKnuY4
-	wqNDC2Q0W5Oznjn2CSqtM84yOm6dPwVrEqedE0/6mmhog1vx9pEaabKX1Px+VovNJbW9tJ
-	VHPvFyJlsKPFNTvh6V2NyZhzfdcuYz2xi1w6ovAUxkwjMkRT6lNcBvtEjguIqLUx1OHff4
-	5ethYU+X1oK6WAP/fCgIjJ+r2iQ0CdxRD0WnGC/RI18BOMMGW0/C9kcQzAuugpakmsH6Db
-	jPJkuaz3YI2MbHRwYImoyZOwLf7SA==
-Received: from cvs.openbsd.org (localhost [127.0.0.1])
-	by cvs.openbsd.org (OpenSMTPD) with ESMTP id b934a569;
-	Tue, 14 May 2024 20:42:38 -0600 (MDT)
-From: "Theo de Raadt" <deraadt@openbsd.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-cc: Matthew Wilcox <willy@infradead.org>,
-    Jonathan Corbet <corbet@lwn.net>,
-    Andrew Morton <akpm@linux-foundation.org>, jeffxu@chromium.org,
-    keescook@chromium.org, jannh@google.com, sroettger@google.com,
-    gregkh@linuxfoundation.org, usama.anjum@collabora.com,
-    Liam.Howlett@oracle.com, surenb@google.com, merimus@google.com,
-    rdunlap@infradead.org, jeffxu@google.com, jorgelo@chromium.org,
-    groeck@chromium.org, linux-kernel@vger.kernel.org,
-    linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-    pedro.falcato@gmail.com, dave.hansen@intel.com,
-    linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v10 0/5] Introduce mseal
-In-reply-to: <CAHk-=wj=Yb1r_g=geQe8YDGv-TA-UQBQe6-OVhA8FOGjWKnQmA@mail.gmail.com>
-References: <20240415163527.626541-1-jeffxu@chromium.org> <20240514104646.e6af4292f19b834777ec1e32@linux-foundation.org> <871q646rea.fsf@meer.lwn.net> <ZkPXcT_JuQeZCAv0@casper.infradead.org> <56001.1715726927@cvs.openbsd.org> <CAHk-=wgsGCKvN0Db6ZRZqJwXQrmhZyWB6RmABaOp4DiZbXgNew@mail.gmail.com> <16982.1715734632@cvs.openbsd.org> <CAHk-=wi04ZCm3vTtkcVnAUdiOpX3a0hBZ-aQWONwCubOJQEdXw@mail.gmail.com> <84192.1715737666@cvs.openbsd.org> <CAHk-=wj=Yb1r_g=geQe8YDGv-TA-UQBQe6-OVhA8FOGjWKnQmA@mail.gmail.com>
-Comments: In-reply-to Linus Torvalds <torvalds@linux-foundation.org>
-   message dated "Tue, 14 May 2024 19:28:54 -0700."
+	s=arc-20240116; t=1715741110; c=relaxed/simple;
+	bh=y5b1xG04vn1CcIUIecHfF8Tcjak6yElJQa34HoZDmyc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=UqO5xqUdcm8BXx7xRsuTrVp6aK1vB3WF3xc3ACLlQwy/+oa4rD2gwLWMDPsFFfS3Z99yl5sEWtXgMXFQs6a3MO1U1twtUnqsFL9i67Su7CdzA7GqhEEe5VjaLKIKdHfO0ApYHWmYVOJjE1dMfSG3aXLsAuzU6nTaMSQ+SDa5/EA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4VfHYD3chGzvYjJ;
+	Wed, 15 May 2024 10:41:36 +0800 (CST)
+Received: from dggpeml500023.china.huawei.com (unknown [7.185.36.114])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2A074180085;
+	Wed, 15 May 2024 10:45:05 +0800 (CST)
+Received: from [10.67.110.112] (10.67.110.112) by
+ dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Wed, 15 May 2024 10:45:04 +0800
+Message-ID: <29aae825-6a1c-1935-a50f-d824c308c4c9@huawei.com>
+Date: Wed, 15 May 2024 10:45:04 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <58986.1715740958.1@cvs.openbsd.org>
-Date: Tue, 14 May 2024 20:42:38 -0600
-Message-ID: <75628.1715740958@cvs.openbsd.org>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [PATCH -next] memcg: don't handle event_list for v2 when
+ offlining
+To: Michal Hocko <mhocko@suse.com>
+CC: <hannes@cmpxchg.org>, <roman.gushchin@linux.dev>,
+	<shakeel.butt@linux.dev>, <muchun.song@linux.dev>,
+	<akpm@linux-foundation.org>, <cgroups@vger.kernel.org>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20240514131106.1326323-1-xiujianfeng@huawei.com>
+ <ZkNwthw5vJrnQSLL@tiehlicka>
+Content-Language: en-US
+From: xiujianfeng <xiujianfeng@huawei.com>
+In-Reply-To: <ZkNwthw5vJrnQSLL@tiehlicka>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpeml500023.china.huawei.com (7.185.36.114)
 
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-> On Tue, 14 May 2024 at 18:47, Theo de Raadt <deraadt@openbsd.org> wrote:
-> >
-> > Linus Torvalds <torvalds@linux-foundation.org> wrote:
-> >
-> > Regarding mprotect(), POSIX also says:
-> >
-> >     An implementation may permit accesses other than those specified by
-> >     prot; however, no implementation shall permit a write to succeed where
-> >     PROT_WRITE has not been set or shall permit any access where PROT_NONE
-> >     alone has been set.
+
+On 2024/5/14 22:09, Michal Hocko wrote:
+> On Tue 14-05-24 13:11:06, Xiu Jianfeng wrote:
+>> The event_list for memcg is only valid for v1 and not used for v2,
+>> so it's unnessesary to handle event_list for v2.
 > 
-> Why do you quote entirely irrelevant issues?
+> You are right but the code as is works just fine. The list will be
+> empty. It is true that we do not need to take event_list_lock lock but
+> nobody should be using this lock anyway. Also the offline callback is
+> not particularly hot path. So why do we want to change the code?
 > 
-> If the mprotect didn't succeed, then clearly the above is irrelevant.
 
-Imagine the following region:
-
-
-    <--------------------------------------------- len
-    [region PROT_READ] [region PROT_READ + sealed] 
-addr ^
-
-then perform
-    mprotect(addr, len, PROT_WRITE | PROT_READ);
-
-This will return -1, with EPERM, when it encounters the sealed region.
-
-I believe in Linux, since it has not checked for errors as a first
-phase, this changes the first region of memory to PROT_READ |
-PROT_WRITE.  Liam, is that correct?  If I am correct, then this
-follows:
-
-So tell me -- did the mprotect() system call succeed or did not it
-succeed?
-
-If EPERM means it did not succeed, then why is the first region now
-writable?
-
-Immediately after this "call that failed", the process can perform a
-write to that first region.  But no succesful system call was made to
-change that memory to PROT_WRITE.
-
-Alternatively, does EPERM mean it did not completely fail, and therefore
-it is OK that that the prot value has been applied?  That's really obscure,
-and undocumented.
-
-In any case it seems, PROT_WRITE can be set on memory, and it is even
-more pointless than before for userland to check the errno *because you
-can't determine the resulting protection on every page of memory.  It's
-all a mishmash after that.
-
-(There is no POSIX system call to ask "what is the permission of a page or
-region).
-
-> Theo, you're making shit up.
-
-I'm trying to have a technical discussion.  Please change your approach,
-Linus.
+Actually, I don’t quite agree, but I don't insist on this patch.
+Thanks for your feedback.
 
 
+>>
+>> Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
+>> ---
+>>  mm/memcontrol.c | 12 +++++++-----
+>>  1 file changed, 7 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+>> index d127c9c5fabf..4254f9cd05f4 100644
+>> --- a/mm/memcontrol.c
+>> +++ b/mm/memcontrol.c
+>> @@ -5881,12 +5881,14 @@ static void mem_cgroup_css_offline(struct cgroup_subsys_state *css)
+>>  	 * Notify userspace about cgroup removing only after rmdir of cgroup
+>>  	 * directory to avoid race between userspace and kernelspace.
+>>  	 */
+>> -	spin_lock_irq(&memcg->event_list_lock);
+>> -	list_for_each_entry_safe(event, tmp, &memcg->event_list, list) {
+>> -		list_del_init(&event->list);
+>> -		schedule_work(&event->remove);
+>> +	if (!cgroup_subsys_on_dfl(memory_cgrp_subsys)) {
+>> +		spin_lock_irq(&memcg->event_list_lock);
+>> +		list_for_each_entry_safe(event, tmp, &memcg->event_list, list) {
+>> +			list_del_init(&event->list);
+>> +			schedule_work(&event->remove);
+>> +		}
+>> +		spin_unlock_irq(&memcg->event_list_lock);
+>>  	}
+>> -	spin_unlock_irq(&memcg->event_list_lock);
+>>  
+>>  	page_counter_set_min(&memcg->memory, 0);
+>>  	page_counter_set_low(&memcg->memory, 0);
+>> -- 
+>> 2.34.1
+> 
 
