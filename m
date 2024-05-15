@@ -1,130 +1,181 @@
-Return-Path: <linux-kernel+bounces-179823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D48F8C65FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 13:56:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2C0A8C660E
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 14:00:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FEEA1F21767
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 11:56:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A786B22838
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 12:00:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43846757F8;
-	Wed, 15 May 2024 11:56:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49CF26FE16;
+	Wed, 15 May 2024 12:00:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V7QqoPiH"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R5vW6wGW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47B4174416;
-	Wed, 15 May 2024 11:56:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77F1F14AB4;
+	Wed, 15 May 2024 12:00:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715774172; cv=none; b=nVvFOsy9r4Pvb38Hmco78MXY9zcEeiD72JivDx+alIbeCzt8+eq/5ikE2f7LpATmLXH+3w+7pxhk+2CAJSnUszRVUS4k7NVAgDSv/qX7yXXcWSKf82HP9nAVA/JABCLexueXqKeXV4LqXi8pIBIf6rIDmSHcV5pYvdpmQsFKMRM=
+	t=1715774417; cv=none; b=sF8+xEd50IRXlbLnCQog4oigS/jnrpmBJmD+GvUeganVuWKSlNfak9Pip6raoe2TPYIAKBoiJ/ifPvp06/yXn0H7d1+IiXtUj2DbIw0IYaz7tWtewVmogUE03wWZR6CQLBkjml6Km1boblnZKp4T1pgv4a4VM/3/O5eEHiiGE6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715774172; c=relaxed/simple;
-	bh=KLIJf6dyuUtjxVo29n46MFMN5nAM6CJEG8L1rIRFJXc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dpTm//1M7feMuxac8zDS6UnKEkh21MFKoH0YkFH0jfbgyBR5PO5UuUWEtDDUjni2UBlJxodxBGnLOEd438E/j3pz7M0DCaoyoVg7uGjSJT8rFmq2xCDixg7kCk/uWlpA+6QkUN2f1HGSthM1+S3bZiol74Bo7BmI7aFBGmoGBnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V7QqoPiH; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-6f6765226d0so474851b3a.3;
-        Wed, 15 May 2024 04:56:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715774170; x=1716378970; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KLIJf6dyuUtjxVo29n46MFMN5nAM6CJEG8L1rIRFJXc=;
-        b=V7QqoPiH4mE1vYcxyxLYiYiRwbMO0AYPCg7QJQ1kcHOLWHnzdmCqyCCLw33MkpDh4b
-         +MlPTg43EyXPO24Ff4B+xWJis7DGv7znPjU+ok9WV9E9eUYOPunuHCzzqAIYUfhHJ7WU
-         IYHecI4GmoJ2N8Jy5mPSW+E7MTjsbaU1CUILbKZeMTzJWlTiAC2I1Y0HqIduxkrbB0wr
-         Ah1+WTdam7dQFjvic/+zJj/uPiMZULewxbgprSg0Zd8m01jgpDVs//Iyljgm/4umKsID
-         lyzqEVdAchXQiAIAl4NdAzFhajJSD2kfVwrJufRkbeP44BfoV4VUoaXpTR/rSskk4jEX
-         XSEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715774170; x=1716378970;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KLIJf6dyuUtjxVo29n46MFMN5nAM6CJEG8L1rIRFJXc=;
-        b=XFa026hChOWUEtHvHCs0kiqPgkte4rCeupjBRJ4gGFhgey0kJIu1fNDDKSB5qo03CY
-         WsSWiviykY+Q60uBLZeQBfTnAaA0Y6I0th+OXFIy+8MlxN9daa6FVd5rphF8xcZx7e9X
-         BUwGXoF79fl7pQsWIYar86b60D6FxsEnQ8b6SToMcDWrz6mMiUnvjlyuumXomoO7xN6+
-         SlHMMwCCka6M0rIoBbuWxD5lrQnlIR8mZxI6r35P2Zs6V3YpH/R9J+eA+zcPsvkU25AB
-         on6ILYD2K3F2Th/FTtlmOOu5OH8L8w4sAybV4qwYiU8E3HvvqqwOpUm2JoLZEY/Rx4Cr
-         4U5w==
-X-Forwarded-Encrypted: i=1; AJvYcCUI5TJMyxTSdRLFMJSfwj6rJSRjGd6pOewTGKMMr8/vF9K2k+hJjX8YPQkBu5EGJQM9jtuUm7KuJb4VbDfRC4ZRSlgSFOfRWjEcMTiSM9X9pHmWk9XIXUPXlvm+5qBhWnR9tBlMHUSFAxOJIkBcVuYKnzX+Tyt0pRfodqqBdfGnx3d88/zm
-X-Gm-Message-State: AOJu0YzUFWZdMl6raZSkb6K+Y4kQogYJkg4owTpGJlhcgIm+7Zc1yiOE
-	xmv/ghW3FV/Km4FGiVsOGlE1jAIognkptjCBtTqYY3qHNUw1zHKlWLSEgg==
-X-Google-Smtp-Source: AGHT+IGbixuRdWw3hpUoH/eg1XmRvH8la1VlEm92zf5wZvmtJsIjySYZuMUHfsOOYQLyQZwHSeeW7A==
-X-Received: by 2002:a05:6a20:5504:b0:1a9:da1f:1679 with SMTP id adf61e73a8af0-1afde0e20f6mr13397919637.34.1715774170370;
-        Wed, 15 May 2024 04:56:10 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0bf30c95sm115677075ad.125.2024.05.15.04.56.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 May 2024 04:56:09 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 7272A19C325FD; Wed, 15 May 2024 18:56:07 +0700 (WIB)
-Date: Wed, 15 May 2024 18:56:06 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: mhklinux@outlook.com, haiyangz@microsoft.com, wei.liu@kernel.org,
-	decui@microsoft.com, kys@microsoft.com, corbet@lwn.net,
-	linux-kernel@vger.kernel.org, linux-hyperv@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Cc: Mao Zhu <zhumao001@208suo.com>, Ran Sun <sunran001@208suo.com>,
-	Xiang wangx <wangxiang@cdjrlc.com>,
-	Shaomin Deng <dengshaomin@cdjrlc.com>,
-	Charles Han <hanchunchao@inspur.com>,
-	Attreyee M <tintinm2017@gmail.com>, LihaSika <lihasika@gmail.com>
-Subject: Re: [PATCH v2 1/2] Documentation: hyperv: Update spelling and fix
- typo
-Message-ID: <ZkSi1raEBdu7MdBE@archie.me>
-References: <20240511133818.19649-1-mhklinux@outlook.com>
+	s=arc-20240116; t=1715774417; c=relaxed/simple;
+	bh=fIyxcnkjrOli+Uk3bndx9D9k4fUWSo6ZOhd9rATHI44=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=Ekcmyx18sWm6zTlKqI+IJUVfRWv+Y3Y2l9boCYUjxkc4Y4i1Mn/Km0ZeO8Vd0f2q0/qFPLGoph1UBMUySVcj4vvmISbh5v1Dp1SiGRfyaBeeFbr2j3F+/UMJC8NdS1eACXUb7po6ADaOeqoDdErh4hLpXCvCVhFpjRAQdoMIQTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R5vW6wGW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBCC9C116B1;
+	Wed, 15 May 2024 12:00:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715774417;
+	bh=fIyxcnkjrOli+Uk3bndx9D9k4fUWSo6ZOhd9rATHI44=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=R5vW6wGW7WwOxYDdVl1GDdN9+ti1CI9HK3NnZJ3RpfZPoQP+xkgs4ILI+ojoulmu7
+	 ZkyEynJEq0gjFD3IJmou85CbPpQtQ4zsepl/0NSRZOOZebeeJSfep8lDHbeMbUsn0X
+	 oBOQDir4i+VGvp/7D7fYi0h/OLclY4j3PVw0b9bT0mFOGEzk8dleEUUBJCm98pSMNF
+	 Gtjinz8Tt+SSu3QxG/kDsQkft9N1ltXvQnloMMKEdoll+Cvon6zN9TXz8DHm1fwMfw
+	 CmezXUBvQvlRM1oCNuigXvzQjnseIp+GDDVJcd/WxirOI93nJ29THWz8VYAFpV+W11
+	 kbvpva46XCqEQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="3mYU1ClqV7Ho83G5"
-Content-Disposition: inline
-In-Reply-To: <20240511133818.19649-1-mhklinux@outlook.com>
-
-
---3mYU1ClqV7Ho83G5
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 15 May 2024 15:00:12 +0300
+Message-Id: <D1A79NQ33IGG.OYIRO9S4YWZS@kernel.org>
+Cc: "James Bottomley" <James.Bottomley@hansenpartnership.com>, "Mimi Zohar"
+ <zohar@linux.ibm.com>, "David Howells" <dhowells@redhat.com>, "Paul Moore"
+ <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>,
+ <serge@hallyn.com>, <linux-integrity@vger.kernel.org>,
+ <keyrings@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <kernel-team@cloudflare.com>
+Subject: Re: [RFC PATCH 2/2] KEYS: implement derived keys
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Ignat Korchagin" <ignat@cloudflare.com>
+X-Mailer: aerc 0.17.0
+References: <20240503221634.44274-1-ignat@cloudflare.com>
+ <20240503221634.44274-3-ignat@cloudflare.com>
+ <D19QW70177QG.2YC9XL0FT7VME@kernel.org>
+ <D19RM0OV7YUW.1ZEI72XQUREMQ@kernel.org>
+ <CALrw=nEnqBCBQKhK9ACc7tbicqkXaDD+Bjc1d90xizMvbb--oA@mail.gmail.com>
+In-Reply-To: <CALrw=nEnqBCBQKhK9ACc7tbicqkXaDD+Bjc1d90xizMvbb--oA@mail.gmail.com>
 
-On Sat, May 11, 2024 at 06:38:17AM -0700, mhkelley58@gmail.com wrote:
-> From: Michael Kelley <mhklinux@outlook.com>
->=20
-> Update spelling from "VMbus" to "VMBus" to match Hyper-V product
-> documentation. Also correct typo: "SNP-SEV" should be "SEV-SNP".
->=20
-> Signed-off-by: Michael Kelley <mhklinux@outlook.com>
-> Reviewed-by: Easwar Hariharan <eahariha@linux.microsoft.com>
+On Wed May 15, 2024 at 9:44 AM EEST, Ignat Korchagin wrote:
+> On Wed, May 15, 2024 at 12:44=E2=80=AFAM Jarkko Sakkinen <jarkko@kernel.o=
+rg> wrote:
+> >
+> > On Wed May 15, 2024 at 2:10 AM EEST, Jarkko Sakkinen wrote:
+> > > On Sat May 4, 2024 at 1:16 AM EEST, Ignat Korchagin wrote:
+> > > > Derived keys are similar to user keys, but their payload is derived=
+ from the
+> > > > primary TPM seed and some metadata of the requesting process. This =
+way every
+> > >
+> > > What is exactly "some metadata"?
+> > >
+> > > > application can get a unique secret/key, which is cryptographically=
+ bound to
+> > >
+> > > What is "cryptographically bound". Please go straight to the point an=
+d
+> > > cut out *all* white paper'ish phrases. We do not need it and will mak=
+e
+> > > painful to backtrack this commit once in the mainline.
+> > >
+> > > > the TPM without the need to provide the key material externally (un=
+like trusted
+> > > > keys). Also, the whole key derivation process is deterministic, so =
+as long as
+> > >
+> > > Why trusted keys is inside braces. It is not important for the point
+> > > you are trying to make here?
+> > >
+> > > > the TPM is available, applications can always recover their keys, w=
+hich may
+> > > > allow for easier key management on stateless systems.
+> > >
+> > > Please drop "stateless system" unless you provide a rigid definition
+> > > what it is. I have no idea what you mean by it. Probably not that
+> > > important, right?
+> > >
+> > > >
+> > > > In this implementation the following factors will be used as a key =
+derivation
+> > > > factor:
+> > > >   * requested key length
+> > > >   * requesting process effective user id
+> > > >   * either the application executable path or the application integ=
+rity
+> > > >     metadata (if available)
+> > >
+> > > NAK for path for any possible key derivation. They are racy and
+> > > and ambiguous.
+> > >
+> > > This should have been in the beginning instead of "some data". What
+> > > other implementations exist. For me "this implementation" implies
+> > > that this one competing alternative to multiple implementations
+> > > of the same thing.
+> > >
+> > > I do not like this science/white paper style at all. Just express
+> > > short, open code everything right at start when you need and cut
+> > > extras like "stateless system" unless you can provide exact, sound
+> > > and unambiguous definiton of it.
+> > >
+> > > Just want to underline how this really needs a complete rewrite with
+> > > clear and concise explanation :-) This won't ever work.
+> > >
+> > > >
+> > > > Key length is used so requests for keys with different sizes result=
+ in keys
+> > > > with different cryptographic material.
+> > >
+> > > What is "key length"? Please refer the exact attribute.
+> > >
+> > > >
+> > > > User id is mixed, so different users get different keys even when e=
+xecuting the
+> > >
+> > > First of all it would be more clear to just s/User id/UID/
+> > >
+> > > And make obvious whether we are talking about ruid or euid and how
+> > > this interacts with GIDs.
+> > >
+> > > I'll look at the code change next round if the commit message starts
+> > > making any sense.
+> >
+> > Right and neither UIDs and GIDs are applicable for key derivation for
+> > quite obvious reasons. So NAK for that too.
+>
+> Can you, please, clarify a bit here? Not very obvious for me. I added
+> euid for two reasons:
+>   * an unprivileged user might run a normally privileged application,
+> for example /usr/sbin/sshd, and depending on the code could "leak" the
+> key
+>   * without it and with unprivileged user namespaces it is possible to
+> create an unprivileged container with code at the same path as a
+> privileged application
+>
+> Why do you think UIDs/GIDs are not applicable as mixins?
 
-LGTM, thanks!
+I did as much clarification as I possibly can.
 
-Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
+Also, if you look at confidential computing platforms there's exactly
+two assets that they use lock into machine:
 
---=20
-An old man doll... just what I always wanted! - Clara
+- Binary
+- CPU material
 
---3mYU1ClqV7Ho83G5
-Content-Type: application/pgp-signature; name="signature.asc"
+Only carved into stone immutable material for key derivation.
 
------BEGIN PGP SIGNATURE-----
+You can use mm_struct->exe_file binary if that will work out for you.
+I'm done with this version.
 
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZkSi0wAKCRD2uYlJVVFO
-oxgoAQDmu6lTcbrHgqcQ1gt7KND0JsUN7RpkeyB7/6Ot0t2pwwD/d6Gvmzh1zJBg
-7y20CyvYAA6LPQ7TrB9/ITaX0kci/AU=
-=pwFL
------END PGP SIGNATURE-----
-
---3mYU1ClqV7Ho83G5--
+BR, Jarkko
 
