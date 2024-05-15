@@ -1,413 +1,112 @@
-Return-Path: <linux-kernel+bounces-179575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E601A8C6199
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:23:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B6E38C619A
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:24:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CEE428170D
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 07:23:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B51BB243A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 07:24:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2D03EAE1;
-	Wed, 15 May 2024 07:19:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB87444C88;
+	Wed, 15 May 2024 07:20:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="F7cveteS"
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QxHewemv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2215A42061
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 07:19:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF140446AD
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 07:20:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715757579; cv=none; b=kUlU/sp+dlvw7h7m0xM2I36t2fAibEijNMlem+cl5Eo6QhyMnwS7aj8QKefS4rczTO+wcGk9ay+TR4TCz25ee16TxXxFbiOwwZEAilA6I0k1tr3HbsPPQrcEkxIsCGVHR1P/viX542e6f6pBysSKPE7oweoPTZkWn+XSYzLVltQ=
+	t=1715757605; cv=none; b=HY58gW/MXxd6XXC9np4PxFcOkGoZTSCVuD/4O1XZTF5T2x985nO2rAQ9DTGRRe8kpg5qkKKOYtjbOXzXI2GIPexUnhkiyKlgmW0HDD37M1ccD+UhJ7UCz3w0KXFsaX7sejuIPoayXJHyr50oOV5RoXA1x+tU2vgenoeuk2jSOpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715757579; c=relaxed/simple;
-	bh=mS08T4zIxogbYBvEKUHiOAoYLAIbH6I61MwGI+XhY1I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aiC3Injg50K2w3uq4gkPkZBeWHr9FdG+xanNlQR8k8vmSiORQtdnq6/C9E1cVrlegr2AKTNdJeM3Xa+tHyi5PVaW4azYQD/L9/7CDVROnqhB5ZYKZ8IbTvz1mjCVJTf75l89rZ12DMYeqWJa48ehifZRILihSibKbCK97A/jKvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=F7cveteS; arc=none smtp.client-ip=209.85.210.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-6f054c567e2so4037667a34.2
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 00:19:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1715757576; x=1716362376; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vInc6tO6gm1EBIF0gkzHCYRIhFoOvwprPtnR3toXSdo=;
-        b=F7cveteSjC8s+OVdJoS1d+mrxpZuzNI9m11PWbt/z407Fa9sJl6adckzZqXkdfysko
-         GMpLRo/WLEwx2QTYfcg+z2Q8S/ik6Wa+ukun89XysrhnSckGrh1rYWwIevQvu+4YmZH+
-         IzzZx7L+OJSFh1gFPPnjO5/BWcjjnUEZk+oyw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715757576; x=1716362376;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vInc6tO6gm1EBIF0gkzHCYRIhFoOvwprPtnR3toXSdo=;
-        b=bRUndoNJV3Ey6kAwE9f4WjvSWRO7VXXQSFoNc92XU1NfD/dR6+5RkpZ9zVoLFSQFCc
-         6sZn9netgzwsR6fFCEsikdI99ja1yMvS9RO+Bya5QUEee+DpJ652VXeIhReV8D57zVzn
-         BN2vibauBOMzayM96jXM6n0046/WzJg+JPulJtJNk5VvkgXe2GNXXmVhstnsKan9f1px
-         P2tMqTdxyJXpweBDhyV3zmC14Biyc30gowLzyeHGx4gz+xTYHV2SDbj6oXHhHU4eFNaT
-         4Z3eHZqZtY99kEIUyT1CmyY7DmYvAnx6fz+KGvfibArsrqiHKfv4GQ5w97MkKG49LhR3
-         N1yQ==
-X-Gm-Message-State: AOJu0YyiLE+EhoDjzHjUEG2Hrmetj50Tgp9u/0iRyPB8RGhsETKpet66
-	YNUNbkq/gWRK+hDr2H/LnoMZ03rqAJ0hMsrg0TVlE3pNdVDRQQSx12kAJPkqvr0=
-X-Google-Smtp-Source: AGHT+IENhxUk/prABJNgrjbL/Tor7bHDeJJbi/khOuNFwiXA6wD33OONdfmfxUwnTdRFPmq3p9lh2w==
-X-Received: by 2002:a05:6830:1515:b0:6f0:e78d:7019 with SMTP id 46e09a7af769-6f0e9112427mr18418109a34.16.1715757576061;
-        Wed, 15 May 2024 00:19:36 -0700 (PDT)
-Received: from LQ3V64L9R2 ([2601:3c7:4200:9500:c97:2507:4743:1383])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5b2b155b94csm1390433eaf.27.2024.05.15.00.19.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 May 2024 00:19:35 -0700 (PDT)
-Date: Wed, 15 May 2024 02:19:33 -0500
-From: Joe Damato <jdamato@fastly.com>
-To: Tariq Toukan <ttoukan.linux@gmail.com>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	zyjzyj2000@gmail.com, nalramli@fastly.com,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	"open list:MELLANOX MLX5 core VPI driver" <linux-rdma@vger.kernel.org>,
-	Tariq Toukan <tariqt@nvidia.com>
-Subject: Re: [PATCH net-next v2 1/1] net/mlx5e: Add per queue netdev-genl
- stats
-Message-ID: <ZkRiBQXlWPPTNKFf@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Tariq Toukan <ttoukan.linux@gmail.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	zyjzyj2000@gmail.com, nalramli@fastly.com,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	"open list:MELLANOX MLX5 core VPI driver" <linux-rdma@vger.kernel.org>,
-	Tariq Toukan <tariqt@nvidia.com>
-References: <20240510041705.96453-1-jdamato@fastly.com>
- <20240510041705.96453-2-jdamato@fastly.com>
- <230701b9-c52a-4b59-9969-4cd5a5d697f4@gmail.com>
+	s=arc-20240116; t=1715757605; c=relaxed/simple;
+	bh=UrQpKGbOOg+j3V5gFRHRGwgFt0fiIcqplbYRMxsH9uQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jzTI9RwPx2diHQ9hWG0LL8xocgt+rwTx1RTo0y5nu76UGIhoyipt539QSOmmZeAOvJGTRklgR1COPcKg+zd54tG4LVafqns8ODYHHJCBHe9K5W8eSIymMYB+BXbrQ9RpeR83wKTvFQtJ2sktLbGu4+6GrB1lEJ0n4XOQUaWC8xI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QxHewemv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FB0BC116B1
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 07:20:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715757604;
+	bh=UrQpKGbOOg+j3V5gFRHRGwgFt0fiIcqplbYRMxsH9uQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=QxHewemvHPJf7qz+BJNh9ddTjkvQ5+kDxQDgCNsF7XVnZnFL7MgZths0xFW1lMdpg
+	 NAZ0r0DxNaIaj5zY+mKl/l7tgvJzQCosBYkZloG/8kusnGl+uvNHYwCMQi2kbi1Rmy
+	 cyUI7db8vL9H2r/vKrNpFx7bPZdu6HFb+rUuOj1bdcVZUIwKmrHlX6rv09BA/XRXE6
+	 7fdvBP4f9nOrNi0bWX+OcfALs5UNz9kkrQtuHWU5XfcgMPpmnlG7kKsE+zs0OryZ7T
+	 dyWTo9uKkTRUgWSEIi4TjJCCH1te+DpDlKwX7fDnHF/ZMcUJ4kRbJcc5Cz8eDg1XgD
+	 V/KAofisAZt7Q==
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52192578b95so7597718e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 00:20:04 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW+uXcd6Hpg2MqrGhkW+aIvZclonVdIg9fAQlWxgZILZivL/75lauwPYrBXRDFi0iGbAlZazkp90YGlBPLHhw3+C4jlpQrkENiwW6fK
+X-Gm-Message-State: AOJu0Yz43JJGJvIhnA/8VKLOfmtMSDRoDYXAOFna8uBkDF/7/Mo8j4mD
+	OgYvjEhgC2YNoPxy8TA2KpQ610bPHIUDi6VgvM3StbxwKhs78I/8kxiDaPwv5KSdV5/Ej4kQSGF
+	3dXkT4BzEtzMuypBi6Zu1g0nFT2k=
+X-Google-Smtp-Source: AGHT+IEPJO8gVpct2Q5WwNj2wvN8zQEAI6qm5VhiD8TRumNyrXPFMB/C4glgYbAiyD8s16TnZuw+9uFyD2FHMpZqD4Y=
+X-Received: by 2002:a05:6512:238e:b0:523:8cc2:e01a with SMTP id
+ 2adb3069b0e04-5238cc2e125mr1200355e87.2.1715757602884; Wed, 15 May 2024
+ 00:20:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <230701b9-c52a-4b59-9969-4cd5a5d697f4@gmail.com>
+References: <20240509013727.648600-1-samuel.holland@sifive.com>
+ <CAMj1kXFfWKh-oM8q11eEF94mPOENHxW+fdvkYLSbUDs0ZG8Sow@mail.gmail.com> <c65023fd-5f35-40f0-947d-377088919af3@sifive.com>
+In-Reply-To: <c65023fd-5f35-40f0-947d-377088919af3@sifive.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Wed, 15 May 2024 09:19:51 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXE2h9MkPtaVcgUBvpK6e1NpzMfXN5GFdUmGSe2DNmg3VQ@mail.gmail.com>
+Message-ID: <CAMj1kXE2h9MkPtaVcgUBvpK6e1NpzMfXN5GFdUmGSe2DNmg3VQ@mail.gmail.com>
+Subject: Re: [PATCH] ARM: Do not select ARCH_HAS_KERNEL_FPU_SUPPORT
+To: Samuel Holland <samuel.holland@sifive.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, 
+	Thiago Jung Bauermann <thiago.bauermann@linaro.org>, kernel test robot <lkp@intel.com>, Andrew Davis <afd@ti.com>, 
+	Arnd Bergmann <arnd@arndb.de>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Eric DeVolder <eric.devolder@oracle.com>, Rob Herring <robh@kernel.org>, 
+	Russell King <linux@armlinux.org.uk>, Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, May 14, 2024 at 09:44:37PM +0300, Tariq Toukan wrote:
-> 
-> 
-> On 10/05/2024 7:17, Joe Damato wrote:
-> > Add functions to support the netdev-genl per queue stats API.
-> > 
-> > ./cli.py --spec netlink/specs/netdev.yaml \
-> > --dump qstats-get --json '{"scope": "queue"}'
-> > 
-> > ...snip
-> > 
-> >   {'ifindex': 7,
-> >    'queue-id': 62,
-> >    'queue-type': 'rx',
-> >    'rx-alloc-fail': 0,
-> >    'rx-bytes': 105965251,
-> >    'rx-packets': 179790},
-> >   {'ifindex': 7,
-> >    'queue-id': 0,
-> >    'queue-type': 'tx',
-> >    'tx-bytes': 9402665,
-> >    'tx-packets': 17551},
-> > 
-> > ...snip
-> > 
-> > Also tested with the script tools/testing/selftests/drivers/net/stats.py
-> > in several scenarios to ensure stats tallying was correct:
-> > 
-> > - on boot (default queue counts)
-> > - adjusting queue count up or down (ethtool -L eth0 combined ...)
-> > - adding mqprio TCs
-> > 
-> > Signed-off-by: Joe Damato <jdamato@fastly.com>
-> > ---
-> >   .../net/ethernet/mellanox/mlx5/core/en_main.c | 144 ++++++++++++++++++
-> >   1 file changed, 144 insertions(+)
-> > 
-> > diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-> > index ffe8919494d5..4a675d8b31b5 100644
-> > --- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-> > +++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-> > @@ -39,6 +39,7 @@
-> >   #include <linux/debugfs.h>
-> >   #include <linux/if_bridge.h>
-> >   #include <linux/filter.h>
-> > +#include <net/netdev_queues.h>
-> >   #include <net/page_pool/types.h>
-> >   #include <net/pkt_sched.h>
-> >   #include <net/xdp_sock_drv.h>
-> > @@ -5282,6 +5283,148 @@ static bool mlx5e_tunnel_any_tx_proto_supported(struct mlx5_core_dev *mdev)
-> >   	return (mlx5_vxlan_allowed(mdev->vxlan) || mlx5_geneve_tx_allowed(mdev));
-> >   }
-> > +static void mlx5e_get_queue_stats_rx(struct net_device *dev, int i,
-> > +				     struct netdev_queue_stats_rx *stats)
-> > +{
-> > +	struct mlx5e_priv *priv = netdev_priv(dev);
-> > +
-> > +	if (mlx5e_is_uplink_rep(priv))
-> > +		return;
-> > +
-> > +	struct mlx5e_channel_stats *channel_stats = priv->channel_stats[i];
-> > +	struct mlx5e_rq_stats *xskrq_stats = &channel_stats->xskrq;
-> > +	struct mlx5e_rq_stats *rq_stats = &channel_stats->rq;
-> > +
-> 
-> Don't we allow variable declaration only at the beginning of a block?
-> Is this style accepted in the networking subsystem?
-> 
-> > +	stats->packets = rq_stats->packets + xskrq_stats->packets;
-> > +	stats->bytes = rq_stats->bytes + xskrq_stats->bytes;
-> > +	stats->alloc_fail = rq_stats->buff_alloc_err +
-> > +			    xskrq_stats->buff_alloc_err;
-> > +}
-> > +
-> > +static void mlx5e_get_queue_stats_tx(struct net_device *dev, int i,
-> > +				     struct netdev_queue_stats_tx *stats)
-> > +{
-> > +	struct mlx5e_priv *priv = netdev_priv(dev);
-> > +	struct net_device *netdev = priv->netdev;
-> > +	struct mlx5e_txqsq *sq;
-> > +	int j;
-> > +
-> > +	if (mlx5e_is_uplink_rep(priv))
-> > +		return;
-> > +
-> > +	for (j = 0; j < netdev->num_tx_queues; j++) {
-> > +		sq = priv->txq2sq[j];
-> 
-> No sq instance in case interface is down.
-
-This seems easily fixable by checking:
-
-  priv->channels.num > 0
-
-> This should be a simple arithmetic calculation.
-
-I'm not sure why I can't use txq2sq? Please see below for my
-explanation about why I think txq2sq might be all I need.
-
-> Need to expose the proper functions for this calculation, and use it here
-> and in the sq create flows.
-
-I re-read the code several times and my apologies, but I am probably
-still missing something.
-
-I don't think a calculation function is necessary (see below), but
-if one is really needed, I'd probably add something like:
-
-  static inline int tc_to_txq_ix(struct mlx5e_channel *c,
-                                 struct mlx5e_params *params,
-                                 int tc)
-  {
-         return c->ix + tc * params->num_channels;
-  }
-
-And call it from mlx5e_open_sqs.
-
-But, I don't understand why any calculation is needed in
-mlx5e_get_queue_stats_tx. Please see below for explanation.
-
-> 
-> Here it seems that you need a very involved user, so he passes the correct
-> index i of the SQ that he's interested in..
-> 
-> > +		if (sq->ch_ix == i) {
-> 
-> So you're looking for the first SQ on channel i?
-> But there might be multiple SQs on channel i...
-> Also, this SQ might be already included in the base stats.
-> In addition, this i might be too large for a channel index (num_tx_queues
-> can be 8 * num_channels)
+On Wed, 15 May 2024 at 00:48, Samuel Holland <samuel.holland@sifive.com> wrote:
 >
-> The logic here (of mapping from i in num_tx_queues to SQ stats) needs
-> careful definition.
+> Hello Ard,
+>
+> On 2024-05-09 2:39 AM, Ard Biesheuvel wrote:
+> > On Thu, 9 May 2024 at 03:37, Samuel Holland <samuel.holland@sifive.com> wrote:
+> >>
+> >> On 32-bit ARM, conversions between `double` and `long long` require
+> >> runtime library support. Since the kernel does not currently provide
+> >> this library support, the amdgpu driver fails to build:
+> >>
+> >>   ERROR: modpost: "__aeabi_l2d" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
+> >>   ERROR: modpost: "__aeabi_d2ulz" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
+> >>
+> >> As Arnd reports, there are likely no 32-bit ARM platforms which can use
+> >> the amdgpu driver anyway, due to lack of features like 64-bit
+> >> prefetchable BARs. Since amdgpu is currently the only real user of
+> >> ARCH_HAS_KERNEL_FPU_SUPPORT, drop support for this option instead of
+> >> bothering to implement the library functions.
+> >>
+> >> Fixes: 12624fe2d707 ("ARM: implement ARCH_HAS_KERNEL_FPU_SUPPORT")
+> >
+> > This commit is not in mainline yet. Could we just drop the original
+> > patch instead?
+>
+> No, like I mentioned in the original thread, later patches in the series (for
+> example bbce5cac4f5a ("lib/raid6: use CC_FLAGS_FPU for NEON CFLAGS")) depend on
+> CC_FLAGS_FPU being defined for both arm and arm64.
+>
+> arm can't select ARCH_HAS_KERNEL_FPU_SUPPORT because the contract of that option
+> is not fully implemented, but in my opinion it doesn't hurt to keep the part
+> that is implemented.
+>
 
-I read your comments a few times and read the mlx5 source and I am
-probably still missing something obvious here; my apologies.
-
-In net/core/netdev-genl.c, calls to the driver's get_queue_stats_tx
-appear to pass [0, netdev->real_num_tx_queues) as i.
-
-I think this means i is a txq_ix in mlx5, because mlx5 sets
-netdev->real_num_tx_queues in mlx5e_update_tx_netdev_queues, as:
-
-  nch * ntc + qos_queues
-
-which when expanded is
-
-  priv->channels.params.num_channels * mlx5e_get_dcb_num_tc + qos_queues
-
-So, net/core/netdev-genl.c will be using 0 up to that expression as
-i when calling mlx5e_get_queue_stats_tx.
-
-In mlx5: 
-  - mlx5e_activate_priv_channels calls mlx5e_build_txq_maps which
-    generates priv->txq2sq[txq_ix] = sq for every mlx5e_get_dcb_num_tc
-    of every priv->channels.num.
- 
-This seems to happen every time mlx5e_activate_priv_channels is
-called, which I think means that priv->txq2sq is always up to date
-and will give the right sq for a given txq_ix (assuming the device
-isn't down).
-
-Putting all of this together, I think that mlx5e_get_queue_stats_tx
-might need to be something like:
-
-  mutex_lock(&priv->state_lock);
-  if (priv->channels.num > 0) {
-          sq = priv->txq2sq[i];
-          stats->packets = sq->stats->packets;
-          stats->bytes = sq->stats->bytes;
-  }
-  mutex_unlock(&priv->state_lock);
-
-Is this still incorrect somehow?
-
-If so, could you explain a bit more about why a calculation is
-needed? It seems like txq2sq would provide the mapping from txq_ix's
-(which is what mlx5e_get_queue_stats_tx gets as 'i') and an sq,
-which seems like all I would need?
-
-Sorry if I am still not following here.
-
-> > +			stats->packets = sq->stats->packets;
-> > +			stats->bytes = sq->stats->bytes;
-> > +			return;
-> > +		}
-> > +	}
-> > +}
-> > +
-> > +static void mlx5e_get_base_stats(struct net_device *dev,
-> > +				 struct netdev_queue_stats_rx *rx,
-> > +				 struct netdev_queue_stats_tx *tx)
-> > +{
-> > +	struct mlx5e_priv *priv = netdev_priv(dev);
-> > +	int i, j;
-> > +
-> > +	if (!mlx5e_is_uplink_rep(priv)) {
-> > +		rx->packets = 0;
-> > +		rx->bytes = 0;
-> > +		rx->alloc_fail = 0;
-> > +
-> > +		/* compute stats for deactivated RX queues
-> > +		 *
-> > +		 * if priv->channels.num == 0 the device is down, so compute
-> > +		 * stats for every queue.
-> > +		 *
-> > +		 * otherwise, compute only the queues which have been deactivated.
-> > +		 */
-> > +		if (priv->channels.num == 0)
-> > +			i = 0;
-> > +		else
-> > +			i = priv->channels.params.num_channels;
-> > +
-> > +		for (; i < priv->stats_nch; i++) {
-> > +			struct mlx5e_channel_stats *channel_stats = priv->channel_stats[i];
-> > +			struct mlx5e_rq_stats *xskrq_stats = &channel_stats->xskrq;
-> > +			struct mlx5e_rq_stats *rq_stats = &channel_stats->rq;
-> > +
-> > +			rx->packets += rq_stats->packets + xskrq_stats->packets;
-> > +			rx->bytes += rq_stats->bytes + xskrq_stats->bytes;
-> > +			rx->alloc_fail += rq_stats->buff_alloc_err +
-> > +					  xskrq_stats->buff_alloc_err;
-> 
-> Isn't this equivalent to mlx5e_get_queue_stats_rx(i) ?
-> 
-> > +		}
-> > +
-> > +		if (priv->rx_ptp_opened) {
-> > +			struct mlx5e_rq_stats *rq_stats = &priv->ptp_stats.rq;
-> > +
-> > +			rx->packets += rq_stats->packets;
-> > +			rx->bytes += rq_stats->bytes;
-> > +		}
-> > +	}
-> > +
-> > +	tx->packets = 0;
-> > +	tx->bytes = 0;
-> > +
-> > +	/* three TX cases to handle:
-> > +	 *
-> > +	 * case 1: priv->channels.num == 0, get the stats for every TC
-> > +	 *         on every queue.
-> > +	 *
-> > +	 * case 2: priv->channel.num > 0, so get the stats for every TC on
-> > +	 *         every deactivated queue.
-> > +	 *
-> > +	 * case 3: the number of TCs has changed, so get the stats for the
-> > +	 *         inactive TCs on active TX queues (handled in the second loop
-> > +	 *         below).
-> > +	 */
-> > +	if (priv->channels.num == 0)
-> > +		i = 0;
-> > +	else
-> > +		i = priv->channels.params.num_channels;
-> > +
-> 
-> All reads/writes to priv->channels must be under the priv->state_lock.
-> 
-> > +	for (; i < priv->stats_nch; i++) {
-> > +		struct mlx5e_channel_stats *channel_stats = priv->channel_stats[i];
-> > +
-> > +		for (j = 0; j < priv->max_opened_tc; j++) {
-> > +			struct mlx5e_sq_stats *sq_stats = &channel_stats->sq[j];
-> > +
-> > +			tx->packets += sq_stats->packets;
-> > +			tx->bytes += sq_stats->bytes;
-> > +		}
-> > +	}
-> > +
-> > +	/* Handle case 3 described above. */
-> > +	for (i = 0; i < priv->channels.params.num_channels; i++) {
-> > +		struct mlx5e_channel_stats *channel_stats = priv->channel_stats[i];
-> > +		u8 dcb_num_tc = mlx5e_get_dcb_num_tc(&priv->channels.params);
-> > +
-> > +		for (j = dcb_num_tc; j < priv->max_opened_tc; j++) {
-> > +			struct mlx5e_sq_stats *sq_stats = &channel_stats->sq[j];
-> > +
-> > +			tx->packets += sq_stats->packets;
-> > +			tx->bytes += sq_stats->bytes;
-> > +		}
-> > +	}
-> > +
-> > +	if (priv->tx_ptp_opened) {
-> > +		for (j = 0; j < priv->max_opened_tc; j++) {
-> > +			struct mlx5e_sq_stats *sq_stats = &priv->ptp_stats.sq[j];
-> > +
-> > +			tx->packets    += sq_stats->packets;
-> > +			tx->bytes      += sq_stats->bytes;
-> > +		}
-> > +	}
-> > +}
-> > +
-> > +static const struct netdev_stat_ops mlx5e_stat_ops = {
-> > +	.get_queue_stats_rx     = mlx5e_get_queue_stats_rx,
-> > +	.get_queue_stats_tx     = mlx5e_get_queue_stats_tx,
-> > +	.get_base_stats         = mlx5e_get_base_stats,
-> > +};
-> > +
-> >   static void mlx5e_build_nic_netdev(struct net_device *netdev)
-> >   {
-> >   	struct mlx5e_priv *priv = netdev_priv(netdev);
-> > @@ -5299,6 +5442,7 @@ static void mlx5e_build_nic_netdev(struct net_device *netdev)
-> >   	netdev->watchdog_timeo    = 15 * HZ;
-> > +	netdev->stat_ops          = &mlx5e_stat_ops;
-> >   	netdev->ethtool_ops	  = &mlx5e_ethtool_ops;
-> >   	netdev->vlan_features    |= NETIF_F_SG;
+Fair enough. But that still doesn't mean we have to add the 'select
+ARCH_HAS_KERNEL_FPU_SUPPORT' only to back it out again.
 
