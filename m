@@ -1,53 +1,39 @@
-Return-Path: <linux-kernel+bounces-180079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E8A78C69DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:38:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B55568C69DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:38:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F9591C2167E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 15:38:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E672F1C21501
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 15:38:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2697A156221;
-	Wed, 15 May 2024 15:37:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="hI4XAogI"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D87DA149DEE;
-	Wed, 15 May 2024 15:37:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 836AD156225;
+	Wed, 15 May 2024 15:38:31 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C907155749;
+	Wed, 15 May 2024 15:38:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715787475; cv=none; b=EnAWPrOvnIP+AsikC0KHEjwkW/mGD0e2AVXWSlrz0YuAqAkbxEGVoHrEneqFdyCJTrxVXjjGIknHD9sP52DgjzwxDuEJubCkrsgoX1YU9ayH423a0BDY+8SpDrM3UFAsp6/Pv6st74sz5aQMnV+fI9IJWhutZHTZDzdqETUdrLs=
+	t=1715787511; cv=none; b=QtPLwbaEJUN9OYLOrCYfWvcX9vTNsz1u1MHvQTgEiJ4dCb2lW/HdzX0HTHC4rN7J5fpUYN/KWQWcfenNk7XXZkGKGjcVnVdwyHQPc73vm7wgyhld4rORM3UHR8bbxX0sl0yxtJGIWk56NsD9ksg/knX2SWMjiFi9MQxx/LPo9aE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715787475; c=relaxed/simple;
-	bh=SIm0BSS9GgUe9wekJzIw3wuit7u9XixO8Wy0pSPRkl4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BzJMebWxk+/9HKUtjJsjWW4jxTRJMV+ssEyNHIVSd7duWri31VNB5QoQPQ+Eh6aqSXUVN1B7CsCXGuQgekispGJP2YPt+sKA9v1iwzECL0OAX640JUbrqHJrMeZladhHUxby6++/7zy98ygZUBnO5uemRiNegCIUcv+wV7yjbMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=hI4XAogI; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id F32A6881AA;
-	Wed, 15 May 2024 17:37:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1715787470;
-	bh=QH26ByvOQZ5ZvIRm4mwmie0PurCQOytE1O9vcfqJ7k8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hI4XAogIvydq71jAdp08CBhPXS3m3P45/HoF02g4iTbrSheJNW/Zp8eGZ1oQRfKBc
-	 UtmW7wklwTQ2jFCTDNB219iKjDGkt9AL6SRMznHGQPyoSRPx4pI18nAZ70KRe8+jXu
-	 QZImy6IttJEy5Aaxi7YmUUpzImBYEedjfAp//N/91wuZk1W7UsYIFpmaa7FJPBtGNx
-	 yrj9DHFCr5jSQagbTNXdRiJyJBTASF5v39ABuVzMZDYsbG5W2pwu0/leGos124s92o
-	 O3LFifmce9U5HSDhs19+2aL8+OmYC2bfFrHUn7quk7jeEbZJda4yMyfifo2EMEEbvY
-	 48SIjCeugEoTw==
-Message-ID: <9de93cbb-5868-473e-8b32-a6b6f50e128e@denx.de>
-Date: Wed, 15 May 2024 17:37:49 +0200
+	s=arc-20240116; t=1715787511; c=relaxed/simple;
+	bh=LEUHsrTdwa6alzDTTaOO55XhQjMYEv4S83zzoa18X5c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=mg02pdkGhgdR26+VxCtx9DKNk2n0SReO+Fw0S30HIK5p9FOaS6v/dux9ZjaDx9HfYTi2Ei4nGtjV2WwW6VURI8a4rURCgdsQugP6w4+fScA/dHzQK1z5Ppj77tO03ZMBTmjqpDOa3nyou2XPG5sdwvz+FVR5fBZiwlzJx63ttdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1438B1042;
+	Wed, 15 May 2024 08:38:53 -0700 (PDT)
+Received: from [10.57.35.76] (unknown [10.57.35.76])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 232AB3F7A6;
+	Wed, 15 May 2024 08:38:25 -0700 (PDT)
+Message-ID: <89e6a60e-5dfc-431a-aeb5-d4f1e9fdc4b0@arm.com>
+Date: Wed, 15 May 2024 17:38:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,48 +41,81 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] dt-bindings: regulator: st,stm32mp1-pwr-reg: add
- compatible for STM32MP13
-To: Conor Dooley <conor@kernel.org>,
- Patrick DELAUNAY <patrick.delaunay@foss.st.com>
-Cc: Alexandre TORGUE <alexandre.torgue@foss.st.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Pascal Paillet <p.paillet@foss.st.com>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com
-References: <20240513095605.218042-1-patrick.delaunay@foss.st.com>
- <20240513115601.v3.1.Ia0a99d90acb512aa020a6e7a8cca8cc1b71f1759@changeid>
- <615dfdcb-cbda-426f-895e-810f03a8ce60@denx.de>
- <20240513-stabilize-proofread-81f0f9ee38b9@spud>
- <d73d4435-75d6-4cea-b38e-07c7ceae3980@foss.st.com>
- <20240514-entryway-idealize-fcd5ed0e1de7@spud>
- <0c97408c-422d-46b3-8017-da9ebb0767e1@foss.st.com>
- <20240515-monsoon-starfish-0dc59707e843@spud>
+Subject: Re: [PATCH v1] perf arm-spe: Unaligned pointer work around
+To: Ian Rogers <irogers@google.com>
+References: <20240514052402.3031871-1-irogers@google.com>
 Content-Language: en-US
-From: Marek Vasut <marex@denx.de>
-In-Reply-To: <20240515-monsoon-starfish-0dc59707e843@spud>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+From: James Clark <james.clark@arm.com>
+In-Reply-To: <20240514052402.3031871-1-irogers@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 5/15/24 5:35 PM, Conor Dooley wrote:
-> On Wed, May 15, 2024 at 04:33:22PM +0200, Patrick DELAUNAY wrote:
->> with
->>
->>    compatible:
->>      oneOf:
->>          - items:
->>             - const: st,stm32mp1,pwr-reg
->>          - items:
->>             - const: st,stm32mp13-pwr-reg
->>             - const: st,stm32mp1,pwr-reg
+
+
+On 14/05/2024 07:24, Ian Rogers wrote:
+> Use get_unaligned_leXX instead of leXX_to_cpu to handle unaligned
+> pointers. Such pointers occur with libFuzzer testing.
 > 
-> Other than the extra ,s this looks okay, thanks.
+> A similar change for intel-pt was done in:
+> https://lore.kernel.org/r/20231005190451.175568-6-adrian.hunter@intel.com
+> 
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
 
-I think the extra ,s are actually correct, those are the ones from the 
-original compatible which had TWO ,s (it does look a bit unusual).
+Reviewed-by: James Clark <james.clark@arm.com>
+
+>  .../arm-spe-decoder/arm-spe-pkt-decoder.c     | 23 ++++---------------
+>  1 file changed, 5 insertions(+), 18 deletions(-)
+> 
+> diff --git a/tools/perf/util/arm-spe-decoder/arm-spe-pkt-decoder.c b/tools/perf/util/arm-spe-decoder/arm-spe-pkt-decoder.c
+> index a454c6737563..7bf607d0f6d8 100644
+> --- a/tools/perf/util/arm-spe-decoder/arm-spe-pkt-decoder.c
+> +++ b/tools/perf/util/arm-spe-decoder/arm-spe-pkt-decoder.c
+> @@ -10,24 +10,11 @@
+>  #include <byteswap.h>
+>  #include <linux/bitops.h>
+>  #include <stdarg.h>
+> +#include <linux/kernel.h>
+> +#include <asm-generic/unaligned.h>
+>  
+>  #include "arm-spe-pkt-decoder.h"
+>  
+> -#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+> -#define le16_to_cpu bswap_16
+> -#define le32_to_cpu bswap_32
+> -#define le64_to_cpu bswap_64
+> -#define memcpy_le64(d, s, n) do { \
+> -	memcpy((d), (s), (n));    \
+> -	*(d) = le64_to_cpu(*(d)); \
+> -} while (0)
+> -#else
+> -#define le16_to_cpu
+> -#define le32_to_cpu
+> -#define le64_to_cpu
+> -#define memcpy_le64 memcpy
+> -#endif
+> -
+>  static const char * const arm_spe_packet_name[] = {
+>  	[ARM_SPE_PAD]		= "PAD",
+>  	[ARM_SPE_END]		= "END",
+> @@ -70,9 +57,9 @@ static int arm_spe_get_payload(const unsigned char *buf, size_t len,
+>  
+>  	switch (payload_len) {
+>  	case 1: packet->payload = *(uint8_t *)buf; break;
+> -	case 2: packet->payload = le16_to_cpu(*(uint16_t *)buf); break;
+> -	case 4: packet->payload = le32_to_cpu(*(uint32_t *)buf); break;
+> -	case 8: packet->payload = le64_to_cpu(*(uint64_t *)buf); break;
+> +	case 2: packet->payload = get_unaligned_le16(buf); break;
+> +	case 4: packet->payload = get_unaligned_le32(buf); break;
+> +	case 8: packet->payload = get_unaligned_le64(buf); break;
+>  	default: return ARM_SPE_BAD_PACKET;
+>  	}
+>  
 
