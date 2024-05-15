@@ -1,111 +1,147 @@
-Return-Path: <linux-kernel+bounces-180245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5242A8C6BEC
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 20:12:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E87BE8C6BEE
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 20:13:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E61141F22575
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:12:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 875F3B227A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:13:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55C63158DC2;
-	Wed, 15 May 2024 18:12:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fUGicGn9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2774D158DBD;
+	Wed, 15 May 2024 18:12:52 +0000 (UTC)
+Received: from exchange.fintech.ru (exchange.fintech.ru [195.54.195.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 849681F60A;
-	Wed, 15 May 2024 18:12:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A865B1F60A;
+	Wed, 15 May 2024 18:12:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.54.195.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715796761; cv=none; b=cyrl+gCpYyqF6R+BVUGmerjYuKFNxBRGeUUqqfTXSL6nRFn7Gg4RjYwGyuj/iNSb5MWoeh4L78a/c/byZy2bZaoZLS6XRmlk+CDBUgTYYQAGkYuGpEhUNpke3HdfTfmFeVOpI3ikha52Ze25zr6ejx0eWvDDiEW31C7fGBK56Gk=
+	t=1715796771; cv=none; b=mTcZfykYlnUtoARurnaryRXeUz1aZhARvMZSSAK3tYrV+rbQX689zyxPPjnKoyBv220BC1XRhMV/Yr/GvFELSWzPipXe2Pd/DLnM3Gj9Pj29HwRB3FODP/NaRdh5l8B0lKDgLJKwb9Mdi/HyeE49mY7hEyerHiGrnFwS/hhHNbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715796761; c=relaxed/simple;
-	bh=LOrt+7GsCdn7DVj/gMbh6Xgf4i7fcQTqSrnZGxnrKlo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=i9194/XMqrzZIfA/GJj31yEvng4TKeYCQAufbYWjPsjdwxLTHEhvMft5eZ0AGH8RkkAwbMvgKChizRn12I2U+qlJEjVqkdDLBLC4LZvWgQoyErTTFLM0svvzKFxEY1bIBclmjXqlceTCx0CEwGAKxq1w79GwZfN6FESe7DnSQ3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fUGicGn9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB5BFC116B1;
-	Wed, 15 May 2024 18:12:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715796761;
-	bh=LOrt+7GsCdn7DVj/gMbh6Xgf4i7fcQTqSrnZGxnrKlo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=fUGicGn9UQgOA6mw01bZqzwkiP556cGeMZciwhppd1eEX9Q0UyRqHaH8a4Pix3k4b
-	 pMz23Ce3cls1u/0/VAklE+zSfxBIc4q/Uh5HvttBB97ty+zfdR7aOGF/Nm8Fl63jWh
-	 8i/bfP5MmhIMJBpGlOlyFiqqNulqAA0FX0FBTo9laWKQKZ+YcI2JfkT2N5K2d06Gbp
-	 WBxbqYwCJ5g3Y8isM7PyYMPTixIec/VbFzK6ez58k2QvWcWE0Jls5XZyrRsy0ovJc9
-	 V327PgagjEknSV7Nzxh+JZX4mJGlP6Cksf6OBV6yYGWAx9kmRq3lFcEsKsSo40a8CI
-	 +YRlQR7DjwxjA==
-Date: Wed, 15 May 2024 13:12:38 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Roman Kisel <romank@linux.microsoft.com>
-Cc: Saurabh Singh Sengar <ssengar@linux.microsoft.com>, arnd@arndb.de,
-	bhelgaas@google.com, bp@alien8.de, catalin.marinas@arm.com,
-	dave.hansen@linux.intel.com, decui@microsoft.com,
-	haiyangz@microsoft.com, hpa@zytor.com, kw@linux.com,
-	kys@microsoft.com, lenb@kernel.org, lpieralisi@kernel.org,
-	mingo@redhat.com, mhklinux@outlook.com, rafael@kernel.org,
-	robh@kernel.org, tglx@linutronix.de, wei.liu@kernel.org,
-	will@kernel.org, linux-acpi@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, x86@kernel.org, ssengar@microsoft.com,
-	sunilmut@microsoft.com, vdso@hexbites.dev
-Subject: Re: [PATCH v2 6/6] drivers/pci/hyperv/arm64: vPCI MSI IRQ domain
- from DT
-Message-ID: <20240515181238.GA2129352@bhelgaas>
+	s=arc-20240116; t=1715796771; c=relaxed/simple;
+	bh=FX5qsQ+pm60AI+ZzsUnsZYsiP1JbmtAjEvy6JnirhdQ=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QC/83AlnmmTKqE2dh24lPpqS2aa2sea/Dm3hNl/C4Sfgw6v1xyt+6smZa/AFvUnLbZ2Q3jQxIQRBgGxaJo2SYIErm0Litcs7fWpsApoysMe48Uh5XNXIqMfjs5mVdL08wwZr890g6ZmyapxNTKosWRdX06DDWOjIhC3VmYFGu/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru; spf=pass smtp.mailfrom=fintech.ru; arc=none smtp.client-ip=195.54.195.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fintech.ru
+Received: from Ex16-01.fintech.ru (10.0.10.18) by exchange.fintech.ru
+ (195.54.195.169) with Microsoft SMTP Server (TLS) id 14.3.498.0; Wed, 15 May
+ 2024 21:12:44 +0300
+Received: from localhost (10.0.253.138) by Ex16-01.fintech.ru (10.0.10.18)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Wed, 15 May
+ 2024 21:12:43 +0300
+From: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+To: syzbot <syzbot+23bbb17a7878e2b3d1d4@syzkaller.appspotmail.com>,
+	<davem@davemloft.net>, <edumazet@google.com>, <herbert@gondor.apana.org.au>,
+	<kuba@kernel.org>, <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<pabeni@redhat.com>, <steffen.klassert@secunet.com>,
+	<syzkaller-bugs@googlegroups.com>
+CC: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+Subject: Re: [syzbot] [net?] KMSAN: uninit-value in xfrm_state_find (2)
+Date: Wed, 15 May 2024 11:12:39 -0700
+Message-ID: <20240515181239.4127-1-n.zhandarovich@fintech.ru>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <00000000000082378906092f51aa@google.com>
+References:
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ea91140a-d0df-4efd-aef8-34f00b82cf74@linux.microsoft.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: Ex16-02.fintech.ru (10.0.10.19) To Ex16-01.fintech.ru
+ (10.0.10.18)
 
-On Wed, May 15, 2024 at 09:34:09AM -0700, Roman Kisel wrote:
+> Hello,
 > 
+> syzbot found the following issue on:
 > 
-> On 5/15/2024 2:48 AM, Saurabh Singh Sengar wrote:
-> > On Tue, May 14, 2024 at 03:43:53PM -0700, Roman Kisel wrote:
-> > > The hyperv-pci driver uses ACPI for MSI IRQ domain configuration
-> > > on arm64 thereby it won't be able to do that in the VTL mode where
-> > > only DeviceTree can be used.
-> > > 
-> > > Update the hyperv-pci driver to discover interrupt configuration
-> > > via DeviceTree.
-> > 
-> > Subject prefix should be "PCI: hv:"
-> > 
-> Thanks!
+> HEAD commit:    3669558bdf35 Merge tag 'for-6.6-rc1-tag' of git://git.kern..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=16656930680000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=754d6383bae8bc99
+> dashboard link: https://syzkaller.appspot.com/bug?extid=23bbb17a7878e2b3d1d4
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/f2e55d5455c8/disk-3669558b.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/5a0b7323ae76/vmlinux-3669558b.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/3430d935a839/bzImage-3669558b.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+23bbb17a7878e2b3d1d4@syzkaller.appspotmail.com
+> 
+> =====================================================
+> BUG: KMSAN: uninit-value in xfrm_state_find+0x17bc/0x8ce0 net/xfrm/xfrm_state.c:1160
+>  xfrm_state_find+0x17bc/0x8ce0 net/xfrm/xfrm_state.c:1160
+>  xfrm_tmpl_resolve_one net/xfrm/xfrm_policy.c:2469 [inline]
+>  xfrm_tmpl_resolve net/xfrm/xfrm_policy.c:2514 [inline]
+>  xfrm_resolve_and_create_bundle+0x80c/0x4e30 net/xfrm/xfrm_policy.c:2807
+>  xfrm_lookup_with_ifid+0x3f7/0x3590 net/xfrm/xfrm_policy.c:3141
+>  xfrm_lookup net/xfrm/xfrm_policy.c:3270 [inline]
+>  xfrm_lookup_route+0x63/0x2b0 net/xfrm/xfrm_policy.c:3281
+>  ip6_dst_lookup_flow net/ipv6/ip6_output.c:1246 [inline]
+>  ip6_sk_dst_lookup_flow+0x1044/0x1260 net/ipv6/ip6_output.c:1278
+>  udpv6_sendmsg+0x3448/0x4000 net/ipv6/udp.c:1552
+>  inet6_sendmsg+0x105/0x190 net/ipv6/af_inet6.c:655
+>  sock_sendmsg_nosec net/socket.c:730 [inline]
+>  sock_sendmsg net/socket.c:753 [inline]
+>  ____sys_sendmsg+0x9c2/0xd60 net/socket.c:2541
+>  ___sys_sendmsg+0x28d/0x3c0 net/socket.c:2595
+>  __sys_sendmmsg+0x3c4/0x950 net/socket.c:2681
+>  __do_sys_sendmmsg net/socket.c:2710 [inline]
+>  __se_sys_sendmmsg net/socket.c:2707 [inline]
+>  __x64_sys_sendmmsg+0xbc/0x120 net/socket.c:2707
+>  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+>  do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+>  entry_SYSCALL_64_after_hwframe+0x63/0xcd
+> 
+> Local variable tmp.i.i created at:
+>  xfrm_tmpl_resolve_one net/xfrm/xfrm_policy.c:2447 [inline]
+>  xfrm_tmpl_resolve net/xfrm/xfrm_policy.c:2514 [inline]
+>  xfrm_resolve_and_create_bundle+0x370/0x4e30 net/xfrm/xfrm_policy.c:2807
+>  xfrm_lookup_with_ifid+0x3f7/0x3590 net/xfrm/xfrm_policy.c:3141
+> 
+> CPU: 0 PID: 26289 Comm: syz-executor.3 Not tainted 6.6.0-rc1-syzkaller-00033-g3669558bdf35 #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/04/2023
+> =====================================================
 
-"git log --oneline <file>" is a good guide in general and could be
-used for other patches in this series as well.
+Hi,
 
-> > > +		hv_msi_gic_irq_domain = acpi_irq_create_hierarchy(0, HV_PCI_MSI_SPI_NR,
-> > > +			fn, &hv_pci_domain_ops,
-> > > +			chip_data);
-> > 
-> > Upto 100 characters per line are supported now, we can have less
-> > line breaks.
-> > 
-> Fewer line breaks would make this look nicer, let me know if you had any
-> particular style in mind.
+I've got a theory about the way this issue is triggered and I could
+use some guidance  on whether I am correct (and how to fix it).
 
-Let's not use the checkpatch "$max_line_length = 100" as a guide.
+Basically, in this case the way saddr is initialized and the way
+saddr's hash is calculated are not synced (different fields of
+struct xfrm_address_t are used).
 
-The pci-hyperv.c file as a whole is obviously formatted to fit in 80
-columns with few exceptions.
+xfrm_tmpl_resolve_one
+	...
+	// initialize saddr
+	xfrm_get_saddr
+		xfrm6_get_saddr
+			ipv6_dev_get_saddr(..., &saddr->in6); // !!!
+	...
+	xfrm_state_find
+		// get hash
+		xfrm_dst_hash
+			...
+			__xfrm6_daddr_saddr_hash
+				__xfrm6_addr_hash
+					jhash2((__force u32 *)addr->a6, 4, 0); // !!!
 
-IMO it would not be an improvement to scatter random 100-column lines
-throughout.  That would just mean the file would look bad in an
-80-column terminal and there would be a lot of wasted space in a
-100-column terminal.
+I am still working out the best way to come up with a quick fix for
+this problem. If, in fact, I am not wrong about it.
 
-Bjorn
+Regards,
+Nikita
 
