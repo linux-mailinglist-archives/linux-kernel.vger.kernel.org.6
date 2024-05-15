@@ -1,158 +1,150 @@
-Return-Path: <linux-kernel+bounces-180190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14FED8C6B4C
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 19:06:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A055E8C6B4E
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 19:07:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89E6F1F25077
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:06:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B9FA28311B
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:07:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8FC438FA0;
-	Wed, 15 May 2024 17:06:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D20038DE9;
+	Wed, 15 May 2024 17:07:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="L/SAoOhf"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=lyndeno.ca header.i=@lyndeno.ca header.b="g8RggYc6";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="gEJmMGqI"
+Received: from fhigh8-smtp.messagingengine.com (fhigh8-smtp.messagingengine.com [103.168.172.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCBCA5338C
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 17:06:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14F4136AF2;
+	Wed, 15 May 2024 17:07:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715792763; cv=none; b=Wks0fGwTfGOEk2GB7bV5CWlwcyaQZYF7eUJYrUdx98zpNlBuQwN3bukxegKhZ1ji27ytx8VCaUVjVVvdUAc11DVBRqVuxA0YkVTgK82R9WX6HkUAnHu4B1EkZPyJcPaHvQPdseZDGFCFRr3fqbKPQuseN4C4WTizM5Pm46SyLPA=
+	t=1715792829; cv=none; b=pEwVuBFtZdoW6jJ7fluocvqc4tPxK/d6RI7k9+iGM2Qu/rrUhIQKejrti18W5GZhksiBnvVv3oyXbVJyzCx9gr2ZsQKArPXNhyEeUHmOlE8qyMGUCHG0zbLpf2Gh75F/+dpxOkI1ywhLsDblUB169RlT1qgCMavj+bOLzMz8EFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715792763; c=relaxed/simple;
-	bh=dw1/uSbgCqNummnAusaarJatdbzq8Y7V3aaolPrBpPE=;
-	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID:Mime-Version:
-	 Content-Type; b=aWbn9gqwrueOChWkyeeDj7MLItpf2Anf1RzeTXAWDs9i3bDzT0qGTKTFc6JVFCrulmGoQeZ4QcBfHKHLjy54CLmUi5PvDBYO9GpdGGW+m/+gwBEHG/5nucGENESKLNJRGj6fLF4kdhL2MUOFmdhCdEbG0SW38XvafaNaBoRJh88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=L/SAoOhf; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1eeb1a4c10aso44242075ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 10:06:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1715792760; x=1716397560; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mQQzdQzBGV3DZrL9QqRIhsLoIytzbr5Nn+q/+rp6S9U=;
-        b=L/SAoOhfMmEn0ODCNexG1lYDwPdJdEEVQQiDc2l6TWNQRQzaSvbv+pbedvmg5QBJ7B
-         05wCerPeKFJsOijslAwZQ6ZKMY2PAvksayD/0z5vP/zKir/PekzJHf+SR6r8EPnk4KaN
-         FFhgGQoTVnGpAOi3rr775+xqvni9GUrbuq5pLtecomI0tRqe+PWq/Fi7qEybblAVZlYz
-         Wvdx7pHJpYRPExoD8uLtL6aauSygoRVZynYYu8QaX6szcN4eff+NZ8wLNEKIhO33PXk1
-         FKB15toJStwHSTwd35K7IB0SROSjzxdU74JnND9e9RV8GzREVmWNlxjOC80Pifp+O8MU
-         CuIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715792760; x=1716397560;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mQQzdQzBGV3DZrL9QqRIhsLoIytzbr5Nn+q/+rp6S9U=;
-        b=aylFf1i53bYtCYp1CgCtdw7Ju9oqYKbBeWp1jg/x4GuGvu06CPA2tGKL7KmBmZ6ihZ
-         O+jKAaJXIokkcphUZf1OXCv1tuL9qZz1+eGTAGeQtXBczW7WHheE0K1uyxALh6ekrywX
-         owcp6leGP9n3bpWnQCNSQNWt+QhuCLlSoSc5cF3JF1OlCa3xJiCDIC2RB6U/kransmyj
-         Wl4jTcLejkMsFE8P1bns8ZmWgMhtf2ggdDfROcY7qU1GjNZKKGiwjnJWhpuyQkDPX//P
-         kZ5Y7383JVXa4iHn6X7Ed1hxQmho0qZpzGIWqi3gTTDaG6uucWeajQK/ihhh+S9LZlT1
-         dRHA==
-X-Forwarded-Encrypted: i=1; AJvYcCUREIa21ftFCoDZO83i5FH+DSZH5Ysi8Y43t0SfR9KQJ2pDnpgMd42fPh3pBXK1Ffulj9RPRUxYTbhB4vwjubyqMwt3MesdQcF3BFAT
-X-Gm-Message-State: AOJu0Yw+p0YhR9mw3/zlEmr87WXXlj/jGpmOIq06BIUbAtVltzUwt6cd
-	OpBrunIVAzAYna42DENFOjaAsKEwAgHS0n3yaJwa/E0gT2fgK3+KDIt/7/dEOy4=
-X-Google-Smtp-Source: AGHT+IHcHqSyEX4mzVByjYRHADLbnyHvlA3EH+pwK15IXluhS5E+pQUXzIRMTRRMFI5dY8+8yAW0/Q==
-X-Received: by 2002:a17:902:744a:b0:1e5:3c5:55a5 with SMTP id d9443c01a7336-1ef43c0ceb1mr150722395ad.8.1715792759795;
-        Wed, 15 May 2024 10:05:59 -0700 (PDT)
-Received: from localhost ([192.184.165.199])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0bf316f7sm120938135ad.164.2024.05.15.10.05.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 May 2024 10:05:59 -0700 (PDT)
-Date: Wed, 15 May 2024 10:05:59 -0700 (PDT)
-X-Google-Original-Date: Wed, 15 May 2024 10:05:57 PDT (-0700)
-Subject:     Re: riscv: irq-riscv-imsic-early.c:52:9: error: too many arguments to function 'riscv_ipi_set_virq_range'
-In-Reply-To: <20240515-zen-calculate-289cfb90cd65@spud>
-CC: naresh.kamboju@linaro.org, linux-kernel@vger.kernel.org,
-  lkft-triage@lists.linaro.org, regressions@lists.linux.dev, linux-riscv@lists.infradead.org,
-  apatel@ventanamicro.com, tglx@linutronix.de, anders.roxell@linaro.org, dan.carpenter@linaro.org,
-  Arnd Bergmann <arnd@arndb.de>
-From: Palmer Dabbelt <palmer@dabbelt.com>
-To: Conor Dooley <conor@kernel.org>
-Message-ID: <mhng-10b71228-cf3e-42ca-9abf-5464b15093f1@palmer-ri-x1c9>
+	s=arc-20240116; t=1715792829; c=relaxed/simple;
+	bh=qrQZyAZgVUPNCUW1pRjCklM+vCSso8Xl/qKciw6A6yI=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=Ypq+sZcK6XX0zGTCS83WQddEd+bQLOPxBAutFjXzyj9F62ZbcLWkau1OH5hpNOeuEkYSVme6AAdEQjwxEBGxFqDl7PU2w6Tq0DS5bNr80LEtnc97rSc7PAaA/8asQT/Ut8giHLOY/hf/GaIfoe8SRetc9WKYYPUhlbDZegTy5Xg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lyndeno.ca; spf=pass smtp.mailfrom=lyndeno.ca; dkim=pass (2048-bit key) header.d=lyndeno.ca header.i=@lyndeno.ca header.b=g8RggYc6; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=gEJmMGqI; arc=none smtp.client-ip=103.168.172.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lyndeno.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lyndeno.ca
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id D24D0114009B;
+	Wed, 15 May 2024 13:07:05 -0400 (EDT)
+Received: from imap52 ([10.202.2.102])
+  by compute5.internal (MEProxy); Wed, 15 May 2024 13:07:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lyndeno.ca; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1715792825; x=1715879225; bh=HKJnf18XpQ
+	XKeOps2EokRjX0aTuUxsmfspin9xKrYJ4=; b=g8RggYc683ErxmYGBSnT+1TSbg
+	62L7reQ6vrBgaG3zc7XQ8TSmSVpE26e9xtnEplG7mbpv72DU+Z5pBT1Zk5FnZdwJ
+	kXaRUhMlmWWPVMabMLbzQTgFT0a4BpPhSXgkFXaChEKsoZDNsRK++Zn0c+zUFLDB
+	uXXP1HNmoE52Qsyzl/bHORFzpJKltXCmSM3iHRyoH3jJSH0wBhT/u8azMuyHconl
+	dDxNAM76HRir08I68Czux94bkzVD33Iry14JR83f9wEfJZVxEC1OSFdEGAt0e1yV
+	39DYBACQ6cfA+Gi//yetv+KbfZCp57OV4AGB9pXNt2zr/YxZktffbyY5MTQw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1715792825; x=1715879225; bh=HKJnf18XpQXKeOps2EokRjX0aTuU
+	xsmfspin9xKrYJ4=; b=gEJmMGqIzymlt1Mqii6T1fe4NHLrxfF14/db6NYPFALb
+	5gyvxwtFeQkRME7FUhwIvJhQNOWcpkRc/Kj4SUU7+oUQFHBHL4SXkPPYAy+KTN6W
+	Z3QdO1TcgjioR4Dj8Zigfe+w59MIFW9iyt7e6rxy0z+J2yMUenfgonbHLvKiwYS1
+	MQyAKVjAaGCjMIKDEgLb9XBkY0zbmOfFqSa54bW3p0OJUGPJlcLNRXWsRw+DlFjx
+	FOg1lqBAvWTCL0TNIkjZbAUEnnsPL70tceeU0CYzniUvzEq7x1rCvjiYQuPBwKId
+	zwA9DwVacsRDRcaDAD6VRoBxiyiifBG0Fv1qpVbUIQ==
+X-ME-Sender: <xms:uOtEZsP6IrdcEd_QZB2V7Nmx0WGkbCPHQUC8BoDWOPXLPlqwD_x7SA>
+    <xme:uOtEZi8T6vTT4Z1JAAUuNGzxHK2U9rCJJwH0vI0_F2ZdbsjbXvtkeRExK8RJu6tUn
+    gucXa4xzUjaRBbfl0Q>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdegkedguddtgecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdfn
+    hihnughonhcuufgrnhgthhgvfdcuoehlshgrnhgthhgvsehlhihnuggvnhhordgtrgeqne
+    cuggftrfgrthhtvghrnhepfeekieeggedvuedtjeelffetgeelgeeludffjefhkedvudeh
+    gefffeehtefftdetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilh
+    hfrhhomheplhhsrghntghhvgeslhihnhguvghnohdrtggr
+X-ME-Proxy: <xmx:uOtEZjS9mv1AbjhKoDIacsZrxYfa5Csl1BpPXbSiU51uS7K1IaRU1g>
+    <xmx:uOtEZkuzssn7KkGMrON6YTv1IUp9rpE9vvv14PtvKEeA_xyHyszrJg>
+    <xmx:uOtEZkd9k_2i_zXvnru75XFSWAr2mCgypnuWGSmeYYTBre0gYdE_oA>
+    <xmx:uOtEZo29tArsmLFZq5M_f3sFmJmFCI1LKId6aksU6xpcMz6vQV0PVA>
+    <xmx:uetEZo9tbCjTiqnkqQYPQDaid74lluakjbi_UnFrNC34jgj9dc3aEGVq>
+Feedback-ID: i1719461a:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 1D106C60097; Wed, 15 May 2024 13:07:04 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-456-gcd147058c-fm-hotfix-20240509.001-g0aad06e4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+Message-Id: <2419538f-199c-4404-9af4-e17259e09cf4@app.fastmail.com>
+In-Reply-To: <c927c490-bc22-45d9-87e4-4156746547f9@gmx.de>
+References: <20240425172758.67831-1-lsanche@lyndeno.ca>
+ <20240511023726.7408-4-lsanche@lyndeno.ca>
+ <c927c490-bc22-45d9-87e4-4156746547f9@gmx.de>
+Date: Wed, 15 May 2024 11:06:43 -0600
+From: "Lyndon Sanche" <lsanche@lyndeno.ca>
+To: "Armin Wolf" <W_Armin@gmx.de>
+Cc: "Mario Limonciello" <mario.limonciello@amd.com>,
+ =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>,
+ srinivas.pandruvada@linux.intel.com,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ "kernel test robot" <lkp@intel.com>, "Hans de Goede" <hdegoede@redhat.com>,
+ "Yijun Shen" <Yijun.Shen@dell.com>, "Matthew Garrett" <mjg59@srcf.ucam.org>,
+ "Heiner Kallweit" <hkallweit1@gmail.com>,
+ "Randy Dunlap" <rdunlap@infradead.org>, "Jonathan Corbet" <corbet@lwn.net>,
+ "Vegard Nossum" <vegard.nossum@oracle.com>,
+ platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Dell.Client.Kernel@dell.com
+Subject: Re: [PATCH v6 2/2] platform/x86: dell-laptop: Implement platform_profile
+Content-Type: text/plain
 
-On Wed, 15 May 2024 07:36:33 PDT (-0700), Conor Dooley wrote:
-> Palmer,
-> This is the issue I point out to you on the call earlier:
 
-Ya, thanks, I just hit it.  Looks like it's a semantic conflict between 
-21a8f8a0eb35 ("irqchip: Add RISC-V incoming MSI controller early 
-driver") and dc892fb44322 ("riscv: Use IPIs for remote cache/TLB flushes 
-by default").  I think all we need is 
 
-diff --git a/drivers/irqchip/irq-riscv-imsic-early.c b/drivers/irqchip/irq-riscv-imsic-early.c
-index 886418ec06cb..4fbb37074d29 100644
---- a/drivers/irqchip/irq-riscv-imsic-early.c
-+++ b/drivers/irqchip/irq-riscv-imsic-early.c
-@@ -49,7 +49,7 @@ static int __init imsic_ipi_domain_init(void)
-                return virq < 0 ? virq : -ENOMEM;
-
-        /* Set vIRQ range */
--       riscv_ipi_set_virq_range(virq, IMSIC_NR_IPI, true);
-+       riscv_ipi_set_virq_range(virq, IMSIC_NR_IPI);
-
-        /* Announce that IMSIC is providing IPIs */
-        pr_info("%pfwP: providing IPIs using interrupt %d\n", imsic->fwnode, IMSIC_IPI_ID);
-
-as a conflict resolution, which IIUC should happen when Linus merges my 
-next PR.  So I'll try and remember to call that out.
-
+On Sun, May 12, 2024, at 12:05 PM, Armin Wolf wrote:
+> Am 11.05.24 um 04:36 schrieb Lyndon Sanche:
 >
-> On Wed, May 15, 2024 at 04:18:58PM +0200, Naresh Kamboju wrote:
->> The riscv builds failed on Linux next-20240515 tag due to following build
->> warnings / errors with gcc-13 and clang toolchain.
->> 
->> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
->> 
->> Build Log:
->> -----
->> drivers/irqchip/irq-riscv-imsic-early.c: In function 'imsic_ipi_domain_init':
->> drivers/irqchip/irq-riscv-imsic-early.c:52:9: error: too many
->> arguments to function 'riscv_ipi_set_virq_range'
->>    52 |         riscv_ipi_set_virq_range(virq, IMSIC_NR_IPI, true);
->>       |         ^~~~~~~~~~~~~~~~~~~~~~~~
->> In file included from include/linux/smp.h:119,
->>                  from include/linux/lockdep.h:14,
->>                  from include/linux/spinlock.h:63,
->>                  from include/linux/sched.h:2142,
->>                  from include/linux/ratelimit.h:6,
->>                  from include/linux/dev_printk.h:16,
->>                  from include/linux/device.h:15,
->>                  from include/linux/node.h:18,
->>                  from include/linux/cpu.h:17,
->>                  from drivers/irqchip/irq-riscv-imsic-early.c:8:
->> arch/riscv/include/asm/smp.h:52:6: note: declared here
->>    52 | void riscv_ipi_set_virq_range(int virq, int nr);
->>       |      ^~~~~~~~~~~~~~~~~~~~~~~~
->> 
->> metadata:
->>   git_describe: next-20240515
->>   git_repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
->>   git_sha: 82d92a9a1b9ea0ea52aff27cddd05009b4edad49
->>   git_short_log: 82d92a9a1b9e ("Add linux-next specific files for 20240515")
->> 
->> Links:
->>  - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20240515/testrun/23894295/suite/build/test/gcc-13-lkftconfig/details/
->>  - https://storage.tuxsuite.com/public/linaro/lkft/builds/2gUiKdxX7qM27ritMJT5pRyZhyi/
->>  - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20240515/testrun/23894295/suite/build/test/gcc-13-lkftconfig/history/
->> 
->> --
->> Linaro LKFT
->> https://lkft.linaro.org
->> 
+
+>> +static int thermal_init(void)
+>> +{
+>> +	int ret;
+>> +	int supported_modes;
+>> +
+>> +	/* If thermal commands not supported, exit without error */
+>> +	if (!dell_laptop_check_supported_cmds(CLASS_INFO))
+>> +		return 0;
+>> +
+>> +	/* If thermal modes not supported, exit without error */
+>> +	ret = thermal_get_supported_modes(&supported_modes);
+>> +	if (ret < 0)
+>> +		return ret;
+>
+> Hi,
+>
+> the function dell_smbios_error() says that when a specific functionality is
+> not supported, -ENXIO is returned.
+>
+> Please treat this as "no thermal modes supported", since checking if CLASS_INFO
+> is supported is not enough (CLASS_INFO is also used by other functionality like
+> rfkill, so machines might support CLASS_INFO but not USTT).
+>
+> Thanks,
+> Armin Wolf
+>
+
+Armin:
+
+Thank you for this. I will include this in the next revision.
+
+Thanks,
+
+Lyndon
 
