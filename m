@@ -1,155 +1,138 @@
-Return-Path: <linux-kernel+bounces-179799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2779C8C6578
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 13:21:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F3638C656D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 13:20:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDAB81F23DCF
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 11:21:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 446902837AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 11:20:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D51E2762C1;
-	Wed, 15 May 2024 11:21:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03C736EB4E;
+	Wed, 15 May 2024 11:20:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WKLSLYPI"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RQOPIcl6"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7F037605E
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 11:21:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9C0157CA1;
+	Wed, 15 May 2024 11:20:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715772068; cv=none; b=PUwwuE2IVDYCGbFm9gl1GDEFZ0iNfzOJfEuZcGrtKR0Dk4j5WY9Q1HnZSScIfHvVIk90sioEslI/jHjX5iCaYiVEPKRCVLcSD1n6vOjynmvOyc5mrG2X8JiRmZy5MGtJeAbpYAlPbWq3464uusdFU0i4UthEeGeI0BUBjvjzElU=
+	t=1715772043; cv=none; b=Od/GvrAPLE1sZ7BETtjHe/G2ylHZFvHGzx3d+zuxWJnT9WSyMYQzozBp8sZh1i7CKyu4/30qNTur06zX0vzrmJa2AWtd3iEFnnQaw8CEXjcDbT7BGQAHmJSxEp1Awq5f3JBVe6cehbP8MUy1N43WgPPtWKlE/dQQPQ5p0PGGO44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715772068; c=relaxed/simple;
-	bh=M/ZccXoJRnPbA6meUj/MmsF/JxN6cGeMpuCaH9Cj9bw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MV+eZfQ3+k7/nS6CGej63JsBBUXwNIpN7fIEAK+8J/cbCapxl/jS3piWty+4+txU+Zvq1vh/DSo7kmaR9nPLNR979n+BDhhejKD1Shf6RoVJPy1F6ngXsYWWb3K/B+49ZLkPVYxejgbD2fwM9G5PcrkYvCd+S2Mfp9zzeuMM9Sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WKLSLYPI; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715772065;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=h5bDd9jfqFy8/uy57c7rT9ALmyU6BJ6GsFfTS9tK9yg=;
-	b=WKLSLYPIVNx9BPfTU2gMFWDkwlzIrJ6JdqAOEg8rvhzwffgTk2eFit2H36jubhEzcJ0WIQ
-	BkVnS6mpP7134O4JHicKaNOyDuFKN0cXKsmgsv6N4IoErowok/V/W3wxBU771u1nMOiKD6
-	yNO2p/dxtr9jFmc5vkYPWZzXPB9gGP8=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-257-WhGl7FHGPIyWXZjzT2JL7g-1; Wed, 15 May 2024 07:20:54 -0400
-X-MC-Unique: WhGl7FHGPIyWXZjzT2JL7g-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 415FA8058D7;
-	Wed, 15 May 2024 11:20:52 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.36])
-	by smtp.corp.redhat.com (Postfix) with SMTP id 26913200A08E;
-	Wed, 15 May 2024 11:20:46 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed, 15 May 2024 13:19:26 +0200 (CEST)
-Date: Wed, 15 May 2024 13:19:20 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Deepak Gupta <debug@rivosinc.com>
-Cc: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
-	"olsajiri@gmail.com" <olsajiri@gmail.com>,
-	"songliubraving@fb.com" <songliubraving@fb.com>,
-	"luto@kernel.org" <luto@kernel.org>,
-	"mhiramat@kernel.org" <mhiramat@kernel.org>,
-	"andrii@kernel.org" <andrii@kernel.org>,
-	"john.fastabend@gmail.com" <john.fastabend@gmail.com>,
-	"linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"mingo@redhat.com" <mingo@redhat.com>,
-	"rostedt@goodmis.org" <rostedt@goodmis.org>,
-	"ast@kernel.org" <ast@kernel.org>,
-	"tglx@linutronix.de" <tglx@linutronix.de>,
-	"linux-man@vger.kernel.org" <linux-man@vger.kernel.org>,
-	"yhs@fb.com" <yhs@fb.com>,
-	"daniel@iogearbox.net" <daniel@iogearbox.net>,
-	"peterz@infradead.org" <peterz@infradead.org>,
-	"linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>,
-	"bp@alien8.de" <bp@alien8.de>,
-	"bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-	"x86@kernel.org" <x86@kernel.org>
-Subject: Re: [PATCHv5 bpf-next 6/8] x86/shstk: Add return uprobe support
-Message-ID: <20240515111919.GA6821@redhat.com>
-References: <20240507105321.71524-7-jolsa@kernel.org>
- <a08a955c74682e9dc6eb6d49b91c6968c9b62f75.camel@intel.com>
- <ZjyJsl_u_FmYHrki@krava>
- <a8b7be15e6dbb1e8f2acaee7dae21fec7775194c.camel@intel.com>
- <Zj_enIB_J6pGJ6Nu@krava>
- <20240513185040.416d62bc4a71e79367c1cd9c@kernel.org>
- <c56ae75e9cf0878ac46185a14a18f6ff7e8f891a.camel@intel.com>
- <ZkKE3qT1X_Jirb92@krava>
- <3e15152888d543d2ee4e5a1d75298c80aa946659.camel@intel.com>
- <ZkQTgQ3aKU4MAjPu@debug.ba.rivosinc.com>
+	s=arc-20240116; t=1715772043; c=relaxed/simple;
+	bh=qQ6ByqmsI87UJ6a1/Qsz0KjSGLTYGPe8kDGDKnT6Wsc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jE4t7P7E4lhyMuXrfqdVPtaeNCDEYVeAm8ULd646pztKOlYnD6lC/gVVbYPuIgbJDGr0IGY82Ba3WAAIxuhNfRl19qGzR8MAL25jv3xRMH05MAEb7HNGa2qCU+RVjEHGB77VkYjST5MbI8ssvlZMrXO5q83X+7PS++r1Pq1+AiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RQOPIcl6; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-572c65cea55so3509437a12.0;
+        Wed, 15 May 2024 04:20:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715772040; x=1716376840; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+m06lZ+9mZ5s12obwPdLvKcWcqk/GTf8FG1sxmRcMtU=;
+        b=RQOPIcl6JtusjSyaxRHYDlIRB5zMuxSf7v2gL/iNoGWo/kEaH1FgXNXRmYfzwMJdrr
+         XCkUnRtoPvouheL3gE6sBHBO+pk4lCQeKTG0sKB2kGfFU8gDDaDsVZAjK4c2sNIufdAA
+         BsVpPXE1EXP46j1kFuZGNWivAHtGVVm0pNTIYmSWZFD9dKAFhjwUoFppQlUEbSgURcdN
+         eiqIiOaN/f6/c+KdLImCmzei4SFcuT94wMYd2OC+Hc42JXTwN+LSWZRedFYpo8pOBlzW
+         S3AZ68/IlJ98Ie/8241if0uCmnx2O3ZL/lBTRAnBxxtO8NtS2qQm7A/Jemquz/iOitX/
+         2hHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715772040; x=1716376840;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+m06lZ+9mZ5s12obwPdLvKcWcqk/GTf8FG1sxmRcMtU=;
+        b=xUpgovtTA45xD7IGHEt22U8zv81NwSvN+8iCO9xrORcsBgjatl/S2+MaVekBATvjWS
+         PHSXljpPAH4JfjKixXGABt1808pucaAT9sFJgnCbNa36wILM+WPGNQg+x5Luyy1TzSfk
+         nPAijnGBEcI06qM7juR5/NrwlkV18ZoHStKr3/m/fsORP96CNMG/ecedKQbMAWzNzAQy
+         xZB1putC4PyJv4sJofXLPUZmLOIkYR5xYZr2rzRHZfrkmunUDFUUkq7b71CKZf3B0eKx
+         Arur+YWJM0MwSOhHb/7CL/Iko+ZibYbaTuNsj4cxFUFakAhyqEWEpSufMudxmZxCc3An
+         9FVg==
+X-Forwarded-Encrypted: i=1; AJvYcCURNs2A5APR/5yix+Ta78FwtwouRd/WfsbpMyJTo/+fI52Sj34jZeCPI54BfEzu8DRqX0gllDcg4G/vJSIa6xAJlNUFlsfEy0iNlE1lKcYMdD/9t1r0NqUaoAnDLDjJp8z/Ht5/bH1TbD6zBZk/i/JWm3aNzG9T3lf4mROqG7eWsE250w==
+X-Gm-Message-State: AOJu0YxM2MD3nioZlj9wrNmCK+X4mbqveunrd7ZnsNjDsWJ+yCH+Mg9j
+	w3OkdsA7u1wmr6jEMj1ns15SqM78JsJltaTwzU8jJUBW4hcp3gpV
+X-Google-Smtp-Source: AGHT+IGGrjPYUKCf6+BOtL9koMPG1xnm0qrc4o1TtWFemS/d4pZiF9rPdsuiukxqtZL+9UAS8m83Xw==
+X-Received: by 2002:a05:6402:1803:b0:572:a4eb:6678 with SMTP id 4fb4d7f45d1cf-5733294a944mr15206998a12.19.1715772039815;
+        Wed, 15 May 2024 04:20:39 -0700 (PDT)
+Received: from debian.fritz.box ([93.184.186.109])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733c2cb331sm8847633a12.67.2024.05.15.04.20.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 May 2024 04:20:39 -0700 (PDT)
+From: Dimitri Fedrau <dima.fedrau@gmail.com>
+To: 
+Cc: Dimitri Fedrau <dima.fedrau@gmail.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/2] pwm: add support for NXPs high-side switch MC33XS2410
+Date: Wed, 15 May 2024 13:20:32 +0200
+Message-Id: <20240515112034.298116-1-dima.fedrau@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZkQTgQ3aKU4MAjPu@debug.ba.rivosinc.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
+Content-Transfer-Encoding: 8bit
 
-Sorry for the late reply, I was on PTO.
+The MC33XS2410 is a four channel high-side switch. Featuring advanced
+monitoring and control function, the device is operational from 3.0 V to
+60 V. The device is controlled by SPI port for configuration.
 
-On 05/14, Deepak Gupta wrote:
->
-> Question,
->
-> Is it kernel who is maintaining all return probes, meaning original return addresses
-> are saved in kernel data structures on per task basis.
+Changes in V2:
+  - fix title in devicetree binding
+  - fix commit message in devicetree binding patch
+  - remove external clock from pwms and create clocks property
+  - switch to unevaluatedProperties: false
+  - add missing properties for complete example:
+    - pwm-names
+    - pwms
+    - interrupts
+    - clocks
 
-Yes. task_struct->utask->return_instances
+Changes in V3:
+  - Add description of the general behaviour of the device (limitations)
+  - Drop unused defines
+  - Add ranges comments for defines with parameters
+  - Drop MC33XS2410_PERIOD_MAX, MC33XS2410_PERIOD_MIN defines
+  - Drop mc33xs2410_period variable
+  - Round down when calculating period and duty cycle
+  - Use switch instead of loop when calculating frequency
+  - Removed ret variable in mc33xs2410_pwm_get_freq
+  - Handle all accesses in a single call to spi_sync_transfer
+  - Fix comments in function mc33xs2410_pwm_get_period
+  - Fix call pwm_set_relative_duty_cycle(state, ret, 255), instead
+    pwm_set_relative_duty_cycle(state, val[1] + 1, 256);
+  - Use devm_pwmchip_alloc
+  - Fix typo s/Transitition/Transition/
+  - Drop driver_data
+  - Removed patch for direct inputs from series
+  - Tested with PWM_DEBUG enabled, didn't before !
 
-See prepare_uretprobe() which inserts the new return_instance with
-->orig_ret_vaddr = original return addresses
-when the tracee enters the ret-probed function.
+Dimitri Fedrau (2):
+  dt-bindings: pwm: add support for MC33XS2410
+  pwm: add support for NXPs high-side switch MC33XS2410
 
-> Once uretprobe did its job then
-> its kernel who is ensuring return to original return address ?
+ .../bindings/pwm/nxp,mc33xs2410.yaml          | 118 +++++
+ drivers/pwm/Kconfig                           |  12 +
+ drivers/pwm/Makefile                          |   1 +
+ drivers/pwm/pwm-mc33xs2410.c                  | 410 ++++++++++++++++++
+ 4 files changed, 541 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pwm/nxp,mc33xs2410.yaml
+ create mode 100644 drivers/pwm/pwm-mc33xs2410.c
 
-Yes. See instruction_pointer_set(regs, ri->orig_ret_vaddr) in
-handle_trampoline().
-
-
-
-I know absolutely nothing about the shadow stacks, trying to read
-Documentation/arch/x86/shstk.rst but it doesn't tell me too much...
-Where can I find more documentation? I didn't try to google yet.
-
-	Upon function return, the processor pops the shadow stack copy
-	and compares it to the normal stack copy. If the two differ, the
-	processor raises a control-protection fault.
-
-grep-grep-grep... exc_control_protection I guess.
-
-Let me ask a couple of really stupid questions. What if the shadow stack
-is "shorter" than the normal stack? I mean,
-
-	enable_shstk()
-	{
-		prctl(ARCH_SHSTK_SHSTK);
-	}
-
-what happens when enable_shstk() returns?
-
-
-And what is the purpose of fpregs_lock_and_load() ? Why do we need to
-fpregs_restore_userregs() in shstk_setup() and other places?
-
-Oleg.
+-- 
+2.39.2
 
 
