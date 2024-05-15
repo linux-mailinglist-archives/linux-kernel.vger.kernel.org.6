@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-179562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C70EF8C6175
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:20:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FAB88C6177
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:20:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 795C9281323
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 07:20:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2FFA1C21CBC
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 07:20:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF0B35B5D3;
-	Wed, 15 May 2024 07:17:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 502835C613;
+	Wed, 15 May 2024 07:17:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LO5Z3Q9t"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Gx3LeW9i"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D16D46424
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 07:17:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6B345BAFC
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 07:17:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715757446; cv=none; b=siUYfTuTx2o3noe/YEWKtjJ5uaLlL06UyAAWfMBApZlLJI4DLfoImp2AUPV2VEJldGD4F7nxjbcR+/3kVQjBSTpbcpUDuPp3R2l19+gW0G+KE70FHIO5JsvWXik2Yh2bYcvSHLQscgyEK7M6yM31bpGYk117yPvEnKJJwBFxSY4=
+	t=1715757448; cv=none; b=NPwrBJHKV8nuSHBCeYo7RJoYyE+ao6xHgkGEsxhw+flxM2+PJj+w3xh6cIpkgRMeaqMUk/WAN6jqv4Vz2SGrwiO5UrYml9vPPBxilfBRQvITy0AmT02b7OdaGAxKu7zCNXnMMGVy7NvQeXc54nADSfFw4m8U+xnBEuCG6ElbHkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715757446; c=relaxed/simple;
-	bh=YnHUtLMZwpVLI0sVuuwwM6o13HO9vMtZxnKMkrUR/KQ=;
+	s=arc-20240116; t=1715757448; c=relaxed/simple;
+	bh=NSsCiPGcIxF0zOQ6vdufDUaR67+LlToiDZLTG5tQTr0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=q8yAx2i7V3jL7gZ6CjhdNFohi0+xDnftPn8YEeE9bexwYq1w7lZlbb0Jt5oqRGsNSN8jzEkpoaZEZTS4z76cf+f2M5RJQzzZmiDm0hZrgPh+RZ1f1U+ZHBV17M1SdA9MmCIc7EK1uhXH96tzKgrwmCJWj/NNTK51vm/3fJFosu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=LO5Z3Q9t; arc=none smtp.client-ip=209.85.214.181
+	 MIME-Version; b=EKQlHEldBCGjZF8Vc0Wfk7+KattgRp7FXzEI5I44DzPh+HYg2Nzf2pAR7yX4u3N4WjYOncpl+ulEU6oI789sUOLIQZ5mfd6OoyNEeDBxIIsi00+/1NlkhP5Tcg555rZCXkhYrum5Uix0hplMRGusFttAK36wfStDYqV783bUWb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Gx3LeW9i; arc=none smtp.client-ip=209.85.214.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1ec486198b6so49882595ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 00:17:24 -0700 (PDT)
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1f082d92864so16527275ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 00:17:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1715757444; x=1716362244; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1715757446; x=1716362246; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EKVs+B+0cyVVZhjjQw1NRD02y131beAoNCpGUQE22Zo=;
-        b=LO5Z3Q9tbMtRLgU4hrriUYiXGWQbatUGRHUqdFQ8GmElEulIilhJdczdqhlD7j24r3
-         Wg/vfrFw+2UCMJ192IWDIvfpG+JpW2wvHIka38x8ZEDgoMHGJpXMTOQjr61At/weeEUp
-         M46cAzb6F+/xfEPCrEstxU8oArfne0fJ2p8As=
+        bh=7bmm+z3Y++HgLKjqUQ1k19xvJfVuFLOPQwKCzZQr8AY=;
+        b=Gx3LeW9iM9+zmkNIGCPmc35XkwEQn2XcILyOSg9atjScgmafLHd2uMc1E3NnjIsjEi
+         CALrMw1t6+7leFD8H2qJj0ZJZ7ikkBrsXgjd7+2BJzsQtlzaD3YOWZfZ3LoLdjrXFz2n
+         efgxwgrHjEHQJ1DjBW4GNolYqmi3u+U/W4kr4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715757444; x=1716362244;
+        d=1e100.net; s=20230601; t=1715757446; x=1716362246;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=EKVs+B+0cyVVZhjjQw1NRD02y131beAoNCpGUQE22Zo=;
-        b=SoyS/zzTXh/isNh10b4C0ZXkkh/KIJ42NFPsKfU599lIniYibUw70Zb4SkhRNG1Rp/
-         OUPi+hriPjUOD+peJ4lB60LJLfIB4geVuZ97evENJF90wKuWT8jJqxJotyqfdlUpxDcE
-         7TUJgBZTzJMIIYHyEnuiJsS5l1MeZMaB22zKifMFSdGCHuCGg5pb8sVDSc1IBEkB06/C
-         xC4SL5HyBuUCnoqKTV46RigR5p6bOBKS35FbLKWU6JQ0hyXXOxPxeQ6FILRThJGF7Z/K
-         qj4WDNK0ctrIOw1xpYWoylqPFnscsFAmIgwRg1/Bq3NdeM1JKoIIbIziV9F/DXFoeulN
-         T5Uw==
-X-Gm-Message-State: AOJu0YxIXo+iSTjVSlBSD5a0/NMtcr3FkgbZqN6JXYG2EGYXv2QiMR6T
-	IREZXU+VlmYBIz8TqIEAAdHxNQc1uzcrzFy/1ppNFI56Ox4PRhRcdyWDAHQ02A==
-X-Google-Smtp-Source: AGHT+IE8qiXvQd9erZoKg5Z5UhnAOTEuylXJnZ57+lB5IHA55FEIIAx2uTY4ujRkG+u9767ycaP2LQ==
-X-Received: by 2002:a17:902:cec3:b0:1ee:b23b:ad5 with SMTP id d9443c01a7336-1ef43d2e1e8mr177002205ad.5.1715757443909;
-        Wed, 15 May 2024 00:17:23 -0700 (PDT)
+        bh=7bmm+z3Y++HgLKjqUQ1k19xvJfVuFLOPQwKCzZQr8AY=;
+        b=va3jrkGZF7Twbee2Vk55PrNvhgUUM8ztdGccwHFsLIwnCSNoO9fAGw6x41yTGSmbAt
+         +r17KIIgP1OvJHGhJOHbNwX0HE9CrsW7YWkcAoPpR1/5alwcP3X3z1hSLXyBrtfzTU3H
+         51adCKal2aQJi8qRnaVxOMUriW2d4jf3BevlEgovO+oPxVOdW+kBCRImt26IIXIajapv
+         XFRh/fZZCbHKrHFTe8tnvbwv2EPKAXDmFS0++L/R8GxnSNjr6MkTBf1emN19xL3acSiw
+         hyWLKQ36EjzY3dLRkyF3sGtPfTZaIJFhYASjfwhuOOkSWboWacC0dZvutmwsa5Gw+yRE
+         newQ==
+X-Gm-Message-State: AOJu0YxuUUk80zKYoDrOK+BokcnEapHIgkmyElhe/iQeSGou7IkbLsa2
+	EVsr9/2fRoZkQ+VPzs/KoOMILoIs8MFYJmQFTXc9TGKs/3Lxdengnu/RGwJACw==
+X-Google-Smtp-Source: AGHT+IFqYYiz6/dbTR0wwd7ijHcmxpeWPZVSroUIYlUMxCGV540oRKNRsxU3YgCNTEN6VkVK7MOiHA==
+X-Received: by 2002:a17:902:ce11:b0:1e7:d482:9e32 with SMTP id d9443c01a7336-1ef43c0e8d6mr184387855ad.7.1715757446224;
+        Wed, 15 May 2024 00:17:26 -0700 (PDT)
 Received: from tigerii.tok.corp.google.com ([2401:fa00:8f:203:111d:a618:3172:cd5b])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0c136d53sm110941605ad.254.2024.05.15.00.17.22
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0c136d53sm110941605ad.254.2024.05.15.00.17.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 May 2024 00:17:23 -0700 (PDT)
+        Wed, 15 May 2024 00:17:25 -0700 (PDT)
 From: Sergey Senozhatsky <senozhatsky@chromium.org>
 To: Andrew Morton <akpm@linux-foundation.org>,
 	Minchan Kim <minchan@kernel.org>
 Cc: linux-kernel@vger.kernel.org,
 	linux-block@vger.kernel.org,
 	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: [PATCHv4 11/21] zram: extend comp_algorithm attr write handling
-Date: Wed, 15 May 2024 16:12:48 +0900
-Message-ID: <20240515071645.1788128-12-senozhatsky@chromium.org>
+Subject: [PATCHv4 12/21] zram: support compression level comp config
+Date: Wed, 15 May 2024 16:12:49 +0900
+Message-ID: <20240515071645.1788128-13-senozhatsky@chromium.org>
 X-Mailer: git-send-email 2.45.0.rc1.225.g2a3ae87e7f-goog
 In-Reply-To: <20240515071645.1788128-1-senozhatsky@chromium.org>
 References: <20240515071645.1788128-1-senozhatsky@chromium.org>
@@ -82,55 +82,99 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Previously comp_algorithm device attr would accept only
-algorithm name param, however in order to enabled comp
-configuration we need to extend comp_algorithm_store()
-with param=value support.
+Add support for compression level level=N comp configuration
+to comp_algorithm and recomp_algorithm knobs.
+
+Note that zram cannot verify ranges, it's a task of
+corresponding backends to make sure that level makes
+sense.
 
 Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
 ---
- drivers/block/zram/zram_drv.c | 26 +++++++++++++++++++++++++-
- 1 file changed, 25 insertions(+), 1 deletion(-)
+ drivers/block/zram/zram_drv.c | 30 ++++++++++++++++++++++++++++--
+ 1 file changed, 28 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-index 75ecdb885d91..7eb500c8fdaa 100644
+index 7eb500c8fdaa..91706889b63f 100644
 --- a/drivers/block/zram/zram_drv.c
 +++ b/drivers/block/zram/zram_drv.c
-@@ -1013,9 +1013,33 @@ static ssize_t comp_algorithm_store(struct device *dev,
- 				    size_t len)
- {
+@@ -998,6 +998,12 @@ static int __comp_algorithm_store(struct zram *zram, u32 prio, const char *buf)
+ 	return 0;
+ }
+ 
++static int comp_config_store(struct zram *zram, u32 prio, s32 level)
++{
++	zram->configs[prio].level = level;
++	return 0;
++}
++
+ static ssize_t comp_algorithm_show(struct device *dev,
+ 				   struct device_attribute *attr,
+ 				   char *buf)
+@@ -1015,6 +1021,7 @@ static ssize_t comp_algorithm_store(struct device *dev,
  	struct zram *zram = dev_to_zram(dev);
-+	char *args, *param, *val;
-+	char *alg = NULL;
+ 	char *args, *param, *val;
+ 	char *alg = NULL;
++	s32 level = ZCOMP_CONFIG_NO_LEVEL;
  	int ret;
  
--	ret = __comp_algorithm_store(zram, ZRAM_PRIMARY_COMP, buf);
-+	args = skip_spaces(buf);
-+	while (*args) {
-+		args = next_arg(args, &param, &val);
+ 	args = skip_spaces(buf);
+@@ -1034,12 +1041,21 @@ static ssize_t comp_algorithm_store(struct device *dev,
+ 			alg = val;
+ 			continue;
+ 		}
 +
-+		/*
-+		 * We need to support 'param' without value, which is an
-+		 * old format for this attr (algorithm name only).
-+		 */
-+		if (!val || !*val) {
-+			alg = param;
++		if (!strcmp(param, "level")) {
++			ret = kstrtoint(val, 10, &level);
++			if (ret)
++				return ret;
 +			continue;
 +		}
-+
-+		if (!strcmp(param, "algo")) {
-+			alg = val;
-+			continue;
-+		}
-+	}
-+
-+	if (!alg)
-+		return -EINVAL;
-+
-+	ret = __comp_algorithm_store(zram, ZRAM_PRIMARY_COMP, alg);
+ 	}
+ 
+ 	if (!alg)
+ 		return -EINVAL;
+ 
+-	ret = __comp_algorithm_store(zram, ZRAM_PRIMARY_COMP, alg);
++	ret = comp_config_store(zram, ZRAM_PRIMARY_COMP, level);
++	if (!ret)
++		ret = __comp_algorithm_store(zram, ZRAM_PRIMARY_COMP, alg);
  	return ret ? ret : len;
  }
  
+@@ -1072,6 +1088,7 @@ static ssize_t recomp_algorithm_store(struct device *dev,
+ 	int prio = ZRAM_SECONDARY_COMP;
+ 	char *args, *param, *val;
+ 	char *alg = NULL;
++	s32 level = ZCOMP_CONFIG_NO_LEVEL;
+ 	int ret;
+ 
+ 	args = skip_spaces(buf);
+@@ -1092,6 +1109,13 @@ static ssize_t recomp_algorithm_store(struct device *dev,
+ 				return ret;
+ 			continue;
+ 		}
++
++		if (!strcmp(param, "level")) {
++			ret = kstrtoint(val, 10, &level);
++			if (ret)
++				return ret;
++			continue;
++		}
+ 	}
+ 
+ 	if (!alg)
+@@ -1100,7 +1124,9 @@ static ssize_t recomp_algorithm_store(struct device *dev,
+ 	if (prio < ZRAM_SECONDARY_COMP || prio >= ZRAM_MAX_COMPS)
+ 		return -EINVAL;
+ 
+-	ret = __comp_algorithm_store(zram, prio, alg);
++	ret = comp_config_store(zram, prio, level);
++	if (!ret)
++		ret = __comp_algorithm_store(zram, prio, alg);
+ 	return ret ? ret : len;
+ }
+ #endif
 -- 
 2.45.0.rc1.225.g2a3ae87e7f-goog
 
