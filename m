@@ -1,104 +1,119 @@
-Return-Path: <linux-kernel+bounces-180178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 479268C6B22
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:59:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A63E8C6B25
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 19:00:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF4981F24301
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:59:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B43201F24371
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:00:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F52C4C3CD;
-	Wed, 15 May 2024 16:58:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C7A43A1DB;
+	Wed, 15 May 2024 17:00:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b+Nq9kZS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I/+QdZfd"
+Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6170F45014;
-	Wed, 15 May 2024 16:58:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12DD01802B;
+	Wed, 15 May 2024 17:00:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715792319; cv=none; b=RAXwxAJX0tfSjdV7DHrp+xNh4Lw8XJsijforg8Wqhetb31WwVqfGfczhZxTctTlKocI0l8GpbdP8Dhzc5J6WlFsMXPF1MZlwe36cufX/WlBu3Fs6keB8g+CZpAmOI0fOVuPKny+/INEvkkKaEk2z4vfsKZwxoTYS8Zdl0uFkUXU=
+	t=1715792419; cv=none; b=W/SHZRKHbD6tD4wHjZtlYn5IZOb3FqAxaUE7Nulo3u9cvNictylphR59ipFg6Ahv3Qm7aDJmm0tBNXRq4tF69gmOock/+Ft6BV4c8oEJBnXqEMCLgzAC0hjEQU/qnl/tQExMzxNNErBmlct+PgS4Ozu2mtdmJyyBZXiOLZG4wWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715792319; c=relaxed/simple;
-	bh=SG+F31jcchOBQl/TZikHS/uKvjZSzf5ZwHECGYyIEVk=;
+	s=arc-20240116; t=1715792419; c=relaxed/simple;
+	bh=l4PH7I6OL5p39oWGVsKZ2XgG4P5yf60Kl+VEfBip2+E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nBttaQfcsDa92gUNVZedXUGan1o5QwiykYsfs8la5lkOc7qFrHCb0sxZPP/oo665A3u4a1mVIHeBeAJfQhy2ezrD8R+p6Py1rQXAQxPRj3ITEJBuIcffg9Y/Gx8y/CBwNuA07yJe3RxMKsZwx0iIoi7mDbh4I7WELRAGtAfkLJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b+Nq9kZS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFB73C32786;
-	Wed, 15 May 2024 16:58:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715792319;
-	bh=SG+F31jcchOBQl/TZikHS/uKvjZSzf5ZwHECGYyIEVk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=b+Nq9kZSDD52tdIndEozwKQEkAzd5h/sRXMTJWCPgVuo/ZK1pHfufWyEoSDkwHeyp
-	 uETfCfvlkkJfTZFGqHxMD+GJoZUYumSd6FMfjAV5zFApfY7viklsH3PA9F40cmAw/C
-	 u/0iyVcib49gOPLvBk6H385gdrC31Xw7D0lzpKVbkPOU/0GMPfoPoMsuQIElTrmGGz
-	 aJdJ7LEIBr3zeths6JOBqg5H7md2TfGcQ09Bceu+1hIZLfRwutFym5Kd8gMnr7JDK7
-	 wiaE/YIwjahELhqpy/AKh2WcZE7ucJVkghNdIOgW5SBWOu0zqfL9Sp+OOkTaDY5rfT
-	 WyrGOaSvtGFZQ==
-Date: Wed, 15 May 2024 18:58:38 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Anthony Iliopoulos <ailiop@suse.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, cve@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-cve-announce@vger.kernel.org
-Subject: Re: CVE-2024-26821: fs: relax mount_setattr() permission checks
-Message-ID: <20240515-faken-gebohrt-b7c4731929fe@brauner>
-References: <2024041702-CVE-2024-26821-de6b@gregkh>
- <20240514124939.77984-1-ailiop@suse.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=S/tuaGdOPMc24ffYqGW4gQ4SCcTJt7nGdsTi00WCdFcwUQ6//DFsjrDjuXtmDJM6cthBSVi7FqumXnJNVa3h91lw73uIXvqUzYL3BpRRYroc+EOBXfrTgSm4sqy39AvyZw4EgArHPJvhcbriQlCwI1k9ruyJohlsJZHJc59t144=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I/+QdZfd; arc=none smtp.client-ip=209.85.161.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5b2e942171cso1133270eaf.3;
+        Wed, 15 May 2024 10:00:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715792417; x=1716397217; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ztWuJKUB2kUkxBkt2qGizUFIOwiieGPZAc0z1Q9sNvE=;
+        b=I/+QdZfdtm4uX5cy/VuJ1FBa+pl8ze8DQsJM0Yem8vYmFjJ/EECByH5FfIWJ49pp6l
+         CH/5W8tLPTtypD8TsbqbQ2QBnKrzH8LVGCZZ7/OWR9SuRBfBSK9X0r5qrcqvjxJxBo7D
+         OLmX/9ptIYg+I0TbD2f2Gr/qO1UKJxMXeAohaF7qM47ge4rRxtrehOSApIGV9wXpnY1+
+         P5lxXXpRQiPwFp7oOkJWOujHlt21/nFaHG+4Y3rWYHxvfXLUv2NeOG8MJOH3ghjP61It
+         sQYOu/V8CFNmzxDJATKOAqesav6kFt9x5ohTCX1kILOSq7bOdlUxkPgutf7WNCQOl5A2
+         oKbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715792417; x=1716397217;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ztWuJKUB2kUkxBkt2qGizUFIOwiieGPZAc0z1Q9sNvE=;
+        b=gNitJJVu2jPJ+MsHYP7IaYJRfyR+hftViVud46hnWs9tBGZcqyU18+3dj2VN3t7XON
+         yai0U/fXX+zExprrOhRb6YPHmNmM3ckWapVrB1G7b+1cnET/C/rGPIf3NUTt5BupFBFw
+         rajxb3WlDBoIZUHqo7WBmj8n60cgG00elswuozc+64Re8esFJZKtMEHzER/lCsmGXuL1
+         DxBpSj9nPvFvFKba7hobnLig0tA9iAfbaTFel8huU30lxbAADJ/QK61TRQmzBvz6HCJq
+         c7aF7SQDPRM38x7m5aVjbVsDSeD8vKNeHAGa7YvxzArgloi+0JQXltuD09RYgFHHi7gi
+         cmww==
+X-Forwarded-Encrypted: i=1; AJvYcCV+7/byx+jr3aM0CUsSzwQT4vnKrPbvrlRuGbOIeDjVSKJT/aFKkhnhTdg15G3hsVEH7dhwwkzBK2qDDyHS+unUio9fDUC5QDQwc85D/X6/AgKoTDl1X84J0d/Zo24rsxSO5keMB/twS/KI5QSH/fNhkmvbo+bcSEyhCruP11kxj0cN
+X-Gm-Message-State: AOJu0YxFfJH9MjGeR8kxdOX8o6tBwJOIog/exST7klGS6LHxxuYvgHYM
+	odxyshmO5nUh3R1Ax8xIfhd/eYVaXFA2UxsPnSsWpC1yVYcIvdATqQ064A==
+X-Google-Smtp-Source: AGHT+IHLXDd5iZw3cSyEW2Xx8gG6pVUp8WIX00xcwNYcmq0TARtdWfJj/qGbWrestPmohe9xpTGejg==
+X-Received: by 2002:a05:6358:6214:b0:194:801b:151b with SMTP id e5c5f4694b2df-194801b1919mr484472155d.7.1715792416887;
+        Wed, 15 May 2024 10:00:16 -0700 (PDT)
+Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6341134705dsm11678185a12.85.2024.05.15.10.00.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 May 2024 10:00:15 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Wed, 15 May 2024 07:00:14 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Waiman Long <longman@redhat.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Josef Bacik <josef@toxicpanda.com>,
+	cgroups@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Dan Schatzberg <schatzberg.dan@gmail.com>,
+	Ming Lei <ming.lei@redhat.com>
+Subject: Re: [PATCH] blk-cgroup: Properly propagate the iostat update up the
+ hierarchy
+Message-ID: <ZkTqHlkm0G6g_NSk@slm.duckdns.org>
+References: <20240515143059.276677-1-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240514124939.77984-1-ailiop@suse.com>
+In-Reply-To: <20240515143059.276677-1-longman@redhat.com>
 
-On Tue, May 14, 2024 at 02:49:39PM +0200, Anthony Iliopoulos wrote:
-> On Wed, Apr 17, 2024 at 11:44:04AM +0200, Greg Kroah-Hartman wrote:
-> > Description
-> > ===========
-> > 
-> > In the Linux kernel, the following vulnerability has been resolved:
-> > 
-> > fs: relax mount_setattr() permission checks
-> > 
-> > When we added mount_setattr() I added additional checks compared to the
-> > legacy do_reconfigure_mnt() and do_change_type() helpers used by regular
-> > mount(2). If that mount had a parent then verify that the caller and the
-> > mount namespace the mount is attached to match and if not make sure that
-> > it's an anonymous mount.
-> > 
-> > The real rootfs falls into neither category. It is neither an anoymous
-> > mount because it is obviously attached to the initial mount namespace
-> > but it also obviously doesn't have a parent mount. So that means legacy
-> > mount(2) allows changing mount properties on the real rootfs but
-> > mount_setattr(2) blocks this. I never thought much about this but of
-> > course someone on this planet of earth changes properties on the real
-> > rootfs as can be seen in [1].
-> > 
-> > Since util-linux finally switched to the new mount api in 2.39 not so
-> > long ago it also relies on mount_setattr() and that surfaced this issue
-> > when Fedora 39 finally switched to it. Fix this.
-> > 
-> > The Linux kernel CVE team has assigned CVE-2024-26821 to this issue.
+On Wed, May 15, 2024 at 10:30:59AM -0400, Waiman Long wrote:
+> During a cgroup_rstat_flush() call, the lowest level of nodes are flushed
+> first before their parents. Since commit 3b8cc6298724 ("blk-cgroup:
+> Optimize blkcg_rstat_flush()"), iostat propagation was still done to
+> the parent. Grandparent, however, may not get the iostat update if the
+> parent has no blkg_iostat_set queued in its lhead lockless list.
 > 
-> This one probably needs to be disputed as it isn't an actual
-> vulnerability, but rather a fix for the mount_setattr which previously
-> didn't allow reconfiguring the real rootfs similar to what the mount
-> syscall always allowed to do.
+> Fix this iostat propagation problem by queuing the parent's global
+> blkg->iostat into one of its percpu lockless lists to make sure that
+> the delta will always be propagated up to the grandparent and so on
+> toward the root blkcg.
 > 
-> So it merely brings mount_attr up to par with mount in terms of allowing
-> the real rootfs to be reconfigured.
+> Note that successive calls to __blkcg_rstat_flush() are serialized by
+> the cgroup_rstat_lock. So no special barrier is used in the reading
+> and writing of blkg->iostat.lqueued.
 > 
-> Christian, what do you think ?
+> Fixes: 3b8cc6298724 ("blk-cgroup: Optimize blkcg_rstat_flush()")
+> Reported-by: Dan Schatzberg <schatzberg.dan@gmail.com>
+> Closes: https://lore.kernel.org/lkml/ZkO6l%2FODzadSgdhC@dschatzberg-fedora-PF3DHTBV/
+> Signed-off-by: Waiman Long <longman@redhat.com>
 
-Yeah, it's not security related at all. It just allows _additional_
-functionality. Not sure how that ended up on the CVE list. Thanks for
-pinging about this!
+Acked-by: Tejun Heo <tj@kernel.org>
+
+Thanks.
+
+-- 
+tejun
 
