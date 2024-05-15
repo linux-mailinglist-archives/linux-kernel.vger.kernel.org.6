@@ -1,96 +1,134 @@
-Return-Path: <linux-kernel+bounces-179814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E6DA8C65C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 13:34:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 781628C65D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 13:37:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 900D21C2109E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 11:34:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33821283C0A
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 11:37:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DB746F073;
-	Wed, 15 May 2024 11:34:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECC827442F;
+	Wed, 15 May 2024 11:37:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OcgoRcKT"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Bi3Oaxk2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75AA6433DC
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 11:34:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D438E6EB53
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 11:37:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715772848; cv=none; b=OVtOsSEwhvUl1KfQd7VN4hRhTFdCzpe5C5kK2casbQPeTziWCS9F55BzUiJaNUl7g3bA9JyRAP4v9F3yyS92TduRDzx3iAPjPgaXdjFjogfq45Mtih3ugmtjBh9a2FXjSPRL9+e3Nmi2KouboZolhtFGq/MD0grEQPb6+W/tOpE=
+	t=1715773025; cv=none; b=YUZxx/UQKbh0mixqkPEGe9ym0+YSlVTRr784DnSrrTID8np5bNPQ/pwpmgQdKhHcWlodbO0UURVnccSCR9HlRUYlnV8oxza1vJiIvKzpI/Ad3NKbV5bOZ3IrkrY+5UNK+HvjStKY/9dLW9YUZCdkWAwb6cQC4OZmEVeST2CRtIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715772848; c=relaxed/simple;
-	bh=vjz3YtkE6x9jeBbjI+Y3bdQZjv0Zgo1PCO5LCXUI51o=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=gSLREa3ySqVDynpzn1zwV8Gb0Fgbi36rfbHK+qkDl0sup4dKdYsSCnN3CQxm6QUtdvOXMyvFpsQyKXR0neK3sRxMG7eaPMSBtO8ED/vB/Eg8dBYX+NLoX4w3J/mcubchUdR7GChE0aE3GPM/d3Y6j6yIcMm2BiSl4loR9ocKajw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OcgoRcKT; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715772847; x=1747308847;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=vjz3YtkE6x9jeBbjI+Y3bdQZjv0Zgo1PCO5LCXUI51o=;
-  b=OcgoRcKTst3gZESXJE9p0LppQ/gcFKdHmyVrQTwUDwytDvPjp5tF1+Zw
-   sozLGi2LTJawRbcaFfuDjjqUr0T8gelcTU7844ij3VV8ydWVIWTxYxTIk
-   j/PR1fYmc3BjVLjxqUU/N0bV0nt2I3pGb3B1ICOqPjcjhjkoAbMlF9k2Y
-   Gm/NfH/YyFbedTgyWfxZxtZ19x4ljkpgfZfwshHWVtgnMwpssMgj7sn0e
-   u4G8i+G7kLKUclrT+knm6SV1/gI+PFst2WYMd7aJT5Tv/SUyluiOAFE38
-   XhVFsaZayL0X6u8t/7LHwSZ4kvGe5KmRUzKdkShfmdSxQZ+AAueUudthX
-   g==;
-X-CSE-ConnectionGUID: TH4VxVqRR5ON7k1QF6Oa2A==
-X-CSE-MsgGUID: q0aSS+dXTgWvk8NPb/MnHA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11073"; a="15602475"
-X-IronPort-AV: E=Sophos;i="6.08,161,1712646000"; 
-   d="scan'208";a="15602475"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 04:34:06 -0700
-X-CSE-ConnectionGUID: c1brhzZxRc68waYgCcrztA==
-X-CSE-MsgGUID: Rnyqba5TQEOfKPYIggFvWw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,161,1712646000"; 
-   d="scan'208";a="31028469"
-Received: from mwiniars-desk2.ger.corp.intel.com (HELO localhost) ([10.245.246.141])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 04:34:02 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Sui Jingfeng <sui.jingfeng@linux.dev>, Neil Armstrong
- <neil.armstrong@linaro.org>, Maxime Ripard <mripard@kernel.org>, Dmitry
- Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] drm/bridge: Support finding bridge with struct device
-In-Reply-To: <bd175eb3-ca70-4ce7-89ab-ca7f622ed153@linux.dev>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20240514154045.309925-1-sui.jingfeng@linux.dev>
- <20240514154045.309925-2-sui.jingfeng@linux.dev>
- <87v83fct2e.fsf@intel.com>
- <cd81893c-ef0b-4906-8c9c-a98b1e4669e6@linux.dev>
- <87pltncqtg.fsf@intel.com>
- <bd175eb3-ca70-4ce7-89ab-ca7f622ed153@linux.dev>
-Date: Wed, 15 May 2024 14:33:59 +0300
-Message-ID: <87msorcnrs.fsf@intel.com>
+	s=arc-20240116; t=1715773025; c=relaxed/simple;
+	bh=5b0coiq2Qij7YycX921gmUQ28b31nkq/g83M03VOqAE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I3T1OjVoNzTwt/I5/6MnOVJ2cfgdP30waRqTGn5EeO2M4pgf9z1UkQwoky+C9w4CYBPt/RW9BhDPfnsdo4e0xc3Rb+jyyN9HzMod34Xf2GTRz88MxpMZSzhw/0vEQciqpKk/b/u9O4QBC2fy5IVjue8ZoS3p9A1eBbJZkGoZ0c4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Bi3Oaxk2; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715773022;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=o+uVyj8qUsbsfq+6bn2kM6u9Mh7k22x+zAgMrxxsnbY=;
+	b=Bi3Oaxk2bNv88Ikuczh+m8XpL9pmpQ8a+y25Mr9Lr4/nJ2h5v4fIW8XFTZy00JdWFGS49M
+	wsabrrUouoAaUHE3DBglGtxSSBlK/hEHe0MLoUjgVHNRPuVRbJEBLqpE/zeSWkyGpRhlOQ
+	QZ/2fDuhXYc1qGScKlXXi2xjQxfPt6A=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-367-4OmFr6i4P9O6WgqBKHOTwQ-1; Wed,
+ 15 May 2024 07:36:58 -0400
+X-MC-Unique: 4OmFr6i4P9O6WgqBKHOTwQ-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 5FA151C0512F;
+	Wed, 15 May 2024 11:36:57 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.39])
+	by smtp.corp.redhat.com (Postfix) with SMTP id 89945200A08E;
+	Wed, 15 May 2024 11:36:52 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Wed, 15 May 2024 13:35:31 +0200 (CEST)
+Date: Wed, 15 May 2024 13:35:25 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Jiri Olsa <olsajiri@gmail.com>
+Cc: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+	"mhiramat@kernel.org" <mhiramat@kernel.org>,
+	"songliubraving@fb.com" <songliubraving@fb.com>,
+	"luto@kernel.org" <luto@kernel.org>,
+	"andrii@kernel.org" <andrii@kernel.org>,
+	"debug@rivosinc.com" <debug@rivosinc.com>,
+	"john.fastabend@gmail.com" <john.fastabend@gmail.com>,
+	"linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"mingo@redhat.com" <mingo@redhat.com>,
+	"rostedt@goodmis.org" <rostedt@goodmis.org>,
+	"ast@kernel.org" <ast@kernel.org>,
+	"tglx@linutronix.de" <tglx@linutronix.de>,
+	"yhs@fb.com" <yhs@fb.com>,
+	"linux-man@vger.kernel.org" <linux-man@vger.kernel.org>,
+	"daniel@iogearbox.net" <daniel@iogearbox.net>,
+	"peterz@infradead.org" <peterz@infradead.org>,
+	"linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>,
+	"bp@alien8.de" <bp@alien8.de>,
+	"bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+	"x86@kernel.org" <x86@kernel.org>
+Subject: Re: [PATCHv5 bpf-next 6/8] x86/shstk: Add return uprobe support
+Message-ID: <20240515113525.GB6821@redhat.com>
+References: <20240507105321.71524-1-jolsa@kernel.org>
+ <20240507105321.71524-7-jolsa@kernel.org>
+ <a08a955c74682e9dc6eb6d49b91c6968c9b62f75.camel@intel.com>
+ <ZjyJsl_u_FmYHrki@krava>
+ <a8b7be15e6dbb1e8f2acaee7dae21fec7775194c.camel@intel.com>
+ <Zj_enIB_J6pGJ6Nu@krava>
+ <20240513185040.416d62bc4a71e79367c1cd9c@kernel.org>
+ <c56ae75e9cf0878ac46185a14a18f6ff7e8f891a.camel@intel.com>
+ <ZkKE3qT1X_Jirb92@krava>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZkKE3qT1X_Jirb92@krava>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
 
-On Wed, 15 May 2024, Sui Jingfeng <sui.jingfeng@linux.dev> wrote:
-> Yes, you are right, I'll back give another try then.
+Let me repeat I know nothing about shadow stacks, only tried to
+read Documentation/arch/x86/shstk.rst few minutes ago ;)
 
-Thanks, but please do wait until you have feedback on whether the whole
-thing is a good idea or not. :)
+On 05/13, Jiri Olsa wrote:
+>
+> 1) current uretprobe which are not working at the moment and we change
+>    the top value of shadow stack with shstk_push_frame
+> 2) optimized uretprobe which needs to push new frame on shadow stack
+>    with shstk_update_last_frame
+>
+> I think we should do 1) and have current uretprobe working with shadow
+> stack, which is broken at the moment
 
-BR,
-Jani.
+Agreed,
 
+> I'm ok with not using optimized uretprobe when shadow stack is detected
+> as enabled and we go with current uretprobe in that case
 
--- 
-Jani Nikula, Intel
+But how can we detect it? Again, suppose userspace does
+
+	enable_shstk()
+	{
+		prctl(ARCH_SHSTK_SHSTK);
+	}
+
+what if enable_shstk() is ret-probed ?
+
+Oleg.
+
 
