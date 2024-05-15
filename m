@@ -1,137 +1,175 @@
-Return-Path: <linux-kernel+bounces-180192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF0698C6B52
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 19:12:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ADED18C6B54
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 19:13:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F395B22BA0
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:12:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CB43B22F65
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:13:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FC0D433BC;
-	Wed, 15 May 2024 17:12:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 099963BBF7;
+	Wed, 15 May 2024 17:13:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="os8QrypA"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="lRLO2TL4"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3735438DE9
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 17:12:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EE9E36AF2
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 17:13:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715793150; cv=none; b=JCH73hl1sZ2kXemwD4fv3XoNI2D2dQWAXND4YaoiT8wDd3WMxlnlUDtKmE6bFN/fVcq5HLR9gtdZpzIGS9cj0x7oXqYvEpAzDt3dQrdHACh6M2E3XGJzBzw0Y/MDoUHpdrYjnXMcQyqwTfaWBYpP8j+QG7CrQqUwiyOc2N+L71w=
+	t=1715793211; cv=none; b=OtCK2BmvuJ4YyKk4OtUnEcKKFgYKwBSG/WIlqpF6DJ2jivYdrVgu8rAERuCbCPGmHWSlhRhnWdlBUG9WDnSN4EMedLgOm/opO13Oy9Y3YoIoUqi5iRAFACdtuLW/xnMjW/USEsCVwtiym37dvN/VrsMhPHo1kH8Ikaip6b4jc70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715793150; c=relaxed/simple;
-	bh=PFgxIB1YPLSdg2W7I438r4ndLIqIln1z0HvRj4J4qqw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cl8a4+julYYUsddqelCHU8Et5ztTIQX3tW8r6leR4WowHUZHX//eDitbqEm60PMoDD7hoh7srq3h69qZ/NQY8IwuTskZrBkh8Xsm5Oce3jcXtd7OBCJ3ZRBdZQhbtQLfv/8G+YnAw4Ifw7oywgFg+IMNFC64p1huE7ExsML1J3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=os8QrypA; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-34e0d47bd98so4642410f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 10:12:28 -0700 (PDT)
+	s=arc-20240116; t=1715793211; c=relaxed/simple;
+	bh=cvIV6f3GkDNs0QXxlEwPSB7F2//s6+TIdkMo1948Phs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TZ62y/W3fseDialChrN1f01hKkm8oMSQlNOy6hoGtQHBV9I9T9xvOLGggYpCg2tjUHz55Tu8f26bLXlAdGAtHwXSFkdASO1fD3eVBPsEKYc3B+5FE2Jnp6latX4vl1YTmkgonFun1D8HWI62s/7EXnR/Ur4EtHvf9B8juI+NgAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=lRLO2TL4; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2e576057c2bso74585821fa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 10:13:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1715793147; x=1716397947; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=aNosG3ckDHB8NLVJ2gGvIoo4Er1X+7+xgehDnbjd6jc=;
-        b=os8QrypAOGFUEvSmqTbU6IVOP6d5jIztE10CDXdEhhdN4o3ePI0BGrfiP11iJd8CIJ
-         30rpzHtxM8JoRm1AUY1gAey/bAp5dl5Cxle+qQx/KcCFx+SIaqh7meqBoLYgJk0r6M9+
-         +AgcOqPp7bQCQeZsSX9ng8QJSL/QAI0PZFEmN6ShU/R2OX/lT0cHvLv3vW1Azaym41UE
-         H+tsXezBuQLFNeCnUimjV9r2vM0cK+wiDwxo8Iu1YFnClBixIyMLbLMCiQV9qcnMHimT
-         HocFr+9vZ2fXetYL1gYpgCgTxwAyS+pNmKPWjiSj0x1ehpjWVvk6E17rd2SGOcRXb4Bp
-         +FpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715793147; x=1716397947;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=ventanamicro.com; s=google; t=1715793208; x=1716398008; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=aNosG3ckDHB8NLVJ2gGvIoo4Er1X+7+xgehDnbjd6jc=;
-        b=ajRaj8qe3s2mDKANvVzOAsKWOIBJ3tht1zUEydlJF4afHawR0tTyVbDE37zpdVAmMs
-         gvtkzeS4I7F79HOKK9gsGwkhMV6OA24+W/1fSzo/qxnOCI8MMRTzzc3GinseFmsxwMSE
-         ZR/BmbJy0fXnGCth5KXpOe/1jVXTedA8CJlP+Zgyui/o4XSrENMBnZ8QIbthWInZ+OLG
-         0ODo4hSQ0cnIAajC4g8E3bmW6MaMN3ccCzsoHYwqfu+LCbSs4ORJs0TfdPkteuHj7s9C
-         2ivYlD/huAbWSxkvDmeAYfH7PhWETjVgCfB6IA4ppo4Fnhs/Oim9AmkQS8SmFVAjc91d
-         yRRw==
-X-Forwarded-Encrypted: i=1; AJvYcCUTXD66aRA4St7Gfk/B1IAUTiE44oMBvRM3A4UHRvNdTkyGaPBm0BQzjnJRnzX+7yZTEcxiww9f7R+M/s56CeJQsGqZzFdJtb0dAeFl
-X-Gm-Message-State: AOJu0YzDpArB7IP3PQLJc+v4Bl2vKJgZiNUCcDajONghPxx8cJyinb4c
-	b+TrOnZVGNgc/hXUKm/PiaO//H88IM4W+5g7+QoD01rKLl/teihSL0lbBj7vvmY=
-X-Google-Smtp-Source: AGHT+IFLKOGooEzh5kgxSU0G+WqjP7c8Us/ACZAVQOeBbdHE4Nu/p8dE0Q5EYbLnc34bRxIqp6xGpA==
-X-Received: by 2002:a05:6000:930:b0:351:d383:6325 with SMTP id ffacd0b85a97d-351d38363cfmr598051f8f.12.1715793147224;
-        Wed, 15 May 2024 10:12:27 -0700 (PDT)
-Received: from airbuntu (host81-157-90-255.range81-157.btcentralplus.com. [81.157.90.255])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502b8a780fsm16840240f8f.59.2024.05.15.10.12.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 May 2024 10:12:26 -0700 (PDT)
-Date: Wed, 15 May 2024 18:12:24 +0100
-From: Qais Yousef <qyousef@layalina.io>
-To: Phil Auld <pauld@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Daniel Bristot de Oliveira <bristot@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH] sched/rt: Clean up usage of rt_task()
-Message-ID: <20240515171224.wbjlke6uavhig2dl@airbuntu>
-References: <20240514234112.792989-1-qyousef@layalina.io>
- <20240514235851.GA6845@lorien.usersys.redhat.com>
- <20240515083238.GA40213@noisy.programming.kicks-ass.net>
- <20240515112050.GA25724@lorien.usersys.redhat.com>
- <20240515120613.m6ajyxyyxhat7eb5@airbuntu>
- <20240515125049.GA29065@lorien.usersys.redhat.com>
+        bh=nG8JDEZluA+U+D68g8z0TeZdm/BEqT6rREHFgTIhPW4=;
+        b=lRLO2TL4neNYn3MR4tadXjLoCHx8YLpBoVc+hSH7+Ha3t4iIMGtaoXE+gHFxk7uPMM
+         Bj1gVBe79RzIshkP0Bv0YEeteZyDOVoxENabG2J+L2cPFi8mhmQkzvfVw9kH3+yuRmlr
+         LLNzIsMv7kqYhZUIjtJ2BFW2PTRqggKxQrePJbp47r0ryxx1YKSIjGsxN/Q7cUcZjJOX
+         3Aa4GJHkMR6EcPnoX0laDBo4Zja6qSyHL7J6TaYHouSU1oqGwNUEngIT/TloPPGZAsF9
+         suFTz6/Y1GH1A/GtjLkI5FfohO9DuRP7iNB3NHGPpv0sOzGafFahHnj1pkvUzyg1xxSQ
+         /gGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715793208; x=1716398008;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nG8JDEZluA+U+D68g8z0TeZdm/BEqT6rREHFgTIhPW4=;
+        b=eV7ssAseNK18tJg85rB0n8qwWmIXmgUEmfpSI69XUwWW9NIcWGWAiEuaCx/Khdv0Ha
+         6Qu8K3f7KOSUo3ZbDXNjA9m7f/MQlTtlJNmXYCN1rIi2QLFFbWCEEvIN23mhpMkZafUd
+         zlOEri7obDoEJL2lwBwpZ1ZAG1xmhc6PEcsbPPRcd+lVsBZhow+Z4ljb4V28RtFVoCpz
+         BEnQTGz9bVlU6wd3uqOo9PDLlGOXhfDGUDfGDdU0qeTOU6kBcSfCeXmvbRAV57hXGgco
+         +PyTcAWPDm0dUI8cywK31GoZtehfOaogpOvC3JdWId1Pqnlx3YF2jEt/euvww/nrvpvO
+         I7LQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXdVCueQEXnk06noJQ4lV12qq0DO4kNj+VndGJMkTzTS25kAs4jwvEXqWkieyg8Gu9/l5A9/iyP2d1+q0TaUgZWmyYPdqIiZCjuRIoA
+X-Gm-Message-State: AOJu0YyPG6VEjMGSbyyfhOsN/1Xk0vNoULP1trjSf0FWAkeb2pP8SfKw
+	y3hVcbtXxLLUOde/5BX7ru7/uqhJfOsaP2OyhO7FeEVeM/RPZE7eiyG7+9LDDiZojqlFsTLPLWD
+	/ABlH+d1Vd8snsJJnDff/9vt1hblzmtkjTQ+p9w==
+X-Google-Smtp-Source: AGHT+IHfmskTbYDtGDQ4I7DObIPA2665F5KMdb6W8Wv/V4mAtLm81tAYf7jnYNcndFdsqSurRzjwAe2PkfScQpV143U=
+X-Received: by 2002:a2e:7a0e:0:b0:2e2:466b:1a56 with SMTP id
+ 38308e7fff4ca-2e52039e2c3mr125315251fa.53.1715793207549; Wed, 15 May 2024
+ 10:13:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240515125049.GA29065@lorien.usersys.redhat.com>
+References: <20240515-zen-calculate-289cfb90cd65@spud> <mhng-10b71228-cf3e-42ca-9abf-5464b15093f1@palmer-ri-x1c9>
+In-Reply-To: <mhng-10b71228-cf3e-42ca-9abf-5464b15093f1@palmer-ri-x1c9>
+From: Anup Patel <apatel@ventanamicro.com>
+Date: Wed, 15 May 2024 22:43:14 +0530
+Message-ID: <CAK9=C2UkTD0hYymjow-yHHfBDh4CtRv-G2BPt=ncstLRmpYgyg@mail.gmail.com>
+Subject: Re: riscv: irq-riscv-imsic-early.c:52:9: error: too many arguments to
+ function 'riscv_ipi_set_virq_range'
+To: Palmer Dabbelt <palmer@dabbelt.com>
+Cc: Conor Dooley <conor@kernel.org>, naresh.kamboju@linaro.org, 
+	linux-kernel@vger.kernel.org, lkft-triage@lists.linaro.org, 
+	regressions@lists.linux.dev, linux-riscv@lists.infradead.org, 
+	tglx@linutronix.de, anders.roxell@linaro.org, dan.carpenter@linaro.org, 
+	Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 05/15/24 08:50, Phil Auld wrote:
+On Wed, May 15, 2024 at 10:36=E2=80=AFPM Palmer Dabbelt <palmer@dabbelt.com=
+> wrote:
+>
+> On Wed, 15 May 2024 07:36:33 PDT (-0700), Conor Dooley wrote:
+> > Palmer,
+> > This is the issue I point out to you on the call earlier:
+>
+> Ya, thanks, I just hit it.  Looks like it's a semantic conflict between
+> 21a8f8a0eb35 ("irqchip: Add RISC-V incoming MSI controller early
+> driver") and dc892fb44322 ("riscv: Use IPIs for remote cache/TLB flushes
+> by default").  I think all we need is
+>
+> diff --git a/drivers/irqchip/irq-riscv-imsic-early.c b/drivers/irqchip/ir=
+q-riscv-imsic-early.c
+> index 886418ec06cb..4fbb37074d29 100644
+> --- a/drivers/irqchip/irq-riscv-imsic-early.c
+> +++ b/drivers/irqchip/irq-riscv-imsic-early.c
+> @@ -49,7 +49,7 @@ static int __init imsic_ipi_domain_init(void)
+>                 return virq < 0 ? virq : -ENOMEM;
+>
+>         /* Set vIRQ range */
+> -       riscv_ipi_set_virq_range(virq, IMSIC_NR_IPI, true);
+> +       riscv_ipi_set_virq_range(virq, IMSIC_NR_IPI);
+>
+>         /* Announce that IMSIC is providing IPIs */
+>         pr_info("%pfwP: providing IPIs using interrupt %d\n", imsic->fwno=
+de, IMSIC_IPI_ID);
+>
+> as a conflict resolution, which IIUC should happen when Linus merges my
+> next PR.  So I'll try and remember to call that out.
 
-> > > My point was just to call it rt_task() still. 
-> > 
-> > It is called rt_task() still. I just added a new realtime_task() to return true
-> > for RT and DL. rt_task() will return true only for RT now.
-> > 
-> > How do you see this should be done instead? I'm not seeing the problem.
+Yes, your conflict resolution is correct.
+
+Thanks,
+Anup
+
+>
 > >
-> 
-> Right, sorry. I misread your commit message completely and then all the
-> places where you changed rt_task() to realtime_task() fit my misreading.
-> 
-> rt_task() means rt class and realtime_task does what rt_task() used to do.
-> That's how I would do it, too :)
-
-Ah, I see. I updated the commit message to hopefully read better :)
-
-"""
-    I define the usage of rt_task() to be tasks that belong to RT class.
-    Make sure that it returns true only for RT class and audit the users and
-    replace the ones required the old behavior with the new realtime_task()
-    which returns true for RT and DL classes. Introduce similar
-    realtime_prio() to create similar distinction to rt_prio() and update
-    the users that required the old behavior to use the new function.
-"""
-
-> Reviewed-by: Phil Auld <pauld@redhat.com>
-
-Thanks for having a look!
-
-Cheers
-
---
-Qais Yousef
+> > On Wed, May 15, 2024 at 04:18:58PM +0200, Naresh Kamboju wrote:
+> >> The riscv builds failed on Linux next-20240515 tag due to following bu=
+ild
+> >> warnings / errors with gcc-13 and clang toolchain.
+> >>
+> >> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> >>
+> >> Build Log:
+> >> -----
+> >> drivers/irqchip/irq-riscv-imsic-early.c: In function 'imsic_ipi_domain=
+_init':
+> >> drivers/irqchip/irq-riscv-imsic-early.c:52:9: error: too many
+> >> arguments to function 'riscv_ipi_set_virq_range'
+> >>    52 |         riscv_ipi_set_virq_range(virq, IMSIC_NR_IPI, true);
+> >>       |         ^~~~~~~~~~~~~~~~~~~~~~~~
+> >> In file included from include/linux/smp.h:119,
+> >>                  from include/linux/lockdep.h:14,
+> >>                  from include/linux/spinlock.h:63,
+> >>                  from include/linux/sched.h:2142,
+> >>                  from include/linux/ratelimit.h:6,
+> >>                  from include/linux/dev_printk.h:16,
+> >>                  from include/linux/device.h:15,
+> >>                  from include/linux/node.h:18,
+> >>                  from include/linux/cpu.h:17,
+> >>                  from drivers/irqchip/irq-riscv-imsic-early.c:8:
+> >> arch/riscv/include/asm/smp.h:52:6: note: declared here
+> >>    52 | void riscv_ipi_set_virq_range(int virq, int nr);
+> >>       |      ^~~~~~~~~~~~~~~~~~~~~~~~
+> >>
+> >> metadata:
+> >>   git_describe: next-20240515
+> >>   git_repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
+> >>   git_sha: 82d92a9a1b9ea0ea52aff27cddd05009b4edad49
+> >>   git_short_log: 82d92a9a1b9e ("Add linux-next specific files for 2024=
+0515")
+> >>
+> >> Links:
+> >>  - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-202=
+40515/testrun/23894295/suite/build/test/gcc-13-lkftconfig/details/
+> >>  - https://storage.tuxsuite.com/public/linaro/lkft/builds/2gUiKdxX7qM2=
+7ritMJT5pRyZhyi/
+> >>  - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-202=
+40515/testrun/23894295/suite/build/test/gcc-13-lkftconfig/history/
+> >>
+> >> --
+> >> Linaro LKFT
+> >> https://lkft.linaro.org
+> >>
 
