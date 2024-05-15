@@ -1,137 +1,218 @@
-Return-Path: <linux-kernel+bounces-179827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FA2C8C6618
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 14:06:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DC0E8C6619
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 14:06:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E03B283646
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 12:06:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 253F41F23470
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 12:06:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D69D77442F;
-	Wed, 15 May 2024 12:06:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A69487581D;
+	Wed, 15 May 2024 12:06:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="u6H+7BQb"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jE1G4tFl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8540F2CCD0
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 12:06:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D908F2CCD0;
+	Wed, 15 May 2024 12:06:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715774778; cv=none; b=RNwpc5QegBZR7Y3k410+hzDTyP4mXvH1AF93765ZFGMxkFW9/7UdD5gOUrJNRSZmY4PmWafFSTSJvn4sxqHJMLQcWjfTLTARz2NHO9p2kQeo6BgDIfKw9GMOWk4HluK/JgNpGEPUd5RjGr69d8Yxid7eaUR+3b5iRewvAs33pvY=
+	t=1715774782; cv=none; b=ebk0BQ3kyeZiKnj5W5oAxe7Ud0+zY0pfb4NhATAiS6nxW10CLwjR6AsbP6P+FpAkMJILZBHQuczFFyMpz1p0Kkw9ATr5Jy0mLdfKnlzMfodsn7Mn7j8uboDUyyqRcrboj+Q+R+FQENmrt5Zhzwk1jF5MaOI9Rc+EeHa2K/QzMK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715774778; c=relaxed/simple;
-	bh=Wf4PtMcK4TWbBm/o2EnpN3Y26qLxkxka0G6bwrOg3aA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YKH0e/q7YZ6Nsg9WBprWzP51xOGDdeDbFReD4hdKqUt/UjaKGSXxXZcdebg0syq6XXMRWhe0ieYSIBZWHbZuPdXvxLatlaaY6yPkq2XfSQlw6ykMgMQ12sbSdRPpDHHJZLIyGBzo0E0PgesQ7lSsMPVzZ4WC79CKvKieFqFX8Bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=u6H+7BQb; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-41fd5dc0508so45556045e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 05:06:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1715774775; x=1716379575; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rJYF6H91YS9YSoXm+Tl9JERoBMf7eBC9ZSy+O3IfVoo=;
-        b=u6H+7BQb9llJ+GoUyqhx9nL12eq1QZTpEYwVKf4L6Kk8pxybMMa6wGPamt1Bg1ep4d
-         C/lsdKjdJeZdXwMLWp5fxgO6nHcC9zVgGTXn9zymZ6xqiiOGQW4rrxGI9jgMEd1nbgYA
-         3zZ5OzYV1RLUm4QAEl4pAqnDflIDLagY3fotksWvN5G5S8JQRnwavg71k78sQdNQSyGG
-         eNyDwXYPYfDTTtrAth6G5gdKHPHtbfOX2QJbdr59n1S9no5Kz15fhFmCr3jnxK5+YEqu
-         ve6MqQrYhJPoB6C1CRuR5F1dkin6pAE07+u2g+nP8Yhoa3ZGe855d6flwjmZT/e1NoCt
-         ZGUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715774775; x=1716379575;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rJYF6H91YS9YSoXm+Tl9JERoBMf7eBC9ZSy+O3IfVoo=;
-        b=sIutzkaz718BQv40C6I8N9fQN1xfkvGpJwbW6lqltLr5ESel5MKP01pW1tIbHgR4az
-         Zd9iKLxQUpi+PGiMyV5xbWuWLY+mW/nsTiCa0H8n6C7w55qPkUsyIZSXY1tBGgo6Wm/p
-         uONnIiu0+TMPRKtV1szLUDmToP03JXBfHCzifVDB8tCTZoqOTfcOxUJpobkFEmPBeWRP
-         U6Ly1awKSPd/VsqSTqj61klu9faA/xQfj//hSHG0RzJrtjKjUTKBSgMvS9tTF9nbmyo5
-         nhTX11mtJepnEffN/C8DEYtpx//VLib6EYqxY7SFdimopMNukDgpYbI1QHnNYCPeKEhW
-         dGqg==
-X-Forwarded-Encrypted: i=1; AJvYcCVM6a2KYcal0fyuEiSkwLJ9tqmEo62vHt3/16UeAvWITVAjOS2BMjP3r1hZMWcWH26Ypytt07jCO28FfriPu5L95Mo+LGuSJ6dmgy6I
-X-Gm-Message-State: AOJu0YyXt5p3DC08P0kCEg4g9pZhCnxQOhRU8SR11f4AUID9+fQuuIeF
-	8T2GtDtF1ugisykjAnzw7cpm0Ib8d7s3Inxk6M7QihmBL+F8k0J8bj2+RK1hyqs=
-X-Google-Smtp-Source: AGHT+IFLpgfv8/Esnolm22txMsxpEfskLJZ4i6egdOEr6U9kJff2jGBqFVP62Bj1ZgVi3f/r+yf4Tg==
-X-Received: by 2002:a05:600c:2187:b0:419:ec38:f34b with SMTP id 5b1f17b1804b1-41feaa439d6mr115391895e9.20.1715774774868;
-        Wed, 15 May 2024 05:06:14 -0700 (PDT)
-Received: from airbuntu (host81-157-90-255.range81-157.btcentralplus.com. [81.157.90.255])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41f87d20488sm266011555e9.25.2024.05.15.05.06.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 May 2024 05:06:14 -0700 (PDT)
-Date: Wed, 15 May 2024 13:06:13 +0100
-From: Qais Yousef <qyousef@layalina.io>
-To: Phil Auld <pauld@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Daniel Bristot de Oliveira <bristot@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH] sched/rt: Clean up usage of rt_task()
-Message-ID: <20240515120613.m6ajyxyyxhat7eb5@airbuntu>
-References: <20240514234112.792989-1-qyousef@layalina.io>
- <20240514235851.GA6845@lorien.usersys.redhat.com>
- <20240515083238.GA40213@noisy.programming.kicks-ass.net>
- <20240515112050.GA25724@lorien.usersys.redhat.com>
+	s=arc-20240116; t=1715774782; c=relaxed/simple;
+	bh=fBp/tINIW/W/kb+0aD/MBS7XiS6Vf70YTcOdC+Nzzu8=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=BHLV35ZHNN07j06ioT0a3nC+KE6PQFCVbbkTgH6lcFj0zAnWh5I7UVr6BUa/xMazhwJujuDWkv3Hbrl/EGdvAH0bGIcaELmiPX+GIoTvDD2bQBu2QIy9+1CZEjWmNj+9g1LBPVa8swvZ7t+u1VB/G+t0XB3I7mKvF+DVxP0EzAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jE1G4tFl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11B7BC32782;
+	Wed, 15 May 2024 12:06:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715774781;
+	bh=fBp/tINIW/W/kb+0aD/MBS7XiS6Vf70YTcOdC+Nzzu8=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=jE1G4tFlE8+tZ8b7ToRce/5HR6xRftU+pd65LJYbajyMV/mZYwddKcvqi4HmBn/05
+	 tTqZMTURRct4InNdr4d3cRWODupifG2OZvahfm2gYqAiXwLfqmJRMSSWsYUgrb4RwA
+	 mpE1zQHh54/LLouqht5Fm5a2Xq2gxZTAX3xu0TB2eCZNCr5bwocuywfoWuYmVCaflz
+	 4ox3qPgixEQ8oyUbeTcZtwrZ/WEFvxBZs6vlTzn5l5MzKmZzBR1RkuALCEmAmGnmTF
+	 SIW69+AvQTznfCIabF1Xi1L57+rnWomUPJ+FljglAsJ9Aou+Z+W60A9JAIDhryJBui
+	 LeMNcZfMH2WBA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240515112050.GA25724@lorien.usersys.redhat.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 15 May 2024 15:06:18 +0300
+Message-Id: <D1A7EBO71WXC.P08C5KQ97AA0@kernel.org>
+Cc: <reinette.chatre@intel.com>, =?utf-8?b?5YiY5Y+MKOi9qeWxuSk=?=
+ <ls123674@antgroup.com>
+Subject: Re: [RFC PATCH v3 1/1] x86/sgx: Explicitly give up the CPU in
+ EDMM's ioctl() to avoid softlockup
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Bojun Zhu" <zhubojun.zbj@antgroup.com>, <linux-kernel@vger.kernel.org>,
+ <linux-sgx@vger.kernel.org>, <dave.hansen@linux.intel.com>
+X-Mailer: aerc 0.17.0
+References: <20240515065521.67908-1-zhubojun.zbj@antgroup.com>
+ <20240515065521.67908-2-zhubojun.zbj@antgroup.com>
+In-Reply-To: <20240515065521.67908-2-zhubojun.zbj@antgroup.com>
 
-On 05/15/24 07:20, Phil Auld wrote:
-> On Wed, May 15, 2024 at 10:32:38AM +0200 Peter Zijlstra wrote:
-> > On Tue, May 14, 2024 at 07:58:51PM -0400, Phil Auld wrote:
-> > > 
-> > > Hi Qais,
-> > > 
-> > > On Wed, May 15, 2024 at 12:41:12AM +0100 Qais Yousef wrote:
-> > > > rt_task() checks if a task has RT priority. But depends on your
-> > > > dictionary, this could mean it belongs to RT class, or is a 'realtime'
-> > > > task, which includes RT and DL classes.
-> > > > 
-> > > > Since this has caused some confusion already on discussion [1], it
-> > > > seemed a clean up is due.
-> > > > 
-> > > > I define the usage of rt_task() to be tasks that belong to RT class.
-> > > > Make sure that it returns true only for RT class and audit the users and
-> > > > replace them with the new realtime_task() which returns true for RT and
-> > > > DL classes - the old behavior. Introduce similar realtime_prio() to
-> > > > create similar distinction to rt_prio() and update the users.
-> > > 
-> > > I think making the difference clear is good. However, I think rt_task() is
-> > > a better name. We have dl_task() still.  And rt tasks are things managed
-> > > by rt.c, basically. Not realtime.c :)  I know that doesn't work for deadline.c
-> > > and dl_ but this change would be the reverse of that pattern.
-> > 
-> > It's going to be a mess either way around, but I think rt_task() and
-> > dl_task() being distinct is more sensible than the current overlap.
-> >
-> 
-> Yes, indeed.
-> 
-> My point was just to call it rt_task() still. 
+On Wed May 15, 2024 at 9:55 AM EEST, Bojun Zhu wrote:
+> EDMM's ioctl()s support batch operations, which may be
+> time-consuming. Try to explicitly give up the CPU as the prefix
+> operation at the every begin of "for loop" in
+> sgx_enclave_{ modify_types | restrict_permissions | remove_pages}
+> to give other tasks a chance to run, and avoid softlockup warning.
+>
+> Additionally perform pending signals check as the prefix operation,
+> and introduce sgx_check_signal_and_resched(),
+> which wraps all the checks.
+>
+> The following has been observed on Linux v6.9-rc5 with kernel
+> preemptions disabled(by configuring "PREEMPT_NONE=3Dy"), when kernel
+> is requested to restrict page permissions of a large number of EPC pages.
+>
+>     ------------[ cut here ]------------
+>     watchdog: BUG: soft lockup - CPU#45 stuck for 22s!
+>     ...
+>     RIP: 0010:sgx_enclave_restrict_permissions+0xba/0x1f0
+>     ...
+>     Call Trace:
+>      sgx_ioctl
+>      __x64_sys_ioctl
+>      x64_sys_call
+>      do_syscall_64
+>      entry_SYSCALL_64_after_hwframe
+>     ------------[ end trace ]------------
+>
 
-It is called rt_task() still. I just added a new realtime_task() to return true
-for RT and DL. rt_task() will return true only for RT now.
+Suggested-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-How do you see this should be done instead? I'm not seeing the problem.
+> Signed-off-by: Bojun Zhu <zhubojun.zbj@antgroup.com>
+> ---
+>  arch/x86/kernel/cpu/sgx/ioctl.c | 40 +++++++++++++++++++++++----------
+>  1 file changed, 28 insertions(+), 12 deletions(-)
+>
+> diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/io=
+ctl.c
+> index b65ab214bdf5..6199f483143e 100644
+> --- a/arch/x86/kernel/cpu/sgx/ioctl.c
+> +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+> @@ -365,6 +365,20 @@ static int sgx_validate_offset_length(struct sgx_enc=
+l *encl,
+>  	return 0;
+>  }
+> =20
+> +/*
+> + * Check signals and invoke scheduler. Return true for a pending signal.
+> + */
+> +static bool sgx_check_signal_and_resched(void)
+> +{
+> +	if (signal_pending(current))
+> +		return true;
+> +
+> +	if (need_resched())
+> +		cond_resched();
+> +
+> +	return false;
+> +}
+> +
+>  /**
+>   * sgx_ioc_enclave_add_pages() - The handler for %SGX_IOC_ENCLAVE_ADD_PA=
+GES
+>   * @encl:       an enclave pointer
+> @@ -409,7 +423,7 @@ static long sgx_ioc_enclave_add_pages(struct sgx_encl=
+ *encl, void __user *arg)
+>  	struct sgx_enclave_add_pages add_arg;
+>  	struct sgx_secinfo secinfo;
+>  	unsigned long c;
+> -	int ret;
+> +	int ret =3D -ERESTARTSYS;
+> =20
+>  	if (!test_bit(SGX_ENCL_CREATED, &encl->flags) ||
+>  	    test_bit(SGX_ENCL_INITIALIZED, &encl->flags))
+> @@ -432,15 +446,8 @@ static long sgx_ioc_enclave_add_pages(struct sgx_enc=
+l *encl, void __user *arg)
+>  		return -EINVAL;
+> =20
+>  	for (c =3D 0 ; c < add_arg.length; c +=3D PAGE_SIZE) {
+> -		if (signal_pending(current)) {
+> -			if (!c)
+> -				ret =3D -ERESTARTSYS;
+> -
+> +		if (sgx_check_signal_and_resched())
+>  			break;
+> -		}
+> -
+> -		if (need_resched())
+> -			cond_resched();
+> =20
+>  		ret =3D sgx_encl_add_page(encl, add_arg.src + c, add_arg.offset + c,
+>  					&secinfo, add_arg.flags);
+> @@ -740,12 +747,15 @@ sgx_enclave_restrict_permissions(struct sgx_encl *e=
+ncl,
+>  	unsigned long addr;
+>  	unsigned long c;
+>  	void *epc_virt;
+> -	int ret;
+> +	int ret =3D -ERESTARTSYS;
+> =20
+>  	memset(&secinfo, 0, sizeof(secinfo));
+>  	secinfo.flags =3D modp->permissions & SGX_SECINFO_PERMISSION_MASK;
+> =20
+>  	for (c =3D 0 ; c < modp->length; c +=3D PAGE_SIZE) {
+> +		if (sgx_check_signal_and_resched())
+> +			goto out;
+> +
+>  		addr =3D encl->base + modp->offset + c;
+> =20
+>  		sgx_reclaim_direct();
+> @@ -898,7 +908,7 @@ static long sgx_enclave_modify_types(struct sgx_encl =
+*encl,
+>  	unsigned long addr;
+>  	unsigned long c;
+>  	void *epc_virt;
+> -	int ret;
+> +	int ret =3D -ERESTARTSYS;
+> =20
+>  	page_type =3D modt->page_type & SGX_PAGE_TYPE_MASK;
+> =20
+> @@ -913,6 +923,9 @@ static long sgx_enclave_modify_types(struct sgx_encl =
+*encl,
+>  	secinfo.flags =3D page_type << 8;
+> =20
+>  	for (c =3D 0 ; c < modt->length; c +=3D PAGE_SIZE) {
+> +		if (sgx_check_signal_and_resched())
+> +			goto out;
+> +
+>  		addr =3D encl->base + modt->offset + c;
+> =20
+>  		sgx_reclaim_direct();
+> @@ -1095,12 +1108,15 @@ static long sgx_encl_remove_pages(struct sgx_encl=
+ *encl,
+>  	unsigned long addr;
+>  	unsigned long c;
+>  	void *epc_virt;
+> -	int ret;
+> +	int ret =3D -ERESTARTSYS;
+> =20
+>  	memset(&secinfo, 0, sizeof(secinfo));
+>  	secinfo.flags =3D SGX_SECINFO_R | SGX_SECINFO_W | SGX_SECINFO_X;
+> =20
+>  	for (c =3D 0 ; c < params->length; c +=3D PAGE_SIZE) {
+> +		if (sgx_check_signal_and_resched())
+> +			goto out;
+> +
+>  		addr =3D encl->base + params->offset + c;
+> =20
+>  		sgx_reclaim_direct();
+
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+
+BR, Jarkko
 
