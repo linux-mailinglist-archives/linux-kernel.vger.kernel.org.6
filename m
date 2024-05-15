@@ -1,284 +1,157 @@
-Return-Path: <linux-kernel+bounces-179716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B499F8C6404
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 11:45:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B22918C640C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 11:47:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6791D282F38
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:45:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 316B7282C2B
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:47:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A44B659151;
-	Wed, 15 May 2024 09:45:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D618959B71;
+	Wed, 15 May 2024 09:46:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WmWbDqtN"
-Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="bYxz81K1"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2077.outbound.protection.outlook.com [40.107.220.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF4473B78D
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 09:45:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715766334; cv=none; b=C1NIed+n15OjUfAWCn3+TvAN9m+zFXv9zUfRVwC4jTLnrb/j7kM/vs7b2C3zsxGXcQvmdROcGs9WL8hVpAcPAdWxFPWC1qI9+Han0bRbHDqcc+GW8EsZWGnJTOFsh2GWtLKKapwhYZeRbH8NIOJLHMF22t+I93odYCRQnY60n3A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715766334; c=relaxed/simple;
-	bh=JRLsaes2n+fx1g7fTVlLvO0GErQiuRGa5Ukv0jsD8JU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Udb3Cgnci6nvbBHXdNU4qweFXa8NYbqMrLz9sETtS7NMwpMcHPn7PV478sq0AtbmBAo+3p3NuCH3ycGZtVNni7/kyM9REEcuryJl+M6rYPAXDvyClu/nIYmw5i+gfcKArDbEBw7vQtGHhOhCgTeiOpL6VIhXaxLjZVRcBFOcz2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WmWbDqtN; arc=none smtp.client-ip=209.85.160.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-244d692e9b9so1649052fac.3
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 02:45:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715766332; x=1716371132; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n6EkIVd0v6k33+WDHvOH1msWEs1FiIcoXhRYw7Xr9mg=;
-        b=WmWbDqtNry4Gl2cIJTlpeGQQlf6abdKndgdSRP+G47fnyyeddMNCL5MMusKIshNxE7
-         w5in/ubKi5tcx4bYpA1SgUgceRAkJQSCXUXyZYkiKopfXWImD/mTD4ZAa6vah0qXjVn/
-         awBBHoYd587s/6sGKblc3FqHtRZAJWTDb2NNzBPRTTxBpG6HknqcA+dzU2U5SUHiFWWE
-         1u8UJqqRZ02o77FAFXCi9pgJepkH7nB/Rz42cDhn87OrPQfioavGQlzIGix8EeuhP/h+
-         N4sf+pM22p0ov4wXj1DFKghk8uirc/LKp/NUOvBwmOx1qvzPY/+Axkel+Hal6ohCzdw3
-         7Khg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715766332; x=1716371132;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=n6EkIVd0v6k33+WDHvOH1msWEs1FiIcoXhRYw7Xr9mg=;
-        b=pdUmW//iH+uvxcSf/ONF9UPcnLOImAzdvNm7K1LevMlaTR6L8rwgsXmROWLlsOb20U
-         QwH3cFHX19GjBHIVxt7RDJISiRxce33vYYZXVHaPHAeLpzA4AvRPc3Xxno/wwMSwl13/
-         s8hirsU9I5OcfeuSY7xNjSh5t03BIx46C8fqWvNGBrpF+gTSsq4a0cwDIpLdjCPubZAE
-         zO1Pm0cogyDGJD7yvd3PgonME7sPWzpgCzhbiDUqWY07NwCVhtS95npU1t4lMx8jsZkw
-         ydaC+5M1Qpg7+JlVEIVBEe6fvZDsZ/dUQgFQmswS4pmONX+wg9L91952On7dMjNOIWvA
-         UhZg==
-X-Gm-Message-State: AOJu0YwVytrFICChxl7uh+iO5yvXG9cTvDyPVs1BDiwmHpmNbm24mr0C
-	iRuCoBpCJeRL1ZH1r6F1GsNE2O45lO0NMflag1WC2xG57S2dmwBDqzzBf312oetbIioNaLxyQ1H
-	5O50IjQnUV49I5WvrHzXH6ubWDNN5i3x4avmHpQ==
-X-Google-Smtp-Source: AGHT+IFA1vxSoRZCoQ+lFYHsLhSUmYQ1wNrbJVvrzY97iQcCxrXCA1lV/tz8D1PjoD7etTD3pYPf5QhBB5GJyU5irx4=
-X-Received: by 2002:a05:6870:8552:b0:23c:ca10:cc23 with SMTP id
- 586e51a60fabf-24172f84d1emr16783291fac.51.1715766331748; Wed, 15 May 2024
- 02:45:31 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46FE73B78D;
+	Wed, 15 May 2024 09:46:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.77
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715766417; cv=fail; b=MtDg9+qa3mRfHN3eixrTkS+tzx74nLpnUhHKYDa4cdKJxnvrwEVMyidSfA3cdTHwWy1xREcb2eOBOXaPvwOOwsggJ9lzeyhw7+Qeuuy5o/C3W6PP72M4Rv4zLJejc53Hp1zEKXSzOEdrAiNZlIhwH6/6Czoyl/Vsm8ENNO7SNEE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715766417; c=relaxed/simple;
+	bh=/SMfR4fnkdp/f9i7NR/yrkyMB/sKP2Cb78IzFVmAiwA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=o1DnMrtHzNWxV3N2B8DGeejEACtipi/vRNiQjdh1Y1XkxmUsrxVGmwfCcUbrgVYvmBCn+VnpGu+bFoqcGF8ZcCWZEsAaf++gSQPtef849RlFaL16V/5ENeR1+PzYorfdGvTAx+i3MgdKZUzLxAu9coS1RcLuPMIOmGsRa/gfaKo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=bYxz81K1; arc=fail smtp.client-ip=40.107.220.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=aXST0wmAfSz+9Fc4Vn+lv+wzlyD9g0NT5SDGvbWYPNOUUNLpmrvxB3Llaemji7GR5ZSX2cNl44viMRh12IV5q4WYuj0/7G6JlX+b6Cs1J6HqmOKx9ZMAGfax9mSHlpM4TJ102+xRBIFXpcvZpih5gzldnyHGIthRpyyBrk90FA17nUHO3Wi5rBQ+Rxz8B6/6SBXVYnID/ZCaCczRYpULqZqvkw/azDaRMXZ3nAlcP3SqFwrDmydM6QYwrxJPNr/2N7On+jTkjCaukjIz9aVN7rMLJAZtVpnzjeNZo10xEK/nCY/S4VoQmUupiSxxYpD3MR6mOgcRDnxQbt008dQ6mg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CJP9NarNRJnvvqeqocTP8LModWICrQTE61M+XYYHRmM=;
+ b=HL+EF8jAIdwkUhDeUuvcSybL5Yeunenoru5CVBqZbbt/Azx/ZbUz5mW3mmKt18JRyqqPHsO6bc6wMzp/zfcU6Gl3J/NDUla5DI5utYmWvYHEh7X5urXS1LpdFP+359IrscQC0JF+Qcid0EjvAZffoRUhZDaYXf/rhucwpRPwUNuK1Hvxyk5SDqYjEeNNfPQBj6uUBYxh5K/hl8MIlj7Bs0z/AWr9QY+F1chsLfjsY2U/z0Yi/8GIh/sCC8qy6tuKtYNNrmlEQoNM65dHu70uQPQu1+Cz3nudNlbiWXwf266gOnmtcEqPn3g1IgARGgvweacC4X+G2Klighg168Agug==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=davemloft.net smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CJP9NarNRJnvvqeqocTP8LModWICrQTE61M+XYYHRmM=;
+ b=bYxz81K1DZnPohAik33ogNhhzkCBJQ3rQWIoaUJjKAqKZFOFWSMW0OAeMY3jN/Ze7cMqggFadLmhd5kpc/QjEXIaC0vxaA5ers4WkIQYyYUgJG9sTUns5K88ATrHcBWHkvE1mSJX1V2/CF2EBJzAGv6jnLyWR+C6hWouL5e9Vcc=
+Received: from BYAPR02CA0031.namprd02.prod.outlook.com (2603:10b6:a02:ee::44)
+ by DS0PR12MB8296.namprd12.prod.outlook.com (2603:10b6:8:f7::6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7544.55; Wed, 15 May 2024 09:46:52 +0000
+Received: from MWH0EPF000971E6.namprd02.prod.outlook.com
+ (2603:10b6:a02:ee:cafe::75) by BYAPR02CA0031.outlook.office365.com
+ (2603:10b6:a02:ee::44) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.28 via Frontend
+ Transport; Wed, 15 May 2024 09:46:52 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ MWH0EPF000971E6.mail.protection.outlook.com (10.167.243.74) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7587.21 via Frontend Transport; Wed, 15 May 2024 09:46:51 +0000
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Wed, 15 May
+ 2024 04:46:50 -0500
+Received: from xhdvineethc40.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Wed, 15 May 2024 04:46:46 -0500
+From: Vineeth Karumanchi <vineeth.karumanchi@amd.com>
+To: <git@amd.com>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <harini.katakam@amd.com>,
+	<andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
+	<michal.simek@amd.com>
+CC: <vineeth.karumanchi@amd.com>, <netdev@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+Subject: [PATH net-next 0/2] net: xilinx_gmii2rgmii: Add clock support.
+Date: Wed, 15 May 2024 15:16:43 +0530
+Message-ID: <20240515094645.3691877-1-vineeth.karumanchi@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240507091619.2208810-1-jens.wiklander@linaro.org>
- <20240507091619.2208810-2-jens.wiklander@linaro.org> <2024051424-shack-blinking-547a@gregkh>
- <CAHUa44FepEVKYPhmH1zvSHOiCMPBwagLSgMmqMyDxewsTxT_-w@mail.gmail.com> <2024051544-clarinet-baffle-c9d6@gregkh>
-In-Reply-To: <2024051544-clarinet-baffle-c9d6@gregkh>
-From: Jens Wiklander <jens.wiklander@linaro.org>
-Date: Wed, 15 May 2024 11:45:20 +0200
-Message-ID: <CAHUa44FwksL_1506TLv-06UMub_7Ot43bcSPuhkP=dX9CZhESg@mail.gmail.com>
-Subject: Re: [PATCH v6 1/3] rpmb: add Replay Protected Memory Block (RPMB) subsystem
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, 
-	op-tee@lists.trustedfirmware.org, 
-	Shyam Saini <shyamsaini@linux.microsoft.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Jerome Forissier <jerome.forissier@linaro.org>, 
-	Sumit Garg <sumit.garg@linaro.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, 
-	Bart Van Assche <bvanassche@acm.org>, Randy Dunlap <rdunlap@infradead.org>, 
-	Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Manuel Traut <manut@mecka.net>, 
-	Tomas Winkler <tomas.winkler@intel.com>, =?UTF-8?B?QWxleCBCZW5uw6ll?= <alex.bennee@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+Received-SPF: None (SATLEXMB03.amd.com: vineeth.karumanchi@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MWH0EPF000971E6:EE_|DS0PR12MB8296:EE_
+X-MS-Office365-Filtering-Correlation-Id: 17371fcc-b0e5-4a49-6f2c-08dc74c3f2a1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|1800799015|376005|7416005|36860700004|82310400017|921011;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?9qfdBG5AN3m06bjCwjuItvUfQBaonveRTlS3pqiFHhZNOGokt0gCoaT7uVNw?=
+ =?us-ascii?Q?IURJ5mKBmHqoLKpDi0nAXZnAYBsUKtSGzTDldpwhMLHkATnM1/Wa1w9UaRQb?=
+ =?us-ascii?Q?jc12MjBZEQlWws1DNvCgSJiLh+NOPm/Ko/oVpEliqSEuHIxWpiw+3qNLdB76?=
+ =?us-ascii?Q?jvItz4VZFf2Vj2C865OxlBmr1notuMuIYx9FqzSxvqw6FMmgbFHGO/vt1Tms?=
+ =?us-ascii?Q?wvXC1MLt5UNKtX+HFEfL546E7AGBJy2cmPgla9T/vkdN+pA8TTovSVDap2uf?=
+ =?us-ascii?Q?K3kwL8OZToTd+5/W15zu8znTslBCRtNl3srFeX90HH7TbE+d4eYREOvmWP6Z?=
+ =?us-ascii?Q?jl26IKjd0lg1VZwCdUl1gCsml+eL7WaurtjFjBYMjlmRkfvmCu4kZrve8/z7?=
+ =?us-ascii?Q?GUzYKZ4rxbnhEEtm2j2UrO2pgA4tjo0CaJO3vHiL1aS/QNXIs2gO5YvBF5Lp?=
+ =?us-ascii?Q?eVF44qDZzQMeKpwLCB0ONxB5vzub9f0hailLe2DP8DrkXBbVhCY9KfjJO0Wd?=
+ =?us-ascii?Q?AqhPSZ53m4pbXYBsaZqEhNMenqviwE6xueuVJC9WiRw5g0o1STTPl/Bq3F92?=
+ =?us-ascii?Q?RMpgs52wLHkyeieACn00JKyAHMD2i1V4MWBpHIcBhUNEiBLsiR0lQZDh4N2c?=
+ =?us-ascii?Q?26TUBgkzd8PtGXtlqULUQhhMbuJv771mpU8J0ink3RGQ5Hgap1vsc80FFEgm?=
+ =?us-ascii?Q?teCkU+j+/CUkAeblAaOCQmiQD80fpO/38mWV4uMENmRIv7t/YQq5EslYVDou?=
+ =?us-ascii?Q?flLDsT5ot7weC0v8Scsc1/Eos6DSf22Czo79zR4z2gUqOUN25GKzL3DX92Es?=
+ =?us-ascii?Q?MKZV/uV4zwmI9MYOHfnisRvyhJFVhNDoHqtjwNGi7YDdoP4wzHaMh5Fbs74R?=
+ =?us-ascii?Q?myjYCgvaEwRywh1mbAOy+V60vIsAt67tgE+cU5ldDymeowxnCh10fFiLOZ1W?=
+ =?us-ascii?Q?1/csR68GrbxC0r8hrva43nMfs2PeK0Vwo9Jyxhf0JDW+2l/P3bk7ThOK6CrH?=
+ =?us-ascii?Q?EFjwOnNZqHQzfKbVlPR/H7vt8i6MwCqWhDp9qJCWHv8GhHyZDtwpzSHW+LEW?=
+ =?us-ascii?Q?YZtH4TLjjpfwnPiMWevzxi3hTtELGopOSV4qS/+bSnqvcMvsl9V4a9jJF8H+?=
+ =?us-ascii?Q?sxBuMq559jCsgw1NDd5t671QvxO//pcgbIIJXvRCNI325WqFRL5bPsV2fs0x?=
+ =?us-ascii?Q?iWrVUqGrXoigQo1K8CLhx37rsQGxY9jRW4WOXWTF0sxrXqe1a2gb70h26Ic5?=
+ =?us-ascii?Q?UnBzjDrmtwjroaFUbfNtgdMBQp4THn6rivZwwyDt5CHsSEbsoHv6+q214XYd?=
+ =?us-ascii?Q?05g0MgdQRSBnjVFQ5Ko/lBPBdbSNByr6hW8H9GrrY4Lbe8wB92lAwtp0Wb1a?=
+ =?us-ascii?Q?SYE3Got9vC5nkjy7HrYIM/ufeESy?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(1800799015)(376005)(7416005)(36860700004)(82310400017)(921011);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 May 2024 09:46:51.6472
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 17371fcc-b0e5-4a49-6f2c-08dc74c3f2a1
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MWH0EPF000971E6.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8296
 
-On Wed, May 15, 2024 at 10:04=E2=80=AFAM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Wed, May 15, 2024 at 09:51:32AM +0200, Jens Wiklander wrote:
-> > On Tue, May 14, 2024 at 5:45=E2=80=AFPM Greg Kroah-Hartman
-> > <gregkh@linuxfoundation.org> wrote:
-> > >
-> > > On Tue, May 07, 2024 at 11:16:17AM +0200, Jens Wiklander wrote:
-> > > > A number of storage technologies support a specialised hardware
-> > > > partition designed to be resistant to replay attacks. The underlyin=
-g
-> > > > HW protocols differ but the operations are common. The RPMB partiti=
-on
-> > > > cannot be accessed via standard block layer, but by a set of specif=
-ic
-> > > > RPMB commands. Such a partition provides authenticated and replay
-> > > > protected access, hence suitable as a secure storage.
-> > > >
-> > > > The initial aim of this patch is to provide a simple RPMB driver
-> > > > interface which can be accessed by the optee driver to facilitate e=
-arly
-> > > > RPMB access to OP-TEE OS (secure OS) during the boot time.
-> > > >
-> > > > A TEE device driver can claim the RPMB interface, for example, via
-> > > > rpmb_interface_register() or rpmb_dev_find_device(). The RPMB drive=
-r
-> > > > provides a callback to route RPMB frames to the RPMB device accessi=
-ble
-> > > > via rpmb_route_frames().
-> > > >
-> > > > The detailed operation of implementing the access is left to the TE=
-E
-> > > > device driver itself.
-> > > >
-> > > > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> > > > Signed-off-by: Alex Benn=C3=A9e <alex.bennee@linaro.org>
-> > > > Signed-off-by: Shyam Saini <shyamsaini@linux.microsoft.com>
-> > > > Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
-> > > > Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> > > > ---
-> > > >  MAINTAINERS              |   7 ++
-> > > >  drivers/misc/Kconfig     |  10 ++
-> > > >  drivers/misc/Makefile    |   1 +
-> > > >  drivers/misc/rpmb-core.c | 233 +++++++++++++++++++++++++++++++++++=
-++++
-> > > >  include/linux/rpmb.h     | 136 +++++++++++++++++++++++
-> > > >  5 files changed, 387 insertions(+)
-> > > >  create mode 100644 drivers/misc/rpmb-core.c
-> > > >  create mode 100644 include/linux/rpmb.h
-> > > >
-> > > > diff --git a/MAINTAINERS b/MAINTAINERS
-> > > > index 8999497011a2..e83152c42499 100644
-> > > > --- a/MAINTAINERS
-> > > > +++ b/MAINTAINERS
-> > > > @@ -19012,6 +19012,13 @@ T:   git git://linuxtv.org/media_tree.git
-> > > >  F:   Documentation/devicetree/bindings/media/allwinner,sun8i-a83t-=
-de2-rotate.yaml
-> > > >  F:   drivers/media/platform/sunxi/sun8i-rotate/
-> > > >
-> > > > +RPMB SUBSYSTEM
-> > > > +M:   Jens Wiklander <jens.wiklander@linaro.org>
-> > > > +L:   linux-kernel@vger.kernel.org
-> > > > +S:   Supported
-> > > > +F:   drivers/misc/rpmb-core.c
-> > > > +F:   include/linux/rpmb.h
-> > > > +
-> > > >  RPMSG TTY DRIVER
-> > > >  M:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-> > > >  L:   linux-remoteproc@vger.kernel.org
-> > > > diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-> > > > index 4fb291f0bf7c..dbff9e8c3a03 100644
-> > > > --- a/drivers/misc/Kconfig
-> > > > +++ b/drivers/misc/Kconfig
-> > > > @@ -104,6 +104,16 @@ config PHANTOM
-> > > >         If you choose to build module, its name will be phantom. If=
- unsure,
-> > > >         say N here.
-> > > >
-> > > > +config RPMB
-> > > > +     tristate "RPMB partition interface"
-> > > > +     depends on MMC
-> > > > +     help
-> > > > +       Unified RPMB unit interface for RPMB capable devices such a=
-s eMMC and
-> > > > +       UFS. Provides interface for in-kernel security controllers =
-to access
-> > > > +       RPMB unit.
-> > > > +
-> > > > +       If unsure, select N.
-> > > > +
-> > > >  config TIFM_CORE
-> > > >       tristate "TI Flash Media interface support"
-> > > >       depends on PCI
-> > > > diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
-> > > > index ea6ea5bbbc9c..8af058ad1df4 100644
-> > > > --- a/drivers/misc/Makefile
-> > > > +++ b/drivers/misc/Makefile
-> > > > @@ -15,6 +15,7 @@ obj-$(CONFIG_LKDTM)         +=3D lkdtm/
-> > > >  obj-$(CONFIG_TIFM_CORE)              +=3D tifm_core.o
-> > > >  obj-$(CONFIG_TIFM_7XX1)              +=3D tifm_7xx1.o
-> > > >  obj-$(CONFIG_PHANTOM)                +=3D phantom.o
-> > > > +obj-$(CONFIG_RPMB)           +=3D rpmb-core.o
-> > > >  obj-$(CONFIG_QCOM_COINCELL)  +=3D qcom-coincell.o
-> > > >  obj-$(CONFIG_QCOM_FASTRPC)   +=3D fastrpc.o
-> > > >  obj-$(CONFIG_SENSORS_BH1770) +=3D bh1770glc.o
-> > > > diff --git a/drivers/misc/rpmb-core.c b/drivers/misc/rpmb-core.c
-> > > > new file mode 100644
-> > > > index 000000000000..e42a45debc76
-> > > > --- /dev/null
-> > > > +++ b/drivers/misc/rpmb-core.c
-> > > > @@ -0,0 +1,233 @@
-> > > > +// SPDX-License-Identifier: GPL-2.0
-> > > > +/*
-> > > > + * Copyright(c) 2015 - 2019 Intel Corporation. All rights reserved=
-.
-> > > > + * Copyright(c) 2021 - 2024 Linaro Ltd.
-> > > > + */
-> > > > +#include <linux/device.h>
-> > > > +#include <linux/init.h>
-> > > > +#include <linux/kernel.h>
-> > > > +#include <linux/list.h>
-> > > > +#include <linux/module.h>
-> > > > +#include <linux/mutex.h>
-> > > > +#include <linux/rpmb.h>
-> > > > +#include <linux/slab.h>
-> > > > +
-> > > > +static struct list_head rpmb_dev_list;
-> > > > +static DEFINE_MUTEX(rpmb_mutex);
-> > > > +static struct blocking_notifier_head rpmb_interface =3D
-> > > > +     BLOCKING_NOTIFIER_INIT(rpmb_interface);
-> > > > +
-> > > > +/**
-> > > > + * rpmb_dev_get() - increase rpmb device ref counter
-> > > > + * @rdev: rpmb device
-> > > > + */
-> > > > +struct rpmb_dev *rpmb_dev_get(struct rpmb_dev *rdev)
-> > > > +{
-> > > > +     if (rdev)
-> > > > +             get_device(rdev->parent_dev);
-> > >
-> > > Odd, why are you thinking the parent reference has anything to do wit=
-h
-> > > this device's reference?
-> > >
-> > > Why isn't this a "real" device and part of the driver model properly?
-> > > This way of "hanging onto" a device and attempting to influence it's
-> > > reference count is odd, please make this real and not "fake".
-> >
-> > I did this in response to
-> > https://lore.kernel.org/lkml/CAPDyKFqNhGWKm=3D+7niNsjXOjEJE3U=3Do7dRNG=
-=3DJqpptUSo9G-ug@mail.gmail.com/
->
-> And I would argue, "Yes, we do need yet-another class and sysfs entry".
->
-> This is a "device" that a driver controls, it is NOT the parent device,
-> it is a class device, so as such, make it one.  That's what the driver
-> model is for.  Trying to avoid it causes problems.
->
-> > Perhaps "parent_dev" isn't the best name. The struct rpmb_dev can be
-> > seen as another representation of the underlying device.
->
-> I.e. a class device.  So use that :)
+Add input clock support to gmii_to_rgmii IP.
+Add "clocks" and "clock_names" bindings, "clkin" is the input clock name.
 
-I see your point.
+Vineeth Karumanchi (2):
+  dt-bindings: net: xilinx_gmii2rgmii: Add clock support
+  net: phy: xilinx-gmii2rgmii: Adopt clock support
 
->
-> > The life
-> > cycle of struct rpmb_dev is tied to the underlying device with
-> > rpmb_dev_register() and rpmb_dev_unregister(). Just as
-> > rpmb_route_frames() forwards the frames to the device, rpmb_dev_{get,
-> > put}() does the corresponding thing.
->
-> You should never be modifying the reference count of a device you really
-> do not control, unless you are trying to make sure it is present to use
-> it yourself.
->
-> > > Bonus, you get that notifier callback "for free" if you do that.  But
-> > > really, notifier callbacks are a pain, are you sure you want that?
-> >
-> > Yes, they are needed because the device may show up late and the
-> > OP-TEE driver doesn't know if any device will show up. As Ulf pointed
-> > out in the link above, at this point, there's no need to tell user
-> > space about this kernel internal abstraction.
->
-> If this is a representation of how the device is interacted with, then
-> yes, you do need to represent that.
+ .../devicetree/bindings/net/xlnx,gmii-to-rgmii.yaml      | 9 +++++++++
+ drivers/net/phy/xilinx_gmii2rgmii.c                      | 7 +++++++
+ 2 files changed, 16 insertions(+)
 
-Thanks for straightening out this. I'll bring back the class device in
-the next version
+-- 
+2.34.1
 
-Cheers,
-Jens
 
