@@ -1,130 +1,117 @@
-Return-Path: <linux-kernel+bounces-179463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AD0D8C6036
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 07:38:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 357938C6037
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 07:40:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC2CD1C20B40
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 05:38:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA01D1F21768
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 05:40:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43FE83A267;
-	Wed, 15 May 2024 05:38:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06CF73B7AC;
+	Wed, 15 May 2024 05:40:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KyMOTv0a"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ca5UtmZX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9C2E26ACE;
-	Wed, 15 May 2024 05:38:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40D5C3B781
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 05:40:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715751482; cv=none; b=hb4l6gyV5g0vEREC3dI+WXPx3eiMCFG2MCqgJ4khA4kQIpi2L2CRrqvWCVKcA6Wzuw2uDALOK1/Zfkc9igOBOQPb+uLheapH5kbtqlTKPWtl0us97Y6tYSlC1YykUmAFHIW9LpvqBFV/JC9eLXINLPW8in06i35E8nXTPRSaSEc=
+	t=1715751601; cv=none; b=neTQ4QwuVrB7Qy+R84lJYXF/c5PbXhrjl6xyFIl5PKxyTBe7ywgtRwra8DTLC8UVWRSBOL816GO/2aFH045HvCJd8OnYhSsXXc7iNMJJwmlP+3d2DO2qA0lpZBnauObJT7Gk5Cc4DYhkdFiGJKslPq5wCMSxDgni1gR4OREIe7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715751482; c=relaxed/simple;
-	bh=D51RIjWRv8o6Dpi8VLUaL1hXkhUUOxK208oZ6GT7L/A=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=NzMkkUBR8PCg11Eqrt+8I0gpefMt8WKWuXE2EfkAdiJhH4Vy3O0i8PiXXSRRA9GhG3kblQBVHSANHI4i+S5A9JRg/7P7JjrlzC3bOwzsQ6d7k9gBTFDI1+2j1DeBLfCCoqoF9C2hcWeviqU9c1c+GNh/wbSLYbL/7k98MeQPYqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KyMOTv0a; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52232d0e5ceso5519586e87.0;
-        Tue, 14 May 2024 22:38:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715751479; x=1716356279; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ihd3QNerXp7+Mq2S4MhLYzSsw3F02E9Een2uVN98XOg=;
-        b=KyMOTv0acjMps8Vw30lc5k7l1UgrXV5AJTJudgRHrFReFMF88UkEi+Zt8eJXL2GxPp
-         9I41RzEOz3dmLJNrjUGu3Y1cZ6D7D7/WrS9W/Ocv0OCk8FZUPoPcJTIaC0c1ikcihibB
-         iJ/62Tgrsb8MYMaX0npumDh+Ak+JliozZseiSZr3i6z9/72Iv98mUrw+BPYd89s8eidR
-         6XP2kRfGrEraUrtlKPvbwUZhB+wY2zyv89sv6VHyToM7n94Iu6vv1fKwqQLiRvJ8bLY2
-         20s0JfRR4hCWJkLGpHT9US18EjMxNV3xVi+WBwloLhCGLqhzY6GXe2NyCCyM24FY/bDG
-         d11g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715751479; x=1716356279;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ihd3QNerXp7+Mq2S4MhLYzSsw3F02E9Een2uVN98XOg=;
-        b=jFDW+96pBTFiAAocifAaomy1/s1PKmw7+MtAq6BnIEix8KI7FEs9aia2W2P/qBKLG9
-         pBgIgI/dfSRWhjDQ+JVMpXSi4UyIxYUTVKumS3k2oOHi1whnSy1FLLiOxdtUux5p2piH
-         CKLYGsFW2fq7YnM3N3ry2X9Av7BqW2WI7lL4qxLZEe9gSbMQnN4uBaVQcLQyM/hHKxeV
-         kwzoSo/GLuS82YQmQzTCLeT4sO8V8U5MCMRoBJRU0Zjb1BE5Jo8n11A3BUTHpA+Zznbj
-         ZI7TyA7rpCMmTZpTYEVMRvG7RB2Y3bZtVga8Prasdlhp9iCx7GswYA0j04QjZmur53Vx
-         CMqA==
-X-Forwarded-Encrypted: i=1; AJvYcCX6seYV2U1JdMlYX6ur7/Z6WEtuxama8ngAiQM2ITEjQ2xgPsCU7gH2pXkcD/vHChrE8tb1jDdQp2Ml3c0U8yi/sPpgpq+b8qO3IA==
-X-Gm-Message-State: AOJu0Yx3313mNLrFKZh0Styial3me5M2xoZl1OGbBWN7nUFH8AYc8YKq
-	y+SykXiA9UBxy3Hza+Vl9JkJGv6p88gh2vQoS8SMiNHzJDL/Gvy1FypREAVCVKuF//iwU4B18Rw
-	66DXN3jtVDY4CtIfBgrf3tvoHgd0=
-X-Google-Smtp-Source: AGHT+IFyovi0W8uHxoh/KUdlVgHTl16xpTpIIyDB51PFM3PdeTmKop8BlqVpWWgglBJ0GfPtacu3t8MtIB9udNVByzg=
-X-Received: by 2002:a05:6512:33c5:b0:522:2a2c:759e with SMTP id
- 2adb3069b0e04-5222a2c76c2mr10669245e87.6.1715751478626; Tue, 14 May 2024
- 22:37:58 -0700 (PDT)
+	s=arc-20240116; t=1715751601; c=relaxed/simple;
+	bh=qFeWv8GsFEP94NiH8hpu0MILQkrgqqI5f7XEUQ/bekw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=tO/rwCV/aFKBXoXQdA8py/2fDsMuobx266UJgavcJh33g0XjLztoxu8Z9LyohLPR3f+Q2q3OxyeLPYoZvsorOJkAPgzEHcZ5zIrcmqurUCRgbu4r6u+Cpjf1z5LOsJaMc4yRUeAeZ/XH5+eJgREmVAVDvFKKCSS5qWd5iA7mXew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ca5UtmZX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D1DDC116B1;
+	Wed, 15 May 2024 05:40:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715751600;
+	bh=qFeWv8GsFEP94NiH8hpu0MILQkrgqqI5f7XEUQ/bekw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=ca5UtmZXO0PHjPXUUdc+VZYnkPVpb5jib4ktCpzzV3ZhA546YhW9UHk5pBrTsB8fs
+	 5OCudtSHCOl3d3tTP3zo7RdBrJ8iHRR/KdAfFY0cca7m/EF0pacW8X7Wpz3cWwdto7
+	 QOq82dcN4g4o9WbzMkFB9Q12wjhuxcMlhN5k61iDy/Hdzzp2lWztAOY+rqK8b1NDji
+	 7PoAKLqCS0xjrsOBxo4Pjl81GboukdaMGq7BdQUF1nz0FsP8sokZnjlqgS/O9SKSKy
+	 ASyYdWBijdb1z+6/2VB4SVQs5vdkkYQlveAVRDdcnzToprQ2NzuYIZYWyPJQVwjBm2
+	 +I5sghOxb1v1A==
+From: =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
+To: Oscar Salvador <osalvador@suse.de>
+Cc: Alexandre Ghiti <alexghiti@rivosinc.com>, Albert Ou
+ <aou@eecs.berkeley.edu>, David Hildenbrand <david@redhat.com>, Palmer
+ Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>,
+ linux-riscv@lists.infradead.org, =?utf-8?B?QmrDtnJuIFTDtnBlbA==?=
+ <bjorn@rivosinc.com>, Andrew
+ Bresticker <abrestic@rivosinc.com>, Chethan Seshadri
+ <Chethan.Seshadri@catalinasystems.io>, Lorenzo Stoakes
+ <lstoakes@gmail.com>, Santosh Mamila <santosh.mamila@catalinasystems.io>,
+ Sivakumar Munnangi <siva.munnangi@catalinasystems.io>, Sunil V L
+ <sunilvl@ventanamicro.com>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, virtualization@lists.linux-foundation.org
+Subject: Re: [PATCH v2 2/8] riscv: mm: Change attribute from __init to
+ __meminit for page functions
+In-Reply-To: <ZkPKazeHI4CENSP3@localhost.localdomain>
+References: <20240514140446.538622-1-bjorn@kernel.org>
+ <20240514140446.538622-3-bjorn@kernel.org>
+ <ZkPKazeHI4CENSP3@localhost.localdomain>
+Date: Wed, 15 May 2024 07:39:57 +0200
+Message-ID: <87r0e3k502.fsf@all.your.base.are.belong.to.us>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Steve French <smfrench@gmail.com>
-Date: Wed, 15 May 2024 00:37:46 -0500
-Message-ID: <CAH2r5mv5B8PAWpMq-5L_n9NXjOb_Jw6atrTETWOUi1rUM=8ugw@mail.gmail.com>
-Subject: [GIT PULL] smb3 client fixes
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>, 
-	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Please pull the following changes since commit
-f4e8d80292859809ea135e9f4c43bae47e4f58bc:
+Oscar Salvador <osalvador@suse.de> writes:
 
-  Merge tag 'vfs-6.10.rw' of
-git://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs (2024-05-13
-12:23:17 -0700)
+> On Tue, May 14, 2024 at 04:04:40PM +0200, Bj=C3=B6rn T=C3=B6pel wrote:
+>> From: Bj=C3=B6rn T=C3=B6pel <bjorn@rivosinc.com>
+>>=20
+>> Prepare for memory hotplugging support by changing from __init to
+>> __meminit for the page table functions that are used by the upcoming
+>> architecture specific callbacks.
+>>=20
+>> Changing the __init attribute to __meminit, avoids that the functions
+>> are removed after init. The __meminit attribute makes sure the
+>> functions are kept in the kernel text post init, but only if memory
+>> hotplugging is enabled for the build.
+>>=20
+>> Also, make sure that the altmap parameter is properly passed on to
+>> vmemmap_populate_hugepages().
+>>=20
+>> Signed-off-by: Bj=C3=B6rn T=C3=B6pel <bjorn@rivosinc.com>
+>
+> Reviewed-by: Oscar Salvador <osalvador@suse.de>
+>
+>> +static void __meminit create_linear_mapping_range(phys_addr_t start, ph=
+ys_addr_t end,
+>> +						  uintptr_t fixed_map_size)
+>>  {
+>>  	phys_addr_t pa;
+>>  	uintptr_t va, map_size;
+>> @@ -1435,7 +1429,7 @@ int __meminit vmemmap_populate(unsigned long start=
+, unsigned long end, int node,
+>>  	 * memory hotplug, we are not able to update all the page tables with
+>>  	 * the new PMDs.
+>>  	 */
+>> -	return vmemmap_populate_hugepages(start, end, node, NULL);
+>> +	return vmemmap_populate_hugepages(start, end, node, altmap);
+>
+> I would have put this into a separate patch.
 
-are available in the Git repository at:
+Thanks for the review, Oscar!
 
-  git://git.samba.org/sfrench/cifs-2.6.git tags/6.10-rc-smb3-fixes
-
-for you to fetch changes up to edfc6481faf896301cab940da776229fe39e9fc9:
-
-  smb3: fix perf regression with cached writes with netfs conversion
-(2024-05-14 17:38:39 -0500)
-
-----------------------------------------------------------------
-four smb client fixes, including three important fixes to recent netfs
-regressions
-- three important fixes to recent netfs conversion to fix various
-xfstest failures, and rmmod oops
-- cleanup patch to fix various GCC-14 warnings
-
-A couple more fixes related to the recent netfs conversion are still
-needed (e.g. to address a data corruption found when running some
-xfstests).
-----------------------------------------------------------------
-Gustavo A. R. Silva (1):
-      smb: smb2pdu.h: Avoid -Wflex-array-member-not-at-end warnings
-
-Steve French (3):
-      cifs: Change from mempool_destroy to mempool_exit for request pools
-      cifs: Fix locking in cifs_strict_readv()
-      smb3: fix perf regression with cached writes with netfs conversion
-
- fs/netfs/direct_read.c   |  3 ++-
- fs/smb/client/cifsfs.c   |  4 ++--
- fs/smb/client/cifsglob.h |  1 +
- fs/smb/client/file.c     | 34 +++++++++++++++++++++++++---------
- fs/smb/client/inode.c    |  3 ---
- fs/smb/client/smb2pdu.h  | 12 ++++++------
- fs/smb/common/smb2pdu.h  | 33 ++++++++++++++++++---------------
- fs/smb/server/smb2pdu.h  | 18 +++++++++---------
- include/linux/netfs.h    |  1 +
- 9 files changed, 64 insertions(+), 45 deletions(-)
+I'll split this up (also suggested by Alex!).
 
 
--- 
-Thanks,
-
-Steve
+Cheers,
+Bj=C3=B6rn
 
