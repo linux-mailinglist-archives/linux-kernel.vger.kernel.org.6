@@ -1,130 +1,159 @@
-Return-Path: <linux-kernel+bounces-180416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B21FD8C6E6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 00:08:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF64A8C6E71
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 00:09:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A7451F2412A
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 22:08:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86956284678
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 22:09:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3419C15B571;
-	Wed, 15 May 2024 22:08:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF2B315B57C;
+	Wed, 15 May 2024 22:09:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eWPB7Yb/"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CN4ss0bZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FF7515B567;
-	Wed, 15 May 2024 22:08:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DCA715B129;
+	Wed, 15 May 2024 22:09:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715810916; cv=none; b=TY+3UAg7q+0gAURy41IeB1wHNnAeBnhue6djYebmjFX6RjRMtAv2zFfSJgpU58a+PE2taJqJsDDFXUd/K0MDq8RWt47KrPPmH3EKGpqp259MDroiD3m2rWYTfxqEIz5tjFYnmd70a8v2zmWwgLXwdBcFPd25+Qk38ocBqe7pKWA=
+	t=1715810942; cv=none; b=bT7sgUn/UkqzLUDMuLKhrzz0vk74EQsoE1KTO3AW1sVq1VLJX16DwEgr0tQp9YmznMUurKbe5lkFC4xsXDAiYMbrtidbHcpQh9Od93h7jhLJOg50vutGun9Zm0EDUGRAP57IrAOdH4H2KEQFik0IWZuNlbMJjltMf8eaCkMMWH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715810916; c=relaxed/simple;
-	bh=reyrihCEmP5oDQtaaGfo+uK/S445YIOEX6bQCHb6Zt4=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=khK93ruZgBW7XHhk8u47ZxZZvgj9SWdbLBEFGeQ0xv9aKyAvlgQXkbIp7xuWFPjf9sDtkWgJAQ8Ij+OEzoaXuLRsZgK0+JkwFHGePsDR9mK2l00TmExej5vbqAfIridAP5bMbhu82hRl53UO4N9llqnBd/VnNe7R7RUr7L+Y+7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eWPB7Yb/; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44FJfARq023988;
-	Wed, 15 May 2024 22:08:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	date:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=qcppdkim1; bh=5VLaD51GYdbhF5lxLvgNA
-	EgcaB1ZksCKGZMXU9Is8Bw=; b=eWPB7Yb/Wc6Bd+SZNegfeV2dD3ZPpMERmP/nv
-	1aCI+bqusfvBJw0O8ClzJaQgNS/dMrz/1ezba8EGCJs9Ikt+ptwDOLmeBdf5u+2d
-	gxTNlcRCmBXNY26IWFJ1FVgCShyIdziU9hNEWb9L3hBjdkLrA3bcNpyR6oqJmhEo
-	okcFtfu0IwIfPGMTmnImhG3pDV/q6Uv2nDNQ2Hq81DkhY9adBswknHBGAdgghxdF
-	pgVX4gnh/iQ+HrTscJs20fVwheLBAdBBFy5/SUc+AodUkzXqbf0rmvpNe0oZt5gw
-	CrdXV1617gSU+Hzpo4tVqlq5QyhtF+A2UM7rwd1Uxos7L02Ig==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y49ft3qbj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 15 May 2024 22:08:30 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44FM8U2e021891
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 15 May 2024 22:08:30 GMT
-Received: from hu-eberman-lv.qualcomm.com (10.49.16.6) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 15 May 2024 15:08:27 -0700
-Date: Wed, 15 May 2024 15:08:26 -0700
-From: Elliot Berman <quic_eberman@quicinc.com>
-To: Unnathi Chalicheemala <quic_uchalich@quicinc.com>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel@quicinc.com>
-Subject: Re: [PATCH] firmware: qcom-scm: Remove QCOM_SMC_WAITQ_FLAG_WAKE_ALL
-Message-ID: <20240515150719472-0700.eberman@hu-eberman-lv.qualcomm.com>
-References: <20240514180046.543763-1-quic_uchalich@quicinc.com>
+	s=arc-20240116; t=1715810942; c=relaxed/simple;
+	bh=0MZIcUuawZGi6K+BymY9vuIR5HkbjpW1vBzGzyRWDxg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UrStTQMLaxs73oBJ3CGX4+L2EHmQ3udOrb1eOmKvBla1c+cvaGbTTsY7J3H7puForEaZndS4KGDIA1efNXMLhVZrYa2l/BZ/Wn3ONMZ/Pil93xpUD4OuDLSRPxoNYWz89b02GzADArrbz5UmKMDKzP/q/wqEVep9jgmFDXVBYpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CN4ss0bZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8E6AC4AF0A;
+	Wed, 15 May 2024 22:09:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715810941;
+	bh=0MZIcUuawZGi6K+BymY9vuIR5HkbjpW1vBzGzyRWDxg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=CN4ss0bZ/OrbxsYY87/Get/y83r9w6o+3mcjoSmkitZsDWY8Qr+b9xoTr+k4sI5we
+	 L2+3a+icYVaqirYA8k1c/RUx1vlMHHA9l6b7ELW/575ed0Fh93hxTwF5q/1Uov4Nie
+	 VlBh9rkl1oPTgtoSYEO2TuEhth/talxj4rwGGk9po6ntB9ERAtIGs/ldlXjAjxqMS4
+	 ULWEhg5yIANC3VLJBu4TusxWmNKwwGxDPABfRpGXMGyC7rq+2uFHWADX+fdN43yDfa
+	 1ngG2agHge7dDjE8EOIE1JOKBBln1PtHeMZlfrKJCOudR2HThvyggOjxl1LkJbapCp
+	 Fv/arGddl3QvA==
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2e27277d2c1so906741fa.2;
+        Wed, 15 May 2024 15:09:01 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW8ZW/6UQYGbHNFPwS9H8tpQT1+dGcgTfU29pE/0+e3FJ4KgEmZXY3mSVsiXsuaHAW4WQWr1+Hm3Zd1c+OzlmSvMlGtgoVMtFlisbj+9cM6XD1hfJoH11lTjGSuH50whUl8jCd4N4dVpJtxiRYMI5nD3ctOzDHmGenUlwOQbNndnwhQtoqLxiKs5D4YlCxn9jWAXAlaEeYckkM4JCtgJQ8HdzQ3+A==
+X-Gm-Message-State: AOJu0YyVGd+KFaNGWL4I1eBGjqvo/wBWLGwIgTHryNK+q9f07MgLpO5a
+	mHSbfFIgE4zow98oPki+bmZhG9WN2pK+FARwXdPjiFN4aEjWqpkqpdfuogU6ZBDEPaSgtykPj6b
+	9Cid3J77EeHBaFNX50Z1Hn3XXnQ==
+X-Google-Smtp-Source: AGHT+IGzQttQC8UMU89GdfrYgHPoLKfcgLpWi8Xho2b4h4LtCH6dR5hoJ41H2FcllqnwQ6eag9/96nVB54HEREq3P58=
+X-Received: by 2002:a05:6512:3a8d:b0:523:9226:41ea with SMTP id
+ 2adb3069b0e04-52392264794mr2835870e87.42.1715810940008; Wed, 15 May 2024
+ 15:09:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240514180046.543763-1-quic_uchalich@quicinc.com>
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: LxlzQSzqxW_fyJ6E5_Gr7vRIv7rAAWcG
-X-Proofpoint-GUID: LxlzQSzqxW_fyJ6E5_Gr7vRIv7rAAWcG
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-15_14,2024-05-15_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- lowpriorityscore=0 malwarescore=0 impostorscore=0 spamscore=0
- suspectscore=0 mlxlogscore=999 mlxscore=0 clxscore=1015 phishscore=0
- bulkscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405010000 definitions=main-2405150158
+References: <20240422232404.213174-1-sboyd@kernel.org> <CABVgOSmgUJp3FijpYGCphi1OzRUNvmYQmPDdL6mN59YnbkR2iQ@mail.gmail.com>
+ <b822c6a5488c4098059b6d3c35eecbbd.sboyd@kernel.org> <5c919f0d3d72fe1592a11c45545e8a60.sboyd@kernel.org>
+ <CAL_JsqK4EZ0RhYCw6ZaeYSJu5Ps1J+J25vjwQy2XvNa5F5d7Pw@mail.gmail.com> <f6d7574582592f3bfa50fc45fefc53be.sboyd@kernel.org>
+In-Reply-To: <f6d7574582592f3bfa50fc45fefc53be.sboyd@kernel.org>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 15 May 2024 17:08:47 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+M953w4FdOHmDWByqUbJmB+g_G=KxAuZ04zFqV6zBmzg@mail.gmail.com>
+Message-ID: <CAL_Jsq+M953w4FdOHmDWByqUbJmB+g_G=KxAuZ04zFqV6zBmzg@mail.gmail.com>
+Subject: Re: [PATCH v4 00/10] clk: Add kunit tests for fixed rate and parent data
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: David Gow <davidgow@google.com>, Michael Turquette <mturquette@baylibre.com>, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	patches@lists.linux.dev, kunit-dev@googlegroups.com, 
+	linux-kselftest@vger.kernel.org, devicetree@vger.kernel.org, 
+	Brendan Higgins <brendan.higgins@linux.dev>, Rae Moar <rmoar@google.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J . Wysocki" <rafael@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, Daniel Latypov <dlatypov@google.com>, 
+	Christian Marangi <ansuelsmth@gmail.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Maxime Ripard <maxime@cerno.tech>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 14, 2024 at 11:00:46AM -0700, Unnathi Chalicheemala wrote:
-> This flag was never supported by firmware, so remove it.
-> 
-> Signed-off-by: Unnathi Chalicheemala <quic_uchalich@quicinc.com>
+On Wed, May 15, 2024 at 4:15=E2=80=AFPM Stephen Boyd <sboyd@kernel.org> wro=
+te:
+>
+> Quoting Rob Herring (2024-05-15 06:06:09)
+> > On Tue, May 14, 2024 at 4:29=E2=80=AFPM Stephen Boyd <sboyd@kernel.org>=
+ wrote:
+> > >
+> > > powerpc doesn't mark the root node with OF_POPULATED_BUS. If I set th=
+at
+> > > in of_platform_default_populate_init() then the overlays can be appli=
+ed.
+> > >
+> > > ---8<----
+> > > diff --git a/drivers/of/platform.c b/drivers/of/platform.c
+> > > index 389d4ea6bfc1..fa7b439e9402 100644
+> > > --- a/drivers/of/platform.c
+> > > +++ b/drivers/of/platform.c
+> > > @@ -565,6 +565,10 @@ static int __init of_platform_default_populate_i=
+nit(void)
+> > >                                 of_platform_device_create(node, buf, =
+NULL);
+> > >                 }
+> > >
+> > > +               node =3D of_find_node_by_path("/");
+> > > +               if (node)
+> > > +                       of_node_set_flag(node, OF_POPULATED_BUS);
+> >
+> > I think you want to do this in of_platform_bus_probe() instead to
+> > mirror of_platform_populate(). These are supposed to be the same
+> > except that 'populate' only creates devices for nodes with compatible
+> > while 'probe' will create devices for all child nodes. Looks like we
+> > are missing some devlink stuff too. There may have been some issue for
+> > PPC with it.
+>
+> Got it. So this patch?
+>
+> ---8<---
+> diff --git a/drivers/of/platform.c b/drivers/of/platform.c
+> index 389d4ea6bfc1..acecefcfdba7 100644
+> --- a/drivers/of/platform.c
+> +++ b/drivers/of/platform.c
+> @@ -421,6 +421,7 @@ int of_platform_bus_probe(struct device_node *root,
+>         if (of_match_node(matches, root)) {
+>                 rc =3D of_platform_bus_create(root, matches, NULL, parent=
+, false);
+>         } else for_each_child_of_node(root, child) {
+> +               of_node_set_flag(root, OF_POPULATED_BUS);
 
-Reviewed-by: Elliot Berman <quic_eberman@quicinc.com>
+No, the same spot as of_platform_populate has it. I guess this would
+be the same, but no reason to do this in the for_each_child_of_node
+loop...
 
-> ---
->  drivers/firmware/qcom/qcom_scm.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
-> index 68f4df7e6c3c..d511ede6f172 100644
-> --- a/drivers/firmware/qcom/qcom_scm.c
-> +++ b/drivers/firmware/qcom/qcom_scm.c
-> @@ -114,7 +114,6 @@ static const u8 qcom_scm_cpu_warm_bits[QCOM_SCM_BOOT_MAX_CPUS] = {
->  };
->  
->  #define QCOM_SMC_WAITQ_FLAG_WAKE_ONE	BIT(0)
-> -#define QCOM_SMC_WAITQ_FLAG_WAKE_ALL	BIT(1)
->  
->  #define QCOM_DLOAD_MASK		GENMASK(5, 4)
->  #define QCOM_DLOAD_NODUMP	0
-> @@ -1793,9 +1792,8 @@ static irqreturn_t qcom_scm_irq_handler(int irq, void *data)
->  			goto out;
->  		}
->  
-> -		if (flags != QCOM_SMC_WAITQ_FLAG_WAKE_ONE &&
-> -		    flags != QCOM_SMC_WAITQ_FLAG_WAKE_ALL) {
-> -			dev_err(scm->dev, "Invalid flags found for wq_ctx: %u\n", flags);
-> +		if (flags != QCOM_SMC_WAITQ_FLAG_WAKE_ONE) {
-> +			dev_err(scm->dev, "Invalid flags received for wq_ctx: %u\n", flags);
->  			goto out;
->  		}
->  
-> -- 
-> 2.34.1
-> 
+>                 if (!of_match_node(matches, child))
+>                         continue;
+>                 rc =3D of_platform_bus_create(child, matches, NULL, paren=
+t, false);
+>
+>
+> This doesn't work though. I see that prom_init() is called, which
+> constructs a DTB and flattens it to be unflattened by
+> unflatten_device_tree(). The powerpc machine type used by qemu is
+> PLATFORM_PSERIES_LPAR. It looks like it never calls
+> of_platform_bus_probe() from the pseries platform code.
+
+Huh. Maybe pseries doesn't have any platform devices?
+
+Ideally, we'd still do it in of_platform_default_populate_init(), but
+if you look at the history, you'll see that broke some PPC boards
+(damn initcall ordering).
+
+> What about skipping the OF_POPULATED_BUS check, or skipping the check
+> when the parent is the root node? This is the if condition that's
+> giving the headache.
+
+I don't think we should just remove it, but a root node check seems fine.
+
+Rob
 
