@@ -1,152 +1,126 @@
-Return-Path: <linux-kernel+bounces-180241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AA928C6BDB
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 20:05:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A94948C6B80
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 19:32:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F241F284815
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:05:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34144B249E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:32:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1119F158DB6;
-	Wed, 15 May 2024 18:05:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0100E45014;
+	Wed, 15 May 2024 17:32:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=akamai.com header.i=@akamai.com header.b="fru98BVI"
-Received: from mx0b-00190b01.pphosted.com (mx0b-00190b01.pphosted.com [67.231.157.127])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QG4m/p0r"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14BB9158845;
-	Wed, 15 May 2024 18:05:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.157.127
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA7723032A
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 17:32:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715796327; cv=none; b=JuwNcGlRPTb1uVePeO4u4OmvZaEQ3dzwnhIJ0y0uxaq7ozoANk06Ehsl9+PGFZ0ExHyIuh/YmuNgg0mBOqTjSkQVt+U+vhrdPMCMEXZmdNESY+ZQfbPxrAwrfG1FhCA0rPg5UleiSKLxWWgfOFnQ7tlHdrNXxu/yiDag5FuVrr8=
+	t=1715794368; cv=none; b=DciR8s1XBB2EtHWWM59O1bo9/8AIWAXDOaJ1lPkEnPytxvsrCTx8HejGGNVKRXbJEGDbuGkykV+MphqRpS1Ng07e2cS9I8DTdaiO/VecKUOp/ih6Yscdr2zaBlYHR+ccAQoteghte0VQr1mpFbeYbKinsNW1ilmZrfrMush4BC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715796327; c=relaxed/simple;
-	bh=NOWeMdSAMU8+1sNAkP8Nr6iomJ7DvwEXpGNc1eKDk9Q=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=OcV7nxzdvIan6z7EVg2W0X3V9jjvA7KFnMOWZVcWNekrk75Ada4uOukraqohxkt7NbtkwqeLOGrk9diCil4RUWYHzbks31hXSkDYPIK66VKaHZSH4dIIlansdgluCjy+gUxH5ENQbnWtM/VD2Ho6o/uHmqEf4a9a8REgvNohzSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=akamai.com; spf=pass smtp.mailfrom=akamai.com; dkim=pass (2048-bit key) header.d=akamai.com header.i=@akamai.com header.b=fru98BVI; arc=none smtp.client-ip=67.231.157.127
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=akamai.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=akamai.com
-Received: from pps.filterd (m0122330.ppops.net [127.0.0.1])
-	by mx0b-00190b01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44F9vZnB018902;
-	Wed, 15 May 2024 18:32:28 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akamai.com; h=
-	from:to:cc:subject:date:message-id:content-type:content-id
-	:content-transfer-encoding:mime-version; s=jan2016.eng; bh=NOWeM
-	dSAMU8+1sNAkP8Nr6iomJ7DvwEXpGNc1eKDk9Q=; b=fru98BVI8LqPFgxPVZr0T
-	UpEDpwuLFY0WCgmofI7PZbh5AzTAte7ft1TRxW7a1P33qdEgpF9d4KDN6CdCEUGS
-	VBk5Kkl4uHUX8dYl4R4q375W2oGwBYvovyRY3p0cOc7IwN0xjQPBY7Hh9wpiUm2m
-	5oxYMpT8thcwz+rcU4Yuy9vMyCldMi8VMK50O7U+WDXuATLLxxMcuSL+JDXPVzak
-	LbLQqODiBelzl7e3Khk1RtAlV2BKA1/2ds5IXk/uPc8VC3w6l8ZksrnOYqlNNfGa
-	DVazoQ3VH2H6r/YfAQ2I7VXdOSyQL1ciO6H9EUk1B4EHzCH7dusP/U92F9+GpN/Q
-	w==
-Received: from prod-mail-ppoint1 (prod-mail-ppoint1.akamai.com [184.51.33.18] (may be forged))
-	by mx0b-00190b01.pphosted.com (PPS) with ESMTPS id 3y20b56v7e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 15 May 2024 18:32:28 +0100 (BST)
-Received: from pps.filterd (prod-mail-ppoint1.akamai.com [127.0.0.1])
-	by prod-mail-ppoint1.akamai.com (8.17.1.19/8.17.1.19) with ESMTP id 44FCjiDj026173;
-	Wed, 15 May 2024 13:32:27 -0400
-Received: from email.msg.corp.akamai.com ([172.27.91.27])
-	by prod-mail-ppoint1.akamai.com (PPS) with ESMTPS id 3y240y4u9f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 15 May 2024 13:32:27 -0400
-Received: from usma1ex-dag4mb1.msg.corp.akamai.com (172.27.91.20) by
- usma1ex-dag4mb8.msg.corp.akamai.com (172.27.91.27) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.28; Wed, 15 May 2024 13:32:27 -0400
-Received: from usma1ex-dag4mb1.msg.corp.akamai.com ([172.27.91.20]) by
- usma1ex-dag4mb1.msg.corp.akamai.com ([172.27.91.20]) with mapi id
- 15.02.1258.028; Wed, 15 May 2024 13:32:27 -0400
-From: "Chaney, Ben" <bchaney@akamai.com>
-To: "ardb@kernel.org" <ardb@kernel.org>,
-        "gregkh@linuxfoundation.org"
-	<gregkh@linuxfoundation.org>,
-        "linux-efi@vger.kernel.org"
-	<linux-efi@vger.kernel.org>,
-        "stable@vger.kernel.org"
-	<stable@vger.kernel.org>
-CC: "bp@alien8.de" <bp@alien8.de>,
-        "dave.hansen@linux.intel.com"
-	<dave.hansen@linux.intel.com>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "Tottenham, Max"
-	<mtottenh@akamai.com>,
-        "Hunt, Joshua" <johunt@akamai.com>,
-        "Galaxy, Michael"
-	<mgalaxy@akamai.com>
-Subject: Regression in 6.1.81: Missing memory in pmem device
-Thread-Topic: Regression in 6.1.81: Missing memory in pmem device
-Thread-Index: AQHapu3aAXNBspXH5EmfViMgDx95dw==
-Date: Wed, 15 May 2024 17:32:27 +0000
-Message-ID: <FA5F6719-8824-4B04-803E-82990E65E627@akamai.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <0D238261143F6D46B9677A1E174E540D@akamai.com>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1715794368; c=relaxed/simple;
+	bh=kiBu9aDX7EL9QTt1G+6SJu1okG8LZwH7rPudLYo5UBA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=k0P9Peda4KiOJd3bR99SlgU4HwXLtA8Q5xFWs+Ps0KkiKJDM9qDDbJSamRHSlWBFXYe6mOU9VL/xMoDo7lDktq31j0T/3rtCButJANSyQMi6rXDhAMYlOnvf+hVnVq0GbAKWxwimMSQHVSh/AmFPy6Ho5nG5Tq6ufEyc4pyxeOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QG4m/p0r; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715794366;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=K3zrJi+7L7SmSVpO4sJC/EifqPPPG8oHimbPsdQiY8I=;
+	b=QG4m/p0rSw5KL7Zk7vTtoGkiT/YjVWX2YlpkPiyYtdtfF/txWVGhntCWNLvPX9T7hHCynX
+	VIJzDU4pgaSJkZGxpDEZm4q962L0vKvU032+WcJ3gr3tDrwxndOuFO7muSy8fYxwtHtHkk
+	XBoe5SWpyjRb8+E667GtFppshVUQcz4=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-230-dRY6s8-qMZyw8X6nMuC-Vg-1; Wed, 15 May 2024 13:32:34 -0400
+X-MC-Unique: dRY6s8-qMZyw8X6nMuC-Vg-1
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-792ff352462so69698285a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 10:32:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715794354; x=1716399154;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=K3zrJi+7L7SmSVpO4sJC/EifqPPPG8oHimbPsdQiY8I=;
+        b=nFd0hotZk2O0Mv5a79bRFvrInv9T5OnQNapsqkHnvu/dGnZYkB/EH6mx3bxbauDT1I
+         0To++JA6UcU1OKSYsfb3VR3m+n2w3M550vgiCfGi6gaiWyCn/KpfdpcDGm578O/IBrKf
+         LdZRBi99pVuaU6XyCnbsKb9FUOFhcwWXGl8dzIwuz4K0WRIudiWAc5r6uCgeNwsNCHKv
+         CKmxQchvQpWhaYCNAR3zIzKD+oWxxSDm64ONN2B3p4IDVVSHcy2BvOHpHycDQN6L4Dge
+         IFUmHEVndfn3epakZqZGbY2+jjbfaiBhQmgqi0xAav0lmvRGhBELt2nsRChuvywfJAkp
+         mb+w==
+X-Forwarded-Encrypted: i=1; AJvYcCUN8ap2rDgm09Il8yGe5Jtu8pN5DAU5bR8xVlUfcjp5LQpPqk3840OEarlzr1UucW9Uph0ttJXTYKkjuLaAPGg057qlB9/e/TAPhNK4
+X-Gm-Message-State: AOJu0YzAXbI7mpHCmHsrUuCzLGELKmtjv4Tbju3jnHLhO9jaFqmR6c+t
+	g7RQuC4Zb4l+InDD5Z3TW5YVyE1DyfxpediTtYFO49foMoYLjmWIK7+5wLGmckvbSVLEIKISJHL
+	QjBfxLYOLueWOdmncxSGMIA0qF+MlfegeQGzWsU6Pi1ft2BObf3DbChcN/GRgsg==
+X-Received: by 2002:a05:620a:4946:b0:790:e6bf:23c8 with SMTP id af79cd13be357-792c757421bmr1697142685a.15.1715794354095;
+        Wed, 15 May 2024 10:32:34 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGhuFXJCFrAqP1KpGavlBwSPWZKTHyKGVO9HIx7RJlDer6r8nEi85JyvPgFGo7LrS4jndsTSg==
+X-Received: by 2002:a05:620a:4946:b0:790:e6bf:23c8 with SMTP id af79cd13be357-792c757421bmr1697139985a.15.1715794353706;
+        Wed, 15 May 2024 10:32:33 -0700 (PDT)
+Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-141-166.abo.bbox.fr. [213.44.141.166])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-792bf27f99dsm703976085a.37.2024.05.15.10.32.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 May 2024 10:32:32 -0700 (PDT)
+From: Valentin Schneider <vschneid@redhat.com>
+To: Frederic Weisbecker <frederic@kernel.org>, LKML
+ <linux-kernel@vger.kernel.org>
+Cc: Frederic Weisbecker <frederic@kernel.org>, "Paul E . McKenney"
+ <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Joel Fernandes
+ <joel@joelfernandes.org>, Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
+ Uladzislau Rezki <urezki@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
+ rcu <rcu@vger.kernel.org>
+Subject: Re: [PATCH 0/6] rcu: Remove several redundant memory barriers
+In-Reply-To: <20240515125332.9306-1-frederic@kernel.org>
+References: <20240515125332.9306-1-frederic@kernel.org>
+Date: Wed, 15 May 2024 19:32:30 +0200
+Message-ID: <xhsmhjzjvgevl.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-15_10,2024-05-15_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxlogscore=598
- phishscore=0 bulkscore=0 spamscore=0 suspectscore=0 mlxscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2405010000 definitions=main-2405150122
-X-Proofpoint-ORIG-GUID: 2KyqGTvCdGd3uUwnnZ2PZHER5km1icai
-X-Proofpoint-GUID: 2KyqGTvCdGd3uUwnnZ2PZHER5km1icai
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-15_10,2024-05-15_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 priorityscore=1501
- lowpriorityscore=0 mlxscore=0 impostorscore=0 malwarescore=0 clxscore=1011
- bulkscore=0 suspectscore=0 mlxlogscore=434 spamscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405010000
- definitions=main-2405150124
+Content-Type: text/plain
 
-SGVsbG8sDQogICAgICAgICAgICAgICAgSSBlbmNvdW50ZXJlZCBhbiBpc3N1ZSB3aGVuIHVwZ3Jh
-ZGluZyB0byA2LjEuODkgZnJvbSA2LjEuNzcuIFRoaXMgdXBncmFkZSBjYXVzZWQgYSBicmVha2Fn
-ZSBpbiBlbXVsYXRlZCBwZXJzaXN0ZW50IG1lbW9yeS4gU2lnbmlmaWNhbnQgYW1vdW50cyBvZiBt
-ZW1vcnkgYXJlIG1pc3NpbmcgZnJvbSBhIHBtZW0gZGV2aWNlOg0KDQpmZGlzayAtbCAvZGV2L3Bt
-ZW0qDQpEaXNrIC9kZXYvcG1lbTA6IDM1NS45IEdpQiwgMzgyMTE3ODcxNjE2IGJ5dGVzLCA3NDYz
-MjM5Njggc2VjdG9ycw0KVW5pdHM6IHNlY3RvcnMgb2YgMSAqIDUxMiA9IDUxMiBieXRlcw0KU2Vj
-dG9yIHNpemUgKGxvZ2ljYWwvcGh5c2ljYWwpOiA1MTIgYnl0ZXMgLyA0MDk2IGJ5dGVzDQpJL08g
-c2l6ZSAobWluaW11bS9vcHRpbWFsKTogNDA5NiBieXRlcyAvIDQwOTYgYnl0ZXMNCg0KRGlzayAv
-ZGV2L3BtZW0xOiAyNS4zOCBHaUIsIDI3MjQ2MTk4Nzg0IGJ5dGVzLCA1MzIxNTIzMiBzZWN0b3Jz
-DQpVbml0czogc2VjdG9ycyBvZiAxICogNTEyID0gNTEyIGJ5dGVzDQpTZWN0b3Igc2l6ZSAobG9n
-aWNhbC9waHlzaWNhbCk6IDUxMiBieXRlcyAvIDQwOTYgYnl0ZXMNCkkvTyBzaXplIChtaW5pbXVt
-L29wdGltYWwpOiA0MDk2IGJ5dGVzIC8gNDA5NiBieXRlcw0KDQoJVGhlIG1lbW1hcCBwYXJhbWV0
-ZXIgdGhhdCBjcmVhdGVkIHRoZXNlIHBtZW0gZGV2aWNlcyBpcyDigJxtZW1tYXA9MzY0NDE2TSEy
-ODY3Mk0sMzY3NDg4TSE0MTk4NDBN4oCdLCB3aGljaCBzaG91bGQgY2F1c2UgYSBtdWNoIGxhcmdl
-ciBhbW91bnQgb2YgbWVtb3J5IHRvIGJlIGFsbG9jYXRlZCB0byAvZGV2L3BtZW0xLiBUaGUgYW1v
-dW50IG9mIG1pc3NpbmcgbWVtb3J5IGFuZCB0aGUgZGV2aWNlIGl0IGlzIG1pc3NpbmcgZnJvbSBp
-cyByYW5kb21pemVkIG9uIGVhY2ggcmVib290LiBUaGVyZSBpcyBzb21lIGFtb3VudCBvZiBtZW1v
-cnkgbWlzc2luZyBpbiBhbG1vc3QgYWxsIGNhc2VzLCBidXQgbm90IDEwMCUgb2YgdGhlIHRpbWUu
-IE5vdGFibHksIHRoZSBtZW1vcnkgdGhhdCBpcyBtaXNzaW5nIGZyb20gdGhlc2UgZGV2aWNlcyBp
-cyBub3QgcmVjbGFpbWVkIGJ5IHRoZSBzeXN0ZW0gZm9yIGdlbmVyYWwgdXNlLiBUaGlzIHN5c3Rl
-bSBpbiBxdWVzdGlvbiBoYXMgNzY4R0Igb2YgbWVtb3J5IHNwbGl0IGV2ZW5seSBhY3Jvc3MgdHdv
-IE5VTUEgbm9kZXMuDQoNCglXaGVuIHRoZSBlcnJvciBvY2N1cnMsIHRoZXJlIGFyZSBhbHNvIHRo
-ZSBmb2xsb3dpbmcgZXJyb3IgbWVzc2FnZXMgc2hvd2luZyB1cCBpbiBkbWVzZzoNCg0KWyAgICA1
-LjMxODMxN10gbmRfcG1lbSBuYW1lc3BhY2UxLjA6IFttZW0gMHg1YzIwNDJjMDAwLTB4NWZmN2Zm
-ZmZmZiBmbGFncyAweDIwMF0gbWlzYWxpZ25lZCwgdW5hYmxlIHRvIG1hcA0KWyAgICA1LjMzNTA3
-M10gbmRfcG1lbTogcHJvYmUgb2YgbmFtZXNwYWNlMS4wIGZhaWxlZCB3aXRoIGVycm9yIC05NQ0K
-DQoJQmlzZWN0aW9uIGltcGxpY2F0ZXMgMmRmYWVhYzNmMzhlNGU1NTBkMjE1MjA0ZWVkZDk3YTA2
-MWZkYzExOCBhcyB0aGUgcGF0Y2ggdGhhdCBmaXJzdCBjYXVzZWQgdGhlIGlzc3VlLiBJIGJlbGll
-dmUgdGhlIGNhdXNlIG9mIHRoZSBpc3N1ZSBpcyB0aGF0IHRoZSBFRkkgc3R1YiBpcyByYW5kb21p
-emluZyB0aGUgbG9jYXRpb24gb2YgdGhlIGRlY29tcHJlc3NlZCBrZXJuZWwgd2l0aG91dCBhY2Nv
-dW50aW5nIGZvciB0aGUgbWVtb3J5IG1hcCwgYW5kIGl0IGlzIGNsb2JiZXJpbmcgc29tZSBvZiB0
-aGUgbWVtb3J5IHRoYXQgaGFzIGJlZW4gcmVzZXJ2ZWQgZm9yIHBtZW0uDQoNClRoYW5rIHlvdSwN
-CglCZW4gQ2hhbmV5DQoNCg0KDQoNCg==
+On 15/05/24 14:53, Frederic Weisbecker wrote:
+> Reviewing Valentin's patchset made me stare at some memory barriers
+> on the way.
+
+Sorry not sorry? :-)
+
+> Here is some removal proposal. Some may be beneficial on
+> runtime (fqs snapshot with potentially as many smp_mb() as the number
+> of online CPUs for each GP). Some happen on more rare path. In any
+> case they clarify code reviews so we don't stumble upon mysterious
+> barriers.
+>
+> Thanks.
+>
+> Frederic Weisbecker (6):
+>   rcu: Remove full ordering on second EQS snapshot
+>   rcu: Remove superfluous full memory barrier upon first EQS snapshot
+>   rcu/exp: Remove superfluous full memory barrier upon first EQS
+>     snapshot
+>   rcu: Remove full memory barrier on boot time eqs sanity check
+>   rcu: Remove full memory barrier on RCU stall printout
+>   rcu/exp: Remove redundant full memory barrier at the end of GP
+>
+>  .../Tree-RCU-Memory-Ordering.rst              |  6 +++---
+>  kernel/rcu/tree.c                             | 21 +++++++------------
+>  kernel/rcu/tree_exp.h                         | 16 +++++++++++---
+>  kernel/rcu/tree_stall.h                       |  4 ++--
+>  4 files changed, 26 insertions(+), 21 deletions(-)
+>
+> --
+> 2.44.0
+
 
