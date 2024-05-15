@@ -1,145 +1,120 @@
-Return-Path: <linux-kernel+bounces-179306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B9FA8C5EA0
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 03:05:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D77DE8C5EA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 03:08:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13A432818D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 01:05:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBAD91C21076
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 01:08:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 479138F77;
-	Wed, 15 May 2024 01:03:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D5271109;
+	Wed, 15 May 2024 01:08:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aGUcSoil"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i3I7We6z"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2285779C0;
-	Wed, 15 May 2024 01:03:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 829B55CB0;
+	Wed, 15 May 2024 01:08:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715735018; cv=none; b=BUb/6TphZv4pVR0p91kiay9WtE3tnnhxx9NroN9KFlNPqHS5R+q7aUNtZbjI74/s30iZAYE//4/rYBO/ZpKSEMHtD5cDWClH2sW1uzvoFh2yRq9rUUzKvzzOSsSjaDbhFhep73z0LqOcSiJiYR1fAtgeoTPTPbAPfuQch6TOTjM=
+	t=1715735302; cv=none; b=D45ki/HVFU2u1zvpUAS+8DDBk3u9hk0zZfLIC7Fy7VhQY7QKPAt8wwiFclSozbd7/8Ei3OtK00yqOhtVGVXdAhv6yXmFlUdkmrd9Zslgvk1XvCMnSFK2cy6jt0MTzGELGXXW3lQ1UKTe84DXO5k+a7dDMpHlgwIaOVRP1jlkhj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715735018; c=relaxed/simple;
-	bh=4OiZUesDpK8HfNBqjTK3RKtPsh+bnPrU9/H8cPvHkNE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sH+HD3Uqv/LAEWFsp+CLL1aSFaLGyAG104MyTDKpbqsWk/pzqzPjnhiA9sDcHErJf+r26ubYfnEl5qxa8RFO/j7uszwEkMs/vna4ky1ES16f2PXn512NVOOQgexC1waETnmUJYdvXbyX+fXSeb+Be9Wfxp/1ASGmjzqbBdp6Bno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aGUcSoil; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715735017; x=1747271017;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=4OiZUesDpK8HfNBqjTK3RKtPsh+bnPrU9/H8cPvHkNE=;
-  b=aGUcSoilxLafHBKcOxG2BCCws99GVmGfheGQee659kcaBKn08KqtuIli
-   SDEugsPNK1kykWTA+1Q4QaqEGUtyreyb8tvfUXhj72GNNkXhb0/UlWKm4
-   G07vIuvofKAyqLVBRSEFLyKBMdHpyr40Aj8iGwaf31b3eybr2VCToHm7z
-   Xq0zRamb1FDqrDfDHPEYNmC182i/KRG99HWw7bOmJYb5/onUHDbO6yM+L
-   lHRH2RnaFWWmjQBdNxKUj7lr/iYLWi4YuPMmresWRb/HOSKgbZxIAq2gh
-   4PmgG2OcrJlj9QMRB/s7O6+CQDtS0v+yj+Ceu7yp/Ud4icfX/HUZgVqjn
-   Q==;
-X-CSE-ConnectionGUID: o2hJodJQTpm2RRVi7pEJDw==
-X-CSE-MsgGUID: TZazJeUfTYWSE1CGkg84rA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11073"; a="11528259"
-X-IronPort-AV: E=Sophos;i="6.08,160,1712646000"; 
-   d="scan'208";a="11528259"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2024 18:03:37 -0700
-X-CSE-ConnectionGUID: 8PJ0ghk5Rkul+sctAQYXbw==
-X-CSE-MsgGUID: qR+Z0+MjQuW//hsf0CSO8w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,160,1712646000"; 
-   d="scan'208";a="30902292"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.125.243.198]) ([10.125.243.198])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2024 18:03:34 -0700
-Message-ID: <f6a9553b-517d-4ac4-a23c-96e2b885c828@intel.com>
-Date: Wed, 15 May 2024 09:03:32 +0800
+	s=arc-20240116; t=1715735302; c=relaxed/simple;
+	bh=D69ZLC8/gjwZxvU+Y4nvOh9+wCwb1dUPhipLaDHJTd8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=P3J8TFH9WkiNIlzNtMgpcii4KyNa320nf2J0eLQDKDHmqeGQY/r45pxNsrSvLepmZuDyH43ZEzzFlJormBM5YT+UMnZgmaPp6MF3qXK8nm/mdKUYg3VCJokR2yZNMdTx+5SRbxeJtgwz7qcf65LtFcE/KJWbjVFhsL00RE4xAXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i3I7We6z; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-6f4dcc3eeb3so3589945b3a.0;
+        Tue, 14 May 2024 18:08:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715735300; x=1716340100; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oEOuUmrraVajZP9NumOJGczPjev4TG6biSN92z3lk0k=;
+        b=i3I7We6ztg0PplCVUQqhfrhvi/KFp8gskcg35QEDt01Et1y1yLXIrBFw1dq6ru2wQP
+         P5OSHo/515ulToKUhuohdS53EUY2NFXmom16WzVYsB7HFWrZITzKPdPNyTwb/hNocHTd
+         Yf/Wj0t7rcbL9d9xXHLX+RPZ+cgqfPRchfbYY07dieSxOo23FT4ql9JRoY77U5xDSsrE
+         NCmrpXAfbwDVQ09MVXHDH+qipHYXTeb/96lRXRsNsMrdtrI4qfkSUxzx9SDxYn7L3D66
+         ov7bfeGNRnTT9XOjPSv9BEDdHlKvB2xyn8gk5WeEPRrh9BXFFiAprPSiY9x59SQ2oL/O
+         BpBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715735300; x=1716340100;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oEOuUmrraVajZP9NumOJGczPjev4TG6biSN92z3lk0k=;
+        b=UK/nF4SEgW/e1P8KB5a/7nUK7p2ti600ELm1gRw31aPDUfWcm9RyTrs4skG+0x0ajw
+         zTIxFF/f3WX5D9FH0kJ0oegQbJ/s/w7pWOtfJEyqie+0BP1eCdOG1Y/TaJiQiOEkZx5P
+         +b3/6R5Hil0EaHQprN3sZBBwGoZ/A5uPDwrk0K2IwJklZ7lwuT5HIWvABqoSRWb54FGz
+         2N3N6BzKkbQwb0Il5IRRiFLaEkvb28NtUUWhbFfj9FK5KK42GKzXCmb0qxr8mCpGSiQd
+         187gldcmxoYE+xYvlQvgK+8gk43cxwatPke14JFO9pf4MVGddCZijNo58wsYvvUGT2Hf
+         w+5g==
+X-Forwarded-Encrypted: i=1; AJvYcCWGqwW/nmLt/PdrIytacOYYp9uw/z6AlZRvu8f6K0LLRmrAUirrAXUnyxEIz6UKeyRR5mClkaCzAA2K6i/oBLABIJyxfjcDhS/v6lFe
+X-Gm-Message-State: AOJu0YxPBlCsWR3gRPI16LCQD68y44iHik2Wn6nlM1gwtx43HKh+hUOx
+	RQKEecTFfEmjw8elTm8HlanrU8lXLOAYIE9+zZpcCNJzG2Cl3Ts8sCwAWHj5y+Q=
+X-Google-Smtp-Source: AGHT+IEf/8xYnuiJOOGb2Sge2zyvi8v+F5kXfA+0Ec6yoRGy+k/BnTYqMYRzAU13OsIYlFSS1N9lgA==
+X-Received: by 2002:a05:6a20:43a7:b0:1af:fa18:76f7 with SMTP id adf61e73a8af0-1affa18795amr7375050637.39.1715735299986;
+        Tue, 14 May 2024 18:08:19 -0700 (PDT)
+Received: from server.ucalgary.ca (S0106f85e42401d5e.cg.shawcable.net. [174.0.240.170])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0b9d16cfsm104973325ad.18.2024.05.14.18.08.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 May 2024 18:08:19 -0700 (PDT)
+From: Abhinav Saxena <xandfury@gmail.com>
+To: linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev
+Cc: Shuah Khan <shuah@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Abhinav Saxena <xandfury@gmail.com>
+Subject: [RFC PATCH 0/4] selftests/binderfs: Fixes to binderfs_test
+Date: Wed, 15 May 2024 01:08:01 +0000
+Message-Id: <20240515010805.605511-1-xandfury@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 04/17] KVM: x86: Move synthetic PFERR_* sanity checks to
- SVM's #NPF handler
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
- kvm@vger.kernel.org, Kai Huang <kai.huang@intel.com>,
- Binbin Wu <binbin.wu@linux.intel.com>
-References: <20240507155817.3951344-1-pbonzini@redhat.com>
- <20240507155817.3951344-5-pbonzini@redhat.com>
- <3b6bc6ac-276f-4a83-8972-68b98db672c7@intel.com>
- <ZkJOb4zJJnOAYnTi@google.com>
- <55d00dc8-bfa3-4cf2-9c6a-1d81e5cfd7b3@intel.com>
- <ZkOEC3PbSmutUdsq@google.com>
-Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <ZkOEC3PbSmutUdsq@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 5/14/2024 11:32 PM, Sean Christopherson wrote:
-> On Tue, May 14, 2024, Xiaoyao Li wrote:
->> On 5/14/2024 1:31 AM, Sean Christopherson wrote:
->>> On Mon, May 13, 2024, Xiaoyao Li wrote:
->>>> On 5/7/2024 11:58 PM, Paolo Bonzini wrote:
->>>>> +#define PFERR_SYNTHETIC_MASK	(PFERR_IMPLICIT_ACCESS)
->>>>>     #define PFERR_NESTED_GUEST_PAGE (PFERR_GUEST_PAGE_MASK |	\
->>>>>     				 PFERR_WRITE_MASK |		\
->>>>> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
->>>>> index c72a2033ca96..5562d693880a 100644
->>>>> --- a/arch/x86/kvm/mmu/mmu.c
->>>>> +++ b/arch/x86/kvm/mmu/mmu.c
->>>>> @@ -4502,6 +4502,9 @@ int kvm_handle_page_fault(struct kvm_vcpu *vcpu, u64 error_code,
->>>>>     		return -EFAULT;
->>>>>     #endif
->>>>> +	/* Ensure the above sanity check also covers KVM-defined flags. */
->>>>
->>>> 1. There is no sanity check above related to KVM-defined flags yet. It has
->>>> to be after Patch 6.
->>>
->>> Ya, it's not just the comment, the entire changelog expects this patch to land
->>> after patch 6.
->>>>
->>>> 2. I somehow cannot parse the comment properly, though I know it's to ensure
->>>> KVM-defined PFERR_SYNTHETIC_MASK not contain any bit below 32-bits.
->>>
->>> Hmm, how about this?
->>>
->>> 	/*
->>> 	 * Ensure that the above sanity check on hardware error code bits 63:32
->>> 	 * also prevents false positives on KVM-defined flags.
->>> 	 */
->>>
->>
->> Maybe it's just myself inability, I still cannot interpret it well.
->>
->> Can't we put it above the sanity check of error code, and just with a
->> comment like
->>
->> 	/*
->>   	 * Ensure KVM-defined flags not occupied any bits below 32-bits,
->>         * that are used by hardware.
-> 
-> This is somewhat misleading, as hardware does use bits 63:32 (for #NPF), just not
-> for #PF error codes.  And the reason I'm using rather indirect wording is that
-> KVM _could_ define synthetic flags in bits 31:0, there's simply a higher probability
-> of needing to reshuffle bit numbers due to a conflict with a future feature.
-> 
-> Is this better?  I think it captures what you're looking for, while hopefully also
-> capturing that staying out of bits 31:0 isn't a hard requirement.
+Hi everyone,
 
-yeah, it looks better!
+My name is Abhinav Saxena. I am a graduate student at the University
+of Calgary. This is my first patch series for the Linux kernel. I am
+applying for the "Linux kernel Bug Fixing Summer Unpaid
+2024". Apologies in advance if I made any trivial mistakes :)
 
-> 	/*
-> 	 * Restrict KVM-defined flags to bits 63:32 so that it's impossible for
-> 	 * them to conflict with #PF error codes, which are limited to 32 bits.
-> 	 */
+This patch mainly includes issues reported by checkpatch.pl.  The
+changes include:
+- Running clang-format on `binderfs_test.c` to fix formatting issues.
+- Updates the macro close_prot_errno_disarm macro.
+
+Testing: I tested patches on my local machine (ARM64 ubuntu) with
+checkpatch.pl and running the selftests.
+
+Best,
+Abhinav
+
+Abhinav Saxena (4):
+  run clang-format on bindergfs test
+  update close_prot_errno_disarm macro to do{...}while(false) structure
+    for safety
+  Macro argument 'fd' may be better as '(fd)' to avoid precedence issues
+  add missing a blank line after declarations; fix alignment formatting
+
+ .../filesystems/binderfs/binderfs_test.c      | 204 +++++++++++-------
+ 1 file changed, 126 insertions(+), 78 deletions(-)
+
+--
+2.34.1
 
 
