@@ -1,145 +1,138 @@
-Return-Path: <linux-kernel+bounces-179349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33C718C5F1A
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 04:29:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E92DA8C5F31
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 04:40:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84344B21C4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 02:29:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A025E282DC2
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 02:40:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 678AD1B7E4;
-	Wed, 15 May 2024 02:29:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dCWWRTZW"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBFDF3D549;
+	Wed, 15 May 2024 02:39:14 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FC3318635
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 02:29:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE9663D0D9
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 02:39:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715740167; cv=none; b=kIwxPW+9co4a2U0h8F32I0NIojBiW6Z50ydYhH+F7KZxjJhgSpfCi1ZpKa+knJ4AyyFZwth4SWTrYIllm/yDhGECbUUi0cIeaK8GzBTnGmh7lbsD4ns1+bUmC1evmWkxAtCs7QkaTDFGqGzGdZDeNBog07+bLq53hwrX1VN9a4g=
+	t=1715740754; cv=none; b=kDvc6w3G1VuS8Y5VqSYxEM6w/6D685/dyec4UUvkzPm60HR9wtfvg90dFa7GezImVdHes1qTd0GmOfT4iTgfC9wfGsoXD/xNwNqRiTl3oWjv2cONx5Djpd+wAMng+X/uk8TWHhYuNdFazVGBPQsqSAJVSpXaKU1UvSEzw7gS2Lo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715740167; c=relaxed/simple;
-	bh=Jstvl0Sw+tyHgtAutAqkp2d9laKunvjsUdOnBXtcPPA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FLFkutWfVTbm7/91ETqayH/6KDFFKUaoKBWF9H4J4k/Mz3OXwFk8InhzzYBP/zPTTMjR6QH7vf+QYwqiHPYP3Uud11/3/BKqYe291CwrDnWxlvSi07TaAJgius02W5RZMAHy2wICE3zOs1i0AH+E7XseWnnZgBETL69efmexw7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dCWWRTZW; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1ed012c1afbso49882155ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 19:29:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715740165; x=1716344965; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TIgpUa8KxyLUmcPW5rdHLb8CzpDEUu73pDtvEeNol/o=;
-        b=dCWWRTZWTLEGlgL3oCwzZu2M/Gv+vP297wf1sdVzzo6X/OYnQpJb9kiXCew0Dkx+xk
-         uh3TmPwRjF3xGM10ARhbdpi9/G9AUvfPoA+X/J2b57vJOIjW7Mjs5TTYCKb/wAc7fAiz
-         m9brwTlIMT45epm1IBzuDWu83B5EFRsPUCD2ca9d8aVZOrQ8WzWoH8BncdPBJT+gd9Ab
-         B8AvAdB5pXuiCX0q5CS5fZugPLzhhSnbPTkqGIpPYMPrc2hOM88MxLhn0ksvRZoRiZZo
-         y+mHC/nBPAzBJ2mYelJwQZB/c1pC6VEt/BnnEGO6wxv/FaRRIUJNeWNiVi2ZFJsRMc/f
-         Ys9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715740165; x=1716344965;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TIgpUa8KxyLUmcPW5rdHLb8CzpDEUu73pDtvEeNol/o=;
-        b=jghdzrGYjuTo9+1KBKEAq5L7djk/VjhZ9L4S28W2gWDDKCBbOboxZADGksHFgAIndC
-         iE8KnbPTV7aRtZj5tOYnN/jjd/HoBaj6KbzK6jdXFhpt7lFUk5nLhnvH21/sxau2+HjN
-         KHSelSh6+/mJcy24BcwYhtiT3oPgYq57XlZdmsvWFt+IITdtLd6SLAQE3Znvs/zZem0s
-         QAKei/lT2qmxDD/MXhJFp/7ODYUm5HItIFcpYGGjqs9khqwho8SQ19cWZ6qH4Ya3CJ4e
-         dwrY9NJiVKIldoCaq3tWbO41qb9ELtmjsG5VWvZuqpkwOj4j6zSffDjY+EgXbOvnMQwv
-         NX7g==
-X-Forwarded-Encrypted: i=1; AJvYcCUbFckf1OzxjP6TFLMg1PZLBtqHvuuRxs/7ufpwJyND++AAG4kRb0lptBza8LdE2w2R6bQVGxRy8e0c+bpaAymYBH3lp0GU302tGjBE
-X-Gm-Message-State: AOJu0Yx/Fl2MbPK1HpOPo9JI/m+VjVTOUkgBkYSLA2ekqzRAfE0zJimm
-	KAwNBFXLxt/zPnSLfDk90GxA5hk1NCE29A1h3z7ali7xqFbjqAcp
-X-Google-Smtp-Source: AGHT+IETFi8DKe3FtKXom1fBYbrA1Dew9V92VfYordZI22nsUhMyQZEwc1CmQQPcxQYcjYoeLbYaLw==
-X-Received: by 2002:a17:902:f648:b0:1e4:6cd7:30b3 with SMTP id d9443c01a7336-1ef4318d311mr217684985ad.23.1715740165386;
-        Tue, 14 May 2024 19:29:25 -0700 (PDT)
-Received: from ?IPV6:2804:431:cfd2:fcb9:629f:d1de:f0d7:c9e8? ([2804:431:cfd2:fcb9:629f:d1de:f0d7:c9e8])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0b9d3e26sm105562555ad.43.2024.05.14.19.29.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 May 2024 19:29:25 -0700 (PDT)
-Message-ID: <768c3e38-724a-42d7-a51d-16044bc69ed5@gmail.com>
-Date: Tue, 14 May 2024 23:29:19 -0300
+	s=arc-20240116; t=1715740754; c=relaxed/simple;
+	bh=5iSS9sXfbHYU0cpJ/xFgcqmUkP2JVSCYu+CyTFpzZkA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OmqNwqobsLR3jt60RiarPRatGhieUukajpHkOVZ8Dxi3KdjXQIaJmvYkOUVoJRUr8afHX6fRl9zbXqUq9vsDU8e/umee9bLadrCI4z4PhQ++q3juNfBHHO/rGv8GvX5RSQDtMVfxmX7Rfu/udh9ddrInzbZyMmURgahF7c3QAa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4VfHR24Qq6z1ynTf;
+	Wed, 15 May 2024 10:36:14 +0800 (CST)
+Received: from canpemm500002.china.huawei.com (unknown [7.192.104.244])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3D8BF140154;
+	Wed, 15 May 2024 10:39:08 +0800 (CST)
+Received: from huawei.com (10.173.135.154) by canpemm500002.china.huawei.com
+ (7.192.104.244) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Wed, 15 May
+ 2024 10:39:07 +0800
+From: Miaohe Lin <linmiaohe@huawei.com>
+To: <akpm@linux-foundation.org>
+CC: <shy828301@gmail.com>, <nao.horiguchi@gmail.com>,
+	<xuyu@linux.alibaba.com>, <david@redhat.com>, <linmiaohe@huawei.com>,
+	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] mm/huge_memory: don't unpoison huge_zero_folio
+Date: Wed, 15 May 2024 10:36:07 +0800
+Message-ID: <20240515023607.870022-1-linmiaohe@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] nvmem: meson-efuse: Replacing the use of of_node_put to
- __free
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Julia Lawall <julia.lawall@inria.fr>
-Cc: Shuah Khan <skhan@linuxfoundation.org>,
- Javier Carrasco <javier.carrasco.cruz@gmail.com>,
- linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20240416011751.93016-1-marilene.agarcia@gmail.com>
-Content-Language: en-US
-From: Marilene Andrade Garcia <marilene.agarcia@gmail.com>
-In-Reply-To: <20240416011751.93016-1-marilene.agarcia@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ canpemm500002.china.huawei.com (7.192.104.244)
 
-On 15/04/2024 22:17, MarileneGarcia wrote:
-> Use __free for device_node values, and thus drop calls to
-> of_node_put.
-> 
-> The goal is to reduce memory management issues by using this
-> scope-based of_node_put() cleanup to simplify function exit
-> handling. When using __free a resource is allocated within a
-> block, it is automatically freed at the end of the block.
-> 
-> Suggested-by: Julia Lawall <julia.lawall@inria.fr>
-> Signed-off-by: MarileneGarcia <marilene.agarcia@gmail.com>
-> ---
->   drivers/nvmem/meson-efuse.c | 5 ++---
->   1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/nvmem/meson-efuse.c b/drivers/nvmem/meson-efuse.c
-> index 33678d0af2c2..400a9a075e53 100644
-> --- a/drivers/nvmem/meson-efuse.c
-> +++ b/drivers/nvmem/meson-efuse.c
-> @@ -42,20 +42,19 @@ static int meson_efuse_probe(struct platform_device *pdev)
->   {
->   	struct device *dev = &pdev->dev;
->   	struct meson_sm_firmware *fw;
-> -	struct device_node *sm_np;
->   	struct nvmem_device *nvmem;
->   	struct nvmem_config *econfig;
->   	struct clk *clk;
->   	unsigned int size;
-> +	struct device_node *sm_np __free(device_node) =
-> +		of_parse_phandle(pdev->dev.of_node, "secure-monitor", 0);
->   
-> -	sm_np = of_parse_phandle(pdev->dev.of_node, "secure-monitor", 0);
->   	if (!sm_np) {
->   		dev_err(&pdev->dev, "no secure-monitor node\n");
->   		return -ENODEV;
->   	}
->   
->   	fw = meson_sm_get(sm_np);
-> -	of_node_put(sm_np);
->   	if (!fw)
->   		return -EPROBE_DEFER;
->   
+When I did memory failure tests recently, below panic occurs:
 
-Hello everyone,
-Did you have a chance to look at the patch? Any questions or suggestions 
-about it?
+ kernel BUG at include/linux/mm.h:1135!
+ invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
+ CPU: 9 PID: 137 Comm: kswapd1 Not tainted 6.9.0-rc4-00491-gd5ce28f156fe-dirty #14
+ RIP: 0010:shrink_huge_zero_page_scan+0x168/0x1a0
+ RSP: 0018:ffff9933c6c57bd0 EFLAGS: 00000246
+ RAX: 000000000000003e RBX: 0000000000000000 RCX: ffff88f61fc5c9c8
+ RDX: 0000000000000000 RSI: 0000000000000027 RDI: ffff88f61fc5c9c0
+ RBP: ffffcd7c446b0000 R08: ffffffff9a9405f0 R09: 0000000000005492
+ R10: 00000000000030ea R11: ffffffff9a9405f0 R12: 0000000000000000
+ R13: 0000000000000000 R14: 0000000000000000 R15: ffff88e703c4ac00
+ FS:  0000000000000000(0000) GS:ffff88f61fc40000(0000) knlGS:0000000000000000
+ CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ CR2: 000055f4da6e9878 CR3: 0000000c71048000 CR4: 00000000000006f0
+ Call Trace:
+  <TASK>
+  do_shrink_slab+0x14f/0x6a0
+  shrink_slab+0xca/0x8c0
+  shrink_node+0x2d0/0x7d0
+  balance_pgdat+0x33a/0x720
+  kswapd+0x1f3/0x410
+  kthread+0xd5/0x100
+  ret_from_fork+0x2f/0x50
+  ret_from_fork_asm+0x1a/0x30
+  </TASK>
+ Modules linked in: mce_inject hwpoison_inject
+ ---[ end trace 0000000000000000 ]---
+ RIP: 0010:shrink_huge_zero_page_scan+0x168/0x1a0
+ RSP: 0018:ffff9933c6c57bd0 EFLAGS: 00000246
+ RAX: 000000000000003e RBX: 0000000000000000 RCX: ffff88f61fc5c9c8
+ RDX: 0000000000000000 RSI: 0000000000000027 RDI: ffff88f61fc5c9c0
+ RBP: ffffcd7c446b0000 R08: ffffffff9a9405f0 R09: 0000000000005492
+ R10: 00000000000030ea R11: ffffffff9a9405f0 R12: 0000000000000000
+ R13: 0000000000000000 R14: 0000000000000000 R15: ffff88e703c4ac00
+ FS:  0000000000000000(0000) GS:ffff88f61fc40000(0000) knlGS:0000000000000000
+ CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ CR2: 000055f4da6e9878 CR3: 0000000c71048000 CR4: 00000000000006f0
 
-Thank you,
-Marilene
+The root cause is that HWPoison flag will be set for huge_zero_folio
+without increasing the folio refcnt. But then unpoison_memory() will
+decrease the folio refcnt unexpectly as it appears like a successfully
+hwpoisoned folio leading to VM_BUG_ON_PAGE(page_ref_count(page) == 0)
+when releasing huge_zero_folio.
+
+Skip unpoisoning huge_zero_folio in unpoison_memory() to fix this issue.
+We're not prepared to unpoison huge_zero_folio yet.
+
+Fixes: 478d134e9506 ("mm/huge_memory: do not overkill when splitting huge_zero_page")
+Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
+Cc: <stable@vger.kernel.org>
+---
+v2:
+ Change to simply check for the huge zero page. Thanks.
+---
+ mm/memory-failure.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+index 16ada4fb02b7..68bc8d7ff53d 100644
+--- a/mm/memory-failure.c
++++ b/mm/memory-failure.c
+@@ -2558,6 +2558,12 @@ int unpoison_memory(unsigned long pfn)
+ 		goto unlock_mutex;
+ 	}
+ 
++	if (is_huge_zero_folio(folio)) {
++		unpoison_pr_info("Unpoison: huge zero page is not supported %#lx\n",
++				 pfn, &unpoison_rs);
++		goto unlock_mutex;
++	}
++
+ 	if (folio_test_slab(folio) || folio_test_pgtable(folio) ||
+ 	    folio_test_reserved(folio) || folio_test_offline(folio))
+ 		goto unlock_mutex;
+-- 
+2.33.0
+
 
