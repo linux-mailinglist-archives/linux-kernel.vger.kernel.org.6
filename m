@@ -1,126 +1,101 @@
-Return-Path: <linux-kernel+bounces-179519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F23D18C60C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:26:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C63A48C60CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:32:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8FCD0B2190F
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:26:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D653282E63
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:32:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E19953C062;
-	Wed, 15 May 2024 06:26:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E6783C062;
+	Wed, 15 May 2024 06:32:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GdcrR6x9"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l9gG0Zf0"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E766F1E869;
-	Wed, 15 May 2024 06:26:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 510861E53F;
+	Wed, 15 May 2024 06:31:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715754394; cv=none; b=BsL72DDtN1BGZmnB3dGaklJpnvCYJ2IZjFQuhFzY8km0ZKViU0SSt72NlKHYXrP7CR4M9G4XiEV1Uc5NjBrlNbV48Kac+sgnjOWpfRXFLZSqUonnFFiHEp2AfCg2TjnaJOKo4Rhor6ENaEZ7eqnNkL3P2lGxI6tENOzl5/LXotg=
+	t=1715754721; cv=none; b=t/RYriT+z0lYN0aRpPIoaKWoQGtdf6WQqrfas+DE2Z5QMf0izuyQAMJZ7FUrBuSMQctbu9vMormwlTxeEDB7la2aKpo2iOc5bpQ57KXBniwVxdtjbm/JUpStXMgAlPxqnaL9Bxma30YIMrylYlsrb15lctFRoL/3kn7Ug1MgGR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715754394; c=relaxed/simple;
-	bh=wEmn7uinhHT5RrRKL1/oFUCkOWbFeSQCbSn3qfR9dns=;
+	s=arc-20240116; t=1715754721; c=relaxed/simple;
+	bh=SMe88j30uJlqLy1VfHIE4rYvL+Pl2XRda8aPFrB8pg0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qXXwuBJgbdujSCOBRz4nv5lowe2DZ5c7xIRlURj7gMg6iv7HktA366ER2VXiXxNpiUru4/+oBB5Fk14kxoJQNQT1vh5ESNhppIEdlMOObTWIMgnatL96Y4wCp8uyLiv8a8oo1+hOzbNSa+yvcF2Sz4I7uYoRABm2IpxCsOs934Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GdcrR6x9; arc=none smtp.client-ip=209.85.215.180
+	 To:Cc:Content-Type; b=hIsnYtSbPwvKmbyjDyij/sW/UaaT6/AnE1boaVxl/zsda6K6Z58QGt11xh8z6eNGYq5NFJ8G9V6YhZgzfSUAE1SU68voL5E8yMApnUTkpAb0oIcRKItkRlhjxtQNjtVooqzxtvfYf3XliVj3qTzAAGCnyEb/5avQiw0N6RP/cMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l9gG0Zf0; arc=none smtp.client-ip=209.85.167.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-5dca1efad59so4858469a12.2;
-        Tue, 14 May 2024 23:26:32 -0700 (PDT)
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5238b5c080cso811553e87.1;
+        Tue, 14 May 2024 23:31:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715754392; x=1716359192; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1715754717; x=1716359517; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=FNSS98dUDgaOW4gwnCppO+ukaIIrb3BrPgBTEKeKqig=;
-        b=GdcrR6x9xSz8T2/Opqlm2yTxt6khZ2ndshOHMQWbAJE6b4iGFJ6krmCN/fRykOeDme
-         XX8n93Mf2d+2wqi316cScc8T7D7gX6hOQDppNRLq7Ka6xiI3r70TV8L1J4wHiD+9aPAc
-         ry0A8ZmW9ulzaDchTfGcFWIoGfERKtKSOcGOVUVqeNcvMR/4Wl5OrPPoPQw+bkiK/XWB
-         pIN0l+qbr123/xaTK+61o1fvx0vQB+GR7lL0Rg3sBwqJDBttP1opfrqPCp9mnILv4jAR
-         T5ygsWAelHa6CIzUC8VgvasIIKVzR4lx5TJ7IBnTXNIcBeXCWvPOMtzZX8qT13AIJu9C
-         g2dw==
+        bh=KO/Qnq8uu0A2bAHSPuBz0lil2/aJMgXXAcipsRcH8eU=;
+        b=l9gG0Zf0JqRHxzAsIf98ffv7hZlzQA0TQxvBRpgnMCA4iM2FKPQFjdTIpYxzYGvzfy
+         1cg+5FjYvp5GFLhf307IiaD3jgpyIhwoAynsLr9A2P4gUO12ZYNM93sS7uCvAT4h3LOF
+         HgCwDznA2tp+uQ0E5OKCJpyceRhKBnrJlvIFF+gAJwrg+keSXuqAgq6vJZ45aAWIjmDG
+         CdYMjENuCROS4ykt5Xwa4mqfVz89bkaGwt/vId3qt6Zj1HMTSaNJd8F93o0TStJuzCzz
+         teXdTlHzRywOsRTEQFdLoulF/8mPD69j77Hn5Mj/oDmsvuAaYCwbXlZvEW8huqXgrbMU
+         41lA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715754392; x=1716359192;
+        d=1e100.net; s=20230601; t=1715754717; x=1716359517;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=FNSS98dUDgaOW4gwnCppO+ukaIIrb3BrPgBTEKeKqig=;
-        b=EAWOc+YNIWey21qvOG2uCSRxpLb+W1XcB3r80w+vpgpLtEdt6/ZXxLWa8bdo8LvEm3
-         5uRIGLrBcF0NC1RwsxdsbM2w9h0Md3VGPsYxoRwWNvHcsZKLQqkwyp3L4lNAuKPl6h6p
-         zpCwFZr6C6u4Bs6SnqGTpHWwnQnLcJ0WwaF9syROzWcfRm/BeP4WTaBtv6p8EDYP66Wz
-         QRGfIIFaT3ruTomcH7Y4q8rMakMFWdyZHKtXAam0oD4m3P2Vf+Tz/NJ+yqt+0jfGhPfl
-         QGOa90/ORabt/XalAIB99YKrBQJacBuy5GYVpyCusJM1wRv6SDMzDdtUjUyIFYv+EAPu
-         wWow==
-X-Forwarded-Encrypted: i=1; AJvYcCW6O5gDrSRuCdx1LYU7SOMzpvIu1K7+lMXQMaqJwdXSB67BVaG2l2H+q56q2oOUrSD8w0dnDg4S4jVoWhU3S44Rts6kPn57n9Z/djFSHN27WfQxRzwlz8QfXx0ORgKnEUTuv9RjWWvUk4ZEHATrzc7bnTYoARM/fkXR
-X-Gm-Message-State: AOJu0YyFd24wmQR+RWEG1w2F7VS909h/xOin3kQcBztp3wUyz9gHiag7
-	vqKUeVyIPU6Om1Gt1v9tmbmDtDKhwjvjF7Bz/CK1fghE9G2/ggNckeUUSB83LBnBJBhOyG4ynEd
-	aUDbhn42MjjEZJefqDJpzURdlzXv/tw==
-X-Google-Smtp-Source: AGHT+IGS5QQgMT/E9JYxOpB3OzRVvnPrjXGJ9zhz/XOe6dI0duHI2p45UY6BO9cyTr9ZWdHU0vv3hgdcIxELbYosh+g=
-X-Received: by 2002:a05:6a20:6f89:b0:1af:cdc5:dfbd with SMTP id
- adf61e73a8af0-1afde0d230cmr13773821637.14.1715754392207; Tue, 14 May 2024
- 23:26:32 -0700 (PDT)
+        bh=KO/Qnq8uu0A2bAHSPuBz0lil2/aJMgXXAcipsRcH8eU=;
+        b=Yg5DwL9qduKj+eMUDdPiOIzIWwbztsojpfkTZIzKyUlXp+Z926J1qM+UYAnvz13rGA
+         ftHy6u9aRlBYKqgAt/rezENvj9Gp7I3iO/JeB6/whUGKfrc4vC5ZGkpg9wv96xyCJr/L
+         CyI9t886+L/Y0jhNEYEMYm60dY12dRyBihDsmYdYeUYuJepzwesMiao7d12LtWMXKpuN
+         sA+rW7GASiwWtsMnRxAw/4fCOfzlJO5K82D87XKx5tT0Jw5twVSMaZuveVvT3dIi+0zo
+         /MIt2UJGN93gBhoqlL18l2D6zMM2mCK7oZzeAK7qfKe/QWxIiUoeBInHnQpUwthnODtn
+         lJMA==
+X-Forwarded-Encrypted: i=1; AJvYcCVZkuwwHBpNGECGhcoyzMa1rwCvknuOdoO4YNpBYvCnst24DYvE4t+on/J2DV1GNbBaldApUp5pqdwekJJVGaAtOl+3qwlzDjfoPnagoB7SLNZ5MkQBSc1mHKXGh/vnOnpGinU2m3kplJSYAXKHElB5lxdf7xdDyhN3KOfk51RPqRW9
+X-Gm-Message-State: AOJu0YxQqdkvsnoiRfSHVjvpKlKcz4G/QWgfSDDRaxO25XMdFYMMM+Gi
+	nwQLJ9Y7UeMRtSuK7RAQJsFxSIbC6c43KNse1w3Wfj2HvrLEBhqe31iL/raoatMO4UddpN77Dh+
+	ufHPffUKzfLB/fdirlWeR8uw82Wk=
+X-Google-Smtp-Source: AGHT+IHoKg0Vu+Ev/OMzjy0UIYtyUIbh89ctl6Q2Uk+JY2wl6Xd+Yslf9XhsdnZpO7qUHzF5fIdfEgEnHzxHsvSQbzc=
+X-Received: by 2002:ac2:58e3:0:b0:518:dfed:f021 with SMTP id
+ 2adb3069b0e04-5220fb749bdmr7624802e87.24.1715754717250; Tue, 14 May 2024
+ 23:31:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240514231155.1004295-1-kuba@kernel.org> <CAHk-=wiSiGppp-J25Ww-gN6qgpc7gZRb_cP+dn3Q8_zdntzgYQ@mail.gmail.com>
- <CAHk-=wj2ZJ_YE2CWJ6TXNQoOm+Q6H5LpQNLWmfft+SO21PW5Bg@mail.gmail.com>
-In-Reply-To: <CAHk-=wj2ZJ_YE2CWJ6TXNQoOm+Q6H5LpQNLWmfft+SO21PW5Bg@mail.gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Wed, 15 May 2024 00:26:20 -0600
-Message-ID: <CAEf4BzbysejYpfcdRrpYc0yHTgZ2YcnGdyWQ-13qmJeDzVNS_g@mail.gmail.com>
-Subject: Re: [GIT PULL] Networking for v6.10
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Jakub Kicinski <kuba@kernel.org>, davem@davemloft.net, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, pabeni@redhat.com, bpf@vger.kernel.org
+References: <20240515012350.1166350-1-zhaoyang.huang@unisoc.com>
+ <20240515012350.1166350-3-zhaoyang.huang@unisoc.com> <ZkQ1dsHKVttb7y4_@casper.infradead.org>
+In-Reply-To: <ZkQ1dsHKVttb7y4_@casper.infradead.org>
+From: Zhaoyang Huang <huangzhaoyang@gmail.com>
+Date: Wed, 15 May 2024 14:31:45 +0800
+Message-ID: <CAGWkznH1dxyF17cQi+9+0EadoG7_MVUNy8n-svQ7ZjYNaWKYdQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/2] mm: introduce budgt control in readahead
+To: Matthew Wilcox <willy@infradead.org>
+Cc: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, linux-mm@kvack.org, 
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	cgroups@vger.kernel.org, steve.kang@unisoc.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 14, 2024 at 10:06=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+On Wed, May 15, 2024 at 12:09=E2=80=AFPM Matthew Wilcox <willy@infradead.or=
+g> wrote:
 >
-> On Tue, 14 May 2024 at 20:32, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > Why does it do that disgusting
-> >
-> >         struct bpf_array *array =3D container_of(map, struct bpf_array,=
- map);
-> >         ...
-> >                 *insn++ =3D BPF_ALU32_IMM(BPF_AND, BPF_REG_0, array->in=
-dex_mask);
-> >
-> > thing? As far as I can tell, a bpf map can be embedded in many
-> > different structures, not just that 'bpf_array' thing.
+> On Wed, May 15, 2024 at 09:23:50AM +0800, zhaoyang.huang wrote:
+> > +     unsigned long budgt =3D inode->i_sb->s_bdev ?
+> > +                     blk_throttle_budgt(inode->i_sb->s_bdev) : 0;
 >
-> Bah. It still needs to do that array->elem_size, so it's not just the
-> spectre-v1 code that needs that 'bpf_array' thing.
->
-> And the non-percpu case seems to do all the same contortions, so I
-> don't know why the new percpu array would show issues.
-
-There is a special check for non-percpu arrays (ops =3D=3D &array_map_ops
-check), which was missed and not updated for percpu arrays,
-unfortunately. I've added more map-in-map combinations to our tests so
-this can be caught sooner. Good thing Jakub tested in our production
-setup so we could catch this sooner!
-
->
-> Oh well. I guess the bpf people will figure it out once they come back
-> from "partying at LSFMM" as you put it.
-
-Not much partying today, but the day was still quite hectic, sorry for
-delays. Just sent out the fix (rebased on top of the latest
-net-next/main).
-
->
->            Linus
->
+> NAK as previously explained.
+ok. But this commit could work by following the configuration of
+blk-throttle as long as it works on btrfs with internal RAID on.
+Furthermore, this will help the blkcg meet the desired BPS value
+perfectly.
 
