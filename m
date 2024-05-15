@@ -1,120 +1,137 @@
-Return-Path: <linux-kernel+bounces-180193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BB2F8C6B53
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 19:12:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF0698C6B52
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 19:12:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC9A01C23431
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:12:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F395B22BA0
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:12:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB35A5C61C;
-	Wed, 15 May 2024 17:12:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FC0D433BC;
+	Wed, 15 May 2024 17:12:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QSIZ8j2a"
-Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
+	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="os8QrypA"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CF184C3CD
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 17:12:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3735438DE9
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 17:12:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715793155; cv=none; b=gXYx/7cYn2OIlgO40dN3qxqGlPJCm6vGFq/FTmAONozK7y2LqG30o5uCQm9rv21nNEymmlvBtzM0SsBfd4lNlN29qg3G+pCpD1eQYRV+klbGFZY6MlcETPwqOefP4CLZd1QY5MO8cW1hh0VM4qK4xtbtcOz3ofhK6Gu4FYdCMok=
+	t=1715793150; cv=none; b=JCH73hl1sZ2kXemwD4fv3XoNI2D2dQWAXND4YaoiT8wDd3WMxlnlUDtKmE6bFN/fVcq5HLR9gtdZpzIGS9cj0x7oXqYvEpAzDt3dQrdHACh6M2E3XGJzBzw0Y/MDoUHpdrYjnXMcQyqwTfaWBYpP8j+QG7CrQqUwiyOc2N+L71w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715793155; c=relaxed/simple;
-	bh=sFdFO/3PseRV0I24tfvAl/Tu3SeNdZ+dYLb3bjXAJu8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QWsRfcOTdRbYBOt/Wpm2rd1qyrE2qlgshoE8CZ+Cw4q4hnM8aS+LkbLDw1KxjoshcXwhjzo6tpf07MugOVsGIug1lUOf7f21Z2NMm0WnDWwXXAX9JmzWSNKuWr0nTbKAmH1STV/gbH01Wu5GnrF2jcqxCeKonOYhPuvPbBIofjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QSIZ8j2a; arc=none smtp.client-ip=209.85.160.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-23f9d07829bso3425451fac.3
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 10:12:33 -0700 (PDT)
+	s=arc-20240116; t=1715793150; c=relaxed/simple;
+	bh=PFgxIB1YPLSdg2W7I438r4ndLIqIln1z0HvRj4J4qqw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cl8a4+julYYUsddqelCHU8Et5ztTIQX3tW8r6leR4WowHUZHX//eDitbqEm60PMoDD7hoh7srq3h69qZ/NQY8IwuTskZrBkh8Xsm5Oce3jcXtd7OBCJ3ZRBdZQhbtQLfv/8G+YnAw4Ifw7oywgFg+IMNFC64p1huE7ExsML1J3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=os8QrypA; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-34e0d47bd98so4642410f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 10:12:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715793152; x=1716397952; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sFdFO/3PseRV0I24tfvAl/Tu3SeNdZ+dYLb3bjXAJu8=;
-        b=QSIZ8j2aBzKVx6dFzUgfgxy4FxbPy1RzZSOEF/YtKW5zI2kRPd9V9sXohfMKvvfGnh
-         LIAUgBErOhh9hf3cRKmJ1+CU/v6SuBPWFzseVylOOzQSCUiwEIZ2YAmjbqcr5EGHovNV
-         PglXLUOMIKQXEVZb7WgTrELqyRLZEwPJuH7TBACQb9UMCBcvYp3M9yWB3/vUduOwqVek
-         SMzSFUplHOgX7RvyTB5JlDn9Qt5/1/nElbYNG9wl5GEx/T1Q7xVU37CBEb/+wbPONmV0
-         g8VLgj3E5xsZuWd+DtjDvl4TEy0pmuMro5lqnnOuOnr+ymxbu1bOuA8lXIz7DYTqj0QX
-         UdQg==
+        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1715793147; x=1716397947; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=aNosG3ckDHB8NLVJ2gGvIoo4Er1X+7+xgehDnbjd6jc=;
+        b=os8QrypAOGFUEvSmqTbU6IVOP6d5jIztE10CDXdEhhdN4o3ePI0BGrfiP11iJd8CIJ
+         30rpzHtxM8JoRm1AUY1gAey/bAp5dl5Cxle+qQx/KcCFx+SIaqh7meqBoLYgJk0r6M9+
+         +AgcOqPp7bQCQeZsSX9ng8QJSL/QAI0PZFEmN6ShU/R2OX/lT0cHvLv3vW1Azaym41UE
+         H+tsXezBuQLFNeCnUimjV9r2vM0cK+wiDwxo8Iu1YFnClBixIyMLbLMCiQV9qcnMHimT
+         HocFr+9vZ2fXetYL1gYpgCgTxwAyS+pNmKPWjiSj0x1ehpjWVvk6E17rd2SGOcRXb4Bp
+         +FpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715793152; x=1716397952;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sFdFO/3PseRV0I24tfvAl/Tu3SeNdZ+dYLb3bjXAJu8=;
-        b=buvEF7EUNWEc3kHl4oz1LmYEM1DkagOFPt1x3eACDMvsR5AEu/tYd85fRPFOZLP+/y
-         O8ENQmWmUUgoB6ZLtjZ4NiQF0DGDcIcvnN3Tw0XN3pUCD9yzKNi0yc1Fxaek1qS+KFcD
-         RDcpuIs3GK+Ehvj+FQPIKfODd8rwuaHNk4RUnDftgVlQofEcvL/LWn2ak9M76crsFqU7
-         kUZ4nq0xQO3Yqnh5e7i0RzL8CxLGTS1vPULjXRmca4IEO0oseRuRFiJ9iLIHD/QSks/W
-         JLIy2GjWfNgzEWkyEszZAguZaaCeH+JT3cBiTCRS8uaA85hVsu8Elv4zlD5XPIDmhKbH
-         cMTA==
-X-Forwarded-Encrypted: i=1; AJvYcCVkTzjVxcAHDgAdX/UhkqpPCV3RuoWANUEaqGE79UPvEkkEQUPgnVAM+XCT1Ft/vrbqLndj4ttyRXV6jBtt2iu9CcjXN58dKWoHVetd
-X-Gm-Message-State: AOJu0Yy6lM192svla7jBlRA8zZYDZUWI/htqqVyRlLbq9P+Cxy/gTX81
-	1H318GeHcZGVhRjPiz0zc6Jc1pAmEDcFz0rVOgbLsGvDWzgEk9U4wSu6sbk5/vglkawOlCqyjlf
-	Bb7f7ja7hhS9+zG0w5dbch9Lg7L3gCuHWin4p
-X-Google-Smtp-Source: AGHT+IHdPnCg97tJxWZG1Gb/DpWshKQCgosn26p/oXEI08Q9kC9bnAhNtdBzk1KnL1lvOIiK1jkJOT92D0YO6qHuMVs=
-X-Received: by 2002:a05:6870:1690:b0:23c:ee0a:260f with SMTP id
- 586e51a60fabf-24172a23552mr18594820fac.3.1715793152544; Wed, 15 May 2024
- 10:12:32 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715793147; x=1716397947;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aNosG3ckDHB8NLVJ2gGvIoo4Er1X+7+xgehDnbjd6jc=;
+        b=ajRaj8qe3s2mDKANvVzOAsKWOIBJ3tht1zUEydlJF4afHawR0tTyVbDE37zpdVAmMs
+         gvtkzeS4I7F79HOKK9gsGwkhMV6OA24+W/1fSzo/qxnOCI8MMRTzzc3GinseFmsxwMSE
+         ZR/BmbJy0fXnGCth5KXpOe/1jVXTedA8CJlP+Zgyui/o4XSrENMBnZ8QIbthWInZ+OLG
+         0ODo4hSQ0cnIAajC4g8E3bmW6MaMN3ccCzsoHYwqfu+LCbSs4ORJs0TfdPkteuHj7s9C
+         2ivYlD/huAbWSxkvDmeAYfH7PhWETjVgCfB6IA4ppo4Fnhs/Oim9AmkQS8SmFVAjc91d
+         yRRw==
+X-Forwarded-Encrypted: i=1; AJvYcCUTXD66aRA4St7Gfk/B1IAUTiE44oMBvRM3A4UHRvNdTkyGaPBm0BQzjnJRnzX+7yZTEcxiww9f7R+M/s56CeJQsGqZzFdJtb0dAeFl
+X-Gm-Message-State: AOJu0YzDpArB7IP3PQLJc+v4Bl2vKJgZiNUCcDajONghPxx8cJyinb4c
+	b+TrOnZVGNgc/hXUKm/PiaO//H88IM4W+5g7+QoD01rKLl/teihSL0lbBj7vvmY=
+X-Google-Smtp-Source: AGHT+IFLKOGooEzh5kgxSU0G+WqjP7c8Us/ACZAVQOeBbdHE4Nu/p8dE0Q5EYbLnc34bRxIqp6xGpA==
+X-Received: by 2002:a05:6000:930:b0:351:d383:6325 with SMTP id ffacd0b85a97d-351d38363cfmr598051f8f.12.1715793147224;
+        Wed, 15 May 2024 10:12:27 -0700 (PDT)
+Received: from airbuntu (host81-157-90-255.range81-157.btcentralplus.com. [81.157.90.255])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502b8a780fsm16840240f8f.59.2024.05.15.10.12.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 May 2024 10:12:26 -0700 (PDT)
+Date: Wed, 15 May 2024 18:12:24 +0100
+From: Qais Yousef <qyousef@layalina.io>
+To: Phil Auld <pauld@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Daniel Bristot de Oliveira <bristot@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH] sched/rt: Clean up usage of rt_task()
+Message-ID: <20240515171224.wbjlke6uavhig2dl@airbuntu>
+References: <20240514234112.792989-1-qyousef@layalina.io>
+ <20240514235851.GA6845@lorien.usersys.redhat.com>
+ <20240515083238.GA40213@noisy.programming.kicks-ass.net>
+ <20240515112050.GA25724@lorien.usersys.redhat.com>
+ <20240515120613.m6ajyxyyxhat7eb5@airbuntu>
+ <20240515125049.GA29065@lorien.usersys.redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202404291502.612E0A10@keescook> <CAHk-=wi5YPwWA8f5RAf_Hi8iL0NhGJeL6MN6UFWwRMY8L6UDvQ@mail.gmail.com>
- <202405081144.D5FCC44A@keescook> <CAHk-=wjeiGb1UxCy6Q8aif50C=wWDX9Pgp+WbZYrO72+B1f_QA@mail.gmail.com>
- <202405081354.B0A8194B3C@keescook> <CAHk-=wgoE5EkH+sQwi4KhRhCZizUxwZAnC=+9RbZcw7g6016LQ@mail.gmail.com>
- <20240515073636.GY40213@noisy.programming.kicks-ass.net>
-In-Reply-To: <20240515073636.GY40213@noisy.programming.kicks-ass.net>
-From: Justin Stitt <justinstitt@google.com>
-Date: Wed, 15 May 2024 10:12:20 -0700
-Message-ID: <CAFhGd8qKObvqbLJWvkG+Wfuy0gpWiTsSmFrBO-NzC-akB6bhzA@mail.gmail.com>
-Subject: Re: [RFC] Mitigating unexpected arithmetic overflow
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Kees Cook <keescook@chromium.org>, 
-	Mark Rutland <mark.rutland@arm.com>, linux-hardening@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240515125049.GA29065@lorien.usersys.redhat.com>
 
-Hi Peter,
+On 05/15/24 08:50, Phil Auld wrote:
 
-On Wed, May 15, 2024 at 12:36=E2=80=AFAM Peter Zijlstra <peterz@infradead.o=
-rg> wrote:
->
-> On Wed, May 08, 2024 at 04:47:25PM -0700, Linus Torvalds wrote:
-> > For example, the most common case of overflow we've ever had has very
-> > much been array indexing. Now, sometimes that has actually been actual
-> > undefined behavior, because it's been overflow in signed variables,
-> > and those are "easy" to find in the sense that you just say "no, can't
-> > do that". UBSAN finds them, and that's good.
->
-> We build with -fno-strict-overflow, which implies -fwrapv, which removes
-> the UB from signed overflow by mandating 2s complement.
+> > > My point was just to call it rt_task() still. 
+> > 
+> > It is called rt_task() still. I just added a new realtime_task() to return true
+> > for RT and DL. rt_task() will return true only for RT now.
+> > 
+> > How do you see this should be done instead? I'm not seeing the problem.
+> >
+> 
+> Right, sorry. I misread your commit message completely and then all the
+> places where you changed rt_task() to realtime_task() fit my misreading.
+> 
+> rt_task() means rt class and realtime_task does what rt_task() used to do.
+> That's how I would do it, too :)
 
-FWIW,
+Ah, I see. I updated the commit message to hopefully read better :)
 
-Clang-19 allows -fwrapv and -fsanitize=3Dsigned-integer-overflow to work
-together [1]
+"""
+    I define the usage of rt_task() to be tasks that belong to RT class.
+    Make sure that it returns true only for RT class and audit the users and
+    replace the ones required the old behavior with the new realtime_task()
+    which returns true for RT and DL classes. Introduce similar
+    realtime_prio() to create similar distinction to rt_prio() and update
+    the users that required the old behavior to use the new function.
+"""
 
-And the sanitizer was re-introduced with Commit 557f8c582a9ba8ab
-("ubsan: Reintroduce signed overflow sanitizer").
+> Reviewed-by: Phil Auld <pauld@redhat.com>
 
->
-> With the exception of an UBSAN bug prior to GCC-8, UBSAN will not, and
-> should not, warn about signed overflow when using either of these flags.
+Thanks for having a look!
 
-[1]: https://clang.llvm.org/docs/ReleaseNotes.html#sanitizers
+Cheers
 
-Thanks
-Justin
+--
+Qais Yousef
 
