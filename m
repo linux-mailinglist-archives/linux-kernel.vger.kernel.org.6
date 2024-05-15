@@ -1,160 +1,112 @@
-Return-Path: <linux-kernel+bounces-180136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5956E8C6A82
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:23:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FCCF8C6A87
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:24:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57C1E1C21B4E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:23:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 516D61C2130F
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:24:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0B55156673;
-	Wed, 15 May 2024 16:22:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3575215665B;
+	Wed, 15 May 2024 16:23:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h3qG4GvI"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="P0xWtMbM"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63A83157483;
-	Wed, 15 May 2024 16:22:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1290E156253
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 16:23:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715790164; cv=none; b=t6ImHUbhP/zgtHfp8rx+6rKbG3MgUvJirD0Dt7CLYudm2/XC/S07AY6fjZjgz1OGYNCbtGDMRXcoc0uqn27Cq5UQxCl08mJdsPVg16AkXXebwrooliAr+YGUM60wExk5PA9Nknys/cQwpVNYyVqMOipOOixisnaqyfz4SQgcnQA=
+	t=1715790236; cv=none; b=BVDIzj3RWRWXFE4rUtDkMYKCNYAUf95un14TANO3btmCmdOGAbif1qUhJ0HRjKMnWyp04IjSH6offHl2BLXYj0yBEpkIKQy7f81noMpRw3bYjzzRj70VqxaRsi0nKT62Q6N+j1m0t1c+MgPe3OdCBuUx+R+e4SNk9jz4TIKR/uk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715790164; c=relaxed/simple;
-	bh=WN8DihRxARtwB0QXAI21QNZOgP69HIDQZiVNqspTz2E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QoyfndEJHZOikyLwcl1kiudCnmuh+wTTALmdNmYpvYWKTQYj8Yd4o7OyOshxbxo35yRDGlIL8zz/vB+ApW8aXvREQAOANaft2Mml0XgvSls8KZFBySc9/DxOgVO0QIPstJ2XyPfMeZq5WENleYvmwBIlWvQtrvF05HTFrgJ4HLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h3qG4GvI; arc=none smtp.client-ip=192.198.163.17
+	s=arc-20240116; t=1715790236; c=relaxed/simple;
+	bh=M6QeqY90ekCGj04tP9Rr+hqPCOKOBKDnlrz8leHVcek=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=CfDLMsawo8J/UbMJ+YoKozOmnWCmA1jPw90O8tjhws6CUFVVBaWqNvccxCcze7s6F7v4RuM+QYvDAdwQf22qnzkNfw2PHpJVNH8Bx1Ufozzxpj3pxXJ9n1foh3SJ0zqDlB65ySzqCvSbySjWnGHxfV2zOz3ImBUzJpp1NDqSn0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=P0xWtMbM; arc=none smtp.client-ip=198.175.65.20
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715790162; x=1747326162;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=WN8DihRxARtwB0QXAI21QNZOgP69HIDQZiVNqspTz2E=;
-  b=h3qG4GvIuwuTznH6wbwC7SnVqSV4Uf5n/1u0MyRrDdNBVsArjhGZncY7
-   P/p3ra1Nrvrdu7mpDO+cB61LYiKQcalpElZD2a64S/0ia9mjmIEj1BGrY
-   77dK6XkKWQYsseR/T45w4UdcfGsaZWljhK9+5mmakTVJ7uRPZsKOsDOtU
-   Z9oi72haWBW2fttfwUa5aCR/cfJG3B4LRVdr37MgNtkl6OXVLsmDqQIRc
-   toqUSX8ePs79k3lG1hVTm0zk2vssB8C3NxiEhGNUA3CZZkujZ7i8kg5e2
-   biNyruNa7fJmCzNDkGl77gEZfRmo7ga7PxT5xySpZM7MZhyFfIE9Cl6+T
+  t=1715790235; x=1747326235;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=M6QeqY90ekCGj04tP9Rr+hqPCOKOBKDnlrz8leHVcek=;
+  b=P0xWtMbMZXXRo9uJwb6XkCHsRIAoY439ef/ssexBAWE92LOJ+umEEfk5
+   cxAr5YqiWzsOFmd/uYyuD4kw+qlEfOb+D2CNPRoOJ43HPsd/cGUJj7/Uf
+   iMEbU+4GeiAo89sNanIusscvgec9sn/ibb9BKdoq//VNAAm0WFDebzUkc
+   cVrcNhVcpH1xGGPLU8WKsTotPhGGOdc3tfs1r80Qk9XPu4XEdnRlxVn0v
+   t48OKEqfgBE2A9ToPwSlKcig6mD47rZNVW0SiieJPwV4scoanWikLIc3k
+   uBhPxEMDsCb8mEjasp0QsGXZzvxhsMT7NzPvx2QzMNEx/5UK7KjS6MV9Z
    Q==;
-X-CSE-ConnectionGUID: lIM9DzExRx2yK6XC8DZP4Q==
-X-CSE-MsgGUID: qZL6PBzhT52bCd7hZzhftg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="11725989"
+X-CSE-ConnectionGUID: yktfmKhhRw+3V1Mj70iyuA==
+X-CSE-MsgGUID: netRBuzvStGuTJWME7GAlA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="11683826"
 X-IronPort-AV: E=Sophos;i="6.08,162,1712646000"; 
-   d="scan'208";a="11725989"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 09:22:42 -0700
-X-CSE-ConnectionGUID: 5zjQutRqRQCGQhImpc8BMg==
-X-CSE-MsgGUID: /1JC4d1CTfSCEMAzPJ34/A==
+   d="scan'208";a="11683826"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 09:23:54 -0700
+X-CSE-ConnectionGUID: +qG7XS3iRGCX0Xx0TjjyRA==
+X-CSE-MsgGUID: NHMwl6rtTGSkdkJBtbVi1Q==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,162,1712646000"; 
-   d="scan'208";a="35655820"
-Received: from ls.sc.intel.com (HELO localhost) ([172.25.112.31])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 09:22:41 -0700
-Date: Wed, 15 May 2024 09:22:40 -0700
-From: Isaku Yamahata <isaku.yamahata@intel.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>, pbonzini@redhat.com,
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	isaku.yamahata@gmail.com, erdemaktas@google.com, sagis@google.com,
-	yan.y.zhao@intel.com, dmatlack@google.com, isaku.yamahata@intel.com,
-	isaku.yamahata@linux.intel.com
-Subject: Re: [PATCH 08/16] KVM: x86/mmu: Bug the VM if kvm_zap_gfn_range() is
- called for TDX
-Message-ID: <20240515162240.GC168153@ls.amr.corp.intel.com>
-References: <20240515005952.3410568-1-rick.p.edgecombe@intel.com>
- <20240515005952.3410568-9-rick.p.edgecombe@intel.com>
- <ZkTWDfuYD-ThdYe6@google.com>
+   d="scan'208";a="35990937"
+Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 15 May 2024 09:23:53 -0700
+Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s7HPy-000D1H-2C;
+	Wed, 15 May 2024 16:23:50 +0000
+Date: Thu, 16 May 2024 00:23:01 +0800
+From: kernel test robot <lkp@intel.com>
+To: Dave Jiang <dave.jiang@intel.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Dan Williams <dan.j.williams@intel.com>,
+	Robert Richter <rrichter@amd.com>
+Subject: powerpc64-linux-ld: warning: orphan section `.bss..Lubsan_data47'
+ from `drivers/cxl/core/port.o' being placed in section `.bss..Lubsan_data47'
+Message-ID: <202405160004.lba9xhLN-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZkTWDfuYD-ThdYe6@google.com>
 
-On Wed, May 15, 2024 at 08:34:37AM -0700,
-Sean Christopherson <seanjc@google.com> wrote:
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   1b294a1f35616977caddaddf3e9d28e576a1adbc
+commit: 5d211c7090590033581175d6405ae40917ca3a06 cxl: Fix cxl_endpoint_get_perf_coordinate() support for RCH
+date:   2 weeks ago
+config: powerpc64-randconfig-r022-20220409 (https://download.01.org/0day-ci/archive/20240516/202405160004.lba9xhLN-lkp@intel.com/config)
+compiler: powerpc64-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240516/202405160004.lba9xhLN-lkp@intel.com/reproduce)
 
-> > diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> > index d5cf5b15a10e..808805b3478d 100644
-> > --- a/arch/x86/kvm/mmu/mmu.c
-> > +++ b/arch/x86/kvm/mmu/mmu.c
-> > @@ -6528,8 +6528,17 @@ void kvm_zap_gfn_range(struct kvm *kvm, gfn_t gfn_start, gfn_t gfn_end)
-> >  
-> >  	flush = kvm_rmap_zap_gfn_range(kvm, gfn_start, gfn_end);
-> >  
-> > -	if (tdp_mmu_enabled)
-> > +	if (tdp_mmu_enabled) {
-> > +		/*
-> > +		 * kvm_zap_gfn_range() is used when MTRR or PAT memory
-> > +		 * type was changed.  TDX can't handle zapping the private
-> > +		 * mapping, but it's ok because KVM doesn't support either of
-> > +		 * those features for TDX. In case a new caller appears, BUG
-> > +		 * the VM if it's called for solutions with private aliases.
-> > +		 */
-> > +		KVM_BUG_ON(kvm_gfn_shared_mask(kvm), kvm);
-> 
-> Please stop using kvm_gfn_shared_mask() as a proxy for "is this TDX".  Using a
-> generic name quite obviously doesn't prevent TDX details for bleeding into common
-> code, and dancing around things just makes it all unnecessarily confusing.
-> 
-> If we can't avoid bleeding TDX details into common code, my vote is to bite the
-> bullet and simply check vm_type.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405160004.lba9xhLN-lkp@intel.com/
 
-TDX has several aspects related to the TDP MMU.
-1) Based on the faulting GPA, determine which KVM page table to walk.
-   (private-vs-shared)
-2) Need to call TDX SEAMCALL to operate on Secure-EPT instead of direct memory
-   load/store.  TDP MMU needs hooks for it.
-3) The tables must be zapped from the leaf. not the root or the middle.
+All warnings (new ones prefixed by >>):
 
-For 1) and 2), what about something like this?  TDX backend code will set
-kvm->arch.has_mirrored_pt = true; I think we will use kvm_gfn_shared_mask() only
-for address conversion (shared<->private).
+   powerpc64-linux-ld: warning: orphan section `.bss..Lubsan_data32' from `kernel/ptrace.o' being placed in section `.bss..Lubsan_data32'
+>> powerpc64-linux-ld: warning: orphan section `.bss..Lubsan_data47' from `drivers/cxl/core/port.o' being placed in section `.bss..Lubsan_data47'
+   powerpc64-linux-ld: warning: orphan section `.bss..Lubsan_data32' from `drivers/cxl/core/hdm.o' being placed in section `.bss..Lubsan_data32'
+   powerpc64-linux-ld: warning: orphan section `.bss..Lubsan_data31' from `drivers/cxl/core/hdm.o' being placed in section `.bss..Lubsan_data31'
+   powerpc64-linux-ld: warning: orphan section `.bss..Lubsan_data32' from `kernel/ptrace.o' being placed in section `.bss..Lubsan_data32'
+>> powerpc64-linux-ld: warning: orphan section `.bss..Lubsan_data47' from `drivers/cxl/core/port.o' being placed in section `.bss..Lubsan_data47'
+   powerpc64-linux-ld: warning: orphan section `.bss..Lubsan_data32' from `drivers/cxl/core/hdm.o' being placed in section `.bss..Lubsan_data32'
+   powerpc64-linux-ld: warning: orphan section `.bss..Lubsan_data31' from `drivers/cxl/core/hdm.o' being placed in section `.bss..Lubsan_data31'
+   powerpc64-linux-ld: warning: orphan section `.bss..Lubsan_data32' from `kernel/ptrace.o' being placed in section `.bss..Lubsan_data32'
+>> powerpc64-linux-ld: warning: orphan section `.bss..Lubsan_data47' from `drivers/cxl/core/port.o' being placed in section `.bss..Lubsan_data47'
+   powerpc64-linux-ld: warning: orphan section `.bss..Lubsan_data32' from `drivers/cxl/core/hdm.o' being placed in section `.bss..Lubsan_data32'
+   powerpc64-linux-ld: warning: orphan section `.bss..Lubsan_data31' from `drivers/cxl/core/hdm.o' being placed in section `.bss..Lubsan_data31'
 
-For 1), maybe we can add struct kvm_page_fault.walk_mirrored_pt
-        (or whatever preferable name)?
-
-For 3), flag of memslot handles it.
-
----
- arch/x86/include/asm/kvm_host.h | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index aabf1648a56a..218b575d24bd 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -1289,6 +1289,7 @@ struct kvm_arch {
- 	u8 vm_type;
- 	bool has_private_mem;
- 	bool has_protected_state;
-+	bool has_mirrored_pt;
- 	struct hlist_head mmu_page_hash[KVM_NUM_MMU_PAGES];
- 	struct list_head active_mmu_pages;
- 	struct list_head zapped_obsolete_pages;
-@@ -2171,8 +2172,10 @@ void kvm_configure_mmu(bool enable_tdp, int tdp_forced_root_level,
- 
- #ifdef CONFIG_KVM_PRIVATE_MEM
- #define kvm_arch_has_private_mem(kvm) ((kvm)->arch.has_private_mem)
-+#define kvm_arch_has_mirrored_pt(kvm) ((kvm)->arch.has_mirrored_pt)
- #else
- #define kvm_arch_has_private_mem(kvm) false
-+#define kvm_arch_has_mirrored_pt(kvm) false
- #endif
- 
- static inline u16 kvm_read_ldt(void)
 -- 
-2.43.2
--- 
-Isaku Yamahata <isaku.yamahata@intel.com>
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
