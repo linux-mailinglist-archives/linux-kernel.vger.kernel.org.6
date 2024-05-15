@@ -1,196 +1,159 @@
-Return-Path: <linux-kernel+bounces-180240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB9C58C6BD8
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 20:04:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D79F8C6BD7
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 20:04:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A53C1F22DCD
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:04:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D6BB1C213EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:04:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A83EC158DB1;
-	Wed, 15 May 2024 18:04:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6365F158DBD;
+	Wed, 15 May 2024 18:04:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b="AFJ2DOkW"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AC06158845
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 18:04:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="glvQcZr9"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56450158845;
+	Wed, 15 May 2024 18:04:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715796262; cv=none; b=aYxcegW6UIPhp/uVLAO7R7y7O8NTMB8CMjLiusyJJJJVudSowDHlgkc1lcS2SHQGiVqbhJLabFntbcKIt98yMlVqHVriNmSXcdGRveF4lQ04atmCCwxLoO29eb7ujF+0J9YiWrj9LqTfXO/o5D396x77nWx5qplcyjo4iVDgz58=
+	t=1715796255; cv=none; b=Vz4nCJo5PXFhssP05YEIfm9br9vzEIiqM5mQjECyYhG1XnzOvpibt7U4dc4qoDPPfHl4UjL3FoeJkiUKY9F+hwr1AmLM1k0QGGsM8boqrDwHcx0zs7ShAtfvWs4BxP+N1tY6tz/ORkG5iKg72/LUwyO3njh+3p/iwueiw+bHDDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715796262; c=relaxed/simple;
-	bh=NJbsxUANiYJQAgs9Bd56/cyNkAcB7jHIQvFwIXDPj44=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bLavBqauuO9SOeBxsaZ5CAPHrQTqCueT3EFZrGnmlQuQO5az/i3jaW+1wXAGlSbj22LCtGPV04TLQWTlmH2UkS1A8JKZanjM4jxIfcGLSvJrLNDz/43Dj9mAYjQE6jguC2lZHPBUE7nJ6erSxiWLaeKLtlQMT1Uw/FveVAy7gMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b=AFJ2DOkW; arc=none smtp.client-ip=212.227.17.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1715796211; x=1716401011; i=efault@gmx.de;
-	bh=NJbsxUANiYJQAgs9Bd56/cyNkAcB7jHIQvFwIXDPj44=;
-	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
-	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=AFJ2DOkWpxKRq3OZE5zXMs0wH8pEGjKJ8InQKZ+cYBpe1fvFq6eWWMaWG5BF9DAF
-	 XjGFLx6QuznvNYoHRc5Igx1cWkxtA7Wu10zBO+iOqyntghABFdrM9Wa31yEqFrnCF
-	 9uJ1IxHeyEIvLcJ1vVktSlNJk+N/7giNpW0DPxTUz/YyzZw8B/1tauin6Cagk7tKu
-	 GKgnmZylA1ZYyk2S/PHlxFmjGPSzSMvFXNsFlNslBj/BF9fHk5IJ87z87LPMQXUE1
-	 pczDg4JFi55u9zxVOej7XYvMaaz8FpqRWQjvKqsZLvkjeAd7yFVYdcIjjs5bvFuLa
-	 4uiM9nNw+FVmBFSSzg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from homer.fritz.box ([185.146.51.110]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MEV3C-1sNCCf04LK-00Fz29; Wed, 15
- May 2024 20:03:31 +0200
-Message-ID: <d5c570edb2000f70d283e185162080e55636eb83.camel@gmx.de>
-Subject: Re: [RFC][PATCH 08/10] sched/fair: Implement delayed dequeue
-From: Mike Galbraith <efault@gmx.de>
-To: Peter Zijlstra <peterz@infradead.org>, Luis Machado
- <luis.machado@arm.com>
-Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org, 
- dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
- mgorman@suse.de,  bristot@redhat.com, vschneid@redhat.com,
- linux-kernel@vger.kernel.org,  kprateek.nayak@amd.com,
- wuyun.abel@bytedance.com, tglx@linutronix.de, nd <nd@arm.com>,  John Stultz
- <jstultz@google.com>, Hongyan.Xia2@arm.com
-Date: Wed, 15 May 2024 20:03:29 +0200
-In-Reply-To: <20240515114828.GO12673@noisy.programming.kicks-ass.net>
-References: <20240405110010.631664251@infradead.org>
-	 <3888d7c8-660e-479c-8c10-8295204e5f36@arm.com>
-	 <1461277e-af68-41e7-947c-9178b55810b1@arm.com>
-	 <20240425104220.GE21980@noisy.programming.kicks-ass.net>
-	 <20240425114949.GH12673@noisy.programming.kicks-ass.net>
-	 <20240426093241.GI12673@noisy.programming.kicks-ass.net>
-	 <c6152855-ef92-4c24-a3f5-64d4256b6789@arm.com>
-	 <2fba04b0-e55e-41f4-8b7a-723734fe1ad2@arm.com>
-	 <219b8b49-3767-4010-aa68-9e1cf66c2ccb@arm.com>
-	 <20240515093649.GF40213@noisy.programming.kicks-ass.net>
-	 <20240515114828.GO12673@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	s=arc-20240116; t=1715796255; c=relaxed/simple;
+	bh=/uC6r8iw//SMzZ8NGS9Vxf3Rfafd5om3I6TH7HLW1bE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RyrENekSeySU8OUGBkzkt5renl5WR0Y1y726T33TMzWFw/PQqZ8+alSfBkoOuNHtM4hZpjNmVs6EhdaRpB7B1r4IFKFH1tS55AT1xJ5HnIM5iF6vsmJjWc35u6+/sgk9tyYkOfnY+JymqQNGxtwRD2QYi0++RWNrnflpLKPK7RU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=glvQcZr9; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.137.186.190] (unknown [131.107.159.62])
+	by linux.microsoft.com (Postfix) with ESMTPSA id B467520B915A;
+	Wed, 15 May 2024 11:04:13 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B467520B915A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1715796253;
+	bh=ScMr1hwCVv5qZHMAEN659FeB99CmF3S+HpysOb7Qq6Q=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=glvQcZr9UxFyBDZUkJ7h/dhCU29YraLKpJcAkfJiZcmA7IocRiKi6vhKB6QrQ3ugC
+	 MtRTGJZEX2gEJkbhFfm53wk/2lXFWpEVFopy5XF6Lq5R4keOUg8kwHKf/VS5ObjeUZ
+	 EqGMgquAB+DH/UnDqqIknS6Sw5SB71iyb3keFUc0=
+Message-ID: <a232ddf5-e6ac-41ec-9f53-d5f76f31e970@linux.microsoft.com>
+Date: Wed, 15 May 2024 11:04:13 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-X-Provags-ID: V03:K1:FKngwJO9uF495Ce5GOKFJupMpHbyQLS42QZCsw3qBf1pIpRTie2
- UGgyXzkGXC4mhFBecobnbyF0sw4wPIQWD178Ey8ji+Nn0IdY3NMGz+FeaVFkNJ+AqTzuznF
- qnN9Z+wNDl2YeUBezyA/AFqor6rEvEC6Eli7cqTaS6Nby22src/GBAU3VV7lO3Ibt6krgWV
- 46ZR75dE91soEzNsV56ww==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:fjHsrgumK7M=;nXvHczD13j41lsq1br0ShJsY6Sn
- eLu3QU5s/WPICQxvUe+SrFTlfB8QSOqcIQapk10deOZiGat4bQAEKZZap7mRYueAYedjgRTud
- WC4dEThmoWCVJbvASl0ahWdpmfPk4ls9I9YzC2J4S0WzaYIOM8BzhMO7cwbNR1uGhfWljUozw
- HWe7fpHHMc4Nk0aXfxJnFLtxLxJ58YqbGG5tvK5K6yjWkN0FC2ANMiBL434CRjLcwbxZgT1gP
- dzHmnHfCiT1DDc7s6f5U+X5w99vsSPLGaGItu7PHBxAy2pYiigeFLqR+UCa8mVsg0wD5llSjh
- twMCfnqgolv2UHbEKv7LYjBOWvsdpK++okIbY+dlXY25toLfFnK55MfBzlt9HWbqGb36RKHuF
- 3Po7IKhk84nv+KZWcjqvl3yh78OiyTa45Gf17Gb7ul1Mtg/0rQ7cdFyqSDtDj1JufWk4uINxM
- NfqOSO6v1qFIUtGUaUJTz9EjRIYl5CFnTvPoKmxov74WUN/REb2pFnNpDUSOPz+sSUqMojFco
- CFpjZa9fxG3Pu5PwEgP+cZP2w3KBNCxVjl/xC2+rTy+wOt4lCiJEeJ+eFF85+YqBwsk85z+GD
- YfmYefmIiaaFLRag/07O/0lxPsG+apgzEAVU85j+3XcYS9cpAUXnTwJruBxUr9hZaP9THjIHN
- 1EGt0Q/Nf/u5pQwcl4JDwJSkYJIf6syV5qYJdzTAB3NyFRnRgTykDp346JhTb2BRJGD4iOI1d
- 3/gWj76UzWDL/PEYgP+G3KbAfILLkLaP/+WhSvQAxkcLfo7W6cdzoZIfVKgGURhNvB0Edh9jX
- 8ti9n8bo775u5k8B6xRe9v2kAQ+RP1kAEWaOTZrqGEvKU=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/6] drivers/hv: Enable VTL mode for arm64
+To: Michael Kelley <mhklinux@outlook.com>, "arnd@arndb.de" <arnd@arndb.de>,
+ "bhelgaas@google.com" <bhelgaas@google.com>, "bp@alien8.de" <bp@alien8.de>,
+ "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "decui@microsoft.com" <decui@microsoft.com>,
+ "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+ "hpa@zytor.com" <hpa@zytor.com>, "kw@linux.com" <kw@linux.com>,
+ "kys@microsoft.com" <kys@microsoft.com>, "lenb@kernel.org"
+ <lenb@kernel.org>, "lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+ "mingo@redhat.com" <mingo@redhat.com>, "rafael@kernel.org"
+ <rafael@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
+ "tglx@linutronix.de" <tglx@linutronix.de>,
+ "wei.liu@kernel.org" <wei.liu@kernel.org>, "will@kernel.org"
+ <will@kernel.org>, "linux-acpi@vger.kernel.org"
+ <linux-acpi@vger.kernel.org>,
+ "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+ "x86@kernel.org" <x86@kernel.org>
+Cc: "ssengar@microsoft.com" <ssengar@microsoft.com>,
+ "sunilmut@microsoft.com" <sunilmut@microsoft.com>,
+ "vdso@hexbites.dev" <vdso@hexbites.dev>
+References: <20240514224508.212318-1-romank@linux.microsoft.com>
+ <20240514224508.212318-3-romank@linux.microsoft.com>
+ <SN6PR02MB4157E15EFE263BBA3D8DFC51D4EC2@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Language: en-US
+From: Roman Kisel <romank@linux.microsoft.com>
+In-Reply-To: <SN6PR02MB4157E15EFE263BBA3D8DFC51D4EC2@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-T24gV2VkLCAyMDI0LTA1LTE1IGF0IDEzOjQ4ICswMjAwLCBQZXRlciBaaWpsc3RyYSB3cm90ZToN
-Cj4gT24gV2VkLCBNYXkgMTUsIDIwMjQgYXQgMTE6MzY6NDlBTSArMDIwMCwgUGV0ZXIgWmlqbHN0
-cmEgd3JvdGU6DQo+ID4gT24gRnJpLCBNYXkgMTAsIDIwMjQgYXQgMDM6NDk6NDZQTSArMDEwMCwg
-THVpcyBNYWNoYWRvIHdyb3RlOg0KPiA+ID4gSnVzdCBhIHF1aWNrIHVwZGF0ZSBvbiB0aGlzLiBX
-aGlsZSBpbnZlc3RpZ2F0aW5nIHRoaXMgYmVoYXZpb3IsIEkNCj4gPiA+IHNwb3R0ZWQgdmVyeSBo
-aWdoIGxvYWRhdmcgdmFsdWVzIG9uIGFuIGlkbGUgc3lzdGVtLiBGb3IgaW5zdGFuY2U6DQo+ID4g
-PiANCj4gPiA+IGxvYWQgYXZlcmFnZTogNDczMy44NCwgNDcyMS4yNCwgNDY4MC4zMw0KPiA+ID4g
-DQo+ID4gPiBJIHdvbmRlciBpZiBzb21lb25lIGVsc2UgYWxzbyBzcG90dGVkIHRoaXMuDQo+ID4g
-DQo+ID4gSGFkbid0IHNwb3R0ZWQgaXQsIGJ1dCBub3cgdGhhdCB5b3UgbWVudGlvbiBpdCwgSSBj
-YW4gZGVmaW5pdGVseSBzZWUgaXQuDQoNCihkaXR0by4uIHdhcnQgbm90IGVub3Jtb3VzIGVub3Vn
-aCBmb3IgYXdlc29tZSBwb3dlcnMgb2Ygb2JzZXJ2YXRpb246KQ0KDQo+ID4gDQo+ID4gTGV0IG1l
-IGdvIHByb2Qgd2l0aCBzb21ldGhpbmcgc2hhcnAuIFRoYW5rcyENCj4gDQo+IFdoYXQncyB0aGUg
-cG9pbnQgb2YgbWFraW5nIG5vdGVzIGlmIHlvdSB0aGVuIGRvbid0IHJlYWQgdGhlbS4uLiAqc2ln
-aCouDQo+IA0KPiBEb2VzIHRoaXMgaGVscD8NCg0KVGhhdCBmaXhlZCBpdCB1cCBoZXJlLg0KDQo+
-IC0tLQ0KPiDCoGtlcm5lbC9zY2hlZC9jb3JlLmPCoCB8IDIzICsrKysrKysrKysrKy0tLS0tLS0t
-LS0tDQo+IMKga2VybmVsL3NjaGVkL2ZhaXIuY8KgIHzCoCA0ICsrLS0NCj4gwqBrZXJuZWwvc2No
-ZWQvc2NoZWQuaCB8wqAgOCArKysrKysrKw0KPiDCoDMgZmlsZXMgY2hhbmdlZCwgMjIgaW5zZXJ0
-aW9ucygrKSwgMTMgZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEva2VybmVsL3NjaGVk
-L2NvcmUuYyBiL2tlcm5lbC9zY2hlZC9jb3JlLmMNCj4gaW5kZXggNWZmZDdlMDQ3MzkzLi40M2Yw
-NjFiY2ZlNTQgMTAwNjQ0DQo+IC0tLSBhL2tlcm5lbC9zY2hlZC9jb3JlLmMNCj4gKysrIGIva2Vy
-bmVsL3NjaGVkL2NvcmUuYw0KPiBAQCAtMjE1NCwxNCArMjE1NCwxOCBAQCB2b2lkIGFjdGl2YXRl
-X3Rhc2soc3RydWN0IHJxICpycSwgc3RydWN0IHRhc2tfc3RydWN0ICpwLCBpbnQgZmxhZ3MpDQo+
-IMKgDQo+IMKgdm9pZCBkZWFjdGl2YXRlX3Rhc2soc3RydWN0IHJxICpycSwgc3RydWN0IHRhc2tf
-c3RydWN0ICpwLCBpbnQgZmxhZ3MpDQo+IMKgew0KPiAtwqDCoMKgwqDCoMKgwqBib29sIHNsZWVw
-ID0gZmxhZ3MgJiBERVFVRVVFX1NMRUVQOw0KPiArwqDCoMKgwqDCoMKgwqBTQ0hFRF9XQVJOX09O
-KGZsYWdzICYgREVRVUVVRV9TTEVFUCk7DQo+IMKgDQo+IC3CoMKgwqDCoMKgwqDCoGlmIChkZXF1
-ZXVlX3Rhc2socnEsIHAsIGZsYWdzKSkgew0KPiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgV1JJVEVfT05DRShwLT5vbl9ycSwgc2xlZXAgPyAwIDogVEFTS19PTl9SUV9NSUdSQVRJTkcp
-Ow0KPiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgQVNTRVJUX0VYQ0xVU0lWRV9XUklU
-RVIocC0+b25fcnEpOw0KPiAtwqDCoMKgwqDCoMKgwqB9IGVsc2Ugew0KPiAtwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgU0NIRURfV0FSTl9PTighc2xlZXApOyAvKiBvbmx5IHNsZWVwIGNh
-biBmYWlsICovDQo+IC3CoMKgwqDCoMKgwqDCoH0NCj4gK8KgwqDCoMKgwqDCoMKgZGVxdWV1ZV90
-YXNrKHJxLCBwLCBmbGFncyk7DQo+ICsNCj4gK8KgwqDCoMKgwqDCoMKgV1JJVEVfT05DRShwLT5v
-bl9ycSwgVEFTS19PTl9SUV9NSUdSQVRJTkcpOw0KPiArwqDCoMKgwqDCoMKgwqBBU1NFUlRfRVhD
-TFVTSVZFX1dSSVRFUihwLT5vbl9ycSk7DQo+ICt9DQo+ICsNCj4gK3N0YXRpYyB2b2lkIGJsb2Nr
-X3Rhc2soc3RydWN0IHJxICpycSwgc3RydWN0IHRhc2tfc3RydWN0ICpwLCBpbnQgZmxhZ3MpDQo+
-ICt7DQo+ICvCoMKgwqDCoMKgwqDCoGlmIChkZXF1ZXVlX3Rhc2socnEsIHAsIERFUVVFVUVfU0xF
-RVAgfCBmbGFncykpDQo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBfX2Jsb2NrX3Rh
-c2socnEsIHApOw0KPiDCoH0NCj4gwqANCj4gwqBzdGF0aWMgaW5saW5lIGludCBfX25vcm1hbF9w
-cmlvKGludCBwb2xpY3ksIGludCBydF9wcmlvLCBpbnQgbmljZSkNCj4gQEAgLTY2OTMsOSArNjY5
-Nyw2IEBAIHN0YXRpYyB2b2lkIF9fc2NoZWQgbm90cmFjZSBfX3NjaGVkdWxlKHVuc2lnbmVkIGlu
-dCBzY2hlZF9tb2RlKQ0KPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIShwcmV2X3N0YXRlICYgVEFTS19OT0xPQUQpICYmDQo+
-IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqAhKHByZXZfc3RhdGUgJiBUQVNLX0ZST1pFTik7DQo+IMKgDQo+IC3CoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgaWYgKHByZXYtPnNjaGVkX2NvbnRy
-aWJ1dGVzX3RvX2xvYWQpDQo+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJxLT5ucl91bmludGVycnVwdGlibGUrKzsNCj4gLQ0K
-PiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAvKg0KPiDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgKiBfX3NjaGVk
-dWxlKCnCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgdHR3dSgpDQo+IMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAqwqDCoCBwcmV2X3N0YXRl
-ID0gcHJldi0+c3RhdGU7wqDCoMKgIGlmIChwLT5vbl9ycSAmJiAuLi4pDQo+IEBAIC02NzA3LDcg
-KzY3MDgsNyBAQCBzdGF0aWMgdm9pZCBfX3NjaGVkIG5vdHJhY2UgX19zY2hlZHVsZSh1bnNpZ25l
-ZCBpbnQgc2NoZWRfbW9kZSkNCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgICoNCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgICogQWZ0ZXIgdGhpcywgc2NoZWR1bGUoKSBtdXN0IG5vdCBjYXJlIGFib3V0IHAt
-PnN0YXRlIGFueSBtb3JlLg0KPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqAgKi8NCj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqBkZWFjdGl2YXRlX3Rhc2socnEsIHByZXYsIERFUVVFVUVfU0xFRVAgfCBERVFVRVVF
-X05PQ0xPQ0spOw0KPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoGJsb2NrX3Rhc2socnEsIHByZXYsIERFUVVFVUVfU0xFRVAgfCBERVFVRVVFX05PQ0xPQ0sp
-Ow0KPiDCoA0KPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqBpZiAocHJldi0+aW5faW93YWl0KSB7DQo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBhdG9taWNfaW5jKCZycS0+bnJfaW93
-YWl0KTsNCj4gZGlmZiAtLWdpdCBhL2tlcm5lbC9zY2hlZC9mYWlyLmMgYi9rZXJuZWwvc2NoZWQv
-ZmFpci5jDQo+IGluZGV4IDUzNmVhYmNiMWE3MS4uNTk2YTVmYWJlNDkwIDEwMDY0NA0KPiAtLS0g
-YS9rZXJuZWwvc2NoZWQvZmFpci5jDQo+ICsrKyBiL2tlcm5lbC9zY2hlZC9mYWlyLmMNCj4gQEAg
-LTcwMzIsOCArNzAzMiw4IEBAIHN0YXRpYyBpbnQgZGVxdWV1ZV9lbnRpdGllcyhzdHJ1Y3QgcnEg
-KnJxLCBzdHJ1Y3Qgc2NoZWRfZW50aXR5ICpzZSwgaW50IGZsYWdzKQ0KPiDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB1dGlsX2VzdF91cGRhdGUoJnJxLT5j
-ZnMsIHAsIHRhc2tfc2xlZXApOw0KPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqBocnRpY2tfdXBkYXRlKHJxKTsNCj4gwqANCj4gLcKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAvKiBGaXgtdXAgd2hhdCBkZWFjdGl2YXRl
-X3Rhc2soKSBza2lwcGVkLiAqLw0KPiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoFdSSVRFX09OQ0UocC0+b25fcnEsIDApOw0KPiArwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoC8qIEZpeC11cCB3aGF0IGJsb2NrX3Rhc2so
-KSBza2lwcGVkLiAqLw0KPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoF9fYmxvY2tfdGFzayhycSwgcCk7DQo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgfQ0KPiDCoMKgwqDCoMKgwqDCoMKgfQ0KPiDCoA0KPiBkaWZmIC0tZ2l0IGEva2VybmVs
-L3NjaGVkL3NjaGVkLmggYi9rZXJuZWwvc2NoZWQvc2NoZWQuaA0KPiBpbmRleCAxMjg0MWQ4MTk1
-YzUuLjQ4ZTVmNDlkOWJjMiAxMDA2NDQNCj4gLS0tIGEva2VybmVsL3NjaGVkL3NjaGVkLmgNCj4g
-KysrIGIva2VybmVsL3NjaGVkL3NjaGVkLmgNCj4gQEAgLTI1NjAsNiArMjU2MCwxNCBAQCBzdGF0
-aWMgaW5saW5lIHZvaWQgc3ViX25yX3J1bm5pbmcoc3RydWN0IHJxICpycSwgdW5zaWduZWQgY291
-bnQpDQo+IMKgwqDCoMKgwqDCoMKgwqBzY2hlZF91cGRhdGVfdGlja19kZXBlbmRlbmN5KHJxKTsN
-Cj4gwqB9DQo+IMKgDQo+ICtzdGF0aWMgaW5saW5lIHZvaWQgX19ibG9ja190YXNrKHN0cnVjdCBy
-cSAqcnEsIHN0cnVjdCB0YXNrX3N0cnVjdCAqcCkNCj4gK3sNCj4gK8KgwqDCoMKgwqDCoMKgV1JJ
-VEVfT05DRShwLT5vbl9ycSwgMCk7DQo+ICvCoMKgwqDCoMKgwqDCoEFTU0VSVF9FWENMVVNJVkVf
-V1JJVEVSKHAtPm9uX3JxKTsNCj4gK8KgwqDCoMKgwqDCoMKgaWYgKHAtPnNjaGVkX2NvbnRyaWJ1
-dGVzX3RvX2xvYWQpDQo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBycS0+bnJfdW5p
-bnRlcnJ1cHRpYmxlKys7DQo+ICt9DQo+ICsNCj4gwqBleHRlcm4gdm9pZCBhY3RpdmF0ZV90YXNr
-KHN0cnVjdCBycSAqcnEsIHN0cnVjdCB0YXNrX3N0cnVjdCAqcCwgaW50IGZsYWdzKTsNCj4gwqBl
-eHRlcm4gdm9pZCBkZWFjdGl2YXRlX3Rhc2soc3RydWN0IHJxICpycSwgc3RydWN0IHRhc2tfc3Ry
-dWN0ICpwLCBpbnQgZmxhZ3MpOw0KPiDCoA0KDQo=
+
+
+On 5/15/2024 6:37 AM, Michael Kelley wrote:
+> From: Roman Kisel <romank@linux.microsoft.com> Sent: Tuesday, May 14, 2024 3:44 PM
+>>
+>> Kconfig dependencies for arm64 guests on Hyper-V require that be ACPI enabled,
+>> and limit VTL mode to x86/x64. To enable VTL mode on arm64 as well, update the
+>> dependencies. Since VTL mode requires DeviceTree instead of ACPI, don't require
+>> arm64 guests on Hyper-V to have ACPI.
+>>
+>> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
+>> ---
+>>   drivers/hv/Kconfig | 6 +++---
+>>   1 file changed, 3 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/hv/Kconfig b/drivers/hv/Kconfig
+>> index 862c47b191af..a5cd1365e248 100644
+>> --- a/drivers/hv/Kconfig
+>> +++ b/drivers/hv/Kconfig
+>> @@ -5,7 +5,7 @@ menu "Microsoft Hyper-V guest support"
+>>   config HYPERV
+>>   	tristate "Microsoft Hyper-V client drivers"
+>>   	depends on (X86 && X86_LOCAL_APIC && HYPERVISOR_GUEST) \
+>> -		|| (ACPI && ARM64 && !CPU_BIG_ENDIAN)
+>> +		|| (ARM64 && !CPU_BIG_ENDIAN)
+>>   	select PARAVIRT
+>>   	select X86_HV_CALLBACK_VECTOR if X86
+>>   	select OF_EARLY_FLATTREE if OF
+>> @@ -15,7 +15,7 @@ config HYPERV
+>>
+>>   config HYPERV_VTL_MODE
+>>   	bool "Enable Linux to boot in VTL context"
+>> -	depends on X86_64 && HYPERV
+>> +	depends on HYPERV
+>>   	depends on SMP
+>>   	default n
+>>   	help
+> 
+> These changes make it possible to build a normal VTL 0 Hyper-V
+> guest (i.e., CONFIG_HYPERV_VTL_MODE=n) if CONFIG_ACPI is
+> not set, which won't work.  While we can say "don't do that", it
+> would be better if the Kconfig dependencies expressed that
+> requirement.
+> 
+> A possible fix is to remove the "depends on HYPERV" from
+> HYPERV_VTL_MODE.  Then for HYPERV, make
+> the "depends on ACPI" be conditional on !HYPERV_VTL_MODE
+> (for both ARM64 and X86).
+> 
+> I think we originally had "depends on HYPERV" in
+> HYPERV_VTL_MODE because there was a VTL-related function
+> in a non-Hyper-V code path, and we wanted to prevent that code
+> from running in non-Hyper-V environments.  But in practice, that
+> turned out not to work well because occasionally people would
+> do an "all config" build where both CONFIG_HYPERV and
+> CONFIG_HYPERV_VTL_MODE were set, and it would panic during
+> boot in their non-Hyper-V environment.  Such people were not
+> happy. :-(  So Saurabh made a relatively simple change (see commit
+> 14058f72cf13e) that got the VTL code out of that non-Hyper-V code
+> path.  With that change, it shouldn't matter if someone sets
+> CONFIG_HYPERV_VTL_MODE=y in a build where
+> CONFIG_HYPERV=n.
+> 
+> At least that's my theory. :-)  Someone would need to check
+> it carefully.
+I'll explore that, appreciate sharing the context!
+
+> 
+> Michael
+
+-- 
+Thank you,
+Roman
 
