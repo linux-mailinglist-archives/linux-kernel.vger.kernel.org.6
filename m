@@ -1,101 +1,105 @@
-Return-Path: <linux-kernel+bounces-179520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C63A48C60CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:32:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E0058C60D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:37:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D653282E63
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:32:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F77E1F220F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:37:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E6783C062;
-	Wed, 15 May 2024 06:32:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 448433D55D;
+	Wed, 15 May 2024 06:37:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l9gG0Zf0"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="VOfzYxkU"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 510861E53F;
-	Wed, 15 May 2024 06:31:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A6BB3BBDE;
+	Wed, 15 May 2024 06:37:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715754721; cv=none; b=t/RYriT+z0lYN0aRpPIoaKWoQGtdf6WQqrfas+DE2Z5QMf0izuyQAMJZ7FUrBuSMQctbu9vMormwlTxeEDB7la2aKpo2iOc5bpQ57KXBniwVxdtjbm/JUpStXMgAlPxqnaL9Bxma30YIMrylYlsrb15lctFRoL/3kn7Ug1MgGR8=
+	t=1715755042; cv=none; b=Dzz8oH4QrUo+JXoRwCOKbfJpNUMjoiApBIOyzI+wXADodwmW/cIWfoNpxhjjdpEf57zv6ewKudfIeD8X3bLYvvYpIHSeCQmUPHANMqbZKaCCitAdqkjjRGyNHRiTOiH37xSwLtnQ49bVAFPIYvyVcThm1ZRyzt2c+HPZZMSSlvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715754721; c=relaxed/simple;
-	bh=SMe88j30uJlqLy1VfHIE4rYvL+Pl2XRda8aPFrB8pg0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hIsnYtSbPwvKmbyjDyij/sW/UaaT6/AnE1boaVxl/zsda6K6Z58QGt11xh8z6eNGYq5NFJ8G9V6YhZgzfSUAE1SU68voL5E8yMApnUTkpAb0oIcRKItkRlhjxtQNjtVooqzxtvfYf3XliVj3qTzAAGCnyEb/5avQiw0N6RP/cMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l9gG0Zf0; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5238b5c080cso811553e87.1;
-        Tue, 14 May 2024 23:31:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715754717; x=1716359517; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KO/Qnq8uu0A2bAHSPuBz0lil2/aJMgXXAcipsRcH8eU=;
-        b=l9gG0Zf0JqRHxzAsIf98ffv7hZlzQA0TQxvBRpgnMCA4iM2FKPQFjdTIpYxzYGvzfy
-         1cg+5FjYvp5GFLhf307IiaD3jgpyIhwoAynsLr9A2P4gUO12ZYNM93sS7uCvAT4h3LOF
-         HgCwDznA2tp+uQ0E5OKCJpyceRhKBnrJlvIFF+gAJwrg+keSXuqAgq6vJZ45aAWIjmDG
-         CdYMjENuCROS4ykt5Xwa4mqfVz89bkaGwt/vId3qt6Zj1HMTSaNJd8F93o0TStJuzCzz
-         teXdTlHzRywOsRTEQFdLoulF/8mPD69j77Hn5Mj/oDmsvuAaYCwbXlZvEW8huqXgrbMU
-         41lA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715754717; x=1716359517;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KO/Qnq8uu0A2bAHSPuBz0lil2/aJMgXXAcipsRcH8eU=;
-        b=Yg5DwL9qduKj+eMUDdPiOIzIWwbztsojpfkTZIzKyUlXp+Z926J1qM+UYAnvz13rGA
-         ftHy6u9aRlBYKqgAt/rezENvj9Gp7I3iO/JeB6/whUGKfrc4vC5ZGkpg9wv96xyCJr/L
-         CyI9t886+L/Y0jhNEYEMYm60dY12dRyBihDsmYdYeUYuJepzwesMiao7d12LtWMXKpuN
-         sA+rW7GASiwWtsMnRxAw/4fCOfzlJO5K82D87XKx5tT0Jw5twVSMaZuveVvT3dIi+0zo
-         /MIt2UJGN93gBhoqlL18l2D6zMM2mCK7oZzeAK7qfKe/QWxIiUoeBInHnQpUwthnODtn
-         lJMA==
-X-Forwarded-Encrypted: i=1; AJvYcCVZkuwwHBpNGECGhcoyzMa1rwCvknuOdoO4YNpBYvCnst24DYvE4t+on/J2DV1GNbBaldApUp5pqdwekJJVGaAtOl+3qwlzDjfoPnagoB7SLNZ5MkQBSc1mHKXGh/vnOnpGinU2m3kplJSYAXKHElB5lxdf7xdDyhN3KOfk51RPqRW9
-X-Gm-Message-State: AOJu0YxQqdkvsnoiRfSHVjvpKlKcz4G/QWgfSDDRaxO25XMdFYMMM+Gi
-	nwQLJ9Y7UeMRtSuK7RAQJsFxSIbC6c43KNse1w3Wfj2HvrLEBhqe31iL/raoatMO4UddpN77Dh+
-	ufHPffUKzfLB/fdirlWeR8uw82Wk=
-X-Google-Smtp-Source: AGHT+IHoKg0Vu+Ev/OMzjy0UIYtyUIbh89ctl6Q2Uk+JY2wl6Xd+Yslf9XhsdnZpO7qUHzF5fIdfEgEnHzxHsvSQbzc=
-X-Received: by 2002:ac2:58e3:0:b0:518:dfed:f021 with SMTP id
- 2adb3069b0e04-5220fb749bdmr7624802e87.24.1715754717250; Tue, 14 May 2024
- 23:31:57 -0700 (PDT)
+	s=arc-20240116; t=1715755042; c=relaxed/simple;
+	bh=eI/hWvYVZn6xmfG6Gso863cUJUBDV94QsvI0YUUona8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=UF3IA20+A3qPMacwVOO658yuoMSXYWU5BTDQarIyF1uWQmO0bZRZBIm6PBwgr3o13kZvOknS/kbO6j9divMTwboz01ogS+CDRW5+Yj9Xi+3fpJuBtkyuem1Ucqb9SvGjQx1RHdArzM1h0McM2opt4XYzp75UxyRHBKAfchBHWs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=VOfzYxkU; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1715755034;
+	bh=APVgJNHkw0GoLhqndKWu3Ob2mj6Ex2bkWrznWolFk9I=;
+	h=Date:From:To:Cc:Subject:From;
+	b=VOfzYxkU9QsPDnTAGPXwpAfe7vwu78Gb/aJSI8aJq00t536XlyBsOOvr4P3Btg3j0
+	 89gHmbFlZ8uhm3SQ7Hsrjl7MgB185+6GqryyarVPHgoSCcgnTTVucJR7XMLp9SdyfU
+	 UMxrqKSXkcLdeLfFQHhi7n4hyk+j+QPQ5n63RCqUDHv19Yj/5rKD8tqtvi6u35qPrC
+	 B5WHQfEa8v2IZY/aort8uG7qZdNLNgQxlQRNi1vKxQidE1CjFOo0WHR4q3/rf1Q5AB
+	 TsU1oSaVIaINYa2Z2qxz56KgJtU9G/q1p7LIRj14oxKm92QFC8yxBusMw3Mro9UHLw
+	 fI7hrdrySdLpw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VfNn563BFz4x1C;
+	Wed, 15 May 2024 16:37:13 +1000 (AEST)
+Date: Wed, 15 May 2024 16:37:08 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Michael Ellerman <mpe@ellerman.id.au>, PowerPC
+ <linuxppc-dev@lists.ozlabs.org>
+Cc: Hari Bathini <hbathini@linux.ibm.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build warning after merge of the powerpc tree
+Message-ID: <20240515163708.3380c4d1@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240515012350.1166350-1-zhaoyang.huang@unisoc.com>
- <20240515012350.1166350-3-zhaoyang.huang@unisoc.com> <ZkQ1dsHKVttb7y4_@casper.infradead.org>
-In-Reply-To: <ZkQ1dsHKVttb7y4_@casper.infradead.org>
-From: Zhaoyang Huang <huangzhaoyang@gmail.com>
-Date: Wed, 15 May 2024 14:31:45 +0800
-Message-ID: <CAGWkznH1dxyF17cQi+9+0EadoG7_MVUNy8n-svQ7ZjYNaWKYdQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/2] mm: introduce budgt control in readahead
-To: Matthew Wilcox <willy@infradead.org>
-Cc: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, linux-mm@kvack.org, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	cgroups@vger.kernel.org, steve.kang@unisoc.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/zfARr8Q8f9AC2zPVlVguGjo";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/zfARr8Q8f9AC2zPVlVguGjo
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 15, 2024 at 12:09=E2=80=AFPM Matthew Wilcox <willy@infradead.or=
-g> wrote:
->
-> On Wed, May 15, 2024 at 09:23:50AM +0800, zhaoyang.huang wrote:
-> > +     unsigned long budgt =3D inode->i_sb->s_bdev ?
-> > +                     blk_throttle_budgt(inode->i_sb->s_bdev) : 0;
->
-> NAK as previously explained.
-ok. But this commit could work by following the configuration of
-blk-throttle as long as it works on btrfs with internal RAID on.
-Furthermore, this will help the blkcg meet the desired BPS value
-perfectly.
+Hi all,
+
+After merging the powerpc tree, today's (it may have been yesterday's)
+linux-next build (powerpc allyesconfig) produced this warning:
+
+WARNING: modpost: vmlinux: section mismatch in reference: fadump_setup_para=
+m_area+0x200 (section: .text.fadump_setup_param_area) -> memblock_phys_allo=
+c_range (section: .init.text)
+
+Introduced by commit
+
+  683eab94da75 ("powerpc/fadump: setup additional parameters for dump captu=
+re kernel")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/zfARr8Q8f9AC2zPVlVguGjo
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZEWBQACgkQAVBC80lX
+0GxS1Af/bFHD2LbuYbe9OcFIUFDiT1c4qaIJtvj5nf8ARrtDwlnxoW5GI4SintL2
+ZYIdWZnvw/RrWob7XRUIg6PcK6IDXhwh30a1jz6aEyv+m/MojjIeJpOH4wominkz
+tAqSiic+yThBgF0AQQ4tKvlabR1ObtiPd053OkvKiQHuuZBpSkTbG6QgK+3LeV+s
+AUZLJe549U7xwnLz1f9ToSvt/qNewXiOy9jBF4uu5q/zuzUkq5wAQdNU01VlqGmS
+ADUXyiNLTnUJxwnwoe/itnqlgdFl4tB28KXr7zv6T0IKfFwOK2KovnL/wAZLd/bj
+Ih9EZ1K/MhyqVmEX04xjz2/r8+eFRw==
+=oatL
+-----END PGP SIGNATURE-----
+
+--Sig_/zfARr8Q8f9AC2zPVlVguGjo--
 
