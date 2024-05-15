@@ -1,104 +1,124 @@
-Return-Path: <linux-kernel+bounces-180490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B3D98C6F36
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 01:33:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 356D28C6F38
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 01:34:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F6F41C20FFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 23:32:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E15A6281CCF
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 23:34:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6AA152F8C;
-	Wed, 15 May 2024 23:32:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41730101C8;
+	Wed, 15 May 2024 23:34:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeweavers.com header.i=@codeweavers.com header.b="aZJnNRCo"
-Received: from mail.codeweavers.com (mail.codeweavers.com [4.36.192.163])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="OFoq6v99"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3A564D5A5;
-	Wed, 15 May 2024 23:32:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=4.36.192.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 741B04D9E0
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 23:34:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715815962; cv=none; b=f1NawSIY0TUBux0MGXBqY122a/RvGUS6u9XdFIoXx13JDqWGXxei5Zm/aW4FmCTLoxKkqPaalGYpogJZKRahmPeMQG7G71w6Z8AREgGUNKRpUTkovJHZoV2RYc6Uhddjtjnx2yV9TfG5drzy8Ls3NSztxvVxszxlepdi3DWTG7Q=
+	t=1715816072; cv=none; b=fHRyX+cC5U+iX6Jf7lO2GNEjJOPBKC3CYYdBQjocIU8lK4TebH4NSZvaG/8Ah/wsOyR55PExCWwOz/Epiu3IsgGZPCxEv0W7nLjvac4Ys2kgwaJTyGtdvyiRcUx/qtoOec1T3n6tNFyl2749JX2wWdkhCewejbR5/gYxNLAkRAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715815962; c=relaxed/simple;
-	bh=kNIfUSqmELR44cA1YYeUiPS/oNMg9kNiAuiUGNZMCbI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=c89AswlQlD3v7U6MRgRj5+dRJBUiz6ueEWH6B3eRi4VBHl6sfFe9csPvR76H59PvbxQ5buC14rkFcqbpYU2zSB28ypQPWyBb8MtHVAJ4IXE36478oDZa8VZp5nJi0L3fkO9z9P5WAsArtACU1oEdrgXubPMH5/apWCQxhBgVBnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeweavers.com; spf=pass smtp.mailfrom=codeweavers.com; dkim=pass (2048-bit key) header.d=codeweavers.com header.i=@codeweavers.com header.b=aZJnNRCo; arc=none smtp.client-ip=4.36.192.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeweavers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeweavers.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=codeweavers.com; s=s1; h=Message-ID:Date:Subject:Cc:To:From:Sender;
-	bh=kNIfUSqmELR44cA1YYeUiPS/oNMg9kNiAuiUGNZMCbI=; b=aZJnNRCoU4VdBtKnFF2KaV3kkk
-	H/MnU0t8TpOaClSFgLOcARfnRydTZRKZF4lEySoZF5MdxuK3dCAuZnhauaBUw/EgTy1cuxJTXWps9
-	gTnZhGETkt32V4J+P9tOsZoRWrL7ui4X8jCrqFoAV2L/r4N/kJ0deokolHOw4Ly6aiE+jnW9QyFiW
-	h39hO6ClKz8UCmoeAUwLyVfjNWdqx7kziiVEn+FBD2WmLVqcCYXDGuUChuaawgovf9fifN2qydGDx
-	GudVNON6odyAwWU/UppZkPacdf3qJ6/9hqsaNoPPQnaRJYhqWZsNv96w13xRkLbIkfupCDCsZyC7o
-	S9uZ6e9A==;
-Received: from [10.69.139.9] (helo=watership.localnet)
-	by mail.codeweavers.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <zfigura@codeweavers.com>)
-	id 1s7O6n-005nPN-1T;
-	Wed, 15 May 2024 18:32:29 -0500
-From: Elizabeth Figura <zfigura@codeweavers.com>
-To: Peter Zijlstra <peterz@infradead.org>, wine-devel@winehq.org
-Cc: Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
- linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
- wine-devel@winehq.org,
- =?ISO-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
- Wolfram Sang <wsa@kernel.org>, Andy Lutomirski <luto@kernel.org>,
- linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
- Randy Dunlap <rdunlap@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
- Boqun Feng <boqun.feng@gmail.com>, Elizabeth Figura <zfigura@codeweavers.com>
-Subject: Re: [PATCH v4 00/30] NT synchronization primitive driver
-Date: Wed, 15 May 2024 18:32:26 -0500
-Message-ID: <2322852.ElGaqSPkdT@watership>
-In-Reply-To: <1790266.VLH7GnMWUR@camazotz>
-References:
- <20240416010837.333694-1-zfigura@codeweavers.com>
- <20240417100132.GK30852@noisy.programming.kicks-ass.net>
- <1790266.VLH7GnMWUR@camazotz>
+	s=arc-20240116; t=1715816072; c=relaxed/simple;
+	bh=+9uW7MlCfHiJsNdkLK4ioFsnx3akBtUYjnkX7SoEjV4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tf481/9ug3JDQs98vP58msTWR+A1wlnY9Vid857TliizWcWDEnHfbH1pYm6uaxZmG49JZto6TuyD59TGWzl0P1+i5IGi1ifFJwNxr+P9/uoU5iCf/anKYjA+L/d61uaBo4klLsgvU+5dUhV+2/IPmKssPrlCEJfPiNQXCvcZ+sE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=OFoq6v99; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2e1fa2ff499so1210051fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 16:34:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1715816069; x=1716420869; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DM1vVgDISZc1YG7TkPKZwT01C1rQBO8QJzo5w5mgocY=;
+        b=OFoq6v99JhEeMlw4e2dybI0cgyYBM6yCu+YMAIWSuZvrzNg8XFMpEs54U5GtV/TpT5
+         DC9/zFOjyNS9e2IWrda0nikiclKAwvygTnaMItP/tHIF4CaKR+7DPNi4220quYPbXECd
+         6LuOsjlC0Bx9o0BsAqHsyEJ6uTjXPcfYv1uc0u1yPcRpXviuRQiMsA8f66GFDF1ViZMz
+         0szaX9ULI/WI8LQKaivo2JdH+EhVvm7K3B2eUi7EfLoPqv3iOmPg3PJHvQJfkAKBK7+L
+         h10xvgrtkO0K5kHX6q9HMbqScXECqfuJZrWejhuWJaGobYoCowzVHJ0XrbbGkS3xZzOy
+         kWCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715816069; x=1716420869;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DM1vVgDISZc1YG7TkPKZwT01C1rQBO8QJzo5w5mgocY=;
+        b=coUMDxXxOD/rXsoidea2gCExiSGEo6j5jtE4RQYTRPI5fDfma6eN3q8m3i3x4cq4hU
+         1dito7wXDogZFS5h/McMLde393FgF35SfA05Zy0IXwu7sZaVw1SLJDqZLqIK55zkGdUv
+         5IhlxzR6nKa7GRrtxI7fntb7qB4vrDKDJQF+iOvZ5BaurI9LiIH6hGrf1qt2Rs3Vddjk
+         H08hizKiB3dz463BnYYMiQl5vr0mEd3xU+HQ8QWjgEiSKOrB07DVP+Zo3vrbnNy04FPk
+         IdKgbxxa5/a2B3FExpvAonJ8rmQG/Po8baq+Bb6UAXZsqDXiz6gTSQE+6aulE+LIfB5M
+         1tDA==
+X-Forwarded-Encrypted: i=1; AJvYcCVKuwUQOaPDPE7LaQTXKmtrymiCAssQx04llYFAIzzdd47JgP47yx8J+jnIXWEW++OoY3FD4RzKDXDdPiWRS5HCvJSNK/01UxPnwnlo
+X-Gm-Message-State: AOJu0YxZWl5OiS9MmcANaraanZYtTkfAy92CGdVTbypLhIgXNnQO5eiD
+	NTSdhF4bWRb3Yj5S9lxxkHi6WG6YZBefq+18GPR+CLWNYHDHV5NlAvN9z6Nsl2l0+4hgllTsHgl
+	DlXEIFC5lzk7cJQGtykNpyTc6wBdTz06jFZhmCA==
+X-Google-Smtp-Source: AGHT+IF4HTk4lQ/MZlscTmkZB2wVbX5P7zvHwqNQ7NPS+iwWOITja47wZizPnUJAYB8kFKyOfMMCLIG7MbpgWvOJo9k=
+X-Received: by 2002:a2e:812:0:b0:2d4:535a:e7a with SMTP id 38308e7fff4ca-2e51b4784b6mr54882141fa.24.1715816068070;
+ Wed, 15 May 2024 16:34:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240514-ad4111-v2-0-29be6a55efb5@analog.com> <20240514-ad4111-v2-7-29be6a55efb5@analog.com>
+In-Reply-To: <20240514-ad4111-v2-7-29be6a55efb5@analog.com>
+From: David Lechner <dlechner@baylibre.com>
+Date: Wed, 15 May 2024 18:34:17 -0500
+Message-ID: <CAMknhBGfu_an738aWqL19zGm7tTOZtoOv-+eY3kn3Zt+-eShwg@mail.gmail.com>
+Subject: Re: [PATCH v2 7/9] iio: adc: ad7173: Remove index from temp channel
+To: dumitru.ceclan@analog.com
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
+	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Dumitru Ceclan <mitrutzceclan@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
 
-On Wednesday, April 17, 2024 3:02:13=E2=80=AFPM CDT Elizabeth Figura wrote:
-> > > Except for the "unowned" semantics of zero, the actual value of the
-> > > owner identifier is not interpreted by the ntsync driver at all. The
-> > > intended use is to store a thread identifier; however, the ntsync
-> > > driver does not actually validate that a calling thread provides
-> > > consistent or unique identifiers.
-> >=20
-> > Why not verify it? Seems simple enough to put in a TID check, esp. if NT
-> > mandates the same.
->=20
-> I mostly figured it'd be simplest to leave the driver completely
-> agnostic, but I don't think there's any reason we can't use the real
-> TID for most calls.
+On Tue, May 14, 2024 at 2:23=E2=80=AFAM Dumitru Ceclan via B4 Relay
+<devnull+dumitru.ceclan.analog.com@kernel.org> wrote:
+>
+> From: Dumitru Ceclan <dumitru.ceclan@analog.com>
+>
+> Temperature channel is unique per device, index is not needed.
+>
+> This is breaking userspace: as main driver has not reached mainline yet
+> it won't affect users as there are none.
 
-While trying to implement this I did realize a reason: if a Linux thread di=
-es=20
-and a new Wine thread is created which happens to have the same Linux TID=20
-*before* Wine notices the thread death, that thread's TID will be conflated=
-=20
-with the thread that died. I don't think we can guarantee that we notice=20
-thread death before we notice a request to create a new Wine thread.
+But it is queued up, so probably need a Fixes: here to make sure it
+makes it into the release.
 
-Using Wine-managed TIDs avoids this by virtue of ensuring that a Wine TID i=
-s=20
-not reused until the associated Wine thread has been cleaned up.
-
-
+>
+> Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
+> ---
+>  drivers/iio/adc/ad7173.c | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
+> index d965b66d4d5a..d66b47e1a186 100644
+> --- a/drivers/iio/adc/ad7173.c
+> +++ b/drivers/iio/adc/ad7173.c
+> @@ -828,7 +828,6 @@ static const struct iio_chan_spec ad7173_channel_temp=
+late =3D {
+>
+>  static const struct iio_chan_spec ad7173_temp_iio_channel_template =3D {
+>         .type =3D IIO_TEMP,
+> -       .indexed =3D 1,
+>         .channel =3D AD7173_AIN_TEMP_POS,
+>         .channel2 =3D AD7173_AIN_TEMP_NEG,
+>         .info_mask_separate =3D BIT(IIO_CHAN_INFO_RAW) |
+>
+> --
+> 2.43.0
+>
+>
 
