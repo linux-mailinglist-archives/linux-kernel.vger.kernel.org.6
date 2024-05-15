@@ -1,172 +1,136 @@
-Return-Path: <linux-kernel+bounces-179514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AF208C60B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:20:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CF6548C60B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:20:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41E1E1F21957
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:20:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EA641F21FE3
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:20:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 047E43BBD4;
-	Wed, 15 May 2024 06:20:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16B313BBC1;
+	Wed, 15 May 2024 06:20:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="bkpscqxp"
-Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="ODHdMt68"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C06E13BB22
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 06:20:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C2063A1AC
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 06:20:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715754003; cv=none; b=tWj7DW4Q95J/zlZPQbyDwflgN+r5uuvdjwTR0HvY/fp4mND9cHawzMsp6e8w1hcu+lxaiKnIm19maoHlr4+ApETu5QXmT9CuRbHFOAnfZE+7Th73QKD2v7Mn2hxHL8oDJvTio7f2moFpr1IE+IEAnK0Tln+yIdu8/Nsyzz03VXQ=
+	t=1715754043; cv=none; b=B7TMMHN4slckOYhLS8DnUo577LG1FjguFc8enRH9GGItszanTWbeQlSZiGrXjf9YoFcEHMNn4kFeXq6YTNaKe8ft6Iwcr/08wbXiYeXmkxRiGDtLaMfHxj7zTqEXqFcz+G1kTqEQt0RCphd3WyYm6HxFHC3znm3l8FM6U7BJaK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715754003; c=relaxed/simple;
-	bh=UyrQgiGxpVTwgJtSrbHRBf9lE+OZP6cY2tzhDaA4YlM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RXYBeoBfFzYWtx1xvTSR07NoTCdaudjwOZUMm29paASTYUwPru7v8r8hZgJdZyIbsdCTWBBsts80jdpVTAW2zI9h7x+0qoWH+/T7S8vsmPeTnfYV00iFFulZkc4KXlPyUf1vi8gC38oO1KwejMoG8rrIgMLRAvNuZsxKYuESDs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=bkpscqxp; arc=none smtp.client-ip=209.85.166.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
-Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-36c90b7f4a5so22487205ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 23:20:00 -0700 (PDT)
+	s=arc-20240116; t=1715754043; c=relaxed/simple;
+	bh=s3hMnneki/xCehK7eUpMW9xHCWCBE5YEqu/0puPv3OU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=hKCu9YxbIJhNL6fJJiLDO3ATyXbi3fmWERDzLsXryb1R7uPJIyf8lWjIF2+zdRs993Qge8ZJlBl9KgdvfVvm59YY4bfTLS3BZdbCyK7UcpP6zE/4Rfo178uMdhMhYiWCwLY+OuZ1ci/aaNswpt/HG5v9HVJDJfBg8q5tDblSoqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=ODHdMt68; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2b6208c88dcso5022198a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 23:20:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1715754000; x=1716358800; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=bytedance.com; s=google; t=1715754040; x=1716358840; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=DXBk01eAYtbUsAxjAP5iGYBzxJrtGgpchSjyGGop1NU=;
-        b=bkpscqxpboI0T8i3xvZR8yiGwgMJq5IXEBKUfkc6jsgH2QQVDn7im6PXOqmyngrZme
-         8Bt8ZQ7yCgADITlNp5E9aAXPY30MFlv/wP8X5Ef8eJKuw6L7ciFuhZn9i3OBqAcWlEmc
-         2E8XdPuXfKvV8eouyH52hY/1aqpvJzYkuVm78idGZ8RQ58dvAtWWlKYP9urtSuzu+E8H
-         9YG8H8wtfQRGmEbyiuM5xHfG5Kiv11hYLyVCvLlAsxRohktKfpcnPrJb0Md7TiOzNL4E
-         5MlZxBcgPVxv6B3rl3dXFKecB1VdTs8teWzHZr+eLREVAeLceO395wiSrImmOjNe0K6W
-         H9qg==
+        bh=bPp84dK/TP4O+E01WOilhkZ88ufy3AD5Z9rfCYlBsMk=;
+        b=ODHdMt68OGUskTUciLb/ixSXlQoVGuneYEgjU15VUuPu/bwS+SsbrIphDOzchBBfbL
+         eZbBJs80UqDwxJWtu0zvtS+FAVGlfGwRLVrMcNETYR0sgZkFTneFrDvGsmB8LmjYcnkV
+         k9XLaC/7aJX3BVkI9DqYunJLHP0n1bwhnc42X4Q/6Eu2cINw0ZzAq5ior0s9nDXrbz/u
+         Ew298HUloXAubJ/juq2eGL8nxxL3/DoCfs0hUy0R/eyDGjB6L+zu9+j3NOICeksBJTXV
+         SaxHyMzsAUh/OwWgOF4e0S5QkGl2kdi13nGxV+ofS4IWpxEd3k4LRyO4WITZUpFNJa1L
+         SOpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715754000; x=1716358800;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1715754040; x=1716358840;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=DXBk01eAYtbUsAxjAP5iGYBzxJrtGgpchSjyGGop1NU=;
-        b=CCbZ5RHSeOre/5wR5fdD3ajFkPxEKAl2+pxgP37zwtaKCCPZUjNDIz5YRrodB4bNlJ
-         OjbSO1iTPmKQn8wzGNDKmZpmR+05/1SJFH3fWiXdtfpwz3xlurhtFZgDQZ92orPtmddV
-         K0nvLIWyf2P7bhtvDbLfNM+klvFzWOYTbP5lpXM3KDFgIK4cWfDYay3sYh1CtEGeToRw
-         nADwiJCKMqh1hqCdQNS5TFlkQoNddYPGYnGW6NCzk9MIK6wdte1iKBh9tnxBvn4qVC7R
-         FeHN/cQQLhATWjISfc+LDPJHudYfiFcbQiSAqWvMnUwEXAreabIAoOD9rP5JqMDGbVg8
-         clEg==
-X-Forwarded-Encrypted: i=1; AJvYcCVZmK96mt+w/xVMyYRj0u6CErRLgTsh6U5iK82NEBZbmCFvrkdT9k3VSBUmAyK+5UuBBQnM52c2rV8C8d9y6i66kjFg7xk5bQJWc6Lt
-X-Gm-Message-State: AOJu0YzjnM1hzGoRScKSgbdT4+dgUym7Ic0Fdc/mU7fJ6jHCnEODN3Ks
-	FkwKirb1Rzcr9Tcq2+wGruvqzM9ORpixiqoGmlVEK7GfJuRTJ7c6VM8eCRRk1sn6jKFrBHLc4h8
-	GYzHEZIaMREwdp/hEH1IS/5la01Ot++auqGsiCA==
-X-Google-Smtp-Source: AGHT+IFkE8DQwyCj3o5jxhZZChCPfs/heM6LGJLIaFfgGkAUVO7wCCuZJPaCHqr48cEbTVMpVAMjeT1LwCMTCZfprkA=
-X-Received: by 2002:a05:6e02:1a01:b0:36b:31d2:f148 with SMTP id
- e9e14a558f8ab-36cb7757227mr129234915ab.15.1715753999877; Tue, 14 May 2024
- 23:19:59 -0700 (PDT)
+        bh=bPp84dK/TP4O+E01WOilhkZ88ufy3AD5Z9rfCYlBsMk=;
+        b=nL92gYFR9LhgkS5JSKwMdGX23CEQ1v5ar0hNSpOcvXv+oyWJFguFS73eRdH6z4nbKy
+         LEyXJFw72mpIwzs/Xjft5cI1nurjgQuc+LnnWwTFY4bMwwois2qpbF5Mlyk6WEALo0Z1
+         eUzgxwsQc9SZr3jRKUk1V5roRp0Jyb9GA55JbigdzUNhITQVVlbgR9lwfNbE5/Jm47iJ
+         wHUwanMpl0WVvO/fNdVmsfx/vQEXvjPOCMSj+Nn4Z9uFGG29r2hD2mL+uv+1DkIf+tyx
+         QFflBEFuy3ujOFEmjed2dT6VYY9HjIm6L4milNIew95p5A0dj5MsUDIizBr9Avrms/tA
+         dmcg==
+X-Forwarded-Encrypted: i=1; AJvYcCXHO+POS/rG13K8X9ToPQ+bsvpS0rS0pbsXAaTynkzBhZbRM1lmtwKPo324PZYj+xWxNr+ZDuFdKzGrUgkHzsAkHwA49flWK8bfJfgr
+X-Gm-Message-State: AOJu0YwtArNYlo2IxaflUmfRGbeTZ5FNfmXuoGIvbRIVM3aAff6lA4lo
+	w/bhY61wofkhrEHFRnDQEhhH6P6hzzQu6FfxN5qddW949k9SKl4W9YL31tII4d9U/0JgxQNGLTe
+	6
+X-Google-Smtp-Source: AGHT+IEkUavsy1YWv/qicLKe9PIwCoSOIz69b8mCVNDFboxtIWn5GXanEy1bkFItdVpeqmQyZYp7vw==
+X-Received: by 2002:a17:90a:a586:b0:2b6:2067:dd15 with SMTP id 98e67ed59e1d1-2b6ccef5ebamr13087553a91.40.1715754040500;
+        Tue, 14 May 2024 23:20:40 -0700 (PDT)
+Received: from GQ6QX3JCW2.bytedance.net ([203.208.189.13])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2b671782d7bsm11948761a91.51.2024.05.14.23.20.38
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Tue, 14 May 2024 23:20:40 -0700 (PDT)
+From: lizhe.67@bytedance.com
+To: lizhe.67@bytedance.com
+Cc: juri.lelli@redhat.com,
+	linux-kernel@vger.kernel.org,
+	mingo@redhat.com,
+	peterz@infradead.org
+Subject: Re: sched/isolation: Fix CPU affinity issues for several task
+Date: Wed, 15 May 2024 14:20:34 +0800
+Message-ID: <20240515062034.61601-1-lizhe.67@bytedance.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240430033948.12165-1-lizhe.67@bytedance.com>
+References: <20240430033948.12165-1-lizhe.67@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <PH7PR20MB4962C6D8FD6989BC79F9483FBB1D2@PH7PR20MB4962.namprd20.prod.outlook.com>
- <IA1PR20MB4953F852CB7A9C5FE45E18EBBB1D2@IA1PR20MB4953.namprd20.prod.outlook.com>
-In-Reply-To: <IA1PR20MB4953F852CB7A9C5FE45E18EBBB1D2@IA1PR20MB4953.namprd20.prod.outlook.com>
-From: Anup Patel <anup@brainfault.org>
-Date: Wed, 15 May 2024 11:49:48 +0530
-Message-ID: <CAAhSdy2uSAA4TLmCvjuLsZT26wJyCQ0L61m5vg3BbBCSvHxVqg@mail.gmail.com>
-Subject: Re: [PATCH v5 1/2] dt-bindings: hwmon: Add Sophgo SG2042 external
- hardware monitor support
-To: Inochi Amaoto <inochiama@outlook.com>
-Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Chen Wang <unicorn_wang@outlook.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, linux-hwmon@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sun, May 5, 2024 at 6:48=E2=80=AFAM Inochi Amaoto <inochiama@outlook.com=
-> wrote:
->
-> Due to the design, Sophgo SG2042 use an external MCU to provide
-> hardware information, thermal information and reset control.
->
-> Add bindings for this monitor device.
->
-> Signed-off-by: Inochi Amaoto <inochiama@outlook.com>
+On Mon, 29 Apr 2024 17:44:27 +0800, Li Zhe wrote:
 
-LGTM.
-
-Reviewed-by: Anup Patel <anup@brainfault.org>
-
-Applied this patch to the riscv/opensbi repo.
-
-Thanks,
-Anup
-
-> ---
->  .../hwmon/sophgo,sg2042-hwmon-mcu.yaml        | 43 +++++++++++++++++++
->  1 file changed, 43 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/hwmon/sophgo,sg2042=
--hwmon-mcu.yaml
+>If the parameter of cmdline "nohz_full=" contains cpu 0, the cpu affinity
+>of the kernel thread "kthreadd", "rcu_sched", "rcuos%d", "rcuog%d" will
+>always be 0x01, that is, these threads can only run on cpu 0. This is
+>obviously not in line with the original design.
 >
-> diff --git a/Documentation/devicetree/bindings/hwmon/sophgo,sg2042-hwmon-=
-mcu.yaml b/Documentation/devicetree/bindings/hwmon/sophgo,sg2042-hwmon-mcu.=
-yaml
-> new file mode 100644
-> index 000000000000..f0667ac41d75
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/hwmon/sophgo,sg2042-hwmon-mcu.yam=
-l
-> @@ -0,0 +1,43 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/hwmon/sophgo,sg2042-hwmon-mcu.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Sophgo SG2042 onboard MCU support
-> +
-> +maintainers:
-> +  - Inochi Amaoto <inochiama@outlook.com>
-> +
-> +properties:
-> +  compatible:
-> +    const: sophgo,sg2042-hwmon-mcu
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  "#thermal-sensor-cells":
-> +    const: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - "#thermal-sensor-cells"
-> +
-> +allOf:
-> +  - $ref: /schemas/thermal/thermal-sensor.yaml#
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    i2c {
-> +        #address-cells =3D <1>;
-> +        #size-cells =3D <0>;
-> +
-> +        hwmon@17 {
-> +            compatible =3D "sophgo,sg2042-hwmon-mcu";
-> +            reg =3D <0x17>;
-> +            #thermal-sensor-cells =3D <1>;
-> +        };
-> +    };
-> --
-> 2.45.0
+>The root cause of this problem is that variables 'cpu_valid_mask' in
+>functions __set_cpus_allowed_ptr_locked only contain cpu 0 before smp
+>initialization is completed. If we call set_cpus_allowed_ptr and pass in a
+>cpumask that does not contain cpu 0, the function call will return failure.
+>Thread "kthreadd" and "rcu_sched" call the function set_cpus_allowed_ptr
+>early in the system startup. Thread "rcuos%d" and "rcuog%d" inherit the
+>wrong cpu affinity of "kthreadd".
 >
+>I tried to fix this problem by adapting the function set_cpus_allowed_ptr,
+>but the variable task_struct->cpus_ptr will be referenced or modified in the
+>scheduled process, which seems to make it more difficult to fix this problem
+>by adapting the function set_cpus_allowed_ptr. So this patch clear cpu 0 from
+>nohz_full range to fix this problem.
 >
+>Signed-off-by: Li Zhe <lizhe.67@bytedance.com>
+>---
+> kernel/sched/isolation.c | 7 +++++++	
+> 1 file changed, 7 insertions(+)
+>
+>diff --git a/kernel/sched/isolation.c b/kernel/sched/isolation.c
+>index 5891e715f00d..7b9bcfcd3c55 100644
+>--- a/kernel/sched/isolation.c
+>+++ b/kernel/sched/isolation.c
+>@@ -152,6 +152,13 @@ static int __init housekeeping_setup(char *str, unsigned long flags)
+> 	if (cpumask_empty(non_housekeeping_mask))
+> 		goto free_housekeeping_staging;
+> 
+>+	if ((flags & HK_FLAG_KTHREAD) &&
+>+		cpumask_test_cpu(smp_processor_id(), non_housekeeping_mask)) {
+>+		pr_warn("Housekeeping: Clearing cpu %d from nohz_full range\n", smp_processor_id());
+>+		__cpumask_set_cpu(smp_processor_id(), housekeeping_staging);
+>+		__cpumask_clear_cpu(smp_processor_id(), non_housekeeping_mask);
+>+	}
+>+
+> 	if (!housekeeping.flags) {
+> 		/* First setup call ("nohz_full=" or "isolcpus=") */
+> 		enum hk_type type;
+
+Friendly ping. Could somebody give me some advice?
 
