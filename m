@@ -1,56 +1,49 @@
-Return-Path: <linux-kernel+bounces-179925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DECF48C678D
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 15:40:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB50B8C6792
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 15:40:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8090F1F23452
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 13:40:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63ECE284F5D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 13:40:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D5B312AAD2;
-	Wed, 15 May 2024 13:39:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59DFF13AD37;
+	Wed, 15 May 2024 13:40:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ki78AE9X"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bPDeT2Ba"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3AD912A15B;
-	Wed, 15 May 2024 13:39:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B2B136983;
+	Wed, 15 May 2024 13:40:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715780381; cv=none; b=HzreStY+F8yJpmmSThKQMES/oEJmjPxxwPrKR879Tql8LMThE/uIeKD6HmmEvhsjfdGDQsjT8W6SKm3yCJHDiXw0pXG5ErcslFVXtgLqdZrkHhoXDHUAvRI6RZ89d9StP0ufCWjDQODii8JYfjk/6cTk6DVrenZHrlKva2TFygM=
+	t=1715780436; cv=none; b=OCCy7/HljZ+B92KqDTUAXb5eceaP12VDJnMKwiLvfPtkZkTFKkj8XJInmuvPDqhI31Zjgh/4ITIWfFOSh7fBMaUDmuUq+bOQEXBEaYdBbI4b8bSZ8aZPEmqhzxpuvAx/Fr9Zjr/r4Kx83Xzac25copUPuflKbmeXrBsQTIaQ1CY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715780381; c=relaxed/simple;
-	bh=17blqijHRfRC3vxH1neCWLqBA7J+OA+Hm9veCyE5STQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NsCU/DAAx4Yh8UbR3sIcosENXNHNuPDmQhlvT2i5GTmSQH2TCGsLBJpIIuqUmxHJDf4rg5b0aPDXozPugSrH3o6ugNv9mbNWYnmZVEAeQ1ATJ8y/jJV+Kcn+DpsRMzNxBqEqm3EmQRqPOTmFwhGwvgHGb17HebNiOtqCEt5Yr2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ki78AE9X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCE25C4AF0B;
-	Wed, 15 May 2024 13:39:39 +0000 (UTC)
+	s=arc-20240116; t=1715780436; c=relaxed/simple;
+	bh=H3ltUsrKOQdu0Za2sRAFpqsHbjoXich3cTJVW0+VNxk=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=dqQ6dKH8Xzgv8oHT2c5oa4httP9NUf1M/yaFXcupnfihJoe82jPHsnreRubcWboPoMvlQvhCm2hLhzxrWedqIOqLMI1Xg6Rr+ZCOqHbWa1FnCLo3v0hFC6/bimAEJickzU6DOEQwSu3pHRX6VEtIBptIZfq7QEBmlq0GOchuGAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bPDeT2Ba; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 40AF0C116B1;
+	Wed, 15 May 2024 13:40:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715780380;
-	bh=17blqijHRfRC3vxH1neCWLqBA7J+OA+Hm9veCyE5STQ=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ki78AE9XAAMtOh9Nkf1Pp5y5zmVJeprzd3VNs1f6hSE/n8u4cB+4gEoR7PE1nl2AM
-	 9onlpQqFBmKAriQRHBmlWjeJdKqyf0goRUzjVYlKzWLOvLO0J8+FGv9i6tvBVo0zv0
-	 1DhUWs2DEzmg5tCHHaWIW+p6ZsPvUaJg/5u+W91I713iJC6xpae+fefdGlUQsWsDAi
-	 4MOctzzNTiL3jEOU8z/QwRntx2rxh4LD2ARV6ZtPWsTXASoQeGD6uRoG2APerAybsk
-	 QBt3JgO9t458/FbhgNXMG0Z56pwzb1UUzBdE/3CdBbuebhVJ30L5HSbFjIXmLJ/wBF
-	 tQp4tQF2U/tCw==
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: linux-integrity@vger.kernel.org,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	James Prestwood <prestwoj@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	linux-crypto@vger.kernel.org (open list:CRYPTO API),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] crypto: rsa-pkcs1pad: export rsa1_asn_lookup()
-Date: Wed, 15 May 2024 16:39:30 +0300
-Message-ID: <20240515133933.8515-1-jarkko@kernel.org>
-X-Mailer: git-send-email 2.45.0
+	s=k20201202; t=1715780435;
+	bh=H3ltUsrKOQdu0Za2sRAFpqsHbjoXich3cTJVW0+VNxk=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=bPDeT2Ba20TH4OKv5kpZ4Mjx40CDUAJezN25PViqjcU7QJ3at4B0CzmnmdLxlpDYE
+	 yeT/yv4mz9gA7hRt0PZEADeizfw5kkSyei3Vf1JRhIDgab6O/LWNROORqZkSiELcmy
+	 33+jDS2hshqM+RR7gKduD3aHQHld/2RC2CuJnS7aOhJGyksj7vVXuiYpo5Rne5HraB
+	 sIVRmDGgECCPV91SanYaSvzIUaSjaJHFgAjT73vezryK9ubQ8t5CDYhxAt5hdc0yLE
+	 eDhTojB8eDnrUq7U70tCOLSWzRmw9Oa//+RLh4XjhygwYsA+gdUy1v6GtTzK8Ng+gW
+	 bFFx8b7g/EzEA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 38A30C4333A;
+	Wed, 15 May 2024 13:40:35 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,77 +51,47 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2 0/2] riscv: make image compression configurable
+From: patchwork-bot+linux-riscv@kernel.org
+Message-Id: 
+ <171578043522.14005.5445713768197740936.git-patchwork-notify@kernel.org>
+Date: Wed, 15 May 2024 13:40:35 +0000
+References: <20240504193446.196886-1-emil.renner.berthing@canonical.com>
+In-Reply-To: <20240504193446.196886-1-emil.renner.berthing@canonical.com>
+To: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-kbuild@vger.kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
+ masahiroy@kernel.org, nathan@kernel.org, nicolas@fjasle.eu, terrelln@fb.com
 
-ASN.1 template is required for TPM2 asymmetric keys, as it needs to be
-piggy-packed with the input data before applying TPM2_RSA_Decrypt. This
-patch prepares crypto subsystem for the addition of those keys.
+Hello:
 
-Later rsa_lookup_asn1() can be enabled in crypto/asymmetric_keys/Kconfig
-by:
+This series was applied to riscv/linux.git (for-next)
+by Palmer Dabbelt <palmer@rivosinc.com>:
 
-	depends on CRYPTO_RSA >= <TPM2 asymmetric keys>
+On Sat,  4 May 2024 21:34:37 +0200 you wrote:
+> Masahiro's patch[1] made me wonder why we're not just using KBUILD_IMAGE
+> to determine which (possibly compressed) kernel image to use in 'make
+> tar-pkg' like other architectures do. It turns out we're always setting
+> KBUILD_IMAGE to the uncompressed Image file and then compressing it into
+> the Image.gz file afterwards.
+> 
+> This series fixes that so the compression method is configurable and
+> KBUILD_IMAGE is set to the chosen (possibly uncompressed) kernel image
+> which is then used by targets like 'make install' and 'make bindeb-pkg' and
+> 'make tar-pkg'.
+> 
+> [...]
 
-Cc: James Prestwood <prestwoj@gmail.com>
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
- crypto/rsa-pkcs1pad.c         | 10 +++++++++-
- include/crypto/rsa-pkcs1pad.h | 11 +++++++++++
- 2 files changed, 20 insertions(+), 1 deletion(-)
- create mode 100644 include/crypto/rsa-pkcs1pad.h
+Here is the summary with links:
+  - [v2,1/2] riscv: make image compression configurable
+    https://git.kernel.org/riscv/c/c1f59d035966
+  - [v2,2/2] riscv: show help string for riscv-specific targets
+    https://git.kernel.org/riscv/c/5e3964ba8400
 
-diff --git a/crypto/rsa-pkcs1pad.c b/crypto/rsa-pkcs1pad.c
-index cd501195f34a..a07ccf179f56 100644
---- a/crypto/rsa-pkcs1pad.c
-+++ b/crypto/rsa-pkcs1pad.c
-@@ -7,6 +7,7 @@
- 
- #include <crypto/algapi.h>
- #include <crypto/akcipher.h>
-+#include <crypto/rsa-pkcs1pad.h>
- #include <crypto/internal/akcipher.h>
- #include <crypto/internal/rsa.h>
- #include <linux/err.h>
-@@ -101,7 +102,13 @@ static const struct rsa_asn1_template {
- 	{ NULL }
- };
- 
--static const struct rsa_asn1_template *rsa_lookup_asn1(const char *name)
-+/**
-+ * rsa_lookup_asn1() - Lookup the ASN.1 digest info given the hash
-+ * name:	hash algorithm name
-+ *
-+ * Returns theu ASN.1 digest info on success, and NULL on failure.
-+ */
-+const struct rsa_asn1_template *rsa_lookup_asn1(const char *name)
- {
- 	const struct rsa_asn1_template *p;
- 
-@@ -110,6 +117,7 @@ static const struct rsa_asn1_template *rsa_lookup_asn1(const char *name)
- 			return p;
- 	return NULL;
- }
-+EXPORT_SYMBOL_GPL(rsa_lookup_asn1);
- 
- struct pkcs1pad_ctx {
- 	struct crypto_akcipher *child;
-diff --git a/include/crypto/rsa-pkcs1pad.h b/include/crypto/rsa-pkcs1pad.h
-new file mode 100644
-index 000000000000..9881fa23d0dd
---- /dev/null
-+++ b/include/crypto/rsa-pkcs1pad.h
-@@ -0,0 +1,11 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * RSA padding templates.
-+ */
-+
-+#ifndef _CRYPTO_RSA_PKCS1PAD_H
-+#define _CRYPTO_RSA_PKCS1PAD_H
-+
-+const struct rsa_asn1_template *rsa_lookup_asn1(const char *name);
-+
-+#endif /* _CRYPTO_RSA_PKCS1PAD_H */
+You are awesome, thank you!
 -- 
-2.45.0
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
