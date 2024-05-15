@@ -1,127 +1,131 @@
-Return-Path: <linux-kernel+bounces-179868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E6428C66B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 15:00:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDBFD8C66CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 15:03:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18592283EE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 13:00:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A8A21C22C01
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 13:03:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59A4F85959;
-	Wed, 15 May 2024 13:00:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B98784D3F;
+	Wed, 15 May 2024 13:03:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="TEeTVv7C"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="T4S63KrV"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 102BA3BB4D;
-	Wed, 15 May 2024 13:00:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69E8084D0B
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 13:03:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715778003; cv=none; b=ui0/NL5Cxg0ZX/kA0hsM8mHMdLtXnlHv8PWOrHFafWqoSUm2roBLKDPYg3+YeY/P9K9CzvVFKw5KtnOuNKDdZZ3qCVmeMXBD+u8R78H+QbxKqNZXC5dILltw0vc7BKQCJkR7NfmwOaZUD4ylR2pwwlFmx2uJFCyUbeMaxT9rYXs=
+	t=1715778198; cv=none; b=e3ImMj1UNJAHnxzdQdcDKjEd1eYjOuUwQlIPy42R6e+6GYBJUyt2MbncnZCNavu9AxHz2dApwDnvibhYXPec+XwB+MxEB34r/lrPYUuNpv8Pl80DUWZzmBz+Zvj7kyupBt30M+0h/K1jngnmfk9RpJepC4ZRJqU+EVz7lHauQuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715778003; c=relaxed/simple;
-	bh=zywkICdLaNTDXdJI/rwjuI6SI68uWOHYP+ueXmHrQbM=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=FbN64hBqCdJJk73OJEZiiu0la/m9Sa4OX1hS18g7xUWPU/24iXxrgBjBBm3CKbZ/nxTkAoCxHxbQySYMHv+H9zFuA7WW93lrHXISw3HRcOY3E7YiFp85uFhiUo612hvbSVc5SfHkXPW2v/MY/fMN4A75nq2x6rrFH5vdaSgYG+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=TEeTVv7C; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44F9SrQx016508;
-	Wed, 15 May 2024 12:59:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- subject : to : cc : references : from : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=pp1;
- bh=utdxrJinQ3y3ssW67uY8/Vj2gKWk7dVKOdUrx/aByzo=;
- b=TEeTVv7CfS7LIh1J0XHjvyUbr/hk3lJtfWgJK0M0nTGdwCUknp1BqL+wceuIqAcU56rl
- i/w9NPn6fKdkLJFkVBhCc4gLIN0vMgeLJ3M3G4DtLfJxpW1DwiX5+myGBuvikgNIiF7Z
- xLF5VJNsE01TrfA5sVJk5Po/XT/L3Ha+QmJ6ERDvdP0W4zeH2i0QQbxsBTfWWAovEXXm
- DOnG1Z99Xy6ayDR3909a8HVMbG3dQZ9bExJuHp8YrMJI7DA1MCMZQjAo1YnNB0a+CnqZ
- sHCbE8sTSqejJCFKb+Se1wgar/krjASe0jHD39t9nFckKgzKaA9T8gTpTGtmcoL1sK3+ sA== 
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y4te9rgrt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 15 May 2024 12:59:44 +0000
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44FA70pQ006132;
-	Wed, 15 May 2024 12:59:43 GMT
-Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3y2nq2u836-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 15 May 2024 12:59:43 +0000
-Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
-	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44FCxeB450856216
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 15 May 2024 12:59:42 GMT
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 064FD58054;
-	Wed, 15 May 2024 12:59:40 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C27A45805D;
-	Wed, 15 May 2024 12:59:38 +0000 (GMT)
-Received: from [9.67.88.41] (unknown [9.67.88.41])
-	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 15 May 2024 12:59:38 +0000 (GMT)
-Message-ID: <3d857119-8eb4-4dc0-8543-f30922d53187@linux.ibm.com>
-Date: Wed, 15 May 2024 07:59:38 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] crypto: X25519 low-level primitives for ppc64le.
-To: Andy Polyakov <appro@cryptogams.org>, linux-crypto@vger.kernel.org
-Cc: herbert@gondor.apana.org.au, leitao@debian.org, nayna@linux.ibm.com,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        mpe@ellerman.id.au, ltcgcw@linux.vnet.ibm.com, dtsen@us.ibm.com
-References: <20240514173835.4814-1-dtsen@linux.ibm.com>
- <20240514173835.4814-2-dtsen@linux.ibm.com>
- <dc5aadc2-308d-4f24-8a59-45da21b8b2e5@cryptogams.org>
-Content-Language: en-US
-From: Danny Tsen <dtsen@linux.ibm.com>
-In-Reply-To: <dc5aadc2-308d-4f24-8a59-45da21b8b2e5@cryptogams.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: DlR67ri-zm08JTzNj0Bkvc7vRlejwpzl
-X-Proofpoint-ORIG-GUID: DlR67ri-zm08JTzNj0Bkvc7vRlejwpzl
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1715778198; c=relaxed/simple;
+	bh=rPRT0MsdY9af2mGauqLnrYy4g8q//Ph0rBvWLrVQuCs=;
+	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
+	 MIME-Version:Content-Type; b=bqNZfsR2DlIvt54EfnWMqzF2SJlJRPKZItAxRR8R3jVxfQiGYYTGJqS59Y3WKdmEWGxdgagoGHghFerzU0olzM02cpn+uUUwsatYK3+EOoM2vF5jixOcGpNbDLHrbhu+2t1apmm5nlPKdOIvCinfvqQLvwG1yrrWwHKFh19XuBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=T4S63KrV; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-41fc2f7fbb5so37857585e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 06:03:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1715778194; x=1716382994; darn=vger.kernel.org;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
+        bh=vlvP4Aa3+nQGmGgcIFiojH5cc2twOueCv7IOqtUVD84=;
+        b=T4S63KrVY6EmtTcQeta10Gr6N72BYFfiSoNm9VRMGg/mXU5D2AWmeVk1+/7MXzXWl5
+         nUSWFTn4WpNmZseP+yz1B8lbsyC1WGa+GtH5NwoF8lIAMOU5i90wKMi2uqY8z0IfVDmE
+         2c7/TH6b9GNL8/w5B57HF56kba5SRmQ+AhI8X/vgqUQjNUZzVIJnEKp+0usTZKl7Qtt5
+         IcstSwE/hvsEXxd810PY7Jv+2qQVc5oFRbjeeD7YnuydQzmkwHsjx14Y70aSa5iHGXAW
+         L/fptVds/i3fyM6Wtl97TFLp7ncJ8BEdFZdiQybNuE0vU5ersBkcH8cfWObjay6kJPXR
+         A4zA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715778194; x=1716382994;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vlvP4Aa3+nQGmGgcIFiojH5cc2twOueCv7IOqtUVD84=;
+        b=a4rR8jjxVFUxYjKPr1FxWHTBWTYFy+gYHnOe6sqxee/avpFXyf3MWirLa2o3xnuvhK
+         AFwP8EBdKneRwXkJ8ve+Nh+Iq0+AVa8Y8QrinlUBCQIh1UHHbsxcKR4G/f+iCdYI13gj
+         cF0kFtZYB27MsRnimTu7Q3U5ju8QCS2TVgBN05guKkqQ2BU0Qo2o8LERvbMGRdVAf3Mt
+         QVXOMLP0FyYvDE2KSgQRCdkJvtT+QJ65MYQo823teCffcE3zdJark/ERSJvDtNEoDK/U
+         NzXRVSv1e5wIhQvJYVyXSFNu6/jVs8ee6FoKcvDxkS9JSTrLCkDXQxNkrrO4OXN4Qv/v
+         Rb/w==
+X-Forwarded-Encrypted: i=1; AJvYcCXvH4xOnMvHb+oLyDU8IEkZgaB6SR+zukxFUz9c2oqXGhv1yB+Q4yl496st4Soegvz6oXeODKlF6yB2YtPkCZwIny2Oq+gzChlbqr82
+X-Gm-Message-State: AOJu0YyZqDIYM5XnGbCGjKXzTZNTMHsBRpNQJMX6gvFWkI9ziwo7eEAm
+	9PN8PEf+bmgtK9GPnOqGUtTJAczA5Bi6OGmDrx84dN87/eneKPqy95qg0hBo7ac=
+X-Google-Smtp-Source: AGHT+IFd1u7hHWUOgkLnsccx8x9MoqmA5KeoD0+FaBvMmlYandqrEjUD4CsLZc7fApcCVFV1xfjlyg==
+X-Received: by 2002:a05:600c:4f06:b0:418:2981:c70f with SMTP id 5b1f17b1804b1-41fbcfb8473mr168925435e9.19.1715778194502;
+        Wed, 15 May 2024 06:03:14 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:2893:1a8f:5988:776a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41fccbe9011sm232644255e9.7.2024.05.15.06.03.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 May 2024 06:03:13 -0700 (PDT)
+References: <87o79azh65.wl-kuninori.morimoto.gx@renesas.com>
+ <20240514143116.3824376-1-jbrunet@baylibre.com>
+ <46daae9b-10dc-4f49-8a25-c387d03ae87a@sirena.org.uk>
+ <87seyk2dmh.wl-kuninori.morimoto.gx@renesas.com>
+User-agent: mu4e 1.10.8; emacs 29.2
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Jerome Brunet <jbrunet@baylibre.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org,
+ linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org
+Subject: Re: [PATCH RFC] ASoC: amlogic: do not use dpcm_playback/capture flags
+Date: Wed, 15 May 2024 15:01:35 +0200
+In-reply-to: <87seyk2dmh.wl-kuninori.morimoto.gx@renesas.com>
+Message-ID: <1jpltnxm5r.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-15_06,2024-05-15_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=999
- phishscore=0 adultscore=0 priorityscore=1501 malwarescore=0 clxscore=1015
- bulkscore=0 spamscore=0 suspectscore=0 impostorscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
- definitions=main-2405150090
+Content-Type: text/plain
 
-Thank you Andy.  Will fix this.
 
-On 5/15/24 3:11 AM, Andy Polyakov wrote:
-> Hi,
+On Tue 14 May 2024 at 23:11, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com> wrote:
+
+> Hi
 >
-> Couple of remarks inline.
+>> > dpcm_playback/capture flags are being deprecated in ASoC.
+>> > Use playback/capture_only flags instead
+>> > 
+>> > Suggested-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>> > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+>> > ---
+>> > 
+>> > Following Kuninori's series, dpcm_playback/capture will be ignored.
+>> > However, properly disabling stream direction is important for Amlogic
+>> > audio drivers.
+>> > 
+>> > I'm not too sure how this should be applied to avoid breaking bisect,
+>> > before or after Kuninori's series. Maybe it should be merged into it ?
+>> 
+>> Probably better to integrate it I think?
 >
->> +# [1] https://www.openssl.org/~appro/cryptogams/
+> ASoC needs dpcm_xxx flag *before* my patch.
+> Your patch is replacing it to xxx_only flag, so it should be applied
+> *after* my patch. So integrate/merge is good idea, I think.
+
+Ok. Then I guess it is up to you and Mark.
+Please let me know if you need me for anything.
+
+Cheers
+
 >
-> https://github.com/dot-asm/cryptogams/ is arguably better reference.
+> Thank you for your help !!
 >
->> +SYM_FUNC_START(x25519_fe51_mul)
->> +.align    5
->
-> The goal is to align the label, not the first instruction after the 
-> directive. It's not a problem in this spot, in the beginning of the 
-> module that is, but further below it's likely to inject redundant nops 
-> between the label and meaningful code. But since the directive in 
-> question is not position-sensitive one can resolve this by changing 
-> the order of the directive and the SYM_FUNC_START macro.
->
-> Cheers.
->
+> Best regards
+> ---
+> Renesas Electronics
+> Ph.D. Kuninori Morimoto
+
+
+-- 
+Jerome
 
