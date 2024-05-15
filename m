@@ -1,185 +1,123 @@
-Return-Path: <linux-kernel+bounces-180031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49A3B8C6913
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:57:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5338E8C6915
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:58:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7866C283A49
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 14:57:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F428283D7E
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 14:58:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CA8B155744;
-	Wed, 15 May 2024 14:57:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8367415573C;
+	Wed, 15 May 2024 14:58:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dgI4gCrh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WSTDR7vc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 926A81E480;
-	Wed, 15 May 2024 14:57:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C750E1E480
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 14:58:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715785062; cv=none; b=ucax1CJey5L551qdry2hehaCZ8Qi762hNWG3OZy8mQMEdQ3oXA5iHnd7IHHl0P6DkvpKPD/kranl4WGYA7mxeAI296Rol/luySJonVeIjGGAMMN8HU1kHtEG7UjWpbw0BRvxL1UIQagtN8fpWY2fnUxN/CYC0jbRLK6J3HmQ0rU=
+	t=1715785123; cv=none; b=VgGg7VOGmnheeW1wjddlmRMAODyn/ma3K9Kq5iRGmfOYn+xPNB1M/VFpbm9tr2Zv9TyGHHgGG7FcfF4PMuQ2CcCoZ7DZFRhCJi/DudCRTUEN6Spj+dlmyQAxa/num61bO0NENtVLORo2q1R1c610lZSJcSBaNq3Brzh1DQ6fTTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715785062; c=relaxed/simple;
-	bh=WZoYbqGGnOPQEjzC3t94VjU0p7tCnohke6zY104Itrk=;
+	s=arc-20240116; t=1715785123; c=relaxed/simple;
+	bh=H4fvttaW5ayZbuhZGdEunUdzP2phRBo1WR9XclwqbBA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kOFhEeiiQJRzi/hOfAcsc7A2jGwCBrvIcrQPdhJDVbet/IGobrFypMW+1UpQ+IOMuhohk6zQ7D+swNviiTa9O+0AiEBo1ZFPX287imc8nS12fj+i1w66NG+ufpQ8eNZOlNKqc5AAGFWaSAMMcs3YKWx0SKvJr5FR2fyOAd2lg88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dgI4gCrh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18897C116B1;
-	Wed, 15 May 2024 14:57:42 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=mg5+wG2g9dyd4CkyrOM3KoXdariiMeWkG394varZFoWxk/bnaPSSvuo20RYCFlqdJ9cPWcO1+UqFPMAsmF3FlgriqSA4eR61h42nv3mY9MPXts8pokL3TXecW+aY96Up7LM2TgC3lT2KFw3LSqb7R/HMBUwIOxM/LW709KfTEqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WSTDR7vc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6AF9C116B1;
+	Wed, 15 May 2024 14:58:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715785062;
-	bh=WZoYbqGGnOPQEjzC3t94VjU0p7tCnohke6zY104Itrk=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=dgI4gCrhm8ErfM11kskowGtGU8gXHhXctsKdQ//nEYfJmqUINpSzyGocVth4T8O+S
-	 6r34N50hcA6BI5OpysiZAV0F7tOBtIwyWxEtRTVvuW5udYhX1q3Akx0bwypugodVSr
-	 HPQyQlnCIi33KvUPHjJIWBg4DYI2BOTm1U7VVWL67o6AZiVo1ytt3YnGiW+84WYM4w
-	 OYRU0HGC7DEtnzjEH8YrHTsFxUisoJkdSjMGS7DUDJ/3ekkGD/P9aMQa0jcuTKZvnH
-	 71SAJ8sNH02NEfafNORz4gL1rMQVv5bobaWtPBpXDs91EGw6u88Yfi4QkwS9nVWXtk
-	 8dw6KyydEb3ow==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 46BE9CE0443; Wed, 15 May 2024 07:57:41 -0700 (PDT)
-Date: Wed, 15 May 2024 07:57:41 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Leonardo Bras <leobras@redhat.com>
-Cc: Sean Christopherson <seanjc@google.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Marcelo Tosatti <mtosatti@redhat.com>, linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org
-Subject: Re: [RFC PATCH 1/1] kvm: Note an RCU quiescent state on guest exit
-Message-ID: <17ebd54d-a058-4bc8-bd65-a175d73b6d1a@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240511020557.1198200-1-leobras@redhat.com>
- <ZkJsvTH3Nye-TGVa@google.com>
- <CAJ6HWG7pgMu7sAUPykFPtsDfq5Kfh1WecRcgN5wpKQj_EyrbJA@mail.gmail.com>
- <68c39823-6b1d-4368-bd1e-a521ade8889b@paulmck-laptop>
- <ZkQ97QcEw34aYOB1@LeoBras>
+	s=k20201202; t=1715785123;
+	bh=H4fvttaW5ayZbuhZGdEunUdzP2phRBo1WR9XclwqbBA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WSTDR7vcNt1KrNEwvkAlMGG6a0Qo9/t5SF3cOP3RroxNld3mBPBTaWAapgj38N44L
+	 UMezzf6AULi4TxjtPWMNzRZVgxEQaoMKYffcIyBTZhl2VTXhK43lSWXiwuy4HREKBq
+	 xSbw5wfswH747qb3wIBb0Ny8u7hw+HRZGY1vvc5amWd0juw1oEkSdFYQH9L3jPId2/
+	 BMJPGj9yU2c1t63t/Amii0IcXTRm8qzG9T0Je1lzj+RrA2aXcdZT/Kt8C2CzDCgG0d
+	 hQXWc+/nYJz3uOr4JNwaaJDcWxYu8DF6d+gNg6jH3KCXTlH8MpD7r9Bvkwfm42ITaV
+	 eaMvBA5I+vMdw==
+Date: Wed, 15 May 2024 16:58:40 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Sui Jingfeng <sui.jingfeng@linux.dev>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] drm/bridge: Add 'struct device *' field to the
+ drm_bridge structure
+Message-ID: <20240515-copper-chimpanzee-of-fortitude-ff3dab@penduick>
+References: <20240514154045.309925-1-sui.jingfeng@linux.dev>
+ <20240514-scarlet-corgi-of-efficiency-faf2bb@penduick>
+ <c44480ab-8d6b-4334-8eba-83db9b30ff1a@linux.dev>
+ <20240515-fair-satisfied-myna-480dea@penduick>
+ <d394ee32-4fa4-41a8-a5ca-c1c7f77f44d2@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="nnqcwypgq74a2js6"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZkQ97QcEw34aYOB1@LeoBras>
+In-Reply-To: <d394ee32-4fa4-41a8-a5ca-c1c7f77f44d2@linux.dev>
 
-On Wed, May 15, 2024 at 01:45:33AM -0300, Leonardo Bras wrote:
-> On Tue, May 14, 2024 at 03:54:16PM -0700, Paul E. McKenney wrote:
-> > On Mon, May 13, 2024 at 06:47:13PM -0300, Leonardo Bras Soares Passos wrote:
-> > > On Mon, May 13, 2024 at 4:40 PM Sean Christopherson <seanjc@google.com> wrote:
-> > > >
-> > > > On Fri, May 10, 2024, Leonardo Bras wrote:
-> > > > > As of today, KVM notes a quiescent state only in guest entry, which is good
-> > > > > as it avoids the guest being interrupted for current RCU operations.
-> > > > >
-> > > > > While the guest vcpu runs, it can be interrupted by a timer IRQ that will
-> > > > > check for any RCU operations waiting for this CPU. In case there are any of
-> > > > > such, it invokes rcu_core() in order to sched-out the current thread and
-> > > > > note a quiescent state.
-> > > > >
-> > > > > This occasional schedule work will introduce tens of microsseconds of
-> > > > > latency, which is really bad for vcpus running latency-sensitive
-> > > > > applications, such as real-time workloads.
-> > > > >
-> > > > > So, note a quiescent state in guest exit, so the interrupted guests is able
-> > > > > to deal with any pending RCU operations before being required to invoke
-> > > > > rcu_core(), and thus avoid the overhead of related scheduler work.
-> > > >
-> > > > Are there any downsides to this?  E.g. extra latency or anything?  KVM will note
-> > > > a context switch on the next VM-Enter, so even if there is extra latency or
-> > > > something, KVM will eventually take the hit in the common case no matter what.
-> > > > But I know some setups are sensitive to handling select VM-Exits as soon as possible.
-> > > >
-> > > > I ask mainly because it seems like a no brainer to me to have both VM-Entry and
-> > > > VM-Exit note the context switch, which begs the question of why KVM isn't already
-> > > > doing that.  I assume it was just oversight when commit 126a6a542446 ("kvm,rcu,nohz:
-> > > > use RCU extended quiescent state when running KVM guest") handled the VM-Entry
-> > > > case?
-> > > 
-> > > I don't know, by the lore I see it happening in guest entry since the
-> > > first time it was introduced at
-> > > https://lore.kernel.org/all/1423167832-17609-5-git-send-email-riel@redhat.com/
-> > > 
-> > > Noting a quiescent state is cheap, but it may cost a few accesses to
-> > > possibly non-local cachelines. (Not an expert in this, Paul please let
-> > > me know if I got it wrong).
-> > 
-> > Yes, it is cheap, especially if interrupts are already disabled.
-> > (As in the scheduler asks RCU to do the same amount of work on its
-> > context-switch fastpath.)
-> 
-> Thanks!
-> 
-> > 
-> > > I don't have a historic context on why it was just implemented on
-> > > guest_entry, but it would make sense when we don't worry about latency
-> > > to take the entry-only approach:
-> > > - It saves the overhead of calling rcu_virt_note_context_switch()
-> > > twice per guest entry in the loop
-> > > - KVM will probably run guest entry soon after guest exit (in loop),
-> > > so there is no need to run it twice
-> > > - Eventually running rcu_core() may be cheaper than noting quiescent
-> > > state every guest entry/exit cycle
-> > > 
-> > > Upsides of the new strategy:
-> > > - Noting a quiescent state in guest exit avoids calling rcu_core() if
-> > > there was a grace period request while guest was running, and timer
-> > > interrupt hits the cpu.
-> > > - If the loop re-enter quickly there is a high chance that guest
-> > > entry's rcu_virt_note_context_switch() will be fast (local cacheline)
-> > > as there is low probability of a grace period request happening
-> > > between exit & re-entry.
-> > > - It allows us to use the rcu patience strategy to avoid rcu_core()
-> > > running if any grace period request happens between guest exit and
-> > > guest re-entry, which is very important for low latency workloads
-> > > running on guests as it reduces maximum latency in long runs.
-> > > 
-> > > What do you think?
-> > 
-> > Try both on the workload of interest with appropriate tracing and
-> > see what happens?  The hardware's opinion overrides mine.  ;-)
-> 
-> That's a great approach!
-> 
-> But in this case I think noting a quiescent state in guest exit is 
-> necessary to avoid a scenario in which a VM takes longer than RCU 
-> patience, and it ends up running rcuc in a nohz_full cpu, even if guest 
-> exit was quite brief. 
-> 
-> IIUC Sean's question is more on the tone of "Why KVM does not note a 
-> quiescent state in guest exit already, if it does in guest entry", and I 
-> just came with a few arguments to try finding a possible rationale, since 
-> I could find no discussion on that topic in the lore for the original 
-> commit.
 
-Understood, and maybe trying it would answer that question quickly.
-Don't get me wrong, just because it appears to work in a few tests doesn't
-mean that it really works, but if it visibly blows up, that answers the
-question quite quickly and easily.  ;-)
+--nnqcwypgq74a2js6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-But yes, if it appears to work, there must be a full investigation into
-whether or not the change really is safe.
+On Wed, May 15, 2024 at 10:53:00PM +0800, Sui Jingfeng wrote:
+> On 5/15/24 22:30, Maxime Ripard wrote:
+> > On Wed, May 15, 2024 at 12:53:33AM +0800, Sui Jingfeng wrote:
+> > > On 2024/5/15 00:22, Maxime Ripard wrote:
+> > > > Hi,
+> > > >=20
+> > > > On Tue, May 14, 2024 at 11:40:43PM +0800, Sui Jingfeng wrote:
+> > > > > Because a lot of implementations has already added it into their =
+drived
+> > > > > class, promote it into drm_bridge core may benifits a lot. drm br=
+idge is
+> > > > > a driver, it should know the underlying hardware entity.
+> > > > Is there some actual benefits, or is it theoretical at this point?
+> > >=20
+> > >=20
+> > > I think, DRM bridge drivers could remove the 'struct device *dev'
+> > > member from their derived structure. Rely on the drm bridge core
+> > > when they need the 'struct device *' pointer.
+> >=20
+> > Sure, but why do we need to do so?
+> >=20
+> > The other thread you had with Jani points out that it turns out that
+> > things are more complicated than "every bridge driver has a struct
+> > device anyway", it creates inconsistency in the API (bridges would have
+> > a struct device, but not other entities), and it looks like there's no
+> > use for it anyway.
+> >=20
+> > None of these things are deal-breaker by themselves, but if there's only
+> > downsides and no upside, it's not clear to me why we should do it at al=
+l.
+>
+> It can reduce boilerplate.
 
-							Thanx, Paul
+You're still using a conditional here.
 
-> Since noting a quiescent state in guest exit is cheap enough, avoids rcuc 
-> schedules when grace period starts during guest execution, and enables a 
-> much more rational usage of RCU patience, it's a safe to assume it's a 
-> better way of dealing with RCU compared to current implementation.
-> 
-> Sean, what do you think?
-> 
-> Thanks!
-> Leo
-> 
-> > 
-> > 							Thanx, Paul
-> > 
-> 
+Maxime
+
+--nnqcwypgq74a2js6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZkTNnwAKCRAnX84Zoj2+
+dpZCAYCvwVAwC/xH/sNA6jr+W48uYJHUiGFm1EaRagcrEpn+Vmm6ntjQFe8LLIpl
+eQetDGgBgN4V7i9OmkXkcdhGNkhsT/oGnh3L3/mF7PFNx89Z5mm5Cnw9b0axTGbn
+lAqrW3gWLg==
+=4/O0
+-----END PGP SIGNATURE-----
+
+--nnqcwypgq74a2js6--
 
