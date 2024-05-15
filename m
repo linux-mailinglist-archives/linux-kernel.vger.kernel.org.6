@@ -1,101 +1,126 @@
-Return-Path: <linux-kernel+bounces-179518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F05698C60BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:24:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F23D18C60C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:26:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7BB11B219CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:24:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8FCD0B2190F
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:26:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E43F3BBE6;
-	Wed, 15 May 2024 06:23:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E19953C062;
+	Wed, 15 May 2024 06:26:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="JJXSQ3uY"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GdcrR6x9"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1242D3BB4D;
-	Wed, 15 May 2024 06:23:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E766F1E869;
+	Wed, 15 May 2024 06:26:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715754230; cv=none; b=Fibemo+3CuvsroWN0JWejxlU4WjVZi2KhOBM8eHkDTNssQKaW/dy5wKXV+RdUnZzIYwy6mEulDCj/ozeSwQoz03lOySV6/EnTcTgopj25HORxJVAP/g1j6B4FTpcXdtJhD1FLNnh9jz7WumtlLiqbYjebinxRbgt43kik+7dQMk=
+	t=1715754394; cv=none; b=BsL72DDtN1BGZmnB3dGaklJpnvCYJ2IZjFQuhFzY8km0ZKViU0SSt72NlKHYXrP7CR4M9G4XiEV1Uc5NjBrlNbV48Kac+sgnjOWpfRXFLZSqUonnFFiHEp2AfCg2TjnaJOKo4Rhor6ENaEZ7eqnNkL3P2lGxI6tENOzl5/LXotg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715754230; c=relaxed/simple;
-	bh=+fR3/NxAITdhdq3Ycr1Czm/xkzyiUXiiJ++SU9SO1o8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=X8JSblCXAbAOsaM5m2B1JsAhMn18FkPcc5uNEeE/+UNgWvSFw5NlptJidINmzyzTRCwoQTogFIoPw8uftdGHnaVsH6CcSMWSarlsXED5RXsoMtPd0vJl8H34G5kR0UL8lmRORWbqQ6FsyscLJmBeWmOOQmrxDA6CqvB8LF1yUq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=JJXSQ3uY; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=+fR3/NxAITdhdq3Ycr1Czm/xkzyiUXiiJ++SU9SO1o8=;
-	t=1715754228; x=1716963828; b=JJXSQ3uYfIAk/qeCNjRdcpf+S43VPjgZEKY7Tgr0NfXKNET
-	zrEiudhNJJW+qXHSmDRyzFftXTY8K91gXFsSCYQ0kBkbINcm5zQcjnj2pX3SYpr4plS+/DLSN+ebT
-	ap7ac54ZqfMDKPz57rJKlbZboVzW9iOhyQp8SjA1Rd+8+WiT0Jg+6ICj+vRkIJl9+WI3gnFrLkEBP
-	r6sjFd6tiJ7FX1JTFbEGg6nV2SJzwfBqnSTtMWlRm6gBu0ihdqhuTOafusb/mU6l16Klu4w6PL1Eh
-	tuyPH/278vtKmDbwt0i6hPl/qrsNAqjaOy6JSDR+J32LKmEgph9kAVgkiaH0Ml3Q==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.97)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1s7837-00000005zBf-1jNr;
-	Wed, 15 May 2024 08:23:37 +0200
-Message-ID: <60fe8df750a74331b8a54a76d55d5e8349ac46b4.camel@sipsolutions.net>
-Subject: Re: [REGRESSION] MT7915E doesn't work any more with v6.9
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Oleksandr Natalenko <oleksandr@natalenko.name>, 
-	linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, "Linux
-	regression tracking (Thorsten Leemhuis)"
-	 <regressions@leemhuis.info>
-Cc: linux-mediatek@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org,  Felix Fietkau <nbd@nbd.name>,
- Lorenzo Bianconi <lorenzo@kernel.org>, Ryder Lee <ryder.lee@mediatek.com>,
- Shayne Chen <shayne.chen@mediatek.com>, Sean Wang <sean.wang@mediatek.com>,
- Kalle Valo <kvalo@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Peter
- Chiu <chui-hao.chiu@mediatek.com>, StanleyYP Wang
- <StanleyYP.Wang@mediatek.com>,  Linux regressions mailing list
- <regressions@lists.linux.dev>
-Date: Wed, 15 May 2024 08:23:35 +0200
-In-Reply-To: <2341660.ElGaqSPkdT@natalenko.name>
-References: <6061263.lOV4Wx5bFT@natalenko.name>
-	 <2341660.ElGaqSPkdT@natalenko.name>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+	s=arc-20240116; t=1715754394; c=relaxed/simple;
+	bh=wEmn7uinhHT5RrRKL1/oFUCkOWbFeSQCbSn3qfR9dns=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qXXwuBJgbdujSCOBRz4nv5lowe2DZ5c7xIRlURj7gMg6iv7HktA366ER2VXiXxNpiUru4/+oBB5Fk14kxoJQNQT1vh5ESNhppIEdlMOObTWIMgnatL96Y4wCp8uyLiv8a8oo1+hOzbNSa+yvcF2Sz4I7uYoRABm2IpxCsOs934Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GdcrR6x9; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-5dca1efad59so4858469a12.2;
+        Tue, 14 May 2024 23:26:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715754392; x=1716359192; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FNSS98dUDgaOW4gwnCppO+ukaIIrb3BrPgBTEKeKqig=;
+        b=GdcrR6x9xSz8T2/Opqlm2yTxt6khZ2ndshOHMQWbAJE6b4iGFJ6krmCN/fRykOeDme
+         XX8n93Mf2d+2wqi316cScc8T7D7gX6hOQDppNRLq7Ka6xiI3r70TV8L1J4wHiD+9aPAc
+         ry0A8ZmW9ulzaDchTfGcFWIoGfERKtKSOcGOVUVqeNcvMR/4Wl5OrPPoPQw+bkiK/XWB
+         pIN0l+qbr123/xaTK+61o1fvx0vQB+GR7lL0Rg3sBwqJDBttP1opfrqPCp9mnILv4jAR
+         T5ygsWAelHa6CIzUC8VgvasIIKVzR4lx5TJ7IBnTXNIcBeXCWvPOMtzZX8qT13AIJu9C
+         g2dw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715754392; x=1716359192;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FNSS98dUDgaOW4gwnCppO+ukaIIrb3BrPgBTEKeKqig=;
+        b=EAWOc+YNIWey21qvOG2uCSRxpLb+W1XcB3r80w+vpgpLtEdt6/ZXxLWa8bdo8LvEm3
+         5uRIGLrBcF0NC1RwsxdsbM2w9h0Md3VGPsYxoRwWNvHcsZKLQqkwyp3L4lNAuKPl6h6p
+         zpCwFZr6C6u4Bs6SnqGTpHWwnQnLcJ0WwaF9syROzWcfRm/BeP4WTaBtv6p8EDYP66Wz
+         QRGfIIFaT3ruTomcH7Y4q8rMakMFWdyZHKtXAam0oD4m3P2Vf+Tz/NJ+yqt+0jfGhPfl
+         QGOa90/ORabt/XalAIB99YKrBQJacBuy5GYVpyCusJM1wRv6SDMzDdtUjUyIFYv+EAPu
+         wWow==
+X-Forwarded-Encrypted: i=1; AJvYcCW6O5gDrSRuCdx1LYU7SOMzpvIu1K7+lMXQMaqJwdXSB67BVaG2l2H+q56q2oOUrSD8w0dnDg4S4jVoWhU3S44Rts6kPn57n9Z/djFSHN27WfQxRzwlz8QfXx0ORgKnEUTuv9RjWWvUk4ZEHATrzc7bnTYoARM/fkXR
+X-Gm-Message-State: AOJu0YyFd24wmQR+RWEG1w2F7VS909h/xOin3kQcBztp3wUyz9gHiag7
+	vqKUeVyIPU6Om1Gt1v9tmbmDtDKhwjvjF7Bz/CK1fghE9G2/ggNckeUUSB83LBnBJBhOyG4ynEd
+	aUDbhn42MjjEZJefqDJpzURdlzXv/tw==
+X-Google-Smtp-Source: AGHT+IGS5QQgMT/E9JYxOpB3OzRVvnPrjXGJ9zhz/XOe6dI0duHI2p45UY6BO9cyTr9ZWdHU0vv3hgdcIxELbYosh+g=
+X-Received: by 2002:a05:6a20:6f89:b0:1af:cdc5:dfbd with SMTP id
+ adf61e73a8af0-1afde0d230cmr13773821637.14.1715754392207; Tue, 14 May 2024
+ 23:26:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+References: <20240514231155.1004295-1-kuba@kernel.org> <CAHk-=wiSiGppp-J25Ww-gN6qgpc7gZRb_cP+dn3Q8_zdntzgYQ@mail.gmail.com>
+ <CAHk-=wj2ZJ_YE2CWJ6TXNQoOm+Q6H5LpQNLWmfft+SO21PW5Bg@mail.gmail.com>
+In-Reply-To: <CAHk-=wj2ZJ_YE2CWJ6TXNQoOm+Q6H5LpQNLWmfft+SO21PW5Bg@mail.gmail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Wed, 15 May 2024 00:26:20 -0600
+Message-ID: <CAEf4BzbysejYpfcdRrpYc0yHTgZ2YcnGdyWQ-13qmJeDzVNS_g@mail.gmail.com>
+Subject: Re: [GIT PULL] Networking for v6.10
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Jakub Kicinski <kuba@kernel.org>, davem@davemloft.net, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, pabeni@redhat.com, bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 2024-05-15 at 00:51 +0200, Oleksandr Natalenko wrote:
-> Also /cc Johannes because of this commit:
->=20
-> 6092077ad09ce wifi: mac80211: introduce 'channel request'
->=20
-> On st=C5=99eda 15. kv=C4=9Btna 2024 0:43:40, SEL=C4=8C Oleksandr Natalenk=
-o wrote:
-> > Hello Felix, Lorenzo et al.
-> >=20
-> > With v6.9 kernel the following card:
-> >=20
-> > 01:00.0 Unclassified device [0002]: MEDIATEK Corp. MT7915E 802.11ax PCI=
- Express Wireless Network Adapter [14c3:7915]
-> >=20
-> > doesn't work any more. Upon mt7915e module insertion the following spla=
-t happens:
-> >=20
+On Tue, May 14, 2024 at 10:06=E2=80=AFPM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Tue, 14 May 2024 at 20:32, Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> >
+> > Why does it do that disgusting
+> >
+> >         struct bpf_array *array =3D container_of(map, struct bpf_array,=
+ map);
+> >         ...
+> >                 *insn++ =3D BPF_ALU32_IMM(BPF_AND, BPF_REG_0, array->in=
+dex_mask);
+> >
+> > thing? As far as I can tell, a bpf map can be embedded in many
+> > different structures, not just that 'bpf_array' thing.
+>
+> Bah. It still needs to do that array->elem_size, so it's not just the
+> spectre-v1 code that needs that 'bpf_array' thing.
+>
+> And the non-percpu case seems to do all the same contortions, so I
+> don't know why the new percpu array would show issues.
 
-6.9 didn't get commit 2f7cf3b61d85 ("wifi: mt76: mt7915: add missing
-chanctx ops")? Huh?
+There is a special check for non-percpu arrays (ops =3D=3D &array_map_ops
+check), which was missed and not updated for percpu arrays,
+unfortunately. I've added more map-in-map combinations to our tests so
+this can be caught sooner. Good thing Jakub tested in our production
+setup so we could catch this sooner!
 
-johannes
+>
+> Oh well. I guess the bpf people will figure it out once they come back
+> from "partying at LSFMM" as you put it.
+
+Not much partying today, but the day was still quite hectic, sorry for
+delays. Just sent out the fix (rebased on top of the latest
+net-next/main).
+
+>
+>            Linus
+>
 
