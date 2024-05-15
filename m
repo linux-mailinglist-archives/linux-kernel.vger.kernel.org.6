@@ -1,350 +1,129 @@
-Return-Path: <linux-kernel+bounces-179374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 327528C5F68
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 05:32:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92B0C8C5F6B
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 05:32:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55F4D1C211E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 03:32:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25A601F21A83
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 03:32:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23ADE381AA;
-	Wed, 15 May 2024 03:32:27 +0000 (UTC)
-Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A0CB3839C;
+	Wed, 15 May 2024 03:32:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="IQFb+fnc"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94095374C3
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 03:32:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B874B38385
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 03:32:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715743946; cv=none; b=Cx5pX91KwJr3T8sS12poQTNaZt+AWpDD4WNMdzcy64mHD+29DBcirQqQxNbnI53D8HFrH3JCFh15A2PimlRUraNBiH4wEDUwLnCV7PLCcZusQ8fBjMQ2K44wOS53A1U4xCTekNBqZZkawp72t3lSVA8l6lxBVL23QmobclbgvN0=
+	t=1715743965; cv=none; b=GxuAm09lltvPzGBiDuks2yz30CYhazzuKmSNkh5AID+Ye3QOgcJfQXfGXhb6v7j52Im3Qs7hLRK8anHAQX99pLBl8xJu4I6MEHIPPbzdLcS6VdXGHJ7LfqUrXSM39Jqak59dUCquVr69zdRzr8gww14NtzaV8KVj3yoQ6l8TQRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715743946; c=relaxed/simple;
-	bh=PFWUFl5xs/gFdfGkAdAl3OzIOKpEu4Qy25iqSWO8fJ4=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Rfh8rUMBsYnYW2d5LZSN+FNmKfi/G6tCyza9fFbTW1HFcfjwG+m85TES2VzcEGj/CwM2S2DkjDy6ebv6hXRW7AdZsezHoIPJ4c3QUgc4o87CST2nXLUrF6+/W2ASaeWIPJ4AhzU9LBsq8nrTNo9IEA9XRloyE2NTXVYotvguPnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-7da52a99cbdso706872239f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 20:32:24 -0700 (PDT)
+	s=arc-20240116; t=1715743965; c=relaxed/simple;
+	bh=IwjxX6lGjtRR4HsC+Tx98ybpDz/8CNenXrNP0R7dQk8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sqrLoo2bz0xI2+Bwf3HZf9U4XNiLlgV2LACz+/zV+As3EGx/mOSLjG+Tm8rKVPEN7QJzVcFtxD4+FDkztMuXDUOkKdqp9vci2Il3l12xUr3MG8zrUp/ZoE/wQAamffl+QSaA2ClbcOHd3c/cVaRHQPNaRJZIOJbw+J0vXuzNOkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=IQFb+fnc; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a59ce1e8609so124764166b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 20:32:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1715743962; x=1716348762; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=n78oaAZRyO+VAfWO7SduK6Bbx6aSAbla91zbFFaUVww=;
+        b=IQFb+fnchIRC7GqVva+r8lW7Xi4SHJiGntne8eKqzYa3ARlBxbtWGrrJyALoWIuw7c
+         mz4PZmkXItCiBUybEh9TtE4Aj3DdzPeckGDAqDQ5H3XgFWnDYuCEyyGUDFCA6WxmPQ/K
+         Gw2poZGgOlhCEx+0YxVFQs+IydHtdsQ4/5x1c=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715743944; x=1716348744;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fA8zvYJYF4/8RIWJyNwOX0fYHJhk5bAzn4yU1hD+pEg=;
-        b=oes5yj7UtzH1bB525ci/wVomHjhQCwVRR97tJhm0xjux72gcMRSBrfgEfmlIgka9zM
-         q+b/aI8D3afwLYN63xPFKZzuqAT4ZI1zc1+DU1XQ5icjH0U0O8QelOmovBOsSeat0sPN
-         UbBQwGu4WzLetHTtyT2LZRgJp5UG5//AZuxmOJA1h54Yl7adj9SirVFWU1e+/bEp325Q
-         l2T/Eu2S0L/MrZtsx9adyH94zAtn+0LnDEL2SbLXWvJUqgbEZHUgGzoNfjcwsQqOngOU
-         iI0OWxUxL4m/GBsAY1+WBWHnBVL9bD7FDtQyB2hP+mBOG5mFWqtxr3N+fQCHGyoeRel9
-         BSMw==
-X-Forwarded-Encrypted: i=1; AJvYcCUoOaZY102jzpXPNKzaq1YvHN8La33yFg23unYAyOiYeSewbirhNuLYg2NkPist87xmeuI2calidoppiltInb0WBtAPNzXKp8jDBFC9
-X-Gm-Message-State: AOJu0YxZQTY1DTYHh+7nzkUxcbSl1Pt14GXtI3bAE0rgDyuQuqOEZ9Z4
-	V9/G7ksFyYQHDadAcYTwOBsXZhlhUCLZNfSlFs4pZ8ybldFidr9Sdyn1+U2g2PCiHeq94b5oLPn
-	QPAsKOmnMNMf39xrF+TFNXdYPa1TURWziLzvU85S232y6KcTSJYj6smo=
-X-Google-Smtp-Source: AGHT+IEYEIB3z9bMMTfighLAfKaO/l1BaFDlsPh2OKypMUfXNa75ugkGs8npOp+VO8QQyy4iA6Pc+l5trkC02qtxkq8F3QHvhQjz
+        d=1e100.net; s=20230601; t=1715743962; x=1716348762;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=n78oaAZRyO+VAfWO7SduK6Bbx6aSAbla91zbFFaUVww=;
+        b=kR5KpM8+8poMyY58fjFUB60MiWN9cu3WLbSa26NAIrKanIP73L0PVEO8TW0gNQawMi
+         4TYxC8rRnCK54A9F3CW2E6OCEseWkAemCRVvPc5dL8TPnhaZsqdsnrkeBQ+rSLskHCaF
+         H5mQNX4FemEq4+PPxMFmAHrbe6CdKN5LgCQODJvkRHT9umMA4wBR+CchsDxqqMsBLnSd
+         Ko9v68WdcRMc0LFK+4MUfFbAGtb2qGJCRBhVXvq9LdK8y6g/JmoEHFbLJ2XVJkXOcY7+
+         md1rJOIem36L2kGSAVVl+/VUv6DcLdhuWjrVVpTF1esdrfkJAwm0jw753jSk/s6kvMub
+         jdyw==
+X-Forwarded-Encrypted: i=1; AJvYcCVwZTrus/jeWpkn5y+hmUlhNS6YtE06AH3kGNsFPxQ90BFLDUQDYVcgfxJjLfuBjKgEXk0wR1OATFL7qm/9neYYKHjoL8NXY+Cbopaq
+X-Gm-Message-State: AOJu0YxD837cfm9NamJfSvn0fMOad+XIl29g7sfc75hT39xi/zCN+MI0
+	mu/CgE4vmNuY2b38gGZny86TaH1hEg+G0SS+cjPif8vG7GhsaKlcT5+BN44m6MZhuZvLQ3SKF0d
+	9udsxcw==
+X-Google-Smtp-Source: AGHT+IHwlLSmTjK3g7Dy1mw/GSN8WaXLl8CodErmB7lzDUwKnfMds4X1L0VTwf+myPZLxtJhE61V0w==
+X-Received: by 2002:a17:907:7dac:b0:a59:adb9:6c2a with SMTP id a640c23a62f3a-a5a115ef957mr1883983666b.11.1715743961697;
+        Tue, 14 May 2024 20:32:41 -0700 (PDT)
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com. [209.85.218.53])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b17d02sm798722266b.218.2024.05.14.20.32.41
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 May 2024 20:32:41 -0700 (PDT)
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a59a609dd3fso135423966b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 20:32:41 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUysFbKoQ+Ci2m30YHJONv616gTmTgykuN9q+UO/Lq2Tk3hLHZNeNRFL13APRXBsd5Dk99I6DSpqvdrjWi8EOlmG3GREt3ByqSlMDge
+X-Received: by 2002:a17:906:70f:b0:a5a:7493:5b68 with SMTP id
+ a640c23a62f3a-a5a74935c7emr527515666b.24.1715743960872; Tue, 14 May 2024
+ 20:32:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:7101:b0:488:77ea:f194 with SMTP id
- 8926c6da1cb9f-4895903263emr1175586173.5.1715743943782; Tue, 14 May 2024
- 20:32:23 -0700 (PDT)
-Date: Tue, 14 May 2024 20:32:23 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000004b84e2061875c4a2@google.com>
-Subject: [syzbot] [xfs?] possible deadlock in xfs_qm_dquot_isolate
-From: syzbot <syzbot+6d8d043596bb844b6947@syzkaller.appspotmail.com>
-To: chandan.babu@oracle.com, djwong@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <20240514231155.1004295-1-kuba@kernel.org>
+In-Reply-To: <20240514231155.1004295-1-kuba@kernel.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 14 May 2024 20:32:24 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiSiGppp-J25Ww-gN6qgpc7gZRb_cP+dn3Q8_zdntzgYQ@mail.gmail.com>
+Message-ID: <CAHk-=wiSiGppp-J25Ww-gN6qgpc7gZRb_cP+dn3Q8_zdntzgYQ@mail.gmail.com>
+Subject: Re: [GIT PULL] Networking for v6.10
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: davem@davemloft.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	pabeni@redhat.com, bpf@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+On Tue, 14 May 2024 at 16:12, Jakub Kicinski <kuba@kernel.org> wrote:
+>
+> Full disclosure I hit a KASAN OOB read warning in BPF when testing
+> on Meta's production servers (which load a lot of BPF).
+> BPF folks aren't super alarmed by it, and also they are partying at
+> LSFMM so I don't think it's worth waiting for the fix.
+> But you may feel differently...  https://pastebin.com/0fzqy3cW
 
-syzbot found the following issue on:
+Hmm. As long as people are aware of it, I don't think a known issue
+needs to hold up any pull request.
 
-HEAD commit:    f4345f05c0df Merge tag 'block-6.9-20240510' of git://git.k..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10c35598980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a450595960709c8
-dashboard link: https://syzkaller.appspot.com/bug?extid=6d8d043596bb844b6947
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: i386
+Even if that whole 'struct bpf_map can be embedded in many different
+structures", combined with "users just magically know which structure
+it is and use container_of()" looks like a horrid pattern.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Why does it do that disgusting
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-f4345f05.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/5e01373e68f5/vmlinux-f4345f05.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/dd55eb82d95f/bzImage-f4345f05.xz
+        struct bpf_array *array = container_of(map, struct bpf_array, map);
+        ...
+                *insn++ = BPF_ALU32_IMM(BPF_AND, BPF_REG_0, array->index_mask);
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+6d8d043596bb844b6947@syzkaller.appspotmail.com
+thing? As far as I can tell, a bpf map can be embedded in many
+different structures, not just that 'bpf_array' thing.
 
-======================================================
-WARNING: possible circular locking dependency detected
-6.9.0-rc7-syzkaller-00136-gf4345f05c0df #0 Not tainted
-------------------------------------------------------
-syz-executor.3/11149 is trying to acquire lock:
-ffffffff8d937180 (fs_reclaim){+.+.}-{0:0}, at: might_alloc include/linux/sched/mm.h:312 [inline]
-ffffffff8d937180 (fs_reclaim){+.+.}-{0:0}, at: slab_pre_alloc_hook mm/slub.c:3752 [inline]
-ffffffff8d937180 (fs_reclaim){+.+.}-{0:0}, at: slab_alloc_node mm/slub.c:3833 [inline]
-ffffffff8d937180 (fs_reclaim){+.+.}-{0:0}, at: kmalloc_trace+0x51/0x340 mm/slub.c:3998
+That spectre-v1 code generation is disgusting. But worse, it's stupid.
+The way to turn the index into a data dependency isn't to just 'and'
+it with some fixed mask (that is wrong anyway and requires that whole
+"round up to the next power-of-two), it's to just teach the JIT to
+generate the proper Spectre-v1 sequence.
 
-but task is already holding lock:
-ffff88806900e5a8 (&dqp->q_qlock){+.+.}-{3:3}, at: xfs_dqlock_nowait fs/xfs/xfs_dquot.h:120 [inline]
-ffff88806900e5a8 (&dqp->q_qlock){+.+.}-{3:3}, at: xfs_qm_dquot_isolate+0x85/0x1420 fs/xfs/xfs_qm.c:423
+So that code should be able to rely purely on map->max_entries, and
+not do that disgusting "look up struct 'bpf_array'"
 
-which lock already depends on the new lock.
+Anyway, I've pulled it - the bpf code looks broken, but it looks
+fairly straightforward to do it right if I understood that code
+correctly.
 
-
-the existing dependency chain (in reverse order) is:
-
--> #2 (&dqp->q_qlock){+.+.}-{3:3}:
-       __lock_release kernel/locking/lockdep.c:5468 [inline]
-       lock_release+0x33e/0x6c0 kernel/locking/lockdep.c:5774
-       __mutex_unlock_slowpath+0xa3/0x650 kernel/locking/mutex.c:912
-       xfs_qm_dqget_cache_lookup+0x428/0x880 fs/xfs/xfs_dquot.c:802
-       xfs_qm_dqget_inode+0x1e7/0x6d0 fs/xfs/xfs_dquot.c:994
-       xfs_qm_dqattach_one+0x26f/0x590 fs/xfs/xfs_qm.c:278
-       xfs_qm_dqattach_locked+0x226/0x2d0 fs/xfs/xfs_qm.c:329
-       xfs_qm_vop_dqalloc+0x344/0xe40 fs/xfs/xfs_qm.c:1710
-       xfs_create+0x422/0x1170 fs/xfs/xfs_inode.c:1041
-       xfs_generic_create+0x631/0x7c0 fs/xfs/xfs_iops.c:199
-       vfs_mkdir+0x57d/0x820 fs/namei.c:4123
-       do_mkdirat+0x301/0x3a0 fs/namei.c:4146
-       __do_sys_mkdir fs/namei.c:4166 [inline]
-       __se_sys_mkdir fs/namei.c:4164 [inline]
-       __ia32_sys_mkdir+0xf0/0x140 fs/namei.c:4164
-       do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
-       __do_fast_syscall_32+0x75/0x120 arch/x86/entry/common.c:386
-       do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
-       entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-
--> #1 (&xfs_dir_ilock_class){++++}-{3:3}:
-       down_write_nested+0x3d/0x50 kernel/locking/rwsem.c:1695
-       xfs_ilock+0x2ef/0x420 fs/xfs/xfs_inode.c:206
-       xfs_reclaim_inode fs/xfs/xfs_icache.c:945 [inline]
-       xfs_icwalk_process_inode fs/xfs/xfs_icache.c:1631 [inline]
-       xfs_icwalk_ag+0xca6/0x1780 fs/xfs/xfs_icache.c:1713
-       xfs_icwalk+0x57/0x100 fs/xfs/xfs_icache.c:1762
-       xfs_reclaim_inodes_nr+0x182/0x250 fs/xfs/xfs_icache.c:1011
-       super_cache_scan+0x409/0x550 fs/super.c:227
-       do_shrink_slab+0x44f/0x11c0 mm/shrinker.c:435
-       shrink_slab+0x18a/0x1310 mm/shrinker.c:662
-       shrink_one+0x493/0x7c0 mm/vmscan.c:4774
-       shrink_many mm/vmscan.c:4835 [inline]
-       lru_gen_shrink_node+0x89f/0x1750 mm/vmscan.c:4935
-       shrink_node mm/vmscan.c:5894 [inline]
-       kswapd_shrink_node mm/vmscan.c:6704 [inline]
-       balance_pgdat+0x10d1/0x1a10 mm/vmscan.c:6895
-       kswapd+0x5ea/0xbf0 mm/vmscan.c:7164
-       kthread+0x2c1/0x3a0 kernel/kthread.c:388
-       ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
--> #0 (fs_reclaim){+.+.}-{0:0}:
-       check_prev_add kernel/locking/lockdep.c:3134 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
-       validate_chain kernel/locking/lockdep.c:3869 [inline]
-       __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
-       lock_acquire kernel/locking/lockdep.c:5754 [inline]
-       lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
-       __fs_reclaim_acquire mm/page_alloc.c:3698 [inline]
-       fs_reclaim_acquire+0x102/0x160 mm/page_alloc.c:3712
-       might_alloc include/linux/sched/mm.h:312 [inline]
-       slab_pre_alloc_hook mm/slub.c:3752 [inline]
-       slab_alloc_node mm/slub.c:3833 [inline]
-       kmalloc_trace+0x51/0x340 mm/slub.c:3998
-       kmalloc include/linux/slab.h:628 [inline]
-       add_stack_record_to_list mm/page_owner.c:177 [inline]
-       inc_stack_record_count mm/page_owner.c:219 [inline]
-       __set_page_owner+0x517/0x7a0 mm/page_owner.c:334
-       set_page_owner include/linux/page_owner.h:32 [inline]
-       post_alloc_hook+0x2d4/0x350 mm/page_alloc.c:1534
-       prep_new_page mm/page_alloc.c:1541 [inline]
-       get_page_from_freelist+0xa28/0x3780 mm/page_alloc.c:3317
-       __alloc_pages+0x22b/0x2460 mm/page_alloc.c:4575
-       __alloc_pages_bulk+0x742/0x14f0 mm/page_alloc.c:4523
-       alloc_pages_bulk_array include/linux/gfp.h:202 [inline]
-       xfs_buf_alloc_pages+0x20f/0x9d0 fs/xfs/xfs_buf.c:398
-       xfs_buf_find_insert fs/xfs/xfs_buf.c:650 [inline]
-       xfs_buf_get_map+0x1e69/0x30d0 fs/xfs/xfs_buf.c:755
-       xfs_buf_read_map+0xd2/0xb40 fs/xfs/xfs_buf.c:860
-       xfs_trans_read_buf_map+0x352/0x990 fs/xfs/xfs_trans_buf.c:289
-       xfs_trans_read_buf fs/xfs/xfs_trans.h:210 [inline]
-       xfs_qm_dqflush+0x224/0x1470 fs/xfs/xfs_dquot.c:1271
-       xfs_qm_dquot_isolate+0xc8f/0x1420 fs/xfs/xfs_qm.c:465
-       __list_lru_walk_one+0x19f/0x690 mm/list_lru.c:218
-       list_lru_walk_one+0xac/0xf0 mm/list_lru.c:266
-       list_lru_shrink_walk include/linux/list_lru.h:228 [inline]
-       xfs_qm_shrink_scan+0x1fc/0x3f0 fs/xfs/xfs_qm.c:519
-       do_shrink_slab+0x44f/0x11c0 mm/shrinker.c:435
-       shrink_slab+0x18a/0x1310 mm/shrinker.c:662
-       drop_slab_node mm/vmscan.c:393 [inline]
-       drop_slab+0x14c/0x2c0 mm/vmscan.c:411
-       drop_caches_sysctl_handler+0x171/0x190 fs/drop_caches.c:68
-       proc_sys_call_handler+0x4cc/0x6f0 fs/proc/proc_sysctl.c:595
-       call_write_iter include/linux/fs.h:2110 [inline]
-       iter_file_splice_write+0x906/0x10b0 fs/splice.c:743
-       do_splice_from fs/splice.c:941 [inline]
-       direct_splice_actor+0x19b/0x6d0 fs/splice.c:1164
-       splice_direct_to_actor+0x346/0xa40 fs/splice.c:1108
-       do_splice_direct_actor fs/splice.c:1207 [inline]
-       do_splice_direct+0x17e/0x250 fs/splice.c:1233
-       do_sendfile+0xaa8/0xdb0 fs/read_write.c:1295
-       __do_compat_sys_sendfile fs/read_write.c:1377 [inline]
-       __se_compat_sys_sendfile fs/read_write.c:1366 [inline]
-       __ia32_compat_sys_sendfile+0x163/0x230 fs/read_write.c:1366
-       do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
-       __do_fast_syscall_32+0x75/0x120 arch/x86/entry/common.c:386
-       do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
-       entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-
-other info that might help us debug this:
-
-Chain exists of:
-  fs_reclaim --> &xfs_dir_ilock_class --> &dqp->q_qlock
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&dqp->q_qlock);
-                               lock(&xfs_dir_ilock_class);
-                               lock(&dqp->q_qlock);
-  lock(fs_reclaim);
-
- *** DEADLOCK ***
-
-2 locks held by syz-executor.3/11149:
- #0: ffff888021f1e420 (sb_writers#3){.+.+}-{0:0}, at: splice_direct_to_actor+0x346/0xa40 fs/splice.c:1108
- #1: ffff88806900e5a8 (&dqp->q_qlock){+.+.}-{3:3}, at: xfs_dqlock_nowait fs/xfs/xfs_dquot.h:120 [inline]
- #1: ffff88806900e5a8 (&dqp->q_qlock){+.+.}-{3:3}, at: xfs_qm_dquot_isolate+0x85/0x1420 fs/xfs/xfs_qm.c:423
-
-stack backtrace:
-CPU: 0 PID: 11149 Comm: syz-executor.3 Not tainted 6.9.0-rc7-syzkaller-00136-gf4345f05c0df #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:114
- check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2187
- check_prev_add kernel/locking/lockdep.c:3134 [inline]
- check_prevs_add kernel/locking/lockdep.c:3253 [inline]
- validate_chain kernel/locking/lockdep.c:3869 [inline]
- __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
- lock_acquire kernel/locking/lockdep.c:5754 [inline]
- lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
- __fs_reclaim_acquire mm/page_alloc.c:3698 [inline]
- fs_reclaim_acquire+0x102/0x160 mm/page_alloc.c:3712
- might_alloc include/linux/sched/mm.h:312 [inline]
- slab_pre_alloc_hook mm/slub.c:3752 [inline]
- slab_alloc_node mm/slub.c:3833 [inline]
- kmalloc_trace+0x51/0x340 mm/slub.c:3998
- kmalloc include/linux/slab.h:628 [inline]
- add_stack_record_to_list mm/page_owner.c:177 [inline]
- inc_stack_record_count mm/page_owner.c:219 [inline]
- __set_page_owner+0x517/0x7a0 mm/page_owner.c:334
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x2d4/0x350 mm/page_alloc.c:1534
- prep_new_page mm/page_alloc.c:1541 [inline]
- get_page_from_freelist+0xa28/0x3780 mm/page_alloc.c:3317
- __alloc_pages+0x22b/0x2460 mm/page_alloc.c:4575
- __alloc_pages_bulk+0x742/0x14f0 mm/page_alloc.c:4523
- alloc_pages_bulk_array include/linux/gfp.h:202 [inline]
- xfs_buf_alloc_pages+0x20f/0x9d0 fs/xfs/xfs_buf.c:398
- xfs_buf_find_insert fs/xfs/xfs_buf.c:650 [inline]
- xfs_buf_get_map+0x1e69/0x30d0 fs/xfs/xfs_buf.c:755
- xfs_buf_read_map+0xd2/0xb40 fs/xfs/xfs_buf.c:860
- xfs_trans_read_buf_map+0x352/0x990 fs/xfs/xfs_trans_buf.c:289
- xfs_trans_read_buf fs/xfs/xfs_trans.h:210 [inline]
- xfs_qm_dqflush+0x224/0x1470 fs/xfs/xfs_dquot.c:1271
- xfs_qm_dquot_isolate+0xc8f/0x1420 fs/xfs/xfs_qm.c:465
- __list_lru_walk_one+0x19f/0x690 mm/list_lru.c:218
- list_lru_walk_one+0xac/0xf0 mm/list_lru.c:266
- list_lru_shrink_walk include/linux/list_lru.h:228 [inline]
- xfs_qm_shrink_scan+0x1fc/0x3f0 fs/xfs/xfs_qm.c:519
- do_shrink_slab+0x44f/0x11c0 mm/shrinker.c:435
- shrink_slab+0x18a/0x1310 mm/shrinker.c:662
- drop_slab_node mm/vmscan.c:393 [inline]
- drop_slab+0x14c/0x2c0 mm/vmscan.c:411
- drop_caches_sysctl_handler+0x171/0x190 fs/drop_caches.c:68
- proc_sys_call_handler+0x4cc/0x6f0 fs/proc/proc_sysctl.c:595
- call_write_iter include/linux/fs.h:2110 [inline]
- iter_file_splice_write+0x906/0x10b0 fs/splice.c:743
- do_splice_from fs/splice.c:941 [inline]
- direct_splice_actor+0x19b/0x6d0 fs/splice.c:1164
- splice_direct_to_actor+0x346/0xa40 fs/splice.c:1108
- do_splice_direct_actor fs/splice.c:1207 [inline]
- do_splice_direct+0x17e/0x250 fs/splice.c:1233
- do_sendfile+0xaa8/0xdb0 fs/read_write.c:1295
- __do_compat_sys_sendfile fs/read_write.c:1377 [inline]
- __se_compat_sys_sendfile fs/read_write.c:1366 [inline]
- __ia32_compat_sys_sendfile+0x163/0x230 fs/read_write.c:1366
- do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
- __do_fast_syscall_32+0x75/0x120 arch/x86/entry/common.c:386
- do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
- entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-RIP: 0023:0xf7353579
-Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
-RSP: 002b:00000000f5f455ac EFLAGS: 00000292 ORIG_RAX: 00000000000000bb
-RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 0000000000000004
-RDX: 0000000020002080 RSI: 000000000000023b RDI: 0000000000000000
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
- </TASK>
-syz-executor.3 (11149): drop_caches: 2
-syz-executor.3 (11149): drop_caches: 2
-----------------
-Code disassembly (best guess), 2 bytes skipped:
-   0:	10 06                	adc    %al,(%rsi)
-   2:	03 74 b4 01          	add    0x1(%rsp,%rsi,4),%esi
-   6:	10 07                	adc    %al,(%rdi)
-   8:	03 74 b0 01          	add    0x1(%rax,%rsi,4),%esi
-   c:	10 08                	adc    %cl,(%rax)
-   e:	03 74 d8 01          	add    0x1(%rax,%rbx,8),%esi
-  1e:	00 51 52             	add    %dl,0x52(%rcx)
-  21:	55                   	push   %rbp
-  22:	89 e5                	mov    %esp,%ebp
-  24:	0f 34                	sysenter
-  26:	cd 80                	int    $0x80
-* 28:	5d                   	pop    %rbp <-- trapping instruction
-  29:	5a                   	pop    %rdx
-  2a:	59                   	pop    %rcx
-  2b:	c3                   	ret
-  2c:	90                   	nop
-  2d:	90                   	nop
-  2e:	90                   	nop
-  2f:	90                   	nop
-  30:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
-  37:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+              Linus
 
