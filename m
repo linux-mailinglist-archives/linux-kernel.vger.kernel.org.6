@@ -1,126 +1,97 @@
-Return-Path: <linux-kernel+bounces-179752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1128D8C64D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 12:13:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEE138C64D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 12:13:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC6A41F2404F
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 10:13:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 644801F24906
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 10:13:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 128AD5BAC1;
-	Wed, 15 May 2024 10:13:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E12315B5B6;
+	Wed, 15 May 2024 10:13:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="gW9tRZSe"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bBwWGOTa"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A810E39855
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 10:13:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91FF55E060
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 10:13:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715768000; cv=none; b=cPK11Jc2L+cNNjUqA/vsRAIpsOHzRY6hI4HG2VSh/cn3p2S5S34OLWIH5xlokRBsWkxaZ2cmxjUIJj7BQoQqzYZ13keQd1vU/+UXZAhe2UXOjYq1YQVBcW1lBw9Ged94cLnVamZ5JkOBkB4R4bwnuOToeb1n5NVXgrkMfFphXMk=
+	t=1715768013; cv=none; b=piYcsU2oNFsudGVd2x6SMGMNjlnwRNiCBwcixrEd9h1BSga3S/gxs8iJ/zD6ifwflyhhb/ATJmoFum9nl1iDoSN7B5D5kWvIwj4L042YvqIUKUt2uh+1JPZLToDsae4Td5gjLV+Nqp9P7huu6+dMcIUi0H6Vztaenq/zrZ48OoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715768000; c=relaxed/simple;
-	bh=AqLoV3x4o52X7+j7qJv+wOgrwV27X06+t1guufZrfIs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=taf9Bb3yNqp/8sKMu2+MNrTZkvx+2tjzXhlmGL4g5F8bzXNMvOGIJveOyfD+W4vkJVSoDxbyGMZXZxOEbeBzcwwGrYFBjNYVVGgCRXl84jKHuuU89IvELPOQEWN1fhBOCvFk7ly62Dc0wjPWmZ+Kh0Q30TYgFeMkrKrEUOeLWWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=gW9tRZSe; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4200ee78f35so30374345e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 03:13:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1715767997; x=1716372797; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=z8kE4aGf4W+ZFrXbXFQuSqYNAtdE2dLfFezL8urZZ58=;
-        b=gW9tRZSeRS2rpADWB/auQkh6m9YFfqPLi2O8kiYbl9phVeBPBBe86LoQG3pVyK1MEW
-         NcGHypnBvlh1i75MkBr0c8O2Pp+Zsx4FkTfOGf5SDOWvdienfy5PO/xOPR9T4pzEhoG9
-         EvHxPbppvj9rX/KVTcTgaHNgxfqjw+cgqUdWY5MbPopolBt/TWpGHIljmY0Slbfh2O51
-         4RF94GalYHMAp/lEmZ1D0S7xg6zc+SPFD9vPWuFyNHn44PFuRyP2D7MjnmnhHtH7m+g7
-         0FIJcUt37XUL6PEapT+flLg1joWIxujdQUlGmAAt3lbS8AAMQ5/gHqt5JFowkVSoHP21
-         pO0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715767997; x=1716372797;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=z8kE4aGf4W+ZFrXbXFQuSqYNAtdE2dLfFezL8urZZ58=;
-        b=sA6tdXsEVUJ/unk0TpaXqzCh8CB0Y8VxRFXSZeJFCDDFWv9sf+n8LOMVyRvFabTUNt
-         SPOEyHC4VpNO2sVWbbOOdN5hE7ddE6cciCzuLHpRNXMcYwML2TMbH0zE/oCSSCRxW0Fy
-         fjoUVgv9wOMkHNg6x4veVRdQNUvBNVLutik7z3bHc1HYE3X961ZvROMCwm3oHs0Ij34h
-         MhiVDtZIArcOyHsXz9oa14U73Fyi2reCzBbg//pYEZAqAhH+lmKzIhnIC6hKKiutOhpU
-         sGzJKQQzl7t8o2ghjHlCjVjlyHZ3KGA2iSwpsuAGRWtKLFOK1DsSxUAOBi/zgV772GLH
-         uPeA==
-X-Gm-Message-State: AOJu0YycK9f3QrWk3DsfYOnuBS8YMTWD7v8pFg4XSi26ivJxYRW6+qeh
-	3JW4gJWUi2M/LxQKCydYVVU9AHCUlSKwXK0FpHZVFmiT5efbxA0xN5hM6Uvm6qU=
-X-Google-Smtp-Source: AGHT+IHMnSblYuX4saXvavk/MZZwrr0XbBzH7gBcJD0C9fU+Tek6INy5WGEdNbNGHhVl8zAR5wjmEg==
-X-Received: by 2002:a05:6000:12d0:b0:34d:95f:c46 with SMTP id ffacd0b85a97d-3504a96ab3cmr14982151f8f.59.1715767996567;
-        Wed, 15 May 2024 03:13:16 -0700 (PDT)
-Received: from fedora.fritz.box (aftr-62-216-208-100.dynamic.mnet-online.de. [62.216.208.100])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502b79bcedsm15941593f8f.19.2024.05.15.03.13.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 May 2024 03:13:16 -0700 (PDT)
-From: Thorsten Blum <thorsten.blum@toblux.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@toblux.com>
-Subject: [PATCH] w1: Add missing newline and fix typos in w1_bus_master comment
-Date: Wed, 15 May 2024 12:11:51 +0200
-Message-ID: <20240515101150.3289-2-thorsten.blum@toblux.com>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1715768013; c=relaxed/simple;
+	bh=R6J+n8cvzciTSGKGyfNyOmGXlBPHb1xLPxZyrsPKKGI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fsG22Qyw2DttIK7Zn7kwA6SoHMCj0zb7oBEjssXPDZ82Elp++7AOAUkvJMijWKoDK7XawPz1nex3rSHKO15LWB6jOlgZE79Ip1mVq1IF02dP/hN9LQLjOjrfZQF/Zh7N8asrjo7qkaQYBlivqofmij4BpRtpfo9OsWWmH13gV8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=bBwWGOTa; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=yn9PlzEiI+jV2QEzgMElYky/iSJE+k1yDY6cuWJfOs4=; b=bBwWGOTal7ohbcYX6S0ZTRpfjn
+	Vs1kwtXl5DQxomNJruot7h/WB0xz0G8hX9LNt49xlJ5NAYYkTj5tCzLDEZH/qKZwv6tNfHyS0hycU
+	i2UR7sg5WUMxxsZP3u4VpYn4svMno+yfC9DVGXAPl040gKoB+83oGmQIFmbudvfal8Q+eOGIsKnCs
+	0bXICyZw5c0ZNWzqV4evWdHe3m/5IBN9+ARZVfj62+ezYJLWW3rkJ++6MGGkteWgwLkmKPTjdCifb
+	rNm10OKs7etrvF2qCNisr8W4jazXuCXdfI3kPGEnXOty6Dtik9CiGfViE5pScLOmdny+umRd1ygp3
+	jQ3LpAng==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1s7BdE-000000053lQ-3b0U;
+	Wed, 15 May 2024 10:13:12 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id DDD583005E3; Wed, 15 May 2024 12:13:05 +0200 (CEST)
+Date: Wed, 15 May 2024 12:13:05 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Mike Galbraith <efault@gmx.de>
+Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
+	linux-kernel@vger.kernel.org, kprateek.nayak@amd.com,
+	wuyun.abel@bytedance.com, tglx@linutronix.de
+Subject: Re: [RFC][PATCH 10/10] sched/eevdf: Use sched_attr::sched_runtime to
+ set request/slice suggestion
+Message-ID: <20240515101305.GG40213@noisy.programming.kicks-ass.net>
+References: <20240405102754.435410987@infradead.org>
+ <20240405110010.934104715@infradead.org>
+ <22b6408d96ce3913121a4a1b80f343657d1f66ae.camel@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <22b6408d96ce3913121a4a1b80f343657d1f66ae.camel@gmx.de>
 
-- Add missing newline before @return
-- s/bytes/byte/
-- s/handles/handle/
+On Tue, May 07, 2024 at 07:34:54AM +0200, Mike Galbraith wrote:
+> On Fri, 2024-04-05 at 12:28 +0200, Peter Zijlstra wrote:
+> > 
+> > --- a/kernel/sched/core.c
+> > +++ b/kernel/sched/core.c
+> > @@ -7812,7 +7823,9 @@ static int __sched_setscheduler(struct t
+> >          * but store a possible modification of reset_on_fork.
+> >          */
+> >         if (unlikely(policy == p->policy)) {
+> > -               if (fair_policy(policy) && attr->sched_nice != task_nice(p))
+> > +               if (fair_policy(policy) &&
+> > +                   (attr->sched_nice != task_nice(p) ||
+> > +                    (attr->sched_runtime && attr->sched_runtime != p->se.slice)))
+> >                         goto change;
+> 
+> Can we make that only look at attr->sched_runtime != p->se.slice? 
+> Doing so lets you clear a custom slice by.. clearing it.. rather than
+> making tools rummage about for the proper value to overwrite.
 
-Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
----
- include/linux/w1.h | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+Duh yes. Seems I already did the right thing in __setscheduler_params()
+for that.
 
-diff --git a/include/linux/w1.h b/include/linux/w1.h
-index 9a2a0ef39018..064805bfae3f 100644
---- a/include/linux/w1.h
-+++ b/include/linux/w1.h
-@@ -85,7 +85,8 @@ typedef void (*w1_slave_found_callback)(struct w1_master *, u64);
-  *
-  * @data: the first parameter in all the functions below
-  *
-- * @read_bit: Sample the line level @return the level read (0 or 1)
-+ * @read_bit: Sample the line level
-+ * @return the level read (0 or 1)
-  *
-  * @write_bit: Sets the line level
-  *
-@@ -95,7 +96,7 @@ typedef void (*w1_slave_found_callback)(struct w1_master *, u64);
-  * touch_bit(1) = write-1 / read cycle
-  * @return the bit read (0 or 1)
-  *
-- * @read_byte: Reads a bytes. Same as 8 touch_bit(1) calls.
-+ * @read_byte: Reads a byte. Same as 8 touch_bit(1) calls.
-  * @return the byte read
-  *
-  * @write_byte: Writes a byte. Same as 8 touch_bit(x) calls.
-@@ -114,7 +115,7 @@ typedef void (*w1_slave_found_callback)(struct w1_master *, u64);
-  * @set_pullup: Put out a strong pull-up pulse of the specified duration.
-  * @return -1=Error, 0=completed
-  *
-- * @search: Really nice hardware can handles the different types of ROM search
-+ * @search: Really nice hardware can handle the different types of ROM search
-  * w1_master* is passed to the slave found callback.
-  * u8 is search_type, W1_SEARCH or W1_ALARM_SEARCH
-  *
--- 
-2.45.0
-
+Done.
 
