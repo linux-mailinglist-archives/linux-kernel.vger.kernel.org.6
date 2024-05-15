@@ -1,624 +1,233 @@
-Return-Path: <linux-kernel+bounces-179537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 250338C6111
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:53:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 825688C625A
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:59:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE8161F22DC4
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:53:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38952284E58
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 07:59:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52E4D42058;
-	Wed, 15 May 2024 06:51:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B67344A990;
+	Wed, 15 May 2024 07:59:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="YWldDSN6"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="OaCNHnGk"
+Received: from out0-221.mail.aliyun.com (out0-221.mail.aliyun.com [140.205.0.221])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8D0E47A57;
-	Wed, 15 May 2024 06:51:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC20C4879B;
+	Wed, 15 May 2024 07:58:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.205.0.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715755885; cv=none; b=Myyst8ROaxluPfnuy2hC1PLdZQKeEy2Bd82utfPAZXZsW90RmBSVDaGNe50Z1ryd0F192VxGYZsDes3sdFqsU+d/mNYNKGBc6k2k1boGMI9CsLpkMk4wHnzPXER+26Tyktbs31em5P5+5p1+eK1aaSikEJVETf+qW8Pdfm7VXXQ=
+	t=1715759939; cv=none; b=pNDbTAXjS4c+k9q8LdJbpHQajstVT3qf1EH56Jid01G0PH62+LEnJ3k7WH04B21WpXBcSC1xmuX5TBxe7j8ZvdJMpIqCRMpi9iZ6C+5SC9yXyzIXCWUknyTcEUdg9fz1XiSe2P9pvARWab29STKl6SiyEd+CSNBNSNhnDyxRWTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715755885; c=relaxed/simple;
-	bh=iOpIK4TGFeX6nXf69LwJKO3nxz4nCDaZK6hHh+1NIdE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Rp8TQ/esQOiadyMkXM8Qpf3b5useNrpWzyPEY3ensgQUTTosY1a3hopUTPGdXVWiNiOrOZAJd3Wr/pe29izk12jNwDQmYlwbwb0WLzYpQT9cnMDItIsAW3PDO/RWPFSkDlm6rysa/RzRqwDm5SHG9elMnCqmU8vQPUKtG6wpc6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=YWldDSN6; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44F6ootL126884;
-	Wed, 15 May 2024 01:50:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1715755850;
-	bh=E3ha7HAXEV1Zds9+dP4RL5Wt57m5vLNirfJ5puAYDEE=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=YWldDSN6vYijwnejYF6zZBp6AKAVmeb3c4j1YyHx7xQdS80HndGOVbP+8nvxJdAll
-	 F5WBnAUJ9geXADsZ63+kCKd9DUakSTxLqk8Joq5l9CiSmq0HKqB/DFNE2alE9C8j35
-	 uYVdwLH7nI/Yu9u9jvLAJCrX8x/iuofkuEEAbrjE=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44F6oo2J038579
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 15 May 2024 01:50:50 -0500
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 15
- May 2024 01:50:50 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 15 May 2024 01:50:50 -0500
-Received: from fllv0122.itg.ti.com (fllv0122.itg.ti.com [10.247.120.72])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44F6ooOj001670;
-	Wed, 15 May 2024 01:50:50 -0500
-Received: from localhost (danish-tpc.dhcp.ti.com [10.24.69.25])
-	by fllv0122.itg.ti.com (8.14.7/8.14.7) with ESMTP id 44F6onOp029154;
-	Wed, 15 May 2024 01:50:49 -0500
-From: MD Danish Anwar <danishanwar@ti.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>,
-        Jan Kiszka
-	<jan.kiszka@siemens.com>, Andrew Lunn <andrew@lunn.ch>,
-        Simon Horman
-	<horms@kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Diogo
- Ivo <diogo.ivo@siemens.com>,
-        Niklas Schnelle <schnelle@linux.ibm.com>,
-        Arnd
- Bergmann <arnd@arndb.de>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Richard
- Cochran <richardcochran@gmail.com>,
-        Roger Quadros <rogerq@kernel.org>,
-        MD
- Danish Anwar <danishanwar@ti.com>, Paolo Abeni <pabeni@redhat.com>,
-        Jakub
- Kicinski <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>,
-        "David S.
- Miller" <davem@davemloft.net>
-CC: <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <srk@ti.com>, <r-gunasekaran@ti.com>,
-        Roger
- Quadros <rogerq@ti.com>,
-        Vinicius Costa Gomes <vinicius.gomes@intel.com>,
-        Vladimir Oltean <vladimir.oltean@nxp.com>
-Subject: [RFC PATCH net-next v6 2/2] net: ti: icssg_prueth: add TAPRIO offload support
-Date: Wed, 15 May 2024 12:20:42 +0530
-Message-ID: <20240515065042.2852877-3-danishanwar@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240515065042.2852877-1-danishanwar@ti.com>
-References: <20240515065042.2852877-1-danishanwar@ti.com>
+	s=arc-20240116; t=1715759939; c=relaxed/simple;
+	bh=JyAC/PWdE9ylEuXalxIwuA91LlSHQxAUpNeMRek+xAM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=S7SFVZvgDu7Df5AhqoZybaisY+5h8f4zIr3FLUagTC7f7cYw5TbxgFxnoYwdtqBbpFcBCGuA75EdMNj3zMhSrOohTO1sUqfzucN6Z1DXFPPjmih4RchXFE4AHmP0JUV03HMzbWWMc5SVLfF5r5XlgR3JbYDzKDbRfMBMpEOpPHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=OaCNHnGk; arc=none smtp.client-ip=140.205.0.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antgroup.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=antgroup.com; s=default;
+	t=1715759933; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=hpx+4O6VSym8I2MXU0WRGTCsP3ZciqQA0E7w0LMWHlA=;
+	b=OaCNHnGkysPWV0X6xNXaaz7bKbwny0vegc/2goYtkOvucIJpzqhCfhZp/t86k5CPsnbTqgYkCkFNEFFeEb5JXpNTgd9xkvR0gBOe24/PIzEJutOEXPdJNGIzpFtHgTz53VSA9FV0TO3ezxOKU+Nyx4gjmll/kWh3n8qFbDx7U30=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R581e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018047213;MF=zhubojun.zbj@antgroup.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---.Xd0WWE._1715756252;
+Received: from localhost(mailfrom:zhubojun.zbj@antgroup.com fp:SMTPD_---.Xd0WWE._1715756252)
+          by smtp.aliyun-inc.com;
+          Wed, 15 May 2024 14:57:38 +0800
+From: "Bojun Zhu" <zhubojun.zbj@antgroup.com>
+To: linux-kernel@vger.kernel.org,
+	linux-sgx@vger.kernel.org,
+	jarkko@kernel.org,
+	dave.hansen@linux.intel.com
+Cc:  <reinette.chatre@intel.com>,
+  "=?UTF-8?B?5YiY5Y+MKOi9qeWxuSk=?=" <ls123674@antgroup.com>,
+  "Bojun Zhu" <zhubojun.zbj@antgroup.com>
+Subject: [RFC PATCH v3 0/1] x86/sgx: Explicitly give up the CPU in EDMM's ioctl() to avoid softlockup
+Date: Wed, 15 May 2024 14:55:20 +0800
+Message-Id: <20240515065521.67908-1-zhubojun.zbj@antgroup.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: quoted-printable
 
-From: Roger Quadros <rogerq@ti.com>
+Hi folks,
 
-ICSSG dual-emac f/w supports Enhanced Scheduled Traffic (EST – defined
-in P802.1Qbv/D2.2 that later got included in IEEE 802.1Q-2018)
-configuration. EST allows express queue traffic to be scheduled
-(placed) on the wire at specific repeatable time intervals. In
-Linux kernel, EST configuration is done through tc command and
-the taprio scheduler in the net core implements a software only
-scheduler (SCH_TAPRIO). If the NIC is capable of EST configuration,
-user indicate "flag 2" in the command which is then parsed by
-taprio scheduler in net core and indicate that the command is to
-be offloaded to h/w. taprio then offloads the command to the
-driver by calling ndo_setup_tc() ndo ops. This patch implements
-ndo_setup_tc() to offload EST configuration to ICSSG.
+This is the third version of the patch to fix the softlockup in EDMM iotcl(=
+)[1][2].
 
-Signed-off-by: Roger Quadros <rogerq@ti.com>
-Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
-Reviewed-by: Simon Horman <horms@kernel.org>
-Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+If we run an enclave equipped with large EPC(30G or greater on my platfrom)
+on the Linux with kernel preemptions disabled(by configuring
+"CONFIG_PREEMPT_NONE=3Dy"), we will get the following softlockup warning=20
+messages being reported in "dmesg" log:
+
+The EDMM's ioctl()s (sgx_ioc_enclave_{ modify_types | restrict_permissions =
+|  remove_pages})=20
+interface provided by kernel support batch changing attributes of enclave's=
+ EPC.
+If userspace App requests kernel to handle too many EPC pages, kernel
+may stuck for a long time(with preemption disabled).
+
+The log is as follows:
+
+------------[ cut here ]------------
+[  901.101294] watchdog: BUG: soft lockup - CPU#92 stuck for 23s! [occlum-r=
+un:4289]
+[  901.109617] Modules linked in: veth xt_conntrack xt_MASQUERADE nf_conntr=
+ack_netlink nfnetlink xfrm_user xfrm_algo iptable_nat nf_nat nf_conntrack n=
+f_defrag_ipv6 nf_defrag_ipv4 libcrc32c xt_addrtype iptable_filter br_netfil=
+ter bridge stp llc overlay nls_iso8859_1 intel_rapl_msr intel_rapl_common i=
+ntel_uncore_frequency intel_uncore_frequency_common i10nm_edac nfit binfmt_=
+misc ipmi_ssif x86_pkg_temp_thermal intel_powerclamp coretemp kvm_intel kvm=
+ crct10dif_pclmul polyval_clmulni polyval_generic ghash_clmulni_intel sha51=
+2_ssse3 sha256_ssse3 pmt_telemetry sha1_ssse3 pmt_class joydev intel_sdsi i=
+nput_leds aesni_intel crypto_simd cryptd dax_hmem cxl_acpi cmdlinepart rapl=
+ cxl_core ast spi_nor intel_cstate drm_shmem_helper einj mtd drm_kms_helper=
+ mei_me idxd isst_if_mmio isst_if_mbox_pci isst_if_common intel_vsec idxd_b=
+us mei acpi_ipmi ipmi_si ipmi_devintf ipmi_msghandler acpi_pad acpi_power_m=
+eter mac_hid sch_fq_codel msr parport_pc ppdev lp parport ramoops reed_solo=
+mon pstore_blk pstore_zone efi_pstore drm ip_tables x_tables
+[  901.109670]  autofs4 mlx5_ib ib_uverbs ib_core hid_generic usbhid hid se=
+s enclosure scsi_transport_sas mlx5_core pci_hyperv_intf mlxfw igb ahci psa=
+mple i2c_algo_bit i2c_i801 spi_intel_pci xhci_pci tls megaraid_sas dca spi_=
+intel crc32_pclmul i2c_smbus i2c_ismt libahci xhci_pci_renesas wmi pinctrl_=
+emmitsburg
+[  901.109691] CPU: 92 PID: 4289 Comm: occlum-run Not tainted 6.9.0-rc5 #3
+[  901.109693] Hardware name: Inspur NF5468-M7-A0-R0-00/NF5468-M7-A0-R0-00,=
+ BIOS 05.02.01 05/08/2023
+[  901.109695] RIP: 0010:sgx_enclave_restrict_permissions+0xba/0x1f0
+[  901.109701] Code: 48 c1 e6 05 48 89 d1 48 8d 5c 24 40 b8 0e 00 00 00 48 =
+2b 8e 70 8e 15 8b 48 c1 e9 05 48 c1 e1 0c 48 03 8e 68 8e 15 8b 0f 01 cf <a9=
+> 00 00 00 40 0f 85 b2 00 00 00 85 c0 0f 85 db 00 00 00 4c 89 ef
+[  901.109702] RSP: 0018:ffffad0ae5d0f8c0 EFLAGS: 00000202
+[  901.109704] RAX: 0000000000000000 RBX: ffffad0ae5d0f900 RCX: ffffad11dfc=
+0e000
+[  901.109705] RDX: ffffad2adcff81c0 RSI: 0000000000000000 RDI: ffff9a12f5f=
+4f000
+[  901.109706] RBP: ffffad0ae5d0f9b0 R08: 0000000000000002 R09: ffff9a1289f=
+57520
+[  901.109707] R10: 000000000000005d R11: 0000000000000002 R12: 00000006d8f=
+f2000
+[  901.109708] R13: ffff9a12f5f4f000 R14: ffffad0ae5d0fa18 R15: ffff9a12f5f=
+4f020
+[  901.109709] FS:  00007fb20ad1d740(0000) GS:ffff9a317fe00000(0000) knlGS:=
+0000000000000000
+[  901.109710] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  901.109711] CR2: 00007f8041811000 CR3: 0000000118530006 CR4: 00000000007=
+70ef0
+[  901.109712] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 00000000000=
+00000
+[  901.109713] DR3: 0000000000000000 DR6: 00000000fffe07f0 DR7: 00000000000=
+00400
+[  901.109714] PKRU: 55555554
+[  901.109714] Call Trace:
+[  901.109716]  <IRQ>
+[  901.109718]  ? show_regs+0x67/0x70
+[  901.109722]  ? watchdog_timer_fn+0x1f3/0x280
+[  901.109725]  ? __pfx_watchdog_timer_fn+0x10/0x10
+[  901.109727]  ? __hrtimer_run_queues+0xc8/0x220
+[  901.109731]  ? hrtimer_interrupt+0x10c/0x250
+[  901.109733]  ? __sysvec_apic_timer_interrupt+0x53/0x130
+[  901.109736]  ? sysvec_apic_timer_interrupt+0x7b/0x90
+[  901.109739]  </IRQ>
+[  901.109740]  <TASK>
+[  901.109740]  ? asm_sysvec_apic_timer_interrupt+0x1b/0x20
+[  901.109745]  ? sgx_enclave_restrict_permissions+0xba/0x1f0
+[  901.109747]  ? aa_file_perm+0x145/0x550
+[  901.109750]  sgx_ioctl+0x1ab/0x900
+[  901.109751]  ? xas_find+0x84/0x200
+[  901.109754]  ? sgx_enclave_etrack+0xbb/0x140
+[  901.109756]  ? sgx_encl_may_map+0x19a/0x240
+[  901.109758]  ? common_file_perm+0x8a/0x1b0
+[  901.109760]  ? obj_cgroup_charge_pages+0xa2/0x100
+[  901.109763]  ? tlb_flush_mmu+0x31/0x1c0
+[  901.109766]  ? tlb_finish_mmu+0x42/0x80
+[  901.109767]  ? do_mprotect_pkey+0x150/0x530
+[  901.109769]  ? __fget_light+0xc0/0x100
+[  901.109772]  __x64_sys_ioctl+0x95/0xd0
+[  901.109775]  x64_sys_call+0x1209/0x20c0
+[  901.109777]  do_syscall_64+0x6d/0x110
+[  901.109779]  ? syscall_exit_to_user_mode+0x86/0x1c0
+[  901.109782]  ? do_syscall_64+0x79/0x110
+[  901.109783]  ? syscall_exit_to_user_mode+0x86/0x1c0
+[  901.109784]  ? do_syscall_64+0x79/0x110
+[  901.109785]  ? free_unref_page+0x10e/0x180
+[  901.109788]  ? __do_fault+0x36/0x130
+[  901.109791]  ? do_pte_missing+0x2e8/0xcc0
+[  901.109792]  ? __pte_offset_map+0x1c/0x190
+[  901.109795]  ? __handle_mm_fault+0x7b9/0xe60
+[  901.109796]  ? __count_memcg_events+0x70/0x100
+[  901.109798]  ? handle_mm_fault+0x256/0x360
+[  901.109799]  ? do_user_addr_fault+0x3c1/0x860
+[  901.109801]  ? irqentry_exit_to_user_mode+0x67/0x190
+[  901.109803]  ? irqentry_exit+0x3b/0x50
+[  901.109804]  ? exc_page_fault+0x89/0x180
+[  901.109806]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[  901.109807] RIP: 0033:0x7fb20b4315cb
+[  901.109810] Code: 0f 1e fa 48 8b 05 c5 78 0d 00 64 c7 00 26 00 00 00 48 =
+c7 c0 ff ff ff ff c3 66 0f 1f 44 00 00 f3 0f 1e fa b8 10 00 00 00 0f 05 <48=
+> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 95 78 0d 00 f7 d8 64 89 01 48
+[  901.109811] RSP: 002b:00007ffc0e7af718 EFLAGS: 00000246 ORIG_RAX: 000000=
+0000000010
+[  901.109812] RAX: ffffffffffffffda RBX: 0000000780000000 RCX: 00007fb20b4=
+315cb
+[  901.109813] RDX: 00007ffc0e7af720 RSI: 00000000c028a405 RDI: 00000000000=
+00005
+[  901.109814] RBP: 0000000000000005 R08: 0000000000000000 R09: 00007ffc0e7=
+af794
+[  901.109815] R10: 00007ffc0e7af7c8 R11: 0000000000000246 R12: 00000000c02=
+8a405
+[  901.109815] R13: 00007ffc0e7af720 R14: 0000000780000000 R15: 00007fb20b2=
+ea980
+[  901.109817]  </TASK>
+------------[ end trace ]------------
+
+We suggest to give up CPU in the ioctl() handler explicitly. I have attache=
+d a
+patch which can fix such issue.
+
+Appreciate for all the review on previous versions.
+Thanks for your time!
+
+Regards,
+Bojun
+
 ---
-Cc: Roger Quadros <rogerq@ti.com>
-Cc: Andrew Lunn <andrew@lunn.ch>
-Cc: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-Cc: Jakub Kicinski <kuba@kernel.org>
-Cc: Vladimir Oltean <vladimir.oltean@nxp.com>
+v1 -> v2:
+  - Make the cond_resched() as a prefix op instead of a postfix op (Jarkko)
+  - Additionly check the pending signal at the begin of every for loop (Jar=
+kko)
+  - Introduce sgx_check_signal_and_resched() to wrap the pending check
+    and reschedule operations (Jarkko)
+  - Refine the trace log in commit() message (Kai)
 
- drivers/net/ethernet/ti/Kconfig              |   1 +
- drivers/net/ethernet/ti/Makefile             |   3 +-
- drivers/net/ethernet/ti/icssg/icssg_prueth.c |   3 +
- drivers/net/ethernet/ti/icssg/icssg_prueth.h |   3 +
- drivers/net/ethernet/ti/icssg/icssg_qos.c    | 288 +++++++++++++++++++
- drivers/net/ethernet/ti/icssg/icssg_qos.h    | 113 ++++++++
- 6 files changed, 410 insertions(+), 1 deletion(-)
- create mode 100644 drivers/net/ethernet/ti/icssg/icssg_qos.c
- create mode 100644 drivers/net/ethernet/ti/icssg/icssg_qos.h
+v2 -> v3:
+  - Set the default value of "ret" as "-ERESTARTSYS" to avoid redundantly c=
+heck
+    whether the current iteration is the first one (Dave)
 
-diff --git a/drivers/net/ethernet/ti/Kconfig b/drivers/net/ethernet/ti/Kconfig
-index 1729eb0e0b41..3716d585f9a3 100644
---- a/drivers/net/ethernet/ti/Kconfig
-+++ b/drivers/net/ethernet/ti/Kconfig
-@@ -190,6 +190,7 @@ config TI_ICSSG_PRUETH
- 	depends on PRU_REMOTEPROC
- 	depends on ARCH_K3 && OF && TI_K3_UDMA_GLUE_LAYER
- 	depends on PTP_1588_CLOCK_OPTIONAL
-+	depends on NET_SCH_TAPRIO
- 	help
- 	  Support dual Gigabit Ethernet ports over the ICSSG PRU Subsystem.
- 	  This subsystem is available starting with the AM65 platform.
-diff --git a/drivers/net/ethernet/ti/Makefile b/drivers/net/ethernet/ti/Makefile
-index 6e086b4c0384..28e794a8ecd1 100644
---- a/drivers/net/ethernet/ti/Makefile
-+++ b/drivers/net/ethernet/ti/Makefile
-@@ -39,7 +39,8 @@ icssg-prueth-y := icssg/icssg_prueth.o \
- 		  icssg/icssg_config.o \
- 		  icssg/icssg_mii_cfg.o \
- 		  icssg/icssg_stats.o \
--		  icssg/icssg_ethtool.o
-+		  icssg/icssg_ethtool.o \
-+		  icssg/icssg_qos.o
- obj-$(CONFIG_TI_ICSSG_PRUETH_SR1) += icssg-prueth-sr1.o
- icssg-prueth-sr1-y := icssg/icssg_prueth_sr1.o \
- 		      icssg/icssg_common.o \
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-index 87f8b03459d2..7da6ddf15ca9 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-+++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-@@ -685,6 +685,7 @@ static const struct net_device_ops emac_netdev_ops = {
- 	.ndo_eth_ioctl = emac_ndo_ioctl,
- 	.ndo_get_stats64 = emac_ndo_get_stats64,
- 	.ndo_get_phys_port_name = emac_ndo_get_phys_port_name,
-+	.ndo_setup_tc = icssg_qos_ndo_setup_tc,
- };
- 
- static int prueth_netdev_init(struct prueth *prueth,
-@@ -819,6 +820,8 @@ static int prueth_netdev_init(struct prueth *prueth,
- 	emac->rx_hrtimer.function = &emac_rx_timer_callback;
- 	prueth->emac[mac] = emac;
- 
-+	icssg_qos_tas_init(ndev);
-+
- 	return 0;
- 
- free:
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.h b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
-index 208fb78fb71f..7aa34345b865 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_prueth.h
-+++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
-@@ -37,6 +37,7 @@
- #include "icssg_config.h"
- #include "icss_iep.h"
- #include "icssg_switch_map.h"
-+#include "icssg_qos.h"
- 
- #define PRUETH_MAX_MTU          (2000 - ETH_HLEN - ETH_FCS_LEN)
- #define PRUETH_MIN_PKT_SIZE     (VLAN_ETH_ZLEN)
-@@ -186,6 +187,8 @@ struct prueth_emac {
- 
- 	struct pruss_mem_region dram;
- 
-+	struct prueth_qos qos;
-+
- 	struct delayed_work stats_work;
- 	u64 stats[ICSSG_NUM_STATS];
- 
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_qos.c b/drivers/net/ethernet/ti/icssg/icssg_qos.c
-new file mode 100644
-index 000000000000..5e93b1b9ca43
---- /dev/null
-+++ b/drivers/net/ethernet/ti/icssg/icssg_qos.c
-@@ -0,0 +1,288 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Texas Instruments ICSSG PRUETH QoS submodule
-+ * Copyright (C) 2023 Texas Instruments Incorporated - http://www.ti.com/
-+ */
-+
-+#include <linux/printk.h>
-+#include "icssg_prueth.h"
-+#include "icssg_switch_map.h"
-+
-+static void tas_update_fw_list_pointers(struct prueth_emac *emac)
-+{
-+	struct tas_config *tas = &emac->qos.tas.config;
-+
-+	if ((readb(tas->active_list)) == TAS_LIST0) {
-+		tas->fw_active_list = emac->dram.va + TAS_GATE_MASK_LIST0;
-+		tas->fw_shadow_list = emac->dram.va + TAS_GATE_MASK_LIST1;
-+	} else {
-+		tas->fw_active_list = emac->dram.va + TAS_GATE_MASK_LIST1;
-+		tas->fw_shadow_list = emac->dram.va + TAS_GATE_MASK_LIST0;
-+	}
-+}
-+
-+static void tas_update_maxsdu_table(struct prueth_emac *emac)
-+{
-+	struct tas_config *tas = &emac->qos.tas.config;
-+	u16 __iomem *max_sdu_tbl_ptr;
-+	u8 gate_idx;
-+
-+	/* update the maxsdu table */
-+	max_sdu_tbl_ptr = emac->dram.va + TAS_QUEUE_MAX_SDU_LIST;
-+
-+	for (gate_idx = 0; gate_idx < TAS_MAX_NUM_QUEUES; gate_idx++)
-+		writew(tas->max_sdu_table.max_sdu[gate_idx], &max_sdu_tbl_ptr[gate_idx]);
-+}
-+
-+static void tas_reset(struct prueth_emac *emac)
-+{
-+	struct tas_config *tas = &emac->qos.tas.config;
-+	int i;
-+
-+	for (i = 0; i < TAS_MAX_NUM_QUEUES; i++)
-+		tas->max_sdu_table.max_sdu[i] = 2048;
-+
-+	tas_update_maxsdu_table(emac);
-+
-+	writeb(TAS_LIST0, tas->active_list);
-+
-+	memset_io(tas->fw_active_list, 0, sizeof(*tas->fw_active_list));
-+	memset_io(tas->fw_shadow_list, 0, sizeof(*tas->fw_shadow_list));
-+}
-+
-+static int tas_set_state(struct prueth_emac *emac, enum tas_state state)
-+{
-+	struct tas_config *tas = &emac->qos.tas.config;
-+	int ret;
-+
-+	if (tas->state == state)
-+		return 0;
-+
-+	switch (state) {
-+	case TAS_STATE_RESET:
-+		tas_reset(emac);
-+		ret = emac_set_port_state(emac, ICSSG_EMAC_PORT_TAS_RESET);
-+		tas->state = TAS_STATE_RESET;
-+		break;
-+	case TAS_STATE_ENABLE:
-+		ret = emac_set_port_state(emac, ICSSG_EMAC_PORT_TAS_ENABLE);
-+		tas->state = TAS_STATE_ENABLE;
-+		break;
-+	case TAS_STATE_DISABLE:
-+		ret = emac_set_port_state(emac, ICSSG_EMAC_PORT_TAS_DISABLE);
-+		tas->state = TAS_STATE_DISABLE;
-+		break;
-+	default:
-+		netdev_err(emac->ndev, "%s: unsupported state\n", __func__);
-+		ret = -EINVAL;
-+		break;
-+	}
-+
-+	if (ret)
-+		netdev_err(emac->ndev, "TAS set state failed %d\n", ret);
-+	return ret;
-+}
-+
-+static int tas_set_trigger_list_change(struct prueth_emac *emac)
-+{
-+	struct tc_taprio_qopt_offload *admin_list = emac->qos.tas.taprio_admin;
-+	struct tas_config *tas = &emac->qos.tas.config;
-+	struct ptp_system_timestamp sts;
-+	u32 change_cycle_count;
-+	u32 cycle_time;
-+	u64 base_time;
-+	u64 cur_time;
-+
-+	/* IEP clock has a hardware errata due to which it wraps around exactly
-+	 * once every taprio cycle. To compensate for that, adjust cycle time
-+	 * by the wrap around time which is stored in emac->iep->def_inc
-+	 */
-+	cycle_time = admin_list->cycle_time - emac->iep->def_inc;
-+	base_time = admin_list->base_time;
-+	cur_time = prueth_iep_gettime(emac, &sts);
-+
-+	if (base_time > cur_time)
-+		change_cycle_count = DIV_ROUND_UP_ULL(base_time - cur_time, cycle_time);
-+	else
-+		change_cycle_count = 1;
-+
-+	writel(cycle_time, emac->dram.va + TAS_ADMIN_CYCLE_TIME);
-+	writel(change_cycle_count, emac->dram.va + TAS_CONFIG_CHANGE_CYCLE_COUNT);
-+	writeb(admin_list->num_entries, emac->dram.va + TAS_ADMIN_LIST_LENGTH);
-+
-+	/* config_change cleared by f/w to ack reception of new shadow list */
-+	writeb(1, &tas->config_list->config_change);
-+	/* config_pending cleared by f/w when new shadow list is copied to active list */
-+	writeb(1, &tas->config_list->config_pending);
-+
-+	return emac_set_port_state(emac, ICSSG_EMAC_PORT_TAS_TRIGGER);
-+}
-+
-+static int tas_update_oper_list(struct prueth_emac *emac)
-+{
-+	struct tc_taprio_qopt_offload *admin_list = emac->qos.tas.taprio_admin;
-+	struct tas_config *tas = &emac->qos.tas.config;
-+	u32 tas_acc_gate_close_time = 0;
-+	u8 idx, gate_idx, val;
-+	int ret;
-+
-+	if (admin_list->cycle_time > TAS_MAX_CYCLE_TIME)
-+		return -EINVAL;
-+
-+	tas_update_fw_list_pointers(emac);
-+
-+	for (idx = 0; idx < admin_list->num_entries; idx++) {
-+		writeb(admin_list->entries[idx].gate_mask,
-+		       &tas->fw_shadow_list->gate_mask_list[idx]);
-+		tas_acc_gate_close_time += admin_list->entries[idx].interval;
-+
-+		/* extend last entry till end of cycle time */
-+		if (idx == admin_list->num_entries - 1)
-+			writel(admin_list->cycle_time,
-+			       &tas->fw_shadow_list->win_end_time_list[idx]);
-+		else
-+			writel(tas_acc_gate_close_time,
-+			       &tas->fw_shadow_list->win_end_time_list[idx]);
-+	}
-+
-+	/* clear remaining entries */
-+	for (idx = admin_list->num_entries; idx < TAS_MAX_CMD_LISTS; idx++) {
-+		writeb(0, &tas->fw_shadow_list->gate_mask_list[idx]);
-+		writel(0, &tas->fw_shadow_list->win_end_time_list[idx]);
-+	}
-+
-+	/* update the Array of gate close time for each queue in each window */
-+	for (idx = 0 ; idx < admin_list->num_entries; idx++) {
-+		/* On Linux, only PRUETH_MAX_TX_QUEUES are supported per port */
-+		for (gate_idx = 0; gate_idx < PRUETH_MAX_TX_QUEUES; gate_idx++) {
-+			u8 gate_mask_list_idx = readb(&tas->fw_shadow_list->gate_mask_list[idx]);
-+			u32 gate_close_time = 0;
-+
-+			if (gate_mask_list_idx & BIT(gate_idx))
-+				gate_close_time = readl(&tas->fw_shadow_list->win_end_time_list[idx]);
-+
-+			writel(gate_close_time,
-+			       &tas->fw_shadow_list->gate_close_time_list[idx][gate_idx]);
-+		}
-+	}
-+
-+	/* tell f/w to swap active & shadow list */
-+	ret = tas_set_trigger_list_change(emac);
-+	if (ret) {
-+		netdev_err(emac->ndev, "failed to swap f/w config list: %d\n", ret);
-+		return ret;
-+	}
-+
-+	/* Wait for completion */
-+	ret = readb_poll_timeout(&tas->config_list->config_change, val, !val,
-+				 USEC_PER_MSEC, 10 * USEC_PER_MSEC);
-+	if (ret) {
-+		netdev_err(emac->ndev, "TAS list change completion time out\n");
-+		return ret;
-+	}
-+
-+	tas_update_fw_list_pointers(emac);
-+
-+	return 0;
-+}
-+
-+static int emac_taprio_replace(struct net_device *ndev,
-+			       struct tc_taprio_qopt_offload *taprio)
-+{
-+	struct prueth_emac *emac = netdev_priv(ndev);
-+	int ret;
-+
-+	if (taprio->cycle_time_extension) {
-+		NL_SET_ERR_MSG_MOD(taprio->extack, "Cycle time extension not supported");
-+		return -EOPNOTSUPP;
-+	}
-+
-+	if (taprio->cycle_time < TAS_MIN_CYCLE_TIME) {
-+		NL_SET_ERR_MSG_FMT_MOD(taprio->extack, "cycle_time %llu is less than min supported cycle_time %d",
-+				       taprio->cycle_time, TAS_MIN_CYCLE_TIME);
-+		return -EINVAL;
-+	}
-+
-+	if (taprio->num_entries > TAS_MAX_CMD_LISTS) {
-+		NL_SET_ERR_MSG_FMT_MOD(taprio->extack, "num_entries %lu is more than max supported entries %d",
-+				       taprio->num_entries, TAS_MAX_CMD_LISTS);
-+		return -EINVAL;
-+	}
-+
-+	if (emac->qos.tas.taprio_admin)
-+		taprio_offload_free(emac->qos.tas.taprio_admin);
-+
-+	emac->qos.tas.taprio_admin = taprio_offload_get(taprio);
-+	ret = tas_update_oper_list(emac);
-+	if (ret)
-+		goto clear_taprio;
-+
-+	ret = tas_set_state(emac, TAS_STATE_ENABLE);
-+	if (ret)
-+		goto clear_taprio;
-+
-+clear_taprio:
-+	emac->qos.tas.taprio_admin = NULL;
-+	taprio_offload_free(taprio);
-+
-+	return ret;
-+}
-+
-+static int emac_taprio_destroy(struct net_device *ndev,
-+			       struct tc_taprio_qopt_offload *taprio)
-+{
-+	struct prueth_emac *emac = netdev_priv(ndev);
-+	int ret;
-+
-+	taprio_offload_free(taprio);
-+
-+	ret = tas_set_state(emac, TAS_STATE_RESET);
-+	if (ret)
-+		return ret;
-+
-+	return tas_set_state(emac, TAS_STATE_DISABLE);
-+}
-+
-+static int emac_setup_taprio(struct net_device *ndev, void *type_data)
-+{
-+	struct tc_taprio_qopt_offload *taprio = type_data;
-+	int ret;
-+
-+	switch (taprio->cmd) {
-+	case TAPRIO_CMD_REPLACE:
-+		ret = emac_taprio_replace(ndev, taprio);
-+		break;
-+	case TAPRIO_CMD_DESTROY:
-+		ret = emac_taprio_destroy(ndev, taprio);
-+		break;
-+	default:
-+		ret = -EOPNOTSUPP;
-+	}
-+
-+	return ret;
-+}
-+
-+int icssg_qos_ndo_setup_tc(struct net_device *ndev, enum tc_setup_type type,
-+			   void *type_data)
-+{
-+	switch (type) {
-+	case TC_SETUP_QDISC_TAPRIO:
-+		return emac_setup_taprio(ndev, type_data);
-+	default:
-+		return -EOPNOTSUPP;
-+	}
-+}
-+
-+void icssg_qos_tas_init(struct net_device *ndev)
-+{
-+	struct prueth_emac *emac = netdev_priv(ndev);
-+	struct tas_config *tas;
-+
-+	tas = &emac->qos.tas.config;
-+
-+	tas->config_list = emac->dram.va + TAS_CONFIG_CHANGE_TIME;
-+	tas->active_list = emac->dram.va + TAS_ACTIVE_LIST_INDEX;
-+
-+	tas_update_fw_list_pointers(emac);
-+
-+	tas_set_state(emac, TAS_STATE_RESET);
-+}
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_qos.h b/drivers/net/ethernet/ti/icssg/icssg_qos.h
-new file mode 100644
-index 000000000000..25baccdd1ce5
---- /dev/null
-+++ b/drivers/net/ethernet/ti/icssg/icssg_qos.h
-@@ -0,0 +1,113 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/* Copyright (C) 2023 Texas Instruments Incorporated - http://www.ti.com/
-+ */
-+
-+#ifndef __NET_TI_ICSSG_QOS_H
-+#define __NET_TI_ICSSG_QOS_H
-+
-+#include <linux/atomic.h>
-+#include <linux/netdevice.h>
-+#include <net/pkt_sched.h>
-+
-+/* Maximum number of gate command entries in each list. */
-+#define TAS_MAX_CMD_LISTS   (16)
-+
-+/* Maximum number of transmit queues supported by implementation */
-+#define TAS_MAX_NUM_QUEUES  (8)
-+
-+/* Minimum cycle time supported by implementation (in ns) */
-+#define TAS_MIN_CYCLE_TIME  (1000000)
-+
-+/* Minimum cycle time supported by implementation (in ns) */
-+#define TAS_MAX_CYCLE_TIME  (4000000000)
-+
-+/* Minimum TAS window duration supported by implementation (in ns) */
-+#define TAS_MIN_WINDOW_DURATION  (10000)
-+
-+/**
-+ * enum tas_list_num - TAS list number
-+ * @TAS_LIST0: TAS list number is 0
-+ * @TAS_LIST1: TAS list number is 1
-+ */
-+enum tas_list_num {
-+	TAS_LIST0 = 0,
-+	TAS_LIST1 = 1
-+};
-+
-+/**
-+ * enum tas_state - State of TAS in firmware
-+ * @TAS_STATE_DISABLE: TAS state machine is disabled.
-+ * @TAS_STATE_ENABLE: TAS state machine is enabled.
-+ * @TAS_STATE_RESET: TAS state machine is reset.
-+ */
-+enum tas_state {
-+	TAS_STATE_DISABLE = 0,
-+	TAS_STATE_ENABLE = 1,
-+	TAS_STATE_RESET = 2,
-+};
-+
-+/**
-+ * struct tas_config_list - Config state machine variables
-+ * @config_change_time: New list is copied at this time
-+ * @config_change_error_counter: Incremented if admin->BaseTime < current time
-+ *				 and TAS_enabled is true
-+ * @config_pending: True if list update is pending
-+ * @config_change: Set to true when application trigger updating of admin list
-+ *		   to active list, cleared when configChangeTime is updated
-+ */
-+struct tas_config_list {
-+	u64 config_change_time;
-+	u32 config_change_error_counter;
-+	u8 config_pending;
-+	u8 config_change;
-+};
-+
-+/* Max SDU table. See IEEE Std 802.1Q-2018 12.29.1.1 */
-+struct tas_max_sdu_table {
-+	u16 max_sdu[TAS_MAX_NUM_QUEUES];
-+};
-+
-+/**
-+ * struct tas_firmware_list - TAS List Structure based on firmware memory map
-+ * @gate_mask_list: Window gate mask list
-+ * @win_end_time_list: Window end time list
-+ * @gate_close_time_list: Array of gate close time for each queue in each window
-+ */
-+struct tas_firmware_list {
-+	u8 gate_mask_list[TAS_MAX_CMD_LISTS];
-+	u32 win_end_time_list[TAS_MAX_CMD_LISTS];
-+	u32 gate_close_time_list[TAS_MAX_CMD_LISTS][TAS_MAX_NUM_QUEUES];
-+};
-+
-+/**
-+ * struct tas_config - Main Time Aware Shaper Handle
-+ * @state: TAS state
-+ * @max_sdu_table: Max SDU table
-+ * @config_list: Config change variables
-+ * @active_list: Current operating list operating list
-+ * @fw_active_list: Active List pointer, used by firmware
-+ * @fw_shadow_list: Shadow List pointer, used by driver
-+ */
-+struct tas_config {
-+	enum tas_state state;
-+	struct tas_max_sdu_table max_sdu_table;
-+	struct tas_config_list __iomem *config_list;
-+	u8 __iomem *active_list;
-+	struct tas_firmware_list __iomem *fw_active_list;
-+	struct tas_firmware_list __iomem *fw_shadow_list;
-+};
-+
-+struct prueth_qos_tas {
-+	struct tc_taprio_qopt_offload *taprio_admin;
-+	struct tc_taprio_qopt_offload *taprio_oper;
-+	struct tas_config config;
-+};
-+
-+struct prueth_qos {
-+	struct prueth_qos_tas tas;
-+};
-+
-+void icssg_qos_tas_init(struct net_device *ndev);
-+int icssg_qos_ndo_setup_tc(struct net_device *ndev, enum tc_setup_type type,
-+			   void *type_data);
-+#endif /* __NET_TI_ICSSG_QOS_H */
--- 
-2.34.1
+[1] v1: https://lore.kernel.org/linux-sgx/20240423092550.59297-1-zhubojun.z=
+bj@antgroup.com/
+[2] v2: https://lore.kernel.org/linux-sgx/20240426141823.112366-1-zhubojun.=
+zbj@antgroup.com/
+
+Bojun Zhu (1):
+  x86/sgx: Explicitly give up the CPU in EDMM's ioctl() to avoid
+    softlockup
+
+ arch/x86/kernel/cpu/sgx/ioctl.c | 40 +++++++++++++++++++++++----------
+ 1 file changed, 28 insertions(+), 12 deletions(-)
+
+
+base-commit: ed30a4a51bb196781c8058073ea720133a65596f
+--=20
+2.25.1
 
 
