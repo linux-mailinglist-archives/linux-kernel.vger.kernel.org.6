@@ -1,131 +1,98 @@
-Return-Path: <linux-kernel+bounces-180267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 874978C6C36
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 20:33:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0DCA8C6C12
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 20:19:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B938F1C210BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:33:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59DB51F22E3F
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:19:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3139215AD9A;
-	Wed, 15 May 2024 18:33:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=valentinobst.de header.i=kernel@valentinobst.de header.b="rf1hovah"
-Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D349C158DD0;
+	Wed, 15 May 2024 18:19:06 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B69E4159596;
-	Wed, 15 May 2024 18:33:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29FDE158DB5
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 18:19:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715797998; cv=none; b=kqe7yoAu+gY7ox9kpDJc999LcV28tYHHVQKelHAp1M3HHQDgttv9gLQ67cg5NLQPAXQreDerWxFshW1fQ+PDarrOrXKbrnMHnioo9Z5PdBC/YEhbp8bXJjg7oiUOeOj2apIfyGCuf4Gjw4Mu+4lueDtllhvMdaQxisKXaQoXsB0=
+	t=1715797146; cv=none; b=NrLmdqsHnqPXxYJ9xa4K7XsPBVpXRZjyOTLG7PrOPtAVJyFA9DirXg9S9awF0c8Q6s7p4fMxT1OwZJZ/0H++7Ud78CPKF7JBocfXFL78PScKkeiweD2SlDijtrUvK6PQKdap2Qr8Gy8+GWtVJGl88FZYIzF+iRXxjEr8gG30NHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715797998; c=relaxed/simple;
-	bh=y2zayKWnk9+auOzdACJ/SZye0xW8Lm8mzmgdTyPY700=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EVcxmTasObkSLbFsvTUR3DhusB+7SbVXWSWFVGblcO8boOIiYmXONtmjCAvJxN6Zc0uAjgedN/kr9+//1vYyB/dvv7i8UmGi+XOD5i2IqvUem7gCZ+IMb5Q9q0qUNug0nFD6pLqde2oiKlj3VE7epVRnofRbRYW9NVrYsj075go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=valentinobst.de; spf=pass smtp.mailfrom=valentinobst.de; dkim=pass (2048-bit key) header.d=valentinobst.de header.i=kernel@valentinobst.de header.b=rf1hovah; arc=none smtp.client-ip=217.72.192.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=valentinobst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valentinobst.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=valentinobst.de;
-	s=s1-ionos; t=1715797983; x=1716402783; i=kernel@valentinobst.de;
-	bh=mSXPAJKXxzZyEDc83l6Cs0ff5IlLiJEXhV9mzqpTkAE=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:In-Reply-To:
-	 References:MIME-Version:cc:content-transfer-encoding:content-type:
-	 date:from:message-id:mime-version:reply-to:subject:to;
-	b=rf1hovahGEVZoPzUBVzzohJ6u+wjvTv1yoDQMIRoZy6uQvD4mmqzgTOqHLkHtcsG
-	 V5T6I5EqiHQsEQ+AKq6VMJ86mC46jiks5xD0hbjR23kdY75lC0DEvSWM18p/pqond
-	 NtNA/TWdNBduEaT2/6aNPTKnb2QMWWVeUY8U1H+FfWJOj/rOoiVwtb8qxhmWu3nI0
-	 PdGDPHQPruv9vDHXwrxtmZ39/nrXIdLu4FL3g186i+X96xe/UjKSetUkcLZgdPEvK
-	 xSUTPRthFeJDnrbZt/u6eWhvvBvxBJH9LZb4rOwPiDiHQkVZFlajyOyZahMYujtyS
-	 DiVNhA4m2gWUpQSVgg==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from archbook.fritz.box ([217.245.131.25]) by
- mrelayeu.kundenserver.de (mreue107 [213.165.67.113]) with ESMTPSA (Nemesis)
- id 1N8GAQ-1sbqiY0Ppo-014Dgt; Wed, 15 May 2024 20:17:38 +0200
-From: Valentin Obst <kernel@valentinobst.de>
-To: mhiramat@kernel.org
-Cc: a.hindborg@samsung.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	gregkh@linuxfoundation.org,
-	hpa@zytor.com,
-	john.m.baublitz@gmail.com,
-	kernel@valentinobst.de,
-	linux-kernel@vger.kernel.org,
-	mingo@kernel.org,
-	mingo@redhat.com,
-	ojeda@kernel.org,
-	peterz@infradead.org,
-	sergio.collado@gmail.com,
-	stable@vger.kernel.org,
-	tglx@linutronix.de,
-	x86@kernel.org
-Subject: Re: [PATCH v3] x86/tools: fix line number reported for malformed lines
-Date: Wed, 15 May 2024 20:17:16 +0200
-Message-ID: <20240515181716.3313-1-kernel@valentinobst.de>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240403091748.ee180a7a1d4bf92e0c46fb8a@kernel.org>
-References: <20240403091748.ee180a7a1d4bf92e0c46fb8a@kernel.org>
+	s=arc-20240116; t=1715797146; c=relaxed/simple;
+	bh=5eudQLXKDiRsYY49Oc+zW6UDq5YXoyySbCrA4nZlq9w=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=nZj/8bgpsSRbyWRL5bAmLxYRlm7g6WSMataNZNQhOqrQH9+1huCX7Zq2eoq3/CKvp2v8BHsRoFcExL7UrybQLsMWqGK4YpKKXZM8z++IuGz2GH3G+H7b+EfCqfGLfeADg9RoS8Qc6MmnCMFFzhJyXd5JTWR/f/CT4jJwH087r0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7e1ea8608afso335650839f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 11:19:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715797144; x=1716401944;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z+tpDgK2JCqXeT0yDQHOxK3Y5nf0WqVOLoMtiI3Y/bw=;
+        b=Q8PU/4/IYR9hWLApMZBKjiIXbMIGSvrSAMf4GaR+quttf0+Sslsv9VXuEsWBfb8Pzg
+         Mrn/XEFM9Cu3CUiSC2qbaJDAYJEw4ghv8L7vAKRgt9+7dV2FIpOd2Apgpb86vYEzQdw/
+         4/2wJXNVQWYvXkIoIXKvM43mVirxdmdNJzpHVWSRPV8L/oDppu3eNH0GCN4c6vNo4NL5
+         NiqcWrJK+unuPa9Gh1bAk4EwsdSQTCJsZJ3tJIPriH2Q2386AEz3YHCGLgviG30nQlL2
+         v0tvc85b4ihx3AXQv70XDKPGYSrxf0rCZGBEf72lHjSZxl31t2H42VMuoVbIq8DUG/xV
+         yimA==
+X-Forwarded-Encrypted: i=1; AJvYcCV/jI5jND2Pl1reesR6iqUBCd/m40E7X1RlU+oQCU838zvC5QAqJCKJq6MsGcJhTSuOJdyVomDkoCxg+AqKYMB6+LGzbpX4/q+5ILGu
+X-Gm-Message-State: AOJu0YzymV2hAFCioepfb80VObZCKttGAZOLAD7o/p897jQ5POfDCJq/
+	KRlVojsavstmeUU/lPmFefVxsVzKp0sobpWE8ASwr0MaBCeBNcbCH6TRImeYnsobdselqXN7lQe
+	tDpv9E3Lyq4FkBa/g3k7P4HApQtCsdxjTNKugXVoot1TtHwAISaP7MQU=
+X-Google-Smtp-Source: AGHT+IEjNm55R8nOlSIvYdtT/+wPoKVbHS4MXBNSquAdO95DQ/qV9dYHkp5IQ0ROpBGxD/p/1FKq4FdnI5XNMO2HYBR0ez1OuwCN
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Provags-ID: V03:K1:ttCaaco3vEonRvTh930mfcrIADBoReXBM9hGliQ2QuSLUQbtV3q
- N/CLOKE9dhGTC+Q1Szo0uzGyPjKzVaxlZAlnD325gGzJn7zCarZ0iikssTW/yJU5Gj22Kyw
- ovshi4BPFTmICFJx+sJi5gAFXFwkJuE82yzzSer5N+DQmrJwLxsH6UPj+9AGh7GOJd8m4GK
- QH2DnBjfJvcKx4RlgJNOQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:CUGfVys0O1E=;LeLgmglAvO6+O7ly0QdmWWvmXNB
- IUE18NMJearSvvzLQ5B/cEXEthivYfvTsI6x1ycGX1c84XTosfMb5Gg4aaKmTFoOeoEMgXRai
- OalavXFvI41+rX8PaKecKrUM0b//tZy/Wwf6rU1/MJ060c+Ulid0Tztl9Us5QOaJ/Eo+pSkPA
- qKWEjDaa0RZBy13MzzH0ncJAZJfMx0UGlgF7tseGMinH2+pew/fdDoNiOPI0O2wwf1O+ixdRK
- L07PEypW8DTPLoMJ3ziRAv861oM2NSrr8ZdmJDC381ZneYCsT1hOB8MidkJiG9kLynDnIGcri
- OqjKK0NnFgLB4ecll2Dlx9nt2QiWLbD/wlUcgZO4cypNvr+aGfVcwbi/zz7BvB//aMnhqyrlo
- OTvaDKqNTChT8VJmAfWFnd34lXebm9mZvNHCUp2JiuZyS4zWmUT6eNojwdwv/+pIwhOyqd43C
- VyBMGTRW6BN8ps3aXk2UA9dtaVcipTF9WVBNcJIkFCFN6zF1ZjpT/3S2kI0uU+oqE8o+y0Wmw
- vKiiTB2w2c4iHN3pquAt4heraFi6AhGewEpkwbzx0NnEReCjlC82i87gK8Fo6O2q2VmbuOvoW
- 7uqu6T6n6rBG2ZcrbhV7//oXhwIZUz2oD5jFPYKSGJFVcAAJ76K58ni51XmP2zzA8tEoCykN2
- /G1zy5SzoMs4YgERH3vA5mPllsBy0yS4h0sdJHmlu8ru7rapGYl0JP0vLMtk/Ka3GZUQMFGci
- aub9+5PoF//aMllPmgXnqBb3uS8tu6qxQghdyIwT6EBJCM3etPDrSw=
+X-Received: by 2002:a05:6638:861e:b0:488:59cc:eb4e with SMTP id
+ 8926c6da1cb9f-4895854473cmr1136597173.1.1715797144326; Wed, 15 May 2024
+ 11:19:04 -0700 (PDT)
+Date: Wed, 15 May 2024 11:19:04 -0700
+In-Reply-To: <000000000000c4b45a056a36872f@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000004b67120618822707@google.com>
+Subject: Re: [syzbot] [ntfs3?] kernel BUG at fs/ntfs/aops.c:LINE!
+From: syzbot <syzbot+6a5a7672f663cce8b156@syzkaller.appspotmail.com>
+To: almaz.alexandrovich@paragon-software.com, anton@tuxera.com, 
+	axboe@kernel.dk, brauner@kernel.org, cgel.zte@gmail.com, 
+	dai.shixin@zte.com.cn, ebiggers@kernel.org, gregkh@linuxfoundation.org, 
+	jack@suse.cz, jiang.xuexin@zte.com.cn, linkinjeon@kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-ntfs-dev@lists.sourceforge.net, lu.zhongjun@zte.com.cn, 
+	ntfs3@lists.linux.dev, ran.maosheng1@zte.com.cn, ran.xiaokai@zte.com.cn, 
+	stable@vger.kernel.org, syzkaller-bugs@googlegroups.com, xu.xin16@zte.com.cn, 
+	yang.tao172@zte.com.cn, yang.yang29@zte.com.cn, zealci@zte.com.cn, 
+	zhang.songyi@zte.com.cn, zhang.wenya1@zte.com.cn, zhang.yanan14@zte.com.cn
+Content-Type: text/plain; charset="UTF-8"
 
-> > Commit 35039eb6b199 ("x86: Show symbol name if insn decoder test failed")
-> > included symbol lines in the post-processed objdump output consumed by
-> > the insn decoder test. This broke the `instuction lines == total lines`
-> > property that `insn_decoder_test.c` relied upon to print the offending
-> > line's number in error messages. This has the consequence that the line
-> > number reported on a test failure is unreated to, and much smaller than,
-> > the line that actually caused the problem.
-> >
-> > Add a new variable that counts the combined (insn+symbol) line count and
-> > report this in the error message.
->
-> This looks good to me. Thanks!
->
-> Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+syzbot suspects this issue was fixed by commit:
 
-Thanks!
+commit 6f861765464f43a71462d52026fbddfc858239a5
+Author: Jan Kara <jack@suse.cz>
+Date:   Wed Nov 1 17:43:10 2023 +0000
 
-So what is the status on this one? Is there someone here who can take it
-through their tree s.t. it might make it into 6.10-rc1 or 6.11-rc1?
+    fs: Block writes to mounted block devices
 
-	- Best Valentin
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=134d0268980000
+start commit:   ceb6a6f023fd Linux 6.7-rc6
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e5751b3a2226135d
+dashboard link: https://syzkaller.appspot.com/bug?extid=6a5a7672f663cce8b156
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=172458d6e80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=120d8026e80000
 
->
-> >
-> > Fixes: 35039eb6b199 ("x86: Show symbol name if insn decoder test failed")
-> > Cc: stable@vger.kernel.org
-> > Reviewed-by: Miguel Ojeda <ojeda@kernel.org>
-> > Tested-by: Miguel Ojeda <ojeda@kernel.org>
-> > Reported-by: John Baublitz <john.m.baublitz@gmail.com>
-> > Debugged-by: John Baublitz <john.m.baublitz@gmail.com>
-> > Signed-off-by: Valentin Obst <kernel@valentinobst.de>
->
-> --
-> Masami Hiramatsu (Google) <mhiramat@kernel.org>
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: fs: Block writes to mounted block devices
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
