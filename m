@@ -1,89 +1,89 @@
-Return-Path: <linux-kernel+bounces-179534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01E438C6109
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:51:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ABC28C610D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:52:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C97F1F214AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:51:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BD6C1F22CD0
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:52:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE226481D0;
-	Wed, 15 May 2024 06:50:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D2A047F62;
+	Wed, 15 May 2024 06:51:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="PO8F082Y"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2076.outbound.protection.outlook.com [40.107.244.76])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="aIqRY/xU"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0126645C18;
-	Wed, 15 May 2024 06:50:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.76
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715755842; cv=fail; b=cEe+NjjKDt4leKl6OFMovJ3mMAskuKXTYMElLS3U9UsYl/zrR7QtaTq4LYRqLUn9gf00k6SjCClv5qCNrR4YnLk7VeLukZH4MwTrJ9zek48zAtm20rc5pw2sYDY39a83s7Ss0lBidpBtFjQKH0FsM2qiNY9pSN22IwZpce7b4K8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715755842; c=relaxed/simple;
-	bh=aDTvSU2bCbGLr8AhimRrzpjFbuLaCvX2L32AZJENLK8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lPGFItbbwqQSKPUxIm5+9hwo4R55iMDfDEGeuYLlDHLNCkU5/doi4J12jeyYPkNhvxgYVQvTLTvGmW5WyLIVlztogGfRBY5Jz28PhdkMB/ss0F1TCb/p6j4dbshCT8RiX0CGOUUAhd3UyF3FRimo/OYH1aUl+oQFaH2v6H+xNY0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=PO8F082Y; arc=fail smtp.client-ip=40.107.244.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=T9pgACrF4X3+B3IhRAwGmJgIO7E2pUB+fzIYbC+Vy5ayBTfssrnRoBl7R3nMCJvVLlkprYBrH2O7Z57K+vpW79gXqmaVld6E8/Jgc7LSooCjASdxNwfSWmje7jThUsygO7jm3c0kLfGZrxdeFp1Lp2Juo8sg5SuqKlXL4uJRTbaCDFvmGZDo1h8/TfsldloCIRDPsnkKXe1W5AOtXGOsn6yuA97nyFd56EdQ5OctnBsW6i++P2OOwbvTEuaYS/qTjQ8vxqbll7yS569Jg3jCccGhrG0JoO3Td3o6iCruJOCjhkXp2im23zEnK2XHet5GGVwB+gZwcb123gGXzlSJew==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vcwYxAcPB960myYrq5oQXoH0v7z+ym1e/y8k8X4re90=;
- b=Z+OxDFAGL3gjw6O8jzWIpW/xP5mgPJYFpYWgnnTSoSyq8kDqsU3VUXQ06uwdOFT4n/km5aukoS2v4S6T8nNfGhm9bHzJCAMI15r9qG1MyHGYV2JpYNcuvwmPPfFT6T3heyEzpHoq0A8uYbnZyxpQwHjpjmNWpYka6wnbzv3xLlnpz+/8V4yLPPnyXARufQxUBiaaQAjaVngJHxy7EIQfpeX1YDaLO5lWu0ndLCSYSg5ZbzK+7rQ2aBYbR5ThAosKMaoy6MHH4CSAwbiZ/Yfi2y9XVBARbcLFRaDYfJvRjTyFLGCiYePbtHuBEfPYJp12UKmEPT+nmhJ3W0m3LpUVXQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=suse.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vcwYxAcPB960myYrq5oQXoH0v7z+ym1e/y8k8X4re90=;
- b=PO8F082YiAagWvJtwAV/cpy5zj1sHwsqD18jMDH71aOTD5rr0pcWV6ZSoVW6JlQz/nCMsk5WNCwtnJ8wYmCSQQVZewmfYaaUDCavDRfMmH+6M/d1E1eV5pLkRiO5TRRRcA979bSn+vT9wFfr+iJONBTFxH4jz33WVpmd229O+1A=
-Received: from SJ0PR03CA0332.namprd03.prod.outlook.com (2603:10b6:a03:39c::7)
- by BY1PR12MB8445.namprd12.prod.outlook.com (2603:10b6:a03:523::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.25; Wed, 15 May
- 2024 06:50:36 +0000
-Received: from CO1PEPF000044F1.namprd05.prod.outlook.com
- (2603:10b6:a03:39c:cafe::df) by SJ0PR03CA0332.outlook.office365.com
- (2603:10b6:a03:39c::7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55 via Frontend
- Transport; Wed, 15 May 2024 06:50:36 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CO1PEPF000044F1.mail.protection.outlook.com (10.167.241.71) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7587.21 via Frontend Transport; Wed, 15 May 2024 06:50:35 +0000
-Received: from cjq-desktop.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Wed, 15 May
- 2024 01:50:32 -0500
-From: Jiqian Chen <Jiqian.Chen@amd.com>
-To: Juergen Gross <jgross@suse.com>, Stefano Stabellini
-	<sstabellini@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, "Rafael J .
- Wysocki" <rafael@kernel.org>, =?UTF-8?q?Roger=20Pau=20Monn=C3=A9?=
-	<roger.pau@citrix.com>
-CC: <xen-devel@lists.xenproject.org>, <linux-pci@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-acpi@vger.kernel.org>, Huang Rui
-	<Ray.Huang@amd.com>, Jiqian Chen <Jiqian.Chen@amd.com>, Huang Rui
-	<ray.huang@amd.com>
-Subject: [RFC KERNEL PATCH v7 2/2] xen/privcmd: Add new syscall to get gsi from dev
-Date: Wed, 15 May 2024 14:50:11 +0800
-Message-ID: <20240515065011.13797-3-Jiqian.Chen@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A950853392;
+	Wed, 15 May 2024 06:51:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715755882; cv=none; b=S41jfQABvMarWha4zpNZ+axj411HAy0cBQ1nff4A2re94ahI/LvM/oqBf80KcZ2ma+FenL2jQppreC3/dvEPJeJvZN88omrfwYqzx/e6tnpZIDy8eOGxOYA/v8XNZBNa+Ugm6Som3h5df/vX2K8oQ58gg9/Ht2O3Owmcw2zEFsA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715755882; c=relaxed/simple;
+	bh=AcMqpX0URE9te22i8OHGjSQymBsQdVrP5w4QrGAwmDw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GMGn9m/ed/V+S4ptlmfG+IXCg5sTdGCn+pmTlXST5rI7dgrbDfr5Q0IyiqeLEuNoWvKUGLQOQNmLApPKsCp2EWgrwTNCTCMQxydQc+Hk6NNjMYQXM8v7UeiOgXRewgEiwwWVd3zb6N73y0sxhFcy0A14wnEtJaPX0YXoBGeUCDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=aIqRY/xU; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44F6okW1126872;
+	Wed, 15 May 2024 01:50:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1715755846;
+	bh=Wo3NosmbA+bW3iOvCUhh0Mt7A5msKwTFBl7WuLM2ikM=;
+	h=From:To:CC:Subject:Date;
+	b=aIqRY/xUPDqUtYrjdpOT3XAEWlfFRB6coMDkGPjVIx76fNf6iZ3jQnB4J5WFQAMJm
+	 nv200dxz0D5dQjO1AZlWy2fayiPrPtPFXxJEgm0FjOJf+Qz/4kNRhLKGED/rCGGe1D
+	 KxcMNzADKCVcSYFQ8R6+JP76sXSzPVQFn2hZpKoQ=
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44F6okCT065032
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 15 May 2024 01:50:46 -0500
+Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 15
+ May 2024 01:50:46 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 15 May 2024 01:50:46 -0500
+Received: from fllv0122.itg.ti.com (fllv0122.itg.ti.com [10.247.120.72])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44F6okS0019575;
+	Wed, 15 May 2024 01:50:46 -0500
+Received: from localhost (danish-tpc.dhcp.ti.com [10.24.69.25])
+	by fllv0122.itg.ti.com (8.14.7/8.14.7) with ESMTP id 44F6ojJr029143;
+	Wed, 15 May 2024 01:50:45 -0500
+From: MD Danish Anwar <danishanwar@ti.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+        Jan Kiszka
+	<jan.kiszka@siemens.com>, Andrew Lunn <andrew@lunn.ch>,
+        Simon Horman
+	<horms@kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Diogo
+ Ivo <diogo.ivo@siemens.com>,
+        Niklas Schnelle <schnelle@linux.ibm.com>,
+        Arnd
+ Bergmann <arnd@arndb.de>, Vignesh Raghavendra <vigneshr@ti.com>,
+        Richard
+ Cochran <richardcochran@gmail.com>,
+        Roger Quadros <rogerq@kernel.org>,
+        MD
+ Danish Anwar <danishanwar@ti.com>, Paolo Abeni <pabeni@redhat.com>,
+        Jakub
+ Kicinski <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>,
+        "David S.
+ Miller" <davem@davemloft.net>
+CC: <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <srk@ti.com>, <r-gunasekaran@ti.com>
+Subject: [RFC PATCH net-next v6 0/2] Add TAPRIO offload support for ICSSG driver
+Date: Wed, 15 May 2024 12:20:40 +0530
+Message-ID: <20240515065042.2852877-1-danishanwar@ti.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240515065011.13797-1-Jiqian.Chen@amd.com>
-References: <20240515065011.13797-1-Jiqian.Chen@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,267 +92,89 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000044F1:EE_|BY1PR12MB8445:EE_
-X-MS-Office365-Filtering-Correlation-Id: 96522366-1522-4902-667c-08dc74ab52f1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|36860700004|376005|1800799015|82310400017;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?XkkMZld4FOxuVGYl6xJEg2UAyYjIZxxtmqkNByGES0zePyuHySd/olj6zrh5?=
- =?us-ascii?Q?mWwDjTWAvsfJd0yey3LfcOAUPszuNilq8laBnuEoz9IntpPa9c5FViO3TgXo?=
- =?us-ascii?Q?Ug1cvQdQXwOqlrya3grdypEvs2vyQxQ6EErfLu+/TCFk+2gvmU4youfphJsW?=
- =?us-ascii?Q?FR7BBxCCBdk7JVCb7NyEABphhki69XtxygOpUU3hap/uP/RTHYP/7Tjb7W3U?=
- =?us-ascii?Q?7W0292Lt7ZJNq+AAQDZli1CXLf5Ip6kvWdEnSzLRtKF2+vNjg+DYGxiNYILd?=
- =?us-ascii?Q?N57QupOw+yfDFRd89buUkNROMHYS7gPmuv6/HkFILXkFERWIbx3j/6rfPdbC?=
- =?us-ascii?Q?+KBMxUk/Ua+jdDznUtxPaAI83CI3oksatkvOnfWPEkH2YuHGTkGdMtfesouD?=
- =?us-ascii?Q?5HhiiPfzgCNjG3a09x9zrY5Fo/5QBIkrg3tvJNJNVQEDbse3YKmLjhc8JLN/?=
- =?us-ascii?Q?onJIKcidrvAYq1E2FHLvKOeTYdfL6UFlCafFDx23TiFeSuN5LyQdqXQ3vCs6?=
- =?us-ascii?Q?jzHzHYY4eYfeU/AjUP6EBlRTTbU73iWnMBaaY3ajIuvd7zPlGbg5CGZx3vUU?=
- =?us-ascii?Q?FM2VBDDJTXjcYuUtEVLAMBKvIuzJ8qDCPNpCWrS+GHV7bhIJcBLOeDd2bQlW?=
- =?us-ascii?Q?uwu44AYA3SWqv+isjZvZKt40f2LGc1qB8d1HOSBfIEq1WA/tB9U3JbrobDDl?=
- =?us-ascii?Q?iPB2EMBgRWciL3Cs3k562LMjZ3xd5aNVnMOF7m4CunoeGb41+LIBMPhWbYQm?=
- =?us-ascii?Q?ahTMYTgWMoFK08UHtwsumw7XJ6jjRiEf0oAGkxw7ZQD2z4yagteGaDFlGP/Z?=
- =?us-ascii?Q?4mXB0ReJhMzYcHtoZPToYDMmLv0L5CP80uUKpcSDh0JKoO9EgD5oCSd2MbLP?=
- =?us-ascii?Q?skOv7/uxTrBHFAwYHOgbfXq5JXiAsmpbDcU3bDqkqNWKAaeZo05uSPFuq1dh?=
- =?us-ascii?Q?G1nUWPlAIsgeYXZ62GowjERojQMrYHr3j8laH/pfIJlpVt0RlhnDaZuUghlz?=
- =?us-ascii?Q?xmh66V7+X9+divEFLVDN8CDv5FXSBmtVKzc0D3mu7WWoOC+ZJbJram+XokXj?=
- =?us-ascii?Q?Cx+zs1YTtNzKm3us+MTpJzr7ZpfypcwvSsUlwvrOrFtLcKlnvGk8AvVGF5eW?=
- =?us-ascii?Q?jv4ZdbWMw5bN7tT1Vk/2OXo13C3Q+IooYfnvVc91xUlcfcaSypeWftnAfmJY?=
- =?us-ascii?Q?WnGf86RwvsZ1nuul+okQNw72HkmwvawgUQXZeKUxeHAKFKECkg3rE8nwYw3M?=
- =?us-ascii?Q?4xzF5Aqzha5suO9UX6ojE4YgVI6JNnMANuKC3BS4qhCXbAB0g2s/CSQNjUSk?=
- =?us-ascii?Q?hxudPpEMk7gk50JxxaDOxiXew89kHFmb8deMBV9t1W+FFs3dmHPGBd5+xHvd?=
- =?us-ascii?Q?daH9YUUrzEIQN5mPLJIhg7NKZcxA?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(36860700004)(376005)(1800799015)(82310400017);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 May 2024 06:50:35.7987
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 96522366-1522-4902-667c-08dc74ab52f1
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000044F1.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR12MB8445
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-In PVH dom0, it uses the linux local interrupt mechanism,
-when it allocs irq for a gsi, it is dynamic, and follow
-the principle of applying first, distributing first. And
-the irq number is alloced from small to large, but the
-applying gsi number is not, may gsi 38 comes before gsi 28,
-it causes the irq number is not equal with the gsi number.
-And when passthrough a device, QEMU will use device's gsi
-number to do pirq mapping, but the gsi number is got from
-file /sys/bus/pci/devices/<sbdf>/irq, irq!= gsi, so it will
-fail when mapping.
-And in current linux codes, there is no method to get gsi
-for userspace.
+This series adds taprio offload support for ICSSG driver.
 
-For above purpose, record gsi of pcistub devices when init
-pcistub and add a new syscall into privcmd to let userspace
-can get gsi when they have a need.
+Patch [1/2] of the series moves some structures and API definition to .h
+files so that these can be accessed by taprio (icssg_qos.c) file.
 
-Co-developed-by: Huang Rui <ray.huang@amd.com>
-Signed-off-by: Jiqian Chen <Jiqian.Chen@amd.com>
----
- drivers/xen/privcmd.c              | 28 ++++++++++++++++++++++
- drivers/xen/xen-pciback/pci_stub.c | 38 +++++++++++++++++++++++++++---
- include/uapi/xen/privcmd.h         |  7 ++++++
- include/xen/acpi.h                 |  2 ++
- 4 files changed, 72 insertions(+), 3 deletions(-)
+Patch [2/2] of the series intoduces the taprio support for icssg driver.
 
-diff --git a/drivers/xen/privcmd.c b/drivers/xen/privcmd.c
-index 67dfa4778864..5953a03b5cb0 100644
---- a/drivers/xen/privcmd.c
-+++ b/drivers/xen/privcmd.c
-@@ -45,6 +45,9 @@
- #include <xen/page.h>
- #include <xen/xen-ops.h>
- #include <xen/balloon.h>
-+#ifdef CONFIG_ACPI
-+#include <xen/acpi.h>
-+#endif
+Changes from v5 to v6:
+*) Added RFC tag as net-next is closed now.
+*) Created a new patch for "the struct definition move" and made this
+   series instead of single patch as suggested by
+   Paolo Abeni <pabeni@redhat.com>.
+*) Removed est_new structure as that is no longer used.
+*) Freeing qos.tas.taprio_admin using taprio_offload_free() as suggested
+   by Paolo Abeni <pabeni@redhat.com>
+*) Clearing taprio_admin and taprio in error case in emac_taprio_replace()
+   API using goto label taprio_clear.
+*) Added RB tag of Simon Horman <horms@kernel.org> 
+
+Changes from v4 to v5:
+*) Rebased on latest net-next/main [commit 5c4c0edca68a]
+*) Moved icss_iep structure to icss_iep.h file so that iep wraparound time
+   which is stored in iep->def_inc, can be accessed by qos file.
+*) Added comment about IEP wraparound time compensation in icssg_qos.c
+*) Moved icssg_qos_tas_init() to prueth_netdev_init() so that icssg_qos_tas_init()
+   gets called even if interface is down.
+*) Fixed print statements as suggested by Vladimir Oltean <vladimir.oltean@nxp.com>
+*) Added taprio_offload_get() and taprio_offload_free() in emac_taprio_replace()
+   and emac_taprio_destory() respectively.
+
+Changes from v3 to v4:
+*) Rebased on the latest next-20231005 linux-next.
+*) Addressed Roger and Vinicius' comments and moved all the validations to
+   emac_taprio_replace() API.
+*) Modified emac_setup_taprio() API to use switch case based on taprio->cmd
+   and added emac_taprio_destroy() and emac_taprio_replace() APIs.
+*) Modified the documentation of structs / enums in icssg_qos.h by using
+   the correct kdoc format.
+
+Changes from v2 to v3:
+*) Rebased on the latest next-20230928 linux-next.
+*) Retained original authorship of the patch.
+*) Addressed Roger's comments and modified emac_setup_taprio() and
+   emac_set_taprio() APIs accordingly.
+*) Removed netif_running() check from emac_setup_taprio().
+*) Addressed Vinicius' comments and added check for MIN and MAX cycle time.
+*) Added check for allocation failure of est_new in emac_setup_taprio().
+
+Changes from v1 to v2:
+*) Rebased on the latest next-20230921 linux-next.
+*) Dropped the RFC tag as merge window is open now.
+*) Splitted this patch from the switch mode series [v1].
+*) Removed TODO comment as asked by Andrew and Roger.
+*) Changed Copyright to 2023 as asked by Roger.
+
+v5: https://lore.kernel.org/all/20240429103022.808161-1-danishanwar@ti.com/
+v4: https://lore.kernel.org/all/20231006102028.3831341-1-danishanwar@ti.com/
+v3: https://lore.kernel.org/all/20230928103000.186304-1-danishanwar@ti.com/
+v2: https://lore.kernel.org/all/20230921070031.795788-1-danishanwar@ti.com/
+v1: https://lore.kernel.org/all/20230830110847.1219515-1-danishanwar@ti.com/
  
- #include "privcmd.h"
- 
-@@ -842,6 +845,27 @@ static long privcmd_ioctl_mmap_resource(struct file *file,
- 	return rc;
- }
- 
-+static long privcmd_ioctl_gsi_from_dev(struct file *file, void __user *udata)
-+{
-+	struct privcmd_gsi_from_dev kdata;
-+
-+	if (copy_from_user(&kdata, udata, sizeof(kdata)))
-+		return -EFAULT;
-+
-+#ifdef CONFIG_ACPI
-+	kdata.gsi = pcistub_get_gsi_from_sbdf(kdata.sbdf);
-+	if (kdata.gsi == -1)
-+		return -EINVAL;
-+#else
-+	kdata.gsi = -1;
-+#endif
-+
-+	if (copy_to_user(udata, &kdata, sizeof(kdata)))
-+		return -EFAULT;
-+
-+	return 0;
-+}
-+
- #ifdef CONFIG_XEN_PRIVCMD_EVENTFD
- /* Irqfd support */
- static struct workqueue_struct *irqfd_cleanup_wq;
-@@ -1529,6 +1553,10 @@ static long privcmd_ioctl(struct file *file,
- 		ret = privcmd_ioctl_ioeventfd(file, udata);
- 		break;
- 
-+	case IOCTL_PRIVCMD_GSI_FROM_DEV:
-+		ret = privcmd_ioctl_gsi_from_dev(file, udata);
-+		break;
-+
- 	default:
- 		break;
- 	}
-diff --git a/drivers/xen/xen-pciback/pci_stub.c b/drivers/xen/xen-pciback/pci_stub.c
-index 2b90d832d0a7..4b62b4d377a9 100644
---- a/drivers/xen/xen-pciback/pci_stub.c
-+++ b/drivers/xen/xen-pciback/pci_stub.c
-@@ -56,6 +56,9 @@ struct pcistub_device {
- 
- 	struct pci_dev *dev;
- 	struct xen_pcibk_device *pdev;/* non-NULL if struct pci_dev is in use */
-+#ifdef CONFIG_ACPI
-+	int gsi;
-+#endif
- };
- 
- /* Access to pcistub_devices & seized_devices lists and the initialize_devices
-@@ -88,6 +91,9 @@ static struct pcistub_device *pcistub_device_alloc(struct pci_dev *dev)
- 
- 	kref_init(&psdev->kref);
- 	spin_lock_init(&psdev->lock);
-+#ifdef CONFIG_ACPI
-+	psdev->gsi = -1;
-+#endif
- 
- 	return psdev;
- }
-@@ -220,6 +226,25 @@ static struct pci_dev *pcistub_device_get_pci_dev(struct xen_pcibk_device *pdev,
- 	return pci_dev;
- }
- 
-+#ifdef CONFIG_ACPI
-+int pcistub_get_gsi_from_sbdf(unsigned int sbdf)
-+{
-+	struct pcistub_device *psdev;
-+	int domain = sbdf >> 16;
-+	int bus = (sbdf >> 8) & 0xff;
-+	int slot = (sbdf >> 3) & 0x1f;
-+	int func = sbdf & 0x7;
-+
-+	psdev = pcistub_device_find(domain, bus, slot, func);
-+
-+	if (!psdev)
-+		return -1;
-+
-+	return psdev->gsi;
-+}
-+EXPORT_SYMBOL_GPL(pcistub_get_gsi_from_sbdf);
-+#endif
-+
- struct pci_dev *pcistub_get_pci_dev_by_slot(struct xen_pcibk_device *pdev,
- 					    int domain, int bus,
- 					    int slot, int func)
-@@ -367,14 +392,20 @@ static int pcistub_match(struct pci_dev *dev)
- 	return found;
- }
- 
--static int pcistub_init_device(struct pci_dev *dev)
-+static int pcistub_init_device(struct pcistub_device *psdev)
- {
- 	struct xen_pcibk_dev_data *dev_data;
-+	struct pci_dev *dev;
- #ifdef CONFIG_ACPI
- 	int gsi, trigger, polarity;
- #endif
- 	int err = 0;
- 
-+	if (!psdev)
-+		return -EINVAL;
-+
-+	dev = psdev->dev;
-+
- 	dev_dbg(&dev->dev, "initializing...\n");
- 
- 	/* The PCI backend is not intended to be a module (or to work with
-@@ -448,6 +479,7 @@ static int pcistub_init_device(struct pci_dev *dev)
- 		dev_err(&dev->dev, "Fail to get gsi info!\n");
- 		goto config_release;
- 	}
-+	psdev->gsi = gsi;
- 
- 	if (xen_initial_domain() && xen_pvh_domain()) {
- 		err = xen_pvh_setup_gsi(gsi, trigger, polarity);
-@@ -495,7 +527,7 @@ static int __init pcistub_init_devices_late(void)
- 
- 		spin_unlock_irqrestore(&pcistub_devices_lock, flags);
- 
--		err = pcistub_init_device(psdev->dev);
-+		err = pcistub_init_device(psdev);
- 		if (err) {
- 			dev_err(&psdev->dev->dev,
- 				"error %d initializing device\n", err);
-@@ -565,7 +597,7 @@ static int pcistub_seize(struct pci_dev *dev,
- 		spin_unlock_irqrestore(&pcistub_devices_lock, flags);
- 
- 		/* don't want irqs disabled when calling pcistub_init_device */
--		err = pcistub_init_device(psdev->dev);
-+		err = pcistub_init_device(psdev);
- 
- 		spin_lock_irqsave(&pcistub_devices_lock, flags);
- 
-diff --git a/include/uapi/xen/privcmd.h b/include/uapi/xen/privcmd.h
-index 8b8c5d1420fe..220e7670a113 100644
---- a/include/uapi/xen/privcmd.h
-+++ b/include/uapi/xen/privcmd.h
-@@ -126,6 +126,11 @@ struct privcmd_ioeventfd {
- 	__u8 pad[2];
- };
- 
-+struct privcmd_gsi_from_dev {
-+	__u32 sbdf;
-+	int gsi;
-+};
-+
- /*
-  * @cmd: IOCTL_PRIVCMD_HYPERCALL
-  * @arg: &privcmd_hypercall_t
-@@ -157,5 +162,7 @@ struct privcmd_ioeventfd {
- 	_IOW('P', 8, struct privcmd_irqfd)
- #define IOCTL_PRIVCMD_IOEVENTFD					\
- 	_IOW('P', 9, struct privcmd_ioeventfd)
-+#define IOCTL_PRIVCMD_GSI_FROM_DEV				\
-+	_IOC(_IOC_NONE, 'P', 10, sizeof(struct privcmd_gsi_from_dev))
- 
- #endif /* __LINUX_PUBLIC_PRIVCMD_H__ */
-diff --git a/include/xen/acpi.h b/include/xen/acpi.h
-index 9b50027113f3..0bf5f4884456 100644
---- a/include/xen/acpi.h
-+++ b/include/xen/acpi.h
-@@ -83,4 +83,6 @@ int xen_acpi_get_gsi_info(struct pci_dev *dev,
- 						  int *gsi_out,
- 						  int *trigger_out,
- 						  int *polarity_out);
-+
-+int pcistub_get_gsi_from_sbdf(unsigned int sbdf);
- #endif	/* _XEN_ACPI_H */
+MD Danish Anwar (1):
+  net: ti: icssg: Move icss_iep structure
+
+Roger Quadros (1):
+  net: ti: icssg_prueth: add TAPRIO offload support
+
+ drivers/net/ethernet/ti/Kconfig              |   1 +
+ drivers/net/ethernet/ti/Makefile             |   3 +-
+ drivers/net/ethernet/ti/icssg/icss_iep.c     |  72 -----
+ drivers/net/ethernet/ti/icssg/icss_iep.h     |  73 ++++-
+ drivers/net/ethernet/ti/icssg/icssg_prueth.c |   5 +-
+ drivers/net/ethernet/ti/icssg/icssg_prueth.h |   5 +
+ drivers/net/ethernet/ti/icssg/icssg_qos.c    | 288 +++++++++++++++++++
+ drivers/net/ethernet/ti/icssg/icssg_qos.h    | 113 ++++++++
+ 8 files changed, 485 insertions(+), 75 deletions(-)
+ create mode 100644 drivers/net/ethernet/ti/icssg/icssg_qos.c
+ create mode 100644 drivers/net/ethernet/ti/icssg/icssg_qos.h
+
+
+base-commit: cddd2dc6390b90e62cec2768424d1d90f6d04161
 -- 
 2.34.1
 
