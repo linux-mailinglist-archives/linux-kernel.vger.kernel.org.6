@@ -1,194 +1,128 @@
-Return-Path: <linux-kernel+bounces-179669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D4968C6313
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 10:53:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 75FD88C6316
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 10:56:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8170D1C20888
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:53:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A37B21C2126C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:56:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00F8955C3B;
-	Wed, 15 May 2024 08:53:04 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED85C53368;
+	Wed, 15 May 2024 08:56:17 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6848E4F606;
-	Wed, 15 May 2024 08:52:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CCE82AF0E
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 08:56:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715763183; cv=none; b=oPYzrlbxkiAx2ZJao1pB+IW5uutgcyRV03CpSeFkUwdBxSC9pCtAlzuHwn/j/FJLddPBFMIsp8wWEXsL/dfbIe3l7EwQ/ZJIFFNQiQSmnxmhW63j9JT0AoOT8BSGIOUJTjlHE/KVOiljK3vx1+fMBr2Nb9HgoPoIujmQd4j0ZLA=
+	t=1715763377; cv=none; b=XAYsOiRKa7EFjUdglRQUTdGsfXvdQu7PoKR0HYLTcaE0Bnm9p/8SSr8omUOTINFhgmaIQDdXFMVg+MwT3kLF8ikdPnEomZkOEakKZYhU2W0nqSC3E76Fp6VLAqPWMLSyQzA45PKNjn+ZKHXiLTZpouSNpyz6IJZ4DStomJKw3cc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715763183; c=relaxed/simple;
-	bh=xM4LfGKSGL5AntowbkzQo4K4DOQYNRt2LpIR1aiLpD8=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=qdSnjnh6FgxBAqmGdjE7QR7o+/Pb1nSh9v4VFSzAFVJyo/HBmwJcxnax6tpalvG8CpiYXjg9HkEJB+SPen0cxvsUGIFA8MLh1Kfm64ajocrQ5voX8kxFHo0xcRMK10PJupM/XO21/daKDk+DLrZWbMn2+KEMWFpVsWEguAj+OOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VfRnV0xxnz4f3mHT;
-	Wed, 15 May 2024 16:52:46 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 4D0AC1A017F;
-	Wed, 15 May 2024 16:52:56 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP2 (Coremail) with SMTP id Syh0CgBHaw7md0RmFQUcNA--.39523S3;
-	Wed, 15 May 2024 16:52:56 +0800 (CST)
-Subject: Re: [PATCH] ext4: fix infinite loop when replaying fast_commit
-To: Luis Henriques <luis.henriques@linux.dev>
-Cc: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
- Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger@dilger.ca>,
- Harshad Shirwadkar <harshadshirwadkar@gmail.com>
-References: <20240510115252.11850-1-luis.henriques@linux.dev>
- <2ee78957-b0a6-f346-5957-c4b2ebcea4ce@huaweicloud.com>
- <87o798a6k5.fsf@brahms.olymp>
- <a49a72d2-98aa-1c87-fc3a-58cae0f90257@huaweicloud.com>
- <87pltniimq.fsf@brahms.olymp>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <326db1c7-1064-d19c-0028-d2149c61f6f5@huaweicloud.com>
-Date: Wed, 15 May 2024 16:52:54 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	s=arc-20240116; t=1715763377; c=relaxed/simple;
+	bh=xrASQiHXqzGD6l4n9Q+e4cuekzDSDwPKrmS9BxqpbF8=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=oacCcvUf8+ES2B3Wh66R1oHUEMlkVv00gzPx43UnwsZir1hrXG3wtuHmian2d4JCJbNHjWmSYVR8sWrmSHnFGyy0WLpyoV1iLvtzqh8hQFl0L50PG7KXb/LvJIaV2gTOtHB+nzE+0T1vmttknNiKf2vm5DxrEWx/tfhxJFPauBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4VfRp53bsbz1ypG1;
+	Wed, 15 May 2024 16:53:17 +0800 (CST)
+Received: from kwepemd500014.china.huawei.com (unknown [7.221.188.63])
+	by mail.maildlp.com (Postfix) with ESMTPS id 65EA81A0188;
+	Wed, 15 May 2024 16:56:11 +0800 (CST)
+Received: from [10.67.146.137] (10.67.146.137) by
+ kwepemd500014.china.huawei.com (7.221.188.63) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.28; Wed, 15 May 2024 16:56:10 +0800
+Subject: Re: [PATCH] irqchip/gic-v4.1:Check whether indirect table is
+ supported in allocate_vpe_l1_table
+To: Marc Zyngier <maz@kernel.org>
+CC: <tglx@linutronix.de>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <guoyang2@huawei.com>,
+	<wangwudi@hisilicon.com>, jiangkunkun <jiangkunkun@huawei.com>
+References: <20240122160607.1078960-1-tangnianyao@huawei.com>
+ <86sf2p91zt.wl-maz@kernel.org>
+ <5de3da53-9c0d-2a2d-876b-2181e540fa2f@huawei.com>
+ <86r0i98o0a.wl-maz@kernel.org>
+From: Tangnianyao <tangnianyao@huawei.com>
+Message-ID: <de3c10be-f4d4-75d0-bc70-0791e5217516@huawei.com>
+Date: Wed, 15 May 2024 16:56:10 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <87pltniimq.fsf@brahms.olymp>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <86r0i98o0a.wl-maz@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:Syh0CgBHaw7md0RmFQUcNA--.39523S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxGF4kZry3uF48AFy7JrWUurg_yoWruFyrpF
-	Z7uF1UKr4Dt3yDK3y7tw4rXr1Yyw4xGw48Xryrtrn5JFn8trn7XF18KF4Yka4kWrWxG3Wj
-	vF48tay7CFn0yaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij
-	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE
-	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42
-	xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
-	c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UWE__UUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Language: en-US
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemd500014.china.huawei.com (7.221.188.63)
 
-On 2024/5/15 16:28, Luis Henriques wrote:
-> On Wed 15 May 2024 12:59:26 PM +08, Zhang Yi wrote;
-> 
->> On 2024/5/14 21:04, Luis Henriques wrote:
->>> On Sat 11 May 2024 02:24:17 PM +08, Zhang Yi wrote;
->>>
->>>> On 2024/5/10 19:52, Luis Henriques (SUSE) wrote:
->>>>> When doing fast_commit replay an infinite loop may occur due to an
->>>>> uninitialized extent_status struct.  ext4_ext_determine_insert_hole() does
->>>>> not detect the replay and calls ext4_es_find_extent_range(), which will
->>>>> return immediately without initializing the 'es' variable.
->>>>>
->>>>> Because 'es' contains garbage, an integer overflow may happen causing an
->>>>> infinite loop in this function, easily reproducible using fstest generic/039.
->>>>>
->>>>> This commit fixes this issue by detecting the replay in function
->>>>> ext4_ext_determine_insert_hole().  It also adds initialization code to the
->>>>> error path in function ext4_es_find_extent_range().
->>>>>
->>>>> Thanks to Zhang Yi, for figuring out the real problem!
->>>>>
->>>>> Fixes: 8016e29f4362 ("ext4: fast commit recovery path")
->>>>> Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
->>>>> ---
->>>>> Hi!
->>>>>
->>>>> Two comments:
->>>>> 1) The change in ext4_ext_map_blocks() could probably use the min_not_zero
->>>>>    macro instead.  I decided not to do so simply because I wasn't sure if
->>>>>    that would be safe, but I'm fine changing that if you think it is.
->>>>>
->>>>> 2) I thought about returning 'EXT_MAX_BLOCKS' instead of '0' in
->>>>>    ext4_lblk_t ext4_ext_determine_insert_hole(), which would then avoid
->>>>>    the extra change to ext4_ext_map_blocks().  '0' sounds like the right
->>>>>    value to return, but I'm also OK using 'EXT_MAX_BLOCKS' instead.
->>>>>
->>>>> And again thanks to Zhang Yi for pointing me the *real* problem!
->>>>>
->>>>>  fs/ext4/extents.c        | 6 +++++-
->>>>>  fs/ext4/extents_status.c | 5 ++++-
->>>>>  2 files changed, 9 insertions(+), 2 deletions(-)
->>>>>
->>>>> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
->>>>> index e57054bdc5fd..b5bfcb6c18a0 100644
->>>>> --- a/fs/ext4/extents.c
->>>>> +++ b/fs/ext4/extents.c
->>>>> @@ -4052,6 +4052,9 @@ static ext4_lblk_t ext4_ext_determine_insert_hole(struct inode *inode,
->>>>>  	ext4_lblk_t hole_start, len;
->>>>>  	struct extent_status es;
->>>>>  
->>>>> +	if (EXT4_SB(inode->i_sb)->s_mount_state & EXT4_FC_REPLAY)
->>>>> +		return 0;
->>>>> +
->>>>
->>>> Sorry, I think it's may not correct. When replaying the jouranl, although
->>>> we don't use the extent statue tree, we still need to query the accurate
->>>> hole length, e.g. please see skip_hole(). If you do this, the hole length
->>>> becomes incorrect, right?
->>>
->>> Thank you for your review (and sorry for my delay replying).
->>>
->>> So, I see three different options to follow your suggestion:
->>>
->>> 1) Initialize 'es' immediately when declaring it in function
->>>    ext4_ext_determine_insert_hole():
->>>
->>> 	es.es_lblk = es.es_len = es.es_pblk = 0;
->>>
->>> 2) Initialize 'es' only in ext4_es_find_extent_range() when checking if an
->>>    fc replay is in progress (my patch was already doing something like
->>>    that):
->>>
->>> 	if (EXT4_SB(inode->i_sb)->s_mount_state & EXT4_FC_REPLAY) {
->>> 		/* Initialize extent to zero */
->>> 		es->es_lblk = es->es_len = es->es_pblk = 0;
->>> 		return;
->>> 	}
->>>
->>> 3) Remove the check for fc replay in function ext4_es_find_extent_range(),
->>>    which will then unconditionally call __es_find_extent_range().  This
->>>    will effectively also initialize the 'es' fields to '0' and, because
->>>    __es_tree_search() will return NULL (at least in generic/039 test!),
->>>    nothing else will be done.
->>>
->>> Since all these 3 options seem to have the same result, I believe option
->>> 1) is probably the best as it initializes the structure shortly after it's
->>> declaration.  Would you agree?  Or did I misunderstood you?
->>>
->>
->> Both 1 and 2 are looks fine to me, but I would prefer to initialize it
->> unconditionally in ext4_es_find_extent_range().
->>
->> @@ -310,6 +310,8 @@ void ext4_es_find_extent_range(struct inode *inode,
->> 				ext4_lblk_t lblk, ext4_lblk_t end,
->> 				struct extent_status *es)
->>  {
->> +	es->es_lblk = es->es_len = es->es_pblk = 0;
->> +
->> 	if (EXT4_SB(inode->i_sb)->s_mount_state & EXT4_FC_REPLAY)
->> 		return;
-> 
-> Thank you, Yi.  I'll send out v2 shortly.  Although, to be fair, the real
-> patch author shouldn't be me. :-)
-> 
 
-Never mind, I just give a suggestion and also I didn't do a full test on
-this change.
 
-Thanks,
-Yi.
+On 1/22/2024 22:02, Marc Zyngier wrote:
+> On Mon, 22 Jan 2024 13:13:09 +0000,
+> Tangnianyao <tangnianyao@huawei.com> wrote:
+>> On 1/22/2024 17:00, Marc Zyngier wrote:
+>>> [Fixing the LKML address, which has bits of Stephan's address embedded
+>>> in it...]
+>>>
+>>> On Mon, 22 Jan 2024 16:06:07 +0000,
+>>> Nianyao Tang <tangnianyao@huawei.com> wrote:
+>>>> In allocate_vpe_l1_table, when we fail to inherit VPE table from other
+>>>> redistributors or ITSs, and we allocate a new vpe table for current common 
+>>>> affinity field without checking whether indirect table is supported.
+>>>> Let's fix it.
+>>> Is there an actual implementation that doesn't support the indirect
+>>> property for the VPE table? I know this is allowed for consistency
+>>> with the original revision of the architecture, but I never expected
+>>> an actual GICv4.1 implementation to be *that* bad.
+>>>
+>>> If that's the case, I'm a bit puzzled/worried.
+>> I met this problem in a developing implementation and find it's allowed by GIC spec.
+>> In such environment,  in a common affinity field with only redistributors and without
+>> any ITS in it, forcing its_vpe_id_alloc to allocate a large vpeid(like 65000), and there
+>> comes an error message "VPE IRQ allocation failure". It originally comes from
+>> allocate_vpe_l2_table, reading GICR_VPROPBASER with GICR_VPROPBASER_4_1_SIZE=1
+>> and GICR_VPROPBASER_4_1_INDIRECT=0.
+> Really, you should get your HW engineers to fix their GIC
+> implementation.  I'm OK with working around this issue for
+> completeness, but shipping such an implementation would be a mistake.
+>
+> [...]
+>
+>> I have another question here. The max number of pages  for GITS_BASER
+>> and GICR_VPROPBASER is different here, while GITS_BASER.Size is
+>> bit[7:0] with max 256, and GICR_4_1_VPROPBASER.Size is bit[6:0] with max 128.
+>> Kernel usually probe ITS basers first and then probe GICR_4_1_VPROPBASER in
+>> a common affinity group. Maybe we need to check this in "inherit_vpe_l1_table_from_its" ?
+> This is because GITS_BASER[] is generic (also works for devices and
+> collections), while GICR_VPROPBASER is tailored to the VPE table which
+> is usually smaller.
+>
+> I would expect that GICD_TYPER2.VID reports something that cannot
+> result in something going wrong (in this case, the L1 allocation
+> cannot be more than 128 pages).
+>
+> Overall, the kernel isn't a validation suite for the HW, and we expect
+> it to have some level of sanity. So if none of this is in shipping HW
+> but only in some model with crazy parameters, I don't think we should
+> go out of our way to support it.
+>
+> Thanks,
+>
+> 	M.
+>
+
+Hi Marc,
+Friendly ping. Do we have plan to fix this problem on kernel, or any other plan ?
 
 
