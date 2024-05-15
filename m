@@ -1,171 +1,132 @@
-Return-Path: <linux-kernel+bounces-179848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE9258C6663
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 14:34:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F202E8C6667
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 14:36:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38B3EB229F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 12:34:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47EB2B210F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 12:36:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AD7781742;
-	Wed, 15 May 2024 12:34:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDDDF823D0;
+	Wed, 15 May 2024 12:36:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WQQ4li11"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nVxaogia"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4ED614AB4;
-	Wed, 15 May 2024 12:34:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 012FA482E9;
+	Wed, 15 May 2024 12:36:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715776455; cv=none; b=VT9gymHgWH6QnTD3pEHbqPzMs3dIuvconsAkyg4kmalYFcVDWjKcE07U6vBW89E76xZ58gO9zZlkqB2URgR+8/biaK3CkNGu8VZXVkh4Q5JnwYQslruqzrvSAwKDDHj/vkHd6U4g0WR9zbCZYSeoj/pBdeRXA6aj7xDk+haYf1k=
+	t=1715776591; cv=none; b=awFPdTcsViqxKseNVLb8nDqgfPKcLktLPk+tFanfFog+g5a3baeVm7eddAaQM+WnH2aLYDRnFFmZJRXNYbILyjZ+4tsC8olUOi/CCOhn1lfHqODakUzRw1LDpKh4ot1IvjWBumWafFxAgRcsb3bL6rzWiSnOnNiD/ia4Ux8xsS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715776455; c=relaxed/simple;
-	bh=1lJElHHqjV25hj6V/dktcSZwmnweHDqKnzO1SGhKrRc=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=vE0c02lUx/TJER1u7iSivRz1z1hcrbNyfUHzkdoevCan7DdSwsPMaa7z/+NpFT0NLzfHh5yLebKYwSfVlzjurDkM4J2qhunF5rx7Jo/BGuV6lii7HBQJn2tmrJst3aW9CbIiwJMlBj9s6saZUmV60L78oBn63ARJfOx2cY34YQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WQQ4li11; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715776454; x=1747312454;
-  h=message-id:date:mime-version:subject:from:to:cc:
-   references:in-reply-to:content-transfer-encoding;
-  bh=1lJElHHqjV25hj6V/dktcSZwmnweHDqKnzO1SGhKrRc=;
-  b=WQQ4li11GxU6Xhk5CYtvQju22BPKT1G3b0tk6ERZ4g3lMA5cOC+kJYlm
-   ys8QApA6ZJeWs+p7y8eurEg/KyVrLmLr40JraWbz0SX5F3K4lotVRCXKa
-   23daICQIsAhUuAd2gWT0VSzscil19kln90TVlQDxOctfDsUhV3FqBc4yN
-   TA7395Zj4MwCBENi8lK9jB0LB7h0dCCsQXXotEaIZcDSrgW6twuJFFOch
-   9ndi2ySssApShc42x0FpLWrVOajHluJgPFNM95LhCOiTYhveliW4EU5C4
-   sRvFL3WSPaMsH0aAchQ2IW6lpafHruGAEfrXz9rdSdHktsZHqJGNbSN+o
-   Q==;
-X-CSE-ConnectionGUID: 2m03NuD6S/K8MUUg/PXhig==
-X-CSE-MsgGUID: Cr4WlRHNQ2SJB6ibczJmJw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11073"; a="23221466"
-X-IronPort-AV: E=Sophos;i="6.08,161,1712646000"; 
-   d="scan'208";a="23221466"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 05:34:13 -0700
-X-CSE-ConnectionGUID: gJLKzCL3TmSokeKOqGe34g==
-X-CSE-MsgGUID: aUFOzMs0RLKbbXYTps5fMw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,161,1712646000"; 
-   d="scan'208";a="31136084"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.48.7])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 05:34:07 -0700
-Message-ID: <55624c6d-cdee-49ba-96b1-09598cb1bf68@intel.com>
-Date: Wed, 15 May 2024 15:34:02 +0300
+	s=arc-20240116; t=1715776591; c=relaxed/simple;
+	bh=cWhVo/kLDDvqijtRQESDCl3lSsOu9f46mfSThgnSdUw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DWA7ohwPNjGZIAH904/fIVtPAvy2jKWzeGFssCByJWCdFQkYZLNej77CLip6invgF8CvcJoeR9IVyneKwHsFeXinuHZjOaQsVrbu4w3saQq0Jl5+zrF3MVQCykwCWJRug+uYNHHLPQN+7rxRpGsqNL3y/Iup0mzFX1sVlB2hBDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nVxaogia; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1ee5235f5c9so52858075ad.2;
+        Wed, 15 May 2024 05:36:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715776589; x=1716381389; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=cWhVo/kLDDvqijtRQESDCl3lSsOu9f46mfSThgnSdUw=;
+        b=nVxaogiaOmRTcyzz8qzZaH2v7MlF5JwJeZ++T7Y9Rd9drNtFDPdoL6nHIWwPTCunQI
+         4hahKweGzA+uiIG0AxfT2pAlhNU5I9SDvJfGGRLX+/XnZbM+VJf0AyvmPxvsSp7G8WZ4
+         Q0Pq7purDOteCkcTsXH1J+x08XFlqCx4cmAjxFHOoEvgYk0uWwR01xIGWdt0+FKVpxQ6
+         /3XocSpqMOoDqey8OrHDOtpJivLCrAnlvON5yTo0Kx9KIIV17DdmE8shhyp79dsrf2Vf
+         1fHP9n5hA3I3wkjKi8n5afMGlka2juVNgcuNEYPy+9ELl5/DGLjf+vKc2KYQnsJxxMyo
+         BTMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715776589; x=1716381389;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cWhVo/kLDDvqijtRQESDCl3lSsOu9f46mfSThgnSdUw=;
+        b=ZWkB3EGw/5P2t9xBObal0mjJ/sC76mj9pdf/0ErwYB69ko/xRZJuI0azDW9CyA5wHX
+         JGY6DtRYithB1BOrNTeI+p7G+TdlSXNz36IULTq5+NabpPn3JPvYgsd0lyOiVgtiFOkJ
+         jx4a1wohl82PL0K7xlHoHklLhHS0HmQbgSQQBmmz3/+mjLD6DJLBpvXLCQV2oG6y/t6v
+         R8/bTtez1xcgBBx+ZcqjKp1yEaYNmyTPyx36aIQjzGt27x/qZsG584xNgNVrR9Ylz4K5
+         z3Y/X4IoXpXGbF2tVE7RC/vp3Lmegkegjw0InYKi3jcqUJRDezSllCqly4kRpkF6UG/R
+         QT+w==
+X-Forwarded-Encrypted: i=1; AJvYcCWpZ05alV78Pjim5/iCUYSDskIYx0hfNau6hln69cnq8RvlJU1UhxGZEl5uP010hj8HHVoKkL54oQ3tZ226vYEXYsg+5nt7kZq71UJh2ibyMhxVJkLSJfEiUDBMZU5lO2w/PHK+6eeFAKAEQwZB7uHLNkS9ZNVBvp+yYpdnyw39MN9eGcgo
+X-Gm-Message-State: AOJu0YzkCs6VxuZgNn/e1W7bsj4y9QOfqoKyeP9Ki/smY3zqoVf2nmDP
+	qjQyubDzpt3MRVr02GcX6qH87Zv6Ko5MR+SxNABZeCasaaU+p4pA
+X-Google-Smtp-Source: AGHT+IFj/BQqZzSQ0Oocu1v+JDcwo10TzKjcB+jwGK9GGCEIAbaUbw7A1t1yhW4VtFtKw2TWxI4Ptg==
+X-Received: by 2002:a17:903:1c8:b0:1eb:7981:28e8 with SMTP id d9443c01a7336-1ef43c0c94cmr186405245ad.7.1715776589112;
+        Wed, 15 May 2024 05:36:29 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0bad7dc1sm117038395ad.89.2024.05.15.05.36.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 May 2024 05:36:28 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 2508319C325FD; Wed, 15 May 2024 19:36:26 +0700 (WIB)
+Date: Wed, 15 May 2024 19:36:25 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: mhklinux@outlook.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+	decui@microsoft.com, kys@microsoft.com, corbet@lwn.net,
+	linux-kernel@vger.kernel.org, linux-hyperv@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Cc: Mao Zhu <zhumao001@208suo.com>, Ran Sun <sunran001@208suo.com>,
+	Xiang wangx <wangxiang@cdjrlc.com>,
+	Shaomin Deng <dengshaomin@cdjrlc.com>,
+	Charles Han <hanchunchao@inspur.com>,
+	Attreyee M <tintinm2017@gmail.com>, LihaSika <lihasika@gmail.com>
+Subject: Re: [PATCH v2 2/2] Documentation: hyperv: Improve synic and
+ interrupt handling description
+Message-ID: <ZkSsSd4xUZkb5R2z@archie.me>
+References: <20240511133818.19649-1-mhklinux@outlook.com>
+ <20240511133818.19649-2-mhklinux@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V5 00/12] perf/core: Add ability for an event to "pause"
- or "resume" AUX area tracing
-From: Adrian Hunter <adrian.hunter@intel.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Heiko Carstens <hca@linux.ibm.com>, Thomas Richter <tmricht@linux.ibm.com>,
- Hendrik Brueckner <brueckner@linux.ibm.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
- <mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
- coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
- Yicong Yang <yangyicong@hisilicon.com>,
- Jonathan Cameron <jonathan.cameron@huawei.com>, Will Deacon
- <will@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
- Ian Rogers <irogers@google.com>, Andi Kleen <ak@linux.intel.com>,
- linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-References: <20240208113127.22216-1-adrian.hunter@intel.com>
- <52f3abd2-4f75-4147-bc7b-c98960d9494b@intel.com>
- <1cb114be-9585-4f85-af9f-4bafb2d15d2a@intel.com>
-Content-Language: en-US
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <1cb114be-9585-4f85-af9f-4bafb2d15d2a@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="vvwbu0/nHWp+XFdt"
+Content-Disposition: inline
+In-Reply-To: <20240511133818.19649-2-mhklinux@outlook.com>
 
-On 24/04/24 13:39, Adrian Hunter wrote:
-> On 11/04/24 15:02, Adrian Hunter wrote:
->> On 8/02/24 13:31, Adrian Hunter wrote:
->>> Hi
->>>
->>> Hardware traces, such as instruction traces, can produce a vast amount of
->>> trace data, so being able to reduce tracing to more specific circumstances
->>> can be useful.
->>>
->>> The ability to pause or resume tracing when another event happens, can do
->>> that.
->>>
->>> These patches add such a facilty and show how it would work for Intel
->>> Processor Trace.
->>>
->>> Maintainers of other AUX area tracing implementations are requested to
->>> consider if this is something they might employ and then whether or not
->>> the ABI would work for them.  Note, thank you to James Clark (ARM) for
->>> evaluating the API for Coresight.  Suzuki K Poulose (ARM) also responded
->>> positively to the RFC.
->>>
->>> Changes to perf tools are now (since V4) fleshed out.
->>>
->>>
->>> Changes in V5:
->>>
->>>     perf/core: Add aux_pause, aux_resume, aux_start_paused
->>> 	Added James' Ack
->>>
->>>     perf/x86/intel: Do not enable large PEBS for events with aux actions or aux sampling
->>> 	New patch
->>>
->>>     perf tools
->>> 	Added Ian's Ack
->>>
->>> Changes in V4:
->>>
->>>     perf/core: Add aux_pause, aux_resume, aux_start_paused
->>> 	Rename aux_output_cfg -> aux_action
->>> 	Reorder aux_action bits from:
->>> 		aux_pause, aux_resume, aux_start_paused
->>> 	to:
->>> 		aux_start_paused, aux_pause, aux_resume
->>> 	Fix aux_action bits __u64 -> __u32
->>>
->>>     coresight: Have a stab at support for pause / resume
->>> 	Dropped
->>>
->>>     perf tools
->>> 	All new patches
->>>
->>> Changes in RFC V3:
->>>
->>>     coresight: Have a stab at support for pause / resume
->>> 	'mode' -> 'flags' so it at least compiles
->>>
->>> Changes in RFC V2:
->>>
->>> 	Use ->stop() / ->start() instead of ->pause_resume()
->>> 	Move aux_start_paused bit into aux_output_cfg
->>> 	Tighten up when Intel PT pause / resume is allowed
->>> 	Add an example of how it might work for CoreSight
->>
->> Any more comments?
->>
-> 
-> Ping
-> 
 
-Kernel patch still applies.
+--vvwbu0/nHWp+XFdt
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-There was a V6 for it:
+On Sat, May 11, 2024 at 06:38:18AM -0700, mhkelley58@gmail.com wrote:
+> From: Michael Kelley <mhklinux@outlook.com>
+>=20
+> Current documentation does not describe how Linux handles the synthetic
+> interrupt controller (synic) that Hyper-V provides to guest VMs, nor how
+> VMBus or timer interrupts are handled. Add text describing the synic and
+> reorganize existing text to make this more clear.
+>=20
+> Signed-off-by: Michael Kelley <mhklinux@outlook.com>
 
-	https://lore.kernel.org/linux-perf-users/20240216093128.77452-1-adrian.hunter@intel.com/
+The doc LGTM, thanks!
 
+Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--vvwbu0/nHWp+XFdt
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZkSsRgAKCRD2uYlJVVFO
+o9QfAQDCNVHEeRoHJWRzgq9pQzkyhszfHSHwtoeHXdQ42yppxgEAx5T83CYOa2/y
+LMx7W1RUXaNm7kSUDkeLloMQSRzAfQ4=
+=Rand
+-----END PGP SIGNATURE-----
+
+--vvwbu0/nHWp+XFdt--
 
