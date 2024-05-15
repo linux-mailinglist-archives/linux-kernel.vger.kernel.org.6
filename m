@@ -1,97 +1,135 @@
-Return-Path: <linux-kernel+bounces-180125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F13328C6A65
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:17:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F6418C6A67
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:17:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD362283A09
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:17:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90D501C20EDC
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:17:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83B7C156652;
-	Wed, 15 May 2024 16:17:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7122156653;
+	Wed, 15 May 2024 16:17:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TqIn4OBj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bB1XiwhU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C417643144;
-	Wed, 15 May 2024 16:17:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11AEE155A52;
+	Wed, 15 May 2024 16:17:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715789841; cv=none; b=eNQ0+daUaZOSMHLR0GPw3ZxaEuW1Wz94Q46DJkGowKAW1TIC+GGRGotnsCFAqDRwS2jWe2H8iazFXDUmZR/fmEM07p6ABvPk8DC9XVYh+3ECWojCNyhACQAhRNIJjutMTPSDm8Hv5jkPdiUIDAt0RlqSmWisB6uTRwUb5T337zk=
+	t=1715789867; cv=none; b=SinGpaYah7pc/W4h0I1BzGb98Nk2FRB9xQff7zZfJUY0eeRhUxVLYM9b1LzdsxF60Gvflppcjd+OqUaq5KuRJyj9TllPhnWpeeDmcLOPx/UzhqhMFdbJkB3NCzbyfzETWneGna9/fEeUQSNrZ1HVBpYbpNODmrKW+dey03L+0wk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715789841; c=relaxed/simple;
-	bh=Up7Qd+RnNSE0g+RPd3RLKdbJ4Lsonuz8jKQ/5bGM+cI=;
+	s=arc-20240116; t=1715789867; c=relaxed/simple;
+	bh=uLTSFmR26jysz/t1r0pgjgFB0W2gGfXMncXxbWXDUbA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Okw4Xsc2z1jRUsmzBdhR4jmoT/QGxcdpuKAZ32+Xo4tJi/82nsvkxMFLJNzHxX+Wh6dJRdLqtH+TOY2uRKN9cDeKw7Qtl3/9VmiGV2rNXZxg1DDKj5yUzSr3etsw1QdRBVyUIgENUYRkefYPWkJLWlu6DD7TlYWC0sOLjIetwfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TqIn4OBj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACF1FC116B1;
-	Wed, 15 May 2024 16:17:18 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=paPx+MSBpKp7fu8nvkMkP7IfAQIq0GP9JXdsxrIsoyRyIikY5hGssvBRvr4KxQ1mST9QkhBmhsb+QCSQX6oxBbgWYU0DcVc0IfDmC+b9IAY/1vF/dpsbiz9w/OhFSpycyRkGpGjRDugYG+tPkeH06H/n/2vSOAi52DFI2iS5nW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bB1XiwhU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99916C116B1;
+	Wed, 15 May 2024 16:17:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715789841;
-	bh=Up7Qd+RnNSE0g+RPd3RLKdbJ4Lsonuz8jKQ/5bGM+cI=;
+	s=k20201202; t=1715789866;
+	bh=uLTSFmR26jysz/t1r0pgjgFB0W2gGfXMncXxbWXDUbA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TqIn4OBj/Z4fZGbVuthGf2mXnKuXE6UMXatVzdZvXPJCD9CK1HjmGWm7z+ki+79JJ
-	 l+MtyvK3Kl2jOwq/EZJjn0qEouFRmSUfE1lXyqqxIwbGrqd/Amydg8nOsomcnHKq3z
-	 dtHevbEBNTf3hoHAVZBg8sh33QtY99heTNTfloY8vWzc3ryPB6gOMPC6x/tNuuTQv7
-	 IPG5x+lcwZY8/O7nFko/axF4L7aZhDOiBK5cpLnEYx8M0Cm/0O71d06xHLM6/G1I/E
-	 9Oz063wN+BCwtHfRdd80hMnw2sxn5Pdi9l1Apr2MNU8G8vxMsRQ09XsLWKO0OEw8ng
-	 Xo5KONvwKJXCA==
-Date: Wed, 15 May 2024 17:17:16 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Dmitry Yashin <dmt.yashin@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Rob Herring <robh@kernel.org>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Jianqun Xu <jay.xu@rock-chips.com>, devicetree@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] dt-bindings: pinctrl: rockchip: add rk3308b
-Message-ID: <20240515-exorcism-savage-14e78d3a8c61@spud>
-References: <20240515121634.23945-1-dmt.yashin@gmail.com>
- <20240515121634.23945-3-dmt.yashin@gmail.com>
+	b=bB1XiwhUpKp1t8bJCEHlCNxXE7ah418QzlRO5wyZ0lNBhEYwNFfJk5Qh8WYqv+BRF
+	 /j3bJoLC8/rVZ+zk/inwN/d2cDjW1n/J0ZLEH/83rvDwoxI1GkvoGYvf/FhYOJAUvk
+	 id/t+ZTSQrhfvRCaRRhV5vZaV3oa8dq2yhr8PPXMnqmaugbhnYKr4Tq+T35XfLKocI
+	 WTutv/nu6A/+hGB3VMQYnkq1X4mRVvX/F9pQapCsOtTNj+Wkwk7blfaURXd3TqZOqU
+	 DhI6542mPzalK46wAIC+Z2xHXL/qBrbbiTb7Oknh7GN1ELgr/+ZxX8i0KDVQID/L4e
+	 rcS1VnKLnZz7A==
+Date: Wed, 15 May 2024 17:17:39 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Doug Berger <opendmb@gmail.com>
+Subject: Re: [PATCH 6.1 000/243] 6.1.91-rc2 review
+Message-ID: <39483cfc-4345-4fbd-87c2-9d618c6fdbc6@sirena.org.uk>
+References: <20240515082456.986812732@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="lUv3gfX0lhAXHhn3"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="cprXTNmPew9yvJ45"
 Content-Disposition: inline
-In-Reply-To: <20240515121634.23945-3-dmt.yashin@gmail.com>
+In-Reply-To: <20240515082456.986812732@linuxfoundation.org>
+X-Cookie: When in doubt, lead trump.
 
 
---lUv3gfX0lhAXHhn3
+--cprXTNmPew9yvJ45
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 15, 2024 at 05:16:33PM +0500, Dmitry Yashin wrote:
-> Add compatible string for rk3308b pin controller.
->=20
-> Signed-off-by: Dmitry Yashin <dmt.yashin@gmail.com>
+On Wed, May 15, 2024 at 10:27:34AM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.91 release.
+> There are 243 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+This seems to break NFS boot for me on Raspberry Pi 4.  The first sign
+of trouble is a WARN:
 
-Cheers,
-Conor.
+[   31.969792] ------------[ cut here ]------------
+Setting prompt string to ['-+\\[ end trace \\w* \\]-+[^\\n]*\\r', '/ #', 'Login timed out', 'Login incorrect']
+[   31.974485] NETDEV WATCHDOG: end0 (bcmgenet): transmit queue 4 timed out
+[   31.981327] WARNING: CPU: 1 PID: 0 at net/sched/sch_generic.c:525 dev_watchdog+0x20c/0x214
 
---lUv3gfX0lhAXHhn3
+Full log at:
+
+   https://lava.sirena.org.uk/scheduler/job/265447#L1021
+
+ramdisk boots seem happy.  A bisect claims that "net: bcmgenet:
+synchronize EXT_RGMII_OOB_CTRL access" is the first commit that breaks,
+I'm not seeing issues with other stables.
+
+# bad: [ca2e773ed20f212ed18c759aef3993ae7bfea631] Linux 6.1.91-rc2
+# good: [909ba1f1b4146de529469910c1bd0b1248964536] Linux 6.1.90
+# good: [a48685468888cca7b6e9df4b944a11be93de7837] MIPS: scall: Save thread_info.syscall unconditionally on entry
+git bisect start 'ca2e773ed20f212ed18c759aef3993ae7bfea631' '909ba1f1b4146de529469910c1bd0b1248964536' 'a48685468888cca7b6e9df4b944a11be93de7837'
+# bad: [ca2e773ed20f212ed18c759aef3993ae7bfea631] Linux 6.1.91-rc2
+git bisect bad ca2e773ed20f212ed18c759aef3993ae7bfea631
+# good: [b86d51ccf09b413520133f135d69e2ed90aae95d] btrfs: fix kvcalloc() arguments order in btrfs_ioctl_send()
+git bisect good b86d51ccf09b413520133f135d69e2ed90aae95d
+# bad: [e84fd70ea88224569d12d7fb011a29796f1d7eb9] net: bcmgenet: synchronize UMAC_CMD access
+git bisect bad e84fd70ea88224569d12d7fb011a29796f1d7eb9
+# good: [b8c64a29b20e55e5d910d59ae3cc8b188c3d8048] usb: xhci-plat: Don't include xhci.h
+git bisect good b8c64a29b20e55e5d910d59ae3cc8b188c3d8048
+# good: [f87acc39c53bf614274607090a25f51f567f16c2] mptcp: ensure snd_nxt is properly initialized on connect
+git bisect good f87acc39c53bf614274607090a25f51f567f16c2
+# good: [cd586168e27d7403c49cfe8c5e3f40f44e63f2f4] kmsan: compiler_types: declare __no_sanitize_or_inline
+git bisect good cd586168e27d7403c49cfe8c5e3f40f44e63f2f4
+# bad: [3443d6c3616b41676a7f02b0fbb55da47067dbc4] net: bcmgenet: synchronize EXT_RGMII_OOB_CTRL access
+git bisect bad 3443d6c3616b41676a7f02b0fbb55da47067dbc4
+# good: [7d43b80d8a20d95c876cd6a4f2cc94f9da4637f7] tipc: fix UAF in error path
+git bisect good 7d43b80d8a20d95c876cd6a4f2cc94f9da4637f7
+# first bad commit: [3443d6c3616b41676a7f02b0fbb55da47067dbc4] net: bcmgenet: synchronize EXT_RGMII_OOB_CTRL access
+
+--cprXTNmPew9yvJ45
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZkTgDAAKCRB4tDGHoIJi
-0tumAQDKgVyAz45elnE7dPP9C+WkoMrgDSwJVx8keW09dm25cQD+PU11FfYGPlnI
-D0cSeptu8Pnbd8cnxtLpzL8qCyNJNAk=
-=vjeV
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZE4CMACgkQJNaLcl1U
+h9CTQQf9HoF7NMyOCqfkWU+/x144f7ZUa2bjkO46zn8GEX6agCSlR41uN7X4V4+Y
+ZmzXblkCcUPtBUXs+ih9J13aqn1jilD2i/v+LsGeOdcdK8GO13JrFLCzj0FXUzvP
+S7ytNGdr7B5x68IrfEjaSA9Ck5nOfkbhzpkj713hpOM9NPWgiUuaqaFT90TalO8Y
+YLafWkUNECuUZJAt32JsbbPI5l+CTjCxrtZQfsnIQa0Wwtiub37A4TSqwpbheUlr
+0nJDwlMgTITtPg0j+PCAlikMsPOA6OGUTporTdqERT7rUsOLLXvznTdudZZ1dKFA
+tiJs3SQbjLO4rzMAN1orIGPA0wKFvw==
+=+prd
 -----END PGP SIGNATURE-----
 
---lUv3gfX0lhAXHhn3--
+--cprXTNmPew9yvJ45--
 
