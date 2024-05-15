@@ -1,87 +1,188 @@
-Return-Path: <linux-kernel+bounces-179587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D4038C61CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:36:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 922D18C61CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:37:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 084572826EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 07:36:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B55D31C20DE6
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 07:37:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E450344C66;
-	Wed, 15 May 2024 07:36:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 277F244C81;
+	Wed, 15 May 2024 07:37:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bkD/YtNE"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="QVrXSJBe"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6183A5661;
-	Wed, 15 May 2024 07:36:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1595A446A9;
+	Wed, 15 May 2024 07:37:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715758605; cv=none; b=FkRwCaJ85ygQfKeDoQz+BnLG6C6/slZNsROLNQjBo0UszZ+HH9HE9WXl1VvuPgGU72gfHWoeuI6nYi2PDs45x01reXabfNjT3v43HnIPnuZtxNSpC+rhruExVbZXFZai3kvCf676dGWwoXK/9bcn/sga/JgT+h4M1zqd0fdlLrU=
+	t=1715758658; cv=none; b=ixNdNVI5Uzek/a/XVrp0PgrCP17DcMTIOVb4c9n+e07VOk5Dr4mphvIGXVPdyucS9aRVatsSqosDGcl32KV4CK/mmWd0neroRJsKLK83/TNmIhHKy2WbSswm9XlWDTMKlFK0csxwpD4hbcUxcdCaRJQyAU8/QISZzjkTqSVgq60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715758605; c=relaxed/simple;
-	bh=CefRu0Bn3G1FBcGR9MMrJgXqv9Ap5Ha9Zc0YkoqMsUE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iIVV5eC4yP8OTzeN4ObsPPq18Fkuagi71vIv/o9YTZm1VnpkIG2GYMZ+Uj3dxlAr5bD7aY5h05C1BU+meEPkKJ5BzJbTIuJdlCMrC35RzCdIMcJGk/weFWXoJCazz63MvK35KlX93o3wKET1I6eGff3wnAYa/KBZPT3m5kwKzaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=bkD/YtNE; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=CefRu0Bn3G1FBcGR9MMrJgXqv9Ap5Ha9Zc0YkoqMsUE=; b=bkD/YtNEYdQRG1Ym54cU6b+Wk3
-	/00CQhXbI8+/nXZM83gY+riXCUgBmyDhIRyNKzRo+pGuy5mJjHjgZ8nmq5m4esoVj6oibp+HAgZU4
-	RTQgb6RNZJYr23Xh6UM7uMCw2eb4tmIoDZD2BC7Iz0pp/Y8WHniefEv2fUXMoH7WiPznGz57Yx/Vh
-	W1vANy6uaWgMgYY5oOXBJyFifXNk7psgYoqk4eLIqeLRyk+d56sxx2VRkG15Q3CNW/K9ScsbYB5R4
-	k6BtyRFCM9vpJ7/2SzG+K6Apa3qka+PpztVrh2LCYxfU1dLgmJzbjbhl5Vkl1ZTaAeSuck/TdzmW/
-	qkk8MwhQ==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s79Bl-0000000A3Wl-0dEO;
-	Wed, 15 May 2024 07:36:38 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 7178730068B; Wed, 15 May 2024 09:36:36 +0200 (CEST)
-Date: Wed, 15 May 2024 09:36:36 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Kees Cook <keescook@chromium.org>,
-	Justin Stitt <justinstitt@google.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: Re: [RFC] Mitigating unexpected arithmetic overflow
-Message-ID: <20240515073636.GY40213@noisy.programming.kicks-ass.net>
-References: <202404291502.612E0A10@keescook>
- <CAHk-=wi5YPwWA8f5RAf_Hi8iL0NhGJeL6MN6UFWwRMY8L6UDvQ@mail.gmail.com>
- <202405081144.D5FCC44A@keescook>
- <CAHk-=wjeiGb1UxCy6Q8aif50C=wWDX9Pgp+WbZYrO72+B1f_QA@mail.gmail.com>
- <202405081354.B0A8194B3C@keescook>
- <CAHk-=wgoE5EkH+sQwi4KhRhCZizUxwZAnC=+9RbZcw7g6016LQ@mail.gmail.com>
+	s=arc-20240116; t=1715758658; c=relaxed/simple;
+	bh=bEsm0BbBd0A7B3bKfe/HOWTX8J9AFW5GwUZfH8pzidE=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=S7oMpJglQRO7eiyREKwaQwyh6jxcNDWyuJu2471FNHJIPAXwmyayqN8E/WvuQBiIXSkRdAb01x5v9pxvPA3qnPl10HiYbY1O/KYz0hNEFSZDsje1UBf9f+UpXrORux9B8QUF9RvZ9aa+jWrLKtxlvNLsPoILraPwsAdSSAwLj94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=QVrXSJBe; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: f8460486128d11ef8065b7b53f7091ad-20240515
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=7aeri6oYG4BXYXoTQ2cZONHGAN6C/zuDSGpOZpExbAw=;
+	b=QVrXSJBegMdpAiH/FpiwRNO6CWpftak62qh65/YTVsENLL+2zAmZBmQUUIwWUKv2PQ/kDibHg9IfCRYXszll+xzP03W/5Ib41++2nkG33HeTgp2FPgqYpkM1covTaP1IIoCcvCex1KTtJDWWBJ5+9+cEfpX8mGGVr58Bf3aJLQQ=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:7c88c58a-e253-4fe5-be09-35a6985de4e1,IP:0,U
+	RL:0,TC:0,Content:-25,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:-25
+X-CID-META: VersionHash:82c5f88,CLOUDID:729ee083-4f93-4875-95e7-8c66ea833d57,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-UUID: f8460486128d11ef8065b7b53f7091ad-20240515
+Received: from mtkmbs09n1.mediatek.inc [(172.21.101.35)] by mailgw02.mediatek.com
+	(envelope-from <yenchia.chen@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 995212172; Wed, 15 May 2024 15:37:23 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Wed, 15 May 2024 00:37:22 -0700
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Wed, 15 May 2024 15:37:22 +0800
+From: Yenchia Chen <yenchia.chen@mediatek.com>
+To: <stable@vger.kernel.org>
+CC: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+	"yenchia . chen" <yenchia.chen@mediatek.com>, "David S. Miller"
+	<davem@davemloft.net>, Matthias Brugger <matthias.bgg@gmail.com>, Sasha Levin
+	<sashal@kernel.org>, Simon Horman <horms@kernel.org>, Ryosuke Yasuoka
+	<ryasuoka@redhat.com>, Zhengchao Shao <shaozhengchao@huawei.com>, Pedro
+ Tammela <pctammela@mojatatu.com>, Thomas Graf <tgraf@suug.ch>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>
+Subject: [PATCH 5.15 1/2] netlink: annotate lockless accesses to nlk->max_recvmsg_len
+Date: Wed, 15 May 2024 15:36:37 +0800
+Message-ID: <20240515073644.32503-2-yenchia.chen@mediatek.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20240515073644.32503-1-yenchia.chen@mediatek.com>
+References: <20240515073644.32503-1-yenchia.chen@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wgoE5EkH+sQwi4KhRhCZizUxwZAnC=+9RbZcw7g6016LQ@mail.gmail.com>
+Content-Type: text/plain
 
-On Wed, May 08, 2024 at 04:47:25PM -0700, Linus Torvalds wrote:
-> For example, the most common case of overflow we've ever had has very
-> much been array indexing. Now, sometimes that has actually been actual
-> undefined behavior, because it's been overflow in signed variables,
-> and those are "easy" to find in the sense that you just say "no, can't
-> do that". UBSAN finds them, and that's good.
+From: Eric Dumazet <edumazet@google.com>
 
-We build with -fno-strict-overflow, which implies -fwrapv, which removes
-the UB from signed overflow by mandating 2s complement.
+syzbot reported a data-race in data-race in netlink_recvmsg() [1]
 
-With the exception of an UBSAN bug prior to GCC-8, UBSAN will not, and
-should not, warn about signed overflow when using either of these flags.
+Indeed, netlink_recvmsg() can be run concurrently,
+and netlink_dump() also needs protection.
+
+[1]
+BUG: KCSAN: data-race in netlink_recvmsg / netlink_recvmsg
+
+read to 0xffff888141840b38 of 8 bytes by task 23057 on cpu 0:
+netlink_recvmsg+0xea/0x730 net/netlink/af_netlink.c:1988
+sock_recvmsg_nosec net/socket.c:1017 [inline]
+sock_recvmsg net/socket.c:1038 [inline]
+__sys_recvfrom+0x1ee/0x2e0 net/socket.c:2194
+__do_sys_recvfrom net/socket.c:2212 [inline]
+__se_sys_recvfrom net/socket.c:2208 [inline]
+__x64_sys_recvfrom+0x78/0x90 net/socket.c:2208
+do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+write to 0xffff888141840b38 of 8 bytes by task 23037 on cpu 1:
+netlink_recvmsg+0x114/0x730 net/netlink/af_netlink.c:1989
+sock_recvmsg_nosec net/socket.c:1017 [inline]
+sock_recvmsg net/socket.c:1038 [inline]
+____sys_recvmsg+0x156/0x310 net/socket.c:2720
+___sys_recvmsg net/socket.c:2762 [inline]
+do_recvmmsg+0x2e5/0x710 net/socket.c:2856
+__sys_recvmmsg net/socket.c:2935 [inline]
+__do_sys_recvmmsg net/socket.c:2958 [inline]
+__se_sys_recvmmsg net/socket.c:2951 [inline]
+__x64_sys_recvmmsg+0xe2/0x160 net/socket.c:2951
+do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+value changed: 0x0000000000000000 -> 0x0000000000001000
+
+Reported by Kernel Concurrency Sanitizer on:
+CPU: 1 PID: 23037 Comm: syz-executor.2 Not tainted 6.3.0-rc4-syzkaller-00195-g5a57b48fdfcb #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/02/2023
+
+Fixes: 9063e21fb026 ("netlink: autosize skb lengthes")
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reviewed-by: Simon Horman <simon.horman@corigine.com>
+Link: https://lore.kernel.org/r/20230403214643.768555-1-edumazet@google.com
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+Signed-off-by: yenchia.chen <yenchia.chen@mediatek.com>
+---
+ net/netlink/af_netlink.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
+
+diff --git a/net/netlink/af_netlink.c b/net/netlink/af_netlink.c
+index 82df02695bbd..56ba8a6396ca 100644
+--- a/net/netlink/af_netlink.c
++++ b/net/netlink/af_netlink.c
+@@ -1935,7 +1935,7 @@ static int netlink_recvmsg(struct socket *sock, struct msghdr *msg, size_t len,
+ 	struct sock *sk = sock->sk;
+ 	struct netlink_sock *nlk = nlk_sk(sk);
+ 	int noblock = flags & MSG_DONTWAIT;
+-	size_t copied;
++	size_t copied, max_recvmsg_len;
+ 	struct sk_buff *skb, *data_skb;
+ 	int err, ret;
+ 
+@@ -1968,9 +1968,10 @@ static int netlink_recvmsg(struct socket *sock, struct msghdr *msg, size_t len,
+ #endif
+ 
+ 	/* Record the max length of recvmsg() calls for future allocations */
+-	nlk->max_recvmsg_len = max(nlk->max_recvmsg_len, len);
+-	nlk->max_recvmsg_len = min_t(size_t, nlk->max_recvmsg_len,
+-				     SKB_WITH_OVERHEAD(32768));
++	max_recvmsg_len = max(READ_ONCE(nlk->max_recvmsg_len), len);
++	max_recvmsg_len = min_t(size_t, max_recvmsg_len,
++				SKB_WITH_OVERHEAD(32768));
++	WRITE_ONCE(nlk->max_recvmsg_len, max_recvmsg_len);
+ 
+ 	copied = data_skb->len;
+ 	if (len < copied) {
+@@ -2219,6 +2220,7 @@ static int netlink_dump(struct sock *sk)
+ 	struct netlink_ext_ack extack = {};
+ 	struct netlink_callback *cb;
+ 	struct sk_buff *skb = NULL;
++	size_t max_recvmsg_len;
+ 	struct module *module;
+ 	int err = -ENOBUFS;
+ 	int alloc_min_size;
+@@ -2241,8 +2243,9 @@ static int netlink_dump(struct sock *sk)
+ 	cb = &nlk->cb;
+ 	alloc_min_size = max_t(int, cb->min_dump_alloc, NLMSG_GOODSIZE);
+ 
+-	if (alloc_min_size < nlk->max_recvmsg_len) {
+-		alloc_size = nlk->max_recvmsg_len;
++	max_recvmsg_len = READ_ONCE(nlk->max_recvmsg_len);
++	if (alloc_min_size < max_recvmsg_len) {
++		alloc_size = max_recvmsg_len;
+ 		skb = alloc_skb(alloc_size,
+ 				(GFP_KERNEL & ~__GFP_DIRECT_RECLAIM) |
+ 				__GFP_NOWARN | __GFP_NORETRY);
+-- 
+2.18.0
+
 
