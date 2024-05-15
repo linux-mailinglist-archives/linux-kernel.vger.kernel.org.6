@@ -1,155 +1,119 @@
-Return-Path: <linux-kernel+bounces-180210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 854858C6B78
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 19:30:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A2AD8C6B7A
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 19:31:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A5A3283CBA
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:30:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C71B01F2436C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:31:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D71B3EA7B;
-	Wed, 15 May 2024 17:30:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8802345014;
+	Wed, 15 May 2024 17:31:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S2zfY/kt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FAxw62gq"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E47B928680
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 17:30:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 914783032A;
+	Wed, 15 May 2024 17:31:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715794240; cv=none; b=tDyK9dMrkt7zsWiVedIqPvsQ+qrlosAGxaLMNP3+Ua9LbAL/t0K5laRr6Iq0UIR6RuxHdX0tnEs6BaPs2tla8zkPvZ28Pz2i+HJTp61yVDiIM4fpynItgkeh5+UrOw/CXRBme/yc7CNJg3/ZngBC9IG6XDxfDrcm9Xtz79sKhEI=
+	t=1715794276; cv=none; b=k+qYuPfb3ZFZAtPSh5tPXJLS1elVw3r65SOinyiTvETUvgmUkbkITC6CiIU4qYeHF4jtGaiD6y+GNM4qvFPfAwmxV479O2ve9/WagJ72WR++7zTiU+3u2eUgKiPnWi1oqF1655wYZjWqfl6Tadiq8pYHcgXKxuCyGamcOfXXBXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715794240; c=relaxed/simple;
-	bh=OJG4bpEGGrZGuwGChGXNvkTrT4xr+O2uNSKaalzsRVI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N91asIOvgVVaeZI5suvrulnYF5eU46ftkB2+IPHAz91FaNo+q2n/fT/nJdxSBLOUooIz+BDGr0ZAmuLvQcfCwJdthtAhIz83dK8gKZeROGMcpshp8vQf6rlhzCsBta5s9bRhBNNpi99Qc0Ci864QwSj6NVpagw+LM6VRHL8EVrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S2zfY/kt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22FACC116B1;
-	Wed, 15 May 2024 17:30:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715794239;
-	bh=OJG4bpEGGrZGuwGChGXNvkTrT4xr+O2uNSKaalzsRVI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=S2zfY/ktqA30sWx3dEOarfDm+D3W5drrb2PnLQ0orVlbsqD7LXdOivxf2ZxVjGoDJ
-	 AG7WPJcfjjBPxSmPeUTWegrilWmNoRtR1wPPjQJPyOsK67+UKsuXA3FSdcsrabMI99
-	 vxGraPNlo9AAShAs9xKpZUxfugtcqdKr4aeZ92cUukidF6N7Nd7iWfZXlRg9d+6lsn
-	 uzCZdhrF5a1yIqwrMS/XIeJ3/aGrsKSI4nruvzrj4MBGO4c9s9p7F/HPPy3eTxToHm
-	 TLaBTMUDXr+DfSZnjen3z8tazbUPkdli23xcKfFR0fHg4HVgxfLlwnuQV8rZNB+PKV
-	 RLF6cPJ390D/A==
-Date: Wed, 15 May 2024 18:30:36 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Charlie Jenkins <charlie@rivosinc.com>
-Cc: linux-riscv@lists.infradead.org,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] RISC-V: fix Andes errata build issues
-Message-ID: <20240515-bootie-patriarch-769c0ebff4b1@spud>
-References: <20240515-comic-sketch-3b40e6676f55@spud>
- <ZkTnlEnoFFrQdXi2@ghost>
- <20240515-slander-stranger-683758537aee@spud>
- <ZkTuc4fxXcS/g7hC@ghost>
+	s=arc-20240116; t=1715794276; c=relaxed/simple;
+	bh=WspG4dbmpI7y3HN4/j9MrTs8m63DfPJvR1gFu99A4Pg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QJkuYd5vtjm+iTJLxrRWxQRiBj5QCKtI2ZR31Y26BoYQS3I7yz6CGURQVk8T4kMSEXhYQujWGyngK/fgfuMUHxuxdHKOjGOz/nVrhrfED1Mi/swJrwzfLbSK0f1Rlfk48mIyy67Q/Adx/izgVisxXitCbtYTeTIODxr35HD38mY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FAxw62gq; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-5c229dabbb6so4567398a12.0;
+        Wed, 15 May 2024 10:31:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715794275; x=1716399075; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wSbs3QJZgIV1wguU0m7Hf9knvWUOvS2qBtHCZHDe/GI=;
+        b=FAxw62gqd8AolORbKt7hsbyxod1QLH4FJBKXuXZEhIm8+3Dle037bjLZe0Dk8wv8o9
+         P+NybjXkISNWifuGIzS6I7bvJpqacpOAZVqdMH87MC+mET2av6Uzvavo9bY1ub12LLe+
+         0X5Ral8z45flTkO7KoGI8EBp4+i8tcRNuQjcYiVDDJEXqqa2cnOjqrXvSKwhv4siBniX
+         mQyvWo44bMeyvWfzIj/H4L+KC9uC/twcRki2I6JsKWUvuBmS6mb2pNAkHEhJUIZK5a+q
+         t2DienZc8UxJ/+Tqm+44ZE3EUlqfS65Q+U6DLL3LqOjfSBKwunlheQ+ooPuZB/5ONTrL
+         wibw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715794275; x=1716399075;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wSbs3QJZgIV1wguU0m7Hf9knvWUOvS2qBtHCZHDe/GI=;
+        b=iDhNxz0JF3+vGu2HfazrV7avDeV3gGYFoAIm7A3ebDJlM2BIvSQCVmzGdpO1FTyyyM
+         PPOSxQNS3/whXRB3ACojtN3fqxmU1ZwejZXMSskBWJbec4z8EGA98reGsrlJVnsXMmvf
+         +D39PImJVu7zT1a4yCDJCf88O82i3+XqJGFg+MgriIjlHst6pC5oJFu0cZZ6S9T8libN
+         Og9fL24W9ZAJywXdqTcJQYlj/hilvTKNO2uOE8Vg/lVPLCz6Pvykb1pfZImIQyjV/hWJ
+         iYwmdoEdjAs1AHaX0spy9942TAgGc9S+UxczprEeq/v/aeSidq0AIzh/va+syQel6rVu
+         a8RQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXJRSp8aXPSXWldUi/NkIkC2gJsE8LA6hcEZ7zVNqwS7/XzKstwlM5ZByjDNW4rIF8nRKwXDttM/Bgn9dgpb6TBHwCSNT0h9bvE+gx9Pr5hGIj9HpRWZ3VSp3N8H3MGnHvHKP1Z
+X-Gm-Message-State: AOJu0Yzph0uJTI/+fF0eN06eoENokl8TBwA+uQjeejQvG+LHCY03j/Kr
+	G+cFKjW07mEF/5zP3LKOox4Ej0Z9FsqKJkFNVEQrgPQVfZ1aBkcA
+X-Google-Smtp-Source: AGHT+IH+1P0V+5QqsR6vcs/Nm9esEuTsfpdd8aqAIj8buKx+p+1+eEn6RQ/BpkqOCtB/jKSmBYKcQw==
+X-Received: by 2002:a17:902:744a:b0:1e5:3c5:55a5 with SMTP id d9443c01a7336-1ef43c0ceb1mr151404605ad.8.1715794274755;
+        Wed, 15 May 2024 10:31:14 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-1ef0bad819csm121148485ad.84.2024.05.15.10.31.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 May 2024 10:31:14 -0700 (PDT)
+Message-ID: <6c2a2127-6db5-461a-b54c-05b73cdd146d@gmail.com>
+Date: Wed, 15 May 2024 10:31:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="NRZexXjAe9f94SYv"
-Content-Disposition: inline
-In-Reply-To: <ZkTuc4fxXcS/g7hC@ghost>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.6 000/309] 6.6.31-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240515082510.431870507@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <20240515082510.431870507@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 5/15/24 01:27, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.31 release.
+> There are 309 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Fri, 17 May 2024 08:23:27 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.31-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
---NRZexXjAe9f94SYv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-On Wed, May 15, 2024 at 10:18:43AM -0700, Charlie Jenkins wrote:
-> On Wed, May 15, 2024 at 05:56:30PM +0100, Conor Dooley wrote:
-> > On Wed, May 15, 2024 at 09:49:24AM -0700, Charlie Jenkins wrote:
-> > > On Wed, May 15, 2024 at 05:09:34PM +0100, Conor Dooley wrote:
-> > > > From: Conor Dooley <conor.dooley@microchip.com>
-> > > >=20
-> > > > Commit e47c37c24024 ("riscv: Introduce vendor variants of extension
-> > > > helpers") added includes for the new vendor_extensions.h header in
-> > > > the T-Head and SiFive errata handling code but didn't do so for And=
-es,
-> > > > resulting in allmodconfig build issues when commit 589e2fc85850
-> > > > ("riscv: Convert xandespmu to use the vendor extension framework")
-> > > > added a user of a macro defined there.
-> > > >=20
-> > > > Fixes: 589e2fc85850 ("riscv: Convert xandespmu to use the vendor ex=
-tension framework")
-> > > > Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
-> >=20
-> > >=20
-> > > I was going to fix this in my next version but was waiting for the
-> > > reviews on the thead stuff. I wasn't anticipating these patches to be
-> > > able to jump the queue :)
-> >=20
-> > Yah, the reason for that is I asked him to take the non-vector parts of
-> > the series as 6.10 material so that we'd have less stuff movin' around
-> > in cpufeatures.c so that Clement's Zc* + validation changes wouldn't run
-> > into a bunch of conflicts etc. Same reason that I pushed for getting
-> > Andy's vector subset stuff merged today, but that mighta been before you
-> > hopped in.
-> >=20
-> > Cheers,
-> > Conor.
->=20
-> Yes I was a couple minutes late to the meeting, whoops.
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
-
-It's prob at like 0600 for you, so w/e.
-
-> The subset of
-> patches that was pulled into for-next is odd to me because there is some
-> of the thead enablement code as part of the vendor extension enablement
-> so that there was a user for it. Since the subset on Palmer's for-next
-> does not have the rest of the thead code there is only a
-> half-implementation of the thead code, it allows the kernel to probe for
-> xtheadvector but it doesn't probe anywhere.
-
-I dunno, I think that reporting that the extension is there constitutes a
-user, it's not gonna be dead code. There's plenty of extensions for
-which all we do is detect them and nothing more.
-
-> In my opinion, a better solution would be for me to get rid of the thead
-> code entirely from those patches. So that there is still a user, I can
-> replace the thead code with the andes versions.
-
-The Andes stuff is in the subset he applied though, so...
->=20
-> Since Palmer already pulled in those changes maybe it's too late. There
-> is not a critical problem here, but it seems like it's bad practice to
-> introduce code without a user.
-
-=2E..there is actually a "real" user in xandespmu. I did miss that
-"riscv: Extend cpufeature.c to detect vendor extensions" actually
-contained the xtheadvector detection though, rather than just the
-infrastructure. I think it is probably harmless to have it, but
-shouldn't be too hard to quickly drop the thead bits either I suppose
-if you're worried about it.
-
-Cheers,
-Conor.
-
---NRZexXjAe9f94SYv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZkTxOwAKCRB4tDGHoIJi
-0n57AP4/XQPuVo3AOMDuWOhQHlozouIYfM94T+VqEClRrVRYygEA/NOrcaa74Uan
-t1niincoErkoqmkJa33oAK4rZzugGw0=
-=ZNQ4
------END PGP SIGNATURE-----
-
---NRZexXjAe9f94SYv--
 
