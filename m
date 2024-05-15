@@ -1,223 +1,262 @@
-Return-Path: <linux-kernel+bounces-180405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B44368C6E01
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 23:50:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EDD58C6E08
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 23:51:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6518C282746
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 21:50:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA2AC283D8B
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 21:51:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 124C515B56C;
-	Wed, 15 May 2024 21:50:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BE2515B56D;
+	Wed, 15 May 2024 21:51:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="G2A75NTD"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ot3QPVvo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC1F515B97E
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 21:50:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E9F15B54A;
+	Wed, 15 May 2024 21:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715809827; cv=none; b=bE/KJOFWUTEh61vo3mAFMRglEyVxWVc+A49Vvhl1YkMYgzin0ZN0YjNzazGnbhWjb1Zw6ygezG9fKCfaVxguRmb3Qf7qXyz/hsHYUH1g34AYupVuMcd4Njy/BlRgiLpY2S4fTPyTcSa5+vyZD75/dUphbd61/35x9mkpBzq9srE=
+	t=1715809863; cv=none; b=nQ1nm73TAUU7gxZmzO/Lafh64vECHEBMNqjtv4on8EX4306Tcknr6VcUs2q6Vfh+/ePzmc/Wo6Lgh/y1f9j3IFiJIsYSWadmwFkPaGAqmmsfP7yGq/lHeoVSIYtnyPhZdmfWYIip8kYuylGhKk26Y15knOaiGoZ1AqRGL5pNHuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715809827; c=relaxed/simple;
-	bh=PJLl00JSXWHvsV/oHOhLKcWkE7dzVuiu0in04i+U0L8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=oc+3hacx/mo96mDciSqAkP3Rx9wp79CM2Ga2sEBJ510AIlP6/FOnzmM4d8tTswrqCj7TYvmzxImKeeGI0cDZWE8hzGeL88pm/4a6QJNp8nc6uOY/jRUtFfEfJ+qkhQpCSNwaxHWWvvFPs5Re8am8G5M9pAJZcw43KnP00y+Ws/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=G2A75NTD; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-6f4dcc3eeb3so4334627b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 14:50:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1715809825; x=1716414625; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SLs+h6zNZh7mF7wyHbnkfOw6GN1dWR7g2z29pkelkkw=;
-        b=G2A75NTDyOWEthf3RFlzqsbW+f36P+IZLbXHET+03El4Fs2viwLg0f28quC/HuG4pE
-         d6ZjauRfAxdAzCfNB9BAG+p8HoofjimWSixvs7nymmItMslpj+p67zs5zAngfjBBXkAR
-         t2MM6HmX0/zFc42N0h7HdHmfaZKqId+1G5UvhI7X5hP8lmJl2bvKd/a31ykQlZ6f9hwj
-         wObRKNkh46FBKeG4AoWY7IivoZyoGAWkz8Zjc4l5Ov34NOqb1dGzF0HcCocTPht19y9r
-         uVnWXpRLyrw5sgpaoJOi21gycUWwcRhpesOuuf4GZsG1/Dghgy9HWGcTYIJmPr+HQJAE
-         4cgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715809825; x=1716414625;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SLs+h6zNZh7mF7wyHbnkfOw6GN1dWR7g2z29pkelkkw=;
-        b=kjPqOo7/iiJu7v6Rut/LU8FZFX240I1QTuyBC59GdWANe81KA0NmB5mKnuH4v2ObNr
-         oX4n4emmAi+qjF+XMwk/4PWry8cvuXI0cpusJzWFpdPUleTBaQxVJrdDjgwWl1I3F4+4
-         nmOZnfiiQOTBe28mlLSqKcH9yiA5b3aRuRGqJr465y46jzxmZxD2GeeFv+kW35F9VDeR
-         CZDpENANrBI7qkyoEMCHt/SoKM/UJNvfNJJdVNAabLrTEwpHxwLIU/t+QsOMRUTi9PjV
-         S5ws6CE2XrqC++c2gptuCFnB8UeQ+C5X7ydT8RFboSUORQB2SCmxclB8VvvGuPyWDxxe
-         9gXg==
-X-Forwarded-Encrypted: i=1; AJvYcCU9NMBQNVnt0dMCj4TFCWpC4DlZ/0Gaizdh0dOdapChJSPruSS+lAJrOd8fhMnKjksrJFS/5pu3r9uRXHiRMg2OJ6/c4oX1rn2+OxEc
-X-Gm-Message-State: AOJu0YzbWFFtXDb9svFjxAjoRTdfXhfVD7FI2xyZ8dnJtm6jksq/2M7W
-	qSp9Tq/TCisYPhkUS+X8/yx53MMex1XuI+QLeXDalEcAdoHbVFJTdEA5RJH95Mj0A+JvJMPJXMP
-	v
-X-Google-Smtp-Source: AGHT+IGEAaUjSboxWJ2duwQsEeAptuaGBNQQH1TifXZ6d134LKtkLFEiWsZJaGRCLjJ0v/CqjmN2Tg==
-X-Received: by 2002:a05:6a21:788e:b0:1a7:7358:f108 with SMTP id adf61e73a8af0-1afde0b5c64mr19600162637.24.1715809825401;
-        Wed, 15 May 2024 14:50:25 -0700 (PDT)
-Received: from charlie.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2a827fdsm11638629b3a.60.2024.05.15.14.50.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 May 2024 14:50:22 -0700 (PDT)
-From: Charlie Jenkins <charlie@rivosinc.com>
-Date: Wed, 15 May 2024 14:50:15 -0700
-Subject: [PATCH 2/2] riscv: vector: Use vlenb from DT
+	s=arc-20240116; t=1715809863; c=relaxed/simple;
+	bh=0DXBzG5HSOGPu4fQRLxlcEQFxW8zkEG7odaxH8d2qII=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZcdtF2cxqJTn053n4ZtIfDTVXILlc434QdYee570GZRrwIfdWRbMF8pr78TjvZHo8ImUuhks6Vg3Gq0YZpoatXUF6vjEs3phkuHmV210zABtcmrYc3cCDJmbZ+aLZVOzA2OOm1E/XLai4hNeQPSVdh0oJbK9BiC9zzFiHC+ut/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ot3QPVvo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAD2FC116B1;
+	Wed, 15 May 2024 21:51:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715809862;
+	bh=0DXBzG5HSOGPu4fQRLxlcEQFxW8zkEG7odaxH8d2qII=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=ot3QPVvoXLBcRKW7d9jOH3R8j7cAacPPDYyldX5dqeswn6MW/we1wkXIo5cuzNMoi
+	 iutcCb2oFNiqpfdivDd/OTuUg8O57U/Z5PRbOtc8b8rTFuMUX9DPAbhesqs8bnYtqV
+	 R9rgNQ/qpjmRGdu1U5TQ/Ak8a1yV4tH5918yL1qYv3V9Hf4oPYERgXIR1bUvnH9oSh
+	 eizYQrM+siWNWZtQsSneCKw9APMtsYCLkUcPxjOLCzn5KuJC8+Xy4R7dR/mUGvgjA2
+	 GWqhNuFuKN89NVJJMWtXhnisI0Py/npkiRSh1wOXKbde8+x5FdOVHG4eF80TxEtb37
+	 WakY5VW+QmsTQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 2F22ACE0DEC; Wed, 15 May 2024 14:51:02 -0700 (PDT)
+Date: Wed, 15 May 2024 14:51:02 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Marco Elver <elver@google.com>
+Cc: Bart Van Assche <bvanassche@acm.org>, Breno Leitao <leitao@debian.org>,
+	Jens Axboe <axboe@kernel.dk>,
+	"open list:BLOCK LAYER" <linux-block@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] block: Annotate a racy read in blk_do_io_stat()
+Message-ID: <d9df8351-7cc2-4562-a8b5-440344bfeb91@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <c83d9c25-b839-4e31-8dd4-85f3cb938653@paulmck-laptop>
+ <4d230bac-bdb0-4a01-8006-e95156965aa8@acm.org>
+ <447ad732-3ff8-40bf-bd82-f7be66899cee@paulmck-laptop>
+ <ca7c2ef0-7e21-4fb3-ac6b-3dae652a7a0e@acm.org>
+ <59ec96c2-52ce-4da1-92c3-9fe38053cd3d@paulmck-laptop>
+ <CANpmjNMj9r1V6Z63fcJxrFC1v4i2vUCEhm1HT77ikxhx0Rghdw@mail.gmail.com>
+ <dd251dba-0a63-4b57-a05b-bfa02615fae5@paulmck-laptop>
+ <CANpmjNMqRUNUs1mZEhrOSyK0Hk+PdGOi+VAs22qYD+1zTkwfhg@mail.gmail.com>
+ <75421237-4c5a-48bc-849e-87a216ee9d32@paulmck-laptop>
+ <CANpmjNM-Cg12qCU3WoLeBboogLQVgn4znFerRwD3BVAFMc9BiQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240515-add_vlenb_to_dt-v1-2-4ebd7cba0aa1@rivosinc.com>
-References: <20240515-add_vlenb_to_dt-v1-0-4ebd7cba0aa1@rivosinc.com>
-In-Reply-To: <20240515-add_vlenb_to_dt-v1-0-4ebd7cba0aa1@rivosinc.com>
-To: Conor Dooley <conor@kernel.org>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
-Cc: Palmer Dabbelt <palmer@sifive.com>, linux-riscv@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Charlie Jenkins <charlie@rivosinc.com>, 
- Conor Dooley <conor.dooley@microchip.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1715809814; l=3496;
- i=charlie@rivosinc.com; s=20231120; h=from:subject:message-id;
- bh=PJLl00JSXWHvsV/oHOhLKcWkE7dzVuiu0in04i+U0L8=;
- b=PPusZY5yDbyewn4LPOz6zzsAoeQVGhX8cVESMhQXQMjuHBGziZWmOGA/NEGK6N38Apa7YdlR0
- JGRVUT1Zr/bCCs7fZNijKg52638cniW+CprhQnJVbS0uErZnn/Wx36U
-X-Developer-Key: i=charlie@rivosinc.com; a=ed25519;
- pk=t4RSWpMV1q5lf/NWIeR9z58bcje60/dbtxxmoSfBEcs=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANpmjNM-Cg12qCU3WoLeBboogLQVgn4znFerRwD3BVAFMc9BiQ@mail.gmail.com>
 
-If vlenb is provided in the device tree, prefer that over reading the
-vlenb csr.
+On Wed, May 15, 2024 at 07:40:08PM +0200, Marco Elver wrote:
+> On Wed, 15 May 2024 at 17:57, Paul E. McKenney <paulmck@kernel.org> wrote:
+> > On Wed, May 15, 2024 at 09:58:35AM +0200, Marco Elver wrote:
+> > > On Wed, 15 May 2024 at 01:47, Paul E. McKenney <paulmck@kernel.org> wrote:
+> > > > On Mon, May 13, 2024 at 10:13:49AM +0200, Marco Elver wrote:
+> > > > > On Sat, 11 May 2024 at 02:41, Paul E. McKenney <paulmck@kernel.org> wrote:
+> > > > > [...]
+> > > > > > ------------------------------------------------------------------------
+> > > > > >
+> > > > > > commit 930cb5f711443d8044e88080ee21b0a5edda33bd
+> > > > > > Author: Paul E. McKenney <paulmck@kernel.org>
+> > > > > > Date:   Fri May 10 15:36:57 2024 -0700
+> > > > > >
+> > > > > >     kcsan: Add example to data_race() kerneldoc header
+> > > > > >
+> > > > > >     Although the data_race() kerneldoc header accurately states what it does,
+> > > > > >     some of the implications and usage patterns are non-obvious.  Therefore,
+> > > > > >     add a brief locking example and also state how to have KCSAN ignore
+> > > > > >     accesses while also preventing the compiler from folding, spindling,
+> > > > > >     or otherwise mutilating the access.
+> > > > > >
+> > > > > >     [ paulmck: Apply Bart Van Assche feedback. ]
+> > > > > >
+> > > > > >     Reported-by: Bart Van Assche <bvanassche@acm.org>
+> > > > > >     Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> > > > > >     Cc: Marco Elver <elver@google.com>
+> > > > > >     Cc: Breno Leitao <leitao@debian.org>
+> > > > > >     Cc: Jens Axboe <axboe@kernel.dk>
+> > > > > >
+> > > > > > diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+> > > > > > index c00cc6c0878a1..9249768ec7a26 100644
+> > > > > > --- a/include/linux/compiler.h
+> > > > > > +++ b/include/linux/compiler.h
+> > > > > > @@ -194,9 +194,17 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
+> > > > > >   * This data_race() macro is useful for situations in which data races
+> > > > > >   * should be forgiven.  One example is diagnostic code that accesses
+> > > > > >   * shared variables but is not a part of the core synchronization design.
+> > > > > > + * For example, if accesses to a given variable are protected by a lock,
+> > > > > > + * except for diagnostic code, then the accesses under the lock should
+> > > > > > + * be plain C-language accesses and those in the diagnostic code should
+> > > > > > + * use data_race().  This way, KCSAN will complain if buggy lockless
+> > > > > > + * accesses to that variable are introduced, even if the buggy accesses
+> > > > > > + * are protected by READ_ONCE() or WRITE_ONCE().
+> > > > > >   *
+> > > > > > - * This macro *does not* affect normal code generation, but is a hint
+> > > > > > - * to tooling that data races here are to be ignored.
+> > > > > > + * This macro *does not* affect normal code generation, but is a hint to
+> > > > > > + * tooling that data races here are to be ignored.  If code generation must
+> > > > > > + * be protected *and* KCSAN should ignore the access, use both data_race()
+> > > > >
+> > > > > "code generation must be protected" seems ambiguous, because
+> > > > > protecting code generation could mean a lot of different things to
+> > > > > different people.
+> > > > >
+> > > > > The more precise thing would be to write that "If the access must be
+> > > > > atomic *and* KCSAN should ignore the access, use both ...".
+> > > >
+> > > > Good point, and I took your wording, thank you.
+> > > >
+> > > > > I've also had trouble in the past referring to "miscompilation" or
+> > > > > similar, because that also entirely depends on the promised vs.
+> > > > > expected semantics: if the code in question assumes for the access to
+> > > > > be atomic, the compiler compiling the code in a way that the access is
+> > > > > no longer atomic would be a "miscompilation". Although is it still a
+> > > > > "miscompilation" if the compiler generated code according to specified
+> > > > > language semantics (say according to our own LKMM) - and that's where
+> > > > > opinions can diverge because it depends on which side we stand
+> > > > > (compiler vs. our code).
+> > > >
+> > > > Agreed, use of words like "miscompilation" can annoy people.  What
+> > > > word would you suggest using instead?
+> > >
+> > > Not sure. As suggested above, I try to just stick to "atomic" vs
+> > > "non-atomic" because that's ultimately the functional end result of
+> > > such a miscompilation. Although I've also had people be confused as in
+> > > "what atomic?! as in atomic RMW?!", but I don't know how to remove
+> > > that kind of confusion.
+> > >
+> > > If, however, our intended model is the LKMM and e.g. a compiler breaks
+> > > a dependency-chain, then we could talk about miscompilation, because
+> > > the compiler violates our desired language semantics. Of course the
+> > > compiler writers then will say that we try to do things that are
+> > > outside any implemented language semantics the compiler is aware of,
+> > > so it's not a miscompilation again. So it all depends on which side
+> > > we're arguing for. Fun times.
+> >
+> > ;-) ;-) ;-)
+> >
+> > > > > > + * and READ_ONCE(), for example, data_race(READ_ONCE(x)).
+> > > > >
+> > > > > Having more documentation sounds good to me, thanks for adding!
+> > > > >
+> > > > > This extra bit of documentation also exists in a longer form in
+> > > > > access-marking.txt, correct? I wonder how it would be possible to
+> > > > > refer to it, in case the reader wants to learn even more.
+> > > >
+> > > > Good point, especially given that I had forgotten about it.
+> > > >
+> > > > I don't have any immediate ideas for calling attention to this file,
+> > > > but would the following update be helpful?
+> > >
+> > > Mentioning __data_racy along with data_race() could be helpful, thank
+> > > you. See comments below.
+> >
+> > I did add a mention of it in "Linux-Kernel RCU Shared-Variable Marking"
+> > [1], but just a mention, given that I do not expect that we will use it
+> > within RCU.
+> >
+> > > Thanks,
+> > > -- Marco
+> > >
+> > > >                                                         Thanx, Paul
+> > > >
+> > > > ------------------------------------------------------------------------
+> > > >
+> > > > diff --git a/tools/memory-model/Documentation/access-marking.txt b/tools/memory-model/Documentation/access-marking.txt
+> > > > index 65778222183e3..690dd59b7ac59 100644
+> > > > --- a/tools/memory-model/Documentation/access-marking.txt
+> > > > +++ b/tools/memory-model/Documentation/access-marking.txt
+> > > > @@ -24,6 +24,12 @@ The Linux kernel provides the following access-marking options:
+> > > >  4.     WRITE_ONCE(), for example, "WRITE_ONCE(a, b);"
+> > > >         The various forms of atomic_set() also fit in here.
+> > > >
+> > > > +5.     ASSERT_EXCLUSIVE_ACCESS() and ASSERT_EXCLUSIVE_WRITER().
+> > >
+> > > Perhaps worth mentioning, but they aren't strictly access-marking
+> > > options. In the interest of simplicity could leave it out.
+> >
+> > Interestingly enough, they can be said to be implicitly marking other
+> > concurrent accesses to the variable.  ;-)
+> 
+> The document starts with "guidelines for marking intentionally
+> concurrent normal accesses to shared memory".  The ASSERT_EXCLUSIVE
+> macros do capture more of the concurrency rules, and perhaps they
+> could be seen as some kind of "negative marking" where concurrent
+> access should _not_ happen concurrently with these. But I'm still not
+> convinced it's the same kind of marking the document introduces.
+> 
+> I always considered them in the realm of general assertions that we
+> can just use to tell the tool more than can be inferred from the bits
+> of C code required for the functional implementation of whatever we're
+> doing.
+> 
+> > I believe that the do need to be mentioned more prominently, though.
+> >
+> > Maybe a second list following this one?  In that case, what do we name
+> > the list?  I suppose the other alternative would be to leave them in
+> > this list, and change the preceding sentence to say something like
+> > "The Linux kernel provides the following access-marking-related primitives"
+> >
+> > Thoughts?
+> 
+> And I just checked the current access-marking.txt to see where we
+> might add more, and found the section "ACCESS-DOCUMENTATION OPTIONS"
+> already exists. I think that section is perfectly reasonable as is,
+> and it does explicitly talk about ASSERT_EXCLUSIVE* macros.
+> 
+> Did you want to add it more prominently at the top? If so, maybe a
+> brief forward-reference to that section might be helpful.
 
-Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
----
- arch/riscv/include/asm/cpufeature.h |  2 ++
- arch/riscv/kernel/cpufeature.c      | 47 +++++++++++++++++++++++++++++++++++++
- arch/riscv/kernel/vector.c          | 12 +++++++++-
- 3 files changed, 60 insertions(+), 1 deletion(-)
+How about like this?
 
-diff --git a/arch/riscv/include/asm/cpufeature.h b/arch/riscv/include/asm/cpufeature.h
-index 347805446151..0c4f08577015 100644
---- a/arch/riscv/include/asm/cpufeature.h
-+++ b/arch/riscv/include/asm/cpufeature.h
-@@ -31,6 +31,8 @@ DECLARE_PER_CPU(struct riscv_cpuinfo, riscv_cpuinfo);
- /* Per-cpu ISA extensions. */
- extern struct riscv_isainfo hart_isa[NR_CPUS];
- 
-+extern u32 riscv_vlenb_of;
-+
- void riscv_user_isa_enable(void);
- 
- #if defined(CONFIG_RISCV_MISALIGNED)
-diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
-index 3ed2359eae35..6c143ea9592b 100644
---- a/arch/riscv/kernel/cpufeature.c
-+++ b/arch/riscv/kernel/cpufeature.c
-@@ -35,6 +35,8 @@ static DECLARE_BITMAP(riscv_isa, RISCV_ISA_EXT_MAX) __read_mostly;
- /* Per-cpu ISA extensions. */
- struct riscv_isainfo hart_isa[NR_CPUS];
- 
-+u32 riscv_vlenb_of;
-+
- /**
-  * riscv_isa_extension_base() - Get base extension word
-  *
-@@ -648,6 +650,46 @@ static int __init riscv_isa_fallback_setup(char *__unused)
- early_param("riscv_isa_fallback", riscv_isa_fallback_setup);
- #endif
- 
-+static int has_riscv_homogeneous_vlenb(void)
-+{
-+	int cpu;
-+	u32 prev_vlenb = 0;
-+	u32 vlenb;
-+
-+	/* Ignore vlenb if vector is not enabled in the kernel */
-+	if (!IS_ENABLED(CONFIG_RISCV_ISA_V))
-+		return 0;
-+
-+	for_each_possible_cpu(cpu) {
-+		struct device_node *cpu_node;
-+
-+		cpu_node = of_cpu_device_node_get(cpu);
-+		if (!cpu_node) {
-+			pr_warn("Unable to find cpu node\n");
-+			return -ENOENT;
-+		}
-+
-+		if (of_property_read_u32(cpu_node, "riscv,vlenb", &vlenb)) {
-+			of_node_put(cpu_node);
-+
-+			if (prev_vlenb)
-+				return -ENOENT;
-+			continue;
-+		}
-+
-+		if (prev_vlenb && vlenb != prev_vlenb) {
-+			of_node_put(cpu_node);
-+			return -ENOENT;
-+		}
-+
-+		prev_vlenb = vlenb;
-+		of_node_put(cpu_node);
-+	}
-+
-+	riscv_vlenb_of = vlenb;
-+	return 0;
-+}
-+
- void __init riscv_fill_hwcap(void)
- {
- 	char print_str[NUM_ALPHA_EXTS + 1];
-@@ -671,6 +713,11 @@ void __init riscv_fill_hwcap(void)
- 			pr_info("Falling back to deprecated \"riscv,isa\"\n");
- 			riscv_fill_hwcap_from_isa_string(isa2hwcap);
- 		}
-+
-+		if (elf_hwcap & COMPAT_HWCAP_ISA_V && has_riscv_homogeneous_vlenb() < 0) {
-+			pr_warn("Unsupported heterogeneous vlen detected, vector extension disabled.\n");
-+			elf_hwcap &= ~COMPAT_HWCAP_ISA_V;
-+		}
- 	}
- 
- 	/*
-diff --git a/arch/riscv/kernel/vector.c b/arch/riscv/kernel/vector.c
-index 6727d1d3b8f2..e04586cdb7f0 100644
---- a/arch/riscv/kernel/vector.c
-+++ b/arch/riscv/kernel/vector.c
-@@ -33,7 +33,17 @@ int riscv_v_setup_vsize(void)
- {
- 	unsigned long this_vsize;
- 
--	/* There are 32 vector registers with vlenb length. */
-+	/*
-+	 * There are 32 vector registers with vlenb length.
-+	 *
-+	 * If the riscv,vlenb property was provided by the firmware, use that
-+	 * instead of probing the CSRs.
-+	 */
-+	if (riscv_vlenb_of) {
-+		this_vsize = riscv_vlenb_of * 32;
-+		return 0;
-+	}
-+
- 	riscv_v_enable();
- 	this_vsize = csr_read(CSR_VLENB) * 32;
- 	riscv_v_disable();
+------------------------------------------------------------------------
 
--- 
-2.44.0
+The Linux kernel provides the following access-marking options:
 
+1.	Plain C-language accesses (unmarked), for example, "a = b;"
+
+2.	Data-race marking, for example, "data_race(a = b);"
+
+3.	READ_ONCE(), for example, "a = READ_ONCE(b);"
+	The various forms of atomic_read() also fit in here.
+
+4.	WRITE_ONCE(), for example, "WRITE_ONCE(a, b);"
+	The various forms of atomic_set() also fit in here.
+
+5.	__data_racy, for example "int __data_racy a;"
+
+6.	KCSAN's negative-marking assertions, ASSERT_EXCLUSIVE_ACCESS()
+	and ASSERT_EXCLUSIVE_WRITER(), are desccribed in the
+	"ACCESS-DOCUMENTATION OPTIONS" section below.
+
+------------------------------------------------------------------------
+
+Would that work?
+
+							Thanx, Paul
 
