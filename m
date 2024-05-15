@@ -1,126 +1,99 @@
-Return-Path: <linux-kernel+bounces-180103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2CD98C6A20
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:02:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD6198C6A21
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:02:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70FC6B21281
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:02:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDEC01C22392
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:02:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAEB015624B;
-	Wed, 15 May 2024 16:02:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96788156243;
+	Wed, 15 May 2024 16:02:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2FRPYHxA"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dphlepJN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1E20155723
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 16:02:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE929155A53
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 16:02:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715788930; cv=none; b=VaYkHXVNxsBmyO2vjvMEORz/pE9A8JiJHEYP542ee70Xweq1+GMDzXGreVzBKniJlixsJcsCUh7BsWbY9IjuAVpLWhvEwnX6MgmIp3QtTYwWy7B0LAxFncEjQpjuUKZV4+aObbnRtZSqpe4wUXwLAQCgWwed0m9LpPfedTIzhXY=
+	t=1715788963; cv=none; b=L6nYi9CuxQjhi1fPOp9I8px8X1FtBFJYIYgCJwaDJWI3UoMyFYghtYy0eUHORkjhWGIK+Av0kr/0nNFpcgyMirGZ0h9K8yW3bntgfGQxwY+OVu0O3LDgzsXWnPy+oEsjQ3RYbuF4f0vB0uhVs//KVIekrjVi4bMRMcWH9tJhFrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715788930; c=relaxed/simple;
-	bh=dHp9YY0yUz81Klbcbarf2tktRzWRTMeL2ufthxa+Lvw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=oI/UZI02c5tQJzgR7+T1u5WHblZU59BO4pVUyxrsbrLCr9uSPuM/vAl1uJW0yoHkRMz+YBqw4J6ckLGf0GcmaFpMjcvgpGJ8fAOsH2DMEMS+urkMFiaacbKBorY5CPEu3fVhXG5qYzrXj8er9Iql1+hF/uP1XmI93Ns1mBFvcHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2FRPYHxA; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-627751b5411so5812977b3.2
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 09:02:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715788927; x=1716393727; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Leaj1hGD/l4qMnCDX6HAbzcyf5xPcTNn9ubyVFrolYs=;
-        b=2FRPYHxAnZjbH4EO51l4RxbGPtkoRqqbgC7JJlJYHXO9f32/U3brEPAN3Dxqo1Fz4W
-         JPwcgFCw9O0Nn1rnnIqVl7S5SUw7TC80P1EFI6mADucXWWK/4pHSL9o4xlDuC67fuJGM
-         hvjwu5tikOrfJ3ul16/LAc3UoOeRNfmAuAG/3Tvxqi/EBLgSF3T5kb/sZUaKF3hVo9kI
-         3F0q3XMjqdZqsCmJJcrYd8nZCgirwittdCnCypviwcvB7cXZ9tb+7zgES66xyuG974W7
-         uIRAYIO7B9OVl8cu2kJSI6jSyGwNnxlw3KGYEZIPGqQGHrK19C7LeSPh4Uca+SehPpDK
-         bs0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715788927; x=1716393727;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Leaj1hGD/l4qMnCDX6HAbzcyf5xPcTNn9ubyVFrolYs=;
-        b=MveGr1w4T9papE8xpPRg9yzY2V5odAvUvt7hUnBmOrgucyNK6ruE6VfwdRDs7Vlq9O
-         i0CgzKG5Boy/GxbJA63HVOwTT+uAEF/pZfKq31PDNzLSdj7dbgp4krYUHMFIkqxIN7cL
-         8BRiFtY6eQnqSuUe1Nt5fo9KPu0Yc0ZZrmM+kXDIkLjA2YiX93QVpD37737nLU9SKP9f
-         kB5K9CQwnj8dA9c+stM2QW78Gp4ScHhtpIRJCkIyNk93lMpjAVGtNIQGBCm4rXbr73f+
-         R5sr2JdNpsppRpLg9VHIVZI8BhU8sC6ZFgGNJgeuAomJsHtQa8MGY44YIc78tBmIiQFt
-         FSGQ==
-X-Gm-Message-State: AOJu0YzEMxrm5B66Ny3M301YOGynmzAyfWCUAjcle1ooKJe90L0hLzhE
-	nJRKngJHqTo9sG2+mJ5EXIW5Jwzcoqk2GH1ZkOD5ePnCXLdhe8D2pCBh4ISjoPdmXbbi6kWEJ+/
-	c0Q==
-X-Google-Smtp-Source: AGHT+IGPwheN6AaZMallYW5on/mieXkwwDJnuyPkb/L15W89sdb/Xu1kDKQkw1QV4ydleb3vm7DTRtu99bs=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a0d:ea0d:0:b0:622:cd7d:fec4 with SMTP id
- 00721157ae682-622cd7e0027mr29802577b3.9.1715788927600; Wed, 15 May 2024
- 09:02:07 -0700 (PDT)
-Date: Wed, 15 May 2024 09:02:06 -0700
-In-Reply-To: <747192d5fe769ae5d28bbb6c701ee9be4ad09415.camel@intel.com>
+	s=arc-20240116; t=1715788963; c=relaxed/simple;
+	bh=AFgzPFaBHoRhzogGDzm865PJZzrfFEUfkq5R7FJmT2Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=heFRzgRnEhjdLRM3vPljFkziYXlxjN9D/4OwZmLX0SHJ3wZ9Phs+uHK9w/ABU9O1Z0XlhOalzHJuTDcru6TmPP3PuhLpHVJmtoV40uEzZ8ml+XRi+mamIuqZzP5uEaHr1BD3TJFb9T8wQHZWDL7sv2zrfv66YWjtmPSEwtiMf8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dphlepJN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB2C2C116B1;
+	Wed, 15 May 2024 16:02:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715788963;
+	bh=AFgzPFaBHoRhzogGDzm865PJZzrfFEUfkq5R7FJmT2Y=;
+	h=From:To:Cc:Subject:Date:From;
+	b=dphlepJNhL0bOPCUtBmG4GlrBuXCoF/B6/azMgXpEC3VX/xg0rSrFYAGn56s2/A7m
+	 QErfAf5aceJk50052JVAU+fiYyAYohWIAnoSzl1SrT2rNYTBaz4i0Sq3XWBzAykNZR
+	 6fK966EJ3cyu1Dmabgti8rXPi4tVKXLp7X3tesxr0HfTR58IFAxhaQeO6ANisZPq9/
+	 RxhRm8PxdC8V97yW+LSMUPqAsxGpWBJxCAloqlNWZZ+S1tSnLhEyBgGYvP8l4bgDsd
+	 ZJlrEUHZhG5KzqFLnwKh4rdvq2VKsokk42gEM36jHCXzvlbY0CIz6yhzIfVRmVDVWU
+	 gDfswjliJ9JJA==
+From: Conor Dooley <conor@kernel.org>
+To: linux-riscv@lists.infradead.org
+Cc: conor@kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Charlie Jenkins <charlie@rivosinc.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1] RISC-V: fix Andes errata build issues
+Date: Wed, 15 May 2024 17:02:28 +0100
+Message-ID: <20240515-shimmer-retake-37033de08096@spud>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240515005952.3410568-1-rick.p.edgecombe@intel.com>
- <20240515005952.3410568-9-rick.p.edgecombe@intel.com> <ZkTWDfuYD-ThdYe6@google.com>
- <f64c7da52a849cd9697b944769c200dfa3ee7db7.camel@intel.com> <747192d5fe769ae5d28bbb6c701ee9be4ad09415.camel@intel.com>
-Message-ID: <ZkTcbPowDSLVgGft@google.com>
-Subject: Re: [PATCH 08/16] KVM: x86/mmu: Bug the VM if kvm_zap_gfn_range() is
- called for TDX
-From: Sean Christopherson <seanjc@google.com>
-To: Rick P Edgecombe <rick.p.edgecombe@intel.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "sagis@google.com" <sagis@google.com>, 
-	"isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>, Erdem Aktas <erdemaktas@google.com>, 
-	Yan Zhao <yan.y.zhao@intel.com>, "dmatlack@google.com" <dmatlack@google.com>, 
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "pbonzini@redhat.com" <pbonzini@redhat.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1201; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=MhlCDrRGZxXwwiDuOFsO1SNCrGR0xpsno+lxxYP+x90=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDGkud6Zuv7D4usZkNhOR7y6dXWc/rDj29tyiPyvefJ/lW 97krn2bq6OUhUGMg0FWTJEl8XZfi9T6Py47nHvewsxhZQIZwsDFKQATudrK8D9n38V9H/Y2qKVP N352/lgV4+uQdfO07ysvS/1Y3O39IfwUw1957dcip2ZLckvazGkS8iwMeBHbcfuxEvMZeZegrp1 Vf7kA
+X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
+Content-Transfer-Encoding: 8bit
 
-On Wed, May 15, 2024, Rick P Edgecombe wrote:
-> On Wed, 2024-05-15 at 08:49 -0700, Rick Edgecombe wrote:
-> > On Wed, 2024-05-15 at 08:34 -0700, Sean Christopherson wrote:
-> > > On Tue, May 14, 2024, Rick Edgecombe wrote:
-> > > > When virtualizing some CPU features, KVM uses kvm_zap_gfn_range() to zap
-> > > > guest mappings so they can be faulted in with different PTE properties.
-> > > > 
-> > > > For TDX private memory this technique is fundamentally not possible.
-> > > > Remapping private memory requires the guest to "accept" it, and also the
-> > > > needed PTE properties are not currently supported by TDX for private
-> > > > memory.
-> > > > 
-> > > > These CPU features are:
-> > > > 1) MTRR update
-> > > > 2) CR0.CD update
-> > > > 3) Non-coherent DMA status update
-> > > 
-> > > Please go review the series that removes these disaster[*], I suspect it
-> > > would
-> > > literally have taken less time than writing this changelog :-)
-> > > 
-> > > [*] https://lore.kernel.org/all/20240309010929.1403984-1-seanjc@google.com
-> > 
-> > We have one additional detail for TDX in that KVM will have different cache
-> > attributes between private and shared. Although implementation is in a later
-> > patch, that detail has an affect on whether we need to support zapping in the
-> > basic MMU support.
-> 
-> Or most specifically, we only need this zapping if we *try* to have consistent
-> cache attributes between private and shared. In the non-coherent DMA case we
-> can't have them be consistent because TDX doesn't support changing the private
-> memory in this way.
+From: Conor Dooley <conor.dooley@microchip.com>
 
-Huh?  That makes no sense.  A physical page can't be simultaneously mapped SHARED
-and PRIVATE, so there can't be meaningful cache attribute aliasing between private
-and shared EPT entries.
+Commit Fixes: 589e2fc85850 ("riscv: Convert xandespmu to use the vendor
+extension framework") added includes for the new vendor_extensions.h
+header in the T-Head and SiFive errata handling code but didn't do so
+for Andes, resulting in allmodconfig build issues.
 
-Trying to provide consistency for the GPA is like worrying about having matching
-PAT entires for the virtual address in two different processes.
+Fixes: 589e2fc85850 ("riscv: Convert xandespmu to use the vendor extension framework")
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+---
+CC: Paul Walmsley <paul.walmsley@sifive.com>
+CC: Palmer Dabbelt <palmer@dabbelt.com>
+CC: Conor Dooley <conor.dooley@microchip.com>
+CC: Charlie Jenkins <charlie@rivosinc.com>
+CC: linux-riscv@lists.infradead.org
+CC: linux-kernel@vger.kernel.org
+---
+ arch/riscv/errata/andes/errata.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/riscv/errata/andes/errata.c b/arch/riscv/errata/andes/errata.c
+index a5d96a7a4682..fc1a34faa5f3 100644
+--- a/arch/riscv/errata/andes/errata.c
++++ b/arch/riscv/errata/andes/errata.c
+@@ -17,6 +17,7 @@
+ #include <asm/processor.h>
+ #include <asm/sbi.h>
+ #include <asm/vendorid_list.h>
++#include <asm/vendor_extensions.h>
+ 
+ #define ANDES_AX45MP_MARCHID		0x8000000000008a45UL
+ #define ANDES_AX45MP_MIMPID		0x500UL
+-- 
+2.43.0
+
 
