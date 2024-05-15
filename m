@@ -1,164 +1,160 @@
-Return-Path: <linux-kernel+bounces-179820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36E638C65E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 13:51:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67C1B8C65ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 13:52:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55C7A1C21C85
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 11:51:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07D321F22FCB
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 11:52:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D0287350E;
-	Wed, 15 May 2024 11:51:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94F4974407;
+	Wed, 15 May 2024 11:52:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="kwyUd6Y3"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sgGzwMOS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 007AC5A0F5;
-	Wed, 15 May 2024 11:51:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8B5E6EB4D;
+	Wed, 15 May 2024 11:52:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715773904; cv=none; b=j4IL3j4FUJG59XWFhCy3MOgLjH25/GQI1Z+1mhuBRP9LzIvj+gHTx++U7DEzriyiObjCdaMmDfgEhGJQ4ZsR9MnJrJPGB8sm4jEM9PaCnCqr0Jm/xBDwbU3TBdv5e3IgcVNbisE9eT7x2nYDNWCf90W/uqNo0JfnrRrDdBX/N4Q=
+	t=1715773963; cv=none; b=U9UfTH7sBplE5kI5am1eE2A82wLABRj3puKgKi9IvdOfpHQeMNcdosEMH6r5obqttY2XcijTWR4qB1/xDuhY5+94Yrh+eLWumQDmkt2sjxONMEs/vrnRGRg16fo+n84YNIQdn8BSGv+222U9mVOtPsNX5JXhIU5fiFTezV0zfqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715773904; c=relaxed/simple;
-	bh=GdvQ3kH47JlZhzV5G7bHu6bKjpEJvCPgt4JPEYVNd3A=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IcF5wCBA+LFs3YMbkEy2oamGlc6ofK6TvCh3JUKG7/c3Ta6/K2VDAjIXaAc6aVMDS/A+Q25HlgLBEN/hsqnIZmTk7xn9FNh5HzIgFu+uv9ucpCrCGbdz94ylsu1mz7iiM8HzoRqDrw9p1LLVZ0qu1CQM4s4VwuoxHIjJW5yTdj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=kwyUd6Y3; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1715773901; x=1747309901;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=GdvQ3kH47JlZhzV5G7bHu6bKjpEJvCPgt4JPEYVNd3A=;
-  b=kwyUd6Y3O87zVnp6ORJIAFBHpJIfjn8wPpBTNaiulqBl0Rf2K3M870fx
-   Y2PVKr3Zak1z9/lZRMdVbh1IDT5Hw+B7g1kMh7U4daeD/Y2pFuvhKEbS4
-   4or6D77ONCMk1X64o8Lb7AsZMQhJuoRdcqdxz4VnoAsvgi2vHOUawFsKO
-   diG13Bs4U1vmV2yvXQvucsHysEQm7KKiGIm764xglPuNZYM8DupefFdc6
-   I1tI0J6dcZXr0mYEARHe9lszzB1P5WgrebSX1G5X6YvDBdA22IYWsONNF
-   j+nDF+ZesHKY5+AQU/fvbYauZ+3vMTU9hz/rMvp/7UDUew/FP0N/hC9WN
-   w==;
-X-CSE-ConnectionGUID: ud8/5qnhRsubTfo6bloRBg==
-X-CSE-MsgGUID: YPeKYJfeQtqP+N3X1UJ6iw==
-X-IronPort-AV: E=Sophos;i="6.08,161,1712646000"; 
-   d="asc'?scan'208";a="192175672"
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 15 May 2024 04:51:39 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Wed, 15 May 2024 04:51:23 -0700
-Received: from wendy (10.10.85.11) by chn-vm-ex02.mchp-main.com (10.10.85.144)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
- Transport; Wed, 15 May 2024 04:51:19 -0700
-Date: Wed, 15 May 2024 12:51:04 +0100
-From: Conor Dooley <conor.dooley@microchip.com>
-To: "Wang, Xiao W" <xiao.w.wang@intel.com>
-CC: Andrew Jones <ajones@ventanamicro.com>, "paul.walmsley@sifive.com"
-	<paul.walmsley@sifive.com>, "palmer@dabbelt.com" <palmer@dabbelt.com>,
-	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, "luke.r.nels@gmail.com"
-	<luke.r.nels@gmail.com>, "xi.wang@gmail.com" <xi.wang@gmail.com>,
-	"bjorn@kernel.org" <bjorn@kernel.org>, "ast@kernel.org" <ast@kernel.org>,
-	"daniel@iogearbox.net" <daniel@iogearbox.net>, "andrii@kernel.org"
-	<andrii@kernel.org>, "martin.lau@linux.dev" <martin.lau@linux.dev>,
-	"eddyz87@gmail.com" <eddyz87@gmail.com>, "song@kernel.org" <song@kernel.org>,
-	"yonghong.song@linux.dev" <yonghong.song@linux.dev>,
-	"john.fastabend@gmail.com" <john.fastabend@gmail.com>, "kpsingh@kernel.org"
-	<kpsingh@kernel.org>, "sdf@google.com" <sdf@google.com>, "haoluo@google.com"
-	<haoluo@google.com>, "jolsa@kernel.org" <jolsa@kernel.org>,
-	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"bpf@vger.kernel.org" <bpf@vger.kernel.org>, "pulehui@huawei.com"
-	<pulehui@huawei.com>, "Li, Haicheng" <haicheng.li@intel.com>,
-	"conor@kernel.org" <conor@kernel.org>, Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: Re: [PATCH v2] riscv, bpf: Optimize zextw insn with Zba extension
-Message-ID: <20240515-wobble-stack-5b9264c12f37@wendy>
-References: <20240511023436.3282285-1-xiao.w.wang@intel.com>
- <20240513-5c6f04fb4a29963c63d09aa2@orel>
- <DM8PR11MB575179A3EB8D056B3EEECA74B8E32@DM8PR11MB5751.namprd11.prod.outlook.com>
- <20240514-944dec90b2c531d8b6c783f7@orel>
- <20240515-cone-getting-d17037b51e97@wendy>
- <20240515-jogger-pummel-19fe4e9e8314@wendy>
- <DM8PR11MB5751A2BB91C431DAE14F48C1B8EC2@DM8PR11MB5751.namprd11.prod.outlook.com>
+	s=arc-20240116; t=1715773963; c=relaxed/simple;
+	bh=6/w6PXuqTKJkCkKH+o49ec5fUjWDa/wTnoKCbxVJAWE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NoreX66M5L2vvcQVD5XTrPI43lW1lXZdu+VlBStuAArUm6LPCK+keest/Tj2uzr3V2lCGjEgijHQg0urMeYRaLa2F8n+tkdg0spzCCRkliIGVi2RANGAYu8jyhwVU3OrXjzrYfC4BQscSIP/mkmR/zsHbyKbcgJAHsCs/Wzg8J4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sgGzwMOS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA203C116B1;
+	Wed, 15 May 2024 11:52:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715773963;
+	bh=6/w6PXuqTKJkCkKH+o49ec5fUjWDa/wTnoKCbxVJAWE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sgGzwMOS2L7p7LfzwCrjMxtTPPLiStcG7C6IigkFtBXfGAk6EwHZMdrJwy1jE3KAv
+	 1mi6QPgfRLangA+iTPCxoITKHVz+jrq/EjtV3y2eMI+Vg0jGSfmWASTqk2xBSut5tK
+	 9O8rmcMs4fWWgYDx7xG24vWoHnl3yO7sgFGMZPse2orPLHbvyFbPo+z2ay/r6CHW9i
+	 fPTB35oPCWVdPqR2NXdXxpxK1oxQJ4RZC+UUfx40s7UIvryKKAbBGtvyvFKhth5++a
+	 7paGhkCUUeVTo6hxtKtWHUEO1A9+AGbtQzWW1heQZqqsEsSrfCZK8NTFUmQ2ZrMLOg
+	 DM01uhXrPuCAA==
+Date: Wed, 15 May 2024 13:52:39 +0200
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Slark Xiao <slark_xiao@163.com>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	loic.poulain@linaro.org, mhi@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	quic_qianyu@quicinc.com
+Subject: Re: Re: Re: [PATCH] bus: mhi: host: Add Foxconn SDX72 related support
+Message-ID: <20240515115239.GD4488@thinkpad>
+References: <20240510032657.789629-1-slark_xiao@163.com>
+ <20240514143741.GA2306@thinkpad>
+ <541de8e4.1600.18f79de44f3.Coremail.slark_xiao@163.com>
+ <20240515074119.GA2445@thinkpad>
+ <5eee5967.7bdf.18f7b4567b7.Coremail.slark_xiao@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="maladpWpE2+wJpPh"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <DM8PR11MB5751A2BB91C431DAE14F48C1B8EC2@DM8PR11MB5751.namprd11.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5eee5967.7bdf.18f7b4567b7.Coremail.slark_xiao@163.com>
 
---maladpWpE2+wJpPh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, May 15, 2024 at 04:01:37PM +0800, Slark Xiao wrote:
+> 
+> At 2024-05-15 15:41:19, "Manivannan Sadhasivam" <manivannan.sadhasivam@linaro.org> wrote:
+> >+ Qiang
+> >
+> >On Wed, May 15, 2024 at 09:29:20AM +0800, Slark Xiao wrote:
+> >> At 2024-05-14 22:37:41, "Manivannan Sadhasivam" <manivannan.sadhasivam@linaro.org> wrote:
+> >> >On Fri, May 10, 2024 at 11:26:57AM +0800, Slark Xiao wrote:
+> >> >> Align with Qcom SDX72, add ready timeout item for Foxconn SDX72.
+> >> >> And also, add firehose support since SDX72.
+> >> >> 
+> >> >> Signed-off-by: Slark Xiao <slark_xiao@163.com>
+> >> >> ---
+> >> >>  drivers/bus/mhi/host/pci_generic.c | 31 ++++++++++++++++++++++++++++++
+> >> >>  1 file changed, 31 insertions(+)
+> >> >> 
+> >> >> diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
+> >> >> index 08844ee79654..0fd94c193fc6 100644
+> >> >> --- a/drivers/bus/mhi/host/pci_generic.c
+> >> >> +++ b/drivers/bus/mhi/host/pci_generic.c
+> >> >> @@ -399,6 +399,8 @@ static const struct mhi_channel_config mhi_foxconn_sdx55_channels[] = {
+> >> >>  	MHI_CHANNEL_CONFIG_DL(13, "MBIM", 32, 0),
+> >> >>  	MHI_CHANNEL_CONFIG_UL(32, "DUN", 32, 0),
+> >> >>  	MHI_CHANNEL_CONFIG_DL(33, "DUN", 32, 0),
+> >> >> +	MHI_CHANNEL_CONFIG_UL_FP(34, "FIREHOSE", 32, 0),
+> >> >> +	MHI_CHANNEL_CONFIG_DL_FP(35, "FIREHOSE", 32, 0),
+> >> >
+> >> >This means SDX55 is also supporting FIREHOSE channels, which is not true I
+> >> >believe.
+> >> Actually, I just verified it with my sdx55 and the answer is Yes. These channels
+> >> are common settings for Qcom device which support PCIe mode. BTW, the
+> >> default settings of Qcom and Quectel support firehose for their sdx55 products.
+> >
+> >Qiang, can you please confirm that SDX55 supports FIREHOSE channels?
+> >
+> >> >
+> >> >>  	MHI_CHANNEL_CONFIG_HW_UL(100, "IP_HW0_MBIM", 128, 2),
+> >> >>  	MHI_CHANNEL_CONFIG_HW_DL(101, "IP_HW0_MBIM", 128, 3),
+> >> >>  };
+> >> >> @@ -419,6 +421,16 @@ static const struct mhi_controller_config modem_foxconn_sdx55_config = {
+> >> >>  	.event_cfg = mhi_foxconn_sdx55_events,
+> >> >>  };
+> >> >>  
+> >> >> +static const struct mhi_controller_config modem_foxconn_sdx72_config = {
+> >> >> +	.max_channels = 128,
+> >> >> +	.timeout_ms = 20000,
+> >> >> +	.ready_timeout_ms = 50000,
+> >> >> +	.num_channels = ARRAY_SIZE(mhi_foxconn_sdx55_channels),
+> >> >> +	.ch_cfg = mhi_foxconn_sdx55_channels,
+> >> >> +	.num_events = ARRAY_SIZE(mhi_foxconn_sdx55_events),
+> >> >> +	.event_cfg = mhi_foxconn_sdx55_events,
+> >> >> +};
+> >> >> +
+> >> >>  static const struct mhi_pci_dev_info mhi_foxconn_sdx24_info = {
+> >> >>  	.name = "foxconn-sdx24",
+> >> >>  	.config = &modem_foxconn_sdx55_config,
+> >> >> @@ -448,6 +460,16 @@ static const struct mhi_pci_dev_info mhi_foxconn_sdx65_info = {
+> >> >>  	.sideband_wake = false,
+> >> >>  };
+> >> >>  
+> >> >> +static const struct mhi_pci_dev_info mhi_foxconn_sdx72_info = {
+> >> >> +	.name = "foxconn-sdx72",
+> >> >> +	.edl = "qcom/sdx72m/xbl_s_devprg_ns.melf",
+> >> >
+> >> >What is '.melf'? Is the firmware available somewhere? Did you plan to upstream
+> >> >it to linux-firmware?
+> >> >
+> >> This file similar with "edl.mbn". In SDX72 product, the default "edl" file name is
+> >> "xbl_s_devprg_ns.melf". Currently we don't plan to upstream it to linux-firmware
+> >> since 2 reasons: 1: we share the same fold name sdx72m with qcom or other vendors
+> >> 2: this file may be changed since sdx72 product still under developing in our side. we
+> >> may change the base line according to QCOM release.
+> >
+> >Then I would ask you to add support when you have a stable firmware. I do not
+> >want to change the firmware name after some time as it will confuse users.
+> >
+> >- Mani
+> If a stable firmware must be provided, I think I shall change the folder name from qcom to
+> fox, do you agree this?
 
-On Wed, May 15, 2024 at 11:31:43AM +0000, Wang, Xiao W wrote:
-> > From: Conor Dooley <conor.dooley@microchip.com>
-> > > > My preferences is to remove as much of the TOOLCHAIN_HAS_ stuff as
-> > > > possible. We should audit the extensions which have them to see if
-> > > > they're really necessary.
-> > >
-> > > While I think it is reasonable to allow the "RISCV_ISA_ZBB" option to
-> > > control whether or not bpf is allowed to use it for optimisations, on=
-ly
-> > > allowing bpf to do that if there's toolchain support feels odd to me..
-> > > Maybe we need to sorta steal from Charlie's patchset and introduce
-> > > some hidden options that have the toolchain dep that are used by the
-> > > alternative macros etc?
-> > >
-> > > I'll have a poke at how bad that looks I think.
-> >=20
-> > I don't love this, in particular my option naming, but it would allow
-> > the Zbb optimisations in the kernel to not depend on toolchain support
-> > while not muddying the Kconfig waters for users:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/conor/linux.git/commit/=
-?h=3Dri
-> > scv-zbb_split
->=20
-> In that patch, I think the bpt jit part should check IS_ENABLED(CONFIG_RI=
-SCV_ISA_ZBB)
-> rather than IS_ENABLED(CONFIG_RISCV_ISA_ZBB_ALT).
+Even in that case, where can the user find the firmware?
 
-D'oh, you're right. The bpf code being different was meant to be the whole
-point of the change...
+> BTW, I need to check if it works after updating 'edl fw' from  xbl_s_devprg_ns.melf to
+> edl.mbn. 
 
-> > A similar model could be followed if there were to be some
-> > optimisations for Zba in the future that do require toolchain support:
->=20
-> Though this model introduces extra hidden Kconfig option, it does provide=
- finer=20
-> config granularity. This should be a separate patch in the future, we can=
- discuss about
-> the option naming there.
+Okay. IMO, we should upstream the product support only after a stable firmware
+release (well stable in the sense a stable name at least).
 
-Yeah, not expecting you to do this as part of this patch.
+- Mani
 
-Thanks,
-Conor.
-
-
---maladpWpE2+wJpPh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZkShnwAKCRB4tDGHoIJi
-0sTgAPwICMKtZQim3Vt/IyQaj7mA09XXCNeqaMmOhqqrqRhmcAD+JuScaCRXPxMN
-fi/Dv2IKekKAVwvT3aEZbt7ZJnLMjg4=
-=znv+
------END PGP SIGNATURE-----
-
---maladpWpE2+wJpPh--
+-- 
+மணிவண்ணன் சதாசிவம்
 
