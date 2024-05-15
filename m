@@ -1,108 +1,116 @@
-Return-Path: <linux-kernel+bounces-180105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 606E38C6A24
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:04:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3B498C6A36
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:09:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 916691C22083
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:04:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EF70281105
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:09:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24A38156248;
-	Wed, 15 May 2024 16:04:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA20C156646;
+	Wed, 15 May 2024 16:09:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="seLoGa36"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n6NR1mc+"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61163155A52;
-	Wed, 15 May 2024 16:04:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 394F113EFE5;
+	Wed, 15 May 2024 16:09:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715789078; cv=none; b=jP42h4w05qz0S/VcFf+eXl3JiyHp2ceoNf2bp2FocvjoOc7NTmav2Za5pNVKWuovkksqj/kwAmpIfuis8x4XVAx71O7kN7GL5hlZ5DWWo5unNDCXA3dZu0/mxV0a3VuSnraU0sadguZaP/1rPwK+zGipuNgsPv8N61yyuLJito0=
+	t=1715789358; cv=none; b=aLmv7qbwAN4POs+bBJRlSkoVHaiDoO0Ga42pnPWCOp0ad/UvL4sARHK1rk0PKNvE44TZkpF8pvOHH4haG0PVuYguEzYovU9fMS63oZ8PQUF56rxbCTIPbbI0vRIS3TArKuwRGpkgRP1I91uyzfqoRRxKfhlTYxlZlBI8L0DJX5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715789078; c=relaxed/simple;
-	bh=XUNB3rc6qOB6hmGzG/aYjOt9XKcCt6Cs/MYeTHAvKNs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OtDtMHScAjIGUEl5RxX85FfymD3Ut3qtOY2TqmdlX5adzbnkBnafUFEEoS0t3Suucj2FbOOzHEG49LTz1j8g2s8qhPvYVDRZ2Fo0u2l/P1XPHLN6NwzWyup9zCx9Tu3UGzOPLLGjtvO9rPDzlG7AVCq3ktpPubUukugkvW+n62M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=seLoGa36; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85D1AC32786;
-	Wed, 15 May 2024 16:04:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715789077;
-	bh=XUNB3rc6qOB6hmGzG/aYjOt9XKcCt6Cs/MYeTHAvKNs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=seLoGa36mHd6Zu2k/lRfyaOspM3ci/EWSH4XR8EiPlgcmV2NSG/5ZWlrP+0iNhQYW
-	 ekGemx9eQiUeZJHrNnSgRHsDAoyi4GCTaiL8cXy8keS2khA7aBc7X44re5R8AcdKCW
-	 cwqt+qR3MRdfOW8/w0EKDYW90OmCtQAPFWF89XnlItLUfkV3RWLnprFUZWnC1wTCxI
-	 yMPnz/JEv7hz9pRSmJtIfnfE80YLXdz8i6+9OVR4rfO8MfFVF/ZYIBzYmT1wunOpW2
-	 N67wdP1+z4PX5aH7Tm/FX9NOr6FTyNJ6kVUZiZFIG2TBrMo8hcus84v04IqSIXeO6t
-	 d/t9GtaZnfk4g==
-Date: Wed, 15 May 2024 17:04:32 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Conor Dooley <conor@kernel.org>
-Cc: Alina Yu <alina_yu@richtek.com>,
-	Conor Dooley <conor.dooley@microchip.com>, lgirdwood@gmail.com,
-	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, johnny_lai@richtek.com,
-	cy_huang@richtek.com
-Subject: Re: [PATCH v3 6/6] regulator: dt-bindings: rtq2208: Add property to
- get ldo of RTQ2208 is adjustable or not
-Message-ID: <35bfdfa3-0b4d-4457-988f-1f861dc5c125@sirena.org.uk>
-References: <cover.1715340537.git.alina_yu@richtek.com>
- <6a3a90d9aa2022dfb92e124e417f3e72c2f28b0b.1715340537.git.alina_yu@richtek.com>
- <20240513-tissue-repave-13d2e3bf88fd@spud>
- <d97752ed-4032-4681-b28f-17f149fdc3d4@sirena.org.uk>
- <20240514-plunging-chair-803d9e342e6f@spud>
- <20240515073830.GA12525@linuxcarl2.richtek.com>
- <20240515-wrinkle-engross-ab6b089baae3@wendy>
- <20240515090229.GA15889@linuxcarl2.richtek.com>
- <20240515-gigantic-justifier-1fa140b59de6@spud>
+	s=arc-20240116; t=1715789358; c=relaxed/simple;
+	bh=nTVevPGzNWh4s9PReJpsEP/R9Arj6uGdwElEHpIpPH4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZwzsIIpTl02Uwaf70e8SbruV/lKJIiDJIGyoUxteupJazcOFbg9GtZ1lkcPjmhmDp5OGslLAWnLA39p0CiPTekHKSsCnj19aF01lMhjMbF0c+MDlQn2cbcI6Cu+5FEqz+aGGu4a8fC85r2x2bmv7RyXaNLQ7XKc7qg4cGP1izR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n6NR1mc+; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715789356; x=1747325356;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=nTVevPGzNWh4s9PReJpsEP/R9Arj6uGdwElEHpIpPH4=;
+  b=n6NR1mc+iJMElevA92dvPV+cMFuEmxJqIHsp5v2YpBHo86XxOWEWh8Oh
+   haohwcXGHQqDT1VtODWIM7cusR4HcfLeve52HHJDOiHDguLGSlwdGfMN2
+   q1rVmnPkglf19obkOvfX9Rittzis9SG3SDyucUDBK2k/8H0Ywms4N2ERS
+   uKiHl2GUKhwNALjyH1fddNVVc20f4GDcPhxoRXabolN2XEJGMbccR5ouc
+   pCTUwnxSzs5mzBNV5i9N6QDbbwXhOaqsPwmMNGL6lD+Oqd1U3DMrTMxFg
+   RDGOpYCIjTSXHQu1hriKjV1oeupZn+aGRgwYoUOQyjlE5CKNIBjpllN7a
+   Q==;
+X-CSE-ConnectionGUID: 7Y/CP5g9RCKzQPCyzNGBDw==
+X-CSE-MsgGUID: kzul5gNeS7SB/2kxCgINJg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="11666344"
+X-IronPort-AV: E=Sophos;i="6.08,162,1712646000"; 
+   d="scan'208";a="11666344"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 09:09:15 -0700
+X-CSE-ConnectionGUID: GANiKUvAR7uiRZ8GlOHq8g==
+X-CSE-MsgGUID: 72pTt72QRii18KEvAsm9hw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,162,1712646000"; 
+   d="scan'208";a="62297177"
+Received: from irvmail002.ir.intel.com ([10.43.11.120])
+  by fmviesa001.fm.intel.com with ESMTP; 15 May 2024 09:09:11 -0700
+Received: from lincoln.igk.intel.com (lincoln.igk.intel.com [10.102.21.235])
+	by irvmail002.ir.intel.com (Postfix) with ESMTP id 3DA332878C;
+	Wed, 15 May 2024 17:09:05 +0100 (IST)
+From: Larysa Zaremba <larysa.zaremba@intel.com>
+To: intel-wired-lan@lists.osuosl.org,
+	Jacob Keller <jacob.e.keller@intel.com>
+Cc: Larysa Zaremba <larysa.zaremba@intel.com>,
+	maciej.fijalkowski@intel.com,
+	Magnus Karlsson <magnus.karlsson@gmail.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	igor.bagnucki@intel.com,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org
+Subject: [PATCH iwl-net 0/3] Fix AF_XDP problems after changing queue number
+Date: Wed, 15 May 2024 18:02:13 +0200
+Message-ID: <20240515160246.5181-1-larysa.zaremba@intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="9AcE8zRTsKNaksUc"
-Content-Disposition: inline
-In-Reply-To: <20240515-gigantic-justifier-1fa140b59de6@spud>
-X-Cookie: When in doubt, lead trump.
+Content-Transfer-Encoding: 8bit
 
+Presented fixes address the following test-case:
+* Run xdpsock on queue 10
+* change number of combined channels to 20
+* observe an error on xdpsock side
 
---9AcE8zRTsKNaksUc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The first 2 patches deal with errors, the last one addresses the lack of
+traffic.
 
-On Wed, May 15, 2024 at 04:51:30PM +0100, Conor Dooley wrote:
+Larysa Zaremba (3):
+  ice: remove af_xdp_zc_qps bitmap
+  ice: add flag to distinguish reset from .ndo_bpf in XDP rings config
+  ice: map XDP queues to vectors in ice_vsi_map_rings_to_vectors()
 
-> BTW, you should probably change the example so that the voltage you add
-> there is actually outside of the range, rather than identical to one of
-> the range's constraints :)
+ drivers/net/ethernet/intel/ice/ice.h      |  44 +++++---
+ drivers/net/ethernet/intel/ice/ice_base.c |   3 +
+ drivers/net/ethernet/intel/ice/ice_lib.c  |  27 ++---
+ drivers/net/ethernet/intel/ice/ice_main.c | 118 +++++++++++++---------
+ drivers/net/ethernet/intel/ice/ice_xsk.c  |  13 ++-
+ 5 files changed, 119 insertions(+), 86 deletions(-)
 
-No, that'd be invalid - the constraints need to include a value offered
-by the regulator, in this case the one fixed voltage.  For a fixed
-voltage regulator it's probably better to just not specify a voltage
-range since it can't be changed anyway.
+-- 
+2.43.0
 
---9AcE8zRTsKNaksUc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZE3Q8ACgkQJNaLcl1U
-h9AV3wf+MxjUh6NJfNfEd9wJkPBg8mAS+DXWvNUXl2n5keniDabcCVvRGAZaMZdj
-rFVyMN3fVa8b6mie+s7cSANggS4z1b5H/qgxfF+2QvNWBGu4hYY2Ra7W0knaPrWn
-NRNZtZ4T3DhtwipASAGFxAoTMWQjjhr7UqTvRrI8gGVmy245cucMzIFgU+nPkGxI
-gkjuppfEegKWldrDA0IRVsOIOiqBgkGwgJzb10rT77o3WZtRxXmuivJ4b3z9h20Z
-bldpjd8xbqDYvFOIdKrdGUB4z6RPn5WjnYcLQLaXX8rpVmOBFzcyNwPRzgd7Jttr
-cBVqx2YZ6YtkpoGoprELrskI/k+/Dg==
-=svLP
------END PGP SIGNATURE-----
-
---9AcE8zRTsKNaksUc--
 
