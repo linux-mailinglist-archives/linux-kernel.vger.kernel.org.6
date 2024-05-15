@@ -1,97 +1,92 @@
-Return-Path: <linux-kernel+bounces-180130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 318098C6A73
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:21:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6C278C6A74
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:22:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 624221C2157A
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:21:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 804AD1F22D25
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:22:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C906156653;
-	Wed, 15 May 2024 16:21:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD6B2156649;
+	Wed, 15 May 2024 16:22:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QjmFvKiW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eobG6Nhv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85EB443144;
-	Wed, 15 May 2024 16:21:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1167543144
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 16:22:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715790098; cv=none; b=ebJRoThFPQZ7gWoloqEAftDkSslrTkoV2XI2WuvOGGoPtXfMjN+xnbVVMFI8YExdUfZQ9XQ68h0obWpo7EW401G+XiBUyasmipZ0t39TvKsAKrKGPS+F93U4W6zFgXXRAkw/+RPwSbYuEkT1dhlRV7PyvseKPUL8MCDMJ84S8Hs=
+	t=1715790150; cv=none; b=HFmozkS9b/AM5yaZhq1VkJoF4Vm91FBDHFk7N40jBBj1mDv2uj8E8fU+WRQxJQXDkeGxijtHmfIqYQlBBd1gjckSr2JbEzL1iUqxtXJUnnfJ4OBrMY5uimKOxZxJhAjzgWrjlag1M5tG9FcMsPnt1B94AthWrWKjHGMZP5KjK0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715790098; c=relaxed/simple;
-	bh=j/DiO7Wd6xtYPXYFy/gevA07a1MmTHYcV+/lcsix9+Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BugUO+QrOVVS8n6YfnWQv4fV02fMs2ZjPnSKQjfvaQQEjQAokVjGqq35onQo3648x6FM41jTuClExEQubVILQqjxHoANFm/ApWqZWqnTCHOOaMwhgRf7hFz3JcNpnZ9mmSUVBNECs6pGuJauisMdVkhmkLQgcHiSAhNKOObn/uU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QjmFvKiW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58B74C116B1;
-	Wed, 15 May 2024 16:21:34 +0000 (UTC)
+	s=arc-20240116; t=1715790150; c=relaxed/simple;
+	bh=dyY5xHwj0t2PCxhheNyX2xM7JFQDx7iIcPYvy0V0ZcA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dMgmdl+AkdtiOz1xlZ3btg1qZ8u5/EClYYCTL/E0losuEOWakcYaic+ZCBiz2JKu44KA2Jdv3ZXvww8tYz8++jbFZINq+vyvKnPYF8U4yhBFgBnJIOVnb0Y1r4cfyz5vaKjuJJB+S+2TI2vUBe9C0ID6v8lZkW4nzvH2eihc1JE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eobG6Nhv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1D46C116B1;
+	Wed, 15 May 2024 16:22:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715790098;
-	bh=j/DiO7Wd6xtYPXYFy/gevA07a1MmTHYcV+/lcsix9+Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QjmFvKiWzTzpNi//GtMILPSKQ8/ZwBwqFr8rnH8saO6P2JNrjcyOcc7GNUgMuAmXY
-	 FcOOdp2If047fWB9aFJF7fUGMsTkxIjd7QdfqwKCkLL4iGG9eeZ175heQXg/g0cT1g
-	 IDHt0TPyCZSm/ahetMC2ZpC+wFlvInuBm30f6MCRUVxjeyuChBJPDXTFkmJFZ29Uyf
-	 FppTYfyldBpK9RQaDITFeF0QoYaNBBOE4IESkO5DNkazUv/10zThrF4DAeanQX6xCj
-	 7QMT+heQvzibtaRfVbxxB3ivD609XH8B+tQn53+SNimys9Dceh0OhuYB6f5PeWn1lU
-	 qlJiE+v60HtbQ==
-Date: Wed, 15 May 2024 17:21:31 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com
-Subject: Re: [PATCH 5.15 000/168] 5.15.159-rc2 review
-Message-ID: <180e5df9-103f-4d46-8ddd-5d75e251e9a1@sirena.org.uk>
-References: <20240515082414.316080594@linuxfoundation.org>
+	s=k20201202; t=1715790149;
+	bh=dyY5xHwj0t2PCxhheNyX2xM7JFQDx7iIcPYvy0V0ZcA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=eobG6NhvC9EIz45JGu6GXyPPyCjZG1Z2MiAMmxt5uPAyZjX2YPE9fhJ1h/feCwZQR
+	 f5w4ygry77wpZNWqgZoGu5pVObb52ysXFYzgp2IXnE0h9daEyghWuYSrIqEo6HPIVD
+	 RfvzEc1TSylMr/xYUuwz5Ba3I1Sjf+5uB1dl7E1tOsfpPNBq5WFST5s+eTsmm/tFc2
+	 TF/3CMKlVJI0CsW+TJASLex+sr9t+zUJS2h2tf7NnPEqb6BSPQJVV3+7re69BwV3ue
+	 ewU6ymaybKa6vz9vnc5A2uGNSBKrI4h6wgf+pj2OnbSFCue7+8xUfuxPgHZCgEvKnV
+	 eqaWmk41Dia3g==
+From: Oded Gabbay <ogabbay@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	dri-devel@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org,
+	Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jason Gunthorpe <jgg@nvidia.com>,
+	Ofir Bitton <obitton@habana.ai>,
+	Lucas De Marchi <lucas.demarchi@intel.com>,
+	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>
+Subject: [PATCH 0/2] Update on habanalabs, Xe maintainer status
+Date: Wed, 15 May 2024 19:22:20 +0300
+Message-Id: <20240515162222.12958-1-ogabbay@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="A49cTM2taokuq74Z"
-Content-Disposition: inline
-In-Reply-To: <20240515082414.316080594@linuxfoundation.org>
-X-Cookie: When in doubt, lead trump.
+Content-Transfer-Encoding: 8bit
 
+Hi Dave, Sima.
 
---A49cTM2taokuq74Z
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+A few weeks ago I left Habana and Intel. Therefore, I'm stepping down from
+the maintainer role of both habanalabs and Xe drivers.
 
-On Wed, May 15, 2024 at 10:27:48AM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.15.159 release.
-> There are 168 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+Ofir Bitton from Habana will replace me in the role of habanalabs driver
+maintainer and as for the Xe driver, Thomas and Lucas will probably suggest
+someone in the near future.
 
-Tested-by: Mark Brown <broonie@kernel.org>
+Although I'm not going to do full-time kernel development in my next role,
+I will remain as the accel maintainer and will probably continue to
+participate in discussions from time to time.
 
---A49cTM2taokuq74Z
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks,
+Oded
 
------BEGIN PGP SIGNATURE-----
+Oded Gabbay (2):
+  MAINTAINERS: Change habanalabs maintainer and git repo path
+  MAINTAINERS: update Xe driver maintainers
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZE4QoACgkQJNaLcl1U
-h9AnNAf+IXPnVqCgOQTrGn2m2+5wEdRKVA2qVUbhmkGvi0BRX1nAZ+h2QVxJx80M
-fVo6xM8hBD+lLLDQnRq/uNEPsaejqybg9j/R1aOuSebx4lU8v0ShFfL6GemIP74+
-+BaKDhzGbRRhC8yERhwFQU4l99HdFqYgSoDhujPHjIwiCalQaLRlzLD62cNHBtnT
-ecoSPd1Af2y3ZzG8Lx1MLzAKyz/RO6G+11jEZAbBasOuTUeXGK2StqZKDshE0t7o
-2aFCdhBJTd2tF8eWNQEPXA1VsimPtoGnYNK6QI+iaStpja+VMLuy/1vmxja+apmu
-uQam14DTfcgZ7ksrqZnCxVYWNJfWIg==
-=3/g0
------END PGP SIGNATURE-----
+ MAINTAINERS | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
---A49cTM2taokuq74Z--
+--
+2.34.1
+
 
