@@ -1,77 +1,46 @@
-Return-Path: <linux-kernel+bounces-179368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 980518C5F57
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 05:13:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56CE18C5F66
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 05:31:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 523FC1F2229C
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 03:13:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C844AB20BA6
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 03:31:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6101D376EB;
-	Wed, 15 May 2024 03:13:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fL/D/gND"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 337A9381A4;
+	Wed, 15 May 2024 03:31:38 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 203FA3C2F;
-	Wed, 15 May 2024 03:13:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DAC233998;
+	Wed, 15 May 2024 03:31:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715742798; cv=none; b=Qy8zTuxSThhuTfwLeFiVVKB9Aj+7K/Wl6YsxN0+C9wamiAeArdxgM/2d/DOTxGvk7faE/hNvOXAr+ISKgpMjeokg0rlq6Cr/j9/t/z0CbD5JCkbQjuLAyJAZExuaZfpSbnZbMkNgjpUyPqbgjNBrsB5Tn21mx9EcdTlYCtE+gcc=
+	t=1715743897; cv=none; b=gcc5QXNLKcdnritd6ZhiCn0C3BbfTuBHQKurQDR7l4Rqzrq7puf0gLlwWr/MVa+mbmUtzIQcVBz1mBQnhUSZC0TkUsnNOuzpbO5bpYY3vFkF5EXxNWABr+A5cGsAmxMhnuiPiIuyoWp1tw+p22UU5xOcsRHHMTKkoxzg9+2f0vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715742798; c=relaxed/simple;
-	bh=uB9Hl02KjTkQ8kSDlHRuvYVYzS140KUlSV2TwxcCTHM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Q2cZIbdvQiuGmrMY3cahiJ4mDV395E70yWn207ZQxI9IfkzXkF7imQDCyUt8gN++Dih9Lzj5DvrSssyw9xLAitf+JXtrwR/PF9dQGuLfeY+jdBYozSQXgFxOBc7Pa22qSbSzITTcGzy3WQ/9FEaaApvgr2UqmqzrancpznYYQxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fL/D/gND; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715742797; x=1747278797;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=uB9Hl02KjTkQ8kSDlHRuvYVYzS140KUlSV2TwxcCTHM=;
-  b=fL/D/gNDmASB7QBYhTWvp9841ovn9ijEB751AO6DbExI0yScAIHm4dcd
-   jXkN7a0EnKLqShNcV0KylRJys6LYVey6kDW+5fv8qOdRojklbWGpZmcrm
-   jkKKj6ifPnD1T8cn4Mg3P7ZIQPZO0fFqkXrJn6G3sk8APagRoz7JUa9Nf
-   rHvlfVAOuR73On2y0SH4x+d5e0yHTpT7UGRirX9CUEmECiweb76F6ZCSb
-   9g1vRcabXQb8cbKIfE4YPLH53BSl2BMMOQwOaTFUinCT8G5hNu4iDE05r
-   OPR6/2bG8qYWZMMAxGZVpEH9NPqHNSf4IPNTMh8GSmhbrxz4cua3cTssH
-   g==;
-X-CSE-ConnectionGUID: DqM7hr9FSeKAgVS/0zmFlA==
-X-CSE-MsgGUID: jElZ4QA2R/a41a+ggQAEkw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11073"; a="14713386"
-X-IronPort-AV: E=Sophos;i="6.08,160,1712646000"; 
-   d="scan'208";a="14713386"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2024 20:13:16 -0700
-X-CSE-ConnectionGUID: 1Vaphy8DTH2zttEv04+Nig==
-X-CSE-MsgGUID: b75J+r8tT2qY1V7p85kAqQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,160,1712646000"; 
-   d="scan'208";a="35434310"
-Received: from zwan2-desk1.sh.intel.com ([10.239.160.154])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2024 20:13:14 -0700
-From: Zhenyu Wang <zhenyuw@linux.intel.com>
-To: peterz@infradead.org
-Cc: kan.liang@linux.intel.com,
+	s=arc-20240116; t=1715743897; c=relaxed/simple;
+	bh=GJnhp0nIlkpaw2pXsx815X3mkKAsAEMrxdQGpI8uPIo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pDZOVJwNziNeRxaBuXswspkWaRMK+E/ZWTRHBmlz5yMRe04dmcwIrz/bGYQm3Qh+Uy/ndp9LLhGhZKYw5vOvdEPsXx3a/v09/WDFg9maZYpStzB6/107RXqunqAFS9+FcN2ZoNlATkDN9Na0N36TfyIkcLs5rMIvURxq9tDmRKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-05 (Coremail) with SMTP id zQCowAAnLACLLERmZKZACw--.9681S2;
+	Wed, 15 May 2024 11:31:23 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: rrameshbabu@nvidia.com,
+	jikos@kernel.org,
+	bentiss@kernel.org
+Cc: linux-input@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	x86@kernel.org,
-	Rui Zhang <rui.zhang@intel.com>,
-	Artem Bityutskiy <artem.bityutskiy@intel.com>,
-	Wendy Wang <wendy.wang@intel.com>
-Subject: [PATCH RESEND] perf/x86/intel/cstate: Add pkg C2 residency counter for Sierra Forest
-Date: Wed, 15 May 2024 11:21:58 +0800
-Message-ID: <20240515032158.12845-1-zhenyuw@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240506084806.495816-1-zhenyuw@linux.intel.com>
-References: <20240506084806.495816-1-zhenyuw@linux.intel.com>
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] HID: nvidia-shield: Add missing check for input_ff_create_memless
+Date: Wed, 15 May 2024 11:30:51 +0800
+Message-Id: <20240515033051.2693390-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,43 +48,48 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowAAnLACLLERmZKZACw--.9681S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrKr4rJryDJw4rtryfGF48WFg_yoW3Kwb_Kr
+	W0ganxWr4UKwnakrnrJr4fAFyIvayYqFWfXr1vqr4ayry29wsxX3yjgrnxG34UCa4jqa4r
+	Kw4rGr1fArsIkjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbc8FF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVWxJr
+	0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc2xSY4AK67AK6r48
+	MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr
+	0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0E
+	wIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJV
+	W8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAI
+	cVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjfUnpnQUUUUU
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-Package C2 residency counter is also available on Sierra Forest.
-So add it support in srf_cstates.
+Add check for the return value of input_ff_create_memless() and return
+the error if it fails in order to catch the error.
 
-Cc: Rui Zhang <rui.zhang@intel.com>
-Cc: Artem Bityutskiy <artem.bityutskiy@intel.com>
-Cc: Wendy Wang <wendy.wang@intel.com>
-Fixes: 3877d55a0db2 ("perf/x86/intel/cstate: Add Sierra Forest support")
-Signed-off-by: Zhenyu Wang <zhenyuw@linux.intel.com>
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
 ---
- arch/x86/events/intel/cstate.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/hid/hid-nvidia-shield.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/events/intel/cstate.c b/arch/x86/events/intel/cstate.c
-index e64eaa8dda5a..4cd36848cfff 100644
---- a/arch/x86/events/intel/cstate.c
-+++ b/arch/x86/events/intel/cstate.c
-@@ -64,7 +64,7 @@
-  *			       perf code: 0x00
-  *			       Available model: SNB,IVB,HSW,BDW,SKL,KNL,GLM,CNL,
-  *						KBL,CML,ICL,ICX,TGL,TNT,RKL,ADL,
-- *						RPL,SPR,MTL
-+ *						RPL,SPR,MTL,SRF
-  *			       Scope: Package (physical package)
-  *	MSR_PKG_C3_RESIDENCY:  Package C3 Residency Counter.
-  *			       perf code: 0x01
-@@ -683,7 +683,8 @@ static const struct cstate_model srf_cstates __initconst = {
- 	.core_events		= BIT(PERF_CSTATE_CORE_C1_RES) |
- 				  BIT(PERF_CSTATE_CORE_C6_RES),
+diff --git a/drivers/hid/hid-nvidia-shield.c b/drivers/hid/hid-nvidia-shield.c
+index 58b15750dbb0..ff9078ad1961 100644
+--- a/drivers/hid/hid-nvidia-shield.c
++++ b/drivers/hid/hid-nvidia-shield.c
+@@ -283,7 +283,9 @@ static struct input_dev *shield_haptics_create(
+ 		return haptics;
  
--	.pkg_events		= BIT(PERF_CSTATE_PKG_C6_RES),
-+	.pkg_events		= BIT(PERF_CSTATE_PKG_C2_RES) |
-+				  BIT(PERF_CSTATE_PKG_C6_RES),
+ 	input_set_capability(haptics, EV_FF, FF_RUMBLE);
+-	input_ff_create_memless(haptics, NULL, play_effect);
++	ret = input_ff_create_memless(haptics, NULL, play_effect);
++	if (ret)
++		goto err;
  
- 	.module_events		= BIT(PERF_CSTATE_MODULE_C6_RES),
- };
+ 	ret = input_register_device(haptics);
+ 	if (ret)
 -- 
-2.43.0
+2.25.1
 
 
