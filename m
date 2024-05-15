@@ -1,177 +1,153 @@
-Return-Path: <linux-kernel+bounces-180374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DAB18C6DA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 23:15:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C37938C6DA8
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 23:16:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64B9B1C220E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 21:15:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 769C3282953
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 21:16:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A539E15B15D;
-	Wed, 15 May 2024 21:15:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A69F15B14D;
+	Wed, 15 May 2024 21:16:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PiDOQQmN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dd1D5djc"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFCEC2F877;
-	Wed, 15 May 2024 21:15:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E1015B134
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 21:16:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715807738; cv=none; b=GgNaSJYkGzjSu2HFG1loMxO0Qyobt1+SrysBrBaZay69ifGLH6gKB44e5OFwYwvZjgj+m+j3Br0PDuI4v3WuGx5/A5bObLb9mU+G1kKISQailg4jqZ+VHnF9Osz4CSQmH+uFkm9RpEFzlaUAZ5m+PjtMJwxvruVS2FeYyPqrkuA=
+	t=1715807764; cv=none; b=PKFqP0orzthVMP2KM0szpro0Qj5H74/pW0l54ci7sauOrmXJ8F9tXgDkzNkl+ny3B4bp5wjd6ZznyBuM+XIGHC22jEeK23H/hW07YJrGEs1gz/g02liAYmz9sSdkEW/3FmDNmHkk5ENdw1SZJEAo2IcCqpq/pnmSw7JW0ElYRRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715807738; c=relaxed/simple;
-	bh=8zRgYixeWbU5a3kUd0M4xV5TV+AjxJpEmwU45ge4kaY=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=BmsCn2nCgRDW0wQkhSgrZ3VM4nF0BbusABfrVK25kzZEPP9th1rJ3mdbkBqWUhlPh5lMZm40tiwfSqLufAOcW2V5BkLp8VE+00gR7HoCdWvSnEmLWMlvQPkmhFuf/FHhOyapJbP8tZDLGMnDCU8qibbLgJcIR+BcxTAuIuRsbAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PiDOQQmN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B304C116B1;
-	Wed, 15 May 2024 21:15:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715807738;
-	bh=8zRgYixeWbU5a3kUd0M4xV5TV+AjxJpEmwU45ge4kaY=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=PiDOQQmN+bIHiSfpue2YctCCuTwEZkmpnSQGS3TqeNw0bE58cNELXRSd85nazMCPD
-	 yuyXdclaoXVl/gIeV3NxguyB4jU8hRBbwCLWM8Ce6hG3Aftjx0m6mkx3JnkRu8L61F
-	 qCJ/012Qc4p9xwHF+8KEZzJM+driOYnuam1IQoI9owU8e5ESdC4IjvM5Mu2OlTHOjB
-	 g9qjwOJYBTWtHgJDeBBv2x/DFhL6M6/FB+rJSajg2VRDV/830G/RhBhCT1FjyRohhx
-	 FXGpleblOhL/tGUOmGx1hG+eiRwQldeZlT5/MfIcU1Ig4+uSXrn/MJ28b8ibODTfCo
-	 7kY1NLoRgCVzw==
-Message-ID: <f6d7574582592f3bfa50fc45fefc53be.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1715807764; c=relaxed/simple;
+	bh=RC4DoAj+zRcOiumG0vEuz7g6nQu/R4r/eyjzhbegJEs=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Y81e+Z1ROj37vjLr6CdOBO4usIOtxqItJku/t9FSg7zK5UcICHiuAVvxZi7JEdmoJxvkRO/4VByQxomWxZgX+IIEkB43bHJuU5r1Ygk37opYERnzjdjJr2rUrijhrvrOaB81viM7KKlyYRlWfo/Rw7pjxfrEASCMsdoyAGxccKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dd1D5djc; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-34ef66c0178so4956853f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 14:16:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715807761; x=1716412561; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ypQ5i7zn3O21lrbNCHNY91mwYYndLzCRxfIgm5nCfGQ=;
+        b=dd1D5djcLEPNE8Xau0SyyrZSkytcDp8tMtECkSJTuI7Fcd8gM/WaI+SmdCda2o8bL8
+         hXLnL8wkdWafrlCy+/qhhp1plSiFpWg5ZtG7co0UTC5ySpUkewXUlf5hTsDtXM/6v1L7
+         CXrk4Dp/nTKQDzq0V6hCKKTV1wcUaRglclMSEGx7BQZUVwvy+LjXDoi0BWo9g9Nc1Wm9
+         UvH4ok7rPw9vfOgcyHRprgbYMY3VK6QOLa8oQ8kvGmJRM1Fl3CtBabl2GeCvMvG01DAX
+         CHHNICeYtfKOGagcQlCizUiBtcMKEWu/uJmnxsUQQ6VHNY0IBut1gEI0vn6VuysGm//g
+         /4Mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715807761; x=1716412561;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ypQ5i7zn3O21lrbNCHNY91mwYYndLzCRxfIgm5nCfGQ=;
+        b=mJDUuOT/WyYt/MLjcgICwgZWqi3T6iKL4mQ9GcU/mJtkhhL59pxFL4Kt2JeXPi7Kqc
+         J5RE7MSvgYhkMawN1Ii/fZUQpHsQnzPoIYYHCqTBR5JugOhKm7d/357c6DYevFqrMlk+
+         yYwn/lISudjSzG1CDt3txOvHCoYIGTPHaIhKbFMavsEfkz3ookNcEG+djt6DkmLKsiNf
+         AbizKK75J7TmG9tfLRR3sGndF32IezHxezA9CI3txUHbb0D7j1w/NfChX4GcHVVmqi2U
+         8Wvf2HMifvRZJmgxC3Qq2hDUWfwRULz0nC3nqmE8PrY3wgxc/A7QTUgZvpYORVr0XsY5
+         mN/g==
+X-Forwarded-Encrypted: i=1; AJvYcCVsPVdNhVvmWEsc4BIotjPjITWo+xXIXP/cTPRy2B7QctCEG38FnZnN88/SJR9siuPqjpT1pPHUHl0pgrdYqGXuqKi0CV2/Cq2G1MNE
+X-Gm-Message-State: AOJu0YxMdivYN9RtwwrOMnL9N+fiYXs8yWn9cXuFrzGfAO48ScFPxndV
+	S9fxHnGSz+DY9RQTQgVrzH9vZAO8t2MQdY6tkKvnAT2ZcJ0eWiC2t/CF99kGpkA=
+X-Google-Smtp-Source: AGHT+IGgcTqIf5m/0zVxc5RASNVotZp2IA/3mSrwEWRVdJbbedxdDEmum4mS9MjHSIt3r+bMIZ6N1A==
+X-Received: by 2002:adf:e586:0:b0:34f:3293:85c6 with SMTP id ffacd0b85a97d-3504a96b7c9mr18524413f8f.64.1715807761057;
+        Wed, 15 May 2024 14:16:01 -0700 (PDT)
+Received: from [10.1.2.176] ([149.14.240.163])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502b79be1dsm17462785f8f.10.2024.05.15.14.15.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 May 2024 14:16:00 -0700 (PDT)
+Message-ID: <0fcdb0ac-2e4a-44b2-a5d6-a67a1d747df8@linaro.org>
+Date: Wed, 15 May 2024 23:15:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAL_JsqK4EZ0RhYCw6ZaeYSJu5Ps1J+J25vjwQy2XvNa5F5d7Pw@mail.gmail.com>
-References: <20240422232404.213174-1-sboyd@kernel.org> <CABVgOSmgUJp3FijpYGCphi1OzRUNvmYQmPDdL6mN59YnbkR2iQ@mail.gmail.com> <b822c6a5488c4098059b6d3c35eecbbd.sboyd@kernel.org> <5c919f0d3d72fe1592a11c45545e8a60.sboyd@kernel.org> <CAL_JsqK4EZ0RhYCw6ZaeYSJu5Ps1J+J25vjwQy2XvNa5F5d7Pw@mail.gmail.com>
-Subject: Re: [PATCH v4 00/10] clk: Add kunit tests for fixed rate and parent data
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: David Gow <davidgow@google.com>, Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, patches@lists.linux.dev, kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org, devicetree@vger.kernel.org, Brendan Higgins <brendan.higgins@linux.dev>, Rae Moar <rmoar@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rafael J . Wysocki <rafael@kernel.org>, Saravana Kannan <saravanak@google.com>, Daniel Latypov <dlatypov@google.com>, Christian Marangi <ansuelsmth@gmail.com>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Maxime Ripard <maxime@cerno.tech>
-To: Rob Herring <robh@kernel.org>
-Date: Wed, 15 May 2024 14:15:36 -0700
-User-Agent: alot/0.10
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [v7 3/7] arm64: defconfig: Enable HIMAX_HX83102 panel
+To: Cong Yang <yangcong5@huaqin.corp-partner.google.com>, sam@ravnborg.org,
+ daniel@ffwll.ch, dianders@chromium.org, linus.walleij@linaro.org,
+ krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org, conor+dt@kernel.org,
+ airlied@gmail.com
+Cc: dmitry.baryshkov@linaro.org, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ xuxinxiong@huaqin.corp-partner.google.com
+References: <20240515014643.2715010-1-yangcong5@huaqin.corp-partner.google.com>
+ <20240515014643.2715010-4-yangcong5@huaqin.corp-partner.google.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20240515014643.2715010-4-yangcong5@huaqin.corp-partner.google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Quoting Rob Herring (2024-05-15 06:06:09)
-> On Tue, May 14, 2024 at 4:29=E2=80=AFPM Stephen Boyd <sboyd@kernel.org> w=
-rote:
-> >
-> > powerpc doesn't mark the root node with OF_POPULATED_BUS. If I set that
-> > in of_platform_default_populate_init() then the overlays can be applied.
-> >
-> > ---8<----
-> > diff --git a/drivers/of/platform.c b/drivers/of/platform.c
-> > index 389d4ea6bfc1..fa7b439e9402 100644
-> > --- a/drivers/of/platform.c
-> > +++ b/drivers/of/platform.c
-> > @@ -565,6 +565,10 @@ static int __init of_platform_default_populate_ini=
-t(void)
-> >                                 of_platform_device_create(node, buf, NU=
-LL);
-> >                 }
-> >
-> > +               node =3D of_find_node_by_path("/");
-> > +               if (node)
-> > +                       of_node_set_flag(node, OF_POPULATED_BUS);
->=20
-> I think you want to do this in of_platform_bus_probe() instead to
-> mirror of_platform_populate(). These are supposed to be the same
-> except that 'populate' only creates devices for nodes with compatible
-> while 'probe' will create devices for all child nodes. Looks like we
-> are missing some devlink stuff too. There may have been some issue for
-> PPC with it.
+Hi,
 
-Got it. So this patch?
+On 15/05/2024 03:46, Cong Yang wrote:
+> DRM_PANEL_HIMAX_HX83102 is being split out from DRM_PANEL_BOE_TV101WUM_NL6.
+> Since the arm64 defconfig had the BOE panel driver enabled, let's also
+> enable the himax driver.
+> 
+> Signed-off-by: Cong Yang <yangcong5@huaqin.corp-partner.google.com>
+> Reviewed-by: Douglas Anderson <dianders@chromium.org>
+> ---
+>   arch/arm64/configs/defconfig | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+> index 2c30d617e180..687c86ddaece 100644
+> --- a/arch/arm64/configs/defconfig
+> +++ b/arch/arm64/configs/defconfig
+> @@ -864,6 +864,7 @@ CONFIG_DRM_PANEL_BOE_TV101WUM_NL6=m
+>   CONFIG_DRM_PANEL_LVDS=m
+>   CONFIG_DRM_PANEL_SIMPLE=m
+>   CONFIG_DRM_PANEL_EDP=m
+> +CONFIG_DRM_PANEL_HIMAX_HX83102=m
+>   CONFIG_DRM_PANEL_ILITEK_ILI9882T=m
+>   CONFIG_DRM_PANEL_MANTIX_MLAF057WE51=m
+>   CONFIG_DRM_PANEL_RAYDIUM_RM67191=m
 
----8<---
-diff --git a/drivers/of/platform.c b/drivers/of/platform.c
-index 389d4ea6bfc1..acecefcfdba7 100644
---- a/drivers/of/platform.c
-+++ b/drivers/of/platform.c
-@@ -421,6 +421,7 @@ int of_platform_bus_probe(struct device_node *root,
- 	if (of_match_node(matches, root)) {
- 		rc =3D of_platform_bus_create(root, matches, NULL, parent, false);
- 	} else for_each_child_of_node(root, child) {
-+		of_node_set_flag(root, OF_POPULATED_BUS);
- 		if (!of_match_node(matches, child))
- 			continue;
- 		rc =3D of_platform_bus_create(child, matches, NULL, parent, false);
+You should probably sent this one separately since only an ARM SoC maintainer
+can apply this, probably via the qcom tree.
 
-
-This doesn't work though. I see that prom_init() is called, which
-constructs a DTB and flattens it to be unflattened by
-unflatten_device_tree(). The powerpc machine type used by qemu is
-PLATFORM_PSERIES_LPAR. It looks like it never calls
-of_platform_bus_probe() from the pseries platform code.
-
-What about skipping the OF_POPULATED_BUS check, or skipping the check
-when the parent is the root node? This is the if condition that's
-giving the headache.
-
----8<---
-diff --git a/drivers/of/platform.c b/drivers/of/platform.c
-index 389d4ea6bfc1..38dfafc25d86 100644
---- a/drivers/of/platform.c
-+++ b/drivers/of/platform.c
-@@ -735,10 +735,6 @@ static int of_platform_notify(struct notifier_block *n=
-b,
-=20
- 	switch (of_reconfig_get_state_change(action, rd)) {
- 	case OF_RECONFIG_CHANGE_ADD:
--		/* verify that the parent is a bus */
--		if (!of_node_check_flag(rd->dn->parent, OF_POPULATED_BUS))
--			return NOTIFY_OK;	/* not for us */
--
- 		/* already populated? (driver using of_populate manually) */
- 		if (of_node_check_flag(rd->dn, OF_POPULATED))
- 			return NOTIFY_OK;
-
-
->=20
-> > +               of_node_put(node);
-> >         } else {
-> >                 /*
-> >                  * Handle certain compatibles explicitly, since we don'=
-t want to create
-> >
-> > I'm guessing this is wrong though, because I see bunch of powerpc speci=
-fic code
-> > calling of_platform_bus_probe() which will set the flag on the actual p=
-latform
-> > bus nodes. Maybe we should just allow overlays to create devices at the=
- root
-> > node regardless? Of course, the flag doc says "platform bus created for
-> > children" and if we never populated the root then that isn't entirely a=
-ccurate.
-> >
-> > Rob, can you point me in the right direction? Do we need to use simple-=
-bus in
-> > the test overlays and teach overlay code to populate that bus?
->=20
-> Overlays adding things to the root node might be suspect, but probably
-> there are some valid reasons to do so.
-
-In this case we're using it to add nodes without a reg property to the
-root node.
-
-> If simple-bus makes sense here,
-> then yes, you should use it. But if what's on it is not MMIO devices,
-> don't. That's a warning in the schema now.
->=20
-
-Ok. Sounds like adding these nodes to the root node is the right way
-then.
-
-I wonder if we can make MMIO devices appear on the kunit bus by adding
-DT support to the bus and then letting those nodes have reg properties
-that we "sinkhole" by making those iomem resources point to something
-else in the ioremap code. Then we can work in MMIO kunit emulation that
-way to let tests check code that works with readl/writel, e.g. the clk
-gate tests.
+Thanks,
+Neil
 
