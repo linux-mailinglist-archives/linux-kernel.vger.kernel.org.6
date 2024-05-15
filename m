@@ -1,101 +1,98 @@
-Return-Path: <linux-kernel+bounces-179897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E28C8C6716
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 15:16:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 686CB8C66EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 15:12:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96BC7B22F0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 13:16:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 991AF1C22293
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 13:12:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4713D130AE5;
-	Wed, 15 May 2024 13:13:22 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F008B127B73;
+	Wed, 15 May 2024 13:12:18 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BF47129E8C;
-	Wed, 15 May 2024 13:13:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04BA78625C;
+	Wed, 15 May 2024 13:12:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715778801; cv=none; b=FQHEe3WPkV1apIVZK86iIfbrBW7NIJkI0ix3eirQYEMpDpAyNiFlbtMCjNDHQUDpck5WKECvM9EyFUqTkJmJQdUiKOvQMX4BS2vEn8IgeJR8pIP+aWrTgq6lzU8E7lhk2Z4qozbB4bGkdEsH21NmogK8+vLjGLENj5zoGywIz4A=
+	t=1715778738; cv=none; b=ofzmteHwoA2fEINAdKUD/AuneCw6P7WSsAExpTDhBDtQGsff7ECIf3/ZtNdG+oZBwVszjuvFh2+iTtyntnHMe2/CgEGinAtlQt+QnwG8omstr94sIeSNSqS9qMWeuH+PyUHAkvG0X4kSQLbUrHlIYnzfpgkzhHEP9qA/XDoz2qc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715778801; c=relaxed/simple;
-	bh=wRCKhxV7zvGXxC90jxbtGJoR75S1QRttnfk4RRvHJOY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dQX+OUkpFud3SCrh7B6gIAPPCv79DksbejkfYrCPaJtt6bxRyH7gLQBT5NIwBGRQ55C8n9/CdGKz5ye/u4ZdIlfk1YqmOIHiQ/bvgoBkPg6T6DeTz4npiRVTIX9U4+hKJZANWRz8uiZxlCTN4CZFpjkOSro3If2p7BwxNaQMwvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4VfYV05LTyzkXhc;
-	Wed, 15 May 2024 21:09:44 +0800 (CST)
-Received: from dggpemm500005.china.huawei.com (unknown [7.185.36.74])
-	by mail.maildlp.com (Postfix) with ESMTPS id A214014037B;
-	Wed, 15 May 2024 21:13:18 +0800 (CST)
-Received: from localhost.localdomain (10.69.192.56) by
- dggpemm500005.china.huawei.com (7.185.36.74) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Wed, 15 May 2024 21:13:18 +0800
-From: Yunsheng Lin <linyunsheng@huawei.com>
-To: <davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Yunsheng Lin
-	<linyunsheng@huawei.com>, Alexander Duyck <alexander.duyck@gmail.com>
-Subject: [RFC v4 13/13] mm: page_frag: add a entry in MAINTAINERS for page_frag
-Date: Wed, 15 May 2024 21:09:32 +0800
-Message-ID: <20240515130932.18842-14-linyunsheng@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20240515130932.18842-1-linyunsheng@huawei.com>
-References: <20240515130932.18842-1-linyunsheng@huawei.com>
+	s=arc-20240116; t=1715778738; c=relaxed/simple;
+	bh=/0KXK6PmkZcde0ubOE7xzi/16BLUawUejjdCW6lX7S4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EIZs/joK4wZXmTCOpt6a/uYYIX4WONor5vvYpUycmJET4+xLMlpdWQZ+RtZcqpLeNh/p/VRkSvGUOTaMohy2veO3bfOe1DDr22YGTbUJyOKX6mW3MZt90ohQLScSuK8V96FvTNX2Yicqo8xOolUKEgA7wSq93RwGzzMLuQQLK+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from fsav113.sakura.ne.jp (fsav113.sakura.ne.jp [27.133.134.240])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 44FDC0M4081731;
+	Wed, 15 May 2024 22:12:00 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav113.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav113.sakura.ne.jp);
+ Wed, 15 May 2024 22:12:00 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav113.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 44FDC0JS081728
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Wed, 15 May 2024 22:12:00 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <8aa947c2-5373-4efd-83db-6a5f75069317@I-love.SAKURA.ne.jp>
+Date: Wed, 15 May 2024 22:12:00 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- dggpemm500005.china.huawei.com (7.185.36.74)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Linux kernel bug] INFO: task hung in blk_mq_get_tag
+To: Sam Sun <samsun1006219@gmail.com>
+Cc: Hillf Danton <hdanton@sina.com>, linux-kernel@vger.kernel.org,
+        linux-block@vger.kernel.org, axboe@kernel.dk,
+        syzkaller-bugs@googlegroups.com, xrivendell7@gmail.com
+References: <CAEkJfYMhv8AxxHSVdPT9bCX1cJZXw39+bMFh=2N9uNOB4Hcr=w@mail.gmail.com>
+ <20240514103742.3137-1-hdanton@sina.com>
+ <CAEkJfYPH3SJ6J3kLSjMGqkWOzgbgKZV_f2Hq05cpZZv7RmhvOg@mail.gmail.com>
+ <cfe6b902-5e2d-415d-afeb-672cafd8d0b7@I-love.SAKURA.ne.jp>
+ <CAEkJfYOBnhVGNENZkkdoX1g+gE=eVNFwNRG6HwFUdCw2+Kda=Q@mail.gmail.com>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <CAEkJfYOBnhVGNENZkkdoX1g+gE=eVNFwNRG6HwFUdCw2+Kda=Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-After this patchset, page_frag is a small subsystem/library
-on its own, so add a entry in MAINTAINERS for to indicate
-the new subsystem/library's maintainer, maillist, status and
-file lists of page_frag.
+On 2024/05/15 21:46, Sam Sun wrote:
+>> What happens if you disable
+>>
+>>   sysfd = write(sysfd, input, hash - input + 1);
+>>
+>> line (i.e. stop updating sg_allow_dio value) in the reproducer?
+>>
+> 
+> I tried to change the value of /sys/module/sg/parameters/allow_dio to
+> 0 and remove write() call, both still triggers task hang report and
+> kernel panic. I think this write is not the call crashing the kernel.
+> 
 
-Alexander is the orginal author of page_frag, add him in the
-MAINTAINERS too.
+Kernel panic by general protection fault upon calling trigger_all_cpu_backtrace() is
+a different bug. Please be sure to keep /proc/sys/kernel/hung_task_all_cpu_backtrace 0
+while investigating this hung task problem.
 
-CC: Alexander Duyck <alexander.duyck@gmail.com>
-Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
----
- MAINTAINERS | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+This hung task problem happens without touching /sys/module/sg/parameters/allow_dio ,
+doesn't it?
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index c4c6ffbc6d10..998c5e868dd8 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -16709,6 +16709,17 @@ F:	mm/page-writeback.c
- F:	mm/readahead.c
- F:	mm/truncate.c
- 
-+PAGE FRAG
-+M:	Alexander Duyck <alexander.duyck@gmail.com>
-+M:	Yunsheng Lin <linyunsheng@huawei.com>
-+L:	linux-mm@kvack.org
-+L:	netdev@vger.kernel.org
-+S:	Supported
-+F:	Documentation/mm/page_frags.rst
-+F:	include/linux/page_frag_cache.h
-+F:	mm/page_frag_cache.c
-+F:	mm/page_frag_test.c
-+
- PAGE POOL
- M:	Jesper Dangaard Brouer <hawk@kernel.org>
- M:	Ilias Apalodimas <ilias.apalodimas@linaro.org>
--- 
-2.33.0
+scsi_rescan_device() is reliably printed when this hung task problem happens,
+isn't it?
+
+Then, it is strange that scsi_rescan_device() is called despite the reproducer is
+almost no-op. Maybe you can trigger scsi_rescan_device() without using the reproducer.
+
+Can you simplify steps to reproduce? For example, doing a lot of write().
 
 
