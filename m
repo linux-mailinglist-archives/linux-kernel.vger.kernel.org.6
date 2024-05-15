@@ -1,150 +1,170 @@
-Return-Path: <linux-kernel+bounces-180217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0E8E8C6B8A
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 19:33:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 778B98C6B83
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 19:33:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 660552841DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:33:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0849C1F234AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:33:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5E9C47F63;
-	Wed, 15 May 2024 17:33:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FD704879B;
+	Wed, 15 May 2024 17:33:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s9HJpiRk"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HXebnCtB"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91D3B28680
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 17:33:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A9B247F69
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 17:33:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715794427; cv=none; b=ZPB7DJ0RlTquKu3yIRbUmBfXM/BVjzmwaigRi/cZNMHE7j3Lk/aPTkcj+G7UL2mZE0VFxS+1Oud3++Gk34lTBWqcALQU3xAtUMOmFBl5i3rYb/0rihgE01KTHhY93E2raCtPK+rK0iHrIzj6a3aToVn/W0+KI7TVAlqllQQQ+s8=
+	t=1715794400; cv=none; b=SZV27X+HPGjYxj2usJCGCWIHc7pB8UQrfU2z6VIGwWy4InKySMPXzSHfMql0QvqXvSU3bvu6bC2PpO/QMugU8fNseYAQGg84f6CK1EL7GRZ+CiorrmBFH4oe7QPQSl1S55oM60CvNNq3LMq5jV3friz8TWE9mYjT+nl745u1oC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715794427; c=relaxed/simple;
-	bh=BczV/FF4eIzKWVrSkkC8DYFt1QqsMU4CdnShIk6/U3M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bCcdxwhw9uhcApmNnQRj5NsZcJtJD0ffRij+IeGX24bMAJfiFsEkHew8SErkZoUwDXGck2byiczatIYlo+VvV0zTt3/7dD/tUYXg7Io5cQvwif7z5WwMuCXGdu2UVJRL/GfayhrZUOfPP1BfnrvpQfdnbWV1NAAPbpCz5MmpbbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=s9HJpiRk; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-34db6a29998so5551281f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 10:33:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715794424; x=1716399224; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=REXKNTAxo862A8ReBddrMUjz3K+lbyLjZMQEflUAct8=;
-        b=s9HJpiRkvmLjvVF7EK6rqcWhZkYTfdp2i6sAc9gf8G1joqcuqe2fWvimC+lsmN3Iyd
-         F/cIbxok4h0TDxs92Inlt/2O7VG4Cj+87c3kIDhEPkVtlaA75A2wV+zbyZ28dHNYFFfW
-         /jeTm02s5ZuxCBjiLa1zQGr0Bw/smD0d1UnSLujEVLuVuJqK5b+69a0I9Tf81n3wVNdC
-         qhhieCMWqWhp8PCF9wYIQmHJnuq47Gk7fK0NsKMua0j/90CLBIpTpGhG++B7aKI/4AzA
-         vOydfcGb1+1O9u6VAR213zUoSTE2hjdn0Yg8JN7KyVjWX98U2tJ6uee3uH3TrK0r3ffv
-         ChDA==
+	s=arc-20240116; t=1715794400; c=relaxed/simple;
+	bh=KQ7vgtIHJ0lCY1+lYQaLcR526DvemfZD38rR0OBQSp8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rT51Rr7I7bvDed0OCoAiLd2efTJN8uUzNdB1s6fi0oUc6+i2OjXfSesS+yXTRF81nU1OACy/vIYkWRHgF+J/Aj7us3VQdzorCc53tv4tAMz3TWIINkyAt6YDhu3AT5IL+ckdnyo67T2oRnnIV9ln5AYT4RAZyKExNS9DNkPyx24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HXebnCtB; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715794397;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=LfUbT0bqMFevfxtZ83fq1OENBuxrXgJtBQk+DKSrhj8=;
+	b=HXebnCtBqAbOpMjQP0jkMH6pqfR20DKuWjfUjcd+LA2+ErZ36yG1WsOnj6zxCp/9GfC7Fy
+	bOBPCwHz0cU973voDf2rMqJa6VOGb1MG29VaKJt+t3jsTgFBHwRSKzTwojc9UNr6ioofT8
+	y80KpiCOBYuBIn5WKZjHnsVZfkXtprQ=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-353-Wn6veW2PP-e4X2kTZJk3uw-1; Wed, 15 May 2024 13:33:16 -0400
+X-MC-Unique: Wn6veW2PP-e4X2kTZJk3uw-1
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-351cb5b7649so1013801f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 10:33:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715794424; x=1716399224;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=REXKNTAxo862A8ReBddrMUjz3K+lbyLjZMQEflUAct8=;
-        b=vHcRvFv0BLER0gWQrsygUUvVcagI5K4a94DIphR8C6EMcCSdthu3YS1OyZnepHKESx
-         w9qUQYJo/NgXTj2DDfw927ZAVCN0qInwDZOKNzUsut+fqt1l/SiJfE4uOdMl8yruOau0
-         z+DCJtn66ddTsx/88gmW0HCviOT5wbIEpBbUSiW2TRyK2OAtIHGaCYetkGt3IMLz+5Ld
-         WnhIlc9WJKEf3PWHCDqrWuP9rs5WPTQE0qsc9gW3SYjPVxjQfc+Zvm2U497VsNYq5CCF
-         1ez9LdnNCKusivdEc5NFmoQOWFUutTVfP5Q3A4wki0zKvrAqIov+NAn/TaRFLrHXBgqk
-         wSIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWvtzdhLFIVg7ui4WCiqzHLHvVSJSNXlQulNfrTLwJW0mgoPxRu13SkN29IwijYPTYn9tkVAbqFwogDE4SdBJQT4Ke8C8LSrKu2ILKx
-X-Gm-Message-State: AOJu0YzqfDEX42nR3RVNA6disxGeugOIcg0sbdauJ+nrvx8/lniendPN
-	lky4TIN/3cc4E3J6WDvuYgvShuqNiQ2a/6ZzMAQW1kcI/iZEdSbP0uuxyZRR2sqK7gqBfO22AHr
-	Qj94mQjdfX8zhZSjSHArMzujjLZmoU3dFgZyb
-X-Google-Smtp-Source: AGHT+IECmpnR3hqErRAHKi5zZVxQqX+AzRVW0B5FrzgG6JtiQjlGQI3473zUOeMvDrH067XEBa75l4kB51sO6OrPOMs=
-X-Received: by 2002:a5d:5351:0:b0:343:e02f:1a46 with SMTP id
- ffacd0b85a97d-3504a62fb12mr13056195f8f.2.1715794423681; Wed, 15 May 2024
- 10:33:43 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715794395; x=1716399195;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LfUbT0bqMFevfxtZ83fq1OENBuxrXgJtBQk+DKSrhj8=;
+        b=B5NWg5j4WeGk/rn8QGakUDCn87b2pe2FFjs/fs5vndikqD9OFGAL5dUMP4TY6zINdO
+         oT0jptGF4AKlb1F7XcHUl2NaA7ynNf+wP9juGqz2rbCiHFjNOSNgEzuJ0zXCeAU13nQN
+         lNQ2tq1ytHD8/5/2PWEi/zuGsjxbN6T8lWiZyIwReNZ4f+Ejyvyt6rvQ9q1j771Ld/Sv
+         xmZQVnzd7yrrHlBj9IsdpZZoaqJ118pBpQSw6ZaaOGKR9PsqT2+hbtYG//Z1nUcnB+LB
+         Rj4kz3fZnn4vBC4pamuH2VkrcvAZUBuF92HgK7cV4xiZ1D7Jd4L/NHXOs6iNXYKnlOhE
+         7BmA==
+X-Gm-Message-State: AOJu0YwbZ+hSWpt5hCp4Ig8dsadoZDYM/fHNhmSDeQd7f9nlYT7/E+zK
+	RzvFa5iX2sB+3IYfMbk8iSZiBKkacOE9HZWmecp+esxLSRgKk3vAcz5uXDaY6izouRlkBtX2RCp
+	bpqWNTjZDgBTga8Iu/b5obCUPuFRbkUPPMqw22aFpQqZeOgMeYUDi94gQ6rarqw==
+X-Received: by 2002:a05:600c:a46:b0:41f:f144:5623 with SMTP id 5b1f17b1804b1-41ff1445732mr130137655e9.14.1715794394970;
+        Wed, 15 May 2024 10:33:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEn29gC0xlHgiaGlcHKOXEBPkcWc5GqRKQ+sTlTUnbCHKlL078H8MP3ATQM4jwusDZdn2rlnw==
+X-Received: by 2002:a05:600c:a46:b0:41f:f144:5623 with SMTP id 5b1f17b1804b1-41ff1445732mr130137545e9.14.1715794394619;
+        Wed, 15 May 2024 10:33:14 -0700 (PDT)
+Received: from [192.168.10.81] ([151.95.155.52])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-41fccee92c7sm248384785e9.34.2024.05.15.10.33.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 May 2024 10:33:14 -0700 (PDT)
+Message-ID: <4d80cec1-9505-4a8c-8bd3-c996b5a42790@redhat.com>
+Date: Wed, 15 May 2024 19:33:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240510182926.763131-1-axelrasmussen@google.com>
- <20240510182926.763131-2-axelrasmussen@google.com> <20240515104142.GBZkSRZsa3cxJ3DKVy@fat_crate.local>
- <ZkSUaVx3uCIPkpkJ@localhost.localdomain>
-In-Reply-To: <ZkSUaVx3uCIPkpkJ@localhost.localdomain>
-From: Axel Rasmussen <axelrasmussen@google.com>
-Date: Wed, 15 May 2024 10:33:03 -0700
-Message-ID: <CAJHvVchGGJkEX=qroW=+N-RJDMDGuxM4xoGe7iOtRu9YcfxEEw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] arch/fault: don't print logs for pte marker poison errors
-To: Oscar Salvador <osalvador@suse.de>
-Cc: Borislav Petkov <bp@alien8.de>, Andrew Morton <akpm@linux-foundation.org>, 
-	Andy Lutomirski <luto@kernel.org>, "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	David Hildenbrand <david@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, Helge Deller <deller@gmx.de>, 
-	Ingo Molnar <mingo@redhat.com>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, John Hubbard <jhubbard@nvidia.com>, 
-	Liu Shixin <liushixin2@huawei.com>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
-	Michael Ellerman <mpe@ellerman.id.au>, Muchun Song <muchun.song@linux.dev>, 
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, Nicholas Piggin <npiggin@gmail.com>, 
-	Peter Xu <peterx@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-parisc@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/7] KVM: x86/mmu: Replace hardcoded value 0 for the
+ initial value for SPTE
+To: Isaku Yamahata <isaku.yamahata@intel.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+ Sean Christopherson <seanjc@google.com>, Xiaoyao Li <xiaoyao.li@intel.com>,
+ Binbin Wu <binbin.wu@linux.intel.com>, rick.p.edgecombe@intel.com
+References: <20240507154459.3950778-1-pbonzini@redhat.com>
+ <20240507154459.3950778-3-pbonzini@redhat.com>
+ <20240515173209.GD168153@ls.amr.corp.intel.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ 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
+In-Reply-To: <20240515173209.GD168153@ls.amr.corp.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, May 15, 2024 at 3:54=E2=80=AFAM Oscar Salvador <osalvador@suse.de> =
-wrote:
->
-> On Wed, May 15, 2024 at 12:41:42PM +0200, Borislav Petkov wrote:
-> > On Fri, May 10, 2024 at 11:29:26AM -0700, Axel Rasmussen wrote:
-> > > @@ -3938,7 +3938,7 @@ static vm_fault_t handle_pte_marker(struct vm_f=
-ault *vmf)
-> > >
-> > >     /* Higher priority than uffd-wp when data corrupted */
-> > >     if (marker & PTE_MARKER_POISONED)
-> > > -           return VM_FAULT_HWPOISON;
-> > > +           return VM_FAULT_HWPOISON | VM_FAULT_HWPOISON_SILENT;
-> >
-> > If you know here that this poisoning should be silent, why do you have
-> > to make it all complicated and propagate it into arch code, waste
-> > a separate VM_FAULT flag just for that instead of simply returning here
-> > a VM_FAULT_COMPLETED or some other innocuous value which would stop
-> > processing the fault?
->
-> AFAIK, He only wants it to be silent wrt. the arch fault handler not scre=
-aming,
-> but he still wants to be able to trigger force_sig_mceerr().
+On 5/15/24 19:32, Isaku Yamahata wrote:
+> Paolo, how do you want me to proceed? I can send a updated patch or you can
+> directly fix the patch in kvm-coco-queue.  I'm fine with either way.
 
-Right, the goal is to still have the process get a SIGBUS, but to
-avoid the "MCE error" log message. The basic issue is, unprivileged
-users can set these markers up, and thereby completely spam up the
-log.
+I'll fix it, thanks!
 
-Also since this is a process-specific thing, and it's not a real
-hardware poison event, it's unclear system admins care at all at a
-global level (this is why we didn't want to switch to just
-printk_ratelimited for example). Better to let the process handle the
-SIGBUS however it likes for its use case (logging a message elsewhere,
-etc.).
+Paolo
 
-That said, one thing I'm not sure about is whether or not
-VM_FAULT_SIGBUS is a viable alternative (returned for a new PTE marker
-type specific to simulated poison). The goal of the simulated poison
-feature is to "closely simulate" a real hardware poison event. If you
-live migrate a VM from a host with real poisoned memory, to a new
-host: you'd want to keep the same behavior if the guest accessed those
-addresses again, so as not to confuse the guest about why it suddenly
-became "un-poisoned". At a basic level I think VM_FAULT_SIGBUS gives
-us what we want (send SIGBUS to the process, don't log about MCEs),
-but I'm not confident I know all the differences vs. VM_FAULT_HWPOISON
-on all the arches.
+> From 7910130c0a3f2c5d814d6f14d663b4b692a2c7e4 Mon Sep 17 00:00:00 2001
+> Message-ID:<7910130c0a3f2c5d814d6f14d663b4b692a2c7e4.1715793643.git.isaku.yamahata@intel.com>
+> From: Isaku Yamahata<isaku.yamahata@intel.com>
+> Date: Wed, 15 May 2024 10:19:08 -0700
+> Subject: [PATCH] fixup! KVM: x86/mmu: Replace hardcoded value 0 for the
+>   initial value for SPTE
+> 
+> ---
+>   arch/x86/kvm/mmu/tdp_mmu.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
+> index 1259dd63defc..36539c1b36cd 100644
+> --- a/arch/x86/kvm/mmu/tdp_mmu.c
+> +++ b/arch/x86/kvm/mmu/tdp_mmu.c
+> @@ -626,7 +626,7 @@ static inline int tdp_mmu_zap_spte_atomic(struct kvm *kvm,
+>   	 * SPTEs.
+>   	 */
+>   	handle_changed_spte(kvm, iter->as_id, iter->gfn, iter->old_spte,
+> -			    0, iter->level, true);
+> +			    SHADOW_NONPRESENT_VALUE, iter->level, true);
+>   
+>   	return 0;
+>   }
+> 
+> base-commit: 698ca1e403579ca00e16a5b28ae4d576d9f1b20e
 
->
->
-> --
-> Oscar Salvador
-> SUSE Labs
+
 
