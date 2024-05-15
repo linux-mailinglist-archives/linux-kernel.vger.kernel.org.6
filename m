@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-179985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A3D08C6875
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:21:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7B588C6877
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:21:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14BD12827F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 14:21:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31BF6B238A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 14:21:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D890213FD7A;
-	Wed, 15 May 2024 14:21:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C8C813F45B;
+	Wed, 15 May 2024 14:21:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="paGnbjoZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KTLMUM7O"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23F2F6214D;
-	Wed, 15 May 2024 14:21:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB76313F441;
+	Wed, 15 May 2024 14:21:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715782872; cv=none; b=SbBCm6qj6ivffEDnpT6orlqUXJblw5BKheGCdQIu86jppFDp/4u9AfaPzJ+wvXhnqA7Ni2APemcrnDkemoXMNgmKf+Qj0hdHaCEKaMLMVVni+iGsdIbgS2yoDcSHfboXgF1N3gfmHm0XwAX+6CN98EUpLFqGSuMLRhobFCuBeow=
+	t=1715782894; cv=none; b=H9zFsSc96Q1JdkGAyI0g+KuuCjsrBwIzDaVqjyyf0CWieoPklAAWo5l3lY1bCKgc8Bi2FnyK6ynY+nKKnKUIEuKnOnRldjn8VNvWDBldFOskIQ17bmAGXG475EYwyzLNMy8V7ssE26pLXESAmo/r740RnfRvK/45ERHG9FXhB9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715782872; c=relaxed/simple;
-	bh=a12Xk8w0WkLR0nfFp+L7SeZt5/M/Eq4WnOuazAt/UuA=;
+	s=arc-20240116; t=1715782894; c=relaxed/simple;
+	bh=JlHkZlCGxF2J0ZVd7aN1EZ6olzqE0j6kpdnQtKdlAr4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RJ0LrZX8xIMEUmZVHYDkkWyP3UySjkOLHQH2FCW4aoNkJmrds2WT5BMaBPf4oXiwYD/3KpaYFflnU6P9ltzmJie5Fp38AKmsJpuVT0bXUDy8NNuGSG6/tSTvKKsnscrwQgiPnkGmG84pbmkvVfRJ6GBaQT6iV2lj0Ipd0ARa35E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=paGnbjoZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 979D5C4AF11;
-	Wed, 15 May 2024 14:21:09 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=NpCXlaIf2D0ycex7f7O6A2HpDyuXN02Gnl4m7KGMLR9+t/FqD7qZ7bbPmrXv0EMaVzPekLPP4ADFi9v6JXw9OfFEbbnibPfexy2P1h+UPJqQXV7eJ5nEJ/rPpGLqCqtzpk2Cek2HTgmNyqIvA5pR6jIiBR5wMe8Svh1N7KRlz94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KTLMUM7O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DDB8C4AF63;
+	Wed, 15 May 2024 14:21:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715782871;
-	bh=a12Xk8w0WkLR0nfFp+L7SeZt5/M/Eq4WnOuazAt/UuA=;
+	s=k20201202; t=1715782893;
+	bh=JlHkZlCGxF2J0ZVd7aN1EZ6olzqE0j6kpdnQtKdlAr4=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=paGnbjoZLrOMv/H+SnRMOT9/JqKCYZy3M+yIxTS34sL2RNdpTsxv6INlII4q78wLM
-	 46CIUnbOVwfrRbBjUbEN88nBE93Gcft+bJEUiCAwu0+Xesg/p5Zs+jFNcEChQPbvWO
-	 clJviLelGIQ6ul41SE5SgG87913aRMvkNDIWKnVKk2R53B4Aux5UFqa+iRDHwQJUIq
-	 SgsinE7ulu1zxtZ0LN8uh7/aBe7nNzPBtQc4mvS/gxpGfIaw+LNXbCXuwB5BgJmlD7
-	 EPcxLQe0n75TVcLVZKj0qV2dPwTlwtvWMjEQOt45Tv/3qwuL8tiXj80bD56rCoaX35
-	 XVOcRa3VV2u4g==
-Message-ID: <4f8a29a0-b31a-485a-90af-4a8df35fd48d@kernel.org>
-Date: Wed, 15 May 2024 16:21:07 +0200
+	b=KTLMUM7OnwSyBc+xykMMGBSoBgF+w1Mh00qo+Ilho/vAqCRvSpYQHpx68ro+Xq/wG
+	 4bKq2GYMKHjaQlIsKbZ8yzk1kBm7PGjcFQOh0777sU6XBxXCu84ZreOu3iWKQ7vZ05
+	 HzPAT9anGctxTfjw3O2KXFp/xHB50KEDCJE7H3R/pM4RBVo5tFtir5ZbbJORshZLf/
+	 /N/J/m8mvyti9gao7g8IEt4U/tRvtLEfI7k885LRobX+6snelPE2NvWtsqQ+F3s6WP
+	 EpDc16FLTNsERTtbDVFnl3UW23xk1CBPMeNHdbQoDBv0F7PqnymT2g9vYARfEdYSzD
+	 OVEQGSA+n8OcA==
+Message-ID: <79cffe2d-a4cd-4717-9e20-64b0d22f9125@kernel.org>
+Date: Wed, 15 May 2024 16:21:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,14 +49,13 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 7/9] dt-bindings: fsi: ast2600-fsi-master: Convert to
- json-schema
+Subject: Re: [PATCH v5 8/9] dt-bindings: fsi: Document the AST2700 FSI master
 To: Eddie James <eajames@linux.ibm.com>, linux-fsi@lists.ozlabs.org
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  krzk+dt@kernel.org, conor+dt@kernel.org, robh@kernel.org, joel@jms.id.au,
  andrew@codeconstruct.com.au
 References: <20240514195435.155372-1-eajames@linux.ibm.com>
- <20240514195435.155372-8-eajames@linux.ibm.com>
+ <20240514195435.155372-9-eajames@linux.ibm.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -102,23 +101,16 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240514195435.155372-8-eajames@linux.ibm.com>
+In-Reply-To: <20240514195435.155372-9-eajames@linux.ibm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 14/05/2024 21:54, Eddie James wrote:
-> Convert to json-schema for the AST2600 FSI master documentation.
-
-Nothing explains dropping fsi-master compatible. Every deviation from
-conversion should be explained in the commit msg. Otherwise it is not
-conversion but a change...
-
-
+> Add the appropriate compatible string.
 > 
 > Signed-off-by: Eddie James <eajames@linux.ibm.com>
-> ---
-> Changes since v4:
->  - Remove the addition of the AST2700 compatible
+
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
