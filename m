@@ -1,81 +1,102 @@
-Return-Path: <linux-kernel+bounces-179538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E58698C6118
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:03:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B81C8C611D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:04:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9294B1F232B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 07:03:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D1FB1F23614
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 07:04:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5485241C84;
-	Wed, 15 May 2024 07:03:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A9BA42061;
+	Wed, 15 May 2024 07:03:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DNaYmnP6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ZoC0D+wP"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B0FA40875
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 07:03:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19DA740875;
+	Wed, 15 May 2024 07:03:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715756586; cv=none; b=Ed7QoN0ZV5V3v8Ubg8KzAEOL0A64Gwgsq1cLXFQN6SXK8kJIsskd5TX7DAmq8UJoUEKGvi+XLJ327O0hGbtCar4NUdeHyB4oeq/SD6t81FtHphyG9IDk9XwVRPr+S/CBzKWIEGYWlNc32fQ7l8JFzq4woWmnG59nUCTMnl0mAXY=
+	t=1715756636; cv=none; b=FSCPhVKxCPswp/OJjsqR97XCW24iW1nyWo2a8lRwNxHshhmRlwfmjZoMnm1Pr/g4D2aGfEnI1z/+13ub4CPb1Scw307gkLrz1zcqbGzsiMKq1hr8dIjya0NJ6SYs2I+j1j/8A14Yp7eJG6oeg2tVNE6hyh8wcfkss041Mdvo+l4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715756586; c=relaxed/simple;
-	bh=B4qEMf4EVGsDCaOxKzxxINbFJU5l8ld0fYiuh99Vrd0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=MX9Af8a3R35eWHRRv62V2iBuax03di7hra0E/DhXVWNfDWDzTxkymaFYDtg19j58eIiKUjo8Th0Ffrczv3nRRA7pU3y+jazUpGDlkvlkCdIz9ZgtnRXfx6jLvitBHbCUQ8sBGN10T1mXEbK8ujZnqSU0zML/kE0LH26faJkFRpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DNaYmnP6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA6A2C2BD11;
-	Wed, 15 May 2024 07:03:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715756586;
-	bh=B4qEMf4EVGsDCaOxKzxxINbFJU5l8ld0fYiuh99Vrd0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=DNaYmnP6lqeZPyPEH4NDgKmSjYmC9W/HLk2KbeeSAN78X+py65STTCNKA1KvSaEYT
-	 ZVPx29xw1qFyhgp30weJoH1zCvmxl3BevfyrAKof0HHTqq9b/OvZ40yXJ8LNt79RKM
-	 5BVm2vdbtuCkaqSyVOvsxo+iBWsDfHBDGoqanZ/E4l0vQnmupevWqbQe0pMXibnPor
-	 xjIQSIpV9CgHcOKLX0Xc+iQrBrRxyMnsEG3DJMcI82+vQcHCP1oVOoFCwgYVlSUwM8
-	 bxCDPmgE4k+MG2+8MzwYcC9bXWBDZ7wPZzOkfzAaYnMbkiwU/lw4LZ7XnyeQvqLai3
-	 9xKzdqSQMXGJQ==
-From: =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
-To: Alexandre Ghiti <alexghiti@rivosinc.com>, Albert Ou
- <aou@eecs.berkeley.edu>, David Hildenbrand <david@redhat.com>, Palmer
- Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>,
- linux-riscv@lists.infradead.org
-Cc: =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>, Andrew Bresticker
- <abrestic@rivosinc.com>, Chethan Seshadri
- <Chethan.Seshadri@catalinasystems.io>, Lorenzo Stoakes
- <lstoakes@gmail.com>, Oscar Salvador <osalvador@suse.de>, Santosh Mamila
- <santosh.mamila@catalinasystems.io>, Sivakumar Munnangi
- <siva.munnangi@catalinasystems.io>, Sunil V L <sunilvl@ventanamicro.com>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- virtualization@lists.linux-foundation.org
-Subject: Re: [PATCH v2 8/8] riscv: mm: Add support for ZONE_DEVICE
-In-Reply-To: <20240514140446.538622-9-bjorn@kernel.org>
-References: <20240514140446.538622-1-bjorn@kernel.org>
- <20240514140446.538622-9-bjorn@kernel.org>
-Date: Wed, 15 May 2024 09:03:02 +0200
-Message-ID: <87pltntv4p.fsf@all.your.base.are.belong.to.us>
+	s=arc-20240116; t=1715756636; c=relaxed/simple;
+	bh=a23Cug9AhjPBfUeD7DrLjspv0v/fZFiP7FlrMUsN2eI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=V1fLZOgqnCTi0zmgY8uGXe0U/DykFcyI2e35Ib3W71gkRmH7n21PM1hiVwsybjWINDsPPP+CMn6szD3h1xltQxsArKCZrROFrB9KlHb579ffOtN4ItWujKwKsfBynzhHk/RhNGkSs3ZD7gz+XAXB0vnN2rJGYC3gxno8VUw5boE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ZoC0D+wP; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1715756630;
+	bh=r5Txr5FAnBYVorvwRI+NCbA8wrTB5FWCVzgZp/cBdz8=;
+	h=Date:From:To:Cc:Subject:From;
+	b=ZoC0D+wPftfScTrINazpAMYzM8MYuf2G0L2s/3a5y5RjFQJjzbw3Uyka4irlxhLxl
+	 tCkfiB/3T3/qvCz9EWlC1F7RW91pjZ6xbwgqVbICmh/4FhHxPkYIq1b1oz5orMPH74
+	 t2XW7X4FRgTYgqaNb79lV1+b7oIP+20u3py0cfWUdMJ0kQdXw51QZvSG0iCf3LarDe
+	 DGS7PbfSe8kwcPt45UFbcl5D1Y436L4d/kUSLbN6k6ilQK7K5qgsGUvrmaWfpI/yPb
+	 IAdc+uMBAn0MD0BSF3tSMlxXW/M5TP+EOhjZO8LAksI13HCuUbts8MDchaKlKrkvW4
+	 5eZcT57KHL3Bg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VfPMp1MM3z4x1Q;
+	Wed, 15 May 2024 17:03:49 +1000 (AEST)
+Date: Wed, 15 May 2024 17:03:49 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: David Sterba <dsterba@suse.cz>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patch in the btrfs tree
+Message-ID: <20240515170349.76ed5933@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; boundary="Sig_/L1ZZfe2k_TQjc+/PbzgrEJO";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/L1ZZfe2k_TQjc+/PbzgrEJO
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Bj=C3=B6rn T=C3=B6pel <bjorn@kernel.org> writes:
+Hi all,
 
-> From: Bj=C3=B6rn T=C3=B6pel <bjorn@rivosinc.com>
->
-> ZONE_DEVICE pages need DEVMAP PTEs support to function
-> (ARCH_HAS_PTE_DEVMAP). Claim another RSW (reserved for software) bit
-> in the PTE for DEVMAP mark, add the corresponding helpers, and enable
-> ARCH_HAS_PTE_DEVMAP for riscv64.
+The following commit is also in Linus Torvalds' tree as a different
+commit (but the same patch):
 
-..and this patch has rv32 build issues. Will fix as well.
+  74a82505bc76 ("btrfs: qgroup: fix initialization of auto inherit array")
+
+This is commit
+
+  0e39c9e52447 ("btrfs: qgroup: fix initialization of auto inherit array")
+
+in Linus' tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/L1ZZfe2k_TQjc+/PbzgrEJO
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZEXlUACgkQAVBC80lX
+0GyWSgf/QDJxwhSAfe3DC5UQ/glTYetA1yNn8qtCUuP7+wwWvUPC4QOgmaXOv9bD
+YDoNIqQEIFWdpTP57gyu7nZp5ObK2VJYSNxXQNIJ3EPFj2zWB0Pa+V/ulkAMMV+2
+e6uKnpXYwxdSBrcLD/JgkkSEuw0mi6PUpJWrsSUzFX5jcIljIzFqKhuC6TynpJyZ
+G/OLRctMwdqkCzu2a1WsF7ryZr1ErrbtsF3WgGvA+SzNEx2w8acdoq1hfnbGn6ku
+mMbD6Z98MPY6E7+xtNqgGB9vHc4C9BtpOiF19zb8Ok6uTBCLJJBuDPzlCERSNiAq
++o0/13zwu9g4MoyOrQ9gxj8FhbsQjg==
+=suKi
+-----END PGP SIGNATURE-----
+
+--Sig_/L1ZZfe2k_TQjc+/PbzgrEJO--
 
