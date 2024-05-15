@@ -1,148 +1,263 @@
-Return-Path: <linux-kernel+bounces-179618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACC1F8C6258
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:58:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A94FD8C625C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:59:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDB3A1C20BB3
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 07:58:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D530BB21A9D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 07:59:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D18A7482C3;
-	Wed, 15 May 2024 07:58:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3352A4AEE0;
+	Wed, 15 May 2024 07:59:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="bwIdvmve"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB82A482E9;
-	Wed, 15 May 2024 07:58:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="knHEnaMU"
+Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93FDC482CD
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 07:59:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715759898; cv=none; b=I86FZU8xftwK2SLv+U+myEt85VV7ZvujBUry7E6fXt7jtf2lgWncYW0kv/fFO5CEotXXTdAvzBJUPV00XLU8tvQ/iBV3iD3hWn4CQqeTwLKz3KYMXBuRYhUb4hPtSaL+8pwXtrwDliPqFD/oQw+FY47tJidHL/2W2SXP+Dopy6g=
+	t=1715759956; cv=none; b=lerW/oqaqmc0VnbNH4odqZxTSdktCFT2Fqw0FuvAy97Pzndjz/kQQ06EdUxJo3oflKfgAkeWwJY5RJCNWEBvFjw+i96EI4UjB+2mTrnIIdwadr+Lw5erC45XLKDakALfnnNzmRpmmj1eLS9qf6y0HTaxuqubwYpd8TcUFV0TH3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715759898; c=relaxed/simple;
-	bh=hJMKYClT3rIcCrTCK6ORUFF1P5fFlzLKjJG4W7J5QFo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=lCmJzlfXrz9QtV60ulBT6xZ7tHenOSZUaeEL5HHs8dhwSvS5qX6BRc5pQPjKDwGgXI6yXodGqia/xz+59gdpIyYheIN614f4L3AAZAICZB1ZzUZS6Xcbjr96ExhOrhP33F0Qk7kHcZrbrptMXhb/GdJvxea3017fafQvpK0haUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=bwIdvmve reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=MrGCgqKguiY7hQ9HCx9sc6Em/KsIRxXTbthTm4JpM3w=; b=b
-	wIdvmveH7dRBOheQkZ2ibyUbL1QZ4jKhXWhqk1WZAa093edVxyu4Z0gN5tAeOQQE
-	xeeijkedHo8ZaUClMN6SFhkFRebUc1P8fUavS1p4/c24mluDODkeNbM47ljG8W9h
-	buON4Z6Gi2XtzDP8mfOYwk2lUmJeaa5k78bfgPPSbQ=
-Received: from slark_xiao$163.com ( [223.104.68.205] ) by
- ajax-webmail-wmsvr-40-127 (Coremail) ; Wed, 15 May 2024 15:57:59 +0800
- (CST)
-Date: Wed, 15 May 2024 15:57:59 +0800 (CST)
-From: "Slark Xiao" <slark_xiao@163.com>
-To: "Manivannan Sadhasivam" <manivannan.sadhasivam@linaro.org>
-Cc: loic.poulain@linaro.org, mhi@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re:Re: Re:Re: [PATCH] bus: mhi: host: Add Foxconn SDX72 related
- support
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20230109(dcb5de15)
- Copyright (c) 2002-2024 www.mailtech.cn 163com
-In-Reply-To: <20240515074315.GB2445@thinkpad>
-References: <20240510032657.789629-1-slark_xiao@163.com>
- <20240514143741.GA2306@thinkpad>
- <541de8e4.1600.18f79de44f3.Coremail.slark_xiao@163.com>
- <fc42977.1ac5.18f79eb945a.Coremail.slark_xiao@163.com>
- <20240515074315.GB2445@thinkpad>
-X-NTES-SC: AL_Qu2aB/uetkAs7yKQZ+kfm0kaj+c/WMGzu/8m3oFXO51wjA/p9R8Ab25qLX/Vwd6AAAyRtzG+XDNV0PRYYrFmXaQGNN5TjrI9qoCZ/7m7datPbg==
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1715759956; c=relaxed/simple;
+	bh=rE6QtgB4pJV8baaXT7OsQtNS6Jx+xpsopoS6BTg2kRs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DK5fNez2fsHpj01uGYZFw9KM6zWOb0N9TZhcBQp9VTc6JW21Hveq+aIZq24tSWSmqAViAeEpyXtOECWEVO4X32l9hO2nSMo52CGyiROzI7iyCDUHGgcPAQpDO6mLiRaEj7KdSUFVatBfIRPECbx85GVFXbt3OeFgzUmlUxe3evo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=knHEnaMU; arc=none smtp.client-ip=209.85.221.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-4df4016b3c9so2232537e0c.1
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 00:59:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715759952; x=1716364752; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=stvuLC23frfwxRFRW518FVRgKrESd+Az5OD98TQsSqo=;
+        b=knHEnaMUmFtWfPmfQmxZ0PyQHSg4SwuLXsPEEHAw8BizuBNCpcK0ksM0+r1GI8jEqm
+         esTnZn9ZcSIBiMoNNXkCq+3VIUn+1wTbNZBfDegoz0QM5z5GNV4IWKxUB2KPu6nztdAC
+         nDAe254SJ5fHitrKE9OsN31f8XtkYGPyRUNCSEpmhfjdzOh8cU0N8dxEEb8DK+4Qs3Ik
+         HcLns0Ct/9Y4c4WNQywIyTNDgcFO3PnB4PXAxZlHt9adgKI6aykjXglLGDUl1CE/Rc55
+         k2CIrJtlfR07HTejEiUhu/ad1bD68o+0hQDfHH6pkYGdcL6kcAIeKRijbFS+qTE/+wAF
+         0UkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715759952; x=1716364752;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=stvuLC23frfwxRFRW518FVRgKrESd+Az5OD98TQsSqo=;
+        b=L21k9SAiURHkrcEEsKXcgPD4M1zg7+wbFEVJdNRamfgz4XgL8SzrFzSqt9U7jo/Qah
+         YM0wNdDBymSOjXMU0V7WrzY2TmZvN9g8xU51QXVSR9fsN93PddwPWUUEMDIwPpqS1rT8
+         jZg969gr8bAI0R8ryv9/Cgd4GJVAIDgNzSR8IfgmoHmDum24WBQyAUb9HiABAbxYLIYE
+         WcO8LVTa/AiShlll75PwXGQntTrul1LyJS3hfA7VeA6nN4AVW6EhckncFwKCJPqDwGnV
+         rzqdph6ywvyRH9/0oqFbYPlGNWqNpq42BOmO6f/3CFEdV4lUPqSSJLbyEME8F9pf1YOR
+         gP+w==
+X-Forwarded-Encrypted: i=1; AJvYcCWuYaEk5FTBC/umTKhoXh021KIiOxD9ZaSH/KRMG6jilhHsKO6cVXKk8ovyEBhF8wzcucQs89cMcE+9wX9rRZDnMaR+Z1xDwpBQso09
+X-Gm-Message-State: AOJu0YxCvallI82zx+YQeGmvaetcV2W8mGfMCH78p/mbqZr6ufE/xLka
+	vDPXThoC/YHqXr4TqbPvGnzqFjFMjk8vt337+QJvKAwIoGxn3uX/4UE21frE+kq/Sn3t3Upj3hZ
+	fKwQXMTf9IdaJcVGZ+/4fMHhMeMM3ilq7mfmr
+X-Google-Smtp-Source: AGHT+IFrk0jr8H15uv7ZhZdzYXIEBxJimfqRYa+asL8SJa1kirroYIbmvGHEcutKM8i1WDSp5mX2XcRA1m3SX+TWVAI=
+X-Received: by 2002:a05:6122:17a0:b0:4d4:eff:454 with SMTP id
+ 71dfb90a1353d-4df8829ce08mr13514421e0c.1.1715759952329; Wed, 15 May 2024
+ 00:59:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <4717acb4.7aa5.18f7b421477.Coremail.slark_xiao@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:_____wD3f4AHa0RmpV4BAA--.2951W
-X-CM-SenderInfo: xvod2y5b0lt0i6rwjhhfrp/1tbiJR3fZGVOBNIhwAACsd
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+References: <20240510141921.883231-1-leitao@debian.org> <ef8c5f6d-17e3-4504-8560-b970912b9eae@acm.org>
+ <de92101c-f9c4-4af4-95f4-19a6f59b636f@paulmck-laptop> <d037f37a-4722-4a1d-a282-63355a97a1a1@acm.org>
+ <c83d9c25-b839-4e31-8dd4-85f3cb938653@paulmck-laptop> <4d230bac-bdb0-4a01-8006-e95156965aa8@acm.org>
+ <447ad732-3ff8-40bf-bd82-f7be66899cee@paulmck-laptop> <ca7c2ef0-7e21-4fb3-ac6b-3dae652a7a0e@acm.org>
+ <59ec96c2-52ce-4da1-92c3-9fe38053cd3d@paulmck-laptop> <CANpmjNMj9r1V6Z63fcJxrFC1v4i2vUCEhm1HT77ikxhx0Rghdw@mail.gmail.com>
+ <dd251dba-0a63-4b57-a05b-bfa02615fae5@paulmck-laptop>
+In-Reply-To: <dd251dba-0a63-4b57-a05b-bfa02615fae5@paulmck-laptop>
+From: Marco Elver <elver@google.com>
+Date: Wed, 15 May 2024 09:58:35 +0200
+Message-ID: <CANpmjNMqRUNUs1mZEhrOSyK0Hk+PdGOi+VAs22qYD+1zTkwfhg@mail.gmail.com>
+Subject: Re: [PATCH] block: Annotate a racy read in blk_do_io_stat()
+To: paulmck@kernel.org
+Cc: Bart Van Assche <bvanassche@acm.org>, Breno Leitao <leitao@debian.org>, Jens Axboe <axboe@kernel.dk>, 
+	"open list:BLOCK LAYER" <linux-block@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-QXQgMjAyNC0wNS0xNSAxNTo0MzoxNSwgIk1hbml2YW5uYW4gU2FkaGFzaXZhbSIgPG1hbml2YW5u
-YW4uc2FkaGFzaXZhbUBsaW5hcm8ub3JnPiB3cm90ZToKPk9uIFdlZCwgTWF5IDE1LCAyMDI0IGF0
-IDA5OjQzOjUzQU0gKzA4MDAsIFNsYXJrIFhpYW8gd3JvdGU6Cj4+IAo+PiBTZW5kIGFnYWluIHdp
-dGggdGV4dCBtb2RlLgo+PiBBdCAyMDI0LTA1LTE1IDA5OjI5OjIwLCAiU2xhcmsgWGlhbyIgPHNs
-YXJrX3hpYW9AMTYzLmNvbT4gd3JvdGU6Cj4+ID5BdCAyMDI0LTA1LTE0IDIyOjM3OjQxLCAiTWFu
-aXZhbm5hbiBTYWRoYXNpdmFtIiA8bWFuaXZhbm5hbi5zYWRoYXNpdmFtQGxpbmFyby5vcmc+IHdy
-b3RlOgo+PiA+Pk9uIEZyaSwgTWF5IDEwLCAyMDI0IGF0IDExOjI2OjU3QU0gKzA4MDAsIFNsYXJr
-IFhpYW8gd3JvdGU6Cj4+ID4+PiBBbGlnbiB3aXRoIFFjb20gU0RYNzIsIGFkZCByZWFkeSB0aW1l
-b3V0IGl0ZW0gZm9yIEZveGNvbm4gU0RYNzIuCj4+ID4+PiBBbmQgYWxzbywgYWRkIGZpcmVob3Nl
-IHN1cHBvcnQgc2luY2UgU0RYNzIuCj4+ID4+PiAKPj4gPj4+IFNpZ25lZC1vZmYtYnk6IFNsYXJr
-IFhpYW8gPHNsYXJrX3hpYW9AMTYzLmNvbT4KPj4gPj4+IC0tLQo+PiA+Pj4gIGRyaXZlcnMvYnVz
-L21oaS9ob3N0L3BjaV9nZW5lcmljLmMgfCAzMSArKysrKysrKysrKysrKysrKysrKysrKysrKysr
-KysKPj4gPj4+ICAxIGZpbGUgY2hhbmdlZCwgMzEgaW5zZXJ0aW9ucygrKQo+PiA+Pj4gCj4+ID4+
-PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9idXMvbWhpL2hvc3QvcGNpX2dlbmVyaWMuYyBiL2RyaXZl
-cnMvYnVzL21oaS9ob3N0L3BjaV9nZW5lcmljLmMKPj4gPj4+IGluZGV4IDA4ODQ0ZWU3OTY1NC4u
-MGZkOTRjMTkzZmM2IDEwMDY0NAo+PiA+Pj4gLS0tIGEvZHJpdmVycy9idXMvbWhpL2hvc3QvcGNp
-X2dlbmVyaWMuYwo+PiA+Pj4gKysrIGIvZHJpdmVycy9idXMvbWhpL2hvc3QvcGNpX2dlbmVyaWMu
-Ywo+PiA+Pj4gQEAgLTM5OSw2ICszOTksOCBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IG1oaV9jaGFu
-bmVsX2NvbmZpZyBtaGlfZm94Y29ubl9zZHg1NV9jaGFubmVsc1tdID0gewo+PiA+Pj4gIAlNSElf
-Q0hBTk5FTF9DT05GSUdfREwoMTMsICJNQklNIiwgMzIsIDApLAo+PiA+Pj4gIAlNSElfQ0hBTk5F
-TF9DT05GSUdfVUwoMzIsICJEVU4iLCAzMiwgMCksCj4+ID4+PiAgCU1ISV9DSEFOTkVMX0NPTkZJ
-R19ETCgzMywgIkRVTiIsIDMyLCAwKSwKPj4gPj4+ICsJTUhJX0NIQU5ORUxfQ09ORklHX1VMX0ZQ
-KDM0LCAiRklSRUhPU0UiLCAzMiwgMCksCj4+ID4+PiArCU1ISV9DSEFOTkVMX0NPTkZJR19ETF9G
-UCgzNSwgIkZJUkVIT1NFIiwgMzIsIDApLAo+PiA+Pgo+PiA+PlRoaXMgbWVhbnMgU0RYNTUgaXMg
-YWxzbyBzdXBwb3J0aW5nIEZJUkVIT1NFIGNoYW5uZWxzLCB3aGljaCBpcyBub3QgdHJ1ZSBJCj4+
-ID4+YmVsaWV2ZS4KPj4gPkFjdHVhbGx5LCBJIGp1c3QgdmVyaWZpZWQgaXQgd2l0aCBteSBzZHg1
-NSBhbmQgdGhlIGFuc3dlciBpcyBZZXMuIFRoZXNlIGNoYW5uZWxzCj4+ID5hcmUgY29tbW9uIHNl
-dHRpbmdzIGZvciBRY29tIGRldmljZSB3aGljaCBzdXBwb3J0IFBDSWUgbW9kZS4gQlRXLCB0aGUK
-Pj4gPmRlZmF1bHQgc2V0dGluZ3Mgb2YgUWNvbSBhbmQgUXVlY3RlbCBzdXBwb3J0IGZpcmVob3Nl
-IGZvciB0aGVpciBzZHg1NSBwcm9kdWN0cy4KPj4gPj4KPj4gPj4+ICAJTUhJX0NIQU5ORUxfQ09O
-RklHX0hXX1VMKDEwMCwgIklQX0hXMF9NQklNIiwgMTI4LCAyKSwKPj4gPj4+ICAJTUhJX0NIQU5O
-RUxfQ09ORklHX0hXX0RMKDEwMSwgIklQX0hXMF9NQklNIiwgMTI4LCAzKSwKPj4gPj4+ICB9Owo+
-PiA+Pj4gQEAgLTQxOSw2ICs0MjEsMTYgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBtaGlfY29udHJv
-bGxlcl9jb25maWcgbW9kZW1fZm94Y29ubl9zZHg1NV9jb25maWcgPSB7Cj4+ID4+PiAgCS5ldmVu
-dF9jZmcgPSBtaGlfZm94Y29ubl9zZHg1NV9ldmVudHMsCj4+ID4+PiAgfTsKPj4gPj4+ICAKPj4g
-Pj4+ICtzdGF0aWMgY29uc3Qgc3RydWN0IG1oaV9jb250cm9sbGVyX2NvbmZpZyBtb2RlbV9mb3hj
-b25uX3NkeDcyX2NvbmZpZyA9IHsKPj4gPj4+ICsJLm1heF9jaGFubmVscyA9IDEyOCwKPj4gPj4+
-ICsJLnRpbWVvdXRfbXMgPSAyMDAwMCwKPj4gPj4+ICsJLnJlYWR5X3RpbWVvdXRfbXMgPSA1MDAw
-MCwKPj4gPj4+ICsJLm51bV9jaGFubmVscyA9IEFSUkFZX1NJWkUobWhpX2ZveGNvbm5fc2R4NTVf
-Y2hhbm5lbHMpLAo+PiA+Pj4gKwkuY2hfY2ZnID0gbWhpX2ZveGNvbm5fc2R4NTVfY2hhbm5lbHMs
-Cj4+ID4+PiArCS5udW1fZXZlbnRzID0gQVJSQVlfU0laRShtaGlfZm94Y29ubl9zZHg1NV9ldmVu
-dHMpLAo+PiA+Pj4gKwkuZXZlbnRfY2ZnID0gbWhpX2ZveGNvbm5fc2R4NTVfZXZlbnRzLAo+PiA+
-Pj4gK307Cj4+ID4+PiArCj4+ID4+PiAgc3RhdGljIGNvbnN0IHN0cnVjdCBtaGlfcGNpX2Rldl9p
-bmZvIG1oaV9mb3hjb25uX3NkeDI0X2luZm8gPSB7Cj4+ID4+PiAgCS5uYW1lID0gImZveGNvbm4t
-c2R4MjQiLAo+PiA+Pj4gIAkuY29uZmlnID0gJm1vZGVtX2ZveGNvbm5fc2R4NTVfY29uZmlnLAo+
-PiA+Pj4gQEAgLTQ0OCw2ICs0NjAsMTYgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBtaGlfcGNpX2Rl
-dl9pbmZvIG1oaV9mb3hjb25uX3NkeDY1X2luZm8gPSB7Cj4+ID4+PiAgCS5zaWRlYmFuZF93YWtl
-ID0gZmFsc2UsCj4+ID4+PiAgfTsKPj4gPj4+ICAKPj4gPj4+ICtzdGF0aWMgY29uc3Qgc3RydWN0
-IG1oaV9wY2lfZGV2X2luZm8gbWhpX2ZveGNvbm5fc2R4NzJfaW5mbyA9IHsKPj4gPj4+ICsJLm5h
-bWUgPSAiZm94Y29ubi1zZHg3MiIsCj4+ID4+PiArCS5lZGwgPSAicWNvbS9zZHg3Mm0veGJsX3Nf
-ZGV2cHJnX25zLm1lbGYiLAo+PiA+Pgo+PiA+PldoYXQgaXMgJy5tZWxmJz8gSXMgdGhlIGZpcm13
-YXJlIGF2YWlsYWJsZSBzb21ld2hlcmU/IERpZCB5b3UgcGxhbiB0byB1cHN0cmVhbQo+PiA+Pml0
-IHRvIGxpbnV4LWZpcm13YXJlPwo+PiA+Pgo+PiA+VGhpcyBmaWxlIHNpbWlsYXIgd2l0aCAiZWRs
-Lm1ibiIuIEluIFNEWDcyIHByb2R1Y3QsIHRoZSBkZWZhdWx0ICJlZGwiIGZpbGUgbmFtZSBpcwo+
-PiA+InhibF9zX2RldnByZ19ucy5tZWxmIi4gQ3VycmVudGx5IHdlIGRvbid0IHBsYW4gdG8gdXBz
-dHJlYW0gaXQgdG8gbGludXgtZmlybXdhcmUKPj4gPnNpbmNlIDIgcmVhc29uczogMTogd2Ugc2hh
-cmUgdGhlIHNhbWUgZm9sZCBuYW1lIHNkeDcybSB3aXRoIHFjb20gb3Igb3RoZXIgdmVuZG9ycwo+
-PiA+MjogdGhpcyBmaWxlIG1heSBiZSBjaGFuZ2VkIHNpbmNlIHNkeDcyIHByb2R1Y3Qgc3RpbGwg
-dW5kZXIgZGV2ZWxvcGluZyBpbiBvdXIgc2lkZS4gd2UKPj4gPm1heSBjaGFuZ2UgdGhlIGJhc2Ug
-bGluZSBhY2NvcmRpbmcgdG8gUUNPTSByZWxlYXNlLgo+PiA+Pi0gTWFuaQo+PiA+Pgo+PiBBbmQg
-SSB3YW50IHRvIHNheSwgdGhlIG9zIG9yIGRyaXZlciBjYW4ndCByZWNvdmVyIGRldmljZSB3aXRo
-IHRoaXMgImVkbCIgZmlsZSBvbmx5LiBUaGlzIGZpbGUKPj4gb25seSB1c2VkIHdoZW4gZGV2aWNl
-IG5lZWRzIHRvIGJlIGNoYW5nZWQgdG8gZmlyZWhvc2UgbW9kZS4gQWZ0ZXIgdGhhdCwgd2UgbmVl
-ZAo+PiBhIHRvb2wgYW5kIGEgY29tcGxldGUgZmlybXdhcmUgcGFja2FnZSB0byBkbyB0aGUgZmly
-ZWhvc2UgZG93bmxvYWQuIFVuZm9ydHVuYXRlbHksCj4+IHRoZXJlIGlzIG5vIG9wZW4gc291cmNl
-IHRvb2wgdG8gc3VwcG9ydCB0aGlzIGRvd25sb2FkLiBFdmVuIFFjb20gUENBVCB0b29sIG9ubHkK
-Pj4gc3VwcG9ydHMgdGhlaXIgb3duIFZJRC9QSUQgd2l0aCB0aGVpciBvd24gZHJpdmVyLiBTbyB0
-aGUgZnVuY3Rpb24gb2YgbWhpIGRyaXZlciBpczoKPj4gUHV0IGRldmljZSBpbnRvIGZpcmVob3Nl
-IG1vZGUgYW5kIGVudW1lcmF0ZSB0aGUgd3dhbjBmaXJlaG9zZTAgcG9ydC4gVGhlIHJlc3QKPj4g
-c2hhbGwgYmUgZG9uZSBieSBlbmR1c2VyIHRoZW1zZWx2ZXMuIAo+Cj5DYW4ndCB5b3UgdXNlIFFE
-TCB0b29sPyBodHRwczovL2dpdGh1Yi5jb20vbGludXgtbXNtL3FkbAo+Cj4tIE1hbmkKPgpOby4g
-V2UgdXNlZCB0aGlzIHRvb2wgZm9yIFVTQiBvbmx5LiBUaGlzIHRvb2wgZG9uJ3Qgc3VwcG9ydCBQ
-Q0lFIGRldmljZSBjdXJyZW50bHkuCnFkbCB3aWxsIGNhbGwgdGhlIGZ1bmN0aW9uIHVzYl9vcGVu
-IHRvIGdldCBkZXZpY2Ugbm9kZSBpbiAKL2Rldi9idXMvdXNiLiBCdXQgZm9yIFBDSUUgZGV2aWNl
-ICwgd2Ugd2lsbCBjb21tdW5pY2F0ZSBkZXZpY2Ugd2l0aCB3d2FuMGZpcmVob3NlMApwb3J0LiAK
-Pi0tIAo+4K6u4K6j4K6/4K614K6j4K+N4K6j4K6p4K+NIOCumuCupOCuvuCumuCuv+CuteCuruCv
-jQo=
+On Wed, 15 May 2024 at 01:47, Paul E. McKenney <paulmck@kernel.org> wrote:
+>
+> On Mon, May 13, 2024 at 10:13:49AM +0200, Marco Elver wrote:
+> > On Sat, 11 May 2024 at 02:41, Paul E. McKenney <paulmck@kernel.org> wrote:
+> > [...]
+> > > ------------------------------------------------------------------------
+> > >
+> > > commit 930cb5f711443d8044e88080ee21b0a5edda33bd
+> > > Author: Paul E. McKenney <paulmck@kernel.org>
+> > > Date:   Fri May 10 15:36:57 2024 -0700
+> > >
+> > >     kcsan: Add example to data_race() kerneldoc header
+> > >
+> > >     Although the data_race() kerneldoc header accurately states what it does,
+> > >     some of the implications and usage patterns are non-obvious.  Therefore,
+> > >     add a brief locking example and also state how to have KCSAN ignore
+> > >     accesses while also preventing the compiler from folding, spindling,
+> > >     or otherwise mutilating the access.
+> > >
+> > >     [ paulmck: Apply Bart Van Assche feedback. ]
+> > >
+> > >     Reported-by: Bart Van Assche <bvanassche@acm.org>
+> > >     Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> > >     Cc: Marco Elver <elver@google.com>
+> > >     Cc: Breno Leitao <leitao@debian.org>
+> > >     Cc: Jens Axboe <axboe@kernel.dk>
+> > >
+> > > diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+> > > index c00cc6c0878a1..9249768ec7a26 100644
+> > > --- a/include/linux/compiler.h
+> > > +++ b/include/linux/compiler.h
+> > > @@ -194,9 +194,17 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
+> > >   * This data_race() macro is useful for situations in which data races
+> > >   * should be forgiven.  One example is diagnostic code that accesses
+> > >   * shared variables but is not a part of the core synchronization design.
+> > > + * For example, if accesses to a given variable are protected by a lock,
+> > > + * except for diagnostic code, then the accesses under the lock should
+> > > + * be plain C-language accesses and those in the diagnostic code should
+> > > + * use data_race().  This way, KCSAN will complain if buggy lockless
+> > > + * accesses to that variable are introduced, even if the buggy accesses
+> > > + * are protected by READ_ONCE() or WRITE_ONCE().
+> > >   *
+> > > - * This macro *does not* affect normal code generation, but is a hint
+> > > - * to tooling that data races here are to be ignored.
+> > > + * This macro *does not* affect normal code generation, but is a hint to
+> > > + * tooling that data races here are to be ignored.  If code generation must
+> > > + * be protected *and* KCSAN should ignore the access, use both data_race()
+> >
+> > "code generation must be protected" seems ambiguous, because
+> > protecting code generation could mean a lot of different things to
+> > different people.
+> >
+> > The more precise thing would be to write that "If the access must be
+> > atomic *and* KCSAN should ignore the access, use both ...".
+>
+> Good point, and I took your wording, thank you.
+>
+> > I've also had trouble in the past referring to "miscompilation" or
+> > similar, because that also entirely depends on the promised vs.
+> > expected semantics: if the code in question assumes for the access to
+> > be atomic, the compiler compiling the code in a way that the access is
+> > no longer atomic would be a "miscompilation". Although is it still a
+> > "miscompilation" if the compiler generated code according to specified
+> > language semantics (say according to our own LKMM) - and that's where
+> > opinions can diverge because it depends on which side we stand
+> > (compiler vs. our code).
+>
+> Agreed, use of words like "miscompilation" can annoy people.  What
+> word would you suggest using instead?
+
+Not sure. As suggested above, I try to just stick to "atomic" vs
+"non-atomic" because that's ultimately the functional end result of
+such a miscompilation. Although I've also had people be confused as in
+"what atomic?! as in atomic RMW?!", but I don't know how to remove
+that kind of confusion.
+
+If, however, our intended model is the LKMM and e.g. a compiler breaks
+a dependency-chain, then we could talk about miscompilation, because
+the compiler violates our desired language semantics. Of course the
+compiler writers then will say that we try to do things that are
+outside any implemented language semantics the compiler is aware of,
+so it's not a miscompilation again. So it all depends on which side
+we're arguing for. Fun times.
+
+> > > + * and READ_ONCE(), for example, data_race(READ_ONCE(x)).
+> >
+> > Having more documentation sounds good to me, thanks for adding!
+> >
+> > This extra bit of documentation also exists in a longer form in
+> > access-marking.txt, correct? I wonder how it would be possible to
+> > refer to it, in case the reader wants to learn even more.
+>
+> Good point, especially given that I had forgotten about it.
+>
+> I don't have any immediate ideas for calling attention to this file,
+> but would the following update be helpful?
+
+Mentioning __data_racy along with data_race() could be helpful, thank
+you. See comments below.
+
+Thanks,
+-- Marco
+
+>                                                         Thanx, Paul
+>
+> ------------------------------------------------------------------------
+>
+> diff --git a/tools/memory-model/Documentation/access-marking.txt b/tools/memory-model/Documentation/access-marking.txt
+> index 65778222183e3..690dd59b7ac59 100644
+> --- a/tools/memory-model/Documentation/access-marking.txt
+> +++ b/tools/memory-model/Documentation/access-marking.txt
+> @@ -24,6 +24,12 @@ The Linux kernel provides the following access-marking options:
+>  4.     WRITE_ONCE(), for example, "WRITE_ONCE(a, b);"
+>         The various forms of atomic_set() also fit in here.
+>
+> +5.     ASSERT_EXCLUSIVE_ACCESS() and ASSERT_EXCLUSIVE_WRITER().
+
+Perhaps worth mentioning, but they aren't strictly access-marking
+options. In the interest of simplicity could leave it out.
+
+> +6.     The volatile keyword, for example, "int volatile a;"
+
+See below - I'm not sure we should mention volatile. It may set the
+wrong example.
+
+> +7.     __data_racy, for example "int __data_racy a;"
+> +
+>
+>  These may be used in combination, as shown in this admittedly improbable
+>  example:
+> @@ -205,6 +211,27 @@ because doing otherwise prevents KCSAN from detecting violations of your
+>  code's synchronization rules.
+>
+>
+> +Use of volatile and __data_racy
+> +-------------------------------
+> +
+> +Adding the volatile keyword to the declaration of a variable causes both
+> +the compiler and KCSAN to treat all reads from that variable as if they
+> +were protected by READ_ONCE() and all writes to that variable as if they
+> +were protected by WRITE_ONCE().
+
+"volatile" isn't something we encourage, right? In which case, I think
+to avoid confusion we should not mention volatile. After all we have
+this: Documentation/process/volatile-considered-harmful.rst
+
+> +Adding the __data_racy type qualifier to the declaration of a variable
+> +causes KCSAN to treat all accesses to that variable as if they were
+> +enclosed by data_race().  However, __data_racy does not affect the
+> +compiler, though one could imagine hardened kernel builds treating the
+> +__data_racy type qualifier as if it was the volatile keyword.
+> +
+> +Note well that __data_racy is subject to the same pointer-declaration
+> +rules as is the volatile keyword.  For example:
+
+To avoid referring to volatile could make it more general and say "..
+rules as other type qualifiers like const and volatile".
+
+
+> +       int __data_racy *p; // Pointer to data-racy data.
+> +       int *__data_racy p; // Data-racy pointer to non-data-racy data.
+> +
+> +
+>  ACCESS-DOCUMENTATION OPTIONS
+>  ============================
+>
+> @@ -342,7 +369,7 @@ as follows:
+>
+>  Because foo is read locklessly, all accesses are marked.  The purpose
+>  of the ASSERT_EXCLUSIVE_WRITER() is to allow KCSAN to check for a buggy
+> -concurrent lockless write.
+> +concurrent write, whether marked or not.
+>
+>
+>  Lock-Protected Writes With Heuristic Lockless Reads
 
