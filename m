@@ -1,273 +1,237 @@
-Return-Path: <linux-kernel+bounces-179400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76A7B8C5FC3
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:40:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE36C8C5FC5
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:43:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EE851C20C66
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 04:40:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C71B28382C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 04:43:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E05C73838A;
-	Wed, 15 May 2024 04:39:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BA6238FA3;
+	Wed, 15 May 2024 04:43:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YqO18MEb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AKzzblkw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF9A320314
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 04:39:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 711DD20314
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 04:43:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715747996; cv=none; b=KFA7GPIabTY4O2tMRejZROMQYfi2E+ffcawkhf3NJ8qbyzJ7mpGJhq4aGZXdH/x2Knm/A1CA63U4B0kTVBDZOMYxmWG4OaPvGUV4IfU5sraAo6bJFavXyZ0IOYUXLVVx7xAxV2rttCRaXhFwb6OGrZ7aj4TDJfsw7eDcHaR2hbA=
+	t=1715748180; cv=none; b=beiX21hb5lJF2SJDBDwXCHuPf8LrZZFcxgpeUdy4tikyXYn5f9K1GYNNUdZzXkllpZSxOaGCeZAr3FMNSz5us5eNnqJud0I3rlrdbweQHr6xaU0sTXXAaKkYX3gOFcjIzw4JTEckQVvQPcveiIZTKTXCPPPEyZXpNZ42GkZsM2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715747996; c=relaxed/simple;
-	bh=n0yrT64pY/eVge12/E8DV4OoPeWlIcq/Yq63xC7LMjY=;
+	s=arc-20240116; t=1715748180; c=relaxed/simple;
+	bh=jy5otEzLfLXZZNVXtUs5okcuruFaJ61JLnJElzJItCg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TohUmZg5siS8hAr0HwXRELQJZ/YCyTMSi2g9CI3mPN3Eee2KnskIglouqp/adJabTEwddi4Z4kSJPMh/YzdhMfgPlb7tfCHMiEfwYfm8+LU40tpZ+P14guQzChZFsrdcbR2IYiezY7/cvpYKXT5b7QcQ3n7Nd4ljlotxWjpD2xo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YqO18MEb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 256D2C116B1;
-	Wed, 15 May 2024 04:39:55 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=YGLSRgH0DwnfHmzMkEruEcO9H4i0bNnoNjwkdV+iGZBc6QGJrx13yO5H6rAJQHIroV149UAVxMa+2tmNdzIo61I8SNM29c/ofYN4WZIORv3Kbt/AeK/Rq7/PWr3ZcZsnUmGLCXrxfDHkpMaKm0sKs8iCFWB4qrKQhjdNaPnZ9tQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AKzzblkw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBF9AC116B1;
+	Wed, 15 May 2024 04:42:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715747995;
-	bh=n0yrT64pY/eVge12/E8DV4OoPeWlIcq/Yq63xC7LMjY=;
+	s=k20201202; t=1715748180;
+	bh=jy5otEzLfLXZZNVXtUs5okcuruFaJ61JLnJElzJItCg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YqO18MEbKnnQtMQqoFFEvaB0VWPmTe1w/AFGlvhekCKgkPLEvr6XRWmTOSrLxuQVL
-	 GwxREmU8RLZXZ21BiqDqcE+PobhNTIFCSdQ/nKR8mdkDPkdG+XYyHjp56XXN+EAwQx
-	 v/ZrI3ZKImGp9hcd9KxUbwOSyA2saSmkJ/SCzRo8kl4W5I/1OC+rFDTUSHHn/grYzi
-	 pHbAX59J+FKyBg+rg8FGirdBelUOVRpupYriIPCxsP+GJR4bW2UsWtdyjUwgtkXaxr
-	 Pa94+V7ZSzPBkG/4ameLxtCmndfxopF5JbvoF/HBhGFIIshN1kprlWJDptn9YfXDbk
-	 Q+bw8o0aai58A==
-Date: Wed, 15 May 2024 04:39:53 +0000
+	b=AKzzblkwguZgKBXTqvFSparHxoKeHbeWBe9LZyGRCc4rfV+6UQk8D7bh9bD10wgZk
+	 apj4dSu1TULS6fknte53/7h52ndXfArdfm1F0n5RpN1ePe8YxNJ59ZM1c39W92wMmL
+	 61r0YhJd+4KGLlmG2IJtfE0AQOuMFELG4QP2RX92PtnCRjrlUizZyUT8cbKq0dDu0l
+	 7gYb7ceQca7dRYGTwfXadaz5iv3uMbmm6cXB1aRhg/tzjUIPbqUaxlmmpNG26UoiB0
+	 yrl4Qx5cpqo5LSZEB2X+mEBjoum/fOGxattXtQ5b4Ba9QisBXoPOot3bJGINnoX8Zs
+	 xNm+kSMA4vbZA==
+Date: Wed, 15 May 2024 04:42:58 +0000
 From: Jaegeuk Kim <jaegeuk@kernel.org>
 To: Chao Yu <chao@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
-	syzbot+848062ba19c8782ca5c8@syzkaller.appspotmail.com
-Subject: Re: [PATCH 3/3] f2fs: fix to do sanity check on i_nid for
- inline_data inode
-Message-ID: <ZkQ8mSYP50Etp0-C@google.com>
-References: <20240506103313.773503-1-chao@kernel.org>
- <20240506103313.773503-3-chao@kernel.org>
- <ZjzxWp4-wmpCzBeB@google.com>
- <b58d0a62-9491-4b77-a3be-70331f849bb8@kernel.org>
- <Zj2WWpHmHaWKbDgG@google.com>
- <948ecc86-63f5-48bb-b71c-61d57cbf446c@kernel.org>
- <Zj6-Fl5OQrHyg0g_@google.com>
- <02a4e80f-a146-4862-8399-3db42979b8fb@kernel.org>
- <ZkOMSQK6hitduUYK@google.com>
- <43f128b0-5151-4ae6-9bc0-438c7a9871e9@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] f2fs: fix to avoid racing in between read and OPU dio
+ write
+Message-ID: <ZkQ9Uo5713Xpr2n7@google.com>
+References: <20240510023906.281700-1-chao@kernel.org>
+ <ZkOMwKAcKmEPQ4Xz@google.com>
+ <fc0d8b1f-0c54-4447-8ceb-3722645f71c2@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <43f128b0-5151-4ae6-9bc0-438c7a9871e9@kernel.org>
+In-Reply-To: <fc0d8b1f-0c54-4447-8ceb-3722645f71c2@kernel.org>
 
 On 05/15, Chao Yu wrote:
-> On 2024/5/15 0:07, Jaegeuk Kim wrote:
-> > 外部邮件/External Mail
-> > 
-> > 
-> > On 05/11, Chao Yu wrote:
-> > > On 2024/5/11 8:38, Jaegeuk Kim wrote:
-> > > > On 05/10, Chao Yu wrote:
-> > > > > On 2024/5/10 11:36, Jaegeuk Kim wrote:
-> > > > > > On 05/10, Chao Yu wrote:
-> > > > > > > On 2024/5/9 23:52, Jaegeuk Kim wrote:
-> > > > > > > > On 05/06, Chao Yu wrote:
-> > > > > > > > > syzbot reports a f2fs bug as below:
-> > > > > > > > > 
-> > > > > > > > > ------------[ cut here ]------------
-> > > > > > > > > kernel BUG at fs/f2fs/inline.c:258!
-> > > > > > > > > CPU: 1 PID: 34 Comm: kworker/u8:2 Not tainted 6.9.0-rc6-syzkaller-00012-g9e4bc4bcae01 #0
-> > > > > > > > > RIP: 0010:f2fs_write_inline_data+0x781/0x790 fs/f2fs/inline.c:258
-> > > > > > > > > Call Trace:
-> > > > > > > > >      f2fs_write_single_data_page+0xb65/0x1d60 fs/f2fs/data.c:2834
-> > > > > > > > >      f2fs_write_cache_pages fs/f2fs/data.c:3133 [inline]
-> > > > > > > > >      __f2fs_write_data_pages fs/f2fs/data.c:3288 [inline]
-> > > > > > > > >      f2fs_write_data_pages+0x1efe/0x3a90 fs/f2fs/data.c:3315
-> > > > > > > > >      do_writepages+0x35b/0x870 mm/page-writeback.c:2612
-> > > > > > > > >      __writeback_single_inode+0x165/0x10b0 fs/fs-writeback.c:1650
-> > > > > > > > >      writeback_sb_inodes+0x905/0x1260 fs/fs-writeback.c:1941
-> > > > > > > > >      wb_writeback+0x457/0xce0 fs/fs-writeback.c:2117
-> > > > > > > > >      wb_do_writeback fs/fs-writeback.c:2264 [inline]
-> > > > > > > > >      wb_workfn+0x410/0x1090 fs/fs-writeback.c:2304
-> > > > > > > > >      process_one_work kernel/workqueue.c:3254 [inline]
-> > > > > > > > >      process_scheduled_works+0xa12/0x17c0 kernel/workqueue.c:3335
-> > > > > > > > >      worker_thread+0x86d/0xd70 kernel/workqueue.c:3416
-> > > > > > > > >      kthread+0x2f2/0x390 kernel/kthread.c:388
-> > > > > > > > >      ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
-> > > > > > > > >      ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-> > > > > > > > > 
-> > > > > > > > > The root cause is: inline_data inode can be fuzzed, so that there may
-> > > > > > > > > be valid blkaddr in its direct node, once f2fs triggers background GC
-> > > > > > > > > to migrate the block, it will hit f2fs_bug_on() during dirty page
-> > > > > > > > > writeback.
-> > > > > > > > > 
-> > > > > > > > > Let's add sanity check on i_nid field for inline_data inode, meanwhile,
-> > > > > > > > > forbid to migrate inline_data inode's data block to fix this issue.
-> > > > > > > > > 
-> > > > > > > > > Reported-by: syzbot+848062ba19c8782ca5c8@syzkaller.appspotmail.com
-> > > > > > > > > Closes: https://lore.kernel.org/linux-f2fs-devel/000000000000d103ce06174d7ec3@google.com
-> > > > > > > > > Signed-off-by: Chao Yu <chao@kernel.org>
-> > > > > > > > > ---
-> > > > > > > > >      fs/f2fs/f2fs.h   |  2 +-
-> > > > > > > > >      fs/f2fs/gc.c     |  6 ++++++
-> > > > > > > > >      fs/f2fs/inline.c | 17 ++++++++++++++++-
-> > > > > > > > >      fs/f2fs/inode.c  |  2 +-
-> > > > > > > > >      4 files changed, 24 insertions(+), 3 deletions(-)
-> > > > > > > > > 
-> > > > > > > > > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> > > > > > > > > index fced2b7652f4..c876813b5532 100644
-> > > > > > > > > --- a/fs/f2fs/f2fs.h
-> > > > > > > > > +++ b/fs/f2fs/f2fs.h
-> > > > > > > > > @@ -4146,7 +4146,7 @@ extern struct kmem_cache *f2fs_inode_entry_slab;
-> > > > > > > > >       * inline.c
-> > > > > > > > >       */
-> > > > > > > > >      bool f2fs_may_inline_data(struct inode *inode);
-> > > > > > > > > -bool f2fs_sanity_check_inline_data(struct inode *inode);
-> > > > > > > > > +bool f2fs_sanity_check_inline_data(struct inode *inode, struct page *ipage);
-> > > > > > > > >      bool f2fs_may_inline_dentry(struct inode *inode);
-> > > > > > > > >      void f2fs_do_read_inline_data(struct page *page, struct page *ipage);
-> > > > > > > > >      void f2fs_truncate_inline_inode(struct inode *inode,
-> > > > > > > > > diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> > > > > > > > > index e86c7f01539a..041957750478 100644
-> > > > > > > > > --- a/fs/f2fs/gc.c
-> > > > > > > > > +++ b/fs/f2fs/gc.c
-> > > > > > > > > @@ -1563,6 +1563,12 @@ static int gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
-> > > > > > > > >                                    continue;
-> > > > > > > > >                            }
-> > > > > > > > > +                 if (f2fs_has_inline_data(inode)) {
-> > > > > > > > > +                         iput(inode);
-> > > > > > > > > +                         set_sbi_flag(sbi, SBI_NEED_FSCK);
-> > > > > > > > > +                         continue;
-> > > > > > > > 
-> > > > > > > > Any race condtion to get this as false alarm?
-> > > > > > > 
-> > > > > > > Since there is no reproducer for the bug, I doubt it was caused by metadata
-> > > > > > > fuzzing, something like this:
-> > > > > > > 
-> > > > > > > - inline inode has one valid blkaddr in i_addr or in dnode reference by i_nid;
-> > > > > > > - SIT/SSA entry of the block is valid;
-> > > > > > > - background GC migrates the block;
-> > > > > > > - kworker writeback it, and trigger the bug_on().
-> > > > > > 
-> > > > > > Wasn't detected by sanity_check_inode?
-> > > > > 
-> > > > > I fuzzed non-inline inode w/ below metadata fields:
-> > > > > - i_blocks = 1
-> > > > > - i_size = 2048
-> > > > > - i_inline |= 0x02
-> > > > > 
-> > > > > sanity_check_inode() doesn't complain.
-> > > > 
-> > > > I mean, the below sanity_check_inode() can cover the fuzzed case? I'm wondering
+> On 2024/5/15 0:09, Jaegeuk Kim wrote:
+> > On 05/10, Chao Yu wrote:
+> > > If lfs mode is on, buffered read may race w/ OPU dio write as below,
+> > > it may cause buffered read hits unwritten data unexpectly, and for
+> > > dio read, the race condition exists as well.
 > > > 
-> > > I didn't figure out a generic way in sanity_check_inode() to catch all fuzzed cases.
+> > > Thread A                      Thread B
+> > > - f2fs_file_write_iter
+> > >   - f2fs_dio_write_iter
+> > >    - __iomap_dio_rw
+> > >     - f2fs_iomap_begin
+> > >      - f2fs_map_blocks
+> > >       - __allocate_data_block
+> > >        - allocated blkaddr #x
+> > >         - iomap_dio_submit_bio
+> > >                                - f2fs_file_read_iter
+> > >                                 - filemap_read
+> > >                                  - f2fs_read_data_folio
+> > >                                   - f2fs_mpage_readpages
+> > >                                    - f2fs_map_blocks
+> > >                                     : get blkaddr #x
+> > >                                    - f2fs_submit_read_bio
+> > >                                IRQ
+> > >                                - f2fs_read_end_io
+> > >                                 : read IO on blkaddr #x complete
+> > > IRQ
+> > > - iomap_dio_bio_end_io
+> > >   : direct write IO on blkaddr #x complete
+> > > 
+> > > This patch introduces a new per-inode i_opu_rwsem lock to avoid
+> > > such race condition.
 > > 
-> > 
-> > The patch described:
-> >   "The root cause is: inline_data inode can be fuzzed, so that there may
-> >   be valid blkaddr in its direct node, once f2fs triggers background GC
-> >   to migrate the block, it will hit f2fs_bug_on() during dirty page
-> >   writeback."
-> > 
-> > Do you suspect the node block address was suddenly assigned after f2fs_iget()?
+> > Wasn't this supposed to be managed by user-land?
 > 
-> No, I suspect that the image was fuzzed by tools offline, not in runtime after
-> mount().
+> Actually, the test case is:
 > 
-> > Otherwise, it looks checking them in sanity_check_inode would be enough.
-> > 
-> > > 
-> > > e.g.
-> > > case #1
-> > > - blkaddr, its dnode, SSA and SIT are consistent
-> > > - dnode.footer.ino points to inline inode
-> > > - inline inode doesn't link to the donde
-> > > 
-> > > Something like fuzzed special file, please check details in below commit:
-> > > 
-> > > 9056d6489f5a ("f2fs: fix to do sanity check on inode type during garbage collection")
-> > > 
-> > > case #2
-> > > - blkaddr, its dnode, SSA and SIT are consistent
-> > > - blkaddr locates in inline inode's i_addr
+> 1. mount w/ lfs mode
+> 2. touch file;
+> 3. initialize file w/ 4k zeroed data; fsync;
+> 4. continue triggering dio write 4k zeroed data to file;
+> 5. and meanwhile, continue triggering buf/dio 4k read in file,
+> use md5sum to verify the 4k data;
 > 
-> The image status is something like above as I described.
+> It expects data is all zero, however it turned out it's not.
 
-Then, why not just checking the gc path only?
+Can we check outstanding write bios instead of abusing locks?
 
 > 
 > Thanks,
 > 
+> > 
 > > > 
-> > > Thanks,
+> > > Fixes: f847c699cff3 ("f2fs: allow out-place-update for direct IO in LFS mode")
+> > > Signed-off-by: Chao Yu <chao@kernel.org>
+> > > ---
+> > > v2:
+> > > - fix to cover dio read path w/ i_opu_rwsem as well.
+> > >   fs/f2fs/f2fs.h  |  1 +
+> > >   fs/f2fs/file.c  | 28 ++++++++++++++++++++++++++--
+> > >   fs/f2fs/super.c |  1 +
+> > >   3 files changed, 28 insertions(+), 2 deletions(-)
 > > > 
-> > > > whether we really need to check it in the gc path.
-> > > > 
-> > > > > 
-> > > > > Thanks,
-> > > > > 
-> > > > > > 
-> > > > > > > 
-> > > > > > > Thoughts?
-> > > > > > > 
-> > > > > > > Thanks,
-> > > > > > > 
-> > > > > > > > 
-> > > > > > > > > +                 }
-> > > > > > > > > +
-> > > > > > > > >                            err = f2fs_gc_pinned_control(inode, gc_type, segno);
-> > > > > > > > >                            if (err == -EAGAIN) {
-> > > > > > > > >                                    iput(inode);
-> > > > > > > > > diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-> > > > > > > > > index ac00423f117b..067600fed3d4 100644
-> > > > > > > > > --- a/fs/f2fs/inline.c
-> > > > > > > > > +++ b/fs/f2fs/inline.c
-> > > > > > > > > @@ -33,11 +33,26 @@ bool f2fs_may_inline_data(struct inode *inode)
-> > > > > > > > >            return !f2fs_post_read_required(inode);
-> > > > > > > > >      }
-> > > > > > > > > -bool f2fs_sanity_check_inline_data(struct inode *inode)
-> > > > > > > > > +static bool has_node_blocks(struct inode *inode, struct page *ipage)
-> > > > > > > > > +{
-> > > > > > > > > + struct f2fs_inode *ri = F2FS_INODE(ipage);
-> > > > > > > > > + int i;
-> > > > > > > > > +
-> > > > > > > > > + for (i = 0; i < DEF_NIDS_PER_INODE; i++) {
-> > > > > > > > > +         if (ri->i_nid[i])
-> > > > > > > > > +                 return true;
-> > > > > > > > > + }
-> > > > > > > > > + return false;
-> > > > > > > > > +}
-> > > > > > > > > +
-> > > > > > > > > +bool f2fs_sanity_check_inline_data(struct inode *inode, struct page *ipage)
-> > > > > > > > >      {
-> > > > > > > > >            if (!f2fs_has_inline_data(inode))
-> > > > > > > > >                    return false;
-> > > > > > > > > + if (has_node_blocks(inode, ipage))
-> > > > > > > > > +         return false;
-> > > > > > > > > +
-> > > > > > > > >            if (!support_inline_data(inode))
-> > > > > > > > >                    return true;
-> > > > > > > > > diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-> > > > > > > > > index c26effdce9aa..1423cd27a477 100644
-> > > > > > > > > --- a/fs/f2fs/inode.c
-> > > > > > > > > +++ b/fs/f2fs/inode.c
-> > > > > > > > > @@ -343,7 +343,7 @@ static bool sanity_check_inode(struct inode *inode, struct page *node_page)
-> > > > > > > > >                    }
-> > > > > > > > >            }
-> > > > > > > > > - if (f2fs_sanity_check_inline_data(inode)) {
-> > > > > > > > > + if (f2fs_sanity_check_inline_data(inode, node_page)) {
-> > > > > > > > >                    f2fs_warn(sbi, "%s: inode (ino=%lx, mode=%u) should not have inline_data, run fsck to fix",
-> > > > > > > > >                              __func__, inode->i_ino, inode->i_mode);
-> > > > > > > > >                    return false;
-> > > > > > > > > --
-> > > > > > > > > 2.40.1
+> > > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > > index 30058e16a5d0..91cf4b3d6bc6 100644
+> > > --- a/fs/f2fs/f2fs.h
+> > > +++ b/fs/f2fs/f2fs.h
+> > > @@ -847,6 +847,7 @@ struct f2fs_inode_info {
+> > >        /* avoid racing between foreground op and gc */
+> > >        struct f2fs_rwsem i_gc_rwsem[2];
+> > >        struct f2fs_rwsem i_xattr_sem; /* avoid racing between reading and changing EAs */
+> > > +     struct f2fs_rwsem i_opu_rwsem;  /* avoid racing between buf read and opu dio write */
+> > > 
+> > >        int i_extra_isize;              /* size of extra space located in i_addr */
+> > >        kprojid_t i_projid;             /* id for project quota */
+> > > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> > > index 72ce1a522fb2..4ec260af321f 100644
+> > > --- a/fs/f2fs/file.c
+> > > +++ b/fs/f2fs/file.c
+> > > @@ -4445,6 +4445,7 @@ static ssize_t f2fs_dio_read_iter(struct kiocb *iocb, struct iov_iter *to)
+> > >        const loff_t pos = iocb->ki_pos;
+> > >        const size_t count = iov_iter_count(to);
+> > >        struct iomap_dio *dio;
+> > > +     bool do_opu = f2fs_lfs_mode(sbi);
+> > >        ssize_t ret;
+> > > 
+> > >        if (count == 0)
+> > > @@ -4457,8 +4458,14 @@ static ssize_t f2fs_dio_read_iter(struct kiocb *iocb, struct iov_iter *to)
+> > >                        ret = -EAGAIN;
+> > >                        goto out;
+> > >                }
+> > > +             if (do_opu && !f2fs_down_read_trylock(&fi->i_opu_rwsem)) {
+> > > +                     f2fs_up_read(&fi->i_gc_rwsem[READ]);
+> > > +                     ret = -EAGAIN;
+> > > +                     goto out;
+> > > +             }
+> > >        } else {
+> > >                f2fs_down_read(&fi->i_gc_rwsem[READ]);
+> > > +             f2fs_down_read(&fi->i_opu_rwsem);
+> > >        }
+> > > 
+> > >        /*
+> > > @@ -4477,6 +4484,7 @@ static ssize_t f2fs_dio_read_iter(struct kiocb *iocb, struct iov_iter *to)
+> > >                ret = iomap_dio_complete(dio);
+> > >        }
+> > > 
+> > > +     f2fs_up_read(&fi->i_opu_rwsem);
+> > >        f2fs_up_read(&fi->i_gc_rwsem[READ]);
+> > > 
+> > >        file_accessed(file);
+> > > @@ -4523,7 +4531,13 @@ static ssize_t f2fs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+> > >        if (f2fs_should_use_dio(inode, iocb, to)) {
+> > >                ret = f2fs_dio_read_iter(iocb, to);
+> > >        } else {
+> > > +             bool do_opu = f2fs_lfs_mode(F2FS_I_SB(inode));
+> > > +
+> > > +             if (do_opu)
+> > > +                     f2fs_down_read(&F2FS_I(inode)->i_opu_rwsem);
+> > >                ret = filemap_read(iocb, to, 0);
+> > > +             if (do_opu)
+> > > +                     f2fs_up_read(&F2FS_I(inode)->i_opu_rwsem);
+> > >                if (ret > 0)
+> > >                        f2fs_update_iostat(F2FS_I_SB(inode), inode,
+> > >                                                APP_BUFFERED_READ_IO, ret);
+> > > @@ -4748,14 +4762,22 @@ static ssize_t f2fs_dio_write_iter(struct kiocb *iocb, struct iov_iter *from,
+> > >                        ret = -EAGAIN;
+> > >                        goto out;
+> > >                }
+> > > +             if (do_opu && !f2fs_down_write_trylock(&fi->i_opu_rwsem)) {
+> > > +                     f2fs_up_read(&fi->i_gc_rwsem[READ]);
+> > > +                     f2fs_up_read(&fi->i_gc_rwsem[WRITE]);
+> > > +                     ret = -EAGAIN;
+> > > +                     goto out;
+> > > +             }
+> > >        } else {
+> > >                ret = f2fs_convert_inline_inode(inode);
+> > >                if (ret)
+> > >                        goto out;
+> > > 
+> > >                f2fs_down_read(&fi->i_gc_rwsem[WRITE]);
+> > > -             if (do_opu)
+> > > +             if (do_opu) {
+> > >                        f2fs_down_read(&fi->i_gc_rwsem[READ]);
+> > > +                     f2fs_down_write(&fi->i_opu_rwsem);
+> > > +             }
+> > >        }
+> > > 
+> > >        /*
+> > > @@ -4779,8 +4801,10 @@ static ssize_t f2fs_dio_write_iter(struct kiocb *iocb, struct iov_iter *from,
+> > >                ret = iomap_dio_complete(dio);
+> > >        }
+> > > 
+> > > -     if (do_opu)
+> > > +     if (do_opu) {
+> > > +             f2fs_up_write(&fi->i_opu_rwsem);
+> > >                f2fs_up_read(&fi->i_gc_rwsem[READ]);
+> > > +     }
+> > >        f2fs_up_read(&fi->i_gc_rwsem[WRITE]);
+> > > 
+> > >        if (ret < 0)
+> > > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> > > index daf2c4dbe150..b4ed3b094366 100644
+> > > --- a/fs/f2fs/super.c
+> > > +++ b/fs/f2fs/super.c
+> > > @@ -1428,6 +1428,7 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
+> > >        init_f2fs_rwsem(&fi->i_gc_rwsem[READ]);
+> > >        init_f2fs_rwsem(&fi->i_gc_rwsem[WRITE]);
+> > >        init_f2fs_rwsem(&fi->i_xattr_sem);
+> > > +     init_f2fs_rwsem(&fi->i_opu_rwsem);
+> > > 
+> > >        /* Will be used by directory only */
+> > >        fi->i_dir_level = F2FS_SB(sb)->dir_level;
+> > > --
+> > > 2.40.1
 
