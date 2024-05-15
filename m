@@ -1,182 +1,124 @@
-Return-Path: <linux-kernel+bounces-180484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EA748C6F24
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 01:24:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 236CD8C6F27
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 01:26:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCE8728201C
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 23:24:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9FC8EB21780
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 23:26:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 726C050278;
-	Wed, 15 May 2024 23:24:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D5BF4F8BC;
+	Wed, 15 May 2024 23:26:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="PmnaoTIW"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Bxqb4oyn"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FBAE3FBA7;
-	Wed, 15 May 2024 23:24:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80A392A8D7
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 23:26:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715815446; cv=none; b=Yikz4q+0TA52663C4OzSKeB7z3GA74WPga5D2B0H4RqK23Dai2Y3aurGF9D5JVZQqBX1VlhrGqAZ46U2grLeszfEbUKM3aJhM1cc3j8JfcbAnBz6TBBGQLL4rIgiVVzyrUtMae6YB8uWBObCW32NCUiOaSbE7ucU8qgRTKGgj6I=
+	t=1715815579; cv=none; b=JnUyEh3tnV/EOV9Zpe3NXSuGvrU0lRXmQQcfhQAw/k7kBVIcydqUXoH5ZIkq71FEMN5Aj7yJh85eRB6mclVhO5kL1y3BOvRj+iaHnxifKF9RBK2G4FDjksfQXpZbxqowjC9NQfq6MOL5rqcEcO16w4DooT9XH58bbPXvofnCBHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715815446; c=relaxed/simple;
-	bh=Q8VPkE29IY3yc1Ga9qKaqmduPct/QBAS7mlBMvMJWI0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uFTBx089CYE6Le6UPIP5IqM49H/O396dwQgKW5kcaOUBgN5P4oc6ofs8CQuDhhGZZiKa3Yji80rZM5fQM4M3OkKDOb+Gvr1nKzztsd4GBGwJnOJJwu/kvSCAmkm/JK6brr9o9kPrNc0f9E3KutYe3zhgHjp460+IMPFV6pUI9fI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=PmnaoTIW; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1715815443;
-	bh=d98LuK1KfsLFwZxjpmtakns62dhgVIQuZbCW8Ow/p4g=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=PmnaoTIWJQ55BQJBEg/AEUhVUuzta/XESSmq1HP+LG7DLaLHKFCLLFWe9Y3JVAL7T
-	 qelhM8EmbwVFGOHp6NnuRWY+iX7Ea2dPP4NPxTwzKj04yiutK6XGO9/ea4FUHNTnWM
-	 3OXt0QoN5bJyJ4jZvZl5hQigbjfWWslnVoHq4E4/I4vHPMonKdf/A9AN9nzjeWpY0j
-	 eTSF9wVyjTgiWLXyEF0rwyLuoi61XhjGtwcKWPFf9Ucimku1rGAqeoMqUijRuydt5W
-	 vEP/sF9PUw6cyTAKkoqlARTlWhuIM60DNLbDlgzmH7lfzDqGMSE5HShxcNL+SbHJAO
-	 I7lUoA7AyqfuQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Vfq6p192nz4x1T;
-	Thu, 16 May 2024 09:24:02 +1000 (AEST)
-Date: Thu, 16 May 2024 09:24:01 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Christoph Hellwig <hch@lst.de>
-Cc: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Alexander Lobakin
- <aleksander.lobakin@intel.com>, Tony Nguyen <anthony.l.nguyen@intel.com>,
- Networking <netdev@vger.kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the net-next tree with the
- dma-mapping tree
-Message-ID: <20240516092401.5257bf0e@canb.auug.org.au>
-In-Reply-To: <20240509115307.71ae8787@canb.auug.org.au>
-References: <20240509115307.71ae8787@canb.auug.org.au>
+	s=arc-20240116; t=1715815579; c=relaxed/simple;
+	bh=2Y9HYnVAi1MX2b83pHesfVOmcysatjNtN2ksEqhG4Gg=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=CEaq5REocVbRiMkaiCd4NKsJDX3uBbo4v/1czG9Pcs+1WRnAxwZA2WcSC8885E4onjRfkq33kCfL7+oayeATC9E92nJvhVcIZ4sQlZo7H0IUPR4X1eFHKldnYkzF4JuIjrTHrIB+xXDkOfYfIhwwcq/wYtwQ3WeUxbJ5cAPptP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Bxqb4oyn; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-1eea09ec7ecso73528335ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 16:26:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715815578; x=1716420378; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2Y9HYnVAi1MX2b83pHesfVOmcysatjNtN2ksEqhG4Gg=;
+        b=Bxqb4oynMQqIRcuj5r880CXfuw2YOillXM1xLTybMhvy25wQt+LPrBnXL7hevpfy3/
+         zxTTbbCFHb4O7RBMsuI0qutXWs6WmbZspApLkzEa/KyBsoYKjzrII0U/7WHu8yywXk0E
+         EoqZ1EbjRS7EMPO5R5PKk3h+FTegwJXGF8SYltL65GOwwm4LAQO7jZBJDn7FfdnUKesh
+         zwxN/Pis0VhrjHWDOkESZ5x8YJ1RcG5kKIMESa/yKjWMlFAK0qoqtCqDyYJ78ZrnAM9y
+         VN+KMdt+F6t7ZdivsMfAaFa6dF5owq4ma1AjgfpazCOSeDUd2I5rPO0pAjfMUbt0ukZj
+         OCVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715815578; x=1716420378;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=2Y9HYnVAi1MX2b83pHesfVOmcysatjNtN2ksEqhG4Gg=;
+        b=G8Z0VQNrZf1BO2QBSBFmkYQcQA68d7Th4m+UTyUW/ZPqZLQfZNkBIaRCx8kfV+IY7D
+         5ogCTT8cAoCFzNoJAIwK8jeFIpBhZIzZ3ndSDYgfLMboKglS3j04JLcm4J98XGgApPOh
+         qM9EV6NPVHBEc1fjL9pNTyuYEGB5hQjUog/5mJSpyB0yya2mTSfyyPcJ8KbPYckxnEKS
+         1sz8Ci9/UjcRYLHCrcZpHWGMMk2i1xmQViatLDh1T18ToZPvCu4wXZq2cSmJWtdSEgg1
+         uijqseMVHLEjFF1/b3UvWCOyA2HsoGNaXuEH8tB8kVv3wG7hphAplc9H7zxFf1Jp6hYI
+         iHFw==
+X-Gm-Message-State: AOJu0YyulCeVyTgBO1bxjfxssY0qO2WJOQiKrj+jFubhUQmRyDenEAPU
+	7Sx0ZB0cPVNWkKABxj1Y67HwaUc+CGxwfVPBe+VjiiPzYw6irRtGilGNEXrYHJHxRsTjXkAOoDT
+	KHw==
+X-Google-Smtp-Source: AGHT+IGtoOQokIuMOtZ7I+wsyi2BzCuze/GDRj0Nh5Z//Qxk8bO9FH7B0H10f4cquEg9Kl6dt9ebJ91/CRQ=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:902:d2c8:b0:1eb:d72e:82aa with SMTP id
+ d9443c01a7336-1ef43d2eb43mr3260165ad.7.1715815577568; Wed, 15 May 2024
+ 16:26:17 -0700 (PDT)
+Date: Wed, 15 May 2024 16:26:16 -0700
+In-Reply-To: <72a18e11e09e949e730d01a084ee9f1a94c452ad.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/XcPvDPn//a2UViAc0ysycQ_";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/XcPvDPn//a2UViAc0ysycQ_
-Content-Type: text/plain; charset=US-ASCII
+Mime-Version: 1.0
+References: <20240515005952.3410568-9-rick.p.edgecombe@intel.com>
+ <ZkTWDfuYD-ThdYe6@google.com> <f64c7da52a849cd9697b944769c200dfa3ee7db7.camel@intel.com>
+ <747192d5fe769ae5d28bbb6c701ee9be4ad09415.camel@intel.com>
+ <ZkTcbPowDSLVgGft@google.com> <de3cb02ae9e639f423ae47ef2fad1e89aa9dd3d8.camel@intel.com>
+ <ZkT4RC_l_F_9Rk-M@google.com> <77ae4629139784e7239ce7c03db2c2db730ab4e9.camel@intel.com>
+ <ZkURaxF57kybgMm0@google.com> <72a18e11e09e949e730d01a084ee9f1a94c452ad.camel@intel.com>
+Message-ID: <ZkVDnUhMafRox9rw@google.com>
+Subject: Re: [PATCH 08/16] KVM: x86/mmu: Bug the VM if kvm_zap_gfn_range() is
+ called for TDX
+From: Sean Christopherson <seanjc@google.com>
+To: Rick P Edgecombe <rick.p.edgecombe@intel.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "sagis@google.com" <sagis@google.com>, 
+	"isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>, Erdem Aktas <erdemaktas@google.com>, 
+	Yan Zhao <yan.y.zhao@intel.com>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "dmatlack@google.com" <dmatlack@google.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Wed, May 15, 2024, Rick P Edgecombe wrote:
+> On Wed, 2024-05-15 at 12:48 -0700, Sean Christopherson wrote:
+> > > It's just another little quirk in an already complicated solution. Th=
+ey
+> > > third
+> > > thing we discussed was somehow rejecting or not supporting non-cohere=
+nt DMA.
+> > > This seemed simpler than that.
+> >=20
+> > Again, huh?=C2=A0 This has _nothing_ to do with non-coherent DMA.=C2=A0=
+ Devices can't
+> > DMA
+> > into TDX private memory.
+>=20
+> Hmm... I'm confused how you are confused... :)
+>=20
+> For normal VMs (after that change you linked), guests will honor guest PA=
+T on
+> newer HW. On older HW it will only honor guest PAT if non-coherent DMA is
+> attached.
+>=20
+> For TDX we can't honor guest PAT for private memory. So we can either hav=
+e:
+> 1. Have shared honor PAT and private not.
+> 2. Have private and shared both not honor PAT and be consistent. Unless n=
+on-
+> coherent DMA is attached. In that case KVM could zap shared only and swit=
+ch to
+> 1.
 
-On Thu, 9 May 2024 11:53:07 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> Today's linux-next merge of the net-next tree got a conflict in:
->=20
->   net/core/page_pool.c
->=20
-> between commit:
->=20
->   4321de4497b2 ("page_pool: check for DMA sync shortcut earlier")
->=20
-> from the dma-mapping tree and commit:
->=20
->   ef9226cd56b7 ("page_pool: constify some read-only function arguments")
->=20
-> from the net-next tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->=20
->=20
-> diff --cc net/core/page_pool.c
-> index 4f9d1bd7f4d1,8bcc7014a61a..000000000000
-> --- a/net/core/page_pool.c
-> +++ b/net/core/page_pool.c
-> @@@ -398,26 -384,16 +399,26 @@@ static struct page *__page_pool_get_cac
->   	return page;
->   }
->  =20
->  -static void page_pool_dma_sync_for_device(const struct page_pool *pool,
->  -					  const struct page *page,
->  -					  unsigned int dma_sync_size)
->  +static void __page_pool_dma_sync_for_device(const struct page_pool *poo=
-l,
-> - 					    struct page *page,
-> ++					    const struct page *page,
->  +					    u32 dma_sync_size)
->   {
->  +#if defined(CONFIG_HAS_DMA) && defined(CONFIG_DMA_NEED_SYNC)
->   	dma_addr_t dma_addr =3D page_pool_get_dma_addr(page);
->  =20
->   	dma_sync_size =3D min(dma_sync_size, pool->p.max_len);
->  -	dma_sync_single_range_for_device(pool->p.dev, dma_addr,
->  -					 pool->p.offset, dma_sync_size,
->  -					 pool->p.dma_dir);
->  +	__dma_sync_single_for_device(pool->p.dev, dma_addr + pool->p.offset,
->  +				     dma_sync_size, pool->p.dma_dir);
->  +#endif
->  +}
->  +
->  +static __always_inline void
->  +page_pool_dma_sync_for_device(const struct page_pool *pool,
-> - 			      struct page *page,
-> ++			      const struct page *page,
->  +			      u32 dma_sync_size)
->  +{
->  +	if (pool->dma_sync && dma_dev_need_sync(pool->p.dev))
->  +		__page_pool_dma_sync_for_device(pool, page, dma_sync_size);
->   }
->  =20
->   static bool page_pool_dma_map(struct page_pool *pool, struct page *page)
-> @@@ -708,10 -688,11 +710,9 @@@ __page_pool_put_page(struct page_pool *
->   	if (likely(__page_pool_page_can_be_recycled(page))) {
->   		/* Read barrier done in page_ref_count / READ_ONCE */
->  =20
->  -		if (pool->p.flags & PP_FLAG_DMA_SYNC_DEV)
->  -			page_pool_dma_sync_for_device(pool, page,
->  -						      dma_sync_size);
->  +		page_pool_dma_sync_for_device(pool, page, dma_sync_size);
->  =20
-> - 		if (allow_direct && in_softirq() &&
-> - 		    page_pool_recycle_in_cache(page, pool))
-> + 		if (allow_direct && page_pool_recycle_in_cache(page, pool))
->   			return NULL;
->  =20
->   		/* Page found as candidate for recycling */
-
-This is now a conflict between the dma-mapping tree and Linus' tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/XcPvDPn//a2UViAc0ysycQ_
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZFRBEACgkQAVBC80lX
-0GyBLAgAjOyX7LRNLBPiTsX9UYXq3Dj5vzSJE9dv5mqGbXU+39GRYPRVpADcZaXo
-8cNjiP7nkub+BQYXPFndeyB/J3hngcEPdMt1fY1qMBikrRBpIkt1XPuiRP1K8YR7
-p9Kb4C4GZ/UR2m6xSGXhXDROgMXYknqOcHX3SNQUXn/lc+MyAxl5PKHGxcoLqGnw
-BG7UTF8Fs0J4MUIZ31hzgw23q37ULLLULk6uzFtjZgI+UcSMHRVLkBzVYSDZvzlF
-xO08zGVXSqtih/VwzDRNtLR6GLiroTa/FR1K+9v6glrfoUNuSpA+ncqWcoqTQQjh
-vt0nklB3T5+hFrlsveDZsjhNWvaWrw==
-=hnQX
------END PGP SIGNATURE-----
-
---Sig_/XcPvDPn//a2UViAc0ysycQ_--
+Oh good gravy, hell no :-)
 
