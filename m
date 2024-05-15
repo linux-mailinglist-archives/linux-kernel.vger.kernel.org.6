@@ -1,275 +1,262 @@
-Return-Path: <linux-kernel+bounces-179924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 769538C6788
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 15:39:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 779068C678F
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 15:40:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B5BE28166E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 13:39:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3CC4283396
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 13:40:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4179A128369;
-	Wed, 15 May 2024 13:39:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="FcmLRaxD"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12olkn2062.outbound.protection.outlook.com [40.92.23.62])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C43E9129A66;
+	Wed, 15 May 2024 13:40:05 +0000 (UTC)
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85BE374407;
-	Wed, 15 May 2024 13:39:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.23.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D6603B79F;
+	Wed, 15 May 2024 13:40:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.178.238
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715780375; cv=fail; b=MES7EFNcTmHzOWvDPMFFR3uiSvHcjk7GQU07ku8cnhWIrLuwboTxzauFRtx8g7+r/pDlaSD2plcaNYAYnfHkjxxSN0irJKlpS/XqDDf4YVHfJyJ5LBzSEBPE+FrIKvYK7E6URHuELYSA94AAcRw8uHDPNjqbqu5Y1DVchR5ciS8=
+	t=1715780404; cv=fail; b=YzaB5apQMZL/f6hVyZYaGAQxmlELwSnkzRYxUQWcwZQz9k6OAzSzxUbAO4XTu5QB+GJ5mAT+8tevfxN4XjtiQnj3IfY6+AHd3YAKjyJ8tlC+0kFDyqry0s/CzELzED9ODvPFiyQ4gnYijdJU9shythB/BLaSJUIHPOMD4Dp4GI4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715780375; c=relaxed/simple;
-	bh=/y0wDufxejP41cALddHP+/QYQI8G09SD/cz4PbFbHqs=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=b1J1qDwO30yKLI+hHE2bxWoRlYzfMo/6KRFA9AeRksYC1XssUj82VcgxwlOs5DuhQiLBvYVhnMcucD9oDjTZMUPBSuq1AzoqFy5l4WGpEH0E6+BlQEEPnnXi6E2Zt3rbBaOAH5/+TRAF7JKQrhLquiKr6JehtdZ5wftvgbvVFnQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=FcmLRaxD; arc=fail smtp.client-ip=40.92.23.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+	s=arc-20240116; t=1715780404; c=relaxed/simple;
+	bh=ZjTSlqAWIBqbE3raDKFBwmelYfidi24Up0539WKtP0o=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=WMcdF/LWJGxkgDWV3/d5OrClzv5qvMPNiFJ7CBHmn93+TZH4K+QGYKEky6rCpv0Z9bKtd+I3BtYJOoqZjsBKzt1ndjmkqgRB4ieAtpJ7G6rvMRY+MMmZQsl2CD1XO804Qjz9gNIZxElvS79x7MOgVqigLE/mB+BcXw/gj86UHB0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=fail smtp.client-ip=205.220.178.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44F2L8Tj011716;
+	Wed, 15 May 2024 13:39:42 GMT
+Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2100.outbound.protection.outlook.com [104.47.55.100])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 3y1yc4c802-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 15 May 2024 13:39:41 +0000 (GMT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=jqwjmZwi7ovC2MII451yT6PhppqSQJ7Wl/ZNoGcBMY5AZNv+TkCxUo5zT13IgO0TFkaTiKIXFXI8pkEDBVxn18QiacKfGTt1HaiQ2+S4aYvtr4momdMHOr1owuuNHnQ1NzJ0i4NqlEbj1+Ss9U0EXoTipWgzhAF3SOFHeletAryeTmhSIbq0OjatyPERjtyBsj28uNwlm+sTyNd1EKWGFm/7Vuhw4c7YTBDFTxuZOexra5AWzgwTClt2jupHQg0mikaBwpoLbc38ANy7uoX1e4sYBb8LRW2y/z/Z+9G9KpizdG7I8ssTYXsZrvgsn5IqEjG6bQ+AbMdhrlI1qvGPig==
+ b=K5sbVkfpiq4MsBaXU7rUnV7WN4uYPVYvMRizgBBhvdIcROVALlghC/ygrMntjEhwb14xRVofkyCT6p3FvXyidyDLrHwKZUdlOXHUWB/ZenNnYjChZYRZY64E9WzVbPd3F1mCOYJhcIIg6Z4Ib/tPhAUxtiaC8zE4KLoBnwbht3bu31pPG1ULxHPdaCjIaE86fb0EhAz9H8CwzCHoXrPRKLVVCzSh7ExrtjlPoSIi4vTGGM8FLW+n9MB+/dJ+t3QJKtb0QOOj7iDz540nSt//nuhOCdQCJ1sJCcecAEkW35dXUmzmr2eVScJWFv++LRy+J2LAPDf1Hg45PmtiS5dN2w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YjkEUe8g+NJLsMfyRLshCucuVNiW8qsppnabSjxK1f0=;
- b=eXAQf+aVH079Ks1U3bMljwl2/PIMOAIsSw3hM2s7bX1oX816DpsrL40goQ9N2HMapODgMVAXnVEZeGTy0zm8k8UTibq2c6L3D+bnvEYhPU8icu773CZepMFm9tOXj16+Dfzbph7YlhfWPDHbgrqozpqvuqjM/nNikTsR/RyKDog0yhYcPx82Ps3XgURNrDmRX68/JKGUSgyBGsxDGFk89YRq2JJadApBemo7k5o9gC+F+bUod44R1OOBcaxhWqMp3n9A/7KTnWqqKI/44lAu6bTySnWHfr5jORm4uBWwwhr9NUPhPZIF9hOuPScwfseih46g29AQyoebexL7Uwdyuw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YjkEUe8g+NJLsMfyRLshCucuVNiW8qsppnabSjxK1f0=;
- b=FcmLRaxDfMXo8RAwg5+scHPX4bpUlvt4uVrt0c+iN0kwIsY5/GjkFitqosNOiL1GVLaf2OoLMVSicrQWjlgotyIGWiRcf+remEyogC1n+5pt5rCALmhVSDi+Paze2H/vedjz7TxP0+csIVOARJ3ZC2GyxDTcdyfA1NMPh4rn8Moj8kIS69QQfI7H1wzr82UkqryBzCI/2yhhMRUp+Q2Ntc6Gj2RLQlUeLkise94tIADWKp2zFhFvP80U0XQ4/49hxpALKCNtzHNUsptDDeKtqnSs7o4rXadwPnl42Ah4TddFVbwodwci822VdJdLIP8oFHYzbnm9kFth7+XHFXvsjg==
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
- by SJ0PR02MB8465.namprd02.prod.outlook.com (2603:10b6:a03:3f5::18) with
+ bh=T9jLidMo0dM+ZmtzmKYzYTr/xWkkUs6VAy9qhE38aYU=;
+ b=HBmuwJaqD4JOOgHzCYUONAyC0lLXC6+jaGCEC3xvchUcd7VBLiFW0nXGx1v6rT6By9mIgznmUrT0MmriIf98Cc+CVUPZya6HQ40OeZtkWfXGg1clvrKAeI2CLLZiRAgovj7PF6XM/V4nDCDwIo8W0qB/pmj5dZ3gqiVY2cvEUvi4++qyVDB4+ewzPeMJqOhsmCVslY/yJ++Mo+xlAKdgsdvAu9K3rfUF7XQLQPHSONr+Ao4VEOkepnkt9DBrkr3HRLOXPQ/UAHggi+H1ENb+QA0HyEoOAPbybME0mcLx5t7xg5gigQ1C3+u+Otbdz0SDToj/w/u7RQy/hHXgKqsU+A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=windriver.com; dmarc=pass action=none
+ header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
+Received: from MW5PR11MB5764.namprd11.prod.outlook.com (2603:10b6:303:197::8)
+ by PH7PR11MB6401.namprd11.prod.outlook.com (2603:10b6:510:1fb::12) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.28; Wed, 15 May
- 2024 13:39:27 +0000
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df%2]) with mapi id 15.20.7544.052; Wed, 15 May 2024
- 13:39:27 +0000
-From: Michael Kelley <mhklinux@outlook.com>
-To: Roman Kisel <romank@linux.microsoft.com>, "arnd@arndb.de" <arnd@arndb.de>,
-	"bhelgaas@google.com" <bhelgaas@google.com>, "bp@alien8.de" <bp@alien8.de>,
-	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"decui@microsoft.com" <decui@microsoft.com>, "haiyangz@microsoft.com"
-	<haiyangz@microsoft.com>, "hpa@zytor.com" <hpa@zytor.com>, "kw@linux.com"
-	<kw@linux.com>, "kys@microsoft.com" <kys@microsoft.com>, "lenb@kernel.org"
-	<lenb@kernel.org>, "lpieralisi@kernel.org" <lpieralisi@kernel.org>,
-	"mingo@redhat.com" <mingo@redhat.com>, "rafael@kernel.org"
-	<rafael@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
-	"tglx@linutronix.de" <tglx@linutronix.de>, "wei.liu@kernel.org"
-	<wei.liu@kernel.org>, "will@kernel.org" <will@kernel.org>,
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-	"linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-hyperv@vger.kernel.org"
-	<linux-hyperv@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-pci@vger.kernel.org"
-	<linux-pci@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>
-CC: "ssengar@microsoft.com" <ssengar@microsoft.com>, "sunilmut@microsoft.com"
-	<sunilmut@microsoft.com>, "vdso@hexbites.dev" <vdso@hexbites.dev>
-Subject: RE: [PATCH v2 4/6] arm64/hyperv: Boot in a Virtual Trust Level
-Thread-Topic: [PATCH v2 4/6] arm64/hyperv: Boot in a Virtual Trust Level
-Thread-Index: AQHaplCUXamnIjdmx0+xkzDtTqaEOLGXkUyw
-Date: Wed, 15 May 2024 13:39:27 +0000
-Message-ID:
- <SN6PR02MB415778D73832B587A2758BD0D4EC2@SN6PR02MB4157.namprd02.prod.outlook.com>
-References: <20240514224508.212318-1-romank@linux.microsoft.com>
- <20240514224508.212318-5-romank@linux.microsoft.com>
-In-Reply-To: <20240514224508.212318-5-romank@linux.microsoft.com>
-Accept-Language: en-US
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Wed, 15 May
+ 2024 13:39:37 +0000
+Received: from MW5PR11MB5764.namprd11.prod.outlook.com
+ ([fe80::3c2c:a17f:2516:4dc8]) by MW5PR11MB5764.namprd11.prod.outlook.com
+ ([fe80::3c2c:a17f:2516:4dc8%4]) with mapi id 15.20.7544.052; Wed, 15 May 2024
+ 13:39:37 +0000
+Message-ID: <1f62cb7e-ae5c-4769-989f-269eb2ddf845@windriver.com>
+Date: Thu, 16 May 2024 00:39:29 +1100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [net PATCH] net/sched: Get stab before calling ops->change()
+To: Simon Horman <horms@kernel.org>
+Cc: jhs@mojatatu.com, xiyou.wangcong@gmail.com, jiri@resnulli.us,
+        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20240509024043.3532677-1-xiaolei.wang@windriver.com>
+ <20240510121948.GT2347895@kernel.org>
 Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-tmn: [5/owsNJv55iyx2TkjaEv2zQE53GhxZTM]
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|SJ0PR02MB8465:EE_
-x-ms-office365-filtering-correlation-id: 326f3352-0ca5-4672-1f9f-08dc74e47119
-x-microsoft-antispam:
- BCL:0;ARA:14566002|461199019|102099023|3412199016|440099019;
-x-microsoft-antispam-message-info:
- 8ArvXz5fz+ZigIhBNRcFPYKfLBs9cb/5zw07FU+KhuVPT4f7nLC2bVXoBMd9qVj/DnCTI/uKuXiMMzDFCo3DyBo0AZZxUz4xYPRbKwHGn609ifmxn/jrYBge4H0Q/Exr5iWvZAz60Mhxv1SNnjaQ/AhGF5qWl94riWlqMiD8tfLMnFKQjpN26IXBJGxM1QZ52/cLhLsP6EVsoRN48XKQUbw1doSplyvCOAoWSBUcl9ZTRI7Np8A3n/CdMtSdkGQ9/dv+JYhcWTs5XtGZUmmF7IH1AT5y/am8VW/cgC/YTOu9HRw/+pGQNCpPsZiKVafAkLwaL8orLt267f7I2gWX6T/VYJ7s4+hczazl0PwS1lmGZMX7D0Z9JhIi6qHIaFRx/elIYntqymKrQZvyrSuQmdhlPkmR+GRccYanKh19OqveKU5qTa6PpWKmEv4uR5FtO3O7vZ0omW19ASbPiq40igx2hTkrkTzUYXtL+9uq2G4t1hQUASBeF2AKo3AXaSoGI/63iqN4gI8PmKym58D2A79nsj7IY/7K/+dEyVpstfb3eQiF9m9nQUUy0uTiZCJV
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?j4gCvWCN4n9cMAPJviCmnML3OCS2Jwimk1szV9CzGAjKSf3zEoJK2+Rqlsxf?=
- =?us-ascii?Q?7+DxkEo6jAlIWqT21YNaKklitzp7E6gNDot7JUonkkyPEumnNLqfMnPyEjZp?=
- =?us-ascii?Q?PFo9qdBCOQTumPHJVoSTzuYEpisfKagOSi9liSV6nsyLBgYT1UWAVbUIWSEZ?=
- =?us-ascii?Q?XkuW4SxgOIjxV1+wJl+95upUeABSGRP4sI5RwvaZGZvgHRzYW8xdFCVDVKzx?=
- =?us-ascii?Q?TjjdibtCLzNVXmZJNnOUaDtIEuSErYvSuzYrTdGYyWZzjSviRKaauJl6DFli?=
- =?us-ascii?Q?3QxxRBWeKJQsIxSghtv4umeV05vAeolTFOUBqyHP94HixG+RFtN9B4aMPhaY?=
- =?us-ascii?Q?n9KiVaFre/UY/iQD1Sq18moDFW7Sr7pokdEgCp2AR0Usa3hlyfbWxzSfSaLj?=
- =?us-ascii?Q?ZRwN+iRFEJg58DEm40/NVhPh4kOzu4gr8PT/y4yrcf0wmJxUB6zjzOySK3gy?=
- =?us-ascii?Q?X/3b0j3K2FEcJ1LxHGJM7G6PwAODqsjO10Q5m7/UzpKbzMRLRl2mTs6hPv+C?=
- =?us-ascii?Q?DF9j4fkxuvm/BtuhUS9kfdFKbiM50/05SqJdAWYeLWGLeQ8jM4zHkWjQuhdB?=
- =?us-ascii?Q?EeLr+zAAEaAV0avFaTyZf6gkbQTTfms7g4bIQpLk/R/+T8mlqPPD7+RPj5hk?=
- =?us-ascii?Q?BvvioE4XsqVqGv9rg/mK33LzkxuomkSMWqq5ZC+9F1tWy0oNzXWF72uX79SS?=
- =?us-ascii?Q?dAHxpEVLAt3KmTjpM4hLju8M/W+k1tmYoySMc26Yvx1TOQ3a3qIMpni5AwXs?=
- =?us-ascii?Q?ItmG4dO9dXlHd3k6TEvMIJIPAPEzRl9G2e1TEUXkihw28rigeXakxcJ8i12d?=
- =?us-ascii?Q?6CYivzvGgZ4Yvjz7iy6g26+AvbI0LrPruDKMJ2l2Vm4U0tBoZQ6wX9SfPQbF?=
- =?us-ascii?Q?COcvYCLCGFW3kRyB2Y0fZNV/OLoADjNJHhx9C+T7iSIZpvef3fi9re6BX8PS?=
- =?us-ascii?Q?EZJ2u6F+oYHQ7orYGi/7AvrOCdG/Efs2eJ8QZsvR4n+qnUYeQldE6Qmzhra3?=
- =?us-ascii?Q?5ozytF1nlds/41Zki9ezi/NnHtORkPxFyaa4IdJF2plWffWVtvZzwnlR4klC?=
- =?us-ascii?Q?rkYZlFAebajN69X2XrK4nJbuVSY4so3JvMUA5G2t3y3IJmi2Ov20aBbX+P+Q?=
- =?us-ascii?Q?/kF5VlNiBJbZfRbmV95ErP8Oxnnpt9qEgCn7eGqNk7kvTYZnAyyt17BIwqxb?=
- =?us-ascii?Q?w+BYloYp7SUakuleLfdZ0qI+xfU7idfWtxltjpkp7/w+jJT/Q8rdQuX6EJc?=
- =?us-ascii?Q?=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+From: wang xiaolei <xiaolei.wang@windriver.com>
+In-Reply-To: <20240510121948.GT2347895@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: TYAPR03CA0007.apcprd03.prod.outlook.com
+ (2603:1096:404:14::19) To MW5PR11MB5764.namprd11.prod.outlook.com
+ (2603:10b6:303:197::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW5PR11MB5764:EE_|PH7PR11MB6401:EE_
+X-MS-Office365-Filtering-Correlation-Id: 87c0ad75-9ea1-45b1-64ac-08dc74e47688
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|7416005|376005|366007;
+X-Microsoft-Antispam-Message-Info: 
+	=?utf-8?B?cHNLYWc2VHBpY0pLR0l5L2h4dEljanlFaGYrOTl4YUNGUHJiNGhkZU85ZnBL?=
+ =?utf-8?B?aUxna2xkY3JEZm5BOHFoZGdWQy9BdjFtN3N0T2ZoUVZORTk3OEVTRDhvTjY5?=
+ =?utf-8?B?M2hEZWQxd1MzRmVuc1gzejFrZklKVXJpNEVvUWo2cGEvcFRFRC8rSm0rc2Nt?=
+ =?utf-8?B?WG9vczQ5TklBSHAyMkQwOGVGR0NXQzBpL1BjV04rdFplTUd1a09WRG00aTZw?=
+ =?utf-8?B?QmhWM1ZaL29rYWFZeFlxZmFOUXk4S04vSmxKcGZ6aUFmdWxOUm9lenhwZUFl?=
+ =?utf-8?B?elB2ZU1EQkN4TkdaUGN2elM2MHFidjRWN1ozVlJMbnVxNEtyV0pUZEgxV21h?=
+ =?utf-8?B?VVN4NGU5QnFTTFU4eGtFQWdiNzZpcWcxUm5Bd01jMEhzMjlhNVd6ZHZtaHcw?=
+ =?utf-8?B?U1FNUXpzbDl0bkpKTzdPQXhDSHdIVk5EMFU4dG80M2Z4TlZ0LytTVWRiV3lO?=
+ =?utf-8?B?R0N0bUYxVTFDY0V6S1kwaFJnbTAxVy9kdVdRLy9Hc3phTkROYnRHSUozS2Rr?=
+ =?utf-8?B?VEh0VzNITVNFcVJkclRpSFZwZGdjQkRjNDFOSG1WQkQyWkRIbmdZUzFmZEVJ?=
+ =?utf-8?B?RmNwbldiOE9sbU96NzV2MWhJejhXeHRSa0draHE2ZHVENkp6bDJJa05kb1Nt?=
+ =?utf-8?B?YzFWVGZEaU11SU5SNytrVHdza2FCM0lhcDRabXlINXg2SVM3aVpnamZXSVJI?=
+ =?utf-8?B?cXUwc1Q0YnF0RGVtYjQvTjlTUHNNbHV1M3IvbmFVRC9PRkxwMklrb1djNzFS?=
+ =?utf-8?B?cERCOWdadUo0TGRJUjJ6SjZ6dk4vbXhlSXk1dWxUcDdwOFhKZElOVHAyUjZR?=
+ =?utf-8?B?OU9Qa0R4Nmpoak5GUkpNNENxK1BYd0tEajBZTHVFdk9XRWJrZGI0SmZ2dXNh?=
+ =?utf-8?B?d1QzeXJzUTAzV0l1OE1aM0lWT0ZmSVhkNzNBd21jZ2t5Si8wbTlGenA2SVlJ?=
+ =?utf-8?B?MWpKS2FZdzg3UCtQRU5xdlJXVmxVY3ppMk5saE1vTE14cSt0RWpqdE4ySkpt?=
+ =?utf-8?B?Y2h6Z082ckFIMGQzUlZDZVVYdFY5Ynhkc3BjYnBMTE9qVDNNd3Q3VkNBa3Ri?=
+ =?utf-8?B?SzFCclJPbjFxb0d1VWVPMzRndkQ2ejBXbXVYM1A1cG05SnRZMFB1ZWszekNK?=
+ =?utf-8?B?UEMzSU9Rb1pnY0hBVjgvbmVjL2orUGhFMk5zbTZ5UDJYdzRkdTVXeHpHSElt?=
+ =?utf-8?B?UnF0VDVMV0hadWJzZkZSYUNFZVNEOStKekRuemcrNkI3YnBJYkpITzhkdGhy?=
+ =?utf-8?B?dGRIcW5Ua2szMFpLS1l6bzUzV3VmSHhLZXkrbW51OFNKeGhzemZNUEs0S0lO?=
+ =?utf-8?B?NFRnWkhqMFVMVHFETGFPaVpmZEJaalRYQndqSkZXdVMvYzVhZjUyZUxZRUZS?=
+ =?utf-8?B?N3gzVC8vMnJlK25WOWJ5L0hqZGw2bE9vQjdrQ3hzS2E0Q05sanFGdU11SnRP?=
+ =?utf-8?B?UWlQU0Z5R0RQa1BoVmNvL1pvYlQvODYveTArakVQTFhxZmFZcWxKTUNZOHdZ?=
+ =?utf-8?B?SE15bDUyZXhmakMwZVowb0FFbjVJRmJVOStjU2grb05rOUxKU3ljRzFxaUlh?=
+ =?utf-8?B?bDhnKzBuNVl2RFZ2c2U0eVYweWZuVzdaQ3loNFhoQlpvWGN5RnRlZHF1UXF4?=
+ =?utf-8?B?d2Z4YzRMSlRHT2V1M2pkUjBLWkxDUUY3K2tTTmJGZFEyR0kzV28xMTFZNjd4?=
+ =?utf-8?B?U2hUYnFYcVBrV0UwUEdKNjV3T2NXWTRsQzdiTC9Va2ZWcHRudm95TmNBPT0=?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW5PR11MB5764.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(7416005)(376005)(366007);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?NjVHQXlJTndlbVdXclpwSlhmTmJaYlZKaXF4cTEzdlQ2a2dYT1VZTCtweHow?=
+ =?utf-8?B?MTNSOFRzZlhKSHhVaFI5WTNNbUc0MWI2aUhUcHF0eW9xM1B4Y1ZJd3pTTWFD?=
+ =?utf-8?B?b1pVNDViOHNLcWEvdG12VG5aTFpDdVc1MVduNW1vOEh1bituZWZIV3FtaFdB?=
+ =?utf-8?B?UzRydGZnYWZ1b1JEZXgyb1ZySnJYWnhCM0hLa1RjbHYwc05GbVAvNzRucmg1?=
+ =?utf-8?B?eEVJSnkzQk4zZG5rd29lOFRzWWdqZUs0dU1HZ1c1ZXRhNlkyZ3pRVCs2Yzcy?=
+ =?utf-8?B?b2NnTllnOGxZakQzNElmSlV4UFlIVHlyeWxFWlMxdXVVWDNha253TzZ6NDNC?=
+ =?utf-8?B?bWI4RElMdjJvUXJPc2V1bkFya0lPOTN6UGVlWktlVERyMXU0YUZTeC9PRGdR?=
+ =?utf-8?B?eG1tTjl0L081azhmSXFFS0RFUCs5cTBwS3Nvcm1zYlVrYjljMFhIZWZEajc4?=
+ =?utf-8?B?dWora1pqWDhieldRM056UmR2UGwvZ214aENOaW56MldkN21XeURTYjJScU1J?=
+ =?utf-8?B?dXdSZlFIbVI0eDI3Zi9hRittcEYvUDJDY29UT1BXZ1l1YVc5WnlFdWJlR0ds?=
+ =?utf-8?B?eEtCOVluQ0dJdU5nMWJQM3c1UE9UYXIxekhGbld6Q2tmQklTRC9lMlFBWi9X?=
+ =?utf-8?B?K0k2Z1g1eFZ3TWJRdHdpYjNqa1hwVU9mSFNubUtXeDNveC82L21sSzVMM1Nw?=
+ =?utf-8?B?a3dsaWNuK21aWEVpVHZnRkpsbEloa3p4M0dVWmh4dC9pYTRGL2tuRytJTE5z?=
+ =?utf-8?B?TTc3S243eUZBZnhvM3A0eTI5MUp2MW1LMlh3TVVWczZ2SElONFIra3U0dlgw?=
+ =?utf-8?B?MW5KVE0zbWg2NVpEWFRvMFp5anA5OUpqWUJRQ2ppZjYrR21yaGZpNEtrbjRT?=
+ =?utf-8?B?bXQ5OUphb1BBck5qTkRQZnYvUGhqRy9TdUV1TVF2bWNOZkJmWGZkcFR2eVQx?=
+ =?utf-8?B?RTNhWEg2SXlnNzdPb05hQzQ4QjVoUUF2SkM3M2ljOXI5QXk0Vk5sTVp6OHZS?=
+ =?utf-8?B?dWpFeE5xckNnV2M4ZkZURlBlL3JRUVU3eG90OG9jZGE5bU80bFJRMmM5ME5w?=
+ =?utf-8?B?ek8vTFAyM1h1c1BVN0JaaEJ2TDgvQ1VQc3JIYnkzeWRRaDQ0L1Q1NWRVVHlB?=
+ =?utf-8?B?T3E4cFZDaGVJNXZjRG9Pd25Ja2JzblJBSXNpWElDeHlLakdOUGJjMTk5VzZ1?=
+ =?utf-8?B?MWdvL3BHWDVFV1krbWJoTW5BYmI2RzFRZ3d5VzZyQ2Z3NFBiaDc2ZmZZL21z?=
+ =?utf-8?B?ak1tOWtlZndQQjVxV1V2Vi9vM3FKNlN3L2dZL3FmL1U1MUVzT3NyYVNhK082?=
+ =?utf-8?B?MC9udHpyRkhLYnRkUVhpeTdJOFFRdzZjSkQvOVRqb2owbFkrV3AreExTa1g2?=
+ =?utf-8?B?dU4yL1BzajdVNTBidHRuRVdEME9WcHAwNkpiUUJwc0ZGM3RZWkg5eUdsMnFD?=
+ =?utf-8?B?YS9EdGpncElBOXc3R3hTTkMxQS9LOEdGbEJvcnJuMzdrS2tEaFRoVEZjTjNh?=
+ =?utf-8?B?SzJPb1BZMFNmbnVHVnBRdlNjdXNzMnhmdmVLdWNLMTM4YUFpTzFCcmx0bVZW?=
+ =?utf-8?B?WVhpRiszTlhCRThJOENoL0ZDK29xSHM0dnh3c3M4R3NPZHZaOXQyQko0QlpH?=
+ =?utf-8?B?ZkdQU3R6anFLTkNka0liTS9SeUwvY1VBbklDQ3F1NXVHd1NSZUovRU1sdFlm?=
+ =?utf-8?B?dnRZaE91dTNOdTBKR0QxcW9pTmNaQ1A4b0tRM25WWTNmb0N0UG43ckd2eDhU?=
+ =?utf-8?B?OTNuS3VOdEZmNnZFTVQ0N1BPRWhJZmJJejZhRUJyVWJMdUN3Rm1qQVpWSUVr?=
+ =?utf-8?B?Q2RrNTJpbjZxdkMzWFIwelI0cmJkRlB3cmJKWGNHZzBUZlp6M3c2ZThKYUF1?=
+ =?utf-8?B?N29MUTExMWlOVmdueEVQYTFreGhEVWVQd3Q4WUxZU3dYQklLZk43YXhVeDVN?=
+ =?utf-8?B?V1JFUldSL3lXVkdSN2RzeGFjODlxSFBZZUR3c0FWSlpyZ3huMDNVKzRtVmhP?=
+ =?utf-8?B?LzliZUZEaUF4eGlIamhOZk9qRHY2bFFrMHBJZGRGMkRockpTM1VCMVVRTHZF?=
+ =?utf-8?B?V2lnTHM1bkk5T21QV3FMK244VGVxNzBvS2s2TWlyV2lMdGxoc3NrbTljeWxN?=
+ =?utf-8?B?ZUVRMDlaandDMXE2TmV2Q0ZGaW4yTWVYa3hYUmxNUVFPU0MrZk9GaWNVNURQ?=
+ =?utf-8?B?UXc9PQ==?=
+X-OriginatorOrg: windriver.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 87c0ad75-9ea1-45b1-64ac-08dc74e47688
+X-MS-Exchange-CrossTenant-AuthSource: MW5PR11MB5764.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 326f3352-0ca5-4672-1f9f-08dc74e47119
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 May 2024 13:39:27.8526
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 May 2024 13:39:37.3612
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR02MB8465
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: CAacqIwZz+BfhcVwV3p+6EIRy2VeiIQNwjoicK9nFEKE9BQ4vBMITe7T3ggLWPty1fQfTemu6T0U0+Y33tjbX6nDLNeI/oHV31ImAlRqBXU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB6401
+X-Proofpoint-GUID: T4-Q4wsfrETjNnSsIzLDDx-suxbGcQtZ
+X-Proofpoint-ORIG-GUID: T4-Q4wsfrETjNnSsIzLDDx-suxbGcQtZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-15_07,2024-05-15_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ priorityscore=1501 adultscore=0 malwarescore=0 lowpriorityscore=0
+ suspectscore=0 spamscore=0 mlxscore=0 clxscore=1015 impostorscore=0
+ phishscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405010000 definitions=main-2405150095
 
-From: Roman Kisel <romank@linux.microsoft.com> Sent: Tuesday, May 14, 2024 =
-3:44 PM
->=20
-> To run in the VTL mode, Hyper-V drivers have to know what
-> VTL the system boots in, and the arm64/hyperv code does not
-> update the variable that stores the value.
->=20
-> Update the variable to enable the Hyper-V drivers to boot
-> in the VTL mode and print the VTL the code runs in.
->=20
-> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
-> ---
->  arch/arm64/hyperv/Makefile        |  1 +
->  arch/arm64/hyperv/hv_vtl.c        | 19 +++++++++++++++++++
->  arch/arm64/hyperv/mshyperv.c      |  6 ++++++
->  arch/arm64/include/asm/mshyperv.h |  8 ++++++++
->  arch/x86/hyperv/hv_vtl.c          |  2 +-
->  5 files changed, 35 insertions(+), 1 deletion(-)
->  create mode 100644 arch/arm64/hyperv/hv_vtl.c
->=20
-> diff --git a/arch/arm64/hyperv/Makefile b/arch/arm64/hyperv/Makefile
-> index 87c31c001da9..9701a837a6e1 100644
-> --- a/arch/arm64/hyperv/Makefile
-> +++ b/arch/arm64/hyperv/Makefile
-> @@ -1,2 +1,3 @@
->  # SPDX-License-Identifier: GPL-2.0
->  obj-y		:=3D hv_core.o mshyperv.o
-> +obj-$(CONFIG_HYPERV_VTL_MODE)	+=3D hv_vtl.o
-> diff --git a/arch/arm64/hyperv/hv_vtl.c b/arch/arm64/hyperv/hv_vtl.c
-> new file mode 100644
-> index 000000000000..9b44cc49594c
-> --- /dev/null
-> +++ b/arch/arm64/hyperv/hv_vtl.c
-> @@ -0,0 +1,19 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2023, Microsoft, Inc.
-> + *
-> + * Author : Roman Kisel <romank@linux.microsoft.com>
-> + */
-> +
-> +#include <asm/mshyperv.h>
-> +
-> +void __init hv_vtl_init_platform(void)
-> +{
-> +	pr_info("Linux runs in Hyper-V Virtual Trust Level %d\n", ms_hyperv.vtl=
-);
-> +}
-> +
-> +int __init hv_vtl_early_init(void)
-> +{
-> +	return 0;
-> +}
-> +early_initcall(hv_vtl_early_init);
-> diff --git a/arch/arm64/hyperv/mshyperv.c b/arch/arm64/hyperv/mshyperv.c
-> index 208a3bcb9686..cbde483b167a 100644
-> --- a/arch/arm64/hyperv/mshyperv.c
-> +++ b/arch/arm64/hyperv/mshyperv.c
-> @@ -96,6 +96,12 @@ static int __init hyperv_init(void)
->  		return ret;
->  	}
->=20
-> +	/* Find the VTL */
-> +	ms_hyperv.vtl =3D get_vtl();
-> +	if (ms_hyperv.vtl > 0) /* non default VTL */
-> +		hv_vtl_early_init();
 
-Since hv_vtl_early_init() doesn't do anything on arm64, is the above
-and the empty implementation of hv_vtl_early_init() really needed?
-I thought maybe a subsequent patch in this series would populate
-hv_vtl_early_init() to do something, but I didn't see such.  I realize
-the functions hv_vtl_init_platform() and hv_vtl_early_init() parallel
-equivalent functions on x86, but I'd say drop hv_vtl_early_init() on
-arm64 if it isn't needed.
+On 5/10/24 11:19 PM, Simon Horman wrote:
+> CAUTION: This email comes from a non Wind River email account!
+> Do not click links or open attachments unless you recognize the sender and know the content is safe.
+>
+> On Thu, May 09, 2024 at 10:40:43AM +0800, Xiaolei Wang wrote:
+>> ops->change() depends on stab, there is such a situation
+>> When no parameters are passed in for the first time, stab
+>> is omitted, as in configuration 1 below. At this time, a
+>> warning "Warning: sch_taprio: Size table not specified, frame
+>> length estimates may be inaccurate" will be received. When
+>> stab is added for the second time, parameters, like configuration
+>> 2 below, because the stab is still empty when ops->change()
+>> is running, you will also receive the above warning.
+>>
+>> 1. tc qdisc replace dev eth1 parent root handle 100 taprio \
+>>    num_tc 5 map 0 1 2 3 4 queues 1@0 1@1 1@2 1@3 1@4 base-time 0 \
+>>    sched-entry S 1 100000 \
+>>    sched-entry S 2 100000 \
+>>    sched-entry S 4 100000 \
+>>    max-sdu 0 0 0 0 0 0 0 200 \
+>>    flags 2
+>>
+>>    2. tc qdisc replace dev eth1 parent root overhead 24 handle 100 taprio \
+>>    num_tc 5 map 0 1 2 3 4 queues 1@0 1@1 1@2 1@3 1@4 base-time 0 \
+>>    sched-entry S 1 100000 \
+>>    sched-entry S 2 100000 \
+>>    sched-entry S 4 100000 \
+>>    max-sdu 0 0 0 0 0 0 0 200 \
+>>    flags 2
+>>
+> Hi Xiaolei Wang,
+>
+> If this is a fix, targeted at the net tree, then it should probably have
+> a Fixes tag here (no blank line between it and other tags).
+>
+>> Signed-off-by: Xiaolei Wang <xiaolei.wang@windriver.com>
+>> ---
+>>   net/sched/sch_api.c | 20 ++++++++++----------
+>>   1 file changed, 10 insertions(+), 10 deletions(-)
+>>
+>> diff --git a/net/sched/sch_api.c b/net/sched/sch_api.c
+>> index 60239378d43f..fec358f497d5 100644
+>> --- a/net/sched/sch_api.c
+>> +++ b/net/sched/sch_api.c
+>> @@ -1404,6 +1404,16 @@ static int qdisc_change(struct Qdisc *sch, struct nlattr **tca,
+>>        struct qdisc_size_table *ostab, *stab = NULL;
+>>        int err = 0;
+>>
+>> +     if (tca[TCA_STAB]) {
+>> +             stab = qdisc_get_stab(tca[TCA_STAB], extack);
+>> +             if (IS_ERR(stab))
+>> +                     return PTR_ERR(stab);
+>> +     }
+>> +
+>> +     ostab = rtnl_dereference(sch->stab);
+>> +     rcu_assign_pointer(sch->stab, stab);
+>> +     qdisc_put_stab(ostab);
+>> +
+>>        if (tca[TCA_OPTIONS]) {
+>>                if (!sch->ops->change) {
+>>                        NL_SET_ERR_MSG(extack, "Change operation not supported by specified qdisc");
+> I am concerned that in this case the stab will be updated even if the
+> change operation is rejected by the following code in the if
+> (tca[TCA_OPTIONS]) block, just below the above hunk.
+>
+>                  if (tca[TCA_INGRESS_BLOCK] || tca[TCA_EGRESS_BLOCK]) {
+>                          NL_SET_ERR_MSG(extack, "Change of blocks is not supported");
+>                          return -EOPNOTSUPP;
+>                  }
+> ...
 
-Note too that the naming on the x86 side is arguably a bit messed
-up. hv_vtl_init_platform() runs *before* hv_vtl_early_init().  But
-typically in the Linux kernel, functions with "early init" in the name
-run very early in boot, and that's not the case here.  hv_vtl_init_platform=
-()
-is actually the function that runs very early in boot, but its name is
-set up to parallel ms_hyperv_init_platform(), which calls it.  On the
-x86 side, I'd would argue for renaming hv_vtl_init_platform() to
-hv_vtl_early_init(), and then hv_vtl_early_init() becomes hv_vtl_init().
-But that's probably a separate patch.  Here on arm64, perhaps all
-you need is hv_vtl_init().
+Well, that makes sense, I will research further
 
-Michael
+thanks
 
-> +
-> +	hv_vtl_init_platform();
->  	ms_hyperv_late_init();
->=20
->  	hyperv_initialized =3D true;
-> diff --git a/arch/arm64/include/asm/mshyperv.h
-> b/arch/arm64/include/asm/mshyperv.h
-> index a975e1a689dd..4a8ff6be389c 100644
-> --- a/arch/arm64/include/asm/mshyperv.h
-> +++ b/arch/arm64/include/asm/mshyperv.h
-> @@ -49,6 +49,14 @@ static inline u64 hv_get_msr(unsigned int reg)
->  				ARM_SMCCC_OWNER_VENDOR_HYP,	\
->  				HV_SMCCC_FUNC_NUMBER)
->=20
-> +#ifdef CONFIG_HYPERV_VTL_MODE
-> +void __init hv_vtl_init_platform(void);
-> +int __init hv_vtl_early_init(void);
-> +#else
-> +static inline void __init hv_vtl_init_platform(void) {}
-> +static inline int __init hv_vtl_early_init(void) { return 0; }
-> +#endif
-> +
->  #include <asm-generic/mshyperv.h>
->=20
->  #endif
-> diff --git a/arch/x86/hyperv/hv_vtl.c b/arch/x86/hyperv/hv_vtl.c
-> index 92bd5a55f093..ae3105375a12 100644
-> --- a/arch/x86/hyperv/hv_vtl.c
-> +++ b/arch/x86/hyperv/hv_vtl.c
-> @@ -19,7 +19,7 @@ static struct real_mode_header hv_vtl_real_mode_header;
->=20
->  void __init hv_vtl_init_platform(void)
->  {
-> -	pr_info("Linux runs in Hyper-V Virtual Trust Level\n");
-> +	pr_info("Linux runs in Hyper-V Virtual Trust Level %d\n", ms_hyperv.vtl=
-);
->=20
->  	x86_platform.realmode_reserve =3D x86_init_noop;
->  	x86_platform.realmode_init =3D x86_init_noop;
+xiaolei
+
+>
 > --
-> 2.45.0
->=20
-
+> pw-bot: under-review
 
