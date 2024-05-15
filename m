@@ -1,77 +1,130 @@
-Return-Path: <linux-kernel+bounces-180461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FA978C6EDD
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 01:02:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A5A68C6EDF
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 01:03:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27D4F282562
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 23:01:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0F06B22AE0
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 23:03:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 492794086A;
-	Wed, 15 May 2024 23:01:54 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD3D64C627;
+	Wed, 15 May 2024 23:03:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fBW12Ns/"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88F323C68C
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 23:01:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A36A93FBA7;
+	Wed, 15 May 2024 23:03:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715814113; cv=none; b=s0E4hfSoawSgYwB6/n0UcWpF1oKu0p+abU38pZeCG690GlTS8sPkIkC/MWgaAma0A2BG7HshP5j2FU3dVcZ0Y9YjsQwP+75H6xpzO1V0zQNzWzlULR1EggjkbSojrZ2+dFML0YvZejoC764VnmzmA543v6L+/hPQGWymquntCgQ=
+	t=1715814195; cv=none; b=jLc+ZuAv692gkX81bphfNXcMlDg5LNXHgqxBGOuHu55zrpWhAFYhA5/bCuJLH/0N7oyJttb2DR9WEnKIX4pNmEAq9oVGyA99rUynYDF7hzg/VyiQ8AK+KPl8zJgzvz8AqvkEU0V2vwJTcf51aPwpAMvuIGS+ak5n9KDbrFnjC7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715814113; c=relaxed/simple;
-	bh=pXGzCZDmshfrTnb/9Rlg5avRevZzvL3bKowgDp7fhkU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=k8HXSsiixgKkP5fZaxVvdPrpSrWCQn4FDf1YY1pTX+ACiig39xmDxXPRq2CWGCeLaSjyx7JLy6Xzk9yh78hn14yrZ7EVf4+Stat8TP2hQogxe37pWPqomXwczfxmrzYk9oLOfWovk7jyuz9safKYJZzbPTYIm2Dj0OPT4kBUUGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7e1d7031f4aso542369439f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 16:01:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715814111; x=1716418911;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pXGzCZDmshfrTnb/9Rlg5avRevZzvL3bKowgDp7fhkU=;
-        b=oYVCUdM2FWJjxhgd9l85g0m16xexN6jVB8/R8xfucjeFBMqemyX88KJFznLsyCXKSJ
-         Y9DyYQTm3+wKpSPs/6kRn4hxs91g+lHKA4yjAhefLMsUT4lDiTqYo4yNqkbmvnuuD9px
-         MLs3+SLwjWWWAwRpsE90wqcUX8GQ2yvDXEwFLyMT5aVRE4rIxIiLi+Gf9egFw2MMsNwM
-         Bl1XjfI6mInMRUTiODNp4lKdbN8MazqaEX/KNd3ILAzlqG5QdDVaF20cYfuSuBjpai93
-         b7g2/LjEiNDARkWz1f++YJt6HohuSN/qvFBWcAZal2AQe8pCfNKSSwDi1AQcTNoTK1Xg
-         W3Gg==
-X-Gm-Message-State: AOJu0YwU9qKzgV10SX3KPmG2DWJmtLtU072Vu+TC8TTJ824gkUpDxNNT
-	Nl7Ihjv2iAUFK6wjksq4LbaBc79yBajgP5rJuWIUBq6e+c0yYG6pbIUJAbO+Jk1OysBdSGjn/qJ
-	1y3clEQxp/gQeM18G4WD9g0WlXTQfkYptAf7zNijJGHZ+Uym4beVY0oM=
-X-Google-Smtp-Source: AGHT+IEtLiWEOaVB3tZa/h7eYeXzpXuToHTgMOaHEYeXVFY8uZHIdyDtk163jh9S1d+7aPDP5mFv7Z0f2RiMZsBPFeEeMQhWaa6W
+	s=arc-20240116; t=1715814195; c=relaxed/simple;
+	bh=sRqB680VTQvj7fzPc84hv8BNalE+uhs8Ck1nsl+35K4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UEiFsELsOVKHu9r3kzMOmxwmxfKq1EM9WWTQW5EOcXDFZImhvICJ6Oh5g9zlF2AIYw1glXsba8ZLMYtO+XoKrnqX1n6vZHMbxay8+b0bxNCN5YtYuprWhueJ6tItp1FF8/kne1vSdAMmaLkGEaulO5EDzXscdAbAleh7bFHT4r8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fBW12Ns/; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715814193; x=1747350193;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=sRqB680VTQvj7fzPc84hv8BNalE+uhs8Ck1nsl+35K4=;
+  b=fBW12Ns/l/R/HXN04kR3gWCtmxqfjmOYAriISI5FUMjXaav1QmknaQt2
+   ONw6Bk+PeyFxMJeNLiBxIO0Pjx32Z1EG/00GuvdsODbJEGBJXcpmhnvzG
+   V7AXgW8kkqxzCYHbXLtPBbsdtNHNlXgegiZULbkJ4BSBch+ucOAz7nbVb
+   HcUP7izg1uMh8LOBDMHQHECS+xVEOQscCBOIByx+DIUZkGyyHIFWR3JzJ
+   8d2domGYjDIHLjNfpJOYyK4L9r1cGdja4V/4DIJcfmUt4DQzphfsE9ijT
+   gENst+hqCFBGgT7utOgPvNQXW/vGQ+KI7DWBO2OiH47bBa7sbt+mhomMw
+   g==;
+X-CSE-ConnectionGUID: PlXFYgTlRB6N6bYrMAY+Kw==
+X-CSE-MsgGUID: 4rqEAhh8TA62Wh1uWzudmA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="12019056"
+X-IronPort-AV: E=Sophos;i="6.08,162,1712646000"; 
+   d="scan'208";a="12019056"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 16:03:12 -0700
+X-CSE-ConnectionGUID: /y/vCtaLSxi9YEwbpTT0qA==
+X-CSE-MsgGUID: Sg5o04ROTVaneSLM+lXQ7Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,162,1712646000"; 
+   d="scan'208";a="35779249"
+Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 15 May 2024 16:03:10 -0700
+Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s7NeN-000DKq-34;
+	Wed, 15 May 2024 23:03:07 +0000
+Date: Thu, 16 May 2024 07:02:46 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ronak Doshi <ronak.doshi@broadcom.com>, netdev@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Ronak Doshi <ronak.doshi@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next 2/4] vmxnet3: add latency measurement support in
+ vmxnet3
+Message-ID: <202405160624.WdmYFkNm-lkp@intel.com>
+References: <20240514182050.20931-3-ronak.doshi@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:8305:b0:488:e81f:845d with SMTP id
- 8926c6da1cb9f-48958e18e34mr1087565173.4.1715814111686; Wed, 15 May 2024
- 16:01:51 -0700 (PDT)
-Date: Wed, 15 May 2024 16:01:51 -0700
-In-Reply-To: <000000000000aaf7ec06186a8d13@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a0c59e0618861aa4@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [ext4?] KASAN: use-after-free Read in
- __ext4_check_dir_entry (2)
-From: syzbot <syzbot+11af34d3c0711f233fd4@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240514182050.20931-3-ronak.doshi@broadcom.com>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+Hi Ronak,
 
-***
+kernel test robot noticed the following build errors:
 
-Subject: Re: [syzbot] [ext4?] KASAN: use-after-free Read in __ext4_check_dir_entry (2)
-Author: tytso@mit.edu
+[auto build test ERROR on net-next/main]
 
-#syz test git://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git dev
+url:    https://github.com/intel-lab-lkp/linux/commits/Ronak-Doshi/vmxnet3-prepare-for-version-9-changes/20240515-023833
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/20240514182050.20931-3-ronak.doshi%40broadcom.com
+patch subject: [PATCH net-next 2/4] vmxnet3: add latency measurement support in vmxnet3
+config: csky-randconfig-r081-20240516 (https://download.01.org/0day-ci/archive/20240516/202405160624.WdmYFkNm-lkp@intel.com/config)
+compiler: csky-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240516/202405160624.WdmYFkNm-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405160624.WdmYFkNm-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In function 'vmxnet3_get_cycles',
+       inlined from 'vmxnet3_rq_rx_complete' at drivers/net/vmxnet3/vmxnet3_drv.c:1675:25:
+>> drivers/net/vmxnet3/vmxnet3_drv.c:151:9: error: impossible constraint in 'asm'
+     151 |         asm volatile("rdpmc" : "=a" (low), "=d" (high) : "c" (pmc));
+         |         ^~~
+
+
+vim +/asm +151 drivers/net/vmxnet3/vmxnet3_drv.c
+
+   145	
+   146	static u64
+   147	vmxnet3_get_cycles(int pmc)
+   148	{
+   149		u32 low, high;
+   150	
+ > 151		asm volatile("rdpmc" : "=a" (low), "=d" (high) : "c" (pmc));
+   152		return (low | ((u_int64_t)high << 32));
+   153	}
+   154	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
