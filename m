@@ -1,169 +1,122 @@
-Return-Path: <linux-kernel+bounces-180401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8977F8C6DF5
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 23:47:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DC4F8C6DFA
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 23:49:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B17F91C21869
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 21:47:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44675283EDF
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 21:49:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EE1F15B559;
-	Wed, 15 May 2024 21:47:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C13315B571;
+	Wed, 15 May 2024 21:49:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mc4aGt07"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (2048-bit key) header.d=ferroamp-se.20230601.gappssmtp.com header.i=@ferroamp-se.20230601.gappssmtp.com header.b="JB6aB5bk"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7635A155A57;
-	Wed, 15 May 2024 21:47:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52B6315B558
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 21:48:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715809665; cv=none; b=ObYAMIL8I+b2zP2K/lt8OwTbPI7U0Fhb1AIhRHpis0CxwqBCLmtzXJ70fzGjPHXu0c5BjEKhOSV2hcKLz9ZkxcMR0s8I/u7Qg3XapVkd7p5+/pRkXb13VkRqjD1KDdGNcfa+umv6DyGdkAZSMq0AfS5geB5UW7txSngZ6N14HKM=
+	t=1715809740; cv=none; b=BJ8BSBlmeWWPtZI96VXIY8/ts32uGNoAPWOjgGoFwo96GlYcjAsO46QfriXNnjdhA6UonAyLOGlQ/mNRc+ceQRye9zTt+dUwQ0cQjmoLlwFVZvisXU3hFCmj+RyLcEsMgGyTmXEMOvRjpmuqOwTCVeIJ9o5O0wcNsgkwgV5N1E0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715809665; c=relaxed/simple;
-	bh=LI9hUjH7t7Zwg5fteMpc579qcbztQeCkUGV2aMfslG4=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hj9blkDOWyMmYlIUtXfXqlFfKK0ZwZvgkQMHMS45bN4Upba+0GylVmz90Zo79HtiYMw+LMG5IRZkktaxVumA2otwEQ1oGRSDqtgxenlNw1UyXv7+Ncmh4Cd89cwZkMubZ8fVQhDZBdeIpnURSAd7GeOS75sKGHHoXGqI43UdGMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mc4aGt07; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1ee0132a6f3so58108465ad.0;
-        Wed, 15 May 2024 14:47:44 -0700 (PDT)
+	s=arc-20240116; t=1715809740; c=relaxed/simple;
+	bh=dYxBvXIkkIPnkxqSbj9IyfDH5umyBNzNhJPJzCi/wu4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kjINlkWg2BYLxU6pTbfHOfxq4joqR7PnA19ORn7HFKkqMno2miUw8JmLOC1+KGFuufWoqpfOC0Gh7haeYJTLXPoOYGK7m82wFnfj6rd3+fPNrLTu+3zE7zndIZWxqcDvjTi53ex/zAa/m6JPIylvDLOhjtBEmeE/deQOFQnRH+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ferroamp.se; spf=pass smtp.mailfrom=ferroamp.se; dkim=pass (2048-bit key) header.d=ferroamp-se.20230601.gappssmtp.com header.i=@ferroamp-se.20230601.gappssmtp.com header.b=JB6aB5bk; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ferroamp.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ferroamp.se
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-51f60817e34so72207e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 14:48:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715809664; x=1716414464; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=hHyY+0tQ9MhTq4Mfna+AwPPphiWbhqwRtp6sEgx3Jm4=;
-        b=Mc4aGt07xojTOmZlLTz0vVXrf8tJipTgehaPJGZxSqR60KPF858CLNRv02dkobXsH+
-         eKRUYiiRaK8IFKv8J+18oHwL3YHfc1EcXWqm27Tu1xRXqXqqvRJTBZJiDgVhODXa9Sya
-         Oj/xKwBI0L1FKwXYUdUIi0KAvg1wJXylnGqlQiNjSdsQP7ZGcFKct49GnFckn1M1OYtZ
-         dfw3FyjG54LM9MJtTSGm1LzIeyvKCz3pAQum0XHcqnB9NxCtwIJjEsDgRxPmLb3NkO+/
-         k3FP2+lsKaiUF2cB22IbzgLxoUFU45uwlblvhniLNCEuw5+JUkYTDH27mDJzAIPSHB/y
-         vm9Q==
+        d=ferroamp-se.20230601.gappssmtp.com; s=20230601; t=1715809737; x=1716414537; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NbHxK0tJj+d8ac7+efgFv40pBbo32UT05hThpFtt0Dk=;
+        b=JB6aB5bkYA53KgfXnlusszz1aNBPGiRfCO01n6ELYVxY+h2UfUA47v5Hg4KsYaZfm5
+         1ezkLibqogfhP1/hAQvsbMRGeGQfJIbwqRONpUXEwzL0iTHRmLd025ahh26Rep3wBGOs
+         l6jMnZkJKBdvqmCQ7gESQHk6F0td0MMWqZfKliXLazBLsaxU5LCVF1vAr2EmUtDqbHgU
+         dfmEMMB6sdKpZqjCiGDtQYr7J8mfdkhaifKuuMLkNcev5seUzebg2TVQUzPTyQheVT6Q
+         2Vc3a8o0dr4apMS2RRVgEbxZE/sGpwu5aweQvhr9asBTPJHb1DPS3z6vHliiBVRiwdVZ
+         ePeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715809664; x=1716414464;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hHyY+0tQ9MhTq4Mfna+AwPPphiWbhqwRtp6sEgx3Jm4=;
-        b=Hv2kbf2UO/mUQnlwztYlhIM0GqnnYLVNqf/Og350yt7d/JHLeCV+0hx6HTLVWSIawI
-         1IbpwpIImxbi5GcdjHPO/B2nkd/LlBPMCdYYXiR9obWWjlVFVcjN6IyMDgai8dj4W0ck
-         y3FmLZVixwAQn8+SOHQzEVNBOrabrnVCbwHD5tGv74h1QH1FMrGzD20HXYaCT5xvuYtb
-         mU6dl/qjC4rKtevyr7udl0Z8pPbt0JdVe2R11CgYKZDTvCYVgpIvJ4EgJERpRj0rUtep
-         STSHlRORmWDTOH3NUuJzYxYFyTqj/gQxaPWBcZTcieP537nMQeVaZd4zVBIr1VARw6p0
-         MXmA==
-X-Forwarded-Encrypted: i=1; AJvYcCV79GfBOh5W7Gjir3XYPAopRljYhE/LEzyIVZ1m25eKRq5R5SA2R3ElDsSTolz94il5jkqd4TY2S9Qm4rPE2G67Z8SWs4rAQfz6YyRcx5lQ5OPsSdZLY/hn49QF9nuqGC9c2mt+y/k5g3oyijFBTIpn
-X-Gm-Message-State: AOJu0YwRAWmLU3aQC0JcppwIEWFFI0GT8zlc/o6WpVvxftW2vEqoqVWD
-	foJufgmqCtChCnVFgqiJAr6EAnbrEWG3/DwAQlfSqlEPOS9NdEILuqd7TA==
-X-Google-Smtp-Source: AGHT+IHjeD8CJAQCCw3yV5Si0QDfL1HUwUh69c0XMShDCcTHA3OtcBSrwulp8CfschFn1fvYHO7yPQ==
-X-Received: by 2002:a17:903:32cc:b0:1f0:9395:7525 with SMTP id d9443c01a7336-1f0939576e5mr27236765ad.1.1715809663294;
-        Wed, 15 May 2024 14:47:43 -0700 (PDT)
-Received: from krava ([50.204.89.30])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0c136d13sm123766515ad.242.2024.05.15.14.47.42
+        d=1e100.net; s=20230601; t=1715809737; x=1716414537;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NbHxK0tJj+d8ac7+efgFv40pBbo32UT05hThpFtt0Dk=;
+        b=U3EiZAIRz+nPpGI5xPcUcPMsp0QhXuc2R/RW04LwfEQk8Qzf/L36k33D2L0EeKtcva
+         uXQVSK3PdTiRsnbytpHD66Vg6yEgNopc25RnjgEzWfBzVyQOtcD8UMERDigd2aom5unF
+         m8OxG5EYmWQMeKY4t+kB2J8MSQaMzecFSBxd6OvbAIXFumlhzhPz5lvyDuOL/Z3gBkFz
+         VAhigWYkuxkx9Xnm1X05DA3UdxsMGj0Is/ZHUne86mDYOJ1Zj4bKOwgPjOPagWgIes1Q
+         pnNJlzsQAatj+xCxYZcWglem5MV4GIFlQLAILTUwCWnXkFKjc3h9+o83uNeF3HIzWMoH
+         8sQA==
+X-Forwarded-Encrypted: i=1; AJvYcCWpq0NwWz0vX+K4Er7u1M4o2V5seAw+8RPTYQBvAGUA1KZWp5DWntQdUAQw1gpMWapM6in0jexI2bbsXQdleouxh+SHow7yI3pLbgsw
+X-Gm-Message-State: AOJu0YxYIdDAojs8Gn4/ZHtZ3efv7v5oKHS3PCxjunEYaUsLC46LD10l
+	5W/Mq88BEh/lBPpCkUv8xVIzll/kb+8rKA/zZ+79uaY5RwSJI6mjWFwse2begVA=
+X-Google-Smtp-Source: AGHT+IFVo+jBTASsbcknHoB6KxnDq74BPVXn3gknwHhVlO4HPpwL5hatGD02RQSDY6ts4L0JE+ESqg==
+X-Received: by 2002:ac2:494a:0:b0:51c:dffc:41f2 with SMTP id 2adb3069b0e04-5220fa71c21mr10626186e87.1.1715809737520;
+        Wed, 15 May 2024 14:48:57 -0700 (PDT)
+Received: from minibuilder (c188-149-135-220.bredband.tele2.se. [188.149.135.220])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-523ba138259sm26690e87.269.2024.05.15.14.48.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 May 2024 14:47:42 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Wed, 15 May 2024 15:47:40 -0600
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Ubisectech Sirius <bugreport@ubisectech.com>,
-	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, ast <ast@kernel.org>,
-	daniel <daniel@iogearbox.net>, andrii <andrii@kernel.org>
-Subject: Re: WARNING: kmalloc bug in bpf_uprobe_multi_link_attach
-Message-ID: <ZkUtfIROG6-FBI7-@krava>
-References: <da22ddaf-384f-4a38-8338-decbfdb929fc.bugreport@ubisectech.com>
- <CAADnVQJndMkNh4X-w0520B8PVN122h8XKQxE4g4LmDTKyWd=0Q@mail.gmail.com>
+        Wed, 15 May 2024 14:48:57 -0700 (PDT)
+Date: Wed, 15 May 2024 23:48:55 +0200
+From: =?iso-8859-1?Q?Ram=F3n?= Nordin Rodriguez <ramon.nordin.rodriguez@ferroamp.se>
+To: Parthiban.Veerasooran@microchip.com
+Cc: andrew@lunn.ch, Pier.Beruto@onsemi.com, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	horms@kernel.org, saeedm@nvidia.com, anthony.l.nguyen@intel.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	corbet@lwn.net, linux-doc@vger.kernel.org, robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+	devicetree@vger.kernel.org, Horatiu.Vultur@microchip.com,
+	ruanjinjie@huawei.com, Steen.Hegelund@microchip.com,
+	vladimir.oltean@nxp.com, UNGLinuxDriver@microchip.com,
+	Thorsten.Kummermehr@microchip.com, Selvamani.Rajagopal@onsemi.com,
+	Nicolas.Ferre@microchip.com, benjamin.bigler@bernformulastudent.ch
+Subject: Re: [PATCH net-next v4 05/12] net: ethernet: oa_tc6: implement error
+ interrupts unmasking
+Message-ID: <ZkUtx1Pj6alRhYd6@minibuilder>
+References: <ZjKJ93uPjSgoMOM7@builder>
+ <b7c7aad7-3e93-4c57-82e9-cb3f9e7adf64@microchip.com>
+ <ZjNorUP-sEyMCTG0@builder>
+ <ae801fb9-09e0-49a3-a928-8975fe25a893@microchip.com>
+ <fd5d0d2a-7562-4fb1-b552-6a11d024da2f@lunn.ch>
+ <BY5PR02MB678683EADBC47A29A4F545A59D1C2@BY5PR02MB6786.namprd02.prod.outlook.com>
+ <ZkG2Kb_1YsD8T1BF@minibuilder>
+ <708d29de-b54a-40a4-8879-67f6e246f851@lunn.ch>
+ <ZkIakC6ixYpRMiUV@minibuilder>
+ <6e4207cd-2bd5-4f5b-821f-bc87c1296367@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAADnVQJndMkNh4X-w0520B8PVN122h8XKQxE4g4LmDTKyWd=0Q@mail.gmail.com>
+In-Reply-To: <6e4207cd-2bd5-4f5b-821f-bc87c1296367@microchip.com>
 
-On Wed, May 15, 2024 at 02:30:37PM -0700, Alexei Starovoitov wrote:
-> On Tue, May 14, 2024 at 12:33 AM Ubisectech Sirius
-> <bugreport@ubisectech.com> wrote:
-> >
-> > Hello.
-> > We are Ubisectech Sirius Team, the vulnerability lab of China ValiantSec. Recently, our team has discovered a issue in Linux kernel 6.7.  Attached to the email were a PoC file of the issue.
+On Tue, May 14, 2024 at 04:46:58AM +0000, Parthiban.Veerasooran@microchip.com wrote:
+> >> Is it doing this in an endless cycle?
+> > 
+> > Exactly, so what I'm seeing is when the driver livelocks the macphy is
+> > periodically pulling the irq pin low, the driver clears the interrupt
+> > and repeat.
+> If I understand correctly, you are keep on getting interrupt without 
+> indicating anything in the footer?. Are you using LAN8650 Rev.B0 or B1?. 
+> If it is B0 then can you try with Rev.B1 once?
 > 
-> Jiri,
-> 
-> please take a look.
-> 
-> > Stack dump:
-> >
-> > loop3: detected capacity change from 0 to 8
-> > MTD: Attempt to mount non-MTD device "/dev/loop3"
-> > ------------[ cut here ]------------
-> > WARNING: CPU: 1 PID: 10075 at mm/util.c:632 kvmalloc_node+0x199/0x1b0 mm/util.c:632
 
-hi,
-this should be already fixed via:
-  https://lore.kernel.org/bpf/20231215100708.2265609-2-houtao@huaweicloud.com/
+I'll check the footer content, thanks for the tip!
 
-original report was in here:
-  https://lore.kernel.org/bpf/CABOYnLwwJY=yFAGie59LFsUsBAgHfroVqbzZ5edAXbFE3YiNVA@mail.gmail.com/
+All testing has bee done with Rev.B0, we've located a set of B1 chips.
+So we'll get on resoldering and rerunning the test scenario.
 
-the fix should be in v6.7, can you check if your kernel has:
-  8b2efe51ba85 bpf: Limit the number of uprobes when attaching program to multiple uprobes
-
-thanks,
-jirka
-
-
-> > Modules linked in:
-> > CPU: 1 PID: 10075 Comm: syz-executor.3 Not tainted 6.7.0 #2
-> > Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
-> > RIP: 0010:kvmalloc_node+0x199/0x1b0 mm/util.c:632
-> > Code: 02 1d 00 eb aa e8 a7 49 c6 ff 41 81 e5 00 20 00 00 31 ff 44 89 ee e8 36 45 c6 ff 45 85 ed 0f 85 1b ff ff ff e8 88 49 c6 ff 90 <0f> 0b 90 e9 dd fe ff ff 66 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40
-> > RSP: 0018:ffffc90002007b60 EFLAGS: 00010212
-> > RAX: 00000000000023e4 RBX: 0000000000000400 RCX: ffffc90003aaa000
-> > RDX: 0000000000040000 RSI: ffffffff81c3acc8 RDI: 0000000000000005
-> > RBP: 00000037ffffcec8 R08: 0000000000000005 R09: 0000000000000000
-> > R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-> > R13: 0000000000000000 R14: 00000000ffffffff R15: ffff88805ff6e1b8
-> > FS:  00007fc62205f640(0000) GS:ffff88807ec00000(0000) knlGS:0000000000000000
-> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > CR2: 0000001b2e026000 CR3: 000000005f338000 CR4: 0000000000750ef0
-> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> > PKRU: 55555554
-> > Call Trace:
-> >  <TASK>
-> >  kvmalloc include/linux/slab.h:738 [inline]
-> >  kvmalloc_array include/linux/slab.h:756 [inline]
-> >  kvcalloc include/linux/slab.h:761 [inline]
-> >  bpf_uprobe_multi_link_attach+0x3fe/0xf60 kernel/trace/bpf_trace.c:3239
-> >  link_create kernel/bpf/syscall.c:5012 [inline]
-> >  __sys_bpf+0x2e85/0x4e00 kernel/bpf/syscall.c:5453
-> >  __do_sys_bpf kernel/bpf/syscall.c:5487 [inline]
-> >  __se_sys_bpf kernel/bpf/syscall.c:5485 [inline]
-> >  __x64_sys_bpf+0x78/0xc0 kernel/bpf/syscall.c:5485
-> >  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-> >  do_syscall_64+0x43/0x120 arch/x86/entry/common.c:83
-> >  entry_SYSCALL_64_after_hwframe+0x6f/0x77
-> > RIP: 0033:0x7fc62128fd6d
-> > Code: c3 e8 97 2b 00 00 0f 1f 80 00 00 00 00 f3 0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-> > RSP: 002b:00007fc62205f028 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
-> > RAX: ffffffffffffffda RBX: 00007fc6213cbf80 RCX: 00007fc62128fd6d
-> > RDX: 0000000000000040 RSI: 00000000200001c0 RDI: 000000000000001c
-> > RBP: 00007fc6212f14cd R08: 0000000000000000 R09: 0000000000000000
-> > R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-> > R13: 000000000000000b R14: 00007fc6213cbf80 R15: 00007fc62203f000
-> >  </TASK>
-> >
-> > Thank you for taking the time to read this email and we look forward to working with you further.
-> >
-> >
-> >
+R
 
