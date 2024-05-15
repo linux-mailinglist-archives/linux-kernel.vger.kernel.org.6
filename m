@@ -1,123 +1,134 @@
-Return-Path: <linux-kernel+bounces-179393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D73988C5FA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:15:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 35C278C5FA9
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:17:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 788AF1F22BD2
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 04:15:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E7391F221CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 04:17:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D961238DCD;
-	Wed, 15 May 2024 04:14:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8EA3383B2;
+	Wed, 15 May 2024 04:17:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="IMNZHljO"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FCpVdjcC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45D922207A
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 04:14:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D8A138398;
+	Wed, 15 May 2024 04:17:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715746498; cv=none; b=VmSGaxrPRpdO/hScYvl6Bp5yG/z7443YF+74G/Rz0dx4mRXrdEjsU3hxeRVQoVJjONVhG19oMpscnTcVZ5eO+CaoCsI+w6gXxiRWXquxsnY+/xjy6bUNBTDIZJkz4OWT3b+W3QMV9srQLesY1rLEldwLIqF3zJ26iCKnagxLAN4=
+	t=1715746662; cv=none; b=TbcUGYRZ75282c3B9O3l9FNmqnLc8hMRJQfOjElQU0piewmWekP2TCCJ6GV1SIq0uSpHVsokQYZTwJNz/fz/nm0x6z16VcxSoVqB/q6KRuR5DuW95qYlOmTsAV9QB2RW3w7HojHSi07lvi22G+tjlThJDMoL5YVnaPofAM0IkLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715746498; c=relaxed/simple;
-	bh=XhCwhjcGydXDxiHtSK4BdYzcSeAyPu3k1yt7vJg0K8E=;
+	s=arc-20240116; t=1715746662; c=relaxed/simple;
+	bh=o8xlyoTwasKN6ToM9uc7PDvEdUddA5cXnljoZKZ9vpM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MAOuxDUr0OSw+YLTJQ5wVqmfygwP1Yoxnd2Vw0snZxA6Qhk+R8ll9HNu1q5yi/cSgBonjUj5RsnU6JYtq1CDxrFNcTx6NDtNBakQz42NqMUMdE4lKo1URawy5WEzd2krDeTXvs/saL4golvDLCnDzrKCtc15eUXH3jXkuxemBzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=IMNZHljO; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-572669fd9f9so1218412a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 21:14:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1715746494; x=1716351294; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=r4cKs65r0Vn5NjWdK37SwLqUt+S38IkvifOxEI5Gn60=;
-        b=IMNZHljOQnPCIgeLH81xvKh2GckkbVFrJhwzoPYESiOip4cGd3J6aB9qX5SAa+PupY
-         PHfF+hUlR4rb6gFjcgS8lbnt0DyQLv/4vgNE6vmFK0vWUy2BPu808d7dQGeXhzEy8GCm
-         0sw/o9bicTAu3BkdNbfBM1GfUhBfhgdYD3Eck=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715746494; x=1716351294;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=r4cKs65r0Vn5NjWdK37SwLqUt+S38IkvifOxEI5Gn60=;
-        b=kNRwtrT2QX1wbXypIW1njUaGeOwCA6cSk53cqer+aoVDiJ3nwbSP1qZzcQ6a4TrKu8
-         /E8Pjpex1wZ39FreewEkJm4Gny9k5/rcLVlDxvz/BdiZPmj1eMEZgSwGjlW18aPG86Uy
-         OtHn1iQRigRZL/SMjZ3yfKPZMP6dqSERXpEfC77gEI92OiayfnYE2KHE4L/lr1olGnoJ
-         2lMyBii0JDprvGaXU4DCrSjwR+/BcbPiG5WRuw2vtZ5xjzHuosQo73UG3OdnckcqBkdl
-         CGPeIYJ5r/vqOgY6mTRuoxY78IeVcfPJpsftaHpga8igpwHPfRNGEgrHnKTau64IZbMy
-         Xp3A==
-X-Forwarded-Encrypted: i=1; AJvYcCXWdjZxvRjiEPkDfRy7WdCt3W6MGaqcq2er+XgQ3uLlola7PXw+PXR//+NGrugxbcU6daHtPV0m02z8GA8IgLucqgYcpgHYgTzOuxSt
-X-Gm-Message-State: AOJu0YwUdh/ezd4h+QGILvNQMZ2DRW8sjwo+Rjl6qNyQ9AtPjiZESME4
-	hMK0f0KmPLnAkiiZjDdr9oZSFEinldvvqDHJx3zFH0PlD3zvZXEBCnMPR8PeUgiLX0NmX+L7M+U
-	fvpGskQ==
-X-Google-Smtp-Source: AGHT+IFk4trkVKr1NeMtZpl2o2Lt9myuC5/0mLzTFw6BZBfY/ZpgUzieeyCp8tEPLD9pgxTQcdRhxA==
-X-Received: by 2002:a50:d74e:0:b0:56e:2b31:b111 with SMTP id 4fb4d7f45d1cf-5734d5be7camr8388113a12.7.1715746494513;
-        Tue, 14 May 2024 21:14:54 -0700 (PDT)
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com. [209.85.218.44])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733becfc2fsm8343645a12.39.2024.05.14.21.14.54
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 May 2024 21:14:54 -0700 (PDT)
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a59a0e4b773so123478066b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 21:14:54 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXXs1QqmabbdBC5NPgR8zIR1OE27+YgSaDTfmye2NSCCvQi5kgw53/a7c3fYvVIXo6lJh5AmOPlObi7I7RJZIgoO80XtkP7ETb9zMBh
-X-Received: by 2002:a17:906:dac3:b0:a59:b6a8:4d74 with SMTP id
- a640c23a62f3a-a5a2d3bebeemr1157374666b.0.1715746493951; Tue, 14 May 2024
- 21:14:53 -0700 (PDT)
+	 To:Cc:Content-Type; b=c/rjX8ArwRV0m6TE2mnB27BTS22cD8YtxesYDST6MqW3R1ARPy9lUfGLIUsyuKKifi+9EQiyQYgWbMt5q/s7QbtsTRF99fpwj2fAIUQvkEr3YmVaLk3/ojkVKHoqQcWA/rbh6awI069e0A4IsWiPa8nnaqZ9mjECEw5aXuLldHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FCpVdjcC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC093C116B1;
+	Wed, 15 May 2024 04:17:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715746660;
+	bh=o8xlyoTwasKN6ToM9uc7PDvEdUddA5cXnljoZKZ9vpM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=FCpVdjcCp0OtgEk1rkJFNu/BgQyghY0NhS0lKg4hirLKKqFoppfPfx8mkb5r2n06C
+	 fP3Phd9ctUKlhW7YQyFh6/KA63uqji35E+B+JECEgXti88NP9mXhS1ceXPmt+njJyh
+	 DkBrKoixQLQq8FdYnuzKK6bbIBeBkGif2Cum31MYqNja2DwHsgL+WYtvyKjqqyVQtB
+	 1+e1wbzIwZYpVu/7WM+WynHJSTqXhIEeXQpliLa78wc0VWMx+f0rFLnr7sxemncTt6
+	 r808xMb7vty05r/JWDea0BMkzvnIlZJ+4iGZJwFi9EZKhDvEAJRwVd+ybjP55Bj+ka
+	 Cs/GS/FS1g5PQ==
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5238b7d0494so718852e87.3;
+        Tue, 14 May 2024 21:17:40 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUqev3i7jAEwGl+n9pLwotFvKWd+Ta9BAfXg4rfDDQl8B5MbHzkucrbFzW1QXGVsghQkztwITKH0hZbJhvpVSdwLSv3ri/2x+PnK8I4t/D2TfXC8FBqH6XkzAGXWoC+7BGJzqYJ+i4x9WLE
+X-Gm-Message-State: AOJu0YxxNnhiZAHoVRNXmAPKu56sNHoJUoG/cZVrkm/y6ppYsBW1EZYd
+	7vTq7Z1/U9gdRuflBntdTIPaJlQOkQZb2dRk5HixSHlRQVOhNKjWUDHM49QUzXbS9OGHMfUlwGY
+	VXv/I9UynSa0NpbOFLauGFHhySvA=
+X-Google-Smtp-Source: AGHT+IESSLsGjW88xIqliogNGDxgxvKWhuWkxYP31Rdm3gmKprqZhOCCqwQtAdIyH4BUsw/KkwPyyrxbqlAYjIgGGM8=
+X-Received: by 2002:a05:6512:3d1a:b0:51e:f0e8:d70d with SMTP id
+ 2adb3069b0e04-5220fc7d1camr19011140e87.21.1715746659584; Tue, 14 May 2024
+ 21:17:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240415163527.626541-1-jeffxu@chromium.org> <20240514104646.e6af4292f19b834777ec1e32@linux-foundation.org>
- <871q646rea.fsf@meer.lwn.net> <ZkPXcT_JuQeZCAv0@casper.infradead.org>
- <56001.1715726927@cvs.openbsd.org> <20240514160150.3ed0fda8af5cbd2f17c625e6@linux-foundation.org>
- <92453.1715730450@cvs.openbsd.org> <20240515025811.GA1232@1wt.eu> <CAHk-=wiW4V5HRQ5Jm_MnSMVTeivS_4kdm1dnc08d03UKzmyp+A@mail.gmail.com>
-In-Reply-To: <CAHk-=wiW4V5HRQ5Jm_MnSMVTeivS_4kdm1dnc08d03UKzmyp+A@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 14 May 2024 21:14:37 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wh_GHCwCiC-ZR=idjNEb0xZq20=fQnQxnjGkiq-ba5DLg@mail.gmail.com>
-Message-ID: <CAHk-=wh_GHCwCiC-ZR=idjNEb0xZq20=fQnQxnjGkiq-ba5DLg@mail.gmail.com>
-Subject: Re: [PATCH v10 0/5] Introduce mseal
-To: Willy Tarreau <w@1wt.eu>
-Cc: Theo de Raadt <deraadt@openbsd.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Matthew Wilcox <willy@infradead.org>, Jonathan Corbet <corbet@lwn.net>, jeffxu@chromium.org, 
-	keescook@chromium.org, jannh@google.com, sroettger@google.com, 
-	gregkh@linuxfoundation.org, usama.anjum@collabora.com, 
-	Liam.Howlett@oracle.com, surenb@google.com, merimus@google.com, 
-	rdunlap@infradead.org, jeffxu@google.com, jorgelo@chromium.org, 
-	groeck@chromium.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org, pedro.falcato@gmail.com, 
-	dave.hansen@intel.com, linux-hardening@vger.kernel.org
+References: <b948b14b-1543-4314-9e9e-58a54cf2b734@gmail.com>
+In-Reply-To: <b948b14b-1543-4314-9e9e-58a54cf2b734@gmail.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Wed, 15 May 2024 13:17:03 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASTaxPDH4_wozMc9G6NE+HwFXgLiUAM5Ki9mc-Gwf4vmA@mail.gmail.com>
+Message-ID: <CAK7LNASTaxPDH4_wozMc9G6NE+HwFXgLiUAM5Ki9mc-Gwf4vmA@mail.gmail.com>
+Subject: Re: [PROBLEM linux-next] Error in "make olddefconfig" and "make menuconfig"
+To: Mirsad Todorovac <mtodorovac69@gmail.com>
+Cc: Bagas Sanjaya <bagasdotme@gmail.com>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Kernel Build System <linux-kbuild@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 14 May 2024 at 20:36, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+On Wed, May 15, 2024 at 3:37=E2=80=AFAM Mirsad Todorovac <mtodorovac69@gmai=
+l.com> wrote:
 >
-> Guys, if you let untrusted code execute random system calls, the whole
-> "look, now unmap() acts oddly" IS THE LEAST OF YOUR ISSUES.
+> Hi, Mr. Bagas,
+>
+> While bisecting a problem in linux-next tree, I came across the problem:
 
-Side note: it doesn't even help to make things "atomic". munmap() acts
-oddly whether it fals completely or whether it fails partially, and if
-the user doesn't check the result, neither case is great.
 
-If you want to have some "hardened mseal()", you make any attempt to
-change a mseal'ed memory area be a fatal error. The whole "atomic or
-not" is a complete red herring.
+I checked out v6.7-rc5-2761-gefc11f34e25f
+but 'make olddefconfig' worked fine with me.
 
-I'd certainly be ok with that. If the point of mseal is "you can't
-change this mapping", then anybody who tries to change it is obviously
-untrustworthy, and killing the whole thing sounds perfectly sane to
-me.
 
-Maybe that's a first valid use-case for the flags argument.
+If this issue occurs only during 'git bisect',
+I need full steps to reproduce it because I do not
+know what you did before v6.7-rc5-2761-gefc11f34e25f.
 
-            Linus
+
+  $ git checkout <some commit>
+  $ [ do something ]
+  $ git v6.7-rc5-2761-gefc11f34e25f
+  $ make olddefconfig
+
+
+If I am able to reproduce the issue that way,
+maybe I can have more insight.
+
+
+
+
+
+
+
+>
+> marvin@defiant:~/linux/kernel/linux-next$ git describe
+> v6.7-rc5-2761-gefc11f34e25f
+> marvin@defiant:~/linux/kernel/linux-next$ make olddefconfig
+> make[2]: *** No targets.  Stop.
+> make[1]: *** [/home/marvin/linux/kernel/linux-next/Makefile:621: scripts_=
+basic] Error 2
+> make: *** [Makefile:234: __sub-make] Error 2
+> marvin@defiant:~/linux/kernel/linux-next$ make menuconfig
+> make[2]: *** No targets.  Stop.
+> make[1]: *** [/home/marvin/linux/kernel/linux-next/Makefile:621: scripts_=
+basic] Error 2
+> make: *** [Makefile:234: __sub-make] Error 2
+> marvin@defiant:~/linux/kernel/linux-next$
+>
+> Now, this occurred for the first time, and I don't know how to bail out.
+>
+> I recall in past couple of years you have some insightful advice.
+>
+> Thank you very much.
+>
+> Best regards,
+> Mirsad Todorovac
+>
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
