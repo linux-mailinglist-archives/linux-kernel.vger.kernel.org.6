@@ -1,123 +1,170 @@
-Return-Path: <linux-kernel+bounces-179706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BA9B8C63B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 11:32:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 841B08C63BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 11:33:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1173FB2305A
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:32:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35323285285
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:33:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87C7E5914A;
-	Wed, 15 May 2024 09:32:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBE9B5915C;
+	Wed, 15 May 2024 09:33:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cS3yVULo"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="bUYC661A"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 453414C61C
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 09:32:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A59035914A;
+	Wed, 15 May 2024 09:33:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715765564; cv=none; b=PCHKthRmAztvgs1OWXpAxrs6mnz3YVB7+3WBd85eBoYJroHKjK2IwC7oePpqCNoB+KOO7jtst910xkN8ncCq3yWNLlvg3bVP6O8GQHK1CgZQyBOPd7X0lsqMnKnUCZBZ1xH8AsITisu6vk/b6uis5b4yDGtik8mi+E40U16mqcw=
+	t=1715765611; cv=none; b=mOQF4YDotweZ2veiTaIeF5tTFlFxbTav6c/8uxgeAi015EkJyVnsD3erzUMXjufPAojuYyG/niXLQpGw6nm28YgKc0sGACMldM1F0hPfmole5rnmIFti/2fUROl+uix8wtUUqXMP9bepTX1gF7UUnvPECbAk1yOMf2ASxRKt/ZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715765564; c=relaxed/simple;
-	bh=I9Njt+qSZitDC1cyvp2ud8/Ev+h1Ulu3Mosrsc2hC/4=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=heiD7qDHKyYk4DQOKjGLCng7uyF82X3mTx7CkRmTBcFgNfFOWOMTakeEE0xB3czaTBhaxLFrZA57tvviXTbL6m2fX76zw+XCWLPreuM/3NNV8Gk5EWTOzmwiuXWmK4Ukl7+oSyz+AO8TRPuTWSCwz2r0BMm1XLxuodAXAU/JFLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cS3yVULo; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-41ffb6bc28fso23317765e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 02:32:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715765562; x=1716370362; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=nEflG7FT4wfp5aRRf/eaCxI+2fXY/+QXyFHn23LNuwA=;
-        b=cS3yVULoeD1Iw7sOuiXbesKqxYDwUqtZtKBRGiQCPpgSBY53W3n1e8NM0K9RfFNxDG
-         6ChYBxfJ6cBZPzl2WnOaN6bbtPhjnWSQ4Z6gd9v7Ykc4Le1SesJISJit+JOG9p5VMRV0
-         XJv4ZhN4gjL+9IKbISgljsB+FZ182BoQbq6YTBhYxOfz3R1dEm7IK/0VPNqFPtuq0pEo
-         7mv9sI5Suc+j5qaiOzroUGbauKbo+t7GvbkxlXsPYniCKcUNlobB/r0rPnJfdk+mUCGj
-         2N6A4PyznJ4ND6nRMS0CRiI8RcCAj9631U1R58ji6c+QzUlDX5IA83g9tAOVRJl9FUUv
-         QzGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715765562; x=1716370362;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nEflG7FT4wfp5aRRf/eaCxI+2fXY/+QXyFHn23LNuwA=;
-        b=r1Yf89uA0u15psCHH+7T7ScmC3D/MAPvZdYdNCZIhZnw9CxbfNix8/AI1NPDnRfvjb
-         7WLHGyMfZqHtQFsgDiPRp/C06UwUhG1gVcWvAiDsuqTvzlFhrx06OtqXPbo/ha4F+jSU
-         8cXBKc22rKf3hhxPTneV/LsH0mtIs0wAQC+f99NOZc2cEko3HfSWjO0+HYKdZIrKHUUW
-         TxLVObYeKwQOjO08gNGcp52mw/+0e153/XxWj2vMvJIi+aZM06+j5A5fcR6hcE9jwjwN
-         q/RlSf3fBci+3E2YAW8VY3V9P1O3VY6rXJJdLBVOw8vloivJZpNl1ir9yOk45XnB6RQi
-         OwgA==
-X-Gm-Message-State: AOJu0YxFg2AgWzbml4vTedoTAvWAg3jO66bxGT9OO6MraaElxuYTEMQ1
-	Jdn7Kp0joqDRDcFL6iYAokdjhnxbtniERm2mYipYPw1+v7NG3gjy7diDoiGw39FvKeSL6kFcbEe
-	VjJ2zGmHHksEOcI5KY9pKiIV7XRjXlmuKt5zxFRRs49HSZRhAhCp9Z2A+lEbTLZ0Bw/HGtC9rjL
-	20NqC2ApidbV8nDQh1mUQ5B9a0+TmYgA==
-X-Google-Smtp-Source: AGHT+IH1gSBqvp7AKGZ667U3ixsabHSvj9QhU4Yt6ofdfYCD3Ty+ONz0FDjbciuxrugmAaUEJQIwKs+Q
-X-Received: from palermo.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:118a])
- (user=ardb job=sendgmr) by 2002:a05:600c:5101:b0:41f:9ffd:fd26 with SMTP id
- 5b1f17b1804b1-41fea526b2bmr978075e9.0.1715765561622; Wed, 15 May 2024
- 02:32:41 -0700 (PDT)
-Date: Wed, 15 May 2024 11:32:34 +0200
+	s=arc-20240116; t=1715765611; c=relaxed/simple;
+	bh=dD5AnFYbetluj6XetlnnIHMeaNCVVsisEY7gFCjJiBg=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ab9Znuw5mVUf2YGqzL1m60ldeOw6MUg3bUW3HX4/Zd750aKJ6t9Z0KCAzlqitWL7yXGfkXdapEl59Hhm6eOI80N+bN7JCtFkJrm/R/MuwepBQiSvkSpnovI0xjRXcV0Ez0Puaajj9iGZATsXjx0KBD1mPLtghOC4qfaUidBJ8WQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=bUYC661A; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1715765608; x=1747301608;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=dD5AnFYbetluj6XetlnnIHMeaNCVVsisEY7gFCjJiBg=;
+  b=bUYC661AfbvnFe4zThhx+IU7b9nBd5/YAKMiLGwNqcDkMcQJ5nDRBSuo
+   pWm+ibmzLsGGFb0K8iedUaAo2l1hbZNw2zG7uT9kqyoWhnnjqZYu5BhKi
+   YE3iSEYR5gstZ9KZBlmWWFR1MXQFpNFxlFC/IL7d0FF2YwpNo5NJUzFw0
+   cBVJfT/kyodnDblwO4wDoXfyhh0DGovTKWRB7qvV645Ka03CtYqDBCr7f
+   iQw9CQcfcpNSyx0qKKdx9TY3nVsw6G5RSeskxmToAFlKueLLY7l0I4TsA
+   aWDP4yIE53+xBTqia8jo1SRnxOGmK55/uI51tx8Gjtkqk+4G2+rZ9vhJ6
+   g==;
+X-CSE-ConnectionGUID: EKg2bsSIT56NOUa44W/qLA==
+X-CSE-MsgGUID: ceVrxNbyQTCf2k1m/fEfXA==
+X-IronPort-AV: E=Sophos;i="6.08,161,1712646000"; 
+   d="asc'?scan'208";a="192161291"
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 15 May 2024 02:33:24 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Wed, 15 May 2024 02:33:04 -0700
+Received: from wendy (10.10.85.11) by chn-vm-ex02.mchp-main.com (10.10.85.144)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
+ Transport; Wed, 15 May 2024 02:33:00 -0700
+Date: Wed, 15 May 2024 10:32:46 +0100
+From: Conor Dooley <conor.dooley@microchip.com>
+To: Andrew Jones <ajones@ventanamicro.com>
+CC: "Wang, Xiao W" <xiao.w.wang@intel.com>, "paul.walmsley@sifive.com"
+	<paul.walmsley@sifive.com>, "palmer@dabbelt.com" <palmer@dabbelt.com>,
+	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, "luke.r.nels@gmail.com"
+	<luke.r.nels@gmail.com>, "xi.wang@gmail.com" <xi.wang@gmail.com>,
+	"bjorn@kernel.org" <bjorn@kernel.org>, "ast@kernel.org" <ast@kernel.org>,
+	"daniel@iogearbox.net" <daniel@iogearbox.net>, "andrii@kernel.org"
+	<andrii@kernel.org>, "martin.lau@linux.dev" <martin.lau@linux.dev>,
+	"eddyz87@gmail.com" <eddyz87@gmail.com>, "song@kernel.org" <song@kernel.org>,
+	"yonghong.song@linux.dev" <yonghong.song@linux.dev>,
+	"john.fastabend@gmail.com" <john.fastabend@gmail.com>, "kpsingh@kernel.org"
+	<kpsingh@kernel.org>, "sdf@google.com" <sdf@google.com>, "haoluo@google.com"
+	<haoluo@google.com>, "jolsa@kernel.org" <jolsa@kernel.org>,
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"bpf@vger.kernel.org" <bpf@vger.kernel.org>, "pulehui@huawei.com"
+	<pulehui@huawei.com>, "Li, Haicheng" <haicheng.li@intel.com>,
+	"conor@kernel.org" <conor@kernel.org>, Ben Dooks <ben.dooks@codethink.co.uk>
+Subject: Re: [PATCH v2] riscv, bpf: Optimize zextw insn with Zba extension
+Message-ID: <20240515-jogger-pummel-19fe4e9e8314@wendy>
+References: <20240511023436.3282285-1-xiao.w.wang@intel.com>
+ <20240513-5c6f04fb4a29963c63d09aa2@orel>
+ <DM8PR11MB575179A3EB8D056B3EEECA74B8E32@DM8PR11MB5751.namprd11.prod.outlook.com>
+ <20240514-944dec90b2c531d8b6c783f7@orel>
+ <20240515-cone-getting-d17037b51e97@wendy>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1426; i=ardb@kernel.org;
- h=from:subject; bh=VGmtaanEnV9/j3ToAO2iBPI8VwmtRdsDGLxG+F/6uRw=;
- b=owGbwMvMwCFmkMcZplerG8N4Wi2JIc2l0ah7Q/TfAPlntz67F+4KWR3145TsE7mzmheEFnBE7
- 38n4728o5SFQYyDQVZMkUVg9t93O09PlKp1niULM4eVCWQIAxenAEyE7SHDX5ETXGZm8s5nRU8J
- s2s47Fq0nN9kA4OKHuOH44YNT1PVlRkZpljpSt38/y2vs2HLPQGH9VXuX2d8X8wyP2zK88dbDqx m4wUA
-X-Mailer: git-send-email 2.45.0.rc1.225.g2a3ae87e7f-goog
-Message-ID: <20240515093233.3698988-2-ardb+git@google.com>
-Subject: [PATCH] x86/boot: Avoid global attribute in early memory mappings
-From: Ard Biesheuvel <ardb+git@google.com>
-To: linux-kernel@vger.kernel.org
-Cc: x86@kernel.org, Ard Biesheuvel <ardb@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="es0X3vLG906/aXNt"
+Content-Disposition: inline
+In-Reply-To: <20240515-cone-getting-d17037b51e97@wendy>
 
-From: Ard Biesheuvel <ardb@kernel.org>
+--es0X3vLG906/aXNt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The decompressor uses the __PAGE_KERNEL_LARGE_EXEC template to create
-page table entries, and this includes the 'G' global bit. Global
-mappings are a performance optimization that requires more elaborate TLB
-maintenance, which the decompressor does not implement, and so global
-mappings are disabled entirely, by clearing CR4.PGE in the startup code.
+On Wed, May 15, 2024 at 09:19:46AM +0100, Conor Dooley wrote:
+> On Tue, May 14, 2024 at 03:37:02PM +0200, Andrew Jones wrote:
+> > On Tue, May 14, 2024 at 07:36:04AM GMT, Wang, Xiao W wrote:
+> > > > From: Andrew Jones <ajones@ventanamicro.com>
+> >> > > > +config RISCV_ISA_ZBA
+> > > > > +	bool "Zba extension support for bit manipulation instructions"
+> > > > > +	depends on TOOLCHAIN_HAS_ZBA
+> > > >=20
+> > > > We handcraft the instruction, so why do we need toolchain support?
+> > >=20
+> > > Good point, we don't need toolchain support for this bpf jit case.
+> > >=20
+> > > >=20
+> > > > > +	depends on RISCV_ALTERNATIVE
+> > > >=20
+> > > > Also, while riscv_has_extension_likely() will be accelerated with
+> > > > RISCV_ALTERNATIVE, it's not required.
+> > >=20
+> > > Agree, it's not required. For this bpf jit case, we should drop these=
+ two dependencies.
+> > >=20
+> > > BTW, Zbb is used in bpf jit, the usage there also doesn't depend on t=
+oolchain and
+> > > RISCV_ALTERNATIVE, but the Kconfig for RISCV_ISA_ZBB has forced the d=
+ependencies
+> > > due to Zbb assembly programming elsewhere.
+> > > Maybe we could just dynamically check the existence of RISCV_ISA_ZB* =
+before jit code
+> > > emission? or introduce new config options for bpf jit? I prefer the f=
+irst method and
+> > > welcome any comments.
+> >=20
+> > My preferences is to remove as much of the TOOLCHAIN_HAS_ stuff as
+> > possible. We should audit the extensions which have them to see if
+> > they're really necessary.
+>=20
+> While I think it is reasonable to allow the "RISCV_ISA_ZBB" option to
+> control whether or not bpf is allowed to use it for optimisations, only
+> allowing bpf to do that if there's toolchain support feels odd to me..
+> Maybe we need to sorta steal from Charlie's patchset and introduce
+> some hidden options that have the toolchain dep that are used by the
+> alternative macros etc?
+>=20
+> I'll have a poke at how bad that looks I think.
 
-Since global mappings are not used, it is better to avoid setting the
-bit altogether, so clear it from the 'flag' variable used to populate
-page table entries.
+I don't love this, in particular my option naming, but it would allow
+the Zbb optimisations in the kernel to not depend on toolchain support
+while not muddying the Kconfig waters for users:
+https://git.kernel.org/pub/scm/linux/kernel/git/conor/linux.git/commit/?h=
+=3Driscv-zbb_split
+A similar model could be followed if there were to be some
+optimisations for Zba in the future that do require toolchain support:
 
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
----
- arch/x86/boot/compressed/ident_map_64.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+--es0X3vLG906/aXNt
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/arch/x86/boot/compressed/ident_map_64.c b/arch/x86/boot/compressed/ident_map_64.c
-index dfb9c2deb77c..e24fedf1e36b 100644
---- a/arch/x86/boot/compressed/ident_map_64.c
-+++ b/arch/x86/boot/compressed/ident_map_64.c
-@@ -121,6 +121,12 @@ void initialize_identity_maps(void *rmode)
- 	mapping_info.page_flag = __PAGE_KERNEL_LARGE_EXEC | sme_me_mask;
- 	mapping_info.kernpg_flag = _KERNPG_TABLE;
- 
-+	/*
-+	 * Entries with the G bit require more elaborate TLB maintenance,
-+	 * so avoid them for these early mappings.
-+	 */
-+	mapping_info.page_flag &= ~_PAGE_GLOBAL;
-+
- 	/*
- 	 * It should be impossible for this not to already be true,
- 	 * but since calling this a second time would rewind the other
--- 
-2.45.0.rc1.225.g2a3ae87e7f-goog
+-----BEGIN PGP SIGNATURE-----
 
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZkSBPgAKCRB4tDGHoIJi
+0nCmAQCsoI65PD/ah3I73wtpDrzK+PCNiu2WNVR/dUBJlyt29AD9Gw6ZED7Qb42h
+L7QgyIUuoEoC+s9FgNEV/wpZUPvx9Qo=
+=gTNF
+-----END PGP SIGNATURE-----
+
+--es0X3vLG906/aXNt--
 
