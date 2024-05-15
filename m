@@ -1,112 +1,111 @@
-Return-Path: <linux-kernel+bounces-180141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC7E88C6A98
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:30:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 450308C6A9B
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:30:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87E661F23D53
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:30:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A2A71C223D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:30:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C62E3236;
-	Wed, 15 May 2024 16:30:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AD85364A0;
+	Wed, 15 May 2024 16:30:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="DFxOs1kP"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XtaHsBhM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E677156672;
-	Wed, 15 May 2024 16:30:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 938EC38382;
+	Wed, 15 May 2024 16:30:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715790604; cv=none; b=ll+1CUdkeytG4UUC8WCai+gROys5S9Aspt8C0v24pWwL3TRADpgUL6wRqibigHirC8TI+H9K8S8zTfyoniyHug/AtCMYmyOLWovHESH6uNMM1CogzbhtSdtR8QKljr0Yc85OgkcD821hft/40NkuKiWP1069LzOiLQua75aJcnU=
+	t=1715790608; cv=none; b=uAh0QFAl+NeU5RJ8K4hTDcMSy5t0ZSE/wC4bvkpQGe70gBam4705XYRjN578TEMKqN3T1Ljx/qKWHiYSaqG1gxbcH7u/N9U83TgHrrDboR9uHT7ujLmuHDVIN6dfsKDK5u2sXwDFaPRm82EXGJZFEpO1NPqD1kexZhzelCb8GZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715790604; c=relaxed/simple;
-	bh=2Fw7EGP5gnCtdsTqAi3dBdIyvt19JoaAOnStGWcs9Fc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JgPJJlEXfu4sUm2ZtrL5m6LXHKzB+wWBIWFfS1WvlScIQmlcnjZusgURNVXWM8R/MOEsBWjHN5tnVaKLKZ6cXz5B5ACbnqLaqDrHvRTSAx7e5YoDb7SGvorYI0Tr+NZ8/vMVjog6BwnG1fWQyAuxbWWNc5qIspgonyDaVl54M4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=DFxOs1kP; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 4AA38C0006;
-	Wed, 15 May 2024 16:29:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1715790599;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eOto8pkdzNcDGrx6zGWKATW1hZHmdFwBb/iquxmXsu0=;
-	b=DFxOs1kPZXEjrYT7zrVpLQ8+MV1VFCFSNxIl7VbSNEjAdCF2bHaUQccNGAG08mRZB8TUlu
-	fgeVCNxsSiEgcqiLOERDy+DW8CbrnsyHUBmMYcEW+b+h8JpvUjrbu41sHJ22snoQu8i0ol
-	UasyrI+PHdEmJaMIJVuKVP2lQaa83sn/SfvFslms8zpaJhWH/NELKvdT/jpk2z4LH4regT
-	8TXZP1I4w3LUEUtoHE0ScTUwknULloPO+KCRoTRf24QmeX+MiNvDceG/ZfLzQXUnon2+0z
-	FiYpY1Fhj1FSeQRJz8aXlHQDdOovu3fTpxXGZi/3ZDzckkFzwtidhYmo0MBCWw==
-Date: Wed, 15 May 2024 18:29:54 +0200
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Dmitry Yashin <dmt.yashin@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Heiko Stuebner
- <heiko@sntech.de>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Rob Herring <robh@kernel.org>, Jianqun Xu
- <jay.xu@rock-chips.com>, devicetree@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] pinctrl: rockchip: add rk3308b SoC support
-Message-ID: <20240515182954.03c4a475@booty>
-In-Reply-To: <20240515121634.23945-4-dmt.yashin@gmail.com>
-References: <20240515121634.23945-1-dmt.yashin@gmail.com>
-	<20240515121634.23945-4-dmt.yashin@gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1715790608; c=relaxed/simple;
+	bh=b6uOhLr5+sNikINkdW52UqVYtu5Q8MJRE/rYI96Vk7k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FS5yxPVPYYkHzKHw2J9232ZrW7X3B9Xxy2xYYXuskVWfVgR3Vx/kuKS1Nkz0jaKOX0MlsEIGeKEgD3Rq/sEnItbNEIwl5SkobIzoVKOMpIfc1NGxFneXzIaUOP5htMEL3E5x8yG2huMZhFiKzVmnNeErdthogIDxbBxaHNBgCNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XtaHsBhM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E881C116B1;
+	Wed, 15 May 2024 16:30:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715790608;
+	bh=b6uOhLr5+sNikINkdW52UqVYtu5Q8MJRE/rYI96Vk7k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XtaHsBhMDyJYm5SKHP6Fjz/B2vn3eXKF0hqyN8fTzRq3m+CH0ez+mlCv+xMz6NQCg
+	 Eg3YOAcg7GFEFRorZCOrAfO/fCU6aijvikwMRDWP9g43jMcqO9k51imp+BJWfvLZNt
+	 vFt8ZDojVHRS4+FrN4tCQCE/ocjf2zq0Q7d3hXVC2I5tXLen9RyCTRGwnWD/Ye/Lc3
+	 nQm6mTN2mClmV263HTxrs3qoKvs/cG/KSSid7qprGQdpGRt8+4HevwH/IgUspQq2+q
+	 i/8t2Jp8ZN9CtAn75sbrQuDbu65qVMOnIgqhB6Ar1dQ46d6CPrCSmUt2yatplQPvER
+	 TUtpxKRQpRAdA==
+Date: Wed, 15 May 2024 17:30:03 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Xingyu Wu <xingyu.wu@starfivetech.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Hal Feng <hal.feng@starfivetech.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v5 0/2] Add notifier for PLL0 clock and set it 1.5GHz on
+Message-ID: <20240515-reorder-even-8b9eebd91b45@spud>
+References: <20240507065319.274976-1-xingyu.wu@starfivetech.com>
+ <20240510-unfounded-syrup-d1263d57d05a@spud>
+ <NTZPR01MB0956D48361098E8AA4B3930A9FE02@NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn>
+ <20240511-unbiased-dainty-ccb5ece9b1b9@spud>
+ <NTZPR01MB0956A7393097129D3CD048EB9FE32@NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn>
+ <20240514-congenial-smother-1e4b0fc6a5df@spud>
+ <NTZPR01MB0956CF1AA9EA5A20A174FD8A9FEC2@NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: luca.ceresoli@bootlin.com
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="0esYplcxwawkbSl6"
+Content-Disposition: inline
+In-Reply-To: <NTZPR01MB0956CF1AA9EA5A20A174FD8A9FEC2@NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn>
 
-Hello Dmitry,
 
-On Wed, 15 May 2024 17:16:34 +0500
-Dmitry Yashin <dmt.yashin@gmail.com> wrote:
+--0esYplcxwawkbSl6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> Add pinctrl support for rk3308b. This pin controller much the same as
-> rk3308's, but with additional iomux routes and 3bit iomuxes selected
-> via gpio##_sel_src_ctrl registers. Set them up in the function
-> rk3308b_soc_sel_src_init to use new 3bit iomuxes over some 2bit old ones.
-> 
-> Fixes: 1f3e25a06883 ("pinctrl: rockchip: fix RK3308 pinmux bits")
-> Signed-off-by: Dmitry Yashin <dmt.yashin@gmail.com>
+On Wed, May 15, 2024 at 02:23:47AM +0000, Xingyu Wu wrote:
+> On 15/05/2024 02:08, Conor Dooley wrote:
 
-Thanks for the effort! I have one high-level remark, see below.
-Otherwise at a superficial look it looks good.
+> > There's a push in U-Boot to move devicestrees to use "OF_UPSTREAM", which
+> > means importing devicetrees directly from Linux and using them in U-Boot. I
+> > don't really want to merge a patch that would present U-Boot with a problem if
+> > the VisionFive 2 moved to that model there.
 
-> @@ -3952,6 +4150,8 @@ static const struct of_device_id rockchip_pinctrl_dt_match[] = {
->  		.data = &rk3288_pin_ctrl },
->  	{ .compatible = "rockchip,rk3308-pinctrl",
->  		.data = &rk3308_pin_ctrl },
-> +	{ .compatible = "rockchip,rk3308b-pinctrl",
-> +		.data = &rk3308b_pin_ctrl },
+> Would it be better  if I  change the rates of PLL0 and CPU core in the driver not dts,
+> and avoid the dts of Linux and U-Boot being different?
 
-I'm skeptical about this being bound to a new DT compatible. As far as I
-know the RK3308 and RK3308B are mostly equivalent, so it looks as the
-pinctrl implementation could be detected at runtime. This would let
-products to be built with either chip version and work on any without
-any DT change.
+I'd definitely prefer if we don't include stuff in the kernel tree that
+would cause problems for U-Boot if imported there, yeah.
 
-Code for reading the chip ID is in the RK3308 codec driver [0].
 
-[0] https://lore.kernel.org/all/20240305-rk3308-audio-codec-v4-4-312acdbe628f@bootlin.com/ -> search "GRF_CHIP_ID"
+--0esYplcxwawkbSl6
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Luca
+-----BEGIN PGP SIGNATURE-----
 
--- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZkTjCwAKCRB4tDGHoIJi
+0mXdAP45Fq2HjIOOGuw/DNTX8COHl/M4Og4CCDPl9ZvpBSrKhAEAnXj3M2a41LKv
+r68Iay0nVDI4wfm5b+vYD81nKcHouwo=
+=t5CG
+-----END PGP SIGNATURE-----
+
+--0esYplcxwawkbSl6--
 
