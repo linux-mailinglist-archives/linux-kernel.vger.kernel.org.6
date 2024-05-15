@@ -1,90 +1,108 @@
-Return-Path: <linux-kernel+bounces-179359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08F1E8C5F3A
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 04:47:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 482078C5F4C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 04:58:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14F85283C24
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 02:47:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB9CA281D42
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 02:58:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4E3D374C3;
-	Wed, 15 May 2024 02:47:14 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88076374D2;
+	Wed, 15 May 2024 02:58:27 +0000 (UTC)
+Received: from mxct.zte.com.cn (mxct.zte.com.cn [58.251.27.85])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BB012E83F;
-	Wed, 15 May 2024 02:47:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD8B28488
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 02:58:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=58.251.27.85
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715741234; cv=none; b=pz4laoqbZa2dJ+uq7aWmvE3UsjleFpc4ZNTnhbMW0vm7cVljCoERvmtDXkWDdAr2vvW3hGfBSdD3i5oA89su12z300lbCKvJWQTtsl6Y2du7Q4i7GKTDyLXhbngv4HlV8AmA/TBsIPsflzuNt/IRBoT8PJKUsLfFmI2guluhG/Y=
+	t=1715741907; cv=none; b=oy6HMuL6SbCzcorGjUwgCB1AuKvrW3M9+H1fVWcI9qWMNupaHcDXYxFSh0DgJhdU1E/kj7EZS90Pwxy+Y8wF4aZTrFWr9N2o4MyYbQkesOXEez52CgQTh4X9T+MbDcBdC5eULycRMOoS5IOo+xn4XanMaOg4//hQH23Pnx0XaxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715741234; c=relaxed/simple;
-	bh=I9V72DkiQhdP85f8x4+pkp/kW6Su4vtYx3XDQpiP11k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=HGuRbkw1ANeFztygbqxQaDskKpywi6vIz2kKIEf/gjjYoeLxHMOR38DC9/S9VFoUmmjAMkGHM2GjKecoaUo+BQgap08WUMHbfCo9Ub7TpfzFBggHRSzvdO5+BJX9liqrzHRf1/47bs6B+W9wmKcCl0j3G+bySp5Eqbml40Cb1PI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4VfHZz5Xn0zgZCs;
-	Wed, 15 May 2024 10:43:07 +0800 (CST)
-Received: from dggpeml500023.china.huawei.com (unknown [7.185.36.114])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9CF52140155;
-	Wed, 15 May 2024 10:47:08 +0800 (CST)
-Received: from [10.67.110.112] (10.67.110.112) by
- dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Wed, 15 May 2024 10:47:08 +0800
-Message-ID: <41fdf6cb-ec1b-ff07-44f4-3ba01b45ebda@huawei.com>
-Date: Wed, 15 May 2024 10:47:07 +0800
+	s=arc-20240116; t=1715741907; c=relaxed/simple;
+	bh=zeabJBIcDLE+2SfFAsuUcbl7VHyQVDsU/JmrINFi/Ps=;
+	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=tWaGPEqRU6ziokl1oI3HZXMsC6mNUK+6PLUlr48vzNEUOSRrfLg63DoqN1MKOd4BgqIiio4AlFvED1BeDLvOnCLLvGeypE8XSJeMIJIeD6mIFEZV7f6ubJZu/iaFrnEKoHFhGZEbmgYrpiUVHA6URqZP621gRXrty5m3NZLAIQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=58.251.27.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mxde.zte.com.cn (unknown [10.35.20.121])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxct.zte.com.cn (FangMail) with ESMTPS id 4VfHj316jTzCh0l
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 10:48:23 +0800 (CST)
+Received: from mxhk.zte.com.cn (unknown [192.168.250.138])
+	(using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+	(No client certificate requested)
+	by mxde.zte.com.cn (FangMail) with ESMTPS id 4VfHhv6kKDzBRHKQ
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 10:48:15 +0800 (CST)
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4VfHhl0cclz5R9kD;
+	Wed, 15 May 2024 10:48:07 +0800 (CST)
+Received: from xaxapp01.zte.com.cn ([10.88.99.176])
+	by mse-fl1.zte.com.cn with SMTP id 44F2lr8a003023;
+	Wed, 15 May 2024 10:47:53 +0800 (+08)
+	(envelope-from xu.xin16@zte.com.cn)
+Received: from mapi (xaxapp03[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Wed, 15 May 2024 10:47:54 +0800 (CST)
+Date: Wed, 15 May 2024 10:47:54 +0800 (CST)
+X-Zmail-TransId: 2afb6644225affffffff811-00028
+X-Mailer: Zmail v1.0
+Message-ID: <20240515104754889HqrahFPePOIE1UlANHVAh@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-Subject: Re: [PATCH -next] memcg: don't handle event_list for v2 when
- offlining
-Content-Language: en-US
-To: Roman Gushchin <roman.gushchin@linux.dev>, Michal Hocko <mhocko@suse.com>
-CC: <hannes@cmpxchg.org>, <shakeel.butt@linux.dev>, <muchun.song@linux.dev>,
-	<akpm@linux-foundation.org>, <cgroups@vger.kernel.org>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20240514131106.1326323-1-xiujianfeng@huawei.com>
- <ZkNwthw5vJrnQSLL@tiehlicka> <ZkOBaNffNi4rmR8h@P9FQF9L96D>
-From: xiujianfeng <xiujianfeng@huawei.com>
-In-Reply-To: <ZkOBaNffNi4rmR8h@P9FQF9L96D>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- dggpeml500023.china.huawei.com (7.185.36.114)
+Mime-Version: 1.0
+From: <xu.xin16@zte.com.cn>
+To: <akpm@linux-foundation.org>, <david@redhat.com>,
+        <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+        <willy@infradead.org>, <ziy@nvidia.com>, <shy828301@gmail.com>
+Cc: <yang.yang29@zte.com.cn>, <ran.xiaokai@zte.com.cn>,
+        <lu.zhongjun@zte.com.cn>, <xu.xin16@zte.com.cn>
+Subject: =?UTF-8?B?wqBbUEFUQ0ggdjJdIG1tL2h1Z2VfbWVtb3J5OiBtYXJrIHJhY3kgYWNjZXNzIG9uwqBodWdlX2Fub25fb3JkZXJzX2Fsd2F5cw==?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl1.zte.com.cn 44F2lr8a003023
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 66442276.000/4VfHj316jTzCh0l
 
+From: Ran Xiaokai <ran.xiaokai@zte.com.cn>
 
+huge_anon_orders_always is accessed lockless, it is better
+to use the READ_ONCE() wrapper. This is not fixing any visible
+bug, hopefully this can cease some KCSAN complains in the future.
+Also do that for huge_anon_orders_madvise.
 
-On 2024/5/14 23:21, Roman Gushchin wrote:
-> On Tue, May 14, 2024 at 04:09:58PM +0200, Michal Hocko wrote:
->> On Tue 14-05-24 13:11:06, Xiu Jianfeng wrote:
->>> The event_list for memcg is only valid for v1 and not used for v2,
->>> so it's unnessesary to handle event_list for v2.
->>
->> You are right but the code as is works just fine. The list will be
->> empty. It is true that we do not need to take event_list_lock lock but
->> nobody should be using this lock anyway. Also the offline callback is
->> not particularly hot path. So why do we want to change the code?
-> 
-> +1 to that.
-> 
-> Plus this code will be moved to a separate function in mm/memcontrol-v1.c
-> and luckily can be compiled out entirely for users who don't need the
-> cgroup v1 support.
+Signed-off-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
+Acked-by: David Hildenbrand <david@redhat.com>
+Reviewed-by: Lu Zhongjun <lu.zhongjun@zte.com.cn>
+Reviewed-by: xu xin <xu.xin16@zte.com.cn>
+Cc: Yang Yang <yang.yang29@zte.com.cn>
+---
+ include/linux/huge_mm.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-I found the patchset you mentioned, Thanks.
+diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+index de0c89105076..cf7f671aa634 100644
+--- a/include/linux/huge_mm.h
++++ b/include/linux/huge_mm.h
+@@ -122,8 +122,8 @@ static inline bool hugepage_flags_enabled(void)
+ 	 * So we don't need to look at huge_anon_orders_inherit.
+ 	 */
+ 	return hugepage_global_enabled() ||
+-	       huge_anon_orders_always ||
+-	       huge_anon_orders_madvise;
++	       READ_ONCE(huge_anon_orders_always) ||
++	       READ_ONCE(huge_anon_orders_madvise);
+ }
 
-> 
-> Thanks!
+ static inline int highest_order(unsigned long orders)
+-- 
+2.15.2
 
