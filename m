@@ -1,80 +1,101 @@
-Return-Path: <linux-kernel+bounces-180166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C0F68C6AE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:49:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6F0B8C6AEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:49:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D86F1C20BEB
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:49:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C36E284F6A
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:49:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31E682574F;
-	Wed, 15 May 2024 16:49:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ADDE3EA7B;
+	Wed, 15 May 2024 16:49:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="ZIr1KB93"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="o92+f7mA";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2+TaicOt";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="o92+f7mA";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2+TaicOt"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B8614084D
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 16:49:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E1A6383BF;
+	Wed, 15 May 2024 16:49:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715791769; cv=none; b=GiqD2sKmeZhNGrX0gcMGrm/H/fxryIZXpoUAN8pf8RoYpHh2OKcOS6sWzdKsUiPokT+9LWgZouAcyBqw2RivVhBOCTrWGDBN6n16KlKNKJvHzKFBdNGmkRMDbVLbaEHJ+fFTmp2q65V5wsDngIH3U2M2yH47nlH5j4rafXyfHJs=
+	t=1715791773; cv=none; b=JBYt74AjJss0ReGdqtZFTEczrI+vMBrm6N2rqg//LZqreOx7qpIbSYrxv8To1R8me86wBRKxCUtLFMYbaQTjz3aG/XACB8i/8gHK7melMZpmgGQMpRVP+wbq8OQD2ePnMuVBkC8qA0i3xBGRW090rm/j3oyJd4OuripgsntPf+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715791769; c=relaxed/simple;
-	bh=rwSS1TgJQWw0adIVRDDzmes057TY1+a9Xl1CeLSbnlQ=;
+	s=arc-20240116; t=1715791773; c=relaxed/simple;
+	bh=fm9VAj8EaEKZcY3tvfl8GYykevYPgjEACx/bMZTiIc4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uiCoi/d8dl3Mtq4XKqCkfaalv0ZjSnEkQyxj7I1GKxEATgEuvFUUZLSOLciivyHa8tt9pF9TTFAabxaHI2GUTevPy2lKfF8AH73Tjd+HymTsAB+Gnklx1mno9MapJNdvHzp01W6gkCWBdGJK/6jRnU/srZqXha1MgBMmbNFtb98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=ZIr1KB93; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-6f666caf9abso2167416b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 09:49:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1715791767; x=1716396567; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HoV7cV0JwbbBn7RhWLNEmVN8lGKUwH4R+jX2T3SF4lM=;
-        b=ZIr1KB93OMF8RmtuyTYOKw0VzX2kmPgy7taFkxS/BF1eE73+QjIv6QzadTfEWWpXjC
-         sRTQ64hzFvJXYOWNhDBJb4PNt6nKQKkOd6McZKeXhtXCCnylj+NMtCrDbd2zaLAgAuzD
-         vPJqnpi8yq1C32tIwSf4Fb4oKPH3Spr8Yl2AzB4uYQU+ssGDgaGtc4POlxDmRA+5LWIW
-         Vo1kk3DOQuqzgdnehsvT3b0GG/wkjsCxfsp6y6srD8OT9yAcNYRwMO+/K4NMr/Rma8lB
-         R5POTS/KWP2QEpTsFcX2Ci9HuSvP3RucSCFMocOgtagrj/pH4nYuxx59bErltivMUNex
-         +XBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715791767; x=1716396567;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HoV7cV0JwbbBn7RhWLNEmVN8lGKUwH4R+jX2T3SF4lM=;
-        b=CU1h0zRpfq6ODYQ2/d4R++CY4uhUdOfCI2r+jAp39meciT8zYqXNSJTFi5LQWUVT3w
-         Neft+Ye1Lv6K0EqvlpDNAqnLRJtEMNaqi+fFhR6xOGsa9KCK/tedh4XOYMBvEPSltp+z
-         QKHyNlKJ+wgcDaHJQvX9fD1NbVvuFN5DdyLEa2LrS/D+hBg2nncgncGAORWmnryeKUFS
-         lsCfz27VeBKQoJXo1EMW4huE1mX8OcVPUyVJGGngJSSZBpIUwfdnd5oFiPUnjvFgMAKZ
-         rMfQbIFZCFwZzIV702Aw6eEeS/l5On/f850rPjfH+jxYTsjeoQx/dwzsSZ/2ZPy9z1OA
-         TXtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU2AoKJ7DCfVQsT24G+SlfX1Fbp+Cnd1iNL1DJTBkIaMVN4N0AjexsaCcSYpLmjfDROLmse9s1C+hwUAYgHJE5sBtsLi40+QANmZSCA
-X-Gm-Message-State: AOJu0YyatM8pIP17asvwLnENlv87Q6L+CFAKN0rI8NJZ5aiAe2/25VAs
-	RLlQPzrMYdRlUlGZOp6FbOKWFKCRTGrpuRv9W8LqK2VYmawb5Dhnajslq992xZg=
-X-Google-Smtp-Source: AGHT+IGe3OBD6jM1gbubyykp+cGQaPSezSszLGkivme8anrlqDizpz6IK5FP+bm6bslTX2/dsmigLg==
-X-Received: by 2002:a05:6a00:1144:b0:6ec:d972:c3d8 with SMTP id d2e1a72fcca58-6f4e02c6598mr16188054b3a.10.1715791766742;
-        Wed, 15 May 2024 09:49:26 -0700 (PDT)
-Received: from ghost ([2601:647:5700:6860:144c:7973:ee0f:85cd])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2ae0d88sm11315503b3a.122.2024.05.15.09.49.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 May 2024 09:49:26 -0700 (PDT)
-Date: Wed, 15 May 2024 09:49:24 -0700
-From: Charlie Jenkins <charlie@rivosinc.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: linux-riscv@lists.infradead.org,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] RISC-V: fix Andes errata build issues
-Message-ID: <ZkTnlEnoFFrQdXi2@ghost>
-References: <20240515-comic-sketch-3b40e6676f55@spud>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YEA9B+NhqFC6EZTgf0DZvzx+NMGvw8ETc6B2HdmqtpaWk+WYvRAojJMR/FaERt45NlcLhAAtbvE0wiw4wmxixSBgMjuJfY0MgQjVpNuVj0SJvVJSkmk8tG6fb3I0S4dLbZy7YJnjDHVCGvFXFZZJd1Z6TovTf1Gu5rJUCGnsmt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=o92+f7mA; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2+TaicOt; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=o92+f7mA; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2+TaicOt; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 464852092F;
+	Wed, 15 May 2024 16:49:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1715791769;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eDOvU1PkWgvaPjHx1N6ucmoxhi0xTaWIZBUPI0kbRgE=;
+	b=o92+f7mAUu7YGwjGQs4PPSpxg/xNvyJCy5hO16jIUeq5vHtlCzBXvpokdgkMTxRiJm6WEA
+	MkpaZkZlMlG8ymYwb8d8fB7GOrR7w8zLeBZTB44fxNM2CHH19Sl+fTRa3kO9ldrjM01WQ1
+	Dkam2wqoJ1f60cGF4Erl08rbgQcsaYw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1715791769;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eDOvU1PkWgvaPjHx1N6ucmoxhi0xTaWIZBUPI0kbRgE=;
+	b=2+TaicOtLG/C5QeYfZxQcDMyhTPhiIdRsj7jU3YQNo+DhUzKGdklN5Yz7tj/eBS1th43MM
+	03sHIjb7VvK7I1CA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=o92+f7mA;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=2+TaicOt
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1715791769;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eDOvU1PkWgvaPjHx1N6ucmoxhi0xTaWIZBUPI0kbRgE=;
+	b=o92+f7mAUu7YGwjGQs4PPSpxg/xNvyJCy5hO16jIUeq5vHtlCzBXvpokdgkMTxRiJm6WEA
+	MkpaZkZlMlG8ymYwb8d8fB7GOrR7w8zLeBZTB44fxNM2CHH19Sl+fTRa3kO9ldrjM01WQ1
+	Dkam2wqoJ1f60cGF4Erl08rbgQcsaYw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1715791769;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eDOvU1PkWgvaPjHx1N6ucmoxhi0xTaWIZBUPI0kbRgE=;
+	b=2+TaicOtLG/C5QeYfZxQcDMyhTPhiIdRsj7jU3YQNo+DhUzKGdklN5Yz7tj/eBS1th43MM
+	03sHIjb7VvK7I1CA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 36CDA136A8;
+	Wed, 15 May 2024 16:49:29 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id fNw3DZnnRGZFEgAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Wed, 15 May 2024 16:49:29 +0000
+Date: Wed, 15 May 2024 18:49:27 +0200
+From: David Sterba <dsterba@suse.cz>
+To: syzbot <syzbot+623a623cfed57f422be1@syzkaller.appspotmail.com>
+Cc: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
+	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [btrfs?] WARNING in btrfs_get_root_ref
+Message-ID: <20240515164927.GT4449@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <000000000000f673a1061202f630@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,53 +104,65 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240515-comic-sketch-3b40e6676f55@spud>
+In-Reply-To: <000000000000f673a1061202f630@google.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Level: *
+X-Spamd-Result: default: False [1.06 / 50.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=caa42dd2796e3ac1];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	BAYES_HAM(-0.23)[72.42%];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_DN_SOME(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:replyto];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	TAGGED_RCPT(0.00)[623a623cfed57f422be1];
+	SUBJECT_HAS_QUESTION(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Score: 1.06
+X-Spamd-Bar: +
+X-Rspamd-Queue-Id: 464852092F
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
 
-On Wed, May 15, 2024 at 05:09:34PM +0100, Conor Dooley wrote:
-> From: Conor Dooley <conor.dooley@microchip.com>
+On Thu, Feb 22, 2024 at 06:03:22PM -0800, syzbot wrote:
+> Hello,
 > 
-> Commit e47c37c24024 ("riscv: Introduce vendor variants of extension
-> helpers") added includes for the new vendor_extensions.h header in
-> the T-Head and SiFive errata handling code but didn't do so for Andes,
-> resulting in allmodconfig build issues when commit 589e2fc85850
-> ("riscv: Convert xandespmu to use the vendor extension framework")
-> added a user of a macro defined there.
+> syzbot found the following issue on:
 > 
-> Fixes: 589e2fc85850 ("riscv: Convert xandespmu to use the vendor extension framework")
-> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
-> ---
-> v2: Fixup commit references in the commit message
+> HEAD commit:    c02197fc9076 Merge tag 'powerpc-6.8-3' of git://git.kernel..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=16765b8a180000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=caa42dd2796e3ac1
+> dashboard link: https://syzkaller.appspot.com/bug?extid=623a623cfed57f422be1
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 > 
-> CC: Paul Walmsley <paul.walmsley@sifive.com>
-> CC: Palmer Dabbelt <palmer@dabbelt.com>
-> CC: Conor Dooley <conor.dooley@microchip.com>
-> CC: Charlie Jenkins <charlie@rivosinc.com>
-> CC: linux-riscv@lists.infradead.org
-> CC: linux-kernel@vger.kernel.org
-> ---
->  arch/riscv/errata/andes/errata.c | 1 +
->  1 file changed, 1 insertion(+)
+> Unfortunately, I don't have any reproducer for this issue yet.
 > 
-> diff --git a/arch/riscv/errata/andes/errata.c b/arch/riscv/errata/andes/errata.c
-> index a5d96a7a4682..fc1a34faa5f3 100644
-> --- a/arch/riscv/errata/andes/errata.c
-> +++ b/arch/riscv/errata/andes/errata.c
-> @@ -17,6 +17,7 @@
->  #include <asm/processor.h>
->  #include <asm/sbi.h>
->  #include <asm/vendorid_list.h>
-> +#include <asm/vendor_extensions.h>
->  
->  #define ANDES_AX45MP_MARCHID		0x8000000000008a45UL
->  #define ANDES_AX45MP_MIMPID		0x500UL
-> -- 
-> 2.43.0
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/7b2a3f729cc3/disk-c02197fc.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/b4f10e6eb1ca/vmlinux-c02197fc.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/8488781d739e/bzImage-c02197fc.xz
 > 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+623a623cfed57f422be1@syzkaller.appspotmail.com
 
-I was going to fix this in my next version but was waiting for the
-reviews on the thead stuff. I wasn't anticipating these patches to be
-able to jump the queue :)
-
-Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
-
+#syz fix: btrfs: fix double free of anonymous device after snapshot creation failure
 
