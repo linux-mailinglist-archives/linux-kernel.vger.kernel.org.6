@@ -1,317 +1,155 @@
-Return-Path: <linux-kernel+bounces-179794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A60B08C656A
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 13:19:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2779C8C6578
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 13:21:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17276B2101C
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 11:18:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDAB81F23DCF
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 11:21:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98C306EB46;
-	Wed, 15 May 2024 11:18:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D51E2762C1;
+	Wed, 15 May 2024 11:21:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="D1Lhsq6u"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WKLSLYPI"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6CF56EB4C;
-	Wed, 15 May 2024 11:18:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7F037605E
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 11:21:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715771934; cv=none; b=NVD9/HQrH/EyP4DzPDEXBDM/uYqL2H2p0sNYCUBHgWEvS7ZXBOqm4zbLGKpbweaWa3IJ2Rj18XomUzoI69yL78YkzG8UdiHeYC+78ZWlDg0U6dv2byf+LOzK+ipf9Z8K45BRlIs7UcJNqdCn8G4evJQRVMElSwsaPPrqwPW0heo=
+	t=1715772068; cv=none; b=PUwwuE2IVDYCGbFm9gl1GDEFZ0iNfzOJfEuZcGrtKR0Dk4j5WY9Q1HnZSScIfHvVIk90sioEslI/jHjX5iCaYiVEPKRCVLcSD1n6vOjynmvOyc5mrG2X8JiRmZy5MGtJeAbpYAlPbWq3464uusdFU0i4UthEeGeI0BUBjvjzElU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715771934; c=relaxed/simple;
-	bh=ypmQgTTVuA6yQFrlp0e3Jm4SgrVCOEzrzTi78+uItIs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uoqUtjodN/JdWmUzlZNspl4x8MX80UUx32sEogWNnqH2n2+ghOpq8Fxk9Fe8bsv46Te6enYbx7IgvrNoXGl0igv9vY1k8z5Givunbnc/bbDY47g9olNbsUNr4cIrowTRjHnuRXdp0vbppBhhgVvbHFWdXMgOQn1VKaz5PwPfU0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=D1Lhsq6u; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715771934; x=1747307934;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=ypmQgTTVuA6yQFrlp0e3Jm4SgrVCOEzrzTi78+uItIs=;
-  b=D1Lhsq6uxOvKL/kyu1bEIiQZaRAnCchCOariTxK8B/3EzewyTMOFPKc7
-   4BLsB03Pq+pEV24rUcsxkWjZtvxjJSpA00HJQfmjFlkaJJMEDqe0l171S
-   jzZWrW7b3uWPVQYbNugfSxcpr3+hVePu5ewl1I6VeZIcLpPBKN21+mwsp
-   sP8RRjRqdguMW/4pgqOQZNFuTMm8vskeF136DMNYWbXEwJrwXVqeqEDQF
-   cTtuSMMU4x3A/TjchPhuwJBFRTvuMEMVGzKFT4EHbr/PUUHJnTtHs3P3k
-   kpy59WianpV/tnSvQ7SRYq3V/kCJizXe0mJEfAqkfOthzlbHaxsY8qgeg
-   A==;
-X-CSE-ConnectionGUID: nLyMdaVTR0uSGvIUFRHqBQ==
-X-CSE-MsgGUID: 99tsPHlWSw+BkIFwj07noA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11073"; a="22399428"
-X-IronPort-AV: E=Sophos;i="6.08,161,1712646000"; 
-   d="scan'208";a="22399428"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 04:18:53 -0700
-X-CSE-ConnectionGUID: n7DBne7AT+GRpJ1utQrarQ==
-X-CSE-MsgGUID: wFklm+3eSeisovWVteQwhA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,161,1712646000"; 
-   d="scan'208";a="31609018"
-Received: from unknown (HELO wieczorr-mobl1.intel.com) ([10.245.245.148])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 04:18:49 -0700
-From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
-To: fenghua.yu@intel.com,
-	shuah@kernel.org,
-	reinette.chatre@intel.com
-Cc: linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	ilpo.jarvinen@linux.intel.com,
-	tony.luck@intel.com
-Subject: [PATCH v2 2/2] selftests/resctrl: Adjust SNC support messages
-Date: Wed, 15 May 2024 13:18:38 +0200
-Message-ID: <16764746e8f9f42cbd45d61210764a9b67085cbf.1715769576.git.maciej.wieczor-retman@intel.com>
-X-Mailer: git-send-email 2.45.0
-In-Reply-To: <cover.1715769576.git.maciej.wieczor-retman@intel.com>
-References: <cover.1715769576.git.maciej.wieczor-retman@intel.com>
+	s=arc-20240116; t=1715772068; c=relaxed/simple;
+	bh=M/ZccXoJRnPbA6meUj/MmsF/JxN6cGeMpuCaH9Cj9bw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MV+eZfQ3+k7/nS6CGej63JsBBUXwNIpN7fIEAK+8J/cbCapxl/jS3piWty+4+txU+Zvq1vh/DSo7kmaR9nPLNR979n+BDhhejKD1Shf6RoVJPy1F6ngXsYWWb3K/B+49ZLkPVYxejgbD2fwM9G5PcrkYvCd+S2Mfp9zzeuMM9Sw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WKLSLYPI; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715772065;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=h5bDd9jfqFy8/uy57c7rT9ALmyU6BJ6GsFfTS9tK9yg=;
+	b=WKLSLYPIVNx9BPfTU2gMFWDkwlzIrJ6JdqAOEg8rvhzwffgTk2eFit2H36jubhEzcJ0WIQ
+	BkVnS6mpP7134O4JHicKaNOyDuFKN0cXKsmgsv6N4IoErowok/V/W3wxBU771u1nMOiKD6
+	yNO2p/dxtr9jFmc5vkYPWZzXPB9gGP8=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-257-WhGl7FHGPIyWXZjzT2JL7g-1; Wed, 15 May 2024 07:20:54 -0400
+X-MC-Unique: WhGl7FHGPIyWXZjzT2JL7g-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 415FA8058D7;
+	Wed, 15 May 2024 11:20:52 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.36])
+	by smtp.corp.redhat.com (Postfix) with SMTP id 26913200A08E;
+	Wed, 15 May 2024 11:20:46 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Wed, 15 May 2024 13:19:26 +0200 (CEST)
+Date: Wed, 15 May 2024 13:19:20 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Deepak Gupta <debug@rivosinc.com>
+Cc: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+	"olsajiri@gmail.com" <olsajiri@gmail.com>,
+	"songliubraving@fb.com" <songliubraving@fb.com>,
+	"luto@kernel.org" <luto@kernel.org>,
+	"mhiramat@kernel.org" <mhiramat@kernel.org>,
+	"andrii@kernel.org" <andrii@kernel.org>,
+	"john.fastabend@gmail.com" <john.fastabend@gmail.com>,
+	"linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"mingo@redhat.com" <mingo@redhat.com>,
+	"rostedt@goodmis.org" <rostedt@goodmis.org>,
+	"ast@kernel.org" <ast@kernel.org>,
+	"tglx@linutronix.de" <tglx@linutronix.de>,
+	"linux-man@vger.kernel.org" <linux-man@vger.kernel.org>,
+	"yhs@fb.com" <yhs@fb.com>,
+	"daniel@iogearbox.net" <daniel@iogearbox.net>,
+	"peterz@infradead.org" <peterz@infradead.org>,
+	"linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>,
+	"bp@alien8.de" <bp@alien8.de>,
+	"bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+	"x86@kernel.org" <x86@kernel.org>
+Subject: Re: [PATCHv5 bpf-next 6/8] x86/shstk: Add return uprobe support
+Message-ID: <20240515111919.GA6821@redhat.com>
+References: <20240507105321.71524-7-jolsa@kernel.org>
+ <a08a955c74682e9dc6eb6d49b91c6968c9b62f75.camel@intel.com>
+ <ZjyJsl_u_FmYHrki@krava>
+ <a8b7be15e6dbb1e8f2acaee7dae21fec7775194c.camel@intel.com>
+ <Zj_enIB_J6pGJ6Nu@krava>
+ <20240513185040.416d62bc4a71e79367c1cd9c@kernel.org>
+ <c56ae75e9cf0878ac46185a14a18f6ff7e8f891a.camel@intel.com>
+ <ZkKE3qT1X_Jirb92@krava>
+ <3e15152888d543d2ee4e5a1d75298c80aa946659.camel@intel.com>
+ <ZkQTgQ3aKU4MAjPu@debug.ba.rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZkQTgQ3aKU4MAjPu@debug.ba.rivosinc.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
 
-Resctrl selftest prints a message on test failure that Sub-Numa
-Clustering (SNC) could be enabled and points the user to check theirs BIOS
-settings. No actual check is performed before printing that message so
-it is not very accurate in pinpointing a problem.
+Sorry for the late reply, I was on PTO.
 
-Figuring out if SNC is enabled is only one part of the problem, the
-other being whether the kernel supports it. As there is no easy
-interface that simply states SNC support in the kernel one can find that
-information by comparing L3 cache sizes from different sources. Cache
-size reported by /sys/devices/system/node/node0/cpu0/cache/index3/size
-will always show the full cache size even if it's split by enabled SNC.
-On the other hand /sys/fs/resctrl/size has information about L3 size,
-that with kernel support is adjusted for enabled SNC.
+On 05/14, Deepak Gupta wrote:
+>
+> Question,
+>
+> Is it kernel who is maintaining all return probes, meaning original return addresses
+> are saved in kernel data structures on per task basis.
 
-Add a function to find a cache size from /sys/fs/resctrl/size since
-finding that information from the other source is already implemented.
+Yes. task_struct->utask->return_instances
 
-Add a function that compares the two cache sizes and use it to make the
-SNC support message more meaningful.
+See prepare_uretprobe() which inserts the new return_instance with
+->orig_ret_vaddr = original return addresses
+when the tracee enters the ret-probed function.
 
-Add the SNC support message just after MBA's check_results() since MBA
-shares code with MBM and also can suffer from enabled SNC if there is no
-support in the kernel.
+> Once uretprobe did its job then
+> its kernel who is ensuring return to original return address ?
 
-Signed-off-by: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
----
-Changelog v2:
-- Move snc_ways() checks from individual tests into
-  snc_kernel_support().
-- Write better comment for snc_kernel_support().
+Yes. See instruction_pointer_set(regs, ri->orig_ret_vaddr) in
+handle_trampoline().
 
- tools/testing/selftests/resctrl/cat_test.c  |  2 +-
- tools/testing/selftests/resctrl/cmt_test.c  |  6 +-
- tools/testing/selftests/resctrl/mba_test.c  |  2 +
- tools/testing/selftests/resctrl/mbm_test.c  |  4 +-
- tools/testing/selftests/resctrl/resctrl.h   |  5 +-
- tools/testing/selftests/resctrl/resctrlfs.c | 72 ++++++++++++++++++++-
- 6 files changed, 82 insertions(+), 9 deletions(-)
 
-diff --git a/tools/testing/selftests/resctrl/cat_test.c b/tools/testing/selftests/resctrl/cat_test.c
-index c7686fb6641a..722b4fcaf788 100644
---- a/tools/testing/selftests/resctrl/cat_test.c
-+++ b/tools/testing/selftests/resctrl/cat_test.c
-@@ -253,7 +253,7 @@ static int cat_run_test(const struct resctrl_test *test, const struct user_param
- 		return ret;
- 
- 	/* Get L3/L2 cache size */
--	ret = get_cache_size(uparams->cpu, test->resource, &cache_total_size);
-+	ret = get_sys_cache_size(uparams->cpu, test->resource, &cache_total_size);
- 	if (ret)
- 		return ret;
- 	ksft_print_msg("Cache size :%lu\n", cache_total_size);
-diff --git a/tools/testing/selftests/resctrl/cmt_test.c b/tools/testing/selftests/resctrl/cmt_test.c
-index a44e6fcd37b7..0ff232d38c26 100644
---- a/tools/testing/selftests/resctrl/cmt_test.c
-+++ b/tools/testing/selftests/resctrl/cmt_test.c
-@@ -112,7 +112,7 @@ static int cmt_run_test(const struct resctrl_test *test, const struct user_param
- 	if (ret)
- 		return ret;
- 
--	ret = get_cache_size(uparams->cpu, "L3", &cache_total_size);
-+	ret = get_sys_cache_size(uparams->cpu, "L3", &cache_total_size);
- 	if (ret)
- 		return ret;
- 	ksft_print_msg("Cache size :%lu\n", cache_total_size);
-@@ -157,8 +157,8 @@ static int cmt_run_test(const struct resctrl_test *test, const struct user_param
- 		goto out;
- 
- 	ret = check_results(&param, span, n);
--	if (ret && (get_vendor() == ARCH_INTEL))
--		ksft_print_msg("Intel CMT may be inaccurate when Sub-NUMA Clustering is enabled. Check BIOS configuration.\n");
-+	if (ret && (get_vendor() == ARCH_INTEL) && !snc_kernel_support())
-+		ksft_print_msg("Kernel doesn't support Sub-NUMA Clustering but it is enabled. Check BIOS configuration.\n");
- 
- out:
- 	free(span_str);
-diff --git a/tools/testing/selftests/resctrl/mba_test.c b/tools/testing/selftests/resctrl/mba_test.c
-index 5d6af9e8afed..74e1ebb14904 100644
---- a/tools/testing/selftests/resctrl/mba_test.c
-+++ b/tools/testing/selftests/resctrl/mba_test.c
-@@ -161,6 +161,8 @@ static int mba_run_test(const struct resctrl_test *test, const struct user_param
- 		return ret;
- 
- 	ret = check_results();
-+	if (ret && (get_vendor() == ARCH_INTEL) && !snc_kernel_support())
-+		ksft_print_msg("Kernel doesn't support Sub-NUMA Clustering but it is enabled. Check BIOS configuration.\n");
- 
- 	return ret;
- }
-diff --git a/tools/testing/selftests/resctrl/mbm_test.c b/tools/testing/selftests/resctrl/mbm_test.c
-index 3059ccc51a5a..e542938272f9 100644
---- a/tools/testing/selftests/resctrl/mbm_test.c
-+++ b/tools/testing/selftests/resctrl/mbm_test.c
-@@ -129,8 +129,8 @@ static int mbm_run_test(const struct resctrl_test *test, const struct user_param
- 		return ret;
- 
- 	ret = check_results(DEFAULT_SPAN);
--	if (ret && (get_vendor() == ARCH_INTEL))
--		ksft_print_msg("Intel MBM may be inaccurate when Sub-NUMA Clustering is enabled. Check BIOS configuration.\n");
-+	if (ret && (get_vendor() == ARCH_INTEL) && !snc_kernel_support())
-+		ksft_print_msg("Kernel doesn't support Sub-NUMA Clustering but it is enabled. Check BIOS configuration.\n");
- 
- 	return ret;
- }
-diff --git a/tools/testing/selftests/resctrl/resctrl.h b/tools/testing/selftests/resctrl/resctrl.h
-index 3dd5d6779786..2bd7c3f71733 100644
---- a/tools/testing/selftests/resctrl/resctrl.h
-+++ b/tools/testing/selftests/resctrl/resctrl.h
-@@ -28,6 +28,7 @@
- #define RESCTRL_PATH		"/sys/fs/resctrl"
- #define PHYS_ID_PATH		"/sys/devices/system/cpu/cpu"
- #define INFO_PATH		"/sys/fs/resctrl/info"
-+#define SIZE_PATH		"/sys/fs/resctrl/size"
- 
- /*
-  * CPU vendor IDs
-@@ -165,12 +166,14 @@ unsigned long create_bit_mask(unsigned int start, unsigned int len);
- unsigned int count_contiguous_bits(unsigned long val, unsigned int *start);
- int get_full_cbm(const char *cache_type, unsigned long *mask);
- int get_mask_no_shareable(const char *cache_type, unsigned long *mask);
--int get_cache_size(int cpu_no, const char *cache_type, unsigned long *cache_size);
- int resource_info_unsigned_get(const char *resource, const char *filename, unsigned int *val);
-+int get_sys_cache_size(int cpu_no, const char *cache_type, unsigned long *cache_size);
-+int get_resctrl_cache_size(const char *cache_type, unsigned long *cache_size);
- void ctrlc_handler(int signum, siginfo_t *info, void *ptr);
- int signal_handler_register(const struct resctrl_test *test);
- void signal_handler_unregister(void);
- unsigned int count_bits(unsigned long n);
-+int snc_kernel_support(void);
- 
- void perf_event_attr_initialize(struct perf_event_attr *pea, __u64 config);
- void perf_event_initialize_read_format(struct perf_event_read *pe_read);
-diff --git a/tools/testing/selftests/resctrl/resctrlfs.c b/tools/testing/selftests/resctrl/resctrlfs.c
-index e4d3624a8817..88f97db72246 100644
---- a/tools/testing/selftests/resctrl/resctrlfs.c
-+++ b/tools/testing/selftests/resctrl/resctrlfs.c
-@@ -214,14 +214,14 @@ int snc_ways(void)
- }
- 
- /*
-- * get_cache_size - Get cache size for a specified CPU
-+ * get_sys_cache_size - Get cache size for a specified CPU
-  * @cpu_no:	CPU number
-  * @cache_type:	Cache level L2/L3
-  * @cache_size:	pointer to cache_size
-  *
-  * Return: = 0 on success, < 0 on failure.
-  */
--int get_cache_size(int cpu_no, const char *cache_type, unsigned long *cache_size)
-+int get_sys_cache_size(int cpu_no, const char *cache_type, unsigned long *cache_size)
- {
- 	char cache_path[1024], cache_str[64];
- 	int length, i, cache_num;
-@@ -273,6 +273,44 @@ int get_cache_size(int cpu_no, const char *cache_type, unsigned long *cache_size
- 	return 0;
- }
- 
-+/*
-+ * get_resctrl_cache_size - Get cache size as reported by resctrl
-+ * @cache_type:	Cache level L2/L3
-+ * @cache_size:	pointer to cache_size
-+ *
-+ * Return: = 0 on success, < 0 on failure.
-+ */
-+int get_resctrl_cache_size(const char *cache_type, unsigned long *cache_size)
-+{
-+	char line[256], cache_prefix[16], *stripped_line, *token;
-+	size_t len;
-+	FILE *fp;
-+
-+	strcpy(cache_prefix, cache_type);
-+	strncat(cache_prefix, ":", 1);
-+
-+	fp = fopen(SIZE_PATH, "r");
-+	if (!fp) {
-+		ksft_print_msg("Failed to open %s : '%s'\n",
-+			       SIZE_PATH, strerror(errno));
-+		return -1;
-+	}
-+
-+	while (fgets(line, sizeof(line), fp)) {
-+		stripped_line = strstr(line, cache_prefix);
-+
-+		if (stripped_line) {
-+			len = strlen(cache_prefix);
-+			stripped_line += len;
-+			token = strtok(stripped_line, ";");
-+			if (sscanf(token, "0=%lu", cache_size) <= 0)
-+				return -1;
-+		}
-+	}
-+	fclose(fp);
-+	return 0;
-+}
-+
- #define CORE_SIBLINGS_PATH	"/sys/bus/cpu/devices/cpu"
- 
- /*
-@@ -935,3 +973,33 @@ unsigned int count_bits(unsigned long n)
- 
- 	return count;
- }
-+
-+/**
-+ * snc_kernel_support - Compare system reported cache size and resctrl
-+ * reported cache size to get an idea if SNC is supported on the kernel side.
-+ *
-+ * Return: 0 if not supported, 1 if SNC is disabled or SNC is both enabled and
-+ * supported, < 0 on failure.
-+ */
-+int snc_kernel_support(void)
-+{
-+	unsigned long resctrl_cache_size, node_cache_size;
-+	int ret;
-+
-+	/* If SNC is disabled then its kernel support isn't important. */
-+	if (snc_ways() == 1)
-+		return 1;
-+
-+	ret = get_sys_cache_size(0, "L3", &node_cache_size);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = get_resctrl_cache_size("L3", &resctrl_cache_size);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (resctrl_cache_size == node_cache_size)
-+		return 1;
-+
-+	return 0;
-+}
--- 
-2.45.0
+
+I know absolutely nothing about the shadow stacks, trying to read
+Documentation/arch/x86/shstk.rst but it doesn't tell me too much...
+Where can I find more documentation? I didn't try to google yet.
+
+	Upon function return, the processor pops the shadow stack copy
+	and compares it to the normal stack copy. If the two differ, the
+	processor raises a control-protection fault.
+
+grep-grep-grep... exc_control_protection I guess.
+
+Let me ask a couple of really stupid questions. What if the shadow stack
+is "shorter" than the normal stack? I mean,
+
+	enable_shstk()
+	{
+		prctl(ARCH_SHSTK_SHSTK);
+	}
+
+what happens when enable_shstk() returns?
+
+
+And what is the purpose of fpregs_lock_and_load() ? Why do we need to
+fpregs_restore_userregs() in shstk_setup() and other places?
+
+Oleg.
 
 
