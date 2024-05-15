@@ -1,131 +1,117 @@
-Return-Path: <linux-kernel+bounces-179604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4829E8C6207
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:48:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 673118C6215
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:49:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C344B21EE8
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 07:48:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98D7F1C20F66
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 07:49:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32B38481D3;
-	Wed, 15 May 2024 07:48:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D50F94879B;
+	Wed, 15 May 2024 07:49:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="asAaV+Xi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="drzJz1u1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 715044654B;
-	Wed, 15 May 2024 07:48:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17ABD47A79;
+	Wed, 15 May 2024 07:49:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715759282; cv=none; b=gVIPPqg1CfCdnvQbmgIwy85FbP8O+/L+ZW0e96din9C8voCTdxDtNU+oHiH4Vmvp7ENSI61LRxbojPmxIkZVrrRHryxc/rcrEzgA59m+fiCtGk2XkoyN6T5Qk6e1/yPKdFKITbCBeXND3KQwyqo+dv8U5IU9dZjSmdpUw59eFXE=
+	t=1715759345; cv=none; b=BETOZ2+Qpn34h+gxVHRmDg0u0WwCXAgxSukT3KaiPVK23VyoxPTNQ88+K+0fJezJeSAhbr5l/gjNk2V+PE3vUEjRykvZ4zfl7aHx209tXVxEMptcG7tGBhb3bbU/u27spy4Gp1cTf8UmY9JgnOxnq0SLUg6P0f5IG6GQuzRshuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715759282; c=relaxed/simple;
-	bh=7+Rm9slZp7s5VN1EMhP2yf5x2G6kbVKBXKCd/UkqlM4=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=drn95A386rNqn5z8PtizDwd4podQXwJu+jTjnuzFm4JUAXSSsisSMMLdPivhPPNIuLzpPId4A1eEt1LFeGaDRIURpkPhPMYoSknyUNk1PsLDfFuf/6qr6nkZ9eiCesOwn/P+K3dl8UVYS7eReYTwn1dNubnCTEhrfwW8XXN5Ma0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=asAaV+Xi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4AC8C116B1;
-	Wed, 15 May 2024 07:48:01 +0000 (UTC)
+	s=arc-20240116; t=1715759345; c=relaxed/simple;
+	bh=ge8e4h3UMypPCIdfQ9dILMu/Uub24xtFTsawJKyXGXA=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=O33jHbmmupkeoytKtfNvNUX/EmkDpaDUupbseQCS8Ivf1/KKE1bGRAfdE3D4O7KbpVzdk+Kja8ohA2V+D9G/w/nmbJNZCN7Hqqmf2HQluyauPUkr/WSqWuyOWtnh20V+K3r29OdhPKY7oaBL+h/txc4Q/E27WLHsQJ9/NHVu570=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=drzJz1u1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6255BC116B1;
+	Wed, 15 May 2024 07:49:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715759282;
-	bh=7+Rm9slZp7s5VN1EMhP2yf5x2G6kbVKBXKCd/UkqlM4=;
-	h=In-Reply-To:References:Date:From:To:Cc:Subject:From;
-	b=asAaV+XiTWpRtr/53VyBjtRKjT70kq+L57IcLebru/ozd3/6tDpF6QLNbFPW7K3gM
-	 DLpKBBqKI0O+sufJdOtbAsJ79wlfNcv+Uc85KJshD2+qlnc5P9nbF0fgvSryWNg0Xi
-	 btBfa70afOK1PwrvyQI7UFTJ17CDJVORqPorkDJjvUePg1GJd5CmRSjoInpidgUC7G
-	 ZLoc/RftJhQIem0HTsVoudNijaBN9b1YbeOi04GNbz+j6cjnXxShprq8PMFYgTC6MF
-	 iHXBAGkT3ttK1Lndkeyh/TBn6r+SFVTNmfuzAVvKa3DkeIxKv+pfXn348yo/PRO+vf
-	 ZjHsWCB6Fjf3Q==
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfauth.nyi.internal (Postfix) with ESMTP id C57E31200032;
-	Wed, 15 May 2024 03:48:00 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Wed, 15 May 2024 03:48:00 -0400
-X-ME-Sender: <xms:sGhEZjZ2gZSgOcEaEixOE7W1VlXD32ttp_zgD9gGIu0vkBDFwlJosA>
-    <xme:sGhEZib1EaFq3rct_1jI7x4lIiwh-zePANKVB6_BYz5OlbMpPKpegcbpzEtaEGMbm
-    B7vVETCbx-FnzxUR8A>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdegjedguddulecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdet
-    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugeskhgvrhhnvghlrdhorhhgqeenucggtf
-    frrghtthgvrhhnpedvveeigfetudegveeiledvgfevuedvgfetgeefieeijeejffeggeeh
-    udegtdevheenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
-    hmpegrrhhnugdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidquddvkeehudej
-    tddvgedqvdekjedttddvieegqdgrrhhnugeppehkvghrnhgvlhdrohhrghesrghrnhgusg
-    druggv
-X-ME-Proxy: <xmx:sGhEZl_dTaFyJaVAMtSf8UIwFESqX5NZ9AAANd-fTDlNx4CRewDQSw>
-    <xmx:sGhEZpoHgl15LrdhdbtCus11HSKbDai1YZx8fWoOWJ9yr5GNWj8H4A>
-    <xmx:sGhEZupcbW2ri4W-vtO-Qw0-MNjYTOCyScod6gjFQAXagUoNOt4Tww>
-    <xmx:sGhEZvRnqe0zoluW3buZV1Oc4pdjdwCIgc5-HcHuKpKHSHEGMM1GxQ>
-    <xmx:sGhEZmoMFEQooAYaKtCnJaCuJiEJ31sG8oiq-XvEc8qi-O1GV450kt5w>
-Feedback-ID: i36794607:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 89646B6008F; Wed, 15 May 2024 03:48:00 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-455-g0aad06e44-fm-20240509.001-g0aad06e4
+	s=k20201202; t=1715759344;
+	bh=ge8e4h3UMypPCIdfQ9dILMu/Uub24xtFTsawJKyXGXA=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=drzJz1u1/ePj3xCPiPsgyWP2UtQ9Tc2bHK6Fx/miLrBfoqCZd31POrlfy7mi8V4zK
+	 deIdpBqlx2zfdxgCIZOCEMwsl7/j7lD7G+PvbiSPqw1SzYINeI/HO04E4AsZegECxN
+	 V8qR8CL2MCJYkrhmYOHxQ9BP3HkTZxtpVMZqBizGeNA11X/32nQOdA+rKc0qqhfhs0
+	 VCBwc80fx/eyIEl0Nn+IPMce+5Shnjo05AwfxH48bEVLa3ndqatQMppDOFV/W8vfPY
+	 k0ROHvuajNuzw5g8Vo1BtnUvpe0wzE5XeA/HKuU21TEdhkjC0yx1Z6r8dqrD+RbrHE
+	 LaW5HOfpMNQ6A==
+From: Kalle Valo <kvalo@kernel.org>
+To: Oleksandr Natalenko <oleksandr@natalenko.name>
+Cc: linux-kernel@vger.kernel.org,  linux-wireless@vger.kernel.org,  "Linux
+ regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>,
+  Johannes Berg <johannes@sipsolutions.net>,
+  linux-mediatek@lists.infradead.org,
+  linux-arm-kernel@lists.infradead.org,  Felix Fietkau <nbd@nbd.name>,
+  Lorenzo Bianconi <lorenzo@kernel.org>,  Ryder Lee
+ <ryder.lee@mediatek.com>,  Shayne Chen <shayne.chen@mediatek.com>,  Sean
+ Wang <sean.wang@mediatek.com>,  Matthias Brugger <matthias.bgg@gmail.com>,
+  AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+  Peter Chiu <chui-hao.chiu@mediatek.com>,  StanleyYP Wang
+ <StanleyYP.Wang@mediatek.com>,  Linux regressions mailing list
+ <regressions@lists.linux.dev>
+Subject: Re: [REGRESSION] MT7915E doesn't work any more with v6.9
+References: <6061263.lOV4Wx5bFT@natalenko.name>
+	<2341660.ElGaqSPkdT@natalenko.name>
+	<60fe8df750a74331b8a54a76d55d5e8349ac46b4.camel@sipsolutions.net>
+	<2200096.irdbgypaU6@natalenko.name>
+Date: Wed, 15 May 2024 10:48:59 +0300
+In-Reply-To: <2200096.irdbgypaU6@natalenko.name> (Oleksandr Natalenko's
+	message of "Wed, 15 May 2024 09:15:12 +0200")
+Message-ID: <87v83fcy6s.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <5c992610-0716-47d1-97f6-65901797aa8c@app.fastmail.com>
-In-Reply-To: <20240514130858.3048650-2-schnelle@linux.ibm.com>
-References: <20240514130858.3048650-1-schnelle@linux.ibm.com>
- <20240514130858.3048650-2-schnelle@linux.ibm.com>
-Date: Wed, 15 May 2024 07:47:29 +0000
-From: "Arnd Bergmann" <arnd@kernel.org>
-To: "Niklas Schnelle" <schnelle@linux.ibm.com>, "Helge Deller" <deller@gmx.de>
-Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
- "Heiko Carstens" <hca@linux.ibm.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] video: Handle HAS_IOPORT dependencies
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 14, 2024, at 13:08, Niklas Schnelle wrote:
-> In a future patch HAS_IOPORT=n will disable inb()/outb() and friends at
-> compile time. We thus need to #ifdef functions and their callsites which
-> unconditionally use these I/O accessors. In the include/video/vga.h
-> these are conveniently all those functions with the vga_io_* prefix.
+Oleksandr Natalenko <oleksandr@natalenko.name> writes:
+
+> Hello Johannes.
 >
-> Co-developed-by: Arnd Bergmann <arnd@kernel.org>
-> Signed-off-by: Arnd Bergmann <arnd@kernel.org>
-> Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
-> ---
-> Note: This patch does not depend any not-yet-mainline HAS_IOPORT changes
-> and may be merged via subsystem specific trees at your earliest
-> convenience.
+> On st=C5=99eda 15. kv=C4=9Btna 2024 8:23:35, SEL=C4=8C Johannes Berg wrot=
+e:
+>> On Wed, 2024-05-15 at 00:51 +0200, Oleksandr Natalenko wrote:
+>> > Also /cc Johannes because of this commit:
+>> >=20
+>> > 6092077ad09ce wifi: mac80211: introduce 'channel request'
+>> >=20
+>> > On st=C5=99eda 15. kv=C4=9Btna 2024 0:43:40, SEL=C4=8C Oleksandr Natal=
+enko wrote:
+>> > > Hello Felix, Lorenzo et al.
+>> > >=20
+>> > > With v6.9 kernel the following card:
+>> > >=20
+>> > > 01:00.0 Unclassified device [0002]: MEDIATEK Corp. MT7915E 802.11ax =
+PCI Express Wireless Network Adapter [14c3:7915]
+>> > >=20
+>> > > doesn't work any more. Upon mt7915e module insertion the following s=
+plat happens:
+>> > >=20
+>>=20
+>> 6.9 didn't get commit 2f7cf3b61d85 ("wifi: mt76: mt7915: add missing
+>> chanctx ops")? Huh?
 >
-> v1 -> v2:
-> - Moved vga_mm_r(), vga_mm_w(), vga_mm_w_fast() above #ifdef CONFIG_HAS_IOPORT
->   to use them in with or without I/O port variants.
-> - Duplicated vga_r(), vga_w(), vga_w_fast() functions as non-I/O port variants
->   to get rid of in-code #ifdef (Arnd)
-> - Got rid of if (regbase) logic inversion needed for in-code #ifdef
+> Yes, you are right, this commit is not present in v6.9, and I can find it=
+ in the "next" branch only.
+>
+> I can also confirm this commit fixes the regression for me.
 
-Thanks for preparing the new version!
+Thanks for testing.
 
-> diff --git a/include/video/vga.h b/include/video/vga.h
-> index 947c0abd04ef..468764d6727a 100644
-> --- a/include/video/vga.h
-> +++ b/include/video/vga.h
-> @@ -197,9 +197,26 @@ struct vgastate {
->  extern int save_vga(struct vgastate *state);
->  extern int restore_vga(struct vgastate *state);
-> 
-> +static inline unsigned char vga_mm_r (void __iomem *regbase, unsigned 
-> short port)
-> +{
-> +	return readb (regbase + port);
-> +}
+#regzbot fix: 2f7cf3b61d85
 
-My first thought was that this should use the normal whitespace,
-but I guess the file is pretty consistent about the style here,
-so I agree with your choice here.
+--=20
+https://patchwork.kernel.org/project/linux-wireless/list/
 
-      Arnd
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatc=
+hes
 
