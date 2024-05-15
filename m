@@ -1,127 +1,112 @@
-Return-Path: <linux-kernel+bounces-179403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B1168C5FCA
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:46:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E5988C5FD4
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:49:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E8851C20DC3
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 04:46:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAAEB2831EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 04:49:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C6443838A;
-	Wed, 15 May 2024 04:46:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jdOHkH+6"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5263F38FA3;
+	Wed, 15 May 2024 04:49:39 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68BAA3B293;
-	Wed, 15 May 2024 04:46:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9CCE20314;
+	Wed, 15 May 2024 04:49:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715748387; cv=none; b=YxlPzBFG3sOQPFFW7FA2xram4nw8+0EbeR1M2rIYkksFd9vYeMv7uO070O9pNitKZp0RG5sm6/lixr5FjpUJ9j0PMGYOxWNrT368rPzNg40JtXnyKqpi1Bhpi2nYUD1aks84AG2BAoDe5y30PU2+n92GHXvqZgtU5NmydgrbdaE=
+	t=1715748578; cv=none; b=BasBgFotBsyaSgFRTFyQJgIguKzdfZ65qP81fNmg/3j3WF/EtaCJc6ARgXe/YN6FvlA0xIXnsFlQmjrkiiwo5tpPgNwOmPcKBkw2uxQlW8LYXiDIsQfXlQcs0lj5plPpf+LK7lr+DSavfr40rkm5hT8YCR5pwdJvHfWO8jf7vl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715748387; c=relaxed/simple;
-	bh=iJ2O8f/PoiMWbkLO39zieFIrs3iybhip4LTxR4g5Uk0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O2MOuK28DjmnbefwgnMB4PWM9NaN7iIOdZU1nTj6bxUozqXgpNf+Y5k2zAWMqkei7NhDQUMJxWaPnhptQyhJIBzz7XuseF0Pq9WSiYHAHTEQisxyAWoi29Mcn0qCxmYlqGgbqcgNx1fJKuB0+XJcJW1wkqk/ugaLcDO1h9vMSEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jdOHkH+6; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1edf506b216so43656865ad.2;
-        Tue, 14 May 2024 21:46:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715748386; x=1716353186; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VtxoGe1/eejPDg5Q4HDf5+EPwAkFuKKE1kZFYnwxgJA=;
-        b=jdOHkH+6rELUVJRbFkSMsPLXd48AjcawZ/tLM/M42pfEdYE5bura+wYF04THa3W+++
-         ZgkhbzPNHYiotVRPA2ophTtQ++/EZ+Au8e2giguKOF/9SKoaM2FuhH4hsIbE1WamxUZn
-         yRtyItu/9JgQgFfIS2+RdCA89jxNBOh4v2P0qS7JcJqw6CYu3lcycxBqfmsgDBBEC4c9
-         W4do4h+rS3ktgfUSJRLoIIKXnyJYe1HHs7l8v9eJ65lsulXowrXmkg1ceb7+ikicY9EY
-         kVi0rjxyDdDTyL6kg9INUK6Bum+e94bmUwAPTH+1LfQKkj3yW4LnCwnMUvVQL27qgvpc
-         4DDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715748386; x=1716353186;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VtxoGe1/eejPDg5Q4HDf5+EPwAkFuKKE1kZFYnwxgJA=;
-        b=EywdI24sijEFrH7xhzUfU3Y7n7OR4PfmeKojrn5B3n3QHA2y8pZ6MwQJnkpp2+aEdq
-         bNWK58PWGYtONqtoF3E9NP5K6qUolWcR+JftG2EP66AaRIt4MPxH3Ko/rd5LbkdxJU0x
-         YoYHo5/nd3b26xH1kXumWmHXIZeawSoHKseEiwuoqxFzMizk5n+b/jA2BHGEzRg1sbXN
-         sqJsOXkGlw3KXn5oBV0qriHkkf4bICBuFl0x2y5have0fiNpTeKUnm1SuQHi8g+epCw0
-         Sz8ZImTc/oei+8wskXVcfXOYMuqG9U4yKaEwN8hxTmHS3X6+7qKHww4LKVdKLUxWgxkF
-         ZNiw==
-X-Forwarded-Encrypted: i=1; AJvYcCVV7N6llccpnKqm84kZcibmLGmWDJawPHNleS5+V2BVS5NmCCEZUMOr1EZM3XRXXfGsX8VnXU3tb5fbqPG75/MnQRbYeGJVonyFqRBGF+pw3zFu7qx/sjb5/RzPOaJnyRJsETdI
-X-Gm-Message-State: AOJu0YwQMJaV31I6O4qNnRm4e/Fx3TE2jKnePrGKuFTzBsJiCHe7uDKq
-	MIDyixUaM65XA+l6fK2IY2BmebxR1lFUgAFPedKGm1EHxsdRBQDI
-X-Google-Smtp-Source: AGHT+IH/XrTjM2PeRK+50jEYxUmUQv3h8fFp5IUdKc92GIpW+8kEgTsvHOgSiD+PFyw0gIrd/g4NFQ==
-X-Received: by 2002:a17:903:2cf:b0:1e4:436e:801b with SMTP id d9443c01a7336-1ef441c113dmr187211615ad.67.1715748385636;
-        Tue, 14 May 2024 21:46:25 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0b9d4877sm107308485ad.24.2024.05.14.21.46.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 May 2024 21:46:25 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id E02F618109C16; Wed, 15 May 2024 11:46:22 +0700 (WIB)
-Date: Wed, 15 May 2024 11:46:22 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org, akpm@linux-foundation.org,
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
-	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
-	allen.lkml@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 6.8 000/336] 6.8.10-rc1 review
-Message-ID: <ZkQ-HpCHYxv9mq2_@archie.me>
-References: <20240514101038.595152603@linuxfoundation.org>
+	s=arc-20240116; t=1715748578; c=relaxed/simple;
+	bh=AVkqO/R8PDeeUExvLM3elvubZXwPS1QR3t18bGSbOlI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sNYE9xoXlINlUOhIbyDhXu77+mqgVnqS7blFTLiL65n8Aseb4ZacZbZYOu6t9NDN+sd+KXh2QbQTSqwhAX/KVt2L0evt2S/w2WbHrNIGiefAHkQPfFZkG8K8Q6NMUfSd35dwCTLOoxY4iVo3vgYchwjoHkXnW3rF1/GhOFXdK64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E3AAC116B1;
+	Wed, 15 May 2024 04:49:38 +0000 (UTC)
+Date: Wed, 15 May 2024 00:49:31 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Vincent Donnefort
+ <vdonnefort@google.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build warning after merge of the ftrace tree
+Message-ID: <20240515004931.0d2e7af3@rorschach.local.home>
+In-Reply-To: <20240515124808.06279d04@canb.auug.org.au>
+References: <20240515124808.06279d04@canb.auug.org.au>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="9cOENGfmL5IvcNVJ"
-Content-Disposition: inline
-In-Reply-To: <20240514101038.595152603@linuxfoundation.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Wed, 15 May 2024 12:48:08 +1000
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
---9cOENGfmL5IvcNVJ
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Hi all,
+> 
+> After merging the ftrace tree, today's linux-next build (powerpc
+> ppc64_defconfig) produced this warning:
 
-On Tue, May 14, 2024 at 12:13:24PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.8.10 release.
-> There are 336 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->=20
+Interesting, as I didn't get reports from it via zero-day bot.
 
-Successfully compiled and installed the kernel on my computer (Acer
-Aspire E15, Intel Core i3 Haswell). No noticeable regressions.
+> 
+> In file included from arch/powerpc/include/asm/page.h:332,
+>                  from arch/powerpc/include/asm/mmu.h:144,
+>                  from arch/powerpc/include/asm/paca.h:18,
+>                  from arch/powerpc/include/asm/current.h:13,
+>                  from include/linux/thread_info.h:23,
+>                  from include/asm-generic/preempt.h:5,
+>                  from ./arch/powerpc/include/generated/asm/preempt.h:1,
+>                  from include/linux/preempt.h:79,
+>                  from include/linux/alloc_tag.h:11,
+>                  from include/linux/percpu.h:5,
+>                  from include/linux/context_tracking_state.h:5,
+>                  from include/linux/hardirq.h:5,
+>                  from include/linux/interrupt.h:11,
+>                  from include/linux/trace_recursion.h:5,
+>                  from kernel/trace/ring_buffer.c:7:
+> kernel/trace/ring_buffer.c: In function '__rb_map_vma':
+> kernel/trace/ring_buffer.c:6286:72: warning: passing argument 1 of 'virt_to_pfn' makes pointer from integer without a cast [-Wint-conversion]
+>  6286 |                 struct page *page = virt_to_page(cpu_buffer->subbuf_ids[s]);
+>       |                                                  ~~~~~~~~~~~~~~~~~~~~~~^~~
+>       |                                                                        |
+>       |                                                                        long unsigned int
+> include/asm-generic/memory_model.h:37:45: note: in definition of macro '__pfn_to_page'
+>    37 | #define __pfn_to_page(pfn)      (vmemmap + (pfn))
+>       |                                             ^~~
+> kernel/trace/ring_buffer.c:6286:37: note: in expansion of macro 'virt_to_page'
+>  6286 |                 struct page *page = virt_to_page(cpu_buffer->subbuf_ids[s]);
+>       |                                     ^~~~~~~~~~~~
+> arch/powerpc/include/asm/page.h:228:53: note: expected 'const void *' but argument is of type 'long unsigned int'
+>   228 | static inline unsigned long virt_to_pfn(const void *kaddr)
+>       |                                         ~~~~~~~~~~~~^~~~~
+> 
+> Introduced by commit
+> 
+>   117c39200d9d ("ring-buffer: Introducing ring-buffer mapping functions")
+> 
+> My arm multi_v7_defconfig build produced a similar warning.
+> 
+> Is this really intended for v6.10?  It seems a bit late.
+> 
 
-Tested-by: Bagas Sanjaya <bagasdotme@gmail.com>
+Well, I submitted this for the v6.9 merge window, and Linus had issues
+with it. So we've been tweaking it for the entire time and it was ready
+a bit earlier, but due to my vacation and traveling I missed pushing it
+to next. :-p
 
---=20
-An old man doll... just what I always wanted! - Clara
+Most the code has been well tested, but because it is late, I kept it
+as a separate topic branch in case Linus still isn't happy with it.
 
---9cOENGfmL5IvcNVJ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZkQ+GgAKCRD2uYlJVVFO
-oxkvAQCaEZP/0IxV0UUSD2YwRSFuTtlUslOem7aMf+/F7g9FLgEA+XQtjHx4Emzb
-IzL9957c/X+XjIs2cThK7f/EoyVX0Qc=
-=7K6X
------END PGP SIGNATURE-----
-
---9cOENGfmL5IvcNVJ--
+-- Steve
 
