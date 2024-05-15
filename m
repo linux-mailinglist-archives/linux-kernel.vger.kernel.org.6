@@ -1,172 +1,124 @@
-Return-Path: <linux-kernel+bounces-180452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51A708C6EBF
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 00:44:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 224168C6EC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 00:45:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7507B1C22284
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 22:44:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89C43B22AAF
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 22:45:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 678434086A;
-	Wed, 15 May 2024 22:43:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CACA53FB1B;
+	Wed, 15 May 2024 22:45:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Gcf9673q"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QbQ2psdi"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A5C639FEC;
-	Wed, 15 May 2024 22:43:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9326739FEC
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 22:45:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715813032; cv=none; b=i1DODQy3x3oCZDZdQJW8NbVBgRH4ymx6wva5HVxbPwme4qGjMpDzhR1fWAazYKwMHzF8r+6ZlxiubjsTHd9Fd6I/2R/423A9ZZOVcF+/UZqBhPGe45CHFzpMdQZqb5ZUm+U6Tdrvs7YvUHiQ/k9+1a0zbPIeLmzKHVaQtiuR64M=
+	t=1715813125; cv=none; b=k6InTN5mciQgS8CNLdbVFEwR5jKY0DhtLnRd4blv5FPye8FIF589Fu+DkXcvX5/CjtUQdSPhYN5hvfWSHaubZQWfKboGGXEliDG3He+pHIThx24eNa4ZTrwCyS8nFoWUoga4HWv8GyIruBOVKmDnfd6kxslf8hu2RDZE4NcK0No=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715813032; c=relaxed/simple;
-	bh=oKchVcPehzuYki4OTeXXqHW9MQl47AW4/PLCYjSexzs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Gp0hrCwkBBeInCVEmH6DaEQebwkpTx4SHC19SCK1qWXInhbuPhUcxUi24Q/qLzSLwytsUXKlgBgIaPqd2iEngGdKyV0n59VarCqIKaZRd0x90IT9ufO7LTrQ4ZO6FPnXKotIRvJMdTwJ/fK0RbhWzfKLo9iXolw4/XK7cRbDuvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Gcf9673q; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44FL9ex3023672;
-	Wed, 15 May 2024 22:43:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=wBLXCgEnr6gzv+kDg5m82yPO1uvCwTswI6/CjKGoDxg=; b=Gc
-	f9673qHVZAMwaG8XwJQsRpMRb+0t9Zcvchzsu8jKCo2qpxYindfiXvCP6rLuEcWR
-	h2RElb7iQZVm4KJedsYnL+TfYGkyBP6aiNgGIGzB06c2RLoxFjQp6ZgccUiySKZN
-	EU6X4C0U/YYrdmtuLjqUFnK5/h0A7tZPn5tm6FPxYbP40msI6Of5WWHf0hhUCoZe
-	6hxHRm/4Wwg9GR6tGDalFsqnYfGif8tIwdiPrhk0Mwb12xcu/bEzSs/Ib4AHvBy4
-	tSK1y+lBGXVCfMJu3T3Cr05U4H/YL1c8Q73A7o9+layupBnujMz6d1t93IA/iJCT
-	/PcFXbSaBKbj05er4ufg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y49gdupb0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 15 May 2024 22:43:45 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44FMhiZT031868
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 15 May 2024 22:43:44 GMT
-Received: from [10.110.0.4] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 15 May
- 2024 15:43:43 -0700
-Message-ID: <01c8dc05-76d1-478e-a4e4-3eab8d6aeaf9@quicinc.com>
-Date: Wed, 15 May 2024 15:43:42 -0700
+	s=arc-20240116; t=1715813125; c=relaxed/simple;
+	bh=7yzWmZ364OkIuO7sH24bl0+F0rv6Nd2L/awqggmIQc4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YBazQf/IzdgHQCjSYT/uyb60tGKYjVSulJlDrKG2xclmdqMar/AJipw+3uEHVuTj0ANfK8WkeP3wmxir+zo8/ymSg9S1/0gTESxjNC8TY2Vbc/HbvUA2c6jPIK/X8k2Sdcit3rjWq3T2+8Edr/nYhQoQPieIEBlO8wCTg+kNzhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QbQ2psdi; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-574f7c0bab4so2286075a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 15:45:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715813122; x=1716417922; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=a7lJcqe1kAwWaUrSqQrIwPbz3u27O8i6pHbRPj7VwJE=;
+        b=QbQ2psdie8kJN1S8wfIXSCZxn7MP84vtDenaI1ATV+ORW6DDcFi29/Qrs1WOc/zaBm
+         s5+AdhgxpPvb+2zKzCvbwqYMtGIzqay/otZOjxmIf941w3n9AkCfShV6xnF8peZCkzMT
+         y8pn/C9cAUN8jxLGTuPyRXJoMmoLYjOongUIIcSFzK10sv39NJf1M/D2thl3EY83ky+a
+         IADpWAqWQsMZ5fWBkZ8YaKLb2Xifb/Zv0HA1CPu6BdYw8dvGRfnLruV+5fkZutFpxN0r
+         MG0DX0J2pIZusPVT0dyjTgdLn9EZ4LvkTYldXfrkGTEkF+5Kf7QQCYSoYY0jnFHRxrOi
+         J8qw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715813122; x=1716417922;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=a7lJcqe1kAwWaUrSqQrIwPbz3u27O8i6pHbRPj7VwJE=;
+        b=MndbO5UnzlJcD32zDNuy+OJyQKBhBXGH4ijnu6cuPm9jwtVmkcjvKdFt6JAhg4E+fC
+         g7MRVS2NnUGTnQ1dTwxrC0GQdWcPLTqZI46r3Noi/Sovt1CNzuWH7j6s07DKpfHCv6ah
+         EEBnW5Jx8Wz1Z7CQ/8oqLwguNU3MGOJkrM12WGvP1+VQqwsiIsKiiDifpna3owaTYbn6
+         nMOTmxF7UNrqPwet6skaco042Stssmi911CzuF8bI8s+H3P3Acnz+SlDYFWnGuxkaUPg
+         WJTceBINzeq/pfa39VN/eZ5frpMcCGsWzNCHgHMIw/5t4Eo2ckaXKCn/NZFNIa99ENEi
+         +7Tw==
+X-Forwarded-Encrypted: i=1; AJvYcCVFWiOEnmOe9V274dip3mBD3iK7y+PETcH8JeqVSMYVluuKcl6qcbC61p3u/yyOa4GpyQqJV/RDLDxu73tRK8dDl+ltNegtEFvYBh4K
+X-Gm-Message-State: AOJu0Yw9tiVPfpFq1+q511wiYdOXsb8/tlexO5KLSzLxDpY1PJwx5Mf0
+	UY3nxIfW1K6pfl49l/2tGPDOj8P8V+O1kNsQT8++vYfweG6xQBlOLFZLFV/Any/9NtRqvNU1Dv2
+	HH5UNeiVRp50Wpcb1Z9G9g8G4Wy8=
+X-Google-Smtp-Source: AGHT+IEnZtZ4SIfj9sglEMTaE3csfFcwbLewzJHmHxd5wagZk24j1xIRqljEdAzdOdGSa0hRMsUs6IixlaN9ZeX+DQw=
+X-Received: by 2002:a17:906:e0c5:b0:a59:a979:2b03 with SMTP id
+ a640c23a62f3a-a5a2d292b12mr1486105166b.23.1715813121682; Wed, 15 May 2024
+ 15:45:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] wifi: ath10k: fix QCOM_RPROC_COMMON dependency
-Content-Language: en-US
-To: Masahiro Yamada <masahiroy@kernel.org>
-CC: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Kalle Valo
-	<kvalo@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
-        Stephen Boyd
-	<swboyd@chromium.org>,
-        Rakesh Pillai <quic_pillair@quicinc.com>,
-        <linux-wireless@vger.kernel.org>, <ath10k@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>,
-        <linux-kbuild@vger.kernel.org>
-References: <20240511-ath10k-snoc-dep-v1-1-9666e3af5c27@linaro.org>
- <12a208d7-f36b-4953-abff-323a15452b3c@quicinc.com>
- <CAK7LNASyBNbxm-e+iZ=7pOJg-a-Zm84O6RNcqiUjZQH7f9r3Lw@mail.gmail.com>
- <e5edd92e-ab47-4a55-9276-5a7d160fd399@quicinc.com>
- <CAK7LNAQ11Pt85_T9kvYYbqfnjMSH_Yjwvz52E+Tcmw8jS-wvDw@mail.gmail.com>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <CAK7LNAQ11Pt85_T9kvYYbqfnjMSH_Yjwvz52E+Tcmw8jS-wvDw@mail.gmail.com>
+References: <CAPM=9tw-53PCvveRcdLUUQ+mjq2X2er5zp6n1KeE8Nu8x=VP2g@mail.gmail.com>
+ <CAHk-=whxT8D_0j=bjtrvj-O=VEOjn6GW8GK4j2V+BiDUntZKAQ@mail.gmail.com>
+In-Reply-To: <CAHk-=whxT8D_0j=bjtrvj-O=VEOjn6GW8GK4j2V+BiDUntZKAQ@mail.gmail.com>
+From: Dave Airlie <airlied@gmail.com>
+Date: Thu, 16 May 2024 08:45:10 +1000
+Message-ID: <CAPM=9tyOtH24Mw_2X+bgV9iChOQV3LtmRCoR5x6KXhSUD6FjUg@mail.gmail.com>
+Subject: Re: [git pull] drm for 6.10-rc1
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Jani Nikula <jani.nikula@intel.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, 
+	dri-devel <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: rrHJ38Yb-Gpp-m0ozMswyzE1KhhcJIWA
-X-Proofpoint-ORIG-GUID: rrHJ38Yb-Gpp-m0ozMswyzE1KhhcJIWA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-15_14,2024-05-15_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=836
- impostorscore=0 clxscore=1015 priorityscore=1501 phishscore=0 spamscore=0
- mlxscore=0 lowpriorityscore=0 suspectscore=0 bulkscore=0 adultscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405010000 definitions=main-2405150161
 
-On 5/14/2024 9:10 PM, Masahiro Yamada wrote:
-> On Wed, May 15, 2024 at 3:14 AM Jeff Johnson <quic_jjohnson@quicinc.com> wrote:
->>
->> On 5/14/2024 10:45 AM, Masahiro Yamada wrote:
->>> On Tue, May 14, 2024 at 11:43 PM Jeff Johnson <quic_jjohnson@quicinc.com> wrote:
->>>>
->>>> On 5/11/2024 3:49 AM, Dmitry Baryshkov wrote:
->>>>> If ath10k_snoc is built-in, while Qualcomm remoteprocs are built as
->>>>> modules, compilation fails with:
->>>>>
->>>>> /usr/bin/aarch64-linux-gnu-ld: drivers/net/wireless/ath/ath10k/snoc.o: in function `ath10k_modem_init':
->>>>> drivers/net/wireless/ath/ath10k/snoc.c:1534: undefined reference to `qcom_register_ssr_notifier'
->>>>> /usr/bin/aarch64-linux-gnu-ld: drivers/net/wireless/ath/ath10k/snoc.o: in function `ath10k_modem_deinit':
->>>>> drivers/net/wireless/ath/ath10k/snoc.c:1551: undefined reference to `qcom_unregister_ssr_notifier'
->>>>>
->>>>> Add corresponding dependency to ATH10K_SNOC Kconfig entry so that it's
->>>>> built as module if QCOM_RPROC_COMMON is built as module too.
->>>>>
->>>>> Fixes: 747ff7d3d742 ("ath10k: Don't always treat modem stop events as crashes")
->>>>> Cc: stable@vger.kernel.org
->>>>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->>>>> ---
->>>>>  drivers/net/wireless/ath/ath10k/Kconfig | 1 +
->>>>>  1 file changed, 1 insertion(+)
->>>>>
->>>>> diff --git a/drivers/net/wireless/ath/ath10k/Kconfig b/drivers/net/wireless/ath/ath10k/Kconfig
->>>>> index e6ea884cafc1..4f385f4a8cef 100644
->>>>> --- a/drivers/net/wireless/ath/ath10k/Kconfig
->>>>> +++ b/drivers/net/wireless/ath/ath10k/Kconfig
->>>>> @@ -45,6 +45,7 @@ config ATH10K_SNOC
->>>>>       depends on ATH10K
->>>>>       depends on ARCH_QCOM || COMPILE_TEST
->>>>>       depends on QCOM_SMEM
->>>>> +     depends on QCOM_RPROC_COMMON || QCOM_RPROC_COMMON=n
->>>>>       select QCOM_SCM
->>>>>       select QCOM_QMI_HELPERS
->>>>>       help
->>>>>
->>>>> ---
->>>>> base-commit: 75fa778d74b786a1608d55d655d42b480a6fa8bd
->>>>> change-id: 20240511-ath10k-snoc-dep-862a9da2e6bb
->>>>
->>>> I see how this fixes the problem, but this doesn't seem like an ideal
->>>> solution. The fact that the *_ssr_notifier() functions are correctly protected
->>>> by conditional compilation ideally should mean that clients don't need to call
->>>> call out this as a dependency. Otherwise, it would mean we'd need to do this
->>>> for all feature flags.
->>>
->>>
->>> It depends on if qcom_common.c is optional for ath10k_snoc.
->>>
->>> If it is optional, this patch is correct.
->>
->> At least from a build perspective it is optional
-> 
-> 
-> 
-> You need to make a decision from a run-time perspective
-> (that is, whether you are fine with having
-> ar_snoc->notifier == NULL)
-> 
-> 
-> If you are able to build the kernel successfully
-> but you get a run-time error (e.g. NULL pointer dereference),
-> it is even worse because run-time debugging is generally more
-> difficult than compile-time debugging.
+On Thu, 16 May 2024 at 06:43, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Tue, 14 May 2024 at 23:21, Dave Airlie <airlied@gmail.com> wrote:
+> >
+> > This is the main pull request for the drm subsystems for 6.10.
+>
+> .. and now that I look more at this pull request, I find other things wrong.
+>
+> Why is the DRM code asking if I want to enable -Werror? I have Werror
+> enabled *already*.
+>
+> I hate stupid config questions. They only confuse users.
+>
+> If the global WERROR config is enabled, then the DRM config certainly
+> shouldn't ask whether you want even more -Werror. It does nothing but
+> annoy people.
+>
+> And no, we are not going to have subsystems that can *weaken* the
+> existing CONFIG_WERROR. Happily, that doesn't seem to be what the DRM
+> code wants to do, it just wants to add -Werror, but as mentioned, its'
+> crazy to do that when we already have it globally enabled.
+>
+> Now, it might make more sense to ask if you want -Wextra. A lot of
+> those warnings are bogus.
 
-The current patch maintains the existing logic, so that is my preference.
+The help says:
 
+          The drm subsystem enables more warnings than the kernel default, so
+          this config option is disabled by default.
+
+It's also
+
+depends on DRM && EXPERT
+
+so we aren't throwing it at random users.
+
+should we rename it CONFIG_DRM_WERROR_MORE or something?
+
+Dave.
 
