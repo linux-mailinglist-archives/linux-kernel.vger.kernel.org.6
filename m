@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-179637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06A4D8C629A
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 10:14:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EBD98C629C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 10:15:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1C4E281DCF
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:14:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27D2D1F21A25
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:15:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F8644C634;
-	Wed, 15 May 2024 08:14:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5C804CB2E;
+	Wed, 15 May 2024 08:14:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mzT2zhvS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H/8ARNUA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 816074AEE0;
-	Wed, 15 May 2024 08:14:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 256814AEF2;
+	Wed, 15 May 2024 08:14:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715760864; cv=none; b=D2Eqiu/qH9+Ue6FEGHtOLOLULCcPocnuTWUfq9arLBdXPWGK8P3GesmKrA3kixftKayp+A6j9OxjYccDiE1dyFYNncSMi/WM1u6ZO3cMCRoBtrADJGHV7WCxMzRkQrRIdnAoE6nx3RvLUBONIaFimbQ5HRe7QtFMgi+vB6+WXBg=
+	t=1715760896; cv=none; b=J651zeeubojQKwJf48C08xvD6MR37HEwq/De01+vUevzbcyRp0bksyxnL+klaWHj4gpQ40Fn2J/n0sJjANLd0BkfFqQTjJ3vd2/blrs75M7WLe52TfvqKzn5C+iQD1V+MhHkzQH+e8hhj6E5CXHhyT9RtacW6TJFRXVnYXhKIwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715760864; c=relaxed/simple;
-	bh=f1VW3XjbE/dtDIgTLPQjTfTGxckD9xNYEPvqyoeVKVg=;
+	s=arc-20240116; t=1715760896; c=relaxed/simple;
+	bh=VYvCydyN3ORJuuPFX7tPPo8OkLfbloVUtiI7kPSgkNU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bcEy2jouNCGjdQY/U8Dzw7AxxolgfDdipEgfEwOlwdJtmZ5bY++MKeO1ZKL2n+sVF6H4hOibbf5lvoHtSMKX+9s97Hc4jWl6WvZK2WDLPu8qCxR9KzB42Pn+0+PMqSTtYZd33XoIl4DMwuY/HQvyeRDSMEHmoV3oBexTEtAyP2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mzT2zhvS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 317FBC116B1;
-	Wed, 15 May 2024 08:14:21 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=AqX1bh3W+2fYKOdCwCnjF2J+HYtaW2nrJcOTxoW0WlCBaCmjTqFkT/LhIzkRyoBtxCnupW4K4V/1FCRONnkefAa39JIyWAgLR9tJ8ijcfvZ912Jvp6mGRW85wWhuc1W/OO4MokHHjMJR3SMIl5aiabsFfSFKabE9KBcaliMauxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H/8ARNUA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 304ADC116B1;
+	Wed, 15 May 2024 08:14:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715760864;
-	bh=f1VW3XjbE/dtDIgTLPQjTfTGxckD9xNYEPvqyoeVKVg=;
+	s=k20201202; t=1715760896;
+	bh=VYvCydyN3ORJuuPFX7tPPo8OkLfbloVUtiI7kPSgkNU=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mzT2zhvS5fUlD1VkKXhAO0K107ramFrkdTb7EqD45HsvcHzJk5hdjzl+OCuLyYdP0
-	 0udLrOvV6r8h1YNTVNzK9R53/hO0HHaZ27/rFgbsUZftHSOcYeBjNM2rHneWX563Fi
-	 fUpbQLZ8aFWCBUFozXDxolc4F0uK8eMx3+87MALKxssyStsqtKU+mlBcE7O0nPDcHP
-	 KuXMBbiqTfGbpb0nwQ7U7TMNmibb+r8ZmY57Aqb4hiDkFWpcKYXrq6YAfKJXtkfztS
-	 SofhQ1LIT70eW2ipSch5EgZ0J/NRQ2naL10LxIQnaUMcESI9yFr41iqYNKyfqO4/Kp
-	 1+zElpkoF5IrQ==
-Message-ID: <5e8eb8a7-c497-4960-8c1c-e58586f53c9f@kernel.org>
-Date: Wed, 15 May 2024 10:14:19 +0200
+	b=H/8ARNUA+VqWAKR/LTrE5bCmIIOCApsr9zItltE2N7ez7uQxxtjqMr6hz9m9ogPx0
+	 76wTqfaAFMTkrFEcSr+Cah//bcampEuXPElc46Bws8GGB/R2JFnAk+1X8SD+iMsRs4
+	 GT0xc/FRTWxAOrugXzbPmkMF2DhqAhQRp+S9dGDBulXiT3j+OEIxYy+BeKr9lMWQOs
+	 GmIIji8vtBPWzd/MKYn5OwzKIdUfFXlXBiIRI67MaLZ2+EQMCDjpRsu2lWHIruEy1m
+	 jIlGNgktVacxXq7++DbQyZaZ5kef7C2sT8mwNymDI7xijiY9SILIR6W7MEDv5jQ7i+
+	 AfDZgmI7ujNpg==
+Message-ID: <b1d3ca34-3aaf-444d-816b-eab7c0626461@kernel.org>
+Date: Wed, 15 May 2024 10:14:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,14 +49,13 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/9] dt-bindings: fsi: fsi2spi: Document SPI controller
- child nodes
+Subject: Re: [PATCH v5 3/9] dt-bindings: fsi: p9-occ: Convert to json-schema
 To: Eddie James <eajames@linux.ibm.com>, linux-fsi@lists.ozlabs.org
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  krzk+dt@kernel.org, conor+dt@kernel.org, robh@kernel.org, joel@jms.id.au,
  andrew@codeconstruct.com.au
 References: <20240514195435.155372-1-eajames@linux.ibm.com>
- <20240514195435.155372-2-eajames@linux.ibm.com>
+ <20240514195435.155372-4-eajames@linux.ibm.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -102,31 +101,22 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240514195435.155372-2-eajames@linux.ibm.com>
+In-Reply-To: <20240514195435.155372-4-eajames@linux.ibm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 14/05/2024 21:54, Eddie James wrote:
+> Conver to json-schema for the OCC documentation. Also document the fact
+> that the OCC "bridge" device will often have the hwmon node as a
+> child.
+> 
+> Signed-off-by: Eddie James <eajames@linux.ibm.com>
+> ---
+> Changes since v4:
+>  - Drop pattern properties for hwmon node
+> 
 
->  properties:
->    compatible:
-> @@ -24,6 +23,17 @@ properties:
->      items:
->        - description: FSI slave address
->  
-> +  "#address-cells":
-> +    const: 1
-> +
-> +  "#size-cells":
-> +    const: 0
-> +
-> +patternProperties:
-> +  "^spi@[0-9a-f]+$":
-> +    type: object
-> +    $ref: /schemas/spi/ibm,spi-fsi.yaml
-
-Are you sure you do not have dependencies? Nothing was explained about
-this in the cover letter or changelog.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
