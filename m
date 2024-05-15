@@ -1,125 +1,78 @@
-Return-Path: <linux-kernel+bounces-179340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F46A8C5EFE
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 03:50:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB4DD8C5EFA
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 03:50:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 801581C214D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 01:50:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D303282B4D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 01:50:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2575D3613D;
-	Wed, 15 May 2024 01:49:23 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3951F1D53F;
+	Wed, 15 May 2024 01:49:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sGnOOWtA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 347424316B
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 01:48:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F2F439ACD;
+	Wed, 15 May 2024 01:49:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715737760; cv=none; b=RnRWcgz4qASBOxOR7pLHLg5+NXXihPsRjpNSzKSVohGM2gm10V/nCsDrppLNI7MZFAUhN4MhiibkZgZHMBs/XUGfFTFczpPomCjfKkBV/sCswThLi34xRoEQDTTUTblxyniinZ/AA+gAH80H/fg/UkXH4LkzAhXEHeZ4SkgrV80=
+	t=1715737748; cv=none; b=gYxA/5Gm5w171nRVN+l0LYGz1uQPuDDdW0yTFMGkcd8AptDm8dmxWtlzaCXbyO4JGaggCw9kwH1Le/5huL76W6xVLE4UgtQgROOzwkmcVb2qIVwC9E44dHmnkTjT1rFYgOaCdVhOxWeBsTNQsPLKg9Tia+HqdzZxSnclC84Vumw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715737760; c=relaxed/simple;
-	bh=fcC4jQN8Gab4+R53kJwjMJeFHnSY3XdoD/ZzuHnROcc=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=KS5s2l3cMl+SrDhsdauI9kWPrU0wgwSIIyevlv/vSz9zmwmSuAesxcivS/kYH7izjJKYoXOS1ZzjZmETMQ/F7bA1GCaUvMGinS4FClap7TYoAefVroFKY/Y0/Hb9XX6UJgumY+oQHcsStZ12NwDV82n19aEiSpamSoX8B4rt2Hw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4VfGHz47TNzvY1W;
-	Wed, 15 May 2024 09:45:03 +0800 (CST)
-Received: from canpemm500002.china.huawei.com (unknown [7.192.104.244])
-	by mail.maildlp.com (Postfix) with ESMTPS id 30B471804AA;
-	Wed, 15 May 2024 09:48:32 +0800 (CST)
-Received: from [10.173.135.154] (10.173.135.154) by
- canpemm500002.china.huawei.com (7.192.104.244) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Wed, 15 May 2024 09:48:31 +0800
-Subject: Re: [PATCH -rc7] mm/huge_memory: mark huge_zero_page reserved
-To: Yang Shi <shy828301@gmail.com>, Andrew Morton <akpm@linux-foundation.org>
-CC: <nao.horiguchi@gmail.com>, <xuyu@linux.alibaba.com>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20240511035435.1477004-1-linmiaohe@huawei.com>
- <20240514141439.55fba39c81c1af55c9a100e1@linux-foundation.org>
- <CAHbLzkq+NBjwjSvU1fQe56nLf5mmGp65TH8hDpb66EFLENctKA@mail.gmail.com>
- <20240514144204.88790f125b0275ef68acf6de@linux-foundation.org>
- <CAHbLzkpQvr2K5yxwmtoHsj_UJ78ak=m-YdZxk=vpnPJ8iZdncw@mail.gmail.com>
-From: Miaohe Lin <linmiaohe@huawei.com>
-Message-ID: <9e5e51d7-e5bf-8209-317e-6f03c548727f@huawei.com>
-Date: Wed, 15 May 2024 09:48:31 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+	s=arc-20240116; t=1715737748; c=relaxed/simple;
+	bh=K67qoiLiuoJZYCrUnU6ml4nqPt6J/mHxM6sR9bPa088=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=jZTt2tckuhe4hL9/YAdKpIMOfIcTDWoImoFkXL8ESDn4mkV0Rx3uIX+RB/7XaXWafXqD87FzvXkMge1+j2mjGRSAXZUzhYo+TV2IkeER/MLCY/l5fM+FY5yKVKN5zw7tF5vMBmFCVLR6UMkpj5gphQSFvxoHRCCA5WtEArYHEuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sGnOOWtA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 896AEC2BD10;
+	Wed, 15 May 2024 01:49:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715737747;
+	bh=K67qoiLiuoJZYCrUnU6ml4nqPt6J/mHxM6sR9bPa088=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=sGnOOWtAxAWmOxCciFSSgUL9mshZ5JLJERVh5R3a6Tl9h+d4TSMCJWYh9iZvPWLPx
+	 HwGGC0/gnnK423o/361BPzFRMf2y9bt4pS51olJP6UAIPFLNqidSEnI9csXDXNa2hV
+	 I1m3Ta3N1CC/W0YgAQ7GRyrL4HNuxTsZLgWtmCLLZIBEc1sBvm9paFKEQxO2S4eHK0
+	 okrOxm1V5vUebt0fzLOPr1iMiubfFC+O5cOfugEZwO5HbSIidtMH3zJJhkXncAWaXo
+	 wDL2H8v+xyxcQEDfth3hrehoW3LaBkGJMHnm/MhZtD5XU2+LBoAS5fls7VVwJDpojM
+	 R7/vF8JpgSu6Q==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 8087DC43339;
+	Wed, 15 May 2024 01:49:07 +0000 (UTC)
+Subject: Re: [GIT PULL] SCSI updates for the 6.9+ merge window
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <b34d2038bb6af20946d7ad4cb456cbca0a896cff.camel@HansenPartnership.com>
+References: <b34d2038bb6af20946d7ad4cb456cbca0a896cff.camel@HansenPartnership.com>
+X-PR-Tracked-List-Id: <linux-scsi.vger.kernel.org>
+X-PR-Tracked-Message-Id: <b34d2038bb6af20946d7ad4cb456cbca0a896cff.camel@HansenPartnership.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-misc
+X-PR-Tracked-Commit-Id: 3668651def2c1622904e58b0280ee93121f2b10b
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 113d1dd9c8ea2186d56a641a787e2588673c9c32
+Message-Id: <171573774751.23667.11017122750447395095.pr-tracker-bot@kernel.org>
+Date: Wed, 15 May 2024 01:49:07 +0000
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>, linux-scsi <linux-scsi@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <CAHbLzkpQvr2K5yxwmtoHsj_UJ78ak=m-YdZxk=vpnPJ8iZdncw@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- canpemm500002.china.huawei.com (7.192.104.244)
 
-On 2024/5/15 5:55, Yang Shi wrote:
-> On Tue, May 14, 2024 at 3:42 PM Andrew Morton <akpm@linux-foundation.org> wrote:
->>
->> On Tue, 14 May 2024 15:28:12 -0600 Yang Shi <shy828301@gmail.com> wrote:
->>
->>> On Tue, May 14, 2024 at 3:14 PM Andrew Morton <akpm@linux-foundation.org> wrote:
->>>>
->>>> On Sat, 11 May 2024 11:54:35 +0800 Miaohe Lin <linmiaohe@huawei.com> wrote:
->>>>
->>>>> When I did memory failure tests recently, below panic occurs:
->>>>>
->>>>>  kernel BUG at include/linux/mm.h:1135!
->>>>>  invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
->>>>>  CPU: 9 PID: 137 Comm: kswapd1 Not tainted 6.9.0-rc4-00491-gd5ce28f156fe-dirty #14
->>>>>
->>>>> ...
->>>>>
->>>>> --- a/mm/huge_memory.c
->>>>> +++ b/mm/huge_memory.c
->>>>> @@ -208,6 +208,7 @@ static bool get_huge_zero_page(void)
->>>>>               __free_pages(zero_page, compound_order(zero_page));
->>>>>               goto retry;
->>>>>       }
->>>>> +     __SetPageReserved(zero_page);
->>>>>       WRITE_ONCE(huge_zero_pfn, page_to_pfn(zero_page));
->>>>>
->>>>>       /* We take additional reference here. It will be put back by shrinker */
->>>>> @@ -260,6 +261,7 @@ static unsigned long shrink_huge_zero_page_scan(struct shrinker *shrink,
->>>>>               struct page *zero_page = xchg(&huge_zero_page, NULL);
->>>>>               BUG_ON(zero_page == NULL);
->>>>>               WRITE_ONCE(huge_zero_pfn, ~0UL);
->>>>> +             __ClearPageReserved(zero_page);
->>>>>               __free_pages(zero_page, compound_order(zero_page));
->>>>>               return HPAGE_PMD_NR;
->>>>>       }
->>>>
->>>> This causes a bit of a mess when staged ahead of mm-stable.  So to
->>>> avoid disruption I staged it behind mm-stable.  This means that when
->>>> the -stable maintainers try to merge it, they will ask for a fixed up
->>>> version for older kernels so you can please just send them this
->>>> version.
->>>
->>> Can you please drop this from mm-unstable since both I and David
->>> nack'ed a similar patch in another thread.
->>> https://lore.kernel.org/linux-mm/20240511032801.1295023-1-linmiaohe@huawei.com/
->>
->> That appears to link to the incorrect email thread?
-> 
-> I meant that patch is actually same with this one. Just used folio
-> interface instead of page. I'm not sure why Miaohe posted two. Maybe
-> target to different version.
+The pull request you sent on Tue, 14 May 2024 12:06:41 -0600:
 
-Sorry for causing confusion. These two patches really target to different branch.
-This patch is for mainline and another one for mm-unstable.
-Thanks both.
-.
+> git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-misc
 
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/113d1dd9c8ea2186d56a641a787e2588673c9c32
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
