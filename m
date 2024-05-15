@@ -1,115 +1,186 @@
-Return-Path: <linux-kernel+bounces-179381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 640058C5F7C
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 05:46:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 229968C5F7F
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 05:46:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D40E1F229D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 03:46:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9DC31F22AA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 03:46:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EBE138385;
-	Wed, 15 May 2024 03:46:04 +0000 (UTC)
-Received: from mail.nfschina.com (unknown [42.101.60.195])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id 845B037142;
-	Wed, 15 May 2024 03:45:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5829F38385;
+	Wed, 15 May 2024 03:46:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LONrvopU"
+Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7E0D38F98;
+	Wed, 15 May 2024 03:46:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715744763; cv=none; b=Qa+oIUM/62tEf/h2HVH2FW3AjxCa0BEzO1j7QtgW84iFaJnelx9iN9mJ8xxl3McjEhpwpxwGqluRQPEtIpxqusZRZkQD6KKPcZ/uj2LFsZlXN9C6jRmck8jIzoXYa3szd0CeGnMKJZ2stX1nKeO3M2IxFWgUOE8lyB7tcCnF5NA=
+	t=1715744775; cv=none; b=MGSawe8CX/HLe9S+R/ZGfv1Vwjfepq2vZMFSgOa/v/nx4vvCYkU2qN8WDizal/y6qyvCnr1vwDawFBzVUm3jJrRQ+vFI+e1nywnTy8Iab3xtbiEoTp3b16whGDI/OzZGHuZeEZRmzA7M+MbBMIUeOfm+3ktfllNzLo/DaweGGR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715744763; c=relaxed/simple;
-	bh=bSk2pktMR0TCwUGzbqyIW1/sI5S2OHHcWRq8iKG2hfQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type; b=HX9aO3fK5Czk3D/F7NDr/8khAegzScD6+Pd8TqFn6oVxTcZIF94FZZHoaioUkJbIsq6ZA2Bir50f+CS6b6AgeIJAL8OTcBB6bwvTHaPblfdKR4XlhVXHbC8OlVflC2Blki23G0eydmaeNAkhVtITBpaK4Mdyc7+yhOlwElPFhxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
-Received: from localhost.localdomain (unknown [180.167.10.98])
-	by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id CB660602637E5;
-	Wed, 15 May 2024 11:45:20 +0800 (CST)
-X-MD-Sfrom: dengxiang@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From: dengxiang <dengxiang@nfschina.com>
-To: hdegoede@redhat.com
-Cc: dengxiang@nfschina.com,
-	lenb@kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org,
-	prime.zeng@hisilicon.com,
-	rafael@kernel.org,
-	tony.luck@intel.com,
-	wanghuiqiang@huawei.com
-Subject: Re: [PATCH] ACPI: video: Use vendor backlight on Lenovo X1 Carbon.
-Date: Wed, 15 May 2024 11:45:01 +0800
-Message-Id: <20240515034501.12772-1-dengxiang@nfschina.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <2db5beba-500b-458e-9fc3-f05bb982172c@redhat.com>
+	s=arc-20240116; t=1715744775; c=relaxed/simple;
+	bh=f0+RAJNpD4xwzDxXJtu5/ftCqWzFGWvy6Jlsa7uUy3Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=s/s9bXNuNdqEUoVrwc7GAiwO4j57Usix0x83YsfvR8cI0eIaMi5uiz1oPyDEnBfBccfD2KHPRCIhExACmZp7fjuDhxSLW58atZxJcUiNJFmvs82+hrVD6HPhKBi5vHtwOH0gRBHWSKmYj4UIOCFQaRMlWpzRYSeO8sDzZmTPins=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LONrvopU; arc=none smtp.client-ip=209.85.166.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-36db3304053so4848845ab.2;
+        Tue, 14 May 2024 20:46:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715744772; x=1716349572; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IK7QXti6gMaWIx9kOf1v+tHDmKiZibD5iL04jzdGCEc=;
+        b=LONrvopUYMM3QAm+y/b47vtN7lltEA51qsKpuvU0LY40IwEKd8uE9s4IpECJC/Gype
+         6X+mCYqhTLZRHQOP6H5e2lO4KB4wJM5uFVQ+wjvcbIDXR6m0+AjX0ZpVTXKXYUaKQ6vz
+         KZqMAHvN7wM45rzx8YJNDPz9KOf48Z4skhHVCOPfmIztQSFpHVaXcFFwVOLlKgQUq0/i
+         243Wd515s+zfNTkQcGmNGbdLuuVy9jKzeH7ijT8AZNDdBYUjbP3kBv16fU3MP7VDe9Zt
+         tv4PnBIQ80Xg3z12eQBM14DXEByU2V2hKxNgnGA/fDgiuz85ErdrPj7ZePPKUzZOPH5P
+         mFbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715744772; x=1716349572;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IK7QXti6gMaWIx9kOf1v+tHDmKiZibD5iL04jzdGCEc=;
+        b=q9FMjnqFBAnjMTsfPZ/wiEO+Hsz7fsLBttD84l+3MMEricvOqc6JYELJc7Uy47EpOc
+         q5Riyl66lNKSHgaCH5XgqsJbOzeiaf7JMdE2JbRl9QNfPsoi7y/Y95K858+HCtKucIMS
+         DZ+ViNq5+Ed1bBdvtiWSWyZXtYs/Pr8RSiWdsaNazqOhgveLh+gdY9wjRuAEsskzwxuU
+         Smku2M9HjmjkiSLLuyEmHmKFPz4zhsu0Q2LXy3l/PDKJW0x418qneMyG3H0EOy5K2AFH
+         28/yJePXQ8WabAuvD/HZuBnE5Av04UX4TPzUrzfwOjoEv7jIMSDgjiCg5PFZr4VHLXG3
+         7lfg==
+X-Forwarded-Encrypted: i=1; AJvYcCWn/vI6RCv3NttF+uFjt45pH0QEjwwxRdeMJdVRE7m5DakE3QLm5tfUCbBhYDpayRhcBzxNv0VeKs59McWD0DHPXQMFYui3phJUs5WwVpk74IqS9cLF3FZETpnXkVjEqQG5LllnUYxV/n+qWbv3oN6k6doqdpO/lPVnVlBHHZDp0M78bQ==
+X-Gm-Message-State: AOJu0YxC9y3Jrg4GLhDsA5ZJ3tEOrG9lr9X1tRhQpV5p+43vem5hy9Kh
+	IHO/dViH/NKzudaF0Y+79l9tgJkL8rhNDcauOf8m19ejg712KhVW1CCGaZ6TlP5vOeXTQw7pC/B
+	62ZEUJu7+8b9ivR/5uYNCHU4zUx0=
+X-Google-Smtp-Source: AGHT+IGZ+P53lPWGkktNPznbZTqmgsikuFuzx6bUIb82YiQyAOuspBc445HOheK/8XONNLi1B1dXlpKVb5ds0xBfnxE=
+X-Received: by 2002:a92:c269:0:b0:36a:f9e8:5e7d with SMTP id
+ e9e14a558f8ab-36cc14684f7mr178877585ab.7.1715744771891; Tue, 14 May 2024
+ 20:46:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <1715679210-9588-1-git-send-email-shengjiu.wang@nxp.com>
+ <1715679210-9588-4-git-send-email-shengjiu.wang@nxp.com> <20240514-campus-sibling-21cdf4c78366@spud>
+ <b86c83a520f0c45a60249468fa92b1de.sboyd@kernel.org> <CAA+D8ANTdvQJVtniyMtqjnJdT4qX+LDGjVuFO6H0RSO+GDw+ng@mail.gmail.com>
+In-Reply-To: <CAA+D8ANTdvQJVtniyMtqjnJdT4qX+LDGjVuFO6H0RSO+GDw+ng@mail.gmail.com>
+From: Shengjiu Wang <shengjiu.wang@gmail.com>
+Date: Wed, 15 May 2024 11:46:00 +0800
+Message-ID: <CAA+D8AMaEEMk9F4bFYqYNez=XPhtF9VR8F-hcqYp_C2QKFq-4Q@mail.gmail.com>
+Subject: Re: [PATCH v3 3/6] dt-bindings: clock: imx8mp: Add reset-controller sub-node
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Conor Dooley <conor@kernel.org>, Shengjiu Wang <shengjiu.wang@nxp.com>, abelvesa@kernel.org, 
+	peng.fan@nxp.com, mturquette@baylibre.com, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org, 
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
+	marex@denx.de, linux-clk@vger.kernel.org, imx@lists.linux.dev, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, p.zabel@pengutronix.de
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Hans,
+On Wed, May 15, 2024 at 10:47=E2=80=AFAM Shengjiu Wang <shengjiu.wang@gmail=
+com> wrote:
+>
+> On Wed, May 15, 2024 at 5:09=E2=80=AFAM Stephen Boyd <sboyd@kernel.org> w=
+rote:
+> >
+> > Quoting Conor Dooley (2024-05-14 11:06:14)
+> > > On Tue, May 14, 2024 at 05:33:27PM +0800, Shengjiu Wang wrote:
+> > > > diff --git a/Documentation/devicetree/bindings/clock/imx8mp-audiomi=
+x.yaml b/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml
+> > > > index 0a6dc1a6e122..a403ace4d11f 100644
+> > > > --- a/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml
+> > > > +++ b/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml
+> > > > @@ -15,7 +15,10 @@ description: |
+> > > >
+> > > >  properties:
+> > > >    compatible:
+> > > > -    const: fsl,imx8mp-audio-blk-ctrl
+> > > > +    items:
+> > > > +      - const: fsl,imx8mp-audio-blk-ctrl
+> > > > +      - const: syscon
+> > > > +      - const: simple-mfd
+> > > >
+> > > >    reg:
+> > > >      maxItems: 1
+> > > > @@ -44,6 +47,11 @@ properties:
+> > > >        ID in its "clocks" phandle cell. See include/dt-bindings/clo=
+ck/imx8mp-clock.h
+> > > >        for the full list of i.MX8MP IMX8MP_CLK_AUDIOMIX_ clock IDs.
+> > > >
+> > > > +  reset-controller:
+> > > > +    type: object
+> > > > +    $ref: /schemas/reset/fsl,imx8mp-audiomix-reset.yaml#
+> > > > +    description: The child reset devices of AudioMIX Block Control=
+.
+> > >
+> > > Why not just set #reset-cells =3D <1> in the existing node? IIRC it w=
+as
+> > > already suggested to you to do that and use auxdev to set up the rese=
+t
+> > > driver.
+> >
+> > Yes, do that.
+>
+> Can I know why sub nodes can't be used? the relationship of parent and
+> child devices looks better with sub nodes.
+>
+> A further question is can I use the reset-ti-syscon? which is a generic r=
+eset
+> device for SoCs.  with it I don't even need to write a new reset device d=
+river.
+> it is more simple.
+>
+The document link is:
+https://www.kernel.org/doc/Documentation/devicetree/bindings/reset/ti-sysco=
+n-reset.txt
 
-> A couple of remarks / questions:
+Then example is:
+examples:
+  # Clock Control Module node:
+  - |
+    #include <dt-bindings/clock/imx8mp-clock.h>
+    #include <dt-bindings/reset/ti-syscon.h>
 
-> 1. Looking at the strings you match on this is not for a Lenovo X1 Carbon,
-> but rather for a Lenovo Kaitan model ?  So it seems that the commit message
-> and the comment for the quirk need some work.
+    clock-controller@30e20000 {
+        compatible =3D "fsl,imx8mp-audio-blk-ctrl", "syscon", "simple-mfd";
+        reg =3D <0x30e20000 0x10000>;
+        #clock-cells =3D <1>;
+        clocks =3D <&clk IMX8MP_CLK_AUDIO_ROOT>,
+                 <&clk IMX8MP_CLK_SAI1>,
+                 <&clk IMX8MP_CLK_SAI2>,
+                 <&clk IMX8MP_CLK_SAI3>,
+                 <&clk IMX8MP_CLK_SAI5>,
+                 <&clk IMX8MP_CLK_SAI6>,
+                 <&clk IMX8MP_CLK_SAI7>;
+        clock-names =3D "ahb",
+                      "sai1", "sai2", "sai3",
+                      "sai5", "sai6", "sai7";
+        power-domains =3D <&pgc_audio>;
 
-ok, I will add DMI_PRODUCT_VERSION & DMI_BOARD_NAME to make a distinction between  X1 Carbon and other kaitian models.
+        reset-controller {
+            compatible =3D "ti,syscon-reset";
+            #reset-cells =3D <1>;
+            ti,reset-bits =3D <
+                0x200 0 0x200 0 0 0 (ASSERT_CLEAR | DEASSERT_SET | STATUS_N=
+ONE)
+                0x200 1 0x200 1 0 0 (ASSERT_CLEAR | DEASSERT_SET | STATUS_N=
+ONE)
+            >;
+        };
+    };
 
-> 2. I have never heard of a zx_backlight interface before and there certainly
-> is no upstream driver providing this. I believe you need to explain what
-> is going on in a bit more detail here and then we can see if this really is
-> the best way to fix this. It seems that these Lenovo Kaitan laptops are
-> using Zhaoxin Kaixian x86 processors with integrate graphics. I would expect
-> the zx_backlight interface to be provided by the driver for the Zhaoxin Kaixian
-> integrated graphics in this case. And if that is the case then the integrated
-> graphics driver should use BACKLIGHT_RAW (aka native) for the backlight type
-> and with that change this quirk should not be necessary .
-
-Yes, zx_backlight interface has been provided by the driver for the Zhaoxin Kaixian integrated graphics. Also use backlight_device_register("zx_backlight",...).
-Strangely enough, X1 Carbon laptops will generate two native acpi_video as belows:
- 
-lrwxrwxrwx 1 root root 0  5月 14 16:20 acpi_video0 -> ../../devices/pci0000:00/0000:00:01.0/backlight/acpi_video0
-lrwxrwxrwx 1 root root 0  5月 14 16:20 acpi_video1 -> ../../devices/pci0000:00/0000:00:01.0/backlight/acpi_video1
-
-As you see, it will conflict with the same pci bus, then zx_blacklight interface can't be shown on the path /sys/class/backlight/.
-That is to say, zhaoxin driver contain key code as belows:
-#if DRM_VERSION_CODE >= KERNEL_VERSION(4, 2, 0)
-    if(acpi_video_get_backlight_type() != acpi_backlight_vendor)
-    {
-        return ret;
-    }
-#endif
-
-If i remove the key code, this laptops will generate two native acpi_video and zx_backlight on the sys backlight patch. Once add acpi_backlight=vendor parameter into kernel cmdline, 
-just zx_backlight interface has been left on the sys path, which mean that both acpi_video0 and acpi_video1 interface can not be found.
-
-> 3. Vendor specific backlight interfaces are normally only found on really
-> old laptops. Since Windows XP laptops typically use the ACPI backlight
-> interface and since Windows 8 they typically use the GPU's native
-> backlight driver. So adding a quirk to use a vendor interface in 2024 is
-> weird. Again can you explain in a lot more detail what is going on here,
-> but I guess the backlight class device is provided by the driver for the
-> integrated graphics and in that case the fix is to simply change the type
-> of the backlight device registered by the igfx driver to BACKLIGHT_RAW.
-
-As mentioned in 2  questions above zhaoxin drivers had used backlight_device_register("zx_backlight"...) as BACKLIGHT_RAW.
-
-> 4. You posted the same patch twice ?
-
-Sorry, i was wrong to think that before patch would be missed by you. also i forgot about the time zone difference. I am sorry for any inconvenience that I have brought to you.
-
-Best Regards,
-dengxiang
+Best regards
+Shengjiu Wang
 
