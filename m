@@ -1,126 +1,93 @@
-Return-Path: <linux-kernel+bounces-179458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E31F8C6027
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 07:29:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBCB28C6029
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 07:34:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CFD81F2286E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 05:29:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 106711C20AA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 05:34:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C58CA3A1B0;
-	Wed, 15 May 2024 05:29:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCB773A1CA;
+	Wed, 15 May 2024 05:34:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L408mwvU"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="EkXoEdxd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 184AD39ACD
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 05:29:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D73339ACD;
+	Wed, 15 May 2024 05:34:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715750951; cv=none; b=QQMlokrN544JxgBJpzCwVyymU/kf+/cYzEudQ9HU+9kkC7wMqSmgdWOe38T4y6pxSPkVrhapLAohODJBpM1t5bX6iwiouCo/GFiNjT2ZSGZcroYIcVTwM0FQBE1rnSmgJXZlVoASThfwmTz12p3pmtOSOTPS0gsMWI64d9E36rA=
+	t=1715751252; cv=none; b=Smhs+iWj2uoqkyvmnpcqhgWMCvg+si9Rwpvy4G5bV+3Ttowzb4D1buNbVJjKSN9DYuyXoj8sH4H4fFm5oNWSm6VhC379w5XeDAl9ViM/xxWheY+Y0i9ggEEXDyCY9kbRkYm6tCNMHFDVfpz7KSr0kpZ+x31+KxwAYPd8ctAIVP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715750951; c=relaxed/simple;
-	bh=KYV3IyS77KkYiDrdE4Rp2al8luhE12DTz/ap5AMIVKA=;
+	s=arc-20240116; t=1715751252; c=relaxed/simple;
+	bh=wSb8ns8IYZ3jF3HlcEZvCD5f6COiy9Og6hXxxUm6NI8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bTgxEx5mKsB4TrEoaUPecurKUESZEWIEiC/GnX3Wk4zCswrkdoPRx4KbWZmCRytwSW/KwJ5U8E5L7TPOBYEPDxgdc28gTqS8F1Pxpw7iwS2q7HHQWnhOi02fV/QNfmsL1QqEZ+uWZCU0BEwg8N5WVpjZxKo5Gk/fcIYoy4rHhNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L408mwvU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E080FC2BD11;
-	Wed, 15 May 2024 05:29:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715750950;
-	bh=KYV3IyS77KkYiDrdE4Rp2al8luhE12DTz/ap5AMIVKA=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=LJyDS+mwTSs6/Fp3/1mkJn5B9YCY6tCxOxxUjVtAhdsTpfnJUA0iQGw2VZZkqTSgp9Fpd2EG4B6CXGnMXL4rlDNb2LNJ4uU22+O1GBT96AgwmZPotJizQOrtDftWuuWj7Rkgnwpv90+aQ9jfhC4nt0YHYrFTLxzqPYo5yKPip7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=EkXoEdxd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF115C116B1;
+	Wed, 15 May 2024 05:34:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1715751251;
+	bh=wSb8ns8IYZ3jF3HlcEZvCD5f6COiy9Og6hXxxUm6NI8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=L408mwvUMOeIe8NIh1DXQD4E9z4z9dV1uQCbEeR/h5oHuaALVr3+KyJVOuWQ1fDBv
-	 5kkZKC1c57bnpNb2BZfCzwdB/xxsMnOcn+5Af2yfMOKAXhg7+DI++l09N08TleJaje
-	 o86OlC881cWpA1QS5wvrBKBmm0GcnqaWCjpTUHUYwkPKrk47JlfQgJYKCHQT1Ijj9/
-	 iMJmkKXjnBF3qYkPlFQF+/eZkIQiueMYbkM2bu5t8ifD0Je6SgKnzPgXjxbt0ZpugZ
-	 uDegFDq8prIXnEv2AgBx6drbwQsWJnPLerYGysi8SOo1Sw+qMiabXGeDYnAh54KDZa
-	 WJu6guhn66vnQ==
-Date: Wed, 15 May 2024 10:53:42 +0530
-From: Naveen N Rao <naveen@kernel.org>
-To: Gautam Menghani <gautam@linux.ibm.com>
-Cc: mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu, 
-	aboorvad@linux.vnet.ibm.com, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] arch/powerpc: Remove unused cede related functions
-Message-ID: <cdzbxdhl2cj754m2erxdt5wwsztdsvrjvhq54szow4ufst44j7@bx2i4w7hpo5v>
-References: <20240514132457.292865-1-gautam@linux.ibm.com>
+	b=EkXoEdxdufurf2ejP3e8GacLs23Ir9io+Z1Sq4qTFZSM3vx/dnPIclnY0aKAhVf3L
+	 x+rFw38ymOqlv0+Gluk6x35UhNsJoOTE4JIqLJTsY1KDQ2lnKMZ3Q1tenbovMOq0Pd
+	 7VBdUa7hAnsACpceW24rSuCol+Ca86eL9vjc9T5U=
+Date: Wed, 15 May 2024 07:34:07 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Yuanchu Xie <yuanchu@google.com>
+Cc: Wei Liu <liuwe@microsoft.com>, Rob Bradford <rbradford@rivosinc.com>,
+	Theodore Ts'o <tytso@mit.edu>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	virtualization@lists.linux.dev, dev@lists.cloudhypervisor.org
+Subject: Re: [RFC PATCH v1 1/2] virt: memctl: control guest physical memory
+ properties
+Message-ID: <2024051533-cyclic-unshipped-5599@gregkh>
+References: <20240514020301.1835794-1-yuanchu@google.com>
+ <2024051414-untie-deviant-ed35@gregkh>
+ <CAJj2-QFnOjzwbsMrTcrzPsbCFchtJLM0hiJDbR-xe1HcmV+ytw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240514132457.292865-1-gautam@linux.ibm.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJj2-QFnOjzwbsMrTcrzPsbCFchtJLM0hiJDbR-xe1HcmV+ytw@mail.gmail.com>
 
-On Tue, May 14, 2024 at 06:54:55PM GMT, Gautam Menghani wrote:
-> Remove extended_cede_processor() and its helpers as
-> extended_cede_processor() has no callers since
-> commit 48f6e7f6d948("powerpc/pseries: remove cede offline state for CPUs")
-> 
-> Signed-off-by: Gautam Menghani <gautam@linux.ibm.com>
-> ---
-> v1 -> v2:
-> 1. Remove helpers of extended_cede_processor()
+On Tue, May 14, 2024 at 06:21:57PM -0700, Yuanchu Xie wrote:
+> On Tue, May 14, 2024 at 9:06 AM Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Mon, May 13, 2024 at 07:03:00PM -0700, Yuanchu Xie wrote:
+> > > Memctl provides a way for the guest to control its physical memory
+> > > properties, and enables optimizations and security features. For
+> > > example, the guest can provide information to the host where parts of a
+> > > hugepage may be unbacked, or sensitive data may not be swapped out, etc.
+> > >...
+> > Pretty generic name for a hardware-specific driver :(
+> It's not for real hardware btw. Its use case is similar to pvpanic
+> where the device is emulated by the VMM. I can change the name if it's
+> a problem.
 
-Acked-by: Naveen N Rao <naveen@kernel.org>
+This file is only used for a single PCI device, that is very
+hardware-specific even if that hardware is "fake" :)
 
-> 
->  arch/powerpc/include/asm/plpar_wrappers.h | 28 -----------------------
->  1 file changed, 28 deletions(-)
-> 
-> diff --git a/arch/powerpc/include/asm/plpar_wrappers.h b/arch/powerpc/include/asm/plpar_wrappers.h
-> index b3ee44a40c2f..71648c126970 100644
-> --- a/arch/powerpc/include/asm/plpar_wrappers.h
-> +++ b/arch/powerpc/include/asm/plpar_wrappers.h
-> @@ -18,16 +18,6 @@ static inline long poll_pending(void)
->  	return plpar_hcall_norets(H_POLL_PENDING);
->  }
->  
-> -static inline u8 get_cede_latency_hint(void)
-> -{
-> -	return get_lppaca()->cede_latency_hint;
-> -}
-> -
-> -static inline void set_cede_latency_hint(u8 latency_hint)
-> -{
-> -	get_lppaca()->cede_latency_hint = latency_hint;
-> -}
-> -
->  static inline long cede_processor(void)
->  {
->  	/*
-> @@ -37,24 +27,6 @@ static inline long cede_processor(void)
->  	return plpar_hcall_norets_notrace(H_CEDE);
->  }
->  
-> -static inline long extended_cede_processor(unsigned long latency_hint)
-> -{
-> -	long rc;
-> -	u8 old_latency_hint = get_cede_latency_hint();
-> -
-> -	set_cede_latency_hint(latency_hint);
-> -
-> -	rc = cede_processor();
-> -
-> -	/* Ensure that H_CEDE returns with IRQs on */
-> -	if (WARN_ON(IS_ENABLED(CONFIG_PPC_IRQ_SOFT_MASK_DEBUG) && !(mfmsr() & MSR_EE)))
-> -		__hard_irq_enable();
-> -
-> -	set_cede_latency_hint(old_latency_hint);
-> -
-> -	return rc;
-> -}
-> -
->  static inline long vpa_call(unsigned long flags, unsigned long cpu,
->  		unsigned long vpa)
->  {
-> -- 
-> 2.45.0
-> 
+Please make the name more specific as well.
+
+thanks,
+
+greg k-h
 
