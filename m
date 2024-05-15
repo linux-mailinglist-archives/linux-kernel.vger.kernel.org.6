@@ -1,143 +1,143 @@
-Return-Path: <linux-kernel+bounces-179608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0429B8C6219
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:50:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE8D38C621E
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:51:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CC5D1F225C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 07:50:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E00A01C21182
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 07:51:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3BCC481DF;
-	Wed, 15 May 2024 07:50:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA788482CD;
+	Wed, 15 May 2024 07:51:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YeHTprxI"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="FBeDfTHu"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75F154654B
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 07:50:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E39F3D966;
+	Wed, 15 May 2024 07:51:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715759411; cv=none; b=MO9QUEQCh9A4LdgVbHcQFyI08iXxeEcEShkrni8TVddxJT8+xg4aKChNET4TR6gi3Ab57Obs2wh23EvXMVCPMyMv/yN3R85KzQcx1V+k+EeE+LCaAT4lJwaWNLo7uTovR6GsEiUe2B7h8yyL1kr8iiBWNIIGeK7Ca5TZ3a7ObFA=
+	t=1715759467; cv=none; b=N9MjnMtXQ2fMEE5UL/J4PEz8SLgjOQOba2s+Y5MMgKjjvayB5UvW0SmpAFNLB2bVv2oun2SsNzDQy7RstEng0InnTTQc4z7VEG3ZgjOUABTI8BBPBaEb+XXBCMY2Tlo8NLj/D1ioHQXmsh+kE6bgCNnWhr8AoJRWjjhtT5FR7gg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715759411; c=relaxed/simple;
-	bh=LoG+7gtU1o+7XCSOkjSuVQBBEuxkH1SzsEnGyxuBS14=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tO/b3Qz0BZgqztXr/T05xA8hBsOTHHoc6opfl3/w18PHPzeoUdbYvlDZYP0OHqSRxbT14T7XxMzFS8k6nGRaBcxtSWwA7oplQ5xExAmEpxRSHM8lWmtqCAr2/kDXDwMZ4klkpLR/GyrPfMZ4FJ0BAxORH1yXzsfwnGhYEbxuMvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YeHTprxI; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42017f8de7aso19258735e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 00:50:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715759408; x=1716364208; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=2luu+TEKGzGGESWKjsQ/mAq5vIhVWQJ0g42DRjIbMDs=;
-        b=YeHTprxIS/XNGwwPGNwBIs9B/yQ3IhS9vR/Dej9YdzzbaNBrVxK3+BdmVMFF5Dfdqg
-         sOkSunh+8M4cB4X7RyxWwysdo0TP2b8D0Ug1bSLRo4QgMTFOC6BNRWJBFeccGAaT1xCo
-         IjW87YZ02WyIHDXevVAslAzNO1h5epm+kGQLbx3xx413k4e3F+2sMOBO+blrHV32Bvm7
-         frRRnRcPsT2hWfzW0u2gTEoQ1BNa/X6wGgna/D9VRYHGfUQDmOd/Hd2KufA6bGvHdQ0U
-         C2JpMC5F23p+F347nCJUgNl5k7nQqpbO9rqwlDf/pOoUrYoMP4bkhokO3KyoQwH9+PyP
-         pRRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715759408; x=1716364208;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2luu+TEKGzGGESWKjsQ/mAq5vIhVWQJ0g42DRjIbMDs=;
-        b=TwMcF6honvBBM3BzKHN1T2EqyrXWXDp1BCQMfud/IS8lsEGiacTWP3WTD5hsX58D/7
-         vnL5CK8nQQtMFW2aQjLSE7ohUkSoewb5vaLLJlQl3+WRjNSlu4AFhARn7dlaCznW/ucc
-         iN2c/CVCsAiXxZrEIYLr5Doxv5m7Z4JRLDX7GDA2+YANi7cnLvLr9Tw/q9ww/xj9drTI
-         2Lxh4BW2b+qsYjJjx4k309FR/7h+4e0Bq4kON6msIFmH8M7Ms1TSUZRE/IGc7soVnjKz
-         howe26t1jJb3ktOD21HG7bDVRVwSlNd3u5qQuwMQkeOgJdaPisi36Ylu1OKPRKQXi5i2
-         2qdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV9mzvV/bEUTaIN0SVF9xw/AwZf5mJISvl3f1lOq7gtxFVKZXV4QS1re5J0MkZNXmS3ygXH/wnlVplOldLToHyrdAokLP0UtAfRcxB4
-X-Gm-Message-State: AOJu0YyvE8XFXSsKrHCkJ2TZ2j9+84wKbuGiv0HpIgESU4dVGU1kCYlU
-	PT/KOHDhu62zNh6VChnQ06R8uDbQMY536jNkzXuFXAnERtXwFOMRBqmMfFTdwA==
-X-Google-Smtp-Source: AGHT+IEwnw88k+dpNWTBc/h+G+M5vpa6Q0JqTHL3W0/n2a9dKdx0i4MEuejJLaApdV2aAiJ/HxYQGg==
-X-Received: by 2002:a05:600c:450e:b0:418:dbad:c57d with SMTP id 5b1f17b1804b1-41feac5ba78mr111020505e9.28.1715759407711;
-        Wed, 15 May 2024 00:50:07 -0700 (PDT)
-Received: from thinkpad ([149.14.240.163])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42011d91edfsm129656185e9.44.2024.05.15.00.50.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 May 2024 00:50:07 -0700 (PDT)
-Date: Wed, 15 May 2024 09:50:05 +0200
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Conor Dooley <conor@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Avri Altman <avri.altman@wdc.com>,
-	Bart Van Assche <bvanassche@acm.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, Andy Gross <agross@kernel.org>,
-	cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
-	linux-scsi@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: ufs: qcom: Use 'ufshc' as the node name
- for UFS controller nodes
-Message-ID: <20240515075005.GC2445@thinkpad>
-References: <20240514-ufs-nodename-fix-v1-0-4c55483ac401@linaro.org>
- <20240514-ufs-nodename-fix-v1-1-4c55483ac401@linaro.org>
- <20240514-buggy-sighing-1573000e3f52@spud>
+	s=arc-20240116; t=1715759467; c=relaxed/simple;
+	bh=2Ra2KzvAOrYGHzfBiCx3fJH4YdQUFj7/c4fPwFegBvg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JVHvjiHhZvh3vliXW2gkowrDHnksKSyaT+GpUBmHWFtGWPGv2QwQBRXAZ9L0/OnYL+nsYUBqVw7yRXl1CS4/RZsE8ZcKxHaJYau/oEAAUUHIrW1HPLrOe+GvznGDPG11PLQzxhpypghE8TMBkBYGrEmpzieE/ru334ccSnlFSPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=FBeDfTHu; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from wsk (85-222-111-42.dynamic.chello.pl [85.222.111.42])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	(Authenticated sender: lukma@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 25DEE8817B;
+	Wed, 15 May 2024 09:50:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1715759460;
+	bh=Ut7zCC++fvkmhRkRtm0kIKlPKyPQE/wa4b3WctClYC0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=FBeDfTHunEQaZwYEM62M0gIUY7ppCx+1BveYVUZLakJDHow3GHaN0Z6EsxZwfHgKd
+	 Bgr1Dpi+Inwj/RvWmPIVh9Xsv0CK2HBNwzxGGMqQdvGVTylym2wlWwVuzjO57x+DXW
+	 HrqFQ62GzaUSct92pYhjCshGSXge8snJvCNelKdjdTHUOm5a0JDT6ywUU4QLraGLsG
+	 /5DOKi8ajNG5AsV5p54y0GYOjN9AX5ffPZmdxsmGzO2DUcOr07ugBRxA7iXXost4by
+	 wy2ZaT6e3kYSuAXqk02BGyA6AP6UOiDdYy17Jtxv2vCWnr+tuSwA4sYiGTnrDsJOxZ
+	 4/CNjKvSV1ypQ==
+Date: Wed, 15 May 2024 09:50:35 +0200
+From: Lukasz Majewski <lukma@denx.de>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, Paolo Abeni
+ <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>, Vladimir Oltean
+ <olteanv@gmail.com>, "David S. Miller" <davem@davemloft.net>, Oleksij
+ Rempel <o.rempel@pengutronix.de>, Tristram.Ha@microchip.com, Ravi
+ Gunasekaran <r-gunasekaran@ti.com>, Simon Horman <horms@kernel.org>, Nikita
+ Zhandarovich <n.zhandarovich@fintech.ru>, Murali Karicheri
+ <m-karicheri2@ti.com>, Arvid Brodin <Arvid.Brodin@xdin.com>, Dan Carpenter
+ <dan.carpenter@linaro.org>, "Ricardo B. Marliere" <ricardo@marliere.net>,
+ Casper Andersson <casper.casan@gmail.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: hsr: Setup and delete proxy prune timer only when
+ RedBox is enabled
+Message-ID: <20240515095035.1c6a8e47@wsk>
+In-Reply-To: <20240515071448.Vf_t99dI@linutronix.de>
+References: <20240514091306.229444-1-lukma@denx.de>
+	<20240515064139.-B-_Hf0_@linutronix.de>
+	<20240515090904.477c6b5f@wsk>
+	<20240515071448.Vf_t99dI@linutronix.de>
+Organization: denx.de
+X-Mailer: Claws Mail 3.19.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240514-buggy-sighing-1573000e3f52@spud>
+Content-Type: multipart/signed; boundary="Sig_/=iNR8my_p0HXF67qrEs5xe0";
+ protocol="application/pgp-signature"; micalg=pgp-sha512
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-On Tue, May 14, 2024 at 07:50:15PM +0100, Conor Dooley wrote:
-> On Tue, May 14, 2024 at 03:08:40PM +0200, Manivannan Sadhasivam wrote:
-> > Devicetree binding has documented the node name for UFS controllers as
-> > 'ufshc'. So let's use it instead of 'ufs' which is for the UFS devices.
-> 
-> Can you point out where that's been documented?
+--Sig_/=iNR8my_p0HXF67qrEs5xe0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Typo here. s/Devicetree binding/Devicetree spec
+Hi Sebastian,
 
-https://github.com/devicetree-org/devicetree-specification/blob/main/source/chapter2-devicetree-basics.rst#generic-names-recommendation
+> On 2024-05-15 09:09:04 [+0200], Lukasz Majewski wrote:
+> > Hi Sebastian, =20
+> Hi Lukasz,
+>=20
+> > My concern is only with resource allocation - when RedBox is not
+> > enabled the resources for this particular, not used timer are
+> > allocated anyway. =20
+>=20
+> timer_setup() does not allocate any resources. The initialisation is
+> pure static assignment. The timer subsystem does not look at this
+> timer until mod_timer() is invoked (or something similar).
 
-- Mani
+Thanks for the clarification.
 
-> Thanks,
-> Conor.
-> 
-> > 
-> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > ---
-> >  Documentation/devicetree/bindings/ufs/qcom,ufs.yaml | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml b/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml
-> > index 10c146424baa..37112e17e474 100644
-> > --- a/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml
-> > +++ b/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml
-> > @@ -273,7 +273,7 @@ examples:
-> >          #address-cells = <2>;
-> >          #size-cells = <2>;
-> >  
-> > -        ufs@1d84000 {
-> > +        ufshc@1d84000 {
-> >              compatible = "qcom,sm8450-ufshc", "qcom,ufshc",
-> >                           "jedec,ufs-2.0";
-> >              reg = <0 0x01d84000 0 0x3000>;
-> > 
-> > -- 
-> > 2.25.1
-> > 
+Considering the above - please just drop this patch.
+
+>=20
+> > If this can be omitted - then we can drop the patch.
+> >=20
+> > Best regards,
+> >=20
+> > Lukasz Majewski =20
+>=20
+> Sebastian
 
 
 
--- 
-மணிவண்ணன் சதாசிவம்
+
+Best regards,
+
+Lukasz Majewski
+
+--
+
+DENX Software Engineering GmbH,      Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
+
+--Sig_/=iNR8my_p0HXF67qrEs5xe0
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAmZEaUsACgkQAR8vZIA0
+zr28cAf/c81TJAjvacDjJZwGsTLd9w7jFwu4PZCY5cfl+cd73FlQSoNiMk/DdRrL
+CSOoMxmFXrIT5dn0E9tAZpbphGaAjf8tJdH5E04RVTwiwNx2EgjOj7ePVvo5SX9P
+p2JRFNhr0ZMg+AfeX6ybhWpPsgumbDyfbUlCV+DZYskMV0Ir71PKY5bC7tRGl/cV
+XQC6F97d3pJFDAezcDoBLN5fQ7jp62/ZDVFoaztJkd0Vj5BTjI4eN/VoEvpxTu5m
+EHi1HVUc3v9R0h6vHwpLvyMViIDXWGsCR3XUE+Aeebaz8SspUKVMTBSUv/CapekN
+gUDt8jO3skZCNXRpgbxK+oZZFAu1Fg==
+=tCGb
+-----END PGP SIGNATURE-----
+
+--Sig_/=iNR8my_p0HXF67qrEs5xe0--
 
