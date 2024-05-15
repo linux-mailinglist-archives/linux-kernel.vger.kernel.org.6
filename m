@@ -1,144 +1,284 @@
-Return-Path: <linux-kernel+bounces-179512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C33548C60A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:13:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7CFE8C60A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:12:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE73F1C20CD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:13:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 652211F21888
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:12:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF1D13BB4D;
-	Wed, 15 May 2024 06:12:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A38713B290;
+	Wed, 15 May 2024 06:12:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="ivbAdywh";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="r4QALbQT"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OHuEUf3e"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BCF13B1AC;
-	Wed, 15 May 2024 06:12:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4432383A0
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 06:12:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715753576; cv=none; b=aDLKLJt3C7/jAyxqTUvDT6OEpPShqs9A/mlkSSfkxIqUpldBIMdJ5OdeGEBvJqMXt82xcbdmn2Yie8KKJYiMb3Bj12Ji6zZWaxmPe4pSAu9ChShQaJBZdC2k5154bn6jt/K2dkdx8DgUMmNE9oUcnuFknINI5/0XhmntFVCvtzc=
+	t=1715753533; cv=none; b=C4c/ILanDM5czBzcPV+Byr7ba+IG/73onMniFUn8BA/4R1kp4lRkmKxoFAf2w/8HXPqgDYjtkI/Pak+o8/5ZcOwhH5lQiGla9oVfytt6YajVqMw8WF8NXxzUDqY7b0THRJr8M2lUjxznbeerGb/OD5T+RNERMWBYDSlqDKFOhsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715753576; c=relaxed/simple;
-	bh=ST1KBgIBdQUGMWs9K1MnA4oRBE3vKwC0vJ3GkqMiD2s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TgbNxLt6hFCQ8CSjWXcm+L9ohFyq/Dtj2u3fCKUtENGhHt0/onvTI+ypgjx30HqcpJmSrwwf5g+niQ9Yqh+IJcASFzVS6lR3gxVpeCQ6nVAb0G3YfFbBYO41pckDg4vPpgenmu3/2BQXvzcCXgi0gEzuFYqwuhVLDhv0EJUYyMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=ivbAdywh; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=r4QALbQT reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1715753573; x=1747289573;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=Ni1BtX8uUfNH+eqIsiz5T/zzcUFH/m6Iqk/eL5FxXCw=;
-  b=ivbAdywh4Flptes0Ou+Zo5Y77hJMfO5PoZ834GIYdP+FySiMW7N4MMBa
-   AoATROi5xYlVXTRhO75re/r9MntiN5ej8wbEGMWAu3+0BbXbM/asE61dV
-   x2dB63P+yG40UcBBFXkg9kHhAu2VkeE4JWWSj29fR8pekIjx577yFOtyL
-   C3wIuLvp6Aw18B5Oip/9onqH2Jffwgt1cZCq/yBXvLRbWdmH2FTYtJ5X+
-   WVNaik3OZhcpvXse3sJB+GfTLoAUDf5EhAOrtxfmzaJ6reBa5BICTRIvv
-   ABVkLzVFzKtiFcOTGzMQKxTqZU4rg7gLq+K1HhqEX4Lzy/PCydmAZMqt6
-   w==;
-X-CSE-ConnectionGUID: sSsNmdUXTuqGs3G2OXkj4w==
-X-CSE-MsgGUID: yzGRMvqBQUqlUMiIv32CiQ==
-X-IronPort-AV: E=Sophos;i="6.08,160,1712613600"; 
-   d="scan'208";a="36904601"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 15 May 2024 08:11:37 +0200
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2B3721712BF;
-	Wed, 15 May 2024 08:11:30 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1715753493;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=Ni1BtX8uUfNH+eqIsiz5T/zzcUFH/m6Iqk/eL5FxXCw=;
-	b=r4QALbQTiUzJGjSHwsQrHvJLIVFxpJ/jBUeoqAx8k8n9WYRaSOx6shLe55Yc0+1Dr8R6tG
-	VvTStgp8Vvsj0SgMHG+e+DlkOY+hUHUUEBZTZT9PYKBCgBiRU7vFEzCukZHJ+Bfb4wpQEf
-	/4V2rVBb//cd+sTH6qela5tc6Erw0ertc3SfKYXJy4/MTOUCPnYmysw72xn0lRGCKOT3X7
-	UexgKLtI3FMJSkIdJE8j6T43czpFD4ZLfVBxyIt4JQJiu7WTuH6XBBSA6cvpmf1c7dGIIS
-	BYuDzbmPn1TdToS58RT1lrenH7Ccwi3qqRmTh30o8mFvYVI6QnleX5R08asptA==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Shengjiu Wang <shengjiu.wang@nxp.com>, Adam Ford <aford173@gmail.com>
-Cc: ulf.hansson@linaro.org, heiko@sntech.de, u.kleine-koenig@pengutronix.de, geert+renesas@glider.be, rafael@kernel.org, linux-pm@vger.kernel.org, abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, imx@lists.linux.dev, shengjiu.wang@gmail.com, frank.li@nxp.com, mkl@pengutronix.de, linus.walleij@linaro.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] pmdomain: imx: gpcv2: Add delay after power up handshake
-Date: Wed, 15 May 2024 08:11:35 +0200
-Message-ID: <9618306.DvuYhMxLoT@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <CAHCN7xLoW2Nydhc3y-X1ieb7-UZTm=ap1O1eSLE31LawmfRZOg@mail.gmail.com>
-References: <1715396125-3724-1-git-send-email-shengjiu.wang@nxp.com> <CAHCN7xLoW2Nydhc3y-X1ieb7-UZTm=ap1O1eSLE31LawmfRZOg@mail.gmail.com>
+	s=arc-20240116; t=1715753533; c=relaxed/simple;
+	bh=h0A+98/4/Mbl1gFraVzzilprOH2dwXmDXoarNVSIjT4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pyhOM1meAC344NDOdAgTx7zUieWLatZwwZSQZXyE2nTMBT+NrMQPaU9fzJtbGC3jBDhNivLyCu3DsqQ/jBxvGxOvYzs38f/FTFWZ16qwhyhtEvXPX7MJlHyy4RCnYaT3QLXHtMMaQOTl1O8ttSwfV9LgukoX5e9ke8ECrTpqDCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OHuEUf3e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB912C116B1;
+	Wed, 15 May 2024 06:12:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715753533;
+	bh=h0A+98/4/Mbl1gFraVzzilprOH2dwXmDXoarNVSIjT4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=OHuEUf3eyJWAwUxyXWMMBLboTzTl1NB9QTvaa8QJhBRZhnLVKWQ0OBFxKpjyZiKbm
+	 x0SyZ1lFOE+c8umMy6d458VVMbbMIeHmrvffcI7uyQakkiYx7CxhYif9Q/DOSBMts6
+	 ng8GZLwVqVG0sY0bvlvr0FcfsSDjyIi05byzG0XPDOfA/XCIIKdEMD3RbXpZDmta12
+	 OEiZO8xrCNbVulq+YtWNA+DhTpas4O2/r5K4knKkAJUwm+ZP3YYoGXlhxITnpM+4Jw
+	 +pG+p8fOuafdmZQmbDpjc28Rv/Pl/VWjZFFiuuKnRQT6i1PC1BAygNx+iUtinxQGYI
+	 KfszlBSW2YoTA==
+Message-ID: <404a39af-b3b7-4898-a158-dd1e92f09a95@kernel.org>
+Date: Wed, 15 May 2024 14:12:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
-X-Last-TLS-Session-Version: TLSv1.3
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] f2fs: fix to do sanity check on i_nid for inline_data
+ inode
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+ syzbot+848062ba19c8782ca5c8@syzkaller.appspotmail.com
+References: <20240506103313.773503-1-chao@kernel.org>
+ <20240506103313.773503-3-chao@kernel.org> <ZjzxWp4-wmpCzBeB@google.com>
+ <b58d0a62-9491-4b77-a3be-70331f849bb8@kernel.org>
+ <Zj2WWpHmHaWKbDgG@google.com>
+ <948ecc86-63f5-48bb-b71c-61d57cbf446c@kernel.org>
+ <Zj6-Fl5OQrHyg0g_@google.com>
+ <02a4e80f-a146-4862-8399-3db42979b8fb@kernel.org>
+ <ZkOMSQK6hitduUYK@google.com>
+ <43f128b0-5151-4ae6-9bc0-438c7a9871e9@kernel.org>
+ <ZkQ8mSYP50Etp0-C@google.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <ZkQ8mSYP50Etp0-C@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi,
+On 2024/5/15 12:39, Jaegeuk Kim wrote:
+> On 05/15, Chao Yu wrote:
+>> On 2024/5/15 0:07, Jaegeuk Kim wrote:
+>>> 外部邮件/External Mail
+>>>
+>>>
+>>> On 05/11, Chao Yu wrote:
+>>>> On 2024/5/11 8:38, Jaegeuk Kim wrote:
+>>>>> On 05/10, Chao Yu wrote:
+>>>>>> On 2024/5/10 11:36, Jaegeuk Kim wrote:
+>>>>>>> On 05/10, Chao Yu wrote:
+>>>>>>>> On 2024/5/9 23:52, Jaegeuk Kim wrote:
+>>>>>>>>> On 05/06, Chao Yu wrote:
+>>>>>>>>>> syzbot reports a f2fs bug as below:
+>>>>>>>>>>
+>>>>>>>>>> ------------[ cut here ]------------
+>>>>>>>>>> kernel BUG at fs/f2fs/inline.c:258!
+>>>>>>>>>> CPU: 1 PID: 34 Comm: kworker/u8:2 Not tainted 6.9.0-rc6-syzkaller-00012-g9e4bc4bcae01 #0
+>>>>>>>>>> RIP: 0010:f2fs_write_inline_data+0x781/0x790 fs/f2fs/inline.c:258
+>>>>>>>>>> Call Trace:
+>>>>>>>>>>       f2fs_write_single_data_page+0xb65/0x1d60 fs/f2fs/data.c:2834
+>>>>>>>>>>       f2fs_write_cache_pages fs/f2fs/data.c:3133 [inline]
+>>>>>>>>>>       __f2fs_write_data_pages fs/f2fs/data.c:3288 [inline]
+>>>>>>>>>>       f2fs_write_data_pages+0x1efe/0x3a90 fs/f2fs/data.c:3315
+>>>>>>>>>>       do_writepages+0x35b/0x870 mm/page-writeback.c:2612
+>>>>>>>>>>       __writeback_single_inode+0x165/0x10b0 fs/fs-writeback.c:1650
+>>>>>>>>>>       writeback_sb_inodes+0x905/0x1260 fs/fs-writeback.c:1941
+>>>>>>>>>>       wb_writeback+0x457/0xce0 fs/fs-writeback.c:2117
+>>>>>>>>>>       wb_do_writeback fs/fs-writeback.c:2264 [inline]
+>>>>>>>>>>       wb_workfn+0x410/0x1090 fs/fs-writeback.c:2304
+>>>>>>>>>>       process_one_work kernel/workqueue.c:3254 [inline]
+>>>>>>>>>>       process_scheduled_works+0xa12/0x17c0 kernel/workqueue.c:3335
+>>>>>>>>>>       worker_thread+0x86d/0xd70 kernel/workqueue.c:3416
+>>>>>>>>>>       kthread+0x2f2/0x390 kernel/kthread.c:388
+>>>>>>>>>>       ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
+>>>>>>>>>>       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+>>>>>>>>>>
+>>>>>>>>>> The root cause is: inline_data inode can be fuzzed, so that there may
+>>>>>>>>>> be valid blkaddr in its direct node, once f2fs triggers background GC
+>>>>>>>>>> to migrate the block, it will hit f2fs_bug_on() during dirty page
+>>>>>>>>>> writeback.
+>>>>>>>>>>
+>>>>>>>>>> Let's add sanity check on i_nid field for inline_data inode, meanwhile,
+>>>>>>>>>> forbid to migrate inline_data inode's data block to fix this issue.
+>>>>>>>>>>
+>>>>>>>>>> Reported-by: syzbot+848062ba19c8782ca5c8@syzkaller.appspotmail.com
+>>>>>>>>>> Closes: https://lore.kernel.org/linux-f2fs-devel/000000000000d103ce06174d7ec3@google.com
+>>>>>>>>>> Signed-off-by: Chao Yu <chao@kernel.org>
+>>>>>>>>>> ---
+>>>>>>>>>>       fs/f2fs/f2fs.h   |  2 +-
+>>>>>>>>>>       fs/f2fs/gc.c     |  6 ++++++
+>>>>>>>>>>       fs/f2fs/inline.c | 17 ++++++++++++++++-
+>>>>>>>>>>       fs/f2fs/inode.c  |  2 +-
+>>>>>>>>>>       4 files changed, 24 insertions(+), 3 deletions(-)
+>>>>>>>>>>
+>>>>>>>>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>>>>>>>>>> index fced2b7652f4..c876813b5532 100644
+>>>>>>>>>> --- a/fs/f2fs/f2fs.h
+>>>>>>>>>> +++ b/fs/f2fs/f2fs.h
+>>>>>>>>>> @@ -4146,7 +4146,7 @@ extern struct kmem_cache *f2fs_inode_entry_slab;
+>>>>>>>>>>        * inline.c
+>>>>>>>>>>        */
+>>>>>>>>>>       bool f2fs_may_inline_data(struct inode *inode);
+>>>>>>>>>> -bool f2fs_sanity_check_inline_data(struct inode *inode);
+>>>>>>>>>> +bool f2fs_sanity_check_inline_data(struct inode *inode, struct page *ipage);
+>>>>>>>>>>       bool f2fs_may_inline_dentry(struct inode *inode);
+>>>>>>>>>>       void f2fs_do_read_inline_data(struct page *page, struct page *ipage);
+>>>>>>>>>>       void f2fs_truncate_inline_inode(struct inode *inode,
+>>>>>>>>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+>>>>>>>>>> index e86c7f01539a..041957750478 100644
+>>>>>>>>>> --- a/fs/f2fs/gc.c
+>>>>>>>>>> +++ b/fs/f2fs/gc.c
+>>>>>>>>>> @@ -1563,6 +1563,12 @@ static int gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+>>>>>>>>>>                                     continue;
+>>>>>>>>>>                             }
+>>>>>>>>>> +                 if (f2fs_has_inline_data(inode)) {
+>>>>>>>>>> +                         iput(inode);
+>>>>>>>>>> +                         set_sbi_flag(sbi, SBI_NEED_FSCK);
+>>>>>>>>>> +                         continue;
+>>>>>>>>>
+>>>>>>>>> Any race condtion to get this as false alarm?
+>>>>>>>>
+>>>>>>>> Since there is no reproducer for the bug, I doubt it was caused by metadata
+>>>>>>>> fuzzing, something like this:
+>>>>>>>>
+>>>>>>>> - inline inode has one valid blkaddr in i_addr or in dnode reference by i_nid;
+>>>>>>>> - SIT/SSA entry of the block is valid;
+>>>>>>>> - background GC migrates the block;
+>>>>>>>> - kworker writeback it, and trigger the bug_on().
+>>>>>>>
+>>>>>>> Wasn't detected by sanity_check_inode?
+>>>>>>
+>>>>>> I fuzzed non-inline inode w/ below metadata fields:
+>>>>>> - i_blocks = 1
+>>>>>> - i_size = 2048
+>>>>>> - i_inline |= 0x02
+>>>>>>
+>>>>>> sanity_check_inode() doesn't complain.
+>>>>>
+>>>>> I mean, the below sanity_check_inode() can cover the fuzzed case? I'm wondering
+>>>>
+>>>> I didn't figure out a generic way in sanity_check_inode() to catch all fuzzed cases.
+>>>
+>>>
+>>> The patch described:
+>>>    "The root cause is: inline_data inode can be fuzzed, so that there may
+>>>    be valid blkaddr in its direct node, once f2fs triggers background GC
+>>>    to migrate the block, it will hit f2fs_bug_on() during dirty page
+>>>    writeback."
+>>>
+>>> Do you suspect the node block address was suddenly assigned after f2fs_iget()?
+>>
+>> No, I suspect that the image was fuzzed by tools offline, not in runtime after
+>> mount().
+>>
+>>> Otherwise, it looks checking them in sanity_check_inode would be enough.
+>>>
+>>>>
+>>>> e.g.
+>>>> case #1
+>>>> - blkaddr, its dnode, SSA and SIT are consistent
+>>>> - dnode.footer.ino points to inline inode
+>>>> - inline inode doesn't link to the donde
+>>>>
+>>>> Something like fuzzed special file, please check details in below commit:
+>>>>
+>>>> 9056d6489f5a ("f2fs: fix to do sanity check on inode type during garbage collection")
+>>>>
+>>>> case #2
+>>>> - blkaddr, its dnode, SSA and SIT are consistent
+>>>> - blkaddr locates in inline inode's i_addr
+>>
+>> The image status is something like above as I described.
+> 
+> Then, why not just checking the gc path only?
 
-Am Mittwoch, 15. Mai 2024, 00:08:21 CEST schrieb Adam Ford:
-> On Fri, May 10, 2024 at 10:15=E2=80=AFPM Shengjiu Wang <shengjiu.wang@nxp=
-=2Ecom> wrote:
-> >
-> > AudioMix BLK-CTRL on i.MX8MP encountered an accessing register issue
-> > after power up.
-> >
-> > [    2.181035] Kernel panic - not syncing: Asynchronous SError Interrupt
-> > [    2.181038] CPU: 1 PID: 48 Comm: kworker/u16:2 Not tainted 6.9.0-rc5=
-=2Dnext-20240424-00003-g21cec88845c6 #171
-> > [    2.181047] Hardware name: NXP i.MX8MPlus EVK board (DT)
-> > [    2.181050] Workqueue: events_unbound deferred_probe_work_func
-> > [    2.181064] Call trace:
-> > [...]
-> > [    2.181142]  arm64_serror_panic+0x6c/0x78
-> > [    2.181149]  do_serror+0x3c/0x70
-> > [    2.181157]  el1h_64_error_handler+0x30/0x48
-> > [    2.181164]  el1h_64_error+0x64/0x68
-> > [    2.181171]  clk_imx8mp_audiomix_runtime_resume+0x34/0x44
-> > [    2.181183]  __genpd_runtime_resume+0x30/0x80
-> > [    2.181195]  genpd_runtime_resume+0x110/0x244
-> > [    2.181205]  __rpm_callback+0x48/0x1d8
-> > [    2.181213]  rpm_callback+0x68/0x74
-> > [    2.181224]  rpm_resume+0x468/0x6c0
-> > [    2.181234]  __pm_runtime_resume+0x50/0x94
-> > [    2.181243]  pm_runtime_get_suppliers+0x60/0x8c
-> > [    2.181258]  __driver_probe_device+0x48/0x12c
-> > [    2.181268]  driver_probe_device+0xd8/0x15c
-> > [    2.181278]  __device_attach_driver+0xb8/0x134
-> > [    2.181290]  bus_for_each_drv+0x84/0xe0
-> > [    2.181302]  __device_attach+0x9c/0x188
-> > [    2.181312]  device_initial_probe+0x14/0x20
-> > [    2.181323]  bus_probe_device+0xac/0xb0
-> > [    2.181334]  deferred_probe_work_func+0x88/0xc0
-> > [    2.181344]  process_one_work+0x150/0x290
-> > [    2.181357]  worker_thread+0x2f8/0x408
-> > [    2.181370]  kthread+0x110/0x114
-> > [    2.181381]  ret_from_fork+0x10/0x20
-> > [    2.181391] SMP: stopping secondary CPUs
-> >
->=20
-> The imx8mp-beacon board suffers from this as well, and I can confirm
-> the patch also fixes it.  It might be a coincidence, but the etnaviv
-> NPU also enumerates more reliably now too.
+Yes, we can.
 
-I had a similar local hack/workaround for NPU startup. This patch address
-both issues.
+has_node_blocks() is added for using a quick check to see whether i_nid
+and inline_data flag are inconsistent, should we change this in a separated
+patch?
 
-Tested-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-=2D-=20
-TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, Germ=
-any
-Amtsgericht M=C3=BCnchen, HRB 105018
-Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan Sch=
-neider
-http://www.tq-group.com/
+Thanks,
 
-
+> 
+>>
+>> Thanks,
+>>
+>>>>
+>>>> Thanks,
+>>>>
+>>>>> whether we really need to check it in the gc path.
+>>>>>
+>>>>>>
+>>>>>> Thanks,
+>>>>>>
+>>>>>>>
+>>>>>>>>
+>>>>>>>> Thoughts?
+>>>>>>>>
+>>>>>>>> Thanks,
+>>>>>>>>
+>>>>>>>>>
+>>>>>>>>>> +                 }
+>>>>>>>>>> +
+>>>>>>>>>>                             err = f2fs_gc_pinned_control(inode, gc_type, segno);
+>>>>>>>>>>                             if (err == -EAGAIN) {
+>>>>>>>>>>                                     iput(inode);
+>>>>>>>>>> diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+>>>>>>>>>> index ac00423f117b..067600fed3d4 100644
+>>>>>>>>>> --- a/fs/f2fs/inline.c
+>>>>>>>>>> +++ b/fs/f2fs/inline.c
+>>>>>>>>>> @@ -33,11 +33,26 @@ bool f2fs_may_inline_data(struct inode *inode)
+>>>>>>>>>>             return !f2fs_post_read_required(inode);
+>>>>>>>>>>       }
+>>>>>>>>>> -bool f2fs_sanity_check_inline_data(struct inode *inode)
+>>>>>>>>>> +static bool has_node_blocks(struct inode *inode, struct page *ipage)
+>>>>>>>>>> +{
+>>>>>>>>>> + struct f2fs_inode *ri = F2FS_INODE(ipage);
+>>>>>>>>>> + int i;
+>>>>>>>>>> +
+>>>>>>>>>> + for (i = 0; i < DEF_NIDS_PER_INODE; i++) {
+>>>>>>>>>> +         if (ri->i_nid[i])
+>>>>>>>>>> +                 return true;
+>>>>>>>>>> + }
+>>>>>>>>>> + return false;
+>>>>>>>>>> +}
+>>>>>>>>>> +
+>>>>>>>>>> +bool f2fs_sanity_check_inline_data(struct inode *inode, struct page *ipage)
+>>>>>>>>>>       {
+>>>>>>>>>>             if (!f2fs_has_inline_data(inode))
+>>>>>>>>>>                     return false;
+>>>>>>>>>> + if (has_node_blocks(inode, ipage))
+>>>>>>>>>> +         return false;
+>>>>>>>>>> +
+>>>>>>>>>>             if (!support_inline_data(inode))
+>>>>>>>>>>                     return true;
+>>>>>>>>>> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+>>>>>>>>>> index c26effdce9aa..1423cd27a477 100644
+>>>>>>>>>> --- a/fs/f2fs/inode.c
+>>>>>>>>>> +++ b/fs/f2fs/inode.c
+>>>>>>>>>> @@ -343,7 +343,7 @@ static bool sanity_check_inode(struct inode *inode, struct page *node_page)
+>>>>>>>>>>                     }
+>>>>>>>>>>             }
+>>>>>>>>>> - if (f2fs_sanity_check_inline_data(inode)) {
+>>>>>>>>>> + if (f2fs_sanity_check_inline_data(inode, node_page)) {
+>>>>>>>>>>                     f2fs_warn(sbi, "%s: inode (ino=%lx, mode=%u) should not have inline_data, run fsck to fix",
+>>>>>>>>>>                               __func__, inode->i_ino, inode->i_mode);
+>>>>>>>>>>                     return false;
+>>>>>>>>>> --
+>>>>>>>>>> 2.40.1
 
