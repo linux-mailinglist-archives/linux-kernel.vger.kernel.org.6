@@ -1,147 +1,153 @@
-Return-Path: <linux-kernel+bounces-180225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6945B8C6BA8
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 19:44:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BEA68C6BAF
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 19:45:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FA85B244E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:44:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18EC028169E
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:45:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45A264CB58;
-	Wed, 15 May 2024 17:44:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE0D5158864;
+	Wed, 15 May 2024 17:44:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora-corp-partner-google-com.20230601.gappssmtp.com header.i=@collabora-corp-partner-google-com.20230601.gappssmtp.com header.b="zvaT/PaO"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KRYladam"
+Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF5CD43AD4
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 17:44:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E22C11586F5
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 17:44:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715795044; cv=none; b=bpYifraXuectxfRtxDDx/JZudAvhvo7cwNR1RaeMtLaO72i7uFTAIZsvMgRSQ8TCBzQNGMej9nzy0SpJfxMSzUwdDF3KIu1KTeWYiypf/YSfDI7QEvmJfMOOPfOBoH4p+5ml0sz9ALu2+QvHyNHP+FemkQylGz1kOz81TZjptNY=
+	t=1715795093; cv=none; b=kB5ZvJv2lbJ3W/39yeKWEkGBpdf/1BuRpeA6NAUF+h4Bh4OBHlX2DUYJ5pOhhtz2QZOuSFntRoAItaKNyPu8RZ1glwtsvZeGBxdV2suSjxn11TVj0OsHK3KYu6g/5a0hHje80OgNY3HP18Wlq5PDA6HY812Yf6apEygmu380fhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715795044; c=relaxed/simple;
-	bh=8z5zmXb00dI33I9nYYn4QHL0CD+KmhO++F+VezLuwF8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bPXzxYKrvcgzQUdf2L+M2B58dP3TCPwYTBD8hH/5pnHHd0HBrxo8/YdabyYGNsCdqTMw6+ImQieAgWLmPlq098depHGWLgStV3/c8ppqn+4K2Ib0ekyxN56yYvtlztkW2ke6dlZHOChlOA3CyRhxjMHtCk0AbbCZ1/zrqfAqKV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=collabora.corp-partner.google.com; spf=pass smtp.mailfrom=collabora.corp-partner.google.com; dkim=pass (2048-bit key) header.d=collabora-corp-partner-google-com.20230601.gappssmtp.com header.i=@collabora-corp-partner-google-com.20230601.gappssmtp.com header.b=zvaT/PaO; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=collabora.corp-partner.google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.corp-partner.google.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-43de92e234dso64228381cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 10:44:02 -0700 (PDT)
+	s=arc-20240116; t=1715795093; c=relaxed/simple;
+	bh=HhT/UyiZ6inv0hfiadFIS4TuJteMpuQm5FvZwCiVsig=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZzdLSk3M0JTLIeaqqupC94HAThwKClXdiTGlsEETXPT4fmRqE67U010qmJgbUsQOZdlGXDIzdVkntvejFy91t4+nRjZq4/kiTNmYpwHkG58okavfbkL0rH6wPXivBWEmakK2MI7HnFnm2kVSaAm5fCOYoKqXSRCA00KEc5JqEYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KRYladam; arc=none smtp.client-ip=209.85.160.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-23f02e15fd6so3540803fac.1
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 10:44:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=collabora-corp-partner-google-com.20230601.gappssmtp.com; s=20230601; t=1715795041; x=1716399841; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=E0amurYLWKaRKPa/iEdq5FcEnj0UswhFN3sKXOxoIEk=;
-        b=zvaT/PaOEtTVMH9d1boly9k+wpE9gg/o8LSGFFqrGt1MFanlcYlPE37yhnE1QLhkf5
-         6CPiCSMcD5H6Uiw0jDy4TkxDyLv6nvTiko0W7tB6xUcdp4OCjmZsxBTOIUme3V80cSMw
-         hko1vvI5LkULOMU1398lkffkJQU8kaFMtrAWPpiqHVnV5JL+wgPU9oSDloVeHFqn/bp6
-         8ZLtTQCh+Vc9kpOURnd7oOT8jhd40yNVmsWF7AyU4VgqnxoULMnHPAiwUBZRZf4dDVRN
-         s98LMyuQ6/QxyxFmzvAtSptpvgXrjL1R0RtnqrwGkWT+1KSfBJLh555kp8BlcO5nApnn
-         FT0g==
+        d=google.com; s=20230601; t=1715795090; x=1716399890; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=aHE7vKazSCPusjGW9s/KeLr4sCT6I3eVwP0aPWhjdjY=;
+        b=KRYladamJu7j47GlAiphAWAsLDyndxPilyLBKv9fEwne0BLcbIviQbRPGyqzgH9ix5
+         KGeFfo3DN2j9XSHXu7sY/ocoUBFcHKfcGEZxG1/AyYMd3YrHZ/5xJ3XJtVzXEivITT1g
+         oWN9Za3jRCNjSzdbIVfTaJVTv0FmrsvalNZ7F7ADj6PRnzRrAQXT2fP192o/yNA4NGUS
+         OqtzAigNFQe33EAOS2NlsPLQXVFKGbH9FSJJfRzgjNCzuWrMKe0Zjh6NCw9inCYNsVl5
+         K8ZmDZXtFsXSwn4Wti5MATSfIM6qLmoQDepPPtY4eQzX5mKtpUwXcDiePJHBl4mU/15Q
+         INMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715795041; x=1716399841;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=E0amurYLWKaRKPa/iEdq5FcEnj0UswhFN3sKXOxoIEk=;
-        b=IXC2rB1tUE24wMrZcUnf3WkSZmEVjactvnxk014CFOZGEe7FqJzlbyUPVQXQNqCVpN
-         h/8VGTzFJZS37JVas/u/rxQaB6uVG6ThwkU+v762e28nfnNgCr6VLncF/DdSOIAGDUNu
-         21nz52mWC3ytWaH4V6FQEtQiruzWvzt57s17ppKljMt8GDX9F6R/qGrTLZEGDXmlv4iZ
-         0eqRqqzTOWSQ8nJa8xKDZp/KVhQ7SQeonpZhNEqAlvpsCeFZZpdMZcPbXwfvflfaw4FR
-         CmoS8amN/O8/b6eF507r4HM/PHsx92JaLm2VwpPOzLqCstYaykJV1p2Zpi4S8CJ2CTRJ
-         t1Pw==
-X-Forwarded-Encrypted: i=1; AJvYcCVavTusuJOQj0mdJdcKUkCZk87EckiBVPz9+mcutlVRQTXMmCaDe5H/kuRt2ViZDEYs4r09QtPtpJfFjSEcAxEYjstaN/lqxqDugqOg
-X-Gm-Message-State: AOJu0YyPtk0PQDnSNJXet5v/I+zPIpxbIlJOlhhnG2Bz7/oD5m8el9Jr
-	z/gr2jA26H5ybgxwAMKsCxuop9JI96/dj7SsuiOpbxbobXHUXPmjSfTY5+V5cW4=
-X-Google-Smtp-Source: AGHT+IFtGcMXjpt3HsFnPe9OF16luEvqPVOtySj8IBH0wjxyNEhyn0setwNtXCb14ES3yOalUq8alQ==
-X-Received: by 2002:a05:622a:1a96:b0:43e:3943:4379 with SMTP id d75a77b69052e-43e39434693mr20225301cf.19.1715795041568;
-        Wed, 15 May 2024 10:44:01 -0700 (PDT)
-Received: from nicolas-tpx395.lan ([2606:6d00:17:5985::580])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43e3a57b396sm2575901cf.24.2024.05.15.10.43.59
+        d=1e100.net; s=20230601; t=1715795090; x=1716399890;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aHE7vKazSCPusjGW9s/KeLr4sCT6I3eVwP0aPWhjdjY=;
+        b=eoUb3N2aHr2Hbw2NoK08YC/nry7timOomTORyK+5USiIJMkzs04A1HXaAWa+Jq9SYu
+         E8NNLOM8b+sZkGKGfAS85j2hZHIIeb7ogaEkE5qRP1isoaCr9DVrmtA+s6ey2kS6fMT4
+         CTewYGYBwcjq9fqgJee6Sc/w1UGvMHixwxN6cUzdgJLqtErCQfUC7dCOJ2NVSA+vGKoo
+         A7fYX0ZFm2HG7WIhFN8Zhzldbk78V8Cra7XpksdctOubAQeAlUqkBZkjARAKK9DmQufF
+         uQlS/JaU1yf5VzGTKhAVkRqsvW2a7voICGoc5fIuxYsuT8zhfMnDjBbVqwg90xCIBr7v
+         Llpg==
+X-Forwarded-Encrypted: i=1; AJvYcCUvTqh3Jxw0qMYVPE7JUvxGJNK59HoMf439jKrs5UWYmv8zm00czKKqpYDHhE2wHu9UVn6GMVKXAN7wkBW0fD1LBeVjjZocjazX/3so
+X-Gm-Message-State: AOJu0YxsLvQFT1MkNKkt+9tzf9Q8C1CN5RZeUyq2ZXlqR+UMHOsMeY8P
+	WIN46iW66/B3Vq3U3eoCD9bNg3+Rft81r+F5VGaLB+jjkb+S7piYgMP5P27hJA==
+X-Google-Smtp-Source: AGHT+IF16vw5ldq2DEQeMTmXB3e2sX+wSSbbVPVrx/3sJzxb2YomXPDc5Mwow7eXWfCtuMlI4cEQLg==
+X-Received: by 2002:a05:6871:a00f:b0:240:eab9:1635 with SMTP id 586e51a60fabf-24172a904bcmr18531712fac.21.1715795088326;
+        Wed, 15 May 2024 10:44:48 -0700 (PDT)
+Received: from google.com (57.92.83.34.bc.googleusercontent.com. [34.83.92.57])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2ade2c9sm11332969b3a.125.2024.05.15.10.44.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 May 2024 10:44:00 -0700 (PDT)
-Message-ID: <a3428b0c352c24d43a2d458d41819fbf4b6cce0f.camel@collabora.corp-partner.google.com>
-Subject: Re: Safety of opening up /dev/dma_heap/* to physically present
- users (udev uaccess tag) ?
-From: nicolas.dufresne@collabora.corp-partner.google.com
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Maxime Ripard <mripard@redhat.com>, Bryan O'Donoghue
- <bryan.odonoghue@linaro.org>, Dmitry Baryshkov
- <dmitry.baryshkov@linaro.org>,  Hans de Goede <hdegoede@redhat.com>, Sumit
- Semwal <sumit.semwal@linaro.org>, Benjamin Gaignard
- <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
- John Stultz <jstultz@google.com>, "T.J. Mercier" <tjmercier@google.com>,
- Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Lennart
- Poettering <mzxreary@0pointer.de>,  Robert Mader
- <robert.mader@collabora.com>, Sebastien Bacher
- <sebastien.bacher@canonical.com>, Linux Media Mailing List
- <linux-media@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
- <dri-devel@lists.freedesktop.org>,  linaro-mm-sig@lists.linaro.org, Linux
- Kernel Mailing List <linux-kernel@vger.kernel.org>, Milan Zamazal
- <mzamazal@redhat.com>, Andrey Konovalov <andrey.konovalov.ynk@gmail.com>
-Date: Wed, 15 May 2024 13:43:58 -0400
-In-Reply-To: <20240514204223.GN32013@pendragon.ideasonboard.com>
-References: <3c0c7e7e-1530-411b-b7a4-9f13e0ff1f9e@redhat.com>
-	 <e7ilwp3vc32xze3iu2ejgqlgz44codsktnvyiufjhuf2zxcnnf@tnwzgzoxvbg2>
-	 <d2a512b2-e6b1-4675-b406-478074bbbe95@linaro.org>
-	 <Zjpmu_Xj6BPdkDPa@phenom.ffwll.local>
-	 <20240507183613.GB20390@pendragon.ideasonboard.com>
-	 <4f59a9d78662831123cc7e560218fa422e1c5eca.camel@collabora.com>
-	 <Zjs5eM-rRoh6WYYu@phenom.ffwll.local>
-	 <20240513-heretic-didactic-newt-1d6daf@penduick>
-	 <20240513083417.GA18630@pendragon.ideasonboard.com>
-	 <c4db22ad94696ed22282bf8dad15088d94ade5d6.camel@collabora.com>
-	 <20240514204223.GN32013@pendragon.ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.1 (3.52.1-1.fc40) 
+        Wed, 15 May 2024 10:44:47 -0700 (PDT)
+Date: Wed, 15 May 2024 17:44:44 +0000
+From: Carlos Llamas <cmllamas@google.com>
+To: Yenchia Chen <yenchia.chen@mediatek.com>
+Cc: stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Sasha Levin <sashal@kernel.org>, Simon Horman <horms@kernel.org>,
+	Ryosuke Yasuoka <ryasuoka@redhat.com>,
+	Zhengchao Shao <shaozhengchao@huawei.com>,
+	Pedro Tammela <pctammela@mojatatu.com>, Thomas Graf <tgraf@suug.ch>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH 5.15 1/2] netlink: annotate lockless accesses to
+ nlk->max_recvmsg_len
+Message-ID: <ZkT0jFN-XWKf4jQK@google.com>
+References: <20240515073644.32503-1-yenchia.chen@mediatek.com>
+ <20240515073644.32503-2-yenchia.chen@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240515073644.32503-2-yenchia.chen@mediatek.com>
 
-Le mardi 14 mai 2024 =C3=A0 23:42 +0300, Laurent Pinchart a =C3=A9crit=C2=
-=A0:
-> > You'll hit the same limitation as we hit in GStreamer, which is that KM=
-S driver
-> > only offer allocation for render buffers and most of them are missing a=
-llocators
-> > for YUV buffers, even though they can import in these formats. (kms all=
-ocators,
-> > except dumb, which has other issues, are format aware).
->=20
-> My experience on Arm platforms is that the KMS drivers offer allocation
-> for scanout buffers, not render buffers, and mostly using the dumb
-> allocator API. If the KMS device can scan out YUV natively, YUV buffer
-> allocation should be supported. Am I missing something here ?
+On Wed, May 15, 2024 at 03:36:37PM +0800, Yenchia Chen wrote:
+> From: Eric Dumazet <edumazet@google.com>
+> 
+> syzbot reported a data-race in data-race in netlink_recvmsg() [1]
+> 
+> Indeed, netlink_recvmsg() can be run concurrently,
+> and netlink_dump() also needs protection.
+> 
+> [1]
+> BUG: KCSAN: data-race in netlink_recvmsg / netlink_recvmsg
+> 
+> read to 0xffff888141840b38 of 8 bytes by task 23057 on cpu 0:
+> netlink_recvmsg+0xea/0x730 net/netlink/af_netlink.c:1988
+> sock_recvmsg_nosec net/socket.c:1017 [inline]
+> sock_recvmsg net/socket.c:1038 [inline]
+> __sys_recvfrom+0x1ee/0x2e0 net/socket.c:2194
+> __do_sys_recvfrom net/socket.c:2212 [inline]
+> __se_sys_recvfrom net/socket.c:2208 [inline]
+> __x64_sys_recvfrom+0x78/0x90 net/socket.c:2208
+> do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+> do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+> entry_SYSCALL_64_after_hwframe+0x63/0xcd
+> 
+> write to 0xffff888141840b38 of 8 bytes by task 23037 on cpu 1:
+> netlink_recvmsg+0x114/0x730 net/netlink/af_netlink.c:1989
+> sock_recvmsg_nosec net/socket.c:1017 [inline]
+> sock_recvmsg net/socket.c:1038 [inline]
+> ____sys_recvmsg+0x156/0x310 net/socket.c:2720
+> ___sys_recvmsg net/socket.c:2762 [inline]
+> do_recvmmsg+0x2e5/0x710 net/socket.c:2856
+> __sys_recvmmsg net/socket.c:2935 [inline]
+> __do_sys_recvmmsg net/socket.c:2958 [inline]
+> __se_sys_recvmmsg net/socket.c:2951 [inline]
+> __x64_sys_recvmmsg+0xe2/0x160 net/socket.c:2951
+> do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+> do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+> entry_SYSCALL_64_after_hwframe+0x63/0xcd
+> 
+> value changed: 0x0000000000000000 -> 0x0000000000001000
+> 
+> Reported by Kernel Concurrency Sanitizer on:
+> CPU: 1 PID: 23037 Comm: syz-executor.2 Not tainted 6.3.0-rc4-syzkaller-00195-g5a57b48fdfcb #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/02/2023
+> 
+> Fixes: 9063e21fb026 ("netlink: autosize skb lengthes")
+> Reported-by: syzbot <syzkaller@googlegroups.com>
+> Signed-off-by: Eric Dumazet <edumazet@google.com>
+> Reviewed-by: Simon Horman <simon.horman@corigine.com>
+> Link: https://lore.kernel.org/r/20230403214643.768555-1-edumazet@google.com
+> Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+> Signed-off-by: yenchia.chen <yenchia.chen@mediatek.com>
+> ---
 
-There is two APIs, Dumb is the legacy allocation API, only used by display
-drivers indeed, and the API does not include a pixel format or a modifier. =
-The
-allocation of YUV buffer has been made through a small hack,=20
+The conflict resolution looks good to me, thanks!
 
-  bpp =3D number of bits per component (of luma plane if multiple planes)
-  width =3D width
-  height =3D height * X
-
-Where X will vary, "3 / 2" is used for 420 subsampling, "2" for 422 and "3"=
- for
-444. It is far from idea, requires deep knowledge of each formats in the
-application and cannot allocate each planes seperatly.
-
-The second is to use the driver specific allocation API. This is then abstr=
-acted
-by GBM. This allows allocating render buffers with notably modifiers and/or=
- use
-cases. But no support for YUV formats or multi-planar formats.
-
-Nicolas
+Reviewed-by: Carlos Llamas <cmllamas@google.com>
 
