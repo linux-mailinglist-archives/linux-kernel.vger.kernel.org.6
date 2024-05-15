@@ -1,175 +1,187 @@
-Return-Path: <linux-kernel+bounces-179818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AF208C65E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 13:47:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A48A8C65E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 13:48:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20B1728490E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 11:47:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9DA6B21449
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 11:48:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 459A96FE16;
-	Wed, 15 May 2024 11:47:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95D0D6F073;
+	Wed, 15 May 2024 11:48:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JE9gX6s7"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VzQmBzBq"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD21D14AB4;
-	Wed, 15 May 2024 11:47:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65B992CCD0
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 11:48:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715773623; cv=none; b=K8Pdp2CZX96T1YPQ6jYagE7pv3wcj3IpuH84TpqRKP/D0nPQO/c38QjINI5XUgytxgtRZsxp2Vo/vIzdaIOTsDIuvrQNxDgk6/DWm0yozY011uLxoAvi/vpCyMqHS9OTAn/tU3v/TKp8lL2j3EcyOkedy0e0Rsd/fdX6Lb9+zvI=
+	t=1715773726; cv=none; b=DD68aQx3RGKK8YkxnbXbZExF8Oqe5cO/b06JLZeN49S6EpUK9Gy+1XBTIOwoLRYLxYWhETteGsVu3RE754iYa1WyeNVM7kihR6iwSXaXvaCQXfNEpQUiNpjkb4OeOmGGC2bjEdTZwU3Sj6L2W2iDIAzb2AHOMItJRNaTmHJv1j8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715773623; c=relaxed/simple;
-	bh=t7iFnEs3Iw3S8AKB68ZJKQ1wqgeLYyoGzDhSi6rtUXA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=QXlpPL5dn7dZ+mIjV4B/6kMuWEjXwAeX9CqPOYvDHuydx19UX9VTyJiEI4RbbQWcqctvVfU5xSyHx/iwgjFiX+VDb6hXq/xSy1XLHDOz3bz9KK8qknrhPQ+LiB9gcjklEoqA5VcqO2pyYZoKbccaRVJWLM5FxabsFWwk1lCQvFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JE9gX6s7; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44F90fgJ024840;
-	Wed, 15 May 2024 11:46:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=ssm9WErsxqX0TxnKA8/0AGDH9AJ2mm24NKSMxmRx92M=; b=JE
-	9gX6s7m2ik2LmOMt8B1+l75+i24GRsECKoSxqYrTAS8B5LPkGRzPX+HolqoWTvy1
-	4WoklPZfaXo5/m8u9mSBMHHOl+HzSIG7ce12nuheyTN9MFQSXjlStfAmrTiza5BA
-	zVNcxGVaj7z7TrjQCNrWI1X4ObL4eoCPekdJY1gwvKFl8hFA8WhHDu1avxEG9gJV
-	CtFf2xpNMA5mKFX168aSwvAN3B9rHSbZSoYhqsfRlPpjfESL57TDCHS9v3siU05+
-	Z/eBfoNC0KAjAGXlYmElYHygz22NEp+6L06hIUyW+IlOKKsERqfB5jo4liDTQfkO
-	ojl4ICC9SObSctp+x6Bg==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y49gdtah2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 15 May 2024 11:46:48 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44FBklYx028028
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 15 May 2024 11:46:47 GMT
-Received: from [10.253.15.49] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 15 May
- 2024 04:46:46 -0700
-Message-ID: <38fcae90-f3f9-4b19-8b36-53ab93dc0953@quicinc.com>
-Date: Wed, 15 May 2024 19:46:28 +0800
+	s=arc-20240116; t=1715773726; c=relaxed/simple;
+	bh=nRdoqcnIgajr9m4SQFCPnF8s6F1in0LeJsdZrDbz8Kw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h4cDPALAw6+VeK6pYVQd3DJOF1oqSP9GCNPYK1dU6WNbYLSI/8H8oFMaY2R/VE03hml6lbqk4CaxACw4U0uujKrQkKOMZ/E7Fqv328t3xS+jmz6LbXKq2geE2jGeEdVRdVUkhvTef7Sa1zaKt6saFOHFmvYLvnZzJDNkQXsCl0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=VzQmBzBq; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=FFsrr8x9TFZA3GNSLmifIzCZ7TQAIkuSwKQBBQMGbKY=; b=VzQmBzBqyQDehI94nbb/4CxlJV
+	RN2zwY6Up8luzn4Sh1x0kibz5XUMs9ztoSE6S2smGY4tbiYX7pscIEg4gG9xLmYVs7yvr1T6SeGU1
+	L2m6dIRuSnGcC/ERiyY/2Rk1Hm0fRcdkCWY8ZdVJnwZp6NAYMGUUBNL89n7D2a9bTSNVHVxbL1vE0
+	AmCXMgAIbT7YkwG5lRtjDQMu+5G+UugbjwOPAvGjLUxEI+QXAophEpPhA/OiHYysfXuU4hQBLx1BM
+	CId9ULtzIfr/awT+D/YWgootBuw02fSxz6hprqJNW2g4BnAC4xKyOCtxFm1Gb4VgTUW/2/14kh+RC
+	q7cgTE+A==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1s7D7X-0000000ALfd-3sHZ;
+	Wed, 15 May 2024 11:48:32 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id ED9C83005E3; Wed, 15 May 2024 13:48:28 +0200 (CEST)
+Date: Wed, 15 May 2024 13:48:28 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Luis Machado <luis.machado@arm.com>
+Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
+	linux-kernel@vger.kernel.org, kprateek.nayak@amd.com,
+	wuyun.abel@bytedance.com, tglx@linutronix.de, efault@gmx.de,
+	nd <nd@arm.com>, John Stultz <jstultz@google.com>,
+	Hongyan.Xia2@arm.com
+Subject: Re: [RFC][PATCH 08/10] sched/fair: Implement delayed dequeue
+Message-ID: <20240515114828.GO12673@noisy.programming.kicks-ass.net>
+References: <20240405110010.631664251@infradead.org>
+ <3888d7c8-660e-479c-8c10-8295204e5f36@arm.com>
+ <1461277e-af68-41e7-947c-9178b55810b1@arm.com>
+ <20240425104220.GE21980@noisy.programming.kicks-ass.net>
+ <20240425114949.GH12673@noisy.programming.kicks-ass.net>
+ <20240426093241.GI12673@noisy.programming.kicks-ass.net>
+ <c6152855-ef92-4c24-a3f5-64d4256b6789@arm.com>
+ <2fba04b0-e55e-41f4-8b7a-723734fe1ad2@arm.com>
+ <219b8b49-3767-4010-aa68-9e1cf66c2ccb@arm.com>
+ <20240515093649.GF40213@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] bus: mhi: host: Add Foxconn SDX72 related support
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Slark Xiao
-	<slark_xiao@163.com>
-CC: <loic.poulain@linaro.org>, <mhi@lists.linux.dev>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240510032657.789629-1-slark_xiao@163.com>
- <20240514143741.GA2306@thinkpad>
- <541de8e4.1600.18f79de44f3.Coremail.slark_xiao@163.com>
- <20240515074119.GA2445@thinkpad>
-Content-Language: en-US
-From: Qiang Yu <quic_qianyu@quicinc.com>
-In-Reply-To: <20240515074119.GA2445@thinkpad>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: TVmkk0hyM7JnVNjh-IkG_A4pAMjOkS-5
-X-Proofpoint-ORIG-GUID: TVmkk0hyM7JnVNjh-IkG_A4pAMjOkS-5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-15_06,2024-05-15_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- impostorscore=0 clxscore=1011 priorityscore=1501 phishscore=0 spamscore=0
- mlxscore=0 lowpriorityscore=0 suspectscore=0 bulkscore=0 adultscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405010000 definitions=main-2405150081
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240515093649.GF40213@noisy.programming.kicks-ass.net>
 
+On Wed, May 15, 2024 at 11:36:49AM +0200, Peter Zijlstra wrote:
+> On Fri, May 10, 2024 at 03:49:46PM +0100, Luis Machado wrote:
+> > Just a quick update on this. While investigating this behavior, I
+> > spotted very high loadavg values on an idle system. For instance:
+> > 
+> > load average: 4733.84, 4721.24, 4680.33
+> > 
+> > I wonder if someone else also spotted this.
+> 
+> Hadn't spotted it, but now that you mention it, I can definitely see it.
+> 
+> Let me go prod with something sharp. Thanks!
 
-On 5/15/2024 3:41 PM, Manivannan Sadhasivam wrote:
-> + Qiang
->
-> On Wed, May 15, 2024 at 09:29:20AM +0800, Slark Xiao wrote:
->> At 2024-05-14 22:37:41, "Manivannan Sadhasivam" <manivannan.sadhasivam@linaro.org> wrote:
->>> On Fri, May 10, 2024 at 11:26:57AM +0800, Slark Xiao wrote:
->>>> Align with Qcom SDX72, add ready timeout item for Foxconn SDX72.
->>>> And also, add firehose support since SDX72.
->>>>
->>>> Signed-off-by: Slark Xiao <slark_xiao@163.com>
->>>> ---
->>>>   drivers/bus/mhi/host/pci_generic.c | 31 ++++++++++++++++++++++++++++++
->>>>   1 file changed, 31 insertions(+)
->>>>
->>>> diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
->>>> index 08844ee79654..0fd94c193fc6 100644
->>>> --- a/drivers/bus/mhi/host/pci_generic.c
->>>> +++ b/drivers/bus/mhi/host/pci_generic.c
->>>> @@ -399,6 +399,8 @@ static const struct mhi_channel_config mhi_foxconn_sdx55_channels[] = {
->>>>   	MHI_CHANNEL_CONFIG_DL(13, "MBIM", 32, 0),
->>>>   	MHI_CHANNEL_CONFIG_UL(32, "DUN", 32, 0),
->>>>   	MHI_CHANNEL_CONFIG_DL(33, "DUN", 32, 0),
->>>> +	MHI_CHANNEL_CONFIG_UL_FP(34, "FIREHOSE", 32, 0),
->>>> +	MHI_CHANNEL_CONFIG_DL_FP(35, "FIREHOSE", 32, 0),
->>> This means SDX55 is also supporting FIREHOSE channels, which is not true I
->>> believe.
->> Actually, I just verified it with my sdx55 and the answer is Yes. These channels
->> are common settings for Qcom device which support PCIe mode. BTW, the
->> default settings of Qcom and Quectel support firehose for their sdx55 products.
-> Qiang, can you please confirm that SDX55 supports FIREHOSE channels?
-Hi Mani
+What's the point of making notes if you then don't read them... *sigh*.
 
-Yes, SDX55 supports FIREHOSE channels.
+Does this help?
 
-Thanks,
-Qiang
->
->>>>   	MHI_CHANNEL_CONFIG_HW_UL(100, "IP_HW0_MBIM", 128, 2),
->>>>   	MHI_CHANNEL_CONFIG_HW_DL(101, "IP_HW0_MBIM", 128, 3),
->>>>   };
->>>> @@ -419,6 +421,16 @@ static const struct mhi_controller_config modem_foxconn_sdx55_config = {
->>>>   	.event_cfg = mhi_foxconn_sdx55_events,
->>>>   };
->>>>   
->>>> +static const struct mhi_controller_config modem_foxconn_sdx72_config = {
->>>> +	.max_channels = 128,
->>>> +	.timeout_ms = 20000,
->>>> +	.ready_timeout_ms = 50000,
->>>> +	.num_channels = ARRAY_SIZE(mhi_foxconn_sdx55_channels),
->>>> +	.ch_cfg = mhi_foxconn_sdx55_channels,
->>>> +	.num_events = ARRAY_SIZE(mhi_foxconn_sdx55_events),
->>>> +	.event_cfg = mhi_foxconn_sdx55_events,
->>>> +};
->>>> +
->>>>   static const struct mhi_pci_dev_info mhi_foxconn_sdx24_info = {
->>>>   	.name = "foxconn-sdx24",
->>>>   	.config = &modem_foxconn_sdx55_config,
->>>> @@ -448,6 +460,16 @@ static const struct mhi_pci_dev_info mhi_foxconn_sdx65_info = {
->>>>   	.sideband_wake = false,
->>>>   };
->>>>   
->>>> +static const struct mhi_pci_dev_info mhi_foxconn_sdx72_info = {
->>>> +	.name = "foxconn-sdx72",
->>>> +	.edl = "qcom/sdx72m/xbl_s_devprg_ns.melf",
->>> What is '.melf'? Is the firmware available somewhere? Did you plan to upstream
->>> it to linux-firmware?
->>>
->> This file similar with "edl.mbn". In SDX72 product, the default "edl" file name is
->> "xbl_s_devprg_ns.melf". Currently we don't plan to upstream it to linux-firmware
->> since 2 reasons: 1: we share the same fold name sdx72m with qcom or other vendors
->> 2: this file may be changed since sdx72 product still under developing in our side. we
->> may change the base line according to QCOM release.
-> Then I would ask you to add support when you have a stable firmware. I do not
-> want to change the firmware name after some time as it will confuse users.
->
-> - Mani
->
+---
+ kernel/sched/core.c  | 23 ++++++++++++-----------
+ kernel/sched/fair.c  |  4 ++--
+ kernel/sched/sched.h |  8 ++++++++
+ 3 files changed, 22 insertions(+), 13 deletions(-)
+
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 5ffd7e047393..43f061bcfe54 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -2154,14 +2154,18 @@ void activate_task(struct rq *rq, struct task_struct *p, int flags)
+ 
+ void deactivate_task(struct rq *rq, struct task_struct *p, int flags)
+ {
+-	bool sleep = flags & DEQUEUE_SLEEP;
++	SCHED_WARN_ON(flags & DEQUEUE_SLEEP);
+ 
+-	if (dequeue_task(rq, p, flags)) {
+-		WRITE_ONCE(p->on_rq, sleep ? 0 : TASK_ON_RQ_MIGRATING);
+-		ASSERT_EXCLUSIVE_WRITER(p->on_rq);
+-	} else {
+-		SCHED_WARN_ON(!sleep); /* only sleep can fail */
+-	}
++	dequeue_task(rq, p, flags);
++
++	WRITE_ONCE(p->on_rq, TASK_ON_RQ_MIGRATING);
++	ASSERT_EXCLUSIVE_WRITER(p->on_rq);
++}
++
++static void block_task(struct rq *rq, struct task_struct *p, int flags)
++{
++	if (dequeue_task(rq, p, DEQUEUE_SLEEP | flags))
++		__block_task(rq, p);
+ }
+ 
+ static inline int __normal_prio(int policy, int rt_prio, int nice)
+@@ -6693,9 +6697,6 @@ static void __sched notrace __schedule(unsigned int sched_mode)
+ 				!(prev_state & TASK_NOLOAD) &&
+ 				!(prev_state & TASK_FROZEN);
+ 
+-			if (prev->sched_contributes_to_load)
+-				rq->nr_uninterruptible++;
+-
+ 			/*
+ 			 * __schedule()			ttwu()
+ 			 *   prev_state = prev->state;    if (p->on_rq && ...)
+@@ -6707,7 +6708,7 @@ static void __sched notrace __schedule(unsigned int sched_mode)
+ 			 *
+ 			 * After this, schedule() must not care about p->state any more.
+ 			 */
+-			deactivate_task(rq, prev, DEQUEUE_SLEEP | DEQUEUE_NOCLOCK);
++			block_task(rq, prev, DEQUEUE_SLEEP | DEQUEUE_NOCLOCK);
+ 
+ 			if (prev->in_iowait) {
+ 				atomic_inc(&rq->nr_iowait);
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 536eabcb1a71..596a5fabe490 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -7032,8 +7032,8 @@ static int dequeue_entities(struct rq *rq, struct sched_entity *se, int flags)
+ 			util_est_update(&rq->cfs, p, task_sleep);
+ 			hrtick_update(rq);
+ 
+-			/* Fix-up what deactivate_task() skipped. */
+-			WRITE_ONCE(p->on_rq, 0);
++			/* Fix-up what block_task() skipped. */
++			__block_task(rq, p);
+ 		}
+ 	}
+ 
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 12841d8195c5..48e5f49d9bc2 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -2560,6 +2560,14 @@ static inline void sub_nr_running(struct rq *rq, unsigned count)
+ 	sched_update_tick_dependency(rq);
+ }
+ 
++static inline void __block_task(struct rq *rq, struct task_struct *p)
++{
++	WRITE_ONCE(p->on_rq, 0);
++	ASSERT_EXCLUSIVE_WRITER(p->on_rq);
++	if (p->sched_contributes_to_load)
++		rq->nr_uninterruptible++;
++}
++
+ extern void activate_task(struct rq *rq, struct task_struct *p, int flags);
+ extern void deactivate_task(struct rq *rq, struct task_struct *p, int flags);
+ 
 
