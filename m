@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-180341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 519BB8C6D35
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 22:25:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A969F8C6D3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 22:29:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5788BB22173
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 20:25:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97CB1B232A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 20:29:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E40FE15B0E3;
-	Wed, 15 May 2024 20:25:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9054A15B0E3;
+	Wed, 15 May 2024 20:29:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Gvdru9Nj"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="GHzWuSOl"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D81A3BBE2
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 20:25:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC28C3219F
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 20:29:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715804707; cv=none; b=KsmzUePtWTHRKBO1I9k741iKStaz9DxqPQtddirFiHsJ3PueOrfyTOE77UN1hUc/zAfHEEK6NukzqIVhsjcd32qsYUKAeEdpDXrMhKJaFbqxzrAG6yQBdAHG+Rg5shg9StoblPv1gUv1yOTWqcM3zJzlI2ecRRPDi2ol643iJOw=
+	t=1715804973; cv=none; b=SoyfGFUwQdS6ZIFBYMUoZYjUkCJNTIfVYKrHveg90RstT6dBtcOu4MtGTfB9KYfxhGRvQb/CnHrkmumuIYFMU74JzETvqCanfRf1RbhEWGjmliqhU5ShFQMAxr+9069GgaP8wpxb2Wpy/TKUHMtpH+NNVfocfxbTjRrKWP+6WD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715804707; c=relaxed/simple;
-	bh=IhLnFTXGWkaL/oFQUDYh7+KwCG7YqYhsShYzsT/U710=;
+	s=arc-20240116; t=1715804973; c=relaxed/simple;
+	bh=JcsUVdV/cLE3Uz80yLif+S+bHleZ4fbqQSw7wPa4nvY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hz8l1X4foWHtZ8kyczDhDCkz35RA989krQ+rQzahY8GWGeWyq5x5Sc4uCkzHuVVa7TVHENOSNFxvIM1vw83qcv7yk8VtxUWIVai1aHviW8DUPqhEVvaBNPFws1yHi/WcuoBuROuFM7zdS/KRZY9xeDDKYREru0uR0LJcj5hVkxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Gvdru9Nj; arc=none smtp.client-ip=209.85.208.42
+	 To:Cc:Content-Type; b=X7IqAHhZxnaQ56vZmVTu8LyfJZNH0e0iJxprBUi1kSbsrqmHsNuBJ3WnmzxZqguUACVjSibvRPGbYd6E3QUkJGM4cGw13DdUvN/dYCFQEFmuwm4Gca3LguqM1ByAWEHHpbMi/Ov4Mhl2CJ2O4LVbwa8xMLknQK/NWKfNmm8rPGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=GHzWuSOl; arc=none smtp.client-ip=209.85.167.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-56e47843cc7so2215567a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 13:25:05 -0700 (PDT)
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52388d9ca98so2926660e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 13:29:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1715804704; x=1716409504; darn=vger.kernel.org;
+        d=linux-foundation.org; s=google; t=1715804970; x=1716409770; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=bgHQeFNA/cjSL1J53O73FIjj3ip3FyKYiQHTHBqHu9I=;
-        b=Gvdru9NjWzRrRv4kpmME4PPfQ3z8uVGzVtKFQqfcfQKhVe+F1BsqkBAkaeTZ/g36tZ
-         xUJoOvPXmDq8UB78ErnIH7LCiv1TNAn2UzrLac/sOvDh6wmMmjUAR87CT0FJEnOZ3MEf
-         66eyhSajFOLT8bkMe61DcSR6Ah6gP2Yph+epo=
+        bh=HySmuUBRFJcyBMiUjWtXa9eokDnDTjSCJ7VGY9yEOOE=;
+        b=GHzWuSOlNsTbWthId/21pHZVYOY7cepZzd3g8s7aRMMuFZWZ6/oSQKslXO09uohjrt
+         tJkIiOW3xqagIFc+YWs/HJXF9MHBjMSx1aJgYhEq7ZAlLL3+IPExCmlmV7+uCaEQaGW9
+         807xwXKpBxvrKEVjMnSJ343V7HknrgLZjGbfk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715804704; x=1716409504;
+        d=1e100.net; s=20230601; t=1715804970; x=1716409770;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=bgHQeFNA/cjSL1J53O73FIjj3ip3FyKYiQHTHBqHu9I=;
-        b=jY0NhvJpTghJFA6KSH2LKovVZ+HCKX26GfgoHytxsyvY8pTVCpDbb4mOnHVOZA1G5P
-         h3eYLidvJ+eaM1fZ2kJTbY9FiCwk0qgwRm41Dc2Dp8lRVuovvLw9pjaMAH/00OqHXism
-         SAidBXPMLlifjcvRrcXMiJiGjthfEfIUs7+yd2+bqHHlEoJysf8BRljN3ETdJk769c3d
-         xYJi+ZE5crk7486OM6+NSBby4KzZIKtmnlvQLUTqOa61sCC/sWlrEhnaYuVgtseNp7pm
-         NCeRYt8H65YGMRKqE/G8K1aMcdopDrvPME2akg+vIjRIeCiV0CI8F0OBfOykh+bDVDQG
-         cPeg==
-X-Forwarded-Encrypted: i=1; AJvYcCU4UuYZS80sGqvA+jtzqHvORO0c1iuv20YB121BBPOMDU39kj6v11FnkJkVRgttu4zDcNi7zk8KA0eeDTccQWh688j6D/5pgljRy6Ax
-X-Gm-Message-State: AOJu0Yyj2OJHmtd7O3haRKXTYgg8UaYaaknhx+9220lSqzyJpHHRv1sc
-	nxkNW5AW/HW0Z5sqbVrTv5e6zY+1om1zgD/k8aVTjoFTpl+IyeHxDCUmedBUtUt/40V4t3O3O34
-	iJyk2eg==
-X-Google-Smtp-Source: AGHT+IFAb8QWQDpGNhHhI6BTANbxMAGwLOfTovFCGst0zzk54dhbkh32DwWAe1oSQgcN3IZoD3gJXg==
-X-Received: by 2002:a17:907:986a:b0:a59:ae39:bfba with SMTP id a640c23a62f3a-a5a2d5c8c60mr1165647866b.34.1715804703745;
-        Wed, 15 May 2024 13:25:03 -0700 (PDT)
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com. [209.85.218.53])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5cd6787e54sm117957666b.80.2024.05.15.13.25.03
+        bh=HySmuUBRFJcyBMiUjWtXa9eokDnDTjSCJ7VGY9yEOOE=;
+        b=qjeUjuRxDiwklrc75frLbZJvYwWeTjAws4m17jqxjiiqn+Xt8KHAyVHLAFbxqlH6fi
+         KzthvUx6IUDrQsaUedBcvC7Vc5X+UvHPWF2HuYpOKLA/HTyo+/zAmXYfiMkoY1rPBvCS
+         bnNriRcMhOycBRUxpI0bV5bmjYKkF0D5VA8+bx6J40kdYMFAvFOQwojn0U3g9Nz5cLrX
+         121vZSAG5fhX2jjTB7zoTBBpCPRXAhxVtfMpu1jlxLK8yhN9YV4bIlvLnU5CukX5wEta
+         bkMqdz2RyHSfzOO5MYvwX/ubO7V4/nWQPs03BrUk1+KygLZbsR2rwRyegKbl/V0CILwc
+         8vHw==
+X-Forwarded-Encrypted: i=1; AJvYcCVTv14kBHMHEK/ybpNwVr0M8SFeFZbcrZd+H9e6nfALtfawwruIjpFjctNtiilg60o31xGyOYV+eWqNa2j1wl9IJshfPr/R6bJOHDgS
+X-Gm-Message-State: AOJu0YwnYVriCG4iGXtZdac40wvomZcNqyZGvhNKn73rVmfbXeVJJYoi
+	qF9/oZ5WECsTVUk3WkbHjogLsGA3/bh0U1+BE8xaHPk4qPdBEM+g1dqJmvnw7nlTnizKpBZiBBy
+	LDmDrsg==
+X-Google-Smtp-Source: AGHT+IHIJD2Z2LmuCsoeVZl1vHCZg54dr3ByuC5eNgdpR7xteIavWDMMWkEKKcpCnuEFpJY7yxrl7w==
+X-Received: by 2002:a05:6512:3c9a:b0:521:7846:69d3 with SMTP id 2adb3069b0e04-5221027858amr17430183e87.55.1715804969914;
+        Wed, 15 May 2024 13:29:29 -0700 (PDT)
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com. [209.85.128.52])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a1781d294sm894981866b.28.2024.05.15.13.29.29
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 May 2024 13:25:03 -0700 (PDT)
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a59b49162aeso210488366b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 13:25:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU/JxnImszryLqe4cXnko94Nxtk/+laypK96tOJwAKXW3ZEH3DbXDZeoJIeLH0Lnqukm4/Kni3ye4zEIaVdqjys4APpo1bk97AnUZx1
-X-Received: by 2002:a17:906:d9d9:b0:a59:b807:330a with SMTP id
- a640c23a62f3a-a5a2d55e4b8mr1135010966b.32.1715804702993; Wed, 15 May 2024
- 13:25:02 -0700 (PDT)
+        Wed, 15 May 2024 13:29:29 -0700 (PDT)
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-41f9ce16ed8so72273885e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 13:29:29 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW1vMgqdMcvG1MRmptL1S6gkd5AkDiyL2YO35krJJK3XDW5d5bZBcCOck/308Rz9kGiRh3qp6e70PMhdJQ+8n+zF0VZiITU7goOtogu
+X-Received: by 2002:a5d:5549:0:b0:351:c68e:48c5 with SMTP id
+ ffacd0b85a97d-351c68e4aabmr5614302f8f.29.1715804968926; Wed, 15 May 2024
+ 13:29:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,12 +77,13 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <CAPM=9tw-53PCvveRcdLUUQ+mjq2X2er5zp6n1KeE8Nu8x=VP2g@mail.gmail.com>
- <CAHk-=wge0et+3PP47OBnNx66Q=i_XgqfGfrSmDGHSyp=Jn-CgQ@mail.gmail.com> <CAHk-=whTqHgXZ4Aj8dNO3Peg9Rf0sh2F7zGWRUOmBwfMDxgvbQ@mail.gmail.com>
-In-Reply-To: <CAHk-=whTqHgXZ4Aj8dNO3Peg9Rf0sh2F7zGWRUOmBwfMDxgvbQ@mail.gmail.com>
+ <CAHk-=wge0et+3PP47OBnNx66Q=i_XgqfGfrSmDGHSyp=Jn-CgQ@mail.gmail.com>
+ <CAHk-=whTqHgXZ4Aj8dNO3Peg9Rf0sh2F7zGWRUOmBwfMDxgvbQ@mail.gmail.com> <CAHk-=wgWJCcJRLBZ1xoAATFyvp6YKN+qzrePhxQbN1SFrno7pQ@mail.gmail.com>
+In-Reply-To: <CAHk-=wgWJCcJRLBZ1xoAATFyvp6YKN+qzrePhxQbN1SFrno7pQ@mail.gmail.com>
 From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 15 May 2024 13:24:46 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgWJCcJRLBZ1xoAATFyvp6YKN+qzrePhxQbN1SFrno7pQ@mail.gmail.com>
-Message-ID: <CAHk-=wgWJCcJRLBZ1xoAATFyvp6YKN+qzrePhxQbN1SFrno7pQ@mail.gmail.com>
+Date: Wed, 15 May 2024 13:29:12 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjm4BcsMrvgXocATBVvZ7N6LAjSvLTzTXWg9EFzyip_cA@mail.gmail.com>
+Message-ID: <CAHk-=wjm4BcsMrvgXocATBVvZ7N6LAjSvLTzTXWg9EFzyip_cA@mail.gmail.com>
 Subject: Re: [git pull] drm for 6.10-rc1
 To: Dave Airlie <airlied@gmail.com>, 
 	Arunpravin Paneer Selvam <Arunpravin.PaneerSelvam@amd.com>, 
@@ -92,20 +93,24 @@ Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, dri-devel <dri-devel@lists.freedeskt
 	LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 15 May 2024 at 13:21, Linus Torvalds
+On Wed, 15 May 2024 at 13:24, Linus Torvalds
 <torvalds@linux-foundation.org> wrote:
 >
-> I guess I'll try to revert the later commit that enables it for amdgpu
-> (commit a68c7eaa7a8f) and see if it at least makes the horrendous
-> messages go away.
+> I have to revert both
+>
+>   a68c7eaa7a8f ("drm/amdgpu: Enable clear page functionality")
+>   e362b7c8f8c7 ("drm/amdgpu: Modify the contiguous flags behaviour")
+>
+> to make things build cleanly. Next step: see if it boots and fixes the
+> problem for me.
 
-I have to revert both
+Well, perhaps not surprisingly, the WARN_ON() no longer triggers with
+this, and everything looks fine.
 
-  a68c7eaa7a8f ("drm/amdgpu: Enable clear page functionality")
-  e362b7c8f8c7 ("drm/amdgpu: Modify the contiguous flags behaviour")
+Let's see if the machine ends up being stable now. It took several
+hours for the "scary messages" state to turn into the "hung machine"
+state, so they *could* have been independent issues, but it seems a
+bit unlikely.
 
-to make things build cleanly. Next step: see if it boots and fixes the
-problem for me.
-
-              Linus
+               Linus
 
