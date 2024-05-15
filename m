@@ -1,120 +1,138 @@
-Return-Path: <linux-kernel+bounces-179951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6FFA8C67ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 15:56:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B92BC8C67F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 15:57:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92931281AB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 13:56:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7132D1F23E22
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 13:57:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92B9913F01A;
-	Wed, 15 May 2024 13:56:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A400313F423;
+	Wed, 15 May 2024 13:57:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HUjyS7Qa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="efVBkvUH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3DBD57CA1;
-	Wed, 15 May 2024 13:56:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF39564CFC;
+	Wed, 15 May 2024 13:57:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715781394; cv=none; b=hdFAjlMSgo6xdpwd7/A1mig2mwhSHojM3CS3Z3fSjcU+MQdJt0O3Fg5C7LFtpHxcd96nlzfMWtIQTpvq+XdzWYr0ifo4ATvyQGjQROjPjqTTBi4WFEV4eoOL+uoBdZbqUrhHWD9BkzamqrevTvwCDiR/Aj1Ih+fEpcMkXDqVpYs=
+	t=1715781462; cv=none; b=owzGd6nCFo01V7F4cXOW7IXZki1wDxFSTyBrCyX7HRCJc2cH+GjUReRoO+I6v4RhAe9FDYI6UU5Ai7vc1WHlwBKJpvfKuvIB5UbgxNNEGgQr5AggyHQdAHVkUYeHFJ1vlUi8HFwA+L8DluSXn+ag3yT+NU62p6CunXVkcp0F/ZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715781394; c=relaxed/simple;
-	bh=x5d5maiHYQceAd2mdSo7gyBviByo2OZ+3BbIm3Oj2T4=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=di6tnSoqOvJaNnH3liGvNncoP47xxkhWcdFqgSQXD1Gy2NjWJ6l2x7FoAdm8A6sSoEXWfzcp1mKBOLdViAyGu8yMR+HR9+uq5yA6rFLlem4MBLLsgNRScPZ7wrA6UlUAkVqfdKHKfvZnPrpo4em9O9QmVJ4KFUO4d4eJYMdCATk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HUjyS7Qa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F172DC116B1;
-	Wed, 15 May 2024 13:56:31 +0000 (UTC)
+	s=arc-20240116; t=1715781462; c=relaxed/simple;
+	bh=0Om0EsLkpFBVKkvz9olitc46qsiUdNn1/n5ZWkf37uM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=TBABM0fYwaENUMPvXAAN5Zr++U6jxKSe8rw6OFcQoGP3xpRzISCRJ+dmr8sFh/wkqV3v0jjO7UeMYhrg+wKR8Hf5mZKGs9w/mYQm9Uc2e7dsEe6BTqPnHHUNOL3u9SYwYN7mrqgre6YzZLlEuhQKKvx3f74iXqjLEK+tLW9TGQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=efVBkvUH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 029F0C116B1;
+	Wed, 15 May 2024 13:57:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715781394;
-	bh=x5d5maiHYQceAd2mdSo7gyBviByo2OZ+3BbIm3Oj2T4=;
-	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
-	b=HUjyS7Qa8zShSh+L6xvl2u3ru30ewgN07Pi7AJnUIjJqSnbGdNs1eIIhbCzwSCBQb
-	 0pt/nEhcuTg+kfv/pVRd/BSZXseGv58KzHN9Elp+JSnnouVfX2P3zvE3qqG/SXPwz2
-	 nWfjryzIQKbMJGeFNFyx3TFk3s7hLXc5VKIoM257DF0CJxFdZqKoLGrlX0fqQTJBeh
-	 8YiuOkQEGbqQD9fZt9YjFwgm+h2IMRWublOlacp0pnpEUIMA6Xtv4/b5Xxu9HF148l
-	 jNVIwLutbCy2CD1n3/cdKywlBWfBR/+61rDRtfsyYasnrDpz+5aZlScY0gj52UxZ6m
-	 Clm1gN04v+PMw==
+	s=k20201202; t=1715781461;
+	bh=0Om0EsLkpFBVKkvz9olitc46qsiUdNn1/n5ZWkf37uM=;
+	h=From:Subject:Date:To:Cc:From;
+	b=efVBkvUHMwvEPS9v5viutvHv7Nwmm+sJx1bgg68pjDdL5tQOBfNrGoz42YlvUCiAj
+	 kn9/Q2v6QxgRiNb+6xYMD68qCd3reid6n/aqHUK1/+u2URPhCIsEV/12vnr3ycQvhH
+	 0X615sQhaDfm/PRn0AnpVG2lmlq4fRLOXY2gH6Yal52hYHSmyhf+K+pMjXbHKAP6/u
+	 CnZ59ZBD4F6zQ+ImRB82ZBpf4m/Is/rzzkq/FbSk/XwB7v0qyM3VAREipiMF3oxUIk
+	 hZJcPiSda5+9Wpt+dsWVmhoHvv5Ce8HWDlr5HjCVBPxAidyY1xdcYyuZosqcDBUqa5
+	 bW1opPrItcBIA==
+From: Maxime Ripard <mripard@kernel.org>
+Subject: [PATCH 0/8] dma-buf: heaps: Support carved-out heaps and ECC
+ related-flags
+Date: Wed, 15 May 2024 15:56:55 +0200
+Message-Id: <20240515-dma-buf-ecc-heap-v1-0-54cbbd049511@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 15 May 2024 16:56:30 +0300
-Message-Id: <D1A9QP6G0PW4.2HI60Q8GUT5YE@kernel.org>
-To: "Jarkko Sakkinen" <jarkko@kernel.org>, "Dmitrii Kuvaiskii"
- <dmitrii.kuvaiskii@intel.com>, <dave.hansen@linux.intel.com>,
- <kai.huang@intel.com>, <haitao.huang@linux.intel.com>,
- <reinette.chatre@intel.com>, <linux-sgx@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Cc: <mona.vij@intel.com>, <kailun.qin@intel.com>, <stable@vger.kernel.org>,
- =?utf-8?q?Marcelina_Ko=C5=9Bcielnicka?= <mwk@invisiblethingslab.com>
-Subject: Re: [PATCH v2 1/2] x86/sgx: Resolve EAUG race where losing thread
- returns SIGBUS
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-X-Mailer: aerc 0.17.0
-References: <20240515131240.1304824-1-dmitrii.kuvaiskii@intel.com>
- <20240515131240.1304824-2-dmitrii.kuvaiskii@intel.com>
- <D1A9PC6LWL2S.38KB2X3EL9X79@kernel.org>
-In-Reply-To: <D1A9PC6LWL2S.38KB2X3EL9X79@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACe/RGYC/x3MQQqAIBBA0avIrBtIS6iuEi1Mx5pFJkoRhHdPW
+ r7F/y9kSkwZJvFCopszn6FCNgLsbsJGyK4aVKv6VkuN7jC4Xh7JWtzJRFSD6aR0yo49Qc1iIs/
+ Pv5yXUj7AlIV2YgAAAA==
+To: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
+ Sumit Semwal <sumit.semwal@linaro.org>, 
+ Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
+ Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>, 
+ "T.J. Mercier" <tjmercier@google.com>, 
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Cc: Mattijs Korpershoek <mkorpershoek@baylibre.com>, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ linaro-mm-sig@lists.linaro.org, Maxime Ripard <mripard@kernel.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2381; i=mripard@kernel.org;
+ h=from:subject:message-id; bh=0Om0EsLkpFBVKkvz9olitc46qsiUdNn1/n5ZWkf37uM=;
+ b=owGbwMvMwCmsHn9OcpHtvjLG02pJDGku+50Tp5XnH/PUiwzWiHWN5qhb6TVvj+JzU9WQlR+vH
+ hINFfXtmMrCIMzJICumyPJEJuz08vbFVQ72K3/AzGFlAhnCwMUpABO5OZWxzoZzzf/AWs7XRS8b
+ b2ve+P/28/yayTKc7TP4yu8EKcs9T/BblnA2Ni96fpTEgzBOSf0PjA0bdl68zBtx8n3vjmrdCjb
+ 5sNayFR9yDVdVeth++TrprFWp9qWS08IBj13Lo87oGvAt+QUA
+X-Developer-Key: i=mripard@kernel.org; a=openpgp;
+ fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
 
-On Wed May 15, 2024 at 4:54 PM EEST, Jarkko Sakkinen wrote:
-> On Wed May 15, 2024 at 4:12 PM EEST, Dmitrii Kuvaiskii wrote:
-> > diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/e=
-ncl.c
-> > index 279148e72459..41f14b1a3025 100644
-> > --- a/arch/x86/kernel/cpu/sgx/encl.c
-> > +++ b/arch/x86/kernel/cpu/sgx/encl.c
-> > @@ -382,8 +382,11 @@ static vm_fault_t sgx_encl_eaug_page(struct vm_are=
-a_struct *vma,
-> >  	 * If ret =3D=3D -EBUSY then page was created in another flow while
-> >  	 * running without encl->lock
-> >  	 */
-> > -	if (ret)
-> > +	if (ret) {
-> > +		if (ret =3D=3D -EBUSY)
-> > +			vmret =3D VM_FAULT_NOPAGE;
-> >  		goto err_out_shrink;
-> > +	}
->
-> I agree that there is a bug but it does not categorize as race
-> condition.
->
-> The bug is simply that for a valid page SIGBUS might be returned.
-> The fix is correct but the claim is not.
->
-> > =20
-> >  	pginfo.secs =3D (unsigned long)sgx_get_epc_virt_addr(encl->secs.epc_p=
-age);
-> >  	pginfo.addr =3D encl_page->desc & PAGE_MASK;
-> > @@ -419,7 +422,7 @@ static vm_fault_t sgx_encl_eaug_page(struct vm_area=
-_struct *vma,
-> >  err_out_shrink:
-> >  	sgx_encl_shrink(encl, va_page);
-> >  err_out_epc:
-> > -	sgx_encl_free_epc_page(epc_page);
-> > +	sgx_free_epc_page(epc_page);
-> >  err_out_unlock:
-> >  	mutex_unlock(&encl->lock);
-> >  	kfree(encl_page);
->
-> Agree with code change 100% but not with the description.
->
-> I'd cut out 90% of the description out and just make the argument of
-> the wrong error code, and done. The sequence is great for showing
-> how this could happen. The prose makes my head hurt tbh.
+Hi,
 
-Also please remember that stable maintainers need to read all of that
-if this is a bug fix (it is a bug fix!) :-) So shorted possible legit
-argument, no prose and the sequence was awesome :-)
+This series is the follow-up of the discussion that John and I had a few
+months ago here:
 
-BR, Jarkko
+https://lore.kernel.org/all/CANDhNCquJn6bH3KxKf65BWiTYLVqSd9892-xtFDHHqqyrroCMQ@mail.gmail.com/
+
+The initial problem we were discussing was that I'm currently working on
+a platform which has a memory layout with ECC enabled. However, enabling
+the ECC has a number of drawbacks on that platform: lower performance,
+increased memory usage, etc. So for things like framebuffers, the
+trade-off isn't great and thus there's a memory region with ECC disabled
+to allocate from for such use cases.
+
+After a suggestion from John, I chose to start using heap allocations
+flags to allow for userspace to ask for a particular ECC setup. This is
+then backed by a new heap type that runs from reserved memory chunks
+flagged as such, and the existing DT properties to specify the ECC
+properties.
+
+We could also easily extend this mechanism to support more flags, or
+through a new ioctl to discover which flags a given heap supports.
+
+I submitted a draft PR to the DT schema for the bindings used in this
+PR:
+https://github.com/devicetree-org/dt-schema/pull/138
+
+Let me know what you think,
+Maxime
+
+Signed-off-by: Maxime Ripard <mripard@kernel.org>
+---
+Maxime Ripard (8):
+      dma-buf: heaps: Introduce a new heap for reserved memory
+      of: Add helper to retrieve ECC memory bits
+      dma-buf: heaps: Import uAPI header
+      dma-buf: heaps: Add ECC protection flags
+      dma-buf: heaps: system: Remove global variable
+      dma-buf: heaps: system: Handle ECC flags
+      dma-buf: heaps: cma: Handle ECC flags
+      dma-buf: heaps: carveout: Handle ECC flags
+
+ drivers/dma-buf/dma-heap.c            |   4 +
+ drivers/dma-buf/heaps/Kconfig         |   8 +
+ drivers/dma-buf/heaps/Makefile        |   1 +
+ drivers/dma-buf/heaps/carveout_heap.c | 330 ++++++++++++++++++++++++++++++++++
+ drivers/dma-buf/heaps/cma_heap.c      |  10 ++
+ drivers/dma-buf/heaps/system_heap.c   |  29 ++-
+ include/linux/dma-heap.h              |   2 +
+ include/linux/of.h                    |  25 +++
+ include/uapi/linux/dma-heap.h         |   5 +-
+ 9 files changed, 407 insertions(+), 7 deletions(-)
+---
+base-commit: a38297e3fb012ddfa7ce0321a7e5a8daeb1872b6
+change-id: 20240515-dma-buf-ecc-heap-28a311d2c94e
+
+Best regards,
+-- 
+Maxime Ripard <mripard@kernel.org>
+
 
