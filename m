@@ -1,154 +1,101 @@
-Return-Path: <linux-kernel+bounces-180457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32F048C6ED0
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 00:52:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45AD48C6ED4
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 00:55:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFE65283427
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 22:52:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB7641F21C37
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 22:55:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55B9E3FE55;
-	Wed, 15 May 2024 22:52:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 947D042058;
+	Wed, 15 May 2024 22:54:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bkJenSik"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="vwN/CmyK"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A7423F9F9
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 22:52:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E6683FBA7
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 22:54:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715813529; cv=none; b=BpPDLs3gHAWL3nrn/2mHEKs6DEyPU619jfZHq9hz/JrvXfXAURkvZsNQFXt48uzAxdXoQPTPfzy3vG4zZqPSZn4bbdNdrYZVmiB7CTZWPWPEswVWzI6wyRCU04qNTTTuCtsh8KHOmHmzKWyzAey1fwMZMHOTkRaYXydxqyw1P74=
+	t=1715813693; cv=none; b=htE2NGEKk5xcmBTVcJcziteprA2+itDcsZ3En+Nrez+zktlumBBTuqD8idr8yPxyPrluxh1TnXuSr5oOj9dyTXgD6bGOfF4HA9Cq230Y1tFepDFrjcW/XKhSeiXR/uf9VmtROzJPZJC0K99ZS0/sUk9KR+t+bdcrkUS9alCmW6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715813529; c=relaxed/simple;
-	bh=STs8mJIE9jdd4hOQZg34DKQ37+B79CWY4a9uidP2t+0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nNdAvCv4ZRR6uSyy9eMCyLECAsqaYAvaEqgova9FpG8LocthaIDCBnr4gdvvUFXycvHOl7eDpll8ZVrKg5IYEqpUuKm4aFbmSeJSzj0AQ8XVCZoKm/A79eAirystHJ8QzyRwRcKoXY2xwGZSxmctkp0plsZqvvUPoZPyyjvLAgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bkJenSik; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFF48C116B1;
-	Wed, 15 May 2024 22:52:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715813529;
-	bh=STs8mJIE9jdd4hOQZg34DKQ37+B79CWY4a9uidP2t+0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bkJenSikP03Wq/GH8WjO1pWjGhY5QO0O4TONQ16gQPvX752Q0+/hfJJgB+XHZdgBM
-	 4XOhGW3PSRIsV9yP3AGdpSiRmccSnJS8GZ7C6RQH9gam7mP065ER2MIOQSHlaniWnR
-	 mDSevhz+EmiXwWzBuTfjKYsoPER85BHCXSNfPQe2/qB/Huo86vO7Y2d+y1gvkvU175
-	 KAQIfUQ+zoLfLf8pfBtsgiWXOLWWQBfEUq4q5H0HQchSlYUjr3MS4epkhJBBNina4P
-	 QKnymQBKuX45mcU5oD7edZ/qQwFYQdA963scVGA5Znx3pVcUDvn9cRVYlotZW+sWbi
-	 7JjlHed6f+Xjw==
-Date: Thu, 16 May 2024 00:52:06 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Levi Yun <ppbuk5246@gmail.com>, Joel Fernandes <joel@joelfernandes.org>,
-	Vineeth Pillai <vineeth@bitbyteword.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: anna-maria@linutronix.de, mingo@kernel.org, tglx@linutronix.de,
-	Markus.Elfring@web.de, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] time/tick-sched: idle load balancing when nohz_full
- cpu becomes idle.
-Message-ID: <ZkU8lm2tjm_r9FpZ@pavilion.home>
-References: <20240508172621.30069-1-ppbuk5246@gmail.com>
- <20240509092931.35209-2-ppbuk5246@gmail.com>
+	s=arc-20240116; t=1715813693; c=relaxed/simple;
+	bh=NTl/aihEJcTuHdTWgEWUNqFvQPS1+TjI61Y+qlo2AzU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dmrVWxxhXGVBsoCGN5j9GHYzja6HuWDZdU+yFUqOMqReCjR9t3Xgl6OFwlB9yX5rRPJsxxa9EIiczktQ85OSskikoh/4U/ktbsa8NNz3yvPSWMpfjLD/U+XxfztCPwQo5zRuJRiFXDDWOOZ3+2xQZM+R7QdRlVbQugEfuiUIU94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=vwN/CmyK; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-6f44390e328so6840726b3a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 15:54:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1715813691; x=1716418491; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JTR8dQhkwufEMJDvzAGSNaBiVeFMhzNSh23L6NaBC+Q=;
+        b=vwN/CmyKPuu+CL/bHNbWXwtFRxCpbdCScTZCHZnq0eRlfT/EXESbnG9f4WpIRyGH4V
+         SEhwZgGrYKRTnpv/3s2wiAWdlZ4/lluX6MOD8hi218Po+ixSRNzqXisOGBUp6TTMoSZ9
+         5b53un8s8JBrb+zXdQR3BcECT77NRzyziw2lkBs5oNWlqomIEF5AqOYAcV2U+c3vZez2
+         qMk+SvI+Mz/EQ+1vqpSUf6FXHs72q/7klLV547GQcSjlnGlmLwGy8F5Ueh566ygLw5Qn
+         s/CJ9SZ8LTTi10Tb0USWqWc2sgSySTwJPlwtt9/74oOhwZzcQnArhyaqBSFOxbTGUSwA
+         Bw1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715813691; x=1716418491;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JTR8dQhkwufEMJDvzAGSNaBiVeFMhzNSh23L6NaBC+Q=;
+        b=wFwC8pvqln9idaRNQvammz+bWjvMtW/JYQNbgbZJaH12Yh/50j2OZFOza2DQuvEsp5
+         Vhb+ytMaPu5A2FHfT2iSmLVh/ThJHGUTwZYGGysQc1AZIawXlW+YB4Al0hn3dI3Y2kaX
+         /RWbxyVs+3nzphcxbrn/etl0Oli0BBG1mnOm576OJGvqKU9N5DT6Cbh02+sBh89P9HNx
+         /vlQMg13wN1hlQ6AgqvZH3vIdbiyOf+iMq/329/nVevXORXQWB5qhUgLfosFhstejib4
+         O+7uGecUqXkNamehOFY1KfWWwDzjuQm+j203wBSnOa8ChuwU4uAR9fNb3rP6sRtBOWql
+         cMow==
+X-Forwarded-Encrypted: i=1; AJvYcCXPVBJ4dnjJyaSTF3dJ93PbuxEiLaJh1DKxONZCAN1+9cxg8KeYGhY/GkZhjf+msIZpPQFX5yW0thglDvnfRmq5YfuCrQrmmWGdOFqU
+X-Gm-Message-State: AOJu0Ywib+XXeD/ozv0UjndMov5uJIE5lnaxrW/VNJWkvDBWxasJrrT1
+	DcTHDTI7VRb5I6jM0zYOjdraSYCUSbqOUgJGYFAfvcku61kbLA2tPWYWKkTTQ2yWEE/sXGp6+3x
+	2d7skAvQ9XWTVpIGLgfWZZKjSfg27n+FM10X5LQ==
+X-Google-Smtp-Source: AGHT+IGPGnW+8Zu6/zpLCOms1wOIqtztMZPQ08nZZujHVz3O4sOz9IR+JCRhfpCQnXiukvs2jqZ1OMqB/SNY8Kp1lD4=
+X-Received: by 2002:a05:6a00:391a:b0:6f3:876a:c029 with SMTP id
+ d2e1a72fcca58-6f4e02ac99bmr23987572b3a.10.1715813691341; Wed, 15 May 2024
+ 15:54:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240509092931.35209-2-ppbuk5246@gmail.com>
+References: <20240514-ad4111-v2-0-29be6a55efb5@analog.com> <20240514-ad4111-v2-4-29be6a55efb5@analog.com>
+In-Reply-To: <20240514-ad4111-v2-4-29be6a55efb5@analog.com>
+From: David Lechner <dlechner@baylibre.com>
+Date: Wed, 15 May 2024 17:54:38 -0500
+Message-ID: <CAMknhBGCoP8kOTYdVxjYMUjpN1jgBM_unoUe8wH-+tbQdgVBYw@mail.gmail.com>
+Subject: Re: [PATCH v2 4/9] iio: adc: ad7173: refactor ain and vref selection
+To: dumitru.ceclan@analog.com
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
+	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Dumitru Ceclan <mitrutzceclan@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Le Thu, May 09, 2024 at 10:29:32AM +0100, Levi Yun a écrit :
-> When nohz_full CPU stops tick in tick_nohz_irq_exit(),
-> It wouldn't be chosen to perform idle load balancing because it doesn't
-> call nohz_balance_enter_idle() in tick_nohz_idle_stop_tick() when it
-> becomes idle.
-> 
-> Formerly, __tick_nohz_idle_enter() is called in both
-> tick_nohz_irq_exit() and in do_idle().
-> That's why commit a0db971e4eb6 ("nohz: Move idle balancer registration
-> to the idle path") prevents nohz_full cpu which isn't yet
-> idle state but tick is stopped from entering idle balance.
-> 
-> However, this prevents nohz_full cpu which already stops tick from
-> entering idle balacne when this cpu really becomes idle state.
-> 
-> Currently, tick_nohz_idle_stop_tick() is only called in idle state and
-> it calls nohz_balance_enter_idle(). this function tracks the CPU
-> which is part of nohz.idle_cpus_mask with rq->nohz_tick_stopped properly.
-> 
-> Therefore, Change tick_nohz_idle_stop_tick() to call nohz_balance_enter_idle()
-> without checking !was_stopped so that nohz_full cpu can be chosen to
-> perform idle load balancing when it enters idle state.
-> 
-> Fixes: a0db971e4eb6 ("nohz: Move idle balancer registration to the idle path")
-> Signed-off-by: Levi Yun <ppbuk5246@gmail.com>
+On Tue, May 14, 2024 at 2:23=E2=80=AFAM Dumitru Ceclan via B4 Relay
+<devnull+dumitru.ceclan.analog.com@kernel.org> wrote:
+>
+> From: Dumitru Ceclan <dumitru.ceclan@analog.com>
+>
+>  Move validation of analog inputs and reference voltage selection to
+> separate functions to reduce the size of the channel config parsing
+> function and improve readability.
+>
+> Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
 > ---
-> v4:
-> 	- Add fixes tags.
-> 
-> v3:
-> 	- Rewording commit message.
-> 
-> v2:
-> 	- Fix typos in commit message.
-> 
->  kernel/time/tick-sched.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
-> index 71a792cd8936..31a4cd89782f 100644
-> --- a/kernel/time/tick-sched.c
-> +++ b/kernel/time/tick-sched.c
-> @@ -1228,8 +1228,10 @@ void tick_nohz_idle_stop_tick(void)
->  		ts->idle_sleeps++;
->  		ts->idle_expires = expires;
-> 
-> -		if (!was_stopped && tick_sched_flag_test(ts, TS_FLAG_STOPPED)) {
-> -			ts->idle_jiffies = ts->last_jiffies;
-> +		if (tick_sched_flag_test(ts, TS_FLAG_STOPPED)) {
-> +			if (!was_stopped)
-> +				ts->idle_jiffies = ts->last_jiffies;
-> +
 
-I've taken some time to respond because your patch has raised more questions
-while discussing this with Anna-Maria:
-
-1) Is Idle load balancing actually relevant for nohz_full? HK_TYPE_MISC already
-   prevent those CPUs from becoming idle load balancer. They can still be
-   targets for load balancing but nohz_full CPUs are supposed to run only one
-   task.
-
-2) This is related to previous point: HK_TYPE_SCHED is never activated. It would
-   prevent the CPU from even beeing part of idle load balancing. Should we
-   remove it or plug it?
-   
-
-3) nohz_balance_enter_idle() is called when the tick is stopped for the first
-   time and nohz_balance_exit_idle() is called from the tick. But that also
-   applies to idle ticks. So if the load balancing triggers while the tick is
-   stopped, nohz_balance_enter_idle() won't be re-called in the idle loop even
-   though the tick is stopped (that would be fixed with your patch).
-
-4) Why is nohz_balance_exit_idle() called from the tick and not from the idle
-   exit path? Is it to avoid overhead?
-
-I'm adding some scheduler people in Cc who might help answer some of those
-questions.
-
-Thanks.
-   
-
->  			nohz_balance_enter_idle(cpu);
->  		}
->  	} else {
-> --
-> 2.41.0
+Reviewed-by: David Lechner <dlechner@baylibre.com>
 
