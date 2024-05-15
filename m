@@ -1,105 +1,87 @@
-Return-Path: <linux-kernel+bounces-179611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 569338C6225
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:52:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D4038C61CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:36:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CEAC1F22488
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 07:52:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 084572826EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 07:36:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E73548CF2;
-	Wed, 15 May 2024 07:52:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E450344C66;
+	Wed, 15 May 2024 07:36:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="SmgL9IFq"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bkD/YtNE"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CEC342AAD;
-	Wed, 15 May 2024 07:52:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6183A5661;
+	Wed, 15 May 2024 07:36:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715759545; cv=none; b=VFitBySnrJdp5Z/HItbjwYODDmvkU0HKM2uSmaNDJBcTQgZBwJYMb/8gorfrrQcw6KtKILoIZ2HpfMYas33+z/TikXrYdKGvLOP0pJIv5pvEK4BoQW97RD5nPr0Emm8nl0fL4R/m9Pc45aQngXS7P6gX5VhSWpWlBBt//JI6lWY=
+	t=1715758605; cv=none; b=FkRwCaJ85ygQfKeDoQz+BnLG6C6/slZNsROLNQjBo0UszZ+HH9HE9WXl1VvuPgGU72gfHWoeuI6nYi2PDs45x01reXabfNjT3v43HnIPnuZtxNSpC+rhruExVbZXFZai3kvCf676dGWwoXK/9bcn/sga/JgT+h4M1zqd0fdlLrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715759545; c=relaxed/simple;
-	bh=EseU8l9i6FsdcgIhuNlxtMXNzYYXWc+xZzlPU9p9RDA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Dw+x1fR5L4OGXAjfsmY8tp7NK6mISF4FmQD23iqwcmxW6sZQZbcbOxTvvVw4KtXk2+Gp7OU+EAdKVdHZf6gU9ZIyltlwLSuA6Wwk7c7yRel3JbjBW3p7ByQi8HmcZImoAWBv8R4Pvro+ftVMhE0bvEr9dmHu1osXO7j5vrwD1Pk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=SmgL9IFq; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: f2f16930128d11efb92737409a0e9459-20240515
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=+Kk+4ccaigRSqLMLy3uDs3B3e9ohN0+aD87eOWCOx5o=;
-	b=SmgL9IFq2Ru43vBV3kmX/sDe/qXSzHH8X6hknfXWr0a1+8WLEs0BRbGCCE1GP32Yvs/HlDboT5q4IJy79/NTU/oxe3J54EE3LBn/YMS6SQW/DqnmCGHIf8YE1K1MHpoa7n1EQvRglaRq7MdXAKcxgeS9ZQG95zihT50AGG9LM+Q=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:4ac413ad-28e7-4a18-815d-eae2a2a796df,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:82c5f88,CLOUDID:5a3a1dfc-ed05-4274-9204-014369d201e8,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
-	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: f2f16930128d11efb92737409a0e9459-20240515
-Received: from mtkmbs09n1.mediatek.inc [(172.21.101.35)] by mailgw01.mediatek.com
-	(envelope-from <yenchia.chen@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 410055962; Wed, 15 May 2024 15:37:14 +0800
-Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Wed, 15 May 2024 15:37:13 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Wed, 15 May 2024 15:37:13 +0800
-From: Yenchia Chen <yenchia.chen@mediatek.com>
-To: <stable@vger.kernel.org>
-CC: yenchia.chen <yenchia.chen@mediatek.com>, "David S. Miller"
-	<davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Matthias Brugger
-	<matthias.bgg@gmail.com>, Eric Dumazet <edumazet@google.com>, Sasha Levin
-	<sashal@kernel.org>, Simon Horman <horms@kernel.org>, Pedro Tammela
-	<pctammela@mojatatu.com>, Zhengchao Shao <shaozhengchao@huawei.com>, Ryosuke
- Yasuoka <ryasuoka@redhat.com>, Thomas Graf <tgraf@suug.ch>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>
-Subject: [PATCH 5.15 0/2] netlink, fix issues caught by syzbot
-Date: Wed, 15 May 2024 15:36:36 +0800
-Message-ID: <20240515073644.32503-1-yenchia.chen@mediatek.com>
-X-Mailer: git-send-email 2.18.0
+	s=arc-20240116; t=1715758605; c=relaxed/simple;
+	bh=CefRu0Bn3G1FBcGR9MMrJgXqv9Ap5Ha9Zc0YkoqMsUE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iIVV5eC4yP8OTzeN4ObsPPq18Fkuagi71vIv/o9YTZm1VnpkIG2GYMZ+Uj3dxlAr5bD7aY5h05C1BU+meEPkKJ5BzJbTIuJdlCMrC35RzCdIMcJGk/weFWXoJCazz63MvK35KlX93o3wKET1I6eGff3wnAYa/KBZPT3m5kwKzaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=bkD/YtNE; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=CefRu0Bn3G1FBcGR9MMrJgXqv9Ap5Ha9Zc0YkoqMsUE=; b=bkD/YtNEYdQRG1Ym54cU6b+Wk3
+	/00CQhXbI8+/nXZM83gY+riXCUgBmyDhIRyNKzRo+pGuy5mJjHjgZ8nmq5m4esoVj6oibp+HAgZU4
+	RTQgb6RNZJYr23Xh6UM7uMCw2eb4tmIoDZD2BC7Iz0pp/Y8WHniefEv2fUXMoH7WiPznGz57Yx/Vh
+	W1vANy6uaWgMgYY5oOXBJyFifXNk7psgYoqk4eLIqeLRyk+d56sxx2VRkG15Q3CNW/K9ScsbYB5R4
+	k6BtyRFCM9vpJ7/2SzG+K6Apa3qka+PpztVrh2LCYxfU1dLgmJzbjbhl5Vkl1ZTaAeSuck/TdzmW/
+	qkk8MwhQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1s79Bl-0000000A3Wl-0dEO;
+	Wed, 15 May 2024 07:36:38 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 7178730068B; Wed, 15 May 2024 09:36:36 +0200 (CEST)
+Date: Wed, 15 May 2024 09:36:36 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Kees Cook <keescook@chromium.org>,
+	Justin Stitt <justinstitt@google.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: Re: [RFC] Mitigating unexpected arithmetic overflow
+Message-ID: <20240515073636.GY40213@noisy.programming.kicks-ass.net>
+References: <202404291502.612E0A10@keescook>
+ <CAHk-=wi5YPwWA8f5RAf_Hi8iL0NhGJeL6MN6UFWwRMY8L6UDvQ@mail.gmail.com>
+ <202405081144.D5FCC44A@keescook>
+ <CAHk-=wjeiGb1UxCy6Q8aif50C=wWDX9Pgp+WbZYrO72+B1f_QA@mail.gmail.com>
+ <202405081354.B0A8194B3C@keescook>
+ <CAHk-=wgoE5EkH+sQwi4KhRhCZizUxwZAnC=+9RbZcw7g6016LQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wgoE5EkH+sQwi4KhRhCZizUxwZAnC=+9RbZcw7g6016LQ@mail.gmail.com>
 
-From: "yenchia.chen" <yenchia.chen@mediatek.com>
+On Wed, May 08, 2024 at 04:47:25PM -0700, Linus Torvalds wrote:
+> For example, the most common case of overflow we've ever had has very
+> much been array indexing. Now, sometimes that has actually been actual
+> undefined behavior, because it's been overflow in signed variables,
+> and those are "easy" to find in the sense that you just say "no, can't
+> do that". UBSAN finds them, and that's good.
 
-Hi,
+We build with -fno-strict-overflow, which implies -fwrapv, which removes
+the UB from signed overflow by mandating 2s complement.
 
-We think 5.15.y could pick these commits.
-
-Below is the mainline commit:
-
-netlink: annotate lockless accesses to nlk->max_recvmsg_len
-[ Upstream commit a1865f2e7d10dde00d35a2122b38d2e469ae67ed ]
-
-netlink: annotate data-races around sk->sk_err
-[ Upstream commit d0f95894fda7d4f895b29c1097f92d7fee278cb2 ]
-
-Eric Dumazet (2):
-  netlink: annotate lockless accesses to nlk->max_recvmsg_len
-  netlink: annotate data-races around sk->sk_err
-
- net/netlink/af_netlink.c | 23 +++++++++++++----------
- 1 file changed, 13 insertions(+), 10 deletions(-)
-
--- 
-2.18.0
-
+With the exception of an UBSAN bug prior to GCC-8, UBSAN will not, and
+should not, warn about signed overflow when using either of these flags.
 
