@@ -1,171 +1,160 @@
-Return-Path: <linux-kernel+bounces-179972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F50C8C684B
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:08:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 377548C6848
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:08:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B58941F2102F
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 14:08:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40D0A1C20B59
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 14:08:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 367AB13F430;
-	Wed, 15 May 2024 14:08:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BEDD13F43C;
+	Wed, 15 May 2024 14:07:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TB983cTZ"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qdam2JMZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C51FD57CA1;
-	Wed, 15 May 2024 14:08:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9201B6214D;
+	Wed, 15 May 2024 14:07:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715782114; cv=none; b=VhjplV0mu/rxoYEjKqun+Y3UszcpSupDkMlOmsgWzI0G6H8QLfYFJjij9H1Mcj/wjo90Pp+TIhzabK6odSUNy2gg+7FTMrN+ZkhEqHQG8Iz/AKATw9CEgL6d7fHHLWobkNQBHJ5vKbs44/YLqDoBDkJGmH6NWh5SLFVjmGnEaHs=
+	t=1715782069; cv=none; b=IuMuQ61O6PoibkXYw+6K5c+U3h4o0X8h0mZRJB0n1o0gMUlvs12kaqwV4ShO5Rg+RjlTlldM8/0cyzMVu3kBlun+yVIGleWyu4y8HdqdTFxqiyMfi4fUkTyNJBc41nAqn2unIZ2TLmgZoNSlqs79vdzqweP2SnBkrH1oyhhRvdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715782114; c=relaxed/simple;
-	bh=2o16aLD+vJUhmgKsy9/fcWJADcd6QUogtZiRFPAWens=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Gg9LMSfWllZN2YMIgQH8LRCVD4fQ/UPVagaO80zyyCCNHP8Y7Ata30RCS8wc2KQlTBS5HJIB2pdoflvUdI70xJ+3sdOF/nU+Mx/DGWQdfV45fo8uPEBt+UgY+a4jTXdFCpf9ccM7qNPE6FnpgbZNv+kFPO0GwSkpPO77BFNSMGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TB983cTZ; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-51f40b5e059so8261712e87.0;
-        Wed, 15 May 2024 07:08:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715782111; x=1716386911; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=iPRt+KH9PEWEf8y8D7biJqUDsvZAC9qRLt3CEmg7xEg=;
-        b=TB983cTZlNqAz7Z8NPWYvPxC4dfs0aX5Se3/IOGZ/JXSztIudKB3xh6W4T2jokw88U
-         7nBtyPGyKerh6jrwXw1jiD+OlAMzLRctPNDQ/yB+dHcvbmzv3iyOpEc87ok/JDexSQ0e
-         TXtw9BSAIgzxSRQ1hIeUyWq0cI+th3Gf6KJLvWU0Uq1ZxAVsbzmuyUSZKqMde3hOBqK0
-         KS44Mje6Dx2bIAMZO8jzyDMdtOb+JgDvahn3O8JYRUTo2SVyFrhZipFtLQjqp/Nw4ciU
-         d0fGdwCblc8EjRlc1Pr+h8KG4wzDWftV4g7sJ30C8aF8SHg3kSw75304qEGbv32jjrwa
-         mCUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715782111; x=1716386911;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iPRt+KH9PEWEf8y8D7biJqUDsvZAC9qRLt3CEmg7xEg=;
-        b=cUgVocDIV0nOB9nssmjKqea80Sd1dS3k+MvmB7ruwk/kUNIJIT4wxPTkXCNXFEUvZI
-         e5S2IAq9N6Z4SuaXpA9mzQ5V9fHrX5Tp0FQlR2wk2slUsbevrw/EreQoIkaC1m5xbdMB
-         U9S0xzsnn5VwxC6axcA7qKWf46XzYqfTo7w2HRp0olObKwGHqAUH+imL24F0GxsY06Hf
-         ykqKbVVBJ8AGLMM/kGdllsjxOTfnVQUECkck6rbyNjonIkU5U5q1x5n1XBb+t4y+1DNO
-         FjVNK5Kh/SHhnxBlNrWCkg7jPARoOdvWRhaqTGHVjlFooJZWzhd/2OZaK4MNj4mdNibs
-         9I1A==
-X-Forwarded-Encrypted: i=1; AJvYcCUj7wW7k+Qn4Aughi8AoDoAOQNXExYP1RzeL1zZJ/hEVJeBzs5eI/H7U8WXWkFlOnxZ5TwU/5Auo4ENRek+PdeVDQwpwSWFABSs+UiEgRni/3+UNOBSvzLIH4djvMXVkU0p/KJEsbeV1g==
-X-Gm-Message-State: AOJu0YxhmsuPgbe3okwP6thhQWuF/O2hy9nwRY8sieHO1IZmvKHyHvbg
-	scX1EQjuOkipmk05CjC1QZY/rZHf4hIHCxwQoRcLQhGVUTjvgRoR
-X-Google-Smtp-Source: AGHT+IHusrVdtGaECVr/u6UpMBgta0LnZGfkVTiO27TcSRbMJwnJW7lVznPwNZDNH43jmxpv8r5CTA==
-X-Received: by 2002:ac2:5f49:0:b0:51f:b781:728f with SMTP id 2adb3069b0e04-5220fc72ffamr8682329e87.32.1715782110537;
-        Wed, 15 May 2024 07:08:30 -0700 (PDT)
-Received: from pratik-IdeaPad.lan (customer-145-40-29-195.stosn.net. [145.40.29.195])
-        by smtp.googlemail.com with ESMTPSA id 2adb3069b0e04-521f35ba4c9sm2523145e87.76.2024.05.15.07.08.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 May 2024 07:08:30 -0700 (PDT)
-From: Pratik Farkase <pratikfarkase94@gmail.com>
-X-Google-Original-From: Pratik Farkase <pratik.farkase@wsisweden.com>
-To: 
-Cc: Pratik Farkase <pratik.farkase@wsisweden.com>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Pratik Farkase <pratikfarkase94@gmail.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] Convert the Broadcom OTP memory controller to newer DT schema. Created DT schema based on the .txt file which had `compatible`, `reg` `brcm,ocotp-size` as the required properties.
-Date: Wed, 15 May 2024 16:07:29 +0200
-Message-Id: <20240515140731.63927-1-pratik.farkase@wsisweden.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1715782069; c=relaxed/simple;
+	bh=5XK22oGF43aTBtYVtVevKA+9XL0Nm1J86+MOL1JE8cE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rSayo4PXb9fGWpWOUYsM3UY8foEJ+dEyRwC5wiCXngiLAbtunVTUnDkfJi0Pc5tU1YGF0/GzgliqMOPELDFn2C5lxSyyhIqAyrCflW80wp8pecTTnq2wQUy2hDawV5cYzv1lhx3yJ6kHUKDGZJVKwUS0fhU0GKPkfhvFxAGggQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qdam2JMZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70162C116B1;
+	Wed, 15 May 2024 14:07:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715782069;
+	bh=5XK22oGF43aTBtYVtVevKA+9XL0Nm1J86+MOL1JE8cE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Qdam2JMZWYlMg6fZG+OM1oyMX/91PgrGmn49nAz1gYci9A9PewiicfagGfN0hyfFv
+	 Xy9Sm0cKdUGaYFogJengnVdVQlK8JzvNmYgsipxVWfdDNwgcGTCTXfpBFbz7P57LS+
+	 kM9qU3t/u8n7fWGY0DciGbAKo+NbaK0Ih0op4Jfv4MYDwMCXulH2qbvuHFuek3uJIg
+	 +RCrQ9VNNfQshsE6ybhZm4jbpIJWKcALG3N+QSs8TTfsQfs31AhOVo4+s4OdwCtuhr
+	 otJJUh9soGqJo2VN0kUPnOPyZewV5AmS4k7yQelEuh8t67dNxAA7WcgLOCMByGQkqA
+	 WKAhytBBAoOFg==
+Message-ID: <4ae4d926-73f0-4f30-9d83-908a92046829@kernel.org>
+Date: Wed, 15 May 2024 16:07:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATH net-next 1/2] dt-bindings: net: xilinx_gmii2rgmii: Add
+ clock support
+To: Vineeth Karumanchi <vineeth.karumanchi@amd.com>, git@amd.com,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ harini.katakam@amd.com, andrew@lunn.ch, hkallweit1@gmail.com,
+ linux@armlinux.org.uk, michal.simek@amd.com
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20240515094645.3691877-1-vineeth.karumanchi@amd.com>
+ <20240515094645.3691877-2-vineeth.karumanchi@amd.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240515094645.3691877-2-vineeth.karumanchi@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Signed-off-by: Pratik Farkase <pratik.farkase@wsisweden.com>
----
- .../devicetree/bindings/nvmem/brcm,ocotp.txt  | 17 --------
- .../devicetree/bindings/nvmem/brcm,ocotp.yaml | 41 +++++++++++++++++++
- 2 files changed, 41 insertions(+), 17 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/nvmem/brcm,ocotp.txt
- create mode 100644 Documentation/devicetree/bindings/nvmem/brcm,ocotp.yaml
+On 15/05/2024 11:46, Vineeth Karumanchi wrote:
+> Add input clock support to gmii_to_rgmii IP.
 
-diff --git a/Documentation/devicetree/bindings/nvmem/brcm,ocotp.txt b/Documentation/devicetree/bindings/nvmem/brcm,ocotp.txt
-deleted file mode 100644
-index 0415265c215a..000000000000
---- a/Documentation/devicetree/bindings/nvmem/brcm,ocotp.txt
-+++ /dev/null
-@@ -1,17 +0,0 @@
--Broadcom OTP memory controller
--
--Required Properties:
--- compatible: "brcm,ocotp" for the first generation Broadcom OTPC which is used
--  in Cygnus and supports 32 bit read/write. Use "brcm,ocotp-v2" for the second
--  generation Broadcom OTPC which is used in SoC's such as Stingray and supports
--  64-bit read/write.
--- reg: Base address of the OTP controller.
--- brcm,ocotp-size: Amount of memory available, in 32 bit words
--
--Example:
--
--otp: otp@301c800 {
--	compatible = "brcm,ocotp";
--	reg = <0x0301c800 0x2c>;
--	brcm,ocotp-size = <2048>;
--};
-diff --git a/Documentation/devicetree/bindings/nvmem/brcm,ocotp.yaml b/Documentation/devicetree/bindings/nvmem/brcm,ocotp.yaml
-new file mode 100644
-index 000000000000..58091e69594e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/nvmem/brcm,ocotp.yaml
-@@ -0,0 +1,41 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/nvmem/brcm,ocotp.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Broadcom OTP memory controller
-+
-+maintainers:
-+  - Pratik Farkase <pratikfarkase94@gmail.com>
-+
-+allOf:
-+  - $ref: nvmem.yaml#
-+
-+properties:
-+  compatible:
-+    enum:
-+      - brcm,ocotp
-+      - brcm,ocotp-v2
-+
-+  reg:
-+    maxItems: 1
-+
-+  brcm,ocotp-size:
-+    description: Amount of memory available, in 32 bit words
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+
-+required:
-+  - compatible
-+  - reg
-+  - brcm,ocotp-size
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    otp@301c800 {
-+        compatible = "brcm,ocotp";
-+        reg = <0x0301c800 0x2c>;
-+        brcm,ocotp-size = <2048>;
-+    };
--- 
-2.34.1
+Why? Wasn't it there before?
+
+> Add "clocks" and "clock_names" bindings, "clkin" is the input clock name.
+
+Please use standard email subjects, so with the PATCH keyword in the
+title. `git format-patch` helps here to create proper versioned patches.
+Another useful tool is b4. Skipping the PATCH keyword makes filtering of
+emails more difficult thus making the review process less convenient.
+
+Don't write it by yourself....
+
+Please use subject prefixes matching the subsystem. You can get them for
+example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
+your patch is touching. For bindings, the preferred subjects are
+explained here:
+https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
+
+> 
+> Signed-off-by: Vineeth Karumanchi <vineeth.karumanchi@amd.com>
+> ---
+>  .../devicetree/bindings/net/xlnx,gmii-to-rgmii.yaml      | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/net/xlnx,gmii-to-rgmii.yaml b/Documentation/devicetree/bindings/net/xlnx,gmii-to-rgmii.yaml
+> index 0f781dac6717..d84d13fb2c54 100644
+> --- a/Documentation/devicetree/bindings/net/xlnx,gmii-to-rgmii.yaml
+> +++ b/Documentation/devicetree/bindings/net/xlnx,gmii-to-rgmii.yaml
+> @@ -31,6 +31,13 @@ properties:
+>    phy-handle:
+>      $ref: ethernet-controller.yaml#/properties/phy-handle
+>  
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  clock-names:
+> +    const: clkin
+> +    description: 200/375 MHz free-running clock is used as a input clock.
+
+Nope, just write the description as items in clocks, instead of
+maxItems. And drop clock-names, not needed and kind of obvious.
+
+
+Best regards,
+Krzysztof
 
 
