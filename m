@@ -1,91 +1,96 @@
-Return-Path: <linux-kernel+bounces-179685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25A438C6344
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 11:00:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51E158C634A
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 11:00:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88DD1B23431
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:00:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8370D1C226C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:00:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E74457333;
-	Wed, 15 May 2024 08:58:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F3435BAF0;
+	Wed, 15 May 2024 08:59:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="X+PkpahR"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PhDIlP+a"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5036B5A0F5;
-	Wed, 15 May 2024 08:58:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97DC25BACF;
+	Wed, 15 May 2024 08:59:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715763528; cv=none; b=lGLDzoKutCX7O3upF4XBx/2GznfGADJPV6OGY63kFhnrgBqWmRxbEWVg/gqDtWr3P5HPLpeCLFcHy//gozk3pJsTNLUmXSpqUE0XknDqIVM+iJHA5lDU/5z7pohJjf1lll/4kegsBroMTh0uPsq91WGg86CAi5E4h3/9lDjvT50=
+	t=1715763566; cv=none; b=pyGPte4KZZZJxYzlSSWNQY/b6D2FvIpspDngfk6j8tJuvcYBCIlFi6VufLoAyxCbN5OgMEz122dd2rDHrAY7dswJqeNoawxkxyOVcY7aBIEkYYYQl0j0LLBGwUy7MhuwPkoeGnBuuM0o8+8Qgv18a4acWmf3/wO9USetQsZO3B4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715763528; c=relaxed/simple;
-	bh=mIm962IF10bdWS0VjUWThN6tROwBuUJv1m8MYht87Qs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X1fdbe2XQQEnqlJ0sl6wRD61HRnYeRBWuvZrcs1yZlnbyIeGhKN32S3+Ap7YE/zf58/yRGctFFxTopT3Hcu+ImNTz3HkRPKj2Abzkw6Atcb4+kiLcsTAtfPylIf1YwC/XtTlcENaNNCQcqPm8iIMZCXTbUdVR7qONqDOlTCUUeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=X+PkpahR; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=bw07bIpSCJ/6547TDCpYtK4MhhGWZ4UOhTjbzZBecaw=; b=X+PkpahRQrFnvf3SXhfKjeI5rP
-	c7Km4Hfpcl06bjSZvd1AgoInaxPlctKsMtlsNqHOtFf6GGFdbk68VIwaFuKZbN6D48KFBQ8a41gMK
-	aeLMpi6vtJB+nWe5i/aGk7XGoSKfrNGIorJvXuCQqbl8u79Nywsvq02vrypAGZ8j00mfBLYlo38Jh
-	gvviAqOAqJUB0vNBVOWFZKinU40WNZu8bXUsBXz5ZP66LKyTXkOT8qvU3B8rQ0vVA/RuD6xsPOK2k
-	fFaxd4sEX6gsbJ0pK1uoYRA1ykOnb1zbKZd1lwje1muDusiDnl6mFPC3yyB3wCdepJNGVX9yQPI0A
-	pl8zH4kQ==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s7ATA-0000000A8lu-1oQT;
-	Wed, 15 May 2024 08:58:40 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 1C94630068B; Wed, 15 May 2024 10:58:40 +0200 (CEST)
-Date: Wed, 15 May 2024 10:58:40 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Yabin Cui <yabinc@google.com>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: Re: [PATCH v4 3/3] perf/core: Check sample_type in
- perf_sample_save_brstack
-Message-ID: <20240515085840.GD40213@noisy.programming.kicks-ass.net>
-References: <20240510191423.2297538-1-yabinc@google.com>
- <20240510191423.2297538-4-yabinc@google.com>
- <CAM9d7chNz8-84m28q5qSLjUjZ=Ni1CA_JzbB_P+YJooLQd85YA@mail.gmail.com>
+	s=arc-20240116; t=1715763566; c=relaxed/simple;
+	bh=wrhjNhMt1xp79b7iWBTzWLqdX0VxB4XNriKu8JSvx7A=;
+	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
+	 Cc:Message-ID:Date; b=G9xcpKj+fMAMarC8r0BQX6cGZY2yXJa3Lnzh1n+7LZ7NSYTYWlqQjfxtohGjyBn3U9WmItqYKGYkEgUVjpBIaOIMTcoobcwTWMVPqZe03nBKGi5AiDs4GNEJZbUXGXO9hn7frl7hZDKY2vREzDYj+bDjh5w1j3Ol3oTRrkXbJPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PhDIlP+a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 370CBC32786;
+	Wed, 15 May 2024 08:59:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715763566;
+	bh=wrhjNhMt1xp79b7iWBTzWLqdX0VxB4XNriKu8JSvx7A=;
+	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+	b=PhDIlP+aiGt58su60LswgrQBw2yVfWrQypyefTD2zTRmGwkeot72P85JQ/WHMN+VG
+	 0Sr1jzszzJwV8sf8J2jKx5Y2i1V1mejk5VuuRDqRO9b/aBWEqm9k2TxOf62JFe5DTX
+	 caZrJCXPqpRfhhX/RXZ1mNjt3duGrLSkTJWoSYWMbP3Y0WI+FA8uQeVYM7Jo6Q3YyK
+	 U424J2buUMXG/iAPXHqxPfVIUtWj2ITzSR5rNqUcC5tu7W8up8A3B0fGttcL7BcG3t
+	 a/aVdn+2agHYjRT4GH3AGwmVTKWNl3yIV3IicTIXkaKZtlpqJJwz0l6xTLRmybSLKD
+	 DwAPxUxz72TJA==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAM9d7chNz8-84m28q5qSLjUjZ=Ni1CA_JzbB_P+YJooLQd85YA@mail.gmail.com>
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v14] ath10k: add LED and GPIO controlling support for
+ various
+ chipsets
+From: Kalle Valo <kvalo@kernel.org>
+In-Reply-To: <20230611080505.17393-1-ansuelsmth@gmail.com>
+References: <20230611080505.17393-1-ansuelsmth@gmail.com>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org,
+ ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
+ netdev@vger.kernel.org, Sebastian Gottschall <s.gottschall@dd-wrt.com>,
+ Steve deRosier <derosier@cal-sierra.com>, Kalle Valo <kvalo@codeaurora.org>,
+ Christian Marangi <ansuelsmth@gmail.com>,
+ Stefan Lippers-Hollmann <s.l-h@gmx.de>
+User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
+Message-ID: <171576356159.2271935.2917787444907693936.kvalo@kernel.org>
+Date: Wed, 15 May 2024 08:59:23 +0000 (UTC)
 
-On Fri, May 10, 2024 at 02:29:58PM -0700, Namhyung Kim wrote:
-> On Fri, May 10, 2024 at 12:14 PM Yabin Cui <yabinc@google.com> wrote:
-> >
-> > Check sample_type in perf_sample_save_brstack() to prevent
-> > saving branch stack data when it isn't required.
-> >
-> > Suggested-by: Namhyung Kim <namhyung@kernel.org>
-> > Signed-off-by: Yabin Cui <yabinc@google.com>
-> 
-> It seems powerpc has the similar bug, then you need this:
-> 
-> Fixes: eb55b455ef9c ("perf/core: Add perf_sample_save_brstack() helper")
+Christian Marangi <ansuelsmth@gmail.com> wrote:
 
-Is this really a bug? AFAICT it just does unneeded work, no?
+> Adds LED and GPIO Control support for 988x, 9887, 9888, 99x0, 9984
+> based chipsets with on chipset connected led's using WMI Firmware API.
+> The LED device will get available named as "ath10k-phyX" at sysfs and
+> can be controlled with various triggers.
+> Adds also debugfs interface for gpio control.
+> 
+> Signed-off-by: Sebastian Gottschall <s.gottschall@dd-wrt.com>
+> Reviewed-by: Steve deRosier <derosier@cal-sierra.com>
+> [kvalo: major reorg and cleanup]
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+> [ansuel: rebase and small cleanup]
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> Tested-by: Stefan Lippers-Hollmann <s.l-h@gmx.de>
+> Signed-off-by: Kalle Valo <quic_kvalo@quicinc.com>
+
+Patch applied to ath-next branch of ath.git, thanks.
+
+8e1debd82466 wifi: ath10k: add LED and GPIO controlling support for various chipsets
+
+-- 
+https://patchwork.kernel.org/project/linux-wireless/patch/20230611080505.17393-1-ansuelsmth@gmail.com/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
 
