@@ -1,111 +1,152 @@
-Return-Path: <linux-kernel+bounces-179665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 190A68C6307
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 10:46:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 747E98C6318
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 10:56:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AEF51C220A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:46:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C1491F2198E
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:56:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E4EF5427E;
-	Wed, 15 May 2024 08:46:29 +0000 (UTC)
-Received: from mxout37.expurgate.net (mxout37.expurgate.net [194.37.255.37])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09EDE57CB5;
+	Wed, 15 May 2024 08:56:37 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26D2B4D10A;
-	Wed, 15 May 2024 08:46:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.37.255.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BDD24F1FE;
+	Wed, 15 May 2024 08:56:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715762789; cv=none; b=lvhhiRHMGVLeqZq+jjcihKV0Ds21gqfK7OyV8R6CcMZ7xM8RU+MvK/V5GBQsS3C0Pu3gS1UDEN8D3eEsvN49wC+H66Gbpwja6DXNQcaAn3RbrWyh2+GqLFsU61QOKVpGCwxez5hILTlierytNm39QPuiklo8hqYjxrc7VWwH82E=
+	t=1715763396; cv=none; b=HVjeeiHumFZs6SuoR0PdzO4VQeyqkG/ZeeusCl+NuHXEiFo6jmDValXt6McY7IX212hP4maW2Cd4RbNTJsODiIahqoprq+8uSI4fAnv15VJQnmOfgiQx71gwjt6NGvV3afm8nq4/sr5VePVZiUZ/qpmmW/x8Q8/yexjM2j6bwkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715762789; c=relaxed/simple;
-	bh=OPP0/BdnjTmMqLoXGVui34c+ShJMz0RlIoV3RjL9SNA=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=f1bigRedPS7hGtgCXhlOXDLFIGrv9/tV54sdn14DafZnt9Ws1wF2MYMiOxf16SqW3pcVXiD2zta+oON/f2cDyA8oNlAHneGZSRM8pRPR9CkdfRbj1goh6ruQXJCHxqVUFSHuNanKCsiHtD+SCz1ddQgPHLQLxA1rCFO2JotcOSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=brueckmann-gmbh.de; spf=pass smtp.mailfrom=brueckmann-gmbh.de; arc=none smtp.client-ip=194.37.255.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=brueckmann-gmbh.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=brueckmann-gmbh.de
-Received: from [127.0.0.1] (helo=localhost)
-	by relay.expurgate.net with smtp (Exim 4.92)
-	(envelope-from <gessler_t@brueckmann-gmbh.de>)
-	id 1s7AH3-00CmdK-OL; Wed, 15 May 2024 10:46:09 +0200
-Received: from [217.239.223.202] (helo=zimbra.brueckmann-gmbh.de)
-	by relay.expurgate.net with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <gessler_t@brueckmann-gmbh.de>)
-	id 1s7AH2-003Shd-I1; Wed, 15 May 2024 10:46:08 +0200
-Received: from zimbra.brueckmann-gmbh.de (localhost [127.0.0.1])
-	by zimbra.brueckmann-gmbh.de (Postfix) with ESMTPS id 60B83CABF0E;
-	Wed, 15 May 2024 10:46:07 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by zimbra.brueckmann-gmbh.de (Postfix) with ESMTP id 52392CABF0C;
-	Wed, 15 May 2024 10:46:07 +0200 (CEST)
-Received: from zimbra.brueckmann-gmbh.de ([127.0.0.1])
- by localhost (zimbra.brueckmann-gmbh.de [127.0.0.1]) (amavis, port 10026)
- with ESMTP id 25_cI0TGBhRh; Wed, 15 May 2024 10:46:07 +0200 (CEST)
-Received: from [10.0.11.14] (unknown [10.0.11.14])
-	by zimbra.brueckmann-gmbh.de (Postfix) with ESMTPSA id 365B6CABF0B;
-	Wed, 15 May 2024 10:46:07 +0200 (CEST)
-Date: Wed, 15 May 2024 10:45:17 +0200 (CEST)
-From: =?ISO-8859-15?Q?Thomas_Ge=DFler?= <gessler_t@brueckmann-gmbh.de>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-cc: Thomas Gessler <thomas.gessler@brueckmann-gmbh.de>, 
-    Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
-    "David S. Miller" <davem@davemloft.net>, 
-    Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-    Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, 
-    linux-kernel@vger.kernel.org, MD Danish Anwar <danishanwar@ti.com>, 
-    Ravi Gunasekaran <r-gunasekaran@ti.com>
-Subject: Re: [PATCH 2/2] net: phy: dp83869: Fix RGMII-SGMII and 1000BASE-X
-In-Reply-To: <ZkNhfXYxFTdB+weJ@shell.armlinux.org.uk>
-Message-ID: <16cfda60-4319-be9a-1df7-026199b85c5@brueckmann-gmbh.de>
-References: <20240514122728.1490156-1-thomas.gessler@brueckmann-gmbh.de> <20240514122728.1490156-2-thomas.gessler@brueckmann-gmbh.de> <ZkNhfXYxFTdB+weJ@shell.armlinux.org.uk>
+	s=arc-20240116; t=1715763396; c=relaxed/simple;
+	bh=Uc4tFnEVf0RBkrgW0ECtX/HMO8s5cgdWU4r75pK1QsY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=F1mUH0yfI0U6N3axJD1baEfbVPVh2/a8G++ZzECjr/geZVW2qOhoKk7SYWjiAMGF+P1Zc+W+EHAzoirXzpST96tCFaROKIgU5OPh+hcsuTrvnONT/KzRPpOiQKqQJQMEvL1YlC+jqPo8iDer/Uom1E4sI5wbJY3hqLLZdgaWe2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VfRsb75Pzz4f3mHb;
+	Wed, 15 May 2024 16:56:19 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 2C3731A120E;
+	Wed, 15 May 2024 16:56:30 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP1 (Coremail) with SMTP id cCh0CgDHlxC7eERm68LgMg--.42328S4;
+	Wed, 15 May 2024 16:56:29 +0800 (CST)
+From: libaokun@huaweicloud.com
+To: netfs@lists.linux.dev,
+	dhowells@redhat.com,
+	jlayton@kernel.org
+Cc: hsiangkao@linux.alibaba.com,
+	jefflexu@linux.alibaba.com,
+	zhujia.zj@bytedance.com,
+	linux-erofs@lists.ozlabs.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	libaokun@huaweicloud.com,
+	yangerkun@huawei.com,
+	houtao1@huawei.com,
+	yukuai3@huawei.com,
+	wozizhi@huawei.com,
+	Baokun Li <libaokun1@huawei.com>
+Subject: [PATCH v2 00/12] cachefiles: some bugfixes and cleanups for ondemand requests
+Date: Wed, 15 May 2024 16:45:49 +0800
+Message-Id: <20240515084601.3240503-1-libaokun@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-purgate-ID: 151534::1715762769-00D3D148-8A47A4C7/0/0
-X-purgate: clean
-X-purgate-type: clean
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgDHlxC7eERm68LgMg--.42328S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxXr1fur4rCw1xGF4xWw1kAFb_yoW5GrWrpF
+	WSk3Wakry8Wr40k3s7Ar4rJryrA3yfAF9Fgw12g34DAwn8Xr15ZrWxtr15XFy5CrZxJw42
+	q3WUuF97J34qv3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvE14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWUuVWrJwAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r
+	1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
+	b7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0x
+	vE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_WFyUJVCq3wCI
+	42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWI
+	evJa73UjIFyTuYvjfUYWrWUUUUU
+X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/
 
-On Tue, 14 May 2024, Russell King (Oracle) wrote:
-> On Tue, May 14, 2024 at 02:27:28PM +0200, Thomas Gessler wrote:
-> > This patch adds
-> > device-specific get_features(), config_aneg(), aneg_done(), and
-> > read_status() functions for these modes. They are based on the genphy_*
-> > versions with the correct registers and fall back to the genphy_*
-> > versions for other modes.
-> 
-> I'm reading this, and wondering... do you have a use case for this,
-> or are you adding it because "the PHY supports this" ?
+From: Baokun Li <libaokun1@huawei.com>
 
-We use this chip in both modes. The driver did not work for the 1000BASE-X
-and RGMII-to-SGMII modes out of the box, so I started a thread in the TI
-forum and tried to get some info there.
+Hi all!
 
-https://e2e.ti.com/support/interface-group/interface/f/interface-forum/1320180/dp83869hm-link-not-working-with-rgmii---sgmii-bridge---1000base-t-using-linux/
+This is the second version of this patch series. Thank you, Jia Zhu and
+Jingbo Xu, for the feedback in the previous version.
 
-This led to the development of this patch, which makes the modes work for
-our use cases.
+We've been testing ondemand mode for cachefiles since January, and we're
+almost done. We hit a lot of issues during the testing period, and this
+patch set fixes some of the issues related to ondemand requests.
+The patches have passed internal testing without regression.
 
-> If you don't have a use case for this, then it would be better not to
-> add support for it at this stage, otherwise it may restrict what we can
-> do in the future when coming up with a solution for stacked PHY support.
+The following is a brief overview of the patches, see the patches for
+more details.
 
-I understand, it would be fine for me to leave this unmerged for now,
-especially because of the unclear RGMII-to-SGMII situation, and continue
-patching this locally. The only problem I see for other users is that the
-driver ostensibly supports all modes the chip supports and can enable each
-of them with device-tree settings. Several of the modes, however, can
-simply not work because the driver accesses the wrong registers (BMCR/BMSR
-instead of the specialized FX_CTRL/FX_STS). This is the main reason why
-the custom config_aneg(), read_status() etc. are necessary.
+Patch 1-5: Holding reference counts of reqs and objects on read requests
+to avoid malicious restore leading to use-after-free.
 
-Thomas
+Patch 6-10: Add some consistency checks to copen/cread/get_fd to avoid
+malicious copen/cread/close fd injections causing use-after-free or hung.
+
+Patch 11: When cache is marked as CACHEFILES_DEAD, flush all requests,
+otherwise the kernel may be hung. since this state is irreversible, the
+daemon can read open requests but cannot copen.
+
+Patch 12: Allow interrupting a read request being processed by killing
+the read process as a way of avoiding hung in some special cases.
+
+Comments and questions are, as always, welcome.
+Please let me know what you think.
+
+Thanks,
+Baokun
+
+Changes since v1:
+  * Collect RVB from Jia Zhu and Jingbo Xu.(Thanks for your review!)
+  * Pathch 1: Add Fixes tag and enrich the commit message.
+  * Pathch 7: Add function graph comments.
+  * Pathch 8: Update commit message and comments.
+  * Pathch 9: Enriched commit msg.
+
+Baokun Li (11):
+  cachefiles: remove request from xarry during flush requests
+  cachefiles: remove err_put_fd tag in cachefiles_ondemand_daemon_read()
+  cachefiles: fix slab-use-after-free in cachefiles_ondemand_get_fd()
+  cachefiles: fix slab-use-after-free in
+    cachefiles_ondemand_daemon_read()
+  cachefiles: add output string to cachefiles_obj_[get|put]_ondemand_fd
+  cachefiles: add consistency check for copen/cread
+  cachefiles: add spin_lock for cachefiles_ondemand_info
+  cachefiles: never get a new anonymous fd if ondemand_id is valid
+  cachefiles: defer exposing anon_fd until after copy_to_user() succeeds
+  cachefiles: flush all requests after setting CACHEFILES_DEAD
+  cachefiles: make on-demand read killable
+
+Zizhi Wo (1):
+  cachefiles: Set object to close if ondemand_id < 0 in copen
+
+ fs/cachefiles/daemon.c            |   3 +-
+ fs/cachefiles/internal.h          |   5 +
+ fs/cachefiles/ondemand.c          | 218 ++++++++++++++++++++++--------
+ include/trace/events/cachefiles.h |   8 +-
+ 4 files changed, 177 insertions(+), 57 deletions(-)
+
+-- 
+2.39.2
+
 
