@@ -1,96 +1,162 @@
-Return-Path: <linux-kernel+bounces-180176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCC628C6B1C
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:58:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC6788C6B21
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:59:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 777F1284EFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:58:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B7AC1C225D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:59:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7204413F45B;
-	Wed, 15 May 2024 16:58:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 299D94084D;
+	Wed, 15 May 2024 16:58:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ujRFFUVL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f1A8ljxX"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B13EE482DB;
-	Wed, 15 May 2024 16:58:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D261A39FE4;
+	Wed, 15 May 2024 16:58:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715792292; cv=none; b=ZNPJqKnOJ5DDslx8lEtDNd0lIyik80s9K5p7q56VtKLmmgMR8j19/tMNSytutQAr420OKtKEtdgi1KA6QvgxSEKSETdN70p0cCt7IKiQn6HhuMDpRol6czYvmXaRy/HFNXZPsxIUN/2o7kGL7HaG+DgOFSoCHyhGRI50iuhJjkw=
+	t=1715792318; cv=none; b=gk2e2JRPgi6iBj34gWOydl3dpCPyw9vOr5NQupaiFGojt2c9fGc6pByed3h40ozv/Kz0WcZYPVkZW+O+x3KQyhWZC1Iq09xmHs7v0MHwL2AZLoI+nc1ZNG0usrss7ZQ/kqL9W2KDoItjGHjCp1CqThNtVUPNCpVEAS/GZMF1SeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715792292; c=relaxed/simple;
-	bh=SLGJTmZ/6Fdf4e/gBCHc7aKNPKQaZTTyFRcj/nywmi8=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=mF3LtM5PuctwrOyZZUMTCAVSJXJPWUAkmTqdUyYvXcCk8l6eZVZf3pHxdiIQQLt9wEeI7bHBBSaMIr7xBp2pmWvH4qK1j8u0JjnXbbtM0mtl38pD133WRUe8YRqmWEX/4wDFeRp75Lnc+iS11LJFZQgarCsaHVxrHeqUpViNFcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ujRFFUVL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 38A21C4AF08;
-	Wed, 15 May 2024 16:58:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715792292;
-	bh=SLGJTmZ/6Fdf4e/gBCHc7aKNPKQaZTTyFRcj/nywmi8=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=ujRFFUVLopOlmxrneZm+NxDYxlabD2gPBNXR9bvxzdgmJwrITYlOfW546/pfuvRSF
-	 PEM3IPJwljzkMw2rnoZyOsRtEClOVHCpoAe+8MZ3u6UAo31J64f+bbYG1t45Y1+9UG
-	 i9mkISm/Hx+GM2Mnz3ottEM8+8WFPZ6bH4TU4IpEahR7mYJgvvYokX7T5o815hvchD
-	 HNng6HNUSL40LQ1s1tHfTZ1RVn+kO1ZT0h6D9QOzqudJSGlt2XJgedqipsHG55+4SQ
-	 suz9ZpZBvUCknyhBmU6/TUoBR0D8Kc/iSqlCF4MeBZO7o5ZFGZSw68/t5rrE7/+P9L
-	 XvCoUnmXIXF3w==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 2CD4ACF21E3;
-	Wed, 15 May 2024 16:58:12 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1715792318; c=relaxed/simple;
+	bh=I2HA0q7hBT81SyHA7gzlxS6UcwHkri2jKlHX9ck6hy4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gNeLYUEi9h0HljbOZxPeGBbu7/O0mn90LZwNGiGf/Rj9lT3OCLyMSpDu3LLRpMWePvHnDA//4wQIBgcxJcVyLKBePCKYbOL79wo4iYTvBZvKd+06lKoUUDlyx59RwJQ9UlKSCB7bKB1JhXfPnh2YADHba6IPXgKYH8mnk5TDNcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f1A8ljxX; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-620e30d8f37so5897627a12.2;
+        Wed, 15 May 2024 09:58:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715792316; x=1716397116; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=9zUil5kvkyqatGu+714JnNLw08wRNNFWgJAtvQ5Ic/U=;
+        b=f1A8ljxXGSMEzyQOWOqbwkcxmlIOisS0lgHUPU/WMNPjkyI9iprREj5Q2CWzBRyY6S
+         xRvzcqdILH1kaLu4ioowX1lTw8xIL649pEtlV8tuA5ONOBPF4dQYFe3lG9qJznkrg/AF
+         ow64vS4aGrTfyzlp5FO2ASU3gZWFMBk9rCEH009kTR/zLXvXvB7LxaFCI7XofwNg1jiI
+         aEJXWAk4uR1LI7ZlhRboM7t0YTDcZ1sDfk9LrlS8t0Hh1PLEk74YDG6GFkvVm+amE/X9
+         O6RMIrDWwVlx7bBmaCe3i//Uo6WBs/Pk8tELvY4rNfjCwenuIlI7L+mS8Dw/vq0sXhRi
+         YSAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715792316; x=1716397116;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9zUil5kvkyqatGu+714JnNLw08wRNNFWgJAtvQ5Ic/U=;
+        b=xCR0QI78NZH2doeYI6EqkJ6hmzWZxR0r3WoPOpmjNUGaIsv0NYiyeP/KkXeY1Iw47n
+         PH69RSxayRFNsX0dYpjHbZIWgOp/8YPCbFSNGGaLete7Bo3wB5cMbfHqHAXtNDVv4qvf
+         wm7J1axVGe/hFFg9ahnyw87AzMMnQJjPsXWj4O94Yy1VV53lB8eLu/gPleZYxQ7hNcK+
+         0+2A8+UelkH0kMEpqnnmGLr8REi3lvASQHwr5iWzYC5+sBINeVookoQXWepf3rlWyS0l
+         yLc0YTEAHJT1Xr3xtAtAU7uCzCGSgUtq7x6QXqg3++tLXTHMWu0Q0ptY87L11xK8Gd56
+         tOuw==
+X-Forwarded-Encrypted: i=1; AJvYcCVBuZUPP6Wnt/iDzBhZIPgib1GjnvFhQriIJsBB+Rvu7T29pGYmegjKWoRsWl38FZaeHw8uzF9jC5einQnpx2jLsxfqXb4x0mVl8KmGniUs1GnMDe3t1GArr2pEa0CjPcnV/Hjn
+X-Gm-Message-State: AOJu0YyEHuxNP6VZi+boblL9cQgVA1UXLw/om/J+gO63xTXxo6ymWV6N
+	3D33WABHIRWI+HibLzbJvGHi+ILCiB2uFB7jFAaNmyHRZM/tfLQA
+X-Google-Smtp-Source: AGHT+IHaRbfAXLdm43VBG58561Dsf+kijeL08E6BODgDQ1PogLi1ul+QfSdpgcRbheVUXWiwljT35A==
+X-Received: by 2002:a05:6a21:788e:b0:1af:ccd9:4b1d with SMTP id adf61e73a8af0-1afde0cd6f6mr19389471637.22.1715792315967;
+        Wed, 15 May 2024 09:58:35 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f0934f3abcsm17060765ad.153.2024.05.15.09.58.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 May 2024 09:58:34 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <823e7e2e-4536-428c-a029-8907ebf89635@roeck-us.net>
+Date: Wed, 15 May 2024 09:58:33 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH bpf] bpf,
- docs: Fix the description of 'src' in ALU instructions
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171579229218.15564.16554458070344125415.git-patchwork-notify@kernel.org>
-Date: Wed, 15 May 2024 16:58:12 +0000
-References: <20240514130303.113607-1-puranjay@kernel.org>
-In-Reply-To: <20240514130303.113607-1-puranjay@kernel.org>
-To: Puranjay Mohan <puranjay@kernel.org>
-Cc: void@manifault.com, ast@kernel.org, daniel@iogearbox.net,
- andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@google.com, haoluo@google.com, jolsa@kernel.org, corbet@lwn.net,
- dthaler1968@googlemail.com, hawkinsw@obs.cr, bpf@vger.kernel.org,
- bpf@ietf.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- puranjay12@gmail.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.1 000/243] 6.1.91-rc2 review
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+ Mark Brown <broonie@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org,
+ patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Doug Berger <opendmb@gmail.com>
+References: <20240515082456.986812732@linuxfoundation.org>
+ <39483cfc-4345-4fbd-87c2-9d618c6fdbc6@sirena.org.uk>
+ <CAHk-=wjntFiQ=mM-zDHTMnrqki3MN3+6aSXhjnJozBaKqLLUDQ@mail.gmail.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <CAHk-=wjntFiQ=mM-zDHTMnrqki3MN3+6aSXhjnJozBaKqLLUDQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello:
-
-This patch was applied to bpf/bpf.git (master)
-by Alexei Starovoitov <ast@kernel.org>:
-
-On Tue, 14 May 2024 13:03:03 +0000 you wrote:
-> An ALU instruction's source operand can be the value in the source
-> register or the 32-bit immediate value encoded in the instruction. This
-> is controlled by the 's' bit of the 'opcode'.
+On 5/15/24 09:20, Linus Torvalds wrote:
+> On Wed, 15 May 2024 at 09:17, Mark Brown <broonie@kernel.org> wrote:
+>>
+>>      A bisect claims that "net: bcmgenet:
+>> synchronize EXT_RGMII_OOB_CTRL access" is the first commit that breaks,
+>> I'm not seeing issues with other stables.
 > 
-> The current description explicitly uses the phrase 'value of the source
-> register' when defining the meaning of 'src'.
+> That's d85cf67a3396 ("net: bcmgenet: synchronize EXT_RGMII_OOB_CTRL
+> access") upstream. Is upstream ok?
 > 
-> [...]
 
-Here is the summary with links:
-  - [bpf] bpf, docs: Fix the description of 'src' in ALU instructions
-    https://git.kernel.org/bpf/bpf/c/7a8030057f67
+Upstream code was rearranged. d85cf67a3396 affects bcmgenet_mii_config().
+3443d6c3616b affects bcmgenet_mac_config(). bcmgenet_mac_config()
+is called from bcmgenet_phy_pause_set() under phydev->lock. I would guess
+that trying to acquire the same lock in in bcmgenet_mac_config() results
+in a deadlock.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+Guenter
 
 
