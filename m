@@ -1,210 +1,103 @@
-Return-Path: <linux-kernel+bounces-179695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7002D8C6384
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 11:17:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E3168C638C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 11:19:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 946831C217B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:17:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 283562832E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:19:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E1BE57CBA;
-	Wed, 15 May 2024 09:17:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 972E057C9A;
+	Wed, 15 May 2024 09:18:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KJ6ceIxw"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="sx0abYUl"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5804157C8D;
-	Wed, 15 May 2024 09:17:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17FDB57CB5
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 09:18:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715764667; cv=none; b=X4hy3rf7+5z/ZTlAqUQsXsKwYcJ7T2nqavmN6Z1FoiOOXMqrQBE2ttVgo8NhTre7/3dimq09FeByWfA7vQ69ZimQ4jdIy2AfZQ4XRqJZx7VJ5wZbOKOexWc9YM6YawzJ0Zv8dlJy6KZHqrp8GLLFH+JIsd70J7yLJMlWQhxZ/wQ=
+	t=1715764736; cv=none; b=keT1DzaQr1Ah80p8fTXKjSGY63aiDRQ//sWUrrOGLNJeVfv2zeWflHErjgYGg5vRYtgzELAn0roL8HkTHo7yY1FTXemmlqhEy488f7oiDHnNpJMEdM4bzs80IKHpGw1UjnzLjISQtMU/cykMNxyOex3VzvejxDXeWk/sXrMLxh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715764667; c=relaxed/simple;
-	bh=97fJlRl8dJOpcgfN1cVebIQsfS1pVOcf9fB3mVSPx5Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=swnr3r+xtWMvlOmLUlXPgyNrx+jYATMDbULCKgqmUR/6eHkssxhkLF3oDQhFWGUFLEzr4KmW9sgctOw05hIo0gj/asWh2pRg6ifaRKHydrcWr4B6IBcarLm7LvLOhFm1urP6D9XkT5Zh8tfcMoV3HOTnB5RZx+Cl8sTPyyxB2Tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KJ6ceIxw; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1ed835f3c3cso57207185ad.3;
-        Wed, 15 May 2024 02:17:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715764665; x=1716369465; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5Wv8rV2tKPThsseCMW82u6ARIGWeqVn1KtBaNU4oLcc=;
-        b=KJ6ceIxw6eDuVGLik8cMQCftF/XcDBDwtVe/ffdaxPmRVfMq+tLDtoCaALSnxw0Z6m
-         ZWTAwzfwS753qSETjfTwZCQp2gqju4Vqor5nlRMabAp1+cHJ237EzQWDARmOLPQG/ui8
-         6Uw6J/WZslyiDhv1Z0oKUaJGO2K6GgstHhWkZIYT+oYHp3KrrKAr7kelVmuWKtAmPncR
-         +SPC1Fk6VBbhcBsVUdWX9aWDBSMwd49TeEf7LjUA9jFsTaOc1S7s+N4idQbm/ByzyygZ
-         +AmL8rHGL072ljSzcAn6RbUj/Q9fp+09RXucO2M3l/w4/LbD/R6pnJxX2K7L/7oqNg4e
-         D5wQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715764665; x=1716369465;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5Wv8rV2tKPThsseCMW82u6ARIGWeqVn1KtBaNU4oLcc=;
-        b=Qpe9g3jUDDNq9Z6e++IRhU4yI364ZmRpAx3qa7PZURLs3/9Jj/OSXtAZu/2vV9QNEj
-         8u1gBskuuXyldmnvijuMHCeBju9xMtA8il7zhid2sab/tkhn5TwiYEoxTppzyxDnZCHF
-         xM0XlYzNv1UKI/xaW/wOoNcygmk+xZUO/mxjoRCYUJfTubPd/QfWibThqd7wTwIpHdkX
-         Z8DKZjovLhkgmYxelwivVzjvSo7D/frSu+GMdisf0TQnZMAaGXsL1i9EqsUOhV7fNl1w
-         RGeBWYUzMaWTSkadq0J9cwP/PXkCsT6YpbvCSWyZq+rPtLuJdqJpN1lpYIcaP/7dx28r
-         Tvaw==
-X-Forwarded-Encrypted: i=1; AJvYcCVu5feVg8knOSRGsxQrt45s2UBjpWl0B9B8UAL83FMI+79X5DrsEZyTrFsMDCtBqyYHr4ClzCqBFtT+p1yO/igPBpxY3jTT64WDvM5CwE1aim+H+D8nI0dNwoHcuKZRucxppcWHyzTuSteT3Q==
-X-Gm-Message-State: AOJu0YxDBV1Xm506XiCYCSFkikwwi9stbDNK1XFcPZTWl07bOch2Q3Ib
-	N4v9zhjnLSMKB5WCQ1zjAdbBcIseZLERWmv3ahAbqnALv9HUUMj0
-X-Google-Smtp-Source: AGHT+IFtmVf7oEws1uF1l3m/5X3gzrEYi5mE17gV2Q6owMBXhDKxbWShPbXhK8zPO76YBGJxCnbDkQ==
-X-Received: by 2002:a17:902:ec8b:b0:1eb:1129:7f15 with SMTP id d9443c01a7336-1ef4404a272mr202174455ad.46.1715764664621;
-        Wed, 15 May 2024 02:17:44 -0700 (PDT)
-Received: from localhost.localdomain ([39.144.45.254])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0bf30fb1sm113304135ad.177.2024.05.15.02.17.40
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 15 May 2024 02:17:44 -0700 (PDT)
-From: Yafang Shao <laoar.shao@gmail.com>
-To: torvalds@linux-foundation.org
-Cc: brauner@kernel.org,
-	jack@suse.cz,
-	laoar.shao@gmail.com,
-	linux-fsdevel@vger.kernel.org,
-	longman@redhat.com,
-	viro@zeniv.linux.org.uk,
-	walters@verbum.org,
-	wangkai86@huawei.com,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH] vfs: Delete the associated dentry when deleting a file
-Date: Wed, 15 May 2024 17:17:27 +0800
-Message-Id: <20240515091727.22034-1-laoar.shao@gmail.com>
-X-Mailer: git-send-email 2.30.1 (Apple Git-130)
-In-Reply-To: <CAHk-=whHsCLoBsCdv2TiaQB+2TUR+wm2EPkaPHxF=g9Ofki7AQ@mail.gmail.com>
-References: <CAHk-=whHsCLoBsCdv2TiaQB+2TUR+wm2EPkaPHxF=g9Ofki7AQ@mail.gmail.com>
+	s=arc-20240116; t=1715764736; c=relaxed/simple;
+	bh=fSK9h/gCpJhmaMaOGAGjU4D5aHmktAM02LLSkh05iT8=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=Ew6ElyHW1VmtUvilasDljCCX/8sVvohc34pYV2f+t0Uh7EG3N9X16RmzK69S/08Kp7wjTk0JSraXObeU1KkQ2K4VOmBPIPTt75yPyIVhUcjSFrhllRGxAI1l03tzVNI9qA089yHONF3o3OLbq4LO8e+W7siT2UN0h+iha08Q438=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=sx0abYUl; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1715764722; x=1716369522; i=markus.elfring@web.de;
+	bh=bxm7PFm+rie4ZzlAqjg1Ckv2mEApVqgNMxWFDmfQvTk=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=sx0abYUlHgKmKAmfrT+gBwD4ZZCmtouEawn4YVPGklkN1ErubE7RuXCxI8AFz0hK
+	 m5k3Wz85YPT8tCSQV5d0Ovxe9FH6KuYnoiRhwFxhpZoHnumzjumkunZ+cPULywwS/
+	 mLcvbmz+/ajl55peTsQfhsTEBH+ISMoxg28AyPP8HFUJcGaTeHTw48sMZnwseOhCO
+	 2o+jgsRQnYAROZrzsF/ciFiadX9rA52xPpxc369WfiaHCskS4JbOWxTsAu4xTSfhp
+	 roBwQ+u/5fy9GNXipSqKwMbhFwuazpUrvGxB9O8WpT9beFKkQJ/FJipSMl81pBU/a
+	 BxLhB/gCzVLMHWumDg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mmhjm-1soijE1lWo-00ZOaR; Wed, 15
+ May 2024 11:18:42 +0200
+Message-ID: <bfece5e7-3c7f-44fd-9cf4-dc541d4e47e7@web.de>
+Date: Wed, 15 May 2024 11:18:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: Kuro Chung <kuro.chung@ite.corp-partner.google.com>,
+ dri-devel@lists.freedesktop.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Allen Chen <allen.chen@ite.com.tw>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>, Jonas Karlman <jonas@kwiboo.se>,
+ Kenneth Haung <kenneth.hung@ite.com.tw>, Kuro Chung <kuro.chung@ite.com.tw>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Pin-yen Lin <treapking@chromium.org>
+References: <20240515072328.1010920-1-kuro.chung@ite.com.tw>
+Subject: Re: [PATCH v8 0/1] drm/bridge: it6505: fix hibernate to resume no
+ display issue
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240515072328.1010920-1-kuro.chung@ite.com.tw>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Kt7Z/wCrNxfV+dApqAha9L9wWAGslnES7TINSjFONy6KeqA744M
+ sIOzWZovzfVs9NC+gmGrFxw7rPpxcJwBU1X7Fl/x9FOOov1oA50MXw79/ms1doYhlai+vib
+ OkcBqhM99p3QEN0ZZ7aiYRWTKEvQto3aVCPGK96RKOabFTphsmM54fG2TpKNYltU/mqYIef
+ btyGAi4FXZEMltQZOwgfQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:+RE1U0i96s4=;cWv86TqIwSZ+CYb9HILeajltDJw
+ 2bmAspgNWJSaClNGfmSFZzgL6+ncUz2fmwuO7ZGc4qlHGZ8xBIvWDKiCqOP0Sh/9rVtWcHopP
+ np/U0hjcRxQcf/J/oyCoAMXiGJ235AZxQ+g6MjqQaPaEcypoShvaceJKo7xQMvwZSsZt5CinI
+ dseLiM75+pIjDx9K8+BHkwI+Yt8hUIjX8WIsVGu0bbEV1MnHH55MQQ0SI4+NPBoj3oGY3+r5H
+ 0alyDIZtyhZpLX7F+FBItM6hRkIYeJK9kQJGj8RhbfBZw+VLKAiwoWh1fLv4JQrBYhXlYVY3z
+ 947lolQIWwGHd2Ck4qr1Jm8X47OcK7VrdhsYdaushGA0x/606TC0K2/eS+Cej1hkygJ0PCMAR
+ r2fIL/eoC+JnR9ozuIV75HSZh0nbPrQvulSt6MabrToXt+BCdKxUElWsDXpxrmAMLD0/RA8V5
+ bPG47mR/MIoUP7xnK3gFlEqkw//osTcK9KlKAnBE8W3Eu7LHxP7jgyT59GxyTMACu3HIYgE6P
+ K1rZJ2ivuNSCf5FXNdonkvB2ANJLX4Ii8pDIYuCLo+o7xMjZpAK6tcIjpYlHfiJjjfHj1W6Da
+ q0d3lboVTj4iV4Kxukw54eBvEOsAA/bBWmxjjyBn95BOyqCS7SEGOhZ5FtGSFZUkHolTnINBK
+ 5jgHd3UORJj0nTjbiu1bQCx0XXJhmHIpunIXPttPctS4wsgTOeeJemu4ciVFwxIY8ndIi5WZq
+ w9s04c/ZRpul1aaLE1QYsuWqqbuBNICUp8SQqCbHWAdo219blnR0TbgnZrASgqyfGYQ374E/i
+ yp9KbV9ko8S+LebEYyTfNQnXHiLktPrxIZZLGuadNJchs=
 
-Our applications, built on Elasticsearch[0], frequently create and delete
-files. These applications operate within containers, some with a memory
-limit exceeding 100GB. Over prolonged periods, the accumulation of negative
-dentries within these containers can amount to tens of gigabytes.
+> New patch description for =E2=80=A6
 
-Upon container exit, directories are deleted. However, due to the numerous
-associated dentries, this process can be time-consuming. Our users have
-expressed frustration with this prolonged exit duration, which constitutes
-our first issue.
+* How do you think about to omit a cover letter for a single patch?
 
-Simultaneously, other processes may attempt to access the parent directory
-of the Elasticsearch directories. Since the task responsible for deleting
-the dentries holds the inode lock, processes attempting directory lookup
-experience significant delays. This issue, our second problem, is easily
-demonstrated:
+* Would it be helpful to specify any email addresses in the message field =
+=E2=80=9CTo=E2=80=9D
+  (besides =E2=80=9CCc=E2=80=9D)?
 
-  - Task 1 generates negative dentries:
-  $ pwd
-  ~/test
-  $ mkdir es && cd es/ && ./create_and_delete_files.sh
-
-  [ After generating tens of GB dentries ]
-
-  $ cd ~/test && rm -rf es
-
-  [ It will take a long duration to finish ]
-
-  - Task 2 attempts to lookup the 'test/' directory
-  $ pwd
-  ~/test
-  $ ls
-
-  The 'ls' command in Task 2 experiences prolonged execution as Task 1
-  is deleting the dentries.
-
-We've devised a solution to address both issues by deleting associated
-dentry when removing a file. Interestingly, we've noted that a similar
-patch was proposed years ago[1], although it was rejected citing the
-absence of tangible issues caused by negative dentries. Given our current
-challenges, we're resubmitting the proposal. All relevant stakeholders from
-previous discussions have been included for reference.
-
-Some alternative solutions are also under discussion[2][3], such as
-shrinking child dentries outside of the parent inode lock or even
-asynchronously shrinking child dentries. However, given the straightforward
-nature of the current solution, I believe this approach is still necessary.
-
-[0]. https://github.com/elastic/elasticsearch
-[1]. https://patchwork.kernel.org/project/linux-fsdevel/patch/1502099673-31620-1-git-send-email-wangkai86@huawei.com
-[2]. https://lore.kernel.org/linux-fsdevel/20240511200240.6354-2-torvalds@linux-foundation.org/
-[3]. https://lore.kernel.org/linux-fsdevel/CAHk-=wjEMf8Du4UFzxuToGDnF3yLaMcrYeyNAaH1NJWa6fwcNQ@mail.gmail.com/
-
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>
-Cc: Waiman Long <longman@redhat.com>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Wangkai <wangkai86@huawei.com>
-Cc: Colin Walters <walters@verbum.org>
----
- fs/dcache.c | 16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
-
-diff --git a/fs/dcache.c b/fs/dcache.c
-index 71a8e943a0fa..2ffdb98e9166 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -2360,19 +2360,17 @@ EXPORT_SYMBOL(d_hash_and_lookup);
-  * - unhash this dentry and free it.
-  *
-  * Usually, we want to just turn this into
-- * a negative dentry, but if anybody else is
-- * currently using the dentry or the inode
-- * we can't do that and we fall back on removing
-- * it from the hash queues and waiting for
-- * it to be deleted later when it has no users
-+ * a negative dentry, but certain workloads can
-+ * generate a large number of negative dentries.
-+ * Therefore, it would be better to simply
-+ * unhash it.
-  */
-  
- /**
-  * d_delete - delete a dentry
-  * @dentry: The dentry to delete
-  *
-- * Turn the dentry into a negative dentry if possible, otherwise
-- * remove it from the hash queues so it can be deleted later
-+ * Remove the dentry from the hash queues so it can be deleted later.
-  */
-  
- void d_delete(struct dentry * dentry)
-@@ -2381,14 +2379,14 @@ void d_delete(struct dentry * dentry)
- 
- 	spin_lock(&inode->i_lock);
- 	spin_lock(&dentry->d_lock);
-+	__d_drop(dentry);
-+
- 	/*
- 	 * Are we the only user?
- 	 */
- 	if (dentry->d_lockref.count == 1) {
--		dentry->d_flags &= ~DCACHE_CANT_MOUNT;
- 		dentry_unlink_inode(dentry);
- 	} else {
--		__d_drop(dentry);
- 		spin_unlock(&dentry->d_lock);
- 		spin_unlock(&inode->i_lock);
- 	}
--- 
-2.30.1 (Apple Git-130)
-
+Regards,
+Markus
 
