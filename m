@@ -1,96 +1,98 @@
-Return-Path: <linux-kernel+bounces-179686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51E158C634A
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 11:00:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A53E78C6352
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 11:01:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8370D1C226C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:00:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 455E91F2353B
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:01:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F3435BAF0;
-	Wed, 15 May 2024 08:59:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PhDIlP+a"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18E2457C8A;
+	Wed, 15 May 2024 09:01:26 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97DC25BACF;
-	Wed, 15 May 2024 08:59:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98E7E2AF0E;
+	Wed, 15 May 2024 09:01:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715763566; cv=none; b=pyGPte4KZZZJxYzlSSWNQY/b6D2FvIpspDngfk6j8tJuvcYBCIlFi6VufLoAyxCbN5OgMEz122dd2rDHrAY7dswJqeNoawxkxyOVcY7aBIEkYYYQl0j0LLBGwUy7MhuwPkoeGnBuuM0o8+8Qgv18a4acWmf3/wO9USetQsZO3B4=
+	t=1715763685; cv=none; b=byp15qARUjrw1GdOs9gnM1VVnJQCe4hZjvjeBXSIhn9PwCChJahuqC9wPBeJV7MVJ0GTIeCHQSc5JK6vDXM5jXVGpRnvu+dW/YQvzftnFrcUmx7PwSQ8OzEKfcw0i7Dffbs9XzC8ThYmpryQEWSBHxybzag/dQyTrR0D2d0m7f0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715763566; c=relaxed/simple;
-	bh=wrhjNhMt1xp79b7iWBTzWLqdX0VxB4XNriKu8JSvx7A=;
-	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
-	 Cc:Message-ID:Date; b=G9xcpKj+fMAMarC8r0BQX6cGZY2yXJa3Lnzh1n+7LZ7NSYTYWlqQjfxtohGjyBn3U9WmItqYKGYkEgUVjpBIaOIMTcoobcwTWMVPqZe03nBKGi5AiDs4GNEJZbUXGXO9hn7frl7hZDKY2vREzDYj+bDjh5w1j3Ol3oTRrkXbJPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PhDIlP+a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 370CBC32786;
-	Wed, 15 May 2024 08:59:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715763566;
-	bh=wrhjNhMt1xp79b7iWBTzWLqdX0VxB4XNriKu8JSvx7A=;
-	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-	b=PhDIlP+aiGt58su60LswgrQBw2yVfWrQypyefTD2zTRmGwkeot72P85JQ/WHMN+VG
-	 0Sr1jzszzJwV8sf8J2jKx5Y2i1V1mejk5VuuRDqRO9b/aBWEqm9k2TxOf62JFe5DTX
-	 caZrJCXPqpRfhhX/RXZ1mNjt3duGrLSkTJWoSYWMbP3Y0WI+FA8uQeVYM7Jo6Q3YyK
-	 U424J2buUMXG/iAPXHqxPfVIUtWj2ITzSR5rNqUcC5tu7W8up8A3B0fGttcL7BcG3t
-	 a/aVdn+2agHYjRT4GH3AGwmVTKWNl3yIV3IicTIXkaKZtlpqJJwz0l6xTLRmybSLKD
-	 DwAPxUxz72TJA==
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1715763685; c=relaxed/simple;
+	bh=VYvg12eai6+57lr4OCKIvPizXBy8aVBEYV3yUW48rY8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pKWObDykzL13/nVJpq+RaTYU0IC+hz6cLsm6d1zOkE5+8BhgmJYHhFSCTzIFLFYjoqR6wsYRkfFa0KnitBtFC6k3UbDMZbQS2eIkUG/Sp3Ijpm3uwzWIt/pANecKVGOXpn92pGnavT0Am8aDT+w/KZ0G5qJuduNkJXXyZnP+Two=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26F46C32781;
+	Wed, 15 May 2024 09:01:21 +0000 (UTC)
+Date: Wed, 15 May 2024 10:01:19 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Steven Price <steven.price@arm.com>
+Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Joey Gouly <joey.gouly@arm.com>,
+	Alexandru Elisei <alexandru.elisei@arm.com>,
+	Christoffer Dall <christoffer.dall@arm.com>,
+	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
+Subject: Re: [PATCH v2 10/14] arm64: Force device mappings to be non-secure
+ shared
+Message-ID: <ZkR535Hmh3WkMYai@arm.com>
+References: <20240412084213.1733764-1-steven.price@arm.com>
+ <20240412084213.1733764-11-steven.price@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH v14] ath10k: add LED and GPIO controlling support for
- various
- chipsets
-From: Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <20230611080505.17393-1-ansuelsmth@gmail.com>
-References: <20230611080505.17393-1-ansuelsmth@gmail.com>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org,
- ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
- netdev@vger.kernel.org, Sebastian Gottschall <s.gottschall@dd-wrt.com>,
- Steve deRosier <derosier@cal-sierra.com>, Kalle Valo <kvalo@codeaurora.org>,
- Christian Marangi <ansuelsmth@gmail.com>,
- Stefan Lippers-Hollmann <s.l-h@gmx.de>
-User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
-Message-ID: <171576356159.2271935.2917787444907693936.kvalo@kernel.org>
-Date: Wed, 15 May 2024 08:59:23 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240412084213.1733764-11-steven.price@arm.com>
 
-Christian Marangi <ansuelsmth@gmail.com> wrote:
-
-> Adds LED and GPIO Control support for 988x, 9887, 9888, 99x0, 9984
-> based chipsets with on chipset connected led's using WMI Firmware API.
-> The LED device will get available named as "ath10k-phyX" at sysfs and
-> can be controlled with various triggers.
-> Adds also debugfs interface for gpio control.
+On Fri, Apr 12, 2024 at 09:42:09AM +0100, Steven Price wrote:
+> From: Suzuki K Poulose <suzuki.poulose@arm.com>
 > 
-> Signed-off-by: Sebastian Gottschall <s.gottschall@dd-wrt.com>
-> Reviewed-by: Steve deRosier <derosier@cal-sierra.com>
-> [kvalo: major reorg and cleanup]
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-> [ansuel: rebase and small cleanup]
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> Tested-by: Stefan Lippers-Hollmann <s.l-h@gmx.de>
-> Signed-off-by: Kalle Valo <quic_kvalo@quicinc.com>
+> Device mappings (currently) need to be emulated by the VMM so must be
+> mapped shared with the host.
 
-Patch applied to ath-next branch of ath.git, thanks.
+You say "currently". What's the plan when the device is not emulated?
+How would the guest distinguish what's emulated and what's not to avoid
+setting the PROT_NS_SHARED bit?
 
-8e1debd82466 wifi: ath10k: add LED and GPIO controlling support for various chipsets
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Signed-off-by: Steven Price <steven.price@arm.com>
+> ---
+>  arch/arm64/include/asm/pgtable.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+> index f5376bd567a1..db71c564ec21 100644
+> --- a/arch/arm64/include/asm/pgtable.h
+> +++ b/arch/arm64/include/asm/pgtable.h
+> @@ -598,7 +598,7 @@ static inline void set_pud_at(struct mm_struct *mm, unsigned long addr,
+>  #define pgprot_writecombine(prot) \
+>  	__pgprot_modify(prot, PTE_ATTRINDX_MASK, PTE_ATTRINDX(MT_NORMAL_NC) | PTE_PXN | PTE_UXN)
+>  #define pgprot_device(prot) \
+> -	__pgprot_modify(prot, PTE_ATTRINDX_MASK, PTE_ATTRINDX(MT_DEVICE_nGnRE) | PTE_PXN | PTE_UXN)
+> +	__pgprot_modify(prot, PTE_ATTRINDX_MASK, PTE_ATTRINDX(MT_DEVICE_nGnRE) | PTE_PXN | PTE_UXN | PROT_NS_SHARED)
+
+This pgprot_device() is not the only one used to map device resources.
+pgprot_writecombine() is another commonly macro. It feels like a hack to
+plug one but not the other and without any way for the guest to figure
+out what's emulated.
+
+Can the DT actually place those emulated ranges in the higher IPA space
+so that we avoid randomly adding this attribute for devices?
 
 -- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20230611080505.17393-1-ansuelsmth@gmail.com/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+Catalin
 
