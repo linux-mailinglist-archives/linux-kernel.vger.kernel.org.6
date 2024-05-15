@@ -1,130 +1,294 @@
-Return-Path: <linux-kernel+bounces-179507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 557DA8C6099
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:05:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 800E98C609F
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:07:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FC07283F11
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:05:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E1251C21E13
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:07:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5C313BBC1;
-	Wed, 15 May 2024 06:05:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E2B33B1AC;
+	Wed, 15 May 2024 06:07:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="F235iv+M"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Z5Q9dPtn"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB153BBC0
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 06:05:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C415B3A8E4
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 06:06:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715753123; cv=none; b=AVbFgh1jWMmXEJl6PYuw90i9rXe5XL8jNbMQAu1S8+MFGQpAMFpk8xqnHJz8tnhH1PSBMXVOJUUs+dOD13w6rL2L9ksqjMKI3dU2PRBx9iDfO2cvi+lyqZeeMvElGTvOQBrD92OkcCLN6ABD0IocmFd1neUM08QLLkQZ0jthGqk=
+	t=1715753221; cv=none; b=OoYFT6r8bIMRBnEvoZuEu8UTgEiiCQB5w7DZaNAVP/nFGNVMgMbHBhVxo6tdQTZOKuCg3snDwbQVYBpyFZ6pW2CBYc/HODKPcglaKKr35BqD8pjWtOW5hXCs7YOCMtiKW6GkrWthyfpvjz2rf6x+1l4kxt4xIxdX5dp9tXBB5fo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715753123; c=relaxed/simple;
-	bh=glxZWalClhItPmKBT4mI+SpZz96hk1rNL5AL/Q5KevQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=hspUvoxf1qrJdbtTusk7Xw8mNT2nEnllpAkcN8ufER22b2zRLK+4wBEGTn+LpWEgVRU9fKKgmAZQ35k3sVu/YDcVwEY74wd7Rein4IU3ahI5YGdJrRahTCqUVvawvaOS4xOqnCzNjY2k2lnJq50iwq8lKld8VmcEjegQmlDd1CE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=F235iv+M; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44EJUbXE026376;
-	Wed, 15 May 2024 06:05:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	from:date:subject:mime-version:content-type
-	:content-transfer-encoding:message-id:to:cc; s=qcppdkim1; bh=zOD
-	MtrKyEGSQ9LSk8nTmKQU/GLmrU+rBf/+KAz6VtPM=; b=F235iv+MyOdSDthfQgC
-	8WHVIKXAQkn9Q69c5YEprOrjNcSfkVW1EC8wQeSVd7bz/cH2Rs2HqNSRTb/4jWwp
-	Ma3JMnP12P1bq9sgQI7WF+lFK9oDzKBJXLu34QiDvGpVM4Fcu0vQLEB/qbZ8Z2Gq
-	hZS3JJiLk19HwOL9BpZqDJsdR61eQozSQf7KYt0rYviQLoyBebipfLEwTIBpUoQ/
-	WPPu269wRjZcBPRZM24cXdvTjLaeQzfT0zIGadza+ZW9T/i1MHwKEYh8uKLQ/T9g
-	9xq2yl8W0YSFdTdfM7188LdtP0mBjzKwNm9VUbirvhonr9+lc+7gdCxpKNSErlA4
-	+Tw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y3j28mu2c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 15 May 2024 06:05:13 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44F65C8w006532
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 15 May 2024 06:05:12 GMT
-Received: from hu-skakitap-hyd.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 14 May 2024 23:05:09 -0700
-From: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-Date: Wed, 15 May 2024 11:34:50 +0530
-Subject: [PATCH] mailmap: Update email address for Satya Priya
+	s=arc-20240116; t=1715753221; c=relaxed/simple;
+	bh=kUL4zZYBA6Zz37ENPOn7eSbSBL2HQB6Dt7zdYhhamFc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BtQ1IksZjV6rErwZ4myy3DR1wMuZYcNG/HNljd8HMMoA5t56BcwEDdeSjiznS8Lc9+4Pc92IK//lm0uMjdpkQBmsORTgqWG+rqyXEr/BQBq+D/u+Ofiju0yd8AYQkQkJQSj6H77ENmHdo9t5gW1WBnsfJ0ko6TpncUyL2UBnYlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Z5Q9dPtn; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-43dfe020675so1814701cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 23:06:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715753219; x=1716358019; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sw46tNmLyy6/gqhuKbv79aER+4CQjoFXDtqPExJDGXQ=;
+        b=Z5Q9dPtniOh6Uq2JbA8QW55FIASwF+jIR6xza9a23e1XGBGV3P9UFx9aSlt0m9S8A2
+         0ib7VJwtu3pSsbvrnACx3crX3xF4hSS1NeodyFvdoQmmekZKWv8qU2KRJKaCBG3VMd1S
+         lBvWAqkIOddBcbrqNFpMsvVOBjv+Uyv+PA0LpIQ1f5yMQAQltuuN8uwIh479NOU0tUm/
+         3UgcT/LldOatiHXqz+90t0BqEdheiqQ5t2Nm976BY2IyrWdJONA1uY7HKUqSYdKbq3TY
+         oaSBfZ1l/imeXLctcVY3prPO25Fwwj8xXTaHbhnmxLG3rbEDTwFvV2dPBfXnyZAr7bJo
+         P+DA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715753219; x=1716358019;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sw46tNmLyy6/gqhuKbv79aER+4CQjoFXDtqPExJDGXQ=;
+        b=kemIAJIZCuQLrpxyG9YpFWMbqwjdJWos+31YPzhuX1X4DCgDztai1c2wNszFEXdFcL
+         DhcjA0Y97g8bDhk3jjU9oueYG2C6tgQV6ajBdZMMyRHxDXFOJn05eP5UWFU98lZZpmB4
+         OPZ0psFv/VaykRbj3h8NM+1aqOM3aDeR8jH3EzP2cCfpvcI+Bdc9XPTrdyxhLrcaNPta
+         ItGH+NsGFS2M4uQn4T3M5ld6jaAFkG3N3mQWR86KIX7+iOT9ppVXWqMtdNIviclGlmwv
+         lUsPnPWd5QA615G/GCrmr/Yk8sXFNH6R988vO2DNAOpM3Al8bWfssiglUxhIole756jv
+         BAUw==
+X-Forwarded-Encrypted: i=1; AJvYcCXOEB3j5o/4Vo2yfqSOoILfzuP4N/BfnKjEokgips5wyBEklWPyKW5E3IPWoL9KSLzkkpUsrdyXDb+S7ayIJKjqv2jsamQLLlKQH2L7
+X-Gm-Message-State: AOJu0Ywr/DGp/JrmiybhykbdjwINp+JAhaatrDxcHOQbt4Lv3Bc9p8sG
+	j0OOQtfsyRZ5kk0zSXLINx8CmtagUpmvxrOxM7tmRWRITqLTLx1jxrDR1vXmd+ZHM0oEblLjdj1
+	m0hS4I0eF+wnIWOkKoTiULolQqsfOfhLxidXb
+X-Google-Smtp-Source: AGHT+IGMu7jEqAfsDU1Uer1R6+MjwPSUeYmT6edhDvNSUzQjbN/bHVLcoORZTgm810sR6j/aC2DogtZJd7HemIH0eYk=
+X-Received: by 2002:a05:622a:2291:b0:437:986d:86f4 with SMTP id
+ d75a77b69052e-43e09555a24mr8295751cf.22.1715753218537; Tue, 14 May 2024
+ 23:06:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-ID: <20240515-mailmap-update-v1-1-df4853f757a3@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAIFQRGYC/x3MQQqAIBBA0avErBNMtEVXiRZTjjWQJVoRiHdPW
- r7F/xkSRaYEQ5Mh0sOJz6OiaxtYNjxWEmyrQUmlpemM8Mi7xyDuYPEioRwqMtrZfnZQoxDJ8fs
- Px6mUD1lFkUpgAAAA
-To: Andrew Morton <akpm@linux-foundation.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>
-CC: <konrad.dybcio@linaro.org>, <linux-kernel@vger.kernel.org>,
-        Ajit Pandey
-	<quic_ajipan@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        "Taniya
- Das" <quic_tdas@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        "Satya
- Priya Kakitapalli" <quic_skakitap@quicinc.com>
-X-Mailer: b4 0.12.4
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 7WbmTs4fsx_sfIiWead69OfVBLqsHV92
-X-Proofpoint-GUID: 7WbmTs4fsx_sfIiWead69OfVBLqsHV92
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-15_02,2024-05-14_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
- impostorscore=0 malwarescore=0 phishscore=0 bulkscore=0 suspectscore=0
- mlxscore=0 clxscore=1011 priorityscore=1501 mlxlogscore=571
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405010000 definitions=main-2405150041
+References: <20240329191224.1046866-1-weilin.wang@intel.com>
+ <20240329191224.1046866-3-weilin.wang@intel.com> <CAM9d7cjBfTM2bjkrvN5XWcXJ=OyBOU06fBN=+eWnDSdP2dkD4A@mail.gmail.com>
+ <CO6PR11MB56351C2AB4BE15C5371E29C2EE3F2@CO6PR11MB5635.namprd11.prod.outlook.com>
+ <CAM9d7cjORNS9h7v6p2fg8OXsZMpeBODzTSCQNZ5zAea-baFKNQ@mail.gmail.com>
+ <CO6PR11MB5635C7D8C91FEDA17EC4BCDEEE112@CO6PR11MB5635.namprd11.prod.outlook.com>
+ <CAM9d7chSCQViX=VjgqdVn5un0J5MpGsGDGncUyY-K4=oPvvfQA@mail.gmail.com>
+ <CO6PR11MB56359754A01778EA3EA53981EE102@CO6PR11MB5635.namprd11.prod.outlook.com>
+ <CAM9d7cj2Zmd_FMBzf=H6K6jRmYLYuR6mpcyhC0_neTvur0=pyw@mail.gmail.com> <CO6PR11MB5635CC88D0855FA485C383A9EEEC2@CO6PR11MB5635.namprd11.prod.outlook.com>
+In-Reply-To: <CO6PR11MB5635CC88D0855FA485C383A9EEEC2@CO6PR11MB5635.namprd11.prod.outlook.com>
+From: Ian Rogers <irogers@google.com>
+Date: Tue, 14 May 2024 23:06:47 -0700
+Message-ID: <CAP-5=fV_mco8cf4yf0VUTGnpNUmQx-VA0S8TpbekAa83c3u5WQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v6 2/5] perf stat: Fork and launch perf record when
+ perf stat needs to get retire latency value for a metric.
+To: "Wang, Weilin" <weilin.wang@intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	"Hunter, Adrian" <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Taylor, Perry" <perry.taylor@intel.com>, 
+	"Alt, Samantha" <samantha.alt@intel.com>, "Biggers, Caleb" <caleb.biggers@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Update mailmap with my latest email ID, quic_c_skakit@quicinc.com
-is no longer active.
+On Tue, May 14, 2024 at 10:57=E2=80=AFPM Wang, Weilin <weilin.wang@intel.co=
+m> wrote:
+>
+>
+>
+> > -----Original Message-----
+> > From: Namhyung Kim <namhyung@kernel.org>
+> > Sent: Wednesday, April 24, 2024 11:50 AM
+> > To: Wang, Weilin <weilin.wang@intel.com>
+> > Cc: Ian Rogers <irogers@google.com>; Arnaldo Carvalho de Melo
+> > <acme@kernel.org>; Peter Zijlstra <peterz@infradead.org>; Ingo Molnar
+> > <mingo@redhat.com>; Alexander Shishkin
+> > <alexander.shishkin@linux.intel.com>; Jiri Olsa <jolsa@kernel.org>; Hun=
+ter,
+> > Adrian <adrian.hunter@intel.com>; Kan Liang <kan.liang@linux.intel.com>=
+;
+> > linux-perf-users@vger.kernel.org; linux-kernel@vger.kernel.org; Taylor,=
+ Perry
+> > <perry.taylor@intel.com>; Alt, Samantha <samantha.alt@intel.com>; Bigge=
+rs,
+> > Caleb <caleb.biggers@intel.com>
+> > Subject: Re: [RFC PATCH v6 2/5] perf stat: Fork and launch perf record =
+when
+> > perf stat needs to get retire latency value for a metric.
+> >
+> > On Wed, Apr 24, 2024 at 10:08=E2=80=AFAM Wang, Weilin <weilin.wang@inte=
+l.com>
+> > wrote:
+> > >
+> > >
+> > >
+> > > > -----Original Message-----
+> > > > From: Namhyung Kim <namhyung@kernel.org>
+> > > > Sent: Tuesday, April 23, 2024 4:06 PM
+> > > > To: Wang, Weilin <weilin.wang@intel.com>
+> > > > Cc: Ian Rogers <irogers@google.com>; Arnaldo Carvalho de Melo
+> > > > <acme@kernel.org>; Peter Zijlstra <peterz@infradead.org>; Ingo Moln=
+ar
+> > > > <mingo@redhat.com>; Alexander Shishkin
+> > > > <alexander.shishkin@linux.intel.com>; Jiri Olsa <jolsa@kernel.org>;=
+ Hunter,
+> > > > Adrian <adrian.hunter@intel.com>; Kan Liang <kan.liang@linux.intel.=
+com>;
+> > > > linux-perf-users@vger.kernel.org; linux-kernel@vger.kernel.org; Tay=
+lor,
+> > Perry
+> > > > <perry.taylor@intel.com>; Alt, Samantha <samantha.alt@intel.com>;
+> > Biggers,
+> > > > Caleb <caleb.biggers@intel.com>
+> > > > Subject: Re: [RFC PATCH v6 2/5] perf stat: Fork and launch perf rec=
+ord
+> > when
+> > > > perf stat needs to get retire latency value for a metric.
+> > > >
+> > > > On Tue, Apr 23, 2024 at 3:16=E2=80=AFPM Wang, Weilin <weilin.wang@i=
+ntel.com>
+> > > > wrote:
+> > > > > > > > > -static int __run_perf_record(void)
+> > > > > > > > > +static int __run_perf_record(const char **record_argv)
+> > > > > > > > >  {
+> > > > > > > > > +       int i =3D 0;
+> > > > > > > > > +       struct tpebs_event *e;
+> > > > > > > > > +
+> > > > > > > > >         pr_debug("Prepare perf record for retire_latency\=
+n");
+> > > > > > > > > +
+> > > > > > > > > +       record_argv[i++] =3D "perf";
+> > > > > > > > > +       record_argv[i++] =3D "record";
+> > > > > > > > > +       record_argv[i++] =3D "-W";
+> > > > > > > > > +       record_argv[i++] =3D "--synth=3Dno";
+> > > > > > > > > +
+> > > > > > > > > +       if (stat_config.user_requested_cpu_list) {
+> > > > > > > > > +               record_argv[i++] =3D "-C";
+> > > > > > > > > +               record_argv[i++] =3D stat_config.user_req=
+uested_cpu_list;
+> > > > > > > > > +       }
+> > > > > > > > > +
+> > > > > > > > > +       if (stat_config.system_wide)
+> > > > > > > > > +               record_argv[i++] =3D "-a";
+> > > > > > > > > +
+> > > > > > > > > +       if (!stat_config.system_wide
+> > > > > > && !stat_config.user_requested_cpu_list)
+> > > > > > > > {
+> > > > > > > > > +               pr_err("Require -a or -C option to run sa=
+mpling.\n");
+> > > > > > > > > +               return -ECANCELED;
+> > > > > > > > > +       }
+> > > > > > > > > +
+> > > > > > > > > +       list_for_each_entry(e, &stat_config.tpebs_events,=
+ nd) {
+> > > > > > > > > +               record_argv[i++] =3D "-e";
+> > > > > > > > > +               record_argv[i++] =3D e->name;
+> > > > > > > > > +       }
+> > > > > > > > > +
+> > > > > > > > > +       record_argv[i++] =3D "-o";
+> > > > > > > > > +       record_argv[i++] =3D PERF_DATA;
+> > > > > > > > > +
+> > > > > > > > >         return 0;
+> > > > > > > > >  }
+> > > > > > > >
+> > > > > > > > Still I think it's weird it has 'perf record' in perf stat =
+(despite the
+> > > > > > > > 'perf stat record').  If it's only Intel thing and we don't=
+ have a plan
+> > > > > > > > to do the same on other arches, we can move it to the arch
+> > > > > > > > directory and keep the perf stat code simple.
+> > > > > > >
+> > > > > > > I'm not sure what is the proper way to solve this. And Ian me=
+ntioned
+> > > > > > > that put code in arch directory could potentially cause other=
+ bugs.
+> > > > > > > So I'm wondering if we could keep this code here for now. I c=
+ould
+> > work
+> > > > > > > on it later if we found it's better to be in arch directory.
+> > > > > >
+> > > > > > Maybe somewhere in the util/ and keep the main code minimal.
+> > > > > > IIUC it's only for very recent (or upcoming?) Intel CPUs and we
+> > > > > > don't have tests (hopefully can run on other arch/CPUs).
+> > > > > >
+> > > > > > So I don't think having it here would help fixing potential bug=
+s.
+> > > > >
+> > > > > Do you mean by creating a new file in util/ to hold this code?
+> > > >
+> > > > Yeah, maybe util/intel-tpebs.c (if it's better than arch/x86/...) ?
+> > > >
+> > > > >
+> > > > > Yes, this feature is for very recent Intel CPUs. It should only b=
+e triggered if
+> > > > > a metric uses event(s) that has the R modifier in the formula.
+> > > >
+> > > > Can we have a test with a fake metric so that we can test
+> > > > the code on non-(or old-)Intel machines?
+> > >
+> > > All the existing metrics in non-(or old-)Intel CPUs should work as us=
+ual. So I
+> > think
+> > > existing metric tests should work for it.
+> > >
+> > > If we want to add a fake metric uses the :R modifier for those platfo=
+rms, the
+> > metric
+> > > should either fail (if the fake metric uses an event not exist on the=
+ test
+> > platform) or
+> > > return all 0 retire latency data.
+> > >
+> > > So, I'm not quite sure what we want the fake metric to test for. Mayb=
+e we
+> > could
+> > > continue using existing metric tests to ensure all the defined metric=
+s work
+> > correctly
+> > > in each machine under test?
+> >
+> > I think it's ok to return all 0 retire latency for fake tPEBS metrics.
+> > It's just to verify the background record + report logic works ok.
+>
+> Hi Namhyung,
+>
+> After think more about how TPEBS and metrics work, I feel should discuss =
+more
+> about defining a fake TPEBS metric in unsupported platforms.
+> If we'd like a add fake metrics, where should we define and store these m=
+etrics?
+> Should we add this type of metrics for every platform? All the official m=
+etrics
+> we publish are defined by architect and stored in JSON files under separa=
+te
+> directories for each platform. I think it is not a good idea to place fak=
+e metrics
+> together with real metrics. Could you please let me know if there is any =
+other
+> method to define fake metrics for testing?
 
-Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
----
- .mailmap | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+We do put fake events/metrics in the "test" arch:
+https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
+ee/tools/perf/pmu-events/arch/test/test_soc/cpu/metrics.json
 
-diff --git a/.mailmap b/.mailmap
-index df56e43cb57f..43cd2995dbc2 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -572,7 +572,7 @@ Sarangdhar Joshi <spjoshi@codeaurora.org>
- Sascha Hauer <s.hauer@pengutronix.de>
- Sahitya Tummala <quic_stummala@quicinc.com> <stummala@codeaurora.org>
- Sathishkumar Muruganandam <quic_murugana@quicinc.com> <murugana@codeaurora.org>
--Satya Priya <quic_c_skakit@quicinc.com> <skakit@codeaurora.org>
-+Satya Priya <quic_skakitap@quicinc.com> <quic_c_skakit@quicinc.com> <skakit@codeaurora.org>
- S.Çağlar Onur <caglar@pardus.org.tr>
- Sayali Lokhande <quic_sayalil@quicinc.com> <sayalil@codeaurora.org>
- Sean Christopherson <seanjc@google.com> <sean.j.christopherson@intel.com>
+It is something of a pain bringing things here over to the
+NO_JEVENTS=3D1 (ie no python) empty-pmu-events.c file. I agree on not
+wanting to pollute real metrics with test metrics, we currently just
+use the test metrics to fake up some expression parsing tests:
+https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
+ee/tools/perf/tests/pmu-events.c#n811
 
----
-base-commit: 26dd54d03cd94ecc035d9e1e9fd4fc0f3ab311cf
-change-id: 20240515-mailmap-update-2fa2e54fd6bf
+Thanks,
+Ian
 
-Best regards,
--- 
-Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-
+> Thanks,
+> Weilin
+>
+> >
+> > Thanks,
+> > Namhyung
 
