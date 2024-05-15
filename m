@@ -1,174 +1,320 @@
-Return-Path: <linux-kernel+bounces-180038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 133C68C692E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:04:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 203B48C692B
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:03:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36A111C222DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 15:03:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4D9A1F21283
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 15:03:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55D6015622F;
-	Wed, 15 May 2024 15:03:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="NtVzwfqS"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EE5C155752
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 15:03:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0351F155750;
+	Wed, 15 May 2024 15:03:29 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0ED01553BF;
+	Wed, 15 May 2024 15:03:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715785412; cv=none; b=S9Q8A1shZ4xn5msr+VaH04n+FyZs2jBHcNKVkk3DYbqSZA6D7821+AF3mA/EPuwAw3YNDN1FMYuO6CUhLsHHpi+3T3KwCCbOyQOZRVwe0fraqzedsSjusehguzskNs0O+Atw1KpIWJiB4S2EDSPRrM4C01wsMg1NLw9znBTCB78=
+	t=1715785408; cv=none; b=FafCGtp4EO10rI+DUL17hEL/sVZPfa4+4FgDPWcXtgmNXl3jP+kyFeBbQYgsnWFmzfhglRUtkYfCFSRtSRGWfeBCZzZ0Yd5Bh6UdW8brbkoP29O8kwjj0ApZrn5jGYZ80DEYp/NRpUHTwEOhW2qIqGE6alzQWWgN/lgm5ffo+Hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715785412; c=relaxed/simple;
-	bh=srhSqcE057PYT8XZgoL4eiPLut1PLIps2HRV2s02uPs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=fmuRxTDths3TGDsvzR7estLhjSrTi7rcSyz9s6d8KWiY0FlRdWlbTdSdUK0/gBaSQFrRn61RQrcgUoMGjI/ALWqX241eRoTtLi6U2tDZNo6dfT/QJfmNQ8MAQ9xVc+2ahi6L0+mnUmPWExj0NO9MK8h79Ck513rFJiaeUWXzgk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=NtVzwfqS; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-34db9a38755so6607745f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 08:03:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1715785407; x=1716390207; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9Lm+V4MOHLjpwTvmluMGIdUeu5zSQz92EjZA+xk1shE=;
-        b=NtVzwfqSpRjebbKqZyF3sqgi6zzhjarjxufiUlFoXVVPMaJz7tpwYsYDDYpkV9nuOf
-         iowp4+QdqgX/aYY+TLVLfIbEJwMIDXWmM2AmhkUGcF+mo6KwfomnxEO3uP/ru2H0wC/s
-         5uCn5SQHJ47LmnLbYfgKEVq6qADvqhTgw1oFqQaq9v5Vgo39vsvQMpVDlECHkWbnPjF/
-         IZcQYgsFDSrF+LSLSpxcF5BQjxy17BqVNoOULE9uz/gjmNi8aWJS4fF9iS9LQtOtrnus
-         QoqziGXuSk6yOPVIMw/cPQP7cS55cjbg9AWbIqCOLOtU3r3wnFJUSvYohCnhB1XCdS1s
-         ObmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715785407; x=1716390207;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9Lm+V4MOHLjpwTvmluMGIdUeu5zSQz92EjZA+xk1shE=;
-        b=injS2vznlOwGlH/2xf64QZCA+ee19SRJTar3aB4WzlVtO3ekI6kBEomOiwiippxzTn
-         g25mmQbXBQuWmZV4xUR/HuwD2zRhFdtVwzYNHzbAbDFSpCyEyb7ujgP89lTYtfI8WJ+L
-         scfUPluum4yUcoKaNN2k2tawiB9aAfvQl1hD4qYeYwtjg9BIFCNb8ill5Ilb7+VtEDar
-         dhKHeoJvP+lZqbYqgkhiA5OPjWUyXzBFTPOFxkzRWXt+8diZgdaaaa+Dwxjf6cN2wpDz
-         Y5G8VbndNgGOsKKyImip8G97LxtAvN4gD1texFTfdPOl3Z9MS7sXqzMuwqjN5SoraQaq
-         eeNg==
-X-Forwarded-Encrypted: i=1; AJvYcCUYR1sKvFdsLTB06nW8IYnEz53nutqB53KBjkErQJqAYOsApMRSVCQbQhj9pwjFkr7c0IoMcd49Qna40A5FDU4R2/3U7dlz1lYZEeRE
-X-Gm-Message-State: AOJu0YxmTsfslRzSIuwQvxXmbOXp31zCffxil9DenRU8zy1QSOR0A3+J
-	TEY6bALRqLuj8yh120JDC63eax5C15D/wU5YbnPyycBdinRFKnDuxvZsG7lTnsM=
-X-Google-Smtp-Source: AGHT+IHFvV/YKUp2ASUsyofDT+uyThnhNn6z7AHT8eX7ShpKC+KLWTMhMTmjH/vu1Il4PLMLegu1Zg==
-X-Received: by 2002:adf:e788:0:b0:34c:fd73:55d with SMTP id ffacd0b85a97d-3504aa63499mr14009742f8f.70.1715785407436;
-        Wed, 15 May 2024 08:03:27 -0700 (PDT)
-Received: from [127.0.1.1] (abordeaux-651-1-78-161.w90-5.abo.wanadoo.fr. [90.5.97.161])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-351d21c8106sm368310f8f.60.2024.05.15.08.03.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 May 2024 08:03:26 -0700 (PDT)
-From: Julien Panis <jpanis@baylibre.com>
-Date: Wed, 15 May 2024 17:03:25 +0200
-Subject: [PATCH] thermal/drivers/mediatek/lvts_thermal: Remove filtered
- mode for mt8188
+	s=arc-20240116; t=1715785408; c=relaxed/simple;
+	bh=bylLm4vBR7uF8DJjgfEFk5Uyg7AOg+1HrxqT9xiN++I=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=HQIjzpypbHt/dWRTDP9xz++soGI9t6wruDUP+afgVe3oNgGdVIHh3Mi7D/87SA/75PzdnVbZHyx91ASzUmQf3EFpoV+rXsufm0Z0QO5odvWx06lmLzszDxEGKiZXfGkNF/G8FOQ1+OzUEUde0GopuBo8D9C9Rn4WWngRjtWJFmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9A2311007;
+	Wed, 15 May 2024 08:03:50 -0700 (PDT)
+Received: from [10.57.35.28] (unknown [10.57.35.28])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D06513F7A6;
+	Wed, 15 May 2024 08:03:22 -0700 (PDT)
+Message-ID: <6fef6e77-a173-4c66-bf6c-574c19820dfa@arm.com>
+Date: Wed, 15 May 2024 16:03:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+From: Steven Price <steven.price@arm.com>
+Subject: Re: [PATCH v2 02/14] arm64: Detect if in a realm and set RIPAS RAM
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Marc Zyngier <maz@kernel.org>,
+ Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
+ Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <yuzenghui@huawei.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei
+ <alexandru.elisei@arm.com>, Christoffer Dall <christoffer.dall@arm.com>,
+ Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
+References: <20240412084213.1733764-1-steven.price@arm.com>
+ <20240412084213.1733764-3-steven.price@arm.com> <Zj5a9Kt6r7U9WN5E@arm.com>
+Content-Language: en-GB
+In-Reply-To: <Zj5a9Kt6r7U9WN5E@arm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240515-mtk-thermal-mt8188-mode-fix-v1-1-e656b310b67f@baylibre.com>
-X-B4-Tracking: v=1; b=H4sIALzORGYC/x2M0QpAQBAAf0X7bMvi6vgVebjcYuPQnaTk323eZ
- uZhHkgchRO02QORL0mybyqUZzDMbpsYxatDWZR1YchgOBc8Z47BrcqWrMWwe8ZRbmRjK9+4irw
- j0MMRWfN/7/r3/QA8wb3LbQAAAA==
-To: "Rafael J. Wysocki" <rafael@kernel.org>, 
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
- Lukasz Luba <lukasz.luba@arm.com>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Nicolas Pitre <npitre@baylibre.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- Julien Panis <jpanis@baylibre.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1715785405; l=2130;
- i=jpanis@baylibre.com; s=20230526; h=from:subject:message-id;
- bh=srhSqcE057PYT8XZgoL4eiPLut1PLIps2HRV2s02uPs=;
- b=P6zbORiYNVpAHtTEViYts3RXJ33FKGxDpNyirArfqnQ9wqgAzgfM/pAZmaR+Kyl+pwyiMRTwW
- 7+RPG0iDXfsDZfJk/djBA5pcqzd3ftimEDK5ts4vW1hDgpPUDiqOnCi
-X-Developer-Key: i=jpanis@baylibre.com; a=ed25519;
- pk=8eSM4/xkiHWz2M1Cw1U3m2/YfPbsUdEJPCWY3Mh9ekQ=
 
-Filtered mode is not supported on mt8188 SoC and is the source of bad
-results. Move to immediate mode which provides good temperatures.
+On 10/05/2024 18:35, Catalin Marinas wrote:
+> On Fri, Apr 12, 2024 at 09:42:01AM +0100, Steven Price wrote:
+>> diff --git a/arch/arm64/include/asm/rsi.h b/arch/arm64/include/asm/rsi.h
+>> new file mode 100644
+>> index 000000000000..3b56aac5dc43
+>> --- /dev/null
+>> +++ b/arch/arm64/include/asm/rsi.h
+>> @@ -0,0 +1,46 @@
+>> +/* SPDX-License-Identifier: GPL-2.0-only */
+>> +/*
+>> + * Copyright (C) 2023 ARM Ltd.
+> 
+> You may want to update the year ;).
 
-Signed-off-by: Julien Panis <jpanis@baylibre.com>
----
-Filtered mode was set by mistake and difficulties with the test setup
-prevented from catching this earlier. Use default mode (immediate mode)
-instead.
----
- drivers/thermal/mediatek/lvts_thermal.c | 6 ------
- 1 file changed, 6 deletions(-)
+Noted! ;)
 
-diff --git a/drivers/thermal/mediatek/lvts_thermal.c b/drivers/thermal/mediatek/lvts_thermal.c
-index 0bb3a495b56e..82c355c466cf 100644
---- a/drivers/thermal/mediatek/lvts_thermal.c
-+++ b/drivers/thermal/mediatek/lvts_thermal.c
-@@ -1458,7 +1458,6 @@ static const struct lvts_ctrl_data mt8188_lvts_mcu_data_ctrl[] = {
- 		},
- 		VALID_SENSOR_MAP(1, 1, 1, 1),
- 		.offset = 0x0,
--		.mode = LVTS_MSR_FILTERED_MODE,
- 	},
- 	{
- 		.lvts_sensor = {
-@@ -1469,7 +1468,6 @@ static const struct lvts_ctrl_data mt8188_lvts_mcu_data_ctrl[] = {
- 		},
- 		VALID_SENSOR_MAP(1, 1, 0, 0),
- 		.offset = 0x100,
--		.mode = LVTS_MSR_FILTERED_MODE,
- 	}
- };
- 
-@@ -1483,7 +1481,6 @@ static const struct lvts_ctrl_data mt8188_lvts_ap_data_ctrl[] = {
- 		},
- 		VALID_SENSOR_MAP(0, 1, 0, 0),
- 		.offset = 0x0,
--		.mode = LVTS_MSR_FILTERED_MODE,
- 	},
- 	{
- 		.lvts_sensor = {
-@@ -1496,7 +1493,6 @@ static const struct lvts_ctrl_data mt8188_lvts_ap_data_ctrl[] = {
- 		},
- 		VALID_SENSOR_MAP(1, 1, 1, 0),
- 		.offset = 0x100,
--		.mode = LVTS_MSR_FILTERED_MODE,
- 	},
- 	{
- 		.lvts_sensor = {
-@@ -1507,7 +1503,6 @@ static const struct lvts_ctrl_data mt8188_lvts_ap_data_ctrl[] = {
- 		},
- 		VALID_SENSOR_MAP(1, 1, 0, 0),
- 		.offset = 0x200,
--		.mode = LVTS_MSR_FILTERED_MODE,
- 	},
- 	{
- 		.lvts_sensor = {
-@@ -1518,7 +1513,6 @@ static const struct lvts_ctrl_data mt8188_lvts_ap_data_ctrl[] = {
- 		},
- 		VALID_SENSOR_MAP(1, 1, 0, 0),
- 		.offset = 0x300,
--		.mode = LVTS_MSR_FILTERED_MODE,
- 	}
- };
- 
+>> + */
+>> +
+>> +#ifndef __ASM_RSI_H_
+>> +#define __ASM_RSI_H_
+>> +
+>> +#include <linux/jump_label.h>
+>> +#include <asm/rsi_cmds.h>
+>> +
+>> +extern struct static_key_false rsi_present;
+> 
+> Nitpick: we tend to use DECLARE_STATIC_KEY_FALSE(), it pairs with
+> DEFINE_STATIC_KEY_FALSE().
 
----
-base-commit: 82d92a9a1b9ea0ea52aff27cddd05009b4edad49
-change-id: 20240515-mtk-thermal-mt8188-mode-fix-e583d9a31da1
+Makes sense.
 
-Best regards,
--- 
-Julien Panis <jpanis@baylibre.com>
+>> +void arm64_setup_memory(void);
+>> +
+>> +void __init arm64_rsi_init(void);
+>> +static inline bool is_realm_world(void)
+>> +{
+>> +	return static_branch_unlikely(&rsi_present);
+>> +}
+>> +
+>> +static inline void set_memory_range(phys_addr_t start, phys_addr_t end,
+>> +				    enum ripas state)
+>> +{
+>> +	unsigned long ret;
+>> +	phys_addr_t top;
+>> +
+>> +	while (start != end) {
+>> +		ret = rsi_set_addr_range_state(start, end, state, &top);
+>> +		BUG_ON(ret);
+>> +		BUG_ON(top < start);
+>> +		BUG_ON(top > end);
+> 
+> Are these always fatal? BUG_ON() is frowned upon in general. The
+> alternative would be returning an error code from the function and maybe
+> printing a warning here (it seems that some people don't like WARN_ON
+> either but it's better than BUG_ON; could use a pr_err() instead). Also
+> if something's wrong with the RSI interface to mess up the return
+> values, it will be hard to debug just from those BUG_ON().
+> 
+> If there's no chance of continuing beyond the point, add a comment on
+> why we have a BUG_ON().
 
+I think you're right, these shouldn't be (immediately) fatal - if this
+is a change happening at runtime it might be possible to handle it.
+However, at boot time it makes no sense to try to continue (which is
+what I was originally looking at when this was written) as the
+environment isn't what the guest is expecting, and continuing will
+either lead to a later crash, attestation failure, or potential exploit
+if the guest can be somehow be tricked to use the shared mapping rather
+than the protected one.
+
+I'll update the set_memory_range...() functions to return an error code
+and push the boot BUG_ON up the chain (with a comment). But this is
+still in the "should never happen" situation so I'll leave a WARN_ON here.
+
+>> diff --git a/arch/arm64/kernel/rsi.c b/arch/arm64/kernel/rsi.c
+>> new file mode 100644
+>> index 000000000000..1076649ac082
+>> --- /dev/null
+>> +++ b/arch/arm64/kernel/rsi.c
+>> @@ -0,0 +1,58 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +/*
+>> + * Copyright (C) 2023 ARM Ltd.
+>> + */
+>> +
+>> +#include <linux/jump_label.h>
+>> +#include <linux/memblock.h>
+>> +#include <asm/rsi.h>
+>> +
+>> +DEFINE_STATIC_KEY_FALSE_RO(rsi_present);
+>> +EXPORT_SYMBOL(rsi_present);
+> 
+> Does this need to be made available to loadable modules?
+
+It's used by drivers/virt/coco/arm-cca-guest/arm-cca-guest.c (through
+is_realm_world()) which can be built as a module - see patch 14.
+
+>> +
+>> +static bool rsi_version_matches(void)
+>> +{
+>> +	unsigned long ver;
+>> +	unsigned long ret = rsi_get_version(RSI_ABI_VERSION, &ver, NULL);
+> 
+> I wonder whether rsi_get_version() is the right name (I know it was
+> introduced in the previous patch but the usage is here, hence my
+> comment). From the RMM spec, this looks more like an
+> rsi_request_version() to me.
+> 
+> TBH, the RMM spec around versioning doesn't fully make sense to me ;). I
+> assume people working on it had some good reasons around the lower
+> revision reporting in case of an error.
+
+There's been a fair bit of discussion around versioning. Currently the
+RMM implementation is very much a "get version" function. The issue was
+what happens if in the future there is an incompatible RMM spec (i.e.
+v2.0). The intention is that old OSes will provide the older version
+number and give the RMM the opportunity to 'emulate' it. Equally where
+the OS supports multiple versions then there's a need to negotiate a
+commonly accepted version.
+
+In terms of naming - mostly I've tried to just follow the spec, but the
+naming in the spec isn't great. Calling the function rsi_version() would
+be confusing so a verb is needed, but I'm not hung up on the verb. I'll
+change it to rsi_request_version().
+
+>> +
+>> +	if (ret == SMCCC_RET_NOT_SUPPORTED)
+>> +		return false;
+>> +
+>> +	if (ver != RSI_ABI_VERSION) {
+>> +		pr_err("RME: RSI version %lu.%lu not supported\n",
+>> +		       RSI_ABI_VERSION_GET_MAJOR(ver),
+>> +		       RSI_ABI_VERSION_GET_MINOR(ver));
+>> +		return false;
+>> +	}
+> 
+> The above check matches what the spec says but wouldn't it be clearer to
+> just check for ret == RSI_SUCCESS? It saves one having to read the spec
+> to figure out what lower revision actually means in the spec (not the
+> actual lowest supported but the highest while still lower than the
+> requested one _or_ equal to the higher revision if the lower is higher
+> than the requested one - if any of this makes sense to people ;), I'm
+> sure I missed some other combinations).
+
+Indeed - I got similar feedback on the RMI side. The spec evolved and I
+forgot to update it. It should be sufficient (for now) to just look for
+RSI_SUCCESS. Only when we start supporting multiple versions (on the
+Linux side) do we need to look at the returned version numbers.
+
+>> +
+>> +	pr_info("RME: Using RSI version %lu.%lu\n",
+>> +		RSI_ABI_VERSION_GET_MAJOR(ver),
+>> +		RSI_ABI_VERSION_GET_MINOR(ver));
+>> +
+>> +	return true;
+>> +}
+>> +
+>> +void arm64_setup_memory(void)
+> 
+> I would give this function a better name, something to resemble the RSI
+> setup. Similarly for others like set_memory_range_protected/shared().
+> Some of the functions have 'rsi' in the name like arm64_rsi_init() but
+> others don't and at a first look they'd seem like some generic memory
+> setup on arm64, not RSI-specific.
+
+Ack.
+
+>> +{
+>> +	u64 i;
+>> +	phys_addr_t start, end;
+>> +
+>> +	if (!static_branch_unlikely(&rsi_present))
+>> +		return;
+> 
+> We have an accessor for rsi_present - is_realm_world(). Why not use
+> that?
+
+Will change.
+
+>> +
+>> +	/*
+>> +	 * Iterate over the available memory ranges
+>> +	 * and convert the state to protected memory.
+>> +	 */
+>> +	for_each_mem_range(i, &start, &end) {
+>> +		set_memory_range_protected(start, end);
+>> +	}
+>> +}
+>> +
+>> +void __init arm64_rsi_init(void)
+>> +{
+>> +	if (!rsi_version_matches())
+>> +		return;
+>> +
+>> +	static_branch_enable(&rsi_present);
+>> +}
+>> diff --git a/arch/arm64/kernel/setup.c b/arch/arm64/kernel/setup.c
+>> index 65a052bf741f..a4bd97e74704 100644
+>> --- a/arch/arm64/kernel/setup.c
+>> +++ b/arch/arm64/kernel/setup.c
+>> @@ -43,6 +43,7 @@
+>>  #include <asm/cpu_ops.h>
+>>  #include <asm/kasan.h>
+>>  #include <asm/numa.h>
+>> +#include <asm/rsi.h>
+>>  #include <asm/scs.h>
+>>  #include <asm/sections.h>
+>>  #include <asm/setup.h>
+>> @@ -293,6 +294,8 @@ void __init __no_sanitize_address setup_arch(char **cmdline_p)
+>>  	 * cpufeature code and early parameters.
+>>  	 */
+>>  	jump_label_init();
+>> +	/* Init RSI after jump_labels are active */
+>> +	arm64_rsi_init();
+>>  	parse_early_param();
+> 
+> Does it need to be this early? It's fine for now but I wonder whether we
+> may have some early parameter at some point that could influence what we
+> do in the arm64_rsi_init(). I'd move it after or maybe even as part of
+> the arm64_setup_memory(), though I haven't read the following patches if
+> they update this function.
+
+As Suzuki said - it's needed for "earlycon" to work - I'll put a comment
+in explaining.
+
+>>  
+>>  	dynamic_scs_init();
+>> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
+>> index 03efd86dce0a..786fd6ce5f17 100644
+>> --- a/arch/arm64/mm/init.c
+>> +++ b/arch/arm64/mm/init.c
+>> @@ -40,6 +40,7 @@
+>>  #include <asm/kvm_host.h>
+>>  #include <asm/memory.h>
+>>  #include <asm/numa.h>
+>> +#include <asm/rsi.h>
+>>  #include <asm/sections.h>
+>>  #include <asm/setup.h>
+>>  #include <linux/sizes.h>
+>> @@ -313,6 +314,7 @@ void __init arm64_memblock_init(void)
+>>  	early_init_fdt_scan_reserved_mem();
+>>  
+>>  	high_memory = __va(memblock_end_of_DRAM() - 1) + 1;
+>> +	arm64_setup_memory();
+>>  }
+> 
+> This feels like a random placement. This function is about memblock
+> initialisation. You might as well put it in paging_init(), it could make
+> more sense there. But I'd rather keep it in setup_arch() immediately
+> after arm64_memblock_init().
+> 
+
+Will move.
+
+Thanks,
+
+Steve
 
