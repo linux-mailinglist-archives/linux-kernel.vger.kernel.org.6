@@ -1,51 +1,52 @@
-Return-Path: <linux-kernel+bounces-180251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82B628C6C0C
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 20:15:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 94ED88C6C0B
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 20:15:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F15EB2199D
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:15:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20156B2188D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:15:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C011F15956E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDAAF159565;
 	Wed, 15 May 2024 18:15:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hd7/Rcge"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OoetWJYT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F09D3433BC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0A1A158DA8;
 	Wed, 15 May 2024 18:15:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715796913; cv=none; b=G83pDr2sL/Flq8eKFEUuTT/9quQHpBJHQpqv6dAZ+x4Zxwp1E9bthMV1+JMWOIazD163sDeSOSJxoTETDGLnTgvFvLrem33DTPcsbqUXNFuC2AVQWgaqnvtuicTyWfcDM8UEJtsNVRZOc9Ipn5mlUiDRju3HS4SG1V030jOVv70=
+	t=1715796913; cv=none; b=h1IgBe02HoJ3C6NpWjqGvz/rekxwyPYiOHqdyeuDUYaAUzWJNZxHzoh0p+Vjr90+cHXsoFIw5hYLUOTiKWyzGPukOnI4FRp72pslKjWsj3yrflFUGZ7Tch/cUeiIQqnySEYL70TyNDgnZYOsPx5eh9Fqy2DYvgX3zzD87xg6R+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1715796913; c=relaxed/simple;
-	bh=PGURJy5MHlm6XUXszUKhFzRvUcIs8Hj8iEYpUECP0Y0=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ReGE9MTFqrfuhb7t+iAbXxhlSoKSEV8z8kbdS5brUfTT0BXE6wH9IeEMsWmf01zba5Lr5aGGpwAGLglCYb+rbX2oviC2jkBWf+IFOEKnzeCOeQY2lX4vo226sFVR2mKyz567Q7WJ5nGHCrRxrEAwJcBjNeeyjHmvWIkRS8rmQdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hd7/Rcge; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 8769FC116B1;
+	bh=06YY8ApMgy1OpGHdIukderyzK7KzMNwwBa335Fe5Jbo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=O5KClwUwerdleU7Kd72ZAuZtk479TPk2fzINrqG5SWuD3t/5WdcPenA2R8V/tQdPFkDaFBsOMHfq4zbLEv897r7gOMnAv5m25BdtHUFDNf+6dUCQIPkFkyQCI19/glru66S57SYjUB0KD4w2rLzukpcM+8AzEElUhDN0txBgZmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OoetWJYT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 93A7EC32781;
 	Wed, 15 May 2024 18:15:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1715796912;
-	bh=PGURJy5MHlm6XUXszUKhFzRvUcIs8Hj8iEYpUECP0Y0=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=hd7/RcgeU+BH0ZVdd5Yv4E6Gc1pYPqQbLyN/McVEe81RoVUpZKEdkQcV852AEeB4W
-	 y2t19I7ndNisZyChd3JQzVOon9tqvDU1DLHo54Sndf4i9MMaHhPAlejBuNcw/8t80V
-	 YuhWhFz67Dfpkm0xX9jEKc5tbXsAYJ0p/REr11DjXbMJ2ActMLoJ/Pbudc8X0IxHib
-	 KnpQ3Vvnl9HdsloREjmwdClkd4kIqT6E3HcdxOyoGViToK2Pe8mlItEqKqeq6ZoJdm
-	 CNfQa37pJAXNVN7m0QkOHQahTkUdxH9hnBXXvAlLQdFcMrVnBrGRJYXZESVtFqtXc/
-	 ckaq6Qei0W5BA==
+	bh=06YY8ApMgy1OpGHdIukderyzK7KzMNwwBa335Fe5Jbo=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=OoetWJYTHEGhiEbwzPmF15VydeMUzSo15wEoZUAf52avZs8u9Z0Capl5nyjpRk3W4
+	 S+/7xbtCMD1BMV0K80Uf3kyV19yF+ERRAyBN5FB/I2NmBlBgKRfR1rxLxLCyby4Jel
+	 DjF+igxvNhXh5xzcC4tZ3vqqGK+e5BL1um58rLGP1ph8QbLpoZIVrDxZw0uzT08EB6
+	 qoTMoKkSVDpXgjrsNuWfoWqww6P8+/WpCqYuIWkSrH721Kjpdy1IVlZw+W9IiluqZ6
+	 M8hO6mx+1M7F2AaKCXS+ykqCaY2v8ohJD8SofkvBSXoHfo07bN5loH25qTdX4AUu9q
+	 ejsYMQfY1cziQ==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76F79C25B75;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85575C25B78;
 	Wed, 15 May 2024 18:15:12 +0000 (UTC)
 From: Sven Peter via B4 Relay <devnull+sven.svenpeter.dev@kernel.org>
-Subject: [PATCH v2 0/3] Bluetooth: hci_bcm4377 fixes
-Date: Wed, 15 May 2024 18:15:01 +0000
-Message-Id: <20240515-btfix-msgid-v2-0-bb06b9ecb6d1@svenpeter.dev>
+Date: Wed, 15 May 2024 18:15:02 +0000
+Subject: [PATCH v2 1/3] Bluetooth: hci_bcm4377: Use correct unit for
+ timeouts
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,23 +55,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAKX7RGYC/22MQQ7CIBBFr9LM2jGAVcSV9zBdgEzbWUgbIETTc
- Hexa5fv/7y3QaLIlODWbRCpcOIlNFCHDp6zDRMh+8aghOrFWSp0eeQ3vtLEHr2+CGWs9kZqaMY
- aqZ177TE0njnlJX72eJG/9X+nSBRonXTenK5Wj/09FQorZYpHTwWGWusXkPK1faoAAAA=
+Message-Id: <20240515-btfix-msgid-v2-1-bb06b9ecb6d1@svenpeter.dev>
+References: <20240515-btfix-msgid-v2-0-bb06b9ecb6d1@svenpeter.dev>
+In-Reply-To: <20240515-btfix-msgid-v2-0-bb06b9ecb6d1@svenpeter.dev>
 To: Hector Martin <marcan@marcan.st>, 
  Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
  Marcel Holtmann <marcel@holtmann.org>, 
  Luiz Augusto von Dentz <luiz.dentz@gmail.com>
 Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
  linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Sven Peter <sven@svenpeter.dev>, stable@vger.kernel.org, 
- Neal Gompa <neal@gompa.dev>
+ Sven Peter <sven@svenpeter.dev>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1715796911; l=1561;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1715796911; l=839;
  i=sven@svenpeter.dev; s=20240512; h=from:subject:message-id;
- bh=PGURJy5MHlm6XUXszUKhFzRvUcIs8Hj8iEYpUECP0Y0=;
- b=rWKwkEblh6RdLBuKAhQAswaTPpV6aL8Wlnu8pLb0phkNIIfvgOLdAMCME/FjRPa1SgQyUa4Vu
- txh3IgfhG9KCoQ9FpGoeKnyAJ6Htc4DOcOoVEJvVsMLLMP30Ve5yNKd
+ bh=7gQn02PYjfQWipM5wmSh7cRXbC3rcrKdfUfT0gxlvsA=;
+ b=5vuT3iBepkv/NY4S5torbyPLDbQY84+ans4BusJj/uJoM6EIqY5izWUCJv/R9gWadUKYhg+sU
+ pnvq3oniF36ArujjWEGXIvjbZukR6B/RB7+8A1jxROyY4DQpNkQcJra
 X-Developer-Key: i=sven@svenpeter.dev; a=ed25519;
  pk=jIiCK29HFM4fFOT2YTiA6N+4N7W+xZYQDGiO0E37bNU=
 X-Endpoint-Received: by B4 Relay for sven@svenpeter.dev/20240512 with
@@ -78,52 +78,33 @@ X-Endpoint-Received: by B4 Relay for sven@svenpeter.dev/20240512 with
 X-Original-From: Sven Peter <sven@svenpeter.dev>
 Reply-To: sven@svenpeter.dev
 
-Hi,
+From: Sven Peter <sven@svenpeter.dev>
 
-There are just two minor fixes from Hector that we've been carrying downstream
-for a while now. One increases the timeout while waiting for the firmware to
-boot which is optional for the controller already supported upstream but
-required for a newer 4388 board for which we'll also submit support soon.
-It also fixes the units for the timeouts which is why I've already included it
-here. The other one fixes a call to bitmap_release_region where we only wanted
-to release a single bit but are actually releasing much more.
+BCM4377_TIMEOUT is always used to wait for completitions and their API
+expects a timeout in jiffies instead of msecs.
 
-Best,
-
-Sven
-
-To: Hector Martin <marcan@marcan.st>
-To: Alyssa Rosenzweig <alyssa@rosenzweig.io>
-To: Marcel Holtmann <marcel@holtmann.org>
-To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Cc: asahi@lists.linux.dev
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-bluetooth@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+Fixes: 8a06127602de ("Bluetooth: hci_bcm4377: Add new driver for BCM4377 PCIe boards")
 Signed-off-by: Sven Peter <sven@svenpeter.dev>
-
-Changes in v2:
-- split the timeout commit into two
-- collect Neal's tag
-- Link to v1: https://lore.kernel.org/r/20240512-btfix-msgid-v1-0-ab1bd938a7f4@svenpeter.dev
-
 ---
-Hector Martin (2):
-      Bluetooth: hci_bcm4377: Increase boot timeout
-      Bluetooth: hci_bcm4377: Fix msgid release
+ drivers/bluetooth/hci_bcm4377.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Sven Peter (1):
-      Bluetooth: hci_bcm4377: Use correct unit for timeouts
+diff --git a/drivers/bluetooth/hci_bcm4377.c b/drivers/bluetooth/hci_bcm4377.c
+index 9a7243d5db71..caf9b64c8111 100644
+--- a/drivers/bluetooth/hci_bcm4377.c
++++ b/drivers/bluetooth/hci_bcm4377.c
+@@ -32,7 +32,7 @@ enum bcm4377_chip {
+ #define BCM4378_DEVICE_ID 0x5f69
+ #define BCM4387_DEVICE_ID 0x5f71
+ 
+-#define BCM4377_TIMEOUT 1000
++#define BCM4377_TIMEOUT msecs_to_jiffies(1000)
+ 
+ /*
+  * These devices only support DMA transactions inside a 32bit window
 
- drivers/bluetooth/hci_bcm4377.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
----
-base-commit: cf87f46fd34d6c19283d9625a7822f20d90b64a4
-change-id: 20240512-btfix-msgid-d76029a7d917
-
-Best regards,
 -- 
-Sven Peter <sven@svenpeter.dev>
+2.34.1
 
 
 
