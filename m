@@ -1,122 +1,130 @@
-Return-Path: <linux-kernel+bounces-180402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DC4F8C6DFA
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 23:49:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C4638C6DFC
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 23:50:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44675283EDF
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 21:49:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14E041F2260D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 21:50:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C13315B571;
-	Wed, 15 May 2024 21:49:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ACE815B562;
+	Wed, 15 May 2024 21:50:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ferroamp-se.20230601.gappssmtp.com header.i=@ferroamp-se.20230601.gappssmtp.com header.b="JB6aB5bk"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="oi7oaaXf"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52B6315B558
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 21:48:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8F8B13FD85
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 21:50:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715809740; cv=none; b=BJ8BSBlmeWWPtZI96VXIY8/ts32uGNoAPWOjgGoFwo96GlYcjAsO46QfriXNnjdhA6UonAyLOGlQ/mNRc+ceQRye9zTt+dUwQ0cQjmoLlwFVZvisXU3hFCmj+RyLcEsMgGyTmXEMOvRjpmuqOwTCVeIJ9o5O0wcNsgkwgV5N1E0=
+	t=1715809820; cv=none; b=cWOKnHq/b9f3XZIts4UBwOZRQspMnqmvuz4honT9RkTAnxYasjfUhaHKHl2vPGY6vzmcYfOneyi5+WocGRUK45+Ah3WaA0nMangULwKnYvfxR5ypfA7bhRPRfkyLnxp5k1rWkHuSqZ1Noa3TNpYi2dPZG5R1eweF/amf2TdQnIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715809740; c=relaxed/simple;
-	bh=dYxBvXIkkIPnkxqSbj9IyfDH5umyBNzNhJPJzCi/wu4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kjINlkWg2BYLxU6pTbfHOfxq4joqR7PnA19ORn7HFKkqMno2miUw8JmLOC1+KGFuufWoqpfOC0Gh7haeYJTLXPoOYGK7m82wFnfj6rd3+fPNrLTu+3zE7zndIZWxqcDvjTi53ex/zAa/m6JPIylvDLOhjtBEmeE/deQOFQnRH+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ferroamp.se; spf=pass smtp.mailfrom=ferroamp.se; dkim=pass (2048-bit key) header.d=ferroamp-se.20230601.gappssmtp.com header.i=@ferroamp-se.20230601.gappssmtp.com header.b=JB6aB5bk; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ferroamp.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ferroamp.se
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-51f60817e34so72207e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 14:48:59 -0700 (PDT)
+	s=arc-20240116; t=1715809820; c=relaxed/simple;
+	bh=c4LlbPQQIBW0EY+raJTf9Sq+v6mtxv6mLuVOawRyfPI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Pp+BDc93fuo7PbYPGjSENBMgpnIFbNOOnAR70MBhOLhWj7NqPSX4f3B4CRIZq9BKlnU2zG7vrcA+8kzxaATh7ovNv7Lmd/c5Qmo51e/IDj5qjM6lb6+kfF314m7Nl8DneGc7wdTA4PN4jsggynPzmYpa9dxMLI9eC2c9sSs3BeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=oi7oaaXf; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-6f4302187c0so5707272b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 14:50:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ferroamp-se.20230601.gappssmtp.com; s=20230601; t=1715809737; x=1716414537; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NbHxK0tJj+d8ac7+efgFv40pBbo32UT05hThpFtt0Dk=;
-        b=JB6aB5bkYA53KgfXnlusszz1aNBPGiRfCO01n6ELYVxY+h2UfUA47v5Hg4KsYaZfm5
-         1ezkLibqogfhP1/hAQvsbMRGeGQfJIbwqRONpUXEwzL0iTHRmLd025ahh26Rep3wBGOs
-         l6jMnZkJKBdvqmCQ7gESQHk6F0td0MMWqZfKliXLazBLsaxU5LCVF1vAr2EmUtDqbHgU
-         dfmEMMB6sdKpZqjCiGDtQYr7J8mfdkhaifKuuMLkNcev5seUzebg2TVQUzPTyQheVT6Q
-         2Vc3a8o0dr4apMS2RRVgEbxZE/sGpwu5aweQvhr9asBTPJHb1DPS3z6vHliiBVRiwdVZ
-         ePeQ==
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1715809817; x=1716414617; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zPoEGWcFNM5Ac7p7zaIQJhacd+hmWksSsGfBqQ9x+34=;
+        b=oi7oaaXfsQoDaW/uOAHCsTugqXoWZ9G83+UEduJGM0l8L/5f1B1Klu2qLSYP6/EYxr
+         cPLSrrTCTITOuYWS9P9jaD5ZAkDKsZXYT3HohurUkewgMA2y8fnv/yHT94OlcgLRWOXY
+         xw9EN2apmSCYbINejUj8O0/7IA771avVaSTuFMMi0PmitxPXwltWfwJghKlCPNhrv3hN
+         ZJpJISQMS5dICT7pc7OXLzSDv2LCrZ4VxrvKtwLjAOoFEw7kV9Wntpqho6kp9f2CwgoK
+         D7mCoL04trfMxZJMkbSVWhZg3dAVlNWNf/ojyT9NQINhdcUWsuVGKlfOEvTTNgHzbXhT
+         Qx7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715809737; x=1716414537;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NbHxK0tJj+d8ac7+efgFv40pBbo32UT05hThpFtt0Dk=;
-        b=U3EiZAIRz+nPpGI5xPcUcPMsp0QhXuc2R/RW04LwfEQk8Qzf/L36k33D2L0EeKtcva
-         uXQVSK3PdTiRsnbytpHD66Vg6yEgNopc25RnjgEzWfBzVyQOtcD8UMERDigd2aom5unF
-         m8OxG5EYmWQMeKY4t+kB2J8MSQaMzecFSBxd6OvbAIXFumlhzhPz5lvyDuOL/Z3gBkFz
-         VAhigWYkuxkx9Xnm1X05DA3UdxsMGj0Is/ZHUne86mDYOJ1Zj4bKOwgPjOPagWgIes1Q
-         pnNJlzsQAatj+xCxYZcWglem5MV4GIFlQLAILTUwCWnXkFKjc3h9+o83uNeF3HIzWMoH
-         8sQA==
-X-Forwarded-Encrypted: i=1; AJvYcCWpq0NwWz0vX+K4Er7u1M4o2V5seAw+8RPTYQBvAGUA1KZWp5DWntQdUAQw1gpMWapM6in0jexI2bbsXQdleouxh+SHow7yI3pLbgsw
-X-Gm-Message-State: AOJu0YxYIdDAojs8Gn4/ZHtZ3efv7v5oKHS3PCxjunEYaUsLC46LD10l
-	5W/Mq88BEh/lBPpCkUv8xVIzll/kb+8rKA/zZ+79uaY5RwSJI6mjWFwse2begVA=
-X-Google-Smtp-Source: AGHT+IFVo+jBTASsbcknHoB6KxnDq74BPVXn3gknwHhVlO4HPpwL5hatGD02RQSDY6ts4L0JE+ESqg==
-X-Received: by 2002:ac2:494a:0:b0:51c:dffc:41f2 with SMTP id 2adb3069b0e04-5220fa71c21mr10626186e87.1.1715809737520;
-        Wed, 15 May 2024 14:48:57 -0700 (PDT)
-Received: from minibuilder (c188-149-135-220.bredband.tele2.se. [188.149.135.220])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-523ba138259sm26690e87.269.2024.05.15.14.48.56
+        d=1e100.net; s=20230601; t=1715809817; x=1716414617;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zPoEGWcFNM5Ac7p7zaIQJhacd+hmWksSsGfBqQ9x+34=;
+        b=q/fhA21P40wwL7WqAgUJFTOghRNea+0jQVOl00A/5H0n0NvsHgeZfVkF6lKUMxmiZh
+         1JQOqHCvnE3om9EXXRflqeBbuHzKQ9U2DocgLcKtOCgumGysxJag7rwoUTpY7SG132/D
+         FJOdDzGkCTQBm+xUV4/SJ3av9I5Sz1bNdUZrd2woDhvFf0vx6CPz3GCUBotgw+UkEtMT
+         sSCjaAuTAKkmT51f0aK8IB8C5v2WmkjcFp2hwoyFC02cg5kgvYMXCHbJ/ZfIPLMqwHyk
+         gwIRXx6x5Np6YmjwY9MTFrK43yFrJ9OZ3dO6up2XWKfUoGolWg8q+E8jTeERYhUImabm
+         pIVA==
+X-Forwarded-Encrypted: i=1; AJvYcCVdugBnr9GtMcnLBYMP/gb/8Jxgw6T17Kmys6MNBJ+bztkqFazbPLGMqpedxdgdrEl4KiDICKKi0IR36yDTudGCmm/pQdEvifF/GOLo
+X-Gm-Message-State: AOJu0Yzy75r2y/Q7GzZliPhVbZDAk0sfieYQG+ywhZTqSemKhWxHRdcA
+	et1iaxFazHGHX7esTTCiTSBfSk6SbJ8Q0rCtLdE7ovlnCX1YodNNBVtBNpEXX9c=
+X-Google-Smtp-Source: AGHT+IF5Gr9Uvw1E9W3ONU1uWg3LggBP3lJhDNnWVyW+gMvBcIPC/4PE3shbuxqBWxeL539zSSHZrA==
+X-Received: by 2002:a05:6a20:4323:b0:1af:58f8:1190 with SMTP id adf61e73a8af0-1afde0d5a81mr23719147637.12.1715809817327;
+        Wed, 15 May 2024 14:50:17 -0700 (PDT)
+Received: from charlie.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2a827fdsm11638629b3a.60.2024.05.15.14.50.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 May 2024 14:48:57 -0700 (PDT)
-Date: Wed, 15 May 2024 23:48:55 +0200
-From: =?iso-8859-1?Q?Ram=F3n?= Nordin Rodriguez <ramon.nordin.rodriguez@ferroamp.se>
-To: Parthiban.Veerasooran@microchip.com
-Cc: andrew@lunn.ch, Pier.Beruto@onsemi.com, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	horms@kernel.org, saeedm@nvidia.com, anthony.l.nguyen@intel.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	corbet@lwn.net, linux-doc@vger.kernel.org, robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-	devicetree@vger.kernel.org, Horatiu.Vultur@microchip.com,
-	ruanjinjie@huawei.com, Steen.Hegelund@microchip.com,
-	vladimir.oltean@nxp.com, UNGLinuxDriver@microchip.com,
-	Thorsten.Kummermehr@microchip.com, Selvamani.Rajagopal@onsemi.com,
-	Nicolas.Ferre@microchip.com, benjamin.bigler@bernformulastudent.ch
-Subject: Re: [PATCH net-next v4 05/12] net: ethernet: oa_tc6: implement error
- interrupts unmasking
-Message-ID: <ZkUtx1Pj6alRhYd6@minibuilder>
-References: <ZjKJ93uPjSgoMOM7@builder>
- <b7c7aad7-3e93-4c57-82e9-cb3f9e7adf64@microchip.com>
- <ZjNorUP-sEyMCTG0@builder>
- <ae801fb9-09e0-49a3-a928-8975fe25a893@microchip.com>
- <fd5d0d2a-7562-4fb1-b552-6a11d024da2f@lunn.ch>
- <BY5PR02MB678683EADBC47A29A4F545A59D1C2@BY5PR02MB6786.namprd02.prod.outlook.com>
- <ZkG2Kb_1YsD8T1BF@minibuilder>
- <708d29de-b54a-40a4-8879-67f6e246f851@lunn.ch>
- <ZkIakC6ixYpRMiUV@minibuilder>
- <6e4207cd-2bd5-4f5b-821f-bc87c1296367@microchip.com>
+        Wed, 15 May 2024 14:50:15 -0700 (PDT)
+From: Charlie Jenkins <charlie@rivosinc.com>
+Subject: [PATCH 0/2] riscv: Allow vlenb to be probed from DT
+Date: Wed, 15 May 2024 14:50:13 -0700
+Message-Id: <20240515-add_vlenb_to_dt-v1-0-4ebd7cba0aa1@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6e4207cd-2bd5-4f5b-821f-bc87c1296367@microchip.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABUuRWYC/3WNwQ7CIBAFf6XZsxhowRpP/odpSIHFbqJgoCGah
+ n8Xe/c4k7x5G2RMhBku3QYJC2WKoYE4dGCXOdyRkWsMPe8lV0Kx2TldHhiMXqN2Kxv4aIzkJ7R
+ WQVu9Enp678Xb1HihvMb02Q+K+Nn/rSIYZ54PfpQjDrI/XxOVmCnYo41PmGqtX85eqYyxAAAA
+To: Conor Dooley <conor@kernel.org>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
+Cc: Palmer Dabbelt <palmer@sifive.com>, linux-riscv@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Charlie Jenkins <charlie@rivosinc.com>, 
+ Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1715809814; l=1245;
+ i=charlie@rivosinc.com; s=20231120; h=from:subject:message-id;
+ bh=c4LlbPQQIBW0EY+raJTf9Sq+v6mtxv6mLuVOawRyfPI=;
+ b=+GS9U1THGMp1qD7oH2HEN2rPKyTNMLV48Ujp0YQK3a3r6JILWA3YeyyDpN6XLBgdWmg/ewOQz
+ EytEXhrktHbB9pkexU5E3ZawhX1Kj8dAqEM+y0Upld68uUOeVc82Hc9
+X-Developer-Key: i=charlie@rivosinc.com; a=ed25519;
+ pk=t4RSWpMV1q5lf/NWIeR9z58bcje60/dbtxxmoSfBEcs=
 
-On Tue, May 14, 2024 at 04:46:58AM +0000, Parthiban.Veerasooran@microchip.com wrote:
-> >> Is it doing this in an endless cycle?
-> > 
-> > Exactly, so what I'm seeing is when the driver livelocks the macphy is
-> > periodically pulling the irq pin low, the driver clears the interrupt
-> > and repeat.
-> If I understand correctly, you are keep on getting interrupt without 
-> indicating anything in the footer?. Are you using LAN8650 Rev.B0 or B1?. 
-> If it is B0 then can you try with Rev.B1 once?
-> 
+The kernel currently requires all harts to have the same value in the
+vlenb csr that is present when a hart supports vector. In order to read
+this csr, the kernel needs to boot the hart. Adding vlenb to the DT will
+allow the kernel to detect the inconsistency early and not waste time
+trying to boot harts that it doesn't support.
 
-I'll check the footer content, thanks for the tip!
+Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
 
-All testing has bee done with Rev.B0, we've located a set of B1 chips.
-So we'll get on resoldering and rerunning the test scenario.
+---
+The two patches in this series were previously part of a series "riscv:
+Support vendor extensions and xtheadvector" but has been factored out
+due to a lack of reviews on the thead specific parts so that series will
+be updated separately.
 
-R
+---
+Charlie Jenkins (1):
+      riscv: vector: Use vlenb from DT
+
+Conor Dooley (1):
+      dt-bindings: riscv: cpus: add a vlen register length property
+
+ Documentation/devicetree/bindings/riscv/cpus.yaml |  6 +++
+ arch/riscv/include/asm/cpufeature.h               |  2 +
+ arch/riscv/kernel/cpufeature.c                    | 47 +++++++++++++++++++++++
+ arch/riscv/kernel/vector.c                        | 12 +++++-
+ 4 files changed, 66 insertions(+), 1 deletion(-)
+---
+base-commit: a38297e3fb012ddfa7ce0321a7e5a8daeb1872b6
+change-id: 20240515-add_vlenb_to_dt-307bb406ecc5
+-- 
+- Charlie
+
 
