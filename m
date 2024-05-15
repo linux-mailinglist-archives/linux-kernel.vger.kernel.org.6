@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-179990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2AFD8C6889
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:23:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A96A8C688C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:24:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5FEE6B24C47
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 14:23:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BAF21C21131
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 14:24:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F04AB13FD68;
-	Wed, 15 May 2024 14:23:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0B6F13FD63;
+	Wed, 15 May 2024 14:23:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aB2THjf9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fGKeOwgC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F8E46214D;
-	Wed, 15 May 2024 14:23:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2997C13F431;
+	Wed, 15 May 2024 14:23:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715783003; cv=none; b=LCWXMbTTuzy+v3j6N+loFw7x/u6+OuxzssEa8i7ZfKKEXvayEFinkquoRdqBGdnSwefYHDgFbcGGkM0KfD14722mFzBSUy5yjlQrBW804wVyA/Kw1EItfyG5fI/h4M1Ld1QqastLni+52pRAamyoMG7M0nGucWjBzL0sDpH7OTI=
+	t=1715783033; cv=none; b=U9gpbOLbuxySj1sU4p+nlh7wO/h92d3rZHzJc87ig8Y1MWfbway7puiQRKHaWBTt2EJCXXkd+1Li97xRda3Y8527waWjvVlqF0GXzsn262VfozEcjzsgOpyvLTgaFBerNNV2CvIs5yIrm9jhwb7BD2QA26wqZYmgbz8eoOC4FfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715783003; c=relaxed/simple;
-	bh=b2WSbJJtikE2IrS3tTleC0R//uK4vxCZ7pxmMLEk25E=;
+	s=arc-20240116; t=1715783033; c=relaxed/simple;
+	bh=4JHgDMX3S+y4Cupj6k/XMYufWspUS9+Dv3f7xiWP6yI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NVcAehP5bER+LSRjhgQuzhm6pCN9tCZmlROhPC6Hpv3DKdSaAZYuqAQtd01sc8EqIVaUuPX8ONKXmat4HOX02H2Jw617l2Jtd+0ns12gea+g29/4KDo6LxyOrAHojCF49EcsQD4RUxbOCgh+U00feEIkdCHL8y6ljDb24cXkog8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aB2THjf9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC06EC116B1;
-	Wed, 15 May 2024 14:23:19 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=cGS+JUQ1AT32NUJTeqtSDFxtKdM6jiqcUmTwexUThc2bD9+CsDEeZsY4h4dv9J+mgW/7IUzJCM55qoQtlgx04AKnRObSv203sXt33+lspFfAlJLjqcDuzgatN8SUb0F73GjKKdWqoYD0w1h99Q/U/D1R5Hrt6kg6V/KmVS/JuKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fGKeOwgC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97663C116B1;
+	Wed, 15 May 2024 14:23:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715783002;
-	bh=b2WSbJJtikE2IrS3tTleC0R//uK4vxCZ7pxmMLEk25E=;
+	s=k20201202; t=1715783032;
+	bh=4JHgDMX3S+y4Cupj6k/XMYufWspUS9+Dv3f7xiWP6yI=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=aB2THjf9FqEcRy6ED+gb3vWh1QehHA8HCSPdyuYHZ6tuI2Cb8KBvSpTB2kr4Oq9Bs
-	 68MhZHJGa1xmIrmRZZeNRVyfG/iEVmCQi5mMYBiw0ZzusF9jzjCf85E3iGez8bgJja
-	 TRirioJBAbnXBMU94JpcQrdNEDbj9mzwQEHG03Sr9DjoVFso3VvtyISJys8KzSpF2F
-	 Z2/0uOGvg8Ono+BD0S1NRGw/I7pyZ2Jwr1BPtIWv9utXZo5sf9CY4o8pn0L/fRJZ0w
-	 K+CoxKgOAkPKoZUtpwqkNJae6kvnbNGzLlAMovVbDX9KVJYlHFOP27gCpzYS3Wq/lT
-	 N2g9tXBSsZumg==
-Message-ID: <a5833628-65f3-493d-9de5-33ba87a18875@kernel.org>
-Date: Wed, 15 May 2024 16:23:18 +0200
+	b=fGKeOwgC8BAhZJxcAIicJbNQInRtikKuaBGhLY8WF09SWZIWlhCEW0tcDUqNqXPFU
+	 8lI6KAO72JrN/3Z81L+o6uvhfhPc3BjcX7FRyqIhYXChmb0ISsnT1B+HSp8Bf3GO6Y
+	 AL+ZKR3hG4Udv5BUGVUkg9BH/7LJNXhvNKJ0qU8xLa8wUARmC5GSYsuhBL7J47KxlR
+	 ZUAtc/z2G4y+6WlTagPzUAb4A/1YILmHbTIle9LPiay/D71uJdBF1AT/RgUb5hYObE
+	 reYFjp3UH/1Mx7wqaM9LcToBYfPInnmTTi6XMeIra2BSGzB5Gg5xRn+skSmw3ZyDGk
+	 W45U2qRHvhawQ==
+Message-ID: <12944aa1-1108-4a9b-a201-a724db975285@kernel.org>
+Date: Wed, 15 May 2024 16:23:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,14 +49,27 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] arm64: dts: qcom: sdx75-idp: add SDHCI for SD Card
-To: Naina Mehta <quic_nainmeht@quicinc.com>, ulf.hansson@linaro.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- andersson@kernel.org, konrad.dybcio@linaro.org, bhupesh.sharma@linaro.org
-Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-References: <20240515120958.32032-1-quic_nainmeht@quicinc.com>
- <20240515120958.32032-4-quic_nainmeht@quicinc.com>
+Subject: Re: [PATCH v3 3/6] dt-bindings: display: simple: Add Microtips &
+ Lincolntech Dual-LVDS Panels
+To: Aradhya Bhatia <a-bhatia1@ti.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Liu Ying <victor.liu@nxp.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: DRI Development List <dri-devel@lists.freedesktop.org>,
+ Devicetree List <devicetree@vger.kernel.org>,
+ Linux Kernel List <linux-kernel@vger.kernel.org>, Nishanth Menon
+ <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Praneeth Bajjuri <praneeth@ti.com>, Udit Kumar <u-kumar1@ti.com>,
+ Devarsh Thakkar <devarsht@ti.com>, Jai Luthra <j-luthra@ti.com>
+References: <20240515095133.745492-1-a-bhatia1@ti.com>
+ <20240515095133.745492-4-a-bhatia1@ti.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -102,35 +115,17 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240515120958.32032-4-quic_nainmeht@quicinc.com>
+In-Reply-To: <20240515095133.745492-4-a-bhatia1@ti.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 15/05/2024 14:09, Naina Mehta wrote:
-> Enable SDHCI on sdx75-idp to support SD card.
-> Also add the required regulators.
+On 15/05/2024 11:51, Aradhya Bhatia wrote:
+> Add the Microtips Technology USA's MF-101HIEBCAF0 10.1"[0] panel,
+> MF-103HIEB0GA0 10.25"[1] panel, and Lincoln Technology Solutions'
+> LCD185-101CT 10.1"[2] panel.
 > 
-> Signed-off-by: Naina Mehta <quic_nainmeht@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/sdx75-idp.dts | 45 ++++++++++++++++++++++++++
->  1 file changed, 45 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sdx75-idp.dts b/arch/arm64/boot/dts/qcom/sdx75-idp.dts
-> index f76e72fb2072..6f94278cf837 100644
-> --- a/arch/arm64/boot/dts/qcom/sdx75-idp.dts
-> +++ b/arch/arm64/boot/dts/qcom/sdx75-idp.dts
-> @@ -41,6 +41,29 @@
-> 
->  		vin-supply = <&vph_ext>;
->  	};
-> +
-> +	vreg_sd_vccb: sd-vccb {
 
-Please use name for all fixed regulators which matches current format
-recommendation: 'regulator-[0-9]+v[0-9]+'
-
-https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git/commit/?id=b6d4b3500d57370f5b3abf0701c9166b384db976
-
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
