@@ -1,54 +1,51 @@
-Return-Path: <linux-kernel+bounces-179938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A89958C67C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 15:50:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1865C8C679D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 15:43:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41801B229D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 13:50:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A586CB2242F
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 13:43:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4A6713EFF4;
-	Wed, 15 May 2024 13:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=skoll.ca header.i=@skoll.ca header.b="BXG0mP7q"
-Received: from dianne.skoll.ca (dianne.skoll.ca [144.217.161.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4286013EFE4;
-	Wed, 15 May 2024 13:49:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.217.161.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2542713F003;
+	Wed, 15 May 2024 13:43:12 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7559513E8B6;
+	Wed, 15 May 2024 13:43:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715780993; cv=none; b=W5eQVfEOH7GZCV2h+WEdHnYdY4ntApRUqKRWjoSz6ZkESMyNKGxBT24QnNyTNK0YQ+4un2Huy5K9ttAT/jn5bYlhFni6dtNYsxm58XEc78YdwxGmaY2wb30zjIHmYAyReF/xx+RrHkBy/vXnbCrnfCzM6tcf363rZfnXJTHGY7o=
+	t=1715780591; cv=none; b=Pg73FKyuAVJVIWpze3beJJIMVHSUYpzCD0jSQz2gwu67flI+yhe8X/VRM9lDKGZhoLlMoaAtYeOt4CTKp56GXLzaFBzcUiFmpcdQ1qR/I9GDH9aRPxoUzjBtq3W7+rg7xCZd8EvOjIHZwmw2GJ8uH2Sv/44/UBH8piFwno2ABKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715780993; c=relaxed/simple;
-	bh=ph199rVCo0b/EbNzAie21c0eAUet5W0TtmezyXByfqw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=P2YqgzFg2/ZKNJp1QiGIs63eL4Ooy0JeGnexQguvlMRO83wfBIVCJ3CmxYT2nkiqrvliDVmpZquD+CTaIzMhrjahY33E0HV8IrE/vWv6NR87DghHzRkmUSQOaL5OhptnQCFifUHzHs6uTdzzmAq6OmV1UtgYQ3KpAFWcMb3fVAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=skoll.ca; spf=pass smtp.mailfrom=skoll.ca; dkim=pass (2048-bit key) header.d=skoll.ca header.i=@skoll.ca header.b=BXG0mP7q; arc=none smtp.client-ip=144.217.161.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=skoll.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=skoll.ca
-Received: from pi4.skoll.ca ([192.168.84.18])
-	by dianne.skoll.ca (8.17.1.9/8.17.1.9/Debian-2) with ESMTPS id 44FDgrdt1088392
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Wed, 15 May 2024 09:42:54 -0400
-Received: from gato.skoll.ca (gato.skoll.ca [192.168.83.21])
-	by pi4.skoll.ca (Postfix) with ESMTPS id 4VfZDF3bvFzgd52Y;
-	Wed, 15 May 2024 09:42:53 -0400 (EDT)
-Date: Wed, 15 May 2024 09:42:52 -0400
-From: Dianne Skoll <dianne@skoll.ca>
-To: Jiri Slaby <jirislaby@kernel.org>
-Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: N_HDLC line discipline: Race condition
-Message-ID: <20240515094252.5f63fce9@gato.skoll.ca>
-In-Reply-To: <c937cd80-ecd5-4d41-ad72-668661898039@kernel.org>
-References: <20240424173114.035ddd7b@gato.skoll.ca>
-	<20240425140127.6504ade1@gato.skoll.ca>
-	<c937cd80-ecd5-4d41-ad72-668661898039@kernel.org>
+	s=arc-20240116; t=1715780591; c=relaxed/simple;
+	bh=qyG8CBA1LFfZoDjh2C5tAoYOWcPwQzqYhJHxMxFAF98=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=RTF6RS/fDP6fnHLlD7dGQEu9OwskoIY9/8+hbVXRzRuysdpWcVnTn5a1aTGNwbUw9GQWNtxq0Ef8VkJzTdKB7FXwYtYWKwRLgkjaint4Htn3NJgNG56rKGjWmVelIYpg8S/WUZ0+oyZKwYdee3WYZKjyZhOJhlL7dUPhznm6wLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id E81CB92009C; Wed, 15 May 2024 15:43:06 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id E22E792009B;
+	Wed, 15 May 2024 14:43:06 +0100 (BST)
+Date: Wed, 15 May 2024 14:43:06 +0100 (BST)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>
+cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+    Nathan Chancellor <nathan@kernel.org>, 
+    Nick Desaulniers <ndesaulniers@google.com>, 
+    Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+    "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>, 
+    linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
+    Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH 6/8] MIPS: Limit MIPS_MT_SMP support by ISA reversion
+In-Reply-To: <7fc82f8b-df9d-45f5-8e82-27eac7b4b0ab@app.fastmail.com>
+Message-ID: <alpine.DEB.2.21.2405150850270.45291@angie.orcam.me.uk>
+References: <20240202-llvm-msym32-v1-0-52f0631057d6@flygoat.com> <20240202-llvm-msym32-v1-6-52f0631057d6@flygoat.com> <alpine.DEB.2.21.2405142235100.45291@angie.orcam.me.uk> <7fc82f8b-df9d-45f5-8e82-27eac7b4b0ab@app.fastmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,48 +53,49 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=skoll.ca; h=date
-	:from:to:cc:subject:message-id:in-reply-to:references
-	:mime-version:content-type:content-transfer-encoding; s=canit2;
-	 bh=ZLc/hObTwxSDwUWL0r4G3UTmP3/rKzazoUIqIj/jfAc=; b=BXG0mP7qeWlb
-	8b3t+6UXjLFwfsfzJSjxJBDyggW1Ty2kdz7j8PmAgg9+w66uUqA7/aWt5iiMXYGP
-	VsA/ndoDLP4FBXNySVzbdOH0pnEOerZs/tlWzId8mMBKoMa4mIx9cSoOyiMuD3i+
-	9RlflKwC6nVZ7+z5ZjewKKqZyNv0hI0zVGuzvokxBfYVjncRNFoXplEu6fibSYHp
-	QDdISJLR11vZiQBqdcUzc2hl10OBNEsehwddEKbmNv0hBjUklVuiv1v9dZJEGyis
-	9WK4apA4PU3zKwtU8S7UB0EGuU4fYVWxz84OpHKLfvumNoWtFykH8p5mNj+hPSDd
-	bOrrSdBShA==
-X-Scanned-By: CanIt (www . roaringpenguin . com)
-X-Scanned-By: mailmunge 3.16 on 192.168.83.18
-X-Spam-Score: undef - relay 192.168.84.18 marked with skip_spam_scan
-X-CanIt-Geo: No geolocation information available for 192.168.84.18
-X-CanItPRO-Stream: outbound (inherits from default)
-X-Canit-Stats-ID: Bayes signature not available
-X-CanIt-Archive-Cluster: tWKWaF/NcZkqjWIj0BEJTBHJhwY
-X-CanIt-Archived-As: base/20240515 / 01cnpGS3r
 
-On Wed, 15 May 2024 12:33:24 +0200
-Jiri Slaby <jirislaby@kernel.org> wrote:
+On Wed, 15 May 2024, Jiaxun Yang wrote:
 
-> I can repro even with 4.19:
+> >> MIPS MT ASE is only available on ISA between Release 1 and Release 5.
+> >
+> >  R2+ only actually, as also evident from Kconfig...
+> 
+> Hi Maciej,
+> 
+> Long time no see :-)
 
-Huh!  I managed to make it happen on Debian's 4.19.67
-kernel.  I had to redirect stdout/stderr to a file because printing to the
-terminal slowed down the writes enough to prevent it from happening for me.
+ It's not so easy to get rid of me. ;)
 
-I guess it's hardware-dependent because I can't reproduce it on kernel
-6.6 on a Raspberry Pi.
+> There is nothing stopping us to run R1 kernel on R2 hardware, given that
+> those features are all detected at boot time. I understand MT was introduced
+> at 34K which is R2.
 
-> > So I guess it was introduced sometime between 4.19.67 and 5.10.209.
-> >  I'll take a look to see if I can do a git bisect.
+ We can certainly choose to support R2 features at run time with R1 kernel 
+configurations, but it's not what the change description says (left quoted 
+above for reference).  And the MT ASE, indeed first implemented with the 
+34K (for which I was a member of the product development team back at MIPS 
+UK), is not a part of the R1 ISA specification set.
 
-> Were you able to do so?
+> >> --- a/arch/mips/Kconfig
+> >> +++ b/arch/mips/Kconfig
+> >> @@ -2171,7 +2171,8 @@ config CPU_R4K_CACHE_TLB
+> >>  config MIPS_MT_SMP
+> >>  	bool "MIPS MT SMP support (1 TC on each available VPE)"
+> >>  	default y
+> >> -	depends on SYS_SUPPORTS_MULTITHREADING && !CPU_MIPSR6 && !CPU_MICROMIPS
+> >> +	depends on TARGET_ISA_REV > 0 && TARGET_ISA_REV < 6
+> >> +	depends on SYS_SUPPORTS_MULTITHREADING && !CPU_MICROMIPS
+> >>  	select CPU_MIPSR2_IRQ_VI
+> >>  	select CPU_MIPSR2_IRQ_EI
+> >                    ^^^^^^
+> >  ... here.  I wish people looked beyond the line they change, sigh...
+> 
+> Both features (VI and VEIC) are probed at boot time. Selecting
+> them doesn't necessarily mean that CPU has those functions.
 
-Unfortunately not; the older kernels failed to compile on my machine and
-since I'm not a kernel developer and don't actually use any software that
-relies on N_HDLC, I gave up... sorry.
+ Both are optional for R2+, so necessarily they need to be probed for, but 
+they are not available in R1.  The reverse dependency set here is another 
+indication that the MT ASE is an R2+ feature.
 
-Regards,
-
-Dianne.
+  Maciej
 
