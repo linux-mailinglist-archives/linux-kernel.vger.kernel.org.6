@@ -1,244 +1,180 @@
-Return-Path: <linux-kernel+bounces-179623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F0CE8C627C
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 10:04:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 301578C6281
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 10:06:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C21431C21CB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:04:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3C2B282089
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:06:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 852FB4A990;
-	Wed, 15 May 2024 08:04:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1282B4A99C;
+	Wed, 15 May 2024 08:06:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="bMvEhrfB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="nzUFl2Kx"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9635241A81;
-	Wed, 15 May 2024 08:04:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1188B4C62E;
+	Wed, 15 May 2024 08:06:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715760289; cv=none; b=WClsduHvo3Xx5lw7P6BJdShxDUyomVGqm1H/VckUDhRKfzhmWv8NipgNWBNnOFgMRy2z17WKfMQf4OtQvj7qxk4jqdfJdx4N9NQ0x4juMuDlll/URefF3v1AyxcCtD2IQNQ5hrGlpxfwI/8Pjb3MRK+BDUqMW2PqZ5CBffwDLys=
+	t=1715760400; cv=none; b=Qe97Mu+6R47RSngnBB/jErRbu7Gr3R754IL6HvFWzCgXkWwN/E5Sedwm4OQxjB67uOpcTFJdHeXkz3GBBtQJLgUHd3azgQrQQCQJx64OZwDYqD7rTCU8pBtTTzTHSICAbJEda/86JcoG6KpVWrPtwpcNf35vy59+jx6KX1N4Y4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715760289; c=relaxed/simple;
-	bh=wuudiOglpt4DKThuTsQfr2VxE75TJXgXe+nOKLcrb2s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lmV1L4XZ+uq8EceEvIunBsyjggT2VSor58aVOOZfKeVKoUIHaRZTAE7WGrQi2ipf3UxbE9o8SUKj+qcClFCM1sQreBTMHXYmkoxbh+7yuAYgoTjOjsrI7Wn53Sn29V+KMaJfIdo6gv7JZbirkIUx3sguZcDm0G7gbwsY+Dt9GsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=bMvEhrfB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96358C116B1;
-	Wed, 15 May 2024 08:04:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1715760289;
-	bh=wuudiOglpt4DKThuTsQfr2VxE75TJXgXe+nOKLcrb2s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bMvEhrfBqRiY2euQIMEkNUl+hu9/oe7AG09doTeoKUeu3QaebnrnVeeo/nYim0r28
-	 Jh8v1B7k0WGqpu8CywYKlhAjQHmqG3E3E97youlEhLuVqh904ZS/joQA7t+hS/EvCa
-	 sjhexrDmt75QkYxIJ3j3dzH63Ij9Az99VbmfgW+o=
-Date: Wed, 15 May 2024 10:04:46 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Jens Wiklander <jens.wiklander@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
-	op-tee@lists.trustedfirmware.org,
-	Shyam Saini <shyamsaini@linux.microsoft.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Jerome Forissier <jerome.forissier@linaro.org>,
-	Sumit Garg <sumit.garg@linaro.org>,
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-	Bart Van Assche <bvanassche@acm.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Manuel Traut <manut@mecka.net>,
-	Tomas Winkler <tomas.winkler@intel.com>,
-	Alex =?iso-8859-1?Q?Benn=E9e?= <alex.bennee@linaro.org>
-Subject: Re: [PATCH v6 1/3] rpmb: add Replay Protected Memory Block (RPMB)
- subsystem
-Message-ID: <2024051544-clarinet-baffle-c9d6@gregkh>
-References: <20240507091619.2208810-1-jens.wiklander@linaro.org>
- <20240507091619.2208810-2-jens.wiklander@linaro.org>
- <2024051424-shack-blinking-547a@gregkh>
- <CAHUa44FepEVKYPhmH1zvSHOiCMPBwagLSgMmqMyDxewsTxT_-w@mail.gmail.com>
+	s=arc-20240116; t=1715760400; c=relaxed/simple;
+	bh=h0Sqhr4ifyZrC1b5lPNa6Gyug/wpM7myXaQxIuh3AZ4=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GqC11zrJcf19aZ6ktVGTNzOAAHSpsxEaeKL9zmcYHU63b8ffQdT6O4g3SwoP5TOefiN8NpechCAuu0psOoQI0JvtKK1pm83Xw0pBVYNsjIdW/ruYsXV1E8jE9GXnL4fPQsxajz/nP4Cu9uPmtqQSgQlf0kW4AUHsjf7gk1clDf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=nzUFl2Kx; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1715760398; x=1747296398;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=h0Sqhr4ifyZrC1b5lPNa6Gyug/wpM7myXaQxIuh3AZ4=;
+  b=nzUFl2KxHPlZyCxSu7RzeKN3iZy4YGBVDp/ohKEDRKIQu/j1Ia1QrFby
+   QCCdAQBsllYyRSV8S2wOBdj1Sf7aScUsbByFWD45upZr2UyUF2nvJTJF1
+   nztaDtcXU09yEpBEfHk/BwGMqlF9PVEmH4aZKpQbTh/CEMBYFksafRB31
+   uSRXnVH8k+mtOtVnfcRE9YufAkfLArWa8+SMJa2APjtKkWcAX4oVMMQWW
+   LcOpBp/mGajcFORdRfsw6ngR6V3Crtm8SenK9rzOG6GcBrt501SxkzfhX
+   IfFA8k/GEKMLWVLPwihI+amyN8Oxu4NJ8K08MkiGMa1plI42ELgz7IQCL
+   g==;
+X-CSE-ConnectionGUID: EvxhA01VQR6BcbhVcVTEIw==
+X-CSE-MsgGUID: gMj862SdQQKslckEPmEeNQ==
+X-IronPort-AV: E=Sophos;i="6.08,161,1712646000"; 
+   d="asc'?scan'208";a="25383960"
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 15 May 2024 01:06:37 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Wed, 15 May 2024 01:06:22 -0700
+Received: from wendy (10.10.85.11) by chn-vm-ex01.mchp-main.com (10.10.85.143)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
+ Transport; Wed, 15 May 2024 01:06:20 -0700
+Date: Wed, 15 May 2024 09:06:06 +0100
+From: Conor Dooley <conor.dooley@microchip.com>
+To: Alina Yu <alina_yu@richtek.com>
+CC: Conor Dooley <conor@kernel.org>, Mark Brown <broonie@kernel.org>,
+	<lgirdwood@gmail.com>, <robh+dt@kernel.org>,
+	<krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<johnny_lai@richtek.com>, <cy_huang@richtek.com>
+Subject: Re: [PATCH v3 6/6] regulator: dt-bindings: rtq2208: Add property to
+ get ldo of RTQ2208 is adjustable or not
+Message-ID: <20240515-wrinkle-engross-ab6b089baae3@wendy>
+References: <cover.1715340537.git.alina_yu@richtek.com>
+ <6a3a90d9aa2022dfb92e124e417f3e72c2f28b0b.1715340537.git.alina_yu@richtek.com>
+ <20240513-tissue-repave-13d2e3bf88fd@spud>
+ <d97752ed-4032-4681-b28f-17f149fdc3d4@sirena.org.uk>
+ <20240514-plunging-chair-803d9e342e6f@spud>
+ <20240515073830.GA12525@linuxcarl2.richtek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="0FcHBb/wqZoBsRLq"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHUa44FepEVKYPhmH1zvSHOiCMPBwagLSgMmqMyDxewsTxT_-w@mail.gmail.com>
+In-Reply-To: <20240515073830.GA12525@linuxcarl2.richtek.com>
 
-On Wed, May 15, 2024 at 09:51:32AM +0200, Jens Wiklander wrote:
-> On Tue, May 14, 2024 at 5:45 PM Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Tue, May 07, 2024 at 11:16:17AM +0200, Jens Wiklander wrote:
-> > > A number of storage technologies support a specialised hardware
-> > > partition designed to be resistant to replay attacks. The underlying
-> > > HW protocols differ but the operations are common. The RPMB partition
-> > > cannot be accessed via standard block layer, but by a set of specific
-> > > RPMB commands. Such a partition provides authenticated and replay
-> > > protected access, hence suitable as a secure storage.
-> > >
-> > > The initial aim of this patch is to provide a simple RPMB driver
-> > > interface which can be accessed by the optee driver to facilitate early
-> > > RPMB access to OP-TEE OS (secure OS) during the boot time.
-> > >
-> > > A TEE device driver can claim the RPMB interface, for example, via
-> > > rpmb_interface_register() or rpmb_dev_find_device(). The RPMB driver
-> > > provides a callback to route RPMB frames to the RPMB device accessible
-> > > via rpmb_route_frames().
-> > >
-> > > The detailed operation of implementing the access is left to the TEE
-> > > device driver itself.
-> > >
-> > > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> > > Signed-off-by: Alex Bennée <alex.bennee@linaro.org>
-> > > Signed-off-by: Shyam Saini <shyamsaini@linux.microsoft.com>
-> > > Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
-> > > Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> > > ---
-> > >  MAINTAINERS              |   7 ++
-> > >  drivers/misc/Kconfig     |  10 ++
-> > >  drivers/misc/Makefile    |   1 +
-> > >  drivers/misc/rpmb-core.c | 233 +++++++++++++++++++++++++++++++++++++++
-> > >  include/linux/rpmb.h     | 136 +++++++++++++++++++++++
-> > >  5 files changed, 387 insertions(+)
-> > >  create mode 100644 drivers/misc/rpmb-core.c
-> > >  create mode 100644 include/linux/rpmb.h
-> > >
-> > > diff --git a/MAINTAINERS b/MAINTAINERS
-> > > index 8999497011a2..e83152c42499 100644
-> > > --- a/MAINTAINERS
-> > > +++ b/MAINTAINERS
-> > > @@ -19012,6 +19012,13 @@ T:   git git://linuxtv.org/media_tree.git
-> > >  F:   Documentation/devicetree/bindings/media/allwinner,sun8i-a83t-de2-rotate.yaml
-> > >  F:   drivers/media/platform/sunxi/sun8i-rotate/
-> > >
-> > > +RPMB SUBSYSTEM
-> > > +M:   Jens Wiklander <jens.wiklander@linaro.org>
-> > > +L:   linux-kernel@vger.kernel.org
-> > > +S:   Supported
-> > > +F:   drivers/misc/rpmb-core.c
-> > > +F:   include/linux/rpmb.h
-> > > +
-> > >  RPMSG TTY DRIVER
-> > >  M:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-> > >  L:   linux-remoteproc@vger.kernel.org
-> > > diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-> > > index 4fb291f0bf7c..dbff9e8c3a03 100644
-> > > --- a/drivers/misc/Kconfig
-> > > +++ b/drivers/misc/Kconfig
-> > > @@ -104,6 +104,16 @@ config PHANTOM
-> > >         If you choose to build module, its name will be phantom. If unsure,
-> > >         say N here.
-> > >
-> > > +config RPMB
-> > > +     tristate "RPMB partition interface"
-> > > +     depends on MMC
-> > > +     help
-> > > +       Unified RPMB unit interface for RPMB capable devices such as eMMC and
-> > > +       UFS. Provides interface for in-kernel security controllers to access
-> > > +       RPMB unit.
-> > > +
-> > > +       If unsure, select N.
-> > > +
-> > >  config TIFM_CORE
-> > >       tristate "TI Flash Media interface support"
-> > >       depends on PCI
-> > > diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
-> > > index ea6ea5bbbc9c..8af058ad1df4 100644
-> > > --- a/drivers/misc/Makefile
-> > > +++ b/drivers/misc/Makefile
-> > > @@ -15,6 +15,7 @@ obj-$(CONFIG_LKDTM)         += lkdtm/
-> > >  obj-$(CONFIG_TIFM_CORE)              += tifm_core.o
-> > >  obj-$(CONFIG_TIFM_7XX1)              += tifm_7xx1.o
-> > >  obj-$(CONFIG_PHANTOM)                += phantom.o
-> > > +obj-$(CONFIG_RPMB)           += rpmb-core.o
-> > >  obj-$(CONFIG_QCOM_COINCELL)  += qcom-coincell.o
-> > >  obj-$(CONFIG_QCOM_FASTRPC)   += fastrpc.o
-> > >  obj-$(CONFIG_SENSORS_BH1770) += bh1770glc.o
-> > > diff --git a/drivers/misc/rpmb-core.c b/drivers/misc/rpmb-core.c
-> > > new file mode 100644
-> > > index 000000000000..e42a45debc76
-> > > --- /dev/null
-> > > +++ b/drivers/misc/rpmb-core.c
-> > > @@ -0,0 +1,233 @@
-> > > +// SPDX-License-Identifier: GPL-2.0
-> > > +/*
-> > > + * Copyright(c) 2015 - 2019 Intel Corporation. All rights reserved.
-> > > + * Copyright(c) 2021 - 2024 Linaro Ltd.
-> > > + */
-> > > +#include <linux/device.h>
-> > > +#include <linux/init.h>
-> > > +#include <linux/kernel.h>
-> > > +#include <linux/list.h>
-> > > +#include <linux/module.h>
-> > > +#include <linux/mutex.h>
-> > > +#include <linux/rpmb.h>
-> > > +#include <linux/slab.h>
-> > > +
-> > > +static struct list_head rpmb_dev_list;
-> > > +static DEFINE_MUTEX(rpmb_mutex);
-> > > +static struct blocking_notifier_head rpmb_interface =
-> > > +     BLOCKING_NOTIFIER_INIT(rpmb_interface);
-> > > +
-> > > +/**
-> > > + * rpmb_dev_get() - increase rpmb device ref counter
-> > > + * @rdev: rpmb device
-> > > + */
-> > > +struct rpmb_dev *rpmb_dev_get(struct rpmb_dev *rdev)
-> > > +{
-> > > +     if (rdev)
-> > > +             get_device(rdev->parent_dev);
-> >
-> > Odd, why are you thinking the parent reference has anything to do with
-> > this device's reference?
-> >
-> > Why isn't this a "real" device and part of the driver model properly?
-> > This way of "hanging onto" a device and attempting to influence it's
-> > reference count is odd, please make this real and not "fake".
-> 
-> I did this in response to
-> https://lore.kernel.org/lkml/CAPDyKFqNhGWKm=+7niNsjXOjEJE3U=o7dRNG=JqpptUSo9G-ug@mail.gmail.com/
+--0FcHBb/wqZoBsRLq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-And I would argue, "Yes, we do need yet-another class and sysfs entry".
+On Wed, May 15, 2024 at 03:38:30PM +0800, Alina Yu wrote:
+> On Tue, May 14, 2024 at 07:01:21PM +0100, Conor Dooley wrote:
+> > On Tue, May 14, 2024 at 11:34:29AM +0100, Mark Brown wrote:
+> > > On Mon, May 13, 2024 at 05:22:54PM +0100, Conor Dooley wrote:
+> > > > On Fri, May 10, 2024 at 08:06:25PM +0800, Alina Yu wrote:
+> > >=20
+> > > > > +            richtek,fixed-microvolt =3D <1200000>;
+> > > > >              regulator-min-microvolt =3D <1200000>;
+> > > > >              regulator-max-microvolt =3D <1200000>;
+> > >=20
+> > > > I'm dumb and this example seemed odd to me. Can you explain to me w=
+hy
+> > > > it is not sufficient to set min-microvolt =3D=3D max-microvolt to a=
+chieve
+> > > > the same thing?
+> > >=20
+> > > This is for a special mode where the voltage being configured is out =
+of
+> > > the range usually supported by the regulator, requiring a hardware
+> > > design change to achieve.  The separate property is because otherwise=
+ we
+> > > can't distinguish the case where the mode is in use from the case whe=
+re
+> > > the constraints are nonsense, and we need to handle setting a fixed
+> > > voltage on a configurable regulator differently to there being a
+> > > hardware fixed voltage on a normally configurable regulator.
+> >=20
+> > Cool, I think an improved comment message and description would be
+> > helpful then to describe the desired behaviour that you mention here.
+> > The commit message in particular isn't great:
+> > | Since there is no way to check is ldo is adjustable or not.
+> > | As discussing in v2 series, 'richtek,fixed-microvolt' is added for th=
+at.
+> > | user is supposed to know whether vout of ldo is adjustable.
+> >=20
+> > It also doesn't seem like this sort of behaviour would be limited to
+> > Richtek either, should this actually be a common property in
+> > regulator.yaml w/o the vendor prefix?
+> >=20
+> > Cheers,
+> > Conor.
+>=20
+>=20
+> Hi Conor,
+>=20
+>=20
+> Should I update v4 to fix the commit message ?
+> I will modify it as follows.
+>=20
+>=20
+> There are two types of LDO VOUT: fixed voltage mode and adjustable voltag=
+e mode.
+>=20
+> As the fixed voltage for the LDO is outside the range of the adjustable v=
+oltage mode,
+> the constraints for this scenario are not suitable to represent both mode=
+s.
 
-This is a "device" that a driver controls, it is NOT the parent device,
-it is a class device, so as such, make it one.  That's what the driver
-model is for.  Trying to avoid it causes problems.
+That's definitely an improvement, yes. The property description could
+also do with an update to explain that this is for a situation where the
+fixed voltage is out of the adjustable range, it doesn't mention that at
+all right now.
 
-> Perhaps "parent_dev" isn't the best name. The struct rpmb_dev can be
-> seen as another representation of the underlying device.
+> In version 3, a property has been added to specify the fixed voltage.
 
-I.e. a class device.  So use that :)
+Don't refer to previous versions of the patchset in your commit message,
+that doesn't help people reading a commit log in the future etc. If
+there's some relevant information in a previous version patchset, put it
+in the commit message directly.
 
-> The life
-> cycle of struct rpmb_dev is tied to the underlying device with
-> rpmb_dev_register() and rpmb_dev_unregister(). Just as
-> rpmb_route_frames() forwards the frames to the device, rpmb_dev_{get,
-> put}() does the corresponding thing.
+Cheers,
+Conor.
 
-You should never be modifying the reference count of a device you really
-do not control, unless you are trying to make sure it is present to use
-it yourself.
+--0FcHBb/wqZoBsRLq
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> > Bonus, you get that notifier callback "for free" if you do that.  But
-> > really, notifier callbacks are a pain, are you sure you want that?
-> 
-> Yes, they are needed because the device may show up late and the
-> OP-TEE driver doesn't know if any device will show up. As Ulf pointed
-> out in the link above, at this point, there's no need to tell user
-> space about this kernel internal abstraction.
+-----BEGIN PGP SIGNATURE-----
 
-If this is a representation of how the device is interacted with, then
-yes, you do need to represent that.
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZkRs7gAKCRB4tDGHoIJi
+0vH7AQD9Pv88a/PkA91egE2kjvXH7h48NPsjCN8xwJ8vNsM5XgEAuD17AiUn8eu7
+CNpGygjTUdxaBxaAC0nC6jR2+XMgXwg=
+=ELYJ
+-----END PGP SIGNATURE-----
 
-thanks,
-
-greg k-h
+--0FcHBb/wqZoBsRLq--
 
