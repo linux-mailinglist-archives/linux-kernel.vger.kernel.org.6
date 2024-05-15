@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-180280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 998228C6C63
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 20:51:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 245F88C6C64
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 20:51:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDE21B228DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:51:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93EAFB22926
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:51:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F116715AD90;
-	Wed, 15 May 2024 18:51:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2777A15ADA4;
+	Wed, 15 May 2024 18:51:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="t4v5tbr5"
-Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="LIyAbjfN"
+Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DEF1158DBC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BB60157A67;
 	Wed, 15 May 2024 18:51:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715799084; cv=none; b=hRIeCYtCUeCni5ZX3Bh0Oj8oWJPL7uh2+P97O7PaIpFshy5/KWoCTZduat2C7xjq5ZO4LZm8gRwrx3EOuoUtE0xlFD7ivBk7oTerM0Ndsn6fLSyKOkqCOyWjfAO2VylnFjpXYhG9V4tkIzGH1yvA1nx9kpFVALbHK1CHmSDehVg=
+	t=1715799084; cv=none; b=Pc91f+hL+/jnHNi51Vt7MQf+cCT2zHLwK6DxH6LEHRvv3MNMs6tSGt85BFfnVbJBHB7bJChZzfyTIzDCk9Zarlo9u4rRXP/x/JRB4UvZ4D8JSi8B1rZ+IVtkPJG9wAAr5/+ZNmrHg06cvPmWXztgIcr9Ia31LW5qI75VUkaF1tE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1715799084; c=relaxed/simple;
-	bh=5AJ9Az0jH6thLKSUMJAMaGVEa07l9Uyn4Cv5T2FSOb4=;
+	bh=X3v5GWSU6vyx0WdMc/Mvt2PDT7pUxLAgtKmhrCzAzcs=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cRDAPBLWhJ2A1m8V97hXJRSs+zUPJd6bhRm9aHIxK8L5smX0fkIZ8aXe9sSrXm+6smYYBgGuT+lKGPwBVl3niRgdAPQ0O239jmP6PuNAk2zOShgcYRrr69ewU20dCY3wBrapHszt/cNXV+HsKScVbRyrJowysGT8E295BXDVPGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=t4v5tbr5; arc=none smtp.client-ip=45.89.224.132
+	 MIME-Version:Content-Type; b=dDFsEasWrs+GGJoxVuCgoHwqqZ6wn7IMnb33YGTnBa61l/ze8eA9RZO53BeE6nTQ6KIOC19/byPf6+/qj2Ui4EI35I/NcPpf76RtS0fchThccMomZj06p/zpDcGgoDylUUk3+/u6/JVGnxlRu6IAiLbgKy/YiipopbOUwxmOjTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=LIyAbjfN; arc=none smtp.client-ip=37.18.73.165
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
-Received: from p-infra-ksmg-sc-msk02 (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id EDF2F12002A;
-	Wed, 15 May 2024 21:51:13 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru EDF2F12002A
+Received: from p-infra-ksmg-sc-msk01 (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 9C12E100030;
+	Wed, 15 May 2024 21:51:14 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 9C12E100030
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1715799073;
-	bh=QMAt1ZjzhOa+8fsvoVbTc9wPD8ylKr2Pv+Hu9aMn9q8=;
+	s=mail; t=1715799074;
+	bh=HLi7xTDyRLEAgUnT8cYqP8dgXv3WaHfuTaUs047L2KA=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=t4v5tbr54qe2OwX475AN7ahXxy0TnC3bb5p8iCnctvxdKFwGyjdq/AT5FlIpA/7bM
-	 F6ba+fuDekQozD8Dqq02Ta3+umyqi3Z6ou9L1BLWMsmLCSF84iUNTZa8ZWNdkcVwu1
-	 CH2KS7knzhP1Lh2UHaQr0SYsr322I+elPgSIfTymeJUzSuxLSWHTrTC+UNt+xYVmt/
-	 p3TsiIKDct37hMdEfW0YgW9nKJibc+Nl8mQjkoJ62O48mK4B9/m2W5CCfOaJ7e4TKE
-	 lQ86fcKTIGFYO7oWCCNbNvdvVriBXMD1KV9XPRR9OdHqDDxNzrP8TTeMopmmSeNOBV
-	 e9CXnrPqOe7Pw==
+	b=LIyAbjfNh2JDqD4QyyQPP81Ljkno3Pa1xKBpLgkpTc2VDhBTKjGFHHMvufMlsg3z9
+	 QAFynle5MhGG/WlGnRPaCzZ+UD6OUh1SCrN7SbkQ8j6yhR9giMLm/siLRlMvL5myRy
+	 yH6eRiF+++0sdBj62QxhOODTvwTPnr5lijRg31vtg5tT6qKjcxdQVzfAZhrDWUTlof
+	 FYsVIjGqX8EnKWulLCpZMsx9OJ3JAtqTsGARpcWSBLRa0sJHCn8l/F/xuC6vF4Xo0S
+	 08HFdn66Q9d5B11naK4ZJePcOJMXAqL0/ytZDhfULqwpkzbKV295DTTMUhrsdmFRDJ
+	 IJ9aWJfgRH6eg==
 Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
 	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Wed, 15 May 2024 21:51:13 +0300 (MSK)
+	Wed, 15 May 2024 21:51:14 +0300 (MSK)
 Received: from CAB-WSD-L081021.sberdevices.ru (100.64.160.123) by
  p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Wed, 15 May 2024 21:51:13 +0300
+ 15.2.1118.40; Wed, 15 May 2024 21:51:14 +0300
 From: Dmitry Rokosov <ddrokosov@salutedevices.com>
 To: <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
 	<mturquette@baylibre.com>, <sboyd@kernel.org>, <robh+dt@kernel.org>,
@@ -63,9 +63,9 @@ CC: <jian.hu@amlogic.com>, <kernel@sberdevices.ru>, <rockosov@gmail.com>,
 	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
 	<linux-arm-kernel@lists.infradead.org>, Dmitry Rokosov
 	<ddrokosov@salutedevices.com>
-Subject: [PATCH v3 2/7] dt-bindings: clock: meson: a1: pll: introduce new syspll bindings
-Date: Wed, 15 May 2024 21:47:25 +0300
-Message-ID: <20240515185103.20256-3-ddrokosov@salutedevices.com>
+Subject: [PATCH v3 3/7] clk: meson: a1: pll: support 'syspll' general-purpose PLL for CPU clock
+Date: Wed, 15 May 2024 21:47:26 +0300
+Message-ID: <20240515185103.20256-4-ddrokosov@salutedevices.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240515185103.20256-1-ddrokosov@salutedevices.com>
 References: <20240515185103.20256-1-ddrokosov@salutedevices.com>
@@ -88,7 +88,7 @@ X-KSMG-AntiSpam-Rate: 0
 X-KSMG-AntiSpam-Status: not_detected
 X-KSMG-AntiSpam-Method: none
 X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 20 0.3.20 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f, {Tracking_from_domain_doesnt_match_to}, 127.0.0.199:7.1.2;100.64.160.123:7.1.2;smtp.sberdevices.ru:5.0.1,7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;salutedevices.com:7.1.1, FromAlignment: s, ApMailHostAddress: 100.64.160.123
+X-KSMG-AntiSpam-Info: LuaCore: 20 0.3.20 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f, {Tracking_from_domain_doesnt_match_to}, 127.0.0.199:7.1.2;smtp.sberdevices.ru:7.1.1,5.0.1;100.64.160.123:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;salutedevices.com:7.1.1, FromAlignment: s, ApMailHostAddress: 100.64.160.123
 X-MS-Exchange-Organization-SCL: -1
 X-KSMG-AntiSpam-Interceptor-Info: scan successful
 X-KSMG-AntiPhishing: Clean
@@ -96,61 +96,131 @@ X-KSMG-LinksScanning: Clean
 X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/05/15 13:12:00 #25231738
 X-KSMG-AntiVirus-Status: Clean, skipped
 
-The 'syspll' PLL is a general-purpose PLL designed specifically for the
-CPU clock. It is capable of producing output frequencies within the
-range of 768MHz to 1536MHz.
-
-The 'syspll_in' source clock is an optional parent connection from the
-peripherals clock controller.
+The 'syspll' PLL, also known as the system PLL, is a general and
+essential PLL responsible for generating the CPU clock frequency.
+With its wide-ranging capabilities, it is designed to accommodate
+frequencies within the range of 768MHz to 1536MHz.
 
 Signed-off-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
 ---
- .../devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml   | 9 +++++++--
- include/dt-bindings/clock/amlogic,a1-pll-clkc.h          | 1 +
- 2 files changed, 8 insertions(+), 2 deletions(-)
+ drivers/clk/meson/a1-pll.c | 72 ++++++++++++++++++++++++++++++++++++++
+ drivers/clk/meson/a1-pll.h |  6 ++++
+ 2 files changed, 78 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
-index a59b188a8bf5..c99274d2a9bd 100644
---- a/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
-+++ b/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
-@@ -26,11 +26,15 @@ properties:
-     items:
-       - description: input fixpll_in
-       - description: input hifipll_in
-+      - description: input syspll_in
-+    minItems: 2 # syspll_in is optional
+diff --git a/drivers/clk/meson/a1-pll.c b/drivers/clk/meson/a1-pll.c
+index 60b2e53e7e51..286e83199d17 100644
+--- a/drivers/clk/meson/a1-pll.c
++++ b/drivers/clk/meson/a1-pll.c
+@@ -138,6 +138,76 @@ static struct clk_regmap hifi_pll = {
+ 	},
+ };
  
-   clock-names:
-     items:
-       - const: fixpll_in
-       - const: hifipll_in
-+      - const: syspll_in
-+    minItems: 2 # syspll_in is optional
++static const struct pll_mult_range sys_pll_mult_range = {
++	.min = 32,
++	.max = 64,
++};
++
++static const struct reg_sequence sys_pll_init_regs[] = {
++	{ .reg = ANACTRL_SYSPLL_CTRL1, .def = 0x01800000 },
++	{ .reg = ANACTRL_SYSPLL_CTRL2, .def = 0x00001100 },
++	{ .reg = ANACTRL_SYSPLL_CTRL3, .def = 0x10022300 },
++	{ .reg = ANACTRL_SYSPLL_CTRL4, .def = 0x00300000 },
++	{ .reg = ANACTRL_SYSPLL_CTRL0, .def = 0x01f18432 },
++};
++
++static struct clk_regmap sys_pll = {
++	.data = &(struct meson_clk_pll_data){
++		.en = {
++			.reg_off = ANACTRL_SYSPLL_CTRL0,
++			.shift   = 28,
++			.width   = 1,
++		},
++		.m = {
++			.reg_off = ANACTRL_SYSPLL_CTRL0,
++			.shift   = 0,
++			.width   = 8,
++		},
++		.n = {
++			.reg_off = ANACTRL_SYSPLL_CTRL0,
++			.shift   = 10,
++			.width   = 5,
++		},
++		.frac = {
++			.reg_off = ANACTRL_SYSPLL_CTRL1,
++			.shift   = 0,
++			.width   = 19,
++		},
++		.l = {
++			.reg_off = ANACTRL_SYSPLL_STS,
++			.shift   = 31,
++			.width   = 1,
++		},
++		.current_en = {
++			.reg_off = ANACTRL_SYSPLL_CTRL0,
++			.shift   = 26,
++			.width   = 1,
++		},
++		.l_detect = {
++			.reg_off = ANACTRL_SYSPLL_CTRL2,
++			.shift   = 6,
++			.width   = 1,
++		},
++		.range = &sys_pll_mult_range,
++		.init_regs = sys_pll_init_regs,
++		.init_count = ARRAY_SIZE(sys_pll_init_regs),
++		/*
++		 * The sys_pll clock is usually enabled and initialized in the
++		 * bootloader stage. Additionally, the cpu_clk is connected to
++		 * sys_pll. As a result, it is not allowed to initialize the
++		 * cpu_clk again, as doing so would prevent the CPU from
++		 * executing any instructions.
++		 */
++		.flags = CLK_MESON_PLL_NOINIT_ENABLED,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "sys_pll",
++		.ops = &meson_clk_pll_ops,
++		.parent_names = (const char *[]){ "syspll_in" },
++		.num_parents = 1,
++	},
++};
++
+ static struct clk_fixed_factor fclk_div2_div = {
+ 	.mult = 1,
+ 	.div = 2,
+@@ -283,6 +353,7 @@ static struct clk_hw *a1_pll_hw_clks[] = {
+ 	[CLKID_FCLK_DIV5]	= &fclk_div5.hw,
+ 	[CLKID_FCLK_DIV7]	= &fclk_div7.hw,
+ 	[CLKID_HIFI_PLL]	= &hifi_pll.hw,
++	[CLKID_SYS_PLL]		= &sys_pll.hw,
+ };
  
- required:
-   - compatible
-@@ -53,7 +57,8 @@ examples:
-             reg = <0 0x7c80 0 0x18c>;
-             #clock-cells = <1>;
-             clocks = <&clkc_periphs CLKID_FIXPLL_IN>,
--                     <&clkc_periphs CLKID_HIFIPLL_IN>;
--            clock-names = "fixpll_in", "hifipll_in";
-+                     <&clkc_periphs CLKID_HIFIPLL_IN>,
-+                     <&clkc_periphs CLKID_SYSPLL_IN>;
-+            clock-names = "fixpll_in", "hifipll_in", "syspll_in";
-         };
-     };
-diff --git a/include/dt-bindings/clock/amlogic,a1-pll-clkc.h b/include/dt-bindings/clock/amlogic,a1-pll-clkc.h
-index 2b660c0f2c9f..0dfc5e78a2d5 100644
---- a/include/dt-bindings/clock/amlogic,a1-pll-clkc.h
-+++ b/include/dt-bindings/clock/amlogic,a1-pll-clkc.h
-@@ -21,5 +21,6 @@
- #define CLKID_FCLK_DIV5		8
- #define CLKID_FCLK_DIV7		9
- #define CLKID_HIFI_PLL		10
-+#define CLKID_SYS_PLL		11
+ static struct clk_regmap *const a1_pll_regmaps[] = {
+@@ -293,6 +364,7 @@ static struct clk_regmap *const a1_pll_regmaps[] = {
+ 	&fclk_div5,
+ 	&fclk_div7,
+ 	&hifi_pll,
++	&sys_pll,
+ };
  
- #endif /* __A1_PLL_CLKC_H */
+ static struct regmap_config a1_pll_regmap_cfg = {
+diff --git a/drivers/clk/meson/a1-pll.h b/drivers/clk/meson/a1-pll.h
+index 4be17b2bf383..666d9b2137e9 100644
+--- a/drivers/clk/meson/a1-pll.h
++++ b/drivers/clk/meson/a1-pll.h
+@@ -18,6 +18,12 @@
+ #define ANACTRL_FIXPLL_CTRL0	0x0
+ #define ANACTRL_FIXPLL_CTRL1	0x4
+ #define ANACTRL_FIXPLL_STS	0x14
++#define ANACTRL_SYSPLL_CTRL0	0x80
++#define ANACTRL_SYSPLL_CTRL1	0x84
++#define ANACTRL_SYSPLL_CTRL2	0x88
++#define ANACTRL_SYSPLL_CTRL3	0x8c
++#define ANACTRL_SYSPLL_CTRL4	0x90
++#define ANACTRL_SYSPLL_STS	0x94
+ #define ANACTRL_HIFIPLL_CTRL0	0xc0
+ #define ANACTRL_HIFIPLL_CTRL1	0xc4
+ #define ANACTRL_HIFIPLL_CTRL2	0xc8
 -- 
 2.43.0
 
