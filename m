@@ -1,153 +1,127 @@
-Return-Path: <linux-kernel+bounces-180479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6DF98C6F10
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 01:18:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ACCB8C6F17
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 01:20:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EA27280E94
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 23:18:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2470B20E63
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 23:20:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A5B24D5A5;
-	Wed, 15 May 2024 23:17:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 010AD4EB3D;
+	Wed, 15 May 2024 23:20:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MrII6GyH"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tO8Vnxz0"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2D39101C8
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 23:17:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDC94101C8
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 23:20:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715815077; cv=none; b=R7wGKi+h205VpZQS0tvfS9xot+66+uwqvNi5iNmwknI/DFyXXH3+yT6eZupmgqFz0p/JKkvyodIxRe0ebPg0RoTsq6rNEHiWUqsv/ufYpPuCaCgzoMGBf5G8wwokoUViaWISBeIkazBgSRh81QNYl+PJBYGoz/NVR1fXPN74rwk=
+	t=1715815206; cv=none; b=mfiS96W0STolkpqGspM7Xmov4B1FL07rS5lhIi9V88tdvhBy5tRSCYLIzJd6sCNk9pG1uZN7ppLFZopubTvhOB4FDmhjbu589t3U0RDh4JabC0zIyd1KY0bfWgOS6gc/o59lq3xjxmp+JWzFWvQmKcDkra9D4i+M0pOu97j0G+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715815077; c=relaxed/simple;
-	bh=rXiiDvC0G8yftHUqkMlkQjgaeYMZEVMFUgTD9x7Hgo4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RjnUK0/MYgAzfz44vhET1BeCnZhahWbQ0MQeEbrGNN8YpSrBLtpdxrQPUl5EU3f2tog/CzWbxnYzpV+CUAXZl/84MdMDJbuzfiWws4mzvI2lrFw85cTj6oJQ/0paENHeMA9s3Z8I9blONM55CybVMZ9JAio/U1xtJWJrJPaiAm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MrII6GyH; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a5a2d0d8644so245353766b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 16:17:55 -0700 (PDT)
+	s=arc-20240116; t=1715815206; c=relaxed/simple;
+	bh=uq5jbcln+jzH/PLpZe9wXnSOTlm0FyFFVFCwKP91LGM=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=AP5iHa861vCcdbrFwEK9CnDC8CrgRFeoF8GdN6bFq9y54s7eJvUcX3KpX9v96eJoshPh3VFQWoznAHoV11BM0BihODX2Hi7w0ffIWY6tkekzR0+hRgEbMdyRi0u1GJBejnbelYPsmmHsOPcMghyDtwO4mfJ4odB7ZC+KkjlS01c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tO8Vnxz0; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-61c9e36888bso127579007b3.2
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 16:20:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715815074; x=1716419874; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=KQkiI/PZoB2oJorTHLYz0xoOjUhSuDugXleksLOQ91w=;
-        b=MrII6GyHEmVETxZG2bxQHeHhLdFDi5e8GSzhBNVdVq4kSuEJAArgSlh2pwSOYWkM0d
-         9rczSP/gPwTe7zW5TF15oZhLimIPlzEhh9M2GtXzX9zkxz1GvwoT3gz2i6nnLHVGSuct
-         nmbVCXfC9pnWATKtZe0K2avEnbCDI8QzUroWkMMxV63FGR/4aERiAnnEqQqzZZKolr7c
-         8UJelvKMPTfS6aAnw3TsYCMecxXqZGQRE9324xPjNb2b+nRTg45A5SJRaw7MZQWtaOJD
-         2zCLduv/1jrQ1uhCiNnKJZK82b5rMcDOrImP9T2GZ2C1NXxPz0q4HK0vM8zextBuOwHM
-         qUFg==
+        d=google.com; s=20230601; t=1715815204; x=1716420004; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6YDxr3hZHHTclQ7zyLq/DlJKdNF735yaym0zXBzZRNw=;
+        b=tO8Vnxz0RfBY/mNvbNtPWd4K2gSh2CgO+SRNJGPZr4rR88zouqmbr1b0UGPz999XK5
+         d3xC4dMuhLcq02EWdOqAruF8Wmn/U4RJneLIY7tIuEK1rjKJWHFRck622i57C4qwFKTH
+         i7xZokKgUN4cl8M+c7Dn9D7TECcH/NUQeiEMw4taLS/zXULc8spiuKW4xzNURG+FQ729
+         +ir12zF7ohScN2dCHTKlQqcbb1jj9RgQuV7bTtUZ5E4+ibt33qaN/VHZSv3w6ohp24hU
+         iv4SxAdGRgxCYDqQmpWKakN/qwGdi7NJHNIU89YB+mx3wUss7Fcz7Cbh0Mh/TUrkIPV/
+         pisQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715815074; x=1716419874;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KQkiI/PZoB2oJorTHLYz0xoOjUhSuDugXleksLOQ91w=;
-        b=HHu2/kfpgigIT6D4mH/jUtNRs+xO0XZCgW2NchqCueyCS+/wKtfiOtNPPXaMmnbDr+
-         c893hOTYaQvl/BavUw9DyOZPrs9N9FjDPg9NEeOuwShOqR83Y6IP3/MaLhrN92VZXlLR
-         7vHEe9O/eVCyYFrfziEz4DLyIi5pleBAODZBJvNNT4IN8mcbEQEKYZ4dhvynjFzQgf6A
-         s64UUcI3YQxV+Gex1HrVrEet6EoNfzjSIuscieiAWQELTFJmvyCz1aw9YRjrGLyn1CCu
-         jQDZ10zaTw1VyT4L57vA7l1YO0qdisLoNqKv6M0CEtK11uBa1q1Um+Zw41BlNFuiuhiA
-         OBgA==
-X-Forwarded-Encrypted: i=1; AJvYcCUuykQVxziJ6/i8/4BMs9gC6wQIli4lDekAfBqWtpYV6CnG5ovbcFyFDNxrMRwc3cE4cnZTVmZmx9N/pR0wibqRdcLOG498RaaSDGJZ
-X-Gm-Message-State: AOJu0Yw9A1G+YmnVY0/y7OyqC/Oq6OM2RnBKuUudjDkOfK53lxDx8sPc
-	X4hU55+1j2WI35T1XeYtLldqsdE2xBk+mH8COCHWWFX+hZnr8W4SMzpdgRPtqMct638drS05/KU
-	KuCNVo8Jwl3NNi3zpW1+aefI5sSU=
-X-Google-Smtp-Source: AGHT+IHuo2WCZvG3HdUyqPlEEQPeV4QkDD96yJ7fXtu9aQhRZOLuTLsMoRXsGUMrONerqPk1SEO9VdQuEio5vRe/IjA=
-X-Received: by 2002:a17:906:2b0d:b0:a59:be21:3575 with SMTP id
- a640c23a62f3a-a5a2d672ee4mr1259988066b.51.1715815074233; Wed, 15 May 2024
- 16:17:54 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715815204; x=1716420004;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6YDxr3hZHHTclQ7zyLq/DlJKdNF735yaym0zXBzZRNw=;
+        b=mUQfFM6AkKegAKgnKOaulcOHQjPiRDeZSiPVPPD2B88jwwnmqTon6I8fdWyfsiCwra
+         hwd7mBvtsySUFuJq6POFFHwJxD3MhHliUsLexjk5KXH5BhwE9MkeE/VFlkT1xbVXZErr
+         1538qTBTSAG/+VpLneoSGxHeRRJ5NstiC6Q11RQLRoGEDl8oC/HDZnnyWFYkKNdz3uAj
+         v3IHR11/+AdSxy9c7/7vDEeBz9eJaBY2IBLCtIsrBVKkRl16pvZsmrP0BXwCcYYCz0Q7
+         ESM8uzq0/rx29UXxU4xSD4t6QTMZHlQHg2/M+K8+gzCKR1+IgA4nVTFOMvhHvX83Gpqg
+         P6TA==
+X-Forwarded-Encrypted: i=1; AJvYcCX07ODyx9+exIB2mRSb2GRgUu26PJw6j5qBpMaX+KPJHjur2kCGOsC7pBrNVYWe1+d3Ym40HLb7D2Wbvv7BimdJqv8ihj4XYAih8m77
+X-Gm-Message-State: AOJu0YyVnYJVY3ZHPqL3QQyXLtXGrX2A/vQphEPZnRxxuknz1j2aaaFw
+	/A6ovHs1yAX5CRbv/o1XHHIbkuWKxRCabJXo9RXGh0cb5+R8DHXvBYSpQPMFHlGEYVxj5iNPV2T
+	PIA==
+X-Google-Smtp-Source: AGHT+IGiMIigOSDrrlOBnbxaKLq8/8hmGFpm1Scz2UDZMrMDNsO773Ch249W9pUKNNAsjSgFGmuSjLu7ZmU=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a81:6d97:0:b0:627:3c45:4a90 with SMTP id
+ 00721157ae682-6273c454b1emr4527527b3.4.1715815203978; Wed, 15 May 2024
+ 16:20:03 -0700 (PDT)
+Date: Wed, 15 May 2024 16:20:02 -0700
+In-Reply-To: <175989e7-2275-4775-9ad8-65c4134184dd@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <CAPM=9tw-53PCvveRcdLUUQ+mjq2X2er5zp6n1KeE8Nu8x=VP2g@mail.gmail.com>
- <CAHk-=whxT8D_0j=bjtrvj-O=VEOjn6GW8GK4j2V+BiDUntZKAQ@mail.gmail.com>
- <CAPM=9tyOtH24Mw_2X+bgV9iChOQV3LtmRCoR5x6KXhSUD6FjUg@mail.gmail.com> <CAHk-=wh8DWSMrtuhZOzanfBCFcuJCihO9x7fkzx-dBhLddXF-Q@mail.gmail.com>
-In-Reply-To: <CAHk-=wh8DWSMrtuhZOzanfBCFcuJCihO9x7fkzx-dBhLddXF-Q@mail.gmail.com>
-From: Dave Airlie <airlied@gmail.com>
-Date: Thu, 16 May 2024 09:17:42 +1000
-Message-ID: <CAPM=9twCVkx9OqndCcvjjgx+P7ixBRwttiz25-R=bkycEo5vrQ@mail.gmail.com>
-Subject: Re: [git pull] drm for 6.10-rc1
-To: Linus Torvalds <torvalds@linux-foundation.org>, 
-	Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Jani Nikula <jani.nikula@intel.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, 
-	dri-devel <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <20240515005952.3410568-1-rick.p.edgecombe@intel.com>
+ <20240515005952.3410568-3-rick.p.edgecombe@intel.com> <b89385e5c7f4c3e5bc97045ec909455c33652fb1.camel@intel.com>
+ <ZkUIMKxhhYbrvS8I@google.com> <1257b7b43472fad6287b648ec96fc27a89766eb9.camel@intel.com>
+ <ZkUVcjYhgVpVcGAV@google.com> <ac5cab4a25d3a1e022a6a1892e59e670e5fff560.camel@intel.com>
+ <ZkU7dl3BDXpwYwza@google.com> <175989e7-2275-4775-9ad8-65c4134184dd@intel.com>
+Message-ID: <ZkVDIkgj3lWKymfR@google.com>
+Subject: Re: [PATCH 02/16] KVM: x86/mmu: Introduce a slot flag to zap only
+ slot leafs on slot deletion
+From: Sean Christopherson <seanjc@google.com>
+To: Kai Huang <kai.huang@intel.com>
+Cc: Rick P Edgecombe <rick.p.edgecombe@intel.com>, "dmatlack@google.com" <dmatlack@google.com>, 
+	"sagis@google.com" <sagis@google.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Yan Y Zhao <yan.y.zhao@intel.com>, 
+	Erdem Aktas <erdemaktas@google.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"pbonzini@redhat.com" <pbonzini@redhat.com>, "isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Thu, 16 May 2024 at 08:56, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Wed, 15 May 2024 at 15:45, Dave Airlie <airlied@gmail.com> wrote:
-> >
-> >           The drm subsystem enables more warnings than the kernel default, so
-> >           this config option is disabled by default.
->
-> Irrelevant.
->
-> If the *main* CONFIG_WERROR is on, then it does NOT MATTER if somebody
-> sets CONFIG_DRM_WERROR or not. It's a no-op. It's pointless.
->
-> And that means that it's also entirely pointless to ask. It's only annoying.
->
-> > depends on DRM && EXPERT
-> >
-> > so we aren't throwing it at random users.
->
-> Yes you are.
->
-> Because - rightly or wrongly - distros enable EXPERT by default. At
-> least Fedora does. So any user that starts from a distro config will
-> have EXPERT enabled.
->
-> > should we rename it CONFIG_DRM_WERROR_MORE or something?
->
-> Renaming does nothing. If it's pointless, it's pointless even if it's renamed.
->
-> It needs to have a
->
->    depends on !WERROR
->
-> because if WERROR is already true, then it's stupid and wrong to ask AGAIN.
->
-> To summarize: if the main WERROR is enabled, then the DRM tree is
-> *ALREADY* built with WERROR. Asking for DRM_WERROR is wrong.
->
-> I keep harping on bad config variables because our kernel config thing
-> is already much too messy and is by far the most difficult part of
-> building your own kernel.
->
-> Everything else is literally just "make" followed by "make
-> modules_install" and "make install". Very straightforward.
->
-> But doing a kernel config? Nasty. And made nastier by bad and
-> nonsensical questions.
+On Thu, May 16, 2024, Kai Huang wrote:
+> > > You had said up the thread, why not opt all non-normal VMs into the new
+> > > behavior. It will work great for TDX. But why do SEV and others want this
+> > > automatically?
+> > 
+> > Because I want flexibility in KVM, i.e. I want to take the opportunity to try and
+> > break away from KVM's godawful ABI.  It might be a pipe dream, as keying off the
+> > VM type obviously has similar risks to giving userspace a memslot flag.  The one
+> > sliver of hope is that the VM types really are quite new (though less so for SEV
+> > and SEV-ES), whereas a memslot flag would be easily applied to existing VMs.
+> 
+> Btw, does the "zap-leaf-only" approach always have better performance,
+> assuming we have to hold MMU write lock for that?
 
-It's also possible it's just that hey there's a few others in the tree
+I highly doubt it, especially given how much the TDP MMU can now do with mmu_lock
+held for read.
 
-KVM_WERROR not tied to it
-PPC_WERROR (why does CXL uses this?)
-AMDGPU, I915 and XE all have !COMPILE_TEST on their variants
+> Consider a huge memslot being deleted/moved.
+> 
+> If we can always have a better performance for "zap-leaf-only", then instead
+> of letting userspace to opt-in this feature, we perhaps can do the opposite:
+> 
+> We always do the "zap-leaf-only" in KVM, but add a quirk for the VMs that
+> userspace know can have such bug and apply this quirk.
 
-We should probably add !WERROR to all of these at this point.
+Hmm, a quirk isn't a bad idea.  It suffers the same problems as a memslot flag,
+i.e. who knows when it's safe to disable the quirk, but I would hope userspace
+would be much, much cautious about disabling a quirk that comes with a massive
+disclaimer.
 
-Adding Jani who was the initial author of
+Though I suspect Paolo will shoot this down too ;-)
 
-commit f89632a9e5fa6c4787c14458cd42a9ef42025434
-Author: Jani Nikula <jani.nikula@intel.com>
-Date:   Tue Mar 5 11:07:36 2024 +0200
+> But again, I think it's just too overkill for TDX.  We can just set the
+> ZAP_LEAF_ONLY flag for the slot when it is created in KVM.
 
-    drm: Add CONFIG_DRM_WERROR
-
-where I see we actually removed the !COMPILE_TEST check in v2.
-
-Dave.
+Ya, I'm convinced that adding uAPI is overkill at this point.
 
