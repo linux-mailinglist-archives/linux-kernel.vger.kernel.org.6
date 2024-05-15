@@ -1,122 +1,253 @@
-Return-Path: <linux-kernel+bounces-179524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A9458C60DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:39:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C2B88C60DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:38:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B9AEB219C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:39:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BA171F21EE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:38:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DDA73D55D;
-	Wed, 15 May 2024 06:38:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 030FE3D3BF;
+	Wed, 15 May 2024 06:38:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="d15GYD9R"
-Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kw38awke"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 191783FBA4
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 06:38:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2295F3BBDE
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 06:38:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715755134; cv=none; b=W3mnMwW/EkjA5yoUQk9du5bTDWZA1AR+9Sx9Lm4V9ZYCFCQ/50PpLHEhyH5WjkfalfQRlim4NyL4VF+YusFbczQBsIa48Y2HHBqPJt8wvcedxn0Efae96XVy2jxngj+ey+fVsgH4ZLf9L0rzdlAMFRAnvYHketwxBGN5nVDtMlE=
+	t=1715755124; cv=none; b=YdlUwkujM7L7fsfNP7rdSlpJp47MmrxP/kMoP1jW1E6NeGjzyE/hFIpWqBCtflKMIe1eJ3THHkh+LROItosSkZrcKyIPtUsq0QCu6SPLxo1xFmsJFm0kqZ2OAg+zGRYD9FfSF9fbQFi2k6cS18YowUgGwisV7DqXZLPwrBPy9SI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715755134; c=relaxed/simple;
-	bh=/91xzwAz9XhKkTyx5CbnWsRTqhWtMw8FNJq7CLNA+4k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=s3wvQsqwNOBsvx8jj/H9b0BF6yCVIIgafADxBDBHsVrEkzb44ZXswF6suWYgwWRD8k/PwNif7gPKkDHSST2WdknxlbTXqsp5tePxK2kaODi/Mz499gNi+gfJN8AdD5Zt5Y24ja9nvFapb2eE00zniQ5hdobbpeq2NLhifV/sifk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=d15GYD9R; arc=none smtp.client-ip=209.85.221.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-4df3ad5520aso2515137e0c.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 23:38:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715755132; x=1716359932; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=vVNSHkVmQ2QEQ7lf4BbvPSzpubRsxHLfx4PuD65Mr2w=;
-        b=d15GYD9RRquwJ290ZkQd1/Gg9ImS/XORhQbxNp6SA3G6yagwZVAW8lBenRo1DMpx//
-         zgs5vJ0ZLAMcOu1Yi/EQiIYEOvEt5i+Lbj5Y/FjyBFWeMHL0Td8wF4yh2ncUQdU0w+4F
-         Eh9R8/aiBc8gHAaEyfbXDzg6whTUr4t5qoTjVWhIpxko/QE1OTmv8U0WZ+vJAo1Ysmf6
-         SG2FQPXB0/5KQJzcU/4CyHRVLpWxPIaMAbIAig8nZ5xSDFacqamiHbQH0SC7mN8Ag/Ip
-         wYvVIQ6Jm7oGtL5Z7igwuw0gjSSLx3aL0IIccqgajw7T2umeQqmUIISbY5sEVs4XNpDZ
-         f4ZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715755132; x=1716359932;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vVNSHkVmQ2QEQ7lf4BbvPSzpubRsxHLfx4PuD65Mr2w=;
-        b=YZwVxwj6IS7uzqxHjAf7j6TNaTYDUXFwHgfgvfK7bVg9tkIA/4LHjRu+NgLVi6jjWD
-         45Ah7Gq/57jVwLU2RM4jbiVk2QXgDojtHh4QJ3DFqnoqO0sbAnrCzlFMwsIR4fnyNTAB
-         UtvBwGS1gZtm7G9P2qjMPkOyU8+BxwtuRXrk9iYafpXbEp16TitcHx/49Dw7e8eeNfd4
-         7NAKiEH+QORBdL3ei/7gz4gjKPJQ2rcMwxYFjkf/NIEV8v6ClFKy2K6ns9adS2WkAn6Q
-         Gdu5e19ifBaPZtS/hRowBB+UAXiOl7S2HkiDgB5qNlmB2q9j89Z/rPo1XxsmzDZf8uum
-         0i5A==
-X-Forwarded-Encrypted: i=1; AJvYcCVAxRo6lZg++wY41cne2+bFapthpgr+/gWAFXgfk4vLFybuG0bBngb5u/u6tUCqohedFVf8mvuf5UWcw6HUnBBYlUoWFwi05jU8BVGR
-X-Gm-Message-State: AOJu0YxrdCizED1OL7Of9uoHGUV2Fp+7xoin7sgeFEWPk6ItJU4wrRBL
-	3GXnjDOZW5/1drwztQXys53ZHSbGgauS8qAiZgDZ0YVgHqXBqNlzFUs+NZhIzeP6237kegKvKox
-	w2aHhsHXMJN0qz4+JeVXcg9DQc0/J5f8Pk0x+
-X-Google-Smtp-Source: AGHT+IHr4wm/sYb1pP/OT+0B+sF0lgunYepCEA+ITnor8B7krDEe5caV2Crh9QZWDnDZn/Yo7donssWP2m/DPvJo4P4=
-X-Received: by 2002:a05:6122:4698:b0:4df:315a:adab with SMTP id
- 71dfb90a1353d-4df882c2956mr13577261e0c.5.1715755131816; Tue, 14 May 2024
- 23:38:51 -0700 (PDT)
+	s=arc-20240116; t=1715755124; c=relaxed/simple;
+	bh=DUBK5FSNdWNxIcO5szuLJHHIpvf4ofWE4u9LBUSeSS0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Zei1EyFWvyJnkjBj5KzL0n6NiyzO8dM+TF14pzZHjuVd7WKc05aTuDpvhFo6/Kx2hLbYIpoF1sfmd3sVfRywyhuZoYF+UhkqUjeXwvetWJ4tQGeHFtCrtSdAk95C8nJ13Z3Q0rd0ZS8FrjL/d7lvHY9zPVXuJ31Xc6oDgNNoN4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kw38awke; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A090DC116B1;
+	Wed, 15 May 2024 06:38:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715755123;
+	bh=DUBK5FSNdWNxIcO5szuLJHHIpvf4ofWE4u9LBUSeSS0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=kw38awkeWt7DClqOHsChHLNDfetR+rpkBv+orOciCmrKvdkwDHPf7OujHxpx2EKAj
+	 98n7e5GAEVyEPuQ4kPOaU7KbCmX3XVZfVe9MdfDgqUX5Jwh8RtKbV7TzGC5tV8yYCl
+	 QGgb/n8B3o8SXbNkOQiKagom5oRlwAHyuxtY/GZXLjpxsT0psyK/GgVVCsWmKQ/zAm
+	 viUXgxZZFYISGJgASO4r+dhIncFalX47rtSeXV0hN2cVrN/+qdWvdM6Xyz2ssN9bGR
+	 KBY+PmXmx/50GaUpkAiREXmC75q3ufVZbxCFjS3B9ZAPXIkAmVvV9kM85q0nIJJXG/
+	 9/9OIG00LuvQw==
+Message-ID: <efae597c-d334-498b-9050-1a21bf40e21d@kernel.org>
+Date: Wed, 15 May 2024 14:38:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240514233747.work.441-kees@kernel.org>
-In-Reply-To: <20240514233747.work.441-kees@kernel.org>
-From: Marco Elver <elver@google.com>
-Date: Wed, 15 May 2024 08:38:15 +0200
-Message-ID: <CANpmjNMmNvW41j8RfqZr8asW5BeRXLFkmW_MTO_DX=xEtQNgFg@mail.gmail.com>
-Subject: Re: [PATCH] ubsan: Restore dependency on ARCH_HAS_UBSAN
-To: Kees Cook <keescook@chromium.org>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Andrey Konovalov <andreyknvl@gmail.com>, 
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>, kasan-dev@googlegroups.com, 
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] f2fs: fix to avoid racing in between read and OPU dio
+ write
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+References: <20240510023906.281700-1-chao@kernel.org>
+ <ZkOMwKAcKmEPQ4Xz@google.com>
+ <fc0d8b1f-0c54-4447-8ceb-3722645f71c2@kernel.org>
+ <ZkQ9Uo5713Xpr2n7@google.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <ZkQ9Uo5713Xpr2n7@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, 15 May 2024 at 01:38, Kees Cook <keescook@chromium.org> wrote:
->
-> While removing CONFIG_UBSAN_SANITIZE_ALL, ARCH_HAS_UBSAN wasn't correctly
-> depended on. Restore this, as we do not want to attempt UBSAN builds
-> unless it's actually been tested on a given architecture.
->
-> Reported-by: Masahiro Yamada <masahiroy@kernel.org>
-> Closes: https://lore.kernel.org/all/20240514095427.541201-1-masahiroy@kernel.org
-> Fixes: 918327e9b7ff ("ubsan: Remove CONFIG_UBSAN_SANITIZE_ALL")
-> Signed-off-by: Kees Cook <keescook@chromium.org>
+On 2024/5/15 12:42, Jaegeuk Kim wrote:
+> On 05/15, Chao Yu wrote:
+>> On 2024/5/15 0:09, Jaegeuk Kim wrote:
+>>> On 05/10, Chao Yu wrote:
+>>>> If lfs mode is on, buffered read may race w/ OPU dio write as below,
+>>>> it may cause buffered read hits unwritten data unexpectly, and for
+>>>> dio read, the race condition exists as well.
+>>>>
+>>>> Thread A                      Thread B
+>>>> - f2fs_file_write_iter
+>>>>    - f2fs_dio_write_iter
+>>>>     - __iomap_dio_rw
+>>>>      - f2fs_iomap_begin
+>>>>       - f2fs_map_blocks
+>>>>        - __allocate_data_block
+>>>>         - allocated blkaddr #x
+>>>>          - iomap_dio_submit_bio
+>>>>                                 - f2fs_file_read_iter
+>>>>                                  - filemap_read
+>>>>                                   - f2fs_read_data_folio
+>>>>                                    - f2fs_mpage_readpages
+>>>>                                     - f2fs_map_blocks
+>>>>                                      : get blkaddr #x
+>>>>                                     - f2fs_submit_read_bio
+>>>>                                 IRQ
+>>>>                                 - f2fs_read_end_io
+>>>>                                  : read IO on blkaddr #x complete
+>>>> IRQ
+>>>> - iomap_dio_bio_end_io
+>>>>    : direct write IO on blkaddr #x complete
+>>>>
+>>>> This patch introduces a new per-inode i_opu_rwsem lock to avoid
+>>>> such race condition.
+>>>
+>>> Wasn't this supposed to be managed by user-land?
+>>
+>> Actually, the test case is:
+>>
+>> 1. mount w/ lfs mode
+>> 2. touch file;
+>> 3. initialize file w/ 4k zeroed data; fsync;
+>> 4. continue triggering dio write 4k zeroed data to file;
+>> 5. and meanwhile, continue triggering buf/dio 4k read in file,
+>> use md5sum to verify the 4k data;
+>>
+>> It expects data is all zero, however it turned out it's not.
+> 
+> Can we check outstanding write bios instead of abusing locks?
 
-Reviewed-by: Marco Elver <elver@google.com>
+I didn't figure out a way to solve this w/o lock, due to:
+- write bios can be issued after outstanding write bios check condition,
+result in the race.
+- once read() detects that there are outstanding write bios, we need to
+delay read flow rather than fail it, right? It looks using a lock is more
+proper here?
 
-> ---
-> Cc: Marco Elver <elver@google.com>
-> Cc: Andrey Konovalov <andreyknvl@gmail.com>
-> Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>
-> Cc: kasan-dev@googlegroups.com
-> Cc: linux-hardening@vger.kernel.org
-> ---
->  lib/Kconfig.ubsan | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/lib/Kconfig.ubsan b/lib/Kconfig.ubsan
-> index e81e1ac4a919..bdda600f8dfb 100644
-> --- a/lib/Kconfig.ubsan
-> +++ b/lib/Kconfig.ubsan
-> @@ -4,6 +4,7 @@ config ARCH_HAS_UBSAN
->
->  menuconfig UBSAN
->         bool "Undefined behaviour sanity checker"
-> +       depends on ARCH_HAS_UBSAN
->         help
->           This option enables the Undefined Behaviour sanity checker.
->           Compile-time instrumentation is used to detect various undefined
-> --
-> 2.34.1
->
+Any suggestion?
+
+Thanks,
+
+> 
+>>
+>> Thanks,
+>>
+>>>
+>>>>
+>>>> Fixes: f847c699cff3 ("f2fs: allow out-place-update for direct IO in LFS mode")
+>>>> Signed-off-by: Chao Yu <chao@kernel.org>
+>>>> ---
+>>>> v2:
+>>>> - fix to cover dio read path w/ i_opu_rwsem as well.
+>>>>    fs/f2fs/f2fs.h  |  1 +
+>>>>    fs/f2fs/file.c  | 28 ++++++++++++++++++++++++++--
+>>>>    fs/f2fs/super.c |  1 +
+>>>>    3 files changed, 28 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>>>> index 30058e16a5d0..91cf4b3d6bc6 100644
+>>>> --- a/fs/f2fs/f2fs.h
+>>>> +++ b/fs/f2fs/f2fs.h
+>>>> @@ -847,6 +847,7 @@ struct f2fs_inode_info {
+>>>>         /* avoid racing between foreground op and gc */
+>>>>         struct f2fs_rwsem i_gc_rwsem[2];
+>>>>         struct f2fs_rwsem i_xattr_sem; /* avoid racing between reading and changing EAs */
+>>>> +     struct f2fs_rwsem i_opu_rwsem;  /* avoid racing between buf read and opu dio write */
+>>>>
+>>>>         int i_extra_isize;              /* size of extra space located in i_addr */
+>>>>         kprojid_t i_projid;             /* id for project quota */
+>>>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+>>>> index 72ce1a522fb2..4ec260af321f 100644
+>>>> --- a/fs/f2fs/file.c
+>>>> +++ b/fs/f2fs/file.c
+>>>> @@ -4445,6 +4445,7 @@ static ssize_t f2fs_dio_read_iter(struct kiocb *iocb, struct iov_iter *to)
+>>>>         const loff_t pos = iocb->ki_pos;
+>>>>         const size_t count = iov_iter_count(to);
+>>>>         struct iomap_dio *dio;
+>>>> +     bool do_opu = f2fs_lfs_mode(sbi);
+>>>>         ssize_t ret;
+>>>>
+>>>>         if (count == 0)
+>>>> @@ -4457,8 +4458,14 @@ static ssize_t f2fs_dio_read_iter(struct kiocb *iocb, struct iov_iter *to)
+>>>>                         ret = -EAGAIN;
+>>>>                         goto out;
+>>>>                 }
+>>>> +             if (do_opu && !f2fs_down_read_trylock(&fi->i_opu_rwsem)) {
+>>>> +                     f2fs_up_read(&fi->i_gc_rwsem[READ]);
+>>>> +                     ret = -EAGAIN;
+>>>> +                     goto out;
+>>>> +             }
+>>>>         } else {
+>>>>                 f2fs_down_read(&fi->i_gc_rwsem[READ]);
+>>>> +             f2fs_down_read(&fi->i_opu_rwsem);
+>>>>         }
+>>>>
+>>>>         /*
+>>>> @@ -4477,6 +4484,7 @@ static ssize_t f2fs_dio_read_iter(struct kiocb *iocb, struct iov_iter *to)
+>>>>                 ret = iomap_dio_complete(dio);
+>>>>         }
+>>>>
+>>>> +     f2fs_up_read(&fi->i_opu_rwsem);
+>>>>         f2fs_up_read(&fi->i_gc_rwsem[READ]);
+>>>>
+>>>>         file_accessed(file);
+>>>> @@ -4523,7 +4531,13 @@ static ssize_t f2fs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+>>>>         if (f2fs_should_use_dio(inode, iocb, to)) {
+>>>>                 ret = f2fs_dio_read_iter(iocb, to);
+>>>>         } else {
+>>>> +             bool do_opu = f2fs_lfs_mode(F2FS_I_SB(inode));
+>>>> +
+>>>> +             if (do_opu)
+>>>> +                     f2fs_down_read(&F2FS_I(inode)->i_opu_rwsem);
+>>>>                 ret = filemap_read(iocb, to, 0);
+>>>> +             if (do_opu)
+>>>> +                     f2fs_up_read(&F2FS_I(inode)->i_opu_rwsem);
+>>>>                 if (ret > 0)
+>>>>                         f2fs_update_iostat(F2FS_I_SB(inode), inode,
+>>>>                                                 APP_BUFFERED_READ_IO, ret);
+>>>> @@ -4748,14 +4762,22 @@ static ssize_t f2fs_dio_write_iter(struct kiocb *iocb, struct iov_iter *from,
+>>>>                         ret = -EAGAIN;
+>>>>                         goto out;
+>>>>                 }
+>>>> +             if (do_opu && !f2fs_down_write_trylock(&fi->i_opu_rwsem)) {
+>>>> +                     f2fs_up_read(&fi->i_gc_rwsem[READ]);
+>>>> +                     f2fs_up_read(&fi->i_gc_rwsem[WRITE]);
+>>>> +                     ret = -EAGAIN;
+>>>> +                     goto out;
+>>>> +             }
+>>>>         } else {
+>>>>                 ret = f2fs_convert_inline_inode(inode);
+>>>>                 if (ret)
+>>>>                         goto out;
+>>>>
+>>>>                 f2fs_down_read(&fi->i_gc_rwsem[WRITE]);
+>>>> -             if (do_opu)
+>>>> +             if (do_opu) {
+>>>>                         f2fs_down_read(&fi->i_gc_rwsem[READ]);
+>>>> +                     f2fs_down_write(&fi->i_opu_rwsem);
+>>>> +             }
+>>>>         }
+>>>>
+>>>>         /*
+>>>> @@ -4779,8 +4801,10 @@ static ssize_t f2fs_dio_write_iter(struct kiocb *iocb, struct iov_iter *from,
+>>>>                 ret = iomap_dio_complete(dio);
+>>>>         }
+>>>>
+>>>> -     if (do_opu)
+>>>> +     if (do_opu) {
+>>>> +             f2fs_up_write(&fi->i_opu_rwsem);
+>>>>                 f2fs_up_read(&fi->i_gc_rwsem[READ]);
+>>>> +     }
+>>>>         f2fs_up_read(&fi->i_gc_rwsem[WRITE]);
+>>>>
+>>>>         if (ret < 0)
+>>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+>>>> index daf2c4dbe150..b4ed3b094366 100644
+>>>> --- a/fs/f2fs/super.c
+>>>> +++ b/fs/f2fs/super.c
+>>>> @@ -1428,6 +1428,7 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
+>>>>         init_f2fs_rwsem(&fi->i_gc_rwsem[READ]);
+>>>>         init_f2fs_rwsem(&fi->i_gc_rwsem[WRITE]);
+>>>>         init_f2fs_rwsem(&fi->i_xattr_sem);
+>>>> +     init_f2fs_rwsem(&fi->i_opu_rwsem);
+>>>>
+>>>>         /* Will be used by directory only */
+>>>>         fi->i_dir_level = F2FS_SB(sb)->dir_level;
+>>>> --
+>>>> 2.40.1
 
