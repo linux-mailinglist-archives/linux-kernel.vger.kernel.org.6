@@ -1,78 +1,163 @@
-Return-Path: <linux-kernel+bounces-180149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBC2A8C6ABD
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:35:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17B1F8C6AC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:37:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 654DAB212DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:35:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D55E1F21D02
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:37:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED1B722F03;
-	Wed, 15 May 2024 16:35:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40CAB2577B;
+	Wed, 15 May 2024 16:36:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u9LxPMb3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LOHfFBOK";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Had3bBPe";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LOHfFBOK";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Had3bBPe"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D6F52D052;
-	Wed, 15 May 2024 16:35:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D43AF1392;
+	Wed, 15 May 2024 16:36:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715790911; cv=none; b=u4K0LNPzrDhscqEcyc6kIkP4Xj7sZV2mypXlKRYcR/C/K7hHqnXiRuLSn5wo+DQhGK0OgIz9LRT8Qq9xv9Y3ifzXIKPNrqF7Ce0sLr4aESwsTpcHWuIcxpnyBeFHqcJxt7UxZprMopAemQ//NYdtkOsj2VGAlyu5fQHnao/PZi4=
+	t=1715791010; cv=none; b=e4Mkv/2bgFSHGMVaQJZkVcernd+JE+Qk802wUezroXRDF+XEACazl4GXxTKZdoEekyinl/re6bb/WmVY2CStWP347rJv07eWWYopP74MZ8Te7EI1NUBsVigblSZSDUm6iCPttfOjHS/ALU+jxbnlGZGQyU3WIqQ4JFqs9jxUu/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715790911; c=relaxed/simple;
-	bh=jyVVUJSwo6c+v3Buq1nMc68pdaHuljQeMCavuuB3no4=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=hMmy15FDuih9mxragGqXTjCpm03UB03rKTHO8R+2CI39bwJciYOhH4VvUBSa+uKp9auN6MmPdqrSS7qTuXB8jgwi/P8VIlY4PzocnfiOBrPkkAFPzM0qPkXXzuT3xdN8ugbx27w9govI8HBS9G1pEcdzb0jy15VUBfaHPh89aCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u9LxPMb3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 17768C32789;
-	Wed, 15 May 2024 16:35:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715790911;
-	bh=jyVVUJSwo6c+v3Buq1nMc68pdaHuljQeMCavuuB3no4=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=u9LxPMb3ek5adgi47oo6iMa1DiU6bYYes7S8ipU9P3JynwyBfw4IEuoT99WqSpo20
-	 3StiIVqRYMma5VDobWJAHS52WoPnIGzCQuaj9Vuqm9EgkLpXnazrGj26nWMVCdnwyO
-	 JaMQsPUhlKkCe97JuCs+G4OJOFCNxi3wUT3gNXzVfu7OQav+croW5PTLtzdyXtwZhQ
-	 ZrNmiyhZqELDqBabNiAI+8Y4PipKBIpre27pmg2OWauTEaXnT3AgXG92VMqPFkFknG
-	 iYyML89ptpq4KC1w6mtWlA7jLYvg9b/wy75ozgrhkRU5XFelJzMZl/U8j9Xt7JSvGp
-	 jBsivWBq7TFCg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 0EBE4C43332;
-	Wed, 15 May 2024 16:35:11 +0000 (UTC)
-Subject: Re: [GIT PULL] integrity: subsystem updates for v6.10
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <1887e28b6bcbe1eca72028432c9e0fee7a72fbfe.camel@linux.ibm.com>
-References: <1887e28b6bcbe1eca72028432c9e0fee7a72fbfe.camel@linux.ibm.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <1887e28b6bcbe1eca72028432c9e0fee7a72fbfe.camel@linux.ibm.com>
-X-PR-Tracked-Remote: ssh://gitolite@ra.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git tags/integrity-v6.10
-X-PR-Tracked-Commit-Id: 9fa8e76250082a45d0d3dad525419ab98bd01658
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 353ad6c0839431146fdee3ff16f9dd17a2809ee4
-Message-Id: <171579091105.28973.13692185848418256314.pr-tracker-bot@kernel.org>
-Date: Wed, 15 May 2024 16:35:11 +0000
-To: Mimi Zohar <zohar@linux.ibm.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-integrity <linux-integrity@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Roberto Sassu <roberto.sassu@huaweicloud.com>
+	s=arc-20240116; t=1715791010; c=relaxed/simple;
+	bh=5cYTWTUqYGK9Lsmtgex2ufr1zilkF/fgbuIddliU2eI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pB/8wCyo3BXdKPkkOrGT5XmxUUe9ydZ/vzfkg95wJ/q5724RNeRu950HvpsZM6WydcbTRhIh9qr+xc+sY7vnF79hXV1GwzTHdjbc2k4yxw/F420mriU8NU1H2Q6jdlRnBlNLovgUx+ZxDsY6Zd0rrKaHmvBJ4TATPRbbi4qzFHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LOHfFBOK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Had3bBPe; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LOHfFBOK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Had3bBPe; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 0D06333D5F;
+	Wed, 15 May 2024 16:36:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1715791007;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8i1qPfQ62wrcBf778d7lmhXzaAaIOC8pN8skQz1Y0NI=;
+	b=LOHfFBOKWrsRaYqT8+TT0cBmr77VY7wrW8IqkCyFNH3j6sqhuFE3DZsBwTF/Ggi2k7ABAP
+	+C5RtiT77YduzRCJPTVbYfqcaajCTRSvKR651OOSKp3JDuG93csf4bqAURLPJtLAopTbIC
+	yPo1GgLWUa8w98jEigA3fS+ii+8FvV4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1715791007;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8i1qPfQ62wrcBf778d7lmhXzaAaIOC8pN8skQz1Y0NI=;
+	b=Had3bBPeqHgjP38nE6OY8jdPc5wF4L8kmzpQ9FZZk6Q68Y8iFV7GrgZP590jlZ2ToOA7q0
+	7IwjYdB5FHfeTbAQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1715791007;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8i1qPfQ62wrcBf778d7lmhXzaAaIOC8pN8skQz1Y0NI=;
+	b=LOHfFBOKWrsRaYqT8+TT0cBmr77VY7wrW8IqkCyFNH3j6sqhuFE3DZsBwTF/Ggi2k7ABAP
+	+C5RtiT77YduzRCJPTVbYfqcaajCTRSvKR651OOSKp3JDuG93csf4bqAURLPJtLAopTbIC
+	yPo1GgLWUa8w98jEigA3fS+ii+8FvV4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1715791007;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8i1qPfQ62wrcBf778d7lmhXzaAaIOC8pN8skQz1Y0NI=;
+	b=Had3bBPeqHgjP38nE6OY8jdPc5wF4L8kmzpQ9FZZk6Q68Y8iFV7GrgZP590jlZ2ToOA7q0
+	7IwjYdB5FHfeTbAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E714A1372E;
+	Wed, 15 May 2024 16:36:46 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id u7suOJ7kRGZdIgAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Wed, 15 May 2024 16:36:46 +0000
+Date: Wed, 15 May 2024 18:36:45 +0200
+From: David Sterba <dsterba@suse.cz>
+To: syzbot <syzbot+06006fc4a90bff8e8f17@syzkaller.appspotmail.com>
+Cc: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
+	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [btrfs?] kernel BUG in __extent_writepage_io
+Message-ID: <20240515163645.GR4449@suse.cz>
+Reply-To: dsterba@suse.cz
+References: <000000000000169326060971d07a@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <000000000000169326060971d07a@google.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Flag: NO
+X-Spam-Score: 0.53
+X-Spam-Level: 
+X-Spamd-Result: default: False [0.53 / 50.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=c3aadb4391bbacce];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	BAYES_HAM(-0.97)[86.80%];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	TAGGED_RCPT(0.00)[06006fc4a90bff8e8f17];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[syzkaller.appspot.com:url,appspotmail.com:email];
+	RCVD_COUNT_TWO(0.00)[2];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	SUBJECT_HAS_QUESTION(0.00)[]
 
-The pull request you sent on Wed, 15 May 2024 07:55:47 -0400:
+On Sun, Nov 05, 2023 at 05:31:27PM -0800, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    8bc9e6515183 Merge tag 'devicetree-for-6.7' of git://git.k..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=10e087a0e80000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=c3aadb4391bbacce
+> dashboard link: https://syzkaller.appspot.com/bug?extid=06006fc4a90bff8e8f17
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/6c9b9f6781b1/disk-8bc9e651.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/44acae63a945/vmlinux-8bc9e651.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/f0058df8ab69/bzImage-8bc9e651.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+06006fc4a90bff8e8f17@syzkaller.appspotmail.com
 
-> ssh://gitolite@ra.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git tags/integrity-v6.10
+#syz fix: btrfs: don't drop extent_map for free space inode on write error
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/353ad6c0839431146fdee3ff16f9dd17a2809ee4
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+We were not aware that syzbot also hit the problem, we got report from
+our CI so the auto close tags was missing.
 
