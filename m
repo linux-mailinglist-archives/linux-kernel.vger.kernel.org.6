@@ -1,103 +1,146 @@
-Return-Path: <linux-kernel+bounces-180306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BF4B8C6CAE
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 21:16:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69E798C6CB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 21:17:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 250691F22BAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 19:16:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 231632825E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 19:17:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 213CF15ADA0;
-	Wed, 15 May 2024 19:16:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2128415AADA;
+	Wed, 15 May 2024 19:17:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DwXOaEWw"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="REkKWhWu"
+Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33282159562
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 19:16:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FECA446AC;
+	Wed, 15 May 2024 19:17:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715800577; cv=none; b=nb8qirXsPoRYyyordbrCjgH+WW5ffs/e5EU5AoCHLmnLhf/V0BisXbv6+Vfj30i2vuObB2C3mkzWNbrejyIorJwPHjZFYfz95hr2jUne2mxbaKg4AUlX2k2AyK8ZfQM1wLP9GksHmiu9ltqAVk0DuPRWWpL9QzMiH6WYPAa7jus=
+	t=1715800636; cv=none; b=XOtDbixheeAHo2rwNOJFE9Q4hRJQvz74lktCpK5R9ro4hyYOLMIZgvd5fy8wEe1p97bB5jrppnF45ZTABgIOE/jWSYGa2pEympLG+3CsW77qX0TVlgOA1D/SXJRf7uqpzqNuW5J0OIQTxLqNcnTzpRvEBFt2SWE2l6aa3PhRDEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715800577; c=relaxed/simple;
-	bh=FP5LyQsEGquqKItcS87RpeQ08Gmx+s5LG2B/J1Ts8Iw=;
-	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YyUvTmGowTDcnzhLdHLQLzLpPqkwMy+KS67YICOXLZfBLcdtO29QmggtWipSOAX/OZ2sIuukuaj4de6jRMpoFoDphwhQzYDEPOWVLGdFsWrsRtTJzOytzAXX6LaIpoh/UCM+lMGW1Df2FDLfCC4rEhqymfXZqRzqKU3qEsW1954=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=DwXOaEWw; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-61bed5ce32fso77961727b3.2
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 12:16:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1715800574; x=1716405374; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FP5LyQsEGquqKItcS87RpeQ08Gmx+s5LG2B/J1Ts8Iw=;
-        b=DwXOaEWwek0SnPySO1ARVc0A/4OgrkGiKRT5mcLRlWNxBKGu93kvckwdGoev7VXqes
-         8oP0wLbVNorcM7UTp5kFPZa+XHNMpTbKO8gCHBsFl1m9nbc0iln2Gz4tJdmEwV1i7nK/
-         1YYuF5S2eQ7VOUG9MD8cQooIgx5qll6LjsBPY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715800574; x=1716405374;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FP5LyQsEGquqKItcS87RpeQ08Gmx+s5LG2B/J1Ts8Iw=;
-        b=R/I8vHkP8mUIPconWpfofBWbQfV1K4tysJ425Rxj9Pr3QWGsgudlOWb0jNTF571K6d
-         fgQ3jpUeIqfcMsVMFV+bT4NgdcDbgHA3LHmZIQLwHNXpiEQbgcM2j3rUQVfVUP+0qvVT
-         qhcOnSVzjRj4n2U7gKEI4bg2mW5c4oq5KWPalKjaFCQX341BBdyuFgV3KR1OEwKxMOqg
-         4su0yCCsB+hiP6aEgjbdgYAloT3s1zLLbxJxibDRRcjpoAqOtmR/QxxJ/hQC/m0Xr/Kw
-         5CPpSlD+NAWly5aF+XJMQJqIDGgGVMFR/bVTfkvzZ7BDEyz+IrhiKlr9Is5eg81KQ/R/
-         AmqA==
-X-Forwarded-Encrypted: i=1; AJvYcCUY13R+QLngcipbMXwavFBgJ1LoA2BxgA9z33fdT7p/Q51UVALu3U+IdXFlQVJCmp20RwMQaEvfMRMfS0tpGnaBI3UdQMQb9xFXGsOm
-X-Gm-Message-State: AOJu0Yy7ht1l8+4lwq7GK1do9hF2XPBpI7Kjo5+CfZLem/xze5CMAHrw
-	MHPQBe1gqYgFDPP7TY8kN1Gqvc445UUQ/yjkKKVflK2exY82wFphIyaOybl9MF0b27ANmtPoadi
-	YZn4CajwvMaiIvICo6IzH57+I/BpEQjEsu2js
-X-Google-Smtp-Source: AGHT+IEZFVp0/9J3vEYY3DeetifpNlyI7Reu7bida3ovANfhBvDsm0gF8xGPrJXaQaXknjiNqesUsWMhYeDWThoRIkM=
-X-Received: by 2002:a25:6b41:0:b0:de5:568a:9a9 with SMTP id
- 3f1490d57ef6-dee4f2f7f74mr14602381276.38.1715800572793; Wed, 15 May 2024
- 12:16:12 -0700 (PDT)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 15 May 2024 12:16:11 -0700
+	s=arc-20240116; t=1715800636; c=relaxed/simple;
+	bh=V6B1o7vP2U1mB+39DQXD0JAC2U9kKIj4ljLZL1FbBX8=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BrcEUo/S4PU0HPUVxkzHMyhkLnugnsXJ/1xHx4+4KzfVvyFmjioalISWU8OgHHZTvzfbBdAIDdGXywEf1DiPTw2rw0KXFg2VZcvh74hsfg5d0MrvyFAQomM5Cktxd1Cm4gPWb2BlTTy5yrCB2Wa+Fg0C2UUIdKYmfvVsowXPdoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=REkKWhWu; arc=none smtp.client-ip=37.18.73.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
+Received: from p-infra-ksmg-sc-msk01 (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 7888B10002F;
+	Wed, 15 May 2024 22:17:12 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 7888B10002F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1715800632;
+	bh=0753sID6h0JKAX7uW58+tc82AGYS+dbom4wraQwXJOU=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:From;
+	b=REkKWhWurHkxfjqqLrnnr+zsQd9y9VC1UnwvBMKYK7xIKSIr1+XAGpvMK7HDH62bN
+	 c0jYuV963J2dT1XvTQgJwqCsKLP7aM4E+KE9A2DoQcb7706m19AMxvfnKNtfSNTPWc
+	 0azZeDbWEzUfUKEOcf28OlThCiCg9+gqzI577WpaEIqlZQSJhQ19YFjbFk/1Ep/8c0
+	 3D49RcCwzW1nDY/K9mjoCgNrXlcPdIXcIe+vQ7rtta06WIG2Nbn79B7qiy2jXXa9yP
+	 O5PzxUJMfYoJtCkVCCWtRj5ahX+jCGE30OxGG8B6ryh+T7qGpRZhUdLZLQO07ghoeX
+	 omxh0ktXh66sA==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Wed, 15 May 2024 22:17:12 +0300 (MSK)
+Received: from localhost (100.64.160.123) by p-i-exch-sc-m02.sberdevices.ru
+ (172.16.192.103) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Wed, 15 May
+ 2024 22:17:11 +0300
+Date: Wed, 15 May 2024 22:17:11 +0300
+From: Dmitry Rokosov <ddrokosov@salutedevices.com>
+To: <neil.armstrong@linaro.org>
+CC: <jbrunet@baylibre.com>, <mturquette@baylibre.com>, <khilman@baylibre.com>,
+	<martin.blumenstingl@googlemail.com>, <glaroque@baylibre.com>,
+	<rafael@kernel.org>, <daniel.lezcano@linaro.org>, <rui.zhang@intel.com>,
+	<lukasz.luba@arm.com>, <robh+dt@kernel.org>,
+	<krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+	<kernel@salutedevices.com>, <rockosov@gmail.com>,
+	<linux-amlogic@lists.infradead.org>, <linux-pm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2 0/3] arm64: dts: amlogic: a1: introduce thermal setup
+Message-ID: <20240515191711.3bltbh536pntnvdg@CAB-WSD-L081021>
+References: <20240328192645.20914-1-ddrokosov@salutedevices.com>
+ <20240503184222.cqka6nmjxhezfhtg@CAB-WSD-L081021>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240511-ath10k-snoc-dep-v1-1-9666e3af5c27@linaro.org>
-References: <20240511-ath10k-snoc-dep-v1-1-9666e3af5c27@linaro.org>
-From: Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.10
-Date: Wed, 15 May 2024 12:16:11 -0700
-Message-ID: <CAE-0n52ptoRRQEL1G9vTZ7ExemrUSmV2Km=uts_E7wBeoz_GcA@mail.gmail.com>
-Subject: Re: [PATCH] wifi: ath10k: fix QCOM_RPROC_COMMON dependency
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Jeff Johnson <jjohnson@kernel.org>, 
-	Kalle Valo <kvalo@kernel.org>, Rakesh Pillai <quic_pillair@quicinc.com>
-Cc: linux-wireless@vger.kernel.org, ath10k@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240503184222.cqka6nmjxhezfhtg@CAB-WSD-L081021>
+User-Agent: NeoMutt/20220415
+X-ClientProxiedBy: p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) To
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 185260 [May 15 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: ddrokosov@salutedevices.com
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 20 0.3.20 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f, {Tracking_uf_ne_domains}, {Track_E25351}, {Tracking_from_domain_doesnt_match_to}, salutedevices.com:7.1.1;smtp.sberdevices.ru:7.1.1,5.0.1;127.0.0.199:7.1.2;100.64.160.123:7.1.2;lore.kernel.org:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1, FromAlignment: s, ApMailHostAddress: 100.64.160.123
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean, bases: 2024/05/15 12:35:00
+X-KSMG-LinksScanning: Clean, bases: 2024/05/15 18:39:00
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/05/15 13:12:00 #25231738
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-Quoting Dmitry Baryshkov (2024-05-11 03:49:59)
-> If ath10k_snoc is built-in, while Qualcomm remoteprocs are built as
-> modules, compilation fails with:
->
-> /usr/bin/aarch64-linux-gnu-ld: drivers/net/wireless/ath/ath10k/snoc.o: in function `ath10k_modem_init':
-> drivers/net/wireless/ath/ath10k/snoc.c:1534: undefined reference to `qcom_register_ssr_notifier'
-> /usr/bin/aarch64-linux-gnu-ld: drivers/net/wireless/ath/ath10k/snoc.o: in function `ath10k_modem_deinit':
-> drivers/net/wireless/ath/ath10k/snoc.c:1551: undefined reference to `qcom_unregister_ssr_notifier'
->
-> Add corresponding dependency to ATH10K_SNOC Kconfig entry so that it's
-> built as module if QCOM_RPROC_COMMON is built as module too.
->
-> Fixes: 747ff7d3d742 ("ath10k: Don't always treat modem stop events as crashes")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
+Hello Neil,
 
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+Excuse me, pls ping.
+
+On Fri, May 03, 2024 at 09:42:22PM +0300, Dmitry Rokosov wrote:
+> Hello Neil,
+> 
+> A1 Thermal Sensor was applied to linux-pm for v6.10-rc1:
+> 
+> https://lore.kernel.org/all/89a02410-87c8-47c6-aa50-04dad5b4e585@linaro.org/
+> 
+> Could you please advise if it's enough to proceed with this series? Or
+> do I need to do something more?
+> 
+> On Thu, Mar 28, 2024 at 10:26:34PM +0300, Dmitry Rokosov wrote:
+> > This patch series introduces thermal sensor declaration to the Meson A1
+> > common dtsi file. It also sets up thermal zones for the AD402 reference
+> > board. It depends on the series with A1 thermal support at [1].
+> > 
+> > Changes v2 since v1 at [2]:
+> >     - provide Neil RvB for cooling-cells dts patch
+> >     - purge unnecessary 'amlogic,a1-thermal' fallback
+> > 
+> > Links:
+> > [1] - https://lore.kernel.org/all/20240328191322.17551-1-ddrokosov@salutedevices.com/
+> > [2] - https://lore.kernel.org/all/20240328134459.18446-1-ddrokosov@salutedevices.com/
+> > 
+> > Signed-off-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
+> > 
+> > Dmitry Rokosov (3):
+> >   arm64: dts: amlogic: a1: add cooling-cells for DVFS feature
+> >   arm64: dts: amlogic: a1: introduce cpu temperature sensor
+> >   arm64: dts: amlogic: ad402: setup thermal-zones
+> > 
+> >  .../arm64/boot/dts/amlogic/meson-a1-ad402.dts | 45 +++++++++++++++++++
+> >  arch/arm64/boot/dts/amlogic/meson-a1.dtsi     | 13 ++++++
+> >  2 files changed, 58 insertions(+)
+> 
+> -- 
+> Thank you,
+> Dmitry
+
+-- 
+Thank you,
+Dmitry
 
