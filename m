@@ -1,135 +1,177 @@
-Return-Path: <linux-kernel+bounces-180373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D69688C6DA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 23:14:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DAB18C6DA6
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 23:15:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 134031C222E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 21:14:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64B9B1C220E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 21:15:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D7FE15B546;
-	Wed, 15 May 2024 21:14:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A539E15B15D;
+	Wed, 15 May 2024 21:15:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yzckX8xk"
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PiDOQQmN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 469C915B544
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 21:14:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFCEC2F877;
+	Wed, 15 May 2024 21:15:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715807672; cv=none; b=kwALLSukS5Zg/01r3ntq8PkmfjnlsfAy+zaalmu3uA/A4Q24aVT45a/mqLCKtVFH0xAKmc8Y6kTaXMUxxxclIdJ6tbTRc58gCipLaXRCC2nAgEFrnzWU6dNAfa+Bmjuy1Zy6UZ9jlyiEzxMzoSsDGx+VinJMnsyhC+dIOqBCWSM=
+	t=1715807738; cv=none; b=GgNaSJYkGzjSu2HFG1loMxO0Qyobt1+SrysBrBaZay69ifGLH6gKB44e5OFwYwvZjgj+m+j3Br0PDuI4v3WuGx5/A5bObLb9mU+G1kKISQailg4jqZ+VHnF9Osz4CSQmH+uFkm9RpEFzlaUAZ5m+PjtMJwxvruVS2FeYyPqrkuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715807672; c=relaxed/simple;
-	bh=KaRp03zPMicROwGMtQ24BK5CzqpLG2F6m7G378tiArU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BJVYZl0BVbM6gLFTTs13qAhdldcm+QIzUl1lwGa3dvvlrgp6aYxtx59b191VoUDz2YUEJM+Bv3HLpejTxC7+9IupCfq9hK6hvyHcfnYcr5Yx+W+Qkb1PmRnzD92EXozgDMS3O526jO/KlmugeProTf7rUyygN1k1oELezf53UHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yzckX8xk; arc=none smtp.client-ip=209.85.166.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-36db863679bso91425ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 14:14:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715807669; x=1716412469; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ASfis+VjxPRoonpfr9uzosJOMgG1sBNuU5vYcng9bn8=;
-        b=yzckX8xkL8Zki6q6lA03WU1eTmHEcdNNp9EJzOxq0ruAVkfW1KBaSLL0s4eP+3bMoH
-         69qzgHkqqb6OJt+mpYFQmZLzvpvi8x9cg3veE2XEs+Mw54/09xMh1mvU8lXvitD0b89S
-         MEkm/Culk27XWANSOYK7MC0cVyoC1TRBCMySoemH5hM0zaVNiPuwrVOaYo9hesajWBFJ
-         Gd8moZKuFhjPVec4EDRlPHGXP2CMAomyVVVShR6eIKRo2HBbb7pm9n1z732PwfY5clvh
-         DCvs0RK01hH/PykPj1VVHPRaSVXKm/4BLVsiB3cFjgQ2mJSCxJU5yWH78zuwkmYLOw/p
-         0+Qg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715807669; x=1716412469;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ASfis+VjxPRoonpfr9uzosJOMgG1sBNuU5vYcng9bn8=;
-        b=rZ7Sj1b3HndGXwYnqi4nvMfi64EG3nTAiOaUAsiX9YXp+fcGwRh0UMfOJFyS1QJilR
-         do8buBIGGfWmNSoLW0m+GS9Pg5OB78UL6JPn3KNA5qjdSY4m5OS+YeBowByTWVApl0yj
-         yt1O1TZCFz+mYzvbumfe52ZtYf8fF+PuxG6o1dv55zhpLMMP54jZ5HY9O0sMksYzfilg
-         agXfdW9ITRB5IU+9Shy+8g3bbPxC+8VJYDhIuJhuUJR2WlB9cAX4HlZVCnOvg9qAwr8K
-         Wn7NRBX/sdqgm7diuSqOy6tecZTygPCZmqgGXeFK/WDXqjNHCNsz0F35Rn1c2UNIAOwH
-         4Eow==
-X-Forwarded-Encrypted: i=1; AJvYcCXDvvyohX+fI7aer9Ah9FPL6K7mfaS/e1DFPiKY7cUz3NgdOcDDoLBJjZBh7wfX5j3Towcq+VP52mCYFPfsRLyLk7a93vkibGscyEBQ
-X-Gm-Message-State: AOJu0YzQRJNjbdosgd7XxW7160FTtvWrxUTJ1Zj0BxO/vmcCAZs5LYwF
-	3/BrgDKTdVBpC4aSZ+OIBJetCDMnwQUbYAMcWESeNCdOMpt1nk+8wApimPCKP+kowwNszNSoqJa
-	1TGDtFBeipxt9RBfXqgDF5Kf9S5cbIf3jE+Dc
-X-Google-Smtp-Source: AGHT+IGrRZmlO1u+WsKnjcXi/EjMPXEXONMgggY4vksZMB23Kb/hjAKD9NLqszxPw7VV9kUKvixDW3AxzwgJfmVDrqk=
-X-Received: by 2002:a92:de03:0:b0:36d:b340:330 with SMTP id
- e9e14a558f8ab-36db3400540mr4953095ab.26.1715807668933; Wed, 15 May 2024
- 14:14:28 -0700 (PDT)
+	s=arc-20240116; t=1715807738; c=relaxed/simple;
+	bh=8zRgYixeWbU5a3kUd0M4xV5TV+AjxJpEmwU45ge4kaY=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=BmsCn2nCgRDW0wQkhSgrZ3VM4nF0BbusABfrVK25kzZEPP9th1rJ3mdbkBqWUhlPh5lMZm40tiwfSqLufAOcW2V5BkLp8VE+00gR7HoCdWvSnEmLWMlvQPkmhFuf/FHhOyapJbP8tZDLGMnDCU8qibbLgJcIR+BcxTAuIuRsbAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PiDOQQmN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B304C116B1;
+	Wed, 15 May 2024 21:15:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715807738;
+	bh=8zRgYixeWbU5a3kUd0M4xV5TV+AjxJpEmwU45ge4kaY=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=PiDOQQmN+bIHiSfpue2YctCCuTwEZkmpnSQGS3TqeNw0bE58cNELXRSd85nazMCPD
+	 yuyXdclaoXVl/gIeV3NxguyB4jU8hRBbwCLWM8Ce6hG3Aftjx0m6mkx3JnkRu8L61F
+	 qCJ/012Qc4p9xwHF+8KEZzJM+driOYnuam1IQoI9owU8e5ESdC4IjvM5Mu2OlTHOjB
+	 g9qjwOJYBTWtHgJDeBBv2x/DFhL6M6/FB+rJSajg2VRDV/830G/RhBhCT1FjyRohhx
+	 FXGpleblOhL/tGUOmGx1hG+eiRwQldeZlT5/MfIcU1Ig4+uSXrn/MJ28b8ibODTfCo
+	 7kY1NLoRgCVzw==
+Message-ID: <f6d7574582592f3bfa50fc45fefc53be.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240515182750.489472-1-samasth.norway.ananda@oracle.com>
-In-Reply-To: <20240515182750.489472-1-samasth.norway.ananda@oracle.com>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 15 May 2024 14:14:15 -0700
-Message-ID: <CAP-5=fWBVwnhoeCtDTvHqZ6SGeOLAhD2GrshCRnwUvnNdyApQA@mail.gmail.com>
-Subject: Re: [PATCH RESEND] perf test pmu: Fix file Leak in test_format_dir_get
-To: Samasth Norway Ananda <samasth.norway.ananda@oracle.com>
-Cc: namhyung@kernel.org, acme@kernel.org, peterz@infradead.org, 
-	mingo@redhat.com, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, 
-	jolsa@kernel.org, adrian.hunter@intel.com, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAL_JsqK4EZ0RhYCw6ZaeYSJu5Ps1J+J25vjwQy2XvNa5F5d7Pw@mail.gmail.com>
+References: <20240422232404.213174-1-sboyd@kernel.org> <CABVgOSmgUJp3FijpYGCphi1OzRUNvmYQmPDdL6mN59YnbkR2iQ@mail.gmail.com> <b822c6a5488c4098059b6d3c35eecbbd.sboyd@kernel.org> <5c919f0d3d72fe1592a11c45545e8a60.sboyd@kernel.org> <CAL_JsqK4EZ0RhYCw6ZaeYSJu5Ps1J+J25vjwQy2XvNa5F5d7Pw@mail.gmail.com>
+Subject: Re: [PATCH v4 00/10] clk: Add kunit tests for fixed rate and parent data
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: David Gow <davidgow@google.com>, Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, patches@lists.linux.dev, kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org, devicetree@vger.kernel.org, Brendan Higgins <brendan.higgins@linux.dev>, Rae Moar <rmoar@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rafael J . Wysocki <rafael@kernel.org>, Saravana Kannan <saravanak@google.com>, Daniel Latypov <dlatypov@google.com>, Christian Marangi <ansuelsmth@gmail.com>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Maxime Ripard <maxime@cerno.tech>
+To: Rob Herring <robh@kernel.org>
+Date: Wed, 15 May 2024 14:15:36 -0700
+User-Agent: alot/0.10
 
-On Wed, May 15, 2024 at 11:27=E2=80=AFAM Samasth Norway Ananda
-<samasth.norway.ananda@oracle.com> wrote:
->
-> File is opened inside the for loop. But if the 'if' condition is
-> successful then 'break' statement will be reached, exiting the
-> 'for' loop prior to reaching 'fclose'.
->
-> Signed-off-by: Samasth Norway Ananda <samasth.norway.ananda@oracle.com>
-> ---
-> Found this error through static analysis. This has only been compile
-> tested.
+Quoting Rob Herring (2024-05-15 06:06:09)
+> On Tue, May 14, 2024 at 4:29=E2=80=AFPM Stephen Boyd <sboyd@kernel.org> w=
+rote:
+> >
+> > powerpc doesn't mark the root node with OF_POPULATED_BUS. If I set that
+> > in of_platform_default_populate_init() then the overlays can be applied.
+> >
+> > ---8<----
+> > diff --git a/drivers/of/platform.c b/drivers/of/platform.c
+> > index 389d4ea6bfc1..fa7b439e9402 100644
+> > --- a/drivers/of/platform.c
+> > +++ b/drivers/of/platform.c
+> > @@ -565,6 +565,10 @@ static int __init of_platform_default_populate_ini=
+t(void)
+> >                                 of_platform_device_create(node, buf, NU=
+LL);
+> >                 }
+> >
+> > +               node =3D of_find_node_by_path("/");
+> > +               if (node)
+> > +                       of_node_set_flag(node, OF_POPULATED_BUS);
+>=20
+> I think you want to do this in of_platform_bus_probe() instead to
+> mirror of_platform_populate(). These are supposed to be the same
+> except that 'populate' only creates devices for nodes with compatible
+> while 'probe' will create devices for all child nodes. Looks like we
+> are missing some devlink stuff too. There may have been some issue for
+> PPC with it.
 
-Thanks Samasth, I agree with the fix however this code was recently
-deleted and isn't in our next tree:
-https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
-ee/tools/perf/tests/pmu.c?h=3Dperf-tools-next
-the change that removed the code is:
-https://lore.kernel.org/all/20240502213507.2339733-4-irogers@google.com/
+Got it. So this patch?
 
-Thanks,
-Ian
+---8<---
+diff --git a/drivers/of/platform.c b/drivers/of/platform.c
+index 389d4ea6bfc1..acecefcfdba7 100644
+--- a/drivers/of/platform.c
++++ b/drivers/of/platform.c
+@@ -421,6 +421,7 @@ int of_platform_bus_probe(struct device_node *root,
+ 	if (of_match_node(matches, root)) {
+ 		rc =3D of_platform_bus_create(root, matches, NULL, parent, false);
+ 	} else for_each_child_of_node(root, child) {
++		of_node_set_flag(root, OF_POPULATED_BUS);
+ 		if (!of_match_node(matches, child))
+ 			continue;
+ 		rc =3D of_platform_bus_create(child, matches, NULL, parent, false);
 
-> ---
->  tools/perf/tests/pmu.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/tools/perf/tests/pmu.c b/tools/perf/tests/pmu.c
-> index 8f18127d876a..f751e6cb6ac0 100644
-> --- a/tools/perf/tests/pmu.c
-> +++ b/tools/perf/tests/pmu.c
-> @@ -106,8 +106,10 @@ static char *test_format_dir_get(char *dir, size_t s=
-z)
->                 if (!file)
->                         return NULL;
->
-> -               if (1 !=3D fwrite(format->value, strlen(format->value), 1=
-, file))
-> +               if (1 !=3D fwrite(format->value, strlen(format->value), 1=
-, file)) {
-> +                       fclose(file);
->                         break;
-> +               }
->
->                 fclose(file);
->         }
-> --
-> 2.43.0
->
+
+This doesn't work though. I see that prom_init() is called, which
+constructs a DTB and flattens it to be unflattened by
+unflatten_device_tree(). The powerpc machine type used by qemu is
+PLATFORM_PSERIES_LPAR. It looks like it never calls
+of_platform_bus_probe() from the pseries platform code.
+
+What about skipping the OF_POPULATED_BUS check, or skipping the check
+when the parent is the root node? This is the if condition that's
+giving the headache.
+
+---8<---
+diff --git a/drivers/of/platform.c b/drivers/of/platform.c
+index 389d4ea6bfc1..38dfafc25d86 100644
+--- a/drivers/of/platform.c
++++ b/drivers/of/platform.c
+@@ -735,10 +735,6 @@ static int of_platform_notify(struct notifier_block *n=
+b,
+=20
+ 	switch (of_reconfig_get_state_change(action, rd)) {
+ 	case OF_RECONFIG_CHANGE_ADD:
+-		/* verify that the parent is a bus */
+-		if (!of_node_check_flag(rd->dn->parent, OF_POPULATED_BUS))
+-			return NOTIFY_OK;	/* not for us */
+-
+ 		/* already populated? (driver using of_populate manually) */
+ 		if (of_node_check_flag(rd->dn, OF_POPULATED))
+ 			return NOTIFY_OK;
+
+
+>=20
+> > +               of_node_put(node);
+> >         } else {
+> >                 /*
+> >                  * Handle certain compatibles explicitly, since we don'=
+t want to create
+> >
+> > I'm guessing this is wrong though, because I see bunch of powerpc speci=
+fic code
+> > calling of_platform_bus_probe() which will set the flag on the actual p=
+latform
+> > bus nodes. Maybe we should just allow overlays to create devices at the=
+ root
+> > node regardless? Of course, the flag doc says "platform bus created for
+> > children" and if we never populated the root then that isn't entirely a=
+ccurate.
+> >
+> > Rob, can you point me in the right direction? Do we need to use simple-=
+bus in
+> > the test overlays and teach overlay code to populate that bus?
+>=20
+> Overlays adding things to the root node might be suspect, but probably
+> there are some valid reasons to do so.
+
+In this case we're using it to add nodes without a reg property to the
+root node.
+
+> If simple-bus makes sense here,
+> then yes, you should use it. But if what's on it is not MMIO devices,
+> don't. That's a warning in the schema now.
+>=20
+
+Ok. Sounds like adding these nodes to the root node is the right way
+then.
+
+I wonder if we can make MMIO devices appear on the kunit bus by adding
+DT support to the bus and then letting those nodes have reg properties
+that we "sinkhole" by making those iomem resources point to something
+else in the ioremap code. Then we can work in MMIO kunit emulation that
+way to let tests check code that works with readl/writel, e.g. the clk
+gate tests.
 
