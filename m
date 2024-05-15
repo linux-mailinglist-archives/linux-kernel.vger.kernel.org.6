@@ -1,112 +1,100 @@
-Return-Path: <linux-kernel+bounces-180219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F1E58C6B93
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 19:35:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFD948C6B96
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 19:36:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C3B2B2556E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:35:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D1021C22571
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:36:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CA60481B1;
-	Wed, 15 May 2024 17:35:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FB324CB58;
+	Wed, 15 May 2024 17:36:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SxVWhf0d"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="flxcqdh/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9527D28680;
-	Wed, 15 May 2024 17:35:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9242130E21;
+	Wed, 15 May 2024 17:36:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715794539; cv=none; b=WrFM+UaMIFMXzaRDA5qu373kcShkVRgfXaN2rM9vWhjob7IGJKC5ZXqe9ZBDTcXlVYNrYI6q7b/kDoAEklj3EWE/Y3S6xTP9Amuy4FxwfYLuUqp3BpKkTq0eH1cMoPMaa1cMvae01xcKQTZraFs6kJdUTww9SDTw46LXCnc65rI=
+	t=1715794561; cv=none; b=B2JWrA2yNBXYwF+Xh903ZAmvsfCs5wSubdXDM/r54+lwZxbBSvxDlIYdQEHhPvK30Pq6uv5fLgt48U6B5QZTaM/aI3+A45iyHzZoNpsgPdiRN0Pd2TxHDWV/+PcKveX16iRUMB/Hv7IyP7Nqn6qbKgoOs/SScQufRRFdJadX5vk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715794539; c=relaxed/simple;
-	bh=bMXMTNE3OZS4/T3Ia9cod0oRbe/kxZEwCK4cz+pCvPE=;
+	s=arc-20240116; t=1715794561; c=relaxed/simple;
+	bh=yXnKEY7Z7Ax7J2SD93pETUZSrJHw69qdl3ldfSTgVmE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KOInMzX42h/ixD6+8waVkHBCBk1f+JsQPBkhR55mlF3YqqUxFTJTvEYgY8leNx8jw4QpQsCarzNq3lD5K/ktqQVBo85zsxK9T+ubhyAXXzXUyNaq8e+hxgIFkWG58DTqZ6bl/dB7RG5cjC6tAqsQiHY8IeeE+/yvbSMGVbyVzRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SxVWhf0d; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715794537; x=1747330537;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=bMXMTNE3OZS4/T3Ia9cod0oRbe/kxZEwCK4cz+pCvPE=;
-  b=SxVWhf0dOQ9u3zYiOlxY8I9KjC2xO4s8iMlBs6WPaeyBKVVDPvIiRor+
-   bgH4f9yaUbaAXIYtnZquD5vejUYKnXLEK3eCykxleWccIerygPFcrF6wy
-   C4n2OFMTNtb8CriIvgRPsZzpX19VGlGjDEiyliAjv4sc9oR1pVeMGp50n
-   O1z2zrZ2BB7XHLZ7p8TQ/PH0ePc2szFRdKbpOcbtLsXlxNXuqsKK5I8aI
-   iPKW0nZGvlwTm0U8HIMdQi7bEv19FCQrdDcIEsHfKP1wyPnvK4vfsljeU
-   EIRtQmItTy4+lMX6+GY1nchMXm7G1GIvZoO+betIIRMWdPE7VePzStpXn
-   g==;
-X-CSE-ConnectionGUID: 7Knlw3k5TsOQ80L0Mx6cTQ==
-X-CSE-MsgGUID: 2DJn9QUWTgmtZk1r708OCA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="22465741"
-X-IronPort-AV: E=Sophos;i="6.08,162,1712646000"; 
-   d="scan'208";a="22465741"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 10:35:36 -0700
-X-CSE-ConnectionGUID: ChK8VZQxRjCKrNmXGhQmDg==
-X-CSE-MsgGUID: 8/AIo60qTcq2zS8LstgONg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,162,1712646000"; 
-   d="scan'208";a="31263346"
-Received: from ls.sc.intel.com (HELO localhost) ([172.25.112.31])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 10:35:36 -0700
-Date: Wed, 15 May 2024 10:35:36 -0700
-From: Isaku Yamahata <isaku.yamahata@intel.com>
-To: Rick Edgecombe <rick.p.edgecombe@intel.com>
-Cc: pbonzini@redhat.com, seanjc@google.com, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, isaku.yamahata@gmail.com,
-	erdemaktas@google.com, sagis@google.com, yan.y.zhao@intel.com,
-	dmatlack@google.com
-Subject: Re: [PATCH 10/16] KVM: x86/tdp_mmu: Support TDX private mapping for
- TDP MMU
-Message-ID: <20240515173536.GE168153@ls.amr.corp.intel.com>
-References: <20240515005952.3410568-1-rick.p.edgecombe@intel.com>
- <20240515005952.3410568-11-rick.p.edgecombe@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MPJnY7rnCNGGTudN3no0yN76WwHuMfAcbs3MDjPsuOryiuCnOBl+w9o9sU9F98R1Dl7AQrY9mzpOTShhSNMdjDs3bRsfFu2NcXZNUOXDNrPwrGsoh/r4KWPK6gimguMFzZ7rQl73jWQEiUSZVPWqnSkhK55P6P6CWzzKqyymflE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=flxcqdh/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F96EC32789;
+	Wed, 15 May 2024 17:35:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715794561;
+	bh=yXnKEY7Z7Ax7J2SD93pETUZSrJHw69qdl3ldfSTgVmE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=flxcqdh/t+vRwhPiATj3JGLuoLPmxoJccAkNm7yJzQ04v2gAHnVuWFFFzeWyxxtt6
+	 fpyCIOxuvAKoiymF9zSuSBMAIA/aaEuBN/VJydlCvNbF1UgC3Tf/i+Y1vnCS7LXwpE
+	 +LaFouIdH4ERaSURpgfoOnL+nSnk+otdKo6BZTvKi1Vm1IlRc419S83xH4BeZgdZaj
+	 5eCoRwP2/E//KneKlB+Dz/cgCcX9UiFPJYArD2mhXHNxsmsE+KvDMhmCZ3Pv9SqW3r
+	 nP9G7FiSuKXaHRobZswgj/wOjxaUqZ/ORfK1o0RhqmHjhBh/QtQb2BuD4e49m+IE2o
+	 CMzjw0iwgIlKA==
+Date: Wed, 15 May 2024 18:35:55 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: linux-kernel@vger.kernel.org, Doug Berger <opendmb@gmail.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	"open list:BROADCOM GENET ETHERNET DRIVER" <netdev@vger.kernel.org>,
+	stable@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sasha Levin <sashal@kernel.org>
+Subject: Re: [PATCH stable 6.1 0/4] GENET stable patches for 6.1
+Message-ID: <9a9dc83e-b218-4f64-86ee-d93ed3592480@sirena.org.uk>
+References: <d52e7e4a-2b60-4fdf-9006-12528a91dabf@broadcom.com>
+ <20240515170227.1679927-1-florian.fainelli@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="HK4sQHjHaWYDxkhZ"
 Content-Disposition: inline
-In-Reply-To: <20240515005952.3410568-11-rick.p.edgecombe@intel.com>
+In-Reply-To: <20240515170227.1679927-1-florian.fainelli@broadcom.com>
+X-Cookie: When in doubt, lead trump.
 
-On Tue, May 14, 2024 at 05:59:46PM -0700,
-Rick Edgecombe <rick.p.edgecombe@intel.com> wrote:
 
-..snip...
+--HK4sQHjHaWYDxkhZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> @@ -619,6 +776,8 @@ static inline int tdp_mmu_zap_spte_atomic(struct kvm *kvm,
->  	 */
->  	__kvm_tdp_mmu_write_spte(iter->sptep, SHADOW_NONPRESENT_VALUE);
->  
-> +
-> +	role = sptep_to_sp(iter->sptep)->role;
->  	/*
->  	 * Process the zapped SPTE after flushing TLBs, and after replacing
->  	 * REMOVED_SPTE with 0. This minimizes the amount of time vCPUs are
-> @@ -626,7 +785,7 @@ static inline int tdp_mmu_zap_spte_atomic(struct kvm *kvm,
->  	 * SPTEs.
->  	 */
->  	handle_changed_spte(kvm, iter->as_id, iter->gfn, iter->old_spte,
-> -			    0, iter->level, true);
-> +			    SHADOW_NONPRESENT_VALUE, role, true);
->  
->  	return 0;
->  }
+On Wed, May 15, 2024 at 10:02:23AM -0700, Florian Fainelli wrote:
+> This brings in a preliminary patch ("net: bcmgenet: Clear RGMII_LINK
+> upon link down") to make sure that ("net: bcmgenet: synchronize
+> EXT_RGMII_OOB_CTRL access") applies to the correct context.
 
-This SHADOW_NONPRESENT_VALUE change should go to another patch at [1]
-I replied to [1].
+That seems to resolve the issue on 6.1 stable for me.
 
-[1] https://lore.kernel.org/kvm/20240507154459.3950778-3-pbonzini@redhat.com/
--- 
-Isaku Yamahata <isaku.yamahata@intel.com>
+--HK4sQHjHaWYDxkhZ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZE8nsACgkQJNaLcl1U
+h9AT3wf/ZDrfEEjfakKbXaSYkehns/2opFXbU2zrFK2DrSQ/SqsTcxueMQGy3+HA
+6vsWtMM8C5ppdGWH1YxtUYUnr/W6oPa62n68SY0T3zlJflr6atr3sgPc7dZItuQh
+HosaIaZ2EDdqiegzVO05A761bp1bDgZnIzJBO65UhbNTUMlDxUg8nVAHMIGTsnaL
+hK1n7oI09YcG5bds3IXr9nXu1pEyy2zv++ntM/1uRIHyfcQ64UHcmjudnwqcLQCs
+0dM2z5TiBdGg3c2o1rhcWdPLFEOAp4pUBVWujUmUlSDbRBi1UEq8DXTb8yEPb6mx
+7ukFOl/7oML4juegQjp6aN3Uh2Lrfg==
+=ELmF
+-----END PGP SIGNATURE-----
+
+--HK4sQHjHaWYDxkhZ--
 
