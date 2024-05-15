@@ -1,132 +1,140 @@
-Return-Path: <linux-kernel+bounces-180389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58C748C6DCD
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 23:28:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86E8E8C6DCE
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 23:28:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67E4CB20CCF
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 21:28:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37AE72834C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 21:28:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D251215B548;
-	Wed, 15 May 2024 21:28:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7DB615B55B;
+	Wed, 15 May 2024 21:28:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="tDJdlNJF";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Y4TDIZc9"
-Received: from wfhigh3-smtp.messagingengine.com (wfhigh3-smtp.messagingengine.com [64.147.123.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hIlCCFDR"
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93D9A1FC4;
-	Wed, 15 May 2024 21:28:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9311E6FBF
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 21:28:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715808521; cv=none; b=HYigwv4FQzRshNVgaRTcEt91qZv/+gwjwMwaweW4yTH4+10h1zJrcPpzWRJQptexU1aYP3zE6hJdl8L+jMeR7grW0H6cF1ERNdcb3aE1pwCFTIRkVcpCuDAYwNxtdIk1Jtu6v7BSvZbeYHEpaE6gshopQHZQg499iFWOToqTPK8=
+	t=1715808522; cv=none; b=t1W7BfYMaSSL2pLnLL6G0nASdDX/KtvSXrvL5YCKSmBBrBtlmVLI9y3o6oLTUNhbYRMFM+XoF3/AeM208wkL3I/KFJ2nbTc7XA5W8aooC1fg5Mq4rpTtDr/ct40GYLYBJt10eoyPGSH4dXYvo54D7OI6HXdcBoGgbwXaVixhHmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715808521; c=relaxed/simple;
-	bh=JsishlYutza6HkbyIEvx9CmiWiE8OXCeNDbrTOBPCXc=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=hyw+3UvFtlQ9lO890kTjsTTmduOFrwySH6XJNdtfjf+8TX+Q1VVrAJ1k1APvl4uk6B+R/XK8KokzCaodN0yrxP9nIGOXlBVI5Z6q+FwUEHe/TEAsTmroZabL4XSlNRsJXrpzqZfepn8RoTP0Wi5CAods+eFtD7Bb4h2wJangk1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=tDJdlNJF; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Y4TDIZc9; arc=none smtp.client-ip=64.147.123.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailfhigh.west.internal (Postfix) with ESMTP id C109C18000EF;
-	Wed, 15 May 2024 17:28:38 -0400 (EDT)
-Received: from imap44 ([10.202.2.94])
-  by compute3.internal (MEProxy); Wed, 15 May 2024 17:28:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1715808517;
-	 x=1715894917; bh=JsishlYutza6HkbyIEvx9CmiWiE8OXCeNDbrTOBPCXc=; b=
-	tDJdlNJFhXRoWMLDg5bwFOrUlh7UrUC39TWZGZbEJK3q167BGtICXK1gtF0f1bcG
-	YD/gJqYzmdGvA9ACzfApOg7sUvfMYbO14ipwBEVWq7/OU/Rymkg445LyFBUN/kIp
-	MsvzPJd1Krf+B00I/Qg/kF5nZzD5W6pTjjWTrfVTEdQzcCj7e7IJneTRkEEfh5oW
-	A3cP2kJOGYSZmcdYFTfYg9/edn+AFShsc1c1U2VJDhyviKzVhCiYI5kprgOj+gI8
-	OE0Uf+a4AN7Sk+A9zJ1a0Ii9sFyr3xXjN1ZcMPp/J4773mLdcNTKJLuY688mhFL7
-	itYaDdl08VNI2nYd2utq9A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1715808517; x=
-	1715894917; bh=JsishlYutza6HkbyIEvx9CmiWiE8OXCeNDbrTOBPCXc=; b=Y
-	4TDIZc9MtepsOkJqeV6H2LtvmeoEjNqr8L1rQ8ARMh73hy5/ZwWUz4AJdCteU73p
-	agH1EAI7RFV4+EAXHaFl6TTP5P7gU5CUjNCcjcON7K6gnyKkpWysb4zb2qYVKSr6
-	dVHgewwEOmR9/EI3VfAoxyTMy5ZaJ0Ec8KK/AJKBb4lgLSnnJwEwrIi0yydttsg9
-	8kyFFK+awv36pVx/e6C1GimJeo88bhr0aWxpdIdl8AFfxK2mHSMcrm5Ke56JV8KK
-	FtvO8OOAMP6E7zs8xqZ83a+bW2AQT1AFOiGTooQaXGXP/NAJpAdsAmFLBL0LhIs+
-	jOoZB0u0pSUsmkXETky/Q==
-X-ME-Sender: <xms:BSlFZjsbeF2Cgtx827Mt_kRcu1Jdl1NDsOMko_BtiZthU_BihcXE9g>
-    <xme:BSlFZke29EBk37OF8G2koRvS1MOZ2_StGr4muiD7ARYSg4MDY_ng_ZzcOwezkbeV2
-    cHYOfsv3qDMftGRyQI>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdegkedgudehiecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedf
-    lfhirgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtg
-    homheqnecuggftrfgrthhtvghrnhepudefgeeftedugeehffdtheefgfevffelfefghefh
-    jeeugeevtefhudduvdeihefgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomh
-X-ME-Proxy: <xmx:BSlFZmy-yRZ4y9Y40SURWTT7405njdUmAhRpRGg-3Ew7KaMtyDrICg>
-    <xmx:BSlFZiOIbm09mjJNWF8s6tOqacLGvPdEAN-9UpymdsCYmulMnnpMOg>
-    <xmx:BSlFZj8t5_zCO44DbO5sVGP-JZ25-1dsT5BKvbXBjx20adCdYWx-iA>
-    <xmx:BSlFZiV6DzoJfty4XqP1HWr3lU54lCHeSDfb2O_hQHfO3H7K6TMNlw>
-    <xmx:BSlFZmYf3aDtNu4JTI0cSlIBT-b5zFvd-hj-zyKGcZjPXsd2wBtuiBIY>
-Feedback-ID: ifd894703:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 2267636A0075; Wed, 15 May 2024 17:28:37 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-456-gcd147058c-fm-hotfix-20240509.001-g0aad06e4
+	s=arc-20240116; t=1715808522; c=relaxed/simple;
+	bh=qnHnvFuVyROhLpvYWHN3fSpsAcLNu13yLY8dAISoFtQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=A99gxHVEP9u/IA/fP8dctgalI9yKyyk0T9lSS+415UgQmFOcg2PFPic+RlOq/7Hgds+kOMj8bfqSwyZVduO8nmUmYH5GF64wpgHyefTCi5+/HFekiNRDSSBsSQv5BCugM5ouWIKIMFHa2Emw1nUfk+jQqQ5y8vEgjRJesYZOLD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hIlCCFDR; arc=none smtp.client-ip=209.85.219.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6a077a861e7so52177026d6.2
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 14:28:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1715808518; x=1716413318; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3UmNEhsA1PVQGVB4IPr+WxtggKmtowmQmNLiJoenwI8=;
+        b=hIlCCFDRjbzsptmQLMFlJJI0QOOOuaqcj5XxmM7JwW/o24V9p7fkD4egenqG6xpggn
+         GqrFJI5mNqPhCV4enz6+zfWUFtNR8LuLjRNWQVvUfpxgWVse1+8g5iq9ztwK1eldoi/J
+         2QtWAJoE1Wfg98mtAZL7Q42pqF8CTuPNDc2yg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715808518; x=1716413318;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3UmNEhsA1PVQGVB4IPr+WxtggKmtowmQmNLiJoenwI8=;
+        b=MpjqqQVPktHHMpY/G5SXf21yd9d51f3h+10qv9JWkZyr7myie0XUIWm5gsz1iS8iVS
+         pORQBnpV+geluRffwZ5qnnUsmmcHgorh+SNvVO9k0dJX4Z8e62OqKsTjVFrOIoeeU7D3
+         LAoDALld/5BaLKPio3pJ7ChFTDmMrnMQSzQTqNehi9bwFgIKzU0tYh0n5n0/+/7e+QC+
+         pISfKEC0PhNsGCTVqS2GadgcRgd5VnXKHrMLYmjiPBbGuB6DZxNZLxdmONCwzHTsSj3e
+         LNac7B6FXeynSivsTRyLsvzl3uxLLA21dZmVuVf33yjjZehVy8xJ/DLFQ9H9WPyY4zxi
+         B2cQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWPuj/Ze+8LdArQekczD0G3ajqG3Ih6Ttf0hiAsQdlZYXP6wrnpevd+gxfcXym0C+EHRsG2o4/C7qvhuNUvgO6diQdiVoz0Fsa7P7/O
+X-Gm-Message-State: AOJu0YxFlQWoJNmB6UBKrJTJ3eFjgBk/DdyvRUPb9KiNWbckHnRExrV7
+	hzKPRpwhx7aT9UllPbjMGrJMexeZqulwhLK+LYOhyVjErbHoEZS1ol/MX1Jreb08AKXgSZYgUMs
+	=
+X-Google-Smtp-Source: AGHT+IEPQpBTnTiRKcNP+mJtmcbkGZNP+dEA+zv3sGYAmwa4bIA3lgxWGJAXdSyjQP/CF9KecD/tSQ==
+X-Received: by 2002:a05:6214:4487:b0:69b:5889:8eff with SMTP id 6a1803df08f44-6a168212cfemr194345596d6.43.1715808518576;
+        Wed, 15 May 2024 14:28:38 -0700 (PDT)
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com. [209.85.160.171])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6a166309ba5sm62523246d6.122.2024.05.15.14.28.37
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 May 2024 14:28:37 -0700 (PDT)
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-43dfe020675so2312221cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 14:28:37 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWRqvdjAaZdfeAi5LzZ/zwgIISGPWKsxMXK6RkEPzfY75HkMReHM1e5hchiWuHnhOep58Uvg3znG00PWz9T7hWa6SNBrDO7bJYmV28K
+X-Received: by 2002:a05:622a:1928:b0:43e:1124:3c4c with SMTP id
+ d75a77b69052e-43e11243d95mr12242171cf.28.1715808517355; Wed, 15 May 2024
+ 14:28:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <3dcf3ac1-5494-482a-a80a-df4126e6ae59@app.fastmail.com>
-In-Reply-To: <20240502-mips_debug_ll-v3-0-3b61f30e484c@flygoat.com>
-References: <20240502-mips_debug_ll-v3-0-3b61f30e484c@flygoat.com>
-Date: Wed, 15 May 2024 22:28:15 +0100
-From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
-To: "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>
-Cc: "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
- linux-kernel@vger.kernel.org,
- =?UTF-8?Q?Philippe_Mathieu-Daud=C3=A9?= <philmd@linaro.org>
-Subject: Re: [PATCH v3 0/9] MIPS: Unify low-level debugging functionalities
-Content-Type: text/plain;charset=utf-8
+References: <20240515014643.2715010-1-yangcong5@huaqin.corp-partner.google.com>
+ <20240515014643.2715010-4-yangcong5@huaqin.corp-partner.google.com> <0fcdb0ac-2e4a-44b2-a5d6-a67a1d747df8@linaro.org>
+In-Reply-To: <0fcdb0ac-2e4a-44b2-a5d6-a67a1d747df8@linaro.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Wed, 15 May 2024 14:28:25 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=XkBkQUN-93eQDKZcw_66uSeNBBhbiq2hRLcFN+Ck71RQ@mail.gmail.com>
+Message-ID: <CAD=FV=XkBkQUN-93eQDKZcw_66uSeNBBhbiq2hRLcFN+Ck71RQ@mail.gmail.com>
+Subject: Re: [v7 3/7] arm64: defconfig: Enable HIMAX_HX83102 panel
+To: neil.armstrong@linaro.org
+Cc: Cong Yang <yangcong5@huaqin.corp-partner.google.com>, sam@ravnborg.org, 
+	daniel@ffwll.ch, linus.walleij@linaro.org, krzysztof.kozlowski+dt@linaro.org, 
+	robh+dt@kernel.org, conor+dt@kernel.org, airlied@gmail.com, 
+	dmitry.baryshkov@linaro.org, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	xuxinxiong@huaqin.corp-partner.google.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
+Hi,
 
+On Wed, May 15, 2024 at 2:16=E2=80=AFPM <neil.armstrong@linaro.org> wrote:
+>
+> Hi,
+>
+> On 15/05/2024 03:46, Cong Yang wrote:
+> > DRM_PANEL_HIMAX_HX83102 is being split out from DRM_PANEL_BOE_TV101WUM_=
+NL6.
+> > Since the arm64 defconfig had the BOE panel driver enabled, let's also
+> > enable the himax driver.
+> >
+> > Signed-off-by: Cong Yang <yangcong5@huaqin.corp-partner.google.com>
+> > Reviewed-by: Douglas Anderson <dianders@chromium.org>
+> > ---
+> >   arch/arm64/configs/defconfig | 1 +
+> >   1 file changed, 1 insertion(+)
+> >
+> > diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfi=
+g
+> > index 2c30d617e180..687c86ddaece 100644
+> > --- a/arch/arm64/configs/defconfig
+> > +++ b/arch/arm64/configs/defconfig
+> > @@ -864,6 +864,7 @@ CONFIG_DRM_PANEL_BOE_TV101WUM_NL6=3Dm
+> >   CONFIG_DRM_PANEL_LVDS=3Dm
+> >   CONFIG_DRM_PANEL_SIMPLE=3Dm
+> >   CONFIG_DRM_PANEL_EDP=3Dm
+> > +CONFIG_DRM_PANEL_HIMAX_HX83102=3Dm
+> >   CONFIG_DRM_PANEL_ILITEK_ILI9882T=3Dm
+> >   CONFIG_DRM_PANEL_MANTIX_MLAF057WE51=3Dm
+> >   CONFIG_DRM_PANEL_RAYDIUM_RM67191=3Dm
+>
+> You should probably sent this one separately since only an ARM SoC mainta=
+iner
+> can apply this, probably via the qcom tree.
 
-=E5=9C=A82024=E5=B9=B45=E6=9C=882=E6=97=A5=E4=BA=94=E6=9C=88 =E4=B8=8A=E5=
-=8D=8810:59=EF=BC=8CJiaxun Yang=E5=86=99=E9=81=93=EF=BC=9A
-> Hi all,
->
-> This is a attempt to bring all low-level debugging print functions
-> together and provide a arm-like low-level debugging interface and
-> a further capability to debug early exceptions.
->
-> This patch elimiate platform specific early_printk, zboot printing
-> functions and cps-vec-ns16550 by newly introduced debug_ll.
->
-> Hope you'll find them handy :-)
->
-> Happy hacking!
->
-> Thanks
->
-> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Really? I always kinda figured that this was a bit like MAINTAINERS
+where it can come through a bunch of different trees. Certainly I've
+landed changes to it before through the drm-misc tree. If that was
+wrong then I'll certainly stop doing it, of course.
 
-A gentle ping.
-
-Our reviewing capacity is quite low recently, hope everything is fine
-with Thomas.
-
-Thanks
-[...]
-- Jiaxun
+-Doug
 
