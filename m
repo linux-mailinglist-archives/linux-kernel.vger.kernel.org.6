@@ -1,109 +1,119 @@
-Return-Path: <linux-kernel+bounces-179320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62E778C5EC4
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 03:26:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF8B08C5EC9
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 03:30:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 039A21F22131
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 01:26:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 865E61F22013
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 01:30:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB9E58493;
-	Wed, 15 May 2024 01:26:07 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA7579C2
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 01:26:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 594DA2FB6;
+	Wed, 15 May 2024 01:30:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="oBzZo/OV"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C506816;
+	Wed, 15 May 2024 01:29:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715736367; cv=none; b=Cp4BLt/nPQ6dpt53888J99NjJ0gPgz2w5m7QbHRliXgYAx4boeOT6BxYAM4zKq1FOsCc8XVzJT7EvGPnYUWyYN7ojjVGv+vbSVATNAFj5AdDSthJk2CkHnp3E/Y0e+Q4v6pffoT1v9lALnrkPnPfcfOD2tNwFyoiA0ucyWr4pQQ=
+	t=1715736601; cv=none; b=YdSvFD/Vz3Fp7PnkD58pmD0tVYpjW16zT2OmOMqr7Pkr5wk3DjL9Hgpv2ZhNtmmZ71LdtWXpaO0L1fVsEJTd2JJpyMcHPQjkvyDXtv2xM1XZQdzhCdJOgJZV5VRT4l1kdhmlw2oeVn/8XQerWqZhgYKVayc6yFrrcHZEspDUpG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715736367; c=relaxed/simple;
-	bh=KqedpD8xfbv4Oo0MVIN2TL1Ut79j6Yz4AF0sCn9HRmE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=VbC6ExQrYkb0u6AlJqLKKXBSzuDTpDNwPYn18k8dGvUZcLVD/oe0JdCil9MFq34NzFGWyzklPRkvlvX+UouWfG0U6i64eUrEZuwODv30UNfnjnEXXpjNHtnbhq7RcK6zkAqDV2PhH/BleyeJxnZ7paCwCtXym0+0a+B60mF9OYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7da4360bbacso770232539f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 18:26:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715736365; x=1716341165;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eu/7agIRsX16G/eKFz8gLh3sRtt5Oof3eN1Be02CY3o=;
-        b=mQ4/fDsueqif4d5sVd9RECQctIXGRp/XIAT7S871oIzp1b+f1vqegENIL8tXLYidZ3
-         3xXIGPlRzmqZ2tfOFngx1wY76DjartrwRGZOad6RfjQbRUY/B4n8nRAs4LIDQWGrWxoS
-         m9FYmbhkoawHoeM+k96GPQcn1NzLUY2pHDJHp7eESvWSUt2iXV/jMs6vdOhTpUQ6rqqh
-         oDIrxn4+gwz9iXC2Z7FvMdwakryIL0X0Wh1R2dRjANjxEmnrz9n/VuHtZqWCrZt+abe0
-         kJNBHuYSbndOnCiM2VA+uOR5TeujCfnpK3Jo8tzJ4OrbotQ2kfZFAq0wr5r6kzYWOotQ
-         lRwA==
-X-Gm-Message-State: AOJu0YwEHKcG9Acd89/OVEIWlq9chfOCe6XM3Ghj6GonflYDQWgiKVq5
-	+O6IG2Xv8Q0mgfHVwcXunobjyfUZ3082TfUN02Y5RAKFaeHUS/bbfOFHf8Giw7/Q61CIEaxgK6d
-	IPkLNuvkZbAbtsIpJm8b0oMm4Gr8XLRZ9b6lcS2pQXEmU7qgp1FJG47Q=
-X-Google-Smtp-Source: AGHT+IEcdj7ctieaYOLO+MpmoD3I8m0VzJwkbXy9pNnL4nc4cYJkopfXFvf0hUNfc/IsmAV+4uD5mgRLQVk8UZ8Zqg3yNlhQAnGy
+	s=arc-20240116; t=1715736601; c=relaxed/simple;
+	bh=peQoSaJm5r7/rNi/49CSPH85oFpV+vigzRHrPMTFNb8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=Eoyk6u3dleWa3gOZ1OBeWjaq9ijqZuRATn7sybnARw6WsRLzpGRddlrey23hPEC7qvXO7wso+PJPETuXCtMtEnY+y3WYFQ+ZmQXiGmVuM5C3+A/4fnVQITMBLh2uYvz71wf8QFRzFTDTeAXdbR/pAF4oAi5L5dkmhehLJPp7spw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=oBzZo/OV reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=dH/gpF16Z7nc/BPL3pmSYU9XRCHIeE+cpF7SwrMJQwg=; b=o
+	BzZo/OV42n/AUxeFg+tVhjTDrgIFUdt9YzGgXa2ztP3aVnHXbBevPj/APNH3Z3ha
+	dKqWyPkP+4fBZ4iUKx0957Y7tDee8YpA3lUL8E9W6OKkpe/ySDo4xDOBkp1Zpung
+	AqAs4n2lC3u+L5gHOPYMYDJxH/ZvlUIeCNDjQ3dnHs=
+Received: from slark_xiao$163.com ( [223.104.68.205] ) by
+ ajax-webmail-wmsvr-40-127 (Coremail) ; Wed, 15 May 2024 09:29:20 +0800
+ (CST)
+Date: Wed, 15 May 2024 09:29:20 +0800 (CST)
+From: "Slark Xiao" <slark_xiao@163.com>
+To: "Manivannan Sadhasivam" <manivannan.sadhasivam@linaro.org>
+Cc: loic.poulain@linaro.org, mhi@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re:Re: [PATCH] bus: mhi: host: Add Foxconn SDX72 related support
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20230109(dcb5de15)
+ Copyright (c) 2002-2024 www.mailtech.cn 163com
+In-Reply-To: <20240514143741.GA2306@thinkpad>
+References: <20240510032657.789629-1-slark_xiao@163.com>
+ <20240514143741.GA2306@thinkpad>
+X-NTES-SC: AL_Qu2aB/uYuU0t5iifYukfm0kaj+c/WMGzu/8m3oFXO51wjA/p9R8Ab25qLX/Vwd6AAAyRtzG+XDNV0PRYYrFmXaQGqGfN1UJIgwrgTeS8H8cepw==
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:2ccd:b0:7e2:b00:222d with SMTP id
- ca18e2360f4ac-7e20b0027aamr668339f.0.1715736365369; Tue, 14 May 2024 18:26:05
- -0700 (PDT)
-Date: Tue, 14 May 2024 18:26:05 -0700
-In-Reply-To: <000000000000ebf2e0061866b102@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000096207606187400e6@google.com>
-Subject: Re: [syzbot] [PATCH] guard against unknown r->data_type in bch2_sb_dev_has_data()
-From: syzbot <syzbot+249018ea545364f78d04@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <541de8e4.1600.18f79de44f3.Coremail.slark_xiao@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:_____wD3v9LwD0RmKxheAA--.442W
+X-CM-SenderInfo: xvod2y5b0lt0i6rwjhhfrp/1tbiNRneZGV4Hlw0FAADsq
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
-
-***
-
-Subject: [PATCH] guard against unknown r->data_type in bch2_sb_dev_has_data()
-Author: cam.alvarez.i@gmail.com
-
-#syz test
-Shift is perfomed only when the data type makes sense.
-
-Fix a missing guard on r->data_type being known.
-
-Signed-off-by: Camila Alvarez <cam.alvarez.i@gmail.com>
----
- fs/bcachefs/replicas.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/fs/bcachefs/replicas.c b/fs/bcachefs/replicas.c
-index 678b9c20e251..0fa91d0bf951 100644
---- a/fs/bcachefs/replicas.c
-+++ b/fs/bcachefs/replicas.c
-@@ -1006,14 +1006,14 @@ unsigned bch2_sb_dev_has_data(struct bch_sb *sb, unsigned dev)
- 
- 		for_each_replicas_entry(replicas, r)
- 			for (i = 0; i < r->nr_devs; i++)
--				if (r->devs[i] == dev)
-+				if (r->devs[i] == dev && r->data_type < BCH_DATA_NR)
- 					data_has |= 1 << r->data_type;
- 	} else if (replicas_v0) {
- 		struct bch_replicas_entry_v0 *r;
- 
- 		for_each_replicas_entry_v0(replicas_v0, r)
- 			for (i = 0; i < r->nr_devs; i++)
--				if (r->devs[i] == dev)
-+				if (r->devs[i] == dev && r->data_type < BCH_DATA_NR)
- 					data_has |= 1 << r->data_type;
- 	}
- 
--- 
-2.34.1
-
+QXQgMjAyNC0wNS0xNCAyMjozNzo0MSwgIk1hbml2YW5uYW4gU2FkaGFzaXZhbSIgPG1hbml2YW5u
+YW4uc2FkaGFzaXZhbUBsaW5hcm8ub3JnPiB3cm90ZToKPk9uIEZyaSwgTWF5IDEwLCAyMDI0IGF0
+IDExOjI2OjU3QU0gKzA4MDAsIFNsYXJrIFhpYW8gd3JvdGU6Cj4+IEFsaWduIHdpdGggUWNvbSBT
+RFg3MiwgYWRkIHJlYWR5IHRpbWVvdXQgaXRlbSBmb3IgRm94Y29ubiBTRFg3Mi4KPj4gQW5kIGFs
+c28sIGFkZCBmaXJlaG9zZSBzdXBwb3J0IHNpbmNlIFNEWDcyLgo+PiAKPj4gU2lnbmVkLW9mZi1i
+eTogU2xhcmsgWGlhbyA8c2xhcmtfeGlhb0AxNjMuY29tPgo+PiAtLS0KPj4gIGRyaXZlcnMvYnVz
+L21oaS9ob3N0L3BjaV9nZW5lcmljLmMgfCAzMSArKysrKysrKysrKysrKysrKysrKysrKysrKysr
+KysKPj4gIDEgZmlsZSBjaGFuZ2VkLCAzMSBpbnNlcnRpb25zKCspCj4+IAo+PiBkaWZmIC0tZ2l0
+IGEvZHJpdmVycy9idXMvbWhpL2hvc3QvcGNpX2dlbmVyaWMuYyBiL2RyaXZlcnMvYnVzL21oaS9o
+b3N0L3BjaV9nZW5lcmljLmMKPj4gaW5kZXggMDg4NDRlZTc5NjU0Li4wZmQ5NGMxOTNmYzYgMTAw
+NjQ0Cj4+IC0tLSBhL2RyaXZlcnMvYnVzL21oaS9ob3N0L3BjaV9nZW5lcmljLmMKPj4gKysrIGIv
+ZHJpdmVycy9idXMvbWhpL2hvc3QvcGNpX2dlbmVyaWMuYwo+PiBAQCAtMzk5LDYgKzM5OSw4IEBA
+IHN0YXRpYyBjb25zdCBzdHJ1Y3QgbWhpX2NoYW5uZWxfY29uZmlnIG1oaV9mb3hjb25uX3NkeDU1
+X2NoYW5uZWxzW10gPSB7Cj4+ICAJTUhJX0NIQU5ORUxfQ09ORklHX0RMKDEzLCAiTUJJTSIsIDMy
+LCAwKSwKPj4gIAlNSElfQ0hBTk5FTF9DT05GSUdfVUwoMzIsICJEVU4iLCAzMiwgMCksCj4+ICAJ
+TUhJX0NIQU5ORUxfQ09ORklHX0RMKDMzLCAiRFVOIiwgMzIsIDApLAo+PiArCU1ISV9DSEFOTkVM
+X0NPTkZJR19VTF9GUCgzNCwgIkZJUkVIT1NFIiwgMzIsIDApLAo+PiArCU1ISV9DSEFOTkVMX0NP
+TkZJR19ETF9GUCgzNSwgIkZJUkVIT1NFIiwgMzIsIDApLAo+Cj5UaGlzIG1lYW5zIFNEWDU1IGlz
+IGFsc28gc3VwcG9ydGluZyBGSVJFSE9TRSBjaGFubmVscywgd2hpY2ggaXMgbm90IHRydWUgSQo+
+YmVsaWV2ZS4KQWN0dWFsbHksIEkganVzdCB2ZXJpZmllZCBpdCB3aXRoIG15IHNkeDU1IGFuZCB0
+aGUgYW5zd2VyIGlzIFllcy4gVGhlc2UgY2hhbm5lbHMKYXJlIGNvbW1vbiBzZXR0aW5ncyBmb3Ig
+UWNvbSBkZXZpY2Ugd2hpY2ggc3VwcG9ydCBQQ0llIG1vZGUuIEJUVywgdGhlCmRlZmF1bHQgc2V0
+dGluZ3Mgb2YgUWNvbSBhbmQgUXVlY3RlbCBzdXBwb3J0IGZpcmVob3NlIGZvciB0aGVpciBzZHg1
+NSBwcm9kdWN0cy4KPgo+PiAgCU1ISV9DSEFOTkVMX0NPTkZJR19IV19VTCgxMDAsICJJUF9IVzBf
+TUJJTSIsIDEyOCwgMiksCj4+ICAJTUhJX0NIQU5ORUxfQ09ORklHX0hXX0RMKDEwMSwgIklQX0hX
+MF9NQklNIiwgMTI4LCAzKSwKPj4gIH07Cj4+IEBAIC00MTksNiArNDIxLDE2IEBAIHN0YXRpYyBj
+b25zdCBzdHJ1Y3QgbWhpX2NvbnRyb2xsZXJfY29uZmlnIG1vZGVtX2ZveGNvbm5fc2R4NTVfY29u
+ZmlnID0gewo+PiAgCS5ldmVudF9jZmcgPSBtaGlfZm94Y29ubl9zZHg1NV9ldmVudHMsCj4+ICB9
+Owo+PiAgCj4+ICtzdGF0aWMgY29uc3Qgc3RydWN0IG1oaV9jb250cm9sbGVyX2NvbmZpZyBtb2Rl
+bV9mb3hjb25uX3NkeDcyX2NvbmZpZyA9IHsKPj4gKwkubWF4X2NoYW5uZWxzID0gMTI4LAo+PiAr
+CS50aW1lb3V0X21zID0gMjAwMDAsCj4+ICsJLnJlYWR5X3RpbWVvdXRfbXMgPSA1MDAwMCwKPj4g
+KwkubnVtX2NoYW5uZWxzID0gQVJSQVlfU0laRShtaGlfZm94Y29ubl9zZHg1NV9jaGFubmVscyks
+Cj4+ICsJLmNoX2NmZyA9IG1oaV9mb3hjb25uX3NkeDU1X2NoYW5uZWxzLAo+PiArCS5udW1fZXZl
+bnRzID0gQVJSQVlfU0laRShtaGlfZm94Y29ubl9zZHg1NV9ldmVudHMpLAo+PiArCS5ldmVudF9j
+ZmcgPSBtaGlfZm94Y29ubl9zZHg1NV9ldmVudHMsCj4+ICt9Owo+PiArCj4+ICBzdGF0aWMgY29u
+c3Qgc3RydWN0IG1oaV9wY2lfZGV2X2luZm8gbWhpX2ZveGNvbm5fc2R4MjRfaW5mbyA9IHsKPj4g
+IAkubmFtZSA9ICJmb3hjb25uLXNkeDI0IiwKPj4gIAkuY29uZmlnID0gJm1vZGVtX2ZveGNvbm5f
+c2R4NTVfY29uZmlnLAo+PiBAQCAtNDQ4LDYgKzQ2MCwxNiBAQCBzdGF0aWMgY29uc3Qgc3RydWN0
+IG1oaV9wY2lfZGV2X2luZm8gbWhpX2ZveGNvbm5fc2R4NjVfaW5mbyA9IHsKPj4gIAkuc2lkZWJh
+bmRfd2FrZSA9IGZhbHNlLAo+PiAgfTsKPj4gIAo+PiArc3RhdGljIGNvbnN0IHN0cnVjdCBtaGlf
+cGNpX2Rldl9pbmZvIG1oaV9mb3hjb25uX3NkeDcyX2luZm8gPSB7Cj4+ICsJLm5hbWUgPSAiZm94
+Y29ubi1zZHg3MiIsCj4+ICsJLmVkbCA9ICJxY29tL3NkeDcybS94Ymxfc19kZXZwcmdfbnMubWVs
+ZiIsCj4KPldoYXQgaXMgJy5tZWxmJz8gSXMgdGhlIGZpcm13YXJlIGF2YWlsYWJsZSBzb21ld2hl
+cmU/IERpZCB5b3UgcGxhbiB0byB1cHN0cmVhbQo+aXQgdG8gbGludXgtZmlybXdhcmU/Cj4KVGhp
+cyBmaWxlIHNpbWlsYXIgd2l0aCAiZWRsLm1ibiIuIEluIFNEWDcyIHByb2R1Y3QsIHRoZSBkZWZh
+dWx0ICJlZGwiIGZpbGUgbmFtZSBpcwoieGJsX3NfZGV2cHJnX25zLm1lbGYiLiBDdXJyZW50bHkg
+d2UgZG9uJ3QgcGxhbiB0byB1cHN0cmVhbSBpdCB0byBsaW51eC1maXJtd2FyZQpzaW5jZSAyIHJl
+YXNvbnM6IDE6IHdlIHNoYXJlIHRoZSBzYW1lIGZvbGQgbmFtZSBzZHg3Mm0gd2l0aCBxY29tIG9y
+IG90aGVyIHZlbmRvcnMKMjogdGhpcyBmaWxlIG1heSBiZSBjaGFuZ2VkIHNpbmNlIHNkeDcyIHBy
+b2R1Y3Qgc3RpbGwgdW5kZXIgZGV2ZWxvcGluZyBpbiBvdXIgc2lkZS4gd2UKbWF5IGNoYW5nZSB0
+aGUgYmFzZSBsaW5lIGFjY29yZGluZyB0byBRQ09NIHJlbGVhc2UuCj4tIE1hbmkKPgo+LS0gCj7g
+rq7grqPgrr/grrXgrqPgr43grqPgrqngr40g4K6a4K6k4K6+4K6a4K6/4K614K6u4K+NCg==
 
