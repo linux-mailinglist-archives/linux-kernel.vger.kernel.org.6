@@ -1,190 +1,177 @@
-Return-Path: <linux-kernel+bounces-179354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A48B8C5F30
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 04:40:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D4568C5F19
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 04:29:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41A201C211DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 02:40:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF2CA1F22313
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 02:29:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64C463BB24;
-	Wed, 15 May 2024 02:39:07 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42120F9CF;
+	Wed, 15 May 2024 02:29:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="c+de57/h"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2B6B2C69B;
-	Wed, 15 May 2024 02:39:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 425C68820
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 02:29:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715740746; cv=none; b=t6RUq4j09f17QSDd2HOQnv6UaSFOLBnd42wSUTAIlVRmLZKnJYivKhWgEmJYLCtul1IMqtJAgI7L8aRubi0xOh1r7MpdrOU7IJBl8iLDLSQ5vhdZyCFerGAMf1vqtZrl2Pi42wSIUiCArT6TFyQtKLAfblcGR6vP2R2K4xgOLgY=
+	t=1715740156; cv=none; b=QWL8IRanA+s1qzLIqKXuq0j7BtM90QF7OLe0z3Iedb6Q8MJ8LQdOlGd1vPPN3YV8xRGRlBLIGmCXmqu+zW0lx/Y4eI5wadPk3xGTiwuWsZCQRmopGvYrjzfuiDOcuIPGc/1NkrGM5kSjvRk2cE7hM7nJyOFg0WD9nW9d5aWdsjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715740746; c=relaxed/simple;
-	bh=xuIlfY/3HVCtD8t5rWUv44jPGANtnz30uK1KfBywpWA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ggYy1zNQs8YTtMF8ruK0s0i5iXymkpJ7xSYLvKs2IJD4aUc2iyFtZdnNU4PJ7cbtOfIK692P4NLaAZw20APN+WiEZw8zM426GDnrQjVHzAq2qAX4+3FFGoCmpHyXqEnOWd9srRjjDM3HQHOqy8EdC1u58VcIqOl3bgB0vAGRV9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VfHV72Cpjz4f3jjk;
-	Wed, 15 May 2024 10:38:55 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id D10301A0D99;
-	Wed, 15 May 2024 10:39:00 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgBXKBE8IERmRFzIMg--.49754S7;
-	Wed, 15 May 2024 10:39:00 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-ext4@vger.kernel.org,
-	djwong@kernel.org,
-	hch@infradead.org,
-	brauner@kernel.org,
-	david@fromorbit.com,
-	chandanbabu@kernel.org,
-	jack@suse.cz,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	chengzhihao1@huawei.com,
-	yukuai3@huawei.com
-Subject: [PATCH 3/3] xfs: correct the zeroing truncate range
-Date: Wed, 15 May 2024 10:28:29 +0800
-Message-Id: <20240515022829.2455554-4-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240515022829.2455554-1-yi.zhang@huaweicloud.com>
-References: <20240515022829.2455554-1-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1715740156; c=relaxed/simple;
+	bh=uIVALT8fMTxGKl7HLSAvodUgkyb/d8KBVovit9yBBdQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tyl1fGaFfYREoh2ng1buK1Nujd7OAKPJ+0X6UR+10xfiRUVG95MJEobXtU4KQ4UgTwX7jArHd5L+I6/eZHOnyirJdZxTaLEJPRExMTO3sKPvLqoEy+tPulUIUi4cUxhmGOb3eNWHFkwnCJXBzMDVEoiOUMfCggWEQBqQ1Ew3lAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=c+de57/h; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a59a5f81af4so101847766b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 19:29:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1715740152; x=1716344952; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=HhWK/QjBhcq/4T9972QoRB3M6/JeMKBp9jipg24+Woc=;
+        b=c+de57/hq2U/+YBIWKXyyEmgcHoqbPUQMBjr9atZPLcDL5hk3DgPoFVY39W1Q8kGJQ
+         eTeN/wzXjI17cEZwYVs3+8Qzu+ZPLWIZ6Qs/mFAFthUPb/e9xjNu2x2GdQfLlOFeuJCI
+         Aq6rIRj8DKgjdUzEAoxhtFu2uqhwOHQipXccs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715740152; x=1716344952;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HhWK/QjBhcq/4T9972QoRB3M6/JeMKBp9jipg24+Woc=;
+        b=BOg0fyG6uBcAw1XNTru3RDirLBDCDVDkBA2upbsDt5pMY02ARWMzAgjgscFLD+Zz3X
+         Ty4ZO8HJISsXnGuytXNS4liJF8bM96c7tBx/gxL/TuZBeJ7MXRaFQfIbjemeLQ0sTH6U
+         ouoPqPwmkTZ80hlzbT6o5X9lrlUMBLvqRAzjX0umLV8s6R28X0IVBW4vvwRtJOzHMijQ
+         Ip8wVy9OQjvo57PLdSAvG7T4x2qR95jmGApyqWZa6O0tyaQw72TTnywMqAE5EiEY1KGO
+         FS5I1Btpn26GUU4iOhwWuRfZmFeiMoa3oyIuB2OLhO43Cl4qQNe90tuQkk2oA+CSh+Yn
+         Wv3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWU7M9mCeGBqTNElAmNcCLqGDLhjf7fmUQRXFEPUOrjDxmscP/LBTSAyO3j+vIax1e2NdeFtR41oEZXTBPHyiX8zXE4rFxQCOBI32Pd
+X-Gm-Message-State: AOJu0Yzvkmx2+Qi5LOZM9qBAPp8AY9gs11zIylXv/VuCPXCknEOv0l56
+	l6aVvUoDQ8MKdGkdyJz6udMRwNIwAoo3VjbgW4Jq2y1POONUb2uaRb/f/c2LvSeOk5fdWWikFhb
+	9zsppfA==
+X-Google-Smtp-Source: AGHT+IGDd4qfgG45fLbwmQIyDsy++B8lSPyEqm7V5gBvc9vclv/ntYQifvEm8U0poSdJEHYqTYHvFA==
+X-Received: by 2002:a17:906:d7b7:b0:a59:9c58:763f with SMTP id a640c23a62f3a-a5a2d5eeabbmr1017886966b.39.1715740152554;
+        Tue, 14 May 2024 19:29:12 -0700 (PDT)
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com. [209.85.218.52])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a1781cd7asm802150866b.10.2024.05.14.19.29.11
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 May 2024 19:29:11 -0700 (PDT)
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a5a2d0d8644so116212466b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 19:29:11 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUJnLd0aqp8RFGU9HLztvhAjRoqNqqMtt1rqsDwPZ6OnENb9Hzcf2Cmndt5n53oc3Uj5T/UN/dExDepn9Qu2PKal+8Y9MgTsYMSjFMT
+X-Received: by 2002:a17:907:7f08:b0:a5a:63bf:5175 with SMTP id
+ a640c23a62f3a-a5a63bf5227mr784689766b.10.1715740150546; Tue, 14 May 2024
+ 19:29:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgBXKBE8IERmRFzIMg--.49754S7
-X-Coremail-Antispam: 1UD129KBjvJXoWxGrW7uF4UAw1DCr4fGFW8Xrb_yoWrGry5pr
-	s7K3Z8CrsrK347ZF1kXF1jvw1Fy3WrAF409ryfGrn7Za4DXr1Iyrn2gF4rKa1Utr4DXw4Y
-	qFs5tayUuas5AaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPj14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JrWl82xGYIkIc2
-	x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
-	Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJw
-	A2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS
-	0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2
-	IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0
-	Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kIc2
-	xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v2
-	6r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2
-	Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_
-	Cr0_Gr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8Jw
-	CI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUFfHUDUUU
-	U
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+References: <20240415163527.626541-1-jeffxu@chromium.org> <20240514104646.e6af4292f19b834777ec1e32@linux-foundation.org>
+ <871q646rea.fsf@meer.lwn.net> <ZkPXcT_JuQeZCAv0@casper.infradead.org>
+ <56001.1715726927@cvs.openbsd.org> <CAHk-=wgsGCKvN0Db6ZRZqJwXQrmhZyWB6RmABaOp4DiZbXgNew@mail.gmail.com>
+ <16982.1715734632@cvs.openbsd.org> <CAHk-=wi04ZCm3vTtkcVnAUdiOpX3a0hBZ-aQWONwCubOJQEdXw@mail.gmail.com>
+ <84192.1715737666@cvs.openbsd.org>
+In-Reply-To: <84192.1715737666@cvs.openbsd.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 14 May 2024 19:28:54 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wj=Yb1r_g=geQe8YDGv-TA-UQBQe6-OVhA8FOGjWKnQmA@mail.gmail.com>
+Message-ID: <CAHk-=wj=Yb1r_g=geQe8YDGv-TA-UQBQe6-OVhA8FOGjWKnQmA@mail.gmail.com>
+Subject: Re: [PATCH v10 0/5] Introduce mseal
+To: Theo de Raadt <deraadt@openbsd.org>
+Cc: Matthew Wilcox <willy@infradead.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Andrew Morton <akpm@linux-foundation.org>, jeffxu@chromium.org, keescook@chromium.org, 
+	jannh@google.com, sroettger@google.com, gregkh@linuxfoundation.org, 
+	usama.anjum@collabora.com, Liam.Howlett@oracle.com, surenb@google.com, 
+	merimus@google.com, rdunlap@infradead.org, jeffxu@google.com, 
+	jorgelo@chromium.org, groeck@chromium.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org, pedro.falcato@gmail.com, 
+	dave.hansen@intel.com, linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Zhang Yi <yi.zhang@huawei.com>
+On Tue, 14 May 2024 at 18:47, Theo de Raadt <deraadt@openbsd.org> wrote:
+>
+> Linus Torvalds <torvalds@linux-foundation.org> wrote:
+>
+> Regarding mprotect(), POSIX also says:
+>
+>     An implementation may permit accesses other than those specified by
+>     prot; however, no implementation shall permit a write to succeed where
+>     PROT_WRITE has not been set or shall permit any access where PROT_NONE
+>     alone has been set.
 
-When truncating a realtime file unaligned to a shorter size,
-xfs_setattr_size() only flush the EOF page before zeroing out, and
-xfs_truncate_page() also only zeros the EOF block. This could expose
-stale data since 943bc0882ceb ("iomap: don't increase i_size if it's not
-a write operation").
+Why do you quote entirely irrelevant issues?
 
-If the sb_rextsize is bigger than one block, and we have a realtime
-inode that contains a long enough written extent. If we unaligned
-truncate into the middle of this extent, xfs_itruncate_extents() could
-split the extent and align the it's tail to sb_rextsize, there maybe
-have more than one blocks more between the end of the file. Since
-xfs_truncate_page() only zeros the trailing portion of the i_blocksize()
-value, so it may leftover some blocks contains stale data that could be
-exposed if we append write it over a long enough distance later.
+If the mprotect didn't succeed, then clearly the above is irrelevant.
 
-xfs_truncate_page() should flush, zeros out the entire rtextsize range,
-and make sure the entire zeroed range have been flushed to disk before
-updating the inode size.
+> When sealed memory is encountered in the middle of a range, an error
+> will be returned (which almost noone looks at). Memory after the sealed
+> region will not be fixed to follow this rule.
+>
+> It may retain higher permission.
 
-Fixes: 943bc0882ceb ("iomap: don't increase i_size if it's not a write operation")
-Reported-by: Chandan Babu R <chandanbabu@kernel.org>
-Link: https://lore.kernel.org/linux-xfs/0b92a215-9d9b-3788-4504-a520778953c2@huaweicloud.com
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
----
- fs/xfs/xfs_iomap.c | 35 +++++++++++++++++++++++++++++++----
- fs/xfs/xfs_iops.c  | 10 ----------
- 2 files changed, 31 insertions(+), 14 deletions(-)
+This is not in any way specific to mseal().
 
-diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-index 4958cc3337bc..fc379450fe74 100644
---- a/fs/xfs/xfs_iomap.c
-+++ b/fs/xfs/xfs_iomap.c
-@@ -1466,12 +1466,39 @@ xfs_truncate_page(
- 	loff_t			pos,
- 	bool			*did_zero)
- {
-+	struct xfs_mount	*mp = ip->i_mount;
- 	struct inode		*inode = VFS_I(ip);
- 	unsigned int		blocksize = i_blocksize(inode);
-+	int			error;
-+
-+	if (XFS_IS_REALTIME_INODE(ip))
-+		blocksize = XFS_FSB_TO_B(mp, mp->m_sb.sb_rextsize);
-+
-+	/*
-+	 * iomap won't detect a dirty page over an unwritten block (or a
-+	 * cow block over a hole) and subsequently skips zeroing the
-+	 * newly post-EOF portion of the page. Flush the new EOF to
-+	 * convert the block before the pagecache truncate.
-+	 */
-+	error = filemap_write_and_wait_range(inode->i_mapping, pos,
-+					     roundup_64(pos, blocksize));
-+	if (error)
-+		return error;
- 
- 	if (IS_DAX(inode))
--		return dax_truncate_page(inode, pos, blocksize, did_zero,
--					&xfs_dax_write_iomap_ops);
--	return iomap_truncate_page(inode, pos, blocksize, did_zero,
--				   &xfs_buffered_write_iomap_ops);
-+		error = dax_truncate_page(inode, pos, blocksize, did_zero,
-+					  &xfs_dax_write_iomap_ops);
-+	else
-+		error = iomap_truncate_page(inode, pos, blocksize, did_zero,
-+					    &xfs_buffered_write_iomap_ops);
-+	if (error)
-+		return error;
-+
-+	/*
-+	 * Write back path won't write dirty blocks post EOF folio,
-+	 * flush the entire zeroed range before updating the inode
-+	 * size.
-+	 */
-+	return filemap_write_and_wait_range(inode->i_mapping, pos,
-+					    roundup_64(pos, blocksize));
- }
-diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-index 66f8c47642e8..baeeddf4a6bb 100644
---- a/fs/xfs/xfs_iops.c
-+++ b/fs/xfs/xfs_iops.c
-@@ -845,16 +845,6 @@ xfs_setattr_size(
- 		error = xfs_zero_range(ip, oldsize, newsize - oldsize,
- 				&did_zeroing);
- 	} else {
--		/*
--		 * iomap won't detect a dirty page over an unwritten block (or a
--		 * cow block over a hole) and subsequently skips zeroing the
--		 * newly post-EOF portion of the page. Flush the new EOF to
--		 * convert the block before the pagecache truncate.
--		 */
--		error = filemap_write_and_wait_range(inode->i_mapping, newsize,
--						     newsize);
--		if (error)
--			return error;
- 		error = xfs_truncate_page(ip, newsize, &did_zeroing);
- 	}
- 
--- 
-2.39.2
+Theo, you're making shit up.
 
+You claim that this is somehow new behavior:
+
+> The other previous errors have been transient system effects, like ENOMEM.
+
+but that's simply NOT TRUE. Try this:
+
+    #include <stdio.h>
+    #include <sys/mman.h>
+
+    int main(int argc, char **argv)
+    {
+        /* Just three pages for VM space allocation */
+        void *a = mmap(NULL, 3*4096, PROT_READ, MAP_PRIVATE |
+MAP_ANONYMOUS, -1, 0);
+
+        /* Make the second page a shared read mapping of stdin */
+        mmap(a+4096, 4096, PROT_READ, MAP_FIXED | MAP_SHARED, 0, 0);
+
+        /* Turn them all PROT_WRITE */
+        mprotect(a, 3*4096, PROT_WRITE);
+
+        fprintf(stderr, "Write to first page\n");
+        *(int *) (a+0) = 0;
+
+        fprintf(stderr, "Write to second page\n");
+        *(int *) (a+4096) = 0;
+
+        fprintf(stderr, "Write to third page\n");
+        *(int *) (a+2*4096) = 0;
+    }
+
+and what you will get (under Linux) is
+
+    $ ./a.out < ./a.out
+    Write to first page
+    Write to second page
+    Segmentation fault (core dumped)
+
+because that mprotect() will have returned EACCES on the shared
+mapping, but will have successfully made the first one writable.
+
+End result: this whole "transient system effects" is just not true.
+And "mseal()" isn't somethign new.
+
+If somebody makes random mprotect() calls, and doesn't check the
+result, they get exactly what they deserve. And mseal() isn't the
+issue - bad programming is.
+
+Anyway, you're just making things up for your nonexistent arguments. I'm done.
+
+            Linus
 
