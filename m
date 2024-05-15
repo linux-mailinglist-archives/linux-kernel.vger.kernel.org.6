@@ -1,171 +1,97 @@
-Return-Path: <linux-kernel+bounces-180063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 044DD8C6993
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:23:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 756308C6997
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:24:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EF361F230BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 15:22:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D8511F23664
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 15:24:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0372155A39;
-	Wed, 15 May 2024 15:22:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70481155A39;
+	Wed, 15 May 2024 15:23:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="OCb7BGKi"
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tw1B7+sV"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77D51155A26
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 15:22:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E6FB62A02
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 15:23:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715786575; cv=none; b=Z+LoIJkM9QYfWMQPXIwQ4FdmseC7BdYTrVsWYF33RqeE3OI1XZqMwsQWRhXIpkCvhRg/29rKjC01jYX5Y7SgDgxiOE28Np8dFaILcBdi/rl5ILk5vwKnx8vXPXENhruz6g0eb/lF0df416C9mKPmrj9yLxEL+bsk9AzfJ/5SDTI=
+	t=1715786635; cv=none; b=fN2SiyAaLb764HVhdigu7VR8Pe+PQZBqcHJC5r48314tZar0RupV37+rieKumlYUUXgREFLmvgnxxEN6xsN9+H0BBGciJ/UvZkUEgP4cva51CAuGKao8Bz3LgjvUIvg9M5pNHDqU3xojxc7yTaf7P+RQf0XGo6lGLl4NF9IC514=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715786575; c=relaxed/simple;
-	bh=LZdlNOSTbe6hze4dhwfW5nwE8DrpSomA3jo7BRPo+rs=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=US7bjwyAwvquMlJ7h2lp33yVHBy7TpOo78Y/NlQ91dvzVIqht3IUFUAzoDfhF12si+aJf5yYUzfQ/0y0c+xmapZ3z2ZSC4cRXas3ZmDXbS5hlIvow57vPQxS3nnu2TAlCvqBhH4SC85TINet2oLGsfgpMEIQo5nZ7Mh22y32lIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=OCb7BGKi; arc=none smtp.client-ip=209.85.222.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-792ce7a1fa8so451932385a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 08:22:51 -0700 (PDT)
+	s=arc-20240116; t=1715786635; c=relaxed/simple;
+	bh=kU5haLDUlfgVHXQJnqJgdAkMMg41tQYnmCEL6k+6oDU=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=haBBB5eTOK9t/OIMN7F+K067i7l5KuO/+5OQfCdhgu/ek7GA9ZocFlP3FYVwxSrm/ndns3TaBIpQ0HMILEGFs3kEmZmIDQYxpY61NctVhW2SRCbuhgtst9sZi6mXKVYtJg7ABjKRoFAcI40c2j8QwB8eRf+PSWHVMvUkkR0QFR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tw1B7+sV; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-dc647f65573so14989597276.2
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 08:23:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1715786570; x=1716391370; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+        d=google.com; s=20230601; t=1715786633; x=1716391433; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=e7fuG8q4vN8I17KIqwuUEjtG/Vg923yjRqjA4jq2rhI=;
-        b=OCb7BGKizVU9isgcKz/8QB2lCIAkV9BxwtIaAfsIc8aGMuuSJFJi57oGk0CfAaeVmg
-         g5xbyu6kbQM/mZqx8CplYUovQzxDZmJeas94S9V9Y7C00wBwg9zqJYfkvdyGCs8CNCtb
-         21vW3LDAYBe8bAg65yN2matYcQHUueHR2IM6z0kh4SEIrDN0JQjd3AYFuxqx/RjmKmsF
-         lSZR6Wn3icvQwdaxuwFkza4agHNQf9YJynQ0LxQ3I4sZ5lU4RoT4A8LwQ3vegD/Mmt7R
-         RVygSroJS17avJZutb/dlg4SWUhfpcQizdhND3FVTmFAkTSMnbtMb5Em/l+nsyjFO7fU
-         21BQ==
+        bh=/vj1A9ui2SaRE/HWTW3nQNHcmp/FHeI/IPRLs6zsaMw=;
+        b=tw1B7+sVFtLjslTi3HDAnFYd1iIy8cvWIarH4hCGkD6J92zscbjwLbuYGsatzPX5Cj
+         KEnvLeIfSFgkSvKV/HiWjOFpFi2a2ELVLN+x2CHivUe0BjRn17aRRVqZhpcWFL8W2dOH
+         57hVo9YNpfD4+ecY6Hpd1KsqbLuUezwfptRqO0sBtYHIHW4kt1Rm5bWrpIh4Y5enZHRj
+         jrBrr512YcD2J/cKhbaENhvJu5cozKwDZqy6jk3e1vr/LEESnTO9bJg3nN3t/IEvy9v1
+         +dabm4c3g/Qgu+DT9rjQrBCLZ2Y9mwgcT8pj9dFyQJzs8pm1I5UO78yQq7XZno5j/13N
+         bM2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715786570; x=1716391370;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+        d=1e100.net; s=20230601; t=1715786633; x=1716391433;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=e7fuG8q4vN8I17KIqwuUEjtG/Vg923yjRqjA4jq2rhI=;
-        b=JLvBkdlgBsnCBZJLgoY3xR/GlFhcgtAf/C7xdRUeoV70Z99ZFwPn+it7F3BmyTAdIV
-         sGEuaYn/j3mWw/TpGdi8ALx4MMpwBS8HFuy/cYpZAmLc0pl1gTkJ0m48HewpsvGCanYA
-         PuPTyBGqEtcOI06bIPT1oJBMhs9KEtEf38lOIoF5oYhBmnrRUO7b1ZQ7qL6DVrMpzffo
-         wuEIKzFhs3bH/NX8+Dh9oIfHJjwmgMueh0QuZ/VtgNBRTsGi8Lp4wnN7mDcgoaPVnXaj
-         GprwJ7grfc/Kl/gtSPuR/yZEjG+ru3HYEcxk9DfYUMcSLQEZUTgmRnImgpE/E9LYcRf2
-         5o7w==
-X-Forwarded-Encrypted: i=1; AJvYcCUZ6JLZG1KZ9saodsBR+MIH0TuS0jGmkyVN/qqacyT68tIcRXbXY9SaevxSOBpQeKb9PhgsUbzGBlWXNjV+rKubgbQq0SsNYEnnhwbs
-X-Gm-Message-State: AOJu0Ywu5NhBc8iCTWC+ujdOAcv+VTKVz4o0WFrbuQ8SCInk+RJRFEN1
-	V1uuPtrxmnVp/m4DFVWuBEbddX2hAuJLvGT+vsPdT7MW9N4sI72UH9Dyry4fDaGf5ZS8aG6+q4d
-	uVVo=
-X-Google-Smtp-Source: AGHT+IGw0aDYjqBIiQz2ro5yaFEoOd0FlTaGJoFh4u+ygsAdhEHrwkLXERLT8RI/xzS13PWtMHd3jw==
-X-Received: by 2002:a05:620a:e14:b0:792:c413:f827 with SMTP id af79cd13be357-792c757412dmr1767831385a.11.1715786570417;
-        Wed, 15 May 2024 08:22:50 -0700 (PDT)
-Received: from xanadu (modemcable018.15-162-184.mc.videotron.ca. [184.162.15.18])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-792e91acc94sm245912185a.26.2024.05.15.08.22.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 May 2024 08:22:50 -0700 (PDT)
-Date: Wed, 15 May 2024 11:22:49 -0400 (EDT)
-From: Nicolas Pitre <npitre@baylibre.com>
-To: Julien Panis <jpanis@baylibre.com>
-cc: "Rafael J. Wysocki" <rafael@kernel.org>, 
-    Daniel Lezcano <daniel.lezcano@linaro.org>, 
-    Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
-    Matthias Brugger <matthias.bgg@gmail.com>, 
-    AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-    linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-    linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH] thermal/drivers/mediatek/lvts_thermal: Remove filtered
- mode for mt8188
-In-Reply-To: <20240515-mtk-thermal-mt8188-mode-fix-v1-1-e656b310b67f@baylibre.com>
-Message-ID: <06np453s-183n-68qn-o33o-97q4163oro4s@onlyvoer.pbz>
-References: <20240515-mtk-thermal-mt8188-mode-fix-v1-1-e656b310b67f@baylibre.com>
+        bh=/vj1A9ui2SaRE/HWTW3nQNHcmp/FHeI/IPRLs6zsaMw=;
+        b=TJiMXHdV2vlH5wajGuYaWsH1DqcNZaV2k/vEOIgBAtayrIfUnqh1R5Ckwrz02suv1g
+         IKlGyaJhjha62JBO8SaVMmPYq2KA4u4iYz5cwZGL8FoX/CTBHscn7G9qgw/hIFtnRZSF
+         fNFGPngsF9jQR0Jzqy2Y3p4MDoYHZ3ehJSSpZI5qGXk01dvu0fleWB2PDWwL+1Bx/ovh
+         gBqPlZ921eZbo056s7sjH964wFxriwAzmmbcXwNT+qcYwkBi6g1vWPtnwBS547MrOM5l
+         EvzkSC52EtsxcdNxxs/aKCBNAN1TOe16Tzyvi6iNpLSaeOcStEGMPb4GI6t4Fi5zqAYu
+         w3Lg==
+X-Forwarded-Encrypted: i=1; AJvYcCW9JqHscdCclpFgNj5fPSWf6Vi0aRsjVx0A4QiswmJv3guKGuqKEjNBFBlOUZB8i9YtH7tZZ/xDjbs/nilqIM0ktZ7R7sPpw3uhyb/Z
+X-Gm-Message-State: AOJu0YyeOyEJLCGJQOr1II5pk6kT7ZUpV8y4IsQVxZUjWkhhFeopnmFx
+	lH88EeQg21dlqbYkAtFBvaaI6Jm0DxOf35AeFIlGMFWXJdIEyHPWijPUlCD8s369Y+pHkS2KvWH
+	qTQ==
+X-Google-Smtp-Source: AGHT+IHYglKVcDSO/IWQfJ8xI8dVwMGpQ0/ErI/yxeFoh8tCkNXcyH0VPfrlyu4AmFvEBSdW3dgM2ePXTNA=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6902:100f:b0:dee:5d43:a0f3 with SMTP id
+ 3f1490d57ef6-dee5d43c91fmr3707898276.6.1715786633444; Wed, 15 May 2024
+ 08:23:53 -0700 (PDT)
+Date: Wed, 15 May 2024 08:23:51 -0700
+In-Reply-To: <5547dd176122865e6a13b61829aa9c4b6cc21ff3.camel@cyberus-technology.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Mime-Version: 1.0
+References: <20240508132502.184428-1-julian.stecklina@cyberus-technology.de> <5547dd176122865e6a13b61829aa9c4b6cc21ff3.camel@cyberus-technology.de>
+Message-ID: <ZkTGhmfF-FYisKL_@google.com>
+Subject: Re: [PATCH] KVM: x86: add KVM_RUN_X86_GUEST_MODE kvm_run flag
+From: Sean Christopherson <seanjc@google.com>
+To: Julian Stecklina <julian.stecklina@cyberus-technology.de>
+Cc: "corbet@lwn.net" <corbet@lwn.net>, "bp@alien8.de" <bp@alien8.de>, 
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "hpa@zytor.com" <hpa@zytor.com>, 
+	"x86@kernel.org" <x86@kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "tglx@linutronix.de" <tglx@linutronix.de>, 
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"pbonzini@redhat.com" <pbonzini@redhat.com>, 
+	Thomas Prescher <thomas.prescher@cyberus-technology.de>, 
+	"mingo@redhat.com" <mingo@redhat.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Wed, 15 May 2024, Julien Panis wrote:
+On Wed, May 15, 2024, Julian Stecklina wrote:
+> Hey Sean,
+> 
+> does this this patch go into the right direction?
 
-> Filtered mode is not supported on mt8188 SoC and is the source of bad
-> results. Move to immediate mode which provides good temperatures.
-> 
-> Signed-off-by: Julien Panis <jpanis@baylibre.com>
-
-Reviewed-by: Nicolas Pitre <npitre@baylibre.com>
-
-
-> ---
-> Filtered mode was set by mistake and difficulties with the test setup
-> prevented from catching this earlier. Use default mode (immediate mode)
-> instead.
-> ---
->  drivers/thermal/mediatek/lvts_thermal.c | 6 ------
->  1 file changed, 6 deletions(-)
-> 
-> diff --git a/drivers/thermal/mediatek/lvts_thermal.c b/drivers/thermal/mediatek/lvts_thermal.c
-> index 0bb3a495b56e..82c355c466cf 100644
-> --- a/drivers/thermal/mediatek/lvts_thermal.c
-> +++ b/drivers/thermal/mediatek/lvts_thermal.c
-> @@ -1458,7 +1458,6 @@ static const struct lvts_ctrl_data mt8188_lvts_mcu_data_ctrl[] = {
->  		},
->  		VALID_SENSOR_MAP(1, 1, 1, 1),
->  		.offset = 0x0,
-> -		.mode = LVTS_MSR_FILTERED_MODE,
->  	},
->  	{
->  		.lvts_sensor = {
-> @@ -1469,7 +1468,6 @@ static const struct lvts_ctrl_data mt8188_lvts_mcu_data_ctrl[] = {
->  		},
->  		VALID_SENSOR_MAP(1, 1, 0, 0),
->  		.offset = 0x100,
-> -		.mode = LVTS_MSR_FILTERED_MODE,
->  	}
->  };
->  
-> @@ -1483,7 +1481,6 @@ static const struct lvts_ctrl_data mt8188_lvts_ap_data_ctrl[] = {
->  		},
->  		VALID_SENSOR_MAP(0, 1, 0, 0),
->  		.offset = 0x0,
-> -		.mode = LVTS_MSR_FILTERED_MODE,
->  	},
->  	{
->  		.lvts_sensor = {
-> @@ -1496,7 +1493,6 @@ static const struct lvts_ctrl_data mt8188_lvts_ap_data_ctrl[] = {
->  		},
->  		VALID_SENSOR_MAP(1, 1, 1, 0),
->  		.offset = 0x100,
-> -		.mode = LVTS_MSR_FILTERED_MODE,
->  	},
->  	{
->  		.lvts_sensor = {
-> @@ -1507,7 +1503,6 @@ static const struct lvts_ctrl_data mt8188_lvts_ap_data_ctrl[] = {
->  		},
->  		VALID_SENSOR_MAP(1, 1, 0, 0),
->  		.offset = 0x200,
-> -		.mode = LVTS_MSR_FILTERED_MODE,
->  	},
->  	{
->  		.lvts_sensor = {
-> @@ -1518,7 +1513,6 @@ static const struct lvts_ctrl_data mt8188_lvts_ap_data_ctrl[] = {
->  		},
->  		VALID_SENSOR_MAP(1, 1, 0, 0),
->  		.offset = 0x300,
-> -		.mode = LVTS_MSR_FILTERED_MODE,
->  	}
->  };
->  
-> 
-> ---
-> base-commit: 82d92a9a1b9ea0ea52aff27cddd05009b4edad49
-> change-id: 20240515-mtk-thermal-mt8188-mode-fix-e583d9a31da1
-> 
-> Best regards,
-> -- 
-> Julien Panis <jpanis@baylibre.com>
-> 
-> 
+At a glance, yes.  We're in a "quite period" until 6.10-rc1, so it'll be a few
+weeks before I take a closer look at this (or really anything that's destined
+for 6.11 or later).
 
