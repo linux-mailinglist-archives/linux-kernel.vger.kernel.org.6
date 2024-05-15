@@ -1,102 +1,93 @@
-Return-Path: <linux-kernel+bounces-179539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B81C8C611D
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:04:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1560E8C61A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:25:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D1FB1F23614
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 07:04:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 455201C21DD2
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 07:25:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A9BA42061;
-	Wed, 15 May 2024 07:03:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ZoC0D+wP"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AFCE5915C;
+	Wed, 15 May 2024 07:22:50 +0000 (UTC)
+Received: from mxout37.expurgate.net (mxout37.expurgate.net [91.198.224.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19DA740875;
-	Wed, 15 May 2024 07:03:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 325924AEDD;
+	Wed, 15 May 2024 07:22:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.198.224.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715756636; cv=none; b=FSCPhVKxCPswp/OJjsqR97XCW24iW1nyWo2a8lRwNxHshhmRlwfmjZoMnm1Pr/g4D2aGfEnI1z/+13ub4CPb1Scw307gkLrz1zcqbGzsiMKq1hr8dIjya0NJ6SYs2I+j1j/8A14Yp7eJG6oeg2tVNE6hyh8wcfkss041Mdvo+l4=
+	t=1715757769; cv=none; b=KKPlggd2MPhjbI8EiP3I5cFb9AHAhRVbwXxEBd4lLk+5iNwbfBujhs1yTPWVjjjLC8vOCAfIFuit5eaYy/DkSC2rkLStJk+whjdt8APBhdDGU7noH2Xo6yJTOfyjDDeRta+6FEJSecj2pmOb/yA8XomNgEGCne+sqS3K9M6xfm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715756636; c=relaxed/simple;
-	bh=a23Cug9AhjPBfUeD7DrLjspv0v/fZFiP7FlrMUsN2eI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=V1fLZOgqnCTi0zmgY8uGXe0U/DykFcyI2e35Ib3W71gkRmH7n21PM1hiVwsybjWINDsPPP+CMn6szD3h1xltQxsArKCZrROFrB9KlHb579ffOtN4ItWujKwKsfBynzhHk/RhNGkSs3ZD7gz+XAXB0vnN2rJGYC3gxno8VUw5boE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ZoC0D+wP; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1715756630;
-	bh=r5Txr5FAnBYVorvwRI+NCbA8wrTB5FWCVzgZp/cBdz8=;
-	h=Date:From:To:Cc:Subject:From;
-	b=ZoC0D+wPftfScTrINazpAMYzM8MYuf2G0L2s/3a5y5RjFQJjzbw3Uyka4irlxhLxl
-	 tCkfiB/3T3/qvCz9EWlC1F7RW91pjZ6xbwgqVbICmh/4FhHxPkYIq1b1oz5orMPH74
-	 t2XW7X4FRgTYgqaNb79lV1+b7oIP+20u3py0cfWUdMJ0kQdXw51QZvSG0iCf3LarDe
-	 DGS7PbfSe8kwcPt45UFbcl5D1Y436L4d/kUSLbN6k6ilQK7K5qgsGUvrmaWfpI/yPb
-	 IAdc+uMBAn0MD0BSF3tSMlxXW/M5TP+EOhjZO8LAksI13HCuUbts8MDchaKlKrkvW4
-	 5eZcT57KHL3Bg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VfPMp1MM3z4x1Q;
-	Wed, 15 May 2024 17:03:49 +1000 (AEST)
-Date: Wed, 15 May 2024 17:03:49 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: David Sterba <dsterba@suse.cz>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patch in the btrfs tree
-Message-ID: <20240515170349.76ed5933@canb.auug.org.au>
+	s=arc-20240116; t=1715757769; c=relaxed/simple;
+	bh=MMJTxIse0XMR2yy8WVH7zqEil4nlE4hSMxlj11n2foc=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Ks7yy1+t4FiW1UsiVNPLcFV1GrUKN5bhsSFEBaDs8ST7nNAzVtl0tN+eVDngCjoIJ7mxdgyslAJVBNxSh6JPCv/stUUGbnxZ4JMnTDHMNl5HKT/Uo334sJ/torq3pj8ZSyJze5+n0qRm5z0w2p8O8RRYBgdiBTDUtSkcHreOWFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=brueckmann-gmbh.de; spf=pass smtp.mailfrom=brueckmann-gmbh.de; arc=none smtp.client-ip=91.198.224.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=brueckmann-gmbh.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=brueckmann-gmbh.de
+Received: from [127.0.0.1] (helo=localhost)
+	by relay.expurgate.net with smtp (Exim 4.92)
+	(envelope-from <gessler_t@brueckmann-gmbh.de>)
+	id 1s78hU-0025li-Fc; Wed, 15 May 2024 09:05:20 +0200
+Received: from [217.239.223.202] (helo=zimbra.brueckmann-gmbh.de)
+	by relay.expurgate.net with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <gessler_t@brueckmann-gmbh.de>)
+	id 1s78hT-00B0ZK-5Q; Wed, 15 May 2024 09:05:19 +0200
+Received: from zimbra.brueckmann-gmbh.de (localhost [127.0.0.1])
+	by zimbra.brueckmann-gmbh.de (Postfix) with ESMTPS id 0A0ECCA5DDD;
+	Wed, 15 May 2024 09:05:18 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by zimbra.brueckmann-gmbh.de (Postfix) with ESMTP id EE310CA6122;
+	Wed, 15 May 2024 09:05:17 +0200 (CEST)
+Received: from zimbra.brueckmann-gmbh.de ([127.0.0.1])
+ by localhost (zimbra.brueckmann-gmbh.de [127.0.0.1]) (amavis, port 10026)
+ with ESMTP id j1AwKLY4gM0P; Wed, 15 May 2024 09:05:17 +0200 (CEST)
+Received: from [10.0.11.14] (unknown [10.0.11.14])
+	by zimbra.brueckmann-gmbh.de (Postfix) with ESMTPSA id D325FCA5DDD;
+	Wed, 15 May 2024 09:05:17 +0200 (CEST)
+Date: Wed, 15 May 2024 09:04:27 +0200 (CEST)
+From: =?ISO-8859-15?Q?Thomas_Ge=DFler?= <gessler_t@brueckmann-gmbh.de>
+To: Andrew Lunn <andrew@lunn.ch>
+cc: Thomas Gessler <thomas.gessler@brueckmann-gmbh.de>, 
+    Heiner Kallweit <hkallweit1@gmail.com>, 
+    Russell King <linux@armlinux.org.uk>, 
+    "David S. Miller" <davem@davemloft.net>, 
+    Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+    Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, 
+    linux-kernel@vger.kernel.org, MD Danish Anwar <danishanwar@ti.com>, 
+    Ravi Gunasekaran <r-gunasekaran@ti.com>
+Subject: Re: [PATCH 1/2] net: phy: dp83869: Add PHY ID for chip revision 3
+In-Reply-To: <b2db4e61-8bc1-4076-a2b9-7b6a028461aa@lunn.ch>
+Message-ID: <54725d-4c84-2a25-54bf-5a56aa17edc5@brueckmann-gmbh.de>
+References: <20240514122728.1490156-1-thomas.gessler@brueckmann-gmbh.de> <b2db4e61-8bc1-4076-a2b9-7b6a028461aa@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/L1ZZfe2k_TQjc+/PbzgrEJO";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/L1ZZfe2k_TQjc+/PbzgrEJO
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+X-purgate-type: clean
+X-purgate: clean
+X-purgate-ID: 151534::1715756719-A76F8356-60AE8429/0/0
 
-Hi all,
+Hi Andrew,
 
-The following commit is also in Linus Torvalds' tree as a different
-commit (but the same patch):
+On Tue, 14 May 2024, Andrew Lunn wrote:
+> As the name suggests, it matches on the model. The revision is
+> ignored. A mask is applied to ignore the lower nibble. So this change
+> looks pointless.
 
-  74a82505bc76 ("btrfs: qgroup: fix initialization of auto inherit array")
+Ah, I see. I did not realize that the match ignores the lower bits. I was
+having trouble getting the driver to match when first experimenting with
+the chip and thought this was part of the problem. As it turns out, it now
+works without this patch.
 
-This is commit
+Please disregard it.
 
-  0e39c9e52447 ("btrfs: qgroup: fix initialization of auto inherit array")
-
-in Linus' tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/L1ZZfe2k_TQjc+/PbzgrEJO
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZEXlUACgkQAVBC80lX
-0GyWSgf/QDJxwhSAfe3DC5UQ/glTYetA1yNn8qtCUuP7+wwWvUPC4QOgmaXOv9bD
-YDoNIqQEIFWdpTP57gyu7nZp5ObK2VJYSNxXQNIJ3EPFj2zWB0Pa+V/ulkAMMV+2
-e6uKnpXYwxdSBrcLD/JgkkSEuw0mi6PUpJWrsSUzFX5jcIljIzFqKhuC6TynpJyZ
-G/OLRctMwdqkCzu2a1WsF7ryZr1ErrbtsF3WgGvA+SzNEx2w8acdoq1hfnbGn6ku
-mMbD6Z98MPY6E7+xtNqgGB9vHc4C9BtpOiF19zb8Ok6uTBCLJJBuDPzlCERSNiAq
-+o0/13zwu9g4MoyOrQ9gxj8FhbsQjg==
-=suKi
------END PGP SIGNATURE-----
-
---Sig_/L1ZZfe2k_TQjc+/PbzgrEJO--
+Thomas
 
