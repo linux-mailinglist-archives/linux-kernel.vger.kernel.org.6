@@ -1,147 +1,117 @@
-Return-Path: <linux-kernel+bounces-180106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2A528C6A2A
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:05:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC79F8C6A2C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:05:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25B50B237A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:05:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7138D1F2357C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:05:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB053156253;
-	Wed, 15 May 2024 16:04:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FB1A156253;
+	Wed, 15 May 2024 16:05:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GCcSlwu0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="IiIT5gZQ"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE31F156230;
-	Wed, 15 May 2024 16:04:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E853A43144
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 16:05:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715789095; cv=none; b=OczOJo4lCs0JXWHcVr4gXqDcHQK5eBcK1cwaIRHMeilKQd2/JDAk5LbUIFiN4tBEqjupXx/gtyc3TmYm2yk5I9KHtitjMlJp7F9KsAVKshjqPPIkf0+3UNAaPGe9POgm2T0fqZugmAGfM3eNsOdye1GSuTOvVx/199/agKlfYy4=
+	t=1715789145; cv=none; b=AytSZw8Tm251Kg1RNY6E7oLI+WnUzw84XuxbyGlmDo0C+HwUGP/T0fq2U4x9rdxnmaLsx5Jxtd6j4qBQzFpfV3W7Taleo93ul+D3kFtRy/EvLnhZ/OxkCXLd4LfM4c1onlrDelyYqqwv+zD8SjYQeDug2zAVhG0x9M0eBZxA5Pw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715789095; c=relaxed/simple;
-	bh=kycUkpRBcEikOS2uUOytIdiW0vootLzo+kRSUZqPy74=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cpYCrJOPxRWOiSKwaW6iFmh3kvcSNhHOgZu/tLyknD1f9qZLtSLBAnbigJwBsaVKZeka7A7oWUsitj3SPhNo3Q0VCRHInf4KMZhdSwHRRe+R+Pjts0I/Y1Kkpjqh1IbIERFMSmuYb306E28riC7MhSxubYONr6it66fIvru9TKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GCcSlwu0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E32CDC116B1;
-	Wed, 15 May 2024 16:04:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715789094;
-	bh=kycUkpRBcEikOS2uUOytIdiW0vootLzo+kRSUZqPy74=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GCcSlwu0Q1/BIvPguL9ykFpvGDB2rB0mNxZugMR4JErdsSybEMwsnH+kD4jm55LOV
-	 S57Vv9wDidtYn/yVdM6wZD0NURFEddwGlz3slZ02HIR/giNMbynTMgxVnCVGW6WSbF
-	 ICWck8njLb+XWO79UraQpW/k6zSJDzw3CefFySezm7wWZVhw2Cqk1WsB60ixo7rrwK
-	 yK+IPO3c1UTjfm1S2w3SIAsOR+notDXFoyRpbxX/mYAhE1Nj0LWepFnsw52LJDWASe
-	 Uvnh/kNRZQpy0gzQo1refhavCN8Hk8CljYYjQhj1gzZdzFBCc2eyxkGQkK9RD5Wcj6
-	 6htRJ70HCYbGg==
-Date: Wed, 15 May 2024 17:04:48 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Shengjiu Wang <shengjiu.wang@gmail.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Shengjiu Wang <shengjiu.wang@nxp.com>,
-	abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-	festevam@gmail.com, marex@denx.de, linux-clk@vger.kernel.org,
-	imx@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	p.zabel@pengutronix.de
-Subject: Re: [PATCH v3 3/6] dt-bindings: clock: imx8mp: Add reset-controller
- sub-node
-Message-ID: <20240515-unbundle-bubble-8623b495a4f1@spud>
-References: <1715679210-9588-1-git-send-email-shengjiu.wang@nxp.com>
- <1715679210-9588-4-git-send-email-shengjiu.wang@nxp.com>
- <20240514-campus-sibling-21cdf4c78366@spud>
- <b86c83a520f0c45a60249468fa92b1de.sboyd@kernel.org>
- <CAA+D8ANTdvQJVtniyMtqjnJdT4qX+LDGjVuFO6H0RSO+GDw+ng@mail.gmail.com>
+	s=arc-20240116; t=1715789145; c=relaxed/simple;
+	bh=hJHrdHj0cikWqaVWvyi6gHT8PuTbJVo4o4T87OWEoW0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ub2PkuMTthvON8iIioFjmVqCx3k2xqfqqt3NbF1YoSYk3IZZT4MZPK8zC78DmcovCaLWPtLZ8K38PNfjuK4J6fsVtjs/WWH8N201FePfwLlr6+1O/Lxj9i/bh0bvFPZuJK6NRI9gpj597c/4j3VezwID7MAq7uRqeIJCIUFxqlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=IiIT5gZQ; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a59a609dd3fso256980166b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 09:05:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1715789142; x=1716393942; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=u2ehF00UkFVYae8eoKheTBkPEUp/ENYAZ+/DySjcSWU=;
+        b=IiIT5gZQcqzKMHpc/5W2YcOOu4OfnKolvmspj74yxAWqNITkfbkalSasme1ro4Y04/
+         XpW7WdYlyE51aHYUmCcNtloejCVXx/NJLDaWYO0Ja/fGofbf0QzrZlCp1xvk52trxioP
+         sDmCwmUj60J2pm5tTtb6kow47ES9pMVF005Lk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715789142; x=1716393942;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=u2ehF00UkFVYae8eoKheTBkPEUp/ENYAZ+/DySjcSWU=;
+        b=Vo6lKeykpWx1oqqDoYcq78O++KjcYLQYTLluNGQhbrXc2AQbZt3MrACG2z34bRAsiX
+         rvgSaZ83ffeW2XaUKqxXwu36FgMOdzMInQ7ACRxaPFKf6jsVDAuYWQUgWFX/Jy/ae7HG
+         bBZN4rmAUPH7eW67NEDhnFQ2vTDSXjG3emYaJwVSFHRw5J4LFhyfn/j2OOGyhaZBEOc9
+         gIW4FKPAL5AUepuF7xrH+CGWTKO3Rdftwn7j+XquzhPhw4/Dnp1sTZBVbX/3rEyAfGdK
+         Hp1DhJWC3UaWSamTuOuGLLFvHR03t1ousupqogV5KMBscxEJtKY7HQ8LHYknD/lm5gYR
+         QFHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW8wKoCAKWIltiPZUXMrc8NncylhGYQzxlhlLmoCwAbRdYcIdqK2s4V25COoCivBI6qf0VV7nuGNQYcMn2QXdQ6i1rDiHANvZGF/ngg
+X-Gm-Message-State: AOJu0Yy5+Pv4LgdbFuybSLqReDuY6cqeP4gkvOYf2DOQDAYqwjxYcUzF
+	5oKDgmu5JbJpWBfDakhKaJejFrlwjZOJasthXxEl9iOH+AD+k52Qj+pMF8sNStSYV9PBJoyZ2qp
+	BBbBXPw==
+X-Google-Smtp-Source: AGHT+IFAxvk5vDMDyx53gZuTXNocRJyu6JPOeCDOGPmqIurAqlrRjsvYQuL37DctI1wL7R54NzSy3g==
+X-Received: by 2002:a17:906:eb07:b0:a5c:dd2c:d95b with SMTP id a640c23a62f3a-a5cdd2cdbafmr64814466b.25.1715789142186;
+        Wed, 15 May 2024 09:05:42 -0700 (PDT)
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com. [209.85.218.43])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733bea6557sm9258182a12.13.2024.05.15.09.05.41
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 May 2024 09:05:41 -0700 (PDT)
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a59a352bbd9so261952466b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 09:05:41 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVgCxC1kHtKDdYnk2FVCMaIE3XidhD5TzPxTQSHwZUOH2KhYtV8gi0xuMXIV6vzpbWtv/7Ekex43HtRcfmmk+BaXvYbw8YJh0Tvsd3w
+X-Received: by 2002:a17:907:25c1:b0:a59:9eee:b1cb with SMTP id
+ a640c23a62f3a-a5a2d30be86mr1715412166b.35.1715789140754; Wed, 15 May 2024
+ 09:05:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="GkjvzzTYbAGBWol4"
-Content-Disposition: inline
-In-Reply-To: <CAA+D8ANTdvQJVtniyMtqjnJdT4qX+LDGjVuFO6H0RSO+GDw+ng@mail.gmail.com>
+References: <CAHk-=whHsCLoBsCdv2TiaQB+2TUR+wm2EPkaPHxF=g9Ofki7AQ@mail.gmail.com>
+ <20240515091727.22034-1-laoar.shao@gmail.com>
+In-Reply-To: <20240515091727.22034-1-laoar.shao@gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 15 May 2024 09:05:24 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgcnsjRvJ3d_Pm6HZ+0Pf_er4Zt2T04E1TSCDywECSJJQ@mail.gmail.com>
+Message-ID: <CAHk-=wgcnsjRvJ3d_Pm6HZ+0Pf_er4Zt2T04E1TSCDywECSJJQ@mail.gmail.com>
+Subject: Re: [PATCH] vfs: Delete the associated dentry when deleting a file
+To: Yafang Shao <laoar.shao@gmail.com>, kernel test robot <oliver.sang@intel.com>
+Cc: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
+	longman@redhat.com, viro@zeniv.linux.org.uk, walters@verbum.org, 
+	wangkai86@huawei.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Matthew Wilcox <willy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 
+Oliver,
+ is there any chance you could run this through the test robot
+performance suite? The original full patch at
 
---GkjvzzTYbAGBWol4
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+    https://lore.kernel.org/all/20240515091727.22034-1-laoar.shao@gmail.com/
 
-On Wed, May 15, 2024 at 10:47:57AM +0800, Shengjiu Wang wrote:
-> On Wed, May 15, 2024 at 5:09=E2=80=AFAM Stephen Boyd <sboyd@kernel.org> w=
-rote:
-> >
-> > Quoting Conor Dooley (2024-05-14 11:06:14)
-> > > On Tue, May 14, 2024 at 05:33:27PM +0800, Shengjiu Wang wrote:
-> > > > diff --git a/Documentation/devicetree/bindings/clock/imx8mp-audiomi=
-x.yaml b/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml
-> > > > index 0a6dc1a6e122..a403ace4d11f 100644
-> > > > --- a/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml
-> > > > +++ b/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml
-> > > > @@ -15,7 +15,10 @@ description: |
-> > > >
-> > > >  properties:
-> > > >    compatible:
-> > > > -    const: fsl,imx8mp-audio-blk-ctrl
-> > > > +    items:
-> > > > +      - const: fsl,imx8mp-audio-blk-ctrl
-> > > > +      - const: syscon
-> > > > +      - const: simple-mfd
-> > > >
-> > > >    reg:
-> > > >      maxItems: 1
-> > > > @@ -44,6 +47,11 @@ properties:
-> > > >        ID in its "clocks" phandle cell. See include/dt-bindings/clo=
-ck/imx8mp-clock.h
-> > > >        for the full list of i.MX8MP IMX8MP_CLK_AUDIOMIX_ clock IDs.
-> > > >
-> > > > +  reset-controller:
-> > > > +    type: object
-> > > > +    $ref: /schemas/reset/fsl,imx8mp-audiomix-reset.yaml#
-> > > > +    description: The child reset devices of AudioMIX Block Control.
-> > >
-> > > Why not just set #reset-cells =3D <1> in the existing node? IIRC it w=
-as
-> > > already suggested to you to do that and use auxdev to set up the reset
-> > > driver.
-> >
-> > Yes, do that.
->=20
-> Can I know why sub nodes can't be used? the relationship of parent and
-> child devices looks better with sub nodes.
+and it would be interesting if the test robot could see if the patch
+makes any difference on any other loads?
 
-That's pretty subjective. I don't think it looks better to have a clock
-node that is also a syscon with a reset child node as it is rather
-inconsistent.
->=20
-> A further question is can I use the reset-ti-syscon? which is a generic r=
-eset
-> device for SoCs.  with it I don't even need to write a new reset device d=
-river.
-> it is more simple.
+Thanks,
+                     Linus
 
-That is for a TI SoC. You're working on an imx. I don't think that you
-should be using that...
-
---GkjvzzTYbAGBWol4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZkTdIAAKCRB4tDGHoIJi
-0m6SAP9agCG57rgGJON9yd0a66dM6NoL7HfdAEzVst0qNsrwUwD+PuKQSxOna4Jj
-BC+nCXgi21EE+l22nlaOgorkcGibTA4=
-=3gXG
------END PGP SIGNATURE-----
-
---GkjvzzTYbAGBWol4--
+On Wed, 15 May 2024 at 02:17, Yafang Shao <laoar.shao@gmail.com> wrote:
+>
+> Our applications, built on Elasticsearch[0], frequently create and delete
+> files. These applications operate within containers, some with a memory
+> limit exceeding 100GB. Over prolonged periods, the accumulation of negative
+> dentries within these containers can amount to tens of gigabytes.
+>
+> Upon container exit, directories are deleted. However, due to the numerous
+> associated dentries, this process can be time-consuming. Our users have
+> expressed frustration with this prolonged exit duration, which constitutes
+> our first issue.
 
