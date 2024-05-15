@@ -1,130 +1,199 @@
-Return-Path: <linux-kernel+bounces-180300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F9538C6C9C
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 21:12:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E9E18C6CA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 21:14:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 383571F21770
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 19:12:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F38D41F21C30
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 19:14:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDEC515920F;
-	Wed, 15 May 2024 19:12:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0989C15ADB0;
+	Wed, 15 May 2024 19:14:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="Zhd3P+oD"
-Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="ogkPrCcr"
+Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 567C213F430
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 19:11:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 687A1446AC;
+	Wed, 15 May 2024 19:14:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715800321; cv=none; b=pUz8OCYWyfK4g7uw5Fba6Dlt7ChesBDaLGE7XgbLOX/jElCecDen1N7oDMbLzSuH8uStOiEaos6908kROGJYCE9LuumINgR77x8OjW8HvZyoY+iizPT8H92EtwnwjwruzXj9qRpgtO7Nqxzi7jQI91E5ZXxTgh1aqjfNCP6z7Es=
+	t=1715800457; cv=none; b=oG/szs1Y8E/yeIDGr09Jk6gTRyJd9bR/JO9RzTfvxzSeQpBMEkqXaShWzGwKhTkKifdG1+vmJSpSXv6vALbakJi1vl3oAollk4AF9Dn6CXurjZZhB5WQrrHoMz0eZEFnmO3iqC2K4dKN977OSWMMy/cRIY0L42usY+W/nmwiaEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715800321; c=relaxed/simple;
-	bh=4oB1JXBLHcvFES9rbzP9mVt+itHaSCvKneEGCnD+In8=;
-	h=Subject:To:Cc:References:In-Reply-To:From:Message-ID:Date:
-	 MIME-Version:Content-Type; b=k6I3+fL22HzuLL6yq+XgQX3NAvJz1kzUrkjzoUC09mkYemvfRG2Rj1h4RFA2i44az4KLwOHRJBLsoq/nVA6RJV0VS6bZhYBIHzT8AqfNQ9hvoUVjOEMu71aO0fzx1tmSISbxgsfFV5vx+l7q11cM2Wu4mDMGoEQ6C95I6pI9Jbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=Zhd3P+oD; arc=none smtp.client-ip=35.89.44.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-6006a.ext.cloudfilter.net ([10.0.30.182])
-	by cmsmtp with ESMTPS
-	id 7GcQsBEEBJXoq7K18sWjxi; Wed, 15 May 2024 19:10:22 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id 7K17sKqeSe3YN7K17sfxq0; Wed, 15 May 2024 19:10:22 +0000
-X-Authority-Analysis: v=2.4 cv=RunDLjmK c=1 sm=1 tr=0 ts=6645089e
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=TpHVaj0NuXgA:10 a=-Ou01B_BuAIA:10 a=VwQbUJbxAAAA:8
- a=HaFmDPmJAAAA:8 a=49j0FZ7RFL9ueZfULrUA:9 a=QEXdDO2ut3YA:10
- a=AjGcO6oz07-iQ99wixmX:22 a=nmWuMzfKamIsx3l42hEX:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
-	Message-ID:From:In-Reply-To:References:Cc:To:Subject:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=6JpUg3wSLY7qGu7ALhdgxvJ1xbPGhzqxXEzKie5Iu7Y=; b=Zhd3P+oDn1trGPQiF2hyhQ0JyS
-	kbqx/OzRm2Bm2T/Ugl2DFpS4BguG5ecH33fxhvB+QGDnHJ5SSbYb10zd8d4sLEO8RkM8K1CmXKbzV
-	t8Z19Pa+WmonC2hhpCFyQNbeJri4USjNw/O8dNdFysGhw65moG5MhGxPCFKnvigrNxMzk7vbXBM0S
-	2gfiDiCf2Mr4jod4zy/+coTDVrSGazeOcKZSDiUgWKJ/E+Ffq/x1ouQTt4sx95hUiTgfWRInmzAoS
-	z4iXmIZbfuwHa/D4aAVo8aHzaiVEx8C3SHvQ/H6c5rqAFroN66O8G24DvJ9BV+gjcvqAXWLmhZKHH
-	V81tt2wQ==;
-Received: from c-98-207-139-8.hsd1.ca.comcast.net ([98.207.139.8]:35806 helo=[10.0.1.47])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <re@w6rz.net>)
-	id 1s7K14-002UIk-35;
-	Wed, 15 May 2024 13:10:19 -0600
-Subject: Re: [PATCH 5.15 000/168] 5.15.159-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240515082414.316080594@linuxfoundation.org>
-In-Reply-To: <20240515082414.316080594@linuxfoundation.org>
-From: Ron Economos <re@w6rz.net>
-Message-ID: <fbbc9d23-1111-ee31-8558-93beed611668@w6rz.net>
-Date: Wed, 15 May 2024 12:10:15 -0700
-User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+	s=arc-20240116; t=1715800457; c=relaxed/simple;
+	bh=SIaYPtAmZYzaVPwYzy+qBnZV2xxtM7JyJlPkIEJKfyc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CvPfi6UU1JPpyH76JSOLk6x1YknaOb5WH6S/6YPvZI/E+RoHI8vNoTazH2ZO4Jdf6HukELv0Ou4NFTDL+3tHtkdnNcVg7baBVLRg/iA//GgUy9+a5PflOWsS/rtCXoxawms/NGe94qIGYrxfsRxEB/lzup0DJK+zvLtqldEP+MI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=ogkPrCcr; arc=none smtp.client-ip=37.18.73.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
+Received: from p-infra-ksmg-sc-msk01 (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 3791610002D;
+	Wed, 15 May 2024 22:14:12 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 3791610002D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1715800452;
+	bh=yh36czi3oiCiH74hnOG7P+ArHnzezMkpMG45lt+1orI=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=ogkPrCcrKyO61s28WFqtpPmAzLZ+8RRCcNyLeipRWtiAB9OgSZHEjhx+nxfVZP2Yo
+	 2Jc3u0nVSA06D379coLls8r/YC4trQbkLdIk3gnkZtyG/W33mD6bKJ+Jf5OIvfqWgB
+	 /pW9qJDa0iIcD3W77VwcICQI86RnnxsByZtS4YC9kC/blMxg9GV4hw3jbDvYhNHxOh
+	 bRjuAtV5Z9TB8EIaClVXUfaiX4AKjJ8LidnYjwRTDkoJQX83pQXezWIj1G9Z0uhQsR
+	 +YrY/Sqlfx0K3GrU5WA0gaJ1eE0yUHuA4KrrMRZPML590LSNOggar3L/qSjUfh8zrp
+	 hgJ5+yhJIf8zg==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Wed, 15 May 2024 22:14:12 +0300 (MSK)
+Received: from CAB-WSD-L081021.sberdevices.ru (100.64.160.123) by
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.40; Wed, 15 May 2024 22:14:11 +0300
+From: Dmitry Rokosov <ddrokosov@salutedevices.com>
+To: <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
+	<mturquette@baylibre.com>, <sboyd@kernel.org>, <robh+dt@kernel.org>,
+	<krzysztof.kozlowski+dt@linaro.org>, <khilman@baylibre.com>,
+	<martin.blumenstingl@googlemail.com>
+CC: <kernel@salutedevices.com>, <rockosov@gmail.com>,
+	<linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, Dmitry Rokosov
+	<ddrokosov@salutedevices.com>
+Subject: [PATCH v3 0/4] arm64: dts: amlogic: a1: Support CPU Power Management
+Date: Wed, 15 May 2024 22:13:49 +0300
+Message-ID: <20240515191405.25395-1-ddrokosov@salutedevices.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 98.207.139.8
-X-Source-L: No
-X-Exim-ID: 1s7K14-002UIk-35
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-98-207-139-8.hsd1.ca.comcast.net ([10.0.1.47]) [98.207.139.8]:35806
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 23
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfNEwH9/cs+qy8Ujcr//jdZOR/mnx5LBwNkapuwicr+uXAmBGe8TmcgJgkkFztx/riqACYsQUaeVzz9vsddbkwyS+xKW4f9aqbO+lIrwQp0KRcA9GM2+N
- p5lZjRqiyKP4yAgeMS9mLR7eY3zPhlxUJ6fF+nyhJjrUyUMl3ll8SIF24g/0IUHWPJF2hj3e3eMiWOAde3+1lO6kvTMh+b+eciE=
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) To
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 185260 [May 15 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: ddrokosov@salutedevices.com
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 20 0.3.20 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, smtp.sberdevices.ru:7.1.1,5.0.1;127.0.0.199:7.1.2;100.64.160.123:7.1.2;lore.kernel.org:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;salutedevices.com:7.1.1, FromAlignment: s, ApMailHostAddress: 100.64.160.123
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean, bases: 2024/05/15 12:35:00
+X-KSMG-LinksScanning: Clean, bases: 2024/05/15 18:39:00
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/05/15 13:12:00 #25231738
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-On 5/15/24 1:27 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.15.159 release.
-> There are 168 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Fri, 17 May 2024 08:23:27 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.159-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+The Amlogic A1 SoC family utilizes static operating points and a
+PWM-controlled core voltage regulator that is specific to the board. As
+the main CPU clock input, the SoC uses CLKID_CPU_CLK from the CPU clock
+controller, which can be inherited from the system PLL (syspll) or a
+fixed CPU clock.
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+Currently, the stable operating points at all frequencies are set to
+800mV. This value is obtained from the vendor setup of several A1
+boards.
 
-Tested-by: Ron Economos <re@w6rz.net>
+The current patch series includes:
+    * CPU clock controller declaration
+    * syspll setup in the PLL controller
+    * operating points
+    * CPU special power parameters: voltage-tolerance, clock-latency,
+      capacity-dmips-mhz, dynamic-power-coefficient
+
+Please be informed that the AD402 vddcpu PWM regulator does not exist in
+this patch series because currently PWM A1 support is under development.
+However, it should look like:
+
+```
+vddcpu: regulator-vddcpu {
+	compatible = "pwm-regulator";
+	pinctrl-0 = <&pwm_f_pins4>;
+	pinctrl-names = "default";
+	regulator-name = "VDDCPU";
+	regulator-min-microvolt = <690000>;
+	regulator-max-microvolt = <1050000>;
+	pwm-supply = <&dc_12v_in>;
+	pwms = <&pwm_ef 1 1500 0>; // 667kHz
+	voltage-table = <1050000 0>,
+			<1040000 3>,
+			<1030000 6>,
+			<1020000 8>,
+			<1010000 11>,
+			<1000000 14>,
+			<990000 17>,
+			<980000 20>,
+			<970000 23>,
+			<960000 26>,
+			<950000 29>,
+			<940000 31>,
+			<930000 34>,
+			<920000 37>,
+			<910000 40>,
+			<900000 43>,
+			<890000 45>,
+			<880000 48>,
+			<870000 51>,
+			<860000 54>,
+			<850000 56>,
+			<840000 59>,
+			<830000 62>,
+			<820000 65>,
+			<810000 68>,
+			<800000 70>,
+			<790000 73>,
+			<780000 76>,
+			<770000 79>,
+			<760000 81>,
+			<750000 84>,
+			<740000 87>,
+			<730000 89>,
+			<720000 92>,
+			<710000 95>,
+			<700000 98>,
+			<690000 100>;
+	regulator-boot-on;
+	regulator-always-on;
+};
+```
+
+This patch series depends on [1].
+
+Changes v3 since v2 at [3]:
+    - move sys_pll_div16 clock from a1-pll clkc to a1-peripherals clkc
+      as Jerome suggested, so dt connection is changed too
+
+Changes v2 since v1 at [2]:
+    - remove holes from the beginning of cpu clock controller regmap
+    - move sys_pll_div16 to the end of the clocks list
+
+Links:
+    [1] https://lore.kernel.org/all/20240515185103.20256-1-ddrokosov@salutedevices.com/
+    [2] https://lore.kernel.org/all/20240329210453.27530-1-ddrokosov@salutedevices.com/
+    [3] https://lore.kernel.org/all/20240510091251.20086-1-ddrokosov@salutedevices.com/
+
+Signed-off-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
+
+Dmitry Rokosov (4):
+  arm64: dts: amlogic: a1: add new syspll_in input for clkc_pll
+    controller
+  arm64: dts: amlogic: a1: declare cpu clock controller
+  arm64: dts: amlogic: a1: add new input clock 'sys_pll' to clkc_periphs
+  arm64: dts: amlogic: a1: setup CPU power management
+
+ arch/arm64/boot/dts/amlogic/meson-a1.dtsi | 70 +++++++++++++++++++++--
+ 1 file changed, 66 insertions(+), 4 deletions(-)
+
+-- 
+2.43.0
 
 
