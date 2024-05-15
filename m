@@ -1,481 +1,246 @@
-Return-Path: <linux-kernel+bounces-180096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F2668C6A0E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:56:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A0C548C6A10
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:56:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED45D1F23687
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 15:56:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F82E1F22D13
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 15:56:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62C2D156243;
-	Wed, 15 May 2024 15:56:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9870D15624B;
+	Wed, 15 May 2024 15:56:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="ldt6EXKD"
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2069.outbound.protection.outlook.com [40.107.22.69])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H3T5N0tl"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6223D155723;
-	Wed, 15 May 2024 15:56:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F2DA156226;
+	Wed, 15 May 2024 15:56:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.20
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715788568; cv=fail; b=FyMVjo1WiwC4YBPeKlTtiFLutr/6bLYP2eLAkXvbR/pL0vqGrQda9zysRVGuZRB/SJMtyuQPFErVxtbtzTaDNP61++fqulYl87VO7q6jIhEOjsuzsPzfVpMYAuafSLjF9NNzebSQIzUClY9LX5l/8X2WkdnxiTqEu7aif6kFpxA=
+	t=1715788586; cv=fail; b=eS0Cg3Zp0TEMLoHCc0NxqX3NcSNzCI2nm2EoSzN68VXhC8QLmLupVyLOQYCRVRH5ACnqv/QZfCipSFazLcPMmbPtOMg4QgQSD+LpcPk9Ht0cG0aGA8GPpzIP1rf72cYHkRLVwPPL/uO14mqpsm+phKy4RG1QP2XOSymijIsjU4g=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715788568; c=relaxed/simple;
-	bh=ifbMh9rjGvYhilfXoHTK1ndSSCza2u0rpZPnL/lO2PE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=pqqAUqCo9rTBnVe7a7XKN3hm2AETDiByCDB/ZuGJQWyrBKNR3ZCaCDPcGDgJML3eHXMR6XHPqGcp0GINwrqwWr/LEjK/XRqpydOsZcPzFJE/t1heMjXV3KMV59aXm6/RWwEuYVi6R1cUZsXyhmBBWRXSB0IL7nJ3RsWJBx1hRZ8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=ldt6EXKD; arc=fail smtp.client-ip=40.107.22.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	s=arc-20240116; t=1715788586; c=relaxed/simple;
+	bh=DLwFM8dQVxWT8Efw86nLvBEZEq4JXzdA1CS9FIEyhDY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=PA1lVmME9YuzHuLpnJSUSi3rTKOXIOLWDU+jjXZq/cVRA97kVvBLM8Imgab1enRzLCzc3nqSeRDT79CQRVDBXKz8Pcd7bwOEHPtRsUXeMJMRzQNd1N5U4D/0qFWlUyavWMBgg5LL7LmyPJ4kjBG5/906JbFm8Q0tbWOO1mh8KoE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H3T5N0tl; arc=fail smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715788585; x=1747324585;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=DLwFM8dQVxWT8Efw86nLvBEZEq4JXzdA1CS9FIEyhDY=;
+  b=H3T5N0tli2WA8BWOGx/Vamok9YLPBdc14QmOW6O6GztBoME9zd9YYTTg
+   iyBqroExf9gUmGdnDTL8Blcoe9iAh0zSIkI8d15nKm33/M2zKVoA2ulTV
+   zeI/WSLZuYVkh2xrQTUhtUQ3SSeu13nwPjIWJplfGsXgEhdXuoWnphrej
+   PXr1N5CLr6oBfCyxBtQcGEyFebgx46l3jmQY6h4wSpxmO116nMxHHFA+T
+   AiuszQw4W2cbHCASBH/GqThWs3oTRNIOx9VE5uSfx/cUrAGO7fSmgV32D
+   gqUW9m2GSRIzssBcF2xVbpX1ZgE82JxD3IRcVU6EBzJANf0P+bxSldy1c
+   w==;
+X-CSE-ConnectionGUID: EpUp1xjhTmqCi/jzuYbBlA==
+X-CSE-MsgGUID: XVCSsGrGQYS7tSA3+AHvHA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="11678572"
+X-IronPort-AV: E=Sophos;i="6.08,162,1712646000"; 
+   d="scan'208";a="11678572"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 08:56:24 -0700
+X-CSE-ConnectionGUID: i/6dC1bATbe/AtGLi2u6hQ==
+X-CSE-MsgGUID: 0StfX3XlREG5jfJIMJ3Mpg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,162,1712646000"; 
+   d="scan'208";a="31106291"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 15 May 2024 08:56:23 -0700
+Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Wed, 15 May 2024 08:56:23 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Wed, 15 May 2024 08:56:22 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Wed, 15 May 2024 08:56:22 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.100)
+ by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Wed, 15 May 2024 08:56:22 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=J7/FDLPvuli9Qh5GHMTo7J7VjsmWMgg3gg/robeYiasRz7y9B7R9FaeCR7B7MN68y3sa3IEiYV7eMHJc2zSq8YhtN3ifC68O+VjLcmEGGaBDuv8Eexydrxf+LbL3N1e/MxFgcCa6aET1xtWi087RCKIEozUtc3vPVH/kZ3GdNgCfw3qybZ4TrQd6dSUUeiwtD3R9P+Y6YbA1z97HtX4475eRK1d6eC02ZusmtCg5kR/4t2NvYa5qWEKmtscn8MXBYJLot9d3fkBZ/+1xqFqlfhfJLFpfcO4Cc2HCF/UxTOBxjLFPzCfwzn2sKEaMOPhEQKk0E68QuNFvEoHj1EYSzw==
+ b=YdkF6TyHkwDtvMFZ6U/gbjUtjtL2031E8sba8plBI2hgYmc5hHx64OPQ1AV0wzq0kFX/HkWNHfgj9SgMgMlQPwKGaWSknO8Keb53IgX7Tle1yXYsvoD6OEaubzs1LE9yOAn5Fr05DA/SmEo+K4kmI//aksOrByHz/uIzVvbAdhmHmczeTKqSo5hD4Xg6JUVq31mhoLHfW6P5O1Hoxl4//SSECAMppjfNgBbrpPUltJmHntDqeJS4cexTuqAmo6LQSQS0XRUrxh7U0aKG72GWhS7V1uuigUJL9evlKaLrd7sODApn4nrjcPSVViAi9DXCmlbS0jTJttdNx+ZdX4wmqg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/AjIRyeidK/yc09gkNz7xu5Snym/9/xTkU3SDDc14R0=;
- b=bnWkDUgCguHbTKbyPwdW1meype01qQ2bnbqvUQYIbVIqxFuZJfVNioZDCTx/RpV1kUY0shNrWuSvV/snW5sLnWD628ERglsC01hzfnhmY4PIRYDle7hvwqQ/1tscymmbK1sSOArnOln+ubYmoHsp9wlcgp9f9/um0LStv2HrdGYiHxBMptF9pp0gKZBDKBiiWyMLK2aPzD7HXuYvFVnDIPLC+hz5fy9oQguoHfmmIC8TEQA0Ff/w5qa8WJwSbPSk+mFCk3XFHB+tLIMPIz6MMQLuroHrR89c5iM3+Awx39bYg6hmpgfq6xSPMIn4m6+VWzQtRQ6DhIBEsF7T9+Um/A==
+ bh=DLwFM8dQVxWT8Efw86nLvBEZEq4JXzdA1CS9FIEyhDY=;
+ b=fEGjE4EyaLYr+eCMdleR4KhbbcIewJFqbUpwYaZPThGizRBMYKG/7AciS5gwxZNeUF/5HnSY24y+/rKh1MA5S5RdOH7b+8bl7qmfrp6k1Z/LPGDQ/xvRrT9gpLYwh0TwxfHVdp1Sg7SdUEsb6HaAqhwS6p4FkLRzr7Eg7tzH5ST9O2G8HAnKf0E+4jOoo1SR6KHyQ/RhwiecpcyzkMc8jfPePSp08hfjqSQkfxD9dwkvqkXgL6+ombWL8ernqkEULCZ2tDEPYc1ODIcxNSUE3DdT42/uXRtuIUSFHdrk4j9h09lpSwnBaHoupJeB89Btaq0Vk8yhPcxVFhMBVzcBpQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/AjIRyeidK/yc09gkNz7xu5Snym/9/xTkU3SDDc14R0=;
- b=ldt6EXKDrSpxLBrL4FO9RsRwEI+WaUJJy+B0AT8Ox4txEnpulXBb1j7mdRy90O+RKycocX6DG21jpQi8G+qT+WHXp7M9IIxdNtU92gXvbjKNZ16ID8Jo24VBG56FrHTStcCDGDRvpcQItOaHMxQKazmQTxPDGIIhBez5/VOWpac=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by DB9PR04MB9645.eurprd04.prod.outlook.com (2603:10a6:10:309::13) with
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from MN0PR11MB5963.namprd11.prod.outlook.com (2603:10b6:208:372::10)
+ by DM4PR11MB7303.namprd11.prod.outlook.com (2603:10b6:8:108::21) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Wed, 15 May
- 2024 15:56:00 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::1e67:dfc9:d0c1:fe58]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::1e67:dfc9:d0c1:fe58%7]) with mapi id 15.20.7587.026; Wed, 15 May 2024
- 15:56:00 +0000
-Date: Wed, 15 May 2024 11:55:49 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Joshua Yeong <joshua.yeong@starfivetech.com>
-Cc: "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-	"conor.culhane@silvaco.com" <conor.culhane@silvaco.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-	"ilpo.jarvinen@linux.intel.com" <ilpo.jarvinen@linux.intel.com>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"jirislaby@kernel.org" <jirislaby@kernel.org>,
-	"joe@perches.com" <joe@perches.com>,
-	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
-	"krzysztof.kozlowski@linaro.org" <krzysztof.kozlowski@linaro.org>,
-	"linux-i3c@lists.infradead.org" <linux-i3c@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-	"miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-	"robh@kernel.org" <robh@kernel.org>,
-	"zbigniew.lukwinski@linux.intel.com" <zbigniew.lukwinski@linux.intel.com>
-Subject: Re: [PATCH resend v9 1/8] i3c: add target mode support
-Message-ID: <ZkTbBRRtmGlTU142@lizhi-Precision-Tower-5810>
-References: <20240507204311.2898714-1-Frank.Li@nxp.com>
- <20240507204311.2898714-2-Frank.Li@nxp.com>
- <SH0PR01MB084187FBA1E4EE786A8996C9F9E22@SH0PR01MB0841.CHNPR01.prod.partner.outlook.cn>
- <ZkI4GO4czdgs5/Xy@lizhi-Precision-Tower-5810>
- <SH0PR01MB084189445E4928BC5047495AF9E22@SH0PR01MB0841.CHNPR01.prod.partner.outlook.cn>
- <ZkJgf/oRMMBswih1@lizhi-Precision-Tower-5810>
- <SH0PR01MB084183D40B4ECC0C4B3A9BF0F9E32@SH0PR01MB0841.CHNPR01.prod.partner.outlook.cn>
- <ZkONGQPBeuR6oZ0Q@lizhi-Precision-Tower-5810>
- <SH0PR01MB084106A67DF4656C9B8CF686F9EC2@SH0PR01MB0841.CHNPR01.prod.partner.outlook.cn>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SH0PR01MB084106A67DF4656C9B8CF686F9EC2@SH0PR01MB0841.CHNPR01.prod.partner.outlook.cn>
-X-ClientProxiedBy: SJ0PR13CA0232.namprd13.prod.outlook.com
- (2603:10b6:a03:2c1::27) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+ 2024 15:56:19 +0000
+Received: from MN0PR11MB5963.namprd11.prod.outlook.com
+ ([fe80::edb2:a242:e0b8:5ac9]) by MN0PR11MB5963.namprd11.prod.outlook.com
+ ([fe80::edb2:a242:e0b8:5ac9%3]) with mapi id 15.20.7587.028; Wed, 15 May 2024
+ 15:56:19 +0000
+From: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+To: "seanjc@google.com" <seanjc@google.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"sagis@google.com" <sagis@google.com>, "isaku.yamahata@gmail.com"
+	<isaku.yamahata@gmail.com>, "Aktas, Erdem" <erdemaktas@google.com>, "Zhao,
+ Yan Y" <yan.y.zhao@intel.com>, "dmatlack@google.com" <dmatlack@google.com>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "pbonzini@redhat.com"
+	<pbonzini@redhat.com>
+Subject: Re: [PATCH 08/16] KVM: x86/mmu: Bug the VM if kvm_zap_gfn_range() is
+ called for TDX
+Thread-Topic: [PATCH 08/16] KVM: x86/mmu: Bug the VM if kvm_zap_gfn_range() is
+ called for TDX
+Thread-Index: AQHapmNQnVfe1bKBZ0u4IdlZLB/mxbGYbgKAgAAELYCAAAHkgA==
+Date: Wed, 15 May 2024 15:56:19 +0000
+Message-ID: <747192d5fe769ae5d28bbb6c701ee9be4ad09415.camel@intel.com>
+References: <20240515005952.3410568-1-rick.p.edgecombe@intel.com>
+	 <20240515005952.3410568-9-rick.p.edgecombe@intel.com>
+	 <ZkTWDfuYD-ThdYe6@google.com>
+	 <f64c7da52a849cd9697b944769c200dfa3ee7db7.camel@intel.com>
+In-Reply-To: <f64c7da52a849cd9697b944769c200dfa3ee7db7.camel@intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Evolution 3.44.4-0ubuntu2 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MN0PR11MB5963:EE_|DM4PR11MB7303:EE_
+x-ms-office365-filtering-correlation-id: 252b8d8e-4d95-4c99-a0f4-08dc74f78fb1
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230031|366007|376005|1800799015|38070700009;
+x-microsoft-antispam-message-info: =?utf-8?B?MlpJVzhJQll1WUJVY1BCRXJUcW9HODZMNjFMdUUvNkRHditadlNmWGV4VHBT?=
+ =?utf-8?B?VGd3WnNaeUhxQmlzZXJXaXpKckJVTDRDWnpVZnFHWWFrRlM0emh3VEVMRFdX?=
+ =?utf-8?B?WXJoaTkzV0ErQTZZOTU0dWVOOWlkTG81emlLSEYybHFEY3hnMksvaHFLUXFW?=
+ =?utf-8?B?eUFWSGNwMVd3NEJ0U3lRWEt4bE4wbU40YVJ1d2UvVXdSVVNuQVVKVU14a2hn?=
+ =?utf-8?B?MU1aVExHcXdlci9BTEJ5aTBCcE9raE1aRCtURVZDU0JKV0x5c20zbm5RVkNY?=
+ =?utf-8?B?WDRQM2l1SVd6bTlrZDBaclU3YU9sdzEzMWxpZ3RlWHNDNUVDVWhyZjR1QXpV?=
+ =?utf-8?B?cWladlFFc1NBYlhnWnl4STRVUnU3T1RYbFVod1JTTlAvZnZQeVFqZzd2TUp5?=
+ =?utf-8?B?L3N3Y3lzc0NoaWc0aHdGekF1OUpMWllwSXF0SVNEZVFWUGNxRCthZEt6aUhD?=
+ =?utf-8?B?dTVOeG1yaUhEWmxwOWRWcm9WQlFwcEtBRzRyWGZGZ0pqbXArS0puUDRCazc0?=
+ =?utf-8?B?dExEMW9rcFQ0Uk9tOTZvb2hWbEVnMTFXdTJSaUQwbDFFR0Y4Sm96Tk9DR0xP?=
+ =?utf-8?B?TGFtZHRrV2JLRURXazB1MWFMeUhLZXlBUVJzYnJtNUF3Mk15VEo5RHRvcUkx?=
+ =?utf-8?B?UHhrdVdvVzNQVC9Fb1dNVHk2SHBrekxZbmlUMlpsM2xpenZ2clRiTThNR0dI?=
+ =?utf-8?B?azJnL1I1QUdNdG1RTnRwZWJ6cTRmTFMzbWhaWXJOVkVEZ2lCMXl2K2Y0QWNu?=
+ =?utf-8?B?V2ZNdElsVW1MNk8zU2R3S1kzQnNtUnhoY0JLbk0wMlFuQlFyYS9HMERDMTk2?=
+ =?utf-8?B?emRnK2dBaW1hZGNyQnVicGxFMVUxKzRoVHBuUEJnY3FwMTZablpTYk1ORWho?=
+ =?utf-8?B?bFJJVS9VZitxQ1FMUUxtNzZKT2ZZNnRRZTdWdzRTdVpNeHNuVW5WUzBQM1Ro?=
+ =?utf-8?B?aTZiZ1NJZjhPTDlBcGxueUczZFVkbzdLK25sNkc5bGpmbHZIQjk1YzRyY2h3?=
+ =?utf-8?B?UC9ySUV4MzJpTW55aWVpUlh4VTUrR3FDWmkwTTRqNFZxQ1FtMm5NeDJhdFMw?=
+ =?utf-8?B?cDNCd1QwWndvREdMRGRkQXl5UWlqNytyV1Bmalp0dzdVanlIMHZ5VXZacmFQ?=
+ =?utf-8?B?aUdDaXgvc1Jydm40VGdYcG9Oa3hiSjZVQkVvWDA3b053TzRtT2IxNUdtZG9T?=
+ =?utf-8?B?QktEYXZ5ajN5SHFKd2QzdHR1SnpRNUgzVHlwUVEveVQ4VGRVTjBEMEpKQ3RU?=
+ =?utf-8?B?enlCSTFCeTdXRlBNbVZHTUVXUDd6YTkvUkMxaGprSDBqcVBpemlMUDRXaTMv?=
+ =?utf-8?B?TmpaRENGMU1zZ3Y3U2wzNmJFTmZ3VVB4Ni9oalNTWmIrVTVpUnBBUUV0L3FQ?=
+ =?utf-8?B?MkdaenpEYmpocTVFSGtHaUhxNklwZ01sQ3N3N0hXY1d1NW1TUHBKdEZVa01M?=
+ =?utf-8?B?bUtoanJHVFpBNEdoQ2d0anJ6cDVVdXpNdnJUWDhkZ0FmMENtamlJelZ1VERm?=
+ =?utf-8?B?Skx0SHZEenFrcVhualNhZkxCTEtZN2VRNW9KMGdWN3RhWjNJNFZZTDZ0cU9h?=
+ =?utf-8?B?NDlLajFiU0hUQ0JXemZhVlZHLzlFYk9kMWVFcUJOTzFjL3hFUjJtSzdjV1ZO?=
+ =?utf-8?B?SFFWWk5mOE9qSkxHNjQyVGlHbDBEYzUzellEWUxSTVdmK0pwYXZRNHVMTk9j?=
+ =?utf-8?B?NkJNelFkdTQ0ekJRZ3RISmN5a3hkWWF5Y0hQNHpHVGpjZ0k3YW9oQXh3PT0=?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB5963.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(1800799015)(38070700009);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?cFZLZVk2MU0ydzZMV2oyYWd2b3EyRHFnTFVlKzczZTBRRFFTanNFc1NhYzN2?=
+ =?utf-8?B?NmxrL0czYUVjd2dtVUdZVWQwK3h6bU5ycmViOUFHNUdrK1FidW5UUzNySnB4?=
+ =?utf-8?B?VTYxY3NTdXhLWkY5NW4zRUlQZE5XR2dSQUV4N1Rqd0U4ZlE1ZmVCSUE2U2pC?=
+ =?utf-8?B?enp0bDVmWU1HOVZZK21JL21mc3F2Q25VbFhZTExSbXAxQ0ZIRnVJZnB3YlN5?=
+ =?utf-8?B?V3pIeEJsQ281UjVtbC8xd2xXb2dqWk92K21xbUdTWERCZFYvS3hiZmVXbHg2?=
+ =?utf-8?B?RVYxWW9BYnVXaU5EcFpESU0raEQ2Vkd5VzJuamlrNi85RGRmSlZNcThtOGRS?=
+ =?utf-8?B?ZCswWUFBVjB5UEpIdFRqYUJwVHpMVnM3T05OWHZsWkc0MlpPRi9EakNvN280?=
+ =?utf-8?B?VVpIOU5TaVF1dlBVcWRYYW1saHd2MStvV0RZclE3T3gwemUwZGZsVmo1YU5i?=
+ =?utf-8?B?NitKUFFoRjNLdjAyTFY1MDF0L3dMNHBsdm95dkVUMnFqK2gxNExGZkp0cmhU?=
+ =?utf-8?B?ZUkxSERqd0NCeHAxcWdOSGR6S0d5REFGdmFTYWgxOTM3UzhtdGpGbmM3Yll1?=
+ =?utf-8?B?TFcvQnY0M2VhS01hVWppM1B3OUF5Y09IN0FrTDNRRU52aDB2Y0RpYU43R0RB?=
+ =?utf-8?B?eUpQM1dWQjRFY042and0N1REQndmc1RJc0p4R283TERsVFlsem5KRXFZSUln?=
+ =?utf-8?B?UXBDMnRtcnQ4QlIwdlAyUmovenYwbGRsMmUwT0NVOXYxbUlrUHB5dEt2OUU3?=
+ =?utf-8?B?MHR0REhPN1UrdzlwSHhPd0piWFpFNzRGalF4NW1rVGZrTFNoWmRhbWNvUWhj?=
+ =?utf-8?B?cTlxTGsvSnBXMWdYKzRxMGNvaHJmUndsL0tJZ3dBdjhDbW1VTWwrR3k4eUFL?=
+ =?utf-8?B?bXprMTBUT09TKytvQ1JpTW1wcUZLclo0THpTcUhKQi9UdlpLQThGR21ZazFC?=
+ =?utf-8?B?NFpScUwzTVNLWmRmUllSZ0pzR1ZiL2pUbXI5VW1ZcUViOWh5TDNGMXJpZzFI?=
+ =?utf-8?B?QzRUSWoyQng0UStNbEE1R2pBTUdUWUFnRk9BWEw2bWhDZjB6d3BCdHdRYnNv?=
+ =?utf-8?B?ZERFclR6Ty9iMzUrUm9CUXVaVXhtZWRQRkViU3BJajZmSmE3K3BQZytJVFFZ?=
+ =?utf-8?B?a0hQSU9nTUEzYXBWUy85dlFzNVJRcmpXMFE0aDBYRHYrRGNLNEtMODd4dm1s?=
+ =?utf-8?B?RFF2b0c4TmdwNlExZVRSUlh5OTliZUJaeWZEYWVtV1piak5BakFlemtxM2xv?=
+ =?utf-8?B?N0pycVdqemdMa3ErdG5DeUowakpHYU1oVWdpNkdTSWx5eWhBTDRxVHdKei9y?=
+ =?utf-8?B?dDBhYmpqRmxVVG1ybUw1TEw0Q3NkWVBuenZ0UWZlTzZFdllhdVZQMmFqdlVM?=
+ =?utf-8?B?cnA0Y1hRb1d0TEQxSlk5VzV6MXMrUDFqc2tVaCtWYzBtT2lTcVo0SnFKaGxI?=
+ =?utf-8?B?QmNEdHZrUmJTUkZBRGU4MUFPTVU5QTNSODFoNE96NURrVXozeUV1dnVjMWJY?=
+ =?utf-8?B?QTYvdW54SjVHR3lsWWV0UmxxYTVWRUs2QStYb2lTbGVGSHJWK0xMOHVyejcv?=
+ =?utf-8?B?TTVHL2s1TnBrNG5nWmFQaVNQUEl0U05yVU41N3BtN3k1NTdYY2dpNXByYTZS?=
+ =?utf-8?B?UUQrVU1JMThZN3pPM2RBaXUvQjl6MXJhRXlMdGNlTDk0TUpaWDJCdjBPSFBy?=
+ =?utf-8?B?bGk0N2g2MEdkcjIyUlg5STRiWFNyYllCdkFZMWNhdEt0N0p5bEN1N2tHWmlE?=
+ =?utf-8?B?VlhuNk1EOWRtL01zL2RYY2xpRnhGc1dUb3czRVNmT0F2RW1sVGVIOTZuY0dr?=
+ =?utf-8?B?aWlhMDFmb29uVklMMEJ5dm1nWElBUHZBT05kMFIvTVA4N3l1WmR3dVJVMGo3?=
+ =?utf-8?B?NFI5WEcyY2hRVThLaFF3OVVzUmoyaEVLUDdSM2duSFJmMXZSbG5Mc2wxMTAx?=
+ =?utf-8?B?WjkwdURJM3lUZFgxaFR1Sm94Y1FyNEhtTFQ5MnR2ZSs0Y1dKYkRZMDJVd2ZJ?=
+ =?utf-8?B?Qm55eWhDaHYyc2tOd3hnVUVxc1VpemlvcmhKWHFBdUlmb0lXSis3V3ZSdHpD?=
+ =?utf-8?B?QTNkU3p1d1VDd2dvMURiLzNiV3pWYlZSRDBKUzJ2azNoem93WDZ3UmlxUFlV?=
+ =?utf-8?B?SFB3R0RXNXVISkh5d2N2TGtEcjhOaFZSR1REaUFCczZQYjh4a3dCdGNTVmpP?=
+ =?utf-8?B?VUE9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <AC454988EFF7524893E37A0D246EEA27@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DB9PR04MB9645:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7a66fd99-9dad-4fd5-eb89-08dc74f78441
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|7416005|366007|1800799015|52116005|376005|38350700005;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?+7MvF0cHIOW/V8tI8ifwBEGzPsxnzfs0QAes2AjywZswDP87bbIZeGkxv/yQ?=
- =?us-ascii?Q?ScP0hqvHjti0QoniMGwjqALW3JM57Vp5Yl8eqJqxoiWLFg52CQ3iZ1YFAEre?=
- =?us-ascii?Q?yM/AoEHJdxYF/COODE4Z/UpvfvcMA4bM6TkNTz88NUborKI8WsxzT7wvTuED?=
- =?us-ascii?Q?Qnj28SsIK1VtJ7DHAudppf3Oz5NqmV+V7csVdav1VGBYT/qhMdmu0UUwoWrT?=
- =?us-ascii?Q?PpOebqOGt077xvcNAYpUDSXZOKomQxdoSSzb/I8Lw+Vh4QOkE2KS/U5Ze9JS?=
- =?us-ascii?Q?EFzbBsYxiPnpyUe3I4e6ZD4WSInlmWEMMEWiqjIgvh11IK2+lvJX4Bd8+W5T?=
- =?us-ascii?Q?IStO9FkEWsswxFrP/ElkM74u3NBsIo9FfnrwD6bPY13Xw+B2YXv6mh7jF29p?=
- =?us-ascii?Q?yR5GSn7MJMuox8efzEDSr03vEbrGruOAgc8hhROZaNwrAhxgy/afI/lKVZPE?=
- =?us-ascii?Q?ZDcrMPQIJ49knSQbb01to5/kPUNJrT5CA4yJlzT8mGaUOJFDwwOmk6TaAf7z?=
- =?us-ascii?Q?2GhzhGjdw5gWt5pUyl7EWVfGcM7nhDd9qViINW8kFSpNjDrETGX+Svghtbr+?=
- =?us-ascii?Q?1RGI9l0dyvA6uGg7CpuwXPEkC7q7YqrrExaVcm+m6mv2fCl4YwGzGDlbjF//?=
- =?us-ascii?Q?KceTxezk+62alncWB4ERz0Ok6lzcNUsy242Eg8L+Qag96Wm7EAnNyq741dOO?=
- =?us-ascii?Q?OdafggMF1ItffYI5MN21qNXKPmbLiEww7mJngNphC5aNmOXkANQJQwrS61dn?=
- =?us-ascii?Q?FqJPCy8768mBcCoVWS+3/APZ02yhIrFGlpBMfrs+MVOHz1Mr+ba0JuDkVUwE?=
- =?us-ascii?Q?IhkXre3N+F+kBkPZdlP1WqZlcvZbGi0Grk4p+xsdve2qPr65EnobdeGduI51?=
- =?us-ascii?Q?+yQfoSAunTjimp/bm3NQdjRH9Vr1jla/1HFoxK9FaQW1Yv74edQCQbwfTU1c?=
- =?us-ascii?Q?K26qQBZHvzZk/6mNouI/FbDEbiV97QqqLd0VET8tm4MdNZFjmHALNDlfB0jC?=
- =?us-ascii?Q?W1HjW2jA1VMdaPBc9/ALtJSYmHUhpAEjQGwC0F+ok86RH2JlB3LztG6kcvLu?=
- =?us-ascii?Q?oCfvPSOcdw2uEslhDQtO4KWgBB/+ZDPMdropgJH+E8herdlzoEJrJLWXew8i?=
- =?us-ascii?Q?JO6aEGzeovvGFI+TzcpzH/rn9nHbi6UnA1bHlRRvYJy+tT/RW0HXxFc9N48g?=
- =?us-ascii?Q?mvyPBFLu3yguxu34jcBbWUyEkyY9ha2BtYn2N5YoIqBP92wnIfz9h+odQbYL?=
- =?us-ascii?Q?aFplzTOO+cQfnh1fIdx1jz1aW9g20IBn4v2VTpt2jQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7416005)(366007)(1800799015)(52116005)(376005)(38350700005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?QWM18DXLLHbvcfHT/SPuxs1O2KVgNoEsVvSmPTyn34ESv446UHOIbDMCGimb?=
- =?us-ascii?Q?rEhSivLyinEEMggKU9Z8MdEQcittvQ9jdOUgZcdNqBMN58GNI74s4jJ7fS8U?=
- =?us-ascii?Q?UJP1+nJSmzbmHAwKzHM0tnfqCJQwwHuOAwRkFL5S8BEmDcOeWjwFJxyzUqRv?=
- =?us-ascii?Q?atiY1zqmFKZJVEESVPVbuGxA9S372pDaPQ7wZr7nu7TTKM8y1qhUsbKXPAex?=
- =?us-ascii?Q?Gw5WHfe6yzi+hzyOI1NI0S70r9QMd7hEgL+QzOOcQo2EbNfbLs3TQZYYnlCM?=
- =?us-ascii?Q?me39yTYWxTFekw6KLQrdIBGYUYTjHWa0kSsEvO5f/HXIr82ZkITRa7fCHhO2?=
- =?us-ascii?Q?oDaG6aQuq8ipj/TnEB2JyFWuAUEG3wlLZ3UR2dhfCE1tqfWRIjAtWpPEFftV?=
- =?us-ascii?Q?R6R7Mm3kJRshwedi17FfUVpCAOk5ursXdLSF14F80aAXlU9E53znGyQie6Pd?=
- =?us-ascii?Q?999/kgWm0+WVh3hhnFjv1aqTz4VXEjU2dmOtAjQQ7plpqBc6gUi0LKb7XcPH?=
- =?us-ascii?Q?st0yBqR06ffUPP4puIFJVRLy725Bx9Wn+duWPblg99esda9DNWTjnNHqf1Zb?=
- =?us-ascii?Q?RNdnXGVKnqL7jgwhykmDTHRV6AIg9DFbmtXbpNSSSoB73mrSIlGiW2cx4fF3?=
- =?us-ascii?Q?OQlUSOXnlQpmuIZLwKTzLilMUJNDvjxVlecDRLarbKc6WTlVAA8tWH4Ne9+S?=
- =?us-ascii?Q?qy5BOfMICWhBisxSZOurEmVtcN3MgFtwJ4l0E/I30JJokzRucHazXeo7s075?=
- =?us-ascii?Q?wLjfi9AAUaxcJIlcsEs6GQJD98H4eaCi5g0nuvR9tjWum0NY31DbfmoiC7Iq?=
- =?us-ascii?Q?ZoOy/ZVnOtRhlD1bu24KC216TZBkS+qTQsnq2si4bC9ctdDCa6FLSMvT8+Ol?=
- =?us-ascii?Q?htY4/5RlcA3z3ARrHTDUejntOROMePRE9Vga89hQnTjnq0/v9+iZqO12uRP/?=
- =?us-ascii?Q?i7cEWvDDCyIftpY3XM5p4KCisDdTRKc9HxQ3FWa/Rualu1qIIw2mBp/5QcIY?=
- =?us-ascii?Q?2LdolEpVShyOgMtGyMVbwUjFyd4XIeiCW90Cair2aNkDEBXkfKTbetu88LSK?=
- =?us-ascii?Q?WUlCvnEkmbh8diRfsAvqzBr1YA+wqBH8nLg50WluH5ju43q9orkSTWEoC5Y5?=
- =?us-ascii?Q?5/xzekagkfYfA5ampvzA3dzQugkDGEZMxftHfElvDjyh5GXtMVyXOmshaAxB?=
- =?us-ascii?Q?AXE8XQlUUqKBuXkfZmjyBAdU+GfC8Pxw/pHh4NR8aTd90+hVmO+NFmz7bt4u?=
- =?us-ascii?Q?aOrFVnNKUYZIRNxwJlNEQVG8+FCCGmJ4ShPI2iSLgpgZ9l77K1erJC6o+0XG?=
- =?us-ascii?Q?aamaEI4uGJ3sZZkiXQXau3fR5oVqgK6xnX4/FEttaAeEvU8Z+yyP6iWBMdXM?=
- =?us-ascii?Q?XeR+a5QbQLyF7Uzi5gOUrh0lgVzBX6ZIrIAJOVX4JQZqLvVk9CWQvMPImFGL?=
- =?us-ascii?Q?EblECyJ+Ll2vhhsrw+cAcVOdTlxYCndVElsy2ae97m3/9LmE/46fybR4PLTr?=
- =?us-ascii?Q?niO0SLP2YPZpj005NHLTx+Z/zK1xfPzNW9fLfIUVkYzN9c/PNijrYjm1Q2pn?=
- =?us-ascii?Q?H932N6jD4tqETAaXH9k=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7a66fd99-9dad-4fd5-eb89-08dc74f78441
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 May 2024 15:56:00.5801
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB5963.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 252b8d8e-4d95-4c99-a0f4-08dc74f78fb1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 May 2024 15:56:19.6212
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3tju0fTMYIslMA7wflDmOcP/ES+WzXbBpq4gCXcqnY3Fl3d8WjPb1gGxxs7P7CuodseSepT46+n019itVzma3A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB9645
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 22fr59OnLoY9bJhglAnqWAdvfPZ0DkHSQn/wdbTAit2it8OkXBf4r9KLPr/cEET/6OUOXUnBpFoQKxujL7W5ZFsFtKNCLGwEXudI2cp4iIw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB7303
+X-OriginatorOrg: intel.com
 
-On Wed, May 15, 2024 at 03:07:37AM +0000, Joshua Yeong wrote:
-> Frank Li wrote:
-> > 
-> > On Tue, May 14, 2024 at 03:07:25AM +0000, Joshua Yeong wrote:
-> > > Frank Li wrote:
-> > > >
-> > > > On Mon, May 13, 2024 at 04:18:00PM +0000, Joshua Yeong wrote:
-> > > > > Frank Li wrote:
-> > > > > > On Mon, May 13, 2024 at 03:16:05AM +0000, Joshua Yeong wrote:
-> > > > > > > Joshua Yeong wrote:
-> > > > > > > >
-> > > > > > > > Introduce a new target core layer in order to support target
-> > > > > > > > functions in linux kernel. This comprises the controller
-> > > > > > > > library and function
-> > > > > > library.
-> > > > > > > > Controller library implements functions specific to an
-> > > > > > > > target controller and function library implements functions
-> > > > > > > > specific to an target
-> > > > > > function.
-> > > > > > > >
-> > > > > > > > Introduce a new configfs entry to configure the target
-> > > > > > > > function configuring and bind the target function with target
-> > controller.
-> > > > > > > >
-> > > > > > > > Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> > > > > > > > ---
-> > > > > > > >
-> > > > > > > > Notes:
-> > > > > > > >     Change from v8 to v9
-> > > > > > > >     -none
-> > > > > > > >
-> > > > > > > >     Change from v7 to v8
-> > > > > > > >     Added missed head files
-> > > > > > > >
-> > > > > > > >     Change from v5 to v6
-> > > > > > > >     - fixed build error when have not CONFIG_TARGET_CONFIGFS
-> > > > > > > >     | Reported-by: kernel test robot <lkp@intel.com>
-> > > > > > > >     | Closes:
-> > > > > > > > https://lore.kernel.org/oe-kbuild-all/202402030437.GdGCrKeK-
-> > > > > > > > lkp@intel.com/
-> > > > > > > >
-> > > > > > > >     Chagne from v4 to v5
-> > > > > > > >     - add include <linux/slab.h> to fix build error
-> > > > > > > >     | Reported-by: kernel test robot <lkp@intel.com>
-> > > > > > > >     | Closes:
-> > > > > > > > https://lore.kernel.org/oe-kbuild-all/202401270838.wdxHPaAT-
-> > > > > > > > lkp@intel.com/
-> > > > > > > >
-> > > > > > > >     Chagne from v4 to v8
-> > > > > > > >     - add include <linux/slab.h> to fix build error
-> > > > > > > >     | Reported-by: kernel test robot <lkp@intel.com>
-> > > > > > > >     | Closes:
-> > > > > > > > https://lore.kernel.org/oe-kbuild-all/202401270838.wdxHPaAT-
-> > > > > > > > lkp@intel.com/
-> > > > > > > >
-> > > > > > > >  drivers/i3c/Kconfig        |  28 +-
-> > > > > > > >  drivers/i3c/Makefile       |   2 +
-> > > > > > > >  drivers/i3c/i3c-cfs.c      | 389 ++++++++++++++++++++++++++
-> > > > > > > >  drivers/i3c/target.c       | 453
-> > ++++++++++++++++++++++++++++++
-> > > > > > > >  include/linux/i3c/target.h | 548
-> > > > > > > > +++++++++++++++++++++++++++++++++++++
-> > > > > > > >
-> > > > > > > > ...
-> > > > > > > >
-> > > > > > > > diff --git a/include/linux/i3c/target.h
-> > > > > > > > b/include/linux/i3c/target.h new file mode 100644 index
-> > > > > > > > 0000000000000..b0bf06685834c
-> > > > > > > > --- /dev/null
-> > > > > > > > +++ b/include/linux/i3c/target.h
-> > > > > > > >
-> > > > > > > > ...
-> > > > > > > >
-> > > > > > > > +/**
-> > > > > > > > + * struct i3c_target_ctrl_ops - set of function pointers
-> > > > > > > > +for performing controller operations
-> > > > > > > > + * @set_config: set I3C controller configuration
-> > > > > > > > + * @enable: enable I3C controller
-> > > > > > > > + * @disable: disable I3C controller
-> > > > > > > > + * @raise_ibi: raise IBI interrupt to master
-> > > > > > > > + * @alloc_request: allocate a i3c_request, optional,
-> > > > > > > > +default use kmalloc
-> > > > > > > > + * @free_request: free a i3c_request, default use kfree
-> > > > > > > > + * @queue: queue an I3C transfer
-> > > > > > > > + * @dequeue: dequeue an I3C transfer
-> > > > > > > > + * @cancel_all_reqs: call all pending requests
-> > > > > > > > + * @fifo_status: current FIFO status
-> > > > > > > > + * @fifo_flush: flush hardware FIFO
-> > > > > > > > + * @hotjoin: raise hotjoin request to master
-> > > > > > > > + * @set_status_format1: set i3c status format1
-> > > > > > > > + * @get_status_format1: get i3c status format1
-> > > > > > > > + * @get_addr: get i3c dynmatic address
-> > > > > > > > + * @get_features: ops to get the features supported by the
-> > > > > > > > +I3C target controller
-> > > > > > > > + * @owner: the module owner containing the ops  */ struct
-> > > > > > > > +i3c_target_ctrl_ops {
-> > > > > > > > +	int (*set_config)(struct i3c_target_ctrl *ctrl, struct
-> > > > > > > > +i3c_target_func
-> > > > > > > > *func);
-> > > > > > > > +	int (*enable)(struct i3c_target_ctrl *ctrl);
-> > > > > > > > +	int (*disable)(struct i3c_target_ctrl *ctrl);
-> > > > > > > > +	int (*raise_ibi)(struct i3c_target_ctrl *ctrl, void *p, u8
-> > > > > > > > +size);
-> > > > > > > > +
-> > > > > > > > +	struct i3c_request *(*alloc_request)(struct
-> > > > > > > > +i3c_target_ctrl *ctrl, gfp_t
-> > > > > > > > gfp_flags);
-> > > > > > > > +	void (*free_request)(struct i3c_request *req);
-> > > > > > > > +
-> > > > > > > > +	int (*queue)(struct i3c_request *req, gfp_t gfp_flags);
-> > > > > > > > +	int (*dequeue)(struct i3c_request *req);
-> > > > > > > > +
-> > > > > > > > +	void (*cancel_all_reqs)(struct i3c_target_ctrl *ctrl, bool
-> > > > > > > > +tx);
-> > > > > > > > +
-> > > > > > > > +	int (*fifo_status)(struct i3c_target_ctrl *ctrl, bool tx);
-> > > > > > > > +	void (*fifo_flush)(struct i3c_target_ctrl *ctrl, bool tx);
-> > > > > > > > +	int (*hotjoin)(struct i3c_target_ctrl *ctrl);
-> > > > > > > > +	int (*set_status_format1)(struct i3c_target_ctrl *ctrl,
-> > > > > > > > +u16
-> > > > status);
-> > > > > > > > +	u16 (*get_status_format1)(struct i3c_target_ctrl *ctrl);
-> > > > > > > > +	u8  (*get_addr)(struct i3c_target_ctrl *ctrl);
-> > > > > > > > +	const struct i3c_target_ctrl_features
-> > > > > > > > +*(*get_features)(struct
-> > > > > > > > i3c_target_ctrl *ctrl);
-> > > > > > > > +	struct module *owner;
-> > > > > > > > +};
-> > > > > > >
-> > > > > > > This structure looks very different from the master controller
-> > > > > > > ops
-> > > > > > 'i3c_master_controller_ops'.
-> > > > > > > I think you could probably combine 'set_config, enable' into
-> > > > > > > 'bus_init',
-> > > > > > 'disable' to 'bus_cleanup'.
-> > > > > > > Also using the 'struct i3c_priv_xfer' rather redefining
-> > > > > > > another 'struct
-> > > > > > i3c_request' would be much cleaner.
-> > > > > >
-> > > > > > Thanks, let me think this. i3c_priv_xter may include read and
-> > > > > > write, or write and read. I3C is quite fast. Most time software
-> > > > > > are not quite enough to handle it in time.
-> > > > > >
-> > > > > > If data len bigger than FIFO size, it have to use DMA to
-> > > > > > transfer it because there are not flow controler at target side (write
-> > direction).
-> > > > > > Read, hardware to use early terminate to tell host read too fast.
-> > > > > > but for write, 9th bit is parit check bit. Data will be lost if
-> > > > > > software have not read from FIFO in time. If use external DMA to
-> > > > > > do that, it needs switch dma channel(generally, DMA rx and tx
-> > > > > > are two channel). switch channel automatically are quite
-> > > > > > challenge at current dma
-> > > > engine framework.
-> > > > > >
-> > > > >
-> > > > > I guess when data is larger than FIFO, the i3c controller (master)
-> > > > > should 'aware' of this limitation when using such target device.
-> > > > > So that appropriate handle like make new read command, or do a
-> > > > > write then another larger read request.
-> > > >
-> > > > Between two commands, such as two write command, some data may lost
-> > > > because first one have not chance to fetch it from FIFO.
-> > > >
-> > > > Function driver can add some recovery mathod. But still better to
-> > > > use modem async method to queue multi transfer and handle by dma
-> > > > automatically. One transfer each time are just special case for queue.
-> > > >
-> > > > If DMA support,  queue can work as big cycle buffer, underrun will
-> > > > never happen unless system wrong, such as disable irq over 1 second.
-> > > >
-> > > > Actually, I worry about still i3c_priv_xfer, write followed read case.
-> > > > Most likely, host driver do like
-> > > >
-> > > > 	write (cmd index/reg index) then read value or command result.
-> > > >
-> > > > It is hard to decode cmd and send back data immedicately.
-> > > >
-> > > > if there are not special DMA support,  more realistic usage mode is
-> > > >
-> > > > cmd1, cmd2, cmd3,....
-> > > >
-> > > > send back
-> > > > 	resp1, resp2, ....
-> > > >
-> > > > instead of comebine cmd1 and resp1 at one transfer.
-> > > >
-> > > > Host can do that just because all SCL are controller by host controllers.
-> > >
-> > > The DMA queue mechanism should still be invisible to the framework.
-> > > Target could use info from SETMRL/SETMWL to 'prepare' whether
-> > > internally DMA is needed.
-> > 
-> > You are right. DMA should be invisiable to the framework, but framework
-> > need provide API to prepare receiver buffer advance before transfer happen.
-> > Only function driver know how much data need be prepared advance. For
-> > host read/target write case, It also need cancel request function incase host
-> > have not fetch data in certain time. Data need be updated. function driver
-> > can't simple update data buffer, because it may already map to DMA.
-> > function driver need dequeue and queue request again.
-> > 
-> > framework should abstract common part of difference i3c target controller
-> > and target function driver to avoid duplicate code.
-> > 
-> > And also need consider linux's irq latency limiation, try to make the function
-> > driver can work on all target controller drivers.
-> > 
-> > I think priv_xfer, W, R, ...  are hard to implement. Maybe limit priv_xfer 's len to
-> > 1 or 2. But if limited to 1, it becames no big difference with current implement.
-> > 
-> 
-> I think if the target unable to handle multiple transaction I think it is safe
-> to throw NACK. In the case small transaction is needed we can still use the 
-> same 'struc i3c_priv_xfer'. If it is large transaction and target unable to 
-> support multiple transaction it should be the target limitation rather than 
-> limiting every target private transfer here. 
-> 
-
-Do you have any actual user case for i3c target? So I will have better
-overy all view?
-
-Frank
-
-> > >
-> > > We can also argue that the max read length should always not larger
-> > > than the FIFO size. Slave data transfer interface should still match
-> > > what i3c spec expect to be, rather than the hardware limitation here.
-> > >
-> > 
-> > According to spec:
-> >  	5.1.9.3.5 Maximum write length in a single command
-> > 
-> > I am not resure "singe command here". I think it should be between "start"
-> > and "repeat start/stop".
-> > 
-> > If my understand is correct,  host still send out W R W R ... as whole I3C
-> > transaction, each one less than FIFO size. but totally size may exceed FIFO size.
-> > 
-> > 
-> > >
-> > > >
-> > > > >
-> > > > > > Of course it will be possible if hardware implement simpilar I3C
-> > > > > > HCI command queue. But I still not found any hardware that can do
-> > that yet.
-> > > > > >
-> > > > > > If only limited data size to FIFO size, there are still
-> > > > > > limiation for xfer.  if write, read, write, read, two write may
-> > > > > > combined in one FIFO, target driver may not split it which
-> > > > > > depend on hardware detect repeat start and insert something into fifo.
-> > > > > >
-> > > > > > It is hard to support all user case by I3C target software in linux.
-> > > > >
-> > > > > Can I know the speed limitation that you having issue while
-> > > > > running on
-> > > > silicon?
-> > > >
-> > > > I am not sure what "speed limitation" here? Do you means irq latency
-> > issue.
-> > > >
-> > > > when I get "stop", there are new data already come into FIFO.  It is
-> > > > not for problem for tty case now.
-> > > >
-> > > > But if it is well defined frame data, it may be problem.
-> > > >
-> > > > I saw some data lost when target are busy without DMA support.
-> > > > driver can query how many fifo space avaible before send data, but
-> > > > it reduced bus utilities rate.
-> > > >
-> > > > >
-> > > > > >
-> > > > > > write follow by read, generally used from get hardware register
-> > > > > > value from target side, which almost impossible by software, it
-> > > > > > is not quick enough to parse (write value) then send back data.
-> > > > > >
-> > > > > > >
-> > > > > > > In the master i3c side they don't abbreviate
-> > > > > > > i3c_master_controller to i3c_master_ctrl. I think we should do the
-> > same here to standardize it.
-> > > > > > > Thanks
-> > > > > >
-> > > > > > The problem is in I3C spec: "master" already depericated
-> > > > > >
-> > > > > > from i3c spec 1.1.1
-> > > > > >
-> > > > > > "Controller: An I3C Device that is capable of controlling the I3C Bus."
-> > > > > >
-> > > > > > master/slave => controller/target.
-> > > > > >
-> > > > > > It will become more confused if i3c_target_controller. "controller"
-> > > > > > are ambiguity.
-> > > > > >
-> > > > > > If "master" => "host" would be better situation, but not happen.
-> > > > > > A point, I use "ctrl"  here to avoid I3C spec defined "controller" term.
-> > > > > >
-> > > > > > Anyway, I hope more people that involve target support discussion.
-> > > > > >
-> > > > > > >
-> > > > > > > Regards,
-> > > > > > > Joshua
-> > > > > > >
-> > > > > > > > --
-> > > > > > > > 2.34.1
-> > > > > > > >
-> > > > > > > >
-> > > > > > > > --
-> > > > > > > > linux-i3c mailing list
-> > > > > > > > linux-i3c@lists.infradead.org
-> > > > > > > > http://lists.infradead.org/mailman/listinfo/linux-i3c
+T24gV2VkLCAyMDI0LTA1LTE1IGF0IDA4OjQ5IC0wNzAwLCBSaWNrIEVkZ2Vjb21iZSB3cm90ZToN
+Cj4gT24gV2VkLCAyMDI0LTA1LTE1IGF0IDA4OjM0IC0wNzAwLCBTZWFuIENocmlzdG9waGVyc29u
+IHdyb3RlOg0KPiA+IE9uIFR1ZSwgTWF5IDE0LCAyMDI0LCBSaWNrIEVkZ2Vjb21iZSB3cm90ZToN
+Cj4gPiA+IFdoZW4gdmlydHVhbGl6aW5nIHNvbWUgQ1BVIGZlYXR1cmVzLCBLVk0gdXNlcyBrdm1f
+emFwX2dmbl9yYW5nZSgpIHRvIHphcA0KPiA+ID4gZ3Vlc3QgbWFwcGluZ3Mgc28gdGhleSBjYW4g
+YmUgZmF1bHRlZCBpbiB3aXRoIGRpZmZlcmVudCBQVEUgcHJvcGVydGllcy4NCj4gPiA+IA0KPiA+
+ID4gRm9yIFREWCBwcml2YXRlIG1lbW9yeSB0aGlzIHRlY2huaXF1ZSBpcyBmdW5kYW1lbnRhbGx5
+IG5vdCBwb3NzaWJsZS4NCj4gPiA+IFJlbWFwcGluZyBwcml2YXRlIG1lbW9yeSByZXF1aXJlcyB0
+aGUgZ3Vlc3QgdG8gImFjY2VwdCIgaXQsIGFuZCBhbHNvIHRoZQ0KPiA+ID4gbmVlZGVkIFBURSBw
+cm9wZXJ0aWVzIGFyZSBub3QgY3VycmVudGx5IHN1cHBvcnRlZCBieSBURFggZm9yIHByaXZhdGUN
+Cj4gPiA+IG1lbW9yeS4NCj4gPiA+IA0KPiA+ID4gVGhlc2UgQ1BVIGZlYXR1cmVzIGFyZToNCj4g
+PiA+IDEpIE1UUlIgdXBkYXRlDQo+ID4gPiAyKSBDUjAuQ0QgdXBkYXRlDQo+ID4gPiAzKSBOb24t
+Y29oZXJlbnQgRE1BIHN0YXR1cyB1cGRhdGUNCj4gPiANCj4gPiBQbGVhc2UgZ28gcmV2aWV3IHRo
+ZSBzZXJpZXMgdGhhdCByZW1vdmVzIHRoZXNlIGRpc2FzdGVyWypdLCBJIHN1c3BlY3QgaXQNCj4g
+PiB3b3VsZA0KPiA+IGxpdGVyYWxseSBoYXZlIHRha2VuIGxlc3MgdGltZSB0aGFuIHdyaXRpbmcg
+dGhpcyBjaGFuZ2Vsb2cgOi0pDQo+ID4gDQo+ID4gWypdIGh0dHBzOi8vbG9yZS5rZXJuZWwub3Jn
+L2FsbC8yMDI0MDMwOTAxMDkyOS4xNDAzOTg0LTEtc2VhbmpjQGdvb2dsZS5jb20NCj4gDQo+IFdl
+IGhhdmUgb25lIGFkZGl0aW9uYWwgZGV0YWlsIGZvciBURFggaW4gdGhhdCBLVk0gd2lsbCBoYXZl
+IGRpZmZlcmVudCBjYWNoZQ0KPiBhdHRyaWJ1dGVzIGJldHdlZW4gcHJpdmF0ZSBhbmQgc2hhcmVk
+LiBBbHRob3VnaCBpbXBsZW1lbnRhdGlvbiBpcyBpbiBhIGxhdGVyDQo+IHBhdGNoLCB0aGF0IGRl
+dGFpbCBoYXMgYW4gYWZmZWN0IG9uIHdoZXRoZXIgd2UgbmVlZCB0byBzdXBwb3J0IHphcHBpbmcg
+aW4gdGhlDQo+IGJhc2ljIE1NVSBzdXBwb3J0Lg0KDQpPciBtb3N0IHNwZWNpZmljYWxseSwgd2Ug
+b25seSBuZWVkIHRoaXMgemFwcGluZyBpZiB3ZSAqdHJ5KiB0byBoYXZlIGNvbnNpc3RlbnQNCmNh
+Y2hlIGF0dHJpYnV0ZXMgYmV0d2VlbiBwcml2YXRlIGFuZCBzaGFyZWQuIEluIHRoZSBub24tY29o
+ZXJlbnQgRE1BIGNhc2Ugd2UNCmNhbid0IGhhdmUgdGhlbSBiZSBjb25zaXN0ZW50IGJlY2F1c2Ug
+VERYIGRvZXNuJ3Qgc3VwcG9ydCBjaGFuZ2luZyB0aGUgcHJpdmF0ZQ0KbWVtb3J5IGluIHRoaXMg
+d2F5Lg0K
 
