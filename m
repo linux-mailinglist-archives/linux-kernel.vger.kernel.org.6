@@ -1,42 +1,55 @@
-Return-Path: <linux-kernel+bounces-179441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07CC38C5FFE
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:59:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BDBA8C5FFD
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:59:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B83AB287BD6
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 04:59:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D262E1F27109
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 04:59:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32F8C3A8D0;
-	Wed, 15 May 2024 04:58:29 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5725F4086A;
+	Wed, 15 May 2024 04:58:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=malaika-12.net header.i=@malaika-12.net header.b="AlYCWalT"
+Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E23BF3A28D
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 04:58:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E4F4085D
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 04:57:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715749108; cv=none; b=BRIF/YKa3e0qRjhV+87pRYkfeaBeuRp6LNBHe9pUj0Bwugw/gDpLZMyYj2ZHc4zCwcH2eOveVnhrhX/pXceUZFyfp8HfqE9NIDdnS/F5oFlwnTCkDSOQbztHDFKZqBIjsChRsUPGpdqg5olD+bipr5v85J9Cy3ZGfSFX60S8s+8=
+	t=1715749080; cv=none; b=sS3GWlisejZJvK5XOmLnKeN8yK6nj3MxXtQSQiKZn5o+ewP3WRNQPOczF3wCwU/ja1DyXEIjQerbLa4VKdD965pvM2D6GTQAurh11VhbDYcmxQMBZdaN5zh4afRqJSSW7m+w+i+C1ofQs8GRu73QTylyjND5Qvx5LUv0ktl4Zg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715749108; c=relaxed/simple;
-	bh=MZv8vVkxWt843xgGuDyV8nKiUPVS7Es5oBBBIszxCyM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eJxo+9OSsv0nJ/mRv0m9AccANGFVnfYWVw3xMebG2S7Yh6ryVmPRJFkkktC74hvutqv9rbSjE8BQ4C/OLUkLLgGr5rkGPbwNWyxpkC/ZOJ00SUECfSIOJm/kTHMxxGnyOgqPAdE7Jax1XJAlmnTZnwEss05/obf+T0VfBpHPsaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [192.168.0.2] (ip5f5af258.dynamic.kabel-deutschland.de [95.90.242.88])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 7C45461E5FE07;
-	Wed, 15 May 2024 06:57:40 +0200 (CEST)
-Message-ID: <23f86436-cd8a-45b0-9378-1ec3adecfc82@molgen.mpg.de>
-Date: Wed, 15 May 2024 06:57:39 +0200
+	s=arc-20240116; t=1715749080; c=relaxed/simple;
+	bh=TlGv4hN6TLnuUyF4egCd1KFggA0o71kgUrPfu/jUIgg=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=FmDScG5vLKeqQK2RrzffnTyMRIiH5eWkMiPjAJcEKts/lgpBzt3QSmNarljHiDf4D0evyF+/6Ps3xFMPuGZIQSx6oZrg+jWsb1jYvN2f0MIggI+Qs9w19ZodoDD0B3tMvbCAdAkljtkxT5JAnQ/WdTY+RTC+LapNj0szrFJhpls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=malaika-12.net; spf=pass smtp.mailfrom=malaika-12.net; dkim=pass (2048-bit key) header.d=malaika-12.net header.i=@malaika-12.net header.b=AlYCWalT; arc=none smtp.client-ip=194.63.252.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=malaika-12.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=malaika-12.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=malaika-12.net; s=ds202404; h=Content-Transfer-Encoding:Content-Type:
+	Subject:From:To:MIME-Version:Date:Message-ID:Sender:Reply-To:Cc:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=vVQwKYxHrgGzKffEpfm7Fn5d9/ro+rRz13j/NFlMhJ8=; b=AlYCWalTL0HSdi8WHlHosThbuG
+	jSnSjL78eyWPGeXTRA4JcYOXSLzhY+WrvVidqXUPoNuyLv4UP4yN/sLATmGKb69W/gtZAasDVg2ER
+	gB9WnCsXAhl38ARGV3RvQzVhCCd0qMhQ34ESuPrRI6vKLkwhJVpy4MhxHSx6bwv/bFSeEMKLDfTVT
+	Szm0m6KEIQEhZe0oIEB4feJJdmxKM51izlI2T94rYw2LUxsaQvzqnFJ6lUhJGTcaStEkApSDP3FuF
+	U5zyPC6X2o88Jja0E5dahWdrRuPKheC2OeU5TtqOSgEyAWJfBQ+htJjpsFbwhdckzqZ1z9vYtqzHg
+	AHeGRLlA==;
+Received: from [2a02:fe1:7001:f100:8478:6470:1c1a:e184] (port=54249)
+	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <BIT@malaika-12.net>)
+	id 1s76i6-003E7E-WA
+	for linux-kernel@vger.kernel.org;
+	Wed, 15 May 2024 06:57:51 +0200
+Message-ID: <73593bdc-aea1-4cbd-b451-6277cc02546c@malaika-12.net>
+Date: Wed, 15 May 2024 06:57:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -44,97 +57,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [Intel-wired-lan] [linus:master] [e1000e] 861e808602:
- suspend-stress.fail (e1000e: move force SMBUS from enable ulp function to
- avoid PHY loss issue)
-To: Oliver Sang <oliver.sang@intel.com>
-Cc: Vitaly Lifshits <vitaly.lifshits@intel.com>,
- Naama Meir <naamax.meir@linux.intel.com>, oliver.sang@intel.com,
- linux-kernel@vger.kernel.org, Tony Nguyen <anthony.l.nguyen@intel.com>,
- yu.c.chen@intel.com, oe-lkp@lists.linux.dev,
- intel-wired-lan@lists.osuosl.org, rui.zhang@intel.com,
- Dima Ruinskiy <dima.ruinskiy@intel.com>
-References: <202405150942.f9b873b1-oliver.sang@intel.com>
-Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <202405150942.f9b873b1-oliver.sang@intel.com>
+To: linux-kernel@vger.kernel.org
+From: =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <BIT@malaika-12.net>
+Subject: The Vast X (with corresponding translation of Islam for Fair Pay
+ Background)
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Dear Oliver,
+Yes, we have bitcoin, and clear water in Africa through BlueTap.
 
+And now perfected philosophy as fair pay background.
 
-Thank you for the report.
+Moor Keywords and Phrases, writing to the right in italic script, most 
+wellknown.
 
-Am 15.05.24 um 03:50 schrieb kernel test robot:
+ From The Doctrine (AL QURAN, from Ul to Jibril to Muhammad)
+Main teaching: No subdeity. Follower is a Moor. (Arabic: MUSLIM)
+Fant (Arabic: FASIQUN)
+Iblis Ash Cracker (IBLIS ASH SHAYTAN)
+Ruhban (IMAM)
+Sha (KHALIF, King)
+Alt. Trek to Oman (relieving BACCA)
+Don of the Universes and The Earth.
+Lamer (KAFIR)
+Ragnarok (YAWM AD DIN)
+Yaon (YAHUD, earlier Juten tribe known for Juten law, "you shall not 
+believe you are something".)
 
-> kernel test robot noticed "suspend-stress.fail" on:
-> 
-> commit: 861e8086029e003305750b4126ecd6617465f5c7 ("e1000e: move force SMBUS from enable ulp function to avoid PHY loss issue")
-> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
-> 
-> [test failed on linus/master a7c840ba5fa78d7761b9fedc33d69cef44986d79]
-> [test failed on linux-next/master 6ba6c795dc73c22ce2c86006f17c4aa802db2a60]
-> 
-> in testcase: suspend-stress
-> version:
-> with following parameters:
-> 
-> 	mode: freeze
-> 	iterations: 10
-> 
-> 
-> 
-> compiler: gcc-13
-> test machine: 4 threads (Broadwell) with 8G memory
-> 
-> (please refer to attached dmesg/kmsg for entire log/backtrace)
-> 
-> 
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <oliver.sang@intel.com>
-> | Closes: https://lore.kernel.org/oe-lkp/202405150942.f9b873b1-oliver.sang@intel.com
-> 
-> test started
-> 
-> <--- but cannot really run suspend-stress tests successfully
-> 
-> 
-> as a contrast, for parent, we always noticed the jobs run smoothly
-> 
-> SUSPEND RESUME TEST STARTED
-> Suspend to freeze 1/10:
-> /usr/bin/wget -q --timeout=3600 --tries=1 --local-encoding=UTF-8 http://internal-lkp-server:80/~lkp/cgi-bin/lkp-jobfile-append-var?job_file=/lkp/jobs/scheduled/lkp-bdw-nuc1/suspend-stress-10-freeze-debian-x86_64-20180403.cgz-6dbdd4de0362-20240406-63993-p7cw6d-0.yaml&job_state=suspending-1/10 -O /dev/null
-> Done
-> Sleep for 10 seconds
-> 
-> ...
-> 
-> Suspend to freeze 10/10:
-> /usr/bin/wget -q --timeout=3600 --tries=1 --local-encoding=UTF-8 http://internal-lkp-server:80/~lkp/cgi-bin/lkp-jobfile-append-var?job_file=/lkp/jobs/scheduled/lkp-bdw-nuc1/suspend-stress-10-freeze-debian-x86_64-20180403.cgz-6dbdd4de0362-20240406-63993-p7cw6d-0.yaml&job_state=suspending-10/10 -O /dev/null
-> Done
-> Sleep for 10 seconds
-> SUSPEND RESUME TEST SUCCESS
-> 
-> The kernel config and materials to reproduce are available at:
-> https://download.01.org/0day-ci/archive/20240515/202405150942.f9b873b1-oliver.sang@intel.com
-> 
-> 
-> if you need more information, please let us know. Thanks!
+Desiring correct computing is the same as desiring a correct translation 
+of Islam.
 
-Can you please share on what test system this fails, and provide the 
-hardware information?
+More at: https://the-vast-x.net/Bit/BIT.html
 
-Also, do you have Linux logs until starting the tests?
-
-
-Kind regards,
-
-Paul
-
-
-PS: In the Cc: header field, your address misses an l in domain part 
-intel.com.
+The Light Be With You,
+Ywe.
+Ruhban,
+https://the-vast-x.net
 
