@@ -1,137 +1,144 @@
-Return-Path: <linux-kernel+bounces-180266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6E478C6C34
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 20:33:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B6F68C6C32
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 20:33:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC0811C21E2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:33:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F423628348E
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 18:33:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A791598EC;
-	Wed, 15 May 2024 18:33:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E1CE3839C;
+	Wed, 15 May 2024 18:33:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="NNcmssn5"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HWVyaIS0"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C8A65B1F8;
-	Wed, 15 May 2024 18:33:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D42E3C466
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 18:33:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715797995; cv=none; b=PV6WEeCC4WiqA1eauqn9WszCHHzWmb+lYFZPIbmNt1Bo8oAhgN8q527XkKkXksSI4+XEfDwYPDd5NXBuzmKckJIvBCr9A04ShVyZUqYvmDYAAL+GkWOzmVsjWtZ5XucFrtVw7gS8QVCDRLBjdsdTvn748isW781SnT4t7MUYyEk=
+	t=1715797991; cv=none; b=Uyy1geTDx7iCmyDEW/XFqJEBvsFNiTTUHgAVqRS+uKFqNAXJIMe+OT4ZHZ18g60Q+oPwC14RQ3IXmwUGhzYNwscl2at4LyINCYWQEDnc4apS+fLz5qit5fC2vUAZINDUYFDLgOCwSOOm5ZJR+Mk5cB3xkTOm/fAyOoqKW2VJ1ZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715797995; c=relaxed/simple;
-	bh=9Zoj/Ih6opWfl2+fhCL2K4ue5IU/qwFB7ZFSvwZcETU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NRfSkOcwjPcUTGJizXRDt60JICGrF//snlIEJmWPol/LsVLlnru0XPDMoS+ADJFyKdNT7PfcYB3lqEzZYNbTePgJnltu6UESUNxl7TJSMOKc35fdzwf99UznuNWLTgkfkxETHMtgriVrOxNWiaqzh1M7tmFkNJGSMZnwyILH6xM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=NNcmssn5; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id C9CD440E0244;
-	Wed, 15 May 2024 18:33:03 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 9vDdpDFf5kxS; Wed, 15 May 2024 18:33:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1715797979; bh=Hm7EEfZwJI4EYLlWeG98fmfbg67gUcFmPW/+3Lw+0eM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NNcmssn5qPrIpNNCkSfiTnfWD2z1w21vdoZu1NS83caf/javSnvE1oJXT+ZlXNp5G
-	 mylWM8TFisrlSNRpcQ3QQUneVDN3u8tAOR49ZzTVUC45U3ROdrBp7IfKMmX/7t1LqA
-	 5TcLzqUsT5yLDImfC7YT5HmUsx+BdgFE+vTShmPP3x3kcB65tPo0V6qL707YzidMw7
-	 lqQoTm3p7XuTNoOIFjBWfpD+q8N9zcRvPzA4BtKg5GQ1VkqCj87ANfFS9Q5UqpKPx3
-	 4uDufH5nyuc3d4/fjwQMqimEshOgxSeDlKKTjlUyvGKaS6DiOkY/3HLz54XzekSFQQ
-	 Vh36R3bGRbKxksUZUUCjvUqWKPQ7HPoOJ+HDku4E1Kz5adIF8dHVkUn0McK4LNFcyL
-	 woIewpgBkUvFMn8rqC65+jq7h7VyTMAOUXHqd2FSUJj+iufewUmeYbXHDiM3/nYDV8
-	 CAZpPHRcwxRmeAfb2RpMrWKW8lfvw9Yl/ezfkC3ZQAjJa7AMx8VAemzLBa/52ZMFCx
-	 WsvtIubJzBZJKHvT8or3pk0cLynKdR4Sooc7+g1mbqRaNNBomRgiJX44xcazeGspJf
-	 rcMtWXcZ8SZXHxXkzvfnw1JrUuF8C9FjvAW669dUA98YboAOpXNSlKba7sqXLBo2rD
-	 7xvQMItMtRQAEQ24XsxQ/6ww=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id EA18940E016A;
-	Wed, 15 May 2024 18:32:30 +0000 (UTC)
-Date: Wed, 15 May 2024 20:32:22 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Axel Rasmussen <axelrasmussen@google.com>
-Cc: Oscar Salvador <osalvador@suse.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	David Hildenbrand <david@redhat.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, Helge Deller <deller@gmx.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Liu Shixin <liushixin2@huawei.com>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Muchun Song <muchun.song@linux.dev>,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	Nicholas Piggin <npiggin@gmail.com>, Peter Xu <peterx@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, linux-parisc@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, x86@kernel.org
-Subject: Re: [PATCH v2 1/1] arch/fault: don't print logs for pte marker
- poison errors
-Message-ID: <20240515183222.GCZkT_tvEffgYtah4T@fat_crate.local>
-References: <20240510182926.763131-1-axelrasmussen@google.com>
- <20240510182926.763131-2-axelrasmussen@google.com>
- <20240515104142.GBZkSRZsa3cxJ3DKVy@fat_crate.local>
- <ZkSUaVx3uCIPkpkJ@localhost.localdomain>
- <CAJHvVchGGJkEX=qroW=+N-RJDMDGuxM4xoGe7iOtRu9YcfxEEw@mail.gmail.com>
+	s=arc-20240116; t=1715797991; c=relaxed/simple;
+	bh=yw+ipdvPqTKvzHRePFMCEGB32d2gTHY4yIizWZv9K1I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CFP377RMy8OR9XQkAFiMI/JLMZKtE8Z/3QY0KlSOCVBveHiidJdyBZgXKt2t+Wms19/EbySHrEvZoSeDT9meHLYYo6/7VPhwydlVkVKb+O2L2o3DSnZs8K5goRBTjKsxA//ZxYDigVZIRUmSjMbvFMjEdtKoQ8sZsGcU9WVuMik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HWVyaIS0; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-572aad902baso36361a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 11:33:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715797988; x=1716402788; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KKkDnLN7qusp5ZEvAbHRefNjI/EUrE6vZKOBSo4hBmc=;
+        b=HWVyaIS0npQb1JpKRAJZztkST62euTKgxU7HH4B6I6s6UY/JYNOS2+GnzcMboRQuVg
+         Fxe0U5VxQAL0Ls3kn4GeWlqSHkrhcbxxrWdlpCEa0vZMqL3b1dI2pIQ6g2n0sz3sgNPE
+         JwcBZdn1f1bOMgbU+PaS3KTeYNOQD8os0uq/t+xk/OoCKm7pkDtBetoRpM46sq3dyR6q
+         bNpCf1RiuFA/Ilr8CBHZ11X8ClH5V6GLBY1V8GlsgcOUfyj8ABab5tXExe6IH6X3M6/U
+         twwvmxwnswpF3uucX+dFrHAMNi+3HPoHsJxTkuGT3E9juJneaEWM0SR4txt686dpHO2Z
+         1hHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715797988; x=1716402788;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KKkDnLN7qusp5ZEvAbHRefNjI/EUrE6vZKOBSo4hBmc=;
+        b=Mbh65NCZoKEe2UiEme1UDRBUdG5SCed6WX6WihNKf93oxzI+ATeoTo7AzZ+P9GEU8X
+         ZJpZ641pxSvBOiI+WKmZzGL0sdsP7wtBYYzp/YY8wk7v7p5qpR1+GdM9mAiGl6PouDH0
+         5GlUoR30y6cNuA/BhOY0DmhzJdcnaLRaQrs3fEh7JLOL4q8SRt+sx8m2z+K1iByC/rHS
+         M4zhtMqI2OpDauCbmn3phRMuovBwy0vT7plICosVdKSsaJZ3pqL/1EnYVQjoOo7kMMFz
+         +RtbWySahxV6BGKaz3ww4/jger7zZ0c2l7R2SHMx+b363yul26xTJ52LOreFqQ+opUpt
+         v/8g==
+X-Forwarded-Encrypted: i=1; AJvYcCUqn3xkvLx7Ku4oyoWwL8BhkcQSozbMCQN2MZETGOG7iFWLxl4giIoeN7uzQ2+W0AvzOYFUjb2U5T0q1bZiEXL+HN+aGaW9fkztkU/j
+X-Gm-Message-State: AOJu0YzeMP+P0c0qfuyZdf5T7wN1kG8Ffv74RWCCb+NZeTj8me4HmcOc
+	2gS8cuarHFzm5Yj+3rSo1rBN20P4a6j737CZvNvcpoPTfhXW5y6mDgmHkA+HuNccA5DnnG14iAI
+	P7TmeortDiqjnZtBsRtyUnp5cG4HRxPJW7/Q=
+X-Google-Smtp-Source: AGHT+IF6MleNTArg5bIvPJ3/eiTCxrRw7G9TB8KN62fOFsAAIP5+dlj2ACr18vI1mrmdbbKTxO7t/JgL68s+ize3a8I=
+X-Received: by 2002:a50:85c6:0:b0:573:438c:7789 with SMTP id
+ 4fb4d7f45d1cf-574ae418342mr914673a12.1.1715797987465; Wed, 15 May 2024
+ 11:33:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAJHvVchGGJkEX=qroW=+N-RJDMDGuxM4xoGe7iOtRu9YcfxEEw@mail.gmail.com>
+References: <20240515010805.605511-1-xandfury@gmail.com> <20240515010805.605511-4-xandfury@gmail.com>
+In-Reply-To: <20240515010805.605511-4-xandfury@gmail.com>
+From: Bill Wendling <morbo@google.com>
+Date: Wed, 15 May 2024 11:32:48 -0700
+Message-ID: <CAGG=3QWyeWuLmJg1R7X8T4CsSgM+EiDToxjd_-8MD94D=DCLtw@mail.gmail.com>
+Subject: Re: [RFC PATCH 3/4] selftests/binderfs: Macro argument 'fd' may be
+ better as '(fd)' to avoid precedence issues
+To: Abhinav Saxena <xandfury@gmail.com>
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev, Shuah Khan <shuah@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Justin Stitt <justinstitt@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 15, 2024 at 10:33:03AM -0700, Axel Rasmussen wrote:
-> Right, the goal is to still have the process get a SIGBUS, but to
-> avoid the "MCE error" log message. The basic issue is, unprivileged
-> users can set these markers up, and thereby completely spam up the
-> log.
+On Tue, May 14, 2024 at 6:08=E2=80=AFPM Abhinav Saxena <xandfury@gmail.com>=
+ wrote:
+>
+> Change the macro argument 'fd' to '(fd)' to avoid potential precedence
+> issues. Without parentheses, the macro expansion could lead to
+> unexpected behavior when used with an expression having different
+> precedence levels.
+>
+> Example Code:
+>
+>     #define CALC_SQR_BAD(x) (x*x)
+>     #define CALC_SQR_GOOD(x) ((x)*(x))
+>
+> CALC_SQR_BAD(2+3) expands to 2+(3*3)+2, giving 11 as the incorrect
+> answer. Enclosing with parathesis CALC_SQR_GOOD(2+3) sets the correct
 
-What is the real attack scenario you want to protect against?
+s/parathesis/parentheses/
 
-Or is this something hypothetical?
+> order of precedence and expands to (2+3)*(2+3), giving 25 as the
+> correct answer.
+>
+> Signed-off-by: Abhinav Saxena <xandfury@gmail.com>
+> ---
+>  .../testing/selftests/filesystems/binderfs/binderfs_test.c  | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/tools/testing/selftests/filesystems/binderfs/binderfs_test.c=
+ b/tools/testing/selftests/filesystems/binderfs/binderfs_test.c
+> index 4a149e3d4ba4..d5dba6c1e07f 100644
+> --- a/tools/testing/selftests/filesystems/binderfs/binderfs_test.c
+> +++ b/tools/testing/selftests/filesystems/binderfs/binderfs_test.c
+> @@ -30,11 +30,11 @@
+>
+>  #define close_prot_errno_disarm(fd)      \
+>         do {                             \
+> -               if (fd >=3D 0) {           \
+> +               if ((fd) >=3D 0) {         \
+>                         int _e_ =3D errno; \
+> -                       close(fd);       \
+> +                       close((fd));     \
+>                         errno =3D _e_;     \
+> -                       fd =3D -EBADF;     \
+> +                       (fd) =3D -EBADF;   \
 
-> That said, one thing I'm not sure about is whether or not
-> VM_FAULT_SIGBUS is a viable alternative (returned for a new PTE marker
-> type specific to simulated poison). The goal of the simulated poison
-> feature is to "closely simulate" a real hardware poison event. If you
-> live migrate a VM from a host with real poisoned memory, to a new
-> host: you'd want to keep the same behavior if the guest accessed those
-> addresses again, so as not to confuse the guest about why it suddenly
-> became "un-poisoned".
+While I agree that it's generally good to add parentheses in macros,
+this line ensures that 'fd' must be an lvalue and not an arithmetic
+expression.
 
-Well, the recovery action is to poison the page and the process should
-be resilient enough and allocate a new, clean page which doesn't trigger
-hw poison hopefully, if possible.
+-bw
 
-It doesn't make a whole lotta sense if poison "remains". Hardware poison
-you don't want to touch a second time either - otherwise you might
-consume that poison and die.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+>                 }                        \
+>         } while (false)
+>
+> --
+> 2.34.1
+>
 
