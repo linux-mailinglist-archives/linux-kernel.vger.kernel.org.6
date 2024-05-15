@@ -1,160 +1,111 @@
-Return-Path: <linux-kernel+bounces-180181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB6D58C6B2A
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 19:01:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DD0568C6B2B
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 19:01:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F09841C22582
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:01:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17EC61C22520
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:01:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE6C939FE4;
-	Wed, 15 May 2024 17:00:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A74D4D9E2;
+	Wed, 15 May 2024 17:01:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="l13p/AzF"
-Received: from msa.smtpout.orange.fr (smtp-70.smtpout.orange.fr [80.12.242.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="AV47vfLA"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC08836AF2;
-	Wed, 15 May 2024 17:00:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9A6D3EA7B;
+	Wed, 15 May 2024 17:00:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715792458; cv=none; b=gew5b/mjjc+z4bc3AnAzK/jJ7hFAyc8XQ7xmaV/ZnjdiBtjbX1m4tYwbRJkeC16ev7mwczArPBm/ZJIiLgDuXSMM0ZUnNNnF91tAQN1ZUqJeBPzuPOfoptw8zy54PCiAlZzh4l7AJF0sVQjZw5zO611v++Z1vfb5sNLUpwZPeEg=
+	t=1715792462; cv=none; b=O4KUZN4VOo8aX4/yZOQK6tL+OSQ3OPo8iw4k/fxyRmcFPVRYZv68O78wstIhKEo37NkR8w/gTUSbHJvYshBs+o4FlNPMfYcDjKBswdHEMlJK4n9+IGgqnd27NCHdS+uSAbXHXXt+mnY3vJZStJ8V0gpymXlL+iubFK2/mSevQGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715792458; c=relaxed/simple;
-	bh=XROEA3lTHts4wb7I2Uwge8OsoOt7tXaMz27MB6n/u6E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SyvrHPSPE1Q4KlV6WVbFhwVIRhcH/Atz/OQSqQP6IemDZIjfIZEKPOEnqGKQbGNfClZe/uU5xpYWcaDE01FHaQCz9kOEG/fTc6r+GKyn79MFD6CvFXjWaXHrElS//nDYAyKlS42kuIodqQ8dcVJifiL390WzAN7PuLl04bXtVTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=l13p/AzF; arc=none smtp.client-ip=80.12.242.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([86.243.17.157])
-	by smtp.orange.fr with ESMTPA
-	id 7Hzes2damneGh7Hzes8m3C; Wed, 15 May 2024 19:00:47 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1715792447;
-	bh=uAPBiVpF/LesUtYKfiBkex5dpCAGm4bpcdCFjHILMPY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=l13p/AzFVdQnSJBQg3ARSek/TirfLo9RIgL6Bf38BtaZl27yEu05RTS4kX39dVSob
-	 XJ5Wy+Y0vKojkeQn3Lwu7KoA+DdteKq8UFv0qQiSvibo6ZfhzERIt0B1Pqh/VAE4T6
-	 emfGYv39p/JQQN1wbHNHqyxVeVmu7D8kc6Zw5DOOaPj1l9g1AMBsfVebzhgHAl+w48
-	 OnywulfPJCXH3t5iXOHpzVo7kehbl+DkzsDJwmx1c94E5qEh4WWhLsOVD62+GOXF4P
-	 NKa593bnAzkhTwu7QIz7r33Fx5O5h6M41b/sErZqt3co5RHLs+2Egd511smBLJekvR
-	 TcIglie92Rz8w==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 15 May 2024 19:00:47 +0200
-X-ME-IP: 86.243.17.157
-Message-ID: <d2c0bc2b-91a1-4533-bd14-3973277b5f6f@wanadoo.fr>
-Date: Wed, 15 May 2024 19:00:38 +0200
+	s=arc-20240116; t=1715792462; c=relaxed/simple;
+	bh=qTwEfXEQkbdljZmqzyD0H6JnsIFFB6dqdWoQSfOqF5Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DMZs5xAzDo4WfZMaIoXGlS3cwyoHnTX0Sn2GaHo9/AxO7+jg0f7plX+22pm3ifo7XVs31Ddyuk4fh88lizMmeB3rZKb4mhvkF8h9L+cbFXQ4HP+19UNgoAmmzzYU5X35+e/F3nSB7tAz7MZjQSG/tpuYoDuDrJBQAXZdfJ6dnK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=AV47vfLA; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=ttzeKH24OIro/tgZ6ld9F7CNMTsJylUB18DEAt6MCa4=; b=AV47vfLA6Cr/IppjyZ58oP/Dej
+	upA1qpiOEjFBTQIwlNrixMmUJM8PaBsuOVJCb8Kfo1hSZbadeKG6o0fs/X4A/riHZ1Sfp15JYvFiL
+	q5J5denqStItH1y6qkykUI9al8bSbq+F17N1VbODIJJXcvIAxnUJotH9xYKRGvoJsaa6IFNgXEJVC
+	qZKMPYKAH/IZZ10MHiM89/Nj/1BfM7T4XSjo5bfUGT40Sl460Nl7uP/lWfzI329cFTMVzGeTaGCQA
+	s4Lt+2CwJuO4DXsoBHPcpgtAKf6Nz/fj30mfHo0Ztf/ZJIcefUK9DQoy4iXKHGvuU1oG9+V66QJZO
+	eBqGP3RA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1s7Hzq-007ZN9-30;
+	Wed, 15 May 2024 17:00:55 +0000
+Date: Wed, 15 May 2024 18:00:54 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: David Sterba <dsterba@suse.cz>
+Cc: syzbot <syzbot+c92c93d1f1aaaacdb9db@syzkaller.appspotmail.com>,
+	axboe@kernel.dk, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, maz@kernel.org, oleg@redhat.com,
+	peterz@infradead.org, syzkaller-bugs@googlegroups.com
+Subject: Re: kernel BUG at fs/inode.c:LINE! (2)
+Message-ID: <20240515170054.GM2118490@ZenIV>
+References: <000000000000c8fcd905adefe24b@google.com>
+ <20240515161314.GO4449@twin.jikos.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] pinctrl: rockchip: add rk3308b SoC support
-To: Dmitry Yashin <dmt.yashin@gmail.com>,
- Linus Walleij <linus.walleij@linaro.org>, Heiko Stuebner <heiko@sntech.de>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Rob Herring <robh@kernel.org>
-Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Jianqun Xu <jay.xu@rock-chips.com>, devicetree@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240515121634.23945-1-dmt.yashin@gmail.com>
- <20240515121634.23945-4-dmt.yashin@gmail.com>
-Content-Language: en-MW
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20240515121634.23945-4-dmt.yashin@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240515161314.GO4449@twin.jikos.cz>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Le 15/05/2024 à 14:16, Dmitry Yashin a écrit :
-> Add pinctrl support for rk3308b. This pin controller much the same as
-> rk3308's, but with additional iomux routes and 3bit iomuxes selected
-> via gpio##_sel_src_ctrl registers. Set them up in the function
-> rk3308b_soc_sel_src_init to use new 3bit iomuxes over some 2bit old ones.
+On Wed, May 15, 2024 at 06:13:14PM +0200, David Sterba wrote:
+> On Fri, Aug 28, 2020 at 06:18:17AM -0700, syzbot wrote:
+> > Hello,
+> > 
+> > syzbot found the following issue on:
+> > 
+> > HEAD commit:    d012a719 Linux 5.9-rc2
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=15aa650e900000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=891ca5711a9f1650
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=c92c93d1f1aaaacdb9db
+> > compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12ecb939900000
+> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=140a19a9900000
+> > 
+> > The issue was bisected to:
+> > 
+> > commit a9ed4a6560b8562b7e2e2bed9527e88001f7b682
+> > Author: Marc Zyngier <maz@kernel.org>
+> > Date:   Wed Aug 19 16:12:17 2020 +0000
+> > 
+> >     epoll: Keep a reference on files added to the check list
+> > 
+> > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16a50519900000
+> > final oops:     https://syzkaller.appspot.com/x/report.txt?x=15a50519900000
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=11a50519900000
+> > 
+> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> > Reported-by: syzbot+c92c93d1f1aaaacdb9db@syzkaller.appspotmail.com
+> > Fixes: a9ed4a6560b8 ("epoll: Keep a reference on files added to the check list")
+> > 
+> > ------------[ cut here ]------------
+> > kernel BUG at fs/inode.c:1668!
 > 
-> Fixes: 1f3e25a06883 ("pinctrl: rockchip: fix RK3308 pinmux bits")
-> Signed-off-by: Dmitry Yashin <dmt.yashin@gmail.com>
-> ---
->   drivers/pinctrl/pinctrl-rockchip.c | 200 +++++++++++++++++++++++++++++
->   drivers/pinctrl/pinctrl-rockchip.h |   1 +
->   2 files changed, 201 insertions(+)
-
-Hi,
-
+> #syz set subsystem: fs
 > 
-> diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-> index cc647db76927..15d2045f929e 100644
-> --- a/drivers/pinctrl/pinctrl-rockchip.c
-> +++ b/drivers/pinctrl/pinctrl-rockchip.c
-> @@ -632,6 +632,115 @@ static struct rockchip_mux_recalced_data rk3308_mux_recalced_data[] = {
->   	},
->   };
->   
-> +static struct rockchip_mux_recalced_data rk3308b_mux_recalced_data[] = {
+> This has been among btrfs bugs but this is is 'fs' and probably with a
+> fix but I was not able to identify it among all the changes in
+> eventpoll.c
 
-It is likely that it would require some other changes, but it looks to 
-be a good candidate for static const struct.
-
-> +	{
-> +		/* gpio1b6_sel */
-> +		.num = 1,
-> +		.pin = 14,
-> +		.reg = 0x28,
-> +		.bit = 12,
-> +		.mask = 0xf
-> +	}, {
-
-..
-
-> @@ -882,6 +991,35 @@ static struct rockchip_mux_route_data rk3308_mux_route_data[] = {
->   	RK_MUXROUTE_SAME(2, RK_PA4, 3, 0x600, BIT(16 + 2) | BIT(2)), /* pdm-clkm-m2 */
->   };
->   
-> +static struct rockchip_mux_route_data rk3308b_mux_route_data[] = {
-
-Same
-
-> +	RK_MUXROUTE_SAME(0, RK_PC3, 1, 0x314, BIT(16 + 0) | BIT(0)), /* rtc_clk */
-> +	RK_MUXROUTE_SAME(1, RK_PC6, 2, 0x314, BIT(16 + 2) | BIT(16 + 3)), /* uart2_rxm0 */
-> +	RK_MUXROUTE_SAME(4, RK_PD2, 2, 0x314, BIT(16 + 2) | BIT(16 + 3) | BIT(2)), /* uart2_rxm1 */
-> +	RK_MUXROUTE_SAME(0, RK_PB7, 2, 0x608, BIT(16 + 8) | BIT(16 + 9)), /* i2c3_sdam0 */
-
-..
-
-> @@ -3746,6 +3929,21 @@ static struct rockchip_pin_ctrl rk3308_pin_ctrl = {
->   		.schmitt_calc_reg	= rk3308_calc_schmitt_reg_and_bit,
->   };
->   
-> +static struct rockchip_pin_ctrl rk3308b_pin_ctrl = {
-
-This one could be constify without any other changes I think (and also 
-makes more sense because of its function pointers)
-
-Just my 2c.
-
-CJ
-
-> +		.pin_banks		= rk3308_pin_banks,
-> +		.nr_banks		= ARRAY_SIZE(rk3308_pin_banks),
-> +		.label			= "RK3308b-GPIO",
-> +		.type			= RK3308B,
-> +		.grf_mux_offset		= 0x0,
-> +		.iomux_recalced		= rk3308b_mux_recalced_data,
-> +		.niomux_recalced	= ARRAY_SIZE(rk3308b_mux_recalced_data),
-> +		.iomux_routes		= rk3308b_mux_route_data,
-> +		.niomux_routes		= ARRAY_SIZE(rk3308b_mux_route_data),
-> +		.pull_calc_reg		= rk3308_calc_pull_reg_and_bit,
-> +		.drv_calc_reg		= rk3308_calc_drv_reg_and_bit,
-> +		.schmitt_calc_reg	= rk3308_calc_schmitt_reg_and_bit,
-> +};
-
-..
-
+It has nothing to do with btrfs, and there's a good chance it had been
+fixed as a side effect of 319c15174757 "epoll: take epitem list out of struct file"
+merge at 1a825a6a0e7e in 5.10 merge window; IOW, it should be in 5.11-rc1.
 
