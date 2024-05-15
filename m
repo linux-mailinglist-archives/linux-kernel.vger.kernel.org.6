@@ -1,69 +1,90 @@
-Return-Path: <linux-kernel+bounces-179607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 673118C6215
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:49:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0429B8C6219
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:50:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98D7F1C20F66
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 07:49:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CC5D1F225C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 07:50:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D50F94879B;
-	Wed, 15 May 2024 07:49:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3BCC481DF;
+	Wed, 15 May 2024 07:50:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="drzJz1u1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YeHTprxI"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17ABD47A79;
-	Wed, 15 May 2024 07:49:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75F154654B
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 07:50:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715759345; cv=none; b=BETOZ2+Qpn34h+gxVHRmDg0u0WwCXAgxSukT3KaiPVK23VyoxPTNQ88+K+0fJezJeSAhbr5l/gjNk2V+PE3vUEjRykvZ4zfl7aHx209tXVxEMptcG7tGBhb3bbU/u27spy4Gp1cTf8UmY9JgnOxnq0SLUg6P0f5IG6GQuzRshuY=
+	t=1715759411; cv=none; b=MO9QUEQCh9A4LdgVbHcQFyI08iXxeEcEShkrni8TVddxJT8+xg4aKChNET4TR6gi3Ab57Obs2wh23EvXMVCPMyMv/yN3R85KzQcx1V+k+EeE+LCaAT4lJwaWNLo7uTovR6GsEiUe2B7h8yyL1kr8iiBWNIIGeK7Ca5TZ3a7ObFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715759345; c=relaxed/simple;
-	bh=ge8e4h3UMypPCIdfQ9dILMu/Uub24xtFTsawJKyXGXA=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=O33jHbmmupkeoytKtfNvNUX/EmkDpaDUupbseQCS8Ivf1/KKE1bGRAfdE3D4O7KbpVzdk+Kja8ohA2V+D9G/w/nmbJNZCN7Hqqmf2HQluyauPUkr/WSqWuyOWtnh20V+K3r29OdhPKY7oaBL+h/txc4Q/E27WLHsQJ9/NHVu570=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=drzJz1u1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6255BC116B1;
-	Wed, 15 May 2024 07:49:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715759344;
-	bh=ge8e4h3UMypPCIdfQ9dILMu/Uub24xtFTsawJKyXGXA=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=drzJz1u1/ePj3xCPiPsgyWP2UtQ9Tc2bHK6Fx/miLrBfoqCZd31POrlfy7mi8V4zK
-	 deIdpBqlx2zfdxgCIZOCEMwsl7/j7lD7G+PvbiSPqw1SzYINeI/HO04E4AsZegECxN
-	 V8qR8CL2MCJYkrhmYOHxQ9BP3HkTZxtpVMZqBizGeNA11X/32nQOdA+rKc0qqhfhs0
-	 VCBwc80fx/eyIEl0Nn+IPMce+5Shnjo05AwfxH48bEVLa3ndqatQMppDOFV/W8vfPY
-	 k0ROHvuajNuzw5g8Vo1BtnUvpe0wzE5XeA/HKuU21TEdhkjC0yx1Z6r8dqrD+RbrHE
-	 LaW5HOfpMNQ6A==
-From: Kalle Valo <kvalo@kernel.org>
-To: Oleksandr Natalenko <oleksandr@natalenko.name>
-Cc: linux-kernel@vger.kernel.org,  linux-wireless@vger.kernel.org,  "Linux
- regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>,
-  Johannes Berg <johannes@sipsolutions.net>,
-  linux-mediatek@lists.infradead.org,
-  linux-arm-kernel@lists.infradead.org,  Felix Fietkau <nbd@nbd.name>,
-  Lorenzo Bianconi <lorenzo@kernel.org>,  Ryder Lee
- <ryder.lee@mediatek.com>,  Shayne Chen <shayne.chen@mediatek.com>,  Sean
- Wang <sean.wang@mediatek.com>,  Matthias Brugger <matthias.bgg@gmail.com>,
-  AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-  Peter Chiu <chui-hao.chiu@mediatek.com>,  StanleyYP Wang
- <StanleyYP.Wang@mediatek.com>,  Linux regressions mailing list
- <regressions@lists.linux.dev>
-Subject: Re: [REGRESSION] MT7915E doesn't work any more with v6.9
-References: <6061263.lOV4Wx5bFT@natalenko.name>
-	<2341660.ElGaqSPkdT@natalenko.name>
-	<60fe8df750a74331b8a54a76d55d5e8349ac46b4.camel@sipsolutions.net>
-	<2200096.irdbgypaU6@natalenko.name>
-Date: Wed, 15 May 2024 10:48:59 +0300
-In-Reply-To: <2200096.irdbgypaU6@natalenko.name> (Oleksandr Natalenko's
-	message of "Wed, 15 May 2024 09:15:12 +0200")
-Message-ID: <87v83fcy6s.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1715759411; c=relaxed/simple;
+	bh=LoG+7gtU1o+7XCSOkjSuVQBBEuxkH1SzsEnGyxuBS14=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tO/b3Qz0BZgqztXr/T05xA8hBsOTHHoc6opfl3/w18PHPzeoUdbYvlDZYP0OHqSRxbT14T7XxMzFS8k6nGRaBcxtSWwA7oplQ5xExAmEpxRSHM8lWmtqCAr2/kDXDwMZ4klkpLR/GyrPfMZ4FJ0BAxORH1yXzsfwnGhYEbxuMvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YeHTprxI; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42017f8de7aso19258735e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 00:50:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715759408; x=1716364208; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=2luu+TEKGzGGESWKjsQ/mAq5vIhVWQJ0g42DRjIbMDs=;
+        b=YeHTprxIS/XNGwwPGNwBIs9B/yQ3IhS9vR/Dej9YdzzbaNBrVxK3+BdmVMFF5Dfdqg
+         sOkSunh+8M4cB4X7RyxWwysdo0TP2b8D0Ug1bSLRo4QgMTFOC6BNRWJBFeccGAaT1xCo
+         IjW87YZ02WyIHDXevVAslAzNO1h5epm+kGQLbx3xx413k4e3F+2sMOBO+blrHV32Bvm7
+         frRRnRcPsT2hWfzW0u2gTEoQ1BNa/X6wGgna/D9VRYHGfUQDmOd/Hd2KufA6bGvHdQ0U
+         C2JpMC5F23p+F347nCJUgNl5k7nQqpbO9rqwlDf/pOoUrYoMP4bkhokO3KyoQwH9+PyP
+         pRRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715759408; x=1716364208;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2luu+TEKGzGGESWKjsQ/mAq5vIhVWQJ0g42DRjIbMDs=;
+        b=TwMcF6honvBBM3BzKHN1T2EqyrXWXDp1BCQMfud/IS8lsEGiacTWP3WTD5hsX58D/7
+         vnL5CK8nQQtMFW2aQjLSE7ohUkSoewb5vaLLJlQl3+WRjNSlu4AFhARn7dlaCznW/ucc
+         iN2c/CVCsAiXxZrEIYLr5Doxv5m7Z4JRLDX7GDA2+YANi7cnLvLr9Tw/q9ww/xj9drTI
+         2Lxh4BW2b+qsYjJjx4k309FR/7h+4e0Bq4kON6msIFmH8M7Ms1TSUZRE/IGc7soVnjKz
+         howe26t1jJb3ktOD21HG7bDVRVwSlNd3u5qQuwMQkeOgJdaPisi36Ylu1OKPRKQXi5i2
+         2qdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV9mzvV/bEUTaIN0SVF9xw/AwZf5mJISvl3f1lOq7gtxFVKZXV4QS1re5J0MkZNXmS3ygXH/wnlVplOldLToHyrdAokLP0UtAfRcxB4
+X-Gm-Message-State: AOJu0YyvE8XFXSsKrHCkJ2TZ2j9+84wKbuGiv0HpIgESU4dVGU1kCYlU
+	PT/KOHDhu62zNh6VChnQ06R8uDbQMY536jNkzXuFXAnERtXwFOMRBqmMfFTdwA==
+X-Google-Smtp-Source: AGHT+IEwnw88k+dpNWTBc/h+G+M5vpa6Q0JqTHL3W0/n2a9dKdx0i4MEuejJLaApdV2aAiJ/HxYQGg==
+X-Received: by 2002:a05:600c:450e:b0:418:dbad:c57d with SMTP id 5b1f17b1804b1-41feac5ba78mr111020505e9.28.1715759407711;
+        Wed, 15 May 2024 00:50:07 -0700 (PDT)
+Received: from thinkpad ([149.14.240.163])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42011d91edfsm129656185e9.44.2024.05.15.00.50.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 May 2024 00:50:07 -0700 (PDT)
+Date: Wed, 15 May 2024 09:50:05 +0200
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Conor Dooley <conor@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Avri Altman <avri.altman@wdc.com>,
+	Bart Van Assche <bvanassche@acm.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>, Andy Gross <agross@kernel.org>,
+	cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
+	linux-scsi@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: ufs: qcom: Use 'ufshc' as the node name
+ for UFS controller nodes
+Message-ID: <20240515075005.GC2445@thinkpad>
+References: <20240514-ufs-nodename-fix-v1-0-4c55483ac401@linaro.org>
+ <20240514-ufs-nodename-fix-v1-1-4c55483ac401@linaro.org>
+ <20240514-buggy-sighing-1573000e3f52@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,47 +92,52 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240514-buggy-sighing-1573000e3f52@spud>
 
-Oleksandr Natalenko <oleksandr@natalenko.name> writes:
+On Tue, May 14, 2024 at 07:50:15PM +0100, Conor Dooley wrote:
+> On Tue, May 14, 2024 at 03:08:40PM +0200, Manivannan Sadhasivam wrote:
+> > Devicetree binding has documented the node name for UFS controllers as
+> > 'ufshc'. So let's use it instead of 'ufs' which is for the UFS devices.
+> 
+> Can you point out where that's been documented?
 
-> Hello Johannes.
->
-> On st=C5=99eda 15. kv=C4=9Btna 2024 8:23:35, SEL=C4=8C Johannes Berg wrot=
-e:
->> On Wed, 2024-05-15 at 00:51 +0200, Oleksandr Natalenko wrote:
->> > Also /cc Johannes because of this commit:
->> >=20
->> > 6092077ad09ce wifi: mac80211: introduce 'channel request'
->> >=20
->> > On st=C5=99eda 15. kv=C4=9Btna 2024 0:43:40, SEL=C4=8C Oleksandr Natal=
-enko wrote:
->> > > Hello Felix, Lorenzo et al.
->> > >=20
->> > > With v6.9 kernel the following card:
->> > >=20
->> > > 01:00.0 Unclassified device [0002]: MEDIATEK Corp. MT7915E 802.11ax =
-PCI Express Wireless Network Adapter [14c3:7915]
->> > >=20
->> > > doesn't work any more. Upon mt7915e module insertion the following s=
-plat happens:
->> > >=20
->>=20
->> 6.9 didn't get commit 2f7cf3b61d85 ("wifi: mt76: mt7915: add missing
->> chanctx ops")? Huh?
->
-> Yes, you are right, this commit is not present in v6.9, and I can find it=
- in the "next" branch only.
->
-> I can also confirm this commit fixes the regression for me.
+Typo here. s/Devicetree binding/Devicetree spec
 
-Thanks for testing.
+https://github.com/devicetree-org/devicetree-specification/blob/main/source/chapter2-devicetree-basics.rst#generic-names-recommendation
 
-#regzbot fix: 2f7cf3b61d85
+- Mani
 
---=20
-https://patchwork.kernel.org/project/linux-wireless/list/
+> Thanks,
+> Conor.
+> 
+> > 
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > ---
+> >  Documentation/devicetree/bindings/ufs/qcom,ufs.yaml | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml b/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml
+> > index 10c146424baa..37112e17e474 100644
+> > --- a/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml
+> > +++ b/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml
+> > @@ -273,7 +273,7 @@ examples:
+> >          #address-cells = <2>;
+> >          #size-cells = <2>;
+> >  
+> > -        ufs@1d84000 {
+> > +        ufshc@1d84000 {
+> >              compatible = "qcom,sm8450-ufshc", "qcom,ufshc",
+> >                           "jedec,ufs-2.0";
+> >              reg = <0 0x01d84000 0 0x3000>;
+> > 
+> > -- 
+> > 2.25.1
+> > 
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatc=
-hes
+
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
