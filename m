@@ -1,184 +1,130 @@
-Return-Path: <linux-kernel+bounces-179822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64F718C65F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 13:56:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D48F8C65FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 13:56:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BAC33B22F72
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 11:56:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FEEA1F21767
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 11:56:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A2507442F;
-	Wed, 15 May 2024 11:56:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43846757F8;
+	Wed, 15 May 2024 11:56:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="QZ67yjOW"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V7QqoPiH"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27EBD6F085;
-	Wed, 15 May 2024 11:56:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47B4174416;
+	Wed, 15 May 2024 11:56:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715774170; cv=none; b=DFQEbKwh7e016RWWhASsip6AMdI5OLI7OuQpBIiFbPTwGfcLWRbnAzsk1R49D4el8BczYuBUAZcdEdMszyXj0OoQUmDF2QitjAdm597jBHavvCcDzapvErXIYH93WNOmeQCTNs22y5kC62LCMPFb9G8Gdv0pW8cMMpP9A7ss/as=
+	t=1715774172; cv=none; b=nVvFOsy9r4Pvb38Hmco78MXY9zcEeiD72JivDx+alIbeCzt8+eq/5ikE2f7LpATmLXH+3w+7pxhk+2CAJSnUszRVUS4k7NVAgDSv/qX7yXXcWSKf82HP9nAVA/JABCLexueXqKeXV4LqXi8pIBIf6rIDmSHcV5pYvdpmQsFKMRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715774170; c=relaxed/simple;
-	bh=4pC6ilZ310P00v6s0/5Ld75NFzCzkUptLwWfKWKbUYY=;
-	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=Uu5EhZDd4YyTczRqc0U4poUXWYePECLE3JrbIUmbbb2emaVK6sZ29p3MXfLA8R3Nuar0tJak5x1fdxALniJfkhstNFMSH3yeQ7qTUVvqfo8/sXDeTnCc0tARhTAFy3vR9GCAUnhjp0X+rm52RgU2/qVvxueS2eko1ypkZoXWlNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=QZ67yjOW; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44FBQGSx009762;
-	Wed, 15 May 2024 11:55:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : content-type : content-transfer-encoding :
- mime-version; s=pp1; bh=a57vU2orCPnYctsB8Gc3TVmzZjgD5+BC2tkG8ynyhrk=;
- b=QZ67yjOWGpqpQ8IhEdYdndRNJtmcGM2a49uQi0RxZvnX99DhxSoPV40E3QR4iv6LDUwy
- KNNtzGQmLdpCHiml4TWQdZ2JUH4MFLuTCUG87kJ/UC1Eoy2WpG1Rvi2T/rNJpLwVF5FQ
- D8IjS/5ePMi/VPcy2O7A83SgqR8v1Cq7uSc9xKLr/j6DZ2H6LRE1ujHTlfNrkvTwJG8I
- LEY4ViwQMy4irjQLtJoJe08pD//iKHD5jYXGSgJny41lLBS/sBgTyDUDRqLaPzldDS4p
- +z6Be3CLNX9tuIGmxfqrP0j3hl0/CGSQfosY+O5KMKoEUYcHrM+4btM1xiM6rzqqY8vA 2g== 
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y4uyg833e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 15 May 2024 11:55:51 +0000
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44FA3NYc006073;
-	Wed, 15 May 2024 11:55:50 GMT
-Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3y2nq2ty7w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 15 May 2024 11:55:50 +0000
-Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
-	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44FBtmOv19857804
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 15 May 2024 11:55:50 GMT
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3632658066;
-	Wed, 15 May 2024 11:55:48 +0000 (GMT)
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E1A1E5805E;
-	Wed, 15 May 2024 11:55:47 +0000 (GMT)
-Received: from li-5cd3c5cc-21f9-11b2-a85c-a4381f30c2f3.ibm.com (unknown [9.61.158.76])
-	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 15 May 2024 11:55:47 +0000 (GMT)
-Message-ID: <1887e28b6bcbe1eca72028432c9e0fee7a72fbfe.camel@linux.ibm.com>
-Subject: [GIT PULL] integrity: subsystem updates for v6.10
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-kernel
- <linux-kernel@vger.kernel.org>,
-        Roberto Sassu
- <roberto.sassu@huaweicloud.com>
-Date: Wed, 15 May 2024 07:55:47 -0400
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-25.el8_9) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: tmcYkkciT_-Nlh97-3hwenfY-w5L_rwu
-X-Proofpoint-GUID: tmcYkkciT_-Nlh97-3hwenfY-w5L_rwu
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1715774172; c=relaxed/simple;
+	bh=KLIJf6dyuUtjxVo29n46MFMN5nAM6CJEG8L1rIRFJXc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dpTm//1M7feMuxac8zDS6UnKEkh21MFKoH0YkFH0jfbgyBR5PO5UuUWEtDDUjni2UBlJxodxBGnLOEd438E/j3pz7M0DCaoyoVg7uGjSJT8rFmq2xCDixg7kCk/uWlpA+6QkUN2f1HGSthM1+S3bZiol74Bo7BmI7aFBGmoGBnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V7QqoPiH; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-6f6765226d0so474851b3a.3;
+        Wed, 15 May 2024 04:56:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715774170; x=1716378970; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KLIJf6dyuUtjxVo29n46MFMN5nAM6CJEG8L1rIRFJXc=;
+        b=V7QqoPiH4mE1vYcxyxLYiYiRwbMO0AYPCg7QJQ1kcHOLWHnzdmCqyCCLw33MkpDh4b
+         +MlPTg43EyXPO24Ff4B+xWJis7DGv7znPjU+ok9WV9E9eUYOPunuHCzzqAIYUfhHJ7WU
+         IYHecI4GmoJ2N8Jy5mPSW+E7MTjsbaU1CUILbKZeMTzJWlTiAC2I1Y0HqIduxkrbB0wr
+         Ah1+WTdam7dQFjvic/+zJj/uPiMZULewxbgprSg0Zd8m01jgpDVs//Iyljgm/4umKsID
+         lyzqEVdAchXQiAIAl4NdAzFhajJSD2kfVwrJufRkbeP44BfoV4VUoaXpTR/rSskk4jEX
+         XSEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715774170; x=1716378970;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KLIJf6dyuUtjxVo29n46MFMN5nAM6CJEG8L1rIRFJXc=;
+        b=XFa026hChOWUEtHvHCs0kiqPgkte4rCeupjBRJ4gGFhgey0kJIu1fNDDKSB5qo03CY
+         WsSWiviykY+Q60uBLZeQBfTnAaA0Y6I0th+OXFIy+8MlxN9daa6FVd5rphF8xcZx7e9X
+         BUwGXoF79fl7pQsWIYar86b60D6FxsEnQ8b6SToMcDWrz6mMiUnvjlyuumXomoO7xN6+
+         SlHMMwCCka6M0rIoBbuWxD5lrQnlIR8mZxI6r35P2Zs6V3YpH/R9J+eA+zcPsvkU25AB
+         on6ILYD2K3F2Th/FTtlmOOu5OH8L8w4sAybV4qwYiU8E3HvvqqwOpUm2JoLZEY/Rx4Cr
+         4U5w==
+X-Forwarded-Encrypted: i=1; AJvYcCUI5TJMyxTSdRLFMJSfwj6rJSRjGd6pOewTGKMMr8/vF9K2k+hJjX8YPQkBu5EGJQM9jtuUm7KuJb4VbDfRC4ZRSlgSFOfRWjEcMTiSM9X9pHmWk9XIXUPXlvm+5qBhWnR9tBlMHUSFAxOJIkBcVuYKnzX+Tyt0pRfodqqBdfGnx3d88/zm
+X-Gm-Message-State: AOJu0YzUFWZdMl6raZSkb6K+Y4kQogYJkg4owTpGJlhcgIm+7Zc1yiOE
+	xmv/ghW3FV/Km4FGiVsOGlE1jAIognkptjCBtTqYY3qHNUw1zHKlWLSEgg==
+X-Google-Smtp-Source: AGHT+IGbixuRdWw3hpUoH/eg1XmRvH8la1VlEm92zf5wZvmtJsIjySYZuMUHfsOOYQLyQZwHSeeW7A==
+X-Received: by 2002:a05:6a20:5504:b0:1a9:da1f:1679 with SMTP id adf61e73a8af0-1afde0e20f6mr13397919637.34.1715774170370;
+        Wed, 15 May 2024 04:56:10 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0bf30c95sm115677075ad.125.2024.05.15.04.56.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 May 2024 04:56:09 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 7272A19C325FD; Wed, 15 May 2024 18:56:07 +0700 (WIB)
+Date: Wed, 15 May 2024 18:56:06 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: mhklinux@outlook.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+	decui@microsoft.com, kys@microsoft.com, corbet@lwn.net,
+	linux-kernel@vger.kernel.org, linux-hyperv@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Cc: Mao Zhu <zhumao001@208suo.com>, Ran Sun <sunran001@208suo.com>,
+	Xiang wangx <wangxiang@cdjrlc.com>,
+	Shaomin Deng <dengshaomin@cdjrlc.com>,
+	Charles Han <hanchunchao@inspur.com>,
+	Attreyee M <tintinm2017@gmail.com>, LihaSika <lihasika@gmail.com>
+Subject: Re: [PATCH v2 1/2] Documentation: hyperv: Update spelling and fix
+ typo
+Message-ID: <ZkSi1raEBdu7MdBE@archie.me>
+References: <20240511133818.19649-1-mhklinux@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-15_06,2024-05-15_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 bulkscore=0
- lowpriorityscore=0 phishscore=0 spamscore=0 suspectscore=0 adultscore=0
- mlxlogscore=829 priorityscore=1501 mlxscore=0 malwarescore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2405010000 definitions=main-2405150082
-
-Hi Linus,
-
-Two IMA changes, one EVM change, a use after free bug fix, and a code cleanup to
-address "-Wflex-array-member-not-at-end" warnings:
-
-- The existing IMA {ascii, binary}_runtime_measurements lists include a hard
-coded SHA1 hash.  To address this limitation, define per TPM enabled hash
-algorithm {ascii, binary}_runtime_measurements lists.
-
-- Close an IMA integrity init_module syscall measurement gap by defining a new
-critical-data record.
-
-- Enable (partial) EVM support on stacked filesystems (overlayfs).  Only EVM
-portable & immutable file signatures are copied up, since they do not contain
-filesystem specific metadata.
-
-thanks,
-
-Mimi
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="3mYU1ClqV7Ho83G5"
+Content-Disposition: inline
+In-Reply-To: <20240511133818.19649-1-mhklinux@outlook.com>
 
 
-The following changes since commit fec50db7033ea478773b159e0e2efb135270e3b7:
+--3mYU1ClqV7Ho83G5
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-  Linux 6.9-rc3 (2024-04-07 13:22:46 -0700)
+On Sat, May 11, 2024 at 06:38:17AM -0700, mhkelley58@gmail.com wrote:
+> From: Michael Kelley <mhklinux@outlook.com>
+>=20
+> Update spelling from "VMbus" to "VMBus" to match Hyper-V product
+> documentation. Also correct typo: "SNP-SEV" should be "SEV-SNP".
+>=20
+> Signed-off-by: Michael Kelley <mhklinux@outlook.com>
+> Reviewed-by: Easwar Hariharan <eahariha@linux.microsoft.com>
 
-are available in the Git repository at:
+LGTM, thanks!
 
-  ssh://gitolite@ra.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git tags/integrity-v6.10
+Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
 
-for you to fetch changes up to 9fa8e76250082a45d0d3dad525419ab98bd01658:
+--=20
+An old man doll... just what I always wanted! - Clara
 
-  ima: add crypto agility support for template-hash algorithm (2024-04-12 09:59:04 -0400)
+--3mYU1ClqV7Ho83G5
+Content-Type: application/pgp-signature; name="signature.asc"
 
-----------------------------------------------------------------
-integrity-v6.10
+-----BEGIN PGP SIGNATURE-----
 
-----------------------------------------------------------------
-Enrico Bravi (1):
-      ima: add crypto agility support for template-hash algorithm
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZkSi0wAKCRD2uYlJVVFO
+oxgoAQDmu6lTcbrHgqcQ1gt7KND0JsUN7RpkeyB7/6Ot0t2pwwD/d6Gvmzh1zJBg
+7y20CyvYAA6LPQ7TrB9/ITaX0kci/AU=
+=pwFL
+-----END PGP SIGNATURE-----
 
-Gustavo A. R. Silva (1):
-      integrity: Avoid -Wflex-array-member-not-at-end warnings
-
-Mimi Zohar (1):
-      ima: define an init_module critical data record
-
-Stefan Berger (11):
-      ima: Fix use-after-free on a dentry's dname.name
-      ima: Rename backing_inode to real_inode
-      security: allow finer granularity in permitting copy-up of security xattrs
-      evm: Implement per signature type decision in security_inode_copy_up_xattr
-      evm: Use the metadata inode to calculate metadata hash
-      ima: Move file-change detection variables into new structure
-      evm: Store and detect metadata inode attributes changes
-      ima: re-evaluate file integrity on file metadata change
-      evm: Enforce signatures on unsupported filesystem for EVM_INIT_X509
-      fs: Rename SB_I_EVM_UNSUPPORTED to SB_I_EVM_HMAC_UNSUPPORTED
-      evm: Rename is_unsupported_fs to is_unsupported_hmac_fs
-
- fs/overlayfs/copy_up.c                    |   2 +-
- fs/overlayfs/super.c                      |   2 +-
- include/linux/evm.h                       |   8 ++
- include/linux/fs.h                        |   2 +-
- include/linux/integrity.h                 |  34 ++++++++
- include/linux/lsm_hook_defs.h             |   3 +-
- include/linux/security.h                  |   4 +-
- security/integrity/evm/evm.h              |   8 +-
- security/integrity/evm/evm_crypto.c       |  25 ++++--
- security/integrity/evm/evm_main.c         |  92 +++++++++++++++-----
- security/integrity/ima/ima.h              |  12 ++-
- security/integrity/ima/ima_api.c          |  32 ++++---
- security/integrity/ima/ima_appraise.c     |   4 +-
- security/integrity/ima/ima_crypto.c       |   7 +-
- security/integrity/ima/ima_fs.c           | 134 +++++++++++++++++++++++++++---
- security/integrity/ima/ima_iint.c         |   2 +-
- security/integrity/ima/ima_init.c         |   6 +-
- security/integrity/ima/ima_kexec.c        |   1 +
- security/integrity/ima/ima_main.c         |  44 +++++++---
- security/integrity/ima/ima_template_lib.c |  27 ++++--
- security/integrity/integrity.h            |  12 ++-
- security/security.c                       |   5 +-
- security/selinux/hooks.c                  |   2 +-
- security/smack/smack_lsm.c                |   2 +-
- 24 files changed, 374 insertions(+), 96 deletions(-)
-
+--3mYU1ClqV7Ho83G5--
 
