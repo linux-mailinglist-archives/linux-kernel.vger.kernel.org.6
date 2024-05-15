@@ -1,181 +1,120 @@
-Return-Path: <linux-kernel+bounces-179435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A38108C5FF3
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:58:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C43038C5FF7
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:58:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 213811F26748
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 04:58:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FB272871D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 04:58:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B39F176046;
-	Wed, 15 May 2024 04:52:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5CFE3BB25;
+	Wed, 15 May 2024 04:53:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=darkphysics.net header.i=@darkphysics.net header.b="Vh5AqTlI"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BaiqBTXV"
+Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 931D66EB5B
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 04:52:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E68577F7F2;
+	Wed, 15 May 2024 04:53:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715748778; cv=none; b=iF1H7MDFqFLizA+iCfNxitU+27DnaE/ISdUqzqt5jbaUUe55LjVauM43E4/ZRirhF2jZDKNVixJfZMG/MDzVCVfBkASQGvB+0lRwLSqnu60yxUuQ9uXM3vekoYu5phK6HL1nJRqK83svGt3g/2di6e/4DFf0bDsce4CxRZSqkg4=
+	t=1715748795; cv=none; b=aEwyTefGN4ajaxKFJu6QTJVWFn5M/2EWUNBojmOAU7KjID5K3Nvxmgld8BJ90fYgD8LaVBv3V9n+clj5bffDc4Si7ZWgze6smyoDqkHypVdaWVYaEK//MS4TvR5xqn6lsE5ztTS6FINWw9BpiDDJ3tp5xNT2Ovhie8o1DIJ3bdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715748778; c=relaxed/simple;
-	bh=nkptEJqOQE2+6wrLAUuYdfLGOOYUQC9bteAa4mWyU9s=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=V5vvQlahdGL9RYJFv7DtcXQOhoG5uGrC3UNM16Ra6aTqt5iD3F0n3vQkMZY7kl0iXxTMIiY2nzlI+j5ZPfEvyzPZht4f34LQG0UMFd7YVmUC4LzGZrUQmoiEGUJ9GGSJ244+bLL6eIYXV2X1owOUaAIPcpq4QVZ5eXX0hHkamIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=darkphysics.net; spf=pass smtp.mailfrom=darkphysics.net; dkim=pass (2048-bit key) header.d=darkphysics.net header.i=@darkphysics.net header.b=Vh5AqTlI; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=darkphysics.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=darkphysics.net
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-6f44bcbaae7so5699467b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 21:52:56 -0700 (PDT)
+	s=arc-20240116; t=1715748795; c=relaxed/simple;
+	bh=qPls4b+1xeuUeDRk+txLZyx8e0JGp6v+slpeddj2bgQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qCXEB4BJpZq2OKkVxI9WZmCQ/LUyjQufAByi1uPpWBEJxYk58Jfv28eJKLTRAwIRqBMoEQFBuNQ5hvC43+V8YJvTLGZWMJYtejOLRqpLPCyPD0hN4XqIg18/2lN3+jwTPIlIYTlmc1wvo6fRdJS15qJfJGekIf9IQVWuJ9rccOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BaiqBTXV; arc=none smtp.client-ip=209.85.222.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-7f16ec9798cso1574361241.3;
+        Tue, 14 May 2024 21:53:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=darkphysics.net; s=google; t=1715748776; x=1716353576; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1715748793; x=1716353593; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=v/vMjY9MMZPdnh9VWVVbKPQx3shyavZBcDLjbDKqtMI=;
-        b=Vh5AqTlIxnsXGHkVvZbvKVhy3BwkOsPPhoBu/BnPsdpy6V5tFK+Er5O98zVOwvrT+G
-         bDvt87lW1KcfoX/yTBgDINA+z6mWj7pBP3ddU95lEUDT+RulRiPDHViPLjH9HO9qyEZ5
-         h2pKTuyuZVJwadJm7xvxcxSmNddebOuYIld2KCQYOtjhKIWMoM8q/aCDZxukczAeLOcx
-         iZoMDlObNrJAvs/EO7H8TlkBfhTYyTSiDQN/a3bqOWPVkcl+EK3ruOEoGwxQ4uolbdyq
-         PjfYnz0pEYw15g4tTIXEnKANYxe8vWbncRpEhOWqpf9XHW4Kf0cVRj1NMsuSwkI1egiU
-         q+BQ==
+        bh=aesBuOS+4Ftj63tZwTxdkb2ZpDV/W4tpYUDHgmuprMI=;
+        b=BaiqBTXV5Z0GntaxSPiIl8BdEP331lZfkoa/F9cPDE8JxpjVAL6uoC4a1JBo60SIcI
+         ZAg8FGXdYyn3hb4vYyfUoOy+p3O8gKfU0IyrVM0EzgR9jQSAvSjoHIIqKailWkgsGY//
+         q86OY2my25eILgHfkqVAnsioAEgEBDcbPa0ZiGXPcWjySoAhHs4WoUw/9CuAf+wkKzVu
+         P2EkEY1DlXqT8JDGornzm1Skerv/alqsjJ6Vpf+XUAWtcqZKIthZbUNBZxBQE88IADYB
+         fJsMncBkrGQ+F+LvhBJKbwFmCEMZ5Txyq3GKztTngENtRxrYD/CegiV1PAtLKUm7QQZ3
+         pj2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715748776; x=1716353576;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1715748793; x=1716353593;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=v/vMjY9MMZPdnh9VWVVbKPQx3shyavZBcDLjbDKqtMI=;
-        b=ofqaT3iqGcLxqYhR18KnIwbVgzmhiliIoqvmeC4W4szHX/SGXmhg5IQv/K3f8GIGVD
-         mIncmT4dv+qq0lNVSlklAh4wlg9iwCUDW1lCOs/KMaRYwCtIGNm4woLaFgRGRY4sfoYk
-         9AM+pz0MINqKOVCS6Qbg9P5jbLIZRyRu5S7qX+AHL6K8zFZIijzIP9chP12jI4lg1kV1
-         igjc+VudP7MGy7e96/ok4H2OM5l7YpGldyNg6Z4HbBSn9kxBcm+eeLneF8X43CUq8Bki
-         Y3Lae39rBNzYg5zvtRvBI+AhMgAeNKyD1SKdEuyL0OXUKFphEQcXByI+ObzuZPLAK3KW
-         tZQA==
-X-Forwarded-Encrypted: i=1; AJvYcCU9nt0dQSA0hpqw5h8nlJeMp9ytHB9LnlWXWg67Egs+rUEttjKdoZu+CtDlw9WwQkr0e5MummV7Q6j2Tp3HyIPUPCJCRus5JZ0va7cr
-X-Gm-Message-State: AOJu0YwuANV04LzdC23PUIkkGDTZ/VhgyDyeSYt1N7CIf9JxfXhVqdql
-	qZAn/2keIMRk/gMT69QOoZrj4NVMYv8kxoSghmZk+MUcsQCkeG7RlQyFiU8ErPM=
-X-Google-Smtp-Source: AGHT+IElzfY19fa8de6K/sc2J/9/ZZDO0caJ5RXxO9clQ88I9Nnd58mBxLMlN/it8652PIjWhC8irQ==
-X-Received: by 2002:a05:6a00:23d3:b0:6f3:ef3d:60f4 with SMTP id d2e1a72fcca58-6f4e03a2c5amr17680652b3a.33.1715748775937;
-        Tue, 14 May 2024 21:52:55 -0700 (PDT)
-Received: from lunchbox.darkphysics (c-76-146-178-2.hsd1.wa.comcast.net. [76.146.178.2])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2a827fdsm10135035b3a.60.2024.05.14.21.52.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 May 2024 21:52:55 -0700 (PDT)
-From: Tree Davies <tdavies@darkphysics.net>
-To: gregkh@linuxfoundation.org,
-	philipp.g.hortmann@gmail.com,
-	anjan@momi.ca
-Cc: linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Tree Davies <tdavies@darkphysics.net>
-Subject: [PATCH 31/31] Staging: rtl8192e: Rename variable bPktInBuf
-Date: Tue, 14 May 2024 21:52:28 -0700
-Message-Id: <20240515045228.35928-32-tdavies@darkphysics.net>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20240515045228.35928-1-tdavies@darkphysics.net>
-References: <20240515045228.35928-1-tdavies@darkphysics.net>
+        bh=aesBuOS+4Ftj63tZwTxdkb2ZpDV/W4tpYUDHgmuprMI=;
+        b=SIGeoHDNZfNhXfxzfhZnmir++JeVfldoEcex3KGqfijZr00RN/ZueJCRc9QUBDjabQ
+         396VVTcL6o1iQZmhRORk0ssRn0n0gIWhKUGy+ZP3jMnVZCWs6gca80yrfMK60TMhyys5
+         Ocp4BVakykfUkK8tTAcvb/xbFhul/FYL7/Aqiup3Zz2q1Wi5gpPgBRd4atygZQ+mbZic
+         052hh0pSPM+Ph3SZc3gD69ytQz3UzrlqorqTY3wkwzW0pn4mkyw2+Z14Q1bGP6eIbhJi
+         q+32iUfFIgeQ55/Kmv3NNQLIWEvVwH1vRy7Y3X+ozgOJLkKl7D3Hweur/bJHhSR0p81X
+         yJ2A==
+X-Forwarded-Encrypted: i=1; AJvYcCXfMAMoYeWn845Bynz3baNGYMtvU7IwuxJhaYnFAMdtQ4eALDpg1WwtelAEJSvvRjesGisSYtq/DTmek/JY/AI5S3iSx7fNdmmZAUKSaY7l4Jin9+VkuxkBnpnE2Os1qIRqcSZYw/akvw==
+X-Gm-Message-State: AOJu0Yz/74N+Ag9qPdE1XhOIZbeWB6VXTZP5tJaOx6Akbss8lgHdac9r
+	JdO8cEm0TfhCjmXqukPrmEpFQRMQ7t6Yt7Bzon10xowWFM4ENGNmLbtQd5tmmhS1cCWs+XYHRUb
+	VKBgif1fc8GRIF5GRDitBNOzjHaqLwc37Q6U=
+X-Google-Smtp-Source: AGHT+IF2K1m0sHCmcxiXGK6ADeM63o/iTW26THXE/tTpqt+3SoPy7O/zfOt3/q5GgcYKxJwG1alNpwpjd/cBB4fDgWc=
+X-Received: by 2002:a05:6102:3709:b0:47b:dc91:e69 with SMTP id
+ ada2fe7eead31-48077e7b9a0mr12040050137.27.1715748791209; Tue, 14 May 2024
+ 21:53:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240423150728.91527-1-sheharyaar48@gmail.com> <f60aac7f-dbba-4cba-8bb6-302b5c911b8c@linaro.org>
+In-Reply-To: <f60aac7f-dbba-4cba-8bb6-302b5c911b8c@linaro.org>
+From: Mohammad Shehar Yaar Tausif <sheharyaar48@gmail.com>
+Date: Wed, 15 May 2024 10:23:00 +0530
+Message-ID: <CAHTLo_=Gg-KN2zOtjOBCxQURq+Ap913Miph2FMhvkoV+GybFNA@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: vt8500: replace "uhci" nodename with generic
+ name "usb"
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Rename variable bPktInBuf to pkt_in_buf
-to fix checkpatch warning Avoid CamelCase.
+On Tue, Apr 23, 2024 at 8:46=E2=80=AFPM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> On 23/04/2024 17:07, Mohammad Shehar Yaar Tausif wrote:
+> > Replace "uhci" nodenames with "usb" as it's generic and aligns with
+> > the schema binding.
+> >
+> > Signed-off-by: Mohammad Shehar Yaar Tausif <sheharyaar48@gmail.com>
+> > ---
+> >  arch/arm/boot/dts/vt8500/vt8500.dtsi | 2 +-
+> >  arch/arm/boot/dts/vt8500/wm8505.dtsi | 2 +-
+> >  arch/arm/boot/dts/vt8500/wm8650.dtsi | 2 +-
+> >  arch/arm/boot/dts/vt8500/wm8750.dtsi | 4 ++--
+> >  arch/arm/boot/dts/vt8500/wm8850.dtsi | 4 ++--
+> >  5 files changed, 7 insertions(+), 7 deletions(-)
+>
+>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>
+> Best regards,
+> Krzysztof
+>
 
-Signed-off-by: Tree Davies <tdavies@darkphysics.net>
----
- drivers/staging/rtl8192e/rtl819x_TSProc.c |  8 ++++----
- drivers/staging/rtl8192e/rtllib_rx.c      | 10 +++++-----
- 2 files changed, 9 insertions(+), 9 deletions(-)
+Hi,
 
-diff --git a/drivers/staging/rtl8192e/rtl819x_TSProc.c b/drivers/staging/rtl8192e/rtl819x_TSProc.c
-index 9903fe3f3c77..7cdeca7ed8c2 100644
---- a/drivers/staging/rtl8192e/rtl819x_TSProc.c
-+++ b/drivers/staging/rtl8192e/rtl819x_TSProc.c
-@@ -18,7 +18,7 @@ static void RxPktPendingTimeout(struct timer_list *t)
- 
- 	unsigned long flags = 0;
- 	u8 index = 0;
--	bool bPktInBuf = false;
-+	bool pkt_in_buf = false;
- 
- 	spin_lock_irqsave(&(ieee->reorder_spinlock), flags);
- 	if (ts->rx_timeout_indicate_seq != 0xffff) {
-@@ -50,7 +50,7 @@ static void RxPktPendingTimeout(struct timer_list *t)
- 				list_add_tail(&pReorderEntry->list,
- 					      &ieee->RxReorder_Unused_List);
- 			} else {
--				bPktInBuf = true;
-+				pkt_in_buf = true;
- 				break;
- 			}
- 		}
-@@ -68,10 +68,10 @@ static void RxPktPendingTimeout(struct timer_list *t)
- 			return;
- 		}
- 		rtllib_indicate_packets(ieee, ieee->stats_IndicateArray, index);
--		bPktInBuf = false;
-+		pkt_in_buf = false;
- 	}
- 
--	if (bPktInBuf && (ts->rx_timeout_indicate_seq == 0xffff)) {
-+	if (pkt_in_buf && (ts->rx_timeout_indicate_seq == 0xffff)) {
- 		ts->rx_timeout_indicate_seq = ts->rx_indicate_seq;
- 		mod_timer(&ts->rx_pkt_pending_timer,  jiffies +
- 			  msecs_to_jiffies(ieee->ht_info->rx_reorder_pending_time)
-diff --git a/drivers/staging/rtl8192e/rtllib_rx.c b/drivers/staging/rtl8192e/rtllib_rx.c
-index 43e94af07e99..c17e7d3ca8c3 100644
---- a/drivers/staging/rtl8192e/rtllib_rx.c
-+++ b/drivers/staging/rtl8192e/rtllib_rx.c
-@@ -529,7 +529,7 @@ static void rx_reorder_indicate_packet(struct rtllib_device *ieee,
- 	u8 win_size = ht_info->rx_reorder_win_size;
- 	u16 win_end = 0;
- 	u8 index = 0;
--	bool match_win_start = false, bPktInBuf = false;
-+	bool match_win_start = false, pkt_in_buf = false;
- 	unsigned long flags;
- 
- 	netdev_dbg(ieee->dev,
-@@ -665,7 +665,7 @@ static void rx_reorder_indicate_packet(struct rtllib_device *ieee,
- 				netdev_err(ieee->dev,
- 					   "%s(): Buffer overflow!\n",
- 					   __func__);
--				bPktInBuf = true;
-+				pkt_in_buf = true;
- 				break;
- 			}
- 
-@@ -683,7 +683,7 @@ static void rx_reorder_indicate_packet(struct rtllib_device *ieee,
- 			list_add_tail(&pReorderEntry->list,
- 				      &ieee->RxReorder_Unused_List);
- 		} else {
--			bPktInBuf = true;
-+			pkt_in_buf = true;
- 			break;
- 		}
- 	}
-@@ -707,10 +707,10 @@ static void rx_reorder_indicate_packet(struct rtllib_device *ieee,
- 			return;
- 		}
- 		rtllib_indicate_packets(ieee, ieee->prxb_indicate_array, index);
--		bPktInBuf = false;
-+		pkt_in_buf = false;
- 	}
- 
--	if (bPktInBuf && ts->rx_timeout_indicate_seq == 0xffff) {
-+	if (pkt_in_buf && ts->rx_timeout_indicate_seq == 0xffff) {
- 		netdev_dbg(ieee->dev, "%s(): SET rx timeout timer\n", __func__);
- 		ts->rx_timeout_indicate_seq = ts->rx_indicate_seq;
- 		spin_unlock_irqrestore(&ieee->reorder_spinlock, flags);
--- 
-2.30.2
+Is there any further feedback or update for this ? This patch is not
+yet merged but the related dt-binding patch that has been merged :
+https://lore.kernel.org/all/20240423150550.91055-1-sheharyaar48@gmail.com/.
+I understand that this is a trivial patch and the maintainers may be
+busy with important work.
 
+Regards,
+Shehar
 
