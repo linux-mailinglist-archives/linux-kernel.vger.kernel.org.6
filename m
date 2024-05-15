@@ -1,92 +1,210 @@
-Return-Path: <linux-kernel+bounces-179711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 058348C63D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 11:37:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C09F8C63DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 11:39:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F030B22CBA
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:37:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8072B23155
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:39:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F5BB5A11F;
-	Wed, 15 May 2024 09:37:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B6DC58AC4;
+	Wed, 15 May 2024 09:39:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mDI7lWWg"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QDnMwim4"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4646E57C9A
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 09:37:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DD0A1DFFD
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 09:39:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715765823; cv=none; b=WNN4kaHj/a0zj01Ddm/n9ascu+qCvacT7VG8qUFrNhzcNP3g88nFx1KS0DXj/VqqWWPW/zHFwqP2+N+/4/YpVgElKuG0bqREdriNPJ1SOTtdZfrJ+gNWgP6S98dOJ6/3u70yqv65hosUtAK5V0gux5DxNwAuHVZJ8AyZJZlt1e0=
+	t=1715765986; cv=none; b=U8wEVCWVmHIW82jlnpTj/jN3I1M9CsaG2ILOsI2ntRjpdOj7Sl/JqMpkMrzqMoiwxMU8/f4GVxajYG45H8oZgudNnW/SoUazGktQj2b45zfJeVMhhdiDtsm7mGLgmfqI/A8Z9A0yOwY4H/hm+pCI6FieDAOcWFOiK6DMPu0kjrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715765823; c=relaxed/simple;
-	bh=FjaK1rsFpNKRwzTdBmvxmqBqC9fajMVEyREzJ2HJ1BA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LPvHOm2IMwd928HZGVWja7jRZbwYbZVJVfas3JR2TBu6JqWnYlEg/9TA1MIRi4oQ//uDTDDwa6wQtqeeqj+ZwJBsby4jsXnHaL9KWbMJglx1C/hxSoEnqacTAQfQY0sse1/evDFUxTzS2mIDBCLdK6AMJEIQip+Np0XWISYQdQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=mDI7lWWg; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=7aiqKEGQMkJPcMbAtoCRjnVTG9iUs0UrpmMn+emZwVM=; b=mDI7lWWgvfz/0A3fXpfl5R7kOX
-	YsiMUysX8LtbdWbe3K4fp9Bu2Tn/wTirSsARZ0XFMc8/VEMN0Oe1nGjTsfxNxiFye8o1tBgj4BLa6
-	0g8hxJAnSHF93FckM78QcfFxPZV91+rK9hUPUi2UhRACnzBeYAIP84yLjeqNT97HPKy1IPY28oa7X
-	XC+ThcX5iXDyG1k0geWFsBjkeGipOeMQmkCKuaevMVjNjQZ/E5kE8YU1EPeAEaV99tkXxl6nXCtuq
-	xAaBEMtBIPice9Rn0cELMg9SgGAZ0calYhbdcbTwmFaNQV5f7uOzJBbM5Cn2wVOs644as9x7Yc+JS
-	yD4Gd5Vg==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s7B45-0000000ABKu-2w8o;
-	Wed, 15 May 2024 09:36:51 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 54E7330068B; Wed, 15 May 2024 11:36:49 +0200 (CEST)
-Date: Wed, 15 May 2024 11:36:49 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Luis Machado <luis.machado@arm.com>
-Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
-	linux-kernel@vger.kernel.org, kprateek.nayak@amd.com,
-	wuyun.abel@bytedance.com, tglx@linutronix.de, efault@gmx.de,
-	nd <nd@arm.com>, John Stultz <jstultz@google.com>,
-	Hongyan.Xia2@arm.com
-Subject: Re: [RFC][PATCH 08/10] sched/fair: Implement delayed dequeue
-Message-ID: <20240515093649.GF40213@noisy.programming.kicks-ass.net>
-References: <20240405102754.435410987@infradead.org>
- <20240405110010.631664251@infradead.org>
- <3888d7c8-660e-479c-8c10-8295204e5f36@arm.com>
- <1461277e-af68-41e7-947c-9178b55810b1@arm.com>
- <20240425104220.GE21980@noisy.programming.kicks-ass.net>
- <20240425114949.GH12673@noisy.programming.kicks-ass.net>
- <20240426093241.GI12673@noisy.programming.kicks-ass.net>
- <c6152855-ef92-4c24-a3f5-64d4256b6789@arm.com>
- <2fba04b0-e55e-41f4-8b7a-723734fe1ad2@arm.com>
- <219b8b49-3767-4010-aa68-9e1cf66c2ccb@arm.com>
+	s=arc-20240116; t=1715765986; c=relaxed/simple;
+	bh=9uh3zKLDMxB2n7lOvq1zpArtcYEgDMl2J1QTDfbEfUo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=hyyLGyNecRU/fCJaBc1x+LIwoVVjHYkqad2MaNmzxODtCPNaH+o/UuD6X0ExIpXrdNmvM0Ak/yBqiutVkvFo/PV+aZCK6TT6VdJzcYFM/Y5yvpOoJtr9ECY0H64wdZ7aMedalamupJTt5mvCSQkAlb6XCNcZY/RFuFdei1u8kGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QDnMwim4; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715765984; x=1747301984;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=9uh3zKLDMxB2n7lOvq1zpArtcYEgDMl2J1QTDfbEfUo=;
+  b=QDnMwim4bdeadtccnZ2fzZErf98fyKugCpGEJPutFssz4FDKphlIK7Yh
+   DLALaoamIcSWgdLpGdeY3FHr3DFdiA1y2C6EJ7U32DZAVqUN9PpR7jion
+   HY/wgNSMw7v8B+x8xul/lTI+ZNp5GOJ455QCQEhn/TDbB0BZJ0N5iA3Jb
+   +J9/NaqQogcTPEao+Zf7VM8rkACaFLHNHaiAcdRhiG1LEe8t8CLqw1q80
+   0rMYZOUcE5FTxa2qMI14u9bO5nB8NBXtoZrDCix4JeeL/oewTUq6fxelB
+   8oJ/2LvbeyjHvfNBkGWmokJMcKva3JC5qZ8rJkFU9TokOBcdedxS4AYw9
+   g==;
+X-CSE-ConnectionGUID: m9NocOVUSeenZbwCsssSYw==
+X-CSE-MsgGUID: /Nt1xBn7S6qjNQHTpXnQrg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11073"; a="11933985"
+X-IronPort-AV: E=Sophos;i="6.08,161,1712646000"; 
+   d="scan'208";a="11933985"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 02:39:44 -0700
+X-CSE-ConnectionGUID: xDPFVd8oTUKsi3PxrpFcNQ==
+X-CSE-MsgGUID: JXGHlvzkRhmuVWa9MkEVrA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,161,1712646000"; 
+   d="scan'208";a="35693516"
+Received: from mwiniars-desk2.ger.corp.intel.com (HELO localhost) ([10.245.246.141])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 02:39:41 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Sui Jingfeng <sui.jingfeng@linux.dev>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Maxime Ripard <mripard@kernel.org>, Dmitry
+ Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Sui
+ Jingfeng <sui.jingfeng@linux.dev>
+Subject: Re: [PATCH 1/2] drm/bridge: Support finding bridge with struct device
+In-Reply-To: <20240514154045.309925-2-sui.jingfeng@linux.dev>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20240514154045.309925-1-sui.jingfeng@linux.dev>
+ <20240514154045.309925-2-sui.jingfeng@linux.dev>
+Date: Wed, 15 May 2024 12:39:37 +0300
+Message-ID: <87v83fct2e.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <219b8b49-3767-4010-aa68-9e1cf66c2ccb@arm.com>
+Content-Type: text/plain
 
-On Fri, May 10, 2024 at 03:49:46PM +0100, Luis Machado wrote:
-> Just a quick update on this. While investigating this behavior, I
-> spotted very high loadavg values on an idle system. For instance:
-> 
-> load average: 4733.84, 4721.24, 4680.33
-> 
-> I wonder if someone else also spotted this.
+On Tue, 14 May 2024, Sui Jingfeng <sui.jingfeng@linux.dev> wrote:
+> The pointer of 'struct device' can also be used as a key to search drm
+> bridge instance from the global bridge list, traditionally, fwnode and
+> 'OF' based APIs requires the system has decent fwnode/OF Graph support.
+> While the drm_find_bridge_by_dev() function introduced in this series
+> don't has such a restriction. It only require you has a pointer to the
+> backing device. Hence, it may suitable for some small and/or limited
+> display subsystems.
+>
+> Also add the drm_bridge_add_with_dev() as a helper, which automatically
+> set the .of_node field of drm_bridge instances if you call it. But it
+> suitable for simple bridge drivers which one device backing one drm_bridge
+> instance.
+>
+> Signed-off-by: Sui Jingfeng <sui.jingfeng@linux.dev>
+> ---
+>  drivers/gpu/drm/drm_bridge.c | 39 ++++++++++++++++++++++++++++++++++++
+>  include/drm/drm_bridge.h     |  5 +++++
+>  2 files changed, 44 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
+> index 584d109330ab..1928d9d0dd3c 100644
+> --- a/drivers/gpu/drm/drm_bridge.c
+> +++ b/drivers/gpu/drm/drm_bridge.c
+> @@ -213,6 +213,23 @@ void drm_bridge_add(struct drm_bridge *bridge)
+>  }
+>  EXPORT_SYMBOL(drm_bridge_add);
+>  
+> +/**
+> + * drm_bridge_add_with_dev - add the given bridge to the global bridge list
+> + *
+> + * @bridge: bridge control structure
+> + * @dev: pointer to the kernel device that this bridge is backed.
+> + */
+> +void drm_bridge_add_with_dev(struct drm_bridge *bridge, struct device *dev)
+> +{
+> +	if (dev) {
+> +		bridge->kdev = dev;
+> +		bridge->of_node = dev->of_node;
+> +	}
+> +
+> +	drm_bridge_add(bridge);
+> +}
+> +EXPORT_SYMBOL_GPL(drm_bridge_add_with_dev);
 
-Hadn't spotted it, but now that you mention it, I can definitely see it.
+I don't actually have an opinion on whether the dev parameter is useful
+or not.
 
-Let me go prod with something sharp. Thanks!
+But please don't add a drm_bridge_add_with_dev() and then convert more
+than half the drm_bridge_add() users to that. Please just add a struct
+device *dev parameter to drm_bridge_add(), and pass NULL if it's not
+relevant.
+
+BR,
+Jani.
+
+
+> +
+>  static void drm_bridge_remove_void(void *bridge)
+>  {
+>  	drm_bridge_remove(bridge);
+> @@ -1334,6 +1351,27 @@ void drm_bridge_hpd_notify(struct drm_bridge *bridge,
+>  }
+>  EXPORT_SYMBOL_GPL(drm_bridge_hpd_notify);
+>  
+> +struct drm_bridge *drm_find_bridge_by_dev(struct device *kdev)
+> +{
+> +	struct drm_bridge *bridge;
+> +
+> +	if (!kdev)
+> +		return NULL;
+> +
+> +	mutex_lock(&bridge_lock);
+> +
+> +	list_for_each_entry(bridge, &bridge_list, list) {
+> +		if (bridge->kdev == kdev) {
+> +			mutex_unlock(&bridge_lock);
+> +			return bridge;
+> +		}
+> +	}
+> +
+> +	mutex_unlock(&bridge_lock);
+> +	return NULL;
+> +}
+> +EXPORT_SYMBOL_GPL(drm_find_bridge_by_dev);
+> +
+>  #ifdef CONFIG_OF
+>  /**
+>   * of_drm_find_bridge - find the bridge corresponding to the device node in
+> @@ -1361,6 +1399,7 @@ struct drm_bridge *of_drm_find_bridge(struct device_node *np)
+>  	return NULL;
+>  }
+>  EXPORT_SYMBOL(of_drm_find_bridge);
+> +
+>  #endif
+>  
+>  MODULE_AUTHOR("Ajay Kumar <ajaykumar.rs@samsung.com>");
+> diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
+> index 4baca0d9107b..70d8393bbd9c 100644
+> --- a/include/drm/drm_bridge.h
+> +++ b/include/drm/drm_bridge.h
+> @@ -715,6 +715,8 @@ struct drm_bridge {
+>  	struct drm_private_obj base;
+>  	/** @dev: DRM device this bridge belongs to */
+>  	struct drm_device *dev;
+> +	/** @kdev: pointer to the kernel device backing this bridge */
+> +	struct device *kdev;
+>  	/** @encoder: encoder to which this bridge is connected */
+>  	struct drm_encoder *encoder;
+>  	/** @chain_node: used to form a bridge chain */
+> @@ -782,12 +784,15 @@ drm_priv_to_bridge(struct drm_private_obj *priv)
+>  }
+>  
+>  void drm_bridge_add(struct drm_bridge *bridge);
+> +void drm_bridge_add_with_dev(struct drm_bridge *bridge, struct device *dev);
+>  int devm_drm_bridge_add(struct device *dev, struct drm_bridge *bridge);
+>  void drm_bridge_remove(struct drm_bridge *bridge);
+>  int drm_bridge_attach(struct drm_encoder *encoder, struct drm_bridge *bridge,
+>  		      struct drm_bridge *previous,
+>  		      enum drm_bridge_attach_flags flags);
+>  
+> +struct drm_bridge *drm_find_bridge_by_dev(struct device *kdev);
+> +
+>  #ifdef CONFIG_OF
+>  struct drm_bridge *of_drm_find_bridge(struct device_node *np);
+>  #else
+
+-- 
+Jani Nikula, Intel
 
