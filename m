@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-179974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0827A8C6854
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:10:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18F138C6856
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 16:11:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B79A2282A23
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 14:10:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2080282BE2
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 14:11:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 617F213F457;
-	Wed, 15 May 2024 14:10:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A58AF13F438;
+	Wed, 15 May 2024 14:11:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nSJEefZH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mD5EHj9x"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A65CB64CFC;
-	Wed, 15 May 2024 14:10:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA39F6214D;
+	Wed, 15 May 2024 14:11:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715782236; cv=none; b=l7+M6CnbNHcjc8a6HIkW0eQJwIFCIsg2xnLTQV89c4OM2EZ4pH3IJrhk5IG5NV4bLKXeGfTtu/4woguKu0Th/vFANpWycVRNqnECWOa3dKOn6uk44W14yfuGsgPW4ie4N2oJL2nv+RjDZOfa+YdAUuP8BgXoIS+eYuekXfUjN58=
+	t=1715782285; cv=none; b=BnNDEVzesbzBZMB1qaezqlnaSQwrHmMJVBkB6nCwE9EAx1uyHKuKpW+sYscnyzzCVo+G3pMH7HAGin+Asp7j03z+38RWkNv9iVHilc1LLT0BA3mei1DD2TjOYtW23LeXeuOpiK90FqtnsqK01uTcCapLL2/TS4Xaob0TV0/dWaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715782236; c=relaxed/simple;
-	bh=2iZbsSMpK18XkU5G9j3RLS8TjIj91E2Mq6HqBzYe3rc=;
+	s=arc-20240116; t=1715782285; c=relaxed/simple;
+	bh=8Vrsgs+N8SbeNlOuPZmcFi6AXV1dFq4kf7hvf3cFv6M=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g9liRsgdrEaY3ElCLnUadiaa2H1/XGikXs+vfQPll5s1NdZD8kwb7l2UxeaAR1G7sIEIHyldxMA5lHwaGaVe5H94Jqx7E6wn5F6sfZ6MQgqrxtgtOPHCTyq+3LDZvMVA+mEAJVT6KJOXr3wKZTrOaO5wEYgW8dcSJIlJBjngJvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nSJEefZH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0AFAC116B1;
-	Wed, 15 May 2024 14:10:33 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=uvFy1wcWCVFP51cbhTUrzJwZkm/OYUOhG+/vHiWT1kd8Cn4yGg4EE+rMd7B0vlBzdRrQmpLRtnS9u1Q+jco0QUCXcN3yUoW7ymlqUv71w8xoarc2cO7qEoQmffzC/A+tNrMH2/PPG+BQPmScnrFCHy2cHkpA3ifxneQaIi605k8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mD5EHj9x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E707C116B1;
+	Wed, 15 May 2024 14:11:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715782236;
-	bh=2iZbsSMpK18XkU5G9j3RLS8TjIj91E2Mq6HqBzYe3rc=;
+	s=k20201202; t=1715782285;
+	bh=8Vrsgs+N8SbeNlOuPZmcFi6AXV1dFq4kf7hvf3cFv6M=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=nSJEefZHSZ5MatIZTMrfRMA8CyInT8G5NTYaWlWFJvKi0qicpYgs9tG6K4x0Sj76N
-	 lqbL4yesAiPr3dSuJ2rmcYoiN4sJ6ZnQF+aYC6JNbtzkbtph5h9GGZzwe7ZZG9NpQz
-	 A8tIi1C988jJKmlggiXZStlf0usEseFoagaA9ehdy9oyNVCfTVgISfR0SxVVgAa7MP
-	 6Mh18R/bsw3/9SulsmilzikywgJaENvfz8TojhyXC04PwMVS/ZOKs8WfL2imFnrDGo
-	 rot9HE+nRjA7aabeWeeSPBE0eLutqZ56uDsk9DcWWf7WSBVXFcVbKceB8+nMzpTjuJ
-	 JNPTmYVV0TpoA==
-Message-ID: <b99b61bd-a271-4dc8-b8fc-ab72df65dc1b@kernel.org>
-Date: Wed, 15 May 2024 16:10:32 +0200
+	b=mD5EHj9x9WrXzrxOD+DggbIJfZkOSIxpNmYvAu7TiGt6xZAfFChNG9jiuqSknoamC
+	 qtq0Z7BbJ+RDaCNJBgmu9e3ZZNGSwTZ3hedHzC9DP6HsHxL9w4Ekcl1fbwVYsIWhx9
+	 aEen3oDbM+vGUGfi81iW8fMRGf8o35cqd+igLNrX+VYr47dKo8kHIlVPbtQrzFXTtq
+	 G7BEVa1qo19wdL7HUCDuS3spUY8pAyjE+x28HxOh4SIKl2etd7jc5lQt+lZIfAHI/Z
+	 qBLoQ0fVWP9HRvOa9mVsqYlusL81z7M8ji+4g0kDNoDWaodg7qA5EytURkvk3TSMkf
+	 Q3RH8dOJL4dPQ==
+Message-ID: <52bf83a5-f62a-4758-999b-9245d4a0ceab@kernel.org>
+Date: Wed, 15 May 2024 16:11:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,12 +49,13 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/4] ARM: dts: aspeed: Add IBM P11 BMC systems
+Subject: Re: [PATCH v5 2/4] ARM: dts: aspeed: Add IBM P11 Blueridge BMC system
 To: Eddie James <eajames@linux.ibm.com>, linux-aspeed@lists.ozlabs.org
 Cc: devicetree@vger.kernel.org, andrew@codeconstruct.com.au, joel@jms.id.au,
  conor+dt@kernel.org, krzk+dt@kernel.org, robh@kernel.org,
  linux-kernel@vger.kernel.org
 References: <20240514213510.159144-1-eajames@linux.ibm.com>
+ <20240514213510.159144-3-eajames@linux.ibm.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -100,19 +101,55 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240514213510.159144-1-eajames@linux.ibm.com>
+In-Reply-To: <20240514213510.159144-3-eajames@linux.ibm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 14/05/2024 23:35, Eddie James wrote:
-> This series was previously included in
-> https://lore.kernel.org/all/20240429210131.373487-1-eajames@linux.ibm.com/
-> The series now depends on
-> https://lore.kernel.org/all/20240514212555.158788-1-eajames@linux.ibm.com/
+> Add the device tree for the new BMC system. The Blueridge is a
+> P11 system with four processors.
+> 
+> Signed-off-by: Eddie James <eajames@linux.ibm.com>
+> ---
+>  arch/arm/boot/dts/aspeed/Makefile             |    1 +
+>  .../dts/aspeed/aspeed-bmc-ibm-blueridge.dts   | 1691 +++++++++++++++++
+>  2 files changed, 1692 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-blueridge.dts
+> 
+> diff --git a/arch/arm/boot/dts/aspeed/Makefile b/arch/arm/boot/dts/aspeed/Makefile
+> index e51c6d2037255..f3db9ee156429 100644
+> --- a/arch/arm/boot/dts/aspeed/Makefile
+> +++ b/arch/arm/boot/dts/aspeed/Makefile
+> @@ -32,6 +32,7 @@ dtb-$(CONFIG_ARCH_ASPEED) += \
+>  	aspeed-bmc-facebook-yamp.dtb \
+>  	aspeed-bmc-facebook-yosemitev2.dtb \
+>  	aspeed-bmc-facebook-yosemite4.dtb \
+> +	aspeed-bmc-ibm-blueridge.dtb \
+>  	aspeed-bmc-ibm-bonnell.dtb \
+>  	aspeed-bmc-ibm-everest.dtb \
+>  	aspeed-bmc-ibm-rainier.dtb \
+> diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-blueridge.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-blueridge.dts
+> new file mode 100644
+> index 0000000000000..418eaf0a46146
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-blueridge.dts
+> @@ -0,0 +1,1691 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +// Copyright 2024 IBM Corp.
+> +/dts-v1/;
+> +
+> +#include <dt-bindings/gpio/aspeed-gpio.h>
+> +#include <dt-bindings/i2c/i2c.h>
+> +#include <dt-bindings/leds/leds-pca955x.h>
+> +#include "aspeed-g6.dtsi"
+> +#include "ibm-power11-quad.dtsi"
+> +
+> +/ {
+> +	model = "Blueridge";
+> +	compatible = "ibm,blueridge-bmc", "aspeed,ast2600";
 
-No, it does not work like this. Bindings come with the user. Do not
-create fake dependencies and DTS must be send TOGETHER with the board
-binding.
+Undocumented binding.
+
 
 Best regards,
 Krzysztof
