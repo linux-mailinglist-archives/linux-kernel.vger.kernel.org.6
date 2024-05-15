@@ -1,113 +1,97 @@
-Return-Path: <linux-kernel+bounces-180087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08E898C69F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:47:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FBEE8C69F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:47:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE9E71F21CA8
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 15:47:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 296351F237AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 15:47:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFF7E15624B;
-	Wed, 15 May 2024 15:47:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 359BF15623D;
+	Wed, 15 May 2024 15:47:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DF8iYYpJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IM1BJLV4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F167E156222;
-	Wed, 15 May 2024 15:47:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7951E149DEE;
+	Wed, 15 May 2024 15:47:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715788028; cv=none; b=peRpPSnWO/PEIa5OGu2U+yT41d2tDltJBx9huesb7ttGt0kUTQ3FYpYQdpMmbEF9FIV+zSPxgxIYp3a+eY5ZkvXiiekQcnSco3brmCllvwKrKXOoMC/tdBTWqWo3/bxp6lBOYYxgP/DPjPrtmUHn8Y9XTZDZdsXgrdDHMSdDKvM=
+	t=1715788064; cv=none; b=DE8QjR+nkw9lsHpg6JlTS2bch4NPRky/43BDmSysQM6Od/Qv8vIN+B2G2eQ/EkHzBUErx5yrHvNsDJmfs8qehle/UnIxWVDAfRaxOu+c13+5Qshp7ktWMEVXCvfNgDx9Cr9lShnuChy6jO8/7jDkylQ2ARr8hn+su9AYLJSSHjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715788028; c=relaxed/simple;
-	bh=3i/POYwuo5W+l1r5f3w06dIkd/xGPKue75hnlbOliL4=;
+	s=arc-20240116; t=1715788064; c=relaxed/simple;
+	bh=6I+MGZNd4rB5QdCOoR+WpEcEO2EJbxQV0kEaZArJvlM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JznQeXpWJwLpsd07x6WjwtIjO6S8AmGskqJn9d6dA407Q0T7OtwrbCNASWXeZvs52sRdk5jgf+FbqRlP0BH2O2amR3mdT3LpHujSIlJI9NNN3McyIx9uvEqv2Q3vK/0wVcSSFtBP8Qa5fUw+f2dgWVCtMnQc3Weylu6rRnzkGQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DF8iYYpJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38E30C116B1;
-	Wed, 15 May 2024 15:47:04 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=N9R1oL1uF7Nnzixw383MtozqwCG+82h8rPYgVf32ycniQIfBLBouTc7YDW6/KbvNKYR9mO6U9hfODhPDZRv3Pf8VVF5AsHHAVC73f7NlgOokzqmBTDK9I+j8BaA8zYR3IjK6ioQ6XFwbq+8zUlyQQ01vgE7tFwTBYTB3B97hx4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IM1BJLV4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02B86C116B1;
+	Wed, 15 May 2024 15:47:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715788027;
-	bh=3i/POYwuo5W+l1r5f3w06dIkd/xGPKue75hnlbOliL4=;
+	s=k20201202; t=1715788064;
+	bh=6I+MGZNd4rB5QdCOoR+WpEcEO2EJbxQV0kEaZArJvlM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DF8iYYpJshvHDiL0aN1ynB1Xamqclpnm5VsF7Gb/scp5CbHlyYhY5T6KjtGiHzTWB
-	 sWCeWecwaskt/I+Se+I3+9jzLZjdY5WApFbu3g1OU5/C6SaH5PdArGhjOmQRjdOnga
-	 oP59kEoDooOB60AOf8sX0eXbvIVaWJXrLq5c73G96g77s/fPb3AdEbaGIB9tW30mZy
-	 cuqbdplphnJa87SWxpquy/ytCaiuCmEJ4wGgHYnHeLM1rq9VjxZzEFYhy2Yfl5qbj3
-	 +bkm2C9PCQexxHPocoNrwfFVB3ivvjrBCzeuYrYS9/WwLBVfG515YR8ixV2OW91ZdT
-	 UvrWLVPJ+JMqQ==
-Date: Wed, 15 May 2024 16:47:02 +0100
-From: Conor Dooley <conor@kernel.org>
-To: =?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Anup Patel <anup@brainfault.org>, Shuah Khan <shuah@kernel.org>,
-	Atish Patra <atishp@atishpatra.org>, linux-doc@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, kvm@vger.kernel.org,
-	kvm-riscv@lists.infradead.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v4 02/11] riscv: add ISA extensions validation
-Message-ID: <20240515-bucktooth-squiggly-4facfc989f28@spud>
-References: <20240429150553.625165-1-cleger@rivosinc.com>
- <20240429150553.625165-3-cleger@rivosinc.com>
- <20240514-headcount-shrill-390ac0b9233c@spud>
- <7a26604f-2653-4140-9294-637b340282d1@rivosinc.com>
+	b=IM1BJLV4yLTSFoY54Mhy5LccAi03DsafhNYwwUbkci4vKDoSBordczSmhlk9S6Li7
+	 MOLHTKJxxPer/o+0WVYPSqurRfcnagz/4ZKZJtP77rRO6l0bv8ZYVJE9alNfxjcGmB
+	 pcCaMVdEc3w4DHvfdMq7qhWnlmdFb3UjdlyondkppZm1mlc9XXil5HOI6f25fnchmT
+	 UQrRA2OEK6XKk0bFlDfrs4w2jfdKTK7q1h2psmfgRe1BcV/qRPllNz1+MJUPQ68dWx
+	 M7g+d1HulVzGGu/8EDkH+K1+YLudxFhXhhIvNmzsw++b7rCC7+OD/WpWKb9iLHLkKm
+	 pI327MDKoJvxA==
+Date: Wed, 15 May 2024 16:47:37 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Alina Yu <alina_yu@richtek.com>
+Cc: lgirdwood@gmail.com, robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	johnny_lai@richtek.com, cy_huang@richtek.com
+Subject: Re: [PATCH v3 1/6] regulator: rtq2208: Fix invalid memory access
+ when devm_of_regulator_put_matches is called
+Message-ID: <f86923b8-a8ab-480f-901a-f29b0dbb0df5@sirena.org.uk>
+References: <cover.1715340537.git.alina_yu@richtek.com>
+ <636cbe817ad61a18f291b5ec8938e79043b8a646.1715340537.git.alina_yu@richtek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="B+OPq6rJ8plGHjIi"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="LooefU3oAUw2ONnD"
 Content-Disposition: inline
-In-Reply-To: <7a26604f-2653-4140-9294-637b340282d1@rivosinc.com>
+In-Reply-To: <636cbe817ad61a18f291b5ec8938e79043b8a646.1715340537.git.alina_yu@richtek.com>
+X-Cookie: When in doubt, lead trump.
 
 
---B+OPq6rJ8plGHjIi
-Content-Type: text/plain; charset=iso-8859-1
+--LooefU3oAUw2ONnD
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 15, 2024 at 03:26:23PM +0200, Cl=E9ment L=E9ger wrote:
-> > This function is badly in need of some new variable names for the first
-> > two parameters. It's hard to follow what each of them is meant to be
-> > once you're inside this function and removed from their definitions.
-> > The first parameter is the source bitmap that we've already filled from
-> > the dt/acpi scan of that hart and the second is the per-hart data
-> > structure that we're gonna assign it to and keep "forever", I think the
-> > naming should reflect that.
->=20
-> Yeah, wasn't sure of the naming at all. Would you be ok with the followin=
-g:
->=20
-> - source_isa: Input ISA bitmap parsed from ISA string (DT/ACPI)
-> - resolved_isa: Output ISA bitmap resolved from the first one
-> (configuration and extension dependencies matching).
->=20
-> Since I'm a non-native english speaker, I'm not sure at all if it
-> correctly means what they do, feel free to tell me if you have some
-> better options.
+On Fri, May 10, 2024 at 08:06:20PM +0800, Alina Yu wrote:
+> In this patch, a software bug has been fixed.
+> rtq2208_ldo_match is no longer a local variable.
+> It prevents invalid memory access when devm_of_regulator_put_matches
+>  is called.
 
-I think those are fine, thanks.
+This doesn't apply against current code, please check and resend (on
+Linus' tree rather than mine at this point given the merge window).
 
---B+OPq6rJ8plGHjIi
+--LooefU3oAUw2ONnD
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZkTY9gAKCRB4tDGHoIJi
-0gfyAQD3gQ7fCpehp/K+Pj9OiStbPvZMpDXqnSuJw6Duajbu8AD+NUc2u8OiReCl
-xfifv7AgIuj7zJ7HphX1WRFq4KJc6wQ=
-=cKSf
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZE2RgACgkQJNaLcl1U
+h9C5mAf/RLEHA17jLhOJTGLODiEwCkSBeMr4/xARXquSHhkRvqJBPasTnrkFoLm+
+YgnG7t4uYvWZPTNNWFfQRx0nFEw/S8EiWm/qOMOzVy49L4/wVgqIWrwfcOnXPB/s
+m0JSf58npdHGkdbFbfKK+z2WLYq/UyEYDL6SeqXaw1ThFrxuvOVYs6vEyfIrtb69
+5W9XgPgHOVpg+vIsij3BFSM/qv6+xVfmuD0eSNWzjoq8E54ZOKNQtdV+1hN0meKb
+NCa5CBxckJM012dbAMZ7tEqAvssevQczYnRxe4DgTwbJZvj/ad9CXeZpFfa9U0y6
+k9JdCFOb7+lydkN8NIS/PcZ6JUsp3Q==
+=0Dbw
 -----END PGP SIGNATURE-----
 
---B+OPq6rJ8plGHjIi--
+--LooefU3oAUw2ONnD--
 
