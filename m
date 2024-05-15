@@ -1,167 +1,112 @@
-Return-Path: <linux-kernel+bounces-180230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B7948C6BB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 19:48:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 809C78C6BB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 19:47:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE21B1C22146
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:48:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1E401C221DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:47:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6E6E158862;
-	Wed, 15 May 2024 17:48:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C9CB15884F;
+	Wed, 15 May 2024 17:47:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AKYetB93"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xYahn0dK"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FB25158860;
-	Wed, 15 May 2024 17:48:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66534158855
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 17:47:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715795288; cv=none; b=CyoJgP+dAzH5cCPj6PqyQ5p+6ZLmKQyTks+8dAVcQ0w9DodJX95p6c0YwFDB+MNRU4oa0wUtUvY2ScQgii2jAenyqOqQuWH/imm01J+EvYCDtj1wqgzNgdESSgEhTncR0GZW+lFwN2JVhAtY0r46EJ2E/Ixj0sj0u6Dh+gYjzsc=
+	t=1715795247; cv=none; b=pwpQEM7SLWZUHkZL6i3KCgJqY35mc8q8Z5ILpfaCvr3cbmj5ETlj1bimTHmqAt6EvxDx0iKr28271ZE9WV9p/caQbnPYFm6gHeocEl1CjAir9TgPosjOGG5rKK28oBLPzZ3c0TQLf3N2Fb7UUHG0O1nw/ljdZXaAeKFZfS7Kz+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715795288; c=relaxed/simple;
-	bh=xMrmqGZHOFO0FBB5gl+pygCJcHRq/yHK9bJC5kINOGg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f+sldQiMxKdMKKwW2WAT/1qB/j0JVpRS8g9+VfIck4eV/8/+AcqH37CvGP6AtsO6T7NQpy5hFaZfMoSGjhs8mKSBZuJFVA5F4xqHlzLgp3YcYdRpySoDixx/hYIQVrSl6eGcH/jFoBUuS61fWdM7IymjTBSwqjvfUbXOSujq3Kg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AKYetB93; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715795286; x=1747331286;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=xMrmqGZHOFO0FBB5gl+pygCJcHRq/yHK9bJC5kINOGg=;
-  b=AKYetB93aeRHL4liWdUeJ/4O8Z4IGNSPbjv0TRa1mb8Pn2rrL/Vm4ciz
-   FDjYmUFnaftu/FngCM4lA8ZpugDYsr7vkYZgL3eXSPa4jslx5cv5a9WG0
-   YoHkS/ampttlhefT5SA8eeaktYr40Swv90XC9d+QK8afea+vbYMXqU+iT
-   a/syZ9xYBjI6iHdtlqIxyukUbJzAzXqeXqrWjhwpa4RU3NBiEjEY5b/D+
-   9msHFI6akHpxuf6skR0DDBL9EihpKgox3n2O8C1XISt1ds9TcTbcr8Rt3
-   eqTUgBUOpbRXDXxqEQK4KDblm8t3LfIKHDaVAb3xC6w7jrc/2OBzc/cYm
-   w==;
-X-CSE-ConnectionGUID: hSAAVt/QRRiZm2tj3F0e8w==
-X-CSE-MsgGUID: i7fLzU+RS+aLQHimJxb/0Q==
-X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="23266189"
-X-IronPort-AV: E=Sophos;i="6.08,162,1712646000"; 
-   d="scan'208";a="23266189"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 10:48:01 -0700
-X-CSE-ConnectionGUID: vrKLvf9nSoWN9pcJPKbFLw==
-X-CSE-MsgGUID: lIOSSUD+Ra2E1OgS3yl50Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,162,1712646000"; 
-   d="scan'208";a="36019653"
-Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 15 May 2024 10:47:57 -0700
-Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s7IjK-000D6H-1O;
-	Wed, 15 May 2024 17:47:54 +0000
-Date: Thu, 16 May 2024 01:47:09 +0800
-From: kernel test robot <lkp@intel.com>
-To: Daniel Gomez <da.gomez@samsung.com>,
-	"hughd@google.com" <hughd@google.com>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"willy@infradead.org" <willy@infradead.org>,
-	"jack@suse.cz" <jack@suse.cz>,
-	"mcgrof@kernel.org" <mcgrof@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-	"djwong@kernel.org" <djwong@kernel.org>,
-	Pankaj Raghav <p.raghav@samsung.com>,
-	"dagmcr@gmail.com" <dagmcr@gmail.com>,
-	"yosryahmed@google.com" <yosryahmed@google.com>,
-	"baolin.wang@linux.alibaba.com" <baolin.wang@linux.alibaba.com>,
-	"ritesh.list@gmail.com" <ritesh.list@gmail.com>,
-	"lsf-pc@lists.linux-foundation.org" <lsf-pc@lists.linux-foundation.org>,
-	"david@redhat.com" <david@redhat.com>,
-	"chandan.babu@oracle.com" <chandan.babu@oracle.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"brauner@kernel.org" <brauner@kernel.org>,
-	Daniel Gomez <da.gomez@samsung.com>
-Subject: Re: [PATCH 11/12] shmem: add file length arg in shmem_get_folio()
- path
-Message-ID: <202405160144.a9ad9CX5-lkp@intel.com>
-References: <20240515055719.32577-12-da.gomez@samsung.com>
+	s=arc-20240116; t=1715795247; c=relaxed/simple;
+	bh=/zCcP1X1di1bJ8igzkeKa8QLS6+W1fjEL6lp+hEgy6k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ATjOHXwtBsyY17zhbJH6AiZbG+orfqas6Wf0A+hmCgvbICoUfQl4hhfWBmSqHfidUec1f3JGd6DiyfVKLMtgpT7hW8JZlmRuN+59ivBJCkY1Pi2uufG31yWCdsGUnyndm/S/7NEROJLl2nU0F9AgIjd7b6RoI7EsjVBKXRjBtrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xYahn0dK; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5724736770cso28706a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 10:47:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715795244; x=1716400044; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/zCcP1X1di1bJ8igzkeKa8QLS6+W1fjEL6lp+hEgy6k=;
+        b=xYahn0dKtXhY820/F6CDXFoP2gqTb3Hyfibp5IhGBY3fywmEfVxRVozqL6hItqnjnO
+         73RLzB7KCmKM0I3TXcX/6+7KP/ldHnAKgdM57sUa2XOpDyDsCQGCBT/QAhjBWCgfm/V9
+         u27KFFgy07GkEfUxR4YN+0E6bH0YfVYZKH4RG1WXz4bVxJAUJGSGaxXNh5IVF/r5F0Lr
+         7DyJouQ+vssBpPZW2Qlx/9mMMOVzgCu4C4UpFSti3OYZkOL/j5JYtOSOt6b6GhsTF1/t
+         jeuqic9Jwm+9EhQbl9/vwBfrxgxlRkOecOmKXKHIpZ6UHf4OnFBlF6olubIFhO5fAmzo
+         qTaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715795244; x=1716400044;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/zCcP1X1di1bJ8igzkeKa8QLS6+W1fjEL6lp+hEgy6k=;
+        b=gSXLfHIgUiEBma9z2l5tZTrQ3qImBjQ8rQEL7YA8xkG99Af8RJ8H1TscvQsfHWn/sB
+         ndpA0XGmMvwrnJSrTkLeZbdVTlTYnX+fYIV0a8DEXisgbRLxfj7/UExh5Fjcxcbk+6o1
+         vYQsBKW6h+vfQU8iripIERY8UyVuVztZjAWwU/OBMe1imKXaQSNHT9ubDkcVAWeWyFUC
+         lxFLwIfPJANB65YUaH3mkbHWVBBggZQpFBD6nMkFfGETnPL+3zQlQ83SGEHqy7UcpbkQ
+         GVIFIhhnNlq9KPpQZjSaABTut24W6aap7sjxo/pGp9t8Dbno4/CO+mqCV9Pzp5AryO7H
+         ONTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX1ScKodaqc1hs0JzilP1Ur52Q9Ik6qDhL7fSJXwcFDlQI9ymjw74i9vEu1NCo0O9IU7kPLXQNLOtGCVEYq3FEPizTey3qQzzSrRi+j
+X-Gm-Message-State: AOJu0YwBE8vp4a0HicKrVNe/u5Yr9eUZf7eP/VA+GM8EftZCFfq26ile
+	SBedPFpBiBx3hJhwbenL0TI0sHlCOORxQqt2yi8YQexQJgXvGeLfqDeFbAEDgSOw1S8xADMihB+
+	hEpXrORB7zZWfF5nwTpcxChodAPSN45hegdU=
+X-Google-Smtp-Source: AGHT+IGAXYIvp/5ckzCX34ddHzC1hiYy+B64kYba2ozl+yuCpUfE1UDiQpoL6EmGIVsWJBofAQCpERhDXWItJwqAXeM=
+X-Received: by 2002:a50:cb8c:0:b0:573:438c:778d with SMTP id
+ 4fb4d7f45d1cf-574ae3c1280mr810495a12.1.1715795243503; Wed, 15 May 2024
+ 10:47:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240515055719.32577-12-da.gomez@samsung.com>
+References: <20240510191423.2297538-1-yabinc@google.com> <20240510191423.2297538-4-yabinc@google.com>
+ <CAM9d7chNz8-84m28q5qSLjUjZ=Ni1CA_JzbB_P+YJooLQd85YA@mail.gmail.com> <20240515085840.GD40213@noisy.programming.kicks-ass.net>
+In-Reply-To: <20240515085840.GD40213@noisy.programming.kicks-ass.net>
+From: Yabin Cui <yabinc@google.com>
+Date: Wed, 15 May 2024 10:47:11 -0700
+Message-ID: <CALJ9ZPOr7Jg8Vic9Ap5+jYqJVaLeV3DEJm3dAGBCLB9DL5EusQ@mail.gmail.com>
+Subject: Re: [PATCH v4 3/3] perf/core: Check sample_type in perf_sample_save_brstack
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Namhyung Kim <namhyung@kernel.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Daniel,
+On Wed, May 15, 2024 at 1:58=E2=80=AFAM Peter Zijlstra <peterz@infradead.or=
+g> wrote:
+>
+> On Fri, May 10, 2024 at 02:29:58PM -0700, Namhyung Kim wrote:
+> > On Fri, May 10, 2024 at 12:14=E2=80=AFPM Yabin Cui <yabinc@google.com> =
+wrote:
+> > >
+> > > Check sample_type in perf_sample_save_brstack() to prevent
+> > > saving branch stack data when it isn't required.
+> > >
+> > > Suggested-by: Namhyung Kim <namhyung@kernel.org>
+> > > Signed-off-by: Yabin Cui <yabinc@google.com>
+> >
+> > It seems powerpc has the similar bug, then you need this:
+> >
+> > Fixes: eb55b455ef9c ("perf/core: Add perf_sample_save_brstack() helper"=
+)
+>
+> Is this really a bug? AFAICT it just does unneeded work, no?
 
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on akpm-mm/mm-everything]
-[also build test WARNING on xfs-linux/for-next brauner-vfs/vfs.all linus/master v6.9 next-20240515]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Daniel-Gomez/splice-don-t-check-for-uptodate-if-partially-uptodate-is-impl/20240515-135925
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20240515055719.32577-12-da.gomez%40samsung.com
-patch subject: [PATCH 11/12] shmem: add file length arg in shmem_get_folio() path
-config: openrisc-defconfig (https://download.01.org/0day-ci/archive/20240516/202405160144.a9ad9CX5-lkp@intel.com/config)
-compiler: or1k-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240516/202405160144.a9ad9CX5-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405160144.a9ad9CX5-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> mm/shmem.c:2382: warning: Function parameter or struct member 'len' not described in 'shmem_get_folio'
-
-
-vim +2382 mm/shmem.c
-
-^1da177e4c3f41 Linus Torvalds          2005-04-16  2356  
-d7468609ee0f90 Christoph Hellwig       2024-02-19  2357  /**
-d7468609ee0f90 Christoph Hellwig       2024-02-19  2358   * shmem_get_folio - find, and lock a shmem folio.
-d7468609ee0f90 Christoph Hellwig       2024-02-19  2359   * @inode:	inode to search
-d7468609ee0f90 Christoph Hellwig       2024-02-19  2360   * @index:	the page index.
-d7468609ee0f90 Christoph Hellwig       2024-02-19  2361   * @foliop:	pointer to the folio if found
-d7468609ee0f90 Christoph Hellwig       2024-02-19  2362   * @sgp:	SGP_* flags to control behavior
-d7468609ee0f90 Christoph Hellwig       2024-02-19  2363   *
-d7468609ee0f90 Christoph Hellwig       2024-02-19  2364   * Looks up the page cache entry at @inode & @index.  If a folio is
-d7468609ee0f90 Christoph Hellwig       2024-02-19  2365   * present, it is returned locked with an increased refcount.
-d7468609ee0f90 Christoph Hellwig       2024-02-19  2366   *
-9d8b36744935f8 Christoph Hellwig       2024-02-19  2367   * If the caller modifies data in the folio, it must call folio_mark_dirty()
-9d8b36744935f8 Christoph Hellwig       2024-02-19  2368   * before unlocking the folio to ensure that the folio is not reclaimed.
-9d8b36744935f8 Christoph Hellwig       2024-02-19  2369   * There is no need to reserve space before calling folio_mark_dirty().
-9d8b36744935f8 Christoph Hellwig       2024-02-19  2370   *
-d7468609ee0f90 Christoph Hellwig       2024-02-19  2371   * When no folio is found, the behavior depends on @sgp:
-8d4dd9d741c330 Akira Yokosawa          2024-02-27  2372   *  - for SGP_READ, *@foliop is %NULL and 0 is returned
-8d4dd9d741c330 Akira Yokosawa          2024-02-27  2373   *  - for SGP_NOALLOC, *@foliop is %NULL and -ENOENT is returned
-d7468609ee0f90 Christoph Hellwig       2024-02-19  2374   *  - for all other flags a new folio is allocated, inserted into the
-d7468609ee0f90 Christoph Hellwig       2024-02-19  2375   *    page cache and returned locked in @foliop.
-d7468609ee0f90 Christoph Hellwig       2024-02-19  2376   *
-d7468609ee0f90 Christoph Hellwig       2024-02-19  2377   * Context: May sleep.
-d7468609ee0f90 Christoph Hellwig       2024-02-19  2378   * Return: 0 if successful, else a negative error code.
-d7468609ee0f90 Christoph Hellwig       2024-02-19  2379   */
-4e1fc793ad9892 Matthew Wilcox (Oracle  2022-09-02  2380) int shmem_get_folio(struct inode *inode, pgoff_t index, struct folio **foliop,
-02efe2fbe45ffd Daniel Gomez            2024-05-15  2381  		enum sgp_type sgp, size_t len)
-4e1fc793ad9892 Matthew Wilcox (Oracle  2022-09-02 @2382) {
-4e1fc793ad9892 Matthew Wilcox (Oracle  2022-09-02  2383) 	return shmem_get_folio_gfp(inode, index, foliop, sgp,
-02efe2fbe45ffd Daniel Gomez            2024-05-15  2384  			mapping_gfp_mask(inode->i_mapping), NULL, NULL, len);
-4e1fc793ad9892 Matthew Wilcox (Oracle  2022-09-02  2385) }
-d7468609ee0f90 Christoph Hellwig       2024-02-19  2386  EXPORT_SYMBOL_GPL(shmem_get_folio);
-4e1fc793ad9892 Matthew Wilcox (Oracle  2022-09-02  2387) 
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+It's not a bug. As I replied to Namhyuang, the powerpc code checks
+sample_type before calling perf_sample_save_brstack().
 
