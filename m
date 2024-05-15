@@ -1,136 +1,124 @@
-Return-Path: <linux-kernel+bounces-179791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B06D28C6562
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 13:16:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE6008C6566
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 13:18:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E20BD1C21E87
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 11:16:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66600282EF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 11:18:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62F796EB4E;
-	Wed, 15 May 2024 11:16:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0769D6E617;
+	Wed, 15 May 2024 11:18:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WUBaprDa"
-Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VKbFsqTn"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62ADB58AC3;
-	Wed, 15 May 2024 11:16:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98C7163511;
+	Wed, 15 May 2024 11:18:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715771789; cv=none; b=myiuu3JWcPnFOpCuML72UpVGtbhUoV8q6gQcFTCNiG025IbkTFcXneSLcBNrsoyxEyKi3NBmhhzm9vBDQpHxbBsYk81Jo7oQZz/QN86diprmgOM5xZ0Kyc9V4gGZ9QiX71vGWv6zq5d3wQWTiDW24Ko+tIjoFOuigLRs/r+6WDM=
+	t=1715771905; cv=none; b=MH3sbQHju0wV5pluh7sh1Or55ekVQ40y4oHFJwLq8XaYL0imloMjZ9GGy15yMEsKQx59feNfHPlYb5pC6hEPnq6cXHKy04WLHRVHJpiCV5AHgldfXiLEs+a9+EgSGZRkHdKzPGFhqoWNGhQtMXEUNlzse44RXaAAu/fXRRaLx9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715771789; c=relaxed/simple;
-	bh=La7shS+zS3wTP17U3gfvOwPX7PwmzI+3Y3Ke6tCzPrM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T1foD8RaqEemO+VjJ3BGNuyismovPdv3JlboynJJESbN0prmbmcfjBmHQgE3tCgxjRrqauFoIE+v+LmeluveOJwbju6pWmFFqJE1G0CzY6UGnjy6IXKrk3doFcEw1s4isHWzIahdrvIxTh69Pgti2kVo/SPoO0cRKSRNONpOJ+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WUBaprDa; arc=none smtp.client-ip=209.85.210.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-6f0f87f9545so2308215a34.2;
-        Wed, 15 May 2024 04:16:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715771787; x=1716376587; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=La7shS+zS3wTP17U3gfvOwPX7PwmzI+3Y3Ke6tCzPrM=;
-        b=WUBaprDaanCCsJL5MQRF4aFxJBWIjQ6Lp/KOs/w7api8H8OIqQxmzH96319ELH3VBs
-         nHQ4AilUHjkdX44iLlQwLTKW9guB8sYR0dywAlGr2yYAhaiUsvwplBrp3yAnp5loG5ky
-         EaVebwmcj4vVXIWpc8L+pLmy/UMLxXxq5astYMyvEk3PwSVHzp7Y9X9D3KtgF4hH2+vn
-         ATVpKd9Ww2n7kdLah7h6pPkDEZM+r2A4LanmZ6OuomI/dASiqNapbOqYU6RuITptc0gb
-         PkMP1za4vAgaKk0GSPhtGGU+yV89OdMiC7bqKJGgktNtkIpxa2AvYPGZinn2qRymUdRh
-         OiVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715771787; x=1716376587;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=La7shS+zS3wTP17U3gfvOwPX7PwmzI+3Y3Ke6tCzPrM=;
-        b=mlQ6Ar9W/YLx2Frgx3hsXgnsoNqTFyhPQezCkTBgwhwQrSAX7QKwNIqVcNochtdcCI
-         iDNxEyR1A40OnW8ge12/ekaj9fHWEuUDWUktycnJzx3qBuKNMPJK31uftmqZtZZTMPsz
-         AmUPqwiFuey8UfrCfB8Yf1RQZbV/a4KowDeQLCAQj27XoudOYjXH+ErDq4D8XbBqIqfa
-         puFClgtmJThCzy14Z3PY34hMLfVpnFzZY4NBQB8B4a1bVhX9mH8yelHeVH0e60gGCc29
-         ma6w5FzXfENA7TewhgoHl7wv9hFIufUhofy7CUrPDbpnKFdA7XpIUpRCN6xXalTBf9RV
-         zbpw==
-X-Forwarded-Encrypted: i=1; AJvYcCUdrdczBU6228GrLaH5KmZ1yASpyOrVQJp4iBI7nnbEtggV87m7oe7JGvCIX/g2KgmDdntTXPf4pN3ebKG/JMD/n9ciZh2qbIFNcoFgT5zokegmfLOXvfWT7I3W+5zhvXOwKr/8vfqK3Rt+XUuDPM1hNSspAsjigoqAfSyNRkDfBTGGiMbrAqSKGBNT3EfE2ZqdHLgGurIKyX7KFfw=
-X-Gm-Message-State: AOJu0Yyb/k4GjBZouKvr/tz6ik2cuY5KI2Rs/LTap4Csxcv7WFxSi0Ll
-	VpMDx3udl+nA+KcBbx1NjImjjaG8FUCTzNUxmFqffpGVVwTbOiQQ
-X-Google-Smtp-Source: AGHT+IEko0JSqQuagK5nJLQhpzLNI4UBWf1hkGCMsz0mbLd4XAPdp/+V3f92NeCVpS+QrlY3oDwjRw==
-X-Received: by 2002:a05:6871:813:b0:23c:9f74:f6d4 with SMTP id 586e51a60fabf-24172f617ccmr18241288fac.52.1715771786922;
-        Wed, 15 May 2024 04:16:26 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2b060f9sm10807819b3a.182.2024.05.15.04.16.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 May 2024 04:16:26 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id E407019B4FD45; Wed, 15 May 2024 18:16:21 +0700 (WIB)
-Date: Wed, 15 May 2024 18:16:21 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: lakshmi.sowjanya.d@intel.com, tglx@linutronix.de, jstultz@google.com,
-	giometti@enneenne.com, corbet@lwn.net, linux-kernel@vger.kernel.org
-Cc: x86@kernel.org, netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-	intel-wired-lan@lists.osuosl.org, andriy.shevchenko@linux.intel.com,
-	eddie.dong@intel.com, christopher.s.hall@intel.com,
-	jesse.brandeburg@intel.com, davem@davemloft.net,
-	alexandre.torgue@foss.st.com, joabreu@synopsys.com,
-	mcoquelin.stm32@gmail.com, perex@perex.cz,
-	linux-sound@vger.kernel.org, anthony.l.nguyen@intel.com,
-	peter.hilber@opensynergy.com, pandith.n@intel.com,
-	subramanian.mohan@intel.com, thejesh.reddy.t.r@intel.com
-Subject: Re: [PATCH v8 11/12] Documentation: driver-api: pps: Add Intel Timed
- I/O PPS generator
-Message-ID: <ZkSZhVz6vyyUt3ot@archie.me>
-References: <20240513103813.5666-1-lakshmi.sowjanya.d@intel.com>
- <20240513103813.5666-12-lakshmi.sowjanya.d@intel.com>
+	s=arc-20240116; t=1715771905; c=relaxed/simple;
+	bh=VJ6A8qhCWtdctbJft4NMBOXHwXvW0/27z0AwmEqovG8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uhBIyCD7ztK7oWn4uS+CsSh4wyQWOZGq6W0Y2Cg17xl0fnqRrqAGbJaOdssBgBWCUVgPbK7Sh3ni8d3R+E14ewnabk7kfMv4Fzi3bk+v50FKpz9ZyKI1CCRePY6G8D9I2o0AtWZe7dkvOzVKoHqE/Pk8LrpcpVbmk4UrPcD718E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VKbFsqTn; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715771904; x=1747307904;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=VJ6A8qhCWtdctbJft4NMBOXHwXvW0/27z0AwmEqovG8=;
+  b=VKbFsqTnQIdk8XSDJ3K+Y8XpU1rOWhge8opctKIn5cbVZu1DgwfhcWJE
+   Dl3c3HjinGkprbdGA94kJTpLe58Oo96NxzDdb6HLwrdIG8Oakh9AUd7gA
+   +AS6DUq51SUX/0DoMyKTXDpFRtzoTy2ES271DfmK3pGRswQVGJnojXhyZ
+   05DpyhWc9+qhQeJuJqbdTnLDivDx4XgzjrMpZMZWODlRHOf9w2L8C0Qo+
+   Ai5Vu1s2+Ljl9S4MROIWthV+yuB6VYVKeao2KhLMAgB3EZ/SJjnEH/1fr
+   AgG0ANL3DKO1CgcRhrApiSRnsiF0BvdE3+a4MY2cC9lM0oVq/QmTJ3vdF
+   Q==;
+X-CSE-ConnectionGUID: atrZUZD+SruKkrpRLXj8eg==
+X-CSE-MsgGUID: qhH6Zca4SjWiArQAlQI4Zw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11073"; a="29305066"
+X-IronPort-AV: E=Sophos;i="6.08,161,1712646000"; 
+   d="scan'208";a="29305066"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 04:18:23 -0700
+X-CSE-ConnectionGUID: 7tqDk9C+THe11S106FEQCw==
+X-CSE-MsgGUID: FrM0xDsMSkWDBpqh96tvPQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,161,1712646000"; 
+   d="scan'208";a="35900916"
+Received: from unknown (HELO wieczorr-mobl1.intel.com) ([10.245.245.148])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 04:18:20 -0700
+From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+To: fenghua.yu@intel.com,
+	shuah@kernel.org,
+	reinette.chatre@intel.com
+Cc: linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	ilpo.jarvinen@linux.intel.com,
+	tony.luck@intel.com
+Subject: [PATCH v2 0/2] selftests/resctrl: SNC kernel support discovery
+Date: Wed, 15 May 2024 13:17:39 +0200
+Message-ID: <cover.1715769576.git.maciej.wieczor-retman@intel.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="xeKKm072pVbJUx/X"
-Content-Disposition: inline
-In-Reply-To: <20240513103813.5666-12-lakshmi.sowjanya.d@intel.com>
+Content-Transfer-Encoding: 8bit
 
+Changes v2:
+- Removed patches 2 and 3 since now this part will be supported by the
+  kernel.
 
---xeKKm072pVbJUx/X
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sub-Numa Clustering (SNC) allows splitting CPU cores, caches and memory
+into multiple NUMA nodes. When enabled, NUMA-aware applications can
+achieve better performance on bigger server platforms.
 
-On Mon, May 13, 2024 at 04:08:12PM +0530, lakshmi.sowjanya.d@intel.com wrot=
-e:
-> +Timed I/O and system time are both driven by same hardware clock. The si=
-gnal
-> +is generated with a precision of ~20 nanoseconds. The generated PPS sign=
-al
-> +is used to synchronize an external device with system clock. For example,
-> +share your clock with a device that receives PPS signal, generated by
-"... it can be used to share your clock ..."
-> +Timed I/O device. There are dedicated Timed I/O pins to deliver the PPS =
-signal
-> +to an external device.
-> +
+SNC support in the kernel is currently in review [1]. With SNC enabled
+and kernel support in place all the tests will function normally. There
+might be a problem when SNC is enabled but the system is still using an
+older kernel version without SNC support. Currently the only message
+displayed in that situation is a guess that SNC might be enabled and is
+causing issues. That message also is displayed whenever the test fails
+on an Intel platform.
 
-That's it.
+Add a mechanism to discover kernel support for SNC which will add more
+meaning and certainty to the error message.
 
---=20
-An old man doll... just what I always wanted! - Clara
+Series was tested on Ice Lake server platforms with SNC disabled, SNC-2
+and SNC-4. The tests were also ran with and without kernel support for
+SNC.
 
---xeKKm072pVbJUx/X
-Content-Type: application/pgp-signature; name="signature.asc"
+Series applies cleanly on kselftest/next.
 
------BEGIN PGP SIGNATURE-----
+[1] https://lore.kernel.org/all/20240503203325.21512-1-tony.luck@intel.com/
 
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZkSZgAAKCRD2uYlJVVFO
-o/6oAP9w3HhiHmrFlOlNQ8EunlgWag4y2WHPIAlhy2UNCHLgUgEAmmZbh7KrfLCK
-neKfTlKuPupWFFMWIJvouCJXmLae8wI=
-=GWg5
------END PGP SIGNATURE-----
+Previous versions of this series:
+[v1] https://lore.kernel.org/all/cover.1709721159.git.maciej.wieczor-retman@intel.com/
 
---xeKKm072pVbJUx/X--
+Maciej Wieczor-Retman (2):
+  selftests/resctrl: Adjust effective L3 cache size with SNC enabled
+  selftests/resctrl: Adjust SNC support messages
+
+ tools/testing/selftests/resctrl/cat_test.c  |   2 +-
+ tools/testing/selftests/resctrl/cmt_test.c  |   6 +-
+ tools/testing/selftests/resctrl/mba_test.c  |   2 +
+ tools/testing/selftests/resctrl/mbm_test.c  |   4 +-
+ tools/testing/selftests/resctrl/resctrl.h   |   8 +-
+ tools/testing/selftests/resctrl/resctrlfs.c | 131 +++++++++++++++++++-
+ 6 files changed, 144 insertions(+), 9 deletions(-)
+
+-- 
+2.45.0
+
 
