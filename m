@@ -1,174 +1,150 @@
-Return-Path: <linux-kernel+bounces-180215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91A0F8C6B81
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 19:33:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0E8E8C6B8A
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 19:33:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45E1928393B
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:33:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 660552841DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 17:33:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2234D39FD4;
-	Wed, 15 May 2024 17:32:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5E9C47F63;
+	Wed, 15 May 2024 17:33:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Nd/TQBXO"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s9HJpiRk"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 809BF4EB3A
-	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 17:32:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91D3B28680
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 17:33:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715794376; cv=none; b=pvopyk8dPunfKi4g0JB+hMCK+tsSiYkmeCk27MAjaeCxI/zqFkZ6FNpWDv3AAwfbKpxzGKZlNGf1iPzlvPSb8Cu54PlNFOyYROJf3N1H7MrSik+RmbTolWXbHfgFIzT1OQJBOiXGaSW26JvzL0HYfh1rcOU+QBNaBlaH3a1xFV4=
+	t=1715794427; cv=none; b=ZPB7DJ0RlTquKu3yIRbUmBfXM/BVjzmwaigRi/cZNMHE7j3Lk/aPTkcj+G7UL2mZE0VFxS+1Oud3++Gk34lTBWqcALQU3xAtUMOmFBl5i3rYb/0rihgE01KTHhY93E2raCtPK+rK0iHrIzj6a3aToVn/W0+KI7TVAlqllQQQ+s8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715794376; c=relaxed/simple;
-	bh=qEcSw3lILLGvhKIjJLG6VoBEYR2tfcg32/p64k58ON8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=NQ9M/5Y48T4dZ127Hy/hsoJyXJ4fWNgqpSBK8hvWd5A2cc6qBhA+ccAzQ4CsOsksCssaQ6TkCVPclrorVZHBEexNwelzZUMTOVmWMxF+eSPqhZoo3llnybm2R9O+/OV3s2h//LNDs4d2y1et0DAAFySLBfdcR06k+B0Kp4sbWeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Nd/TQBXO; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715794373;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oOwdeJhBjSGNCAussjsFY04Bth4aIM7eWnKu5IfNLOU=;
-	b=Nd/TQBXOK7qs9Lal+vutoItKN2UwzAuNtihaTe9nkJvLQR1njhw8ObCVJGt7d4OM7+3w0Q
-	G4G0eiu8GBK/2rjXpO7CVyo3GScsLLt0FWry0nGCa7I2L6klkxvXXSByzihLMm/Hqi2qRS
-	L0pxSj3BC2KF++ag0qSQUrpeOBflEVg=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-509-SpQ7e2JDPX6uSPnR_ErIZg-1; Wed, 15 May 2024 13:32:52 -0400
-X-MC-Unique: SpQ7e2JDPX6uSPnR_ErIZg-1
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-792cefecd00so940488785a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 10:32:52 -0700 (PDT)
+	s=arc-20240116; t=1715794427; c=relaxed/simple;
+	bh=BczV/FF4eIzKWVrSkkC8DYFt1QqsMU4CdnShIk6/U3M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bCcdxwhw9uhcApmNnQRj5NsZcJtJD0ffRij+IeGX24bMAJfiFsEkHew8SErkZoUwDXGck2byiczatIYlo+VvV0zTt3/7dD/tUYXg7Io5cQvwif7z5WwMuCXGdu2UVJRL/GfayhrZUOfPP1BfnrvpQfdnbWV1NAAPbpCz5MmpbbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=s9HJpiRk; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-34db6a29998so5551281f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 10:33:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715794424; x=1716399224; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=REXKNTAxo862A8ReBddrMUjz3K+lbyLjZMQEflUAct8=;
+        b=s9HJpiRkvmLjvVF7EK6rqcWhZkYTfdp2i6sAc9gf8G1joqcuqe2fWvimC+lsmN3Iyd
+         F/cIbxok4h0TDxs92Inlt/2O7VG4Cj+87c3kIDhEPkVtlaA75A2wV+zbyZ28dHNYFFfW
+         /jeTm02s5ZuxCBjiLa1zQGr0Bw/smD0d1UnSLujEVLuVuJqK5b+69a0I9Tf81n3wVNdC
+         qhhieCMWqWhp8PCF9wYIQmHJnuq47Gk7fK0NsKMua0j/90CLBIpTpGhG++B7aKI/4AzA
+         vOydfcGb1+1O9u6VAR213zUoSTE2hjdn0Yg8JN7KyVjWX98U2tJ6uee3uH3TrK0r3ffv
+         ChDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715794370; x=1716399170;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oOwdeJhBjSGNCAussjsFY04Bth4aIM7eWnKu5IfNLOU=;
-        b=TSp/NHTxxJLB6QXnNPJCl/FFk7xmQt1kf0tnmU66auLNEvi7chDZs4CbGXJCWoz+CV
-         zccQkYH+3FyZMjbXhpdvmb2SQ2PgtLl1I9jlbSn8tQavSTKJalXSxef8DhwtjD3oIhfG
-         S7haOFGlPj2mbDd7+Mru2qC+n/7Y4IiL7s2NmAcwxHKJ6N08XYVnKmPsH5I58+NVv5wk
-         qkOfJqxW8JI7FFHFljHucMNceZscvsaPzMYCCB1Rvxz+IiGEN8QfFdKZpoCI1BEMYdOl
-         mR+IjPcKknRo6CoLUPGa0dBjbW4FNo9YEkto1Dk56ZTZcBUVmuahaHveQ/x1gYT2S/k2
-         0yUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUO9NXoP7b0zKeGXfOvNgsnjmqOnkQtjqKD4D7ucGv89EwuV3x4OiJdo642iPXqcv41iiUdoLElOw8KYOba6i26fb6ObtqM3zfyVhlJ
-X-Gm-Message-State: AOJu0YwJxs/g0xyVbPibBbMVnfq6JH607OAjXaQol22bHSyc0zkbMk5F
-	Yr5WijQXi1m1xsp3NWVTjil7AHzCti40w6iKJ2/MmWyvUfgVBlMkk41Ft/WZAkOSv78dl+HLkdO
-	4NcYEkubps1p217Dt9aWqrkniEIRWVMHIJsxTU+8OtgYaHeX7LGiVvInkmggEKA==
-X-Received: by 2002:a05:622a:109:b0:43a:3502:8446 with SMTP id d75a77b69052e-43dec39be29mr341473721cf.28.1715794370170;
-        Wed, 15 May 2024 10:32:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE3J4mJbmHn1T6bjHxpYTkK8dZATZQr5Sa13WzDnCmuqUStezho5/sEVpt2rJSDEKrAgOg5Bw==
-X-Received: by 2002:a05:622a:109:b0:43a:3502:8446 with SMTP id d75a77b69052e-43dec39be29mr341473421cf.28.1715794369830;
-        Wed, 15 May 2024 10:32:49 -0700 (PDT)
-Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-141-166.abo.bbox.fr. [213.44.141.166])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43e0e421dccsm54794051cf.53.2024.05.15.10.32.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 May 2024 10:32:49 -0700 (PDT)
-From: Valentin Schneider <vschneid@redhat.com>
-To: Frederic Weisbecker <frederic@kernel.org>, LKML
- <linux-kernel@vger.kernel.org>
-Cc: Frederic Weisbecker <frederic@kernel.org>, "Paul E . McKenney"
- <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Joel Fernandes
- <joel@joelfernandes.org>, Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
- Uladzislau Rezki <urezki@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
- rcu <rcu@vger.kernel.org>
-Subject: Re: [PATCH 1/6] rcu: Remove full ordering on second EQS snapshot
-In-Reply-To: <20240515125332.9306-2-frederic@kernel.org>
-References: <20240515125332.9306-1-frederic@kernel.org>
- <20240515125332.9306-2-frederic@kernel.org>
-Date: Wed, 15 May 2024 19:32:45 +0200
-Message-ID: <xhsmhikzfgev6.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+        d=1e100.net; s=20230601; t=1715794424; x=1716399224;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=REXKNTAxo862A8ReBddrMUjz3K+lbyLjZMQEflUAct8=;
+        b=vHcRvFv0BLER0gWQrsygUUvVcagI5K4a94DIphR8C6EMcCSdthu3YS1OyZnepHKESx
+         w9qUQYJo/NgXTj2DDfw927ZAVCN0qInwDZOKNzUsut+fqt1l/SiJfE4uOdMl8yruOau0
+         z+DCJtn66ddTsx/88gmW0HCviOT5wbIEpBbUSiW2TRyK2OAtIHGaCYetkGt3IMLz+5Ld
+         WnhIlc9WJKEf3PWHCDqrWuP9rs5WPTQE0qsc9gW3SYjPVxjQfc+Zvm2U497VsNYq5CCF
+         1ez9LdnNCKusivdEc5NFmoQOWFUutTVfP5Q3A4wki0zKvrAqIov+NAn/TaRFLrHXBgqk
+         wSIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWvtzdhLFIVg7ui4WCiqzHLHvVSJSNXlQulNfrTLwJW0mgoPxRu13SkN29IwijYPTYn9tkVAbqFwogDE4SdBJQT4Ke8C8LSrKu2ILKx
+X-Gm-Message-State: AOJu0YzqfDEX42nR3RVNA6disxGeugOIcg0sbdauJ+nrvx8/lniendPN
+	lky4TIN/3cc4E3J6WDvuYgvShuqNiQ2a/6ZzMAQW1kcI/iZEdSbP0uuxyZRR2sqK7gqBfO22AHr
+	Qj94mQjdfX8zhZSjSHArMzujjLZmoU3dFgZyb
+X-Google-Smtp-Source: AGHT+IECmpnR3hqErRAHKi5zZVxQqX+AzRVW0B5FrzgG6JtiQjlGQI3473zUOeMvDrH067XEBa75l4kB51sO6OrPOMs=
+X-Received: by 2002:a5d:5351:0:b0:343:e02f:1a46 with SMTP id
+ ffacd0b85a97d-3504a62fb12mr13056195f8f.2.1715794423681; Wed, 15 May 2024
+ 10:33:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20240510182926.763131-1-axelrasmussen@google.com>
+ <20240510182926.763131-2-axelrasmussen@google.com> <20240515104142.GBZkSRZsa3cxJ3DKVy@fat_crate.local>
+ <ZkSUaVx3uCIPkpkJ@localhost.localdomain>
+In-Reply-To: <ZkSUaVx3uCIPkpkJ@localhost.localdomain>
+From: Axel Rasmussen <axelrasmussen@google.com>
+Date: Wed, 15 May 2024 10:33:03 -0700
+Message-ID: <CAJHvVchGGJkEX=qroW=+N-RJDMDGuxM4xoGe7iOtRu9YcfxEEw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] arch/fault: don't print logs for pte marker poison errors
+To: Oscar Salvador <osalvador@suse.de>
+Cc: Borislav Petkov <bp@alien8.de>, Andrew Morton <akpm@linux-foundation.org>, 
+	Andy Lutomirski <luto@kernel.org>, "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	David Hildenbrand <david@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, Helge Deller <deller@gmx.de>, 
+	Ingo Molnar <mingo@redhat.com>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, John Hubbard <jhubbard@nvidia.com>, 
+	Liu Shixin <liushixin2@huawei.com>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
+	Michael Ellerman <mpe@ellerman.id.au>, Muchun Song <muchun.song@linux.dev>, 
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, Nicholas Piggin <npiggin@gmail.com>, 
+	Peter Xu <peterx@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-parisc@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 15/05/24 14:53, Frederic Weisbecker wrote:
-> When the grace period kthread checks the extended quiescent state
-> counter of a CPU, full ordering is necessary to ensure that either:
+On Wed, May 15, 2024 at 3:54=E2=80=AFAM Oscar Salvador <osalvador@suse.de> =
+wrote:
 >
-> * If the GP kthread observes the remote target in an extended quiescent
->   state, then that target must observe all accesses prior to the current
->   grace period, including the current grace period sequence number, once
->   it exits that extended quiescent state. Also the GP kthread must
->   observe all accesses performed by the target prior it entering in
->   EQS.
+> On Wed, May 15, 2024 at 12:41:42PM +0200, Borislav Petkov wrote:
+> > On Fri, May 10, 2024 at 11:29:26AM -0700, Axel Rasmussen wrote:
+> > > @@ -3938,7 +3938,7 @@ static vm_fault_t handle_pte_marker(struct vm_f=
+ault *vmf)
+> > >
+> > >     /* Higher priority than uffd-wp when data corrupted */
+> > >     if (marker & PTE_MARKER_POISONED)
+> > > -           return VM_FAULT_HWPOISON;
+> > > +           return VM_FAULT_HWPOISON | VM_FAULT_HWPOISON_SILENT;
+> >
+> > If you know here that this poisoning should be silent, why do you have
+> > to make it all complicated and propagate it into arch code, waste
+> > a separate VM_FAULT flag just for that instead of simply returning here
+> > a VM_FAULT_COMPLETED or some other innocuous value which would stop
+> > processing the fault?
 >
-> or:
->
-> * If the GP kthread observes the remote target NOT in an extended
->   quiescent state, then the target further entering in an extended
->   quiescent state must observe all accesses prior to the current
->   grace period, including the current grace period sequence number, once
->   it enters that extended quiescent state. Also the GP kthread later
->   observing that EQS must also observe all accesses performed by the
->   target prior it entering in EQS.
->
-> This ordering is explicitly performed both on the first EQS snapshot
-> and on the second one as well through the combination of a preceding
-> full barrier followed by an acquire read. However the second snapshot's
-> full memory barrier is redundant and not needed to enforce the above
-> guarantees:
->
->     GP kthread                  Remote target
->     ----                        -----
->     // Access prior GP
->     WRITE_ONCE(A, 1)
->     // first snapshot
->     smp_mb()
->     x = smp_load_acquire(EQS)
->                                // Access prior GP
->                                WRITE_ONCE(B, 1)
->                                // EQS enter
->                                // implied full barrier by atomic_add_return()
->                                atomic_add_return(RCU_DYNTICKS_IDX, EQS)
->                                // implied full barrier by atomic_add_return()
->                                READ_ONCE(A)
->     // second snapshot
->     y = smp_load_acquire(EQS)
->     z = READ_ONCE(B)
->
-> If the GP kthread above fails to observe the remote target in EQS
-> (x not in EQS), the remote target will observe A == 1 after further
-> entering in EQS. Then the second snapshot taken by the GP kthread only
-> need to be an acquire read in order to observe z == 1.
->
-> Therefore remove the needless full memory barrier on second snapshot.
->
-> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+> AFAIK, He only wants it to be silent wrt. the arch fault handler not scre=
+aming,
+> but he still wants to be able to trigger force_sig_mceerr().
 
-Still looking at the rest, but at least so far I'm convinced this one makes
-sense.
+Right, the goal is to still have the process get a SIGBUS, but to
+avoid the "MCE error" log message. The basic issue is, unprivileged
+users can set these markers up, and thereby completely spam up the
+log.
 
-Reviewed-by: Valentin Schneider <vschneid@redhat.com>
+Also since this is a process-specific thing, and it's not a real
+hardware poison event, it's unclear system admins care at all at a
+global level (this is why we didn't want to switch to just
+printk_ratelimited for example). Better to let the process handle the
+SIGBUS however it likes for its use case (logging a message elsewhere,
+etc.).
 
-> ---
->  kernel/rcu/tree.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+That said, one thing I'm not sure about is whether or not
+VM_FAULT_SIGBUS is a viable alternative (returned for a new PTE marker
+type specific to simulated poison). The goal of the simulated poison
+feature is to "closely simulate" a real hardware poison event. If you
+live migrate a VM from a host with real poisoned memory, to a new
+host: you'd want to keep the same behavior if the guest accessed those
+addresses again, so as not to confuse the guest about why it suddenly
+became "un-poisoned". At a basic level I think VM_FAULT_SIGBUS gives
+us what we want (send SIGBUS to the process, don't log about MCEs),
+but I'm not confident I know all the differences vs. VM_FAULT_HWPOISON
+on all the arches.
+
 >
-> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-> index 5e6828132007..58415cdc54f8 100644
-> --- a/kernel/rcu/tree.c
-> +++ b/kernel/rcu/tree.c
-> @@ -325,7 +325,7 @@ static bool rcu_dynticks_in_eqs(int snap)
->   */
->  static bool rcu_dynticks_in_eqs_since(struct rcu_data *rdp, int snap)
->  {
-> -	return snap != rcu_dynticks_snap(rdp->cpu);
-> +	return snap != ct_dynticks_cpu_acquire(rdp->cpu);
->  }
 >
->  /*
 > --
-> 2.44.0
-
+> Oscar Salvador
+> SUSE Labs
 
