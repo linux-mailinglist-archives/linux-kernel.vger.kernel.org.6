@@ -1,185 +1,110 @@
-Return-Path: <linux-kernel+bounces-180353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F25928C6D5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 22:43:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAD258C6D5E
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 22:43:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67C3EB2336E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 20:43:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5EDA1C211AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 20:43:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B99B15B10F;
-	Wed, 15 May 2024 20:43:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFF3015B541;
+	Wed, 15 May 2024 20:43:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="LtINA/nE"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2056.outbound.protection.outlook.com [40.107.93.56])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="T0CS6hQF"
+Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE687158845;
-	Wed, 15 May 2024 20:43:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.56
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715805790; cv=fail; b=Nx0hZE7+CEUY9mARY8ac19gMGADgZRoU4hGkX5brDze4IwvJ+VBVjEuiRgXx74zwrdgCMUOrDC4g5ULLvQorhPdvTM1dIAWWwnjryDW4lLe19erkobwSXTZzgcpjhqLId65FSMKsGAzENot70OQfzJBIv5siMMiHt0nEbQfycds=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715805790; c=relaxed/simple;
-	bh=bbHogzMK0ENwm5xJqTVqnfRkItNUtaR93kHXPorLcCI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=fo0qLvDX15X8HrcSQHelfU6nbV+ROGup3AW4v0mRbw3zQAjzPNig8BCbxM9T/+Plkunmk9gaLJ8klbMwbNL2/x0RKNHJ5jM1+v/A8pz/FLsVqEpQjMY/AE8PK+lzuvi+9b9YoAQTgWFURJO8hURa/cdARQ/mleR0KgdBMXTLOmI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=LtINA/nE; arc=fail smtp.client-ip=40.107.93.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=FdnziZd3agPiwh381CR/lF/zLzU1qD8+O72WVjPAeECEYRiYnnTmCp6EJHKt0GwBG1nPw/BG36iAO+ULAMqsJs/LJ7hVpISzM65iJLe18YAgHij0FakjNG3USBg2pDCcsfkmCTE0KynjvrDuXdHZVaxsYxdqAZh6x9EiMbvYa9Bl4inza4Awm/psQ2d6GjwHC5V5xJXfsKhkglxDt56sYYPRuEOIDwWmEoC9+LQ/k5WsT9l59ydpIJGALTVM3bq3s8llUO6Qw6c5mzyhd5nMzivruZcVUk3Se9SEFEs/vEUVFrGWDRZAuDDwbeVf9W/lbuEufYT01ajrJYWQsE0SrA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bbHogzMK0ENwm5xJqTVqnfRkItNUtaR93kHXPorLcCI=;
- b=bh+2xe5M2sR+eaiW6Z82u9bPuVvFxGe4z1JcIm7zAOddqsAXydZBqaLPbgQkwOLhOuINiAxKwzVRCSMNfyMdDVlZ/R7sPB8942feSjOGPCzV0p26Na+0m09H3pXu3tJYrrQJQKpVgodSUIlBFzSy0HwwhPnQuJPOfrtn0l5nfFImQtn1yxVRTTnJKVcyzWw0X5Q3B+P3GWrmuhNHic4C93sfRsEnK9WiajjeeAyEAvq5V+SeE2QDmFyxfVvWE2lgtakmjyfvc5JaxGNSHvnNff67+zeqij0NJ8AgbGBw5RT02rnoYTlmzAASzy/tovl/UFls2b+bCWx+GhZj4Wvl4A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bbHogzMK0ENwm5xJqTVqnfRkItNUtaR93kHXPorLcCI=;
- b=LtINA/nEXDBHh8h7LGC1ZDIi4nmZ030mHmNHtnHoeUHZUH6yDwoDQaE0PIpT2765QMh/lEDdQEaEtkjag31gsp1mjxTAjmoaMB+tqP7Sc69YGiT9cC5iWsKZJzkKJVVuqi/e8Ns1G22l+HbDJhxBZECQiCG732qSfm5WH5RJkT51hEoJFheV0N5v/5UPVPMfm3gLG8RXCaKHh7obh9QWH6R7wAUboI6R3lv4KCW3jMQzF0ewIYH1LxktuQMHtgOvraqxnrSOijoMH462RgZ7qk3Lm5OkADz0rMOGAUTQtIgeDDmTjSfFJZCeKn0pbK9HEW/Xiu3X7FjVJLUwxDdV0Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DM6PR12MB3849.namprd12.prod.outlook.com (2603:10b6:5:1c7::26)
- by CY8PR12MB7513.namprd12.prod.outlook.com (2603:10b6:930:91::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Wed, 15 May
- 2024 20:43:05 +0000
-Received: from DM6PR12MB3849.namprd12.prod.outlook.com
- ([fe80::c296:774b:a5fc:965e]) by DM6PR12MB3849.namprd12.prod.outlook.com
- ([fe80::c296:774b:a5fc:965e%4]) with mapi id 15.20.7544.052; Wed, 15 May 2024
- 20:43:05 +0000
-Date: Wed, 15 May 2024 17:43:04 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Yan Zhao <yan.y.zhao@intel.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org,
-	alex.williamson@redhat.com, kevin.tian@intel.com,
-	iommu@lists.linux.dev, pbonzini@redhat.com, seanjc@google.com,
-	dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-	corbet@lwn.net, joro@8bytes.org, will@kernel.org,
-	robin.murphy@arm.com, baolu.lu@linux.intel.com, yi.l.liu@intel.com
-Subject: Re: [PATCH 5/5] iommufd: Flush CPU caches on DMA pages in
- non-coherent domains
-Message-ID: <ZkUeWAjHuvIhLcFH@nvidia.com>
-References: <20240507061802.20184-1-yan.y.zhao@intel.com>
- <20240507062212.20535-1-yan.y.zhao@intel.com>
- <20240509141332.GP4650@nvidia.com>
- <Zj3UuHQe4XgdDmDs@yzhao56-desk.sh.intel.com>
- <20240510132928.GS4650@nvidia.com>
- <ZkHEsfaGAXuOFMkq@yzhao56-desk.sh.intel.com>
- <ZkN/F3dGKfGSdf/6@nvidia.com>
- <ZkRe/HeAIgscsYZw@yzhao56-desk.sh.intel.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZkRe/HeAIgscsYZw@yzhao56-desk.sh.intel.com>
-X-ClientProxiedBy: CY5PR22CA0019.namprd22.prod.outlook.com
- (2603:10b6:930:16::26) To DM6PR12MB3849.namprd12.prod.outlook.com
- (2603:10b6:5:1c7::26)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D56F15B13E
+	for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 20:43:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715805796; cv=none; b=EegKlrn7vznieqsHHjA1W3mJAWwL1lPB57/p+AbECxMKOtKzXLVdH6q1Wp+CL0C1yAZv3PS8HwgH8JOWzsNLiMWS68KqlnVCoM0y136A59hIi+pIasz0KFpVusj0kb1uw0sWz+XKB3wN27CL14IY2+hfG4YgvIZOBMANzfnQq6Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715805796; c=relaxed/simple;
+	bh=3R4LUKh3E8othza8TyroAgCHl+LIZz3OEQv47Ax76co=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JmDossguSwtwgOXGFIwh/5SQn1S4MFNPIJiF5K26U1FaYSE4YKrfqFTGddoZSQNdTooGN3R+iGGY+freud5WwN9+/P/C+zKvVFA9rtAYXJ6LfmaiBRDJATrA25kuLf1eI69bhW1xaSVtw+MipOL+8nAvHdSeJ5qHQNpA+F3tR/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=T0CS6hQF; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=3R4L
+	UKh3E8othza8TyroAgCHl+LIZz3OEQv47Ax76co=; b=T0CS6hQFU4aPC6+A/+Qf
+	E5hQJ2mcaoda0lNlPIHpIL1xkdjV6ibJb59as4CCCltEyHCokvBYEPSuVgPaaQ2f
+	885yfwvqJO4dy8qrurgK5miGr0WhBkeHGyBXNeOnYv/pak+goHii3wEZOgPAxDrr
+	wpCMtIT13+NMiaQ6vqllGJJ93JBdGgdYKQampXtS/VwU5iP8iWPHdGgv1KMTIMCz
+	gUsxllQivt7ITrkQjV+6DwX9bJh23tvpBYTf3zBFfXsol3/OAS2xhEwxKQeYbagH
+	iG1MBC9De6FL2WEm5HSFjs89InRRD0SJgZw7V/K1wqsAjlU0/LJmHer1qXXDrL5d
+	4Q==
+Received: (qmail 2941755 invoked from network); 15 May 2024 22:43:06 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 15 May 2024 22:43:06 +0200
+X-UD-Smtp-Session: l3s3148p1@bJFcKoQYvMFehhtP
+Date: Wed, 15 May 2024 22:43:05 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: renesas: gray-hawk-single: add aliases for
+ I2C busses
+Message-ID: <nsozpsifnhpmsbrzvpttmiu775mhm2oq54hycjvc2wa3qtoukh@wpigcux5tkyr>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	linux-renesas-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+References: <20240515091925.24353-2-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR12MB3849:EE_|CY8PR12MB7513:EE_
-X-MS-Office365-Filtering-Correlation-Id: d5936ccb-5813-4b83-31ad-08dc751f9f1f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|7416005|1800799015|376005|366007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?e+rY/34FLKPWr1w9edoj/LQOmX57CxyFZrn30BWwr1QdZdYyDBeJZJ8Y604/?=
- =?us-ascii?Q?aQ+qyKYoiuSVGaY9CngBDLbwFCh/tVuEXbt9S8D9J9Fo/H85c4DN/AmGkEzv?=
- =?us-ascii?Q?kpdJYjXVxoX1CTWdODQ9k9/86TQjlJxBE4BkXHv3JBPnzCOG4vaO5Uzfb8cL?=
- =?us-ascii?Q?lkFXlk7fshFnxzjlfa1aKBUWIG/f3k+cHZwWjJvrQgpYIIpGrRukRiaSuPlA?=
- =?us-ascii?Q?KuxHWvlrzYhwp6mpsGoQNxQDXQd/eZ9uzgTtfkRfzd6o64gjrGWqBCRtq6C9?=
- =?us-ascii?Q?QUehtlzUSn6HfRK8Fy7T6A9awIrf5oNRDbtkzj5trfqDUMCV8tPmg0at50zF?=
- =?us-ascii?Q?gg+gk5Sg5Pv1d9/lkXOJPWYoyugPjb+pasbPudevxXnT12f6xMY8Y/F1vFO9?=
- =?us-ascii?Q?qTdSg9Vs6lVgH6D8wfKi3uKT9c6LNrUifPE02mQUc4mTe7ncayZgq+jSYLLy?=
- =?us-ascii?Q?irOvYLhFyNB7dRtKxxR7jY+VNzVHzIjLdFQ6/s8C75CjUG1OW3Gh5e0svS1s?=
- =?us-ascii?Q?4LYZR3mPI8/65uxvlgF9QybR/E/PHKDn56nAa/w/BmRt9yG/7ywsojbRpN3I?=
- =?us-ascii?Q?+o0SEyjMejUwusshuwRLXpdC6xeVjmBKXwVImBDbYb59LIgNl4tHcZw5HUGX?=
- =?us-ascii?Q?OFIUzIrhnr92cjdYDVqtr49WxYRV98tFnvJDViAAUDrcUGVPPBZr4hYvhrAC?=
- =?us-ascii?Q?9ZdSJ6qgLvisfMG2HvDIjc/fJT+SXIuu/Y+7VxfNLYSefJtl0pTLPQsIX/y4?=
- =?us-ascii?Q?+80yU60TVlYKtPf/Ng0WVb+xC4Oiok2g1xNcRfG2iA/eR5eFAEt+xzKUQPXd?=
- =?us-ascii?Q?FqVFqxDZnaP4KJAEHvDF1xL5NZ0TtAKFt045lbMAGxKJ/zh0DZNQT6+YunLz?=
- =?us-ascii?Q?ndQ/KkYzLDqZcaXZT4NVeCVSb3N4QUjgtxL41iaLC0FA4hnoBOfJjuk9o3Nh?=
- =?us-ascii?Q?5fe+qk+8j8RTRULXyb1vJAf2tXFLETj2oqTwGliRKPVaYFKZtSrUYEUuQmTf?=
- =?us-ascii?Q?KGKZGcxex4tgAFJbAkQQDe/N5HxzwgLPFDIgeoCo0oYTbinmm609lZF7IN8w?=
- =?us-ascii?Q?wSeXo2bKUTEL6FqrEsvhH14TaC2rysULfrkXSRRPI12FNZm9ivmDaUkJzdLs?=
- =?us-ascii?Q?slg8pEsSv7PdVv3ontWjDr4CK5jVxi+AeHKqi56BNDCpsHrmFllFM0/HIKxi?=
- =?us-ascii?Q?xQCblyH0DOZ7ivKKEFPxFQzx6vSRxE5KhXWe1P+jCSaBwsSgCZs96LojbtbD?=
- =?us-ascii?Q?O290RrY/iTJmF+eY6A7hjwQ4DOvrbf+t8goeHYBwtw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3849.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7416005)(1800799015)(376005)(366007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?VIM7ZmdWIS7LLT2LLau3MV7i3HBXhk+gRAibJvXvHrunTx4H9V/nBpHhdJdh?=
- =?us-ascii?Q?1WVWYKk6euaCB0P17rTb2qMGZjRV8cYDOldMIdT5aDsI9Am2t+wIV3uK2pR7?=
- =?us-ascii?Q?lgfVFN++JmLVBjvkhNtRNrhdHvWxQ09OHXNoqt5ePlBOEaX+zUdmF0Fa4olX?=
- =?us-ascii?Q?heoPEdTXh+ggZwRn2KWA4zjNXfyU+AndHm3Pm0aABf2iXLoYQqy3SlBy3Y4c?=
- =?us-ascii?Q?5YPE4MPNgwNC8vzmI0Ei5ZoQMhusHr39xm4oyJsUQB0LtQ0u3gvRXFiFdIOb?=
- =?us-ascii?Q?2mburGhXZj7P/ls6xY8hZeWp3Q8WbZY2Wiha23NB01s9m1a+nTJX7RCBoHV7?=
- =?us-ascii?Q?QVg2CISHc1c1549BYauWCcCoDNlq3kkAICVsZgne6UPxba9u2uYRo+CEXYOw?=
- =?us-ascii?Q?xB0UD14NOojGVgqnqlrYlVVYCtBbK00xSrC5/SQbricXRoqWOt0E8JS6UZHV?=
- =?us-ascii?Q?snyAvnQYxh+FtuoZJIiSsdWTrg+Z36LszgCOTnYCrLeP8fyMG8vJjKFfYiw3?=
- =?us-ascii?Q?OoxozXg1QcJHrlRS5h7CZi/ufrbkntE0s8mx8kEdO4CPz9ONf/pF2lir8njW?=
- =?us-ascii?Q?Dld2fN7hYE9lmooqUUL07Uptdg0e6z94Vi3x52TKE6Yhq9mq3rPBOGvbtx8E?=
- =?us-ascii?Q?ZXKtB3gU1Af2ludKbMs4k9We6ZqkfkUItLAPKbFDnreph6Ly5Ct+qVNQNo5H?=
- =?us-ascii?Q?2PWZZKjFKcN/NTJETYTs36wnennU9gZVxvo/4rCb2JhmMHGsKESeRl0C0Ala?=
- =?us-ascii?Q?whLgAAzCQWTRAZUBFhQBqTYbBItF/BT/LAE4gjvjQ7ZaKQoLw+t3Fe82WLO9?=
- =?us-ascii?Q?onhtOyr/fbD43gOu+wr1Ey1Tc/UXkxje69fB2iCMdQaMbWQBL0/p6BsJc5e9?=
- =?us-ascii?Q?wkDQI4WKnzkuxszbzdh+9jUgFOWLL0pfY7ThIkc5otMTgOcIeTLHpjwHvLL4?=
- =?us-ascii?Q?mK+ojBgD/syX+lixsFJegZHw3XSzKN7EU0jRZiC7QQoUQEA/HbcLJv20XQYn?=
- =?us-ascii?Q?BYJilmVucs2+csjlan3W90zY7/laujBmGc12G+au4g7Q74zq0Yeqnklhaxu5?=
- =?us-ascii?Q?arM1gwYtCFPKnXOU7IlSLDb6dE7BekPygYxUw244qcUxJjdFywB2CH393mYW?=
- =?us-ascii?Q?Gd9NKDd3ZDELLGvA8xw9QCSHyO4TMBshUjgYHJlwJCXJ/uNO9DBCG6mXMcGv?=
- =?us-ascii?Q?IQdq8ALzgTxgviF3omg3c2Vjn32vpfO28QJO3b565IqFstlbE7+xD1Nxx2KF?=
- =?us-ascii?Q?feL4AhsEHKeHy40fhi6Tn4i+9u3ndhvGUs/AluCQcsc0PCkomPjTfRlvU9/3?=
- =?us-ascii?Q?Rno62nPxs/XaX/+eimvLpT994w2sfkNBxGxINb/Q2TmQRMALyXkGN+W2Ogr8?=
- =?us-ascii?Q?yZ4n5cAeJ0Lxi0jozyjMnXz4F81wn3cai0VTs7twMOaa5CRj85yBpVedlE9x?=
- =?us-ascii?Q?H2GnL5iS1H3iDRAsFqJ+bx3LFTO8WQ4AWHOE286Xa1cw0jl7s4x/TyP56gnE?=
- =?us-ascii?Q?21lQZ68JkpjsvYXEP4C/Z5Mn6tkI4qpOiR9AxklpWvH/O0rTfm9mr5Iy/GQ5?=
- =?us-ascii?Q?AeUJoayLnlVq1jqCFAQ=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d5936ccb-5813-4b83-31ad-08dc751f9f1f
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3849.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 May 2024 20:43:05.4919
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: tV2/bfQPV233TqDApcpdmUdJdayD9Y3BSDA34rlt9GCAynUjZGHXSlafj/AC/uQ0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7513
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="s2jc5l5fb5e4n4q2"
+Content-Disposition: inline
+In-Reply-To: <20240515091925.24353-2-wsa+renesas@sang-engineering.com>
 
-On Wed, May 15, 2024 at 03:06:36PM +0800, Yan Zhao wrote:
 
-> > So it has to be calculated on closer to a page by page basis (really a
-> > span by span basis) if flushing of that span is needed based on where
-> > the pages came from. Only pages that came from a hwpt that is
-> > non-coherent can skip the flushing.
-> Is area by area basis also good?
-> Isn't an area either not mapped to any domain or mapped into all domains?
+--s2jc5l5fb5e4n4q2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yes, this is what the span iterator turns into in the background, it
-goes area by area to cover things.
+On Wed, May 15, 2024 at 11:18:51AM +0200, Wolfram Sang wrote:
+> They are numbered like this in the schematics, so keep the names in
+> Linux the same.
+>=20
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-> But, yes, considering the limited number of non-coherent domains, it appears
-> more robust and clean to always flush for non-coherent domain in
-> iopt_area_fill_domain().
-> It eliminates the need to decide whether to retain the area flag during a split.
+Hmmm, Spider and WhiteHawk are also missing this. Shall I send v2 with
+these included or incremental patches?
 
-And flush for pin user pages, so you basically always flush because
-you can't tell where the pages came from.
 
-Jason
+--s2jc5l5fb5e4n4q2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZFHlUACgkQFA3kzBSg
+KbYMOBAAocC1FyMK8HFZfwGn6akeoF+C8O1lKBZnjdg9GlVcrxlN7zk7PrkKUkzY
+46MqHQ6ojF4hKIC74rXzvUOe1Rmr3P3mdVBWHZ+84gZWIzrfroOWwDc7MjL2ZdXH
+HV6jFQ0skODn/uVEeIKgx2bfpiMty0Lgkii8VUYSKztvMc4oGlenycxbY7wbs8sO
+qjsDGo5oOA28oJiaik6qKtR+os622tbrpj8ORSNlBXrALuyqtH+Qbw3MA0ZRD23p
+2yeod71vcA+SttH/qjZh+c+FNVBna5t+2LPkkV/O+nqbgRvSeTRPWMQBrxOlaVfU
+WL1JwDVW7xk500GSOOpd51iN3cPKD0AOqRW04R2m/R/W0c2m7RgEXjoi1k9FJ+H2
+2GqXGt2r/BqEfyvXgI7CAltso4Ii8uKEV/dexOZgGG5ezjxkt7GKd1Bp1ckOvxM0
+K0iVSNacfPUiaj5dV4z3NdjKkaNEW/vrtFWfDZKtfX5XStLxU2NNPVES7qdczeia
+CX1eVWNdTMwDIiD7OG3kmah62s76x6vYa/FE+Fj1559Tz9gitDzsokKv4dNzH24Q
+Umd2Tz30VRYG+YObLUMaZ7XExpp9d1YyYO1PGbLpc5rHpOi69oVptJzecz93rMku
+loHTeHNSqU9XWBAXf/bl6mJZDRJYgzLGC9sXeGeXmvh6m8Qahh4=
+=wXgf
+-----END PGP SIGNATURE-----
+
+--s2jc5l5fb5e4n4q2--
 
