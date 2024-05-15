@@ -1,188 +1,142 @@
-Return-Path: <linux-kernel+bounces-179545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6545E8C612E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:09:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF7478C6130
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:10:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21C17283D75
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 07:09:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A5C71F23CE6
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 07:10:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 129404AEF4;
-	Wed, 15 May 2024 07:09:09 +0000 (UTC)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B7B4E1A8;
+	Wed, 15 May 2024 07:09:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="wAOE8lha"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D12E6481DF;
-	Wed, 15 May 2024 07:09:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D9054D58E;
+	Wed, 15 May 2024 07:09:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715756948; cv=none; b=KPwp4NYSvSED3qb9PqKkNFAynC5yO7v1czEpFcUKA1qsjV7Yi7RjO+wypzBEWND8eTHBGCrUxW7n8wt+RDsHOfbglPA57J3OnHaJWYPJzX0UCmqkzka4gz/z1Al8sQ1bZCvSVrwLGWY6S1DMfhcW2lHBX5IQrYmc4TrbIXQiWnI=
+	t=1715756951; cv=none; b=a0orZw1Y0PoJbeAjRxes7Sf5GFkbaPUp3S3DerH+x8bRbi6A6wMGpRNeIB2uOWXy7xnfMATpk2FXOPNa5ZEnBn9fT5fg9DVLSSpFshxEDYSPhJPfq5PhNunUFIP55RUQe35bb1XW5T6vqvSvSNFKpNoY3JD9dRDCR1+fnjFxhAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715756948; c=relaxed/simple;
-	bh=njRyex57xZz0oe6JsmGT5/vRa7wbswWURMZAfYLgbPE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=RPPgAS8Tlj7lbmVICv6jfSC0nyIn1b7kbMWJwwNX6RYUeIF5rtJM6OX68fRXR2bpqwNoVAcdmDWnpKl/22kMvIVA8IWWf/Rj5HFnGixm0Pv5v4Njc4XaTQErogf9G2Ew75fsK900UIpySVKvk+ysC1+XfgD6IEESYS9hVUruzeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 2DE2B1A1ACC;
+	s=arc-20240116; t=1715756951; c=relaxed/simple;
+	bh=TlijGYMDNzqIG7iiD3qAFvS5QTO9ino5t7xI4ecx6I0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=V0ikw83z1+g0pey37ZUAThfoKMjb5Jl+dL3ZwY/D3an0qlKX5oUIwldCPV2VKlYrTI2pQ/30tt6+xGOuZ8Q5S91qiQv5LeoJC8VhlBzL++UaAR4y3DTniPH1wmmoLeLc3MCVH64m4JV4BKysgug8H4lXbeMSufVxUG0Yufpp0eo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=wAOE8lha; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from wsk (85-222-111-42.dynamic.chello.pl [85.222.111.42])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	(Authenticated sender: lukma@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 1F238881C8;
 	Wed, 15 May 2024 09:09:05 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 9591E1A1ABC;
-	Wed, 15 May 2024 09:09:04 +0200 (CEST)
-Received: from pe-lt8779.in-pnq01.nxp.com (pe-lt8779.in-pnq01.nxp.com [10.17.104.141])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id D3763180222A;
-	Wed, 15 May 2024 15:09:02 +0800 (+08)
-From: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
-To: marcel@holtmann.org,
-	luiz.dentz@gmail.com
-Cc: linux-bluetooth@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	amitkumar.karwar@nxp.com,
-	rohit.fule@nxp.com,
-	neeraj.sanjaykale@nxp.com,
-	sherry.sun@nxp.com,
-	ziniu.wang_1@nxp.com,
-	haibo.chen@nxp.com,
-	LnxRevLi@nxp.com,
-	guillaume.legoupil@nxp.com,
-	salim.chebbo@nxp.com
-Subject: [PATCH v1 3/3] Bluetooth: btnxpuart: Handle FW Download Abort scenario
-Date: Wed, 15 May 2024 12:36:57 +0530
-Message-Id: <20240515070657.85132-4-neeraj.sanjaykale@nxp.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240515070657.85132-1-neeraj.sanjaykale@nxp.com>
-References: <20240515070657.85132-1-neeraj.sanjaykale@nxp.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1715756947;
+	bh=qZEnpACq0iHTaacG6FZZEyfsiJPcBQ6mk9fV3PhjltU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=wAOE8lhaMKWtilGri2uI01elUkjYFpu3dtgegVDoPB01RXTQCESJCG3cHfUMuHJtP
+	 MY6X1Phy8qI9b8a/Cf79fUpmxkQj1UI3F9iZDaVkj8YOsOlehw2tMJ/5eu5LCWOc3R
+	 6o3IkRJhXZDT1jmP/p69xOrN9X+pyDrre09E/3ElcwR+geJ+tz0CUOXrp1kNaJYR4X
+	 Qtk5WAauBxJnuiT2NXq6bX0PLz7npt1UeR3UO3B7qtfxmcyKWrXrtnjQQDoVcIUXnQ
+	 NkuVgz0insnprJYDBELK12tVtNM9cA8U9VmLpW+fV9MTxw2b6wCe7KiOmCrtgo7mUT
+	 1ibyO98tfce4Q==
+Date: Wed, 15 May 2024 09:09:04 +0200
+From: Lukasz Majewski <lukma@denx.de>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, Paolo Abeni
+ <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>, Vladimir Oltean
+ <olteanv@gmail.com>, "David S. Miller" <davem@davemloft.net>, Oleksij
+ Rempel <o.rempel@pengutronix.de>, Tristram.Ha@microchip.com, Ravi
+ Gunasekaran <r-gunasekaran@ti.com>, Simon Horman <horms@kernel.org>, Nikita
+ Zhandarovich <n.zhandarovich@fintech.ru>, Murali Karicheri
+ <m-karicheri2@ti.com>, Arvid Brodin <Arvid.Brodin@xdin.com>, Dan Carpenter
+ <dan.carpenter@linaro.org>, "Ricardo B. Marliere" <ricardo@marliere.net>,
+ Casper Andersson <casper.casan@gmail.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: hsr: Setup and delete proxy prune timer only when
+ RedBox is enabled
+Message-ID: <20240515090904.477c6b5f@wsk>
+In-Reply-To: <20240515064139.-B-_Hf0_@linutronix.de>
+References: <20240514091306.229444-1-lukma@denx.de>
+	<20240515064139.-B-_Hf0_@linutronix.de>
+Organization: denx.de
+X-Mailer: Claws Mail 3.19.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Type: multipart/signed; boundary="Sig_/7vQ_Gdg_fcDO5+YKl6phDUR";
+ protocol="application/pgp-signature"; micalg=pgp-sha512
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-This adds a new flag BTNXPUART_FW_DOWNLOAD_ABORT which handles the
-situation where driver is removed while firmware download is in
-progress.
+--Sig_/7vQ_Gdg_fcDO5+YKl6phDUR
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-logs:
-modprobe btnxpuart
-[65239.230431] Bluetooth: hci0: ChipID: 7601, Version: 0
-[65239.236670] Bluetooth: hci0: Request Firmware: nxp/uartspi_n61x_v1.bin.se
-rmmod btnxpuart
-[65241.425300] Bluetooth: hci0: FW Download Aborted
+Hi Sebastian,
 
-Signed-off-by: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
-Tested-by: Guillaume Legoupil <guillaume.legoupil@nxp.com>
----
- drivers/bluetooth/btnxpuart.c | 47 ++++++++++++++++++++++++-----------
- 1 file changed, 33 insertions(+), 14 deletions(-)
+> On 2024-05-14 11:13:06 [+0200], Lukasz Majewski wrote:
+> > The timer for removing entries in the ProxyNodeTable shall be only
+> > active when the HSR driver works as RedBox (HSR-SAN).
+> >=20
+> > Moreover, the obsolete del_timer_sync() is replaced with
+> > timer_delete_sync().
+> >=20
+> > This patch improves fix from commit 3c668cef61ad
+> > ("net: hsr: init prune_proxy_timer sooner") as the prune node
+> > timer shall be setup only when HSR RedBox is supported in the node.
+> > =20
+>=20
+> Is it problematic to init/ delete the timer in non-redbox mode? It
+> looks easier and it is not a hotpath.
 
-diff --git a/drivers/bluetooth/btnxpuart.c b/drivers/bluetooth/btnxpuart.c
-index c22f2ad7d751..97d0f6f089e8 100644
---- a/drivers/bluetooth/btnxpuart.c
-+++ b/drivers/bluetooth/btnxpuart.c
-@@ -29,6 +29,7 @@
- #define BTNXPUART_CHECK_BOOT_SIGNATURE	3
- #define BTNXPUART_SERDEV_OPEN		4
- #define BTNXPUART_IR_IN_PROGRESS	5
-+#define BTNXPUART_FW_DOWNLOAD_ABORT	6
- 
- /* NXP HW err codes */
- #define BTNXPUART_IR_HW_ERR		0xb0
-@@ -159,6 +160,7 @@ struct btnxpuart_dev {
- 	u8 fw_name[MAX_FW_FILE_NAME_LEN];
- 	u32 fw_dnld_v1_offset;
- 	u32 fw_v1_sent_bytes;
-+	u32 fw_dnld_v3_offset;
- 	u32 fw_v3_offset_correction;
- 	u32 fw_v1_expected_len;
- 	u32 boot_reg_offset;
-@@ -550,6 +552,7 @@ static int nxp_download_firmware(struct hci_dev *hdev)
- 	nxpdev->fw_v1_sent_bytes = 0;
- 	nxpdev->fw_v1_expected_len = HDR_LEN;
- 	nxpdev->boot_reg_offset = 0;
-+	nxpdev->fw_dnld_v3_offset = 0;
- 	nxpdev->fw_v3_offset_correction = 0;
- 	nxpdev->baudrate_changed = false;
- 	nxpdev->timeout_changed = false;
-@@ -564,14 +567,23 @@ static int nxp_download_firmware(struct hci_dev *hdev)
- 					       !test_bit(BTNXPUART_FW_DOWNLOADING,
- 							 &nxpdev->tx_state),
- 					       msecs_to_jiffies(60000));
-+
-+	release_firmware(nxpdev->fw);
-+	memset(nxpdev->fw_name, 0, sizeof(nxpdev->fw_name));
-+
- 	if (err == 0) {
--		bt_dev_err(hdev, "FW Download Timeout.");
-+		bt_dev_err(hdev, "FW Download Timeout. offset: %d",
-+				nxpdev->fw_dnld_v1_offset ?
-+				nxpdev->fw_dnld_v1_offset :
-+				nxpdev->fw_dnld_v3_offset);
- 		return -ETIMEDOUT;
- 	}
-+	if (test_bit(BTNXPUART_FW_DOWNLOAD_ABORT, &nxpdev->tx_state)) {
-+		bt_dev_err(hdev, "FW Download Aborted");
-+		return -EINTR;
-+	}
- 
- 	serdev_device_set_flow_control(nxpdev->serdev, true);
--	release_firmware(nxpdev->fw);
--	memset(nxpdev->fw_name, 0, sizeof(nxpdev->fw_name));
- 
- 	/* Allow the downloaded FW to initialize */
- 	msleep(1200);
-@@ -955,8 +967,9 @@ static int nxp_recv_fw_req_v3(struct hci_dev *hdev, struct sk_buff *skb)
- 		goto free_skb;
- 	}
- 
--	serdev_device_write_buf(nxpdev->serdev, nxpdev->fw->data + offset -
--				nxpdev->fw_v3_offset_correction, len);
-+	nxpdev->fw_dnld_v3_offset = offset - nxpdev->fw_v3_offset_correction;
-+	serdev_device_write_buf(nxpdev->serdev, nxpdev->fw->data +
-+				nxpdev->fw_dnld_v3_offset, len);
- 
- free_skb:
- 	kfree_skb(skb);
-@@ -1390,16 +1403,22 @@ static void nxp_serdev_remove(struct serdev_device *serdev)
- 	struct btnxpuart_dev *nxpdev = serdev_device_get_drvdata(serdev);
- 	struct hci_dev *hdev = nxpdev->hdev;
- 
--	/* Restore FW baudrate to fw_init_baudrate if changed.
--	 * This will ensure FW baudrate is in sync with
--	 * driver baudrate in case this driver is re-inserted.
--	 */
--	if (nxpdev->current_baudrate != nxpdev->fw_init_baudrate) {
--		nxpdev->new_baudrate = nxpdev->fw_init_baudrate;
--		nxp_set_baudrate_cmd(hdev, NULL);
-+	if (is_fw_downloading(nxpdev)) {
-+		set_bit(BTNXPUART_FW_DOWNLOAD_ABORT, &nxpdev->tx_state);
-+		clear_bit(BTNXPUART_FW_DOWNLOADING, &nxpdev->tx_state);
-+		wake_up_interruptible(&nxpdev->check_boot_sign_wait_q);
-+		wake_up_interruptible(&nxpdev->fw_dnld_done_wait_q);
-+	} else {
-+		/* Restore FW baudrate to fw_init_baudrate if changed.
-+		 * This will ensure FW baudrate is in sync with
-+		 * driver baudrate in case this driver is re-inserted.
-+		 */
-+		if (nxpdev->current_baudrate != nxpdev->fw_init_baudrate) {
-+			nxpdev->new_baudrate = nxpdev->fw_init_baudrate;
-+			nxp_set_baudrate_cmd(hdev, NULL);
-+		}
-+		ps_cancel_timer(nxpdev);
- 	}
--
--	ps_cancel_timer(nxpdev);
- 	hci_unregister_dev(hdev);
- 	hci_free_dev(hdev);
- }
--- 
-2.34.1
+My concern is only with resource allocation - when RedBox is not
+enabled the resources for this particular, not used timer are allocated
+anyway.
 
+If this can be omitted - then we can drop the patch.
+
+>=20
+> > Signed-off-by: Lukasz Majewski <lukma@denx.de> =20
+>=20
+> Sebastian
+
+
+
+
+Best regards,
+
+Lukasz Majewski
+
+--
+
+DENX Software Engineering GmbH,      Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
+
+--Sig_/7vQ_Gdg_fcDO5+YKl6phDUR
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAmZEX5AACgkQAR8vZIA0
+zr1lTAgA2ENishaKFuCVLs+wjmiwd631kRvCT/CrhFlZee0BvnKzZt8kCInlqXHz
+87nox73yEmt+X7K5j+IvZCWLgJlrlhkqmeJRfubl4/9p7XfAraK5z+jrCt3PlhRQ
+gsNSMHRcthViR7aluoVSbWWjuYH04CjKejrW1fxIm8BHVOVFMI2WU/dnm0UCTetM
+19XhJ4MK+u9+doa9jGekd1CHv39U67jx7bhkOx0FR6j1P1/ye0cg5JOUKP+CwLos
+auEtJMO9taESL6ptJB0JOmNLycJXD9HROgpALwSkgBZ/VAfvfaes0Y8u4G7EIfW8
+P2+Tl9nI+DLm2OjU3V7IMXrQnO6ARg==
+=Dwv4
+-----END PGP SIGNATURE-----
+
+--Sig_/7vQ_Gdg_fcDO5+YKl6phDUR--
 
