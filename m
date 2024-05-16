@@ -1,215 +1,134 @@
-Return-Path: <linux-kernel+bounces-180754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6BEA8C72B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:23:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 582568C72B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:24:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9A361C210C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 08:23:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12F36281EC2
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 08:24:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7F2580C03;
-	Thu, 16 May 2024 08:22:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D810A86267;
+	Thu, 16 May 2024 08:24:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EfRVXoVH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lXe5xgEv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24AE35477A
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 08:22:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 223CC27269;
+	Thu, 16 May 2024 08:24:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715847779; cv=none; b=m7IHCPYb7u3nezV31hzyW9qxMw9IV+YeuhoE2j38olTAciXw7eSQRDE+0b3oC7X6C+bvlZ3fOLPiaPcgi+i0bW8Rdz4NhLoA6EDwtzfnvxl2px7a4b26lEzLGvijr2esCmftdxOGOk2s3ph6B9j2ue+/eGo+ytqfEz0b39lqwAc=
+	t=1715847843; cv=none; b=PSvYTztF436tqUHS0hiZ2VRGUftT2R2Lju1cDFw9oPaQ6po3NY+EtTDhxT4aKkEug/xkH3c210sxsuJk16mkYkgXeebPsCk2S1UeK2mHpNWBnHGRguZmZQoDOC0mWdovT+L339B9+qfcnU7JvWxB8mTqgfSMlBhOpP/6x1q/lks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715847779; c=relaxed/simple;
-	bh=ALV9uGrFv7cZdcRvwBfOfVLAhVL7+0hTT07Mfq1KqrA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ObjLwIJBNgTNWPj5sjCmmTf9RaAzQDZ8sO72s5MqSVOdleBpjbLF5mGO77pp9RDMju9FvVD+JgsHaMAyAR6xHXNWZJnb41jNc0LPvpujfFuJRIKdgNAXFeHqY2JJNy0Pi0Q+LZM8BflxMRN3/5f5jZ2VRGpN6LFAiUjGy13hZgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EfRVXoVH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17A12C32782;
-	Thu, 16 May 2024 08:22:58 +0000 (UTC)
+	s=arc-20240116; t=1715847843; c=relaxed/simple;
+	bh=hyQRYxU63IRWE515n+lMY3Cdi+hKZmN00P0ekqCBH88=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eSPBgL0XXDdyAzqLYLFHMm+VAvsIbpNP1j4AA/6E6bTWdGRXu5bEz8EkLmnQI7ksB7epj5D0HwNX8bralDSpJ1aCS0PT4ZOWFMOGCIVGt172bd4VIrhLyqyItMz1h6zzLC1AusC4Govyu7L2doTNqFw3jtWxM6tAN5sidFnwri8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lXe5xgEv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4FE8C4AF0A;
+	Thu, 16 May 2024 08:24:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715847778;
-	bh=ALV9uGrFv7cZdcRvwBfOfVLAhVL7+0hTT07Mfq1KqrA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EfRVXoVHoD9Mne5Wpd6QuwDb1ZcB6EJ5ADD/ZKCrtIYNgdrhtgA8warDEO1J+B1Vm
-	 +ArPjI0D/r0YS7Wkh4Tf4Ldau28fx8x76b92QKcQCOTP/gHxo+wYfwLCo8rrg3dmFL
-	 BXSzhxabVsbIluDG0w5MHH4oo9ARHVDWnBqRG/WNlf6WWbOwSEMeRuwGgIe/0+jQSZ
-	 p0IYjme5nOftV6cjx7mml+PAf8bHRffVsOpaglTygE9j3kVeF9EmtgWQzdwz8Cf+Om
-	 6eQwWa7/1OUVIvd+GSDcXOkpQtpDvVyBUJaWywqpVcDHXA1qJE+lvqxyNQaKu/aaj6
-	 wKTBwLHqiaRDQ==
-Date: Thu, 16 May 2024 10:22:55 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Aradhya Bhatia <a-bhatia1@ti.com>
-Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Jyri Sarha <jyri.sarha@iki.fi>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, DRI Development List <dri-devel@lists.freedesktop.org>, 
-	Linux Kernel List <linux-kernel@vger.kernel.org>, Sam Ravnborg <sam@ravnborg.org>, 
-	Thierry Reding <treding@nvidia.com>, Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
-	Boris Brezillon <boris.brezillon@bootlin.com>, Nishanth Menon <nm@ti.com>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, Praneeth Bajjuri <praneeth@ti.com>, Udit Kumar <u-kumar1@ti.com>, 
-	Devarsh Thakkar <devarsht@ti.com>, Jayesh Choudhary <j-choudhary@ti.com>, 
-	Jai Luthra <j-luthra@ti.com>
-Subject: Re: [PATCH 6/7] drm/bridge: Introduce early_enable and late disable
-Message-ID: <20240516-bipedal-keen-taipan-eedbe7@penduick>
-References: <20240511153051.1355825-1-a-bhatia1@ti.com>
- <20240511153051.1355825-7-a-bhatia1@ti.com>
+	s=k20201202; t=1715847841;
+	bh=hyQRYxU63IRWE515n+lMY3Cdi+hKZmN00P0ekqCBH88=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=lXe5xgEvnEx8z6PUz2pL5ixMNeh9XpCBd+ztAAPImIBffjdluWJbOGot6MJJHYgon
+	 i7tkaVASeISGC99mWPn56DIyzlkyByDSJULcIBTgSjX1czoKnLFIN0ktsRgvjhz95b
+	 ROSwAFfAUMXgtEbjc8nWee5UTGzLg3yLF7iVaVov4UGpqzJkRNnzvSkq6WtUTjUNLN
+	 6ZsfYyEGu/j3bXLdpWIoeoqswVPpiRUOglZwZ9PyZC15dYyGiQ2B6Uf+nX5yfLLbJO
+	 7BK+U80vECPNxhZCf2vvym/S/Xa9kEl/ZM2Qesv3jNBSj7xnnFo3EZAQ0HnYCGeg4q
+	 X1UeTKCzJ1G9Q==
+Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3c998b36c6bso1280551b6e.3;
+        Thu, 16 May 2024 01:24:01 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUml9uCrp2ruRN3U1TosrCUDW+Pe/Ei7+P5Aj0xvi2qs7fIsLqC9gNxQwy7x5jsJzgCL2vSqUq/0PzNO6ZvzJ/RWHshBXbyYs4kIbt0/Sw9T3t0K338dcOW5Odo7ixo1kGFedTl9Zc=
+X-Gm-Message-State: AOJu0YzB2ayi9ix3Hdc0IE9qBiLSPOnl9CdN1MJi4PR5gcK4B8zTl8TP
+	CmQTlwHOQ9E3YSwOE65YGnyKl+cJ7b/kWj/T3Te0y0MKx6pYva3O9y4pxeqODoPEylz1tc1Fylc
+	Ron06IK/7x5hHWtwoVI372wuENiM=
+X-Google-Smtp-Source: AGHT+IGM4DTxf1p6aeFTp0onaB5jzEKQ/ZjKRM8n/2o6y3957FE/RdcAQjcwPEB4Sc47z2x9EU4JE9wEVsKIH1mBsWI=
+X-Received: by 2002:a05:6870:d0c6:b0:22d:fb4b:9d11 with SMTP id
+ 586e51a60fabf-24172fc0c29mr20760363fac.4.1715847841119; Thu, 16 May 2024
+ 01:24:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="xi3lclbr3vvtndxj"
-Content-Disposition: inline
-In-Reply-To: <20240511153051.1355825-7-a-bhatia1@ti.com>
-
-
---xi3lclbr3vvtndxj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <PUZPR01MB5120A03DFF0EA1CE70E7334E92ED2@PUZPR01MB5120.apcprd01.prod.exchangelabs.com>
+ <a0ecb036-c760-447a-abfb-78fb7928fb9c@amd.com>
+In-Reply-To: <a0ecb036-c760-447a-abfb-78fb7928fb9c@amd.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 16 May 2024 10:23:48 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gWDAws8vOvLXo4WEcz_jr38=87giN=RJSg=O1ec6F4rg@mail.gmail.com>
+Message-ID: <CAJZ5v0gWDAws8vOvLXo4WEcz_jr38=87giN=RJSg=O1ec6F4rg@mail.gmail.com>
+Subject: Re: [PATCH v4] cpufreq: amd-pstate: fix the memory to free after epp exist
+To: "Limonciello, Mario" <mario.limonciello@amd.com>
+Cc: zhida312@outlook.com, rafael@kernel.org, viresh.kumar@linaro.org, 
+	Peng Ma <andypma@tencent.com>, Huang Rui <ray.huang@amd.com>, 
+	"Gautham R. Shenoy" <gautham.shenoy@amd.com>, Perry Yuan <perry.yuan@amd.com>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, May 11, 2024 at 09:00:50PM +0530, Aradhya Bhatia wrote:
-> diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
-> index 4baca0d9107b..40f93230abb2 100644
-> --- a/include/drm/drm_bridge.h
-> +++ b/include/drm/drm_bridge.h
-> @@ -206,6 +206,20 @@ struct drm_bridge_funcs {
->  	 */
->  	void (*post_disable)(struct drm_bridge *bridge);
-> =20
-> +	/**
-> +	 * @late_disable:
-> +	 *
-> +	 * This callback should disable the bridge. It is called right after the
-> +	 * preceding element in the display pipe is disabled. If the preceding
-> +	 * element is a bridge this means it's called after that bridge's
-> +	 * @atomic_post_disable. If the preceding element is a &drm_crtc it's
-> +	 * called right after the crtc's &drm_crtc_helper_funcs.atomic_disable
-> +	 * hook.
-> +	 *
-> +	 * The @late_disable callback is optional.
-> +	 */
-> +	void (*late_disable)(struct drm_bridge *bridge);
-> +
->  	/**
->  	 * @mode_set:
->  	 *
-> @@ -235,6 +249,26 @@ struct drm_bridge_funcs {
->  	void (*mode_set)(struct drm_bridge *bridge,
->  			 const struct drm_display_mode *mode,
->  			 const struct drm_display_mode *adjusted_mode);
-> +
-> +	/**
-> +	 * @early_enable:
-> +	 *
-> +	 * This callback should enable the bridge. It is called right before
-> +	 * the preceding element in the display pipe is enabled. If the
-> +	 * preceding element is a bridge this means it's called before that
-> +	 * bridge's @early_enable. If the preceding element is a &drm_crtc it's
-> +	 * called right before the crtc's &drm_crtc_helper_funcs.atomic_enable
-> +	 * hook.
-> +	 *
-> +	 * The display pipe (i.e. clocks and timing signals) feeding this bridge
-> +	 * will not yet be running when this callback is called. The bridge can
-> +	 * enable the display link feeding the next bridge in the chain (if
-> +	 * there is one) when this callback is called.
-> +	 *
-> +	 * The @early_enable callback is optional.
-> +	 */
-> +	void (*early_enable)(struct drm_bridge *bridge);
-> +
+On Thu, May 16, 2024 at 9:47=E2=80=AFAM Limonciello, Mario
+<mario.limonciello@amd.com> wrote:
+>
+>
+>
+> On 5/16/2024 1:30 AM, zhida312@outlook.com wrote:
+> > From: andypma <andypma.tencent.com>
+> >
+> > the cpudata memory from kzmalloc in epp init function is
+> > not free after epp exist, so we should free it.
+> >
+> > Signed-off-by: Peng Ma <andypma@tencent.com>
+> >
+> > Changes from v3 to v4:
+> >       update subject used git command "git format-patch -1 -v x"
+> >
+> > Changes from v2 to v3:
+> >       update Signed-off-by to Peng Ma <andypma@tencent.com>.
+> >       set a space between if and "(".
+> >
+> > Changes from v1 to v2:
+> >       check whether it is empty before releasing
+> >       set driver_data is NULL after free
+> > ---
+>
+> Thanks for your submission!
+>
+> I would prefer the change list below the cut list, but otherwise this is
+> fine.  Maybe Rafael can modify that while committing.
 
-You don't need the legacy option here, just go straight for the atomic one.
+I can do that no problem.
 
->  	/**
->  	 * @pre_enable:
->  	 *
-> @@ -285,6 +319,26 @@ struct drm_bridge_funcs {
->  	 */
->  	void (*enable)(struct drm_bridge *bridge);
-> =20
-> +	/**
-> +	 * @atomic_early_enable:
-> +	 *
-> +	 * This callback should enable the bridge. It is called right before
-> +	 * the preceding element in the display pipe is enabled. If the
-> +	 * preceding element is a bridge this means it's called before that
-> +	 * bridge's @atomic_early_enable. If the preceding element is a
-> +	 * &drm_crtc it's called right before the crtc's
-> +	 * &drm_crtc_helper_funcs.atomic_enable hook.
-> +	 *
-> +	 * The display pipe (i.e. clocks and timing signals) feeding this bridge
-> +	 * will not yet be running when this callback is called. The bridge can
-> +	 * enable the display link feeding the next bridge in the chain (if
-> +	 * there is one) when this callback is called.
-> +	 *
-> +	 * The @early_enable callback is optional.
-> +	 */
-> +	void (*atomic_early_enable)(struct drm_bridge *bridge,
-> +				    struct drm_bridge_state *old_bridge_state);
-> +
->  	/**
->  	 * @atomic_pre_enable:
->  	 *
-> @@ -361,6 +415,21 @@ struct drm_bridge_funcs {
->  	void (*atomic_post_disable)(struct drm_bridge *bridge,
->  				    struct drm_bridge_state *old_bridge_state);
-> =20
-> +	/**
-> +	 * @atomic_late_disable:
-> +	 *
-> +	 * This callback should disable the bridge. It is called right after the
-> +	 * preceding element in the display pipe is disabled. If the preceding
-> +	 * element is a bridge this means it's called after that bridge's
-> +	 * @atomic_late_disable. If the preceding element is a &drm_crtc it's
-> +	 * called right after the crtc's &drm_crtc_helper_funcs.atomic_disable
-> +	 * hook.
-> +	 *
-> +	 * The @atomic_late_disable callback is optional.
-> +	 */
-> +	void (*atomic_late_disable)(struct drm_bridge *bridge,
-> +				    struct drm_bridge_state *old_bridge_state);
-> +
+> Acked-by: Mario Limonciello <mario.limonciello@amd.com>
 
-But more importantly, I don't quite get the use case you're trying to
-solve here.
+Thanks!
 
-If I got the rest of your series, the Cadence DSI bridge needs to be
-powered up before its source is started. You can't use atomic_enable or
-atomic_pre_enable because it would start the source before the DSI
-bridge. Is that correct?
-
-If it is, then how is it different from what
-drm_atomic_bridge_chain_pre_enable is doing? The assumption there is
-that it starts enabling bridges last to first, to it should be enabled
-before anything starts.
-
-The whole bridge enabling order code starts to be a bit of a mess, so it
-would be great if you could list all the order variations we have
-currently, and why none work for cdns-dsi.
-
-Maxime
-
---xi3lclbr3vvtndxj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZkXCXwAKCRAnX84Zoj2+
-du9OAYCwICdqAsCdbXf95TL0DLkl5Ns5me9WAXyJSrjsZgfFartVcHbGu45arYgr
-ZMC9F/MBgLi8V9OwNmxsbYh9VYB8cZiCNXq9mBLjGDlgsVhhhnXQm93SxrV7rP+x
-3U3viCVI7A==
-=jdzB
------END PGP SIGNATURE-----
-
---xi3lclbr3vvtndxj--
+> >   drivers/cpufreq/amd-pstate.c | 7 +++++++
+> >   1 file changed, 7 insertions(+)
+> >
+> > diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.=
+c
+> > index 6a342b0c0140..1b7e82a0ad2e 100644
+> > --- a/drivers/cpufreq/amd-pstate.c
+> > +++ b/drivers/cpufreq/amd-pstate.c
+> > @@ -1441,6 +1441,13 @@ static int amd_pstate_epp_cpu_init(struct cpufre=
+q_policy *policy)
+> >
+> >   static int amd_pstate_epp_cpu_exit(struct cpufreq_policy *policy)
+> >   {
+> > +     struct amd_cpudata *cpudata =3D policy->driver_data;
+> > +
+> > +     if (cpudata) {
+> > +             kfree(cpudata);
+> > +             policy->driver_data =3D NULL;
+> > +     }
+> > +
+> >       pr_debug("CPU %d exiting\n", policy->cpu);
+> >       return 0;
+> >   }
 
