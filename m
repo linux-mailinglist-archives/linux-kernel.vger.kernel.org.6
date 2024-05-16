@@ -1,180 +1,140 @@
-Return-Path: <linux-kernel+bounces-181219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C011B8C791C
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:15:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 001A48C7925
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:17:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 151FAB2110D
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:15:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84A56283A70
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:17:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 633DC14D422;
-	Thu, 16 May 2024 15:15:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EBE514D6E0;
+	Thu, 16 May 2024 15:17:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="bh/Lcs3B";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="peqCUhu9";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="bh/Lcs3B";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="peqCUhu9"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="O9jJV8Y1"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9D461E491;
-	Thu, 16 May 2024 15:15:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7B1C14D452
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 15:16:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715872530; cv=none; b=UklfUP9ylM1T3dH/r4oXubFiby5r58DcYFlNBNbwVB3WtuDJ8kq/JxRWEIN4G6Byzhcj9YxqwMSDQTgQlnH3j1meP/pVq7AQ27sHy7lHpZ03y03Lv/0OulijRSHiH91egu6QkWLht0H74CH2SyADuEPWUaJFMU/M+QdGHwOFdd8=
+	t=1715872621; cv=none; b=nkqMooZPTKR+q2ZqD1qDALstTqi2M14/ZMWTHkBWgIYhT8lG94X9lYjgqk6/Zde/Yz4caPGEbs2+r1MwHTynXdcl4RjZ7wHzl7YCdDBWtWiq7/NWL1WJ/ERi9GAxzR1KKbXyqdFRwibTShS57+oh8mHkwv30mH5eye1+912K11M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715872530; c=relaxed/simple;
-	bh=x7DdXYnCzFVdBqewRXoNz1fX6UgbGzwW5h5AT+08kj4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rvih4nf8eQ5GajfEcqQ3JODltszQ1jGapOubEvFtkdV4shuGcpD5j63Ap5mSbsR9s+FJAmR5nI7ICHaDo6x+yuU5eFWDCmJmXNI32xVhfo3dEcBW0APrtYs7U+DriNKnE7KhoVo+/m9xUtVjvfJ0QFh4Oy5APQ0XoOu7eGug55w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=bh/Lcs3B; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=peqCUhu9; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=bh/Lcs3B; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=peqCUhu9; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id C707734459;
-	Thu, 16 May 2024 15:15:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1715872526;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=o0inhXTwA4YjeQwB4Bizlo9EYy4r9uL0TfMoT/ThxIc=;
-	b=bh/Lcs3BgoBJfFVid6PVFu9vMlzBqbXKo49X/ayUHr4WE2yFU1o2GSgMVJtxFJrlS38qGe
-	GqzZr9PEp+XzfMQv/DxYmh1SxR8YxUkcap6ELe770ZsOPO/22Uy5+pMYorxL2zriAsWohi
-	1ogbSjJAlPbNPWwlk9tAw8GBDMYdcBU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1715872526;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=o0inhXTwA4YjeQwB4Bizlo9EYy4r9uL0TfMoT/ThxIc=;
-	b=peqCUhu9XBMEmd/EnpR2cjB/JKlvmq7y/sTu7cphgaiTw+wO3RbT5WkrmMz7MnNjc0jvNm
-	v+CFs6rMareJ5mBQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1715872526;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=o0inhXTwA4YjeQwB4Bizlo9EYy4r9uL0TfMoT/ThxIc=;
-	b=bh/Lcs3BgoBJfFVid6PVFu9vMlzBqbXKo49X/ayUHr4WE2yFU1o2GSgMVJtxFJrlS38qGe
-	GqzZr9PEp+XzfMQv/DxYmh1SxR8YxUkcap6ELe770ZsOPO/22Uy5+pMYorxL2zriAsWohi
-	1ogbSjJAlPbNPWwlk9tAw8GBDMYdcBU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1715872526;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=o0inhXTwA4YjeQwB4Bizlo9EYy4r9uL0TfMoT/ThxIc=;
-	b=peqCUhu9XBMEmd/EnpR2cjB/JKlvmq7y/sTu7cphgaiTw+wO3RbT5WkrmMz7MnNjc0jvNm
-	v+CFs6rMareJ5mBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A9216137C3;
-	Thu, 16 May 2024 15:15:26 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 3VkeKQ4jRmZNTQAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Thu, 16 May 2024 15:15:26 +0000
-Date: Thu, 16 May 2024 17:15:24 +0200
-From: David Sterba <dsterba@suse.cz>
-To: syzbot <syzbot+89700d262ed1fb9f9351@syzkaller.appspotmail.com>
-Cc: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [btrfs?] kernel BUG in __set_extent_bit
-Message-ID: <20240516151524.GB4449@suse.cz>
-Reply-To: dsterba@suse.cz
-References: <0000000000006deae405f1fac97a@google.com>
+	s=arc-20240116; t=1715872621; c=relaxed/simple;
+	bh=ZXs22x8gjkyO5FvWfIYFnYooRXNq/Z5RnIzauYycA2c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aHjGvHV4sx/LtuYV066NCaJy+Cxhu5xHxOPjMq+vkbb5ybV5xc4I1MDUvld/u01NMkPhb8oFFWrt38WnGhGXYVx4dbuXsnEVxepf2m1OcxepiBWCZkDF1vYPycjdjSZ1oBMWtFj8608q3PkL9fvNnf0tzD2XtjjKgK5Blszi8gQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=O9jJV8Y1; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5750a8737e5so10421a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 08:16:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715872618; x=1716477418; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=S4aYJn/xV/PKWXs5PNzajPV5h6iws4xgG9CE/ZAuxU8=;
+        b=O9jJV8Y1NfSroH7pVBI1a0MwoviYauaTDffLSrwHr2ANL2cwvNsI96mZEZwTI9pAds
+         gCiIFDAwYiSSz5n2BPRulynH+x9aB+dmA0l7Aus8N3mCNcaEmDeJ3MGVXzRyWKjnQ1/S
+         j6sbtkwDE0FGG6Gf98vXQpR3lkExREtyhz+oNSEeewpK/vx0tlJqXKjqeKuPXxt/dFPL
+         aA4WFw7MphbIdnuGKeOcPnITQdPmN8ogDcpVB/mtYBU5nnYfi2kMMsduzLGjN4Ab/wJT
+         giZYJCUD2uoyWBYbd6iuSFMFFtn6w5V8tfTh+lV1f8OwmgQ+yie8V19JMnOSuhgCvjy7
+         yMaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715872618; x=1716477418;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=S4aYJn/xV/PKWXs5PNzajPV5h6iws4xgG9CE/ZAuxU8=;
+        b=kQIEDC+rDuyh0SdVghGPH1bMueOWptmTeO3PQ1D+y+D+9QW7CU/b0fFCLkN/MXDlaH
+         eS1lJoDusxsoyGSY47xkaN/LlGw96CCBnmxLbCI75KeQwzUBMTO/2FvO4kk9V2lXg81G
+         onKB/aal/5CjtqFt7Rb1R/OoRVE3e0QqIelhom+ludd6/6i+PsL5mAheB2S5CfONRTR/
+         0oDUJFMbYW6oCeCyJWnI/l6WnNFaxGAytvo1z2H2jRgdlq1jV296fmADBFV4oK598wFH
+         AseTCg+0X5SFob1O7Og00o2f6CtcbijSJJGWbNAUzRj/MXh20zUtcOPUYrsTfVKVLdU1
+         sd6w==
+X-Forwarded-Encrypted: i=1; AJvYcCVHusYEmozEjo9LFuqX7l+UBL3QdIWVk9NvJQl1PUnw+lztpNu0BxYEMrAI5xG/sqUnn1ItesRqpXPdmzTIjkcDHHvUN3jJq7EwbWiW
+X-Gm-Message-State: AOJu0YzLTf1B5abO9nvI0f1BP16rPPEb4hwH1oDh3A6xzxotD8rPL4hM
+	qex+P93pCQaD6LLLleneCxsi5rl6i0iDoAEXoYNOioKaMV72s9CLE+EF8WfNZ54NxnVf58JCxht
+	2jReZrMrbKO2V860w+KLRFBybf0hySF/vGElewj+n6+Btu1WGZw==
+X-Google-Smtp-Source: AGHT+IHMNTC40XpTvgL1XTSP35Cv+n/Rhk6HldIuh2H5A/OEKFOgYm6M15rG805D9tnLx4WQjYkOJaxE+AAac13kuWk=
+X-Received: by 2002:a50:c90b:0:b0:572:a33d:437f with SMTP id
+ 4fb4d7f45d1cf-5743a0a4739mr1000638a12.2.1715872617792; Thu, 16 May 2024
+ 08:16:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0000000000006deae405f1fac97a@google.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spam-Level: 
-X-Spamd-Result: default: False [-1.50 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=2573056c6a11f00d];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	TAGGED_RCPT(0.00)[89700d262ed1fb9f9351];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:replyto,imap1.dmz-prg2.suse.org:helo];
-	RCVD_COUNT_TWO(0.00)[2];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	SUBJECT_HAS_QUESTION(0.00)[]
-X-Spam-Score: -1.50
-X-Spam-Flag: NO
+References: <20210416180427.1545645-1-dlatypov@google.com> <b7155efb-e99c-f385-3bf3-3ffcdefd1260@ti.com>
+In-Reply-To: <b7155efb-e99c-f385-3bf3-3ffcdefd1260@ti.com>
+From: Daniel Latypov <dlatypov@google.com>
+Date: Thu, 16 May 2024 08:16:44 -0700
+Message-ID: <CAGS_qxoSgEGThm3RfSc2jXrCUFwSs6HnfNcsg+EMMvWYWRbKWw@mail.gmail.com>
+Subject: Re: [PATCH v6] lib: add basic KUnit test for lib/math
+To: Devarsh Thakkar <devarsht@ti.com>
+Cc: andriy.shevchenko@linux.intel.com, brendanhiggins@google.com, 
+	davidgow@google.com, linux-kernel@vger.kernel.org, kunit-dev@googlegroups.com, 
+	linux-kselftest@vger.kernel.org, skhan@linuxfoundation.org, 
+	Linux Media Mailing List <linux-media@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jan 11, 2023 at 02:51:47AM -0800, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    358a161a6a9e Merge branch 'for-next/fixes' into for-kernelci
-> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-> console output: https://syzkaller.appspot.com/x/log.txt?x=12115e1c480000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=2573056c6a11f00d
-> dashboard link: https://syzkaller.appspot.com/bug?extid=89700d262ed1fb9f9351
-> compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
-> userspace arch: arm64
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13abc0a6480000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1153e53c480000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/99d14e0f4c19/disk-358a161a.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/23275b612976/vmlinux-358a161a.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/ed79195fac61/Image-358a161a.gz.xz
-> mounted in repro: https://storage.googleapis.com/syzbot-assets/fdb7b054a0c8/mount_0.gz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+89700d262ed1fb9f9351@syzkaller.appspotmail.com
-> 
->  __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
->  invoke_syscall arch/arm64/kernel/syscall.c:52 [inline]
->  el0_svc_common+0x138/0x220 arch/arm64/kernel/syscall.c:142
->  do_el0_svc+0x48/0x140 arch/arm64/kernel/syscall.c:197
->  el0_svc+0x58/0x150 arch/arm64/kernel/entry-common.c:637
->  el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:655
->  el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:584
-> ------------[ cut here ]------------
-> kernel BUG at fs/btrfs/extent-io-tree.c:379!
+On Thu, May 16, 2024 at 3:19=E2=80=AFAM Devarsh Thakkar <devarsht@ti.com> w=
+rote:
+>
+> Hi Daniel, Andy,
+>
+> On 16/04/21 23:34, Daniel Latypov wrote:
+> > Add basic test coverage for files that don't require any config options=
+:
+> > * part of math.h (what seem to be the most commonly used macros)
+> > * gcd.c
+> > * lcm.c
+> > * int_sqrt.c
+> > * reciprocal_div.c
+> > (Ignored int_pow.c since it's a simple textbook algorithm.)
+> >
+> > These tests aren't particularly interesting, but they
+> > * provide short and simple examples of parameterized tests
+> > * provide a place to add tests for any new files in this dir
+> > * are written so adding new test cases to cover edge cases should be ea=
+sy
+> >   * looking at code coverage, we hit all the branches in the .c files
+> >
+> > Signed-off-by: Daniel Latypov <dlatypov@google.com>
+> > Reviewed-by: David Gow <davidgow@google.com>
+>
+> Just checking if something else was pending on this patch-set for this no=
+t
+> getting merged?
+>
+> I needed this patch-set for adding tests for new macros I am adding in ma=
+th.h
+> as suggested in this thread [1], so wanted to pull this in my series and =
+add
+> changes on top of that for new macros.
+>
+> Kindly let me know your thoughts on this.
 
-set_state_bits()
+This patch just fell through the cracks for me.
+I had (wrongly) inferred that Andy might have had some lingering
+reservations about this patch (that it was too contrived, might not be
+useful to have tests for stuff like abs(), etc.).
 
-	ret = add_extent_changeset(state, bits_to_set, changeset, 1);
-	BUG_ON(ret < 0);
-	state->state |= bits_to_set;
+Feel free to pull this into your series.
 
-ret is -ENOMEM (returned in register x1), known problem in general in
-the state helpers everywhere, it's hard to fix as there's little change
-of rollback.
+Looking over the code itself, I think this still looks valid and
+stylistically correct with regard to KUnit.
+I haven't gone and validated that it still compiles and runs just yet, thou=
+gh.
+But if you do run into any problems, let me know and I can help send
+you a fixed version.
+
+Thanks for picking this up,
+Daniel
 
