@@ -1,171 +1,164 @@
-Return-Path: <linux-kernel+bounces-180817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46BC88C737F
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 11:10:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 292908C738F
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 11:15:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F122E1F211C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 09:10:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFF2A282C86
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 09:15:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C833A143720;
-	Thu, 16 May 2024 09:10:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E584B143745;
+	Thu, 16 May 2024 09:15:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="R1e4yjAW"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b="cmmZPd2+";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b="cpG6DbTl"
+Received: from smtpout36.security-mail.net (smtpout36.security-mail.net [85.31.212.36])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEB38142E8A
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 09:10:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715850621; cv=none; b=cZ/XrvgTfkyQVC0HArbHqCzYluhFjoRkZCsQxGkqHuIdyLuaQW6IWE0qBaQy5yB0UnBFiNX2sOrvddJzcFQI+rAbqtflykBqjhgX+VP+/Grpf8t4hrvXvhgeDQme/t2bGRRPW9AVpj5k9mxGaUeJk9W7bnpfx/4NpQOZXGj+9qQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715850621; c=relaxed/simple;
-	bh=PUdOanXyPmYs8t1SAQ5CGzSg30ESic3akwCJ1g2YgYI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=tiINYHrFY1u531UWlhqsqb6p7j4235qxTxBNhc3ULgkOQQCo8+M3BawlRGrYVAp+kCRkCX+sFLzmLuQU9KKE7XW0P/a1GPvHWAz7GrvX3UjXJM8rhpP5kOhVOPBw1wqq/Ne6MJp4M5lJMDrJ8HMAkKTBPnlpz8uNo2y6ooYjIO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=R1e4yjAW; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id B564E2000E;
-	Thu, 16 May 2024 09:10:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1715850617;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=NMV5f3FFSpaQuc9jD0+gvxaq7aY9BJmILcDh48MT9I8=;
-	b=R1e4yjAWnRlhnQQiYh4l+wXZsD7GNc34u/Qo89wR2TJ6wIZ7SY3BhnXqfkMKnb7O+7mjAa
-	q1X863b3zfHbqIuXTU2crR2Fp5SNYu+NeeDYliIHM4ChGaJAfXvOhSjphiv/UA7PQTFLLZ
-	o6pUyrHA+r9F/sCd34boyXHFfZ3iTIz5wrUgiUmNA6iZZLYFpo5qQEc5fXmdEUimL1uoMH
-	PV8Hc3uR8NRglmjhF3ms6xPFnKVfHWlyoBq/DBItu0aMlnmrd8CNFmCFyyEhhqUKHx6X4a
-	E6REp79DOVxFBOpnCuhWW6GuXW0NHtEF/2D4GlgNeo1zDzMLAvxvaTDIHsj5Og==
-Date: Thu, 16 May 2024 11:10:16 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-mtd@lists.infradead.org, Richard Weinberger <richard@nod.at>,
- Tudor Ambarus <Tudor.Ambarus@linaro.org>, Vignesh Raghavendra
- <vigneshr@ti.com>, Frieder Schrempf <frieder.schrempf@kontron.de>, Michael
- Walle <michael@walle.cc>, Pratyush Yadav <pratyush@kernel.org>,
- linux-kernel@vger.kernel.org
-Subject: [GIT PULL] mtd: Changes for v6.10-rc1
-Message-ID: <20240516111016.10d8abc4@xps-13>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B30D13FD93
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 09:15:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=85.31.212.36
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715850907; cv=fail; b=jlA9X3fTYCSSjb9IdOx5HkGSuT592JvyPHVQh19qTckJE+huIZSkjQDEBBt1RZtjhKzDMFjBk9FWe1rO/XBQ4oOLbScrvnf6rAf4DOX7M6wVCEIxTb+DxEACJR7284XX1hG/3ALZ1zYfiLHHf7WxBIBGrKi1uTNc29lrJLoqmdM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715850907; c=relaxed/simple;
+	bh=Gk97dZ93D1jbPehlZpifsIayO1o78Zn1QAGKkvOAPIU=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=OGkqDU2/x97lcs87wAI+O192A47rVuAphUJbPWULeE7Bcrgr4HY8rP18l5VNdXlJVB9F/juqahYz+uZhNGJu+JFMMg/uHYwIdbLUzJc03h2u77qV27orMOCjr5fZbsPf26qKCYtju88RRoZyvyiE97wg7yRQ8XSwR4X2tVBHENg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com; spf=pass smtp.mailfrom=kalrayinc.com; dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b=cmmZPd2+; dkim=fail (2048-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b=cpG6DbTl reason="signature verification failed"; arc=fail smtp.client-ip=85.31.212.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kalrayinc.com
+Received: from localhost (localhost [127.0.0.1])
+	by fx301.security-mail.net (Postfix) with ESMTP id AF6103D1134
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 11:10:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kalrayinc.com;
+	s=sec-sig-email; t=1715850653;
+	bh=Gk97dZ93D1jbPehlZpifsIayO1o78Zn1QAGKkvOAPIU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=cmmZPd2+98eHOCfqRu62eD0E7SduEfGb78p+KUu9ya5NdAM3uKGQOmUw546Rv54sT
+	 TyZHrFs3RQQOaUox3fafqaPNuNcVtZL82NvP+83UWwca5gWEjKLvjmOyJqS5ZxSidP
+	 56XBNhBpU4gB01XvQHr8fwv1T1Oc8n32PBVJoJw0=
+Received: from fx301 (localhost [127.0.0.1]) by fx301.security-mail.net
+ (Postfix) with ESMTP id 6E8833D1433; Thu, 16 May 2024 11:10:53 +0200 (CEST)
+Received: from PR0P264CU014.outbound.protection.outlook.com
+ (mail-francecentralazlp17012010.outbound.protection.outlook.com
+ [40.93.76.10]) by fx301.security-mail.net (Postfix) with ESMTPS id
+ D3B673D10F4; Thu, 16 May 2024 11:10:52 +0200 (CEST)
+Received: from PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:14b::6)
+ by PR1P264MB3511.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:143::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.28; Thu, 16 May
+ 2024 09:10:51 +0000
+Received: from PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM
+ ([fe80::7a6f:1976:3bf3:aa39]) by PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM
+ ([fe80::7a6f:1976:3bf3:aa39%4]) with mapi id 15.20.7587.026; Thu, 16 May
+ 2024 09:10:51 +0000
+X-Virus-Scanned: E-securemail
+Secumail-id: <575b.6645cd9c.d2d8f.0>
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=bMMBLEwBE/ObnHKQ4khNT0mpp4RqPE3IrUG9HSK2mJwo+3+qFDJHyC87qO/OZxG1Vrb2p3yLGN+EaAxm4shNCy61GREWDVuv0fb3bIVEMyy9qLCPGiULpfokIpxngUYPXLMXAyReio9uO3rqn0KHRW40H0DP+NhE7SqfFcQt4B9cqeY2uXflsVfV2BMV76GGcPLhoPvao3Y3jkMswkFk7OFP5KM5kBfa4DOLgDXvX/sW0AxgWqVntAtnkXXqNbjWoyUmUt2FlqG+CLxRNker/cF3CSnoy5KOf24mjpa8k13tJRAt6p/6cvctVpNaimJvd14DJnrvvfP2lo6xwZRNHQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microsoft.com; s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tSwz5Dq6FqvDtkKK7Kx8CrgM6PvxxFnc83+LktgGgug=;
+ b=bmNrdpu01GleGm83Ya/+uqwR6Th2q5+mk08HNhJYu9ZQSO7Zuk9Avot4L5vvhyi94yTXO6b08odmBkopIPRPWAIp6DYvQ5wMHhBSVufNQ60n3esRUT+TAa7l3wS0CJJ+vzKwr9NBMzKOa+r3gYkbOZKSPLXFxuKH2gF85ftYBSEGp0djXTi2dDW9wLlt6mi8PIW1VTz+tKRNPOCbVyhGCm+plq2HVPwKxCnRqBlsPoiXZ6QhXFxZQiuaztco0ubjH0xez3W5Hy0TWagiL9+yzih4G/YKiw52hn9IogSePPcsfVHp0vTXfNUPBFPjLddm2QSd5wxrlVrx7rANXjoa2w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=kalrayinc.com; dmarc=pass action=none
+ header.from=kalrayinc.com; dkim=pass header.d=kalrayinc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kalrayinc.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tSwz5Dq6FqvDtkKK7Kx8CrgM6PvxxFnc83+LktgGgug=;
+ b=cpG6DbTlQ2P/iKLPbscBYpFtc4yumxYPigVsaJ1oltIFtfPpnCR4QCLnT8wOfV8dNoFo9Eo12rKQW3ZIub8CaVys01l/Ea/tTfoQeRNdTJ6oN4SORZsSOr9gXU+agQAJylZShPwFDQ1aTnQhBat9Pr9MECdae5/jnt0Kv/giyV1601T8bQX3P5ECW0IAyloz74iSL1RFJ1kkJkC/LX9KkXCJRieq+up13XUi9sbWtSz1UCLyCrIgiFSSlB+S8lz9zGwR5KtplSrpg4X+ToaIN4Amqf8/Scxarbw726Bin/rxKUzdKA1Ix0zFFvc2WLEuTw7yb1GqMs/83H5578Iuzg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=kalrayinc.com;
+Message-ID: <7a8a015d-24d9-4bd3-a252-988f5273978f@kalrayinc.com>
+Date: Thu, 16 May 2024 11:10:48 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.1 000/243] 6.1.91-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240515082456.986812732@linuxfoundation.org>
+Content-Language: fr
+From: Yann Sionneau <ysionneau@kalrayinc.com>
+In-Reply-To: <20240515082456.986812732@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: AS4PR09CA0022.eurprd09.prod.outlook.com
+ (2603:10a6:20b:5d4::14) To PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:102:14b::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PR0P264MB3481:EE_|PR1P264MB3511:EE_
+X-MS-Office365-Filtering-Correlation-Id: 45aa62be-499b-4cfd-9b37-08dc758814cd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|376005|7416005|1800799015;
+X-Microsoft-Antispam-Message-Info: CKgO31rDIVR80w7uwKkQ5GdGz9OUZvnRGxlqq08ElYbP0oLS8ZsodafFv09la2Weealuz7oJuEffxbwOKcurseqizL7+EI52y/aJ7auOcJgyUah95bFm4e1eLUKeslgB2zX4qnMGCu1eyOKz/s8tSXLBnsWeQTv6HepXBzzE5yRyRAop9yDvZ6UFweMgODkADIHayM0HOKCpAUxvXTmoM6s7xCa3/74HUSYtqjVHCFkwD9z1k6KRrnRbItqklkbdTnBZ5Oix0QiU6QcuPpIGPXBZNz7xpj8Nb/sjcgrJccDXjVZ+dwWW/yGd5F6bo7U3GLQGBPaPSLV8U9xhlUz+q75bf6kx8kipkKnWow/Ir/Jepu/8xBEuHBylgyvs9bsSM+Y66ytn5kr6fVsY1rhtJUGM0lcApnCYuNfVqZ+lZmLOy5EB/GyRKSZv719JyzavTqRwbmAWVrN6GSup0q3pesEqeqLmx3vRhrSQ7qb9uwYPdCV4hAccFVJ1DS+zLrpkz8JXsTNFrF7l2QPgqBO8zQq6PpRGyEG4ebOaCWFSzBNwpcFUl8VZ9PpA/ojTjL4SQ9gMBCN5+UN8kAQiaTTzPWXz/IHZ+0vOooxourYmirZUqJx57mW5KJTnIk8MJFCxpbfPFCsFFrDsXAV/cRGi9W4uurkwOnREzGRJK6S0G0G4XyaM8dtUsyt2P5M3PiGostTN9I0uJf3PUAJRB5Rs4loC6wgdFzN6gjhBaiGtUE3uMgFwdBN7jX33Sf4DoJX3o1kpBKDhb/YJW1Oss/tx9zstKlqUZpcGHQdx5sw5sdgEyQJLArZzIaV1inK8k0izLHgv2M5xcW0p+4H/Xx7KnarWTteYFY+G1NGwQ6fwHhYnJjw0x4/1pEb659FQQvgnmx6NEcLu2onNXdd/GhnzEaJmv/gTn+sfJ7L/XFstTiQdcK8otZWk2q8+u3pvEGYoQL/
+ PitfbMgR/02roedsmjNZtHwdRN65emeb3oc4aglfhytD7mXNW0qw6mCdFJGy6VVjNTbNeIYwh9Uc5l/R2IHNS0HJxRrYD83SlfhuNycBJ06Mox7u7KwNM4SWDEPCFcAQt21Us/WHafmMikKOBR7YHZ/IkExRwzpBhRPWbcpS8/+yJM/kWvLanWR2Nz/WVqz9mkrMw/+uOiRDHxFL7TbUaLv8yO8GR1XKF3SuG2rXy/+6K+ZcpOwFAa2u3PQXPr4bCxCcK9A7pp3TNBb+MtP618CbG29F7WzP9z4eTy+c=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(7416005)(1800799015);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: ao8OStSqmEU2P3Z/OZHzowA/hZjArs+240tkugjwrZQRi5As5OvCRxQJPUT67qacHp+lLCFqJ0UB8aLEH3MI+J7PfoCP/GV81bHjWBTBiLxCZBhYuRCVe8eXBOFY5LlK520THh4Im7IfxcDw3nCSsuAKXmuoxjJaN4zxCoXqlDo/UJgMjvbhRrl2ExSptE5xrz76ZzbM4uTBHJHAKLk223TbcsMgQrJHPAYjbX6QCP1BpffWxfVNdnVpSn2QWMreZ3lSTVhv2wK4QVvmEiKWIS27mohE4cv5iPHYl9kK28EbjqaYS88wUo4Id8Rf+CP4dWu7f0wgcM7XeDuuR/ViekwSn3U6a3cUiieN6AJ9mr4J9y6jC707uCj73Ltf4ZGKo9NKsthEd8SmBgZZ7YjVj75bfXslrQs1IGIsrOm2mz0i31OCiuN7Wk52x8VFQGFwGtrXHYpw8Sn7RbmmAnVtpGZLZUFe6AsgPVsXwBg0D/CzlCQAkYkOiTs5uNxykiG3uPHpyOY29mOFsI95Nsal6IRcsHUiReTXqYUIsqupA+uJJtO4w7QJ560DeUXbuTnxgm8F0YvJ4HCEu5ylBLuyDYEtNEL09+7KpiwkNK6pkgPp6BpDmd4OEyKX3l9YpVUAyqc/e/7n4os0K++ifdF1jYkVVdCSzn+ILUZHwm2dRyStPGFo5h88YVuAnmCs3qjsqcoS4vMcIho4qQ0g1c1VTcMPCn4DAsjW+I0r+/HNWecOxNsFCYJXyxAv0br4MM957zWcIsjLq70gjhKc6qX7z3fUm7jUDEFWYSwM4T0oCRdYNs7Z0Hf65uyvYM1ZIHTWffFhD30q/TwvlIqhtH8qYbG8PZoGxralChQTHaD+CA/E3SjSfTuAJCFWEplYOrKAXlN1ChqFI+oxeDS/Z/sGzGc5bYJvWW+PQ4WitzOLDEIgJZh1bjdsT595K1kLy/qf
+ 5T66ivC0jwP6aZqJsEIL0oYv3DWTKAdTAeeatHSfsGRUIYC+PyqBIegP2060iJHHCuSoog4m3roFJZM0KrL07RH1WEvVPbbyk0TBF5Z8Js+PchgbvMYIdrVvNMqWyYQesXqcS76hp6myM3L482KnY7INcAo3m1YJQtisdX8HJTmiT+5oANzcCQKQcsuVDEKxeoBK6IqxBFi0Eg56MCOAHj7PGxHtxWPao8Ctje5VmpnMeC8PeXoH6mG9dd07FRdMndMQ++/Gq8dh7HPIvBXmTCNTdEEMa/TXScwERONK5t4LXcdVy8VJYvl2PWWx91TCYlkHKRK3f6C7Sgiwmy1UFXUmPHPxo44gKIsP7LLwEI6j9ODmwKLwrL6Co57wkbkkVKzQc17ZdQa4ECOKtq6XPYac2hA7XwtZoTjrzJZxHyEPLgfbZ36tYpyoajMFeRd0q8Yos23YCzNvIwDQxRGItyrQaie+0nEbmEFRnFj+qd2Z97iwAQO3c3Yt7aLjcL/ONqy1zfS1le32jw+YwtlsZNLbmYcQ1JUvSc0lvCMMl17fQV6448iWROOnT56GaGAuYvlZnguU9IRo4DjNbdTjC0Thm+zVOmeTCDwJLJYwER8UTR5tAwv+QQFzDkda0IoNsFIbe7b3SB7wZ6qQxqbuOQ==
+X-OriginatorOrg: kalrayinc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 45aa62be-499b-4cfd-9b37-08dc758814cd
+X-MS-Exchange-CrossTenant-AuthSource: PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 May 2024 09:10:51.3906
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8931925d-7620-4a64-b7fe-20afd86363d3
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6QJtzNeFVmIp8RHXD69CMA7qcpeftJ4TbBxdNCnywckcsKpkGSDtnpDSZ1JFhC0+J4Rs4TV3YJQ9ayeYb5Uh3Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR1P264MB3511
+X-ALTERMIMEV2_out: done
 
-Hello Linus,
+Hi Greg,
 
-This is the MTD PR for v6.10-rc1.
+Le 5/15/24 à 10:27, Greg Kroah-Hartman a écrit :
+> This is the start of the stable review cycle for the 6.1.91 release.
+> There are 243 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Fri, 17 May 2024 08:23:27 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.91-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
+>
+> thanks,
 
-Thanks,
-Miqu=C3=A8l
+I tested 6.1.91-rc2 (ca2e773ed20f) on Kalray kvx arch (not upstream yet) and everything looks good!
 
-The following changes since commit 4cece764965020c22cff7665b18a012006359095:
+It ran on real hw (k200, k200lp and k300 boards), on qemu as well as on our internal instruction set simulator (ISS).
 
-  Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
+Tests were run on several interfaces/drivers (usb, qsfp ethernet, eMMC, PCIe endpoint+RC, SPI, remoteproc, uart, iommu). LTP and uClibc-ng testsuites are also run without any regression.
 
-are available in the Git repository at:
+Everything looks fine to us.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git tags/mtd/for-=
-6.10
+Tested-by: Yann Sionneau<ysionneau@kalrayinc.com>
 
-for you to fetch changes up to 552c9380f98fc47950870ef0935f94cf3acec087:
+-- Yann
 
-  Merge tag 'nand/for-6.10' into mtd/next (2024-05-16 10:55:36 +0200)
 
-----------------------------------------------------------------
-* MTD
 
-Simon Glass wanted to support binman's output properties in order to
-check their validity using the binding checks and proposed changes with
-the missing properties as well as a binman compatible.
 
-Krzysztof Kozlowski on his side shared a new yaml for describing
-Samsung's OneNAND interface.
 
-The interface with NVMEM has also been slightly improved/fixed,
-especially now that OTP are also supported in the NAND subsystem.
-
-Along with these changes, small cleanups have also been contributed
-around ID tables, structure sizes, arithmetic checks and comments.
-
-* Raw NAND subsystem
-
-Two small fixes, one in the Hynix vendor code for properly returning an
-error which might have been ignored and another in the Davinci driver to
-properly synchronize the controller with the gpio domain.
-
-* SPI NOR subsystem
-
-SPI NOR now uses div_u64() instead of div64_u64() in places where the
-divisor is 32 bits. Many 32 bit architectures can optimize this variant
-better than a full 64 bit divide.
-
-----------------------------------------------------------------
-Aapo Vienamo (2):
-      mtd: core: Report error if first mtd_otp_size() call fails in mtd_otp=
-_nvmem_add()
-      mtd: core: Don't fail mtd_otp_nvmem_add() if OTP is unsupported
-
-Andy Shevchenko (1):
-      mtd: core: Align comment with an action in mtd_otp_nvmem_add()
-
-Bastien Curutchet (1):
-      mtd: rawnand: davinci: Add dummy read after sending command
-
-Denis Arefev (1):
-      mtd: partitions: redboot: Added conversion of operands to a larger ty=
-pe
-
-Erick Archer (1):
-      mtd: maps: sa1100-flash: Prefer struct_size over open coded arithmetic
-
-Krzysztof Kozlowski (2):
-      dt-bindings: mtd: Add Samsung S5Pv210 OneNAND
-      mtd: mchp23k256: drop unneeded MODULE_ALIAS
-
-Maxim Korotkov (1):
-      mtd: rawnand: hynix: fixed typo
-
-Michael Walle (1):
-      mtd: spi-nor: replace unnecessary div64_u64() with div_u64()
-
-Miquel Raynal (2):
-      Merge tag 'spi-nor/for-6.10' into mtd/next
-      Merge tag 'nand/for-6.10' into mtd/next
-
-Simon Glass (2):
-      dt-bindings: mtd: fixed-partitions: Add alignment properties
-      dt-bindings: mtd: fixed-partition: Add binman compatibles
-
- Documentation/devicetree/bindings/mtd/partitions/binman.yaml    | 53 +++++=
-++++++++++++++++
- Documentation/devicetree/bindings/mtd/partitions/partition.yaml | 72 +++++=
-++++++++++++++++++++++++
- .../devicetree/bindings/mtd/samsung,s5pv210-onenand.yaml        | 65 +++++=
-+++++++++++++++++++++
- MAINTAINERS                                                     |  5 ++
- drivers/mtd/devices/mchp23k256.c                                |  1 -
- drivers/mtd/maps/sa1100-flash.c                                 |  6 +--
- drivers/mtd/mtdcore.c                                           |  9 +++-
- drivers/mtd/nand/raw/davinci_nand.c                             |  5 +-
- drivers/mtd/nand/raw/nand_hynix.c                               |  2 +-
- drivers/mtd/parsers/redboot.c                                   |  2 +-
- drivers/mtd/spi-nor/core.c                                      |  4 +-
- 11 files changed, 212 insertions(+), 12 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/mtd/partitions/binman=
-yaml
- create mode 100644 Documentation/devicetree/bindings/mtd/samsung,s5pv210-o=
-nenand.yaml
 
