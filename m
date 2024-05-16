@@ -1,119 +1,143 @@
-Return-Path: <linux-kernel+bounces-181344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D7FF8C7AC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:57:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED1758C7AC3
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:57:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B15F71F227BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:57:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A6071C21C34
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:57:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D1A2143C4E;
-	Thu, 16 May 2024 16:57:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C329114B940;
+	Thu, 16 May 2024 16:57:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MlaNABtO"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Lrn0JLjo"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 856784C90;
-	Thu, 16 May 2024 16:57:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 468F4C121
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 16:57:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715878644; cv=none; b=FWGdt9dTwXhkizorz0x8LHfgPhQvQ8CMVfCHYJtZuEC1oDma6Q01Ewi1PpihOQLANFBzbpzZmLfEWNKt8wANt1x34Dcqq2/VXTq63q9Ovfg7TyBUz1XrojM5durmJyZMPTXFmAgjGmVwhxMxhzd1Cmhcb5AAqmRkBjFXogHW+a4=
+	t=1715878657; cv=none; b=WWYrkzt0q2Q1eu9mm2zwpKryPIQ9QyK24H46ApTTl9X2kZ1h+vhpoEMKnvufwCIMCjeCqC+yuZoy7hCqIK6duVE8pfZSMLLU+9OvJdAS4g4HkuzEZmJdsOPrJ/+ap+svv7+Kt4EnQcc2FZ+UeA5duEzZkUwCiCQmPtRdrU498ws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715878644; c=relaxed/simple;
-	bh=eFFVQcl1g3izW1Ue47+S2VYYVJe/1FsMDD82U9A3EGc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=URBv/TxX+0durcUh26mEf+UibXeIWj1U4vzlRmqM3H/BlAF7NFOoGJJulCziwuPTKIJdViVn+bONhiVjCtI5RortWINVzRWlbiVHZNIH38JJXKkr2tbfoBsRVJcKKP1YfngPfWrZ+YtEz6v01hSesDTDweN0u9lYe8BM6evRR50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MlaNABtO; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-6f447260f9dso417973b3a.0;
-        Thu, 16 May 2024 09:57:22 -0700 (PDT)
+	s=arc-20240116; t=1715878657; c=relaxed/simple;
+	bh=4z0LvThJEiKq2H3kd+RUA72yTT6QSoojsUkp+4+JLzg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QGgLyi4NXQgTLcfXPwwtys//Qy58H7HV+lHuxQv2i5CvkODC9Ash6r9EDK8S3X9XhotoqcLI2HMDjYVpq3DsMpbUZUsWCKzKBo5YWbBp0vUQfFC5xPxfCnv24IFJYrw3c9r/XOd3OSBAaTbhEh2sNnThc1a0q7y3Zeln1G9bPs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Lrn0JLjo; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1eed90a926fso6035ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 09:57:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715878642; x=1716483442; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=k2bhLOB5Q9K5+OsYlbLnqM08/oUvfJSr9geEiHh0y64=;
-        b=MlaNABtOZxzFHmDildmD6pf8tWVfLwqv9adZv0TvuAnY5anMm15aJxHQYOu9YdTEx+
-         f+fxLA2QFFq8UqOTTj2HlnmdBynMs8/HoF9bCydSZWjAvg2ALU1W6v+WhuaHzj6vJVr7
-         kaMHIkTzz6bAKyJkBpHYgjIcCfBDlr+U8fQ4iOxqrPQumd2UlK/hGvgwXsyiiQsFcpEP
-         10ih66mTEVMvi52k9wdG8HU51sIvFSE5oai4Ct9FzTeJ4eWkCE4mFLfF+xSZZHuRv6yX
-         0h7uAhmwlWWm1XV8491C2hjg+Ts/P5xzI4iWkXttFPopK3apBS2HIczTjZa5ssFNstyC
-         mRog==
+        d=google.com; s=20230601; t=1715878653; x=1716483453; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pqpSCcrr1x6Rp9jDqagAxtA7Cjuz8cvYaFzHk9HszMY=;
+        b=Lrn0JLjoc+FijiIvegT71s/c1Hg/+wPgW7lnZbramMQeun7hZLk8RcsJ5WsDf0vkL4
+         u/OIf7VS92A0tGd05vPg3N9SJEnJsUJ+2ioP42mDhQm7/C39jH2f0OdRE2PA+tOf2dlm
+         otOnJX24DcMAKx9ziTw95jU90v2y7Sy/G8BEwaNp+9SIk+q0eM3ER47440qqWapKoYdu
+         4elL4ywWezZXQUVRV7MHgju+e8OXqBq3Lbz6Npl4Qc4DlZgRCzfUTqei3UtqseZC7J76
+         eR5h/o5LUeK8lmSUyMHBfxROlGxsko3ZFUek0XWAFjCMK0/111+GgnBaAefpbPv2qC5y
+         P2dg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715878642; x=1716483442;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=k2bhLOB5Q9K5+OsYlbLnqM08/oUvfJSr9geEiHh0y64=;
-        b=xDMbzTs/fMHwuS9k5rczEOwtWaaNc5sIpIkS7bNlyxo6x42KKEetPQRm09rWUFuzYC
-         cBK4kVeGw1J/RzIEh5i2f056e+lSygiJxeWvuG+DGtj8x50mWkDDTfHni9LCeUB5c/Wi
-         N+v0ienyATOjbaMVyTzdL7I8tToz7/RtlYi3DxjIIFA09q1qM1j1xd44eCig/7REhIvR
-         hX++Qlrr747Xgqe3Yzz3r5e7/n80io5TQCbR4l8qprlVb//bTEslvoCqjxmOsFSq2lyN
-         r4XBavjOyS7P06w8CkOl7yKzfU9bn2vKfvKhLLb41vwNLoxDPAXJG5A/0mKqfYvEGGVf
-         hSAA==
-X-Forwarded-Encrypted: i=1; AJvYcCW6HD2XPu3HLv7CxxY3moDBKpdxdJgs00xurmE44Qc+PsTLpWAFno5Mof/7pgQlpBu+bUwfanCaS+Z+u9IVDg42vPX6SfyHZDr0xYtjze/8Q+oZFkFW4R/y0k+OLbtoZn3MIjhA
-X-Gm-Message-State: AOJu0YwfOfgzr1sIq/3ZtjYOe4uwjpkuVk/cG5arkLUqtJwfVwC73MrB
-	Zt1dD3Ix3GecAtDnQdjZ1+VQIuON+r0KDBw5T/oDehNIdkLrSqbq
-X-Google-Smtp-Source: AGHT+IHlh7QdmSS3WTCAoIXebwSunD1syWEbtM4hHp4cPjVxYk8uj2sH9HnFjZi2zCTFzp0kyKDsNw==
-X-Received: by 2002:a05:6a20:43a8:b0:1af:e09d:d98 with SMTP id adf61e73a8af0-1afe09d1066mr19267558637.60.1715878641527;
-        Thu, 16 May 2024 09:57:21 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-6f684d88710sm1306325b3a.80.2024.05.16.09.57.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 May 2024 09:57:20 -0700 (PDT)
-Message-ID: <9086d2fb-e464-42b5-a264-1000917c6bbd@gmail.com>
-Date: Thu, 16 May 2024 09:57:19 -0700
+        d=1e100.net; s=20230601; t=1715878653; x=1716483453;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pqpSCcrr1x6Rp9jDqagAxtA7Cjuz8cvYaFzHk9HszMY=;
+        b=Nsj8TFa38BOrr7+olgFjdG/Z5m3Kd2CK89d+Z8SshO6j18X49bGW4Bf7/GbdsOr9ap
+         GWaW9gsCW2Fxs/TIjxnRDywqkkhCTQomJnS5X6un7dMUxgmTr3kXZaKKkngCTR2QmaKl
+         OY/XVyMT9Ul/KSXg0l2cxle1ka9Q7BR9YoF3vWqFFTHAPIiv54A4unMgAv5MmAyx0gDI
+         9irOYfugLJW4Q8a9t8kch1/qSSwkH4iOn6rrUTTlF6W4MCu23AEw1gQ/6xP5ndwrtE67
+         0xlcb68P29vdLnwzj7B+b0VGiIvc4RE515Og4YYoxo5Il549eHcCXg0lpoaE7Fqr7lp4
+         MsvA==
+X-Forwarded-Encrypted: i=1; AJvYcCW4BsftkIKpUELDJxhYaS8J2ZWCaaykxs1FnlObBQHtU9o6L4Oe+FsAA9sbt8nDkgKehfAiLjUKQxeKZNyTbihZ29n5VWrt4/Un+2ll
+X-Gm-Message-State: AOJu0YzZRXxPPr0p/0HtqEKPqyFo2QbnzfXStwCKYiBqOPNVwLPGSrwm
+	o4XrlZUA53El6ddTwct/uAZbhn2zGxbOkHZNPdw6cerlcrbce5klrExbyodS0iU1mkrGZHjOTGp
+	yhGrDGOIKsf8H3jrihFgBqdsY/8m+Xrvk7uP1
+X-Google-Smtp-Source: AGHT+IG/XwMydBHOjq3QmTNXCCxT8rv1bnywB6ho3Oni4ZCUNL5rvm9eSm1ulDdNMygSqprtFF73dK32X4UoOiX/iz0=
+X-Received: by 2002:a17:902:d4c6:b0:1e8:88b2:17cd with SMTP id
+ d9443c01a7336-1f05f651484mr12546175ad.12.1715878653170; Thu, 16 May 2024
+ 09:57:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.1 000/244] 6.1.91-rc3 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240516091232.619851361@linuxfoundation.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20240516091232.619851361@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240515054443.2824147-1-weilin.wang@intel.com> <20240515054443.2824147-7-weilin.wang@intel.com>
+In-Reply-To: <20240515054443.2824147-7-weilin.wang@intel.com>
+From: Ian Rogers <irogers@google.com>
+Date: Thu, 16 May 2024 09:57:21 -0700
+Message-ID: <CAP-5=fXDmewhEzZc5ZYhfHYtPUmELjeDTKM5m04PRFaAPaO+vg@mail.gmail.com>
+Subject: Re: [RFC PATCH v8 6/7] perf vendor events intel: Add MTL metric json files
+To: weilin.wang@intel.com
+Cc: Namhyung Kim <namhyung@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Perry Taylor <perry.taylor@intel.com>, Samantha Alt <samantha.alt@intel.com>, 
+	Caleb Biggers <caleb.biggers@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 5/16/24 02:13, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.91 release.
-> There are 244 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat, 18 May 2024 09:11:43 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.91-rc3.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+On Tue, May 14, 2024 at 10:44=E2=80=AFPM <weilin.wang@intel.com> wrote:
+>
+> From: Weilin Wang <weilin.wang@intel.com>
+>
+> Add MTL metric json file at TMA4.7 [1]. Some of the metrics' formulas use=
+ TPEBS
+> retire_latency in MTL.
+>
+> [1] https://lore.kernel.org/all/20240214011820.644458-1-irogers@google.co=
+m/
+>
+> Signed-off-by: Weilin Wang <weilin.wang@intel.com>
+> Reviewed-by: Ian Rogers <irogers@google.com>
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+This change works either with the approach in this series or with the
+evsel approach so I don't mind my reviewed-by standing. I'd prefer we
+could have an evsel read counter implementation that returns 0 so that
+we can run without retirement latency gathering.
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+TMA 4.7 is broken in that the tma_lock_latency metric uses a
+retirement latency event but not within a max function so having the
+read counter return 0 would break the metric:
 
++    {
++        "BriefDescription": "This metric represents fraction of
+cycles the CPU spent handling cache misses due to lock operations",
++        "MetricExpr": "MEM_INST_RETIRED.LOCK_LOADS *
+MEM_INST_RETIRED.LOCK_LOADS:R / tma_info_thread_clks",
++        "MetricGroup":
+"Offcore;TopdownL4;tma_L4_group;tma_issueRFO;tma_l1_bound_group",
++        "MetricName": "tma_lock_latency",
++        "MetricThreshold": "tma_lock_latency > 0.2 & (tma_l1_bound >
+0.1 & (tma_memory_bound > 0.2 & tma_backend_bound > 0.2))",
++        "PublicDescription": "This metric represents fraction of
+cycles the CPU spent handling cache misses due to lock operations. Due
+to the microarchitecture handling of locks; they are classified as
+L1_Bound regardless of what memory source satisfied them. Sample with:
+MEM_INST_RETIRED.LOCK_LOADS_PS. Related metrics: tma_store_latency",
++        "ScaleUnit": "100%",
++        "Unit": "cpu_core"
++    },
+
+Other metrics then use that metric specifically
+tma_info_bottleneck_memory_data_tlbs and
+tma_info_bottleneck_cache_memory_bandwidth.
+
+I couldn't see in the TMA 4.8 release the updated MTL metrics:
+https://github.com/intel/perfmon/pull/181/commits/d54c847b2f863c98a917bdd31=
+a0680f4d50ff75c
+but my belief is that this issue hasn't been addressed.
+
+Thanks,
+Ian
 
