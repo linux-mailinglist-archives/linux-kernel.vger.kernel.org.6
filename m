@@ -1,131 +1,111 @@
-Return-Path: <linux-kernel+bounces-181346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D72148C7AC5
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:58:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 525CB8C7ACA
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 19:04:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 428BD1F21EBF
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:58:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3FCB2832D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:04:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D7CA14A0AE;
-	Thu, 16 May 2024 16:58:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 672D214A4E2;
+	Thu, 16 May 2024 17:04:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pWeD82FN"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b="bVWGEHUt"
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AABE14A3D
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 16:58:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C12C6FD5
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 17:04:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715878720; cv=none; b=MeyjagNnFq+FCfOMz5dhW2lhclXYHfV+OL4BqJDHDiDT3inlHUDbcsbYakmq7sKh04TXgQqe5QhvE/iII23HxX0wc6Kp68YGzTZvTo1QiTa9dZxXib8zFvcV+ZtHbLCFW6vVT0sEMvj5Pe9zR782Vi4Vot6kLjJy4IjMrvpdsL8=
+	t=1715879049; cv=none; b=f1gRkLfSMkF58FtmY0HYx3Cga/gTZ7HaGuHlHyeYLjPtdfTCgeUNBlhsl3kXLKYVuSMo8srml7KpxoApjqv59Qhtt4D0kW43xNEnw26IexQOxIpo8DT+DvwUexjcm0ifle38OFHKpuUSY3TDaNL5Zc0N3D2OzDjCbGyaLY97G68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715878720; c=relaxed/simple;
-	bh=fU/c6HrGJfHpZI7B1NOeoFi3w5X1FCUEXZajmkpmbl8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=G9lN/BVqMrjSuzMehcD/soq5dk4vPS7dYTUDSPrZgvxt6iEr821LNiHbk1CbSvZpYWPUkRDltWnYj9Mw/5yZXuJ40F7xwsRsgaIHpuyn6d36EiQ+F3vqxnycrr3Qcj1uVp1WKL2MM+L3zkoyJgCXq3KZk0C/LnxeflK59tWUMTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pWeD82FN; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-658b03ebe58so1168495a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 09:58:39 -0700 (PDT)
+	s=arc-20240116; t=1715879049; c=relaxed/simple;
+	bh=rsMQ/5885mYwARF3wRsSl+Yp5H4QymZh6RwQfRBmPtE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ulI2HLj6twpTsI7XALqGlIK0ScyXzJ4x8ecohFwQQDY02ZcQfBTRoBmqJTbpJ4JrU2NC/3fFUsp6nyjDlr0Pi6Cnn0emYKf6RSY2BVcnlCM2BklyKJqOZXXkHoLGWTglujjpDoBXWds7JXYFkLA2pyOt6BCIjb/X5vEWpTLAkGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=9elements.com; spf=pass smtp.mailfrom=9elements.com; dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b=bVWGEHUt; arc=none smtp.client-ip=209.85.166.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=9elements.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=9elements.com
+Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-7e1e06c9a10so63126139f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 10:04:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715878719; x=1716483519; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VYOU9HPjB76w/RXd8VAXD/28+sXZKX4A/bOVr9SyK1c=;
-        b=pWeD82FN1lLaqosaNPMDybaqG3D36e9YC5ZNK24iw3HYWOKid5WPPrbUj+ctIUbDQV
-         avDIUwEEFTHaRS9FS5PPx7u6pRG86trON9ClTl7BQQYCj85bskavOKMKNyR4hJqd3gYz
-         kIfk/WTdPwNJqd+aaHZu5+eRxMfq31Srh9T7/UGAl3wf9wx2qZFLCbH/CFp6FD6lEV3q
-         yM9UjkJ98eEnJ37o7N+Q19b8qfoGgrLfdKTtaWKu0nYbdKVddxx/T/LPMw8QPUOD8XSn
-         Gzhslbh7P3d5em1kY2tbk7Ap1lu5084tJ2nEYG7GlyR4fTphZzdrDu62EskKQfW7BpJK
-         C8zQ==
+        d=9elements.com; s=google; t=1715879047; x=1716483847; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=5BcOlqeHdHkpg9rPGe9OSUX6goj8JCvPGkrhm+DPRCU=;
+        b=bVWGEHUtWNqlQF+Q5/whad4eLxuxE0ZnETiVOIyDrHdZxBVJsUPmnuAGS1uXlAod6A
+         0fA7i4O0jLaxLfz0CM72RXxu/2byT0Mv15ov9VS18wcGTYclUto7gozs98oTepv8cRdj
+         9kRd0WhNzO9UL6QdzDS9ZkxDLArj91/iknwWMXXtc5r56P+Bn5HtDkNlIlv/QPpbubv0
+         lGL7exD03Bdn7gshTQMktlZ+qFm1yqvny4c8YJsWw7h44JZMqhraJPcXmJQ4QKjpoo7f
+         hepGVZZXfX0feGCWqBYw6OCynNfxDud3/b3/NNtUV7f0rAnM8C6DUjrdi5mJ6WEwRQpl
+         GgZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715878719; x=1716483519;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=VYOU9HPjB76w/RXd8VAXD/28+sXZKX4A/bOVr9SyK1c=;
-        b=sVgfcdN2qC5ckbXHyMzX3MrAQPk4EtaRX2HkjBS2QhExOKfNrMPNjgYadROHtNZB14
-         XkJNdxxKWZtYLm7lO1d0iXuRLcL3PXn5ioU2Tu4U6CMusqFX/i97tCOwPsdkSQ+4Umx4
-         D2BgoLiTD3JbFLeRnXbIRgN1O2q275KDZ0MSX6iYKeA8QNROflYGZycWhhmojdaAwbj/
-         TNvmd0rKsFD0/AG/rIdgxUhWTNPbQrb3qZvW9k5QenxSceU5hTtijpv8O8NOXk42D2fr
-         zTYpjfiGI8KAgMSd0UZB2VjsmcaIeL4L2tYXAbqKaoL7FuQoA6gxJj26xS18cYihCzYY
-         D/kQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVHYrDSBiiVN0lfVk9kmzqEHgX2xxFfCRKtJxy7ZhPgDhYNtXk2Ih4W+1LtEjuAtR7OVEOP6cykyBF4p6cAyHM79+s1+GABshoUJb9e
-X-Gm-Message-State: AOJu0Yx1uJic+2EKbpAPQLNWDGzLp7F7cqilaAcHttVQA2A0VqcQKH5Y
-	QKsCsruUCGcZpTObxi+ssZUABQKMHwAWMRVzwt7SFYGGvu63Xl0XDMg13lJNv549JPauDksAsOe
-	5rA==
-X-Google-Smtp-Source: AGHT+IGkW9xGFtXyZxtk1zO2vktTlKEU4xznjefUNTVhjQ1iMyPlYoEtgmVFLWiTc+08JgEUIDI04/TgaA8=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a63:b609:0:b0:619:f921:b6e0 with SMTP id
- 41be03b00d2f7-6373d2172afmr46520a12.5.1715878718905; Thu, 16 May 2024
- 09:58:38 -0700 (PDT)
-Date: Thu, 16 May 2024 09:58:37 -0700
-In-Reply-To: <f2d6d62d-09be-4940-9c6e-92f80811587f@intel.com>
+        d=1e100.net; s=20230601; t=1715879047; x=1716483847;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5BcOlqeHdHkpg9rPGe9OSUX6goj8JCvPGkrhm+DPRCU=;
+        b=YfslV5iR7xya/iklndX+s92++J0oCLtwUlQxHINjW3QzuCsZoBtxyaf164eFQPNLjc
+         CnCmQaRDsFsfKQ2NGIDIUI72zmHCz7lKrnE+sYoVJy8JOU6xMYZUyJp/hf/iWXmW8gKl
+         GsnZ1ASdB0WUw4S/EKP5LS23O2C+dMQJAK3+T+pNKL8kMsh3LbQdiylNXnoOABg6e3KB
+         4cRJf7Bs8nA5B3qyjI21lEliB7mW0sESjJBmJap+XRyE1z8rSpwINOVSU9wG+msmfrFP
+         Yu592LHk4xcNvW9KFyRK1Qh1c/vUpjsdc1yNEjN7cn0AQJekm/p9tWNm1DMmqA8teXdK
+         LwZg==
+X-Forwarded-Encrypted: i=1; AJvYcCXmqAwAT11A7kBxnmbMkv37lIg8E7FY08NiEBtBbBoGNQH70h+FViQK2+Bw1M+HZHAg31WiGMkOXGGa30g9KhfmIenaQxPpRNCXizER
+X-Gm-Message-State: AOJu0Yzl1UfMswDjCEGKJOXEJi4HTteYfmxPHqBNlTnKEG12d7FunIcD
+	abGUIC+cFUu9YH3jrNl1Bc0ANTf3NHx8FgibQ9DlFDCqGN7hlcBB+3H9wHrP7dmJ6OkC5hahYZd
+	6IENR8DiEFwNfgaUVnqLEtpxjDQa0IGQMi0XI9w==
+X-Google-Smtp-Source: AGHT+IE+z0zK6uASgcjSs7VlTlOFQlYBognlriBxa+PoojSvXe6oM8x+zp3anb917Is6/YXAALwPJdB81pS9MYSJMP0=
+X-Received: by 2002:a5d:948e:0:b0:7d9:6351:4ef3 with SMTP id
+ ca18e2360f4ac-7e1b51bb73amr1910166539f.5.1715879046543; Thu, 16 May 2024
+ 10:04:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240219074733.122080-1-weijiang.yang@intel.com>
- <20240219074733.122080-25-weijiang.yang@intel.com> <ZjLNEPwXwPFJ5HJ3@google.com>
- <39b95ac6-f163-4461-93f3-eaa653ab1355@intel.com> <ZkYauRJBhaw9P1A_@google.com>
- <f2d6d62d-09be-4940-9c6e-92f80811587f@intel.com>
-Message-ID: <ZkY7PblLmWdFYeSa@google.com>
-Subject: Re: [PATCH v10 24/27] KVM: x86: Enable CET virtualization for VMX and
- advertise to userspace
-From: Sean Christopherson <seanjc@google.com>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Weijiang Yang <weijiang.yang@intel.com>, rick.p.edgecombe@intel.com, 
-	pbonzini@redhat.com, x86@kernel.org, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, peterz@infradead.org, chao.gao@intel.com, 
-	mlevitsk@redhat.com, john.allen@amd.com
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+References: <20231219125350.4031370-1-patrick.rudolph@9elements.com>
+ <ZkL2Sdf0NcqaZRZ4@surfacebook.localdomain> <CACRpkdbUye6RhbRNGn6sapARwVUyi5hKS-5VEVBr6ZR6W_KdQw@mail.gmail.com>
+ <CALNFmy33wMHBcoU9ei0vVsn0gUM7-0jdkDDq_Loa3=mMWXiWcw@mail.gmail.com>
+ <CACRpkdZhY_Yz2jHGXWO5_t8Qdey8me0Gytds7V64GYOFoEC2Dg@mail.gmail.com> <85577035-06b0-4059-8092-1b751c2a6b53@sirena.org.uk>
+In-Reply-To: <85577035-06b0-4059-8092-1b751c2a6b53@sirena.org.uk>
+From: Patrick Rudolph <patrick.rudolph@9elements.com>
+Date: Thu, 16 May 2024 19:03:54 +0200
+Message-ID: <CALNFmy1ZRqHz6_DD_2qamm-iLQ51AOFQH=ahCWRN7SAk3pfZ_A@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: cy8c95x0: Cache muxed registers
+To: Mark Brown <broonie@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, 
+	naresh.solanki@9elements.com, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, May 16, 2024, Dave Hansen wrote:
-> On 5/16/24 07:39, Sean Christopherson wrote:
-> >> We synced the issue internally, and got conclusion that KVM should hon=
-or host
-> >> IBT config.  In this case IBT bit in boot_cpu_data should be honored.=
-=C2=A0 With
-> >> this policy, it can avoid CPUID confusion to guest side due to host ib=
-t=3Doff
-> >> config.
-> > What was the reasoning?  CPUID confusion is a weak justification, e.g. =
-it's not
-> > like the guest has visibility into the host kernel, and raw CPUID will =
-still show
-> > IBT support in the host.
->=20
-> I'm basically arguing for the path of least resistance (at least to start=
-).
->=20
-> We should just do what takes the least amount of code for now that
-> results in mostly sane behavior, then debate about making it perfect late=
-r.
->=20
-> In other words, let's say the place we'd *IDEALLY* end up is that guests
-> can have any random FPU state which is disconnected from the host.  But
-> the reality, for now, is that the host needs to have XFEATURE_CET_USER
-> set in order to pass it into the guest and that means keeping
-> X86_FEATURE_SHSTK set.
->=20
-> If you want guest XFEATURE_CET_USER, you must have host
-> X86_FEATURE_SHSTK ... for now.
+Hi Mark,
+I tried to convert the cy8c95x0 driver to use the regmap ranges, but
+had a few problems:
+- I removed the regmap lock since the driver has it's own mutex to
+protect all regmap accesses.
+  That disabled the regmap debugfs, which wasn't obvious to me and
+took some time to figure out.
+- I verified that the regmap range works as expected, but the debugfs
+showed that the regcache has invalid defaults.
+  The defaults are read from HW using by setting "num_reg_defaults_raw".
+  From what I understand regmap_raw_read() called by
+regcache_hw_init() ignores the ranges
+  and doesn't use the page selector at all. Since it's not using
+paging the contents will be invalid.
+  I had to apply the workaround in the config ".use_single_read =
+true" to fix the cache init, but
+  that might reduce performance when initializing the cache.
 
-Ah, because fpu__init_system_xstate() will clear XFEATURE_CET_USER via the
-X86_FEATURE_SHSTK connection in xsave_cpuid_features.=20
+Is this a bug or a known limitation of the regcache?
+It looks like none of the other drivers use num_reg_defaults_raw +
+ranges at the same time.
 
-Please put something to that effect in the changelog.  "this literally won'=
-t work
-(without more changes)" is very different than us making a largely arbitrar=
-y
-decision.
+Regards,
+Patrick
 
