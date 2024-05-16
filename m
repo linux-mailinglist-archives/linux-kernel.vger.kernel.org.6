@@ -1,105 +1,111 @@
-Return-Path: <linux-kernel+bounces-181302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C6628C7A22
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:12:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0B998C7A27
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:15:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DD551C22698
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:12:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 796B61F23F38
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:15:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27D2914D71E;
-	Thu, 16 May 2024 16:12:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96F1714E2FB;
+	Thu, 16 May 2024 16:15:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QQz9+USn"
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kzHJV/Sy"
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EC8614D707
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 16:12:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F60014E2C1;
+	Thu, 16 May 2024 16:15:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715875967; cv=none; b=f3b1MQ39E1n6UjPLw1+yRZ+DwmYgDpz8Obd8XOAMNHGFCMyFAElDfDiKPDB2Aq1OoshIccaAyEEbxDPYC/WEwm4eX8Rays3q2ZCOtNbuhYDf7aQgyE0tYY2EJvoVGhOGwZItDMU+vz7l6j00ntyucgVqfr0966DchpKrvcnvVJ4=
+	t=1715876110; cv=none; b=J1gox7R7gavoSMPPPcCS/EeyHxfX6Pw2T2EdTNvXKRPWhpJBLWUNRV9FGmSPKhWNPxRkQ60HN3kP+OqyhLfTTGwuAz0N5P1HOz9SoGD9acOYEkY0HawJGptxCbdpSL403FsNaPCgBJsAX5l+jSWbOVhX2VhKA+5zZPd/PqOfk7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715875967; c=relaxed/simple;
-	bh=EDVDStN9akIll0ya820KZNeIn7ir4olgOtXijBH6aOg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tup+S8XS3O+VVF3QsXv+NoYJZVicyO9js13y3YCTmAhSDe9hF4MecUb4TdUVAZSnU1wLVHzZt1tQ3+LnzbkY7/aB/LSgej0iyXOoHYXIhBc/pSMjPkhIP4nWI6T2iPE/bzIeggp4lh/KA/YQ8llK7jTeXpvrtSdMu9qMVTVegno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QQz9+USn; arc=none smtp.client-ip=209.85.160.176
+	s=arc-20240116; t=1715876110; c=relaxed/simple;
+	bh=Mh0u9Y06mcntjSNlKFJ57KMfOKSfioL1lnQzZWm3pu0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=czo2L/8Xv+c/sKfZUHLTBqkA/LgVWIxJHcjlTtTLuRYXyfNQ6Zt/fOX0JqdKIpWCAhfQV0be3MqlAv6y7XvN2NldMRFeDI6dbqjk7hy9ENKofjHmbuTU6HzH8rAHPMojRfphXnuhQtWyfGHlAH4zIhcAE6CC+fY6l0QG7y/w9TQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kzHJV/Sy; arc=none smtp.client-ip=209.85.222.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-43e1581e81cso31459781cf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 09:12:45 -0700 (PDT)
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-792b8d98a56so745216185a.2;
+        Thu, 16 May 2024 09:15:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715875965; x=1716480765; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=EDVDStN9akIll0ya820KZNeIn7ir4olgOtXijBH6aOg=;
-        b=QQz9+USnTDYFWNZgI5ivdSAACTsh/KANVCTKfAUvb8ou3ZMgq8UMHdkKlxvbl1KYCU
-         4VRCY7BfWZST0A0K/DTZkxdekHb7sPlX6gcSTmNIjGkhAyfXvRmL0RfAlLCyCag9ip0Q
-         jR1MEq9v5mQpoFV/cpTkrQNy7nHGuRw4KEFaE8oRZ9eDSfFSf7Y/oaaV8DIzqWpt5oiW
-         LEZXU8nXTd4k/+mPxwqRoRhCmRdgPAX4rWX+CGRRBDP9Ne/07ZPg8r6X3+IrpkrRntML
-         /BR71trOPmQEX1941Ky1+MligW8dMiOoXJxmESoRNJrd7tJzWkkZ5OdKuXD3hq/vO6Oq
-         oPLQ==
+        d=gmail.com; s=20230601; t=1715876108; x=1716480908; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xe39QYa7TfsWXzNNingUD+O1lJhMRi830tLy3GV8ajM=;
+        b=kzHJV/SyfkKLyjkYNSKJkewDlss+EOzRlrH4RzYrg6Sq+kC21tiRG5517RRBHei6uD
+         dfOTKk5O5FPU+XH9jZjXlyiLgtrDf2A/Tsp689y8jKtvuIaE5nzxkfcwAmUyu7ZB/E5X
+         JrIwVpW4hfohPhtH7gzndjnMnmuQnQFD5qkGKvOny4kh0GfFU53CWm5HbJkTQrKyjgpX
+         znXhnc2Y40YYLpXbFIVfDMcs9sEfP886QjK60B9UA/IncyWuTlIWfRZCvLsdwWyyD62X
+         TJYI6gnyMNxMu8KZTJAAmcBiATXEzFroKho8wuTHCtUFIjz18G2IESzDgulYZhLFn7I9
+         C5eg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715875965; x=1716480765;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EDVDStN9akIll0ya820KZNeIn7ir4olgOtXijBH6aOg=;
-        b=PlVIZfZ9BA4Ve7X6EiAe3llsrZlrTlGPTal0mdxs+qrMJQBSb9w9VvO7hcgdqtoM5n
-         68KukHdCJ/OqX0gVTZp1mK204IBWsSSfZcirv+TMv+Moa7snJmtPMCGkbIjs9QJKcWKW
-         dMG1qtWqpZ2naMVWqHlYcOm/LDfosj3fn0pH2tYLYX/KgPqUjMGkFx2v01PE2eLoFwbn
-         8kxSLk7J3qudDh435y31u69GO6kwHc8oNuGcVjEm9wBtGDt/6ykZ9bSTFQ6BBMv72tlV
-         1Hxadaf/gR9jOp15qs4H472nvyODrgSzh86uzowClFS/cAvzdDotC0cryUuJ7TzU9uev
-         xYbA==
-X-Forwarded-Encrypted: i=1; AJvYcCUYNR/4X5Rvo+t2mN6mH/MgQobovckuDUvPnxaPY9+uq32UDr3ZBd+S1T7GEQxqnLs0OPRD8ExjGXwxOa9wj1ECBk7voKer44BfF76C
-X-Gm-Message-State: AOJu0YxSHYCBhwdf2FLj6AkaYkMvI96FJKtD8zeqVlf45ebeblZYDQvA
-	0O6qhks9xfD3JsODhvAd30nJn3ORIUmDrZD51jJytFsMEr91KnATDOXviiDZX0TLDXFp6s+SjEm
-	Wspwm5zuZXV82j08fusz1QSW1Kdk=
-X-Google-Smtp-Source: AGHT+IFaEJ8GHCyu3non5YHI6ttPcdFCQtu47m9l4CWqBdVjbODGX809oQyAj1OqF4j3CWyKqDFe5cMvI7CnUOWr/ZY=
-X-Received: by 2002:ac8:7c45:0:b0:43a:ffa5:3f24 with SMTP id
- d75a77b69052e-43dfdba9604mr246255961cf.58.1715875965116; Thu, 16 May 2024
- 09:12:45 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715876108; x=1716480908;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xe39QYa7TfsWXzNNingUD+O1lJhMRi830tLy3GV8ajM=;
+        b=HgOZe37ZDdF2VhtS9EYdafDeW1V+qaeKjtMM47+ZIXU6uVZOqLIowCTiuWIOkAnPhE
+         aeUg+pQG/IkOm2YKzYysqB4knPNQfgdxhxlMVZ68GJkKAfJbvDq38zTYTxZpsnsw9/A+
+         NfhmwWZxc1IWnpcjbfu+q+QORoEr4G9LocQ8BfWKiqC2+tZI6sLyKnOkYztVjfUdbZUZ
+         1So0btKRqrXPXY15SQ0dqJDeDoYhNNvnfvQJV+2YmfLfVBJ8NzXDvjr6+4+ucgnJimMI
+         vq9Lmw9Sg0osiqXWywBnDs71LZwZoPejzeo7S4wV+cqUnLBOlDny5TAmEXTkkqQNBVgg
+         oZRw==
+X-Forwarded-Encrypted: i=1; AJvYcCX19f5a8QMNGS64Q5haW681a57spmxZy1VuETrdvAaA0g1au4cqeAHHhhG06UF+0lV0JPY3BHmTyaKTS0jJkCRCDDj68vKsyCqykbRWOT+SNB+NFHIWLx/+7CUtZamBPQguBNSgSSvoT8q7wcAhCLztXieSv1wk1g5ZPwE/rLQVbIXy3A==
+X-Gm-Message-State: AOJu0YwNTUtni9TR7cyGTai/XiCr625FSNPtyJ2vb9fvAG9nnGyi9Gv4
+	541+nsHjiOFfQGmcFB9sE5FntAOtFdPJREvU9hwx6YB+OPbHsF+q
+X-Google-Smtp-Source: AGHT+IFUuxxxvJDDRP5xjeDBCKJXwzIYIXtYwwHtRWhzgkosnjs7D4tlbQURdVVrLy5sbsofDmkh9Q==
+X-Received: by 2002:a37:e209:0:b0:790:9a32:651 with SMTP id af79cd13be357-792c75f47e3mr2216024685a.55.1715876108240;
+        Thu, 16 May 2024 09:15:08 -0700 (PDT)
+Received: from [192.168.0.137] ([188.24.105.36])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-792bf315009sm816795585a.118.2024.05.16.09.15.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 May 2024 09:15:07 -0700 (PDT)
+Message-ID: <7705589b-d135-48c2-b4d2-866138a82918@gmail.com>
+Date: Thu, 16 May 2024 19:15:04 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240516075628.GC22557@noisy.programming.kicks-ass.net>
- <CAM7-yPRHp3tiZjuBTesdRQoU8WJNg1scon_txS_6R-pZq9MXHw@mail.gmail.com>
- <20240516084911.GF22557@noisy.programming.kicks-ass.net> <ZkXtHv+fHUD2+lFJ@lothringen>
- <CAM7-yPTSq0CSmRsTpeXwzhFk77gfwUK_LZKnbgo4NPk5zPCaAg@mail.gmail.com>
- <20240516140003.GJ22557@noisy.programming.kicks-ass.net> <ZkYW48dTX2FH5NaD@lothringen>
- <20240516144504.GL22557@noisy.programming.kicks-ass.net> <ZkYgG9KYMpUPeJsM@lothringen>
- <20240516151953.GM22557@noisy.programming.kicks-ass.net> <ZkYnKAd1Qy+yvjDY@lothringen>
-In-Reply-To: <ZkYnKAd1Qy+yvjDY@lothringen>
-From: Yun Levi <ppbuk5246@gmail.com>
-Date: Thu, 16 May 2024 17:12:33 +0100
-Message-ID: <CAM7-yPRjjCS7VDz5-X4Z5gBCymoCMxGc+okL7+2WZiHM7D0C_w@mail.gmail.com>
-Subject: Re: [PATCH v4] time/tick-sched: idle load balancing when nohz_full
- cpu becomes idle.
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Joel Fernandes <joel@joelfernandes.org>, 
-	Vineeth Pillai <vineeth@bitbyteword.org>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, anna-maria@linutronix.de, mingo@kernel.org, 
-	tglx@linutronix.de, Markus.Elfring@web.de, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/9] Add support for AD411x
+To: David Lechner <dlechner@baylibre.com>, dumitru.ceclan@analog.com
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>
+References: <20240514-ad4111-v2-0-29be6a55efb5@analog.com>
+ <CAMknhBGUHB65FALiy4pC2kHs0hXuF-51uwL5CTXOVWaBh_QpDg@mail.gmail.com>
+Content-Language: en-US
+From: "Ceclan, Dumitru" <mitrutzceclan@gmail.com>
+In-Reply-To: <CAMknhBGUHB65FALiy4pC2kHs0hXuF-51uwL5CTXOVWaBh_QpDg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-> > Yes, but stronger, as long as the CPU is part of a load-balance domain,
-> > it must not disable the tick while running anything.
-> >
-> > that is, NOHZ_FULL must not become active unless it's running on a
-> > single CPU partition.
->
-> I like the idea but I'm afraid to introduce regressions while doing so,
-> with people currently using nohz_full without proper partionning...
+On 16/05/2024 01:35, David Lechner wrote:
+> On Tue, May 14, 2024 at 2:23 AM Dumitru Ceclan via B4 Relay
+> <devnull+dumitru.ceclan.analog.com@kernel.org> wrote:
+>>
+>> This patch series adds support for the Analog Devices AD4111, AD4112,
+>>  AD4114, AD4115, AD4116 within the existing AD7173 driver.
+>>
+> 
+> It looks like most of the patches in this series are cleanups and
+> fixes of the existing driver unrelated to adding AD411x. Perhaps it
+> would be better to split those out into a separate series so we can
+> focus on that first? Especially since several of them need to be sent
+> as fixes for the v6.10 kernel to avoid breaking usespace or bindings
+> in the next release.
 
-But I wonder when nohz_full cpu enters *idle".
-
-If the cpuidle governor selects an idle state which wants "stop_tick",
-If nohz_full cpu is still in sched domain, should it disable tick or not?
+Sure
 
