@@ -1,133 +1,336 @@
-Return-Path: <linux-kernel+bounces-181340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 348568C7AB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:52:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D617F8C7AB6
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:53:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90004B2284B
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:52:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F20D1F218A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:53:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 470C81E533;
-	Thu, 16 May 2024 16:51:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99715846D;
+	Thu, 16 May 2024 16:53:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0S/FMLLt"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="3tm54BWb"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEB6C79C0
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 16:51:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B607B79C0
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 16:53:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715878312; cv=none; b=b00SLNT76X6LIMkFID1FlXfYNZLPvoV/9yFcNwHdd47FYI8IEK7k1DC2ZZp85Bv42nDmagn/R3RzUU7/XQDxHNMwo+IFg3XAIyc7PjJ5wbQNmv/F3MS9oYOdcOAkte4gFmmJNnwZkvfxclmLCqGCdrkf8nybQMZsmYW+n70rxao=
+	t=1715878423; cv=none; b=tgBTpZyVQ7M8MxEV60hdXpHpraPhrhjPacTzfXhv4d6M8J36ASgK6KAl/5ziBtWsDClcXvhalqj+dWqFlV1LRrSb7cWggxyTctJW3SGNE/KN8+N0Oxd/tp88Dtlm6E1769h87PNGjaXo7/leMWmzofa1UpVCv3d4udaREqR4DB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715878312; c=relaxed/simple;
-	bh=HiwHUDNOqaO7gJLaH4Ty8qKZ6uj6Ygys0Vm63BVU3TY=;
+	s=arc-20240116; t=1715878423; c=relaxed/simple;
+	bh=Rfukpev61+HUMGELE+Yl7kWQy/3drovke0iAQklwEEs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=JFyUsXKwpsldnzAP40uLKnBsGJ5tLkcn4BpgNbZikMv0tS6jEBfIsrAHhVIvaP9Hq0pVQl/0Mk/hoDv1PvQANXlOL9OLRnI08GWc2XeZ6AlhkHL65HlMxeg7dgc5Gc7qCA6zrQ6x/v5Drp+XCNDkrc8vyUYtJiK5lAICmzzymmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0S/FMLLt; arc=none smtp.client-ip=209.85.128.50
+	 To:Cc:Content-Type; b=eJFCyOtNcaE/TvXB9/isuug/HuMjlWzWLe46vHkKn7CDKgJJJEpvAJDdb/dp5w7c7FEe8ewPdy5lOVHQD1Wa8QP3+GWDhf8F+fnWouqhRuIsdJcDtxBVhQoBK8v7GYPpeSDO3FN1xHQsgRXu1DN8fWutYAJL1Cmk3hXUMx4XzIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3tm54BWb; arc=none smtp.client-ip=209.85.208.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-41ff3a5af40so1585e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 09:51:50 -0700 (PDT)
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-572f6c56cdaso685a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 09:53:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715878309; x=1716483109; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
+        d=google.com; s=20230601; t=1715878420; x=1716483220; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=onRIPguZVTKnH89R9mkjKZKxwfRC8K+qmiRpCHzudec=;
-        b=0S/FMLLtr/2qruuPh85VLKOPvrTmzoqsD8+2SnSx1uERc1+ANC3GiH/rQ/1FwO2OMf
-         nFy97a3NeoEtIF1iYetv2esDSj+Rmn/iwfLTTCpsvt4V2IbuGOBNo6p89/N68F/jqqTN
-         qBi7F5ei+baGqnL7qTwK9GvIDWrNVe9xDvXdhl3/4d0z5p8YlU0gFyVlKF+2jfkH8fye
-         JTeCyIT5oDWTTl8KWRfvnWU8fXVXqyVEy9sMVu2lhtyq7FvNoVQQMu2KqJ+8tyM93vKU
-         nDojzC88NIIoQLNLjGlM+zGMEj/5cs1e+NIyKJSzLtn9xO1cTB09rk3pBOkIiED0cXUh
-         DLkg==
+        bh=pAtUZuQuQXgYjpu4YwyXcnTpXb8aUu6f5oRyQ9gZtmU=;
+        b=3tm54BWbr21TJMlgDChb/GyzrptEbx+2ocxtAvNBfNq1gbq8W1eENZNb+PcXnL9uRX
+         mnY1UGJXTAtma8025IW3ONB+yiiuNjAZy9cJS2NJr1TSu4MG7+cTr+2QKixzBTiH5iQX
+         g83dmLEhRl7I8LsZ7nz3k37WuEvXAkIIgxIC6M/+Fp6iY/l2iLPx+NX3ArksAV2OFaAp
+         1qIuZZxmWxnBIuTaKEGgsl/j2cO+aHAoVURL5xxXTPJu5py1DfMSZO1f3+go2afG/g20
+         JUgjGZCQFba/owghuMjX7yfOYHBaAGrQpfEGH5niUAJtLObDvLChr19H9qmvEb2jK9vU
+         afhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715878309; x=1716483109;
-        h=content-transfer-encoding:to:subject:message-id:date:from
+        d=1e100.net; s=20230601; t=1715878420; x=1716483220;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=onRIPguZVTKnH89R9mkjKZKxwfRC8K+qmiRpCHzudec=;
-        b=sgvFZgUiO85F2KVZ5u+IXDJYxOjKEg03Dls0s59hQY8CAAlEjuW4jBVCo70qJ+KDTj
-         6Ebfet4jM+eZvhdftkQ7Q0jleULZ4ICopd8ck5zg35yObfYauxOOgICU37pMDr7okV0P
-         A9Kr6JXB6BpG6k7hmtfAwQKY1pIAfMkV13I7c6ruAiaoyBvPGRZ83nhe10rlH9BLZAjW
-         0z5rg4LLRiiHSPEVixcCurFI7xDIlBZPiJtZS+GgJYFGI0rUHrB1Fp/rsk+HMPNFktDJ
-         WP+FHUBUAFJ6Iw9sflzWE3aA5Q2DHbbABxE7uz5ytAYMG1M2SfbTb9fOyRu4yNzkuEFS
-         70ug==
-X-Forwarded-Encrypted: i=1; AJvYcCWhRpayRJ5QZv3taF00o1q2gAtX9lJ1cXrY0ATO2OF4B1ER2mPEkkuV1JMyO0nVAgpyumJHWesYiW2ngqMREtCrghuNeFvTgJdHn3tk
-X-Gm-Message-State: AOJu0YyvBRAUO1dwVb/XylowlYKrM2V+8xGfNpUSHb4N5C7zkO4a4e5v
-	ZBsKpmEPo4m2MqDArCJA+rRJpngsgZn6vbKCB3P+FWYSXattauareIxHZJcEPMENJ64YRH7fwwM
-	eXlnWvIUTR/8xXtxMPVBgMO/hEC5kVAeVQ3c=
-X-Google-Smtp-Source: AGHT+IEtjZ9BDFF4UXQQ+nrOQN0XGRAp0bc3xjYZiRXnK81siroeleNET7wr5DctMi1WpgetmZ17HV2nwiWezX0TGvA=
-X-Received: by 2002:a05:600c:34c2:b0:41b:e55c:8dca with SMTP id
- 5b1f17b1804b1-4200f8c6eeamr11617495e9.7.1715878309151; Thu, 16 May 2024
- 09:51:49 -0700 (PDT)
+        bh=pAtUZuQuQXgYjpu4YwyXcnTpXb8aUu6f5oRyQ9gZtmU=;
+        b=vpBsSO+8hjK6TUmjdPYKM+KubVH/a4s0E1mYA8NkzqBRQM3mHLc3zcoGD/XCZpSitH
+         Me+vXouTjGz6kRuRmUOBW2LzcMMPzce7uKZsb57amWwpvl0QZ6RAP4axgnup831Lh0Bx
+         CX7wy8TaRH19Zi7pmEodd8wpSSkvThtw0sboxXYu4u6YnU6J2UqKa0HS2F/SwfzFskps
+         yBCxbQ9IDRb3732U55H53bt+4cBfOwbbB6LAhlrgkbin819ab5gQp6vaSbLTNvzR9C2B
+         Y1PksI+h532EnfmX/K2mYPeosKc/u5sdAbVhCxFF0SbwpKDaXbUxhf2I7trA1EAsFjqY
+         DpJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVkVaM37oxKrt1Y0DTsvs29HOuYWX7m3T9H6XPZGIYG+cdKdx9uRoARbeAXDTUCmjsXKkDApSJFyx7FdTvR1SSYPkWpboSDmawDvjvn
+X-Gm-Message-State: AOJu0YyYnVGAE0csOMu26IoBcZ60TrdfitpwJj15s9Gg/fkdb6W8fTOX
+	4wL1dyWMB7qomkhlQZh7EXDHRBvT4mwx2IyJwtAxyjm6ArQhrBRIR3arI1XL8NxX+EhHttZAp+N
+	ST57D4M59Boi2WdSHNyCiFfX7Zm44U7CJePxV
+X-Google-Smtp-Source: AGHT+IFIAvF85e35+Fm7m3Nysi8LcbeJfOl5NCE999v6MsinV+qpkVH0+qT4nGj5N3ynxrf1ZtMbmvPdiKG/ZITLHcQ=
+X-Received: by 2002:a50:cb8c:0:b0:573:438c:778d with SMTP id
+ 4fb4d7f45d1cf-574ae3c1280mr1017459a12.1.1715878419750; Thu, 16 May 2024
+ 09:53:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240515-dma-buf-ecc-heap-v1-0-54cbbd049511@kernel.org>
- <CANDhNCoOKwtpstFE2VDcUvzdXUWkZ-Zx+fz6xrdPWTyciVXMXQ@mail.gmail.com> <ZkXmWwmdPsqAo7VU@phenom.ffwll.local>
-In-Reply-To: <ZkXmWwmdPsqAo7VU@phenom.ffwll.local>
-From: John Stultz <jstultz@google.com>
-Date: Thu, 16 May 2024 09:51:35 -0700
-Message-ID: <CANDhNCo5hSC-sLwdkBi3e-Ja-MzdqcGGbn-4G3XNYwCzZUwscw@mail.gmail.com>
-Subject: Re: [PATCH 0/8] dma-buf: heaps: Support carved-out heaps and ECC related-flags
-To: John Stultz <jstultz@google.com>, Maxime Ripard <mripard@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, 
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
-	"T.J. Mercier" <tjmercier@google.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Mattijs Korpershoek <mkorpershoek@baylibre.com>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org
+References: <20c9c21619aa44363c2c7503db1581cb816a1c0f.camel@redhat.com>
+ <CALMp9eSy2r+iUzqHV+V2mbPaPWfn=Y=a1aM+9C65PGtE0=nGqA@mail.gmail.com>
+ <481be19e33915804c855a55181c310dd8071b546.camel@redhat.com>
+ <CALMp9eQcRF_oS2rc_xF1H3=pfHB7ggts44obZgvh-K03UYJLSQ@mail.gmail.com> <7cb1aec718178ee9effe1017dad2ef7ab8b2a714.camel@redhat.com>
+In-Reply-To: <7cb1aec718178ee9effe1017dad2ef7ab8b2a714.camel@redhat.com>
+From: Jim Mattson <jmattson@google.com>
+Date: Thu, 16 May 2024 09:53:24 -0700
+Message-ID: <CALMp9eSPXP-9u7Fd+QMmeKzO6+fbTfn3iAHUn83Og+F=SvcQ4A@mail.gmail.com>
+Subject: Re: RFC: NTP adjustments interfere with KVM emulation of TSC deadline timers
+To: Maxim Levitsky <mlevitsk@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, Marc Zyngier <maz@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Vitaly Kuznetsov <vkuznets@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 16, 2024 at 3:56=E2=80=AFAM Daniel Vetter <daniel@ffwll.ch> wro=
-te:
-> On Wed, May 15, 2024 at 11:42:58AM -0700, John Stultz wrote:
-> > But it makes me a little nervous to add a new generic allocation flag
-> > for a feature most hardware doesn't support (yet, at least). So it's
-> > hard to weigh how common the actual usage will be across all the
-> > heaps.
-> >
-> > I apologize as my worry is mostly born out of seeing vendors really
-> > push opaque feature flags in their old ion heaps, so in providing a
-> > flags argument, it was mostly intended as an escape hatch for
-> > obviously common attributes. So having the first be something that
-> > seems reasonable, but isn't actually that common makes me fret some.
-> >
-> > So again, not an objection, just something for folks to stew on to
-> > make sure this is really the right approach.
+On Wed, May 15, 2024 at 2:03=E2=80=AFPM Maxim Levitsky <mlevitsk@redhat.com=
+> wrote:
 >
-> Another good reason to go with full heap names instead of opaque flags on
-> existing heaps is that with the former we can use symlinks in sysfs to
-> specify heaps, with the latter we need a new idea. We haven't yet gotten
-> around to implement this anywhere, but it's been in the dma-buf/heap todo
-> since forever, and I like it as a design approach. So would be a good ide=
-a
-> to not toss it. With that display would have symlinks to cma-ecc and cma,
-> and rendering maybe cma-ecc, shmem, cma heaps (in priority order) for a
-> SoC where the display needs contig memory for scanout.
+> On Tue, 2024-01-02 at 15:49 -0800, Jim Mattson wrote:
+> > On Tue, Jan 2, 2024 at 2:21=E2=80=AFPM Maxim Levitsky <mlevitsk@redhat.=
+com> wrote:
+> > > On Thu, 2023-12-21 at 11:09 -0800, Jim Mattson wrote:
+> > > > On Thu, Dec 21, 2023 at 8:52=E2=80=AFAM Maxim Levitsky <mlevitsk@re=
+dhat.com> wrote:
+> > > > > Hi!
+> > > > >
+> > > > > Recently I was tasked with triage of the failures of 'vmx_preempt=
+ion_timer'
+> > > > > that happen in our kernel CI pipeline.
+> > > > >
+> > > > >
+> > > > > The test usually fails because L2 observes TSC after the
+> > > > > preemption timer deadline, before the VM exit happens.
+> > > > >
+> > > > > This happens because KVM emulates nested preemption timer with HR=
+ timers,
+> > > > > so it converts the preemption timer value to nanoseconds, taking =
+in account
+> > > > > tsc scaling and host tsc frequency, and sets HR timer.
+> > > > >
+> > > > > HR timer however as I found out the hard way is bound to CLOCK_MO=
+NOTONIC,
+> > > > > and thus its rate can be adjusted by NTP, which means that it can=
+ run slower or
+> > > > > faster than KVM expects, which can result in the interrupt arrivi=
+ng earlier,
+> > > > > or late, which is what is happening.
+> > > > >
+> > > > > This is how you can reproduce it on an Intel machine:
+> > > > >
+> > > > >
+> > > > > 1. stop the NTP daemon:
+> > > > >       sudo systemctl stop chronyd.service
+> > > > > 2. introduce a small error in the system time:
+> > > > >       sudo date -s "$(date)"
+> > > > >
+> > > > > 3. start NTP daemon:
+> > > > >       sudo chronyd -d -n  (for debug) or start the systemd servic=
+e again
+> > > > >
+> > > > > 4. run the vmx_preemption_timer test a few times until it fails:
+> > > > >
+> > > > >
+> > > > > I did some research and it looks like I am not the first to encou=
+nter this:
+> > > > >
+> > > > > From the ARM side there was an attempt to support CLOCK_MONOTONIC=
+_RAW with
+> > > > > timer subsystem which was even merged but then reverted due to is=
+sues:
+> > > > >
+> > > > > https://lore.kernel.org/all/1452879670-16133-3-git-send-email-mar=
+c.zyngier@arm.com/T/#u
+> > > > >
+> > > > > It looks like this issue was later worked around in the ARM code:
+> > > > >
+> > > > >
+> > > > > commit 1c5631c73fc2261a5df64a72c155cb53dcdc0c45
+> > > > > Author: Marc Zyngier <maz@kernel.org>
+> > > > > Date:   Wed Apr 6 09:37:22 2016 +0100
+> > > > >
+> > > > >     KVM: arm/arm64: Handle forward time correction gracefully
+> > > > >
+> > > > >     On a host that runs NTP, corrections can have a direct impact=
+ on
+> > > > >     the background timer that we program on the behalf of a vcpu.
+> > > > >
+> > > > >     In particular, NTP performing a forward correction will resul=
+t in
+> > > > >     a timer expiring sooner than expected from a guest point of v=
+iew.
+> > > > >     Not a big deal, we kick the vcpu anyway.
+> > > > >
+> > > > >     But on wake-up, the vcpu thread is going to perform a check t=
+o
+> > > > >     find out whether or not it should block. And at that point, t=
+he
+> > > > >     timer check is going to say "timer has not expired yet, go ba=
+ck
+> > > > >     to sleep". This results in the timer event being lost forever=
+.
+> > > > >
+> > > > >     There are multiple ways to handle this. One would be record t=
+hat
+> > > > >     the timer has expired and let kvm_cpu_has_pending_timer retur=
+n
+> > > > >     true in that case, but that would be fairly invasive. Another=
+ is
+> > > > >     to check for the "short sleep" condition in the hrtimer callb=
+ack,
+> > > > >     and restart the timer for the remaining time when the conditi=
+on
+> > > > >     is detected.
+> > > > >
+> > > > >     This patch implements the latter, with a bit of refactoring i=
+n
+> > > > >     order to avoid too much code duplication.
+> > > > >
+> > > > >     Cc: <stable@vger.kernel.org>
+> > > > >     Reported-by: Alexander Graf <agraf@suse.de>
+> > > > >     Reviewed-by: Alexander Graf <agraf@suse.de>
+> > > > >     Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+> > > > >     Signed-off-by: Christoffer Dall <christoffer.dall@linaro.org>
+> > > > >
+> > > > >
+> > > > > So to solve this issue there are two options:
+> > > > >
+> > > > >
+> > > > > 1. Have another go at implementing support for CLOCK_MONOTONIC_RA=
+W timers.
+> > > > >    I don't know if that is feasible and I would be very happy to =
+hear a feedback from you.
+> > > > >
+> > > > > 2. Also work this around in KVM. KVM does listen to changes in th=
+e timekeeping system
+> > > > >   (kernel calls its update_pvclock_gtod), and it even notes rates=
+ of both regular and raw clocks.
+> > > > >
+> > > > >   When starting a HR timer I can adjust its period for the differ=
+ence in rates, which will in most
+> > > > >   cases produce more correct result that what we have now, but wi=
+ll still fail if the rate
+> > > > >   is changed at the same time the timer is started or before it e=
+xpires.
+> > > > >
+> > > > >   Or I can also restart the timer, although that might cause more=
+ harm than
+> > > > >   good to the accuracy.
+> > > > >
+> > > > >
+> > > > > What do you think?
+> > > >
+> > > > Is this what the "adaptive tuning" in the local APIC TSC_DEADLINE
+> > > > timer is all about (lapic_timer_advance_ns =3D -1)?
+> > >
+> > > Hi,
+> > >
+> > > I don't think that 'lapic_timer_advance' is designed for that but it =
+does
+> > > mask this problem somewhat.
+> > >
+> > > The goal of 'lapic_timer_advance' is to decrease time between deadlin=
+e passing and start
+> > > of guest timer irq routine by making the deadline happen a bit earlie=
+r (by timer_advance_ns), and then busy-waiting
+> > > (hopefully only a bit) until the deadline passes, and then immediatel=
+y do the VM entry.
+> > >
+> > > This way instead of overhead of VM exit and VM entry that both happen=
+ after the deadline,
+> > > only the VM entry happens after the deadline.
+> > >
+> > >
+> > > In relation to NTP interference: If the deadline happens earlier than=
+ expected, then
+> > > KVM will busy wait and decrease the 'timer_advance_ns', and next time=
+ the deadline
+> > > will happen a bit later thus adopting for the NTP adjustment somewhat=
+.
+> > >
+> > > Note though that 'timer_advance_ns' variable is unsigned and adjust_l=
+apic_timer_advance can underflow
+> > > it, which can be fixed.
+> > >
+> > > Now if the deadline happens later than expected, then the guest will =
+see this happen,
+> > > but at least adjust_lapic_timer_advance should increase the 'timer_ad=
+vance_ns' so next
+> > > time the deadline will happen earlier which will also eventually hide=
+ the problem.
+> > >
+> > > So overall I do think that implementing the 'lapic_timer_advance' for=
+ nested VMX preemption timer
+> > > is a good idea, especially since this feature is not really nested in=
+ some sense - the timer is
+> > > just delivered as a VM exit but it is always delivered to L1, so VMX =
+preemption timer can
+> > > be seen as just an extra L1's deadline timer.
+> > >
+> > > I do think that nested VMX preemption timer should use its own value =
+of timer_advance_ns, thus
+> > > we need to extract the common code and make both timers use it. Does =
+this make sense?
+> >
+> > Alternatively, why not just use the hardware VMX-preemption timer to
+> > deliver the virtual VMX-preemption timer?
+> >
+> > Today, I believe that we only use the hardware VMX-preemption timer to
+> > deliver the virtual local APIC timer. However, it shouldn't be that
+> > hard to pick the first deadline of {VMX-preemption timer, local APIC
+> > timer} at each emulated VM-entry to L2.
+>
+> I assume that this is possible but it might add some complexity.
+>
+> AFAIK the design choice here was that L1 uses the hardware VMX preemption=
+ timer always,
+> while L2 uses the software preemption timer which is relatively simple.
+>
+> I do agree that this might work and if it does work it might be even wort=
+hwhile
+> change on its own.
+>
+> If you agree that this is a good idea, I can prepare a patch series for t=
+hat.
 
-So indeed that is a good point to keep in mind, but I also think it
-might re-inforce the choice of having ECC as a flag here.
+I do think it would be worthwhile to provide the infrastructure for
+multiple clients of the VMX-preemption timer. (Better yet would be to
+provide a CLOCK_MONOTONIC_RAW hrtimer, but that's outwith our domain.)
 
-Since my understanding of the sysfs symlinks to heaps idea is about
-being able to figure out a common heap from a collection of devices,
-it's really about the ability for the driver to access the type of
-memory. If ECC is just an attribute of the type of memory (as in this
-patch series), it being on or off won't necessarily affect
-compatibility of the buffer with the device.  Similarly "uncached"
-seems more of an attribute of memory type and not a type itself.
-Hardware that can access non-contiguous "system" buffers can access
-uncached system buffers.
+> Note though that the same problem (although somewhat masked by lapic_time=
+r_advance)
+> does exit on AMD as well because while AMD lacks both VMX preemption time=
+r and even the TSC deadline timer,
+> KVM exposes TSC deadline to the guest, and HR timers are always used for =
+its emulation,
+> and are prone to NTP interference as I discovered.
 
-thanks
--john
+It's not a problem if userspace ignores KVM's claim to support TSC deadline=
+ :)
+
+> Best regards,
+>         Maxim Levitsky
+>
+> >
+> > > Best regards,
+> > >         Maxim Levitsky
+> > >
+> > >
+> > > >  If so, can we
+> > > > leverage that for the VMX-preemption timer as well?
+> > > > > Best regards,
+> > > > >         Maxim Levitsky
+> > > > >
+> > > > >
+> > > > >
+> > >
+> > >
+> > >
+>
+>
+>
+>
 
