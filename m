@@ -1,126 +1,135 @@
-Return-Path: <linux-kernel+bounces-180974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0CAF8C75A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:07:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6AA28C75A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:07:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22AE91C210DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:07:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84D781F24094
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:07:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AA4B145A06;
-	Thu, 16 May 2024 12:06:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E4E4145FE3;
+	Thu, 16 May 2024 12:07:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WzozJMDv"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="g0n6ddhI"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13C941459E2;
-	Thu, 16 May 2024 12:06:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE3DB1459E2;
+	Thu, 16 May 2024 12:07:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715861212; cv=none; b=aTG8mU87EM+bs4vrqaFxidD/AsM9IkCMPOjFlW3NMONDzgICvGBMadqs7jgdQAz2QDvmy2TaMF+zkQh0ZciGoTnbrBxDwn+1qKm/QiMK9ld/TKTMwq1uBWswegOYVYNG7uOvc8PPzIoKCyWeMXMbVVZ/teuUuvOsRLx8+ouoWzM=
+	t=1715861232; cv=none; b=sHEhj9AsBYtU25YDWa+Cor1m4Q1SNJE0Q6XkUrXWG+xsZ/SMaNNmpwa4/SXGJqSe4wvS2hwUPewxyPjHYFvsXu0+NRcAQkexMzDeQKE4U6fXpTxMI8D8V2V561BpHgZkUDv9vo8/f1s0eG7mh18+v99BXE64WVg5PvsJZ99EgQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715861212; c=relaxed/simple;
-	bh=iOUIrdlu87CHnC7pAPLPHYIfXVJw3A6l8WecuIe9HRU=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=J5vOemJ995AUsDXjzu+XWNx4Cvhhg6T3zLoYK/JCgwzwm2JdrSQXGUJSXcLtkJQQRhTpYeGaSmrFq747KN3SApPWL1+0Pm7HEFEX3aXVeHAzyBHtZJK1v3m6xZ1GMuvt2SpyW4C4/d+/zeWvaWyeykV8n7x0c9akuvV21xNoevs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WzozJMDv; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2e3e18c240fso8214281fa.0;
-        Thu, 16 May 2024 05:06:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715861209; x=1716466009; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=d/+iOXfE5JhcsldrJn15mneL9tsGrRwJenKZ7TfkMY0=;
-        b=WzozJMDvx8fx9C0seY2dgyyzOT8V3TFnVzJpVR1jqakpfY/jGfK+V/jUIrOea+ZYPj
-         ovt08twrTKjE6Zt73tYiQwk4e40QoLjJT3SG+ebmh7iGC+remWCqI8cbvffYAejXUvcL
-         uB7ldqFZNlHTqlwtxOFW5Q1U3+0B/qqJ297FlBXbtQsrqZxIVfQi2mGMCeHxaORcIWkc
-         UJLac2Bavsu0jEaeBM0IqlFp6gyMUbl7IzdQ9ZnG5ETN/8IzpfqOTqThAabh9ZCDFe42
-         uAhTYmPW7rIkzrSKxFMd95mIdlwpFNA0v9N7Iy9TgMA9QP90F3eYqUi+l/1j8K0Yu8ji
-         DquQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715861209; x=1716466009;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=d/+iOXfE5JhcsldrJn15mneL9tsGrRwJenKZ7TfkMY0=;
-        b=pSha17KRw6iW3ODSD2IySAYj6pV6QFxSKvFHm/6tOmLOkFNVH74I+OGIJRRyZBQYKu
-         czXGORQPiYVUGTaMrN9QW3Zj8nCSxxAivlG+bxNtak86K+QJYJPbm6fbsyRa8xoUb/8s
-         fVgsYQngwoGbdixclCY8xmWaZr61Q93Y18XxaFGjZCJvJgE7Hu7lW6383Bv+vaskpjkq
-         V4jnjkAZsAvy4s4xIeCL9H0vngiEw8TB5lPMTBO0MMqfKdjAiHyPbbmGGYTni7nqUjOg
-         hoKkzB0C7pNGx8s77TXVl0kR60xf2XBwL6zQmu1XWkMjWpDcHpJdmjDUVSbwp4AIz+89
-         q1og==
-X-Forwarded-Encrypted: i=1; AJvYcCWQEiqcF/bGpB7Xf2wPJ0rygFR1AAgDWTHTxB9LhQYdsqMkbYImIrXCWqq80Y1/GDtH0dJWK4SbHsQlbtXsPEOYziXh9gX3FVTCZ1VM7FObbwt9FZpApSgkqIjKNBqwwyWpcQCK22i4VkodNTS9mThpzg0g7vf61VH28PZFkP0G99ZeKkI=
-X-Gm-Message-State: AOJu0YwKPHZfx/c9RPZpAA4ggP/KmhpH1J5wMB8PZkuaIe8+ndNaWlJ0
-	GmsJdkiVh6+lquv7dB6yGZ3/MlIPmbO4qeR7vMqvjfBPC68ouet+uMmVwUss
-X-Google-Smtp-Source: AGHT+IGRXdu4e46HW+sJ65tDSzWCXInDmL+maJuMRLPwnyxExOFx8EFCPUqneDMLyHGHRnj5Mj8LLA==
-X-Received: by 2002:a05:651c:546:b0:2df:1e3e:3280 with SMTP id 38308e7fff4ca-2e51ff5da7dmr204135241fa.28.1715861208838;
-        Thu, 16 May 2024 05:06:48 -0700 (PDT)
-Received: from [192.168.0.107] ([91.90.219.38])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2e4d15155fdsm24154071fa.83.2024.05.16.05.06.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 May 2024 05:06:48 -0700 (PDT)
-Message-ID: <81aa0e4e-a3c7-41d1-8cd2-4d060730b37a@gmail.com>
-Date: Thu, 16 May 2024 17:06:46 +0500
+	s=arc-20240116; t=1715861232; c=relaxed/simple;
+	bh=tysYO2NRmknRooroESqwe/efcDnREN8woy4AxLfsxf8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=GQgMCQ73P4dRGhMsU5W5e8aGlszoPmuaIhNY4uc03+VmvEl6MDdT/voqy5MGFQtYOKzuBybFxU01zpE+zy8c4hvIVsB3COphNzIJ1bOKQUs5dmO8YL5MABDtEtKBlep1h5+NjITbDxplYeSmRhcsfUZ1n7d0wed/aCcUH0Wy0Q0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=g0n6ddhI; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1715861221;
+	bh=eNAEbz0fp/gY1nhw1dpy1yORqplQKqdzXReDnu/+e4g=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=g0n6ddhIF7/0X29LcsUDo8Z4BWeTQgdK8scAYY/1iaMbeN5vvDA0gHJNo1eeCezYx
+	 gkjsu6a+zNqBDJvvlQUSZp48sk4wwJMUTseU6EDA3ocYioVRc89Of0YdyaemMdRi6M
+	 pWkga5jzFG+2LKvxwY+QnrOVi2mT6JYVc5zKFbZ7B197AhdehtvTv8lpa+Ac6SukZh
+	 FdFSbRKfBsiJa8RGwmiXUVQM8mwe71xs14qZkSaa+jnMkKjFoP5ooC/d2/iAoAecZb
+	 BNJjc1oxZAyhmSfHKtoknrWEBy5sQLAZN6PjXhjyRFnON6TASlKnqfu5Ea31RdZyYA
+	 dAULMCr282Ugg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Vg8380233z4wby;
+	Thu, 16 May 2024 22:06:59 +1000 (AEST)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Andy Polyakov <appro@cryptogams.org>, Danny Tsen <dtsen@linux.ibm.com>,
+ linux-crypto@vger.kernel.org
+Cc: herbert@gondor.apana.org.au, leitao@debian.org, nayna@linux.ibm.com,
+ linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ ltcgcw@linux.vnet.ibm.com, dtsen@us.ibm.com
+Subject: Re: [PATCH 1/3] crypto: X25519 low-level primitives for ppc64le.
+In-Reply-To: <89e7b4b0-9804-41be-b9b1-aeba57cd3cc6@cryptogams.org>
+References: <20240514173835.4814-1-dtsen@linux.ibm.com>
+ <20240514173835.4814-2-dtsen@linux.ibm.com> <87a5kqwe59.fsf@mail.lhotse>
+ <89e7b4b0-9804-41be-b9b1-aeba57cd3cc6@cryptogams.org>
+Date: Thu, 16 May 2024 22:06:58 +1000
+Message-ID: <875xvevu3h.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Dmitry Yashin <dmt.yashin@gmail.com>
-Subject: Re: [PATCH 3/3] pinctrl: rockchip: add rk3308b SoC support
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Heiko Stuebner
- <heiko@sntech.de>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- Jianqun Xu <jay.xu@rock-chips.com>, devicetree@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- Dmitry Yashin <dmt.yashin@gmail.com>
-References: <20240515121634.23945-1-dmt.yashin@gmail.com>
- <20240515121634.23945-4-dmt.yashin@gmail.com> <20240515182954.03c4a475@booty>
-Content-Language: en-US
-In-Reply-To: <20240515182954.03c4a475@booty>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-Hi Luca,
+Andy Polyakov <appro@cryptogams.org> writes:
+> Hi,
+>
+>>> +.abiversion	2
+>>
+>> I'd prefer that was left to the compiler flags.
+>
+> Problem is that it's the compiler that is responsible for providing this
+> directive in the intermediate .s prior invoking the assembler. And there
+> is no assembler flag to pass through -Wa.
 
-On 15.05.24 21:29, Luca Ceresoli wrote:
-> I'm skeptical about this being bound to a new DT compatible. As far as I
-> know the RK3308 and RK3308B are mostly equivalent, so it looks as the
-> pinctrl implementation could be detected at runtime. This would let
-> products to be built with either chip version and work on any without
-> any DT change.
+Hmm, right. But none of our existing .S files include .abiversion
+directives.
 
+We build .S files with gcc, passing -mabi=elfv2, but it seems to have no
+effect.
 
-Thanks for your feedback.
+So all the intermediate .o's generated from .S files are not ELFv2:
 
-Indeed, these SoC's have a lot in common, but as I can see the rk3308b
-has more blocks, like extra PWM's (rk3308 datasheet 1.5 [0] shows only
-1x PWM 4ch, when rk3308b and rk3308b-s have 3x PWM 4ch), 1-wire and
-CAN controller (mentioned in the TRM, but dropped from rk3308b
-datasheet for some reason).
+  $ find .build/ -name '*.o' | xargs file | grep Unspecified
+  .build/arch/powerpc/kernel/vdso/note-64.o:                        ELF 64-bit LSB relocatable, 64-bit PowerPC or cisco 7500, Unspecified or Power ELF V1 ABI, version 1 (SYSV), not stripped
+  .build/arch/powerpc/kernel/vdso/sigtramp64-64.o:                  ELF 64-bit LSB relocatable, 64-bit PowerPC or cisco 7500, Unspecified or Power ELF V1 ABI, version 1 (SYSV), not stripped
+  .build/arch/powerpc/kernel/vdso/getcpu-64.o:                      ELF 64-bit LSB relocatable, 64-bit PowerPC or cisco 7500, Unspecified or Power ELF V1 ABI, version 1 (SYSV), not stripped
+  .build/arch/powerpc/kernel/vdso/gettimeofday-64.o:                ELF 64-bit LSB relocatable, 64-bit PowerPC or cisco 7500, Unspecified or Power ELF V1 ABI, version 1 (SYSV), not stripped
+  .build/arch/powerpc/kernel/vdso/datapage-64.o:                    ELF 64-bit LSB relocatable, 64-bit PowerPC or cisco 7500, Unspecified or Power ELF V1 ABI, version 1 (SYSV), not stripped
+  ...
 
-So, in my view, it really makes sense to add rk3308b.dtsi, where extra
-PWM's, pinctrl compatible and its pin functions can be moved. And if
-its not worth it, then I will try to adapt the entire series to runtime
-config based on cpuid like you suggested.
+But the actual code follows ELFv2, because we wrote it that way, and I
+guess the linker doesn't look at the actual ABI version of the .o ?
 
-Additional thoughts on this would be appreciated.
+So it currently works. But it's kind of gross that those .o files are
+not ELFv2 for an ELFv2 build.
 
-[0] https://rockchip.fr/RK3308%20datasheet%20V1.5.pdf
+> If concern is ABI neutrality,
+> then solution would rather be #if (_CALL_ELF-0) == 2/#endif. One can
+> also make a case for
+>
+> #ifdef _CALL_ELF
+> .abiversion _CALL_ELF
+> #endif
 
--- 
-Thanks,
-Dmitry
+Is .abiversion documented anywhere? I can't see it in the manual.
 
+We used to use _CALL_ELF, but the kernel config is supposed to be the
+source of truth, so we'd use:
+
+  #ifdef CONFIG_PPC64_ELF_ABI_V2
+  .abiversion 2
+  #endif
+
+And probably put it in a macro like:
+
+  #ifdef CONFIG_PPC64_ELF_ABI_V2
+  #define ASM_ABI_VERSION .abiversion 2
+  #else
+  #define ASM_ABI_VERSION
+  #endif
+
+Or something like that. But it's annoying that we need to go and
+sprinkle that in every .S file.
+
+Anyway, my comment can be ignored as far as this series is concerned,
+seems we have to clean this up everywhere.
+
+cheers
 
