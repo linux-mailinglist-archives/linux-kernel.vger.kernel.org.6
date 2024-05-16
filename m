@@ -1,91 +1,203 @@
-Return-Path: <linux-kernel+bounces-180884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 772388C7453
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:04:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 514728C744A
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:01:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C5571C223D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:04:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E84002861FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:01:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF7BE14388A;
-	Thu, 16 May 2024 10:03:56 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2720E143884;
+	Thu, 16 May 2024 10:01:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="gQEx10Ks"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2069.outbound.protection.outlook.com [40.107.21.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF6D7143754
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 10:03:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715853836; cv=none; b=I2xk8nsjapAXW51qV2gpSW3eBKcgcAoqEFoGVFCIe3mbJ7Wf6QZUg1O9LanOIJTNN/o5XFQHHTBeoOKnnaAV75fMTGLM5kBnKwVskSV31sE2isQ79rCFopXWOxgZeuXaTcNpxTW+8MQu/4QNaMvFkLv7AqpF0ggw4ijesdLQ4i0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715853836; c=relaxed/simple;
-	bh=009iAbl0t2VqPd7PIsRrUBmqkdj8koEBV/R4e8ltrCo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=NBCoBtLX81A2e0STF9jqWIZlAfmtTF6Nhv0sd5HCMWkGmuYzdEdfudftzHq+Jqaqu/zNAwrrRDTS30WWHHNecQkiTvVP3hjmrL/rIRSMNUuxw/HudH5+uY14FEPO9oi9yuP3YyTcHs1dmhK6DoBRQEhT1UngnYwSy6ZL1ZLKk8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Vg5HV2Y4gzcf7D;
-	Thu, 16 May 2024 18:02:30 +0800 (CST)
-Received: from dggpemm100001.china.huawei.com (unknown [7.185.36.93])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2747B14038F;
-	Thu, 16 May 2024 18:03:45 +0800 (CST)
-Received: from [10.174.177.243] (10.174.177.243) by
- dggpemm100001.china.huawei.com (7.185.36.93) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Thu, 16 May 2024 18:03:44 +0800
-Message-ID: <1d38aa26-cd2f-4330-9dcc-6c379cecb83b@huawei.com>
-Date: Thu, 16 May 2024 18:03:44 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 126AB143754
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 10:01:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715853704; cv=fail; b=HqoxOhAYIf7a/tBY+M7TKgWZhGOhuY0oppmKDAyk53bhd3lmDOKKaZAxUKYbn4aGoVM35JSnKdTOie1LJcShELtC8jnyJAjCArG2jm2mM/ksjcUlsjZHyDvGKdB2nNb5xaWJXqV1yeTWB27Ax7zC09gChPA6OX4p9LI7BlNNbHg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715853704; c=relaxed/simple;
+	bh=QFrScN0l1VuI+Rh4cj0oVoNbWlruiE7yuNHc2KfE/fk=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=rmfdEWzLevgXbt95krKLacgGEpcFU3tsjGWY9v2tBGgmkVYgWr3oftjU33l/Q+ZEYrmcEYi7kVGcJo6zfTj8p/TPHhULTYLkDBphgE0LrliGTO0+RTWQ6iWXFUpfLofyqIC1d0fF3rpatQSr0QhxmlJBWgpuTe4dwHo4KCmOqmw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=gQEx10Ks; arc=fail smtp.client-ip=40.107.21.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=IE8meJojtAr9r+A3f1G+GDgQdinv81JkfJNmnxgaS3VL1WVEwGYo2ZkuWbFzUTKQe/wioqKMzpavayn0UO5/G1CuT/rNmYvQLCFBnL8WIiKJ9sg/dhA0Sq9im/HtvNLc/UzFPDR7duw6H3qXnZ3GD4Tr4tJ1ljqY4EKgeKRThZGLNb9aGCn4XQ6uqZYMPmMjT/Qhhk1k/OMEN2f3alVHLNFr5GyieGq7BWQkbhiUSOp0p1YRSCSPHznqRKKQ1EUahPw+0G6iuccrusRPK2/yOMp42plIOvzp1zfSiO7RwNrTsMPL6yX+iTpQCLjhGzJS7JD4FuGxiyPhashLMYclAQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9ymfew+mbBrL2SXJHCFkAqeivGXDN8OSDVGpwMbLmEk=;
+ b=VFeC/ax8is671sl6szmUrKCbdJc1tPwW0boHjvNNz2ZjGwIgJsk9WfrA4+QsvFWT4QjOoWGlro+T0MWzvKuUVsToF62a8puOcxrsYLe7wMw+4CtqM1YHeR2CiJlsqpdsOLldl78Y6zfLwOTMNO/K1gR9S7pw3/b2oGl6wNWv1g7luOkmYobu3WFjaj2lNTzqH53tCkWA1XjN9XEaHwiLUBS5YI4PjHTaG0Eof+5SGvgHy+e0JXF7qynVklgq4VabunhPBWCDtfIurXtfPU4r/JSlOe8U+P2n9Chq6iKvxtEBX7i3IpM92LfVIuAYcsxVfxQXezd5AXA9f6owT1eRiA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9ymfew+mbBrL2SXJHCFkAqeivGXDN8OSDVGpwMbLmEk=;
+ b=gQEx10Ks8eiWYD+WXSd59BKrTY5r8JgKGStGCyXmljaDadiPA/AXZrZNupP+2607yROEzwILhR+tl8UbYyJ6Ym1z3WkBU0CkofUhazVOIiq8TvfbWlcB3wMBpqPePEo+k6MY3YlJV7/Xqb90DVtWB9CdYYgU7pqImeCPy/5vEwc=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+ by VE1PR04MB7232.eurprd04.prod.outlook.com (2603:10a6:800:1af::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.27; Thu, 16 May
+ 2024 10:01:36 +0000
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90%3]) with mapi id 15.20.7587.028; Thu, 16 May 2024
+ 10:01:36 +0000
+From: Liu Ying <victor.liu@nxp.com>
+To: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Cc: andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org,
+	rfoss@kernel.org,
+	Laurent.pinchart@ideasonboard.com,
+	jonas@kwiboo.se,
+	jernej.skrabec@gmail.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	biju.das.jz@bp.renesas.com,
+	dmitry.baryshkov@linaro.org,
+	u.kleine-koenig@pengutronix.de,
+	aford173@gmail.com,
+	jani.nikula@intel.com,
+	bli@bang-olufsen.dk,
+	sui.jingfeng@linux.dev
+Subject: [PATCH] drm/bridge: adv7511: Exit interrupt handling when necessary
+Date: Thu, 16 May 2024 18:10:06 +0800
+Message-Id: <20240516101006.2388767-1-victor.liu@nxp.com>
+X-Mailer: git-send-email 2.37.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2PR02CA0014.apcprd02.prod.outlook.com
+ (2603:1096:4:194::19) To AM7PR04MB7046.eurprd04.prod.outlook.com
+ (2603:10a6:20b:113::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/cma: get nid from physical address
-Content-Language: en-US
-To: Yajun Deng <yajun.deng@linux.dev>, <akpm@linux-foundation.org>
-CC: <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
-References: <20240516091701.1527002-1-yajun.deng@linux.dev>
-From: Kefeng Wang <wangkefeng.wang@huawei.com>
-In-Reply-To: <20240516091701.1527002-1-yajun.deng@linux.dev>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggpemm100001.china.huawei.com (7.185.36.93)
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|VE1PR04MB7232:EE_
+X-MS-Office365-Filtering-Correlation-Id: ad8f8066-b1f0-4c66-cc54-08dc758f2bf2
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230031|376005|7416005|1800799015|52116005|366007|38350700005;
+X-Microsoft-Antispam-Message-Info:
+ =?us-ascii?Q?FkWqmwiHa763nOx5AtIetT9ZH/qenOcv26zEGRLmkz9UT0iJ/qhpZnPAelOp?=
+ =?us-ascii?Q?PLDMGYPieZpm8MQW2ah2zN/S78XIbDHX3qjjB9Z8pzq6HJmHvlByYcswzfUz?=
+ =?us-ascii?Q?qNqAp+yN+w359+eeJB8tj25pUvPu5kbD0QWdiI+96U15DMV4B12HH/m9QXm/?=
+ =?us-ascii?Q?jKsFUzMuRNSIFpHXleTA3C4JoQvFYN9BPajhcZU3CRBU9Fi9XvfsJgAvf4ov?=
+ =?us-ascii?Q?AtyMszXM7dvLwLQYdeA83ih0Jj4S+un0tRPiJJ355e61uvTcZ5hb53BPtzQo?=
+ =?us-ascii?Q?EPRRaoJiv5P55HHv3frMYFi33tdIbWPGzr+wzrVMAQAk2z+So0sxOarESn4C?=
+ =?us-ascii?Q?ELHDXIcnfek6+186Jin3ttNX64hJxc+q6B4OAOSTOQuAs4kdRPLJOq58pcl7?=
+ =?us-ascii?Q?cbSnNZOkcEbC8UcR4ckSKvbVeJdQP3DSeHdAs1xy2pyfTM9bpM2lt6l9gVrz?=
+ =?us-ascii?Q?+ha0skfpYkZLXoVozCvYMPM8o9hVsqhHfwJzwH+4EGHLO1gU6y96+ZehfAmm?=
+ =?us-ascii?Q?J2FFqTKxSU+Os40WE2RDcrU2i3QM85L08JlY1ZHl6vdVTpJVGGLr8M102I5G?=
+ =?us-ascii?Q?Fw/j7/ByZwMbm7UWqla1C20iA9WJS+b4qCcdrSchFHtbUEJ+795AI61r0Ld2?=
+ =?us-ascii?Q?8R7D9Ke4NJ85JdM3LDAE++WSbo1V6cR+NVxcTHD4O3oDqvI6w5B7Fj+fCFWY?=
+ =?us-ascii?Q?lU+KVAlTZ9/lOO1iK88QpnNtvaUQWGhrOl/xz7BeeBdpz9ETskyXSGw0I17L?=
+ =?us-ascii?Q?rF7eoOwuqmstBaQpSE8DLN6h5t3s8R5rCvSOyIlJgWjjh3mxzHKkuwh6lzh5?=
+ =?us-ascii?Q?4ALzbF47uvOHIKejMDWsQTwCPd6ZAsDxX+9RtjBr38/o4971D1lCkTs0W0tb?=
+ =?us-ascii?Q?L8EDdqdSinjW+obGehYjfbVV4MnKQX9sh0NOJwjNzNOFzQQ5qRkLK2/Noqht?=
+ =?us-ascii?Q?K4WBkeIJ85i3zLNUBebiXJMQTmucUymEZDO6VR5xgA1Z9L4eHSVyATAX3reP?=
+ =?us-ascii?Q?lngOX+4LcNknc8JEq4M+EhLugOmroBqPxSDcaW1/qd/rIl8O2ZOf81XKDVxt?=
+ =?us-ascii?Q?+GQkxmfZICwGbQMBvvcYhdDql8bXo6XcY73oQrjFQjOWUtKRfR+SRVLppDu7?=
+ =?us-ascii?Q?wryzedizi7KCxp4ptVvSwWOetQh+dV6HpzfICjCHYvFih4IMQAXuz0OZxfQP?=
+ =?us-ascii?Q?kQX7n5WjuZKTuiqqex8f/0QLDMCpPJFonxunbI9ys92Bgw1kHIwO0535PxkE?=
+ =?us-ascii?Q?E/VkXW20Xzx8xeO80GPzaJ+sOYtESxfka40AK0AWWO3Jxv2XVXxLU465qytm?=
+ =?us-ascii?Q?neteIhzwQ2YfmUdOAoLn3brYfC1C09MfSagyGTzeRryCew=3D=3D?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(7416005)(1800799015)(52116005)(366007)(38350700005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?us-ascii?Q?YGjgpN0Ze4IhwlWZZjuVCD1VF4bRvE5P9sVqDRPu4yxS+4MfAHmhoq3d+7dJ?=
+ =?us-ascii?Q?36Dyyaa+/KVkF9cmswFjlKKaDFjbS1+hSAZnss4GOeYCVC/+QS8sw9ZsAnFN?=
+ =?us-ascii?Q?AVtx/o5h2iEBT6WI1BtlkvFMVe8ZpQ0Ry5CzxJIEwGpqeboWhJS1/aECkNYf?=
+ =?us-ascii?Q?J74ohEHrdp7+DlcO8Fxr33+7OANVRuI4WXSCSGP1kZLBr+Kmp8x0FNl+052Z?=
+ =?us-ascii?Q?daUXpPuJf5iFweJFqgaoXMq0DN+zY7r7QkGMwFsLJE1/nBerZLJfYZ6aEL2k?=
+ =?us-ascii?Q?Wlf+yPuOlCqd7iKEyzBYa+uDQCSGI+cYn02SVyXwKRHJ0x/GMll+PbuDwH2/?=
+ =?us-ascii?Q?mOvvOrx8TL1d2DtBvRfez4Wbkp1Y+hYjnkf630ixjT59+ia5aWv5So5AbWvC?=
+ =?us-ascii?Q?P++Oe/xONX8yBIj428UT7jjj3OGBaK6umigGR3KQetHA+gzu/ulUAXy78BHd?=
+ =?us-ascii?Q?ttU3x6+xHDKhEnx4Olsz6wJ4DZILfUhQBnAuAcR69yroNDEtPf/dtz894W5M?=
+ =?us-ascii?Q?DauM3cqFr99QyzaRMYjtkz1u1Vd1OaUMY3OusjWwjIPq4rb/4izX4EycyXgB?=
+ =?us-ascii?Q?yS2u6hzuhbvW923UdwxpY3dDNFtnAZ78X0bCxVe3tBNzreUsbAdO8XNXpvu6?=
+ =?us-ascii?Q?d8m4WYA2dGlaxvPI9yIcSUW6wLQ5EZplG1d//bJxg1r66F/4xtfokLw5+6oe?=
+ =?us-ascii?Q?qc5M1r9C9Dg2KIR+aeoeLpSdFnSgshkWFqrwXoQwIey9NP4a0TWkccCUBzk3?=
+ =?us-ascii?Q?kd5uKJzZ3h99RD4i2/O9yF2jM9NRWGR8CSU6PaG6wghZ9h6RLruNBNK+wVYW?=
+ =?us-ascii?Q?/2zv9KShjm880VmYHh66UB7ZFLAhahio8pBNN7AjS1G1M2p4SSzwsRb1GON9?=
+ =?us-ascii?Q?PW+NxpL+m51SHcdqpfvoi8Mvgxt7A+zhXfFqyNvENGPCw6K2S/2nYVFyKz6V?=
+ =?us-ascii?Q?KAhgk0IoWbZX0hLJTwhAS0SK6LG6GjR7UrYDVPW8VPH1zFtwBq5UPilsNUZW?=
+ =?us-ascii?Q?k1dfnNdSOuSbefOSQKhnBrUVTwkR+Y1a96QnAGEqYC5181+PKaIr5SPumwys?=
+ =?us-ascii?Q?hPl6heeJnsvD7SOOs8xdimHZTRHtluJNakV3a2wV9Hb/zhZYDyRjdvh4mKWt?=
+ =?us-ascii?Q?aS0rGVwJqZrzT5QfTmXoro5m7kMIMnE3MVPUnMEZUPcWPIpBc0kDM7MwvRzQ?=
+ =?us-ascii?Q?PxDIWWFM08qTuZx+g2vDOVjMyD76Pu19jfjxMI0+364Be6PvJeUydriDHgtr?=
+ =?us-ascii?Q?tw9qkmEaogR4Fy2E2Qjbd1e+9Ztv3aDT0cXt01YFTfiVnHgM9wRS1qYZ2KJl?=
+ =?us-ascii?Q?AKvuVok30aPNs5ButWGf5iorZSlIBYp9Ha6NqRy+QAVX5rWEkVdMpTRBIv/s?=
+ =?us-ascii?Q?CWK/oN7kqBGVle1fvBbQu5iQn9FeTP+f4AqGGuThAUl+e4/zb3WUh07Np03e?=
+ =?us-ascii?Q?JpPTEe2urX/G1++WHH8GobTwl6xmWB0XOAV/NC3cl0sw3NkT9Wd37BOj4IrG?=
+ =?us-ascii?Q?8oR/Py18enNDjI71Ug+w0QVRPTIDL1QkTk64n3DaFfumLy0gdJQtYUHsNeSC?=
+ =?us-ascii?Q?TEpOmhnhE778dWxSkxHel2QOwLWUzrQemHTXF3fL?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ad8f8066-b1f0-4c66-cc54-08dc758f2bf2
+X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 May 2024 10:01:36.0542
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: jdPEP+GC8qduQeyYelVsFZzYhG4isVvLk4nzNuLiruZfWWjjBCh8KFE0dZF5kGa3VMRKmobZ9SpDZ/abFi52UQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB7232
 
+Commit f3d9683346d6 ("drm/bridge: adv7511: Allow IRQ to share GPIO pins")
+fails to consider the case where adv7511->i2c_main->irq is zero, i.e.,
+no interrupt requested at all.
 
+Without interrupt, adv7511_wait_for_edid() could return -EIO sometimes,
+because it polls adv7511->edid_read flag by calling adv7511_irq_process()
+a few times, but adv7511_irq_process() happens to refuse to handle
+interrupt by returning -ENODATA.  Hence, EDID retrieval fails randomly.
 
-On 2024/5/16 17:17, Yajun Deng wrote:
-> The nid passed to cma_declare_contiguous_nid() may be NUMA_NO_NODE,
-> which is not the actual nid. To get the correct nid, we can get the nid
-> from physical address.
-> 
+Fix the issue by checking adv7511->i2c_main->irq before exiting interrupt
+handling from adv7511_irq_process().
 
-Please check
+Fixes: f3d9683346d6 ("drm/bridge: adv7511: Allow IRQ to share GPIO pins")
+Signed-off-by: Liu Ying <victor.liu@nxp.com>
+---
+ drivers/gpu/drm/bridge/adv7511/adv7511_drv.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-https://lore.kernel.org/linux-riscv/47437c2b-5946-41c6-ad1b-cc03329eb230@huawei.com/
+diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
+index 6089b0bb9321..2074fa3c1b7b 100644
+--- a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
++++ b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
+@@ -479,7 +479,8 @@ static int adv7511_irq_process(struct adv7511 *adv7511, bool process_hpd)
+ 		return ret;
+ 
+ 	/* If there is no IRQ to handle, exit indicating no IRQ data */
+-	if (!(irq0 & (ADV7511_INT0_HPD | ADV7511_INT0_EDID_READY)) &&
++	if (adv7511->i2c_main->irq &&
++	    !(irq0 & (ADV7511_INT0_HPD | ADV7511_INT0_EDID_READY)) &&
+ 	    !(irq1 & ADV7511_INT1_DDC_ERROR))
+ 		return -ENODATA;
+ 
+-- 
+2.37.1
 
-> Signed-off-by: Yajun Deng <yajun.deng@linux.dev>
-> ---
->   mm/cma.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/mm/cma.c b/mm/cma.c
-> index 3e9724716bad..be6cdde32944 100644
-> --- a/mm/cma.c
-> +++ b/mm/cma.c
-> @@ -361,6 +361,7 @@ int __init cma_declare_contiguous_nid(phys_addr_t base,
->   		kmemleak_ignore_phys(addr);
->   		base = addr;
->   	}
-> +	nid = early_pfn_to_nid(PHYS_PFN(base));
->   
->   	ret = cma_init_reserved_mem(base, size, order_per_bit, name, res_cma);
->   	if (ret)
 
