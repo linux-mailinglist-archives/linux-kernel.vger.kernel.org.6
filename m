@@ -1,170 +1,192 @@
-Return-Path: <linux-kernel+bounces-181282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AE158C79E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:55:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E53608C7A03
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:04:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD2491C21655
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:55:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13D291C20C13
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:04:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1989F14D711;
-	Thu, 16 May 2024 15:55:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0BB614D718;
+	Thu, 16 May 2024 16:03:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gScUhOYS";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="dR/IrjwU";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gScUhOYS";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="dR/IrjwU"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="mIsccNtB"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E4FE14A097;
-	Thu, 16 May 2024 15:55:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC56414D708
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 16:03:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715874934; cv=none; b=WhkZubajpZl9Se+21Pn2NDknDzp76zGVHyEi2stKSTmvnWh4lg+B2MAxtr/w10EkeMGQIXk6lhPoyqPbVXODy/sJ5S1u5Z/etbk2ECWmJOzX9KUuHc5c6CxyYaSvsJq7s7v+e/KyhSNu2MVgYgQM6IRsBKn8ZbvaZdGU4nyQPsA=
+	t=1715875415; cv=none; b=KXM7ENHoDLqF1xnOdT85qlbgUO3OzZnjMFOSbc/66MlLgPnKqP/Cc8g2lM4pWZtoRY63oZ9Tv27fDX+GYvjMcaL1IIAaFpvkXTFjHwQF4HJb0UMvBIfC03S3uHr3B4/fMU6LVOevkskxn+P3I4PRY6lxV9XhGoDeqEcWPVzFYqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715874934; c=relaxed/simple;
-	bh=1Nwm8qdDFRNEZx7WNaDQabozWH6b1j4ykGmeVq/JdbU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qKGZnNgiXpAZPzCl2kimBFQSN6bzI/ChgglE2NFSfx89xdQFlzoHHP/H0u6DwO5nPh5QnosMpremqViM7AAu6UB1gVnBxsJFotCUZAQJl+qQOpS/dV27AwyiQ4qYqj0cI3agIwYXNlSSjjupohCr+1fPB7CPMLGBlvAcj/iPles=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=gScUhOYS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=dR/IrjwU; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=gScUhOYS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=dR/IrjwU; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 7022E5C66A;
-	Thu, 16 May 2024 15:55:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1715874924;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1KezvWlzVnxI862WBQg1zAOLmg8OzwPLiM1I741YDGA=;
-	b=gScUhOYSDbTYl8utOjQyeeni9sAiPS2USJAVK+kekl9kVUsl++INe8+x8NF3GigYWBvekg
-	lFuOWu5v7cbSU/g7BPZ+H1yG31PNs6wXE5SRkq6tBum7DtgekNqhlT3rXzxL2voErhfYo6
-	FslgkOJHdvClW1TjBBzbcDKvpZaeOOc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1715874924;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1KezvWlzVnxI862WBQg1zAOLmg8OzwPLiM1I741YDGA=;
-	b=dR/IrjwUaGrBZtaQ+UYRzjmQoKUCNEq6HRF7gwLNBMfTfSZ5mk4dO6jp9bzBI5oblpfiKf
-	JEnygAGCQ3lw0lAg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=gScUhOYS;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="dR/IrjwU"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1715874924;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1KezvWlzVnxI862WBQg1zAOLmg8OzwPLiM1I741YDGA=;
-	b=gScUhOYSDbTYl8utOjQyeeni9sAiPS2USJAVK+kekl9kVUsl++INe8+x8NF3GigYWBvekg
-	lFuOWu5v7cbSU/g7BPZ+H1yG31PNs6wXE5SRkq6tBum7DtgekNqhlT3rXzxL2voErhfYo6
-	FslgkOJHdvClW1TjBBzbcDKvpZaeOOc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1715874924;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1KezvWlzVnxI862WBQg1zAOLmg8OzwPLiM1I741YDGA=;
-	b=dR/IrjwUaGrBZtaQ+UYRzjmQoKUCNEq6HRF7gwLNBMfTfSZ5mk4dO6jp9bzBI5oblpfiKf
-	JEnygAGCQ3lw0lAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4FB2E13991;
-	Thu, 16 May 2024 15:55:24 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id B3PiEmwsRmboPQAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Thu, 16 May 2024 15:55:24 +0000
-Date: Thu, 16 May 2024 17:55:22 +0200
-From: David Sterba <dsterba@suse.cz>
-To: syzbot <syzbot+5244d35be7f589cf093e@syzkaller.appspotmail.com>
-Cc: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] WARNING in btrfs_fileattr_set
-Message-ID: <20240516155522.GG4449@suse.cz>
-Reply-To: dsterba@suse.cz
-References: <000000000000e7579c05e9d6e701@google.com>
+	s=arc-20240116; t=1715875415; c=relaxed/simple;
+	bh=w6Fg2JpsvdjRRkndeYWuK9Oga3yO+xojBx1QK7WwnvM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=p7wJHUVDBufRI41yr8/HblJJctWumNioqEC/GDYcVHNPuQo1ks9YepxhMMrQo31RrHtLICsgHAiWNx//0dobPCPgcHW9KPqyONzdUXA3eq27O6qeRyf0dXoTZzI2qoH7u4qBUDLvZAnKt1ea1yIsjgG1YAG0amxTRzBfz25LY4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=mIsccNtB; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-51ff65b1e14so1084094e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 09:03:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1715875411; x=1716480211; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xAQn5ZJ029A4BYjWHjsUKX38oU4M2o9epOHX/AbRcWI=;
+        b=mIsccNtB+LILRN5trg4ywr4p46ikEi760G/L0X4i6SQ6X9BvrcvaPogrHcJ5pQscrC
+         j+thSgtyRqxvLo0LmjJr6OwkTt9Gg/ZjnyYl55wdTYeG+DoRoNMy3hgON45I5atOurcm
+         pfrzowI8nUQtjZwH4xbSJZ4pwtxFRiV/OtXCjrEPs3eNLw15KKV8bB0esfTY+Seb9K/J
+         MNj6ruKJzESBb0u3RB0DoFaHr033VzMMsGSBJfAG3BfluCku6IBN6zAUhLH5QtRoAWUW
+         kEA3O85hJYMqo+w3UV4nGOkr+MUnlS1cJXXntfYmteIawAr0vWVumi/UAjbSo1OeVcU+
+         ja7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715875411; x=1716480211;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xAQn5ZJ029A4BYjWHjsUKX38oU4M2o9epOHX/AbRcWI=;
+        b=IBBdkrdI9mY1yfRs8o5DNMH6iPVV/+/tf8UFuSsyxNRIkadhdqml+5IGo/OazuzJSh
+         yN5CLC73Jz5PVk2jcjy7Icn/ogrKoJkU59f3xJjjnODjS94MxoAvZXu99SQKRXJppPQA
+         PEez07W//AxXzgCrn9mD/I/b9s/VIqurGPYc02VmH4LvwJJlpOprI9SNGNpIAkt4/o+5
+         rfLlADbDZ6/WgB6om5LdA/PDgXASyA21Zi4BuLTuqhKZk4uTt2XvNT02eZ5hqiIDGdrE
+         LUgc2fQUBeqR1Gb1sOpLrjyZqkb11iX1EWpGssYxfxaP0948YNRsEqxXMyDIWONYWueZ
+         8ayw==
+X-Forwarded-Encrypted: i=1; AJvYcCV3OjJyXOD4txyQsuI6K+ZzSXD/JWSlnkPIF0FDh/n/OT2qvuL+81FAn5r1o2325dJQyv4Z7pLaI0HXj7mkutqVWE7j+dCQpP7zSm2Z
+X-Gm-Message-State: AOJu0YwYoJjVb4odfSDRtgPFFYdDbB7iWmBmg1oN/nJ2h3JIKq088gCM
+	gVN7S44p4FS55ZYsyGy5eot8U3BNDPWiQYSW1p8yfbEylH3coRwyl2cVHAT5Zd8=
+X-Google-Smtp-Source: AGHT+IEIrRIBOZMUkIkIqwr58hBnezl+CPbwEVWg81y2jWQugC79B8soRmnQGgNwxKLA+Ivy11jUBw==
+X-Received: by 2002:a05:6512:3194:b0:523:b19a:25fe with SMTP id 2adb3069b0e04-523b19a28a8mr2745903e87.6.1715875410427;
+        Thu, 16 May 2024 09:03:30 -0700 (PDT)
+Received: from fedora.fritz.box (aftr-62-216-208-100.dynamic.mnet-online.de. [62.216.208.100])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502b79bc99sm19275156f8f.11.2024.05.16.09.03.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 May 2024 09:03:30 -0700 (PDT)
+From: Thorsten Blum <thorsten.blum@toblux.com>
+To: thorsten.blum@toblux.com
+Cc: andrew@lunn.ch,
+	arnd@arndb.de,
+	davem@davemloft.net,
+	edumazet@google.com,
+	glaubitz@physik.fu-berlin.de,
+	kuba@kernel.org,
+	linux-kernel@vger.kernel.org,
+	lkp@intel.com,
+	netdev@vger.kernel.org,
+	nico@fluxnic.net,
+	pabeni@redhat.com
+Subject: [PATCH v2] net: smc91x: Fix pointer types
+Date: Thu, 16 May 2024 17:56:12 +0200
+Message-ID: <20240516155610.191612-3-thorsten.blum@toblux.com>
+X-Mailer: git-send-email 2.45.0
+In-Reply-To: <AEF82223-BB2B-4AF0-9732-0F2F605AAEC2@toblux.com>
+References: <AEF82223-BB2B-4AF0-9732-0F2F605AAEC2@toblux.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000000000000e7579c05e9d6e701@google.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spam-Level: 
-X-Spamd-Result: default: False [-1.27 / 50.00];
-	BAYES_HAM(-2.56)[98.05%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=ba0d23aa7e1ffaf5];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TAGGED_RCPT(0.00)[5244d35be7f589cf093e];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[appspotmail.com:email,syzkaller.appspot.com:url,suse.cz:dkim,suse.cz:replyto,storage.googleapis.com:url]
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 7022E5C66A
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Score: -1.27
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 29, 2022 at 01:41:46PM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    49c13ed0316d Merge tag 'soc-fixes-6.0-rc7' of git://git.ke..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=129847ff080000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=ba0d23aa7e1ffaf5
-> dashboard link: https://syzkaller.appspot.com/bug?extid=5244d35be7f589cf093e
-> compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
-> 
-> Unfortunately, I don't have any reproducer for this issue yet.
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/418654aab051/disk-49c13ed0.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/49c501fc7ae3/vmlinux-49c13ed0.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+5244d35be7f589cf093e@syzkaller.appspotmail.com
-> 
-> WARNING: CPU: 0 PID: 29090 at fs/btrfs/ioctl.c:367 btrfs_fileattr_set+0xae4/0xbd0 fs/btrfs/ioctl.c:367
+Use void __iomem pointers as parameters for mcf_insw() and mcf_outsw()
+to align with the parameter types of readw() and writew().
 
-That was an injected ENOMEM that then hit a transaction abort, we used
-to print a full trace on that but it's been silenced.
+Use lp->base instead of ioaddr when calling SMC_outsw(), SMC_outsb(),
+SMC_insw(), and SMC_insb() to retain its type across macro boundaries
+and to fix the following warnings reported by kernel test robot:
 
-#syz fix: btrfs: don't print stack trace when transaction is aborted due to ENOMEM
+drivers/net/ethernet/smsc/smc91x.c:590:9: sparse: warning: incorrect type in argument 1 (different address spaces)
+drivers/net/ethernet/smsc/smc91x.c:590:9: sparse:    expected void *a
+drivers/net/ethernet/smsc/smc91x.c:590:9: sparse:    got void [noderef] __iomem *
+drivers/net/ethernet/smsc/smc91x.c:590:9: sparse: warning: incorrect type in argument 1 (different address spaces)
+drivers/net/ethernet/smsc/smc91x.c:590:9: sparse:    expected void *a
+drivers/net/ethernet/smsc/smc91x.c:590:9: sparse:    got void [noderef] __iomem *
+drivers/net/ethernet/smsc/smc91x.c:590:9: sparse: warning: incorrect type in argument 1 (different address spaces)
+drivers/net/ethernet/smsc/smc91x.c:590:9: sparse:    expected void *a
+drivers/net/ethernet/smsc/smc91x.c:590:9: sparse:    got void [noderef] __iomem *
+drivers/net/ethernet/smsc/smc91x.c:483:17: sparse: warning: incorrect type in argument 1 (different address spaces)
+drivers/net/ethernet/smsc/smc91x.c:483:17: sparse:    expected void *a
+drivers/net/ethernet/smsc/smc91x.c:483:17: sparse:    got void [noderef] __iomem *
+
+Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202405160853.3qyaSj8w-lkp@intel.com/
+Acked-by: Nicolas Pitre <nico@fluxnic.net>
+---
+Changes in v2:
+- Use lp->base instead of __ioaddr as suggested by Andrew Lunn. They are
+  essentially the same, but using lp->base results in a smaller diff
+- Remove whitespace only changes as suggested by Andrew Lunn
+- Preserve Acked-by: Nicolas Pitre tag (please let me know if you
+  somehow disagree with the changes in v2)
+---
+ drivers/net/ethernet/smsc/smc91x.h | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/net/ethernet/smsc/smc91x.h b/drivers/net/ethernet/smsc/smc91x.h
+index 45ef5ac0788a..a1523fb503a3 100644
+--- a/drivers/net/ethernet/smsc/smc91x.h
++++ b/drivers/net/ethernet/smsc/smc91x.h
+@@ -142,14 +142,14 @@ static inline void _SMC_outw_align4(u16 val, void __iomem *ioaddr, int reg,
+ #define SMC_CAN_USE_32BIT	0
+ #define SMC_NOWAIT		1
+ 
+-static inline void mcf_insw(void *a, unsigned char *p, int l)
++static inline void mcf_insw(void __iomem *a, unsigned char *p, int l)
+ {
+ 	u16 *wp = (u16 *) p;
+ 	while (l-- > 0)
+ 		*wp++ = readw(a);
+ }
+ 
+-static inline void mcf_outsw(void *a, unsigned char *p, int l)
++static inline void mcf_outsw(void __iomem *a, unsigned char *p, int l)
+ {
+ 	u16 *wp = (u16 *) p;
+ 	while (l-- > 0)
+@@ -1034,7 +1034,7 @@ static const char * chip_ids[ 16 ] =  {
+ 			void __iomem *__ioaddr = ioaddr;		\
+ 			if (__len >= 2 && (unsigned long)__ptr & 2) {	\
+ 				__len -= 2;				\
+-				SMC_outsw(ioaddr, DATA_REG(lp), __ptr, 1); \
++				SMC_outsw(lp->base, DATA_REG(lp), __ptr, 1); \
+ 				__ptr += 2;				\
+ 			}						\
+ 			if (SMC_CAN_USE_DATACS && lp->datacs)		\
+@@ -1042,12 +1042,12 @@ static const char * chip_ids[ 16 ] =  {
+ 			SMC_outsl(__ioaddr, DATA_REG(lp), __ptr, __len>>2); \
+ 			if (__len & 2) {				\
+ 				__ptr += (__len & ~3);			\
+-				SMC_outsw(ioaddr, DATA_REG(lp), __ptr, 1); \
++				SMC_outsw(lp->base, DATA_REG(lp), __ptr, 1); \
+ 			}						\
+ 		} else if (SMC_16BIT(lp))				\
+-			SMC_outsw(ioaddr, DATA_REG(lp), p, (l) >> 1);	\
++			SMC_outsw(lp->base, DATA_REG(lp), p, (l) >> 1);	\
+ 		else if (SMC_8BIT(lp))				\
+-			SMC_outsb(ioaddr, DATA_REG(lp), p, l);	\
++			SMC_outsb(lp->base, DATA_REG(lp), p, l);	\
+ 	} while (0)
+ 
+ #define SMC_PULL_DATA(lp, p, l)					\
+@@ -1080,9 +1080,9 @@ static const char * chip_ids[ 16 ] =  {
+ 			__len += 2;					\
+ 			SMC_insl(__ioaddr, DATA_REG(lp), __ptr, __len>>2); \
+ 		} else if (SMC_16BIT(lp))				\
+-			SMC_insw(ioaddr, DATA_REG(lp), p, (l) >> 1);	\
++			SMC_insw(lp->base, DATA_REG(lp), p, (l) >> 1);	\
+ 		else if (SMC_8BIT(lp))				\
+-			SMC_insb(ioaddr, DATA_REG(lp), p, l);		\
++			SMC_insb(lp->base, DATA_REG(lp), p, l);		\
+ 	} while (0)
+ 
+ #endif  /* _SMC91X_H_ */
+-- 
+2.45.0
+
 
