@@ -1,144 +1,264 @@
-Return-Path: <linux-kernel+bounces-181321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E7108C7A6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:33:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF4D78C7A68
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:33:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C93F1F2208A
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:33:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90707281C78
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:33:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71D234C8A;
-	Thu, 16 May 2024 16:33:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="dM2SFDJz"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 645ED4A2C;
+	Thu, 16 May 2024 16:33:27 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D1AF4A15;
-	Thu, 16 May 2024 16:33:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF7234A15;
+	Thu, 16 May 2024 16:33:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715877229; cv=none; b=NKt4pRh2kQwa4TIs7UfUL5dtukZxXL9jRQlJvQYXyhScclQ2KqLCCZf6RDATCsYtFd3T3zIbpE/zCU9F6cIFtgCN9pCWzQLZRwfnAjTMaOzbUA+NnzoeHCOacBPEYfXrS9kQGuggvN/Jqpfe89ek31Mc1cnQCnVKzkN/wbQfvzk=
+	t=1715877206; cv=none; b=Kd4dJNHxnkwAoYPzqsUEZVdqb1ggHTAV+CS/WvdTh7yLLRh2bdTjJAbz3/Fa9kZnW7msho/Rl1xAsbZqA+g0K6ROd3Ne+ipeJ4aH3MKjj8PbATj80may5A4V9Gdy3E6wBSoZBcrFK1L/HWMfYgEq9P71+rqdNJPmlyf8ZPHabL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715877229; c=relaxed/simple;
-	bh=jc+p0uqi6u3V3KnhrnLdMf7Zn9A5zPWqZdmw9MFR0Pk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=A3aacuBkb5xf8aq3vol1itzlhen4boskK3z8kzRyWX6YkdEy7+AdFkzRlpYkU85zAfcZDAmE8BzhQCad4pAg60RwORI5kFypLaAsXfPM1jibznR8rdhQuJwhyt3WgGH6FLMOdj7BQSvf63CZqP8MMWcEZwsavvFDQux6hudYQ4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=dM2SFDJz; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44GDhYe5005402;
-	Thu, 16 May 2024 18:33:12 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	selector1; bh=2pRzvEKsr2u9WywjaryEnBZCx349KN6Wpc4RHZd+rck=; b=dM
-	2SFDJzSYm9AtY55y2HwV2Jyh8tSKydE5jusko5MbfwttReZjEn3YHFd0zMgY6lso
-	aEk774snO5txwIxya4PGQGt+fuci8ATwfzLqhyI/SE0iwLLTI3QEP0x686iIuE0p
-	yls1WTxNB6EaUDH6CvG0Wst0kOvj55xLoR4yZZemdhAXyIPoCS0SCbzP2Sa6NzEO
-	DEQi6AKSAP83EEPGS+sUrFGdfDqdRrfk5JCl/EoXB1PhBEyoHlBjJoYuFSgu+iLN
-	q27l4PC/TM7XcBuykhDDbui/wxORAI6++7wO21esoE1U5MHvwxW3Ezrkq3EXJMHz
-	eJ0ta5KxTtYs+IhVaoDg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3y4syme8rc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 16 May 2024 18:33:11 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id E36A340045;
-	Thu, 16 May 2024 18:33:07 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id E8359226FC6;
-	Thu, 16 May 2024 18:32:17 +0200 (CEST)
-Received: from [10.48.87.205] (10.48.87.205) by SHFDAG1NODE3.st.com
- (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Thu, 16 May
- 2024 18:32:17 +0200
-Message-ID: <2e5ad8c3-4889-4062-964b-acf4ec75986c@foss.st.com>
-Date: Thu, 16 May 2024 18:32:15 +0200
+	s=arc-20240116; t=1715877206; c=relaxed/simple;
+	bh=HyxKbm7lvP7BZCmAfJtpChzelCXKU4ecBlBVnNw5c5Y=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=boDv3wX235W+ASRkLqiQ2Fy+cc/mEy6bivQL4ZvsMG4HGicSPObKMgbTZp6wZwOLnjYAZOwPp5jur6o2KYzXKkivWaNBlNtC9yEsnSIN/lC1CvVzq/gy8prUHINmbkhMNLVFxhS8MHMko9yNqCspvYccpihuMZhLaWqdpH6hT3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4VgFxh1rKGz6J7yy;
+	Fri, 17 May 2024 00:32:40 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 84B04140594;
+	Fri, 17 May 2024 00:33:21 +0800 (CST)
+Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 16 May
+ 2024 17:33:21 +0100
+Date: Thu, 16 May 2024 17:33:19 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
+CC: Davidlohr Bueso <dave@stgolabs.net>, Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>, Vishal Verma
+	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
+	<dan.j.williams@intel.com>, <linux-cxl@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] cxl/events: Use a common struct for DRAM and General
+ Media events
+Message-ID: <20240516173319.00007429@Huawei.com>
+In-Reply-To: <20240516102116.3512377-1-fabio.m.de.francesco@linux.intel.com>
+References: <20240516102116.3512377-1-fabio.m.de.francesco@linux.intel.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] dt-bindings: regulator: st,stm32mp1-pwr-reg: add
- compatible for STM32MP13
-To: Conor Dooley <conor@kernel.org>, Marek Vasut <marex@denx.de>
-CC: Alexandre TORGUE <alexandre.torgue@foss.st.com>,
-        Liam Girdwood
-	<lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Pascal
- Paillet <p.paillet@foss.st.com>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-References: <20240513095605.218042-1-patrick.delaunay@foss.st.com>
- <20240513115601.v3.1.Ia0a99d90acb512aa020a6e7a8cca8cc1b71f1759@changeid>
- <615dfdcb-cbda-426f-895e-810f03a8ce60@denx.de>
- <20240513-stabilize-proofread-81f0f9ee38b9@spud>
- <d73d4435-75d6-4cea-b38e-07c7ceae3980@foss.st.com>
- <20240514-entryway-idealize-fcd5ed0e1de7@spud>
- <0c97408c-422d-46b3-8017-da9ebb0767e1@foss.st.com>
- <20240515-monsoon-starfish-0dc59707e843@spud>
- <9de93cbb-5868-473e-8b32-a6b6f50e128e@denx.de>
- <20240515-edginess-evacuee-356bd6dd1dfa@spud>
-Content-Language: en-US
-From: Patrick DELAUNAY <patrick.delaunay@foss.st.com>
-In-Reply-To: <20240515-edginess-evacuee-356bd6dd1dfa@spud>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-16_07,2024-05-15_01,2023-05-22_02
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-Hi,
+On Thu, 16 May 2024 12:19:53 +0200
+"Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com> wrote:
 
-On 5/15/24 18:15, Conor Dooley wrote:
-> On Wed, May 15, 2024 at 05:37:49PM +0200, Marek Vasut wrote:
->> On 5/15/24 5:35 PM, Conor Dooley wrote:
->>> On Wed, May 15, 2024 at 04:33:22PM +0200, Patrick DELAUNAY wrote:
->>>> with
->>>>
->>>>     compatible:
->>>>       oneOf:
->>>>           - items:
->>>>              - const: st,stm32mp1,pwr-reg
->>>>           - items:
->>>>              - const: st,stm32mp13-pwr-reg
->>>>              - const: st,stm32mp1,pwr-reg
->>> Other than the extra ,s this looks okay, thanks.
->> I think the extra ,s are actually correct, those are the ones from the
->> original compatible which had TWO ,s (it does look a bit unusual).
-> Oh my bad then.
+> cxl_event_common was a poor naming choice and caused confusion with the
+> existing Common Event Record.
+> 
+> Use cxl_event_media as a common structure to record information about DRAM
+> and General Media events because it simplifies handling the two events.
+> 
+> Suggested-by: Dan Williams <dan.j.williams@intel.com>
+> Fixes: 6aec00139d3a ("cxl/core: Add region info to cxl_general_media and cxl_dram events")
+> Signed-off-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.com>
+> ---
 
+Packing question inline.
 
-Ok, I prepare a V4 with fallback
+> 
+> Changes for v2:
+> 	- Extend the commit message (Alison);
+> 	- Add a "Fixes" tag (Alison, thanks).
+> 
+>  drivers/cxl/core/mbox.c      |  6 ++--
+>  drivers/cxl/core/trace.h     |  4 +--
+>  include/linux/cxl-event.h    | 70 +++++++++++++++---------------------
+>  tools/testing/cxl/test/mem.c |  4 +--
+>  4 files changed, 36 insertions(+), 48 deletions(-)
+> 
+> diff --git a/drivers/cxl/core/mbox.c b/drivers/cxl/core/mbox.c
+> index 2626f3fff201..ad4d7b0f7f4d 100644
+> --- a/drivers/cxl/core/mbox.c
+> +++ b/drivers/cxl/core/mbox.c
+> @@ -875,16 +875,16 @@ void cxl_event_trace_record(const struct cxl_memdev *cxlmd,
+>  		guard(rwsem_read)(&cxl_region_rwsem);
+>  		guard(rwsem_read)(&cxl_dpa_rwsem);
+>  
+> -		dpa = le64_to_cpu(evt->common.phys_addr) & CXL_DPA_MASK;
+> +		dpa = le64_to_cpu(evt->media_common.phys_addr) & CXL_DPA_MASK;
+>  		cxlr = cxl_dpa_to_region(cxlmd, dpa);
+>  		if (cxlr)
+>  			hpa = cxl_trace_hpa(cxlr, cxlmd, dpa);
+>  
+>  		if (event_type == CXL_CPER_EVENT_GEN_MEDIA)
+>  			trace_cxl_general_media(cxlmd, type, cxlr, hpa,
+> -						&evt->gen_media);
+> +						&evt->media_general);
+>  		else if (event_type == CXL_CPER_EVENT_DRAM)
+> -			trace_cxl_dram(cxlmd, type, cxlr, hpa, &evt->dram);
+> +			trace_cxl_dram(cxlmd, type, cxlr, hpa, &evt->media_dram);
+>  	}
+>  }
+>  EXPORT_SYMBOL_NS_GPL(cxl_event_trace_record, CXL);
+> diff --git a/drivers/cxl/core/trace.h b/drivers/cxl/core/trace.h
+> index 07a0394b1d99..2c7293761bb2 100644
+> --- a/drivers/cxl/core/trace.h
+> +++ b/drivers/cxl/core/trace.h
+> @@ -316,7 +316,7 @@ TRACE_EVENT(cxl_generic_event,
+>  TRACE_EVENT(cxl_general_media,
+>  
+>  	TP_PROTO(const struct cxl_memdev *cxlmd, enum cxl_event_log_type log,
+> -		 struct cxl_region *cxlr, u64 hpa, struct cxl_event_gen_media *rec),
+> +		 struct cxl_region *cxlr, u64 hpa, struct cxl_event_media *rec),
+>  
+>  	TP_ARGS(cxlmd, log, cxlr, hpa, rec),
+>  
+> @@ -413,7 +413,7 @@ TRACE_EVENT(cxl_general_media,
+>  TRACE_EVENT(cxl_dram,
+>  
+>  	TP_PROTO(const struct cxl_memdev *cxlmd, enum cxl_event_log_type log,
+> -		 struct cxl_region *cxlr, u64 hpa, struct cxl_event_dram *rec),
+> +		 struct cxl_region *cxlr, u64 hpa, struct cxl_event_media *rec),
+>  
+>  	TP_ARGS(cxlmd, log, cxlr, hpa, rec),
+>  
+> diff --git a/include/linux/cxl-event.h b/include/linux/cxl-event.h
+> index 60b25020281f..e417556cc120 100644
+> --- a/include/linux/cxl-event.h
+> +++ b/include/linux/cxl-event.h
+> @@ -32,41 +32,38 @@ struct cxl_event_generic {
+>   * CXL rev 3.0 Section 8.2.9.2.1.1; Table 8-43
+>   */
+>  #define CXL_EVENT_GEN_MED_COMP_ID_SIZE	0x10
+> -struct cxl_event_gen_media {
+> -	struct cxl_event_record_hdr hdr;
+> -	__le64 phys_addr;
+> -	u8 descriptor;
+> -	u8 type;
+> -	u8 transaction_type;
+> -	u8 validity_flags[2];
+> -	u8 channel;
+> -	u8 rank;
+> -	u8 device[3];
+> -	u8 component_id[CXL_EVENT_GEN_MED_COMP_ID_SIZE];
+> -	u8 reserved[46];
+> -} __packed;
+> -
+>  /*
+>   * DRAM Event Record - DER
+>   * CXL rev 3.0 section 8.2.9.2.1.2; Table 3-44
+>   */
+>  #define CXL_EVENT_DER_CORRECTION_MASK_SIZE	0x20
+> -struct cxl_event_dram {
+> +struct cxl_event_media {
+>  	struct cxl_event_record_hdr hdr;
+> -	__le64 phys_addr;
+> -	u8 descriptor;
+> -	u8 type;
+> -	u8 transaction_type;
+> -	u8 validity_flags[2];
+> -	u8 channel;
+> -	u8 rank;
+> -	u8 nibble_mask[3];
+> -	u8 bank_group;
+> -	u8 bank;
+> -	u8 row[3];
+> -	u8 column[2];
+> -	u8 correction_mask[CXL_EVENT_DER_CORRECTION_MASK_SIZE];
+> -	u8 reserved[0x17];
+> +	struct_group_tagged(cxl_event_media_hdr, media_hdr,
+> +		__le64 phys_addr;
+> +		u8 descriptor;
+> +		u8 type;
+> +		u8 transaction_type;
+> +		u8 validity_flags[2];
+> +		u8 channel;
+> +		u8 rank;
+> +	);
 
+Does the struct that is created end up __packed?
+Also, why is tagged useful here?  
 
-and comma in compatible "st,stm32mp1,pwr-reg" was clearly an error
-
-but it is too late to change it, see [1]
-
-[1] ARM: st: use a correct pwr compatible for stm32mp15
-
-https://patchwork.kernel.org/project/linux-arm-kernel/list/?series=847733&state=* 
-
-
-regards
-
-Patrick
-
+> +	union {
+> +		struct_group(general,
+> +			u8 device[3];
+> +			u8 component_id[CXL_EVENT_GEN_MED_COMP_ID_SIZE];
+> +			u8 gen_reserved[46];
+> +		);
+> +		struct_group(dram,
+> +			u8 nibble_mask[3];
+> +			u8 bank_group;
+> +			u8 bank;
+> +			u8 row[3];
+> +			u8 column[2];
+> +			u8 correction_mask[CXL_EVENT_DER_CORRECTION_MASK_SIZE];
+> +			u8 dram_reserved[0x17];
+> +		);
+> +	};
+>  } __packed;
+>  
+>  /*
+> @@ -95,21 +92,12 @@ struct cxl_event_mem_module {
+>  	u8 reserved[0x3d];
+>  } __packed;
+>  
+> -/*
+> - * General Media or DRAM Event Common Fields
+> - * - provides common access to phys_addr
+> - */
+> -struct cxl_event_common {
+> -	struct cxl_event_record_hdr hdr;
+> -	__le64 phys_addr;
+> -} __packed;
+> -
+>  union cxl_event {
+>  	struct cxl_event_generic generic;
+> -	struct cxl_event_gen_media gen_media;
+> -	struct cxl_event_dram dram;
+> +	struct cxl_event_media media_general;
+> +	struct cxl_event_media media_dram;
+>  	struct cxl_event_mem_module mem_module;
+> -	struct cxl_event_common common;
+> +	struct cxl_event_media media_common;
+>  } __packed;
+>  
+>  /*
+> diff --git a/tools/testing/cxl/test/mem.c b/tools/testing/cxl/test/mem.c
+> index 6584443144de..0a8fd145c391 100644
+> --- a/tools/testing/cxl/test/mem.c
+> +++ b/tools/testing/cxl/test/mem.c
+> @@ -378,7 +378,7 @@ struct cxl_event_record_raw hardware_replace = {
+>  
+>  struct cxl_test_gen_media {
+>  	uuid_t id;
+> -	struct cxl_event_gen_media rec;
+> +	struct cxl_event_media rec;
+>  } __packed;
+>  
+>  struct cxl_test_gen_media gen_media = {
+> @@ -402,7 +402,7 @@ struct cxl_test_gen_media gen_media = {
+>  
+>  struct cxl_test_dram {
+>  	uuid_t id;
+> -	struct cxl_event_dram rec;
+> +	struct cxl_event_media rec;
+>  } __packed;
+>  
+>  struct cxl_test_dram dram = {
 
 
