@@ -1,226 +1,125 @@
-Return-Path: <linux-kernel+bounces-180579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 074208C7069
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 04:49:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 351CA8C706D
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 04:52:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89D481F21A7E
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 02:49:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C93151F22468
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 02:52:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEBBC4411;
-	Thu, 16 May 2024 02:48:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="OKow7QuE"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2058.outbound.protection.outlook.com [40.107.92.58])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B3615C3;
-	Thu, 16 May 2024 02:48:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.58
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715827737; cv=fail; b=aAlU0BNrrSzmWhWZ5jqBZbpdiz3FAau2GERXpQhazEEiI4DJr2RHXoiznQGuWscqGxR4KVexiHxub+KoshoHu20wwy5SBvgZ8bqblIRm4hIs9qrGBzcQWWiAo6+EBa05wJX7qOjKhILNu2zcxAkcsj1Hw6X4WEJ5aiYK9VpA4RM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715827737; c=relaxed/simple;
-	bh=lrEUrlK3p1Tn/cQAKjnPvj8azfKq3gbHd6Fsc97fbn8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=R5p8xXp631dVk3TVx2WCf8k/LoGHhlcSuCa7dDRPeTZuAfXZjGbyPuF4hOczcORdkaO8oKis+qeMpCtRbhZMp48HhxYEOuPMmCclGCwHE4ziBaYC5Jb7pa1SSMaRCVWJarnzOz72WQMefPdKl5bly+mCcgYO704rpdD6bXqSAsQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=OKow7QuE; arc=fail smtp.client-ip=40.107.92.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=G1PWncP0IIA8FMjar2vjicjKoZBa2oRhWqbc0a3XWuhMmRhAxOEOG0gkngFXnfZ3QssSUVqP1bTo7X+zIUR0AV3en5RaxaKOmARpMh0usxyyNtmanrCza0iVGcMBMX5WRzJuFVSEUhXZtCws9a74oSWGm7JeI/4C92DaEcaQFc9TSLxTHb8SkWiTV5bEHMq1J/wjqM4wJaNFSwPG1zR2HDBW7t9RiUFXQbWrqa5FfbWQTW4kL1uKp00xxgvRbHuut1+rtMP2/4WmfiUgo3EHsdwtuR62sjUWTdF8fwnvy91nV9N80/z0UTg0S4q5NECqwU2Tcb+01kMgW3UmQYHDZw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iTgMbSuOfuxNZlHaK5zI34o191wJaZ0UmSiwowf9Cqs=;
- b=d1aReMAp65/U22zgvma5IOl/748BPrV4/cD4LQmcnQ5XF2DFUa3t079QmM396r98WugOFSNz0l1vyHk5gNruPo57cYGG+ih5GFjcyAEVAwpwN7ofljrR08caQUTRZsGj7kB7ekOvz+dybr9f0rOLZok92RDG+C75pKYF2T6WEalV7iazlgQcqCsY5MOlCZAV5BgJOvWj6jERIuZH+mrZK0M9epg1bxswOmNDXXx3Xf+RXxQwwPBG2/H5xFrY7sAPnoCnDzeQqTl5om0xlI0s4leyE+hvp/eP+K4qJaHyuSG0EtvVtTu/ecdh/rM+cjRDa51D/9auIdOp58tk30nA0A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iTgMbSuOfuxNZlHaK5zI34o191wJaZ0UmSiwowf9Cqs=;
- b=OKow7QuEe9dVKmSju57h+9QuLLzlHwt9Lp97M9Iwofr+xwtgsOB0JKi03cJUlbrn/ZmTwfgJbeTkOpyITJEPOdzMic5E9SP1FcPmWIvCU2b7znzVHFxbKVT65E1jlLb0uzX0x4aDK6ldvTR2zO2fK4YEd10dV1ZwUO6Tr9YQZZI=
-Received: from CYYPR12MB8655.namprd12.prod.outlook.com (2603:10b6:930:c4::19)
- by SJ0PR12MB7005.namprd12.prod.outlook.com (2603:10b6:a03:486::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.28; Thu, 16 May
- 2024 02:48:49 +0000
-Received: from CYYPR12MB8655.namprd12.prod.outlook.com
- ([fe80::7fa2:65b3:1c73:cdbf]) by CYYPR12MB8655.namprd12.prod.outlook.com
- ([fe80::7fa2:65b3:1c73:cdbf%6]) with mapi id 15.20.7587.026; Thu, 16 May 2024
- 02:48:48 +0000
-From: "Yuan, Perry" <Perry.Yuan@amd.com>
-To: "zhida312@outlook.com" <zhida312@outlook.com>
-CC: Peng Ma <andypma@tencent.com>, "Huang, Ray" <Ray.Huang@amd.com>, "Shenoy,
- Gautham Ranjal" <gautham.shenoy@amd.com>, "Limonciello, Mario"
-	<Mario.Limonciello@amd.com>, "linux-pm@vger.kernel.org"
-	<linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "viresh.kumar@linaro.org"
-	<viresh.kumar@linaro.org>, "rafael@kernel.org" <rafael@kernel.org>
-Subject: RE: [v3] cpufreq: amd-pstate: fix the memory to free after epp exist
-Thread-Topic: [v3] cpufreq: amd-pstate: fix the memory to free after epp exist
-Thread-Index: AQHapnNS2Fs0k0Uj1kCoPfk5W0R3R7GZKPvg
-Date: Thu, 16 May 2024 02:48:48 +0000
-Message-ID:
- <CYYPR12MB8655ABCB32C6B11C6B382E649CED2@CYYPR12MB8655.namprd12.prod.outlook.com>
-References:
- <PUZPR01MB51202786825AA6A93383B7AD92EC2@PUZPR01MB5120.apcprd01.prod.exchangelabs.com>
-In-Reply-To:
- <PUZPR01MB51202786825AA6A93383B7AD92EC2@PUZPR01MB5120.apcprd01.prod.exchangelabs.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ActionId=48993ae2-5ef3-4cc1-9a62-e1f708bf4b65;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ContentBits=0;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Enabled=true;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Method=Standard;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Name=AMD
- Internal Distribution
- Only;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SetDate=2024-05-16T02:44:15Z;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CYYPR12MB8655:EE_|SJ0PR12MB7005:EE_
-x-ms-office365-filtering-correlation-id: 8363829d-ddc5-4582-e752-08dc7552b675
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230031|1800799015|376005|366007|38070700009;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?PcT4bxsds4pnVSSPmkznSJkGWj0y8Dl0d6TYKJ5ojh1JzKjBREfAcQV+XEAX?=
- =?us-ascii?Q?79P8ZogZ6LHukATbuOn/Ul8O/l9NRQsPse3SPls62rv7BXZfA0V8UivuDIvo?=
- =?us-ascii?Q?Juyk8PmokqTbNfC3Igo9RTc2SLc2xqOnuSexXOfnLzhVU5e0MNDMBEtue9My?=
- =?us-ascii?Q?mUFpsKb94Yng6cHzYQehuC7113BQtIVNsnKFtoNVrw76P6diOTjHAk8/zy5V?=
- =?us-ascii?Q?jVuyo44cTRbrQr1+pubZZeFIDeV0/8ehCNBd8E1+E+FukI3VUj5enMmEbvA6?=
- =?us-ascii?Q?KRab2MhxvxoMOhrE5XiXuMFLcfUjYalMV8/abHvSqtxmK0Vr14cnFl/ARmm0?=
- =?us-ascii?Q?DN4vCZRP/fqu7Ie3A8fW44JuXKcBzx3e0Mdw5jBJ1HTsqapHSy6trGmfYp4m?=
- =?us-ascii?Q?RhPFVvhnblY9Fz6HDzF0MMW7sgAh5LNMF+4DHncsHXKTjiu7EQfXZ0l8Gy4b?=
- =?us-ascii?Q?/qg4WxHMSLCbpDgk+RskLUJ9k1p5RO1Yd2MGYKt/4I60p2BbFHLPpF7106Lj?=
- =?us-ascii?Q?1g2sB/wRSK+N724AG1gDzDcOpYjPSHQPt2AH7Wz3z7bZzqzwhkDofXvEU8kI?=
- =?us-ascii?Q?KGnerthcZuUBIaMyLlaslM7zHCqcf6Wg2TpuQtwZpYn9/cxaOroBqsSkq/IL?=
- =?us-ascii?Q?3LqKKi7QMubvggrEXzu5hQ4o2ZTUNMZh11xwNulpjbZH+5bwyOMKUbVbXN+9?=
- =?us-ascii?Q?63IWeXL8cu7jj2pysjUwdpDOf82HNRUzf7HsBnLx6ju2pAtYp0wmTzxvrkZI?=
- =?us-ascii?Q?9qdgvf8quUIOz9OFpnbB9HxWt3+8JKFTu5l5JQyoXvm+ogMySzERyo+t3WT+?=
- =?us-ascii?Q?csGDN6CmNpqYgKgqsZvbwteRPRShB8T+3ddR/xqe2ssiA/efLA1toMfQADKA?=
- =?us-ascii?Q?IzSPOk9tcvnUE4urmnVNpQnwZbvMOpcU8/bHvz551fxVXwIQZM8wZLKloA7u?=
- =?us-ascii?Q?T/YTLm0f1gqJj4Qj9/V9H/6i8D92malYMUcpTrv41Dwh3EQc88brYV/N3+L9?=
- =?us-ascii?Q?x2qKh3cu8LzIwaa6OpHWEh8hXw5RFfTTryqRK7rNK16S/HaqZhW5BVPFk8c0?=
- =?us-ascii?Q?dfMdDhR5/5ECZ4kPBDdm2Oh0OSc/qz5WdakmECC+6i2clSj5Sfmg19VmF6+U?=
- =?us-ascii?Q?hYvtLnez20ZYiuMwjPqu0dN8xjYXwRlAKNWjaFCYbGHqextBhePyR32JrsCY?=
- =?us-ascii?Q?K0Acrlj+eYqFgoRJ3VxT5VxTnBITwJqVgRitaeaStEPIgCT8o6UpozsXdRZC?=
- =?us-ascii?Q?4KMOZP+AWOnyQsPTjAB+nRQdwJMYnFG8/S2OwKxhuyQO+89WOMTEbnWLgou7?=
- =?us-ascii?Q?88Q/tXHVjPRejxHwJK4zE1cp/h9XEPgHS7vhrxItIehW9Q=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CYYPR12MB8655.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(366007)(38070700009);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?xo4TRhvJIVXdVK3ciNGfDLKN3p4+L/Ex+JKhN9VTIW7IeLW77P2ftxOMQU1N?=
- =?us-ascii?Q?Q2qdEbKSYqAA3V3VL/SDRKJsbEfsYJOdxB93rJ03+z7r8SeOrX0+ivuab7Vl?=
- =?us-ascii?Q?lBYvPppILAkAnGxU3YxbhwA2HCkukxOzb6wSsUvpUevlhHBf91YXYqdY9QIG?=
- =?us-ascii?Q?CKyPUVe6QLEIrQgz4hBxWDvdzyQ1JUmQdP1JZVhp3WggKJeBPN+EZykHF63+?=
- =?us-ascii?Q?sSnu6w2FLZlYUw4CEEryjWorEODW535yn+QHbi5C/krDKs4DHfmR7UwTlHDL?=
- =?us-ascii?Q?NIDPCQ2a9Cu3gNajzUUM3DWrCxF/s5VvDSQvbDj93BeoIS8/qvwi2DDtdQIc?=
- =?us-ascii?Q?yX/eO1Gbd75OMUs25luDPTOcoeyr1e0xvLajBqj8doIiZOmHWWFpyj17Vsdw?=
- =?us-ascii?Q?DV1Hcb1R+7ZAIwr2c3gR/1cY9Eg+InKhRNYO+91nPR1a+fleG4+jcJdgL5Ih?=
- =?us-ascii?Q?asGZWTAA33QkWxPlw4irKBStOrgx90r+5aJGjSV7zb+FE4jzZw7DBmKd8x8R?=
- =?us-ascii?Q?x66F4NYKZdZCYOGWb+nbl1utrfuq/G+q9iwbmBRp+oCWw/wTkgyUflIm8RuZ?=
- =?us-ascii?Q?i2r9BONGDjH0D5PHGtKDNurTSuAy00ikXmH4/I0TO4julyPygLgzfBPuJDT9?=
- =?us-ascii?Q?dYv4VZNXgcq3L59+hLJZWM2jgGSKz8gT5O2skZvq+JjNvMrLbVEbuQC42Dq/?=
- =?us-ascii?Q?xsp1BLl6F/pEkKd2XB0C9pE7r3CxpvA4fzVLRr3n3x0mxd80J9VRY/5omwIi?=
- =?us-ascii?Q?/J0i818g/5yTDZFLvjtAO17K67rSh5uAzlFKPYfEFrLFFUyilRevEZJBqd5u?=
- =?us-ascii?Q?pXKvFipltWU+MMRDphI2MQ1ls0x92nxF2V7ryvvDUTNWJNC2e8QCx/zWO+/u?=
- =?us-ascii?Q?eqOrf7mqx6Yf3okFYNA5cNxR7ehtfMfEnAEnhKhLkKgkJZoahM7bi3Eu+2qD?=
- =?us-ascii?Q?9EmtexDjiGgpDMxIeGKn58PjVed+3L2D378tnNRE2pr5DAw5cImyrwJyIXEG?=
- =?us-ascii?Q?i04urstt3VdjXee17xYDBNmYGUexfuXQ2eVbXa9wqhkvDShk4dkJQ9qJ2Nq/?=
- =?us-ascii?Q?zM487l7Kq/AZnc/YTRDObSNPcgKSvGTB6WTZ55bM7wDw5Y8us5zNpV1lzJCE?=
- =?us-ascii?Q?nNpeuv35hnEmiHud495NuECMeUFmGNoDgS5W9CORQFjbmLuWerJK8ZwPvl22?=
- =?us-ascii?Q?8LWSXl10QAs+DmgyzurnIgKAYZAGpMewaIZNkRcmVM6vhV6EK93xBOmVjA7x?=
- =?us-ascii?Q?Q5VXxF34LJzIqMmcdSSd9MCq+tN3lXgsZzmgWp70ScbmrtkTCLotL+Bp/PCA?=
- =?us-ascii?Q?Vr+OqgNtzTWKVmrxU4ddjMk9l+7CTQEvFACSByL8RUG2SjBeyxTUzAPUNXzA?=
- =?us-ascii?Q?/6hCaBNbuXRfZwJxpjFU+U4dKyuVDomllzSM4xmNR1BgyGyehcTWSZOn5HM+?=
- =?us-ascii?Q?jCNrOC4NOkdHqVkeeSjdftvmjZkAdmNjdyt7wOP8MQfnNe+5Kkw6MlVZflru?=
- =?us-ascii?Q?Y4txUybkqN8Zhduo7lyDT9eDG5wMGF+Lnekcltp2uiWwW6V/nWGeZAU4Jr/k?=
- =?us-ascii?Q?nC/tC3gRJ/VTv/jsv3w=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DBFC443D;
+	Thu, 16 May 2024 02:52:18 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E324215C3;
+	Thu, 16 May 2024 02:52:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715827938; cv=none; b=DdA6df0S5bGV8qxewib7aM/YllrD1BO+/KJ5gBApcF6RE8CZAVmjNslWc4Atrq2Z3Q3ryu9L1dT2vOVPLWbE357cZQFLDIGyVcyIg8SCdnQmkTQJFpQ/eVnrgGfz7rXvLNzCZnr98OtWDevHu+IJ76U/IYZod1hFeH0eCrioXFU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715827938; c=relaxed/simple;
+	bh=Bpp2sS8JAC34w//706OVYxm4uK643Velk4anITvY9sQ=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=eORwFTLk7DsKVxPOYN4iWIdUuB7/o6biBHz55wy61sf/1U6TEdQQlXV4T/7WrWhMAwLP55AakApJVSr0pwNCC5sKQ4oSkm9JvgTxe1pr+LZT69x9ih9Bf6gzhpchvPVNJ+7Fil9Ye4r166bPyzutabUR0L0cLpsBlQ7ouEEz3hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.173])
+	by gateway (Coremail) with SMTP id _____8BxeOnbdEVm+lsNAA--.19759S3;
+	Thu, 16 May 2024 10:52:11 +0800 (CST)
+Received: from [10.20.42.173] (unknown [10.20.42.173])
+	by localhost.localdomain (Coremail) with SMTP id AQAAf8Dxb1XWdEVmdXkiAA--.2393S3;
+	Thu, 16 May 2024 10:52:08 +0800 (CST)
+Subject: Re: [PATCH] LoongArch: Define __ARCH_WANT_NEW_STAT in unistd.h
+To: Arnd Bergmann <arnd@arndb.de>, Huacai Chen <chenhuacai@loongson.cn>,
+ Huacai Chen <chenhuacai@kernel.org>
+Cc: loongarch@lists.linux.dev, Linux-Arch <linux-arch@vger.kernel.org>,
+ Xuefeng Li <lixuefeng@loongson.cn>, guoren <guoren@kernel.org>,
+ WANG Xuerui <kernel@xen0n.name>, Jiaxun Yang <jiaxun.yang@flygoat.com>,
+ linux-kernel@vger.kernel.org, loongson-kernel@lists.loongnix.cn,
+ stable@vger.kernel.org
+References: <20240511100157.2334539-1-chenhuacai@loongson.cn>
+ <f92e23be-3f3f-4bc6-8711-3bcf6beb7fa2@app.fastmail.com>
+ <3937d6b1-119b-195e-8b9b-314a0bfbeaeb@loongson.cn>
+ <ebf493ee-1e8b-426d-bcf4-d8e17d10844a@app.fastmail.com>
+From: maobibo <maobibo@loongson.cn>
+Message-ID: <14d52b91-58b2-6079-b66a-f01d1bac583f@loongson.cn>
+Date: Thu, 16 May 2024 10:52:06 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CYYPR12MB8655.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8363829d-ddc5-4582-e752-08dc7552b675
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 May 2024 02:48:48.8399
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: UoTQ+vQ6X0549PbdxD0nbaZezg9b8A4hZ8CVaCP9knD93kflR0QijHkg3hGpvFr9iYXlVF0DQBvI7N4DqpI74w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB7005
-
-[AMD Official Use Only - AMD Internal Distribution Only]
-
-Hi Peng,
-
-> -----Original Message-----
-> From: zhida312@outlook.com <zhida312@outlook.com>
-> Sent: Wednesday, May 15, 2024 10:54 AM
-> To: rafael@kernel.org; viresh.kumar@linaro.org
-> Cc: Peng Ma <andypma@tencent.com>; Huang, Ray <Ray.Huang@amd.com>;
-> Shenoy, Gautham Ranjal <gautham.shenoy@amd.com>; Limonciello, Mario
-> <Mario.Limonciello@amd.com>; Yuan, Perry <Perry.Yuan@amd.com>; linux-
-> pm@vger.kernel.org; linux-kernel@vger.kernel.org
-> Subject: [v3] cpufreq: amd-pstate: fix the memory to free after epp exist
-
-The subject need to be update as below. " git format-patch -1 -v 3"
-
-[PATCH v3] cpufreq: amd-pstate: fix the memory to free after epp exist
+In-Reply-To: <ebf493ee-1e8b-426d-bcf4-d8e17d10844a@app.fastmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:AQAAf8Dxb1XWdEVmdXkiAA--.2393S3
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj93XoW7tF1kGrW5Cw1UtryrWr47KFX_yoW8XF17pF
+	WSgF1a9FWqyr1Syw4Ikw1DtFnYkryrJr45Z34FqryxAay5Xr13tr1FqrWUCFyaqFyxCFyj
+	va93Wa4fuFZ8ZagCm3ZEXasCq-sJn29KB7ZKAUJUUUUx529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUP2b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6r4UJVWxJr1ln4kS14v26r126r1DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12
+	xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r12
+	6r1DMcIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr4
+	1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxG
+	rwCFx2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWUAVWUtwC20s026c02F40E14
+	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkG
+	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI
+	0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4U
+	MIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8Dl1DUUUU
+	U==
 
 
->
-> From: andypma <andypma.tencent.com>
->
-> the cpudata memory from kzmalloc in epp init function is not free after e=
-pp exist,
-> so we should free it.
->
-> Signed-off-by: Peng Ma <andypma@tencent.com>
->
-> Changes since v2:
->       update Signed-off-by to Peng Ma <andypma@tencent.com>.
->       set a space between if and "(".
->
-> Changes since v1:
->       check whether it is empty before releasing.
->       set driver_data is NULL after free.
-> ---
->  drivers/cpufreq/amd-pstate.c | 7 +++++++
->  1 file changed, 7 insertions(+)
->
-> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c =
-index
-> 6a342b0c0140..1b7e82a0ad2e 100644
-> --- a/drivers/cpufreq/amd-pstate.c
-> +++ b/drivers/cpufreq/amd-pstate.c
-> @@ -1441,6 +1441,13 @@ static int amd_pstate_epp_cpu_init(struct
-> cpufreq_policy *policy)
->
->  static int amd_pstate_epp_cpu_exit(struct cpufreq_policy *policy)  {
-> +     struct amd_cpudata *cpudata =3D policy->driver_data;
-> +
-> +     if (cpudata) {
-> +             kfree(cpudata);
-> +             policy->driver_data =3D NULL;
-> +     }
-> +
->       pr_debug("CPU %d exiting\n", policy->cpu);
->       return 0;
->  }
-> --
-> 2.41.0
+
+On 2024/5/15 下午10:25, Arnd Bergmann wrote:
+> On Wed, May 15, 2024, at 09:30, maobibo wrote:
+>> On 2024/5/11 下午8:17, Arnd Bergmann wrote:
+>>> On Sat, May 11, 2024, at 12:01, Huacai Chen wrote:
+>>>
+>>> Importantly, we can't just add fstatat64() on riscv32 because
+>>> there is no time64 version for it other than statx(), and I don't
+>>> want the architectures to diverge more than necessary.
+>> yes, I agree. Normally there is newfstatat() on 64-bit architectures but
+>> fstatat64() on 32-bit ones.
+>>
+>> I do not understand why fstatat64() can be added for riscv32 still.
+>> 32bit timestamp seems works well for the present, it is valid until
+>> (0x1UL << 32) / 365 / 24 / 3600 + 1970 == 2106 year. Year 2106 should
+>> be enough for 32bit system.
+> 
+> There is a very small number of interfaces for which we ended up
+> not using a 64-bit time_t replacement, but those are only for
+> relative times, not epoch based offsets. The main problems
+> here are:
+> 
+> - time_t is defined to be a signed value in posix, and we need
+>    to handle file timestamps before 1970 in stat(), so changing
+>    this one to be unsigned is not an option.
+> 
+> - A lot of products have already shipped that will have to
+>    be supported past 2038 on existing 32-bit hardware. We
+>    cannot regress on architectures that have already been
+>    fixed to support this.
+> 
+> - file timestamps can also be set into the future, so applications
+>    relying on this are broken before 2038.
+I see. And thanks for detailed explanation.
+
+Regards
+Bibo Mao
+> 
+>        Arnd
+> 
 
 
