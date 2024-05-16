@@ -1,104 +1,111 @@
-Return-Path: <linux-kernel+bounces-181252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41AF88C798F
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:33:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 312DD8C7991
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:34:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1818285C7C
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:33:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFDB51F214AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:34:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A842814D431;
-	Thu, 16 May 2024 15:33:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G1TaLr3k"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC4FC14D2A8
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 15:32:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFE8414D451;
+	Thu, 16 May 2024 15:34:40 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAF8F14884E;
+	Thu, 16 May 2024 15:34:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715873580; cv=none; b=BJL7/D3CPZy4wbe0llXRm7Nd6f2GlI1A4SwiE8D2f4BB+B03dv6SjCpgpegv5Yv6IsOpXPyPLKt6LAEqBoLBm5xqqcR2B8vk5cKHvBNtZRvx5TOdxqEojUgIryKJZAkmwOcRS8Yv0YT2lsv0eir3+gXdb9HvRSYwJL+wFPGCaLw=
+	t=1715873680; cv=none; b=rvU7XBe1HM9laPpEYJWViD9rJ2z+CsFRMvrthsnQuZTwni9Zy89+RT8wfrKQ0+DrljEDWNpgAanNWbF3myQSuW9Q/Sja0LRjgfVGvsadjiDSPuCuFOReZ1AtORRjACJ0arz680Q+ckT8GRtqpH/KOGLuZxm4M9VBZLpphBl1Bgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715873580; c=relaxed/simple;
-	bh=srVdnYXyT4tc0ys+RBcE/24kZDqVhwuTNm17oGZxacE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gcaIAA8w3nLSlTzjAqNmp+jl7iY1/TgkSGwoZY2JmkVpdE2/d34yf4PWafZt8CyuOwTicYcW981lyYWaCzakdSwaPpH4uhqeN8psJG8AGUAV1FCPbRjCP6tf+MhSP6LbrLg3IjILU/x2EwCBUEBHTeRUtF9Y/aQxKE/+klS+d34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G1TaLr3k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24E01C113CC;
-	Thu, 16 May 2024 15:32:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715873579;
-	bh=srVdnYXyT4tc0ys+RBcE/24kZDqVhwuTNm17oGZxacE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=G1TaLr3k80zEv75xK/NkWx1OBTq58CmAqVlpgACvQf1BuVh47walBQpUebuieTNQx
-	 e4lJ13bmuWS+IPJVmH8D4CBrk51PjU8gLvHt2BYmDGcox7j9Y6tOEoO6nGSmpoE+oM
-	 IlPh0FHcwhfpOTwWUmUXbeByVEuUSRHxPa1U9Xejud9/nUd3MaClJekcYB32CyTcQt
-	 /lw0O5WLiS46y+wGtnJUgh1SB5yJRt/Yir5GdLod/BrjyN3iVWwx72iTU4YcB0DnHp
-	 uYNt5x0YMa8PSN2Gqp+guf2usZFdVqxt7wtR3+908mFEEIE8b8p3yoSP5NvEeakybY
-	 uzfwb9L+kDKLg==
-Date: Thu, 16 May 2024 17:32:56 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Yun Levi <ppbuk5246@gmail.com>, Joel Fernandes <joel@joelfernandes.org>,
-	Vineeth Pillai <vineeth@bitbyteword.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	anna-maria@linutronix.de, mingo@kernel.org, tglx@linutronix.de,
-	Markus.Elfring@web.de, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] time/tick-sched: idle load balancing when nohz_full
- cpu becomes idle.
-Message-ID: <ZkYnKAd1Qy+yvjDY@lothringen>
-References: <20240516075628.GC22557@noisy.programming.kicks-ass.net>
- <CAM7-yPRHp3tiZjuBTesdRQoU8WJNg1scon_txS_6R-pZq9MXHw@mail.gmail.com>
- <20240516084911.GF22557@noisy.programming.kicks-ass.net>
- <ZkXtHv+fHUD2+lFJ@lothringen>
- <CAM7-yPTSq0CSmRsTpeXwzhFk77gfwUK_LZKnbgo4NPk5zPCaAg@mail.gmail.com>
- <20240516140003.GJ22557@noisy.programming.kicks-ass.net>
- <ZkYW48dTX2FH5NaD@lothringen>
- <20240516144504.GL22557@noisy.programming.kicks-ass.net>
- <ZkYgG9KYMpUPeJsM@lothringen>
- <20240516151953.GM22557@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1715873680; c=relaxed/simple;
+	bh=1uiUK9sNfauyJOgS1zPlzqunt1aZuBKd0XvfbKxLQFk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dq8iVB9VK41FE5cae+VEWqiXxQ+B1wMXwZNOTZXMWvfkLML5oNEVP368Op8BTZo6zVT2U9ImcF+jjZC7qypiyr/hU/fzYL5347gwHS3EERm53bYRdtFVuVhLEPKlBZVOkzSfVRftq2KFRHLRQwABow6Nm/9UdzjvVpfFFW0/rjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4266ADA7;
+	Thu, 16 May 2024 08:35:02 -0700 (PDT)
+Received: from [10.1.25.38] (e122027.cambridge.arm.com [10.1.25.38])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5FBFF3F7A6;
+	Thu, 16 May 2024 08:34:35 -0700 (PDT)
+Message-ID: <bf2e159e-4e78-407d-b6e9-071916a20816@arm.com>
+Date: Thu, 16 May 2024 16:34:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240516151953.GM22557@noisy.programming.kicks-ass.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 07/14] arm64: Make the PHYS_MASK_SHIFT dynamic
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev, Marc Zyngier
+ <maz@kernel.org>, Will Deacon <will@kernel.org>,
+ James Morse <james.morse@arm.com>, Oliver Upton <oliver.upton@linux.dev>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
+ <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
+ Alexandru Elisei <alexandru.elisei@arm.com>,
+ Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
+ linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
+References: <20240412084213.1733764-1-steven.price@arm.com>
+ <20240412084213.1733764-8-steven.price@arm.com> <ZkJCHcqfXxV1wlB0@arm.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <ZkJCHcqfXxV1wlB0@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 16, 2024 at 05:19:53PM +0200, Peter Zijlstra wrote:
-> On Thu, May 16, 2024 at 05:02:51PM +0200, Frederic Weisbecker wrote:
+On 13/05/2024 17:38, Catalin Marinas wrote:
+> On Fri, Apr 12, 2024 at 09:42:06AM +0100, Steven Price wrote:
+>> diff --git a/arch/arm64/include/asm/kvm_arm.h b/arch/arm64/include/asm/kvm_arm.h
+>> index e01bb5ca13b7..9944aca348bd 100644
+>> --- a/arch/arm64/include/asm/kvm_arm.h
+>> +++ b/arch/arm64/include/asm/kvm_arm.h
+>> @@ -398,7 +398,7 @@
+>>   * bits in PAR are res0.
+>>   */
+>>  #define PAR_TO_HPFAR(par)		\
+>> -	(((par) & GENMASK_ULL(52 - 1, 12)) >> 8)
+>> +	(((par) & GENMASK_ULL(MAX_PHYS_MASK_SHIFT - 1, 12)) >> 8)
 > 
-> > > I'm confused, none of that makes sense. If you're part of a
-> > > load-balancer, you're part of a load-balancer, no ifs buts or other
-> > > nonsense.
-> > > 
-> > > idle load balancer is no different from regular load balancing.
-> > > 
-> > > Fundamentally, you can't disable the tick if you're part of a
-> > > load-balance group, the load-balancer needs the tick.
-> > > 
-> > > The only possible way to use nohz_full is to not be part of a
-> > > load-balancer, and the only way that is so is by having (lots of) single
-> > > CPU partitions.
-> > 
-> > So you're suggesting that nohz_full should just be part of the whole
-> > ilb machinery by default (that is, not fiddle with ilb internals) and
-> > then it's up to CPU partitioning (through cpuset or isolcpus) to disable
-> > ilb naturally. Right?
-> 
-> Yes, but stronger, as long as the CPU is part of a load-balance domain,
-> it must not disable the tick while running anything.
-> 
-> that is, NOHZ_FULL must not become active unless it's running on a
-> single CPU partition.
+> Why does this need to be changed? It's still a constant not dependent on
+> the new dynamic IPA size.
 
-I like the idea but I'm afraid to introduce regressions while doing so,
-with people currently using nohz_full without proper partionning...
+Good question - this appears to be a rebase error. Since commit
+a0d37784bfd7 ("KVM: arm64: Fix PAR_TO_HPFAR() to work independently of
+PA_BITS.") this macro no longer uses PHYS_MASK_SHIFT. Previously the
+change was to just to keep this uses the new 'MAX' constant.
+
+>> diff --git a/arch/arm64/include/asm/pgtable-hwdef.h b/arch/arm64/include/asm/pgtable-hwdef.h
+>> index ef207a0d4f0d..90dc292bed5f 100644
+>> --- a/arch/arm64/include/asm/pgtable-hwdef.h
+>> +++ b/arch/arm64/include/asm/pgtable-hwdef.h
+>> @@ -206,8 +206,8 @@
+>>  /*
+>>   * Highest possible physical address supported.
+>>   */
+>> -#define PHYS_MASK_SHIFT		(CONFIG_ARM64_PA_BITS)
+>> -#define PHYS_MASK		((UL(1) << PHYS_MASK_SHIFT) - 1)
+>> +#define MAX_PHYS_MASK_SHIFT	(CONFIG_ARM64_PA_BITS)
+>> +#define MAX_PHYS_MASK		((UL(1) << PHYS_MASK_SHIFT) - 1)
+> 
+> I prefer to have MAX as suffix in those definitions, it matches other
+> places like TASK_SIZE_MAX, PHYS_ADDR_MAX (I know PHYS_MASK_MAX doesn't
+> roll off the tongue easily but very few people tend to read the kernel
+> aloud ;)).
+
+I could rename, but actually given the above rebasing errors it appears
+these are actually no longer needed, so I'll just drop the MAX_xxx
+definitions.
+
+Thanks,
+
+Steve
+
 
