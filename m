@@ -1,127 +1,223 @@
-Return-Path: <linux-kernel+bounces-180951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3A268C7555
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 13:36:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EA5E8C7559
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 13:39:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 651A11F21E26
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 11:36:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 516201C20BA9
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 11:38:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5918A1459F6;
-	Thu, 16 May 2024 11:36:50 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8954C145A0A;
+	Thu, 16 May 2024 11:38:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="mXh1tGMi"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C03F145A05
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 11:36:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33E6A1DFCB;
+	Thu, 16 May 2024 11:38:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715859409; cv=none; b=IiKjq1ZJozANQUqjAVc/Qpz3W9pTEUjKyE68rmiB1R21SM9UM58ZeeRhYrfphNr1ozwZmWwV74p+kW/yJvi4MtRRCX/9/VOlUDSs6MwiyobYC5PzCOnwd2b2+R0NoVdTQppGviciS113fsy1zn2bOImy1rbu0wUpUzwq3JjzkSo=
+	t=1715859531; cv=none; b=is33MTZf0sY0xM3OYr6+5XJeOvOIJRPKNXj8X7im5BowruHxEnw4r5Ex3fq2NiKYpUSTiYb7B/Pffd7JEPocTml+4+E3JER1Z/nNSZpCdCWHpbcSEFoIYzhq4Z2pQ5qvLnUxBcptuwE99vQAeSdfxPUAIBV5gZFwGikuoCSN4b4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715859409; c=relaxed/simple;
-	bh=CTavtiGpG7ILOOHp9yowuOhIXoFP2hGxQnS1LKNpHSM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DSt7pWFTePKMheVjtGKSfsgeq1KUs30iM0ZpRBFVDrFIBh8TfkNusn1dU/cXqYZ66u0RK/CyzAYUcfRso9Wced60HBk+aacZZl66a1NT6HqydMUtLqE1e7KGchWriTwN9PHiB112ytk+gyXg9SCXvnGSC8xwudthreHx8j1s518=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <sha@pengutronix.de>)
-	id 1s7ZPf-0007gw-Mt; Thu, 16 May 2024 13:36:43 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <sha@pengutronix.de>)
-	id 1s7ZPe-001hfo-Fw; Thu, 16 May 2024 13:36:42 +0200
-Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1s7ZPe-00Eqac-1I;
-	Thu, 16 May 2024 13:36:42 +0200
-Date: Thu, 16 May 2024 13:36:42 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] mtd: nand: mxc_nand: implement exec_op
-Message-ID: <ZkXvyiuB4B2Fbz4l@pengutronix.de>
-References: <20240514-mtd-nand-mxc-nand-exec-op-v3-0-3e6f45fd3d82@pengutronix.de>
- <20240514-mtd-nand-mxc-nand-exec-op-v3-2-3e6f45fd3d82@pengutronix.de>
- <20240516103214.57a8ce33@xps-13>
- <ZkXfJ6n-06YqOr39@pengutronix.de>
- <20240516124405.2da1aa23@xps-13>
+	s=arc-20240116; t=1715859531; c=relaxed/simple;
+	bh=2ADI+XAWgpXxNfcc1TvaNZGCMnvF6+6Jc8UOMq0T8zg=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=UbK0J9RF321SLz0u9IZ62ydB8qc7bj6DxfUmVoVD58TrJjQrFVU1s/XbpZX5BtXJ5gWDgo0lsEo8yBnGe9VzAh4b2DtFcUYQLk/0RRcB+yBuPNuTv491S2cmc71M5bUcXAtMbVQTJtndbx8sHVH4qwfRQPzzvSComPdkSl8jF1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=mXh1tGMi; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44GApt4M025339;
+	Thu, 16 May 2024 11:38:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ subject : to : cc : references : from : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=5bRqxCdtmzjaCx8M5vJhcH031+uvoifMt9dAk8qBbUo=;
+ b=mXh1tGMi5ccz6MZb/tYx0Jij+0wATn10hXfo5D5bQWBtRms4r45NWHhFo/4kZN5OzNDh
+ 3E6S3SzfT9Mi+wG5csm7nEJKQP/bAgL6oDp02dN83qVflMdRtOttptuR1icegGKxVmCm
+ x7xp3pdY5fCACSz3JfI0oaoStlv9q2DXOa+2kClkr2V0Ufg6gbKDnbC4fx65859idzq0
+ NrBqueTBU3AI6QhCJw7vKp/FZj3TcMVhPEtbdsKThNhVNORCJVxYMUBYzRZgMAiFbvmt
+ NdKr3fo0/ppZ/Y8gfnwGkGdlOaKkdPaoecEyEAaU/st0QRoPY7I8GL7DSQCiCcT6Y5GW lg== 
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y5gjbg45m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 16 May 2024 11:38:30 +0000
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44GASP97020349;
+	Thu, 16 May 2024 11:38:29 GMT
+Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3y2kd09u8v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 16 May 2024 11:38:29 +0000
+Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
+	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44GBcQrC9110100
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 16 May 2024 11:38:28 GMT
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6B7B75805E;
+	Thu, 16 May 2024 11:38:26 +0000 (GMT)
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5511058051;
+	Thu, 16 May 2024 11:38:25 +0000 (GMT)
+Received: from [9.67.138.125] (unknown [9.67.138.125])
+	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 16 May 2024 11:38:25 +0000 (GMT)
+Message-ID: <db79ddf3-cf4d-4b05-b787-3e92e1236e81@linux.ibm.com>
+Date: Thu, 16 May 2024 06:38:24 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] crypto: X25519 low-level primitives for ppc64le.
+To: Michael Ellerman <mpe@ellerman.id.au>, linux-crypto@vger.kernel.org
+Cc: herbert@gondor.apana.org.au, leitao@debian.org, nayna@linux.ibm.com,
+        appro@cryptogams.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, ltcgcw@linux.vnet.ibm.com,
+        dtsen@us.ibm.com
+References: <20240514173835.4814-1-dtsen@linux.ibm.com>
+ <20240514173835.4814-2-dtsen@linux.ibm.com> <87a5kqwe59.fsf@mail.lhotse>
+Content-Language: en-US
+From: Danny Tsen <dtsen@linux.ibm.com>
+In-Reply-To: <87a5kqwe59.fsf@mail.lhotse>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: RTapjZgpmvATb9mGScqoR56rvIfAqjqj
+X-Proofpoint-ORIG-GUID: RTapjZgpmvATb9mGScqoR56rvIfAqjqj
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240516124405.2da1aa23@xps-13>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-16_05,2024-05-15_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 priorityscore=1501
+ bulkscore=0 clxscore=1015 adultscore=0 mlxlogscore=999 lowpriorityscore=0
+ suspectscore=0 impostorscore=0 phishscore=0 spamscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
+ definitions=main-2405160082
 
-On Thu, May 16, 2024 at 12:44:05PM +0200, Miquel Raynal wrote:
-> Hi Sascha,
-> 
-> s.hauer@pengutronix.de wrote on Thu, 16 May 2024 12:25:43 +0200:
-> 
-> > On Thu, May 16, 2024 at 10:32:14AM +0200, Miquel Raynal wrote:
-> > > Hi Sascha,
-> > >   
-> > > > +static const struct nand_op_parser mxcnd_op_parser = NAND_OP_PARSER(
-> > > > +	NAND_OP_PARSER_PATTERN(mxcnd_do_exec_op,
-> > > > +			       NAND_OP_PARSER_PAT_CMD_ELEM(false),
-> > > > +			       NAND_OP_PARSER_PAT_ADDR_ELEM(true, 7),
-> > > > +			       NAND_OP_PARSER_PAT_CMD_ELEM(true),
-> > > > +			       NAND_OP_PARSER_PAT_WAITRDY_ELEM(true),
-> > > > +			       NAND_OP_PARSER_PAT_DATA_IN_ELEM(true, MAX_DATA_SIZE)),  
-> > > 
-> > > CMD, ADDR, CMD, DATA is the RNDOUT pattern. So it is now working fine?  
-> > 
-> > Yes, RNDOUT is working now.
-> 
-> Excellent!
-> 
-> > > Or did you forget to adapt the patterns to your use case?  
-> > 
-> > Although it looks like the patterns from the pl35x-nand-controller.c,
-> > there is one slight difference. The 'false' in the NAND_OP_PARSER_PAT_CMD_ELEM
-> > above has the effect that a plain NAND_OP_PARSER_PAT_DATA_IN_ELEM is
-> > disallowed.
-> 
-> I'm not sure I follow, the above pattern means: a single command cycle
-> is supported, no?
 
-A single command cycle indeed is and shall be supported. The
-pl35x-nand-controller.c I copied this from has
-NAND_OP_PARSER_PAT_CMD_ELEM(true). With all elements being optional this
-also allows a single NAND_OP_PARSER_PAT_DATA_IN_ELEM()
-(supported_op.data_only_read becomes true). I can't support that, so I
-made the CMD mandatory.
+On 5/15/24 11:53 PM, Michael Ellerman wrote:
+> Hi Danny,
+>
+> Danny Tsen <dtsen@linux.ibm.com> writes:
+>> Use the perl output of x25519-ppc64.pl from CRYPTOGAMs and added three
+>> supporting functions, x25519_fe51_sqr_times, x25519_fe51_frombytes
+>> and x25519_fe51_tobytes.
+> For other algorithms we have checked-in the perl script and generated
+> the code at runtime. Is there a reason you've done it differently this time?
 
-Sascha
+Hi Michael,
 
-> 
-> Miquèl
-> 
+It's easier for me to read and use just assembly not mixed with perl and 
+it's easier for me to debug and testing also I copied some code and made 
+some modification.
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+>> Signed-off-by: Danny Tsen <dtsen@linux.ibm.com>
+>> ---
+>>   arch/powerpc/crypto/curve25519-ppc64le_asm.S | 648 +++++++++++++++++++
+>>   1 file changed, 648 insertions(+)
+>>   create mode 100644 arch/powerpc/crypto/curve25519-ppc64le_asm.S
+>>
+>> diff --git a/arch/powerpc/crypto/curve25519-ppc64le_asm.S b/arch/powerpc/crypto/curve25519-ppc64le_asm.S
+>> new file mode 100644
+>> index 000000000000..8a018104838a
+>> --- /dev/null
+>> +++ b/arch/powerpc/crypto/curve25519-ppc64le_asm.S
+>> @@ -0,0 +1,648 @@
+>> +/* SPDX-License-Identifier: GPL-2.0-or-later */
+>> +#
+>> +# Copyright 2024- IBM Corp.  All Rights Reserved.
+>   
+> I'm not a lawyer, but AFAIK "All Rights Reserved" is not required and
+> can be confusing - because we are not reserving all rights, we are
+> granting some rights under the GPL.
+>
+> I also think the IBM copyright should be down below where your
+> modifications are described.
+Will change that.
+>> +# This code is taken from CRYPTOGAMs[1] and is included here using the option
+>> +# in the license to distribute the code under the GPL. Therefore this program
+>> +# is free software; you can redistribute it and/or modify it under the terms of
+>> +# the GNU General Public License version 2 as published by the Free Software
+>> +# Foundation.
+>> +#
+>> +# [1] https://www.openssl.org/~appro/cryptogams/
+>> +
+>> +# Copyright (c) 2006-2017, CRYPTOGAMS by <appro@openssl.org>
+>> +# All rights reserved.
+>> +#
+>> +# Redistribution and use in source and binary forms, with or without
+>> +# modification, are permitted provided that the following conditions
+>> +# are met:
+>> +#
+>> +#       * Redistributions of source code must retain copyright notices,
+>> +#         this list of conditions and the following disclaimer.
+>> +#
+>> +#       * Redistributions in binary form must reproduce the above
+>> +#         copyright notice, this list of conditions and the following
+>> +#         disclaimer in the documentation and/or other materials
+>> +#         provided with the distribution.
+>> +#
+>> +#       * Neither the name of the CRYPTOGAMS nor the names of its
+>> +#         copyright holder and contributors may be used to endorse or
+>> +#         promote products derived from this software without specific
+>> +#         prior written permission.
+>> +#
+>> +# ALTERNATIVELY, provided that this notice is retained in full, this
+>> +# product may be distributed under the terms of the GNU General Public
+>> +# License (GPL), in which case the provisions of the GPL apply INSTEAD OF
+>> +# those given above.
+>> +#
+>> +# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDER AND CONTRIBUTORS
+>> +# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+>> +# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+>> +# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+>> +# OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+>> +# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+>> +# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+>> +# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+>> +# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+>> +# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+>> +# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+>> +
+>> +# ====================================================================
+>> +# Written by Andy Polyakov <appro@openssl.org> for the OpenSSL
+>> +# project. The module is, however, dual licensed under OpenSSL and
+>> +# CRYPTOGAMS licenses depending on where you obtain it. For further
+>> +# details see https://www.openssl.org/~appro/cryptogams/.
+>> +# ====================================================================
+>> +
+>> +#
+>> +# ====================================================================
+>> +# Written and Modified by Danny Tsen <dtsen@us.ibm.com>
+>> +# - Added x25519_fe51_sqr_times, x25519_fe51_frombytes, x25519_fe51_tobytes
+> ie. here.
+>
+>> +# X25519 lower-level primitives for PPC64.
+>> +#
+>> +
+>> +#include <linux/linkage.h>
+>> +
+>> +.machine "any"
+>   
+> Please don't add new .machine directives unless they are required.
+>
+>> +.abiversion	2
+> I'd prefer that was left to the compiler flags.
+
+Ok.
+
+Thanks.
+
+-Danny
+
+>
+> cheers
+>
 
