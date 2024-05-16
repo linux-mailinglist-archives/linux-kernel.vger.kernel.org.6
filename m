@@ -1,103 +1,67 @@
-Return-Path: <linux-kernel+bounces-181250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5552B8C7989
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:32:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41AF88C798F
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:33:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF51D1F23BB1
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:32:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1818285C7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:33:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21DBA14D6FB;
-	Thu, 16 May 2024 15:32:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A842814D431;
+	Thu, 16 May 2024 15:33:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LkWEIgTn";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3mQ5IpWH";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LkWEIgTn";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3mQ5IpWH"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G1TaLr3k"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8840814884E;
-	Thu, 16 May 2024 15:32:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC4FC14D2A8
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 15:32:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715873530; cv=none; b=pXV/hlSu08W3WR+ruuon4MSSti91oC62T3JsuixOFOLTyQKgil1Or8mO1YTwgXyX/j90HOqOUmgZCLlfn57sH0EuvbCAGs0qOJ7Ks3TfWZEdTnQUy3NToU2UdkwmLMUQaSVn26Svne8dWn5L8evd+UUBKVfDnUS9foZ37TyrkbU=
+	t=1715873580; cv=none; b=BJL7/D3CPZy4wbe0llXRm7Nd6f2GlI1A4SwiE8D2f4BB+B03dv6SjCpgpegv5Yv6IsOpXPyPLKt6LAEqBoLBm5xqqcR2B8vk5cKHvBNtZRvx5TOdxqEojUgIryKJZAkmwOcRS8Yv0YT2lsv0eir3+gXdb9HvRSYwJL+wFPGCaLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715873530; c=relaxed/simple;
-	bh=kQyRGHwFV9EB0D1MNdKQ04WmVe+yF6Troh3WRIVi2SI=;
+	s=arc-20240116; t=1715873580; c=relaxed/simple;
+	bh=srVdnYXyT4tc0ys+RBcE/24kZDqVhwuTNm17oGZxacE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yf0KqRfqLgtVxGfa/syxHDLsXLXJKFTU9fHnh80c8AkzZMzDXCfEzrcBtuHNX16QFebGmqTzqPvs9zE5H8rbEJXBbWsumrsm2LW3wRRoH9qjqTWJk8mxtarki3K1l2pIsHiOiR4dRbCMv2j/jEBafD2SrLqtwkRLaIzfVU4isMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LkWEIgTn; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3mQ5IpWH; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LkWEIgTn; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3mQ5IpWH; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 754BE34439;
-	Thu, 16 May 2024 15:32:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1715873526;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VhU2JclVgo+abpYV6ZYar66kfkQ1msvfEKBsfACUK8U=;
-	b=LkWEIgTn3sbChPgzra2zO5CrjIi+VzynFj6Zalv2SuHU+hzv3lwkc8UP0d8YplIYOLsNz2
-	7ad0LRVeC8oi8qTz44QIs8uI6uUPezeN56lOW/tw96NEa0qQnm9/TKnc3QicHYfDw/2Zeu
-	QCN52+ps0a7b4ZlzyXwTxydMntpIb5k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1715873526;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VhU2JclVgo+abpYV6ZYar66kfkQ1msvfEKBsfACUK8U=;
-	b=3mQ5IpWHXcw6nlwPUiEaCt22wAv7aMRElj3peGAsu9JDBEo8CXRJvMGSgRJ4Pxyb5mypRW
-	v4Gw2dBBeX4FeMAQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=LkWEIgTn;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=3mQ5IpWH
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1715873526;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VhU2JclVgo+abpYV6ZYar66kfkQ1msvfEKBsfACUK8U=;
-	b=LkWEIgTn3sbChPgzra2zO5CrjIi+VzynFj6Zalv2SuHU+hzv3lwkc8UP0d8YplIYOLsNz2
-	7ad0LRVeC8oi8qTz44QIs8uI6uUPezeN56lOW/tw96NEa0qQnm9/TKnc3QicHYfDw/2Zeu
-	QCN52+ps0a7b4ZlzyXwTxydMntpIb5k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1715873526;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VhU2JclVgo+abpYV6ZYar66kfkQ1msvfEKBsfACUK8U=;
-	b=3mQ5IpWHXcw6nlwPUiEaCt22wAv7aMRElj3peGAsu9JDBEo8CXRJvMGSgRJ4Pxyb5mypRW
-	v4Gw2dBBeX4FeMAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5850613991;
-	Thu, 16 May 2024 15:32:06 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 35pgFfYmRma0BgAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Thu, 16 May 2024 15:32:06 +0000
-Date: Thu, 16 May 2024 17:32:00 +0200
-From: David Sterba <dsterba@suse.cz>
-To: syzbot <syzbot+d56e0d33caf7d1a02821@syzkaller.appspotmail.com>
-Cc: clm@fb.com, dsterba@suse.com, fdmanana@suse.com,
-	johannes.thumshirn@wdc.com, josef@toxicpanda.com,
-	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [btrfs?] kernel BUG in create_pending_snapshot
-Message-ID: <20240516153200.GD4449@suse.cz>
-Reply-To: dsterba@suse.cz
-References: <0000000000006cb13705ee3184f9@google.com>
- <000000000000a8f4b30608b0be9c@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gcaIAA8w3nLSlTzjAqNmp+jl7iY1/TgkSGwoZY2JmkVpdE2/d34yf4PWafZt8CyuOwTicYcW981lyYWaCzakdSwaPpH4uhqeN8psJG8AGUAV1FCPbRjCP6tf+MhSP6LbrLg3IjILU/x2EwCBUEBHTeRUtF9Y/aQxKE/+klS+d34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G1TaLr3k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24E01C113CC;
+	Thu, 16 May 2024 15:32:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715873579;
+	bh=srVdnYXyT4tc0ys+RBcE/24kZDqVhwuTNm17oGZxacE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=G1TaLr3k80zEv75xK/NkWx1OBTq58CmAqVlpgACvQf1BuVh47walBQpUebuieTNQx
+	 e4lJ13bmuWS+IPJVmH8D4CBrk51PjU8gLvHt2BYmDGcox7j9Y6tOEoO6nGSmpoE+oM
+	 IlPh0FHcwhfpOTwWUmUXbeByVEuUSRHxPa1U9Xejud9/nUd3MaClJekcYB32CyTcQt
+	 /lw0O5WLiS46y+wGtnJUgh1SB5yJRt/Yir5GdLod/BrjyN3iVWwx72iTU4YcB0DnHp
+	 uYNt5x0YMa8PSN2Gqp+guf2usZFdVqxt7wtR3+908mFEEIE8b8p3yoSP5NvEeakybY
+	 uzfwb9L+kDKLg==
+Date: Thu, 16 May 2024 17:32:56 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Yun Levi <ppbuk5246@gmail.com>, Joel Fernandes <joel@joelfernandes.org>,
+	Vineeth Pillai <vineeth@bitbyteword.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	anna-maria@linutronix.de, mingo@kernel.org, tglx@linutronix.de,
+	Markus.Elfring@web.de, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] time/tick-sched: idle load balancing when nohz_full
+ cpu becomes idle.
+Message-ID: <ZkYnKAd1Qy+yvjDY@lothringen>
+References: <20240516075628.GC22557@noisy.programming.kicks-ass.net>
+ <CAM7-yPRHp3tiZjuBTesdRQoU8WJNg1scon_txS_6R-pZq9MXHw@mail.gmail.com>
+ <20240516084911.GF22557@noisy.programming.kicks-ass.net>
+ <ZkXtHv+fHUD2+lFJ@lothringen>
+ <CAM7-yPTSq0CSmRsTpeXwzhFk77gfwUK_LZKnbgo4NPk5zPCaAg@mail.gmail.com>
+ <20240516140003.GJ22557@noisy.programming.kicks-ass.net>
+ <ZkYW48dTX2FH5NaD@lothringen>
+ <20240516144504.GL22557@noisy.programming.kicks-ass.net>
+ <ZkYgG9KYMpUPeJsM@lothringen>
+ <20240516151953.GM22557@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -106,69 +70,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <000000000000a8f4b30608b0be9c@google.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Level: 
-X-Spamd-Result: default: False [-0.51 / 50.00];
-	BAYES_HAM(-1.80)[93.83%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=5ea620bd01d9130d];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:replyto,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TAGGED_RCPT(0.00)[d56e0d33caf7d1a02821];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	SUBJECT_HAS_QUESTION(0.00)[]
-X-Rspamd-Queue-Id: 754BE34439
-X-Spam-Flag: NO
-X-Spam-Score: -0.51
-X-Spamd-Bar: /
+In-Reply-To: <20240516151953.GM22557@noisy.programming.kicks-ass.net>
 
-On Fri, Oct 27, 2023 at 04:11:06AM -0700, syzbot wrote:
-> syzbot suspects this issue was fixed by commit:
+On Thu, May 16, 2024 at 05:19:53PM +0200, Peter Zijlstra wrote:
+> On Thu, May 16, 2024 at 05:02:51PM +0200, Frederic Weisbecker wrote:
 > 
-> commit df9f278239046719c91aeb59ec0afb1a99ee8b2b
-> Author: Filipe Manana <fdmanana@suse.com>
-> Date:   Tue Jun 13 15:42:16 2023 +0000
+> > > I'm confused, none of that makes sense. If you're part of a
+> > > load-balancer, you're part of a load-balancer, no ifs buts or other
+> > > nonsense.
+> > > 
+> > > idle load balancer is no different from regular load balancing.
+> > > 
+> > > Fundamentally, you can't disable the tick if you're part of a
+> > > load-balance group, the load-balancer needs the tick.
+> > > 
+> > > The only possible way to use nohz_full is to not be part of a
+> > > load-balancer, and the only way that is so is by having (lots of) single
+> > > CPU partitions.
+> > 
+> > So you're suggesting that nohz_full should just be part of the whole
+> > ilb machinery by default (that is, not fiddle with ilb internals) and
+> > then it's up to CPU partitioning (through cpuset or isolcpus) to disable
+> > ilb naturally. Right?
 > 
->     btrfs: do not BUG_ON on failure to get dir index for new snapshot
+> Yes, but stronger, as long as the CPU is part of a load-balance domain,
+> it must not disable the tick while running anything.
 > 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1584c385680000
-> start commit:   0136d86b7852 Merge tag 'block-6.2-2023-02-03' of git://git..
-> git tree:       upstream
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=5ea620bd01d9130d
-> dashboard link: https://syzkaller.appspot.com/bug?extid=d56e0d33caf7d1a02821
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14657573480000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16dd145d480000
-> 
-> If the result looks correct, please mark the issue as fixed by replying with:
-> 
-> #syz fix: btrfs: do not BUG_ON on failure to get dir index for new snapshot
+> that is, NOHZ_FULL must not become active unless it's running on a
+> single CPU partition.
 
-Yes, that's correct.
-
-#syz fix: btrfs: do not BUG_ON on failure to get dir index for new snapshot
+I like the idea but I'm afraid to introduce regressions while doing so,
+with people currently using nohz_full without proper partionning...
 
