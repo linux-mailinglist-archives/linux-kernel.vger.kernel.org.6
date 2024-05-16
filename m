@@ -1,70 +1,64 @@
-Return-Path: <linux-kernel+bounces-181319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F92D8C7A63
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:31:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E7108C7A6B
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:33:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B12741C21456
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:31:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C93F1F2208A
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:33:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 251A84C94;
-	Thu, 16 May 2024 16:31:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71D234C8A;
+	Thu, 16 May 2024 16:33:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="TGZ+rhCh"
-Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="dM2SFDJz"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E41BF4691
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 16:31:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D1AF4A15;
+	Thu, 16 May 2024 16:33:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715877078; cv=none; b=XyzxPKF7zCxue+AvcjcUpTQamyRMntynPx9IKknIfbyKhTAjJ+OfBrlEGFN7+cdcVN54P4MplJEh0jpsUra/tEXSDeK83EI2kYlGa7Z1483MpEZ+UwqFR5bzGSDsNDg8bjYnk1cfKgBg/EY6lIwNT0tu48XnQRF22cr0kUAyRu8=
+	t=1715877229; cv=none; b=NKt4pRh2kQwa4TIs7UfUL5dtukZxXL9jRQlJvQYXyhScclQ2KqLCCZf6RDATCsYtFd3T3zIbpE/zCU9F6cIFtgCN9pCWzQLZRwfnAjTMaOzbUA+NnzoeHCOacBPEYfXrS9kQGuggvN/Jqpfe89ek31Mc1cnQCnVKzkN/wbQfvzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715877078; c=relaxed/simple;
-	bh=xkfznAhSXPPgMUvz2RZcB9OT2Zux0dt6kJDr+ShFPrA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rGQ+j+oQd8S1JNI9kAK+P5h0AdayUL93+biI6uA+bWLBbGC19CR5CLJepR5bU4km3AlC6ZJIWM3OpMRwDDBEivSI6QhO25N+AaGgMqdbzE8hq/+/OD5zent47CVrMDIZXWbhB0qnki6Nsu4R8C+nV+cuUpBECPUbg62+jKZnn3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=TGZ+rhCh; arc=none smtp.client-ip=209.85.166.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-7e1fb2a81fdso5728539f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 09:31:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1715877076; x=1716481876; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pDnoiv+aAilJOglosMLJSLeZ15PVLhndVRN5KP2yh64=;
-        b=TGZ+rhChyRj5oWtecIQsAYYU5joL5ZarwVOJkKi6LVVn1xVoi0hSNjEtIObQLT8hdM
-         WIx5VkA6oEqMxG6aR2Yw7bwo1q4jd2ADzaHp2AXIyzKhZO4n3mtUjsfANJL7Et5QhgEA
-         8kIUJIrRB90zzkeSDU1NGARAEQHe6sXTJsed8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715877076; x=1716481876;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pDnoiv+aAilJOglosMLJSLeZ15PVLhndVRN5KP2yh64=;
-        b=a6P54LFmqaWayvYi/xQeJmVh8CVkaHyUFp3vyIWHU9eDzZdbftp06bVmiQMusbLKVE
-         OyG2VW+7YUQfVZKGdg5ClZyix4K7pfZB6RWAuD/i12fZaqYrfBSRYgREDGvnuocUcPeC
-         X+b2s+ckPeKl0BL9UyjfQF7Lr1yNAxpKA0emHTs2BorfzXGn2LYWNrucSesy0Tx1bXgu
-         XzRGFt0Bi60g98oL9O5y7+IzHKdRSi7R8AWHYntpEuJk5baaHDScIIrxT75W6sHSPIqX
-         ur1mYh41qzS+fJIRrbXdfj09cUSgvI5ovjDUveKlVSn3+evh+sOScXf2Z1a/8mmccW3E
-         +Qfw==
-X-Forwarded-Encrypted: i=1; AJvYcCULNFZeWq6AAr6NTMoYAzNV5NTOOhmag3Ojsf1J3JVLLk+i0bomPk4TYrHEyFn5vPpsHJztiuJqDqRANObKzubN+FR8Ylvs7wLdC58u
-X-Gm-Message-State: AOJu0Yz44HXHpVRzbW+CuyT3dkqCta0X8L8IRoYsaOStrLctQ0riOXMN
-	PbXsAShwfgBomduEoXcAysDVVBVKtqK1llALfB6xJpTcURVPNzHVVRwPdY1KENU=
-X-Google-Smtp-Source: AGHT+IHC7NWHiVtGdW49HXEWLPpD9poqjpxpz8h5HFbktLyqnUrR9q12B55ixwuwmtZx24K1zeLkFg==
-X-Received: by 2002:a05:6e02:1c8b:b0:36c:c599:698a with SMTP id e9e14a558f8ab-36cc599af7dmr211295495ab.2.1715877075869;
-        Thu, 16 May 2024 09:31:15 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-36dbbd191b0sm7514315ab.17.2024.05.16.09.31.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 May 2024 09:31:15 -0700 (PDT)
-Message-ID: <9e72d97a-9a04-4423-a711-0c21c1c8b161@linuxfoundation.org>
-Date: Thu, 16 May 2024 10:31:13 -0600
+	s=arc-20240116; t=1715877229; c=relaxed/simple;
+	bh=jc+p0uqi6u3V3KnhrnLdMf7Zn9A5zPWqZdmw9MFR0Pk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=A3aacuBkb5xf8aq3vol1itzlhen4boskK3z8kzRyWX6YkdEy7+AdFkzRlpYkU85zAfcZDAmE8BzhQCad4pAg60RwORI5kFypLaAsXfPM1jibznR8rdhQuJwhyt3WgGH6FLMOdj7BQSvf63CZqP8MMWcEZwsavvFDQux6hudYQ4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=dM2SFDJz; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44GDhYe5005402;
+	Thu, 16 May 2024 18:33:12 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	selector1; bh=2pRzvEKsr2u9WywjaryEnBZCx349KN6Wpc4RHZd+rck=; b=dM
+	2SFDJzSYm9AtY55y2HwV2Jyh8tSKydE5jusko5MbfwttReZjEn3YHFd0zMgY6lso
+	aEk774snO5txwIxya4PGQGt+fuci8ATwfzLqhyI/SE0iwLLTI3QEP0x686iIuE0p
+	yls1WTxNB6EaUDH6CvG0Wst0kOvj55xLoR4yZZemdhAXyIPoCS0SCbzP2Sa6NzEO
+	DEQi6AKSAP83EEPGS+sUrFGdfDqdRrfk5JCl/EoXB1PhBEyoHlBjJoYuFSgu+iLN
+	q27l4PC/TM7XcBuykhDDbui/wxORAI6++7wO21esoE1U5MHvwxW3Ezrkq3EXJMHz
+	eJ0ta5KxTtYs+IhVaoDg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3y4syme8rc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 16 May 2024 18:33:11 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id E36A340045;
+	Thu, 16 May 2024 18:33:07 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id E8359226FC6;
+	Thu, 16 May 2024 18:32:17 +0200 (CEST)
+Received: from [10.48.87.205] (10.48.87.205) by SHFDAG1NODE3.st.com
+ (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Thu, 16 May
+ 2024 18:32:17 +0200
+Message-ID: <2e5ad8c3-4889-4062-964b-acf4ec75986c@foss.st.com>
+Date: Thu, 16 May 2024 18:32:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,77 +66,79 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 08/66] selftests/cgroup: Drop define _GNU_SOURCE
-To: Tejun Heo <tj@kernel.org>
-Cc: Edward Liaw <edliaw@google.com>, shuah@kernel.org,
- =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
- =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
- Christian Brauner <brauner@kernel.org>,
- Richard Cochran <richardcochran@gmail.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>, Zefan Li
- <lizefan.x@bytedance.com>, Johannes Weiner <hannes@cmpxchg.org>,
- Muchun Song <muchun.song@linux.dev>, Michal Hocko <mhocko@kernel.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Shakeel Butt <shakeel.butt@linux.dev>, Yosry Ahmed <yosryahmed@google.com>,
- Nhat Pham <nphamcs@gmail.com>, Chengming Zhou <chengming.zhou@linux.dev>,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- kernel-team@android.com, linux-security-module@vger.kernel.org,
- netdev@vger.kernel.org, linux-riscv@lists.infradead.org,
- bpf@vger.kernel.org, cgroups@vger.kernel.org, linux-mm@kvack.org,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240510000842.410729-1-edliaw@google.com>
- <20240510000842.410729-9-edliaw@google.com>
- <ZkJHvrwZEqg6RJK5@slm.duckdns.org>
- <bec3f30e-fc9a-45e2-b6ea-d739b2a2d019@linuxfoundation.org>
- <ZkYymMDd690uufZy@slm.duckdns.org>
+Subject: Re: [PATCH v3 1/2] dt-bindings: regulator: st,stm32mp1-pwr-reg: add
+ compatible for STM32MP13
+To: Conor Dooley <conor@kernel.org>, Marek Vasut <marex@denx.de>
+CC: Alexandre TORGUE <alexandre.torgue@foss.st.com>,
+        Liam Girdwood
+	<lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Pascal
+ Paillet <p.paillet@foss.st.com>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+References: <20240513095605.218042-1-patrick.delaunay@foss.st.com>
+ <20240513115601.v3.1.Ia0a99d90acb512aa020a6e7a8cca8cc1b71f1759@changeid>
+ <615dfdcb-cbda-426f-895e-810f03a8ce60@denx.de>
+ <20240513-stabilize-proofread-81f0f9ee38b9@spud>
+ <d73d4435-75d6-4cea-b38e-07c7ceae3980@foss.st.com>
+ <20240514-entryway-idealize-fcd5ed0e1de7@spud>
+ <0c97408c-422d-46b3-8017-da9ebb0767e1@foss.st.com>
+ <20240515-monsoon-starfish-0dc59707e843@spud>
+ <9de93cbb-5868-473e-8b32-a6b6f50e128e@denx.de>
+ <20240515-edginess-evacuee-356bd6dd1dfa@spud>
 Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <ZkYymMDd690uufZy@slm.duckdns.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Patrick DELAUNAY <patrick.delaunay@foss.st.com>
+In-Reply-To: <20240515-edginess-evacuee-356bd6dd1dfa@spud>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE3.st.com
+ (10.75.129.71)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-16_07,2024-05-15_01,2023-05-22_02
 
-On 5/16/24 10:21, Tejun Heo wrote:
-> On Thu, May 16, 2024 at 09:50:06AM -0600, Shuah Khan wrote:
->> On 5/13/24 11:02, Tejun Heo wrote:
->>> On Fri, May 10, 2024 at 12:06:25AM +0000, Edward Liaw wrote:
->>>> _GNU_SOURCE is provided by lib.mk, so it should be dropped to prevent
->>>> redefinition warnings.
+Hi,
+
+On 5/15/24 18:15, Conor Dooley wrote:
+> On Wed, May 15, 2024 at 05:37:49PM +0200, Marek Vasut wrote:
+>> On 5/15/24 5:35 PM, Conor Dooley wrote:
+>>> On Wed, May 15, 2024 at 04:33:22PM +0200, Patrick DELAUNAY wrote:
+>>>> with
 >>>>
->>>> Signed-off-by: Edward Liaw <edliaw@google.com>
->>>
->>> Applied to cgroup/for-6.10.
->>>
->>> Thanks.
->>>
->>
->> Hi Tejun,
->>
->> Please don't include this in your PR to Linus. This patch series needs
->> to go together as it is causing several build warns and some errors.
-> 
-> I'm afraid it's too late. The PR is too late. Do you want me to send an
-> amended PR with the commit reverted? If it's just temporary issues in
-> selftests, maybe we can just wait it out?
-> 
+>>>>     compatible:
+>>>>       oneOf:
+>>>>           - items:
+>>>>              - const: st,stm32mp1,pwr-reg
+>>>>           - items:
+>>>>              - const: st,stm32mp13-pwr-reg
+>>>>              - const: st,stm32mp1,pwr-reg
+>>> Other than the extra ,s this looks okay, thanks.
+>> I think the extra ,s are actually correct, those are the ones from the
+>> original compatible which had TWO ,s (it does look a bit unusual).
+> Oh my bad then.
 
-I am exploring options and leaning towards reverting the patch
 
-daef47b89efd ("selftests: Compile kselftest headers with -D_GNU_SOURCE")
+Ok, I prepare a V4 with fallback
 
-Your amending the PR helps me if I have to send revert. I am sorry
-for the trouble.
 
-I can all of them together in a second update or after the merge window
-closes.
+and comma in compatible "st,stm32mp1,pwr-reg" was clearly an error
 
-thanks,
--- Shuah
+but it is too late to change it, see [1]
+
+[1] ARM: st: use a correct pwr compatible for stm32mp15
+
+https://patchwork.kernel.org/project/linux-arm-kernel/list/?series=847733&state=* 
+
+
+regards
+
+Patrick
 
 
 
