@@ -1,199 +1,128 @@
-Return-Path: <linux-kernel+bounces-180675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83A208C71A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 08:29:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 654F98C71A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 08:30:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0E0AB218D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 06:29:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05E571F21500
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 06:30:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B35322EF3;
-	Thu, 16 May 2024 06:29:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 680BE23748;
+	Thu, 16 May 2024 06:30:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HnS0mFyB"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YGyo/1It"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B33FE21104
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 06:29:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2668BEA4;
+	Thu, 16 May 2024 06:30:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715840943; cv=none; b=SnmexvGhbdWp466dYkTQESTwefVEKffwU5QqDzm18oJgk/GfqLr45E6n+Wbo+2Do85U5y7Y2AMwI7LTci5UkQXwFyhCBuSiKy7WUjj6wikG/DdimETcfnSBkdOBMx5zy1ij37gUzAJ4v08L+iV7M/cAd2LAaM6ImXOXouBfi9e8=
+	t=1715841046; cv=none; b=ZpuKo9OQqu5JdkZ3MERZBZZeo/brLwJVuXXHTWypNLthW4OgGQyqkNz3eoCwgNtC+1ACJo3ssxC+GebETDeqiQooZAFpwsvTDkotU4hs/6QModQnm4r0Eurr+ZfobtatpytKPWozPgxwdsxY1atjgaQ7dtaqErP9BdjavHOA/x8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715840943; c=relaxed/simple;
-	bh=Do8+hrkPYfVF70FufV/8izbbtcXtflTbhGYfCnKVeSQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GzaPo1MzvWimgXWRY1XfmTe5lGyRK1FyCX2gdCp3dlwz48Wi7etFQo7Bm0wsyZhZL/kgyEPdj4Nf/m8u3kYC1MIE5odzrRAVEF95ttP2lrXAVuyYybhN4nz5L63MOjbsnMaURfrrto5nmUegCqCFAKYtZFgWXvQWO3xWVwhBYQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HnS0mFyB; arc=none smtp.client-ip=209.85.221.44
+	s=arc-20240116; t=1715841046; c=relaxed/simple;
+	bh=fPBTd5uxchEoKW8l3r53TEJU9W7YylYMjqDXE+6TwOM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LqKhpo5YhOEySNdJD0Th8Hh60VI6+6EWlj3PTvKvrmf7LQC58xi5RF2AhI06SKjH7sQxXz4+Xb9Au7CZH3RiNheABDpVYATCY+4CUJPGscSfGouwDpjmQ48uoV0ycpIcgaGghUJBbk55mQvqHJviiG+bNmgFufcYizFL2sldjRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YGyo/1It; arc=none smtp.client-ip=209.85.208.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-34da04e44a2so6008446f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 23:29:01 -0700 (PDT)
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-56e56ee8d5cso3181410a12.2;
+        Wed, 15 May 2024 23:30:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715840940; x=1716445740; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7rg8sgBlpOEhG+vmyc1NABRGMyciJCtyEIj3MgTpcGM=;
-        b=HnS0mFyBl9cPHkDq7DBlS+Rjve+YaW0ikDw/F5Lj+DJviv+Wkwtp0EKMTb8/jddnLs
-         U6ZetE02/OpZcSBzMvfJgM1mySm4on+Spp9oH3pgt1YhqsU2tNLj/yq1teBnA/qYHNWL
-         05JzXvfGSq+q6LwHbYxRTnvI3AkOQtds+HRqfpw1z5nKIqpubr1+85Ey5Hdb3CavUcG4
-         JlQvkvC6NV9PHxvMoDVaxGB40JSOdYV7FkJ6J7RxSFc7wiFCqTLaaYlTVoPT43cz0iIQ
-         dYAWKmc89HLpEL+PwmYRjSnhBpP4tJXVhhMfwO34zDb8zwvVPtM9gMyKaqkFk8ctSgTA
-         qqzw==
+        d=gmail.com; s=20230601; t=1715841043; x=1716445843; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fPBTd5uxchEoKW8l3r53TEJU9W7YylYMjqDXE+6TwOM=;
+        b=YGyo/1ItLYuj2hyzDnDRuV59GUzprJWzCtlrLQFH/c2NeKR9b0kopjuUhXVmSqk8u9
+         Gkj0EiUQoUm0ZReimx+8qzq/l4bPbUOOcWB66NzdmOmfkBcJJXHrvWzyDG5c2CesOU9u
+         3dvHZ/4wKBk2VEPNa2ryJucvm8K+3ErKaGJBu6D7DIBbHFgrFB2svL5xs0qWe7MOtIr9
+         RNi4IhOM4+hag8BK8Vkd+Pt+bk7qJNoskEsKjwrhNj0XUfQ3SwaX8I6nSWA+bfx/pdKR
+         v7xhQ6Jcfuoh0h9MtsH4t+1vuuNUhpGnbZMUpD1cJ/g3Dc2PHE7lqwNl6nBg6J2bzztj
+         Jndw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715840940; x=1716445740;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7rg8sgBlpOEhG+vmyc1NABRGMyciJCtyEIj3MgTpcGM=;
-        b=rqEH8FMdWm6TRwUYPY6Jgp24R2dWhnOupWwjt3OtJkDzwfISUuQ13T8yrNVuQ2wNaO
-         RzerwWXZjdHgiO6IfgS9cY97BeyV3gX07rCEL4ypQE56G3a6Bl1DvQLGoMNGUxp2brCe
-         EK+fLkgvlgCrHG17olfNuyNNf8Odsq45g/ZUbhgBBYdIV3zTOv1IxL8LffGyhO7Izkl4
-         zK0jKQFTo+HeVAmR2wRVOJGVmf8M1ApIWbd0P7OjPfN/E8FsmF0iZcsQ4NKGVEuvmMBs
-         qHTnPj5QM8idSMhdQJni3NbBwkVq8qMzodBISQ+Xc3E8rVWg1Dqn7NJ11cDKkh4wg4UZ
-         fv3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVa7MrK1uM6RkSc2wuCqDL2FsZ5vzMtAnj5UQE4h37OcABObG65W3aoT/stzRuCi+5ZDV0pKqOOi4M7dptOdQJAGCgTKAQ5Zbkbn807
-X-Gm-Message-State: AOJu0YxMkiiBV/EaB7U/ywlmUFBgvt27tbzRi6FvPSwoicsQRrbg2Xkv
-	MJsJcAE0SnDqlvP5lkcRbvckTSjVbU0iIivLbEW2k1jbbX4FTQsy
-X-Google-Smtp-Source: AGHT+IGhSwgHBXtvft87CVqxzGNP+iqIxB2m7O1j0hd4rs/o3rysHb4Rqq4nTpjVUhe7m07914zAQA==
-X-Received: by 2002:adf:e40e:0:b0:34d:28bd:a83 with SMTP id ffacd0b85a97d-3504a63645amr12021785f8f.22.1715840939805;
-        Wed, 15 May 2024 23:28:59 -0700 (PDT)
-Received: from f.. (cst-prg-82-229.cust.vodafone.cz. [46.135.82.229])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502bbbc955sm18051149f8f.111.2024.05.15.23.28.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 May 2024 23:28:58 -0700 (PDT)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: dennis@kernel.org
-Cc: tj@kernel.org,
-	hughd@google.com,
-	akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [RFC PATCH] percpu_counter: reimplement _add_batch with __this_cpu_cmpxchg
-Date: Thu, 16 May 2024 08:28:47 +0200
-Message-ID: <20240516062847.1064901-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1715841043; x=1716445843;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fPBTd5uxchEoKW8l3r53TEJU9W7YylYMjqDXE+6TwOM=;
+        b=MTjwE9rrGMPJdQzg1gCjIlJ/EjTzK1X4SegpJ0P4u1Q8xK+9CFNoFCBmcbotQVtlev
+         18cmnxEDJt1fwqDQHpp4XBNXzBpDX8avPn7JlSf1dvU3HWQbF0/xqgXBp7wZBhL4Cuzn
+         c1QYKxo5+L8vrxTiMHVu6W0v5OSx6E/qXXy1rk/8p5oVHF7ya8uSW/U4CqPmpyzi2GjH
+         MZJTK8dqzWlpfIDulFm1vnkfuu/juwWk8Rnx6Ghck6H9w3SjGPs/in/g7vtoC1Xmblzk
+         +ZLxX93euKu/W9rYXwqQ/XKZ3CSirwLoASSp0wRCZ5VSwWqPN5c0i7kEH17n18myYETN
+         fr+A==
+X-Forwarded-Encrypted: i=1; AJvYcCVD0osy+y0y6pjvuaS1vG+eyP3oCScyU0z7B/9Xd5fPXHGMv/V0JnCTWNPcNQPxR/zEjEdZ9BcMQyw9uZG+IstGDqQyjTd+Y6FCHO7wtn0V9qydS4RxOUUMoayluAGJy51H9vDB5jvOsFTMoZOoSCR4ggODJiDNQ+18+WJi6oyi6qXTqA==
+X-Gm-Message-State: AOJu0YxobK5fjNru35VEBx2bkW9rhFB5ygohAK1qHibOKyTxmsvA0PYh
+	uoxJbauq5ny4hIowVQzNwtm4VT2MU26iV3ERXCqeQhT5+G0d8SWyfPGvO7PHVuVOprJ95ONib6U
+	yFKOHSYIC5lDg6oXEbTvnHPMoc9M=
+X-Google-Smtp-Source: AGHT+IFhgmhYlVWiE4ufjDHyd9xZdN6gQBkhsS2mE9DemOWlCtL7sx0LnvR5dhQJqSVcryT0279ac/Kf8iD7r7uPuCs=
+X-Received: by 2002:a50:9f21:0:b0:572:6249:96bc with SMTP id
+ 4fb4d7f45d1cf-5734d67eea4mr13082226a12.32.1715841043205; Wed, 15 May 2024
+ 23:30:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240514070051.2959-1-kanakshilledar111@protonmail.com> <20240514-sitting-ritzy-498d35eb5ac8@spud>
+In-Reply-To: <20240514-sitting-ritzy-498d35eb5ac8@spud>
+From: Kanak Shilledar <kanakshilledar@gmail.com>
+Date: Thu, 16 May 2024 12:00:29 +0530
+Message-ID: <CAGLn_=vRDj_A2VpqQ6eT3OX6AgCfesA1KzJh+6djyF6MhAgEvw@mail.gmail.com>
+Subject: Re: [PATCH v3] dt-bindings: spi: brcm,bcm2835-spi: convert to dtschema
+To: Conor Dooley <conor@kernel.org>
+Cc: wahrenst@gmx.net, Kanak Shilledar <kanakshilledar111@protonmail.com>, 
+	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
+	Scott Branden <sbranden@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, linux-spi@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This replaces the expensive cli/sti pair with not-lock-prefixed cmpxchg.
+On Tue, May 14, 2024 at 11:44=E2=80=AFPM Conor Dooley <conor@kernel.org> wr=
+ote:
+>
+> On Tue, May 14, 2024 at 12:30:47PM +0530, Kanak Shilledar wrote:
+>
+> > Changes in v3:
+> > - Updated DCO email address
+>
+> I was really hoping you'd tell me why you'd not used the same email
+> address, rather than just sending another version. My ulterior motive is
+> that I wrote the section in email-clients.rst saying that protonmail had
+> WKD issues with kernel.org accounts but apparently proton added a
+> workaround and have yet to be sent an email that confirmed that the
+> workaround fixed things. (I'm not sure that the WKD issues ever applied
+> as there's no GPG key posted for conor+dt@kernel.org, only
+> conor@kernel.org).
 
-While it provides a win on x86-64, I have no idea about other
-architectures and I don't have easy means to test there either.
+Oh, I am primarily using protonmail and I am aware that there are some
+issues with protonmail and kernel.org so for that reason I am sending my
+patches via @gmail.com address. I was trying out some things with
+gmail and proton so had changed my signing email address to @gmail.com
+apart from sending emails I have no motive on using gmail.com account.
+Also I am adding my protonmail account in the `CC`.
+Hope this helps.
+If this is not the intended route then I will change it and stick
+to one email address.
 
-If this is considered a problem then perhaps the variant below could be
-ifdefed on ARCH_WANTS_CMPXCHG_PERCPU_COUNTER_ADD_BATCH or something more
-concise, you get the idea.
+> The patch is fine IMO though, so
+> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 
-That aside perhaps it is possible to save a branch if there is something
-cheaper than preemption counter trip -- this code needs to prevent
-migration, does not mind getting descheduled.
+Do I need to roll out another version with this reviewed by flag?
+> Cheers,
+> Conor.
 
-================ cut here ================
 
-Interrupt disable/enable trips are quite expensive on x86-64 compared to
-a mere cmpxchg (note: no lock prefix!) and percpu counters are used
-quite often.
-
-With this change I get a bump of 1% ops/s for negative path lookups,
-plugged into will-it-scale:
-
-void testcase(unsigned long long *iterations, unsigned long nr)
-{
-        while (1) {
-                int fd = open("/tmp/nonexistent", O_RDONLY);
-                assert(fd == -1);
-
-                (*iterations)++;
-        }
-}
-
-The win would be higher if it was not for other slowdowns, but one has
-to start somewhere.
-
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
- lib/percpu_counter.c | 48 +++++++++++++++++++++++++++++---------------
- 1 file changed, 32 insertions(+), 16 deletions(-)
-
-diff --git a/lib/percpu_counter.c b/lib/percpu_counter.c
-index 44dd133594d4..01f0cd9c6451 100644
---- a/lib/percpu_counter.c
-+++ b/lib/percpu_counter.c
-@@ -73,11 +73,14 @@ void percpu_counter_set(struct percpu_counter *fbc, s64 amount)
- EXPORT_SYMBOL(percpu_counter_set);
- 
- /*
-- * local_irq_save() is needed to make the function irq safe:
-- * - The slow path would be ok as protected by an irq-safe spinlock.
-- * - this_cpu_add would be ok as it is irq-safe by definition.
-- * But:
-- * The decision slow path/fast path and the actual update must be atomic, too.
-+ * Add to a counter while respecting batch size.
-+ *
-+ * Safety against interrupts is achieved in 2 ways:
-+ * 1. the fast path uses local cmpxchg (note: no lock prefix)
-+ * 2. the slow path operates with interrupts disabled
-+ *
-+ * This deals with the following:
-+ * The decision slow path/fast path and the actual update must be atomic.
-  * Otherwise a call in process context could check the current values and
-  * decide that the fast path can be used. If now an interrupt occurs before
-  * the this_cpu_add(), and the interrupt updates this_cpu(*fbc->counters),
-@@ -86,20 +89,33 @@ EXPORT_SYMBOL(percpu_counter_set);
-  */
- void percpu_counter_add_batch(struct percpu_counter *fbc, s64 amount, s32 batch)
- {
--	s64 count;
-+	s64 count, ocount;
- 	unsigned long flags;
- 
--	local_irq_save(flags);
--	count = __this_cpu_read(*fbc->counters) + amount;
--	if (abs(count) >= batch) {
--		raw_spin_lock(&fbc->lock);
--		fbc->count += count;
--		__this_cpu_sub(*fbc->counters, count - amount);
--		raw_spin_unlock(&fbc->lock);
--	} else {
--		this_cpu_add(*fbc->counters, amount);
-+	preempt_disable();
-+	ocount = __this_cpu_read(*fbc->counters);
-+retry:
-+	if (unlikely(abs(ocount + amount) >= batch)) {
-+		raw_spin_lock_irqsave(&fbc->lock, flags);
-+		/*
-+		 * Note: the counter might have changed before we got the lock,
-+		 * but is guaranteed to be stable now.
-+		 */
-+		ocount = __this_cpu_read(*fbc->counters);
-+		fbc->count += ocount + amount;
-+		__this_cpu_sub(*fbc->counters, ocount);
-+		raw_spin_unlock_irqrestore(&fbc->lock, flags);
-+		preempt_enable();
-+		return;
- 	}
--	local_irq_restore(flags);
-+
-+	count = __this_cpu_cmpxchg(*fbc->counters, ocount, ocount + amount);
-+	if (unlikely(count != ocount)) {
-+		ocount = count;
-+		goto retry;
-+	}
-+
-+	preempt_enable();
- }
- EXPORT_SYMBOL(percpu_counter_add_batch);
- 
--- 
-2.39.2
-
+Thanks and Regards
+Kanak Shilledar
 
