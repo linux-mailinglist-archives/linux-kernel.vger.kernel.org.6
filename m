@@ -1,318 +1,90 @@
-Return-Path: <linux-kernel+bounces-181121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 887FE8C77B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:32:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E1C28C77AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:31:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC1BA1C2277A
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 13:32:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1281E1F2347A
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 13:31:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C46B714D719;
-	Thu, 16 May 2024 13:30:43 +0000 (UTC)
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 496D714D43D;
+	Thu, 16 May 2024 13:30:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PHwLq/uJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F38414D71A;
-	Thu, 16 May 2024 13:30:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8149D14D2B3;
+	Thu, 16 May 2024 13:30:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715866243; cv=none; b=tf3hDu3cPJX/6LpOLJysy8I/Cc7RuYONHysYB4RkqnCoMNFwSKUWDaWS5t80PmxDczbWN/JJEsRmzpQpYAijT1ji0QnRmcSSJba9ob07fHy21rq8g+aR4V0vY0en7MaQ8kml3BIcWCYOWx6CCKmI4zaAyG6r2kwd5HaQZBTHl9k=
+	t=1715866234; cv=none; b=LEaYEBiLTQDQAnvXm0En2QFJKnLvvTm/zBfN4pT6LtHJ6Y/8wBiZt7UJ/T/id0LwelL5P1Fq7o/jgiqSVNRx7IFxi0Qy5pC9CMAgAB6Drk23ZoA72ACxcuczGHuuDM4JezDWAQWbtAlwR2SiY4qdxUmBj7Uv+zKjju8jxR62PtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715866243; c=relaxed/simple;
-	bh=piBfHsdrx+bDkPiULo4ylAnu5ZGbeLfxNVM1FW2By5I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AS3gQFAfBSSvLbR6X0O1a8hb2eK+5rSJQlc4eDhBnX9fGHWYKL4loXQIPL4jzJrRIytsJcjIj49TmU1y/HnQaezPVI9CxXUvLfe49k5M5lN0KNUkREtFKuG9d248q9Z8VW7Gq+RSkqeCAq3Um/Movkdl9+Iknv3I45z0oCJ3ByU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 94170349E1;
-	Thu, 16 May 2024 13:30:39 +0000 (UTC)
-Authentication-Results: smtp-out1.suse.de;
-	none
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8786113991;
-	Thu, 16 May 2024 13:30:39 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id OYRbIH8KRmYkDQAAD6G6ig
-	(envelope-from <lhruska@suse.cz>); Thu, 16 May 2024 13:30:39 +0000
-From: Lukas Hruska <lhruska@suse.cz>
-To: pmladek@suse.com,
-	mbenes@suse.cz,
-	jpoimboe@kernel.org
-Cc: joe.lawrence@redhat.com,
-	live-patching@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kbuild@vger.kernel.org,
-	mpdesouza@suse.com,
-	lhruska@suse.cz
-Subject: [PATCH v2 6/6] selftests: livepatch: Test livepatching function using an external symbol
-Date: Thu, 16 May 2024 15:30:09 +0200
-Message-ID: <20240516133009.20224-7-lhruska@suse.cz>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240516133009.20224-1-lhruska@suse.cz>
-References: <20240516133009.20224-1-lhruska@suse.cz>
+	s=arc-20240116; t=1715866234; c=relaxed/simple;
+	bh=z8BnU2Is6DFB6KVcEKYw3pqMsABrzURYamS+ST69Qk0=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=ZItztftFVjxn/tMp3b9hZ4xEZnJP6wcl1Ji6HLngBKcVXGIHM2Q+JFNDwqunP44JLWwPd8hKahrUfpNYzSmbPa9ONg1oB6/ASUf2be5kXEIAS6Ennk32nUtD75E99y4jmv+OKysHAdGEyr7pVbyq+FyQxoTHIX+PUMwialGI+eQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PHwLq/uJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4131C113CC;
+	Thu, 16 May 2024 13:30:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715866234;
+	bh=z8BnU2Is6DFB6KVcEKYw3pqMsABrzURYamS+ST69Qk0=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=PHwLq/uJvoN0fU1gNykdMOT0phruqPrBSqb5l+yRgMUgegRuGl0R4RVb/VQNKldo1
+	 mkkrYXbLB3d90j6KBRyAiuzhzE+wD7cwQViOMeIvc+RIHQoh4CRKYXTMeLoYtm5TD9
+	 AOsZ4N23KBJIcUFYJtlyZfelrFo5K+/PtJG4THL+kze4j1SPTxfaW0h0xnSKkq198s
+	 JYKbDN/WqRLEdSEmlq8TnWU+BozS/3PKiVf7mdKMicq/hW3emTwXiRawbH4XAQIAjK
+	 Wc+YRgcTtWW2ykVjX2w7Pi/kOPaTnAIK+pItqhkJTz04bWGClvurKfg/r4q6DEohA1
+	 CxGmVALL3FaTg==
+Date: Thu, 16 May 2024 06:30:32 -0700
+From: Kees Cook <kees@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>
+CC: Kees Cook <keescook@chromium.org>, Justin Stitt <justinstitt@google.com>,
+ Mark Rutland <mark.rutland@arm.com>, linux-hardening@vger.kernel.org,
+ linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [RFC] Mitigating unexpected arithmetic overflow
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20240515073636.GY40213@noisy.programming.kicks-ass.net>
+References: <202404291502.612E0A10@keescook> <CAHk-=wi5YPwWA8f5RAf_Hi8iL0NhGJeL6MN6UFWwRMY8L6UDvQ@mail.gmail.com> <202405081144.D5FCC44A@keescook> <CAHk-=wjeiGb1UxCy6Q8aif50C=wWDX9Pgp+WbZYrO72+B1f_QA@mail.gmail.com> <202405081354.B0A8194B3C@keescook> <CAHk-=wgoE5EkH+sQwi4KhRhCZizUxwZAnC=+9RbZcw7g6016LQ@mail.gmail.com> <20240515073636.GY40213@noisy.programming.kicks-ass.net>
+Message-ID: <25882715-FE44-44C0-BB9B-57F2E7D1F0F9@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	REPLY(-4.00)[]
-X-Spam-Flag: NO
-X-Spam-Score: -4.00
-X-Rspamd-Queue-Id: 94170349E1
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Action: no action
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-The test proves that klp-convert works as intended and it is possible to
-livepatch a function that use an external symbol.
 
-Signed-off-by: Lukas Hruska <lhruska@suse.cz>
----
- .../testing/selftests/livepatch/functions.sh  | 16 +++++-
- .../selftests/livepatch/test-extern.sh        | 57 +++++++++++++++++++
- .../selftests/livepatch/test_modules/Makefile |  2 +
- .../livepatch/test_modules/test_klp_extern.c  | 51 +++++++++++++++++
- .../test_modules/test_klp_extern_hello.c      | 36 ++++++++++++
- 5 files changed, 161 insertions(+), 1 deletion(-)
- create mode 100755 tools/testing/selftests/livepatch/test-extern.sh
- create mode 100644 tools/testing/selftests/livepatch/test_modules/test_klp_extern.c
- create mode 100644 tools/testing/selftests/livepatch/test_modules/test_klp_extern_hello.c
 
-diff --git a/tools/testing/selftests/livepatch/functions.sh b/tools/testing/selftests/livepatch/functions.sh
-index fc4c6a016d38..801d55dc06ac 100644
---- a/tools/testing/selftests/livepatch/functions.sh
-+++ b/tools/testing/selftests/livepatch/functions.sh
-@@ -7,6 +7,7 @@
- MAX_RETRIES=600
- RETRY_INTERVAL=".1"	# seconds
- KLP_SYSFS_DIR="/sys/kernel/livepatch"
-+MODULE_SYSFS_DIR="/sys/module"
- 
- # Kselftest framework requirement - SKIP code is 4
- ksft_skip=4
-@@ -299,7 +300,7 @@ function check_result {
- 	result=$(dmesg | awk -v last_dmesg="$LAST_DMESG" 'p; $0 == last_dmesg { p=1 }' | \
- 		 grep -e 'livepatch:' -e 'test_klp' | \
- 		 grep -v '\(tainting\|taints\) kernel' | \
--		 sed 's/^\[[ 0-9.]*\] //')
-+		 sed 's/^\[[ 0-9.]*\] //' | sed 's/^test_klp_log: //')
- 
- 	if [[ "$expect" == "$result" ]] ; then
- 		echo "ok"
-@@ -344,3 +345,16 @@ function check_sysfs_value() {
- 		die "Unexpected value in $path: $expected_value vs. $value"
- 	fi
- }
-+
-+# read_module_param_value(modname, param) - read module parameter value
-+#  modname - livepatch module creating the sysfs interface
-+#  param - parameter name
-+function read_module_param() {
-+   local mod="$1"; shift
-+   local param="$1"; shift
-+
-+   local path="$MODULE_SYSFS_DIR/$mod/parameters/$param"
-+
-+   log "% echo \"$mod/parameters/$param: \$(cat $path)\""
-+   log "$mod/parameters/$param: $(cat $path)"
-+}
-diff --git a/tools/testing/selftests/livepatch/test-extern.sh b/tools/testing/selftests/livepatch/test-extern.sh
-new file mode 100755
-index 000000000000..3dde6cabb07c
---- /dev/null
-+++ b/tools/testing/selftests/livepatch/test-extern.sh
-@@ -0,0 +1,57 @@
-+#!/bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+# Copyright (C) 2024 Lukas Hruska <lhruska@suse.cz>
-+
-+. $(dirname $0)/functions.sh
-+
-+MOD_LIVEPATCH=test_klp_extern
-+MOD_HELLO=test_klp_extern_hello
-+PARAM_HELLO=hello
-+
-+setup_config
-+
-+# - load a module to be livepatched
-+# - load a livepatch that modifies the output from 'hello' parameter
-+#   of the previously loaded module and verify correct behaviour
-+# - unload the livepatch and make sure the patch was removed
-+# - unload the module that was livepatched
-+
-+start_test "livepatch with external symbol"
-+
-+load_mod $MOD_HELLO
-+
-+read_module_param $MOD_HELLO $PARAM_HELLO
-+
-+load_lp $MOD_LIVEPATCH
-+
-+read_module_param $MOD_HELLO $PARAM_HELLO
-+
-+disable_lp $MOD_LIVEPATCH
-+unload_lp $MOD_LIVEPATCH
-+
-+read_module_param $MOD_HELLO $PARAM_HELLO
-+
-+unload_mod $MOD_HELLO
-+
-+check_result "% insmod test_modules/$MOD_HELLO.ko
-+% echo \"$MOD_HELLO/parameters/$PARAM_HELLO: \$(cat /sys/module/$MOD_HELLO/parameters/$PARAM_HELLO)\"
-+$MOD_HELLO/parameters/$PARAM_HELLO: Hello from kernel module.
-+% insmod test_modules/$MOD_LIVEPATCH.ko
-+livepatch: enabling patch '$MOD_LIVEPATCH'
-+livepatch: '$MOD_LIVEPATCH': initializing patching transition
-+livepatch: '$MOD_LIVEPATCH': starting patching transition
-+livepatch: '$MOD_LIVEPATCH': completing patching transition
-+livepatch: '$MOD_LIVEPATCH': patching complete
-+% echo \"$MOD_HELLO/parameters/$PARAM_HELLO: \$(cat /sys/module/$MOD_HELLO/parameters/$PARAM_HELLO)\"
-+$MOD_HELLO/parameters/$PARAM_HELLO: Hello from livepatched module.
-+% echo 0 > /sys/kernel/livepatch/$MOD_LIVEPATCH/enabled
-+livepatch: '$MOD_LIVEPATCH': initializing unpatching transition
-+livepatch: '$MOD_LIVEPATCH': starting unpatching transition
-+livepatch: '$MOD_LIVEPATCH': completing unpatching transition
-+livepatch: '$MOD_LIVEPATCH': unpatching complete
-+% rmmod $MOD_LIVEPATCH
-+% echo \"$MOD_HELLO/parameters/$PARAM_HELLO: \$(cat /sys/module/$MOD_HELLO/parameters/$PARAM_HELLO)\"
-+$MOD_HELLO/parameters/$PARAM_HELLO: Hello from kernel module.
-+% rmmod $MOD_HELLO"
-+
-+exit 0
-diff --git a/tools/testing/selftests/livepatch/test_modules/Makefile b/tools/testing/selftests/livepatch/test_modules/Makefile
-index e6e638c4bcba..0d6df14787da 100644
---- a/tools/testing/selftests/livepatch/test_modules/Makefile
-+++ b/tools/testing/selftests/livepatch/test_modules/Makefile
-@@ -6,6 +6,8 @@ obj-m += test_klp_atomic_replace.o \
- 	test_klp_callbacks_demo.o \
- 	test_klp_callbacks_demo2.o \
- 	test_klp_callbacks_mod.o \
-+	test_klp_extern.o \
-+	test_klp_extern_hello.o \
- 	test_klp_livepatch.o \
- 	test_klp_state.o \
- 	test_klp_state2.o \
-diff --git a/tools/testing/selftests/livepatch/test_modules/test_klp_extern.c b/tools/testing/selftests/livepatch/test_modules/test_klp_extern.c
-new file mode 100644
-index 000000000000..2a88ae289668
---- /dev/null
-+++ b/tools/testing/selftests/livepatch/test_modules/test_klp_extern.c
-@@ -0,0 +1,51 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2024 Lukas Hruska <lhruska@suse.cz>
-+
-+#define pr_fmt(fmt) "test_klp_extern_hello: " fmt
-+
-+#include <linux/module.h>
-+#include <linux/kernel.h>
-+#include <linux/livepatch.h>
-+
-+extern const char *hello_msg \
-+		   KLP_RELOC_SYMBOL(test_klp_extern_hello, test_klp_extern_hello, hello_msg);
-+
-+static int hello_get(char *buffer, const struct kernel_param *kp)
-+{
-+	return sysfs_emit(buffer, "%s livepatched module.\n", hello_msg);
-+}
-+
-+static struct klp_func funcs[] = {
-+	{
-+		.old_name = "hello_get",
-+		.new_func = hello_get,
-+	}, { }
-+};
-+
-+static struct klp_object objs[] = {
-+	{
-+		.name = "test_klp_extern_hello",
-+		.funcs = funcs,
-+	}, { }
-+};
-+
-+static struct klp_patch patch = {
-+	.mod = THIS_MODULE,
-+	.objs = objs,
-+};
-+
-+static int test_klp_extern_init(void)
-+{
-+	return klp_enable_patch(&patch);
-+}
-+
-+static void test_klp_extern_exit(void)
-+{
-+}
-+
-+module_init(test_klp_extern_init);
-+module_exit(test_klp_extern_exit);
-+MODULE_LICENSE("GPL");
-+MODULE_INFO(livepatch, "Y");
-+MODULE_AUTHOR("Lukas Hruska <lhruska@suse.cz>");
-+MODULE_DESCRIPTION("Livepatch test: external symbol relocation");
-diff --git a/tools/testing/selftests/livepatch/test_modules/test_klp_extern_hello.c b/tools/testing/selftests/livepatch/test_modules/test_klp_extern_hello.c
-new file mode 100644
-index 000000000000..58ce4e655eee
---- /dev/null
-+++ b/tools/testing/selftests/livepatch/test_modules/test_klp_extern_hello.c
-@@ -0,0 +1,36 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2024 Lukas Hruska <lhruska@suse.cz>
-+
-+#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-+
-+#include <linux/module.h>
-+#include <linux/kernel.h>
-+
-+const char *hello_msg = "Hello from";
-+
-+static int hello_get(char *buffer, const struct kernel_param *kp)
-+{
-+	return sysfs_emit(buffer, "%s kernel module.\n", hello_msg);
-+}
-+
-+static const struct kernel_param_ops hello_ops = {
-+	.get	= hello_get
-+};
-+
-+module_param_cb(hello, &hello_ops, NULL, 0400);
-+MODULE_PARM_DESC(hello, "Read only parameter greeting the reader.");
-+
-+static int test_klp_extern_hello_init(void)
-+{
-+	return 0;
-+}
-+
-+static void test_klp_extern_hello_exit(void)
-+{
-+}
-+
-+module_init(test_klp_extern_hello_init);
-+module_exit(test_klp_extern_hello_exit);
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Lukas Hruska <lhruska@suse.cz>");
-+MODULE_DESCRIPTION("Livepatch test: external symbol relocation - test module");
--- 
-2.45.0
+On May 15, 2024 12:36:36 AM PDT, Peter Zijlstra <peterz@infradead=2Eorg> w=
+rote:
+>On Wed, May 08, 2024 at 04:47:25PM -0700, Linus Torvalds wrote:
+>> For example, the most common case of overflow we've ever had has very
+>> much been array indexing=2E Now, sometimes that has actually been actua=
+l
+>> undefined behavior, because it's been overflow in signed variables,
+>> and those are "easy" to find in the sense that you just say "no, can't
+>> do that"=2E UBSAN finds them, and that's good=2E
+>
+>We build with -fno-strict-overflow, which implies -fwrapv, which removes
+>the UB from signed overflow by mandating 2s complement=2E
 
+I am a broken record=2E :) This is _not_ about undefined behavior=2E
+
+This is about finding a way to make the intent of C authors unambiguous=2E=
+ That overflow wraps is well defined=2E It is not always _desired_=2E C has=
+ no way to distinguish between the two cases=2E
+
+-Kees
+
+--=20
+Kees Cook
 
