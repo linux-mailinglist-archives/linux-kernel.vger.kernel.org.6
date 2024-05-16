@@ -1,174 +1,127 @@
-Return-Path: <linux-kernel+bounces-180767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C8058C72D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:29:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A20468C72DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:30:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B438B22FE2
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 08:29:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D30AF1C22398
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 08:30:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44260131BA3;
-	Thu, 16 May 2024 08:29:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE6071799B;
+	Thu, 16 May 2024 08:30:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kLjvnB1Y"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ILDkwUsg"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2957886267;
-	Thu, 16 May 2024 08:29:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B065E2EAF7;
+	Thu, 16 May 2024 08:30:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715848146; cv=none; b=UDcP2sC6T0cPeC+D22VAFKTXBQiP48uDKg613PJuSe9VrW+6oFpQVM5gAA9H42z1QrvSCwtsxWd2a1s16F+Jnm55Sjouiuu6+xSD8cQSsdOKRv86utjdcQT9dN14+occOTPlnUbmXqEcXydhSclnKRfBltBXzbZFMeLVCuIouwA=
+	t=1715848223; cv=none; b=H97cJgwJcIxma2Bs+gbvxSeeG5DDUS5hhHewqrQvFmrI7owUkqQr0o99qgYyQpZ2qimUlf5ywkYYoU7v3F+wogVuW0I2N+E4kcwLM2VZZ6s4YqmUtGwgqgloCMUxwq/IA7xEfxIKKT8gtw6Ufw+uKMpASGwniwJ3CuKWG7xEKuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715848146; c=relaxed/simple;
-	bh=nxv5ycxArjTevmzgBjbrfNCqpXySQ4JMyvIe/0FBJjw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OxGjO5moG7W5uBO3CezDmVt4ZJnVdgcl3yjokJC2eM66h3+inR4oKOP0oswnakBbJYxjFe+fsaS8bG1qA6PiVoaab3hr1J4EG6gxGSZZoJa704QBvzlE0j64p6s9MSa0DMzprwzd5TyyTIH/8Q/UCwQ3gObH0MvTOfaxTDkmRLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kLjvnB1Y; arc=none smtp.client-ip=192.198.163.14
+	s=arc-20240116; t=1715848223; c=relaxed/simple;
+	bh=Q2bR+FaZIzy1J8U4W6MYcfPYvM1EMTA/mliTZkjLgC8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iUY6sv23YbNtoXS9hr60mSj8nElrdBYzUKVRSvRntKJslyB7SvlEf5+2XjsH7DTDmlv3oCN3clC6vD4mPSxUJSze4/fGzhTQ4Ml7XMkF+boH7OY1xTLiUT8wsp/qHEOFkPvffyYtt0oPNCOeTfcjsug9zRRu2TY0SA327i/dIVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ILDkwUsg; arc=none smtp.client-ip=198.175.65.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715848144; x=1747384144;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=nxv5ycxArjTevmzgBjbrfNCqpXySQ4JMyvIe/0FBJjw=;
-  b=kLjvnB1Yh3xQd+c0ifdyWq5xhGhV8Rjscx94NhBgikNYpH2t2sGxjiSJ
-   ap9M1pjZGxcEhmmj8MVDnNQnscPIpYHUFi/JJojbOnPSVevXgLpRrrtoJ
-   Aehe9UAT2Je3YCFqSL7mLvZaMt6fuIe0iCBE2yCwqPEQUinSb/uq4JEV/
-   4J323bwQdjGrJE1AJilFLFKtclJ90Bx6iup9H8ap/WELrPEY3kInMWPVL
-   xJeS5mQAVBv8PJUIymqzfte/HVhZgJcmKnRXDBGqqKWYO2h07z7sbuEEm
-   wMbXV0n/dEmZJdPaKJnL9JnSb6N3a3RsTjh9SNYE6zil+ksPnnuVvnUJo
+  t=1715848222; x=1747384222;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Q2bR+FaZIzy1J8U4W6MYcfPYvM1EMTA/mliTZkjLgC8=;
+  b=ILDkwUsgv7VGVFlO5ucTXxapzTvKkM5n8dZbb6Wns5d+UCIXEFDyvLdW
+   7xU3sW1Qft7TioBd9L+rOJynRpvamnY2SW9RCsfZZutIDrEONO13C1SFN
+   eQy7e0Xej6xqYH15b3ff2ND/10pNTI9msGpDz8vQTnR3xClDrmcIc/xnq
+   /4qnYJxFRVu2dkajuJnHsFSQ5F+SFQnC4s3DiuGo0vWnlyo0aioTYY7eB
+   pyajLxjJmkvd9XvVy4P3+hqo57EGHKFLV3mYXs5oJiuZgrI+t+4SKTGBG
+   lT29P/R+2WwJO7ZYTaKFYF+VwEhEEld256lXO8bUqAbM6ZfcOF3XE4zu/
    A==;
-X-CSE-ConnectionGUID: VUDdHlV/R/uK71fVzdWQcA==
-X-CSE-MsgGUID: GdCnC6waSXuF3ug1kbtwvw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="12154496"
+X-CSE-ConnectionGUID: 7neuDPOwSxukbmHQccPwFA==
+X-CSE-MsgGUID: wh+MWzzvQ1i8lJGjztNfRQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="12053209"
 X-IronPort-AV: E=Sophos;i="6.08,164,1712646000"; 
-   d="scan'208";a="12154496"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 01:29:03 -0700
-X-CSE-ConnectionGUID: a0gWeKCuRbW8XuYagLQEzQ==
-X-CSE-MsgGUID: IemgONeeRz+3YI5JWUgR+Q==
+   d="scan'208";a="12053209"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 01:30:21 -0700
+X-CSE-ConnectionGUID: es8fKLq6Tpyk5CUcyrL8lg==
+X-CSE-MsgGUID: gGdZ9HIwQfiT2Hm3bTFxiA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,164,1712646000"; 
-   d="scan'208";a="31179894"
-Received: from unknown (HELO [10.238.8.173]) ([10.238.8.173])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 01:28:54 -0700
-Message-ID: <84e8460d-f8e7-46d7-a274-90ea7aec2203@linux.intel.com>
-Date: Thu, 16 May 2024 16:28:51 +0800
+   d="scan'208";a="36083736"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa003.jf.intel.com with ESMTP; 16 May 2024 01:30:20 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+	id DCEC997D; Thu, 16 May 2024 11:30:17 +0300 (EEST)
+Date: Thu, 16 May 2024 11:30:17 +0300
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Lukas Wunner <lukas@wunner.de>
+Cc: Esther Shimanovich <eshimanovich@chromium.org>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Rajat Jain <rajatja@google.com>
+Subject: Re: [PATCH v4] PCI: Relabel JHL6540 on Lenovo X1 Carbon 7,8
+Message-ID: <20240516083017.GA1421138@black.fi.intel.com>
+References: <CA+Y6NJFyi6e7ype6dTAjxsy5aC80NdVOt+Vg-a0O0y_JsfwSGg@mail.gmail.com>
+ <Zi0VLrvUWH6P1_or@wunner.de>
+ <CA+Y6NJE8hA+wt+auW1wJBWA6EGMc6CGpmdExr3475E_Yys-Zdw@mail.gmail.com>
+ <ZjsKPSgV39SF0gdX@wunner.de>
+ <20240510052616.GC4162345@black.fi.intel.com>
+ <CA+Y6NJF2Ex6Rwxw0a5V1aMY2OH4=MP5KTtat9x9Ge7y-JBdapw@mail.gmail.com>
+ <20240511043832.GD4162345@black.fi.intel.com>
+ <20240511054323.GE4162345@black.fi.intel.com>
+ <CA+Y6NJF+sJs_zQEF7se5QVMBAhoXJR3Y7x0PHfnBQZyCBbbrQg@mail.gmail.com>
+ <ZkUcihZR_ZUUEsZp@wunner.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v15 09/20] KVM: SEV: Add support to handle MSR based Page
- State Change VMGEXIT
-To: Michael Roth <michael.roth@amd.com>, kvm@vger.kernel.org
-Cc: linux-coco@lists.linux.dev, linux-mm@kvack.org,
- linux-crypto@vger.kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org,
- tglx@linutronix.de, mingo@redhat.com, jroedel@suse.de,
- thomas.lendacky@amd.com, hpa@zytor.com, ardb@kernel.org,
- pbonzini@redhat.com, seanjc@google.com, vkuznets@redhat.com,
- jmattson@google.com, luto@kernel.org, dave.hansen@linux.intel.com,
- slp@redhat.com, pgonda@google.com, peterz@infradead.org,
- srinivas.pandruvada@linux.intel.com, rientjes@google.com,
- dovmurik@linux.ibm.com, tobin@ibm.com, bp@alien8.de, vbabka@suse.cz,
- kirill@shutemov.name, ak@linux.intel.com, tony.luck@intel.com,
- sathyanarayanan.kuppuswamy@linux.intel.com, alpergun@google.com,
- jarkko@kernel.org, ashish.kalra@amd.com, nikunj.dadhania@amd.com,
- pankaj.gupta@amd.com, liam.merwick@oracle.com,
- Brijesh Singh <brijesh.singh@amd.com>,
- "Yamahata, Isaku" <isaku.yamahata@intel.com>
-References: <20240501085210.2213060-1-michael.roth@amd.com>
- <20240501085210.2213060-10-michael.roth@amd.com>
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20240501085210.2213060-10-michael.roth@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZkUcihZR_ZUUEsZp@wunner.de>
 
+Hi,
 
+On Wed, May 15, 2024 at 10:35:22PM +0200, Lukas Wunner wrote:
+> On Wed, May 15, 2024 at 02:53:54PM -0400, Esther Shimanovich wrote:
+> > On Wed, May 8, 2024 at 1:23???AM Lukas Wunner <lukas@wunner.de> wrote:
+> > > On Wed, May 01, 2024 at 06:23:28PM -0400, Esther Shimanovich wrote:
+> > > > On Sat, Apr 27, 2024 at 3:17AM Lukas Wunner <lukas@wunner.de> wrote:
+> > > > That is correct, when the user-visible issue occurs, no driver is
+> > > > bound to the NHI and XHCI. The discrete JHL chip is not permitted to
+> > > > attach to the external-facing root port because of the security
+> > > > policy, so the NHI and XHCI are not seen by the computer.
+> > >
+> > > Could you rework your patch to only rectify the NHI's and XHCI's
+> > > device properties and leave the bridges untouched?
+> > 
+> > So I tried a build with that patch, but it never reached the
+> > tb_pci_fixup function
+> 
+> That means that for some reason, the PCI devices are not associated with
+> the Thunderbolt ports.  Could you add this to the command line:
+> 
+>   thunderbolt.dyndbg ignore_loglevel log_buf_len=10M
+> 
+> and this to your kernel config:
+> 
+>   CONFIG_DYNAMIC_DEBUG=y
+> 
+> You should see "... is associated with ..." messages in dmesg.
+> This did work for Mika during his testing with recent Thunderbolt chips.
+> I amended the patches after his testing but wouldn't expect that to
+> cause issues.
+> 
+> @Mika, would you mind re-testing if you've got cycles to spare?
 
-On 5/1/2024 4:51 PM, Michael Roth wrote:
-> SEV-SNP VMs can ask the hypervisor to change the page state in the RMP
-> table to be private or shared using the Page State Change MSR protocol
-> as defined in the GHCB specification.
->
-> When using gmem, private/shared memory is allocated through separate
-> pools, and KVM relies on userspace issuing a KVM_SET_MEMORY_ATTRIBUTES
-> KVM ioctl to tell the KVM MMU whether or not a particular GFN should be
-> backed by private memory or not.
->
-> Forward these page state change requests to userspace so that it can
-> issue the expected KVM ioctls. The KVM MMU will handle updating the RMP
-> entries when it is ready to map a private page into a guest.
->
-> Use the existing KVM_HC_MAP_GPA_RANGE hypercall format to deliver these
-> requests to userspace via KVM_EXIT_HYPERCALL.
->
-> Signed-off-by: Michael Roth <michael.roth@amd.com>
-> Co-developed-by: Brijesh Singh <brijesh.singh@amd.com>
-> Signed-off-by: Brijesh Singh <brijesh.singh@amd.com>
-> Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
-> ---
->   arch/x86/include/asm/sev-common.h |  6 ++++
->   arch/x86/kvm/svm/sev.c            | 48 +++++++++++++++++++++++++++++++
->   2 files changed, 54 insertions(+)
->
-> diff --git a/arch/x86/include/asm/sev-common.h b/arch/x86/include/asm/sev-common.h
-> index 1006bfffe07a..6d68db812de1 100644
-> --- a/arch/x86/include/asm/sev-common.h
-> +++ b/arch/x86/include/asm/sev-common.h
-> @@ -101,11 +101,17 @@ enum psc_op {
->   	/* GHCBData[11:0] */				\
->   	GHCB_MSR_PSC_REQ)
->   
-> +#define GHCB_MSR_PSC_REQ_TO_GFN(msr) (((msr) & GENMASK_ULL(51, 12)) >> 12)
-> +#define GHCB_MSR_PSC_REQ_TO_OP(msr) (((msr) & GENMASK_ULL(55, 52)) >> 52)
-> +
->   #define GHCB_MSR_PSC_RESP		0x015
->   #define GHCB_MSR_PSC_RESP_VAL(val)			\
->   	/* GHCBData[63:32] */				\
->   	(((u64)(val) & GENMASK_ULL(63, 32)) >> 32)
->   
-> +/* Set highest bit as a generic error response */
-> +#define GHCB_MSR_PSC_RESP_ERROR (BIT_ULL(63) | GHCB_MSR_PSC_RESP)
-> +
->   /* GHCB Hypervisor Feature Request/Response */
->   #define GHCB_MSR_HV_FT_REQ		0x080
->   #define GHCB_MSR_HV_FT_RESP		0x081
-> diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-> index e1ac5af4cb74..720775c9d0b8 100644
-> --- a/arch/x86/kvm/svm/sev.c
-> +++ b/arch/x86/kvm/svm/sev.c
-> @@ -3461,6 +3461,48 @@ static void set_ghcb_msr(struct vcpu_svm *svm, u64 value)
->   	svm->vmcb->control.ghcb_gpa = value;
->   }
->   
-> +static int snp_complete_psc_msr(struct kvm_vcpu *vcpu)
-> +{
-> +	struct vcpu_svm *svm = to_svm(vcpu);
-> +
-> +	if (vcpu->run->hypercall.ret)
-
-Do we have definition of ret? I didn't find clear documentation about it.
-According to the code, 0 means succssful. Is there any other error codes 
-need to or can be interpreted?
-
-For TDX, it may also want to use KVM_HC_MAP_GPA_RANGE hypercall  to 
-userspace via KVM_EXIT_HYPERCALL.
-
-
-> +		set_ghcb_msr(svm, GHCB_MSR_PSC_RESP_ERROR);
-> +	else
-> +		set_ghcb_msr(svm, GHCB_MSR_PSC_RESP);
-> +
-> +	return 1; /* resume guest */
-> +}
->
-[...]
+Sure, I'll try this today and update.
 
