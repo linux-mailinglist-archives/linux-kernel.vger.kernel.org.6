@@ -1,104 +1,127 @@
-Return-Path: <linux-kernel+bounces-180941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 580308C753F
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 13:28:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1AD38C754B
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 13:33:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBDE01F2327C
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 11:28:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A465284E7B
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 11:33:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2FF5145A00;
-	Thu, 16 May 2024 11:28:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E60A6145A02;
+	Thu, 16 May 2024 11:33:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="H86aIONB"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="kH78TWg9"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2A481A28D;
-	Thu, 16 May 2024 11:28:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF2171459E2;
+	Thu, 16 May 2024 11:33:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715858928; cv=none; b=BTZ2cRVPM1rs8yDvSNxjzIhqsojQIG/2pXIISnKdkiPtEQXhLJMa3DndWFNb5nAfE+sgOfZqUPurl3uU84Zi7ycwfKnGCYcSq452DvWWilzx/I7Td8U7X8eB7EymC5FAHvPrUbPlDf+n5lhyA2Grre0ACQk40Pr2PPIjoy0W7LQ=
+	t=1715859185; cv=none; b=rZtBQObEIrAOav40qN9t4Bkfr82s493RvawncDV1dNc4rWvfCyQPO0dpNT13ipZd7RbHRDbyOeNHy4u3AQN1lJAO50pc+99Z5H98VTNEAj6fkQe3FGaXQNUkk7yBMRgY6BgJwkjy8r5FNOEV9+sYY8h5FTMhfEMGx9M+1qEqmWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715858928; c=relaxed/simple;
-	bh=enKVvRzU5oZ+oBuhTjqo5JEvJIXEKjq9C/ONbAnmrx4=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=XGNLUXtmJTUzp3Lvhr/Ks1FkJ7GHs4Qc2pGJkQzxv4bmvyIQdZYoBzo0u+/2rNjHRRBRFewdP8wkujgM+CGdbD3TkT1emtEKew7P1Bj0250TkcDKwP5Ply5UUox00u1NvG2dni9rOCasDUT+NNqPhjwMgnZRMxgO8rGELFWgwIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=H86aIONB; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1715858904; x=1716463704; i=markus.elfring@web.de;
-	bh=5i0xham76HEOhXJqsxBHehiz8KwJEYaip6aTpBTpCZE=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=H86aIONBqwK8OyKWHLrU9c1MuUbdEX2GHTxNkQNYU2AngRhZ6i5Axjbmp1v4Od1F
-	 6o7ymLBteX40N3HllBBLU0c0IIfsutlOM7FmZN+pJ+9ile1a8Xags9dbZtZbLY5Na
-	 uImG6GyEZgIZrBHJf0/Pe7V5aPcPO49dufeYaWcWip3irznyv6gDU7gnOvf96Rm0g
-	 HIy6/kaVGkGz7QxAtuG9WwbnqV1PYNcpsBvkK8GQtoSIQhX8rYF1hk0S3dVJjcYNa
-	 4yTG6zD1LLFXCkTfP49UDurrsUogDsi9b2+L4xiDpdRKPDn2Ceilo8Z/tOaUk4fe9
-	 OLnj2YhxI2iRbcaR/w==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N0Icn-1sSY4W3yKd-00xKQf; Thu, 16
- May 2024 13:28:24 +0200
-Message-ID: <6bf6d165-5b7f-447d-a804-25c4f7defe53@web.de>
-Date: Thu, 16 May 2024 13:28:11 +0200
+	s=arc-20240116; t=1715859185; c=relaxed/simple;
+	bh=vJ1dXf3D1QyoUryoyq2MHmEWi0/eC/n822cq45EZbpA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bSSwFru/DTpwcJYMviCSRgWDHD3MTXYncM1QtgWEIxZQhKdlUhJcg94L2uZaGqyne9P3y6Kr0DBnjnwVI36B+UUa+/PgqJfHzJ08icQGs+wx8telgUxHIK9Je5m60ZeJ5nvBkrSxtX1uMvWhCfP0AHSuHXwGEd4F9CVGNBbTgNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=kH78TWg9; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=FtaIYOu5+dNz/ZMQJk5S85cXvl1SZa5DjNYpIAT6Axw=; b=kH78TWg9Y1Ej/jEYMWiGgnfT9u
+	WyeiZ2z2GnV/cDp4x8JK9qV2JTnPaAagZhVm0UuMdRRNWlAIyL8Jr+TH4u+rpxc84MZNaKu0LVBXE
+	s4iHSmQ0L6UwB2YzpmMaHiVqs1RkgEF+gi1V8h4hq74ZaU+NhlkIQjyr8WIUTs0+ug2FdhnpCd0Xo
+	Ft1whsCDOYeIlDnXYUkPTYgFRBydZ/ed4eD/MSDUfKKO0TLkHfUjS6pRpDu6LwgCxZ9iJHj0KerwY
+	0rMIZDkWi8iRwgU+qiHy+aBqEvK8qP90M1835ifzfO0m1RTGoy0nN3djybw+rWr08uheH8NILZ8FQ
+	FEfsz3yg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:55876)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1s7ZLp-0004ls-0M;
+	Thu, 16 May 2024 12:32:45 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1s7ZLp-0000Zk-5j; Thu, 16 May 2024 12:32:45 +0100
+Date: Thu, 16 May 2024 12:32:45 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>, lkft-triage@lists.linaro.org,
+	open list <linux-kernel@vger.kernel.org>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: clkdev: report over-sized strings when creating clkdev entries
+Message-ID: <ZkXu3XNVLhTuRRNt@shell.armlinux.org.uk>
+References: <CA+G9fYuZd_ur56H8fwDSvUywopvn_b7ogprGkjEatQ7EPTLwYQ@mail.gmail.com>
+ <11be44d3-0f32-49c6-b4ae-ba97a9f97763@app.fastmail.com>
+ <820ddc2ec70780ae1ecd3af864dc8bd6.sboyd@kernel.org>
+ <ZkUgqzUn1EmjrPdl@shell.armlinux.org.uk>
+ <CA+G9fYurPNaW=u2E+h+segnXhY3cfWo3BJpfYDJxKRFPY4epsQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Mark Brown <broonie@kernel.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- linux-spi@vger.kernel.org, kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
- =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>
-References: <171517009614.2014074.15995946356965034064.b4-ty@kernel.org>
-Subject: Re: [PATCH] spi: Remove unneeded check for orig_nents
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <171517009614.2014074.15995946356965034064.b4-ty@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:7QtqQv6V4+p6dQ9XjTYyGG6RH4s+5KrA0jlgsKxD6T16Y8YQeKo
- vmqUlykKx+P1RKQodcjSxhXMUkJ+PDnYx7DMOj5dI/MSo7Ri5CZLqvQZWFi9tdXGE63/K2w
- pnBDOcqPkcbi3+y4G6Yf82qnLOZkUgg4Koi9SZNtdRcgEiICvnpoBoCd1r6WD6jRgc7pRH7
- OU5SfRvPJ46GfR9P5CcsQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:708x+Vn/bH0=;eUTZJkIFGasy7vrsUkNULKMEAiL
- GjRjNXiHPuEv4cm2u89R2+yulWZUmY7m3TmDdG3UY8U/44n6SLFBF4WLXmVdF3rN2PbUa4Nbl
- iWeFmMv9zBUCCLElirFY1c1pl6WZO46KaaxpE+Er4V1sh/x7lELj0+UMI2gWFtG0sii3Cz09K
- 9oKYZJBa/nX/WKBhpCLOSL8qRYnQeLXPdyVMG50KoNNLeqJOcHW/3pawl8/MLxydGJZozNumr
- FAt8KUXLpnCRG/3nKRe7ZUXuqJq/jp1WYqNK4HM2ksvD/1tupXtWeGHrqEpaQDiTTeVhVis0w
- ifcaQTNEtRywujpesxfWgJTHy21M76ss57uk0qm0u801tMakMNsXv6WiV6xy7TCKTORXC5oNt
- h5ogfSe7ZhtjEfQxzuX5Pw6p6m35/9Zh/fkEydj35QXtIVM1A9AaTGmwOGVHdPcWWVPUBYMBa
- U4XWBKnS0T/BNLLI2uGs4+yIwvqa3dHjOJm1zqSMIBCtSNcVynwFztqMaHbTB2jlz6t/GhKYz
- Uo5OGhhujSyKkz3n5/o8L99rEOQMawZwydFYLaiOz4vsc3VEItdyvhpMbUbwUYJxEbqMBLL6M
- 0zCJNBdKof33ln/cJEA/NJvYkGiJWJSwToMeA+E+z749r3kWQ/19g7C+WpUw+HE2t584CdTaq
- 6INjL/KRc2j4Uq+xOkv0k4ITq0p7fSdYpUQRpDtqLSlZZiiQvIYnYkPZ0yUbeipEiSQtXP4Ar
- ccAjIAu2evRTSxaOElhlHBHVb3HGcoVnAH9+K1Wct+p4Re0JI3LeRPGttA2f16ViDgI+OF1AZ
- 4BSOaJdFyIozL7rLtWQymghQMDKxM4INkdBs8ghXfiDek=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+G9fYurPNaW=u2E+h+segnXhY3cfWo3BJpfYDJxKRFPY4epsQ@mail.gmail.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-=E2=80=A6
-> Applied to
->
->    https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-n=
-ext
-=E2=80=A6
-> [1/1] spi: Remove unneded check for orig_nents
->       commit: 8cc3bad9d9d6a4735a8c8998c6daa1ef31cbf708
-=E2=80=A6
+On Thu, May 16, 2024 at 12:27:20PM +0200, Naresh Kamboju wrote:
+> On Wed, 15 May 2024 at 22:53, Russell King (Oracle)
+> <linux@armlinux.org.uk> wrote:
+> >
+> > On Tue, May 07, 2024 at 01:26:17PM -0700, Stephen Boyd wrote:
+> > > Quoting Arnd Bergmann (2024-05-07 00:44:15)
+> > > > On Tue, May 7, 2024, at 09:20, Naresh Kamboju wrote:
+> > > > > The WinLink E850-96 board boot failed with Linux next-20240506 but there
+> > > > > is no kernel crash log on the serial [1].
+> > > > >
+> > > > > Anders bisection results pointing to this commit,
+> > > > > # first bad commit:
+> > > > >   [4d11c62ca8d77cb1f79054844b598e0f4e92dabe]
+> > > > >   clkdev: report over-sized strings when creating clkdev entrie
+> > > > >
+> > > > > After reverting the above patch the boot test passed [2].
+> > > > >
+> > > > > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> > > > >
+> > >
+> > > There are two fixes on the list: [1] and [2]. Perhaps one of those
+> > > resolves this?
+> > >
+> > > [1] https://lore.kernel.org/r/20240507065317.3214186-1-m.szyprowski@samsung.com
+> >
+> > This one has (I think) ended up in the patch system last week, but it's
+> > not clkdev, it's only related. I'm also not Cc'd on its posting, and
+> > it's not posted to any mailing list that I'm a part of. So I've not
+> > been following any discussion on it.
+> >
+> > Digging in to the discussion, I see various attributations, and a final
+> > message reporting an unused variable, and a promise to send v2. So,
+> > I'm guessing that
+> > http://www.home.armlinux.org.uk/developer/patches/viewpatch.php?id=9397/1
+> 
+> I do not have access to this link ^.
 
-Are there any chances left over to avoid a typo in the summary phrase?
+Sorry, that's my internal link, the external one is:
 
-Regards,
-Markus
+http://www.armlinux.org.uk/developer/patches/viewpatch.php?id=9397/1
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
