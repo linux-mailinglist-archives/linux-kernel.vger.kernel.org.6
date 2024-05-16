@@ -1,253 +1,198 @@
-Return-Path: <linux-kernel+bounces-181093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F75F8C775C
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:15:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 747338C7771
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:19:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6486281DFA
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 13:15:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AA07282252
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 13:19:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE8F1146D60;
-	Thu, 16 May 2024 13:15:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XBrOEsxy"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73A941482E0;
+	Thu, 16 May 2024 13:18:47 +0000 (UTC)
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CB20143862
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 13:15:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 366B5143862;
+	Thu, 16 May 2024 13:18:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715865343; cv=none; b=qmb9lu5SHJHHXUSshbT4H3QC5Y2UJ3Kx6jzxlodZ+6ubmm3JLfghDCmpwo5Gr4TcLftqLZ2ITFBmwsXuzmWHEBFZlieSrM/wgldCeOkSz7H48IoE3P+dlni3FYPZORIDMnhmWkGf+WnHr/3Nae0+ZRk4qejFh7QGBWSPtLPqTuE=
+	t=1715865527; cv=none; b=iI0oQT4ucw19HB+h0VETRBAcJt0A48Gsr0HYCfOYdDRz7S94NZoHa4reECKt2zGDAIIBVcZo2z28fY0RyHlGIkUDr+zf1NOYNv4XAO23MjJ5uV8I9Ij+aixK+0pHf+9EOSzBpO0j2vpl8zDPu8YNyoDlDv/KTl2K1uaq1Mnj/sI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715865343; c=relaxed/simple;
-	bh=K+T7vqOTQzoe7J10uVXZdg4De+l3xm8mWoBd5YROxc0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tPt61z99GsMwsmp+3+VQlarM4iWjevP9hj5/YfP+KvPA7E4vyYbbFbmRm+9uBENDmpVZP4h7WsXjvIh7ADngjepg0x5lWlkK0f4E6e+L2A0G7KVzk/89IVGfWIDNsWN8NNxGUV0KRELDk++hxNtK72a5Q7sGoSBsMqRFAszhp0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XBrOEsxy; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715865340;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0l6u6hPd0VabUs35cq4b+ucitv/6ESbFrYjDHjfIiEE=;
-	b=XBrOEsxyDLwPit529DjKUfkV91YUdrA5nsBjMJw/jvPLHO5imk/WTDerXT+EC37Wu22k0x
-	aPxSJZsPfahBsPvoZ5BvvVv5+dQW19sp+vlzTYcAkfh3u4Oc1UFzGKMLMnxyiT7vDg2CX5
-	OEEFn5wODttKazYKaX7yWw5+scz2aek=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-138-CF3WLzTKPhWdmmYFN0MxVg-1; Thu, 16 May 2024 09:15:38 -0400
-X-MC-Unique: CF3WLzTKPhWdmmYFN0MxVg-1
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6a097848a56so74898646d6.0
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 06:15:38 -0700 (PDT)
+	s=arc-20240116; t=1715865527; c=relaxed/simple;
+	bh=IwDcXBrM7FxrzumjpWEBXxVI/Sjr7Q8mo1aSkT0G6Uk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P7NffrFNLaPphIILmjjOSq/aQpRQoU9svECn/59jNh1csX/RffDwtF1P/+sVR3bM9NaIkAocXZLDBT0ZWw2F/7kG3tB/GTrWO/UUHK1Z+gQIFv2J3njiqgBRf3qVNprM/F4KPo7tb9l+BgWHMaf4r1rBI6wnZhgItvRCe4RPAj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a5ce2f0deffso105140366b.3;
+        Thu, 16 May 2024 06:18:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715865338; x=1716470138;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0l6u6hPd0VabUs35cq4b+ucitv/6ESbFrYjDHjfIiEE=;
-        b=ha6Eu0vSF5BCPjNMGVby+dkvipG3fufNDT4LGUbkHnGdkRJHOfPCgpKCBA/e7fNkJF
-         sjnPtw/1HMXK1ngWF0SwOGGp8rrpuyf2JZZw9jF4KTa/Ja9ZjRBhItu4ImcVfRBUgCw/
-         YoFNr7wI8ZpX33W1QsahZBQnBHCW3TNUN7VIRChr6soH7Pl/FypFQjIAkznZPMuEeuLt
-         j0BvCY/3hhRIX5BimSv99IS89dzYxeXdth2ubJV8cMEFQqCZlX4Y2kIuoEpcykHrDJKm
-         bWefr7NtW4XXrl1Ws0nkDcr5Z7k8jUcm8QF1hjR4GTncIqPEIsCo6MYLZMXIQp2alpep
-         WwrA==
-X-Forwarded-Encrypted: i=1; AJvYcCWuytZX6pKpwO1fiWbgxHb92I5F0GvCHsoZrzDv+lmb6XOvoF43Dc5d36AOeBqQSg7XX8GGJUhD5xY9SlX/cRQlUyaTJB0a3xXBSrLf
-X-Gm-Message-State: AOJu0YzY8z9F6sPfFwPF+KqL6bRDbRHdAJhttpiQriS40X9NGan1sLdX
-	EQr4ZJq/H46D6VlLvSjWuMTLB8HRMe5b2dcWPUmsGk+Mi9YwaYGpkYS1qQDJQtm3b56d3RmXGfQ
-	94i/7h5Of+1pbWkPGHRI3EjAsb9MwjWE+1xIEXuQcR/79pbQieOFg1Aes5gnnsg==
-X-Received: by 2002:a05:6214:3d8d:b0:6a0:b9bf:3cb3 with SMTP id 6a1803df08f44-6a1681da9a9mr236654736d6.34.1715865337749;
-        Thu, 16 May 2024 06:15:37 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF5l63B/ThTFOUu+b8+mZcUqIP+JY7JfnEdLxlBSrypwCMC29xnG1Oe9RFOjzz7TJMZvMGXJg==
-X-Received: by 2002:a05:6214:3d8d:b0:6a0:b9bf:3cb3 with SMTP id 6a1803df08f44-6a1681da9a9mr236654376d6.34.1715865337094;
-        Thu, 16 May 2024 06:15:37 -0700 (PDT)
-Received: from x1gen2nano ([2600:1700:1ff0:d0e0::33])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6a15f1852fdsm75706596d6.32.2024.05.16.06.15.35
+        d=1e100.net; s=20230601; t=1715865523; x=1716470323;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KdGWxoXF3gHnPOdYFh5gyCjeUx8D+oDKEyOSzHQOiAA=;
+        b=HPodG0Dx5rerUOwXaeKOwUywuAVuf5sQnLIOEo1jMZpSgpVoD+xilhx3NQKwsTUYCK
+         kwjgejwxjX8AF2QS9K2h++x1mstGPaQSR3KsHy7kbXOxKtwyfM9AmqT/L/hJPJ/5ux/o
+         5qppnrbnXdUXLNZH6Nf0LrF/C48wIS57f8P3GvXSGav7tbH7H5Y01unZIjtUFqxsPh2+
+         jb5z4Y1mBCN7Vp1WGjJCLi/swemP7JKNitQ/cVm1c7cvyJ84z1gE07Z3ZIALzBh+0ZDZ
+         P6QXy29EgBpZq5Hv2YX7c8Q7PNioMUQd4BDAvWcJADXKjTclSWb+hzvhQKMu4gTS/NNZ
+         MRog==
+X-Forwarded-Encrypted: i=1; AJvYcCVkprhqgFWgktACURSFEFLgEo3y7PP6JbXsJ4kOWzwWQ6qZprW5Zw55+i2aDFKOLBUf61EQQIBQyT6J+ZT/E9HjVRlkWw8kVfSaft4NJ11YW1op2wMzrnJdr+nRwheni2l4aCudVu11mpWsQNk1sQ==
+X-Gm-Message-State: AOJu0Yw1SrZ/0hRRok25b/FXe6q/tSN0pC6VDAC+GvwR9KZ/GqxyGlP6
+	g6YRn2Uf7VK09QsXBWp2/XG3ToAd/4zEs30cCXRSlyTcRPrfcIEa
+X-Google-Smtp-Source: AGHT+IE2d8F0VoqvvpDcSpf30NsfMeCjcYrMF4Tuu+HjVBfDa1U+6aaHYWXjrnML45ynkiykx7Dkrw==
+X-Received: by 2002:a17:906:aa4d:b0:a59:c23d:85d8 with SMTP id a640c23a62f3a-a5a2d6653f4mr1274823266b.51.1715865523323;
+        Thu, 16 May 2024 06:18:43 -0700 (PDT)
+Received: from localhost (fwdproxy-lla-009.fbsv.net. [2a03:2880:30ff:9::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b17870sm976435666b.216.2024.05.16.06.18.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 May 2024 06:15:36 -0700 (PDT)
-Date: Thu, 16 May 2024 08:15:34 -0500
-From: Andrew Halaney <ahalaney@redhat.com>
-To: Akhil P Oommen <quic_akhilpo@quicinc.com>
-Cc: Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Rob Clark <robdclark@chromium.org>, 
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/msm/adreno: De-spaghettify the use of memory barriers
-Message-ID: <ae4a77wt3kc73ejshptldqx6ugzrqguyq7etbbu54y4avhbdlt@qyt4r6gma7ev>
-References: <20240508-topic-adreno-v1-1-1babd05c119d@linaro.org>
- <20240514183849.6lpyplifero5u35r@hu-akhilpo-hyd.qualcomm.com>
+        Thu, 16 May 2024 06:18:42 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+To: irogers@google.com,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>
+Cc: leit@meta.com,
+	linux-perf-users@vger.kernel.org (open list:PERFORMANCE EVENTS SUBSYSTEM),
+	linux-kernel@vger.kernel.org (open list:PERFORMANCE EVENTS SUBSYSTEM)
+Subject: [PATCH v3] perf list: Fix the --no-desc option
+Date: Thu, 16 May 2024 06:15:43 -0700
+Message-ID: <20240516131544.2885917-1-leitao@debian.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240514183849.6lpyplifero5u35r@hu-akhilpo-hyd.qualcomm.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, May 15, 2024 at 12:08:49AM GMT, Akhil P Oommen wrote:
-> On Wed, May 08, 2024 at 07:46:31PM +0200, Konrad Dybcio wrote:
-> > Memory barriers help ensure instruction ordering, NOT time and order
-> > of actual write arrival at other observers (e.g. memory-mapped IP).
-> > On architectures employing weak memory ordering, the latter can be a
-> > giant pain point, and it has been as part of this driver.
-> > 
-> > Moreover, the gpu_/gmu_ accessors already use non-relaxed versions of
-> > readl/writel, which include r/w (respectively) barriers.
-> > 
-> > Replace the barriers with a readback that ensures the previous writes
-> > have exited the write buffer (as the CPU must flush the write to the
-> > register it's trying to read back) and subsequently remove the hack
-> > introduced in commit b77532803d11 ("drm/msm/a6xx: Poll for GBIF unhalt
-> > status in hw_init").
+Currently, the --no-desc option in perf list isn't functioning as
+intended.
 
-For what its worth, I've been eyeing (but haven't tested) sending some
-patches to clean up dsi_phy_write_udelay/ndelay(). There's no ordering
-guarantee between a writel() and a delay(), so the expected "write then
-delay" sequence might not be happening.. you need to write, read, delay.
+This issue arises from the overwriting of struct option->desc with the
+opposite value of struct option->long_desc. Consequently, whatever
+parse_options() returns at struct option->desc gets overridden later,
+rendering the --desc or --no-desc arguments ineffective.
 
-memory-barriers.txt:
+To resolve this, set ->desc as true by default and allow parse_options()
+to adjust it accordingly. This adjustment will fix the --no-desc
+option while preserving the functionality of the other parameters.
 
-	5. A readX() by a CPU thread from the peripheral will complete before
-	   any subsequent delay() loop can begin execution on the same thread.
-	   This ensures that two MMIO register writes by the CPU to a peripheral
-	   will arrive at least 1us apart if the first write is immediately read
-	   back with readX() and udelay(1) is called prior to the second
-	   writeX():
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+Changelog:
 
-		writel(42, DEVICE_REGISTER_0); // Arrives at the device...
-		readl(DEVICE_REGISTER_0);
-		udelay(1);
-		writel(42, DEVICE_REGISTER_1); // ...at least 1us before this.
+v3:
+	* Applied the same logic to default_print_metric() and
+	  json_print_event() functions, as identified by Ian Rogers. 
+v2:
+        * Do not print desc if long_desc is being printed, as identified
+          by Ian Rogers.
 
-> > 
-> > Fixes: b77532803d11 ("drm/msm/a6xx: Poll for GBIF unhalt status in hw_init")
-> > Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> > ---
-> >  drivers/gpu/drm/msm/adreno/a6xx_gmu.c |  5 ++---
-> >  drivers/gpu/drm/msm/adreno/a6xx_gpu.c | 14 ++++----------
-> >  2 files changed, 6 insertions(+), 13 deletions(-)
-> 
-> I prefer this version compared to the v2. A helper routine is
-> unnecessary here because:
-> 1. there are very few scenarios where we have to read back the same
-> register.
-> 2. we may accidently readback a write only register.
-> 
-> > 
-> > diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-> > index 0e3dfd4c2bc8..4135a53b55a7 100644
-> > --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-> > +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-> > @@ -466,9 +466,8 @@ static int a6xx_rpmh_start(struct a6xx_gmu *gmu)
-> >  	int ret;
-> >  	u32 val;
-> >  
-> > -	gmu_write(gmu, REG_A6XX_GMU_RSCC_CONTROL_REQ, 1 << 1);
-> > -	/* Wait for the register to finish posting */
-> > -	wmb();
-> > +	gmu_write(gmu, REG_A6XX_GMU_RSCC_CONTROL_REQ, BIT(1));
-> > +	gmu_read(gmu, REG_A6XX_GMU_RSCC_CONTROL_REQ);
-> 
-> This is unnecessary because we are polling on a register on the same port below. But I think we
-> can replace "wmb()" above with "mb()" to avoid reordering between read
-> and write IO instructions.
+---
+ tools/perf/builtin-list.c | 34 +++++++++++++++-------------------
+ 1 file changed, 15 insertions(+), 19 deletions(-)
 
-If I understand correctly, you don't need any memory barrier.
-writel()/readl()'s are ordered to the same endpoint. That goes for all
-the reordering/barrier comments mentioned below too.
-
-device-io.rst:
-
-    The read and write functions are defined to be ordered. That is the
-    compiler is not permitted to reorder the I/O sequence. When the ordering
-    can be compiler optimised, you can use __readb() and friends to
-    indicate the relaxed ordering. Use this with care.
-
-memory-barriers.txt:
-
-     (*) readX(), writeX():
-
-	    The readX() and writeX() MMIO accessors take a pointer to the
-	    peripheral being accessed as an __iomem * parameter. For pointers
-	    mapped with the default I/O attributes (e.g. those returned by
-	    ioremap()), the ordering guarantees are as follows:
-
-	    1. All readX() and writeX() accesses to the same peripheral are ordered
-	       with respect to each other. This ensures that MMIO register accesses
-	       by the same CPU thread to a particular device will arrive in program
-	       order.
-
-
-> 
-> >  
-> >  	ret = gmu_poll_timeout(gmu, REG_A6XX_GMU_RSCC_CONTROL_ACK, val,
-> >  		val & (1 << 1), 100, 10000);
-> > diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> > index 973872ad0474..0acbc38b8e70 100644
-> > --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> > +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> > @@ -1713,22 +1713,16 @@ static int hw_init(struct msm_gpu *gpu)
-> >  	}
-> >  
-> >  	/* Clear GBIF halt in case GX domain was not collapsed */
-> > +	gpu_write(gpu, REG_A6XX_GBIF_HALT, 0);
-> 
-> We need a full barrier here to avoid reordering. Also, lets add a
-> comment about why we are doing this odd looking sequence.
-> 
-> > +	gpu_read(gpu, REG_A6XX_GBIF_HALT);
-> >  	if (adreno_is_a619_holi(adreno_gpu)) {
-> > -		gpu_write(gpu, REG_A6XX_GBIF_HALT, 0);
-> >  		gpu_write(gpu, REG_A6XX_RBBM_GPR0_CNTL, 0);
-> > -		/* Let's make extra sure that the GPU can access the memory.. */
-> > -		mb();
-> 
-> We need a full barrier here.
-> 
-> > +		gpu_read(gpu, REG_A6XX_RBBM_GPR0_CNTL);
-> >  	} else if (a6xx_has_gbif(adreno_gpu)) {
-> > -		gpu_write(gpu, REG_A6XX_GBIF_HALT, 0);
-> >  		gpu_write(gpu, REG_A6XX_RBBM_GBIF_HALT, 0);
-> > -		/* Let's make extra sure that the GPU can access the memory.. */
-> > -		mb();
-> 
-> We need a full barrier here.
-> 
-> > +		gpu_read(gpu, REG_A6XX_RBBM_GBIF_HALT);
-> >  	}
-> >  
-> > -	/* Some GPUs are stubborn and take their sweet time to unhalt GBIF! */
-> > -	if (adreno_is_a7xx(adreno_gpu) && a6xx_has_gbif(adreno_gpu))
-> > -		spin_until(!gpu_read(gpu, REG_A6XX_GBIF_HALT_ACK));
-> > -
-> 
-> Why is this removed?
-> 
-> -Akhil
-> 
-> >  	gpu_write(gpu, REG_A6XX_RBBM_SECVID_TSB_CNTL, 0);
-> >  
-> >  	if (adreno_is_a619_holi(adreno_gpu))
-> > 
-> > ---
-> > base-commit: 93a39e4766083050ca0ecd6a3548093a3b9eb60c
-> > change-id: 20240508-topic-adreno-a2d199cd4152
-> > 
-> > Best regards,
-> > -- 
-> > Konrad Dybcio <konrad.dybcio@linaro.org>
-> > 
-> 
+diff --git a/tools/perf/builtin-list.c b/tools/perf/builtin-list.c
+index 02bf608d585e..8a0e123587f3 100644
+--- a/tools/perf/builtin-list.c
++++ b/tools/perf/builtin-list.c
+@@ -149,7 +149,11 @@ static void default_print_event(void *ps, const char *pmu_name, const char *topi
+ 	} else
+ 		fputc('\n', fp);
+ 
+-	if (desc && print_state->desc) {
++	if (long_desc && print_state->long_desc) {
++		fprintf(fp, "%*s", 8, "[");
++		wordwrap(fp, long_desc, 8, pager_get_columns(), 0);
++		fprintf(fp, "]\n");
++	} else if (desc && print_state->desc) {
+ 		char *desc_with_unit = NULL;
+ 		int desc_len = -1;
+ 
+@@ -165,12 +169,6 @@ static void default_print_event(void *ps, const char *pmu_name, const char *topi
+ 		fprintf(fp, "]\n");
+ 		free(desc_with_unit);
+ 	}
+-	long_desc = long_desc ?: desc;
+-	if (long_desc && print_state->long_desc) {
+-		fprintf(fp, "%*s", 8, "[");
+-		wordwrap(fp, long_desc, 8, pager_get_columns(), 0);
+-		fprintf(fp, "]\n");
+-	}
+ 
+ 	if (print_state->detailed && encoding_desc) {
+ 		fprintf(fp, "%*s", 8, "");
+@@ -243,15 +241,14 @@ static void default_print_metric(void *ps,
+ 	}
+ 	fprintf(fp, "  %s\n", name);
+ 
+-	if (desc && print_state->desc) {
+-		fprintf(fp, "%*s", 8, "[");
+-		wordwrap(fp, desc, 8, pager_get_columns(), 0);
+-		fprintf(fp, "]\n");
+-	}
+ 	if (long_desc && print_state->long_desc) {
+ 		fprintf(fp, "%*s", 8, "[");
+ 		wordwrap(fp, long_desc, 8, pager_get_columns(), 0);
+ 		fprintf(fp, "]\n");
++	} else if (desc && print_state->desc) {
++		fprintf(fp, "%*s", 8, "[");
++		wordwrap(fp, desc, 8, pager_get_columns(), 0);
++		fprintf(fp, "]\n");
+ 	}
+ 	if (expr && print_state->detailed) {
+ 		fprintf(fp, "%*s", 8, "[");
+@@ -395,17 +392,16 @@ static void json_print_event(void *ps, const char *pmu_name, const char *topic,
+ 				   deprecated ? "1" : "0");
+ 		need_sep = true;
+ 	}
+-	if (desc) {
+-		fix_escape_fprintf(fp, &buf, "%s\t\"BriefDescription\": \"%S\"",
+-				   need_sep ? ",\n" : "",
+-				   desc);
+-		need_sep = true;
+-	}
+ 	if (long_desc) {
+ 		fix_escape_fprintf(fp, &buf, "%s\t\"PublicDescription\": \"%S\"",
+ 				   need_sep ? ",\n" : "",
+ 				   long_desc);
+ 		need_sep = true;
++	} else if (desc) {
++		fix_escape_fprintf(fp, &buf, "%s\t\"BriefDescription\": \"%S\"",
++				   need_sep ? ",\n" : "",
++				   desc);
++		need_sep = true;
+ 	}
+ 	if (encoding_desc) {
+ 		fix_escape_fprintf(fp, &buf, "%s\t\"Encoding\": \"%S\"",
+@@ -491,6 +487,7 @@ int cmd_list(int argc, const char **argv)
+ 	int i, ret = 0;
+ 	struct print_state default_ps = {
+ 		.fp = stdout,
++		.desc = true,
+ 	};
+ 	struct print_state json_ps = {
+ 		.fp = stdout,
+@@ -563,7 +560,6 @@ int cmd_list(int argc, const char **argv)
+ 		};
+ 		ps = &json_ps;
+ 	} else {
+-		default_ps.desc = !default_ps.long_desc;
+ 		default_ps.last_topic = strdup("");
+ 		assert(default_ps.last_topic);
+ 		default_ps.visited_metrics = strlist__new(NULL, NULL);
+-- 
+2.43.0
 
 
