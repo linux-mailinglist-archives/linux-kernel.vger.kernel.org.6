@@ -1,174 +1,129 @@
-Return-Path: <linux-kernel+bounces-180512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 553CB8C6F7A
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 02:24:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B6098C6F7D
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 02:24:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4FF91F22741
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 00:24:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBA221F22540
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 00:24:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16D25811;
-	Thu, 16 May 2024 00:24:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 947B84A11;
+	Thu, 16 May 2024 00:24:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eyhYvQrh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="ayMHRsU9"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3285B1877;
-	Thu, 16 May 2024 00:24:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D29217E1;
+	Thu, 16 May 2024 00:24:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715819046; cv=none; b=V/TIrWS3SwCcMSfMryZJ4Q64BlJjUobYFyQGbteHtMPbaeKF/DB7JC4tQp3pwcP4hrHK9/bKsHTCYimQ5lkEOaAkhnmJyyDXhsr5K/kUN4coeb0Uob0O7ZcSKlFKOm/BaklkchzUj70t0hqUZMON349WufcAHNC/WcSMxtK6N08=
+	t=1715819048; cv=none; b=e9R1koynFzTaE+50EcKg8TKOKhfVDe3Pm45KCnO8wr18MkF/d+xxMHvBf32zWVG7MmqkP2XN/NoQSi6iOOY9SR2Vs4Et74g5awhaK7cbA5zX9qy9agVrFUycan1idmRZ4PGXaevCbvuaw9BLkuGidGgT5DnrXnLbP9ENhEy0HKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715819046; c=relaxed/simple;
-	bh=2mTyV3yHsXnpIz+Hf8dHwdpSsS9bL76Nasiv3NlJOGU=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=l1QI9khiLElR7VFjzE5or0yCKtQTm1UPHdHFUtG8qZM/wRHYZZaRZmRraCJx+an6l6BO1PV8A6GVEiqLQm20tEPYY995CkuIwhIYYNEczIM7+014gTqnGq+xOz5amnD7OukLZYAwkx/JrjT1pmJKQRzhBrH86B3fx+r4YzJTjj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eyhYvQrh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34B95C116B1;
-	Thu, 16 May 2024 00:23:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715819045;
-	bh=2mTyV3yHsXnpIz+Hf8dHwdpSsS9bL76Nasiv3NlJOGU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=eyhYvQrhNljUOqI7QNUxGGddgXbxg9y2eAf3SrTd+rZn8BqfPQoiuSPf3cJR34dYa
-	 zSvce/f+OH48w4hBDOW3RJtYyeJg/nH46JmYm2E1PnSRHy3kF0o/T3lOVha7lvTJZL
-	 uwq0IQjHw/2eZmSVpTKVdnQCl4UR4thsmYHeiq/1GVjfoMBQqd3nuLCklTZ9PM9S84
-	 D8LoRdc+cO+u2c30aTUmBWeafhneREBkpHfzgJUF++utFsobb1GHqqrDGDR8WHyFxG
-	 uiknNVRd2iWPJ5aH2ELN/FibJPqRnrW3ba5PPk+Mf7re8cp/Bm8sj9dFC7CoxlOg4B
-	 VDJeBnkbZygiA==
-Date: Thu, 16 May 2024 09:23:55 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Stephen Brennan <stephen.s.brennan@oracle.com>
-Cc: Guo Ren <guoren@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, Mark
- Rutland <mark.rutland@arm.com>, Huacai Chen <chenhuacai@kernel.org>, WANG
- Xuerui <kernel@xen0n.name>, "James E.J. Bottomley"
- <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>, "Aneesh Kumar K.V"
- <aneesh.kumar@kernel.org>, "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Heiko Carstens
- <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
- <agordeev@linux.ibm.com>, Christian Borntraeger
- <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, Thomas
- Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav
- Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-csky@vger.kernel.org, loongarch@lists.linux.dev,
- linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org
-Subject: Re: [PATCH v3] kprobe/ftrace: bail out if ftrace was killed
-Message-Id: <20240516092355.4eaab560b7f4e22953f73cfc@kernel.org>
-In-Reply-To: <87r0e2pvmn.fsf@oracle.com>
-References: <20240501162956.229427-1-stephen.s.brennan@oracle.com>
-	<CAJF2gTT8a4PBU3ekZFNTi6EuETT9hhKfhXrPgGGpn92rQMNSvg@mail.gmail.com>
-	<20240502110348.016f190e0b0565b7e9ecdb48@kernel.org>
-	<87r0e2pvmn.fsf@oracle.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1715819048; c=relaxed/simple;
+	bh=LQrgsqIByN2f+qZpuZYvsf4zHse06e3f1SdS7MR9PyE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YkAEbvM2YjjZ0eova3+6OGPzXtIM6oAKx/WM7ENAucLWnTu4jKLFgegaYxVdQL5oM7Ke7wUz6BJhGIVtBRzK3nUWLPAvsFpv4/bL5UD3jAAjDx007ahYc29r0XQzHALlZYr6uyafyiVctil5Ur9GT5uyM6B3qpNXQ0Aq9hF4gGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=ayMHRsU9; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 4250B87EF7;
+	Thu, 16 May 2024 02:23:57 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1715819038;
+	bh=jG1kyEHStM/G4Bx69cnZ9ynPKSC8S8yZPDjm5wi4i4Q=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ayMHRsU9bOUstMRI7s2hcFPlwsAQONW2aXEHzKPB8nCX3D6FtQMDFRMmx1mxxi+BP
+	 5ky2+jR2Jr3j7N0oAkQuIMB+5Gl5K26MjsPPaWL7KqmRCLUOMfwxgfCTPMONCIvkqL
+	 SqGAcXwUuRuUAmMzIxvfEr7IXpjwl7iDxtsZw+IJPQOcqufFWg/DUrlpKxNbAkGhJ0
+	 aN6/aP1dRQ5VlfzYKYii3cU7PolA1UvwvCtDYMZNtnquw2M7qcDXLoe0wBC6ECr1QU
+	 FdLw9aAbGx587PlLFTMQT5i+kTGmfznpVsaumkZFEwNZ0Aa56qrto+S+bHv6g0/6WD
+	 1TfGLe9G7saKw==
+Message-ID: <9c1d80eb-03e7-4d39-b516-cbcae0d50e4a@denx.de>
+Date: Thu, 16 May 2024 02:23:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 10/11] ARM: dts: stm32: add ethernet1 and ethernet2 for
+ STM32MP135F-DK board
+To: Alexandre TORGUE <alexandre.torgue@foss.st.com>,
+ Christophe Roullier <christophe.roullier@foss.st.com>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Richard Cochran <richardcochran@gmail.com>, Jose Abreu
+ <joabreu@synopsys.com>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240426125707.585269-1-christophe.roullier@foss.st.com>
+ <20240426125707.585269-11-christophe.roullier@foss.st.com>
+ <43024130-dcd6-4175-b958-4401edfb5fd8@denx.de>
+ <8bf3be27-3222-422d-bfff-ff67271981d8@foss.st.com>
+Content-Language: en-US
+From: Marek Vasut <marex@denx.de>
+In-Reply-To: <8bf3be27-3222-422d-bfff-ff67271981d8@foss.st.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-On Wed, 15 May 2024 15:18:08 -0700
-Stephen Brennan <stephen.s.brennan@oracle.com> wrote:
+On 5/13/24 6:01 PM, Alexandre TORGUE wrote:
+> Hi Marek
 
-> Masami Hiramatsu (Google) <mhiramat@kernel.org> writes:
-> > On Thu, 2 May 2024 01:35:16 +0800
-> > Guo Ren <guoren@kernel.org> wrote:
-> >
-> >> On Thu, May 2, 2024 at 12:30 AM Stephen Brennan
-> >> <stephen.s.brennan@oracle.com> wrote:
-> >> >
-> >> > If an error happens in ftrace, ftrace_kill() will prevent disarming
-> >> > kprobes. Eventually, the ftrace_ops associated with the kprobes will be
-> >> > freed, yet the kprobes will still be active, and when triggered, they
-> >> > will use the freed memory, likely resulting in a page fault and panic.
-> >> >
-> >> > This behavior can be reproduced quite easily, by creating a kprobe and
-> >> > then triggering a ftrace_kill(). For simplicity, we can simulate an
-> >> > ftrace error with a kernel module like [1]:
-> >> >
-> >> > [1]: https://github.com/brenns10/kernel_stuff/tree/master/ftrace_killer
-> >> >
-> >> >   sudo perf probe --add commit_creds
-> >> >   sudo perf trace -e probe:commit_creds
-> >> >   # In another terminal
-> >> >   make
-> >> >   sudo insmod ftrace_killer.ko  # calls ftrace_kill(), simulating bug
-> >> >   # Back to perf terminal
-> >> >   # ctrl-c
-> >> >   sudo perf probe --del commit_creds
-> >> >
-> >> > After a short period, a page fault and panic would occur as the kprobe
-> >> > continues to execute and uses the freed ftrace_ops. While ftrace_kill()
-> >> > is supposed to be used only in extreme circumstances, it is invoked in
-> >> > FTRACE_WARN_ON() and so there are many places where an unexpected bug
-> >> > could be triggered, yet the system may continue operating, possibly
-> >> > without the administrator noticing. If ftrace_kill() does not panic the
-> >> > system, then we should do everything we can to continue operating,
-> >> > rather than leave a ticking time bomb.
-> >> >
-> >> > Signed-off-by: Stephen Brennan <stephen.s.brennan@oracle.com>
-> >> > ---
-> >> > Changes in v3:
-> >> >   Don't expose ftrace_is_dead(). Create a "kprobe_ftrace_disabled"
-> >> >   variable and check it directly in the kprobe handlers.
-> >> > Link to v1/v2 discussion:
-> >> >   https://lore.kernel.org/all/20240426225834.993353-1-stephen.s.brennan@oracle.com/
-> >> >
-> >> >  arch/csky/kernel/probes/ftrace.c     | 3 +++
-> >> >  arch/loongarch/kernel/ftrace_dyn.c   | 3 +++
-> >> >  arch/parisc/kernel/ftrace.c          | 3 +++
-> >> >  arch/powerpc/kernel/kprobes-ftrace.c | 3 +++
-> >> >  arch/riscv/kernel/probes/ftrace.c    | 3 +++
-> >> >  arch/s390/kernel/ftrace.c            | 3 +++
-> >> >  arch/x86/kernel/kprobes/ftrace.c     | 3 +++
-> >> >  include/linux/kprobes.h              | 7 +++++++
-> >> >  kernel/kprobes.c                     | 6 ++++++
-> >> >  kernel/trace/ftrace.c                | 1 +
-> >> >  10 files changed, 35 insertions(+)
-> >> >
-> >> > diff --git a/arch/csky/kernel/probes/ftrace.c b/arch/csky/kernel/probes/ftrace.c
-> >> > index 834cffcfbce3..7ba4b98076de 100644
-> >> > --- a/arch/csky/kernel/probes/ftrace.c
-> >> > +++ b/arch/csky/kernel/probes/ftrace.c
-> >> > @@ -12,6 +12,9 @@ void kprobe_ftrace_handler(unsigned long ip, unsigned long parent_ip,
-> >> >         struct kprobe_ctlblk *kcb;
-> >> >         struct pt_regs *regs;
-> >> >
-> >> > +       if (unlikely(kprobe_ftrace_disabled))
-> >> > +               return;
-> >> > +
-> >> For csky part.
-> >> Acked-by: Guo Ren <guoren@kernel.org>
-> >
-> > Thanks Stephen, Guo and Steve!
-> >
-> > Let me pick this to probes/for-next!
+Hi,
+
+> On 4/26/24 17:44, Marek Vasut wrote:
+>> On 4/26/24 2:57 PM, Christophe Roullier wrote:
+>>> Add dual Ethernet:
+>>> -Ethernet1: RMII with crystal
+>>> -Ethernet2: RMII without crystal
+>>> PHYs used are SMSC (LAN8742A)
+>>>
+>>> With Ethernet1, we can performed WoL from PHY instead of GMAC point
+>>> of view.
+>>> (in this case IRQ for WoL is managed as wakeup pin and configured
+>>> in OS secure).
+>>
+>> How does the Linux PHY driver process such a PHY IRQ ?
+>>
+>> Or is Linux unaware of the PHY IRQ ? Doesn't that cause issues ?
 > 
-> Thank you Masami!
-> 
-> I did want to check, is this the correct git tree to be watching?
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git/log/?h=probes/for-next
-> 
-> ( I'm not trying to pressure on timing, as I know the merge window is
->   hectic. Just making sure I'm watching the correct place! )
+> In this case, we want to have an example to wakeup the system from 
+> Standby low power mode (VDDCPU and VDD_CORE off) thanks to a magic 
+> packet detected by the PHY. The PHY then assert his interrupt output 
+> signal.
+> On MP13 DK platform, this PHY signal is connected to a specific GPIO
+> aka "Wakeup pins" (only 6 wakeup pins an MP13). Those specific GPIOs are 
+> handled by the PWR peripheral which is controlled by the secure OS.
 
-Sorry, I forgot to push it from my local tree. Now it should be there.
+What does configure the PHY for this wakeup mode ?
 
-Thanks,
+> On WoL packet, the Secure OS catches the PHY interrupt and uses 
+> asynchronous notification mechanism to warn Linux (on our platform we 
+> use a PPI). On Linux side, Optee core driver creates an irq 
+> domain/irqchip triggered on the asynchronous notification. Each device 
+> which use a wakeup pin need then to request an IRQ on this "Optee irq 
+> domain".
+> 
+> This OPTEE irq domain will be pushed soon.
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+I suspect it might make sense to add this WoL part separately from the 
+actual ethernet DT nodes, so ethernet could land and the WoL 
+functionality can be added when it is ready ?
 
