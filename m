@@ -1,157 +1,182 @@
-Return-Path: <linux-kernel+bounces-180840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 365D58C73C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 11:32:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6CB78C73D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 11:33:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2A55282072
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 09:32:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 814D628548F
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 09:33:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 249CB14374E;
-	Thu, 16 May 2024 09:32:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2A1314387F;
+	Thu, 16 May 2024 09:33:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nFVDV6Tw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QL2IJDoM"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B121182AF
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 09:32:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A729414375A;
+	Thu, 16 May 2024 09:33:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715851941; cv=none; b=ZgoLDpymqwoeg0px+fpQLt+AJqhEdN8KoxWynuZlna+iYtCqhJzNlqsr6acaw5TCtNzYiwNTeG8nGiY/yLmhqNoob1g4JDP3CHkDmZirvV6iMyxRGn0BpXohScJGEv5FBjQVM6ruWbX5QkSR33GDv764AiT+3cbklAWvUimoc2M=
+	t=1715852009; cv=none; b=PMAfDXx5+ITo7Pt4o5FMZAakNoUyop2DErLzR2oR+4RjMa0KSJ4IAnsnsOtdaEFlaNDPuvYsrQyOptS00lcBUdpC0Dcw0osMtC5IYEgUJV703xIgi2C+2t9LaFr0UlLSeItu5PTk+0fUEQTXA/s4G5PCnTj2FrqmwkAdZ1mDDIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715851941; c=relaxed/simple;
-	bh=SoLSBSXOsFBOvO+gPHVZLRXS6EZu2pbQEyZVtrcKK3M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ow2bSHPQYwVzk9AEJ+jZ78rClfG7Bb9Cd9zTdv0L/heC6ek4nS8bdZ09ac47QsMrR7vJ7JbujEshNdoDCB57Gu/1wiLp+FYkaPtpxuDDUKcReqB5vWXbo0OD1CXznhiZwFn9tZK/LI1VIx2hPBnvR6xHYiRzGonScIqc2BP8diE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nFVDV6Tw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57965C113CC;
-	Thu, 16 May 2024 09:32:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715851940;
-	bh=SoLSBSXOsFBOvO+gPHVZLRXS6EZu2pbQEyZVtrcKK3M=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=nFVDV6Tw6MegjNUCIw2T1Ejg155ZkAuh8A+czvCBrt5T//NKR/i0aaHFXrIGJL6oO
-	 28ZBSgCVy0iZMCqxaNuRmtwdIS2NG97fYxappghSog8kgJ0fzeLOm/1Ei2+hgtdx+x
-	 Kvr4NajbgMRxp6zCKVmoK4bg+qWolpqPLY2LyzSw688PrI5AdaFAGS8wEbTh30/Qvg
-	 23tDtRgMy79L7nwMA0mp/Ouzppe5abAR/exk5XTYRvsWGqY9Ip2LUGnzvx+2979bRw
-	 U2qM8P07+2kq6R6ScxAkK1sHj7RJuh40pecyzGu8E1OCN1dJPHE3wDlYvbtOCwCf8V
-	 D2iEBrWQP8RGg==
-Message-ID: <30a5f29b-886f-4ee7-93d1-8c3e1bb8bb49@kernel.org>
-Date: Thu, 16 May 2024 17:32:16 +0800
+	s=arc-20240116; t=1715852009; c=relaxed/simple;
+	bh=BVjR8kQOCaRR8HeUse8J/wqXd6QjtOPOLht8xEyki8E=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Czws62ZED3VKP21ziqxd2BJ40gOa3JWZIQ5XX5CZbPV4OG8iI0Jl20U02/FQFOWvZRe99ik8U+08VJzVycyvR3ek5/RTMcHUuI68FDA0lWzA1mZ4pGcVF5rNQBLRWe/jslEykewrVxd5Lu2ttq+mz112yWyFavVG6HxtoQ1s6Ug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QL2IJDoM; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715852008; x=1747388008;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=BVjR8kQOCaRR8HeUse8J/wqXd6QjtOPOLht8xEyki8E=;
+  b=QL2IJDoM+4kkNYkLNXFgQM1HBF1dmZbmxIaD5AphW8qwGXP3WVBkz3fB
+   yS7scP86tHBJD+23GMDtEVufle3JXmcepcdBkqaRp98Kxi/fqo9FMYsyx
+   YmDJ5sjVdilFNxyBVotSeBka2zGGu0aH1wt3YRXAC3O7yF3PvCfROjmTo
+   HvPuEnWidb0vV9Z2l4hIKjTJgYNT5dNx5UUkIPkGYsJsHoCBksR5UNUJC
+   UXRJPYgyFhPvCElDQgv3qe6fRgm85PnzsL9BUroP8sgTgC578JxcDjmOq
+   Qp9nvc9KCojiYTqOOVBMcHxl98tGrTTO+lYneKk7C6LLAs2OOgr9jyULQ
+   g==;
+X-CSE-ConnectionGUID: bZQTn8Q9Spmd33baNoaPiA==
+X-CSE-MsgGUID: ovYjORLWQHyZonV/kg2oWQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="22553268"
+X-IronPort-AV: E=Sophos;i="6.08,164,1712646000"; 
+   d="scan'208";a="22553268"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 02:33:27 -0700
+X-CSE-ConnectionGUID: xAeTtwk6RV+yOuw3JBfRrg==
+X-CSE-MsgGUID: 1WKycw3kR+mp9BabvqCAvA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,164,1712646000"; 
+   d="scan'208";a="31197217"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.108])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 02:33:21 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: linux-pci@vger.kernel.org,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+	"Maciej W . Rozycki" <macro@orcam.me.uk>,
+	Jonathan Cameron <Jonathan.Cameron@Huawei.com>,
+	Lukas Wunner <lukas@wunner.de>,
+	Alexandru Gagniuc <mr.nuke.me@gmail.com>,
+	Krishna chaitanya chundru <quic_krichai@quicinc.com>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Amit Kucheria <amitk@kernel.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Subject: [PATCH v6 3/8] PCI: Refactor pcie_update_link_speed()
+Date: Thu, 16 May 2024 12:32:17 +0300
+Message-Id: <20240516093222.1684-4-ilpo.jarvinen@linux.intel.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240516093222.1684-1-ilpo.jarvinen@linux.intel.com>
+References: <20240516093222.1684-1-ilpo.jarvinen@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] f2fs: fix panic in f2fs_put_super
-To: sunshijie <sunshijie@xiaomi.corp-partner.google.com>, jaegeuk@kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-Cc: sunshijie <sunshijie@xiaomi.com>
-References: <20240516085512.1082640-1-sunshijie@xiaomi.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20240516085512.1082640-1-sunshijie@xiaomi.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 2024/5/16 16:55, sunshijie wrote:
-> When thread A calls kill_f2fs_super, Thread A first executes the code sbi->node_inode = NULL;
-> Then thread A may submit a bio to the function iput(sbi->meta_inode);
-> Then thread A enters the process D state,
-> Now that the bio submitted by thread A is complete, it calls f2fs_write_end_io and may trigger null-ptr-deref in NODE_MAPPING.
+pcie_update_link_speed() is passed the Link Status register but not all
+callers have that value at hand nor need the value.
 
-I didn't get it, if there is no cp_err, f2fs_write_checkpoint() in
-f2fs_put_super() will flush all dirty pages of node_inode, if there is
-cp_err, below flow will keep all dirty pages being truncated, and
-there is sanity check on all types of dirty pages.
+Refactor pcie_update_link_speed() to include reading the Link Status
+register into pcie_update_link_speed() and create
+__pcie_update_link_speed() which can be used by the hotplug code that
+has the register value at hand beforehand (and needs the value for
+other purposes).
 
-	/* our cp_error case, we can wait for any writeback page */
-	f2fs_flush_merged_writes(sbi);
+Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+---
+ drivers/pci/hotplug/pciehp_hpc.c |  2 +-
+ drivers/pci/pci.h                |  7 ++++++-
+ drivers/pci/probe.c              | 12 +++++++-----
+ 3 files changed, 14 insertions(+), 7 deletions(-)
 
-	f2fs_wait_on_all_pages(sbi, F2FS_WB_CP_DATA);
+diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
+index b1d0a1b3917d..0d818110af6d 100644
+--- a/drivers/pci/hotplug/pciehp_hpc.c
++++ b/drivers/pci/hotplug/pciehp_hpc.c
+@@ -319,7 +319,7 @@ int pciehp_check_link_status(struct controller *ctrl)
+ 		return -1;
+ 	}
+ 
+-	pcie_update_link_speed(ctrl->pcie->port->subordinate, lnk_status);
++	__pcie_update_link_speed(ctrl->pcie->port->subordinate, lnk_status);
+ 
+ 	if (!found) {
+ 		ctrl_info(ctrl, "Slot(%s): No device found\n",
+diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+index 48eae81a0a43..664191768395 100644
+--- a/drivers/pci/pci.h
++++ b/drivers/pci/pci.h
+@@ -297,7 +297,12 @@ u32 pcie_bandwidth_capable(struct pci_dev *dev, enum pci_bus_speed *speed,
+ 			   enum pcie_link_width *width);
+ void __pcie_print_link_status(struct pci_dev *dev, bool verbose);
+ void pcie_report_downtraining(struct pci_dev *dev);
+-void pcie_update_link_speed(struct pci_bus *bus, u16 link_status);
++
++static inline void __pcie_update_link_speed(struct pci_bus *bus, u16 linksta)
++{
++	bus->cur_bus_speed = pcie_link_speed[linksta & PCI_EXP_LNKSTA_CLS];
++}
++void pcie_update_link_speed(struct pci_bus *bus);
+ 
+ /* Single Root I/O Virtualization */
+ struct pci_sriov {
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index 1b08b3f16027..65413d408b3d 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -742,9 +742,13 @@ const char *pci_speed_string(enum pci_bus_speed speed)
+ }
+ EXPORT_SYMBOL_GPL(pci_speed_string);
+ 
+-void pcie_update_link_speed(struct pci_bus *bus, u16 linksta)
++void pcie_update_link_speed(struct pci_bus *bus)
+ {
+-	bus->cur_bus_speed = pcie_link_speed[linksta & PCI_EXP_LNKSTA_CLS];
++	struct pci_dev *bridge = bus->self;
++	u16 linksta;
++
++	pcie_capability_read_word(bridge, PCI_EXP_LNKSTA, &linksta);
++	__pcie_update_link_speed(bus, linksta);
+ }
+ EXPORT_SYMBOL_GPL(pcie_update_link_speed);
+ 
+@@ -827,15 +831,13 @@ static void pci_set_bus_speed(struct pci_bus *bus)
+ 
+ 	if (pci_is_pcie(bridge)) {
+ 		u32 linkcap;
+-		u16 linksta;
+ 
+ 		pcie_capability_read_dword(bridge, PCI_EXP_LNKCAP, &linkcap);
+ 		bus->max_bus_speed = pcie_link_speed[linkcap & PCI_EXP_LNKCAP_SLS];
+ 		if (bus->max_bus_speed != PCI_SPEED_UNKNOWN)
+ 			bus->supported_speeds = PCI_EXP_LNKCAP2_SLS_2_5GB;
+ 
+-		pcie_capability_read_word(bridge, PCI_EXP_LNKSTA, &linksta);
+-		pcie_update_link_speed(bus, linksta);
++		pcie_update_link_speed(bus);
+ 	}
+ }
+ 
+-- 
+2.39.2
 
-	if (err || f2fs_cp_error(sbi)) {
-		truncate_inode_pages_final(NODE_MAPPING(sbi));
-		truncate_inode_pages_final(META_MAPPING(sbi));
-	}
-
-	for (i = 0; i < NR_COUNT_TYPE; i++) {
-		if (!get_pages(sbi, i))
-			continue;
-		f2fs_err(sbi, "detect filesystem reference count leak during "
-			"umount, type: %d, count: %lld", i, get_pages(sbi, i));
-		f2fs_bug_on(sbi, 1);
-	}
-
-So, is there any missing case that dirty page of node_inode is missed by
-f2fs_put_super()?
-
-Thanks,
-
-> 
-> Thread A                                          IRQ context
-> - f2fs_put_super
->   - sbi->node_inode = NULL;
->   - iput(sbi->meta_inode);
->    - iput_final
->     - write_inode_now
->      - writeback_single_inode
->       - __writeback_single_inode
->        - filemap_fdatawait
->         - filemap_fdatawait_range
->          - __kcfi_typeid_free_transhuge_page
->           - __filemap_fdatawait_range
->            - wait_on_page_writeback
->             - folio_wait_writeback
->              - folio_wait_bit
->               - folio_wait_bit_common
->                - io_schedule
-> 
->                                                    - __handle_irq_event_percpu
->                                                     - ufs_qcom_mcq_esi_handler
->                                                      - ufshcd_mcq_poll_cqe_nolock
->                                                       - ufshcd_compl_one_cqe
->                                                        - scsi_done
->                                                         - scsi_done_internal
->                                                          - blk_mq_complete_request
->                                                           - scsi_complete
->                                                            - scsi_finish_command
->                                                             - scsi_io_completion
->                                                              - scsi_end_request
->                                                               - blk_update_request
->                                                                - bio_endio
->                                                                 - f2fs_write_end_io
->                                                                  - NODE_MAPPING(sbi)
-> 
-> Signed-off-by: sunshijie <sunshijie@xiaomi.com>
-> ---
->   fs/f2fs/super.c | 6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index adffc9b80a9c..aeb085e11f9a 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -1641,12 +1641,12 @@ static void f2fs_put_super(struct super_block *sb)
->   
->   	f2fs_destroy_compress_inode(sbi);
->   
-> -	iput(sbi->node_inode);
-> -	sbi->node_inode = NULL;
-> -
->   	iput(sbi->meta_inode);
->   	sbi->meta_inode = NULL;
->   
-> +	iput(sbi->node_inode);
-> +	sbi->node_inode = NULL;
-> +
->   	mutex_unlock(&sbi->umount_mutex);
->   
->   	/*
 
