@@ -1,116 +1,85 @@
-Return-Path: <linux-kernel+bounces-180723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6C238C724B
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 09:57:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A2AD8C7252
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 09:58:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AC391F22548
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 07:57:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B692A1F22678
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 07:58:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47F38604D5;
-	Thu, 16 May 2024 07:57:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01B1F6BFBF;
+	Thu, 16 May 2024 07:58:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HQdQplp/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="fR9nUFVu"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 847A3282EF
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 07:57:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE0573E49E;
+	Thu, 16 May 2024 07:58:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715846266; cv=none; b=Egf+IhUDcNss0zWqbjBNIxOtaWmVcb3618okzo92SOEyNvgK4TJjAQO8nZkZJqbfvu6HMEDBrmdhEvGavRSqzlFMDtiGN+zCIBS3TE3twJjGL/SJPY/SbKMzPdbYnZCY761Sb5eiBBiUT6DfpvePd11xWz+iF7PEVgMHrulYytk=
+	t=1715846307; cv=none; b=BdBosSMnayZsp/Mxnz1T/6T5mZtcATrfovwyacQ9GGWyR/LMpl8i0/CXz4tL+M4RmQm30nNVxCArK4+I5EL1UdaZuPN2aB2GvlyrvkGL6bZKbYGYsemekVR7lLeZ4EPaJ+S+lMg1sPqyAnceu9VaOfx8WQXcDHADUbXIN0RLkug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715846266; c=relaxed/simple;
-	bh=6nEVeR2xHqL+xtbx4QyEOB31XerRon6nHmu9UdguhZI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W4Gqw6Wwmj1DozF/alY07/ChOerEXkDPUfAb6BvSI1Lov0r/XHYu2SXHUU3HOQI8b8Qc/xDd08ZBjVJLa2TLbsRclArsi3VB5T9vXa56CeLhL4N/Dcbyyw6L4SG98J/pYdFIANuSt0X00PRvPGIVkH9N9soUXraM3bZTwM8Uoe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HQdQplp/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC21FC113CC;
-	Thu, 16 May 2024 07:57:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715846265;
-	bh=6nEVeR2xHqL+xtbx4QyEOB31XerRon6nHmu9UdguhZI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HQdQplp/8vX86ut/jbMDglepohWQgHpTSGUBJw5PCnN2bj1KN+lWktM6Ew8WDG8n5
-	 GLYZuRwTXCu+d0aBeKS6AZSaF2+j7+yoHCeApnvQPGkmgsDc+BpbvxqiA5inLuy/Yj
-	 Kd+ZpV0QUCXgUhRKLdKNhE+cONsjuF5oqNwOHNdE4HaDxy06gOHkSSruALVq7MgMBH
-	 ctSWmpNnk1KJ402LE3GmAZlfQJtbbd2IT0kiblJ5PVYspbW+2I/w+dTWdKB7mweMIg
-	 In0kmbucUq4iXpyEPee1LFAv6mOPze8wfo8EJnAwYgcpbdKPjOQvtN15B8+3fSq59J
-	 WFc1z8GjKwpvw==
-Date: Thu, 16 May 2024 09:57:31 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Sean Nyekjaer <sean@geanix.com>
-Cc: Yannick FERTRE <yannick.fertre@foss.st.com>, 
-	Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, Philippe Cornu <philippe.cornu@foss.st.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Robert Foss <rfoss@kernel.org>, Antonio Borneo <antonio.borneo@foss.st.com>, 
-	dri-devel@lists.freedesktop.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/stm: dsi: relax mode_valid clock tolerance
-Message-ID: <20240516-astonishing-tasteful-tuatara-7d29bd@penduick>
-References: <20240322104732.2327060-1-sean@geanix.com>
- <lkrxoqhcitmvjvzslhx6mrdjaa6lpxtpmdjt7wwollm6z4h65q@jk5esjje6ppy>
- <b58c9073-02c6-4b5e-9082-fb11f388842d@foss.st.com>
- <44grbp56thhsbxf3i3yicsxgftbuhzebetioxfuibrpw6vbc6l@qqphfke5vgl5>
+	s=arc-20240116; t=1715846307; c=relaxed/simple;
+	bh=YNnO+YHP/FnlxQ5PatkNjQ9Nib8ubYkKUzGgdEIYd8k=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=AMpMxu9W5TpW4rVB0qs7LqCQncocsrQlE6G1LHW7OE1/xi7yWaXKziRF6MLYudwH5e0yav1cSG1xxwI41po1RqiK+3RgFHhbMo0kWwlfqHCo+Ck32tmclISXS4A4dXgu8OBvACNwJWCYwIU2vPzaemnipmyeiXf+/dJFuTuFWq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=fR9nUFVu; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
+	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=YNnO+YHP/FnlxQ5PatkNjQ9Nib8ubYkKUzGgdEIYd8k=; b=fR9nUFVu86nH72IYbkbRk9WBKY
+	odFxoj/uJ7+WWboZ75vzDEj5xLSXl68+S4y3vwFIn0ck+YOc5EHBvcy/8pNc/217hABcCpvtftzD8
+	YCjCSY8prsZZpTb3d9rvKaFcaLng0QnbuYeyPIEp5d+PVz9D/JA+/BUdmN+laJHjckKzNlb6GkmGj
+	1rZwruNpeqRjW6uVbq3EfhJfnWwRtJ9P4oRSanURsmxX1LKOfQVLBnM2mn58i8zjcdXUMnqXoz7UV
+	L4Hw1uZ1TwTB5FA08xS/oiBu5UgbJEsCGrohlADHYZuy5vSjTO5AR7SZ0Rc40X/plqn+56rILdlHo
+	NOLcNe7g==;
+Received: from [219.240.46.135] (helo=localhost.localdomain)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1s7W04-008jMi-0Y; Thu, 16 May 2024 09:58:04 +0200
+From: Hyunjun Ko <zzoon@igalia.com>
+To: quic_dikshita@quicinc.com
+Cc: agross@kernel.org,
+	andersson@kernel.org,
+	bryan.odonoghue@linaro.org,
+	konrad.dybcio@linaro.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	mchehab@kernel.org,
+	quic_abhinavk@quicinc.com,
+	quic_vgarodia@quicinc.com,
+	stanimir.k.varbanov@gmail.com
+Subject: Re: [PATCH v2 00/34] Qualcomm video encoder and decoder driver
+Date: Thu, 16 May 2024 16:57:32 +0900
+Message-ID: <20240516075732.105878-1-zzoon@igalia.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <1702899149-21321-1-git-send-email-quic_dikshita@quicinc.com>
+References: <1702899149-21321-1-git-send-email-quic_dikshita@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="35odebnap6x5sjhe"
-Content-Disposition: inline
-In-Reply-To: <44grbp56thhsbxf3i3yicsxgftbuhzebetioxfuibrpw6vbc6l@qqphfke5vgl5>
-
-
---35odebnap6x5sjhe
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
 Hi,
 
-On Wed, May 15, 2024 at 09:42:34AM +0200, Sean Nyekjaer wrote:
-> On Wed, May 15, 2024 at 08:39:49AM UTC, Yannick FERTRE wrote:
-> > Hi Sean,
-> >=20
-> > thanks for your patch.
-> >=20
-> > Tested-by: Yannick Fertre <yannick.fertre@foss.st.com>
-> >=20
-> > I think that a helper could be useful in simplifying this part.
-> > This might be reworked when a new helper will be implemented.
-> >=20
-> > Best regards
->=20
-> Hi Yannick,
->=20
-> Will this mean that this will patch will go in?
->=20
-> I still have plans to do the helper, but I'm limited on time :)
+Thanks for this series of patches. I successfully adjusted these patches and tried to test video features with gstreamer or ffmpeg.
+But I found this provides staetful interfaces while I need stateless, which might cause an issue for my side..
 
-I still think we should work on the helper and merge that directly. It's
-been broken for a while anyway so it's not like it's a regression anyway.
+My question is do you have any plan to implement stateless interfaces or already you have somewhere?
 
-Maxime
 
---35odebnap6x5sjhe
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZkW8XwAKCRAnX84Zoj2+
-dunqAYDKPCmEKxonPhhitWf97oBPBxfeBTdrMIqsZGA8qieRjVX6swAQk63a86xv
-MGEjr/ABgKUizwvYzV/yf1DXkDoX8hAGZLW2VxvK4KC9FZNWg2EQXreBaig7iA9r
-2Te1Kbufww==
-=TSXP
------END PGP SIGNATURE-----
-
---35odebnap6x5sjhe--
 
