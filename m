@@ -1,193 +1,162 @@
-Return-Path: <linux-kernel+bounces-180521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 335D78C6FA0
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 02:40:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEAFE8C6FA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 02:52:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEDA31F220AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 00:40:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58E16283D75
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 00:52:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A7E6A47;
-	Thu, 16 May 2024 00:40:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83A8B10E6;
+	Thu, 16 May 2024 00:52:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="tCQwwYOG"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cCo7iv5A"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C7F0620
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 00:40:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C22EB7E1
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 00:52:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715820048; cv=none; b=BDZRQOX3rm+PqK2+D+oWEqtFyHHCaMScUXujqldbsS5XPF91ZPKRRTkg6kqrWH6yKok9eVaqprp/W3x+iHaHK7vklLfx5SdTXT6IkT8Ux/J6ZxcvIET6vZuwiMu1b002MpOWuBVuaCSsun+HFO9OpGhjzKc6LG/35L+IihzIi0g=
+	t=1715820741; cv=none; b=DMWQIw1c3727dPpxWVdm8XIE/o7vIbPnaCRTS3/F0tbE4LmqGdcfnB1f4TOVW/eD5sYYNGcVdVQ6njSMbriBQ4v7EDzhbloUXzoYLOI6RK37NQN9+r/zJSRI7e2J65mO17nZuW/0sjXw8HGV8q8XrXukHTEW+dHnechLAjynECg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715820048; c=relaxed/simple;
-	bh=9abLEE+9ZCkj45X/8sGs10BG0//YdgH1IRIHDBUOCpk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XMmk6niJiaVr9Y3S3BjfRDvVEdaNSuAbVClABW1ou2dpXR/z3JGla7YaH9zFCXHikR7Rtu5ymJ3i3nKVu5s4fycnhlofMQyqK/KdyRIZ8LjpZtA5PJYxKf+LkWuhGYmi/hF98DdqPUTNbOStPbWzePNbHzsJI9dZ98XJNc8pdc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=tCQwwYOG; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=WLRrFtSftIZp/DIoV6uP1EDdzLDN/HEm8dpl8avsW7w=; b=tCQwwYOGDtu1rcX1
-	EgWov9eVBuKiTRuCZbT5GWgcCMNlk+tX8+pl2yAfdXTkl5dDum28eWjXFnJXGSdKyE8Tnb8k6qtbA
-	HmXJqBTaDsIGpNKOqXrVS8WCgTqCi/owCZb3Cyy7BrBZh9xtsNBEBzMxOI2TSZ29015geBvriXKNZ
-	dMj3OYaHBpZwDRwlUFBNzA1qHSWME88zOrZKY2j0GHbOHF9/XFuDEsuiVO+cMxkxzmTpVDEv/Dfaa
-	Q/aMRCUt0S4zXfcOLsxT8g0xlQhfwKnbBqs8mVoZCrgDx2mDnWMGY3AX2BLIaoQb4xE+ayuwTULT1
-	lHogLdhskfL8Xh+ubw==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1s7PAm-0019Js-0a;
-	Thu, 16 May 2024 00:40:40 +0000
-Date: Thu, 16 May 2024 00:40:40 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Kees Cook <keescook@chromium.org>
-Cc: linux-kernel@vger.kernel.org, nathan@kernel.org,
-	luc.vanoostenryck@gmail.com
-Subject: Re: thoughts wanted on dead code hunting?
-Message-ID: <ZkVWCOZDb7iewLxL@gallifrey>
-References: <Zjy82Ja6G2iIHl75@gallifrey>
- <202405141706.1D5D26C@keescook>
+	s=arc-20240116; t=1715820741; c=relaxed/simple;
+	bh=MQChwxKevYNr8Xg3kmsYXwROXzpolSJQuiBbTDSvSYk=;
+	h=Date:From:To:Cc:Subject:Message-Id:Mime-Version:Content-Type; b=EDV9bVfJMHCX53ehJVtM92Td1OMf8Kg71CYlUbysW8dWE5V70pd99AJ9htPG6HokDYXqfNFsnKh7g2Xy1ZtZKuUsYZOv3saiUkJyUJXCGnRkstxLLylVwbQ56k+OXNybjJx2S6vghR89ySNnPEqGY1J7caR2J8yoVAuwNpdXNnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cCo7iv5A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B468BC116B1;
+	Thu, 16 May 2024 00:52:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715820741;
+	bh=MQChwxKevYNr8Xg3kmsYXwROXzpolSJQuiBbTDSvSYk=;
+	h=Date:From:To:Cc:Subject:From;
+	b=cCo7iv5AR9P3RbcFteeyuA/PH4M7SM/Vx3x9DExTPnpozu9/QecLwzeqSvSjCj9+T
+	 eIDm++0m00yFX8DVrks/UA+rUW7d/y5BBw1LO1uMRsQyqELG9flY7XO2H2d1AoI1kc
+	 RyUnQYGejIT3xz1hP5ph/5fVjTHivV+GaK5WIAN3TcZCpHHXVBAxDO8boWl8q3zYay
+	 IsQNGjMo1Dhs8s6jc6M+yEqxSEcyMqApj+OybOmggRxl8Y/j3bvy/gBKwkh1hkOabw
+	 5cFIQQaxnKYhfC5bdEBC1/3vGUDOwTjsU/8Dp0ATO0i78z7ejWnEpgPMDwv3C5YNIp
+	 2c0k6nFt1tWQA==
+Date: Thu, 16 May 2024 09:52:16 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andrii Nakryiko <andrii@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+ Jonathan Haslam <jonathan.haslam@gmail.com>, Kui-Feng Lee
+ <thinker.li@gmail.com>, Masami Hiramatsu (Google) <mhiramat@kernel.org>,
+ Stephen Brennan <stephen.s.brennan@oracle.com>, Ye Bin
+ <yebin10@huawei.com>, Steven Rostedt <rostedt@goodmis.org>, Masami
+ Hiramatsu <mhiramat@kernel.org>, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] probes updates for v6.10
+Message-Id: <20240516095216.ac9a0fd13357450cc5f2e491@kernel.org>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <202405141706.1D5D26C@keescook>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 00:17:07 up 7 days, 11:31,  1 user,  load average: 0.00, 0.00, 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-* Kees Cook (keescook@chromium.org) wrote:
-> On Thu, May 09, 2024 at 12:08:56PM +0000, Dr. David Alan Gilbert wrote:
-> >   That's found me ~200 candidates; where I guess 150ish are probably
-> > real; but my hacky script is, well trivial and hacky, so they each
-> > need eyeballing, then a git lookup to see why they're unused, and a
-> > compile just to make there's not some subtle macro somewhere.
-> 
-> Nice finds! People are usually big fans of code removal patches. :)
+Hi Linus,
 
-Thanks; removing the LIST_HEADs actually saves bytes in the binary;
-just removing the structs themselves still cleans up the source and
-occasionally it's noticing something else left along with it.
+Probes updates for v6.10:
 
-> >  ** Questions:
-> >   a) Can anyone think of a better tool than my script (see bottom)?
-> >    The simplicity is a blessing & a curse - it doesn't know about
-> >    #ifdef's so I don't need to try lots of configs, but at the same
-> >    time, it can't tell if the struct actually gets used in a macro
-> >    and I have to eyeball for a struct which is assigned to as
-> >    a variable at declaration time.
-> 
-> I'm not sure I've seen anything better.
-> 
-> I tend to use stuff like Coccinelle (spatch) for finding specific struct
-> usage, but it can sometimes be slow when trying to process headers
-> recursively. e.g.:
-> 
-> // Options: --recursive-includes
-> @find@
-> struct to_be_removed INSTANCE;
-> struct to_be_removed *POINTER;
-> 
-> (
-> *       INSTANCE
-> |
-> *       POINTER
-> )
-> 
-> 
-> (I bet this could be improved, but it should be a usable example.)
+- tracing/probes: Adding new pseudo-types %pd and %pD support for dumping
+  dentry name from 'struct dentry *' and file name from 'struct file *'.
 
-Hmm, now if I could use coccinelle it would be more tolerant of coding
-style and slight variations than my script.
-However, trying that tiny example, I get:
-  File "play.cocci", line 10, column 1, charpos = 141
-    around = '',
-    whole content = )
+- uprobes: Some performance optimizations have been done.
+ . Speed up the BPF uprobe event by delaying the fetching of the uprobe
+   event arguments that are not used in BPF.
+ . Avoid locking by speculatively checking whether uprobe event is valid.
+ . Reduce lock contention by using read/write_lock instead of spinlock for
+   uprobe list operation. This improved BPF uprobe benchmark result 43% on
+   average.
 
-so it seems to be objecting to something at the end of the file?
-I ran that with:
+- rethook: Removes non-fatal warning messages when tracing stack from BPF
+  and skip rcu_is_watching() validation in rethook if possible.
 
-make coccicheck COCCI=play.cocci M=arch/x86
-with Fedora 40's coccinelle-1.1.1-30.20230624git0afff7f.fc40.x86_64
+- objpool: Optimizing objpool (which is used by kretprobes and fprobe as
+  rethook backend storage) by inlining functions and avoid caching nr_cpu_ids
+  because it is a const value.
 
-> So this might very a given struct isn't used.
-> 
-> >   b) The dead structs are all over; so they've mostly been individual
-> >   patches rather than a big patch series - how do people feel about
-> >   another 150ish similar patches ?
-> 
-> Generally the smaller patches are preferred. For this kind of thing,
-> though, I'd probably collect them by individual header files, rather
-> than one-patch-per-struct.
+- fprobe: Add entry/exit callbacks types (code cleanup)
+- kprobes: Check ftrace was killed in kprobes if it uses ftrace.
 
-Yeh; although note so far I've only been looking for unused structs
-that are defined in a .c file rather than ones in headers.
-Those are relatively easy to find, because I'm only looking in one .c
-at a time (although that does hit corner cases like:
 
-  header:
-       struct foo;
-       struct baa {
-          struct foo *p;
-       };
+Please pull the latest probes-v6.10 tree, which can be found at:
 
-  .c file:
-       struct foo {
-         stuff
-       };
 
-       func(struct baa *b) {
-          b->p  something
-       }
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+probes-v6.10
 
-  so foo is defined in the C file but the symbol 'foo' is never
-used again in it.
+Tag SHA1: 9c42dca969de36a7aaa9573844a863bb306dcafc
+Head SHA1: 1a7d0890dd4a502a202aaec792a6c04e6e049547
 
-> If you have one giant patch, this tool can help break it up into
-> per-subsystem patches (it isn't perfect, but does its best):
-> https://github.com/kees/kernel-tools/blob/trunk/split-on-maintainer
 
-Thanks.
+Andrii Nakryiko (7):
+      uprobes: encapsulate preparation of uprobe args buffer
+      uprobes: prepare uprobe args buffer lazily
+      uprobes: add speculative lockless system-wide uprobe filter check
+      ftrace: make extra rcu_is_watching() validation check optional
+      rethook: honor CONFIG_FTRACE_VALIDATE_RCU_IS_WATCHING in rethook_try_get()
+      objpool: enable inlining objpool_push() and objpool_pop() operations
+      objpool: cache nr_possible_cpus() and avoid caching nr_cpu_ids
 
-> >   * There's a few cases where people have added 'static' to a variable
-> >    to cleanup compiler warnings, but actually they just needed to
-> >    delete the variable.
-> 
-> Hah. Yeah, these are nice to find and remove.
-> 
-> >   * A harder problem is unused structure members; some I've spotted
-> >    by accident, some follow from what else I delete; e.g. if you
-> >    delete a LIST_HEAD, there's a good chance there's a struct somewhere
-> >    with the list entry in it that's no longer used.
-> 
-> This is especially tricky because a giant amount of structs in the
-> kernel actually describe over-the-wire or on-hardware structures that
-> maybe the kernel doesn't care about all the members, but they're still
-> needed to keep the layout correct.
+Jiri Olsa (1):
+      fprobe: Add entry/exit callbacks types
 
-Oh yeh; and also I'm not deleting unused struct's if they look like they're
-describing some firmware or hardware struct, even if the kernel doesn't currently
-use it.
+Jonathan Haslam (1):
+      uprobes: reduce contention on uprobes_tree access
 
-Dave
+Kui-Feng Lee (1):
+      rethook: Remove warning messages printed for finding return address of a frame.
 
-> -Kees
-> 
-> -- 
-> Kees Cook
-> 
+Masami Hiramatsu (Google) (1):
+      selftests/ftrace: Fix required features for VFS type test case
+
+Stephen Brennan (1):
+      kprobe/ftrace: bail out if ftrace was killed
+
+Ye Bin (5):
+      tracing/probes: support '%pd' type for print struct dentry's name
+      tracing/probes: support '%pD' type for print struct file's name
+      Documentation: tracing: add new type '%pd' and '%pD' for kprobe
+      selftests/ftrace: add kprobe test cases for VFS type "%pd" and "%pD"
+      selftests/ftrace: add fprobe test cases for VFS type "%pd" and "%pD"
+
+----
+ Documentation/trace/kprobetrace.rst                |   8 +-
+ arch/csky/kernel/probes/ftrace.c                   |   3 +
+ arch/loongarch/kernel/ftrace_dyn.c                 |   3 +
+ arch/parisc/kernel/ftrace.c                        |   3 +
+ arch/powerpc/kernel/kprobes-ftrace.c               |   3 +
+ arch/riscv/kernel/probes/ftrace.c                  |   3 +
+ arch/s390/kernel/ftrace.c                          |   3 +
+ arch/x86/kernel/kprobes/ftrace.c                   |   3 +
+ include/linux/fprobe.h                             |  18 ++--
+ include/linux/kprobes.h                            |   7 ++
+ include/linux/objpool.h                            | 105 ++++++++++++++++++-
+ include/linux/trace_recursion.h                    |   2 +-
+ kernel/events/uprobes.c                            |  22 ++--
+ kernel/kprobes.c                                   |   6 ++
+ kernel/trace/Kconfig                               |  13 +++
+ kernel/trace/ftrace.c                              |   1 +
+ kernel/trace/rethook.c                             |   4 +-
+ kernel/trace/trace.c                               |   2 +-
+ kernel/trace/trace_fprobe.c                        |   6 ++
+ kernel/trace/trace_kprobe.c                        |   6 ++
+ kernel/trace/trace_probe.c                         |  63 ++++++++++++
+ kernel/trace/trace_probe.h                         |   2 +
+ kernel/trace/trace_uprobe.c                        | 103 +++++++++++--------
+ lib/objpool.c                                      | 112 ++-------------------
+ .../ftrace/test.d/dynevent/fprobe_args_vfs.tc      |  41 ++++++++
+ .../ftrace/test.d/kprobe/kprobe_args_vfs.tc        |  40 ++++++++
+ 26 files changed, 406 insertions(+), 176 deletions(-)
+ create mode 100644 tools/testing/selftests/ftrace/test.d/dynevent/fprobe_args_vfs.tc
+ create mode 100644 tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_vfs.tc
 -- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
