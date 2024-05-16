@@ -1,451 +1,196 @@
-Return-Path: <linux-kernel+bounces-181217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B55598C7918
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:14:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4DA88C7919
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:14:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7FB11C21EB5
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:14:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C1F9287F1F
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:14:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 434FA14D2B7;
-	Thu, 16 May 2024 15:14:07 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69C6414D2BF;
+	Thu, 16 May 2024 15:14:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZcOsNhKp"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34BA914B96A
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 15:14:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D581314B97C
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 15:14:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715872446; cv=none; b=TTqA8x6N6K2hC080VBg8SDhUdEoMZ1FOWl0Z55qpLf7fxKsQQidOKdq0L1I8k97YFH96zwgdbWYhRrCgBiFb3p+IxvLSVlZpAN7SEXtMyJln2XR3QJrt8m+HFuLvP/KAytYLjPlQlbE34L+VO8RIZlulVlpd+P5FWEFvLd9Flaw=
+	t=1715872471; cv=none; b=j2HxQITG5SlYD6gTY2gxIAPdlP6FdWdPdhov2wtDadBLA2xq859pPF2ON4Vb7GNcgT72kqParZZ0x0ZQ2P4e70LOQwZZRBGil1WubZQ7yFAZD0Y3kGql+qNz3E2LWo6ie6kT1jlwyUW25I5runseSJmZbUxXc/2XHKC4w6lPgbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715872446; c=relaxed/simple;
-	bh=0xxCrEsHsgUSxd8FF9qh7uGMW/Bgn7+nS4tJFobM9XM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=KVjxBxsAUuj4KFEbsC/9jqdwpWWeH2S6Uq5N6QA71UxQWfwAUhkwIx3jYYTJhXF2YLaWv7F1DdTGRbTVG1za5fhksq/llbIWcgBfNsTjfktMJPCViMZwJChe8eYlBBDglT/Ake29+e1VoMD4Q4E5CW49DtjkH9udTK+y2CsJgfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-36c610e9479so102588145ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 08:14:03 -0700 (PDT)
+	s=arc-20240116; t=1715872471; c=relaxed/simple;
+	bh=FuE2SXn9fuN5E1glU5FxtdaSGvXvd7GtdLVAMfO9dhM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uFi46DTpAvuCMHeEiPY2RiQE92f42LiNy+LA2ru+G23b6SnodTUwwgXciP5FSCX5e0u973zC4MMW81RTQgZY3k490JzkuXVP/63tU+rXrm/uVfFZe2M8fzLfQ7lb2SVdrxvHjh1Oqrcj5jC6EiJKZ+V58epjYWQDnw2AgBFb6Xk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZcOsNhKp; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-57230faeb81so2422055a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 08:14:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715872468; x=1716477268; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1S2eWYwd0RSPH92xJmhlUyx+mVQoKIPweBEeWH6A6Bw=;
+        b=ZcOsNhKp7Xt09y8+aoIDReJF/nIhufym7Ud0b06encGNro+xgZV17i0+eZSajhREu5
+         xY/7bcDUQKLWe0K9qLJvoGcuQiLt5aNnw5VawCCFRDTSyC9LTEUF9Wy7Hmoa/gd8k2ar
+         rNs3ELGy0RR/G6OdqnxNt7usZLS6gIHTTK3y7WPuAvLgXIXQKp/pdEyRmxsBld19hsRa
+         e9cJgF07ysEn/oN8oqZcwscT3G+VzzPHH5dVsRsaFIqIHisuJZNBDrhETUg1S6hqm7ui
+         PGElLbQObPXP+pKFN4rVcaTm2dkh4mT1l283HDlwpgHqL1k/7i7/vJVY6d/zaph/gHPc
+         sGXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715872443; x=1716477243;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1715872468; x=1716477268;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=prU5EQA+GensDV5ACcTrpWkB3XjONpQfp/BORnY3KgY=;
-        b=wMzKXldYLzMGlG/dZ2ciRTCrg0r7OlrEtIXyI0mHjkCQ+mHgPGFYveTQqqXrRycNmg
-         2C/towldimJ2uDchL+z/8ibvV0wECk6sIEZuuoou55ghIk/YUB2XYDMBskEVDVvPPPhx
-         IUM20Tw5C5PnqGSWiw6eD05l3uJnIej7MPphl8AszpIP4R8tieUHEfuyJgA6Veqj3+f8
-         p/WzN11OHtTOi4Ss2+0ZtRf9wzecjqPPWoVCryY+U0oLiYd/OVb+ZVqn/aA5GGznzxRW
-         f3GfAqiNOJSb7l3cgn8o5ama/RYQbd25Y6ebcxO76uf1Z0lw1l/jaeQSDrrUrEafQPVE
-         md6g==
-X-Gm-Message-State: AOJu0Yy5dT0vHo/CTE0yjwK8Fhb/o/6Y/7RCTUPr1S2zvaCS586qxIHc
-	tjH9ucmageeN+/Kf/W6G5axXjf9Psv/+UaXEvT6aNE/a6trpyfu9OpKB2feBvLH4KIBfaeuwaQi
-	2UgXdw6mXVp2QsOiLxAsd5NCqhAd8B5HkL0AcUzWYqMgJdzFOqES75Ss=
-X-Google-Smtp-Source: AGHT+IF4g9eWJDkfWHmLXxqa9w7xtfLVEkrYAgHnVSOk0a/gaYx0hxv++oYVkTcH1p9inE8FR+0xxQvnL6tPFvCP/IpQrneJuNKQ
+        bh=1S2eWYwd0RSPH92xJmhlUyx+mVQoKIPweBEeWH6A6Bw=;
+        b=BzKWZmfIzWUAk9oM4F0aSfledIYNoWJgFhkLnklWEUXQgb5pBj7mqC8ZWgtUHiQlYV
+         oFCPPuDaJcsYW0rSybs/LTFAv6GF+ZDX4huqHwU5YADm/NKjVBKAS9rHdvjVFWqWi8X+
+         bhp5D+ubp2sS5Wqry8gbno7ZzbwdhCJ+nBOfe/TWW1QbM3iADSWFLYBXw6/XTKrlgLjI
+         5G3DX8zQow3ZzgETRDsrSf1eLezZlzWWZadyhq65keREQPPGOEdFIWxVfWi10K3qJVRB
+         t/BPiNlwjl/cvL/+su+epr4tAgFWTc8bAqLquysCtSCRG+7N5G7ueIkpMwwKSVq4oaS1
+         sDtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWB/289PHHvPz8rXSzW6dc/yOpj0uTkBbi3x0Ge/mRTVo5wQUIBCR0dGSxUotE/JDVI8hqdIThlZZq8bU41kT6CrFeZqZwERR9EUst9
+X-Gm-Message-State: AOJu0YyTI6JX0Hq+A602sgHb2TIXWB/EcB4L7brSNkR1HZtPZV4wX3T1
+	EQIiFzvYEWxvKEafMfhYp0tgR0+rCZQKSCNYHasZVgtuhTS7k22u
+X-Google-Smtp-Source: AGHT+IFthx2bnGaWcEtherBvVyvy/WIe+XS8j3rbgROOod0/ZXYgaulUNAalWPL4lXTxH+A/lctZwA==
+X-Received: by 2002:a50:a6d4:0:b0:56e:3293:3777 with SMTP id 4fb4d7f45d1cf-5734d5c1594mr18621932a12.17.1715872467943;
+        Thu, 16 May 2024 08:14:27 -0700 (PDT)
+Received: from f (cst-prg-82-229.cust.vodafone.cz. [46.135.82.229])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733c34e5ccsm10599095a12.95.2024.05.16.08.14.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 May 2024 08:14:27 -0700 (PDT)
+Date: Thu, 16 May 2024 17:14:06 +0200
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: Kairui Song <ryncsn@gmail.com>
+Cc: "zhangpeng (AS)" <zhangpeng362@huawei.com>, 
+	Rongwei Wang <rongwei.wrw@gmail.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	akpm@linux-foundation.org, dennisszhou@gmail.com, shakeelb@google.com, jack@suse.cz, 
+	surenb@google.com, kent.overstreet@linux.dev, mhocko@suse.cz, vbabka@suse.cz, 
+	yuzhao@google.com, yu.ma@intel.com, wangkefeng.wang@huawei.com, 
+	sunnanyong@huawei.com
+Subject: Re: [RFC PATCH v2 2/2] mm: convert mm's rss stats to use atomic mode
+Message-ID: <5nv3r7qilsye5jgqcjrrbiry6on7wtjmce6twqbxg6nmvczue3@ikc22ggphg3h>
+References: <20240418142008.2775308-1-zhangpeng362@huawei.com>
+ <20240418142008.2775308-3-zhangpeng362@huawei.com>
+ <ec2b110b-fb85-4af2-942b-645511a32297@gmail.com>
+ <c1c79eb5-4d48-40e5-6f17-f8bc42f2d274@huawei.com>
+ <CAMgjq7DHUgyR0vtkYXH4PuzBHUVZ5cyCzi58TfShL57TUSL+Tg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c0c9:0:b0:36c:2981:a85a with SMTP id
- e9e14a558f8ab-36cc137f13dmr3432405ab.0.1715872443356; Thu, 16 May 2024
- 08:14:03 -0700 (PDT)
-Date: Thu, 16 May 2024 08:14:03 -0700
-In-Reply-To: <20240516.234838.1058418917770529360.syoshida@redhat.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000776c12061893afa1@google.com>
-Subject: Re: [syzbot] [can?] KMSAN: kernel-infoleak in raw_recvmsg
-From: syzbot <syzbot+5681e40d297b30f5b513@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syoshida@redhat.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAMgjq7DHUgyR0vtkYXH4PuzBHUVZ5cyCzi58TfShL57TUSL+Tg@mail.gmail.com>
 
-Hello,
+On Thu, May 16, 2024 at 07:50:52PM +0800, Kairui Song wrote:
+> > > On 2024/4/18 22:20, Peng Zhang wrote:
+> > >> From: ZhangPeng <zhangpeng362@huawei.com>
+> > >>
+> > >> Since commit f1a7941243c1 ("mm: convert mm's rss stats into
+> > >> percpu_counter"), the rss_stats have converted into percpu_counter,
+> > >> which convert the error margin from (nr_threads * 64) to approximately
+> > >> (nr_cpus ^ 2). However, the new percpu allocation in mm_init() causes a
+> > >> performance regression on fork/exec/shell. Even after commit
+> > >> 14ef95be6f55
+> > >> ("kernel/fork: group allocation/free of per-cpu counters for mm
+> > >> struct"),
+> > >> the performance of fork/exec/shell is still poor compared to previous
+> > >> kernel versions.
+> > >>
+> > >> To mitigate performance regression, we delay the allocation of percpu
+> > >> memory for rss_stats. Therefore, we convert mm's rss stats to use
+> > >> percpu_counter atomic mode. For single-thread processes, rss_stat is in
+> > >> atomic mode, which reduces the memory consumption and performance
+> > >> regression caused by using percpu. For multiple-thread processes,
+> > >> rss_stat is switched to the percpu mode to reduce the error margin.
+> > >> We convert rss_stats from atomic mode to percpu mode only when the
+> > >> second thread is created.
+> 
+> I've a patch series that is earlier than commit f1a7941243c1 ("mm:
+> convert mm's rss stats into
+> percpu_counter"):
+> 
+> https://lwn.net/ml/linux-kernel/20220728204511.56348-1-ryncsn@gmail.com/
+> 
+> Instead of a per-mm-per-cpu cache, it used only one global per-cpu
+> cache, and flush it on schedule. Or, if the arch supports, flush and
+> fetch it use mm bitmap as an optimization (like tlb shootdown).
+> 
 
-syzbot tried to test the proposed patch but the build/boot failed:
+I just spotted this thread.
 
- ima: No TPM chip found, activating TPM-bypass!
-[   50.039109][    T1] Loading compiled-in module X.509 certificates
-[   50.083961][    T1] Loaded X.509 cert 'Build time autogenerated kernel k=
-ey: ed37ac0c9a8f55c6ba8aa91286c3f4ce83e3fe2b'
-[   50.095135][    T1] ima: Allocated hash algorithm: sha256
-[   50.101198][    T1] ima: No architecture policies found
-[   50.107754][    T1] evm: Initialising EVM extended attributes:
-[   50.113851][    T1] evm: security.selinux (disabled)
-[   50.119108][    T1] evm: security.SMACK64 (disabled)
-[   50.124324][    T1] evm: security.SMACK64EXEC (disabled)
-[   50.129959][    T1] evm: security.SMACK64TRANSMUTE (disabled)
-[   50.135991][    T1] evm: security.SMACK64MMAP (disabled)
-[   50.141763][    T1] evm: security.apparmor
-[   50.146091][    T1] evm: security.ima
-[   50.150083][    T1] evm: security.capability
-[   50.154796][    T1] evm: HMAC attrs: 0x1
-[   50.164184][    T1] PM:   Magic number: 8:300:83
-[   50.169166][    T1] sound pcmC1D1p: hash matches
-[   50.176711][    T1] platform QEMU0001:00: hash matches
-[   50.182388][    T1] acpi QEMU0001:00: hash matches
-[   50.187948][    T1] printk: legacy console [netcon0] enabled
-[   50.193949][    T1] netconsole: network logging started
-[   50.200795][    T1] gtp: GTP module loaded (pdp ctx size 128 bytes)
-[   50.209727][    T1] rdma_rxe: loaded
-[   50.215570][    T1] cfg80211: Loading compiled-in X.509 certificates for=
- regulatory database
-[   50.236664][    T1] Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
-[   50.254692][    T1] Loaded X.509 cert 'wens: 61c038651aabdcf94bd0ac7ff06=
-c7248db18c600'
-[   50.263177][    T1] clk: Disabling unused clocks
-[   50.268190][    T1] ALSA device list:
-[   50.272172][    T1]   #0: Dummy 1
-[   50.275724][    T1]   #1: Loopback 1
-[   50.279796][    T1]   #2: Virtual MIDI Card 1
-[   50.290001][   T43] platform regulatory.0: Direct firmware load for regu=
-latory.db failed with error -2
-[   50.300031][   T43] platform regulatory.0: Falling back to sysfs fallbac=
-k for: regulatory.db
-[   50.309651][    T1] md: Waiting for all devices to be available before a=
-utodetect
-[   50.317651][    T1] md: If you don't use raid, use raid=3Dnoautodetect
-[   50.324371][    T1] md: Autodetecting RAID arrays.
-[   50.329451][    T1] md: autorun ...
-[   50.333934][    T1] md: ... autorun DONE.
-[   50.472668][    T1] EXT4-fs (sda1): mounted filesystem 5941fea2-f5fa-4b4=
-e-b5ef-9af118b27b95 ro with ordered data mode. Quota mode: none.
-[   50.485882][    T1] VFS: Mounted root (ext4 filesystem) readonly on devi=
-ce 8:1.
-[   50.518764][    T1] devtmpfs: mounted
-[   50.799320][    T1] Freeing unused kernel image (initmem) memory: 37072K
-[   50.811563][    T1] Write protecting the kernel read-only data: 262144k
-[   50.859067][    T1] Freeing unused kernel image (rodata/data gap) memory=
-: 1828K
-[   52.516123][    T1] x86/mm: Checked W+X mappings: passed, no W+X pages f=
-ound.
-[   52.526352][    T1] x86/mm: Checking user space page tables
-[   54.031927][    T1] x86/mm: Checked W+X mappings: passed, no W+X pages f=
-ound.
-[   54.040796][    T1] Failed to set sysctl parameter 'kernel.hung_task_all=
-_cpu_backtrace=3D1': parameter not found
-[   54.061983][    T1] Failed to set sysctl parameter 'max_rcu_stall_to_pan=
-ic=3D1': parameter not found
-[   54.074907][    T1] Run /sbin/init as init process
-[   55.706656][ T4458] mount (4458) used greatest stack depth: 7936 bytes l=
-eft
-[   55.796948][ T4459] EXT4-fs (sda1): re-mounted 5941fea2-f5fa-4b4e-b5ef-9=
-af118b27b95 r/w. Quota mode: none.
-mount: mounting smackfs on /sys/fs/smackfs failed: No such file or director=
-y
-mount: mounting selinuxfs on /sys/fs/selinux failed: No such file or direct=
-ory
-[   56.135964][ T4462] mount (4462) used greatest stack depth: 5536 bytes l=
-eft
-Starting syslogd: OK
-Starting acpid: OK
-Starting klogd: OK
-Running sysctl: OK
-Populating /dev using udev: [   60.026277][ T4492] udevd[4492]: starting ve=
-rsion 3.2.11
-[   63.617687][ T4493] udevd[4493]: starting eudev-3.2.11
-[   63.630423][ T4492] udevd (4492) used greatest stack depth: 5296 bytes l=
-eft
-[   96.440761][ T1228] net_ratelimit: 2 callbacks suppressed
-[   96.440836][ T1228] aoe: packet could not be sent on lo.  consider incre=
-asing tx_queue_len
-[   96.456284][ T1228] aoe: packet could not be sent on bond0.  consider in=
-creasing tx_queue_len
-[   96.465416][ T1228] aoe: packet could not be sent on dummy0.  consider i=
-ncreasing tx_queue_len
-[   96.474717][ T1228] aoe: packet could not be sent on eql.  consider incr=
-easing tx_queue_len
-[   96.483772][ T1228] aoe: packet could not be sent on ifb0.  consider inc=
-reasing tx_queue_len
-[   96.492874][ T1228] aoe: packet could not be sent on ifb1.  consider inc=
-reasing tx_queue_len
-[   96.501891][ T1228] aoe: packet could not be sent on eth0.  consider inc=
-reasing tx_queue_len
-[   96.510890][ T1228] aoe: packet could not be sent on wlan0.  consider in=
-creasing tx_queue_len
-[   96.520082][ T1228] aoe: packet could not be sent on wlan1.  consider in=
-creasing tx_queue_len
-[   96.529236][ T1228] aoe: packet could not be sent on hwsim0.  consider i=
-ncreasing tx_queue_len
-done
-Starting system message bus: done
-Starting iptables: OK
-Starting network: OK
-Starting dhcpcd...
-dhcpcd-9.4.1 starting
-dev: loaded udev
-DUID 00:04:c7:fd:4a:df:9d:a6:e9:60:55:7b:b4:5b:1f:77:00:5c
-forked to background, child pid 4705
-[  111.191271][ T4706] 8021q: adding VLAN 0 to HW filter on device bond0
-[  111.209817][ T4706] eql: remember to turn off Van-Jacobson compression o=
-n your slave devices
-[  111.780216][   T43] cfg80211: failed to load regulatory.db
-Starting sshd: OK
+I have a rather long rant to write about the entire ordeal, but don't
+have the time at the moment. I do have time to make some remarks though.
 
+Rolling with a centralized counter and only distributing per-cpu upon
+creation of a thread is something which was discussed last time and
+which I was considering doing. Then life got it in the way and in the
+meantime I managed to conclude it's a questionable idea anyway.
 
-syzkaller
+The state prior to the counters moving to per-cpu was not that great to
+begin with, with quite a few serialization points. As far as allocating
+stuff goes one example is mm_alloc_cid, with the following:
+	mm->pcpu_cid = alloc_percpu(struct mm_cid);
 
-syzkaller login: [  115.865683][    C0] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-[  115.873160][    C0] BUG: KMSAN: uninit-value in receive_buf+0x25e3/0x5fd=
-0
-[  115.880340][    C0]  receive_buf+0x25e3/0x5fd0
-[  115.885254][    C0]  virtnet_poll+0xd1c/0x23c0
-[  115.890052][    C0]  __napi_poll+0xe7/0x980
-[  115.894742][    C0]  net_rx_action+0x82a/0x1850
-[  115.899618][    C0]  handle_softirqs+0x1d8/0x810
-[  115.904721][    C0]  __irq_exit_rcu+0x68/0x120
-[  115.909582][    C0]  irq_exit_rcu+0x12/0x20
-[  115.914958][    C0]  common_interrupt+0x94/0xa0
-[  115.920273][    C0]  asm_common_interrupt+0x2b/0x40
-[  115.925662][    C0]  acpi_safe_halt+0x25/0x30
-[  115.930366][    C0]  acpi_idle_do_entry+0x22/0x40
-[  115.935467][    C0]  acpi_idle_enter+0xa1/0xc0
-[  115.940237][    C0]  cpuidle_enter_state+0xcb/0x250
-[  115.945591][    C0]  cpuidle_enter+0x7f/0xf0
-[  115.950171][    C0]  do_idle+0x551/0x750
-[  115.954442][    C0]  cpu_startup_entry+0x65/0x80
-[  115.959559][    C0]  rest_init+0x1e8/0x260
-[  115.963993][    C0]  start_kernel+0x927/0xa70
-[  115.968867][    C0]  x86_64_start_reservations+0x2e/0x30
-[  115.975073][    C0]  x86_64_start_kernel+0x98/0xa0
-[  115.980184][    C0]  common_startup_64+0x12c/0x137
-[  115.985408][    C0]=20
-[  115.987817][    C0] Uninit was created at:
-[  115.992379][    C0]  __alloc_pages+0x9d6/0xe70
-[  115.997124][    C0]  alloc_pages_mpol+0x299/0x990
-[  116.002166][    C0]  alloc_pages+0x1bf/0x1e0
-[  116.006928][    C0]  skb_page_frag_refill+0x2bf/0x7c0
-[  116.012306][    C0]  virtnet_rq_alloc+0x43/0xbb0
-[  116.017681][    C0]  try_fill_recv+0x3f0/0x2f50
-[  116.022594][    C0]  virtnet_open+0x1cc/0xb00
-[  116.027277][    C0]  __dev_open+0x546/0x6f0
-[  116.031805][    C0]  __dev_change_flags+0x309/0x9a0
-[  116.037006][    C0]  dev_change_flags+0x8e/0x1d0
-[  116.042167][    C0]  devinet_ioctl+0x13ec/0x22c0
-[  116.047162][    C0]  inet_ioctl+0x4bd/0x6d0
-[  116.051595][    C0]  sock_do_ioctl+0xb7/0x540
-[  116.056397][    C0]  sock_ioctl+0x727/0xd70
-[  116.060877][    C0]  __se_sys_ioctl+0x261/0x450
-[  116.065933][    C0]  __x64_sys_ioctl+0x96/0xe0
-[  116.070733][    C0]  x64_sys_call+0x1883/0x3b50
-[  116.075693][    C0]  do_syscall_64+0xcf/0x1e0
-[  116.080462][    C0]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-[  116.087003][    C0]=20
-[  116.089406][    C0] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 6.9.0-syzk=
-aller-07726-g3c999d1ae3c7-dirty #0
-[  116.099490][    C0] Hardware name: Google Google Compute Engine/Google C=
-ompute Engine, BIOS Google 04/02/2024
-[  116.109736][    C0] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-[  116.116828][    C0] Disabling lock debugging due to kernel taint
-[  116.123111][    C0] Kernel panic - not syncing: kmsan.panic set ...
-[  116.129715][    C0] CPU: 0 PID: 0 Comm: swapper/0 Tainted: G    B       =
-       6.9.0-syzkaller-07726-g3c999d1ae3c7-dirty #0
-[  116.141815][    C0] Hardware name: Google Google Compute Engine/Google C=
-ompute Engine, BIOS Google 04/02/2024
-[  116.152174][    C0] Call Trace:
-[  116.155539][    C0]  <IRQ>
-[  116.158586][    C0]  dump_stack_lvl+0x216/0x2d0
-[  116.163397][    C0]  ? kmsan_get_shadow_origin_ptr+0x4d/0xb0
-[  116.169531][    C0]  dump_stack+0x1e/0x30
-[  116.173806][    C0]  panic+0x4e2/0xcd0
-[  116.177900][    C0]  ? kmsan_get_metadata+0xf1/0x1d0
-[  116.183138][    C0]  kmsan_report+0x2d5/0x2e0
-[  116.187923][    C0]  ? kmsan_get_metadata+0x146/0x1d0
-[  116.193246][    C0]  ? kmsan_get_metadata+0x146/0x1d0
-[  116.198556][    C0]  ? __msan_warning+0x95/0x120
-[  116.203515][    C0]  ? receive_buf+0x25e3/0x5fd0
-[  116.208570][    C0]  ? virtnet_poll+0xd1c/0x23c0
-[  116.213493][    C0]  ? __napi_poll+0xe7/0x980
-[  116.218201][    C0]  ? net_rx_action+0x82a/0x1850
-[  116.223142][    C0]  ? handle_softirqs+0x1d8/0x810
-[  116.228219][    C0]  ? __irq_exit_rcu+0x68/0x120
-[  116.233149][    C0]  ? irq_exit_rcu+0x12/0x20
-[  116.237889][    C0]  ? common_interrupt+0x94/0xa0
-[  116.242897][    C0]  ? asm_common_interrupt+0x2b/0x40
-[  116.248227][    C0]  ? acpi_safe_halt+0x25/0x30
-[  116.253054][    C0]  ? acpi_idle_do_entry+0x22/0x40
-[  116.258300][    C0]  ? acpi_idle_enter+0xa1/0xc0
-[  116.263183][    C0]  ? cpuidle_enter_state+0xcb/0x250
-[  116.268497][    C0]  ? cpuidle_enter+0x7f/0xf0
-[  116.273248][    C0]  ? do_idle+0x551/0x750
-[  116.277699][    C0]  ? cpu_startup_entry+0x65/0x80
-[  116.283030][    C0]  ? rest_init+0x1e8/0x260
-[  116.287616][    C0]  ? start_kernel+0x927/0xa70
-[  116.292494][    C0]  ? x86_64_start_reservations+0x2e/0x30
-[  116.298261][    C0]  ? x86_64_start_kernel+0x98/0xa0
-[  116.303657][    C0]  ? common_startup_64+0x12c/0x137
-[  116.308897][    C0]  ? kmsan_internal_memmove_metadata+0x17b/0x230
-[  116.315434][    C0]  ? kmsan_get_metadata+0x146/0x1d0
-[  116.320737][    C0]  ? kmsan_get_metadata+0x146/0x1d0
-[  116.326047][    C0]  ? page_to_skb+0xdae/0x1620
-[  116.331013][    C0]  ? kmsan_get_metadata+0x146/0x1d0
-[  116.336344][    C0]  __msan_warning+0x95/0x120
-[  116.341038][    C0]  receive_buf+0x25e3/0x5fd0
-[  116.345748][    C0]  ? kmsan_get_metadata+0x146/0x1d0
-[  116.351067][    C0]  ? kmsan_get_shadow_origin_ptr+0x4d/0xb0
-[  116.357172][    C0]  virtnet_poll+0xd1c/0x23c0
-[  116.362001][    C0]  ? __pfx_virtnet_poll+0x10/0x10
-[  116.367146][    C0]  __napi_poll+0xe7/0x980
-[  116.371703][    C0]  ? kmsan_get_metadata+0x146/0x1d0
-[  116.377048][    C0]  net_rx_action+0x82a/0x1850
-[  116.381835][    C0]  ? sched_clock_cpu+0x55/0x870
-[  116.386928][    C0]  ? __pfx_net_rx_action+0x10/0x10
-[  116.392151][    C0]  handle_softirqs+0x1d8/0x810
-[  116.397053][    C0]  __irq_exit_rcu+0x68/0x120
-[  116.401871][    C0]  irq_exit_rcu+0x12/0x20
-[  116.406445][    C0]  common_interrupt+0x94/0xa0
-[  116.411335][    C0]  </IRQ>
-[  116.414325][    C0]  <TASK>
-[  116.417407][    C0]  asm_common_interrupt+0x2b/0x40
-[  116.422551][    C0] RIP: 0010:acpi_safe_halt+0x25/0x30
-[  116.427969][    C0] Code: 90 90 90 90 90 55 48 89 e5 65 48 8b 04 25 c0 5=
-c 0a 00 48 f7 00 08 00 00 00 75 10 66 90 0f 00 2d eb bd 51 00 f3 0f 1e fa f=
-b f4 <fa> 5d c3 cc cc cc cc 0f 1f 40 00 90 90 90 90 90 90 90 90 90 90 90
-[  116.447780][    C0] RSP: 0018:ffffffff91003ce8 EFLAGS: 00000246
-[  116.454059][    C0] RAX: ffffffff9102be00 RBX: ffffffff91483da0 RCX: 000=
-0000000000001
-[  116.462289][    C0] RDX: ffff888103584c64 RSI: ffffffff91483da0 RDI: fff=
-f888103584c64
-[  116.470655][    C0] RBP: ffffffff91003ce8 R08: ffffea000000000f R09: 000=
-00000000000ff
-[  116.478730][    C0] R10: ffff88823f16fe02 R11: ffffffff8f8b99a0 R12: fff=
-f8881064f0400
-[  116.487141][    C0] R13: ffffffff91483e20 R14: 0000000000000001 R15: 000=
-0000000000001
-[  116.495298][    C0]  ? __pfx_acpi_idle_enter+0x10/0x10
-[  116.500824][    C0]  acpi_idle_do_entry+0x22/0x40
-[  116.505977][    C0]  acpi_idle_enter+0xa1/0xc0
-[  116.510780][    C0]  cpuidle_enter_state+0xcb/0x250
-[  116.515918][    C0]  cpuidle_enter+0x7f/0xf0
-[  116.520615][    C0]  do_idle+0x551/0x750
-[  116.524816][    C0]  cpu_startup_entry+0x65/0x80
-[  116.529734][    C0]  rest_init+0x1e8/0x260
-[  116.534092][    C0]  start_kernel+0x927/0xa70
-[  116.538728][    C0]  x86_64_start_reservations+0x2e/0x30
-[  116.544307][    C0]  x86_64_start_kernel+0x98/0xa0
-[  116.549373][    C0]  common_startup_64+0x12c/0x137
-[  116.554565][    C0]  </TASK>
-[  116.558270][    C0] Kernel Offset: disabled
-[  116.563102][    C0] Rebooting in 86400 seconds..
+Converting the code to avoid per-cpu rss counters in the common case or
+the above patchset only damage-control the state back to what it was,
+don't do anything to push things further.
 
+Another note is that unfortunately userspace is increasingly
+multithreaded for no good reason, see the Rust ecosystem as an example.
 
-syzkaller build log:
-go env (err=3D<nil>)
-GO111MODULE=3D'auto'
-GOARCH=3D'amd64'
-GOBIN=3D''
-GOCACHE=3D'/syzkaller/.cache/go-build'
-GOENV=3D'/syzkaller/.config/go/env'
-GOEXE=3D''
-GOEXPERIMENT=3D''
-GOFLAGS=3D''
-GOHOSTARCH=3D'amd64'
-GOHOSTOS=3D'linux'
-GOINSECURE=3D''
-GOMODCACHE=3D'/syzkaller/jobs-2/linux/gopath/pkg/mod'
-GONOPROXY=3D''
-GONOSUMDB=3D''
-GOOS=3D'linux'
-GOPATH=3D'/syzkaller/jobs-2/linux/gopath'
-GOPRIVATE=3D''
-GOPROXY=3D'https://proxy.golang.org,direct'
-GOROOT=3D'/usr/local/go'
-GOSUMDB=3D'sum.golang.org'
-GOTMPDIR=3D''
-GOTOOLCHAIN=3D'auto'
-GOTOOLDIR=3D'/usr/local/go/pkg/tool/linux_amd64'
-GOVCS=3D''
-GOVERSION=3D'go1.21.4'
-GCCGO=3D'gccgo'
-GOAMD64=3D'v1'
-AR=3D'ar'
-CC=3D'gcc'
-CXX=3D'g++'
-CGO_ENABLED=3D'1'
-GOMOD=3D'/syzkaller/jobs-2/linux/gopath/src/github.com/google/syzkaller/go.=
-mod'
-GOWORK=3D''
-CGO_CFLAGS=3D'-O2 -g'
-CGO_CPPFLAGS=3D''
-CGO_CXXFLAGS=3D'-O2 -g'
-CGO_FFLAGS=3D'-O2 -g'
-CGO_LDFLAGS=3D'-O2 -g'
-PKG_CONFIG=3D'pkg-config'
-GOGCCFLAGS=3D'-fPIC -m64 -pthread -Wl,--no-gc-sections -fmessage-length=3D0=
- -ffile-prefix-map=3D/tmp/go-build2973090537=3D/tmp/go-build -gno-record-gc=
-c-switches'
+All that to say is that the multithreaded case is what has to get
+faster, as a side effect possibly obsoleting both approaches proposed
+above. I concede if there is nobody wiling to commit to doing the work
+in the foreseeable future then indeed a damage-controlling solution
+should land.
 
-git status (err=3D<nil>)
-HEAD detached at 21339d7b9
-nothing to commit, working tree clean
+On that note in check_mm there is this loop:
+        for (i = 0; i < NR_MM_COUNTERS; i++) {
+                long x = percpu_counter_sum(&mm->rss_stat[i]);
 
+This avoidably walks all cpus 4 times with a preemption and lock trip
+for each round. Instead one can observe all modifications are supposed
+to have already stopped and that this is allocated in a banch. A
+routine, say percpu_counter_sum_many_unsafe, could do one iteration
+without any locks or interrupt play and return an array. This should be
+markedly faster and I perhaps will hack it up.
 
-tput: No value for $TERM and no -T specified
-tput: No value for $TERM and no -T specified
-Makefile:31: run command via tools/syz-env for best compatibility, see:
-Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
-ing.md#using-syz-env
-go list -f '{{.Stale}}' ./sys/syz-sysgen | grep -q false || go install ./sy=
-s/syz-sysgen
-make .descriptions
-tput: No value for $TERM and no -T specified
-tput: No value for $TERM and no -T specified
-Makefile:31: run command via tools/syz-env for best compatibility, see:
-Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
-ing.md#using-syz-env
-bin/syz-sysgen
-touch .descriptions
-GOOS=3Dlinux GOARCH=3Damd64 go build "-ldflags=3D-s -w -X github.com/google=
-/syzkaller/prog.GitRevision=3D21339d7b9986698282dce93709157dc36907fbf8 -X '=
-github.com/google/syzkaller/prog.gitRevisionDate=3D20240422-175005'" "-tags=
-=3Dsyz_target syz_os_linux syz_arch_amd64 " -o ./bin/linux_amd64/syz-fuzzer=
- github.com/google/syzkaller/syz-fuzzer
-GOOS=3Dlinux GOARCH=3Damd64 go build "-ldflags=3D-s -w -X github.com/google=
-/syzkaller/prog.GitRevision=3D21339d7b9986698282dce93709157dc36907fbf8 -X '=
-github.com/google/syzkaller/prog.gitRevisionDate=3D20240422-175005'" "-tags=
-=3Dsyz_target syz_os_linux syz_arch_amd64 " -o ./bin/linux_amd64/syz-execpr=
-og github.com/google/syzkaller/tools/syz-execprog
-GOOS=3Dlinux GOARCH=3Damd64 go build "-ldflags=3D-s -w -X github.com/google=
-/syzkaller/prog.GitRevision=3D21339d7b9986698282dce93709157dc36907fbf8 -X '=
-github.com/google/syzkaller/prog.gitRevisionDate=3D20240422-175005'" "-tags=
-=3Dsyz_target syz_os_linux syz_arch_amd64 " -o ./bin/linux_amd64/syz-stress=
- github.com/google/syzkaller/tools/syz-stress
-mkdir -p ./bin/linux_amd64
-gcc -o ./bin/linux_amd64/syz-executor executor/executor.cc \
-	-m64 -O2 -pthread -Wall -Werror -Wparentheses -Wunused-const-variable -Wfr=
-ame-larger-than=3D16384 -Wno-stringop-overflow -Wno-array-bounds -Wno-forma=
-t-overflow -Wno-unused-but-set-variable -Wno-unused-command-line-argument -=
-static-pie -fpermissive -w -DGOOS_linux=3D1 -DGOARCH_amd64=3D1 \
-	-DHOSTGOOS_linux=3D1 -DGIT_REVISION=3D\"21339d7b9986698282dce93709157dc369=
-07fbf8\"
+A part of The Real Solution(tm) would make counter allocations scale
+(including mcid, not just rss) or dodge them (while maintaining the
+per-cpu distribution, see below for one idea), but that boils down to
+balancing scalability versus total memory usage. It is trivial to just
+slap together a per-cpu cache of these allocations and have the problem
+go away for benchmarking purposes, while being probably being too memory
+hungry for actual usage.
 
+I was pondering an allocator with caches per some number of cores (say 4
+or 8). Microbenchmarks aside I suspect real workloads would not suffer
+from contention at this kind of granularity. This would trivially reduce
+memory usage compared to per-cpu caching. I suspect things like
+mm_struct, task_struct, task stacks and similar would be fine with it.
 
-Error text is too large and was truncated, full error text is at:
-https://syzkaller.appspot.com/x/error.txt?x=3D17258884980000
+Suppose mm_struct is allocated from a more coarse grained allocator than
+per-cpu. Total number of cached objects would be lower than it is now.
+That would also mean these allocated but not currently used mms could
+hold on to other stuff, for example per-cpu rss and mcid counters. Then
+should someone fork or exit, alloc/free_percpu would be avoided for most
+cases. This would scale better and be faster single-threaded than the
+current state.
 
+(believe it or not this is not the actual long rant I have in mind)
 
-Tested on:
+I can't commit to work on the Real Solution though.
 
-commit:         3c999d1a Merge tag 'wq-for-6.10' of git://git.kernel.o..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3D32e783ac1c83004=
-e
-dashboard link: https://syzkaller.appspot.com/bug?extid=3D5681e40d297b30f5b=
-513
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debia=
-n) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=3D1164bc3f1800=
-00
-
+In the meantime I can submit percpu_counter_sum_many_unsafe as described
+above if Denis likes the idea.
 
