@@ -1,110 +1,116 @@
-Return-Path: <linux-kernel+bounces-180977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2986F8C75AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:11:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18FE08C75B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:11:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B18DB1F217F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:11:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A857DB216D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:11:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 244E3145B24;
-	Thu, 16 May 2024 12:11:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC732145FE8;
+	Thu, 16 May 2024 12:11:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="p6s/wSdx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MFGv9a8x"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4108D4EB30;
-	Thu, 16 May 2024 12:11:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 310DC145A06;
+	Thu, 16 May 2024 12:11:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715861462; cv=none; b=NJEgN3JvheBC3K+NqluY0aFrCLhiDMo9ckUrn6APmkK1C0GVKytgDHR4zqPthx5CIlZEzpFKgz4Ll0VDk3divwA4bWbmVohre0MqA6d7+0TvYYHs2Mrt8UG9Z4qSoODufC51QQx5fldU9M7QdJIohWjMVg6VY2bCb13MhfXZqME=
+	t=1715861478; cv=none; b=N8e+DfsEPVKYITHXdaCxO+tWZGkVQoicepEQyS0b84MVZG//f1NOVrJDJP++yRJ7npwjUrQmke4qE76s7ziVYqmowJkQClyZSJn5lTQNRS/ctzhBkOddzzlc8RcBuHJ7/J5BLgWMcFmgLqvXKSw9hLOrRdMQ3y34QHe81UphAaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715861462; c=relaxed/simple;
-	bh=HKeG/Np/80+fRhUwiQBfGjpcGP9XvDW4eQ8HduuifDg=;
+	s=arc-20240116; t=1715861478; c=relaxed/simple;
+	bh=vzWty9Z112mKSwQmpKl9H1kFTMkTlX2pGHRLOpUzc/8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y4m3bM+9w62yd5nUnNAWvxeUZLF4kLsdGqhtZgil0av80FqnyrADwkVET9RZj5uuweGli8jz8aSsxIZ30NyOaKVP0OtNIArIomd0/HIXHFumaY9xkUl/W3Mx27F6cGKAf6+Sc7EfuXUlCVihyn3HN+HuAIe+/bGhXBn6+qc2qdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=p6s/wSdx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41DE3C113CC;
-	Thu, 16 May 2024 12:11:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1715861461;
-	bh=HKeG/Np/80+fRhUwiQBfGjpcGP9XvDW4eQ8HduuifDg=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=URDSjOkF1eXVuTQuYwEzPDldd8g+Xq6U5wZs7HRJWORej7VQkgBa2xxjeDeSOBA/PI9njQwaikK+zoyjcJ/Tgvxif/x4ZukvaS2Ot3KMWplfSYCACBoACplF0IMLl5IMuyPx+cZbIKwZcBf7oZc96vJm5xOBzIOdXPaHbJJzC0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MFGv9a8x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EE16C113CC;
+	Thu, 16 May 2024 12:11:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715861477;
+	bh=vzWty9Z112mKSwQmpKl9H1kFTMkTlX2pGHRLOpUzc/8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=p6s/wSdxvGXM713EnVGN/SKxKdsqajqEstVHjfe/EkqcR4OKwNWJ6Q3oB/jcxjJ1y
-	 I1tH66EVMZVfmLsyx5uhq9esrNRiDg7qJDpUaPH2L67OQDaCtQtH8MY0GzJFxV4ezh
-	 KJpZMjY1qqWvfuYmIouO3V0wkVLZVBbHmRjx9Exk=
-Date: Thu, 16 May 2024 14:10:58 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com,
-	Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH 6.8 000/340] 6.8.10-rc2 review
-Message-ID: <2024051628-direness-grazing-d4ee@gregkh>
-References: <20240515082517.910544858@linuxfoundation.org>
- <8221e12b-4def-4faf-84c6-f2fe208a4bf3@sirena.org.uk>
+	b=MFGv9a8xqo8bIibuLTC9Sb22GP+YNQKltzSiK5BkAxKn0wNtLMgfSglvsKWq8NCFn
+	 2p66bCe8JEZjQtBko0q30KPK5AEzNRLzP8+9Ybw2o/zP2GFmWoqGXdtMT+7ullrGHM
+	 KsFRznanFdd7euh+hybdzmSQGcdITWEBsycbxu8GmiVmHbk/jrJXQUsgtR4MGWKPYi
+	 aeKu03Xzz8FiBxjPfCL5MqFn9JRzfSdeGQ3b3a2r9C+qwOjRBWfTQRJFP/nHf9LdVA
+	 Ujd3ycfgTKc6iR/hkJDzhkWpL6UkTirq8EiK1I5/EnNlQcy9QyxtdmikyTkTapXMno
+	 cU/ARVbKxuyEQ==
+Date: Thu, 16 May 2024 13:11:11 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Elinor Montmasson <elinor.montmasson@savoirfairelinux.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shengjiu Wang <shengjiu.wang@gmail.com>,
+	Xiubo Li <Xiubo.Lee@gmail.com>, Fabio Estevam <festevam@gmail.com>,
+	Nicolin Chen <nicoleotsuka@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
+	linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCHv4 9/9] ASoC: dt-bindings: fsl-asoc-card: add compatible
+ for generic codec
+Message-ID: <ce9a87c6-4a5c-4f0a-a8df-1fdce8c1f5df@sirena.org.uk>
+References: <20240515135411.343333-1-elinor.montmasson@savoirfairelinux.com>
+ <20240515135411.343333-10-elinor.montmasson@savoirfairelinux.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="XZeYRrKEjeLfbFL9"
+Content-Disposition: inline
+In-Reply-To: <20240515135411.343333-10-elinor.montmasson@savoirfairelinux.com>
+X-Cookie: I'm having a MID-WEEK CRISIS!
+
+
+--XZeYRrKEjeLfbFL9
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8221e12b-4def-4faf-84c6-f2fe208a4bf3@sirena.org.uk>
 
-On Wed, May 15, 2024 at 05:37:15PM +0100, Mark Brown wrote:
-> On Wed, May 15, 2024 at 10:27:21AM +0200, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 6.8.10 release.
-> > There are 340 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> 
-> I'm seeing issues with the ftrace "Test file and directory owership
-> changes for eventfs" test on several platforms, including both 32 Arm
-> and whatever random x86_64 box Linaro have in their lab.  The logs
-> aren't terribly helpful since they just log a "not ok", example here:
-> 
->   https://lava.sirena.org.uk/scheduler/job/265221#L3252
-> 
-> Bisects land on "eventfs: Do not differentiate the toplevel events
-> directory" as having introduced the issue.  Other stables don't seem to
-> be affected.
-> 
-> Bisect log (this one from a Raspberry Pi 3 in 32 bit mode):
-> 
-> # bad: [cfe824b75b3d9d13a891ad1c4a2d6fe0eceed1e9] Linux 6.8.10-rc2
-> # good: [f3d61438b613b87afb63118bea6fb18c50ba7a6b] Linux 6.8.9
-> # good: [428b806127e00d1c39ed72cbae36dbb4598e58dd] usb: dwc3: core: Prevent phy suspend during init
-> # good: [a336529a6498c3e7208415b1c2710872aebf04aa] drm/vmwgfx: Fix invalid reads in fence signaled events
-> # good: [dcca5ac4f5de7cca371138049a4a5877a6a3af97] hv_netvsc: Don't free decrypted memory
-> git bisect start 'cfe824b75b3d9d13a891ad1c4a2d6fe0eceed1e9' 'f3d61438b613b87afb63118bea6fb18c50ba7a6b' '428b806127e00d1c39ed72cbae36dbb4598e58dd' 'a336529a6498c3e7208415b1c2710872aebf04aa' 'dcca5ac4f5de7cca371138049a4a5877a6a3af97'
-> # bad: [cfe824b75b3d9d13a891ad1c4a2d6fe0eceed1e9] Linux 6.8.10-rc2
-> git bisect bad cfe824b75b3d9d13a891ad1c4a2d6fe0eceed1e9
-> # good: [00dfda4fc19df6f2235723e9529efa94cbc122a2] nvme-pci: Add quirk for broken MSIs
-> git bisect good 00dfda4fc19df6f2235723e9529efa94cbc122a2
-> # bad: [1239a1c5dc96166a0010de49e4769e08bc6d75b3] Bluetooth: qca: fix wcn3991 device address check
-> git bisect bad 1239a1c5dc96166a0010de49e4769e08bc6d75b3
-> # good: [a2ede3c7da39a8ab359cd23ebba04603e119ac59] ksmbd: do not grant v2 lease if parent lease key and epoch are not set
-> git bisect good a2ede3c7da39a8ab359cd23ebba04603e119ac59
-> # bad: [21b410a9ae24348d143dbfe3062eae67d52d5a76] eventfs: Do not differentiate the toplevel events directory
-> git bisect bad 21b410a9ae24348d143dbfe3062eae67d52d5a76
-> # good: [801cdc1467e661f2b151eeb8a25042593a487c78] tracefs: Still use mount point as default permissions for instances
-> git bisect good 801cdc1467e661f2b151eeb8a25042593a487c78
-> # first bad commit: [21b410a9ae24348d143dbfe3062eae67d52d5a76] eventfs: Do not differentiate the toplevel events directory
+On Wed, May 15, 2024 at 03:54:11PM +0200, Elinor Montmasson wrote:
 
-Thanks for the bisection, I'll go drop this from 6.8 and 6.6 queues.
+> Add documentation about new dts bindings following new support
+> for compatible "fsl,imx-audio-generic".
 
-Hopefully 6.9 doesn't also have this issue.
+>    audio-codec:
+> -    $ref: /schemas/types.yaml#/definitions/phandle
+> -    description: The phandle of an audio codec
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    description: |
+> +      The phandle of an audio codec.
+> +      If using the "fsl,imx-audio-generic" compatible, give instead a pair of
+> +      phandles with the spdif_transmitter first (driver SPDIF DIT) and the
+> +      spdif_receiver second (driver SPDIF DIR).
+> +    items:
+> +      maxItems: 1
 
-greg k-h
+This description (and the code) don't feel like they're actually generic
+- they're clearly specific to the bidrectional S/PDIF case.  I'd expect
+something called -generic to cope with single CODECs as well as double,
+and not to have any constraints on what those are.
+
+--XZeYRrKEjeLfbFL9
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZF994ACgkQJNaLcl1U
+h9B7owf/abYbh4drI6QTSdLIrmNMdhFX4cLfs8jwRLolmoqXOy0BxV3+SchLf/aR
+T+1Cls7jAUyeAqoS8Z4NyDeCa/5Y17c7+QVmcgr53BmGgWjkKhxiyOjrl6q6gEXy
+VMZBcrNghdW1k5rzO3OCOiO38eFODTZ6RzBL0sh3iThDf+qQLKwgKWeZgL7tsuNz
+zJWwE0UVPkuiX9iR2pNWfWb0Q4VuEY9LieR9Onw5+rusb0xLF1PxGD6FaZIHLBBT
+CeeFfhBmLKorYQzK0o8oROWKEIx2o+HFCt/VO4aVmT+xFS5qK2wAOm4u/GtwnQLD
+6C87130dv/yD0+qYIIG6L3mTkpJ29A==
+=nO6y
+-----END PGP SIGNATURE-----
+
+--XZeYRrKEjeLfbFL9--
 
