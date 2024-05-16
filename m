@@ -1,294 +1,760 @@
-Return-Path: <linux-kernel+bounces-181489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A96508C7CBD
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 20:56:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A2478C7CC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 20:57:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F692B21512
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:56:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09CBD281E93
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:57:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61F16156F3C;
-	Thu, 16 May 2024 18:56:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FACE156F3C;
+	Thu, 16 May 2024 18:57:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ECtBA3Vf"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="pLnTqUDv"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A94CEDE;
-	Thu, 16 May 2024 18:56:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.9
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715885784; cv=fail; b=Mxt9bZe+d5M3B4OucRZC+miOu0+pguCiHaQQeb1ruxtWY0V/WtWTU2vdb9QyZXyXoKRhqPMlPLXRrN189JbMohLIcVKGKXd8d3lW752vqrnr69UTXIXYKpQw4BbiSjiob2Xake4flh+7EO/KzazoVQrvzWdmuE/miaPn9aceF+o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715885784; c=relaxed/simple;
-	bh=lwziwO4LZkNxb6IW5QwqS6PwMdIkOqId0cqKt40224A=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=HDMRnaKRdMl3WE2D+9B0deQHwbgCxm/JdePdiu2BUkOAgDTGugq1U1OZy1s5mlHTHw/Ouv+H8MDVx5nEr5QtqZgEOibdWmzCXAOo0RN4gAdCAGc4ll+6wbUeWlQ8fN42q57HLiPBPO5BtAPGM/Un6OLE2UJMGx3OCq+Ow5j1wNE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ECtBA3Vf; arc=fail smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715885782; x=1747421782;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=lwziwO4LZkNxb6IW5QwqS6PwMdIkOqId0cqKt40224A=;
-  b=ECtBA3VfsJlhC5N0piYj4IMyn/DnXCLiMcEkSp2f5AgoML3FQP2ap6hE
-   csF6fraj3wspPKMLDqJcsE5Zg/LkVxc+r18wktk8HunjOMWbWHn/1u5ZM
-   dRR4urSFpHGx9GF9eHWawPd4WTGWL8T4cVI6GRJMSBgHqmK5I9yTHUarg
-   q29POF0gX31fEPC4niWdWnQMfH7GmmYefdRjV2V7Rvh2HqMzLUHw5C4M3
-   LHZoFNiE8hmVoaWk+bMXZM8FWe+l9t39J2Gm5ZYZ56OFtxR73+teFs6Ui
-   z/sXBLWdUYR0yUoz56iivPhCgRyY8P7qLkxnyVRomGrz66rMbNwXhRVsT
-   Q==;
-X-CSE-ConnectionGUID: RVnPPc52QNa8Nu6HmU3FHg==
-X-CSE-MsgGUID: +xYpQaYNRNKVHV20fhkYsg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="22701886"
-X-IronPort-AV: E=Sophos;i="6.08,165,1712646000"; 
-   d="scan'208";a="22701886"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 11:56:21 -0700
-X-CSE-ConnectionGUID: jRl6TtMKRTyP5cuK/C0zZg==
-X-CSE-MsgGUID: A6IWBEJ8Q7CWhRIKfgLipQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,165,1712646000"; 
-   d="scan'208";a="32137797"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by orviesa007.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 16 May 2024 11:56:22 -0700
-Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Thu, 16 May 2024 11:56:21 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Thu, 16 May 2024 11:56:20 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Thu, 16 May 2024 11:56:20 -0700
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.101)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Thu, 16 May 2024 11:56:20 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=E6eo5zFyMfASudIJdmyHZmV2tDXS+PBIfTN0T4sgFJjlXl58atj55kR53ONIMDHO2jUIrz+rQ5J/EUAkkMmp0xbzlOc8X/Cp/8P3MLAhM4DXQ6mnGjy7C/goruWL2ikwaNKRPyiDez+gORTOX+crejdx7ZX3M6s7RfZv5DX6+FwkUK8EC6nroE6n+lbNhYHYtd6no4e00UIpuTdZHxvlbZicepanvnSiGwjZMf8GGBVr9Puy+iiYbUQcsUXpG54DhgMRFKYyQdeq1q8mQ+SQfYrOCA+Y4TexCboMzmSYkhS07zCbqkcTS7LeFpDjPaRLbk+vWdduU4lY0rzWOG4X1A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jey2+mAvgew40MD8VNLkE7EfJ/zTRUACN6apSOc0FUc=;
- b=PFpg1/wvDBZjHmbGY0n04Nv1C4JbgEgIoIxmuUdNSdTlutiLYxx+9ms809Cyw/PLECZ5NHH/bgPQtVZbZKUiQ5MUix+/iHNZRe7jIrorpWLxn8DnCn1WK9f0sVYwtr2870pmY6VGK5Qwqyhg1dNVWGN2NUxUy9TRzFCsvr/AQU0ehJXSAVINCxcVnrvfubKVMbeEySjoPKkdQGgVLkjtF3YIqVE9VrR/XOc+ZfhBFVOMcJzJbXXNsrzgz9SNpBRh9v3RoIBYvwNynqBxU1RKC6Cjy/uFWk3aaJegHauIkWW2o3bsAPd4d30Qde7h56s0XqtedQInYLkTJ3PFF9v3kA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
- by SJ2PR11MB8500.namprd11.prod.outlook.com (2603:10b6:a03:574::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.27; Thu, 16 May
- 2024 18:56:18 +0000
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8%6]) with mapi id 15.20.7544.052; Thu, 16 May 2024
- 18:56:18 +0000
-Date: Thu, 16 May 2024 11:56:15 -0700
-From: Dan Williams <dan.j.williams@intel.com>
-To: Borislav Petkov <bp@alien8.de>, Dan Williams <dan.j.williams@intel.com>
-CC: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>, "Rafael J.
- Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, Tony Luck
-	<tony.luck@intel.com>, <linux-acpi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-edac@vger.kernel.org>,
-	<rostedt@goodmis.org>
-Subject: Re: [RFC PATCH v2 3/3] ACPI: extlog: Make print_extlog_rcd() log
- unconditionally
-Message-ID: <664656cf7c59b_2c2629493@dwillia2-xfh.jf.intel.com.notmuch>
-References: <20240510112740.667445-1-fabio.m.de.francesco@linux.intel.com>
- <7009544.jJDZkT8p0M@fdefranc-mobl3>
- <20240510192556.GDZj50xFIWSqK2gzQR@fat_crate.local>
- <2881368.Ex9A2HvPv6@fdefranc-mobl3>
- <663e9bd4c2525_db82d29451@dwillia2-xfh.jf.intel.com.notmuch>
- <20240511130801.GBZj9tsenZ5SKXgRTm@fat_crate.local>
- <6641548474088_3dce92942b@dwillia2-mobl3.amr.corp.intel.com.notmuch>
- <20240516095714.GCZkXYeiKbUk2QXoIO@fat_crate.local>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240516095714.GCZkXYeiKbUk2QXoIO@fat_crate.local>
-X-ClientProxiedBy: MW4PR03CA0084.namprd03.prod.outlook.com
- (2603:10b6:303:b6::29) To PH8PR11MB8107.namprd11.prod.outlook.com
- (2603:10b6:510:256::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD4C014533D
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 18:57:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715885844; cv=none; b=r/hCHudatIP/eM3m6s8UpYLBsc89FNvyku9DI1hGIznUoxgsj427hNK1Y65yl1B84ytIxM2roWKcclDxCk8zdkDAC/1HogBes3cNNngE/dqNB35Xr56F/ycxHyr6T9zcWGCZ5W0rvSAUC5LjrHjXVtinjHaEiJDeTT4cYnmL+Lo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715885844; c=relaxed/simple;
+	bh=PCwL33wL+HkHbByfEBINtFM0anRwswkCP7Z7IykylsE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aTWD9ViEFiHhE1IrG1X82dwyo3ufcefgSc1b0FoJ8APJQc5Jk512xhXJTdMnP9RSMpfMzvSXWDGyMyoFYptkaFZEjko2HbLuTl5r5rtWLwYBBrhsKtMdcUhCYjzd8jqtJ1dWmNyZqcyOsoUZqx2Y5Q/FqQM1jpPi/qRt5viCzNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pLnTqUDv; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-43dfe020675so83821cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 11:57:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715885841; x=1716490641; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=98F9kFaZ2uv1dBjoVyYJPvYX7altEVqvwNwO0ERf+9c=;
+        b=pLnTqUDvPOCFYac84hje21tiI3x2QsWKRImzbJ/FkT6L6pTgQ+2JE4sr8fXSop3kwe
+         qnT7bjP8ONOq33c13LDk9wuKat9c7M4U2jJ3Oj6LvPdFMfrlE0sEGJAs9yhRus26pRMy
+         Ujqos4Vie5Ul2jwmJSyG1tVixEwoiB3j9DDOC7zVW6ZOa/sh/JnN/pqLREOucFOqOtAd
+         NKdramAz6THdfOFf20OnzrOGpOA30MlpjRyACY9GifR3/ESoq7AFrHgmVgIbgbuT8mbt
+         ZE+iaOYtJbYlgR2nd/in8BqAnXIM8JI2AeyqESLLKEWrIWo2l0Wsi0jBh+aketdzPcxd
+         quKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715885841; x=1716490641;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=98F9kFaZ2uv1dBjoVyYJPvYX7altEVqvwNwO0ERf+9c=;
+        b=hnO7GLs3Dog45HLK5aFmtojklh/G9ZvdB5DFhqNuf8Tzs00A06ZwxwlWTRNFo8Jfsh
+         qoFgoawkXdU1hDzaWmMzMb6Jjg7UVYTY4DKuQpyIb6WgPyhcuptdYn0uZpZtTUb+ReF5
+         QH8qNs0FSSnWHFbhAQjaVf4aSdDRRIyKdwmDpeJLwp9EIFV9jq4ZC3pUo5ixbBtNW1C2
+         MZedc81JPTy9R17yDUEmVug42d/uuuCt7XsP9r8NC9O+u5xgWxMrBqdZxAR2tbA5tDIs
+         fNh0bJAcoirbzhnMAQgTt0L1evmRgQJaDjRnsn55Z345iZppFzk47Pphhu/DODIYoFR9
+         wscA==
+X-Forwarded-Encrypted: i=1; AJvYcCX42v/E/0jv8FPQdoy8hg958d4RxN908S/WW+bp6+qz46DZ6qNnW5xRL7RpNNpL83jQS7MYsbYf7WNK6FRcEYEuqFKclFZ+3QE5sn9X
+X-Gm-Message-State: AOJu0YwfWjaXSQw0NP4/LNJxs26B5xAM1Px/sX9SO1n1D8P63h6P1uol
+	ObgU+Z3WSeUXLZf4b1Ve1tWSptVuerHy7F6yCss9C2sdJbnWfhM+ePdCQLaiSiqlQe2ojeIrj0R
+	a/RMVrdIp9nH5Bhc3KHbg29iMcfuItkdwrwXX
+X-Google-Smtp-Source: AGHT+IENY4M2Aj65cl9mvXkq/hqF9pbs/iW6bMQqK9/7i0zDEaPF7UAaEQ9OiIfj3ABpVBHK4/9FgxU9kwe8qxGvzUI=
+X-Received: by 2002:a05:622a:838b:b0:43a:aa3f:917a with SMTP id
+ d75a77b69052e-43e442e044cmr188191cf.27.1715885841281; Thu, 16 May 2024
+ 11:57:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|SJ2PR11MB8500:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5f6156d3-c7d8-445b-7ec3-08dc75d9deb7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|376005|1800799015;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?5N77b9ZA76iJVj0/gJvMDAtpl2Y6UO3NUq/HYeF0sK2i5lzZ6Rv+7NZMtxZX?=
- =?us-ascii?Q?GCIdC3uTUQqjuIcTgBMySHX98wB0EBLt/QV+1+YEbJqMokpQITzrx24YeEu6?=
- =?us-ascii?Q?srYq12M8nqUHU/1FDGQ+zs9cnaBfR747MDASXhAPpIoPMXfuksH+CAfS7VK6?=
- =?us-ascii?Q?Bv2SDMagLYN4dr9B33EUxCgXqb+kVvF/7FV7qTEWfoWlmdv3FMQL1487kxM/?=
- =?us-ascii?Q?YXlVCg+OQYK8C3Vuhv8oaKgrO/k2l6HaOZReMunUheN5d2AdYKJ/ealbfmqf?=
- =?us-ascii?Q?EgNkHNZDveXlYyQnsmJx0jPafY/e7EjCOlfRYjkltwErf5z71DI5SJ2CjD1/?=
- =?us-ascii?Q?43Fov2iYf2T2bjc78JhzzetQshOJv7TwSJRNKkwgfRBg56Umr4xkQ6A8mngK?=
- =?us-ascii?Q?ObUcTjZnoilaLdNus3HTnROn9iGLVYWKHefBWYM1ccfmuQzDcr/4x4YNyt/g?=
- =?us-ascii?Q?rzjKsT7SCc93DGjuF0ZndCdkbg7Vxno7RLJMjQSioGvfoK88C11anV7vfofU?=
- =?us-ascii?Q?tqfqYtn+000+SFynYxnv9at2ZDGO+PWpoSMOF6P5VMV/GcHE314Qh/7PjfEx?=
- =?us-ascii?Q?uvs3rdSL6F3xfebeexEBu/t3W4QqDzCM+OkadWsmmwflp28SO8xvTcGK2e9o?=
- =?us-ascii?Q?EbdSr/UPhIf1elhbmcEziqa/po5MZH2j98x14Bm8B5/Pyz2K5YpfSMfytW4E?=
- =?us-ascii?Q?WgpPAKY31auTN1S3V+Mkg8wGdZibTaGl7Y9SQG771smLpHFr9JTL7E1+2vtN?=
- =?us-ascii?Q?CVyAH40wZ229BDEqr+qWAjP5XVm+38aCMAx+qdCF66XkOOkR+gfIicNtHGyF?=
- =?us-ascii?Q?EVuzs09MSxHYIRR5lX+kbY0V3V1RCQN06NTftOO2BINKTFtlayKXB5lfK99S?=
- =?us-ascii?Q?e1Z5f0LjOvZUUFxX5+QBpBkxNaQ8IoBaKIbaRcxnXdQ3I+Niae57U8AWWb5P?=
- =?us-ascii?Q?pvUuvt6YPqoNslo8DQbEZ9sgMFco0uVpFWFQx70Mkyz3tnhNf/2EkSeRf6Ld?=
- =?us-ascii?Q?DGKNPr8Po/969iMYeEHGr5l/mYVOjBSqdJxTyoO5GdmeDBg/VcwxaynUGlOb?=
- =?us-ascii?Q?Fr/ysp0vDq837CySrIbz04+eGT3BqDZJpVlZ1p9eFS06OoRb5g7DiFPqZP42?=
- =?us-ascii?Q?ZwxWSsjM6HIqtockYMSuDXPpekmSXSMgWaoMSZYpb5KuqpHe61ErxulElrsS?=
- =?us-ascii?Q?IAe+ZdFiTH+Q8FFTpJ86ZZ1HALcyaKGPC8ziMHoCzN1x5H/OpKpMWeCoY1ad?=
- =?us-ascii?Q?XSFuXem72fugsqL1TYddhls9GhHGIgDY0SoaWVApBQ=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(1800799015);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?e9zukV6BNAopPpj0ZJEB+8lt5E3/y/8x1Ri35bgKFsboDpWVL1uERzc/jBKJ?=
- =?us-ascii?Q?IDqiSZ4KK+FBjO+EFhI7kqiEt3wJisvjbLVubpYyHyl3nCZ/KengTCzgxTQJ?=
- =?us-ascii?Q?jGf7WZmflJjOT5WHXst5RY/S2SoRGWTEpcG+e/giSWMGOjU5zzx7DQMGm7c1?=
- =?us-ascii?Q?ARhOLmaMuPBGCCNwDhHlhaCdgaDIZMke7DBkOPe74enG1iuykCBTydJTtSbQ?=
- =?us-ascii?Q?T03HurJ8/npjZQ45/KL5OGlbD3kSR36TauFtydoViX0kUox1jkcpZ2Ifywjb?=
- =?us-ascii?Q?9CnGn9zJPGV7/WcTpaeQVTBY3M+BNl/KoBvssushGm3/E0lPSOkT33kZ4i1a?=
- =?us-ascii?Q?HeT/ap7pCBFCVr74KoV3Ym1Cc5PIww10Zms4oHPwiauQhIPvF/7YkMgKkqxG?=
- =?us-ascii?Q?c3PdnDpRBYhM8yKLcXA3wkLKfCCKVIDr0GrFihDKlKwzUAYwTSi8m7vwm+o0?=
- =?us-ascii?Q?i1SvR3j+tStSqD7+lWh7a+u1sRjiQ1iuDYOx2Shw3IhTsi8NHrGWPymlPTOW?=
- =?us-ascii?Q?pRBmWiWcNlW+rnZMBsLC4oMLLmSa8ExXQVgljxGc3OwBX8spblZn0OEby84I?=
- =?us-ascii?Q?BNZBZiQwBa/jqSjiLPDZu7KNYmJZHOlE58NG76uohBWcKTmCgFfvCeczn+hV?=
- =?us-ascii?Q?EK6GU7+EWyixdutCWd6aajFUztD0Y3lEHsnL2ieGK4Ogd1MAaO/MaNPRcrc8?=
- =?us-ascii?Q?uNQBlVPIyJwDt+/Pj4bnANyk7aweMA+LeEYhY3ylnJ+yvqIh+FSYzpzd2HWj?=
- =?us-ascii?Q?nzt2E716KhS2mLB8pc6l6G1aIUqsHzM/al3OTq21vBrejOv61HlNx3ZFP4Yd?=
- =?us-ascii?Q?pOk1iyvYTXkTLW21yzRIvnj5Mt6CcxP6Oha1FRnkVm5Vg6MiC97HPtOWDvKS?=
- =?us-ascii?Q?etaQE7ij+wIuCZi6fzLCf/Jvhf3Cy4bN0LlcfFemNoW6PBtgwpEPRszN/SbH?=
- =?us-ascii?Q?7VNcvfGLPpL/+KuYM8z5RPCq/5GY4LL1s6dZWI9HFeu3Rr20FP2GD5qNqCSA?=
- =?us-ascii?Q?oMs8FDRRt6rlJoptbHtZt8yqdlyGh2PLhCf3FrFIXIqp3UUeIX2RnlWETDCm?=
- =?us-ascii?Q?C8M34wAtGggZ3El+uner1vRk+kjYAt/4RGhY8LreG171gwEAwbAMw7MM3CV0?=
- =?us-ascii?Q?kyB5oniTh3J8caPJNbrOarRqYVRe+3TlYPm6Ih2CqGryvqosmuDJQeRp21WK?=
- =?us-ascii?Q?98zAVfcGQ+ejR9plmV1RTPN8jqdNdGLyAyr6MvGswlCn1tSIdIuRlXg1mJ7T?=
- =?us-ascii?Q?AvZaZhTd91VfLBJgBuMZYv4f9QPEc8/e7ecwaAKRXxNrf8aQ7e0HYLVFc0Q+?=
- =?us-ascii?Q?fUNd9Hi2lOj09e4BV27hvEiswTqWBEylJMkmc8vFNmxVM/3CmaeUywzl6iKF?=
- =?us-ascii?Q?S+KHmXDrvMX/rfJVgTlk2q723Mv3LXggYkIf2yINvU1fYXDxWsS6wt3L0kJG?=
- =?us-ascii?Q?Ei6jSVlBQcWGvXVwKFZPqLng9j9tRQPtzDBBE1Zv2qV5sQS5kLirD8oYOhGW?=
- =?us-ascii?Q?4MEbS9XQOMQQGzFX0FhKzGm3GEpSFC6Z0AXLe7x7ZNtuxxxSRBQQAGhT2Uek?=
- =?us-ascii?Q?QQJLFbdVVkMsRouum9G2K/4BX5oKv/OmH8B3J9Vu3XbhoLUUfjfCyLYaWOIn?=
- =?us-ascii?Q?+A=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5f6156d3-c7d8-445b-7ec3-08dc75d9deb7
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 May 2024 18:56:18.6073
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: TvQd+4u/fCOwN9Kbnn7b3MeH8NBfVvUSwENX4H6pZIxREOW66OyaS2Vu9sO2FH5rAOQhSpnYKeETrxGPupVMQQ+uJh3dshpds3k23CzMCFg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR11MB8500
-X-OriginatorOrg: intel.com
+References: <20240515142056.1374495-1-ivan.orlov0322@gmail.com>
+In-Reply-To: <20240515142056.1374495-1-ivan.orlov0322@gmail.com>
+From: Rae Moar <rmoar@google.com>
+Date: Thu, 16 May 2024 14:57:08 -0400
+Message-ID: <CA+GJov4e8K2gWbQQA_vZvWs34OZJ7biMTkOnGAhfidG4V_dPJg@mail.gmail.com>
+Subject: Re: [PATCH v4] kunit: Cover 'assert.c' with tests
+To: Ivan Orlov <ivan.orlov0322@gmail.com>
+Cc: brendan.higgins@linux.dev, davidgow@google.com, 
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kunit-dev@googlegroups.com, skhan@linuxfoundation.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-[ add Steven for a "deprecate emitting hardware errors with explicit printk" discussion ]
+On Wed, May 15, 2024 at 10:20=E2=80=AFAM Ivan Orlov <ivan.orlov0322@gmail.c=
+om> wrote:
+>
+> There are multiple assertion formatting functions in the `assert.c`
+> file, which are not covered with tests yet. Implement the KUnit test
+> for these functions.
+>
+> The test consists of 11 test cases for the following functions:
+>
+> 1) 'is_literal'
+> 2) 'is_str_literal'
+> 3) 'kunit_assert_prologue', test case for multiple assert types
+> 4) 'kunit_assert_print_msg'
+> 5) 'kunit_unary_assert_format'
+> 6) 'kunit_ptr_not_err_assert_format'
+> 7) 'kunit_binary_assert_format'
+> 8) 'kunit_binary_ptr_assert_format'
+> 9) 'kunit_binary_str_assert_format'
+> 10) 'kunit_assert_hexdump'
+> 11) 'kunit_mem_assert_format'
+>
+> The test aims at maximizing the branch coverage for the assertion
+> formatting functions.
+>
+> As you can see, it covers some of the static helper functions as
+> well, so mark the static functions in `assert.c` as 'VISIBLE_IF_KUNIT'
+> and conditionally export them with EXPORT_SYMBOL_IF_KUNIT. Add the
+> corresponding definitions to `assert.h`.
+>
+> Build the assert test when CONFIG_KUNIT_TEST is enabled, similar to
+> how it is done for the string stream test.
+>
+> Signed-off-by: Ivan Orlov <ivan.orlov0322@gmail.com>
+> ---
+> V1 -> V2:
+> - Check the output from the string stream for containing the key parts
+> instead of comparing the results with expected strings char by char, as
+> it was suggested by Rae Moar <rmoar@google.com>. Define two macros to
+> make it possible (ASSERT_TEST_EXPECT_CONTAIN and
+> ASSERT_TEST_EXPECT_NCONTAIN).
+> - Mark the static functions in `assert.c` as VISIBLE_IF_KUNIT and export
+> them conditionally if kunit is enabled instead of including the
+> `assert_test.c` file in the end of `assert.c`. This way we will decouple
+> the test from the implementation (SUT).
+> - Update the kunit_assert_hexdump test: now it checks for presense of
+> the brackets '<>' around the non-matching bytes, instead of comparing
+> the kunit_assert_hexdump output char by char.
+> V2 -> V3:
+> - Make test case array and test suite definitions static
+> - Change the condition in `assert.h`: we should declare VISIBLE_IF_KUNIT
+> functions in the header file when CONFIG_KUNIT is enabled, not
+> CONFIG_KUNIT_TEST. Otherwise, if CONFIG_KUNIT_TEST is disabled,
+> VISIBLE_IF_KUNIT functions in the `assert.c` are not static, and
+> prototypes for them can't be found.
+> - Add MODULE_LICENSE and MODULE_DESCRIPTION macros
+> V3 -> V4:
+> - Compile the assertion test only when CONFIG_KUNIT_TEST is set to 'y',
+> as it is done for the string-stream test. It is necessary since
+> functions from the string-stream are not exported into the public
+> namespace, and therefore they are not accessible when linking and
+> loading the test module.
 
-Borislav Petkov wrote:
-> On Sun, May 12, 2024 at 04:45:08PM -0700, Dan Williams wrote:
-> > Yes, my point though was that if it got deleted I doubt anyone would
-> > notice. rasdaemon explicitly does not check the return from
-> > open("daemon_active").
-> 
-> The intent was for userspace to open it and thus it'll increment
-> trace_count which then ras_userspace_consumers() reads...
-> 
-> > I am also curious about the history here. This "daemon_active" scheme is
-> > an awkward way to detect that something is consuming the tracepoint. It
-> > was added on v4.0, but Steven had added "tracepoint_enabled()" back in
-> > v3.17:
-> > 
-> > 7c65bbc7dcfa tracing: Add trace_<tracepoint>_enabled() function
-> 
-> Ha, I usually talk to Rostedt for all things tracepoint when wondering
-> how we could use them for RAS purposes but I haven't this time, it
-> seems.
-> 
-> > So even if non-rasdaemon userspace was watching the extlog tracepoints
-> > they would not fire because ras_userspace_consumers() prevents it.
-> >
-> > I am finding it difficult to see why ras_userspace_consumers() needs to
-> > continue to be maintained.
-> 
-> Well, you still need some functionality which tests whether a userspace
-> daemon consumes RAS events. Whether it is something cludgy like now or
-> something which checks whether all RAS tracepoints have been enabled,
-> something's gotta be there.
+Hi Ivan!
 
-Honest question, why? Lets deprecate that path. As an example, this
-extlog path has bit-rotted and not kept pace with the same level of
-error reporting that is available via ACPI GHES or OS native
-tracepoints.
+This looks great! Just one last thing, since this test is no longer
+loadable as a module, could you remove the exporting of new symbols
+and adding of the module license. Those can be part of the next patch,
+where we convert these tests to modules.
 
-Given that is has not kept pace the next question is whether the kernel
-should bother to maintain the contract => "if nothing is watching
-tracepoints some subset (all?) hardware error messages will be reflected
-to the kernel log".
+Thanks!
+-Rae
 
-I would point to tp_printk as a way to get tracepoints into the kernel
-log. If that is too coarse-grained a replacement for print_extlog_rcd()
-I would advocate spending time making tp_printk control more
-fine-grained rather than perpetuate this duplicated emission path for
-error info.
+>
+>  include/kunit/assert.h  |  11 ++
+>  lib/kunit/Makefile      |   1 +
+>  lib/kunit/assert.c      |  24 ++-
+>  lib/kunit/assert_test.c | 391 ++++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 419 insertions(+), 8 deletions(-)
+>  create mode 100644 lib/kunit/assert_test.c
+>
+> diff --git a/include/kunit/assert.h b/include/kunit/assert.h
+> index 24c2b9fa61e8..7e7490a74b13 100644
+> --- a/include/kunit/assert.h
+> +++ b/include/kunit/assert.h
+> @@ -218,4 +218,15 @@ void kunit_mem_assert_format(const struct kunit_asse=
+rt *assert,
+>                              const struct va_format *message,
+>                              struct string_stream *stream);
+>
+> +#if IS_ENABLED(CONFIG_KUNIT)
+> +void kunit_assert_print_msg(const struct va_format *message,
+> +                           struct string_stream *stream);
+> +bool is_literal(const char *text, long long value);
+> +bool is_str_literal(const char *text, const char *value);
+> +void kunit_assert_hexdump(struct string_stream *stream,
+> +                         const void *buf,
+> +                         const void *compared_buf,
+> +                         const size_t len);
+> +#endif
+> +
+>  #endif /*  _KUNIT_ASSERT_H */
+> diff --git a/lib/kunit/Makefile b/lib/kunit/Makefile
+> index 309659a32a78..900e6447c8e8 100644
+> --- a/lib/kunit/Makefile
+> +++ b/lib/kunit/Makefile
+> @@ -22,6 +22,7 @@ obj-$(CONFIG_KUNIT_TEST) +=3D           kunit-test.o
+>  # string-stream-test compiles built-in only.
+>  ifeq ($(CONFIG_KUNIT_TEST),y)
+>  obj-$(CONFIG_KUNIT_TEST) +=3D            string-stream-test.o
+> +obj-$(CONFIG_KUNIT_TEST) +=3D            assert_test.o
+>  endif
+>
+>  obj-$(CONFIG_KUNIT_EXAMPLE_TEST) +=3D    kunit-example-test.o
+> diff --git a/lib/kunit/assert.c b/lib/kunit/assert.c
+> index dd1d633d0fe2..382eb409d34b 100644
+> --- a/lib/kunit/assert.c
+> +++ b/lib/kunit/assert.c
+> @@ -7,6 +7,7 @@
+>   */
+>  #include <kunit/assert.h>
+>  #include <kunit/test.h>
+> +#include <kunit/visibility.h>
+>
+>  #include "string-stream.h"
+>
+> @@ -30,12 +31,14 @@ void kunit_assert_prologue(const struct kunit_loc *lo=
+c,
+>  }
+>  EXPORT_SYMBOL_GPL(kunit_assert_prologue);
+>
+> -static void kunit_assert_print_msg(const struct va_format *message,
+> -                                  struct string_stream *stream)
+> +VISIBLE_IF_KUNIT
+> +void kunit_assert_print_msg(const struct va_format *message,
+> +                           struct string_stream *stream)
+>  {
+>         if (message->fmt)
+>                 string_stream_add(stream, "\n%pV", message);
+>  }
+> +EXPORT_SYMBOL_IF_KUNIT(kunit_assert_print_msg);
 
-Something like a new annotation for tracepoints marking them as "emit to
-kernel log if no-one is watching this high-priority trace event"?
+This symbol does not have to be exported because the test is not
+loadable as a module.
 
-> > That would be odd since there is no ras_userspace_consumers() in the
-> > ACPI GHES path,
-> 
-> Probably because no one's using RAS daemon with GHES. I at least haven't
-> heard of anyone complaining about this yet...
+>
+>  void kunit_fail_assert_format(const struct kunit_assert *assert,
+>                               const struct va_format *message,
+> @@ -89,7 +92,7 @@ void kunit_ptr_not_err_assert_format(const struct kunit=
+_assert *assert,
+>  EXPORT_SYMBOL_GPL(kunit_ptr_not_err_assert_format);
+>
+>  /* Checks if `text` is a literal representing `value`, e.g. "5" and 5 */
+> -static bool is_literal(const char *text, long long value)
+> +VISIBLE_IF_KUNIT bool is_literal(const char *text, long long value)
+>  {
+>         char *buffer;
+>         int len;
+> @@ -110,6 +113,7 @@ static bool is_literal(const char *text, long long va=
+lue)
+>
+>         return ret;
+>  }
+> +EXPORT_SYMBOL_IF_KUNIT(is_literal);
 
-Well no, there is little to complain about in that path because that
-path does not play "is anybody watching" games. It always emits to the
-kernel log (subject to rate limiting) and then follows up with always
-emitting a tracepoint (subject to standard trace filtering).
+Same here.
 
-For CXL I asked that its events deprecate the kernel log path with the
-hope of not growing new userspace dependencies on kernel log parsing for
-newfangled CXL errors.
+>
+>  void kunit_binary_assert_format(const struct kunit_assert *assert,
+>                                 const struct va_format *message,
+> @@ -166,7 +170,7 @@ EXPORT_SYMBOL_GPL(kunit_binary_ptr_assert_format);
+>  /* Checks if KUNIT_EXPECT_STREQ() args were string literals.
+>   * Note: `text` will have ""s where as `value` will not.
+>   */
+> -static bool is_str_literal(const char *text, const char *value)
+> +VISIBLE_IF_KUNIT bool is_str_literal(const char *text, const char *value=
+)
+>  {
+>         int len;
+>
+> @@ -178,6 +182,7 @@ static bool is_str_literal(const char *text, const ch=
+ar *value)
+>
+>         return strncmp(text + 1, value, len - 2) =3D=3D 0;
+>  }
+> +EXPORT_SYMBOL_IF_KUNIT(is_str_literal);
 
-[..]
-> > Would be great to hear from folks that have a reasons for kernel log
-> > message error reporting to continue.
-> 
-> Right, from my experience so far, you never hear anything. :-\
-> 
-> So if we do anything, it should be something simple and which works for
-> almost everyone.
-> 
-> With RAS, everyone does their own thing. And then there's the firmware
-> which claims that it can do better RAS but then f*cks up on basic things
-> like *actually* shipping a working EINJ or whatever implementation.
+Same here.
 
-*sad nod*
+>
+>  void kunit_binary_str_assert_format(const struct kunit_assert *assert,
+>                                     const struct va_format *message,
+> @@ -208,10 +213,11 @@ EXPORT_SYMBOL_GPL(kunit_binary_str_assert_format);
+>  /* Adds a hexdump of a buffer to a string_stream comparing it with
+>   * a second buffer. The different bytes are marked with <>.
+>   */
+> -static void kunit_assert_hexdump(struct string_stream *stream,
+> -                                const void *buf,
+> -                                const void *compared_buf,
+> -                                const size_t len)
+> +VISIBLE_IF_KUNIT
+> +void kunit_assert_hexdump(struct string_stream *stream,
+> +                         const void *buf,
+> +                         const void *compared_buf,
+> +                         const size_t len)
+>  {
+>         size_t i;
+>         const u8 *buf1 =3D buf;
+> @@ -229,6 +235,7 @@ static void kunit_assert_hexdump(struct string_stream=
+ *stream,
+>                         string_stream_add(stream, " %02x ", buf1[i]);
+>         }
+>  }
+> +EXPORT_SYMBOL_IF_KUNIT(kunit_assert_hexdump);
 
-> So in the end of the day it is, oh, we need our drivers in the OS
-> because we can't fix firmware. It is harder to fix it than *hardware*
-> :-P
+Same here.
 
-At least when the firmware gets out of the way Linux has a chance to
-solve user issues.
+>
+>  void kunit_mem_assert_format(const struct kunit_assert *assert,
+>                              const struct va_format *message,
+> @@ -269,4 +276,5 @@ void kunit_mem_assert_format(const struct kunit_asser=
+t *assert,
+>                 kunit_assert_print_msg(message, stream);
+>         }
+>  }
+> +
+>  EXPORT_SYMBOL_GPL(kunit_mem_assert_format);
+> diff --git a/lib/kunit/assert_test.c b/lib/kunit/assert_test.c
+> new file mode 100644
+> index 000000000000..1347a964204b
+> --- /dev/null
+> +++ b/lib/kunit/assert_test.c
+> @@ -0,0 +1,391 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * KUnit test for the assertion formatting functions.
+> + * Author: Ivan Orlov <ivan.orlov0322@gmail.com>
+> + */
+> +#include <kunit/test.h>
+> +#include "string-stream.h"
+> +
+> +#define TEST_PTR_EXPECTED_BUF_SIZE 32
+> +#define HEXDUMP_TEST_BUF_LEN 5
+> +#define ASSERT_TEST_EXPECT_CONTAIN(test, str, substr) KUNIT_EXPECT_TRUE(=
+test, strstr(str, substr))
+> +#define ASSERT_TEST_EXPECT_NCONTAIN(test, str, substr) KUNIT_EXPECT_FALS=
+E(test, strstr(str, substr))
+> +
+> +static void kunit_test_is_literal(struct kunit *test)
+> +{
+> +       KUNIT_EXPECT_TRUE(test, is_literal("5", 5));
+> +       KUNIT_EXPECT_TRUE(test, is_literal("0", 0));
+> +       KUNIT_EXPECT_TRUE(test, is_literal("1234567890", 1234567890));
+> +       KUNIT_EXPECT_TRUE(test, is_literal("-1234567890", -1234567890));
+> +       KUNIT_EXPECT_FALSE(test, is_literal("05", 5));
+> +       KUNIT_EXPECT_FALSE(test, is_literal("", 0));
+> +       KUNIT_EXPECT_FALSE(test, is_literal("-0", 0));
+> +       KUNIT_EXPECT_FALSE(test, is_literal("12#45", 1245));
+> +}
+> +
+> +static void kunit_test_is_str_literal(struct kunit *test)
+> +{
+> +       KUNIT_EXPECT_TRUE(test, is_str_literal("\"Hello, World!\"", "Hell=
+o, World!"));
+> +       KUNIT_EXPECT_TRUE(test, is_str_literal("\"\"", ""));
+> +       KUNIT_EXPECT_TRUE(test, is_str_literal("\"\"\"", "\""));
+> +       KUNIT_EXPECT_FALSE(test, is_str_literal("", ""));
+> +       KUNIT_EXPECT_FALSE(test, is_str_literal("\"", "\""));
+> +       KUNIT_EXPECT_FALSE(test, is_str_literal("\"Abacaba", "Abacaba"));
+> +       KUNIT_EXPECT_FALSE(test, is_str_literal("Abacaba\"", "Abacaba"));
+> +       KUNIT_EXPECT_FALSE(test, is_str_literal("\"Abacaba\"", "\"Abacaba=
+\""));
+> +}
+> +
+> +KUNIT_DEFINE_ACTION_WRAPPER(kfree_wrapper, kfree, const void *);
+> +
+> +/* this function is used to get a "char *" string from the string stream=
+ and defer its cleanup  */
+> +static char *get_str_from_stream(struct kunit *test, struct string_strea=
+m *stream)
+> +{
+> +       char *str =3D string_stream_get_string(stream);
+> +
+> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, str);
+> +       kunit_add_action(test, kfree_wrapper, (void *)str);
+> +
+> +       return str;
+> +}
+> +
+> +static void kunit_test_assert_prologue(struct kunit *test)
+> +{
+> +       struct string_stream *stream;
+> +       char *str;
+> +       const struct kunit_loc location =3D {
+> +               .file =3D "testfile.c",
+> +               .line =3D 1337,
+> +       };
+> +
+> +       stream =3D kunit_alloc_string_stream(test, GFP_KERNEL);
+> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, stream);
+> +
+> +       /* Test an expectation fail prologue */
+> +       kunit_assert_prologue(&location, KUNIT_EXPECTATION, stream);
+> +       str =3D get_str_from_stream(test, stream);
+> +       ASSERT_TEST_EXPECT_CONTAIN(test, str, "EXPECTATION");
+> +       ASSERT_TEST_EXPECT_CONTAIN(test, str, "testfile.c");
+> +       ASSERT_TEST_EXPECT_CONTAIN(test, str, "1337");
+> +
+> +       /* Test an assertion fail prologue */
+> +       string_stream_clear(stream);
+> +       kunit_assert_prologue(&location, KUNIT_ASSERTION, stream);
+> +       str =3D get_str_from_stream(test, stream);
+> +       ASSERT_TEST_EXPECT_CONTAIN(test, str, "ASSERTION");
+> +       ASSERT_TEST_EXPECT_CONTAIN(test, str, "testfile.c");
+> +       ASSERT_TEST_EXPECT_CONTAIN(test, str, "1337");
+> +}
+> +
+> +/*
+> + * This function accepts an arbitrary count of parameters and generates =
+a va_format struct,
+> + * which can be used to validate kunit_assert_print_msg function
+> + */
+> +static void verify_assert_print_msg(struct kunit *test,
+> +                                   struct string_stream *stream,
+> +                                   char *expected, const char *format, .=
+.)
+> +{
+> +       va_list list;
+> +       const struct va_format vformat =3D {
+> +               .fmt =3D format,
+> +               .va =3D &list,
+> +       };
+> +
+> +       va_start(list, format);
+> +       string_stream_clear(stream);
+> +       kunit_assert_print_msg(&vformat, stream);
+> +       KUNIT_EXPECT_STREQ(test, get_str_from_stream(test, stream), expec=
+ted);
+> +}
+> +
+> +static void kunit_test_assert_print_msg(struct kunit *test)
+> +{
+> +       struct string_stream *stream;
+> +
+> +       stream =3D kunit_alloc_string_stream(test, GFP_KERNEL);
+> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, stream);
+> +
+> +       verify_assert_print_msg(test, stream, "\nTest", "Test");
+> +       verify_assert_print_msg(test, stream, "\nAbacaba -123 234", "%s %=
+d %u",
+> +                               "Abacaba", -123, 234U);
+> +       verify_assert_print_msg(test, stream, "", NULL);
+> +}
+> +
+> +/*
+> + * Further code contains the tests for different assert format functions=
+.
+> + * This helper function accepts the assert format function, executes it =
+and
+> + * validates the result string from the stream by checking that all of t=
+he
+> + * substrings exist in the output.
+> + */
+> +static void validate_assert(assert_format_t format_func, struct kunit *t=
+est,
+> +                           const struct kunit_assert *assert,
+> +                           struct string_stream *stream, int num_checks,=
+ ...)
+> +{
+> +       size_t i;
+> +       va_list checks;
+> +       char *cur_substr_exp;
+> +       struct va_format message =3D { NULL, NULL };
+> +
+> +       va_start(checks, num_checks);
+> +       string_stream_clear(stream);
+> +       format_func(assert, &message, stream);
+> +
+> +       for (i =3D 0; i < num_checks; i++) {
+> +               cur_substr_exp =3D va_arg(checks, char *);
+> +               ASSERT_TEST_EXPECT_CONTAIN(test, get_str_from_stream(test=
+, stream), cur_substr_exp);
+> +       }
+> +}
+> +
+> +static void kunit_test_unary_assert_format(struct kunit *test)
+> +{
+> +       struct string_stream *stream;
+> +       struct kunit_assert assert =3D {};
+> +       struct kunit_unary_assert un_assert =3D {
+> +               .assert =3D assert,
+> +               .condition =3D "expr",
+> +               .expected_true =3D true,
+> +       };
+> +
+> +       stream =3D kunit_alloc_string_stream(test, GFP_KERNEL);
+> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, stream);
+> +
+> +       validate_assert(kunit_unary_assert_format, test, &un_assert.asser=
+t,
+> +                       stream, 2, "true", "is false");
+> +
+> +       un_assert.expected_true =3D false;
+> +       validate_assert(kunit_unary_assert_format, test, &un_assert.asser=
+t,
+> +                       stream, 2, "false", "is true");
+> +}
+> +
+> +static void kunit_test_ptr_not_err_assert_format(struct kunit *test)
+> +{
+> +       struct string_stream *stream;
+> +       struct kunit_assert assert =3D {};
+> +       struct kunit_ptr_not_err_assert not_err_assert =3D {
+> +               .assert =3D assert,
+> +               .text =3D "expr",
+> +               .value =3D NULL,
+> +       };
+> +
+> +       stream =3D kunit_alloc_string_stream(test, GFP_KERNEL);
+> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, stream);
+> +
+> +       /* Value is NULL. The corresponding message should be printed out=
+ */
+> +       validate_assert(kunit_ptr_not_err_assert_format, test,
+> +                       &not_err_assert.assert,
+> +                       stream, 1, "null");
+> +
+> +       /* Value is not NULL, but looks like an error pointer. Error shou=
+ld be printed out */
+> +       not_err_assert.value =3D (void *)-12;
+> +       validate_assert(kunit_ptr_not_err_assert_format, test,
+> +                       &not_err_assert.assert, stream, 2,
+> +                       "error", "-12");
+> +}
+> +
+> +static void kunit_test_binary_assert_format(struct kunit *test)
+> +{
+> +       struct string_stream *stream;
+> +       struct kunit_assert assert =3D {};
+> +       struct kunit_binary_assert_text text =3D {
+> +               .left_text =3D "1 + 2",
+> +               .operation =3D "=3D=3D",
+> +               .right_text =3D "2",
+> +       };
+> +       const struct kunit_binary_assert binary_assert =3D {
+> +               .assert =3D assert,
+> +               .text =3D &text,
+> +               .left_value =3D 3,
+> +               .right_value =3D 2,
+> +       };
+> +
+> +       stream =3D kunit_alloc_string_stream(test, GFP_KERNEL);
+> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, stream);
+> +
+> +       /*
+> +        * Printed values should depend on the input we provide: the left=
+ text, right text, left
+> +        * value and the right value.
+> +        */
+> +       validate_assert(kunit_binary_assert_format, test, &binary_assert.=
+assert,
+> +                       stream, 4, "1 + 2", "2", "3", "=3D=3D");
+> +
+> +       text.right_text =3D "4 - 2";
+> +       validate_assert(kunit_binary_assert_format, test, &binary_assert.=
+assert,
+> +                       stream, 3, "=3D=3D", "1 + 2", "4 - 2");
+> +
+> +       text.left_text =3D "3";
+> +       validate_assert(kunit_binary_assert_format, test, &binary_assert.=
+assert,
+> +                       stream, 4, "3", "4 - 2", "2", "=3D=3D");
+> +
+> +       text.right_text =3D "2";
+> +       validate_assert(kunit_binary_assert_format, test, &binary_assert.=
+assert,
+> +                       stream, 3, "3", "2", "=3D=3D");
+> +}
+> +
+> +static void kunit_test_binary_ptr_assert_format(struct kunit *test)
+> +{
+> +       struct string_stream *stream;
+> +       struct kunit_assert assert =3D {};
+> +       char *addr_var_a, *addr_var_b;
+> +       static const void *var_a =3D (void *)0xDEADBEEF;
+> +       static const void *var_b =3D (void *)0xBADDCAFE;
+> +       struct kunit_binary_assert_text text =3D {
+> +               .left_text =3D "var_a",
+> +               .operation =3D "=3D=3D",
+> +               .right_text =3D "var_b",
+> +       };
+> +       struct kunit_binary_ptr_assert binary_ptr_assert =3D {
+> +               .assert =3D assert,
+> +               .text =3D &text,
+> +               .left_value =3D var_a,
+> +               .right_value =3D var_b,
+> +       };
+> +
+> +       addr_var_a =3D kunit_kzalloc(test, TEST_PTR_EXPECTED_BUF_SIZE, GF=
+P_KERNEL);
+> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, addr_var_a);
+> +       addr_var_b =3D kunit_kzalloc(test, TEST_PTR_EXPECTED_BUF_SIZE, GF=
+P_KERNEL);
+> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, addr_var_b);
+> +       /*
+> +        * Print the addresses to the buffers first.
+> +        * This is necessary as we may have different count of leading ze=
+ros in the pointer
+> +        * on different architectures.
+> +        */
+> +       snprintf(addr_var_a, TEST_PTR_EXPECTED_BUF_SIZE, "%px", var_a);
+> +       snprintf(addr_var_b, TEST_PTR_EXPECTED_BUF_SIZE, "%px", var_b);
+> +
+> +       stream =3D kunit_alloc_string_stream(test, GFP_KERNEL);
+> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, stream);
+> +       validate_assert(kunit_binary_ptr_assert_format, test, &binary_ptr=
+_assert.assert,
+> +                       stream, 3, addr_var_a, addr_var_b, "=3D=3D");
+> +}
+> +
+> +static void kunit_test_binary_str_assert_format(struct kunit *test)
+> +{
+> +       struct string_stream *stream;
+> +       struct kunit_assert assert =3D {};
+> +       static const char *var_a =3D "abacaba";
+> +       static const char *var_b =3D "kernel";
+> +       struct kunit_binary_assert_text text =3D {
+> +               .left_text =3D "var_a",
+> +               .operation =3D "=3D=3D",
+> +               .right_text =3D "var_b",
+> +       };
+> +       struct kunit_binary_str_assert binary_str_assert =3D {
+> +               .assert =3D assert,
+> +               .text =3D &text,
+> +               .left_value =3D var_a,
+> +               .right_value =3D var_b,
+> +       };
+> +
+> +       stream =3D kunit_alloc_string_stream(test, GFP_KERNEL);
+> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, stream);
+> +
+> +       validate_assert(kunit_binary_str_assert_format, test,
+> +                       &binary_str_assert.assert,
+> +                       stream, 5, "var_a", "var_b", "\"abacaba\"",
+> +                       "\"kernel\"", "=3D=3D");
+> +
+> +       text.left_text =3D "\"abacaba\"";
+> +       validate_assert(kunit_binary_str_assert_format, test, &binary_str=
+_assert.assert,
+> +                       stream, 4, "\"abacaba\"", "var_b", "\"kernel\"", =
+"=3D=3D");
+> +
+> +       text.right_text =3D "\"kernel\"";
+> +       validate_assert(kunit_binary_str_assert_format, test, &binary_str=
+_assert.assert,
+> +                       stream, 3, "\"abacaba\"", "\"kernel\"", "=3D=3D")=
+;
+> +}
+> +
+> +static const u8 hex_testbuf1[] =3D { 0x26, 0x74, 0x6b, 0x9c, 0x55,
+> +                                  0x45, 0x9d, 0x47, 0xd6, 0x47,
+> +                                  0x2,  0x89, 0x8c, 0x81, 0x94,
+> +                                  0x12, 0xfe, 0x01 };
+> +static const u8 hex_testbuf2[] =3D { 0x26, 0x74, 0x6b, 0x9c, 0x55,
+> +                                  0x45, 0x9d, 0x47, 0x21, 0x47,
+> +                                  0xcd, 0x89, 0x24, 0x50, 0x94,
+> +                                  0x12, 0xba, 0x01 };
+> +static void kunit_test_assert_hexdump(struct kunit *test)
+> +{
+> +       struct string_stream *stream;
+> +       char *str;
+> +       size_t i;
+> +       char buf[HEXDUMP_TEST_BUF_LEN];
+> +
+> +       stream =3D kunit_alloc_string_stream(test, GFP_KERNEL);
+> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, stream);
+> +       /* Check that we are getting output like <xx> for non-matching nu=
+mbers. */
+> +       kunit_assert_hexdump(stream, hex_testbuf1, hex_testbuf2, sizeof(h=
+ex_testbuf1));
+> +       str =3D get_str_from_stream(test, stream);
+> +       for (i =3D 0; i < sizeof(hex_testbuf1); i++) {
+> +               snprintf(buf, HEXDUMP_TEST_BUF_LEN, "<%02x>", hex_testbuf=
+1[i]);
+> +               if (hex_testbuf1[i] !=3D hex_testbuf2[i])
+> +                       ASSERT_TEST_EXPECT_CONTAIN(test, str, buf);
+> +       }
+> +       /* We shouldn't get any <xx> numbers when comparing the buffer wi=
+th itself. */
+> +       string_stream_clear(stream);
+> +       kunit_assert_hexdump(stream, hex_testbuf1, hex_testbuf1, sizeof(h=
+ex_testbuf1));
+> +       str =3D get_str_from_stream(test, stream);
+> +       ASSERT_TEST_EXPECT_NCONTAIN(test, str, "<");
+> +       ASSERT_TEST_EXPECT_NCONTAIN(test, str, ">");
+> +}
+> +
+> +static void kunit_test_mem_assert_format(struct kunit *test)
+> +{
+> +       struct string_stream *stream;
+> +       struct string_stream *expected_stream;
+> +       struct kunit_assert assert =3D {};
+> +       static const struct kunit_binary_assert_text text =3D {
+> +               .left_text =3D "hex_testbuf1",
+> +               .operation =3D "=3D=3D",
+> +               .right_text =3D "hex_testbuf2",
+> +       };
+> +       struct kunit_mem_assert mem_assert =3D {
+> +               .assert =3D assert,
+> +               .text =3D &text,
+> +               .left_value =3D NULL,
+> +               .right_value =3D hex_testbuf2,
+> +               .size =3D sizeof(hex_testbuf1),
+> +       };
+> +
+> +       expected_stream =3D kunit_alloc_string_stream(test, GFP_KERNEL);
+> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, expected_stream);
+> +       stream =3D kunit_alloc_string_stream(test, GFP_KERNEL);
+> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, stream);
+> +
+> +       /* The left value is NULL */
+> +       validate_assert(kunit_mem_assert_format, test, &mem_assert.assert=
+,
+> +                       stream, 2, "hex_testbuf1", "is not null");
+> +
+> +       /* The right value is NULL, the left value is not NULL */
+> +       mem_assert.left_value =3D hex_testbuf1;
+> +       mem_assert.right_value =3D NULL;
+> +       validate_assert(kunit_mem_assert_format, test, &mem_assert.assert=
+,
+> +                       stream, 2, "hex_testbuf2", "is not null");
+> +
+> +       /* Both arguments are not null */
+> +       mem_assert.left_value =3D hex_testbuf1;
+> +       mem_assert.right_value =3D hex_testbuf2;
+> +
+> +       validate_assert(kunit_mem_assert_format, test, &mem_assert.assert=
+,
+> +                       stream, 3, "hex_testbuf1", "hex_testbuf2", "=3D=
+=3D");
+> +}
+> +
+> +static struct kunit_case assert_test_cases[] =3D {
+> +       KUNIT_CASE(kunit_test_is_literal),
+> +       KUNIT_CASE(kunit_test_is_str_literal),
+> +       KUNIT_CASE(kunit_test_assert_prologue),
+> +       KUNIT_CASE(kunit_test_assert_print_msg),
+> +       KUNIT_CASE(kunit_test_unary_assert_format),
+> +       KUNIT_CASE(kunit_test_ptr_not_err_assert_format),
+> +       KUNIT_CASE(kunit_test_binary_assert_format),
+> +       KUNIT_CASE(kunit_test_binary_ptr_assert_format),
+> +       KUNIT_CASE(kunit_test_binary_str_assert_format),
+> +       KUNIT_CASE(kunit_test_assert_hexdump),
+> +       KUNIT_CASE(kunit_test_mem_assert_format),
+> +       {}
+> +};
+> +
+> +static struct kunit_suite assert_test_suite =3D {
+> +       .name =3D "kunit-assert",
+> +       .test_cases =3D assert_test_cases,
+> +};
+> +
+> +MODULE_IMPORT_NS(EXPORTED_FOR_KUNIT_TESTING);
 
-> > Uniformity of error response to "fatal" events, but that is mainly a
-> > PCIe error handling concern not  CPU errors.
-> 
-> Sure, just make sure to keep it simple and generic.
+This is not needed as this test cannot be loaded as a module.
 
-Yes, tracepoints feel simple and generic to me while kernel log messages
-with rate-limiting is already a lossy proposition.
+> +kunit_test_suites(&assert_test_suite);
+> +MODULE_LICENSE("GPL");
+> +MODULE_DESCRIPTION("Test for the KUnit assertion format functions.");
+
+Same here with the license and description.
+
+> --
+> 2.34.1
+>
 
