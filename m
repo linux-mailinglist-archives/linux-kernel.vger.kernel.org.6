@@ -1,154 +1,212 @@
-Return-Path: <linux-kernel+bounces-180839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFFE48C73C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 11:30:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D39BC8C73CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 11:33:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A38392829C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 09:30:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87F152821DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 09:33:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C38B143752;
-	Thu, 16 May 2024 09:30:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4C7E143757;
+	Thu, 16 May 2024 09:32:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gNxoKO7A"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="goFwxHSE"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD886182AF;
-	Thu, 16 May 2024 09:30:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFC0D182AF;
+	Thu, 16 May 2024 09:32:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715851833; cv=none; b=HwF7HhKGSKx6xTvJDAytN0xQvmJ3rhCAmqHK7eYmB6YGkpBa4zjYnvxhQ6BOVKh+YAuTYbVWL2IszIJ7U9e9ExnZp51KsHrhBPSRKSDcQVu7abuASMXx8SgCGqAMjTUnLHBBMiG6KLThuqwF41JxTxcgZLPhx7LOagFw6iUT13o=
+	t=1715851977; cv=none; b=UOcfCfqXnh2G+zSfs9sYPMIkd4inOG4U+wIKyx+fMnHINvPFE4zjMkEG3k9tDODcUvuzYHLTo9BEkcgQ6SK2MkJ5AiTNLZziNTctcjf6I2gtMztzV3QRCmlCzTwWpuCanmm768BTgDrl12ELGMhxUqKb2CWATh9e75MNPzDOVso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715851833; c=relaxed/simple;
-	bh=IwBN3sJvmL0IiVGBK5TPlcQXz3br6smbAIO5yeCkE28=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oq60BaLVw6XZrjsg67YZRCxmv5FJ3whrKBpmEEBxx44mShIVTGU2CvVE0YDyFen3z93qOpUig4i4p/+GyZGKizqkPudWAmmV7G7VfEsNA9IhMtdFrslaqVKkmg69doZxr8ZPpnpFbxxU+RsaFgtAk7U9I0nFk8COoFM7dEfLiBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gNxoKO7A; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-56e69888a36so3093150a12.3;
-        Thu, 16 May 2024 02:30:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715851829; x=1716456629; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IwBN3sJvmL0IiVGBK5TPlcQXz3br6smbAIO5yeCkE28=;
-        b=gNxoKO7Af/DzhFi5lw4OV2pUEXaIcXnGYesUy9xiZ79eLD2rRKZCkGwBeG2Gkxvi51
-         fenZoe0PAc+v9C7rLviA7CLq+3/Y9V9qFOEcv4dmggjfmTolMSkR5p0dXMBtXxyRgnIb
-         hadvTsK27yjAnI6j0fjYKKPo4R6ka/G1XZEfMikQ91Q52QkAt8oJi8sKZmEhteLb4m77
-         acqM7e9IlF9JqaW2faobHKVxCb+bDIr9/nDRlpSTXPXD6ys8HjytQvZIjBwimABQUuDv
-         sdkkwCCzq9e2+IvqrpA9842QXRHqVYst1BbakJp2RHs0e0xoYwEOdyzA5tkHSjG8/b1C
-         TCWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715851829; x=1716456629;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IwBN3sJvmL0IiVGBK5TPlcQXz3br6smbAIO5yeCkE28=;
-        b=rhqv8qDifAkbzntb7lo8R3RBHoDEt02OmzpWZqhjC8ujo2GNYpP8Vw4pU9cJw99R4L
-         ggik0DyvDOC3Af1nfEunUQiYwt2mbIpkSmFAb4IviUT6cOGbYGohUWTNvIiLlro8DX5W
-         2DdCh9entA/PnDkZANa4AVPkb5tyx/0kZwa+p7ARH5NhAiVd0y7KyAreAGBa3fTloWi1
-         gwPngW8OwcxciOa90nmkXAwiW6sOwmf0fAtwEJLE7zwAwhg5IDVtbMkptzTrxpM8xlst
-         iEA53KR26iS94e7IfFbFKM6qWrr3Zm/WNFxeAVGkFaNUQi5zIe7rUajw+1z1KWsg3jzr
-         aaAw==
-X-Forwarded-Encrypted: i=1; AJvYcCXgcjalM3NP3I+9laDCfetFeZ6yivrf6Xhyd5YhfuWv8EniN1Akbg1hSOqyLvqfws55qiNptz/YeDqN3wK/tXyLLyKcN5K+jxwJPFqgSr0G2ldC4EAjoAwu5NB/GEt8zIz9F3PrnRVcbp5uV7Ky35gfz6DBZtRSjhFRy8BG4Q15vdo4Gw==
-X-Gm-Message-State: AOJu0YzymsuD1lgpxCilvT3qCmtBlNdAjqxu/bpRc5v6JSg/+3gbcmSC
-	R389L98mCHzqnYRF0jfakwTYz6n8mNrsGF0VP94RkpnOqCsAhPai9ENEO2XgGs6LLMl9nz+65US
-	eXch88hJBGjelBJ0ISXZzFVPSysA=
-X-Google-Smtp-Source: AGHT+IE8MdvP8pmcdxnyQcO8BxF0G/cG0jo0Lrv1oHAoEbj2FQdZ+/B7pMwFQ51oRL7Z8YOXQ2ZU0CQ2Vqbnk0Ig12I=
-X-Received: by 2002:a50:bb05:0:b0:572:5f28:1f25 with SMTP id
- 4fb4d7f45d1cf-5734d5c1692mr13027701a12.7.1715851829119; Thu, 16 May 2024
- 02:30:29 -0700 (PDT)
+	s=arc-20240116; t=1715851977; c=relaxed/simple;
+	bh=d5PGVl/4+7COvjJ+kTfGHKzfNeCWoSFOzK3iWfPyVnI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=WFSHwrQXtce6WgIxdKMJXqwVgfysI5zBPw1qiZGlOWFm1ksUK3AlY/6sHWESifvuNN8puAE2fMVIuTtuNy1IrivE4TitN5DWzFZVip3NnrylKQivzuWdZlQevxRSGJTuRRGaobxgglwgg1jL4HLDYheBdhN7LWmWw2TDhja2MQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=goFwxHSE; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715851976; x=1747387976;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=d5PGVl/4+7COvjJ+kTfGHKzfNeCWoSFOzK3iWfPyVnI=;
+  b=goFwxHSE37YfGhYHYdyxjD7D/TIiHjnbIYiy/qS7dmyMoxvlIYgcAt5G
+   YqTcs74BFg1HMk68qEutHyvs4NGHmme6zyZEAOzqFKJa0GUW45kpUVScj
+   wsz7cSu7tvMk3EqJhSFumagvy4GTjmgRs4Z3VpQZ6lEHJRnH1rKQn6hzC
+   Pf5aVs9lv4kHBU1+F/PHyNX8nPRKN88Hg5ihEx+0MYhs3y5oXNZ8L7ovP
+   qs9tXUOiiQPGN8LxBsPaKOPTuWZEN2OlN8PCmJsHIr0TJHXQmLaTT5yIE
+   IX/VV2aeR0ah6Ej2qim5r/3qszpjlzgNrVprTPTY1aONGnbsHNRkCIALa
+   A==;
+X-CSE-ConnectionGUID: dxdUr94HSHGbH6rsloAM0w==
+X-CSE-MsgGUID: pBF/j1jWTdS9//6YWrKnDw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="12113815"
+X-IronPort-AV: E=Sophos;i="6.08,164,1712646000"; 
+   d="scan'208";a="12113815"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 02:32:55 -0700
+X-CSE-ConnectionGUID: vNnF7sP0TbS+8pwe0hgnOg==
+X-CSE-MsgGUID: YcpdELeARZav5i9jI4Kr7Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,164,1712646000"; 
+   d="scan'208";a="31490993"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.108])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 02:32:50 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: linux-pci@vger.kernel.org,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+	"Maciej W . Rozycki" <macro@orcam.me.uk>,
+	Jonathan Cameron <Jonathan.Cameron@Huawei.com>,
+	Lukas Wunner <lukas@wunner.de>,
+	Alexandru Gagniuc <mr.nuke.me@gmail.com>,
+	Krishna chaitanya chundru <quic_krichai@quicinc.com>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	linux-pm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Amit Kucheria <amitk@kernel.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Subject: [PATCH v6 0/8] PCI: Add PCIe bandwidth controller
+Date: Thu, 16 May 2024 12:32:14 +0300
+Message-Id: <20240516093222.1684-1-ilpo.jarvinen@linux.intel.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240514070051.2959-1-kanakshilledar111@protonmail.com>
- <20240514-sitting-ritzy-498d35eb5ac8@spud> <CAGLn_=vRDj_A2VpqQ6eT3OX6AgCfesA1KzJh+6djyF6MhAgEvw@mail.gmail.com>
- <20240516-encourage-bouncing-77e9c14c9887@wendy>
-In-Reply-To: <20240516-encourage-bouncing-77e9c14c9887@wendy>
-From: Kanak Shilledar <kanakshilledar@gmail.com>
-Date: Thu, 16 May 2024 15:00:15 +0530
-Message-ID: <CAGLn_=vpdnDaMoNNqnON5jBuq4LGtAq+gZm-W-f6H-PXQGMfKA@mail.gmail.com>
-Subject: Re: [PATCH v3] dt-bindings: spi: brcm,bcm2835-spi: convert to dtschema
-To: Conor Dooley <conor.dooley@microchip.com>
-Cc: Conor Dooley <conor@kernel.org>, wahrenst@gmx.net, 
-	Kanak Shilledar <kanakshilledar111@protonmail.com>, Mark Brown <broonie@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, linux-spi@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 16, 2024 at 12:27=E2=80=AFPM Conor Dooley
-<conor.dooley@microchip.com> wrote:
->
-> On Thu, May 16, 2024 at 12:00:29PM +0530, Kanak Shilledar wrote:
-> > On Tue, May 14, 2024 at 11:44=E2=80=AFPM Conor Dooley <conor@kernel.org=
-> wrote:
-> > >
-> > > On Tue, May 14, 2024 at 12:30:47PM +0530, Kanak Shilledar wrote:
-> > >
-> > > > Changes in v3:
-> > > > - Updated DCO email address
-> > >
-> > > I was really hoping you'd tell me why you'd not used the same email
-> > > address, rather than just sending another version. My ulterior motive=
- is
-> > > that I wrote the section in email-clients.rst saying that protonmail =
-had
-> > > WKD issues with kernel.org accounts but apparently proton added a
-> > > workaround and have yet to be sent an email that confirmed that the
-> > > workaround fixed things. (I'm not sure that the WKD issues ever appli=
-ed
-> > > as there's no GPG key posted for conor+dt@kernel.org, only
-> > > conor@kernel.org).
-> >
-> > Oh, I am primarily using protonmail and I am aware that there are some
-> > issues with protonmail and kernel.org so for that reason I am sending m=
-y
-> > patches via @gmail.com address. I was trying out some things with
-> > gmail and proton so had changed my signing email address to @gmail.com
-> > apart from sending emails I have no motive on using gmail.com account.
-> > Also I am adding my protonmail account in the `CC`.
-> > Hope this helps.
-> > If this is not the intended route then I will change it and stick
-> > to one email address.
->
-> I don't care what email you use for stuff, that's your business. I just
-> want to know if we can remove the section from the docs that says not to
-> use proton. Maybe you could send me an off-list email to
-> conor@kernel.org from your proton account, so I can see if it ends up
-> getting encrypted? That'd be helpful if you could.
+Hi all,
 
-I have sent you a mail off-list using proton. Please let me know if
-you were able to view it?
-There is a option to attach public key as well when using protonmail.
+This series adds PCIe bandwidth controller (bwctrl) and associated PCIe
+cooling driver to the thermal core side for limiting PCIe Link Speed
+due to thermal reasons. PCIe bandwidth controller is a PCI express bus
+port service driver. A cooling device is created for each port the
+service driver finds if they support changing speeds.
 
-> > > The patch is fine IMO though, so
-> > > Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-> >
-> > Do I need to roll out another version with this reviewed by flag?
->
-> No, Mark should be able to pick that up. There's usually no need to
-> resend patches solely pick up tags, that's the maintainer's
-> responsibility. If you're resending for any other reason, then yes, pick
-> up tags.
+This series only adds support for controlling PCIe Link Speed.
+Controlling PCIe Link Width might also be useful but AFAIK, there is no
+mechanism for that until PCIe 6.0 (L0p) so Link Width throttling is not
+added by this series.
 
-Alright!
-> Cheers,
-> Conor.
+bwctrl is built on top of BW notifications revert. The changes are
+based on top of target quirk fixes [1].
 
-Thanks and Regards,
-Kanak Shilledar
+[1] https://lore.kernel.org/linux-pci/alpine.DEB.2.21.2402092125070.2376@angie.orcam.me.uk/
+
+v6:
+- Removed unnecessary PCI_EXP_LNKCAP_SLS mask from PCIE_LNKCAP_SLS2SPEED()
+- Split error handling in pcie_bwnotif_irq_thread()
+- pci_info() -> pci_dbg() on bwctrl probe success path
+- Handle cooling device pointer -Exx codes in bwctrl probe
+- Reorder port->link_bwctrl setup / bwnotif enable for symmetry
+- Handle LBMS count == 0 in PCIe quirk by checking LBMS (avoids a race
+  between quirk and bwctrl)
+- Use cleanup.h in PCIe cooling device's register
+
+v5:
+- Removed patches: LNKCTL2 RMW driver patches went in separately
+- Refactor pcie_update_link_speed() to read LNKSTA + add __ variant
+  for hotplug that has LNKSTA value at hand
+- Make series fully compatible with the Target Speed quirk
+        - LBMS counter added, quirk falls back to LBMS bit when bwctrl =n
+        - Separate LBMS patch from set target speed patches
+- Always provide pcie_bwctrl_change_speed() even if bwctrl =n so drivers
+  don't need to come up their own version (also required by the Target
+  Speed quirk)
+- Remove devm_* (based on Lukas' comment on some other service
+  driver patch)
+- Convert to use cleanup.h
+- Renamed functions/struct to have shorter names
+
+v4:
+- Merge Port's and Endpoint's Supported Link Speeds Vectors into
+  supported_speeds in the struct pci_bus
+- Reuse pcie_get_speed_cap()'s code for pcie_get_supported_speeds()
+- Setup supported_speeds with PCI_EXP_LNKCAP2_SLS_2_5GB when no
+  Endpoint exists
+- Squash revert + add bwctrl patches into one
+- Change to use threaded IRQ + IRQF_ONESHOT
+- Enable also LABIE / LABS
+- Convert Link Speed selection to use bit logic instead of loop
+- Allocate before requesting IRQ during probe
+- Use devm_*()
+- Use u8 for speed_conv array instead of u16
+- Removed READ_ONCE()
+- Improve changelogs, comments, and Kconfig
+- Name functions slightly more consistently
+- Use bullet list for RMW protected registers in docs
+
+v3:
+- Correct hfi1 shortlog prefix
+- Improve error prints in hfi1
+- Add L: linux-pci to the MAINTAINERS entry
+
+v2:
+- Adds LNKCTL2 to RMW safe list in Documentation/PCI/pciebus-howto.rst
+- Renamed cooling devices from PCIe_Port_* to PCIe_Port_Link_Speed_* in
+  order to plan for possibility of adding Link Width cooling devices
+  later on
+- Moved struct thermal_cooling_device declaration to the correct patch
+- Small tweaks to Kconfig texts
+- Series rebased to resolve conflict (in the selftest list)
+
+Ilpo Järvinen (8):
+  PCI: Protect Link Control 2 Register with RMW locking
+  PCI: Store all PCIe Supported Link Speeds
+  PCI: Refactor pcie_update_link_speed()
+  PCI/quirks: Abstract LBMS seen check into own function
+  PCI/bwctrl: Re-add BW notification portdrv as PCIe BW controller
+  PCI/bwctrl: Add API to set PCIe Link Speed
+  thermal: Add PCIe cooling driver
+  selftests/pcie_bwctrl: Create selftests
+
+ Documentation/PCI/pciebus-howto.rst           |  14 +-
+ MAINTAINERS                                   |   9 +
+ drivers/pci/hotplug/pciehp_hpc.c              |   2 +-
+ drivers/pci/hotplug/pciehp_pci.c              |   2 +
+ drivers/pci/pci.c                             |  59 ++-
+ drivers/pci/pci.h                             |  29 +-
+ drivers/pci/pcie/Kconfig                      |  12 +
+ drivers/pci/pcie/Makefile                     |   1 +
+ drivers/pci/pcie/bwctrl.c                     | 346 ++++++++++++++++++
+ drivers/pci/pcie/portdrv.c                    |   9 +-
+ drivers/pci/pcie/portdrv.h                    |  10 +-
+ drivers/pci/probe.c                           |  20 +-
+ drivers/pci/quirks.c                          |  25 +-
+ drivers/pci/remove.c                          |   3 +
+ drivers/thermal/Kconfig                       |  10 +
+ drivers/thermal/Makefile                      |   2 +
+ drivers/thermal/pcie_cooling.c                |  80 ++++
+ include/linux/pci-bwctrl.h                    |  28 ++
+ include/linux/pci.h                           |  18 +
+ include/uapi/linux/pci_regs.h                 |   1 +
+ tools/testing/selftests/Makefile              |   1 +
+ tools/testing/selftests/pcie_bwctrl/Makefile  |   2 +
+ .../pcie_bwctrl/set_pcie_cooling_state.sh     | 122 ++++++
+ .../selftests/pcie_bwctrl/set_pcie_speed.sh   |  67 ++++
+ 24 files changed, 824 insertions(+), 48 deletions(-)
+ create mode 100644 drivers/pci/pcie/bwctrl.c
+ create mode 100644 drivers/thermal/pcie_cooling.c
+ create mode 100644 include/linux/pci-bwctrl.h
+ create mode 100644 tools/testing/selftests/pcie_bwctrl/Makefile
+ create mode 100755 tools/testing/selftests/pcie_bwctrl/set_pcie_cooling_state.sh
+ create mode 100755 tools/testing/selftests/pcie_bwctrl/set_pcie_speed.sh
+
+-- 
+2.39.2
+
 
