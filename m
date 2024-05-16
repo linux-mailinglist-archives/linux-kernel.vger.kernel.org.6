@@ -1,112 +1,153 @@
-Return-Path: <linux-kernel+bounces-181155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4134B8C7848
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:10:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C2608C784B
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:11:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE76F1F21E23
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:10:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC0331F230F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:11:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7B8814B952;
-	Thu, 16 May 2024 14:10:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5311D14A0AE;
+	Thu, 16 May 2024 14:10:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="aC79Bz1Y"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sc4HhVUG"
+Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1083214A4E5;
-	Thu, 16 May 2024 14:09:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13E591487CD
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 14:10:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715868600; cv=none; b=r7GSHkCoZZfD8R6elzOTl4HibbTAlRvG+PKPhShCvg1WSO+jNYdCGSLVzYTLRID0+jp7+c08uSfPLYCWmUomcv7mls2mcPI8kWtoecM5dfNr+g2t9lGoAiC+Vsx8F7g15yvrx4PoAXzS4fHafSu4y4xMUhCkgBQNb06/4McREPg=
+	t=1715868654; cv=none; b=BXrsx5pXZ0OjCA4Mayn3O0NmdGie20AeDsPVe4QthM4oYXtpy9F6iSHDsBaEQWmM9qwDupIcIsZDVWwOS6vU3evikxDyi9AhIvdVjl+dwnxMqb5UO8EL1crjdgtr8BGJL+Jg/CXrFuEaLOrcoaneMPo+3uG+B1S2nsm7E0C8En4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715868600; c=relaxed/simple;
-	bh=NG33MsgUIuv6RqtlkvMV7YeulTRGpA4Wba/8OWH9Oj0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jltyx8w36Uc3NvV9FGHmxkLEjjfY9ieh8HRHjbt4wiUmcLkbzMsrhNSFPGEPugfirU47Pu3DGhQg3POEwemBgmkpHoSdfUFWrttVQFDrD4oNCw/cRb2Uc9Dp9SXIGhf89NWv6eegt7i3RzuuvMgAzgVLfISK30tjLhtw27djKgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=aC79Bz1Y; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=B+vHXanNosqR77yg+0PuvGZcIdU1FMsesPSXvdi9FrI=; b=aC79Bz1YkTxxAYhSjCGt8o2StR
-	VjxBfTagIHSwM2YuKqY6VBIIwokJxrXcWyB+hNoMWX31yNn3mWCQWbzr3DlfMISGjPv5omvc1pF+H
-	bNUoQran6PzOZzioyDuXjEQaLN2btKjMKe6aoTCcnhcuqk2/ou0DrFcAwWm95gKtDLmFfYElUOsz2
-	irk03/7fzlgi8sLrDcUVueg9FozjS7J2fHFc24GyngCNs6Ll8K2HmWeEn1RCNRcosq7RBmTY3QWJf
-	4QC+G+lubu3Fr2odxsWsbOV6Gmdv8NcZo+UvyCA/rNBCVfOTHc+81r+0w9sAF/7ybvzq9y5GI8dRX
-	rnnDUoSw==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s7bns-0000000BrYV-0ziH;
-	Thu, 16 May 2024 14:09:52 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id BB3C530068B; Thu, 16 May 2024 16:09:51 +0200 (CEST)
-Date: Thu, 16 May 2024 16:09:51 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Kees Cook <keescook@chromium.org>,
-	Justin Stitt <justinstitt@google.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: Re: [RFC] Mitigating unexpected arithmetic overflow
-Message-ID: <20240516140951.GK22557@noisy.programming.kicks-ass.net>
-References: <202404291502.612E0A10@keescook>
- <CAHk-=wi5YPwWA8f5RAf_Hi8iL0NhGJeL6MN6UFWwRMY8L6UDvQ@mail.gmail.com>
- <202405081144.D5FCC44A@keescook>
- <CAHk-=wjeiGb1UxCy6Q8aif50C=wWDX9Pgp+WbZYrO72+B1f_QA@mail.gmail.com>
- <202405081354.B0A8194B3C@keescook>
- <CAHk-=wgoE5EkH+sQwi4KhRhCZizUxwZAnC=+9RbZcw7g6016LQ@mail.gmail.com>
- <20240515073636.GY40213@noisy.programming.kicks-ass.net>
- <25882715-FE44-44C0-BB9B-57F2E7D1F0F9@kernel.org>
+	s=arc-20240116; t=1715868654; c=relaxed/simple;
+	bh=mnvj+qh6fnc2dz1OtvSl8U5zGPGDwak9VJs7OHFHwSo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SL5MQvhrvPq+bFYJ1ozVajCD9AFIRXDYTLHahJqsBByrl2ON7OACkSX2lGgCPwUoeR2J/4sFrfyFJC4ex4sRj+IeKpZNqHNJC+0lqZGmOpOcPeLpxVbGUK0p74CkmDzNQ09nK1G0h2hvZXKLyS+f/rROxgWLZz4LsoAShyin7FI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sc4HhVUG; arc=none smtp.client-ip=209.85.210.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-6f1239a2e83so140432a34.3
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 07:10:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715868652; x=1716473452; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EmERywOLItQdbPqV7TU/hQijQ/77khKWhpW6wK/l15M=;
+        b=sc4HhVUGHBC5Bf/ZrXv13UlbuTvC0BT649BUOxXGIGV14Aq/PEVdKvjYo3jAAL+NiR
+         i5K21sjE9aZSKQHVyGhVIkzO40Z4Qn2rKIt6DbPTeZsKFJXcVpdciUodf/tPykJ42jKQ
+         +JpkO5T/+gddGavX1i7kn8nBa7CR6t2gtInI04INYp1vAthfYbCqrDUxbME/8yBQy8r/
+         +Rs3RJ62MF3vVFycP6xRNpUmG6sPXkeOOUiJ6ZnBYpLYe6YOwQMmC4OOnn+EbD3yb5vQ
+         tdGIGPAhDJwf0NIkc/dd4NvbbTYk6igfWmd9MiW6hdhuKna36hqu0UOhEA3WeVp8uZRy
+         IeQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715868652; x=1716473452;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EmERywOLItQdbPqV7TU/hQijQ/77khKWhpW6wK/l15M=;
+        b=hHy9HTqkugiETnvPka5Te7DlqoB+nMJL8OSxWQVCCCg2haasxONcWASerdrHJcEmdX
+         deFtazsTgIPlbxRMHq/IQq9lplfLmMIfnAxuhS3OVmLi0+O5jiwhFRcXL2pcPGwkiQJJ
+         hMpa+RADwV2wwVrdzn/BFvYvXaler0m/UAU55iJ4R71CO9bRI2PJUy6rR4e34UnAB9PR
+         AYjDAlF5DASK43PT9CU/IAUc2HlLGYEb0iWwh4eJb0Xf6asUF304nnwGPbzoVPTWi+FY
+         KIbqy25UfzD5wiUF5o1ezyV56xjDltCmv3cVUeWpGfJJIG4sp2iJn2EkG61vckCACJZK
+         Vvhg==
+X-Forwarded-Encrypted: i=1; AJvYcCXpOOP2kjI8AuEVIMOw6rJVnlmqei1nG+xJTQmOxHIVEHbgIUxFFTUJohsedNQIEiv/n1Uv2CzCFPXrhuSzFVdQekx5gdqKGSKz0y3R
+X-Gm-Message-State: AOJu0Yxgqw0UlG1XXEAteMciBsLc+a5/WmQRxIXnm0Nrdjw3F2rVz3Qv
+	lS/ReyVXWYIOwAoYF78DFt11Qc6NcXgJPN82URSHeDj1ddoyH5eOBfIYWrOt5hKe9bErj0xxSOD
+	pZ2zT+8DlGPJT4G56hBP2O+j3GvVMvKwF99g3
+X-Google-Smtp-Source: AGHT+IFSxIIw5+TRsjWyYP9yGDTrpI+j1ZHyy/eI6LFhWko+dNPEXPkD5HoZu1iEfsp1TB70Tl70y9O174itz+Z1MxE=
+X-Received: by 2002:a05:6808:1206:b0:3c9:930c:1c9 with SMTP id
+ 5614622812f47-3c9970cfad9mr29242397b6e.40.1715868651918; Thu, 16 May 2024
+ 07:10:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <25882715-FE44-44C0-BB9B-57F2E7D1F0F9@kernel.org>
+References: <20240516133952.4072309-1-cmllamas@google.com>
+In-Reply-To: <20240516133952.4072309-1-cmllamas@google.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Thu, 16 May 2024 16:10:40 +0200
+Message-ID: <CAH5fLgjP8eozdA3wSari2LHyVUzaOMNTU12JWb2rzGgy9RRpsg@mail.gmail.com>
+Subject: Re: [PATCH v3] binder: use bitmap for faster descriptor lookup
+To: Carlos Llamas <cmllamas@google.com>
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joel@joelfernandes.org>, Christian Brauner <brauner@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, linux-kernel@vger.kernel.org, kernel-team@android.com, 
+	Tim Murray <timmurray@google.com>, John Stultz <jstultz@google.com>, 
+	Steven Moreland <smoreland@google.com>, Nick Chen <chenjia3@oppo.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 16, 2024 at 06:30:32AM -0700, Kees Cook wrote:
-> 
-> 
-> On May 15, 2024 12:36:36 AM PDT, Peter Zijlstra <peterz@infradead.org> wrote:
-> >On Wed, May 08, 2024 at 04:47:25PM -0700, Linus Torvalds wrote:
-> >> For example, the most common case of overflow we've ever had has very
-> >> much been array indexing. Now, sometimes that has actually been actual
-> >> undefined behavior, because it's been overflow in signed variables,
-> >> and those are "easy" to find in the sense that you just say "no, can't
-> >> do that". UBSAN finds them, and that's good.
-> >
-> >We build with -fno-strict-overflow, which implies -fwrapv, which removes
-> >the UB from signed overflow by mandating 2s complement.
-> 
-> I am a broken record. :) This is _not_ about undefined behavior.
+On Thu, May 16, 2024 at 3:39=E2=80=AFPM Carlos Llamas <cmllamas@google.com>=
+ wrote:
+>
+> When creating new binder references, the driver assigns a descriptor id
+> that is shared with userspace. Regrettably, the driver needs to keep the
+> descriptors small enough to accommodate userspace potentially using them
+> as Vector indexes. Currently, the driver performs a linear search on the
+> rb-tree of references to find the smallest available descriptor id. This
+> approach, however, scales poorly as the number of references grows.
+>
+> This patch introduces the usage of bitmaps to boost the performance of
+> descriptor assignments. This optimization results in notable performance
+> gains, particularly in processes with a large number of references. The
+> following benchmark with 100,000 references showcases the difference in
+> latency between the dbitmap implementation and the legacy approach:
+>
+>   [  587.145098] get_ref_desc_olocked: 15us (dbitmap on)
+>   [  602.788623] get_ref_desc_olocked: 47343us (dbitmap off)
+>
+> Note the bitmap size is dynamically adjusted in line with the number of
+> references, ensuring efficient memory usage. In cases where growing the
+> bitmap is not possible, the driver falls back to the slow legacy method.
+>
+> A previous attempt to solve this issue was proposed in [1]. However,
+> such method involved adding new ioctls which isn't great, plus older
+> userspace code would not have benefited from the optimizations either.
+>
+> Link: https://lore.kernel.org/all/20240417191418.1341988-1-cmllamas@googl=
+e.com/ [1]
+> Cc: Tim Murray <timmurray@google.com>
+> Cc: Arve Hj=C3=B8nnev=C3=A5g <arve@android.com>
+> Cc: Alice Ryhl <aliceryhl@google.com>
+> Cc: Martijn Coenen <maco@android.com>
+> Cc: Todd Kjos <tkjos@android.com>
+> Cc: John Stultz <jstultz@google.com>
+> Cc: Steven Moreland <smoreland@google.com>
+> Suggested-by: Nick Chen <chenjia3@oppo.com>
+> Signed-off-by: Carlos Llamas <cmllamas@google.com>
 
-And yet you introduced CONFIG_UBSAN_SIGNED_WRAP... *UB*san, get it?
+LGTM. One nit below, but it's not a correctness issue.
 
-> This is about finding a way to make the intent of C authors
-> unambiguous. That overflow wraps is well defined. It is not always
-> _desired_. C has no way to distinguish between the two cases.
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
-The current semantics are (and have been for years, decades at this
-point) that everything wraps nicely and code has been assuming this. You
-cannot just change this.
+> +static inline unsigned int dbitmap_shrink_nbits(struct dbitmap *dmap)
+> +{
+> +       unsigned int bit;
+> +
+> +       if (dmap->nbits <=3D NBITS_MIN)
+> +               return 0;
+> +
+> +       bit =3D find_last_bit(dmap->map, dmap->nbits);
+> +       if (unlikely(bit =3D=3D dmap->nbits))
+> +               return NBITS_MIN;
+> +
+> +       if (unlikely(bit <=3D (dmap->nbits >> 2)))
+> +               return dmap->nbits >> 1;
 
-So what you do is do a proper language extension and add a type
-qualifier that makes overflows trap and annotate all them cases where
-people do not expect overflows (so that we can put the
-__builtin_*_overflow() things where the sun don't shine).
+I think this is intended to say that we only shrink if only the lower
+fourth of the bits have any bits set, but for the condition to
+actually be that, you need `bit < (map->nbits >> 2)` here instead of
+`<=3D`.
 
-And pretty please, also do a qualifier modification extension, because
-that's totally painful already.
-
+Alice
 
