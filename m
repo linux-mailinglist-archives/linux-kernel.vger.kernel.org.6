@@ -1,198 +1,232 @@
-Return-Path: <linux-kernel+bounces-181101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 747338C7771
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:19:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30D1D8C7763
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:18:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AA07282252
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 13:19:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5378E1C20B64
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 13:18:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73A941482E0;
-	Thu, 16 May 2024 13:18:47 +0000 (UTC)
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C86A21465A4;
+	Thu, 16 May 2024 13:18:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="2kug9SF1"
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 366B5143862;
-	Thu, 16 May 2024 13:18:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98E8D145FE0
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 13:18:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715865527; cv=none; b=iI0oQT4ucw19HB+h0VETRBAcJt0A48Gsr0HYCfOYdDRz7S94NZoHa4reECKt2zGDAIIBVcZo2z28fY0RyHlGIkUDr+zf1NOYNv4XAO23MjJ5uV8I9Ij+aixK+0pHf+9EOSzBpO0j2vpl8zDPu8YNyoDlDv/KTl2K1uaq1Mnj/sI=
+	t=1715865482; cv=none; b=dERij623yrTPg2p6rYzwLFNh6Y7oawR4xhm/BYCkkCOxnMRnpxFH25kSCzc8UkW2jsgfnPf8kU4RRIgHoV4lGXCBQT/nCHGG0xmtwbmqLgV+C//xc+VDpd2r1Lval2JgTFBs5acYNzfK41q022k0w2pBC6RktPiTYG8niI5pZHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715865527; c=relaxed/simple;
-	bh=IwDcXBrM7FxrzumjpWEBXxVI/Sjr7Q8mo1aSkT0G6Uk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P7NffrFNLaPphIILmjjOSq/aQpRQoU9svECn/59jNh1csX/RffDwtF1P/+sVR3bM9NaIkAocXZLDBT0ZWw2F/7kG3tB/GTrWO/UUHK1Z+gQIFv2J3njiqgBRf3qVNprM/F4KPo7tb9l+BgWHMaf4r1rBI6wnZhgItvRCe4RPAj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a5ce2f0deffso105140366b.3;
-        Thu, 16 May 2024 06:18:44 -0700 (PDT)
+	s=arc-20240116; t=1715865482; c=relaxed/simple;
+	bh=eWIwOv9Zvvo6YEpALZ/ZPdwbeGaIZJVB3BlqIwm1sn8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nbWH9wqLKSr7xz4eAcxL4J8WViyj3Tq2Q4uhFGKYyadhk2miCb4hCQ8SjgHN/n9qUSXyZZGu05gsQoDI3Oe/llXecyzkuShvcAlvhCjcoDYggi5SnAm0AvKYu4wVXotfAmeCObZyzWPfB/17VNKZLPYgz6G/gUMdwvNlgN8ljz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=2kug9SF1; arc=none smtp.client-ip=209.85.219.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6a0b68733f5so53326786d6.1
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 06:18:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1715865479; x=1716470279; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=K3ryDiibw2FEZDxAgyeJcOHx0hxqbPorlVehc70NqQc=;
+        b=2kug9SF1l0uiFvM1Q4XoD3ppYBRvefSEWzClos+oi+yBwP8A9DLyJSHiyOgxQ7gmWH
+         mpaJdWUhyLtwrllzxU/OCr9X4q2zrx+dJKm1B2OD2fByA5PMLvQvQnlKYCd4vfkMZDOf
+         6/N77N+/lZRWvGPqZdyFBiWIDS0H5/iXcosafMTvPuDv164gjZXbrJwv6zZWhMh6I9Mw
+         ztF5E+amsNkCSIkZxmFOu9RhJwbmqWwZEfDpWiU7oJPqGj6evZgyarjhY45SN3gnlOYZ
+         UCVjFXMlBH4laopFV3cECtg2zOFHfxQHpoWO7cG1KmmrtGM5kX16oVYRZG/RsWhohUoZ
+         Zu3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715865523; x=1716470323;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KdGWxoXF3gHnPOdYFh5gyCjeUx8D+oDKEyOSzHQOiAA=;
-        b=HPodG0Dx5rerUOwXaeKOwUywuAVuf5sQnLIOEo1jMZpSgpVoD+xilhx3NQKwsTUYCK
-         kwjgejwxjX8AF2QS9K2h++x1mstGPaQSR3KsHy7kbXOxKtwyfM9AmqT/L/hJPJ/5ux/o
-         5qppnrbnXdUXLNZH6Nf0LrF/C48wIS57f8P3GvXSGav7tbH7H5Y01unZIjtUFqxsPh2+
-         jb5z4Y1mBCN7Vp1WGjJCLi/swemP7JKNitQ/cVm1c7cvyJ84z1gE07Z3ZIALzBh+0ZDZ
-         P6QXy29EgBpZq5Hv2YX7c8Q7PNioMUQd4BDAvWcJADXKjTclSWb+hzvhQKMu4gTS/NNZ
-         MRog==
-X-Forwarded-Encrypted: i=1; AJvYcCVkprhqgFWgktACURSFEFLgEo3y7PP6JbXsJ4kOWzwWQ6qZprW5Zw55+i2aDFKOLBUf61EQQIBQyT6J+ZT/E9HjVRlkWw8kVfSaft4NJ11YW1op2wMzrnJdr+nRwheni2l4aCudVu11mpWsQNk1sQ==
-X-Gm-Message-State: AOJu0Yw1SrZ/0hRRok25b/FXe6q/tSN0pC6VDAC+GvwR9KZ/GqxyGlP6
-	g6YRn2Uf7VK09QsXBWp2/XG3ToAd/4zEs30cCXRSlyTcRPrfcIEa
-X-Google-Smtp-Source: AGHT+IE2d8F0VoqvvpDcSpf30NsfMeCjcYrMF4Tuu+HjVBfDa1U+6aaHYWXjrnML45ynkiykx7Dkrw==
-X-Received: by 2002:a17:906:aa4d:b0:a59:c23d:85d8 with SMTP id a640c23a62f3a-a5a2d6653f4mr1274823266b.51.1715865523323;
-        Thu, 16 May 2024 06:18:43 -0700 (PDT)
-Received: from localhost (fwdproxy-lla-009.fbsv.net. [2a03:2880:30ff:9::face:b00c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b17870sm976435666b.216.2024.05.16.06.18.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 May 2024 06:18:42 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-To: irogers@google.com,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>
-Cc: leit@meta.com,
-	linux-perf-users@vger.kernel.org (open list:PERFORMANCE EVENTS SUBSYSTEM),
-	linux-kernel@vger.kernel.org (open list:PERFORMANCE EVENTS SUBSYSTEM)
-Subject: [PATCH v3] perf list: Fix the --no-desc option
-Date: Thu, 16 May 2024 06:15:43 -0700
-Message-ID: <20240516131544.2885917-1-leitao@debian.org>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1715865479; x=1716470279;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=K3ryDiibw2FEZDxAgyeJcOHx0hxqbPorlVehc70NqQc=;
+        b=ny1C6bK1VHzszhRM2qaUFbXDWKIqzJ+wi0O/CBIons0Q+ro5TbH3VjYZeVKfiMkjXF
+         OAdpMBpeb1JreK/RU7UweNoTxArxUetZD50M90rtk+xm7VnTdA0dKleSjBQoaQuqahMe
+         tPNXgNbxQAgJpI5kqnnD0Dz9loVmRYNKVRgghyQC/uNTA2Xu2ujsk+L8vZWyyXZ9Hzru
+         Xc4vdd/a737h1W4Fn679y5MWc02/lWXjQMmYcF+MVGEbivhiabUhux4Zz+fAlnv1Msdq
+         /AtbjqDDJaHMFQYt7jxrmE2KoW/XzVWYECqECgJjbqkgSFRl3C+0wo1NKZWoqOJfCIwV
+         +v3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUEp4S+d7Yg4NeHus26dOhAhcbnfAPHiSmbqzQZbKjhM0+c46trqR/Wnss519bsYrj+0Vw8ChcjPkxs7QIBcgmbVso9IAWG6PlE/dnQ
+X-Gm-Message-State: AOJu0YwOomZT225aft/9Kyyxq5rYDYFaKJFHYJ/4O7YtyTwoOvggqFXA
+	Z2fd7SMBUZ5WYQPAo+EIB28JX5RZM8Wgf6NUNN5zHj1tD2q0RaBzu1uLLhczXak=
+X-Google-Smtp-Source: AGHT+IEujLLB/2OVCOaeopynbDG1eVKKcIAgIkn7Cc16JQ9OK5R5FdeAk2/xUtVCzZYR2ptdOJ8EbA==
+X-Received: by 2002:a05:6214:2b96:b0:6a0:984d:7ff7 with SMTP id 6a1803df08f44-6a1681792e4mr226857446d6.4.1715865479521;
+        Thu, 16 May 2024 06:17:59 -0700 (PDT)
+Received: from [192.168.0.2] (host-79-16-6-145.retail.telecomitalia.it. [79.16.6.145])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6a35969bcd5sm16517186d6.53.2024.05.16.06.17.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 May 2024 06:17:58 -0700 (PDT)
+Message-ID: <2943205c-e7dc-4ca1-a174-15df2244c77b@baylibre.com>
+Date: Thu, 16 May 2024 15:17:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] iio: dac: ad3552r: add support for ad3541r and
+ ad3551r
+To: David Lechner <dlechner@baylibre.com>
+Cc: jic23@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, nuno.sa@analog.com, lars@metafoo.de,
+ Michael.Hennerich@analog.com, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240510141836.1624009-1-adureghello@baylibre.org>
+ <20240510141836.1624009-2-adureghello@baylibre.org>
+ <CAMknhBFrOdzvo+aEFjMSf_3FGmbhVp42Oymt_DEF2L-CdWiSmQ@mail.gmail.com>
+Content-Language: en-US
+From: Angelo Dureghello <adureghello@baylibre.com>
+In-Reply-To: <CAMknhBFrOdzvo+aEFjMSf_3FGmbhVp42Oymt_DEF2L-CdWiSmQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Currently, the --no-desc option in perf list isn't functioning as
-intended.
+Hi David,
 
-This issue arises from the overwriting of struct option->desc with the
-opposite value of struct option->long_desc. Consequently, whatever
-parse_options() returns at struct option->desc gets overridden later,
-rendering the --desc or --no-desc arguments ineffective.
+On 10/05/24 5:42 PM, David Lechner wrote:
+> On Fri, May 10, 2024 at 9:19 AM Angelo Dureghello
+> <adureghello@baylibre.com> wrote:
+>> From: Angelo Dureghello <adureghello@baylibre.com>
+>>
+>> Add support for single-output dac variants.
+>>
+>> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+>> ---
+>>   drivers/iio/dac/ad3552r.c | 39 +++++++++++++++++++++++++++++----------
+>>   1 file changed, 29 insertions(+), 10 deletions(-)
+>>
+>> diff --git a/drivers/iio/dac/ad3552r.c b/drivers/iio/dac/ad3552r.c
+>> index a492e8f2fc0f..0dd6f995c3e2 100644
+>> --- a/drivers/iio/dac/ad3552r.c
+>> +++ b/drivers/iio/dac/ad3552r.c
+>> @@ -140,7 +140,9 @@ enum ad3552r_ch_vref_select {
+>>   };
+>>
+>>   enum ad3542r_id {
+>> +       AD3541R_ID = 0x400b,
+>>          AD3542R_ID = 0x4009,
+>> +       AD3551R_ID = 0x400a,
+>>          AD3552R_ID = 0x4008,
+>>   };
+>>
+>> @@ -745,7 +747,8 @@ static void ad3552r_calc_gain_and_offset(struct ad3552r_desc *dac, s32 ch)
+>>          } else {
+>>                  /* Normal range */
+>>                  idx = dac->ch_data[ch].range;
+>> -               if (dac->chip_id == AD3542R_ID) {
+>> +               if (dac->chip_id == AD3541R_ID ||
+>> +                   dac->chip_id == AD3542R_ID) {
+>>                          v_min = ad3542r_ch_ranges[idx][0];
+>>                          v_max = ad3542r_ch_ranges[idx][1];
+>>                  } else {
+>> @@ -780,7 +783,7 @@ static int ad3552r_find_range(u16 id, s32 *vals)
+>>          int i, len;
+>>          const s32 (*ranges)[2];
+>>
+>> -       if (id == AD3542R_ID) {
+>> +       if (id == AD3541R_ID || id == AD3542R_ID) {
+>>                  len = ARRAY_SIZE(ad3542r_ch_ranges);
+>>                  ranges = ad3542r_ch_ranges;
+>>          } else {
+>> @@ -955,9 +958,10 @@ static int ad3552r_configure_device(struct ad3552r_desc *dac)
+>>                          dev_err(dev, "mandatory reg property missing\n");
+>>                          goto put_child;
+>>                  }
+>> -               if (ch >= AD3552R_NUM_CH) {
+>> -                       dev_err(dev, "reg must be less than %d\n",
+>> -                               AD3552R_NUM_CH);
+>> +               if (ch >= AD3552R_NUM_CH ||
+>> +                       (dac->chip_id == AD3541R_ID && ch) ||
+>> +                       (dac->chip_id == AD3551R_ID && ch)) {
+>> +                       dev_err(dev, "channel %d is not supported\n", ch);
+>>                          err = -EINVAL;
+>>                          goto put_child;
+>>                  }
+>> @@ -987,9 +991,10 @@ static int ad3552r_configure_device(struct ad3552r_desc *dac)
+>>                                  goto put_child;
+>>
+>>                          dac->ch_data[ch].range = val;
+>> -               } else if (dac->chip_id == AD3542R_ID) {
+>> +               } else if (dac->chip_id == AD3541R_ID ||
+>> +                          dac->chip_id == AD3542R_ID) {
+>>                          dev_err(dev,
+>> -                               "adi,output-range-microvolt is required for ad3542r\n");
+>> +                               "adi,output-range-microvolt is required for ad354xr\n");
+>>                          err = -EINVAL;
+>>                          goto put_child;
+>>                  } else {
+>> @@ -1088,10 +1093,20 @@ static int ad3552r_probe(struct spi_device *spi)
+>>                  return err;
+>>
+>>          /* Config triggered buffer device */
+>> -       if (dac->chip_id == AD3552R_ID)
+>> -               indio_dev->name = "ad3552r";
+>> -       else
+>> +       switch (dac->chip_id) {
+>> +       case AD3541R_ID:
+>> +               indio_dev->name = "ad3541r";
+>> +               break;
+>> +       case AD3542R_ID:
+>>                  indio_dev->name = "ad3542r";
+>> +               break;
+>> +       case AD3551R_ID:
+>> +               indio_dev->name = "ad3551r";
+>> +               break;
+>> +       case AD3552R_ID:
+>> +               indio_dev->name = "ad3552r";
+>> +               break;
+>> +       }
+>>          indio_dev->dev.parent = &spi->dev;
+>>          indio_dev->info = &ad3552r_iio_info;
+>>          indio_dev->num_channels = dac->num_ch;
+>> @@ -1110,14 +1125,18 @@ static int ad3552r_probe(struct spi_device *spi)
+>>   }
+>>
+>>   static const struct spi_device_id ad3552r_id[] = {
+>> +       { "ad3541r", AD3541R_ID },
+>>          { "ad3542r", AD3542R_ID },
+>> +       { "ad3551r", AD3551R_ID },
+>>          { "ad3552r", AD3552R_ID },
+>>          { }
+>>   };
+>>   MODULE_DEVICE_TABLE(spi, ad3552r_id);
+>>
+>>   static const struct of_device_id ad3552r_of_match[] = {
+>> +       { .compatible = "adi,ad3541r"},
+>>          { .compatible = "adi,ad3542r"},
+>> +       { .compatible = "adi,ad3551r"},
+>>          { .compatible = "adi,ad3552r"},
+>>          { }
+>>   };
+>> --
+>> 2.45.0.rc1
+>>
+>>
+> It looks like it is time for a chip_info struct here instead of the if
+> and switch statements to get chip-specific data. Most other IIO
+> drivers have this already and it is the preferred way to look up this
+> kind of information in the IIO subsystem. I prefer the drivers that
+> don't put all of the info structs in an array (that way the code is
+> less verbose). So I would suggest looking at e.g. adc/aspeed_adc,
+> starting with aspeed_adc_matches, to see what I mean and how to
+> implement it. (So one patch to add the info structs and a second patch
+> to add the single channel chips)
 
-To resolve this, set ->desc as true by default and allow parse_options()
-to adjust it accordingly. This adjustment will fix the --no-desc
-option while preserving the functionality of the other parameters.
+Ack, will change in that way.
 
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
-Changelog:
 
-v3:
-	* Applied the same logic to default_print_metric() and
-	  json_print_event() functions, as identified by Ian Rogers. 
-v2:
-        * Do not print desc if long_desc is being printed, as identified
-          by Ian Rogers.
+Regards,
+angelo
 
----
- tools/perf/builtin-list.c | 34 +++++++++++++++-------------------
- 1 file changed, 15 insertions(+), 19 deletions(-)
-
-diff --git a/tools/perf/builtin-list.c b/tools/perf/builtin-list.c
-index 02bf608d585e..8a0e123587f3 100644
---- a/tools/perf/builtin-list.c
-+++ b/tools/perf/builtin-list.c
-@@ -149,7 +149,11 @@ static void default_print_event(void *ps, const char *pmu_name, const char *topi
- 	} else
- 		fputc('\n', fp);
- 
--	if (desc && print_state->desc) {
-+	if (long_desc && print_state->long_desc) {
-+		fprintf(fp, "%*s", 8, "[");
-+		wordwrap(fp, long_desc, 8, pager_get_columns(), 0);
-+		fprintf(fp, "]\n");
-+	} else if (desc && print_state->desc) {
- 		char *desc_with_unit = NULL;
- 		int desc_len = -1;
- 
-@@ -165,12 +169,6 @@ static void default_print_event(void *ps, const char *pmu_name, const char *topi
- 		fprintf(fp, "]\n");
- 		free(desc_with_unit);
- 	}
--	long_desc = long_desc ?: desc;
--	if (long_desc && print_state->long_desc) {
--		fprintf(fp, "%*s", 8, "[");
--		wordwrap(fp, long_desc, 8, pager_get_columns(), 0);
--		fprintf(fp, "]\n");
--	}
- 
- 	if (print_state->detailed && encoding_desc) {
- 		fprintf(fp, "%*s", 8, "");
-@@ -243,15 +241,14 @@ static void default_print_metric(void *ps,
- 	}
- 	fprintf(fp, "  %s\n", name);
- 
--	if (desc && print_state->desc) {
--		fprintf(fp, "%*s", 8, "[");
--		wordwrap(fp, desc, 8, pager_get_columns(), 0);
--		fprintf(fp, "]\n");
--	}
- 	if (long_desc && print_state->long_desc) {
- 		fprintf(fp, "%*s", 8, "[");
- 		wordwrap(fp, long_desc, 8, pager_get_columns(), 0);
- 		fprintf(fp, "]\n");
-+	} else if (desc && print_state->desc) {
-+		fprintf(fp, "%*s", 8, "[");
-+		wordwrap(fp, desc, 8, pager_get_columns(), 0);
-+		fprintf(fp, "]\n");
- 	}
- 	if (expr && print_state->detailed) {
- 		fprintf(fp, "%*s", 8, "[");
-@@ -395,17 +392,16 @@ static void json_print_event(void *ps, const char *pmu_name, const char *topic,
- 				   deprecated ? "1" : "0");
- 		need_sep = true;
- 	}
--	if (desc) {
--		fix_escape_fprintf(fp, &buf, "%s\t\"BriefDescription\": \"%S\"",
--				   need_sep ? ",\n" : "",
--				   desc);
--		need_sep = true;
--	}
- 	if (long_desc) {
- 		fix_escape_fprintf(fp, &buf, "%s\t\"PublicDescription\": \"%S\"",
- 				   need_sep ? ",\n" : "",
- 				   long_desc);
- 		need_sep = true;
-+	} else if (desc) {
-+		fix_escape_fprintf(fp, &buf, "%s\t\"BriefDescription\": \"%S\"",
-+				   need_sep ? ",\n" : "",
-+				   desc);
-+		need_sep = true;
- 	}
- 	if (encoding_desc) {
- 		fix_escape_fprintf(fp, &buf, "%s\t\"Encoding\": \"%S\"",
-@@ -491,6 +487,7 @@ int cmd_list(int argc, const char **argv)
- 	int i, ret = 0;
- 	struct print_state default_ps = {
- 		.fp = stdout,
-+		.desc = true,
- 	};
- 	struct print_state json_ps = {
- 		.fp = stdout,
-@@ -563,7 +560,6 @@ int cmd_list(int argc, const char **argv)
- 		};
- 		ps = &json_ps;
- 	} else {
--		default_ps.desc = !default_ps.long_desc;
- 		default_ps.last_topic = strdup("");
- 		assert(default_ps.last_topic);
- 		default_ps.visited_metrics = strlist__new(NULL, NULL);
--- 
-2.43.0
 
 
