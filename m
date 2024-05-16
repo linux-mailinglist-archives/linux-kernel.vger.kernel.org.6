@@ -1,268 +1,170 @@
-Return-Path: <linux-kernel+bounces-180861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1ACB8C740C
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 11:45:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 524AC8C740F
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 11:46:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0BC61C233C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 09:45:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C13271F24650
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 09:46:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C984143872;
-	Thu, 16 May 2024 09:45:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F8C214386E;
+	Thu, 16 May 2024 09:46:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ba5TCAMY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="V9C9aDvj"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42CF33FBA7;
-	Thu, 16 May 2024 09:45:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C31BA143866
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 09:45:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715852737; cv=none; b=A4oMDK8ABdeJD4y/2ZwPLdYM3mYYOsLe+9yAJcyrA2sHQncxpweIrN+cTTBFGP8Q6WisUauqv3s5bHIVGbqZL/VB0aE3Gw+I+Ya86DJZ1R8I48mRJczbKLdd/9S9BHItAM62hDHGaavgETy7YAkQmRWJkG2KZGpZSR0JECdewCo=
+	t=1715852761; cv=none; b=AqzNunXsR5zd5U7gcP+6Y0jY13AWuUcyfmVaOiWpDdGTBOG5rJY1W1neaei/ckSHGhHn2OhBwMTMpLZLCi2PB9iWsi6MS7XzgAqnh3v93lCzCgx27gF+Nl0zuDjLxCa6Px3zeRWCeFQJBmCuMwm+XNrBY719enXWrtlpogikcck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715852737; c=relaxed/simple;
-	bh=yXCqhL29SVvT8WjrDeHNlvHXxEyfDjFKwsltPgc1BOk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YvzVnWf96pHhfL6hRECYLNjNmx1eSlaGQvZOE+vOU3sMCi3RxgSV0oAv2THrH/jrxdpKeG1l1ABnlAjn3t724UrMAx0OJpvJweXkAw7wcjJElin5mjbMMeVvMnP8gwq/Z2Q7LQhGoidHr6vKwUeJUtPNXEhHA5aWAL5rtiGxA5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ba5TCAMY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58290C113CC;
-	Thu, 16 May 2024 09:45:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715852736;
-	bh=yXCqhL29SVvT8WjrDeHNlvHXxEyfDjFKwsltPgc1BOk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ba5TCAMYUEVuM1HddFl0N3gS+f6oX3izyFyLul6eetaKJMafh+e+7Viqp5sb7HNqG
-	 JTLMIiFC0eRSKkd+Y8l65cNK5FwB1B4WvIaoKTNusgD29wj/dSoQkb2CVPaobbkzV+
-	 oT2CLHsEwaLSyJ4sT9NxQJod5gJXsXs7/LKWj6SYgaOnaNLoYwZ8ci9sMh4omr0l/O
-	 sR3UslWLSnq1Bo8ZTc15qw1rNXRP2VriSlqYjdzr1JpYgm6wmWPo7nx1ScKhPWQcUt
-	 Pdkbr/wPIX5cnWl48RtbVW9zjxhVqPHVZLEpvAo3u7Hs8wXe0+g3ewoztFpHXqP3Ru
-	 MjyLNkPCTlpJQ==
-Date: Thu, 16 May 2024 11:45:33 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Andy Yan <andyshrk@163.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Jonathan Corbet <corbet@lwn.net>, 
-	Sandy Huang <hjc@rock-chips.com>, Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, 
-	Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Samuel Holland <samuel@sholland.org>, Andy Yan <andy.yan@rock-chips.com>, 
-	Hans Verkuil <hverkuil@xs4all.nl>, Sebastian Wick <sebastian.wick@redhat.com>, 
-	Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, dri-devel@lists.freedesktop.org, 
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH v13 15/28] drm/connector: hdmi: Compute bpc and format
- automatically
-Message-ID: <20240516-lean-smooth-bonobo-d7e198@penduick>
-References: <20240507-kms-hdmi-connector-state-v13-0-8fafc5efe8be@kernel.org>
- <20240507-kms-hdmi-connector-state-v13-15-8fafc5efe8be@kernel.org>
- <73944574.1631.18f6be1e78f.Coremail.andyshrk@163.com>
+	s=arc-20240116; t=1715852761; c=relaxed/simple;
+	bh=sk30qgPUSP5VMpqNvzfTm4tREso0iPAES3Zy5BrkDD4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DzR6hO2gfgK2hlCbYH4bwNIs8cu/WEBNKG0UVY2icg0C8U8F9j5cNaJi54w//VTF7iiyjtvprVgSd6AG89qhoaoWV7pL5Czk/OKGFAY7b3j+e/EpDGAJJhGprmQDoausY4I0BRyuw9BtaZ2zK43Os1eRFDIIXuXbZ/7Kh4CyRTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=V9C9aDvj; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-34ddc9fe497so4881560f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 02:45:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715852758; x=1716457558; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gfUhSrVZG2CLLkDQLu8KJ8fPEH7JKufyK+L488gLenI=;
+        b=V9C9aDvjybqcPUa8l0dImZlcq2ZJ98HsfbJdLjwvpKrMZgR8OgZygcs9v+mNSEdlCN
+         r5ivaCVYeNbFIz3wAFLguv+U/sxYcuyK0W86fR3b5IUWWrsEH5Na68g/uyVxu7HDNFu3
+         w7maLV4UqZ1OvYxm36hGMsSD1qq8I0UxuU2fdod6zSEjwZA0sj3K5/lm+xOpCnJzoJ5l
+         D6/wl5Lz72t/5fqZTy1IEKHlW3IYxNlS1DKjyocSMyMaGlruAioxC/TZouQMMH4I6kCM
+         WjWI7sPxLSMClMR3DeKoKWCoJXJ5+h5073OXmZpu1jtU6yV+HboGAnRlULkY5p9ifhTW
+         6ydQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715852758; x=1716457558;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gfUhSrVZG2CLLkDQLu8KJ8fPEH7JKufyK+L488gLenI=;
+        b=YtNK6cbGvnppLzCjFaP9vdk1Kb4JowLmqMRWEQKUe0KSQWBFx7tYfWhH7ExPOl+j44
+         sQwOp66vyTJ05Bi7VkBjZJXtRAuekk2D3CFsdvBXmsn00Nj0b8Nxr0D1BlHzFN5sivwH
+         WhisvVaHumMyKknuYJHi1DC4vu3ZTp86+Sg5RdNgojPhW2OaxUURiOzEMPbEcDwT+Hx/
+         daLiTOweq9RcQmnCRyB1zpHi77tNnH8g7/1N3VjddjmWBRmuistZE6+OMynYoO2vUwAR
+         IOUw6mFUsjvUmzLQf10NQnAq0SBH73pjOtpdPb3s/GenzvfJEQf9tbQGG6OGqfk/Qw0A
+         Ab/A==
+X-Forwarded-Encrypted: i=1; AJvYcCWDXZni1+0bfjoQ9KAAxQEwfFaDHPxCKHQq7uwt6EWqoM6WUyJmG4kPnHQxSQSkkKLtUnheNnthL97Gn4Reg4ipaLvtz/5SzxxGSKt0
+X-Gm-Message-State: AOJu0YzLorB9u+KNZjdof9GDJE/Bf0abCMRJWWlBEAQ4S7Vlx5loiZYL
+	T4dvCUDMLG6ylK1nkiZkiW+lVE2qn6yHRFWndrijY5g4QLigItVS8pJoRMEnECo=
+X-Google-Smtp-Source: AGHT+IHOI2nq9U7R2THlqTlle6ZvaaiGSKn/bBTzfUSdjpTQ3Q9wafLDNp9Iz6mIii2pvyTa1FD8CA==
+X-Received: by 2002:a5d:52cf:0:b0:34a:e73a:67a1 with SMTP id ffacd0b85a97d-3504a956039mr16342164f8f.56.1715852757928;
+        Thu, 16 May 2024 02:45:57 -0700 (PDT)
+Received: from [10.91.0.199] ([149.14.240.163])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3502bbc4b41sm18515232f8f.113.2024.05.16.02.45.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 May 2024 02:45:57 -0700 (PDT)
+Message-ID: <65a94273-7fa5-4352-a24b-a08a1f244f99@linaro.org>
+Date: Thu, 16 May 2024 11:45:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="zvciie23y5uhhbzh"
-Content-Disposition: inline
-In-Reply-To: <73944574.1631.18f6be1e78f.Coremail.andyshrk@163.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/6] thermal: sysfs: Trigger zone temperature updates
+ on sysfs reads
+To: "Rafael J. Wysocki" <rafael@kernel.org>, Lukasz Luba <lukasz.luba@arm.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+ LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Zhang Rui <rui.zhang@intel.com>
+References: <13518388.uLZWGnKmhe@kreacher> <3304112.44csPzL39Z@kreacher>
+ <39e15eef-f7fd-4e16-bc74-7f1c6820fe6a@arm.com>
+ <CAJZ5v0gZJE6jfa8_9LgDdjYotY+crLH1JJXHdAWREPz4SJ305A@mail.gmail.com>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <CAJZ5v0gZJE6jfa8_9LgDdjYotY+crLH1JJXHdAWREPz4SJ305A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
---zvciie23y5uhhbzh
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Rafael,
 
-Hi again,
+On 16/05/2024 11:04, Rafael J. Wysocki wrote:
+> Hi Lukasz,
+> 
+> On Mon, May 13, 2024 at 9:11 AM Lukasz Luba <lukasz.luba@arm.com> wrote:
+>>
+>> Hi Rafael,
+>>
+>> On 5/10/24 15:13, Rafael J. Wysocki wrote:
+>>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>>>
+>>> Reading the zone temperature via sysfs causes the driver callback to
+>>> be invoked, but it does not cause the thermal zone object to be updated.
+>>>
+>>> This is problematic if the zone temperature read via sysfs differs from
+>>> the temperature value stored in the thermal zone object as it may cause
+>>> the kernel and user space to act against each other in some cases.
+>>>
+>>> For this reason, make temp_show() trigger a zone temperature update if
+>>> the temperature returned by thermal_zone_get_temp() is different from
+>>> the temperature value stored in the thermal zone object.
 
-On Sun, May 12, 2024 at 04:18:38PM +0800, Andy Yan wrote:
-> =E5=9C=A8 2024-05-07 21:17:33=EF=BC=8C"Maxime Ripard" <mripard@kernel.org=
-> =E5=86=99=E9=81=93=EF=BC=9A
-> >Now that we have all the infrastructure needed, we can add some code
-> >that will, for a given connector state and mode, compute the best output
-> >format and bpc.
-> >
-> >The algorithm is equivalent to the one already found in i915 and vc4.
-> >
-> >Cc: Ville Syrj=C3=A4l=C3=A4 <ville.syrjala@linux.intel.com>
-> >Signed-off-by: Maxime Ripard <mripard@kernel.org>
-> >---
-> > drivers/gpu/drm/display/drm_hdmi_state_helper.c    | 199 ++++++++++++++=
-++++++-
-> > drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c |  25 ++-
-> > 2 files changed, 212 insertions(+), 12 deletions(-)
-> >
-> >diff --git a/drivers/gpu/drm/display/drm_hdmi_state_helper.c b/drivers/g=
-pu/drm/display/drm_hdmi_state_helper.c
-> >index 063421835dba..f20dcfecb6b8 100644
-> >--- a/drivers/gpu/drm/display/drm_hdmi_state_helper.c
-> >+++ b/drivers/gpu/drm/display/drm_hdmi_state_helper.c
-> >@@ -1,9 +1,11 @@
-> > // SPDX-License-Identifier: MIT
-> >=20
-> > #include <drm/drm_atomic.h>
-> > #include <drm/drm_connector.h>
-> >+#include <drm/drm_edid.h>
-> >+#include <drm/drm_print.h>
-> >=20
-> > #include <drm/display/drm_hdmi_helper.h>
-> > #include <drm/display/drm_hdmi_state_helper.h>
-> >=20
-> > /**
-> >@@ -46,10 +48,112 @@ connector_state_get_mode(const struct drm_connector=
-_state *conn_state)
-> > 		return NULL;
-> >=20
-> > 	return &crtc_state->mode;
-> > }
-> >=20
-> >+static bool
-> >+sink_supports_format_bpc(const struct drm_connector *connector,
-> >+			 const struct drm_display_info *info,
-> >+			 const struct drm_display_mode *mode,
-> >+			 unsigned int format, unsigned int bpc)
-> >+{
-> >+	struct drm_device *dev =3D connector->dev;
-> >+	u8 vic =3D drm_match_cea_mode(mode);
-> >+
-> >+	/*
-> >+	 * CTA-861-F, section 5.4 - Color Coding & Quantization states
-> >+	 * that the bpc must be 8, 10, 12 or 16 except for the default
-> >+	 * 640x480 VIC1 where the value must be 8.
-> >+	 *
-> >+	 * The definition of default here is ambiguous but the spec
-> >+	 * refers to VIC1 being the default timing in several occasions
-> >+	 * so our understanding is that for the default timing (ie,
-> >+	 * VIC1), the bpc must be 8.
-> >+	 */
-> >+	if (vic =3D=3D 1 && bpc !=3D 8) {
-> >+		drm_dbg_kms(dev, "VIC1 requires a bpc of 8, got %u\n", bpc);
-> >+		return false;
-> >+	}
-> >+
-> >+	if (!info->is_hdmi &&
-> >+	    (format !=3D HDMI_COLORSPACE_RGB || bpc !=3D 8)) {
-> >+		drm_dbg_kms(dev, "DVI Monitors require an RGB output at 8 bpc\n");
-> >+		return false;
-> >+	}
-> >+
-> >+	if (!(connector->hdmi.supported_formats & BIT(format))) {
-> >+		drm_dbg_kms(dev, "%s format unsupported by the connector.\n",
-> >+			    drm_hdmi_connector_get_output_format_name(format));
-> >+		return false;
-> >+	}
-> >+
-> >+	switch (format) {
-> >+	case HDMI_COLORSPACE_RGB:
-> >+		drm_dbg_kms(dev, "RGB Format, checking the constraints.\n");
-> >+
-> >+		if (!(info->color_formats & DRM_COLOR_FORMAT_RGB444)) {
-> >+			drm_dbg_kms(dev, "Sink doesn't support RGB.\n");
-> >+			return false;
-> >+		}
-> >+
-> As I reported in V12,  the HDMI output on my rk3036-kylin was lost after =
-apply this series.
-> This is because there is something wrong with the DDC on my board, the ed=
-id read always failed
-> on first bootup. That means inno_hdmi_connector_get_modes will return 0.
->=20
-> and in function drm_helper_probe_single_connector_modes:
->=20
->          count =3D drm_helper_probe_get_modes(connector);
->=20
->          if (count =3D=3D 0 && (connector->status =3D=3D connector_status=
-_connected ||
->                             connector->status =3D=3D connector_status_unk=
-nown)) {
->                  count =3D drm_add_modes_noedid(connector, 1024, 768);
->=20
->                  /*
->                   * Section 4.2.2.6 (EDID Corruption Detection) of the DP=
- 1.4a
->                   * Link CTS specifies that 640x480 (the official "failsa=
-fe"
->                   * mode) needs to be the default if there's no EDID.
->                   */
->                  if (connector->connector_type =3D=3D DRM_MODE_CONNECTOR_=
-DisplayPort)
->                          drm_set_preferred_mode(connector, 640, 480);
->          }
-> drm_add_modes_noedid will not initialize display_info. So the check about=
- display info will always failed here:
->=20
-> [    4.205368] rockchip-drm display-subsystem: [drm:drm_atomic_check_only=
-] checking (ptrval)
-> [    4.205410] rockchip-drm display-subsystem: [drm:drm_atomic_helper_che=
-ck_modeset] [CRTC:35:crtc-0] mode changed
-> [    4.205439] rockchip-drm display-subsystem: [drm:drm_atomic_helper_che=
-ck_modeset] [CRTC:35:crtc-0] enable changed
-> [    4.205464] rockchip-drm display-subsystem: [drm:drm_atomic_helper_che=
-ck_modeset] [CRTC:35:crtc-0] active changed
-> [    4.205490] rockchip-drm display-subsystem: [drm:drm_atomic_helper_che=
-ck_modeset] Updating routing for [CONNECTOR:37:HDMI-A-1]
-> [    4.205517] rockchip-drm display-subsystem: [drm:drm_atomic_helper_che=
-ck_modeset] [CONNECTOR:37:HDMI-A-1] using [ENCODER:36:TMDS-36] on [CRTC:35:=
-crtc-0]
-> [    4.205545] rockchip-drm display-subsystem: [drm:drm_atomic_helper_con=
-nector_hdmi_check] Trying with a 8 bpc output
-> [    4.205575] rockchip-drm display-subsystem: [drm:drm_atomic_helper_con=
-nector_hdmi_check] Trying RGB output format
-> [    4.205670] rockchip-drm display-subsystem: [drm:drm_atomic_helper_con=
-nector_hdmi_check] RGB Format, checking the constraints.
-> [    4.205696] rockchip-drm display-subsystem: [drm:drm_atomic_helper_con=
-nector_hdmi_check] Sink doesn't support RGB.
-> [    4.205720] rockchip-drm display-subsystem: [drm:drm_atomic_helper_con=
-nector_hdmi_check] RGB output format not supported with 8 bpc
-> [    4.205747] rockchip-drm display-subsystem: [drm:drm_atomic_helper_con=
-nector_hdmi_check] Failed. No Format Supported for that bpc count.
-> [    4.205772] rockchip-drm display-subsystem: [drm:drm_atomic_helper_che=
-ck_modeset] [CONNECTOR:37:HDMI-A-1] driver check failed
-> [    4.205796] rockchip-drm display-subsystem: [drm:drm_atomic_check_only=
-] atomic driver check for (ptrval) failed: -22
->=20
-> My reply for your email in V12[0] was bounced, so I think you didn't read=
- it.
->=20
-> [0]https://patchwork.kernel.org/project/linux-rockchip/patch/20240423-kms=
--hdmi-connector-state-v12-27-3338e4c0b189@kernel.org/
 
-Indeed, I never received it, sorry.
+The hwmon system is doing something similar and I'm not sure we want to 
+mimic the same behavior.
 
-Thanks for looking into it, it's very valuable.
+Just to summarize:
 
-I can see several things that interact and could go wrong:
+1. There is a polling delay set
 
-* The DDC readout should not fail like that. From a quick look at the
-  driver, I'm wondering if it's not due to the fact that the DDC
-  controller isn't powered until the first modeset happens. Since the
-  first get_modes call is done with the controller disabled, it's
-  probably not initialized enough yet. The first modeset then comes and
-  will initialize the controller enough for the subsequent get_modes to
-  work. Is it something you could look into?
+This polling delay gives the sampling rate the thermal zone is 
+monitored. The temperature is updated at each 'delay' tick
 
-* drm_display_info not being filled to some sane default when there's no
-  EDID is indeed an issue. I can't be made generic, but the HDMI spec
-  provides us with some minimum requirements we can probably set in this
-  case (RGB supported, 8bpc supported, etc.) I'll work on that.
+2. There is no polling delay set
 
-Thanks again,
-Maxime
+The system relies on the interrupts to tell when a temperature reaches a 
+threshold.
 
---zvciie23y5uhhbzh
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+On the other side, if the governor is in-kernel, then we should not read 
+the temperature of the thermal zones because it is the job of the kernel 
+to do that.
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZkXVvQAKCRAnX84Zoj2+
-dhk4AYDogM4jEJWYBgXDz/9UjL6hM3e7hDiwpTPzxkObPEWZiK3oKr2a2v7jLuE5
-xTCqq9MBegJT2DFubE/fsL0xtq9L6tXFall+M0VLBe504G/qtrbBpVtz4xc3xqIJ
-KoTH3BOGyQ==
-=996h
------END PGP SIGNATURE-----
+Actually we can assume the temperature information exported to the 
+userspace is a courtesy of the kernel when this one is managing the 
+thermal zone.
 
---zvciie23y5uhhbzh--
+If there is no governor associated to the thermal zone because there is 
+no cooling device associated to the defined trip points, then we can 
+assume it is up to the userspace to monitor the thermal zone.
+
+Furthermore, the hwmon gives the temperature information with the 
+caching and because of that it is not possible for a thermal daemon to 
+correctly handle a thermal zone.
+
+That said, I would say we don't want the userspace to influence the 
+thermal zone monitoring in any manner.
+
+ From my POV, we should keep the code as it is.
+
+The description of the change says "it may cause the kernel and user 
+space to act against each other in some cases". Is it possible to give 
+the cases when that can happen ?
+
+
+
+
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
 
