@@ -1,123 +1,193 @@
-Return-Path: <linux-kernel+bounces-180789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EE848C731C
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:45:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5990F8C731E
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:46:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DCA52B22DC8
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 08:45:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A2BFB23128
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 08:46:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8FB5142E88;
-	Thu, 16 May 2024 08:45:30 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 912E437142
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 08:45:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BDF3142E8C;
+	Thu, 16 May 2024 08:46:10 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2065C37142;
+	Thu, 16 May 2024 08:46:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715849130; cv=none; b=hzCimQSF1Lgofyt4GkKoOUyNEY+DvmQtTCwR5sSRXLZ6XRTNP+YuhR0kTY94YP5PjOEdmQyveykYcVFezp402q7cJ0nXRrpXYQp6f5jKy5r0FkBRAKOfBSRHc+YBbUXMx0OGAU0GyHztjePcJ0cMDpwr+02E1lQKOdRNRHC1AbM=
+	t=1715849169; cv=none; b=rLYDVpT8djt9/wJYu4qBFP/tASE/n/KH7CHKfX8YnSWfZ0PY0c8KyKaVmJQ+5dpwZ4QWge5Whs32ebEgeyjBOrfCAbHdMHJgFdssSY5D/zkJRQVUsRgkU8Ckhu7k94D0+mBoIKBeFCx08VWcefHj8OofHx237uayJ20WlI148Vk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715849130; c=relaxed/simple;
-	bh=7aYx2NAHJSdm6UY/JfxSDGIF/gJzItywug9/e9fWLng=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=dz7xbDpU//s7if2M5ZHa72oTGjpbqaQjkQSaz280r2V7u74HG4REVyN9B8eMOcaD5IePz/IUPjghrfuh0omhL55IgrAtyLCe9WLPApMUHN+Y2iOirlNB4ZcCG69qTIsSWvQRDjLuxgwKYBTgU9dUF0DaceebvAW7ZIPbHYhQ5Vw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Vg3VN5cTSzxNgp;
-	Thu, 16 May 2024 16:41:48 +0800 (CST)
-Received: from canpemm500002.china.huawei.com (unknown [7.192.104.244])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8E42D1800C7;
-	Thu, 16 May 2024 16:45:23 +0800 (CST)
-Received: from [10.173.135.154] (10.173.135.154) by
- canpemm500002.china.huawei.com (7.192.104.244) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Thu, 16 May 2024 16:45:23 +0800
-Subject: Re: [PATCH v2] mm/huge_memory: don't unpoison huge_zero_folio
-To: Oscar Salvador <osalvador@suse.de>, David Hildenbrand <david@redhat.com>
-CC: <akpm@linux-foundation.org>, <shy828301@gmail.com>,
-	<nao.horiguchi@gmail.com>, <xuyu@linux.alibaba.com>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20240515023607.870022-1-linmiaohe@huawei.com>
- <e1c93779-8cde-4986-85d3-2134fb8970b3@redhat.com>
- <ZkXDS9y_cBSzBzeN@localhost.localdomain>
-From: Miaohe Lin <linmiaohe@huawei.com>
-Message-ID: <fd1b4d3f-be4c-16e2-00d9-8ea6443c68f3@huawei.com>
-Date: Thu, 16 May 2024 16:45:22 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+	s=arc-20240116; t=1715849169; c=relaxed/simple;
+	bh=YVevjVRuBtKpw75QsPySW5U+EaVbbAyylawt46tOVqc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pna0Gl1TMYMdg3UVUjJsxFWiRhO/exPey0CNIFYCuhIx9aAmW/5v9Adz6oSLKqv8Tg5orpzzHLXCQXvYO5qZ7gz7/YnnbFjm4z3J4iTIt7pUTb3Ht+Ll8rR3EQ+XPfkIcEhxFeqC45q5IYhJ29fJoFXftRRXZ84tE/H/pYONS2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3B487DA7;
+	Thu, 16 May 2024 01:46:30 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C855C3F7A6;
+	Thu, 16 May 2024 01:46:03 -0700 (PDT)
+Date: Thu, 16 May 2024 10:45:58 +0200
+From: Mark Rutland <mark.rutland@arm.com>
+To: Carlos Llamas <cmllamas@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>
+Cc: Will Deacon <will@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+	Kees Cook <keescook@chromium.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Uros Bizjak <ubizjak@gmail.com>, Nhat Pham <nphamcs@gmail.com>,
+	linux-kernel@vger.kernel.org, kernel-team@android.com,
+	stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v2] locking/atomic: scripts: fix ${atomic}_sub_and_test()
+ kerneldoc
+Message-ID: <ZkXHxhhER-T6MhIX@J2N7QTR9R3>
+References: <ZkRuMcao7lusrypL@J2N7QTR9R3>
+ <20240515133844.3502360-1-cmllamas@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ZkXDS9y_cBSzBzeN@localhost.localdomain>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- canpemm500002.china.huawei.com (7.192.104.244)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240515133844.3502360-1-cmllamas@google.com>
 
-On 2024/5/16 16:26, Oscar Salvador wrote:
-> On Wed, May 15, 2024 at 05:55:39PM +0200, David Hildenbrand wrote:
->>> +	if (is_huge_zero_folio(folio)) {
->>> +		unpoison_pr_info("Unpoison: huge zero page is not supported %#lx\n",
->>> +				 pfn, &unpoison_rs);
->>> +		goto unlock_mutex;
->>> +	}
->>> +
+On Wed, May 15, 2024 at 01:37:10PM +0000, Carlos Llamas wrote:
+> For ${atomic}_sub_and_test() the @i parameter is the value to subtract,
+> not add. Fix the typo in the kerneldoc template and generate the headers
+> with this update.
 > 
-> Sorry for spamming your reply David, but for some unknown reason I am not able
-> to find the original patch in my mailbox, in none of the two accountes I am
-> subscribed, so I guess I will have to reply here.
+> Fixes: ad8110706f38 ("locking/atomic: scripts: generate kerneldoc comments")
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: stable@vger.kernel.org
+> Suggested-by: Mark Rutland <mark.rutland@arm.com>
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+> Signed-off-by: Carlos Llamas <cmllamas@google.com>
+> ---
 > 
-> Just two things
-> 
-> 1) We do not care if someone grabs a refcount for huge_zero_folio,
->    because since it is not supported anyway the outcome will not change.
->    Also, AFAIK, there is no chance we can unpoison that folio.
->    Therefore, I would just lift the check two blocks and place it right after
->    the hw_memory_failure check.
-> 
-> 2) The whole thing is unsupported, but you will return -EBUSY while you
->    should be returning -EOPNOTSUPP AFAICS.
-> 
+> Notes:
+>     v2: fix kerneldoc template instead, as pointed out by Mark
 
-Thanks for your comment. Do you mean something like below?
+Thanks for this!
 
-diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-index 16ada4fb02b7..a9fe9eda593f 100644
---- a/mm/memory-failure.c
-+++ b/mm/memory-failure.c
-@@ -2546,6 +2546,13 @@ int unpoison_memory(unsigned long pfn)
-                goto unlock_mutex;
-        }
+Acked-by: Mark Rutland <mark.rutland@arm.com>
 
-+       if (is_huge_zero_folio(folio)) {
-+               unpoison_pr_info("Unpoison: huge zero page is not supported %#lx\n",
-+                                pfn, &unpoison_rs);
-+               ret = -EOPNOTSUPP;
-+               goto unlock_mutex;
-+       }
-+
-        if (!PageHWPoison(p)) {
-                unpoison_pr_info("Unpoison: Page was already unpoisoned %#lx\n",
-                                 pfn, &unpoison_rs);
+Peter, Ingo, are you happy to queue this up in the tip tree?
 
-Thanks.
-.
+Thanks,
+Mark.
 
-> with that you can add:
 > 
-> Reviewed-by: Oscar Salvador <osalvador@suse.de>
+>  include/linux/atomic/atomic-arch-fallback.h | 6 +++---
+>  include/linux/atomic/atomic-instrumented.h  | 8 ++++----
+>  include/linux/atomic/atomic-long.h          | 4 ++--
+>  scripts/atomic/kerneldoc/sub_and_test       | 2 +-
+>  4 files changed, 10 insertions(+), 10 deletions(-)
 > 
+> diff --git a/include/linux/atomic/atomic-arch-fallback.h b/include/linux/atomic/atomic-arch-fallback.h
+> index 956bcba5dbf2..2f9d36b72bd8 100644
+> --- a/include/linux/atomic/atomic-arch-fallback.h
+> +++ b/include/linux/atomic/atomic-arch-fallback.h
+> @@ -2242,7 +2242,7 @@ raw_atomic_try_cmpxchg_relaxed(atomic_t *v, int *old, int new)
 >  
+>  /**
+>   * raw_atomic_sub_and_test() - atomic subtract and test if zero with full ordering
+> - * @i: int value to add
+> + * @i: int value to subtract
+>   * @v: pointer to atomic_t
+>   *
+>   * Atomically updates @v to (@v - @i) with full ordering.
+> @@ -4368,7 +4368,7 @@ raw_atomic64_try_cmpxchg_relaxed(atomic64_t *v, s64 *old, s64 new)
+>  
+>  /**
+>   * raw_atomic64_sub_and_test() - atomic subtract and test if zero with full ordering
+> - * @i: s64 value to add
+> + * @i: s64 value to subtract
+>   * @v: pointer to atomic64_t
+>   *
+>   * Atomically updates @v to (@v - @i) with full ordering.
+> @@ -4690,4 +4690,4 @@ raw_atomic64_dec_if_positive(atomic64_t *v)
+>  }
+>  
+>  #endif /* _LINUX_ATOMIC_FALLBACK_H */
+> -// 14850c0b0db20c62fdc78ccd1d42b98b88d76331
+> +// b565db590afeeff0d7c9485ccbca5bb6e155749f
+> diff --git a/include/linux/atomic/atomic-instrumented.h b/include/linux/atomic/atomic-instrumented.h
+> index debd487fe971..9409a6ddf3e0 100644
+> --- a/include/linux/atomic/atomic-instrumented.h
+> +++ b/include/linux/atomic/atomic-instrumented.h
+> @@ -1349,7 +1349,7 @@ atomic_try_cmpxchg_relaxed(atomic_t *v, int *old, int new)
+>  
+>  /**
+>   * atomic_sub_and_test() - atomic subtract and test if zero with full ordering
+> - * @i: int value to add
+> + * @i: int value to subtract
+>   * @v: pointer to atomic_t
+>   *
+>   * Atomically updates @v to (@v - @i) with full ordering.
+> @@ -2927,7 +2927,7 @@ atomic64_try_cmpxchg_relaxed(atomic64_t *v, s64 *old, s64 new)
+>  
+>  /**
+>   * atomic64_sub_and_test() - atomic subtract and test if zero with full ordering
+> - * @i: s64 value to add
+> + * @i: s64 value to subtract
+>   * @v: pointer to atomic64_t
+>   *
+>   * Atomically updates @v to (@v - @i) with full ordering.
+> @@ -4505,7 +4505,7 @@ atomic_long_try_cmpxchg_relaxed(atomic_long_t *v, long *old, long new)
+>  
+>  /**
+>   * atomic_long_sub_and_test() - atomic subtract and test if zero with full ordering
+> - * @i: long value to add
+> + * @i: long value to subtract
+>   * @v: pointer to atomic_long_t
+>   *
+>   * Atomically updates @v to (@v - @i) with full ordering.
+> @@ -5050,4 +5050,4 @@ atomic_long_dec_if_positive(atomic_long_t *v)
+>  
+>  
+>  #endif /* _LINUX_ATOMIC_INSTRUMENTED_H */
+> -// ce5b65e0f1f8a276268b667194581d24bed219d4
+> +// 8829b337928e9508259079d32581775ececd415b
+> diff --git a/include/linux/atomic/atomic-long.h b/include/linux/atomic/atomic-long.h
+> index 3ef844b3ab8a..f86b29d90877 100644
+> --- a/include/linux/atomic/atomic-long.h
+> +++ b/include/linux/atomic/atomic-long.h
+> @@ -1535,7 +1535,7 @@ raw_atomic_long_try_cmpxchg_relaxed(atomic_long_t *v, long *old, long new)
+>  
+>  /**
+>   * raw_atomic_long_sub_and_test() - atomic subtract and test if zero with full ordering
+> - * @i: long value to add
+> + * @i: long value to subtract
+>   * @v: pointer to atomic_long_t
+>   *
+>   * Atomically updates @v to (@v - @i) with full ordering.
+> @@ -1809,4 +1809,4 @@ raw_atomic_long_dec_if_positive(atomic_long_t *v)
+>  }
+>  
+>  #endif /* _LINUX_ATOMIC_LONG_H */
+> -// 1c4a26fc77f345342953770ebe3c4d08e7ce2f9a
+> +// eadf183c3600b8b92b91839dd3be6bcc560c752d
+> diff --git a/scripts/atomic/kerneldoc/sub_and_test b/scripts/atomic/kerneldoc/sub_and_test
+> index d3760f7749d4..96615e50836b 100644
+> --- a/scripts/atomic/kerneldoc/sub_and_test
+> +++ b/scripts/atomic/kerneldoc/sub_and_test
+> @@ -1,7 +1,7 @@
+>  cat <<EOF
+>  /**
+>   * ${class}${atomicname}() - atomic subtract and test if zero with ${desc_order} ordering
+> - * @i: ${int} value to add
+> + * @i: ${int} value to subtract
+>   * @v: pointer to ${atomic}_t
+>   *
+>   * Atomically updates @v to (@v - @i) with ${desc_order} ordering.
+> -- 
+> 2.45.0.rc1.225.g2a3ae87e7f-goog
 > 
-
 
