@@ -1,152 +1,278 @@
-Return-Path: <linux-kernel+bounces-181580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 509CB8C7DE2
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 23:06:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEEB68C7DE7
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 23:11:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8214E1C215A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 21:06:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3F31282C27
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 21:11:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2261215820C;
-	Thu, 16 May 2024 21:06:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 100C81581EE;
+	Thu, 16 May 2024 21:11:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="O9xpuRdU"
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="u4McJBe8"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEFC1157E88
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 21:05:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B70A5250;
+	Thu, 16 May 2024 21:11:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715893561; cv=none; b=DGbdy8hUY9+CpWqiM7IuH6aVoJLRkd9YqgQhtKMD7ddel9EuET+0UEuBH372r/2CUPh4tkBOoSORmOnNQ2M4WBiNyjqq2wRAUKfpkH2n6FyOSh1c7v8+dwIRrp1P6dBhWwDacGImdxCIAmQDtdiFq79eXZdH5KTtqRkJw//Ip+g=
+	t=1715893888; cv=none; b=OpyZDhiidh0oUZtEc7F7pxduMqtmxW6byKQXGPodoq7dobZtaBnxkxrHe2exsyXlwg6XJS66DEIL75F5b2KudGX4pz1Z/a9sEDLQ51TrsG1YyWmkcwaoMR/xhurRi6VkSv3CSVHHJZyShYFqo+dFA0ijiecV09KXPxUYrweSHS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715893561; c=relaxed/simple;
-	bh=kB38o85pn/GJarPAddnJlZVHN6WB91yX6h3Qc6dHZsM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VFjVolCHUm2dM6GZyNq7xa5l0+/HoMhNCYhA+w1C5Ot2HqIBM07ras6aMGlHcwfYWxXqyNskknckHYIrbU2tDrtjhSzHgk7TLlWh9rBAeOgkxlKD/LDKKyVYW6plb9vTxh/U/G9oZKKzSIEJVwgKsuvrXMfEo2ygyUgw3fZTZJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=O9xpuRdU; arc=none smtp.client-ip=209.85.219.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-dc236729a2bso8466532276.0
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 14:05:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715893559; x=1716498359; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vdQVJALIhd9J+5MaB3JGG80Txdx/1fS6o6hU1+crkwk=;
-        b=O9xpuRdUUDqcRavlYV2GvPe9of4mRVouJb/lhck5tnxRggTC3cvzQYa2AIiiwt7jfl
-         YrzTdIgdxy9DMN0d82cSpxjgRP14Kbs6S4fluFLs4Xue1ptB4O2ndn8c79HNmdyk1jmK
-         nDS/FVDal2+jQtG1Onh9SRwKt0L8zm4fPVJ6Z1oGVpaEdw6qDIYo4KjQcfdgLT/Zz0iG
-         fkH9fHaKUNexxDCGwFbvKK4zPikzh4C+y6XVuwBLxOTZb0jaxlD5AjDKpi4DxsSGz0Cj
-         ZdCTpYMOjmju6Us4Av7NInpuyOYtofgEyDDkfzZYb0wY+56Ru4ONQJKgCV3YXoomRwEW
-         MDLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715893559; x=1716498359;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vdQVJALIhd9J+5MaB3JGG80Txdx/1fS6o6hU1+crkwk=;
-        b=X/hN0OMOrP9kABNMI6roLf+qnN0JQbW6LQ1HCmPfwqGFmt8RLoF5xb5cOTC8J8/Rd3
-         0Tjn9yshnvER8hZ0EdrYH42yvy2cadaAjCGC6O636H5mPn4ZjaHzy07jBl4iUAx7FL+B
-         8WVHuK2H7C9iGUpdvjwd4AOu1zBC0BvvG1PfkQXRG0mqE2+NkcdFOE4fZijV6p4o2C3c
-         M7zy4jIMufwXUMjBlqNd5pbkbyvsKgxefhtw0zktEmrRwlbT1X4U/CxeWhmG6tjM6+fl
-         ybk0g1Wrp79iQCifJ4aWXpX7fAkHlKveccOGSB/9tIyKQoovMsb9+tngEjvNiqbNGSa6
-         e0LA==
-X-Forwarded-Encrypted: i=1; AJvYcCWGxauRc6iNBDMkRfvNrLNZq/fRPzimbBP1VfVRQ2X4WakS8sfAB8PfryeagV1rmN5p1XjoOEwvG53oFTmykVAKAYX7whcis2uUZSlL
-X-Gm-Message-State: AOJu0YzkmyvJ7W/dYQPrqaOOen8g46DZuMQ1OiQdYz2V8T/Odx8ile4C
-	YKrpHSaRmdxEaTgARXYu4ybJJUo74sA661GF2ZNBbMU/I5Xq4ZZQctkMtXMjRQ6vSju4B6veWZV
-	scj4YhK5pWwjrUlwWG+gMF8tLEvjKrgjRSJbFVg==
-X-Google-Smtp-Source: AGHT+IGPVI7xUKR6WSZ8Rlc31e14V3f37LgbLOEi82rBg1xrqYEaOrRWPX+MwjIkDuFNMNGbSL5VXpr3n/oPxM83b3s=
-X-Received: by 2002:a25:8e81:0:b0:dc6:b820:bb45 with SMTP id
- 3f1490d57ef6-dee4f2fe16amr18028910276.27.1715893558734; Thu, 16 May 2024
- 14:05:58 -0700 (PDT)
+	s=arc-20240116; t=1715893888; c=relaxed/simple;
+	bh=cravbn4MV/KVF/u5zIEyrt9Uh9e/yN5beMqcBhMb6xI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MlYnX4hBIMoeYAPmKimz4upeKtB3MF1VHlxZPPfCVcKdK6dfXI/q6NOaTLGCT7osTIk3MON5H9KvkJ8fgmaO/CBT1VbhOa3Z2xz0//C4dNZCryKfFqfeXB58epxzwc0lmf/ZxYg6q+X7JWLpwrdRNewd/gVwLnOULhDQ3ePKGr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=u4McJBe8; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1715893884;
+	bh=cravbn4MV/KVF/u5zIEyrt9Uh9e/yN5beMqcBhMb6xI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=u4McJBe8IhgsJVGKmL7r63tEs0Y8DpJXPBZC5M2CDxXFE0ThXRd2V5rDLlnYQ3nIH
+	 5tVxJW2a3AXYFSthBmI92J2XMjnKncBbZjONt6HCljx7apSFNcU2zeTvaJL94gBB18
+	 Yr+Z0RAgcuuH1LtcttQG8uYDmclpXvgEmnwM4IszfptJ3cvp3kBJbAFIfpnacn36iO
+	 nH15/I8W1Q6djo4hSWmRlZzsB0a8+xSXJX7FTqAu25SFqr4fDNI2me5JvYto0s1lBn
+	 WjKOMEBLlbg851s8VMjFg+i2zGe2zYLrLWyhyVEIVZvztT0T0q83OFPkIqR9E39kHo
+	 Y5iLRnmfvmFGA==
+Received: from notapiano (zone.collabora.co.uk [167.235.23.81])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nfraprado)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id A3FBD37821A8;
+	Thu, 16 May 2024 21:11:23 +0000 (UTC)
+Date: Thu, 16 May 2024 17:11:21 -0400
+From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/1] spi: Remove unneded check for orig_nents
+Message-ID: <038b55ec-9cbc-4303-a962-906f073892b8@notapiano>
+References: <20240507201028.564630-1-andriy.shevchenko@linux.intel.com>
+ <d8930bce-6db6-45f4-8f09-8a00fa48e607@notapiano>
+ <ZkXdXO4Xb83270V7@smile.fi.intel.com>
+ <ZkYJTxmlM5oWOzFL@smile.fi.intel.com>
+ <2fccdd9a-5b97-4dc6-a6b1-ce2d9e0819bd@notapiano>
+ <ZkZGbz0RlUHshneC@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240427-realtek-led-v2-0-5abaddc32cf6@gmail.com>
- <20240427-realtek-led-v2-3-5abaddc32cf6@gmail.com> <20240429063923.648c927f@kernel.org>
- <CAJq09z6kBRXKG6QVyfUO6qzKaOZL6sbRnNXu8aT+siywjX7xLg@mail.gmail.com>
-In-Reply-To: <CAJq09z6kBRXKG6QVyfUO6qzKaOZL6sbRnNXu8aT+siywjX7xLg@mail.gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 16 May 2024 23:05:47 +0200
-Message-ID: <CACRpkda9W7SjX+saGY9U5ct6MdD_f-B6C0PTF0OffCRPEsEnrQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v2 3/3] net: dsa: realtek: add LED drivers for rtl8366rb
-To: Luiz Angelo Daros de Luca <luizluca@gmail.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, =?UTF-8?Q?Alvin_=C5=A0ipraga?= <alsi@bang-olufsen.dk>, 
-	Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>, 
-	Vladimir Oltean <olteanv@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
-	Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZkZGbz0RlUHshneC@smile.fi.intel.com>
 
-On Thu, May 16, 2024 at 7:30=E2=80=AFPM Luiz Angelo Daros de Luca
-<luizluca@gmail.com> wrote:
-> > On Sat, 27 Apr 2024 02:11:30 -0300 Luiz Angelo Daros de Luca wrote:
-> > > +static int rtl8366rb_setup_leds(struct realtek_priv *priv)
-> > > +{
-> > > +     struct device_node *leds_np, *led_np;
-> > > +     struct dsa_switch *ds =3D &priv->ds;
-> > > +     struct dsa_port *dp;
-> > > +     int ret =3D 0;
-> > > +
-> > > +     dsa_switch_for_each_port(dp, ds) {
-> > > +             if (!dp->dn)
-> > > +                     continue;
-> > > +
-> > > +             leds_np =3D of_get_child_by_name(dp->dn, "leds");
-> > > +             if (!leds_np) {
-> > > +                     dev_dbg(priv->dev, "No leds defined for port %d=
-",
-> > > +                             dp->index);
-> > > +                     continue;
-> > > +             }
-> > > +
-> > > +             for_each_child_of_node(leds_np, led_np) {
-> > > +                     ret =3D rtl8366rb_setup_led(priv, dp,
-> > > +                                               of_fwnode_handle(led_=
-np));
-> > > +                     if (ret) {
-> > > +                             of_node_put(led_np);
-> > > +                             break;
-> > > +                     }
-> > > +             }
-> > > +
-> > > +             of_node_put(leds_np);
-> > > +             if (ret)
-> > > +                     return ret;
-> > > +     }
-> > > +     return 0;
-> > > +}
-> >
-> > coccicheck generates this warning:
-> >
-> > drivers/net/dsa/realtek/rtl8366rb.c:1032:4-15: ERROR: probable double p=
-ut.
-> >
-> > I think it's a false positive.
->
-> Me too. I don't think it is a double put. The put for led_np is called
-> in the increment code inside the for_each_child_of_node macro. With a
-> break, we skip that part and we need to put it before leaving. I don't
-> know coccicheck but maybe it got confused by the double for.
+On Thu, May 16, 2024 at 08:46:23PM +0300, Andy Shevchenko wrote:
+> On Thu, May 16, 2024 at 12:25:19PM -0400, Nícolas F. R. A. Prado wrote:
+> > On Thu, May 16, 2024 at 04:25:35PM +0300, Andy Shevchenko wrote:
+> > > On Thu, May 16, 2024 at 01:18:04PM +0300, Andy Shevchenko wrote:
+> > > > On Wed, May 15, 2024 at 05:09:33PM -0400, Nícolas F. R. A. Prado wrote:
+> > > > > On Tue, May 07, 2024 at 11:10:27PM +0300, Andy Shevchenko wrote:
+> > > > > > Both dma_unmap_sgtable() and sg_free_table() in spi_unmap_buf_attrs()
+> > > > > > have checks for orig_nents against 0. No need to duplicate this.
+> > > > > > All the same applies to other DMA mapping API calls.
+> > > > > > 
+> > > > > > Also note, there is no other user in the kernel that does this kind of
+> > > > > > checks.
+> > > > > > 
+> > > > > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > > > > 
+> > > > > this commit caused a regression which I reported here:
+> > > > > 
+> > > > > https://lore.kernel.org/all/d3679496-2e4e-4a7c-97ed-f193bd53af1d@notapiano
+> > > > > 
+> > > > > along with some thoughts on the cause and a possible solution, though I'm not
+> > > > > familiar with this code base at all and would really appreciate any feedback you
+> > > > > may have.
+> > > > 
+> > > > Thanks for the report and preliminary analysis!
+> > > > I'll look at it hopefully sooner than later.
+> > > > 
+> > > > But at least what I think now is that my change revealed a problem somewhere
+> > > > else, because that's how DMA mapping / streaming APIs designed, it's extremely
+> > > > rare to check orig_nents field.
+> > > 
+> > > Can you test the below patch?
+> > > 
+> > > diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+> > > index b2efd4964f7c..51811f04e463 100644
+> > > --- a/drivers/spi/spi.c
+> > > +++ b/drivers/spi/spi.c
+> > > @@ -1243,6 +1243,7 @@ static int __spi_map_msg(struct spi_controller *ctlr, struct spi_message *msg)
+> > >  	else
+> > >  		rx_dev = ctlr->dev.parent;
+> > >  
+> > > +	ret = -ENOMSG;
+> > >  	list_for_each_entry(xfer, &msg->transfers, transfer_list) {
+> > >  		/* The sync is done before each transfer. */
+> > >  		unsigned long attrs = DMA_ATTR_SKIP_CPU_SYNC;
+> > > @@ -1272,6 +1273,9 @@ static int __spi_map_msg(struct spi_controller *ctlr, struct spi_message *msg)
+> > >  			}
+> > >  		}
+> > >  	}
+> > > +	/* No transfer has been mapped, bail out with success */
+> > > +	if (ret)
+> > > +		return 0;
+> > >  
+> > >  	ctlr->cur_rx_dma_dev = rx_dev;
+> > >  	ctlr->cur_tx_dma_dev = tx_dev;
+> > 
+> > Hi Andy,
+> > 
+> > thank you for the patch. Unfortunately it didn't completely solve the issue. Now
+> > the stack trace is slightly different and points at the next line:
+> > 
+> > 	dma_sync_sgtable_for_device(rx_dev, &xfer->rx_sg, DMA_FROM_DEVICE);
+> > 
+> > So now we're hitting the case where only the tx buffer was DMA mapped, but the
+> > rx is still uninitialized, though the cur_msg_mapped flag is set to true, since
+> > it is shared between them. The original code checked for the initialization of
+> > each scatterlist individually, which is why it worked.
+> 
+> I was kinda expecting that, and already have another patch to try (should
+> applied on top):
+> 
+> diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+> index 51811f04e463..5c607dd21fe7 100644
+> --- a/drivers/spi/spi.c
+> +++ b/drivers/spi/spi.c
+> @@ -1258,6 +1258,8 @@ static int __spi_map_msg(struct spi_controller *ctlr, struct spi_message *msg)
+>  						attrs);
+>  			if (ret != 0)
+>  				return ret;
+> +		} else {
+> +			memset(&xfer->tx_sg, 0, sizeof(xfer->tx_sg));
+>  		}
+>  
+>  		if (xfer->rx_buf != NULL) {
+> @@ -1271,6 +1273,8 @@ static int __spi_map_msg(struct spi_controller *ctlr, struct spi_message *msg)
+>  
+>  				return ret;
+>  			}
+> +		} else {
+> +			memset(&xfer->rx_sg, 0, sizeof(xfer->rx_sg));
+>  		}
+>  	}
+>  	/* No transfer has been mapped, bail out with success */
 
-Maybe I can use for_each_child_of_node_scoped() and
-get the handling for free? The checkers should learn about
-*_scoped now.
+Still the same issue. I've attached the backtrace at the end for reference. But
+I don't see how a memset would help here. As far as I can see, there's nothing
+in the DMA API protecting it from a null pointer to be passed in. So when
 
-(I'm still working on the patch, I'm just slow.)
+	dma_sync_sgtable_for_device(tx_dev, &xfer->tx_sg, DMA_TO_DEVICE);
 
-Yours,
-Linus Walleij
+is called with xfer->tx_sg.sgl being null, that will get passed all the way to
+iommu_dma_sync_sg_for_device() and sg_dma_is_swiotlb(), where it'll be
+dereferenced and cause the issue. So it seems to me that either the DMA API
+functions should check for the null pointer, or if the API doesn't want to
+handle those cases (like sync being called before the buffer has been mapped),
+then the caller needs to do the check, as was done in the original code.
+
+The same applies for the change in spi_unmap_buf_attrs(). I see sg_free_table()
+does handle a null sgl, but dma_unmap_sgtable() doesn't (and indeed I verified
+null pointer dereference happens there too if I avoid this one).
+
+Thanks,
+Nícolas
+
+[    3.418996] Unable to handle kernel NULL pointer dereference at virtual address 000000000000001c
+[    3.425173] Mem abort info:
+[    3.425175]   ESR = 0x0000000096000004
+[    3.425178]   EC = 0x25: DABT (current EL), IL = 32 bits
+[    3.425183]   SET = 0, FnV = 0
+[    3.425186]   EA = 0, S1PTW = 0
+[    3.437092]   FSC = 0x04: level 0 translation fault
+[    3.446403] Data abort info:
+[    3.446405]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+[    3.452779]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+[    3.460666]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+[    3.467487] [000000000000001c] user address but active_mm is swapper
+[    3.478571] Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
+[    3.486896] Modules linked in:
+[    3.495580] CPU: 6 PID: 68 Comm: kworker/u32:2 Tainted: G        W          6.9.0-next-20240515-00003-g3f984d58a25f #400
+[    3.507103] Hardware name: Google Kingoftown (DT)
+[    3.507108] Workqueue: events_unbound deferred_probe_work_func
+[    3.516498] pstate: 80400009 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[    3.525275] pc : iommu_dma_sync_sg_for_device+0x28/0x100
+[    3.580070] lr : __dma_sync_sg_for_device+0x28/0x4c
+[    3.585089] sp : ffff800080942dc0
+[    3.588495] x29: ffff800080942dc0 x28: ffff5a9cc33ac000 x27: ffff5a9cc1482010
+[    3.595821] x26: ffff800080943008 x25: ffff5a9cc33ac480 x24: ffffb11b69bcfc00
+[    3.603146] x23: ffff5a9cc1482010 x22: 0000000000000001 x21: 0000000000000000
+[    3.610473] x20: ffffb11b69f3d718 x19: 0000000000000000 x18: ffffb11b6ac19c48
+[    3.617797] x17: 0000000000010108 x16: 0000000000000000 x15: 0000000000000002
+[    3.625130] x14: 0000000000000001 x13: 0000000000161361 x12: 0000000000000001
+[    3.632454] x11: ffff800080942cd0 x10: ffff5a9cc3dafff8 x9 : ffff5a9cc33ac469
+[    3.639782] x8 : ffff5a9cc148d704 x7 : 00000000ffffffff x6 : 0000000000000001
+[    3.647109] x5 : ffffb11b6933a780 x4 : ffffb11b68504b34 x3 : 0000000000000001
+[    3.654442] x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff5a9cc1482010
+[    3.661769] Call trace:
+[    3.664285]  iommu_dma_sync_sg_for_device+0x28/0x100
+[    3.669388]  __dma_sync_sg_for_device+0x28/0x4c
+[    3.674052]  spi_transfer_one_message+0x378/0x6e4
+[    3.678898]  __spi_pump_transfer_message+0x1dc/0x504
+[    3.684002]  __spi_sync+0x2a0/0x3c4
+[    3.687589]  spi_sync+0x30/0x54
+[    3.690825]  spi_mem_exec_op+0x26c/0x41c
+[    3.694866]  spi_nor_spimem_read_data+0x148/0x158
+[    3.699708]  spi_nor_read_data+0x30/0x3c
+[    3.703745]  spi_nor_read_sfdp+0x74/0xe4
+[    3.707784]  spi_nor_parse_sfdp+0x120/0x11d0
+[    3.712174]  spi_nor_sfdp_init_params_deprecated+0x3c/0x8c
+[    3.717807]  spi_nor_scan+0x7ac/0xef8
+[    3.721579]  spi_nor_probe+0x94/0x2ec
+[    3.725352]  spi_mem_probe+0x6c/0xac
+[    3.729038]  spi_probe+0x84/0xe4
+[    3.732359]  really_probe+0xbc/0x2a0
+[    3.736035]  __driver_probe_device+0x78/0x12c
+[    3.740511]  driver_probe_device+0x40/0x160
+[    3.744814]  __device_attach_driver+0xb8/0x134
+[    3.749381]  bus_for_each_drv+0x84/0xe0
+[    3.753330]  __device_attach+0xa8/0x1b0
+[    3.757280]  device_initial_probe+0x14/0x20
+[    3.761580]  bus_probe_device+0xa8/0xac
+[    3.765526]  device_add+0x590/0x750
+[    3.769108]  __spi_add_device+0x138/0x208
+[    3.773234]  of_register_spi_device+0x394/0x57c
+[    3.777898]  spi_register_controller+0x394/0x760
+[    3.782651]  qcom_qspi_probe+0x328/0x390
+[    3.786691]  platform_probe+0x68/0xd8
+[    3.790464]  really_probe+0xbc/0x2a0
+[    3.794147]  __driver_probe_device+0x78/0x12c
+[    3.798622]  driver_probe_device+0x40/0x160
+[    3.802923]  __device_attach_driver+0xb8/0x134
+[    3.807487]  bus_for_each_drv+0x84/0xe0
+[    3.811434]  __device_attach+0xa8/0x1b0
+[    3.815383]  device_initial_probe+0x14/0x20
+[    3.819682]  bus_probe_device+0xa8/0xac
+[    3.823629]  deferred_probe_work_func+0x88/0xc0
+[    3.828281]  process_one_work+0x154/0x298
+[    3.832409]  worker_thread+0x304/0x408
+[    3.836272]  kthread+0x118/0x11c
+[    3.839596]  ret_from_fork+0x10/0x20
+[    3.843284] Code: 2a0203f5 2a0303f6 a90363f7 aa0003f7 (b9401c20)
+[    3.849541] ---[ end trace 0000000000000000 ]---
+
+> 
+> 
+> If my understanding is correct, my patch revealed two issues:
+> - for non-mapped message at all;
+> - for unidirect transfers.
+> 
+> But I will wait for your test results to make the final conclusion.
+> 
+> -- 
+> With Best Regards,
+> Andy Shevchenko
+> 
+> 
 
