@@ -1,103 +1,93 @@
-Return-Path: <linux-kernel+bounces-181127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76B6F8C77CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:36:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D68AC8C77CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:37:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BFBF1F222EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 13:36:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2F66282FBE
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 13:37:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFAB41482E4;
-	Thu, 16 May 2024 13:36:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A5A51474C6;
+	Thu, 16 May 2024 13:37:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dNlMIP63"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="Lx/VUXV+"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1A2D145A13;
-	Thu, 16 May 2024 13:36:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F9AA138C
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 13:37:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715866573; cv=none; b=gUzcIZ5AX5ZoC9+m/vSNLee4kEqk+0ju4tFRgsQAWKwmt71wfQ5+6UkNCuzZeUhcL6j6O3gbArBVR4ZCGL3YY4qD5iFkzCYaDZA3ke2J0IY5u5nvl6wQAAP6S4cW9P6gXGB5iMaaKjgivFMXGbK4Dh/XZxlqWEszzoPhOButK1o=
+	t=1715866653; cv=none; b=VvQuXvThuYCMy9FOsCvBsw0/SYATDylZi1PNtT6TENMsBBAdkW0ikfAOZXjf3V0iHI8H8+/yRsLhwwW7V+g6fM2pwRt6HTMbs+JPqzfftkjN1me9xC58w2ja5n0tOEUVaTA42sm5F2iyL4CMtNv92fay9DJv4gTQqLYUrd0gFCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715866573; c=relaxed/simple;
-	bh=+X/pJ+cjQTPvyiXa9RlyRxNcuMfpjhyz9k+r/NmP/WY=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=rtAlH9yOLkMMnYH2jO5AstpDVL0HLGqtneCf/jPmDsrUIY5TWKysJ+9RqMN2S3E74YFCnp0sDMZt7y+DX6AbH1CjAKQjxQd04GnTUeCSzKvbKATEM5/nFnxUP1VD1FCbg/JMGQETO4CgEBGPrbb0/yX+kOfYqa0Hu6GSrwrc0rY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dNlMIP63; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34313C113CC;
-	Thu, 16 May 2024 13:36:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715866572;
-	bh=+X/pJ+cjQTPvyiXa9RlyRxNcuMfpjhyz9k+r/NmP/WY=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=dNlMIP63DMon7wdup7/PSlufCpBM3kgmim23PNWd6NN5hxQJ8SEk1godal4HV4LOu
-	 v4v8ECOM+6olmSSSzmjeu0I5ABuCHFHBISDIcUH6ptvx2R6lyLAmBb5QknQej8tHRw
-	 VxDVmPXSZRuoiAaa+15rP9BOwcFfzwob5/7KWhM83/oeean4xO/gksPZD2LYKmp7hd
-	 /mv22xlDcQaKuqTZWkrYtzhu3PrmJcMm0Vf0NEDr+5FZy0QBsai5s0ptdkKDcht2xH
-	 /ceZkDUqvklKuy5QUkE2BpfHwf7mVisucs5zNM8ujHMPvMVF2grFmO3vF+HJqQUcG6
-	 61xV0KeMa+GqA==
+	s=arc-20240116; t=1715866653; c=relaxed/simple;
+	bh=G1lDGnjhyJ7Ve4PIHh0atn8KGFSqLwZuTuc0oadXrro=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ifcYQHb1awnHtrsCSAjvA2i3GOOOpaK9nob3lHA4xU9yO1sEFYytKe2B00FiUq79eea/QRxAQKccFLMdMRCHQL2q8LxG6TmBVy7689CPMikIWfJJxQJKfRbl9mV6EngwkKfUSxz/vl40kToxlSGmhFEveu0wTdOd3ee90SbAvNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=Lx/VUXV+; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=zqiddJDPtoHIu0oZ8yctrj4tnb0n+qoaibljudxr+uE=; b=Lx/VUXV+8oIP1NeN
+	fvLk7t+T8WwUqKHypprgU1b/JapMZp7DNA2CQaTCEGdNq/qPQNtH+Fa7o/rQWOoP3rxI/ereBkKZK
+	wOHVmVMLVsyFpQt1I+e1qb1/ZjKDCUsW9bQwMkgfQKOUH1WAun4PMNGqwU6SuNQslfQuLvOGvz3Lr
+	UjuRqzt9kStW7NeEIxko78Rtv/sHPq2EiRVIOwSMOmvYzIvNF8Ma064eFA/WY8+ZKS+jEdlJe64X1
+	xbne+6VdXOogMSA2jbJXfSpmaNm78E7sYL6M3nqHQB8quXs6StDOvjoy0C7C0oMsNDc43+o1tXcpn
+	aTDJZvJ7qUnSUmFfJA==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1s7bIS-001Eq6-34;
+	Thu, 16 May 2024 13:37:25 +0000
+From: linux@treblig.org
+To: liviu.dudau@arm.com,
+	mripard@kernel.org,
+	airlied@gmail.com
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] drm/komeda: remove unused struct 'gamma_curve_segment'
+Date: Thu, 16 May 2024 14:37:24 +0100
+Message-ID: <20240516133724.251750-1-linux@treblig.org>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 16 May 2024 16:36:07 +0300
-Message-Id: <D1B3XN42A6DR.1RSMLZ6R7VRHT@kernel.org>
-Cc: <brauner@kernel.org>, <ebiederm@xmission.com>, "Luis Chamberlain"
- <mcgrof@kernel.org>, "Kees Cook" <keescook@chromium.org>, "Joel Granados"
- <j.granados@samsung.com>, "Serge Hallyn" <serge@hallyn.com>, "Paul Moore"
- <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "David Howells"
- <dhowells@redhat.com>, <containers@lists.linux.dev>,
- <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
- <linux-security-module@vger.kernel.org>, <keyrings@vger.kernel.org>
-Subject: Re: [PATCH 0/3] Introduce user namespace capabilities
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Ben Boeckel" <me@benboeckel.net>, "Jonathan Calmels"
- <jcalmels@3xx0.net>
-X-Mailer: aerc 0.17.0
-References: <20240516092213.6799-1-jcalmels@3xx0.net>
- <ZkYKgNltq2hlBzbx@farprobe>
-In-Reply-To: <ZkYKgNltq2hlBzbx@farprobe>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Thu May 16, 2024 at 4:30 PM EEST, Ben Boeckel wrote:
-> On Thu, May 16, 2024 at 02:22:02 -0700, Jonathan Calmels wrote:
-> > Jonathan Calmels (3):
-> >   capabilities: user namespace capabilities
-> >   capabilities: add securebit for strict userns caps
-> >   capabilities: add cap userns sysctl mask
-> >=20
-> >  fs/proc/array.c                 |  9 ++++
-> >  include/linux/cred.h            |  3 ++
-> >  include/linux/securebits.h      |  1 +
-> >  include/linux/user_namespace.h  |  7 +++
-> >  include/uapi/linux/prctl.h      |  7 +++
-> >  include/uapi/linux/securebits.h | 11 ++++-
-> >  kernel/cred.c                   |  3 ++
-> >  kernel/sysctl.c                 | 10 ++++
-> >  kernel/umh.c                    | 16 +++++++
-> >  kernel/user_namespace.c         | 83 ++++++++++++++++++++++++++++++---
-> >  security/commoncap.c            | 59 +++++++++++++++++++++++
-> >  security/keys/process_keys.c    |  3 ++
-> >  12 files changed, 204 insertions(+), 8 deletions(-)
->
-> I note a lack of any changes to `Documentation/` which seems quite
-> glaring for something with such a userspace visibility aspect to it.
->
-> --Ben
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-Yeah, also in cover letter it would be nice to refresh what is
-a bounding set. I had to xref that (recalled what it is), and
-then got bored reading the rest :-)
+'gamma_curve_segment' looks like it has never been used.
+Remove it.
 
-Not exactly in the nutshell cover letter tbh, but maybe the
-content in that would be better put to Documentation/
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ drivers/gpu/drm/arm/display/komeda/komeda_color_mgmt.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-BR, Jarkko
+diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_color_mgmt.c b/drivers/gpu/drm/arm/display/komeda/komeda_color_mgmt.c
+index d8e449e6ebda..50cb8f7ee6b2 100644
+--- a/drivers/gpu/drm/arm/display/komeda/komeda_color_mgmt.c
++++ b/drivers/gpu/drm/arm/display/komeda/komeda_color_mgmt.c
+@@ -72,11 +72,6 @@ struct gamma_curve_sector {
+ 	u32 segment_width;
+ };
+ 
+-struct gamma_curve_segment {
+-	u32 start;
+-	u32 end;
+-};
+-
+ static struct gamma_curve_sector sector_tbl[] = {
+ 	{ 0,    4,  4   },
+ 	{ 16,   4,  4   },
+-- 
+2.45.0
+
 
