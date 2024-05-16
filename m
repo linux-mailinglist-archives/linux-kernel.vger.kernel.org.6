@@ -1,73 +1,98 @@
-Return-Path: <linux-kernel+bounces-181576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75FF88C7DD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 22:50:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 149158C7DD8
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 22:50:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7DAAB2201C
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 20:50:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEB28282F51
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 20:50:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAEB5157E9E;
-	Thu, 16 May 2024 20:50:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C38A71581F8;
+	Thu, 16 May 2024 20:50:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="P4igE5Zj"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cMGi4gze"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27CF0157A58
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 20:50:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22AAB22092
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 20:50:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715892604; cv=none; b=qRxoFfoZ8UWUJRPR/B+U3lfWsVWkNHLvxLxg4DSherEY81EgwGYxPFnsWLRFnPoZD5+gBxQm/x6eXat/Rh7cauS4xip9Q5Qdz0+0jctFsS98U9xKo9u5Os6sgTPJToOemAF8p5tc+wKC0bKOjm3tq77pRlEGDY0bKHanRhLXiCo=
+	t=1715892616; cv=none; b=qOWyFulZEhWvHWsNn4MMNZk5OobZErHt4KnOPi2aCCMr2oo4HnpT+rl/6NqGxEkGbpzwqIO/2fa4AA9IrAA/3Gkdjii/qWNN4L0a0j2ZtpZUi8iaTiWzyhStls/e74yWWXIg+U6MygWAeCiKVwBxcV/EXmygmrEoTwZvI6DtRRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715892604; c=relaxed/simple;
-	bh=O2ewFUdwq+gbmSDgv62d/vyBToUFpAKRIEjy2L8N0fI=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=AP0Ib/d8HC8FBioBgDHSA/URr7RDfTPDo7k++Xy//vuwz5ae3socp1bstKZk8Y7WYOdxDg3sY0i6YgbWHQMzIaxjifkc1pZfNRFcs1Wws/WZbr4YC1RWfDgMa9/nlvidNTmHo0KvelstBsIVwgDJNJOku8Kg42fcy4satJvyxZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=P4igE5Zj; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1715892616; c=relaxed/simple;
+	bh=jlXZv3qP8SJGyzwaITAAmc594iMe2iOqE24weI7m6oo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DfeKSzwIy8xztyXnkP2FpjB6koue6d1Pb319XUV/N2VnyZsRVipEKf6M2hHCzs5AGrSn0KVuIzFYSECQIEliafVZ81OIC4ziUvGf6L1yLmYLLrnVFL8GxTCb1kTibm7iuQfSpGxWjfZxe1LWGbhQ7RVct9B0FUkTelyB2kdbgQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cMGi4gze; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715892599;
+	s=mimecast20190719; t=1715892614;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=O+fAnIIebPuxwkKSzMwnCOwSYdgO9pXZPB02aKazGyo=;
-	b=P4igE5ZjdooP9qG7v2qNLmgLIHfSZ7tsIZAZl+2elxKMYYVqiVkybK73cC2lnUTBXlq+f5
-	HazFjuw/vqyX+Dc9eWj+g/zd8uDrlRpMvvaF0lGuOWgQ26dOot/eXGW6sEww/zuY68MY6V
-	iri0HhOj3Ip/j+zgX2MT5mfxHz6KhI8=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-330-a75kPsHoM7esCkPxXErHZA-1; Thu,
- 16 May 2024 16:49:56 -0400
-X-MC-Unique: a75kPsHoM7esCkPxXErHZA-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id E17043C025C9;
-	Thu, 16 May 2024 20:49:55 +0000 (UTC)
-Received: from file1-rdu.file-001.prod.rdu2.dc.redhat.com (unknown [10.11.5.21])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id C7B4951BF;
-	Thu, 16 May 2024 20:49:55 +0000 (UTC)
-Received: by file1-rdu.file-001.prod.rdu2.dc.redhat.com (Postfix, from userid 12668)
-	id B336F30C1C33; Thu, 16 May 2024 20:49:55 +0000 (UTC)
-Received: from localhost (localhost [127.0.0.1])
-	by file1-rdu.file-001.prod.rdu2.dc.redhat.com (Postfix) with ESMTP id AFE453FB4F;
-	Thu, 16 May 2024 22:49:55 +0200 (CEST)
-Date: Thu, 16 May 2024 22:49:55 +0200 (CEST)
-From: Mikulas Patocka <mpatocka@redhat.com>
-To: Benjamin Marzinski <bmarzins@redhat.com>
-cc: Yang Yang <yang.yang@vivo.com>, Alasdair Kergon <agk@redhat.com>, 
-    Mike Snitzer <snitzer@kernel.org>, dm-devel@lists.linux.dev, 
-    linux-kernel@vger.kernel.org
-Subject: [PATCH] dm: optimize flushes
-In-Reply-To: <60bd4b9-8edd-7e22-ce8b-e5d0e43da195@redhat.com>
-Message-ID: <90f4beb-2e15-3f9-4bc2-0d13872e8ea@redhat.com>
-References: <20240514090445.2847-1-yang.yang@vivo.com> <20240514090445.2847-4-yang.yang@vivo.com> <ZkTXzG1yrPmW64Z6@redhat.com> <60bd4b9-8edd-7e22-ce8b-e5d0e43da195@redhat.com>
+	bh=DgfeXMkmseJgwm40V0OoBOyXRqsK7UUQX8yHhq3rw+s=;
+	b=cMGi4gzezXyOcNPgS7OpzRmSe1+ptOcWjknNkn9j3WSvi/4bzF7AvZq2RGV82qy38ou7R8
+	IahnGcWxJzlSOSGWQJkX+z7mGfdqwOiutfPTgJq7BouMTXsLVAw7QwsQqMIhrkAjkfcuoP
+	YlE9CkHqneZANcgqrwOB9cbIyz23JuQ=
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com
+ [209.85.166.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-690-ph_UBCRDMz-P7jfwS1zFHg-1; Thu, 16 May 2024 16:50:12 -0400
+X-MC-Unique: ph_UBCRDMz-P7jfwS1zFHg-1
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7e1d807cfbaso659236039f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 13:50:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715892612; x=1716497412;
+        h=content-transfer-encoding:mime-version:organization:references
+         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DgfeXMkmseJgwm40V0OoBOyXRqsK7UUQX8yHhq3rw+s=;
+        b=WxDU4yEOf5s2GEUYiDK5BtXJTgVury01kexjILa9CcLgKRmn9m7UP1B++qyfgdNw8O
+         vNsUDq2i0fv7SYsZSP6YqPGin5nhpqfO6eN9q221xV12zLxlEGJ/3odgdt0sMTk87T3g
+         Auv87gfHbhFM4m5KScpAtmL1dv9MUukkGu5E7dPe3IrqZA2oAk5yCXrOtesJGqwqqC+g
+         zEz+Q1XLCX7ToDPiEHt7BAKXgbApcXM8MZhcQ7OoGmKXHozv+HcTZDGE5vqYnkdf7okN
+         JEIjYjHdfQTjztF0eBTu1k2N6Mq4vaz2WBH5YRMPBTLMVGob7Fn5KEoe79MWI8XQjwOS
+         BXdA==
+X-Forwarded-Encrypted: i=1; AJvYcCXsJ4ZolAgKc5jpxeDNHK8JpR8BvROxh51xKhdeig4A+tksMI8Nx1/aHaaRoR9lfCrIGE+3QMMaGWmQ7dPEq2UWc+FqKmCzpLzf6rfn
+X-Gm-Message-State: AOJu0YzCTR+5F4Z0pyMtgG7U14k8vECJ879gUAUGsfNAkPC96iCNV+1/
+	/SXWeimJZRpP/V8/OyyaDYLtgUI7h0460a7lVYiU/eUKlrp8SExWqIyO4Kn+DF75TTlqD/jT0BA
+	ue0RkPathIuDvfdWNobQYFnd4YKozxp6A9zN2/Ha/KMiaZ1hxCKnEkTeBolTpLg==
+X-Received: by 2002:a05:6602:1d53:b0:7e2:181:a054 with SMTP id ca18e2360f4ac-7e20181a1abmr821474039f.5.1715892611703;
+        Thu, 16 May 2024 13:50:11 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGwRkXStIyZ5cr/BlvlET+DTEZcFSPsEWkGox9hOLQu2DM9ciDgxpqD5jYjyjYUSdbcJwJc+g==
+X-Received: by 2002:a05:6602:1d53:b0:7e2:181:a054 with SMTP id ca18e2360f4ac-7e20181a1abmr821469839f.5.1715892611202;
+        Thu, 16 May 2024 13:50:11 -0700 (PDT)
+Received: from redhat.com ([38.15.36.11])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-7e1d2a5a276sm285683339f.17.2024.05.16.13.50.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 May 2024 13:50:10 -0700 (PDT)
+Date: Thu, 16 May 2024 14:50:09 -0600
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
+ <jgg@nvidia.com>, <kevin.tian@intel.com>, <iommu@lists.linux.dev>,
+ <pbonzini@redhat.com>, <seanjc@google.com>, <dave.hansen@linux.intel.com>,
+ <luto@kernel.org>, <peterz@infradead.org>, <tglx@linutronix.de>,
+ <mingo@redhat.com>, <bp@alien8.de>, <hpa@zytor.com>, <corbet@lwn.net>,
+ <joro@8bytes.org>, <will@kernel.org>, <robin.murphy@arm.com>,
+ <baolu.lu@linux.intel.com>, <yi.l.liu@intel.com>
+Subject: Re: [PATCH 4/5] vfio/type1: Flush CPU caches on DMA pages in
+ non-coherent domains
+Message-ID: <20240516145009.3bcd3d0c.alex.williamson@redhat.com>
+In-Reply-To: <ZkG9IEQwi7HG3YBk@yzhao56-desk.sh.intel.com>
+References: <20240507061802.20184-1-yan.y.zhao@intel.com>
+	<20240507062138.20465-1-yan.y.zhao@intel.com>
+	<20240509121049.58238a6f.alex.williamson@redhat.com>
+	<Zj33cUe7HYOIfj5N@yzhao56-desk.sh.intel.com>
+	<20240510105728.76d97bbb.alex.williamson@redhat.com>
+	<ZkG9IEQwi7HG3YBk@yzhao56-desk.sh.intel.com>
+Organization: Red Hat
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,190 +100,195 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.5
+Content-Transfer-Encoding: 7bit
 
-Device mapper sends flush bios to all the targets and the targets send it
-to the underlying device. That may be inefficient, for example if a table
-contains 10 linear targets pointing to the same physical device, then
-device mapper would send 10 flush bios to that device - despite the fact
-that only one bio would be sufficient.
+On Mon, 13 May 2024 15:11:28 +0800
+Yan Zhao <yan.y.zhao@intel.com> wrote:
 
-This commit optimizes the flush behavior. It introduces a per-target
-variable flush_pass_around - it is set when the target supports flush
-optimization - currently, the dm-linear and dm-stripe targets support it.
-When all the targets in a table have flush_pass_around, flush_pass_around
-on the table is set. __send_empty_flush tests if the table has
-flush_pass_around - and if it has, no flush bios are sent to the targets
-and the list dm_table->devices is iterated and the flush bios are sent to
-each member of the list.
+> On Fri, May 10, 2024 at 10:57:28AM -0600, Alex Williamson wrote:
+> > On Fri, 10 May 2024 18:31:13 +0800
+> > Yan Zhao <yan.y.zhao@intel.com> wrote:
+> >   
+> > > On Thu, May 09, 2024 at 12:10:49PM -0600, Alex Williamson wrote:  
+> > > > On Tue,  7 May 2024 14:21:38 +0800
+> > > > Yan Zhao <yan.y.zhao@intel.com> wrote:    
+> > > ...   
+> > > > >  drivers/vfio/vfio_iommu_type1.c | 51 +++++++++++++++++++++++++++++++++
+> > > > >  1 file changed, 51 insertions(+)
+> > > > > 
+> > > > > diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+> > > > > index b5c15fe8f9fc..ce873f4220bf 100644
+> > > > > --- a/drivers/vfio/vfio_iommu_type1.c
+> > > > > +++ b/drivers/vfio/vfio_iommu_type1.c
+> > > > > @@ -74,6 +74,7 @@ struct vfio_iommu {
+> > > > >  	bool			v2;
+> > > > >  	bool			nesting;
+> > > > >  	bool			dirty_page_tracking;
+> > > > > +	bool			has_noncoherent_domain;
+> > > > >  	struct list_head	emulated_iommu_groups;
+> > > > >  };
+> > > > >  
+> > > > > @@ -99,6 +100,7 @@ struct vfio_dma {
+> > > > >  	unsigned long		*bitmap;
+> > > > >  	struct mm_struct	*mm;
+> > > > >  	size_t			locked_vm;
+> > > > > +	bool			cache_flush_required; /* For noncoherent domain */    
+> > > > 
+> > > > Poor packing, minimally this should be grouped with the other bools in
+> > > > the structure, longer term they should likely all be converted to
+> > > > bit fields.    
+> > > Yes. Will do!
+> > >   
+> > > >     
+> > > > >  };
+> > > > >  
+> > > > >  struct vfio_batch {
+> > > > > @@ -716,6 +718,9 @@ static long vfio_unpin_pages_remote(struct vfio_dma *dma, dma_addr_t iova,
+> > > > >  	long unlocked = 0, locked = 0;
+> > > > >  	long i;
+> > > > >  
+> > > > > +	if (dma->cache_flush_required)
+> > > > > +		arch_clean_nonsnoop_dma(pfn << PAGE_SHIFT, npage << PAGE_SHIFT);
+> > > > > +
+> > > > >  	for (i = 0; i < npage; i++, iova += PAGE_SIZE) {
+> > > > >  		if (put_pfn(pfn++, dma->prot)) {
+> > > > >  			unlocked++;
+> > > > > @@ -1099,6 +1104,8 @@ static long vfio_unmap_unpin(struct vfio_iommu *iommu, struct vfio_dma *dma,
+> > > > >  					    &iotlb_gather);
+> > > > >  	}
+> > > > >  
+> > > > > +	dma->cache_flush_required = false;
+> > > > > +
+> > > > >  	if (do_accounting) {
+> > > > >  		vfio_lock_acct(dma, -unlocked, true);
+> > > > >  		return 0;
+> > > > > @@ -1120,6 +1127,21 @@ static void vfio_remove_dma(struct vfio_iommu *iommu, struct vfio_dma *dma)
+> > > > >  	iommu->dma_avail++;
+> > > > >  }
+> > > > >  
+> > > > > +static void vfio_update_noncoherent_domain_state(struct vfio_iommu *iommu)
+> > > > > +{
+> > > > > +	struct vfio_domain *domain;
+> > > > > +	bool has_noncoherent = false;
+> > > > > +
+> > > > > +	list_for_each_entry(domain, &iommu->domain_list, next) {
+> > > > > +		if (domain->enforce_cache_coherency)
+> > > > > +			continue;
+> > > > > +
+> > > > > +		has_noncoherent = true;
+> > > > > +		break;
+> > > > > +	}
+> > > > > +	iommu->has_noncoherent_domain = has_noncoherent;
+> > > > > +}    
+> > > > 
+> > > > This should be merged with vfio_domains_have_enforce_cache_coherency()
+> > > > and the VFIO_DMA_CC_IOMMU extension (if we keep it, see below).    
+> > > Will convert it to a counter and do the merge.
+> > > Thanks for pointing it out!
+> > >   
+> > > >     
+> > > > > +
+> > > > >  static void vfio_update_pgsize_bitmap(struct vfio_iommu *iommu)
+> > > > >  {
+> > > > >  	struct vfio_domain *domain;
+> > > > > @@ -1455,6 +1477,12 @@ static int vfio_pin_map_dma(struct vfio_iommu *iommu, struct vfio_dma *dma,
+> > > > >  
+> > > > >  	vfio_batch_init(&batch);
+> > > > >  
+> > > > > +	/*
+> > > > > +	 * Record necessity to flush CPU cache to make sure CPU cache is flushed
+> > > > > +	 * for both pin & map and unmap & unpin (for unwind) paths.
+> > > > > +	 */
+> > > > > +	dma->cache_flush_required = iommu->has_noncoherent_domain;
+> > > > > +
+> > > > >  	while (size) {
+> > > > >  		/* Pin a contiguous chunk of memory */
+> > > > >  		npage = vfio_pin_pages_remote(dma, vaddr + dma->size,
+> > > > > @@ -1466,6 +1494,10 @@ static int vfio_pin_map_dma(struct vfio_iommu *iommu, struct vfio_dma *dma,
+> > > > >  			break;
+> > > > >  		}
+> > > > >  
+> > > > > +		if (dma->cache_flush_required)
+> > > > > +			arch_clean_nonsnoop_dma(pfn << PAGE_SHIFT,
+> > > > > +						npage << PAGE_SHIFT);
+> > > > > +
+> > > > >  		/* Map it! */
+> > > > >  		ret = vfio_iommu_map(iommu, iova + dma->size, pfn, npage,
+> > > > >  				     dma->prot);
+> > > > > @@ -1683,9 +1715,14 @@ static int vfio_iommu_replay(struct vfio_iommu *iommu,
+> > > > >  	for (; n; n = rb_next(n)) {
+> > > > >  		struct vfio_dma *dma;
+> > > > >  		dma_addr_t iova;
+> > > > > +		bool cache_flush_required;
+> > > > >  
+> > > > >  		dma = rb_entry(n, struct vfio_dma, node);
+> > > > >  		iova = dma->iova;
+> > > > > +		cache_flush_required = !domain->enforce_cache_coherency &&
+> > > > > +				       !dma->cache_flush_required;
+> > > > > +		if (cache_flush_required)
+> > > > > +			dma->cache_flush_required = true;    
+> > > > 
+> > > > The variable name here isn't accurate and the logic is confusing.  If
+> > > > the domain does not enforce coherency and the mapping is not tagged as
+> > > > requiring a cache flush, then we need to mark the mapping as requiring
+> > > > a cache flush.  So the variable state is something more akin to
+> > > > set_cache_flush_required.  But all we're saving with this is a
+> > > > redundant set if the mapping is already tagged as requiring a cache
+> > > > flush, so it could really be simplified to:
+> > > > 
+> > > > 		dma->cache_flush_required = !domain->enforce_cache_coherency;    
+> > > Sorry about the confusion.
+> > > 
+> > > If dma->cache_flush_required is set to true by a domain not enforcing cache
+> > > coherency, we hope it will not be reset to false by a later attaching to domain 
+> > > enforcing cache coherency due to the lazily flushing design.  
+> > 
+> > Right, ok, the vfio_dma objects are shared between domains so we never
+> > want to set 'dma->cache_flush_required = false' due to the addition of a
+> > 'domain->enforce_cache_coherent == true'.  So this could be:
+> > 
+> > 	if (!dma->cache_flush_required)
+> > 		dma->cache_flush_required = !domain->enforce_cache_coherency;  
+> 
+> Though this code is easier for understanding, it leads to unnecessary setting of
+> dma->cache_flush_required to false, given domain->enforce_cache_coherency is
+> true at the most time.
 
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-Reported-by: Yang Yang <yang.yang@vivo.com>
+I don't really see that as an issue, but the variable name originally
+chosen above, cache_flush_required, also doesn't convey that it's only
+attempting to set the value if it wasn't previously set and is now
+required by a noncoherent domain.
 
----
- drivers/md/dm-core.h          |    4 ++-
- drivers/md/dm-linear.c        |    1 
- drivers/md/dm-stripe.c        |    1 
- drivers/md/dm-table.c         |    4 +++
- drivers/md/dm.c               |   47 +++++++++++++++++++++++++++++-------------
- include/linux/device-mapper.h |    5 ++++
- 6 files changed, 47 insertions(+), 15 deletions(-)
+> > > > It might add more clarity to just name the mapping flag
+> > > > dma->mapped_noncoherent.    
+> > > 
+> > > The dma->cache_flush_required is to mark whether pages in a vfio_dma requires
+> > > cache flush in the subsequence mapping into the first non-coherent domain
+> > > and page unpinning.  
+> > 
+> > How do we arrive at a sequence where we have dma->cache_flush_required
+> > that isn't the result of being mapped into a domain with
+> > !domain->enforce_cache_coherency?  
+> Hmm, dma->cache_flush_required IS the result of being mapped into a domain with
+> !domain->enforce_cache_coherency.
+> My concern only arrives from the actual code sequence, i.e.
+> dma->cache_flush_required is set to true before the actual mapping.
+> 
+> If we rename it to dma->mapped_noncoherent and only set it to true after the
+> actual successful mapping, it would lead to more code to handle flushing for the
+> unwind case.
+> Currently, flush for unwind is handled centrally in vfio_unpin_pages_remote()
+> by checking dma->cache_flush_required, which is true even before a full
+> successful mapping, so we won't miss flush on any pages that are mapped into a
+> non-coherent domain in a short window.
 
-Index: linux-2.6/drivers/md/dm-core.h
-===================================================================
---- linux-2.6.orig/drivers/md/dm-core.h	2024-05-15 16:56:49.000000000 +0200
-+++ linux-2.6/drivers/md/dm-core.h	2024-05-15 16:56:49.000000000 +0200
-@@ -206,7 +206,9 @@ struct dm_table {
- 
- 	bool integrity_supported:1;
- 	bool singleton:1;
--	unsigned integrity_added:1;
-+	bool integrity_added:1;
-+	/* set if all the targets in the table have "flush_pass_around" set */
-+	bool flush_pass_around:1;
- 
- 	/*
- 	 * Indicates the rw permissions for the new logical device.  This
-Index: linux-2.6/drivers/md/dm-linear.c
-===================================================================
---- linux-2.6.orig/drivers/md/dm-linear.c	2024-05-15 16:56:49.000000000 +0200
-+++ linux-2.6/drivers/md/dm-linear.c	2024-05-15 16:56:49.000000000 +0200
-@@ -62,6 +62,7 @@ static int linear_ctr(struct dm_target *
- 	ti->num_discard_bios = 1;
- 	ti->num_secure_erase_bios = 1;
- 	ti->num_write_zeroes_bios = 1;
-+	ti->flush_pass_around = true;
- 	ti->private = lc;
- 	return 0;
- 
-Index: linux-2.6/drivers/md/dm-stripe.c
-===================================================================
---- linux-2.6.orig/drivers/md/dm-stripe.c	2024-05-15 16:56:49.000000000 +0200
-+++ linux-2.6/drivers/md/dm-stripe.c	2024-05-15 16:56:49.000000000 +0200
-@@ -157,6 +157,7 @@ static int stripe_ctr(struct dm_target *
- 	ti->num_discard_bios = stripes;
- 	ti->num_secure_erase_bios = stripes;
- 	ti->num_write_zeroes_bios = stripes;
-+	ti->flush_pass_around = true;
- 
- 	sc->chunk_size = chunk_size;
- 	if (chunk_size & (chunk_size - 1))
-Index: linux-2.6/drivers/md/dm-table.c
-===================================================================
---- linux-2.6.orig/drivers/md/dm-table.c	2024-05-15 16:56:49.000000000 +0200
-+++ linux-2.6/drivers/md/dm-table.c	2024-05-15 16:56:49.000000000 +0200
-@@ -160,6 +160,7 @@ int dm_table_create(struct dm_table **re
- 	t->type = DM_TYPE_NONE;
- 	t->mode = mode;
- 	t->md = md;
-+	t->flush_pass_around = 1;
- 	*result = t;
- 	return 0;
- }
-@@ -738,6 +739,9 @@ int dm_table_add_target(struct dm_table
- 	if (ti->limit_swap_bios && !static_key_enabled(&swap_bios_enabled.key))
- 		static_branch_enable(&swap_bios_enabled);
- 
-+	if (!ti->flush_pass_around)
-+		t->flush_pass_around = false;
-+
- 	return 0;
- 
-  bad:
-Index: linux-2.6/include/linux/device-mapper.h
-===================================================================
---- linux-2.6.orig/include/linux/device-mapper.h	2024-05-15 16:56:49.000000000 +0200
-+++ linux-2.6/include/linux/device-mapper.h	2024-05-15 16:56:49.000000000 +0200
-@@ -397,6 +397,11 @@ struct dm_target {
- 	 * bio_set_dev(). NOTE: ideally a target should _not_ need this.
- 	 */
- 	bool needs_bio_set_dev:1;
-+
-+	/*
-+	 * Set if the target supports flush optimization
-+	 */
-+	bool flush_pass_around:1;
- };
- 
- void *dm_per_bio_data(struct bio *bio, size_t data_size);
-Index: linux-2.6/drivers/md/dm.c
-===================================================================
---- linux-2.6.orig/drivers/md/dm.c	2024-05-15 16:56:49.000000000 +0200
-+++ linux-2.6/drivers/md/dm.c	2024-05-16 20:06:32.000000000 +0200
-@@ -645,7 +645,7 @@ static struct bio *alloc_tio(struct clon
- 
- 	/* Set default bdev, but target must bio_set_dev() before issuing IO */
- 	clone->bi_bdev = md->disk->part0;
--	if (unlikely(ti->needs_bio_set_dev))
-+	if (likely(ti != NULL) && unlikely(ti->needs_bio_set_dev))
- 		bio_set_dev(clone, md->disk->part0);
- 
- 	if (len) {
-@@ -1107,7 +1107,7 @@ static void clone_endio(struct bio *bio)
- 	blk_status_t error = bio->bi_status;
- 	struct dm_target_io *tio = clone_to_tio(bio);
- 	struct dm_target *ti = tio->ti;
--	dm_endio_fn endio = ti->type->end_io;
-+	dm_endio_fn endio = likely(ti != NULL) ? ti->type->end_io : NULL;
- 	struct dm_io *io = tio->io;
- 	struct mapped_device *md = io->md;
- 
-@@ -1154,7 +1154,7 @@ static void clone_endio(struct bio *bio)
- 	}
- 
- 	if (static_branch_unlikely(&swap_bios_enabled) &&
--	    unlikely(swap_bios_limit(ti, bio)))
-+	    likely(ti != NULL) && unlikely(swap_bios_limit(ti, bio)))
- 		up(&md->swap_bios_semaphore);
- 
- 	free_tio(bio);
-@@ -1566,17 +1566,36 @@ static void __send_empty_flush(struct cl
- 	ci->sector_count = 0;
- 	ci->io->tio.clone.bi_iter.bi_size = 0;
- 
--	for (unsigned int i = 0; i < t->num_targets; i++) {
--		unsigned int bios;
--		struct dm_target *ti = dm_table_get_target(t, i);
--
--		if (unlikely(ti->num_flush_bios == 0))
--			continue;
--
--		atomic_add(ti->num_flush_bios, &ci->io->io_count);
--		bios = __send_duplicate_bios(ci, ti, ti->num_flush_bios,
--					     NULL, GFP_NOWAIT);
--		atomic_sub(ti->num_flush_bios - bios, &ci->io->io_count);
-+	if (!t->flush_pass_around) {
-+		for (unsigned int i = 0; i < t->num_targets; i++) {
-+			unsigned int bios;
-+			struct dm_target *ti = dm_table_get_target(t, i);
-+
-+			if (unlikely(ti->num_flush_bios == 0))
-+				continue;
-+
-+			atomic_add(ti->num_flush_bios, &ci->io->io_count);
-+			bios = __send_duplicate_bios(ci, ti, ti->num_flush_bios,
-+						     NULL, GFP_NOWAIT);
-+			atomic_sub(ti->num_flush_bios - bios, &ci->io->io_count);
-+		}
-+	} else {
-+		/*
-+		 * Note that there's no need to grab t->devices_lock here
-+		 * because the targets that support flush pass-around don't
-+		 * modify the list of devices.
-+		 */
-+		struct list_head *devices = dm_table_get_devices(t);
-+		unsigned int len = 0;
-+		struct dm_dev_internal *dd;
-+		list_for_each_entry(dd, devices, list) {
-+			struct bio *clone;
-+			clone = alloc_tio(ci, NULL, 0, &len, GFP_NOIO);
-+			atomic_add(1, &ci->io->io_count);
-+			bio_set_dev(clone, dd->dm_dev->bdev);
-+			clone->bi_end_io = clone_endio;
-+			dm_submit_bio_remap(clone, NULL);
-+		}
- 	}
- 
- 	/*
+I don't think we need to be so literal that "mapped_noncoherent" can
+only be set after the vfio_dma is fully mapped to a noncoherent domain,
+but also we can come up with other names for the flag.  Perhaps
+"is_noncoherent".  My suggestion was more from the perspective of what
+does the flag represent rather than what we intend to do as a result of
+the flag being set.  Thanks,
+
+Alex
 
 
