@@ -1,143 +1,118 @@
-Return-Path: <linux-kernel+bounces-180887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 062B08C7464
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:09:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0E948C7468
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:10:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 984E21F235B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:09:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 511AEB252D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:10:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C78C614388D;
-	Thu, 16 May 2024 10:09:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04067143894;
+	Thu, 16 May 2024 10:10:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q8Sfsz2i"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ofNxsnre"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15375143754;
-	Thu, 16 May 2024 10:09:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1AA0143754;
+	Thu, 16 May 2024 10:10:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715854157; cv=none; b=R6MDBadY9ZpcyCkALOoookezeVc4Oqhmx0YhKPFCTqnsrW/4v3sSsBYVrvc4p07zonvYstLdOHsJ6CK+SwWerBS+a6JQnSFcFEnj2Ltvd7yhJTBUOMCuGFPwpwHc2N0NV+I9uxQlEI/rV0XoJYbxgW7zu7jfZpgoxPA9saT0SeM=
+	t=1715854240; cv=none; b=QWEI0mc+5s0QRXSCdmA0O7Jl6Tp5jXv0jlFaL9/2VIdna7KtYKVqbskIXJJpeJr+kgI/6krduP4HqKblhk4+mIfn4TZgWxg1Wtg4uuMI3NIwM/hCGGzm9KIWgT2qulI8mS3kG38HT6QJwGn4x4yXs0P99yjOndPvaXNygc0zt3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715854157; c=relaxed/simple;
-	bh=F3slW8z/pG6jXGw2Nj66+rGuDpnvI8DlslsaiUUIUqg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f8d2nBYTeKKwuvpGHyGE977/F0gP9Hz/KUs6FHDboVTfi+n5pxZvCAZ8w4EeIX4z4RgCkTlm7FdbVIS0cQqmOHX9Vd4Xrb7rJcIBt19v1pb9r6M791B6dlA7BCZBb1DMAzGg4Si5CgusAmR+6YxHGYRs5CRVuG7IQ4cDVx+8/XA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q8Sfsz2i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E5A7C4AF0A;
-	Thu, 16 May 2024 10:09:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715854156;
-	bh=F3slW8z/pG6jXGw2Nj66+rGuDpnvI8DlslsaiUUIUqg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Q8Sfsz2iYbXDPx2R+fGgQk/+AusJBcYPcrvEHLkMgHbWUXyKKzNHdfI+kS7qpp/u5
-	 /IK3MsA2GTohcksDV9eGLmHJwUWUZ1DAA8Cw7FCKQIl4+vOA3HaBxsdn7O/ZmtDU3p
-	 6t0YrdFpcAjESfaGmY1SHQ1WEGnBlnnn2QQXlT697pn/QRpeZn9LDmJgBLCzUWhbN8
-	 IgnqsJE85stF+gbph7siYZTstzl7a43YHw+J/YlkLPSFk3UzezZzgo6kaHMYKWgZC3
-	 ZcmEVYFpj+/4zANNCohbsDeII+Vq0nCBX627a/xjaeYc/Cxs4uMg4W/xV5RzCqAtzY
-	 J87zLWi7KJ75Q==
-Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3c99682a7cfso2195b6e.2;
-        Thu, 16 May 2024 03:09:16 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVnCZAL9A0kC4vMA1av0Q198mGh9j4OJQODtf24kg7bqfWJN8hKxkDE4zVsNAe/osKjLrmzBv4jEjDOYP4JOkwhENA1q4inEWj0C+pyacx+Cq540dcOtYSxSKay3Y1mQqO4yO0nj1jOXA==
-X-Gm-Message-State: AOJu0YwUHmhYQNp7U6GgG4pZlZVFmPzLH3vTQ954UCvMAY3nsS81zNBr
-	24g47tukwGuL/XsZbdI4CaV/oLK59fhNSVaVaFO4u57/eauep3IwjsBaj+kTys0giy+5XmQURt4
-	3DjR5oK+ldaiHbKleLj63g7yjgQ4=
-X-Google-Smtp-Source: AGHT+IHruOoabur5gc7PsQr1i3keJcLfUy3nS6jhBV1muFUchmQW5j7szKL2lb7hjI6a/JCA321moEBxskcKZhyST/g=
-X-Received: by 2002:a05:6870:96a5:b0:22e:6e96:ed41 with SMTP id
- 586e51a60fabf-24172a337f1mr23246965fac.2.1715854155779; Thu, 16 May 2024
- 03:09:15 -0700 (PDT)
+	s=arc-20240116; t=1715854240; c=relaxed/simple;
+	bh=ugAWDM1qcmrWTtKMSTkkvc0MnR1N8NG07aVhZyc9Avw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qHRkGnTEylsf88IMQqOD2/ZZ4r1HecYmECugl48azlE0jq3/pJz/g5wxuNAN6kPBNZgAbxe8MHIH9JN0IeOINwOTR7ybbPR89Vp40cptSJw8XINJGmhyeyUXl4iJSgRET7tudNYi3lmKStZnuLCPFCiktsbvgCPA9o5f8WSBzS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ofNxsnre; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1715854237;
+	bh=ugAWDM1qcmrWTtKMSTkkvc0MnR1N8NG07aVhZyc9Avw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ofNxsnreO1XE/kyXC7ZuR3rY6V4IutCD9oOaUATenbvbQsjVohi9FgRTlITcOb9PZ
+	 dNnJPWBBR4z18EGOqiPm1gF1E+VvieBbt4bFQAVqyX7UewABZnh1SsuxxMtpIE3piP
+	 qpfXmqZdlGzgC2/IpnR1n3PxjbrI9hx0f/q1BWYpvhaIH4FlDLto4UEYIzyZDhp4Yh
+	 2i5McbxDiyUGAkfk2H4sn/dwIx531RWun2FaJjDjVvJmAHQxHwssYJYGsGwv181f//
+	 WPFGDeUzq/0Kb45dPjOFyVyT+t/fgwObBv9y5JFs1zIZZPvvwyvvDb1pHQcRlowEbi
+	 9ZopzBNxptJ/w==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 1D90C3780C13;
+	Thu, 16 May 2024 10:10:36 +0000 (UTC)
+Message-ID: <f9e09d27-4e28-4ed9-95a5-66c8dba6d499@collabora.com>
+Date: Thu, 16 May 2024 12:10:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <12437901.O9o76ZdvQC@kreacher> <5161bd95-d51e-49cc-bcbd-523fbb747e4b@redhat.com>
- <CAJZ5v0gf-oLcjT8dxnpjAyVfpUep5ST2mHDJy2dySBGCJwjMxg@mail.gmail.com> <b53b4fe4-e3b7-4939-a8ea-9eb55f0bece6@redhat.com>
-In-Reply-To: <b53b4fe4-e3b7-4939-a8ea-9eb55f0bece6@redhat.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 16 May 2024 12:09:04 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0i+ejMyj0j7RvVY7+g6eU8bQ9QLG=08fm78i9Ui1fEiVA@mail.gmail.com>
-Message-ID: <CAJZ5v0i+ejMyj0j7RvVY7+g6eU8bQ9QLG=08fm78i9Ui1fEiVA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] ACPI: EC: Install EC address space handler at the
- namespace root
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, 
-	Linux ACPI <linux-acpi@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Mario Limonciello <mario.limonciello@amd.com>, Armin Wolf <w_armin@gmx.de>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next] net: ethernet: mtk_eth_soc: add missing check
+ for rhashtable_init
+To: Chen Ni <nichen@iscas.ac.cn>, nbd@nbd.name, sean.wang@mediatek.com,
+ Mark-MC.Lee@mediatek.com, lorenzo@kernel.org, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ matthias.bgg@gmail.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <20240516092427.3897322-1-nichen@iscas.ac.cn>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20240516092427.3897322-1-nichen@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi,
+Il 16/05/24 11:24, Chen Ni ha scritto:
+> Add check for the return value of rhashtable_init() and return the error
+> if it fails in order to catch the error.
+> 
+> Fixes: 33fc42de3327 ("net: ethernet: mtk_eth_soc: support creating mac address based offload entries")
+> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+> ---
+>   drivers/net/ethernet/mediatek/mtk_ppe.c | 5 ++++-
+>   1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/ethernet/mediatek/mtk_ppe.c b/drivers/net/ethernet/mediatek/mtk_ppe.c
+> index 0acee405a749..f7e5e6e52cdf 100644
+> --- a/drivers/net/ethernet/mediatek/mtk_ppe.c
+> +++ b/drivers/net/ethernet/mediatek/mtk_ppe.c
+> @@ -884,12 +884,15 @@ struct mtk_ppe *mtk_ppe_init(struct mtk_eth *eth, void __iomem *base, int index)
+>   	struct mtk_ppe *ppe;
+>   	u32 foe_flow_size;
+>   	void *foe;
+> +	int ret;
+>   
+>   	ppe = devm_kzalloc(dev, sizeof(*ppe), GFP_KERNEL);
+>   	if (!ppe)
+>   		return NULL;
+>   
+> -	rhashtable_init(&ppe->l2_flows, &mtk_flow_l2_ht_params);
+> +	ret = rhashtable_init(&ppe->l2_flows, &mtk_flow_l2_ht_params);
+> +	if (ret)
+> +		return NULL;
 
-On Thu, May 16, 2024 at 11:50=E2=80=AFAM Hans de Goede <hdegoede@redhat.com=
-> wrote:
->
-> Hi,
->
-> On 5/16/24 10:37 AM, Rafael J. Wysocki wrote:
-> > On Thu, May 16, 2024 at 10:35=E2=80=AFAM Hans de Goede <hdegoede@redhat=
-com> wrote:
-> >>
-> >> Hi,
-> >>
-> >> On 5/15/24 9:39 PM, Rafael J. Wysocki wrote:
-> >>> Hi Everyone,
-> >>>
-> >>> This is an update of
-> >>>
-> >>> https://lore.kernel.org/linux-acpi/5787281.DvuYhMxLoT@kreacher/
-> >>>
-> >>> which was a follow up for the discussion in:
-> >>>
-> >>> https://lore.kernel.org/linux-acpi/CAJZ5v0hiXdv08PRcop7oSYqgr_g5rwzRT=
-j7HgdNCCGjXeV44zA@mail.gmail.com/T/#t
-> >>>
-> >>> Patch [1/2] has been updated to avoid possible issues related to
-> >>> systems with defective platform firmware and patch [2/2] is a resend
-> >>> with a couple of tags added.
-> >>
-> >> Thanks, the series looks good to me:
-> >>
-> >> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-> >>
-> >> for the series.
-> >>
-> >> I assume you are going to send this in as a fix for 6.10 ?
-> >
-> > Yes, I am.
-> >
-> >> In that case feel free to merge both patches through the
-> >> linux-pm tree.
-> >
-> > Thank you!
->
-> Hmm, I just realized that this:
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x8=
-6.git/commit/?h=3Dfor-next&id=3Dc663b26972eae7d2a614f584c92a266fe9a2d44c
->
-> Is part of the main pdx86 pull-request for 6.10 which I'm going to
-> send to Linus in the next 10 minutes or so. So that is going to
-> conflict with your 2/2.
->
-> Options:
->
-> a) You only send 1/2 upstream as a fix and I'll then send a rebased
-> 2/2 upstream as part of the first pdx86 pull-request.
->
-> b) You merge the git://git.kernel.org/pub/scm/linux/kernel/git/pdx86/plat=
-form-drivers-x86.git
-> platform-drivers-x86-v6.10-1 tag (which is the tag for the pull-request
-> I'm about to send to Linus) and rebase on top of that before sending
-> a pull-request for both to Linus.
+return PTR_ERR(ret);
 
-I would rather wait for Linus to merge your PR and merge my changes on
-top of his merge.
+.then in mtk_eth_soc.c, you will have to fix the check:
+			if (!eth->ppe[i]) {
+
+to IS_ERR_OR_NULL( ... )
+
+Cheers,
+Angelo
+
+>   
+>   	/* need to allocate a separate device, since it PPE DMA access is
+>   	 * not coherent.
+
+
 
