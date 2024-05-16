@@ -1,281 +1,237 @@
-Return-Path: <linux-kernel+bounces-181285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CAE58C79FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:03:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B08ED8C79FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:03:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04A8B1F22047
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:03:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1DDB1C20AA5
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:03:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A8B214D714;
-	Thu, 16 May 2024 16:03:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E38E814D711;
+	Thu, 16 May 2024 16:03:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="siHbNN0H"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hyGTErEQ"
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8491A14D2AE
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 16:02:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FF8F14D2AE;
+	Thu, 16 May 2024 16:03:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715875381; cv=none; b=YwQI4pa2XkBXGRESB29xXRlyI21pIhIiIf4FeTxW3IZ4K+qSO5lZOAWbymWx9qMm2GG1CfMKfTXVaL6zP2MaCgBGVENDJbLT7PuYtdVm1uNpdjd9mtQiHTqZ4F8KTfIjCXIZyodb4B5/CnMnD4r2ocCSRh6wr5ag/4FJgEYVlfQ=
+	t=1715875395; cv=none; b=MTeCdTfaxCFkxGV6XzP7gBovj81T+pwGgdCqxCdCo6S2iwv6ZzJFHqSRPqv/FbxYCxV4owY7K5CWIcr8BppxgLXrFjCEtBAF8TTMfor4lmQyIKCvX0fRmNvPuV8AYpIFSceop8DlpC5Y+N01tACDoDxPBjvwFzz98+b0e5NSjG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715875381; c=relaxed/simple;
-	bh=Qvn+eDPV3KjfuRiCHUcxOODBkfjgRSK4kviR/a5h1b0=;
-	h=Date:In-Reply-To:Mime-Version:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=Usfjt/2fEokzrp1KDD1LoEVJcoZluIKU4xZDP342OCquNFBBW+uvu1YLbqhlG/4xRytlQSi/Y2XAWCpm/nmZntyzxOwwtYoIkEAVlGa67Da9hJLWUkGsQZqxBeNmOnV4TYHybPbOhgVCl20JVWG+VZehgOpqdfJSDGEGT4/uL9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=siHbNN0H; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-dc6b26783b4so10835007276.0
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 09:02:59 -0700 (PDT)
+	s=arc-20240116; t=1715875395; c=relaxed/simple;
+	bh=XfbK26HHwTXb9D6hf85Wv5JSchZA7ZbGTeN/kOh0rRw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dGULdCkYYkWKO3bRe3v7Vs1XhB80f9tTp00REYe5D9nDB7LtArgPjeWHBD7obd3DkhIl/dxONJ/hiAJXlVfcBG6wgMJ5giDc3w8RwwcjGjY7RB1F3ZPYCZBqLpZz4cV5AKEvQzjC9HMB4KphSU5KCr6PIApQ+00ngO8MLOJTACs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hyGTErEQ; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-43df44ef3e3so33174691cf.2;
+        Thu, 16 May 2024 09:03:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715875378; x=1716480178; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=7HpIXuT6tOszn6Sdim+VjymIhcvyFpypZfRE8OZjGxU=;
-        b=siHbNN0Hkag8LErRHX1pAwbMgIKp+zJYlmoN6XdicTxJc/rj0PGpfAKKVkhiovR8Xm
-         PLh6BFoecYu5ynnu7QPuZWBPyIOkPx5JpRvuBMhuzuEwbKoct+2pKt+/1pY8sMNGHLHA
-         upeNUc4mX2sQJn7zCPsmXjz5dTP8k4W/Ar104YMIWFYpitOC8Jnftt//qQrStp8SRnPQ
-         /wwjMG8IHEvXxN8ufI547BvO8fvgFxl2tQn1PIV+lrMSzA9gHDMslurPOG4wUEIGlWAo
-         Sfms6ZGdWxt/MDvj+BygTX2GdTraQjrZzsGRNJ3fDWIMBzqCoCqe7v5fJuoWWjkkfcLR
-         QVFw==
+        d=gmail.com; s=20230601; t=1715875392; x=1716480192; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=quQEENvi+8m2W7cBE5Cl749lOV0EoC/dR++hJ/4pzdI=;
+        b=hyGTErEQFmXvFTZKsDMCaA5I3ANYEZweCWknpV9mi5taZz0bkBwO+f8Tlf3pKpP8AT
+         xYr7pTCAKJOcJM3w05M/je0jq7ffozvkXNr8jB+5MFUJNMcz1FWdrOM4HCbF/4iyWinz
+         Gqt3YVyPSijQtraH3ZmNqxZI9pKQeQAVlZNu910S6eTIoVp87xPeOq9/uY0CuDWWv/7u
+         9h433goprZqKl2d93BGOJpgSMaoUAeOdtjt0HjoXemMwW05fl4kIOGx/ZNiJSU75xIqv
+         9woM0/W0XooQ6i6F9mzJUamuZgw8t6NT6/ZPntVR9cm/8NdfMbBPQpnd7aIeicyXO3UV
+         2H8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715875378; x=1716480178;
-        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date
+        d=1e100.net; s=20230601; t=1715875392; x=1716480192;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7HpIXuT6tOszn6Sdim+VjymIhcvyFpypZfRE8OZjGxU=;
-        b=F/TUUqfMkZxBLFTGDhx7lTzpzjJAPZQJp1c11mBHKQP3Dbunn20iG8nrBZC8+zGeZs
-         WeSx0CsoOnPl2PJKpZmMmPRHN2hQr2JDxRy7b1+mwk2nwoFJr2DDcjVrIq/JeVh79Rak
-         uLVdFODO+A1wvzNgs7oJ3sUySK3fDRXnCSbtAcGZUMteXW6zNSAITMGy05vmc+IHJwkq
-         QSrDmc3ffCuLhGR62iBAnp2o3RDMDOwETvy9ljFVO9Bg94FV6sGObjh4OI/9NGpH+INf
-         glA/cxxkIl3Ot8sXBoONkm79fbftfZX9cmJ3a2a3vrrOIaq0ReB38TIqr3ilzuss9y5w
-         2TLA==
-X-Forwarded-Encrypted: i=1; AJvYcCU7p7eeNBnVldiHHcXF45erlEobB+56T5h+NJMHapwK8y4Yyt7spFx8LrngyHhZwAsllhgZ4HW42F1gt5KGOM6gUbYh21eZeBdESp35
-X-Gm-Message-State: AOJu0YzocYpSM36TItprv+UwRtmWgwQa3/KOOVegbe7YWwiIBk0Z2Fxq
-	LD1s7KILmCNgNFS4+nOEEkbDqhlwS1PUb7XiJpaQ8Gx4zQF735Cj0x4oFg6QEgUBn5V1KQIYZR9
-	PsHOuAiYNN+FZW7rjzte4Jw==
-X-Google-Smtp-Source: AGHT+IF/VTizL3uRcaPz4FUA6Qw+im1lfzOrpyEK3SLZlU2Rx96wjJQrdDCUaoRmdREzsaN+wgsjcIqTNDS1LM0OIQ==
-X-Received: from coltonlewis-kvm.c.googlers.com ([fda3:e722:ac3:cc00:2b:ff92:c0a8:14ce])
- (user=coltonlewis job=sendgmr) by 2002:a05:6902:1201:b0:dee:6f9d:b753 with
- SMTP id 3f1490d57ef6-dee6f9dbdeamr1196625276.6.1715875378456; Thu, 16 May
- 2024 09:02:58 -0700 (PDT)
-Date: Thu, 16 May 2024 16:02:57 +0000
-In-Reply-To: <861q69oi9c.wl-maz@kernel.org> (message from Marc Zyngier on Fri,
- 10 May 2024 15:26:23 +0100)
+        bh=quQEENvi+8m2W7cBE5Cl749lOV0EoC/dR++hJ/4pzdI=;
+        b=wSvjOSO2LM0/WMrgu8LaHgmapz9+i5x0n67GAm2LzhHIzsfS58IoyiarWmdMOu3oHZ
+         fkbQnTwbm4rH1LPDBhLjx5L23LcrYEWksgF+CbfKaw1QB1B9cOGBt9TW4SyAy6vgh6UH
+         QVAv3YqJu4Zqc4+NpY9LAEAas4PNB527L5VVV7xvggIxXrIwZ1L98Hq+3rqAxAsjJx1D
+         1UFLtZmuuVS85YAo+Y+GLV+WZ0umR3pkBHqo3FEGk0B9AHonWpMgLtHh9kX6G9c7xrWa
+         WiCDXdXCamWWli2op8LRyoZl+gMaUtgCAsCvZs8gYszErzR6WqydBgRJDGCEqGVqukn/
+         1MHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWmyfZ6A8xgVz4N99qjR/A8dDYhOtp1bmaVOFMkDvlT/uNA27FkY2NzXi4Wtlh8fgdJM0+C9dec70LTVeVXMVhIsXnCdEA04wZXdifS3Xi4p5zp7hhixHEnFtAygzHAuepVWiA8s3cnOMYkn/LBbRewLH1IUYlAV1okky2/shyfKQA/rg==
+X-Gm-Message-State: AOJu0Yzz3REoeEpRzAgGKkjWMYRl/vN1QVyche4T37TqfofAPHNWpShW
+	TrNo8R+YM7+gfdcedgLjNcSoagq+hyDxrzxxsaax1YOFWij2ZawT
+X-Google-Smtp-Source: AGHT+IHUQiwlM/E+TmpEM0zYayXuGOsA78RdCCnlxaFfplbOFlUmqLjP2bBU4RWTImAmH4BW4JkH8w==
+X-Received: by 2002:ac8:5a8c:0:b0:439:f51a:2c1 with SMTP id d75a77b69052e-43dfda9664bmr233981201cf.1.1715875392075;
+        Thu, 16 May 2024 09:03:12 -0700 (PDT)
+Received: from [192.168.0.137] ([188.24.105.36])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43df54f216esm99899601cf.31.2024.05.16.09.03.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 May 2024 09:03:11 -0700 (PDT)
+Message-ID: <9c58e5d3-d31c-4dd2-b89d-3acf744b3a28@gmail.com>
+Date: Thu, 16 May 2024 19:03:07 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Message-ID: <gsntbk55agni.fsf@coltonlewis-kvm.c.googlers.com>
-Subject: Re: [PATCH v5] KVM: arm64: Add early_param to control WFx trapping
-From: Colton Lewis <coltonlewis@google.com>
-To: Marc Zyngier <maz@kernel.org>
-Cc: kvm@vger.kernel.org, corbet@lwn.net, oliver.upton@linux.dev, 
-	james.morse@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, 
-	catalin.marinas@arm.com, will@kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	kvmarm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/9] iio: adc: ad7173: add support for special inputs
+To: David Lechner <dlechner@baylibre.com>, dumitru.ceclan@analog.com
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240514-ad4111-v2-0-29be6a55efb5@analog.com>
+ <20240514-ad4111-v2-5-29be6a55efb5@analog.com>
+ <CAMknhBF8D3YCro4duKrBoEkdc-SiCGwvHTg4SFb17ympUsG1nA@mail.gmail.com>
+Content-Language: en-US
+From: "Ceclan, Dumitru" <mitrutzceclan@gmail.com>
+In-Reply-To: <CAMknhBF8D3YCro4duKrBoEkdc-SiCGwvHTg4SFb17ympUsG1nA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Marc. Thanks for the review.
-
-Marc Zyngier <maz@kernel.org> writes:
-
-> On Tue, 30 Apr 2024 19:14:44 +0100,
-> Colton Lewis <coltonlewis@google.com> wrote:
->> diff --git a/Documentation/admin-guide/kernel-parameters.txt  
->> b/Documentation/admin-guide/kernel-parameters.txt
->> index 31b3a25680d0..a4d94d9abbe4 100644
->> --- a/Documentation/admin-guide/kernel-parameters.txt
->> +++ b/Documentation/admin-guide/kernel-parameters.txt
->> @@ -2653,6 +2653,22 @@
->>   			[KVM,ARM] Allow use of GICv4 for direct injection of
->>   			LPIs.
-
->> +	kvm-arm.wfe_trap_policy=
->> +			[KVM,ARM] Control when to set WFE instruction trap for
->> +			KVM VMs.
+On 16/05/2024 02:27, David Lechner wrote:
+> On Tue, May 14, 2024 at 2:23 AM Dumitru Ceclan via B4 Relay
+> <devnull+dumitru.ceclan.analog.com@kernel.org> wrote:
+>>
+>> From: Dumitru Ceclan <dumitru.ceclan@analog.com>
+>>
+>>  Add support for selecting REF+ and REF- inputs on all models.
+>>  Add support for selecting ((AVDD1 − AVSS)/5) inputs
+>>   on supported models.
+>>
+>> Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
+>> ---
+>>  drivers/iio/adc/ad7173.c | 21 +++++++++++++++++++++
+>>  1 file changed, 21 insertions(+)
+>>
+>> diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
+>> index fb33534d63a9..1e9ba3070770 100644
+>> --- a/drivers/iio/adc/ad7173.c
+>> +++ b/drivers/iio/adc/ad7173.c
+>> @@ -65,6 +65,10 @@
+>>          FIELD_PREP(AD7173_CH_SETUP_AINNEG_MASK, neg))
+>>  #define AD7173_AIN_TEMP_POS    17
+>>  #define AD7173_AIN_TEMP_NEG    18
+>> +#define AD7173_AIN_COM_IN_POS  19
+>> +#define AD7173_AIN_COM_IN_NEG  20
+>> +#define AD7173_AIN_REF_POS     21
+>> +#define AD7173_AIN_REF_NEG     22
+>>
+>>  #define AD7172_2_ID                    0x00d0
+>>  #define AD7175_ID                      0x0cd0
+>> @@ -145,6 +149,8 @@ struct ad7173_device_info {
+>>         unsigned int id;
+>>         char *name;
+>>         bool has_temp;
+>> +       /* ((AVDD1 − AVSS)/5) */
+>> +       bool has_common_input;
+>>         bool has_input_buf;
+>>         bool has_int_ref;
+>>         bool has_ref2;
+>> @@ -215,6 +221,7 @@ static const struct ad7173_device_info ad7173_device_info[] = {
+>>                 .has_temp = true,
+>>                 .has_input_buf = true,
+>>                 .has_int_ref = true,
+>> +               .has_common_input = true,
+>>                 .clock = 2 * HZ_PER_MHZ,
+>>                 .sinc5_data_rates = ad7173_sinc5_data_rates,
+>>                 .num_sinc5_data_rates = ARRAY_SIZE(ad7173_sinc5_data_rates),
+>> @@ -228,6 +235,7 @@ static const struct ad7173_device_info ad7173_device_info[] = {
+>>                 .has_temp = false,
+>>                 .has_input_buf = true,
+>>                 .has_ref2 = true,
+>> +               .has_common_input = true,
+>>                 .clock = 2 * HZ_PER_MHZ,
+>>                 .sinc5_data_rates = ad7173_sinc5_data_rates,
+>>                 .num_sinc5_data_rates = ARRAY_SIZE(ad7173_sinc5_data_rates),
+>> @@ -243,6 +251,7 @@ static const struct ad7173_device_info ad7173_device_info[] = {
+>>                 .has_input_buf = true,
+>>                 .has_int_ref = true,
+>>                 .has_ref2 = true,
+>> +               .has_common_input = false,
+>>                 .clock = 2 * HZ_PER_MHZ,
+>>                 .sinc5_data_rates = ad7173_sinc5_data_rates,
+>>                 .num_sinc5_data_rates = ARRAY_SIZE(ad7173_sinc5_data_rates),
+>> @@ -257,6 +266,7 @@ static const struct ad7173_device_info ad7173_device_info[] = {
+>>                 .has_temp = true,
+>>                 .has_input_buf = true,
+>>                 .has_int_ref = true,
+>> +               .has_common_input = true,
+>>                 .clock = 16 * HZ_PER_MHZ,
+>>                 .sinc5_data_rates = ad7175_sinc5_data_rates,
+>>                 .num_sinc5_data_rates = ARRAY_SIZE(ad7175_sinc5_data_rates),
+>> @@ -271,6 +281,7 @@ static const struct ad7173_device_info ad7173_device_info[] = {
+>>                 .has_input_buf = true,
+>>                 .has_int_ref = true,
+>>                 .has_ref2 = true,
+>> +               .has_common_input = true,
+>>                 .clock = 16 * HZ_PER_MHZ,
+>>                 .sinc5_data_rates = ad7175_sinc5_data_rates,
+>>                 .num_sinc5_data_rates = ARRAY_SIZE(ad7175_sinc5_data_rates),
+>> @@ -285,6 +296,7 @@ static const struct ad7173_device_info ad7173_device_info[] = {
+>>                 .has_temp = false,
+>>                 .has_input_buf = false,
+>>                 .has_int_ref = true,
+>> +               .has_common_input = false,
+>>                 .clock = 16 * HZ_PER_MHZ,
+>>                 .sinc5_data_rates = ad7175_sinc5_data_rates,
+>>                 .num_sinc5_data_rates = ARRAY_SIZE(ad7175_sinc5_data_rates),
+>> @@ -298,6 +310,7 @@ static const struct ad7173_device_info ad7173_device_info[] = {
+>>                 .has_temp = true,
+>>                 .has_input_buf = true,
+>>                 .has_int_ref = true,
+>> +               .has_common_input = true,
+>>                 .clock = 16 * HZ_PER_MHZ,
+>>                 .odr_start_value = AD7177_ODR_START_VALUE,
+>>                 .sinc5_data_rates = ad7175_sinc5_data_rates,
+>> @@ -920,6 +933,14 @@ static int ad7173_validate_voltage_ain_inputs(struct ad7173_state *st,
+>>                 if (ain[i] < st->info->num_inputs)
+>>                         continue;
+>>
+>> +               if (ain[i] == AD7173_AIN_REF_POS || ain[i] == AD7173_AIN_REF_NEG)
+>> +                       continue;
 >> +
->> +			trap: set WFE instruction trap
+>> +               if ((ain[i] == AD7173_AIN_COM_IN_POS ||
+>> +                    ain[i] == AD7173_AIN_COM_IN_NEG) &&
+>> +                   st->info->has_common_input)
+>> +                       continue;
 >> +
->> +			notrap: clear WFE instruction trap
->> +
->> +	kvm-arm.wfi_trap_policy=
->> +			[KVM,ARM] Control when to set WFI instruction trap for
->> +			KVM VMs.
->> +
->> +			trap: set WFI instruction trap
->> +
->> +			notrap: clear WFI instruction trap
->> +
+> 
+> If there is only one valid combination, it seems like these should be
+> fixed channels like the temperature input rather than something coming
+> from the device tree.
+> 
+As I've said, I do not agree with forcing one channel slot to be used.
+I could add a property that spawns this channel. Although as I see under,
+I think I'll permit these inputs to be mixed and matched.
 
-> Please make it clear that neither traps are guaranteed. The
-> architecture *allows* an implementation to trap when no events (resp.
-> interrupts) are pending, but nothing more. An implementation is
-> perfectly allowed to ignore these bits.
+> It looks like on AD411x, it is the case that there is only one valid
+> option for the reference input in the channel configuration. But in
+> the case of AD717x since both REF+ and REF- are listed as possible
+> inputs for both AINPOS0 and AINNEG0, it seems like they could be mixed
+> and matched with other channels. The datasheet doesn't seem very clear
+> on this though.
+> 
+This is imposed artificially, AD411x has the same cross-point mux that
+can mix and match all the inputs.
 
-Will do. I'll just add an additional sentence stating "Traps are allowed
-but not guaranteed by the CPU architecture"
+> If it is valid to combine, say AIN0 with REF+ though, then the
+> validation would need to be relaxed. But I'm guessing that is not
+> actually the case?
+>
 
->> diff --git a/arch/arm64/include/asm/kvm_host.h  
->> b/arch/arm64/include/asm/kvm_host.h
->> index 21c57b812569..315ee7bfc1cb 100644
->> --- a/arch/arm64/include/asm/kvm_host.h
->> +++ b/arch/arm64/include/asm/kvm_host.h
->> @@ -67,6 +67,13 @@ enum kvm_mode {
->>   	KVM_MODE_NV,
->>   	KVM_MODE_NONE,
->>   };
->> +
->> +enum kvm_wfx_trap_policy {
->> +	KVM_WFX_NOTRAP_SINGLE_TASK, /* Default option */
->> +	KVM_WFX_NOTRAP,
->> +	KVM_WFX_TRAP,
->> +};
+I think it is the case.
 
-> Since this is only ever used in arm.c, it really doesn't need to be
-> exposed anywhere else.
+>>                 return dev_err_probe(dev, -EINVAL,
+>>                         "Input pin number out of range for pair (%d %d).\n",
+>>                         ain[0], ain[1]);
+>>
+>> --
+>> 2.43.0
+>>
+>>
 
-I can move it to there.
-
->> diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
->> index a25265aca432..5ec52333e042 100644
->> --- a/arch/arm64/kvm/arm.c
->> +++ b/arch/arm64/kvm/arm.c
->> @@ -46,6 +46,8 @@
->>   #include <kvm/arm_psci.h>
-
->>   static enum kvm_mode kvm_mode = KVM_MODE_DEFAULT;
->> +static enum kvm_wfx_trap_policy kvm_wfi_trap_policy =  
->> KVM_WFX_NOTRAP_SINGLE_TASK;
->> +static enum kvm_wfx_trap_policy kvm_wfe_trap_policy =  
->> KVM_WFX_NOTRAP_SINGLE_TASK;
-
-> It would be worth declaring those as __read_mostly.
-
-Will do.
-
->> +static bool kvm_vcpu_should_clear_twi(struct kvm_vcpu *vcpu)
->> +{
->> +	if (likely(kvm_wfi_trap_policy == KVM_WFX_NOTRAP_SINGLE_TASK))
->> +		return single_task_running() &&
->> +			(atomic_read(&vcpu->arch.vgic_cpu.vgic_v3.its_vpe.vlpi_count) ||
->> +			 vcpu->kvm->arch.vgic.nassgireq);
-
-> So you are evaluating a runtime condition (scheduler queue length,
-> number of LPIs)...
-
-Yes. Only in the case of default behavior when no option is given, which
-should be equivalent to what the code was doing before.
-
->> +
->> +	return kvm_wfi_trap_policy == KVM_WFX_NOTRAP;
->> +}
->> +
->> +static bool kvm_vcpu_should_clear_twe(struct kvm_vcpu *vcpu)
->> +{
->> +	if (likely(kvm_wfe_trap_policy == KVM_WFX_NOTRAP_SINGLE_TASK))
->> +		return single_task_running();
->> +
->> +	return kvm_wfe_trap_policy == KVM_WFX_NOTRAP;
->> +}
->> +
->> +static inline void kvm_vcpu_reset_hcr(struct kvm_vcpu *vcpu)
-
-> Why the inline?
-
-Because I moved it from the kvm_emulate.h header with no
-modification. It doesn't have to be.
-
->> +{
->> +	vcpu->arch.hcr_el2 = HCR_GUEST_FLAGS;
->> +	if (has_vhe() || has_hvhe())
->> +		vcpu->arch.hcr_el2 |= HCR_E2H;
->> +	if (cpus_have_final_cap(ARM64_HAS_RAS_EXTN)) {
->> +		/* route synchronous external abort exceptions to EL2 */
->> +		vcpu->arch.hcr_el2 |= HCR_TEA;
->> +		/* trap error record accesses */
->> +		vcpu->arch.hcr_el2 |= HCR_TERR;
->> +	}
->> +
->> +	if (cpus_have_final_cap(ARM64_HAS_STAGE2_FWB)) {
->> +		vcpu->arch.hcr_el2 |= HCR_FWB;
->> +	} else {
->> +		/*
->> +		 * For non-FWB CPUs, we trap VM ops (HCR_EL2.TVM) until M+C
->> +		 * get set in SCTLR_EL1 such that we can detect when the guest
->> +		 * MMU gets turned on and do the necessary cache maintenance
->> +		 * then.
->> +		 */
->> +		vcpu->arch.hcr_el2 |= HCR_TVM;
->> +	}
->> +
->> +	if (cpus_have_final_cap(ARM64_HAS_EVT) &&
->> +	    !cpus_have_final_cap(ARM64_MISMATCHED_CACHE_TYPE))
->> +		vcpu->arch.hcr_el2 |= HCR_TID4;
->> +	else
->> +		vcpu->arch.hcr_el2 |= HCR_TID2;
->> +
->> +	if (vcpu_el1_is_32bit(vcpu))
->> +		vcpu->arch.hcr_el2 &= ~HCR_RW;
->> +
->> +	if (kvm_has_mte(vcpu->kvm))
->> +		vcpu->arch.hcr_el2 |= HCR_ATA;
->> +
->> +
->> +	if (kvm_vcpu_should_clear_twe(vcpu))
->> +		vcpu->arch.hcr_el2 &= ~HCR_TWE;
->> +	else
->> +		vcpu->arch.hcr_el2 |= HCR_TWE;
->> +
->> +	if (kvm_vcpu_should_clear_twi(vcpu))
->> +		vcpu->arch.hcr_el2 &= ~HCR_TWI;
->> +	else
->> +		vcpu->arch.hcr_el2 |= HCR_TWI;
-
-> ... and from the above runtime conditions you make it a forever
-> decision, for a vcpu that still hasn't executed a single instruction.
-> What could possibly go wrong?
-
-Oh I see. kvm_arch_vcpu_ioctl_vcpu_init only executes once when the vcpu
-is created (makes sense given the name), thereby making the decision
-permanent for the life of the vcpu. I misunderstood that fact before.
-
-I will move the decision back to when the vcpu is loaded as it was in
-earlier versions of this series.
-
->> +static int __init early_kvm_wfx_trap_policy_cfg(char *arg, enum  
->> kvm_wfx_trap_policy *p)
->> +{
->> +	if (!arg)
->> +		return -EINVAL;
->> +
->> +	if (strcmp(arg, "trap") == 0) {
->> +		*p = KVM_WFX_TRAP;
->> +		return 0;
->> +	}
->> +
->> +	if (strcmp(arg, "notrap") == 0) {
->> +		*p = KVM_WFX_NOTRAP;
->> +		return 0;
->> +	}
->> +
->> +	if (strcmp(arg, "default") == 0) {
->> +		*p = KVM_WFX_NOTRAP_SINGLE_TASK;
->> +		return 0;
->> +	}
-
-> Where is this "default" coming from? It's not documented.
-
-It was explicitly documented on earlier patch versions, but then I was
-told we didn't want people to rely on the default behavior so we have
-flexibility to change it in the future.
-
-There isn't much use for it if it isn't documented, so I'll take it out.
 
