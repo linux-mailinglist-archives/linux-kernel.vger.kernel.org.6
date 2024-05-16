@@ -1,105 +1,95 @@
-Return-Path: <linux-kernel+bounces-180968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DE408C7591
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:03:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 711C88C75D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:18:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22BC91F22D2F
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:03:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D09E284E88
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:18:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9B2014601C;
-	Thu, 16 May 2024 12:03:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89C83146584;
+	Thu, 16 May 2024 12:18:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V8JHdMeg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14AC0145A06;
-	Thu, 16 May 2024 12:03:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="QaF6Wo9e"
+Received: from m16.mail.126.com (m16.mail.126.com [117.135.210.9])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5396145B24;
+	Thu, 16 May 2024 12:18:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715861017; cv=none; b=faNLQeTtGSF2M2vvY9C2ovIkLbs4ohLFNnQOAv29Iy1CTST7eBOX3RTkAe48CBGt4g2F4D7vbpPQ+pNxjFXW8P+pf7kfax3ovpI96Nx+g+2QfDOFWgj03nK1JopK2chy//5DVaOHG1OCFmNLpw0Q3TlTQJCPHciBiyeCtxDTATg=
+	t=1715861902; cv=none; b=ebw+ozrb6KUVzKWC8oxnpFga0H6M5CO5VYhsOhZVINCnOMSmOGuSA8WW05Oi/5KJec2Nr8mbuseDs8+trjPrIfTYGmMTXKTOwLzIdH+AOh7aYCjwyc6UXa42mJ2PU/uYdJ7+2DxfoN2p2hOHalXKz77/IirxP405t//UyzwYwjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715861017; c=relaxed/simple;
-	bh=ao3vT+/wgbwOmNIGPIj0yiu9lABcaUGxyDAadsmJeK0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qHlkVQdBtCXEbtpkah+BMvXbJZ95p7jBCuQDc4bHktDhgjryqGgDJ2/dWe0HKhqipLC9jbPZftq2TlPM6nVqq9FYrkyGWbJ66WHs1OnOgn7YU7PvNEaEp4D4X4P1T4eVbeJ0JREYez7x+5M140Kb13ieqF+xfz80bp6DvIpWO6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V8JHdMeg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C47DBC113CC;
-	Thu, 16 May 2024 12:03:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715861016;
-	bh=ao3vT+/wgbwOmNIGPIj0yiu9lABcaUGxyDAadsmJeK0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=V8JHdMegnhJJfdQwfbG/Po0osKXDtPq89J2E86h/wMBCidUzF6BQOxsmrHLHc1/zy
-	 eSwX59oExTKxdILgy2f3icMFNHrBtS0+uH3QYYyqLUH3tdTn6ksBbs8KdOLCNF84zd
-	 7mK9EYogE0k2pKc6YMajLgYfNcBgFBYk/6Ic498ttBbNE4bsa3YFSyDe3rvp8SLD6W
-	 Ft0EZ9yD9mNwrOEuAKrnj9dsP0+TaghtkGZVCP5aT3HpqdezEwSKz5mD9II0m8+KnF
-	 CqGijKUefTUEF1/XdhLAqp34mAdsYYrxrfmrhDWoLlJgP+SS3sBs8H6EwjW1O1h8C0
-	 zGnvxeIOrr++w==
-Date: Thu, 16 May 2024 13:03:32 +0100
-From: Simon Horman <horms@kernel.org>
-To: Ryosuke Yasuoka <ryasuoka@redhat.com>
-Cc: krzk@kernel.org, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, syoshida@redhat.com
-Subject: Re: [PATCH net] nfc: nci: Fix handling of zero-length payload
- packets in nci_rx_work()
-Message-ID: <20240516120332.GB443134@kernel.org>
-References: <20240515151757.457353-1-ryasuoka@redhat.com>
- <20240516084348.GF179178@kernel.org>
- <ZkXQ5h8fla1KhX6A@zeus>
+	s=arc-20240116; t=1715861902; c=relaxed/simple;
+	bh=21bx4c1PmfkU2JPz9tYRAzj1c31ZjgcveRPXwlDx3Pg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=QTcIIykGwRh3V+j72n+v86H21dhfQiklirYhB92RBoVTw33UsN18EnSq/T0J35f2zr5v9JenjbxPbYdJ8cqOxics12Uc966WEg8r2VLjIWtbRDWPkwbMrxGlw7Qql3tpi4g4Tx8/uCGDhy1m8FjrrBWwr0HpfAwcqXTLKFNDJlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=QaF6Wo9e; arc=none smtp.client-ip=117.135.210.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version:
+	Content-Type; bh=vofaX8fsHWZZdLKjY6vYcEjUy3BVDsZa1OFGxEENHhk=;
+	b=QaF6Wo9eWARKm6glyHkx+PiUgBnZV92PYSDX8gy3+7j80LCoa2hX4NLvmJH9Sc
+	fGuBYfC7nNA1mPINu/KLN0qje8LqcQ6XVqDnQn0hfiMxqkMstIuZTuOvTvxKy8Fi
+	AOEGFzxpCQowwr48HMWMsoG2w7Six5OkzHTp6n68Yoq7A=
+Received: from localhost.localdomain (unknown [116.128.244.171])
+	by gzga-smtp-mta-g1-4 (Coremail) with SMTP id _____wDHD+tp9UVmXt_9Bw--.21873S4;
+	Thu, 16 May 2024 20:01:52 +0800 (CST)
+From: Genjian <zhanggenjian@126.com>
+To: tsbogend@alpha.franken.de,
+	chenhuacai@kernel.org,
+	jiaxun.yang@flygoat.com,
+	ricardo@marliere.net
+Cc: linux-mips@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Genjian Zhang <zhanggenjian@kylinos.cn>,
+	k2ci <kernel-bot@kylinos.cn>
+Subject: [PATCH 1/3] MIPS: Loongson64: include asm/bootinfo.h
+Date: Thu, 16 May 2024 19:59:04 +0800
+Message-Id: <20240516115906.1224164-1-zhanggenjian@126.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZkXQ5h8fla1KhX6A@zeus>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDHD+tp9UVmXt_9Bw--.21873S4
+X-Coremail-Antispam: 1Uf129KBjvdXoW7XFWrKF47Cr4fuFWxuw4UJwb_yoW3trXEga
+	42y3y0grn5AF1xA34fWFn3Ar4ak348Way5uwn5Xr9Yvas8JayDCFW7Z34UtF1DWrs0yrWr
+	Zr1rJr1kCF1fGjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUjS_MPUUUUU==
+X-CM-SenderInfo: x2kd0wxjhqyxldq6ij2wof0z/1tbiHhTgfmV20wENggAAsa
 
-On Thu, May 16, 2024 at 06:24:54PM +0900, Ryosuke Yasuoka wrote:
-> Thank you for your review and comment, Simon.
-> 
-> On Thu, May 16, 2024 at 09:43:48AM +0100, Simon Horman wrote:
-> > Hi Yasuoka-san,
-> > 
-> > On Thu, May 16, 2024 at 12:17:07AM +0900, Ryosuke Yasuoka wrote:
-> > > When nci_rx_work() receives a zero-length payload packet, it should
-> > > discard the packet without exiting the loop. Instead, it should continue
-> > > processing subsequent packets.
-> > 
-> > nit: I think it would be clearer to say:
-> > 
-> > ... it should not discard the packet and exit the loop. Instead, ...
-> 
-> Great. I'll update commit msg like this.
-> 
-> > > 
-> > > Fixes: d24b03535e5e ("nfc: nci: Fix uninit-value in nci_dev_up and nci_ntf_packet")
-> > > Closes: https://lore.kernel.org/lkml/20240428134525.GW516117@kernel.org/T/
-> > 
-> > nit: I'm not sure this Closes link is adding much,
-> >      there are more changes coming, right?
-> 
-> No. I just wanna show the URL link as a reference where this bug is
-> found. This URL discuss a little bit different topic as you know.
-> 
-> In the following discussion [1], Jakub pointed out that changing
-> continue statement to break is not related to the patch "Fix
-> uninit-value in nci_rw_work". So I posted this new small patch before
-> posting v5 patch for "Fix: uninit-value in nci_rw_work".
-> 
-> If Closes tag is not appropriate, I can remove this in this v2 patch.
-> What do you think?
+From: Genjian Zhang <zhanggenjian@kylinos.cn>
 
-Thanks, if it was me I would drop the Closes tag.
+build-warning is printed:
+arch/mips/loongson64/dma.c:25:13: error: no previous prototype for ‘plat_swiotlb_setup’ [-Werror=missing-prototypes]
 
-> [1] https://lore.kernel.org/all/20240510190613.72838bf0@kernel.org/
+Include the header to fix it.
 
-..
+Reported-by: k2ci <kernel-bot@kylinos.cn>
+Signed-off-by: Genjian Zhang <zhanggenjian@kylinos.cn>
+---
+ arch/mips/loongson64/dma.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/mips/loongson64/dma.c b/arch/mips/loongson64/dma.c
+index 8220a1bc0db6..5c5e524b9121 100644
+--- a/arch/mips/loongson64/dma.c
++++ b/arch/mips/loongson64/dma.c
+@@ -3,6 +3,7 @@
+ #include <linux/init.h>
+ #include <linux/swiotlb.h>
+ #include <boot_param.h>
++#include <asm/bootinfo.h>
+ 
+ dma_addr_t phys_to_dma(struct device *dev, phys_addr_t paddr)
+ {
+-- 
+2.25.1
+
 
