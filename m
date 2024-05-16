@@ -1,146 +1,75 @@
-Return-Path: <linux-kernel+bounces-181110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E10E88C778E
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:25:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA98E8C7790
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:25:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BF8E1C22073
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 13:25:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 831B21F233D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 13:25:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D30181474BA;
-	Thu, 16 May 2024 13:25:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 692101487DD;
+	Thu, 16 May 2024 13:25:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Kccyz/FO"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kd/9POmk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A1E9146A81;
-	Thu, 16 May 2024 13:25:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A877E147C67;
+	Thu, 16 May 2024 13:25:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715865941; cv=none; b=VLgdCPTy9wstWr8HFum15Hj2+rkn4BWQux0XjburIK1Uq2pnSulI7YgCqswAug7SJ3eEbPzIj1iqM75KTUR5KPiHeqP2cedE/TdSiQiRkpTZMDZhrODrTW5FsQuWa1lX/torlJGoQCtWW4G6mUyl2LaoxxBfd1BbUyU0Rv5TQF0=
+	t=1715865942; cv=none; b=u5y4pvPw2s5BE/7zSE1YOJD9jb2z2Tcn6v2juJ2gtb2FpPD/bwcK9FKbp7B8aRbKPb2+Q+DlA7rps9aLOUf2O50Kf7bS4JXdhT2cbOXohJtCNb5jHLU/HX+0NQWtZXcCo/n7V1gXSSoT3vxye6QZDikwUZ+RO+GuqE4goJ3XlHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715865941; c=relaxed/simple;
-	bh=VsIJoVcpaZyxPjmMbwNyKsbaFel46KmodWVxSzdH2w4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mIa8VcX57JvPXWdHAGvuUC0r5rST+cWk3Vjg1ymiKgyd3zi3xEvvxSgAHDLyUzbqgG+BR5AP9NqlWu2dbT62IK0cB8h1gedPuHRgaRTooWigxJPRwdM9FmNSBs2zAV1L4xI5hBiokr/sfsI0Km3Bs8DAcFJcVxrriKVtWhpbTm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Kccyz/FO; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715865939; x=1747401939;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=VsIJoVcpaZyxPjmMbwNyKsbaFel46KmodWVxSzdH2w4=;
-  b=Kccyz/FO5T9ZMHvP59DrYNIQxDMonL+W760y9xTaPff4c4TiQEnMTUbK
-   yKujA52kjWVa92qp6hUbVjh9w6ZFxUuspJvVGjMZOaJ33iQsleQuDvLfH
-   2CBszLdWnX5D9M72mG6sUn2UlxfdIultWdPTU/GVGQcO5+Yc/h8v/E36u
-   WhyBKeYtc9G17vS/K4QEqlviGRTb+jjdoahtIlI2AlDUU93WkGHFqHOhb
-   WUrk9/DLGKkYmHjwfuvlSU2UnnxDy1M5EHqXASUY038SwhabqqJtNiaAf
-   9HQy1sQP//oGy6Id/L85IhEmmhe+46X6UZpdgae1cSeHWQVYWRk5J3fuL
-   g==;
-X-CSE-ConnectionGUID: +z4ecAtmTtuELf47/CqfRw==
-X-CSE-MsgGUID: ewSu32urTsGX2eTmKHh+iA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="11820516"
-X-IronPort-AV: E=Sophos;i="6.08,164,1712646000"; 
-   d="scan'208";a="11820516"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 06:25:39 -0700
-X-CSE-ConnectionGUID: Xqgw/h7JQLiUdWj4pIljFw==
-X-CSE-MsgGUID: 7xPasMA7RPyI3ILjZwM1TA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,164,1712646000"; 
-   d="scan'208";a="35861237"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 06:25:38 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1s7b71-000000083vS-1Blf;
-	Thu, 16 May 2024 16:25:35 +0300
-Date: Thu, 16 May 2024 16:25:35 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: =?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado <nfraprado@collabora.com>
-Cc: Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/1] spi: Remove unneded check for orig_nents
-Message-ID: <ZkYJTxmlM5oWOzFL@smile.fi.intel.com>
-References: <20240507201028.564630-1-andriy.shevchenko@linux.intel.com>
- <d8930bce-6db6-45f4-8f09-8a00fa48e607@notapiano>
- <ZkXdXO4Xb83270V7@smile.fi.intel.com>
+	s=arc-20240116; t=1715865942; c=relaxed/simple;
+	bh=DTID0d2KyQR/8XiYolqjuMB/saokffSkjZ3E2d08u6s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sXofks9LwKRFSGQGadJLEIopgRoQaIYx2GSoQOtLT3EAlW92Rk8ZucucQC+IBg4HUOZGwDj0DsA6sYKVwClawVX+c93ROqSPII2q7fAx7gGrbWvCoXcUNGpDnftRRCKyZyc3KD4qY+XgT4jnv5ORGfU3qJQR41MgZttrRIan7bE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kd/9POmk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B363DC2BD11;
+	Thu, 16 May 2024 13:25:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715865941;
+	bh=DTID0d2KyQR/8XiYolqjuMB/saokffSkjZ3E2d08u6s=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=kd/9POmk6sAVT/dIQrtQahOW/w/liyZhYvG6lD3CmGDKPp0+e+IISQFD+/8feGQ0n
+	 iTsoEp4+NfZxo6nr+9fR9kEp4gTBsJ+kgQyr6ad36xRhzf3WyJdaqbBB87GBmdg+FH
+	 j4fshPF5vNLGPjPo5EVcRoOVoyVw2/xKOmXtdzH6V6s3x4VGLyXtF5aD3C/XWnQ8U8
+	 kOjN2PBYa6UnoBvRZ5CLnkNXFDjH+fcqIXhFiEcFaMyqsaXJ22llRmYxzp1AigMZBG
+	 wywUkBGcoh90/DrNM78YequKHs8P8gOzgkZ/0n3+0ZWij9enG04jNX0d6RGTU1LHsf
+	 dmFQ4XsuA3HmQ==
+Message-ID: <d1034c35-8737-4f8f-91c2-be53dfa73e57@kernel.org>
+Date: Thu, 16 May 2024 15:25:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZkXdXO4Xb83270V7@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 8/8] rtla: Add --trace-buffer-size option
+To: Steven Rostedt <rostedt@goodmis.org>, linux-trace-kernel@vger.kernel.org
+Cc: Jonathan Corbet <corbet@lwn.net>, Juri Lelli <juri.lelli@redhat.com>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ John Kacur <jkacur@redhat.com>
+References: <cover.1713968967.git.bristot@kernel.org>
+ <0281bfbd3b3fed11a0150a8645a1f9941a423c7a.1713968967.git.bristot@kernel.org>
+Content-Language: en-US, pt-BR, it-IT
+From: Daniel Bristot de Oliveira <bristot@kernel.org>
+In-Reply-To: <0281bfbd3b3fed11a0150a8645a1f9941a423c7a.1713968967.git.bristot@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 16, 2024 at 01:18:04PM +0300, Andy Shevchenko wrote:
-> On Wed, May 15, 2024 at 05:09:33PM -0400, Nícolas F. R. A. Prado wrote:
-> > On Tue, May 07, 2024 at 11:10:27PM +0300, Andy Shevchenko wrote:
-> > > Both dma_unmap_sgtable() and sg_free_table() in spi_unmap_buf_attrs()
-> > > have checks for orig_nents against 0. No need to duplicate this.
-> > > All the same applies to other DMA mapping API calls.
-> > > 
-> > > Also note, there is no other user in the kernel that does this kind of
-> > > checks.
-> > > 
-> > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > 
-> > this commit caused a regression which I reported here:
-> > 
-> > https://lore.kernel.org/all/d3679496-2e4e-4a7c-97ed-f193bd53af1d@notapiano
-> > 
-> > along with some thoughts on the cause and a possible solution, though I'm not
-> > familiar with this code base at all and would really appreciate any feedback you
-> > may have.
-> 
-> Thanks for the report and preliminary analysis!
-> I'll look at it hopefully sooner than later.
-> 
-> But at least what I think now is that my change revealed a problem somewhere
-> else, because that's how DMA mapping / streaming APIs designed, it's extremely
-> rare to check orig_nents field.
+On 4/24/24 16:36, Daniel Bristot de Oliveira wrote:
+> +			retval = trace_set_buffer_size(&record->trace, params->buffer_size);
 
-Can you test the below patch?
+This function appears on libtracefs from 1.6 up, so I need to update
+the minimum required lib version to 1.6. I will send a v2 of this
+patch only.
 
-diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
-index b2efd4964f7c..51811f04e463 100644
---- a/drivers/spi/spi.c
-+++ b/drivers/spi/spi.c
-@@ -1243,6 +1243,7 @@ static int __spi_map_msg(struct spi_controller *ctlr, struct spi_message *msg)
- 	else
- 		rx_dev = ctlr->dev.parent;
- 
-+	ret = -ENOMSG;
- 	list_for_each_entry(xfer, &msg->transfers, transfer_list) {
- 		/* The sync is done before each transfer. */
- 		unsigned long attrs = DMA_ATTR_SKIP_CPU_SYNC;
-@@ -1272,6 +1273,9 @@ static int __spi_map_msg(struct spi_controller *ctlr, struct spi_message *msg)
- 			}
- 		}
- 	}
-+	/* No transfer has been mapped, bail out with success */
-+	if (ret)
-+		return 0;
- 
- 	ctlr->cur_rx_dma_dev = rx_dev;
- 	ctlr->cur_tx_dma_dev = tx_dev;
+Thanks jkacur for pointing it to me, it happens on fedora 38.
 
-
-If it fixes the issue, I will submit it properly.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+-- Daniel
 
