@@ -1,265 +1,372 @@
-Return-Path: <linux-kernel+bounces-181281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 239998C79E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:55:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93A4B8C79D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:55:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE53C283EBF
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:55:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0ECB4B22005
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:55:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3406314D457;
-	Thu, 16 May 2024 15:55:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HccA8G+Q"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3B5614D446;
+	Thu, 16 May 2024 15:54:51 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 731F014D713;
-	Thu, 16 May 2024 15:55:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31A2A14D431
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 15:54:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715874912; cv=none; b=c3kyr3V2G0flH/gbIfuQmeKQmMjm6gswBbUbo5F2UwmZB6aMAmQ6mEkS8BIEdgr6Aw8t2j/2IhIclInXeK+VJ3EJo7QrsHr5yxvRBjObibdOXn11zUNtNj50m9dz9lAmr1JXXBx/NmQKGtchv8flXU4+tqPrsqFwxcmZFzSjsxA=
+	t=1715874891; cv=none; b=MZ+HqMvob33WD0XS87hA5O+MAfJddjAcQc4urXSgMAv8TmQ/jTFmd72HyMw7M7msHoOyLxlPQe2jbNKDsQmIZ8H+RNYVtXzPSJ6vlEZjcSPkZGfn5YFitiYxrH74HjeWTLpOMEPPZZTewrkq62Yx+RK/jsbfqfo/IZyIkYlEx3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715874912; c=relaxed/simple;
-	bh=12vt83DDQ9W1vK1XXPC3vvTvH4RQzN7F1BBnruNYXew=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lNfuJ+SezedCqw8kLavE2y3/LXXTfcLTbl+wW+vSh2wpTT+Ry8CZ8HrxGoR37rI5L+qw2RZgWFotGVRRc1vDuGq0ukq7jiRdxluvIEsd6wkUpowc/tNmeR61X1mJJuWflIMQyloAvX2UJCYZOkF6VZG5ZTxgZnPrlDbspZpcWqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HccA8G+Q; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715874910; x=1747410910;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=12vt83DDQ9W1vK1XXPC3vvTvH4RQzN7F1BBnruNYXew=;
-  b=HccA8G+QU4MZw88m94pnX/HLKpF9dZqpt8WFR17eE536nN1sFM33wAM3
-   ti6+wpPbRoB4D3qE2csWhIxI5QZd51ahMNNYy6llhboOxYFprLQkyhqZu
-   vXr6CxAMVK93mk4d2Lmcf9NmuFeM4cq3TTncRrvJ3IUWRwXhwiMN56xvR
-   AXC/2k8ci7cmTf2jYTq3CUbjRS7JEmumQem4gThxXt4CVtyHNwU8bte+l
-   kqvE4yxaZ3Q+2b8MJqQ20mk0gg/lOl/w2Mh/mrm33Jv9V0knDW4ioygS1
-   IS9ZNWgHsivgckn0MC4xp4uD+CQ9gtRRfyTH6YUgqHJVZyuphci4W5xA6
-   Q==;
-X-CSE-ConnectionGUID: E1EE79brSnaQWuGacEwo2A==
-X-CSE-MsgGUID: 5rgZJShETgKu9XhdqTIMAA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="22600387"
-X-IronPort-AV: E=Sophos;i="6.08,165,1712646000"; 
-   d="scan'208";a="22600387"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 08:55:10 -0700
-X-CSE-ConnectionGUID: QW/JcknhS0yz25vN+Jm6Ng==
-X-CSE-MsgGUID: gTmiFC6JTV+qrfeYB3sspA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,165,1712646000"; 
-   d="scan'208";a="62683601"
-Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 16 May 2024 08:55:07 -0700
-Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s7dRh-000EQ7-1j;
-	Thu, 16 May 2024 15:55:05 +0000
-Date: Thu, 16 May 2024 23:54:27 +0800
-From: kernel test robot <lkp@intel.com>
-To: Dimitri Fedrau <dima.fedrau@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev, Dimitri Fedrau <dima.fedrau@gmail.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-pwm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] pwm: add support for NXPs high-side switch
- MC33XS2410
-Message-ID: <202405162306.aFLe0sSZ-lkp@intel.com>
-References: <20240515112034.298116-3-dima.fedrau@gmail.com>
+	s=arc-20240116; t=1715874891; c=relaxed/simple;
+	bh=FOSXC2Q65VEvriAMezp3gL0yOoXg0gtxq3K2dr9Ma/0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=F8kcs0JLvhnAheC4jVfPCetzUA/IMizWdKMw0/OYvUSloahm6U2uyia8HYQRh8HJ1MePYrYhDTGRgVEMjdnUst/fSKdiErYat3/Ptaczv2Ub8bGMYXry/DMHB+N8jBph3K8RLqZO6NPgBfhSpAKTnzV1K92u12SvIAwgLxu1OZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F9CDC113CC;
+	Thu, 16 May 2024 15:54:50 +0000 (UTC)
+Date: Thu, 16 May 2024 11:54:49 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Mark Rutland <mark.rutland@arm.com>, "Dr. David Alan Gilbert"
+ <linux@treblig.org>, Hao Ge <gehao@kylinos.cn>, "Paul E. McKenney"
+ <paulmck@kernel.org>, Thorsten Blum <thorsten.blum@toblux.com>, Yuran
+ Pereira <yuran.pereira@hotmail.com>, Zheng Yejian <zhengyejian1@huawei.com>
+Subject: [GIT PULL] tracing: Cleanups for v6.10
+Message-ID: <20240516115449.32d6f2b0@rorschach.local.home>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240515112034.298116-3-dima.fedrau@gmail.com>
-
-Hi Dimitri,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on robh/for-next]
-[also build test ERROR on linus/master v6.9 next-20240516]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Dimitri-Fedrau/dt-bindings-pwm-add-support-for-MC33XS2410/20240515-192237
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/20240515112034.298116-3-dima.fedrau%40gmail.com
-patch subject: [PATCH v3 2/2] pwm: add support for NXPs high-side switch MC33XS2410
-config: openrisc-allmodconfig (https://download.01.org/0day-ci/archive/20240516/202405162306.aFLe0sSZ-lkp@intel.com/config)
-compiler: or1k-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240516/202405162306.aFLe0sSZ-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405162306.aFLe0sSZ-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/pwm/pwm-mc33xs2410.c: In function 'mc33xs2410_xfer_regs':
->> drivers/pwm/pwm-mc33xs2410.c:123:34: error: implicit declaration of function 'FIELD_GET' [-Werror=implicit-function-declaration]
-     123 |                         val[i] = FIELD_GET(MC33XS2410_RD_DATA_MASK,
-         |                                  ^~~~~~~~~
-   drivers/pwm/pwm-mc33xs2410.c: In function 'mc33xs2410_pwm_get_freq':
->> drivers/pwm/pwm-mc33xs2410.c:206:16: error: implicit declaration of function 'FIELD_PREP' [-Werror=implicit-function-declaration]
-     206 |         return FIELD_PREP(MC33XS2410_PWM_FREQ_STEP_MASK, step) |
-         |                ^~~~~~~~~~
-   cc1: some warnings being treated as errors
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
 
-vim +/FIELD_GET +123 drivers/pwm/pwm-mc33xs2410.c
 
-    74	
-    75	static int mc33xs2410_xfer_regs(struct spi_device *spi, bool read, u8 *reg,
-    76					u16 *val, bool *ctrl, int len)
-    77	{
-    78		struct spi_transfer t[MC33XS2410_MAX_TRANSFERS] = { { 0 } };
-    79		u8 tx[MC33XS2410_MAX_TRANSFERS * MC33XS2410_WORD_LEN];
-    80		u8 rx[MC33XS2410_MAX_TRANSFERS * MC33XS2410_WORD_LEN];
-    81		int i, ret, reg_i, val_i;
-    82	
-    83		if (!len)
-    84			return 0;
-    85	
-    86		if (read)
-    87			len++;
-    88	
-    89		if (len > MC33XS2410_MAX_TRANSFERS)
-    90			return -EINVAL;
-    91	
-    92		for (i = 0; i < len; i++) {
-    93			reg_i = i * MC33XS2410_WORD_LEN;
-    94			val_i = reg_i + 1;
-    95			if (read) {
-    96				if (i < len - 1) {
-    97					tx[reg_i] = reg[i];
-    98					tx[val_i] = ctrl[i] ? MC33XS2410_RD_CTRL : 0;
-    99					t[i].tx_buf = &tx[reg_i];
-   100				}
-   101	
-   102				if (i > 0)
-   103					t[i].rx_buf = &rx[reg_i - MC33XS2410_WORD_LEN];
-   104			} else {
-   105				tx[reg_i] = reg[i] | MC33XS2410_WR;
-   106				tx[val_i] = val[i];
-   107				t[i].tx_buf = &tx[reg_i];
-   108			}
-   109	
-   110			t[i].len = MC33XS2410_WORD_LEN;
-   111			t[i].cs_change = 1;
-   112		}
-   113	
-   114		t[len - 1].cs_change = 0;
-   115	
-   116		ret = spi_sync_transfer(spi, &t[0], len);
-   117		if (ret < 0)
-   118			return ret;
-   119	
-   120		if (read) {
-   121			for (i = 0; i < len - 1; i++) {
-   122				reg_i = i * MC33XS2410_WORD_LEN;
- > 123				val[i] = FIELD_GET(MC33XS2410_RD_DATA_MASK,
-   124						   get_unaligned_be16(&rx[reg_i]));
-   125			}
-   126		}
-   127	
-   128		return 0;
-   129	}
-   130	
-   131	static
-   132	int mc33xs2410_write_regs(struct spi_device *spi, u8 *reg, u16 *val, int len)
-   133	{
-   134	
-   135		return mc33xs2410_xfer_regs(spi, false, reg, val, NULL, len);
-   136	}
-   137	
-   138	static int mc33xs2410_read_regs(struct spi_device *spi, u8 *reg, bool *ctrl,
-   139					u16 *val, u8 len)
-   140	{
-   141		return mc33xs2410_xfer_regs(spi, true, reg, val, ctrl, len);
-   142	}
-   143	
-   144	
-   145	static int mc33xs2410_write_reg(struct spi_device *spi, u8 reg, u16 val)
-   146	{
-   147		return mc33xs2410_write_regs(spi, &reg, &val, 1);
-   148	}
-   149	
-   150	static
-   151	int mc33xs2410_read_reg(struct spi_device *spi, u8 reg, u16 *val, bool ctrl)
-   152	{
-   153		return mc33xs2410_read_regs(spi, &reg, &ctrl, val, 1);
-   154	}
-   155	
-   156	static int mc33xs2410_read_reg_ctrl(struct spi_device *spi, u8 reg, u16 *val)
-   157	{
-   158		return mc33xs2410_read_reg(spi, reg, val, true);
-   159	}
-   160	
-   161	static
-   162	int mc33xs2410_modify_reg(struct spi_device *spi, u8 reg, u16 mask, u16 val)
-   163	{
-   164		u16 tmp;
-   165		int ret;
-   166	
-   167		ret = mc33xs2410_read_reg_ctrl(spi, reg, &tmp);
-   168		if (ret < 0)
-   169			return ret;
-   170	
-   171		tmp &= ~mask;
-   172		tmp |= val & mask;
-   173	
-   174		return mc33xs2410_write_reg(spi, reg, tmp);
-   175	}
-   176	
-   177	static u8 mc33xs2410_pwm_get_freq(u64 period)
-   178	{
-   179		u8 step, count;
-   180	
-   181		/*
-   182		 * Check if period is within the limits of each of the four frequency
-   183		 * ranges, starting with the highest frequency(lowest period). Higher
-   184		 * frequencies are represented with better resolution by the device.
-   185		 * Therefore favor frequency range with the better resolution to
-   186		 * minimize error introduced by the frequency steps.
-   187		 */
-   188	
-   189		switch (period) {
-   190		case MC33XS2410_MIN_PERIOD_STEP(3) + 1 ... MC33XS2410_MAX_PERIOD_STEP(3):
-   191			step = 3;
-   192			break;
-   193		case MC33XS2410_MAX_PERIOD_STEP(3) + 1 ... MC33XS2410_MAX_PERIOD_STEP(2):
-   194			step = 2;
-   195			break;
-   196		case MC33XS2410_MAX_PERIOD_STEP(2) + 1 ... MC33XS2410_MAX_PERIOD_STEP(1):
-   197			step = 1;
-   198			break;
-   199		case MC33XS2410_MAX_PERIOD_STEP(1) + 1 ... MC33XS2410_MAX_PERIOD_STEP(0):
-   200			step = 0;
-   201			break;
-   202		}
-   203	
-   204		count = DIV_ROUND_UP(MC33XS2410_MAX_PERIOD_STEP(step), period) - 1;
-   205	
- > 206		return FIELD_PREP(MC33XS2410_PWM_FREQ_STEP_MASK, step) |
-   207		       FIELD_PREP(MC33XS2410_PWM_FREQ_COUNT_MASK, count);
-   208	}
-   209	
+Linus,
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+tracing cleanups for v6.10:
+
+- Removed unused ftrace_direct_funcs variables
+
+- Fix a possible NULL pointer dereference race in eventfs
+
+- Update do_div() usage in trace event benchmark test
+
+- Speedup direct function registration with asynchronous RCU callback.
+  The synchronization was done in the registration code and this
+  caused delays when registering direct callbacks. Move the freeing
+  to a call_rcu() that will prevent delaying of the registering.
+
+- Replace simple_strtoul() usage with kstrtoul()
+
+
+Please pull the latest trace-v6.10 tree, which can be found at:
+
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+trace-v6.10
+
+Tag SHA1: 7cb6620f9a48fbdda06bc070c3e6270a39edc76a
+Head SHA1: d4e9a968738bf66d3bb852dd5588d4c7afd6d7f4
+
+
+Dr. David Alan Gilbert (2):
+      ftrace: Remove unused list 'ftrace_direct_funcs'
+      ftrace: Remove unused global 'ftrace_direct_func_count'
+
+Hao Ge (1):
+      eventfs: Fix a possible null pointer dereference in eventfs_find_events()
+
+Paul E. McKenney (1):
+      ftrace: Use asynchronous grace period for register_ftrace_direct()
+
+Thorsten Blum (1):
+      tracing: Improve benchmark test performance by using do_div()
+
+Yuran Pereira (1):
+      ftrace: Replaces simple_strtoul in ftrace
+
+Zheng Yejian (1):
+      ftrace: Fix possible use-after-free issue in ftrace_location()
+
+----
+ fs/tracefs/event_inode.c       |  7 ++---
+ include/linux/ftrace.h         |  3 --
+ kernel/trace/fgraph.c          | 11 -------
+ kernel/trace/ftrace.c          | 68 ++++++++++++++++++++++--------------------
+ kernel/trace/trace_benchmark.c |  2 +-
+ 5 files changed, 39 insertions(+), 52 deletions(-)
+---------------------------
+diff --git a/fs/tracefs/event_inode.c b/fs/tracefs/event_inode.c
+index a878cea70f4c..0256afdd4acf 100644
+--- a/fs/tracefs/event_inode.c
++++ b/fs/tracefs/event_inode.c
+@@ -345,10 +345,9 @@ static struct eventfs_inode *eventfs_find_events(struct dentry *dentry)
+ 		 * If the ei is being freed, the ownership of the children
+ 		 * doesn't matter.
+ 		 */
+-		if (ei->is_freed) {
+-			ei = NULL;
+-			break;
+-		}
++		if (ei->is_freed)
++			return NULL;
++
+ 		// Walk upwards until you find the events inode
+ 	} while (!ei->is_events);
+ 
+diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
+index 54d53f345d14..e3a83ebd1b33 100644
+--- a/include/linux/ftrace.h
++++ b/include/linux/ftrace.h
+@@ -83,7 +83,6 @@ static inline void early_trace_init(void) { }
+ 
+ struct module;
+ struct ftrace_hash;
+-struct ftrace_direct_func;
+ 
+ #if defined(CONFIG_FUNCTION_TRACER) && defined(CONFIG_MODULES) && \
+ 	defined(CONFIG_DYNAMIC_FTRACE)
+@@ -414,7 +413,6 @@ struct ftrace_func_entry {
+ };
+ 
+ #ifdef CONFIG_DYNAMIC_FTRACE_WITH_DIRECT_CALLS
+-extern int ftrace_direct_func_count;
+ unsigned long ftrace_find_rec_direct(unsigned long ip);
+ int register_ftrace_direct(struct ftrace_ops *ops, unsigned long addr);
+ int unregister_ftrace_direct(struct ftrace_ops *ops, unsigned long addr,
+@@ -426,7 +424,6 @@ void ftrace_stub_direct_tramp(void);
+ 
+ #else
+ struct ftrace_ops;
+-# define ftrace_direct_func_count 0
+ static inline unsigned long ftrace_find_rec_direct(unsigned long ip)
+ {
+ 	return 0;
+diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
+index c83c005e654e..a130b2d898f7 100644
+--- a/kernel/trace/fgraph.c
++++ b/kernel/trace/fgraph.c
+@@ -125,17 +125,6 @@ int function_graph_enter(unsigned long ret, unsigned long func,
+ {
+ 	struct ftrace_graph_ent trace;
+ 
+-#ifndef CONFIG_HAVE_DYNAMIC_FTRACE_WITH_ARGS
+-	/*
+-	 * Skip graph tracing if the return location is served by direct trampoline,
+-	 * since call sequence and return addresses are unpredictable anyway.
+-	 * Ex: BPF trampoline may call original function and may skip frame
+-	 * depending on type of BPF programs attached.
+-	 */
+-	if (ftrace_direct_func_count &&
+-	    ftrace_find_rec_direct(ret - MCOUNT_INSN_SIZE))
+-		return -EBUSY;
+-#endif
+ 	trace.func = func;
+ 	trace.depth = ++current->curr_ret_depth;
+ 
+diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+index da1710499698..2308c0a2fd29 100644
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -1595,12 +1595,15 @@ static struct dyn_ftrace *lookup_rec(unsigned long start, unsigned long end)
+ unsigned long ftrace_location_range(unsigned long start, unsigned long end)
+ {
+ 	struct dyn_ftrace *rec;
++	unsigned long ip = 0;
+ 
++	rcu_read_lock();
+ 	rec = lookup_rec(start, end);
+ 	if (rec)
+-		return rec->ip;
++		ip = rec->ip;
++	rcu_read_unlock();
+ 
+-	return 0;
++	return ip;
+ }
+ 
+ /**
+@@ -1614,25 +1617,22 @@ unsigned long ftrace_location_range(unsigned long start, unsigned long end)
+  */
+ unsigned long ftrace_location(unsigned long ip)
+ {
+-	struct dyn_ftrace *rec;
++	unsigned long loc;
+ 	unsigned long offset;
+ 	unsigned long size;
+ 
+-	rec = lookup_rec(ip, ip);
+-	if (!rec) {
++	loc = ftrace_location_range(ip, ip);
++	if (!loc) {
+ 		if (!kallsyms_lookup_size_offset(ip, &size, &offset))
+ 			goto out;
+ 
+ 		/* map sym+0 to __fentry__ */
+ 		if (!offset)
+-			rec = lookup_rec(ip, ip + size - 1);
++			loc = ftrace_location_range(ip, ip + size - 1);
+ 	}
+ 
+-	if (rec)
+-		return rec->ip;
+-
+ out:
+-	return 0;
++	return loc;
+ }
+ 
+ /**
+@@ -2538,7 +2538,6 @@ ftrace_find_unique_ops(struct dyn_ftrace *rec)
+ /* Protected by rcu_tasks for reading, and direct_mutex for writing */
+ static struct ftrace_hash __rcu *direct_functions = EMPTY_HASH;
+ static DEFINE_MUTEX(direct_mutex);
+-int ftrace_direct_func_count;
+ 
+ /*
+  * Search the direct_functions hash to see if the given instruction pointer
+@@ -4202,12 +4201,12 @@ static int
+ add_rec_by_index(struct ftrace_hash *hash, struct ftrace_glob *func_g,
+ 		 int clear_filter)
+ {
+-	long index = simple_strtoul(func_g->search, NULL, 0);
++	long index;
+ 	struct ftrace_page *pg;
+ 	struct dyn_ftrace *rec;
+ 
+ 	/* The index starts at 1 */
+-	if (--index < 0)
++	if (kstrtoul(func_g->search, 0, &index) || --index < 0)
+ 		return 0;
+ 
+ 	do_for_each_ftrace_rec(pg, rec) {
+@@ -5318,14 +5317,6 @@ ftrace_set_addr(struct ftrace_ops *ops, unsigned long *ips, unsigned int cnt,
+ 
+ #ifdef CONFIG_DYNAMIC_FTRACE_WITH_DIRECT_CALLS
+ 
+-struct ftrace_direct_func {
+-	struct list_head	next;
+-	unsigned long		addr;
+-	int			count;
+-};
+-
+-static LIST_HEAD(ftrace_direct_funcs);
+-
+ static int register_ftrace_function_nolock(struct ftrace_ops *ops);
+ 
+ /*
+@@ -5366,6 +5357,13 @@ static void remove_direct_functions_hash(struct ftrace_hash *hash, unsigned long
+ 	}
+ }
+ 
++static void register_ftrace_direct_cb(struct rcu_head *rhp)
++{
++	struct ftrace_hash *fhp = container_of(rhp, struct ftrace_hash, rcu);
++
++	free_ftrace_hash(fhp);
++}
++
+ /**
+  * register_ftrace_direct - Call a custom trampoline directly
+  * for multiple functions registered in @ops
+@@ -5464,10 +5462,8 @@ int register_ftrace_direct(struct ftrace_ops *ops, unsigned long addr)
+  out_unlock:
+ 	mutex_unlock(&direct_mutex);
+ 
+-	if (free_hash && free_hash != EMPTY_HASH) {
+-		synchronize_rcu_tasks();
+-		free_ftrace_hash(free_hash);
+-	}
++	if (free_hash && free_hash != EMPTY_HASH)
++		call_rcu_tasks(&free_hash->rcu, register_ftrace_direct_cb);
+ 
+ 	if (new_hash)
+ 		free_ftrace_hash(new_hash);
+@@ -5817,9 +5813,8 @@ __setup("ftrace_graph_notrace=", set_graph_notrace_function);
+ 
+ static int __init set_graph_max_depth_function(char *str)
+ {
+-	if (!str)
++	if (!str || kstrtouint(str, 0, &fgraph_max_depth))
+ 		return 0;
+-	fgraph_max_depth = simple_strtoul(str, NULL, 0);
+ 	return 1;
+ }
+ __setup("ftrace_graph_max_depth=", set_graph_max_depth_function);
+@@ -6596,6 +6591,8 @@ static int ftrace_process_locs(struct module *mod,
+ 	/* We should have used all pages unless we skipped some */
+ 	if (pg_unuse) {
+ 		WARN_ON(!skipped);
++		/* Need to synchronize with ftrace_location_range() */
++		synchronize_rcu();
+ 		ftrace_free_pages(pg_unuse);
+ 	}
+ 	return ret;
+@@ -6809,6 +6806,9 @@ void ftrace_release_mod(struct module *mod)
+  out_unlock:
+ 	mutex_unlock(&ftrace_lock);
+ 
++	/* Need to synchronize with ftrace_location_range() */
++	if (tmp_page)
++		synchronize_rcu();
+ 	for (pg = tmp_page; pg; pg = tmp_page) {
+ 
+ 		/* Needs to be called outside of ftrace_lock */
+@@ -7142,6 +7142,7 @@ void ftrace_free_mem(struct module *mod, void *start_ptr, void *end_ptr)
+ 	unsigned long start = (unsigned long)(start_ptr);
+ 	unsigned long end = (unsigned long)(end_ptr);
+ 	struct ftrace_page **last_pg = &ftrace_pages_start;
++	struct ftrace_page *tmp_page = NULL;
+ 	struct ftrace_page *pg;
+ 	struct dyn_ftrace *rec;
+ 	struct dyn_ftrace key;
+@@ -7183,12 +7184,8 @@ void ftrace_free_mem(struct module *mod, void *start_ptr, void *end_ptr)
+ 		ftrace_update_tot_cnt--;
+ 		if (!pg->index) {
+ 			*last_pg = pg->next;
+-			if (pg->records) {
+-				free_pages((unsigned long)pg->records, pg->order);
+-				ftrace_number_of_pages -= 1 << pg->order;
+-			}
+-			ftrace_number_of_groups--;
+-			kfree(pg);
++			pg->next = tmp_page;
++			tmp_page = pg;
+ 			pg = container_of(last_pg, struct ftrace_page, next);
+ 			if (!(*last_pg))
+ 				ftrace_pages = pg;
+@@ -7205,6 +7202,11 @@ void ftrace_free_mem(struct module *mod, void *start_ptr, void *end_ptr)
+ 		clear_func_from_hashes(func);
+ 		kfree(func);
+ 	}
++	/* Need to synchronize with ftrace_location_range() */
++	if (tmp_page) {
++		synchronize_rcu();
++		ftrace_free_pages(tmp_page);
++	}
+ }
+ 
+ void __init ftrace_free_init_mem(void)
+diff --git a/kernel/trace/trace_benchmark.c b/kernel/trace/trace_benchmark.c
+index 811b08439406..e19c32f2a938 100644
+--- a/kernel/trace/trace_benchmark.c
++++ b/kernel/trace/trace_benchmark.c
+@@ -104,7 +104,7 @@ static void trace_do_benchmark(void)
+ 		stddev = 0;
+ 
+ 	delta = bm_total;
+-	delta = div64_u64(delta, bm_cnt);
++	do_div(delta, (u32)bm_cnt);
+ 	avg = delta;
+ 
+ 	if (stddev > 0) {
 
