@@ -1,111 +1,162 @@
-Return-Path: <linux-kernel+bounces-180556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D22138C7020
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 03:53:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF2158C7008
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 03:33:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57FE0B21AE2
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 01:53:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C5951C20FDE
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 01:33:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F1E4138E;
-	Thu, 16 May 2024 01:53:37 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A33CB137E;
+	Thu, 16 May 2024 01:33:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LwEaGJP6"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 774DAEBB
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 01:53:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73DE2EBB;
+	Thu, 16 May 2024 01:33:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715824416; cv=none; b=YC/SUTOobVAKeAA41LSaFC4PIjzo6g4SUSkz/xjBuXFcveZ7zTDqnt4HH4I9rrbCbqyBwLkBLImfiAovBG5EDV50rkREnf+cFFh4dkw8jCM5cPyZBjDJ0dhvZPZKnyyBbgHT8ED/sWeG15D45F266CsEVw2qh+nm7FskoXcCAdM=
+	t=1715823201; cv=none; b=T+RHPn9M27XXexQYOV4GbwjFOA80Z6Ad3jfabZTtjHT2BIkn2u9Kti++j+l8Z/kDKA0TcKNB+BhzoksqnRqMtNGDJU4m7L6c0cewSHdjOcmWedoJAW9k+QvcKJN6FBSFJZYjwnooF7tQ1MuF7g+2xtmVZbZn+8PtNK8UOiDJNI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715824416; c=relaxed/simple;
-	bh=rOKdQ3N+F1PGXNs69n/ZNxCVgWVYh5ZQiDFu0EJptgE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=qDQziqE/v5+y8/wVN3L4Xw2ovaDiK16Srbhs4Motzl4VtHy1Qafn7PJ7tg8KfkRRa4VWXT7FoVucr4vt/+VCy6h5VVkEWHerWYkYXAOqHta37/Lm2ncpscsOgTcR7cMpTF8kwmCcIxNNQ05k2g4BL2sCF3BhChhS/U0l7akGpkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-36b1fda4c6dso89602705ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 18:53:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715824414; x=1716429214;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3b5BLJERYWCwDqY37mhWSKVY47KPE4N4nHJwRLSECrI=;
-        b=qbZ9z83TGfSIU1FEKcgYKTk6ATXIMqWFhRgggRlwv8J0s2uNwFIz82XaasVo345Whl
-         JBTHuvtrXkiDS2TFxoCdVUxT8EJlIxcG4Gk2oSnGcg2UoKt8EMkel2GaIbNBcpU+w9sU
-         adzVKYYVnX0BbXazKb/U+Dy9scvqhDm+rX4kyY7U9JRRLC3nde3DedoT8RN91azvDDY5
-         b3LmqXNdtL7Rdq8GzdAJWlbrcC7ihX97iV1P6FUS8pKtNoD4DuNNYUexSJ9EeSxgKg+x
-         lf7b4u1hYG/06IUUTo5qVv6zOf+K0x8oqJ/RGk+GAGIqfpGneMIIcH2cQP2te7clC9cm
-         laYg==
-X-Gm-Message-State: AOJu0YwV7oEApv9E7juluQb1bSCkKyMRjz7daTrdn2CzMYderxEmG3Xg
-	cXkgRu64ntKDPxtRH3SuCfno4xcUBzUpNTM/5Fd/uyFi3e8rxLHIunfMmq0wSeCE+0gI/vOPzKT
-	kWN6dD7ZkHP/XmsRTDNcRvlzarpVPL8j1knteJcCpK9pM/jJrSaADoOk=
-X-Google-Smtp-Source: AGHT+IF4AJw9960il03j5cg3S3Td6DqRua8f+gTBAwB9irQHhNGcRyQD4QgJI8oUMnwLvFq7Clxv6DOp4g1MBO88LqK6vDOp+3B8
+	s=arc-20240116; t=1715823201; c=relaxed/simple;
+	bh=L/MSeE85WwDv+k9wnUzILdJTM7kfnpnvNhjH6yhtOPw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZSGDvD2X0kOHFPGEDJQRkIv8ozDtB7tIa5jFKDhenenOWTQ5JYJP+u3GR9+nP+OvLcTXxltVHY8jjph+OqJOp9+UsyDXxE3q48yMOGV5tig1+gQ6LS1TJTKSCorkPd3ABAUllr8eGzvU7poSTxtibCN09kmWrOeTp03Js0KKNB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LwEaGJP6; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715823200; x=1747359200;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=L/MSeE85WwDv+k9wnUzILdJTM7kfnpnvNhjH6yhtOPw=;
+  b=LwEaGJP60KYbkjK36GlxJyLswavXQtapRPu92PeLejKGcvecuJOmKY2G
+   dCaJwVigubM04DJ1YvX4Qdt8hSc0m8FZlhjwEp+ZgyIOnU3v6j43GrUSy
+   rw/Xsh9s50SzRDTVJwzwu2jS4tH3DbQhP4qAkmVkhJCpYNUSyeCR0uyXY
+   +DGvAlmroobBXbmOPsGlAjiNnl3FDfUebKaYCm3chl7cRd4Tkz1UmfjGl
+   0pMlN6MN6oc3RhNOXSShju8yYNcmenoHK61XRQl0z2kHqChr+A4T4qrQ1
+   RGI14TaU90AhAkMDshujj6Q4LBspCz3uR9+acCLdyV/4PBfqgcBm26gxP
+   w==;
+X-CSE-ConnectionGUID: jz019q2SQsK2VkUMwAJW7w==
+X-CSE-MsgGUID: QCi6LtSgRtu5p1lSByaB7A==
+X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="15686570"
+X-IronPort-AV: E=Sophos;i="6.08,163,1712646000"; 
+   d="scan'208";a="15686570"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 18:33:19 -0700
+X-CSE-ConnectionGUID: sRUhUOvISA6D5GZbceR8Hw==
+X-CSE-MsgGUID: zYNpDQmeRn+ekVV0I9yNSQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,163,1712646000"; 
+   d="scan'208";a="35977510"
+Received: from wentongw-optiplex-8070.sh.intel.com ([10.239.154.12])
+  by orviesa003.jf.intel.com with ESMTP; 15 May 2024 18:33:17 -0700
+From: Wentong Wu <wentong.wu@intel.com>
+To: sakari.ailus@linux.intel.com,
+	tomas.winkler@intel.com,
+	gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org,
+	hao.yao@intel.com,
+	Wentong Wu <wentong.wu@intel.com>,
+	stable@vger.kernel.org,
+	Jason Chen <jason.z.chen@intel.com>
+Subject: [PATCH] mei: vsc: Don't stop/restart mei device during system suspend/resume
+Date: Thu, 16 May 2024 09:54:00 +0800
+Message-Id: <20240516015400.3281634-1-wentong.wu@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:481:b0:36c:8135:8d5f with SMTP id
- e9e14a558f8ab-36cc1437ea1mr3006595ab.2.1715824414650; Wed, 15 May 2024
- 18:53:34 -0700 (PDT)
-Date: Wed, 15 May 2024 18:53:34 -0700
-In-Reply-To: <0000000000009bc5fa06185a064d@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000bb836e0618888015@google.com>
-Subject: Re: [syzbot] [PATCH] bcachefs: fix last_seq and last_empty_seq in bch2_fs_journal_start()
-From: syzbot <syzbot+10b936c5eaee2819b49b@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+The dynamically created mei client device (mei csi) is used as one V4L2
+sub device of the whole video pipeline, and the V4L2 connection graph is
+built by software node. The mei_stop() and mei_restart() will delete the
+old mei csi client device and create a new mei client device, which will
+cause the software node information saved in old mei csi device lost and
+the whole video pipeline will be broken.
 
-***
+Removing mei_stop()/mei_restart() during system suspend/resume can fix
+the issue above and won't impact hardware actual power saving logic.
 
-Subject: [PATCH] bcachefs: fix last_seq and last_empty_seq in bch2_fs_journal_start()
-Author: cam.alvarez.i@gmail.com
-
-#syz test
-Values were left as the next possible sequence number when there were no
-entries.
-
-The fix involves updating the last_seq initial value and
-setting last_empty_seq to cur_seq - 1.
-
-Signed-off-by: Camila Alvarez <cam.alvarez.i@gmail.com>
+Fixes: 386a766c4169 ("mei: Add MEI hardware support for IVSC device")
+Cc: stable@vger.kernel.org # for 6.8+
+Reported-by: Hao Yao <hao.yao@intel.com>
+Signed-off-by: Wentong Wu <wentong.wu@intel.com>
+Tested-by: Jason Chen <jason.z.chen@intel.com>
 ---
- fs/bcachefs/journal.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/misc/mei/platform-vsc.c | 39 +++++++++++++--------------------
+ 1 file changed, 15 insertions(+), 24 deletions(-)
 
-diff --git a/fs/bcachefs/journal.c b/fs/bcachefs/journal.c
-index adec8e1ea73e..3835c458eec9 100644
---- a/fs/bcachefs/journal.c
-+++ b/fs/bcachefs/journal.c
-@@ -1196,7 +1196,7 @@ int bch2_fs_journal_start(struct journal *j, u64 cur_seq)
- 	struct journal_replay *i, **_i;
- 	struct genradix_iter iter;
- 	bool had_entries = false;
--	u64 last_seq = cur_seq, nr, seq;
-+	u64 last_seq = cur_seq - 1, nr, seq;
+diff --git a/drivers/misc/mei/platform-vsc.c b/drivers/misc/mei/platform-vsc.c
+index b543e6b9f3cf..1ec65d87488a 100644
+--- a/drivers/misc/mei/platform-vsc.c
++++ b/drivers/misc/mei/platform-vsc.c
+@@ -399,41 +399,32 @@ static void mei_vsc_remove(struct platform_device *pdev)
  
- 	genradix_for_each_reverse(&c->journal_entries, iter, _i) {
- 		i = *_i;
-@@ -1256,7 +1256,7 @@ int bch2_fs_journal_start(struct journal *j, u64 cur_seq)
- 	}
+ static int mei_vsc_suspend(struct device *dev)
+ {
+-	struct mei_device *mei_dev = dev_get_drvdata(dev);
+-	struct mei_vsc_hw *hw = mei_dev_to_vsc_hw(mei_dev);
++	struct mei_device *mei_dev;
++	int ret = 0;
  
- 	if (!had_entries)
--		j->last_empty_seq = cur_seq;
-+		j->last_empty_seq = cur_seq - 1;
+-	mei_stop(mei_dev);
++	mei_dev = dev_get_drvdata(dev);
++	if (!mei_dev)
++		return -ENODEV;
  
- 	spin_lock(&j->lock);
+-	mei_disable_interrupts(mei_dev);
++	mutex_lock(&mei_dev->device_lock);
  
+-	vsc_tp_free_irq(hw->tp);
++	if (!mei_write_is_idle(mei_dev))
++		ret = -EAGAIN;
+ 
+-	return 0;
++	mutex_unlock(&mei_dev->device_lock);
++
++	return ret;
+ }
+ 
+ static int mei_vsc_resume(struct device *dev)
+ {
+-	struct mei_device *mei_dev = dev_get_drvdata(dev);
+-	struct mei_vsc_hw *hw = mei_dev_to_vsc_hw(mei_dev);
+-	int ret;
+-
+-	ret = vsc_tp_request_irq(hw->tp);
+-	if (ret)
+-		return ret;
+-
+-	ret = mei_restart(mei_dev);
+-	if (ret)
+-		goto err_free;
++	struct mei_device *mei_dev;
+ 
+-	/* start timer if stopped in suspend */
+-	schedule_delayed_work(&mei_dev->timer_work, HZ);
++	mei_dev = dev_get_drvdata(dev);
++	if (!mei_dev)
++		return -ENODEV;
+ 
+ 	return 0;
+-
+-err_free:
+-	vsc_tp_free_irq(hw->tp);
+-
+-	return ret;
+ }
+ 
+ static DEFINE_SIMPLE_DEV_PM_OPS(mei_vsc_pm_ops, mei_vsc_suspend, mei_vsc_resume);
 -- 
 2.34.1
 
