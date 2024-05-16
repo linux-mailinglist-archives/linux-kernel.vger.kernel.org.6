@@ -1,170 +1,264 @@
-Return-Path: <linux-kernel+bounces-181367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 792658C7B15
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 19:25:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3749A8C7B18
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 19:27:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A9FD2836BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:25:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 560411C2091D
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:27:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 561E2156642;
-	Thu, 16 May 2024 17:25:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA416156679;
+	Thu, 16 May 2024 17:27:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="LIe5TSa3"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gOS+Dso0"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E43753392
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 17:25:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7568253392;
+	Thu, 16 May 2024 17:27:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715880335; cv=none; b=ngzlgqepFP+Knt4xJ7P7nIf0BK+QoEpQg4eHYzHwX/6Xc/YX4ftvYUoUroNSl7+Klob0wsj8TRDixGTNedUEyQSNDcJuqmJnYxgRGertdUaKsCkzTsqJKr7kMn8ZxEJuM6EoFC3jfdUxxZKKCDckX7JisX3uN0IcvholMQoAhUE=
+	t=1715880426; cv=none; b=rSEWD+zckWG6W5L7+glxC3+7hZuYFvh8Z+gOaxjFBVPraXHamf2X+h87D+ogmcSgnA+2bm44zp7QAAQbOwm97k0OHeP4HFaRjDywOnMrpViYYCelrelxhMhTDz9jYNdvv4Ah4FdNicfBvjquyXGM+x4pC65xwGPABCHgEfdsMOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715880335; c=relaxed/simple;
-	bh=pNLCm2T6MuWaee5MduBM9YVuC9CmG8Q2+vsEy1hbTO0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PMLFiGZnKYRwXdF33Ms0rLKuYq245+ERkqwd3WHxMNzYniKwe8xspBD8udB2+i4N3no5UCDs1GnzZdHfWmLgo0mjzOnwsP6JEfgN/wK1g0NwQIeNDNctiBvA45L126xLuDboJsc9mpLeCh54/B0bRoq12K9Ex5U49NfXqfOFRZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=LIe5TSa3; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a59a352bbd9so486380166b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 10:25:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1715880331; x=1716485131; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZoJcT9IN7CXxnbK0d4qtbKbdlGqkhITWkFsznFTzj4Q=;
-        b=LIe5TSa3aB+ID9C2WCpGTRzgIAxNf8IgVbLW2Pkg4Ga3vGbVcPU2STNPsO91zW8xsb
-         /28U7OUXXlPxD746Ng1QXa243nYTQ+8aITyqfEJognbnKgz7UnFUpFE7B8n9iFSX8Zco
-         No1p6wtCrvxiixFxMp8OTFW6+klr1t7mnQOMs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715880331; x=1716485131;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZoJcT9IN7CXxnbK0d4qtbKbdlGqkhITWkFsznFTzj4Q=;
-        b=u5uF4D3oHGnfp5PXmyjB+9gCSh7mt3AmQYSNSqskBMDvfeZgoe73JKcemknBdxfELn
-         nyaSbN1Yni9mc83xUTYm/AK4vPrhXd54oqGrqirIU3Qbnv80q31yhIXUP4so6gluHyRf
-         NgBMy8Yd2fZfiGw+gjS6n88LgjDSIPJvkxVlkZQ5ww/AgE1mRWtzA+VbhshDVSU7PTkk
-         t/k/guANEj5m5EAAP8GRVbC3qMbPjrEfNkKQL0DaL0WOdQNQd34tHukhvATGMVxxCYvE
-         EuFRbOYYXUYKT97i15JhCGdACpeOAHNviSrB/FJgiZK4OzTivVZWU6pFspunUZbIFrPP
-         T4KQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWj0KbXWuUHJ76Z/80gNVY0RzBV8z94GKHVCxhpVxt1bpNf0nVB0VXmEmglivYLE4DXFo4vtfnQVqOPopt57z2LCbrD0vH5wZo8Dd0D
-X-Gm-Message-State: AOJu0Yyo1s7vpP7dOnAUxt+Znx6JBosF4d7qVk6OjYFsS+veP4wR8T+C
-	BuNUd1nCBqM8+bfZFRd0P54xPSqAfv8/gLro6eQ64Ya0Hbk7qgSf6oHJio6JaVzC/JVwtmJAT3o
-	8p5YHVA==
-X-Google-Smtp-Source: AGHT+IGz+dlNPw2JOvhYz73WNvC0rDuMXXd8EbzatXqtI7fdkCotia02Yi9S9Tnh80G5FqHTicmqCQ==
-X-Received: by 2002:a17:906:5291:b0:a59:9f88:f1f1 with SMTP id a640c23a62f3a-a5a2d1de7b1mr1813434266b.19.1715880330981;
-        Thu, 16 May 2024 10:25:30 -0700 (PDT)
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com. [209.85.218.41])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b01932sm997045566b.168.2024.05.16.10.25.30
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 May 2024 10:25:30 -0700 (PDT)
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a59a352bbd9so486375466b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 10:25:30 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXV0DdrwFHLK1C6BzJfS/lryrd2K6qFOlOMs5+A0C+NQ18hq521uGCNWqOM0+FAl/jBGZRPc1p4alYd36H3VA8Gi36Y2EsINTcK+oIY
-X-Received: by 2002:a17:906:6547:b0:a5a:8896:73de with SMTP id
- a640c23a62f3a-a5a88967610mr708543966b.26.1715880330099; Thu, 16 May 2024
- 10:25:30 -0700 (PDT)
+	s=arc-20240116; t=1715880426; c=relaxed/simple;
+	bh=ejzaFrCXR3ybrXuH51IQZfobfJ8mp+oTbwRZZLoq6Wg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WRKugwhRIFfSMuvvN9hr90yrlp1G9HH/zL2tWbuhyCwMJXgczfd5PMSKLpMsgvYDvBfVP/i6KoYu3empV6NhyF1R3ck61Uf0MFV3MBcey3fxQxqbat2mG0Qpern6ZI+AkEgMQE7o1GunVVC1tJ+xdkeaz9bS5slVtczWoM/oWxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gOS+Dso0; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715880423; x=1747416423;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ejzaFrCXR3ybrXuH51IQZfobfJ8mp+oTbwRZZLoq6Wg=;
+  b=gOS+Dso0sbPjuzytnqVn/J28w/KB9S6qoGLm/t4wbnA7Sh85OBmsNM9r
+   7GhuX7P0fFNwyfY2AGyrGZlVmDaCQFSn14k14qPNwMvBAiVSdY/RdZ+oi
+   tYrBcW5KaTh/O22NOKV3SWtO2un85gllFPEpZx496DoYUaXCfZMuRTT6y
+   H5TG4zwtz/YWxB0goKwT8FLZBkX837UTKp1RjvgpygBW/MHRIpeh6LZIX
+   yQFjEVt9ztg2urBHvcyJqy7l48xdZvLQkWEC9ZPRSVZ2KAc+IsLF6knkw
+   IcIaqGoRCLGIt+lN1F5EeZ/5+mY7EJkvs+oU3tZOm8qDNpwqXOcmNF1lr
+   Q==;
+X-CSE-ConnectionGUID: NN0z2QU7SpqZkf+FvodgKg==
+X-CSE-MsgGUID: q+stOXizRXSwdhHGYYuPbg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="11956912"
+X-IronPort-AV: E=Sophos;i="6.08,165,1712646000"; 
+   d="scan'208";a="11956912"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 10:27:02 -0700
+X-CSE-ConnectionGUID: 4wwxVEAlRF6XoHUXs3t9sA==
+X-CSE-MsgGUID: SiUf63eVTWeFQsNsX22OPg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,165,1712646000"; 
+   d="scan'208";a="32052862"
+Received: from ls.sc.intel.com (HELO localhost) ([172.25.112.31])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 10:27:03 -0700
+Date: Thu, 16 May 2024 10:27:03 -0700
+From: Isaku Yamahata <isaku.yamahata@intel.com>
+To: "Huang, Kai" <kai.huang@intel.com>
+Cc: Isaku Yamahata <isaku.yamahata@intel.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>, pbonzini@redhat.com,
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	isaku.yamahata@gmail.com, erdemaktas@google.com, sagis@google.com,
+	yan.y.zhao@intel.com, dmatlack@google.com,
+	isaku.yamahata@linux.intel.com
+Subject: Re: [PATCH 08/16] KVM: x86/mmu: Bug the VM if kvm_zap_gfn_range() is
+ called for TDX
+Message-ID: <20240516172703.GK168153@ls.amr.corp.intel.com>
+References: <20240515005952.3410568-1-rick.p.edgecombe@intel.com>
+ <20240515005952.3410568-9-rick.p.edgecombe@intel.com>
+ <ZkTWDfuYD-ThdYe6@google.com>
+ <20240515162240.GC168153@ls.amr.corp.intel.com>
+ <eab9201e-702e-46bc-9782-d6dfe3da2127@intel.com>
+ <20240516001530.GG168153@ls.amr.corp.intel.com>
+ <4ba18e4e-5971-4683-82eb-63c985e98e6b@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAPM=9tx_KS1qc8E1kUB5PPBvO9EKHNkk7hYWu-WwWJ6os=otJA@mail.gmail.com>
-In-Reply-To: <CAPM=9tx_KS1qc8E1kUB5PPBvO9EKHNkk7hYWu-WwWJ6os=otJA@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 16 May 2024 10:25:13 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjdyimk4t2C7xfqLYFX1HUH92yTRTFQXAitJJT+REvF3Q@mail.gmail.com>
-Message-ID: <CAHk-=wjdyimk4t2C7xfqLYFX1HUH92yTRTFQXAitJJT+REvF3Q@mail.gmail.com>
-Subject: Re: [git pull] drm urgent for 6.10-rc1
-To: Dave Airlie <airlied@gmail.com>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, 
-	"Deucher, Alexander" <Alexander.Deucher@amd.com>, 
-	Arunpravin Paneer Selvam <Arunpravin.PaneerSelvam@amd.com>, 
-	dri-devel <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <4ba18e4e-5971-4683-82eb-63c985e98e6b@intel.com>
 
-On Wed, 15 May 2024 at 19:54, Dave Airlie <airlied@gmail.com> wrote:
->
-> Here is the buddy allocator fix I picked up from the list, please apply.
+On Thu, May 16, 2024 at 01:21:40PM +1200,
+"Huang, Kai" <kai.huang@intel.com> wrote:
 
-So I removed my reverts, and am running a kernel that includes the
-merge 972a2543e3dd ("Merge tag 'drm-next-2024-05-16' of
-https://gitlab.freedesktop.org/drm/kernel") but I still see a lot of
-warnings as per below.
+> On 16/05/2024 12:15 pm, Isaku Yamahata wrote:
+> > On Thu, May 16, 2024 at 10:17:50AM +1200,
+> > "Huang, Kai" <kai.huang@intel.com> wrote:
+> > 
+> > > On 16/05/2024 4:22 am, Isaku Yamahata wrote:
+> > > > On Wed, May 15, 2024 at 08:34:37AM -0700,
+> > > > Sean Christopherson <seanjc@google.com> wrote:
+> > > > 
+> > > > > > diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+> > > > > > index d5cf5b15a10e..808805b3478d 100644
+> > > > > > --- a/arch/x86/kvm/mmu/mmu.c
+> > > > > > +++ b/arch/x86/kvm/mmu/mmu.c
+> > > > > > @@ -6528,8 +6528,17 @@ void kvm_zap_gfn_range(struct kvm *kvm, gfn_t gfn_start, gfn_t gfn_end)
+> > > > > >    	flush = kvm_rmap_zap_gfn_range(kvm, gfn_start, gfn_end);
+> > > > > > -	if (tdp_mmu_enabled)
+> > > > > > +	if (tdp_mmu_enabled) {
+> > > > > > +		/*
+> > > > > > +		 * kvm_zap_gfn_range() is used when MTRR or PAT memory
+> > > > > > +		 * type was changed.  TDX can't handle zapping the private
+> > > > > > +		 * mapping, but it's ok because KVM doesn't support either of
+> > > > > > +		 * those features for TDX. In case a new caller appears, BUG
+> > > > > > +		 * the VM if it's called for solutions with private aliases.
+> > > > > > +		 */
+> > > > > > +		KVM_BUG_ON(kvm_gfn_shared_mask(kvm), kvm);
+> > > > > 
+> > > > > Please stop using kvm_gfn_shared_mask() as a proxy for "is this TDX".  Using a
+> > > > > generic name quite obviously doesn't prevent TDX details for bleeding into common
+> > > > > code, and dancing around things just makes it all unnecessarily confusing.
+> > > > > 
+> > > > > If we can't avoid bleeding TDX details into common code, my vote is to bite the
+> > > > > bullet and simply check vm_type.
+> > > > 
+> > > > TDX has several aspects related to the TDP MMU.
+> > > > 1) Based on the faulting GPA, determine which KVM page table to walk.
+> > > >      (private-vs-shared)
+> > > > 2) Need to call TDX SEAMCALL to operate on Secure-EPT instead of direct memory
+> > > >      load/store.  TDP MMU needs hooks for it.
+> > > > 3) The tables must be zapped from the leaf. not the root or the middle.
+> > > > 
+> > > > For 1) and 2), what about something like this?  TDX backend code will set
+> > > > kvm->arch.has_mirrored_pt = true; I think we will use kvm_gfn_shared_mask() only
+> > > > for address conversion (shared<->private).
+> > > > 
+> > > > For 1), maybe we can add struct kvm_page_fault.walk_mirrored_pt
+> > > >           (or whatever preferable name)?
+> > > > 
+> > > > For 3), flag of memslot handles it.
+> > > > 
+> > > > ---
+> > > >    arch/x86/include/asm/kvm_host.h | 3 +++
+> > > >    1 file changed, 3 insertions(+)
+> > > > 
+> > > > diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> > > > index aabf1648a56a..218b575d24bd 100644
+> > > > --- a/arch/x86/include/asm/kvm_host.h
+> > > > +++ b/arch/x86/include/asm/kvm_host.h
+> > > > @@ -1289,6 +1289,7 @@ struct kvm_arch {
+> > > >    	u8 vm_type;
+> > > >    	bool has_private_mem;
+> > > >    	bool has_protected_state;
+> > > > +	bool has_mirrored_pt;
+> > > >    	struct hlist_head mmu_page_hash[KVM_NUM_MMU_PAGES];
+> > > >    	struct list_head active_mmu_pages;
+> > > >    	struct list_head zapped_obsolete_pages;
+> > > > @@ -2171,8 +2172,10 @@ void kvm_configure_mmu(bool enable_tdp, int tdp_forced_root_level,
+> > > >    #ifdef CONFIG_KVM_PRIVATE_MEM
+> > > >    #define kvm_arch_has_private_mem(kvm) ((kvm)->arch.has_private_mem)
+> > > > +#define kvm_arch_has_mirrored_pt(kvm) ((kvm)->arch.has_mirrored_pt)
+> > > >    #else
+> > > >    #define kvm_arch_has_private_mem(kvm) false
+> > > > +#define kvm_arch_has_mirrored_pt(kvm) false
+> > > >    #endif
+> > > >    static inline u16 kvm_read_ldt(void)
+> > > 
+> > > I think this 'has_mirrored_pt' (or a better name) is better, because it
+> > > clearly conveys it is for the "page table", but not the actual page that any
+> > > page table entry maps to.
+> > > 
+> > > AFAICT we need to split the concept of "private page table itself" and the
+> > > "memory type of the actual GFN".
+> > > 
+> > > E.g., both SEV-SNP and TDX has concept of "private memory" (obviously), but
+> > > I was told only TDX uses a dedicated private page table which isn't directly
+> > > accessible for KVV.  SEV-SNP on the other hand just uses normal page table +
+> > > additional HW managed table to make sure the security.
+> > 
+> > kvm_mmu_page_role.is_private is not good name now. Probably is_mirrored_pt or
+> > need_callback or whatever makes sense.
+> > 
+> > 
+> > > In other words, I think we should decide whether to invoke TDP MMU callback
+> > > for private mapping (the page table itself may just be normal one) depending
+> > > on the fault->is_private, but not whether the page table is private:
+> > > 
+> > > 	if (fault->is_private && kvm_x86_ops->set_private_spte)
+> > > 		kvm_x86_set_private_spte(...);
+> > > 	else
+> > > 		tdp_mmu_set_spte_atomic(...);
+> > 
+> > This doesn't work for two reasons.
+> > 
+> > - We need to pass down struct kvm_page_fault fault deep only for this.
+> >    We could change the code in such way.
+> > 
+> > - We don't have struct kvm_page_fault fault for zapping case.
+> >    We could create a dummy one and pass it around.
+> 
+> For both above, we don't necessarily need the whole 'kvm_page_fault', we
+> just need:
+> 
+>  1) GFN
+>  2) Whether it is private (points to private memory to be precise)
+>  3) use a separate private page table.
 
-I was going to say that the difference is that now they trigger
-through the page fault path (amdgpu_gem_fault) while previously they
-triggered through the system call path and amdgpu_drm_ioctl. But it
-turns out it's both in both cases, and it just happened to be one or
-the other in the particular warnings that I cut-and-pasted.
+Ok, so you suggest passing around necessary info (if missing) somehow.
 
-As before, there are tens of thousands of them after being up for less
-than an hour, so this is not some kind of rare thing.
 
-The machine hasn't _crashed_ yet, though. But I'm going to be out and
-about and working on my laptop the rest of the day, so I won't be able
-to test.
+> > Essentially the issue is how to pass down is_private or stash the info
+> > somewhere or determine it somehow.  Options I think of are
+> > 
+> > - Pass around fault:
+> >    Con: fault isn't passed down
+> >    Con: Create fake fault for zapping case >
+> > - Stash it in struct tdp_iter and pass around iter:
+> >    Pro: work for zapping case
+> >    Con: we need to change the code to pass down tdp_iter >
+> > - Pass around is_private (or mirrored_pt or whatever):
+> >    Pro: Don't need to add member to some structure
+> >    Con: We need to pass it around still. >
+> > - Stash it in kvm_mmu_page:
+> >    The patch series uses kvm_mmu_page.role.
+> >    Pro: We don't need to pass around because we know struct kvm_mmu_page
+> >    Con: Need to twist root page allocation
+> 
+> I don't think using kvm_mmu_page.role is correct.
+> 
+> If kvm_mmu_page.role is private, we definitely can assume the faulting
+> address is private; but otherwise the address can be both private or shared.
 
-(And that kernel version of "6.9.0-08295-gfd39ab3b5289" that is quoted
-in the WARN isn't some official kernel, I have about ten private
-patches that I keep testing in my tree, so if you wondered what the
-heck that git version is, it's not going to match anything you see,
-but the ~ten patches also aren't relevant to this).
+What do you mean by the last sentence.  For example, do you mean memslot
+deletion?  In that case, we need to GPA with shared bit for shared PT, GPA
+without shared bit for mirrored/private PT.  Or do you mean something else?
 
-Nothing unusual in the config, although this is clang-built. Shouldn't
-matter, never has before.
 
-            Linus
+> > - Use gfn. kvm_is_private_gfn(kvm, gfn):
+> >    Con: The use of gfn is confusing.  It's too TDX specific.
+> > 
+> > 
+> > > And the 'has_mirrored_pt' should be only used to select the root of the page
+> > > table that we want to operate on.
+> > 
+> > We can add one more bool to struct kvm_page_fault.follow_mirrored_pt or
+> > something to represent it.  We can initialize it in __kvm_mmu_do_page_fault().
+> > 
+> > .follow_mirrored_pt = kvm->arch.has_mirrored_pt && kvm_is_private_gpa(gpa);
+> > 
+> > 
+> > > This also gives a chance that if there's anything special needs to be done
+> > > for page allocated for the "non-leaf" middle page table for SEV-SNP, it can
+> > > just fit.
+> > 
+> > Can you please elaborate on this?
+> 
+> I meant SEV-SNP may have it's own version of link_private_spt().
+> 
+> I haven't looked into it, and it may not needed from hardware's perspective,
+> but providing such chance certainly doesn't hurt and is more flexible IMHO.
 
----
-CPU: 28 PID: 3326 Comm: mutter-x11-fram Tainted: G        W
-6.9.0-08295-gfd39ab3b5289 #64
-Hardware name: Gigabyte Technology Co., Ltd. TRX40 AORUS MASTER/TRX40
-AORUS MASTER, BIOS F7 09/07/2022
-RIP: 0010:__force_merge+0x14f/0x180 [drm_buddy]
-Code: 74 0d 49 8b 44 24 18 48 d3 e0 49 29 44 24 30 4c 89 e7 ba 01 00
-00 00 e8 9f 00 00 00 44 39 e8 73 1f 49 8b 04 24 e9 25 ff ff ff <0f> 0b
-4c 39 c3 75 a3 eb 99 b8 f4 ff ff ff c3 b8 f4 ff ff ff eb 02
-RSP: 0000:ffff9e350314baa0 EFLAGS: 00010246
-RAX: ffff974a227a4a00 RBX: ffff974a2d024b88 RCX: 000000000b8eb800
-RDX: ffff974a2d024bf8 RSI: ffff974a2d024bd0 RDI: ffff974a2d024bb0
-RBP: 0000000000000000 R08: ffff974a2d024b88 R09: 0000000000001000
-R10: 0000000000000800 R11: 0000000000000000 R12: ffff974a2198fa18
-R13: 0000000000000009 R14: 0000000010000000 R15: 0000000000000000
-FS:  00007f56a78b6540(0000) GS:ffff97591e700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f5688040000 CR3: 0000000198cc9000 CR4: 0000000000350ef0
-Call Trace:
- <TASK>
- ? __warn+0xc1/0x190
- ? __force_merge+0x14f/0x180 [drm_buddy]
- ? report_bug+0x129/0x1a0
- ? handle_bug+0x3d/0x70
- ? exc_invalid_op+0x16/0x40
- ? asm_exc_invalid_op+0x16/0x20
- ? __force_merge+0x14f/0x180 [drm_buddy]
- drm_buddy_alloc_blocks+0x249/0x400 [drm_buddy]
- ? __cond_resched+0x16/0x40
- amdgpu_vram_mgr_new+0x204/0x3f0 [amdgpu]
- ttm_resource_alloc+0x31/0x120 [ttm]
- ttm_bo_alloc_resource+0xbc/0x260 [ttm]
- ? memcg_account_kmem+0x4a/0xe0
- ? ttm_resource_compatible+0xbb/0xe0 [ttm]
- ttm_bo_validate+0x9f/0x210 [ttm]
- ? __alloc_pages+0x129/0x210
- amdgpu_bo_fault_reserve_notify+0x98/0x110 [amdgpu]
- amdgpu_gem_fault+0x53/0xd0 [amdgpu]
- __do_fault+0x41/0x140
- do_pte_missing+0x453/0xfd0
- handle_mm_fault+0x73c/0x1090
- do_user_addr_fault+0x2e2/0x6f0
- exc_page_fault+0x56/0x110
- asm_exc_page_fault+0x22/0x30
+It doesn't need TDP MMU hooks.
+-- 
+Isaku Yamahata <isaku.yamahata@intel.com>
 
