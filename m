@@ -1,125 +1,106 @@
-Return-Path: <linux-kernel+bounces-181640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E94058C7F03
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 01:42:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 306EF8C7F0A
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 01:55:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2634C1C212BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 23:42:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB4471F228D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 23:55:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 310072D022;
-	Thu, 16 May 2024 23:42:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A54E52D03D;
+	Thu, 16 May 2024 23:55:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ojWbBU0O"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="E/imWOJQ"
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C412C68C;
-	Thu, 16 May 2024 23:42:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E85C2C6A3
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 23:55:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715902946; cv=none; b=EFZ1giD3JNo4B7pGx8ILQP1IQeRibCO8O/DnsiOyNDb2BmGQQPSWKLFH5vqQ6WyEdt1xLSW6BaC2+w+JPefI62Id72muqmZpi+wtdRIhHtxwAwJCh79zJSEnYvgcyyCTPjdF8epi3JxGgD1AXK8P8dwUbRdf5AdSETyUzXt4Z6I=
+	t=1715903734; cv=none; b=gXVR3FtowUM9k1cwTDQ9iHxV+invD2xcdRMdkeIfqh/Y7jvMF3U5Ke7zi6wjyijDcxHHggPLcLL8xbPTHpPqlbq/eykcVgg6Yn0BgZIMHythoAhOy5dxeiylN8t2MWVXqKc2JoRbvGwgvMGyN8AI3g2j9g/vbBLEmIBvID4JThg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715902946; c=relaxed/simple;
-	bh=zee7hHQpdOGP25NMSwoAHBhZF/iEgJc6wzU+KTUZfdY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LEXqv8+HvVjq0ODoEHB6NLxcQoo9Z5dkec2YG1h2ufAr0jHDwWwXRk1LQ3ebz+FGkMu/QtoKViRXlHSEIEc0cUOur4AzBzaNR8Rr4HFByr8A0hj8lx/w3Vs4rIs5Y3MMIYUj82/Q6596nFUY6FtcvlJQfCjNImW0W0iK4Oo22y8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ojWbBU0O; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1715902940;
-	bh=XSBc8fMaGGaZPXxCyzrlLuxfz7M3VRz50PHtt0uz3jw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ojWbBU0OOadLF9W6zwZSKJqNs+qQWVf5jYFvGV99pevivf81EmEIq8CHAsWs47zGI
-	 bEIeU5O8qAw2d7L+UHNrkPYTwTBxZpR4bSMmwfvgRl7YXPRRi5zqpFg1DgNXWhHO1C
-	 SQyUP5ZE6D91caUVya1WsmvHq3jL/l8f7zbBLxfEP11CTn4qFLr5BIZjZ+BvxER2oE
-	 lgMjgWQiQ/nMNA2L75Dj5gWF5UK/76qXlX5tMcYtQwnT5ex0G4ftrZlmznfvTr96S4
-	 fbvmXeKgqijqzyrKU8x2R+FGK1B559462dhBuerhIO9TOeJSkSXVUhggmh692DKr0e
-	 W11pnD5XeDJNA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VgRTR70f5z4wbr;
-	Fri, 17 May 2024 09:42:19 +1000 (AEST)
-Date: Fri, 17 May 2024 09:42:19 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Huacai Chen <chenhuacai@loongson.cn>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, KVM <kvm@vger.kernel.org>, Bibo Mao
- <maobibo@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>, Linux Kernel
- Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Tiezhu Yang <yangtiezhu@loongson.cn>
-Subject: Re: linux-next: manual merge of the kvm tree with the loongarch
- tree
-Message-ID: <20240517094219.6a4f618a@canb.auug.org.au>
-In-Reply-To: <20240515125404.5ffbaada@canb.auug.org.au>
-References: <20240515125404.5ffbaada@canb.auug.org.au>
+	s=arc-20240116; t=1715903734; c=relaxed/simple;
+	bh=4pwCjRrdKlshy11Q9Qidn/PkDr98ccPmPz4v2MD8UlY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Yuz9Ng3hubv/6Pme9fH/z0DidEKkoWT41WcGt1VVkbZ6eBNckghPb8FYCM5XSuVVq85afOi28V21z0xswqAVhTOvlNw8THgRYb0IwU2a8Xh0m0kCzoyQdMc+0pSM5DPgW94eXqJ+6PQjDRxZVFJ1bh6w6ZZ+l7uB9m4K8OJwF1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=E/imWOJQ; arc=none smtp.client-ip=209.85.217.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-47f01a027easo2430264137.0
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 16:55:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715903731; x=1716508531; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/gLVcqBV3F66KdisazNL7hONRkMphSyVVTtUEh3IZ/0=;
+        b=E/imWOJQUukqIhTYGUAHSeDRJpe2R/x3Oe9ByVALnfK124hIndaA/8Mjmdr2phBqKM
+         u+NeUR/kYgXJZTF9KDzqa8/qGoIpf4dNDMHyidkK15c1c79VKQ9BgcSSlQxV2Ylk5OYp
+         4ec+y4+bcN2lFZNRS7toy2FItQ7CiMxRTwZQJz/tkxw4T0w92KbXAqZWDRqe23pZOOwJ
+         xCetOdesSvIbcayGyrlV6mXFWl37iPVGpEyelL8b5X0eIW+Z8L5S1lFhZiBygIHTPRQU
+         eWLEnmom0n++EIvDSroYuCc3OrBHxEaHTp8Bz01kT9VHoRUpoWm2rOCma0ULrHayezss
+         8oeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715903731; x=1716508531;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/gLVcqBV3F66KdisazNL7hONRkMphSyVVTtUEh3IZ/0=;
+        b=XTAgLSz2Eb37QSkBL8iciQ5Sie8Dc9z/nHGGPgdf6UZfL4iyMWjZx+9EcjsGjhPs1y
+         LJprBWTt22gTKlFDCw13Ae7UWPKklmmfQS6R6VssOgKST8ymWi65ebc71D5EiqtjirUb
+         jP9hITx2xnYR36hIydqhfVU7IZ2WpYiXiZ0dApC43jXf+KWp2qAJlp2mXXedPZdYa3AJ
+         hpobBkj9BHew59gwzfMbzfis84+Tk7iJlyTDYeqEui3Do9WkTqTVSoVw6bxwvW5A5EdX
+         EOHWlQpB68Jy0QdSB3zZVB7lEswsG3pAs9vaNgOYNNABKTL1vQoyL3TdT3GRoy61BvLv
+         /giQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXR/X1n6R2UMkwTcbYBUjTrQP5MScAvuXUTpavVxiHHvLq8uOoRzP5pMf9RzavizhtKmmxg2VefYt90Cl4Ymomx5IACE8Mz/ajAZ29H
+X-Gm-Message-State: AOJu0YxbcDxY3DQvxypk0LW65VXjmskx07lrLORDP2EphezxZrdmcVtL
+	TjEr0Kg/nPbUtpmThUNuRnb4xjMQLL5AQZwy0mKf8+Vmb7yJ8DlRsrqLokgkr+9JRF/PD9GuQkY
+	utHzOli9FDw9byDL59+FaZfI4y5MdCti+wMxX
+X-Google-Smtp-Source: AGHT+IG+/22HSGO1aEWyeCTPHI7nYt0GiaqCsKk1aiSbOHC0OUQTiWABWrFf6IIzcykO5qWDSD6ZOxcp/txXENrYfSk=
+X-Received: by 2002:a05:6102:5089:b0:485:9a12:cae with SMTP id
+ ada2fe7eead31-4859a1210d8mr3163573137.21.1715903730652; Thu, 16 May 2024
+ 16:55:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/o=RVMbxBToyvQbtEwVMaoE1";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/o=RVMbxBToyvQbtEwVMaoE1
-Content-Type: text/plain; charset=US-ASCII
+References: <20240507-b4-sio-ntp-usec-v1-1-15003fc9c2b4@google.com>
+ <87v83gllv8.ffs@tglx> <CAFhGd8p94sHpDc8MApZK7q9iEQ_C8c5frwZx9v_bTnhwtAM=HQ@mail.gmail.com>
+In-Reply-To: <CAFhGd8p94sHpDc8MApZK7q9iEQ_C8c5frwZx9v_bTnhwtAM=HQ@mail.gmail.com>
+From: Justin Stitt <justinstitt@google.com>
+Date: Thu, 16 May 2024 16:55:19 -0700
+Message-ID: <CAFhGd8rTHPiKG+XOkkUihj9r8k1=n3zgitpM9X2aQf6zhp9psQ@mail.gmail.com>
+Subject: Re: [PATCH] ntp: remove accidental integer wrap-around
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Bill Wendling <morbo@google.com>, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev, linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Thu, May 16, 2024 at 4:40=E2=80=AFPM Justin Stitt <justinstitt@google.co=
+m> wrote:
+> Isn't this usually supplied from the user and can be some pretty
+> random stuff? Are you suggesting we update
+> timekeeping_validate_timex() to include a check to limit the maxerror
+> field to (NTP_PHASE_LIMIT-(MAXFREQ / NSEC_PER_USEC))? It seems like we
+> should handle the overflow case where it happens: in
+> second_overflow().
 
-On Wed, 15 May 2024 12:54:04 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> Today's linux-next merge of the kvm tree got a conflict in:
->=20
->   arch/loongarch/kernel/irq.c
->=20
-> between commit:
->=20
->   5685d7fcb55f ("LoongArch: Give a chance to build with !CONFIG_SMP")
->=20
-> from the loongarch tree and commit:
->=20
->   316863cb62fe ("LoongArch/smp: Refine some ipi functions on LoongArch pl=
-atform")
->=20
-> from the kvm tree.
->=20
-> I fixed it up (the latter removed a function that was made protected by
-> CONFIG_SMP in the former - I just removed it) and can carry the fix as
-> necessary. This is now fixed as far as linux-next is concerned, but any
-> non trivial conflicts should be mentioned to your upstream maintainer
-> when your tree is submitted for merging.  You may also want to consider
-> cooperating with the maintainer of the conflicting tree to minimise any
-> particularly complex conflicts.
+Or, I suppose we could add a check to timekeeping_validate_timex() like:
 
-This is now a conflict between the loongarch tree and Linus' tree.
+if (txc->modes & ADJ_MAXERROR) {
+    if (txc->maxerror < 0 || txc->maxerror > NTP_PHASE_LIMIT)
+        return -EINVAL;
+}
 
---=20
-Cheers,
-Stephen Rothwell
 
---Sig_/o=RVMbxBToyvQbtEwVMaoE1
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZGmdsACgkQAVBC80lX
-0GyYnggAoHkAcH1yudrcWWYykKNdOiAPmChnPhT34hThPHbuuo2Eo6V+OC7Ks6eO
-F2v0+KrTyZJYRjxAHSeEDuT1SlZxax9hRYOH2JV1ugK2HXeAuxQY4u3HTfiIIP28
-G4F3KLZpQfrFsoAkhfb/8wDyB/YvohpsiBfVEkerVZoKqNQUGUhODIa0gPvSSZLc
-3vlXNIJwKaNigl2FDGtcsLMmZTNce9F/qo4ya2S99jtYlMaxRcz1BTk7GdmZcKPx
-TN1AuGrQXDcWmutcc/0Rc2zFc6InBu0JOZDXLCrLWuiAZcrFLydrGknIXomraF1O
-edm8Ww9lQNy2dS6auN9I7ocR+6FPZQ==
-=Twam
------END PGP SIGNATURE-----
-
---Sig_/o=RVMbxBToyvQbtEwVMaoE1--
+> Thanks
+> Justin
 
