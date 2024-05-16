@@ -1,54 +1,108 @@
-Return-Path: <linux-kernel+bounces-181303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D3788C7A24
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:15:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 822DB8C7A34
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:22:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8806B2832E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:15:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 391361F214A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:22:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49F9014D71B;
-	Thu, 16 May 2024 16:15:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2785514E2EF;
+	Thu, 16 May 2024 16:21:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="JtYVC8El"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lVcSA9hm"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C2ED2421A;
-	Thu, 16 May 2024 16:15:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 060B52421A;
+	Thu, 16 May 2024 16:21:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715876108; cv=none; b=GLU5r8miuZg8Sq5BqDKevB9pSb0Dt7+hZ1JR1Hq87cIUn40C+XEJEO8y3gX+NX2etf0nImRZrzQZ+Lyx2nJ2lqP4oieNztHw1q0C7f5XH0gBAD+QKEk4geFfexTFpyAkm8nNTMJ2uq/dqfwVUWzEGqmk9Nl3yLg15h28FppsN6Q=
+	t=1715876508; cv=none; b=AOByYUKr4JZ+U175am5wQqoyOatAOPuIdD0S4WMvrb5z3+J3XT7bPQXnoioqdXZWJpQAEVnsnQYxUPGhPduGd7EOt3GMrU5vqPW+GNfF+k583Q8xvhCtarLKA8OS+lfEW26fY83zSDM8oEgGHaBQ6dSc0kxHAqSyKHVPi8gsyTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715876108; c=relaxed/simple;
-	bh=C5txdxBhuj7rW3DWnSbwvCzPzbmF4xQ5STOkAZq83ag=;
+	s=arc-20240116; t=1715876508; c=relaxed/simple;
+	bh=oxcZl7+8PVAjjKM8q0xudjNvpkx4vmZdjGUD85dJAMM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=loYiG4FrZCoqwHXh3QMYVATPN7dLxpJ2zsn3SumGLD/jMtRcjrN0CA28pBrGn37AjsgmqOaNQEJIewxGysRkObs/5Cvfrj/pT5NAN+9Wxhudf03XIpy4Ycc86UbUWxE7ihaYSnBuWT4PzjVyUv6TyGGlfQ+M17BNLjOKtqh+Rhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=JtYVC8El; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF147C113CC;
-	Thu, 16 May 2024 16:15:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1715876108;
-	bh=C5txdxBhuj7rW3DWnSbwvCzPzbmF4xQ5STOkAZq83ag=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JtYVC8Elpkr080qIIwIffhq7Xabf/QhfcnqUPFWpxscSTASidGwxeAWdxwNUEwpQn
-	 SSPfWjsKCa0RRt1mPnSkMUSd0TyiBWfIA69jJyrMDqeG4ekCfRGRRypHSBeeavbEpF
-	 ds+m50y/663B0JwIW1wujM83A4h6g6sQumIfOYmo=
-Date: Thu, 16 May 2024 18:15:05 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: "Manthey, Norbert" <nmanthey@amazon.de>
-Cc: "keescook@chromium.org" <keescook@chromium.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Woodhouse, David" <dwmw@amazon.co.uk>,
-	"Stieger, Andreas" <astieger@amazon.de>,
-	"linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>,
-	"Hemdan, Hagar Gamal Halim" <hagarhem@amazon.de>
-Subject: Re: Extending Linux' Coverity model and also cover aarch64
-Message-ID: <2024051625-dowry-pacifism-b0b9@gregkh>
-References: <77f6e6fc46232db82a3c63e93877c9534334e407.camel@amazon.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BPsMbl9OIFa+v5vxZ62VvYwTkI4Hh4TJj1Y1Iis70fxQvJ8nbajG7nLf2gjtJdDSBe0kiRmhCgMjtzm9Z1QD7p76u3+ScJNozd1l/vY+iUiTinrrzo3PKyi3C/FtdkAjb+TIUhF1Y8SpBHkuACSH9LgNcA5dPaQEQwZ8vTe+tfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lVcSA9hm; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2b5388087f9so321547a91.0;
+        Thu, 16 May 2024 09:21:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715876506; x=1716481306; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ladxmLIkYURG/7sblZ1iTNsC5RmlL9cxQCxBwW8J0dI=;
+        b=lVcSA9hmwj0O71Q/dDwqHIplGUzAq0unOl7AXoZJjzffUAtGIp+pYJYPUS3kFhvTmk
+         T1vHeqbwxTLwz78dx+ESazJfqajjv+4AJD5INtLo0D2nsBFHYg4MF+eptke2PYlBDV3g
+         ld+1pGgrigveW2xLO0G7FcdwumbYpqsFTMlD55u1/g7zOMsNceVOWVdUwiex43jTK768
+         W9mGJYg0OoJE7sqBhKoiAxyLIGNvFeT8ig1pu6FF7nA7GGgt8aWeHU4ojXMi6NllNUwb
+         r/0afcN1o+SHCu5DT8mZxu0MDX2UsJ+9zr/bH6A5N6zvI6c1r2qJGSKr/zobMnpe6NqR
+         qGZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715876506; x=1716481306;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ladxmLIkYURG/7sblZ1iTNsC5RmlL9cxQCxBwW8J0dI=;
+        b=HfrBpADiwd1w3c7qpfMRtYmMFGbPCq9/GOL6YVEvaGBXbS1VXaDhgQhsgrJZPoAYhQ
+         YPum+Liymb/noWT+8DLnSnuOjo3ygx4+nROzkMO1QKdrw4xzRNJABf1U4wVpfakjsKZ+
+         G317w1/O3tXx/qxnQpPIUiPJ2xy/vV3FRI6///Q50VXFD//Qg0OsDU5lgk4WUBSp4wSh
+         LlqufBNd5bCEvqIII8akcStv+VfOigHHIs77aYPMrRYrza7nnKpNaSsVvUUNcXf+GWXg
+         5Kq29ujOvMrVtcL2R1MqLCbWmPevsW46ZVViTb5iod3Cvo+KPlIXYuuG3Ht4u+YlrulS
+         lbLw==
+X-Forwarded-Encrypted: i=1; AJvYcCWdWFr15O07GPtHGDQEbvx1Ngl70uBzKFWe0/p6vHzgC+8fZv46N6T37VgPOEhD47sbzHIZ+y8OflOmsh0Own0uWxT+EEISlN+fztpOttFMjbnd9R87DfnYYHz5Nd+2nBdeQsIgXghXqNpr38giRmXrdyTzZ6fWR+UOZ+s4g7t2FGZQVbmF7TcrvQzUVLrPvPEon5ts/fDWdaikf27uEGti857kkvqyS54CCbWARU5HRvG1TDcDwk4B82sK9QHumWuFmo10+vMQt8FIMgXrWXy+9sTtTsAdGMVYRw==
+X-Gm-Message-State: AOJu0YxbG8KFCfKFMisAiDzbD26PZ10z4kcv56A1kjbbkLhZcHLq9JLZ
+	Uv1O8X+EXhEREFE0iLeCFJp9SY+gWd4aWukJy6LB1I09Qww0aA0k
+X-Google-Smtp-Source: AGHT+IE2RYf/IjCzqA6lvwO63eep/pWkyyUhLJPD8PBjTkjNJiBeJ3r1GQbOnigCM2bH4+drbBXVnQ==
+X-Received: by 2002:a17:90a:d3d8:b0:2ad:c098:ebca with SMTP id 98e67ed59e1d1-2b6cc44f929mr17346299a91.20.1715876506064;
+        Thu, 16 May 2024 09:21:46 -0700 (PDT)
+Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2b62863a52esm15900592a91.2.2024.05.16.09.21.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 May 2024 09:21:45 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Thu, 16 May 2024 06:21:44 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: Edward Liaw <edliaw@google.com>, shuah@kernel.org,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Zefan Li <lizefan.x@bytedance.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Muchun Song <muchun.song@linux.dev>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Yosry Ahmed <yosryahmed@google.com>, Nhat Pham <nphamcs@gmail.com>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	kernel-team@android.com, linux-security-module@vger.kernel.org,
+	netdev@vger.kernel.org, linux-riscv@lists.infradead.org,
+	bpf@vger.kernel.org, cgroups@vger.kernel.org, linux-mm@kvack.org,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v4 08/66] selftests/cgroup: Drop define _GNU_SOURCE
+Message-ID: <ZkYymMDd690uufZy@slm.duckdns.org>
+References: <20240510000842.410729-1-edliaw@google.com>
+ <20240510000842.410729-9-edliaw@google.com>
+ <ZkJHvrwZEqg6RJK5@slm.duckdns.org>
+ <bec3f30e-fc9a-45e2-b6ea-d739b2a2d019@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,37 +111,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <77f6e6fc46232db82a3c63e93877c9534334e407.camel@amazon.de>
+In-Reply-To: <bec3f30e-fc9a-45e2-b6ea-d739b2a2d019@linuxfoundation.org>
 
-On Thu, May 16, 2024 at 03:28:16PM +0000, Manthey, Norbert wrote:
-> Dear Kees, all,
+On Thu, May 16, 2024 at 09:50:06AM -0600, Shuah Khan wrote:
+> On 5/13/24 11:02, Tejun Heo wrote:
+> > On Fri, May 10, 2024 at 12:06:25AM +0000, Edward Liaw wrote:
+> > > _GNU_SOURCE is provided by lib.mk, so it should be dropped to prevent
+> > > redefinition warnings.
+> > > 
+> > > Signed-off-by: Edward Liaw <edliaw@google.com>
+> > 
+> > Applied to cgroup/for-6.10.
+> > 
+> > Thanks.
+> > 
 > 
-> we published an extension for the Coverity model that is used by the
-> CoverityScan setup for the Linux kernel [1]. We have been using this
-> extension to analyze the 6.1 kernel branch, and reported some fixes to
-> the upstream code base that are based on this model [2]. Feel free to
-> merge the pull request, and update the model in the CoverityScan setup.
-> We do not have access to that project to perform these updates
-> ourselves.
+> Hi Tejun,
 > 
-> To increase the analysis coverage to aarch64, we analyzed a x86 and a
-> aarch64 configuration. The increased coverage is achieved by using re-
-> configuration and cross-compilation during the analysis build. If you
-> are interested in this setup we can share the Dockerfile and script we
-> used for this process.
-> 
-> To prevent regressions in backports to LTS kernels, we wondered whether
-> the community is interested in setting up CoverityScan projects for
-> older kernel releases. Would such an extension be useful to show new
-> defects in addition to the current release testing?
+> Please don't include this in your PR to Linus. This patch series needs
+> to go together as it is causing several build warns and some errors.
 
-New defects yes, I would like to know that, as long as they are also
-fixed already in mainline, right?
+I'm afraid it's too late. The PR is too late. Do you want me to send an
+amended PR with the commit reverted? If it's just temporary issues in
+selftests, maybe we can just wait it out?
 
-Just send us reports of that, no need to get the covertity site involved
-there, I'll be glad to take them.
+Thanks.
 
-thanks,
-
-greg k-h
+-- 
+tejun
 
