@@ -1,190 +1,101 @@
-Return-Path: <linux-kernel+bounces-181180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1A8B8C788E
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:43:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19F1A8C78DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:02:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4F8F1C21053
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:43:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C884C281C07
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:02:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D098D14B970;
-	Thu, 16 May 2024 14:43:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tmR3h53g"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B458814B97C;
+	Thu, 16 May 2024 15:02:25 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A02CD1474B0
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 14:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE8A514B969
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 15:02:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715870585; cv=none; b=UlUN/z2cBzLnn4jrvsPt4TaaDHJu896yV1A+qX6EuGqQGvHHi+WPIRfscQu7hueNFBEsRxy+pE9fTupxlL1VEFJ3lAXsHItoppnHLhMVPHdAaCNU7EJdcjvwblKaxGqicbzTvS8N3Ufey8I6M7QSJSj4yZ+FUUAAGEmvRdmI30c=
+	t=1715871745; cv=none; b=q1ko0fMcIjTpo+hH6IHtK2bBE71+6a4JaPm1oS8XMFQWwEwdT51QCsbRuc4qWdY2MRsEbacvChcasin4QsucfVKtNcN76pnGZa14rHnFA8OHA7FLvpPfD7JRXlDnrxLF3NoNv75t+G9Ahs7+iKrrmr+obL0VZ5RAbQ0h6o7iEU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715870585; c=relaxed/simple;
-	bh=8riy7heOl4++APz40BP4z5UOenBVFzksbUbLZvmj/ro=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=q+LazUkw1naAAn7yfkNKQPLuPcRf5/XA23Pk112nWBmQg9nI4EflfQW1HpWI1AH3VhcFQe0her/ZVAagf08A/ypVr3Gk90v9qZUHN3+igL0HCGwVKofzJS7x2PxnsiUdIcNeFfg9ILHxwy5Dx+o4A4BjJKU6PAwRFOo3z1ab8M8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tmR3h53g; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-62a379a7c80so4697075a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 07:43:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715870583; x=1716475383; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=14IL7CrrslTsTRZJKgKh3jedpCPpSOvWG6h4FuG3j7k=;
-        b=tmR3h53gW6I8/LIpc19+vUamc9HhB87vAmQ2GA0+cpxXHDx6QMvO+qtBrDK7UOUY++
-         Cdor9KgcFqyJ7/fVHuTt6Z27BkB1wXQPqXeT9NYuAsFvtwQJUBXjm/BEvsE+rBi+4frs
-         rXeXKvfdL6gUXsxUd38D47FuETG+E/r8nnipEcTHgemungmh3885vimv76eTNi5Em/ks
-         TNuJI5/udveV1QBgRrTkMbQ0/W9sD8UzHxtTQ6oLxIvyegxcct1lRZs7NHG0ok83tC5j
-         JTAK4v2o9wJwbKkmubteyygx4emUyBhpb7BuGQ5bHEeCG1vEAym1pLiTOBygtwfdDiOF
-         ZSpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715870583; x=1716475383;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=14IL7CrrslTsTRZJKgKh3jedpCPpSOvWG6h4FuG3j7k=;
-        b=PAgN+YPLURYYiSW4lr0pUEVPevMZBC66xBkD/+xny4t425v0LGwXyxQXUoLtL/vNAR
-         daxPc8nlDjUaGFlbDThdypIR0BfwWpDfYJle1j/wq0wh2fr7ZF38p7YoZeBydyompSNt
-         D+kEPjxrQE2MBJAqZ3CXrbqK4rQ0HnYVQbWGZVRxVvN6IHk6g1wt0cJ4hIdYp2wspIDa
-         t8kGqFbP7fFPbxxoat2pGHPDmNkpf3ozas/EU2EZ6qcotxB2dsVRtyVw4E2bvfzosxGL
-         Cw0GXybehIyyv6feBpZqv0nXcpWKXXAO6qU24WP3dvrEgG/plMti8feimLo1nZU3Y7/Q
-         lT6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWW/1zQluYuFtJW90oHuWEuNAzeReLdwGeC2rIWSNY9TxEbzk48Q80dErYhuWfIoxISXjx2KW/LG8XxXATxGOLaM4rEdxosKJAZBmWH
-X-Gm-Message-State: AOJu0YwZNmfxcCy3ix308CksbGqrWBrY00vHgczE24+GFTjEEzCkQZ5+
-	5n/OBAykKPlYdNuHzl0r+kzizDRHPUQPsRjkOkK3p8vsUEV8/xy6gZfJhPsR6hhv6zMCjhSnKHP
-	RcA==
-X-Google-Smtp-Source: AGHT+IHSiDA64iI3XfiWglUYLYFEusoIG63LOrq7HIjE4w99t1sJ4BYgoAmXrm2NNj1vVHrAFT7OXoRQVy8=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:902:c40f:b0:1e2:3051:81a9 with SMTP id
- d9443c01a7336-1ef42e6c1b5mr7298125ad.2.1715870582774; Thu, 16 May 2024
- 07:43:02 -0700 (PDT)
-Date: Thu, 16 May 2024 07:43:01 -0700
-In-Reply-To: <f77496b0-ee94-4690-803f-44650706640f@intel.com>
+	s=arc-20240116; t=1715871745; c=relaxed/simple;
+	bh=gXoWBoXtXBpNI3VqUpla1J72BNbCAzZhjk4toEodcyM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=saQ/3R+3q6Qd2Ttpxz13SBTgJR6P5nGGGCl09Mr6BYNzcchez1ARpKUkuCJIo9+GGt/lCmYNEx4sb3EEh9roWrXV6iibIAupzZ9S3f54llrSdY1qEPjlVaKEGDtXF8OfKitrgcIE1xUdW4L16hV8LoVDUgxNdxbaNzYMCyRV6uQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com; spf=pass smtp.mailfrom=perches.com; arc=none smtp.client-ip=216.40.44.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perches.com
+Received: from omf07.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay08.hostedemail.com (Postfix) with ESMTP id ADD26140402;
+	Thu, 16 May 2024 14:43:21 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf07.hostedemail.com (Postfix) with ESMTPA id 57ECF20024;
+	Thu, 16 May 2024 14:43:19 +0000 (UTC)
+Message-ID: <4a77b3a77db293acba504914af220d8b8d644616.camel@perches.com>
+Subject: Re: [PATCH 1/1] checkpatch: allow multi-statement declarative
+ macros.
+From: Joe Perches <joe@perches.com>
+To: Jim Cromie <jim.cromie@gmail.com>, linux-kernel@vger.kernel.org
+Cc: akpm@linuxfoundation.org, Andy Whitcroft <apw@canonical.com>, Dwaipayan
+ Ray <dwaipayanray1@gmail.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Thu, 16 May 2024 07:43:18 -0700
+In-Reply-To: <20240516141418.25345-1-jim.cromie@gmail.com>
+References: <20240516141418.25345-1-jim.cromie@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240219074733.122080-1-weijiang.yang@intel.com>
- <20240219074733.122080-25-weijiang.yang@intel.com> <ZjLRnisdUgeYgg8i@google.com>
- <83bb5f3f-a374-4b0e-a26d-9a9d88561bbe@intel.com> <f77496b0-ee94-4690-803f-44650706640f@intel.com>
-Message-ID: <ZkYbdaW-2p9wHwEL@google.com>
-Subject: Re: [PATCH v10 24/27] KVM: x86: Enable CET virtualization for VMX and
- advertise to userspace
-From: Sean Christopherson <seanjc@google.com>
-To: Weijiang Yang <weijiang.yang@intel.com>
-Cc: pbonzini@redhat.com, dave.hansen@intel.com, x86@kernel.org, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, peterz@infradead.org, 
-	chao.gao@intel.com, rick.p.edgecombe@intel.com, mlevitsk@redhat.com, 
-	john.allen@amd.com
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-Stat-Signature: mju6c8wbgf6gfb8fgnwn6yu59ximhujy
+X-Rspamd-Server: rspamout06
+X-Rspamd-Queue-Id: 57ECF20024
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Session-ID: U2FsdGVkX1+R8Vbk930gfY1y8+k6ZBXumRqXreZfIMw=
+X-HE-Tag: 1715870599-267049
+X-HE-Meta: U2FsdGVkX1/lzKfoZz+Vev/LZzjDmrVIIyqZEWkbWagL8BFFPHTu99DfYkPD4Yh36GbTWVPtnQdXK4xTzx/eIiV/353Rsygr0SUxRbpIKW4QqsWSVMKLFR4TDwdtOoBNVKNsBf0t+yrHr+W8R1ox5yaI2bpzLJsy7YWsd6q/eQnplrQh1y1RYWO/bk3UHoNbT9yzIWXTb1/7MfRe30VtM8Cgr2A33BjACX97lfwJ+Jam746oIFlhHBlSp5EZn5qWWAFHffN+TkphdmrJNGW3wr2mdW10sEU367lLZbbYtfHTojIzeVfDFwGfThX8wkj1
 
-On Thu, May 16, 2024, Weijiang Yang wrote:
-> On 5/6/2024 5:41 PM, Yang, Weijiang wrote:
-> > On 5/2/2024 7:34 AM, Sean Christopherson wrote:
-> > > On Sun, Feb 18, 2024, Yang Weijiang wrote:
-> > > > @@ -665,7 +665,7 @@ void kvm_set_cpu_caps(void)
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 F(AVX512_VPO=
-PCNTDQ) | F(UMIP) | F(AVX512_VBMI2) | F(GFNI) |
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 F(VAES) | F(=
-VPCLMULQDQ) | F(AVX512_VNNI) | F(AVX512_BITALG) |
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 F(CLDEMOTE) =
-| F(MOVDIRI) | F(MOVDIR64B) | 0 /*WAITPKG*/ |
-> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 F(SGX_LC) | F(BUS_LOCK_=
-DETECT)
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 F(SGX_LC) | F(BUS_LOCK_=
-DETECT) | F(SHSTK)
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 );
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* Set LA57 based on hardware capabi=
-lity. */
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (cpuid_ecx(7) & F(LA57))
-> > > > @@ -683,7 +683,8 @@ void kvm_set_cpu_caps(void)
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 F(SPEC_CTRL_=
-SSBD) | F(ARCH_CAPABILITIES) | F(INTEL_STIBP) |
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 F(MD_CLEAR) =
-| F(AVX512_VP2INTERSECT) | F(FSRM) |
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 F(SERIALIZE)=
- | F(TSXLDTRK) | F(AVX512_FP16) |
-> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 F(AMX_TILE) | F(AMX_INT=
-8) | F(AMX_BF16) | F(FLUSH_L1D)
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 F(AMX_TILE) | F(AMX_INT=
-8) | F(AMX_BF16) | F(FLUSH_L1D) |
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 F(IBT)
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 );
-> > > ...
-> > >=20
-> > > > @@ -7977,6 +7993,18 @@ static __init void vmx_set_cpu_caps(void)
-> > > > =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (cpu_has_vmx_waitpkg())
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 kvm_cpu_cap_=
-check_and_set(X86_FEATURE_WAITPKG);
-> > > > +
-> > > > +=C2=A0=C2=A0=C2=A0 /*
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0 * Disable CET if unrestricted_guest is un=
-supported as KVM doesn't
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0 * enforce CET HW behaviors in emulator. O=
-n platforms with
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0 * VMX_BASIC[bit56] =3D=3D 0, inject #CP a=
-t VMX entry with error code
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0 * fails, so disable CET in this case too.
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0 */
-> > > > +=C2=A0=C2=A0=C2=A0 if (!cpu_has_load_cet_ctrl() || !enable_unrestr=
-icted_guest ||
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 !cpu_has_vmx_basic_no_h=
-w_errcode()) {
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 kvm_cpu_cap_clear(X86_F=
-EATURE_SHSTK);
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 kvm_cpu_cap_clear(X86_F=
-EATURE_IBT);
-> > > > +=C2=A0=C2=A0=C2=A0 }
-> > > Oh!=C2=A0 Almost missed it.=C2=A0 This patch should explicitly kvm_cp=
-u_cap_clear()
-> > > X86_FEATURE_SHSTK and X86_FEATURE_IBT.=C2=A0 We *know* there are upco=
-ming AMD CPUs
-> > > that support at least SHSTK, so enumerating support for common code w=
-ould yield
-> > > a version of KVM that incorrectly advertises support for SHSTK.
-> > >=20
-> > > I hope to land both Intel and AMD virtualization in the same kernel r=
-elease, but
-> > > there are no guarantees that will happen.=C2=A0 And explicitly cleari=
-ng both SHSTK and
-> > > IBT would guard against IBT showing up in some future AMD CPU in adva=
-nce of KVM
-> > > gaining full support.
-> >=20
-> > Let me be clear on this, you want me to disable SHSTK/IBT with
-> > kvm_cpu_cap_clear() unconditionally for now in this patch, and wait unt=
-il
-> > both AMD's SVM patches and this series are ready for guest CET, then re=
-move
-> > the disabling code in this patch for final merge, am I right?
+On Thu, 2024-05-16 at 08:14 -0600, Jim Cromie wrote:
+> Declarative macros, which declare/define storage (at either file or
+> function scope), cannot be wrapped in do-while statements.  So
+> checkpatch advice is incorrect here.
+>=20
+> The code has an $exceptions regex which allows multiple statements
+> based on the macro name, etc; /DECLARE_PER_CPU|DEFINE_PER_CPU/ are
+> currently accepted, widen those to accept /DECLARE|DEFINE/.
 
-No, allow it to be enabled for VMX, but explicitly disable it for SVM, i.e.
+It seems this exempts too large a number of these macros
 
-diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-index 4aaffbf22531..b3df12af4ee6 100644
---- a/arch/x86/kvm/svm/svm.c
-+++ b/arch/x86/kvm/svm/svm.c
-@@ -5125,6 +5125,10 @@ static __init void svm_set_cpu_caps(void)
-        kvm_caps.supported_perf_cap =3D 0;
-        kvm_caps.supported_xss =3D 0;
-=20
-+       /* KVM doesn't yet support CET virtualization for SVM. */
-+       kvm_cpu_cap_clear(X86_FEATURE_SHSTK);
-+       kvm_cpu_cap_clear(X86_FEATURE_IBT);
-+
-        /* CPUID 0x80000001 and 0x8000000A (SVM features) */
-        if (nested) {
-                kvm_cpu_cap_set(X86_FEATURE_SVM);
+$ git grep -P '^\s*\#\s*define\s+\w*(?:DECLARE|DEFINE)\w*'|wc -l
+5075
 
-Then the SVM series can simply delete those lines when all is ready.
+How about somehow limiting these exemptions more strictly?
+
+> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+[]
+> @@ -5901,6 +5901,7 @@ sub process {
+>  			}
+>  		}
+> =20
+> +# except for declarative macros (whether file or function scope),
+>  # multi-statement macros should be enclosed in a do while loop, grab the
+>  # first statement and ensure its the whole macro if its not enclosed
+>  # in a known good container
+> @@ -5958,8 +5959,8 @@ sub process {
+>  				$Declare|
+>  				module_param_named|
+>  				MODULE_PARM_DESC|
+> -				DECLARE_PER_CPU|
+> -				DEFINE_PER_CPU|
+> +				DECLARE|
+> +				DEFINE|
+>  				__typeof__\(|
+>  				union|
+>  				struct|
+
 
