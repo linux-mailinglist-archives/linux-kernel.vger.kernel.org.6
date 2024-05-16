@@ -1,200 +1,170 @@
-Return-Path: <linux-kernel+bounces-181366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC8098C7B12
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 19:24:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 792658C7B15
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 19:25:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63CA01F22910
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:24:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A9FD2836BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:25:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F891155A21;
-	Thu, 16 May 2024 17:23:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 561E2156642;
+	Thu, 16 May 2024 17:25:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NKhWMF4n"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="LIe5TSa3"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C031A156F23
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 17:23:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E43753392
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 17:25:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715880233; cv=none; b=eTrPHIFsXM9mdbFgqJuVw2SRW6hNVj9PAtXGYRYV9Cyv8An9ugeGvHQepObd1xK5DiC29pojeFdw2N1A2CQDKL8KHr7sx79LCxo1K5lTPFoCAlkKUlOY0qezxGqQpLHRXGLcNKgGapkZ0zPNLvPs7uEb0j2EW9ReezwyGEa2n00=
+	t=1715880335; cv=none; b=ngzlgqepFP+Knt4xJ7P7nIf0BK+QoEpQg4eHYzHwX/6Xc/YX4ftvYUoUroNSl7+Klob0wsj8TRDixGTNedUEyQSNDcJuqmJnYxgRGertdUaKsCkzTsqJKr7kMn8ZxEJuM6EoFC3jfdUxxZKKCDckX7JisX3uN0IcvholMQoAhUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715880233; c=relaxed/simple;
-	bh=HMh7HuasJa24BhZCwWokjmjfgzo6MrZ9NA4F5skwANU=;
+	s=arc-20240116; t=1715880335; c=relaxed/simple;
+	bh=pNLCm2T6MuWaee5MduBM9YVuC9CmG8Q2+vsEy1hbTO0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l7ieBd6pjIQwWordstG0+H+LqF0kUWrU7q9lBLtFve7cq4/hB2TFM4yhec74/boQ/WfDchabgvczdIXolOqhT7cYXcZymjDZgvqhU0DPw1hawjtPb/SYL83qn7txGdYp5iK+sRV9XQaxn2QHatH7qlO7Si8S1MHdV4X0jRL1psk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NKhWMF4n; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715880230;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=19E7GPCN1ivTDhWTuCbZE7KnAa8A5iElKF7+ifU05tY=;
-	b=NKhWMF4nw42o4kzrADMRjLnJH6EC4oZTBjhB4awxUyZGALktlflffhzdjNevuQbiw2sKy9
-	Th28oT7K2H6cwo06OELFOL9ZQiUtFkmBMg75Pv1RE1rQ4FJziAKPC49TIOZiJddVlndItz
-	OgSfFHDjzk2XuoaBm0Yi/VX0WYYxuOU=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-552-fWPCF827PzivJHwHd8clHw-1; Thu, 16 May 2024 13:23:49 -0400
-X-MC-Unique: fWPCF827PzivJHwHd8clHw-1
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-351bd229b88so3107786f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 10:23:49 -0700 (PDT)
+	 To:Cc:Content-Type; b=PMLFiGZnKYRwXdF33Ms0rLKuYq245+ERkqwd3WHxMNzYniKwe8xspBD8udB2+i4N3no5UCDs1GnzZdHfWmLgo0mjzOnwsP6JEfgN/wK1g0NwQIeNDNctiBvA45L126xLuDboJsc9mpLeCh54/B0bRoq12K9Ex5U49NfXqfOFRZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=LIe5TSa3; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a59a352bbd9so486380166b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 10:25:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1715880331; x=1716485131; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZoJcT9IN7CXxnbK0d4qtbKbdlGqkhITWkFsznFTzj4Q=;
+        b=LIe5TSa3aB+ID9C2WCpGTRzgIAxNf8IgVbLW2Pkg4Ga3vGbVcPU2STNPsO91zW8xsb
+         /28U7OUXXlPxD746Ng1QXa243nYTQ+8aITyqfEJognbnKgz7UnFUpFE7B8n9iFSX8Zco
+         No1p6wtCrvxiixFxMp8OTFW6+klr1t7mnQOMs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715880228; x=1716485028;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=19E7GPCN1ivTDhWTuCbZE7KnAa8A5iElKF7+ifU05tY=;
-        b=TUIDZYGf1Uc2GJHYKafTMnvrN4NPZ51SRR5AXysdcmgA99GTfKPp8dd3TI69wk4Mgl
-         o6ZtheNlFU+0FIxHWSIZ7CBzXmairzR4BTmA/cmGaSQNh6TR8lN0ZuwH5i+dfnsseZ53
-         XNUgBc/pLvDSUNpJz/Z9TUOVS0yI3ZT9dOH/hkzeGuHUczl5Ioak+bcgFTa227t57dMp
-         C/APkrZxKJRxwZsI4JpWwOIEGuHyyG8xDysNSEtzQXIt8yN4PffYZyz8aY/dJJxWvJRH
-         2hGEWliO5hVDec5HnY9faWOGgeCD4Zk2pX/FgeDAZ5tQaL94dD6YiBnSxtOEjoMNyltB
-         1NHg==
-X-Forwarded-Encrypted: i=1; AJvYcCV8664HJGYKfj48/f/runjse1KPBW4ww91eqttD69xYi6eivbloS16SU5Uowovo4US6S4OWWWkxemejr+VYIeSgMtnAUISm6d4wOErp
-X-Gm-Message-State: AOJu0YwF190kPMy3tHp/BHJeKkiZ3dfabTtcj3pcfDrWslwUF49zYFJR
-	gLj+6TEQeSXoDSu+onYSCaNV9yAMe9TLnUG+6eDCJygJiQwUw4UAmqWIJ9gajBFYGAR+xs/XIgW
-	0HOJWWDLDZxcFwmYwPuS84Ec9bHEVh6lS5myoh+NPRQkHjwrq8W5AMuLEcgm64x78oVMwZKIvlL
-	a5W2AQhLjar+ftep3CBea/yNlFWuKIDY4xlU8b
-X-Received: by 2002:adf:ff92:0:b0:34c:9b4d:a7ee with SMTP id ffacd0b85a97d-3504aa66822mr15744072f8f.67.1715880228137;
-        Thu, 16 May 2024 10:23:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHTVOF6tCwOyYT/m1XvAI/L4WEGf+ijDm6MmFZ5m37aa8PPPlxqPrapghhXVBONg9RhqurSX3MAN+Jlfejb4GQ=
-X-Received: by 2002:adf:ff92:0:b0:34c:9b4d:a7ee with SMTP id
- ffacd0b85a97d-3504aa66822mr15744026f8f.67.1715880227699; Thu, 16 May 2024
- 10:23:47 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715880331; x=1716485131;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZoJcT9IN7CXxnbK0d4qtbKbdlGqkhITWkFsznFTzj4Q=;
+        b=u5uF4D3oHGnfp5PXmyjB+9gCSh7mt3AmQYSNSqskBMDvfeZgoe73JKcemknBdxfELn
+         nyaSbN1Yni9mc83xUTYm/AK4vPrhXd54oqGrqirIU3Qbnv80q31yhIXUP4so6gluHyRf
+         NgBMy8Yd2fZfiGw+gjS6n88LgjDSIPJvkxVlkZQ5ww/AgE1mRWtzA+VbhshDVSU7PTkk
+         t/k/guANEj5m5EAAP8GRVbC3qMbPjrEfNkKQL0DaL0WOdQNQd34tHukhvATGMVxxCYvE
+         EuFRbOYYXUYKT97i15JhCGdACpeOAHNviSrB/FJgiZK4OzTivVZWU6pFspunUZbIFrPP
+         T4KQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWj0KbXWuUHJ76Z/80gNVY0RzBV8z94GKHVCxhpVxt1bpNf0nVB0VXmEmglivYLE4DXFo4vtfnQVqOPopt57z2LCbrD0vH5wZo8Dd0D
+X-Gm-Message-State: AOJu0Yyo1s7vpP7dOnAUxt+Znx6JBosF4d7qVk6OjYFsS+veP4wR8T+C
+	BuNUd1nCBqM8+bfZFRd0P54xPSqAfv8/gLro6eQ64Ya0Hbk7qgSf6oHJio6JaVzC/JVwtmJAT3o
+	8p5YHVA==
+X-Google-Smtp-Source: AGHT+IGz+dlNPw2JOvhYz73WNvC0rDuMXXd8EbzatXqtI7fdkCotia02Yi9S9Tnh80G5FqHTicmqCQ==
+X-Received: by 2002:a17:906:5291:b0:a59:9f88:f1f1 with SMTP id a640c23a62f3a-a5a2d1de7b1mr1813434266b.19.1715880330981;
+        Thu, 16 May 2024 10:25:30 -0700 (PDT)
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com. [209.85.218.41])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b01932sm997045566b.168.2024.05.16.10.25.30
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 May 2024 10:25:30 -0700 (PDT)
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a59a352bbd9so486375466b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 10:25:30 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXV0DdrwFHLK1C6BzJfS/lryrd2K6qFOlOMs5+A0C+NQ18hq521uGCNWqOM0+FAl/jBGZRPc1p4alYd36H3VA8Gi36Y2EsINTcK+oIY
+X-Received: by 2002:a17:906:6547:b0:a5a:8896:73de with SMTP id
+ a640c23a62f3a-a5a88967610mr708543966b.26.1715880330099; Thu, 16 May 2024
+ 10:25:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240501085210.2213060-1-michael.roth@amd.com>
- <20240501085210.2213060-10-michael.roth@amd.com> <84e8460d-f8e7-46d7-a274-90ea7aec2203@linux.intel.com>
-In-Reply-To: <84e8460d-f8e7-46d7-a274-90ea7aec2203@linux.intel.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Thu, 16 May 2024 19:23:35 +0200
-Message-ID: <CABgObfaXmMUYHEuK+D+2E9pybKMJqGZsKB033X1aOSQHSEqqVA@mail.gmail.com>
-Subject: Re: [PATCH v15 09/20] KVM: SEV: Add support to handle MSR based Page
- State Change VMGEXIT
-To: Binbin Wu <binbin.wu@linux.intel.com>
-Cc: Michael Roth <michael.roth@amd.com>, kvm@vger.kernel.org, linux-coco@lists.linux.dev, 
-	linux-mm@kvack.org, linux-crypto@vger.kernel.org, x86@kernel.org, 
-	linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com, 
-	jroedel@suse.de, thomas.lendacky@amd.com, hpa@zytor.com, ardb@kernel.org, 
-	seanjc@google.com, vkuznets@redhat.com, jmattson@google.com, luto@kernel.org, 
-	dave.hansen@linux.intel.com, slp@redhat.com, pgonda@google.com, 
-	peterz@infradead.org, srinivas.pandruvada@linux.intel.com, 
-	rientjes@google.com, dovmurik@linux.ibm.com, tobin@ibm.com, bp@alien8.de, 
-	vbabka@suse.cz, kirill@shutemov.name, ak@linux.intel.com, tony.luck@intel.com, 
-	sathyanarayanan.kuppuswamy@linux.intel.com, alpergun@google.com, 
-	jarkko@kernel.org, ashish.kalra@amd.com, nikunj.dadhania@amd.com, 
-	pankaj.gupta@amd.com, liam.merwick@oracle.com, 
-	Brijesh Singh <brijesh.singh@amd.com>, "Yamahata, Isaku" <isaku.yamahata@intel.com>
+References: <CAPM=9tx_KS1qc8E1kUB5PPBvO9EKHNkk7hYWu-WwWJ6os=otJA@mail.gmail.com>
+In-Reply-To: <CAPM=9tx_KS1qc8E1kUB5PPBvO9EKHNkk7hYWu-WwWJ6os=otJA@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 16 May 2024 10:25:13 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjdyimk4t2C7xfqLYFX1HUH92yTRTFQXAitJJT+REvF3Q@mail.gmail.com>
+Message-ID: <CAHk-=wjdyimk4t2C7xfqLYFX1HUH92yTRTFQXAitJJT+REvF3Q@mail.gmail.com>
+Subject: Re: [git pull] drm urgent for 6.10-rc1
+To: Dave Airlie <airlied@gmail.com>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, 
+	"Deucher, Alexander" <Alexander.Deucher@amd.com>, 
+	Arunpravin Paneer Selvam <Arunpravin.PaneerSelvam@amd.com>, 
+	dri-devel <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 16, 2024 at 10:29=E2=80=AFAM Binbin Wu <binbin.wu@linux.intel.c=
-om> wrote:
+On Wed, 15 May 2024 at 19:54, Dave Airlie <airlied@gmail.com> wrote:
 >
->
->
-> On 5/1/2024 4:51 PM, Michael Roth wrote:
-> > SEV-SNP VMs can ask the hypervisor to change the page state in the RMP
-> > table to be private or shared using the Page State Change MSR protocol
-> > as defined in the GHCB specification.
-> >
-> > When using gmem, private/shared memory is allocated through separate
-> > pools, and KVM relies on userspace issuing a KVM_SET_MEMORY_ATTRIBUTES
-> > KVM ioctl to tell the KVM MMU whether or not a particular GFN should be
-> > backed by private memory or not.
-> >
-> > Forward these page state change requests to userspace so that it can
-> > issue the expected KVM ioctls. The KVM MMU will handle updating the RMP
-> > entries when it is ready to map a private page into a guest.
-> >
-> > Use the existing KVM_HC_MAP_GPA_RANGE hypercall format to deliver these
-> > requests to userspace via KVM_EXIT_HYPERCALL.
-> >
-> > Signed-off-by: Michael Roth <michael.roth@amd.com>
-> > Co-developed-by: Brijesh Singh <brijesh.singh@amd.com>
-> > Signed-off-by: Brijesh Singh <brijesh.singh@amd.com>
-> > Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
-> > ---
-> >   arch/x86/include/asm/sev-common.h |  6 ++++
-> >   arch/x86/kvm/svm/sev.c            | 48 ++++++++++++++++++++++++++++++=
-+
-> >   2 files changed, 54 insertions(+)
-> >
-> > diff --git a/arch/x86/include/asm/sev-common.h b/arch/x86/include/asm/s=
-ev-common.h
-> > index 1006bfffe07a..6d68db812de1 100644
-> > --- a/arch/x86/include/asm/sev-common.h
-> > +++ b/arch/x86/include/asm/sev-common.h
-> > @@ -101,11 +101,17 @@ enum psc_op {
-> >       /* GHCBData[11:0] */                            \
-> >       GHCB_MSR_PSC_REQ)
-> >
-> > +#define GHCB_MSR_PSC_REQ_TO_GFN(msr) (((msr) & GENMASK_ULL(51, 12)) >>=
- 12)
-> > +#define GHCB_MSR_PSC_REQ_TO_OP(msr) (((msr) & GENMASK_ULL(55, 52)) >> =
-52)
-> > +
-> >   #define GHCB_MSR_PSC_RESP           0x015
-> >   #define GHCB_MSR_PSC_RESP_VAL(val)                  \
-> >       /* GHCBData[63:32] */                           \
-> >       (((u64)(val) & GENMASK_ULL(63, 32)) >> 32)
-> >
-> > +/* Set highest bit as a generic error response */
-> > +#define GHCB_MSR_PSC_RESP_ERROR (BIT_ULL(63) | GHCB_MSR_PSC_RESP)
-> > +
-> >   /* GHCB Hypervisor Feature Request/Response */
-> >   #define GHCB_MSR_HV_FT_REQ          0x080
-> >   #define GHCB_MSR_HV_FT_RESP         0x081
-> > diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-> > index e1ac5af4cb74..720775c9d0b8 100644
-> > --- a/arch/x86/kvm/svm/sev.c
-> > +++ b/arch/x86/kvm/svm/sev.c
-> > @@ -3461,6 +3461,48 @@ static void set_ghcb_msr(struct vcpu_svm *svm, u=
-64 value)
-> >       svm->vmcb->control.ghcb_gpa =3D value;
-> >   }
-> >
-> > +static int snp_complete_psc_msr(struct kvm_vcpu *vcpu)
-> > +{
-> > +     struct vcpu_svm *svm =3D to_svm(vcpu);
-> > +
-> > +     if (vcpu->run->hypercall.ret)
->
-> Do we have definition of ret? I didn't find clear documentation about it.
-> According to the code, 0 means succssful. Is there any other error codes
-> need to or can be interpreted?
+> Here is the buddy allocator fix I picked up from the list, please apply.
 
-They are defined in include/uapi/linux/kvm_para.h
+So I removed my reverts, and am running a kernel that includes the
+merge 972a2543e3dd ("Merge tag 'drm-next-2024-05-16' of
+https://gitlab.freedesktop.org/drm/kernel") but I still see a lot of
+warnings as per below.
 
-#define KVM_ENOSYS        1000
-#define KVM_EFAULT        EFAULT /* 14 */
-#define KVM_EINVAL        EINVAL /* 22 */
-#define KVM_E2BIG        E2BIG /* 7 */
-#define KVM_EPERM        EPERM /* 1*/
-#define KVM_EOPNOTSUPP        95
+I was going to say that the difference is that now they trigger
+through the page fault path (amdgpu_gem_fault) while previously they
+triggered through the system call path and amdgpu_drm_ioctl. But it
+turns out it's both in both cases, and it just happened to be one or
+the other in the particular warnings that I cut-and-pasted.
 
-Linux however does not expect the hypercall to fail for SEV/SEV-ES; and
-it will terminate the guest if the PSC operation fails for SEV-SNP.  So
-it's best for userspace if the hypercall always succeeds. :)
+As before, there are tens of thousands of them after being up for less
+than an hour, so this is not some kind of rare thing.
 
-> For TDX, it may also want to use KVM_HC_MAP_GPA_RANGE hypercall  to
-> userspace via KVM_EXIT_HYPERCALL.
+The machine hasn't _crashed_ yet, though. But I'm going to be out and
+about and working on my laptop the rest of the day, so I won't be able
+to test.
 
-Yes, definitely.
+(And that kernel version of "6.9.0-08295-gfd39ab3b5289" that is quoted
+in the WARN isn't some official kernel, I have about ten private
+patches that I keep testing in my tree, so if you wondered what the
+heck that git version is, it's not going to match anything you see,
+but the ~ten patches also aren't relevant to this).
 
-Paolo
+Nothing unusual in the config, although this is clang-built. Shouldn't
+matter, never has before.
 
+            Linus
+
+---
+CPU: 28 PID: 3326 Comm: mutter-x11-fram Tainted: G        W
+6.9.0-08295-gfd39ab3b5289 #64
+Hardware name: Gigabyte Technology Co., Ltd. TRX40 AORUS MASTER/TRX40
+AORUS MASTER, BIOS F7 09/07/2022
+RIP: 0010:__force_merge+0x14f/0x180 [drm_buddy]
+Code: 74 0d 49 8b 44 24 18 48 d3 e0 49 29 44 24 30 4c 89 e7 ba 01 00
+00 00 e8 9f 00 00 00 44 39 e8 73 1f 49 8b 04 24 e9 25 ff ff ff <0f> 0b
+4c 39 c3 75 a3 eb 99 b8 f4 ff ff ff c3 b8 f4 ff ff ff eb 02
+RSP: 0000:ffff9e350314baa0 EFLAGS: 00010246
+RAX: ffff974a227a4a00 RBX: ffff974a2d024b88 RCX: 000000000b8eb800
+RDX: ffff974a2d024bf8 RSI: ffff974a2d024bd0 RDI: ffff974a2d024bb0
+RBP: 0000000000000000 R08: ffff974a2d024b88 R09: 0000000000001000
+R10: 0000000000000800 R11: 0000000000000000 R12: ffff974a2198fa18
+R13: 0000000000000009 R14: 0000000010000000 R15: 0000000000000000
+FS:  00007f56a78b6540(0000) GS:ffff97591e700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f5688040000 CR3: 0000000198cc9000 CR4: 0000000000350ef0
+Call Trace:
+ <TASK>
+ ? __warn+0xc1/0x190
+ ? __force_merge+0x14f/0x180 [drm_buddy]
+ ? report_bug+0x129/0x1a0
+ ? handle_bug+0x3d/0x70
+ ? exc_invalid_op+0x16/0x40
+ ? asm_exc_invalid_op+0x16/0x20
+ ? __force_merge+0x14f/0x180 [drm_buddy]
+ drm_buddy_alloc_blocks+0x249/0x400 [drm_buddy]
+ ? __cond_resched+0x16/0x40
+ amdgpu_vram_mgr_new+0x204/0x3f0 [amdgpu]
+ ttm_resource_alloc+0x31/0x120 [ttm]
+ ttm_bo_alloc_resource+0xbc/0x260 [ttm]
+ ? memcg_account_kmem+0x4a/0xe0
+ ? ttm_resource_compatible+0xbb/0xe0 [ttm]
+ ttm_bo_validate+0x9f/0x210 [ttm]
+ ? __alloc_pages+0x129/0x210
+ amdgpu_bo_fault_reserve_notify+0x98/0x110 [amdgpu]
+ amdgpu_gem_fault+0x53/0xd0 [amdgpu]
+ __do_fault+0x41/0x140
+ do_pte_missing+0x453/0xfd0
+ handle_mm_fault+0x73c/0x1090
+ do_user_addr_fault+0x2e2/0x6f0
+ exc_page_fault+0x56/0x110
+ asm_exc_page_fault+0x22/0x30
 
