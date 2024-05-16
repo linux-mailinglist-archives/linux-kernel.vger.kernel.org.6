@@ -1,264 +1,118 @@
-Return-Path: <linux-kernel+bounces-181368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3749A8C7B18
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 19:27:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 73DED8C7B1C
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 19:29:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 560411C2091D
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:27:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4E911C21293
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:29:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA416156679;
-	Thu, 16 May 2024 17:27:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66CFA156672;
+	Thu, 16 May 2024 17:29:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gOS+Dso0"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=akamai.com header.i=@akamai.com header.b="chHh8eFs"
+Received: from mx0b-00190b01.pphosted.com (mx0b-00190b01.pphosted.com [67.231.157.127])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7568253392;
-	Thu, 16 May 2024 17:27:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 980B553392;
+	Thu, 16 May 2024 17:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.157.127
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715880426; cv=none; b=rSEWD+zckWG6W5L7+glxC3+7hZuYFvh8Z+gOaxjFBVPraXHamf2X+h87D+ogmcSgnA+2bm44zp7QAAQbOwm97k0OHeP4HFaRjDywOnMrpViYYCelrelxhMhTDz9jYNdvv4Ah4FdNicfBvjquyXGM+x4pC65xwGPABCHgEfdsMOU=
+	t=1715880561; cv=none; b=Pmw6lSUVLtYL+pZLiSqPOZTrROlp8kO/qGtaKwilx7BK4GBTkSt+ydoZ37JJSBnaQEogNGdUKcAHM0QYU+G08/r0GH3aTxsIOs4FD/Q4RltmErkZoNGe6hzjQ5wCan0DFOySX6s1DH+iXWk6TlA9oJwkUecw7GavoXFcpx/bjgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715880426; c=relaxed/simple;
-	bh=ejzaFrCXR3ybrXuH51IQZfobfJ8mp+oTbwRZZLoq6Wg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WRKugwhRIFfSMuvvN9hr90yrlp1G9HH/zL2tWbuhyCwMJXgczfd5PMSKLpMsgvYDvBfVP/i6KoYu3empV6NhyF1R3ck61Uf0MFV3MBcey3fxQxqbat2mG0Qpern6ZI+AkEgMQE7o1GunVVC1tJ+xdkeaz9bS5slVtczWoM/oWxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gOS+Dso0; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715880423; x=1747416423;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ejzaFrCXR3ybrXuH51IQZfobfJ8mp+oTbwRZZLoq6Wg=;
-  b=gOS+Dso0sbPjuzytnqVn/J28w/KB9S6qoGLm/t4wbnA7Sh85OBmsNM9r
-   7GhuX7P0fFNwyfY2AGyrGZlVmDaCQFSn14k14qPNwMvBAiVSdY/RdZ+oi
-   tYrBcW5KaTh/O22NOKV3SWtO2un85gllFPEpZx496DoYUaXCfZMuRTT6y
-   H5TG4zwtz/YWxB0goKwT8FLZBkX837UTKp1RjvgpygBW/MHRIpeh6LZIX
-   yQFjEVt9ztg2urBHvcyJqy7l48xdZvLQkWEC9ZPRSVZ2KAc+IsLF6knkw
-   IcIaqGoRCLGIt+lN1F5EeZ/5+mY7EJkvs+oU3tZOm8qDNpwqXOcmNF1lr
-   Q==;
-X-CSE-ConnectionGUID: NN0z2QU7SpqZkf+FvodgKg==
-X-CSE-MsgGUID: q+stOXizRXSwdhHGYYuPbg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="11956912"
-X-IronPort-AV: E=Sophos;i="6.08,165,1712646000"; 
-   d="scan'208";a="11956912"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 10:27:02 -0700
-X-CSE-ConnectionGUID: 4wwxVEAlRF6XoHUXs3t9sA==
-X-CSE-MsgGUID: SiUf63eVTWeFQsNsX22OPg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,165,1712646000"; 
-   d="scan'208";a="32052862"
-Received: from ls.sc.intel.com (HELO localhost) ([172.25.112.31])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 10:27:03 -0700
-Date: Thu, 16 May 2024 10:27:03 -0700
-From: Isaku Yamahata <isaku.yamahata@intel.com>
-To: "Huang, Kai" <kai.huang@intel.com>
-Cc: Isaku Yamahata <isaku.yamahata@intel.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>, pbonzini@redhat.com,
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	isaku.yamahata@gmail.com, erdemaktas@google.com, sagis@google.com,
-	yan.y.zhao@intel.com, dmatlack@google.com,
-	isaku.yamahata@linux.intel.com
-Subject: Re: [PATCH 08/16] KVM: x86/mmu: Bug the VM if kvm_zap_gfn_range() is
- called for TDX
-Message-ID: <20240516172703.GK168153@ls.amr.corp.intel.com>
-References: <20240515005952.3410568-1-rick.p.edgecombe@intel.com>
- <20240515005952.3410568-9-rick.p.edgecombe@intel.com>
- <ZkTWDfuYD-ThdYe6@google.com>
- <20240515162240.GC168153@ls.amr.corp.intel.com>
- <eab9201e-702e-46bc-9782-d6dfe3da2127@intel.com>
- <20240516001530.GG168153@ls.amr.corp.intel.com>
- <4ba18e4e-5971-4683-82eb-63c985e98e6b@intel.com>
+	s=arc-20240116; t=1715880561; c=relaxed/simple;
+	bh=QOwBXzs+B/FnJjlHkVIg2c4hvucIpHASSs1js++W2xs=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ZDF5Uzy5rKG3KnRAHLRgxKo59EzBoPeFYkIwpDbUMlEOAVG/cii3z+Wzul5lw2b19vAiii3OtskRvvb6nn3ITmn0z8Qai8STHKq4H3kjIwzT7El9PtveVeDrzK5YmDaYi24FqtzehrgaB2LiRvwuDVyXiZM98qc/Se7XVZWthMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=akamai.com; spf=pass smtp.mailfrom=akamai.com; dkim=pass (2048-bit key) header.d=akamai.com header.i=@akamai.com header.b=chHh8eFs; arc=none smtp.client-ip=67.231.157.127
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=akamai.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=akamai.com
+Received: from pps.filterd (m0050102.ppops.net [127.0.0.1])
+	by m0050102.ppops.net-00190b01. (8.18.1.2/8.18.1.2) with ESMTP id 44GEwqF5030147;
+	Thu, 16 May 2024 18:29:13 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akamai.com; h=
+	from:to:cc:subject:date:message-id:references:in-reply-to
+	:content-type:content-id:content-transfer-encoding:mime-version;
+	 s=jan2016.eng; bh=QOwBXzs+B/FnJjlHkVIg2c4hvucIpHASSs1js++W2xs=; b=
+	chHh8eFsje+fKzhouMS0yRmCJaZj2aE8uuNUu4RdnMl+L2RaPyvOP6S43pYH1T02
+	b4r4CvoqJAKSbu+18qB+INpRX1Pl6s7xmpp88vUycvtbLihZyFBRtt6bxPD+tnF3
+	Ud1ST2u5tAgCOnzb4WvOLkHCEcmA3ZpJmdnolxVa7dlQv41K6fRSBh6RqnlQ9V9g
+	F90cck/jaB1DV584MSnj5ZuNdUCmH4xHO0NJg57p+St0euspgmOqMCSQVmafsa1r
+	qJmBi14fjoEOR/38tVgk1uIsPHwWijXsf1fMdjJ8nP9ZHpcP+fvYFNHXjdaYv63J
+	3tIjCLElNJIFa4QtlBZm5g==
+Received: from prod-mail-ppoint6 (prod-mail-ppoint6.akamai.com [184.51.33.61] (may be forged))
+	by m0050102.ppops.net-00190b01. (PPS) with ESMTPS id 3y1ye5ue8n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 16 May 2024 18:29:13 +0100 (BST)
+Received: from pps.filterd (prod-mail-ppoint6.akamai.com [127.0.0.1])
+	by prod-mail-ppoint6.akamai.com (8.17.1.19/8.17.1.19) with ESMTP id 44GExU2u025709;
+	Thu, 16 May 2024 13:29:12 -0400
+Received: from email.msg.corp.akamai.com ([172.27.91.22])
+	by prod-mail-ppoint6.akamai.com (PPS) with ESMTPS id 3y240y03tk-2
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 16 May 2024 13:29:12 -0400
+Received: from usma1ex-dag4mb1.msg.corp.akamai.com (172.27.91.20) by
+ usma1ex-dag4mb3.msg.corp.akamai.com (172.27.91.22) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.28; Thu, 16 May 2024 13:29:12 -0400
+Received: from usma1ex-dag4mb1.msg.corp.akamai.com ([172.27.91.20]) by
+ usma1ex-dag4mb1.msg.corp.akamai.com ([172.27.91.20]) with mapi id
+ 15.02.1258.028; Thu, 16 May 2024 13:29:12 -0400
+From: "Chaney, Ben" <bchaney@akamai.com>
+To: Ard Biesheuvel <ardb+git@google.com>,
+        "linux-efi@vger.kernel.org"
+	<linux-efi@vger.kernel.org>
+CC: "keescook@chromium.org" <keescook@chromium.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH] x86/efistub: Omit physical KASLR when memory reservations
+ exist
+Thread-Topic: [PATCH] x86/efistub: Omit physical KASLR when memory
+ reservations exist
+Thread-Index: AQHap3BEN52kUBFw3k26As6aZLAiM7GaHkCA
+Date: Thu, 16 May 2024 17:29:11 +0000
+Message-ID: <FBF468D5-18D6-4D29-B6A2-83A0A1998A05@akamai.com>
+References: <20240516090541.4164270-2-ardb+git@google.com>
+In-Reply-To: <20240516090541.4164270-2-ardb+git@google.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <A284D31F6E507D4EB179E416AB63120D@akamai.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <4ba18e4e-5971-4683-82eb-63c985e98e6b@intel.com>
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-16_07,2024-05-15_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 adultscore=0 phishscore=0
+ mlxscore=0 mlxlogscore=515 suspectscore=0 malwarescore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
+ definitions=main-2405160124
+X-Proofpoint-GUID: pHyxdtuvwcqKQ5ShFUaV2oH2LanF-KK9
+X-Proofpoint-ORIG-GUID: pHyxdtuvwcqKQ5ShFUaV2oH2LanF-KK9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-16_07,2024-05-15_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 priorityscore=1501
+ adultscore=0 spamscore=0 clxscore=1011 bulkscore=0 impostorscore=0
+ suspectscore=0 lowpriorityscore=0 mlxscore=0 phishscore=0 mlxlogscore=382
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405010000
+ definitions=main-2405160125
 
-On Thu, May 16, 2024 at 01:21:40PM +1200,
-"Huang, Kai" <kai.huang@intel.com> wrote:
-
-> On 16/05/2024 12:15 pm, Isaku Yamahata wrote:
-> > On Thu, May 16, 2024 at 10:17:50AM +1200,
-> > "Huang, Kai" <kai.huang@intel.com> wrote:
-> > 
-> > > On 16/05/2024 4:22 am, Isaku Yamahata wrote:
-> > > > On Wed, May 15, 2024 at 08:34:37AM -0700,
-> > > > Sean Christopherson <seanjc@google.com> wrote:
-> > > > 
-> > > > > > diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> > > > > > index d5cf5b15a10e..808805b3478d 100644
-> > > > > > --- a/arch/x86/kvm/mmu/mmu.c
-> > > > > > +++ b/arch/x86/kvm/mmu/mmu.c
-> > > > > > @@ -6528,8 +6528,17 @@ void kvm_zap_gfn_range(struct kvm *kvm, gfn_t gfn_start, gfn_t gfn_end)
-> > > > > >    	flush = kvm_rmap_zap_gfn_range(kvm, gfn_start, gfn_end);
-> > > > > > -	if (tdp_mmu_enabled)
-> > > > > > +	if (tdp_mmu_enabled) {
-> > > > > > +		/*
-> > > > > > +		 * kvm_zap_gfn_range() is used when MTRR or PAT memory
-> > > > > > +		 * type was changed.  TDX can't handle zapping the private
-> > > > > > +		 * mapping, but it's ok because KVM doesn't support either of
-> > > > > > +		 * those features for TDX. In case a new caller appears, BUG
-> > > > > > +		 * the VM if it's called for solutions with private aliases.
-> > > > > > +		 */
-> > > > > > +		KVM_BUG_ON(kvm_gfn_shared_mask(kvm), kvm);
-> > > > > 
-> > > > > Please stop using kvm_gfn_shared_mask() as a proxy for "is this TDX".  Using a
-> > > > > generic name quite obviously doesn't prevent TDX details for bleeding into common
-> > > > > code, and dancing around things just makes it all unnecessarily confusing.
-> > > > > 
-> > > > > If we can't avoid bleeding TDX details into common code, my vote is to bite the
-> > > > > bullet and simply check vm_type.
-> > > > 
-> > > > TDX has several aspects related to the TDP MMU.
-> > > > 1) Based on the faulting GPA, determine which KVM page table to walk.
-> > > >      (private-vs-shared)
-> > > > 2) Need to call TDX SEAMCALL to operate on Secure-EPT instead of direct memory
-> > > >      load/store.  TDP MMU needs hooks for it.
-> > > > 3) The tables must be zapped from the leaf. not the root or the middle.
-> > > > 
-> > > > For 1) and 2), what about something like this?  TDX backend code will set
-> > > > kvm->arch.has_mirrored_pt = true; I think we will use kvm_gfn_shared_mask() only
-> > > > for address conversion (shared<->private).
-> > > > 
-> > > > For 1), maybe we can add struct kvm_page_fault.walk_mirrored_pt
-> > > >           (or whatever preferable name)?
-> > > > 
-> > > > For 3), flag of memslot handles it.
-> > > > 
-> > > > ---
-> > > >    arch/x86/include/asm/kvm_host.h | 3 +++
-> > > >    1 file changed, 3 insertions(+)
-> > > > 
-> > > > diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> > > > index aabf1648a56a..218b575d24bd 100644
-> > > > --- a/arch/x86/include/asm/kvm_host.h
-> > > > +++ b/arch/x86/include/asm/kvm_host.h
-> > > > @@ -1289,6 +1289,7 @@ struct kvm_arch {
-> > > >    	u8 vm_type;
-> > > >    	bool has_private_mem;
-> > > >    	bool has_protected_state;
-> > > > +	bool has_mirrored_pt;
-> > > >    	struct hlist_head mmu_page_hash[KVM_NUM_MMU_PAGES];
-> > > >    	struct list_head active_mmu_pages;
-> > > >    	struct list_head zapped_obsolete_pages;
-> > > > @@ -2171,8 +2172,10 @@ void kvm_configure_mmu(bool enable_tdp, int tdp_forced_root_level,
-> > > >    #ifdef CONFIG_KVM_PRIVATE_MEM
-> > > >    #define kvm_arch_has_private_mem(kvm) ((kvm)->arch.has_private_mem)
-> > > > +#define kvm_arch_has_mirrored_pt(kvm) ((kvm)->arch.has_mirrored_pt)
-> > > >    #else
-> > > >    #define kvm_arch_has_private_mem(kvm) false
-> > > > +#define kvm_arch_has_mirrored_pt(kvm) false
-> > > >    #endif
-> > > >    static inline u16 kvm_read_ldt(void)
-> > > 
-> > > I think this 'has_mirrored_pt' (or a better name) is better, because it
-> > > clearly conveys it is for the "page table", but not the actual page that any
-> > > page table entry maps to.
-> > > 
-> > > AFAICT we need to split the concept of "private page table itself" and the
-> > > "memory type of the actual GFN".
-> > > 
-> > > E.g., both SEV-SNP and TDX has concept of "private memory" (obviously), but
-> > > I was told only TDX uses a dedicated private page table which isn't directly
-> > > accessible for KVV.  SEV-SNP on the other hand just uses normal page table +
-> > > additional HW managed table to make sure the security.
-> > 
-> > kvm_mmu_page_role.is_private is not good name now. Probably is_mirrored_pt or
-> > need_callback or whatever makes sense.
-> > 
-> > 
-> > > In other words, I think we should decide whether to invoke TDP MMU callback
-> > > for private mapping (the page table itself may just be normal one) depending
-> > > on the fault->is_private, but not whether the page table is private:
-> > > 
-> > > 	if (fault->is_private && kvm_x86_ops->set_private_spte)
-> > > 		kvm_x86_set_private_spte(...);
-> > > 	else
-> > > 		tdp_mmu_set_spte_atomic(...);
-> > 
-> > This doesn't work for two reasons.
-> > 
-> > - We need to pass down struct kvm_page_fault fault deep only for this.
-> >    We could change the code in such way.
-> > 
-> > - We don't have struct kvm_page_fault fault for zapping case.
-> >    We could create a dummy one and pass it around.
-> 
-> For both above, we don't necessarily need the whole 'kvm_page_fault', we
-> just need:
-> 
->  1) GFN
->  2) Whether it is private (points to private memory to be precise)
->  3) use a separate private page table.
-
-Ok, so you suggest passing around necessary info (if missing) somehow.
-
-
-> > Essentially the issue is how to pass down is_private or stash the info
-> > somewhere or determine it somehow.  Options I think of are
-> > 
-> > - Pass around fault:
-> >    Con: fault isn't passed down
-> >    Con: Create fake fault for zapping case >
-> > - Stash it in struct tdp_iter and pass around iter:
-> >    Pro: work for zapping case
-> >    Con: we need to change the code to pass down tdp_iter >
-> > - Pass around is_private (or mirrored_pt or whatever):
-> >    Pro: Don't need to add member to some structure
-> >    Con: We need to pass it around still. >
-> > - Stash it in kvm_mmu_page:
-> >    The patch series uses kvm_mmu_page.role.
-> >    Pro: We don't need to pass around because we know struct kvm_mmu_page
-> >    Con: Need to twist root page allocation
-> 
-> I don't think using kvm_mmu_page.role is correct.
-> 
-> If kvm_mmu_page.role is private, we definitely can assume the faulting
-> address is private; but otherwise the address can be both private or shared.
-
-What do you mean by the last sentence.  For example, do you mean memslot
-deletion?  In that case, we need to GPA with shared bit for shared PT, GPA
-without shared bit for mirrored/private PT.  Or do you mean something else?
-
-
-> > - Use gfn. kvm_is_private_gfn(kvm, gfn):
-> >    Con: The use of gfn is confusing.  It's too TDX specific.
-> > 
-> > 
-> > > And the 'has_mirrored_pt' should be only used to select the root of the page
-> > > table that we want to operate on.
-> > 
-> > We can add one more bool to struct kvm_page_fault.follow_mirrored_pt or
-> > something to represent it.  We can initialize it in __kvm_mmu_do_page_fault().
-> > 
-> > .follow_mirrored_pt = kvm->arch.has_mirrored_pt && kvm_is_private_gpa(gpa);
-> > 
-> > 
-> > > This also gives a chance that if there's anything special needs to be done
-> > > for page allocated for the "non-leaf" middle page table for SEV-SNP, it can
-> > > just fit.
-> > 
-> > Can you please elaborate on this?
-> 
-> I meant SEV-SNP may have it's own version of link_private_spt().
-> 
-> I haven't looked into it, and it may not needed from hardware's perspective,
-> but providing such chance certainly doesn't hurt and is more flexible IMHO.
-
-It doesn't need TDP MMU hooks.
--- 
-Isaku Yamahata <isaku.yamahata@intel.com>
+PiArc3RhdGljIGVmaV9zdGF0dXNfdCBwYXJzZV9vcHRpb25zKGNvbnN0IGNoYXIgKmNtZGxpbmUp
+DQo+ICt7DQo+ICsgc3RhdGljIGNvbnN0IGNoYXIgb3B0c1tdWzE0XSA9IHsNCj4gKyAibWVtPSIs
+ICJtZW1tYXA9IiwgImVmaV9mYWtlX21lbT0iLCAiaHVnZXBhZ2VzPSINCj4gKyB9Ow0KPiArDQoN
+CkkgdGhpbmsgd2UgcHJvYmFibHkgd2FudCB0byBpbmNsdWRlIGJvdGggY3Jhc2hrZXJuZWwgYW5k
+IHBzdG9yZSBhcyBhcmd1bWVudHMgdGhhdCBjYW4gZGlzYWJsZSB0aGlzIHJhbmRvbWl6YXRpb24u
+DQoNClRoYW5rcywNCglCZW4gDQoNCg==
 
