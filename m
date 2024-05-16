@@ -1,98 +1,96 @@
-Return-Path: <linux-kernel+bounces-181359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A8A28C7AF6
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 19:17:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 284598C7AFB
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 19:18:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B117F1F22551
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:17:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B07051F221A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:18:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 226A1155A21;
-	Thu, 16 May 2024 17:16:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EA6215666D;
+	Thu, 16 May 2024 17:18:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="xzDhDO0z"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rdOjwGHg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DB0A1429E;
-	Thu, 16 May 2024 17:16:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9219B154BF0;
+	Thu, 16 May 2024 17:18:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715879818; cv=none; b=aoGNOkhJgX5WCr4DTh90XET9VAHLtscP/GsQrnUXg7y2N0CZKOmbIgasoAJZdrwf03dnA3dN5nPdXgmCOIG/0AkZXRP+jA9Mxrca9VV380hvP+vs4k1z/znd79tbXgTHHkiAaHPuJr2biC5EQ8MwVck+Cf5HRVnsCYAonmPt02I=
+	t=1715879907; cv=none; b=MxwFXH55IcuK8aAOoa50RstgesX/iF+XAafC1JpCIsxK14XH/G/skffKOpdPmuvy7K8z3q2n3BarqWLmuqpPyeZoxJYtNOgj1LiDDvkkrSQceYhHz4m0EF+8SaehB/MqZe/I6E9vX3M13/qDfxw9ld1hui9q5ywfn6GA2kuq2hk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715879818; c=relaxed/simple;
-	bh=ggWmeHnyrvQuqQvGyWMWOlym1DXS5hCVdvJpfdraodk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kBXxbNyaJr86tRhq/ZXLkKyJrR51fvJcbpVGq8Js7IZCFVoRiXiPGbs1zjTJJcqsZXOHxuZBII3bpZQMmz8SUl4wtZ1cs8Q/zK9adE4IlMYZzAcnG9QfNieGmReXF3IbdShiAcKhz7JYVBI9d/8w1wel5B/zs+RkyI0wYcutBL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=xzDhDO0z; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=L3wGeenFMy7/WOW4QFAgkiw9kjyavP6D58uibLg+zeQ=; b=xzDhDO0zy8jM8TbZ/zEH94TD45
-	O2iu36ZSzdCma/wwtnxy6P0+0gktQUwCUkhd67e4NcERMUg1dxU96geVKOcCl4cEfgiyxrG5JHUFx
-	ZA9TKMI/wlxXqd2FXq9ebpRVkMs+6mXiT4qtuf2T0LuqhDh8zMcWTExPzW66f/0s2HyE=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1s7eiR-00FWcm-Rw; Thu, 16 May 2024 19:16:27 +0200
-Date: Thu, 16 May 2024 19:16:27 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Thorsten Blum <thorsten.blum@toblux.com>
-Cc: arnd@arndb.de, davem@davemloft.net, edumazet@google.com,
-	glaubitz@physik.fu-berlin.de, kuba@kernel.org,
-	linux-kernel@vger.kernel.org, lkp@intel.com, netdev@vger.kernel.org,
-	nico@fluxnic.net, pabeni@redhat.com
-Subject: Re: [PATCH v2] net: smc91x: Fix pointer types
-Message-ID: <0efd687d-3df5-49dd-b01c-d5bd977ae12e@lunn.ch>
-References: <AEF82223-BB2B-4AF0-9732-0F2F605AAEC2@toblux.com>
- <20240516155610.191612-3-thorsten.blum@toblux.com>
+	s=arc-20240116; t=1715879907; c=relaxed/simple;
+	bh=fIK++qma76v6f8TknO156tpt5GQaZPJ+s9y4ZW/mavQ=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=JHqSgg0Q04rNRGqc6qGrRlNCPJDCTGKkpbJ/iJepGdhLGGP7TR/M17/l/BgB1F6jUu/KF46eBg8msTVkLk3dMgByzUcGqpSmYneRXsL8xyI4jjtuk4KBARYB4abLqphpREBh1ATbULAKezWpoWWGoAR/6MCB7kL+KaTlJgXRB/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rdOjwGHg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 217FFC113CC;
+	Thu, 16 May 2024 17:18:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715879907;
+	bh=fIK++qma76v6f8TknO156tpt5GQaZPJ+s9y4ZW/mavQ=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=rdOjwGHgCqG3/ineB6Oty5GlbvyY3FGa5MaGsr7QsgqE7RwBRax43tYFSxhyNkM3O
+	 xvCgoQE+c6eQxKm0Hd9H5SonC7lgFIyeYvMz6yqH//2dY22/kFLzzPn5EO9rVJ9PCK
+	 8GDyfegnO0bLk/lqUFzxWTVkpyEiM5zk2y5Ouyx/QrZB0vNGnl3ijiK/eF7sok+iab
+	 Sh5LzcBRbGZO2hEvBkihpNXL5CTUrcYLgmNdAS7sSmVWgq3neuVPg/XIp0u5tamkFb
+	 AqUvhzBKZpVOrQ3AptQ72EYJ/3M0R/ULEBexGzuF5+PsL8crJ9BaPCPV9P8mw5bjdx
+	 loHHl3sp4DRUw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240516155610.191612-3-thorsten.blum@toblux.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 16 May 2024 20:18:22 +0300
+Message-Id: <D1B8NSWK7C8W.2793LJVZT01LD@kernel.org>
+Cc: <brauner@kernel.org>, <ebiederm@xmission.com>, "Luis Chamberlain"
+ <mcgrof@kernel.org>, "Kees Cook" <keescook@chromium.org>, "Joel Granados"
+ <j.granados@samsung.com>, "James Morris" <jmorris@namei.org>, "David
+ Howells" <dhowells@redhat.com>, <containers@lists.linux.dev>,
+ <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+ <linux-security-module@vger.kernel.org>, <keyrings@vger.kernel.org>
+Subject: Re: [PATCH 0/3] Introduce user namespace capabilities
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Paul Moore" <paul@paul-moore.com>, "Jonathan Calmels"
+ <jcalmels@3xx0.net>, "Serge Hallyn" <serge@hallyn.com>
+X-Mailer: aerc 0.17.0
+References: <20240516092213.6799-1-jcalmels@3xx0.net>
+ <CAHC9VhQ=nNPLRHF8RAMxArT1CESei+qYsnGse6--ixPhACAWTA@mail.gmail.com>
+In-Reply-To: <CAHC9VhQ=nNPLRHF8RAMxArT1CESei+qYsnGse6--ixPhACAWTA@mail.gmail.com>
 
-On Thu, May 16, 2024 at 05:56:12PM +0200, Thorsten Blum wrote:
-> Use void __iomem pointers as parameters for mcf_insw() and mcf_outsw()
-> to align with the parameter types of readw() and writew().
-> 
-> Use lp->base instead of ioaddr when calling SMC_outsw(), SMC_outsb(),
-> SMC_insw(), and SMC_insb() to retain its type across macro boundaries
-> and to fix the following warnings reported by kernel test robot:
-> 
-> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse: warning: incorrect type in argument 1 (different address spaces)
-> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse:    expected void *a
-> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse:    got void [noderef] __iomem *
-> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse: warning: incorrect type in argument 1 (different address spaces)
-> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse:    expected void *a
-> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse:    got void [noderef] __iomem *
-> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse: warning: incorrect type in argument 1 (different address spaces)
-> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse:    expected void *a
-> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse:    got void [noderef] __iomem *
-> drivers/net/ethernet/smsc/smc91x.c:483:17: sparse: warning: incorrect type in argument 1 (different address spaces)
-> drivers/net/ethernet/smsc/smc91x.c:483:17: sparse:    expected void *a
-> drivers/net/ethernet/smsc/smc91x.c:483:17: sparse:    got void [noderef] __iomem *
-> 
-> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202405160853.3qyaSj8w-lkp@intel.com/
-> Acked-by: Nicolas Pitre <nico@fluxnic.net>
+On Thu May 16, 2024 at 7:23 PM EEST, Paul Moore wrote:
+> On Thu, May 16, 2024 at 5:21=E2=80=AFAM Jonathan Calmels <jcalmels@3xx0.n=
+et> wrote:
+> >
+> > It's that time of the year again where we debate security settings for =
+user
+> > namespaces ;)
+> >
+> > I=E2=80=99ve been experimenting with different approaches to address th=
+e gripe
+> > around user namespaces being used as attack vectors.
+> > After invaluable feedback from Serge and Christian offline, this is wha=
+t I
+> > came up with.
+>
+> As Serge is the capabilities maintainer it would be good to hear his
+> thoughts on-list about this proposal.
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Also it would make sense to make this just a bit more digestible to a
+wider group of maintainers, i.e. a better introduction to the topic
+instead of huge list of references (no bandwidth to read them all).
 
-You could add a follow up patch which removes the 
-void __iomem *__ioaddr = ioaddr; lines and uses lp->base.
-The code will then be more uniform.
+This is exactly kind of patch set that makes you ignore it unless
+you are pro-active exactly in this domain.
 
-	Andrew
+I think this could bring more actually useful feedback.
+
+BR, Jarkko
 
