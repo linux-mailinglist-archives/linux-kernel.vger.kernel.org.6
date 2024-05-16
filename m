@@ -1,172 +1,167 @@
-Return-Path: <linux-kernel+bounces-181044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E01CB8C76A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:41:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5902E8C76B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:42:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EE71282252
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:41:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E50971F222E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:42:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E1D0146015;
-	Thu, 16 May 2024 12:41:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DB6214601C;
+	Thu, 16 May 2024 12:42:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HW+z3how"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ANsanT6n"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45ED77E763;
-	Thu, 16 May 2024 12:41:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B2C2335B5;
+	Thu, 16 May 2024 12:42:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715863274; cv=none; b=sCMpH1WtJnH67XrPEFbJ5wfkGQglRckZ0oq4IxzUTljbe5FOwFNxr60VZw727ZxWLPKfgKntoEKS8Hb6tcMPi4eahTohTGVxgQlH5PopXlG6GkAtZtnFRzCxNucS/V15Ols1eiQ2d3IwrS5YK67zl4KBeUHuiv9DA9/vR1FwwKM=
+	t=1715863337; cv=none; b=P8TFyJliYGT2ehOJ2NQOWXOu3pL0J71sBjM28QtyuMf527FQFwgPYppk4jUrDYW3TLMtTNHlwJgeLW0I3vtsWPe84dMpYmYfk+pCPPFgEVWK5Tu1PtXrZFrlr3pQUqqt4gyb0Kw3Xf3eZrbJQ/4ZwcBYl30cDEUO3GGoCXrg/6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715863274; c=relaxed/simple;
-	bh=eQHIiIL1ALm5PPVQ3Io9cb7gr9OV/haIlOC1+pSXKVU=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nKs+aAP64TWRr6huehkCNnMS8/c/WSjJFAuYHOXlZKPZoWE2ucDOaNHk2vABxxnj2A0RuuJcVcGHz+OfsTVVhJoZTDDmJHENAFgTyLAuh0KI1Hq250X26TQl+xKZiZjXtBE9TBjwB5N+ACoVKud2qIXH4qVt17GfLyGuJAhEA+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HW+z3how; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51309C32786;
-	Thu, 16 May 2024 12:41:13 +0000 (UTC)
+	s=arc-20240116; t=1715863337; c=relaxed/simple;
+	bh=dZuc6aEkLxsStlqKWqRbYGaBpp818DtL48GR/YcgDws=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=etumGbeVDAwga1CInjBSl0hzs9k/n2YOC3bqCGauorHTVhp6rr6qdwP0NAbXioY+VgNLtOUzF7K/9V3d4FBi976dtx5e++fGQF1bVjjKW6f46Fd0XafKDZ/72aftAJ+Vz38c+4Ri3l95+bfToksPglx4JgVbybQh8RPgTNKa8R4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ANsanT6n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3040C2BD11;
+	Thu, 16 May 2024 12:42:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715863273;
-	bh=eQHIiIL1ALm5PPVQ3Io9cb7gr9OV/haIlOC1+pSXKVU=;
-	h=Date:From:To:Subject:References:In-Reply-To:From;
-	b=HW+z3howijTGOOcAphkl82HP7uOZEOoSZva4jxoHROFt0mSevv4rTFk8gICxCfvk/
-	 7oNOzLU8oefihbItRwr2yBUhfYOVn7knvCS1vQMIROkobA1ZRdWkObtk3+lsksUT4Y
-	 M3/B++hwmb42oQvcuubJhZOt2q/FyH5cQAF8yG5h3uTmALEG/DbnWjc+FobKIRfsI1
-	 Cs1B0SiV4LAp4wu31y71LUjghKuTDhOfJJ6+Hw92G4aF7MxB93h1dc5w/eAY/7C6mj
-	 KUmU1fiFlJq/E7Qv/CWqyNgqqdUPZyQIy0FSYoUsmMByvMNnLzZbNmoG6R6lruvx5t
-	 ucCkeNHAJmgjw==
-Date: Thu, 16 May 2024 14:41:10 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: John Stultz <jstultz@google.com>, Rob Herring <robh@kernel.org>, 
-	Saravana Kannan <saravanak@google.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
-	"T.J. Mercier" <tjmercier@google.com>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
-	Mattijs Korpershoek <mkorpershoek@baylibre.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org
-Subject: Re: [PATCH 0/8] dma-buf: heaps: Support carved-out heaps and ECC
- related-flags
-Message-ID: <20240516-melodic-quick-dalmatian-fa7b41@penduick>
-References: <20240515-dma-buf-ecc-heap-v1-0-54cbbd049511@kernel.org>
- <CANDhNCoOKwtpstFE2VDcUvzdXUWkZ-Zx+fz6xrdPWTyciVXMXQ@mail.gmail.com>
- <ZkXmWwmdPsqAo7VU@phenom.ffwll.local>
+	s=k20201202; t=1715863336;
+	bh=dZuc6aEkLxsStlqKWqRbYGaBpp818DtL48GR/YcgDws=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=ANsanT6nZYIwvn7RXLoXPppfuchIVNZvA8h22fH680TVIxuzInBAS9F7+/g10GnBd
+	 Wb3ALcWC4UFNXjQeAW0VXeiznDONGwjCvMtUsYPJbDow8QsH73paA3fynPyoROgrcC
+	 VLGgouxeyvzOtAVP4zcTuAmK+45d2VssRgPzogb/FsDmn1sP5+z0WxzVVAhEoAeeO4
+	 GdyXwSHp8Vh9gKRU0d33phVuo1nJ5OHH5Y74XhlfEMSm//q6YRGHnqcezqs0BjVtoQ
+	 kwoWiKmDCT2LtTpxGV6JTq9mpHsmEG7hHC/8vd0RZ2yqWT4ZCYYIvyEGT9Y/y561N/
+	 uVDdO2xmJgXZA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="suucgit7csl7uhjz"
-Content-Disposition: inline
-In-Reply-To: <ZkXmWwmdPsqAo7VU@phenom.ffwll.local>
-
-
---suucgit7csl7uhjz
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 16 May 2024 15:42:11 +0300
+Message-Id: <D1B2SCNE9LOV.EQJ3T08WUX9H@kernel.org>
+Subject: Re: [PATCH 2/3] capabilities: add securebit for strict userns caps
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Jonathan Calmels" <jcalmels@3xx0.net>, <brauner@kernel.org>,
+ <ebiederm@xmission.com>, "Luis Chamberlain" <mcgrof@kernel.org>, "Kees
+ Cook" <keescook@chromium.org>, "Joel Granados" <j.granados@samsung.com>,
+ "Serge Hallyn" <serge@hallyn.com>, "Paul Moore" <paul@paul-moore.com>,
+ "James Morris" <jmorris@namei.org>, "David Howells" <dhowells@redhat.com>
+Cc: <containers@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+ <linux-fsdevel@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+ <keyrings@vger.kernel.org>
+X-Mailer: aerc 0.17.0
+References: <20240516092213.6799-1-jcalmels@3xx0.net>
+ <20240516092213.6799-3-jcalmels@3xx0.net>
+In-Reply-To: <20240516092213.6799-3-jcalmels@3xx0.net>
 
-On Thu, May 16, 2024 at 12:56:27PM +0200, Daniel Vetter wrote:
-> On Wed, May 15, 2024 at 11:42:58AM -0700, John Stultz wrote:
-> > On Wed, May 15, 2024 at 6:57=E2=80=AFAM Maxime Ripard <mripard@kernel.o=
-rg> wrote:
-> > > This series is the follow-up of the discussion that John and I had a =
-few
-> > > months ago here:
-> > >
-> > > https://lore.kernel.org/all/CANDhNCquJn6bH3KxKf65BWiTYLVqSd9892-xtFDH=
-HqqyrroCMQ@mail.gmail.com/
-> > >
-> > > The initial problem we were discussing was that I'm currently working=
- on
-> > > a platform which has a memory layout with ECC enabled. However, enabl=
-ing
-> > > the ECC has a number of drawbacks on that platform: lower performance,
-> > > increased memory usage, etc. So for things like framebuffers, the
-> > > trade-off isn't great and thus there's a memory region with ECC disab=
-led
-> > > to allocate from for such use cases.
-> > >
-> > > After a suggestion from John, I chose to start using heap allocations
-> > > flags to allow for userspace to ask for a particular ECC setup. This =
-is
-> > > then backed by a new heap type that runs from reserved memory chunks
-> > > flagged as such, and the existing DT properties to specify the ECC
-> > > properties.
-> > >
-> > > We could also easily extend this mechanism to support more flags, or
-> > > through a new ioctl to discover which flags a given heap supports.
-> >=20
-> > Hey! Thanks for sending this along! I'm eager to see more heap related
-> > work being done upstream.
-> >=20
-> > The only thing that makes me a bit hesitant, is the introduction of
-> > allocation flags (as opposed to a uniquely specified/named "ecc"
-> > heap).
-> >=20
-> > We did talk about this earlier, and my earlier press that only if the
-> > ECC flag was general enough to apply to the majority of heaps then it
-> > makes sense as a flag, and your patch here does apply it to all the
-> > heaps. So I don't have an objection.
-> >=20
-> > But it makes me a little nervous to add a new generic allocation flag
-> > for a feature most hardware doesn't support (yet, at least). So it's
-> > hard to weigh how common the actual usage will be across all the
-> > heaps.
-> >=20
-> > I apologize as my worry is mostly born out of seeing vendors really
-> > push opaque feature flags in their old ion heaps, so in providing a
-> > flags argument, it was mostly intended as an escape hatch for
-> > obviously common attributes. So having the first be something that
-> > seems reasonable, but isn't actually that common makes me fret some.
-> >=20
-> > So again, not an objection, just something for folks to stew on to
-> > make sure this is really the right approach.
->=20
-> Another good reason to go with full heap names instead of opaque flags on
-> existing heaps is that with the former we can use symlinks in sysfs to
-> specify heaps, with the latter we need a new idea. We haven't yet gotten
-> around to implement this anywhere, but it's been in the dma-buf/heap todo
-> since forever, and I like it as a design approach. So would be a good idea
-> to not toss it. With that display would have symlinks to cma-ecc and cma,
-> and rendering maybe cma-ecc, shmem, cma heaps (in priority order) for a
-> SoC where the display needs contig memory for scanout.
+Maintainer dependent but at least on x86 patches people tend to prefer
+capital letter in the short summary i.e. s/add/Add/
 
-I guess it depends what we want to use the heaps for exactly. If we
-create a heap by type, then the number of heaps is going to explode and
-their name is going to be super weird and inconsistent.
+On Thu May 16, 2024 at 12:22 PM EEST, Jonathan Calmels wrote:
+> This patch adds a new capability security bit designed to constrain a
+> task=E2=80=99s userns capability set to its bounding set. The reason for =
+this is
+> twofold:
+>
+> - This serves as a quick and easy way to lock down a set of capabilities
+>   for a task, thus ensuring that any namespace it creates will never be
+>   more privileged than itself is.
+> - This helps userspace transition to more secure defaults by not requirin=
+g
+>   specific logic for the userns capability set, or libcap support.
+>
+> Example:
+>
+>     # capsh --secbits=3D$((1 << 8)) --drop=3Dcap_sys_rawio -- \
+>             -c 'unshare -r grep Cap /proc/self/status'
+>     CapInh: 0000000000000000
+>     CapPrm: 000001fffffdffff
+>     CapEff: 000001fffffdffff
+>     CapBnd: 000001fffffdffff
+>     CapAmb: 0000000000000000
+>     CapUNs: 000001fffffdffff
+>
+> Signed-off-by: Jonathan Calmels <jcalmels@3xx0.net>
+> ---
+>  include/linux/securebits.h      |  1 +
+>  include/uapi/linux/securebits.h | 11 ++++++++++-
+>  kernel/user_namespace.c         |  5 +++++
+>  3 files changed, 16 insertions(+), 1 deletion(-)
+>
+> diff --git a/include/linux/securebits.h b/include/linux/securebits.h
+> index 656528673983..5f9d85cd69c3 100644
+> --- a/include/linux/securebits.h
+> +++ b/include/linux/securebits.h
+> @@ -5,4 +5,5 @@
+>  #include <uapi/linux/securebits.h>
+> =20
+>  #define issecure(X)		(issecure_mask(X) & current_cred_xxx(securebits))
+> +#define iscredsecure(cred, X)	(issecure_mask(X) & cred->securebits)
+>  #endif /* !_LINUX_SECUREBITS_H */
+> diff --git a/include/uapi/linux/securebits.h b/include/uapi/linux/secureb=
+its.h
+> index d6d98877ff1a..2da3f4be4531 100644
+> --- a/include/uapi/linux/securebits.h
+> +++ b/include/uapi/linux/securebits.h
+> @@ -52,10 +52,19 @@
+>  #define SECBIT_NO_CAP_AMBIENT_RAISE_LOCKED \
+>  			(issecure_mask(SECURE_NO_CAP_AMBIENT_RAISE_LOCKED))
+> =20
+> +/* When set, user namespace capabilities are restricted to their parent'=
+s bounding set. */
+> +#define SECURE_USERNS_STRICT_CAPS			8
+> +#define SECURE_USERNS_STRICT_CAPS_LOCKED		9  /* make bit-8 immutable */
+> +
+> +#define SECBIT_USERNS_STRICT_CAPS (issecure_mask(SECURE_USERNS_STRICT_CA=
+PS))
+> +#define SECBIT_USERNS_STRICT_CAPS_LOCKED \
+> +			(issecure_mask(SECURE_USERNS_STRICT_CAPS_LOCKED))
+> +
+>  #define SECURE_ALL_BITS		(issecure_mask(SECURE_NOROOT) | \
+>  				 issecure_mask(SECURE_NO_SETUID_FIXUP) | \
+>  				 issecure_mask(SECURE_KEEP_CAPS) | \
+> -				 issecure_mask(SECURE_NO_CAP_AMBIENT_RAISE))
+> +				 issecure_mask(SECURE_NO_CAP_AMBIENT_RAISE) | \
+> +				 issecure_mask(SECURE_USERNS_STRICT_CAPS))
+>  #define SECURE_ALL_LOCKS	(SECURE_ALL_BITS << 1)
+> =20
+>  #endif /* _UAPI_LINUX_SECUREBITS_H */
+> diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
+> index 7e624607330b..53848e2b68cd 100644
+> --- a/kernel/user_namespace.c
+> +++ b/kernel/user_namespace.c
+> @@ -10,6 +10,7 @@
+>  #include <linux/cred.h>
+>  #include <linux/securebits.h>
+>  #include <linux/security.h>
+> +#include <linux/capability.h>
+>  #include <linux/keyctl.h>
+>  #include <linux/key-type.h>
+>  #include <keys/user-type.h>
+> @@ -42,6 +43,10 @@ static void dec_user_namespaces(struct ucounts *ucount=
+s)
+> =20
+>  static void set_cred_user_ns(struct cred *cred, struct user_namespace *u=
+ser_ns)
+>  {
+> +	/* Limit userns capabilities to our parent's bounding set. */
+> +	if (iscredsecure(cred, SECURE_USERNS_STRICT_CAPS))
+> +		cred->cap_userns =3D cap_intersect(cred->cap_userns, cred->cap_bset);
+> +
+>  	/* Start with the capabilities defined in the userns set. */
+>  	cred->cap_bset =3D cred->cap_userns;
+>  	cred->cap_permitted =3D cred->cap_userns;
 
-Using the ECC setup here as an example, it means that we would need to
-create system (with the default ECC setup for the system), system-ecc,
-system-no-ecc, cma, cma-ecc, cma-no-ecc.
-
-Let's say we introduce caching next. do we want to triple the number of
-heaps again?
-
-So I guess it all boils down to whether we want to consider heaps as
-allocators, and then we need the flags to fine-tune the attributes/exact
-semantics, or the combination of an allocator and the semantics which
-will make the number of heaps explode (and reduce their general
-usefulness, I guess).
-
-Maxime
-
---suucgit7csl7uhjz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZkX+5gAKCRAnX84Zoj2+
-dlm2AX4zDrlbmQnJLk98W+IofB6hK8ZzSAe2eROyf8ACySG5WHvFn9Thj2UsUYxC
-Y3jkMxEBgOqPayZCO59a/ow4sVm+Bk7F7/fvmM03D3EhW8fjpGGViti3Ap52OpI/
-YONnWKwxQA==
-=GS0k
------END PGP SIGNATURE-----
-
---suucgit7csl7uhjz--
+BR, Jarkko
 
