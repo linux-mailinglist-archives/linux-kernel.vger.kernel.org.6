@@ -1,256 +1,223 @@
-Return-Path: <linux-kernel+bounces-181248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 014778C7983
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:30:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92B388C798D
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:32:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81BBE1F22506
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:30:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 495902864BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:32:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 184F014D2BD;
-	Thu, 16 May 2024 15:29:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70D1E14884E;
+	Thu, 16 May 2024 15:32:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TG3CMTYZ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="pz+WG1rQ";
+	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="uSfTxPKu"
+Received: from esa1.hgst.iphmx.com (esa1.hgst.iphmx.com [68.232.141.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A15414D2A8
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 15:29:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715873388; cv=none; b=PYvEULzNEEXzcdsbpoPvUVIXSzTZx/jF6rDaaSSCA/11WeyhwnO4m4FFzJxmd48HOFAsI0R+8wKz6KRvCogNeq6+g/0zLKZbFopLwt1Hmiw9oDggJsjuAdGEAIJD9beULQKcn23YcVYBONc2xjXeAvVcwn8vv16XE+sJfB2H+r0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715873388; c=relaxed/simple;
-	bh=RhDKxBqRK8qQ+lHwtauQVcSSfhbRWVtAUQmU6/Q1Bn4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H/3D1Q4fw7Ytlt+Bn+5oRvec1bd2U4UBw12h9WG/JSdHbsyDR0SAkKKyFp/xQY502ehFa6vODPb7YeaWeQwl3efn6VsqPyd4XkW3oXpJVdB0srbSKI3Zpuzw5oE9yU2eqWcpd9aqbjXeXknnDYz0FRxW25K1VEsJ13ByozIoP2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TG3CMTYZ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715873385;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dkKvfHDsq1+5iaz2UmJ8RA3u/nWfPXsKWMGU/Ix3SVM=;
-	b=TG3CMTYZGBcyXIB5tO25nYgfGTXqfQckOkpmaHlWvTqN2+6McuRVgrNew0Bfd8vmk9Uois
-	qpEgTBniNExQ62XKjktLon8zLXu7HboRWQ+qGjdV9A7fitbPntpX/fxQ2uQ21FVhJD7NJ9
-	NNB7SvKlmrNOPqM4wj69KUnLLZFt5AY=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-335-Rj9S7aawNVmNtB3WY_wnFA-1; Thu, 16 May 2024 11:29:43 -0400
-X-MC-Unique: Rj9S7aawNVmNtB3WY_wnFA-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 320EA80021D;
-	Thu, 16 May 2024 15:29:43 +0000 (UTC)
-Received: from bmarzins-01.fast.eng.rdu2.dc.redhat.com (bmarzins-01.fast.eng.rdu2.dc.redhat.com [10.6.23.12])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id 159D14B400E;
-	Thu, 16 May 2024 15:29:42 +0000 (UTC)
-Received: from bmarzins-01.fast.eng.rdu2.dc.redhat.com (localhost [127.0.0.1])
-	by bmarzins-01.fast.eng.rdu2.dc.redhat.com (8.17.2/8.17.1) with ESMTPS id 44GFTgLQ131923
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Thu, 16 May 2024 11:29:42 -0400
-Received: (from bmarzins@localhost)
-	by bmarzins-01.fast.eng.rdu2.dc.redhat.com (8.17.2/8.17.2/Submit) id 44GFTfQh131922;
-	Thu, 16 May 2024 11:29:41 -0400
-Date: Thu, 16 May 2024 11:29:41 -0400
-From: Benjamin Marzinski <bmarzins@redhat.com>
-To: YangYang <yang.yang@vivo.com>
-Cc: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
-        Mikulas Patocka <mpatocka@redhat.com>, dm-devel@lists.linux.dev,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/5] dm: support retrieving struct dm_target from struct
- dm_dev
-Message-ID: <ZkYmZaGWPtGIwedG@redhat.com>
-References: <20240514090445.2847-1-yang.yang@vivo.com>
- <20240514090445.2847-4-yang.yang@vivo.com>
- <ZkTXzG1yrPmW64Z6@redhat.com>
- <80ddcd90-2e1c-4fbf-a45a-b1b5ff4d60fb@vivo.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 771D014D435;
+	Thu, 16 May 2024 15:32:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=68.232.141.245
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715873541; cv=fail; b=ZCL0MDaLLBQipskucNKtwp6eXsK4p37HeaGUtznNoFYklTIuZYVr4LdwxVGuJPTCvJNLgQ5VUPRGTU2L84G4T8Nh33WYxaZoYI25LJ4nFM5vj6Zw8PP3GGaolfpL+g/pK9X9P7u5JvP6zF6Sc3Yj53n6owEWbq1xLbjEVUo9ov0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715873541; c=relaxed/simple;
+	bh=jXeSy4jTKIxLTuV5gbLcKEjNGlJjBUP2+xabqGx0iHA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=G276nayiCjZzRyhU8Lm3mvPbSbjuSlDss498+RTWeVLv8tQsGsDAHEiCMnYSMgHE2TqVE733eFpokBfl0BTHHC8tmrRXm+5Fe+oCUAi3vfkE1IXZRBP7LLdxMKnbxhPOY7kInV3TTCw2x/rP1Bdu6iQYhVVn6hBdI57CJ01Mhm8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=pz+WG1rQ; dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b=uSfTxPKu; arc=fail smtp.client-ip=68.232.141.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1715873539; x=1747409539;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=jXeSy4jTKIxLTuV5gbLcKEjNGlJjBUP2+xabqGx0iHA=;
+  b=pz+WG1rQcVZVgJsEQbG0EhObKHdbNG7Hs3K7VWX+1OpZfhoGYn/dk1nf
+   uFtgaDrNkuMXrqsrUo84sFkJue1bV0vcyZKwocwZ9j/ws7TuADOKXIqNi
+   nE7uds+kFK/SP3ECNYR9qZhFF44/N8iUq35U4EnvIlWeXwOLlY7xP8lVC
+   rIIc542dCHXnq5v4I6hdD65rixGeY9yC1qufmt6j9ccfLk9fPd/kFZu3M
+   28XAnrnIyDfB72KLpklKOkAiqYNjmhP1hLLSCzHBg+6EMl74vX7bAZD2J
+   gBRTSI51U0D5Fv8nONpPIlDh4bJe4e+MLNaGkDmAGnIJqX2CYYWiXelAd
+   A==;
+X-CSE-ConnectionGUID: K9jXtQ8vReCK3R2s786+pA==
+X-CSE-MsgGUID: XdFrJp0iSo+PU+9lijX2sA==
+X-IronPort-AV: E=Sophos;i="6.08,164,1712592000"; 
+   d="scan'208";a="16741464"
+Received: from mail-bn8nam12lp2168.outbound.protection.outlook.com (HELO NAM12-BN8-obe.outbound.protection.outlook.com) ([104.47.55.168])
+  by ob1.hgst.iphmx.com with ESMTP; 16 May 2024 23:31:03 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=CYkzTadEJ4P72WqE4b1pEI7KEgKxrFmWUjjf0vAkatolepjfuufVeJ6cvAHr7n0y/gMIqOJErOlWqpqJ4NjnCLrw3sv6341/4Z5fmiXydIJJh152CQ0DblzHU/CThAQy10kh/zTYG1UTUu7DiVF0w94GNMZHRP21wJhiRnQ86GxKoCmwf4H6qfEYcd4PxCRs6Pe3L7QWqy4THOk/dfoMJ6vnGFWzbkrY6nP6WwPW0biWe+cgoi1UA5f1YUcBj7jLZrxqKGJq8eQMM0kqlgdDpbfdizOLWdwmuENbFnvZVqcpmdFIrKjq9wv8NGysVh8EO4NSdYvSibDEetcBQLaOkA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jXeSy4jTKIxLTuV5gbLcKEjNGlJjBUP2+xabqGx0iHA=;
+ b=OwXqfQkGAP3SI/15FVE/xg8l2lwnDLkIKoFItd0R0L9NhacS3ug5XH87RQrIBxGTqOI0/Y8CH8fJhPN2b2ru/Dt4hURoLA7kWkqZ3PSQ7bvl06zkDJcSbvOBiJFFM+j9X3at+wCePhjVRb3qL4gatIThqLITGOrf/LyeRG4mmaMVSFKDknrmmdIHODULQwXlWK73qzwUPWgNsjd4aTTDQeRuq7/t7QmaaYkBG6CBP6V+hI+T9enR2nOiSrd/5ZJmDcEo052FIxfsMzc3lLkn9z8CyyUvsadGKjB/8Z4m92rMc78Xbv21Yfggid51xg6/r+j+L7Kihz3h8+m/rZgXBw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jXeSy4jTKIxLTuV5gbLcKEjNGlJjBUP2+xabqGx0iHA=;
+ b=uSfTxPKuD2fIvM8KVh9JCMnyC7Tfp4AbPKiqrSiM72l98uaKDsoYW5nW9q3kNTs6JbrFBZbPeleXQS6pI8lMcH73PGgZ1WsULrpB/cZKA19inxDRrp011GRmIlTxUnne7uv4YBlHtNFANx+0uTk1Gjx7r9tRj4wnRzto8B/v+Mk=
+Received: from DM6PR04MB6575.namprd04.prod.outlook.com (2603:10b6:5:1b7::7) by
+ CO6PR04MB7489.namprd04.prod.outlook.com (2603:10b6:303:a0::12) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7587.30; Thu, 16 May 2024 15:31:01 +0000
+Received: from DM6PR04MB6575.namprd04.prod.outlook.com
+ ([fe80::73a8:8d4e:8c05:62a5]) by DM6PR04MB6575.namprd04.prod.outlook.com
+ ([fe80::73a8:8d4e:8c05:62a5%5]) with mapi id 15.20.7587.028; Thu, 16 May 2024
+ 15:31:01 +0000
+From: Avri Altman <Avri.Altman@wdc.com>
+To: Bart Van Assche <bvanassche@acm.org>, "Martin K . Petersen"
+	<martin.petersen@oracle.com>
+CC: Bean Huo <beanhuo@micron.com>, Peter Wang <peter.wang@mediatek.com>,
+	"linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v4 3/3] scsi: ufs: sysfs: Make max_number_of_rtt
+ read-write
+Thread-Topic: [PATCH v4 3/3] scsi: ufs: sysfs: Make max_number_of_rtt
+ read-write
+Thread-Index: AQHap1UqCn30QJuzdkSR4jUZe60dILGZ6NSAgAAUfIA=
+Date: Thu, 16 May 2024 15:31:01 +0000
+Message-ID:
+ <DM6PR04MB6575E8AF1B1B0ECAF6F169F6FCED2@DM6PR04MB6575.namprd04.prod.outlook.com>
+References: <20240516055124.24490-1-avri.altman@wdc.com>
+ <20240516055124.24490-4-avri.altman@wdc.com>
+ <054739a5-f38c-4756-b248-94dfb6bad916@acm.org>
+In-Reply-To: <054739a5-f38c-4756-b248-94dfb6bad916@acm.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=wdc.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DM6PR04MB6575:EE_|CO6PR04MB7489:EE_
+x-ms-office365-filtering-correlation-id: 23a30bc4-dd60-4c7a-4b79-08dc75bd310e
+wdcipoutbound: EOP-TRUE
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230031|376005|1800799015|366007|38070700009;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?Um5UU0VQME9meFRKU0Zhd2IzMFZlNDRZUWE4K2ZqYmEvdHUraHdSbFg2K3Nr?=
+ =?utf-8?B?U1N4bUJETWZIbzllSzdMWDZRa1VYdkJmQm5GcU5ZU1NlNDZFV1VwNW42TTUv?=
+ =?utf-8?B?aXp3emJ4ckcrdVdpVUZLZXV4UDRSUXg0bnRHR3FrbzhVTlNKWGZSZjJhYUU5?=
+ =?utf-8?B?SE1GVlkvUlY3N1hUOTJpaHJBVm1OR2JOTUpjRGdKb0lkYXRhbnlpeGFDRTRW?=
+ =?utf-8?B?Z1o4cUIzMFVXK00vWnBYd25tUnRjeGc5ZXFxYkJtVnBNb1lIK0NDWFlxOFYv?=
+ =?utf-8?B?Q0FtK1AzdVhiU0E3VWIwQjlQWjE4RUFvTjRWbnVWQytXWXE1eE1jUldsQ2o5?=
+ =?utf-8?B?cmNoblZkV3BDaFZ0ZHFEdWNCVzNrNGw3M29UU29GbFdodGNXdlFmOWw0WE0x?=
+ =?utf-8?B?RUlVYjFpUVd3WFdLK3JPbkNnUWFjK0pGNTFrOHhoWGRMVmdVbHc2ZGFtY2pr?=
+ =?utf-8?B?T1B6SzdTYUdtcFpUdGNoUjJ2VHNoaEZpZkdwVUJnZzJzZjN1eTE5MXd5RTla?=
+ =?utf-8?B?WjR4bHNndWZjcHliZU5FWWdEQk5WZkVxZjBidmtNeHNMVGRmazM5VEhUWnpu?=
+ =?utf-8?B?MlQ3dlhkSWdUeEg2dHh2TWMxa1Z5VXpjV3V4VVdLNkFMRHIzY2U1Q3NuZEVV?=
+ =?utf-8?B?SmZhOFZGZkExQVFKYkRvckhqSlYrOWJkSlFLZ0JIOHk1aXVjMDQ0dDZKYXNy?=
+ =?utf-8?B?a0JXTDlCY0k2UGdXUGJEa2p0em14a2t1WCs3L2g5eEpiVzhjSXRiZGd4N3FB?=
+ =?utf-8?B?Z0F4am5ydFNpbnJRdHl4U0x3NjlTWHd3TnIrNmQ4bVR1L1Qvbithb3BKdFVp?=
+ =?utf-8?B?cHhWdG96T2ljYS81ZTVrWXBsc2NJYmJ6elZmR2hndXZFWG50bmowRW5QdUJF?=
+ =?utf-8?B?SVg3SE9hMFhOcEszcTIrcVV6bGc4cTk0OUpwbURiV0RtbUxRcWovTkxtREpi?=
+ =?utf-8?B?S0FwQ0dPOVFSRnVCSG1jRFdFZjJmQ0JUYWpHYXNESHdKY0NiR1d5aFc4SkY3?=
+ =?utf-8?B?SWowb043TS9WQjZZTkRMc1QwSVUyUlo2MVNNakNQeFl0bGhMTzB3bUpoYTUv?=
+ =?utf-8?B?VS9haWNPRjdaYkd3eGxYYmNXaEZlbUJOcnF0dzFoYUZoc2IvcWpxNVdlYnFP?=
+ =?utf-8?B?alRqaVQ1ajFKMGlDbjh3cG04cWh4alhiNWhvc0xUamVQNGJhTFR3VjI2eTJu?=
+ =?utf-8?B?eDJ1NHlVdWtkbnBBdDdFRzFYS2VrUVA5bDQ0VUNYWFQrZVdkQUhsc2JScFBv?=
+ =?utf-8?B?cnNSS2VtYjdHemFoNjlFT0ZydVFzSmppaVBRWlBROEgwZHhHSEZ4T3ZlVHlV?=
+ =?utf-8?B?QVMyenNMcnVqUm5tUDlMbEZuRWhKMzkrSTRzNnF3QU5idkZBeTJVMHlldVdT?=
+ =?utf-8?B?dTNoMlJmb2NCNHFqak11dW0zVUVLNHdiRUZHOEFLOG1YUm8rbDc4RmZNcHBs?=
+ =?utf-8?B?cEpZS1FqWjZiOFErRXBuOUFyczJrUURYbHV4N3NScHdIeGtQN2hWZDRRRUM4?=
+ =?utf-8?B?UE9aemtYYzNrWFJDZE1ETGNKc0V0cHJQYm9wamk1WGR1aDY5RHFQOVNUb09i?=
+ =?utf-8?B?NU1aOTdDVTVPam05RlZ4SXFsRW1PaWZVME9waWJQaTBRU0s2aWI4cXpGTVhT?=
+ =?utf-8?B?TGgxTG9XNmxJaXorcGNHN3FNKzNxOWU4UEozMmM4aUFabDdOUllMNlpsL0w3?=
+ =?utf-8?B?d3dkUEVSSEdhbzVIVWFuVEZGZG1aWlA3eFNRVmp1Qm9odmEzOUx0Q2I4QmNk?=
+ =?utf-8?B?YjlidVVUSVFYOFF2TDgxbTlDeHdIWkFNVnhCWFdqOWJiR1EyekszSGhJUUxW?=
+ =?utf-8?B?NVU4WiswTUJlL2prbVBVQT09?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR04MB6575.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(366007)(38070700009);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?WGo0NEk4aUlBQUFYMnJhbkE1U0NxMzB1QmdGdTNhcVlrZWF1S0NuNTR2bHlN?=
+ =?utf-8?B?RDlWRVpsVkpFK25wV2VRc21OZ01QQUJ6dmxhVjZOd2xHTXVYRlhHM2RmT0xl?=
+ =?utf-8?B?VmUxSlRuWEhBUVAxa3FRUFBmMjBUbVIrSWtZc1VCelFkN0hxTWlzanIzR08y?=
+ =?utf-8?B?QUxvY0JsUmpkYnoxTUt6MGlhVG5HbkRyVE5pQnZ5K2RvUWo0Y1ozRWFRRVNv?=
+ =?utf-8?B?Q2ZENlJLTHJlZjNhMFlweWFxWkNnLzEwUTdZK2pud05SU29wRzB2Tm1iRG14?=
+ =?utf-8?B?UFFvT3NhZVY3TUE3aVVhWldVR2syNGRBNjFIQWhPM0Y4SVF2U05BOUJ6THlj?=
+ =?utf-8?B?MDJ5clNnUGxVTEt1VDBnL1V6L2kycmdFejFZN1N5MDVaRFhpRVVWMWZFMlVE?=
+ =?utf-8?B?SzZhL2pmSU41NFZ1Z2FxNDR2bWlqSXl6L3F0b1ZPZnRZWEQrV042U2h3M2E2?=
+ =?utf-8?B?dUZDbUJlKzU1YWw2WXlENlE3dm5hSTY3aXp3U3FaWWRqQTFMRzJpWi84VEZD?=
+ =?utf-8?B?eW5pSWxGdFJNYnBSeEVJcWlEazJNVjJ6ZFkwYUsxTnpVdWVwVDBkbjFaN25S?=
+ =?utf-8?B?VUZRTGRNMW41dEZ1N0k3NFcraElDL202azdIZ3ViTGN5UHZGdHJ4aUFiSjhr?=
+ =?utf-8?B?ZkVzTTNjU2p0aCtKWGx4eXgwV2ZWakF6MUM0dkJzNTN0cHErNSs1dkFUcTFm?=
+ =?utf-8?B?dGh2bk9ENXNGWUdWdmc0SW5wYTJDQ2tXOTNSemM4c29GeS9KOVQwMmMrN2l5?=
+ =?utf-8?B?YVB0Wk0vZXM5STRPdDBUMDkxU2FqOGFBMXpCM3l4Vi9YeUVzdExJVHdSUFo3?=
+ =?utf-8?B?YVNORkd1TEZKWWpkQjYvMUp6MHgyQjhXdFZOcjdQbW93MmZIZnBpcGRoNmdE?=
+ =?utf-8?B?TndYTWEvU3pqL1NXeU4xc3BXZE4vd2NoYmdkQzBoZUJWL2x3TjFLVkJvRXdH?=
+ =?utf-8?B?UXJnK1UzWkV3YjUvNzRzV3VQMzRMTlhzZXB1cjVJSHQzbmZscG82cU1ET0tl?=
+ =?utf-8?B?VldybTdzdG9BWmpXZnBSN0FvcFVreVIvRXJyQXU3MGxkSFlSUGpqRFlTbXNi?=
+ =?utf-8?B?SThMWUN6a042Y0tXbG44MjB0V3I0R1pRTzN6S2QrNFFRWmMvcEg3K3JpOEhL?=
+ =?utf-8?B?WHQvK2RpSnVGZVFWeVY2N3E1VnViZTNKeHlIN05RUjFVdEZjSU56UGo1eVNR?=
+ =?utf-8?B?R2p0UG9vS2wzelNvRzdQdmtpeUx0ckNVa2VKQkFBREszRHBMbmtlQXdtbEw3?=
+ =?utf-8?B?WFlYdVlxbzlYUjhsY2cyL0NvSEpnLzYreUl6WHNIMURrQnpMRlZoTnllL2FI?=
+ =?utf-8?B?UGR4N2xlWnY2d1g5NjY0ZFUvb2RQM2FxTnlmb05uN0QzeHM2TE9RZjJpT21T?=
+ =?utf-8?B?QmJidzVQL054VnhGc2FjaS9DalVXZDh4WGN6ekQwVUVJTUIxdzFncEZTL2hG?=
+ =?utf-8?B?NVVDZHp2Z0tmVDlUUDNWaVdWaFFJTjBQZGZYaStOckVCYVdBNWtOTlRWSVo4?=
+ =?utf-8?B?MHhGeTZZak95QlRVcEh2cncrTktwVjZKZHhUNVZLU1dLdE9kYmduUlJXL1kw?=
+ =?utf-8?B?a0dOSHhnVTI4dEUrMHZJamY1bGpWUG4rTDRXSi96Sis4UEJ4b0JDTE1mbDhZ?=
+ =?utf-8?B?Z0FwSUF4ejQzT3BZNFFyaVprSkNnS3NHem5NdjNCdUxGS2dQNDZxL0V2ZC9E?=
+ =?utf-8?B?UkRWV1NzbUNBSjZPcnZZd0t1U0xwcDNEbDB1NFRxcnFFZjJyUk1KU3RFcmpE?=
+ =?utf-8?B?UVpLWGRPc3krSnpKdkxTOGRManlUSTB0MFBWa2liZkNXSmZWQm1aSjB6ZHBU?=
+ =?utf-8?B?TWJHK1IyN0h4WjNuODZUaGxST2RkOTQxUmpObllPbDlFM1IxeFhyRXBDMzhX?=
+ =?utf-8?B?Z251d25TMW5aOFhmY014YTUzVHZDbXo0cFNxamtXanpDcWJrK1BhRmthYmk3?=
+ =?utf-8?B?ajV3eUdsVnNGUEpMRnJ2R25zYUdRMm1ZaVBTaVdlUEJjNjdORzJYdHBRYXE2?=
+ =?utf-8?B?WWU3QThjS3V3c3U1NlVtbnJiMXNXcy9QTm9mSGxZSFBSYUp2bXhIQ2FFU2dZ?=
+ =?utf-8?B?dHhySFArLzd4NFNzYTM0YVlqQ2N0dWNyNjJpODR5QlFMOGpxcGZUQXp5Mmdq?=
+ =?utf-8?Q?ko7s=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <80ddcd90-2e1c-4fbf-a45a-b1b5ff4d60fb@vivo.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.9
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	C4CdGVY7P1I1Tp6pUCW1vXsylcpWiD//o+QZg83yxxslufPPcDD7qAvdrcpmV8i5pZRqCygJbchh3PylCbFAv5sZVtMtQoollHE06+FDGkCAgrZ5k5NbkkrvuhI1lwdBTi0O6O4IlurVa+uT9BnjHW8fN6HF6ojVJSf3ms7kMom2/ZAbDKmn295MDofyZjY58DL+tUxtCwHwItBAen9Hv85x2l+Szvce4F6gwCYYfKjbgs3vT2wF0uFXlNFCD9TRo4Z/ng6saHlgsCdaqwMVoQO6x3Z7PR0Z6EBF6OObv2P8pMBERoG4yGJPqZz6AF0F329B6EhMgdrok+CpUSwAV8z4I+RMFwlDz1uWrnlgdxlv3KpgmOstiWoHauzm2ISIZYO6Y9g/STbp8Rr1wK8AXyKuN8l7jcqmiZAwJMWJ3UhPkgUNqeVUd8R+H1fCvkTshf8rCD3qXxHVp5B4DbHdihS7i+vXz8XGsynLD3XFvJB4w5nnb1kdr34nm2vL0MoGwpbgtB9XNXg09L9i58IhyFsIQs92DAm9AQWAysCWHcLgT1/7U+sngusOmaijyCy+kKhyB+neCwb/P9u41zOZN6T1c9XiISHAZvDv/1hKvyzY5xnWjQ55okvGu7ZodBg6
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR04MB6575.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 23a30bc4-dd60-4c7a-4b79-08dc75bd310e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 May 2024 15:31:01.1525
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: cecn03rwRd/ultdlFJsAkffJLwpIo54PU1uBDbid1zsvlqqc/XE/WliIo7TotaQWpIhFKylHRChvb2LwJuhGFA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO6PR04MB7489
 
-On Thu, May 16, 2024 at 09:55:53AM +0800, YangYang wrote:
-> On 2024/5/15 23:42, Benjamin Marzinski wrote:
-> > On Tue, May 14, 2024 at 05:04:42PM +0800, Yang Yang wrote:
-> > > Add a list to the struct dm_dev structure to store the associated
-> > > targets, while also allowing differentiation between different target
-> > > types.
-> > 
-> > I still think this is more complex than it needs to be. If devices that
-> > support flush_pass_around can guarantee that:
-> > 
-> > 1. They will send a flush bio to all of their table devices
-> > 2. They are fine with another target sending the flush bio to their
-> >     table devices
-> > 
-> > Then I don't see why we need the table devices to keep track of all the
-> > different target types that are using them. Am I missing something here?
-> 
-> I attempted to enhance this solution to support additional target types,
-> such as those with num_flush_bios greater than 1.
-
-I'm still missing why sending a flush to each target type is necessary
-to handle num_flush_bios > 1. As long as the targets meet the
-requirements I listed before, AFAICS it should still work with only one
-of the targets mapped to each device.
-
-Say the table devices are sda, sdb, sdc, and sdd.  If you have 4 linear
-targets, each mapped to a different table device, and one stripe target
-mapped to all of them.  It doesn't really matter if you don't call
-__send_empty_flush_bios() for the stripe target, does it? all if its
-stripe devs will still get flushes. Similarly, it's fine if one of the
-linear targets doesn't get called (in fact it's fine if all the linear
-targets don't get called, since the stripe target will send flushes to
-all the devices). If there were only 3 linear targets, then the stripe
-target would get linked to a table device, so it would get a flush sent
-to it. Can you explain a situation where you need the to send a flush to
-multiple targets per table device for this to work, if you assume the 2
-guarantees I mentioned above (the target sends flushes to all their
-devices, and they don't do something special so they need to be the one
-to send the flushes).
-
-> 
-> > If we don't need to worry about sending a flush bio to a target of each
-> > type that is using a table device, then all we need to do is call
-> > __send_empty_flush_bios() for enough targets to cover all the table
-> > devices. This seems a lot easier to track. We just need another flag in
-> > dm_target, something like sends_pass_around_flush.
-> > 
-> > When a target calls dm_get_device(), if it adds a new table device to
-> > t->devices, then it's the first target in this table to use that device.
-> > If flush_pass_around is set for this target, then it also sets
-> > sends_pass_around_flush. In __send_empty_flush() if the table has
-> > flush_pass_around set, when you iterate through the devices, you only
-> > call __send_empty_flush_bios() for the ones with sends_pass_around_flush
-> > set.
-> > 
-> > Or am I overlooking something?
-> 
-> If I understand correctly, you are suggesting to iterate through all the
-> targets, handling those with sends_pass_around_flush set, and skipping
-> those where sends_pass_around_flush is not set. I believe this approach
-> may result in some CPU wastage.
-> 
->   for i in {0..1023}; do
->     echo $((8000*$i)) 8000 linear /dev/sda2 $((16384*$i))
->   done | sudo dmsetup create example
-> 
-> In this specific scenario, a single iteration of the loop is all that
-> is needed.
-
-It's just one iteration of the loop either way. You either loop through
-the targets or the devices.  It's true that if you have lots of targets
-all mapped to the same device, you would waste time looping through all
-the targets instead of looping through the devices.  But if you only had
-one striped target mapped to lots of devices, you would waste time
-looping through all of the devices instead of looping through the
-targets.  
-
--Ben
- 
-> > 
-> > -Ben
-> > 
-> > > 
-> > > Signed-off-by: Yang Yang <yang.yang@vivo.com>
-> > > ---
-> > >   drivers/md/dm-table.c         | 36 +++++++++++++++++++++++++++++++++++
-> > >   include/linux/device-mapper.h |  3 +++
-> > >   2 files changed, 39 insertions(+)
-> > > 
-> > > diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
-> > > index bd68af10afed..f6554590b7af 100644
-> > > --- a/drivers/md/dm-table.c
-> > > +++ b/drivers/md/dm-table.c
-> > > @@ -741,6 +741,8 @@ int dm_table_add_target(struct dm_table *t, const char *type,
-> > >   	if (ti->flush_pass_around == 0)
-> > >   		t->flush_pass_around = 0;
-> > > +	INIT_LIST_HEAD(&ti->list);
-> > > +
-> > >   	return 0;
-> > >    bad:
-> > > @@ -2134,6 +2136,25 @@ void dm_table_postsuspend_targets(struct dm_table *t)
-> > >   	suspend_targets(t, POSTSUSPEND);
-> > >   }
-> > > +static int dm_link_dev_to_target(struct dm_target *ti, struct dm_dev *dev,
-> > > +		sector_t start, sector_t len, void *data)
-> > > +{
-> > > +	struct list_head *targets = &dev->targets;
-> > > +	struct dm_target *pti;
-> > > +
-> > > +	if (!list_empty(targets)) {
-> > > +		list_for_each_entry(pti, targets, list) {
-> > > +			if (pti->type == ti->type)
-> > > +				return 0;
-> > > +		}
-> > > +	}
-> > > +
-> > > +	if (list_empty(&ti->list))
-> > > +		list_add_tail(&ti->list, targets);
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > >   int dm_table_resume_targets(struct dm_table *t)
-> > >   {
-> > >   	unsigned int i;
-> > > @@ -2162,6 +2183,21 @@ int dm_table_resume_targets(struct dm_table *t)
-> > >   			ti->type->resume(ti);
-> > >   	}
-> > > +	if (t->flush_pass_around) {
-> > > +		struct list_head *devices = &t->devices;
-> > > +		struct dm_dev_internal *dd;
-> > > +
-> > > +		list_for_each_entry(dd, devices, list)
-> > > +			INIT_LIST_HEAD(&dd->dm_dev->targets);
-> > > +
-> > > +		for (i = 0; i < t->num_targets; i++) {
-> > > +			struct dm_target *ti = dm_table_get_target(t, i);
-> > > +
-> > > +			if (ti->type->iterate_devices)
-> > > +				ti->type->iterate_devices(ti, dm_link_dev_to_target, NULL);
-> > > +		}
-> > > +	}
-> > > +
-> > >   	return 0;
-> > >   }
-> > > diff --git a/include/linux/device-mapper.h b/include/linux/device-mapper.h
-> > > index 0893ff8c01b6..19e03f9b2589 100644
-> > > --- a/include/linux/device-mapper.h
-> > > +++ b/include/linux/device-mapper.h
-> > > @@ -169,6 +169,7 @@ struct dm_dev {
-> > >   	struct dax_device *dax_dev;
-> > >   	blk_mode_t mode;
-> > >   	char name[16];
-> > > +	struct list_head targets;
-> > >   };
-> > >   /*
-> > > @@ -298,6 +299,8 @@ struct dm_target {
-> > >   	struct dm_table *table;
-> > >   	struct target_type *type;
-> > > +	struct list_head list;
-> > > +
-> > >   	/* target limits */
-> > >   	sector_t begin;
-> > >   	sector_t len;
-> > > -- 
-> > > 2.34.1
-> > > 
-> > 
-
+PiBPbiA1LzE1LzI0IDIzOjUxLCBBdnJpIEFsdG1hbiB3cm90ZToNCj4gPiArc3RhdGljIHNzaXpl
+X3QgbWF4X251bWJlcl9vZl9ydHRfc3RvcmUoc3RydWN0IGRldmljZSAqZGV2LA0KPiA+ICsgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgc3RydWN0IGRldmljZV9hdHRyaWJ1dGUgKmF0
+dHIsDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBjb25zdCBjaGFyICpi
+dWYsIHNpemVfdCBjb3VudCkNCj4gPiArew0KPiA+ICsgICAgIHN0cnVjdCB1ZnNfaGJhICpoYmEg
+PSBkZXZfZ2V0X2RydmRhdGEoZGV2KTsNCj4gPiArICAgICB1bnNpZ25lZCBpbnQgcnR0Ow0KPiA+
+ICsgICAgIGludCByZXQ7DQo+ID4gKw0KPiA+ICsgICAgIGlmIChrc3RydG91aW50KGJ1ZiwgMCwg
+JnJ0dCkpDQo+ID4gKyAgICAgICAgICAgICByZXR1cm4gLUVJTlZBTDsNCj4gPiArDQo+ID4gKyAg
+ICAgZG93bigmaGJhLT5ob3N0X3NlbSk7DQo+ID4gKyAgICAgaWYgKCF1ZnNoY2RfaXNfdXNlcl9h
+Y2Nlc3NfYWxsb3dlZChoYmEpKSB7DQo+ID4gKyAgICAgICAgICAgICByZXQgPSAtRUJVU1k7DQo+
+ID4gKyAgICAgICAgICAgICBnb3RvIG91dDsNCj4gPiArICAgICB9DQo+ID4gKw0KPiA+ICsgICAg
+IHVmc2hjZF9ycG1fZ2V0X3N5bmMoaGJhKTsNCj4gPiArICAgICByZXQgPSB1ZnNoY2RfcXVlcnlf
+YXR0cihoYmEsIFVQSVVfUVVFUllfT1BDT0RFX1dSSVRFX0FUVFIsDQo+ID4gKyAgICAgICAgICAg
+ICBRVUVSWV9BVFRSX0lETl9NQVhfTlVNX09GX1JUVCwgMCwgMCwgJnJ0dCk7DQo+ID4gKyAgICAg
+dWZzaGNkX3JwbV9wdXRfc3luYyhoYmEpOw0KPiA+ICsNCj4gPiArb3V0Og0KPiA+ICsgICAgIHVw
+KCZoYmEtPmhvc3Rfc2VtKTsNCj4gPiArICAgICByZXR1cm4gcmV0IDwgMCA/IHJldCA6IGNvdW50
+Ow0KPiA+ICt9DQo+IA0KPiBTaW5jZSBtb2RpZnlpbmcgUlRUIGlzIG9ubHkgYWxsb3dlZCB3aGls
+ZSBubyBjb21tYW5kcyBhcmUgaW4gcHJvZ3Jlc3MsDQo+IHNob3VsZG4ndCBtYXhfbnVtYmVyX29m
+X3J0dF9zdG9yZSgpIGZyZWV6ZSBhbmQgdW5mcmVlemUgYWxsIHJlcXVlc3QNCj4gcXVldWVzIG9m
+IGFsbCBsb2dpY2FsIHVuaXRzPw0KRG9uZS4NCg0KVGhhbmtzLA0KQXZyaQ0KDQo+IA0KPiBUaGFu
+a3MsDQo+IA0KPiBCYXJ0Lg0KDQo=
 
