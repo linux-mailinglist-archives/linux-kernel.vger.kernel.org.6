@@ -1,110 +1,227 @@
-Return-Path: <linux-kernel+bounces-181241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3819C8C7973
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:28:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A1E98C7975
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:28:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBD841F221DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:28:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BA031F214A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:28:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9656514D710;
-	Thu, 16 May 2024 15:28:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7465714E2D8;
+	Thu, 16 May 2024 15:28:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L6rXecEI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="WSpuOrNp";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="b7mnujaO";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="WSpuOrNp";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="b7mnujaO"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C48C414D43B;
-	Thu, 16 May 2024 15:28:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6751414D708;
+	Thu, 16 May 2024 15:28:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715873282; cv=none; b=tzVtF7STrC3TgSqbbVFQLyZiW/O7I83g/fj8ENFEE3b/g6G6IJK9thMB6z7C0V2bZ+uBRZkyYzoPIaNrHXU07mWr6sEOwKBcomTau0Zj/wa4Xe8peS2iqOcezns6ifTtpIjkbUMwMoV+mEFX5aJ9QktV1dwzsgPao+z8mn/PnBY=
+	t=1715873285; cv=none; b=WTrRdIL6pRm/9bcuSWnLoMcNoNxJTIfqB1Zzzgc77FK5rh71R1Z3nxKdp8z//KQ03F7vF0YRMlZ+USRml5KsWwcYe01usP3LLXwQWzo3eaVdZ9sr/IndyVtoLOWZU+oJaAYhRZRW9A1p37nngvaelO+tK9fAHMYdMyDyLHUNs5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715873282; c=relaxed/simple;
-	bh=SXE6O+oHIddD6pG7s3b7eDz3xjBZ6UcMXN9xDAZYMyU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=GqXDTX36PjTyIU1aK4PzzhYoBEAHg296bXQyD52BzBfwpq02kIgpuFtJRhf1GAeu7BeviuIQr76hdMDQ1Cel9WYO8UbUjumcmBU0i3g7WM9XLnPIBkgL6ylCPorQUzKFin05dAHgiK8lBtbSqGfr+LGw8Lpjrzs7m5AcSenQS0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L6rXecEI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31C3EC113CC;
-	Thu, 16 May 2024 15:28:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715873282;
-	bh=SXE6O+oHIddD6pG7s3b7eDz3xjBZ6UcMXN9xDAZYMyU=;
-	h=From:Date:Subject:To:Cc:From;
-	b=L6rXecEITy/6+ODRXq7YXTjKfZqb9y9NjOWWrM1qpxCvYl6gvrxs0gIG9sUlTUvHU
-	 N68n9ScuhH8yBcZMEDSp3zduI7DTnxSShV9zOCorrDXZYe2Z3aDD7oQBJezvzJv0Hr
-	 iTyupgohmzGtjgua9NY4rAtQCLT3IluJjxq6jtqlGPjAmdB+1PILjl9hWY8ZOowTnE
-	 I4JK7efU9zBof6Yp3pPU9ivPoKgiDwTR6bT8mgkzYYfg72OXhcD3amdqUVoB7S70zn
-	 Z4fB0zCNpBtQpiIW+OahBSeEy+TvQ4c+ZBXAkThMkxtXW1SZZ5P2Zil46AgMBD1zBE
-	 nlccvkr4pIhww==
-From: Mark Brown <broonie@kernel.org>
-Date: Thu, 16 May 2024 16:27:33 +0100
-Subject: [PATCH] kselftest/alsa: Ensure _GNU_SOURCE is defined
+	s=arc-20240116; t=1715873285; c=relaxed/simple;
+	bh=AmOTYXH8GdqujH3HrTd6mrl/hYKJ4jq8NRd8KsPzjLs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D0VkjeQSfpxmjH792gYBbNzwWpD7XuGT1sZIy1hb7wpsu89UgPNGnn/spGy2jjVwnoaDwm4z5tHwLzynnNw2c3Arn1c2A1Izxv7/TQ23DB037T/8xcH/43wn0/gnu6BUy8X2RiTyCw/OAAY+f+UEQqP7PdLneg0AAx39wGUpQ+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=WSpuOrNp; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=b7mnujaO; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=WSpuOrNp; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=b7mnujaO; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 4FD0A34B65;
+	Thu, 16 May 2024 15:28:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1715873281;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=v4gybi6HKECFJhxHO1fxxxa9tuCaWVox9JYYEGyzVGY=;
+	b=WSpuOrNpxAL3SMGegO7rJw38EC6fbBLtSpgnNgQU01fKZNDxi4NA1KRwq978kqCxALf82D
+	97flXmceO+sInMOcvwXNSo566rYcb1e2LMpimkbHh9aeDeD/UcXsCAWhspW1Rz7fIjUXxa
+	y39zzW0WSkNKIcFxVasHu3qisq2GnO4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1715873281;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=v4gybi6HKECFJhxHO1fxxxa9tuCaWVox9JYYEGyzVGY=;
+	b=b7mnujaOJcSUnXsNHbR+ZCIMxm4wq7NAaC8CDa/SHujbLB/32viBk1iU02mV4UlHF+x66x
+	eVVfIzFmsgMSZ7Dg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1715873281;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=v4gybi6HKECFJhxHO1fxxxa9tuCaWVox9JYYEGyzVGY=;
+	b=WSpuOrNpxAL3SMGegO7rJw38EC6fbBLtSpgnNgQU01fKZNDxi4NA1KRwq978kqCxALf82D
+	97flXmceO+sInMOcvwXNSo566rYcb1e2LMpimkbHh9aeDeD/UcXsCAWhspW1Rz7fIjUXxa
+	y39zzW0WSkNKIcFxVasHu3qisq2GnO4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1715873281;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=v4gybi6HKECFJhxHO1fxxxa9tuCaWVox9JYYEGyzVGY=;
+	b=b7mnujaOJcSUnXsNHbR+ZCIMxm4wq7NAaC8CDa/SHujbLB/32viBk1iU02mV4UlHF+x66x
+	eVVfIzFmsgMSZ7Dg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 277EC13991;
+	Thu, 16 May 2024 15:28:01 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 2snzCAEmRmblOAAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Thu, 16 May 2024 15:28:01 +0000
+Date: Thu, 16 May 2024 17:27:55 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Cc: syzbot <syzbot+d6f9ff86c1d804ba2bc6@syzkaller.appspotmail.com>,
+	clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] WARNING in lookup_inline_extent_backref
+Message-ID: <20240516152755.GC4449@suse.cz>
+Reply-To: dsterba@suse.cz
+References: <0000000000003d4a1a05ef104401@google.com>
+ <2de85e6f-b1ad-69ae-1e60-cd47c91115a9@gmx.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240516-kselftest-fix-gnu-source-v1-1-e482ca6bfff7@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAOUlRmYC/x2MSQqAMAwAvyI5G0jFpfgV8VBs1KBUaVQE8e8Wj
- wMz84ByFFZoswciX6KyhQQmz2CYXZgYxSeGgoqSKlPjoryOB+uBo9w4hRN1O+PAaI33nsg25Cy
- kfI+cjH/d9e/7Adth6olqAAAA
-To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Shuah Khan <shuah@kernel.org>, 
- Muhammad Usama Anjum <usama.anjum@collabora.com>, 
- Edward Liaw <edliaw@google.com>, John Hubbard <jhubbard@nvidia.com>
-Cc: Shuah Khan <skhan@linuxfoundation.org>, linux-sound@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.14-dev-f3d47
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1156; i=broonie@kernel.org;
- h=from:subject:message-id; bh=SXE6O+oHIddD6pG7s3b7eDz3xjBZ6UcMXN9xDAZYMyU=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBmRiX/9x1tdwjJ+WIougt2pxJwJRNDHaY3WKX7ZVta
- tzaafrCJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZkYl/wAKCRAk1otyXVSH0Ag/B/
- wMrz08LCQDCftmtnukIUc0v2DAGIqoW8APGwN2DsWqfxdhNbQamdvCc9YxkhcWo1AGQMMyLxrgukpf
- //9bkf9MaNYjjaCrV2V4wf0LyWJB9JmTMpWjUA1AGT3mFNnI+nmpTrdX70BxNDXHZYSISJsjbUbzRG
- pC0KZ89D4tZVoOB28+dPGib8/na/8X5nuPbF1Exf4bXdCWeSsz1+B+PEhm5wp4P9mHlRalrNfHxfZY
- 1oDo6kw8FsI+E7r4RfSRycplAWMYV0pY17seq//hck0C9Kn+aDdqA67tBu33wjFTQv+r0xJQAKHsbd
- R1rDLME3Tx6FtNorKInZaIB9YfWAEe
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2de85e6f-b1ad-69ae-1e60-cd47c91115a9@gmx.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Level: 
+X-Spamd-Result: default: False [-1.50 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=2325e409a9a893e1];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	ARC_NA(0.00)[];
+	FREEMAIL_TO(0.00)[gmx.com];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmx.com];
+	RCVD_TLS_ALL(0.00)[];
+	TAGGED_RCPT(0.00)[d6f9ff86c1d804ba2bc6];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:replyto]
+X-Spam-Score: -1.50
+X-Spam-Flag: NO
 
-The pcmtest driver tests use the kselftest harness which requires that
-_GNU_SOURCE is defined but nothing causes it to be defined.  Since the
-KHDR_INCLUDES Makefile variable has had the required define added let's
-use that, this should provide some futureproofing.
+On Mon, Jul 31, 2023 at 01:55:56PM +0800, Qu Wenruo wrote:
+> On 2022/12/5 16:13, syzbot wrote:
+> > Hello,
+> >
+> > syzbot found the following issue on:
+> >
+> > HEAD commit:    a4412fdd49dc error-injection: Add prompt for function erro..
+> > git tree:       upstream
+> > console+strace: https://syzkaller.appspot.com/x/log.txt?x=1469bdbd880000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=2325e409a9a893e1
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=d6f9ff86c1d804ba2bc6
+> > compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12d89247880000
+> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16b1ca83880000
+> >
+> > Downloadable assets:
+> > disk image: https://storage.googleapis.com/syzbot-assets/3bbe66b25958/disk-a4412fdd.raw.xz
+> > vmlinux: https://storage.googleapis.com/syzbot-assets/6851483ca667/vmlinux-a4412fdd.xz
+> > kernel image: https://storage.googleapis.com/syzbot-assets/2d5b23cb4616/bzImage-a4412fdd.xz
+> > mounted in repro: https://storage.googleapis.com/syzbot-assets/1f178223dd56/mount_0.gz
+> >
+> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> > Reported-by: syzbot+d6f9ff86c1d804ba2bc6@syzkaller.appspotmail.com
+> >
+> > ------------[ cut here ]------------
+> > WARNING: CPU: 0 PID: 6559 at fs/btrfs/extent-tree.c:865 lookup_inline_extent_backref+0x8c1/0x13f0
+> > Modules linked in:
+> > CPU: 0 PID: 6559 Comm: syz-executor311 Not tainted 6.1.0-rc7-syzkaller-00123-ga4412fdd49dc #0
+> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
+> > RIP: 0010:lookup_inline_extent_backref+0x8c1/0x13f0 fs/btrfs/extent-tree.c:865
+> > Code: 98 00 00 00 0f 87 42 0b 00 00 e8 5a 9c 07 fe 4c 8b 6c 24 28 eb 3d 83 7d 28 00 4c 8b 6c 24 28 0f 84 b0 04 00 00 e8 3f 9c 07 fe <0f> 0b 41 bc fb ff ff ff e9 f3 05 00 00 e8 2d 9c 07 fe e9 ca 05 00
+> > RSP: 0018:ffffc90006296e40 EFLAGS: 00010293
+> > RAX: ffffffff8382fbb1 RBX: 0000000000000000 RCX: ffff88801eab1d40
+> > RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+> > RBP: ffffc90006296ff0 R08: ffffffff8382f700 R09: ffffed100faf1008
+> > R10: ffffed100faf1008 R11: 1ffff1100faf1007 R12: dffffc0000000000
+> > R13: ffff888075edcd10 R14: ffffc90006296f60 R15: ffff88807d788000
+> > FS:  00007fdb617d5700(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
+> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > CR2: 000055912e028900 CR3: 000000001954b000 CR4: 00000000003506e0
+> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> > Call Trace:
+> >   <TASK>
+> >   insert_inline_extent_backref+0xcc/0x260 fs/btrfs/extent-tree.c:1152
+> >   __btrfs_inc_extent_ref+0x108/0x5e0 fs/btrfs/extent-tree.c:1455
+> >   btrfs_run_delayed_refs_for_head+0xf00/0x1df0 fs/btrfs/extent-tree.c:1943
+> >   __btrfs_run_delayed_refs+0x25f/0x490 fs/btrfs/extent-tree.c:2008
+> >   btrfs_run_delayed_refs+0x312/0x490 fs/btrfs/extent-tree.c:2139
+> >   qgroup_account_snapshot+0xce/0x340 fs/btrfs/transaction.c:1538
+> >   create_pending_snapshot+0xf35/0x2560 fs/btrfs/transaction.c:1800
+> >   create_pending_snapshots+0x1a8/0x1e0 fs/btrfs/transaction.c:1868
+> >   btrfs_commit_transaction+0x13f0/0x3760 fs/btrfs/transaction.c:2323
+> >   create_snapshot+0x4aa/0x7e0 fs/btrfs/ioctl.c:833
+> >   btrfs_mksubvol+0x62e/0x760 fs/btrfs/ioctl.c:983
+> >   btrfs_mksnapshot+0xb5/0xf0 fs/btrfs/ioctl.c:1029
+> >   __btrfs_ioctl_snap_create+0x339/0x450 fs/btrfs/ioctl.c:2184
+> >   btrfs_ioctl_snap_create+0x134/0x190 fs/btrfs/ioctl.c:2211
+> >   btrfs_ioctl+0x15c/0xc10
+> >   vfs_ioctl fs/ioctl.c:51 [inline]
+> >   __do_sys_ioctl fs/ioctl.c:870 [inline]
+> >   __se_sys_ioctl+0xfb/0x170 fs/ioctl.c:856
+> >   do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+> >   do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
+> >   entry_SYSCALL_64_after_hwframe+0x63/0xcd
+> > RIP: 0033:0x7fdb6184aa69
+> > Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 71 15 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+> > RSP: 002b:00007fdb617d52f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+> > RAX: ffffffffffffffda RBX: 00007fdb618d57f0 RCX: 00007fdb6184aa69
+> > RDX: 00000000200000c0 RSI: 0000000050009401 RDI: 0000000000000004
+> > RBP: 00007fdb618a226c R08: 00007fdb617d5700 R09: 0000000000000000
+> > R10: 00007fdb617d5700 R11: 0000000000000246 R12: 8000000000000000
+> > R13: 00007fdb618a1270 R14: 0000000100000000 R15: 00007fdb618d57f8
+> >   </TASK>
+> 
+> # syz test: git://github.com/adam900710/linux.git inline_lookup_debug
 
-Fixes: daef47b89efd ("selftests: Compile kselftest headers with -D_GNU_SOURCE")
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- tools/testing/selftests/alsa/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+There's one new repor from syzbot from 01/2024, the patch 7f72f50547b7af
+("btrfs: output extra debug info if we failed to find an inline
+backref") is there and adds some debugging. However, due to ordering of
 
-diff --git a/tools/testing/selftests/alsa/Makefile b/tools/testing/selftests/alsa/Makefile
-index 5af9ba8a4645..c1ce39874e2b 100644
---- a/tools/testing/selftests/alsa/Makefile
-+++ b/tools/testing/selftests/alsa/Makefile
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- #
- 
--CFLAGS += $(shell pkg-config --cflags alsa)
-+CFLAGS += $(shell pkg-config --cflags alsa) $(KHDR_INCLUDES)
- LDLIBS += $(shell pkg-config --libs alsa)
- ifeq ($(LDLIBS),)
- LDLIBS += -lasound
+WARN_ON, print_leaf, error message
 
----
-base-commit: 3c999d1ae3c75991902a1a7dad0cb62c2a3008b4
-change-id: 20240516-kselftest-fix-gnu-source-81ddd00870a8
-
-Best regards,
--- 
-Mark Brown <broonie@kernel.org>
-
+the machine reboots at the end of WARN_ON, so there's no useful
+debugging in the logs. I don't see a syzbot reproducer but you could ask
+it to do a test with updated debugging patch or eventually send an
+update to the one we have in tree.
 
