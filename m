@@ -1,135 +1,141 @@
-Return-Path: <linux-kernel+bounces-180921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0007B8C74D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:46:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D4768C74D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:51:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF820287369
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:46:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B957B1C21DDA
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:51:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88C97145342;
-	Thu, 16 May 2024 10:46:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7FC1145345;
+	Thu, 16 May 2024 10:51:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="SWrmU0Rd"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="knM0xaSy";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ks2B2d6y"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA8F143866
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 10:46:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B2D0143866;
+	Thu, 16 May 2024 10:51:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715856384; cv=none; b=Hd2cNXeBRdGAMW36+6zdxrkGHTnCha3fw51HGGdar1lnTYDNGxO2qN/XxelRARUgbDIP/3vG6Uj8ovpSximjNNbYgiS0lErzxhWm4U9rGPSDRoDg35A6fe1jXR3MibbyvIamMIbY+XayPeKYtCdFgceFOFU+bj+My7kOfWJ69cs=
+	t=1715856709; cv=none; b=LFUvIhfYX9R6EFH59ggkPdQiUAPNz4DjBuLgigTQP5eZvJgj9fzGZ8tEamyQHU6Kb/E0oEx1qb9NgOKSHSRG/MqXeDuvoArskIXO0h1yF7187G59GMb55dW5YorWC+WYEVy247DqPZFhkekhDOh2eZ8xCLT2Ba9+jFGNvmFkXBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715856384; c=relaxed/simple;
-	bh=QY0AeitsqqCxT+3ZJAW/jZAg5x1lur9Lmw+RgFWMNH8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OYHgk4JDiWtp8IG49FJIBViBVtCWH17aR5mjOyWyWOSlWJtbgStRqaPbFv3gdgTz7IAo0AViUSxOg7+PfwI/wzxNKJP5Zo1geSk3RmFXn6S51coOQ2Ug7OlPyBwXQgDU8GxT2E1cHQeQFqmZz2heLrTgaEWCEmn2+z574BL7aoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=SWrmU0Rd; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=sfAZnDr/F1j2PBMDkg6bGHqWdxY46sHH2KFN7kd5Q+M=; b=SWrmU0Rd04ldJWtx
-	rGBYzPzLRskEM4WaMyouHDDf83TFn7AHQoI4Il20LDhBI79LYDS/CoppJciRiqc9a8Zy/9iBKaVCw
-	I8D3C2MzatXyJZSmBp0e1tpaZJYn71TQDnSRSdqLgd2+MDyHFhnfbvj6eSF06YHjpwgZbWk7hXPUC
-	Bn1Igf15a3inK41UFkAc5n0siUc+GrRi5+SajQiFbgwBWzMyi9H19n4KkeQlg5TDUSFcZpSn1vHJS
-	JzgX3AqLHBmg9Xn/s5AFxk0hvlMWi+dhUDlnqFeFDgDG0h6Pl5ANphie8B/EuSGpZhnkxAamkeGj0
-	+OBTzX1cIgLPfCT45w==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1s7Ycm-001Cjz-1l;
-	Thu, 16 May 2024 10:46:12 +0000
-Date: Thu, 16 May 2024 10:46:12 +0000
-From: "Dr. David Alan Gilbert" <dave@treblig.org>
-To: sudipm.mukherjee@gmail.com
-Cc: arnd@arndb.de, linux-kernel@vger.kernel.org,
-	linux-parport@lists.infradead.org
-Subject: Re: [PATCH 0/3] parport: Cleanup some pre-devmodel code
-Message-ID: <ZkXj9Ip3DoUAe1wt@gallifrey>
-References: <20240502154823.67235-1-linux@treblig.org>
+	s=arc-20240116; t=1715856709; c=relaxed/simple;
+	bh=ddwSZ0rfxaLzTSLiACUTmn4XATY/arbreMqI2FnP5IA=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=EIogGqYt7mV5it5uLG8jgp3fVvWNx7vgEmwcrYx2V+qV8EuPKItSq7GMBLzpOwfFHTu+FBQykD30Uyh2mQBMFx0mMuqHcT0DvbtqZoVq8vH565xxSdixdGD+uTPf4b3oSa08qKjNdCr8a7Hs2J89BsP5aGbEa9wlDxfP5BfwIw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=knM0xaSy; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ks2B2d6y; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 16 May 2024 10:51:38 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1715856699;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EYwh9LNFmp9S2lIWZ26ZRPJGUQ8EBuLmGBdMkkajOXo=;
+	b=knM0xaSyoxFmMpyZ6i8rDG/mv/oe70gcmvqY37vc5bJADDtNcur7wR55O6Q9LQbfTf0jAE
+	W3xSUrQMMUf+JxJT0bDpdnRz4Vh7C5T+JSQuNND8I/ZldfDunIlib65WI7mn+1+ZpfLDJh
+	EQ45QNKEhFjgE9gcidM8vZHaJXki3ZCI1U0cFn6zMsldIDW5QTRkFS5HOpQTVsI8a7UIrd
+	QipIkW7E3rEMFNV71WjBvSup6JaQplAZ0LZ6uiRS12XXiQ0uvlkNHOixrFXE5ovO7urxv/
+	Atnlm2a8FN3+vcDvMiwTdrtSyn31A36sY1lK7KErZvtcMH/zkwmJD0USIPT7og==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1715856699;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EYwh9LNFmp9S2lIWZ26ZRPJGUQ8EBuLmGBdMkkajOXo=;
+	b=ks2B2d6yKXzp4k3hLXpECK0WufAQZsqEmwo7C5j2+c5938dfKoIfV5b95r9wUEmw9GGAPX
+	LJAIt/ExcpHTO4Ag==
+From: "tip-bot2 for Borislav Petkov" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/boot: Add a fallthrough annotation
+Cc: Borislav Petkov <bp@suse.de>, "Borislav Petkov (AMD)" <bp@alien8.de>,
+ Ingo Molnar <mingo@kernel.org>, x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240516102240.16270-1-bp@kernel.org>
+References: <20240516102240.16270-1-bp@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <20240502154823.67235-1-linux@treblig.org>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 10:45:58 up 7 days, 22:00,  1 user,  load average: 0.05, 0.01, 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+Message-ID: <171585669878.10875.8116182217321169904.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-* linux@treblig.org (linux@treblig.org) wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> 
-> There are some remenants of the pre-devmodel code
-> still in the parport drivers; try and clean some of them out.
+The following commit has been merged into the x86/urgent branch of tip:
 
-Ping!
+Commit-ID:     dd0716c2b87792ebea30864e7ad1df461d4c1525
+Gitweb:        https://git.kernel.org/tip/dd0716c2b87792ebea30864e7ad1df461d4=
+c1525
+Author:        Borislav Petkov <bp@suse.de>
+AuthorDate:    Thu, 16 May 2024 12:22:40 +02:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Thu, 16 May 2024 12:46:36 +02:00
 
-Dave
+x86/boot: Add a fallthrough annotation
 
-> This series should have no visible change, all the drivers
-> already use the devmodel, it's just removing the flags
-> that say that, and cleaning out no longer used function pointers.
-> (To me the most useful bit is removing the no longer used
-> 'attach' pointer, so if you've got code that's trying to use
-> it you'll get educated).
-> 
-> Trivially tested in qemu, I can still write to the lp;
-> 
-> Also checked with grep -r 'struct parport_driver' . -A 9
-> to see if I've missed any.
-> 
-> (I found this while dragging the out-of-tree ppscsi code
-> into working on head, so that I could use my prehistoric
-> HP PP scanner)
-> 
-> Dave
-> 
-> Dr. David Alan Gilbert (3):
->   parport: Remove 'drivers' list
->   parport: Remove attach function pointer
->   parport: Remove parport_driver.devmodel
-> 
->  drivers/ata/pata_parport/pata_parport.c  | 1 -
->  drivers/auxdisplay/ks0108.c              | 1 -
->  drivers/auxdisplay/panel.c               | 1 -
->  drivers/char/lp.c                        | 1 -
->  drivers/char/ppdev.c                     | 1 -
->  drivers/i2c/busses/i2c-parport.c         | 1 -
->  drivers/input/joystick/db9.c             | 1 -
->  drivers/input/joystick/gamecon.c         | 1 -
->  drivers/input/joystick/turbografx.c      | 1 -
->  drivers/input/joystick/walkera0701.c     | 1 -
->  drivers/input/serio/parkbd.c             | 1 -
->  drivers/net/hamradio/baycom_epp.c        | 1 -
->  drivers/net/hamradio/baycom_par.c        | 1 -
->  drivers/net/plip/plip.c                  | 1 -
->  drivers/parport/daisy.c                  | 1 -
->  drivers/parport/share.c                  | 9 ---------
->  drivers/pps/clients/pps_parport.c        | 1 -
->  drivers/pps/generators/pps_gen_parport.c | 1 -
->  drivers/scsi/imm.c                       | 1 -
->  drivers/scsi/ppa.c                       | 1 -
->  drivers/spi/spi-butterfly.c              | 1 -
->  drivers/spi/spi-lm70llp.c                | 1 -
->  include/linux/parport.h                  | 6 ------
->  sound/drivers/mts64.c                    | 1 -
->  sound/drivers/portman2x4.c               | 1 -
->  25 files changed, 38 deletions(-)
-> 
-> -- 
-> 2.44.0
-> 
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+Add implicit fallthrough checking to the decompressor code and fix this
+warning:
+
+  arch/x86/boot/printf.c: In function =E2=80=98vsprintf=E2=80=99:
+  arch/x86/boot/printf.c:248:10: warning: this statement may fall through [-W=
+implicit-fallthrough=3D]
+    248 |    flags |=3D SMALL;
+        |          ^
+  arch/x86/boot/printf.c:249:3: note: here
+    249 |   case 'X':
+        |   ^~~~
+
+This is a patch from three years ago which I found in my trees, thus the
+SUSE authorship still.
+
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Link: https://lore.kernel.org/r/20240516102240.16270-1-bp@kernel.org
+---
+ arch/x86/boot/Makefile | 1 +
+ arch/x86/boot/printf.c | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/arch/x86/boot/Makefile b/arch/x86/boot/Makefile
+index 3cece19..343aef6 100644
+--- a/arch/x86/boot/Makefile
++++ b/arch/x86/boot/Makefile
+@@ -69,6 +69,7 @@ KBUILD_CFLAGS	:=3D $(REALMODE_CFLAGS) -D_SETUP
+ KBUILD_AFLAGS	:=3D $(KBUILD_CFLAGS) -D__ASSEMBLY__
+ KBUILD_CFLAGS	+=3D $(call cc-option,-fmacro-prefix-map=3D$(srctree)/=3D)
+ KBUILD_CFLAGS	+=3D -fno-asynchronous-unwind-tables
++KBUILD_CFLAGS	+=3D $(CONFIG_CC_IMPLICIT_FALLTHROUGH)
+ GCOV_PROFILE :=3D n
+ UBSAN_SANITIZE :=3D n
+=20
+diff --git a/arch/x86/boot/printf.c b/arch/x86/boot/printf.c
+index 1237bee..c0ec1dc 100644
+--- a/arch/x86/boot/printf.c
++++ b/arch/x86/boot/printf.c
+@@ -246,6 +246,7 @@ int vsprintf(char *buf, const char *fmt, va_list args)
+=20
+ 		case 'x':
+ 			flags |=3D SMALL;
++			fallthrough;
+ 		case 'X':
+ 			base =3D 16;
+ 			break;
 
