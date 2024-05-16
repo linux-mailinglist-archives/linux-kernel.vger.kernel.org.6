@@ -1,182 +1,182 @@
-Return-Path: <linux-kernel+bounces-180924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1703E8C74EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:56:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B312A8C74F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:58:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B25AB2310F
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:56:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A95F1F23B5F
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:58:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E19DE14535D;
-	Thu, 16 May 2024 10:56:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51D4D145352;
+	Thu, 16 May 2024 10:58:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="Fz/smocq"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="OpWVdIwJ"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 808DB145339
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 10:56:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71BFB143747
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 10:58:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715856994; cv=none; b=QpSAggK+9F7R4fXB7i7FQOkrhRNTEFLvZFaF0+UxjvyJVb0H1czZAh1W0ElG+8k9V9AeC7R1AJ3QF6Yv5o6DdSHoqDSxUyktfral9pzr/vWskAmLySYk3BKD2HAyPmMtRabXpM40I3kj3fLloOa1kf+trmEvxvi1CJKmdiRts6A=
+	t=1715857088; cv=none; b=ebS+ETxmwIDsI1zJnvJZez8+rTqkOlY8abs4Q1LSz21lau/sif1IGeZs6mA0OK2JsTqFkqsEqIgOTUx+dF2267Z79dAlpb1jNbjpMeuEoF8uVc9c2uuBr4HaHzgdW0RUhTKuMqu6Aj6s4jZvrif7mBGs5ddwBwL3gKyDJGjl9p8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715856994; c=relaxed/simple;
-	bh=BsLbCZn+JhmXnJxcv1qH56cu7tkHuVfRZhl7UEiWLEY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z7A6llBkbYXimA4kCAgK0dMXG4a/bw81Ja0ihM8S9X0YvyPgaJQEL0t6nuteJ0zauyihnmrDY9bHmhtAjwfeJnX2w9f0+c0EVARkIQGpweXiv9YDx4Yi5DV78L6t/s5ztIXYmLu4k/BSE5SEjAAdMKeVXdxNaX8npig2DsmiCAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=Fz/smocq; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2e381f7c9c4so14821fa.3
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 03:56:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1715856990; x=1716461790; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CYCaZIYD32X8OWqTmuj/FbQa01MUdFxdF5XvoFGLFW0=;
-        b=Fz/smocqGZqvipuDuJ5GR6bdGTERMK1Tq5TyxPLD9dJVMnK0ANHuWKWjfXeDvUYH2O
-         f8sJcJJc5Ru6hniW49DaMvZl9Oy/5jAIrwXyydOIuglZ+BJkcs6ayC5dX7fjZup4RCwb
-         AD122Vh1lt9tdDezNiNNvx3SlhhpsnenfDcJs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715856990; x=1716461790;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CYCaZIYD32X8OWqTmuj/FbQa01MUdFxdF5XvoFGLFW0=;
-        b=OIX4enOSUgz8NYMyxIHeZsKGWArkiCqUUkY6u9viyq90vsSqc/fZEC/ofv05WDwdca
-         2wM62WhlXP4KZDUmc1JvZqI4weYOr6dljuzaP6TFV5XNCOgsKYHX3nY9gLL95dkGRB3Z
-         r0WHexLCnHh4wN7vf4jg46fZPR0km1nFIKQmiZm0+n3kpdMk8QHJlZQTfk+lk09UtXRD
-         /kuLrs7DajQCqgxvpycoUF1h4rd7Y6F5HUOhdC5NAS0o+P1WSY9DYMxF0Bt23PR9XNeT
-         8Qob5UYZSJLWYAU4UvUELbCoWnWG1ORnG9Z98hpavBgbjRnKDPyl6I1XB2K/a1BKjdov
-         f9og==
-X-Forwarded-Encrypted: i=1; AJvYcCWC8cFeEVSnz9fnmM7OAiFxm+dTwcZAaF+mfDfeN9H8MUqmeDaoGdLaqaiIsZsxVamrumdxCj+k+Vn2agxlGY4CkooqQMHRNLlmyRTV
-X-Gm-Message-State: AOJu0YyzyisYZ/sESOrIe6jEJAazMQRQ5KOVHPIgxc2oNNotcWt1QoOp
-	qim1ZLVPDnt7lsJNrQCJbylFSltNUk50KTlSdyTeSYQFlSEX65qmuYCL4ZZ7QbQ=
-X-Google-Smtp-Source: AGHT+IEjj4yl40IXE4RuRX4OV/v0GH5bFkfz02Pq4c/NaDR61cTtFuwAhcTUObONlIdIlDgvDa0lTA==
-X-Received: by 2002:a2e:9b8b:0:b0:2e2:1647:8308 with SMTP id 38308e7fff4ca-2e51fd4b33emr121987831fa.2.1715856990407;
-        Thu, 16 May 2024 03:56:30 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-351c6f295e2sm6725490f8f.39.2024.05.16.03.56.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 May 2024 03:56:29 -0700 (PDT)
-Date: Thu, 16 May 2024 12:56:27 +0200
-From: Daniel Vetter <daniel@ffwll.ch>
-To: John Stultz <jstultz@google.com>
-Cc: Maxime Ripard <mripard@kernel.org>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Brian Starkey <Brian.Starkey@arm.com>,
-	"T.J. Mercier" <tjmercier@google.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Mattijs Korpershoek <mkorpershoek@baylibre.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org
-Subject: Re: [PATCH 0/8] dma-buf: heaps: Support carved-out heaps and ECC
- related-flags
-Message-ID: <ZkXmWwmdPsqAo7VU@phenom.ffwll.local>
-Mail-Followup-To: John Stultz <jstultz@google.com>,
-	Maxime Ripard <mripard@kernel.org>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Brian Starkey <Brian.Starkey@arm.com>,
-	"T.J. Mercier" <tjmercier@google.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Mattijs Korpershoek <mkorpershoek@baylibre.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org
-References: <20240515-dma-buf-ecc-heap-v1-0-54cbbd049511@kernel.org>
- <CANDhNCoOKwtpstFE2VDcUvzdXUWkZ-Zx+fz6xrdPWTyciVXMXQ@mail.gmail.com>
+	s=arc-20240116; t=1715857088; c=relaxed/simple;
+	bh=14XKAqGJJ7efuAKjdOGKIrcSj/dQ64odSwJbyfxAhjI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=rM+DMmHzL+MG5vj41XXf/4sX+zx6u34ZV8KK/SmFwiexitEq4xYpwyAtg0B/AmadAzoGjYXb1v1TaDZxQNKXG36I3RbxlcJwJpoxyS3BxHwbhxy7GOCvnjbXXlssbsH1ZVplv01syNnpIzkWJX1H6/2DZ6CIwZCcQKMMOjLqFwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=OpWVdIwJ; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240516105755euoutp0267b6a49b97d3d1f901340e3212ab7a43~P8us6ztCQ2689526895euoutp02D
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 10:57:55 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240516105755euoutp0267b6a49b97d3d1f901340e3212ab7a43~P8us6ztCQ2689526895euoutp02D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1715857075;
+	bh=AzsFVgT9ZtACfhnjkNzCBMnfOWVmsAJhweMEuyRHJwk=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=OpWVdIwJFLqtMY3OmhJQ7w9tJIUFY5ZhXiWudFtjcVDyMQdpIWFFuy59b04SHBWh0
+	 FhpPWRfheAPSWIoNWc164Mn4WH2HSh2WLx25YtMvdQgxDHuitfEl2TPDENeVaTD28h
+	 pyN1ioWu5mI+wZ3AApbnwsi61pBVTOTGtbZZBj0A=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20240516105754eucas1p14aafa43dc59b01537ccdb54aea7c98c6~P8usjh2yv0654806548eucas1p1R;
+	Thu, 16 May 2024 10:57:54 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges3new.samsung.com (EUCPMTA) with SMTP id 19.31.09620.2B6E5466; Thu, 16
+	May 2024 11:57:54 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240516105754eucas1p29073691f41788465de22d59008b95932~P8usGPH5T1610316103eucas1p21;
+	Thu, 16 May 2024 10:57:54 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240516105754eusmtrp2d0427052643d706bbe2dcc5712ec3586~P8usE_r9h1817218172eusmtrp2J;
+	Thu, 16 May 2024 10:57:54 +0000 (GMT)
+X-AuditID: cbfec7f5-d31ff70000002594-cc-6645e6b22a39
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id 8E.3D.08810.2B6E5466; Thu, 16
+	May 2024 11:57:54 +0100 (BST)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240516105753eusmtip1c6ced12055351978f721781ff4dd75e1~P8urc3BYk0913809138eusmtip19;
+	Thu, 16 May 2024 10:57:53 +0000 (GMT)
+Message-ID: <29f30eda-deba-4092-9b4c-8cb101b8691d@samsung.com>
+Date: Thu, 16 May 2024 12:57:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANDhNCoOKwtpstFE2VDcUvzdXUWkZ-Zx+fz6xrdPWTyciVXMXQ@mail.gmail.com>
-X-Operating-System: Linux phenom 6.6.15-amd64 
+User-Agent: Mozilla Thunderbird
+Subject: Re: clkdev: report over-sized strings when creating clkdev entries
+To: Naresh Kamboju <naresh.kamboju@linaro.org>, "Russell King (Oracle)"
+	<linux@armlinux.org.uk>
+Cc: Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Linux
+	ARM <linux-arm-kernel@lists.infradead.org>, linux-clk
+	<linux-clk@vger.kernel.org>, lkft-triage@lists.linaro.org, open list
+	<linux-kernel@vger.kernel.org>, Anders Roxell <anders.roxell@linaro.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>, Michael Turquette
+	<mturquette@baylibre.com>
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <CA+G9fYurPNaW=u2E+h+segnXhY3cfWo3BJpfYDJxKRFPY4epsQ@mail.gmail.com>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrAKsWRmVeSWpSXmKPExsWy7djPc7qbnrmmGeyYrm5xa8pvJou/k46x
+	W3yY18pusenxNVaLjz33WC0u75rDZnFo6l5Gi633prFbXDzlanHrE7/Fv2sbWRy4PS5fu8js
+	8fvXJEaP9zda2T02repk87hzbQ+bx+Yl9R63/z1m9vi8SS6AI4rLJiU1J7MstUjfLoErY+KX
+	SYwFnQIV14/8Y2lg3MXbxcjJISFgItGzqZW5i5GLQ0hgBaPEuVlL2CGcL4wSHS9PsEI4nxkl
+	LjbuZYZpedv0FKpqOVDVtDmMEM5HRolFh+aAVfEK2Emsn7+aFcRmEVCV+PVyOhNEXFDi5Mwn
+	LCC2qIC8xP1bM9hBbGEBb4m+e71gvSICiRKPV/0E28As8I5J4vynHrAGZgFxiVtP5oMNYhMw
+	lOh628UGYnMKBEr8ftrJBFEjL7H97RywjyQEujkljl09yQRxt4vEotdvoGxhiVfHt7BD2DIS
+	/3eCDAVpaGeUWPD7PpQzgVGi4fktRogqa4k7534BreMAWqEpsX6XPkTYUeLX/y52kLCEAJ/E
+	jbeCEEfwSUzaNp0ZIswr0dEmBFGtJjHr+Dq4tQcvXGKewKg0CylcZiF5cxaSd2Yh7F3AyLKK
+	UTy1tDg3PbXYOC+1XK84Mbe4NC9dLzk/dxMjMJGd/nf86w7GFa8+6h1iZOJgPMQowcGsJMIr
+	kuacJsSbklhZlVqUH19UmpNafIhRmoNFSZxXNUU+VUggPbEkNTs1tSC1CCbLxMEp1cBU8uev
+	/OcrSysP72zJmjNjWiLvl1/cfsUuX51Kkz5ov7FfnHQhTuWf6qyMKwyHHjb6M//89JSL70/K
+	50d7ri8ydbl2n3Vnu93SFR7l7D/bxYs+z7/rI2D69Zn0uwwLvycKk/L/CDGtObj10h+3mRdD
+	3n1bEOHGeoJ/mkL4jNdpd8JXBd5WWHoye6KmxdFPH9kYEn443JV83PngZt2On4zfdLU1vYVW
+	JP1evfH2tkXbNH64XMvb9CZTOlRFIGfTt64Fj+uS2X+pfZ+xJ+YzE6/BTrYu0ZOTqvcvP3jF
+	hNEw2H3zl/iY0A9LPZqta5g8tQMWiIYEBoVIxTha3Co8wBNaasXN/Xuu34aEmu62w4ouSizF
+	GYmGWsxFxYkAdX0GNdMDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrAIsWRmVeSWpSXmKPExsVy+t/xu7qbnrmmGezYzmlxa8pvJou/k46x
+	W3yY18pusenxNVaLjz33WC0u75rDZnFo6l5Gi633prFbXDzlanHrE7/Fv2sbWRy4PS5fu8js
+	8fvXJEaP9zda2T02repk87hzbQ+bx+Yl9R63/z1m9vi8SS6AI0rPpii/tCRVISO/uMRWKdrQ
+	wkjP0NJCz8jEUs/Q2DzWyshUSd/OJiU1J7MstUjfLkEvY+KXSYwFnQIV14/8Y2lg3MXbxcjJ
+	ISFgIvG26Sl7FyMXh5DAUkaJr983sUIkZCROTmuAsoUl/lzrYoMoes8ocafvLRNIglfATmL9
+	/NVgRSwCqhK/Xk6HigtKnJz5hAXEFhWQl7h/awY7iC0s4C3Rd6+XuYuRg0NEIFHi138TkDCz
+	wAcmiU/XNCDmtzFL3H/QyQiREJe49WQ+2Ew2AUOJrrcgR3BycAoESvx+2skEUWMm0bW1C6pe
+	XmL72znMExiFZiE5YxaSUbOQtMxC0rKAkWUVo0hqaXFuem6xoV5xYm5xaV66XnJ+7iZGYNRu
+	O/Zz8w7Gea8+6h1iZOJgPMQowcGsJMIrkuacJsSbklhZlVqUH19UmpNafIjRFBgWE5mlRJPz
+	gWkjryTe0MzA1NDEzNLA1NLMWEmc17OgI1FIID2xJDU7NbUgtQimj4mDU6qBSXTqUj+R7H89
+	i7ysjqmdffCJ3cQ6XctzeaLSxQqB71bt64zf+z/efMHP4s2UO6vzEw2YdPW/PnodnbpOafVB
+	sfz8OdlZHAbm8i8OMwokLX3+tu1UwMIo4z0J/bsaP+qbeqR8t11vGG47aVfn8VfX3Q5HpH14
+	6dYxuze7Vt05odF5lc7WwOclrHvc4vcsZPRlL3NhscldVxNwuTlznVi1vr/qoVMTzndUu5mu
+	MvkYX8c5Ya7fjU9X1MT7Jv/XPrRu24S+MPvHJ66Yv+ktjmq6YXv+2LuoRVOfll6cXR79tNY+
+	T+aFQoj51QVsbPoX43ZdZJK7/6w/29zkO8eSNVYfN35bLV1QN8Xyj9t/v+W/lViKMxINtZiL
+	ihMB9h02VmMDAAA=
+X-CMS-MailID: 20240516105754eucas1p29073691f41788465de22d59008b95932
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20240516102738eucas1p2eee547d4b78c347308b0979fa98ede39
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240516102738eucas1p2eee547d4b78c347308b0979fa98ede39
+References: <CA+G9fYuZd_ur56H8fwDSvUywopvn_b7ogprGkjEatQ7EPTLwYQ@mail.gmail.com>
+	<11be44d3-0f32-49c6-b4ae-ba97a9f97763@app.fastmail.com>
+	<820ddc2ec70780ae1ecd3af864dc8bd6.sboyd@kernel.org>
+	<ZkUgqzUn1EmjrPdl@shell.armlinux.org.uk>
+	<CGME20240516102738eucas1p2eee547d4b78c347308b0979fa98ede39@eucas1p2.samsung.com>
+	<CA+G9fYurPNaW=u2E+h+segnXhY3cfWo3BJpfYDJxKRFPY4epsQ@mail.gmail.com>
 
-On Wed, May 15, 2024 at 11:42:58AM -0700, John Stultz wrote:
-> On Wed, May 15, 2024 at 6:57 AM Maxime Ripard <mripard@kernel.org> wrote:
-> > This series is the follow-up of the discussion that John and I had a few
-> > months ago here:
-> >
-> > https://lore.kernel.org/all/CANDhNCquJn6bH3KxKf65BWiTYLVqSd9892-xtFDHHqqyrroCMQ@mail.gmail.com/
-> >
-> > The initial problem we were discussing was that I'm currently working on
-> > a platform which has a memory layout with ECC enabled. However, enabling
-> > the ECC has a number of drawbacks on that platform: lower performance,
-> > increased memory usage, etc. So for things like framebuffers, the
-> > trade-off isn't great and thus there's a memory region with ECC disabled
-> > to allocate from for such use cases.
-> >
-> > After a suggestion from John, I chose to start using heap allocations
-> > flags to allow for userspace to ask for a particular ECC setup. This is
-> > then backed by a new heap type that runs from reserved memory chunks
-> > flagged as such, and the existing DT properties to specify the ECC
-> > properties.
-> >
-> > We could also easily extend this mechanism to support more flags, or
-> > through a new ioctl to discover which flags a given heap supports.
-> 
-> Hey! Thanks for sending this along! I'm eager to see more heap related
-> work being done upstream.
-> 
-> The only thing that makes me a bit hesitant, is the introduction of
-> allocation flags (as opposed to a uniquely specified/named "ecc"
-> heap).
-> 
-> We did talk about this earlier, and my earlier press that only if the
-> ECC flag was general enough to apply to the majority of heaps then it
-> makes sense as a flag, and your patch here does apply it to all the
-> heaps. So I don't have an objection.
-> 
-> But it makes me a little nervous to add a new generic allocation flag
-> for a feature most hardware doesn't support (yet, at least). So it's
-> hard to weigh how common the actual usage will be across all the
-> heaps.
-> 
-> I apologize as my worry is mostly born out of seeing vendors really
-> push opaque feature flags in their old ion heaps, so in providing a
-> flags argument, it was mostly intended as an escape hatch for
-> obviously common attributes. So having the first be something that
-> seems reasonable, but isn't actually that common makes me fret some.
-> 
-> So again, not an objection, just something for folks to stew on to
-> make sure this is really the right approach.
+On 16.05.2024 12:27, Naresh Kamboju wrote:
+> On Wed, 15 May 2024 at 22:53, Russell King (Oracle)
+> <linux@armlinux.org.uk> wrote:
+>> On Tue, May 07, 2024 at 01:26:17PM -0700, Stephen Boyd wrote:
+>>> Quoting Arnd Bergmann (2024-05-07 00:44:15)
+>>>> On Tue, May 7, 2024, at 09:20, Naresh Kamboju wrote:
+>>>>> The WinLink E850-96 board boot failed with Linux next-20240506 but there
+>>>>> is no kernel crash log on the serial [1].
+>>>>>
+>>>>> Anders bisection results pointing to this commit,
+>>>>> # first bad commit:
+>>>>>    [4d11c62ca8d77cb1f79054844b598e0f4e92dabe]
+>>>>>    clkdev: report over-sized strings when creating clkdev entrie
+>>>>>
+>>>>> After reverting the above patch the boot test passed [2].
+>>>>>
+>>>>> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+>>>>>
+>>> There are two fixes on the list: [1] and [2]. Perhaps one of those
+>>> resolves this?
+>>>
+>>> [1] https://lore.kernel.org/r/20240507065317.3214186-1-m.szyprowski@samsung.com
+>> This one has (I think) ended up in the patch system last week, but it's
+>> not clkdev, it's only related. I'm also not Cc'd on its posting, and
+>> it's not posted to any mailing list that I'm a part of. So I've not
+>> been following any discussion on it.
+>>
+>> Digging in to the discussion, I see various attributations, and a final
+>> message reporting an unused variable, and a promise to send v2. So,
+>> I'm guessing that
+>> https://protect2.fireeye.com/v1/url?k=946226d9-f5e933ef-9463ad96-74fe485fffe0-28286a0026513387&q=1&e=a16c1c53-9c99-475a-b144-8adf7852ebc0&u=http%3A%2F%2Fwww.home.armlinux.org.uk%2Fdeveloper%2Fpatches%2Fviewpatch.php%3Fid%3D9397%2F1
+> I do not have access to this link ^.
+>
+>> is now superseded in some way... I wouldn't have known without locating
+>> this email and checking the links.
 
-Another good reason to go with full heap names instead of opaque flags on
-existing heaps is that with the former we can use symlinks in sysfs to
-specify heaps, with the latter we need a new idea. We haven't yet gotten
-around to implement this anywhere, but it's been in the dma-buf/heap todo
-since forever, and I like it as a design approach. So would be a good idea
-to not toss it. With that display would have symlinks to cma-ecc and cma,
-and rendering maybe cma-ecc, shmem, cma heaps (in priority order) for a
-SoC where the display needs contig memory for scanout.
 
-> Another thing to discuss, that I didn't see in your mail: Do we have
-> an open-source user of this new flag?
+The fix for drivers/clk/samsung/clk.c driver has been merged to clk-next:
 
-I think one option might be to just start using these internally, but not
-sure the dma-api would understand a fallback cadence of allocators (afaik
-you can specify specific cma regions already, but that doesn't really
-covere the case where you can fall back to pages and iommu to remap to
-contig dma space) ... And I don't think abandonding the dma-api for
-allocating cma buffers is going to be a popular proposal.
--Sima
+https://lore.kernel.org/all/f7a877622829db499bf2bc65fe9ffbff.sboyd@kernel.org/
+
+Best regards
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
 
