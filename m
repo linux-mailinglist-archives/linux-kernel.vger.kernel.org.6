@@ -1,101 +1,153 @@
-Return-Path: <linux-kernel+bounces-180534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8A448C6FC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 02:59:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 190AB8C6FC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 02:58:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA13F1C21CDF
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 00:59:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 215251C21893
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 00:58:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 997D93C39;
-	Thu, 16 May 2024 00:58:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C78B138C;
+	Thu, 16 May 2024 00:58:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ZiPyViGD"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	dkim=pass (2048-bit key) header.d=jrtc27.com header.i=@jrtc27.com header.b="fRfd419z"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3FE110E3
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 00:58:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92B2BEBB
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 00:58:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715821125; cv=none; b=BP7CjqBfNNCpQWU/glwmfEZbDUMcbxydK/VPq1ENH0IP8zq2656jRu2UfEaqa5Iu/Xe8RV5VtRN+3IcfKARRkNKoUJ+x7GKXEII8jXkfRdFYuAzXpEvVVipGxdFzG8cC1BW0jcS9J6Asx7wgeu5y4RCP1hHnN+JMMxWSZtt2O9A=
+	t=1715821124; cv=none; b=bpjh2FHNOqi1nNmuxxSUlnHW60i+PoxtE+2aJpeCA/87OQkxyjXQK0KQAGo7PWtTyEvpRThlCnVhKI6t04gQ7eiTYiSiV2omNPkzfursfEmgr+0xFoaxgPP+AAqdRimt7uqNxZbe4sSsryCK2cIY6tqt+IzMpaZ+Yy7GDRJM2bk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715821125; c=relaxed/simple;
-	bh=7BhJCHWbFw2vBW4UWOoKmtl5o/hRhwMMB30aAmCIRIg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kHa9ETbwRMhh0d9RyY+dHsPXqxoYpxjLj+QNmCrDxOxI5EVNgzBAHGwLRfuXm6z30Mg+6B/ArvUt6UZqg+p15H5QfKQx6yaVXcNzjncLINs+8cP18S0Eukx6TJVmG7x6YzLjcXg1gx8YJN2gvTA0zJ3QZXRAXeh7iVK8EyNrosI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ZiPyViGD; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5727dc6d3edso2667513a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 17:58:43 -0700 (PDT)
+	s=arc-20240116; t=1715821124; c=relaxed/simple;
+	bh=SW/q7stGvy6OMoCA218cQyZGjRLhnAtQ3Ys6NaaQOAE=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=lz2YPuGbWYTKnFE+/X6RynOn2HH9IPk/smSOvxgHBeyDXsABS3/5DtWsnRPiwwH25eej46/KFNaliJeBpvjQVzURK3W+2IiL2J2dGCJxNbDGxocj00HYHqD7pn+jehOr7UryF0v63g9Tvbce1/8I2GpS+HGwGte/G0LAvYMFCQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jrtc27.com; spf=pass smtp.mailfrom=jrtc27.com; dkim=pass (2048-bit key) header.d=jrtc27.com header.i=@jrtc27.com header.b=fRfd419z; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jrtc27.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jrtc27.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4202959b060so2363275e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 17:58:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1715821122; x=1716425922; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=4hg4NLF7jEXeiNRcO834bQO5LEzD3TDDoCFHLvMHj6Q=;
-        b=ZiPyViGDgAHrw43FqkzbUd/okMCFM/X968UU0PbUzEPkBt+xXDwVWP71hFAlIuCCrE
-         Y2N7o7cbH2w10PubLtN+IYgmpKgpHnPPy1To/DpDav8eZTY0jP38Ro31ybmTOhshpC65
-         lk+jDrM7FIsK186ugvsz1bK9Ov05P1GfaVOTE=
+        d=jrtc27.com; s=gmail.jrtc27.user; t=1715821121; x=1716425921; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SW/q7stGvy6OMoCA218cQyZGjRLhnAtQ3Ys6NaaQOAE=;
+        b=fRfd419z0bzTM54X2iBLP1bLXlj30vlD9S269IfYyZrkaHDMu2SVLI94s3L02HD3AL
+         ZrwhHDTwbt2m0IY9In0utVuHWpiRqfX1F9Ot/KdFxrreCJghrysEl1qG0/SDmUcm4n3Q
+         bpCCAiAAmnalKB5QY37vA5sDvpO19IFScqIawAhQcJj4Az+RurBGuqrvBbgI6xg5SGIW
+         v3ppHqQ+FVG4JPGTVKE/pCdLjlXaJ1ZZDESMNr1OGkv38riRDJo7jFElgFufbEr80jRb
+         wOiE83CJTi/O8TeQhf4gqVI3azMoYs32HFe1/mLHNC2KkQHmYzIgwdbHCobW2bW7qbtY
+         JMdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715821122; x=1716425922;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4hg4NLF7jEXeiNRcO834bQO5LEzD3TDDoCFHLvMHj6Q=;
-        b=pWHjphRmznXoaCKkI7PyAifklUoREjx2uAhAmUHlCSyR8V0ywd/AgYuzrDT7SXLwzp
-         K2bfnX0uuR9gsQExPPdqez0/vYk1nOlf6xTmIR2myingR+X5U9Jiz2o4OTk4zraoX21A
-         KWoyK+bP5DnkXq4H595kGCPulSIHgmlau+N80mXAzu6g8m/WNHyDMD6UjFbqM1VrpXbW
-         BgMRh8+ySJWCoDG+ymuTJKz69wmce4+UX3T5a/lFlt0/WjWAPd0xiOq4XRCclUuXA9VJ
-         /62EGCn/DoiPX2PZ3KTYGcxX4c1bI5LHtm/7UWtV7jtP9ZQSkeXR8rB2vt74TaywT5E2
-         G+bQ==
-X-Gm-Message-State: AOJu0YyRSXwqWejPVFKQdCOzdBQ65jO8WQ8TowohwiBmExD/rlksv0Vh
-	tTecq0NM9ZaM/OWKets7YPh8rCDL416Ymzy8GPcEHD3Ig3twCxEly/o+GkEb6mhfGEwjxjcoN+X
-	75BUh4w==
-X-Google-Smtp-Source: AGHT+IGeOye+GtBV/mzow0GVIKlcXF7bYuAJKFrQsGyITiMVMQJBjBA7l5htmHy2zkiNvbsC9Gcfhw==
-X-Received: by 2002:a17:906:37d6:b0:a55:9dec:355f with SMTP id a640c23a62f3a-a5a2d676774mr1056314666b.70.1715821122102;
-        Wed, 15 May 2024 17:58:42 -0700 (PDT)
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com. [209.85.208.52])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b01598sm932443366b.178.2024.05.15.17.58.41
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 May 2024 17:58:41 -0700 (PDT)
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-56e37503115so1876752a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 17:58:41 -0700 (PDT)
-X-Received: by 2002:a17:906:e2c2:b0:a59:c3dd:db2a with SMTP id
- a640c23a62f3a-a5a2d53b04cmr1119476866b.11.1715821121343; Wed, 15 May 2024
- 17:58:41 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715821121; x=1716425921;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SW/q7stGvy6OMoCA218cQyZGjRLhnAtQ3Ys6NaaQOAE=;
+        b=AkRuwicdY+JFGHcVEUMcqR5JyKkptiV1jkZ026aj3k44Kb20Hcc1W3bzi+zs3GPlli
+         77tpt/prjHnkjR/iaP/IwuYvDIUabulphgEeGHEP2ahwZnItn+TQVEkmprJSP79FB5Jm
+         uSk0WrGhfQ+O2IF9DkT1pTn0sGdYFRJob9Vn4WSqU94ytdC1y6aGyFHxq9y5UVAhTZUM
+         E2IPFfUTzzJ5fYK0xkZw+fiy17J0vMjCWErPB1RL+IAwhyvTI2MF1FVCxxchI793T0am
+         UhyGWnMGJIANh0X4L6ftg/MRfnIa4wB6XPjRjFv6mEryhTQqDHev5Y8FSgMTkRpvrUOS
+         8vzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUBcYbk2SbeMkuWFdyNNv59RKcvM2dJK3xH1gKTD0mJi0A1D0TnOldah7M6qMj5J7i4d0xDYkSq7C391ijubmPY8BIPqIZunhklMtMK
+X-Gm-Message-State: AOJu0YwDRD1o9T/9Nm++xGXOjWVAwZ+gxiFuK/S79XkA1zJQDIrNkjQ1
+	5AUbqdc30V3PxGAG8JkXKrUO2hhPgplr4by8n7yXNIfO1Vp6S365Q0CSmhYlpE8=
+X-Google-Smtp-Source: AGHT+IG8/7wKols6oq37R5OJvGqZTKvcrgWEhHIDZA0YIaNJ+IfZHMO7lXNZePnotDSmTCdPiS6z1w==
+X-Received: by 2002:a05:600c:35d6:b0:41a:a4b1:c098 with SMTP id 5b1f17b1804b1-4200fcb9e94mr90424695e9.19.1715821120656;
+        Wed, 15 May 2024 17:58:40 -0700 (PDT)
+Received: from smtpclient.apple ([131.111.5.246])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41fccbe8fc6sm248541215e9.4.2024.05.15.17.58.40
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 15 May 2024 17:58:40 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <ZkU2kmQxdZ3jRfyB@slm.duckdns.org> <CAHk-=wjTVMV2hBx6pQDBuG6sn75CtTfXrm8TF977fL9sqwnDFg@mail.gmail.com>
- <ZkVZkJPznWI8Y6ZN@slm.duckdns.org>
-In-Reply-To: <ZkVZkJPznWI8Y6ZN@slm.duckdns.org>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 15 May 2024 17:58:25 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgbNOu+NivP2+wrBFoAoyiZfv7+utK7ur_a9quFy7tcAw@mail.gmail.com>
-Message-ID: <CAHk-=wgbNOu+NivP2+wrBFoAoyiZfv7+utK7ur_a9quFy7tcAw@mail.gmail.com>
-Subject: Re: [GIT PULL] workqueue: Changes for v6.10
-To: Tejun Heo <tj@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
+Subject: Re: [PATCH 0/2] riscv: Allow vlenb to be probed from DT
+From: Jessica Clarke <jrtc27@jrtc27.com>
+In-Reply-To: <ZkVAYeNnvj99YHXt@ghost>
+Date: Thu, 16 May 2024 01:58:29 +0100
+Cc: Conor Dooley <conor@kernel.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>,
+ Palmer Dabbelt <palmer@sifive.com>,
+ linux-riscv <linux-riscv@lists.infradead.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>,
+ Conor Dooley <conor.dooley@microchip.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <6DDF33DF-07D6-4230-8674-F91A91660686@jrtc27.com>
+References: <20240515-add_vlenb_to_dt-v1-0-4ebd7cba0aa1@rivosinc.com>
+ <A9EDD470-B8EC-4644-82A0-7444729EF885@jrtc27.com> <ZkVAYeNnvj99YHXt@ghost>
+To: Charlie Jenkins <charlie@rivosinc.com>
+X-Mailer: Apple Mail (2.3774.500.171.1.1)
 
-On Wed, 15 May 2024 at 17:55, Tejun Heo <tj@kernel.org> wrote:
->
-> I'll send the corrected pull request right away.
+On 16 May 2024, at 00:08, Charlie Jenkins <charlie@rivosinc.com> wrote:
+>=20
+> On Wed, May 15, 2024 at 11:25:16PM +0100, Jessica Clarke wrote:
+>> On 15 May 2024, at 22:50, Charlie Jenkins <charlie@rivosinc.com> =
+wrote:
+>>>=20
+>>> The kernel currently requires all harts to have the same value in =
+the
+>>> vlenb csr that is present when a hart supports vector. In order to =
+read
+>>> this csr, the kernel needs to boot the hart. Adding vlenb to the DT =
+will
+>>> allow the kernel to detect the inconsistency early and not waste =
+time
+>>> trying to boot harts that it doesn't support.
+>>=20
+>> That doesn=E2=80=99t seem sufficient justification to me. If it can =
+be read
+>> from the hardware, why should we have to put it in the FDT? The whole
+>> point of the FDT is to communicate the hardware configuration that
+>> isn=E2=80=99t otherwise discoverable.
+>=20
+> Yes you are correct in that vlenb is discoverable on any conforming
+> chip. However, the motivation here is for making decisions about how =
+to
+> boot a hart before it is booted. By placing it in the device tree, we
+> are able to disable vector before the chip is booted instead of trying
+> to boot the chip with vector enabled only to disable it later. In both
+> cases when there is different vlenb on different harts, all harts =
+still
+> boot and the outcome is that vector is disabled. The difference is =
+that
+> with the DT entry, no vector setup code needs to be ran on a booting
+> hart when the outcome will be that vector is not enabled.
 
-It's fine, I already merged it.
+Why does vlen get this special treatment? You could make exactly the
+same argument for the number of asid bits. The precedent in the kernel,
+whether RISC-V or other architectures, is to not do this. You can
+detect it, so you should, especially since optimising for an
+exceptional, unexpected error case is not worthwhile.
 
-Mistakes happen, this wasn't a huge pattern of problems with you, and
-while I could have just merged the non-merge commit I decided that I'd
-rather take the ugly empty merge and get your signature than to pick
-the "right" commit and avoid the merge.
+>> As for T-HEAD stuff, if they need it they can have a custom property.
+>> Though naively I=E2=80=99d assume there=E2=80=99s a way to avoid it =
+still...
+>=20
+> T-Head does not expose vlenb on all of their chips so I do not know of
+> any other way of getting the vlenb without having it be provided in a
+> DT. That was the motivation for this patch in the first place, but
+> making this available to all vendors allows optimizations to happen
+> during boot.
 
-             Linus
+How does userspace read it then? But if T-HEAD need it, that means it
+should be a thead,vlen, not a riscv,vlen.
+
+Jess
+
 
