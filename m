@@ -1,169 +1,193 @@
-Return-Path: <linux-kernel+bounces-181059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EDA48C76F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:57:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23A848C76F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:58:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07A33283667
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:57:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7D941F21715
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:58:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BEFE1465A3;
-	Thu, 16 May 2024 12:56:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5818514658C;
+	Thu, 16 May 2024 12:57:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T28cPLYI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="RzV538HB"
+Received: from smtp-fw-80008.amazon.com (smtp-fw-80008.amazon.com [99.78.197.219])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 739F7145FF9;
-	Thu, 16 May 2024 12:56:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13B871474BF;
+	Thu, 16 May 2024 12:57:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715864214; cv=none; b=Pc+EeNU6FR3HLzCsZcuxD7bdl5l11wSDaQYeJ5WRFzAj0HvuMfkv+kCrzdx4prxDAqD8q8dUPWxOG5FNhFlwdFYdUeEpO9ea3bLQREDMfvin+avKr8iNr3wncvynIagjpv2EzJCizXbbyjn5xnjy5kXtfTKsxrR1DIMKYVtefAU=
+	t=1715864276; cv=none; b=D04eK2Rya+OxXuKNAQSx7RgfX8yMwlztZv5w2y7K634MwuK6evp4HocuJCDh7/p6YX80Xfif0wKoJ3tycmjxz3LabLodMg7Koq0EP4ObW8teImVH6PgHyMf4trHCOEU9xOwko5x2rSOtUEjCoLJi8rQiP02hDeqONxjGxD9h7qg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715864214; c=relaxed/simple;
-	bh=/yLPfI7mbEHwDzLhz+Nf7UUcyTKCIhrbHMaNZgA2hyc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TmkIyoaXLABhL7Sl/ulIoF70NlsMAviVqV6pt+SkQJEaaBaArBE1/SWQOjfec/YwtF3+OkIaWxUh/c9Y6DG8+dSB4yWwT7JyV7FH9avJ/16YmYQ/YsC5CerC/G5UyhOWqrhPIvw4/P+eVMfD+INeXFT6OlT8AFCdmzvtTQUhpqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T28cPLYI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0623DC4AF08;
-	Thu, 16 May 2024 12:56:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715864214;
-	bh=/yLPfI7mbEHwDzLhz+Nf7UUcyTKCIhrbHMaNZgA2hyc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=T28cPLYI1afhksw1uALFMKWyLsVJ7U7GI/1SAXClzgA8+Rna71l/jFkbIQ9CaC+RB
-	 hyPcKarpM2SfoQJkpJUu9UF6e7TkpJ4CGqnvrXVxzKsEToDOrSfPLTFA3g/imNzavo
-	 VHtBVVJskk8hAIGqilTzeW6oDX8plICo882++2glkeJu78KEJoNKxJ+YIonC6hsB56
-	 Dguz/2JikGMjocC/hF8gR08dCfcEZ3HZLRtoJY31ukMoiyVdNkawDwpqyJU1arKsJH
-	 28atDNvqX3OnXChcCYS3M7l5JYRv2kjxmtAaiJX1RIrmD2pa+u0UyFX8mF6kDBFLTS
-	 +XG18SAM7Mh0g==
-Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-3c9bcd57524so40432b6e.3;
-        Thu, 16 May 2024 05:56:53 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUc76wnPi5vbGVgKAKcc1da4Ri7TL3pTGHVnhzlZdE53m1XM0J9q3bEyAcjX36wV7rYAyrT1CI0BpEv/DaL/Y0dtWcQQyIPFbhI5SWljaPyQYFZbvuSAM5gODFEvUy2cwADJAVSg6M=
-X-Gm-Message-State: AOJu0YyeOpJyK//0Rwx95B0faupJFtJDn/sbMSLq9zc/7rhLDWMgdO0o
-	t+oT1QPzYWjlEhNL0TQosQELMrRsSVffS7y6EVA2/dLDQAeqUjZFMRe59gibcRLOqDuX38xuM4Z
-	qkAP2R6JC0DqX1/DJlb78s4Bq04k=
-X-Google-Smtp-Source: AGHT+IFiaoSyd28mKG2dn5+WVYPeWD4D4Jm2o+HpZo1vMtBFQ8BAGcBHHQqm6SlvV5SxjGgnt0I4ZeuhJjzth0Pztpg=
-X-Received: by 2002:a05:6870:5246:b0:23c:350c:f157 with SMTP id
- 586e51a60fabf-24172fc1a06mr24795650fac.4.1715864213216; Thu, 16 May 2024
- 05:56:53 -0700 (PDT)
+	s=arc-20240116; t=1715864276; c=relaxed/simple;
+	bh=D082drQ3+fR+yT4LdI08Rc37UV5rMeJR/aG7eX9MgDo=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I7lmO6NiVhETs6MV5RL2VCMfLzLTq2miIsaS9sy9aPygCu6TCVwjsvAG0JfQoCe10bRpIAwxqJU8mM8Y4SHr3qJ194KP6s3N2gHE5WPyGEB18nt+Pvdg5g2M/wn95Fn6xxqnyHAtVrOKISZnvbU24ENn9MSnizRsRokZhd6k/mY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=RzV538HB; arc=none smtp.client-ip=99.78.197.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1715864275; x=1747400275;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=+Rqyg84e/++nESTIJoWcy14dhUm9sKb3isOo0+iOAjg=;
+  b=RzV538HBA9uPwrtbycOUvtDlCz9zo8UxBMOlP13debyMKwi6wrA8/5Y5
+   W5ubRtUBIIhKJ9DDL3EUpDVR8xbHmrCH4io9AnXjzpZt+wIOvcq0UWWVm
+   f2sIvhplYgtLszUp27spbqKJL0D/hlfwWn7va957ojuQ6et5+hpqGMsyP
+   M=;
+X-IronPort-AV: E=Sophos;i="6.08,164,1712620800"; 
+   d="scan'208";a="89591144"
+Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.214])
+  by smtp-border-fw-80008.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 12:57:52 +0000
+Received: from EX19MTAEUC001.ant.amazon.com [10.0.43.254:21742]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.38.98:2525] with esmtp (Farcaster)
+ id 15655bab-d417-4d16-8fb6-4e2f551c9b7e; Thu, 16 May 2024 12:57:51 +0000 (UTC)
+X-Farcaster-Flow-ID: 15655bab-d417-4d16-8fb6-4e2f551c9b7e
+Received: from EX19D002EUA004.ant.amazon.com (10.252.50.181) by
+ EX19MTAEUC001.ant.amazon.com (10.252.51.155) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.28; Thu, 16 May 2024 12:57:43 +0000
+Received: from EX19MTAUWB001.ant.amazon.com (10.250.64.248) by
+ EX19D002EUA004.ant.amazon.com (10.252.50.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.28; Thu, 16 May 2024 12:57:43 +0000
+Received: from dev-dsk-hagarhem-1b-b868d8d5.eu-west-1.amazon.com
+ (10.253.65.58) by mail-relay.amazon.com (10.250.64.254) with Microsoft SMTP
+ Server id 15.2.1258.28 via Frontend Transport; Thu, 16 May 2024 12:57:43
+ +0000
+Received: by dev-dsk-hagarhem-1b-b868d8d5.eu-west-1.amazon.com (Postfix, from userid 23002382)
+	id 920C320BED; Thu, 16 May 2024 12:57:42 +0000 (UTC)
+Date: Thu, 16 May 2024 12:57:42 +0000
+From: Hagar Hemdan <hagarhem@amazon.com>
+To: Kent Gibson <warthog618@gmail.com>
+CC: Norbert Manthey <nmanthey@amazon.de>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Linus Walleij <linus.walleij@linaro.org>, <linux-gpio@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] gpio: prevent potential speculation leaks in
+ gpio_device_get_desc()
+Message-ID: <20240516125742.GA14240@amazon.com>
+References: <20240514122601.15261-1-hagarhem@amazon.com>
+ <20240514124221.GA76024@rigel>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <13518388.uLZWGnKmhe@kreacher> <3304112.44csPzL39Z@kreacher>
- <39e15eef-f7fd-4e16-bc74-7f1c6820fe6a@arm.com> <CAJZ5v0gZJE6jfa8_9LgDdjYotY+crLH1JJXHdAWREPz4SJ305A@mail.gmail.com>
- <65a94273-7fa5-4352-a24b-a08a1f244f99@linaro.org> <CAJZ5v0g5ejtjYQ9t1O3tW+akmu_pWav9L=-Th5f6LYac7EG3Lw@mail.gmail.com>
-In-Reply-To: <CAJZ5v0g5ejtjYQ9t1O3tW+akmu_pWav9L=-Th5f6LYac7EG3Lw@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 16 May 2024 14:56:42 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jUW2ToCS7ZGjPFPnvTKHPLEw+4=FURDoBGzw0R51DgNA@mail.gmail.com>
-Message-ID: <CAJZ5v0jUW2ToCS7ZGjPFPnvTKHPLEw+4=FURDoBGzw0R51DgNA@mail.gmail.com>
-Subject: Re: [PATCH v1 1/6] thermal: sysfs: Trigger zone temperature updates
- on sysfs reads
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Lukasz Luba <lukasz.luba@arm.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, 
-	LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Zhang Rui <rui.zhang@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240514124221.GA76024@rigel>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
-On Thu, May 16, 2024 at 12:02=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.o=
-rg> wrote:
->
-> Hi Daniel,
->
-> On Thu, May 16, 2024 at 11:46=E2=80=AFAM Daniel Lezcano
-> <daniel.lezcano@linaro.org> wrote:
-> >
-> >
-> > Hi Rafael,
-> >
-> > On 16/05/2024 11:04, Rafael J. Wysocki wrote:
-> > > Hi Lukasz,
-> > >
-> > > On Mon, May 13, 2024 at 9:11=E2=80=AFAM Lukasz Luba <lukasz.luba@arm.=
-com> wrote:
-> > >>
-> > >> Hi Rafael,
-> > >>
-> > >> On 5/10/24 15:13, Rafael J. Wysocki wrote:
-> > >>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > >>>
-> > >>> Reading the zone temperature via sysfs causes the driver callback t=
-o
-> > >>> be invoked, but it does not cause the thermal zone object to be upd=
-ated.
-> > >>>
-> > >>> This is problematic if the zone temperature read via sysfs differs =
-from
-> > >>> the temperature value stored in the thermal zone object as it may c=
-ause
-> > >>> the kernel and user space to act against each other in some cases.
-> > >>>
-> > >>> For this reason, make temp_show() trigger a zone temperature update=
- if
-> > >>> the temperature returned by thermal_zone_get_temp() is different fr=
-om
-> > >>> the temperature value stored in the thermal zone object.
-> >
-> >
-> > The hwmon system is doing something similar and I'm not sure we want to
-> > mimic the same behavior.
-> >
-> > Just to summarize:
-> >
-> > 1. There is a polling delay set
-> >
-> > This polling delay gives the sampling rate the thermal zone is
-> > monitored. The temperature is updated at each 'delay' tick
-> >
-> > 2. There is no polling delay set
-> >
-> > The system relies on the interrupts to tell when a temperature reaches =
-a
-> > threshold.
->
-> So this is a bit of a problem if the interrupts are not coming.
->
-> At least from the debugfs perspective, there are "mitigation episodes"
-> that last forever if the zone temperature happens to be above a trip
-> at the system resume time, say, and is never updated afterward.
->
-> > On the other side, if the governor is in-kernel, then we should not rea=
-d
-> > the temperature of the thermal zones because it is the job of the kerne=
-l
-> > to do that.
-> >
-> > Actually we can assume the temperature information exported to the
-> > userspace is a courtesy of the kernel when this one is managing the
-> > thermal zone.
->
-> It is not the case right now, though, as sysfs temperature reads
-> effectively bypass the whole in-kernel thermal management.
->
-> > If there is no governor associated to the thermal zone because there is
-> > no cooling device associated to the defined trip points, then we can
-> > assume it is up to the userspace to monitor the thermal zone.
->
-> Well, in that case trips should not be taken into account, but they are n=
-ow.
+On Tue, May 14, 2024 at 08:42:21PM +0800, Kent Gibson wrote:
+> On Tue, May 14, 2024 at 12:26:01PM +0000, Hagar Hemdan wrote:
+> > Users can call the gpio_ioctl() interface to get information about gpio
+> > chip lines.
+> 
+> Indeed they can, assuming they have access to the gpiochip device. So what?
+> 
+> > Lines on the chip are identified by an offset in the range
+> > of [0,chip.lines).
+> > Offset is copied from user and then used as an array index to get
+> > the gpio descriptor without sanitization.
+> 
+> Yup, and it returns an -EINVAL, via gpio_device_get_desc(), if it is out
+> of range.
+> 
+ In case of speculation executin, the condition (hwnum >= gdev→ngpio)
+may be miss predicted as true and then the value of &gdev→descs[hwnum] is
+speculatively loaded even if hwnum >= gdev→ngpio.
 
-Actually, there is always a governor associated with a thermal zone
-AFAICS.  It is set before binding any cooling devices to the thermal
-zone.
+> >
+> > This change ensures that the offset is sanitized by
+> > using "array_index_nospec" to mitigate any possibility of speculative
+> > information leaks.
+> >
+> 
+> Speculative leaks of what?  The size of the array?
+> That is explicitly public knowledge - if they call GPIO_GET_CHIPINFO_IOCTL
+> it will tell them.
+>
+Speculation leaks of gdev→descs[hwnum] when hwnum >= ngpio.
+As in func "lineinfo_get()", hwnum is an offset copied from user and used
+as an index to get a device descriptor in gpio_device_get_desc().
+Could you explain what do you mean by it is a public knowledge?
 
-However, there are thermal zones without any cooling devices bound to
-them and they have the governor set to user_space, so it appears that
-they want to receive trip crossing notifications, but then they don't
-have a way to trigger zone temperature updates which is inconsistent.
+> > This bug was discovered and resolved using Coverity Static Analysis
+> > Security Testing (SAST) by Synopsys, Inc.
+> >
+> > Fixes: aad955842d1c ("gpiolib: cdev: support GPIO_V2_GET_LINEINFO_IOCTL and GPIO_V2_GET_LINEINFO_WATCH_IOCTL")
+> > Signed-off-by: Hagar Hemdan <hagarhem@amazon.com>
+> > ---
+> > Only compile tested, no access to HW.
+> > ---
+> >  drivers/gpio/gpiolib-cdev.c | 10 +++++++---
+> >  1 file changed, 7 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
+> > index 9dad67ea2597..215c03e6808f 100644
+> > --- a/drivers/gpio/gpiolib-cdev.c
+> > +++ b/drivers/gpio/gpiolib-cdev.c
+> > @@ -20,6 +20,7 @@
+> >  #include <linux/kfifo.h>
+> >  #include <linux/module.h>
+> >  #include <linux/mutex.h>
+> > +#include <linux/nospec.h>
+> >  #include <linux/overflow.h>
+> >  #include <linux/pinctrl/consumer.h>
+> >  #include <linux/poll.h>
+> > @@ -2170,7 +2171,8 @@ static int lineevent_create(struct gpio_device *gdev, void __user *ip)
+> >  	lflags = eventreq.handleflags;
+> >  	eflags = eventreq.eventflags;
+> >
+> > -	desc = gpio_device_get_desc(gdev, offset);
+> > +	desc = gpio_device_get_desc(gdev,
+> > +				array_index_nospec(offset, gdev->ngpio));
+> 
+> Moving an out of bounds index INTO bounds here is totally wrong.
+> That is NOT what the user asked for, and in that case they should get an
+> error, as they currently do, no an actual different line - which is what
+> this change does.
+> 
+> NACK.
+> 
+> Cheers,
+> Kent.
+This macro "array_index_nospec()" prevents out-of-bounds accesses
+under speculation execution, ensures that bounds checks are
+respected even under speculation and not moving out of bounds into bounds.
 
-IMO at least for these thermal zones temp_store() should trigger a
-zone temperature update.
+> 
+> >  	if (IS_ERR(desc))
+> >  		return PTR_ERR(desc);
+> >
+> > @@ -2477,7 +2479,8 @@ static int lineinfo_get_v1(struct gpio_chardev_data *cdev, void __user *ip,
+> >  		return -EFAULT;
+> >
+> >  	/* this doubles as a range check on line_offset */
+> > -	desc = gpio_device_get_desc(cdev->gdev, lineinfo.line_offset);
+> > +	desc = gpio_device_get_desc(cdev->gdev,
+> > +				array_index_nospec(lineinfo.line_offset, cdev->gdev->ngpio));
+> >  	if (IS_ERR(desc))
+> >  		return PTR_ERR(desc);
+> >
+> > @@ -2514,7 +2517,8 @@ static int lineinfo_get(struct gpio_chardev_data *cdev, void __user *ip,
+> >  	if (memchr_inv(lineinfo.padding, 0, sizeof(lineinfo.padding)))
+> >  		return -EINVAL;
+> >
+> > -	desc = gpio_device_get_desc(cdev->gdev, lineinfo.offset);
+> > +	desc = gpio_device_get_desc(cdev->gdev,
+> > +				array_index_nospec(lineinfo.offset, cdev->gdev->ngpio));
+> >  	if (IS_ERR(desc))
+> >  		return PTR_ERR(desc);
+> >
+> > --
+> > 2.40.1
+> >
 
