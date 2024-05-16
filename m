@@ -1,105 +1,112 @@
-Return-Path: <linux-kernel+bounces-181613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06B238C7E96
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 00:45:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87B6B8C7E99
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 00:52:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7CF32B21DCA
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 22:45:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8177C1C21AB1
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 22:51:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 441F2273FC;
-	Thu, 16 May 2024 22:45:06 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 672BA1EEE0;
-	Thu, 16 May 2024 22:45:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49E78208C1;
+	Thu, 16 May 2024 22:51:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="BZeedQll"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 495A24A11;
+	Thu, 16 May 2024 22:51:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715899505; cv=none; b=bxUBIL7Y653Kss1BCAg827kkrquY6PRiMUfnoefRT/kbRCnKd7kQPsG94C+N1MQG3mMpzXspAVDKUebKrMiD9SHOCU/LdXZeAx5L8/jFIuZZxerD3yZfajXzLXIfTdLQ9JQUO9NYNO2UC7HSkvi0C4VNU+WJxMFK/hS31Vd8VEI=
+	t=1715899912; cv=none; b=D1fFLih+yyvax4G98o+6MiwKsdT1qyME8I1xUFk0ojl6hFMQIYRRJzmO5t++FlbPP7UwzK6xbxx9RxAymfQtJxEgyOuFHLLZmGfA6zFjXxPmNCOjZFoKKSn3yeQnRRnuyQFG/g3sQUciSeXjdNV5a2S/6+oeMNQxEIgGF4b3AjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715899505; c=relaxed/simple;
-	bh=cKglyS+9H62XEHeJRO+8UM6DLraq8qZuLx6o1DzNa7s=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=lySDRmRADNnSoVePqw9RKT0R/RZOmrSKkJMWFqSXhoPIU3Q0HCE9DXp4gFV0id0uT7irQVlXf+KcOg34ZVG91FKBYsveByCDVHj0tJoe1WKFzff2RMJMfaT/Cc90GZQomGOZ3oRxZVfFC9F0p8bfL4Qx5QowtWBNdw5/8mxz5Dw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id D2C0A92009C; Fri, 17 May 2024 00:44:55 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id C713392009B;
-	Thu, 16 May 2024 23:44:55 +0100 (BST)
-Date: Thu, 16 May 2024 23:44:55 +0100 (BST)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>
-cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-    Nathan Chancellor <nathan@kernel.org>, 
-    Nick Desaulniers <ndesaulniers@google.com>, 
-    Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
-    "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>, 
-    linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
-    Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH 6/8] MIPS: Limit MIPS_MT_SMP support by ISA reversion
-In-Reply-To: <4b8d0a71-f4b3-4c6b-b1e2-f67bb2908508@app.fastmail.com>
-Message-ID: <alpine.DEB.2.21.2405162315290.32322@angie.orcam.me.uk>
-References: <20240202-llvm-msym32-v1-0-52f0631057d6@flygoat.com> <20240202-llvm-msym32-v1-6-52f0631057d6@flygoat.com> <alpine.DEB.2.21.2405142235100.45291@angie.orcam.me.uk> <7fc82f8b-df9d-45f5-8e82-27eac7b4b0ab@app.fastmail.com>
- <alpine.DEB.2.21.2405150850270.45291@angie.orcam.me.uk> <4b8d0a71-f4b3-4c6b-b1e2-f67bb2908508@app.fastmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1715899912; c=relaxed/simple;
+	bh=L7KhBLLyRFGTOe2L8CfKk/G01adXlvkwHXxoKyKvHqA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kNO70RETm/lUjuN/DzPDkZ/H0RL/NMuc6BFaeeE102nB9n9A7GOx3cKYlmi7iGnXi6ZTf61d+0oPZx0tb4DuACAnUdYnyoMwIf+7lVAWAVnyby/tKFVliMp9KQ0Uan5P8lVfTaEPnRk0lJ2MbMTDdK+1p49P1+u8mLHBKhja+Ns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=BZeedQll; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=ervmNo5biR+yzACnIdOD1iqbJR0q4reGPzHLBT50d6U=; b=BZeedQllwqeJtWefMp2XLpr1ZV
+	AYRIKZofAv8GgFgu0x9TAqjmSWWvWcJivA839poaN03gAEhGFWgYWsEZprq1l6VVsIrOR7qT/njIm
+	nr3stVho4FU+3xJHlBex8TUt3k5snuQuxjpFfAs2fTcNOJahtLqRe20Ga1TApIujH0Xc=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1s7jwg-00FXIE-G6; Fri, 17 May 2024 00:51:30 +0200
+Date: Fri, 17 May 2024 00:51:30 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Thorsten Blum <thorsten.blum@toblux.com>
+Cc: arnd@arndb.de, davem@davemloft.net, edumazet@google.com,
+	glaubitz@physik.fu-berlin.de, kuba@kernel.org,
+	linux-kernel@vger.kernel.org, lkp@intel.com, netdev@vger.kernel.org,
+	nico@fluxnic.net, pabeni@redhat.com
+Subject: Re: [PATCH v3] net: smc91x: Fix pointer types
+Message-ID: <f192113c-9aee-47be-85f6-cd19fcb81a5e@lunn.ch>
+References: <0efd687d-3df5-49dd-b01c-d5bd977ae12e@lunn.ch>
+ <20240516223004.350368-2-thorsten.blum@toblux.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240516223004.350368-2-thorsten.blum@toblux.com>
 
-On Wed, 15 May 2024, Jiaxun Yang wrote:
-
-> >> There is nothing stopping us to run R1 kernel on R2 hardware, given that
-> >> those features are all detected at boot time. I understand MT was introduced
-> >> at 34K which is R2.
-> >
-> >  We can certainly choose to support R2 features at run time with R1 kernel 
-> > configurations, but it's not what the change description says (left quoted 
-> > above for reference).  And the MT ASE, indeed first implemented with the 
-> > 34K (for which I was a member of the product development team back at MIPS 
-> > UK), is not a part of the R1 ISA specification set.
-> >
-> Good to know!
+On Fri, May 17, 2024 at 12:30:05AM +0200, Thorsten Blum wrote:
+> Use void __iomem pointers as parameters for mcf_insw() and mcf_outsw()
+> to align with the parameter types of readw() and writew() to fix the
+> following warnings reported by kernel test robot:
 > 
-> The motivation behind this patch is to workaround some randconfig failures
-> that combines MT with early ISA release.
+> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse: warning: incorrect type in argument 1 (different address spaces)
+> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse:    expected void *a
+> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse:    got void [noderef] __iomem *
+> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse: warning: incorrect type in argument 1 (different address spaces)
+> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse:    expected void *a
+> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse:    got void [noderef] __iomem *
+> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse: warning: incorrect type in argument 1 (different address spaces)
+> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse:    expected void *a
+> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse:    got void [noderef] __iomem *
+> drivers/net/ethernet/smsc/smc91x.c:483:17: sparse: warning: incorrect type in argument 1 (different address spaces)
+> drivers/net/ethernet/smsc/smc91x.c:483:17: sparse:    expected void *a
+> drivers/net/ethernet/smsc/smc91x.c:483:17: sparse:    got void [noderef] __iomem *
+> 
+> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202405160853.3qyaSj8w-lkp@intel.com/
+> Acked-by: Nicolas Pitre <nico@fluxnic.net>
+> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+> ---
+> Changes in v2:
+> - Use lp->base instead of __ioaddr as suggested by Andrew Lunn. They are
+>  essentially the same, but using lp->base results in a smaller diff
+> - Remove whitespace only changes as suggested by Andrew Lunn
+> - Preserve Acked-by: Nicolas Pitre tag (please let me know if you
+>  somehow disagree with the changes in v2 or v3)
+> 
+> Changes in v3:
+> - Revert changing the macros as this is unnecessary. Neither the types
+>   nor the __iomem attributes get lost across macro boundaries
+> - Preserve Reviewed-by: Andrew Lunn tag (please let me know if you
+>   somehow disagree with the changes in v3)
 
- I'd say it's an actual fix rather than just a workaround.
+This fixes the warning, but we still have the macro accessing things
+not passed to them. If you are going to brother to fix the warnings,
+it would also be good to fix the bad practice. Please make a patchset
+to do this.
 
- Originally intention was with the MIPS port that eventually we would 
-support a generic kernel configuration, such as original x86 Linux has 
-always had or the Alpha port has at one point gained, where you can have 
-respectively an i486 (or previously even i386) or EV4 CPU kernel binary 
-that runs everywhere, even on the most recent hardware available.
+It would also be good if you read:
 
- With the MIPS platform fragmentation it has proved too much of an effort
-for the engineering resources we've had available and consequently never 
-happened.  This is why we have retained numerous abstractions intended to 
-switch between handlers at boot time (and had even more in the past).
+https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html
 
- From R1 onwards the privileged architecture has become more uniform and
-therefore easier to handle between ISA revisions and/or implementations 
-and the choice of the CPU to build for has become more of a balance 
-between backwards compatibility and optimisation stemming from a richer 
-architecture and FWIW I fully support striving to make an R1 kernel binary 
-run with any R1-R5 hardware.  It can be especially useful with platforms 
-that have swappable CPU modules available at different ISA levels.
-
-> They are not trivial to fix, so I just ban them in Kconfig. I was a little bit
-> reluctant to admit that in commit message.
-
- Please always state your genuine motivation in change descriptions.  It 
-lets reviewers understand what a change is about and if there is any 
-concern about the description itself, then it can always be adjusted in 
-the review if needed.
-
-  Maciej
+	Andrew
 
