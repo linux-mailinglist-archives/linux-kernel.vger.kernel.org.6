@@ -1,126 +1,128 @@
-Return-Path: <linux-kernel+bounces-180904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFB0E8C749E
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:26:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DACA8C74A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:27:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A42171F24DF9
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:26:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 796FDB24FBE
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:27:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 018C8143C4B;
-	Thu, 16 May 2024 10:26:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3340F143C70;
+	Thu, 16 May 2024 10:26:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gPfUkLrk"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ScYALdTv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA778143898;
-	Thu, 16 May 2024 10:26:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A12B14389C;
+	Thu, 16 May 2024 10:26:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715855198; cv=none; b=AxFI+LrAknVnfGFmLfV9x2WFOzNDLeujCIRYq0HZdl8gXSo0fa++76/Ua90kN4Uni5W6ERWFm8MnEK2eD9SLrbiGlDXfbktEYw/YI4BPpxTsNG+hpeP4xQMg/uUZwtChirksPKIpr2k43Ap0BWAp3LBLbUGqus0jjoknXunlfak=
+	t=1715855207; cv=none; b=l2byNp5jVoForROPlLFdnibreBCG+GRuEgJRoS4S2r5knXON8Eh0ICEaJE/WOY1cAjzkMEEdhsZRjsNY/luHklCZRvRbDbsp0mmwkwH7GnIhVtL4SufF1OqJnj2alifdf6VopEh7SuPv5YCIVV9p7nFU2IRSFGy6Slxp/45uIpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715855198; c=relaxed/simple;
-	bh=6irmRYyO6aI1ugOg4kgQ1h12u9uSfnzT47OyGU1W4lU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S3xk7SBDqaPCYmTEKSEhsoTbyn0fA9/wJ5njDnl9dY5fnXVjMb8dbO/MoRlFr80k+p7d6f10jR3LRJwFkApGIcE+qsmgu3mh/7r6M1pFhOQbogdqOrCNd77AuDy1sYnlNP7hQO+oSujTfh6+vt/tF1tjFG3r51GGRpS0JfGiTuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gPfUkLrk; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715855197; x=1747391197;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=6irmRYyO6aI1ugOg4kgQ1h12u9uSfnzT47OyGU1W4lU=;
-  b=gPfUkLrkA2ENb63pkQ5Vkc65+90OrU89BJbru95RfpLwEoCFQNXVqADp
-   wyhe6ANPEqzLc9obHB6C0PECeLcori1HzitCFSWWpcHSs9yPcSOhei/gD
-   vWsDSYuyFS1hXOcSYafTaxW7c4hAJFfHF3TG7FGlgsXa9bJt22BYx70HZ
-   Mq2MiQWS0Z9sXevbfSBeKwLwWwO8sxUAiW7LD0Tzyw3cVoxupHMoTxq8/
-   aTgSPkNzaSqNpE4XS4PntugGEKtB9tVy4HSvjuIKQOXBwXCRFDxLNoJyV
-   VdUYzP9yaHZoxwt6RjCFXmdvcQ18xzq2Om1sO5umb+IjffFJDXdz+r++z
-   A==;
-X-CSE-ConnectionGUID: 4gD4A0KaSrOGFGFNLON+Dg==
-X-CSE-MsgGUID: kPv/2X+PQUivodWnEahB0w==
-X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="22559639"
-X-IronPort-AV: E=Sophos;i="6.08,164,1712646000"; 
-   d="scan'208";a="22559639"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 03:26:36 -0700
-X-CSE-ConnectionGUID: +iBBDJxASNmMxB7aHGkj8w==
-X-CSE-MsgGUID: 0/10U3klRTirxFvbJ7jXGw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,164,1712646000"; 
-   d="scan'208";a="36265589"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 03:26:34 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1s7YJi-000000080YQ-1zYF;
-	Thu, 16 May 2024 13:26:30 +0300
-Date: Thu, 16 May 2024 13:26:30 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Devarsh Thakkar <devarsht@ti.com>
-Cc: Daniel Latypov <dlatypov@google.com>, brendanhiggins@google.com,
-	davidgow@google.com, linux-kernel@vger.kernel.org,
-	kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	Linux Media Mailing List <linux-media@vger.kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: Re: [PATCH v6] lib: add basic KUnit test for lib/math
-Message-ID: <ZkXfViBFU0BWpOMM@smile.fi.intel.com>
-References: <20210416180427.1545645-1-dlatypov@google.com>
- <b7155efb-e99c-f385-3bf3-3ffcdefd1260@ti.com>
+	s=arc-20240116; t=1715855207; c=relaxed/simple;
+	bh=aP4BKg6GnlWaJaGCLB8K2mhaB0kdRVmKegZq2DPZhV4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kx8V+UAZhI+2p7GSsLJxwRkwap2ecCXDBNO2YKJ1/9i0UQylJ2O+K2rOA8wImce5p6kspGWksLp43+BtOE8Fm6f4vKQ4tVcRpfeWQwiAa6k2N5+gyLtxzytNVSaSHaLZQLwM61GaQxV8IRIal0FzhevTxEtQBRkANnF/7QK3Ljk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ScYALdTv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BCC5C32789;
+	Thu, 16 May 2024 10:26:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715855206;
+	bh=aP4BKg6GnlWaJaGCLB8K2mhaB0kdRVmKegZq2DPZhV4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ScYALdTvjzmBicOJ0Rbdx7I654XNTrIZGeHPGFHZyb5G5loJmcuL5tOYgK+cIFbIu
+	 Ix/Oro8u5j/deaWiaG7fmyOWhySrjjY4ycDHrFgWsGwJW8pHEZkOmPdyxK+E844a9a
+	 cJiTnxTWOYr0bKABrLwklaKlN4UBCE0EEbJOUu+LQK7cIqGhmyu+EhjXz+LZBb2/Dn
+	 Tb06IF12GHRJV9IwvJ8z1QZSUc1CFc6vvPbio9CQLIGph5ANb4n1CxtnefGRf8SfWg
+	 uqauYXGiLtMleBvz0ivGLD40MRo0tX6Zww2AALRcIfLY/90QPc2Qt7pYHoDr3AfDAR
+	 BHyZzuM7OyWjg==
+Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-5b2f4090ac9so2781eaf.2;
+        Thu, 16 May 2024 03:26:46 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVi70bBnXSFI68qXQy9bpk14yypcdlzzhKaPoe2PkQAZxCm6WrtgVSCq210msuXvT28A2iH2r/6A3D8BpMV1AJkQokIJ7qxA6/qddQzsl0DL73CfiJNz/jLmv+fwftJ6pUyOQflKU1s3g==
+X-Gm-Message-State: AOJu0YxU7z2xiYYkV/tAbeCkgMXZL8j8DIJS+NuQdPU6I2VKWyHFjp56
+	63qOBZMn/fy/iosK66jea9eFjkEBdHqwIsO0fZj+pOtE06l4r8jbUN714cfVTsKlzkHYEuiOB+n
+	5v0/WSyRAtHfpQJNb/VeMSrxfFFY=
+X-Google-Smtp-Source: AGHT+IEA84Gdgt9lv8DZTUfEcZ9ettVVanMsJF5hG2e9SkWYmQ5gG1yYaAEC3Yvkr7rfUiiA6PmdZzPto608t85uN54=
+X-Received: by 2002:a05:6870:9724:b0:23e:6d44:f97f with SMTP id
+ 586e51a60fabf-24172a3d677mr21010801fac.1.1715855205346; Thu, 16 May 2024
+ 03:26:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b7155efb-e99c-f385-3bf3-3ffcdefd1260@ti.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <12437901.O9o76ZdvQC@kreacher> <6046110.lOV4Wx5bFT@kreacher> <ZkXea4fdJwgvu0Hm@smile.fi.intel.com>
+In-Reply-To: <ZkXea4fdJwgvu0Hm@smile.fi.intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 16 May 2024 12:26:34 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hxDDrN8DyKws1R-3GabjHcQ4eua2wyTQsueqnqa6Y4+Q@mail.gmail.com>
+Message-ID: <CAJZ5v0hxDDrN8DyKws1R-3GabjHcQ4eua2wyTQsueqnqa6Y4+Q@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] ACPI: EC: Install address space handler at the
+ namespace root
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux ACPI <linux-acpi@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Hans de Goede <hdegoede@redhat.com>, 
+	Mario Limonciello <mario.limonciello@amd.com>, Armin Wolf <w_armin@gmx.de>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 16, 2024 at 03:49:44PM +0530, Devarsh Thakkar wrote:
-> Hi Daniel, Andy,
-> 
-> On 16/04/21 23:34, Daniel Latypov wrote:
-> > Add basic test coverage for files that don't require any config options:
-> > * part of math.h (what seem to be the most commonly used macros)
-> > * gcd.c
-> > * lcm.c
-> > * int_sqrt.c
-> > * reciprocal_div.c
-> > (Ignored int_pow.c since it's a simple textbook algorithm.)
-> > 
-> > These tests aren't particularly interesting, but they
-> > * provide short and simple examples of parameterized tests
-> > * provide a place to add tests for any new files in this dir
-> > * are written so adding new test cases to cover edge cases should be easy
-> >   * looking at code coverage, we hit all the branches in the .c files
-> > 
-> > Signed-off-by: Daniel Latypov <dlatypov@google.com>
-> > Reviewed-by: David Gow <davidgow@google.com>
-> 
-> Just checking if something else was pending on this patch-set for this not
-> getting merged?
-> 
-> I needed this patch-set for adding tests for new macros I am adding in math.h
-> as suggested in this thread [1], so wanted to pull this in my series and add
-> changes on top of that for new macros.
-> 
-> Kindly let me know your thoughts on this.
+On Thu, May 16, 2024 at 12:22=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Wed, May 15, 2024 at 09:40:54PM +0200, Rafael J. Wysocki wrote:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >
+> > It is reported that _DSM evaluation fails in ucsi_acpi_dsm() on Lenovo
+> > IdeaPad Pro 5 due to a missing address space handler for the EC address
+> > space:
+> >
+> >  ACPI Error: No handler for Region [ECSI] (000000007b8176ee) [EmbeddedC=
+ontrol] (20230628/evregion-130)
+> >
+> > This happens because if there is no ECDT, the EC driver only registers
+> > the EC address space handler for operation regions defined in the EC
+> > device scope of the ACPI namespace while the operation region being
+> > accessed by the _DSM in question is located beyond that scope.
+> >
+> > To address this, modify the ACPI EC driver to install the EC address
+> > space handler at the root of the ACPI namespace for the first EC that
+> > can be found regardless of whether or not an ECDT is present.
+> >
+> > Note that this change is consistent with some examples in the ACPI
+> > specification in which EC operation regions located outside the EC
+> > device scope are used (for example, see Section 9.17.15 in ACPI 6.5),
+> > so the current behavior of the EC driver is arguably questionable.
+>
+> ...
+>
+> > -             status =3D acpi_install_address_space_handler_no_reg(ec->=
+handle,
+> > +             status =3D acpi_install_address_space_handler_no_reg(scop=
+e_handle,
+> >                                                                  ACPI_A=
+DR_SPACE_EC,
+> >                                                                  &acpi_=
+ec_space_handler,
+> >                                                                  NULL, =
+ec);
+>
+> Looking at this...
+>
+> >               if (ACPI_FAILURE(acpi_remove_address_space_handler(
+> > +                                             scope_handle,
+> > +                                             ACPI_ADR_SPACE_EC,
+> > +                                             &acpi_ec_space_handler)))
+>
+> ...and this, I believe you can move scope_handle to the previous line and=
+ align
+> the rest for the sake of consistency and slightly better readability.
 
-Wow, blast from the past!
-But good finding, it would be good to have more math.h related test cases.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Well, I prefer to cut a separate cleanup patch to make this more consistent=
+.
 
