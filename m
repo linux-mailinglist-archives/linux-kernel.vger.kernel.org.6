@@ -1,86 +1,280 @@
-Return-Path: <linux-kernel+bounces-180592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C6698C7092
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 05:15:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43A988C7094
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 05:16:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBC49281990
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 03:15:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51511B2290A
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 03:16:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 134604436;
-	Thu, 16 May 2024 03:15:10 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB2A94A2C;
+	Thu, 16 May 2024 03:15:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="L5pc85aC"
+Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B64623A6
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 03:15:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201FE1877
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 03:15:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715829309; cv=none; b=qZmCwRegHtG/i64MGYf+Lmt07Lwy/OYpz4fITlu8t91tyuu6r/5SfPmN9pu5zk1OLBsOATMNbwqzXPkDLRchjtsmcPKq2DhKras+TcTQ+NPRNx6LCCu7KU6PhSFa5UMqHq1REXrfcLwwgh2fJjPbCpdLwVhZJcL1RK/WNWYe/CM=
+	t=1715829357; cv=none; b=Skyg7lbUoz0DxpjdXAWIRYnfATGHWrT0X5f6aLzV1O4NGKT3mXZqLimRasl55ICVRe6dK/Bp7mx+cnMTBMGMDADXkQxTyDNgG83nF7pljJOwDHR0PgAQI607JbzqbiQfR3Qx4/JoE8TMbwSLcosgDZo/JVKL7YbqjukP8S+d2Dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715829309; c=relaxed/simple;
-	bh=1yw3XpZLGUoO2qQOr3I4kX9QmYuJiEIoMytGrMloAVw=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=QCAJA5YBGcTCSlJHHwgMR3iO0vYeGPHX7Kg8Eh8RyJz3pm2prhHcr6JU617cCy67BnIw//vuEhdUjsbE0Ki1pcCGKMlisDDStmgLyzArH/Gb8P5i7qVTPFOONKijLzQV10Zpjpm84dGxiDCdd85kQpXFqO4NjxVSbf0WpE5Jdwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7da42114485so878953639f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 20:15:08 -0700 (PDT)
+	s=arc-20240116; t=1715829357; c=relaxed/simple;
+	bh=Ck2Nw3i0eBNHAfwrtTAecQi2+lDsbfEH+mb9QGsN5TI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D5HJajU+RhWx2OSjR84a+4L1zhH1+vRSRkg/Z/dd0PeA7I+Cd2wj65IDpAspZCXIXxjB6Z1GuEMmSn2qsCv71Gf7gKdq0m+xQwWlu6+zmeY3dT86fAMBGCFKE5UTy1puHUWsQF+Z5WCHnc1N7zicGAt46dslIFsqRyG7/0EdeQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=L5pc85aC; arc=none smtp.client-ip=209.85.161.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5b27d9fe710so3534076eaf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 20:15:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1715829354; x=1716434154; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mc6P0QBJk/o6Xns5zeCFfeIHIpvdDG/dknYVsSKeQ3I=;
+        b=L5pc85aCFoCYUWOGmjg2PoT8v3cR3//lNLRfmu1r1YAB/R7QYkpW2HNChKGiddwKXK
+         uv+K/3sRokLlpmdjfCJFrYB6Hc/JhqUD6a6PhUu10YU/GkpJhFOAY2HR0sD2e04SCGhX
+         Zj/mZDxqKzTpmmytLRiSxPs4wXNn1R8AbTFw1GnXjMG1mEhqaplXwQSkeOkO7bcdq79A
+         i4rHdARqmMaFNH1R0ARHVnSnaAnQ9mV3zHAKAORkqgz8k1mBzZ3o/8hT+lBXcJPjszG5
+         in8TKjDy46Y7w+O23/CPwiAbhX3QHykFE+dcIJ3Kwj1RQYzLDr32ZiNHn7Ctt4XQx6kX
+         w5Ug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715829307; x=1716434107;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eH3WMOMqxTdZPDY/Z5BEhSb0EhhkpBD5NwLk/16yKEc=;
-        b=tq6NfApcL4yFwhEEJV1cwDy8daBLAdmRfYg4VW0hqfe9whJ3APHZ5rB+J2/pj+zWcK
-         x1a8psB8AkkBrdszQUwSqfYp+1SDnB4ZI5QW3Pki66Z7kjESMFkcsjgNHRnTTXeJwQRf
-         NQXZF8Z4uKQDeWeuxOtM+wKqU4twUh66jcbaonZNnYanHTtyRC0sCWtNq2nffBmKkRmH
-         ZW/KKvY+v6tCEP/og8ZYifXhjPy/c9B6mX2auZJ61YjB4FWanLvJFzltc9M7lAraVgpV
-         eFNQQwHrriSa81LUMXDF4WTFY8XUrsCSKqUzrlnp86qR2nxic02y3AyqDj+wNDHut56q
-         L8Ow==
-X-Forwarded-Encrypted: i=1; AJvYcCUVP3BCI73pFAFUTFloIpZl5ywRSQPyMleYoyyzQpcnF1zSYAwMA+SoWMOqQEzPfXPUeQWTeHn84j/JvWjvrFQGKYmoQqBg43tZzF4F
-X-Gm-Message-State: AOJu0Yz2o5wtKQoIP1Sg3HurAiYchxsyC6NJQxCE5+tX+t6MoB/RTgFg
-	QXNYG6kZYsRIw92q0DyBVHDHl6eBJHIgGT5v4KjCpK6+1Fgn5Y6aqFv3SGR2cEx3Lz34xOeFaC9
-	f1SXQmMJyQuK35Ii0lEQiAIaKuJ5xrXAZmrb0n0HZGDc4nreePQYr6Wc=
-X-Google-Smtp-Source: AGHT+IEIBLWpoSPhCBd9STvIjrVsKaqV6Ind6L+wNI+R1OFJndmfPSy05DCySGaUJqbt1Dzt0Rrz+/gB11MGnv6rGx5/lNmRSZRJ
+        d=1e100.net; s=20230601; t=1715829354; x=1716434154;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=mc6P0QBJk/o6Xns5zeCFfeIHIpvdDG/dknYVsSKeQ3I=;
+        b=xEZkSbQNPpTijYCMJY9C8A1hmLTUU1iGg0DBYxxVqSnLIG4QzfAnkqP3c0Z9AMakc5
+         YEUUUq4eaTyzv4oqywLNbtFJmQ+NffdsazDHS+GomSBi110oVlTnz0Lw87abFjS4nB3y
+         qUwvAID+uiboBXaZYoq+YkVSuZvj2rR6Ah4q20wYDOo2JC9jZ9C5C36zBR0yAExpmu+z
+         NzS6APuuncHMKmyTXOEH9gikOyyDBrf3cEvn9+M8iZCyLsrSHR359LTdQ8w9p0EqPjM/
+         GQgHli3RN7V+c6sOd7whhtyOkyliwL8XG6MKURqoqseT7fg8gA4azk72lIEjxvSk2EWO
+         8fIw==
+X-Forwarded-Encrypted: i=1; AJvYcCW8YBKNLEBx+L1uDvQMkb09H2lti9UGN5iLWxKX8z9nPSI+lRj+atx54dpYVz6/T/0PJWf9Fc2GF+xElz49Df9TKOIpOGY+HqlKWYVp
+X-Gm-Message-State: AOJu0Yz52clQ4RX6y+QKSzNeYPWU/xDS8A4WoKg6EHzP532aZjyhkwKe
+	Wi5SRquHXCG4+I5tO22o8Q6kKxoMiRGBj4GWVZikbRWW4bEboDlPfntYhrsWYHM=
+X-Google-Smtp-Source: AGHT+IF7Xp+lktXA8GPkGnB7Vs0YYEJLSeV+njJLOz6ktfH2aQw+bMeP//pkZK/RozRmiuZtbeukjg==
+X-Received: by 2002:a05:6870:d153:b0:244:ba40:8b29 with SMTP id 586e51a60fabf-244ba409c58mr16014187fac.43.1715829353960;
+        Wed, 15 May 2024 20:15:53 -0700 (PDT)
+Received: from [10.84.154.38] ([203.208.167.149])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-658764fda40sm655658a12.5.2024.05.15.20.15.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 May 2024 20:15:53 -0700 (PDT)
+Message-ID: <1803b7c0-bc56-46d6-835f-f3802b8b7e00@bytedance.com>
+Date: Thu, 16 May 2024 11:15:43 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:2510:b0:488:c743:c17 with SMTP id
- 8926c6da1cb9f-4895a39dbf2mr1455198173.5.1715829307410; Wed, 15 May 2024
- 20:15:07 -0700 (PDT)
-Date: Wed, 15 May 2024 20:15:07 -0700
-In-Reply-To: <20240516015201.485387-1-cam.alvarez.i@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000005d234c061889a4f2@google.com>
-Subject: Re: [syzbot] [bcachefs?] kernel BUG in bch2_fs_journal_stop
-From: syzbot <syzbot+10b936c5eaee2819b49b@syzkaller.appspotmail.com>
-To: cam.alvarez.i@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: Re: [PATCH bpf-next] bpf: tcp: Improve bpf write tcp opt
+ performance
+To: Jakub Sitnicki <jakub@cloudflare.com>
+Cc: edumazet@google.com, ast@kernel.org, daniel@iogearbox.net,
+ andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@google.com, haoluo@google.com, jolsa@kernel.org, davem@davemloft.net,
+ dsahern@kernel.org, kuba@kernel.org, pabeni@redhat.com,
+ laoar.shao@gmail.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ bpf@vger.kernel.org, yangzhenze@bytedance.com, wangdongdong.6@bytedance.com
+References: <20240515081901.91058-1-zhoufeng.zf@bytedance.com>
+ <87seyjwgme.fsf@cloudflare.com>
+From: Feng Zhou <zhoufeng.zf@bytedance.com>
+In-Reply-To: <87seyjwgme.fsf@cloudflare.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello,
+在 2024/5/15 17:48, Jakub Sitnicki 写道:
+> On Wed, May 15, 2024 at 04:19 PM +08, Feng zhou wrote:
+>> From: Feng Zhou <zhoufeng.zf@bytedance.com>
+>>
+>> Set the full package write tcp option, the test found that the loss
+>> will be 20%. If a package wants to write tcp option, it will trigger
+>> bpf prog three times, and call "tcp_send_mss" calculate mss_cache,
+>> call "tcp_established_options" to reserve tcp opt len, call
+>> "bpf_skops_write_hdr_opt" to write tcp opt, but "tcp_send_mss" before
+>> TSO. Through bpftrace tracking, it was found that during the pressure
+>> test, "tcp_send_mss" call frequency was 90w/s. Considering that opt
+>> len does not change often, consider caching opt len for optimization.
+> 
+> You could also make your BPF sock_ops program cache the value and return
+> the cached value when called for BPF_SOCK_OPS_HDR_OPT_LEN_CB.
+> 
+> If that is in your opinion prohibitevely expensive then it would be good
+> to see a sample program and CPU cycle measurements (bpftool prog profile).
+> 
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+I'm not referring to the overhead introduced by the time-consuming
+operation of bpf prog. I have tested that bpf prog does nothing and
+returns directly, and the loss is still 20%. During the pressure test
+process, "tcp_send_mss" and "__tcp_transmit_skb" the call frequency per
+second
 
-Reported-and-tested-by: syzbot+10b936c5eaee2819b49b@syzkaller.appspotmail.com
+@[
+     bpf_skops_hdr_opt_len.isra.46+1
+     tcp_established_options+730
+     tcp_current_mss+81
+     tcp_send_mss+23
+     tcp_sendmsg_locked+285
+     tcp_sendmsg+58
+     sock_sendmsg+48
+     sock_write_iter+151
+     new_sync_write+296
+     vfs_write+165
+     ksys_write+89
+     do_syscall_64+89
+     entry_SYSCALL_64_after_hwframe+68
+]: 3671671
 
-Tested on:
+@[
+     bpf_skops_write_hdr_opt.isra.47+1
+     __tcp_transmit_skb+761
+     tcp_write_xmit+822
+     __tcp_push_pending_frames+52
+     tcp_close+813
+     inet_release+60
+     __sock_release+55
+     sock_close+17
+     __fput+179
+     task_work_run+112
+     exit_to_usermode_loop+245
+     do_syscall_64+456
+     entry_SYSCALL_64_after_hwframe+68
+]: 36125
 
-commit:         82d92a9a Add linux-next specific files for 20240515
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=11c02034980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a6e710494e484d15
-dashboard link: https://syzkaller.appspot.com/bug?extid=10b936c5eaee2819b49b
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=128d04f4980000
+"tcp_send_mss" before TSO, without packet aggregation, and
+"__tcp_transmit_skb" after TSO, the gap between the two is
+100 times.
 
-Note: testing is done by a robot and is best-effort only.
+>>
+>> Signed-off-by: Feng Zhou <zhoufeng.zf@bytedance.com>
+>> ---
+>>   include/linux/tcp.h            |  3 +++
+>>   include/uapi/linux/bpf.h       |  8 +++++++-
+>>   net/ipv4/tcp_output.c          | 12 +++++++++++-
+>>   tools/include/uapi/linux/bpf.h |  8 +++++++-
+>>   4 files changed, 28 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/include/linux/tcp.h b/include/linux/tcp.h
+>> index 6a5e08b937b3..74437fcf94a2 100644
+>> --- a/include/linux/tcp.h
+>> +++ b/include/linux/tcp.h
+>> @@ -455,6 +455,9 @@ struct tcp_sock {
+>>   					  * to recur itself by calling
+>>   					  * bpf_setsockopt(TCP_CONGESTION, "itself").
+>>   					  */
+>> +	u8	bpf_opt_len;		/* save tcp opt len implementation
+>> +					 * BPF_SOCK_OPS_HDR_OPT_LEN_CB fast path
+>> +					 */
+>>   #define BPF_SOCK_OPS_TEST_FLAG(TP, ARG) (TP->bpf_sock_ops_cb_flags & ARG)
+>>   #else
+>>   #define BPF_SOCK_OPS_TEST_FLAG(TP, ARG) 0
+>> diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+>> index 90706a47f6ff..f2092de1f432 100644
+>> --- a/include/uapi/linux/bpf.h
+>> +++ b/include/uapi/linux/bpf.h
+>> @@ -6892,8 +6892,14 @@ enum {
+>>   	 * options first before the BPF program does.
+>>   	 */
+>>   	BPF_SOCK_OPS_WRITE_HDR_OPT_CB_FLAG = (1<<6),
+>> +	/* Fast path to reserve space in a skb under
+>> +	 * sock_ops->op == BPF_SOCK_OPS_HDR_OPT_LEN_CB.
+>> +	 * opt length doesn't change often, so it can save in the tcp_sock. And
+>> +	 * set BPF_SOCK_OPS_HDR_OPT_LEN_CACHE_CB_FLAG to no bpf call.
+>> +	 */
+>> +	BPF_SOCK_OPS_HDR_OPT_LEN_CACHE_CB_FLAG = (1<<7),
+>>   /* Mask of all currently supported cb flags */
+>> -	BPF_SOCK_OPS_ALL_CB_FLAGS       = 0x7F,
+>> +	BPF_SOCK_OPS_ALL_CB_FLAGS       = 0xFF,
+>>   };
+>>   
+>>   /* List of known BPF sock_ops operators.
+>> diff --git a/net/ipv4/tcp_output.c b/net/ipv4/tcp_output.c
+>> index ea7ad7d99245..0e7480a58012 100644
+>> --- a/net/ipv4/tcp_output.c
+>> +++ b/net/ipv4/tcp_output.c
+>> @@ -488,12 +488,21 @@ static void bpf_skops_hdr_opt_len(struct sock *sk, struct sk_buff *skb,
+>>   {
+>>   	struct bpf_sock_ops_kern sock_ops;
+>>   	int err;
+>> +	struct tcp_sock *th = (struct tcp_sock *)sk;
+>>   
+>> -	if (likely(!BPF_SOCK_OPS_TEST_FLAG(tcp_sk(sk),
+>> +	if (likely(!BPF_SOCK_OPS_TEST_FLAG(th,
+>>   					   BPF_SOCK_OPS_WRITE_HDR_OPT_CB_FLAG)) ||
+>>   	    !*remaining)
+>>   		return;
+>>   
+>> +	if (likely(BPF_SOCK_OPS_TEST_FLAG(th,
+>> +					  BPF_SOCK_OPS_HDR_OPT_LEN_CACHE_CB_FLAG)) &&
+>> +	    th->bpf_opt_len) {
+>> +		*remaining -= th->bpf_opt_len;
+> 
+> What if *remaining value shrinks from one call to the next?
+> 
+> BPF sock_ops program can't react to change. Feels like there should be a
+> safety check to prevent an underflow.
+> 
+
+Thanks for the reminder, I'll add a judgment.
+
+>> +		opts->bpf_opt_len = th->bpf_opt_len;
+>> +		return;
+>> +	}
+>> +
+>>   	/* *remaining has already been aligned to 4 bytes, so *remaining >= 4 */
+>>   
+>>   	/* init sock_ops */
+>> @@ -538,6 +547,7 @@ static void bpf_skops_hdr_opt_len(struct sock *sk, struct sk_buff *skb,
+>>   	opts->bpf_opt_len = *remaining - sock_ops.remaining_opt_len;
+>>   	/* round up to 4 bytes */
+>>   	opts->bpf_opt_len = (opts->bpf_opt_len + 3) & ~3;
+>> +	th->bpf_opt_len = opts->bpf_opt_len;
+>>   
+>>   	*remaining -= opts->bpf_opt_len;
+>>   }
+>> diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bpf.h
+>> index 90706a47f6ff..f2092de1f432 100644
+>> --- a/tools/include/uapi/linux/bpf.h
+>> +++ b/tools/include/uapi/linux/bpf.h
+>> @@ -6892,8 +6892,14 @@ enum {
+>>   	 * options first before the BPF program does.
+>>   	 */
+>>   	BPF_SOCK_OPS_WRITE_HDR_OPT_CB_FLAG = (1<<6),
+>> +	/* Fast path to reserve space in a skb under
+>> +	 * sock_ops->op == BPF_SOCK_OPS_HDR_OPT_LEN_CB.
+>> +	 * opt length doesn't change often, so it can save in the tcp_sock. And
+>> +	 * set BPF_SOCK_OPS_HDR_OPT_LEN_CACHE_CB_FLAG to no bpf call.
+>> +	 */
+>> +	BPF_SOCK_OPS_HDR_OPT_LEN_CACHE_CB_FLAG = (1<<7),
+> 
+> Have you considered a bpf_reserve_hdr_opt() flag instead?
+> 
+> An example or test coverage would to show this API extension in action
+> would help.
+> 
+
+bpf_reserve_hdr_opt () flag can't finish this. I want to optimize
+that bpf prog will not be triggered frequently before TSO. Provide
+a way for users to not trigger bpf prog when opt len is unchanged.
+Then when writing opt, if len changes, clear the flag, and then
+change opt len in the next package.
+
+In the next version, I will add test cases.
+
+>>   /* Mask of all currently supported cb flags */
+>> -	BPF_SOCK_OPS_ALL_CB_FLAGS       = 0x7F,
+>> +	BPF_SOCK_OPS_ALL_CB_FLAGS       = 0xFF,
+>>   };
+>>   
+>>   /* List of known BPF sock_ops operators.
+
 
