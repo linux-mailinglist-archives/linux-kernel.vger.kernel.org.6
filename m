@@ -1,136 +1,142 @@
-Return-Path: <linux-kernel+bounces-181628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D49B08C7EDD
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 01:05:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 992708C7EE4
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 01:08:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 122771C20F07
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 23:05:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59C3A28142C
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 23:08:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D3492D044;
-	Thu, 16 May 2024 23:04:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4E8C2E40D;
+	Thu, 16 May 2024 23:08:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Vj7jXEjv"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VaFVwiQQ"
+Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29C42249F7;
-	Thu, 16 May 2024 23:04:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E066F27269
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 23:08:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715900694; cv=none; b=V0RQ3x9ZaHGT2a+UbkD4RWSGeSZxvx2F4/Pf6bwLdA6W0LjSVF7u7RiZakTzm3r857n1fdwZMa90/UMXR9e4EO1hnD70YOIs6UETacFZsukOCqOzqmCFcrD3dOidCXI5WvNxuNWUDrClDWjxYWSzdxv6+NGgljQhhZsEKDwwPsg=
+	t=1715900902; cv=none; b=Yn05I+gME+w86s4cRyiTubjblDJl1yWI+iMM4x0DRrxgwFCbKHRM7sDxLqZ32V8GOBgbjpk+hZg0c3jKkG//GyGdHD2ls9GG8jNDoNSQUkxTpemRXJazrQzKLXcBjM8ECS8N+86KzRdtvNMJco3UHFatB+lAzvgXleHk24f0xtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715900694; c=relaxed/simple;
-	bh=nh4nGr+gQ6wnevCjIVCmzspYxt6MCbloYi4F9t67PIg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T+OmpzkiLyLa3/ogWjSCSAZpQL1gHL3s1+EKJuFtqd+b/ALTkp0PKHn4rvDG7pBcx7VYJwd0UVaP9fiBAI05LqM2u7qQDLxOIVo2AUDr5w3gR0pnHCsaQvhgYNx3sIu9fqH9W7ZhRQvMCzzdpLN7X81Inq+xbs7Sry4BzOIL4Cg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Vj7jXEjv; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715900693; x=1747436693;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=nh4nGr+gQ6wnevCjIVCmzspYxt6MCbloYi4F9t67PIg=;
-  b=Vj7jXEjva+EPdM5lqBvLwDq/Nqx79yO3kynUcy2fXe0np6p7P4sEW2Bd
-   sVo8KoWG0N9l3p8h+b/jERr5W8eSGLfKFhpdcV6i27ws3vXNbhmfq14DZ
-   4qFumpK8kbfO/urKBmLvxpoQSS/l0fPgqF2ha0jyIpzyFqHV7d2o6rqpX
-   n2nn0C4bmUMiGLaFFpr4PF4PtZoYKOa+fj/DQbd9zjbUQGCkEkkB0I7l1
-   TfroctM87xz+JnpcVCuhObg9g0diiSmM6Y2+QGiq2dZUFIlwaQSH/i5Gb
-   /ZukLeQN9F0KDkNqE353MHpONZWS7eVfGshfVqP0LleJx10dLYy6JLX6f
-   g==;
-X-CSE-ConnectionGUID: JBuN+R9nT7GY6p160paclw==
-X-CSE-MsgGUID: OfnCxF1jTj6N5yjPAom1Yw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="12266918"
-X-IronPort-AV: E=Sophos;i="6.08,165,1712646000"; 
-   d="scan'208";a="12266918"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 16:04:52 -0700
-X-CSE-ConnectionGUID: +k415JnMQi+FptgiSeOfPw==
-X-CSE-MsgGUID: bl9Y4xyLRXy+FsAFUdig8g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,165,1712646000"; 
-   d="scan'208";a="36499893"
-Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 16 May 2024 16:04:45 -0700
-Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s7k9S-000Exl-1e;
-	Thu, 16 May 2024 23:04:42 +0000
-Date: Fri, 17 May 2024 07:03:46 +0800
-From: kernel test robot <lkp@intel.com>
-To: Zhang Yi <yi.zhang@huaweicloud.com>, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-ext4@vger.kernel.org, djwong@kernel.org, hch@infradead.org,
-	brauner@kernel.org, david@fromorbit.com, chandanbabu@kernel.org,
-	jack@suse.cz, yi.zhang@huawei.com, yi.zhang@huaweicloud.com,
-	chengzhihao1@huawei.com, yukuai3@huawei.com
-Subject: Re: [PATCH v2 1/3] iomap: pass blocksize to iomap_truncate_page()
-Message-ID: <202405170624.liC4qYj3-lkp@intel.com>
-References: <20240516073001.1066373-2-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1715900902; c=relaxed/simple;
+	bh=EP942SqgqU+2g95deuGJUqyAMQDCgoYsK8UTO8Gxpcc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=moZi04aLj4eN312vEFOJ5VP2Pk2alYA7whyEFSciqzopX2WEDw8I8p59LD3pJEjtLnzshNsAraVL+xEWheGyJ5JxCntOLyPGXSSbc6dk4a02ZikdwgX+PkiK6g2jtvZcdBV9QmfJP1Rab2Qn0b06cR79YVaoXupUu2sbTza3wOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VaFVwiQQ; arc=none smtp.client-ip=209.85.222.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-7f74cca5a2bso25083241.3
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 16:08:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715900899; x=1716505699; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gak+/oovP81PfogPpqJsHd/1CwWJ9r/ylbJlVjZgFRo=;
+        b=VaFVwiQQonng/gkW5JDVk2XG3oZJgOWtoLasmWZZXswJ8s/fuLmCQgzIeaVR3h5GkT
+         CYHuxQ9+AoFU7VzYIrhrnxAn3RhTwzEpI2yfC3l8hxGWs9WsTvwra9ygVJPs2+7BXaYU
+         NAK07jhm8354GuT0+u/nNofzFEUK6O+RTNoTbqVStDlylExqdUwDhauG8iqAG6EGmgam
+         oroXw4d+WcTSyWCghGHd3/EEf3AQUPTss8+6EX8db4lAYzDakZr2J8kARtY0isCaicKC
+         MUfMuKXapJuMRKaNaXbev+zfUoOb8y09JSPB5RR37a9Q1XH0OKWG8qRhTEi/ZsouDfx3
+         GIFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715900899; x=1716505699;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gak+/oovP81PfogPpqJsHd/1CwWJ9r/ylbJlVjZgFRo=;
+        b=fW8atax4aR4YwGECv4YHcNlS2CjOpqli8qtCT/iYQw0OnBXP0hYenQ7B2mhy4vzxgs
+         DTrfaDV4WEu4VD599Z3kCMAZSrjnMDD0CFDZCsGYyMT4HFnAcfBmkgAIYUzEVoTA+yIF
+         l56A7/VEueUX0HQGem8NAtC7KjAkE+v53crUGkyQ/8ludxHQ23ZsUU7PALZjdvMeBXQ0
+         cIuBEXkcZFG9KEE5+mNfAyy+hW3HD0F5i/q5hDKgcgf+cDvI7F4/GsiTg6moRGwrZcJd
+         xmNvHUFlGIZM5oGofMY8xwc95DUXX105jAYiLdHaGPC3SwicrMXlDD7bopSqesXSOx00
+         2Rrw==
+X-Forwarded-Encrypted: i=1; AJvYcCX7EwqWDtk+OCxy+dIGuPlr9rwF+GPEZoRaRIleJlwtDYF4lZHTQ3kuxC0/2KT1ARr0E70EjPBpf/8WBb+tvOJO8kz2hRfDP7jz0ZH+
+X-Gm-Message-State: AOJu0YxhaolhVmB7IxYKnW32TQ2pXRdDiK1XJz5JzqArV+/GEA2zPBDP
+	v2OnkI3x0Z8VMYFZ/NihlU2J3H+xqIIZV1UwDLQlZ+pHKAkLPM+QK0+/k8SikvEZCWjOue7pkQi
+	eeWcE4nqxHtpImsPPecI9WZBquqJGsVRLVULE
+X-Google-Smtp-Source: AGHT+IFMgTb54aBiq7xBfnDGVVGoTPJD2NkwNvHCirLNFVItNElpLuHUDLgn7UWhCRx47d2b9REE8C02r6/bHnLb5WM=
+X-Received: by 2002:a05:6102:3e26:b0:47b:b8a7:7ddc with SMTP id
+ ada2fe7eead31-48077eb4acdmr25780377137.30.1715900898508; Thu, 16 May 2024
+ 16:08:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240516073001.1066373-2-yi.zhang@huaweicloud.com>
+References: <20240516-x86-boot-fix-clang-implicit-fallthrough-v1-1-04dc320ca07c@kernel.org>
+In-Reply-To: <20240516-x86-boot-fix-clang-implicit-fallthrough-v1-1-04dc320ca07c@kernel.org>
+From: Justin Stitt <justinstitt@google.com>
+Date: Thu, 16 May 2024 16:08:06 -0700
+Message-ID: <CAFhGd8oAunv=+xT84hC2hCp3F-=Oy_gvK08eRmD6nk9xwCvWzQ@mail.gmail.com>
+Subject: Re: [PATCH] x86/boot: Address clang -Wimplicit-fallthrough in vsprintf()
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	Bill Wendling <morbo@google.com>, linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
+	patches@lists.linux.dev, kernel test robot <lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Zhang,
+On Thu, May 16, 2024 at 7:03=E2=80=AFAM Nathan Chancellor <nathan@kernel.or=
+g> wrote:
+>
+> After enabling -Wimplicit-fallthrough for the x86 boot code, clang
+> warns:
+>
+>   arch/x86/boot/printf.c:257:3: warning: unannotated fall-through between=
+ switch labels [-Wimplicit-fallthrough]
+>     257 |                 case 'u':
+>         |                 ^
+>
+> Clang is a little more pedantic than GCC, which does not warn when
+> falling through to a case that is just break or return. Clang's version
+> is more in line with the kernel's own stance in deprecated.rst, which
+> states that all switch/case blocks must end in either break,
+> fallthrough, continue, goto, or return. Add the missing break to silence
+> the warning.
+>
+> Fixes: dd0716c2b877 ("x86/boot: Add a fallthrough annotation")
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202405162054.ryP73vy1-lkp@i=
+ntel.com/
+> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
 
-kernel test robot noticed the following build warnings:
+Seems simple enough.
 
-[auto build test WARNING on brauner-vfs/vfs.all]
-[also build test WARNING on linus/master v6.9 next-20240516]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Acked-by: Justin Stitt <justinstitt@google.com>
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Zhang-Yi/iomap-pass-blocksize-to-iomap_truncate_page/20240516-154238
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
-patch link:    https://lore.kernel.org/r/20240516073001.1066373-2-yi.zhang%40huaweicloud.com
-patch subject: [PATCH v2 1/3] iomap: pass blocksize to iomap_truncate_page()
-config: arm-randconfig-r111-20240517 (https://download.01.org/0day-ci/archive/20240517/202405170624.liC4qYj3-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 13.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20240517/202405170624.liC4qYj3-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405170624.liC4qYj3-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
->> fs/iomap/buffered-io.c:1453:28: sparse: sparse: incompatible types in comparison expression (different signedness):
-   fs/iomap/buffered-io.c:1453:28: sparse:    long long *
-   fs/iomap/buffered-io.c:1453:28: sparse:    unsigned long long [usertype] *
-
-vim +1453 fs/iomap/buffered-io.c
-
-  1446	
-  1447	int
-  1448	iomap_truncate_page(struct inode *inode, loff_t pos, unsigned int blocksize,
-  1449			bool *did_zero, const struct iomap_ops *ops)
-  1450	{
-  1451		loff_t start = pos;
-  1452		unsigned int off = is_power_of_2(blocksize) ? (pos & (blocksize - 1)) :
-> 1453				   do_div(pos, blocksize);
-  1454	
-  1455		/* Block boundary? Nothing to do */
-  1456		if (!off)
-  1457			return 0;
-  1458		return iomap_zero_range(inode, start, blocksize - off, did_zero, ops);
-  1459	}
-  1460	EXPORT_SYMBOL_GPL(iomap_truncate_page);
-  1461	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> ---
+>  arch/x86/boot/printf.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/arch/x86/boot/printf.c b/arch/x86/boot/printf.c
+> index c0ec1dc355ab..51dc14b714f6 100644
+> --- a/arch/x86/boot/printf.c
+> +++ b/arch/x86/boot/printf.c
+> @@ -254,6 +254,8 @@ int vsprintf(char *buf, const char *fmt, va_list args=
+)
+>                 case 'd':
+>                 case 'i':
+>                         flags |=3D SIGN;
+> +                       break;
+> +
+>                 case 'u':
+>                         break;
+>
+>
+> ---
+> base-commit: dd0716c2b87792ebea30864e7ad1df461d4c1525
+> change-id: 20240516-x86-boot-fix-clang-implicit-fallthrough-fc5c9bb19765
+>
+> Best regards,
+> --
+> Nathan Chancellor <nathan@kernel.org>
+>
 
