@@ -1,189 +1,162 @@
-Return-Path: <linux-kernel+bounces-180812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E0148C7376
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 11:06:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B35218C7378
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 11:07:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CC651F23B14
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 09:06:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21186B20E92
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 09:06:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77D41142E98;
-	Thu, 16 May 2024 09:06:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SdRdpQPZ"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FC86142E94
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 09:05:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73C6F14372C;
+	Thu, 16 May 2024 09:06:46 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FE06142E8A;
+	Thu, 16 May 2024 09:06:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715850359; cv=none; b=s3rgwNKqDkRoxcOMsvoQ2xXcMpZV8Jxn5egKcG6ln3EH6r8n8A7OO+PxzvC3TFlEeNfJ8uh9dwLMYFPFb9oywmRrqQV2ODfDXz0iFjCtfr1HAPb3fvoNRx+b6mBXIs7dQBFmtVQ1Ehe9gUCZntCjHx7IZkVCFS2SFBB25HJVcrY=
+	t=1715850406; cv=none; b=Aq4+mzTGqUlwQt6yqiZ/D4EWLE34FtZHsFiDOr9I2eypp6ePmyWu8MguUMrc4ncM6kPSYbfxgwTj70iu2nS96Bjkr3VBaPGX7QNnxlXUt2gD89I4fXiD/Dw/mGfvwXdtFJhvPyEjcZsSGXL0cMsHs6eGabN+Yb32P2znMZmpoT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715850359; c=relaxed/simple;
-	bh=0E+gPqH6jSJafScL9pyYv33ymYZlJA8AedYepE0ldGY=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=dqToklWrXZ1MU53BDwnT7TzEFzY2AcIwWUTUApQw9DXax1cAkjWXdQRZwNdkm/bgIIZQfLz7hRcq/YhYaIpXydOa8zl/UmkRyJn3FaNKwM87u6DPZPx7q2HJs8Il1n0ghdrhG8KvEx6GQ4v6rdX0iuzjPKMHW1dmG3ldEWQoC+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SdRdpQPZ; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-42024ca94d0so9024195e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 02:05:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715850355; x=1716455155; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=eCVjg4sqSDfY9TI5zH06fjgzS/36wYmW5IVSJ2sv/qA=;
-        b=SdRdpQPZUsg7VDeysAh0OEXsppk9PcbWNAimh5KzdU8ojMTRQ1U8RxGxNrYVZzco12
-         u9eM8fsn2hjDZtxJbMQmQ7m27tIDX5ogq5IT0DXdyWeUVgD3PYC2wabooCdwhFleovKt
-         XoO4ksK7yKHXkDacT+iIZJKluRviDnsc73mQPn0Kej15PyCFE+nXYXDjtL5hl0Tn+siI
-         FGy7yLbZiFRmfC4Bvo8QZYP+oXSAlZMZSnzgt1qSCftE/AIz1HPpAA7652jd3xiQoasE
-         9xuqCZ7mdU8ai1Ak+QfmwtQEhgLV/UDwaQ+kTXaznY3Qny3XxfFa20RBOHNILQ0/7IIC
-         lbew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715850355; x=1716455155;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=eCVjg4sqSDfY9TI5zH06fjgzS/36wYmW5IVSJ2sv/qA=;
-        b=Pcl0gT/7YXlhw5GH7XsZT4gjWNy4Zr0ZTZqpnb0cvMCzdWS/SKuYpIdnIKSQXRtXDV
-         Hmss8GlJwjY8LhTO077YlUbbkn7tooddze2Uu6ckinl2PPFh+q2jy6u0V2rlA3wGLJVx
-         ZOdOI4pjSTFRFDgLS8zQvCv3D1P9IVcRHbO1cDqnoQYDKyRUlfhmB0opU8FVkvS/pvke
-         6+lkQ56UhaWX4Oc/ouKFDMpOlsV1sMXB7vADnQfqmQozK3C0X8jmg2W9TzUlLI1iDHgd
-         uhpCjyyj+3ROUfOBGP1I4Lh5ET5S6SV3c3o9WPYA9hbq/L7pWnUtgz9lgq+XyZqmqeuR
-         XsCw==
-X-Forwarded-Encrypted: i=1; AJvYcCXXM6STF1JdQKbHHZ2LpmHCGt7Bk75CJq+60WjrOpAxEUvYHGeFWlXu3t/CmirNZbPQXs4Z9fqZK6Om25uaL7dOqL2Jf62de1a3IhNb
-X-Gm-Message-State: AOJu0Yy+fiiHwUESaenA8NmtkrWZvDwpLCBEEw8om5n8vvmFvg6u28x2
-	ZGKvBMkoX0ZKC8IkgiqYHe0vY/QxQu4nqPIFfqKAlATAjJKM9IhQzc6/IMYJhyA6qcbYIA==
-X-Google-Smtp-Source: AGHT+IExAYePWaQ3A5GVUKfOSn5p57YB46bPWL6/P0sXj67q8bQsgVt0zHPnfetLFURFlbMeUdkLlKxe
-X-Received: from palermo.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:118a])
- (user=ardb job=sendgmr) by 2002:a05:600c:1d86:b0:420:2962:242d with SMTP id
- 5b1f17b1804b1-4202962261cmr141205e9.8.1715850354957; Thu, 16 May 2024
- 02:05:54 -0700 (PDT)
-Date: Thu, 16 May 2024 11:05:42 +0200
+	s=arc-20240116; t=1715850406; c=relaxed/simple;
+	bh=+Jlyv5HcMaUNPlQ6mVoxa3FJu4ksG1w7kjJzgf+HZ3E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jwKItAB4Kyv0wiIRkZDiLMM6X1jaP+UrFU54zaTwz5jl7C6LQ79rqUyfkAEzGTy+j5waV02izre2DAyr+0Mbe78Jn5cMFOctm0CTpJoasB16tsZ5zfLcWv5ThmPoRgPKhw1/wAwt0S2/eWVQt5F00BY3OiKbW1LNcMKc4K/OYvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 504C2DA7;
+	Thu, 16 May 2024 02:07:08 -0700 (PDT)
+Received: from [10.57.35.131] (unknown [10.57.35.131])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 77A383F7A6;
+	Thu, 16 May 2024 02:06:41 -0700 (PDT)
+Message-ID: <d9d35115-0fb5-4e8e-a99c-ff85ba4a7967@arm.com>
+Date: Thu, 16 May 2024 10:06:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4092; i=ardb@kernel.org;
- h=from:subject; bh=TsQg8UBvrS233z0bzqtKVfmyw4Ycif6w17yanCPXV7E=;
- b=owGbwMvMwCFmkMcZplerG8N4Wi2JIc31TBpHW/RC/rlrTUxnZcf/uLb3/ESheT/barJqLDtiq
- jO2qT/qKGVhEONgkBVTZBGY/ffdztMTpWqdZ8nCzGFlAhnCwMUpABOJ3s7I8KtS7ou1ytW3Sswh
- c9W+XfX6vcPqrIfP98XVXFe+39F4EcPwzzBp5vzKGrUX64NiNJ5+vGxuy8HzPdHQMu3c8t5a99e 8vAA=
-X-Mailer: git-send-email 2.45.0.rc1.225.g2a3ae87e7f-goog
-Message-ID: <20240516090541.4164270-2-ardb+git@google.com>
-Subject: [PATCH] x86/efistub: Omit physical KASLR when memory reservations exist
-From: Ard Biesheuvel <ardb+git@google.com>
-To: linux-efi@vger.kernel.org
-Cc: keescook@chromium.org, linux-kernel@vger.kernel.org, x86@kernel.org, 
-	Ard Biesheuvel <ardb@kernel.org>, Ben Chaney <bchaney@akamai.com>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 09/14] arm64: Enable memory encrypt for Realms
+Content-Language: en-GB
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
+ kvmarm@lists.linux.dev, Marc Zyngier <maz@kernel.org>,
+ Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
+ Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <yuzenghui@huawei.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei
+ <alexandru.elisei@arm.com>, Christoffer Dall <christoffer.dall@arm.com>,
+ Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
+References: <20240412084213.1733764-1-steven.price@arm.com>
+ <20240412084213.1733764-10-steven.price@arm.com> <ZkOmrMIMFCgEKuVw@arm.com>
+ <5b2db977-7f0f-4c3a-b278-f195c7ddbd80@arm.com> <ZkW6UgrwJT6G9UN-@arm.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <ZkW6UgrwJT6G9UN-@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Ard Biesheuvel <ardb@kernel.org>
+Hi Catalin
 
-The legacy decompressor has elaborate logic to ensure that the
-randomized physical placement of the decompressed kernel image does not
-conflict with any memory reservations, including ones specified on the
-command line using mem=, memmap=, efi_fake_mem= or hugepages=, which are
-taken into account by the kernel proper at a later stage.
+On 16/05/2024 08:48, Catalin Marinas wrote:
+> On Wed, May 15, 2024 at 11:47:02AM +0100, Suzuki K Poulose wrote:
+>> On 14/05/2024 19:00, Catalin Marinas wrote:
+>>> On Fri, Apr 12, 2024 at 09:42:08AM +0100, Steven Price wrote:
+>>> Can someone summarise what the point of this protection bit is? The IPA
+>>> memory is marked as protected/unprotected already via the RSI call and
+>>> presumably the RMM disables/permits sharing with a non-secure hypervisor
+>>> accordingly irrespective of which alias the realm guest has the linear
+>>> mapping mapped to. What does it do with the top bit of the IPA? Is it
+>>> that the RMM will prevent (via Stage 2) access if the IPA does not match
+>>> the requested protection? IOW, it unmaps one or the other at Stage 2?
+>>
+>> The Realm's IPA space is split in half. The lower half is "protected"
+>> and all pages backing the "protected" IPA is in the Realm world and
+>> thus cannot be shared with the hypervisor. The upper half IPA is
+>> "unprotected" (backed by Non-secure PAS pages) and can be accessed
+>> by the Host/hyp.
+> 
+> What about emulated device I/O where there's no backing RAM at an IPA.
+> Does it need to have the top bit set?
 
-When booting in EFI mode, it is the firmware's job to ensure that the
-chosen range does not conflict with any memory reservations that it
-knows about, and this is trivially achieved by using the firmware's
-memory allocation APIs.
+The behaviour depends on the IPA (i.e, protected vs unprotected).
 
-That leaves reservations specified on the command line, though, which
-the firmware knows nothing about, as these regions have no other special
-significance to the platform. Since commit
+1. Unprotected : All stage2 faults in the Unprotected half are serviced
+by the Host, including the areas that may be "Memory" backed. RMM 
+doesn't provide any guarantees on accesses to the unprotected half. 
+i.e., host could even inject a Synchronous External abort, if an MMIO
+region is not understood by it.
 
-  a1b87d54f4e4 ("x86/efistub: Avoid legacy decompressor when doing EFI boot")
+2. Protected : The behaviour depends on the "IPA State" (only applicable 
+for the protected IPAs). The possible states are RIPAS_RAM,  RIPAS_EMPTY 
+and RIPAS_DESTROYED(not visible for the Realm).
 
-these reservations are not taken into account when randomizing the
-physical placement, which may result in conflicts where the memory
-cannot be reserved by the kernel proper because its own executable image
-resides there.
+The default IPA state is RIPAS_EMPTY for all IPA and the state is 
+controlled by Realm with the help of RMM (serviced by Host), except
+during the Realm initialisation. i.e., the Host is allowed to "mark"
+some IPAs as RIPAS_RAM (for e.g., initial images loaded into the Realm)
+during Realm initiliasation (via RMI_RTT_INIT_RIPAS), which gets
+measured by the RMM (and affects the Realm Initial Measurement). After
+the Realm is activated, the Host can only perform the changes requested
+by the Realm (RMM monitors this). Hence, the Realm at boot up, marks all
+of its "Described RAM" areas as RIPAS_RAM (via RSI_IPA_STATE_SET), so
+that it can go ahead and acccess the RAM as normal.
 
-To avoid having to duplicate or reuse the existing complicated logic,
-disable physical KASLR entirely when such overrides are specified. These
-are mostly diagnostic tools or niche features, and physical KASLR (as
-opposed to virtual KASLR, which is much more important as it affects the
-memory addresses observed by code executing in the kernel) is something
-we can live without.
 
-Closes: https://lkml.kernel.org/r/FA5F6719-8824-4B04-803E-82990E65E627%40akamai.com
-Reported-by: Ben Chaney <bchaney@akamai.com>
-Fixes: a1b87d54f4e4 ("x86/efistub: Avoid legacy decompressor when doing EFI boot")
-Cc: <stable@vger.kernel.org> # v6.1+
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
----
- drivers/firmware/efi/libstub/x86-stub.c | 28 +++++++++++++++++++++++--
- 1 file changed, 26 insertions(+), 2 deletions(-)
+a) RIPAS_EMPTY: Any access to an IPA in RIPAS_EMPTY generates a 
+Synchronous External Abort back to the Realm. (In the future, this may
+be serviced by another entity in the Realm).
 
-diff --git a/drivers/firmware/efi/libstub/x86-stub.c b/drivers/firmware/efi/libstub/x86-stub.c
-index d5a8182cf2e1..1983fd3bf392 100644
---- a/drivers/firmware/efi/libstub/x86-stub.c
-+++ b/drivers/firmware/efi/libstub/x86-stub.c
-@@ -776,6 +776,26 @@ static void error(char *str)
- 	efi_warn("Decompression failed: %s\n", str);
- }
- 
-+static const char *cmdline_memmap_override;
-+
-+static efi_status_t parse_options(const char *cmdline)
-+{
-+	static const char opts[][14] = {
-+		"mem=", "memmap=", "efi_fake_mem=", "hugepages="
-+	};
-+
-+	for (int i = 0; i < ARRAY_SIZE(opts); i++) {
-+		const char *p = strstr(cmdline, opts[i]);
-+
-+		if (p == cmdline || (p > cmdline && isspace(p[-1]))) {
-+			cmdline_memmap_override = opts[i];
-+			break;
-+		}
-+	}
-+
-+	return efi_parse_options(cmdline);
-+}
-+
- static efi_status_t efi_decompress_kernel(unsigned long *kernel_entry)
- {
- 	unsigned long virt_addr = LOAD_PHYSICAL_ADDR;
-@@ -807,6 +827,10 @@ static efi_status_t efi_decompress_kernel(unsigned long *kernel_entry)
- 		    !memcmp(efistub_fw_vendor(), ami, sizeof(ami))) {
- 			efi_debug("AMI firmware v2.0 or older detected - disabling physical KASLR\n");
- 			seed[0] = 0;
-+		} else if (cmdline_memmap_override) {
-+			efi_info("%s detected on the kernel command line - disabling physical KASLR\n",
-+				 cmdline_memmap_override);
-+			seed[0] = 0;
- 		}
- 
- 		boot_params_ptr->hdr.loadflags |= KASLR_FLAG;
-@@ -883,7 +907,7 @@ void __noreturn efi_stub_entry(efi_handle_t handle,
- 	}
- 
- #ifdef CONFIG_CMDLINE_BOOL
--	status = efi_parse_options(CONFIG_CMDLINE);
-+	status = parse_options(CONFIG_CMDLINE);
- 	if (status != EFI_SUCCESS) {
- 		efi_err("Failed to parse options\n");
- 		goto fail;
-@@ -892,7 +916,7 @@ void __noreturn efi_stub_entry(efi_handle_t handle,
- 	if (!IS_ENABLED(CONFIG_CMDLINE_OVERRIDE)) {
- 		unsigned long cmdline_paddr = ((u64)hdr->cmd_line_ptr |
- 					       ((u64)boot_params->ext_cmd_line_ptr << 32));
--		status = efi_parse_options((char *)cmdline_paddr);
-+		status = parse_options((char *)cmdline_paddr);
- 		if (status != EFI_SUCCESS) {
- 			efi_err("Failed to parse options\n");
- 			goto fail;
--- 
-2.45.0.rc1.225.g2a3ae87e7f-goog
+b) RIPAS_RAM: A stage2 fault at a mapped entry triggers a Realm Exit to 
+the Host (except Instruction Aborts) and the host is allowed to map a
+page (that is "scrubbed" by RMM) at stage2 and continue the execution.
 
+[ ---->8  You may skip this ---
+  c) RIPAS_DESTROYED: An IPA is turned to RIPAS_DESTROYED, if the host
+     "unmaps" a protected IPA in RIPAS_RAM (via RMI_DATA_DESTROY). This
+     implies that the Realm contents were destroyed with no way of
+     restoring back. Any access to such IPA from the Realm also causes
+     a Realm EXIT, however, the Host is not allowed to map anything back
+     there and thus the vCPU cannot proceed with the execution.
+----<8----
+]
+
+> 
+>> The RSI call (RSI_IPA_STATE_SET) doesn't make an IPA unprotected. It
+>> simply "invalidates" a (protected) IPA to "EMPTY" implying the Realm doesn't
+>> intend to use the "ipa" as RAM anymore and any access to it from
+>> the Realm would trigger an SEA into the Realm. The RSI call triggers an exit
+>> to the host with the information and is a hint to the hypervisor to reclaim
+>> the page backing the IPA.
+>>
+>> Now, given we need dynamic "sharing" of pages (instead of a dedicated
+>> set of shared pages), "aliasing" of an IPA gives us shared pages.
+>> i.e., If OS wants to share a page "x" (protected IPA) with the host,
+>> we mark that as EMPTY via RSI call and then access the "x" with top-bit
+>> set (aliasing the IPA x). This fault allows the hyp to map the page backing
+>> IPA "x" as "unprotected" at ALIAS(x) address.
+> 
+> Does the RMM sanity-checks that the NS hyp mappings are protected or
+> unprotected depending on the IPA range?
+
+RMM moderates the mappings in the protected half (as mentioned above).
+Any mapping in the unprotected half is not monitored. The host is
+allowed unmap, remap with anything in the unprotected half.
+
+> 
+> I assume that's also the case if the NS hyp is the first one to access a
+> page before the realm (e.g. inbound virtio transfer; no page allocated
+> yet because of a realm access).
+> 
+
+Correct. The host need not map anything upfront in the Unprotected half
+as it is allowed to map a page "with contents" at any time. A stage2 
+fault can be serviced by the host to load a page with contents.
+
+Suzuki
 
