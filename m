@@ -1,162 +1,117 @@
-Return-Path: <linux-kernel+bounces-181514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBA3A8C7CF6
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 21:11:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 409A28C7D05
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 21:12:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54A981F25665
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 19:11:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 620071C22223
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 19:12:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DDC5157496;
-	Thu, 16 May 2024 19:07:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E5BA1598E9;
+	Thu, 16 May 2024 19:07:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="asqs+wVl"
-Received: from sonic310-30.consmr.mail.ne1.yahoo.com (sonic310-30.consmr.mail.ne1.yahoo.com [66.163.186.211])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bahG2UVJ"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CD86156F55
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 19:07:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.186.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41672158D99;
+	Thu, 16 May 2024 19:07:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715886438; cv=none; b=LNoCClIOpPQ7Acir7U14r4CCe3B0eo0AT6sD/dJg+pOIzOONPh7PGoaY8YxMVde/W3izIx7LSXjHIWdrz47tl0zpXsD5es99+Phpd6PhPAc2afN13cQvxEQhMpI40BwZf5c4kTyshZ1j+NJ2JFeiozsG1fL+imApBJouILEsTyY=
+	t=1715886468; cv=none; b=I6OUnz5XAWaAEBCNonPd1X6SahW5MR9vpaLhwTFuC+iNHTYv083CuwZ2g3BUvjhDdULcgHxMc7nvfDK4YvKXooy9fAXb6UlvmBO9jX1hiP9u4+Yc4l3xr8OfQSEZCBJ/A/NgquzTnaZTNfOgCEAHTmjzLKC8QygmNiHcCmdU23c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715886438; c=relaxed/simple;
-	bh=wxXjpMQ3CVgL6XhPOBwVDZJdQ+2ElLYlyyUvbGIHuVI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UcVG6CT4s6JK9SExXzvMfX/3e0FWFH2SlI5ugkf0lg6Iz2ebW2mcxsBzesI1CY0udY//a8YDWkba8m5eNlYn27bUI864dEXlDTYUv5LbIbbmFOjZZCgBl3eMnT6N2C8V0M24YW2lX8mMs/Q+CRwdmFX0nLcAW2i5QzqlYuPL7us=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=asqs+wVl; arc=none smtp.client-ip=66.163.186.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1715886430; bh=yNlZ6SD8AV4L2IiFccQWOEbwRuaVS5TqhgBGaRz5hS0=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=asqs+wVlFKgk77FMOf8o18CsUL3aYTBEr8Vd2ExIMeEDlhUtTyVn6FpEax04DGIBxTM4FiRhBrBrKrod2qCpcRLQMH5Xik6+nvOo8VeUnkao2MdyeZSpPRAvEY+DnjOE19g5Z09M26OMo6cE4WhQM++b+zCf3lS4P0wx7xPy2Z2axd8LV9k8Es7U5ybr8t4PjYzdEKwBjK137knuIXtN37YbqXOYn70zGyGn1LH1Mxd+f9p6P8pfQ0DKNT5YytvWxc9PgFCbPqn4p/cq4bE4b8KMki8VVX2BBqF1TzUCkvfKGgyO5M8Xmj3ykQo+S4EzhA/wXZPnQOiThxYXYdWg9A==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1715886430; bh=xs+KbK7iZ6xb8mK5Dh8mGIcifqdDvmM0US8FwFZWRhp=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=Jvvobh+sWltZLAmlyjFixKR9nDEbO65QdDjVDUTGfMzFheEcUgvTbJAGlkDWRpOcMbJurZ6TZ3klHhucFvCGdjrfD+TecXaZL/e1c8t84szXs6QX3AIQFiN/YriJe5dzeoxPKoEn0YdreICy965aWGPELwizkcB9A028DefgEVsxfp00zeTCSUfESNKfHIR1OJVvFLaBxkSdyd/LP2mJjNY1tasn7pdM9wKXU03+TeRqYOshOkq7yIBhNRol41OUnEWFAhe1zlfdYA7q7JwPiXGZGvS8U1K4wDAyoSKjqgSP5BMFPNU69Z5D70YxvqMLQHG64coP1JC2maU86x5GOQ==
-X-YMail-OSG: pZBMlF8VM1k2zM2XHcCduB696.Z_YU2fsX5EmVOh6R0JnHnJI8PWMIznjX5mEQf
- Z7KMY55FzxPakQobR1lVZHHHQIJMqULL.t6gufmJ3RF.AxcHnD6yfDQcnTUvcXMXOCzClqORm3nE
- qXIHnF3GPVG9vlAUMjqMyPvyeSQ32pD89D8Xwb3CeLnpvFETG38Hkz197lc2gXbD8LX1nmLBpz3s
- xT5kAkiDVxum841pNFUhyTp5zijzlkLe7oq29Lty0y2zpZDR0anxz5d7Yhz6p0t7bul7wCvCEaH4
- A05.R2OdXdTL0u2vIAHCVxmiseZZ2GuT91bBB04hZg_OK0Xv_Iptps9AseR4Z4lkulMSEMmagfAY
- cSMJaiUxYJtG13KQzJYWaXs2jXDdR51dQLCIeRJh.GxIuMhXHuSjlA5QuZpmS_C_x6ntBfB.sVBh
- t_qizro1_UYBlAJsEhIg9.mk9P6mqG665_DwmLzltxj8Dmj_wXSTH_l_dRvdmH8ZYbRg4kqMD4SC
- 5s_OXQ8afqu0BTxo8s2DF_RlXtKROPwX.cvEikrOEi6vpOdN2sz6379Jr9.jdPlmBBMPOiaG4g1w
- z6qNztXrLZyhrPJ6LF.mRrJluHf4eCte3M6qgG7rEvh86RBbvbzJLheb_0aoKr9QPkl59ISiwMQg
- xO0ZXT2HDmW28eqbbqzL0CyzEmmyrCibk.KmRrObawRwrrwx8GstXlpb3M7JJDCE74rQtjY377GS
- hjrO2B2lB1fLWscC_KUC7ktCdTMYhF6AyYGBr9k_pEZlxOrjggZ0Nvb0xFc_KjMifHLmRI7I75p.
- xB_zEdlvr9typvSIIEFn_dPc3gJSHsFw6lnjCbofx3tMGUDSE2PqCJNLe7LPdBX908ITsQpw2xwy
- pM9h.GYqw1HRkYiXaCB7siZmWx.w.mTSPADNytEBh3VFOl4nxOcvgSZycUuu6fsf3jEMqoH52Kgz
- w45fCrQn_FP6PeOxWIs7ChQkHY7tydT0T5d_s1wsDfwsyvwzI.NArkFRgkFt_ai5eSssQ0aGPGEf
- eTWKmGi3UUrjVTSsZAjDqN8wqpX1FzR_wjGeIQLtS76iUbkbDZfXQy6EBjeBW88SseUSTcNCE.b_
- K5tRJkcq9tgFUmk7WRkFoGGQyrZ5g6r0mGt1RqqeqZkpxED85coDid8UCFXJGRDb9FyBsBjGsoQN
- x3_5nXXcp3ZH64pfQCI7qy4wSEeuiuP36jxYhJO2M52yooM19CBMUR3pBhdw.mj7VeZWbVLNNDzL
- 9qIvhALHLYMs4cuz6ILakLYRkVGiwMuD5IB4_as7DI1WMoMKQAZQAeUxllqsr2w_YRKlUueaBWr3
- Rs9gNMDDcY3xZ0Vg_.j_hKZwen3JQw_XX7V0I01PGziLVP5o04Ec5SUj83.n24ivjg5qzcatSJn0
- g1mpqL4qubfa0.yWBrcya.DOfbEy7gic3987u2YnV.3HzsYMTRw2Vnbm0d9OZV7oxRIDGLyoPWuq
- bh8eBW4JO495aOJdUDOHykA240F2BHnpTN7fMs5d8WVF8oetz1SP9AwHZ0Oaqrw6ldxEsYLMsIC5
- rTgTBt.XW6AH1TuzhNQ.N.QaK4aBsJgQTeHh2OlenGki1rx5o7lHBsHHYQjec50U0f0GCVJNw5N_
- KwC9NqQmVFbnWgR5wvNrBLJ9Dn9DfqG0ygycdY7IXlph_csrhAwSW88CPA2KQ0Z9BHcU2aVzXQpa
- ZodEMiLGQWfUWDYkOLCV2Fh7iJ0hIpxNCAOzX9KZbm.nKWi5LEncuAx1jMVtbMkSyYOVozma6Cw3
- 6h.7UqmnD9kQZoLTThG2Br59eiaDyQPXTQvY5BlZRBXrtJ_GotWzuYiOp7SjvtV2F6A9jRda2IhW
- x1JkE7n2AqqEo8mnE9hfaz686.PskkbnVK_4DIiuMgbHh8Q0G1R.1fgwlhkwzicxChyFh6APhA7v
- hkDMBNiPSKl5u5SnrUrCYGUjKgLgCPTxpLPUkvpfU11YEhtLwDauceqASXpsF_FyEkzqLZhtCk.g
- U2jrkSz43B4x9S6.AzXGQ9oJId195N7nTp_FmLe6kZkc1C.PfgsxMyXrDxBXjX0Ndg9rOTpMYZsK
- TvLxMfChMzyr7o6zSoAZi4ylavGxrRaWz8Lo.KF8M1n6hCrAvn51JAng9DefzfNq3hIgyFV5LAyW
- eAVF0Fq8shIwp6lfBaf_QCU8q1IH0mQIWRIkjqrLWH1lPP96E3X0XJYggw9G56RiDhVsEukEctkx
- IWFGAOotXkWo1G6smNegb0DDYRoC7TPvsBpcehz3En506hKJloY67PpFivSixL1q5FWZUUw0hgMV
- AiyASE4Mos9fT
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: cc1a172b-e4e9-4422-891f-00a5a4d558f7
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.ne1.yahoo.com with HTTP; Thu, 16 May 2024 19:07:10 +0000
-Received: by hermes--production-gq1-59c575df44-94tst (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 8763c159b28ba26d1fa19a878a48be67;
-          Thu, 16 May 2024 19:07:08 +0000 (UTC)
-Message-ID: <2804dd75-50fd-481c-8867-bc6cea7ab986@schaufler-ca.com>
-Date: Thu, 16 May 2024 12:07:07 -0700
+	s=arc-20240116; t=1715886468; c=relaxed/simple;
+	bh=vdVstfTJWRr25JayXKawfEg+DKVNWLVsJwrCAWHBcOA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FAc3L1mpoIu8pdOx1Ss2CBG8RFaqUz5XQu6FHrXMqHskWLtflz31Jc2r4bU4hkx+tGV+sVTO94ZqWcx6i5Tt6KD+5N9GiINLbKBcw5rvXsgWLWTp2HxGi7kZJQdYsKyW/yxqnBxgexUcYNrE57h4MVhbLog3wx26iKPboxKcD3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bahG2UVJ; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-6f44dd41a5cso616940b3a.0;
+        Thu, 16 May 2024 12:07:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715886465; x=1716491265; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vdVstfTJWRr25JayXKawfEg+DKVNWLVsJwrCAWHBcOA=;
+        b=bahG2UVJCKX+3QRk3oG2AYqTxI0QSQ2+XGfGkCUkzc9KxIATJ3iHcv+D1f0Mh/8aAM
+         bkqyavgGVwThMSKTTU4uuOebbuvp32rGIilN1TGan10uEbf3FOATWm1Dpc3vFZXIlLHN
+         utqaaMUnmluVq7puXz9e8cFrAe+UZpEvSUtRcI7ZOue8wIiR9L3E7TlkqJ0g/4p7YmIP
+         +W94DvX1MsImlKwWwNVRMAGJZWw8tYjdyx6lTJHKZjuWmvxYx7RT/YIEocd7YFl+nBPW
+         tT0g9JQbDfcwQBL3B1PBLAeaccBHHWp0zNoC0wQwomZhZl4dhshsJD9uMABim5vhoulg
+         fHTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715886465; x=1716491265;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vdVstfTJWRr25JayXKawfEg+DKVNWLVsJwrCAWHBcOA=;
+        b=XusfDbOwq/kFNmasErAVdMxlYVzFuRxZ/8INMPs8i3+xwjqRBbd7pU4CjQcg7AW45I
+         OxdmgZE3I8kaNqARRYaUlWK7vxYKObk1LICPkfjmBU7qY5tfPKllxLqA2arVY0U1Wy1J
+         3J0lJDbjsMKjxR1mZzfXKRsjvcHQaFVMkRpji2k6fMpW8mdHmlcdINsNnfFgvU6usRj1
+         dWqYV0Hm0fj3PWSWUoQncTcwFSzqX5NrlQoagdo+BNwX+QCqj2Q9CIB3kPW5SqB5NPoT
+         x0D23V7oFX4LUDHAgX0iIIhlYAF3ejTAXZbhHjYCCsF7dbblKy8TEgMNiUtGU7rxrltp
+         HP7g==
+X-Forwarded-Encrypted: i=1; AJvYcCVNE8wOpX/qc8ydb/k3w6A0vs5MCmatt9MBXq6WoJQ2hYBoWFZM+Kxv69efkgDmtwdJwIXxkv30JI9zAMlDMR+J6GSRlzihsJzC1Yx71WPaqXFAwJEImMNpHFWk0M/97QRawPFt/BDuiZTT/Vn6+Hl4LzYW79AWaPIG3d9c9QMe8Q==
+X-Gm-Message-State: AOJu0Yyp9P7W+Q1jFvzAtcuci2CC5OMss2zgNbLhO2pzpOaz42VC3hkq
+	wLbRZeyvXqLwfLacIdj/w0QxuGFfvhHUEMncakUWSj4YwZ2EqdrKtbLiCa11cAuVVt4OBIOuFON
+	nM1z3n4IijSpGR1F0QjmxIEf7cTE=
+X-Google-Smtp-Source: AGHT+IGLFT1S7qQvZoURCyPTWP6DLQxIRfqFMLgmLurk+JpY7haynCdqsfwTebdBhjXGd/5cwIz/OyJ0cMQ8OV0KcMA=
+X-Received: by 2002:a05:6a20:9498:b0:1af:c5b9:273b with SMTP id
+ adf61e73a8af0-1afde1d824cmr19019205637.54.1715886465298; Thu, 16 May 2024
+ 12:07:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] Introduce user namespace capabilities
-To: Jonathan Calmels <jcalmels@3xx0.net>, brauner@kernel.org,
- ebiederm@xmission.com, Luis Chamberlain <mcgrof@kernel.org>,
- Kees Cook <keescook@chromium.org>, Joel Granados <j.granados@samsung.com>,
- Serge Hallyn <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>,
- James Morris <jmorris@namei.org>, David Howells <dhowells@redhat.com>,
- Jarkko Sakkinen <jarkko@kernel.org>, Casey Schaufler <casey@schaufler-ca.com>
-Cc: containers@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org,
- keyrings@vger.kernel.org
-References: <20240516092213.6799-1-jcalmels@3xx0.net>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20240516092213.6799-1-jcalmels@3xx0.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.22356 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+References: <20240515125342.1069999-1-haakon.bugge@oracle.com>
+ <20240515125342.1069999-4-haakon.bugge@oracle.com> <82bf9e5f-b798-4d29-8473-c074a34f15b0@linux.dev>
+ <236B9732-8264-454C-94BF-7C9D491D3A37@oracle.com>
+In-Reply-To: <236B9732-8264-454C-94BF-7C9D491D3A37@oracle.com>
+From: Greg Sword <gregsword0@gmail.com>
+Date: Fri, 17 May 2024 03:07:34 +0800
+Message-ID: <CAEz=Lcvbc3O+PtDSLvGAgd5fmps8j69DDn+Mgm8UWMFMNSd8WA@mail.gmail.com>
+Subject: Re: [PATCH v2 3/6] RDMA/cma: Brute force GFP_NOIO
+To: Haakon Bugge <haakon.bugge@oracle.com>
+Cc: Zhu Yanjun <zyjzyj2000@gmail.com>, OFED mailing list <linux-rdma@vger.kernel.org>, 
+	open list <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>, 
+	"rds-devel@oss.oracle.com" <rds-devel@oss.oracle.com>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	Leon Romanovsky <leon@kernel.org>, Saeed Mahameed <saeedm@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>, 
+	"David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Tejun Heo <tj@kernel.org>, 
+	Lai Jiangshan <jiangshanlai@gmail.com>, Allison Henderson <allison.henderson@oracle.com>, 
+	Manjunath Patil <manjunath.b.patil@oracle.com>, Mark Zhang <markzhang@nvidia.com>, 
+	Chuck Lever III <chuck.lever@oracle.com>, Shiraz Saleem <shiraz.saleem@intel.com>, 
+	Yang Li <yang.lee@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 5/16/2024 2:22 AM, Jonathan Calmels wrote:
-> It's that time of the year again where we debate security settings for user
-> namespaces ;)
+On Thu, May 16, 2024 at 11:54=E2=80=AFPM Haakon Bugge <haakon.bugge@oracle.=
+com> wrote:
 >
-> I’ve been experimenting with different approaches to address the gripe
-> around user namespaces being used as attack vectors.
-> After invaluable feedback from Serge and Christian offline, this is what I
-> came up with.
+> Hi Yanjun,
 >
-> There are obviously a lot of things we could do differently but I feel this
-> is the right balance between functionality, simplicity and security. This
-> also serves as a good foundation and could always be extended if the need
-> arises in the future.
 >
-> Notes:
+> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
+/Documentation/process/maintainer-netdev.rst?h=3Dv6.9#n376
+> >
+> > "
+> > Netdev has a convention for ordering local variables in functions.
+> > Order the variable declaration lines longest to shortest, e.g.::
 >
-> - Adding a new capability set is far from ideal, but trying to reuse the
->   existing capability framework was deemed both impractical and
->   questionable security-wise, so here we are.
+> "Infiniband subsystem" !=3D netdev, right?
 
-I suggest that adding a capability set for user namespaces is a bad idea:
-	- It is in no way obvious what problem it solves
-	- It is not obvious how it solves any problem
-	- The capability mechanism has not been popular, and relying on a
-	  community (e.g. container developers) to embrace it based on this
-	  enhancement is a recipe for failure
-	- Capabilities are already more complicated than modern developers
-	  want to deal with. Adding another, special purpose set, is going
-	  to make them even more difficult to use.
+All kernel subsystems should follow this rule, including the network
+and rdma subsystems
 
-> - We might want to add new capabilities for some of the checks instead of
->   reusing CAP_SETPCAP every time. Serge mentioned something like
->   CAP_SYS_LIMIT?
->
-> - In the last patch, we could decide to have stronger requirements and
->   perform checks inside cap_capable() in case we want to retroactively
->   prevent capabilities in old namespaces, this might be an overreach though
->   so I left it out.
->
->   I'm also not fond of the ulong logic for setting the sysctl parameter, on
->   the other hand, the usermodhelper code always uses two u32s which makes it
->   very confusing to set in userspace.
 >
 >
-> Jonathan Calmels (3):
->   capabilities: user namespace capabilities
->   capabilities: add securebit for strict userns caps
->   capabilities: add cap userns sysctl mask
->
->  fs/proc/array.c                 |  9 ++++
->  include/linux/cred.h            |  3 ++
->  include/linux/securebits.h      |  1 +
->  include/linux/user_namespace.h  |  7 +++
->  include/uapi/linux/prctl.h      |  7 +++
->  include/uapi/linux/securebits.h | 11 ++++-
->  kernel/cred.c                   |  3 ++
->  kernel/sysctl.c                 | 10 ++++
->  kernel/umh.c                    | 16 +++++++
->  kernel/user_namespace.c         | 83 ++++++++++++++++++++++++++++++---
->  security/commoncap.c            | 59 +++++++++++++++++++++++
->  security/keys/process_keys.c    |  3 ++
->  12 files changed, 204 insertions(+), 8 deletions(-)
+> Thxs, H=C3=A5kon
 >
 
