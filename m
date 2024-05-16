@@ -1,158 +1,95 @@
-Return-Path: <linux-kernel+bounces-181144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 890758C782C
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:02:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94F858C7835
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:03:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E44D28424B
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:02:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C5D4BB213C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:03:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5F98149001;
-	Thu, 16 May 2024 14:02:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BFAA1494B5;
+	Thu, 16 May 2024 14:03:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="yvkGjKI+";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="yEL3sR0H";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="yvkGjKI+";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="yEL3sR0H"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="kiThjHP3"
+Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B528A146D51;
-	Thu, 16 May 2024 14:02:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2551C148313;
+	Thu, 16 May 2024 14:03:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715868151; cv=none; b=kRR8mLPuf/0BO8gmprOW3iD0IjExWcskCSilverOcq87YSEbzQdU7cluDqjaZUUfwyKovyzeOyPDu6lE2+P3p+yCalISqQOfPAuuXF58Jp1Pzu33VLswcEAVeaDW6VUlKLFBPrddffU+tSRKAaLQIcQcru1g49azu3Gd48Zn5qc=
+	t=1715868211; cv=none; b=jodC8k3AbozKzoBCJX5/0svN1gA/MEI44IpkDKi0oggT4ej7uDrmmvo8hJhB3/xzv4sBnmaANEcrGI6ihLkavfTGoOjMktDQQetVeBI6K/LMbGXA2PUR7ltZgrl2BbiI8O95ykfIsic3CpigvixP8cSic6TbZKZWxOOvgJ2ByY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715868151; c=relaxed/simple;
-	bh=V/NH146L7hIj0JHJ81pb0dj3R2FIvS7eqv0S8By9H3M=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=W0NJye2ma/vgxaBsAR0UHAJeBlKRm4q+ouojF0weCbFol5dZGlRVBDo8FARrL/5rB/6Dv9giZ2buEN/dffcDyEFKmQNuyzz5lmOtj60JZzqOgXIJNxCP0BMNv9dIJBotXTMXqbvio6m8m5UgZbLNp1eazhR/rzp6VuPfWwgWcE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=yvkGjKI+; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=yEL3sR0H; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=yvkGjKI+; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=yEL3sR0H; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	s=arc-20240116; t=1715868211; c=relaxed/simple;
+	bh=soUCs+Ynzrht+xTT+a3fzCUc3Y0OPkm3Wqv3CuReEpg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XdwtLnOWTLzvCMS08XOfQg2rvVJeEZf+OgH44dcxK1TW+fc15DkbGPaJOHm4M5iUEOuEp7MJj+RDTREzaxpawWSEsq9nP5D+hDDuXbRJSMCTTkBeBqlyg9+ScZuH50bPvdFo3NnGUDGrNAIMuHyqomF5YIALDlml5gN0OJYgyoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=kiThjHP3; arc=none smtp.client-ip=199.89.1.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 008.lax.mailroute.net (Postfix) with ESMTP id 4VgBdR09gQz6Cnk8t;
+	Thu, 16 May 2024 14:03:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1715868199; x=1718460200; bh=5amq6jdvuhesyzf8Nwr6Lq4U
+	r87XslGywG9bcT3i8DQ=; b=kiThjHP39CcN3G8bDjY2IBd4uOmKfEXt2+aP9mOp
+	elg3SiDjzQLCLwABf6vzFdtSUd72WUzfHtmCG4O5ogr+ml7p6zdwQMjJqQRx4fN2
+	G8oorDuoc74C7ITuig9pv0uJiRdeW24jf2yslYxdYSCfPvvm/2KVALQunmDeV7Jm
+	tM7sk7zrFain77QnzVU3Jb7jkdzaNR26w40V9Qgom6vTxIoF7pC2lRl+/hDlKDVv
+	4+G9IXjTE3hgB1y6Zpj6/6wOizqeTPh+wkJbOGWnwjoUzIHZtTbtU1BDapkUoU81
+	La7gUE65GHgPgMiJ35sBtQSOk6wFmntQWytCzviIaf4YQA==
+X-Virus-Scanned: by MailRoute
+Received: from 008.lax.mailroute.net ([127.0.0.1])
+ by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id jaPseyPbmWHq; Thu, 16 May 2024 14:03:19 +0000 (UTC)
+Received: from [172.20.0.79] (unknown [8.9.45.205])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id D114E34A44;
-	Thu, 16 May 2024 14:02:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1715868147; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eS8dHN/8uJit7KYQ/wbXUaaaUK7rLV870M0qQi40wRk=;
-	b=yvkGjKI+HlU66ZeEIDPc5u1ZN2WdFvqMcB9L2qwKmGMlUB95vzaZUWtRWe6SGky1NB+yi8
-	YA5x0lc2LBVM6AaRHly4m8Wc1aOEKemxsCAWslvafYd9UwcOqTUgwWIk0Ws3wX1PIVBzqH
-	A2YUsI1gbqsGFFDBeIE7kjqsj1p1hrI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1715868147;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eS8dHN/8uJit7KYQ/wbXUaaaUK7rLV870M0qQi40wRk=;
-	b=yEL3sR0HvJfrS+9bZ3N+OJ2/2Wmkd4V+1TX90j+VjtH5+iC/14dwnkUEXzNKVHZUmYS3DS
-	fMe1AsRljprqdmAw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=yvkGjKI+;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=yEL3sR0H
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1715868147; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eS8dHN/8uJit7KYQ/wbXUaaaUK7rLV870M0qQi40wRk=;
-	b=yvkGjKI+HlU66ZeEIDPc5u1ZN2WdFvqMcB9L2qwKmGMlUB95vzaZUWtRWe6SGky1NB+yi8
-	YA5x0lc2LBVM6AaRHly4m8Wc1aOEKemxsCAWslvafYd9UwcOqTUgwWIk0Ws3wX1PIVBzqH
-	A2YUsI1gbqsGFFDBeIE7kjqsj1p1hrI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1715868147;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eS8dHN/8uJit7KYQ/wbXUaaaUK7rLV870M0qQi40wRk=;
-	b=yEL3sR0HvJfrS+9bZ3N+OJ2/2Wmkd4V+1TX90j+VjtH5+iC/14dwnkUEXzNKVHZUmYS3DS
-	fMe1AsRljprqdmAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8449713991;
-	Thu, 16 May 2024 14:02:27 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ijkOH/MRRmZbaAAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Thu, 16 May 2024 14:02:27 +0000
-Date: Thu, 16 May 2024 16:02:43 +0200
-Message-ID: <87h6ex3ldo.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Manuel Barrio Linares <mbarriolinares@gmail.com>
-Cc: alsa-devel@alsa-project.org,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Jeremie Knuesel <knuesel@gmail.com>,
-	Lukasz Tyl <ltyl@hem-e.com>,
-	Christos Skevis <xristos.thes@gmail.com>,
-	Jussi Laako <jussi@sonarnerd.net>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ALSA: usb-audio: Fix for sampling rates support for Mbox3
-In-Reply-To: <20240516134003.39104-1-mbarriolinares@gmail.com>
-References: <87ikze486g.wl-tiwai@suse.de>
-	<20240516134003.39104-1-mbarriolinares@gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	(Authenticated sender: bvanassche@acm.org)
+	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4VgBdL4R0yz6Cnk8s;
+	Thu, 16 May 2024 14:03:18 +0000 (UTC)
+Message-ID: <2450470c-b449-48a7-9fb7-aa363cbe885b@acm.org>
+Date: Thu, 16 May 2024 08:03:17 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[alsa-project.org,perex.cz,suse.com,gmail.com,hem-e.com,sonarnerd.net,vger.kernel.org];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: D114E34A44
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Score: -4.01
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ufs: mcq: Fix missing argument 'hba' in MCQ_OPR_OFFSET_n
+To: Minwoo Im <minwoo.im@samsung.com>,
+ "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K . Petersen" <martin.petersen@oracle.com>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Joel Granados <j.granados@samsung.com>, gost.dev@samsung.com,
+ Asutosh Das <quic_asutoshd@quicinc.com>
+References: <CGME20240516032553epcas2p3b8f34d03f32cccccc628027fbe1e8356@epcas2p3.samsung.com>
+ <20240516031405.586706-1-minwoo.im@samsung.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20240516031405.586706-1-minwoo.im@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, 16 May 2024 15:40:02 +0200,
-Manuel Barrio Linares wrote:
-> 
-> Fixed wrong use of usb_sndctrlpipe to usb_rcvctrlpipe
-> 
-> Signed-off-by: Manuel Barrio Linares <mbarriolinares@gmail.com>
+On 5/15/24 21:14, Minwoo Im wrote:
+>   /* Operation and runtime registers configuration */
+>   #define MCQ_CFG_n(r, i)	((r) + MCQ_QCFG_SIZE * (i))
+> -#define MCQ_OPR_OFFSET_n(p, i) \
+> +#define MCQ_OPR_OFFSET_n(hba, p, i) \
+>   	(hba->mcq_opr[(p)].offset + hba->mcq_opr[(p)].stride * (i))
+Since inline functions are preferred over macros, please convert the
+MCQ_OPR_OFFSET_n() macro into an inline function.
 
-Thanks, applied now with Fixes tag.
+Thanks,
 
-
-Takashi
+Bart.
 
