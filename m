@@ -1,140 +1,107 @@
-Return-Path: <linux-kernel+bounces-180763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D51D48C72CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:28:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E2E358C72C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:28:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 906F3281D9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 08:28:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D842281E24
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 08:28:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EA8512EBFE;
-	Thu, 16 May 2024 08:27:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A601313443C;
+	Thu, 16 May 2024 08:27:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YXbJsieC"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mU5Wpl8f"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B3176C76
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 08:27:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD40C76C76;
+	Thu, 16 May 2024 08:27:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715848072; cv=none; b=cB1t9wesetOeJVSYpM/yb5HXgldCns0Rfq05cDKaaDOehDE9mWBTqF+7Ma7OW37oQ8kD13Ty6IQfyNK8QedYpb6izbLw6W2bfwlnOVp3oH8uP44m6SwUy2xwzEu1l7WmsZZ5LXvfUkUk4WkC5jyGfbfpb2dghuY1jswnUgDck0c=
+	t=1715848060; cv=none; b=RvDc4oqlSnjVlynd59jXYHHQiaW5ixBahfTodPni30cmxMd5lemJEkZUv91RisdvnOpdNzajj9tzOkCeVV3Eo9w6Ir/UPNnElkVFa/0IhAb642YrF53f7SKm/Hu/XJ41YeFhmE3rl9Ql5rGB6/t8wuoTnHE7HL2YRgtOcBy6HCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715848072; c=relaxed/simple;
-	bh=rvAPyJkeR+TboZ8lV4SzobDUy8jvlE9fbDs25cQI/TM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Rh+53qEaW8KEIVGPMmw3WHZSB2r22ioqMaCYyaDd0CY5MgaPPXtvR77c026DdalUcPykDO/8C+fNsLBBXb7sqgdVH4R2wCUzFvYGHYjWK8uVZ1kU8nQVtyTZSKRc4hTzrSptWR28ZcDSXU20GNslXhb7TLjTAyILLjPyoy+eRwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YXbJsieC; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715848069;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Wp3xz/jEXktsfVHXaP1pl4p7Vr0VDUO5oIkhNKKtxrw=;
-	b=YXbJsieCrKCPNKqqICsw+fkE4McgxQrktXbOiFjeVP0bSohjnOMuj4aXYkqNc6O9J3TIjR
-	C1fyiODOPhd+LQvuwzexLvtswynye0MpOcigojdoW0lVFiTv1ak28Wqt4h2S3t1JfygMTs
-	F/Qu2CRPFnAsF4rh8JMZZbsglKPaQqc=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-349-yw0N3rezPtq1pnTrowYLiQ-1; Thu,
- 16 May 2024 04:27:46 -0400
-X-MC-Unique: yw0N3rezPtq1pnTrowYLiQ-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 974C83C025B8;
-	Thu, 16 May 2024 08:27:45 +0000 (UTC)
-Received: from ksundara-mac.redhat.com (unknown [10.74.17.49])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id E4CF85ADC45;
-	Thu, 16 May 2024 08:27:37 +0000 (UTC)
-From: Karthik Sundaravel <ksundara@redhat.com>
-To: jesse.brandeburg@intel.com,
-	wojciech.drewek@intel.com,
-	sumang@marvell.com,
-	jacob.e.keller@intel.com,
-	anthony.l.nguyen@intel.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	intel-wired-lan@lists.osuosl.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	horms@kernel.org
-Cc: pmenzel@molgen.mpg.de,
-	jiri@resnulli.us,
-	michal.swiatkowski@linux.intel.com,
-	bcreeley@amd.com,
-	rjarry@redhat.com,
-	aharivel@redhat.com,
-	vchundur@redhat.com,
-	ksundara@redhat.com,
-	cfontain@redhat.com
-Subject: [PATCH iwl-next v10] ice: Add get/set hw address for VFs using devlink commands 
-Date: Thu, 16 May 2024 13:57:32 +0530
-Message-Id: <20240516082733.35783-1-ksundara@redhat.com>
+	s=arc-20240116; t=1715848060; c=relaxed/simple;
+	bh=9LRNAuur+huZKRDmejnPug6GuKAfA0xgXvFKeLB4wLo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c3MY8r2X+bApFrF5Ii19k48KLfSWVgdYZsmxBwjqRgpjDC4G2whS2/PfHZZpE7pBo1V+Uw1DRSctGwyZpWgwws7adlCMvmMaRWlu+6EBwG24KBOooAu3PV7LdR+ZunUUuFP12mcVgQGTQCSyzTBpuuVb20gAQgCcYqLXm3hiP8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mU5Wpl8f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40375C32789;
+	Thu, 16 May 2024 08:27:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715848059;
+	bh=9LRNAuur+huZKRDmejnPug6GuKAfA0xgXvFKeLB4wLo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mU5Wpl8fCqZC6kZltsIgQeTYGjz4QB/WYbrXvz7R/+YdO0nxnKnRx2KdNJnYxLCs0
+	 zCLxREkNgG/FkZ1VQ84uTCOBuPLL0tGIH5PADs083gnXzlTc/MQKYaT9nyzs/iLGeY
+	 i0OiRL7ef/29o/JLkpJxgFJak0dQpyhCVpXjaDyNEyJebiTFeHVBSIHzt9tZAR71CC
+	 KQAithRyMZ+Qza+XemZzid9Is1m3GSkn2/8cpzwnuY9yxQbxH9O39ABXJ+S/a7vgQp
+	 W1iLGegicc2MvRaHMRaGhRkRTRUw24wzkArSJLTSR/4CcB8m/BboT57kW3qAty8UNi
+	 mavlwMDJmJAMQ==
+Date: Thu, 16 May 2024 09:27:33 +0100
+From: Simon Horman <horms@kernel.org>
+To: Larysa Zaremba <larysa.zaremba@intel.com>
+Cc: intel-wired-lan@lists.osuosl.org,
+	Jacob Keller <jacob.e.keller@intel.com>,
+	maciej.fijalkowski@intel.com,
+	Magnus Karlsson <magnus.karlsson@gmail.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	igor.bagnucki@intel.com, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH iwl-net 2/3] ice: add flag to distinguish reset from
+ .ndo_bpf in XDP rings config
+Message-ID: <20240516082733.GD179178@kernel.org>
+References: <20240515160246.5181-1-larysa.zaremba@intel.com>
+ <20240515160246.5181-3-larysa.zaremba@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240515160246.5181-3-larysa.zaremba@intel.com>
 
-Dear Maintainers,
-    Thanks for the review and suggestions for my patch.
+On Wed, May 15, 2024 at 06:02:15PM +0200, Larysa Zaremba wrote:
+> Commit 6624e780a577 ("ice: split ice_vsi_setup into smaller functions")
+> has placed ice_vsi_free_q_vectors() after ice_destroy_xdp_rings() in
+> the rebuild process. The behaviour of the XDP rings config functions is
+> context-dependent, so the change of order has led to
+> ice_destroy_xdp_rings() doing additional work and removing XDP prog, when
+> it was supposed to be preserved.
+> 
+> Also, dependency on the PF state reset flags creates an additional,
+> fortunately less common problem:
+> 
+> * PFR is requested e.g. by tx_timeout handler
+> * .ndo_bpf() is asked to delete the program, calls ice_destroy_xdp_rings(),
+>   but reset flag is set, so rings are destroyed without deleting the
+>   program
+> * ice_vsi_rebuild tries to delete non-existent XDP rings, because the
+>   program is still on the VSI
+> * system crashes
+> 
+> With a similar race, when requested to attach a program,
+> ice_prepare_xdp_rings() can actually skip setting the program in the VSI
+> and nevertheless report success.
+> 
+> Instead of reverting to the old order of function calls, add an enum
+> argument to both ice_prepare_xdp_rings() and ice_destroy_xdp_rings() in
+> order to distinguish between calls from rebuild and .ndo_bpf().
+> 
+> Fixes: efc2214b6047 ("ice: Add support for XDP")
+> Reviewed-by: Igor Bagnucki <igor.bagnucki@intel.com>
+> Signed-off-by: Larysa Zaremba <larysa.zaremba@intel.com>
 
-v9 -> v10
---------
-- Refactor ice_set_vf_mac() to use reuse the common code blocks
-  for setting the MAC addresses in both netdev and devlink flow.
-
-v8 -> v9
---------
-- Rebasing against dev-queue branch of next-queue tree
-
-v7 -> v8
---------
-- Added const keyword for the parameter ``mac`` in ice_set_vf_fn_mac()
-
-v6 -> v7
---------
-- Addressed Smatch and checkpatch issues
-
-v5 -> v6
---------
-- Changed data type of vf_id to u16
-- Used container_of(port, struct ice_vf, devlink_port) to
-  get the vf instead of ice_get_vf_by_id()/ice_put_vf()
-
-v4 -> v5
---------
-- Cloned ice_set_vf_mac() to ice_set_vf_fn_mac() so that the
-  parameter ice_pf is used instead of net_device of vf
-- removed redundant error handling
-
-v3 -> v4
---------
-- Released the vf device by calling ice_put_vf()
-
-v2 -> v3
---------
-- Fill the extack message instead of dev_err()
-
-v1 -> v2
---------
-- called ice_set_vf_mac() directly from the devlink port function
-  handlers.
-
-RFC -> v1
----------
-- Add the function handlers to set and get the HW address for the
-  VF representor ports.
+Reviewed-by: Simon Horman <horms@kernel.org>
 
 
