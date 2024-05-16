@@ -1,108 +1,145 @@
-Return-Path: <linux-kernel+bounces-181283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E64AB8C79E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:58:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3081C8C79F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:00:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DC19280CBD
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:58:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FFA21C20CB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:00:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7930014D6E0;
-	Thu, 16 May 2024 15:58:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A07314D6E9;
+	Thu, 16 May 2024 16:00:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="he4pjcID"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="SmNyTHWt"
+Received: from mail-0301.mail-europe.com (mail-0301.mail-europe.com [188.165.51.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBB9914D431
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 15:58:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C260414D2AE
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 16:00:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.165.51.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715875089; cv=none; b=beJJQP33XydhXfjjFLa99GM6n1WNcGAhe2ySjmDn00PXza2ehU54IswgHlqWbwQEjWLehLOPHtqOxf7fERNuXXxf7Vs3c+x+PVd/yVwufTOs15J/wXR5Yq4KNOLO2J0GqYnGeUteaNuGBsKvVNHORjVx457hWGQdEFtNcGdT0CY=
+	t=1715875238; cv=none; b=ea2gvQ2IyCO2n+CIZBn4DuPZBkgCnL0ST3GNV06P2nnMUsSFuqiENFgtH7BDLUCjoAeFPXhi39HXgaV9P+4+2XwKkRWuzpJkML3iON6TPk5NYHcESW+Y3fpTYQCfnbI1rdykGrW2h8lY8J1hlPRmpE9IF+HwR7bxbnyezfz375Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715875089; c=relaxed/simple;
-	bh=OAUCW4BIhk2b3lKjcBQqRchiUKDpImkI0iZhfVpediE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=kLPNgJZ8QMtf7vMRVhagE277dYgfFaM2NAg/Dudp4vyZ6Gf8KVmjZlY9FDH3wMDmow+ha23BAXdIxz3XUSsSEnAYmBBoGM6sDdkYWX6tiW8loFE1S1coeETbpB0t82gdIhG8MyA+7ZJ8+L6AhcthcSYw6X0epr753XIG2vfCbeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=he4pjcID; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7395C113CC;
-	Thu, 16 May 2024 15:58:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715875089;
-	bh=OAUCW4BIhk2b3lKjcBQqRchiUKDpImkI0iZhfVpediE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=he4pjcIDJc6fILhgt/4hdd0cVV/s2UO4ivIGZIPP9eLILvW6kZ4H9zj1VgXc/6fDJ
-	 mkTI2wDc9nWo+4lzAPJK+hwVNgFlW+hDMk9/ZmQENQ6byV0giqK5vLIdgJO8Jjphqp
-	 9md6cq39hHDEeTdsnY/nFeD7a9Dxwe2ZlSI7DGcFN8Wy07P9Vkie6C7FGTL5a5/M7x
-	 fyJOvtyQk98tqrlL8bz+UPeMYZtHjoz0oAfzLmN4Du08ggCNqLND6JECvRK/xskHWp
-	 bIGNBE6WQNMMRztI/0my+m3tbIqZt3+VVn590CAdLNw11LmjxbvmHRKiBca1t4awpH
-	 Uh8JBsuWUnBew==
-From: Mark Brown <broonie@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>, 
- Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org
-In-Reply-To: <cover.1715848512.git.mazziesaccount@gmail.com>
-References: <cover.1715848512.git.mazziesaccount@gmail.com>
-Subject: Re: [PATCH 0/3] regulator: misc fixes
-Message-Id: <171587508866.156897.11252945159976734613.b4-ty@kernel.org>
-Date: Thu, 16 May 2024 16:58:08 +0100
+	s=arc-20240116; t=1715875238; c=relaxed/simple;
+	bh=RROxxPhxMtq0HkZs0u1KmYdIX+QELF6ptNfysJifQ5c=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OSg2sZ14hAXExW51DFvK6S7DlLZyTYTV9Ph4V7vXs/Ozza80216hYz+WRfPPYwgCFjrWiKnrxq10l3Ga3L7uAYgC8yDzNUXbQzC+dV/V8xhDUq7/m30s/mA48fi9ICekMsTwbWIR1BIcvtt5t8UH0Bl24bjsKnYz+XD5E9DKiUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=SmNyTHWt; arc=none smtp.client-ip=188.165.51.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1715875220; x=1716134420;
+	bh=RROxxPhxMtq0HkZs0u1KmYdIX+QELF6ptNfysJifQ5c=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=SmNyTHWtmXNuNeD1Oq7quI6S2hkya+ueMIca33ldecu9oLqDKDBZ0KI/wYPPa/Kyq
+	 cV1X10jOy0WARsiH6ioh1fEjw3er8a67TRl121WUeBjpxIgLVeAJTmuV9AAtdNaPx+
+	 SsSeTeY+LAdP1MQwitVQZbiF76h5ZHcF5/zGFNybJGVlLVALoFUXjk2st3G51W0zCr
+	 6kaX74nGHnHwTEON9Dodt8XrB59vAqQk8Mn7ov1+mQHBlN5L0YlFCqq+s9BOzUVXKJ
+	 6nHu9oquXK1DpA3ojqhqAn8IalHWyQqqtPERSlGdOpeV+Ts+IrafA7HSIiL9v6qVZA
+	 SrH4s6UOyy+5Q==
+Date: Thu, 16 May 2024 16:00:10 +0000
+To: Conor Dooley <conor@kernel.org>
+From: Kanak Shilledar <kanakshilledar111@protonmail.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Conor Dooley <conor.dooley@microchip.com>, Konstantin Ryabitsev <konstantin@linuxfoundation.org>, Mark Brown <broonie@kernel.org>, workflows@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] Documentation: process: Revert "Document suitability of Proton Mail for kernel development"
+Message-ID: <4oW9pC38sSYZn96BW8abMfVpDDCmG4MDHwwmL73o5bP-WyHAutJ5j2GrSU17MCSWOKufViNl4q2zZUmwmN40evP5OK3QiMnUn2hsgWCYhl4=@protonmail.com>
+In-Reply-To: <20240516-groin-slingshot-c3c3734d2f10@spud>
+References: <20240516-groin-slingshot-c3c3734d2f10@spud>
+Feedback-ID: 26271244:user:proton
+X-Pm-Message-ID: 67644286d89954f6086eaacbeca6a1bf6868a4ff
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14-dev-f3d47
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 16 May 2024 11:52:44 +0300, Matti Vaittinen wrote:
-> This series adds couple of a bit unrelated fixes/improvements which I
-> implemented while working to support yet another ROHM PMIC.
-> 
-> Patch1 addresses a potential problem where the voltage selector for
-> pickable-ranges is used in same fashion as a 'apply-bit'. Eg, when a
-> regulator voltage is changed so that also the range changes, the effect
-> of the range and voltage selector change is not taken into account until
-> the voltage selector is written to hardware. In such case caching the
-> voltage-selector value will cause the voltage range change to not change
-> the actual output voltage.
-> 
-> [...]
+On Thursday, May 16th, 2024 at 9:05 PM, Conor Dooley <conor@kernel.org> wro=
+te:
 
-Applied to
+> From: Conor Dooley conor.dooley@microchip.com
+>=20
+>=20
+> Revert commit 1d2ed9234c85 ("Documentation: process: Document
+> suitability of Proton Mail for kernel development") as Proton disabled
+> WKD for kernel.org addresses as a result of some interaction with
+> Konstantin on social.kernel.org
+>=20
+> Signed-off-by: Conor Dooley conor.dooley@microchip.com
+>=20
+> ---
+>=20
+> I tried to find the stuff on social.korg to provide a link
+> but could not.
+>=20
+> CC: kanakshilledar111@protonmail.com
+> CC: Konstantin Ryabitsev konstantin@linuxfoundation.org
+>=20
+> CC: Mark Brown broonie@kernel.org
+>=20
+> CC: Jonathan Corbet corbet@lwn.net
+>=20
+> CC: workflows@vger.kernel.org
+> CC: linux-doc@vger.kernel.org
+> CC: linux-kernel@vger.kernel.org
+> ---
+> Documentation/process/email-clients.rst | 20 --------------------
+> 1 file changed, 20 deletions(-)
+>=20
+> diff --git a/Documentation/process/email-clients.rst b/Documentation/proc=
+ess/email-clients.rst
+> index 471e1f93fa09..fc2c46f3f82d 100644
+> --- a/Documentation/process/email-clients.rst
+> +++ b/Documentation/process/email-clients.rst
+> @@ -350,23 +350,3 @@ although tab2space problem can be solved with extern=
+al editor.
+>=20
+> Another problem is that Gmail will base64-encode any message that has a
+> non-ASCII character. That includes things like European names.
+> -
+> -Proton Mail
+> -***********
+> -
+> -Proton Mail has a "feature" where it looks up keys using Web Key Directo=
+ry
+> -(WKD) and encrypts mail to any recipients for which it finds a key.
+> -Kernel.org publishes the WKD for all developers who have kernel.org acco=
+unts.
+> -As a result, emails sent using Proton Mail to kernel.org addresses will =
+be
+> -encrypted.
+> -Unfortunately, Proton Mail does not provide a mechanism to disable the
+> -automatic encryption, viewing it as a privacy feature.
+> -The automatic encryption feature is also enabled for mail sent via the P=
+roton
+> -Mail Bridge, so this affects all outgoing messages, including patches se=
+nt with
+> -`git send-email`.
+> -Encrypted mail adds unnecessary friction, as other developers may not ha=
+ve mail
+> -clients, or tooling, configured for use with encrypted mail and some mai=
+l
+> -clients may encrypt responses to encrypted mail for all recipients, incl=
+uding
+> -the mailing lists.
+> -Unless a way to disable this "feature" is introduced, Proton Mail is uns=
+uited
+> -to kernel development.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+Instead of completely removing the Proton Mail section, can we keep the men=
+tion about the Proton Mail bridge and the third-party hydroxide (https://gi=
+thub.com/emersion/hydroxide) bridge.
 
-Thanks!
+> --
+> 2.43.0
 
-[1/3] regulator: don't cache vsel to ensure voltage setting
-      (no commit info)
-[2/3] regulator: bd71828: Don't overwrite runtime voltages
-      commit: 0f9f7c63c415e287cd57b5c98be61eb320dedcfc
-[3/3] regulator: rohm-regulator: warn if unsupported voltage is set
-      commit: cb3a0f84ae0caa5eabf40457485473edc1e2d3f0
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+Thanks and Regards,
+Kanak Shilledar
 
