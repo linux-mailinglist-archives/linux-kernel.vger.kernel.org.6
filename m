@@ -1,201 +1,379 @@
-Return-Path: <linux-kernel+bounces-180614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41C928C70D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 06:04:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67C858C70D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 06:10:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B03161F237C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 04:04:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 885711C212DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 04:10:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A462744C6F;
-	Thu, 16 May 2024 04:03:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D29444A2C;
+	Thu, 16 May 2024 04:10:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="Xj6oaKs9"
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2068.outbound.protection.outlook.com [40.107.255.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="i7pafl0W"
+Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32C523F9D4
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 04:03:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715832195; cv=fail; b=qm/WvC0YpLl3hz7EZEqWZ12HiHr2+IidIJZvmVpSB0pWO7e99Crq7WLVe5tMAShAhwVMuJf2DMxVpX8MwEg8wNvF4SRwv1TwzCwFFtvaF4vTef/bprefzDZGY2FhBW/HXun1tubApenLBWwWR4R9bE0Zs3lNu33qdg9yy/G1eh8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715832195; c=relaxed/simple;
-	bh=pPWvRKMPkRY+EnBmIi6erbgSwiPgbkjhyxIFZjHSVZs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=E2rvwXMEmXTLppsdBcPRgzuc6YuUKdAO1nMlB2pB+WpXgjziIDqds4CKa6/+FKnU4o3nbfdIypRlDPScHZTYNOtLYoUk1d4mYxrNXjAf1Bf+P2tTMkjI+QGPg3aFIXURD6QS3owrnRTL+X3PFd0/xClZyQFjSWx5FUIWMSceUdU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=Xj6oaKs9; arc=fail smtp.client-ip=40.107.255.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=diMSQDWAvcO3PQTmqbDHgtStmSNel63evlDswiQGXj5ym/I1ft65nSL4FubWBP/VEKBsf2JcPofskjqUaqOKUnwnRUnfx3jr+lX8sZDqDmSvnxW4OKwZYLn5mwJHfp/CI4ff7EKA/CC2b6Fa8ZxqP63U1c7LVrnTOPcfv+BjF6+ZkAeUyZhgDn/aWVuw6W11csS/xA31DJ+oCilIUaQwePbQpvgRrFYPenNP1vCZ5f3tG7rG+mvifarzMjx9uVftoqOdV/W3uSvxGS79Bk5bMZpacgBls4UunRHTNAJXhleO2TxPEuJ0u9B6yujihCn7a2qTDQ7WGSgwh2f4a+kqTA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BRt2mpHtqBUQEwpYTcZxeN7e22kn1HBl7EsDYJP5O38=;
- b=UIeJsBPtDPMga2eTW8Q2WtGzmViD9lAT7ycs+SL87ihUJpjSJuFjLq81/soiZ67dbwgzUYyNMK+f4M3FVVU30LWWvWO3McNgJAfP+dIaRZG2CdZlrqVasTwovnFzHCNk+ldMhZUKRBFAmwmLVyJ91QLE9FrF1b1ZzlP7+ONPqLNfFTSJGVm0YxcHwx4s9+lbX3fq1hgbMJBt0QA4yZCNp9v+q3qmOu0qK5H/CNdznRfqWG4u689UBCCaNMi4kFJ5BjuOfiQJTwuwWHhiIb/64WTHDdd9u4N6wxElqOV2w7vMy368oUEqRPFLe93xC2sDLy01AJNXDFF5+meL86YHrA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BRt2mpHtqBUQEwpYTcZxeN7e22kn1HBl7EsDYJP5O38=;
- b=Xj6oaKs9QcTKYF/jK/GDJPi2+NbeWL0MfImlPncEWk8n+ndjSIUNehev0VGQSvCx365xeOAzH/qESFfOAz1ORwxdY0pRj+XFn3a9m1TlvQKGToYNWnS0lHtJPDKjjcBwbGYjC9HuyF5eSWYWC4147Nus6GGE4j3UUI2fvQtF4DhR34T6agToTY95eGGPBCg5uTA7GIBDRhvMr5Eep+j8HPRZE5Mmn05qrd0D+6oG5jkKtZf0JapwV+u/aCEp20bAL7cshmri+gzmLPRZYykOJfr7YOdMb8jcxRoNCTi+dClxYm383Wvwm+t/8fmIITwACGCBMwfHQT3WNPi/xZ+BXg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from TYSPR06MB6411.apcprd06.prod.outlook.com (2603:1096:400:42a::11)
- by TYZPR06MB6807.apcprd06.prod.outlook.com (2603:1096:405:1c::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Thu, 16 May
- 2024 04:03:10 +0000
-Received: from TYSPR06MB6411.apcprd06.prod.outlook.com
- ([fe80::8e76:5af3:e027:ccee]) by TYSPR06MB6411.apcprd06.prod.outlook.com
- ([fe80::8e76:5af3:e027:ccee%3]) with mapi id 15.20.7587.025; Thu, 16 May 2024
- 04:03:10 +0000
-From: Yang Yang <yang.yang@vivo.com>
-To: Alasdair Kergon <agk@redhat.com>,
-	Mike Snitzer <snitzer@kernel.org>,
-	Mikulas Patocka <mpatocka@redhat.com>,
-	dm-devel@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: Yang Yang <yang.yang@vivo.com>
-Subject: [PATCH v3 5/5] dm linear: enable flush optimization function
-Date: Thu, 16 May 2024 12:02:34 +0800
-Message-Id: <20240516040235.115651-6-yang.yang@vivo.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240516040235.115651-1-yang.yang@vivo.com>
-References: <20240516040235.115651-1-yang.yang@vivo.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYWPR01CA0017.jpnprd01.prod.outlook.com
- (2603:1096:400:a9::22) To TYSPR06MB6411.apcprd06.prod.outlook.com
- (2603:1096:400:42a::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E26824688
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 04:10:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715832605; cv=none; b=qHETYHwMnPISUv9SRVgZgjZY8nXqZj4t3NA2QtPgrwCAdXjJH3xEPRC50Zuhfwmc7u7X6Jt7Ofaok6AbJBRJ8bhWfrRtN5UZpAoLWnBW+FomhuffzbqrVU3Aq1C/ooxpdsbP1WbKF1mA7VP5d4O7p4u+R2B5Obvmgd9xCbmO8Nc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715832605; c=relaxed/simple;
+	bh=c1j0wXz3522Y57qEplsyQOhz+FYX8Kznq+LiDDoyDnw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iq91qpFb8x55/jhnJh5cC1EJ3FInFPgODxZqr62F2tfEfJwgivutzlrhlTjpz5z2ftN8f9tEDa/COwq06rX46QOmoQ8B9+Jp8UN8BF9YXtxAH8rDXUp13yzRfHxaLZeDzwbgvOFZwnNiYtxwga84mXRjzkg9GRKZNxUR0eapx4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=i7pafl0W; arc=none smtp.client-ip=209.85.160.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-2451da9b4feso145691fac.0
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 21:10:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1715832603; x=1716437403; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mFrog2h5nAkzpq5WoUadeeUmrdg//eB0XW+3OoY88O0=;
+        b=i7pafl0WO2AxPLdD0GRqa0HmJx2uhXkS58pCsBy3LG3uSTQnurntnyGxrR9kBIxMe7
+         McqzdkvMTgNCjjXpuNxR96nZf8kYAeWi/5TUvaFHsXdr6WczIE/jWHYSO/r5qpcDCLDt
+         WarxKCJKE8LR0LTuydy9xt5XspOe/owzIHqEg5HKcxbn9NPYuKKaTU1MIkwcAxvLRHOu
+         TmAEwUZsSHBDfBMlRu5P8iCfM2dTMLXjY+hOfBrhLa3/+6I6zRESyTNO+FKdq1X50AXp
+         XSZvTDrrvUTC6cw9gX5+4vFTl3mtdV0ZmaU7GtbCyDGyp4NWW0i/ObaHN1qvS6cTUgUw
+         EPIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715832603; x=1716437403;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mFrog2h5nAkzpq5WoUadeeUmrdg//eB0XW+3OoY88O0=;
+        b=iXfRykGsm35DWlyN5wJx1R6H9A56xDqLpq4M9gap8JVR8VFGUl7qjPA8k8wW0HXZAS
+         TAlqBmUyg6Km6D1N3UudKgoQ4uHP+mPW2bWRLCKolCJa8r6Mnnp8jlVsB1oMTUaDC77m
+         rCg76ny+lWZGDShu0Klg5jPlZaaU1gnJVOAs0URKh08zNyaRmEFlMBk3DexgUCRVL95i
+         ah0OJemFkK0dU1ZUndWkPsUMY3k6sGeVeaPC0StxIrRrLjEbVFD9dAnyVxIYKzbnkQuR
+         2kpQrH/KqXZPxN3faZku+uZri3RMs8h0181W8KyPSR/fdtrojn3aN4lyAOtBibfsK58t
+         mTsw==
+X-Forwarded-Encrypted: i=1; AJvYcCW68jW+4pbSmGcMg0xFyK+gJM44pqFGf6aw6lBk6HNyq9yWXpHl1oNWTvj96AnoU4EB54MxwhYA/28nD6CeetKDBAqAvG/V1jjWpS09
+X-Gm-Message-State: AOJu0YwPzmjCh/M9q2o8EgX3S8VAIDxmARI+2hAVgdvHJHlG2KLPaLPu
+	wLuSiKKtM0KcuRCPJ/6nEqIKteFkbji0WA3QA0E+WUdjKmTfLsLGimBxymVPRiZRnEjsFgcCfFX
+	wch8llSLrGgI5dHWGkWTPsZjKo+nCgmlsH5YF3A==
+X-Google-Smtp-Source: AGHT+IEZwOTguoznC6GO7B8DWo9mKJcJa+X8xXJwVFs0MwvGABgNROFhXX+idM0oJv5WOU5cfX3Gc8V5kZLRXZTdZrY=
+X-Received: by 2002:a05:6870:d106:b0:23c:cab7:1310 with SMTP id
+ 586e51a60fabf-241730dc0edmr24147517fac.56.1715832602830; Wed, 15 May 2024
+ 21:10:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYSPR06MB6411:EE_|TYZPR06MB6807:EE_
-X-MS-Office365-Filtering-Correlation-Id: b55282d8-3641-4abe-d945-08dc755d19de
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|1800799015|52116005|366007|376005|38350700005;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Ro2YuFHn1bkJC9Xmajkui/McbYeJ7gqshFqOC1ccRZqzy23xlpLr4pF/I9VL?=
- =?us-ascii?Q?tAffn0gTBYgGkxEmZ6w5wd45MMDwUiM/V7dI0gn2cPTPB0qWW3rDDBcspIDA?=
- =?us-ascii?Q?MviWqXh7PLHWYTIHQb2Y2ptwHYJcg/8QoGKmvt7sWmUJVDBrRPSv/f29cD9V?=
- =?us-ascii?Q?ObH2pygHDEwSe6IF1v3U4HTN+7S3hS+fRdu0W3hiX53lT2s0lUZLGSOazqO0?=
- =?us-ascii?Q?JBirwoGnb6jvfBI+/zFfHAskWwuxVHM49kk6LCm+xtO29O0IdzMNt4v8Z/i6?=
- =?us-ascii?Q?fY1vRe4S6DnpvIfMXG+M+V88MZj0a3eyeoHkPu3OjNf/8EXz9OmwEi8m0jbt?=
- =?us-ascii?Q?1rnZ9BHfI0bAQpePOGJJtR4ARXE6X3+K3aZtE9jbQVJAJvl2puY7qVxZfsxx?=
- =?us-ascii?Q?FSjuzGxsJa7eZTtyLGxNpkFWI/YxOR180gPPy9X2fPIaAzy5FCMczQrcdVm1?=
- =?us-ascii?Q?rMy+YnxTGKu3Gm4/zW+HwGE+pLMOtH25K98UdiWquYNdTiD6HBXSI1WuZfTP?=
- =?us-ascii?Q?nO1Rz06p7U0+mHSurS9qY1ZSPQOka4V7jBCB3LCHBYcpv6cxtKHgjmdPYF82?=
- =?us-ascii?Q?jQnedA3mzzo6KiebLY9JmUl9tL7vLbv90KnbHxbygs1kAppdYJp1dOqOG0Eo?=
- =?us-ascii?Q?vgSDL8Bivwt72Yl4p817UQuaGMRsp/wxy1L3hnNgy57BzWjMy+wR3BF+ABLG?=
- =?us-ascii?Q?1HToAKVmA9sTdxyxKEGRG84ILq4OmlsC5weyFoIQXXRMh3AYqraGUYSxvJPB?=
- =?us-ascii?Q?Uv+fsvl2ThofmIetdNP0HyEWZzTge1BkbYHPznOmAkxciEKepI9lmDjPnILZ?=
- =?us-ascii?Q?i7TaSEROgA/K8AdX55cf8xgFiZ0JSN+zAVsQcoXMhCOwiuMFZc6IV5HEWM60?=
- =?us-ascii?Q?Jj+b+uj9h9i0N2Qnxr+bnpWjkhGSLCvwp+aUpg6KzpnNjO0cmkvTq9t+tjF6?=
- =?us-ascii?Q?ZCQU2uSeZ4bqw0yQxF4BYG+W+VcqX0brI1cNMK8dq2TYf60Tu70PFFUct8CF?=
- =?us-ascii?Q?nubd0zaRn+BLQCJ7p8Yw7YRxAcX27tIJbtrdHMC4r+Q6HFcBB/7zDr/PPv5X?=
- =?us-ascii?Q?795CSs3/nQOw9DGQ4+QgG+hl8co/ycByWCdQIfTYXrWHCZkSMIs4IJ9pCV0G?=
- =?us-ascii?Q?Yy566oDupxPoIVueEy4XW2Fzo5+kaWe1yuBZyZVHcFqlQjDzTQMxELrGH17x?=
- =?us-ascii?Q?XtiDJwb+J3hJD1MhkeY4+NYHlUiJcXsirhzo+8fwhsRQXBXkBNhFgJloWYEQ?=
- =?us-ascii?Q?uOJRA4tmyAA+6l+Mabw36goZRP6ug0ZZFuoHzByazM+aWeTJa62+IDyZ6ddf?=
- =?us-ascii?Q?tWFdhOlXlhNvACys24VX7LcalwegRxGJKeocCq2rEyfbhw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYSPR06MB6411.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(52116005)(366007)(376005)(38350700005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?FEISBvIKuXMhCI4kcbj6uN9QzQRVKwofGsVYzIfA7LWcA1UI9MtZOxVqvL+Z?=
- =?us-ascii?Q?tZLkL7Q4V6f9KMmcKz5Pwx67Tl0hM10PZ6qM8ATAQQ43SppvVxZkBk6Zvp4P?=
- =?us-ascii?Q?fBGFKyvL2U7kRQPitHgACIRQXmPNAhTeseo+n3LPoi8nnv2rAQnWyf0+ruRB?=
- =?us-ascii?Q?wTsqW0siKA0lxjPoOlaKpNsAuXWiBGotajD/22up6KB9bEl4hql16MaZpYSS?=
- =?us-ascii?Q?eSfAtyYuQDWbA76LHJC6La8s+qPIH88QFqATg859xusqohT2wLqxaBgHhK9i?=
- =?us-ascii?Q?mBUf+FluuTDiO4bVp2CKgiN1Zr92Mbxeu5dnAnRPHEcpYzfhxSJr9FLWxUe/?=
- =?us-ascii?Q?3b2jzaUHglw3PHkqDY1Z+vDUbuYJGtZOaFqKWVHsMC22lHiEgSLjc1fe5Wkj?=
- =?us-ascii?Q?krj+kyBrQtjrRSOmxKYqJkpJNgMXFn/R9YFQ5N3SpWUPhvYYVxYsVh9OUa9a?=
- =?us-ascii?Q?gEEXd3ZACfn/+HIqoklncKqti3D2SCJ4124LjLiOaDi/AHWsl8gESD0Wgz0x?=
- =?us-ascii?Q?8R1qtJKXdxC1Rn/PBFfaxlE1f6qCJhaCIE8fpdPbIzaK/f/OpoCe38NbBtxk?=
- =?us-ascii?Q?c3oIUeHVu0DQc5fyPIIgtCMHrjjG7bzvTyhECev/qY/8U7fjS9U8o/A6LsjD?=
- =?us-ascii?Q?efoxqmOMrvzZvZH+8SHbypV7wxZGBlqVjhnjq4nsz0OI516gBXNRQmRwoT3D?=
- =?us-ascii?Q?5HFtBnnU2ayir4Ee2l260AKAeQDi21HaTkiAnndou31SuwSCPlBWq4Z2CACe?=
- =?us-ascii?Q?qq8EcdcQGxauZtDIKJFX3/Ahng6Gwt3I1H8i8QGp6JWfUKjhfaydbhv78P5U?=
- =?us-ascii?Q?Ib0gzJPrEWOlYcoLzBok8rtwDrKdi6S6vxMkkSzMDwzpuxfd/qj/v5lewNLf?=
- =?us-ascii?Q?EdYL+idLIB7NeQKcYMm4kBuY/zBqp2ktLHLTDO073fdL5pK3PQXZUkhfpJww?=
- =?us-ascii?Q?7LkzSkZ4+uN2W8S4Tm3O3Tfie5qkoIa6LlogGrRW6nKLgKdZkdap+S/DqC5H?=
- =?us-ascii?Q?sYr1/PMt1cXg7Sv+plxAXJGnW0q15v9oBEfrxiKyiipV3X6u1xmJovSU6SNd?=
- =?us-ascii?Q?UVxv4Pp/guNKNV3AHqKOE3gyHQR2vUNvwMYGupZc2vpwBoK46hXCL0MCkwlb?=
- =?us-ascii?Q?Bx6IkgOm+1wgFieXgCPAvjKsF2RxzWj4+cVwiVNtcTrx72WiaCMpy7SuJ+GM?=
- =?us-ascii?Q?nBRxBKtZo+IrLFQNtbabIo7schkrb6d10pnurhbBW/lM0Tf0k+/TV0IleqSR?=
- =?us-ascii?Q?jBzDe+NSK8ij8nOmuYN4gxv08KBkEVaTftCLIqNW/87huAlF2XRY8lrTSvhI?=
- =?us-ascii?Q?nxyhJRWS+trtxm71ZnTll6isd75EnTctQriCGQ4STvcRC1ZGcKNmNQMba+vZ?=
- =?us-ascii?Q?kjmUdiatywM6liYZnur/CLLpFQ0AyYDhs5foGUMCy7fdykqa4Uw7AdMBETOR?=
- =?us-ascii?Q?Y4jfNeaTrXfzieh1uDc2mNObYERMi7QX1PVAK/rdhQQxn693h+TA11J/JQF3?=
- =?us-ascii?Q?Ks3BgHZJnuRZq3rfkdJSuL5HAqOHLA2L8gV1xJIPFEjOBFFOgmqBcXrDwLLD?=
- =?us-ascii?Q?0V9Z9w4ev2R80pTDlqnCSNO4owPJh33kfcPyhfww?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b55282d8-3641-4abe-d945-08dc755d19de
-X-MS-Exchange-CrossTenant-AuthSource: TYSPR06MB6411.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 May 2024 04:03:10.7652
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 8T2KekCUOq9JoTndhiNvgS57k9UpLFQPcxZw6qvZrvkP07lh+OlnNVKk5G4eXilhNCDfBb4jEXNFq/WeQdP5bw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB6807
+References: <20240226065113.1690534-1-nick.hu@sifive.com> <CAPDyKFph3WsZMmALnzBQKE4S_80Ji5h386Wi0vHda37QUsjMtg@mail.gmail.com>
+ <CAKddAkDcdaXKzpcKN=LCCx9S4Trv+joLX2s=nyhzaRtM5HorqA@mail.gmail.com>
+ <CAKddAkC6N=Cfo0z+F8herKTuJzCyt_MA0vWNbLCr6CbQnj0y8g@mail.gmail.com>
+ <CAPDyKFr_M0NDH0gaunBpybnALOFfz4LpX4_JW2GCUxjwGzdZsg@mail.gmail.com>
+ <CAKddAkC5CRX+ZTh=MgzPYU72SY13+AQYhknhV_CC+=XX9=DKyg@mail.gmail.com>
+ <CAAhSdy1SDd=VUqDQA0T5n9LwHo=3uGzFq1dUcbDFcB3aBdaioA@mail.gmail.com>
+ <CAAhSdy33DcNw+pbDRrR=hBH86kwvu3xZbomQby8XhRXcc-exqQ@mail.gmail.com>
+ <CAKddAkBrP2iQBC+aY1Xw5pssBpiQZe4V-6ww5m8hbKP6V0jzLg@mail.gmail.com> <CAAhSdy12-_Hdb-WVrs8kyfCy_OQA0p27DS6TOV87dh9HODrU_Q@mail.gmail.com>
+In-Reply-To: <CAAhSdy12-_Hdb-WVrs8kyfCy_OQA0p27DS6TOV87dh9HODrU_Q@mail.gmail.com>
+From: Nick Hu <nick.hu@sifive.com>
+Date: Thu, 16 May 2024 12:09:52 +0800
+Message-ID: <CAKddAkCQOvnci-bzKx1pBUJh5t1uPT-wNXGH1WyqDyb5qR_Scg@mail.gmail.com>
+Subject: Re: [PATCH] cpuidle: riscv-sbi: Add cluster_pm_enter()/exit()
+To: Anup Patel <anup@brainfault.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, palmer@dabbelt.com, rafael@kernel.org, 
+	daniel.lezcano@linaro.org, paul.walmsley@sifive.com, linux-pm@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	zong.li@sifive.com, Cyan Yang <cyan.yang@sifive.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-__send_empty_flush() sends empty flush bios to every target in the
-dm_table. However, if the num_targets exceeds the number of block
-devices in the dm_table's device list, it could lead to multiple
-invocations of __send_duplicate_bios() for the same block device.
-Typically, a single thread sending numerous empty flush bios to one
-block device is redundant, as these bios are likely to be merged by the
-flush state machine. In scenarios where num_targets significantly
-outweighs the number of block devices, such behavior may result in a
-noteworthy decrease in performance.
+Hi Anup
 
-This issue can be reproduced using this command line:
-  for i in {0..1023}; do
-    echo $((8000*$i)) 8000 linear /dev/sda2 $((16384*$i))
-  done | dmsetup create example
+On Wed, May 15, 2024 at 9:46=E2=80=AFPM Anup Patel <anup@brainfault.org> wr=
+ote:
+>
+> Hi Nick,
+>
+> On Wed, May 15, 2024 at 5:45=E2=80=AFPM Nick Hu <nick.hu@sifive.com> wrot=
+e:
+> >
+> > Hi Anup,
+> >
+> > Thank you for your guidance.
+> > After enabling the debug message, we found a way to solve the problem
+> > by the following steps:
+> > 1. Add a compatible string in 'power-domains' node otherwise it won't
+> > be the supplier of the consumers. (See of_link_to_phandle())
+>
+> Hmm, requiring a compatible string is odd. Where should we document
+> this compatible string ?
+>
+Sorry, this is my fault. I didn't include some updates in
+of_link_to_phandle(). This led some misunderstandings here.
+You are right, we don't need it.
+The supplier will be linked to the CLUSTER_PD node.
 
-With this fix, a random write with fsync workload executed with the
-following fio command:
+> > 2. Move the 'power-domains' node outside the 'cpus' node otherwise it
+> > won't be added to the device hierarchy by device_add().
+> > 3. Update the cpuidle-riscv-sbi driver to get the pds_node from
+> > '/power-domains'.
+>
+> By adding a compatible string and moving the "power-domains" node
+> outside, you are simply forcing the OF framework to populate devices.
+>
+> How about manually creating platform_device for each power-domain
+> DT node using of_platform_device_create() in sbi_pd_init() ?
+>
+Thanks for the suggestion! We have test the solution and it could work.
+We was wondering if it's feasible for us to relocate the
+'power-domains' node outside of the /cpus? The CLUSTER_PD might
+encompass not only the CPUs but also other components within the
+cluster.
 
-  fio --group_reporting --name=benchmark --filename=/dev/mapper/example \
-      --ioengine=sync --invalidate=1 --numjobs=16 --rw=randwrite \
-      --blocksize=4k --size=2G --time_based --runtime=30 --fdatasync=1
+We also look at cpuidle_psci_domain driver and it seems Arm doesn't
+create the devices for each subnode of psci domain.
+Is there any reason that they don't need it?
 
-results in an increase from 857 KB/s to 30.8 MB/s of the write
-throughput (3580% increase).
-
-Signed-off-by: Yang Yang <yang.yang@vivo.com>
----
- drivers/md/dm-linear.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/md/dm-linear.c b/drivers/md/dm-linear.c
-index 2d3e186ca87e..3e1a33b4d289 100644
---- a/drivers/md/dm-linear.c
-+++ b/drivers/md/dm-linear.c
-@@ -62,6 +62,7 @@ static int linear_ctr(struct dm_target *ti, unsigned int argc, char **argv)
- 	ti->num_discard_bios = 1;
- 	ti->num_secure_erase_bios = 1;
- 	ti->num_write_zeroes_bios = 1;
-+	ti->flush_pass_around = 1;
- 	ti->private = lc;
- 	return 0;
- 
--- 
-2.34.1
-
+> >
+> > So the DTS will be like:
+> > cpus {
+> >     ...
+> >      domain-idle-states {
+> >            CLUSTER_SLEEP:cluster-sleep {
+> >                         compatible =3D "domain-idle-state";
+> >                         ...
+> >             }
+> >      }
+> > }
+> > power-domains {
+> >             compatible =3D "riscv,sbi-power-domains"
+> >             ...
+> >             ...
+> >             CLUSTER_PD: clusterpd {
+> >                     domain-idle-states =3D <&CLUSTER_SLEEP>;
+> >             };
+> > }
+> > soc {
+> >       deviceA@xxx{
+> >              ...
+> >              power-domains =3D <&CLUSTER_PD>;
+> >              ...
+> >       }
+> > }
+>
+> Regards,
+> Anup
+>
+> >
+> > Regards,
+> > Nick
+> >
+> > On Tue, May 14, 2024 at 10:54=E2=80=AFPM Anup Patel <anup@brainfault.or=
+g> wrote:
+> > >
+> > > On Tue, May 14, 2024 at 7:53=E2=80=AFPM Anup Patel <anup@brainfault.o=
+rg> wrote:
+> > > >
+> > > > Hi Nick,
+> > > >
+> > > > On Tue, May 14, 2024 at 3:20=E2=80=AFPM Nick Hu <nick.hu@sifive.com=
+> wrote:
+> > > > >
+> > > > > Hi Ulf,
+> > > > >
+> > > > > Thank you for your valuable suggestion.
+> > > > > I sincerely apologize for the delay in responding to your message=
+ We
+> > > > > have diligently worked on experimenting with the suggestion you
+> > > > > provided.
+> > > > >
+> > > > > As per your recommendation, we have incorporated the "power-domai=
+ns=3D<>
+> > > > > property" into the consumer's node, resulting in modifications to=
+ the
+> > > > > DTS as illustrated below:
+> > > > >
+> > > > > cpus {
+> > > > >     ...
+> > > > >      domain-idle-states {
+> > > > >            CLUSTER_SLEEP:cluster-sleep {
+> > > > >                         compatible =3D "domain-idle-state";
+> > > > >                         ...
+> > > > >             }
+> > > > >      }
+> > > > >      power-domains {
+> > > > >             ...
+> > > > >             ...
+> > > > >             CLUSTER_PD: clusterpd {
+> > > > >                     domain-idle-states =3D <&CLUSTER_SLEEP>;
+> > > > >             };
+> > > > >      }
+> > > > > }
+> > > > > soc {
+> > > > >       deviceA@xxx{
+> > > > >              ...
+> > > > >              power-domains =3D <&CLUSTER_PD>;
+> > > > >              ...
+> > > > >       }
+> > > > > }
+> > > > >
+> > > > > However, this adjustment has led to an issue where the probe for
+> > > > > 'deviceA' is deferred by 'device_links_check_suppliers()' within
+> > > > > 'really_probe()'. In an attempt to mitigate this issue, we
+> > > > > experimented with a workaround by adding the attribute
+> > > > > "status=3D"disabled"" to the 'CLUSTER_PD' node. This action aimed=
+ to
+> > > > > prevent the creation of a device link between 'deviceA' and
+> > > > > 'CLUSTER_PD'. Nevertheless, we remain uncertain about the
+> > > > > appropriateness of this solution.
+> > > > >
+> > > > > Do you have suggestions on how to effectively address this issue?
+> > > >
+> > > > I totally missed this email since I was not CC'ed sorry about that.=
+ Please
+> > > > use get_maintainers.pl when sending patches.
+> > >
+> > > I stand corrected. This patch had landed in the "spam" folder. I don'=
+t know why.
+> > >
+> > > Regards,
+> > > Anup
+> > >
+> > > >
+> > > > The genpd_add_provider() (called by of_genpd_add_provider_simple())
+> > > > does mark the power-domain DT node as initialized (fwnode_dev_initi=
+alized())
+> > > > so after the cpuidle-riscv-sbi driver is probed the 'deviceA' depen=
+dency is
+> > > > resolved and 'deviceA' should be probed unless there are other unme=
+t
+> > > > dependencies.
+> > > >
+> > > > Try adding "#define DEBUG" before all includes in drivers/core/base=
+c
+> > > > and add "loglevel=3D8" in kernel parameters, this will print produc=
+er-consumer
+> > > > linkage of all devices.
+> > > >
+> > > > Marking the power-domain DT node as "disabled" is certainly not the
+> > > > right way.
+> > > >
+> > > > Regards,
+> > > > Anup
+> > > >
+> > > > >
+> > > > > Regards,
+> > > > > Nick
+> > > > >
+> > > > > On Tue, Apr 30, 2024 at 4:13=E2=80=AFPM Ulf Hansson <ulf.hansson@=
+linaro.org> wrote:
+> > > > > >
+> > > > > > On Mon, 29 Apr 2024 at 18:26, Nick Hu <nick.hu@sifive.com> wrot=
+e:
+> > > > > > >
+> > > > > > > On Tue, Apr 30, 2024 at 12:22=E2=80=AFAM Nick Hu <nick.hu@sif=
+ive.com> wrote:
+> > > > > > > >
+> > > > > > > > Hi Ulf
+> > > > > > > >
+> > > > > > > > On Mon, Apr 29, 2024 at 10:32=E2=80=AFPM Ulf Hansson <ulf.h=
+ansson@linaro.org> wrote:
+> > > > > > > > >
+> > > > > > > > > On Mon, 26 Feb 2024 at 07:51, Nick Hu <nick.hu@sifive.com=
+> wrote:
+> > > > > > > > > >
+> > > > > > > > > > When the cpus in the same cluster are all in the idle s=
+tate, the kernel
+> > > > > > > > > > might put the cluster into a deeper low power state. Ca=
+ll the
+> > > > > > > > > > cluster_pm_enter() before entering the low power state =
+and call the
+> > > > > > > > > > cluster_pm_exit() after the cluster woken up.
+> > > > > > > > > >
+> > > > > > > > > > Signed-off-by: Nick Hu <nick.hu@sifive.com>
+> > > > > > > > >
+> > > > > > > > > I was not cced this patch, but noticed that this patch go=
+t queued up
+> > > > > > > > > recently. Sorry for not noticing earlier.
+> > > > > > > > >
+> > > > > > > > > If not too late, can you please drop/revert it? We should=
+ really move
+> > > > > > > > > away from the CPU cluster notifiers. See more information=
+ below.
+> > > > > > > > >
+> > > > > > > > > > ---
+> > > > > > > > > >  drivers/cpuidle/cpuidle-riscv-sbi.c | 24 +++++++++++++=
++++++++++--
+> > > > > > > > > >  1 file changed, 22 insertions(+), 2 deletions(-)
+> > > > > > > > > >
+> > > > > > > > > > diff --git a/drivers/cpuidle/cpuidle-riscv-sbi.c b/driv=
+ers/cpuidle/cpuidle-riscv-sbi.c
+> > > > > > > > > > index e8094fc92491..298dc76a00cf 100644
+> > > > > > > > > > --- a/drivers/cpuidle/cpuidle-riscv-sbi.c
+> > > > > > > > > > +++ b/drivers/cpuidle/cpuidle-riscv-sbi.c
+> > > > > > > > > > @@ -394,6 +394,7 @@ static int sbi_cpuidle_pd_power_off=
+(struct generic_pm_domain *pd)
+> > > > > > > > > >  {
+> > > > > > > > > >         struct genpd_power_state *state =3D &pd->states=
+[pd->state_idx];
+> > > > > > > > > >         u32 *pd_state;
+> > > > > > > > > > +       int ret;
+> > > > > > > > > >
+> > > > > > > > > >         if (!state->data)
+> > > > > > > > > >                 return 0;
+> > > > > > > > > > @@ -401,6 +402,10 @@ static int sbi_cpuidle_pd_power_of=
+f(struct generic_pm_domain *pd)
+> > > > > > > > > >         if (!sbi_cpuidle_pd_allow_domain_state)
+> > > > > > > > > >                 return -EBUSY;
+> > > > > > > > > >
+> > > > > > > > > > +       ret =3D cpu_cluster_pm_enter();
+> > > > > > > > > > +       if (ret)
+> > > > > > > > > > +               return ret;
+> > > > > > > > >
+> > > > > > > > > Rather than using the CPU cluster notifiers, consumers of=
+ the genpd
+> > > > > > > > > can register themselves to receive genpd on/off notifiers=
+.
+> > > > > > > > >
+> > > > > > > > > In other words, none of this should be needed, right?
+> > > > > > > > >
+> > > > > > > > Thanks for the feedback!
+> > > > > > > > Maybe I miss something, I'm wondering about a case like bel=
+ow:
+> > > > > > > > If we have a shared L2 cache controller inside the cpu clus=
+ter power
+> > > > > > > > domain and we add this controller to be a consumer of the p=
+ower
+> > > > > > > > domain, Shouldn't the genpd invoke the domain idle only aft=
+er the
+> > > > > > > > shared L2 cache controller is suspended?
+> > > > > > > > Is there a way that we can put the L2 cache down while all =
+cpus in the
+> > > > > > > > same cluster are idle?
+> > > > > > > > > [...]
+> > > > > > > Sorry, I made some mistake in my second question.
+> > > > > > > Update the question here:
+> > > > > > > Is there a way that we can save the L2 cache states while all=
+ cpus in the
+> > > > > > > same cluster are idle and the cluster could be powered down?
+> > > > > >
+> > > > > > If the L2 cache is a consumer of the cluster, the consumer driv=
+er for
+> > > > > > the L2 cache should register for genpd on/off notifiers.
+> > > > > >
+> > > > > > The device representing the L2 cache needs to be enabled for ru=
+ntime
+> > > > > > PM, to be taken into account correctly by the cluster genpd. In=
+ this
+> > > > > > case, the device should most likely remain runtime suspended, b=
+ut
+> > > > > > instead rely on the genpd on/off notifiers to understand when
+> > > > > > save/restore of the cache states should be done.
+> > > > > >
+> > > > > > Kind regards
+> > > > > > Uffe
 
