@@ -1,142 +1,104 @@
-Return-Path: <linux-kernel+bounces-180940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FFCD8C7535
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 13:27:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 580308C753F
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 13:28:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A27D5287874
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 11:27:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBDE01F2327C
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 11:28:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 955781459FD;
-	Thu, 16 May 2024 11:27:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2FF5145A00;
+	Thu, 16 May 2024 11:28:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="DazUIU2R"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="H86aIONB"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7704B1459E7;
-	Thu, 16 May 2024 11:27:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2A481A28D;
+	Thu, 16 May 2024 11:28:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715858852; cv=none; b=TCqacHq6oYveFSEUlQhjOH7QYOiboX9CCVn2AFOS9MFRqe6dPqLC0uzR0Ro5ICdApYkZh/uK8P0ELZeL3fYe8AlQrpRwQnovmsbepERk3Ko9J+ieoP7BWjx3/gGvumnEXccfBPxiyuvewK8g1Fqc6LSWPZzoSH3Z76//CVcKg/4=
+	t=1715858928; cv=none; b=BTZ2cRVPM1rs8yDvSNxjzIhqsojQIG/2pXIISnKdkiPtEQXhLJMa3DndWFNb5nAfE+sgOfZqUPurl3uU84Zi7ycwfKnGCYcSq452DvWWilzx/I7Td8U7X8eB7EymC5FAHvPrUbPlDf+n5lhyA2Grre0ACQk40Pr2PPIjoy0W7LQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715858852; c=relaxed/simple;
-	bh=XWllrDJgXCsAZy9Z5sDYfrb6ed2DyF9I1Pdx9ZRRR5A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tJNZBe533gsuE5zK6DyAZQPb5jfhofPrdxaW6p7aInruPJb/OrqW9Q2qSCUIS4oSDSYhr7zGpzBaS/pumOwzQSU6frnQtP0Sd3xVkfrPnpRsP/eAuSbi1QpOe4nnI1qUVxq4k6s0KBwPGHntBwICsg1mp/8f/WgEwGJF2YWFmKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=DazUIU2R; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 2F16227C;
-	Thu, 16 May 2024 13:27:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1715858840;
-	bh=XWllrDJgXCsAZy9Z5sDYfrb6ed2DyF9I1Pdx9ZRRR5A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DazUIU2RgiGQFEFJXxUSK4kgQ7916AjDz6UDMMDf0sUg66jj5Ief2/k3l4SiOJY1T
-	 rnHjgLlRS6wvNnIMFzrdrSkJHjaCdyXVUCwUf8P5s0pkAOp2ewDQr3QjnyAWqL8z+l
-	 1Zj0EfYQsxWsbAn5eGUALpLIoiKGKibN5/TJpyPQ=
-Date: Thu, 16 May 2024 14:27:20 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: nicolas.dufresne@collabora.corp-partner.google.com
-Cc: Maxime Ripard <mripard@redhat.com>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Brian Starkey <Brian.Starkey@arm.com>,
-	John Stultz <jstultz@google.com>,
-	"T.J. Mercier" <tjmercier@google.com>,
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
-	Lennart Poettering <mzxreary@0pointer.de>,
-	Robert Mader <robert.mader@collabora.com>,
-	Sebastien Bacher <sebastien.bacher@canonical.com>,
-	Linux Media Mailing List <linux-media@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	linaro-mm-sig@lists.linaro.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Milan Zamazal <mzamazal@redhat.com>,
-	Andrey Konovalov <andrey.konovalov.ynk@gmail.com>
-Subject: Re: Safety of opening up /dev/dma_heap/* to physically present users
- (udev uaccess tag) ?
-Message-ID: <20240516112720.GA12714@pendragon.ideasonboard.com>
-References: <d2a512b2-e6b1-4675-b406-478074bbbe95@linaro.org>
- <Zjpmu_Xj6BPdkDPa@phenom.ffwll.local>
- <20240507183613.GB20390@pendragon.ideasonboard.com>
- <4f59a9d78662831123cc7e560218fa422e1c5eca.camel@collabora.com>
- <Zjs5eM-rRoh6WYYu@phenom.ffwll.local>
- <20240513-heretic-didactic-newt-1d6daf@penduick>
- <20240513083417.GA18630@pendragon.ideasonboard.com>
- <c4db22ad94696ed22282bf8dad15088d94ade5d6.camel@collabora.com>
- <20240514204223.GN32013@pendragon.ideasonboard.com>
- <a3428b0c352c24d43a2d458d41819fbf4b6cce0f.camel@collabora.corp-partner.google.com>
+	s=arc-20240116; t=1715858928; c=relaxed/simple;
+	bh=enKVvRzU5oZ+oBuhTjqo5JEvJIXEKjq9C/ONbAnmrx4=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=XGNLUXtmJTUzp3Lvhr/Ks1FkJ7GHs4Qc2pGJkQzxv4bmvyIQdZYoBzo0u+/2rNjHRRBRFewdP8wkujgM+CGdbD3TkT1emtEKew7P1Bj0250TkcDKwP5Ply5UUox00u1NvG2dni9rOCasDUT+NNqPhjwMgnZRMxgO8rGELFWgwIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=H86aIONB; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1715858904; x=1716463704; i=markus.elfring@web.de;
+	bh=5i0xham76HEOhXJqsxBHehiz8KwJEYaip6aTpBTpCZE=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=H86aIONBqwK8OyKWHLrU9c1MuUbdEX2GHTxNkQNYU2AngRhZ6i5Axjbmp1v4Od1F
+	 6o7ymLBteX40N3HllBBLU0c0IIfsutlOM7FmZN+pJ+9ile1a8Xags9dbZtZbLY5Na
+	 uImG6GyEZgIZrBHJf0/Pe7V5aPcPO49dufeYaWcWip3irznyv6gDU7gnOvf96Rm0g
+	 HIy6/kaVGkGz7QxAtuG9WwbnqV1PYNcpsBvkK8GQtoSIQhX8rYF1hk0S3dVJjcYNa
+	 4yTG6zD1LLFXCkTfP49UDurrsUogDsi9b2+L4xiDpdRKPDn2Ceilo8Z/tOaUk4fe9
+	 OLnj2YhxI2iRbcaR/w==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N0Icn-1sSY4W3yKd-00xKQf; Thu, 16
+ May 2024 13:28:24 +0200
+Message-ID: <6bf6d165-5b7f-447d-a804-25c4f7defe53@web.de>
+Date: Thu, 16 May 2024 13:28:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a3428b0c352c24d43a2d458d41819fbf4b6cce0f.camel@collabora.corp-partner.google.com>
+User-Agent: Mozilla Thunderbird
+To: Mark Brown <broonie@kernel.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ linux-spi@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>
+References: <171517009614.2014074.15995946356965034064.b4-ty@kernel.org>
+Subject: Re: [PATCH] spi: Remove unneeded check for orig_nents
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <171517009614.2014074.15995946356965034064.b4-ty@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:7QtqQv6V4+p6dQ9XjTYyGG6RH4s+5KrA0jlgsKxD6T16Y8YQeKo
+ vmqUlykKx+P1RKQodcjSxhXMUkJ+PDnYx7DMOj5dI/MSo7Ri5CZLqvQZWFi9tdXGE63/K2w
+ pnBDOcqPkcbi3+y4G6Yf82qnLOZkUgg4Koi9SZNtdRcgEiICvnpoBoCd1r6WD6jRgc7pRH7
+ OU5SfRvPJ46GfR9P5CcsQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:708x+Vn/bH0=;eUTZJkIFGasy7vrsUkNULKMEAiL
+ GjRjNXiHPuEv4cm2u89R2+yulWZUmY7m3TmDdG3UY8U/44n6SLFBF4WLXmVdF3rN2PbUa4Nbl
+ iWeFmMv9zBUCCLElirFY1c1pl6WZO46KaaxpE+Er4V1sh/x7lELj0+UMI2gWFtG0sii3Cz09K
+ 9oKYZJBa/nX/WKBhpCLOSL8qRYnQeLXPdyVMG50KoNNLeqJOcHW/3pawl8/MLxydGJZozNumr
+ FAt8KUXLpnCRG/3nKRe7ZUXuqJq/jp1WYqNK4HM2ksvD/1tupXtWeGHrqEpaQDiTTeVhVis0w
+ ifcaQTNEtRywujpesxfWgJTHy21M76ss57uk0qm0u801tMakMNsXv6WiV6xy7TCKTORXC5oNt
+ h5ogfSe7ZhtjEfQxzuX5Pw6p6m35/9Zh/fkEydj35QXtIVM1A9AaTGmwOGVHdPcWWVPUBYMBa
+ U4XWBKnS0T/BNLLI2uGs4+yIwvqa3dHjOJm1zqSMIBCtSNcVynwFztqMaHbTB2jlz6t/GhKYz
+ Uo5OGhhujSyKkz3n5/o8L99rEOQMawZwydFYLaiOz4vsc3VEItdyvhpMbUbwUYJxEbqMBLL6M
+ 0zCJNBdKof33ln/cJEA/NJvYkGiJWJSwToMeA+E+z749r3kWQ/19g7C+WpUw+HE2t584CdTaq
+ 6INjL/KRc2j4Uq+xOkv0k4ITq0p7fSdYpUQRpDtqLSlZZiiQvIYnYkPZ0yUbeipEiSQtXP4Ar
+ ccAjIAu2evRTSxaOElhlHBHVb3HGcoVnAH9+K1Wct+p4Re0JI3LeRPGttA2f16ViDgI+OF1AZ
+ 4BSOaJdFyIozL7rLtWQymghQMDKxM4INkdBs8ghXfiDek=
 
-Hi Nicolas,
+=E2=80=A6
+> Applied to
+>
+>    https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-n=
+ext
+=E2=80=A6
+> [1/1] spi: Remove unneded check for orig_nents
+>       commit: 8cc3bad9d9d6a4735a8c8998c6daa1ef31cbf708
+=E2=80=A6
 
-On Wed, May 15, 2024 at 01:43:58PM -0400, nicolas.dufresne@collabora.corp-partner.google.com wrote:
-> Le mardi 14 mai 2024 à 23:42 +0300, Laurent Pinchart a écrit :
-> > > You'll hit the same limitation as we hit in GStreamer, which is that KMS driver
-> > > only offer allocation for render buffers and most of them are missing allocators
-> > > for YUV buffers, even though they can import in these formats. (kms allocators,
-> > > except dumb, which has other issues, are format aware).
-> > 
-> > My experience on Arm platforms is that the KMS drivers offer allocation
-> > for scanout buffers, not render buffers, and mostly using the dumb
-> > allocator API. If the KMS device can scan out YUV natively, YUV buffer
-> > allocation should be supported. Am I missing something here ?
-> 
-> There is two APIs, Dumb is the legacy allocation API, only used by display
+Are there any chances left over to avoid a typo in the summary phrase?
 
-Is it legacy only ? I understand the dumb buffers API to be officially
-supported, to allocate scanout buffers suitable for software rendering.
-
-> drivers indeed, and the API does not include a pixel format or a modifier. The
-> allocation of YUV buffer has been made through a small hack, 
-> 
->   bpp = number of bits per component (of luma plane if multiple planes)
->   width = width
->   height = height * X
-> 
-> Where X will vary, "3 / 2" is used for 420 subsampling, "2" for 422 and "3" for
-> 444. It is far from idea, requires deep knowledge of each formats in the
-> application
-
-I'm not sure I see that as an issue, but our experiences and uses cases
-may vary :-)
-
-> and cannot allocate each planes seperatly.
-
-For semi-planar or planar formats, unless I'm mistaken, you can either
-allocate a single buffer and use it with appropriate offsets when
-constructing your framebuffer (with DRM_IOCTL_MODE_ADDFB2), or allocate
-one buffer per plane.
-
-> The second is to use the driver specific allocation API. This is then abstracted
-> by GBM. This allows allocating render buffers with notably modifiers and/or use
-> cases. But no support for YUV formats or multi-planar formats.
-
-GBM is the way to go for render buffers indeed. It has been designed
-with only graphics buffer management use cases in mind, so it's
-unfortunately not an option as a generic allocator, at least in its
-current form.
-
--- 
 Regards,
-
-Laurent Pinchart
+Markus
 
