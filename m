@@ -1,74 +1,52 @@
-Return-Path: <linux-kernel+bounces-181022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9161E8C7647
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:28:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C8868C7648
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:28:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DEE6286342
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:28:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B7C71F2107B
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:28:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15CD514B94F;
-	Thu, 16 May 2024 12:23:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42F6A147C74;
+	Thu, 16 May 2024 12:23:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="DufbBNmQ"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="saxOtqU6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A16F814600D;
-	Thu, 16 May 2024 12:23:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E5B914B97D;
+	Thu, 16 May 2024 12:23:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715862198; cv=none; b=tp+cnm3192ucJPFswa19hISD5GGo4rKTXBIYkSIMbed0u8PfDMEDpdmEeH2SV4o43z3O17TCn3BVLRKpyVettqq1b7EuJ1aNwQtFrich6MYWAOSikqz1uDdaAptMsB7L/2vMyltgICtdwfReYP7VOg17ZCCIYVVB+nZHZIxf2yI=
+	t=1715862201; cv=none; b=mAjeNZLmWpZCaLYJ/W+GnZAuc8HYY4RLKXKkegGYUwV7qn/X71v5er851WY4BnV5w65vvZ6oMaffU98dJDEfCDmEZn8xNp9QyVVJ0sH3eRIKJx39ii9DHn14VRwJ67j1zNch26XrKye5gwVGGpXOVEewi42Pd71MwTtTD8D75gU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715862198; c=relaxed/simple;
-	bh=qzak7sMWjW1eI0tpMtEBkZV5nI1gneKQVu4D3TQXJXQ=;
+	s=arc-20240116; t=1715862201; c=relaxed/simple;
+	bh=7Rb1hI6Ib5ye2Hsj4bedBcii6mULZV87Rt3nDw/naJA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N/bzgSa2F+3XxrFZpNHcM1fAzQHpeWiMf0XlPvc4ZBYnVf85vUSzhYtdP1AUEaySMXQmqEmVbdsVRGIp4vkCBfr210mqBeSM02Z5i6aiEmzYny1LoTiKyolcilBFBS4Tdft55ZHFSdp/eSche+YNFcNljZclIbi83l+aQdTI4pA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=DufbBNmQ; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=17qpjYbzklDpeN+YSOUwARueA/UNvwjrGY4gKlNC5dE=; b=DufbBNmQt2ByDUKFL2nLJEOyCO
-	EKpvCZHk2g5cL5wbPaYrf/2rZZTZgXORzFBLNLT6Wy2E6Yk0zVSaQdFvQhwRFunVK9ugicqHe/WQN
-	p92zW0tIEAVVBiOSlA99e7ZNEJotdLU9Uk/WZT3v3Ax+B/UXcpxqzndaPTiRf/RoOvkA=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1s7a8M-00FVje-Td; Thu, 16 May 2024 14:22:54 +0200
-Date: Thu, 16 May 2024 14:22:54 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Alexandre TORGUE <alexandre.torgue@foss.st.com>
-Cc: Marek Vasut <marex@denx.de>,
-	Christophe Roullier <christophe.roullier@foss.st.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 10/11] ARM: dts: stm32: add ethernet1 and ethernet2
- for STM32MP135F-DK board
-Message-ID: <4b17d7e4-c135-4d91-8565-9a8b2c6341d2@lunn.ch>
-References: <20240426125707.585269-1-christophe.roullier@foss.st.com>
- <20240426125707.585269-11-christophe.roullier@foss.st.com>
- <43024130-dcd6-4175-b958-4401edfb5fd8@denx.de>
- <8bf3be27-3222-422d-bfff-ff67271981d8@foss.st.com>
- <9c1d80eb-03e7-4d39-b516-cbcae0d50e4a@denx.de>
- <5544e11b-25a8-4465-a7cc-f1e9b1d0f0cc@foss.st.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=n20XW9ifx+RaHtt9tceZNHqrtfha38nqkxVAAaXgMHVjnf4P/rV/dIjJWsmvWc/wfAixdyTJyTzaAFkPiybiz6VQEIVNKDxJGXeLrtclkEZcaXHNrvLTQNuip5epp+B9eCw0gsgf2I6XMVoxSHvPQvhblYzHtv5IX/7aYitv8Uk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=saxOtqU6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C54FEC4AF08;
+	Thu, 16 May 2024 12:23:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1715862201;
+	bh=7Rb1hI6Ib5ye2Hsj4bedBcii6mULZV87Rt3nDw/naJA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=saxOtqU6dis0ueGCXBp3G5RiHCYia+kBa44UML18S7lbY/V99M7y/FLjGpPr9ncOX
+	 iRVRNCsYK+zuesiTgcFuhxKkzWikhinRmZkqYxG+jep4zhCr8ZICpSSxZ8wD7DlzL1
+	 mQPw6cG19xJbflbBUBWJAFBikgTbDZZJ+zSS64Gw=
+Date: Thu, 16 May 2024 14:23:18 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Anthony Iliopoulos <ailiop@suse.com>, cve@kernel.org,
+	linux-kernel@vger.kernel.org, linux-cve-announce@vger.kernel.org
+Subject: Re: CVE-2024-26821: fs: relax mount_setattr() permission checks
+Message-ID: <2024051606-imaging-entrench-b327@gregkh>
+References: <2024041702-CVE-2024-26821-de6b@gregkh>
+ <20240514124939.77984-1-ailiop@suse.com>
+ <20240515-faken-gebohrt-b7c4731929fe@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,20 +55,53 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5544e11b-25a8-4465-a7cc-f1e9b1d0f0cc@foss.st.com>
+In-Reply-To: <20240515-faken-gebohrt-b7c4731929fe@brauner>
 
-> > I suspect it might make sense to add this WoL part separately from the
-> > actual ethernet DT nodes, so ethernet could land and the WoL
-> > functionality can be added when it is ready ?
+On Wed, May 15, 2024 at 06:58:38PM +0200, Christian Brauner wrote:
+> On Tue, May 14, 2024 at 02:49:39PM +0200, Anthony Iliopoulos wrote:
+> > On Wed, Apr 17, 2024 at 11:44:04AM +0200, Greg Kroah-Hartman wrote:
+> > > Description
+> > > ===========
+> > > 
+> > > In the Linux kernel, the following vulnerability has been resolved:
+> > > 
+> > > fs: relax mount_setattr() permission checks
+> > > 
+> > > When we added mount_setattr() I added additional checks compared to the
+> > > legacy do_reconfigure_mnt() and do_change_type() helpers used by regular
+> > > mount(2). If that mount had a parent then verify that the caller and the
+> > > mount namespace the mount is attached to match and if not make sure that
+> > > it's an anonymous mount.
+> > > 
+> > > The real rootfs falls into neither category. It is neither an anoymous
+> > > mount because it is obviously attached to the initial mount namespace
+> > > but it also obviously doesn't have a parent mount. So that means legacy
+> > > mount(2) allows changing mount properties on the real rootfs but
+> > > mount_setattr(2) blocks this. I never thought much about this but of
+> > > course someone on this planet of earth changes properties on the real
+> > > rootfs as can be seen in [1].
+> > > 
+> > > Since util-linux finally switched to the new mount api in 2.39 not so
+> > > long ago it also relies on mount_setattr() and that surfaced this issue
+> > > when Fedora 39 finally switched to it. Fix this.
+> > > 
+> > > The Linux kernel CVE team has assigned CVE-2024-26821 to this issue.
+> > 
+> > This one probably needs to be disputed as it isn't an actual
+> > vulnerability, but rather a fix for the mount_setattr which previously
+> > didn't allow reconfiguring the real rootfs similar to what the mount
+> > syscall always allowed to do.
+> > 
+> > So it merely brings mount_attr up to par with mount in terms of allowing
+> > the real rootfs to be reconfigured.
+> > 
+> > Christian, what do you think ?
 > 
-> If at the end we want to have this Wol from PHY then I agree we need to
-> wait. We could push a WoL from MAC for this node before optee driver patches
-> merge but not sure it makes sens.
+> Yeah, it's not security related at all. It just allows _additional_
+> functionality. Not sure how that ended up on the CVE list. Thanks for
+> pinging about this!
 
-In general, it is better if the PHY does WoL, since the MAC can then
-be powered down. MAC WoL should only be used when the PHY does not
-support the requested WoL configuration, but the MAC can. And
-sometimes you need to spread it over both the PHY and the MAC.
+Now rejected, thanks all for reviewing this and letting us know.
 
-	Andrew
+greg k-h
 
