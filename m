@@ -1,246 +1,253 @@
-Return-Path: <linux-kernel+bounces-181092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 273958C7754
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:11:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F75F8C775C
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:15:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93C841F2137D
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 13:11:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6486281DFA
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 13:15:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1047E1474B4;
-	Thu, 16 May 2024 13:11:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE8F1146D60;
+	Thu, 16 May 2024 13:15:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="HKkIiKKg"
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XBrOEsxy"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0FE9146A72
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 13:11:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CB20143862
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 13:15:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715865108; cv=none; b=b++/ckMhuDbNK9lrHzU+gqA+SF5GfUm9Ve34Dz4hpY8JjtE6cuC56oLmEw6T+JeyWbEGugHN2ELAGCh+75+TrhOYiVTybFFQT8dXQqw7IVQMCcIonbMmsXL5oyWyAJtIyfJlHQIKdEsOfduwoXTUF2VhpgVnsLCq9C/RBfCtL9U=
+	t=1715865343; cv=none; b=qmb9lu5SHJHHXUSshbT4H3QC5Y2UJ3Kx6jzxlodZ+6ubmm3JLfghDCmpwo5Gr4TcLftqLZ2ITFBmwsXuzmWHEBFZlieSrM/wgldCeOkSz7H48IoE3P+dlni3FYPZORIDMnhmWkGf+WnHr/3Nae0+ZRk4qejFh7QGBWSPtLPqTuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715865108; c=relaxed/simple;
-	bh=Wi6fPWBM2N13lqz1ePjmrOpqRQ8zl8M+Hd0GZZShN44=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mItJRC6x2p99V5YqGMi+kMI2Hh21Mvj8qY9Ly9t24Z9U9sQHAP/MYoeHlDyjoDwCzrBqyuFKRW2qpUwQecqfZhZgGhaKXe7mz0w/Razhnkk+JLtcWct59rF68HnWIEBuaqzLqZ/OenEnnxoGaXWin8qDFIzbPDxu3/fGX87gcWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=HKkIiKKg; arc=none smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6277a2bb35fso5282517b3.1
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 06:11:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1715865106; x=1716469906; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4V904prVi6oQ5IyZz7aDLXAgfOChEzLZtTfRAaiZkwU=;
-        b=HKkIiKKglEbZ0hNaJB/6vEr2kjrfTrAMUPaj+Ct9bWmyMQA8SkQKvrQg76KjBrhUDw
-         q8pq4iGam6QFNqGlYJ8XhdLlsbe8rwle8BtK8Yzs15RQbF855DfywMB7pBLjcnaj2wOl
-         rcktK0svtAULtALURw4vcFxNsJzMgU7QBe9+zLUlTZ+3n+Mxl55MoOIu3uNbJWmth10o
-         rYXY1FBNrUN1miG65K942JxmgsxAIQeibboAPzgXzJB2qYI5aq7GaJG1fSZkC/2DMdMY
-         q+PZrMLZtF1XCXtv6AwqUtmKFy/mVByqlYuE14B6xeelv2axt6X0fNVBPYacEP7tdK92
-         rx0Q==
+	s=arc-20240116; t=1715865343; c=relaxed/simple;
+	bh=K+T7vqOTQzoe7J10uVXZdg4De+l3xm8mWoBd5YROxc0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tPt61z99GsMwsmp+3+VQlarM4iWjevP9hj5/YfP+KvPA7E4vyYbbFbmRm+9uBENDmpVZP4h7WsXjvIh7ADngjepg0x5lWlkK0f4E6e+L2A0G7KVzk/89IVGfWIDNsWN8NNxGUV0KRELDk++hxNtK72a5Q7sGoSBsMqRFAszhp0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XBrOEsxy; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715865340;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0l6u6hPd0VabUs35cq4b+ucitv/6ESbFrYjDHjfIiEE=;
+	b=XBrOEsxyDLwPit529DjKUfkV91YUdrA5nsBjMJw/jvPLHO5imk/WTDerXT+EC37Wu22k0x
+	aPxSJZsPfahBsPvoZ5BvvVv5+dQW19sp+vlzTYcAkfh3u4Oc1UFzGKMLMnxyiT7vDg2CX5
+	OEEFn5wODttKazYKaX7yWw5+scz2aek=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-138-CF3WLzTKPhWdmmYFN0MxVg-1; Thu, 16 May 2024 09:15:38 -0400
+X-MC-Unique: CF3WLzTKPhWdmmYFN0MxVg-1
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6a097848a56so74898646d6.0
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 06:15:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715865106; x=1716469906;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4V904prVi6oQ5IyZz7aDLXAgfOChEzLZtTfRAaiZkwU=;
-        b=vwxi4TRng2SY8mlWASWYu8/Ahi78uKXzCtTEriTSmwcbYY2jptMpcgWwJG1mMwRmge
-         8lCqf3rsUFaQxX620czKq7KAo8U4OMf4hc/2gHhRc6oIJf3B9YtZawFRHsjDDT8GmmOf
-         EFM/eo938i0o2DiSIoLCDwT70kefXkCN/4N8/S+tQvAE4YCOHnEnk34JH5gFOdFhMRlu
-         P2/eaQyBn1A1zMuOw+5Q5XfSMaldxwkggUmyBLqt2t6i8wZvfYAppByAf43aLe9CJrry
-         K0F4SL+TYM2iJTbrfXdEqbhJIxz0g5fP5+aj9kBUnizLswhapl0aH/cm2U7aS+hjprnx
-         OnSA==
-X-Forwarded-Encrypted: i=1; AJvYcCXTQ6W7BmRBMotWdRkkyqllLxqDby6N+s43u/aPJ/zA8qYEb7k2wafUebEpfvlVJlWxZERTEj5prjngGb9PsULwLM5iQuoMLzqCdIDo
-X-Gm-Message-State: AOJu0YymxWSjMj00R6k2MXuUhL1rVz7/+KI+RrEgWBDSzgTA5lKSItw1
-	hW196EL0ne/k+Tbimjg1pLuwtf9wmwJVAUVKkiNMpeum3j/tnDEmHr4MQwHmN95bbj30q7eky8R
-	ULKR4M0TLQzUKDofR5eF3CveV3Zn0EkIGAi3hRQ==
-X-Google-Smtp-Source: AGHT+IH5FRDo7BDlg+tWZAgAOlCiAfHazME5mq8JEMAmJ+ns26s+bWNHf5N3/miLQXMAqpV9jaca9Qw0iocuCcuU1Ac=
-X-Received: by 2002:a81:77c2:0:b0:618:9198:1a9b with SMTP id
- 00721157ae682-622af7af307mr115191067b3.3.1715865105680; Thu, 16 May 2024
- 06:11:45 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715865338; x=1716470138;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0l6u6hPd0VabUs35cq4b+ucitv/6ESbFrYjDHjfIiEE=;
+        b=ha6Eu0vSF5BCPjNMGVby+dkvipG3fufNDT4LGUbkHnGdkRJHOfPCgpKCBA/e7fNkJF
+         sjnPtw/1HMXK1ngWF0SwOGGp8rrpuyf2JZZw9jF4KTa/Ja9ZjRBhItu4ImcVfRBUgCw/
+         YoFNr7wI8ZpX33W1QsahZBQnBHCW3TNUN7VIRChr6soH7Pl/FypFQjIAkznZPMuEeuLt
+         j0BvCY/3hhRIX5BimSv99IS89dzYxeXdth2ubJV8cMEFQqCZlX4Y2kIuoEpcykHrDJKm
+         bWefr7NtW4XXrl1Ws0nkDcr5Z7k8jUcm8QF1hjR4GTncIqPEIsCo6MYLZMXIQp2alpep
+         WwrA==
+X-Forwarded-Encrypted: i=1; AJvYcCWuytZX6pKpwO1fiWbgxHb92I5F0GvCHsoZrzDv+lmb6XOvoF43Dc5d36AOeBqQSg7XX8GGJUhD5xY9SlX/cRQlUyaTJB0a3xXBSrLf
+X-Gm-Message-State: AOJu0YzY8z9F6sPfFwPF+KqL6bRDbRHdAJhttpiQriS40X9NGan1sLdX
+	EQr4ZJq/H46D6VlLvSjWuMTLB8HRMe5b2dcWPUmsGk+Mi9YwaYGpkYS1qQDJQtm3b56d3RmXGfQ
+	94i/7h5Of+1pbWkPGHRI3EjAsb9MwjWE+1xIEXuQcR/79pbQieOFg1Aes5gnnsg==
+X-Received: by 2002:a05:6214:3d8d:b0:6a0:b9bf:3cb3 with SMTP id 6a1803df08f44-6a1681da9a9mr236654736d6.34.1715865337749;
+        Thu, 16 May 2024 06:15:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF5l63B/ThTFOUu+b8+mZcUqIP+JY7JfnEdLxlBSrypwCMC29xnG1Oe9RFOjzz7TJMZvMGXJg==
+X-Received: by 2002:a05:6214:3d8d:b0:6a0:b9bf:3cb3 with SMTP id 6a1803df08f44-6a1681da9a9mr236654376d6.34.1715865337094;
+        Thu, 16 May 2024 06:15:37 -0700 (PDT)
+Received: from x1gen2nano ([2600:1700:1ff0:d0e0::33])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6a15f1852fdsm75706596d6.32.2024.05.16.06.15.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 May 2024 06:15:36 -0700 (PDT)
+Date: Thu, 16 May 2024 08:15:34 -0500
+From: Andrew Halaney <ahalaney@redhat.com>
+To: Akhil P Oommen <quic_akhilpo@quicinc.com>
+Cc: Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Rob Clark <robdclark@chromium.org>, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/msm/adreno: De-spaghettify the use of memory barriers
+Message-ID: <ae4a77wt3kc73ejshptldqx6ugzrqguyq7etbbu54y4avhbdlt@qyt4r6gma7ev>
+References: <20240508-topic-adreno-v1-1-1babd05c119d@linaro.org>
+ <20240514183849.6lpyplifero5u35r@hu-akhilpo-hyd.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240503-dev-charlie-support_thead_vector_6_9-v6-0-cb7624e65d82@rivosinc.com>
- <20240503-dev-charlie-support_thead_vector_6_9-v6-3-cb7624e65d82@rivosinc.com>
-In-Reply-To: <20240503-dev-charlie-support_thead_vector_6_9-v6-3-cb7624e65d82@rivosinc.com>
-From: Andy Chiu <andy.chiu@sifive.com>
-Date: Thu, 16 May 2024 21:11:33 +0800
-Message-ID: <CABgGipUJ1hk_N6Vka2j12o80bxpDbAadJVBHdoLncrQEaBPoaw@mail.gmail.com>
-Subject: Re: [PATCH v6 03/17] riscv: vector: Use vlenb from DT
-To: Charlie Jenkins <charlie@rivosinc.com>
-Cc: Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Guo Ren <guoren@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Conor Dooley <conor.dooley@microchip.com>, Evan Green <evan@rivosinc.com>, 
-	=?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, linux-riscv@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Palmer Dabbelt <palmer@rivosinc.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev, linux-doc@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240514183849.6lpyplifero5u35r@hu-akhilpo-hyd.qualcomm.com>
 
-On Sat, May 4, 2024 at 2:21=E2=80=AFAM Charlie Jenkins <charlie@rivosinc.co=
-m> wrote:
->
-> If vlenb is provided in the device tree, prefer that over reading the
-> vlenb csr.
->
-> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+On Wed, May 15, 2024 at 12:08:49AM GMT, Akhil P Oommen wrote:
+> On Wed, May 08, 2024 at 07:46:31PM +0200, Konrad Dybcio wrote:
+> > Memory barriers help ensure instruction ordering, NOT time and order
+> > of actual write arrival at other observers (e.g. memory-mapped IP).
+> > On architectures employing weak memory ordering, the latter can be a
+> > giant pain point, and it has been as part of this driver.
+> > 
+> > Moreover, the gpu_/gmu_ accessors already use non-relaxed versions of
+> > readl/writel, which include r/w (respectively) barriers.
+> > 
+> > Replace the barriers with a readback that ensures the previous writes
+> > have exited the write buffer (as the CPU must flush the write to the
+> > register it's trying to read back) and subsequently remove the hack
+> > introduced in commit b77532803d11 ("drm/msm/a6xx: Poll for GBIF unhalt
+> > status in hw_init").
 
-I agree with Conor that we need a mechanism to turn off v and all
-depending extensions with has_riscv_homogeneous_vlenb(). And that can
-come after this.
+For what its worth, I've been eyeing (but haven't tested) sending some
+patches to clean up dsi_phy_write_udelay/ndelay(). There's no ordering
+guarantee between a writel() and a delay(), so the expected "write then
+delay" sequence might not be happening.. you need to write, read, delay.
 
-Thanks for adding the homogeneous vlen checking!
+memory-barriers.txt:
 
-Reviewed-by: Andy Chiu <andy.chiu@sifive.com>
+	5. A readX() by a CPU thread from the peripheral will complete before
+	   any subsequent delay() loop can begin execution on the same thread.
+	   This ensures that two MMIO register writes by the CPU to a peripheral
+	   will arrive at least 1us apart if the first write is immediately read
+	   back with readX() and udelay(1) is called prior to the second
+	   writeX():
 
-> ---
->  arch/riscv/include/asm/cpufeature.h |  2 ++
->  arch/riscv/kernel/cpufeature.c      | 47 +++++++++++++++++++++++++++++++=
-++++++
->  arch/riscv/kernel/vector.c          | 12 +++++++++-
->  3 files changed, 60 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/riscv/include/asm/cpufeature.h b/arch/riscv/include/asm=
-/cpufeature.h
-> index 347805446151..0c4f08577015 100644
-> --- a/arch/riscv/include/asm/cpufeature.h
-> +++ b/arch/riscv/include/asm/cpufeature.h
-> @@ -31,6 +31,8 @@ DECLARE_PER_CPU(struct riscv_cpuinfo, riscv_cpuinfo);
->  /* Per-cpu ISA extensions. */
->  extern struct riscv_isainfo hart_isa[NR_CPUS];
->
-> +extern u32 riscv_vlenb_of;
-> +
->  void riscv_user_isa_enable(void);
->
->  #if defined(CONFIG_RISCV_MISALIGNED)
-> diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeatur=
-e.c
-> index 3ed2359eae35..6c143ea9592b 100644
-> --- a/arch/riscv/kernel/cpufeature.c
-> +++ b/arch/riscv/kernel/cpufeature.c
-> @@ -35,6 +35,8 @@ static DECLARE_BITMAP(riscv_isa, RISCV_ISA_EXT_MAX) __r=
-ead_mostly;
->  /* Per-cpu ISA extensions. */
->  struct riscv_isainfo hart_isa[NR_CPUS];
->
-> +u32 riscv_vlenb_of;
-> +
->  /**
->   * riscv_isa_extension_base() - Get base extension word
->   *
-> @@ -648,6 +650,46 @@ static int __init riscv_isa_fallback_setup(char *__u=
-nused)
->  early_param("riscv_isa_fallback", riscv_isa_fallback_setup);
->  #endif
->
-> +static int has_riscv_homogeneous_vlenb(void)
-> +{
-> +       int cpu;
-> +       u32 prev_vlenb =3D 0;
-> +       u32 vlenb;
-> +
-> +       /* Ignore vlenb if vector is not enabled in the kernel */
-> +       if (!IS_ENABLED(CONFIG_RISCV_ISA_V))
-> +               return 0;
-> +
-> +       for_each_possible_cpu(cpu) {
-> +               struct device_node *cpu_node;
-> +
-> +               cpu_node =3D of_cpu_device_node_get(cpu);
-> +               if (!cpu_node) {
-> +                       pr_warn("Unable to find cpu node\n");
-> +                       return -ENOENT;
-> +               }
-> +
-> +               if (of_property_read_u32(cpu_node, "riscv,vlenb", &vlenb)=
-) {
-> +                       of_node_put(cpu_node);
-> +
-> +                       if (prev_vlenb)
-> +                               return -ENOENT;
-> +                       continue;
-> +               }
-> +
-> +               if (prev_vlenb && vlenb !=3D prev_vlenb) {
-> +                       of_node_put(cpu_node);
-> +                       return -ENOENT;
-> +               }
-> +
-> +               prev_vlenb =3D vlenb;
-> +               of_node_put(cpu_node);
-> +       }
-> +
-> +       riscv_vlenb_of =3D vlenb;
-> +       return 0;
-> +}
-> +
->  void __init riscv_fill_hwcap(void)
->  {
->         char print_str[NUM_ALPHA_EXTS + 1];
-> @@ -671,6 +713,11 @@ void __init riscv_fill_hwcap(void)
->                         pr_info("Falling back to deprecated \"riscv,isa\"=
-\n");
->                         riscv_fill_hwcap_from_isa_string(isa2hwcap);
->                 }
-> +
-> +               if (elf_hwcap & COMPAT_HWCAP_ISA_V && has_riscv_homogeneo=
-us_vlenb() < 0) {
-> +                       pr_warn("Unsupported heterogeneous vlen detected,=
- vector extension disabled.\n");
-> +                       elf_hwcap &=3D ~COMPAT_HWCAP_ISA_V;
-> +               }
->         }
->
->         /*
-> diff --git a/arch/riscv/kernel/vector.c b/arch/riscv/kernel/vector.c
-> index 6727d1d3b8f2..e04586cdb7f0 100644
-> --- a/arch/riscv/kernel/vector.c
-> +++ b/arch/riscv/kernel/vector.c
-> @@ -33,7 +33,17 @@ int riscv_v_setup_vsize(void)
->  {
->         unsigned long this_vsize;
->
-> -       /* There are 32 vector registers with vlenb length. */
-> +       /*
-> +        * There are 32 vector registers with vlenb length.
-> +        *
-> +        * If the riscv,vlenb property was provided by the firmware, use =
-that
-> +        * instead of probing the CSRs.
-> +        */
-> +       if (riscv_vlenb_of) {
-> +               this_vsize =3D riscv_vlenb_of * 32;
-> +               return 0;
-> +       }
-> +
->         riscv_v_enable();
->         this_vsize =3D csr_read(CSR_VLENB) * 32;
->         riscv_v_disable();
->
-> --
-> 2.44.0
->
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+		writel(42, DEVICE_REGISTER_0); // Arrives at the device...
+		readl(DEVICE_REGISTER_0);
+		udelay(1);
+		writel(42, DEVICE_REGISTER_1); // ...at least 1us before this.
+
+> > 
+> > Fixes: b77532803d11 ("drm/msm/a6xx: Poll for GBIF unhalt status in hw_init")
+> > Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> > ---
+> >  drivers/gpu/drm/msm/adreno/a6xx_gmu.c |  5 ++---
+> >  drivers/gpu/drm/msm/adreno/a6xx_gpu.c | 14 ++++----------
+> >  2 files changed, 6 insertions(+), 13 deletions(-)
+> 
+> I prefer this version compared to the v2. A helper routine is
+> unnecessary here because:
+> 1. there are very few scenarios where we have to read back the same
+> register.
+> 2. we may accidently readback a write only register.
+> 
+> > 
+> > diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+> > index 0e3dfd4c2bc8..4135a53b55a7 100644
+> > --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+> > +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+> > @@ -466,9 +466,8 @@ static int a6xx_rpmh_start(struct a6xx_gmu *gmu)
+> >  	int ret;
+> >  	u32 val;
+> >  
+> > -	gmu_write(gmu, REG_A6XX_GMU_RSCC_CONTROL_REQ, 1 << 1);
+> > -	/* Wait for the register to finish posting */
+> > -	wmb();
+> > +	gmu_write(gmu, REG_A6XX_GMU_RSCC_CONTROL_REQ, BIT(1));
+> > +	gmu_read(gmu, REG_A6XX_GMU_RSCC_CONTROL_REQ);
+> 
+> This is unnecessary because we are polling on a register on the same port below. But I think we
+> can replace "wmb()" above with "mb()" to avoid reordering between read
+> and write IO instructions.
+
+If I understand correctly, you don't need any memory barrier.
+writel()/readl()'s are ordered to the same endpoint. That goes for all
+the reordering/barrier comments mentioned below too.
+
+device-io.rst:
+
+    The read and write functions are defined to be ordered. That is the
+    compiler is not permitted to reorder the I/O sequence. When the ordering
+    can be compiler optimised, you can use __readb() and friends to
+    indicate the relaxed ordering. Use this with care.
+
+memory-barriers.txt:
+
+     (*) readX(), writeX():
+
+	    The readX() and writeX() MMIO accessors take a pointer to the
+	    peripheral being accessed as an __iomem * parameter. For pointers
+	    mapped with the default I/O attributes (e.g. those returned by
+	    ioremap()), the ordering guarantees are as follows:
+
+	    1. All readX() and writeX() accesses to the same peripheral are ordered
+	       with respect to each other. This ensures that MMIO register accesses
+	       by the same CPU thread to a particular device will arrive in program
+	       order.
+
+
+> 
+> >  
+> >  	ret = gmu_poll_timeout(gmu, REG_A6XX_GMU_RSCC_CONTROL_ACK, val,
+> >  		val & (1 << 1), 100, 10000);
+> > diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> > index 973872ad0474..0acbc38b8e70 100644
+> > --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> > +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> > @@ -1713,22 +1713,16 @@ static int hw_init(struct msm_gpu *gpu)
+> >  	}
+> >  
+> >  	/* Clear GBIF halt in case GX domain was not collapsed */
+> > +	gpu_write(gpu, REG_A6XX_GBIF_HALT, 0);
+> 
+> We need a full barrier here to avoid reordering. Also, lets add a
+> comment about why we are doing this odd looking sequence.
+> 
+> > +	gpu_read(gpu, REG_A6XX_GBIF_HALT);
+> >  	if (adreno_is_a619_holi(adreno_gpu)) {
+> > -		gpu_write(gpu, REG_A6XX_GBIF_HALT, 0);
+> >  		gpu_write(gpu, REG_A6XX_RBBM_GPR0_CNTL, 0);
+> > -		/* Let's make extra sure that the GPU can access the memory.. */
+> > -		mb();
+> 
+> We need a full barrier here.
+> 
+> > +		gpu_read(gpu, REG_A6XX_RBBM_GPR0_CNTL);
+> >  	} else if (a6xx_has_gbif(adreno_gpu)) {
+> > -		gpu_write(gpu, REG_A6XX_GBIF_HALT, 0);
+> >  		gpu_write(gpu, REG_A6XX_RBBM_GBIF_HALT, 0);
+> > -		/* Let's make extra sure that the GPU can access the memory.. */
+> > -		mb();
+> 
+> We need a full barrier here.
+> 
+> > +		gpu_read(gpu, REG_A6XX_RBBM_GBIF_HALT);
+> >  	}
+> >  
+> > -	/* Some GPUs are stubborn and take their sweet time to unhalt GBIF! */
+> > -	if (adreno_is_a7xx(adreno_gpu) && a6xx_has_gbif(adreno_gpu))
+> > -		spin_until(!gpu_read(gpu, REG_A6XX_GBIF_HALT_ACK));
+> > -
+> 
+> Why is this removed?
+> 
+> -Akhil
+> 
+> >  	gpu_write(gpu, REG_A6XX_RBBM_SECVID_TSB_CNTL, 0);
+> >  
+> >  	if (adreno_is_a619_holi(adreno_gpu))
+> > 
+> > ---
+> > base-commit: 93a39e4766083050ca0ecd6a3548093a3b9eb60c
+> > change-id: 20240508-topic-adreno-a2d199cd4152
+> > 
+> > Best regards,
+> > -- 
+> > Konrad Dybcio <konrad.dybcio@linaro.org>
+> > 
+> 
+
 
