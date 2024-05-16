@@ -1,98 +1,174 @@
-Return-Path: <linux-kernel+bounces-180772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E84E88C72E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:32:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B7F78C72BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:26:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23D9C1C22322
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 08:32:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51826281D99
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 08:26:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E2D21411F0;
-	Thu, 16 May 2024 08:32:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0E6080C15;
+	Thu, 16 May 2024 08:26:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="RNvEgPTB"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BxI8gMgx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7194140E4D;
-	Thu, 16 May 2024 08:32:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D66038F86;
+	Thu, 16 May 2024 08:26:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715848350; cv=none; b=oBevpRI9uOYxO9v+xU82X+kZgDUlUPTbUv34F8yfx1YX+hnd10NxbRY+ClF77TjQ0xShaFj95MjUrz7JsGfoBLscW9HDFVGLmbz8P9SQMBoOGw7LPZl9myXrJ2DNKdbofXSck/NGdVQQC/HRM8S3tzOiGQuvXBprjDEbthTTLY0=
+	t=1715848012; cv=none; b=rE9DOiLnE9ubakQvFUA1ZN9dVLTzIUH7iHjfayyn743gUdK2j6LD2RQiwJkmlJFLSfTSpOcN3+f2VC4u1bba8Wbo5Rs6zvduXD7PHkKvMSeVS9DHDYojWK4UZmoiqDNIwwJI0lLDWr/pTRA7QSrtpXQyTXkWZNI5wN7+nKp0oRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715848350; c=relaxed/simple;
-	bh=n3wfwXdLhgrZfXaFpbTErMq4VZLJenZ0wJJ6hu+fpmM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KH/i6JBR64xgThZ668h5bKdE0rlOpFk8aOCOa4FQ4ogYlv38lfyCFwkuJ/oZb14+Ft7PbJfXZUBtJ8Bn6K1lZjheq25ldFBc7SfFvEHoDdCOPiwRMsS+F2mxgxHM8muBKRBhH14/bBQsVsd+hGKZzrliltcQFjK4kSIqxXH30E4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=RNvEgPTB; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44G8Pni2048592;
-	Thu, 16 May 2024 03:25:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1715847949;
-	bh=clZL/8Y8uccnbJaVKNewC7vniy/6nA7aPUL53Va0yB4=;
-	h=From:To:CC:Subject:Date;
-	b=RNvEgPTBrPhcZFllUq05yk/cQwXGO0/fk97hQsSWphVsIvw0E1Kg3vlX03MKuBLEJ
-	 2mYsXIYWzUU9el/Yc77bkTebRDt6nhG5nOtBe0TOjCvDv35KjEJ2TCydRstTv0FNd4
-	 ACv3/IMiMggkgw9kD+KaS7qi7TlNG00/evUVZn6g=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44G8PnJr036001
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 16 May 2024 03:25:49 -0500
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 16
- May 2024 03:25:48 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 16 May 2024 03:25:48 -0500
-Received: from uda0500640.dal.design.ti.com (uda0500640.dhcp.ti.com [172.24.227.88])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44G8PkQt072837;
-	Thu, 16 May 2024 03:25:47 -0500
-From: Ravi Gunasekaran <r-gunasekaran@ti.com>
-To: <netdev@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <s-vadapalli@ti.com>, <rogerq@kernel.org>, <r-gunasekaran@ti.com>
-Subject: [PATCH] MAINTAINERS: net: Update reviewers for TI's Ethernet drivers
-Date: Thu, 16 May 2024 13:55:45 +0530
-Message-ID: <20240516082545.6412-1-r-gunasekaran@ti.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1715848012; c=relaxed/simple;
+	bh=WIoFwH8zB7Jl59HZ7oYwJwNcVULcP10JP5xKKdRoIzk=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=rWyGyRvaMgsu8UMZ0YzsK4atjdMTMUNSPbUWdfjgFN0jujlaZZFzF7IgKAm4Bv2+1KEVvZTds87ZYw6ewb1rUzwA/bJDjFNRSNcv8DQ8sSmRH1pko/CLF0ZJTrntaEKrcT2g1cLFynAOq0MJWeYdfysaILzXhu7ZNo6QitSAam8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BxI8gMgx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DAA7C113CC;
+	Thu, 16 May 2024 08:26:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715848011;
+	bh=WIoFwH8zB7Jl59HZ7oYwJwNcVULcP10JP5xKKdRoIzk=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=BxI8gMgxAB54Z/Lzl2eEiuuLAipJD0jCmNzMpUmypjQCeLCmTwPfTqYfwXQPbseOX
+	 G9TI6Sqpf6rlLLqBIJKuHHG4NrrfHAu/wTFh9YSY8MUSS5aRVOQcSTnAnDhROB2ZqZ
+	 lNenUAIGvgX3zKINmCVA5eopDspokXpbNS7XRbMUQczJbpejPgLsBs7VY2nNcRHQUS
+	 bS7tzd72HIKU82VM2zVE0kYOXws9gO2cYjLu3dq4Oi/zQkBiDH3sOqSQkgfCqD/eqU
+	 0/TIBmtb4wNaRdQcKO/CZzC31dGqOUxnZhjYy7ynXqVWXd2pDhonVS23a+maZqKId1
+	 FC9JqjYxt25Sw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 16 May 2024 11:26:48 +0300
+Message-Id: <D1AXCT1OTHA9.2TJ6JYNJBBT44@kernel.org>
+Cc: <reinette.chatre@intel.com>, =?utf-8?b?5YiY5Y+MKOi9qeWxuSk=?=
+ <ls123674@antgroup.com>
+Subject: Re: [RFC PATCH v3 1/1] x86/sgx: Explicitly give up the CPU in
+ EDMM's ioctl() to avoid softlockup
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Haitao Huang" <haitao.huang@linux.intel.com>,
+ <linux-kernel@vger.kernel.org>, <linux-sgx@vger.kernel.org>,
+ <dave.hansen@linux.intel.com>, "Bojun Zhu" <zhubojun.zbj@antgroup.com>
+X-Mailer: aerc 0.17.0
+References: <20240515065521.67908-1-zhubojun.zbj@antgroup.com>
+ <20240515065521.67908-2-zhubojun.zbj@antgroup.com>
+ <op.2nt1vls9wjvjmi@hhuan26-mobl.amr.corp.intel.com>
+ <op.2nt3fzsnwjvjmi@hhuan26-mobl.amr.corp.intel.com>
+In-Reply-To: <op.2nt3fzsnwjvjmi@hhuan26-mobl.amr.corp.intel.com>
 
-Remove myself as reviewer for TI's ethernet drivers
+On Thu May 16, 2024 at 1:29 AM EEST, Haitao Huang wrote:
+> On Wed, 15 May 2024 16:55:59 -0500, Haitao Huang =20
+> <haitao.huang@linux.intel.com> wrote:
+>
+> > On Wed, 15 May 2024 01:55:21 -0500, Bojun Zhu =20
+> > <zhubojun.zbj@antgroup.com> wrote:
+> >
+> >> EDMM's ioctl()s support batch operations, which may be
+> >> time-consuming. Try to explicitly give up the CPU as the prefix
+> >> operation at the every begin of "for loop" in
+> >> sgx_enclave_{ modify_types | restrict_permissions | remove_pages}
+> >> to give other tasks a chance to run, and avoid softlockup warning.
+> >>
+> >> Additionally perform pending signals check as the prefix operation,
+> >> and introduce sgx_check_signal_and_resched(),
+> >> which wraps all the checks.
+> >>
+> >> The following has been observed on Linux v6.9-rc5 with kernel
+> >> preemptions disabled(by configuring "PREEMPT_NONE=3Dy"), when kernel
+> >> is requested to restrict page permissions of a large number of EPC =20
+> >> pages.
+> >>
+> >>     ------------[ cut here ]------------
+> >>     watchdog: BUG: soft lockup - CPU#45 stuck for 22s!
+> >>     ...
+> >>     RIP: 0010:sgx_enclave_restrict_permissions+0xba/0x1f0
+> >>     ...
+> >>     Call Trace:
+> >>      sgx_ioctl
+> >>      __x64_sys_ioctl
+> >>      x64_sys_call
+> >>      do_syscall_64
+> >>      entry_SYSCALL_64_after_hwframe
+> >>     ------------[ end trace ]------------
+> >>
+> >> Signed-off-by: Bojun Zhu <zhubojun.zbj@antgroup.com>
+> >> ---
+> >>  arch/x86/kernel/cpu/sgx/ioctl.c | 40 +++++++++++++++++++++++---------=
+-
+> >>  1 file changed, 28 insertions(+), 12 deletions(-)
+> >>
+> >> diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c =20
+> >> b/arch/x86/kernel/cpu/sgx/ioctl.c
+> >> index b65ab214bdf5..6199f483143e 100644
+> >> --- a/arch/x86/kernel/cpu/sgx/ioctl.c
+> >> +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+> >> @@ -365,6 +365,20 @@ static int sgx_validate_offset_length(struct =20
+> >> sgx_encl *encl,
+> >>  	return 0;
+> >>  }
+> >> +/*
+> >> + * Check signals and invoke scheduler. Return true for a pending =20
+> >> signal.
+> >> + */
+> >> +static bool sgx_check_signal_and_resched(void)
+> >> +{
+> >> +	if (signal_pending(current))
+> >> +		return true;
+> >> +
+> >> +	if (need_resched())
+> >> +		cond_resched();
+> >> +
+> >> +	return false;
+> >> +}
+> >> +
+> >>  /**
+> >>   * sgx_ioc_enclave_add_pages() - The handler for =20
+> >> %SGX_IOC_ENCLAVE_ADD_PAGES
+> >>   * @encl:       an enclave pointer
+> >> @@ -409,7 +423,7 @@ static long sgx_ioc_enclave_add_pages(struct =20
+> >> sgx_encl *encl, void __user *arg)
+> >>  	struct sgx_enclave_add_pages add_arg;
+> >>  	struct sgx_secinfo secinfo;
+> >>  	unsigned long c;
+> >> -	int ret;
+> >> +	int ret =3D -ERESTARTSYS;
+> >> 	if (!test_bit(SGX_ENCL_CREATED, &encl->flags) ||
+> >>  	    test_bit(SGX_ENCL_INITIALIZED, &encl->flags))
+> >> @@ -432,15 +446,8 @@ static long sgx_ioc_enclave_add_pages(struct =20
+> >> sgx_encl *encl, void __user *arg)
+> >>  		return -EINVAL;
+> >> 	for (c =3D 0 ; c < add_arg.length; c +=3D PAGE_SIZE) {
+> >> -		if (signal_pending(current)) {
+> >> -			if (!c)
+> >> -				ret =3D -ERESTARTSYS;
+> >> -
+> >> +		if (sgx_check_signal_and_resched())
+> >>  			break;
+> >> -		}
+> >
+> > ERESTARTSYS is only appropriate if we have not EADDed any pages yet.
+> > If we got interrupted in the middle, we should return 0. User space =20
+> > would check the 'count' returned and decide to recall this ioctl() with=
+ =20
+> > 'offset'  reset to the next page, and adjust length.
+>
+> NVM, I misread it. ret will be changed to zero in subsequent iteration.
+>
+> Reviewed-by: Haitao Huang <haitao.huang@linux.intel.com>
 
-Signed-off-by: Ravi Gunasekaran <r-gunasekaran@ti.com>
----
- MAINTAINERS | 1 -
- 1 file changed, 1 deletion(-)
+Duh, and I responded too quickly. OK, I revisited the original
+patch and yes ret gets reseted. Ignore my previous response ;-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 85025e859d57..9698b8b19197 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -22463,7 +22463,6 @@ F:	drivers/counter/ti-eqep.c
- 
- TI ETHERNET SWITCH DRIVER (CPSW)
- R:	Siddharth Vadapalli <s-vadapalli@ti.com>
--R:	Ravi Gunasekaran <r-gunasekaran@ti.com>
- R:	Roger Quadros <rogerq@kernel.org>
- L:	linux-omap@vger.kernel.org
- L:	netdev@vger.kernel.org
+My tags still hold, sorry.
 
-base-commit: dbd9e2e056d8577375ae4b31ada94f8aa3769e8a
--- 
-2.17.1
-
+BR, Jarkko
 
