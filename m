@@ -1,103 +1,153 @@
-Return-Path: <linux-kernel+bounces-180760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61C908C72C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:27:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE0728C72C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:27:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C869CB22AF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 08:27:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50ED51F21647
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 08:27:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E91BA12FB33;
-	Thu, 16 May 2024 08:27:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W+e1arsP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D221130A56;
+	Thu, 16 May 2024 08:27:36 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EAF938F86;
-	Thu, 16 May 2024 08:27:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3BFE76C76;
+	Thu, 16 May 2024 08:27:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715848040; cv=none; b=BxKfDeMBKFm5Hqsw/5JweiYKHf+qXrcpEEA68fumCfU31GvRehq602rp16yN/gGJdXxCOKFNCkcMN5m2pUGZ+LePMziaZvWYYbUpg/hF7zSgnRNK23fYlBEi4EDVxzi0Zxjun3RDbJg/eV33YgAD4BwRB7fPXR7vC5odfFllVn0=
+	t=1715848055; cv=none; b=k6VBcxmthZa6n8HHxFU/5joIrZwcb04pXZ0vsSaB69CYP9m8rdLlxTBKIgEu5KpgIkEoG5NifCnrE0FbWimNC/1B8jF8VvhL4LpH9OmSvI1wtSvlmaFD2odvFqbu6lqVPDLh77i+ht1wREgACaM+U4lrz1Wq4VH1dELX7yKuTa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715848040; c=relaxed/simple;
-	bh=XS+c13dsUKZqV4fhUJ4NseTT8YN+F9dJ7nFDGFXcNrs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XHpZ2QwYrmozH0w1E4f39ZHzGrqbXQ3JJgTi3el6NNUGGjmhT2xgWYXwbJidFH/EdTzCTmO9qTQsmUUVjyDwtsTmaRt2fFttntjDGm5TzXQ5b8XncRB8M4MyS997OFnY3cPnpc6zOoIn3Q9hZidVodpnZaoqJN6YlestYWk5Ul4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W+e1arsP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48018C113CC;
-	Thu, 16 May 2024 08:27:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715848039;
-	bh=XS+c13dsUKZqV4fhUJ4NseTT8YN+F9dJ7nFDGFXcNrs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=W+e1arsPk3v9M3A8EeaJpe0Z8uAAfgVylWc7wCMixoFpsYxiO9MFuM1ocFVQWmAeR
-	 KXFZOav5FfjYm03+McmjOpIdXEii1bxqkQ7/8xTAZEo2U8XQP2rBp6ipgo4uPalkuV
-	 pI3G5UHIJFYjL0qdyyW6ncIlnV77pQwjI/oV4GeDMHeZ7LFeQvodFEnlwh6ocDojZr
-	 Rhs+0VJzxcuD+TJmk93Zdt4cUvlMlwGtl17UBaYbgqvPjPtKbodCgnDVOZUE/yT/c6
-	 S0rmmeB4QipQDwpYo8jNBtAQs0cXym7XCM1RjrkdHC2gnkNB/buheVMKzkKahzGDYt
-	 IN9+Y3ltxHvdA==
-Date: Thu, 16 May 2024 09:27:13 +0100
-From: Simon Horman <horms@kernel.org>
-To: Larysa Zaremba <larysa.zaremba@intel.com>
-Cc: intel-wired-lan@lists.osuosl.org,
-	Jacob Keller <jacob.e.keller@intel.com>,
-	maciej.fijalkowski@intel.com,
-	Magnus Karlsson <magnus.karlsson@gmail.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	igor.bagnucki@intel.com, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH iwl-net 3/3] ice: map XDP queues to vectors in
- ice_vsi_map_rings_to_vectors()
-Message-ID: <20240516082713.GC179178@kernel.org>
-References: <20240515160246.5181-1-larysa.zaremba@intel.com>
- <20240515160246.5181-4-larysa.zaremba@intel.com>
+	s=arc-20240116; t=1715848055; c=relaxed/simple;
+	bh=Fa3tCa+nHTX5GaUek5DQjejgVE5UyfDOFzTBnbAZZgQ=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=WYd1o5mteRp6hPuHUxqGHvKtTvmibBGabvja/ZMUscaNboOa1GEBO/2wazSZFvdK6MsI6FpFBNE7CKv6YnGzuJRD3OKIXda6L4nsTQXfMNIpDOXLye0lAoB4570oyWx/+c71BR/HEAlKygPT7WnFcj1W9WlrNRMiybkKZ/vJd1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Vg39h3dg3z4f3jYN;
+	Thu, 16 May 2024 16:27:20 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 381E41A10BC;
+	Thu, 16 May 2024 16:27:29 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP2 (Coremail) with SMTP id Syh0CgAnmAttw0VmcIZ6NA--.39916S3;
+	Thu, 16 May 2024 16:27:27 +0800 (CST)
+Subject: Re: [PATCH] ext4/jbd2: drop jbd2_transaction_committed()
+To: Jan Kara <jack@suse.cz>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+ ritesh.list@gmail.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
+ yukuai3@huawei.com
+References: <20240513072119.2335346-1-yi.zhang@huaweicloud.com>
+ <20240515002513.yaglghza4i4ldmr5@quack3>
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+Message-ID: <f0eb115d-dd10-e156-9aed-65b7f479f008@huaweicloud.com>
+Date: Thu, 16 May 2024 16:27:25 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240515160246.5181-4-larysa.zaremba@intel.com>
+In-Reply-To: <20240515002513.yaglghza4i4ldmr5@quack3>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:Syh0CgAnmAttw0VmcIZ6NA--.39916S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxArWxCw4fAr1xXry8Jw47Arb_yoW5Aw43pF
+	W0k3W2gr4kZ34I9r40qa17ZFW0yws5Ja48XrsxXwsaga1UG3s7KrW7tFyavFyDtFs5Ww4U
+	XF4S9rn7Kryj937anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvab4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+	e2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
+	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
+	kF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv
+	67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyT
+	uYvjxUrR6zUUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On Wed, May 15, 2024 at 06:02:16PM +0200, Larysa Zaremba wrote:
-> ice_pf_dcb_recfg() re-maps queues to vectors with
-> ice_vsi_map_rings_to_vectors(), which does not restore the previous
-> state for XDP queues. This leads to no AF_XDP traffic after rebuild.
+On 2024/5/15 8:25, Jan Kara wrote:
+> On Mon 13-05-24 15:21:19, Zhang Yi wrote:
+>> From: Zhang Yi <yi.zhang@huawei.com>
+>>
+>> jbd2_transaction_committed() is used to check whether a transaction with
+>> the given tid has already committed, it hold j_state_lock in read mode
+>> and check the tid of current running transaction and committing
+>> transaction, but holding the j_state_lock is expensive.
+>>
+>> We have already stored the sequence number of the most recently
+>> committed transaction in journal t->j_commit_sequence, we could do this
+>> check by comparing it with the given tid instead. If the given tid isn't
+>> smaller than j_commit_sequence, we can ensure that the given transaction
+>> has been committed. That way we could drop the expensive lock and
+>> achieve about 10% ~ 20% performance gains in concurrent DIOs on may
+>> virtual machine with 100G ramdisk.
+>>
+>> fio -filename=/mnt/foo -direct=1 -iodepth=10 -rw=$rw -ioengine=libaio \
+>>     -bs=4k -size=10G -numjobs=10 -runtime=60 -overwrite=1 -name=test \
+>>     -group_reporting
+>>
+>> Before:
+>>   overwrite       IOPS=88.2k, BW=344MiB/s
+>>   read            IOPS=95.7k, BW=374MiB/s
+>>   rand overwrite  IOPS=98.7k, BW=386MiB/s
+>>   randread        IOPS=102k, BW=397MiB/s
+>>
+>> After:
+>>   verwrite:       IOPS=105k, BW=410MiB/s
+>>   read:           IOPS=112k, BW=436MiB/s
+>>   rand overwrite: IOPS=104k, BW=404MiB/s
+>>   randread:       IOPS=111k, BW=432MiB/s
+>>
+>> CC: Dave Chinner <david@fromorbit.com>
+>> Suggested-by: Dave Chinner <david@fromorbit.com>
+>> Link: https://lore.kernel.org/linux-ext4/493ab4c5-505c-a351-eefa-7d2677cdf800@huaweicloud.com/T/#m6a14df5d085527a188c5a151191e87a3252dc4e2
+>> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 > 
-> Map XDP queues to vectors in ice_vsi_map_rings_to_vectors().
-> Also, move the code around, so XDP queues are mapped independently only
-> through .ndo_bpf().
+> I agree this is workable solution and the performance benefits are nice. But
+> I have some comments regarding the implementation:
+> 
+>> @@ -3199,8 +3199,8 @@ static bool ext4_inode_datasync_dirty(struct inode *inode)
+>>  	journal_t *journal = EXT4_SB(inode->i_sb)->s_journal;
+>>  
+>>  	if (journal) {
+>> -		if (jbd2_transaction_committed(journal,
+>> -			EXT4_I(inode)->i_datasync_tid))
+>> +		if (tid_geq(journal->j_commit_sequence,
+>> +			    EXT4_I(inode)->i_datasync_tid))
+> 
+> Please leave the helper jbd2_transaction_committed(), just make the
+> implementation more efficient. 
 
-Hi Larysa,
+Sure.
 
-I take it the last sentence refers to the placement of ice_map_xdp_rings()
-in ice_prepare_xdp_rings() after rather than before the
-(cfg_type == ICE_XDP_CFG_PART) condition.
+> Also accessing j_commit_sequence without any
+> lock is theoretically problematic wrt compiler optimization. You should have
+> READ_ONCE() there and the places modifying j_commit_sequence need to use
+> WRITE_ONCE().
+> 
 
-If so, I see that it is a small change. But I do wonder if it is separate
-from fixing the issue described in the first paragraph. And thus would
-be better as a separate patch.
+Thanks for pointing this out, but I'm not sure if we have to need READ_ONCE()
+here. IIUC, if we add READ_ONCE(), we could make sure to get the latest
+j_commit_sequence, if not, there is a window (it might becomes larger) that
+we could get the old value and jbd2_transaction_committed() could return false
+even if the given transaction was just committed, but I think the window is
+always there, so it looks like it is not a big problem, is that right?
 
-Also, (I'm raising a separate issue :) breaking out logic into
-ice_xdp_ring_from_qid() seems very nice.  But I wonder if this ought to be
-part of a cleanup-patch for 'iwl' rather than a fixes patch for 'iwl-next'.
+Thanks,
+Yi.
 
-OTOH, I do see that breaking out ice_map_xdp_rings() makes sense in the
-context of this fix as the same logic is to be called in two places.
-
-Splitting patches aside, the resulting code looks good to me.
-
-..
 
