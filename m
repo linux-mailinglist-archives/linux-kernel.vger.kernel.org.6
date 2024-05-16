@@ -1,72 +1,78 @@
-Return-Path: <linux-kernel+bounces-181578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31F188C7DDA
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 22:52:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7259F8C7DDE
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 22:58:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 443531C215E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 20:52:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27E5E1F2208A
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 20:58:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 092A3157E9E;
-	Thu, 16 May 2024 20:52:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95FA4158202;
+	Thu, 16 May 2024 20:58:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="LAL413as"
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Zb9xwuvp"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA6B415CB
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 20:52:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EF3D156F2D;
+	Thu, 16 May 2024 20:58:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715892745; cv=none; b=rSQLnfssFU9dVC3JJF+kj+xI/j1kUnWeb0dFTtv5Xb7oU49qRK/3cgbXgxhPHNmnm4YXmpZM/FhX45Gjr0lt9eFaTRgRCI8zfBOMmuQHTVWtbFpnVT/fX86nchb/OqpaezwcOfNtaZDLpXdzlnz8/78WCXXh1UpOnIa3HfnUeFo=
+	t=1715893093; cv=none; b=jEYIhO9NiPdPCvsdLfXXl0MSMSzrqs16161TC+yDi3KOB5FUoV/Us7HuOMCFi8sgHX3AQzXa0YvotTrHXG7RN8PCPWIVSqVavdM+biMaRp7IlwHZeHi17Rl9/9sOLISjlF9+hZqVc31IHSXQjc6IdtMycwuT0EoPLAmOxb3ay9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715892745; c=relaxed/simple;
-	bh=tVODxaTXe1VJWK72M3wkpqVogEldieF3m7bSsMs8jIM=;
+	s=arc-20240116; t=1715893093; c=relaxed/simple;
+	bh=GgjtcSqmQYA23xjNtcHKpl6Tkpxfd4PdMb/OKYmoTcQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XNVpk1ksJnWYqqU85id2A4vh8zQjIuBjvv5CHjXfOW90NHmkp4sZep/PF1bYDVGHdKqRBJZ8yzbWUMHhzNhLRAeZVMsKNF8v7NuxIZsLKgH5HOUFL0MqKDkFKVAObl3yBceb2bvSiXh6m/AKsV0dbggIOz1kJ190QstTa4+/FXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=LAL413as; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from macsyma.thunk.org (99-196-128-135.cust.exede.net [99.196.128.135] (may be forged))
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 44GKpaRr012754
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 16 May 2024 16:51:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1715892707; bh=SOtluD1PaXHX4aLfHVPP7s3eptH002zErJfg39HNDSk=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=LAL413asy4CTYAoR3vtKjzRUe9/Y5ZKBHnX4D7QBrLySjGcmNL/TA6b/3nF4L7OW6
-	 auGZzHOYkeWzK33jCS14SqF32HnyLSwxPfpglAASB8vbXfv7A2zObdTAjV2nzCq0gk
-	 m3CWrF5/sUKerMQeqpL1UlyPsZg2cRQOfjRfMox85NiCHzApmIyP4rbralHvruTPzb
-	 s9EMU8horV31wPgD29MyYcikq36S0G1/t/YZk4eJPIO63PqEU2KOY7H6gWiWbv8Vwt
-	 CspH+ti7/1rz0YO7O8w8MOiyu1S1gXy7FSoB+hB49nwfI7z+rpRsp4dnDz6sPrhubc
-	 eVS++1v7+PG0A==
-Received: by macsyma.thunk.org (Postfix, from userid 15806)
-	id F15DF3403E6; Thu, 16 May 2024 14:51:34 -0600 (MDT)
-Date: Thu, 16 May 2024 14:51:34 -0600
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Justin Stitt <justinstitt@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Kees Cook <kees@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>, Mark Rutland <mark.rutland@arm.com>,
-        linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
-        llvm@lists.linux.dev
-Subject: Re: [RFC] Mitigating unexpected arithmetic overflow
-Message-ID: <20240516205134.GC287325@mit.edu>
-References: <202404291502.612E0A10@keescook>
- <CAHk-=wi5YPwWA8f5RAf_Hi8iL0NhGJeL6MN6UFWwRMY8L6UDvQ@mail.gmail.com>
- <202405081144.D5FCC44A@keescook>
- <CAHk-=wjeiGb1UxCy6Q8aif50C=wWDX9Pgp+WbZYrO72+B1f_QA@mail.gmail.com>
- <202405081354.B0A8194B3C@keescook>
- <CAHk-=wgoE5EkH+sQwi4KhRhCZizUxwZAnC=+9RbZcw7g6016LQ@mail.gmail.com>
- <20240515073636.GY40213@noisy.programming.kicks-ass.net>
- <25882715-FE44-44C0-BB9B-57F2E7D1F0F9@kernel.org>
- <20240516140951.GK22557@noisy.programming.kicks-ass.net>
- <CAFhGd8qCCCrccQ2z5bjBD5YcMWHkym9aVz_qYkyyj662XEeHvA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=SO6m8ii53HEWMf3hVbgVfZ40B0f4CnBRfKitarLkgOJzJFQks3h6mDaeE9Ftk0aSjszUZJC7AJcjwQpebdZsv9Xf+n0EDROgPBhFBBWL70B4oocwsdQaQm1kJmKtRWEiPSxQAfIkLAePY8gCxsboajfTz7xEXAx8T1p8MU8u6gM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Zb9xwuvp; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715893093; x=1747429093;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=GgjtcSqmQYA23xjNtcHKpl6Tkpxfd4PdMb/OKYmoTcQ=;
+  b=Zb9xwuvpHylA4j3VcCn0HcR7Mx1IjSq/RtswOa3lWAR9YlZsoxxyHAM7
+   V1geFrJ90WvnavxaoCjX+PgwaZD88AFWgLicAJ+U3D4qr0f13q3pgtzct
+   Jq69BxJTRKsFWjboAezEUYje3/Oljsw967+KCGa/3nGjINGAqUAyjY/W9
+   skJSQJor6CFl9ggXhAoYtAM6Trl5k+IIvwcIp1iEqw0sbUDGwCGbI+fV5
+   9gUYcCSlLtLce1UdNlXLcPlNRZX7R7zSvVc4mFXdf1EJH5pv9sJJRD6FT
+   FIttL5k8vWatERKN5oIA7xk1l+fzhKr/Mi/F3ojvBD5qZIMq6lWDuYsDT
+   g==;
+X-CSE-ConnectionGUID: QpKSK7CSSAGLlvOmpW1DtA==
+X-CSE-MsgGUID: Uif6/vGYRPW1vqKvXdD4Xg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="11890980"
+X-IronPort-AV: E=Sophos;i="6.08,165,1712646000"; 
+   d="scan'208";a="11890980"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 13:58:12 -0700
+X-CSE-ConnectionGUID: K/Z4Yk8xQfOSo9mRNlLAuA==
+X-CSE-MsgGUID: 48mx8Y62QhOtQ+OJhwlFmg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,165,1712646000"; 
+   d="scan'208";a="31687976"
+Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 16 May 2024 13:58:09 -0700
+Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s7iAw-000Emw-2e;
+	Thu, 16 May 2024 20:58:06 +0000
+Date: Fri, 17 May 2024 04:57:54 +0800
+From: kernel test robot <lkp@intel.com>
+To: Yasin Lee <yasin.lee.x@outlook.com>, jic23@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, andy.shevchenko@gmail.com,
+	lars@metafoo.de, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, nuno.a@analog.com,
+	swboyd@chromium.org, u.kleine-koenig@pengutronix.de,
+	yasin.lee.x@gmail.com, yasin.lee.x@outlook.com
+Subject: Re: [PATCH v1 1/2] iio:proximity:hx9031as: Add TYHX HX9031AS/HX9023S
+ sensor driver
+Message-ID: <202405170416.dC1DFrGn-lkp@intel.com>
+References: <SN7PR12MB810161203706CD288923AB1DA4E32@SN7PR12MB8101.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,43 +81,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAFhGd8qCCCrccQ2z5bjBD5YcMWHkym9aVz_qYkyyj662XEeHvA@mail.gmail.com>
+In-Reply-To: <SN7PR12MB810161203706CD288923AB1DA4E32@SN7PR12MB8101.namprd12.prod.outlook.com>
 
-On Thu, May 16, 2024 at 12:48:47PM -0700, Justin Stitt wrote:
-> 
-> It is incredibly important that the exact opposite approach is taken;
-> we need to be annotating (or adding type qualifiers to) the _expected_
-> overflow cases. The omniscience required to go and properly annotate
-> all the spots that will cause problems would suggest that we should
-> just fix the bug outright. If only it was that easy.
+Hi Yasin,
 
-It certainly isn't easy, yes.  But the problem is when you dump a huge
-amount of work and pain onto kernel developers, when they haven't
-signed up for it, when they don't necessarily have the time to do all
-of the work themselves, and when their corporate overlords won't given
-them the headcount to handle unfunded mandates which folks who are
-looking for a bright new wonderful future --- don't be surprised if
-kernel developers push back hard.
+kernel test robot noticed the following build errors:
 
-One of the big problems that we've seen with many of these security
-initiatives is that the teams create these unfunded mandates get their
-performance reviews based on how many "bug reports" that they file,
-regardless of whether they are real problems or not.  This has been a
-problem with syzkaller, and with clusterfuzz.  Let's not make this
-problem worse with new and fancy sanitizers, please.
+[auto build test ERROR on jic23-iio/togreg]
+[also build test ERROR on robh/for-next linus/master v6.9 next-20240516]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Unfortunately, I don't get funding from my employer to clear these
-kinds of reports, so when I do the work, it happens on the weekends or
-late at night, on my own time, which is probably why I am so grumpy
-about this.  Whether you call this "sharpening our focus", or "year of
-efficiency", or pick your corporate buzzwords, it really doesn't
-matter.  The important thing is that the figure of merit must NOT be
-"how many security bugs that are found", but how much bullsh*t noise
-do these security features create, and how do you decrease overhead by
-upstream developers to deal with the fuzzing/ubsan/security tools
-find.
+url:    https://github.com/intel-lab-lkp/linux/commits/Yasin-Lee/dt-bindings-iio-proximity-Add-hx9031as-binding/20240515-083021
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
+patch link:    https://lore.kernel.org/r/SN7PR12MB810161203706CD288923AB1DA4E32%40SN7PR12MB8101.namprd12.prod.outlook.com
+patch subject: [PATCH v1 1/2] iio:proximity:hx9031as: Add TYHX HX9031AS/HX9023S sensor driver
+config: m68k-allyesconfig (https://download.01.org/0day-ci/archive/20240517/202405170416.dC1DFrGn-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240517/202405170416.dC1DFrGn-lkp@intel.com/reproduce)
 
-Cheers,
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405170416.dC1DFrGn-lkp@intel.com/
 
-						- Ted
+All errors (new ones prefixed by >>):
+
+   m68k-linux-ld: drivers/iio/proximity/hx9031as.o: in function `hx9031as_write_raw':
+>> hx9031as.c:(.text+0x316): undefined reference to `__udivdi3'
+   m68k-linux-ld: drivers/iio/proximity/hx9031as.o: in function `hx9031as_read_raw':
+   hx9031as.c:(.text+0x16da): undefined reference to `__udivdi3'
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
