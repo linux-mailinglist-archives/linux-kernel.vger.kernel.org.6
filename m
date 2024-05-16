@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-181390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3A7F8C7B83
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 19:45:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6274E8C7B84
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 19:46:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E82028226A
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:45:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 866741C217C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:46:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 223341581FB;
-	Thu, 16 May 2024 17:44:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 898BD1586D0;
+	Thu, 16 May 2024 17:44:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Isq9LXxu"
-Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gA0tAO5O"
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FAAB157E78
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 17:44:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C659156C74
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 17:44:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715881460; cv=none; b=SRk0jUO67jJM/ozJ2U0oG23JFNC2007P0AoyVw1G7JO5sRyIxXrAwx1YBEaxWeOSWctYDe+UwEGekOc/zxeYJFhLZbGDqIZasLvn5FGrqcPlhHP29GoTUrtr+NxXvkZn+TAFUPUJGQa5RYYAvN4oZKEhiJp6lAjS+CNd7cN42iM=
+	t=1715881461; cv=none; b=AJYuY/LLd0+sTP1wEcOBJsZmoo61jS8IbdFJ9moDIVH+pOktjFwfe2WrWQ2rc72pzW3yMyub0UBDxUBTeyqD3D7DEgJvqL82XRtZcl+PNYbwWsBYxCCwD0HpntPifMVaqQ83+HXITA/kT4Lg/J84Hdo0FZl86bfiymPXxTEBwDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715881460; c=relaxed/simple;
-	bh=qhaSWleYG+r3n9pGZPTsZ6CKG0mS38934T1f4hN35uc=;
+	s=arc-20240116; t=1715881461; c=relaxed/simple;
+	bh=zRw7b4KxY6XwSKZoRGW1l0s8wJscpuoS2KwZ+Arhbyc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mLFpatWBFvJO9s7Bsb636oGghqLQ0VoChf+a7TSPK04E+pce0lUxvqUJzulI8vAy5qk62TAiReDkDvsbAQMTKlIXqW9H55jnGgQSgwqw+rnWgwDAUXBz8+8kDnu/kXgy9vu0oaVrxk8Kl4yXQEM5IcGme/Jrdh7QIkPvCIg9QjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Isq9LXxu; arc=none smtp.client-ip=209.85.166.41
+	 MIME-Version; b=Csqd/0hvat50Q2H20b1jcqo3HASgUcIVr9l4HuEU5O8bYoqk+3QP+T3rbwQqGfJSNkhUpWQp4HppELKUZPmdZm6fkrdg8QG0+0WM2ZGI9mqfAunQ6f/cp65lNQNAbdm65MMtF6KcuglUIn3J09T94Xjk7UZ3fG0fzg88hBtN0pY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gA0tAO5O; arc=none smtp.client-ip=209.85.166.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-7e1b887c488so29574439f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 10:44:18 -0700 (PDT)
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-7e2025c3651so62759139f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 10:44:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715881458; x=1716486258; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1715881459; x=1716486259; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/0mUDwLsKTvN+KYpp0nKUCtynM6CNCM+YNZSzAF3Qbg=;
-        b=Isq9LXxuLwRfNKIQYfhVHtfQMI0yjnZRL+WNsPAyhet39lZDvXImPGw30D/XIgHI2p
-         E3PwCHueAGfKvGKHQDdzHowe3d1VgUeELYZ2IfE9JIWPGausjvs9I1QCfQyHt8hjq4Dz
-         soFz6ELnHeIYtYZdj66tTlO+CxjWXoi1P+iCEnjcyJrfL0It9qDVTOl4hgQqPJ3Ls1IA
-         OLVBGVANPGlcEgWR3mjtkvxRe2QbbhMhBJLhuFERotXl5PGm6Da6NNnUGKaIl3vXStgQ
-         zPKP11HTrTu+sKfBC8++k51sb5LZR1CL/jvRVqX0rxVkitGIOy8I5KcpE7VkibDtpoJt
-         oLmA==
+        bh=IQuNI/VL3/Itw4aJGKYcYvYUzx59qbXu6ruzCspuP/A=;
+        b=gA0tAO5OytNtZ89he8x72sobhp9+pnpCyqivVFCut5NA1ebXrgHDy/LknpMxVz7xJa
+         xxSIrpYS1jPcopE4Gj5Wk3R85PzV9EUXIlwnoTduROaTRTgRGwGXOwt1zu/aom/IA1K0
+         BHJJqZvdr+0GNK9xchatp6D/Pg2I8D4p1aaqIuPkl/AtpjQPaksSs+7cm2Al1xFuWSjV
+         Zhk1OPN1eYQJayp2AuxV3YFJelr7Hg8/7GZdrSc2nvkmA8q93u+ws6iGPZRl+dL1mFNN
+         d8T4hcbcoM32unrcMksEApbxR4NiX8EA1XSa3YWTU4INvey/HTOrhWAOxDbnjBXtZrQW
+         rjWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715881458; x=1716486258;
+        d=1e100.net; s=20230601; t=1715881459; x=1716486259;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/0mUDwLsKTvN+KYpp0nKUCtynM6CNCM+YNZSzAF3Qbg=;
-        b=H2TyJDVbHVZ0oVY8jUf5MmXM2hkcU4rlmWqlIAGPr5H/rkfh1h/Kmp8a50qMJcvq+C
-         l5Gk+qfuRN6lXQ34BPAyc1hH2DdHVAMTHXEj9LAbnoeV+jLFwphy71GBB0G/SJH4ttvo
-         /SxSR9RpYsZbGZmLXl6UPwoBjyscBSxZlJYLaxJmYGhpcsLFDb1+ws/NaWviKWI9JVFI
-         c2ix6gUL2rADMpG/WwdTkvyqyy2fqV8RIGQvqD/97N4YhEMSpS9tZqcCgCynpBjl4IgB
-         lYC1ILEP1ZXffK0h6HexjNdK9ysk49eFVGIi52JMOD4VRambNFHcdtbAKF5D2eYdWf/I
-         zYUA==
-X-Forwarded-Encrypted: i=1; AJvYcCXfFj84ox5vggXSfLhwZmjEvYVUvQlWL3qimPKfTf1/L7bPe0Zr00e4oO9LssMqa+q+/KVXmFz2Qb8ju5WK/TkYow78NX4yFglKDKn4
-X-Gm-Message-State: AOJu0YyYeHNEgoiVWVoGyKHGthHHmJT4ktr3pPvL/e1odND6g+QGZnKm
-	E1rk1Z5oySHUDKLaSR8dPF61w7kHREDJUqVRUTT6ScieGhuzt8pA
-X-Google-Smtp-Source: AGHT+IGIOrAefexRX5iLZLVQpG/mCdV8Mzhuo1qT7J0aV4gPdaHlwEYUam8FNXCpbVmmpbDjB/83qQ==
-X-Received: by 2002:a5d:8358:0:b0:7de:cb34:98ad with SMTP id ca18e2360f4ac-7e1a337fa7dmr1822853239f.1.1715881458411;
-        Thu, 16 May 2024 10:44:18 -0700 (PDT)
+        bh=IQuNI/VL3/Itw4aJGKYcYvYUzx59qbXu6ruzCspuP/A=;
+        b=OuUtYx1hqJ5vexj0jmQ97oBReaopyRmijGFwbyyvDnc2/DtkVOu1LoMmX4swk8aBQj
+         77qNk6ByKJ8v2590UpUpeQWzpAANpDFt/xbdJQ4Z8HRKaU9Rvou9SXJdryLqtmGC8LYI
+         9TyZbTgaHhF2xzl3jEtDOccHQP6jO4m0sJRohvPZrngeJSi8Aq31A/OO5KZX/itRrY4H
+         UqnF7wA9mTBW9JYyUHuXBXblPx4xohLU5KwvF+eV537Pky0idJ3WNC3rPth/hD98o6iM
+         HyLtRjxVK4NlYYhqdJW/3/o0JsrCb7nX0F5J7rRQioF+OXmjtFThlR73uBWJjN7wW58T
+         l2IA==
+X-Forwarded-Encrypted: i=1; AJvYcCWYw/Ayti3uFD6eWytFxqK+C6qK/2f7xp/O+5GXHhT1dOR06sYxV6s1f+3knFL22jdDz8QemO1HJJoHB5OZSxQoxDZqS8CUIXqAZ+gB
+X-Gm-Message-State: AOJu0YzEnLd29/ZVUt23d9T6IwP5gpXJW+/NNqQlvurRdN31KzEidXr8
+	WaIBXsHbo6aL8qBmoLGJXU9hIBUy5VwnW6P193I258h5inLBIT4c
+X-Google-Smtp-Source: AGHT+IEf7CGzZ4PWnr6XB/a/3ybomaaf+WvBUPxqjK+CuOxKiIR+I0SpD/Ou7m4w3zDhAPmCoe+f8w==
+X-Received: by 2002:a5e:8a46:0:b0:7d9:a53a:c9bc with SMTP id ca18e2360f4ac-7e1b51c7b16mr2196661039f.10.1715881459466;
+        Thu, 16 May 2024 10:44:19 -0700 (PDT)
 Received: from frodo.. (c-73-78-62-130.hsd1.co.comcast.net. [73.78.62.130])
-        by smtp.googlemail.com with ESMTPSA id 8926c6da1cb9f-4893715057csm4273595173.80.2024.05.16.10.44.17
+        by smtp.googlemail.com with ESMTPSA id 8926c6da1cb9f-4893715057csm4273595173.80.2024.05.16.10.44.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 May 2024 10:44:18 -0700 (PDT)
+        Thu, 16 May 2024 10:44:19 -0700 (PDT)
 From: Jim Cromie <jim.cromie@gmail.com>
 To: jbaron@akamai.com,
 	gregkh@linuxfoundation.org,
@@ -84,9 +84,9 @@ Cc: ukaszb@chromium.org,
 	yanivt@google.com,
 	bleung@google.com,
 	Jim Cromie <jim.cromie@gmail.com>
-Subject: [PATCH v8-RESEND 08/33] dyndbg: drop NUM_TYPE_ARRAY
-Date: Thu, 16 May 2024 11:43:32 -0600
-Message-ID: <20240516174357.26755-9-jim.cromie@gmail.com>
+Subject: [PATCH v8-RESEND 09/33] dyndbg: reduce verbose/debug clutter
+Date: Thu, 16 May 2024 11:43:33 -0600
+Message-ID: <20240516174357.26755-10-jim.cromie@gmail.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20240516174357.26755-1-jim.cromie@gmail.com>
 References: <20240516174357.26755-1-jim.cromie@gmail.com>
@@ -98,32 +98,101 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-ARRAY_SIZE works here, since array decl is complete.
+currently, for verbose=3, these are logged (blank lines for clarity):
 
-no functional change
+ dyndbg: query 0: "class DRM_UT_CORE +p" mod:*
+ dyndbg: split into words: "class" "DRM_UT_CORE" "+p"
+
+ dyndbg: op='+'
+ dyndbg: flags=0x1
+ dyndbg: *flagsp=0x1 *maskp=0xffffffff
+
+ dyndbg: parsed: func="" file="" module="" format="" lineno=0-0 class=...
+ dyndbg: no matches for query
+ dyndbg: no-match: func="" file="" module="" format="" lineno=0-0 class=...
+ dyndbg: processed 1 queries, with 0 matches, 0 errs
+
+That is excessive, so this patch:
+ - shrinks 3 lines of 2nd stanza to single line
+ - drops 1st 2 lines of 3rd stanza
+   3rd line is like 1st, with result, not procedure.
+   2nd line is just status, retold in 4th, with more info.
+
+New output:
+
+ dyndbg: query 0: "class DRM_UT_CORE +p" mod:*
+ dyndbg: split into words: "class" "DRM_UT_CORE" "+p"
+ dyndbg: op='+' flags=0x1 *flagsp=0x1 *maskp=0xffffffff
+ dyndbg: no-match: func="" file="" module="" format="" lineno=0-0 class=...
+ dyndbg: processed 1 queries, with 0 matches, 0 errs
+
+no functional change.
 
 Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
 ---
- include/linux/dynamic_debug.h | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ lib/dynamic_debug.c | 14 +++-----------
+ 1 file changed, 3 insertions(+), 11 deletions(-)
 
-diff --git a/include/linux/dynamic_debug.h b/include/linux/dynamic_debug.h
-index b53217e4b711..8116d0a0d33a 100644
---- a/include/linux/dynamic_debug.h
-+++ b/include/linux/dynamic_debug.h
-@@ -106,11 +106,9 @@ struct ddebug_class_map {
- 		.mod_name = KBUILD_MODNAME,				\
- 		.base = _base,						\
- 		.map_type = _maptype,					\
--		.length = NUM_TYPE_ARGS(char*, __VA_ARGS__),		\
-+		.length = ARRAY_SIZE(_var##_classnames),		\
- 		.class_names = _var##_classnames,			\
+diff --git a/lib/dynamic_debug.c b/lib/dynamic_debug.c
+index 4a48f830507f..368381dbd266 100644
+--- a/lib/dynamic_debug.c
++++ b/lib/dynamic_debug.c
+@@ -266,9 +266,6 @@ static int ddebug_change(const struct ddebug_query *query,
  	}
--#define NUM_TYPE_ARGS(eltype, ...)				\
--        (sizeof((eltype[]){__VA_ARGS__}) / sizeof(eltype))
+ 	mutex_unlock(&ddebug_lock);
  
- /* encapsulate linker provided built-in (or module) dyndbg data */
- struct _ddebug_info {
+-	if (!nfound && verbose)
+-		pr_info("no matches for query\n");
+-
+ 	return nfound;
+ }
+ 
+@@ -501,7 +498,6 @@ static int ddebug_parse_flags(const char *str, struct flag_settings *modifiers)
+ 		pr_err("bad flag-op %c, at start of %s\n", *str, str);
+ 		return -EINVAL;
+ 	}
+-	v3pr_info("op='%c'\n", op);
+ 
+ 	for (; *str ; ++str) {
+ 		for (i = ARRAY_SIZE(opt_array) - 1; i >= 0; i--) {
+@@ -515,7 +511,6 @@ static int ddebug_parse_flags(const char *str, struct flag_settings *modifiers)
+ 			return -EINVAL;
+ 		}
+ 	}
+-	v3pr_info("flags=0x%x\n", modifiers->flags);
+ 
+ 	/* calculate final flags, mask based upon op */
+ 	switch (op) {
+@@ -531,7 +526,7 @@ static int ddebug_parse_flags(const char *str, struct flag_settings *modifiers)
+ 		modifiers->flags = 0;
+ 		break;
+ 	}
+-	v3pr_info("*flagsp=0x%x *maskp=0x%x\n", modifiers->flags, modifiers->mask);
++	v3pr_info("op='%c' flags=0x%x maskp=0x%x\n", op, modifiers->flags, modifiers->mask);
+ 
+ 	return 0;
+ }
+@@ -541,7 +536,7 @@ static int ddebug_exec_query(char *query_string, const char *modname)
+ 	struct flag_settings modifiers = {};
+ 	struct ddebug_query query = {};
+ #define MAXWORDS 9
+-	int nwords, nfound;
++	int nwords;
+ 	char *words[MAXWORDS];
+ 
+ 	nwords = ddebug_tokenize(query_string, words, MAXWORDS);
+@@ -559,10 +554,7 @@ static int ddebug_exec_query(char *query_string, const char *modname)
+ 		return -EINVAL;
+ 	}
+ 	/* actually go and implement the change */
+-	nfound = ddebug_change(&query, &modifiers);
+-	vpr_info_dq(&query, nfound ? "applied" : "no-match");
+-
+-	return nfound;
++	return ddebug_change(&query, &modifiers);
+ }
+ 
+ /* handle multiple queries in query string, continue on error, return
 -- 
 2.45.0
 
