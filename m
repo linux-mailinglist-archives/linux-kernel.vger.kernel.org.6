@@ -1,227 +1,210 @@
-Return-Path: <linux-kernel+bounces-181242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A1E98C7975
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:28:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D433E8C7979
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:28:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BA031F214A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:28:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B7A228B2D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:28:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7465714E2D8;
-	Thu, 16 May 2024 15:28:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B387914D708;
+	Thu, 16 May 2024 15:28:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="WSpuOrNp";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="b7mnujaO";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="WSpuOrNp";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="b7mnujaO"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=pobox.com header.i=@pobox.com header.b="iIMabCed";
+	dkim=pass (1024-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b="iRF+9Q2q"
+Received: from pb-smtp2.pobox.com (pb-smtp2.pobox.com [64.147.108.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6751414D708;
-	Thu, 16 May 2024 15:28:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDD9F14D431;
+	Thu, 16 May 2024 15:28:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.108.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715873285; cv=none; b=WTrRdIL6pRm/9bcuSWnLoMcNoNxJTIfqB1Zzzgc77FK5rh71R1Z3nxKdp8z//KQ03F7vF0YRMlZ+USRml5KsWwcYe01usP3LLXwQWzo3eaVdZ9sr/IndyVtoLOWZU+oJaAYhRZRW9A1p37nngvaelO+tK9fAHMYdMyDyLHUNs5A=
+	t=1715873296; cv=none; b=miJaGR+OjsK8dAvMFt8YcC/lLIlI1eufYTzDXJ/qwlAZBWD5uaT7dB+eBRDOzNGeaKYhK4RLaxPj/x1hDYoPwgtyapRfQYjkGTAF9BktC4Qg9O4V/QxbNa5xYJgTFh3vM9YJ9QWsCX/Je54MXqQ3J04SOpjCxkpYjQbNBPinH0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715873285; c=relaxed/simple;
-	bh=AmOTYXH8GdqujH3HrTd6mrl/hYKJ4jq8NRd8KsPzjLs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D0VkjeQSfpxmjH792gYBbNzwWpD7XuGT1sZIy1hb7wpsu89UgPNGnn/spGy2jjVwnoaDwm4z5tHwLzynnNw2c3Arn1c2A1Izxv7/TQ23DB037T/8xcH/43wn0/gnu6BUy8X2RiTyCw/OAAY+f+UEQqP7PdLneg0AAx39wGUpQ+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=WSpuOrNp; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=b7mnujaO; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=WSpuOrNp; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=b7mnujaO; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	s=arc-20240116; t=1715873296; c=relaxed/simple;
+	bh=jDGaIXZ6mwJSE++TssF9Hgd5zL7rRZplsxBJ8LGhBE0=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=hNpOUDTOOZkqli2PYjt6g62th3v+IEE1ZwpMw95eAj5bCvLkfcatRmWSOYo4SSY3T4hkN5UrmMA0IeXBjLNL+rESusT+qegiEu2tS+LY5MxbZW7owslwOtyFwz5fg+r10IE6oqsD4gJ8fAOIsEIVU+AIzlo+iVzkT9LBG8h+lRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fluxnic.net; spf=pass smtp.mailfrom=fluxnic.net; dkim=pass (1024-bit key) header.d=pobox.com header.i=@pobox.com header.b=iIMabCed; dkim=pass (1024-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b=iRF+9Q2q; arc=none smtp.client-ip=64.147.108.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fluxnic.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fluxnic.net
+Received: from pb-smtp2.pobox.com (unknown [127.0.0.1])
+	by pb-smtp2.pobox.com (Postfix) with ESMTP id 3CBDD20145;
+	Thu, 16 May 2024 11:28:08 -0400 (EDT)
+	(envelope-from nico@fluxnic.net)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=pobox.com; h=date:from
+	:to:cc:subject:in-reply-to:message-id:references:mime-version
+	:content-type; s=sasl; bh=jDGaIXZ6mwJSE++TssF9Hgd5zL7rRZplsxBJ8L
+	GhBE0=; b=iIMabCed0OLIq2MSNYAdqqL5B00RDZCoGMHJ+oKGm1jaBCDA2Vjs1w
+	JlD9VLaJuZCyxIj84vW0xKKixfE41XreZbErLJOWgHR/vDlxKaNTNli6E53FrHem
+	7OaffE4dpQ2+0Zk2ye2TcVDatSbWGz2lFyDNUk6kK0Ia+vo2s3+eM=
+Received: from pb-smtp2.nyi.icgroup.com (unknown [127.0.0.1])
+	by pb-smtp2.pobox.com (Postfix) with ESMTP id 2FC8120144;
+	Thu, 16 May 2024 11:28:08 -0400 (EDT)
+	(envelope-from nico@fluxnic.net)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=fluxnic.net;
+ h=date:from:to:cc:subject:in-reply-to:message-id:references:mime-version:content-type; s=2016-12.pbsmtp; bh=jDGaIXZ6mwJSE++TssF9Hgd5zL7rRZplsxBJ8LGhBE0=; b=iRF+9Q2qWzw2ciruz1uGT5msSsWhWF+t0SqcIAcRKLfKZI9byA9Bg+I+r/KAit9buJxLZgg2E3DkBI9XwJ3eRn5qckpB+unpqs0Dq7Wb1YRAtLRn1BT+0cfTil9AIGZtktisONajvPuVvpYdRidGRvuZcO6iDFcG4+r5/T+nsNA=
+Received: from yoda.fluxnic.net (unknown [184.162.15.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 4FD0A34B65;
-	Thu, 16 May 2024 15:28:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1715873281;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=v4gybi6HKECFJhxHO1fxxxa9tuCaWVox9JYYEGyzVGY=;
-	b=WSpuOrNpxAL3SMGegO7rJw38EC6fbBLtSpgnNgQU01fKZNDxi4NA1KRwq978kqCxALf82D
-	97flXmceO+sInMOcvwXNSo566rYcb1e2LMpimkbHh9aeDeD/UcXsCAWhspW1Rz7fIjUXxa
-	y39zzW0WSkNKIcFxVasHu3qisq2GnO4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1715873281;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=v4gybi6HKECFJhxHO1fxxxa9tuCaWVox9JYYEGyzVGY=;
-	b=b7mnujaOJcSUnXsNHbR+ZCIMxm4wq7NAaC8CDa/SHujbLB/32viBk1iU02mV4UlHF+x66x
-	eVVfIzFmsgMSZ7Dg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1715873281;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=v4gybi6HKECFJhxHO1fxxxa9tuCaWVox9JYYEGyzVGY=;
-	b=WSpuOrNpxAL3SMGegO7rJw38EC6fbBLtSpgnNgQU01fKZNDxi4NA1KRwq978kqCxALf82D
-	97flXmceO+sInMOcvwXNSo566rYcb1e2LMpimkbHh9aeDeD/UcXsCAWhspW1Rz7fIjUXxa
-	y39zzW0WSkNKIcFxVasHu3qisq2GnO4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1715873281;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=v4gybi6HKECFJhxHO1fxxxa9tuCaWVox9JYYEGyzVGY=;
-	b=b7mnujaOJcSUnXsNHbR+ZCIMxm4wq7NAaC8CDa/SHujbLB/32viBk1iU02mV4UlHF+x66x
-	eVVfIzFmsgMSZ7Dg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 277EC13991;
-	Thu, 16 May 2024 15:28:01 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 2snzCAEmRmblOAAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Thu, 16 May 2024 15:28:01 +0000
-Date: Thu, 16 May 2024 17:27:55 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Cc: syzbot <syzbot+d6f9ff86c1d804ba2bc6@syzkaller.appspotmail.com>,
-	clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] WARNING in lookup_inline_extent_backref
-Message-ID: <20240516152755.GC4449@suse.cz>
-Reply-To: dsterba@suse.cz
-References: <0000000000003d4a1a05ef104401@google.com>
- <2de85e6f-b1ad-69ae-1e60-cd47c91115a9@gmx.com>
+	by pb-smtp2.pobox.com (Postfix) with ESMTPSA id 6979020143;
+	Thu, 16 May 2024 11:28:07 -0400 (EDT)
+	(envelope-from nico@fluxnic.net)
+Received: from xanadu (unknown [IPv6:fd17:d3d3:663b:0:9696:df8a:e3:af35])
+	by yoda.fluxnic.net (Postfix) with ESMTPSA id 5B3AACAF973;
+	Thu, 16 May 2024 11:28:06 -0400 (EDT)
+Date: Thu, 16 May 2024 11:28:06 -0400 (EDT)
+From: Nicolas Pitre <nico@fluxnic.net>
+To: Thorsten Blum <thorsten.blum@toblux.com>
+cc: "David S. Miller" <davem@davemloft.net>, 
+    Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+    Paolo Abeni <pabeni@redhat.com>, 
+    John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
+    Arnd Bergmann <arnd@arndb.de>, Andrew Lunn <andrew@lunn.ch>, 
+    netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+    kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH] net: smc91x: Fix pointer types
+In-Reply-To: <20240516121142.181934-3-thorsten.blum@toblux.com>
+Message-ID: <o61rp249-27sr-q9q5-118r-o531s8o80o8r@syhkavp.arg>
+References: <20240516121142.181934-3-thorsten.blum@toblux.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2de85e6f-b1ad-69ae-1e60-cd47c91115a9@gmx.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spam-Level: 
-X-Spamd-Result: default: False [-1.50 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=2325e409a9a893e1];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	FREEMAIL_TO(0.00)[gmx.com];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmx.com];
-	RCVD_TLS_ALL(0.00)[];
-	TAGGED_RCPT(0.00)[d6f9ff86c1d804ba2bc6];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:replyto]
-X-Spam-Score: -1.50
-X-Spam-Flag: NO
+Content-Type: text/plain; charset=US-ASCII
+X-Pobox-Relay-ID:
+ E5494648-1398-11EF-AF40-25B3960A682E-78420484!pb-smtp2.pobox.com
 
-On Mon, Jul 31, 2023 at 01:55:56PM +0800, Qu Wenruo wrote:
-> On 2022/12/5 16:13, syzbot wrote:
-> > Hello,
-> >
-> > syzbot found the following issue on:
-> >
-> > HEAD commit:    a4412fdd49dc error-injection: Add prompt for function erro..
-> > git tree:       upstream
-> > console+strace: https://syzkaller.appspot.com/x/log.txt?x=1469bdbd880000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=2325e409a9a893e1
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=d6f9ff86c1d804ba2bc6
-> > compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12d89247880000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16b1ca83880000
-> >
-> > Downloadable assets:
-> > disk image: https://storage.googleapis.com/syzbot-assets/3bbe66b25958/disk-a4412fdd.raw.xz
-> > vmlinux: https://storage.googleapis.com/syzbot-assets/6851483ca667/vmlinux-a4412fdd.xz
-> > kernel image: https://storage.googleapis.com/syzbot-assets/2d5b23cb4616/bzImage-a4412fdd.xz
-> > mounted in repro: https://storage.googleapis.com/syzbot-assets/1f178223dd56/mount_0.gz
-> >
-> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > Reported-by: syzbot+d6f9ff86c1d804ba2bc6@syzkaller.appspotmail.com
-> >
-> > ------------[ cut here ]------------
-> > WARNING: CPU: 0 PID: 6559 at fs/btrfs/extent-tree.c:865 lookup_inline_extent_backref+0x8c1/0x13f0
-> > Modules linked in:
-> > CPU: 0 PID: 6559 Comm: syz-executor311 Not tainted 6.1.0-rc7-syzkaller-00123-ga4412fdd49dc #0
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
-> > RIP: 0010:lookup_inline_extent_backref+0x8c1/0x13f0 fs/btrfs/extent-tree.c:865
-> > Code: 98 00 00 00 0f 87 42 0b 00 00 e8 5a 9c 07 fe 4c 8b 6c 24 28 eb 3d 83 7d 28 00 4c 8b 6c 24 28 0f 84 b0 04 00 00 e8 3f 9c 07 fe <0f> 0b 41 bc fb ff ff ff e9 f3 05 00 00 e8 2d 9c 07 fe e9 ca 05 00
-> > RSP: 0018:ffffc90006296e40 EFLAGS: 00010293
-> > RAX: ffffffff8382fbb1 RBX: 0000000000000000 RCX: ffff88801eab1d40
-> > RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-> > RBP: ffffc90006296ff0 R08: ffffffff8382f700 R09: ffffed100faf1008
-> > R10: ffffed100faf1008 R11: 1ffff1100faf1007 R12: dffffc0000000000
-> > R13: ffff888075edcd10 R14: ffffc90006296f60 R15: ffff88807d788000
-> > FS:  00007fdb617d5700(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
-> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > CR2: 000055912e028900 CR3: 000000001954b000 CR4: 00000000003506e0
-> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> > Call Trace:
-> >   <TASK>
-> >   insert_inline_extent_backref+0xcc/0x260 fs/btrfs/extent-tree.c:1152
-> >   __btrfs_inc_extent_ref+0x108/0x5e0 fs/btrfs/extent-tree.c:1455
-> >   btrfs_run_delayed_refs_for_head+0xf00/0x1df0 fs/btrfs/extent-tree.c:1943
-> >   __btrfs_run_delayed_refs+0x25f/0x490 fs/btrfs/extent-tree.c:2008
-> >   btrfs_run_delayed_refs+0x312/0x490 fs/btrfs/extent-tree.c:2139
-> >   qgroup_account_snapshot+0xce/0x340 fs/btrfs/transaction.c:1538
-> >   create_pending_snapshot+0xf35/0x2560 fs/btrfs/transaction.c:1800
-> >   create_pending_snapshots+0x1a8/0x1e0 fs/btrfs/transaction.c:1868
-> >   btrfs_commit_transaction+0x13f0/0x3760 fs/btrfs/transaction.c:2323
-> >   create_snapshot+0x4aa/0x7e0 fs/btrfs/ioctl.c:833
-> >   btrfs_mksubvol+0x62e/0x760 fs/btrfs/ioctl.c:983
-> >   btrfs_mksnapshot+0xb5/0xf0 fs/btrfs/ioctl.c:1029
-> >   __btrfs_ioctl_snap_create+0x339/0x450 fs/btrfs/ioctl.c:2184
-> >   btrfs_ioctl_snap_create+0x134/0x190 fs/btrfs/ioctl.c:2211
-> >   btrfs_ioctl+0x15c/0xc10
-> >   vfs_ioctl fs/ioctl.c:51 [inline]
-> >   __do_sys_ioctl fs/ioctl.c:870 [inline]
-> >   __se_sys_ioctl+0xfb/0x170 fs/ioctl.c:856
-> >   do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-> >   do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
-> >   entry_SYSCALL_64_after_hwframe+0x63/0xcd
-> > RIP: 0033:0x7fdb6184aa69
-> > Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 71 15 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-> > RSP: 002b:00007fdb617d52f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-> > RAX: ffffffffffffffda RBX: 00007fdb618d57f0 RCX: 00007fdb6184aa69
-> > RDX: 00000000200000c0 RSI: 0000000050009401 RDI: 0000000000000004
-> > RBP: 00007fdb618a226c R08: 00007fdb617d5700 R09: 0000000000000000
-> > R10: 00007fdb617d5700 R11: 0000000000000246 R12: 8000000000000000
-> > R13: 00007fdb618a1270 R14: 0000000100000000 R15: 00007fdb618d57f8
-> >   </TASK>
+On Thu, 16 May 2024, Thorsten Blum wrote:
+
+> Use void __iomem pointers as parameters for mcf_insw() and mcf_outsw()
+> to align with the parameter types of readw() and writew().
 > 
-> # syz test: git://github.com/adam900710/linux.git inline_lookup_debug
+> Consistently call SMC_outsw(), SMC_outsb(), SMC_insw(), and SMC_insb()
+> with void __iomem pointers to address the following warnings reported by
+> kernel test robot:
+> 
+> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse: warning: incorrect type in argument 1 (different address spaces)
+> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse:    expected void *a
+> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse:    got void [noderef] __iomem *
+> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse: warning: incorrect type in argument 1 (different address spaces)
+> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse:    expected void *a
+> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse:    got void [noderef] __iomem *
+> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse: warning: incorrect type in argument 1 (different address spaces)
+> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse:    expected void *a
+> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse:    got void [noderef] __iomem *
+> drivers/net/ethernet/smsc/smc91x.c:483:17: sparse: warning: incorrect type in argument 1 (different address spaces)
+> drivers/net/ethernet/smsc/smc91x.c:483:17: sparse:    expected void *a
+> drivers/net/ethernet/smsc/smc91x.c:483:17: sparse:    got void [noderef] __iomem *
+> 
+> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202405160853.3qyaSj8w-lkp@intel.com/
 
-There's one new repor from syzbot from 01/2024, the patch 7f72f50547b7af
-("btrfs: output extra debug info if we failed to find an inline
-backref") is there and adds some debugging. However, due to ordering of
+Acked-by: Nicolas Pitre <nico@fluxnic.net>
 
-WARN_ON, print_leaf, error message
-
-the machine reboots at the end of WARN_ON, so there's no useful
-debugging in the logs. I don't see a syzbot reproducer but you could ask
-it to do a test with updated debugging patch or eventually send an
-update to the one we have in tree.
+> ---
+>  drivers/net/ethernet/smsc/smc91x.h | 34 +++++++++++++++---------------
+>  1 file changed, 17 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/smsc/smc91x.h b/drivers/net/ethernet/smsc/smc91x.h
+> index 45ef5ac0788a..204fbb5c975c 100644
+> --- a/drivers/net/ethernet/smsc/smc91x.h
+> +++ b/drivers/net/ethernet/smsc/smc91x.h
+> @@ -142,14 +142,14 @@ static inline void _SMC_outw_align4(u16 val, void __iomem *ioaddr, int reg,
+>  #define SMC_CAN_USE_32BIT	0
+>  #define SMC_NOWAIT		1
+>  
+> -static inline void mcf_insw(void *a, unsigned char *p, int l)
+> +static inline void mcf_insw(void __iomem *a, unsigned char *p, int l)
+>  {
+>  	u16 *wp = (u16 *) p;
+>  	while (l-- > 0)
+>  		*wp++ = readw(a);
+>  }
+>  
+> -static inline void mcf_outsw(void *a, unsigned char *p, int l)
+> +static inline void mcf_outsw(void __iomem *a, unsigned char *p, int l)
+>  {
+>  	u16 *wp = (u16 *) p;
+>  	while (l-- > 0)
+> @@ -1026,15 +1026,15 @@ static const char * chip_ids[ 16 ] =  {
+>  		}							\
+>  	} while (0)
+>  
+> -#define SMC_PUSH_DATA(lp, p, l)					\
+> +#define SMC_PUSH_DATA(lp, p, l)						\
+>  	do {								\
+> -		if (SMC_32BIT(lp)) {				\
+> +		void __iomem *__ioaddr = ioaddr;			\
+> +		if (SMC_32BIT(lp)) {					\
+>  			void *__ptr = (p);				\
+>  			int __len = (l);				\
+> -			void __iomem *__ioaddr = ioaddr;		\
+>  			if (__len >= 2 && (unsigned long)__ptr & 2) {	\
+>  				__len -= 2;				\
+> -				SMC_outsw(ioaddr, DATA_REG(lp), __ptr, 1); \
+> +				SMC_outsw(__ioaddr, DATA_REG(lp), __ptr, 1); \
+>  				__ptr += 2;				\
+>  			}						\
+>  			if (SMC_CAN_USE_DATACS && lp->datacs)		\
+> @@ -1042,20 +1042,20 @@ static const char * chip_ids[ 16 ] =  {
+>  			SMC_outsl(__ioaddr, DATA_REG(lp), __ptr, __len>>2); \
+>  			if (__len & 2) {				\
+>  				__ptr += (__len & ~3);			\
+> -				SMC_outsw(ioaddr, DATA_REG(lp), __ptr, 1); \
+> +				SMC_outsw(__ioaddr, DATA_REG(lp), __ptr, 1); \
+>  			}						\
+>  		} else if (SMC_16BIT(lp))				\
+> -			SMC_outsw(ioaddr, DATA_REG(lp), p, (l) >> 1);	\
+> -		else if (SMC_8BIT(lp))				\
+> -			SMC_outsb(ioaddr, DATA_REG(lp), p, l);	\
+> +			SMC_outsw(__ioaddr, DATA_REG(lp), p, (l) >> 1);	\
+> +		else if (SMC_8BIT(lp))					\
+> +			SMC_outsb(__ioaddr, DATA_REG(lp), p, l);	\
+>  	} while (0)
+>  
+> -#define SMC_PULL_DATA(lp, p, l)					\
+> +#define SMC_PULL_DATA(lp, p, l)						\
+>  	do {								\
+> -		if (SMC_32BIT(lp)) {				\
+> +		void __iomem *__ioaddr = ioaddr;			\
+> +		if (SMC_32BIT(lp)) {					\
+>  			void *__ptr = (p);				\
+>  			int __len = (l);				\
+> -			void __iomem *__ioaddr = ioaddr;		\
+>  			if ((unsigned long)__ptr & 2) {			\
+>  				/*					\
+>  				 * We want 32bit alignment here.	\
+> @@ -1072,7 +1072,7 @@ static const char * chip_ids[ 16 ] =  {
+>  				 */					\
+>  				__ptr -= 2;				\
+>  				__len += 2;				\
+> -				SMC_SET_PTR(lp,			\
+> +				SMC_SET_PTR(lp,				\
+>  					2|PTR_READ|PTR_RCV|PTR_AUTOINC); \
+>  			}						\
+>  			if (SMC_CAN_USE_DATACS && lp->datacs)		\
+> @@ -1080,9 +1080,9 @@ static const char * chip_ids[ 16 ] =  {
+>  			__len += 2;					\
+>  			SMC_insl(__ioaddr, DATA_REG(lp), __ptr, __len>>2); \
+>  		} else if (SMC_16BIT(lp))				\
+> -			SMC_insw(ioaddr, DATA_REG(lp), p, (l) >> 1);	\
+> -		else if (SMC_8BIT(lp))				\
+> -			SMC_insb(ioaddr, DATA_REG(lp), p, l);		\
+> +			SMC_insw(__ioaddr, DATA_REG(lp), p, (l) >> 1);	\
+> +		else if (SMC_8BIT(lp))					\
+> +			SMC_insb(__ioaddr, DATA_REG(lp), p, l);		\
+>  	} while (0)
+>  
+>  #endif  /* _SMC91X_H_ */
+> -- 
+> 2.45.0
+> 
+> 
 
