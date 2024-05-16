@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-180792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66CBC8C733B
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:50:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEB4E8C733A
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:50:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B6CD1F232EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 08:50:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D3571F2333A
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 08:50:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE0D914373C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDDDE14373B;
 	Thu, 16 May 2024 08:50:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r+VhujnR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GDw8YUFf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F0E32D054;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F1291369A6;
 	Thu, 16 May 2024 08:50:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715849430; cv=none; b=LT1Xgoz1DmyyCb2Nyo0McSyL+2827R8kF5ULN6rqgaeDwtOYNrw54DRrKiuz5ayNAWU9UTwsIPQLA2taAdkLLwc5+N+Krnup0DxoJtFxqDzcg6EoqXTZ02BsCAfg5M5ncYkonkGit4nR9ijts9V0vdkwNexZX2z05ee0QhPzk2s=
+	t=1715849430; cv=none; b=n9Vv1gAjM0zLIgZjcKfzSVOlHCG3558aLFMVbv0hy+gXGbcyiQLEoVAIkkWX+sHz5YoLgUTHsERPDd0igL5MqJBoJmetOvCCRJndYPNReENXEirifO7kpOVJORqgDCHwq1NUHGynSa8TvR958t6yPXfIJ1Pna8nD41jH4iPOP7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1715849430; c=relaxed/simple;
-	bh=y5h+7pOsf2LQAzv1rpEJ5kQwncPFKnUuGd6tyQje25k=;
+	bh=jGZ1Q8ASZwPpFqiD9bNHm16JhmI8gL6wk9d+T6GjM9E=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=HUV5EcE8VUAd8KwMeNGNSwdeKhnMggcQ/uCL3tax+YRSo6UfH4Xz87KHpH4j5q6ZuVpe2RrRWqQwUz9S+b/kH6UakTzrSZJ26Irsmt4K+ui/tw+Bbck8fEdpRxH12fWl+Q+DNC264cUg7cICo3VNidW+SuyDUo/amDV7Qa9POtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r+VhujnR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id A4039C32789;
+	 In-Reply-To:To:Cc; b=sowb/PJwiLbnogYyI8foIRBhjE1BKuwuJWKDg2P5JBJniBIkJEVn99wz2uU1kWXmwr7ljkc5/z9zY5sJKI0pkuBVnBIi0Cd3cD0ycD9qZZOqS9zq0zbIX5gy0ftn0MIUvepcaGaugPcSGwFDUYtiGa3YA9Cre/oh09wYb3H1/F0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GDw8YUFf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 97473C32782;
 	Thu, 16 May 2024 08:50:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1715849429;
-	bh=y5h+7pOsf2LQAzv1rpEJ5kQwncPFKnUuGd6tyQje25k=;
+	bh=jGZ1Q8ASZwPpFqiD9bNHm16JhmI8gL6wk9d+T6GjM9E=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=r+VhujnRujmUBpv/ObSVS+c1hQ43UOiplppyQ3Mv7lVVG15ED2HXXp8DSLMhlz2/5
-	 yQepyVjcbY4Yxrj3eqUqc91iz+4kt25zhnyOrEXji/LxCfjc5yRNuR+LhXEmGRNttW
-	 5XLtk91iNpG3jyVbWDgldy7z9urqI1ij/Lu1Sjp5ibjovCQUUOb5CMZFrkmYUNA3m/
-	 R4lsyrfc+uiHq7NIHFpQVZ9DVM62Q15bBKsXJVMnRN5CTkC2AQuZLNW4yB11VTTGLk
-	 /ngPjmNo0xqE39LPOrDM0pSY/5vPiVpNRu9bbwG7Y2fWik8s+azxc1VurfTUgXgt+3
-	 0sUZyo0EZJZiw==
+	b=GDw8YUFfEXRxPKJS78D7fgbPRNnYCsOOlSD1EJLjNmac2/3GvyZCX7DE8sBUnQhv5
+	 UeNvNaPigSECyw3fmVmbFbmjpgbpRnLDU/BhvhPv65o0vgGGVfmXWzNERT6lB453U3
+	 QI6UgTOTuIUd0WNKUF842jM8z4gy1nyZ2qfRUOLSLwCxZLpcfWgQK4313yZB4WAzHI
+	 c16bYoYPo//vvak7cpF7cb0l2sZ0Y1nZr7AFO21jUsYGKFRZaiwvDiXzIpUq/I3pwf
+	 mwZjd4XniQYsqvmMLR2Bu6Lod62XnvcpRGcLjtJx5PEIs1vaFQefi++rxJXwjDdkME
+	 vCqlymYymcTyA==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 92E73C54BB6;
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 8A33EC54BB7;
 	Thu, 16 May 2024 08:50:29 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
@@ -51,42 +51,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net: qrtr: ns: Fix module refcnt
+Subject: Re: [PATCH net v2] net: lan966x: remove debugfs directory in probe()
+ error path
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <171584942959.27746.10698605172964484112.git-patchwork-notify@kernel.org>
+ <171584942956.27746.704741396527709628.git-patchwork-notify@kernel.org>
 Date: Thu, 16 May 2024 08:50:29 +0000
-References: <20240513-fix-qrtr-rmmod-v1-1-312a7cd2d571@quicinc.com>
-In-Reply-To: <20240513-fix-qrtr-rmmod-v1-1-312a7cd2d571@quicinc.com>
-To: Chris Lew <quic_clew@quicinc.com>
-Cc: manivannan.sadhasivam@linaro.org, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- andersson@kernel.org, luca@z3ntu.xyz, mani@kernel.org,
- linux-arm-msm@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, quic_jhugo@quicinc.com
+References: <20240513111853.58668-1-herve.codina@bootlin.com>
+In-Reply-To: <20240513111853.58668-1-herve.codina@bootlin.com>
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: horatiu.vultur@microchip.com, UNGLinuxDriver@microchip.com,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ andrew@lunn.ch, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ allan.nielsen@microchip.com, steen.hegelund@microchip.com,
+ thomas.petazzoni@bootlin.com, stable@vger.kernel.org
 
 Hello:
 
 This patch was applied to netdev/net.git (main)
 by David S. Miller <davem@davemloft.net>:
 
-On Mon, 13 May 2024 10:31:46 -0700 you wrote:
-> The qrtr protocol core logic and the qrtr nameservice are combined into
-> a single module. Neither the core logic or nameservice provide much
-> functionality by themselves; combining the two into a single module also
-> prevents any possible issues that may stem from client modules loading
-> inbetween qrtr and the ns.
+On Mon, 13 May 2024 13:18:53 +0200 you wrote:
+> A debugfs directory entry is create early during probe(). This entry is
+> not removed on error path leading to some "already present" issues in
+> case of EPROBE_DEFER.
 > 
-> Creating a socket takes two references to the module that owns the
-> socket protocol. Since the ns needs to create the control socket, this
-> creates a scenario where there are always two references to the qrtr
-> module. This prevents the execution of 'rmmod' for qrtr.
+> Create this entry later in the probe() code to avoid the need to change
+> many 'return' in 'goto' and add the removal in the already present error
+> path.
 > 
 > [...]
 
 Here is the summary with links:
-  - net: qrtr: ns: Fix module refcnt
-    https://git.kernel.org/netdev/net/c/fd76e5ccc48f
+  - [net,v2] net: lan966x: remove debugfs directory in probe() error path
+    https://git.kernel.org/netdev/net/c/99975ad644c7
 
 You are awesome, thank you!
 -- 
