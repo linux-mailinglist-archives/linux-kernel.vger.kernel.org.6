@@ -1,277 +1,400 @@
-Return-Path: <linux-kernel+bounces-180560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D64958C7028
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 04:01:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C0CBB8C702C
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 04:08:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50D951F22842
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 02:01:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A6E91F224EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 02:08:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31D9B15C3;
-	Thu, 16 May 2024 02:01:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B90331C32;
+	Thu, 16 May 2024 02:08:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Itcu+hVQ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iBaO35OG"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAF631362;
-	Thu, 16 May 2024 02:01:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715824883; cv=none; b=dcW/TpVJtmHT/9YX1N/Me0XIX1e7aIWnuJ2nUagy9itFQKjfwExffeg3Mb0eS+KjKZnES1sT/foa+CK9BPyFS45ObMD8ITpaRXXKHoVCk9I+K0K4T75ObGFrnpk/MuOMy+tEZLCTrHcZ+chjua6qGjsVOstDP1cggjGjzpQufkQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715824883; c=relaxed/simple;
-	bh=D5hIBH/xrIU5xGjpWSXQPtBqiEprNo+HFshmxHFLBS8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j8l4+hk43o855CxCBv/LftIawLMXxUfsD4dnu9eSaKB4/kkenAZZHoUJGP6K/uyvPwVBgx9D74vOEPuMbBmNkmRpjRnIrQngcSLOG8sLtoO0KmhSApHpA0faGDR+PkuffqO+Dm98RpXwZemdKkO0c8mFUmJcReA7Wr22/OJzjc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Itcu+hVQ; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B03311366;
+	Thu, 16 May 2024 02:08:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715825291; cv=fail; b=hHwTiwlZC4w/JN8h1G7KkUfNUh3LarpC9pXpaQtZCecgWO6fIJTzMLippRY5sNJ/CL/V8iThTdCV99rGkF4myLAvJtDPGaf2cdheGNP1gLGlwvz1gqvpEFhUoXcPXlUpP2gU3PP84eVyAV+PoPMsyi62i/vFVzbhl04txbgND6k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715825291; c=relaxed/simple;
+	bh=uAnUruLdrx5ZvjNOVibedcmimGp08MPJyKGXAZ9zkXc=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=mpYfHPUnSuUOZSooDJEjYh+pporF/R8ds7wT3XfPE2uzcd8XrhwKRNU3wuZ4iY8yRAXEAyPDPeBVt0dAFRt5rfV0rvEUMPXCq7azk3QWvd3hXw46pe3NzhjrYeVF5uM/GYPwX5NHzxaJcEDalZQMCnv4tbAId/4YI/ymxXShEsg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iBaO35OG; arc=fail smtp.client-ip=198.175.65.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715824882; x=1747360882;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=D5hIBH/xrIU5xGjpWSXQPtBqiEprNo+HFshmxHFLBS8=;
-  b=Itcu+hVQU4UclbNmVX/cA2NLdbTjJZYn9kvuMX783+JgWWooGjEavQ30
-   y8kj6V/dsMBwkaDtbri44nmMfXcr7Uzr3WpBjltfybKdHUFS8WrDHnty0
-   UcG9rEzhmF9Eho7TMHZRbPVUeG71YZditpXmS9RnBrm3sgYEY8uGTe1mQ
-   voLe4Xf92bg1UPzeWdsPWBG+sBiQX0PVEhyGqLpq+evjlUt3CcyMKVvDz
-   s4L+qdS290uELby7ZRhb6hDC3Pxy7lrHD3qrlttRti6Cn+eJOPnE5xdYv
-   A/nanlhh+GmET9iYachqfu5/GIHIndPNqGs83FOzhxoe9OgNfd09JloVq
-   w==;
-X-CSE-ConnectionGUID: OJLs31dDRhWeNXdKvc1GGg==
-X-CSE-MsgGUID: ydL7q1TBR62Ye9fwGLgNNA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="23313204"
+  t=1715825289; x=1747361289;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=uAnUruLdrx5ZvjNOVibedcmimGp08MPJyKGXAZ9zkXc=;
+  b=iBaO35OGCzvDndBwfOmmMWB2IlAPxHlooy1CJeXS31Oio4hbEO/Y9BR8
+   Nk+hQoloweBtAhe+JThdlIzVymYExibmcrVh9vOIFndGGE+HR8eEsUJ9s
+   xZS8B1sXUPQYBzksX8D+f8ETDNc64mMW3eS7wGygEsHwOqf7wwYsXOeG2
+   kdqrdQvS1cN1qJRW8XUBXu+csDdVId01LozTdCvZ8VRrk+eX2M9eJ0SEM
+   Fl9dWHYWUAdScKOqVwdHYPK+fQt8QtAm1RZvsawocF6gXS7WsWK0i8Yrr
+   DfUgmhjeHD7j3LQsHO9kVudE+vSNDRwYichNKyduS/TzTH2DukNiPyxEp
+   g==;
+X-CSE-ConnectionGUID: LocubfRER5aZPMQ8WcUv9g==
+X-CSE-MsgGUID: xobKR4WtSpib/hTdMTcTnw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="23312918"
 X-IronPort-AV: E=Sophos;i="6.08,163,1712646000"; 
-   d="scan'208";a="23313204"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 19:01:20 -0700
-X-CSE-ConnectionGUID: wjIc16IFS7ubpe64n08wAg==
-X-CSE-MsgGUID: C5LrK5snSJO7G05zNkNs1g==
+   d="scan'208";a="23312918"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 19:07:49 -0700
+X-CSE-ConnectionGUID: j6JryqY8Qn6S7U0aAcb/BQ==
+X-CSE-MsgGUID: KHYezrGWS6CuaqA3wr2TQQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,163,1712646000"; 
-   d="scan'208";a="68711558"
-Received: from aschofie-mobl2.amr.corp.intel.com (HELO aschofie-mobl2) ([10.251.19.247])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 19:01:20 -0700
-Date: Wed, 15 May 2024 19:01:18 -0700
-From: Alison Schofield <alison.schofield@intel.com>
-To: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
-Cc: Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cxl/events: Use a common struct for DRAM and General
- Media events
-Message-ID: <ZkVo7molzy8diF2p@aschofie-mobl2>
-References: <20240515190512.3480817-1-fabio.m.de.francesco@linux.intel.com>
+   d="scan'208";a="31193711"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 15 May 2024 19:07:49 -0700
+Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Wed, 15 May 2024 19:07:48 -0700
+Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Wed, 15 May 2024 19:07:48 -0700
+Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
+ fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35 via Frontend Transport; Wed, 15 May 2024 19:07:48 -0700
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.169)
+ by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Wed, 15 May 2024 19:07:47 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Qzlk7Q6LwgZT8ZVgJ1MCVLgkXc1gux6QGV1iD0OhOvQZZMiYO5EfhNPEq9rru/XpM2jiiekIMcL+USzEU3lzAdwR0Z966HHAsnKI4ts3QWpmUtpJzj4U2aXuefs5PVNjCTNzGhVXSnxEZoI/iJPNQUZJjl0gg64MSnjRO1JEUDaN1K4xu9UKFNxgPSUESa3wEkAMOgqouBPdsm6GXFHS69bo9tEWh1o5EMcd5Qa6lnLYLgCOeWXBHryakVeHxGP38t9mZfRDP61yvSTHbse8HnOlt9rLIde3mM9S0x7dH3OotA2nkPsb7sH/hbjUyo0X9CXqvdXVDCd7FNHut2QBTA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fxFF3uEid76uG0yZlX+GnBxNFFU1yEOiucwaQEVXfw0=;
+ b=H0jjKGX6Mzf0HnODxVrpbU2RsjHZbofCSDb1VorqWOLq5NrfaDW/ebBgoxJLcOpibF2Bg2C4UnASSZ4wnk2irAiJNAvic1Mj1zgtCLp2Whzps+UVfetGpoSbr7Z0l6YKpgeq7JaZUNi1qRqBdiXaitQjw3pQb3vrmFKam9AvXjTktVYEQ3FHyrrThEsR0OxykUseEqELMdnNtBXDRPq6CnCv9CzCaJhC5cxtNkaYrVcmX/5W6Lo4/tD6P+qWUAb7M9r04b1aoVvhC+6P2Rsco5ETteZse8jBptAIyNdxEZ/DGr8GNn+pUkVWWtnHpmJ0ENr34TcY2srUSC9g64Tukw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from BL1PR11MB5978.namprd11.prod.outlook.com (2603:10b6:208:385::18)
+ by SA1PR11MB7039.namprd11.prod.outlook.com (2603:10b6:806:2b5::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.28; Thu, 16 May
+ 2024 02:07:44 +0000
+Received: from BL1PR11MB5978.namprd11.prod.outlook.com
+ ([fe80::fdb:309:3df9:a06b]) by BL1PR11MB5978.namprd11.prod.outlook.com
+ ([fe80::fdb:309:3df9:a06b%4]) with mapi id 15.20.7544.052; Thu, 16 May 2024
+ 02:07:44 +0000
+Message-ID: <a08779dc-056c-421c-a573-f0b1ba9da8ad@intel.com>
+Date: Thu, 16 May 2024 14:07:36 +1200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 10/16] KVM: x86/tdp_mmu: Support TDX private mapping for
+ TDP MMU
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>, "kvm@vger.kernel.org"
+	<kvm@vger.kernel.org>, "pbonzini@redhat.com" <pbonzini@redhat.com>,
+	"seanjc@google.com" <seanjc@google.com>
+CC: "sagis@google.com" <sagis@google.com>, "dmatlack@google.com"
+	<dmatlack@google.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "isaku.yamahata@gmail.com"
+	<isaku.yamahata@gmail.com>, "Zhao, Yan Y" <yan.y.zhao@intel.com>, "Aktas,
+ Erdem" <erdemaktas@google.com>
+References: <20240515005952.3410568-1-rick.p.edgecombe@intel.com>
+ <20240515005952.3410568-11-rick.p.edgecombe@intel.com>
+ <12afae41-906c-4bb7-956a-d73734c68010@intel.com>
+ <1d247b658f3e9b14cefcfcf7bca01a652d0845a0.camel@intel.com>
+Content-Language: en-US
+From: "Huang, Kai" <kai.huang@intel.com>
+In-Reply-To: <1d247b658f3e9b14cefcfcf7bca01a652d0845a0.camel@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: MW4PR04CA0185.namprd04.prod.outlook.com
+ (2603:10b6:303:86::10) To BL1PR11MB5978.namprd11.prod.outlook.com
+ (2603:10b6:208:385::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240515190512.3480817-1-fabio.m.de.francesco@linux.intel.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL1PR11MB5978:EE_|SA1PR11MB7039:EE_
+X-MS-Office365-Filtering-Correlation-Id: 31e5b551-1887-4e91-fd22-08dc754cf986
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|1800799015|366007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?a0drMUhXOE1MWThrQmxTRWV6M284L0VXQ1VFNGxhRkJGcU9oRXNiQmI5MzJt?=
+ =?utf-8?B?T2VETDMvdXEwRDNLYmtUNTRrSmlac3pBZmQzWGlyOG1qYSt0QTVqK1V4M2dM?=
+ =?utf-8?B?WE8yNk5XU1lpdWFGMWp6QkF0aHN5N2tEek9JWmhYUXJNRGRXT0lydlBINTRz?=
+ =?utf-8?B?eU1ScEh6ZHo0Y3JBeW0xeU9oOU5RQ2xZRmVJNGNEeVhpK3pCVEZyd2RyMzA1?=
+ =?utf-8?B?eW9uSUJSQW55dk1nYlB5R3R5LzVTUWl4cWljbHpIZTNqVHgwRmdCZzQ4ZE0x?=
+ =?utf-8?B?UXJxMUNOWEQ1ZWtOb0pHKzFTTEVDbXhOcTJudVZMTWtNTkVQQ1pXb3VZdnRi?=
+ =?utf-8?B?SVh2dkx4MUpRZmVCYVRHNHdnb2J0WitjbjdpWWRPZ3VZcm5JV0N2Tkk2VUk1?=
+ =?utf-8?B?eWxUcW5aZEtyekIvMTZuWExrWXh1RjQ0cVZSSjluQ0dubzEvU292Zmdjc3hN?=
+ =?utf-8?B?ajA0Umt2dFpQSWlzZnNDVEE3YTQ3aE4waTlyT3NjL3E1YXcyVGZWSEpWRnNz?=
+ =?utf-8?B?d25zR1piUFRjZWw2cFBrMlBXNnlOb2xLSit0V3hFQzY3bjBhR040SXJjeGpx?=
+ =?utf-8?B?a25VR3YwS0VrT3E3WFl3Z1RPT0NVYUVETjhJWm5IcUN6Z3k2QkRmUDdQOVYy?=
+ =?utf-8?B?TTVZcGFQdkg2U1FEWUN6b0xhR0JORmxpRE1sRUhqSW9hVVppSEZDd0NrMGlN?=
+ =?utf-8?B?T1BJVEpkVms3TEFTSjR1NkpXRUhQa05qWHl0bFpmbUhoSHc1WlBJWWpEdGJS?=
+ =?utf-8?B?N0VqYjNsVmZrWGhHakIvNWFSR0RCRURwMTgwQUxrTHcvNHlnb0ZaMEF1VXBs?=
+ =?utf-8?B?UXlQWWkzbDlzbGpMeTNxNGpMMUM3WjU0NEs1WkplRU1oTlk1aEgxWnh5aXJo?=
+ =?utf-8?B?TTdQUUxCRlpHZ2d3TVBwemJmV0hHTm1LeE12MCszK3lIdGtvUXpJTVJBVU1i?=
+ =?utf-8?B?TTNaT1U5RWlWemtSMVV6UmtuL29CUXVybVlzNFlCSE4wQ2dwcE1kQ2Rxbk1J?=
+ =?utf-8?B?bE5GY2hyc2NQYkFmUnF3emMwNnU5WUhld0pvOER3UFpzakl0VE9sOFBmelpt?=
+ =?utf-8?B?VG1mSm5aY3FEMGpzNExkMVFocmFaeFd2OFc5Y0t5c0N0T1gzRHNVM1hQYnIv?=
+ =?utf-8?B?aGh2NndUQjlGQ2JlMGtVYkYxbThQbE5UTUlTMlNQK0h3b1pLbHVHdUJGNVQ2?=
+ =?utf-8?B?TnlnTFVIRE9WQVhKQnBvYzc1K3RrWnRGRzkrdURvSFBXWkl1SVFtd0JzZ1ha?=
+ =?utf-8?B?L2FrTFQ0YUcwbHdIVUNaaTY0Tm5IRzkwNzc2d2NEbUVFL2Npa0FtVHV3aUhR?=
+ =?utf-8?B?ZXp0a3l5Nm5rc0NWZ2Fxa3hlQkNSajVPeFprUUtnUjF0RzNzVzRTdlBxZGxY?=
+ =?utf-8?B?eEdDeVNmZVJjczkxa3A2U0xoTm9zT2tuSUtkYkRtaXh0YmJGdVp5bVNKenNv?=
+ =?utf-8?B?YzRUd0sxU1dhTEpkbXFubHNodWtndDlJTDVTK0FUeTJVandNRVFrTENYcCtV?=
+ =?utf-8?B?Q2FJVWlDUisybWNKTFNxWUNsQ3pSbDJMMUQ4THcrTjJKMUJPRnBGRGNYaEF1?=
+ =?utf-8?B?aDR0RVVoK1NKNGN4NTZBc2d0N1pCWE5NVWNsOVdUaVZ1QjRwM1pGZTVScXdl?=
+ =?utf-8?Q?5RWzHjDuxh0Q58sP59tODhAvOca1/QLvmEho4BPhJbbs=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5978.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(366007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?UTIrcjU2Tk9mSDExNnNmbFVCR2g1d3oyWFdpZCtjVThnZDd3eWJSK2JSekVx?=
+ =?utf-8?B?TlpWenl2czBOSXNLclNGTEkveUMrUk5oVWJiMFFtRStWS3ZoNlBLbEx6WXVX?=
+ =?utf-8?B?U2RkRXpKNEZ0SkZGMHdDeVY3d1lsV2g1TnFUaFRrTXZ6ZWRJeWp1KzdrREQ1?=
+ =?utf-8?B?OGVkb1FmRFd4Sk1maS8wQW9naTZGN2lmZTVOZ1JmalY1V21ZT09meUpaRTly?=
+ =?utf-8?B?dnd6djZCL29vOTFWb1A1enhuZTg1Y1pjMlRsWGh5VnFLelYxRjlvZENRdEdM?=
+ =?utf-8?B?S1MzZFNaYTk5aU9wZXVoZXVxdXRObHhUSTROcCtNeVZMbExXYzYyb1ZZbTZt?=
+ =?utf-8?B?Z0lFY0J3OUpYTmdrTHczWVhRNEZFRDRSU0F3NXJ0Mjk0dUY5WkFyK2sxY3FY?=
+ =?utf-8?B?aW5ON2FRbUYzaWlhNVZidGdnUFdSenVVTnNlaXFSRTRpSURUME45dW5zQnNm?=
+ =?utf-8?B?MitwNjE5TzNtZ21jdEJYdmp1akp5allpQTRZcnJhSWlhak5IdW5wQ3pIZWJV?=
+ =?utf-8?B?QVh4eHB3ZDdjVTU4cmc2cUhhQjZZN3FZQjB1RWpwZFhGYzhYdkpZbm1oL2FU?=
+ =?utf-8?B?Ry9YWXpackd6Ti9BU2dtMFhHWW45cFk2dTVGVmFsQVpsNERIdGRlZzc3YmR4?=
+ =?utf-8?B?bWNCNEc0MDM1b0ZyM1FSMGh6Nk1MOWVOSDJEd05Eckx6QlhQS1V3eDVvT2tW?=
+ =?utf-8?B?UDBsc1JhUEFBNUV1V28ydWFZYnhCL0tPbW9kK25WWndlTnNiVjlnQWxGcDho?=
+ =?utf-8?B?NWNVWnc3MUZKTHgwajZrL1lwaFNwYzN0M2FYUGpueEk0Q08yWkhLWng5S3d1?=
+ =?utf-8?B?WmRzZE9NS2VmMytnZXY5aEVmZE9YMmlyalcyN1RLZjF0eXlvMnhDK0duWTJX?=
+ =?utf-8?B?RVY0Q0syZkZIcTB1Q1VmTjJvU2ZxMnJCL0I3MlJ2bnlZbXJvUWtOdGRuKzFw?=
+ =?utf-8?B?RHBqK3J5UjVWemQxUUd1TmJvVE45R3RiT0RmSHhySnpIcjFjWHRCckZpSXFm?=
+ =?utf-8?B?UUIxNlZpVWdBS1oyeG5ITFZrOU51SWJ6R212TlB0ck5jWFRUdjVBMHQ3U1V4?=
+ =?utf-8?B?ZnlST0QrQVVEK0xQTlhBT3E5S2dPTGZiWVlla3VvT2FaV3hqUkNyT2I4b3hq?=
+ =?utf-8?B?Z3hkZkw4a1d3Y3VVNFBHK21HQUhwL2FqckY3SytmNkhSZEJFZ0F4KzkzaDRm?=
+ =?utf-8?B?dXA5T3g3Y1U5YVh5Ujd2ZnUwL2tuUjhQTjBlZ1pnZE1pbC85Y2tGS0UzdnJ0?=
+ =?utf-8?B?b1JMS0gzOHlPZjdGU2FRUFN1NEFwbW1NZmVFUjNhc1R6UGNZTGtVWDFFbm9K?=
+ =?utf-8?B?bDRrN1RWa2tRK3FUWUhFRVZGUE45UjNXRE50emhiZ3Mwc2x2N3VuTEQvcnlX?=
+ =?utf-8?B?YmVYZGFVTk5RWHpxa1VyVi9hcFRFb1R6bVJOVldxeWIzUnJLQkRnUkNYd0xH?=
+ =?utf-8?B?RzlnSVBoYVJjVlowUFY0WEFWem91YWI5WGdRaVNTS1h1b01Bd2FEYlFIdTFm?=
+ =?utf-8?B?Mk5HaXVKN2F2S1JmNWVvQlNEeEJsNGFQN01UcTRwZStuYjVVUnlMRTExeE1G?=
+ =?utf-8?B?UWlPZjNuR3NDNUlWV3ZjOWtGbkpSUDlZdUJ1K2JLQXA2bGhFTXl4UlFYbTcz?=
+ =?utf-8?B?b2xQR1Mya011TEh5MmZJTlBsTjFYUnEwcDcyS0VqdHpKbDRMSlpVM05mcGYv?=
+ =?utf-8?B?Z3cydWhoYmtvUG1qZCtQeUFjWFFETXBmblZRMDBOL0NFYXc4d1czbnJJUjBT?=
+ =?utf-8?B?cXZaZU5KRDZ2aGRLK2orbGNLMUpUdUdvbGhPZEp0dFJNajV2d2Fjc3pTZ21z?=
+ =?utf-8?B?THBLMVVSK0h6T0Uyc3BHRG1hVUl1MWJlS05DdFF0dUcwWkdJQTlFRkRIRjhP?=
+ =?utf-8?B?M0pkdlNHNjZXelVpbzV4YmtDQXhrSGJIeFZoVU5nNG9LMElnRis3TlNRWFZW?=
+ =?utf-8?B?Q2pFSWhRT2VURmFTQWlyM3BIeUtSc0t2a3pEUmdBOGxMUzdpWUpobGV6NklI?=
+ =?utf-8?B?TFdzY3lZZmFPdmUvUDRKcnJGSExmLzVocDMzdHZkRWlWaGpQZ3dvVGhtS2tu?=
+ =?utf-8?B?WTBadFFtUzJRVGlnelE1TmRvNkJXa2xGWFdhSnFaRkw3UDQyT01zR3hvdkJU?=
+ =?utf-8?Q?1y9g5y0HOXEsPuPmR+xhCnlkO?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 31e5b551-1887-4e91-fd22-08dc754cf986
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5978.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 May 2024 02:07:44.6239
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ZeP3VVSfjD005H3yYxIP3f/4IFQVk+Xn33E3fE3czKaTpk9D4Z+4Gek9Vx0cM7CmJwBCw2VGrntgubPAFJ7n4g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB7039
+X-OriginatorOrg: intel.com
 
-On Wed, May 15, 2024 at 09:04:53PM +0200, Fabio M. De Francesco wrote:
-> Use cxl_event_media as a common structure to record information about DRAM
-> and General Media events because it simplifies handling the two events.
+
+>>> @@ -470,6 +470,7 @@ struct kvm_mmu {
+>>>          int (*sync_spte)(struct kvm_vcpu *vcpu,
+>>>                           struct kvm_mmu_page *sp, int i);
+>>>          struct kvm_mmu_root_info root;
+>>> +       hpa_t private_root_hpa;
+>>
+>> Should we have
+>>
+>>          struct kvm_mmu_root_info private_root;
+>>
+>> instead?
 > 
-
-Fabio,
-
-Thanks! I think this header file cleanup warrants a fixes tag.
-Try prefacing the above log message with something like:
-"struct cxl_event_common was a poor naming choice and causes confusion
-with the existing Common Event Record."
-
-Fixes: 6aec00139d3a ("cxl/core: Add region info to cxl_general_media and cxl_dram events")
-
--- Alison
-
-> Suggested-by: Dan Williams <dan.j.williams@intel.com>
-> Signed-off-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.com>
-> ---
->  drivers/cxl/core/mbox.c      |  6 ++--
->  drivers/cxl/core/trace.h     |  4 +--
->  include/linux/cxl-event.h    | 70 +++++++++++++++---------------------
->  tools/testing/cxl/test/mem.c |  4 +--
->  4 files changed, 36 insertions(+), 48 deletions(-)
+> This is corresponds to:
+> mmu->root.hpa
 > 
-> diff --git a/drivers/cxl/core/mbox.c b/drivers/cxl/core/mbox.c
-> index 2626f3fff201..ad4d7b0f7f4d 100644
-> --- a/drivers/cxl/core/mbox.c
-> +++ b/drivers/cxl/core/mbox.c
-> @@ -875,16 +875,16 @@ void cxl_event_trace_record(const struct cxl_memdev *cxlmd,
->  		guard(rwsem_read)(&cxl_region_rwsem);
->  		guard(rwsem_read)(&cxl_dpa_rwsem);
->  
-> -		dpa = le64_to_cpu(evt->common.phys_addr) & CXL_DPA_MASK;
-> +		dpa = le64_to_cpu(evt->media_common.phys_addr) & CXL_DPA_MASK;
->  		cxlr = cxl_dpa_to_region(cxlmd, dpa);
->  		if (cxlr)
->  			hpa = cxl_trace_hpa(cxlr, cxlmd, dpa);
->  
->  		if (event_type == CXL_CPER_EVENT_GEN_MEDIA)
->  			trace_cxl_general_media(cxlmd, type, cxlr, hpa,
-> -						&evt->gen_media);
-> +						&evt->media_general);
->  		else if (event_type == CXL_CPER_EVENT_DRAM)
-> -			trace_cxl_dram(cxlmd, type, cxlr, hpa, &evt->dram);
-> +			trace_cxl_dram(cxlmd, type, cxlr, hpa, &evt->media_dram);
->  	}
->  }
->  EXPORT_SYMBOL_NS_GPL(cxl_event_trace_record, CXL);
-> diff --git a/drivers/cxl/core/trace.h b/drivers/cxl/core/trace.h
-> index 07a0394b1d99..2c7293761bb2 100644
-> --- a/drivers/cxl/core/trace.h
-> +++ b/drivers/cxl/core/trace.h
-> @@ -316,7 +316,7 @@ TRACE_EVENT(cxl_generic_event,
->  TRACE_EVENT(cxl_general_media,
->  
->  	TP_PROTO(const struct cxl_memdev *cxlmd, enum cxl_event_log_type log,
-> -		 struct cxl_region *cxlr, u64 hpa, struct cxl_event_gen_media *rec),
-> +		 struct cxl_region *cxlr, u64 hpa, struct cxl_event_media *rec),
->  
->  	TP_ARGS(cxlmd, log, cxlr, hpa, rec),
->  
-> @@ -413,7 +413,7 @@ TRACE_EVENT(cxl_general_media,
->  TRACE_EVENT(cxl_dram,
->  
->  	TP_PROTO(const struct cxl_memdev *cxlmd, enum cxl_event_log_type log,
-> -		 struct cxl_region *cxlr, u64 hpa, struct cxl_event_dram *rec),
-> +		 struct cxl_region *cxlr, u64 hpa, struct cxl_event_media *rec),
->  
->  	TP_ARGS(cxlmd, log, cxlr, hpa, rec),
->  
-> diff --git a/include/linux/cxl-event.h b/include/linux/cxl-event.h
-> index 60b25020281f..e417556cc120 100644
-> --- a/include/linux/cxl-event.h
-> +++ b/include/linux/cxl-event.h
-> @@ -32,41 +32,38 @@ struct cxl_event_generic {
->   * CXL rev 3.0 Section 8.2.9.2.1.1; Table 8-43
->   */
->  #define CXL_EVENT_GEN_MED_COMP_ID_SIZE	0x10
-> -struct cxl_event_gen_media {
-> -	struct cxl_event_record_hdr hdr;
-> -	__le64 phys_addr;
-> -	u8 descriptor;
-> -	u8 type;
-> -	u8 transaction_type;
-> -	u8 validity_flags[2];
-> -	u8 channel;
-> -	u8 rank;
-> -	u8 device[3];
-> -	u8 component_id[CXL_EVENT_GEN_MED_COMP_ID_SIZE];
-> -	u8 reserved[46];
-> -} __packed;
-> -
->  /*
->   * DRAM Event Record - DER
->   * CXL rev 3.0 section 8.2.9.2.1.2; Table 3-44
->   */
->  #define CXL_EVENT_DER_CORRECTION_MASK_SIZE	0x20
-> -struct cxl_event_dram {
-> +struct cxl_event_media {
->  	struct cxl_event_record_hdr hdr;
-> -	__le64 phys_addr;
-> -	u8 descriptor;
-> -	u8 type;
-> -	u8 transaction_type;
-> -	u8 validity_flags[2];
-> -	u8 channel;
-> -	u8 rank;
-> -	u8 nibble_mask[3];
-> -	u8 bank_group;
-> -	u8 bank;
-> -	u8 row[3];
-> -	u8 column[2];
-> -	u8 correction_mask[CXL_EVENT_DER_CORRECTION_MASK_SIZE];
-> -	u8 reserved[0x17];
-> +	struct_group_tagged(cxl_event_media_hdr, media_hdr,
-> +		__le64 phys_addr;
-> +		u8 descriptor;
-> +		u8 type;
-> +		u8 transaction_type;
-> +		u8 validity_flags[2];
-> +		u8 channel;
-> +		u8 rank;
-> +	);
-> +	union {
-> +		struct_group(general,
-> +			u8 device[3];
-> +			u8 component_id[CXL_EVENT_GEN_MED_COMP_ID_SIZE];
-> +			u8 gen_reserved[46];
-> +		);
-> +		struct_group(dram,
-> +			u8 nibble_mask[3];
-> +			u8 bank_group;
-> +			u8 bank;
-> +			u8 row[3];
-> +			u8 column[2];
-> +			u8 correction_mask[CXL_EVENT_DER_CORRECTION_MASK_SIZE];
-> +			u8 dram_reserved[0x17];
-> +		);
-> +	};
->  } __packed;
->  
->  /*
-> @@ -95,21 +92,12 @@ struct cxl_event_mem_module {
->  	u8 reserved[0x3d];
->  } __packed;
->  
-> -/*
-> - * General Media or DRAM Event Common Fields
-> - * - provides common access to phys_addr
-> - */
-> -struct cxl_event_common {
-> -	struct cxl_event_record_hdr hdr;
-> -	__le64 phys_addr;
-> -} __packed;
-> -
->  union cxl_event {
->  	struct cxl_event_generic generic;
-> -	struct cxl_event_gen_media gen_media;
-> -	struct cxl_event_dram dram;
-> +	struct cxl_event_media media_general;
-> +	struct cxl_event_media media_dram;
->  	struct cxl_event_mem_module mem_module;
-> -	struct cxl_event_common common;
-> +	struct cxl_event_media media_common;
->  } __packed;
->  
->  /*
-> diff --git a/tools/testing/cxl/test/mem.c b/tools/testing/cxl/test/mem.c
-> index 6584443144de..0a8fd145c391 100644
-> --- a/tools/testing/cxl/test/mem.c
-> +++ b/tools/testing/cxl/test/mem.c
-> @@ -378,7 +378,7 @@ struct cxl_event_record_raw hardware_replace = {
->  
->  struct cxl_test_gen_media {
->  	uuid_t id;
-> -	struct cxl_event_gen_media rec;
-> +	struct cxl_event_media rec;
->  } __packed;
->  
->  struct cxl_test_gen_media gen_media = {
-> @@ -402,7 +402,7 @@ struct cxl_test_gen_media gen_media = {
->  
->  struct cxl_test_dram {
->  	uuid_t id;
-> -	struct cxl_event_dram rec;
-> +	struct cxl_event_media rec;
->  } __packed;
->  
->  struct cxl_test_dram dram = {
-> -- 
-> 2.45.0
+> We don't need the other fields, so I think better to not take space. It does
+> look asymmetric though...
+
+Being symmetric is why I asked.  Anyway no strong opinion.
+
+[...]
+
+>>>    
+>>> @@ -4685,7 +4687,7 @@ int kvm_tdp_page_fault(struct kvm_vcpu *vcpu, struct
+>>> kvm_page_fault *fault)
+>>>          if (kvm_mmu_honors_guest_mtrrs(vcpu->kvm)) {
+>>>                  for ( ; fault->max_level > PG_LEVEL_4K; --fault->max_level)
+>>> {
+>>>                          int page_num = KVM_PAGES_PER_HPAGE(fault-
+>>>> max_level);
+>>> -                       gfn_t base = gfn_round_for_level(fault->gfn,
+>>> +                       gfn_t base = gfn_round_for_level(gpa_to_gfn(fault-
+>>>> addr),
+>>>                                                           fault->max_level);
+>>
+>> I thought by reaching here the shared bit has already been stripped away
+>> by the caller?
 > 
+> We don't support MTRRs so this code wont be executed for TDX, but not clear what
+> you are asking.
+> fault->addr has the shared bit (if present)
+> fault->gfn has it stripped.
+
+When I was looking at the code, I thought fault->gfn is still having the 
+shred bit, and gpa_to_gfn() internally strips aways the shared bit, but 
+sorry it is not true.
+
+My question is why do we even need this change?  Souldn't we pass the 
+actual GFN (which doesn't have the shared bit) to 
+kvm_mtrr_check_gfn_range_consistency()?
+
+If so, looks we should use fault->gfn to get the base?
+
+> 
+>>
+>> It doesn't make a lot sense to still have it here, given we have a
+>> universal KVM-defined PFERR_PRIVATE_ACCESS flag:
+>>
+>> https://lore.kernel.org/kvm/20240507155817.3951344-2-pbonzini@redhat.com/T/#mb30987f31b431771b42dfa64dcaa2efbc10ada5e
+>>
+>> IMHO we should just strip the shared bit in the TDX variant of
+>> handle_ept_violation(), and pass the PFERR_PRIVATE_ACCESS (when GPA
+>> doesn't hvae shared bit) to the common fault handler so it can correctly
+>> set fault->is_private to true.
+> 
+> I'm not sure what you are seeing here, could elaborate?
+See reply below.
+
+[...]
+
+>>
+>> Anyway, from common code's perspective, we need to have some
+>> clarification why we design to do it here.
+>>
+>>>          free_mmu_pages(&vcpu->arch.root_mmu);
+>>>          free_mmu_pages(&vcpu->arch.guest_mmu);
+>>>          mmu_free_memory_caches(vcpu);
+>>> diff --git a/arch/x86/kvm/mmu/mmu_internal.h
+>>> b/arch/x86/kvm/mmu/mmu_internal.h
+>>> index 0f1a9d733d9e..3a7fe9261e23 100644
+>>> --- a/arch/x86/kvm/mmu/mmu_internal.h
+>>> +++ b/arch/x86/kvm/mmu/mmu_internal.h
+>>> @@ -6,6 +6,8 @@
+>>>    #include <linux/kvm_host.h>
+>>>    #include <asm/kvm_host.h>
+>>>    
+>>> +#include "mmu.h"
+>>> +
+>>>    #ifdef CONFIG_KVM_PROVE_MMU
+>>>    #define KVM_MMU_WARN_ON(x) WARN_ON_ONCE(x)
+>>>    #else
+>>> @@ -178,6 +180,16 @@ static inline void kvm_mmu_alloc_private_spt(struct
+>>> kvm_vcpu *vcpu, struct kvm_m
+>>>          sp->private_spt = kvm_mmu_memory_cache_alloc(&vcpu-
+>>>> arch.mmu_private_spt_cache);
+>>>    }
+>>>    
+>>> +static inline gfn_t kvm_gfn_for_root(struct kvm *kvm, struct kvm_mmu_page
+>>> *root,
+>>> +                                    gfn_t gfn)
+>>> +{
+>>> +       gfn_t gfn_for_root = kvm_gfn_to_private(kvm, gfn);
+>>> +
+>>> +       /* Set shared bit if not private */
+>>> +       gfn_for_root |= -(gfn_t)!is_private_sp(root) &
+>>> kvm_gfn_shared_mask(kvm);
+>>> +       return gfn_for_root;
+>>> +}
+>>> +
+>>>    static inline bool kvm_mmu_page_ad_need_write_protect(struct kvm_mmu_page
+>>> *sp)
+>>>    {
+>>>          /*
+>>> @@ -348,7 +360,12 @@ static inline int __kvm_mmu_do_page_fault(struct
+>>> kvm_vcpu *vcpu, gpa_t cr2_or_gp
+>>>          int r;
+>>>    
+>>>          if (vcpu->arch.mmu->root_role.direct) {
+>>> -               fault.gfn = fault.addr >> PAGE_SHIFT;
+>>> +               /*
+>>> +                * Things like memslots don't understand the concept of a
+>>> shared
+>>> +                * bit. Strip it so that the GFN can be used like normal,
+>>> and the
+>>> +                * fault.addr can be used when the shared bit is needed.
+>>> +                */
+>>> +               fault.gfn = gpa_to_gfn(fault.addr) &
+>>> ~kvm_gfn_shared_mask(vcpu->kvm);
+>>>                  fault.slot = kvm_vcpu_gfn_to_memslot(vcpu, fault.gfn);
+>>
+>> Again, I don't think it's nessary for fault.gfn to still have the shared
+>> bit here?
+> 
+> It's getting stripped as it's set for the first time... What do you mean still
+> have it?
+
+Sorry, I meant fault->addr.
+
+> 
+>>
+>> This kinda usage is pretty much the reason I want to get rid of
+>> kvm_gfn_shared_mask().
+> 
+> I think you want to move it to an x86_op right? Not get rid of the concept of a
+> shared bit? I think KVM will have a hard time doing TDX without knowing about
+> the shared bit location.
+> 
+> Or maybe you are saying you think it should be stripped earlier and live as a PF
+> error code?
+
+I meant it seems we should just strip shared bit away from the GPA in 
+handle_ept_violation() and pass it as 'cr2_or_gpa' here, so fault->addr 
+won't have the shared bit.
+
+Do you see any problem of doing so?
+
+> 
+>>
+>>>          }
+>>>    
+>>> diff --git a/arch/x86/kvm/mmu/tdp_iter.h b/arch/x86/kvm/mmu/tdp_iter.h
+>>> index fae559559a80..8a64bcef9deb 100644
+>>> --- a/arch/x86/kvm/mmu/tdp_iter.h
+>>> +++ b/arch/x86/kvm/mmu/tdp_iter.h
+>>> @@ -91,7 +91,7 @@ struct tdp_iter {
+>>>          tdp_ptep_t pt_path[PT64_ROOT_MAX_LEVEL];
+>>>          /* A pointer to the current SPTE */
+>>>          tdp_ptep_t sptep;
+>>> -       /* The lowest GFN mapped by the current SPTE */
+>>> +       /* The lowest GFN (shared bits included) mapped by the current SPTE
+>>> */
+>>>          gfn_t gfn;
+>>
+>> IMHO we need more clarification of this design.
+> 
+> Have you seen the documentation patch? Where do you think it should be? You mean
+> in the tdp_iter struct?
+
+My thinking:
+
+Changelog should clarify why include shared bit to 'gfn' in tdp_iter.
+
+And here around the 'gfn' we can have some simple sentence to explain 
+why to include the shared bit.
+
+
 
