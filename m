@@ -1,126 +1,170 @@
-Return-Path: <linux-kernel+bounces-180931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 022AD8C750E
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 13:16:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C019D8C7511
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 13:17:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CB2D1F24679
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 11:16:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5B9B1C219E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 11:17:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1879C1459E3;
-	Thu, 16 May 2024 11:16:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 803951459E3;
+	Thu, 16 May 2024 11:17:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qOj+Pk4m"
-Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bHFyTcL/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0701145350
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 11:16:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3BE6145354
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 11:17:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715858170; cv=none; b=U+LGUsaIgoo9Y7djkabSxvrfLYpmWgk1dCSq4zURd/qvVSvGouZDKZ8FdVEjkpGygjZT4KHOlTxcg2JnTL92NzEO5NqGCNaXOniYsjT8OXWL/Mr1DLypcBUMm2MdPDEbGfVVDnixGOHVxxfc4laESKHGrJC2BAHY5sYeD44ybN0=
+	t=1715858239; cv=none; b=j0HmxT/fIMhiYCRNzpBOAI7JFBTxTaryg729yf9S/hl2E4CAhNJJgOtr7iOM+LBzDczuBcfvqtabJR8y+3sEQnDam1eebFieTwxJhvDjs49zvtLrc+GDCTKm5VQR3/5yD37RryCs/zuyeSi3BN8LeR4GepvLWC9RKssGbVQ4GGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715858170; c=relaxed/simple;
-	bh=OB7JAvMeIimxmVIdIIm0ayzHuZaHOX29FQ00F2p1ZIA=;
-	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
-	 In-Reply-To:References; b=TDq2999vNg6+3JQvgDkSCaUOdM4tnJic6IeIMLlY6wp4SC4iPU/dB08d0MWH4rs/Kz4EQhKNFFZRsA/iMzUuU9fNOyW3RYbIjEALCaz9z8xspYghxt5zGcbeZc3Li6q+R0XfjhNo6uaAik8h/rXSsTqR4flEWdpR2e+ajwMJnck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qOj+Pk4m; arc=none smtp.client-ip=95.215.58.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: wangkefeng.wang@huawei.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1715858166;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JLeSRS3quX4ZlkgzdAPYMzk5VTg8+XdQRte0NfGmRLA=;
-	b=qOj+Pk4mcfUGWn7xkvKGJBmWnGR3HzgqOzbDB+kKCA5fVuBnOHvvOMmroddBtoDwCYqGvP
-	wdpnWeRBsj9aPvkAz2QuNiOc5Pq8wZzDmCGJSl3xuGlOo4Cu5NA4AqO6U2ZaKoaIEvTbXz
-	eJJ5KE6OxxCj5kktHMv1L81heiVJwlg=
-X-Envelope-To: akpm@linux-foundation.org
-X-Envelope-To: linux-mm@kvack.org
-X-Envelope-To: linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1715858239; c=relaxed/simple;
+	bh=1UfKGMJ9TThxAQag/fpQqjCYHLaRtcWRad/IDztYG+E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T458vQ+nLRWlhTdRxi+7l4ve9GfY8akZ51pLULyCMoBziVJu07tb2fdpsDlIapzSFDBnQ/bS87ovHwqVjnD/yYlRxRFa/9G1RITb0wvkRxExdhuMvyplDpb/OqgZKzJQIzmHCBGbVkmqEet/lIBznwWFYKqYLinK1OwiHZeo7Oc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bHFyTcL/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF519C113CC;
+	Thu, 16 May 2024 11:17:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715858239;
+	bh=1UfKGMJ9TThxAQag/fpQqjCYHLaRtcWRad/IDztYG+E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bHFyTcL/drb07H45gqUnNdYjzZbszYvz5AJdotwKTEmzuNAGyrvuQHTEhUHa8SSi8
+	 8CV+/PJ7+41peChdh5ZsHI6icu3yp8Yc3S5lMXk1xpB1PHIZWpJyEq8FFrdEG6gyF2
+	 Ws8e8jpPkxfR/sBJd0gbGZDdxeGp1dOm+ITe+KQ0YnDhncyHgnWD3Or+L8HRetA7UL
+	 DHtYHP4lepyMR4NlYyBb8/kvcbNPht4O4+JLjejuuQwevWW3XKnBZmnLJ3rFqdaYKU
+	 EKxY5WFfBr94tjx5LmlNsBk0Y8Afpe+LACYnSA52o3qnDOMeWJ28vg2gKTW4+mc7yx
+	 7h7l7HalWhB6Q==
+Date: Thu, 16 May 2024 13:17:16 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: Re: [PATCH 3/4] perf: Fix event leak upon exit
+Message-ID: <ZkXrPNZCu1Eq8bTb@lothringen>
+References: <20240515144311.16038-1-frederic@kernel.org>
+ <20240515144311.16038-4-frederic@kernel.org>
+ <20240516090529.GH22557@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 16 May 2024 11:16:05 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Yajun Deng" <yajun.deng@linux.dev>
-Message-ID: <e41ea9022c217bb6aed5a8a4b8375a62878c9c8b@linux.dev>
-TLS-Required: No
-Subject: Re: [PATCH] mm/cma: get nid from physical address
-To: "Kefeng Wang" <wangkefeng.wang@huawei.com>, akpm@linux-foundation.org
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
-In-Reply-To: <1d38aa26-cd2f-4330-9dcc-6c379cecb83b@huawei.com>
-References: <20240516091701.1527002-1-yajun.deng@linux.dev>
- <1d38aa26-cd2f-4330-9dcc-6c379cecb83b@huawei.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240516090529.GH22557@noisy.programming.kicks-ass.net>
 
-May 16, 2024 at 6:03 PM, "Kefeng Wang" <wangkefeng.wang@huawei.com> wrote=
-:
+On Thu, May 16, 2024 at 11:05:29AM +0200, Peter Zijlstra wrote:
+> On Wed, May 15, 2024 at 04:43:10PM +0200, Frederic Weisbecker wrote:
+> > When a task is scheduled out, pending sigtrap deliveries are deferred
+> > to the target task upon resume to userspace via task_work.
+> > 
+> > However failures while adding en event's callback to the task_work
+> > engine are ignored. And since the last call for events exit happen
+> > after task work is eventually closed, there is a small window during
+> > which pending sigtrap can be queued though ignored, leaking the event
+> > refcount addition such as in the following scenario:
+> > 
+> >     TASK A
+> >     -----
+> > 
+> >     do_exit()
+> >        exit_task_work(tsk);
+> > 
+> >        <IRQ>
+> >        perf_event_overflow()
+> >           event->pending_sigtrap = pending_id;
+> >           irq_work_queue(&event->pending_irq);
+> >        </IRQ>
+> >     =========> PREEMPTION: TASK A -> TASK B
+> >        event_sched_out()
+> >           event->pending_sigtrap = 0;
+> >           atomic_long_inc_not_zero(&event->refcount)
+> >           // FAILS: task work has exited
+> >           task_work_add(&event->pending_task)
+> >        [...]
+> >        <IRQ WORK>
+> >        perf_pending_irq()
+> >           // early return: event->oncpu = -1
+> >        </IRQ WORK>
+> >        [...]
+> >     =========> TASK B -> TASK A
+> >        perf_event_exit_task(tsk)
+> >           perf_event_exit_event()
+> >              free_event()
+> >                 WARN(atomic_long_cmpxchg(&event->refcount, 1, 0) != 1)
+> >                 // leak event due to unexpected refcount == 2
+> > 
+> > As a result the event is never released while the task exits.
+> 
+> Urgh...
+> 
+> > 
+> > Fix this with appropriate task_work_add()'s error handling.
+> > 
+> > Fixes: 517e6a301f34 ("perf: Fix perf_pending_task() UaF")
+> > Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+> > ---
+> >  kernel/events/core.c | 9 +++++----
+> >  1 file changed, 5 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/kernel/events/core.c b/kernel/events/core.c
+> > index 724e6d7e128f..c1632e69c69d 100644
+> > --- a/kernel/events/core.c
+> > +++ b/kernel/events/core.c
+> > @@ -2289,10 +2289,11 @@ event_sched_out(struct perf_event *event, struct perf_event_context *ctx)
+> >  		event->pending_sigtrap = 0;
+> >  		if (state != PERF_EVENT_STATE_OFF &&
+> >  		    !event->pending_work) {
+> > -			event->pending_work = 1;
+> > -			dec = false;
+> > -			WARN_ON_ONCE(!atomic_long_inc_not_zero(&event->refcount));
+> > -			task_work_add(current, &event->pending_task, TWA_RESUME);
+> > +			if (task_work_add(current, &event->pending_task, TWA_RESUME) >= 0) {
+> 
+> AFAICT the thing is a return 0 on success -Efoo on fail, no? That is,
+> should this not simply be '== 0' ?
 
+Right.
 
+> 
+> > +				WARN_ON_ONCE(!atomic_long_inc_not_zero(&event->refcount));
+> > +				dec = false;
+> > +				event->pending_work = 1;
+> > +			}
+> 
+> Also, do we want to write it like so and save an indent?
+> 
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -2288,11 +2288,11 @@ event_sched_out(struct perf_event *event
+>  
+>  		event->pending_sigtrap = 0;
+>  		if (state != PERF_EVENT_STATE_OFF &&
+> -		    !event->pending_work) {
+> +		    !event->pending_work &&
+> +		    !task_work_add(current, &event->pending_task, TWA_RESUME)) {
+>  			event->pending_work = 1;
+>  			dec = false;
+>  			WARN_ON_ONCE(!atomic_long_inc_not_zero(&event->refcount));
+> -			task_work_add(current, &event->pending_task, TWA_RESUME);
+>  		}
+>  		if (dec)
+>  			local_dec(&event->ctx->nr_pending);
 
->=20
->=20On 2024/5/16 17:17, Yajun Deng wrote:
->=20
->=20>=20
->=20> The nid passed to cma_declare_contiguous_nid() may be NUMA_NO_NODE,
-> >=20
->=20>  which is not the actual nid. To get the correct nid, we can get th=
-e nid
-> >=20
->=20>  from physical address.
-> >=20
->=20
-> Please check
->=20
->=20https://lore.kernel.org/linux-riscv/47437c2b-5946-41c6-ad1b-cc03329eb=
-230@huawei.com/
->=20
+Looks good, I'm resending this one patch.
 
-Okay,=20thanks!
-> >=20
->=20> Signed-off-by: Yajun Deng <yajun.deng@linux.dev>
-> >=20
->=20>  ---
-> >=20
->=20>  mm/cma.c | 1 +
-> >=20
->=20>  1 file changed, 1 insertion(+)
-> >=20
->=20>  diff --git a/mm/cma.c b/mm/cma.c
-> >=20
->=20>  index 3e9724716bad..be6cdde32944 100644
-> >=20
->=20>  --- a/mm/cma.c
-> >=20
->=20>  +++ b/mm/cma.c
-> >=20
->=20>  @@ -361,6 +361,7 @@ int __init cma_declare_contiguous_nid(phys_add=
-r_t base,
-> >=20
->=20>  kmemleak_ignore_phys(addr);
-> >=20
->=20>  base =3D addr;
-> >=20
->=20>  }
-> >=20
->=20>  + nid =3D early_pfn_to_nid(PHYS_PFN(base));
-> >=20
->=20>  > ret =3D cma_init_reserved_mem(base, size, order_per_bit, name, r=
-es_cma);
-> >=20
->=20>  if (ret)
-> >
->
+Thanks.
 
