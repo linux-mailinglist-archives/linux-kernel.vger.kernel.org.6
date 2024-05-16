@@ -1,124 +1,165 @@
-Return-Path: <linux-kernel+bounces-181287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B3088C7A01
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:03:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C99558C7A05
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:04:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F09941F2250B
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:03:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6010CB21018
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:04:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5FFB14D6E9;
-	Thu, 16 May 2024 16:03:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA4FA14D712;
+	Thu, 16 May 2024 16:04:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R5uUj/P4"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k+Hvg3eQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB8FC14E2EF;
-	Thu, 16 May 2024 16:03:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2DE214D452;
+	Thu, 16 May 2024 16:04:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715875399; cv=none; b=oBRPN2ULpqjVPKsCHRDz3kWX+NWEQsSYflRGdhqAsN3qx2xLVt/DbKIjZA8X0eXmMwVFhHYoYKBwmkGyKy/hf3yimTllpH+JhPbiqPt8877OO4jl6iwG7ow7m7AODfM73hh9HGGEe3NhEnBs1qsPHSfiKClV7rHxXM1aQZGMCco=
+	t=1715875461; cv=none; b=GG/HM1PgjLpCLBzUPM4gjy8yC/Law/2+pdUOGFeOjx2f5GJaZjfL4IvDtOkyJuQHqzQezVQuhuGPB9RICZP4j5iY+mCrROn4Srvz8dRG+nK8ZRPIKj6L0YFFlv+BgUH+mA2AhsCxWjOwYQMTfwsqoWoakLhyXc4gp0fY16dEhho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715875399; c=relaxed/simple;
-	bh=I2HxkgYxcy+MWDcGiUKLXiPl4ji8qHCK6XMx7iOMO2c=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=RFFAoyuOMfEB6RHX1gT2y5pQaKUj7qDyLJI1WDhvcuy2imsjVpC6AY506YiwIi33G9QljJzCtr+EuXGrmO6wMPDCBorjFhay9oDC/Ys/5zSBDWoCj7KlMO1/t3rczX6czvwhKtSVz0BdPvzKBfs3kzBDkap+OsANNLOCcp829gU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R5uUj/P4; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a59ad12efe3so161034266b.3;
-        Thu, 16 May 2024 09:03:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715875396; x=1716480196; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=h2UlXLlotwfBEqJl5RyF1BB7i1PhDgWjZZExNzHpicY=;
-        b=R5uUj/P4hzFDSx4egN6EwgjuJUPY4x8h/9KbQjIXJEHVaEVe+xxwNJ6lHMTh5VjRQB
-         4tyaCZRRJ/Wqvi7Xh0ypvzNuFPRfPitsJYq9h6mZTeEiiDdnopgpFLymw+dIK3cKZRkr
-         rau2G0tvCS8zS3yTO8AU3wmiyi4qIVTOjCCxbb5SH+FcLjnk3cqPYlqGU70AxostcE6v
-         n2uuLLxb6okMnpBbx/x6jXUiAv9+SdA8C/9JAJCGlRahsXiz+ZXZdlaPrsbiuUbgpZiG
-         pEJa16I1gYnFGEr+RxqhB47wJftUXl9+1/p5VXmmkO2eDCOm6Y0yhSDeNOjsu6lgZe0b
-         ygBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715875396; x=1716480196;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=h2UlXLlotwfBEqJl5RyF1BB7i1PhDgWjZZExNzHpicY=;
-        b=tmI9aYCOVwKh4okCYEsI5VuejUr3H3L2YxT+tSWtK7VOc/TG2cg0USAFWF+zXGfjTR
-         pPM3dPuvugZhu2wcNMmzQXqY0jMZxiLDq1XBRcQd805SejWXjUC0aGi1KhdgyYrDOvcW
-         1XqhJ/wpUjArXtlJ9V/VWHOvvB/b7lHo0tmDLtZk5u19y4DzOMwGZjvvGiQkTS0Zv+Oj
-         jcNBNvRiGaSDETAPZ8tovnsQoAPbzlsplLePRih/+ZBDBWmkmuzA0+zJiLLTpwaYuqiP
-         aQclPiLDZDgJAPSTq8fq4qKH7510BNakw9ioEselfJ7pds/o3sOffmJCG+2qzhvVS6FN
-         C0IA==
-X-Forwarded-Encrypted: i=1; AJvYcCWV/j1YmB9EQNd6z8aHeTIFTv0e8Q9aSJaak2hWl+VBT6/yEJozO1qq2FsODJsjbZb3QLPVOFURJPQePINC8dMMJuSNIjVmBOVBOUle4n3XOBOJTHJTtw0u3SioahJnf1o+aK/qYrP8PQ==
-X-Gm-Message-State: AOJu0YyKrZpnv6OXmU4hDtirdACRzVa0kqX+3El9gkNMYv5OCbfqf5OY
-	CEhptunVLepyGS1ny3/5LtSkd12L5LUt7SsamZHetY5A6dSIfKy+
-X-Google-Smtp-Source: AGHT+IGUmF1po0i4xBr81rQ2OeOh8QF45K6Bg7Kx7HO+pT8V6cPBtdynozaaidZkQFVmKBx8d0YJ3Q==
-X-Received: by 2002:a50:8d06:0:b0:572:7d75:a70e with SMTP id 4fb4d7f45d1cf-5734d5d0208mr17338442a12.25.1715875395933;
-        Thu, 16 May 2024 09:03:15 -0700 (PDT)
-Received: from localhost (host-95-246-50-43.retail.telecomitalia.it. [95.246.50.43])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733bebb6casm10560431a12.29.2024.05.16.09.03.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 May 2024 09:03:15 -0700 (PDT)
-Date: Thu, 16 May 2024 18:03:14 +0200
-From: Matteo Martelli <matteomartelli3@gmail.com>
-To: Matteo Martelli <matteomartelli3@gmail.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, 
- Mark Brown <broonie@kernel.org>, 
- Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, 
- Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-sound@vger.kernel.org, 
- devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Matteo Martelli <matteomartelli3@gmail.com>
-Message-ID: <66462e42bebfe_15e553703c@njaxe.notmuch>
-In-Reply-To: <20240516154800.125284-1-matteomartelli3@gmail.com>
-References: <20240516154800.125284-1-matteomartelli3@gmail.com>
-Subject: Re: [PATCH v2 0/2] ASoC: codecs: add support for everest-semi es8311
- codec
+	s=arc-20240116; t=1715875461; c=relaxed/simple;
+	bh=w/VCxKOJAzskajQyGDqLy9NBiE2zC4FfWI7LfgmWFfA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fXcI0iApu/Tq+/OsBBhG9t/x5Xc3c6nbW5J26C+J9ibaexJYKl+Dgfn76OmYXRVNetHjec8zX8b9H9UBjmTx1KlwESJU1KPi7Mmg6+RF8H0cm2Q7TE0QrORW80w+4POmn//AVAl5O9Blu5GT99NXvQ4QjxqvSQU60+Lsa1WVhvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k+Hvg3eQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF7E3C32786;
+	Thu, 16 May 2024 16:04:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715875460;
+	bh=w/VCxKOJAzskajQyGDqLy9NBiE2zC4FfWI7LfgmWFfA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=k+Hvg3eQLJ4lIBsk6+vsvR2fp7IKceiyjLvU8HaXSbVWJ2AAGtSFGQxKUVyW4mYLb
+	 1jhtdzpmD/PK3YwTEIaaP718jLsO4oV9Qz+yWqRsQEaRxJoIctWWYgPMQdkqiqPthy
+	 jR4FYUN8jnkuQAhiBhTNJchXpbFKYakPdP/fy271WL+ve30xsuqS7PWE7zVKaqguUr
+	 y5IUPGGLLX+dd/BVVLn6HuqeAxlqemyf/86swKuesbIQTQoP7AymmoZMCMO/i8nroK
+	 F9xu8rBIVZjyJ3IABAtEvYF6eCPzV3XyasJVbcYVjI/MjSAR2yqV+0nXnQam2KfVSj
+	 mZjzXZ+P2kyzg==
+Date: Thu, 16 May 2024 17:04:16 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Kanak Shilledar <kanakshilledar111@protonmail.com>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
+	Mark Brown <broonie@kernel.org>, workflows@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] Documentation: process: Revert "Document suitability
+ of Proton Mail for kernel development"
+Message-ID: <20240516-tattered-rival-f443328b5971@spud>
+References: <20240516-groin-slingshot-c3c3734d2f10@spud>
+ <4oW9pC38sSYZn96BW8abMfVpDDCmG4MDHwwmL73o5bP-WyHAutJ5j2GrSU17MCSWOKufViNl4q2zZUmwmN40evP5OK3QiMnUn2hsgWCYhl4=@protonmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="M4UZhHp/KDapPJjU"
+Content-Disposition: inline
+In-Reply-To: <4oW9pC38sSYZn96BW8abMfVpDDCmG4MDHwwmL73o5bP-WyHAutJ5j2GrSU17MCSWOKufViNl4q2zZUmwmN40evP5OK3QiMnUn2hsgWCYhl4=@protonmail.com>
 
-Matteo Martelli wrote:
->  .../bindings/sound/everest,es8311.yaml        |  52 +
->  sound/soc/codecs/Kconfig                      |   4 +
->  sound/soc/codecs/Makefile                     |   2 +
->  sound/soc/codecs/es8311.c                     | 970 ++++++++++++++++++
->  sound/soc/codecs/es8311.h                     | 162 +++
->  5 files changed, 1190 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/sound/everest,es8311.yaml
->  create mode 100644 sound/soc/codecs/es8311.c
->  create mode 100644 sound/soc/codecs/es8311.h
 
-This is the wrong diffstat from previous patch v1, sorry for that.
+--M4UZhHp/KDapPJjU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Here's the correct diffstat:
+On Thu, May 16, 2024 at 04:00:10PM +0000, Kanak Shilledar wrote:
+> On Thursday, May 16th, 2024 at 9:05 PM, Conor Dooley <conor@kernel.org> w=
+rote:
+>=20
+> > From: Conor Dooley conor.dooley@microchip.com
+> >=20
+> >=20
+> > Revert commit 1d2ed9234c85 ("Documentation: process: Document
+> > suitability of Proton Mail for kernel development") as Proton disabled
+> > WKD for kernel.org addresses as a result of some interaction with
+> > Konstantin on social.kernel.org
+> >=20
+> > Signed-off-by: Conor Dooley conor.dooley@microchip.com
+> >=20
+> > ---
+> >=20
+> > I tried to find the stuff on social.korg to provide a link
+> > but could not.
+> >=20
+> > CC: kanakshilledar111@protonmail.com
+> > CC: Konstantin Ryabitsev konstantin@linuxfoundation.org
+> >=20
+> > CC: Mark Brown broonie@kernel.org
+> >=20
+> > CC: Jonathan Corbet corbet@lwn.net
+> >=20
+> > CC: workflows@vger.kernel.org
+> > CC: linux-doc@vger.kernel.org
+> > CC: linux-kernel@vger.kernel.org
+> > ---
+> > Documentation/process/email-clients.rst | 20 --------------------
+> > 1 file changed, 20 deletions(-)
+> >=20
+> > diff --git a/Documentation/process/email-clients.rst b/Documentation/pr=
+ocess/email-clients.rst
+> > index 471e1f93fa09..fc2c46f3f82d 100644
+> > --- a/Documentation/process/email-clients.rst
+> > +++ b/Documentation/process/email-clients.rst
+> > @@ -350,23 +350,3 @@ although tab2space problem can be solved with exte=
+rnal editor.
+> >=20
+> > Another problem is that Gmail will base64-encode any message that has a
+> > non-ASCII character. That includes things like European names.
+> > -
+> > -Proton Mail
+> > -***********
+> > -
+> > -Proton Mail has a "feature" where it looks up keys using Web Key Direc=
+tory
+> > -(WKD) and encrypts mail to any recipients for which it finds a key.
+> > -Kernel.org publishes the WKD for all developers who have kernel.org ac=
+counts.
+> > -As a result, emails sent using Proton Mail to kernel.org addresses wil=
+l be
+> > -encrypted.
+> > -Unfortunately, Proton Mail does not provide a mechanism to disable the
+> > -automatic encryption, viewing it as a privacy feature.
+> > -The automatic encryption feature is also enabled for mail sent via the=
+ Proton
+> > -Mail Bridge, so this affects all outgoing messages, including patches =
+sent with
+> > -`git send-email`.
+> > -Encrypted mail adds unnecessary friction, as other developers may not =
+have mail
+> > -clients, or tooling, configured for use with encrypted mail and some m=
+ail
+> > -clients may encrypt responses to encrypted mail for all recipients, in=
+cluding
+> > -the mailing lists.
+> > -Unless a way to disable this "feature" is introduced, Proton Mail is u=
+nsuited
+> > -to kernel development.
+>=20
+> Instead of completely removing the Proton Mail section, can we keep the
+> mention about the Proton Mail bridge and the third-party hydroxide
+> (https://github.com/emersion/hydroxide) bridge.
 
- .../bindings/sound/everest,es8316.yaml        |   7 +-
- sound/soc/codecs/Kconfig                      |   4 +
- sound/soc/codecs/Makefile                     |   2 +
- sound/soc/codecs/es8311.c                     | 970 ++++++++++++++++++
- sound/soc/codecs/es8311.h                     | 162 +++
- 5 files changed, 1143 insertions(+), 2 deletions(-)
- create mode 100644 sound/soc/codecs/es8311.c
- create mode 100644 sound/soc/codecs/es8311.h
+I think that is probably reasonable, but I think writing the replacement
+text is up to someone who actually uses protonmail.
 
-Best regards,
-Matteo Martelli
+--M4UZhHp/KDapPJjU
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZkYugAAKCRB4tDGHoIJi
+0omAAQD2PDht18QafEYRX8KcAkFSW+u0xgTPRkv1jW67OHnXUQD/b7l2pDkiHGJO
+H0NRHTXedMoiytMxuVkw1tu7zM96SwE=
+=qAQV
+-----END PGP SIGNATURE-----
+
+--M4UZhHp/KDapPJjU--
 
