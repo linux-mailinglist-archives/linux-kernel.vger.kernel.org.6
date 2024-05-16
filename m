@@ -1,96 +1,83 @@
-Return-Path: <linux-kernel+bounces-181360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 284598C7AFB
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 19:18:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FF9D8C7B04
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 19:19:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B07051F221A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:18:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC2A11F2266D
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:19:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EA6215666D;
-	Thu, 16 May 2024 17:18:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B0F915696F;
+	Thu, 16 May 2024 17:19:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rdOjwGHg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="nrZipxZp"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9219B154BF0;
-	Thu, 16 May 2024 17:18:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD9711429E;
+	Thu, 16 May 2024 17:19:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715879907; cv=none; b=MxwFXH55IcuK8aAOoa50RstgesX/iF+XAafC1JpCIsxK14XH/G/skffKOpdPmuvy7K8z3q2n3BarqWLmuqpPyeZoxJYtNOgj1LiDDvkkrSQceYhHz4m0EF+8SaehB/MqZe/I6E9vX3M13/qDfxw9ld1hui9q5ywfn6GA2kuq2hk=
+	t=1715879944; cv=none; b=liHEzB3IOLoEJb8ICbYt4uDBOhO6o21ZwC2+sOAoHJNfnm7pnLIO5UEjIjWdnOtJLkS6eWBsGBXROyM8lAZ6efD6FVVFKXd+0iG0QGjcWEiBVtIR4W90eUPic3Yc9aHJPv/ChL/4ek1mT83bXjWxHqwwx3rfWfcExyKZqenAOiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715879907; c=relaxed/simple;
-	bh=fIK++qma76v6f8TknO156tpt5GQaZPJ+s9y4ZW/mavQ=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=JHqSgg0Q04rNRGqc6qGrRlNCPJDCTGKkpbJ/iJepGdhLGGP7TR/M17/l/BgB1F6jUu/KF46eBg8msTVkLk3dMgByzUcGqpSmYneRXsL8xyI4jjtuk4KBARYB4abLqphpREBh1ATbULAKezWpoWWGoAR/6MCB7kL+KaTlJgXRB/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rdOjwGHg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 217FFC113CC;
-	Thu, 16 May 2024 17:18:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715879907;
-	bh=fIK++qma76v6f8TknO156tpt5GQaZPJ+s9y4ZW/mavQ=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=rdOjwGHgCqG3/ineB6Oty5GlbvyY3FGa5MaGsr7QsgqE7RwBRax43tYFSxhyNkM3O
-	 xvCgoQE+c6eQxKm0Hd9H5SonC7lgFIyeYvMz6yqH//2dY22/kFLzzPn5EO9rVJ9PCK
-	 8GDyfegnO0bLk/lqUFzxWTVkpyEiM5zk2y5Ouyx/QrZB0vNGnl3ijiK/eF7sok+iab
-	 Sh5LzcBRbGZO2hEvBkihpNXL5CTUrcYLgmNdAS7sSmVWgq3neuVPg/XIp0u5tamkFb
-	 AqUvhzBKZpVOrQ3AptQ72EYJ/3M0R/ULEBexGzuF5+PsL8crJ9BaPCPV9P8mw5bjdx
-	 loHHl3sp4DRUw==
+	s=arc-20240116; t=1715879944; c=relaxed/simple;
+	bh=MvMJ500IcUju/J5qbNPK3z8cC6mXwc3HjbRxf8hRgco=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tz0/XYpu08UwnKZCJ8Z/2ioj1rQLP3SPvE4e1S+2mFnlsF74PKEsJWcZeEDpqipjcTgRAwWf41ODHPQqd+apRTRcMq2k5Uz8uoBgBRT2hpPIij3q4sx00muzb7k6jswyTObwMVRqx2mWpmMUfrYs1PGh/kguKllqXB7+esOihTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=nrZipxZp; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=xxQYQK2/Vh6beHOFwpkTAc40DkWP8JdY+uh5YwSLWrQ=; b=nrZipxZp3XsCImZTe22oaTOTPr
+	4vihGnamFREThHGpVWBMw5lG8IAMgZg0g4WnuFvxKTfRwXk5mJFkCleLY9nOHM11FHahkUvj5Nsx5
+	9R9h2FQc2Qm1uQJiO4PDaxB73rrhHWh3lx3os2mMunSO7oDMaiYnH7bPbxlwbadAGd5Q=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1s7ekZ-00FWeX-Bd; Thu, 16 May 2024 19:18:39 +0200
+Date: Thu, 16 May 2024 19:18:39 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>
+Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+	decui@microsoft.com, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, longli@microsoft.com,
+	yury.norov@gmail.com, leon@kernel.org, cai.huoqing@linux.dev,
+	ssengar@linux.microsoft.com, vkuznets@redhat.com,
+	tglx@linutronix.de, linux-hyperv@vger.kernel.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-rdma@vger.kernel.org, schakrabarti@microsoft.com,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] net: mana: Fix the extra HZ in mana_hwc_send_request
+Message-ID: <d9a7f46e-1e57-4c66-8e47-dfdd696f8f43@lunn.ch>
+References: <1715875538-21499-1-git-send-email-schakrabarti@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 16 May 2024 20:18:22 +0300
-Message-Id: <D1B8NSWK7C8W.2793LJVZT01LD@kernel.org>
-Cc: <brauner@kernel.org>, <ebiederm@xmission.com>, "Luis Chamberlain"
- <mcgrof@kernel.org>, "Kees Cook" <keescook@chromium.org>, "Joel Granados"
- <j.granados@samsung.com>, "James Morris" <jmorris@namei.org>, "David
- Howells" <dhowells@redhat.com>, <containers@lists.linux.dev>,
- <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
- <linux-security-module@vger.kernel.org>, <keyrings@vger.kernel.org>
-Subject: Re: [PATCH 0/3] Introduce user namespace capabilities
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Paul Moore" <paul@paul-moore.com>, "Jonathan Calmels"
- <jcalmels@3xx0.net>, "Serge Hallyn" <serge@hallyn.com>
-X-Mailer: aerc 0.17.0
-References: <20240516092213.6799-1-jcalmels@3xx0.net>
- <CAHC9VhQ=nNPLRHF8RAMxArT1CESei+qYsnGse6--ixPhACAWTA@mail.gmail.com>
-In-Reply-To: <CAHC9VhQ=nNPLRHF8RAMxArT1CESei+qYsnGse6--ixPhACAWTA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1715875538-21499-1-git-send-email-schakrabarti@linux.microsoft.com>
 
-On Thu May 16, 2024 at 7:23 PM EEST, Paul Moore wrote:
-> On Thu, May 16, 2024 at 5:21=E2=80=AFAM Jonathan Calmels <jcalmels@3xx0.n=
-et> wrote:
-> >
-> > It's that time of the year again where we debate security settings for =
-user
-> > namespaces ;)
-> >
-> > I=E2=80=99ve been experimenting with different approaches to address th=
-e gripe
-> > around user namespaces being used as attack vectors.
-> > After invaluable feedback from Serge and Christian offline, this is wha=
-t I
-> > came up with.
->
-> As Serge is the capabilities maintainer it would be good to hear his
-> thoughts on-list about this proposal.
+On Thu, May 16, 2024 at 09:05:38AM -0700, Souradeep Chakrabarti wrote:
+> Commit 62c1bff593b7 added an extra HZ along with msecs_to_jiffies.
+> This patch fixes that.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 62c1bff593b7 ("net: mana: Configure hwc timeout from hardware")
+> Signed-off-by: Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>
 
-Also it would make sense to make this just a bit more digestible to a
-wider group of maintainers, i.e. a better introduction to the topic
-instead of huge list of references (no bandwidth to read them all).
+https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html#netdev-faq
 
-This is exactly kind of patch set that makes you ignore it unless
-you are pro-active exactly in this domain.
+Please set the Subject line to [PATCH net] to indicate which tree this
+applies to.
 
-I think this could bring more actually useful feedback.
-
-BR, Jarkko
+	Andrew
 
