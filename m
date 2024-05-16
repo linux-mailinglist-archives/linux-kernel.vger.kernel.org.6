@@ -1,85 +1,154 @@
-Return-Path: <linux-kernel+bounces-180726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE0B48C7257
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:00:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29F418C725F
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:03:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AF9C1F2261F
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 08:00:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B3CD1C21860
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 08:03:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 791C26AFAE;
-	Thu, 16 May 2024 08:00:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22A386D1AF;
+	Thu, 16 May 2024 08:03:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="n+nkw9AU"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j+kNbRQn"
+Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com [209.85.222.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DDC13E49E;
-	Thu, 16 May 2024 08:00:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF5584EB30;
+	Thu, 16 May 2024 08:03:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715846424; cv=none; b=B0UAMPdr/HDyMjCJv0QCCL31Ut5G5cuWbvTr6lNXDAJ7p12FaoRv5ypqn79zywMXgH+/ug/N9ZckWQe1WIo6soUijj9ABBV2MJjbq50SSuObDvUUzaPuILjDjJdtiLqjupitTgzE83Kgbxpm09/MNWZUbK+F1SE12Dks/rqZMP0=
+	t=1715846585; cv=none; b=upFwa5oqH+7k/bX2erGquoYx3+DWTrjkjJgnsRPVb+n8PtnRD9IKfJiHjbkfJG9lmhBzudiL91QNxNe/E+mCTca3W1O2FpWLMVJIZuBd3go3L0xstHdchNP6Um73MZg6DRGM7QMZWzWtzV5foH9LD6ehh6CF2HsDhwNLB+bd5ec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715846424; c=relaxed/simple;
-	bh=9fSy4m7IFndF9uPlgLMzNmbf3zpZNt6Zla356Zods3M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TIRhMcCT0+LEya2NtXDE0Wsz6i7VDXtzjWm4bXkviWbPCofTWGmPiFTv5aHUIw8fDrwRMIdDuePYi5/FPgOK2DJ06UxVoanwwjLJ78J1cG8hUCb+n/j0vMTxvjvbbrnntJU2yjwde4H7j/wXMj/fKKRhdD2DLloxsR8iLNe7r7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=n+nkw9AU; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from francesco-nb (31-10-206-125.static.upc.ch [31.10.206.125])
-	by mail11.truemail.it (Postfix) with ESMTPA id 45FBB1FE67;
-	Thu, 16 May 2024 10:00:12 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1715846412;
-	bh=9fSy4m7IFndF9uPlgLMzNmbf3zpZNt6Zla356Zods3M=; h=From:To:Subject;
-	b=n+nkw9AUM5/VtOoI5cQjhYrdvZeg+o0A7gGkxcIhCvOrI7FhHIsjyhu2ZDxeWZ4iK
-	 GZddQ9LQ9gPmC9LSyzQ+x94ykLFujfn7/5UqTdcsgIS63ihY/nkhlCe13Tw9aPH8ZX
-	 ETdzNUJw2WfEGqtXEHhaCbsSnuUbpnPa1QhIB76XBifsm/IEss1pDURLrQXGPijWUM
-	 svVBqMGUtWe7RJnEp92Frdm2kn17hBbL/CPlzRDREw6XueEmVwNTXd6ru3Z0waS9at
-	 zgEXSCtBp0Ioi0DgzVjX6d6hw1goyuJFzcuSZPpQtODJWOay8w96iXpkDpblsrr9Rs
-	 uLinG5P8CcbmQ==
-Date: Thu, 16 May 2024 10:00:08 +0200
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Marek Vasut <marex@denx.de>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Conor Dooley <conor+dt@kernel.org>,
-	Fabio Estevam <festevam@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, kernel@dh-electronics.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: imx8mp: Enable HDMI on i.MX8MP DHCOM PDK2
- and PDK3
-Message-ID: <20240516080008.GA9338@francesco-nb>
-References: <20240514010706.245874-1-marex@denx.de>
+	s=arc-20240116; t=1715846585; c=relaxed/simple;
+	bh=5HE3VuQjHHXUOEE4YFWAvTD0H1sgsk7BGUNdV6sOGOc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=trw+hNLr2FZysSAvHSuT2C8Gm49VniiJ+Ap8K9tYQwRbxYAwKWlu+5S+Q7/WUDHjK7+ahesDWo40rp1ibGwUjSNg/NlUlvzVQFMOu2fDosvE6Y7N+cTgNwifHZWiXimlXXFJgxeTc4V+llbhgIl94k+hjpET1Q+uN0+BGnE1Ngw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j+kNbRQn; arc=none smtp.client-ip=209.85.222.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-7fbbb2cf3c1so1196845241.3;
+        Thu, 16 May 2024 01:03:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715846583; x=1716451383; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fl0nj/kLrslUm9shiSkyG/Y7CY/aAcnLARdZY81Sgbk=;
+        b=j+kNbRQn5iymX73FVekrMtiTXiLFbcKGcrnKuLEbUWYxt1tRfqS1NKJq+MjfUAwGtx
+         PeGzp30ZnvuXy/RMhH3sEw7jP32/V01d4lRvohnGrBJr9ICWBjB3fDiIu0u0XKDZWyei
+         SbTbk2uImlEaAXJ7EkAVKUez74uxRlSDPYb6qeW6p1GrBHIvxutKNRAmCmCRv3T7M7Jl
+         p7fzznEMV05vwMrHcpw/LOYmOjIhJDy8/WFT87bwBd0VaB+6GaMTCTCMmNXTHcpYC3mS
+         rc/i+Jw+LsEDT6rVtqN/UPPdvM0JkGgD5oXVwBhWRtV+HcGljkAGOp4Zp2vRYtLzCH4K
+         fknQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715846583; x=1716451383;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fl0nj/kLrslUm9shiSkyG/Y7CY/aAcnLARdZY81Sgbk=;
+        b=SjiIDmS6+bgO86DxaQZwFyfCkgn0d01yGfDaggnH52vaDvbT1Rekh1kbDURBKXl15z
+         ABQwZmSyNtYw6LEnLptDSZo4Bg7n6p0Mh0kDvsXGArXfwTBladUMWwJFKrOpPsFJkAlm
+         7k3l29o5SChPIwhYYH3GzUgxjdxu7rbAN7X1Spu7FJUscs7NvgT5FFYqcWPRkuMyy/wW
+         mIDD4YrneHTcQ+4jj35Gdf4R2UlBWkzRsACkZgHkztS/XnSavOZNmdQAK0tYqWCUmI2c
+         Ve6Ih+4YK659iLUZr3Z9eyFj2mYOJdw6/UMdAtwdrgqQ8Kq9AYshvZKMjiwIenQrEyE3
+         9haw==
+X-Forwarded-Encrypted: i=1; AJvYcCWiFfJO0GraIj8CNK13YAILSomlGzc5WGlJTvZTYz11iDNrLN6TYxxyLC91XmQzF36j0CivSyzXAkXPZOmwLW2cuQWXupOWf1SSk4wziltXc2bwQLM1HkAUaKMeA0mnsxHKDlzFWE6MQdt4VrYd0rdn4U3LQp+BkE80JmbBn9pz0rokNmk=
+X-Gm-Message-State: AOJu0Yy+zndMGE/XzSaYogrd9u2QIYSP4YYhvZJvhlxlf+7PAtHfPwcC
+	7WFMVqZkWhOyM4IX21oBrDZKcNdQoxeJyt+qWDPaO2boA8nYTr02WNoTVaAuPYkI6IQn87hJy0l
+	LXud4hkEPPCjN+C1PbW2WxuujBVk=
+X-Google-Smtp-Source: AGHT+IEGmuIZ94m60TpcHFKQ9zhWmQGKsauGUlJNHGP37sp7Ssf2UU/Ll/3JZVxKgrv+EFCNMM8uiab2zcK65YD2nbo=
+X-Received: by 2002:a05:6122:368d:b0:4df:2ce2:6e4 with SMTP id
+ 71dfb90a1353d-4df882c1c5amr15980200e0c.4.1715846582738; Thu, 16 May 2024
+ 01:03:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240514010706.245874-1-marex@denx.de>
+References: <20240423175900.702640-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240423175900.702640-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Thu, 16 May 2024 09:02:35 +0100
+Message-ID: <CA+V-a8vN5YHX3NFJNmqxzQt6HB=xC1Srr12ZvzEWHhKe85YWSg@mail.gmail.com>
+Subject: Re: [PATCH v2 00/13] Add PFC support for Renesas RZ/V2H(P) SoC
+To: Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-renesas-soc@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
+	Rob Herring <robh@kernel.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Marek,
+On Tue, Apr 23, 2024 at 6:59=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
+om> wrote:
+>
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Hi All,
+>
+> This patch series aims to add PFC (Pin Function Controller) support for
+> Renesas RZ/V2H(P) SoC. The PFC block on RZ/V2H(P) is almost similar to
+> one found on the RZ/G2L family with couple of differences. To able to
+> re-use the use the existing driver for RZ/V2H(P) SoC function pointers
+> are introduced based on the SoC changes.
+>
+>
+> RFC->v2
+> - Fixed review comments pointed by Rob
+> - Incorporated changes suggested by Claudiu
+> - Fixed build error reported for m68K
+> - Dropped IOLH groups as we will be passing register values
+> - Fixed configs for dedicated pins
+> - Added support for slew-rate and bias settings
+> - Added support for OEN
+>
+> RFC: https://patchwork.kernel.org/project/linux-renesas-soc/cover/2024032=
+6222844.1422948-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
+>
+> Cheers,
+> Prabhakar
+>
+> Lad Prabhakar (13):
+>   dt-bindings: pinctrl: renesas,rzg2l-pinctrl: Remove the check from the
+>     object
+>   dt-bindings: pinctrl: renesas: Document RZ/V2H(P) SoC
+>   pinctrl: renesas: pinctrl-rzg2l: Allow more bits for pin configuration
+>   pinctrl: renesas: pinctrl-rzg2l: Allow parsing of variable
+>     configuration for all architectures
+>   pinctrl: renesas: pinctrl-rzg2l: Validate power registers for SD and
+>     ETH
+>   pinctrl: renesas: pinctrl-rzg2l: Add function pointers for
+>     locking/unlocking the PFC register
+>   pinctrl: renesas: pinctrl-rzg2l: Add function pointer for writing to
+>     PMC register
+>   pinctrl: renesas: pinctrl-rzg2l: Add function pointers for
+>     reading/writing OEN register
+>   pinctrl: renesas: pinctrl-rzg2l: Add support to configure the
+>     slew-rate
+>   pinctrl: renesas: pinctrl-rzg2l: Add support to set pulling up/down
+>     the pins
+>   pinctrl: renesas: pinctrl-rzg2l: Pass pincontrol device pointer to
+>     pinconf_generic_parse_dt_config()
+>   pinctrl: renesas: pinctrl-rzg2l: Add support for custom parameters
+>   pinctrl: renesas: pinctrl-rzg2l: Add support for RZ/V2H SoC
+>
+Gentle ping.
 
-On Tue, May 14, 2024 at 03:06:42AM +0200, Marek Vasut wrote:
-> Enable HDMI output on i.MX8MP DHCOM PDK2 and PDK3. The I2C5 on PDK2 and
-> I2C mux port 1 on PDK3 respectively are used in regular I2C mode instead
-> of HDMI DDC mode to permit connection of other I2C devices on those buses.
+Cheers,
+Prabhakar
 
-Are you able to read the HDMI EDID with such configuration? I have the
-patch ready for verdin imx8mp, I just did not have time to figure out
-this last details.
-
-Francesco
-
+>  .../pinctrl/renesas,rzg2l-pinctrl.yaml        |  40 +-
+>  drivers/pinctrl/renesas/pinctrl-rzg2l.c       | 640 ++++++++++++++++--
+>  2 files changed, 617 insertions(+), 63 deletions(-)
+>
+> --
+> 2.34.1
+>
 
