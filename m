@@ -1,95 +1,118 @@
-Return-Path: <linux-kernel+bounces-181477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B740D8C7C82
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 20:31:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 23A3D8C7C86
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 20:31:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CD081F2342A
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:31:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDC2A1F23419
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:31:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34C5015746D;
-	Thu, 16 May 2024 18:24:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 262AA156F54;
+	Thu, 16 May 2024 18:28:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nkYjuS/N"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="CwU2n6eV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A35156C7F;
-	Thu, 16 May 2024 18:24:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59563156C7C;
+	Thu, 16 May 2024 18:28:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715883892; cv=none; b=tcEgwi+qRJl9nl4U6V6KkhG+9LI9jAIRQId9GsliZlA8D0Gis8MEQ9ebW+80tip13YByZz7Efu7Ly74ZGjhI+UqX0Nfh05wA/YM2uRidgu/fH7EqaFZbpvzCxJXRexAAa0vxHN+HPZwPm2Cbo84tm16GM4nHxyWTHLJ+v7eHe3M=
+	t=1715884100; cv=none; b=BzlV2T8Ns8SEDgN+DqmhmXufEx6hocw5S9ePWlCijcoUAJZ1O/04DCOiXB09wXd+YlIxJO/qOtznoskO+OucdZzl4JKZ+zfWgSCJSjZjglY9Jftpvg+trk3pTCCM8pQKyd2lKl8ag+w1oTZ3hVxpsK6MA5ZCPk7D3rSBlpuWLYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715883892; c=relaxed/simple;
-	bh=cPL1DhrdW/xtQHPL/q/XvgIelBXk6IEmMe/AGb1c944=;
+	s=arc-20240116; t=1715884100; c=relaxed/simple;
+	bh=sT5rh3M+x1YJYckp/JlnwaL9GidKt++aphUT4lC1FnU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BA2WgGa7wl5zBkPsETlWeJUuy6ZIh4Jn1vbq+ONn4otFiYhV+jvQCSbYVL5aOpW8tqdnrSx2JotEpGBHf9Nvm3gzC9KELGbH/KEC2tIbK16HUgscEmUS5OqzrzBXKo3X3PYHixzt9VQo2+pTqhsDAOtCrGmmORUQuuX1Svbn9+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nkYjuS/N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C819C113CC;
-	Thu, 16 May 2024 18:24:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715883891;
-	bh=cPL1DhrdW/xtQHPL/q/XvgIelBXk6IEmMe/AGb1c944=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xyt8pBeLvJ+B8EnYYRkCADcXoDFlxVxOzpRqfZ1NvDbRUyFKJci7++fHTeb/RLeutHfQjUtaGKr5m8U+lh0vcvD16LdGWY+Z5oxlty+reaLziwKWsIWuVJ6xAVXgc4RQS+Ad+IEvFAqol0+VFCbSV+xDnD5f57AOp9qX6gWOlF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=CwU2n6eV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BC99C4DE1B;
+	Thu, 16 May 2024 18:28:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1715884099;
+	bh=sT5rh3M+x1YJYckp/JlnwaL9GidKt++aphUT4lC1FnU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nkYjuS/NexdomGUYU3PhmF2BEhhJUZUm4c0PYZXVThwzQ1oUCUlMhSlRnZ1V3G0dI
-	 Wl35yGix0v9t0gXtX+EXf16tY03zkK6DewJ36fpxh/djVTlLkaW2R/+NRXUvKtylgO
-	 aRhbWYSXg7PTX9Y3jEpRtXFnL/Ydoiw95ivnOxxWhnRT0x2UWZks1Yk+85EkqyFn5O
-	 nTSQ8P7WVoKmLK5lq+y0Pd+JeIEPBYtIRr+ORf7MgipT/MbEkZBrOLgo2UNDPPG02Z
-	 zMHpHpGNvRSuztl7iD7RNVzpr3jdPiJZ6FCQPxGqpZOxeN0/+iPfCsNAxZV4HyVH8v
-	 ULd2zSEYDI5Pw==
-Date: Thu, 16 May 2024 19:24:46 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Eddie James <eajames@linux.ibm.com>
-Cc: linux-fsi@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-	linux-i2c@vger.kernel.org, linux-spi@vger.kernel.org,
-	andi.shyti@kernel.org, joel@jms.id.au, alistair@popple.id.au,
-	jk@ozlabs.org, andrew@codeconstruct.com.au,
-	linux-aspeed@lists.ozlabs.org
-Subject: Re: [PATCH v3 38/40] spi: fsi: Calculate clock divider from local
- bus frequency
-Message-ID: <a3cf96f2-fa53-4f18-90f0-c21d6df5b2af@sirena.org.uk>
-References: <20240516181907.3468796-1-eajames@linux.ibm.com>
- <20240516181907.3468796-39-eajames@linux.ibm.com>
+	b=CwU2n6eVL6NNCAgVieVMspD5xWKrfd4OQgqj3WrEwdlG6PoaKeIxdU3Nl+vyMBQI9
+	 aECP/pmMps/AXBG2ymUF9F2xlzxsOY/W018DVcO3dYu2pSP9wo5eQo/i8ox8Gk8gLl
+	 +x83O4W6y/LIIff5vLbn7YgmPlSw09nvi2tYfLic=
+Date: Thu, 16 May 2024 20:28:16 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	linux-kernel@vger.kernel.org, Sebastian Reichel <sre@kernel.org>,
+	linux-pm@vger.kernel.org
+Subject: Re: [PATCH RFC] kobject_uevent: notify uevent sysfs file on changes
+Message-ID: <2024051634-replica-unbalance-b39d@gregkh>
+References: <20240516-uevent-sysfs-notify-v1-1-2ebb39930c09@weissschuh.net>
+ <2024051640-earthen-granite-0847@gregkh>
+ <74e7cc7b-3b3f-4dae-bcb2-7eb4f9d478cd@t-8ch.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="EtRMkbJm6V6cCFzH"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240516181907.3468796-39-eajames@linux.ibm.com>
-X-Cookie: I'm having a MID-WEEK CRISIS!
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <74e7cc7b-3b3f-4dae-bcb2-7eb4f9d478cd@t-8ch.de>
 
+On Thu, May 16, 2024 at 07:41:07PM +0200, Thomas Weißschuh wrote:
+> On 2024-05-16 13:17:34+0000, Greg Kroah-Hartman wrote:
+> > On Thu, May 16, 2024 at 12:27:58PM +0200, Thomas Weißschuh wrote:
+> > > The sysfs file "uevent" that exists for each device
+> > > contains the same information that is attached to uevents emitted via
+> > > netlink (or the usermode helper).
+> > > This is useful for userspace which interacts with sysfs directly,
+> > > without using (lib)udev.
+> > > 
+> > > However it is not possible to actually get notified when the data in
+> > > the "uevent" file changes.
+> > 
+> > What is wrong with listening to the uevent that is happening when the
+> > file changes?
+> 
+> It requires netlink or libudev which is not available or ergonimic for
+> all userspace programs.
 
---EtRMkbJm6V6cCFzH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+But that's the api involved for this thing.
 
-On Thu, May 16, 2024 at 01:19:05PM -0500, Eddie James wrote:
-> Use the new FSI device local bus clock to calculate the proper SPI
-> clock divider.
+> Shellscripts, simple C applications, programing languages without
+> access to netlink/libudev.
 
-Acked-by: Mark Brown <broonie@kernel.org>
+You can have a shellscript run for every uevent if that's all you have,
+why not just do that?
 
---EtRMkbJm6V6cCFzH
-Content-Type: application/pgp-signature; name="signature.asc"
+> I noticed this when using the "Waybar" application[0] and missing power
+> supply event updates. Both me and the authors of Waybar expected sysfs
+> notifications to work for uevent files.
+> 
+> Using sysfs notifications looks like an easy quality-of-life
+> improvement.
+> 
+> > > Enable these notifications, so that the "uevent" file can be used
+> > > together with inotify and friends.
+> > 
+> > uevent files are meant to be listened to by the uevent itself, why not do
+> > that?
+> 
+> I can't parse this sentence, sorry. Could you elaborate?
 
------BEGIN PGP SIGNATURE-----
+The uevent file just mirrors what was sent in the uevent.  It isn't
+there to be polled, it's just there to be read if you want the
+information later on for some reason (i.e. coldplugging).
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZGT20ACgkQJNaLcl1U
-h9Cd2Af/YyaJyngR16Od3D4m0rdz60YKgrtOS3Cb/uzkT7akZun/GI8APPvqa3eT
-MoMILsYV/sJLZZSToRxWTX4KeD6W05e/xroFqQGdEFOYPKIgSKurASoHutiksOW+
-6eG20q6tI7MHN0ljWxuvxl5f50mmgNGHilOP9SliRxqwZ7Opezxbmjefr1Zzekpd
-VpuzfhVO+Cb29HWR8NWcIqFcLi0Hi/VzEtJ6ydEWQAUuVU1UOWP1VeNLiNxLrP4d
-mAn+T8KHJfreTV9pf2d9hGxH0KXpeEVeq1CYJCjClrSZ3I5ra3iSVNxIQhpTZnWJ
-BhkD4E3BAnkYctMOFZms4ZgVm8W50A==
-=n/DO
------END PGP SIGNATURE-----
+I recommend just using libudev to register for the events, don't try to
+parse the files yourself, that way is madness :)
 
---EtRMkbJm6V6cCFzH--
+Or register for the netlink events you care about, you can filter very
+easily that way to only get the ones you want, that's why the netlink
+interface is used.
+
+thanks,
+
+greg k-h
 
