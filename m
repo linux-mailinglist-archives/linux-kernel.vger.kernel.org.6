@@ -1,143 +1,228 @@
-Return-Path: <linux-kernel+bounces-181051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40E128C76CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:46:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F8628C76CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:47:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71F721C210E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:46:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5327B1C20E6B
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:47:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CC0F146580;
-	Thu, 16 May 2024 12:46:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC856146005;
+	Thu, 16 May 2024 12:47:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JbWIxIwt"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="yxtGzDPQ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="D9IOcnl6";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="yxtGzDPQ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="D9IOcnl6"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7276D3A1B7
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 12:45:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E2DB3A1B7
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 12:47:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715863559; cv=none; b=qTrz1q9y0ch211ez1/sSr3fphvihY1iNGzZpNLHN7ew1RC33TepWhl2sWLloJ5F+Z1ymvCsGWNP4qBVmWM4mZgwzKKApq+5XydB93wLcvAcFWTbmMp9pynlTbWVgyiYa05rt1uY+gaNTI4KXzyTUQkM+keTqKB5CgFHLtnYkOZg=
+	t=1715863631; cv=none; b=ZjFqYRaCdCI+DiRmdv0Yota81OLFk/3Hr41dFCfEoK4/RUYbgksxYUXV207Yjteq+jClYhERoid9KqvZEcCt8AwgSIHVbE2r83fSPwy2dX+QVHWjfZ9k0ehdv5+zi4KBBdrJLjJzHeYiGMcPedWlbrlydDXX7P+7KV1sCVv3L0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715863559; c=relaxed/simple;
-	bh=xHfa5u2tqq62Z2Yqj7BohljmTIio2h6h+05EN60Voxc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f/SE0Geiyeeu5L9URVR/Irls2m6D2VicUJRcUm1KeU/xAks513yRhyCtxJQRpVlwa3gfg3KQPQx4DJOcu5sZcGu1wkr20TqcjHGREdIxbsigHjbeZW3BmSr5cQv6LR8ghEWdfrizly3KCnsfo0o0r0vMhBckcBRxvCKczyN7OLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JbWIxIwt; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715863557;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
+	s=arc-20240116; t=1715863631; c=relaxed/simple;
+	bh=N4XtJk61jiIC6+ZqtkoIDnGLQX+KPmLZ6o29Z+dVyBc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CbceYNvP40ZxTAEHo/kOICKm00bVILT5LHLJUVBWW0HJiB9XCxQe+ajXimEo1mv84lpWj7n1gleTcdwgN2FPMnvImd8TjESIABRhTDOtjaEEHSVq+v/4LbiO0NA8k5eKYEu4Dh+z3Ti9O517c2eGzG4z4H+EvYR7IEl3D5TX/kU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=yxtGzDPQ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=D9IOcnl6; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=yxtGzDPQ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=D9IOcnl6; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 69ACD34940;
+	Thu, 16 May 2024 12:47:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1715863627; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=7dG6Z+45v2q5x1q/1fMWlQrJ5gyYce9+KheVF6sIr+g=;
-	b=JbWIxIwtALlmRlpOpfSpqBdOndvWs4vzsCnUIEA8daNwFNPi+IjLHYLzUnS/518C/aVRG1
-	xsRt+1SnSSNdrW7A+Cwqj0/KDsl1EpivQVeJsLivH4VNpM75RcQ/GzEtvvcW/Dh63t4guz
-	n5dcCMjyVZvHZ6D9qlGHpTPOt5iqJlU=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-607-pnl1F1f5P3yXkUW7PfD7rQ-1; Thu, 16 May 2024 08:45:55 -0400
-X-MC-Unique: pnl1F1f5P3yXkUW7PfD7rQ-1
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-35044e65060so4096581f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 05:45:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715863554; x=1716468354;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7dG6Z+45v2q5x1q/1fMWlQrJ5gyYce9+KheVF6sIr+g=;
-        b=osDDcEwFj8ikcM8RwwfD9b8qkkstvgmL7o51V88dS738T823d8YRwG8u2Bpu1wBbx9
-         t0UC9DwCjquq4Kb2OxmmnCV/3pDaHL5sFufMoC2uf3D9169KiZYMi3oraJ70tH7kTomF
-         iBKvWDRjEmVipTbv9NtozuF0SC6VgFmBP2bkzQHKXPEQR9gAltgvJY5IgI7lEdN1nUH0
-         Kc2wa9pSwEvd0DmL3zRSe968AdmeAIavxqaZSiZ0A7kM8MTO2WJal90Ydli/mYlhdYSg
-         nhmWsDfT0XofO5VVs6BK/vtZVvnZkRJjuc0mft5L7imrdp9Cvuy58Q9La0Hw3MmJJflf
-         oBDA==
-X-Forwarded-Encrypted: i=1; AJvYcCU4RQ2EfoyUgdXqpbUjARIpff25qNZ+dXoyQDRWlrejrbzQkRdWqcbPcW1T0XHZzar4wXl5X+hVEVEzbBAhtt0Pqs7MEZTDkx2GiXz1
-X-Gm-Message-State: AOJu0Yw4Fj7pwTbjG3tZhdBG475HZHdbxKVVQXt9SILuJaTr7a30UAiD
-	cv8FXsMiTsEch3lXa3EFI8fUgTArGX2ysGu15U3Eq1XRLy7a2XAbSbjNveUSuPRvP14AKGZ0593
-	svejyA4AA1s4r2IHcVwrFJlVbKPLWWzQF7u3oz3OwANXohCs9NgMaTOdqln2MVM0YmJiyisKgRg
-	eCEY08Zu9MS6mtDrR3KQzrnsUVwX2muh3HSdJj
-X-Received: by 2002:a5d:550b:0:b0:34a:9afe:76f with SMTP id ffacd0b85a97d-3504a73749cmr14015563f8f.30.1715863554124;
-        Thu, 16 May 2024 05:45:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEQ2EdeulUpFW4L96VwQkufH/EGbNBZaA8+A6kpKigJT6nq88J8jsTsHca1puBuLIbcAMkH5jX3IOPWEwU8ztQ=
-X-Received: by 2002:a5d:550b:0:b0:34a:9afe:76f with SMTP id
- ffacd0b85a97d-3504a73749cmr14015549f8f.30.1715863553739; Thu, 16 May 2024
- 05:45:53 -0700 (PDT)
+	bh=8Uunt0wltRfjPfUxaO1z16wqwyf23EJvV6VQSXtDXjQ=;
+	b=yxtGzDPQYvGfNYfJcuPm0QDabpmpGL4MyQoXPH7E3Kei/l1ld2Vs7oMAjLsnMZYefC+XyU
+	Fd6SLhSFqzQY6u6AXqQVAbC5Lxw7edwEc0A2Fue0HhBgNvCPpfHpyJrcSY5LRAiaGUuRa7
+	AhWO+2H0mT1IlHPyxZvS45zfcfEqgS4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1715863627;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8Uunt0wltRfjPfUxaO1z16wqwyf23EJvV6VQSXtDXjQ=;
+	b=D9IOcnl6NhZrbmCbZ1pgb5ON6qGsbNBaymMRAfZVtJH5icBX+7udSYYORpBIsB9Ndcpawp
+	XwsCI3y4fEZaqXBA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=yxtGzDPQ;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=D9IOcnl6
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1715863627; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8Uunt0wltRfjPfUxaO1z16wqwyf23EJvV6VQSXtDXjQ=;
+	b=yxtGzDPQYvGfNYfJcuPm0QDabpmpGL4MyQoXPH7E3Kei/l1ld2Vs7oMAjLsnMZYefC+XyU
+	Fd6SLhSFqzQY6u6AXqQVAbC5Lxw7edwEc0A2Fue0HhBgNvCPpfHpyJrcSY5LRAiaGUuRa7
+	AhWO+2H0mT1IlHPyxZvS45zfcfEqgS4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1715863627;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8Uunt0wltRfjPfUxaO1z16wqwyf23EJvV6VQSXtDXjQ=;
+	b=D9IOcnl6NhZrbmCbZ1pgb5ON6qGsbNBaymMRAfZVtJH5icBX+7udSYYORpBIsB9Ndcpawp
+	XwsCI3y4fEZaqXBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 02033137C3;
+	Thu, 16 May 2024 12:47:06 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id rOU2OUoARmZhUgAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Thu, 16 May 2024 12:47:06 +0000
+Date: Thu, 16 May 2024 14:47:01 +0200
+From: Oscar Salvador <osalvador@suse.de>
+To: Jane Chu <jane.chu@oracle.com>
+Cc: linmiaohe@huawei.com, nao.horiguchi@gmail.com,
+	akpm@linux-foundation.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 5/5] mm/memory-failure: send SIGBUS in the event of
+ thp split fail
+Message-ID: <ZkYARVW2cOZcsFYB@localhost.localdomain>
+References: <20240510062602.901510-1-jane.chu@oracle.com>
+ <20240510062602.901510-6-jane.chu@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240510211024.556136-1-michael.roth@amd.com> <20240510211024.556136-14-michael.roth@amd.com>
- <ZkU3_y0UoPk5yAeK@google.com>
-In-Reply-To: <ZkU3_y0UoPk5yAeK@google.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Thu, 16 May 2024 14:45:41 +0200
-Message-ID: <CABgObfZXvq8_j+tm8zJ_F=5XAD22rky1JtdUSzV+VgpOXqOn-g@mail.gmail.com>
-Subject: Re: [PULL 13/19] KVM: SEV: Implement gmem hook for invalidating
- private pages
-To: Sean Christopherson <seanjc@google.com>
-Cc: Michael Roth <michael.roth@amd.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240510062602.901510-6-jane.chu@oracle.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-5.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[huawei.com,gmail.com,linux-foundation.org,kvack.org,vger.kernel.org];
+	RCVD_COUNT_TWO(0.00)[2];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	TAGGED_RCPT(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: 69ACD34940
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Score: -5.01
 
-On Thu, May 16, 2024 at 12:32=E2=80=AFAM Sean Christopherson <seanjc@google=
-com> wrote:
-> > +void sev_gmem_invalidate(kvm_pfn_t start, kvm_pfn_t end)
-> > +{
-> > +     kvm_pfn_t pfn;
-> > +
-> > +     pr_debug("%s: PFN start 0x%llx PFN end 0x%llx\n", __func__, start=
-, end);
-> > +
-> > +     for (pfn =3D start; pfn < end;) {
-> > +             bool use_2m_update =3D false;
-> > +             int rc, rmp_level;
-> > +             bool assigned;
-> > +
-> > +             rc =3D snp_lookup_rmpentry(pfn, &assigned, &rmp_level);
-> > +             if (WARN_ONCE(rc, "SEV: Failed to retrieve RMP entry for =
-PFN 0x%llx error %d\n",
-> > +                           pfn, rc))
-> > +                     goto next_pfn;
->
-> This is comically trivial to hit, as it fires when running guest_memfd_te=
-st on a
-> !SNP host.  Presumably the correct fix is to simply do nothing for !sev_s=
-np_guest(),
-> but that's easier said than done due to the lack of a @kvm in .gmem_inval=
-idate().
->
-> That too is not a big fix, but that's beside the point.  IMO, the fact th=
-at I'm
-> the first person to (completely inadvertantly) hit this rather basic bug =
-is a
-> good hint that we should wait until 6.11 to merge SNP support.
+On Fri, May 10, 2024 at 12:26:02AM -0600, Jane Chu wrote:
+> When handle hwpoison in a RDMA longterm pinned thp page,
+> try_to_split_thp_page() will fail. And at this point, there is
+> little else the kernel could do except sending a SIGBUS to
+> the user process, thus give it a chance to recover.
 
-Of course there is an explanation - I usually run all the tests before
-pushing anything to kvm/next, here I did not do it because 1) I was
-busy with the merge window and 2) I wanted to give exposure to the
-code in linux-next, which was the right call indeed but it's beside
-the point. Between the clang issue and this one, it's clear that even
-though the implementation is 99.99% okay (especially considering the
-size), there are a few kinks to fix.
+Well, it does need to be a RDMA longterm pinned, right?
+Anything holding an extra refcount can already make us bite the dust, so
+I would not make it that specific.
 
-I'll fix everything up and re-push to kvm/next, but I agree that we
-shouldn't rush it any further. What really matters is that development
-on userspace can proceed.
 
-This also confirms that it's important to replace kvm/next with
-kvm/queue in linux-next, since linux-next doesn't care that much about
-branches that rebase.
+> Signed-off-by: Jane Chu <jane.chu@oracle.com>
+> ---
+>  mm/memory-failure.c | 31 ++++++++++++++++++++++++++-----
+>  1 file changed, 26 insertions(+), 5 deletions(-)
+> 
+> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+> index 2fa884d8b5a3..15bb1c0c42e8 100644
+> --- a/mm/memory-failure.c
+> +++ b/mm/memory-failure.c
+> @@ -1697,7 +1697,7 @@ static int identify_page_state(unsigned long pfn, struct page *p,
+>  	return page_action(ps, p, pfn);
+>  }
+>  
+> -static int try_to_split_thp_page(struct page *page)
+> +static int try_to_split_thp_page(struct page *page, bool release)
+>  {
+>  	int ret;
+>  
+> @@ -1705,7 +1705,7 @@ static int try_to_split_thp_page(struct page *page)
+>  	ret = split_huge_page(page);
+>  	unlock_page(page);
+>  
+> -	if (unlikely(ret))
+> +	if (ret && release)
+>  		put_page(page);
 
-Paolo
+I would document whhen and when not we can release the page.
+E.g: we cannot release it if there are still processes mapping the thp.
 
+
+> +static int kill_procs_now(struct page *p, unsigned long pfn, int flags,
+> +				struct folio *folio)
+> +{
+> +	LIST_HEAD(tokill);
+> +
+> +	collect_procs(folio, p, &tokill, flags & MF_ACTION_REQUIRED);
+> +	kill_procs(&tokill, true, pfn, flags);
+> +
+> +	return -EHWPOISON;
+
+You are returning -EHWPOISON here,
+
+> +}
+> +
+>  /**
+>   * memory_failure - Handle memory failure of a page.
+>   * @pfn: Page Number of the corrupted page
+> @@ -2313,8 +2331,11 @@ int memory_failure(unsigned long pfn, int flags)
+>  		 * page is a valid handlable page.
+>  		 */
+>  		folio_set_has_hwpoisoned(folio);
+> -		if (try_to_split_thp_page(p) < 0) {
+> -			res = action_result(pfn, MF_MSG_UNSPLIT_THP, MF_IGNORED);
+> +		if (try_to_split_thp_page(p, false) < 0) {
+> +			pr_err("%#lx: thp split failed\n", pfn);
+> +			res = kill_procs_now(p, pfn, flags, folio);
+> +			put_page(p);
+> +			res = action_result(pfn, MF_MSG_UNSPLIT_THP, MF_FAILED);
+
+just to overwrite it here with action_result(). Which one do we need?
+I think we would need -EBUSY here, right? So I would drop the retcode
+from kill_procs_now.
+
+Also, do we want the extra pr_err() here.
+action_result() will already provide us the pfn and the
+action_page_types which will be "unsplit thp". Is not that clear enough?
+
+I would drop that.
+
+
+-- 
+Oscar Salvador
+SUSE Labs
 
