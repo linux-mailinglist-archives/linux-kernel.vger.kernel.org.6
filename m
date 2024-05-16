@@ -1,431 +1,630 @@
-Return-Path: <linux-kernel+bounces-181330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73A8D8C7A98
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:43:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 383168C7A9B
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:43:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DCA5EB22985
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:43:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E216E28431B
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:43:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F289979DF;
-	Thu, 16 May 2024 16:43:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 169BE79FE;
+	Thu, 16 May 2024 16:43:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="T6vR3/R2"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="quHfxCQ7"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31D7F4691
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 16:43:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C552D6FD5
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 16:43:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715877799; cv=none; b=orO+nf3Fu0zInA/rpFke5qVSfeb/Bcpw4jWsGt1ej3ULF1lzxCJ8zEgDzyIPF+oeUemB7hxOK8psl5afCIrXs4emcgyp2CeTDRe7rhHNl24j0faen7XBIUOp0wu7aEFJ0yFsM/JKRoRBsVH/pYQ11TYi6DAyNjomPmsqmmshHXc=
+	t=1715877810; cv=none; b=X/WddKf3VWwaKumbZgABKNjIUG2k2ZS0ZPr3mSylaPCXn+wdE/Hln7LYv5X4A5jG9AtY6KVkza1GooQAAVqv8KRzTBhPcLpa9e1UzcArso48AIFEsymWbYv4+mq4Y6xCqEGwgJob6JQIzMeYa8SwttEe7ZjzkM0lxPuDcqYyaXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715877799; c=relaxed/simple;
-	bh=qhdkkjG63mJDXlyD6fjALNrwjbUeN8euBvfpCnw6MQA=;
+	s=arc-20240116; t=1715877810; c=relaxed/simple;
+	bh=v2p6heHYfEkFaIblU2RAzPLaaKr5FYKpPHkxDcnnCHI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iuUP3+lnUVemAsDdVjEB9LudG9pvb87VVD6aG0GFPHSPu9NW7Fwv3Fu7kViqYHmgaKyBXiGWiC6o6UoKQeicc5alsng3t4uLKgBSQ82rMD282xk0ayctT+9N5geidSrWgtbfY2RiEariCuo9vlFtAXo2EGTNO3w2VnXLAcosWyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=T6vR3/R2; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2e3e18c24c1so11435291fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 09:43:16 -0700 (PDT)
+	 To:Cc:Content-Type; b=odSOLV3Est/wsK0WNft0ZvyIx1fwBtHfTtyrn7U+j5MJRHWP6FjLuZ0kCqwnQtgqtAyiPIs3q0Rimax6tOd8F7Mz3lFd8lSAlgTMpwJE83s8acvs7jgOg+GSD1wfVh96DqvUKc2wqlN3OBtro6CcWPJUaC24Bhay4FaIMHVOMHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=quHfxCQ7; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1ee5f3123d8so1295ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 09:43:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1715877795; x=1716482595; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1715877808; x=1716482608; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=79IRUvthFSgXLjweA1zUqe2seBKxPLlxqdBaQG4SKUw=;
-        b=T6vR3/R2YWhJIVqbTLKcK4yJFxh7cFTHD5NrjfTAPfmF0r2reLIM66NP5YL2kCjuQp
-         bjmDubXG8x5PfwuIk7gUN2EgKegyIujg1VKjyt3Hpn8/I2PU0dYaQchQYk79IERrcBdg
-         btDiiHFgzIFHBqo9z1Cd8FhyXaLU8BCMawWSVUh2z/kykTY21gBFgaqUOrybccrkwgHx
-         2Qcb3eQkypT7ZQjE5tiG+FOJ6qGbNhQKWxMPL6FsTHIFaY9B7vlGi2B/fwLAH9WRgUud
-         PCEQ9yhE+gaob5VU58IfuRjHJuYDpFHAX5FWKvi3A6xSRnkyZi2m93eCVca0aL4mQlCN
-         APrg==
+        bh=xRZXHT5zv4OLD8sClnj1MyaIu2OkR4Vag3zoxjx9vrk=;
+        b=quHfxCQ7U/6YgkacTgBlX/hyO1ov/Dw33WaTm8v081yHXMKbX0XjXhfFObyFmHaA8V
+         t+Tvnitq3NFs/k5xrrozwYTjM+YWAkHXf6lpHbAotnn2sKa1BVJaTlXKDoaPhcZuONUe
+         4qpIvSKCTUTR2jYqba+HUj4q+7Ck9UV4cMBp90ddrfQS7gQJBBGl0xICAASeSvD4RSrh
+         L5lKGh94+U1PVV2qeVqVLqrauPE3NOyrJWyBTkccjI2mKlW4eS6l7XlE/zr6WoKY/P04
+         wFUY7I263W/cT+iL6C4T3ZUt/hCJcEGB0r4FcEw4ZnRAAbxKf8QBVXRZtv3ZQd7RyWpp
+         E1UA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715877795; x=1716482595;
+        d=1e100.net; s=20230601; t=1715877808; x=1716482608;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=79IRUvthFSgXLjweA1zUqe2seBKxPLlxqdBaQG4SKUw=;
-        b=ZbLxkwAPO+SYRliUvXsIH8i1nZm30qp1XKIFZJSTvZ1bAWHMElic+2SQVffJv97Wk3
-         r2wdOUmYZu/k/bZLrOPh9oijTBZ/5HVWoXQqvzT72g1HejDUlKlEUwwZxXXiu0tBoVGK
-         OvMWxV9VfWjc/CxeA4N0zpE6wRKJvDzeHZhD4bKZx7o9b7bg6lSka4gfHD/3Q1VVPQGr
-         wBYUufo3YxpegoqbshgdYqFgt05CnST0Vkn7rU8E8xXSaZaPmUrryW//AZR4JGnZ4JMY
-         oaGnLkkhUShBcGFg8UlUFUqB/6v2a76NtLCk/YlhsLV4wlFdOF1Zop4XDlT/pWCmYtfp
-         p/4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVZuVGqaSQsrKh/G14v2CqwylCK0YAoQHAAkGAk/PaHk5h+GE1inyMI+QV6+EJbU/IWqiPKs48nF7ho6FrljgJPxd1VH2ZoJf1grAO6
-X-Gm-Message-State: AOJu0YyFtu4cuY2RMGGYAmTMjT6t9W45ag/LydMUBl1PGU2ohsUXgxNw
-	e4PZgfh+Mo2WrWVcePnlPWkB0KyswzEtrkS5nsoAI1Nqbpu3kguoMIkqqOYCkQ3NVnlVSV4z1Yj
-	XjFyX1rpd8sH0ufTLqC2JdoCumQNvdYwPMuph5g==
-X-Google-Smtp-Source: AGHT+IGFobeuDVmgJIg/aZnlBscvXY51EDfry/lc6brTp0NxdfFW+gAy0JY4O/NTy2FJLYdANJUQeujyfscqopixA1o=
-X-Received: by 2002:a2e:2c13:0:b0:2e1:e8fa:4f56 with SMTP id
- 38308e7fff4ca-2e52028e665mr116051901fa.42.1715877795373; Thu, 16 May 2024
- 09:43:15 -0700 (PDT)
+        bh=xRZXHT5zv4OLD8sClnj1MyaIu2OkR4Vag3zoxjx9vrk=;
+        b=bkSeTFWbM8BS6rHAkCH8GjuTCir5lCJurdSaGCJzf9SkXNLS7CzRxiqzNY2qrMewwE
+         EMqrHwYWhJW+se1upRNVDgrKWVvJdS6HfYZKUoBpbDGsWV38+AynINpnPG3cd94E0Xjv
+         IhfbFdAcfeeE08HLoYMwWzEvSv2HIW6Bn5TY8MK+AEGkmOe5aTUJB/WqI2ZNJViAzzhJ
+         E+h7SkfsRs6JvJyQCMuqHoyLJ+Uur4/5b8qq8oUp5/Q7EAQK+ED6cnHFQLE+I5M1aZ0q
+         eRrlHW76eqcFEPUPoPzuPeHYOsO6/rgQwxQqsdDri3vgNYJtywgYlWm/5mCBt4iy+Zbb
+         S+OQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUWmtSkdegsPXN0BZXqjyqJ3NQNCzksXoAA3mUztMsJAPG62jI3D5ALgmdDnf9QWsAn8Oe3MODChaGYQ3Nxcpji3RqKt+N679r7AT3w
+X-Gm-Message-State: AOJu0YyL9Tgx4Kl+LzEAiZ+Hiy7Asl2v2gD+/cpZE7kUOw0Pm5PjGC2n
+	1qSTyKa/WLjdD/6s2LOBZwYKjVl9TGcL5U4uyzSI7F50pXQ8ktHsG/miF5Yzlf/3VfGahZAI1Z7
+	OiHe3Eyz3Fmr5/l65DjOCAE+r3SM0JSshqFRB
+X-Google-Smtp-Source: AGHT+IHYVd0OFe7jbnEFMHJ3QzsmHY59lb5sCE2OxbM0AvTFwCiZVXBVLT3r9YdEUzOhpatqvTXxBz4UTGUz3pFzcz8=
+X-Received: by 2002:a17:902:bb0f:b0:1ea:2b8:2761 with SMTP id
+ d9443c01a7336-1f05f77e58amr12299965ad.20.1715877807540; Thu, 16 May 2024
+ 09:43:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240514-ad4111-v2-0-29be6a55efb5@analog.com> <20240514-ad4111-v2-1-29be6a55efb5@analog.com>
- <CAMknhBGNPvxegL+YbnLGoKjA=P3Vx=x+39aXuMgq+cv2KgdeLw@mail.gmail.com> <151d6893-3e9e-4331-8dde-5293e75f10ef@gmail.com>
-In-Reply-To: <151d6893-3e9e-4331-8dde-5293e75f10ef@gmail.com>
-From: David Lechner <dlechner@baylibre.com>
-Date: Thu, 16 May 2024 11:43:04 -0500
-Message-ID: <CAMknhBFKM+DC9jNDV+cZ5agwsXJ1iqU9DB3XD-y3sVcRWJOAsQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/9] dt-bindings: adc: ad7173: add support for ad411x
-To: "Ceclan, Dumitru" <mitrutzceclan@gmail.com>
-Cc: dumitru.ceclan@analog.com, Lars-Peter Clausen <lars@metafoo.de>, 
-	Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20240515054443.2824147-1-weilin.wang@intel.com> <20240515054443.2824147-4-weilin.wang@intel.com>
+In-Reply-To: <20240515054443.2824147-4-weilin.wang@intel.com>
+From: Ian Rogers <irogers@google.com>
+Date: Thu, 16 May 2024 09:43:16 -0700
+Message-ID: <CAP-5=fWB+rSTaXfTkB9BkWYOt-m2UHcocj6Hkz5B-P0C0WEL2w@mail.gmail.com>
+Subject: Re: [RFC PATCH v8 3/7] perf stat: Fork and launch perf record when
+ perf stat needs to get retire latency value for a metric.
+To: weilin.wang@intel.com
+Cc: Namhyung Kim <namhyung@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Perry Taylor <perry.taylor@intel.com>, Samantha Alt <samantha.alt@intel.com>, 
+	Caleb Biggers <caleb.biggers@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 16, 2024 at 10:49=E2=80=AFAM Ceclan, Dumitru
-<mitrutzceclan@gmail.com> wrote:
+On Tue, May 14, 2024 at 10:44=E2=80=AFPM <weilin.wang@intel.com> wrote:
 >
-> On 16/05/2024 01:37, David Lechner wrote:
-> > On Tue, May 14, 2024 at 2:23=E2=80=AFAM Dumitru Ceclan via B4 Relay
-> > <devnull+dumitru.ceclan.analog.com@kernel.org> wrote:
-> >>
-> >> From: Dumitru Ceclan <dumitru.ceclan@analog.com>
-> >>
-> >> Add support for: AD4111, AD4112, AD4114, AD4115, AD4116.
-> >>
-> >> AD411x family ADCs support a VCOM pin, dedicated for single-ended usag=
-e.
-> >> AD4111/AD4112 support current channels, usage is implemented by
-> >>  specifying channel reg values bigger than 15.
-> >>
-> >> Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
-> >> ---
-> >>  .../devicetree/bindings/iio/adc/adi,ad7173.yaml    | 118 ++++++++++++=
-++++++++-
-> >>  1 file changed, 117 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml=
- b/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml
-> >> index ea6cfcd0aff4..6cc3514f5ed8 100644
-> >> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml
-> >> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml
-> >> @@ -19,7 +19,18 @@ description: |
-> >>    primarily for measurement of signals close to DC but also delivers
-> >>    outstanding performance with input bandwidths out to ~10kHz.
-> >>
-> >> +  Analog Devices AD411x ADC's:
-> >> +  The AD411X family encompasses a series of low power, low noise, 24-=
-bit,
-> >> +  sigma-delta analog-to-digital converters that offer a versatile ran=
-ge of
-> >> +  specifications. They integrate an analog front end suitable for pro=
-cessing
-> >> +  fully differential/single-ended and bipolar voltage inputs.
-> >> +
-> >>    Datasheets for supported chips:
-> >> +    https://www.analog.com/media/en/technical-documentation/data-shee=
-ts/AD4111.pdf
-> >> +    https://www.analog.com/media/en/technical-documentation/data-shee=
-ts/AD4112.pdf
-> >> +    https://www.analog.com/media/en/technical-documentation/data-shee=
-ts/AD4114.pdf
-> >> +    https://www.analog.com/media/en/technical-documentation/data-shee=
-ts/AD4115.pdf
-> >> +    https://www.analog.com/media/en/technical-documentation/data-shee=
-ts/AD4116.pdf
-> >>      https://www.analog.com/media/en/technical-documentation/data-shee=
-ts/AD7172-2.pdf
-> >>      https://www.analog.com/media/en/technical-documentation/data-shee=
-ts/AD7172-4.pdf
-> >>      https://www.analog.com/media/en/technical-documentation/data-shee=
-ts/AD7173-8.pdf
-> >> @@ -31,6 +42,11 @@ description: |
-> >>  properties:
-> >>    compatible:
-> >>      enum:
-> >> +      - adi,ad4111
-> >> +      - adi,ad4112
-> >> +      - adi,ad4114
-> >> +      - adi,ad4115
-> >> +      - adi,ad4116
-> >>        - adi,ad7172-2
-> >>        - adi,ad7172-4
-> >>        - adi,ad7173-8
-> >> @@ -129,6 +145,31 @@ patternProperties:
-> >>          maximum: 15
-> >>
-> >>        diff-channels:
-> >> +        description: |
-> >> +          For using current channels specify select the current input=
-s
-> >> +           and enable the adi,current-channel property.
-> >> +
-> >> +          Family AD411x supports a dedicated VCOM voltage input.
-> >
-> > Did you mean VINCOM? Searching the datasheets for "VCOM" comes up empty=
-.
-> >
-> Yep
-> >> +          To select it set the second channel to 16.
-> >> +            (VIN2, VCOM) -> diff-channels =3D <2 16>
-> >
-> > Jonathan mentioned this in v1 with regard to the current inputs, but
-> > it applies here too. There is a new proposed single-channel property
-> > [1] that would be preferred when an input is used as a single-ended or
-> > pseudo-differential input (i.e. with VINCOM or ADCIN15).
-> >
-> > [1]: https://lore.kernel.org/linux-iio/20240514120222.56488-5-alisa.rom=
-an@analog.com/
-> >
-> Yet here I thought that it was clear from previous conversations that
-> we are not really dealing with a single-ended/pseudo-differential input,
-> just a differential ADC that can be used in that manner.
+> From: Weilin Wang <weilin.wang@intel.com>
 >
-> We do not have here such a clear cut case as with AD7194, where an input
-> is dedicated for single-ended/pseudo usage. Here, the inputs are mix and
-> match and single-ended/pseudo is obtainable with other pins than VINCOM/
-> ADCIN15.
+> When retire_latency value is used in a metric formula, perf stat would fo=
+rk a
+> perf record process with "-e" and "-W" options. Perf record will collect
+> required retire_latency values in parallel while perf stat is collecting
+> counting values.
 >
-> When configuring channels we are *always* specifying two voltage inputs.
-> I strongly disagree using single-channel for voltage channels in these
-> families of ADC's.
+> At the point of time that perf stat stops counting, it would send sigterm=
+ signal
+> to perf record process and receiving sampling data back from perf record =
+from a
+> pipe. Perf stat will then process the received data to get retire latency=
+ data
+> and calculate metric result.
+>
+> Another thread is required to synchronize between perf stat and perf reco=
+rd
+> when we pass data through pipe.
+>
+> Signed-off-by: Weilin Wang <weilin.wang@intel.com>
+> Reviewed-by: Ian Rogers <irogers@google.com>
 
-Yes, sorry, you are right. I forgot that VINCOM isn't actually
-electrically different from the other pins (even if the name makes it
-seem like it would be).
+So I don't think this is the correct way to add this. My reviewed-by
+was based on the fact that I was going to refactor this after landing.
+It didn't land and I already sent out:
+"Retirement latency perf stat support"
+https://lore.kernel.org/lkml/20240428053616.1125891-1-irogers@google.com/
+v3 to just land the tool portion:
+https://lore.kernel.org/lkml/20240503232849.17752-1-irogers@google.com/
+So my reviewed-by no longer stands. The changes I've sent out haven't
+been reviewed. Given you're trying to land this, can we work on
+reviewing those changes? The v3 was specifically done just so that we
+can have the cleaner basis for adding tpebs to the evsel.
 
->
-> >> +
-> >> +          There are special values that can be selected besides the v=
-oltage
-> >> +          analog inputs:
-> >> +            21: REF+
-> >> +            22: REF=E2=88=92
-> >> +          Supported only by AD7172-2, AD7172-4, AD7175-2, AD7175-8, A=
-D7177-2:
-> >> +            19: ((AVDD1 =E2=88=92 AVSS)/5)+
-> >> +            20: ((AVDD1 =E2=88=92 AVSS)/5)=E2=88=92
-> >> +          Supported only by AD4111, AD4112:
-> >> +            12: IIN3+
-> >> +            11: IIN3=E2=88=92
-> >> +            13: IIN2+
-> >> +            10: IIN2=E2=88=92
-> >> +            14: IIN1+
-> >> +             9: IIN1=E2=88=92
-> >> +            15: IIN0+
-> >> +             8: IIN0=E2=88=92
-> >
-> > I just made a late reply on v1 where Jonathan suggested that the
-> > current inputs are differential with a similar comment to this:
-> >
-> > It doesn't seem to me like current inputs are differential if they are
-> > only measuring one current. They take 2 pins because you need a way
-> > for current to come in and go back out, but the datasheet calls them
-> > single-ended inputs.
-> >
-> It seemed to me that the conclusion that we arrived to was to expose the
-> precise pins that are used in the conversion and document the selection.
->
-> Yes, it is a single-ended channel. So revert to the way it was in V1 usin=
-g
-> single-channel?
+Let me point to specific issues below:
 
-I'd like to hear Jonathan's opinion on this one.
+> ---
+>  tools/perf/builtin-stat.c     |  19 +++
+>  tools/perf/util/Build         |   1 +
+>  tools/perf/util/intel-tpebs.c | 285 ++++++++++++++++++++++++++++++++++
+>  tools/perf/util/intel-tpebs.h |  29 ++++
+>  tools/perf/util/stat.h        |   3 +
+>  5 files changed, 337 insertions(+)
+>  create mode 100644 tools/perf/util/intel-tpebs.c
+>  create mode 100644 tools/perf/util/intel-tpebs.h
+>
+> diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+> index 428e9721b908..85927cf45adb 100644
+> --- a/tools/perf/builtin-stat.c
+> +++ b/tools/perf/builtin-stat.c
+> @@ -70,6 +70,7 @@
+>  #include "util/bpf_counter.h"
+>  #include "util/iostat.h"
+>  #include "util/util.h"
+> +#include "util/intel-tpebs.h"
+>  #include "asm/bug.h"
+>
+>  #include <linux/time64.h>
+> @@ -94,6 +95,7 @@
+>  #include <perf/evlist.h>
+>  #include <internal/threadmap.h>
+>
+> +
+>  #define DEFAULT_SEPARATOR      " "
+>  #define FREEZE_ON_SMI_PATH     "devices/cpu/freeze_on_smi"
+>
+> @@ -162,6 +164,8 @@ static struct perf_stat_config stat_config =3D {
+>         .ctl_fd                 =3D -1,
+>         .ctl_fd_ack             =3D -1,
+>         .iostat_run             =3D false,
+> +       .tpebs_results          =3D LIST_HEAD_INIT(stat_config.tpebs_resu=
+lts),
+> +       .tpebs_pid              =3D -1,
 
->
-> >> +
-> >>          items:
-> >>            minimum: 0
-> >>            maximum: 31
-> >> @@ -154,6 +195,23 @@ patternProperties:
-> >>            - avdd
-> >>          default: refout-avss
-> >>
-> >> +      adi,current-channel:
-> >> +        description: |
-> >> +          Signal that the selected inputs are current channels.
-> >> +          Only available on AD4111 and AD4112.
-> >> +        type: boolean
-> >> +
-> >> +      adi,channel-type:
-> >> +        description:
-> >> +          Used to differentiate between different channel types as th=
-e device
-> >> +           register configurations are the same for all usage types.
-> >> +        $ref: /schemas/types.yaml#/definitions/string
-> >> +        enum:
-> >> +          - single-ended
-> >> +          - pseudo-differential
-> >> +          - differential
-> >> +        default: differential
-> >> +
-> >
-> > As suggested above, we should soon have diff-channels and
-> > single-channel to differentiate between (fully) differential and
-> > single-ended. Do we actually need to differentiate between
-> > single-ended and pseudo-differential though?
-> >
-> Not really, so just a bool differential flag? (this seems weird as we hav=
-e diff-channels)
+Here we're adding state to the stat_config for the sake of tpebs
+events. Were the state in the evsel, as in my changes, we'd not need
+to carry new global state for tpebs.
 
-Or we need to change the proposed single-channel property to allow two
-inputs. I guess we'll see what Johnathan has to say.
+>  };
+>
+>  static void evlist__check_cpu_maps(struct evlist *evlist)
+> @@ -653,6 +657,8 @@ static enum counter_recovery stat_handle_error(struct=
+ evsel *counter)
+>
+>         if (child_pid !=3D -1)
+>                 kill(child_pid, SIGTERM);
+> +       if (stat_config.tpebs_pid !=3D -1)
+> +               stop_tpebs();
 
->
-> > I think the AD4116 datasheet is the only one that uses both of those
-> > terms. It gives the examples that for "single-ended" ADCIN15 would be
-> > connected to AVSS and for "pseudo-differential" ADCIN15 would be
-> > connected to REFOUT (AVSS + 2.5 V). So the only difference seems to be
-> > if the voltage on ADCIN15 is =3D=3D 0V or !=3D 0V.
-> >
-> In the ad411x yes, over to ad717x it's mixed:
-> https://lore.kernel.org/all/0fef36f8-a7db-40cc-86bd-9449cb4ab46e@gmail.co=
-m/
->
-> > To make this like other pseudo-differential chips we have done
-> > recently, it seems to me like we should have an adcin15-supply
-> > property to describe the ADCIN15 input. Then we could use that
-> > property to determine single-ended vs. pseudo-differential (if there
-> > actually is a need for that) and we wouldn't need the adi,channel-type
-> > property.
-> >
->
-> I agree that we do not need to differentiate between those two.
-> But the approach with the supply is too specific, the adi,channel-type
-> property is not only for AD4116-ADCIN15, but for all models compatible.
->
+This logic is builtin-stat but what about other commands that could be
+using TPEBS for counters?
 
-Makes sense, especially given the point above that ADCIN15 isn't
-really electrically different from other inputs.
-
-> >>      required:
-> >>        - reg
-> >>        - diff-channels
-> >> @@ -166,7 +224,6 @@ allOf:
-> >>    - $ref: /schemas/spi/spi-peripheral-props.yaml#
-> >>
-> >>    # Only ad7172-4, ad7173-8 and ad7175-8 support vref2
-> >> -  # Other models have [0-3] channel registers
-> >>    - if:
-> >>        properties:
-> >>          compatible:
-> >> @@ -187,6 +244,37 @@ allOf:
-> >>                  - vref
-> >>                  - refout-avss
-> >>                  - avdd
-> >> +
-> >> +  - if:
-> >> +      properties:
-> >> +        compatible:
-> >> +          contains:
-> >> +            enum:
-> >> +              - adi,ad4114
-> >> +              - adi,ad4115
-> >> +              - adi,ad4116
-> >> +              - adi,ad7173-8
-> >> +              - adi,ad7175-8
-> >> +    then:
-> >> +      patternProperties:
-> >> +        "^channel@[0-9a-f]$":
-> >> +          properties:
-> >> +            reg:
-> >> +              maximum: 15
-> >
-> > As discussed recently in the the very similar ad719x bindings [2], we
-> > may have been misunderstanding this limit so far. 15 is a bit
-> > artificially low since input pins can be used more than once in
-> > different "channels". But that is really an issues with the existing
-> > bindings, not just this patch.
-> >
-> > [2]: https://lore.kernel.org/linux-iio/20240511122955.2372f56e@jic23-hu=
-awei/
-> >
-> >
-> In this case there is a 1-1 correspondence between this reg limit and the=
- number
-> of channel configuration registers available to the device. Maybe another=
- property
-> then reg? Sure...but this limitation fits the current situation.
+>         return COUNTER_FATAL;
+>  }
 >
-> In addition, the device does not work the same as ad719x. If I understood=
- correctly
-> that documentation, the configuration register needs to be rewritten for =
-every different
-> input combination. This means that the driver is implemented to overwrite=
- the reg for
-> every read. This device, it seems to me, is more in the liking's of write=
- all the channel
-> configs at once, then keep using those.
+> @@ -673,6 +679,10 @@ static int __run_perf_stat(int argc, const char **ar=
+gv, int run_idx)
+>         int err;
+>         bool second_pass =3D false;
 >
-> For AD719x yes, it is artificial. Over here we have a clear reason.
-
-I thought they worked nearly the same in this regard since they are
-sharing a lot of code via adc/ad_sigma_delta.h, It looks to me like
-the channel registers are only set up for a raw read (single channel)
-or buffered read (only enabled channels), but maybe I didn't look deep
-enough. Anyway, not a big deal to me.
-
+> +       err =3D start_tpebs(&stat_config, evsel_list);
+> +       if (err < 0)
+> +               return err;
+> +
+>         if (forks) {
+>                 if (evlist__prepare_workload(evsel_list, &target, argv, i=
+s_pipe, workload_exec_failed_signal) < 0) {
+>                         perror("failed to prepare workload");
+> @@ -878,6 +888,10 @@ static int __run_perf_stat(int argc, const char **ar=
+gv, int run_idx)
 >
-> >> +
-> >> +  - if:
-> >> +      properties:
-> >> +        compatible:
-> >> +          contains:
-> >> +            enum:
-> >> +              - adi,ad7172-2
-> >> +              - adi,ad7175-2
-> >> +              - adi,ad7176-2
-> >> +              - adi,ad7177-2
-> >> +    then:
-> >> +      patternProperties:
-> >> +        "^channel@[0-9a-f]$":
-> >> +          properties:
-> >>              reg:
-> >>                maximum: 3
-> >>
-> >> @@ -210,6 +298,34 @@ allOf:
-> >>            required:
-> >>              - adi,reference-select
-> >>
-> >> +  - if:
-> >> +      properties:
-> >> +        compatible:
-> >> +          contains:
-> >> +            enum:
-> >> +              - adi,ad4111
-> >> +              - adi,ad4112
-> >> +              - adi,ad4114
-> >> +              - adi,ad4115
-> >> +              - adi,ad4116
-> >> +    then:
-> >> +      properties:
-> >> +        avdd2-supply: false
-> >> +
-> >> +  - if:
-> >> +      properties:
-> >> +        compatible:
-> >> +          not:
-> >> +            contains:
-> >> +              enum:
-> >> +                - adi,ad4111
-> >> +                - adi,ad4112
-> >> +    then:
-> >> +      patternProperties:
-> >> +        "^channel@[0-9a-f]$":
-> >> +          properties:
-> >> +            adi,current-channel: false
-> >> +
-> >>    - if:
-> >>        anyOf:
-> >>          - required: [clock-names]
-> >>
-> >> --
-> >> 2.43.0
-> >>
-> >>
+>         t1 =3D rdclock();
+>
+> +       err =3D stop_tpebs();
+> +       if (err < 0)
+> +               return err;
+> +
+>         if (stat_config.walltime_run_table)
+>                 stat_config.walltime_run[run_idx] =3D t1 - t0;
+>
+> @@ -985,6 +999,9 @@ static void sig_atexit(void)
+>         if (child_pid !=3D -1)
+>                 kill(child_pid, SIGTERM);
+>
+> +       if (stat_config.tpebs_pid !=3D -1)
+> +               kill(stat_config.tpebs_pid, SIGTERM);
+> +
+>         sigprocmask(SIG_SETMASK, &oset, NULL);
+>
+>         if (signr =3D=3D -1)
+> @@ -2918,5 +2935,7 @@ int cmd_stat(int argc, const char **argv)
+>         metricgroup__rblist_exit(&stat_config.metric_events);
+>         evlist__close_control(stat_config.ctl_fd, stat_config.ctl_fd_ack,=
+ &stat_config.ctl_fd_close);
+>
+> +       tpebs_data__delete();
+> +
+>         return status;
+>  }
+> diff --git a/tools/perf/util/Build b/tools/perf/util/Build
+> index 292170a99ab6..c9f1d0bb6bf8 100644
+> --- a/tools/perf/util/Build
+> +++ b/tools/perf/util/Build
+> @@ -153,6 +153,7 @@ perf-y +=3D clockid.o
+>  perf-y +=3D list_sort.o
+>  perf-y +=3D mutex.o
+>  perf-y +=3D sharded_mutex.o
+> +perf-y +=3D intel-tpebs.o
+>
+>  perf-$(CONFIG_LIBBPF) +=3D bpf_map.o
+>  perf-$(CONFIG_PERF_BPF_SKEL) +=3D bpf_counter.o
+> diff --git a/tools/perf/util/intel-tpebs.c b/tools/perf/util/intel-tpebs.=
+c
+> new file mode 100644
+> index 000000000000..4b7a98794fae
+> --- /dev/null
+> +++ b/tools/perf/util/intel-tpebs.c
+> @@ -0,0 +1,285 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * intel_pt.c: Intel Processor Trace support
+> + * Copyright (c) 2013-2015, Intel Corporation.
+> + */
+> +
+> +
+> +#include <sys/param.h>
+> +#include <subcmd/run-command.h>
+> +#include <thread.h>
+> +#include "intel-tpebs.h"
+> +#include <linux/list.h>
+> +#include <linux/zalloc.h>
+> +#include <linux/err.h>
+> +#include "sample.h"
+> +#include "debug.h"
+> +#include "evlist.h"
+> +#include "evsel.h"
+> +#include "session.h"
+> +#include "tool.h"
+> +#include "metricgroup.h"
+> +#include <sys/stat.h>
+> +#include <sys/file.h>
+> +
+> +
+> +
+> +#define PERF_DATA              "-"
+> +#define CONTROL                        "/tmp/control"
+> +#define ACK                    "/tmp/ack"
+> +pthread_t reader_thread;
+> +struct child_process *cmd;
+> +struct perf_stat_config *stat_config;
+> +
+> +static int get_perf_record_args(const char **record_argv)
+> +{
+> +       int i =3D 0;
+> +       struct tpebs_retire_lat *e;
+> +
+> +       pr_debug("Prepare perf record for retire_latency\n");
+> +
+> +       record_argv[i++] =3D "perf";
+> +       record_argv[i++] =3D "record";
+> +       record_argv[i++] =3D "-W";
+> +       record_argv[i++] =3D "--synth=3Dno";
+
+There should be more things to disable, like BPF events, we don't need
+the dummy, etc.
+
+> +       record_argv[i++] =3D "--control=3Dfifo:/tmp/control,/tmp/ack";
+> +
+> +       if (stat_config->user_requested_cpu_list) {
+> +               record_argv[i++] =3D "-C";
+> +               record_argv[i++] =3D stat_config->user_requested_cpu_list=
+;
+> +       }
+> +
+> +       if (stat_config->system_wide)
+> +               record_argv[i++] =3D "-a";
+> +
+> +       if (!stat_config->system_wide && !stat_config->user_requested_cpu=
+_list) {
+> +               pr_err("Require -a or -C option to run sampling.\n");
+> +               return -ECANCELED;
+> +       }
+> +
+> +       list_for_each_entry(e, &stat_config->tpebs_results, nd) {
+> +               record_argv[i++] =3D "-e";
+> +               record_argv[i++] =3D e->name;
+> +       }
+> +
+> +       record_argv[i++] =3D "-o";
+> +       record_argv[i++] =3D PERF_DATA;
+> +
+> +       return 0;
+> +}
+> +
+> +static int prepare_run_command(const char **argv)
+> +{
+> +       cmd =3D zalloc(sizeof(struct child_process));
+> +       if (!cmd)
+> +               return -ENOMEM;
+> +       cmd->argv =3D argv;
+> +       cmd->out =3D -1;
+> +       return 0;
+> +}
+> +
+> +static int prepare_perf_record(int tpebs_event_size)
+> +{
+> +       const char **record_argv;
+> +       int ret;
+> +
+> +       /*Create control and ack fd for --control*/
+> +       if (mkfifo(CONTROL, 0600)) {
+> +               pr_err("Failed to create control fifo");
+> +               return -1;
+> +       }
+> +       if (mkfifo(ACK, 0600)) {
+> +               pr_err("Failed to create control fifo");
+> +               return -1;
+> +       }
+> +
+> +       record_argv =3D calloc(10 + 2 * tpebs_event_size, sizeof(char *))=
+;
+> +       if (!record_argv)
+> +               return -ENOMEM;
+> +
+> +
+> +       ret =3D get_perf_record_args(record_argv);
+> +       if (ret)
+> +               goto out;
+> +
+> +       ret =3D prepare_run_command(record_argv);
+> +       if (ret)
+> +               goto out;
+> +       ret =3D start_command(cmd);
+> +out:
+> +       free(record_argv);
+> +       return ret;
+> +}
+> +struct sample_data_reader {
+> +       struct perf_tool        tool;
+> +       struct perf_session     *session;
+> +};
+> +
+> +static void tpebs_retire_lat__delete(struct tpebs_retire_lat *r)
+> +{
+> +       zfree(&r->name);
+> +       zfree(&r->tpebs_name);
+> +       free(r);
+> +}
+> +
+> +void tpebs_data__delete(void)
+> +{
+> +       struct tpebs_retire_lat *r, *rtmp;
+> +
+> +       list_for_each_entry_safe(r, rtmp, &stat_config->tpebs_results, nd=
+) {
+> +               list_del_init(&r->nd);
+> +               tpebs_retire_lat__delete(r);
+> +       }
+> +       free(cmd);
+> +}
+> +
+> +static int process_sample_event(struct perf_tool *tool __maybe_unused,
+> +                               union perf_event *event __maybe_unused,
+> +                               struct perf_sample *sample,
+> +                               struct evsel *evsel,
+> +                               struct machine *machine __maybe_unused)
+> +{
+> +       int ret =3D 0;
+> +       const char *evname;
+> +       struct tpebs_retire_lat *t;
+> +
+> +       evname =3D evsel__name(evsel);
+> +
+> +       /*
+> +        * Need to handle per core results? We are assuming average retir=
+e
+> +        * latency value will be used. Save the number of samples and the=
+ sum of
+> +        * retire latency value for each event.
+> +        */
+> +       list_for_each_entry(t, &stat_config->tpebs_results, nd) {
+> +               if (!strcmp(evname, t->name)) {
+> +                       t->count +=3D 1;
+> +                       t->sum +=3D sample->retire_lat;
+> +                       t->val =3D (double) t->sum / t->count;
+> +                       break;
+> +               }
+> +       }
+> +
+> +       return ret;
+> +}
+> +
+> +static int process_feature_event(struct perf_session *session,
+> +                                union perf_event *event)
+> +{
+> +       if (event->feat.feat_id < HEADER_LAST_FEATURE)
+> +               return perf_event__process_feature(session, event);
+> +       return 0;
+> +}
+> +
+> +static void *__sample_reader(void *arg)
+> +{
+> +       struct child_process *child =3D arg;
+> +       struct perf_session *session;
+> +       struct perf_data data =3D {
+> +               .mode =3D PERF_DATA_MODE_READ,
+> +               .path =3D PERF_DATA,
+> +               .file.fd =3D child->out,
+> +       };
+> +       struct sample_data_reader reader =3D {
+> +               .tool =3D {
+> +               .sample          =3D process_sample_event,
+> +               .feature         =3D process_feature_event,
+> +               .attr            =3D perf_event__process_attr,
+> +               },
+> +       };
+
+I prefer the reading approach here over what I did here:
+https://lore.kernel.org/lkml/CAM9d7cgzTsfk3C+dTN80f5FhB1rmfturjuUUwvSTeUvny=
+5eWKw@mail.gmail.com/
+I'd done that as Namhyung had commented on using perf report:
+https://lore.kernel.org/lkml/CAM9d7cgdQQn5GYB7t++xuoMdeqPXiEkkcop69+rD06RAn=
+u9-EQ@mail.gmail.com/
+It was also less work. I don't see why we can't move the reading logic
+into a function like evsel__read_retire_latency that's in my change. I
+also think that in the first instance all reading logic should be
+implemented to return 0 and we only do the forking, etc. when a
+command line flag is passed.
+
+> +
+> +       session =3D perf_session__new(&data, &reader.tool);
+> +       if (IS_ERR(session))
+> +               return NULL;
+> +       reader.session =3D session;
+> +       perf_session__process_events(session);
+> +       perf_session__delete(session);
+> +
+> +       return NULL;
+> +}
+> +
+> +
+> +int start_tpebs(struct perf_stat_config *perf_stat_config, struct evlist=
+ *evsel_list)
+> +{
+> +       int ret =3D 0;
+> +       struct evsel *evsel;
+> +       int control =3D -1, ack =3D -1;
+> +
+> +       stat_config =3D perf_stat_config;
+> +       /*
+> +        * Prepare perf record for sampling event retire_latency before f=
+ork and
+> +        * prepare workload
+> +        */
+> +       evlist__for_each_entry(evsel_list, evsel) {
+> +               if (evsel->retire_lat) {
+> +                       struct tpebs_retire_lat *new =3D malloc(sizeof(st=
+ruct tpebs_retire_lat));
+> +                       int i;
+> +                       char *name;
+> +
+> +                       pr_debug("perf stat retire latency %s required\n"=
+, evsel->name);
+> +                       if (!new)
+> +                               return -1;
+> +                       for (i =3D strlen(evsel->name) - 1; i > 0; i--) {
+> +                               if (evsel->name[i] =3D=3D 'R')
+> +                                       break;
+> +                       }
+> +                       if (i <=3D 0 || evsel->name[i] !=3D 'R')
+> +                               return -1;
+> +
+> +                       name =3D strdup(evsel->name);
+> +                       if (!name)
+> +                               return -ENOMEM;
+> +                       name[i] =3D 'p';
+> +                       new->name =3D strdup(name);
+> +                       free(name);
+> +                       new->tpebs_name =3D strdup(evsel->name);
+> +                       if (!new->tpebs_name)
+> +                               return -ENOMEM;
+> +                       new->count =3D 0;
+> +                       new->sum =3D 0;
+> +                       list_add_tail(&new->nd, &stat_config->tpebs_resul=
+ts);
+> +                       stat_config->tpebs_event_size +=3D 1;
+> +               }
+> +       }
+> +
+> +       if (stat_config->tpebs_event_size > 0) {
+> +               ret =3D prepare_perf_record(stat_config->tpebs_event_size=
+);
+> +               if (ret)
+> +                       return ret;
+> +               if (pthread_create(&reader_thread, NULL, __sample_reader,=
+ cmd)) {
+> +                       kill(cmd->pid, SIGTERM);
+> +                       close(cmd->out);
+> +                       pr_err("Could not create thread to process sample=
+ data.\n");
+> +                       return -1;
+> +               }
+> +               /* Wait for perf record initialization a little bit.*/
+> +               control =3D open(CONTROL, O_RDONLY, O_NONBLOCK);
+> +               if (!control)
+> +                       return -1;
+> +               close(control);
+> +               ack =3D open(ACK, O_RDONLY, O_NONBLOCK);
+> +               if (!ack)
+> +                       return -1;
+> +               close(ack);
+> +               pr_debug("Received ack from perf record\n");
+> +       }
+> +
+> +       return ret;
+> +}
+> +
+> +
+> +int stop_tpebs(void)
+> +{
+> +       int ret =3D 0;
+> +
+> +       if (stat_config->tpebs_event_size > 0) {
+> +               kill(cmd->pid, SIGTERM);
+> +               pthread_join(reader_thread, NULL);
+> +               close(cmd->out);
+> +               ret =3D finish_command(cmd);
+> +               if (ret =3D=3D -ERR_RUN_COMMAND_WAITPID_SIGNAL)
+> +                       ret =3D 0;
+> +               remove(CONTROL);
+> +               remove(ACK);
+> +       }
+> +       return ret;
+> +}
+> diff --git a/tools/perf/util/intel-tpebs.h b/tools/perf/util/intel-tpebs.=
+h
+> new file mode 100644
+> index 000000000000..e8e2bb2f479b
+> --- /dev/null
+> +++ b/tools/perf/util/intel-tpebs.h
+> @@ -0,0 +1,29 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * intel_pt.h: Intel Processor Trace support
+> + * Copyright (c) 2013-2015, Intel Corporation.
+> + */
+> +#include "stat.h"
+> +
+> +#ifndef INCLUDE__PERF_INTEL_TPEBS_H__
+> +#define INCLUDE__PERF_INTEL_TPEBS_H__
+> +
+> +struct tpebs_retire_lat {
+> +       struct list_head nd;
+> +       /* Event name */
+> +       const char *name;
+> +       /* Event name with the TPEBS modifier R */
+> +       const char *tpebs_name;
+> +       /* Count of retire_latency values found in sample data */
+> +       size_t count;
+> +       /* Sum of all the retire_latency values in sample data */
+> +       int sum;
+> +       /* Average of retire_latency, val =3D sum / count */
+> +       double val;
+> +};
+
+An evsel has a pretty much all of this and so we're duplicating in
+particular the counting logic which then needs later work to integrate
+and is why I'd prefer we went the evsel route.
+
+Thanks,
+Ian
+
+> +
+> +int start_tpebs(struct perf_stat_config *perf_stat_config, struct evlist=
+ *evsel_list);
+> +int stop_tpebs(void);
+> +void tpebs_data__delete(void);
+> +
+> +#endif
+> diff --git a/tools/perf/util/stat.h b/tools/perf/util/stat.h
+> index fd7a187551bd..c6c2aa43030f 100644
+> --- a/tools/perf/util/stat.h
+> +++ b/tools/perf/util/stat.h
+> @@ -110,6 +110,9 @@ struct perf_stat_config {
+>         struct cpu_aggr_map     *cpus_aggr_map;
+>         u64                     *walltime_run;
+>         struct rblist            metric_events;
+> +       size_t                   tpebs_event_size;
+> +       struct list_head         tpebs_results;
+> +       pid_t                    tpebs_pid;
+>         int                      ctl_fd;
+>         int                      ctl_fd_ack;
+>         bool                     ctl_fd_close;
+> --
+> 2.43.0
 >
 
