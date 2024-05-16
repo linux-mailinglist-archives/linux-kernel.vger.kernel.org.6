@@ -1,144 +1,139 @@
-Return-Path: <linux-kernel+bounces-181313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF95D8C7A4E
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:25:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 104F08C7A50
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:25:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C8321C21AB6
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:25:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 421001C21877
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:25:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A9B514EC50;
-	Thu, 16 May 2024 16:24:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 559D414E2D2;
+	Thu, 16 May 2024 16:25:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ckTBUbeU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Xm+tt4vj"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4029C2421A;
-	Thu, 16 May 2024 16:24:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4AAB14D719;
+	Thu, 16 May 2024 16:25:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715876672; cv=none; b=AGQ4QSbJzZNuJUjaI7qO4TDjRiB85Cax7aSh5HXr3l1L55u7LIRY2rWQBZ5Ghc9U8TYfcIGYOqwQhE39Pidq5hDwtDdzjeBI1XpEorIg+ms268c+Arkunr8ShhY4g0UBYz0lfxW1TY9Qz4SDmTpcY5GhcT2rOMK2wcOlOI//qxw=
+	t=1715876725; cv=none; b=DYu7jtCUA14I9tzylwGiWKa8gjrhbk4SyKZegheLwjYlSpiQSsLlYxWnZ8mFQw5Cr+X9kDKbcYuDmwLyJZqJFl9GCJKrtdPaVNs5t5wsmqLB7hS1bd8TjqsYqTfWuJzyzTrAuHQsBRYUwlEQx3Lf8+UXuLFuMJwgH6GW3ihItko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715876672; c=relaxed/simple;
-	bh=YPQd9Pwq5Y5I0Bij2ansbmtYi61hje5cM4D0fSaH4v0=;
+	s=arc-20240116; t=1715876725; c=relaxed/simple;
+	bh=ManuiqZkVA/LH1oUi2yvZnP0nenBUYYloncINkTTt/0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=diAcRdWbPrmEFmxVwEK16Ew48amhIX8WXWUAxZuFt85ECVWESz4W3x/kG51PK312Iq6iWL4T5DlpkkZzxd9q2L5zfufUZhDpCXnM3tuAP0VZzSHwLbFCyXgs7xemtQ7KmE+YgpmkhSVGVpo6WF8sZ1iPWJF8pjrp7c4FPiJVV9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ckTBUbeU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F557C113CC;
-	Thu, 16 May 2024 16:24:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715876672;
-	bh=YPQd9Pwq5Y5I0Bij2ansbmtYi61hje5cM4D0fSaH4v0=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=FeZibkrTPWWTBDbkKZk+JMr6SK9VSQPsTKg4zuVdqGjShZDJKCwSrSkcdkjGr1U401SxKVeOdwsN5YbS6sWQEUk0PKytzsPyNLW1lq9Jye2zF1wAD2ljhR1uQBPEe365Ab4uivrfJegZz5nvLFfo0CTS2VYash7I8trv65S7xfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Xm+tt4vj; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1715876722;
+	bh=ManuiqZkVA/LH1oUi2yvZnP0nenBUYYloncINkTTt/0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ckTBUbeU+U4d8pK30I5KoZpbLoTF1F3+e6xfJWjXJ4EJQyFcHH8LKaim31594OV8N
-	 mLeuX/YVDzdBjW8zJiShYpRnbVPc9rQznt1jj3VJ7+lyGmQU9EzEUWQp4cCxD2urfV
-	 vMlxsjpdY4l9sInSsA0QnW2dCTO258v55LpfqzLuFxP4QXecHPkpPW0MG3lFZ6xH4m
-	 UAtqVq37k3D3kP9GRlXGON/IS+3TCIn9S7HqoBAPo44+HK9rT90qyAo6ZIykI2epHX
-	 j6l3mUoL4XBcQpMJOXoE9B88N7CTanz7fRCGviNd7CG7INHguA1X2uMTnfFsvvzL24
-	 dCPsaC40p8iQg==
-Date: Thu, 16 May 2024 17:24:25 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Andy Chiu <andy.chiu@sifive.com>
-Cc: Charlie Jenkins <charlie@rivosinc.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Guo Ren <guoren@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Evan Green <evan@rivosinc.com>,
-	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>,
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Palmer Dabbelt <palmer@rivosinc.com>,
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v6 03/17] riscv: vector: Use vlenb from DT
-Message-ID: <20240516-grandkid-monday-86c698ca4aed@spud>
-References: <20240503-dev-charlie-support_thead_vector_6_9-v6-0-cb7624e65d82@rivosinc.com>
- <20240503-dev-charlie-support_thead_vector_6_9-v6-3-cb7624e65d82@rivosinc.com>
- <CABgGipXg68VEGt=oZZSENmbqs4-g3PB=CBobNwgqQjLHfxo+VQ@mail.gmail.com>
+	b=Xm+tt4vj6fqAqYaWHMwVxBRNN8IZbrcKZPOKlbahvYjbr9pbSTsFviXlxn9Vli/UU
+	 hhwcWkdWc0uj6pvmD2TdX/QqOPk5iKPS5LlmFf1b3AsQGkwKHKcF+1xTvJ5HXgI1/w
+	 0KdnZ+9h4XCrW3M5nWnSTcYVKtLa1efrKXzWY4qrq+dRBs6juWPMKR+cXAXghDts1G
+	 E+N59YppiTHxN+O3tK8eusFL0w0YwReqjMrN4KEGBmscTs+mL5FpFb2VNk1ne2q8DY
+	 yQ2bkdCgJYjWwo0fF5N7zzIbc6nURvnFt0nT0ON3qDrTqPOtJNgWKcgDKAM6/cug89
+	 A5w0XmuK9wUOw==
+Received: from notapiano (zone.collabora.co.uk [167.235.23.81])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nfraprado)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 23933378143B;
+	Thu, 16 May 2024 16:25:21 +0000 (UTC)
+Date: Thu, 16 May 2024 12:25:19 -0400
+From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/1] spi: Remove unneded check for orig_nents
+Message-ID: <2fccdd9a-5b97-4dc6-a6b1-ce2d9e0819bd@notapiano>
+References: <20240507201028.564630-1-andriy.shevchenko@linux.intel.com>
+ <d8930bce-6db6-45f4-8f09-8a00fa48e607@notapiano>
+ <ZkXdXO4Xb83270V7@smile.fi.intel.com>
+ <ZkYJTxmlM5oWOzFL@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="54mb6NLQMPiDuRTG"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <CABgGipXg68VEGt=oZZSENmbqs4-g3PB=CBobNwgqQjLHfxo+VQ@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZkYJTxmlM5oWOzFL@smile.fi.intel.com>
 
+On Thu, May 16, 2024 at 04:25:35PM +0300, Andy Shevchenko wrote:
+> On Thu, May 16, 2024 at 01:18:04PM +0300, Andy Shevchenko wrote:
+> > On Wed, May 15, 2024 at 05:09:33PM -0400, Nícolas F. R. A. Prado wrote:
+> > > On Tue, May 07, 2024 at 11:10:27PM +0300, Andy Shevchenko wrote:
+> > > > Both dma_unmap_sgtable() and sg_free_table() in spi_unmap_buf_attrs()
+> > > > have checks for orig_nents against 0. No need to duplicate this.
+> > > > All the same applies to other DMA mapping API calls.
+> > > > 
+> > > > Also note, there is no other user in the kernel that does this kind of
+> > > > checks.
+> > > > 
+> > > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > > 
+> > > this commit caused a regression which I reported here:
+> > > 
+> > > https://lore.kernel.org/all/d3679496-2e4e-4a7c-97ed-f193bd53af1d@notapiano
+> > > 
+> > > along with some thoughts on the cause and a possible solution, though I'm not
+> > > familiar with this code base at all and would really appreciate any feedback you
+> > > may have.
+> > 
+> > Thanks for the report and preliminary analysis!
+> > I'll look at it hopefully sooner than later.
+> > 
+> > But at least what I think now is that my change revealed a problem somewhere
+> > else, because that's how DMA mapping / streaming APIs designed, it's extremely
+> > rare to check orig_nents field.
+> 
+> Can you test the below patch?
+> 
+> diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+> index b2efd4964f7c..51811f04e463 100644
+> --- a/drivers/spi/spi.c
+> +++ b/drivers/spi/spi.c
+> @@ -1243,6 +1243,7 @@ static int __spi_map_msg(struct spi_controller *ctlr, struct spi_message *msg)
+>  	else
+>  		rx_dev = ctlr->dev.parent;
+>  
+> +	ret = -ENOMSG;
+>  	list_for_each_entry(xfer, &msg->transfers, transfer_list) {
+>  		/* The sync is done before each transfer. */
+>  		unsigned long attrs = DMA_ATTR_SKIP_CPU_SYNC;
+> @@ -1272,6 +1273,9 @@ static int __spi_map_msg(struct spi_controller *ctlr, struct spi_message *msg)
+>  			}
+>  		}
+>  	}
+> +	/* No transfer has been mapped, bail out with success */
+> +	if (ret)
+> +		return 0;
+>  
+>  	ctlr->cur_rx_dma_dev = rx_dev;
+>  	ctlr->cur_tx_dma_dev = tx_dev;
 
---54mb6NLQMPiDuRTG
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Andy,
 
-On Thu, May 16, 2024 at 10:00:12PM +0800, Andy Chiu wrote:
-> On Sat, May 4, 2024 at 2:21=E2=80=AFAM Charlie Jenkins <charlie@rivosinc.=
-com> wrote:
+thank you for the patch. Unfortunately it didn't completely solve the issue. Now
+the stack trace is slightly different and points at the next line:
 
-> > +               if (elf_hwcap & COMPAT_HWCAP_ISA_V && has_riscv_homogen=
-eous_vlenb() < 0) {
-> > +                       pr_warn("Unsupported heterogeneous vlen detecte=
-d, vector extension disabled.\
-> > +                       elf_hwcap &=3D ~COMPAT_HWCAP_ISA_V;
-> > +               }
->=20
-> We only touch COMPAT_HWCAP_ISA_V and the failed case only turns off the
-> rectified V. So here we have nothing to do with the Xtheadvector.
+	dma_sync_sgtable_for_device(rx_dev, &xfer->rx_sg, DMA_FROM_DEVICE);
 
-There's nothing t-head related in the tree at this point, so doing
-anything with it would cause build issues.
+So now we're hitting the case where only the tx buffer was DMA mapped, but the
+rx is still uninitialized, though the cur_msg_mapped flag is set to true, since
+it is shared between them. The original code checked for the initialization of
+each scatterlist individually, which is why it worked.
 
-> However, I am still confused because I think Xtheadvector would also
-> need to call into this check, so as to setup vlenb.
-
-
-> Apart from that, it seems like some vendor stating Xtheadvector is
-> actually vector-0.7.
-
-The T-Head implementation is 0.7.x, but I am not really sure what you
-mean by this comment.
-
-> Please correct me if I speak anything wrong. One
-> thing I noticed is that Xtheadvector wouldn't trap on reading
-> th.vlenb but vector-0.7 would. If that is the case, should we require
-> Xtheadvector to specify `riscv,vlenb` on the device tree?
-
-In the world of Linux, "vector-0.7" isn't a thing. There's only 1.0, and
-after this patchset, "xtheadvector". My understanding, from discussion
-on earlier versions of this series the trap is actually accessing
-th.vlenb register, despite the documentation stating that it is
-unprivileged:
-https://github.com/T-head-Semi/thead-extension-spec/blob/master/xtheadvecto=
-r.adoc
-I assume Charlie tried it but was trapping, as v1 had a comment:
-+		 * Although xtheadvector states that th.vlenb exists and
-+		 * overlaps with the vector 1.0 extension overlaps, an illegal
-+		 * instruction is raised if read. These systems all currently
-+		 * have a fixed vector length of 128, so hardcode that value.
-
-Cheers,
-Conor.
-
---54mb6NLQMPiDuRTG
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZkYzOQAKCRB4tDGHoIJi
-0rSDAQDYSejV6VHTrL2jnxNTvkydaJkpuoNoUR0KH7Woyb0A7wEAoRBty/hTiap0
-kvVFRs7XwEEn0QBitKVO7a6zx8YNQA4=
-=DNuY
------END PGP SIGNATURE-----
-
---54mb6NLQMPiDuRTG--
+Thanks,
+Nícolas
 
