@@ -1,167 +1,135 @@
-Return-Path: <linux-kernel+bounces-181066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA6B78C7716
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:04:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 576A48C7718
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:05:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 567CE1F21B6F
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 13:04:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05A951F21CAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 13:05:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2D0F1482E0;
-	Thu, 16 May 2024 13:04:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AC3B146D6B;
+	Thu, 16 May 2024 13:04:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OOcUatqx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UB/tRvnq"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6C6B1474C6;
-	Thu, 16 May 2024 13:04:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 180A0146D51
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 13:04:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715864680; cv=none; b=psc9HerjxmB+Ulo0JFfOtEYsnIQgZtBhHBOXbVKq1jH1mVukMTzpaykw+D6DroyAXVXUXEYMMLuwE9901x4vh0dxgdTle0CXNnRg2PA2NzcI8crqf/1hwrZYQSC6uh9454q2HcWzAM4/UY9K4Gj7F5R170UhWxivtE55BEvanT4=
+	t=1715864698; cv=none; b=K/kQholEB041lnk/e0gnR9Sbb6iCh/IDDqw6caqmoqvSzMC8mOsCX12onncfWlDYgzTC+W1mjZXLqqxK3+VjrqIiacnnbP/duRRf5qyeYuAZ/m6tD76llHZ0j8UJlXod0fJlIecd/oyqLWHMIL/JyaX7dygTwnEFXRq6qZlCbdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715864680; c=relaxed/simple;
-	bh=lANF33hHhvZlC5k66NZieznEujRydEkMTcg2oIOZf+0=;
+	s=arc-20240116; t=1715864698; c=relaxed/simple;
+	bh=415jALTlWUO89NXSLBZTpbKURNjit+DVVwNfQ4tH4nU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ULWsLef5egD39ezsKePMUR4til+lFmmMijTEgfe3cd2KSgD/68p792AvMZEa9yNIpFl1/hk4sG+q4QUdf7FRHUHT7eH/HrdoYbpJ8JLon0SzEUI5uRdEcVPx9rtdcmVsXGBUWNEd4rqNCqass5q8FuWwwxh/+PK0hIjPXZH5RA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OOcUatqx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AD1CC2BD11;
-	Thu, 16 May 2024 13:04:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715864679;
-	bh=lANF33hHhvZlC5k66NZieznEujRydEkMTcg2oIOZf+0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=OOcUatqxoX1Mo/CcGPvfT3OJXCa2Q0HX4obZINi03Qk2mH4IhDoJiqR2g8tNYKOVY
-	 roHwMxJrBJfDzHxwQh++0N5i4M0yNC+ftPOLBCi9GJpdYxiINpufLKQTrONeQOYu+/
-	 btnFmOMT25BdDPUu3s15ZVw7IEsvgQ+RvZ840YzguGlF7TPpXhBqltjpSff8CQArOZ
-	 jVMFoAMzViKf5HQFrE/jQMD0F5/wTsRgXChGEa4zpf4NpbY8KDrSN3LhCgGOmaukCZ
-	 o5gCkyDdTp4dJ60JHbD8ovfstF3d29iwhCSxCoXxBp7nW9KkDH5Uif0LNlI2cbxBuH
-	 CsKDkXblzkkwA==
-Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5b2f4090ac9so40553eaf.2;
-        Thu, 16 May 2024 06:04:39 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWiLvnBCNC9tnVNGcbCxfkrA3UwXrwUtRXV16efljod9xzkRP8SJ++X6OZj17LbyS2MwAMVk4/6U6iCoNoo9BtFNXqwW/sxRlXo9RuNsZ+NRQ5bVloFIxHJwUD0M3kCY8wsrDWbBUo23VpYq4C9FBdf/rq4RBP/COqzqoMMxHoW7NouW9F+LRlWNol3rcMkcp3zPoWLX7CDtFmnNW/xluNpYg==
-X-Gm-Message-State: AOJu0YwTpYnPh000f9BZaXxtwO25jAD7hTBkwFtoSOGiLgipEaHbK0WO
-	ISU53E+DyPOIAjQVT14mC7nkDRC0quP29yoqH63dU/QEPYQdQ0ytTr5cULDobt1VfwUj9lkioWH
-	/CZV8ivtvF7uQZ85mNIXKncPZ2PM=
-X-Google-Smtp-Source: AGHT+IFemhO95rMoyxfMEhxijBJUiXX4NOCyoajz6xwWsaXxqFUkT8aIVqw1K1TJO13iN9pQ3XfqejYS9nFUxeFLCaw=
-X-Received: by 2002:a05:6870:2153:b0:22e:dfbc:4aae with SMTP id
- 586e51a60fabf-24172a7e835mr21408284fac.2.1715864678677; Thu, 16 May 2024
- 06:04:38 -0700 (PDT)
+	 To:Cc:Content-Type; b=cr/Vfoq+grDcg0/lXDIYa9JTqAXypP4jom5SJszxgtvNK2Ded4w8KItcMHYOEDh+dxbwH9y2lN422IicGdm7CjjSUOzVHkrVNLQsbU8EAFHr7jamUNZ2MVNw3BoDjChmva7BKK5ZlN5R2GL2IXGrLkOg2vflGVJ+v09Y2OShtuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UB/tRvnq; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-6001399f22bso130447a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 06:04:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715864696; x=1716469496; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CHzuz0CH6x1TfON6MZpHmTkKmz49+sk28IRI1d2Qybo=;
+        b=UB/tRvnqRILkKfNegr9GKmsws5kthxvL/LwO0b5tp8fvCxcfy8H0pkOCj+kyWMhmQN
+         TNOsUg0Jdk90MgZSAqOFrJXqLUSQjXORrd+KbcP0tdOGO+G3nD83rMZCMVJuwcOBElvF
+         vfSAM+X2tNF+uPxZ8rGcvZ1uFhcBd+GD4spF/ZBC9QTefrbbhzZpBCkLoLOvjZ2F2eDP
+         bDM4veSkaGwsel10BYdR85yoLg1OP4yJGH8w99HT1r4QTIse521wIuAYqXOH38BSkTJm
+         7rnsJvoizenYXZsoV6N5roBw38WSLSfyS2OFHbHOHm/yxJQLJcYIfEPEBTTTuWO8MiAI
+         UG3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715864696; x=1716469496;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CHzuz0CH6x1TfON6MZpHmTkKmz49+sk28IRI1d2Qybo=;
+        b=Wu8cHAi0pjlpaCdUetQpISUMn34dBARvO86cTwvBilliFV5ak70zAk12vCjOUXOO+q
+         0M11IfIElNAhbfy4i1D1F0p8gcpBTFf3uO4T/na1oa+yoGHf/c05BS55bfbJMTqmdIEV
+         5qQXoa4p+t94ieV1xDqDnwlyDzGEr5jLystD+yg1Rw6pkrggjKBzjvGmGGPgeBX6/Ic2
+         YjR5fC6RKZ0ENTCPF/NXEwqEZJlapnHEmNreVJGrxtZbQ/yyZPKIy0mlNRy9P5vxR3Kq
+         vAjbH9pFhN4jGVFhqqRsXIdfrP3y3wLE0Fm27zNOYnwD0qCTZyChvf662eM+wMGwQYS/
+         qDGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXwj5Qll16RHO2Pu8YVrMC0Bp+eyPDKNJOVPAp3CpAk9yNhMABjf+gNII59BGng5qGfeRdymOIKXh7bxKdF5GrLamu8JBiOf6zl02mN
+X-Gm-Message-State: AOJu0Yw7yCvTs+fFeGgkKIkJhM6IMtAU02DvXhodl+vnr073Y3Jt17bn
+	wBQ1dkbUJQf+iwmUCeSLPrLEP8m5rh4qJMaixg1n6LVZ4A9JDFrPjIPgL/Euih65Sp4+Hj4q9M2
+	LMAim4pqxEvuNziaxjUl9bM+Q+9mY7Q==
+X-Google-Smtp-Source: AGHT+IGD6aSzAfB1khSEG7/IvHVW4QgklsGIhvcD1YMnYiRrZrtPPyg+BeZe9Crho+h371LSrzuIesWHhZK9P4g1BzY=
+X-Received: by 2002:a17:90a:778b:b0:2b6:5156:5b9b with SMTP id
+ 98e67ed59e1d1-2b6ccd6c165mr16100840a91.35.1715864695987; Thu, 16 May 2024
+ 06:04:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240516124317.710-1-tzimmermann@suse.de>
-In-Reply-To: <20240516124317.710-1-tzimmermann@suse.de>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 16 May 2024 15:04:27 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gw620SLfxM66FfVeWMTN=dSZZtpH-=mFT_0HsumT3SsA@mail.gmail.com>
-Message-ID: <CAJZ5v0gw620SLfxM66FfVeWMTN=dSZZtpH-=mFT_0HsumT3SsA@mail.gmail.com>
-Subject: Re: [PATCH] ACPI: video: Fix name collision with architecture's video.o
-To: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: rafael@kernel.org, lenb@kernel.org, arnd@arndb.de, 
-	chaitanya.kumar.borah@intel.com, suresh.kumar.kurmi@intel.com, 
-	jani.saarinen@intel.com, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org, 
-	linux-arch@vger.kernel.org, linux-fbdev@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, Hans de Goede <hdegoede@redhat.com>
+References: <CAPM=9tw-53PCvveRcdLUUQ+mjq2X2er5zp6n1KeE8Nu8x=VP2g@mail.gmail.com>
+ <CAHk-=whxT8D_0j=bjtrvj-O=VEOjn6GW8GK4j2V+BiDUntZKAQ@mail.gmail.com>
+ <CAPM=9tyOtH24Mw_2X+bgV9iChOQV3LtmRCoR5x6KXhSUD6FjUg@mail.gmail.com>
+ <CAHk-=wh8DWSMrtuhZOzanfBCFcuJCihO9x7fkzx-dBhLddXF-Q@mail.gmail.com>
+ <CAPM=9twCVkx9OqndCcvjjgx+P7ixBRwttiz25-R=bkycEo5vrQ@mail.gmail.com>
+ <CAHk-=whuCX-NAGOLzwn5sObPDJX-pdqamZ7YTpHFHODAMv4P+A@mail.gmail.com> <87v83eb2sn.fsf@intel.com>
+In-Reply-To: <87v83eb2sn.fsf@intel.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Thu, 16 May 2024 09:04:44 -0400
+Message-ID: <CADnq5_Nw_Tr5DABc3XGFpzQhePnVNGW-tzSZAQq0CL=s0iT8sQ@mail.gmail.com>
+Subject: Re: [git pull] drm for 6.10-rc1
+To: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Dave Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel.vetter@ffwll.ch>, dri-devel <dri-devel@lists.freedesktop.org>, 
+	LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-CC Hans who has been doing the majority of the ACPI video work.
+On Thu, May 16, 2024 at 4:42=E2=80=AFAM Jani Nikula <jani.nikula@linux.inte=
+l.com> wrote:
+>
+> On Wed, 15 May 2024, Linus Torvalds <torvalds@linux-foundation.org> wrote=
+:
+> > On Wed, 15 May 2024 at 16:17, Dave Airlie <airlied@gmail.com> wrote:
+> >> AMDGPU, I915 and XE all have !COMPILE_TEST on their variants
+> >
+> > Hmm.  It turns out that I didn't notice the AMDGPU one because my
+> > Threadripper - that has AMDGPU enabled - I have actually turned off
+> > EXPERT on, so it's hidden by that for me.
+> >
+> > But yes, both of those should be "depends on !WERROR" too.
+>
+> Fair enough. Honestly it just didn't occur to me.
+>
+> The main goal here was to ensure the drm subsystem does not have any
+> build warnings, but without halting CI on any non-drm warnings that
+> might occasionally creep in and that we can't fix as quickly.
+>
+> If there was a way to somehow limit WERROR by subdirectories, without
+> config options, I'd love to ditch the config.
 
-On Thu, May 16, 2024 at 2:43=E2=80=AFPM Thomas Zimmermann <tzimmermann@suse=
-de> wrote:
->
-> Commit 2fd001cd3600 ("arch: Rename fbdev header and source files")
-> renames the video source files under arch/ such that they does not
-> refer to fbdev any longer. The new files named video.o conflict with
-> ACPI's video.ko module.
+Right.  Same thing for amdgpu.  Our CI was often breaking due to
+-WERROR in other subsystems or with compiler updates.  Maybe it's
+better now.
 
-And surely nobody knew or was unable to check upfront that there was a
-video.ko already in the kernel.
+Alex
 
-> Modprobing the ACPI module can then fail with warnings about missing symb=
-ols, as shown below.
->
->   (i915_selftest:1107) igt_kmod-WARNING: i915: Unknown symbol acpi_video_=
-unregister (err -2)
->   (i915_selftest:1107) igt_kmod-WARNING: i915: Unknown symbol acpi_video_=
-register_backlight (err -2)
->   (i915_selftest:1107) igt_kmod-WARNING: i915: Unknown symbol __acpi_vide=
-o_get_backlight_type (err -2)
->   (i915_selftest:1107) igt_kmod-WARNING: i915: Unknown symbol acpi_video_=
-register (err -2)
->
-> Fix this problem by renaming ACPI's video.ko to acpi_video.ko. Also
-> rename a related source file and clean up the Makefile.
 
-If you insist on renaming, rename it to backlight.c (and
-backlight_detect.c for consistency), because that's what it really is
-about.
-
-> Reported-by: Chaitanya Kumar Borah <chaitanya.kumar.borah@intel.com>
-> Closes: https://lore.kernel.org/intel-gfx/9dcac6e9-a3bf-4ace-bbdc-f697f76=
-7f9e0@suse.de/T/#t
-> Tested-by: Chaitanya Kumar Borah <chaitanya.kumar.borah@intel.com>
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-> Fixes: 2fd001cd3600 ("arch: Rename fbdev header and source files")
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: linux-arch@vger.kernel.org
-> Cc: linux-fbdev@vger.kernel.org
-> Cc: dri-devel@lists.freedesktop.org
-> ---
->  drivers/acpi/Makefile                            | 5 +++--
->  drivers/acpi/{acpi_video.c =3D> acpi_video_core.c} | 2 +-
->  2 files changed, 4 insertions(+), 3 deletions(-)
->  rename drivers/acpi/{acpi_video.c =3D> acpi_video_core.c} (99%)
 >
-> diff --git a/drivers/acpi/Makefile b/drivers/acpi/Makefile
-> index 8cc8c0d9c8732..fc9e11f7afbf7 100644
-> --- a/drivers/acpi/Makefile
-> +++ b/drivers/acpi/Makefile
-> @@ -84,7 +84,9 @@ obj-$(CONFIG_ACPI_FAN)                +=3D fan.o
->  fan-objs                       :=3D fan_core.o
->  fan-objs                       +=3D fan_attr.o
+> > Or maybe they should just go away entirely, and be subsumed by the
+> > DRM_WERROR thing.
 >
-> -obj-$(CONFIG_ACPI_VIDEO)       +=3D video.o
-> +obj-$(CONFIG_ACPI_VIDEO)       +=3D acpi_video.o
-> +acpi_video-objs                        +=3D acpi_video_core.o video_dete=
-ct.o
-> +
->  obj-$(CONFIG_ACPI_TAD)         +=3D acpi_tad.o
->  obj-$(CONFIG_ACPI_PCI_SLOT)    +=3D pci_slot.o
->  obj-$(CONFIG_ACPI_PROCESSOR)   +=3D processor.o
-> @@ -124,7 +126,6 @@ obj-$(CONFIG_ACPI_CONFIGFS) +=3D acpi_configfs.o
+> For i915, this was the idea anyway, we just haven't gotten around to it
+> yet.
 >
->  obj-y                          +=3D pmic/
 >
-> -video-objs                     +=3D acpi_video.o video_detect.o
->  obj-y                          +=3D dptf/
+> BR,
+> Jani.
 >
->  obj-$(CONFIG_ARM64)            +=3D arm64/
-> diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video_core.c
-> similarity index 99%
-> rename from drivers/acpi/acpi_video.c
-> rename to drivers/acpi/acpi_video_core.c
-> index 1fda303882973..32bf81c5773a4 100644
-> --- a/drivers/acpi/acpi_video.c
-> +++ b/drivers/acpi/acpi_video_core.c
-> @@ -1,6 +1,6 @@
->  // SPDX-License-Identifier: GPL-2.0-or-later
->  /*
-> - *  video.c - ACPI Video Driver
-> + *  acpi_video_core.c - ACPI Video Driver
->   *
->   *  Copyright (C) 2004 Luming Yu <luming.yu@intel.com>
->   *  Copyright (C) 2004 Bruno Ducrot <ducrot@poupinou.org>
+>
 > --
-> 2.45.0
->
->
+> Jani Nikula, Intel
 
