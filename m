@@ -1,118 +1,104 @@
-Return-Path: <linux-kernel+bounces-181478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23A3D8C7C86
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 20:31:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC7278C7C88
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 20:32:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDC2A1F23419
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:31:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19ABB1C20DDC
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:32:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 262AA156F54;
-	Thu, 16 May 2024 18:28:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="CwU2n6eV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DC5D1586C4;
+	Thu, 16 May 2024 18:28:25 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59563156C7C;
-	Thu, 16 May 2024 18:28:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3566156C7C
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 18:28:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715884100; cv=none; b=BzlV2T8Ns8SEDgN+DqmhmXufEx6hocw5S9ePWlCijcoUAJZ1O/04DCOiXB09wXd+YlIxJO/qOtznoskO+OucdZzl4JKZ+zfWgSCJSjZjglY9Jftpvg+trk3pTCCM8pQKyd2lKl8ag+w1oTZ3hVxpsK6MA5ZCPk7D3rSBlpuWLYw=
+	t=1715884105; cv=none; b=iWR1ApffcnulEuUt0AtLrFPhnDSTyiwHFtHUOTcyRvs0VD5HppZkEd1KiBx+7DdRcgMQxk1B4SbkU5ZVE4xS2BBhwkXQtGjEvLLKU7c9GRaVSe4/VbjkRykd1E/1HJS9u1Lx1c/BI0v4jRRFQO8jGsqwxGj+lTnLE64Obv0OMTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715884100; c=relaxed/simple;
-	bh=sT5rh3M+x1YJYckp/JlnwaL9GidKt++aphUT4lC1FnU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xyt8pBeLvJ+B8EnYYRkCADcXoDFlxVxOzpRqfZ1NvDbRUyFKJci7++fHTeb/RLeutHfQjUtaGKr5m8U+lh0vcvD16LdGWY+Z5oxlty+reaLziwKWsIWuVJ6xAVXgc4RQS+Ad+IEvFAqol0+VFCbSV+xDnD5f57AOp9qX6gWOlF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=CwU2n6eV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BC99C4DE1B;
-	Thu, 16 May 2024 18:28:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1715884099;
-	bh=sT5rh3M+x1YJYckp/JlnwaL9GidKt++aphUT4lC1FnU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CwU2n6eVL6NNCAgVieVMspD5xWKrfd4OQgqj3WrEwdlG6PoaKeIxdU3Nl+vyMBQI9
-	 aECP/pmMps/AXBG2ymUF9F2xlzxsOY/W018DVcO3dYu2pSP9wo5eQo/i8ox8Gk8gLl
-	 +x83O4W6y/LIIff5vLbn7YgmPlSw09nvi2tYfLic=
-Date: Thu, 16 May 2024 20:28:16 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	linux-kernel@vger.kernel.org, Sebastian Reichel <sre@kernel.org>,
-	linux-pm@vger.kernel.org
-Subject: Re: [PATCH RFC] kobject_uevent: notify uevent sysfs file on changes
-Message-ID: <2024051634-replica-unbalance-b39d@gregkh>
-References: <20240516-uevent-sysfs-notify-v1-1-2ebb39930c09@weissschuh.net>
- <2024051640-earthen-granite-0847@gregkh>
- <74e7cc7b-3b3f-4dae-bcb2-7eb4f9d478cd@t-8ch.de>
+	s=arc-20240116; t=1715884105; c=relaxed/simple;
+	bh=UzKx2uEzqgslDAiwUDJyVu5c/uy6CYD26vc1Ic3/26A=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=aIjpvi9zUJ90o5UNqV3eQ7OkHHhcUV6mFsmVP3ZIhr66ckrBvplzmqBwgczc1rg2JpmdBV3RAfFS7WBfFqaDG2fivouwvHFIKVbZVIogc9AGrOhwu6XuUXYP5YE5DxTj1xuqy7VY9+rLYB8zx5n+CSR3RX9vFjqBlq8Kem5bX78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7d9fde69c43so886223239f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 11:28:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715884103; x=1716488903;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UzKx2uEzqgslDAiwUDJyVu5c/uy6CYD26vc1Ic3/26A=;
+        b=XXw391s2NHJ06Ng711izWuzXZkxiRksu3Gj7qC2CPcjw7gqsXKdXPdHIgIsEodgcR3
+         Hsy4P+JP0vkBnKzid/9OGk6N119x6AeB6wNtA145VDygWcjBCJiLU0kM3ZFF3n94TBU6
+         FvfDH24PcnK8IYNK2p7pwb7a5zA5pG8SK0zZIGUPi+R6QHGMXP0QY8lz72kc5RbWSIXv
+         SSeCxnm8ysrmAygwuI9lAlW9Hn4oPlE25J0UI13+K1m7erl9a+TIDvw9DxVWFhN33AeJ
+         ojdfRUhXDGY5rE9YbOrCfh8pka6hsQ0kz1Zk8arzKQ6L0uU9v2s16nzAPafOOkCtXKEQ
+         SApQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXDu/KDkhb5s6toRaKm+FKt8OA/VghRPjaqoiEvxxFClNYYfcAh6+AnFvv/OhCNO1B+lpetkiyPMJ6l1lJ1Tp80ZKzFdrdLxrwBYmXY
+X-Gm-Message-State: AOJu0YwwPiR694ZNDeK01pE5Jq+fQNxfFBHYhcCy2+Lonvu66eRT7z1y
+	YTrwUOUWYJEjc3fwcXmmw+oh1aKYUsCAlow2OGDi44zRQ98ukAJ8SvySb5ko1x4VgfEQaJANtiE
+	p9xDCEiyt1uYSEwICSlvfUEnDU1+H9juYFMdBGih0Hz71CrNbI5QyUrQ=
+X-Google-Smtp-Source: AGHT+IGKKYnqdAHzrld9TebqrsNNwKIo/KHdQn6r+DkVA7nvsLxlcQmJjp/lh+6pTXx69W6Co6RzpGinzhw/WGufFYsVoBdG0blB
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <74e7cc7b-3b3f-4dae-bcb2-7eb4f9d478cd@t-8ch.de>
+X-Received: by 2002:a05:6638:8506:b0:488:f465:f4cd with SMTP id
+ 8926c6da1cb9f-4895856fa08mr1523351173.1.1715884101697; Thu, 16 May 2024
+ 11:28:21 -0700 (PDT)
+Date: Thu, 16 May 2024 11:28:21 -0700
+In-Reply-To: <000000000000a62351060e363bdc@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000005ba4340618966617@google.com>
+Subject: Re: [syzbot] memory leak in ___neigh_create (2)
+From: syzbot <syzbot+42cfec52b6508887bbe8@syzkaller.appspotmail.com>
+To: alexander.mikhalitsyn@virtuozzo.com, davem@davemloft.net, den@openvz.org, 
+	dsahern@kernel.org, edumazet@google.com, f.fainelli@gmail.com, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	nogikh@google.com, pabeni@redhat.com, razor@blackwall.org, 
+	syzkaller-bugs@googlegroups.com, thomas.zeitlhofer+lkml@ze-it.at, 
+	thomas.zeitlhofer@ze-it.at, wangyuweihx@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, May 16, 2024 at 07:41:07PM +0200, Thomas Weißschuh wrote:
-> On 2024-05-16 13:17:34+0000, Greg Kroah-Hartman wrote:
-> > On Thu, May 16, 2024 at 12:27:58PM +0200, Thomas Weißschuh wrote:
-> > > The sysfs file "uevent" that exists for each device
-> > > contains the same information that is attached to uevents emitted via
-> > > netlink (or the usermode helper).
-> > > This is useful for userspace which interacts with sysfs directly,
-> > > without using (lib)udev.
-> > > 
-> > > However it is not possible to actually get notified when the data in
-> > > the "uevent" file changes.
-> > 
-> > What is wrong with listening to the uevent that is happening when the
-> > file changes?
-> 
-> It requires netlink or libudev which is not available or ergonimic for
-> all userspace programs.
+This bug is marked as fixed by commit:
+net: stop syzbot
 
-But that's the api involved for this thing.
+But I can't find it in the tested trees[1] for more than 90 days.
+Is it a correct commit? Please update it by replying:
 
-> Shellscripts, simple C applications, programing languages without
-> access to netlink/libudev.
+#syz fix: exact-commit-title
 
-You can have a shellscript run for every uevent if that's all you have,
-why not just do that?
+Until then the bug is still considered open and new crashes with
+the same signature are ignored.
 
-> I noticed this when using the "Waybar" application[0] and missing power
-> supply event updates. Both me and the authors of Waybar expected sysfs
-> notifications to work for uevent files.
-> 
-> Using sysfs notifications looks like an easy quality-of-life
-> improvement.
-> 
-> > > Enable these notifications, so that the "uevent" file can be used
-> > > together with inotify and friends.
-> > 
-> > uevent files are meant to be listened to by the uevent itself, why not do
-> > that?
-> 
-> I can't parse this sentence, sorry. Could you elaborate?
+Kernel: Linux
+Dashboard link: https://syzkaller.appspot.com/bug?extid=42cfec52b6508887bbe8
 
-The uevent file just mirrors what was sent in the uevent.  It isn't
-there to be polled, it's just there to be read if you want the
-information later on for some reason (i.e. coldplugging).
+---
+[1] I expect the commit to be present in:
 
-I recommend just using libudev to register for the events, don't try to
-parse the files yourself, that way is madness :)
+1. for-kernelci branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git
 
-Or register for the netlink events you care about, you can filter very
-easily that way to only get the ones you want, that's why the netlink
-interface is used.
+2. master branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git
 
-thanks,
+3. master branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf.git
 
-greg k-h
+4. main branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git
+
+The full list of 9 trees can be found at
+https://syzkaller.appspot.com/upstream/repos
 
