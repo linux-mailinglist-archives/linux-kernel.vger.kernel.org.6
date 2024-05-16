@@ -1,202 +1,204 @@
-Return-Path: <linux-kernel+bounces-181038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25F948C768E
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:36:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7DB58C7692
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:36:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91413B22E8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:36:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB2F21C2127D
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:36:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24A87145FE6;
-	Thu, 16 May 2024 12:36:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9A58146006;
+	Thu, 16 May 2024 12:36:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="eck9mCF7"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2066.outbound.protection.outlook.com [40.107.21.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d/xs5voZ"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F417B1E511;
-	Thu, 16 May 2024 12:36:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715862980; cv=fail; b=CevbQgkoeXVNSLQpTtuNlJ3lhz1eZqU0ZrEA84hHvKPvzez1F1+OhiZ8oHL6juV7Zz2jIy6nNdRK4aolnjkX6zq7iDTJIiMriReezCUL5qE+do0lO7Hx6YMULvSKgCNi9d9yr3Hzxou+E+7CKKz4+yP4/RQwMh4vUn2EMQBOHD4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715862980; c=relaxed/simple;
-	bh=SS2VZEhMVeNNmXVO8h+vS7khcN/HcODuYGNb2w4nVII=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=NCFecYCoAt1/GXReOmt0460FaUMtB0xwx4wqODMvZ6sWpejKqFZkA/XZFW9M/Khlu2h7ahaaXmDaYUa1tIpvr2VlxX3UJRiodNJsavxtnvJmHMbVcZS3ViLEYpxwh1PmQn0Qs8zSq0wgctI2+wLpuU3CkP3JyWB3uv0No8urO/g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=eck9mCF7; arc=fail smtp.client-ip=40.107.21.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=DcIswR23km98LJwrGTUsKr2eG9GtsRucJ3c40Be0MnfK2V3lBtqX4Gns/lHlufXxgzKd7h2Bj1lUr9/6ka6NeZSAWVzDhZveDYimz+UKp6VPVFrhoHU9Y67X7CFW+JDelFw8I6KAbzCUj81SD7GseRE4PIhAWpq8zwMYJ1neK8mrEq5mwykjXDfdZY9FoC/MEOsHtMaiGgWmdLBmFSbSmBKX+karX4EnYjIq/p2x+z2Bjv8GzUwKrdcifZcE31WAOq/0+CwZMYuu8VMFSrkHJsyHXvg9ecqX/F8plIKnvLgvQw8JJF7UTpY43o8ykYqLtFBkBvqwy+Es0CdmtiFnxQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ja95AnOuV+Z5fY8MsD6/NwB3w5GhiG2gKsA7dYQYCKs=;
- b=iDFh/ZoAcmq3wDhiyoOGRsnfDPTokCwGkhpYDqYkOaV6u1NqV04LpeCm7Cyvx0cw886c94Vb6H4oQlYEFEJo8I+w2ikfPeyiT8J5qOsHNZLdebCOr2VQUIYlIu8/4eO+e74Ym7tYbifTVXOUKTj+u37WGmGk0W+dScttAlAogpSfxjs3JCWXPaoi2cER0LGiU96nlTvtMskGXIWqGRJ3nmsIGIolCH4+W/6i8pydr2EhEy/76Fsh4zdzoJ5kbkRAyBtP0HKYDVUGJn2IxXxcQkOLXZrrw824QrW3LoldRbu/d1ZNOqtg0BCGXRygLgXGCMDBuixDQ+3v1fXJMApidw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ja95AnOuV+Z5fY8MsD6/NwB3w5GhiG2gKsA7dYQYCKs=;
- b=eck9mCF7fQC+3R7Rp927OxRFjlGCxJNH8gTShlyR+bpmoBpowhDnco0vTG5ql00eNqRNUXnIw0q+erAdcB8O3CfuuVv4Hlrda+Ld/YblV2ORjgYuew9ws3L/oJZEffRRoEnP0fRFJKpi2Us3ZBVZ8oMD7w6iAnsdOcoFuFfZj1A=
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
- by DBBPR04MB7786.eurprd04.prod.outlook.com (2603:10a6:10:1e8::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.27; Thu, 16 May
- 2024 12:36:15 +0000
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::557f:6fcf:a5a7:981c]) by DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::557f:6fcf:a5a7:981c%6]) with mapi id 15.20.7587.026; Thu, 16 May 2024
- 12:36:14 +0000
-From: Peng Fan <peng.fan@nxp.com>
-To: "Michael S. Tsirkin" <mst@redhat.com>, "Peng Fan (OSS)"
-	<peng.fan@oss.nxp.com>
-CC: "jasowang@redhat.com" <jasowang@redhat.com>,
-	"virtualization@lists.linux-foundation.org"
-	<virtualization@lists.linux-foundation.org>, "eperezma@redhat.com"
-	<eperezma@redhat.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Subject: RE: [PATCH] vhost: use pr_err for vq_err
-Thread-Topic: [PATCH] vhost: use pr_err for vq_err
-Thread-Index: AQHap2PoJC/0KTnrWkOIs9fllb1Mi7GZy6QAgAAAj2A=
-Date: Thu, 16 May 2024 12:36:14 +0000
-Message-ID:
- <DU0PR04MB94172C1079F0EEF84631700688ED2@DU0PR04MB9417.eurprd04.prod.outlook.com>
-References: <20240516074629.1785921-1-peng.fan@oss.nxp.com>
- <20240516083221-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20240516083221-mutt-send-email-mst@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DU0PR04MB9417:EE_|DBBPR04MB7786:EE_
-x-ms-office365-filtering-correlation-id: 3dfda90d-9c82-4c9c-e2d1-08dc75a4c665
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230031|1800799015|366007|376005|38070700009;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?L1qT7tebh6YGEH0dXrdI3UCE8P+gQ0fzI1b4TsUI7mKIIgRKy2ZmXuMiuB5t?=
- =?us-ascii?Q?UiWdTrigongn9sD9gak5+6n5T1x3shrjITnd19W5p754D1NyCCbn/F88QWhI?=
- =?us-ascii?Q?7d2NyPebwX2pdNLh0TBCDaQRnzYQpQ+IdQC/JNd4WnO8YNDMoRckmZjz56LV?=
- =?us-ascii?Q?z2KQIpu4cQbDNnDFyGjVf6ackzaxYM6pDtO6j8dyFkiqouOLazJ5n4zuEIKD?=
- =?us-ascii?Q?4GqaIXcxbfKZgFq7Bk6lcoX2LpVS29GEt1smpw58R6d9qe84a24DgodgHUzS?=
- =?us-ascii?Q?20whR6pKQYGvzgrbMec50uQtc2Fnti73LBX56LaPf+I3GZ4QYoGpGRWP4tkZ?=
- =?us-ascii?Q?WqmCDURlIWNBx4htvlqKlTjOvFrMTg8CJkE5eOIMeX2VCa1h8BgHH9is0Yyq?=
- =?us-ascii?Q?sDGMx3GZUQMTxvKhnSybzVOLsQrxUKtLjvxDt4i5p4tZFsqEfW2vCGhzJGys?=
- =?us-ascii?Q?cQKx2lkRyojQty1nMyCLMqTYWa6HiGNkJFmugvMN5DhltGdVEs0zG6SwrUwQ?=
- =?us-ascii?Q?DNzKtKA5CVTT9xQjl2ZlLtLdMNDT6jFyRqHlKUvNhqxTRMh0rQi7WufBTDky?=
- =?us-ascii?Q?6zqaA2S78YWkXJjOxkPdcEewwfPgBp9VGWrPzGk2hTAh7l3qOsp0+eclK1gW?=
- =?us-ascii?Q?wKlFBjZDq2Vf/AMLEl7n/MAIcbUinYxyqf+7yzSOREJcMbBunqvdZj8kvdog?=
- =?us-ascii?Q?NJFKzPNzpippZc6IFJoi/8PYE97fXVFVAioAI81w6Dotd3n16GCQqtWcvDkX?=
- =?us-ascii?Q?85QiyfIu9W51s9lMDyO3N4DCvPq1fZikDfJi2vf46jdz6AT9N6OnZz1n48ys?=
- =?us-ascii?Q?KGXKOKPx5OQ9MMi8287EfNXr06cFM/IZR7oc4vv1aTAQ0ToHu7VobDcXrFwv?=
- =?us-ascii?Q?yBCvTSmWYlnM4O0ynvdfpUG2ZhIn3sy2/3YJqrahb8EZAaoJ9iSh1xPj8jWJ?=
- =?us-ascii?Q?5lCEHOD+nY1hCSBTIaXEDhUMyAC6xmUuCCUnaM/Q/bXVniWCK+b6kdbZXgnL?=
- =?us-ascii?Q?tZfAM/HVI17CwpGNyefQxJJEC3YtV09OwJ/0cpEw/xt5+xJDeMOf62rGOs0d?=
- =?us-ascii?Q?Mu7YxT9ro9Aq+sqULqjcVagRY1y1NnaDdfw0jkwQYPYbmSKCRy7Qyri9vFc6?=
- =?us-ascii?Q?mCUm45OH+oOFvrBUvhcXcR2Rl8CtvGO8UKhim7PoUDt6MoYDLifU7BxMAhJj?=
- =?us-ascii?Q?PBDcRC/FTs9uNyVSEd+yvQwa1DnVBd1zpFcu1VpY8csgjzXuu+eBvUlUtFmc?=
- =?us-ascii?Q?NhtNMNpp32WOrqjN8dvfbR1Xmanhvjr8HkSgXF6/l0hZCO5tt48cEwFso3/l?=
- =?us-ascii?Q?ijKdAFtK3HroyJUbJUVSTkMOJKJkgrIrI2nY+oLsdmEIDw=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(366007)(376005)(38070700009);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?Q7pU6ICJ5hdFwyyjyDN+QzxqMgRw8hv4Cnmcp5rRgS8gskaWe5zhFHtA+FzT?=
- =?us-ascii?Q?D2uq4pOjLn0ErGCJqUpnQjAnCueb/arG9ezxjro5tMPgXcOdwf4dtP205Mqq?=
- =?us-ascii?Q?R4Fet9UmdymD98XFdOhBUqldmKK+4tgOHZNk5drY1o04DHVSv0BLaIE6Iyfy?=
- =?us-ascii?Q?2Wzvu9m5Al2J0/BFXNelFX15c2dgLZXBh0ibevjNYqG8b3oimpzFaj9TCxJi?=
- =?us-ascii?Q?kmFY/DKMsGHLf9vg+9F0PEMAwPhe26PJaP0sgV2XtSd3uFXep7/2+SHcaYWC?=
- =?us-ascii?Q?TMT0Q0/b5ZxpLnH/CCZiUiBc0R0dQfYDplYHyIce8yM2bxQN9/8wAXMMgHUU?=
- =?us-ascii?Q?bQ6Y2sqrKfHUmgTHVrOqJBml915dE48cBQpQQYm/zVWjz7YAWGKFh8L9xLi2?=
- =?us-ascii?Q?vIwtfUZqOTD/kAZAuH4fbZ+Zb9cHbYLry7Z32c0tEeuR2fGFuXMWXMkoEOf+?=
- =?us-ascii?Q?6xlhREJhy68ZLWoov64jxYV3kYlR5PrgXv0DZpn5/ukn72p2BHmj7RKXd1PA?=
- =?us-ascii?Q?72cYwxoWEzWBt8/4j/k9CH58pHM5pf4ZWWwsLgkh6+CDOCvZvz5gZqloTW3s?=
- =?us-ascii?Q?kiO23oreQoCwJhyy2Aypi/RbUG8GK1j4C23UuS/vU0LcUvbAQ/V0oz6jlX9q?=
- =?us-ascii?Q?R8I8FpufvwU3hm+lD4+lL+eNdN9yizFCwspdGot3hUqHUauMUd6ZnIDKqvTu?=
- =?us-ascii?Q?+F6LLWpMdL6wHP3DDgdGLwGFv79s0/wmrGXhKYEOgd2pdUiSprspo9o56t3H?=
- =?us-ascii?Q?yPR1EL2wYWnxa/9ADBIf+VOUnmZ5EUVfq1siMB9kB8wcjZuKH1sN3ypOULRa?=
- =?us-ascii?Q?SptnmVc0uj8hCDspiAOJZMQhapngWa8VBQF8G179lHdRc281ehtrNkeNwYwU?=
- =?us-ascii?Q?StIAGQOc0IgdRFhxfgXCbcE9Z1U6iZuIrsyyH6R+Bvp204HOYlKlmArX/yi6?=
- =?us-ascii?Q?6Sn9k9BBbowLG1MF6d8sCIVv+el+BX8yC5FvMB2j2UQmt2diVmN+PqgFFh6v?=
- =?us-ascii?Q?EB88jv/5DxE1GsgAnlntMJ7F5kzbeuvegsOwNpb5L9WW5eJTAPE2zpWFZIwL?=
- =?us-ascii?Q?mmT7mVkrJ7X7aA906jQMi6QF8a5NnCvOiWSyPng13diQ4X3d5ifTgHvffe+D?=
- =?us-ascii?Q?eIa2Od6B245o614VigWFrQJc4YPboFHBGag8NVkB5EQ4aX22gkMfak1BZt92?=
- =?us-ascii?Q?7c4WQiF8l8Q5PjhTG8fyocRhRpsIKmgD3xfXi3bz3Til0zJLai1tvwgpSUtC?=
- =?us-ascii?Q?lA1rleDc8Mv5e73/wbRxzMH/JElh2UBJFoiVnSbOBPLnx6PJw9H4fai9rRyE?=
- =?us-ascii?Q?0Rf/81hp7IVhwrqH4qZWFyNwp+0Fj7rmwiVyVc7O0ypmKn18ltlCAZcYzm6L?=
- =?us-ascii?Q?NTPjZC/AHhtNQ9+NKNmWmpd4DXGhzZIL7FNySr/HPdIdZ4A6h/KA1xSMSjen?=
- =?us-ascii?Q?xiQsFB8onWEARextWGcGe8vI1GSG1j3xF7+t85xKEgTJRbEDcyKNx5bzxsvE?=
- =?us-ascii?Q?akTy/gX3VjnsDTOIJUIVIVIrkRJhJNd3rWlp33eA5RwPo5iLViDnPHo5KsFh?=
- =?us-ascii?Q?jPrTy0EkJK3IKpg8dwE=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 217A9145B37
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 12:36:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715863001; cv=none; b=Sii2DJjypmSTgGNFOr4bKODlnmSc6GfKWuUtW3LIj+B58xa4G2gi+pmoq96jMiBsGubbU9LSN9ZmV7D5Kg4vXacN6NjpPJrtVfNOa6DpC/PPVYjDwW29CrRJm49S4C+obsdwmeUgZoOvbQsbD5c/0iE4TkOlnZ4pW5o3PAVtSA8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715863001; c=relaxed/simple;
+	bh=wqO7+0Nj+t4DW2OQpnChBRs6IiuvN9tF3cG7kCxcPwE=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=CZBpHc0cAQj5WT4TwiXA6vb6AH2FeoYj7+mje61/ZshRSe8IzMzB7DFcQoRBJxDDO8/Sy1H/Zrc3dqIntIo5V3hOg8bsMGpVP+BjN1lgtKrQZRtjYJ6QA5ANq9iB4C9gIti74rCJDpEyOvjegH1ZHZu0+yw/Q48fE9cEECCDkfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=d/xs5voZ; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4202ca70318so3280375e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 05:36:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715862998; x=1716467798; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7u9UgrXAiHW9UrrIdHLjqFr2KCY8YsT8XD0QgC4VHdw=;
+        b=d/xs5voZB/6zvIt8KsydTWNNU5xKA6jj1OoEhIOtd9Fa9e7PzI34DS159eWogmlmAe
+         4UfTqbILIm0BfHk4j2+ghhcn1C3S2X2Bis715Cvo5GZOPFLhoCj+D9pTI0hooV9EW8BP
+         ki6kqyKpsAhnu3O+z41+yWxwfVojqH04NdGNnsVgS9AbeOdHpPg1R5HXh3/oyQx0veOv
+         YnesCa6OGAN5bFfBrNfA7lUcMzsZdQInjhc9iNCW8vOK/GoazNjKfg5/HDzbvOHhjQCz
+         iDfakEC/LJBnlBLlJjPCr7GoJ9cyijyg5z3OMeWrEu3uCdlrIu78gmk1UdFpyBraFGbo
+         AZaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715862998; x=1716467798;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=7u9UgrXAiHW9UrrIdHLjqFr2KCY8YsT8XD0QgC4VHdw=;
+        b=L4GtyL01yV/rnxtNztFkFQaBT93hvkyF7fcCbQsfErCSXA5dizFEMq+9LdenEyXJPh
+         XFx+IuvH4qrFu6XGx4Uxx9ad4vznZMBhYrSDP+C3psr3b+MZmSJPooyz3KdQBbUApJoX
+         7OmQBkkx0fP+VfZaqG7ouAV1ZJwuT8796cwJY54YWQx/Z3EPVCTswMH9uCz3pjtbCmFP
+         Jl6FscP+otAWwL0OgpjWgzuzlJJ2kd2QWrPusdzLrldhS9Gloyf7WYPY2+PXGAIyHNlT
+         Z/IxZwA32HoS+FE0IRhD1PZypbVYWZKac9f8zIFz8qUbN5UTOcZ4iJmj0P4vsCXyUs4E
+         AUfg==
+X-Forwarded-Encrypted: i=1; AJvYcCWFTkBJO9aZw9Lu/FBeeWYrzyXdfX0pURY2KTtjuHmruYmcJ8OEMeA/uMUP3Cm4hD797E4plYJI7vmlCIWbYCk97iVmSIrU0VjEO1cE
+X-Gm-Message-State: AOJu0Yy5kZl3aLfY8Sgz9jqNtKgd/L3SZgUYoPoKhPvduFlzJaO+h48h
+	G3Z7I6S3KNLuxqAoq1Ypm+6DPAVj8kAZbLhiUMuepcW1UOByj0Zh3wGNstB+1Jo=
+X-Google-Smtp-Source: AGHT+IG1y1kInySg9tuz9weH7g2TaNqHI/69k6mVraLoKsovAscO+fx1x3wznKwq9TAkINyZgf+a3w==
+X-Received: by 2002:a05:600c:444e:b0:418:fb6f:5f59 with SMTP id 5b1f17b1804b1-41fea931860mr146950595e9.2.1715862998070;
+        Thu, 16 May 2024 05:36:38 -0700 (PDT)
+Received: from [10.91.0.73] ([149.14.240.163])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41fccce24cdsm271027755e9.15.2024.05.16.05.36.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 May 2024 05:36:37 -0700 (PDT)
+Message-ID: <6f54a590-d3dc-48f2-9061-27afb1c34fef@linaro.org>
+Date: Thu, 16 May 2024 14:36:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3dfda90d-9c82-4c9c-e2d1-08dc75a4c665
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 May 2024 12:36:14.3331
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: HTFrV/Iwl3DfjuFsI+Fptx80w++54/u0cAIXNbNUhQNXGxTwr2h5SwklLJD3cQ+EqF5/GqTKLV9+mHdOlbPutQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB7786
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v3 3/6] dt-bindings: display: simple: Add Microtips &
+ Lincolntech Dual-LVDS Panels
+To: Aradhya Bhatia <a-bhatia1@ti.com>, Liu Ying <victor.liu@nxp.com>,
+ Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Thierry Reding
+ <thierry.reding@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: DRI Development List <dri-devel@lists.freedesktop.org>,
+ Devicetree List <devicetree@vger.kernel.org>,
+ Linux Kernel List <linux-kernel@vger.kernel.org>, Nishanth Menon
+ <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Praneeth Bajjuri <praneeth@ti.com>, Udit Kumar <u-kumar1@ti.com>,
+ Devarsh Thakkar <devarsht@ti.com>, Jai Luthra <j-luthra@ti.com>
+References: <20240515095133.745492-1-a-bhatia1@ti.com>
+ <20240515095133.745492-4-a-bhatia1@ti.com>
+ <9f3c1825-0438-464e-bd6d-88da6a9c3b3b@nxp.com>
+ <cecb865d-2f59-4cdf-991a-4607b200d503@ti.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <cecb865d-2f59-4cdf-991a-4607b200d503@ti.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> Subject: Re: [PATCH] vhost: use pr_err for vq_err
->=20
-> On Thu, May 16, 2024 at 03:46:29PM +0800, Peng Fan (OSS) wrote:
-> > From: Peng Fan <peng.fan@nxp.com>
-> >
-> > Use pr_err to print out error message without enabling DEBUG. This
-> > could make people catch error easier.
-> >
-> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
->=20
-> This isn't appropriate: pr_err must not be triggerable by userspace. If y=
-ou are
-> debugging userspace, use a debugging kernel, it's that simple.
+On 16/05/2024 13:06, Aradhya Bhatia wrote:
+> Hi Liu,
+> 
+> Thanks for reviewing the patch.
+> 
+> On 16/05/24 07:49, Liu Ying wrote:
+>> On 5/15/24 17:51, Aradhya Bhatia wrote:
+>>> Add the Microtips Technology USA's MF-101HIEBCAF0 10.1"[0] panel,
+>>> MF-103HIEB0GA0 10.25"[1] panel, and Lincoln Technology Solutions'
+>>> LCD185-101CT 10.1"[2] panel.
+>>>
+>>> Thes are all dual-lvds panels.
+>>>
+>>> Panel Links:
+>>> [0]: https://simplespec.microtipsusa.com/uploads/spec/datasheetFile/2588/13-101HIEBCAF0-S_V1.1_20221104.pdf
+>>> [1]: https://simplespec.microtipsusa.com/uploads/spec/datasheetFile/2660/13-103HIEB0GA0-S_V1.0_20211206.pdf
+>>
+>> This one mentions some controls in '3. PIN DESCRIPTION' which
+>> don't comply with this binding, like RL, TB, STBYB and RESET.
+>> Note this binding only allows compatible, ports, backlight,
+>> enable-gpios and power-supply properties, nothing more.
+>>
+> 
+> Maybe the internal module _can_ support these control options but the
+> actual panel hardware does not expose any of these controls on its
+> connector pin-out, and hence has no possibility for additional SW
+> control. Even for the usage, the device-tree node for the panel only has
+> "compatible" and "ports" properties defined.
+> 
+> The panel is being used within the confines of a simple panel.
 
-I see, then drop this patch.
+If somehow some modules with those panels would need more control lines,
+we'll simply move them out of simple panel bindings & drivers if
+required.
 
-Thanks,
-Peng.
->=20
->=20
-> > ---
-> >  drivers/vhost/vhost.h | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/vhost/vhost.h b/drivers/vhost/vhost.h index
-> > bb75a292d50c..0bff436d1ce9 100644
-> > --- a/drivers/vhost/vhost.h
-> > +++ b/drivers/vhost/vhost.h
-> > @@ -248,7 +248,7 @@ void vhost_iotlb_map_free(struct vhost_iotlb *iotlb=
-,
-> >  			  struct vhost_iotlb_map *map);
-> >
-> >  #define vq_err(vq, fmt, ...) do {                                  \
-> > -		pr_debug(pr_fmt(fmt), ##__VA_ARGS__);       \
-> > +		pr_err(pr_fmt(fmt), ##__VA_ARGS__);       \
-> >  		if ((vq)->error_ctx)                               \
-> >  				eventfd_signal((vq)->error_ctx);\
-> >  	} while (0)
-> > --
-> > 2.37.1
+Those are perfectly fine as is, we don't want useless description and dead code.
+
+Neil
+
+> 
+> Regards
+> Aradhya
+> 
+>>
+>>> [2]: https://lincolntechsolutions.com/wp-content/uploads/2023/04/LCD185-101CTL1ARNTT_DS_R1.3.pdf
+>>>
+>>> Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
+>>> ---
+>>>   .../display/panel/panel-simple-lvds-dual-ports.yaml         | 6 ++++++
+>>>   1 file changed, 6 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/display/panel/panel-simple-lvds-dual-ports.yaml b/Documentation/devicetree/bindings/display/panel/panel-simple-lvds-dual-ports.yaml
+>>> index 716ece5f3978..e78160d1aa24 100644
+>>> --- a/Documentation/devicetree/bindings/display/panel/panel-simple-lvds-dual-ports.yaml
+>>> +++ b/Documentation/devicetree/bindings/display/panel/panel-simple-lvds-dual-ports.yaml
+>>> @@ -41,6 +41,12 @@ properties:
+>>>         - auo,g190ean01
+>>>           # Kaohsiung Opto-Electronics Inc. 10.1" WUXGA (1920 x 1200) LVDS TFT LCD panel
+>>>         - koe,tx26d202vm0bwa
+>>> +        # Lincoln Technology Solutions, LCD185-101CT 10.1" TFT 1920x1200
+>>> +      - lincolntech,lcd185-101ct
+>>> +        # Microtips Technology MF-101HIEBCAF0 10.1" WUXGA (1920x1200) TFT LCD panel
+>>> +      - microtips,mf-101hiebcaf0
+>>> +        # Microtips Technology MF-103HIEB0GA0 10.25" 1920x720 TFT LCD panel
+>>> +      - microtips,mf-103hieb0ga0
+>>>           # NLT Technologies, Ltd. 15.6" FHD (1920x1080) LVDS TFT LCD panel
+>>>         - nlt,nl192108ac18-02d
+>>>   
+>>
 
 
