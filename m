@@ -1,85 +1,162 @@
-Return-Path: <linux-kernel+bounces-180724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A2AD8C7252
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 09:58:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 98CEA8C725A
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:00:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B692A1F22678
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 07:58:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1905D1F226EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 08:00:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01B1F6BFBF;
-	Thu, 16 May 2024 07:58:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABA666D1AF;
+	Thu, 16 May 2024 08:00:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="fR9nUFVu"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="UmMcVkWG"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE0573E49E;
-	Thu, 16 May 2024 07:58:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2232F4120A;
+	Thu, 16 May 2024 08:00:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715846307; cv=none; b=BdBosSMnayZsp/Mxnz1T/6T5mZtcATrfovwyacQ9GGWyR/LMpl8i0/CXz4tL+M4RmQm30nNVxCArK4+I5EL1UdaZuPN2aB2GvlyrvkGL6bZKbYGYsemekVR7lLeZ4EPaJ+S+lMg1sPqyAnceu9VaOfx8WQXcDHADUbXIN0RLkug=
+	t=1715846437; cv=none; b=kkV9bx82fXTqGymhLjO15eB4eheshaLIzrgXBnUuLSZf1DJauturWZDN625kJ7JuMrLu6hMKxwaTH8b5jfML7FxkKk9UmpcU9cQ7pOHCFcaeF3cP2wxSKSuBOEymLzpOXnLew1rembSBs/G7bTstsH+aifeYV3Tiz9UAr3I+czw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715846307; c=relaxed/simple;
-	bh=YNnO+YHP/FnlxQ5PatkNjQ9Nib8ubYkKUzGgdEIYd8k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AMpMxu9W5TpW4rVB0qs7LqCQncocsrQlE6G1LHW7OE1/xi7yWaXKziRF6MLYudwH5e0yav1cSG1xxwI41po1RqiK+3RgFHhbMo0kWwlfqHCo+Ck32tmclISXS4A4dXgu8OBvACNwJWCYwIU2vPzaemnipmyeiXf+/dJFuTuFWq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=fR9nUFVu; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=YNnO+YHP/FnlxQ5PatkNjQ9Nib8ubYkKUzGgdEIYd8k=; b=fR9nUFVu86nH72IYbkbRk9WBKY
-	odFxoj/uJ7+WWboZ75vzDEj5xLSXl68+S4y3vwFIn0ck+YOc5EHBvcy/8pNc/217hABcCpvtftzD8
-	YCjCSY8prsZZpTb3d9rvKaFcaLng0QnbuYeyPIEp5d+PVz9D/JA+/BUdmN+laJHjckKzNlb6GkmGj
-	1rZwruNpeqRjW6uVbq3EfhJfnWwRtJ9P4oRSanURsmxX1LKOfQVLBnM2mn58i8zjcdXUMnqXoz7UV
-	L4Hw1uZ1TwTB5FA08xS/oiBu5UgbJEsCGrohlADHYZuy5vSjTO5AR7SZ0Rc40X/plqn+56rILdlHo
-	NOLcNe7g==;
-Received: from [219.240.46.135] (helo=localhost.localdomain)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1s7W04-008jMi-0Y; Thu, 16 May 2024 09:58:04 +0200
-From: Hyunjun Ko <zzoon@igalia.com>
-To: quic_dikshita@quicinc.com
-Cc: agross@kernel.org,
-	andersson@kernel.org,
-	bryan.odonoghue@linaro.org,
-	konrad.dybcio@linaro.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	mchehab@kernel.org,
-	quic_abhinavk@quicinc.com,
-	quic_vgarodia@quicinc.com,
-	stanimir.k.varbanov@gmail.com
-Subject: Re: [PATCH v2 00/34] Qualcomm video encoder and decoder driver
-Date: Thu, 16 May 2024 16:57:32 +0900
-Message-ID: <20240516075732.105878-1-zzoon@igalia.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <1702899149-21321-1-git-send-email-quic_dikshita@quicinc.com>
-References: <1702899149-21321-1-git-send-email-quic_dikshita@quicinc.com>
+	s=arc-20240116; t=1715846437; c=relaxed/simple;
+	bh=ir7OEPsIB4tXdeYYmNY7Cbeyj6ggj2jZXmerEjaLdfE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=sdbweVHhURrhZcoWqC1oGEuf0WnOb3RuGArqixvr0pMbitOhSui9cBHbUi6DvmtaQvhGhxXYFC7j6YalCjDRoySNlE6D/XnWuNwAWcX/oku+ica9S9FdDjIL/Fxm5JNyt/MmaVmVozbRmTkD7UwURvL6RAZYe/ppmhs569HCtlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=UmMcVkWG; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44G7e2A0009990;
+	Thu, 16 May 2024 10:00:03 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	selector1; bh=Y9trgIEu9RJeCdLikqsHLkO6L244vgMdpxM1Z3pwaD0=; b=Um
+	McVkWGSeyAqG7zib2bWvlJJKU1n11jEEZc09GsrTpzqCiEXZypojsxCIhQ6QGb2R
+	h/85D95WXhwEGLy/EIbDDASXYgx1N9neWTvA7r2fGgB6Ram2rWeAe1YrfAtlcfy8
+	wwfOFzXocBd8Z0W7NA8jrn9cHAO7OhfaY/5ZriS/jmiH4tZRzWVOWpx8QUJfXTLA
+	gyVWgOjZ7tP0MiI8vnu46iBBTPLOM6ywtH7uujQMgnWfhJvJ0hEp9BAmIIaMTAhH
+	X4D+tcpYqpTsMOrhEIuDyLJa5Z5rBuzsiaCGm0RCL9IIf8QtU+FHgHuNpyPuMPQx
+	jH+uBQgahirt8dZKazAQ==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3y4sxv4f6v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 16 May 2024 10:00:03 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 3999440044;
+	Thu, 16 May 2024 09:59:58 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 39B872122F0;
+	Thu, 16 May 2024 09:58:48 +0200 (CEST)
+Received: from [10.48.86.79] (10.48.86.79) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Thu, 16 May
+ 2024 09:58:47 +0200
+Message-ID: <5544e11b-25a8-4465-a7cc-f1e9b1d0f0cc@foss.st.com>
+Date: Thu, 16 May 2024 09:58:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 10/11] ARM: dts: stm32: add ethernet1 and ethernet2 for
+ STM32MP135F-DK board
+To: Marek Vasut <marex@denx.de>,
+        Christophe Roullier
+	<christophe.roullier@foss.st.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo
+ Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof
+ Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Richard
+ Cochran <richardcochran@gmail.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        Liam
+ Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20240426125707.585269-1-christophe.roullier@foss.st.com>
+ <20240426125707.585269-11-christophe.roullier@foss.st.com>
+ <43024130-dcd6-4175-b958-4401edfb5fd8@denx.de>
+ <8bf3be27-3222-422d-bfff-ff67271981d8@foss.st.com>
+ <9c1d80eb-03e7-4d39-b516-cbcae0d50e4a@denx.de>
+Content-Language: en-US
+From: Alexandre TORGUE <alexandre.torgue@foss.st.com>
+In-Reply-To: <9c1d80eb-03e7-4d39-b516-cbcae0d50e4a@denx.de>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-16_03,2024-05-15_01,2023-05-22_02
 
-Hi,
+Hi
 
-Thanks for this series of patches. I successfully adjusted these patches and tried to test video features with gstreamer or ffmpeg.
-But I found this provides staetful interfaces while I need stateless, which might cause an issue for my side..
+On 5/16/24 02:23, Marek Vasut wrote:
+> On 5/13/24 6:01 PM, Alexandre TORGUE wrote:
+>> Hi Marek
+> 
+> Hi,
+> 
+>> On 4/26/24 17:44, Marek Vasut wrote:
+>>> On 4/26/24 2:57 PM, Christophe Roullier wrote:
+>>>> Add dual Ethernet:
+>>>> -Ethernet1: RMII with crystal
+>>>> -Ethernet2: RMII without crystal
+>>>> PHYs used are SMSC (LAN8742A)
+>>>>
+>>>> With Ethernet1, we can performed WoL from PHY instead of GMAC point
+>>>> of view.
+>>>> (in this case IRQ for WoL is managed as wakeup pin and configured
+>>>> in OS secure).
+>>>
+>>> How does the Linux PHY driver process such a PHY IRQ ?
+>>>
+>>> Or is Linux unaware of the PHY IRQ ? Doesn't that cause issues ?
+>>
+>> In this case, we want to have an example to wakeup the system from 
+>> Standby low power mode (VDDCPU and VDD_CORE off) thanks to a magic 
+>> packet detected by the PHY. The PHY then assert his interrupt output 
+>> signal.
+>> On MP13 DK platform, this PHY signal is connected to a specific GPIO
+>> aka "Wakeup pins" (only 6 wakeup pins an MP13). Those specific GPIOs 
+>> are handled by the PWR peripheral which is controlled by the secure OS.
+> 
+> What does configure the PHY for this wakeup mode ?
 
-My question is do you have any plan to implement stateless interfaces or already you have somewhere?
+Linux device tree.
 
+> 
+>> On WoL packet, the Secure OS catches the PHY interrupt and uses 
+>> asynchronous notification mechanism to warn Linux (on our platform we 
+>> use a PPI). On Linux side, Optee core driver creates an irq 
+>> domain/irqchip triggered on the asynchronous notification. Each device 
+>> which use a wakeup pin need then to request an IRQ on this "Optee irq 
+>> domain".
+>>
+>> This OPTEE irq domain will be pushed soon.
+> 
+> I suspect it might make sense to add this WoL part separately from the 
+> actual ethernet DT nodes, so ethernet could land and the WoL 
+> functionality can be added when it is ready ?
 
+If at the end we want to have this Wol from PHY then I agree we need to 
+wait. We could push a WoL from MAC for this node before optee driver 
+patches merge but not sure it makes sens.
 
+Alex
 
