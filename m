@@ -1,203 +1,142 @@
-Return-Path: <linux-kernel+bounces-180879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 514728C744A
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:01:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45E5C8C74AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:32:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E84002861FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:01:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE521286FBD
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:32:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2720E143884;
-	Thu, 16 May 2024 10:01:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F36EB145332;
+	Thu, 16 May 2024 10:32:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="gQEx10Ks"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2069.outbound.protection.outlook.com [40.107.21.69])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="lOZog/6R"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 126AB143754
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 10:01:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715853704; cv=fail; b=HqoxOhAYIf7a/tBY+M7TKgWZhGOhuY0oppmKDAyk53bhd3lmDOKKaZAxUKYbn4aGoVM35JSnKdTOie1LJcShELtC8jnyJAjCArG2jm2mM/ksjcUlsjZHyDvGKdB2nNb5xaWJXqV1yeTWB27Ax7zC09gChPA6OX4p9LI7BlNNbHg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715853704; c=relaxed/simple;
-	bh=QFrScN0l1VuI+Rh4cj0oVoNbWlruiE7yuNHc2KfE/fk=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=rmfdEWzLevgXbt95krKLacgGEpcFU3tsjGWY9v2tBGgmkVYgWr3oftjU33l/Q+ZEYrmcEYi7kVGcJo6zfTj8p/TPHhULTYLkDBphgE0LrliGTO0+RTWQ6iWXFUpfLofyqIC1d0fF3rpatQSr0QhxmlJBWgpuTe4dwHo4KCmOqmw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=gQEx10Ks; arc=fail smtp.client-ip=40.107.21.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=IE8meJojtAr9r+A3f1G+GDgQdinv81JkfJNmnxgaS3VL1WVEwGYo2ZkuWbFzUTKQe/wioqKMzpavayn0UO5/G1CuT/rNmYvQLCFBnL8WIiKJ9sg/dhA0Sq9im/HtvNLc/UzFPDR7duw6H3qXnZ3GD4Tr4tJ1ljqY4EKgeKRThZGLNb9aGCn4XQ6uqZYMPmMjT/Qhhk1k/OMEN2f3alVHLNFr5GyieGq7BWQkbhiUSOp0p1YRSCSPHznqRKKQ1EUahPw+0G6iuccrusRPK2/yOMp42plIOvzp1zfSiO7RwNrTsMPL6yX+iTpQCLjhGzJS7JD4FuGxiyPhashLMYclAQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9ymfew+mbBrL2SXJHCFkAqeivGXDN8OSDVGpwMbLmEk=;
- b=VFeC/ax8is671sl6szmUrKCbdJc1tPwW0boHjvNNz2ZjGwIgJsk9WfrA4+QsvFWT4QjOoWGlro+T0MWzvKuUVsToF62a8puOcxrsYLe7wMw+4CtqM1YHeR2CiJlsqpdsOLldl78Y6zfLwOTMNO/K1gR9S7pw3/b2oGl6wNWv1g7luOkmYobu3WFjaj2lNTzqH53tCkWA1XjN9XEaHwiLUBS5YI4PjHTaG0Eof+5SGvgHy+e0JXF7qynVklgq4VabunhPBWCDtfIurXtfPU4r/JSlOe8U+P2n9Chq6iKvxtEBX7i3IpM92LfVIuAYcsxVfxQXezd5AXA9f6owT1eRiA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9ymfew+mbBrL2SXJHCFkAqeivGXDN8OSDVGpwMbLmEk=;
- b=gQEx10Ks8eiWYD+WXSd59BKrTY5r8JgKGStGCyXmljaDadiPA/AXZrZNupP+2607yROEzwILhR+tl8UbYyJ6Ym1z3WkBU0CkofUhazVOIiq8TvfbWlcB3wMBpqPePEo+k6MY3YlJV7/Xqb90DVtWB9CdYYgU7pqImeCPy/5vEwc=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
- by VE1PR04MB7232.eurprd04.prod.outlook.com (2603:10a6:800:1af::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.27; Thu, 16 May
- 2024 10:01:36 +0000
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90%3]) with mapi id 15.20.7587.028; Thu, 16 May 2024
- 10:01:36 +0000
-From: Liu Ying <victor.liu@nxp.com>
-To: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Cc: andrzej.hajda@intel.com,
-	neil.armstrong@linaro.org,
-	rfoss@kernel.org,
-	Laurent.pinchart@ideasonboard.com,
-	jonas@kwiboo.se,
-	jernej.skrabec@gmail.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	biju.das.jz@bp.renesas.com,
-	dmitry.baryshkov@linaro.org,
-	u.kleine-koenig@pengutronix.de,
-	aford173@gmail.com,
-	jani.nikula@intel.com,
-	bli@bang-olufsen.dk,
-	sui.jingfeng@linux.dev
-Subject: [PATCH] drm/bridge: adv7511: Exit interrupt handling when necessary
-Date: Thu, 16 May 2024 18:10:06 +0800
-Message-Id: <20240516101006.2388767-1-victor.liu@nxp.com>
-X-Mailer: git-send-email 2.37.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI2PR02CA0014.apcprd02.prod.outlook.com
- (2603:1096:4:194::19) To AM7PR04MB7046.eurprd04.prod.outlook.com
- (2603:10a6:20b:113::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94184143C55
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 10:32:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715855535; cv=none; b=WZorLCBdrNe0Ga9jXkJt+6Th5/hLG4FWM2HsOGA3QCOfvoE3WiTB1NMcotpU8lhR3aEBY/4bzgyWMSw6+z42/k6tzkYkOkhmx+RuAulcalnOF+3XQvdyu3VxF28xjVGJBmMivuate0CXaHyeA9ouZbJat7lo9uLzrUxsJmvHXkc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715855535; c=relaxed/simple;
+	bh=tL6KAUUBdX+sVXzhCbeVX6rqZ5fXwzcnVA3Sy4BZ7pE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=drv8nnNhp9VambCudLjS5GswNwVjmJxHMh3YdDQOe1YcyRm81FmjvUuuE+cITdgBWar9PD9SoF3x5+qVMjL+/2Zd+pMRpdMUc/c2rUMAjosexeaTD+ep0D8vWl42tcvIfSOS6aILWM3QL6JXrKUWlPPLPMOZoK06RO6x1FmrOUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=lOZog/6R; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44G9fmVS056166;
+	Thu, 16 May 2024 04:41:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1715852508;
+	bh=wYQOXr5Vdn2rus+peaYLnfyMg1IdCq5SCmKMEecT2l4=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=lOZog/6R02eMJWGESciek9BgtgdUOHA/RIeN/A52gS847IG/2nP6fiwFcydkntCMR
+	 DANzLXCNaSl2HJoL/sfcEdyBd8m3PQkaJXGXCDRMI9j01ukLspmLajclg9sj6FFVsZ
+	 tiniWcz/Ta7ZWGZIsriWt8SVa2gJt5fXNbfrr6mk=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44G9fmEM117558
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 16 May 2024 04:41:48 -0500
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 16
+ May 2024 04:41:48 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 16 May 2024 04:41:48 -0500
+Received: from [172.24.227.31] (uda0496377.dhcp.ti.com [172.24.227.31])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44G9ffH0074525;
+	Thu, 16 May 2024 04:41:41 -0500
+Message-ID: <8bb974f9-90ff-4b61-9623-cf5675f35e78@ti.com>
+Date: Thu, 16 May 2024 15:11:40 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|VE1PR04MB7232:EE_
-X-MS-Office365-Filtering-Correlation-Id: ad8f8066-b1f0-4c66-cc54-08dc758f2bf2
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230031|376005|7416005|1800799015|52116005|366007|38350700005;
-X-Microsoft-Antispam-Message-Info:
- =?us-ascii?Q?FkWqmwiHa763nOx5AtIetT9ZH/qenOcv26zEGRLmkz9UT0iJ/qhpZnPAelOp?=
- =?us-ascii?Q?PLDMGYPieZpm8MQW2ah2zN/S78XIbDHX3qjjB9Z8pzq6HJmHvlByYcswzfUz?=
- =?us-ascii?Q?qNqAp+yN+w359+eeJB8tj25pUvPu5kbD0QWdiI+96U15DMV4B12HH/m9QXm/?=
- =?us-ascii?Q?jKsFUzMuRNSIFpHXleTA3C4JoQvFYN9BPajhcZU3CRBU9Fi9XvfsJgAvf4ov?=
- =?us-ascii?Q?AtyMszXM7dvLwLQYdeA83ih0Jj4S+un0tRPiJJ355e61uvTcZ5hb53BPtzQo?=
- =?us-ascii?Q?EPRRaoJiv5P55HHv3frMYFi33tdIbWPGzr+wzrVMAQAk2z+So0sxOarESn4C?=
- =?us-ascii?Q?ELHDXIcnfek6+186Jin3ttNX64hJxc+q6B4OAOSTOQuAs4kdRPLJOq58pcl7?=
- =?us-ascii?Q?cbSnNZOkcEbC8UcR4ckSKvbVeJdQP3DSeHdAs1xy2pyfTM9bpM2lt6l9gVrz?=
- =?us-ascii?Q?+ha0skfpYkZLXoVozCvYMPM8o9hVsqhHfwJzwH+4EGHLO1gU6y96+ZehfAmm?=
- =?us-ascii?Q?J2FFqTKxSU+Os40WE2RDcrU2i3QM85L08JlY1ZHl6vdVTpJVGGLr8M102I5G?=
- =?us-ascii?Q?Fw/j7/ByZwMbm7UWqla1C20iA9WJS+b4qCcdrSchFHtbUEJ+795AI61r0Ld2?=
- =?us-ascii?Q?8R7D9Ke4NJ85JdM3LDAE++WSbo1V6cR+NVxcTHD4O3oDqvI6w5B7Fj+fCFWY?=
- =?us-ascii?Q?lU+KVAlTZ9/lOO1iK88QpnNtvaUQWGhrOl/xz7BeeBdpz9ETskyXSGw0I17L?=
- =?us-ascii?Q?rF7eoOwuqmstBaQpSE8DLN6h5t3s8R5rCvSOyIlJgWjjh3mxzHKkuwh6lzh5?=
- =?us-ascii?Q?4ALzbF47uvOHIKejMDWsQTwCPd6ZAsDxX+9RtjBr38/o4971D1lCkTs0W0tb?=
- =?us-ascii?Q?L8EDdqdSinjW+obGehYjfbVV4MnKQX9sh0NOJwjNzNOFzQQ5qRkLK2/Noqht?=
- =?us-ascii?Q?K4WBkeIJ85i3zLNUBebiXJMQTmucUymEZDO6VR5xgA1Z9L4eHSVyATAX3reP?=
- =?us-ascii?Q?lngOX+4LcNknc8JEq4M+EhLugOmroBqPxSDcaW1/qd/rIl8O2ZOf81XKDVxt?=
- =?us-ascii?Q?+GQkxmfZICwGbQMBvvcYhdDql8bXo6XcY73oQrjFQjOWUtKRfR+SRVLppDu7?=
- =?us-ascii?Q?wryzedizi7KCxp4ptVvSwWOetQh+dV6HpzfICjCHYvFih4IMQAXuz0OZxfQP?=
- =?us-ascii?Q?kQX7n5WjuZKTuiqqex8f/0QLDMCpPJFonxunbI9ys92Bgw1kHIwO0535PxkE?=
- =?us-ascii?Q?E/VkXW20Xzx8xeO80GPzaJ+sOYtESxfka40AK0AWWO3Jxv2XVXxLU465qytm?=
- =?us-ascii?Q?neteIhzwQ2YfmUdOAoLn3brYfC1C09MfSagyGTzeRryCew=3D=3D?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(7416005)(1800799015)(52116005)(366007)(38350700005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?us-ascii?Q?YGjgpN0Ze4IhwlWZZjuVCD1VF4bRvE5P9sVqDRPu4yxS+4MfAHmhoq3d+7dJ?=
- =?us-ascii?Q?36Dyyaa+/KVkF9cmswFjlKKaDFjbS1+hSAZnss4GOeYCVC/+QS8sw9ZsAnFN?=
- =?us-ascii?Q?AVtx/o5h2iEBT6WI1BtlkvFMVe8ZpQ0Ry5CzxJIEwGpqeboWhJS1/aECkNYf?=
- =?us-ascii?Q?J74ohEHrdp7+DlcO8Fxr33+7OANVRuI4WXSCSGP1kZLBr+Kmp8x0FNl+052Z?=
- =?us-ascii?Q?daUXpPuJf5iFweJFqgaoXMq0DN+zY7r7QkGMwFsLJE1/nBerZLJfYZ6aEL2k?=
- =?us-ascii?Q?Wlf+yPuOlCqd7iKEyzBYa+uDQCSGI+cYn02SVyXwKRHJ0x/GMll+PbuDwH2/?=
- =?us-ascii?Q?mOvvOrx8TL1d2DtBvRfez4Wbkp1Y+hYjnkf630ixjT59+ia5aWv5So5AbWvC?=
- =?us-ascii?Q?P++Oe/xONX8yBIj428UT7jjj3OGBaK6umigGR3KQetHA+gzu/ulUAXy78BHd?=
- =?us-ascii?Q?ttU3x6+xHDKhEnx4Olsz6wJ4DZILfUhQBnAuAcR69yroNDEtPf/dtz894W5M?=
- =?us-ascii?Q?DauM3cqFr99QyzaRMYjtkz1u1Vd1OaUMY3OusjWwjIPq4rb/4izX4EycyXgB?=
- =?us-ascii?Q?yS2u6hzuhbvW923UdwxpY3dDNFtnAZ78X0bCxVe3tBNzreUsbAdO8XNXpvu6?=
- =?us-ascii?Q?d8m4WYA2dGlaxvPI9yIcSUW6wLQ5EZplG1d//bJxg1r66F/4xtfokLw5+6oe?=
- =?us-ascii?Q?qc5M1r9C9Dg2KIR+aeoeLpSdFnSgshkWFqrwXoQwIey9NP4a0TWkccCUBzk3?=
- =?us-ascii?Q?kd5uKJzZ3h99RD4i2/O9yF2jM9NRWGR8CSU6PaG6wghZ9h6RLruNBNK+wVYW?=
- =?us-ascii?Q?/2zv9KShjm880VmYHh66UB7ZFLAhahio8pBNN7AjS1G1M2p4SSzwsRb1GON9?=
- =?us-ascii?Q?PW+NxpL+m51SHcdqpfvoi8Mvgxt7A+zhXfFqyNvENGPCw6K2S/2nYVFyKz6V?=
- =?us-ascii?Q?KAhgk0IoWbZX0hLJTwhAS0SK6LG6GjR7UrYDVPW8VPH1zFtwBq5UPilsNUZW?=
- =?us-ascii?Q?k1dfnNdSOuSbefOSQKhnBrUVTwkR+Y1a96QnAGEqYC5181+PKaIr5SPumwys?=
- =?us-ascii?Q?hPl6heeJnsvD7SOOs8xdimHZTRHtluJNakV3a2wV9Hb/zhZYDyRjdvh4mKWt?=
- =?us-ascii?Q?aS0rGVwJqZrzT5QfTmXoro5m7kMIMnE3MVPUnMEZUPcWPIpBc0kDM7MwvRzQ?=
- =?us-ascii?Q?PxDIWWFM08qTuZx+g2vDOVjMyD76Pu19jfjxMI0+364Be6PvJeUydriDHgtr?=
- =?us-ascii?Q?tw9qkmEaogR4Fy2E2Qjbd1e+9Ztv3aDT0cXt01YFTfiVnHgM9wRS1qYZ2KJl?=
- =?us-ascii?Q?AKvuVok30aPNs5ButWGf5iorZSlIBYp9Ha6NqRy+QAVX5rWEkVdMpTRBIv/s?=
- =?us-ascii?Q?CWK/oN7kqBGVle1fvBbQu5iQn9FeTP+f4AqGGuThAUl+e4/zb3WUh07Np03e?=
- =?us-ascii?Q?JpPTEe2urX/G1++WHH8GobTwl6xmWB0XOAV/NC3cl0sw3NkT9Wd37BOj4IrG?=
- =?us-ascii?Q?8oR/Py18enNDjI71Ug+w0QVRPTIDL1QkTk64n3DaFfumLy0gdJQtYUHsNeSC?=
- =?us-ascii?Q?TEpOmhnhE778dWxSkxHel2QOwLWUzrQemHTXF3fL?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ad8f8066-b1f0-4c66-cc54-08dc758f2bf2
-X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 May 2024 10:01:36.0542
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: jdPEP+GC8qduQeyYelVsFZzYhG4isVvLk4nzNuLiruZfWWjjBCh8KFE0dZF5kGa3VMRKmobZ9SpDZ/abFi52UQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB7232
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/7] drm/bridge: cdns-dsi: Fix minor bugs
+To: Maxime Ripard <mripard@kernel.org>
+CC: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+        Andrzej Hajda
+	<andrzej.hajda@intel.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Robert
+ Foss <rfoss@kernel.org>,
+        Laurent Pinchart
+	<Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej
+ Skrabec <jernej.skrabec@gmail.com>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Jyri Sarha <jyri.sarha@iki.fi>,
+        Thomas
+ Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Daniel
+ Vetter <daniel@ffwll.ch>,
+        DRI Development List
+	<dri-devel@lists.freedesktop.org>,
+        Linux Kernel List
+	<linux-kernel@vger.kernel.org>,
+        Sam Ravnborg <sam@ravnborg.org>, Thierry
+ Reding <treding@nvidia.com>,
+        Kieran Bingham
+	<kieran.bingham+renesas@ideasonboard.com>,
+        Boris Brezillon
+	<boris.brezillon@bootlin.com>,
+        Nishanth Menon <nm@ti.com>, Vignesh
+ Raghavendra <vigneshr@ti.com>,
+        Praneeth Bajjuri <praneeth@ti.com>, Udit Kumar
+	<u-kumar1@ti.com>,
+        Devarsh Thakkar <devarsht@ti.com>,
+        Jayesh Choudhary
+	<j-choudhary@ti.com>, Jai Luthra <j-luthra@ti.com>
+References: <20240511153051.1355825-1-a-bhatia1@ti.com>
+ <20240511153051.1355825-3-a-bhatia1@ti.com>
+ <20240516-stereotyped-precise-wapiti-6d0cd3@penduick>
+Content-Language: en-US
+From: Aradhya Bhatia <a-bhatia1@ti.com>
+In-Reply-To: <20240516-stereotyped-precise-wapiti-6d0cd3@penduick>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Commit f3d9683346d6 ("drm/bridge: adv7511: Allow IRQ to share GPIO pins")
-fails to consider the case where adv7511->i2c_main->irq is zero, i.e.,
-no interrupt requested at all.
 
-Without interrupt, adv7511_wait_for_edid() could return -EIO sometimes,
-because it polls adv7511->edid_read flag by calling adv7511_irq_process()
-a few times, but adv7511_irq_process() happens to refuse to handle
-interrupt by returning -ENODATA.  Hence, EDID retrieval fails randomly.
 
-Fix the issue by checking adv7511->i2c_main->irq before exiting interrupt
-handling from adv7511_irq_process().
+On 16/05/24 13:41, Maxime Ripard wrote:
+> On Sat, May 11, 2024 at 09:00:46PM +0530, Aradhya Bhatia wrote:
+>> Update the Phy initialized state to "not initialized" when the driver
+>> (and the hardware by extension) gets suspended. This will allow the Phy
+>> to get initialized again after resume.
+>>
+>> Fix the OF node that gets passed to find the next available bridge in
+>> the display pipeline.
+>>
+>> Fix the order of DSI Link and DSI Phy inits. The link init needs to
+>> happen before the Phy is initialized, so the Phy can lock on the
+>> incoming PLL reference clock. If this doesn't happen, the Phy cannot
+>> lock (until DSI Link is init later on). This causes a warning dump
+>> during the kernel boot.
+>>
+>> Allow the D-Phy config checks to use mode->clock instead of
+>> mode->crtc_clock during mode_valid checks, like everywhere else in the
+>> driver.
+> 
+> All these should be in separate patches.
+> 
 
-Fixes: f3d9683346d6 ("drm/bridge: adv7511: Allow IRQ to share GPIO pins")
-Signed-off-by: Liu Ying <victor.liu@nxp.com>
----
- drivers/gpu/drm/bridge/adv7511/adv7511_drv.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Alright! I will split them into different patches in v2.
 
-diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-index 6089b0bb9321..2074fa3c1b7b 100644
---- a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-+++ b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-@@ -479,7 +479,8 @@ static int adv7511_irq_process(struct adv7511 *adv7511, bool process_hpd)
- 		return ret;
- 
- 	/* If there is no IRQ to handle, exit indicating no IRQ data */
--	if (!(irq0 & (ADV7511_INT0_HPD | ADV7511_INT0_EDID_READY)) &&
-+	if (adv7511->i2c_main->irq &&
-+	    !(irq0 & (ADV7511_INT0_HPD | ADV7511_INT0_EDID_READY)) &&
- 	    !(irq1 & ADV7511_INT1_DDC_ERROR))
- 		return -ENODATA;
- 
--- 
-2.37.1
-
+Regards
+Aradhya
 
