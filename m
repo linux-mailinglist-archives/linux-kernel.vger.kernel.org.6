@@ -1,155 +1,129 @@
-Return-Path: <linux-kernel+bounces-180915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 965368C74BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:42:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1ECE8C74CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:44:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3B921C240A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:42:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D28FE1C23EF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:44:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEED714534A;
-	Thu, 16 May 2024 10:42:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A02E31459E8;
+	Thu, 16 May 2024 10:44:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TkB6i3Ee"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="EIG5CWO8"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EA76143C56;
-	Thu, 16 May 2024 10:42:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F242145349
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 10:44:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715856133; cv=none; b=KvU5hU+wE5F/YxgtiGNMxv2+w2ST0j7pxbGsLkp8bYXIfiTk7ndQy/Ugb7n8QhQvQVDhtxmxX5U8WWELDu9t4aH/EpKXnf9noXz2gvz932Is/Ncto7QF5qySXRGbdBvm8gvH+qkLC0viqluwdg8r9mOj1rLSkQzi6sYOq7MESXA=
+	t=1715856257; cv=none; b=l7Ivs+LJ5OLJrApSqZHJtPeOa4OYft+y1EHotmwBtS34fvngioCaxdbN4karHVFNbIWZ9ezyxHn7bKRVOkQHBlbPoHy4oq+JpDOPxfu1KPo5L2+jHfMDZgN1Szh1Bpunr3pum9IymnqmTfKQ59wxE4Gm+8wxVzsgklF0rv+YGB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715856133; c=relaxed/simple;
-	bh=LC4AeqwZIRmI4MhnnhupDiJJMKgFyN7s0/4iOHpe3+4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZFVII72vfBCQ6PdotS0RjKqJVxcjCsxmq7wWedYVHLc3SgDlCkI0p8HaEflrVuW/ZvVRCljFW9i/1vYWl5Wl30x4s+iPgfWZeDJtZxRKa7rRLy79267LGWwD6Bohmme1TPcrOlmuEiyPYoXrn1ljZ2dDVYHa6A0LGOpe+8p6Ils=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TkB6i3Ee; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715856131; x=1747392131;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=LC4AeqwZIRmI4MhnnhupDiJJMKgFyN7s0/4iOHpe3+4=;
-  b=TkB6i3Een8HSgJnxi4bkUJ9SDx3oReLjN2RtjqDAJ/5tcA/qSzSIn6pg
-   6FDuZiKIJr56rSAJdEqSWz6aEMS1Y0nhjYlVcnQJumZjD1+at29GUhN+M
-   MkgW5ySFjH/VoQcNu2lcK+sdUd4u91vWGNoJSbRJpOnS7O3/vfAuyM+G9
-   rUbDQdBzrFNN+NvJlLRTDHDcwSzvQCfifIJbZVcCLUp5RoOU7PR0Q9LvD
-   An7OtnrNmdVaNtrVKz7+7IIRtwDHkKVRE8udF7yfbqV7oMiOJ2Cw6UW+y
-   4peInmB0qUPO2uhRpZxbFJK6LrYGMfHXDdZrwezALhpxc1bvhlsju44xD
-   A==;
-X-CSE-ConnectionGUID: NDk50ujVReq8fhyThOurug==
-X-CSE-MsgGUID: vxpLYxZiRMK/FPDBgDEfww==
-X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="11803709"
-X-IronPort-AV: E=Sophos;i="6.08,164,1712646000"; 
-   d="scan'208";a="11803709"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 03:42:09 -0700
-X-CSE-ConnectionGUID: drmnooZZQMKtYIAtdk4Uzg==
-X-CSE-MsgGUID: ZFPyQ8ZsTqWAKrvtrFP90w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,164,1712646000"; 
-   d="scan'208";a="31962616"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 03:42:08 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 122A811FC04;
-	Thu, 16 May 2024 13:42:05 +0300 (EEST)
-Date: Thu, 16 May 2024 10:42:05 +0000
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: cy_huang@richtek.com
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Daniel Scally <djrscally@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Jean-Michel Hautbois <jeanmichel.hautbois@ideasonboard.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] media: v4l: async: Fix NULL pointer when v4l2 flash
- subdev binding
-Message-ID: <ZkXi_U5Js34dUQsA@kekkonen.localdomain>
-References: <e2f9f2b7b7de956d70b8567a2ab285409fff988b.1715136478.git.cy_huang@richtek.com>
+	s=arc-20240116; t=1715856257; c=relaxed/simple;
+	bh=elcuRzbPwhsrH1xyXyzntGnfl1nBBo4p+zDIv+CsHfA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tEAYT3MCkIdSZudaRSQhtWZkrcynsryBPh2VMw20x+Bx9zbgDbQRuYueKv7ZyY5m7ZZVMspvVoV7tKe2NAhhRetLOxd089LtIJGaE7m6hUM79HPktt3uAbCW2PP+MciM1pzmCixg3E4subk5SDUdRvyHac4bJxHcxJav6/l9mnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=EIG5CWO8; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=WsXuer6vlmF2frs6M0mRkWJUMiqFR4wogoKodqEE79Y=; b=EIG5CWO8wgD7/+bOl3BMH8D2LX
+	jO9nWRjwkP+C5b2iszk5UomkWkA5PoAGZDt7TAHq7bs098DJPX+60JC9mlRZ029AfSNXgsooNw7ME
+	/21Kw7T+gj2yAzzAgoeU7HanLtKHb61VeXEen3i1E1Fr6YPjq6Lq3wyAdcOVbKXxgIakvuze/tmgk
+	QaKhxYfauSL/YJBEU62jbuUo/pfvMYxJMhgNrsMMGikV7pLioj2DFBJcp1/uaCeN27UiyBUJnTjTQ
+	K1vcigcvoEx+yfcnvoCHWkxLy4PM1CSJHU16rgC/PWsXMlE8hRjlNJTtDkCkF3p7yt8DR9YWP68Kp
+	sN/vloFg==;
+Received: from [179.234.232.152] (helo=[192.168.1.212])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1s7YaC-008mbj-VF; Thu, 16 May 2024 12:43:33 +0200
+Message-ID: <c83255f4-745e-43e6-98e0-2e89c31d569a@igalia.com>
+Date: Thu, 16 May 2024 07:43:21 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e2f9f2b7b7de956d70b8567a2ab285409fff988b.1715136478.git.cy_huang@richtek.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 11/17] drm/vkms: Remove useless drm_rotation_simplify
+To: Louis Chauvet <louis.chauvet@bootlin.com>,
+ Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+ Melissa Wen <melissa.srw@gmail.com>,
+ Haneen Mohammed <hamohammed.sa@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, rdunlap@infradead.org,
+ arthurgrillo@riseup.net, Jonathan Corbet <corbet@lwn.net>,
+ pekka.paalanen@haloniitty.fi
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ jeremie.dautheribes@bootlin.com, miquel.raynal@bootlin.com,
+ thomas.petazzoni@bootlin.com, seanpaul@google.com, marcheu@google.com,
+ nicolejadeyee@google.com
+References: <20240513-yuv-v7-0-380e9ffec502@bootlin.com>
+ <20240513-yuv-v7-11-380e9ffec502@bootlin.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
+Autocrypt: addr=mcanal@igalia.com; keydata=
+ xjMEZIsaeRYJKwYBBAHaRw8BAQdAGU6aY8oojw61KS5rGGMrlcilFqR6p6ID45IZ6ovX0h3N
+ H01haXJhIENhbmFsIDxtY2FuYWxAaWdhbGlhLmNvbT7CjwQTFggANxYhBDMCqFtIvFKVRJZQ
+ hDSPnHLaGFVuBQJkixp5BQkFo5qAAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQNI+cctoYVW5u
+ GAEAwpaC5rI3wD8zqETKwGVoXd6+AbmGfZuVD40xepy7z/8BAM5w95/oyPsHUqOsg/xUTlNp
+ rlbhA+WWoaOXA3XgR+wCzjgEZIsaeRIKKwYBBAGXVQEFAQEHQGoOK0jgh0IorMAacx6WUUWb
+ s3RLiJYWUU6iNrk5wWUbAwEIB8J+BBgWCAAmFiEEMwKoW0i8UpVEllCENI+cctoYVW4FAmSL
+ GnkFCQWjmoACGwwACgkQNI+cctoYVW6cqwD/Q9R98msvkhgRvi18fzUPFDwwogn+F+gQJJ6o
+ pwpgFkAA/R2zOfla3IT6G3SBoV5ucdpdCpnIXFpQLbmfHK7dXsAC
+In-Reply-To: <20240513-yuv-v7-11-380e9ffec502@bootlin.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Chi Yuan,
+Hi Louis,
 
-On Wed, May 08, 2024 at 10:51:49AM +0800, cy_huang@richtek.com wrote:
-> From: ChiYuan Huang <cy_huang@richtek.com>
+On 5/13/24 04:50, Louis Chauvet wrote:
+> As all the rotation are now supported by VKMS, this simplification does
+> not make sense anymore, so remove it.
 > 
-> In v4l2_async_create_ancillary_links(), if v4l2 async notifier is
-> created from v4l2 device, the v4l2 flash subdev async binding will enter
-> the logic to create media link. Due to the subdev of notifier is NULL,
-> this will cause NULL pointer to access the subdev entity. Therefore, add
-> the check to bypass it.
-> 
-> Fixes: aa4faf6eb271 ("media: v4l2-async: Create links during v4l2_async_match_notify()")
-> Signed-off-by: ChiYuan Huang <cy_huang@richtek.com>
+> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+
+I'd like to push all commits up to this point to drm-misc-next. Do you
+see a problem with it? Reason: I'd like Melissa to take a look at the
+YUV patches and patches 1 to 11 fix several composition errors.
+
+Let me know your thoughts about it.
+
+Best Regards,
+- Maíra
+
 > ---
-> Hi,
+>   drivers/gpu/drm/vkms/vkms_plane.c | 7 +------
+>   1 file changed, 1 insertion(+), 6 deletions(-)
 > 
->   I'm trying to bind the v4l2 subdev for flashlight testing. It seems
-> some logic in v4l2 asynd binding is incorrect.
+> diff --git a/drivers/gpu/drm/vkms/vkms_plane.c b/drivers/gpu/drm/vkms/vkms_plane.c
+> index 8875bed76410..5a028ee96c91 100644
+> --- a/drivers/gpu/drm/vkms/vkms_plane.c
+> +++ b/drivers/gpu/drm/vkms/vkms_plane.c
+> @@ -115,12 +115,7 @@ static void vkms_plane_atomic_update(struct drm_plane *plane,
+>   	frame_info->fb = fb;
+>   	memcpy(&frame_info->map, &shadow_plane_state->data, sizeof(frame_info->map));
+>   	drm_framebuffer_get(frame_info->fb);
+> -	frame_info->rotation = drm_rotation_simplify(new_state->rotation, DRM_MODE_ROTATE_0 |
+> -									  DRM_MODE_ROTATE_90 |
+> -									  DRM_MODE_ROTATE_270 |
+> -									  DRM_MODE_REFLECT_X |
+> -									  DRM_MODE_REFLECT_Y);
+> -
+> +	frame_info->rotation = new_state->rotation;
+>   
+>   	vkms_plane_state->pixel_read_line = get_pixel_read_line_function(fmt);
+>   }
 > 
-> From the change, I modified vim2m as the test driver to bind mt6370 flashlight.
-> 
-> Here's the backtrace log.
-> 
->  vim2m soc:vim2m: bound [white:flash-2]
->  Unable to handle kernel NULL pointer dereference at virtual address 0000000000000058
->  ......skipping
->  Call trace:
->   media_create_ancillary_link+0x48/0xd8 [mc]
->   v4l2_async_match_notify+0x17c/0x208 [v4l2_async]
->   v4l2_async_register_subdev+0xb8/0x1d0 [v4l2_async]
-
-There's something wrong obviously somewhere but where?
-
-A sub-notifier does have a sub-device after the notifier initialisation.
-Maybe the initialisation does not happen in the right order?
-
->   __v4l2_flash_init.part.0+0x3b4/0x4b0 [v4l2_flash_led_class]
->   v4l2_flash_init+0x28/0x48 [v4l2_flash_led_class]
->   mt6370_led_probe+0x348/0x690 [leds_mt6370_flash]
-> 
-> After tracing the code, it will let the subdev labeled as F_LENS or
-> F_FLASH function to create media link. To prevent the NULL pointer
-> issue, the simplest way is add a check when 'n->sd' is NULL and bypass
-> the later media link creataion.
-> ---
->  drivers/media/v4l2-core/v4l2-async.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-core/v4l2-async.c
-> index 3ec323bd528b..9d3161c51954 100644
-> --- a/drivers/media/v4l2-core/v4l2-async.c
-> +++ b/drivers/media/v4l2-core/v4l2-async.c
-> @@ -324,6 +324,9 @@ static int v4l2_async_create_ancillary_links(struct v4l2_async_notifier *n,
->  	    sd->entity.function != MEDIA_ENT_F_FLASH)
->  		return 0;
->  
-> +	if (!n->sd)
-> +		return 0;
-
-This isn't the right fix: the ancillary link won't be created as a result.
-
-> +
->  	link = media_create_ancillary_link(&n->sd->entity, &sd->entity);
->  
->  #endif
-
--- 
-Regards,
-
-Sakari Ailus
 
