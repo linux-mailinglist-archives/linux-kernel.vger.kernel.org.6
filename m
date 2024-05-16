@@ -1,96 +1,100 @@
-Return-Path: <linux-kernel+bounces-181171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C150F8C7868
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:28:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B808F8C786A
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:28:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 683AB1F22D1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:28:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E18E1F22976
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:28:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E374014A4E5;
-	Thu, 16 May 2024 14:28:14 +0000 (UTC)
-Received: from mail115-69.sinamail.sina.com.cn (mail115-69.sinamail.sina.com.cn [218.30.115.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F52714B940;
+	Thu, 16 May 2024 14:28:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="Li4K1RqE"
+Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F1F6149DFB
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 14:28:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 811ED149DFB;
+	Thu, 16 May 2024 14:28:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715869694; cv=none; b=GH5aRdpreBvu4PxyVNkM1fR8vEqnmmssvlqFiRXvzbFXrMfoPvMr+W9xSaZxzTitBqQpe9StikEk7MgtUgautEGybtHcqzqkgoOa1lWUrgdBiJTRlmxnutaUXuNBvA0WXVZgpwwaoZoH4yk5FKJbgPG+sOUhDOaSil2faFX/w/M=
+	t=1715869704; cv=none; b=dy+jncNsW2Oh2dnN90BNjoXTQTxCeTlK+nh8t9ELM2PTYQ+dxLJMskinDqXWe9X4PWyW2jto7N5EMM4oLXKPdTX4cOhy70dDi5eJBCgi0+D6C/yQ9lXuE0GIFlLnOo6Ntv2HFF8vqUO5bh4yl01TzxIuLa7VfcPiNU3S0G+8ixM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715869694; c=relaxed/simple;
-	bh=TDaEZybXqvpmUnjwTVX/eb2UV3Rfqn0IpKildOfcolo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=C0uaxObyJUpdHxmjFGOpJtAHJsZtlFxB36d7TogOdpgFU0dJKwzR/xqk1NWP2GFbGI3gVAMcA1iiRlZUaP02iNv30MEAmbq80FrGzYXX4ed0lhVErgCcNT/719VsnNcR53lBraOF4AcSEaY8Q4Q/akROqubc1/FNUGPVA7651Tk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([116.24.10.157])
-	by sina.com (10.75.12.45) with ESMTP
-	id 664617ED00000A8D; Thu, 16 May 2024 22:28:00 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 10188231457764
-X-SMAIL-UIID: 4EA501508203459DB2B96C4558590B53-20240516-222800-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+2f44671e54488d20f0e6@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [kernfs?] [usb?] WARNING in kernfs_get (5)
-Date: Thu, 16 May 2024 22:27:48 +0800
-Message-Id: <20240516142748.3376-1-hdanton@sina.com>
-In-Reply-To: <0000000000007224f506186be18b@google.com>
-References: 
+	s=arc-20240116; t=1715869704; c=relaxed/simple;
+	bh=UtwM1AaCv/Q84rlWqpbrUUhXCJ+gDNCjlNXvblAvb24=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L9xNR5udHR5AAsKH7EWINmvlyGBoMKKPSE1N1kDbtYc6zV6/rUh4okl7RRz72IuO/pLfxP1I1rxEw545B/Q0FejQJ9rPBtHsA+wk4lVKz+eI1Yv7OjsNgtEIzfQwp6ohaJt2ADSxETwGuZkRM6Y0/k5O/Y/7UNGUKnJRB0CZX+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=Li4K1RqE; arc=none smtp.client-ip=199.89.1.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 008.lax.mailroute.net (Postfix) with ESMTP id 4VgCBG6pNRz6Cnk90;
+	Thu, 16 May 2024 14:28:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1715869700; x=1718461701; bh=1ZWKwegtnmatTNMl1Q7jftnZ
+	el8hG+2rMuLUAeJoCXA=; b=Li4K1RqEZhj1CuLLNvlp/77rh4WSmdSLYRQReCZA
+	R1drGkROsBilJQMfPBfMBb5GBi/sKu/DOFuGQ2i4MxdF43ZjUmNQ8OgdwD3MtpHH
+	0XNrBbvV7DU6t8WqUiffhj/3NC34dg92+YChfe6KCKenEpuJPWVPQa9dBlAnzQDU
+	fLf0OyrCp3nhwyt73UbzjkLrqqY/xlTL7FuVCSMNWehNjZBusKOU24XlFm9nXyEO
+	oJE+lRUXAXgNgByk4hoBBR/B5HFfkI0XOjnojesmbZwI9QZOKNnZE/0nfjBA17LB
+	UrkLimTQuiTSzZWJQmT/jQHRIcz2HWjarfo0SzgITotnbA==
+X-Virus-Scanned: by MailRoute
+Received: from 008.lax.mailroute.net ([127.0.0.1])
+ by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id 32nPqzYKbRFB; Thu, 16 May 2024 14:28:20 +0000 (UTC)
+Received: from [172.20.0.79] (unknown [8.9.45.205])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4VgCBD0mfJz6Cnk8s;
+	Thu, 16 May 2024 14:28:19 +0000 (UTC)
+Message-ID: <91e9322b-9304-4cb7-a1be-1f43208800e8@acm.org>
+Date: Thu, 16 May 2024 08:28:18 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/3] scsi: ufs: Allow RTT negotiation
+To: Avri Altman <avri.altman@wdc.com>,
+ "Martin K . Petersen" <martin.petersen@oracle.com>
+Cc: Bean Huo <beanhuo@micron.com>, Peter Wang <peter.wang@mediatek.com>,
+ linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240516055124.24490-1-avri.altman@wdc.com>
+ <20240516055124.24490-2-avri.altman@wdc.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20240516055124.24490-2-avri.altman@wdc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, 14 May 2024 08:44:43 -0700
-> syzbot has found a reproducer for the following issue on:
-> 
-> HEAD commit:    26dd54d03cd9 Add linux-next specific files for 20240514
-> git tree:       linux-next
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14b06900980000
+On 5/15/24 23:51, Avri Altman wrote:
+>   void ufshcd_fixup_dev_quirks(struct ufs_hba *hba,
+>   			     const struct ufs_dev_quirk *fixups)
+>   {
+> @@ -8278,6 +8312,8 @@ static int ufs_get_device_desc(struct ufs_hba *hba)
+>   	if (hba->ext_iid_sup)
+>   		ufshcd_ext_iid_probe(hba, desc_buf);
+>   
+> +	ufshcd_rtt_set(hba, desc_buf);
+> +
 
-#syz test https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git  26dd54d03cd9
+Why does this call occur in ufs_get_device_desc()? ufshcd_rtt_set() sets
+a device parameter. Shouldn't this call be moved one level up into
+ufshcd_device_params_init()?
 
---- l/drivers/base/firmware_loader/fallback.c
-+++ f/drivers/base/firmware_loader/fallback.c
-@@ -64,6 +64,7 @@ void kill_pending_fw_fallback_reqs(bool
- 	mutex_unlock(&fw_lock);
- }
- 
-+static DEFINE_MUTEX(fw_load_sysfs_mutex);
- /**
-  * fw_load_sysfs_fallback() - load a firmware via the sysfs fallback mechanism
-  * @fw_sysfs: firmware sysfs information for the firmware to load
-@@ -82,6 +83,7 @@ static int fw_load_sysfs_fallback(struct
- 		fw_priv->is_paged_buf = true;
- 
- 	dev_set_uevent_suppress(f_dev, true);
-+	mutex_lock(&fw_load_sysfs_mutex);
- 
- 	retval = device_add(f_dev);
- 	if (retval) {
-@@ -124,6 +126,7 @@ out:
- 	device_del(f_dev);
- err_put_dev:
- 	put_device(f_dev);
-+	mutex_unlock(&fw_load_sysfs_mutex);
- 	return retval;
- }
- 
---
+Otherwise this patch looks good to me.
+
+Thanks,
+
+Bart.
 
