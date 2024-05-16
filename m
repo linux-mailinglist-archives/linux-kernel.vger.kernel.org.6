@@ -1,142 +1,431 @@
-Return-Path: <linux-kernel+bounces-181329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1B648C7A80
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:42:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73A8D8C7A98
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:43:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D3F82840F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:42:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DCA5EB22985
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:43:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 131545250;
-	Thu, 16 May 2024 16:42:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F289979DF;
+	Thu, 16 May 2024 16:43:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aExv9r/X"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="T6vR3/R2"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CE0D46A4;
-	Thu, 16 May 2024 16:42:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31D7F4691
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 16:43:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715877723; cv=none; b=fXEQIWl6rJ977c6QvSEnMAoJBlfTgRLOsa1NcYW5gLRVigFcFYC4quQVDSnpnPtVTmOc4QkB4qzM1xMYUqWpFWGS4KPSoBgTl4geAnedYqDQCLF2JN9jGfGcOLMsLValXCmGJrwkd0zyjYKacUnNW/KNiZP8vMRasxurtrQdzaw=
+	t=1715877799; cv=none; b=orO+nf3Fu0zInA/rpFke5qVSfeb/Bcpw4jWsGt1ej3ULF1lzxCJ8zEgDzyIPF+oeUemB7hxOK8psl5afCIrXs4emcgyp2CeTDRe7rhHNl24j0faen7XBIUOp0wu7aEFJ0yFsM/JKRoRBsVH/pYQ11TYi6DAyNjomPmsqmmshHXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715877723; c=relaxed/simple;
-	bh=PRjdh13H3dqplEdXWS21JU8vd8Bok+GEVIimeVd07Vk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qEpHKwEDaL7sUOhYZ/Ff/ngl8yt4PY7aKHkR4Payhhj821+c0Eg0+rTWx48X329d1y4q8GEk7D6zLXVN3rqoko+gLM24lzXQhbnH/5Yn1KAbhk7C0MU9cQk4//aG5NH0gek9engTVZyItT2U/9xSMdvtFCJkX9w/DCmeUU5l9zk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aExv9r/X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48E53C113CC;
-	Thu, 16 May 2024 16:42:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715877722;
-	bh=PRjdh13H3dqplEdXWS21JU8vd8Bok+GEVIimeVd07Vk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=aExv9r/XR6Dl/EIenbsiKmuBA3dH17vCpYWXWjpXt/2ok2BrDyDg3Rb6b0nwMo4eQ
-	 WmuaBTu5Qk4DMwuXuQzJqDGNikyOU/lYmcQHvXRLYII6YkVqjdZpZ45qeJuyiAttVk
-	 jKcBLkCwRFtlVLVx3M1BZvPqpi1KRtPcA5KQj/s4O+Ek3dUQEF2i/sScigyO7Qma4Z
-	 Js436CSldxRunVlvYBhjQRWIE1kWgA054glx0jSA7XH8uKHexF+UeoYrV4pLfP9WeP
-	 Br6hwcphOJgLs+eUEtf5Gj01REEjjwvcCP/PuE9OyliSaC9a5BPOk1CwQieSrfa4NH
-	 2YiFQpIdvpYKA==
-From: SeongJae Park <sj@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: SeongJae Park <sj@kernel.org>,
-	stable@vger.kernel.org,
-	patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org,
-	akpm@linux-foundation.org,
-	linux@roeck-us.net,
-	shuah@kernel.org,
-	patches@kernelci.org,
-	lkft-triage@lists.linaro.org,
-	pavel@denx.de,
-	jonathanh@nvidia.com,
-	f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net,
-	rwarsow@gmx.de,
-	conor@kernel.org,
-	allen.lkml@gmail.com,
-	broonie@kernel.org,
-	damon@lists.linux.dev
-Subject: Re: [PATCH 6.6 000/308] 6.6.31-rc3 review
-Date: Thu, 16 May 2024 09:41:59 -0700
-Message-Id: <20240516164159.79334-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240516121335.906510573@linuxfoundation.org>
-References: 
+	s=arc-20240116; t=1715877799; c=relaxed/simple;
+	bh=qhdkkjG63mJDXlyD6fjALNrwjbUeN8euBvfpCnw6MQA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iuUP3+lnUVemAsDdVjEB9LudG9pvb87VVD6aG0GFPHSPu9NW7Fwv3Fu7kViqYHmgaKyBXiGWiC6o6UoKQeicc5alsng3t4uLKgBSQ82rMD282xk0ayctT+9N5geidSrWgtbfY2RiEariCuo9vlFtAXo2EGTNO3w2VnXLAcosWyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=T6vR3/R2; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2e3e18c24c1so11435291fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 09:43:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1715877795; x=1716482595; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=79IRUvthFSgXLjweA1zUqe2seBKxPLlxqdBaQG4SKUw=;
+        b=T6vR3/R2YWhJIVqbTLKcK4yJFxh7cFTHD5NrjfTAPfmF0r2reLIM66NP5YL2kCjuQp
+         bjmDubXG8x5PfwuIk7gUN2EgKegyIujg1VKjyt3Hpn8/I2PU0dYaQchQYk79IERrcBdg
+         btDiiHFgzIFHBqo9z1Cd8FhyXaLU8BCMawWSVUh2z/kykTY21gBFgaqUOrybccrkwgHx
+         2Qcb3eQkypT7ZQjE5tiG+FOJ6qGbNhQKWxMPL6FsTHIFaY9B7vlGi2B/fwLAH9WRgUud
+         PCEQ9yhE+gaob5VU58IfuRjHJuYDpFHAX5FWKvi3A6xSRnkyZi2m93eCVca0aL4mQlCN
+         APrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715877795; x=1716482595;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=79IRUvthFSgXLjweA1zUqe2seBKxPLlxqdBaQG4SKUw=;
+        b=ZbLxkwAPO+SYRliUvXsIH8i1nZm30qp1XKIFZJSTvZ1bAWHMElic+2SQVffJv97Wk3
+         r2wdOUmYZu/k/bZLrOPh9oijTBZ/5HVWoXQqvzT72g1HejDUlKlEUwwZxXXiu0tBoVGK
+         OvMWxV9VfWjc/CxeA4N0zpE6wRKJvDzeHZhD4bKZx7o9b7bg6lSka4gfHD/3Q1VVPQGr
+         wBYUufo3YxpegoqbshgdYqFgt05CnST0Vkn7rU8E8xXSaZaPmUrryW//AZR4JGnZ4JMY
+         oaGnLkkhUShBcGFg8UlUFUqB/6v2a76NtLCk/YlhsLV4wlFdOF1Zop4XDlT/pWCmYtfp
+         p/4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVZuVGqaSQsrKh/G14v2CqwylCK0YAoQHAAkGAk/PaHk5h+GE1inyMI+QV6+EJbU/IWqiPKs48nF7ho6FrljgJPxd1VH2ZoJf1grAO6
+X-Gm-Message-State: AOJu0YyFtu4cuY2RMGGYAmTMjT6t9W45ag/LydMUBl1PGU2ohsUXgxNw
+	e4PZgfh+Mo2WrWVcePnlPWkB0KyswzEtrkS5nsoAI1Nqbpu3kguoMIkqqOYCkQ3NVnlVSV4z1Yj
+	XjFyX1rpd8sH0ufTLqC2JdoCumQNvdYwPMuph5g==
+X-Google-Smtp-Source: AGHT+IGFobeuDVmgJIg/aZnlBscvXY51EDfry/lc6brTp0NxdfFW+gAy0JY4O/NTy2FJLYdANJUQeujyfscqopixA1o=
+X-Received: by 2002:a2e:2c13:0:b0:2e1:e8fa:4f56 with SMTP id
+ 38308e7fff4ca-2e52028e665mr116051901fa.42.1715877795373; Thu, 16 May 2024
+ 09:43:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240514-ad4111-v2-0-29be6a55efb5@analog.com> <20240514-ad4111-v2-1-29be6a55efb5@analog.com>
+ <CAMknhBGNPvxegL+YbnLGoKjA=P3Vx=x+39aXuMgq+cv2KgdeLw@mail.gmail.com> <151d6893-3e9e-4331-8dde-5293e75f10ef@gmail.com>
+In-Reply-To: <151d6893-3e9e-4331-8dde-5293e75f10ef@gmail.com>
+From: David Lechner <dlechner@baylibre.com>
+Date: Thu, 16 May 2024 11:43:04 -0500
+Message-ID: <CAMknhBFKM+DC9jNDV+cZ5agwsXJ1iqU9DB3XD-y3sVcRWJOAsQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/9] dt-bindings: adc: ad7173: add support for ad411x
+To: "Ceclan, Dumitru" <mitrutzceclan@gmail.com>
+Cc: dumitru.ceclan@analog.com, Lars-Peter Clausen <lars@metafoo.de>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Thu, May 16, 2024 at 10:49=E2=80=AFAM Ceclan, Dumitru
+<mitrutzceclan@gmail.com> wrote:
+>
+> On 16/05/2024 01:37, David Lechner wrote:
+> > On Tue, May 14, 2024 at 2:23=E2=80=AFAM Dumitru Ceclan via B4 Relay
+> > <devnull+dumitru.ceclan.analog.com@kernel.org> wrote:
+> >>
+> >> From: Dumitru Ceclan <dumitru.ceclan@analog.com>
+> >>
+> >> Add support for: AD4111, AD4112, AD4114, AD4115, AD4116.
+> >>
+> >> AD411x family ADCs support a VCOM pin, dedicated for single-ended usag=
+e.
+> >> AD4111/AD4112 support current channels, usage is implemented by
+> >>  specifying channel reg values bigger than 15.
+> >>
+> >> Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
+> >> ---
+> >>  .../devicetree/bindings/iio/adc/adi,ad7173.yaml    | 118 ++++++++++++=
+++++++++-
+> >>  1 file changed, 117 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml=
+ b/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml
+> >> index ea6cfcd0aff4..6cc3514f5ed8 100644
+> >> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml
+> >> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml
+> >> @@ -19,7 +19,18 @@ description: |
+> >>    primarily for measurement of signals close to DC but also delivers
+> >>    outstanding performance with input bandwidths out to ~10kHz.
+> >>
+> >> +  Analog Devices AD411x ADC's:
+> >> +  The AD411X family encompasses a series of low power, low noise, 24-=
+bit,
+> >> +  sigma-delta analog-to-digital converters that offer a versatile ran=
+ge of
+> >> +  specifications. They integrate an analog front end suitable for pro=
+cessing
+> >> +  fully differential/single-ended and bipolar voltage inputs.
+> >> +
+> >>    Datasheets for supported chips:
+> >> +    https://www.analog.com/media/en/technical-documentation/data-shee=
+ts/AD4111.pdf
+> >> +    https://www.analog.com/media/en/technical-documentation/data-shee=
+ts/AD4112.pdf
+> >> +    https://www.analog.com/media/en/technical-documentation/data-shee=
+ts/AD4114.pdf
+> >> +    https://www.analog.com/media/en/technical-documentation/data-shee=
+ts/AD4115.pdf
+> >> +    https://www.analog.com/media/en/technical-documentation/data-shee=
+ts/AD4116.pdf
+> >>      https://www.analog.com/media/en/technical-documentation/data-shee=
+ts/AD7172-2.pdf
+> >>      https://www.analog.com/media/en/technical-documentation/data-shee=
+ts/AD7172-4.pdf
+> >>      https://www.analog.com/media/en/technical-documentation/data-shee=
+ts/AD7173-8.pdf
+> >> @@ -31,6 +42,11 @@ description: |
+> >>  properties:
+> >>    compatible:
+> >>      enum:
+> >> +      - adi,ad4111
+> >> +      - adi,ad4112
+> >> +      - adi,ad4114
+> >> +      - adi,ad4115
+> >> +      - adi,ad4116
+> >>        - adi,ad7172-2
+> >>        - adi,ad7172-4
+> >>        - adi,ad7173-8
+> >> @@ -129,6 +145,31 @@ patternProperties:
+> >>          maximum: 15
+> >>
+> >>        diff-channels:
+> >> +        description: |
+> >> +          For using current channels specify select the current input=
+s
+> >> +           and enable the adi,current-channel property.
+> >> +
+> >> +          Family AD411x supports a dedicated VCOM voltage input.
+> >
+> > Did you mean VINCOM? Searching the datasheets for "VCOM" comes up empty=
+.
+> >
+> Yep
+> >> +          To select it set the second channel to 16.
+> >> +            (VIN2, VCOM) -> diff-channels =3D <2 16>
+> >
+> > Jonathan mentioned this in v1 with regard to the current inputs, but
+> > it applies here too. There is a new proposed single-channel property
+> > [1] that would be preferred when an input is used as a single-ended or
+> > pseudo-differential input (i.e. with VINCOM or ADCIN15).
+> >
+> > [1]: https://lore.kernel.org/linux-iio/20240514120222.56488-5-alisa.rom=
+an@analog.com/
+> >
+> Yet here I thought that it was clear from previous conversations that
+> we are not really dealing with a single-ended/pseudo-differential input,
+> just a differential ADC that can be used in that manner.
+>
+> We do not have here such a clear cut case as with AD7194, where an input
+> is dedicated for single-ended/pseudo usage. Here, the inputs are mix and
+> match and single-ended/pseudo is obtainable with other pins than VINCOM/
+> ADCIN15.
+>
+> When configuring channels we are *always* specifying two voltage inputs.
+> I strongly disagree using single-channel for voltage channels in these
+> families of ADC's.
 
-On Thu, 16 May 2024 14:15:01 +0200 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+Yes, sorry, you are right. I forgot that VINCOM isn't actually
+electrically different from the other pins (even if the name makes it
+seem like it would be).
 
-> This is the start of the stable review cycle for the 6.6.31 release.
-> There are 308 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat, 18 May 2024 12:12:33 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.31-rc3.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
+>
+> >> +
+> >> +          There are special values that can be selected besides the v=
+oltage
+> >> +          analog inputs:
+> >> +            21: REF+
+> >> +            22: REF=E2=88=92
+> >> +          Supported only by AD7172-2, AD7172-4, AD7175-2, AD7175-8, A=
+D7177-2:
+> >> +            19: ((AVDD1 =E2=88=92 AVSS)/5)+
+> >> +            20: ((AVDD1 =E2=88=92 AVSS)/5)=E2=88=92
+> >> +          Supported only by AD4111, AD4112:
+> >> +            12: IIN3+
+> >> +            11: IIN3=E2=88=92
+> >> +            13: IIN2+
+> >> +            10: IIN2=E2=88=92
+> >> +            14: IIN1+
+> >> +             9: IIN1=E2=88=92
+> >> +            15: IIN0+
+> >> +             8: IIN0=E2=88=92
+> >
+> > I just made a late reply on v1 where Jonathan suggested that the
+> > current inputs are differential with a similar comment to this:
+> >
+> > It doesn't seem to me like current inputs are differential if they are
+> > only measuring one current. They take 2 pins because you need a way
+> > for current to come in and go back out, but the datasheet calls them
+> > single-ended inputs.
+> >
+> It seemed to me that the conclusion that we arrived to was to expose the
+> precise pins that are used in the conversion and document the selection.
+>
+> Yes, it is a single-ended channel. So revert to the way it was in V1 usin=
+g
+> single-channel?
 
-This rc kernel passes DAMON functionality test[1] on my test machine.
-Attaching the test results summary below.  Please note that I retrieved the
-kernel from linux-stable-rc tree[2].
+I'd like to hear Jonathan's opinion on this one.
 
-Tested-by: SeongJae Park <sj@kernel.org>
+>
+> >> +
+> >>          items:
+> >>            minimum: 0
+> >>            maximum: 31
+> >> @@ -154,6 +195,23 @@ patternProperties:
+> >>            - avdd
+> >>          default: refout-avss
+> >>
+> >> +      adi,current-channel:
+> >> +        description: |
+> >> +          Signal that the selected inputs are current channels.
+> >> +          Only available on AD4111 and AD4112.
+> >> +        type: boolean
+> >> +
+> >> +      adi,channel-type:
+> >> +        description:
+> >> +          Used to differentiate between different channel types as th=
+e device
+> >> +           register configurations are the same for all usage types.
+> >> +        $ref: /schemas/types.yaml#/definitions/string
+> >> +        enum:
+> >> +          - single-ended
+> >> +          - pseudo-differential
+> >> +          - differential
+> >> +        default: differential
+> >> +
+> >
+> > As suggested above, we should soon have diff-channels and
+> > single-channel to differentiate between (fully) differential and
+> > single-ended. Do we actually need to differentiate between
+> > single-ended and pseudo-differential though?
+> >
+> Not really, so just a bool differential flag? (this seems weird as we hav=
+e diff-channels)
 
-[1] https://github.com/awslabs/damon-tests/tree/next/corr
-[2] 2379391bdb9d ("Linux 6.6.31-rc3")
+Or we need to change the proposed single-channel property to allow two
+inputs. I guess we'll see what Johnathan has to say.
 
-Thanks,
-SJ
+>
+> > I think the AD4116 datasheet is the only one that uses both of those
+> > terms. It gives the examples that for "single-ended" ADCIN15 would be
+> > connected to AVSS and for "pseudo-differential" ADCIN15 would be
+> > connected to REFOUT (AVSS + 2.5 V). So the only difference seems to be
+> > if the voltage on ADCIN15 is =3D=3D 0V or !=3D 0V.
+> >
+> In the ad411x yes, over to ad717x it's mixed:
+> https://lore.kernel.org/all/0fef36f8-a7db-40cc-86bd-9449cb4ab46e@gmail.co=
+m/
+>
+> > To make this like other pseudo-differential chips we have done
+> > recently, it seems to me like we should have an adcin15-supply
+> > property to describe the ADCIN15 input. Then we could use that
+> > property to determine single-ended vs. pseudo-differential (if there
+> > actually is a need for that) and we wouldn't need the adi,channel-type
+> > property.
+> >
+>
+> I agree that we do not need to differentiate between those two.
+> But the approach with the supply is too specific, the adi,channel-type
+> property is not only for AD4116-ADCIN15, but for all models compatible.
+>
 
-[...]
+Makes sense, especially given the point above that ADCIN15 isn't
+really electrically different from other inputs.
 
----
+> >>      required:
+> >>        - reg
+> >>        - diff-channels
+> >> @@ -166,7 +224,6 @@ allOf:
+> >>    - $ref: /schemas/spi/spi-peripheral-props.yaml#
+> >>
+> >>    # Only ad7172-4, ad7173-8 and ad7175-8 support vref2
+> >> -  # Other models have [0-3] channel registers
+> >>    - if:
+> >>        properties:
+> >>          compatible:
+> >> @@ -187,6 +244,37 @@ allOf:
+> >>                  - vref
+> >>                  - refout-avss
+> >>                  - avdd
+> >> +
+> >> +  - if:
+> >> +      properties:
+> >> +        compatible:
+> >> +          contains:
+> >> +            enum:
+> >> +              - adi,ad4114
+> >> +              - adi,ad4115
+> >> +              - adi,ad4116
+> >> +              - adi,ad7173-8
+> >> +              - adi,ad7175-8
+> >> +    then:
+> >> +      patternProperties:
+> >> +        "^channel@[0-9a-f]$":
+> >> +          properties:
+> >> +            reg:
+> >> +              maximum: 15
+> >
+> > As discussed recently in the the very similar ad719x bindings [2], we
+> > may have been misunderstanding this limit so far. 15 is a bit
+> > artificially low since input pins can be used more than once in
+> > different "channels". But that is really an issues with the existing
+> > bindings, not just this patch.
+> >
+> > [2]: https://lore.kernel.org/linux-iio/20240511122955.2372f56e@jic23-hu=
+awei/
+> >
+> >
+> In this case there is a 1-1 correspondence between this reg limit and the=
+ number
+> of channel configuration registers available to the device. Maybe another=
+ property
+> then reg? Sure...but this limitation fits the current situation.
+>
+> In addition, the device does not work the same as ad719x. If I understood=
+ correctly
+> that documentation, the configuration register needs to be rewritten for =
+every different
+> input combination. This means that the driver is implemented to overwrite=
+ the reg for
+> every read. This device, it seems to me, is more in the liking's of write=
+ all the channel
+> configs at once, then keep using those.
+>
+> For AD719x yes, it is artificial. Over here we have a clear reason.
 
- [32m
-ok 1 selftests: damon: debugfs_attrs.sh
-ok 2 selftests: damon: debugfs_schemes.sh
-ok 3 selftests: damon: debugfs_target_ids.sh
-ok 4 selftests: damon: debugfs_empty_targets.sh
-ok 5 selftests: damon: debugfs_huge_count_read_write.sh
-ok 6 selftests: damon: debugfs_duplicate_context_creation.sh
-ok 7 selftests: damon: debugfs_rm_non_contexts.sh
-ok 8 selftests: damon: sysfs.sh
-ok 9 selftests: damon: sysfs_update_removed_scheme_dir.sh
-ok 10 selftests: damon: reclaim.sh
-ok 11 selftests: damon: lru_sort.sh
-ok 1 selftests: damon-tests: kunit.sh
-ok 2 selftests: damon-tests: huge_count_read_write.sh
-ok 3 selftests: damon-tests: buffer_overflow.sh
-ok 4 selftests: damon-tests: rm_contexts.sh
-ok 5 selftests: damon-tests: record_null_deref.sh
-ok 6 selftests: damon-tests: dbgfs_target_ids_read_before_terminate_race.sh
-ok 7 selftests: damon-tests: dbgfs_target_ids_pid_leak.sh
-ok 8 selftests: damon-tests: damo_tests.sh
-ok 9 selftests: damon-tests: masim-record.sh
-ok 10 selftests: damon-tests: build_i386.sh
-ok 11 selftests: damon-tests: build_arm64.sh
-ok 12 selftests: damon-tests: build_m68k.sh
-ok 13 selftests: damon-tests: build_i386_idle_flag.sh
-ok 14 selftests: damon-tests: build_i386_highpte.sh
-ok 15 selftests: damon-tests: build_nomemcg.sh
- [33m
- [92mPASS [39m
+I thought they worked nearly the same in this regard since they are
+sharing a lot of code via adc/ad_sigma_delta.h, It looks to me like
+the channel registers are only set up for a raw read (single channel)
+or buffered read (only enabled channels), but maybe I didn't look deep
+enough. Anyway, not a big deal to me.
+
+>
+> >> +
+> >> +  - if:
+> >> +      properties:
+> >> +        compatible:
+> >> +          contains:
+> >> +            enum:
+> >> +              - adi,ad7172-2
+> >> +              - adi,ad7175-2
+> >> +              - adi,ad7176-2
+> >> +              - adi,ad7177-2
+> >> +    then:
+> >> +      patternProperties:
+> >> +        "^channel@[0-9a-f]$":
+> >> +          properties:
+> >>              reg:
+> >>                maximum: 3
+> >>
+> >> @@ -210,6 +298,34 @@ allOf:
+> >>            required:
+> >>              - adi,reference-select
+> >>
+> >> +  - if:
+> >> +      properties:
+> >> +        compatible:
+> >> +          contains:
+> >> +            enum:
+> >> +              - adi,ad4111
+> >> +              - adi,ad4112
+> >> +              - adi,ad4114
+> >> +              - adi,ad4115
+> >> +              - adi,ad4116
+> >> +    then:
+> >> +      properties:
+> >> +        avdd2-supply: false
+> >> +
+> >> +  - if:
+> >> +      properties:
+> >> +        compatible:
+> >> +          not:
+> >> +            contains:
+> >> +              enum:
+> >> +                - adi,ad4111
+> >> +                - adi,ad4112
+> >> +    then:
+> >> +      patternProperties:
+> >> +        "^channel@[0-9a-f]$":
+> >> +          properties:
+> >> +            adi,current-channel: false
+> >> +
+> >>    - if:
+> >>        anyOf:
+> >>          - required: [clock-names]
+> >>
+> >> --
+> >> 2.43.0
+> >>
+> >>
+>
 
