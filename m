@@ -1,94 +1,107 @@
-Return-Path: <linux-kernel+bounces-181550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5049B8C7D86
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 21:57:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F24A38C7D8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 22:00:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B11328472A
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 19:57:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 381FB282E78
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 20:00:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EB45156F53;
-	Thu, 16 May 2024 19:57:10 +0000 (UTC)
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C99D157A74;
+	Thu, 16 May 2024 20:00:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IH/2JEns"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55962156F4C;
-	Thu, 16 May 2024 19:57:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74342147C72;
+	Thu, 16 May 2024 20:00:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715889429; cv=none; b=oyrwPBNXcRqUIswZtOoOxzemtDhCYZIofrQQKKDYsIMR9G4FeBD0fvg4G8HrdSNB0XJ8fA01+ljEKlrDx8X427jExLanLiBfkJM0JKGRA32/0Wn1dfwFm0sD/VwMBlyhK6izlfxjkZcqnG6yodph7I9s2+hi8TIiTYx5PWuqOqY=
+	t=1715889632; cv=none; b=hIyQi+lMmNuXrlsMeCbgNCI3jjbFMP2Pvi/8HyYMzhRURFlJZqzM2YTAQ/pI+YQ3w5c7T1CK2FwawV4YUgNRj/Dn4qFTXnFkI6yrOuBM4+rm9+DWMvs5VWcLpJcPn/MUrOKXMx8pYMsxdr4enoStqsvu59kju91CTWACbainGz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715889429; c=relaxed/simple;
-	bh=eSEhwn08/jTBvLW0ZvVPy2OksqlbiFSo0nNJd0R6TpE=;
-	h=From:In-Reply-To:Content-Type:References:Date:Cc:To:MIME-Version:
-	 Message-ID:Subject; b=ZdSJOH8txc2HbSLMWGM33W/7V/k/ewJ9sm3lZEk2CiD1neFjlIpcBv9+o/MOCImXKUVRAWOZm7UC6clwXdRbTlsqJAzxRd2IX1zZrEi8PiFw5Kcm+PPLNUiHuOMnXZmXiTxdngz9lfgILHnDoOcnlp3ctXZTjedXH0sMOFhQvNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Received: from harlem.collaboradmins.com (harlem.collaboradmins.com [IPv6:2a01:4f8:1c0c:5936::1])
-	by madrid.collaboradmins.com (Postfix) with ESMTP id F3DCF37821B2;
-	Thu, 16 May 2024 19:57:04 +0000 (UTC)
-From: "Shreeya Patel" <shreeya.patel@collabora.com>
-In-Reply-To: <20240514100951.686412426@linuxfoundation.org>
-Content-Type: text/plain; charset="utf-8"
-X-Forward: 127.0.0.1
-References: <20240514100951.686412426@linuxfoundation.org>
-Date: Thu, 16 May 2024 20:57:04 +0100
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org, "kernelci-regressions mailing list" <kernelci-regressions@lists.collabora.co.uk>, "Gustavo Padovan" <gustavo.padovan@collabora.com>
-To: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+	s=arc-20240116; t=1715889632; c=relaxed/simple;
+	bh=oIo0+8UooOueZ1JprNItUa0mTgu6yRRFRPC/LxHzJLc=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=nbUWc+n/aQwaDVjXvu6F3qxOAl6dOQlz9+KQHNgCPe10kCorXIDVINUrtM73uSbKCpZGW/noh8yf8nODifBFfhJy3c4U/pUasjdxXcxtQfddWnqk0eJWAiHYCUE9xePXYBVVSW7FC7ynefQFBjAybKgCzs3+alNWU4AECBioHR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IH/2JEns; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A118C32786;
+	Thu, 16 May 2024 20:00:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715889631;
+	bh=oIo0+8UooOueZ1JprNItUa0mTgu6yRRFRPC/LxHzJLc=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=IH/2JEnsmDlYis68tcQXP1jSBA3ibITkeUFmxniYgQGaAs8DNqOT3EwnUgSJb54CN
+	 V/7atgZBY8hdRJNdhMccnbCD6Y2By6cug68ykSbUtakB88OoXt83+xmsWJQwmDIwV3
+	 IMXfl9FqhLGH6Q3knt2DUpZy57l9tgtg6mb27STOgCXdyXNG2KqIYjS9QF/FnZYzni
+	 ovbTzu5ZAgbTjdXtGfvC2f6aZbXlt7DUW4zMhSE3TWaH1ZT6+RQ8wEy8wERHyplnPu
+	 MTib+i7N8RLjx3SYSlUB+xa50dKhMGTXW1GVh7koRG6VUfZsG0PEpI9fzyqHpXtd25
+	 wmqhq7DJUp77A==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Message-ID: <157931-66466500-1-60c3fc00@162156629>
-Subject: =?utf-8?q?Re=3A?= [PATCH =?utf-8?q?5=2E4?= 00/84] 
- =?utf-8?q?5=2E4=2E276-rc1?= review
-User-Agent: SOGoMail 5.10.0
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 16 May 2024 23:00:25 +0300
+Message-Id: <D1BC3VWXKTNC.2DB9JIIDOFIOQ@kernel.org>
+Cc: <containers@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+ <linux-fsdevel@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+ <keyrings@vger.kernel.org>
+Subject: Re: [PATCH 0/3] Introduce user namespace capabilities
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Jarkko Sakkinen" <jarkko@kernel.org>, "Casey Schaufler"
+ <casey@schaufler-ca.com>, "Jonathan Calmels" <jcalmels@3xx0.net>,
+ <brauner@kernel.org>, <ebiederm@xmission.com>, "Luis Chamberlain"
+ <mcgrof@kernel.org>, "Kees Cook" <keescook@chromium.org>, "Joel Granados"
+ <j.granados@samsung.com>, "Serge Hallyn" <serge@hallyn.com>, "Paul Moore"
+ <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "David Howells"
+ <dhowells@redhat.com>
+X-Mailer: aerc 0.17.0
+References: <20240516092213.6799-1-jcalmels@3xx0.net>
+ <2804dd75-50fd-481c-8867-bc6cea7ab986@schaufler-ca.com>
+ <D1BBFWKGIA94.JP53QNURY3J4@kernel.org>
+ <D1BBI1LX2FMW.3MTQAHW0MA1IH@kernel.org>
+In-Reply-To: <D1BBI1LX2FMW.3MTQAHW0MA1IH@kernel.org>
 
-On Tuesday, May 14, 2024 15:49 IST, Greg Kroah-Hartman <gregkh@linuxfou=
-ndation.org> wrote:
+On Thu May 16, 2024 at 10:31 PM EEST, Jarkko Sakkinen wrote:
+> On Thu May 16, 2024 at 10:29 PM EEST, Jarkko Sakkinen wrote:
+> > On Thu May 16, 2024 at 10:07 PM EEST, Casey Schaufler wrote:
+> > > I suggest that adding a capability set for user namespaces is a bad i=
+dea:
+> > > 	- It is in no way obvious what problem it solves
+> > > 	- It is not obvious how it solves any problem
+> > > 	- The capability mechanism has not been popular, and relying on a
+> > > 	  community (e.g. container developers) to embrace it based on this
+> > > 	  enhancement is a recipe for failure
+> > > 	- Capabilities are already more complicated than modern developers
+> > > 	  want to deal with. Adding another, special purpose set, is going
+> > > 	  to make them even more difficult to use.
+> >
+> > What Inh, Prm, Eff, Bnd and Amb is not dead obvious to you? ;-)
+> > One UNs cannot hurt...
+> >
+> > I'm not following containers that much but didn't seccomp profiles
+> > supposed to be the silver bullet?
+>
+> Also, I think Kata Containers style way of doing containers is pretty
+> solid. I've heard that some video streaming service at least in recent
+> past did launch VM per stream so it's not like VM's cannot be made to
+> scale I guess.
 
-> This is the start of the stable review cycle for the 5.4.276 release.
-> There are 84 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, plea=
-se
-> let me know.
->=20
-> Responses should be made by Thu, 16 May 2024 10:09:32 +0000.
-> Anything received after that time might be too late.
->=20
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4=
-276-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc=
-git linux-5.4.y
-> and the diffstat can be found below.
->=20
+Sorry for multiple responses but this actually nails the key question:
+who will use this? Even if this would work out somehow, is there someone
+who will actually use this, and not few other more robust solutions
+available? I mean it is worth of time to maintain it, if there is no
+potential users for a feature.
 
-KernelCI report for stable-rc/linux-5.4.y for this week.
+In addition to "show me the code", there is always also "show me the payloa=
+d".
 
-## stable-rc HEAD for linux-5.4.y:
-Date: 2024-05-15
-https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.=
-git/log/?h=3Dea8a1bc66159e9f769146360b41d36e87537045e
-
-## Build failures:
-No build failures seen for the stable-rc/linux-5.4.y commit head \o/
-
-## Boot failures:
-No **new** boot failures seen for the stable-rc/linux-5.4.y commit head=
- \o/
-
-Tested-by: kernelci.org bot <bot@kernelci.org>
-
-Thanks,
-Shreeya Patel
-
+BR, Jarkko
 
