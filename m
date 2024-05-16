@@ -1,273 +1,259 @@
-Return-Path: <linux-kernel+bounces-181187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E2078C78AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:50:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B55F8C78B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:51:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 417871C20FBE
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:50:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E85702834D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:51:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 009CF14B971;
-	Thu, 16 May 2024 14:50:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19ABE14B976;
+	Thu, 16 May 2024 14:51:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="h+rLoDzS"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=perex.cz header.i=@perex.cz header.b="C2tVvhB0"
+Received: from mail1.perex.cz (mail1.perex.cz [77.48.224.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D665149001;
-	Thu, 16 May 2024 14:50:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E46826ACA;
+	Thu, 16 May 2024 14:51:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=77.48.224.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715871036; cv=none; b=t0kFxca4LyJh2lHL0Tb9R+Ly7882ba8lF+TZvTKnUTuLhkVnC69vBipRvKY9KMQGrNoeUtQ9Laof1nsTvBJ/1cS++NAea7nsyLx5RG6Uetlf8OyTMihu0JNHSV1LeZBkmqoHGHBUKVTRAblo6wrkj9AXB3/+dx+qd1KDnqOrWzc=
+	t=1715871076; cv=none; b=QX5HULTHOD+m3hUNQBIFRVecY0RZrfrmecUpxchcBrs/CcQjZvIu7VCNTCi/qmgNBwg27d03Wh3PdOKi4SJQa7mhF9ArGKbW2rw3HuT5r5bA2lU6cJ3H2n+86Fdu3HfJEY7HUc3iHCU+v/cLIr8I2LAotFynOoAs13bt36H/oz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715871036; c=relaxed/simple;
-	bh=cIuRZMCXx6tga+KjwTBuSD33NoycbKHK8ATJUv4vGHM=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eh6ECOIv6lWfZVji1ywU/hvDvL22/L73HBGS1OBfEKWGeVABQuXSSzH7FTaUhFrGdj6tyc0uTJe7ziQF+Vup0VvsM398nxSDlpOFrNdslAL+QLo/1W9nKiSCrcgO/P1MaGkl18anSFb1FYB8M2nuvgjs28PKinWlmsn/aewGoYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=h+rLoDzS; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44G8wWer027342;
-	Thu, 16 May 2024 14:50:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	date:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=qcppdkim1; bh=7LC7lcmJyov9Qi/efmiSV
-	LbqbpOslruMoQMnmaayvGc=; b=h+rLoDzSfJm971uPBV9guJzeWth+r4jJSs6YE
-	AGpwRWaU3+p1i5/2HMZpFIwMdJqR5xYeM6T4RpP4ExU8InVlaM1YZGYUh90LxN7e
-	SnAoFn2mUDRRPH7x3gtdfmRLxL9kH/yVTvf8++Jv6DRHzfdnsYOHhVvKsHpchvOA
-	N7ARMaSb85e6Lyy8wadVJ3/hToco06bJ5J9852t6d2nUFHzV6Gw5lDNy1KOW0smj
-	FZvh2l3wtqmAizGi3LCcbiGLksbnm8c8S+6ZX+7UeWxmbslgwenYP/sI+YP+ONJ8
-	OAd07XBpjg9M6wuFWXtHlHiuiuHm/O3CFZCRWgHNWM8gkXEjg==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y42kvxhvk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 16 May 2024 14:50:16 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44GEoErJ026535
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 16 May 2024 14:50:14 GMT
-Received: from hu-akhilpo-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 16 May 2024 07:50:09 -0700
-Date: Thu, 16 May 2024 20:20:05 +0530
-From: Akhil P Oommen <quic_akhilpo@quicinc.com>
-To: Andrew Halaney <ahalaney@redhat.com>, Will Deacon <will@kernel.org>
-CC: Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Clark <robdclark@gmail.com>,
-        Sean Paul <sean@poorly.run>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, "Daniel
- Vetter" <daniel@ffwll.ch>,
-        Rob Clark <robdclark@chromium.org>, <linux-arm-msm@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] drm/msm/adreno: De-spaghettify the use of memory barriers
-Message-ID: <20240516145005.gdksmvxp35m45ifh@hu-akhilpo-hyd.qualcomm.com>
-References: <20240508-topic-adreno-v1-1-1babd05c119d@linaro.org>
- <20240514183849.6lpyplifero5u35r@hu-akhilpo-hyd.qualcomm.com>
- <ae4a77wt3kc73ejshptldqx6ugzrqguyq7etbbu54y4avhbdlt@qyt4r6gma7ev>
+	s=arc-20240116; t=1715871076; c=relaxed/simple;
+	bh=7+WGl4qwJpTyPTpUWeD6hXve1hktly7Kg58xogeIOJM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j3glNzebxq1Z8LzFLE85R4WornC+9rch/a1PB5+Ajt7zeOJvDUmCz0mJgMJhytEyFNOREWk2HsBhNggxNUqyN0NQOPOkce7QAJB4Rf93ZOik1bSBl5BHmI2uvAlfC6zjkan0a7WAGoyf3WlTNBx7zVNyRloN3e6tkR5jSItBg5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=perex.cz; spf=pass smtp.mailfrom=perex.cz; dkim=pass (1024-bit key) header.d=perex.cz header.i=@perex.cz header.b=C2tVvhB0; arc=none smtp.client-ip=77.48.224.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=perex.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perex.cz
+Received: from mail1.perex.cz (localhost [127.0.0.1])
+	by smtp1.perex.cz (Perex's E-mail Delivery System) with ESMTP id B313645B5;
+	Thu, 16 May 2024 16:51:01 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.perex.cz B313645B5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=perex.cz; s=default;
+	t=1715871062; bh=vd5m65i8q/dcDshCpdZxqE51XS5GvkCD5cFuKYkovLw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=C2tVvhB04LcKiEIyl5kYj3qgRnwLPIYlK94nbSF4CO68fdWuv0ZZ1HmOH2JEoxKSH
+	 ahb6NKXAUk8Uc0uGjSX7hYLcvlkQMdTXX+u8ZxJ/J4q4ijnyrPN+YGKfBLnRZJ+lER
+	 YO2R4l4IkXKbO/9DfVyHkcw1//iNZMk7kjku+4w4=
+Received: from [192.168.100.98] (unknown [192.168.100.98])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: perex)
+	by mail1.perex.cz (Perex's E-mail Delivery System) with ESMTPSA;
+	Thu, 16 May 2024 16:50:40 +0200 (CEST)
+Message-ID: <3b9c9649-c657-4636-b4ef-31df82c58bba@perex.cz>
+Date: Thu, 16 May 2024 16:50:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <ae4a77wt3kc73ejshptldqx6ugzrqguyq7etbbu54y4avhbdlt@qyt4r6gma7ev>
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: HCAGNcshZ20vdCVu8DRxPqG465O0ngvi
-X-Proofpoint-ORIG-GUID: HCAGNcshZ20vdCVu8DRxPqG465O0ngvi
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-16_07,2024-05-15_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 malwarescore=0
- mlxlogscore=966 phishscore=0 lowpriorityscore=0 bulkscore=0
- priorityscore=1501 spamscore=0 adultscore=0 mlxscore=0 impostorscore=0
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405010000 definitions=main-2405160104
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v15 00/16] Add audio support in v4l2 framework
+To: Nicolas Dufresne <nicolas@ndufresne.ca>, Takashi Iwai <tiwai@suse.de>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, Shengjiu Wang
+ <shengjiu.wang@gmail.com>,
+ =?UTF-8?Q?Amadeusz_S=C5=82awi=C5=84ski?=
+ <amadeuszx.slawinski@linux.intel.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Mark Brown <broonie@kernel.org>,
+ Sebastian Fricke <sebastian.fricke@collabora.com>,
+ Shengjiu Wang <shengjiu.wang@nxp.com>, sakari.ailus@iki.fi,
+ tfiga@chromium.org, m.szyprowski@samsung.com, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Xiubo.Lee@gmail.com, festevam@gmail.com,
+ nicoleotsuka@gmail.com, lgirdwood@gmail.com, tiwai@suse.com,
+ alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org
+References: <1710834674-3285-1-git-send-email-shengjiu.wang@nxp.com>
+ <ZjRCJ2ZcmKOIo7_p@finisterre.sirena.org.uk> <20240503094225.47fe4836@sal.lan>
+ <CAA+D8APfM3ayXHAPadHLty52PYE9soQM6o780=mZs+R4px-AOQ@mail.gmail.com>
+ <22d94c69-7e9f-4aba-ae71-50cc2e5dd8ab@xs4all.nl>
+ <51408e79-646d-4d23-bc5b-cd173d363327@linux.intel.com>
+ <CAA+D8AM7+SvXBi=LKRqvJkLsrYW=nkHTfFe957z2Qzm89bc48g@mail.gmail.com>
+ <cd71e8e8-b4dc-40ed-935e-a84c222997e6@linux.intel.com>
+ <CAA+D8AMpLB0N++_iLWLN_qettNz-gKGQz2c2yLsY8qSycibkYg@mail.gmail.com>
+ <2f771fe9-7c09-4e74-9b04-de52581133fd@linux.intel.com>
+ <CAA+D8AMJKPVR99jzYCR5EsbMa8P95jQrDL=4ayYMuz+Cu1d2mQ@mail.gmail.com>
+ <28d423b1-49d8-4180-8394-622b1afd9cd9@perex.cz>
+ <850a80b2-d952-4c14-bd0b-98cb5a5c0233@perex.cz>
+ <c5dbb765-8c93-4050-84e1-c0f63b43d6c2@xs4all.nl>
+ <8a6f84ac-5813-4954-b852-84f5118e607c@perex.cz> <87o7975qcw.wl-tiwai@suse.de>
+ <e63ec6c8-7da7-4b87-b7ff-a71ff12dcfc1@perex.cz>
+ <a60ee3505e551f3def6cdd7c76942d0fd74bc656.camel@ndufresne.ca>
+From: Jaroslav Kysela <perex@perex.cz>
+Content-Language: en-US
+Autocrypt: addr=perex@perex.cz; keydata=
+ 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
+In-Reply-To: <a60ee3505e551f3def6cdd7c76942d0fd74bc656.camel@ndufresne.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 16, 2024 at 08:15:34AM -0500, Andrew Halaney wrote:
-> On Wed, May 15, 2024 at 12:08:49AM GMT, Akhil P Oommen wrote:
-> > On Wed, May 08, 2024 at 07:46:31PM +0200, Konrad Dybcio wrote:
-> > > Memory barriers help ensure instruction ordering, NOT time and order
-> > > of actual write arrival at other observers (e.g. memory-mapped IP).
-> > > On architectures employing weak memory ordering, the latter can be a
-> > > giant pain point, and it has been as part of this driver.
-> > > 
-> > > Moreover, the gpu_/gmu_ accessors already use non-relaxed versions of
-> > > readl/writel, which include r/w (respectively) barriers.
-> > > 
-> > > Replace the barriers with a readback that ensures the previous writes
-> > > have exited the write buffer (as the CPU must flush the write to the
-> > > register it's trying to read back) and subsequently remove the hack
-> > > introduced in commit b77532803d11 ("drm/msm/a6xx: Poll for GBIF unhalt
-> > > status in hw_init").
+On 15. 05. 24 22:33, Nicolas Dufresne wrote:
+> Hi,
 > 
-> For what its worth, I've been eyeing (but haven't tested) sending some
-> patches to clean up dsi_phy_write_udelay/ndelay(). There's no ordering
-> guarantee between a writel() and a delay(), so the expected "write then
-> delay" sequence might not be happening.. you need to write, read, delay.
+> GStreamer hat on ...
 > 
-> memory-barriers.txt:
+> Le mercredi 15 mai 2024 à 12:46 +0200, Jaroslav Kysela a écrit :
+>> On 15. 05. 24 12:19, Takashi Iwai wrote:
+>>> On Wed, 15 May 2024 11:50:52 +0200,
+>>> Jaroslav Kysela wrote:
+>>>>
+>>>> On 15. 05. 24 11:17, Hans Verkuil wrote:
+>>>>> Hi Jaroslav,
+>>>>>
+>>>>> On 5/13/24 13:56, Jaroslav Kysela wrote:
+>>>>>> On 09. 05. 24 13:13, Jaroslav Kysela wrote:
+>>>>>>> On 09. 05. 24 12:44, Shengjiu Wang wrote:
+>>>>>>>>>> mem2mem is just like the decoder in the compress pipeline. which is
+>>>>>>>>>> one of the components in the pipeline.
+>>>>>>>>>
+>>>>>>>>> I was thinking of loopback with endpoints using compress streams,
+>>>>>>>>> without physical endpoint, something like:
+>>>>>>>>>
+>>>>>>>>> compress playback (to feed data from userspace) -> DSP (processing) ->
+>>>>>>>>> compress capture (send data back to userspace)
+>>>>>>>>>
+>>>>>>>>> Unless I'm missing something, you should be able to process data as fast
+>>>>>>>>> as you can feed it and consume it in such case.
+>>>>>>>>>
+>>>>>>>>
+>>>>>>>> Actually in the beginning I tried this,  but it did not work well.
+>>>>>>>> ALSA needs time control for playback and capture, playback and capture
+>>>>>>>> needs to synchronize.  Usually the playback and capture pipeline is
+>>>>>>>> independent in ALSA design,  but in this case, the playback and capture
+>>>>>>>> should synchronize, they are not independent.
+>>>>>>>
+>>>>>>> The core compress API core no strict timing constraints. You can eventually0
+>>>>>>> have two half-duplex compress devices, if you like to have really independent
+>>>>>>> mechanism. If something is missing in API, you can extend this API (like to
+>>>>>>> inform the user space that it's a producer/consumer processing without any
+>>>>>>> relation to the real time). I like this idea.
+>>>>>>
+>>>>>> I was thinking more about this. If I am right, the mentioned use in gstreamer
+>>>>>> is supposed to run the conversion (DSP) job in "one shot" (can be handled
+>>>>>> using one system call like blocking ioctl).  The goal is just to offload the
+>>>>>> CPU work to the DSP (co-processor). If there are no requirements for the
+>>>>>> queuing, we can implement this ioctl in the compress ALSA API easily using the
+>>>>>> data management through the dma-buf API. We can eventually define a new
+>>>>>> direction (enum snd_compr_direction) like SND_COMPRESS_CONVERT or so to allow
+>>>>>> handle this new data scheme. The API may be extended later on real demand, of
+>>>>>> course.
+>>>>>>
+>>>>>> Otherwise all pieces are already in the current ALSA compress API
+>>>>>> (capabilities, params, enumeration). The realtime controls may be created
+>>>>>> using ALSA control API.
+>>>>>
+>>>>> So does this mean that Shengjiu should attempt to use this ALSA approach first?
+>>>>
+>>>> I've not seen any argument to use v4l2 mem2mem buffer scheme for this
+>>>> data conversion forcefully. It looks like a simple job and ALSA APIs
+>>>> may be extended for this simple purpose.
+>>>>
+>>>> Shengjiu, what are your requirements for gstreamer support? Would be a
+>>>> new blocking ioctl enough for the initial support in the compress ALSA
+>>>> API?
+>>>
+>>> If it works with compress API, it'd be great, yeah.
+>>> So, your idea is to open compress-offload devices for read and write,
+>>> then and let them convert a la batch jobs without timing control?
+>>>
+>>> For full-duplex usages, we might need some more extensions, so that
+>>> both read and write parameters can be synchronized.  (So far the
+>>> compress stream is a unidirectional, and the runtime buffer for a
+>>> single stream.)
+>>>
+>>> And the buffer management is based on the fixed size fragments.  I
+>>> hope this doesn't matter much for the intended operation?
+>>
+>> It's a question, if the standard I/O is really required for this case. My
+>> quick idea was to just implement a new "direction" for this job supporting
+>> only one ioctl for the data processing which will execute the job in "one
+>> shot" at the moment. The I/O may be handled through dma-buf API (which seems
+>> to be standard nowadays for this purpose and allows future chaining).
+>>
+>> So something like:
+>>
+>> struct dsp_job {
+>>      int source_fd;     /* dma-buf FD with source data - for dma_buf_get() */
+>>      int target_fd;     /* dma-buf FD for target data - for dma_buf_get() */
+>>      ... maybe some extra data size members here ...
+>>      ... maybe some special parameters here ...
+>> };
+>>
+>> #define SNDRV_COMPRESS_DSPJOB _IOWR('C', 0x60, struct dsp_job)
+>>
+>> This ioctl will be blocking (thus synced). My question is, if it's feasible
+>> for gstreamer or not. For this particular case, if the rate conversion is
+>> implemented in software, it will block the gstreamer data processing, too.
 > 
-> 	5. A readX() by a CPU thread from the peripheral will complete before
-> 	   any subsequent delay() loop can begin execution on the same thread.
-> 	   This ensures that two MMIO register writes by the CPU to a peripheral
-> 	   will arrive at least 1us apart if the first write is immediately read
-> 	   back with readX() and udelay(1) is called prior to the second
-> 	   writeX():
+> Yes, GStreamer threading is using a push-back model, so blocking for the time of
+> the processing is fine. Note that the extra simplicity will suffer from ioctl()
+> latency.
 > 
-> 		writel(42, DEVICE_REGISTER_0); // Arrives at the device...
-> 		readl(DEVICE_REGISTER_0);
-> 		udelay(1);
-> 		writel(42, DEVICE_REGISTER_1); // ...at least 1us before this.
+> In GFX, they solve this issue with fences. That allow setting up the next
+> operation in the chain before the data has been produced.
 
-Yes, udelay orders only with readl(). I saw a patch from Will Deacon
-which fixes this for arm64 few years back:
-https://lore.kernel.org/all/1543251228-30001-1-git-send-email-will.deacon@arm.com/T/
+The fences look really nicely and seem more modern. It should be possible with 
+dma-buf/sync_file.c interface to handle multiple jobs simultaneously and share 
+the state between user space and kernel driver.
 
-But this is needed only when you write io and do cpuside wait , not when
-you poll io to check status.
+In this case, I think that two non-blocking ioctls should be enough - add a 
+new job with source/target dma buffers guarded by one fence and abort (flush) 
+all active jobs.
 
-> 
-> > > 
-> > > Fixes: b77532803d11 ("drm/msm/a6xx: Poll for GBIF unhalt status in hw_init")
-> > > Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> > > ---
-> > >  drivers/gpu/drm/msm/adreno/a6xx_gmu.c |  5 ++---
-> > >  drivers/gpu/drm/msm/adreno/a6xx_gpu.c | 14 ++++----------
-> > >  2 files changed, 6 insertions(+), 13 deletions(-)
-> > 
-> > I prefer this version compared to the v2. A helper routine is
-> > unnecessary here because:
-> > 1. there are very few scenarios where we have to read back the same
-> > register.
-> > 2. we may accidently readback a write only register.
-> > 
-> > > 
-> > > diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-> > > index 0e3dfd4c2bc8..4135a53b55a7 100644
-> > > --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-> > > +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-> > > @@ -466,9 +466,8 @@ static int a6xx_rpmh_start(struct a6xx_gmu *gmu)
-> > >  	int ret;
-> > >  	u32 val;
-> > >  
-> > > -	gmu_write(gmu, REG_A6XX_GMU_RSCC_CONTROL_REQ, 1 << 1);
-> > > -	/* Wait for the register to finish posting */
-> > > -	wmb();
-> > > +	gmu_write(gmu, REG_A6XX_GMU_RSCC_CONTROL_REQ, BIT(1));
-> > > +	gmu_read(gmu, REG_A6XX_GMU_RSCC_CONTROL_REQ);
-> > 
-> > This is unnecessary because we are polling on a register on the same port below. But I think we
-> > can replace "wmb()" above with "mb()" to avoid reordering between read
-> > and write IO instructions.
-> 
-> If I understand correctly, you don't need any memory barrier.
-> writel()/readl()'s are ordered to the same endpoint. That goes for all
-> the reordering/barrier comments mentioned below too.
-> 
-> device-io.rst:
-> 
->     The read and write functions are defined to be ordered. That is the
->     compiler is not permitted to reorder the I/O sequence. When the ordering
->     can be compiler optimised, you can use __readb() and friends to
->     indicate the relaxed ordering. Use this with care.
-> 
-> memory-barriers.txt:
-> 
->      (*) readX(), writeX():
-> 
-> 	    The readX() and writeX() MMIO accessors take a pointer to the
-> 	    peripheral being accessed as an __iomem * parameter. For pointers
-> 	    mapped with the default I/O attributes (e.g. those returned by
-> 	    ioremap()), the ordering guarantees are as follows:
-> 
-> 	    1. All readX() and writeX() accesses to the same peripheral are ordered
-> 	       with respect to each other. This ensures that MMIO register accesses
-> 	       by the same CPU thread to a particular device will arrive in program
-> 	       order.
-> 
+I'll try to propose an API extension for the ALSA's compress API in the 
+linux-sound mailing list soon.
 
-In arm64, a writel followed by readl translates to roughly the following
-sequence: dmb_wmb(), __raw_writel(), __raw_readl(), dmb_rmb(). I am not
-sure what is stopping compiler from reordering  __raw_writel() and __raw_readl()
-above? I am assuming iomem cookie is ignored during compilation.
+					Jaroslav
 
-Added Will to this thread if he can throw some light on this.
+-- 
+Jaroslav Kysela <perex@perex.cz>
+Linux Sound Maintainer; ALSA Project; Red Hat, Inc.
 
--Akhil
-
-> 
-> > 
-> > >  
-> > >  	ret = gmu_poll_timeout(gmu, REG_A6XX_GMU_RSCC_CONTROL_ACK, val,
-> > >  		val & (1 << 1), 100, 10000);
-> > > diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> > > index 973872ad0474..0acbc38b8e70 100644
-> > > --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> > > +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> > > @@ -1713,22 +1713,16 @@ static int hw_init(struct msm_gpu *gpu)
-> > >  	}
-> > >  
-> > >  	/* Clear GBIF halt in case GX domain was not collapsed */
-> > > +	gpu_write(gpu, REG_A6XX_GBIF_HALT, 0);
-> > 
-> > We need a full barrier here to avoid reordering. Also, lets add a
-> > comment about why we are doing this odd looking sequence.
-> > 
-> > > +	gpu_read(gpu, REG_A6XX_GBIF_HALT);
-> > >  	if (adreno_is_a619_holi(adreno_gpu)) {
-> > > -		gpu_write(gpu, REG_A6XX_GBIF_HALT, 0);
-> > >  		gpu_write(gpu, REG_A6XX_RBBM_GPR0_CNTL, 0);
-> > > -		/* Let's make extra sure that the GPU can access the memory.. */
-> > > -		mb();
-> > 
-> > We need a full barrier here.
-> > 
-> > > +		gpu_read(gpu, REG_A6XX_RBBM_GPR0_CNTL);
-> > >  	} else if (a6xx_has_gbif(adreno_gpu)) {
-> > > -		gpu_write(gpu, REG_A6XX_GBIF_HALT, 0);
-> > >  		gpu_write(gpu, REG_A6XX_RBBM_GBIF_HALT, 0);
-> > > -		/* Let's make extra sure that the GPU can access the memory.. */
-> > > -		mb();
-> > 
-> > We need a full barrier here.
-> > 
-> > > +		gpu_read(gpu, REG_A6XX_RBBM_GBIF_HALT);
-> > >  	}
-> > >  
-> > > -	/* Some GPUs are stubborn and take their sweet time to unhalt GBIF! */
-> > > -	if (adreno_is_a7xx(adreno_gpu) && a6xx_has_gbif(adreno_gpu))
-> > > -		spin_until(!gpu_read(gpu, REG_A6XX_GBIF_HALT_ACK));
-> > > -
-> > 
-> > Why is this removed?
-> > 
-> > -Akhil
-> > 
-> > >  	gpu_write(gpu, REG_A6XX_RBBM_SECVID_TSB_CNTL, 0);
-> > >  
-> > >  	if (adreno_is_a619_holi(adreno_gpu))
-> > > 
-> > > ---
-> > > base-commit: 93a39e4766083050ca0ecd6a3548093a3b9eb60c
-> > > change-id: 20240508-topic-adreno-a2d199cd4152
-> > > 
-> > > Best regards,
-> > > -- 
-> > > Konrad Dybcio <konrad.dybcio@linaro.org>
-> > > 
-> > 
-> 
 
