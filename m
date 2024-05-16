@@ -1,97 +1,122 @@
-Return-Path: <linux-kernel+bounces-181257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 164898C79A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:42:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 594EA8C79A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:42:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A53A61F21141
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:42:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14947284076
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:42:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2215D14D446;
-	Thu, 16 May 2024 15:41:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2A361DFD6;
+	Thu, 16 May 2024 15:41:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ughN7Gfr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JdwgMiBf"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C6961DFD6;
-	Thu, 16 May 2024 15:41:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B61C14D452;
+	Thu, 16 May 2024 15:41:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715874116; cv=none; b=j4zPYO0tdpf2vDUqH7Joxked2SEQmkixO9Ir8OvO4ny3qUXSCnfjN90u4aJIF5gGIt4FbE4C2TQoLgPTV54Mqrqo0JGVA4IAD62xpjDZtagg6ZOt6EB234S3fTP6J1YH9UpIhSurglRRc+p9ujmIIEXED9LXpX25oFnPr17L3qo=
+	t=1715874119; cv=none; b=kFtWVSM4o5MC9XkUUJO60Qx4xZu8j+s9V0TJJLVHV13mfZhnyoDSI6TdtZzhHNyHvWGc36/Y5lqDIU2a9IePy2vGkxT/q4LbbXZ7RtM+B4mgxeeNRuMcUKom8OQr3QOyS0HThY0uXe5xwFnpagTHlJYpfvtDnBSgM28FlTlLky8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715874116; c=relaxed/simple;
-	bh=XfWlKT52rk3dHWds0VUbx+0BhvlPaBvp8U6eFA2uQV8=;
+	s=arc-20240116; t=1715874119; c=relaxed/simple;
+	bh=Hn7/vCbl6NJlnjzeYD+Ur3zP/ut2JNfZwZRZ8ytN7LI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eX1RrfgFkJZIXFwP96txOFdcPc2XUoSQB7/LP90cTyyD4XgwQNT8WNlg4ChHltPJk1sZl0ex6gEv8bWB95ZYZXdt+dUlrRzCykOaDYpGNIieZJERH0S05jP4K+vJKJqPQlT7kAKy4RU/C1Rc3Qck8rLrP8/kSbYf1Oo0TTyiniE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ughN7Gfr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1536C113CC;
-	Thu, 16 May 2024 15:41:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715874115;
-	bh=XfWlKT52rk3dHWds0VUbx+0BhvlPaBvp8U6eFA2uQV8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ughN7Gfr3Rzd8oKxHLsehBVmwzh3m9JnfY7Hti36z804gvp/e37d7QK86KxT2Rdlj
-	 nLUmplxi2ZaKYGBdt4LiLWxMJGK9UgwxfpcqTS/1WgIFlAjoh1J7UPtPNLX2I/hzKW
-	 fPGKE9uYOHMkcawRcLHbnqvVrYHBs/Mruvf4NCUFH1qtbgmLU6YwDWnBZU0zbrJm5r
-	 ktPAxsXHA4cQsVWHRvSaZuUrtHSgkDxq9Yv9dtaFr6l1P4aTE574Eq6+jh+YJP5cOn
-	 TUogwDSoBMNLd020sP789U8WI2PgseM331QBS9tzXIQRGCONxyJ/5g/lQprUhkUXhP
-	 UKC86w+ImBaoQ==
-Date: Thu, 16 May 2024 16:41:49 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com
-Subject: Re: [PATCH 6.6 000/308] 6.6.31-rc3 review
-Message-ID: <533a6e6f-83fd-4f06-a7bb-78144839d34a@sirena.org.uk>
-References: <20240516121335.906510573@linuxfoundation.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Uw8Bkto6A84elmuKT80M244761LmbRkLv2PL2uRoPjbpb0J4u5XkTj47nvZn68ZeW1Pp0n4PnHYJeUQRnF/Z/MqgDdxyRjh4YzbtVpZkEUvyWtv9ZlHUxpCiKFuUthvBNe9kvB6Eze3c2SUKRIodsdWBAC83hfPNb8Qrg8OSCvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JdwgMiBf; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715874118; x=1747410118;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=Hn7/vCbl6NJlnjzeYD+Ur3zP/ut2JNfZwZRZ8ytN7LI=;
+  b=JdwgMiBfiZLsBCPF7TphMK5Nvz1UQjXqOb/eWONagf3l/Q8lXYaR1jBp
+   /zgShH1SU73tvB33NLRUPYX0XAQBHmfy4B0Vh77CrpQZ0IdJrDQzQ2Rdv
+   3+3KeT1X0hG9yNgWV/1tvWJBKv/ZLkT5BIeXilC4AjISgPJXIzsZYB2Ye
+   3Lxez43TzlA+dshVaNTrRElVCos8FV5aUjRlKbynh6+YxIisMATl8mWP3
+   rtPzbLVmF4u7mGAmmtLAhfU7pFSs24/tNPabQy9nIaZdR3Lg+L0VuEFWN
+   zKqmqFi/zS6gpwLEDoJYqEx71rBovwPQC/gBC4jzu8tghI/UJddnkoxuY
+   Q==;
+X-CSE-ConnectionGUID: i+BGohMvSveJGos3VltXcQ==
+X-CSE-MsgGUID: eQklBbbwSJe3BzOQBbqf4g==
+X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="23403787"
+X-IronPort-AV: E=Sophos;i="6.08,164,1712646000"; 
+   d="scan'208";a="23403787"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 08:41:57 -0700
+X-CSE-ConnectionGUID: UjuNcKFuSGGH3e6htSU5PQ==
+X-CSE-MsgGUID: h9KSI5c5Qzi2CoBjhYktow==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,164,1712646000"; 
+   d="scan'208";a="62301778"
+Received: from josephjo-mobl1.amr.corp.intel.com (HELO desk) ([10.212.146.49])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 08:41:57 -0700
+Date: Thu, 16 May 2024 08:41:50 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Kalle Valo <kvalo@kernel.org>, Borislav Petkov <bp@alien8.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>, x86@kernel.org,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	regressions@lists.linux.dev,
+	Jeff Johnson <quic_jjohnson@quicinc.com>,
+	Daniel Sneddon <daniel.sneddon@linux.intel.com>
+Subject: Re: [regression] suspend stress test stalls within 30 minutes
+Message-ID: <20240516154150.46w4h2ro6sm5yyzx@desk>
+References: <878r0djxgc.fsf@kernel.org>
+ <874jb0jzx5.fsf@kernel.org>
+ <feaefaae-e25b-4a48-b6be-e20054f2c8df@intel.com>
+ <20240515072231.z3wlyoblyc34ldmr@desk>
+ <529C9374-DA6F-49C8-9B32-91741800F8E4@alien8.de>
+ <20240515162747.6shmaoelc4mt7nro@desk>
+ <878r0bhvjq.fsf@kernel.org>
+ <20240516070315.swz2golcrfp3uvfd@desk>
+ <20240516142513.qqy7wbmja5frizuj@desk>
+ <ab00d8e5-8400-451e-9435-becb0b3fa80c@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="8UvaK5fao2dQW2NB"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240516121335.906510573@linuxfoundation.org>
-X-Cookie: I'm having a MID-WEEK CRISIS!
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ab00d8e5-8400-451e-9435-becb0b3fa80c@intel.com>
 
+On Thu, May 16, 2024 at 07:32:54AM -0700, Dave Hansen wrote:
+> On 5/16/24 07:25, Pawan Gupta wrote:
+> > On Thu, May 16, 2024 at 12:03:22AM -0700, Pawan Gupta wrote:
+> >> I am running the suspend test now and will update in the morning if I
+> >> could reproduce the hang.
+> > Completed 500 suspend iterations, but the hang is not reproduced 🙁
+> > I have restarted the test.
+> > 
+> > BTW, could you please share your /proc/cmdline? Also, was there any
+> > workload running with the suspend test? If I could not reproduce it in the
+> > next run, I will run stress-ng with the suspend test.
+> 
+> I'd suggest two things:
+> 
+>   * Run everything in tools/testing/selftests/x86 in a loop during the
+>     suspend test.
+>   * Run perf or something else to generate some NMIs.
 
---8UvaK5fao2dQW2NB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Will do.
 
-On Thu, May 16, 2024 at 02:15:01PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.31 release.
-> There are 308 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+> Those will ensure the dark corners of the entry code are being
+> sufficiently prodded.
+> 
+> I also have sneaking suspicion that microcode updates during resume are
+> the aggravating factor.
 
-Tested-by: Mark Brown <broonie@kernel.org>
-
---8UvaK5fao2dQW2NB
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZGKTwACgkQJNaLcl1U
-h9BS+wf+OEIch6iDjwEGoV/pGI3t9p1souA7yiUVT2tEsgQEt9xmIfk74fS8ML4w
-nKwSKeWgTjSziGJ/LzKZ2gl6GPZv3FPy4EE9alUoQfj3rbqxRCi3+UWDykmqRKsU
-70LwuLnktI4ISFHqoD5ChAYzrxnfmZ3PwAA21g4sV+nTLCT94JZ32AInDkM0EXzx
-MH25OXiKNVJ3f8/Qsw3RA74WB2lKR+EuLmNwBtC51ZeXwZG/g23hXjD/XM6Nefqy
-VCSXRCly7Mf+pRxlzVlJ14Wrxm6ZjASvTPsGmbhnIL+RYvBmmHtj6+HewKVBGA1P
-E/u6NDMtFPAU2pJv7ihdVTV7Xg17jw==
-=x7N8
------END PGP SIGNATURE-----
-
---8UvaK5fao2dQW2NB--
+Lets see if Kalle is able to reproduce the hang with "dis_ucode_ldr".
 
