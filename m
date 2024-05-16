@@ -1,90 +1,133 @@
-Return-Path: <linux-kernel+bounces-181119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E1C28C77AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:31:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB8778C77B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:32:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1281E1F2347A
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 13:31:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 180201C22CF0
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 13:32:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 496D714D43D;
-	Thu, 16 May 2024 13:30:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B921914E2F1;
+	Thu, 16 May 2024 13:30:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PHwLq/uJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=benboeckel.net header.i=@benboeckel.net header.b="Ulgo0/uJ";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="CMPaTGX3"
+Received: from fhigh5-smtp.messagingengine.com (fhigh5-smtp.messagingengine.com [103.168.172.156])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8149D14D2B3;
-	Thu, 16 May 2024 13:30:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AADD14E2CC;
+	Thu, 16 May 2024 13:30:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715866234; cv=none; b=LEaYEBiLTQDQAnvXm0En2QFJKnLvvTm/zBfN4pT6LtHJ6Y/8wBiZt7UJ/T/id0LwelL5P1Fq7o/jgiqSVNRx7IFxi0Qy5pC9CMAgAB6Drk23ZoA72ACxcuczGHuuDM4JezDWAQWbtAlwR2SiY4qdxUmBj7Uv+zKjju8jxR62PtM=
+	t=1715866246; cv=none; b=FsRwvX+bv89EZgN9wz4gBSpMV/l2Q+PUcQR99wReMhbuh55Pp4GSecjF0vjmKsIlcLEYi7ynv1DUqrdMlkTHQFX3ueru8ZwWzFVgUlsrjUe0efPtgEIuPiPElRBdYpf6xFu3kNbU6+JLPODueTUox7ABbqCzxJZeS5AZ/WP4XSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715866234; c=relaxed/simple;
-	bh=z8BnU2Is6DFB6KVcEKYw3pqMsABrzURYamS+ST69Qk0=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=ZItztftFVjxn/tMp3b9hZ4xEZnJP6wcl1Ji6HLngBKcVXGIHM2Q+JFNDwqunP44JLWwPd8hKahrUfpNYzSmbPa9ONg1oB6/ASUf2be5kXEIAS6Ennk32nUtD75E99y4jmv+OKysHAdGEyr7pVbyq+FyQxoTHIX+PUMwialGI+eQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PHwLq/uJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4131C113CC;
-	Thu, 16 May 2024 13:30:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715866234;
-	bh=z8BnU2Is6DFB6KVcEKYw3pqMsABrzURYamS+ST69Qk0=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=PHwLq/uJvoN0fU1gNykdMOT0phruqPrBSqb5l+yRgMUgegRuGl0R4RVb/VQNKldo1
-	 mkkrYXbLB3d90j6KBRyAiuzhzE+wD7cwQViOMeIvc+RIHQoh4CRKYXTMeLoYtm5TD9
-	 AOsZ4N23KBJIcUFYJtlyZfelrFo5K+/PtJG4THL+kze4j1SPTxfaW0h0xnSKkq198s
-	 JYKbDN/WqRLEdSEmlq8TnWU+BozS/3PKiVf7mdKMicq/hW3emTwXiRawbH4XAQIAjK
-	 Wc+YRgcTtWW2ykVjX2w7Pi/kOPaTnAIK+pItqhkJTz04bWGClvurKfg/r4q6DEohA1
-	 CxGmVALL3FaTg==
-Date: Thu, 16 May 2024 06:30:32 -0700
-From: Kees Cook <kees@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>,
- Linus Torvalds <torvalds@linux-foundation.org>
-CC: Kees Cook <keescook@chromium.org>, Justin Stitt <justinstitt@google.com>,
- Mark Rutland <mark.rutland@arm.com>, linux-hardening@vger.kernel.org,
- linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [RFC] Mitigating unexpected arithmetic overflow
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20240515073636.GY40213@noisy.programming.kicks-ass.net>
-References: <202404291502.612E0A10@keescook> <CAHk-=wi5YPwWA8f5RAf_Hi8iL0NhGJeL6MN6UFWwRMY8L6UDvQ@mail.gmail.com> <202405081144.D5FCC44A@keescook> <CAHk-=wjeiGb1UxCy6Q8aif50C=wWDX9Pgp+WbZYrO72+B1f_QA@mail.gmail.com> <202405081354.B0A8194B3C@keescook> <CAHk-=wgoE5EkH+sQwi4KhRhCZizUxwZAnC=+9RbZcw7g6016LQ@mail.gmail.com> <20240515073636.GY40213@noisy.programming.kicks-ass.net>
-Message-ID: <25882715-FE44-44C0-BB9B-57F2E7D1F0F9@kernel.org>
+	s=arc-20240116; t=1715866246; c=relaxed/simple;
+	bh=69YmzG7HlmyFpdfSNhi6JvNROFFTperfLVWxTG48xks=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sDOJ9nFJ+zUnpQsY+UEqUWtm+kyHEiuGz9T0rGc5uOoyHsVfuuLgFcM6MDubPhv5BDJ+f0EJdqmXoF66GeOppHHXp0wpQHi89w+FtyRMCMTucXqwQw4PU3WC4UODe9hhpJFrj44YXeNqzhonZAb8EGJIXI7+nSPr3+2LtAyNkqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=benboeckel.net; spf=pass smtp.mailfrom=benboeckel.net; dkim=pass (2048-bit key) header.d=benboeckel.net header.i=@benboeckel.net header.b=Ulgo0/uJ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=CMPaTGX3; arc=none smtp.client-ip=103.168.172.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=benboeckel.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=benboeckel.net
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id A2B621140163;
+	Thu, 16 May 2024 09:30:43 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Thu, 16 May 2024 09:30:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=benboeckel.net;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm2; t=1715866243; x=
+	1715952643; bh=srNyWoS8gHl7ihHI55zXs+WUoGWk3Nt7F0kqPAoVUgo=; b=U
+	lgo0/uJOxneabXt0AO0W3Um5NvHMW3NQiBpDz8F3oMLNvhLBfqo7vCO8H4n/7irr
+	agpY5/XrkIACg6iTAWjOFv5euU8S6F474qhXpW0LgfCCuPWiRn28CRkygS7YwBgf
+	7Hu7DbqU7i39PcQUwYqqOOABn+QucgKolm4j0FvsrVF27q3vcPrEk4oWgGmXN79I
+	qDQqq4Jxy8loVaiv63zw/CBWMGGAuj4eipGBRfNggJhuPoqzeVCn36NPNZNy2cFd
+	1pLQiXcD2b2DUpJW9h7E0TipvGbKcsp9eJrvPpTBfCvK6EF+Ou4zB3v4NuRQ5CXe
+	eKAjoiSg925auwaFUn0vw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1715866243; x=1715952643; bh=srNyWoS8gHl7ihHI55zXs+WUoGWk
+	3Nt7F0kqPAoVUgo=; b=CMPaTGX36RAvpWpuLUdskxeKMOkh8NSmRhKj7qJy/FO0
+	0hbdZDmwxRDRvehUreDUTjxmGVUcOTPAwglbSQfYawQX3JP32EEGe1xYkXbAVTq1
+	N/H6BsWu9+QC+dJEOVNCUed1g/C6VZWArsC1kO8w0NZ8xyjZudDNAukXJC/UKrF0
+	ngYh1kefeAg6loSLmgk6zJpalYB53lM1eJi/4L6CEhKmyebHjnb1nODNuPJxSQqJ
+	SmFOnOFqg37E7AkKtBAr2ryALsRN7gMJI/NcPWEhe/zcyzEhGtX8a/u44jMCiNuA
+	kUwAGKAMAN3wjuvdvPDjWrYfzJ5i4VVp8Y4HDP15uw==
+X-ME-Sender: <xms:gQpGZnnPscjJflIkLrGofT2-Dvm0xkBHgMpOoUoOj77wTVnsAhQ_DA>
+    <xme:gQpGZq0onq26fCD5nXCJVGsp4y_wKTqcDudN0rnZjpd2F0OvAuJJYXPgi1MQsgbuS
+    o4vtRtuElhcqLsqD-4>
+X-ME-Received: <xmr:gQpGZtoXv4FK_6IOr7oSTq9lhfSWKCxN18O_2wuXGv-jA18Uc-wuTeHCltMo5ZDJTwIvndnQNr4686xw9xhLS2ZLX-7YbbzpsrUz>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdehuddgieefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujggfsehttdertddtreejnecuhfhrohhmpeeuvghn
+    uceuohgvtghkvghluceomhgvsegsvghnsghovggtkhgvlhdrnhgvtheqnecuggftrfgrth
+    htvghrnhepffelgeffveelkeffkeehiefgtdeluedvtdfghfdtvdefgfejheffudeuveek
+    vddvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmh
+    gvsegsvghnsghovggtkhgvlhdrnhgvth
+X-ME-Proxy: <xmx:ggpGZvlvpjtSb_TmrALGRHYZdhaWLs-zxbFoBzNxHJVoSXWJkWKEeQ>
+    <xmx:ggpGZl0nR1LnPmlWKoaPNhTEAoO5CytJyReBzV1nb4b-BaUb79L4og>
+    <xmx:ggpGZuvsS2YxGDuTeEtF6n8k4Sr-AVOji0EqVFsNqK7WPzwivAn67Q>
+    <xmx:ggpGZpWTcGqpLW9ijjbtsqcd8ln0xc-DXgh4fTgVfZ8Vcc3bbvYpiw>
+    <xmx:gwpGZmHPE40il4HXpuoPKONGo7DBMWBXMShW5T8oNWMVLbwrKSJoZQLW>
+Feedback-ID: iffc1478b:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 16 May 2024 09:30:41 -0400 (EDT)
+Date: Thu, 16 May 2024 09:30:40 -0400
+From: Ben Boeckel <me@benboeckel.net>
+To: Jonathan Calmels <jcalmels@3xx0.net>
+Cc: brauner@kernel.org, ebiederm@xmission.com,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Kees Cook <keescook@chromium.org>,
+	Joel Granados <j.granados@samsung.com>,
+	Serge Hallyn <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	David Howells <dhowells@redhat.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>, containers@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
+Subject: Re: [PATCH 0/3] Introduce user namespace capabilities
+Message-ID: <ZkYKgNltq2hlBzbx@farprobe>
+References: <20240516092213.6799-1-jcalmels@3xx0.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240516092213.6799-1-jcalmels@3xx0.net>
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
+On Thu, May 16, 2024 at 02:22:02 -0700, Jonathan Calmels wrote:
+> Jonathan Calmels (3):
+>   capabilities: user namespace capabilities
+>   capabilities: add securebit for strict userns caps
+>   capabilities: add cap userns sysctl mask
+> 
+>  fs/proc/array.c                 |  9 ++++
+>  include/linux/cred.h            |  3 ++
+>  include/linux/securebits.h      |  1 +
+>  include/linux/user_namespace.h  |  7 +++
+>  include/uapi/linux/prctl.h      |  7 +++
+>  include/uapi/linux/securebits.h | 11 ++++-
+>  kernel/cred.c                   |  3 ++
+>  kernel/sysctl.c                 | 10 ++++
+>  kernel/umh.c                    | 16 +++++++
+>  kernel/user_namespace.c         | 83 ++++++++++++++++++++++++++++++---
+>  security/commoncap.c            | 59 +++++++++++++++++++++++
+>  security/keys/process_keys.c    |  3 ++
+>  12 files changed, 204 insertions(+), 8 deletions(-)
 
+I note a lack of any changes to `Documentation/` which seems quite
+glaring for something with such a userspace visibility aspect to it.
 
-On May 15, 2024 12:36:36 AM PDT, Peter Zijlstra <peterz@infradead=2Eorg> w=
-rote:
->On Wed, May 08, 2024 at 04:47:25PM -0700, Linus Torvalds wrote:
->> For example, the most common case of overflow we've ever had has very
->> much been array indexing=2E Now, sometimes that has actually been actua=
-l
->> undefined behavior, because it's been overflow in signed variables,
->> and those are "easy" to find in the sense that you just say "no, can't
->> do that"=2E UBSAN finds them, and that's good=2E
->
->We build with -fno-strict-overflow, which implies -fwrapv, which removes
->the UB from signed overflow by mandating 2s complement=2E
-
-I am a broken record=2E :) This is _not_ about undefined behavior=2E
-
-This is about finding a way to make the intent of C authors unambiguous=2E=
- That overflow wraps is well defined=2E It is not always _desired_=2E C has=
- no way to distinguish between the two cases=2E
-
--Kees
-
---=20
-Kees Cook
+--Ben
 
