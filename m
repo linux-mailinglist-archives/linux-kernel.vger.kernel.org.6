@@ -1,190 +1,278 @@
-Return-Path: <linux-kernel+bounces-180711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98AA88C722C
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 09:41:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E87F8C71FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 09:22:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E9FC1F21C5F
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 07:41:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F8AF1C209E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 07:22:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3235A130E38;
-	Thu, 16 May 2024 07:40:42 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF7084645B;
+	Thu, 16 May 2024 07:21:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="kC4wathi"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2047.outbound.protection.outlook.com [40.107.21.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 883DC3C473;
-	Thu, 16 May 2024 07:40:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715845241; cv=none; b=c+BICnZOGyKTvj2r0jNyEjy0+GeDanfnuRy6QDxgxcVzejqMedEITOesqT/2HSeK9JML6lHbhSvosZKpaRtx/ndhfblmi8GpE0KrikKcQ7Au7OTDGR4OsDJAM1oHtR7pdj67lJUAMOBWfdICImw9uVHAm/EQlVKVgR+RtZgMV8A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715845241; c=relaxed/simple;
-	bh=xuIlfY/3HVCtD8t5rWUv44jPGANtnz30uK1KfBywpWA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=le51SH+20yIOaK4Sj4aed9D4IyqvzDN4GmpcODTTyh3QIETdIwv0DVqisiCSOgwQ75yutuQatE1IOe4HpP1Z2h6tpiaL4a+O5axPFkFRiBu+JH4avclzqhVPtiTagd+y0BekGTAAFauZmDE7ZBvzBJdEDchzWa/Rqv+cv7X74w0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Vg27b58l0z4f3jYW;
-	Thu, 16 May 2024 15:40:27 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 677D51A0847;
-	Thu, 16 May 2024 15:40:36 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgBXKBFtuEVmQuY4Mw--.31554S7;
-	Thu, 16 May 2024 15:40:36 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-ext4@vger.kernel.org,
-	djwong@kernel.org,
-	hch@infradead.org,
-	brauner@kernel.org,
-	david@fromorbit.com,
-	chandanbabu@kernel.org,
-	jack@suse.cz,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	chengzhihao1@huawei.com,
-	yukuai3@huawei.com
-Subject: [PATCH v2 3/3] xfs: correct the zeroing truncate range
-Date: Thu, 16 May 2024 15:30:01 +0800
-Message-Id: <20240516073001.1066373-4-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240516073001.1066373-1-yi.zhang@huaweicloud.com>
-References: <20240516073001.1066373-1-yi.zhang@huaweicloud.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0EF512BEA9;
+	Thu, 16 May 2024 07:21:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715844092; cv=fail; b=Cqw3lhfHfvh4KvDF919pqxfIptrEFm8ngp4on+3F6z4JCXXVbvhCzw+orhXABUke4tKkZRuAKn9AcBo4m1EgmI4vwq5GxgHxX6KdCkDPY64emOX7f/8cXhB1R44b6Xnx9p7U6S0GHTg+M63sdUV53JfkpEZJDywWHGwHTxjpt5s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715844092; c=relaxed/simple;
+	bh=iFsluABJnDx7E7/HqelOMMvPVMf+HPoV/4X7YhF7cH4=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=ZGqfnQxuOxivS9mVyrHU9t9Ig0NfllDeq9XXOoAgbNPCexvIZNlpSyS6NHma9ALi6rFFJYnQ+UlSKvnV47A1RzFpSiXAf8Ruj47FQqq/s2t1b5bk9yVtXY0NJNUyM6mVWqKV4sQUESwsIrO2N6ND9uSxRGw/YjE9LYLvpvEShgQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (1024-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=kC4wathi; arc=fail smtp.client-ip=40.107.21.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Ky9AVr6h8EFBERNVMr3kqH0crxfeqK6T3LOy562U2y4JyKlIOA9e/XZGRmkLlGneVCugn1p86li2gSnwP4BpTpVVW2hku4h/4YHqdAFiVuW+ENfVEHR9ofUpHR8EbdTfit7Ks9f6jU76KPmYV9PkVLWAFDQM8OWp1wL3ELMXcoVifAFf4VnWiWtq+YmeQjcn+/i+hWw1V6G+be0x2cuGBlQNrzzv46PahEq3/cl632Aj0POCL2FZZG5mVqiKIMwYzJTESEhO6eccUG/C5ACP1ynR94DvbK8/ykakfygZ85xtYqQyzxl2hGVC7TnIi2ya5aWMM8wC++hUJE5f8zJfDg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=FtUWzdcs5M8fBsfAw7e9gGAEA3QwEZfGTZsMfCRQlq8=;
+ b=JbDV3hk5CLYwlGekI9Hr2tbKJGYevT+WLj/NeXdrsI82tMsOd26lSLCwop9FVJz4vv2poGGKcKDCsL0PBd1GaZimKXlGhnoFjbq2eni0T0QAp0AJL69WvZwLvBWrgMwpnmMhN+jI0WfSRKM3qn2PlJcWSAZZV+kpvuVVETEM320O36KT0vebRzvJKy+saHoCG3z+neY4E0V5tpAhX+Fs/FD631aOi4xW9R9je7kSxLLFKtWvL95tf7wkyH2rUfTkGn2hlWxP977OGCmHqE0q/JzLKCzbnoB/AdUV3xsJUS1oDRyNEHlB5eSF6Fvu43pA+UxPnU2lxWC/SfXK/n4kDg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector2-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FtUWzdcs5M8fBsfAw7e9gGAEA3QwEZfGTZsMfCRQlq8=;
+ b=kC4wathiv8o0CNGfwqeui7zHujzxtDnwMD+wTUkBVgycjDd3nM0MuQQY6HdAHhQy0XYsD1lDWTQ9YPf7iKZ9cVAHTua39M0wey/y1ZwUh2sxLVnK+3njKTHaQkJAQS6UUleY2rcOMWitLVtfmFGfoSKkFe1CDaX699aeXDfNFW4=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
+ by DB8PR04MB6778.eurprd04.prod.outlook.com (2603:10a6:10:111::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.28; Thu, 16 May
+ 2024 07:21:22 +0000
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::557f:6fcf:a5a7:981c]) by DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::557f:6fcf:a5a7:981c%6]) with mapi id 15.20.7587.026; Thu, 16 May 2024
+ 07:21:22 +0000
+From: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+To: linus.walleij@linaro.org,
+	sudeep.holla@arm.com,
+	cristian.marussi@arm.com,
+	robh@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de
+Cc: linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	festevam@gmail.com,
+	imx@lists.linux.dev,
+	aisheng.dong@nxp.com,
+	Peng Fan <peng.fan@nxp.com>
+Subject: [RFC] dt-bindings: firmware: arm,scmi: Add properties for i.MX95 Pinctrl OEM extensions
+Date: Thu, 16 May 2024 15:30:12 +0800
+Message-Id: <20240516073012.1699795-1-peng.fan@oss.nxp.com>
+X-Mailer: git-send-email 2.37.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR02CA0087.apcprd02.prod.outlook.com
+ (2603:1096:4:90::27) To DU0PR04MB9417.eurprd04.prod.outlook.com
+ (2603:10a6:10:358::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgBXKBFtuEVmQuY4Mw--.31554S7
-X-Coremail-Antispam: 1UD129KBjvJXoWxGrW7uF4UAw1DCr4fGFW8Xrb_yoWrGry5pr
-	s7K3Z8CrsrK347ZF1kXF1jvw1Fy3WrAF409ryfGrn7Za4DXr1Iyrn2gF4rKa1Utr4DXw4Y
-	qFs5tayUuas5AaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPj14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JrWl82xGYIkIc2
-	x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
-	Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJw
-	A2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS
-	0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2
-	IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0
-	Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kIc2
-	xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v2
-	6r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2
-	Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_
-	Cr0_Gr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8Jw
-	CI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUFfHUDUUU
-	U
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU0PR04MB9417:EE_|DB8PR04MB6778:EE_
+X-MS-Office365-Filtering-Correlation-Id: 17d807cd-dd54-448f-2407-08dc7578c998
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|366007|376005|52116005|7416005|1800799015|38350700005;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?md7AT8i/SgVhkRhF1ihcjDFkTWJpvr3YLyQE9Ym5Bv2yN0c3wpBXYUYFdb37?=
+ =?us-ascii?Q?3HqW0NOR1u2aHHDgt/3WZia3cLdMv4MDjjlELEkff98CJsd6fGEhHW2WVef7?=
+ =?us-ascii?Q?orDEMRlsNAjBbtdDIYY9voYq7bCY6WK+yvXY4LUB3R6o8X518t0Qv+4o5ODH?=
+ =?us-ascii?Q?WWxHryqXNRtUjRM5caYOTwaqULr1iELlZ4RZsi8FGNqST1dZJH5/nflslCsq?=
+ =?us-ascii?Q?G5Tg9kXAXFed/zBUhyWh2yokZ2Xa89ENMFMLYLEIqy5jPCBwTzERGq39bIim?=
+ =?us-ascii?Q?VkQJq3O0VECykxsHWn3DCQV6mzqVaF4ypsOSgsmKMPs2GxfjEaeP6KK+XgPc?=
+ =?us-ascii?Q?fk6Jzz6bBhsXUxMu1AR5ISDSQ0IRUdKihq5sBXoFEZl0hy3jOGil/FLKu2Y+?=
+ =?us-ascii?Q?YWvm3jx1AiFaKBuszDeVLWZ0cy1rsGscbcvDFBZ1RkvVKjyUW73SthSIhJjY?=
+ =?us-ascii?Q?87+DMIa0NsassyOVNNfmUfjLsdPEFcrJzuwsJv4oUsU712CX8m03Pr0EKCd9?=
+ =?us-ascii?Q?A8d3XahEiUWH63FeoflW1DJX9OtugaLnFgOH//UgO8Z5EeIZsgj840YFbfD4?=
+ =?us-ascii?Q?0VILHR0ilj7ZioXMNmubk63+5JcEyFG+SSYOTyfurzi2W8aspF/Z4KuzusPb?=
+ =?us-ascii?Q?L0pztplumV0OTDsWpSiBrELAxRPykHuexhfIQF2GVhPn75OZtSfPxIEVBl8E?=
+ =?us-ascii?Q?LV9P2829Y4PDYE/kS4JQl4zhQtbzyeaOrtoQCEQGcvl/FR8763RfSIz9KQVX?=
+ =?us-ascii?Q?d6NVFKqoYL5Lu1uD2qdR5+EP91GdC9mtIG6RAbKtpxw4oXvX+FDqdHddZFiE?=
+ =?us-ascii?Q?8018NnIicPkoTjmx+f68P403fjl83zmtVUz4nQYHtypbhof4GRef7APOPWY0?=
+ =?us-ascii?Q?ZtWDE9RBtiOjgKWck4JCUldvNfeCSWOlVQ3u+oB3/wjgYdX4JU/+Yi7pvUW6?=
+ =?us-ascii?Q?wXnmeFV18MgT9kwXYbTR4qAEgwlJlZMUIapbpg7+aqx7G46Kb3TPkX21fWva?=
+ =?us-ascii?Q?O6GkQV94QDsP5H5zxy+n6H+5Wub0wYWdxRkgtFTF4hubcRsV8C+OLblCzhEo?=
+ =?us-ascii?Q?qCvi8P1s9TjkY5Bw9sTg+qntU2LHE1EpUbY59b+6MZViDqhMlxNjnvNOnh+U?=
+ =?us-ascii?Q?DCi0c6vmu2cwcwQu5SpFs9rRgLl4R0MWnhf6gxHGeBM4FddPrrwJFQmO3Qz8?=
+ =?us-ascii?Q?YHBeBlnxxbdiJ0q2vCqw8gHRWTTu2Tf3xV9+ySBIzZXRidlNCYoLLV/QcXIn?=
+ =?us-ascii?Q?W040aUly0UE3PGT6hHKqo8wWj6KjhrvZoST5UYQqNxEnWxxuEWemhZk5haBw?=
+ =?us-ascii?Q?ops=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(52116005)(7416005)(1800799015)(38350700005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?VvLA8Kd7laory7qfNVKFgdwNzZHOHRH1pEK6wWwYyUj9ux4KqqJyaJDBoJMh?=
+ =?us-ascii?Q?QPNz6mOzd/Fl8UCZVr4FhcWemKNfIzqY7Sp4NlQSsFFO4PmY2CK/4vzl5g5c?=
+ =?us-ascii?Q?CLTGy35P9O8uikg/UzYjms5BRYQj8pCX8B6W02U2y9zpS36K5iKccAsoBqPl?=
+ =?us-ascii?Q?xgB4Lsb90YPOl3jXjpLBAw2d+EuSJPoadgM34u4PDTVK7+9aV9SUdbaV9j7X?=
+ =?us-ascii?Q?Ak23zBGNOIXW9Ds9rTrgQQQluMp+3OUQYJgzMPJRrCp3SCUqZetUrTRggmn+?=
+ =?us-ascii?Q?BHEF3iOJugNa70YAhLUN40RXMfEf7Xa9+zAsHzwhowlPjeqfDdJLnlgajfdo?=
+ =?us-ascii?Q?4jX6yxhxvHP6LLmDF2ljpeqrzlslsOYfZqFb8PFGhfXLd2aFiVcJMVjh1rTL?=
+ =?us-ascii?Q?6faBta2cS+kOx4jiOfe9bhNuvwn3OcXn5YUsZoLofiCUMd5xN7c8Y0zojrYy?=
+ =?us-ascii?Q?c1F02+idORcDTDg5EwB06kHEpWLHyyZNlfU8C891vBmLWPJnKCrFGJVfAqp0?=
+ =?us-ascii?Q?Ija0EQhCJ+Ci37z9Gzeps4zfHBcuPICZqQUcbNJLkHCUYilBWYRMuynP4Gp1?=
+ =?us-ascii?Q?snuYU1KNNQP8yoILvIFlDrXbYqgAWA5neThPcDi4p10detfNfH/IQfiZLzHL?=
+ =?us-ascii?Q?5/Ug8rmLqDeunejoc0Gp37MnyNDTQVGZNzW+WGSTDMSjiisLx7bVPX8rnlAh?=
+ =?us-ascii?Q?ghRFRtDPU3ZPHDtL2L1DhYc0onGf7gLPjZwCyy2x2f7/7VdtJ8H0C2EFPn5J?=
+ =?us-ascii?Q?H7qVavDWDMRmfTCkGISE5jFsocleDPGi8a88Jp7aVcJhaF9oYcey0ITpoSYL?=
+ =?us-ascii?Q?9+eMMEtgJMbWWrlWp/lfHXgwf2UAKTDOqvN5yTJyuvZOdkzj0S2IwGOG8OLv?=
+ =?us-ascii?Q?Mi0+GicQhOBYubIXNLHbz0eiCbvXLK3pbt+z/jdARs8qqr98DoBVG8J9Ardz?=
+ =?us-ascii?Q?LVhAbnK4cTEL4wq+4egFwN5LIxHYvjGk5aFxxtnoqJclb/BzTJMOqHRJpABY?=
+ =?us-ascii?Q?sQ+7TuV2LYLp8jLPqEjke3DJiwX7hFHVRqwHf/hiug/1NM4MVXnu3YaGnLdr?=
+ =?us-ascii?Q?+DtDv5Ujw9HUoMcH5FdlCguZbtoN8n60tPtqliD3T+BBIyv69uN9nhtUN8F0?=
+ =?us-ascii?Q?tGFCtiS3m0UdOz35xWJMeZ9m97l9+Tlsa2DLqXXVjccuoleNFMzwSeCtpk5Q?=
+ =?us-ascii?Q?JKY7sjX6FzIfN55aNQ6rxDS/0HiZ6vgyv8oouEVTRBnavf93TwsE8XbAwWHL?=
+ =?us-ascii?Q?f0ICva1YCux6RTaSt/JfPlgyrYuZRimjc2kVQc9pO6WS4LevNTqdxAYHn/7q?=
+ =?us-ascii?Q?C626oTjEvjh8YPRB5fzYVV3gm2LClzfDLMskF2Ni4jVGJD36yt+a6lTRTv2V?=
+ =?us-ascii?Q?Atjj/F1V3r+Au8jJoHp7mdf6NR4AmgbgpxgqZ+0sFlWD0U6CGdQJpreFDDih?=
+ =?us-ascii?Q?sWKvjJxiGMgIfumxqPPoZh1UrWOAjBgdIvanafPRhtCR3AqduS/m3AgQON8F?=
+ =?us-ascii?Q?JD8AeEHSzW1e7aY3f60+fQV7fslDrTxJGfBpOr9LgGu2e9Y4DZiefJbCaNvJ?=
+ =?us-ascii?Q?MHvuan+c2NPYXKijmF2iGQmxb5aoQnHsBikiPix2?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 17d807cd-dd54-448f-2407-08dc7578c998
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 May 2024 07:21:22.1359
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: fP3wD5DZK3P+BMF3Lq+K5S7QrtC3uhGs09RleLhIrnmBBpQ/ndq2CWj4yypHQSwZqFqz2Zx7e6tC10dsoYcHgQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR04MB6778
 
-From: Zhang Yi <yi.zhang@huawei.com>
+From: Peng Fan <peng.fan@nxp.com>
 
-When truncating a realtime file unaligned to a shorter size,
-xfs_setattr_size() only flush the EOF page before zeroing out, and
-xfs_truncate_page() also only zeros the EOF block. This could expose
-stale data since 943bc0882ceb ("iomap: don't increase i_size if it's not
-a write operation").
+i.MX95 Pinctrl is managed by System Control Management Interface(SCMI)
+firmware using OEM extensions. No functions, no groups are provided by
+the firmware. So add i.MX95 specific properties.
 
-If the sb_rextsize is bigger than one block, and we have a realtime
-inode that contains a long enough written extent. If we unaligned
-truncate into the middle of this extent, xfs_itruncate_extents() could
-split the extent and align the it's tail to sb_rextsize, there maybe
-have more than one blocks more between the end of the file. Since
-xfs_truncate_page() only zeros the trailing portion of the i_blocksize()
-value, so it may leftover some blocks contains stale data that could be
-exposed if we append write it over a long enough distance later.
+To keep aligned with current i.MX pinctrl bindings, still use "fsl,pins"
+for i.MX95.
 
-xfs_truncate_page() should flush, zeros out the entire rtextsize range,
-and make sure the entire zeroed range have been flushed to disk before
-updating the inode size.
-
-Fixes: 943bc0882ceb ("iomap: don't increase i_size if it's not a write operation")
-Reported-by: Chandan Babu R <chandanbabu@kernel.org>
-Link: https://lore.kernel.org/linux-xfs/0b92a215-9d9b-3788-4504-a520778953c2@huaweicloud.com
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
 ---
- fs/xfs/xfs_iomap.c | 35 +++++++++++++++++++++++++++++++----
- fs/xfs/xfs_iops.c  | 10 ----------
- 2 files changed, 31 insertions(+), 14 deletions(-)
 
-diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-index 4958cc3337bc..fc379450fe74 100644
---- a/fs/xfs/xfs_iomap.c
-+++ b/fs/xfs/xfs_iomap.c
-@@ -1466,12 +1466,39 @@ xfs_truncate_page(
- 	loff_t			pos,
- 	bool			*did_zero)
- {
-+	struct xfs_mount	*mp = ip->i_mount;
- 	struct inode		*inode = VFS_I(ip);
- 	unsigned int		blocksize = i_blocksize(inode);
-+	int			error;
-+
-+	if (XFS_IS_REALTIME_INODE(ip))
-+		blocksize = XFS_FSB_TO_B(mp, mp->m_sb.sb_rextsize);
-+
-+	/*
-+	 * iomap won't detect a dirty page over an unwritten block (or a
-+	 * cow block over a hole) and subsequently skips zeroing the
-+	 * newly post-EOF portion of the page. Flush the new EOF to
-+	 * convert the block before the pagecache truncate.
-+	 */
-+	error = filemap_write_and_wait_range(inode->i_mapping, pos,
-+					     roundup_64(pos, blocksize));
-+	if (error)
-+		return error;
+V1:
+ There is already a v6 version for i.MX95 pinctrl with binding got reviewed by
+ Rob, https://lore.kernel.org/all/20240513-pinctrl-scmi-oem-v3-v6-1-904975c99cc4@nxp.com/
+ But after NXP internal discussion, to keep "fsl,pins" for i.MX95 would make
+ it aligned with current i.MX93/8M/7 bindings which people are familiar with,
+ and easy to understand.
+
+ Sorry to bring back so late after your reviewing in previous generic binding
+ patch. This is not to reject the v6 patch, just wanna to see whether you are
+ happy with "fsl,pins" for i.MX95. If people are happy to accept, I will post
+ out driver together with this patch in new patchset to reject v6. If people are
+ not happy, we could continue with v6.
+
+ v6: https://lore.kernel.org/all/20240513-pinctrl-scmi-oem-v3-v6-0-904975c99cc4@nxp.com/
+
+ Thanks,
+ Peng
+
+ .../bindings/firmware/arm,scmi.yaml           |  4 +-
+ .../firmware/nxp,imx95-scmi-pinctrl.yaml      | 54 +++++++++++++++++++
+ 2 files changed, 57 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/firmware/nxp,imx95-scmi-pinctrl.yaml
+
+diff --git a/Documentation/devicetree/bindings/firmware/arm,scmi.yaml b/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
+index 7de2c29606e5..f7a48b1e9f62 100644
+--- a/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
++++ b/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
+@@ -251,7 +251,9 @@ properties:
+     type: object
+     allOf:
+       - $ref: '#/$defs/protocol-node'
+-      - $ref: /schemas/pinctrl/pinctrl.yaml
++      - anyOf:
++          - $ref: /schemas/pinctrl/pinctrl.yaml
++          - $ref: /schemas/firmware/nxp,imx95-scmi-pinctrl.yaml
  
- 	if (IS_DAX(inode))
--		return dax_truncate_page(inode, pos, blocksize, did_zero,
--					&xfs_dax_write_iomap_ops);
--	return iomap_truncate_page(inode, pos, blocksize, did_zero,
--				   &xfs_buffered_write_iomap_ops);
-+		error = dax_truncate_page(inode, pos, blocksize, did_zero,
-+					  &xfs_dax_write_iomap_ops);
-+	else
-+		error = iomap_truncate_page(inode, pos, blocksize, did_zero,
-+					    &xfs_buffered_write_iomap_ops);
-+	if (error)
-+		return error;
-+
-+	/*
-+	 * Write back path won't write dirty blocks post EOF folio,
-+	 * flush the entire zeroed range before updating the inode
-+	 * size.
-+	 */
-+	return filemap_write_and_wait_range(inode->i_mapping, pos,
-+					    roundup_64(pos, blocksize));
- }
-diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-index 66f8c47642e8..baeeddf4a6bb 100644
---- a/fs/xfs/xfs_iops.c
-+++ b/fs/xfs/xfs_iops.c
-@@ -845,16 +845,6 @@ xfs_setattr_size(
- 		error = xfs_zero_range(ip, oldsize, newsize - oldsize,
- 				&did_zeroing);
- 	} else {
--		/*
--		 * iomap won't detect a dirty page over an unwritten block (or a
--		 * cow block over a hole) and subsequently skips zeroing the
--		 * newly post-EOF portion of the page. Flush the new EOF to
--		 * convert the block before the pagecache truncate.
--		 */
--		error = filemap_write_and_wait_range(inode->i_mapping, newsize,
--						     newsize);
--		if (error)
--			return error;
- 		error = xfs_truncate_page(ip, newsize, &did_zeroing);
- 	}
+     unevaluatedProperties: false
  
+diff --git a/Documentation/devicetree/bindings/firmware/nxp,imx95-scmi-pinctrl.yaml b/Documentation/devicetree/bindings/firmware/nxp,imx95-scmi-pinctrl.yaml
+new file mode 100644
+index 000000000000..3f28c4a171c7
+--- /dev/null
++++ b/Documentation/devicetree/bindings/firmware/nxp,imx95-scmi-pinctrl.yaml
+@@ -0,0 +1,54 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++# Copyright 2024 NXP
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/firmware/nxp,imx95-scmi-pinctrl.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: i.MX System Control and Management Interface (SCMI) Pinctrl Protocol
++
++maintainers:
++  - Peng Fan <peng.fan@nxp.com>
++
++allOf:
++  - $ref: /schemas/pinctrl/pinctrl.yaml
++
++patternProperties:
++  'grp$':
++    type: object
++    description:
++      Pinctrl node's client devices use subnodes for desired pin configuration.
++      Client device subnodes use below standard properties.
++
++    unevaluatedProperties: false
++
++    properties:
++      fsl,pins:
++        description:
++          each entry consists of 6 integers and represents the mux and config
++          setting for one pin. The first 5 integers <mux_reg conf_reg input_reg
++          mux_val input_val> are specified using a PIN_FUNC_ID macro, which can
++          be found in <arch/arm64/boot/dts/freescale/imx95-pinfunc.h>. The last
++          integer CONFIG is the pad setting value like pull-up on this pin. Please
++          refer to i.MX8M Plus Reference Manual for detailed CONFIG settings.
++        $ref: /schemas/types.yaml#/definitions/uint32-matrix
++        items:
++          items:
++            - description: |
++                "mux_reg" indicates the offset of mux register.
++            - description: |
++                "conf_reg" indicates the offset of pad configuration register.
++            - description: |
++                "input_reg" indicates the offset of select input register.
++            - description: |
++                "mux_val" indicates the mux value to be applied.
++            - description: |
++                "input_val" indicates the select input value to be applied.
++            - description: |
++                "pad_setting" indicates the pad configuration value to be applied.
++
++
++    required:
++      - fsl,pins
++
++additionalProperties: true
 -- 
-2.39.2
+2.37.1
 
 
