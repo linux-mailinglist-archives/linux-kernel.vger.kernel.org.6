@@ -1,111 +1,93 @@
-Return-Path: <linux-kernel+bounces-181304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0B998C7A27
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:15:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D3788C7A24
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:15:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 796B61F23F38
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:15:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8806B2832E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:15:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96F1714E2FB;
-	Thu, 16 May 2024 16:15:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kzHJV/Sy"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F60014E2C1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49F9014D71B;
 	Thu, 16 May 2024 16:15:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="JtYVC8El"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C2ED2421A;
+	Thu, 16 May 2024 16:15:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715876110; cv=none; b=J1gox7R7gavoSMPPPcCS/EeyHxfX6Pw2T2EdTNvXKRPWhpJBLWUNRV9FGmSPKhWNPxRkQ60HN3kP+OqyhLfTTGwuAz0N5P1HOz9SoGD9acOYEkY0HawJGptxCbdpSL403FsNaPCgBJsAX5l+jSWbOVhX2VhKA+5zZPd/PqOfk7Y=
+	t=1715876108; cv=none; b=GLU5r8miuZg8Sq5BqDKevB9pSb0Dt7+hZ1JR1Hq87cIUn40C+XEJEO8y3gX+NX2etf0nImRZrzQZ+Lyx2nJ2lqP4oieNztHw1q0C7f5XH0gBAD+QKEk4geFfexTFpyAkm8nNTMJ2uq/dqfwVUWzEGqmk9Nl3yLg15h28FppsN6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715876110; c=relaxed/simple;
-	bh=Mh0u9Y06mcntjSNlKFJ57KMfOKSfioL1lnQzZWm3pu0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=czo2L/8Xv+c/sKfZUHLTBqkA/LgVWIxJHcjlTtTLuRYXyfNQ6Zt/fOX0JqdKIpWCAhfQV0be3MqlAv6y7XvN2NldMRFeDI6dbqjk7hy9ENKofjHmbuTU6HzH8rAHPMojRfphXnuhQtWyfGHlAH4zIhcAE6CC+fY6l0QG7y/w9TQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kzHJV/Sy; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-792b8d98a56so745216185a.2;
-        Thu, 16 May 2024 09:15:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715876108; x=1716480908; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xe39QYa7TfsWXzNNingUD+O1lJhMRi830tLy3GV8ajM=;
-        b=kzHJV/SyfkKLyjkYNSKJkewDlss+EOzRlrH4RzYrg6Sq+kC21tiRG5517RRBHei6uD
-         dfOTKk5O5FPU+XH9jZjXlyiLgtrDf2A/Tsp689y8jKtvuIaE5nzxkfcwAmUyu7ZB/E5X
-         JrIwVpW4hfohPhtH7gzndjnMnmuQnQFD5qkGKvOny4kh0GfFU53CWm5HbJkTQrKyjgpX
-         znXhnc2Y40YYLpXbFIVfDMcs9sEfP886QjK60B9UA/IncyWuTlIWfRZCvLsdwWyyD62X
-         TJYI6gnyMNxMu8KZTJAAmcBiATXEzFroKho8wuTHCtUFIjz18G2IESzDgulYZhLFn7I9
-         C5eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715876108; x=1716480908;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xe39QYa7TfsWXzNNingUD+O1lJhMRi830tLy3GV8ajM=;
-        b=HgOZe37ZDdF2VhtS9EYdafDeW1V+qaeKjtMM47+ZIXU6uVZOqLIowCTiuWIOkAnPhE
-         aeUg+pQG/IkOm2YKzYysqB4knPNQfgdxhxlMVZ68GJkKAfJbvDq38zTYTxZpsnsw9/A+
-         NfhmwWZxc1IWnpcjbfu+q+QORoEr4G9LocQ8BfWKiqC2+tZI6sLyKnOkYztVjfUdbZUZ
-         1So0btKRqrXPXY15SQ0dqJDeDoYhNNvnfvQJV+2YmfLfVBJ8NzXDvjr6+4+ucgnJimMI
-         vq9Lmw9Sg0osiqXWywBnDs71LZwZoPejzeo7S4wV+cqUnLBOlDny5TAmEXTkkqQNBVgg
-         oZRw==
-X-Forwarded-Encrypted: i=1; AJvYcCX19f5a8QMNGS64Q5haW681a57spmxZy1VuETrdvAaA0g1au4cqeAHHhhG06UF+0lV0JPY3BHmTyaKTS0jJkCRCDDj68vKsyCqykbRWOT+SNB+NFHIWLx/+7CUtZamBPQguBNSgSSvoT8q7wcAhCLztXieSv1wk1g5ZPwE/rLQVbIXy3A==
-X-Gm-Message-State: AOJu0YwNTUtni9TR7cyGTai/XiCr625FSNPtyJ2vb9fvAG9nnGyi9Gv4
-	541+nsHjiOFfQGmcFB9sE5FntAOtFdPJREvU9hwx6YB+OPbHsF+q
-X-Google-Smtp-Source: AGHT+IFUuxxxvJDDRP5xjeDBCKJXwzIYIXtYwwHtRWhzgkosnjs7D4tlbQURdVVrLy5sbsofDmkh9Q==
-X-Received: by 2002:a37:e209:0:b0:790:9a32:651 with SMTP id af79cd13be357-792c75f47e3mr2216024685a.55.1715876108240;
-        Thu, 16 May 2024 09:15:08 -0700 (PDT)
-Received: from [192.168.0.137] ([188.24.105.36])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-792bf315009sm816795585a.118.2024.05.16.09.15.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 May 2024 09:15:07 -0700 (PDT)
-Message-ID: <7705589b-d135-48c2-b4d2-866138a82918@gmail.com>
-Date: Thu, 16 May 2024 19:15:04 +0300
+	s=arc-20240116; t=1715876108; c=relaxed/simple;
+	bh=C5txdxBhuj7rW3DWnSbwvCzPzbmF4xQ5STOkAZq83ag=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=loYiG4FrZCoqwHXh3QMYVATPN7dLxpJ2zsn3SumGLD/jMtRcjrN0CA28pBrGn37AjsgmqOaNQEJIewxGysRkObs/5Cvfrj/pT5NAN+9Wxhudf03XIpy4Ycc86UbUWxE7ihaYSnBuWT4PzjVyUv6TyGGlfQ+M17BNLjOKtqh+Rhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=JtYVC8El; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF147C113CC;
+	Thu, 16 May 2024 16:15:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1715876108;
+	bh=C5txdxBhuj7rW3DWnSbwvCzPzbmF4xQ5STOkAZq83ag=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JtYVC8Elpkr080qIIwIffhq7Xabf/QhfcnqUPFWpxscSTASidGwxeAWdxwNUEwpQn
+	 SSPfWjsKCa0RRt1mPnSkMUSd0TyiBWfIA69jJyrMDqeG4ekCfRGRRypHSBeeavbEpF
+	 ds+m50y/663B0JwIW1wujM83A4h6g6sQumIfOYmo=
+Date: Thu, 16 May 2024 18:15:05 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: "Manthey, Norbert" <nmanthey@amazon.de>
+Cc: "keescook@chromium.org" <keescook@chromium.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Woodhouse, David" <dwmw@amazon.co.uk>,
+	"Stieger, Andreas" <astieger@amazon.de>,
+	"linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>,
+	"Hemdan, Hagar Gamal Halim" <hagarhem@amazon.de>
+Subject: Re: Extending Linux' Coverity model and also cover aarch64
+Message-ID: <2024051625-dowry-pacifism-b0b9@gregkh>
+References: <77f6e6fc46232db82a3c63e93877c9534334e407.camel@amazon.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/9] Add support for AD411x
-To: David Lechner <dlechner@baylibre.com>, dumitru.ceclan@analog.com
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>
-References: <20240514-ad4111-v2-0-29be6a55efb5@analog.com>
- <CAMknhBGUHB65FALiy4pC2kHs0hXuF-51uwL5CTXOVWaBh_QpDg@mail.gmail.com>
-Content-Language: en-US
-From: "Ceclan, Dumitru" <mitrutzceclan@gmail.com>
-In-Reply-To: <CAMknhBGUHB65FALiy4pC2kHs0hXuF-51uwL5CTXOVWaBh_QpDg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <77f6e6fc46232db82a3c63e93877c9534334e407.camel@amazon.de>
 
-On 16/05/2024 01:35, David Lechner wrote:
-> On Tue, May 14, 2024 at 2:23 AM Dumitru Ceclan via B4 Relay
-> <devnull+dumitru.ceclan.analog.com@kernel.org> wrote:
->>
->> This patch series adds support for the Analog Devices AD4111, AD4112,
->>  AD4114, AD4115, AD4116 within the existing AD7173 driver.
->>
+On Thu, May 16, 2024 at 03:28:16PM +0000, Manthey, Norbert wrote:
+> Dear Kees, all,
 > 
-> It looks like most of the patches in this series are cleanups and
-> fixes of the existing driver unrelated to adding AD411x. Perhaps it
-> would be better to split those out into a separate series so we can
-> focus on that first? Especially since several of them need to be sent
-> as fixes for the v6.10 kernel to avoid breaking usespace or bindings
-> in the next release.
+> we published an extension for the Coverity model that is used by the
+> CoverityScan setup for the Linux kernel [1]. We have been using this
+> extension to analyze the 6.1 kernel branch, and reported some fixes to
+> the upstream code base that are based on this model [2]. Feel free to
+> merge the pull request, and update the model in the CoverityScan setup.
+> We do not have access to that project to perform these updates
+> ourselves.
+> 
+> To increase the analysis coverage to aarch64, we analyzed a x86 and a
+> aarch64 configuration. The increased coverage is achieved by using re-
+> configuration and cross-compilation during the analysis build. If you
+> are interested in this setup we can share the Dockerfile and script we
+> used for this process.
+> 
+> To prevent regressions in backports to LTS kernels, we wondered whether
+> the community is interested in setting up CoverityScan projects for
+> older kernel releases. Would such an extension be useful to show new
+> defects in addition to the current release testing?
 
-Sure
+New defects yes, I would like to know that, as long as they are also
+fixed already in mainline, right?
+
+Just send us reports of that, no need to get the covertity site involved
+there, I'll be glad to take them.
+
+thanks,
+
+greg k-h
 
