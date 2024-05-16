@@ -1,121 +1,185 @@
-Return-Path: <linux-kernel+bounces-180666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B1B58C718A
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 08:02:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 344D08C718E
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 08:12:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCC94B22A6A
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 06:02:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D2551C20F9C
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 06:12:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9295282ED;
-	Thu, 16 May 2024 06:02:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E043121104;
+	Thu, 16 May 2024 06:11:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="i81RDg9O"
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XZpQxaFC"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5A4B2576F
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 06:02:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78F5420317
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 06:11:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715839339; cv=none; b=eOyA+Ic8HudD4XakKxmKb6dEu8AVkuU18LARJkxYzZjxqk7r3wfAZgs5bd/yV+RxnUwGIu7nfDUo02pMdMl0wLLKu2W3qGoBLbg05VYGExrEMlLhKNLN0WCAdOHPqsS+L6868aOyzJC51w+qLSLskPhK4tLyR0plEEfgd9Cn3Hc=
+	t=1715839915; cv=none; b=EwngJtbqGjdKN0syXgAyXpNad9oNeBA+O0wJKWqcOqxojUcCZJ+dcMY0DqFc3ba6brXuiXdRsSJuf7aj+ORSCTlFsL0ykybSIpk5tX+8SDz6A9E/m0X83yZE6dIKeHeuiZQZNVRKvY4cCAjGbHKHiZlBu/QBpazG8HikjhAf1gU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715839339; c=relaxed/simple;
-	bh=fMxF2StVs/M/aaHNKTnKzRqFLg6CcU30ETa1Rv+cqko=;
+	s=arc-20240116; t=1715839915; c=relaxed/simple;
+	bh=EZIG0xKUDpv3EETxHdOtNwt9+dBWRvFDMP3FaqEOGqo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P+HvuLHja3wvZWk+IqmzrL4l60EvsOe/gtM8pkEBFd/ZgOr4hKFbOqMARur25AoCaqiCFSJrGBTEbgtkC48e4krcfTQ5CzHB3eGmv40MO/AgtKeRYIBVD66eKBgVc2r8PiNOl1KKWfqHIVNUP/dFviUnK82iKUUA9pbi3avAnog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=i81RDg9O; arc=none smtp.client-ip=209.85.219.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-df475159042so139787276.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 23:02:17 -0700 (PDT)
+	 To:Cc:Content-Type; b=CMX2LJcCng1tgQvXm4cv4PjCd/wYknohQslcc+Y/VmHZHDLuclA4Z7LvTRuTUK8krCt69MPJyXo7pwKZYZxA7OFCusq5mii19qUiVuivNNLjZ7WCBxY4FZObuH9DlSUzLWgWRDrpjdzKSieu81VELC1SlXiscWqPGw6lNv+UjD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XZpQxaFC; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5750a8737e5so3039a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 23:11:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715839336; x=1716444136; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=fMxF2StVs/M/aaHNKTnKzRqFLg6CcU30ETa1Rv+cqko=;
-        b=i81RDg9OTTrg7eIrBpaSUCZiDOcu38wt8Zv1o+2K+ZMatMToc6xffHXt18uJxr6qMJ
-         p1QXhloacffi41FpwHKM4DVn369p9/+c9F/6UsIClNGFL03EFcsGDYi3EmhVHqJwZVTf
-         IXXtH5h/39DQ3JYECUmwYl/iEUokAb7S4B0JwpyqbJTCQsmNyfw9iNQWQEpdntJO04eI
-         pzF5O0EADRR7x0byW7tx+I49uzPjepNcNuQSkAv3h+9sFE1tqSEXdPoD3KW1q2srkEsa
-         YjxVMX+2C6msc5bTvo6LM/ewIKDc/q9JzMWsZ4mNzY0q7zMvHF7xoFzCLxiATNZuwiF9
-         tN5w==
+        d=google.com; s=20230601; t=1715839912; x=1716444712; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zwSzN8fvfDv5GDu8auPPWOoq9lZrwSpmFoOwo9DGQxk=;
+        b=XZpQxaFClYkgsryuKzGqlyzbvQJFlrLiW4OpKjNzheJTY6UPgdGDwHQrMRhWhC5d03
+         8nDNe3LMXibxqn1ydTPH6+8jHw03b8SOhkUsM+eKG3TVg5ntgJbFQmQwPSMI5dgTpKTR
+         ur0Fwd2EWwOekWrg/6Mp9EOQn91Z5H9cDBfKSeGOuPkC/taXrzHhdIMbli0R3u6VoWmv
+         35SiOcAjUIpLkhICXopzl2ILGUndqI19s0iDQzLpV45LM5arZh8t5jafc1o2o+Q073TC
+         1Qa/xYX3wcn/9VDctWv7UlQ68485gAFfipDDpTKvjdTT3GimLCB32BOB2y2Y+xeESm/7
+         w5cg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715839336; x=1716444136;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fMxF2StVs/M/aaHNKTnKzRqFLg6CcU30ETa1Rv+cqko=;
-        b=obtx7VhGlLlLO1qEOHbPS5BPmxSXJA+3j1D0NpScgFp9ZLuH8t3wUIcKaKYPE94j7u
-         naX/pSjxESz5GieSCVfXb64GTWtRG5Jiv4V1bfAm508GRFRzkPgup7dMYoI+hO6sZiN9
-         cKCvGSMi05zRxrMmiFnzwm0dyheBlidi26ypU29yvWmOKQ5K0doFLXmTPewwv4HeU9jb
-         24v8BbpKr6UG18c711lLsYKO/a37Si8Ltm/w6xJLztG0OfqEh3dqVpeegLHuLJiimt9Y
-         qtKnY3JKfby4bQZm6yinifzwDoV4g4+H6a/Gc6mbltmX3QPju0sXqTthMw22LJIp06Lk
-         vxaw==
-X-Forwarded-Encrypted: i=1; AJvYcCVBS3pRWArxbTSuy1jMY0zg1uyCyK9bI3sWxr8pXEPX0lgjg8koz2yRIKH/VP0WRP5v2dVZaJmXPYpzbfUi5Umr4olxsUY5mqPlxvCx
-X-Gm-Message-State: AOJu0YyN3sN/9fj5wcPzT+iJJfQri8D5mq9FrIcZVjJ3r6HNhzGP3Djz
-	4bc9PJPDikdQLACxSPJ+ZWRm7AC0+jBrvd6TV4rIWFsZgQdbBdn2zR4OJlkU+bAFRlwhMuyhuco
-	fhcwLeQvhwu+M5BSAAL7h34sDj2Wt77XvyJ65TQ==
-X-Google-Smtp-Source: AGHT+IHQRhJ5WdipOlFEPTE2IXtjwpxOJIa3F6UInY4NKv3hR6EY4LO3bbTRgZIjq/P9G1VVfPyvex/Mx0Vhj/yz1NA=
-X-Received: by 2002:a25:f505:0:b0:de6:d0a:ee3d with SMTP id
- 3f1490d57ef6-dee4f1b7a13mr16047733276.30.1715839336505; Wed, 15 May 2024
- 23:02:16 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715839912; x=1716444712;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zwSzN8fvfDv5GDu8auPPWOoq9lZrwSpmFoOwo9DGQxk=;
+        b=V+/fiqDaqPa1gd97IezUKaG6L2kZlh1WRx9+pcDV9WlCE4RhsghzhMOif3m4PDv8lK
+         Whvoa+vkdojWmy82+XH7k69L8A4FSo+LaYBNe7i9/OvL82Z84Qxtge720FBsAGFQn+Pr
+         k1n7APPGnNW8hP0ckIX+z8A/G/4+OuEOTOs/BJNngPDino8wKvRhhLvja0wgjiarPhxC
+         AfGPQTJDaVvpJ3nghVOb0ceAUutff6jUZXxWttfne1f3T7Aoc1XyVhnoAPSHdLnfZj+p
+         4bUsjhi40+OCuebBbW+KBu6E309P7UVgMKOcAL/SAKtiQZaKcRMjLlFw7e4VDz2hh87U
+         f52g==
+X-Forwarded-Encrypted: i=1; AJvYcCVGEvoLFIVQg0zf/myxlQ/OtwN3qtrrIYvd/dHbkNMT0SGcJT6hNq9mYyCJecYkfqzydURlCgcQLUk8lvD/cCxLM3Svx6cq9WCol6XA
+X-Gm-Message-State: AOJu0YwsPIEjvIjrikogDxRN8RgXeW6rO6wbxvSA9bjWJjGAPOqYKWvO
+	4AbBjxNwx/Hn+nwxHl+hKNIIZi0aASun5+Akvbmso3RspBO88yheww4Y0a70RxkBkb7rvXxp+ZD
+	OrLCosz6Q2I3OHaZCBKYXqBctcQc1yZ9OR27y
+X-Google-Smtp-Source: AGHT+IEp0x2v9zSQfirOjmV+BT0Ym9aTirvBrBvS0QkHPlchfgN4t9zGFwynf4n0RLKyS+bv4MaASd94Zp7m+NCTcXE=
+X-Received: by 2002:a05:6402:5248:b0:574:e7e1:35bf with SMTP id
+ 4fb4d7f45d1cf-574e7e13675mr685505a12.7.1715839910575; Wed, 15 May 2024
+ 23:11:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240515105446.3944629-1-sumit.garg@linaro.org>
- <20240515105446.3944629-2-sumit.garg@linaro.org> <131345e4-7920-428c-85c8-0fc4f56ca84e@linaro.org>
-In-Reply-To: <131345e4-7920-428c-85c8-0fc4f56ca84e@linaro.org>
-From: Sumit Garg <sumit.garg@linaro.org>
-Date: Thu, 16 May 2024 11:32:05 +0530
-Message-ID: <CAFA6WYO1r5VydNo3VkdQY4yrC9ppL3-ou15i=GOgaQtVvSw0bQ@mail.gmail.com>
-Subject: Re: [PATCH RESEND v5 1/3] dt-bindings: vendor-prefixes: Add Schneider Electric
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: andersson@kernel.org, konrad.dybcio@linaro.org, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, robh+dt@kernel.org, 
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, stephan@gerhold.net, 
-	caleb.connolly@linaro.org, neil.armstrong@linaro.org, 
-	dmitry.baryshkov@linaro.org, laetitia.mariottini@se.com, 
-	pascal.eberhard@se.com, abdou.saker@se.com, jimmy.lalande@se.com, 
-	benjamin.missey@non.se.com, daniel.thompson@linaro.org, 
-	linux-kernel@vger.kernel.org
+References: <20240513191544.94754-1-pobrn@protonmail.com>
+In-Reply-To: <20240513191544.94754-1-pobrn@protonmail.com>
+From: Jeff Xu <jeffxu@google.com>
+Date: Wed, 15 May 2024 23:11:12 -0700
+Message-ID: <CALmYWFt7MYbWrCDVEKH4DrMQGxaXA2kK8qth-JVxzkvMd6Ohtg@mail.gmail.com>
+Subject: Re: [PATCH v1] memfd: `MFD_NOEXEC_SEAL` should not imply `MFD_ALLOW_SEALING`
+To: =?UTF-8?B?QmFybmFiw6FzIFDFkWN6ZQ==?= <pobrn@protonmail.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, akpm@linux-foundation.org, 
+	dmitry.torokhov@gmail.com, dverkamp@chromium.org, hughd@google.com, 
+	jorgelo@chromium.org, skhan@linuxfoundation.org, keescook@chromium.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Krzysztof,
-
-On Wed, 15 May 2024 at 20:08, Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
+On Mon, May 13, 2024 at 12:15=E2=80=AFPM Barnab=C3=A1s P=C5=91cze <pobrn@pr=
+otonmail.com> wrote:
 >
-> On 15/05/2024 12:54, Sumit Garg wrote:
-> > Add vendor prefix for Schneider Electric (https://www.se.com/).
-> >
-> > Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> > Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
-> > ---
+> `MFD_NOEXEC_SEAL` should remove the executable bits and set
+> `F_SEAL_EXEC` to prevent further modifications to the executable
+> bits as per the comment in the uapi header file:
 >
-> Please do not resend regular patches during merge window. Nothing can
-> happen now, no one will pick it up, so probably you will need another
-> resend later. This just creates really unnecessary traffic on the
-> mailing lists.
+>   not executable and sealed to prevent changing to executable
+>
+> However, currently, it also unsets `F_SEAL_SEAL`, essentially
+> acting as a superset of `MFD_ALLOW_SEALING`. Nothing implies
+> that it should be so, and indeed up until the second version
+> of the of the patchset[0] that introduced `MFD_EXEC` and
+> `MFD_NOEXEC_SEAL`, `F_SEAL_SEAL` was not removed, however it
+> was changed in the third revision of the patchset[1] without
+> a clear explanation.
+>
+> This behaviour is suprising for application developers,
+> there is no documentation that would reveal that `MFD_NOEXEC_SEAL`
+> has the additional effect of `MFD_ALLOW_SEALING`.
+>
+Ya, I agree that there should be documentation, such as a man page. I will
+work on that.
 
-You are right. I suppose the reason for my hurry is not to miss the
-next v6.11 release cycle as the v6.10 release cycle has already passed
-for this patchset to be picked up. It has nearly been 6 weeks since
-the original v5 patch-set [1] was posted and not being picked up even
-after it has gone through extensive review. I am really failing to
-understand the missing pieces or any unaddressed feedback to get this
-accepted.
+> So do not remove `F_SEAL_SEAL` when `MFD_NOEXEC_SEAL` is requested.
+> This is technically an ABI break, but it seems very unlikely that an
+> application would depend on this behaviour (unless by accident).
+>
+> [0]: https://lore.kernel.org/lkml/20220805222126.142525-3-jeffxu@google.c=
+om/
+> [1]: https://lore.kernel.org/lkml/20221202013404.163143-3-jeffxu@google.c=
+om/
+>
+> Fixes: 105ff5339f498a ("mm/memfd: add MFD_NOEXEC_SEAL and MFD_EXEC")
+> Signed-off-by: Barnab=C3=A1s P=C5=91cze <pobrn@protonmail.com>
+> ---
+>
+> Or did I miss the explanation as to why MFD_NOEXEC_SEAL should
+> imply MFD_ALLOW_SEALING? If so, please direct me to it and
+> sorry for the noise.
+>
+Previously I might be thinking  MFD_NOEXEC_SEAL implies
+MFD_ALLOW_SEALING because MFD_NOEXEC_SEAL seals F_SEAL_EXEC, and
+sealing is added only when MFD_ALLOW_SEALING is set.
 
-However, as you have suggested I will resend again after the merge
-window closes.
+I agree your patch handles this better, e.g.
+mfd_create(MFD_NOEXEC_SEAL) will have F_SEAL_SEAL and F_SEAL_EXEC
+mfd_create(MFD_NOEXEC_SEAL|MFD_ALLOW_SEALING) will have F_SEAL_EXEC
 
-[1] https://lore.kernel.org/lkml/20240403043416.3800259-1-sumit.garg@linaro.org/
 
--Sumit
+> ---
+>  mm/memfd.c                                 | 9 ++++-----
+>  tools/testing/selftests/memfd/memfd_test.c | 2 +-
+>  2 files changed, 5 insertions(+), 6 deletions(-)
+>
+> diff --git a/mm/memfd.c b/mm/memfd.c
+> index 7d8d3ab3fa37..8b7f6afee21d 100644
+> --- a/mm/memfd.c
+> +++ b/mm/memfd.c
+> @@ -356,12 +356,11 @@ SYSCALL_DEFINE2(memfd_create,
+>
+>                 inode->i_mode &=3D ~0111;
+>                 file_seals =3D memfd_file_seals_ptr(file);
+> -               if (file_seals) {
+> -                       *file_seals &=3D ~F_SEAL_SEAL;
+> +               if (file_seals)
+>                         *file_seals |=3D F_SEAL_EXEC;
+> -               }
+> -       } else if (flags & MFD_ALLOW_SEALING) {
+> -               /* MFD_EXEC and MFD_ALLOW_SEALING are set */
+> +       }
+> +
+> +       if (flags & MFD_ALLOW_SEALING) {
+>                 file_seals =3D memfd_file_seals_ptr(file);
+>                 if (file_seals)
+>                         *file_seals &=3D ~F_SEAL_SEAL;
+> diff --git a/tools/testing/selftests/memfd/memfd_test.c b/tools/testing/s=
+elftests/memfd/memfd_test.c
+> index 18f585684e20..b6a7ad68c3c1 100644
+> --- a/tools/testing/selftests/memfd/memfd_test.c
+> +++ b/tools/testing/selftests/memfd/memfd_test.c
+> @@ -1151,7 +1151,7 @@ static void test_noexec_seal(void)
+>                             mfd_def_size,
+>                             MFD_CLOEXEC | MFD_NOEXEC_SEAL);
+>         mfd_assert_mode(fd, 0666);
+> -       mfd_assert_has_seals(fd, F_SEAL_EXEC);
+> +       mfd_assert_has_seals(fd, F_SEAL_SEAL | F_SEAL_EXEC);
+>         mfd_fail_chmod(fd, 0777);
+>         close(fd);
+>  }
+> --
+> 2.45.0
+>
+
+Reviewed-by: Jeff Xu <jeffxu@google.com>
+
+Thanks!
+-Jeff
 
