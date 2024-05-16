@@ -1,182 +1,116 @@
-Return-Path: <linux-kernel+bounces-180893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D7718C747C
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:14:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8386B8C7482
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:18:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30A921C23C71
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:14:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B41151C210C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:18:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 850C71448C4;
-	Thu, 16 May 2024 10:14:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B80AA143897;
+	Thu, 16 May 2024 10:18:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="A0nE7z2x"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="El5SV9AX"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD04A14388D
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 10:13:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48924143754;
+	Thu, 16 May 2024 10:18:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715854441; cv=none; b=iYSlV1FqJ7dkrTGi+etb0tUj3jPzBSfXjuGxWBV0Nzwz2SeYDUfG9zPWKJ0M5wbzy5YN7NPGJOplfSAEgGt7Ji8VLEMBjP3HSow21ZmXmAJjM/Y/Wbby1QJ5BjQLxmJJk2mNsjdv+zbI/20OTcvz85SyDu/AbaX8iz2/LWuYeTI=
+	t=1715854692; cv=none; b=n7KeogpEouQaWQfN59dv/5dBuCLMOiT0y9yEIUOW3wec8ZoWRYEvg0glIfQmokIuq1Mi5fXgo8+PNn54/WiUfFOL9Cc9IpljbjRoeJo9T7sUZq8Bb+Ek8Tj5s/9vs1xorkeqHU58r1o466N1K/nwlwvSZuCWrKv2AxV8Gfr5l9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715854441; c=relaxed/simple;
-	bh=dpSnTE5cKNRfORfDcOScjr13JdXXzuQc/kzXUbq+S/4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ernDsxzKdvn/J/mdvKl0C+mzUVyCAmzRsLcaS5hkchKv8Zti+K1xF3jJbdZ6/T/esaUIjqWwwbg/QImDGf0Bd209NWKJ/+kmc+eYlUsUm8ROITiLsQEk8dP+XY+MnZCpJDeKl+N/wc49Zlsy1alSo67/GrXL1Qemx7xjo/KBlCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=A0nE7z2x; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715854438;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jFCv0XQtSQzy9qRNLd/SfLPXz3EOPSnTspnCEFQxF4U=;
-	b=A0nE7z2xAxXM1D1G1DWqxH9XbL8yr2Q/wapeKuOnm2L9OcVGpbxlRPQhOvl1hAiQWn7Y0A
-	7ojLDuhic3/dPyBU0KFW62AH4lE+8MBgH3akZv9JHxbOM/L6EiTNAQg8F/GeGVZq3W/6mf
-	bgry/v9pna8mCknECdV2jVCeojk2QdY=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-558-otpJkHmdNNiCxMHFpst9vA-1; Thu, 16 May 2024 06:13:57 -0400
-X-MC-Unique: otpJkHmdNNiCxMHFpst9vA-1
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a5a05c4e0efso493040266b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 03:13:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715854436; x=1716459236;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jFCv0XQtSQzy9qRNLd/SfLPXz3EOPSnTspnCEFQxF4U=;
-        b=fuVdithr/pe/6SDe9Usf3zRtvqEMtUjYhcM4JH0OS32zu3tg0h7KNMmq/l2PvUBkQc
-         hJnugZobOsAsrMOrqP566iqhybHsPmp/1lxjjnM7f+skPmDvhLWulVXgc9ilpdQnOozh
-         QOBXCQYDEvhn8++rzrKHZZGGln9T/mZP7zxS71XywgD9Jd0tfvQtFBPKIGUfNU0Pf6NO
-         uTm9Tdwr/bQ9z+QZj+HGDsgmwGn4ReIn5NX884Sk7udroRd+v7nnooZVGcpzi+Z/ZvOk
-         W4gf/cebH5dBGo0SLWgBedPErYe4JVQNMhS9mB3j0E567epKkGNXsOAS97h2SPHbmY4t
-         Y+Xg==
-X-Forwarded-Encrypted: i=1; AJvYcCVE7vlRrT5/OBldG8IC8ViNhm+4yaq4aE3vmxXrHFjllYOp+qL1HzA+Kt7ii+r1alkc57ODjZjNM9DtWsyJm7GwkO3nleIxIC0j9xVt
-X-Gm-Message-State: AOJu0YxoJ2l5/VmBbjS+HZCbIu6Dnt2B4IBY29ssEtfbDgGt/jwapDY2
-	SzLT5RD55KOecIMqsKwVhur8ZU1rhjdvY9CefXl28YPpCSVxvckcKNn8KuAXNDymvo3uTIKgntk
-	RzWfugfL2jVPkmBlnQQbLa9op5wQPN9RWZog1Br1IlF/rpgEjwlxtPidoFO+bSA==
-X-Received: by 2002:a17:907:986:b0:a5a:5c5:a9f7 with SMTP id a640c23a62f3a-a5a2d55a4bemr1502141366b.8.1715854436161;
-        Thu, 16 May 2024 03:13:56 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEjOimyeZISz2+Cx+C1ULkQurXDxrZa7vlq7k7hVr+yQ2h5kGz1o7CEEhnQyMJ8GvoRkDaKHQ==
-X-Received: by 2002:a17:907:986:b0:a5a:5c5:a9f7 with SMTP id a640c23a62f3a-a5a2d55a4bemr1502139666b.8.1715854435744;
-        Thu, 16 May 2024 03:13:55 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b17d10sm961336966b.198.2024.05.16.03.13.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 May 2024 03:13:55 -0700 (PDT)
-Message-ID: <2e5c9108-9ca4-4d7c-a062-2a9a5baaf06e@redhat.com>
-Date: Thu, 16 May 2024 12:13:54 +0200
+	s=arc-20240116; t=1715854692; c=relaxed/simple;
+	bh=oM99wvMghWzRLZiCkmAW+JkH+y2MSn2kxDiVKwQUaAk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U87Mqw0Hmq2g1IJEwbfQtoASJbnFy/7n3o7bk/Co0L/yN6qMMRVBATF10hKDwJQDRaRN4CA3wSbG15zwPMgS2C40kcU9Bum+OanEIKW6iR55pRvgmW0FEDLte4ZJJWCsagpa53Aij+TRz7xe6mUnrgvhwd/j5sYl+UKpYSeTqms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=El5SV9AX; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715854690; x=1747390690;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=oM99wvMghWzRLZiCkmAW+JkH+y2MSn2kxDiVKwQUaAk=;
+  b=El5SV9AXm2bQhTK0pIg0D1k7JNp120y5OR97qWp8om1uP25nov2dFlSV
+   6qed0njNeFHTK34LUhMzHpxKzPGWu58swrQCAQOqgg/fkZb5upvSkad2l
+   tlARvPbbWf5QTpQ+42JPDyRItNt1rT9VPldkBYCsnx7W1ROQUogZDoTCg
+   c8Q8EhlKg+yjcrMak+nrInL/usxRktC3+I5/kj8og8fq3IeGJNhTqlc2j
+   0bPS53hGGD6nlNORTt+ROYKO31rJ6pfplJntZk1usiLudVOabDb4yTrIv
+   mCOO8zOcvOj/ckKSQEgBHI5s5X2f205FDsxO5dFBaXuwAhnujrBAT+Qf5
+   g==;
+X-CSE-ConnectionGUID: ub3PLRTQQcG4zFId+icWJw==
+X-CSE-MsgGUID: zfMXCRMgRdql7KQqF09ZvA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="11555063"
+X-IronPort-AV: E=Sophos;i="6.08,164,1712646000"; 
+   d="scan'208";a="11555063"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 03:18:08 -0700
+X-CSE-ConnectionGUID: g6LZCYGxTf6yynXW1143Pw==
+X-CSE-MsgGUID: XO4C68ctQzK6M+0msbGgFQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,164,1712646000"; 
+   d="scan'208";a="31796158"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 03:18:07 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1s7YBY-000000080RE-3xMw;
+	Thu, 16 May 2024 13:18:04 +0300
+Date: Thu, 16 May 2024 13:18:04 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: =?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado <nfraprado@collabora.com>
+Cc: Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/1] spi: Remove unneded check for orig_nents
+Message-ID: <ZkXdXO4Xb83270V7@smile.fi.intel.com>
+References: <20240507201028.564630-1-andriy.shevchenko@linux.intel.com>
+ <d8930bce-6db6-45f4-8f09-8a00fa48e607@notapiano>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] ACPI: EC: Install EC address space handler at the
- namespace root
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
- Linux ACPI <linux-acpi@vger.kernel.org>, LKML
- <linux-kernel@vger.kernel.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Mario Limonciello <mario.limonciello@amd.com>, Armin Wolf <w_armin@gmx.de>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>
-References: <12437901.O9o76ZdvQC@kreacher>
- <5161bd95-d51e-49cc-bcbd-523fbb747e4b@redhat.com>
- <CAJZ5v0gf-oLcjT8dxnpjAyVfpUep5ST2mHDJy2dySBGCJwjMxg@mail.gmail.com>
- <b53b4fe4-e3b7-4939-a8ea-9eb55f0bece6@redhat.com>
- <CAJZ5v0i+ejMyj0j7RvVY7+g6eU8bQ9QLG=08fm78i9Ui1fEiVA@mail.gmail.com>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <CAJZ5v0i+ejMyj0j7RvVY7+g6eU8bQ9QLG=08fm78i9Ui1fEiVA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <d8930bce-6db6-45f4-8f09-8a00fa48e607@notapiano>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hi,
-
-On 5/16/24 12:09 PM, Rafael J. Wysocki wrote:
-> Hi,
+On Wed, May 15, 2024 at 05:09:33PM -0400, N�colas F. R. A. Prado wrote:
+> On Tue, May 07, 2024 at 11:10:27PM +0300, Andy Shevchenko wrote:
+> > Both dma_unmap_sgtable() and sg_free_table() in spi_unmap_buf_attrs()
+> > have checks for orig_nents against 0. No need to duplicate this.
+> > All the same applies to other DMA mapping API calls.
+> > 
+> > Also note, there is no other user in the kernel that does this kind of
+> > checks.
+> > 
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 > 
-> On Thu, May 16, 2024 at 11:50 AM Hans de Goede <hdegoede@redhat.com> wrote:
->>
->> Hi,
->>
->> On 5/16/24 10:37 AM, Rafael J. Wysocki wrote:
->>> On Thu, May 16, 2024 at 10:35 AM Hans de Goede <hdegoede@redhat.com> wrote:
->>>>
->>>> Hi,
->>>>
->>>> On 5/15/24 9:39 PM, Rafael J. Wysocki wrote:
->>>>> Hi Everyone,
->>>>>
->>>>> This is an update of
->>>>>
->>>>> https://lore.kernel.org/linux-acpi/5787281.DvuYhMxLoT@kreacher/
->>>>>
->>>>> which was a follow up for the discussion in:
->>>>>
->>>>> https://lore.kernel.org/linux-acpi/CAJZ5v0hiXdv08PRcop7oSYqgr_g5rwzRTj7HgdNCCGjXeV44zA@mail.gmail.com/T/#t
->>>>>
->>>>> Patch [1/2] has been updated to avoid possible issues related to
->>>>> systems with defective platform firmware and patch [2/2] is a resend
->>>>> with a couple of tags added.
->>>>
->>>> Thanks, the series looks good to me:
->>>>
->>>> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
->>>>
->>>> for the series.
->>>>
->>>> I assume you are going to send this in as a fix for 6.10 ?
->>>
->>> Yes, I am.
->>>
->>>> In that case feel free to merge both patches through the
->>>> linux-pm tree.
->>>
->>> Thank you!
->>
->> Hmm, I just realized that this:
->>
->> https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/commit/?h=for-next&id=c663b26972eae7d2a614f584c92a266fe9a2d44c
->>
->> Is part of the main pdx86 pull-request for 6.10 which I'm going to
->> send to Linus in the next 10 minutes or so. So that is going to
->> conflict with your 2/2.
->>
->> Options:
->>
->> a) You only send 1/2 upstream as a fix and I'll then send a rebased
->> 2/2 upstream as part of the first pdx86 pull-request.
->>
->> b) You merge the git://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git
->> platform-drivers-x86-v6.10-1 tag (which is the tag for the pull-request
->> I'm about to send to Linus) and rebase on top of that before sending
->> a pull-request for both to Linus.
+> this commit caused a regression which I reported here:
 > 
-> I would rather wait for Linus to merge your PR and merge my changes on
-> top of his merge.
+> https://lore.kernel.org/all/d3679496-2e4e-4a7c-97ed-f193bd53af1d@notapiano
+> 
+> along with some thoughts on the cause and a possible solution, though I'm not
+> familiar with this code base at all and would really appreciate any feedback you
+> may have.
 
-That is fine too. I just send out the pull-request so hopefully Linus will
-merge it soon(ish).
+Thanks for the report and preliminary analysis!
+I'll look at it hopefully sooner than later.
 
-Note (stating the obvious) when rebasing 2/2 you will pretty much need to
-remove all the new code added by:
+But at least what I think now is that my change revealed a problem somewhere
+else, because that's how DMA mapping / streaming APIs designed, it's extremely
+rare to check orig_nents field.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/commit/?id=c663b26972eae7d2a614f584c92a266fe9a2d44c
-
-Regards,
-
-Hans
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
 
