@@ -1,336 +1,194 @@
-Return-Path: <linux-kernel+bounces-181341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D617F8C7AB6
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:53:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C6548C7ABC
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:54:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F20D1F218A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:53:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC383284576
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:54:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99715846D;
-	Thu, 16 May 2024 16:53:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E81314D43A;
+	Thu, 16 May 2024 16:54:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="3tm54BWb"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Vur/NDOu"
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2083.outbound.protection.outlook.com [40.107.212.83])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B607B79C0
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 16:53:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715878423; cv=none; b=tgBTpZyVQ7M8MxEV60hdXpHpraPhrhjPacTzfXhv4d6M8J36ASgK6KAl/5ziBtWsDClcXvhalqj+dWqFlV1LRrSb7cWggxyTctJW3SGNE/KN8+N0Oxd/tp88Dtlm6E1769h87PNGjaXo7/leMWmzofa1UpVCv3d4udaREqR4DB8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715878423; c=relaxed/simple;
-	bh=Rfukpev61+HUMGELE+Yl7kWQy/3drovke0iAQklwEEs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eJFCyOtNcaE/TvXB9/isuug/HuMjlWzWLe46vHkKn7CDKgJJJEpvAJDdb/dp5w7c7FEe8ewPdy5lOVHQD1Wa8QP3+GWDhf8F+fnWouqhRuIsdJcDtxBVhQoBK8v7GYPpeSDO3FN1xHQsgRXu1DN8fWutYAJL1Cmk3hXUMx4XzIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3tm54BWb; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-572f6c56cdaso685a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 09:53:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715878420; x=1716483220; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pAtUZuQuQXgYjpu4YwyXcnTpXb8aUu6f5oRyQ9gZtmU=;
-        b=3tm54BWbr21TJMlgDChb/GyzrptEbx+2ocxtAvNBfNq1gbq8W1eENZNb+PcXnL9uRX
-         mnY1UGJXTAtma8025IW3ONB+yiiuNjAZy9cJS2NJr1TSu4MG7+cTr+2QKixzBTiH5iQX
-         g83dmLEhRl7I8LsZ7nz3k37WuEvXAkIIgxIC6M/+Fp6iY/l2iLPx+NX3ArksAV2OFaAp
-         1qIuZZxmWxnBIuTaKEGgsl/j2cO+aHAoVURL5xxXTPJu5py1DfMSZO1f3+go2afG/g20
-         JUgjGZCQFba/owghuMjX7yfOYHBaAGrQpfEGH5niUAJtLObDvLChr19H9qmvEb2jK9vU
-         afhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715878420; x=1716483220;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pAtUZuQuQXgYjpu4YwyXcnTpXb8aUu6f5oRyQ9gZtmU=;
-        b=vpBsSO+8hjK6TUmjdPYKM+KubVH/a4s0E1mYA8NkzqBRQM3mHLc3zcoGD/XCZpSitH
-         Me+vXouTjGz6kRuRmUOBW2LzcMMPzce7uKZsb57amWwpvl0QZ6RAP4axgnup831Lh0Bx
-         CX7wy8TaRH19Zi7pmEodd8wpSSkvThtw0sboxXYu4u6YnU6J2UqKa0HS2F/SwfzFskps
-         yBCxbQ9IDRb3732U55H53bt+4cBfOwbbB6LAhlrgkbin819ab5gQp6vaSbLTNvzR9C2B
-         Y1PksI+h532EnfmX/K2mYPeosKc/u5sdAbVhCxFF0SbwpKDaXbUxhf2I7trA1EAsFjqY
-         DpJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVkVaM37oxKrt1Y0DTsvs29HOuYWX7m3T9H6XPZGIYG+cdKdx9uRoARbeAXDTUCmjsXKkDApSJFyx7FdTvR1SSYPkWpboSDmawDvjvn
-X-Gm-Message-State: AOJu0YyYnVGAE0csOMu26IoBcZ60TrdfitpwJj15s9Gg/fkdb6W8fTOX
-	4wL1dyWMB7qomkhlQZh7EXDHRBvT4mwx2IyJwtAxyjm6ArQhrBRIR3arI1XL8NxX+EhHttZAp+N
-	ST57D4M59Boi2WdSHNyCiFfX7Zm44U7CJePxV
-X-Google-Smtp-Source: AGHT+IFIAvF85e35+Fm7m3Nysi8LcbeJfOl5NCE999v6MsinV+qpkVH0+qT4nGj5N3ynxrf1ZtMbmvPdiKG/ZITLHcQ=
-X-Received: by 2002:a50:cb8c:0:b0:573:438c:778d with SMTP id
- 4fb4d7f45d1cf-574ae3c1280mr1017459a12.1.1715878419750; Thu, 16 May 2024
- 09:53:39 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA8CAC121;
+	Thu, 16 May 2024 16:54:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.83
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715878449; cv=fail; b=c8DRBMYaeQtEWDJXO9Yz3b+d0R5Lub5Jd7AExsaOM+jcQzvWpqGjweo2MioUi6rkn04WMKXK/k0a95REbmCKNP8fxUReptWqj0R+lsIWyQjLZUumd1ct4uDAU0epjLVb6AGeckVpBlwxBgdXET0IkiP5fMMMws1XNhixtwJrum8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715878449; c=relaxed/simple;
+	bh=MtxHNtq4Opo33H5hav8fZQ0rWqSSvZTHsmLJV8+RCsM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=VmiV6pp6w3jP1f/g7JGtYZ/FG35JkTSoOg5FPX45mOtSuf0v/GwFq0mDLArq56K11YB6IKJiMWr14Sk9Cd03wg//K318bOJNMTE/jHptzQegC4jpKDiiYh1fXWoPScjmxxk6F92lohJtnuwtesutBdpKxaCl6kgwQcZjjfj7Kao=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Vur/NDOu; arc=fail smtp.client-ip=40.107.212.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=eu0gzkImHMxNmRnB/2Z8Zt/RocyCmGU8Ydx1rKZjIhuqwtuAQ+qJsARgHJ/gQOwWOH9ouAjrp9UXh31jQuAhS/FaBjxoxa5P0I5SdorhXrKsN0K/CwEpKGiB/CU8yA6N9hn02OVL0q1ffCm3wa1KteUNQDWciVmDNmDtfhwRUa1rhg7+nnC7uPNIf1tXUOq3PYGQ/UISX+RD9J0mBA7J4weWV3Tl6X2w64rRQuF+rAfaaXajX1RvAuCCT4UaEYPvAb24cC72HWs4C9PDlUQCtLUWUuy1VZW7LmxcorvkP2wKycp8QZhqioEt1JKh5B9Yvfwwe0xw5YlvsUPuUo6L8w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cWP1hUdTl63hbHwhGl43ZOMhqdVOPf0YelDYt26GmVc=;
+ b=Vr3gjvh+Y9L5rgmjnkqvIl8WX77EVX/p29ffdEwrG5RbkFjH4U0cau7BAL105Vhi/WVAkx36m916OIRNT0jrZJLjJM3AGEfOBAaA2C278B3AKRBadPtJnHf0mu67OVj4soo8vIR4oqn5caCtiQSdjXNxSsJzrjiIBQbG+mdsFz8G3VDd4nWtzcFaqqNyrpHGSFOly8CrP9fRv9ya1kaPnAhIJJs2H7Sv0UTzdGgejsI74OVMvB19DXCV+M5Yif9tw8f06WW6BD1ChwHlCi7iQfQ78/7qq6IDs/p3SAw2HvTDSaZPvwbCnORACCaVap5IrWN+EvmNCPL4NAhT7+n2pA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cWP1hUdTl63hbHwhGl43ZOMhqdVOPf0YelDYt26GmVc=;
+ b=Vur/NDOum9IvO9vDIAZlxa+CkBqCjAy94ZUlduwaVc+YcskHnKMIIhz6RgGX0JfFT6cLAt9uwJzwFMfMhFQUkQFq/9oJ4Ybq54hPYo80Uzow7//xP/1nwCIU1cs8ZjRZKKUyBNkPttpOMiuZsDzesOq3AnxFYMs7gZO/1uKkipc=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH0PR12MB7982.namprd12.prod.outlook.com (2603:10b6:510:28d::5)
+ by DS7PR12MB5718.namprd12.prod.outlook.com (2603:10b6:8:71::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.28; Thu, 16 May
+ 2024 16:54:04 +0000
+Received: from PH0PR12MB7982.namprd12.prod.outlook.com
+ ([fe80::bfd5:ffcf:f153:636a]) by PH0PR12MB7982.namprd12.prod.outlook.com
+ ([fe80::bfd5:ffcf:f153:636a%5]) with mapi id 15.20.7587.028; Thu, 16 May 2024
+ 16:54:04 +0000
+Message-ID: <79ca2c3d-c8d5-4e69-bf2d-51f3270449a1@amd.com>
+Date: Thu, 16 May 2024 09:54:01 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] net: mana: Fix the extra HZ in mana_hwc_send_request
+To: Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>,
+ kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+ decui@microsoft.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, longli@microsoft.com,
+ yury.norov@gmail.com, leon@kernel.org, cai.huoqing@linux.dev,
+ ssengar@linux.microsoft.com, vkuznets@redhat.com, tglx@linutronix.de,
+ linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org
+Cc: schakrabarti@microsoft.com, stable@vger.kernel.org
+References: <1715875538-21499-1-git-send-email-schakrabarti@linux.microsoft.com>
+Content-Language: en-US
+From: Brett Creeley <bcreeley@amd.com>
+In-Reply-To: <1715875538-21499-1-git-send-email-schakrabarti@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SJ0P220CA0030.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:a03:41b::6) To PH0PR12MB7982.namprd12.prod.outlook.com
+ (2603:10b6:510:28d::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20c9c21619aa44363c2c7503db1581cb816a1c0f.camel@redhat.com>
- <CALMp9eSy2r+iUzqHV+V2mbPaPWfn=Y=a1aM+9C65PGtE0=nGqA@mail.gmail.com>
- <481be19e33915804c855a55181c310dd8071b546.camel@redhat.com>
- <CALMp9eQcRF_oS2rc_xF1H3=pfHB7ggts44obZgvh-K03UYJLSQ@mail.gmail.com> <7cb1aec718178ee9effe1017dad2ef7ab8b2a714.camel@redhat.com>
-In-Reply-To: <7cb1aec718178ee9effe1017dad2ef7ab8b2a714.camel@redhat.com>
-From: Jim Mattson <jmattson@google.com>
-Date: Thu, 16 May 2024 09:53:24 -0700
-Message-ID: <CALMp9eSPXP-9u7Fd+QMmeKzO6+fbTfn3iAHUn83Og+F=SvcQ4A@mail.gmail.com>
-Subject: Re: RFC: NTP adjustments interfere with KVM emulation of TSC deadline timers
-To: Maxim Levitsky <mlevitsk@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, Marc Zyngier <maz@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Vitaly Kuznetsov <vkuznets@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR12MB7982:EE_|DS7PR12MB5718:EE_
+X-MS-Office365-Filtering-Correlation-Id: e8352824-3547-4bc0-94e8-08dc75c8caf5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|366007|376005|7416005|1800799015|921011;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?RnRVYUp2NmhaUy9Mb3JxejRBanJ6MFJDb2FIMlZZeS9YWkJCTGRYMTdWYlFB?=
+ =?utf-8?B?b05lSHlad3ErWjVybXRhdkdkcnBSUTJ1VU1MTE1JajR1SW5UaitlOGp0dkhH?=
+ =?utf-8?B?ay9OUnc2QmN5emdTVnRMZUliZ1ZTSmZCVE1oR2NhZXZWZFRybUw3dXN4cktU?=
+ =?utf-8?B?NWc3RTVnMklqcCthb1p1dFEwNCtBMVpRSnBBRngvTmpUSEVHMXdjcnFrUlM4?=
+ =?utf-8?B?TmlMWjAyRmZDRFZvekhnWnlQR3ZIYzNwS3AwWEd4b1VOUjFoUGVIYTVSbkhi?=
+ =?utf-8?B?SEsydFJTSTRwYzM0Qmo1S0IvVityYlBVWFREbllNNS92OWxFZ2ExNS9Ub014?=
+ =?utf-8?B?RHB0MGpxTjdKNHQ5ZWNodHRZM0JUVjY3dllhbWJadkM5UWFRd2NzZDdOV29H?=
+ =?utf-8?B?Q3JSMitWQ1VZQjBCWlp6bkhvMS9uQjNNb24ycE90YmdCdE1KNU9NQmZXaHlZ?=
+ =?utf-8?B?RWVFWExhSi9veCtOMVBvVTJvL1JCMVJXRWJDaVkxM0Z2dDZncE1xK2tEQWI3?=
+ =?utf-8?B?cU9aRnJkTlhDdVB0Tm5oZ3JsYVc5S1paMXhmRk5LMUpQcU9BWTh3Tm1jcyth?=
+ =?utf-8?B?amVMQURFYTQwUXd6eU50bGo1djVUMy90K3ZHOVkvclV5aTljaTBSdnN0SHYy?=
+ =?utf-8?B?d3N4L21tVDlLbnVtUmJQb1FJd296RVJNckFjL0taMUNvWGtENFdsamZEU0hB?=
+ =?utf-8?B?OFlRKzd2Ry9NdUd0Zy96RGpISmdMQlNGa0RscVVUMHg5bFNybTlad1grNlhI?=
+ =?utf-8?B?NTk0eE5vQ1NTUnFNUGtzZFNsbGhQZHEwOFNlUWREYTJFVEtackt6N2UvMDMw?=
+ =?utf-8?B?K2tKZDNadFg3eUZ5VVQyRG8yMGZtU2I0Z1hBQndwVWkwUGFuS0hhWnZYNFor?=
+ =?utf-8?B?V1dZbVFJdlNsLzBzQjdHYUYvdnM4QjQ5UzlWcEh5VmtyRmpabnBJS2E1MW5F?=
+ =?utf-8?B?MWRXQmY4K2lxY3pUZlZlQkRNelN3Nyt0QXRNT2FEOHBCRTQxK0JSRUtFb1hE?=
+ =?utf-8?B?Vy96dGVnLzRyT2ZkYXZlVHBYRThvQVBjLzcvVkdmUEJoc2V2TEo5L1ZpV2Fa?=
+ =?utf-8?B?cmJsYk1LZUVCei9ZU0h2WkJSTnYrWHh1RE5NcjgzaHdGR2NVMVY2WlpTMzQ3?=
+ =?utf-8?B?S0lwUW96OXc2WVc3MTB2eFJFWXNHeUpWYnJaT0QyVzNRTGxlY1M2anpYQ21N?=
+ =?utf-8?B?aXQyYjd6bnZnaUNISlRXOVRBL2M1TjZJZy85eWY3STc1bXRzYzJrQTFJTERE?=
+ =?utf-8?B?Uzd4aXJIakJTdm5qMkZFMnN3UFVyTDg5bkVYVUxFSTN0U3d0MnhGanVSN2JT?=
+ =?utf-8?B?WVc2MS9KM0VhenFEb25mOTltaktFNnFhVVlBeEt1dWgyVEVBSVZLK3BjUzdF?=
+ =?utf-8?B?SkppQjlNZEVESThMRHY4bUNZTFBDQk5ialh3cWhqVU9CMUlnWmRBY29RZVY1?=
+ =?utf-8?B?WHJiemtKZ2wyMDByUE0rYUwwTFFpRW84aXZqSm11MURVamU4Nk5XdFFyVEJG?=
+ =?utf-8?B?SlBMU0liOHRBQ0p0Yjc2US9Vb2VscHZQK1VRYVJ5ZUd2VUZSNk1vRmlLRC9Y?=
+ =?utf-8?B?dW5jdkZlU3hOY1FXelhKWS9mcUpoNHB0dUp2N0E2cFp2eVZIZWdnTGgybVJ6?=
+ =?utf-8?B?OVdJY2doT0J3TG15Q0txY0N5U2VpUzhCaUJZSUpHK2c5ZitrN05FOVlSS2gw?=
+ =?utf-8?B?RVhHaXAxazlsSmFudmdxMTdkN0QwUXplTDZHVUxUekF5VHgwcFkvR2JUYS95?=
+ =?utf-8?Q?PTLteXUWQdEMbEAy0KMGTIT0DMNcd7UEDMYu91a?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR12MB7982.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(7416005)(1800799015)(921011);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?blRweW0vU1dodUlvUVdKeElqY3NtM1VzUFNKcTR3Zm4xWHVFTjRFdHc0cm44?=
+ =?utf-8?B?WUhlay9GTnovcTZZZjZSaVdjc0lpc2ZYUENYcXFFZERRVjRkZ0Y3WXRwWFl4?=
+ =?utf-8?B?bHJjUnNrZE01cGNSdUdzZ1FGSnEwN0ZzNXFpNFB4Qnptd2xlMFR2RWVlbnVX?=
+ =?utf-8?B?YU1qbi95U0dEc2ZXWDI1Wi9YTWxZcVJqVEJvN1VjMzRwSldVRTZTdUU4Z0JX?=
+ =?utf-8?B?UEZodWpmSUxiM2I4dTF6Q25iQ1BCTmU2NzJQWDNja09DM2RDTGxabmZHdmky?=
+ =?utf-8?B?M1ZOMVVoTWszUTMrT1RVd3NsYlpFaU91dkx1ZWRtaVlUa0FRWXY2V0hjK3RM?=
+ =?utf-8?B?dlNFa1B1ZXk4cmR0RTRDR2pSNWk2ckh4VFZYYllNSlozTUhZcEdaaVM3YkRI?=
+ =?utf-8?B?Q3Y1c0k1Zmh6UGRQNE9XVzI3VkszMExiNUp1UEFoN3JkODQ1a3dJTFNJMXdF?=
+ =?utf-8?B?c0lNTTF3VGxkQUZLbXlLOGdYcUY4ZlQwQUhMVWFCR3k3M3lPaVhjY0pSZEpk?=
+ =?utf-8?B?ZldmU1hNa1ZqWEJES1liL21RbkNuNXd3NFNETGFOUlZMamFHS0ViZjloNVBP?=
+ =?utf-8?B?Z2lKbXk1K2tYd0JKdC9zZlkxR3BabXhWUFV1VUxEbTY5SjNJS1JWL253ZjdQ?=
+ =?utf-8?B?U0EwTUVMOHFzU2hQQ2VTTWlRUWFhdmNkZE43cXVFOVpwK3EramtybWZqUHpn?=
+ =?utf-8?B?bFhsaEZ6NWZMbFlRRmQvOUdGSy9SbE4rRkQ5bFN2VzdNNFBsUUtEUzhGVFFn?=
+ =?utf-8?B?MXpYS05YaWsvRDdlQk40S2YxRzk1dTAzTGhJM3o0Nm0yeU5QeXE5Uk5jd1VP?=
+ =?utf-8?B?bWRwUGxoS2VvVnloYnlPUE9GRXU0a2kxaDc0TXdSdkY1eWJjWWpuOUNaNUZh?=
+ =?utf-8?B?UTFZUkhLZ0toalJXKzlyMERaMk1wSElwUXVuSjc3eU0xcmgvcUFEbTZxWFQr?=
+ =?utf-8?B?N294ZUMyUGoyTHVTdFJoRmg2ZVNpUTRpVzZ6WlVRNnJHbHB0MlpLUDZLeit6?=
+ =?utf-8?B?aGVZRThKc2xraUdXUmVOckY3WE9pTlBTNEFZZ3hXbEd3QW5ZVUZSbU1rTVpk?=
+ =?utf-8?B?Zzl2QnE2aGM1ZTd6WFhVdHN0MGRRK1c0cWxhR20rRE1GK1R2OWcxcFY0azQ4?=
+ =?utf-8?B?SG1nZi9uYzB1NWk5eXRvMEtuU0tmSHo3M0lkZWQ2T2J2VVRVN1RyaDlkdE5F?=
+ =?utf-8?B?cWR6RFhqUEU2K2NFU2hHdVRQaXEwNXhhSnc1M1l2cytwMU9jMlA3T0ZhUXda?=
+ =?utf-8?B?MWdEb2dVbEJHTStxQ2p4UWFMUWFabllDOFRUYk1GTEY1MEJhZEdYK3k0NmF4?=
+ =?utf-8?B?OS80ZDdhL2V4eWllZTRjRHg4YXh4dVREeEZtV2RaODNnOWVDM09JSEhXV0xH?=
+ =?utf-8?B?S0d2Snd3QnB5VWxkYzB1WWxqczdzS2t2U3FDdHA4bHBxVVZQeS9KYk1KOWN5?=
+ =?utf-8?B?ekxyZnU1OU5jRmdoU1kza3ZUc1M0aUFXMHdPMG12dXFTNXpNWUVqazZlYWF5?=
+ =?utf-8?B?TWdUaXRUSmwwbjRaMzlFaGtmS3RIcVpDdlkzRFg4TTFIcU51VmtPejBneUIx?=
+ =?utf-8?B?cHVjWGhScEV1a0hCMDRyb2ZPdTQ2dGFPMEFsTmNmWGxOekR5YWVyZXdWdmwv?=
+ =?utf-8?B?dm11blhmWHQvejNubE9LOUxWakNTQ2V0d2d5ZTZvTkUxdTV0cnpVcWJkY0NV?=
+ =?utf-8?B?SkhuWWhEVS85WS93Vk10NnQvTEZXcXhSV2IwMkd2Y1ZsOWhTL1BUelU1SExB?=
+ =?utf-8?B?QkdNMUFVNTBPdFR5dVpidkVzaWxZTnYzU3RQdmxUeUlnMjhrREVlNGVQdzBF?=
+ =?utf-8?B?OFpNODhYOWFES0dmbkRaZ0FaWFYzMmJSbm05ekNqdTR6NXBPSUhZL25EUWZB?=
+ =?utf-8?B?TFI0MyswNzNZcFl4OUdKVUxpbFlWZGRTaDlZNWt0UmswMTR5eFQ1bGxzK2tv?=
+ =?utf-8?B?ZTJkeFVEM1gwV240WU5KcTV3N1ZGVnVLR3kzNS9CWGZYd1paL29xYTQ0RlpW?=
+ =?utf-8?B?NWdJOWNURU1ibFliSVo2cnNub3JnWlpsN0pVUjEzZ3lzczVZVzFLUmY3dCty?=
+ =?utf-8?B?MVlIMEpIdjRMQ2xpK0hEdnVNYjVvd3E3cUNZRGc2c29JeC9BN1FRT2w1TWtw?=
+ =?utf-8?Q?RHcSCIONhWwQXU4vOyQcoeTUt?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e8352824-3547-4bc0-94e8-08dc75c8caf5
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR12MB7982.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 May 2024 16:54:03.9862
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: xVJGIOUhBfB8289dyDw0L1wvi9wghEAUeRYT5g8uuBbe7Rc4HKqpd/Z/VF3rr9T/C0KmFFi0GF9uo3qsT96B/g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5718
 
-On Wed, May 15, 2024 at 2:03=E2=80=AFPM Maxim Levitsky <mlevitsk@redhat.com=
-> wrote:
->
-> On Tue, 2024-01-02 at 15:49 -0800, Jim Mattson wrote:
-> > On Tue, Jan 2, 2024 at 2:21=E2=80=AFPM Maxim Levitsky <mlevitsk@redhat.=
-com> wrote:
-> > > On Thu, 2023-12-21 at 11:09 -0800, Jim Mattson wrote:
-> > > > On Thu, Dec 21, 2023 at 8:52=E2=80=AFAM Maxim Levitsky <mlevitsk@re=
-dhat.com> wrote:
-> > > > > Hi!
-> > > > >
-> > > > > Recently I was tasked with triage of the failures of 'vmx_preempt=
-ion_timer'
-> > > > > that happen in our kernel CI pipeline.
-> > > > >
-> > > > >
-> > > > > The test usually fails because L2 observes TSC after the
-> > > > > preemption timer deadline, before the VM exit happens.
-> > > > >
-> > > > > This happens because KVM emulates nested preemption timer with HR=
- timers,
-> > > > > so it converts the preemption timer value to nanoseconds, taking =
-in account
-> > > > > tsc scaling and host tsc frequency, and sets HR timer.
-> > > > >
-> > > > > HR timer however as I found out the hard way is bound to CLOCK_MO=
-NOTONIC,
-> > > > > and thus its rate can be adjusted by NTP, which means that it can=
- run slower or
-> > > > > faster than KVM expects, which can result in the interrupt arrivi=
-ng earlier,
-> > > > > or late, which is what is happening.
-> > > > >
-> > > > > This is how you can reproduce it on an Intel machine:
-> > > > >
-> > > > >
-> > > > > 1. stop the NTP daemon:
-> > > > >       sudo systemctl stop chronyd.service
-> > > > > 2. introduce a small error in the system time:
-> > > > >       sudo date -s "$(date)"
-> > > > >
-> > > > > 3. start NTP daemon:
-> > > > >       sudo chronyd -d -n  (for debug) or start the systemd servic=
-e again
-> > > > >
-> > > > > 4. run the vmx_preemption_timer test a few times until it fails:
-> > > > >
-> > > > >
-> > > > > I did some research and it looks like I am not the first to encou=
-nter this:
-> > > > >
-> > > > > From the ARM side there was an attempt to support CLOCK_MONOTONIC=
-_RAW with
-> > > > > timer subsystem which was even merged but then reverted due to is=
-sues:
-> > > > >
-> > > > > https://lore.kernel.org/all/1452879670-16133-3-git-send-email-mar=
-c.zyngier@arm.com/T/#u
-> > > > >
-> > > > > It looks like this issue was later worked around in the ARM code:
-> > > > >
-> > > > >
-> > > > > commit 1c5631c73fc2261a5df64a72c155cb53dcdc0c45
-> > > > > Author: Marc Zyngier <maz@kernel.org>
-> > > > > Date:   Wed Apr 6 09:37:22 2016 +0100
-> > > > >
-> > > > >     KVM: arm/arm64: Handle forward time correction gracefully
-> > > > >
-> > > > >     On a host that runs NTP, corrections can have a direct impact=
- on
-> > > > >     the background timer that we program on the behalf of a vcpu.
-> > > > >
-> > > > >     In particular, NTP performing a forward correction will resul=
-t in
-> > > > >     a timer expiring sooner than expected from a guest point of v=
-iew.
-> > > > >     Not a big deal, we kick the vcpu anyway.
-> > > > >
-> > > > >     But on wake-up, the vcpu thread is going to perform a check t=
-o
-> > > > >     find out whether or not it should block. And at that point, t=
-he
-> > > > >     timer check is going to say "timer has not expired yet, go ba=
-ck
-> > > > >     to sleep". This results in the timer event being lost forever=
-.
-> > > > >
-> > > > >     There are multiple ways to handle this. One would be record t=
-hat
-> > > > >     the timer has expired and let kvm_cpu_has_pending_timer retur=
-n
-> > > > >     true in that case, but that would be fairly invasive. Another=
- is
-> > > > >     to check for the "short sleep" condition in the hrtimer callb=
-ack,
-> > > > >     and restart the timer for the remaining time when the conditi=
-on
-> > > > >     is detected.
-> > > > >
-> > > > >     This patch implements the latter, with a bit of refactoring i=
-n
-> > > > >     order to avoid too much code duplication.
-> > > > >
-> > > > >     Cc: <stable@vger.kernel.org>
-> > > > >     Reported-by: Alexander Graf <agraf@suse.de>
-> > > > >     Reviewed-by: Alexander Graf <agraf@suse.de>
-> > > > >     Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-> > > > >     Signed-off-by: Christoffer Dall <christoffer.dall@linaro.org>
-> > > > >
-> > > > >
-> > > > > So to solve this issue there are two options:
-> > > > >
-> > > > >
-> > > > > 1. Have another go at implementing support for CLOCK_MONOTONIC_RA=
-W timers.
-> > > > >    I don't know if that is feasible and I would be very happy to =
-hear a feedback from you.
-> > > > >
-> > > > > 2. Also work this around in KVM. KVM does listen to changes in th=
-e timekeeping system
-> > > > >   (kernel calls its update_pvclock_gtod), and it even notes rates=
- of both regular and raw clocks.
-> > > > >
-> > > > >   When starting a HR timer I can adjust its period for the differ=
-ence in rates, which will in most
-> > > > >   cases produce more correct result that what we have now, but wi=
-ll still fail if the rate
-> > > > >   is changed at the same time the timer is started or before it e=
-xpires.
-> > > > >
-> > > > >   Or I can also restart the timer, although that might cause more=
- harm than
-> > > > >   good to the accuracy.
-> > > > >
-> > > > >
-> > > > > What do you think?
-> > > >
-> > > > Is this what the "adaptive tuning" in the local APIC TSC_DEADLINE
-> > > > timer is all about (lapic_timer_advance_ns =3D -1)?
-> > >
-> > > Hi,
-> > >
-> > > I don't think that 'lapic_timer_advance' is designed for that but it =
-does
-> > > mask this problem somewhat.
-> > >
-> > > The goal of 'lapic_timer_advance' is to decrease time between deadlin=
-e passing and start
-> > > of guest timer irq routine by making the deadline happen a bit earlie=
-r (by timer_advance_ns), and then busy-waiting
-> > > (hopefully only a bit) until the deadline passes, and then immediatel=
-y do the VM entry.
-> > >
-> > > This way instead of overhead of VM exit and VM entry that both happen=
- after the deadline,
-> > > only the VM entry happens after the deadline.
-> > >
-> > >
-> > > In relation to NTP interference: If the deadline happens earlier than=
- expected, then
-> > > KVM will busy wait and decrease the 'timer_advance_ns', and next time=
- the deadline
-> > > will happen a bit later thus adopting for the NTP adjustment somewhat=
-.
-> > >
-> > > Note though that 'timer_advance_ns' variable is unsigned and adjust_l=
-apic_timer_advance can underflow
-> > > it, which can be fixed.
-> > >
-> > > Now if the deadline happens later than expected, then the guest will =
-see this happen,
-> > > but at least adjust_lapic_timer_advance should increase the 'timer_ad=
-vance_ns' so next
-> > > time the deadline will happen earlier which will also eventually hide=
- the problem.
-> > >
-> > > So overall I do think that implementing the 'lapic_timer_advance' for=
- nested VMX preemption timer
-> > > is a good idea, especially since this feature is not really nested in=
- some sense - the timer is
-> > > just delivered as a VM exit but it is always delivered to L1, so VMX =
-preemption timer can
-> > > be seen as just an extra L1's deadline timer.
-> > >
-> > > I do think that nested VMX preemption timer should use its own value =
-of timer_advance_ns, thus
-> > > we need to extract the common code and make both timers use it. Does =
-this make sense?
-> >
-> > Alternatively, why not just use the hardware VMX-preemption timer to
-> > deliver the virtual VMX-preemption timer?
-> >
-> > Today, I believe that we only use the hardware VMX-preemption timer to
-> > deliver the virtual local APIC timer. However, it shouldn't be that
-> > hard to pick the first deadline of {VMX-preemption timer, local APIC
-> > timer} at each emulated VM-entry to L2.
->
-> I assume that this is possible but it might add some complexity.
->
-> AFAIK the design choice here was that L1 uses the hardware VMX preemption=
- timer always,
-> while L2 uses the software preemption timer which is relatively simple.
->
-> I do agree that this might work and if it does work it might be even wort=
-hwhile
-> change on its own.
->
-> If you agree that this is a good idea, I can prepare a patch series for t=
-hat.
+On 5/16/2024 9:05 AM, Souradeep Chakrabarti wrote:
+> Caution: This message originated from an External Source. Use proper caution when opening attachments, clicking links, or responding.
+> 
+> 
+> Commit 62c1bff593b7 added an extra HZ along with msecs_to_jiffies.
+> This patch fixes that.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 62c1bff593b7 ("net: mana: Configure hwc timeout from hardware")
+> Signed-off-by: Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>
+> ---
+>   drivers/net/ethernet/microsoft/mana/hw_channel.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 
-I do think it would be worthwhile to provide the infrastructure for
-multiple clients of the VMX-preemption timer. (Better yet would be to
-provide a CLOCK_MONOTONIC_RAW hrtimer, but that's outwith our domain.)
+LGTM.
 
-> Note though that the same problem (although somewhat masked by lapic_time=
-r_advance)
-> does exit on AMD as well because while AMD lacks both VMX preemption time=
-r and even the TSC deadline timer,
-> KVM exposes TSC deadline to the guest, and HR timers are always used for =
-its emulation,
-> and are prone to NTP interference as I discovered.
+Reviewed-by: Brett Creeley <brett.creeley@amd.com>
 
-It's not a problem if userspace ignores KVM's claim to support TSC deadline=
- :)
-
-> Best regards,
->         Maxim Levitsky
->
-> >
-> > > Best regards,
-> > >         Maxim Levitsky
-> > >
-> > >
-> > > >  If so, can we
-> > > > leverage that for the VMX-preemption timer as well?
-> > > > > Best regards,
-> > > > >         Maxim Levitsky
-> > > > >
-> > > > >
-> > > > >
-> > >
-> > >
-> > >
->
->
->
->
 
