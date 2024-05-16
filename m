@@ -1,109 +1,126 @@
-Return-Path: <linux-kernel+bounces-180988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B92288C75D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:18:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39C7F8C75B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:11:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B81CC1C21888
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:18:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA93BB2119B
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:11:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8781145B38;
-	Thu, 16 May 2024 12:18:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F08E7146581;
+	Thu, 16 May 2024 12:11:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="LOffGyV7"
-Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.9])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 687F4145B01;
-	Thu, 16 May 2024 12:18:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.9
+	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="ACnZW+Kc";
+	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="DiNDXPGj"
+Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED0BF145B12;
+	Thu, 16 May 2024 12:11:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.157.23.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715861899; cv=none; b=KMvoOwqP9zW1TMgsmWxeea8GQlYSFwt6u4YFalNZTLhmRam6gBTmsevklBUSwZinXoE7JQZgefR+pAfuifLfYhxZ/qLdwB6ZYunm8TQ+1gSEVS8ezQi6DGcrqcGLy4tbmJa/uISQogX0qwRB1h+EQC2U0ie59mCfC90oqILUWf4=
+	t=1715861466; cv=none; b=M46/SHhCQeiMmTJ9zO+4UKGLto9tDv2nqMIxgU7b/ZOobkVSSN/v+/nsQ61yxEmFak0m8EC7MmzqnC/Jb9Z95LCqnNOAOsrZY82QTdRqsudv29YFrZi1YRYwcxhO/RE1t3KCRqdsv+3m2jkOAoKSaW81V2OSDlYjXTd10u7HqYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715861899; c=relaxed/simple;
-	bh=HFCQg3Sx4ZhEpDdFJ4Xk+JoGPY6Gfx1b4LEHhW4aXsA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oYFOLD2DEVsknwCqwvwm579S27PyqDQRof35SXxz/5H84EEXY91xrxP1RsfwF8W3R6PEgiB8Q5lgmeSQ4ZEHx36a0yHxU1s2KdAH6APX7emE0Ms0n0P9MgLZBXlv2aVfesVm8NA3x3L9EeKzOSWVpXBRz/8eXEN57N1v4Fmv+nw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=LOffGyV7; arc=none smtp.client-ip=220.197.31.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version:
-	Content-Type; bh=c/c6UprRMJ+Pu2qhWWNi5OJ+tLUdGCPrD5YFgn6dxvw=;
-	b=LOffGyV73othVfZ2u6U7kpHvNHb8ueEpG5nSavtgJ1IQQKabg/Mqyca701W+E8
-	WCtLQeJdwM6X20TjKDQhRQtUVfXJIo1gJHA4pWS/kyG3KMDyTjeOFGpIWUDsfiIZ
-	xpzxkVKSAhzJaffaxpA/Ze+DebM2GWs94l3ha6forVCLg=
-Received: from localhost.localdomain (unknown [116.128.244.171])
-	by gzga-smtp-mta-g1-4 (Coremail) with SMTP id _____wDHD+tp9UVmXt_9Bw--.21873S6;
-	Thu, 16 May 2024 20:01:58 +0800 (CST)
-From: Genjian <zhanggenjian@126.com>
-To: tsbogend@alpha.franken.de,
-	chenhuacai@kernel.org,
-	jiaxun.yang@flygoat.com,
-	ricardo@marliere.net
-Cc: linux-mips@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Genjian Zhang <zhanggenjian@kylinos.cn>,
-	k2ci <kernel-bot@kylinos.cn>
-Subject: [PATCH 3/3] MIPS: ip22-gio: Make ip22_gio_set_64bit() and ip22_gio_init() static
-Date: Thu, 16 May 2024 19:59:06 +0800
-Message-Id: <20240516115906.1224164-3-zhanggenjian@126.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240516115906.1224164-1-zhanggenjian@126.com>
-References: <20240516115906.1224164-1-zhanggenjian@126.com>
+	s=arc-20240116; t=1715861466; c=relaxed/simple;
+	bh=F6WO1aR+Qxv99DM4oHOPG9apgSeKLUE9nrEBhqRH5D0=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TpCaYD7pTkNqqVkX1Baswo01pgj7eHsSPNWyiVS6Dm64tPJ5xjOW5g2sKP3YFXiTAjPN6y/62os6nWKIEYCZSJ7A7Eye0G/jazK7qGVOL1B63BZYSCt5xcRfDMKWs8GpIGmbaXtwXoKmJOdx+dTbrOIoP0mkJKPVYqeHVgZfAEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com; spf=pass smtp.mailfrom=paragon-software.com; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=ACnZW+Kc; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=DiNDXPGj; arc=none smtp.client-ip=35.157.23.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paragon-software.com
+Received: from relayfre-01.paragon-software.com (unknown [172.30.72.12])
+	by relayaws-01.paragon-software.com (Postfix) with ESMTPS id B6CCF1F86;
+	Thu, 16 May 2024 11:53:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=paragon-software.com; s=mail; t=1715860392;
+	bh=GOGJaz9UJqKRi2i7pMYNMK4sWlylteCj88ffOeaMKGQ=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=ACnZW+KcT0fYGBHLAlEIKlGjw8yCdUEqWqze1R37u3nNcT4VJ//Yv7b1W+srOZsZK
+	 Zcr5lSAXwf37mTjEQXkDRjgpRoRZGHLAnM2IKaeL7Zhyk1j2//kZPC0aRIMdj2PoE4
+	 zUpz4/MnQ2wZJCa7+LB3m524h6aUL47u7kqxgAYI=
+Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
+	by relayfre-01.paragon-software.com (Postfix) with ESMTPS id D77FE21CF;
+	Thu, 16 May 2024 12:00:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=paragon-software.com; s=mail; t=1715860855;
+	bh=GOGJaz9UJqKRi2i7pMYNMK4sWlylteCj88ffOeaMKGQ=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=DiNDXPGjfoHIRP/89L7R2yge4Qse7mfKIBekMGUtGs85UsqSQZbAEuP3U+76jmvt+
+	 nChTzXKmco6hoaFshnnFBZEPIiEtYe6DIYX050Kt1bppcKQDNF2eH9odSAu/A9EysS
+	 zo5Y8lLSKqur84a9RuSJUqPSZVE+tXIBy940FFx0=
+Received: from ntfs3vm.paragon-software.com (192.168.211.154) by
+ vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.7; Thu, 16 May 2024 15:00:55 +0300
+From: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+To: <ntfs3@lists.linux.dev>
+CC: <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+	<stable@vger.kernel.org>
+Subject: [PATCH v2] fs/ntfs3: Fix case when index is reused during tree transformation
+Date: Thu, 16 May 2024 15:00:29 +0300
+Message-ID: <20240516120029.5113-1-almaz.alexandrovich@paragon-software.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240423144155.10219-1-almaz.alexandrovich@paragon-software.com>
+References:
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDHD+tp9UVmXt_9Bw--.21873S6
-X-Coremail-Antispam: 1Uf129KBjvJXoW7ZFyUAr48KrykGry8Kr1kuFg_yoW8JFy7pr
-	W0yFnrKFWjgFWDWFs5Cry8Xr4S9wn8ArWFvF4qk34IgF1rGFy3JF4rKr98Zr1UGrWUZ3Wr
-	XF1Fg3ZxKw4I9wUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UZAwsUUUUU=
-X-CM-SenderInfo: x2kd0wxjhqyxldq6ij2wof0z/1tbiHhTgfmV20wENggABsb
+Content-Type: text/plain
+X-ClientProxiedBy: vdlg-exch-02.paragon-software.com (172.30.1.105) To
+ vdlg-exch-02.paragon-software.com (172.30.1.105)
 
-From: Genjian Zhang <zhanggenjian@kylinos.cn>
+In most cases when adding a cluster to the directory index,
+they are placed at the end, and in the bitmap, this cluster corresponds
+to the last bit. The new directory size is calculated as follows:
 
-These functions are used in only one file.
-Made them static to fix the following build error:
+	data_size = (u64)(bit + 1) << indx->index_bits;
 
-arch/mips/sgi-ip22/ip22-gio.c:249:6: error: no previous prototype for ‘ip22_gio_set_64bit’ [-Werror=missing-prototypes]
-arch/mips/sgi-ip22/ip22-gio.c:398:12: error: no previous prototype for ‘ip22_gio_init’ [-Werror=missing-prototypes]
+In the case of reusing a non-final cluster from the index,
+data_size is calculated incorrectly, resulting in the directory size
+differing from the actual size.
 
-Reported-by: k2ci <kernel-bot@kylinos.cn>
-Signed-off-by: Genjian Zhang <zhanggenjian@kylinos.cn>
+A check for cluster reuse has been added, and the size update is skipped.
+
+Fixes: 82cae269cfa95 ("fs/ntfs3: Add initialization of super block")
+Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Cc: stable@vger.kernel.org
 ---
- arch/mips/sgi-ip22/ip22-gio.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/ntfs3/index.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/arch/mips/sgi-ip22/ip22-gio.c b/arch/mips/sgi-ip22/ip22-gio.c
-index a3cdcb289941..2738325e98dd 100644
---- a/arch/mips/sgi-ip22/ip22-gio.c
-+++ b/arch/mips/sgi-ip22/ip22-gio.c
-@@ -246,7 +246,7 @@ void gio_set_master(struct gio_device *dev)
- }
- EXPORT_SYMBOL_GPL(gio_set_master);
+diff --git a/fs/ntfs3/index.c b/fs/ntfs3/index.c
+index daabaad63aaf..14284f0ed46a 100644
+--- a/fs/ntfs3/index.c
++++ b/fs/ntfs3/index.c
+@@ -1533,6 +1533,11 @@ static int indx_add_allocate(struct ntfs_index *indx, struct ntfs_inode *ni,
+ 		goto out1;
+ 	}
  
--void ip22_gio_set_64bit(int slotno)
-+static void ip22_gio_set_64bit(int slotno)
- {
- 	u32 tmp = sgimc->giopar;
++	if (data_size <= le64_to_cpu(alloc->nres.data_size)) {
++		/* Reuse index. */
++		goto out;
++	}
++
+ 	/* Increase allocation. */
+ 	err = attr_set_size(ni, ATTR_ALLOC, in->name, in->name_len,
+ 			    &indx->alloc_run, data_size, &data_size, true,
+@@ -1546,6 +1551,7 @@ static int indx_add_allocate(struct ntfs_index *indx, struct ntfs_inode *ni,
+ 	if (in->name == I30_NAME)
+ 		i_size_write(&ni->vfs_inode, data_size);
  
-@@ -395,7 +395,7 @@ static struct resource gio_bus_resource = {
- 	.flags = IORESOURCE_MEM,
- };
++out:
+ 	*vbn = bit << indx->idx2vbn_bits;
  
--int __init ip22_gio_init(void)
-+static int __init ip22_gio_init(void)
- {
- 	unsigned int pbdma __maybe_unused;
- 	int ret;
+ 	return 0;
 -- 
-2.25.1
+2.34.1
 
 
