@@ -1,79 +1,265 @@
-Return-Path: <linux-kernel+bounces-181277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C9B78C79D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:54:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 239998C79E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:55:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D7B71C215C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:54:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE53C283EBF
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:55:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5882F14D6E0;
-	Thu, 16 May 2024 15:53:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3406314D457;
+	Thu, 16 May 2024 15:55:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VkYGEUO1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HccA8G+Q"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A00A71459F3
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 15:53:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 731F014D713;
+	Thu, 16 May 2024 15:55:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715874798; cv=none; b=hFK8fKvUijlkh539Kx8qmDh35nMVhZVH0pAV1gXSRY0xno6EPCdRyLnpiRFjVkM2eMSPyF8xZVBV53ImMp6djDaxe7Y6lSkLTz6oUOWT9uwas99dlV6mpUw8OGFQkE5CajF6Fs+L7kRpMN0xHrBAnj6ivKdHTaOFD+AhOd5MG8k=
+	t=1715874912; cv=none; b=c3kyr3V2G0flH/gbIfuQmeKQmMjm6gswBbUbo5F2UwmZB6aMAmQ6mEkS8BIEdgr6Aw8t2j/2IhIclInXeK+VJ3EJo7QrsHr5yxvRBjObibdOXn11zUNtNj50m9dz9lAmr1JXXBx/NmQKGtchv8flXU4+tqPrsqFwxcmZFzSjsxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715874798; c=relaxed/simple;
-	bh=vJXNK/Tqo8zBAUsSHhEd6zAfV9a1tg/5MoYyOWTdTs0=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=e+Ghw4teENt/apNnMme7Ul5pDnpZlLOgGL40QzbUlENjMsGTNEKe0Z6oBAu1GANQhYZOw/BOhT4Ev1v5Ct22nj3croo7yFH7d1FB1Dd6zT0NvKyVhT9AHN4cu/ZBFssZToPSJf2RNXQKc7y6IF5Fzz7iO71BGHZRNyhjrRWtzHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VkYGEUO1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 816E9C113CC;
-	Thu, 16 May 2024 15:53:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715874798;
-	bh=vJXNK/Tqo8zBAUsSHhEd6zAfV9a1tg/5MoYyOWTdTs0=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=VkYGEUO1BBeAKvdwFP0HGPkPnL7zHKxaGWxMoQkK92nbXG3j7yLrzn/wTu3IfokU9
-	 9lNsKXyTV/t2Ze8nRekL6yE1gqsmv4EOg9aDqT73auZR4GFuT2SjiABKsO8dAWkph/
-	 JeOogGCYFH7IsH2jYRN/wluMc8lxPhHRBMyD072QMv3Etx/5NI7RTDkVMXx14uxqZJ
-	 M1mynW+M4C4a224YNYJ0YL3dCPtx2PtFgdj4KXtKL6DtcAMXHnxy9N66FP7tjGmi5J
-	 CbvTmDTgESagRKyh9wGoluAoLxNAkTCBWfrRafy+A+ycUT9iGPzmaYz1vcixdPCcBB
-	 XAhdWQdJTBhhQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 79488C41620;
-	Thu, 16 May 2024 15:53:18 +0000 (UTC)
-Subject: Re: [git pull] drm urgent for 6.10-rc1
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <CAPM=9tx_KS1qc8E1kUB5PPBvO9EKHNkk7hYWu-WwWJ6os=otJA@mail.gmail.com>
-References: <CAPM=9tx_KS1qc8E1kUB5PPBvO9EKHNkk7hYWu-WwWJ6os=otJA@mail.gmail.com>
-X-PR-Tracked-List-Id: Direct Rendering Infrastructure - Development
- <dri-devel.lists.freedesktop.org>
-X-PR-Tracked-Message-Id: <CAPM=9tx_KS1qc8E1kUB5PPBvO9EKHNkk7hYWu-WwWJ6os=otJA@mail.gmail.com>
-X-PR-Tracked-Remote: https://gitlab.freedesktop.org/drm/kernel.git tags/drm-next-2024-05-16
-X-PR-Tracked-Commit-Id: 431c590c3ab0469dfedad3a832fe73556396ee52
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 972a2543e3dd87f7310d65944b857631b4290e12
-Message-Id: <171587479849.7101.896680176648713686.pr-tracker-bot@kernel.org>
-Date: Thu, 16 May 2024 15:53:18 +0000
-To: Dave Airlie <airlied@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, "Deucher, Alexander" <Alexander.Deucher@amd.com>, Arunpravin Paneer Selvam <Arunpravin.PaneerSelvam@amd.com>, dri-devel <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
+	s=arc-20240116; t=1715874912; c=relaxed/simple;
+	bh=12vt83DDQ9W1vK1XXPC3vvTvH4RQzN7F1BBnruNYXew=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lNfuJ+SezedCqw8kLavE2y3/LXXTfcLTbl+wW+vSh2wpTT+Ry8CZ8HrxGoR37rI5L+qw2RZgWFotGVRRc1vDuGq0ukq7jiRdxluvIEsd6wkUpowc/tNmeR61X1mJJuWflIMQyloAvX2UJCYZOkF6VZG5ZTxgZnPrlDbspZpcWqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HccA8G+Q; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715874910; x=1747410910;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=12vt83DDQ9W1vK1XXPC3vvTvH4RQzN7F1BBnruNYXew=;
+  b=HccA8G+QU4MZw88m94pnX/HLKpF9dZqpt8WFR17eE536nN1sFM33wAM3
+   ti6+wpPbRoB4D3qE2csWhIxI5QZd51ahMNNYy6llhboOxYFprLQkyhqZu
+   vXr6CxAMVK93mk4d2Lmcf9NmuFeM4cq3TTncRrvJ3IUWRwXhwiMN56xvR
+   AXC/2k8ci7cmTf2jYTq3CUbjRS7JEmumQem4gThxXt4CVtyHNwU8bte+l
+   kqvE4yxaZ3Q+2b8MJqQ20mk0gg/lOl/w2Mh/mrm33Jv9V0knDW4ioygS1
+   IS9ZNWgHsivgckn0MC4xp4uD+CQ9gtRRfyTH6YUgqHJVZyuphci4W5xA6
+   Q==;
+X-CSE-ConnectionGUID: E1EE79brSnaQWuGacEwo2A==
+X-CSE-MsgGUID: 5rgZJShETgKu9XhdqTIMAA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="22600387"
+X-IronPort-AV: E=Sophos;i="6.08,165,1712646000"; 
+   d="scan'208";a="22600387"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 08:55:10 -0700
+X-CSE-ConnectionGUID: QW/JcknhS0yz25vN+Jm6Ng==
+X-CSE-MsgGUID: gTmiFC6JTV+qrfeYB3sspA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,165,1712646000"; 
+   d="scan'208";a="62683601"
+Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
+  by fmviesa001.fm.intel.com with ESMTP; 16 May 2024 08:55:07 -0700
+Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s7dRh-000EQ7-1j;
+	Thu, 16 May 2024 15:55:05 +0000
+Date: Thu, 16 May 2024 23:54:27 +0800
+From: kernel test robot <lkp@intel.com>
+To: Dimitri Fedrau <dima.fedrau@gmail.com>
+Cc: oe-kbuild-all@lists.linux.dev, Dimitri Fedrau <dima.fedrau@gmail.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] pwm: add support for NXPs high-side switch
+ MC33XS2410
+Message-ID: <202405162306.aFLe0sSZ-lkp@intel.com>
+References: <20240515112034.298116-3-dima.fedrau@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240515112034.298116-3-dima.fedrau@gmail.com>
 
-The pull request you sent on Thu, 16 May 2024 12:53:52 +1000:
+Hi Dimitri,
 
-> https://gitlab.freedesktop.org/drm/kernel.git tags/drm-next-2024-05-16
+kernel test robot noticed the following build errors:
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/972a2543e3dd87f7310d65944b857631b4290e12
+[auto build test ERROR on robh/for-next]
+[also build test ERROR on linus/master v6.9 next-20240516]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Thank you!
+url:    https://github.com/intel-lab-lkp/linux/commits/Dimitri-Fedrau/dt-bindings-pwm-add-support-for-MC33XS2410/20240515-192237
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+patch link:    https://lore.kernel.org/r/20240515112034.298116-3-dima.fedrau%40gmail.com
+patch subject: [PATCH v3 2/2] pwm: add support for NXPs high-side switch MC33XS2410
+config: openrisc-allmodconfig (https://download.01.org/0day-ci/archive/20240516/202405162306.aFLe0sSZ-lkp@intel.com/config)
+compiler: or1k-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240516/202405162306.aFLe0sSZ-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405162306.aFLe0sSZ-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/pwm/pwm-mc33xs2410.c: In function 'mc33xs2410_xfer_regs':
+>> drivers/pwm/pwm-mc33xs2410.c:123:34: error: implicit declaration of function 'FIELD_GET' [-Werror=implicit-function-declaration]
+     123 |                         val[i] = FIELD_GET(MC33XS2410_RD_DATA_MASK,
+         |                                  ^~~~~~~~~
+   drivers/pwm/pwm-mc33xs2410.c: In function 'mc33xs2410_pwm_get_freq':
+>> drivers/pwm/pwm-mc33xs2410.c:206:16: error: implicit declaration of function 'FIELD_PREP' [-Werror=implicit-function-declaration]
+     206 |         return FIELD_PREP(MC33XS2410_PWM_FREQ_STEP_MASK, step) |
+         |                ^~~~~~~~~~
+   cc1: some warnings being treated as errors
+
+
+vim +/FIELD_GET +123 drivers/pwm/pwm-mc33xs2410.c
+
+    74	
+    75	static int mc33xs2410_xfer_regs(struct spi_device *spi, bool read, u8 *reg,
+    76					u16 *val, bool *ctrl, int len)
+    77	{
+    78		struct spi_transfer t[MC33XS2410_MAX_TRANSFERS] = { { 0 } };
+    79		u8 tx[MC33XS2410_MAX_TRANSFERS * MC33XS2410_WORD_LEN];
+    80		u8 rx[MC33XS2410_MAX_TRANSFERS * MC33XS2410_WORD_LEN];
+    81		int i, ret, reg_i, val_i;
+    82	
+    83		if (!len)
+    84			return 0;
+    85	
+    86		if (read)
+    87			len++;
+    88	
+    89		if (len > MC33XS2410_MAX_TRANSFERS)
+    90			return -EINVAL;
+    91	
+    92		for (i = 0; i < len; i++) {
+    93			reg_i = i * MC33XS2410_WORD_LEN;
+    94			val_i = reg_i + 1;
+    95			if (read) {
+    96				if (i < len - 1) {
+    97					tx[reg_i] = reg[i];
+    98					tx[val_i] = ctrl[i] ? MC33XS2410_RD_CTRL : 0;
+    99					t[i].tx_buf = &tx[reg_i];
+   100				}
+   101	
+   102				if (i > 0)
+   103					t[i].rx_buf = &rx[reg_i - MC33XS2410_WORD_LEN];
+   104			} else {
+   105				tx[reg_i] = reg[i] | MC33XS2410_WR;
+   106				tx[val_i] = val[i];
+   107				t[i].tx_buf = &tx[reg_i];
+   108			}
+   109	
+   110			t[i].len = MC33XS2410_WORD_LEN;
+   111			t[i].cs_change = 1;
+   112		}
+   113	
+   114		t[len - 1].cs_change = 0;
+   115	
+   116		ret = spi_sync_transfer(spi, &t[0], len);
+   117		if (ret < 0)
+   118			return ret;
+   119	
+   120		if (read) {
+   121			for (i = 0; i < len - 1; i++) {
+   122				reg_i = i * MC33XS2410_WORD_LEN;
+ > 123				val[i] = FIELD_GET(MC33XS2410_RD_DATA_MASK,
+   124						   get_unaligned_be16(&rx[reg_i]));
+   125			}
+   126		}
+   127	
+   128		return 0;
+   129	}
+   130	
+   131	static
+   132	int mc33xs2410_write_regs(struct spi_device *spi, u8 *reg, u16 *val, int len)
+   133	{
+   134	
+   135		return mc33xs2410_xfer_regs(spi, false, reg, val, NULL, len);
+   136	}
+   137	
+   138	static int mc33xs2410_read_regs(struct spi_device *spi, u8 *reg, bool *ctrl,
+   139					u16 *val, u8 len)
+   140	{
+   141		return mc33xs2410_xfer_regs(spi, true, reg, val, ctrl, len);
+   142	}
+   143	
+   144	
+   145	static int mc33xs2410_write_reg(struct spi_device *spi, u8 reg, u16 val)
+   146	{
+   147		return mc33xs2410_write_regs(spi, &reg, &val, 1);
+   148	}
+   149	
+   150	static
+   151	int mc33xs2410_read_reg(struct spi_device *spi, u8 reg, u16 *val, bool ctrl)
+   152	{
+   153		return mc33xs2410_read_regs(spi, &reg, &ctrl, val, 1);
+   154	}
+   155	
+   156	static int mc33xs2410_read_reg_ctrl(struct spi_device *spi, u8 reg, u16 *val)
+   157	{
+   158		return mc33xs2410_read_reg(spi, reg, val, true);
+   159	}
+   160	
+   161	static
+   162	int mc33xs2410_modify_reg(struct spi_device *spi, u8 reg, u16 mask, u16 val)
+   163	{
+   164		u16 tmp;
+   165		int ret;
+   166	
+   167		ret = mc33xs2410_read_reg_ctrl(spi, reg, &tmp);
+   168		if (ret < 0)
+   169			return ret;
+   170	
+   171		tmp &= ~mask;
+   172		tmp |= val & mask;
+   173	
+   174		return mc33xs2410_write_reg(spi, reg, tmp);
+   175	}
+   176	
+   177	static u8 mc33xs2410_pwm_get_freq(u64 period)
+   178	{
+   179		u8 step, count;
+   180	
+   181		/*
+   182		 * Check if period is within the limits of each of the four frequency
+   183		 * ranges, starting with the highest frequency(lowest period). Higher
+   184		 * frequencies are represented with better resolution by the device.
+   185		 * Therefore favor frequency range with the better resolution to
+   186		 * minimize error introduced by the frequency steps.
+   187		 */
+   188	
+   189		switch (period) {
+   190		case MC33XS2410_MIN_PERIOD_STEP(3) + 1 ... MC33XS2410_MAX_PERIOD_STEP(3):
+   191			step = 3;
+   192			break;
+   193		case MC33XS2410_MAX_PERIOD_STEP(3) + 1 ... MC33XS2410_MAX_PERIOD_STEP(2):
+   194			step = 2;
+   195			break;
+   196		case MC33XS2410_MAX_PERIOD_STEP(2) + 1 ... MC33XS2410_MAX_PERIOD_STEP(1):
+   197			step = 1;
+   198			break;
+   199		case MC33XS2410_MAX_PERIOD_STEP(1) + 1 ... MC33XS2410_MAX_PERIOD_STEP(0):
+   200			step = 0;
+   201			break;
+   202		}
+   203	
+   204		count = DIV_ROUND_UP(MC33XS2410_MAX_PERIOD_STEP(step), period) - 1;
+   205	
+ > 206		return FIELD_PREP(MC33XS2410_PWM_FREQ_STEP_MASK, step) |
+   207		       FIELD_PREP(MC33XS2410_PWM_FREQ_COUNT_MASK, count);
+   208	}
+   209	
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
