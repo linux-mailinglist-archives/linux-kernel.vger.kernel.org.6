@@ -1,147 +1,166 @@
-Return-Path: <linux-kernel+bounces-180963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99EF38C7581
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 13:58:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BB538C7585
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 13:58:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52FDC284222
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 11:58:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 102A32842B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 11:58:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0017926AD0;
-	Thu, 16 May 2024 11:58:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 369AF145B07;
+	Thu, 16 May 2024 11:58:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eoxtqSG+"
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pvISL2g5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4FBF145A01
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 11:58:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AF9926AD0;
+	Thu, 16 May 2024 11:58:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715860695; cv=none; b=avMaWLwyW/UmrrVUafgrlpWpM4TlHyT/yQxreFncA7m/OpRAIDQBQBQ+gU5zNCWlqfSkX8sDKWU2zWtmXzTej228Va5+yk9yGvJo6OsuQ6PjRp79MdRotQfnPP4JHOC/olnowa5P2kH6Yq1vprn2lBiu04G4e/iCubPtpfggC24=
+	t=1715860727; cv=none; b=dsMjmsDeK8hIHVkHrucIy66EK1HAMZMpSO7F0WZ5FdAYEw6lG1IHgFViy2XWUm6O4imajL/d4o7baEFWumWbd+2ZVzWKBhnfwDHmbhtVM+KXjFXH3+YdLZF+/GcM7bzXyDj/bpA2L7ej6614tA1RYOinRe/Pu//GYtt8P2nrJug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715860695; c=relaxed/simple;
-	bh=ZD6fdGcG8Vh7cSxSlm4IT/PuId4g528AT3i6ACO2HWE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P6IdeDGQOrkI5e2NEyDx2ivbFxpFebvEKPqDhGLyBADctS3PGD1L8lwzNh77+pkPd/zJi5uO6iSEU+RBuXo58OCZ1KS+JPSjyf+VvZVoTRyHtwisO5IX2d93k3lrOGrVumzq+I5u43ThasZdcbbXSo24gR2Hqozc3nrW8Op34Dc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eoxtqSG+; arc=none smtp.client-ip=209.85.217.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-47f39711c94so2184914137.1
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 04:58:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715860692; x=1716465492; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LVLsiflUzOkxw62g1k8tSvDQS/0/UmSfYYflXMvKM5w=;
-        b=eoxtqSG+QuovpfoCjZsVJdME+SSQzEAYcYcW/KMDfajcFoFzHkkjgjWt+QJb5pufE3
-         oNwum97K1wCQ6xuOW0axnGzPanCi6GlTFY0RksbMNiF+GzhtiK8H4quWMnalNmWWmvb7
-         eswcJXC6aiMZSiRwIN5lFJQAPtqgGLW0fe9Rt88kdR+ZpNojfeck8ycBQuD0VRlEN4GZ
-         16pBbUDhIChHsmWRLI88iD03UJqmqN3n81K9Ez4rNyZvj1ZIUAgVrO4JoRkwfzPDAfOK
-         9aPnIDY4Vc4sDFPCidgklWKom8TNlx5J/LlXUg1AnhfnzHFiUhCMhWyyHCyNV2LxdMu9
-         yHQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715860692; x=1716465492;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LVLsiflUzOkxw62g1k8tSvDQS/0/UmSfYYflXMvKM5w=;
-        b=AXsgxDTTZTCtkuVWIjnGNBljzB+3MrTPuCTeCz/iM8KxxEc5wQdr8EP0LpgfrcPH77
-         ClUglPKHF5EO+HOIoJmsMiKLUzhoUKrO8wHOW5H6dbA/n+jY7lkJfHiU3I3MZoGSeoIB
-         ldjUKyPwavowuMKGS0yuGD6cwN/sa/5qttOpiruhtwVep+TMVxgTDRAY/D2x8QkW1gx8
-         2Sel1769MRcNDG/2bh6pNcup7IM5OcALuq7AB5fzCR+Lh0tAWXbATZMf7YdzFLRmBZwP
-         vUprYbIRN4G/CS0rcQdwDrwmvxN3YzfGQDxbGvno8JK+YHHRIHcHTI4AnBM8AYI8fvd/
-         H1Qg==
-X-Forwarded-Encrypted: i=1; AJvYcCVZoSrTwaUso0NIU+C84W81nLcZWl01Beke3Tfv1PFghN/LIvScSHxNWdeB6iaUOenhK61IyPJknUOyo3bD+g95mhULbk0B2mjTqVEk
-X-Gm-Message-State: AOJu0YxbxCkOCG1xUkRxb9NOFnJyEo9IL6Tk6vD7Q8Hqf9GOOcgdI35K
-	rpf0B2TtOMoGCecqf332vhJyqYuQxHv/l4bM17tE/c3KZfp33P9kAyJk0u/8LAKl7yp3cfsH4Uk
-	RAVu25DtzQiz40Uba9bQaseuxZ7Ag607Oy7wVKg==
-X-Google-Smtp-Source: AGHT+IEnSexvZwY287vVwa8ydg5RBnd4iYHY/vijHZOwtIpC7IUKq3meEbllweVItwMl5LJPYcEeoHu8dAXmjWLzQQg=
-X-Received: by 2002:a05:6102:2914:b0:47e:d89:6ae1 with SMTP id
- ada2fe7eead31-48077de8685mr14056384137.12.1715860692420; Thu, 16 May 2024
- 04:58:12 -0700 (PDT)
+	s=arc-20240116; t=1715860727; c=relaxed/simple;
+	bh=E7UsGb6Za+wHEcmHsLVrZiP4f3obI82j8AUAXJwI+Oc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qexafKz+5Kf6nlLs44I4OHBRYbp58TFKdkic74pQu9ZEzyIPbShr/CDDQCqLruimZ27aAP+gpVjg4qf0JkA5n4kU3NRaUXQd8JkX9lNWwzyLo2v7JenevQY7Ipf89m6vBetlXWvd6Nb6ePsAHCw7o7P2tJYnuCor3d5NQS/MsKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pvISL2g5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2F72C113CC;
+	Thu, 16 May 2024 11:58:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715860726;
+	bh=E7UsGb6Za+wHEcmHsLVrZiP4f3obI82j8AUAXJwI+Oc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pvISL2g5xA9A7ryhfZ4/mtSa5WAkWW7GkBPMWB7qu6TEZ90UmAWOOerEh3/Cl2Ph0
+	 +TDkQY81351Z8KKw8h27YPRDj4Og2lsD9wH8zIVlH/tCkCfqVe6UN8XdUdx1XO5Gm/
+	 YPEyc8Ijvy2zull41IQX+Sdfzo88p/rXYUNmzTm6718wMQeVdtUDuRt85tvlgcjaED
+	 ueOH0onP7/5O8fFYXJ9/EFeE5Y2I8QTkT5XXwUd59T0H9JrvFb/zkFXpZWsauxOTwL
+	 Sqy5Kfvp7ltuVMUDfp8e3KYMT7VyK6BoI50J912bQDEpY5p4XBvRGuRpB2u9S82VG+
+	 wdR+ks55in61w==
+Date: Thu, 16 May 2024 12:58:40 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Banajit Goswami <bgoswami@quicinc.com>,
+	Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	alsa-devel@alsa-project.org, linux-arm-msm@vger.kernel.org,
+	linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, quic_rohkumar@quicinc.com,
+	quic_pkumpatl@quicinc.com
+Subject: Re: [PATCH v4 4/7] ASoC: codecs: wcd937x: add basic controls
+Message-ID: <f766e8fc-64e7-4579-ac5a-4afcdae067cc@sirena.org.uk>
+References: <20240516044801.1061838-1-quic_mohs@quicinc.com>
+ <20240516044801.1061838-5-quic_mohs@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240515082510.431870507@linuxfoundation.org>
-In-Reply-To: <20240515082510.431870507@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Thu, 16 May 2024 13:58:00 +0200
-Message-ID: <CA+G9fYtEMG8t4rKgyDdC_xPNZOoXy43AjaqL6a14uAZSgcEf7Q@mail.gmail.com>
-Subject: Re: [PATCH 6.6 000/309] 6.6.31-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, 15 May 2024 at 10:27, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.6.31 release.
-> There are 309 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Fri, 17 May 2024 08:23:27 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.6.31-rc2.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.6.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="bEuBL+UqcAprloOC"
+Content-Disposition: inline
+In-Reply-To: <20240516044801.1061838-5-quic_mohs@quicinc.com>
+X-Cookie: I'm having a MID-WEEK CRISIS!
 
 
-Results from Linaro=E2=80=99s test farm.
+--bEuBL+UqcAprloOC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-As reported from the linux-6.8 review email,
-Following tests failed on 6.8 and 6.6.
+On Thu, May 16, 2024 at 10:17:58AM +0530, Mohammad Rafi Shaik wrote:
 
-kselftest-ftrace
-  - ftrace_ftracetest-ktap
-  - ftrace_ftracetest-ktap_Test_file_and_directory_owership_changes_for_eve=
-ntfs
+> +static int wcd937x_rx_hph_mode_put(struct snd_kcontrol *kcontrol,
+> +				   struct snd_ctl_elem_value *ucontrol)
+> +{
+> +	struct snd_soc_component *component =
+> +				snd_soc_kcontrol_component(kcontrol);
+> +	struct wcd937x_priv *wcd937x = snd_soc_component_get_drvdata(component);
+> +	u32 mode_val;
+> +
+> +	mode_val = ucontrol->value.enumerated.item[0];
+> +	if (!mode_val) {
+> +		dev_warn(component->dev, "Invalid HPH Mode, default to class_AB\n");
+> +		mode_val = CLS_AB;
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+This should be silent (or return an error) otherwise people can DoS the
+logs by just spamming in invalid values.
 
-Linux:
- - https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.=
-6.30-310-g0b94bef0cf16/testrun/23929131/suite/kselftest-ftrace/test/ftrace_=
-ftracetest-ktap_Test_file_and_directory_owership_changes_for_eventfs/detail=
-s/
-  - https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2gUuHR=
-XnZeVFxSJj1ZDTcnIKTr7
+> +	}
+> +
+> +	wcd937x->hph_mode = mode_val;
 
-## Build
-* kernel: 6.6.31-rc2
-* git: https://gitlab.com/Linaro/lkft/mirrors/stable/linux-stable-rc
-* git branch: linux-6.6.y
-* git commit: 0b94bef0cf164f56b5f7d93015069017f1678f70
-* git describe: v6.6.30-310-g0b94bef0cf16
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.3=
-0-310-g0b94bef0cf16
+I would expect there's more validation needed here, this will blindly
+assign any non-zero mode.  Please run the mixer-test selftests on a card
+with this device in it and show the results on future submissions, this
+will detect this and other issues for you.
 
---
-Linaro LKFT
-https://lkft.linaro.org
+Several of the other controls look like they're also missing validation.
+
+> +static int wcd937x_set_swr_port(struct snd_kcontrol *kcontrol,
+> +				struct snd_ctl_elem_value *ucontrol)
+> +{
+> +	struct soc_mixer_control *mixer = (struct soc_mixer_control *)kcontrol->private_value;
+> +	struct snd_soc_component *comp = snd_soc_kcontrol_component(kcontrol);
+> +	struct wcd937x_priv *wcd937x = snd_soc_component_get_drvdata(comp);
+> +	struct wcd937x_sdw_priv *wcd;
+> +	int dai_id = mixer->shift;
+> +	int ch_idx = mixer->reg;
+> +	int portidx;
+> +	bool enable;
+> +
+> +	wcd = wcd937x->sdw_priv[dai_id];
+> +
+> +	portidx = wcd->ch_info[ch_idx].port_num;
+> +
+> +	enable = !!ucontrol->value.integer.value[0];
+> +
+> +	wcd->port_enable[portidx] = enable;
+> +	wcd937x_connect_port(wcd, portidx, ch_idx, enable);
+> +
+> +	return 1;
+> +}
+
+This unconditionally reports that the value changed so will generate
+spurious events.
+> +
+> +static const char * const rx_hph_mode_mux_text[] = {
+> +	"CLS_H_INVALID", "CLS_H_HIFI", "CLS_H_LP", "CLS_AB", "CLS_H_LOHIFI",
+> +	"CLS_H_ULP", "CLS_AB_HIFI",
+> +};
+
+It would be more idiomatic to write these in a more human readable form.
+
+> +static const char * const wcd937x_ear_pa_gain_text[] = {
+> +	"G_6_DB", "G_4P5_DB", "G_3_DB", "G_1P5_DB", "G_0_DB",
+> +	"G_M1P5_DB", "G_M3_DB", "G_M4P5_DB",
+> +	"G_M6_DB", "G_7P5_DB", "G_M9_DB",
+> +	"G_M10P5_DB", "G_M12_DB", "G_M13P5_DB",
+> +	"G_M15_DB", "G_M16P5_DB", "G_M18_DB",
+> +};
+
+Why is this an enum and not TLV information?
+
+--bEuBL+UqcAprloOC
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZF9PAACgkQJNaLcl1U
+h9BE5gf+MZfo6xckou+1xaQ1x8WUvInmUJO84njGHB6R6hSHjjnEG+XIuVw/g7EZ
+yZ9OiZFuYfRQlTp2Gw/GYO+9DG/+gLGcBZQ7TGVFU8mP/i8hSVF0U7wNXRF1+uG1
+qbpx4Qqh2Nl5Rr3SHsSaxscGjNKvOI27Vm9eb2Dq9uVuy/nfDymCUiFwrVUQGleE
+2XUfQeW3IlyZI1INfjNcQ1e/I5a36bh1mFtD+GHk1jbGp/YLImU2sGbJPBmQwpzQ
+F9eKub3szoFc2Xh9kMoc8Vlxi0mYOphxhK21yNk+aVaWTV74teJcBC66oumbC/nI
+xpHyAPFWN0WtuFOXrz40J+//3ils/w==
+=TStU
+-----END PGP SIGNATURE-----
+
+--bEuBL+UqcAprloOC--
 
