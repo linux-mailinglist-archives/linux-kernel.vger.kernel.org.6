@@ -1,413 +1,93 @@
-Return-Path: <linux-kernel+bounces-181468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D20C8C7C6A
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 20:29:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EDFD8C7C68
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 20:28:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04088280C8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:29:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24EB91F22525
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:28:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 219AE160795;
-	Thu, 16 May 2024 18:19:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ADB715FD19;
+	Thu, 16 May 2024 18:19:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="kq2SZSe1"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="tr43CFx4"
+Received: from smtp-190c.mail.infomaniak.ch (smtp-190c.mail.infomaniak.ch [185.125.25.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DD9515FA70;
-	Thu, 16 May 2024 18:19:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D4415EFA8
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 18:19:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715883594; cv=none; b=myD5akLUd/uySrzpyZbIsVPT/JxCsUYsMuuBn4yo8408sE4exfScz5qoQVd4tEZlxrAVRFFkNL1VMrOwNPt5XuUQ4p79H7j8zSVNQh0roHP0cORfPSZpegZaOtm6cp5Y9vhiIY0tmlEYZKwjlJJQynN70/Snxi3hj0Wz1Kfgyk4=
+	t=1715883593; cv=none; b=kGAts0RTr/t27jqOgDlGtOUwghZgS+IKN/qK/UrmQA/WgIyWU3nUwxyRNp3DLF2SJeQY4x+/BnztJzXNO+jPZgzooppBG3BEqWHYJIOUn9FDWSqW3PdgeWTOEy0eIGfK/vDYctnnDCQ0eW3Q5lgM/EcEYbtf1gqmP83/7QOFIwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715883594; c=relaxed/simple;
-	bh=M9G0C5XMvwwySAScbo9qEW4QmuRwYiNTlRB1r+pCTRQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=VqYl3/w+enuBaanP90bp2HaEGhwSmrSkWO9YFZAaXB5a5CeCo5SHut/j2lCFRjlP3DvOUU6iLqWb/vxUm5BvOajCvgHGEv8UISGlv8nPJkXnDtmTYWLcnwmH/u2V+oXOqBagRlEzXiONeiCRm2sjCk+1/ayRoIPBXLV8u8oFPnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=kq2SZSe1; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353724.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44GHc0i9010903;
-	Thu, 16 May 2024 18:19:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=pp1;
- bh=MU/yVusaZAzYIm5jhrcns6ij25EwWFQhZWpvdpTtNWw=;
- b=kq2SZSe1fmpTXPeJmkekUoZ2+rvZKdMUwdk+u1/kxhexzp3YPQwopRIhhhC/J2XNUMZY
- MOHa4AMfI2K+UYQKSXskxJyen9lkB9oilLP0ALehl0lZN3wANIMKZ4t3V0x3HrngGTN6
- TlGAsJ8vdjqqePp65s81H9u6NCBrvbvbjYSHl0eaqYaiJ0cXqcwgHaQXE+OylPuGsfP5
- u0z5pC7C2gqOQnFmOZMTr+pOdyo6L1Up34sxsAVzvG7AUYkaC+JAj9zBap2rkwTDGvEG
- woezbfUT1xsnd9z7+AA4NvPNMjYL9xOaXArnI1hlG/o+5rOxkl9Uqei64VcsWrMYbU/n dQ== 
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y5pq5r36c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 16 May 2024 18:19:22 +0000
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44GHJCHp018780;
-	Thu, 16 May 2024 18:19:22 GMT
-Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3y2k0tuqek-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 16 May 2024 18:19:22 +0000
-Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
-	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44GIJJAa7930520
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 16 May 2024 18:19:21 GMT
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8739A5806A;
-	Thu, 16 May 2024 18:19:19 +0000 (GMT)
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 48E0258070;
-	Thu, 16 May 2024 18:19:19 +0000 (GMT)
-Received: from slate16.aus.stglabs.ibm.com (unknown [9.61.107.19])
-	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 16 May 2024 18:19:19 +0000 (GMT)
-From: Eddie James <eajames@linux.ibm.com>
-To: linux-fsi@lists.ozlabs.org
-Cc: linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-spi@vger.kernel.org, broonie@kernel.org, andi.shyti@kernel.org,
-        joel@jms.id.au, alistair@popple.id.au, jk@ozlabs.org,
-        andrew@codeconstruct.com.au, linux-aspeed@lists.ozlabs.org,
-        eajames@linux.ibm.com
-Subject: [PATCH v3 40/40] ARM: dts: aspeed: P10: Bump SPI max frequencies
-Date: Thu, 16 May 2024 13:19:07 -0500
-Message-Id: <20240516181907.3468796-41-eajames@linux.ibm.com>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <20240516181907.3468796-1-eajames@linux.ibm.com>
-References: <20240516181907.3468796-1-eajames@linux.ibm.com>
+	s=arc-20240116; t=1715883593; c=relaxed/simple;
+	bh=8i+81HfSMQ4B+34PJVD+1LT4BhQy/TedwCa1JhBidyI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=N8V7mmpMcbhg22B21dfEvs6n9rtkuntYSx5w+V/X6Gf9W+SlDWhhAiYd+/PG7LLz5lN6roawrL7W6rav/jz5swkQnezz14CqhtWHJmzntP7Ku81MnDf82h2XO0aGrajPd4yPj08IcxNIaAWMhXUSy+fM7Zt6ssrOiS/rQSZoLTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=tr43CFx4; arc=none smtp.client-ip=185.125.25.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4VgJKF5ZDYz9xx;
+	Thu, 16 May 2024 20:19:45 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1715883585;
+	bh=CerPzP5dUgudtzxZqGbBjChoGejUpjLgIsX+ii7FKE4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=tr43CFx470rjkCLy632XfxFwcR4DuopkPnCccYyTMlCqEqvRu3D6NAgjmeB0w25YG
+	 3HAJ678i3/sRVhh+u0fgksy+B6pseiHVVsdtnSCGaHeD4w+MEtbz5ZUck29ooSbGTu
+	 ygFce8B0cvrv4EvaPwk/WHewg3X6vt/QqooQFL4E=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4VgJKF1bmxzdsH;
+	Thu, 16 May 2024 20:19:45 +0200 (CEST)
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	Paul Moore <paul@paul-moore.com>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	"Serge E . Hallyn" <serge@hallyn.com>,
+	nathan@kernel.org,
+	ndesaulniers@google.com,
+	syzkaller-bugs@googlegroups.com,
+	trix@redhat.com,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: [PATCH v1 0/2] Fix warning in collect_domain_accesses()
+Date: Thu, 16 May 2024 20:19:33 +0200
+Message-ID: <20240516181935.1645983-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: fphCgzX11WaTYDUihhaLg9Q_L_Mk4LGS
-X-Proofpoint-ORIG-GUID: fphCgzX11WaTYDUihhaLg9Q_L_Mk4LGS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-16_07,2024-05-15_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- suspectscore=0 bulkscore=0 spamscore=0 malwarescore=0 phishscore=0
- clxscore=1015 mlxlogscore=894 priorityscore=1501 adultscore=0
- impostorscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2405010000 definitions=main-2405160132
+X-Infomaniak-Routing: alpha
 
-These parts support 10MHZ.
+Hi,
 
-Signed-off-by: Eddie James <eajames@linux.ibm.com>
----
- .../dts/aspeed/aspeed-bmc-ibm-everest.dts     | 32 +++++++++----------
- .../arm/boot/dts/aspeed/ibm-power10-dual.dtsi | 16 +++++-----
- .../arm/boot/dts/aspeed/ibm-power10-quad.dtsi | 16 +++++-----
- 3 files changed, 32 insertions(+), 32 deletions(-)
+As found by syzbot, there is an issue in the collect_domain_accesses()
+function.  A WARN_ON_ONCE() can be triggered by processes sandboxed with
+Landlock and trying to do a link with a mount root directory.  This is
+then not a security issue.  Moreover, such directory can only be created
+with the open_tree(2) syscall by a process with CAP_SYS_ADMIN.
 
-diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-everest.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-everest.dts
-index 214b2e6a4c6df..1365dc95f1352 100644
---- a/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-everest.dts
-+++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-everest.dts
-@@ -2797,7 +2797,7 @@ eeprom@0 {
- 
- 					compatible = "atmel,at25";
- 					reg = <0>;
--					spi-max-frequency = <1000000>;
-+					spi-max-frequency = <10000000>;
- 				};
- 			};
- 
-@@ -2813,7 +2813,7 @@ eeprom@0 {
- 
- 					compatible = "atmel,at25";
- 					reg = <0>;
--					spi-max-frequency = <1000000>;
-+					spi-max-frequency = <10000000>;
- 				};
- 			};
- 
-@@ -2830,7 +2830,7 @@ eeprom@0 {
- 
- 					compatible = "atmel,at25";
- 					reg = <0>;
--					spi-max-frequency = <1000000>;
-+					spi-max-frequency = <10000000>;
- 				};
- 			};
- 
-@@ -2847,7 +2847,7 @@ eeprom@0 {
- 
- 					compatible = "atmel,at25";
- 					reg = <0>;
--					spi-max-frequency = <1000000>;
-+					spi-max-frequency = <10000000>;
- 				};
- 			};
- 		};
-@@ -3170,7 +3170,7 @@ eeprom@0 {
- 
- 					compatible = "atmel,at25";
- 					reg = <0>;
--					spi-max-frequency = <1000000>;
-+					spi-max-frequency = <10000000>;
- 				};
- 			};
- 
-@@ -3186,7 +3186,7 @@ eeprom@0 {
- 
- 					compatible = "atmel,at25";
- 					reg = <0>;
--					spi-max-frequency = <1000000>;
-+					spi-max-frequency = <10000000>;
- 				};
- 			};
- 
-@@ -3203,7 +3203,7 @@ eeprom@0 {
- 
- 					compatible = "atmel,at25";
- 					reg = <0>;
--					spi-max-frequency = <1000000>;
-+					spi-max-frequency = <10000000>;
- 				};
- 			};
- 
-@@ -3220,7 +3220,7 @@ eeprom@0 {
- 
- 					compatible = "atmel,at25";
- 					reg = <0>;
--					spi-max-frequency = <1000000>;
-+					spi-max-frequency = <10000000>;
- 				};
- 			};
- 		};
-@@ -3543,7 +3543,7 @@ eeprom@0 {
- 
- 					compatible = "atmel,at25";
- 					reg = <0>;
--					spi-max-frequency = <1000000>;
-+					spi-max-frequency = <10000000>;
- 				};
- 			};
- 
-@@ -3559,7 +3559,7 @@ eeprom@0 {
- 
- 					compatible = "atmel,at25";
- 					reg = <0>;
--					spi-max-frequency = <1000000>;
-+					spi-max-frequency = <10000000>;
- 				};
- 			};
- 
-@@ -3576,7 +3576,7 @@ eeprom@0 {
- 
- 					compatible = "atmel,at25";
- 					reg = <0>;
--					spi-max-frequency = <1000000>;
-+					spi-max-frequency = <10000000>;
- 				};
- 			};
- 
-@@ -3593,7 +3593,7 @@ eeprom@0 {
- 
- 					compatible = "atmel,at25";
- 					reg = <0>;
--					spi-max-frequency = <1000000>;
-+					spi-max-frequency = <10000000>;
- 				};
- 			};
- 		};
-@@ -3916,7 +3916,7 @@ eeprom@0 {
- 
- 					compatible = "atmel,at25";
- 					reg = <0>;
--					spi-max-frequency = <1000000>;
-+					spi-max-frequency = <10000000>;
- 				};
- 			};
- 
-@@ -3932,7 +3932,7 @@ eeprom@0 {
- 
- 					compatible = "atmel,at25";
- 					reg = <0>;
--					spi-max-frequency = <1000000>;
-+					spi-max-frequency = <10000000>;
- 				};
- 			};
- 
-@@ -3949,7 +3949,7 @@ eeprom@0 {
- 
- 					compatible = "atmel,at25";
- 					reg = <0>;
--					spi-max-frequency = <1000000>;
-+					spi-max-frequency = <10000000>;
- 				};
- 			};
- 
-@@ -3966,7 +3966,7 @@ eeprom@0 {
- 
- 					compatible = "atmel,at25";
- 					reg = <0>;
--					spi-max-frequency = <1000000>;
-+					spi-max-frequency = <10000000>;
- 				};
- 			};
- 		};
-diff --git a/arch/arm/boot/dts/aspeed/ibm-power10-dual.dtsi b/arch/arm/boot/dts/aspeed/ibm-power10-dual.dtsi
-index 44e48e39e6e96..e11354bb384c2 100644
---- a/arch/arm/boot/dts/aspeed/ibm-power10-dual.dtsi
-+++ b/arch/arm/boot/dts/aspeed/ibm-power10-dual.dtsi
-@@ -94,7 +94,7 @@ eeprom@0 {
- 
- 					compatible = "atmel,at25";
- 					reg = <0>;
--					spi-max-frequency = <1000000>;
-+					spi-max-frequency = <10000000>;
- 				};
- 			};
- 
-@@ -110,7 +110,7 @@ eeprom@0 {
- 
- 					compatible = "atmel,at25";
- 					reg = <0>;
--					spi-max-frequency = <1000000>;
-+					spi-max-frequency = <10000000>;
- 				};
- 			};
- 
-@@ -127,7 +127,7 @@ eeprom@0 {
- 
- 					compatible = "atmel,at25";
- 					reg = <0>;
--					spi-max-frequency = <1000000>;
-+					spi-max-frequency = <10000000>;
- 				};
- 			};
- 
-@@ -144,7 +144,7 @@ eeprom@0 {
- 
- 					compatible = "atmel,at25";
- 					reg = <0>;
--					spi-max-frequency = <1000000>;
-+					spi-max-frequency = <10000000>;
- 				};
- 			};
- 		};
-@@ -261,7 +261,7 @@ eeprom@0 {
- 
- 					compatible = "atmel,at25";
- 					reg = <0>;
--					spi-max-frequency = <1000000>;
-+					spi-max-frequency = <10000000>;
- 				};
- 			};
- 
-@@ -277,7 +277,7 @@ eeprom@0 {
- 
- 					compatible = "atmel,at25";
- 					reg = <0>;
--					spi-max-frequency = <1000000>;
-+					spi-max-frequency = <10000000>;
- 				};
- 			};
- 
-@@ -294,7 +294,7 @@ eeprom@0 {
- 
- 					compatible = "atmel,at25";
- 					reg = <0>;
--					spi-max-frequency = <1000000>;
-+					spi-max-frequency = <10000000>;
- 				};
- 			};
- 
-@@ -311,7 +311,7 @@ eeprom@0 {
- 
- 					compatible = "atmel,at25";
- 					reg = <0>;
--					spi-max-frequency = <1000000>;
-+					spi-max-frequency = <10000000>;
- 				};
- 			};
- 		};
-diff --git a/arch/arm/boot/dts/aspeed/ibm-power10-quad.dtsi b/arch/arm/boot/dts/aspeed/ibm-power10-quad.dtsi
-index 57494c744b5d0..0ffb4ae6423fc 100644
---- a/arch/arm/boot/dts/aspeed/ibm-power10-quad.dtsi
-+++ b/arch/arm/boot/dts/aspeed/ibm-power10-quad.dtsi
-@@ -744,7 +744,7 @@ eeprom@0 {
- 
- 					compatible = "atmel,at25";
- 					reg = <0>;
--					spi-max-frequency = <1000000>;
-+					spi-max-frequency = <10000000>;
- 				};
- 			};
- 
-@@ -760,7 +760,7 @@ eeprom@0 {
- 
- 					compatible = "atmel,at25";
- 					reg = <0>;
--					spi-max-frequency = <1000000>;
-+					spi-max-frequency = <10000000>;
- 				};
- 			};
- 
-@@ -777,7 +777,7 @@ eeprom@0 {
- 
- 					compatible = "atmel,at25";
- 					reg = <0>;
--					spi-max-frequency = <1000000>;
-+					spi-max-frequency = <10000000>;
- 				};
- 			};
- 
-@@ -794,7 +794,7 @@ eeprom@0 {
- 
- 					compatible = "atmel,at25";
- 					reg = <0>;
--					spi-max-frequency = <1000000>;
-+					spi-max-frequency = <10000000>;
- 				};
- 			};
- 		};
-@@ -1117,7 +1117,7 @@ eeprom@0 {
- 
- 					compatible = "atmel,at25";
- 					reg = <0>;
--					spi-max-frequency = <1000000>;
-+					spi-max-frequency = <10000000>;
- 				};
- 			};
- 
-@@ -1133,7 +1133,7 @@ eeprom@0 {
- 
- 					compatible = "atmel,at25";
- 					reg = <0>;
--					spi-max-frequency = <1000000>;
-+					spi-max-frequency = <10000000>;
- 				};
- 			};
- 
-@@ -1150,7 +1150,7 @@ eeprom@0 {
- 
- 					compatible = "atmel,at25";
- 					reg = <0>;
--					spi-max-frequency = <1000000>;
-+					spi-max-frequency = <10000000>;
- 				};
- 			};
- 
-@@ -1167,7 +1167,7 @@ eeprom@0 {
- 
- 					compatible = "atmel,at25";
- 					reg = <0>;
--					spi-max-frequency = <1000000>;
-+					spi-max-frequency = <10000000>;
- 				};
- 			};
- 		};
+See https://lore.kernel.org/r/000000000000553d3f0618198200@google.com
+
+Regards,
+
+Mickaël Salaün (2):
+  landlock: Fix d_parent walk
+  selftests/landlock: Add layout1.refer_mount_root
+
+ security/landlock/fs.c                     | 13 ++++++-
+ tools/testing/selftests/landlock/fs_test.c | 45 ++++++++++++++++++++++
+ 2 files changed, 56 insertions(+), 2 deletions(-)
+
+
+base-commit: 5bf9e57e634bd72a97b4b12c87186fc052a6a116
 -- 
-2.39.3
+2.45.0
 
 
