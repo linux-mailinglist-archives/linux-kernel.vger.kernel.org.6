@@ -1,118 +1,119 @@
-Return-Path: <linux-kernel+bounces-181236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 522138C795F
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:26:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3E158C794B
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:25:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E1CC28AE32
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:26:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 005911C21976
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:25:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8239714D719;
-	Thu, 16 May 2024 15:26:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E389614D2BD;
+	Thu, 16 May 2024 15:25:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="niiKBIZn"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="NU2xaTu/"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 367D914D2A3;
-	Thu, 16 May 2024 15:26:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED8751E491;
+	Thu, 16 May 2024 15:25:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715873177; cv=none; b=pDL1MlDUliS/CBd+PI1KE+4HKQytJhGuC2nT7B1QchU+esRfhA9MioloCMPPm20TmKlhnfjJRtuKQ77CKgMt2FD0qnpkQRHb6KXt9E+Ris1rTp0X2Laox5s5VJgfNRyadt+qCOp1rrc4pwNOIfCMhya2Gk1TgqmiQdkvHeGjnJw=
+	t=1715873118; cv=none; b=pEuzf8x6pHZpH7Wa6ykcDpFQxsnmb6IJIHc33PZYMMIjHeZSrig8tDHciSVHfxv44JRPL0z/9RdjVCbD/vXSLE8jszmHgAGa3G7ODya8YXPBnfyKIj5z0cYWQRvk6jEylLGMj5qWsp0pwOw2FMSghSBWjnMDfVGJR4mHO7Rq5iI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715873177; c=relaxed/simple;
-	bh=aXqDgEPjwHMD2PFCnGHgOg/xjWQI0U5DZ7CMG6pHtco=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=T6lGv7+sxBGKIQ8ZauG3QIOmByixWEEzx2xBjjU8hALRw6CwGo8SiLzQ3Q6c7NEAOsmk5JnDV6PCeJ7B0813O6+B7LDl59Z3oKErSsR2CSsYhznNpOhFvQno0zpRS1J09ukOYAHahpHrBwIPT/aKy9mOzyvopicMIkAhULhLUhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=niiKBIZn; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44GD5XZh009990;
-	Thu, 16 May 2024 17:26:01 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	from:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding:content-type; s=
-	selector1; bh=VDo9KLS5VfcqruiE4K9r2uLa3efLXIlw/R2YAL6iasM=; b=ni
-	iKBIZnvTl78+xl/TTrU62H2Hbu6SmGhK+S23XJ8pme/OnpxxyMyZViRbbsEB/f9p
-	9puVOvrbZsbomwWe4jFCKQhC/1kMafDn+MuJ/TiOTbCWrjf1MX0m9t82OtX6iMdG
-	HMShfIB2jsiChlhrwE2kx++IvhsapM0iLx3CE/7vpmQEtbZVm5XsLv9KBirCxDmx
-	+L89AMvFQMtaNg0GZiFm9XBYWrF0LRwfdNUO11yZuIT68ZbMdEs3HQe2OdJlZt5n
-	zXXwQ7kVeA1RsRLQwCBp5mzgc4una03MdOlSe8HAirBpGiuUpJN+MtitzuoWPXwT
-	NIsqQPmvjKDUyYtsAlwQ==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3y4sxv69p4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 16 May 2024 17:26:01 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 8F01540045;
-	Thu, 16 May 2024 17:25:57 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B6D34223653;
-	Thu, 16 May 2024 17:24:56 +0200 (CEST)
-Received: from localhost (10.48.87.209) by SHFDAG1NODE1.st.com (10.75.129.69)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Thu, 16 May
- 2024 17:24:56 +0200
-From: <gabriel.fernandez@foss.st.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Maxime Ripard <mripard@kernel.org>,
-        Gabriel Fernandez
-	<gabriel.fernandez@foss.st.com>,
-        Dan Carpenter <dan.carpenter@linaro.or6g>
-CC: <devicetree@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-Subject: [PATCH v2 3/3] arm64: dts: st: enable STM32 access controller for RCC
-Date: Thu, 16 May 2024 17:24:27 +0200
-Message-ID: <20240516152427.692374-4-gabriel.fernandez@foss.st.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240516152427.692374-1-gabriel.fernandez@foss.st.com>
-References: <20240516152427.692374-1-gabriel.fernandez@foss.st.com>
+	s=arc-20240116; t=1715873118; c=relaxed/simple;
+	bh=YTfcN3ABeR8TgtyVD7RSJHOoZtLWmrSjRR3Vv5D/b6w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A/J6ArceosP0ui6juDHW642eSW8cPqnQQyeJEOnGP2pi1gxjNDz6To2lq5XGizR0u9UbAZ72pUenqvUDqPXQVhi7voG3je2lo4KFBlHLmPMtjSsBbJD7k8pBXv6/25Lo5epzPgCqdZnbyshllkSqLau6g2W+BhKtbvTVYi2tFhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=NU2xaTu/; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=ZhFvrP46M0abGKnWf7SV+eo4mI12fx7mDm5L6hnBtXA=; b=NU2xaTu/MB5fraFn
+	tWRzPU7/oXq/XojRJgS/8tT+OrizrJBQOsBOoDUKqLA51M+jnKfht5LpV0TSmTlWwb4cZ3D4r9wzY
+	sPv44QOg6m3TJcIcjt28/szsca5ky3Ox+ZdD1fo6snX5yX7HqaD9Q1GSeMf7g3jemgmRcCHc9Ynys
+	msgXJmYa0mX20oyG8bGWxajwylJZTsl5qFZ1TtE0AebI1H9/U8QBw/IdNoS4pLdGn2Prnmn3L1Pmq
+	/OGXOGEvnGeV0FQ1/VabsrH41YKcCNVoecDQHB7PQZGKDWGXNsKPLKpoopjlmi1D5c9MDXJcF5cRe
+	a8Towg5rJiBB6YBYFw==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1s7cym-001Fs8-1V;
+	Thu, 16 May 2024 15:25:12 +0000
+Date: Thu, 16 May 2024 15:25:12 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: Frank Li <Frank.li@nxp.com>
+Cc: vkoul@kernel.org, linux-arm-msm@vger.kernel.org,
+	dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dmaengine: qcom: gpi: remove unused struct 'gpi_desc'
+Message-ID: <ZkYlWIg74EqHUFAp@gallifrey>
+References: <20240516133211.251205-1-linux@treblig.org>
+ <ZkYdDtoPMnYlGT/6@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-16_07,2024-05-15_01,2023-05-22_02
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <ZkYdDtoPMnYlGT/6@lizhi-Precision-Tower-5810>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 15:24:29 up 8 days,  2:38,  2 users,  load average: 0.01, 0.04, 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+* Frank Li (Frank.li@nxp.com) wrote:
+> On Thu, May 16, 2024 at 02:32:11PM +0100, linux@treblig.org wrote:
+> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> > 
+> > 'gpi_desc' seems like it was never used.
+> > Remove it.
+> 
+> code change show 'reg_info', not 'gpi_desc'. You need make sure that it
+> really is not used, not "seems like".
 
-Use an STM32 access controller to filter the registration of clocks.
+Oops that was a cut-and-paste when I did the commit on the name.
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
----
- arch/arm64/boot/dts/st/stm32mp251.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+It was build tested.
 
-diff --git a/arch/arm64/boot/dts/st/stm32mp251.dtsi b/arch/arm64/boot/dts/st/stm32mp251.dtsi
-index dcd0656d67a8..602d02efc202 100644
---- a/arch/arm64/boot/dts/st/stm32mp251.dtsi
-+++ b/arch/arm64/boot/dts/st/stm32mp251.dtsi
-@@ -441,6 +441,7 @@ rcc: clock-controller@44200000 {
- 				<&scmi_clk CK_SCMI_TIMG2>,
- 				<&scmi_clk CK_SCMI_PLL3>,
- 				<&clk_dsi_txbyte>;
-+				access-controllers = <&rifsc 156>;
- 		};
- 
- 		exti1: interrupt-controller@44220000 {
+V2 coming along now.
+
+Dave
+
+> 'struct reg_info' is never used, so remove it.
+> 
+> > 
+> > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> > ---
+> >  drivers/dma/qcom/gpi.c | 6 ------
+> >  1 file changed, 6 deletions(-)
+> > 
+> > diff --git a/drivers/dma/qcom/gpi.c b/drivers/dma/qcom/gpi.c
+> > index 1c93864e0e4d..639ab304db9b 100644
+> > --- a/drivers/dma/qcom/gpi.c
+> > +++ b/drivers/dma/qcom/gpi.c
+> > @@ -476,12 +476,6 @@ struct gpi_dev {
+> >  	struct gpii *gpiis;
+> >  };
+> >  
+> > -struct reg_info {
+> > -	char *name;
+> > -	u32 offset;
+> > -	u32 val;
+> > -};
+> > -
+> >  struct gchan {
+> >  	struct virt_dma_chan vc;
+> >  	u32 chid;
+> > -- 
+> > 2.45.0
+> > 
 -- 
-2.25.1
-
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
