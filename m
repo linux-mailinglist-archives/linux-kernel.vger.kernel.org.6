@@ -1,68 +1,89 @@
-Return-Path: <linux-kernel+bounces-181499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4683A8C7CD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 21:06:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5417C8C7CFC
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 21:11:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCF191F22176
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 19:06:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C1DC1F2564E
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 19:11:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78F1C156F55;
-	Thu, 16 May 2024 19:04:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="ZHbCJ+XJ"
-Received: from aer-iport-4.cisco.com (aer-iport-4.cisco.com [173.38.203.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E20A115748B;
+	Thu, 16 May 2024 19:07:20 +0000 (UTC)
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C8C0158D77;
-	Thu, 16 May 2024 19:04:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.38.203.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2232157A53;
+	Thu, 16 May 2024 19:07:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715886272; cv=none; b=e+ufxdwX3I/GwA3G1hNabAlhoGE4yKSgNWKXXOEXn65/TO62O+q7K8O1Welkm+P3w5vJTYqC9xaRoX3h2oqLWYFtKtkZ0fzVe2+w8HPlG76yIYZ1SXatuRqSD0qqjilqitSsTSHhe59gyvc6V7WuS0SbwR5GMPA9Jq+vK7WnwT0=
+	t=1715886440; cv=none; b=pHd2T977uXCkLabNamcHuSp+XmGlmmHcBy5mJ/Gi/TKHE3yodt1gkggfSqwCxDuGQerR5p+1NgzxwafRzJQostBMTdfBcgzOPAyd0soO8GP8G+/NzwIY0h2wM4pIhCOU/iKwNt/dilz6ypTWV7smblzyem6cUz3Ij7+N+8y1NlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715886272; c=relaxed/simple;
-	bh=YVkKY+DVfu3Ns5YhZFxnBhlRk3J/PwOtX93n3BmC/r0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=rNKOdhjSll4kayBYjVd+RwlxhHcTp+tERECLsTX2Pb7heCjzREbiN5SgzCh+7DqAFc9iBc7nMb61gqdHTbhdx/igjjynJ1y+BZqoIGgMPbYFkEz8S9eFXPT+6bFoXab43eRmQBPc8398qs2P4K4E12jRABlzpJzH9iOrdDmqBCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com; spf=pass smtp.mailfrom=cisco.com; dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b=ZHbCJ+XJ; arc=none smtp.client-ip=173.38.203.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cisco.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=cisco.com; i=@cisco.com; l=3251; q=dns/txt; s=iport;
-  t=1715886271; x=1717095871;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=+pfayBA377Ipl2qQGaCZtcT9bhjEsaDIsf91AaD2x7E=;
-  b=ZHbCJ+XJHSms5kH0i4Px/dU5jPf2aFyMfpSdlDBfOX0G1R2HWtveJ3lu
-   epg4ZTnecHPCu/rt7QHo6i/j98sxghOkaBU2w2nSHqvK8+eyFT16uUx8t
-   i+VJ4pG/jRaLEtEKF/42xlVl3TYjFNZ+eyCwnDolqtArxV1eXARBYXW1d
-   M=;
-X-CSE-ConnectionGUID: IN3ktra0TnyQzrIlWsIUSA==
-X-CSE-MsgGUID: MVb2X31TSLeouobFH9aTTA==
-X-IronPort-AV: E=Sophos;i="6.08,165,1712620800"; 
-   d="scan'208";a="12379876"
-Received: from aer-iport-nat.cisco.com (HELO aer-core-10.cisco.com) ([173.38.203.22])
-  by aer-iport-4.cisco.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 19:04:28 +0000
-Received: from localhost (ams3-vpn-dhcp4879.cisco.com [10.61.83.14])
-	(authenticated bits=0)
-	by aer-core-10.cisco.com (8.15.2/8.15.2) with ESMTPSA id 44GJ4RKW101499
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Thu, 16 May 2024 19:04:28 GMT
-From: Ariel Miculas <amiculas@cisco.com>
-To: rust-for-linux@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        tycho@tycho.pizza, brauner@kernel.org, viro@zeniv.linux.org.uk,
-        ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
-        shallyn@cisco.com, Ariel Miculas <amiculas@cisco.com>
-Subject: [RFC PATCH v3 22/22] fs: puzzlefs: implement statfs for puzzlefs
-Date: Thu, 16 May 2024 22:03:45 +0300
-Message-Id: <20240516190345.957477-23-amiculas@cisco.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240516190345.957477-1-amiculas@cisco.com>
-References: <20240516190345.957477-1-amiculas@cisco.com>
+	s=arc-20240116; t=1715886440; c=relaxed/simple;
+	bh=MHoT4Jo3RAzz8eEtqv+1iklBPBBHf3L8xhNTgPY77mk=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=b5LGj4UH74bPdvMDZ58/raUYdUo/fuDZgl74dhALsDgCBtQNA9fLy0EEItwKmHzRpHqZOEBRBWR4JZSVhZa8yRLM4PuyV6YT6V8YIrEEPgPG50fSqbcocZr1xxWk//7zV05crclIc1CknynM0vZXw+8VNPxWfDyq/z9XZILFWB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4202cea9a2fso6606215e9.3;
+        Thu, 16 May 2024 12:07:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715886437; x=1716491237;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TGl25VI/bdS9cA0cwaeR3veGamr8DGMylL6oozmJjQ8=;
+        b=Q3EfbISFKyD1A/FwAF8KVvvIJ6CxUPtTUfX/dayyD/Hmn9JkBUL3E+9krxTt12rHkr
+         Yy2CNf7o8XjBekzZ6X7rTwNc6MINBP8nIYy85GMijoTZ22vdmkzOjuzwzj75WKa3o5UH
+         D3Ilru+TG6N5a5IXgct1FDtGy0mwOys2fRnLp7VBy6Gqvmgsc2u1IoP1Xez7RRHjSXbB
+         Qk1tBKlONVnvKEUZYnNVySSUXnsh368G4SsYeixi/I9/tG5v4UoGysDnEDhZZyU97Xgf
+         kL87o30pH7FUQYAoterl5/HlGkrsZxOEFm/HNKmgiyNOZq8qqcv1rYbLgEIi/Y9mAWiE
+         cE8g==
+X-Forwarded-Encrypted: i=1; AJvYcCVDPeNhvNFzTcUJnUajeOzqPuAmcz53AA1jzVo1Nd3GdnltCX1O0WMJGnQFpIriDHGumxJHg01KKWL6XRpzgMwd702CKGim93IYPO6Aen1PCkEkHHrQCCNdlB8cAj4dKjsqaPQxYA==
+X-Gm-Message-State: AOJu0Yx64P/eAkWtEVEomprRprqW1l9i7R0NDixlDaMJ9Ai5zb2nz/EV
+	g1zq89ZERPdOUnjFaanD0jiUolU441NbNaEwRk2iAk6VQmWMPwrL
+X-Google-Smtp-Source: AGHT+IHU5PR5Vspk+t1XLlDt07CkPjZ43WOOq9u4XxhlmWZ+EEOyNz1/pOKCz5lmgQmKNi0bY+Qa4A==
+X-Received: by 2002:a05:600c:5008:b0:41b:dca6:a3fa with SMTP id 5b1f17b1804b1-41fead6dc7amr143740775e9.39.1715886436833;
+        Thu, 16 May 2024 12:07:16 -0700 (PDT)
+Received: from costa-tp.redhat.com ([2a00:a040:1a3:c059:8b18:f13e:da9b:5a8e])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41fccee9335sm275834155e9.29.2024.05.16.12.07.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 May 2024 12:07:16 -0700 (PDT)
+From: Costa Shulyupin <costa.shul@redhat.com>
+To: longman@redhat.com,
+	pauld@redhat.com,
+	juri.lelli@redhat.com,
+	prarit@redhat.com,
+	vschneid@redhat.com,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Zefan Li <lizefan.x@bytedance.com>,
+	Tejun Heo <tj@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Daniel Bristot de Oliveira <bristot@redhat.com>,
+	Petr Mladek <pmladek@suse.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Yoann Congal <yoann.congal@smile.fr>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Nhat Pham <nphamcs@gmail.com>,
+	Costa Shulyupin <costa.shul@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org
+Subject: [PATCH v1 0/7] sched: Adjust affinity according to change of housekeeping cpumask
+Date: Thu, 16 May 2024 22:04:30 +0300
+Message-ID: <20240516190437.3545310-1-costa.shul@redhat.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,122 +91,60 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Authenticated-User: amiculas@cisco.com
-X-Outbound-SMTP-Client: 10.61.83.14, ams3-vpn-dhcp4879.cisco.com
-X-Outbound-Node: aer-core-10.cisco.com
 
-In order to use a filesystem as a lower filesystem in an overlay, it
-must implement statfs.
+The housekeeping CPU masks, set up by the "isolcpus" and "nohz_full"
+boot command line options, are used at boot time to exclude selected
+CPUs from running some kernel housekeeping facilities to minimize
+disturbance to latency sensitive userspace applications such as DPDK.
 
-Signed-off-by: Ariel Miculas <amiculas@cisco.com>
----
- fs/puzzlefs/puzzle/inode.rs | 26 ++++++++++++++++++++++++--
- fs/puzzlefs/puzzlefs.rs     | 21 +++++++++++++++++++--
- 2 files changed, 43 insertions(+), 4 deletions(-)
+However, these options can have negative consequences for "normal"
+workloads. Both nohz_full and rcu_nocbs can be applied to a subset of
+the CPUs on a server (so as to not impact the "normal" workloads), but
+they can only be changed with a reboot. This is a problem for
+containerized workloads running on OpenShift (i.e. kubernetes) where a
+mix of low latency and "normal" workloads can be created/destroyed
+dynamically and the number of CPUs allocated to each workload is often
+not known at boot time.
 
-diff --git a/fs/puzzlefs/puzzle/inode.rs b/fs/puzzlefs/puzzle/inode.rs
-index 318edbdc5163..a34f1064b632 100644
---- a/fs/puzzlefs/puzzle/inode.rs
-+++ b/fs/puzzlefs/puzzle/inode.rs
-@@ -14,6 +14,8 @@
- pub(crate) struct PuzzleFS {
-     pub(crate) oci: Image,
-     layers: Vec<format::MetadataBlob>,
-+    pub(crate) total_inodes: u64,
-+    pub(crate) total_block_size: u64,
- }
- 
- impl PuzzleFS {
-@@ -22,13 +24,33 @@ pub(crate) fn open(oci_root_dir: &CStr, rootfs_path: &CStr) -> Result<PuzzleFS>
-         let oci = Image::open(vfs_mount)?;
-         let rootfs = oci.open_rootfs_blob(rootfs_path)?;
- 
-+        let mut total_block_size = 0;
-+        let mut total_inodes: u64 = 0;
-         let mut layers = Vec::new();
-         for md in rootfs.metadatas.iter() {
-             let digest = Digest::try_from(md)?;
--            layers.push(oci.open_metadata_blob(&digest)?, GFP_KERNEL)?;
-+            let layer = oci.open_metadata_blob(&digest)?;
-+
-+            // This may take up too much time, but we need to implement statfs if we want to use
-+            // puzzlefs as a lower filesystem in overlayfs
-+            let inodes = layer.get_inode_vector()?;
-+            total_inodes += u64::from(inodes.len());
-+            for inode_number in 0..inodes.len() {
-+                let inode = Inode::from_capnp(inodes.get(inode_number))?;
-+                if let InodeMode::File { chunks } = inode.mode {
-+                    total_block_size += chunks.iter().map(|chunk| chunk.len).sum::<u64>();
-+                }
-+            }
-+
-+            layers.push(layer, GFP_KERNEL)?;
-         }
- 
--        Ok(PuzzleFS { oci, layers })
-+        Ok(PuzzleFS {
-+            oci,
-+            layers,
-+            total_inodes,
-+            total_block_size,
-+        })
-     }
- 
-     pub(crate) fn find_inode(&self, ino: u64) -> Result<Inode> {
-diff --git a/fs/puzzlefs/puzzlefs.rs b/fs/puzzlefs/puzzlefs.rs
-index 932f31917992..633f60983849 100644
---- a/fs/puzzlefs/puzzlefs.rs
-+++ b/fs/puzzlefs/puzzlefs.rs
-@@ -4,7 +4,7 @@
- 
- use kernel::fs::{
-     address_space, dentry, dentry::DEntry, file, file::DirEntryType, file::File, inode,
--    inode::INode, sb, Offset,
-+    inode::INode, sb, Offset, Stat,
- };
- use kernel::prelude::*;
- use kernel::types::{ARef, Either, Locked};
-@@ -23,6 +23,10 @@
-     license: "GPL",
- }
- 
-+const PUZZLEFS_BSIZE: u64 = 1 << PUZZLEFS_BSIZE_BITS;
-+const PUZZLEFS_BSIZE_BITS: u8 = 12;
-+const PUZZLEFS_MAGIC: usize = 0x7a7a7570;
-+
- fn mode_to_fs_type(inode: &Inode) -> Result<DirEntryType> {
-     Ok(match inode.mode {
-         InodeMode::File { .. } => DirEntryType::Reg,
-@@ -156,7 +160,7 @@ fn fill_super(
-         );
- 
-         let puzzlefs = puzzlefs?;
--        sb.set_magic(0x7a7a7570);
-+        sb.set_magic(PUZZLEFS_MAGIC);
-         Ok(Box::new(puzzlefs, GFP_KERNEL)?)
-     }
- 
-@@ -194,6 +198,19 @@ fn read_xattr(
-         }
-         Err(ENODATA)
-     }
-+
-+    fn statfs(dentry: &DEntry<Self>) -> Result<Stat> {
-+        let puzzlefs = dentry.super_block().data();
-+
-+        Ok(Stat {
-+            magic: PUZZLEFS_MAGIC,
-+            namelen: isize::MAX,
-+            bsize: PUZZLEFS_BSIZE as _,
-+            // Round total_block_size up
-+            blocks: (puzzlefs.total_block_size + PUZZLEFS_BSIZE - 1) / PUZZLEFS_BSIZE,
-+            files: puzzlefs.total_inodes,
-+        })
-+    }
- }
- 
- #[vtable]
+This series of patches is based on series
+"isolation: Exclude dynamically isolated CPUs from housekeeping masks"
+https://lore.kernel.org/lkml/20240229021414.508972-1-longman@redhat.com/
+Its purpose is to exclude dynamically isolated CPUs from some
+housekeeping masks so that subsystems that check the housekeeping masks
+at run time will not use those isolated CPUs.
+
+However, some of subsystems can use obsolete housekeeping CPU masks.
+Therefore, to prevent the use of these isolated CPUs, it is necessary to
+explicitly propagate changes of the housekeeping masks to all subsystems
+depending on the mask.
+
+Costa Shulyupin (7):
+  sched/isolation: Add infrastructure to adjust affinity for dynamic CPU
+    isolation
+  sched/isolation: Adjust affinity of timers according to change of
+    housekeeping cpumask
+  sched/isolation: Adjust affinity of hrtimers according to change of
+    housekeeping cpumask
+  sched/isolation: Adjust affinity of managed irqs according to change
+    of housekeeping cpumask
+  [NOT-FOR-MERGE] test timers affinity adjustment
+  [NOT-FOR-MERGE] test timers and hrtimers affinity adjustment
+  [NOT-FOR-MERGE] test managed irqs affinity adjustment
+
+ include/linux/hrtimer.h  |   2 +
+ include/linux/timer.h    |   2 +
+ init/Kconfig             |   1 +
+ kernel/cgroup/cpuset.c   |   3 +-
+ kernel/sched/isolation.c | 119 +++++++++++++++++++++++++++++++++++++--
+ kernel/time/hrtimer.c    |  81 ++++++++++++++++++++++++++
+ kernel/time/timer.c      |  64 +++++++++++++++++++++
+ tests/managed_irq.c      |  71 +++++++++++++++++++++++
+ tests/timers.c           |  58 +++++++++++++++++++
+ 9 files changed, 395 insertions(+), 6 deletions(-)
+ create mode 100644 tests/managed_irq.c
+ create mode 100644 tests/timers.c
+
 -- 
-2.34.1
+2.45.0
 
 
