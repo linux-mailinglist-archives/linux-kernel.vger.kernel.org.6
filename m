@@ -1,129 +1,159 @@
-Return-Path: <linux-kernel+bounces-181089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DA168C7749
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:09:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B04F8C7750
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:10:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B882A1F21A1B
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 13:09:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4206EB2089E
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 13:10:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43F56147C77;
-	Thu, 16 May 2024 13:08:13 +0000 (UTC)
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82408146A8A;
+	Thu, 16 May 2024 13:10:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YelBLipc"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BDA61474BA;
-	Thu, 16 May 2024 13:08:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA98B145B3D
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 13:10:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715864892; cv=none; b=SpNk1poRTXMyiM+CoIGyQfPQ0cy5yP/gp7FPiDISKlQw5CPC20LUfnqmD+2J9R2SDU9C6WEhxq7RxqIWuELLJ8gMyUwEwPBwsTwhfOYU/XUGrgQzbUFQv/robjDBS21uVMMTj053mjvw7DdZRBJ8TPAN285efBrTaDP+Iff/LcE=
+	t=1715865048; cv=none; b=Mo1So89vjja6CG8LjqyhGnOhvZ5llOSLzfyV17euRpTUhOmorqyIibRkv3L0lSoOuKVPCDVptgpnozZNetynId1qnd5Amr/vt3TNILswd+f1lwEjd9aNLCThe0aSlPZwTMu3+9usAqG5BZJE84qrRvGSlPNQ9FXLUFE7zis6S8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715864892; c=relaxed/simple;
-	bh=LTLX0LeM+qS03ZxB4OHmr2DRJXBFAV5FfJtbLW+rRa8=;
+	s=arc-20240116; t=1715865048; c=relaxed/simple;
+	bh=+qN5DxB61g3Rpzjt8cPs2wxxF/2JTkfmz6mnIXDsgT8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XOiycGDDx2Ys5RVIETP1eRdHRWm0xiLPowNG6TixC5Nuwh5PK0fxEqb7JXm4CHi/X7gCAt7Zqt/6fwCxwDLftyM/Mdx1QiuvubH+yKpd909TBRDqbgrdkAqB8eyToEkoptF9fmuq8Z9V1/cVfP+q4tfkHQLHPgyj9ddOe973CWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a5ce2f0deffso103738366b.3;
-        Thu, 16 May 2024 06:08:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715864889; x=1716469689;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=x3xI3WqCXBZnh7JICdirIiSsZ2+IepKR0X49gjIcQu8=;
-        b=U7nrWgiDdqIteNJF7PziMKt3yOPFzeVKebCo7ZsoA2y4ckhwFAd8Y7EI6LJVSmT4It
-         m7UQ/xQeRr/PtwjGszoVhzK0hTvCdGOMbNqtvm5Kgmo0tgGQ8sdHChPcnY531ahwg0Nz
-         wIdOysSOjpl2IBBvwgqyGLGFo+zH0N72cSIoUcmyqMjCobZ0V0fkTnCkULO5b87XF8Hv
-         2iMtk/8sbk6R0l3oG8WQrrukhqo0ZqT8bivQ1QTSp1V/+qmRwVyYS32i1+aFuEB3gfHg
-         dn01sPqviDK1u6H7xvopAm+t2J0C3R7E6PDEyDklVaVnXS629drP2s9ltH2J8n4wjyRu
-         YItQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXFxHr9XF2v4O0xVm45MPtLxzcCJXCSozUtmkS35RXfOrb2JXql9EKakHWisXaAE0TTH92Io58TRmaEgn4AIr6q3k9WWuMw557AJCcnuIWR4tdMPQ6hi+krEJ2BK25NbjCuqoqBl7p6f9YCuQVC/Q==
-X-Gm-Message-State: AOJu0YwJcccfutVdYYGkVNIAXygGsqKsBth7idmWxcH/aZ4oJzWpWjrR
-	TS86vt5a+qXvsVkz6s33YuzeLkjfEWDNSqAW+nKi4kZI+1nMxfk6
-X-Google-Smtp-Source: AGHT+IHj6g17NY36UT1C5E1qzE5vQQVCSq6a5qXMzfef9hvyCrnuyZLS/XU8bjsk5rSgGfRB41Azng==
-X-Received: by 2002:a17:906:3d0:b0:a59:bfab:b25a with SMTP id a640c23a62f3a-a5a2d678063mr1306501066b.63.1715864889376;
-        Thu, 16 May 2024 06:08:09 -0700 (PDT)
-Received: from gmail.com (fwdproxy-lla-000.fbsv.net. [2a03:2880:30ff::face:b00c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a1781ce5dsm969498966b.42.2024.05.16.06.08.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 May 2024 06:08:08 -0700 (PDT)
-Date: Thu, 16 May 2024 06:08:06 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>, leit@meta.com,
-	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-perf-users@vger.kernel.org>,
-	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] perf list: Fix the --no-desc option
-Message-ID: <ZkYFNrwGtdi8XHSD@gmail.com>
-References: <20240513212007.62904-1-leitao@debian.org>
- <CAP-5=fXimpTxhC0A+MDs8t9zn=hifHFxLChQm_QzJQtuHbztPg@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nNaqrwyEXefxt279Hy/9k6qc2YlCqnll9p+nhhIRTtFSauiNdvBstcx+1yrYDPheblsz5vidDRRqjWILtamLjCaqznFpbRVh7ZqriiQRaLCL9UJ3yhdUdx+OXMEAEp2arBTwdL5wF6lMFnBKxgPu/9CaxhT29gfJN+TEXoCwdVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YelBLipc; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715865045;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6MzQGMFLfrhhSl6bSyuFe86ROBiqTDOIvxRDFN1T/dk=;
+	b=YelBLipcYAjin2YZ0J2tgBxCFB2O25V1d9JywfucH141C2Ke4FZCPuWQ9ULguh18OFDsrB
+	psiOcScNLPGwUoOhu8bDINLNDm71YCCcakjyF4jbDdtq7MVnSpjc8p6fAgVIXO86N3Xksc
+	40wg23ikzmCvjEE3W5mnMLkQNnDaeEk=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-674-x07UT-oNMRe252-Bln2tow-1; Thu, 16 May 2024 09:10:44 -0400
+X-MC-Unique: x07UT-oNMRe252-Bln2tow-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id CF3AC800074;
+	Thu, 16 May 2024 13:10:42 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.2])
+	by smtp.corp.redhat.com (Postfix) with SMTP id 8DDD4200A0B4;
+	Thu, 16 May 2024 13:10:40 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Thu, 16 May 2024 15:09:17 +0200 (CEST)
+Date: Thu, 16 May 2024 15:09:14 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Andrei Vagin <avagin@google.com>
+Cc: Kees Cook <keescook@chromium.org>,
+	Tycho Andersen <tandersen@netflix.com>,
+	Andy Lutomirski <luto@amacapital.net>,
+	Will Drewry <wad@chromium.org>, Jens Axboe <axboe@kernel.dk>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] seccomp: release task filters when the task exits
+Message-ID: <20240516130913.GB19105@redhat.com>
+References: <20240514175551.297237-1-avagin@google.com>
+ <20240514175551.297237-3-avagin@google.com>
+ <20240515125113.GC6821@redhat.com>
+ <CAEWA0a5dBvRwGAnztL56i=JV-WGGiaTd-GdJYdOxZmq1c+bdpg@mail.gmail.com>
+ <20240516093427.GA19105@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fXimpTxhC0A+MDs8t9zn=hifHFxLChQm_QzJQtuHbztPg@mail.gmail.com>
+In-Reply-To: <20240516093427.GA19105@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
 
-On Mon, May 13, 2024 at 07:51:12PM -0700, Ian Rogers wrote:
-> On Mon, May 13, 2024 at 2:20 PM Breno Leitao <leitao@debian.org> wrote:
+On 05/16, Oleg Nesterov wrote:
+>
+> On 05/15, Andrei Vagin wrote:
 > >
-> > Currently, the --no-desc option in perf list isn't functioning as
-> > intended.
-> >
-> > This issue arises from the overwriting of struct option->desc with the
-> > opposite value of struct option->long_desc. Consequently, whatever
-> > parse_options() returns at struct option->desc gets overridden later,
-> > rendering the --desc or --no-desc arguments ineffective.
-> >
-> > To resolve this, set ->desc as true by default and allow parse_options()
-> > to adjust it accordingly. This adjustment will fix the --no-desc
-> > option while preserving the functionality of the other parameters.
-> >
-> > Signed-off-by: Breno Leitao <leitao@debian.org>
-> > ---
-> > Changelog:
-> >
-> > v2:
-> >         * Do not print desc if long_desc is being printed, as identified
-> >           by Ian Rogers.
-> > ---
-> >  tools/perf/builtin-list.c | 14 ++++++--------
-> >  1 file changed, 6 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/tools/perf/builtin-list.c b/tools/perf/builtin-list.c
-> > index e27a1b1288c2..16186acdd301 100644
-> > --- a/tools/perf/builtin-list.c
-> > +++ b/tools/perf/builtin-list.c
-> > @@ -149,7 +149,11 @@ static void default_print_event(void *ps, const char *pmu_name, const char *topi
-> >         } else
-> >                 fputc('\n', fp);
-> >
-> > -       if (desc && print_state->desc) {
-> > +       if (long_desc && print_state->long_desc) {
-> > +               fprintf(fp, "%*s", 8, "[");
-> > +               wordwrap(fp, long_desc, 8, pager_get_columns(), 0);
-> > +               fprintf(fp, "]\n");
-> > +       } else if (desc && print_state->desc) {
-> 
-> I think we need the same fix also in default_print_metric, on an Intel
-> Tigerlake I see the description repeated like:
+> > seccomp_sync_threads and seccomp_can_sync_threads should be considered too.
+>
+> Yes. But we only need to consider them in the multi-thread case, right?
+> In this case exit_signals() sets PF_EXITING under ->siglock, so they can't
+> miss this flag, seccomp_filter_release() doesn't need to take siglock.
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Good point. We also need the same for json_print_event().
+Ah, no. seccomp_filter_release() does need to take ->siglock even if we
+forget about proc_pid_seccomp_cache().
 
-Thanks for the review.
+Without siglock
+
+	orig = tsk->seccomp.filter;
+
+can leak into the critical section in exit_signals() (spin_unlock is the
+one-way barrier) and this LOAD can be reordered with "flags |= PF_EXITING".
+
+Hmm. I thought we have something smp_mb__after_unlock(), but it seems we
+don't. So we can't add a fast-path
+
+	if (!tsk->seccomp.filter)
+		return;
+
+check at the start of seccomp_filter_release().
+
+
+Cough... Now that I look at seccomp_can_sync_threads() I think it too
+doesn't need the PF_EXITING check.
+
+If it is called before seccomp_filter_release(), this doesn't really
+differ from the case when it is called before do_exit/exit_signals.
+
+If it is called after seccomp_filter_release(), then is_ancestor()
+must be true.
+
+But perhaps I missed something, I won't insist, up to you.
+
+> > If we check PF_EXITING in all of them, we don't need to take ->siglock in
+> > seccomp_filter_release. Does it sound right?
+>
+> The problem is a single-threaded exiting task. In this case exit_signals()
+> sets PF_EXITING lockless. This means that in this case
+>
+> 	- proc_pid_seccomp_cache() can't rely on the PF_EXITING check
+> 	  but it can be safely removed.
+>
+> 	- seccomp_filter_release() needs to take ->siglock to avoid the
+> 	  race with proc_pid_seccomp_cache().
+>
+> And this chunk from your patch
+>
+> 	 static void __seccomp_filter_orphan(struct seccomp_filter *orig)
+> 	 {
+> 	+       lockdep_assert_held(&current->sighand->siglock);
+> 	+
+>
+> looks unnecessary too, seccomp_filter_release() can just do
+>
+> 	spin_lock_irq(siglock);
+> 	orig = tsk->seccomp.filter;
+> 	tsk->seccomp.filter = NULL;
+> 	spin_unlock_irq(siglock);
+>
+> 	__seccomp_filter_release(orig);
+>
+> Right?
+>
+> Oleg.
+
 
