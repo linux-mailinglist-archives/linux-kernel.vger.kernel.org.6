@@ -1,116 +1,156 @@
-Return-Path: <linux-kernel+bounces-180836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC3048C73BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 11:26:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 056D88C7444
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:01:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87059281DB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 09:26:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A100FB24C44
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:01:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BE70143751;
-	Thu, 16 May 2024 09:26:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B9DD143882;
+	Thu, 16 May 2024 10:00:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="sJMIatAA"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b="jf2ezs57"
+Received: from kylie.crudebyte.com (kylie.crudebyte.com [5.189.157.229])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C60352576F;
-	Thu, 16 May 2024 09:26:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79E1C143754;
+	Thu, 16 May 2024 10:00:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.189.157.229
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715851608; cv=none; b=Gk405DRppphgU+TIVA6pMlCn0i6tGAuSXdtQzk8QRReJNbGNbK82VNZC3Ld6cB8N88O/3jg8CrhqjNDIBFPmIlJc+zHloj8pbKGq0nMKA53b7jBwe24FGBvZUbn9bGMnmeHczG7h+5OAfYrZSP6z8wBb+UuSvYA56UIO8B273QI=
+	t=1715853654; cv=none; b=Ai/VUEeWgW/jFXrBX0nlij+1tMERbCJZgobuVc5ja/IcPbr+S2RvDHHMslZMoRA7aZh/skP0p8Va0OHNfS+EiJRi1ETiAjr4bAvfir+symEoQtt8fEPf2Yb3qOeTMeqD5gqFCJN8D24oBqOED1C6JKqYQPCMOYBSBpT+lDKo6a0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715851608; c=relaxed/simple;
-	bh=nb7YbQ/1b8v3jtmh71hREfxGGshguRO4vNSooGhXfBI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MO3xO3kIhBvAGV+K0sRDMMm21txNiG6Zbx7DOP0fU9nmJDzKSPjEUZ+jkhQg1lwNyJmWs04wfdzcDyL7ywE0ZtLeQGuVjlMXsLzhjL6C0uT6W9y5H7NJ7XxFnEihG0G/B45G4V0HlTtqrUau87PlpUoPDH2qtxN2P22JMJqmDgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=sJMIatAA; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+	s=arc-20240116; t=1715853654; c=relaxed/simple;
+	bh=8HXogCTpnJ/n4MmOkUeaDBlbudv84EkCG4VMtstjvmQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=M8S20Fn9c1gf09D4mGQQdH6egXhJW7TbtLxq8sXABnZ7YNyr5KFfnvZ9Sh1W4C/3LRLKCxVhgNZgmzM5UTIT3XGq3Nwn1p/WafRwYJFhQZ2XW4a4TnP1Gd85gtKi1IMlhmTvmSsTPN7x4rus7RFrBgxo86y9OH2isoKbTRQ3ZP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com; spf=pass smtp.mailfrom=crudebyte.com; dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b=jf2ezs57; arc=none smtp.client-ip=5.189.157.229
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crudebyte.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=iwpgZMChDlDGQdY1FB4R79GudyxC2zX+GHB1AHWt+x0=; b=sJMIatAA6Q8YnBM8RwJOXcawHi
-	Oa84a1T/KY4GRYolF2EfyYijV9SpHEV0JXnnptXTzDfZGDEbdhb0NQKCwlz4IMVrTa+zHKmZeDCTo
-	uInjU7fVgoyL1kEvqLxuHBO2W8QtLa6cFjO1sCw7HNvSRD7O5R3DrDZqzkjW6fCzE0VJcr1ESzPll
-	Kvp+t7jQZ5cM80S9u6sqbsWtJwBzRMk+pPrT6yea14hNKYqxy2aUyhwxiuL1+vjKS35w2YGMvMruI
-	pxjldPHD65Aa5A3UB3U7H6QF6y0vMks2CmxBpAzT/2SchUu8DUJRcWjq3ZXmplCuAVl73jr+lkG5b
-	04LbZfHA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:37340)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1s7XNb-0004e6-1E;
-	Thu, 16 May 2024 10:26:27 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1s7XNZ-0000Vh-Q7; Thu, 16 May 2024 10:26:25 +0100
-Date: Thu, 16 May 2024 10:26:25 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Florian Fainelli <florian.fainelli@broadcom.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Kees Cook <keescook@chromium.org>, Ard Biesheuvel <ardb@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>, Stefan Wahren <wahrenst@gmx.net>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: Fix userspace enter on LPAE with
- CC_OPTIMIZE_FOR_SIZE=y
-Message-ID: <ZkXRQexBTBe5psTB@shell.armlinux.org.uk>
-References: <200d273a83906a68a1c4a9298c415980737be811.1715781469.git.geert+renesas@glider.be>
- <8ef97b5d-2053-4051-b2da-6c2887c7b394@broadcom.com>
+	d=crudebyte.com; s=kylie; h=Content-Type:Content-Transfer-Encoding:
+	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+	Content-ID:Content-Description;
+	bh=ZOdg+UxEX0UYoNsiLotMQ5sr/A6Ve75FAxdqq6STPCI=; b=jf2ezs57UCUKXx/sircGT0LdPB
+	xPAGh1Cdn6buWBed/Gmq53llWqOrzXwr6YpwqUJmZe8piJKAsd83YaiLwYX3Kk0onUrRGPqAqi/PC
+	RemYT6EInkg2heGsesVl2IYqK4++yNSRn1tDlq4PWnH8gjU2oxxOfkJx8cOetphZquu7H9anMmmRN
+	S3hpMj1iO3OTNJO7rr1VEFT7UOVo2C00Ww/K+gUe4tm5I3dfUaYSJkwg1YzUpaDcgvy6Kuxi7j1gF
+	erYjMVTKXn0T2+4pyYUW7gux2ILIinifaVkkOlz0Hwb79AECJfcKXmWBvg2W9Lq29bxmQpSZJ5Nrd
+	waUVEVDI2EC+jGF8N4vqqGLt5eWYJwOCacPF0uoG75HDzqY+uSOIFsJHS333CKGIOCpyz2EzbCGpU
+	oFdTjg4g2TSFsqda74wgDgF+DoYStG9b27WokFpXNKRgnjwKwf3XAfmSOEj6eQ0vhD48GCwSJNuXP
+	jZA04DmieDSfXMoYf5uLxoyVJ3LTOzW+vqta1qQCiVuUU+s7riCBxF4mzZBo/ShuMmX3oGFi46RqZ
+	ewzVO7F4Hui3Lq7iEDlDEZIbmO03oP92bnjPNVclpqryqdOANJpwiLmfOgwJ8HdpK/xR/ETXdt+dN
+	MNNh0XWEh6Dv4UTUzKQSjZOX4V2T96hP557JuU2FI=;
+From: Christian Schoenebeck <linux_oss@crudebyte.com>
+To: Eric Van Hensbergen <ericvh@kernel.org>,
+ Nikita Zhandarovich <n.zhandarovich@fintech.ru>,
+ Latchesar Ionkov <lucho@ionkov.net>
+Cc: Dominique Martinet <asmadeus@codewreck.org>, v9fs@lists.linux.dev,
+ linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org,
+ syzbot+ff14db38f56329ef68df@syzkaller.appspotmail.com
+Subject: Re: [PATCH net v2] net/9p: fix uninit-value in p9_client_rpc()
+Date: Thu, 16 May 2024 11:27:21 +0200
+Message-ID: <1731146.XZuUqIVtO3@silver>
+In-Reply-To: <20240408141039.30428-1-n.zhandarovich@fintech.ru>
+References: <20240408141039.30428-1-n.zhandarovich@fintech.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8ef97b5d-2053-4051-b2da-6c2887c7b394@broadcom.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-On Wed, May 15, 2024 at 12:46:38PM -0700, Florian Fainelli wrote:
-> On 5/15/24 07:02, Geert Uytterhoeven wrote:
-> > Booting an LPAE-enabled kernel built with CONFIG_CC_OPTIMIZE_FOR_SIZE=y
-> > fails when starting userspace:
-> > 
-> >      Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000004
-> >      CPU: 1 PID: 1 Comm: init Tainted: G        W        N 6.9.0-rc1-koelsch-00004-g7af5b901e847 #1930
-> >      Hardware name: Generic R-Car Gen2 (Flattened Device Tree)
-> >      Call trace:
-> >       unwind_backtrace from show_stack+0x10/0x14
-> >       show_stack from dump_stack_lvl+0x78/0xa8
-> >       dump_stack_lvl from panic+0x118/0x398
-> >       panic from do_exit+0x1ec/0x938
-> >       do_exit from sys_exit_group+0x0/0x10
-> >      ---[ end Kernel panic - not syncing: Attempted to kill init!  exitcode=0x00000004 ]---
-> > 
-> > Add the missing memory clobber to cpu_set_ttbcr(), as suggested by
-> > Russell King.
-> > 
-> > Force inlining of uaccess_save_and_enable(), as suggested by Ard
-> > Biesheuvel.
-> > 
-> > The latter fixes booting on Koelsch.
-> > 
-> > Fixes: 7af5b901e84743c6 ("ARM: 9358/2: Implement PAN for LPAE by TTBR0 page table walks disablement")
-> > Closes: https://lore.kernel.org/r/CAMuHMdWTAJcZ9BReWNhpmsgkOzQxLNb5OhNYxzxv6D5TSh2fwQ@mail.gmail.com/
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Monday, April 8, 2024 4:10:39 PM CEST Nikita Zhandarovich wrote:
+> Syzbot with the help of KMSAN reported the following error:
 > 
-> Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+> BUG: KMSAN: uninit-value in trace_9p_client_res include/trace/events/9p.h:146 [inline]
+> BUG: KMSAN: uninit-value in p9_client_rpc+0x1314/0x1340 net/9p/client.c:754
+>  trace_9p_client_res include/trace/events/9p.h:146 [inline]
+>  p9_client_rpc+0x1314/0x1340 net/9p/client.c:754
+>  p9_client_create+0x1551/0x1ff0 net/9p/client.c:1031
+>  v9fs_session_init+0x1b9/0x28e0 fs/9p/v9fs.c:410
+>  v9fs_mount+0xe2/0x12b0 fs/9p/vfs_super.c:122
+>  legacy_get_tree+0x114/0x290 fs/fs_context.c:662
+>  vfs_get_tree+0xa7/0x570 fs/super.c:1797
+>  do_new_mount+0x71f/0x15e0 fs/namespace.c:3352
+>  path_mount+0x742/0x1f20 fs/namespace.c:3679
+>  do_mount fs/namespace.c:3692 [inline]
+>  __do_sys_mount fs/namespace.c:3898 [inline]
+>  __se_sys_mount+0x725/0x810 fs/namespace.c:3875
+>  __x64_sys_mount+0xe4/0x150 fs/namespace.c:3875
+>  do_syscall_64+0xd5/0x1f0
+>  entry_SYSCALL_64_after_hwframe+0x6d/0x75
+> 
+> Uninit was created at:
+>  __alloc_pages+0x9d6/0xe70 mm/page_alloc.c:4598
+>  __alloc_pages_node include/linux/gfp.h:238 [inline]
+>  alloc_pages_node include/linux/gfp.h:261 [inline]
+>  alloc_slab_page mm/slub.c:2175 [inline]
+>  allocate_slab mm/slub.c:2338 [inline]
+>  new_slab+0x2de/0x1400 mm/slub.c:2391
+>  ___slab_alloc+0x1184/0x33d0 mm/slub.c:3525
+>  __slab_alloc mm/slub.c:3610 [inline]
+>  __slab_alloc_node mm/slub.c:3663 [inline]
+>  slab_alloc_node mm/slub.c:3835 [inline]
+>  kmem_cache_alloc+0x6d3/0xbe0 mm/slub.c:3852
+>  p9_tag_alloc net/9p/client.c:278 [inline]
+>  p9_client_prepare_req+0x20a/0x1770 net/9p/client.c:641
+>  p9_client_rpc+0x27e/0x1340 net/9p/client.c:688
+>  p9_client_create+0x1551/0x1ff0 net/9p/client.c:1031
+>  v9fs_session_init+0x1b9/0x28e0 fs/9p/v9fs.c:410
+>  v9fs_mount+0xe2/0x12b0 fs/9p/vfs_super.c:122
+>  legacy_get_tree+0x114/0x290 fs/fs_context.c:662
+>  vfs_get_tree+0xa7/0x570 fs/super.c:1797
+>  do_new_mount+0x71f/0x15e0 fs/namespace.c:3352
+>  path_mount+0x742/0x1f20 fs/namespace.c:3679
+>  do_mount fs/namespace.c:3692 [inline]
+>  __do_sys_mount fs/namespace.c:3898 [inline]
+>  __se_sys_mount+0x725/0x810 fs/namespace.c:3875
+>  __x64_sys_mount+0xe4/0x150 fs/namespace.c:3875
+>  do_syscall_64+0xd5/0x1f0
+>  entry_SYSCALL_64_after_hwframe+0x6d/0x75
+> 
+> If p9_check_errors() fails early in p9_client_rpc(), req->rc.tag
+> will not be properly initialized. However, trace_9p_client_res()
+> ends up trying to print it out anyway before p9_client_rpc()
+> finishes.
+> 
+> Fix this issue by assigning default values to p9_fcall fields
+> such as 'tag' and (just in case KMSAN unearths something new) 'id'
+> during the tag allocation stage.
+> 
+> Reported-and-tested-by: syzbot+ff14db38f56329ef68df@syzkaller.appspotmail.com
+> Fixes: 348b59012e5c ("net/9p: Convert net/9p protocol dumps to tracepoints")
+> Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+> ---
+> v2: change fc->tag init value from 0 to P9_NOTAG per Dominique
+> Martinet's <asmadeus@codewreck.org> helpful suggestion.
+> Link: https://lore.kernel.org/all/ZhNVMivKCCq6wir0@codewreck.org/
+> 
+>  net/9p/client.c | 2 ++
+>  1 file changed, 2 insertions(+)
 
-This should be in linux-next now, if not by tomorrow - it was pushed
-out yesterday.
+Reviewed-by: Christian Schoenebeck <linux_oss@crudebyte.com>
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+> diff --git a/net/9p/client.c b/net/9p/client.c
+> index f7e90b4769bb..b05f73c291b4 100644
+> --- a/net/9p/client.c
+> +++ b/net/9p/client.c
+> @@ -235,6 +235,8 @@ static int p9_fcall_init(struct p9_client *c, struct p9_fcall *fc,
+>  	if (!fc->sdata)
+>  		return -ENOMEM;
+>  	fc->capacity = alloc_msize;
+> +	fc->id = 0;
+> +	fc->tag = P9_NOTAG;
+>  	return 0;
+>  }
+>  
+> 
+
+
 
