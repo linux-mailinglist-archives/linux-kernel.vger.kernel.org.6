@@ -1,96 +1,166 @@
-Return-Path: <linux-kernel+bounces-181483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D1668C7CA5
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 20:47:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E18E8C7CA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 20:49:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C375E1F2197E
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:47:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9338E1F218BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:49:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 325B2156F54;
-	Thu, 16 May 2024 18:47:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gVXTlHEp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7392C156F3B;
+	Thu, 16 May 2024 18:49:24 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65A7314533D;
-	Thu, 16 May 2024 18:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 026A14688
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 18:49:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715885261; cv=none; b=UOyvAbvdc/AcZt8cIARwutCYF6sBMLE9sP7gdtRnMZmkeOzer0X4TfC7Y3qh4KHeloz0xICMV5FmIEevyKOnCyVSVyvbKw7aDcmMuTV7C4Pfjhg+4LENZs3RAJ4M7cf63f6TtvTAmNDHNCn4G0hVDkjw8WLgIXxa2EEGJmVZP88=
+	t=1715885364; cv=none; b=WHkXFAtMOmgbXKlf8KcbB/pG/pJOEhi3vqXRryYOJev+TbKm0oupbeHMOcy0X19ydVVbq1LIe9kAuMXTeTIWw44Ut6BbjSGZmqTEtFGeCImMYeJxVgsZYz+qy6ELU7kyWIofx1X2hJq2lgX5UwJu1rADOGq9/6LeGWEttAqxz/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715885261; c=relaxed/simple;
-	bh=jm+jW7lXzqC7OUQoWU9fKu4kPcG7Y8Ley+euTkWLiUs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KUfyKCjocP2Gb9t2apkE/4JerPTEcZCjq5VzYdQFuQzvhUj1W39VrTtecjJq2Jg54GjtIFrd19UaOCEF0RD+cmGGejjX/pr7XKU6mx9cAnZ4WaWoYyjtw3UgtdLIFwlN9hfwQmCVN284+m/zlRw4bCesI2PuD+BPHvs3IqOJ1ls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gVXTlHEp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEFA0C32786;
-	Thu, 16 May 2024 18:47:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715885261;
-	bh=jm+jW7lXzqC7OUQoWU9fKu4kPcG7Y8Ley+euTkWLiUs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=gVXTlHEp+++5rSNwyJMr118cGmOOnB+Jxn4WluPQSdvjVzMNLTY5dWB7cnfkdm3kR
-	 XGw487Yb9CEsLvYBWHjqiWhW+QfNhyuVm2c7rEuPlKnFT2bNTRBtBjFpdAgXFlcvQN
-	 Lv//0Sj9cYWvrg+blKTxqgwEbwtDcLDImXiH0klDWvMHI6G2e5GmxQKiCFy8SNJubs
-	 0g6z/0gX97SyIVvN+HLAhQFwLdRIPS/qQRz95lhgL4h2+PM4gPL9Lrgp4TcGCHOo0N
-	 ngGrF6tit5Ezm42NFIljZxmC4qDtTAhCgS8+kJ3GWcIYqvdeDLBT5mgsmYiRhY1g0k
-	 erUqLPyVFY3rA==
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2e6ffe57c23so11131601fa.3;
-        Thu, 16 May 2024 11:47:40 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUipu1P4fWbLXNbvfjRg/aQlZQM52duKCfB6cyIfUZEU8pWfGN+A2rGCf0a5wKEQe3w4xOuk+o0SiX86J1o850T5jVNn1NB9jf3BmDbkWVqMxeGvA4o22j6ERlvMw/203zCFtOlGcFZUnAABJgp4qqf2XXBGlbTObjMM0wKbpKW
-X-Gm-Message-State: AOJu0YwvDwoVw/UEfk7LFl5xzwmIMJpPm+C6zYFlxBNBZDtD85mgbFWR
-	7zqCw5fEiDp1HoBtV9lh76kj822agdQm58gddSPQNqJkUsKiUgSwx2rGgt6jwC2MU/iC7Dmv8Cd
-	v/tQONcR1mvHBnorjUWaxYmBIbZk=
-X-Google-Smtp-Source: AGHT+IGGnSrHI5R5guYtSC89176WLUK0K1h/xOskDaV0ddYq2dgBIztvzDAgzA/gFxwQ6NHEh6DiUyOjvWGadVsTw7o=
-X-Received: by 2002:a2e:9650:0:b0:2e1:d747:8c0 with SMTP id
- 38308e7fff4ca-2e51fe54086mr156416451fa.21.1715885259339; Thu, 16 May 2024
- 11:47:39 -0700 (PDT)
+	s=arc-20240116; t=1715885364; c=relaxed/simple;
+	bh=7sDQLbzYPoMng3X/oV0YblZ0kaUEel4rP8Huz0OPohs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EK5s2lh9lqPWPWvuwwF5ImvBmwF7VohWKxCl2p+GA7KITbch5OjMbsJe0ZTx0lBCKAn7lxnETel+ExuQIW78pWfBEg284HrprN0FQDQ/nXLswffAqviZhpPD9RYQvPA4KbSqoCi8T7K6CeSVn93rQ8Dfb+ik2UngzLKdnU4ivJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mgr@pengutronix.de>)
+	id 1s7gA5-00022d-RR; Thu, 16 May 2024 20:49:05 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mgr@pengutronix.de>)
+	id 1s7gA2-001let-Ll; Thu, 16 May 2024 20:49:02 +0200
+Received: from mgr by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mgr@pengutronix.de>)
+	id 1s7gA2-00Ewms-1m;
+	Thu, 16 May 2024 20:49:02 +0200
+Date: Thu, 16 May 2024 20:49:02 +0200
+From: Michael Grzeschik <mgr@pengutronix.de>
+To: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+Cc: Eric Van Hensbergen <ericvh@kernel.org>,
+	Latchesar Ionkov <lucho@ionkov.net>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	v9fs@lists.linux.dev, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	kernel@pengutronix.de
+Subject: Re: [PATCH v4 2/3] net/9p/usbg: Add new usb gadget function transport
+Message-ID: <ZkZVHoHcdoNF6T2-@pengutronix.de>
+References: <20240116-ml-topic-u9p-v4-0-722ed28b0ade@pengutronix.de>
+ <20240116-ml-topic-u9p-v4-2-722ed28b0ade@pengutronix.de>
+ <c78c9e88-bd53-4ae5-8f78-d8b1c468a5cd@collabora.com>
+ <Zj3y04btf16BGZAJ@pengutronix.de>
+ <2f36e766-054c-4001-addf-fe388916d858@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240516090541.4164270-2-ardb+git@google.com> <FBF468D5-18D6-4D29-B6A2-83A0A1998A05@akamai.com>
- <202405161142.A62A23A9@keescook>
-In-Reply-To: <202405161142.A62A23A9@keescook>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Thu, 16 May 2024 20:47:27 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXEAqKTaXD8o3bM=1u3COG=CYUp7P83L6segM4dKYoDszg@mail.gmail.com>
-Message-ID: <CAMj1kXEAqKTaXD8o3bM=1u3COG=CYUp7P83L6segM4dKYoDszg@mail.gmail.com>
-Subject: Re: [PATCH] x86/efistub: Omit physical KASLR when memory reservations exist
-To: Kees Cook <keescook@chromium.org>
-Cc: "Chaney, Ben" <bchaney@akamai.com>, Ard Biesheuvel <ardb+git@google.com>, 
-	"linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>, 
-	"stable@vger.kernel.org" <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="8+72CV5QLt3FWqM3"
+Content-Disposition: inline
+In-Reply-To: <2f36e766-054c-4001-addf-fe388916d858@collabora.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mgr@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Thu, 16 May 2024 at 20:45, Kees Cook <keescook@chromium.org> wrote:
->
-> On Thu, May 16, 2024 at 05:29:11PM +0000, Chaney, Ben wrote:
-> > > +static efi_status_t parse_options(const char *cmdline)
-> > > +{
-> > > + static const char opts[][14] = {
-> > > + "mem=", "memmap=", "efi_fake_mem=", "hugepages="
-> > > + };
-> > > +
-> >
-> > I think we probably want to include both crashkernel and pstore as arguments that can disable this randomization.
->
-> The carve-outs that pstore uses should already appear in the physical
-> memory mapping that EFI has. (i.e. those things get listed in e820 as
-> non-RAM, etc)
->
-> I don't know anything about crashkernel, but if we really do have a lot
-> of these, we likely need to find a way to express them to EFI...
->
 
-Perhaps. But the fact that the current KASLR code ignores it entirely
-suggests that this has not been a problem up to this point.
+--8+72CV5QLt3FWqM3
+Content-Type: text/plain; charset=iso-8859-15; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi
+
+On Fri, May 10, 2024 at 04:11:27PM +0200, Andrzej Pietrasiewicz wrote:
+>W dniu 10.05.2024 o=A012:11, Michael Grzeschik pisze:
+>>On Fri, May 10, 2024 at 11:25:47AM +0200, Andrzej Pietrasiewicz wrote:
+>>>Hi Michael,
+>>>
+>>>W dniu 30.04.2024 o=A001:33, Michael Grzeschik pisze:
+>>>>Add the new gadget function for 9pfs transport. This function is
+>>>>defining an simple 9pfs transport interface that consists of one in and
+>>>>one out endpoint. The endpoints transmit and receive the 9pfs protocol
+>>>>payload when mounting a 9p filesystem over usb.
+>>>>
+>>>>Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
+>>>>
+>>>>---
+>>>>v3 -> v4:
+>>>>=A0 - implemented conn_cancel
+>>>
+>>>I tried this scenario:
+>>>
+>>>1) run all the components and have 9pfs up and running
+>>>2) stop the forwarder
+>>>3) umount -f at the gadget side - this indeed succeeds now in v4
+>>>4) start the forwarder again
+>>>5) mount at the gadget side - this hangs.
+>>>
+>>>Did this scenario work for you?
+>>
+>>I actually tested this exact scenario. So this is
+>>suprising. I will try this again just to be sure
+>>that I did send the latest version.
+>>
+>>My latest testsetup included the dummy_hcd. Did you test on real hardware?
+>
+>Yes, I did.
+
+I just also tested this again on real hardware. With the imx6 chipidea
+udc I indeed see that this is stuck after the first round of mount and
+remount. With the musb core on the beaglebone this seems to be fine.
+
+While debugging this I also ran into some shutdown issues and lockdep
+issues I see because the complete handler is possible to be resumed
+immedeatly on musb, which is odd. However I fixed/fix them and send an
+v5 afterwards.
+
+Regarding the hang on the imx6, which hardware did you test this on?
+
+Michael
+
+--=20
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+
+--8+72CV5QLt3FWqM3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEElXvEUs6VPX6mDPT8C+njFXoeLGQFAmZGVRsACgkQC+njFXoe
+LGRgFw//WscWMXZFcbFLW4HiBLc2QmGtJZP2s/7F9Evy6G7D1trQoFPBP9TimGPI
+/Hh6cbdJOtcUeg62SdHx2WWwPEdC5S4a/WDxAGmWmmpJsvKnHORq+auPWBdG6Lnb
+/Q93NqZKlSO9eByMWSigLlxCNEcRgpdKR2lePU5zF8leavY2iS2sVB2eAAFNYURS
+K3WiL/PGjuJ6eWUUfpSug/zMwDmrZHlX91zraeDcicjVrDFUuoz4/AxtWIsM6xM8
+6RBcsQg1kqMIeUrbynqzUe997CckffDAoQBrfizydTKqFGRwt4Ofv+m0KFmqBhAl
+1g332cvvJRGy3R4B9lIWWz99at67nF7eC/Fb9FHYG7e+Gf50rpCnP8RWV8xHycFP
+SlKSDlqgCD9shSBmPWpJYbOTEFwrGbCVjew1SOgkMklI+heQDi6QJxsK/WGKO9Sq
+xD6LxCogW3qrCrBru7Q6lkaUDTwaF6ol/DNnAotsCygHI9lye+gdJptJbo4jnDUv
+AsbiBzU6vxx6D9vw2LhaNS8MHRNzChpjo5hAWu11jdhFQnukqgvscfAPc0I4A31F
+Qgw/p2dB8sAPH21CNz3Y6eipXiDwKv2tvm/jOClgDw7bNU5BC6xDGUFlKzfSg7H4
+tungGeFatDe+7SUKh0lJOOnGqYnhVjG3bbB5eOUbsAvYQSCW8JQ=
+=WIQ9
+-----END PGP SIGNATURE-----
+
+--8+72CV5QLt3FWqM3--
 
