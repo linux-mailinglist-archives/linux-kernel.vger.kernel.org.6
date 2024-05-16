@@ -1,161 +1,123 @@
-Return-Path: <linux-kernel+bounces-181326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 909028C7A77
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:38:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D3448C7A78
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:39:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48E81282E18
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:38:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE216282B12
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:39:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67BF54C8A;
-	Thu, 16 May 2024 16:38:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF1CB63D5;
+	Thu, 16 May 2024 16:39:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="YUOJPQPb"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XToibkZ2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 579278821;
-	Thu, 16 May 2024 16:38:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98B044C63
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 16:39:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715877510; cv=none; b=qX2gGFyF+f29Z0GgxsAoZoMNwoL383mhD7ZbqAHiE3Hz1vZguHQ0JEksXJ1MK2z9Rr4ZxEhB5AA+AEqTmmA44XOjuaSSxVnvy0vvSo4BX0vnHFukvY42oP/LiZp1o61bj1UtBztCZmbJBIMK0fjzkgdB6PxbKEFXL1W3A2bfBp0=
+	t=1715877554; cv=none; b=Chfj2PFk5aYmjrbT5Btt/R7BJUAQTIvkIjeZ8XvkVt3Vx1cueto2MZDa0IsmMf31LsuMqNP6POjuKjbSTI26qiWDiAOJr7WRaS4bjFlYSoDpJU+NqAKI8E3njiw9jB41S+R4rzqHObAc+VtlHMeZC/47zANNXHR3GiwPiV3kP5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715877510; c=relaxed/simple;
-	bh=YjsP4L4icgq/Y6Q4/G0kLiCQWYTDum7px1qoh4b1Pb0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=DexYgErVdDxkeyCF4yfbEaikmu07ysmnfR6I1szBRRj1af5F6FC7da8QWQgWWIIQjq4eMHWJwxH3OEXVVCu0B5gab/MjgM+zz8Cyrkoqo/QvdFdLLSKwtbSwwILfQxkXH4tMSBQgdN7YvAa7vMBvGhY8t4W1b6f0BVwkB9kW3jU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=YUOJPQPb; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44GGVJPB018436;
-	Thu, 16 May 2024 16:38:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : in-reply-to : references : date : message-id : mime-version :
- content-type; s=pp1; bh=mL2ixIV4yHVtZCx+rAwU6k84asoS2aeQfzHRCssL2Vs=;
- b=YUOJPQPbEYYFutYkCQkc99kuAzU85sKyDTb5lNqcEvXtXgFiFGUz6oDCIM/AFZhuFvw5
- Vliki+kqlrj1/3rUvInswqS29sd2toZB5dCXMp6JBSopfiaS7TigHb2KYoO3lebNHj3l
- e915XGpmEuh2MLI3K0VX1U85Qwg9nv1mkOxP5LWw8UdUEd9LG70L90cK45uFsg9ufi/f
- kpq0A//RvtbAMEaMoCqtL6O4WzCKSBKfVa7NLO++GZI0OcALtwnjbDDaEWCVPVEAOrmX
- Tx8npJ0Jb0ppTNVzS5CFYVHwzn72lVarLxz7nbYtZiFmiStAECedqR8oe248VOIP8ZKV dQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y5m9mr9us-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 16 May 2024 16:38:12 +0000
-Received: from m0353726.ppops.net (m0353726.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44GGcB5H031698;
-	Thu, 16 May 2024 16:38:11 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y5m9mr9un-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 16 May 2024 16:38:11 +0000
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44GG032q006027;
-	Thu, 16 May 2024 16:38:10 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3y2nq32jtn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 16 May 2024 16:38:10 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44GGc6Yu50463124
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 16 May 2024 16:38:08 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B9E542004E;
-	Thu, 16 May 2024 16:38:06 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8E71C2004F;
-	Thu, 16 May 2024 16:38:06 +0000 (GMT)
-Received: from tuxmaker.linux.ibm.com (unknown [9.152.85.9])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu, 16 May 2024 16:38:06 +0000 (GMT)
-From: Sven Schnelle <svens@linux.ibm.com>
-To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Valentin Schneider <vschneid@redhat.com>,
-        Juri Lelli
- <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt
- <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
-        Mel Gorman
- <mgorman@suse.de>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Heiko Carstens <hca@linux.ibm.com>, linux-s390@vger.kernel.org,
+	s=arc-20240116; t=1715877554; c=relaxed/simple;
+	bh=rUyXihDhNu7Z1iAvgieVjKk23YR4PPc7ojQiMkhbqlI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lvaU7uQ+LSKnUiRDuQaa2Qzqic1nvkoVmnKuY/lkfEjweElvI15EawVHJ72HYMu5Pe+6GBF+H7GGfe8oVV/bAc8kF1YmUQ8odJMsaQIZA3InlUYBhKY9baa/KgCVPCsfoyceghCgKFQN8F1LLYuivYWEGX51WdsuDJ8HZ8FKUdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XToibkZ2; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715877551;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QBHCOS4PG3tX0fhnUU55Pd+Wdr3Qjy0XkhyjMsdKKB4=;
+	b=XToibkZ2VYT1fKvvsvrLQjeKw8iQto3c9YZTsjJnQLAMwaj/YQvwh8ivg45Ri3ZWiahvHp
+	ZlgqOIwMN65VwGiXlOFCpRmh9eoJfLbqAve7HH7qCWti36PO47YDiB7slAD4RZcM88Pems
+	yReZOpR9QxP/eFi75mKp7OMl6UeSnxQ=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-690-LbmT44npPzGsAD4ekVPLPA-1; Thu, 16 May 2024 12:39:09 -0400
+X-MC-Unique: LbmT44npPzGsAD4ekVPLPA-1
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id CC3E1801211;
+	Thu, 16 May 2024 16:39:08 +0000 (UTC)
+Received: from bmarzins-01.fast.eng.rdu2.dc.redhat.com (bmarzins-01.fast.eng.rdu2.dc.redhat.com [10.6.23.12])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id C37B45ADC40;
+	Thu, 16 May 2024 16:39:08 +0000 (UTC)
+Received: from bmarzins-01.fast.eng.rdu2.dc.redhat.com (localhost [127.0.0.1])
+	by bmarzins-01.fast.eng.rdu2.dc.redhat.com (8.17.2/8.17.1) with ESMTPS id 44GGd8DT132591
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Thu, 16 May 2024 12:39:08 -0400
+Received: (from bmarzins@localhost)
+	by bmarzins-01.fast.eng.rdu2.dc.redhat.com (8.17.2/8.17.2/Submit) id 44GGd8mq132590;
+	Thu, 16 May 2024 12:39:08 -0400
+Date: Thu, 16 May 2024 12:39:08 -0400
+From: Benjamin Marzinski <bmarzins@redhat.com>
+To: YangYang <yang.yang@vivo.com>
+Cc: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
+        Mikulas Patocka <mpatocka@redhat.com>, dm-devel@lists.linux.dev,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sched/core: Test online status in available_idle_cpu()
-In-Reply-To: <yt9dcypwrc96.fsf@linux.ibm.com> (Sven Schnelle's message of
-	"Wed, 08 May 2024 09:31:01 +0200")
-References: <20240429055415.3278672-1-svens@linux.ibm.com>
-	<xhsmhzft86wap.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
-	<yt9dcypwrc96.fsf@linux.ibm.com>
-Date: Thu, 16 May 2024 18:38:06 +0200
-Message-ID: <yt9dcyplg1ap.fsf@linux.ibm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+Subject: Re: [PATCH 3/5] dm: support retrieving struct dm_target from struct
+ dm_dev
+Message-ID: <ZkY2rKP6AzEGfpkn@redhat.com>
+References: <20240514090445.2847-1-yang.yang@vivo.com>
+ <20240514090445.2847-4-yang.yang@vivo.com>
+ <ZkTXzG1yrPmW64Z6@redhat.com>
+ <ZkTcHCM49DDqhaYD@redhat.com>
+ <4971046c-213b-494b-bf4b-ebe3feaa03c1@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 5pjcHBMCZzEwX7JOBh20VbQir2_jpalz
-X-Proofpoint-ORIG-GUID: FE1He3IUYj5Qu-s1LFpWnP_-O3LLwCPE
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-16_07,2024-05-15_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxscore=0
- malwarescore=0 spamscore=0 impostorscore=0 phishscore=0 bulkscore=0
- clxscore=1011 mlxlogscore=673 lowpriorityscore=0 priorityscore=1501
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2405010000 definitions=main-2405160118
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4971046c-213b-494b-bf4b-ebe3feaa03c1@vivo.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.9
 
-Sven Schnelle <svens@linux.ibm.com> writes:
+On Thu, May 16, 2024 at 10:12:25AM +0800, YangYang wrote:
+> On 2024/5/16 0:00, Benjamin Marzinski wrote:
+> > On Wed, May 15, 2024 at 11:42:04AM -0400, Benjamin Marzinski wrote:
+> > > When a target calls dm_get_device(), if it adds a new table device to
+> > > t->devices, then it's the first target in this table to use that device.
+> > > If flush_pass_around is set for this target, then it also sets
+> > > sends_pass_around_flush. In __send_empty_flush() if the table has
+> > > flush_pass_around set, when you iterate through the devices, you only
+> > 
+> > Err, "When you iterate through the *targets*, you only ..." In this
+> > method you don't iterate through the list of devices (which is supposed
+> > to be protected by t->devices_lock).
+> 
+> I'm not very familiar with this area, I thought that the device list
+> of an active table cannot be modified, so it doesn't need to be
+> protected by t->devices_lock.
 
-> Valentin Schneider <vschneid@redhat.com> writes:
->
->> On 29/04/24 07:54, Sven Schnelle wrote:
->>> The current implementation of available_idle_cpu() doesn't test
->>> whether a possible cpu is offline. On s390 this dereferences a
->>> NULL pointer in arch_vcpu_is_preempted() because lowcore is not
->>> allocated for offline cpus. On x86, tracing also shows calls to
->>> available_idle_cpu() after a cpu is disabled, but it looks like
->>> this isn't causing any (obvious) issue. Nevertheless, add a check
->>> and return early if the cpu isn't online.
->>>
->>> Signed-off-by: Sven Schnelle <svens@linux.ibm.com>
->>
->>
->> So most of the uses of that function is in wakeup task placement.
->> o find_idlest_cpu() works on the sched_domain spans, so shouldn't
-> deal with
->>   offline CPUs.
->> o select_idle_sibling() may issue an available_idle_cpu(prev) with
-> an
->>   offline previous, which would trigger your issue.
->>
->> Currently, even if select_idle_sibling() picks an offline CPU, this
-> will
->> get corrected by select_fallback_rq() at the end of
->> select_task_rq(). However, it would make sense to realize @prev
-> isn't a
->> suitable pick before making it to the fallback machinery, in which
-> case
->> your patch makes sense beyond just fixing s390.
->>
->> Reviewed-by: Valentin Schneider <vschneid@redhat.com>
->
-> Thanks for the review! Ingo/Peter, gentle ping, are you planning to
-> take
-> this patch?
+Actually, looking at this some more you're basically correct. The only
+place where dm can modify the devices list of active table is in
+multipath_message(), and that's bug. So you should be safe not locking
+here.
 
-Ping?
+I'll post a patch to fix the multipath target.
 
-Thanks,
+-Ben
+ 
+> > 
+> > > call __send_empty_flush_bios() for the ones with sends_pass_around_flush
+> > > set.
+> > > 
+> > > Or am I overlooking something?
+> > > 
+> > > -Ben
+> > 
 
-Sven
 
