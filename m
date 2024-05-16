@@ -1,459 +1,242 @@
-Return-Path: <linux-kernel+bounces-180554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 274488C701B
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 03:48:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFC7E8C701E
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 03:51:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2230282FF0
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 01:48:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7483B1F2238A
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 01:51:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F1A910FA;
-	Thu, 16 May 2024 01:48:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4180A15C9;
+	Thu, 16 May 2024 01:51:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mS3Kkxog"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FMEDmnd8"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E58831366;
-	Thu, 16 May 2024 01:48:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA6A810F2
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 01:51:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715824087; cv=none; b=AzMUjtqNCkSOIbXLgeNX80gEABsDl5Y9n8wY/DVRMBaOxu8+Tbq9HltObMkxKUCOCAu5Is8U5b3ZogHl9KfUTlC43+E2Mn9r3damPo5K6mfdldu0MCzTl1Aht2CiYBi23XUPP84ybgERfiMsWNzXBWJgNNAmp/n+wH2YihyyYjA=
+	t=1715824271; cv=none; b=WQldouszdgMuejNXHxcalgxzL1AApTG5e+VGNOFnxKsceTAOa7kUoesvsL6wYuHzXLC78mv6Z6t/CL42iTxgkg2+eOpRwx1yw0h9tJovXhtkaY6Nl1pxblUSdRHGXlR6VHo7FNGg66sUr6mee3y7plnANHESczdQYZl79gh6sFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715824087; c=relaxed/simple;
-	bh=8A1Ua9ge6R3SVCKSWE8Awr7EzSeDB0C7jXXzTDFwAt4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g4jeBl0YAfVvuxPI2wlztktyVd/o5+7Nwi0KaJJICThpFZOBWmtmi4EafqSrmvWSx1Ivle+TyzIbw7E1oPObRQMgRz48bYRMBwK3dn4eJ9lKevHzIJSBFQaNmnj0FdlN8fRaklpKiTHIK26HRLuemRtnNLZYKASYHXb0R65VJ7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mS3Kkxog; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715824085; x=1747360085;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=8A1Ua9ge6R3SVCKSWE8Awr7EzSeDB0C7jXXzTDFwAt4=;
-  b=mS3KkxogmPyRAFZF7zdm4PixON7kx4V6Ep1r65K0JhJ6HJbLanuS9VWE
-   CWZYPSTDLWey49rbtRO7JFA0A/8XAft7cyOAIV0IKJL0rn3bP8+LefMDb
-   CYcV7IMoNWpfzezXMB2OZ2kKZZwx+N/zr0W86Y/HiyxHQBqHkeT2Pm5Mn
-   B1i9Rusp4Ang0m5Hpf5gIR1jkML09VqeqKj9/c6fvWSKkbc5MfqNwhaSl
-   SKEM9RhLqxFtpwtOXCYy0I0glT3T+pcnY4YkYIl0oUsRyh0aohUu9byho
-   +KO1UX69eHcpAC6m+ghsxdmyABCl6y76+YKZIUaqTPfb8dN6wUPvCdrmM
-   w==;
-X-CSE-ConnectionGUID: jBwJRUS2SU2GV/ZSqHqp0Q==
-X-CSE-MsgGUID: tVqH38T4QUqkCX/Gb+sYdg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="23311085"
-X-IronPort-AV: E=Sophos;i="6.08,163,1712646000"; 
-   d="scan'208";a="23311085"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 18:48:04 -0700
-X-CSE-ConnectionGUID: x5I4tR1rRdC6B08P2xHAkg==
-X-CSE-MsgGUID: 3ndJShgFROeZmms0CVpuXg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,163,1712646000"; 
-   d="scan'208";a="31190389"
-Received: from ls.sc.intel.com (HELO localhost) ([172.25.112.31])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 18:48:04 -0700
-Date: Wed, 15 May 2024 18:48:03 -0700
-From: Isaku Yamahata <isaku.yamahata@intel.com>
-To: "Huang, Kai" <kai.huang@intel.com>
-Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>, pbonzini@redhat.com,
-	seanjc@google.com, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, isaku.yamahata@gmail.com,
-	erdemaktas@google.com, sagis@google.com, yan.y.zhao@intel.com,
-	dmatlack@google.com
-Subject: Re: [PATCH 10/16] KVM: x86/tdp_mmu: Support TDX private mapping for
- TDP MMU
-Message-ID: <20240516014803.GI168153@ls.amr.corp.intel.com>
-References: <20240515005952.3410568-1-rick.p.edgecombe@intel.com>
- <20240515005952.3410568-11-rick.p.edgecombe@intel.com>
- <12afae41-906c-4bb7-956a-d73734c68010@intel.com>
+	s=arc-20240116; t=1715824271; c=relaxed/simple;
+	bh=VZm8PwZdXz0Se0UJLcdGqy0jJcWJtMdx7ttUqmGReLs=;
+	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=OMqPexoOnuVddF+uEof9u27UTUjK6HGdsPJEyYCJHmwFg/Q61OjZKRHWOX62+iIJ0viixDFtTzDXlI2a3Xj2JxA92ruFg7Eq5a0rT/FA+oZwWOQg/AaKj5xakAHV7LzO2WkV/WjuRBO5zWy8UbEvde4Y+xBlKlsc1H04dXfT7l0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FMEDmnd8; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715824268;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OQ8ZtpLdFwvSXvOYs4aVKSIy+B51env2242BIG2JHBs=;
+	b=FMEDmnd8iAWl8P7CEAgyE8qaRNj0cK1bCje7YeEKRfP1+8Kf3DjlX+AgyvZ1SBmQL2VoDz
+	aIuU+xdN89Ulaa8cccG8tLp8UjNcDgP2Ys5cMhlO2Qa/w2UAZNWE1fPZ6uOMOGA4+WFDrg
+	987wDzs6lavVKX/RKV7wXa5u/OnH8Dc=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-423-YTrIfpJ-PDSvoBllxa4xKg-1; Wed, 15 May 2024 21:51:07 -0400
+X-MC-Unique: YTrIfpJ-PDSvoBllxa4xKg-1
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-792bc089c43so1017072185a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 18:51:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715824267; x=1716429067;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=OQ8ZtpLdFwvSXvOYs4aVKSIy+B51env2242BIG2JHBs=;
+        b=bATvuyW2nVqbDLIVV8Sf7k/B40mtU+JzuRSF4Bjktj9BUmsVjvivmAJxR3tdqqeGZR
+         3cfig37bSj4xhraZfI7RmNd1y35IxIQohb3NcVofqx/bvlzQR7PHvjmtL9FKI1hPrXV7
+         Zq8uoiasivRQ9W0YDZWfB+mqDc34mYvjztyVhEiRFE/Pi4ibd4mNx4domooJpexgJuPd
+         192VRGrm+k15eSa6IEolbXzXKjMMXwiDLjF+ncCqfoAgHQmn+vWCtbH3C34ypNRiV8XB
+         /Jxocf2czyZHxB9LCJFhdn+g/GW5+7jI0CKgKYtscgi+LEx9ziD3yVj9aIbwiBoualAj
+         bTCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUnz1PNFLEEFp8F0O7nnW3xapzqhKcJPT5CIo2hCnIUuSydHHldmEwvuio+nDSpiaJEAAN3ObV8SMw44hPRnm/yPXXj8jV47urZTlGL
+X-Gm-Message-State: AOJu0Yy1CTxkxrcR9DurSEXzxoeMb1VW0CAJ387mTjQkbwOztGsGa7q4
+	LvvBxFVk/r8qO89v5K0sfG7dE5lm3nuF4l4UCf1HjSX8pZJVC6jkk4+QqCsLahBtqo0SHOb2K7R
+	3uX3nT0R7Px1syX/xxewFocBH6aNDkOAMLLDPwergB+ljJUxpUXNpgd2v6+ULoQ==
+X-Received: by 2002:a05:620a:37a4:b0:793:6d0:b917 with SMTP id af79cd13be357-79306d0bb20mr19630785a.4.1715824266455;
+        Wed, 15 May 2024 18:51:06 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFpszCgqcR6xxxMjDi29UaMLDi5LzclgxtHYRx1KHW2oOb/Rwj4OmBJc4XHPJDsYb5LUUkVMA==
+X-Received: by 2002:a05:620a:37a4:b0:793:6d0:b917 with SMTP id af79cd13be357-79306d0bb20mr19628385a.4.1715824265801;
+        Wed, 15 May 2024 18:51:05 -0700 (PDT)
+Received: from localhost ([240d:1a:c0d:9f00:a03a:475d:8280:d9b7])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-792bf310bc3sm748724785a.99.2024.05.15.18.51.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 May 2024 18:51:05 -0700 (PDT)
+Date: Thu, 16 May 2024 10:51:00 +0900 (JST)
+Message-Id: <20240516.105100.743311612367936729.syoshida@redhat.com>
+To: o.rempel@pengutronix.de
+Cc: robin@protonic.nl, kernel@pengutronix.de, socketcan@hartkopp.net,
+ mkl@pengutronix.de, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, linux-can@vger.kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzbot+5681e40d297b30f5b513@syzkaller.appspotmail.com
+Subject: Re: [PATCH] can: j1939: Initialize unused data in j1939_send_one()
+From: Shigeru Yoshida <syoshida@redhat.com>
+In-Reply-To: <ZkG9zbYwd0BL7B2r@pengutronix.de>
+References: <20240512160307.2604215-1-syoshida@redhat.com>
+	<ZkG9zbYwd0BL7B2r@pengutronix.de>
+X-Mailer: Mew version 6.9 on Emacs 29.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <12afae41-906c-4bb7-956a-d73734c68010@intel.com>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 16, 2024 at 12:52:32PM +1200,
-"Huang, Kai" <kai.huang@intel.com> wrote:
+On Mon, 13 May 2024 09:14:21 +0200, Oleksij Rempel wrote:
+> Hi,
+> 
+> On Mon, May 13, 2024 at 01:03:07AM +0900, Shigeru Yoshida wrote:
+>> syzbot reported kernel-infoleak in raw_recvmsg() [1]. j1939_send_one()
+>> creates full frame including unused data, but it doesn't initialize it.
+>> This causes the kernel-infoleak issue. Fix this by initializing unused
+>> data.
+>> 
+>> [1]
+>> BUG: KMSAN: kernel-infoleak in instrument_copy_to_user include/linux/instrumented.h:114 [inline]
+>> BUG: KMSAN: kernel-infoleak in copy_to_user_iter lib/iov_iter.c:24 [inline]
+>> BUG: KMSAN: kernel-infoleak in iterate_ubuf include/linux/iov_iter.h:29 [inline]
+>> BUG: KMSAN: kernel-infoleak in iterate_and_advance2 include/linux/iov_iter.h:245 [inline]
+>> BUG: KMSAN: kernel-infoleak in iterate_and_advance include/linux/iov_iter.h:271 [inline]
+>> BUG: KMSAN: kernel-infoleak in _copy_to_iter+0x366/0x2520 lib/iov_iter.c:185
+>>  instrument_copy_to_user include/linux/instrumented.h:114 [inline]
+>>  copy_to_user_iter lib/iov_iter.c:24 [inline]
+>>  iterate_ubuf include/linux/iov_iter.h:29 [inline]
+>>  iterate_and_advance2 include/linux/iov_iter.h:245 [inline]
+>>  iterate_and_advance include/linux/iov_iter.h:271 [inline]
+>>  _copy_to_iter+0x366/0x2520 lib/iov_iter.c:185
+>>  copy_to_iter include/linux/uio.h:196 [inline]
+>>  memcpy_to_msg include/linux/skbuff.h:4113 [inline]
+>>  raw_recvmsg+0x2b8/0x9e0 net/can/raw.c:1008
+>>  sock_recvmsg_nosec net/socket.c:1046 [inline]
+>>  sock_recvmsg+0x2c4/0x340 net/socket.c:1068
+>>  ____sys_recvmsg+0x18a/0x620 net/socket.c:2803
+>>  ___sys_recvmsg+0x223/0x840 net/socket.c:2845
+>>  do_recvmmsg+0x4fc/0xfd0 net/socket.c:2939
+>>  __sys_recvmmsg net/socket.c:3018 [inline]
+>>  __do_sys_recvmmsg net/socket.c:3041 [inline]
+>>  __se_sys_recvmmsg net/socket.c:3034 [inline]
+>>  __x64_sys_recvmmsg+0x397/0x490 net/socket.c:3034
+>>  x64_sys_call+0xf6c/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:300
+>>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>>  do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+>>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>> 
+>> Uninit was created at:
+>>  slab_post_alloc_hook mm/slub.c:3804 [inline]
+>>  slab_alloc_node mm/slub.c:3845 [inline]
+>>  kmem_cache_alloc_node+0x613/0xc50 mm/slub.c:3888
+>>  kmalloc_reserve+0x13d/0x4a0 net/core/skbuff.c:577
+>>  __alloc_skb+0x35b/0x7a0 net/core/skbuff.c:668
+>>  alloc_skb include/linux/skbuff.h:1313 [inline]
+>>  alloc_skb_with_frags+0xc8/0xbf0 net/core/skbuff.c:6504
+>>  sock_alloc_send_pskb+0xa81/0xbf0 net/core/sock.c:2795
+>>  sock_alloc_send_skb include/net/sock.h:1842 [inline]
+>>  j1939_sk_alloc_skb net/can/j1939/socket.c:878 [inline]
+>>  j1939_sk_send_loop net/can/j1939/socket.c:1142 [inline]
+>>  j1939_sk_sendmsg+0xc0a/0x2730 net/can/j1939/socket.c:1277
+>>  sock_sendmsg_nosec net/socket.c:730 [inline]
+>>  __sock_sendmsg+0x30f/0x380 net/socket.c:745
+>>  ____sys_sendmsg+0x877/0xb60 net/socket.c:2584
+>>  ___sys_sendmsg+0x28d/0x3c0 net/socket.c:2638
+>>  __sys_sendmsg net/socket.c:2667 [inline]
+>>  __do_sys_sendmsg net/socket.c:2676 [inline]
+>>  __se_sys_sendmsg net/socket.c:2674 [inline]
+>>  __x64_sys_sendmsg+0x307/0x4a0 net/socket.c:2674
+>>  x64_sys_call+0xc4b/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:47
+>>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>>  do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+>>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>> 
+>> Bytes 12-15 of 16 are uninitialized
+>> Memory access of size 16 starts at ffff888120969690
+>> Data copied to user address 00000000200017c0
+>> 
+>> CPU: 1 PID: 5050 Comm: syz-executor198 Not tainted 6.9.0-rc5-syzkaller-00031-g71b1543c83d6 #0
+>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+>> 
+>> Fixes: 9d71dd0c7009 ("can: add support of SAE J1939 protocol")
+>> Reported-and-tested-by: syzbot+5681e40d297b30f5b513@syzkaller.appspotmail.com
+>> Closes: https://syzkaller.appspot.com/bug?extid=5681e40d297b30f5b513
+>> Signed-off-by: Shigeru Yoshida <syoshida@redhat.com>
+> 
+> Thank you for your investigation!
+> 
+>> ---
+>>  net/can/j1939/main.c | 3 +++
+>>  1 file changed, 3 insertions(+)
+>> 
+>> diff --git a/net/can/j1939/main.c b/net/can/j1939/main.c
+>> index a6fb89fa6278..df01628c6509 100644
+>> --- a/net/can/j1939/main.c
+>> +++ b/net/can/j1939/main.c
+>> @@ -344,6 +344,9 @@ int j1939_send_one(struct j1939_priv *priv, struct sk_buff *skb)
+>>  	/* make it a full can frame again */
+>>  	skb_put(skb, J1939_CAN_FTR + (8 - dlc));
+>>  
+>> +	/* initialize unused data  */
+>> +	memset(cf->data + dlc, 0, 8 - dlc);
+>> +
+>>  	canid = CAN_EFF_FLAG |
+>>  		(skcb->priority << 26) |
+>>  		(skcb->addr.pgn << 8) |
+>> -- 
+>> 2.44.0
+> 
+> Can you please change it to:
+> 
+> --- a/net/can/j1939/main.c
+> +++ b/net/can/j1939/main.c
+> @@ -30,10 +30,6 @@ MODULE_ALIAS("can-proto-" __stringify(CAN_J1939));
+>  /* CAN_HDR: #bytes before can_frame data part */
+>  #define J1939_CAN_HDR (offsetof(struct can_frame, data))
+>  
+> -/* CAN_FTR: #bytes beyond data part */
+> -#define J1939_CAN_FTR (sizeof(struct can_frame) - J1939_CAN_HDR - \
+> -		 sizeof(((struct can_frame *)0)->data))
+> -
+>  /* lowest layer */
+>  static void j1939_can_recv(struct sk_buff *iskb, void *data)
+>  {
+> @@ -342,7 +338,7 @@ int j1939_send_one(struct j1939_priv *priv, struct sk_buff *skb)
+>  	memset(cf, 0, J1939_CAN_HDR);
+>  
+>  	/* make it a full can frame again */
+> -	skb_put(skb, J1939_CAN_FTR + (8 - dlc));
+> +	skb_put_zero(skb, 8 - dlc);
+>  
+>  	canid = CAN_EFF_FLAG |
+>  		(skcb->priority << 26) |
+> 
+> With this change included, you can add my:
+> Acked-by: Oleksij Rempel <o.rempel@pengutronix.de>
 
-> On 15/05/2024 12:59 pm, Rick Edgecombe wrote:
-> > From: Isaku Yamahata <isaku.yamahata@intel.com>
-> > 
-> > Allocate mirrored page table for the private page table and implement MMU
-> > hooks to operate on the private page table.
-> > 
-> > To handle page fault to a private GPA, KVM walks the mirrored page table in
-> > unencrypted memory and then uses MMU hooks in kvm_x86_ops to propagate
-> > changes from the mirrored page table to private page table.
-> > 
-> >    private KVM page fault   |
-> >        |                    |
-> >        V                    |
-> >   private GPA               |     CPU protected EPTP
-> >        |                    |           |
-> >        V                    |           V
-> >   mirrored PT root          |     private PT root
-> >        |                    |           |
-> >        V                    |           V
-> >     mirrored PT --hook to propagate-->private PT
-> >        |                    |           |
-> >        \--------------------+------\    |
-> >                             |      |    |
-> >                             |      V    V
-> >                             |    private guest page
-> >                             |
-> >                             |
-> >       non-encrypted memory  |    encrypted memory
-> >                             |
-> > 
-> > PT:         page table
-> > Private PT: the CPU uses it, but it is invisible to KVM. TDX module manages
-> >              this table to map private guest pages.
-> > Mirrored PT:It is visible to KVM, but the CPU doesn't use it. KVM uses it
-> >              to propagate PT change to the actual private PT.
-> > 
-> > SPTEs in mirrored page table (refer to them as mirrored SPTEs hereafter)
-> > can be modified atomically with mmu_lock held for read, however, the MMU
-> > hooks to private page table are not atomical operations.
-> > 
-> > To address it, a special REMOVED_SPTE is introduced and below sequence is
-> > used when mirrored SPTEs are updated atomically.
-> > 
-> > 1. Mirrored SPTE is first atomically written to REMOVED_SPTE.
-> > 2. The successful updater of the mirrored SPTE in step 1 proceeds with the
-> >     following steps.
-> > 3. Invoke MMU hooks to modify private page table with the target value.
-> > 4. (a) On hook succeeds, update mirrored SPTE to target value.
-> >     (b) On hook failure, restore mirrored SPTE to original value.
-> > 
-> > KVM TDP MMU ensures other threads will not overrite REMOVED_SPTE.
-> > 
-> > This sequence also applies when SPTEs are atomiclly updated from
-> > non-present to present in order to prevent potential conflicts when
-> > multiple vCPUs attempt to set private SPTEs to a different page size
-> > simultaneously, though 4K page size is only supported for private page
-> > table currently.
-> > 
-> > 2M page support can be done in future patches.
-> > 
-> > Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
-> > Co-developed-by: Kai Huang <kai.huang@intel.com>
-> > Signed-off-by: Kai Huang <kai.huang@intel.com>
-> > Co-developed-by: Yan Zhao <yan.y.zhao@intel.com>
-> > Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
-> > Co-developed-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> > Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> > ---
-> > TDX MMU Part 1:
-> >   - Remove unnecessary gfn, access twist in
-> >     tdp_mmu_map_handle_target_level(). (Chao Gao)
-> >   - Open code call to kvm_mmu_alloc_private_spt() instead oCf doing it in
-> >     tdp_mmu_alloc_sp()
-> >   - Update comment in set_private_spte_present() (Yan)
-> >   - Open code call to kvm_mmu_init_private_spt() (Yan)
-> >   - Add comments on TDX MMU hooks (Yan)
-> >   - Fix various whitespace alignment (Yan)
-> >   - Remove pointless warnings and conditionals in
-> >     handle_removed_private_spte() (Yan)
-> >   - Remove redundant lockdep assert in tdp_mmu_set_spte() (Yan)
-> >   - Remove incorrect comment in handle_changed_spte() (Yan)
-> >   - Remove unneeded kvm_pfn_to_refcounted_page() and
-> >     is_error_noslot_pfn() check in kvm_tdp_mmu_map() (Yan)
-> >   - Do kvm_gfn_for_root() branchless (Rick)
-> >   - Update kvm_tdp_mmu_alloc_root() callers to not check error code (Rick)
-> >   - Add comment for stripping shared bit for fault.gfn (Chao)
-> > 
-> > v19:
-> > - drop CONFIG_KVM_MMU_PRIVATE
-> > 
-> > v18:
-> > - Rename freezed => frozen
-> > 
-> > v14 -> v15:
-> > - Refined is_private condition check in kvm_tdp_mmu_map().
-> >    Add kvm_gfn_shared_mask() check.
-> > - catch up for struct kvm_range change
-> > ---
-> >   arch/x86/include/asm/kvm-x86-ops.h |   5 +
-> >   arch/x86/include/asm/kvm_host.h    |  25 +++
-> >   arch/x86/kvm/mmu/mmu.c             |  13 +-
-> >   arch/x86/kvm/mmu/mmu_internal.h    |  19 +-
-> >   arch/x86/kvm/mmu/tdp_iter.h        |   2 +-
-> >   arch/x86/kvm/mmu/tdp_mmu.c         | 269 +++++++++++++++++++++++++----
-> >   arch/x86/kvm/mmu/tdp_mmu.h         |   2 +-
-> >   7 files changed, 293 insertions(+), 42 deletions(-)
-> > 
-> > diff --git a/arch/x86/include/asm/kvm-x86-ops.h b/arch/x86/include/asm/kvm-x86-ops.h
-> > index 566d19b02483..d13cb4b8fce6 100644
-> > --- a/arch/x86/include/asm/kvm-x86-ops.h
-> > +++ b/arch/x86/include/asm/kvm-x86-ops.h
-> > @@ -95,6 +95,11 @@ KVM_X86_OP_OPTIONAL_RET0(set_tss_addr)
-> >   KVM_X86_OP_OPTIONAL_RET0(set_identity_map_addr)
-> >   KVM_X86_OP_OPTIONAL_RET0(get_mt_mask)
-> >   KVM_X86_OP(load_mmu_pgd)
-> > +KVM_X86_OP_OPTIONAL(link_private_spt)
-> > +KVM_X86_OP_OPTIONAL(free_private_spt)
-> > +KVM_X86_OP_OPTIONAL(set_private_spte)
-> > +KVM_X86_OP_OPTIONAL(remove_private_spte)
-> > +KVM_X86_OP_OPTIONAL(zap_private_spte)
-> >   KVM_X86_OP(has_wbinvd_exit)
-> >   KVM_X86_OP(get_l2_tsc_offset)
-> >   KVM_X86_OP(get_l2_tsc_multiplier)
-> > diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> > index d010ca5c7f44..20fa8fa58692 100644
-> > --- a/arch/x86/include/asm/kvm_host.h
-> > +++ b/arch/x86/include/asm/kvm_host.h
-> > @@ -470,6 +470,7 @@ struct kvm_mmu {
-> >   	int (*sync_spte)(struct kvm_vcpu *vcpu,
-> >   			 struct kvm_mmu_page *sp, int i);
-> >   	struct kvm_mmu_root_info root;
-> > +	hpa_t private_root_hpa;
-> 
-> Should we have
-> 
-> 	struct kvm_mmu_root_info private_root;
-> 
-> instead?
+Thank you for your feedback! I will send v2 patch with the above
+changes you suggested.
 
-Yes. And the private root allocation can be pushed down into TDP MMU.
+Thanks
+Shigeru
 
+> 
+> Regards,
+> Oleksij
+> -- 
+> Pengutronix e.K.                           |                             |
+> Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+> 31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+> 
 
-> >   	union kvm_cpu_role cpu_role;
-> >   	union kvm_mmu_page_role root_role;
-> > @@ -1747,6 +1748,30 @@ struct kvm_x86_ops {
-> >   	void (*load_mmu_pgd)(struct kvm_vcpu *vcpu, hpa_t root_hpa,
-> >   			     int root_level);
-> > +	/* Add a page as page table page into private page table */
-> > +	int (*link_private_spt)(struct kvm *kvm, gfn_t gfn, enum pg_level level,
-> > +				void *private_spt);
-> > +	/*
-> > +	 * Free a page table page of private page table.
-> > +	 * Only expected to be called when guest is not active, specifically
-> > +	 * during VM destruction phase.
-> > +	 */
-> > +	int (*free_private_spt)(struct kvm *kvm, gfn_t gfn, enum pg_level level,
-> > +				void *private_spt);
-> > +
-> > +	/* Add a guest private page into private page table */
-> > +	int (*set_private_spte)(struct kvm *kvm, gfn_t gfn, enum pg_level level,
-> > +				kvm_pfn_t pfn);
-> > +
-> > +	/* Remove a guest private page from private page table*/
-> > +	int (*remove_private_spte)(struct kvm *kvm, gfn_t gfn, enum pg_level level,
-> > +				   kvm_pfn_t pfn);
-> > +	/*
-> > +	 * Keep a guest private page mapped in private page table, but clear its
-> > +	 * present bit
-> > +	 */
-> > +	int (*zap_private_spte)(struct kvm *kvm, gfn_t gfn, enum pg_level level);
-> > +
-> >   	bool (*has_wbinvd_exit)(void);
-> >   	u64 (*get_l2_tsc_offset)(struct kvm_vcpu *vcpu);
-> > diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> > index 76f92cb37a96..2506d6277818 100644
-> > --- a/arch/x86/kvm/mmu/mmu.c
-> > +++ b/arch/x86/kvm/mmu/mmu.c
-> > @@ -3701,7 +3701,9 @@ static int mmu_alloc_direct_roots(struct kvm_vcpu *vcpu)
-> >   	int r;
-> >   	if (tdp_mmu_enabled) {
-> > -		kvm_tdp_mmu_alloc_root(vcpu);
-> > +		if (kvm_gfn_shared_mask(vcpu->kvm))
-> > +			kvm_tdp_mmu_alloc_root(vcpu, true);
-> 
-> As mentioned in replies to other patches, I kinda prefer
-> 
-> 	kvm->arch.has_mirrored_pt (or has_mirrored_private_pt)
-> 
-> Or we have a helper
-> 
-> 	kvm_has_mirrored_pt() / kvm_has_mirrored_private_pt()
-> 
-> > +		kvm_tdp_mmu_alloc_root(vcpu, false);
-> >   		return 0;
-> >   	}
-> > @@ -4685,7 +4687,7 @@ int kvm_tdp_page_fault(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault)
-> >   	if (kvm_mmu_honors_guest_mtrrs(vcpu->kvm)) {
-> >   		for ( ; fault->max_level > PG_LEVEL_4K; --fault->max_level) {
-> >   			int page_num = KVM_PAGES_PER_HPAGE(fault->max_level);
-> > -			gfn_t base = gfn_round_for_level(fault->gfn,
-> > +			gfn_t base = gfn_round_for_level(gpa_to_gfn(fault->addr),
-> >   							 fault->max_level);
-> 
-> I thought by reaching here the shared bit has already been stripped away by
-> the caller?
-> 
-> It doesn't make a lot sense to still have it here, given we have a universal
-> KVM-defined PFERR_PRIVATE_ACCESS flag:
-> 
-> https://lore.kernel.org/kvm/20240507155817.3951344-2-pbonzini@redhat.com/T/#mb30987f31b431771b42dfa64dcaa2efbc10ada5e
-> 
-> IMHO we should just strip the shared bit in the TDX variant of
-> handle_ept_violation(), and pass the PFERR_PRIVATE_ACCESS (when GPA doesn't
-> hvae shared bit) to the common fault handler so it can correctly set
-> fault->is_private to true.
-
-Yes, this part should be dropped.  Because we will have vCPUID.MTRR=0 for TDX in
-long term, we can make kvm_mmu_honors_guest_mtrrs() always false.  Maybe
-kvm->arch.disbled_mtrr or guest_cpuid_has(vcpu, X86_FEATURE_MTRR) = false.  We
-will enforce vcpu.CPUID.MTRR=false.
-
-Guest MTRR=0 support can be independently addressed.
-
-
-> >   			if (kvm_mtrr_check_gfn_range_consistency(vcpu, base, page_num))
-> > @@ -6245,6 +6247,7 @@ static int __kvm_mmu_create(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu)
-> >   	mmu->root.hpa = INVALID_PAGE;
-> >   	mmu->root.pgd = 0;
-> > +	mmu->private_root_hpa = INVALID_PAGE;
-> >   	for (i = 0; i < KVM_MMU_NUM_PREV_ROOTS; i++)
-> >   		mmu->prev_roots[i] = KVM_MMU_ROOT_INFO_INVALID;
-> > @@ -7263,6 +7266,12 @@ int kvm_mmu_vendor_module_init(void)
-> >   void kvm_mmu_destroy(struct kvm_vcpu *vcpu)
-> >   {
-> >   	kvm_mmu_unload(vcpu);
-> > +	if (tdp_mmu_enabled) {
-> > +		read_lock(&vcpu->kvm->mmu_lock);
-> > +		mmu_free_root_page(vcpu->kvm, &vcpu->arch.mmu->private_root_hpa,
-> > +				   NULL);
-> > +		read_unlock(&vcpu->kvm->mmu_lock);
-> > +	}
-> 
-> Hmm.. I don't quite like this, but sorry I kinda forgot why we need to to
-> this here.
-> 
-> Could you elaborate?
-> 
-> Anyway, from common code's perspective, we need to have some clarification
-> why we design to do it here.
-
-This should be cleaned up.  It can be pushed down into kvm_tdp_mmu_alloc_root().
-
-void kvm_tdp_mmu_alloc_root(struct kvm_vcpu *vcpu)
-  allocate shared root
-  if (has_mirrort_pt)
-    allocate private root
-
-
-> >   	free_mmu_pages(&vcpu->arch.root_mmu);
-> >   	free_mmu_pages(&vcpu->arch.guest_mmu);
-> >   	mmu_free_memory_caches(vcpu);
-> > diff --git a/arch/x86/kvm/mmu/mmu_internal.h b/arch/x86/kvm/mmu/mmu_internal.h
-> > index 0f1a9d733d9e..3a7fe9261e23 100644
-> > --- a/arch/x86/kvm/mmu/mmu_internal.h
-> > +++ b/arch/x86/kvm/mmu/mmu_internal.h
-> > @@ -6,6 +6,8 @@
-> >   #include <linux/kvm_host.h>
-> >   #include <asm/kvm_host.h>
-> > +#include "mmu.h"
-> > +
-> >   #ifdef CONFIG_KVM_PROVE_MMU
-> >   #define KVM_MMU_WARN_ON(x) WARN_ON_ONCE(x)
-> >   #else
-> > @@ -178,6 +180,16 @@ static inline void kvm_mmu_alloc_private_spt(struct kvm_vcpu *vcpu, struct kvm_m
-> >   	sp->private_spt = kvm_mmu_memory_cache_alloc(&vcpu->arch.mmu_private_spt_cache);
-> >   }
-> > +static inline gfn_t kvm_gfn_for_root(struct kvm *kvm, struct kvm_mmu_page *root,
-> > +				     gfn_t gfn)
-> > +{
-> > +	gfn_t gfn_for_root = kvm_gfn_to_private(kvm, gfn);
-> > +
-> > +	/* Set shared bit if not private */
-> > +	gfn_for_root |= -(gfn_t)!is_private_sp(root) & kvm_gfn_shared_mask(kvm);
-> > +	return gfn_for_root;
-> > +}
-> > +
-> >   static inline bool kvm_mmu_page_ad_need_write_protect(struct kvm_mmu_page *sp)
-> >   {
-> >   	/*
-> > @@ -348,7 +360,12 @@ static inline int __kvm_mmu_do_page_fault(struct kvm_vcpu *vcpu, gpa_t cr2_or_gp
-> >   	int r;
-> >   	if (vcpu->arch.mmu->root_role.direct) {
-> > -		fault.gfn = fault.addr >> PAGE_SHIFT;
-> > +		/*
-> > +		 * Things like memslots don't understand the concept of a shared
-> > +		 * bit. Strip it so that the GFN can be used like normal, and the
-> > +		 * fault.addr can be used when the shared bit is needed.
-> > +		 */
-> > +		fault.gfn = gpa_to_gfn(fault.addr) & ~kvm_gfn_shared_mask(vcpu->kvm);
-> >   		fault.slot = kvm_vcpu_gfn_to_memslot(vcpu, fault.gfn);
-> 
-> Again, I don't think it's nessary for fault.gfn to still have the shared bit
-> here?
-> 
-> This kinda usage is pretty much the reason I want to get rid of
-> kvm_gfn_shared_mask().
-
-We are going to flags like has_mirrored_pt and we have root page table iterator
-with types specified.  I'll investigate how we can reduce (or eliminate)
-those helper functions.
-
-
-> >   	}
-> > diff --git a/arch/x86/kvm/mmu/tdp_iter.h b/arch/x86/kvm/mmu/tdp_iter.h
-> > index fae559559a80..8a64bcef9deb 100644
-> > --- a/arch/x86/kvm/mmu/tdp_iter.h
-> > +++ b/arch/x86/kvm/mmu/tdp_iter.h
-> > @@ -91,7 +91,7 @@ struct tdp_iter {
-> >   	tdp_ptep_t pt_path[PT64_ROOT_MAX_LEVEL];
-> >   	/* A pointer to the current SPTE */
-> >   	tdp_ptep_t sptep;
-> > -	/* The lowest GFN mapped by the current SPTE */
-> > +	/* The lowest GFN (shared bits included) mapped by the current SPTE */
-> >   	gfn_t gfn;
-> 
-> IMHO we need more clarification of this design.
-> 
-> We at least needs to call out the TDX hardware uses the 'GFA + shared bit'
-> when it walks the page table for shared mappings, so we must set up the
-> mapping at the GPA with the shared bit.
-> 
-> E.g, because TDX hardware uses separate root for shared/private mappings, I
-> think it's a resonable opion for the TDX hardware to just use the actual GPA
-> w/o shared bit when it walks the shared page table, and still report EPT
-> violation with GPA with shared bit set.
-> 
-> Such HW implementation is completely hidden from software, thus should be
-> clarified in the changelog/comments.
-
-Totally agree that it deserves for documentation.  I would update the design
-document of TDX TDP MMU to include it.  This patch series doesn't include it,
-though.
-
-
-> >   	/* The level of the root page given to the iterator */
-> >   	int root_level;
-> 
-> [...]
-> 
-> >   	for_each_tdp_pte_min_level(iter, root, PG_LEVEL_4K, start, end) {
-> > @@ -1029,8 +1209,8 @@ static int tdp_mmu_map_handle_target_level(struct kvm_vcpu *vcpu,
-> >   		new_spte = make_mmio_spte(vcpu, iter->gfn, ACC_ALL);
-> >   	else
-> >   		wrprot = make_spte(vcpu, sp, fault->slot, ACC_ALL, iter->gfn,
-> > -					 fault->pfn, iter->old_spte, fault->prefetch, true,
-> > -					 fault->map_writable, &new_spte);
-> > +					fault->pfn, iter->old_spte, fault->prefetch, true,
-> > +					fault->map_writable, &new_spte);
-> >   	if (new_spte == iter->old_spte)
-> >   		ret = RET_PF_SPURIOUS;
-> > @@ -1108,6 +1288,8 @@ int kvm_tdp_mmu_map(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault)
-> >   	struct kvm *kvm = vcpu->kvm;
-> >   	struct tdp_iter iter;
-> >   	struct kvm_mmu_page *sp;
-> > +	gfn_t raw_gfn;
-> > +	bool is_private = fault->is_private && kvm_gfn_shared_mask(kvm);
-> 
-> Ditto.  I wish we can have 'has_mirrored_private_pt'.
-
-Which name do you prefer? has_mirrored_pt or has_mirrored_private_pt?
--- 
-Isaku Yamahata <isaku.yamahata@intel.com>
 
