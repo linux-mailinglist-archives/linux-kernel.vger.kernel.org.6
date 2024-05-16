@@ -1,119 +1,106 @@
-Return-Path: <linux-kernel+bounces-181355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B425F8C7AE7
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 19:12:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BC6F8C7AEC
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 19:13:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E2C8B2264E
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:12:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B209B21BCA
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:13:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B71E15625B;
-	Thu, 16 May 2024 17:12:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f0V5wK+Y"
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2221A1553B1;
+	Thu, 16 May 2024 17:13:19 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10F0315539A;
-	Thu, 16 May 2024 17:12:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE492154BF0
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 17:13:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715879543; cv=none; b=SihaVQzbgergiJm3NMxU2w7JRQSe4d0PWqKrgE0qkjhMpLDifBKc4SMAvlzMup0Ma3Z6vj5xhIkX+4rTaSSm54A198xqwx1oIU3iPdc4hnMs03DqnQBHtbqdTfxqTHFBc4m/i4NogZI+0aTj1VQvImFyZJBIuBzvAeHUARGuMkc=
+	t=1715879598; cv=none; b=aAb8IHGcSVdhrJqjFcrDgg3LZnLZqsAkbuIg46Mwv+d2vSWDSV5f0aFMCbtioRwUDLCBw8Cf/u5JwaPJLhW5yBN5aBco5FgPQ11X+VVKfPJvn8yDHGCZTpDxEkMdI+VkED7+2ltOOQIZLHW7+5utK2kuC1qsHoD3hmfsQIrVufU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715879543; c=relaxed/simple;
-	bh=FhE0/+Vev/VD1sKePplNrzUpXEfx7mJdHOT5LI85Ld0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z8rASoHyIiPU1jDRWVqe4yFrOj6QLtSMM3lPJtXDxXIKnB8WjTHIVWo+jyf2ndg5FsLI0S5mnzeuMveOiY452/vQUL4TT7qGZE+O3WMja6LBKcDe6DNgM7xHKKgr6UU4CZsPB2tmyxdeJL8AkLk519u9JgGZJhYA1nuAw4jrsYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f0V5wK+Y; arc=none smtp.client-ip=209.85.219.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6a04bae512aso38862996d6.2;
-        Thu, 16 May 2024 10:12:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715879541; x=1716484341; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WNtCqrtDQOq5DdS6OQ5vwazjgqxJj8aBt0efGR7Z08Y=;
-        b=f0V5wK+Y6SWj7dQNR3KyfRSLdPtnPjqnGzuI10rAcgjZN1nj7Or6m5rI1SZ8lqgGuI
-         Vou1FThCYZz3YLGQ+up0X85w9kLbHEhWd5pN+o2uVDcWuEMXWiwMIoyqABgci55JEDnS
-         nQIn/jiDRNvYmXeEISa4a4xjIvRcv4PRtEw4mh6E7nJV3in/UTjMpspi/iR7jhUYIqG5
-         2osKaxFVN9uPS8LmAXOXyD8snocDRJ/hYkAExv8R6jmSRHQdXAVnlIRc2atSSKQqP6/6
-         P52YJznIBUxdNIXSCHkWLhXpqKIigeK1P/QM+gnNzN+HVtoSa2kz0IpD3KLwszdz0QGF
-         xftA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715879541; x=1716484341;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WNtCqrtDQOq5DdS6OQ5vwazjgqxJj8aBt0efGR7Z08Y=;
-        b=Io49pwvnX8jAoXT95noq7shTUcpDCo7sAq+d4G9oPn0pedwXVngiE2AebHj0A+XlrP
-         EZZeMzudBcnTYSxo4o0R93M4aw2L5YFILbOekn8PYXsqSoQanHllf+XjnlSePyHwYmft
-         hL2Nxn1BtvbraEoqJmolXLqTz8I0yZN2VfKgMBg6JtRhK9WIIXd4XsIfRxGUC6rP37UW
-         lxqAZtWc4fB+6u+V0ReNRPoxF9N6gvVLScjYkd1FzZi3OvxcgmSbergsYxnOnfJlEGUV
-         5Xk08KfteyVdrJSy3s/NCFCWr2K15dNzdHQ2WEwYcKC9lIgb1trrhKiQi21sGMpGtwlO
-         4IuA==
-X-Forwarded-Encrypted: i=1; AJvYcCU5V8Yz7aZk3jM1L8K7yrK7LZ3heI3UvAByA8CC3OEgEeWKYP8D7HInVnZK0lTZdx/seForUvMD4O8Csay1Yq/TPeCcwAANnAtRl4cEiWGn00M22tAkw6WRtm2U+ctpKqmHzY0n
-X-Gm-Message-State: AOJu0YwBhyR1THs5JDja1HjVbJITHQ1iNQ6xoVSsGGGrFBHqdELNYenP
-	HPx2s/Js243DUOqdu53oR3Tm21yFrhg5NfT/4c8Pm7Lz02oxw3h8jh2hmmgq
-X-Google-Smtp-Source: AGHT+IG9HkjRFX1+YYNHBv/8dIe/DIDRiBupHz5JYg3PVe/p9rP5vVSjJEbRQE/hJq1GVm93at3f8g==
-X-Received: by 2002:a05:6214:2f8b:b0:69b:12a0:295c with SMTP id 6a1803df08f44-6a168378b13mr232212446d6.57.1715879540836;
-        Thu, 16 May 2024 10:12:20 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id 6a1803df08f44-6a15f194945sm76619176d6.61.2024.05.16.10.12.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 May 2024 10:12:19 -0700 (PDT)
-Message-ID: <ea42405f-77df-40fa-af3f-e35b8a8cd484@gmail.com>
-Date: Thu, 16 May 2024 10:12:16 -0700
+	s=arc-20240116; t=1715879598; c=relaxed/simple;
+	bh=Ntp9s3ZQjej96T2DegVyNKETmpnMIscSNouwatw/mIA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=JCBlZmilI+XBDFW4yPuwfEaRmK0cjxxdxiFr/Ty+EEa0yN9dvUCuLVPhW63eEcoXvUs0GA8bl1AKm3kgu381O/ADvQVF2nH5pL8gtZTxm6sALLwkaG+vswzXIqUsfSl1qjFwvSmpBegts2w3o325yWJjc7K6JP/Y5VDfX5eSa4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[IPv6:::1])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <l.stach@pengutronix.de>)
+	id 1s7efD-0005Hj-LM; Thu, 16 May 2024 19:13:07 +0200
+Message-ID: <2c5b62e0898efc61da7bec7a261d10e89ccd4a1e.camel@pengutronix.de>
+Subject: Re: [PATCH] drm/etnaviv: drop driver owner assignment
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Christian Gmeiner <christian.gmeiner@gmail.com>, Krzysztof Kozlowski
+	 <krzysztof.kozlowski@linaro.org>
+Cc: Russell King <linux+etnaviv@armlinux.org.uk>, David Airlie
+	 <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Date: Thu, 16 May 2024 19:13:06 +0200
+In-Reply-To: <CAH9NwWfU5eaBRSqhgJgHwgphtL+KUAiX3Tx_7vO11N_BV7qUQQ@mail.gmail.com>
+References: <20240330205241.92711-1-krzysztof.kozlowski@linaro.org>
+	 <CAH9NwWfU5eaBRSqhgJgHwgphtL+KUAiX3Tx_7vO11N_BV7qUQQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5.15 000/168] 5.15.159-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240515082414.316080594@linuxfoundation.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20240515082414.316080594@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 5/15/24 01:27, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.15.159 release.
-> There are 168 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Fri, 17 May 2024 08:23:27 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.159-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+Am Montag, dem 01.04.2024 um 12:26 +0200 schrieb Christian Gmeiner:
+> >=20
+> > Core in platform_driver_register() already sets the .owner, so driver
+> > does not need to.  Whatever is set here will be anyway overwritten by
+> > main driver calling platform_driver_register().
+> >=20
+> > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>=20
+> Reviewed-by: Christian Gmeiner <cgmeiner@igalia.com>
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+Applied to the etnaviv/next branch.
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+Regards,
+Lucas
+
+>=20
+> > ---
+> > =C2=A0drivers/gpu/drm/etnaviv/etnaviv_gpu.c | 1 -
+> > =C2=A01 file changed, 1 deletion(-)
+> >=20
+> > diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c b/drivers/gpu/drm/et=
+naviv/etnaviv_gpu.c
+> > index 734412aae94d..87b31cfee41d 100644
+> > --- a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
+> > +++ b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
+> > @@ -1995,7 +1995,6 @@ static const struct dev_pm_ops etnaviv_gpu_pm_ops=
+ =3D {
+> > =C2=A0struct platform_driver etnaviv_gpu_driver =3D {
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.driver =3D {
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0.name =3D "etnaviv-gpu",
+> > -               .owner =3D THIS_MODULE,
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0.pm =3D pm_ptr(&etnaviv_gpu_pm_ops),
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0.of_match_table =3D etnaviv_gpu_match,
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0},
+> > --
+> > 2.34.1
+> >=20
+>=20
+>=20
 
 
