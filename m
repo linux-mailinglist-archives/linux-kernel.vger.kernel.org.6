@@ -1,140 +1,105 @@
-Return-Path: <linux-kernel+bounces-181294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C756F8C7A15
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:08:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 430C88C7A17
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:09:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F293C1C21523
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:08:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC8651F244DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:09:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2204114D711;
-	Thu, 16 May 2024 16:08:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FA6F14D710;
+	Thu, 16 May 2024 16:09:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cmwD+eXx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ba/wtGx2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F209143874;
-	Thu, 16 May 2024 16:08:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B356A143874
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 16:09:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715875709; cv=none; b=B2Mc3zFp0oNzZZHQYXdVElSJI9lK9UWc1PrLCM5qm2cW6/XdQO/dxVIMwfzW22mZev7046V4/AQqxFbAwEYtStryOM6BuTq0bdEcbPS0eyl2tVzShaFx0+izmHT/hiCaz+N9l6Xnd9QQuljg9L4NUkWBivX90e+QSc+fUBEqGTs=
+	t=1715875757; cv=none; b=qwwLkezkuaSdzs/AtyyrdU7ATL2OqOa/A4gyNkTxihbXzSz9zZCwvfJY61+4IaSY7BbsssmOi0DpSUGGQtnn1wXZ4hwhTaSbUhNIQBaCwZm88EJb6lt5SdZhZMrk93Mh18ivZn/JXZ3hxROI4yTveXzie+Q5yFJHb/Ic+ukKP1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715875709; c=relaxed/simple;
-	bh=d8/EvAf4yHxNQSMPnoKJkKTtilEr1elItCh+nLIaYSM=;
+	s=arc-20240116; t=1715875757; c=relaxed/simple;
+	bh=BuB1lBuPqSHeYAZRlNth4Ne+6BiznLgjo9Q2PlJemPM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P4sIgi0XsZmFl85BTdkF0bipuuYcfKaTmGJKRAIpzldMLzl+nL5bg6rf06XOAADjjqbylkHDQ8k01KZcl2bxaLEZ+6tIk8fwUKrj+tVCgHZ6NQDB9Ruluwdak5I1xxTzZ5erP7qwpltyp+dvxfdt1PeO/tkfjhyhJyYUu6w3rgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cmwD+eXx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E113C113CC;
-	Thu, 16 May 2024 16:08:28 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=J9tZ9tS7BIqS40aNj891IvgRkUhtUHFJgF+kIHMtz9TRiqwsAwIFBVnxS3Gtne2gEcMam0i2cUTe6T15mV5oVcaC28JSQwf+F2flEGsbaZAozfE+RJDxJ9PwXTk0hZ+k2J9kJOY9bVnHpKPIDjJpvJkGiskqfmO5FxPuMw83PI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ba/wtGx2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93BAAC113CC;
+	Thu, 16 May 2024 16:09:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715875708;
-	bh=d8/EvAf4yHxNQSMPnoKJkKTtilEr1elItCh+nLIaYSM=;
+	s=k20201202; t=1715875757;
+	bh=BuB1lBuPqSHeYAZRlNth4Ne+6BiznLgjo9Q2PlJemPM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cmwD+eXxssf5j+5x5z68QXN0AwLYlujL0dW/KrM6HPGATV+lXXsKpGeQY/8FwM6Oy
-	 AJoP4vwY1hVKb4+p8f7hqlUgC0aWPCNCx/3cTCGTP6ewHqWvboHz6DiaKlhLJauVZE
-	 hBuyKJ2+M1imXF2D8JkFBZcDwzonmFHUsCjlNNKEYtxmIokQVfbGC9Qn2PnfvfSfqS
-	 oP6nBjjSQIx8DsWrWbv8l7fcIJ0EdvCPxjn7isGzx3BDYPI1riOWcdrQB9wW0utoUu
-	 k5RV1ABsx1Do7SOWRRpMpHu+aL2lfVi99MPXalyeFJqtpczcrG6JbtmQiiE3s0s04s
-	 cMmkjuZ9KMeUw==
-Date: Thu, 16 May 2024 18:08:26 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Valentin Schneider <vschneid@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>
-Subject: Re: [PATCH 2/6] rcu: Remove superfluous full memory barrier upon
- first EQS snapshot
-Message-ID: <ZkYvemdrEOVFNtVu@lothringen>
-References: <20240515125332.9306-1-frederic@kernel.org>
- <20240515125332.9306-3-frederic@kernel.org>
- <xhsmhfruhhixv.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+	b=ba/wtGx2vX3cqrPfKBAa+K8BYIBEfPXL8ABcCbOyBeoqITFyr9fmyoJQg9NMi0f9O
+	 dOg9y0QrpMX/Dnos2RNeS/Tr/vUB6A5YjCP4l7On3vJPyGNRxmtIU9HxvzUAAUoSc0
+	 OFxe37TAV2TjTQJUpl8uR2juQaJ0Dl7NDkj6iwb60KK33hByDxDzNJyF3Vlbuhyabk
+	 I/rEy/Df6VMutIvLPlQJT5tkcqvCaVAbqBP7np5noNraJVIiDt9zb5AEkRLLGMXHVD
+	 2ZU5xKaNpHk0+CUk88bjgNUn0S6gPpq/Oe/Ob/seUmaEiYEVrH11Zb/t41wwx2MCHK
+	 Iwb6GrPT4jkfg==
+Date: Thu, 16 May 2024 17:09:13 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Evan Green <evan@rivosinc.com>, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] riscv: Extend cpufeature.c to detect vendor
+ extensions
+Message-ID: <20240516-undergo-bruising-00b2dda7fdb5@spud>
+References: <20240515-support_vendor_extensions-v1-0-b05dd5ea7d8d@rivosinc.com>
+ <20240515-support_vendor_extensions-v1-1-b05dd5ea7d8d@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="IrlPhg3iJOawMNuM"
+Content-Disposition: inline
+In-Reply-To: <20240515-support_vendor_extensions-v1-1-b05dd5ea7d8d@rivosinc.com>
+
+
+--IrlPhg3iJOawMNuM
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <xhsmhfruhhixv.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 16, 2024 at 05:31:40PM +0200, Valentin Schneider wrote:
-> On 15/05/24 14:53, Frederic Weisbecker wrote:
-> > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-> > index 58415cdc54f8..f5354de5644b 100644
-> > --- a/kernel/rcu/tree.c
-> > +++ b/kernel/rcu/tree.c
-> > @@ -773,7 +773,12 @@ static void rcu_gpnum_ovf(struct rcu_node *rnp, struct rcu_data *rdp)
-> >   */
-> >  static int dyntick_save_progress_counter(struct rcu_data *rdp)
-> >  {
-> > -	rdp->dynticks_snap = rcu_dynticks_snap(rdp->cpu);
-> 
-> So for PPC, which gets the smp_mb() at the lock acquisition, this is an
-> "obvious" redundant smp_mb().
-> 
-> For the other archs, per the definition of smp_mb__after_unlock_lock() it
-> seems implied that UNLOCK+LOCK is a full memory barrier, but I wanted to
-> see it explicitly stated somewhere. From a bit of spelunking below I still
-> think it's the case, but is there a "better" source of truth?
-> 
->   01352fb81658 ("locking: Add an smp_mb__after_unlock_lock() for UNLOCK+BLOCK barrier")
->   """
->   The Linux kernel has traditionally required that an UNLOCK+LOCK pair act as a
->   full memory barrier when either (1) that UNLOCK+LOCK pair was executed by the
->   same CPU or task, or (2) the same lock variable was used for the UNLOCK and
->   LOCK.
->   """
-> 
-> and
-> 
->   https://lore.kernel.org/all/1436789704-10086-1-git-send-email-will.deacon@arm.com/
->   """
->   This ordering guarantee is already provided without the barrier on
->   all architectures apart from PowerPC
->   """
+On Wed, May 15, 2024 at 02:26:13PM -0700, Charlie Jenkins wrote:
+> Instead of grouping all vendor extensions into the same riscv_isa_ext
+> that standard instructions use, create a struct
+> "riscv_isa_vendor_ext_data_list" that allows each vendor to maintain
+> their vendor extensions independently of the standard extensions.
+> xandespmu is currently the only vendor extension so that is the only
+> extension that is affected by this change.
+>=20
+> An additional benefit of this is that the extensions of each vendor can
+> be conditionally enabled. A config RISCV_ISA_VENDOR_EXT_ANDES has been
+> added to allow for that.
+>=20
+> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
 
-You seem to have found the accurate informations! But I must admit
-they are hard to find and it would be welcome to document that properly, for example
-in Documentation/memory-barriers.txt
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 
-I think the reason is that it's not supposed to be used outside RCU, perhaps
-because its semantics are too fragile to use for general purpose? Even that
-could be stated along in Documentation/memory-barriers.txt
+Cheers,
+Conor.
 
-Another thing is that its semantics are similar to smp_mb__after_spinlock()
-(itself badly documented), although slightly different. I'm not even completely
-sure how. I assume that smp_mb__after_spinlock() can be just used once to
-produce the required ordering and subsequent lock on that spinlock don't need
-to repeat the barrier to propagate the ordering against what is before the
-smp_mb__after_spinlock. However IUUC smp_mb__after_unlock_lock() has to be
-chained/repeated on all subsequent locking of the spinlock...
+--IrlPhg3iJOawMNuM
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks.
+-----BEGIN PGP SIGNATURE-----
 
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZkYvqQAKCRB4tDGHoIJi
+0vPmAQCjYL7DFqx7XDKaJSfCyQ8gk+EFN+XsJQlo7vj1Euw1gQEAjxLQCPf6hokg
+WsJvsba6+KjbLP00vCozW0FMGxUkpAw=
+=hoDt
+-----END PGP SIGNATURE-----
 
-> 
-> > +	/*
-> > +	 * Full ordering against accesses prior current GP and also against
->                                           ^^^^^
->                                           prior to
-> 
-> > +	 * current GP sequence number is enforced by current rnp locking
-> > +	 * with chained smp_mb__after_unlock_lock().
-> > +	 */
-> > +	rdp->dynticks_snap = ct_dynticks_cpu_acquire(rdp->cpu);
-> >       if (rcu_dynticks_in_eqs(rdp->dynticks_snap)) {
-> >               trace_rcu_fqs(rcu_state.name, rdp->gp_seq, rdp->cpu, TPS("dti"));
-> >               rcu_gpnum_ovf(rdp->mynode, rdp);
-> > --
-> > 2.44.0
-> 
+--IrlPhg3iJOawMNuM--
 
