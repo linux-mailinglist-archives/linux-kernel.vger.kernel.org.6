@@ -1,97 +1,96 @@
-Return-Path: <linux-kernel+bounces-181020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 804708C7643
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:28:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9161E8C7647
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:28:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A3172859B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:28:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DEE6286342
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:28:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00847147C6D;
-	Thu, 16 May 2024 12:22:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15CD514B94F;
+	Thu, 16 May 2024 12:23:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f91+QU/Q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="DufbBNmQ"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F580146003;
-	Thu, 16 May 2024 12:22:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A16F814600D;
+	Thu, 16 May 2024 12:23:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715862169; cv=none; b=SQrCAU6gZwLv18xMHWeWJOi+yzoG1Xy8UM7CMi9hJwaPzra1QU+s2jnEaGJQZmI8caCRcuzENBAdcsrmlBLvlgCTui2Lq23xoIdss1ZbipMC4f3TK8gMJjHlTrS86pTyB/WcyL3NsUWL5ka+YFE9F2OwaqCZVRhIzgKAhlMZvw0=
+	t=1715862198; cv=none; b=tp+cnm3192ucJPFswa19hISD5GGo4rKTXBIYkSIMbed0u8PfDMEDpdmEeH2SV4o43z3O17TCn3BVLRKpyVettqq1b7EuJ1aNwQtFrich6MYWAOSikqz1uDdaAptMsB7L/2vMyltgICtdwfReYP7VOg17ZCCIYVVB+nZHZIxf2yI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715862169; c=relaxed/simple;
-	bh=pbkgcyOMAvajczsNFMK5AKBGKVLG+pkcaFB75ObAP3g=;
+	s=arc-20240116; t=1715862198; c=relaxed/simple;
+	bh=qzak7sMWjW1eI0tpMtEBkZV5nI1gneKQVu4D3TQXJXQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DUvGilnlg0sTfwkYAkyBNwXL0yHB2Z6Xk0pFDuI1qOawDc15ROzZ4P0ZKLbVEjUJWV7D4W5NymjX1ALFjqbx7zI2EbsUNSX5fp21CPtSpDgTdU5ibdY+0ySCYs5uE139syK2l0e7vHPRaOnQcqP1l0vbuHNZxsRVxBcGCKCBkLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f91+QU/Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E5C4C2BD11;
-	Thu, 16 May 2024 12:22:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715862168;
-	bh=pbkgcyOMAvajczsNFMK5AKBGKVLG+pkcaFB75ObAP3g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=f91+QU/QCdXhU0lQCGrbANudhZ9sklbIOkouSYyBkFpNwHCKQAjW/Tw/WovwPzeLE
-	 a1udjPqkMFhARICQ5yf708SP/hPSpIRqnKpE0IJZ31OP3PJ+NGLltRQuXo9XohubU2
-	 dgPDYC/i9OLTyHXdC3gYIEjelFXZ94gT9ZLcZ9noDbxOcIBykg1iqMaqMgDnvtz0P+
-	 imdbK1c23hrJvO2fBfWRY85ksAHybnPXG6JBq/nOfS1fLls38VH0PcHrVBTfwe1539
-	 L3D7CZmlE13zwFgdnlZfAehLxE+VErFlUHp+vDopzkQ52RyRr4jd6hVhvM73pxc9bX
-	 KgCfmvLR2/RKw==
-Date: Thu, 16 May 2024 13:22:42 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com
-Subject: Re: [PATCH 6.1 000/244] 6.1.91-rc3 review
-Message-ID: <8b92c738-6719-4f14-8f86-5964e03abfaf@sirena.org.uk>
-References: <20240516091232.619851361@linuxfoundation.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=N/bzgSa2F+3XxrFZpNHcM1fAzQHpeWiMf0XlPvc4ZBYnVf85vUSzhYtdP1AUEaySMXQmqEmVbdsVRGIp4vkCBfr210mqBeSM02Z5i6aiEmzYny1LoTiKyolcilBFBS4Tdft55ZHFSdp/eSche+YNFcNljZclIbi83l+aQdTI4pA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=DufbBNmQ; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=17qpjYbzklDpeN+YSOUwARueA/UNvwjrGY4gKlNC5dE=; b=DufbBNmQt2ByDUKFL2nLJEOyCO
+	EKpvCZHk2g5cL5wbPaYrf/2rZZTZgXORzFBLNLT6Wy2E6Yk0zVSaQdFvQhwRFunVK9ugicqHe/WQN
+	p92zW0tIEAVVBiOSlA99e7ZNEJotdLU9Uk/WZT3v3Ax+B/UXcpxqzndaPTiRf/RoOvkA=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1s7a8M-00FVje-Td; Thu, 16 May 2024 14:22:54 +0200
+Date: Thu, 16 May 2024 14:22:54 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Alexandre TORGUE <alexandre.torgue@foss.st.com>
+Cc: Marek Vasut <marex@denx.de>,
+	Christophe Roullier <christophe.roullier@foss.st.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 10/11] ARM: dts: stm32: add ethernet1 and ethernet2
+ for STM32MP135F-DK board
+Message-ID: <4b17d7e4-c135-4d91-8565-9a8b2c6341d2@lunn.ch>
+References: <20240426125707.585269-1-christophe.roullier@foss.st.com>
+ <20240426125707.585269-11-christophe.roullier@foss.st.com>
+ <43024130-dcd6-4175-b958-4401edfb5fd8@denx.de>
+ <8bf3be27-3222-422d-bfff-ff67271981d8@foss.st.com>
+ <9c1d80eb-03e7-4d39-b516-cbcae0d50e4a@denx.de>
+ <5544e11b-25a8-4465-a7cc-f1e9b1d0f0cc@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="FIKgxqDy+M7OVyzr"
-Content-Disposition: inline
-In-Reply-To: <20240516091232.619851361@linuxfoundation.org>
-X-Cookie: I'm having a MID-WEEK CRISIS!
-
-
---FIKgxqDy+M7OVyzr
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <5544e11b-25a8-4465-a7cc-f1e9b1d0f0cc@foss.st.com>
 
-On Thu, May 16, 2024 at 11:13:37AM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.91 release.
-> There are 244 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+> > I suspect it might make sense to add this WoL part separately from the
+> > actual ethernet DT nodes, so ethernet could land and the WoL
+> > functionality can be added when it is ready ?
+> 
+> If at the end we want to have this Wol from PHY then I agree we need to
+> wait. We could push a WoL from MAC for this node before optee driver patches
+> merge but not sure it makes sens.
 
-Tested-by: Mark Brown <broonie@kernel.org>
+In general, it is better if the PHY does WoL, since the MAC can then
+be powered down. MAC WoL should only be used when the PHY does not
+support the requested WoL configuration, but the MAC can. And
+sometimes you need to spread it over both the PHY and the MAC.
 
---FIKgxqDy+M7OVyzr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZF+pEACgkQJNaLcl1U
-h9C8VQf7B1XtqkicL7UqbMI4wb/ilLikxiDsEiXSoRaNeaVcahaPrzkYjTLKRE2E
-2iUH5wEC5SMLwJp+cwA4iDjkewxJTmVvx+n7KcTKFrVxt7w6axt8otTdhJ8m4KKO
-TpGngmYkNi8TFBath/2xeEX9JrD3DIMbjSoMd3TFxm7Mcy3CrS2fSf8xHdvIVXVL
-0Dwubx7MJDAD3rrGO251N6eAHPgCpOYBwxKnk8tnhkK/Y9VuJ2ztQtFIXzP7X/A7
-t0HskZ1fOhjpmTOah0ObZb27KjKsumqTqMQEDjNV8Pkl4E5OF2bAmQLfR5sALNy5
-DCnJK7Ke7WZigRyoU+giVivjyyWDJg==
-=CJ9E
------END PGP SIGNATURE-----
-
---FIKgxqDy+M7OVyzr--
+	Andrew
 
