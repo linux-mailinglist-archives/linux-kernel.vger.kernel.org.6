@@ -1,110 +1,134 @@
-Return-Path: <linux-kernel+bounces-181537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1B5C8C7D54
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 21:35:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D9718C7D5A
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 21:38:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8734B1F214A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 19:35:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19E44281C13
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 19:38:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6876B15746A;
-	Thu, 16 May 2024 19:35:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DFBD156F54;
+	Thu, 16 May 2024 19:38:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eXaneYh7"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BFQIgZIw"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52602156F29;
-	Thu, 16 May 2024 19:35:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D15B14B95D
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 19:38:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715888151; cv=none; b=hhcSpDA+T6Nw0/qvOYcRFv66xHowFRwsE1E8ZxZ2WjG/N85ulZDJLhDfVvNMFm6hmFeWqSDhkGEGn58Ivf3ayXvlMQma9zjsxUVuE4s4iE3c+Lwq53hpk/wB/iAjEQRs1resP2KagdJscUQlcZSVUlXnTYBtkj7Y2Dk5x9knr4k=
+	t=1715888316; cv=none; b=NyFrCVymuF651NCSHyKrb1pRUZD5Xf1VIveFAa2lf8QiD4nloIGdD99EJQyBhPvm3y8qFSSM2yT3O2rl5Tj7t3ePllX2ISeDqRYbNX2yI3/58dCOHRCyIoBHoj2jbOhNGHVnIdu5QbM9UI8sdCzkUzrmHH3PMlEv1c0XUv8k3HE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715888151; c=relaxed/simple;
-	bh=mNGvbi6UBTqM0UtD7DtDPlPW0sys/RPnQHWpHwLBo0w=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=T0d/wJq3HRb4erXjNUMgQFE+rLjG3RjRvZE2D5hFPJ8EaiFDHkbimlGmEmgyp4+HG2s3OZjIuqJv8T18xAzR++tXtfjSCLHSLOxx96ZhxFay/RL9uP8ZtDVDVtppSWq+36PPz9Qv/JOiy4wW1nG3OZsXvO+62AtFS57XQ5oWU5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eXaneYh7; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44G8a25c004298;
-	Thu, 16 May 2024 19:35:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	from:to:cc:subject:date:message-id:mime-version:content-type; s=
-	qcppdkim1; bh=8F41lEOUWhxcepV6aCwJ/7/6o8SC7cZS2HU/5lRsPDU=; b=eX
-	aneYh7Vd8L7jCzZ/uVou1mTCUKBsnh6aW/lp885V0znX0TGzdmruN9gBdy+ZzK9p
-	iEHqAq02ktCHGovyc9L/EukPlB2D0aGQvDrdEVDHMoI+OPOb9Zx0hEcRnVNvUTxV
-	Mpx4RafuxCy8BbkNF3F4xoIbkAOk8mQ1F2Okqtpr17aSMeUbB7KnWSw5lgMkj5LN
-	8ZjwO12I47PTJ6YidtET29gkBX7+sqp/ZyFwPcyJcuUEYh5gX/qQehXnI+ItDsus
-	po2EHZR03xu3xd5U1/M84hS2homfr+uOkS99dQdl8rBXtN6Asq9QhMnOCUNbTt/l
-	DPwQ/EdJBi6FUujwXRhg==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y2125mnm7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 16 May 2024 19:35:46 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44GJZinB022406
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 16 May 2024 19:35:44 GMT
-Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 16 May 2024 12:35:41 -0700
-From: Mukesh Ojha <quic_mojha@quicinc.com>
-To: <andersson@kernel.org>, <konrad.dybcio@linaro.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <robh@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Mukesh Ojha <quic_mojha@quicinc.com>
-Subject: [PATCH] arm64: dts: qcom: sm8650: Enable download mode register write
-Date: Fri, 17 May 2024 01:05:33 +0530
-Message-ID: <1715888133-2810-1-git-send-email-quic_mojha@quicinc.com>
-X-Mailer: git-send-email 2.7.4
+	s=arc-20240116; t=1715888316; c=relaxed/simple;
+	bh=mlnMYRMZywee+bU7X3E/HTKmms1wgK1WMiDq3bygPLc=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=TrdbCKUjvi/PYzoxoxKws7pyBouIBsW4G61HcZJjffRF70FOQ0JSIegRzpNZz2n5aP/wJ9OFhXJP4fH2ntkBesTcIY1cVwKyqnMFoTmnSBj/bsFFGwFwQbhbo+DpwLIUDzk0vi7c4wHMhS3MK+kBHrVfoo2G2eMX00ym8WQbr1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BFQIgZIw; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-61bea0c36bbso167107657b3.2
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 12:38:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715888313; x=1716493113; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=GTNya4KcgcK2eGurHUl9hyGe1sf/dMjmphGQ/IQpeU0=;
+        b=BFQIgZIwLjEW71n1n9fcx78hCAtFLlWc2e4G4rD6SICAOrFst9bfAFB0FLmr2O79c5
+         jreVp0gAhYe/9gIkc/TDC5RzbXkGppLGjsIdqG6PPDtg6QcmWA9TK9RlQjJNtYqTQuMf
+         QYSmAIcPKG+CeLKx4Ovk68ea96q04zNzHTKKO4nX3C4fzyAJGrR8ZFq8FlUOguU3JLjS
+         ZCn+4CXaK+GaDN6xq/fxcREM/e8yT+xjn4mGIDLSrXpGZDLU0ANenOLaBCensnW1Q071
+         w2BKC3fZfrGnoDSzZrj0+JWGZdarp40cGqiceJ1ceV1ySCiTxT9wdNd4SrRTBa7Aqgyz
+         RjQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715888313; x=1716493113;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GTNya4KcgcK2eGurHUl9hyGe1sf/dMjmphGQ/IQpeU0=;
+        b=jUIcwtCUpG++Ix3a6btXs1j3fQd6fB83FBx5wn9/uGnZeao0+vKbyYRP3gcP/+s06z
+         x4XA6iud6HFqDWSCUjP8sGLuT78b2bQaMbdnMVcV0PE4kHsaOcdESkfikc0BC0RSdQ/B
+         3hkyHhbd3phPev1/sP8AwyFom6Rn9fcN4Wx9uLULOv//gi1ujezZsXgUhOxr4gKDzDch
+         n5FTbYB0p41nW32XLf89J2TeJDt0A7zInGLqYRk50Bg0zFtkEWWNA5ASnt6oYiSpXcrV
+         3TDsv6UI99G9Dcp8xbu/skk5rpepkG2flCdExKGfyh2PL1UZlFDehECDKDYBq3y506No
+         gsOA==
+X-Forwarded-Encrypted: i=1; AJvYcCVg+e0cxJS6eODlHvnLPsZ0HESoRbFTPWkd5Hp2WD4kpssRZc2+kQ+7bCoHbdSecPrssYsdrQdlweNXJMHC59iN4jQuRrvqNdGo3tVY
+X-Gm-Message-State: AOJu0YyLR3UhQBUSCvbV0E80f3WDICllzbVKQWD8cGpvYHBBMOhLbLUQ
+	WAjsBVhxbDcg9czN5dQL92fGZatbCxcBwhLpUttAtkoWdlCRR51n6lNmYAm+dLOZaMZg3ty2cqd
+	1kwDPsJIc2Q==
+X-Google-Smtp-Source: AGHT+IGr/aLkFgMRkSjlxVh1xA+fX/na3/5ELahuHu4kuYZN2vLitNc/Cs2NtJ6FKvCmAN8Sir+chzojBjOS2Q==
+X-Received: from beeg.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:11db])
+ (user=jackmanb job=sendgmr) by 2002:a05:690c:b96:b0:61b:791a:9850 with SMTP
+ id 00721157ae682-622b0168adfmr51024257b3.9.1715888313401; Thu, 16 May 2024
+ 12:38:33 -0700 (PDT)
+Date: Thu, 16 May 2024 19:38:30 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 5AnmAQduDhgfS8_89aWFVbTU0H_D4dSt
-X-Proofpoint-ORIG-GUID: 5AnmAQduDhgfS8_89aWFVbTU0H_D4dSt
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-16_07,2024-05-15_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
- lowpriorityscore=0 mlxlogscore=831 clxscore=1011 bulkscore=0
- priorityscore=1501 impostorscore=0 phishscore=0 adultscore=0
- suspectscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405010000 definitions=main-2405160141
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIALVgRmYC/x2MQQqAIBAAvxJ7TlCxwr4SHUy3WioLrQiiv2edh
+ jnM3BAxEEaosxsCnhRp9UlEnoEdjR+QkUsOkkvFC1Gy6fC0M7suG834cTHeRea0VrxSvZUdQoq 3gD1d/7hpn+cFped4W2gAAAA=
+X-Mailer: b4 0.14-dev
+Message-ID: <20240516-kunit-compile-commands-v1-1-05fc32b79312@google.com>
+Subject: [PATCH] kunit: tool: Build compile_commands.json
+From: Brendan Jackman <jackmanb@google.com>
+To: Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
+	Rae Moar <rmoar@google.com>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>
+Cc: linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
+	Brendan Jackman <jackmanb@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-Enable download mode setting for sm8650 which can help collect
-ramdump for this SoC.
+compile_commands.json is used by clangd[1] to provide code navigation
+and completion functionality to editors. See [2] for an example
+configuration that includes this functionality for VSCode.
 
-Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+It can currently be built manually when using kunit.py, by running:
+
+  ./scripts/clang-tools/gen_compile_commands.py -d .kunit
+
+With this change however, it's built automatically so you don't need to
+manually keep it up to date.
+
+Unlike the manual approach, having make build the compile_commands.json
+means that it appears in the build output tree instead of at the root of
+the source tree, so you'll need to add --compile-commands-dir= to your
+clangd args for it to be found.
+
+[1] https://clangd.llvm.org/
+[2] https://github.com/FlorentRevest/linux-kernel-vscode
+
+Signed-off-by: Brendan Jackman <jackmanb@google.com>
 ---
- arch/arm64/boot/dts/qcom/sm8650.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ tools/testing/kunit/kunit_kernel.py | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-index 62a6e77730bc..eb0f20160822 100644
---- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-@@ -371,6 +371,7 @@
- 	firmware {
- 		scm: scm {
- 			compatible = "qcom,scm-sm8650", "qcom,scm";
-+			qcom,dload-mode = <&tcsr 0x19000>;
- 			interconnects = <&aggre2_noc MASTER_CRYPTO QCOM_ICC_TAG_ALWAYS
- 					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
- 		};
+diff --git a/tools/testing/kunit/kunit_kernel.py b/tools/testing/kunit/kunit_kernel.py
+index 7254c110ff23..61931c4926fd 100644
+--- a/tools/testing/kunit/kunit_kernel.py
++++ b/tools/testing/kunit/kunit_kernel.py
+@@ -72,7 +72,8 @@ class LinuxSourceTreeOperations:
+ 			raise ConfigError(e.output.decode())
+ 
+ 	def make(self, jobs: int, build_dir: str, make_options: Optional[List[str]]) -> None:
+-		command = ['make', 'ARCH=' + self._linux_arch, 'O=' + build_dir, '--jobs=' + str(jobs)]
++		command = ['make', 'all', 'compile_commands.json', 'ARCH=' + self._linux_arch,
++			   'O=' + build_dir, '--jobs=' + str(jobs)]
+ 		if make_options:
+ 			command.extend(make_options)
+ 		if self._cross_compile:
+
+---
+base-commit: 3c999d1ae3c75991902a1a7dad0cb62c2a3008b4
+change-id: 20240516-kunit-compile-commands-d994074fc2be
+
+Best regards,
 -- 
-2.7.4
+Brendan Jackman <jackmanb@google.com>
 
 
