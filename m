@@ -1,160 +1,132 @@
-Return-Path: <linux-kernel+bounces-180738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6C768C7275
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:08:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56A778C7278
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:10:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2562DB23092
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 08:08:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D54ADB220F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 08:10:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECAED137778;
-	Thu, 16 May 2024 08:06:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E48EE1292F3;
+	Thu, 16 May 2024 08:10:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vco1HtXF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z79csfdq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AB4813443C
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 08:06:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BC624120A
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 08:10:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715846799; cv=none; b=nETfXPLSkrjNH0Anfw1pqGa1y/HfZDVVJTqckaLpCGv7FvLWTqKdf5Q0q7jfKWfzGjZuJMCDQFfisMyzmyI08arKXI1rFjyX3YdPfDUJCZW9gt73Ympcvjj5GbgtJjqnfDUoFAwMMtIgRVWuWin2HhF684ZzS4Vpd2+9kDA3Kps=
+	t=1715847012; cv=none; b=iAMOnqd1CPF97PtM44aIvD5oLr7EcD1jUrnOsWB8laHXVodQMai2dBT545wecLjcybH2nGT5fVfkly/5R66auIlhsBBPnCrX0MhAz/4tFDjFD91C3CKLkH2xS2Us+T+Be9h3B3mSnNThVBjf2+wrLorUyW4ViwtjRTwxpUOqs5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715846799; c=relaxed/simple;
-	bh=Cpes2UwySJ5Ss9+H0DDEAlFZX5mKWDHgKLb1yKMu3OI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JQg0e+NmB1XdSJtaOh8QPHQH0BUJXzxjf2OXwYtJmBwTQ2iScIWsVKsm4cbEnA66Zc7t696xfVrhDc6ahpYRgDCKcDDzeJsJQhunWNUK1bmxS278HinV3LvjWrmQkhR5kUF7VZgpJaC1t7eNpxNpqbj1vvjF7uabjlnCSEsw0lc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vco1HtXF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61C0BC32781;
-	Thu, 16 May 2024 08:06:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715846798;
-	bh=Cpes2UwySJ5Ss9+H0DDEAlFZX5mKWDHgKLb1yKMu3OI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Vco1HtXF/lVJfAJo4GYPqv/q5dp57R2B9PypCmBdhq/n/3Hjebue4fGhBUEUb1m8o
-	 EInyD9fNStefU14k2Q3xO5GKF44UFEphHfSSAXqGp7SzkdtDybBhupHbbg9J+XHmz4
-	 AAGA0oHGuyV5ET5zZ59HFjz/gfmxAbWFhQHhuzZCaV4TjeLxjjtU+b05Eyg0QgkIrM
-	 iQOBy30ImeILZIL/HRvUdxZIKyC3a0+9d2fszXSdRUJwvQC1zuP00MxJcDxI6PBXa+
-	 hrkgdVbbJQ2E8uJJhAJb+HjZb8cfBeLqRpi42fN49u+OQPqjg029NZelaC2Hoq2SQJ
-	 Kgmq4h6LRsRzg==
-Message-ID: <c9c8b609-68b8-4f44-98eb-8d04e1a270fb@kernel.org>
-Date: Thu, 16 May 2024 16:06:34 +0800
+	s=arc-20240116; t=1715847012; c=relaxed/simple;
+	bh=k4p6BZBD6f8DVa1WslyLTAjRuEA4N0NOBDUZFqG9OjE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a+/VqCe52ZPAztAAPHZrKX2ufxbofzaXlDcIFM1Lv/Y+jI5ovwJ5tnhXvuVv8hHVyr93Z6JrPUN6XZqz/XdZ7I+jHVRu1db9fTPQjihRcO4GgzUhQwWfo4LViecrWzGPTExyRwYh/OiB73rPpxQDkKuZzi7H++EV+D0hbi/dbtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z79csfdq; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715847009;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RA+jepTOChJ7+snqX+5DRaDKCp4RJQjDydrDRBP3COs=;
+	b=Z79csfdqLPvF4Y7CV217LrDZMOGa6JrdAKDpAwJ54oRUVq/t1QnOeY3cHq/ccQwy3Ipv/i
+	wCxFhwt8aHUBE+VZOCd6igtq/2z4FeHcY6CxVM/GBkN5npewZXAXoZbeDxYnEAzEMS2rte
+	hcvgGOArQ8+ckiXp0FmYLR3EvurN5mY=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-158-RZj-BM4iOouRkvytT-rKUg-1; Thu, 16 May 2024 04:10:03 -0400
+X-MC-Unique: RZj-BM4iOouRkvytT-rKUg-1
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a59ad2436f8so468101366b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 01:10:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715847002; x=1716451802;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RA+jepTOChJ7+snqX+5DRaDKCp4RJQjDydrDRBP3COs=;
+        b=epbKloLBzLuJQx+Ws531pyOmdF6UFWx0dkqhhicAYazFluk/3VydRE6hypj6ATcG4X
+         43kqWsZh8HMoaBDjdHo545ji2zNnl9JHijuq0Wf/nlagEpPvUOxIb1b+xadHHKRyKH2o
+         OGGeItwW3BBFShoODDh7cYwmfxcAqBwZ2d9N1WOOtZNOMU2z/k2dIcjaRFRWlWf8jb4p
+         FLCoDVkOpCZ8fgkaj4pLk+hVUMCkImoJkvVkf53JY6PyVuXMSfTRIueUMia3xF+4QxwZ
+         kKJVLNwiMVAu4H6s6x2CtAQ3ej2MGrm8bnFc4Up+tg4rPZHNMjtAtAgdNNLn64jYbQkQ
+         Xi1Q==
+X-Gm-Message-State: AOJu0YxP6Zc9I3Dk06IZ9OaUf/TX09XMvWM0/qUEtI0lfRx28OFuJ++0
+	WPauWZl1SLLYsv2BzPK9nCYxovVgSJPj/5BUNzxyeF3BjaXH2Oqax7szcBjd1eVKgTzPReI3Ssp
+	06LqzHrWkTKYAdfU2iKJZ1YOEUp4KlGI89P6WvytnRua5DFlx2K8jE2pBegM2iw==
+X-Received: by 2002:a17:906:37d6:b0:a55:9dec:355f with SMTP id a640c23a62f3a-a5a2d676774mr1102992766b.70.1715847002082;
+        Thu, 16 May 2024 01:10:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFDQyscwxbqGC7a+Epkh0Xcy/QL4T1fDS/fLANmDq3+Ubkm9JOf+n6UBt4e0RPv0Wj5wD462A==
+X-Received: by 2002:a17:906:37d6:b0:a55:9dec:355f with SMTP id a640c23a62f3a-a5a2d676774mr1102990066b.70.1715847001507;
+        Thu, 16 May 2024 01:10:01 -0700 (PDT)
+Received: from sgarzare-redhat (host-87-12-25-77.business.telecomitalia.it. [87.12.25.77])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b01598sm963957166b.178.2024.05.16.01.10.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 May 2024 01:10:00 -0700 (PDT)
+Date: Thu, 16 May 2024 10:09:56 +0200
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: linux-kernel@vger.kernel.org, 
+	syzbot+6c21aeb59d0e82eb2782@syzkaller.appspotmail.com, Jeongjun Park <aha310510@gmail.com>, 
+	Arseny Krasnov <arseny.krasnov@kaspersky.com>, "David S . Miller" <davem@davemloft.net>, 
+	Stefan Hajnoczi <stefanha@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, kvm@vger.kernel.org, virtualization@lists.linux.dev, 
+	netdev@vger.kernel.org
+Subject: Re: [PATCH] vhost/vsock: always initialize seqpacket_allow
+Message-ID: <mci7jdezdtzgoxj7zgecf4zyvxk6jixy4jgcwwoxegzkjqqqtx@7zoborovztcs>
+References: <bcc17a060d93b198d8a17a9b87b593f41337ee28.1715785488.git.mst@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] f2fs:modify the entering condition for
- f2fs_migrate_blocks()
-To: Liao Yuanhong <liaoyuanhong@vivo.com>, Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: bo.wu@vivo.com, linux-f2fs-devel@lists.sourceforge.net,
- linux-kernel@vger.kernel.org
-References: <20240515082433.24411-1-liaoyuanhong@vivo.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20240515082433.24411-1-liaoyuanhong@vivo.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <bcc17a060d93b198d8a17a9b87b593f41337ee28.1715785488.git.mst@redhat.com>
 
-On 2024/5/15 16:24, Liao Yuanhong wrote:
-> Currently, when we allocating a swap file on zone UFS, this file will
-> created on conventional UFS. If the swap file size is not aligned with the
-> zone size, the last extent will enter f2fs_migrate_blocks(), resulting in
-> significant additional I/O overhead and prolonged lock occupancy. In most
-> cases, this is unnecessary, because on Conventional UFS, as long as the
-> start block of the swap file is aligned with zone, it is sequentially
-> aligned.To circumvent this issue, we have altered the conditions for
-> entering f2fs_migrate_blocks(). Now, if the start block of the last extent
-> is aligned with the start of zone, we avoids entering
-> f2fs_migrate_blocks().
+On Wed, May 15, 2024 at 11:05:43AM GMT, Michael S. Tsirkin wrote:
+>There are two issues around seqpacket_allow:
+>1. seqpacket_allow is not initialized when socket is
+>   created. Thus if features are never set, it will be
+>   read uninitialized.
+>2. if VIRTIO_VSOCK_F_SEQPACKET is set and then cleared,
+>   then seqpacket_allow will not be cleared appropriately
+>   (existing apps I know about don't usually do this but
+>    it's legal and there's no way to be sure no one relies
+>    on this).
+>
+>To fix:
+>	- initialize seqpacket_allow after allocation
+>	- set it unconditionally in set_features
+>
+>Reported-by: syzbot+6c21aeb59d0e82eb2782@syzkaller.appspotmail.com
+>Reported-by: Jeongjun Park <aha310510@gmail.com>
+>Fixes: ced7b713711f ("vhost/vsock: support SEQPACKET for transport").
+>Cc: Arseny Krasnov <arseny.krasnov@kaspersky.com>
+>Cc: David S. Miller <davem@davemloft.net>
+>Cc: Stefan Hajnoczi <stefanha@redhat.com>
+>Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+>Acked-by: Arseniy Krasnov <avkrasnov@salutedevices.com>
+>Tested-by: Arseniy Krasnov <avkrasnov@salutedevices.com>
+>
+>---
+>
+>
+>Reposting now it's been tested.
+>
+> drivers/vhost/vsock.c | 4 ++--
+> 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Hi,
+Thanks for fixing this issue!
 
-Is it possible that we can pin swapfile, and fallocate on it aligned to
-zone size, then mkswap and swapon?
+Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
 
-Thanks,
-
-> 
-> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
-> Signed-off-by: Wu Bo <bo.wu@vivo.com>
-> ---
->   fs/f2fs/data.c | 23 +++++++++++++++++++++--
->   1 file changed, 21 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 50ceb25b3..4d58fb6c2 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -3925,10 +3925,12 @@ static int check_swap_activate(struct swap_info_struct *sis,
->          block_t pblock;
->          block_t lowest_pblock = -1;
->          block_t highest_pblock = 0;
-> +       block_t blk_start;
->          int nr_extents = 0;
->          unsigned int nr_pblocks;
->          unsigned int blks_per_sec = BLKS_PER_SEC(sbi);
->          unsigned int not_aligned = 0;
-> +       unsigned int cur_sec;
->          int ret = 0;
-> 
->          /*
-> @@ -3965,23 +3967,39 @@ static int check_swap_activate(struct swap_info_struct *sis,
->                  pblock = map.m_pblk;
->                  nr_pblocks = map.m_len;
-> 
-> -               if ((pblock - SM_I(sbi)->main_blkaddr) % blks_per_sec ||
-> +               blk_start = pblock - SM_I(sbi)->main_blkaddr;
-> +
-> +               if (blk_start % blks_per_sec ||
->                                  nr_pblocks % blks_per_sec ||
->                                  !f2fs_valid_pinned_area(sbi, pblock)) {
->                          bool last_extent = false;
-> 
->                          not_aligned++;
-> 
-> +                       cur_sec = (blk_start + nr_pblocks) / BLKS_PER_SEC(sbi);
->                          nr_pblocks = roundup(nr_pblocks, blks_per_sec);
-> -                       if (cur_lblock + nr_pblocks > sis->max)
-> +                       if (cur_lblock + nr_pblocks > sis->max) {
->                                  nr_pblocks -= blks_per_sec;
-> 
-> +                               /* the start address is aligned to section */
-> +                               if (!(blk_start % blks_per_sec))
-> +                                       last_extent = true;
-> +                       }
-> +
->                          /* this extent is last one */
->                          if (!nr_pblocks) {
->                                  nr_pblocks = last_lblock - cur_lblock;
->                                  last_extent = true;
->                          }
-> 
-> +                       /*
-> +                        * the last extent which located on conventional UFS doesn't
-> +                        * need migrate
-> +                        */
-> +                       if (last_extent && f2fs_sb_has_blkzoned(sbi) &&
-> +                               cur_sec < GET_SEC_FROM_SEG(sbi, first_zoned_segno(sbi)))
-> +                               goto next;
-> +
->                          ret = f2fs_migrate_blocks(inode, cur_lblock,
->                                                          nr_pblocks);
->                          if (ret) {
-> @@ -3994,6 +4012,7 @@ static int check_swap_activate(struct swap_info_struct *sis,
->                                  goto retry;
->                  }
-> 
-> +next:
->                  if (cur_lblock + nr_pblocks >= sis->max)
->                          nr_pblocks = sis->max - cur_lblock;
-> 
-> --
-> 2.25.1
-> 
 
