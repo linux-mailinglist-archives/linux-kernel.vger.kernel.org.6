@@ -1,151 +1,105 @@
-Return-Path: <linux-kernel+bounces-180787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 305848C7314
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:42:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D297D8C7319
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:44:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE2922814B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 08:42:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FD3E1C21F18
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 08:44:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8700A142E8A;
-	Thu, 16 May 2024 08:42:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1FEF142E8F;
+	Thu, 16 May 2024 08:43:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GbFaGmCI"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pkg4pDxZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C96941420BB;
-	Thu, 16 May 2024 08:42:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22D8A6BFBF;
+	Thu, 16 May 2024 08:43:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715848950; cv=none; b=Wa8pVH/byg4/P1cJc3Vk6tiRvf5dggoq538bGMNq/eWe3Mf+QtB2cS2nESOU0zuWpuOIi46fWygE7lVMQQ6k/iiUd+MNxbSEHpCzusxXuLHRQM1AYIHi2kJipzJCB9CxwgUMVda2oszGb+UPGnGhZJrPPuJlWUIqlDoI9miY+VQ=
+	t=1715849033; cv=none; b=A0V97csrOAzeGu1ixcOkQ+nOk3+LSUys3PE1zJZK5Y51yKwa+Ok9U7NYLdWzUBkZl3grQvYkM54HZ7AL4X70kzz/GQjQlg8RT+ekTYcm+dnvyQhPrzmyjyPaonzTwh4h8/02VtyPd1yTW2MhMCa5VwekyfWYjDz+nl2Qwgld8hI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715848950; c=relaxed/simple;
-	bh=3ZpZsR6/16+tn0TZWLuuwEPsrm0WVS4oOlmAnDVesfg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dr290ScjjIiS2z9yRnR8R3Lkva8lvtJd8gRF+QUNQK4pv32LvBBhxUQjZMd5XuctIOD38kfeahH+RsM1x9UoLk8Wgeix472kdMlC0PjMZFcV7ovfhWNQPw+/pK38pB2pbqs63lKTOI8uzSkoOvt4M/DCrxqOQ8tF+w0qrapJAtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GbFaGmCI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BE4BC4AF07;
-	Thu, 16 May 2024 08:42:30 +0000 (UTC)
+	s=arc-20240116; t=1715849033; c=relaxed/simple;
+	bh=7eowNZsP0z/IUYzGQw3TrUkJcTIY48766X+Sspo9t44=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DQKwG2r+lUnih4Ljog+smyJP8nyTS4L0nxoEXjU5EGLD2ESRQwsRc7SJX43MIPfX6Pnjsf6hImrS83V58xAMVMOq6uhEUPPG1Ect7Urp4cJcQBXwHohtbxZIjOLfypBgCdG6f5tRu3scaXQITv2fIksFj1+RCpHKzO0WrDlQ5/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pkg4pDxZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B46C1C32781;
+	Thu, 16 May 2024 08:43:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715848950;
-	bh=3ZpZsR6/16+tn0TZWLuuwEPsrm0WVS4oOlmAnDVesfg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=GbFaGmCIjgOPOkG9toXL3AQ6m2KofRDe2JjF+zw3SS9ZFffhRJ2Q2QBy6LWz+oBGd
-	 UeOFPH6SFG8s8t/RuyJtn9hF8+D80pEhuLqWNv6V/9yXK0aLj7u12Cis74jBiGFthM
-	 OErxTztBFxC6WP7+9DnaWpGJ3nr0aPozlz8XBWGbtHdh4PfECI1eWW3ZKT4R+Lrr6i
-	 ymvQJ2dueGHXZU4hkVdCjniNxS8KcL3JpzxjcDsPkFFQvOAZCKNPGYPzu2bZ/029Jc
-	 54R+ZLm7XWA9ZAHMHLrIPOiHYDM5pcN6f+Hie96I5zMZzQxPfH68cXr8dfbK7cO5Qi
-	 YQsz/0VxSXtfg==
-Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-5ac970dded6so784451eaf.0;
-        Thu, 16 May 2024 01:42:30 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXZS+7xWu+7eMEKgCRZTYZGlRTWveTzQmpuHnwRkOgVpKAzD5icKrM6rnWI2XBVVBvKgP9gElbOlvpK6Ceus/j8VQ+Ye35Dlu6zWqvW8GCmDfWcF7r0BYDQTORZ3qaMeAYqjVe1CY0=
-X-Gm-Message-State: AOJu0Yy2pL1fV7RcAqAglW1Vg80PB/Yo3l6a/g+Xq7j4gV6EoCwGdF7y
-	j/Ty+CL9To3vrqErnrYZfI0A+ZsIeEhDpzsnTosRuiqlltXOidVH170Sfctuy17zbzul2PUbuCP
-	XrtMsRCBzn/+qIQS61Sm58jx/DJU=
-X-Google-Smtp-Source: AGHT+IFVqRk/Q7FVPniA7J+O/Coz6lel+XjmqUxUokxKOzC/Wi4yTOwKqHNhbs4ieQPijRuGYUwRcvEcXkBOWVIUbck=
-X-Received: by 2002:a05:6871:5b18:b0:23e:5301:4348 with SMTP id
- 586e51a60fabf-241732f6ca1mr20444031fac.5.1715848949574; Thu, 16 May 2024
- 01:42:29 -0700 (PDT)
+	s=k20201202; t=1715849032;
+	bh=7eowNZsP0z/IUYzGQw3TrUkJcTIY48766X+Sspo9t44=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pkg4pDxZ1kyNT3gWta5QQ1ZLtC/xQUwyvpn1l27JH2A8G3uR767HFOTFDgDiKwfeV
+	 SaANF+IDO1eZVTDEN3IKoTZVQCT2KLPJvxE7QeF8p8L6h2pQtyEBYe2fDpEfFUL529
+	 iLZHYrSZNKHGR1SZCok/X/4GCOxcsnGD54B66dxe2o0mJkl42PBGERX6sFlDoIQFRN
+	 D5pAVChuwKIIzBd/84TFPrZNFWx8hziSSTv9B27D+UBfo0uptOUyjpu8hLh0FyOEEO
+	 49ocJz7XPoPLlcEYQlAJ3tOBRmhgFItbecA0+jXEVsLX2ch5+RRHhsvZGzBk1pBYxa
+	 Xgb0sguWwoocA==
+Date: Thu, 16 May 2024 09:43:48 +0100
+From: Simon Horman <horms@kernel.org>
+To: Ryosuke Yasuoka <ryasuoka@redhat.com>
+Cc: krzk@kernel.org, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, syoshida@redhat.com
+Subject: Re: [PATCH net] nfc: nci: Fix handling of zero-length payload
+ packets in nci_rx_work()
+Message-ID: <20240516084348.GF179178@kernel.org>
+References: <20240515151757.457353-1-ryasuoka@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <PUZPR01MB5120A03DFF0EA1CE70E7334E92ED2@PUZPR01MB5120.apcprd01.prod.exchangelabs.com>
- <CYYPR12MB86551771F1670A5F9EAC47859CED2@CYYPR12MB8655.namprd12.prod.outlook.com>
-In-Reply-To: <CYYPR12MB86551771F1670A5F9EAC47859CED2@CYYPR12MB8655.namprd12.prod.outlook.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 16 May 2024 10:42:17 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gqTnj4Dk844gMMG+rnBvbpA_dGErghTM1PokaDScdBSQ@mail.gmail.com>
-Message-ID: <CAJZ5v0gqTnj4Dk844gMMG+rnBvbpA_dGErghTM1PokaDScdBSQ@mail.gmail.com>
-Subject: Re: [PATCH v4] cpufreq: amd-pstate: fix the memory to free after epp exist
-To: "Yuan, Perry" <Perry.Yuan@amd.com>, "zhida312@outlook.com" <zhida312@outlook.com>
-Cc: "rafael@kernel.org" <rafael@kernel.org>, "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>, 
-	Peng Ma <andypma@tencent.com>, "Huang, Ray" <Ray.Huang@amd.com>, 
-	"Shenoy, Gautham Ranjal" <gautham.shenoy@amd.com>, "Limonciello, Mario" <Mario.Limonciello@amd.com>, 
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240515151757.457353-1-ryasuoka@redhat.com>
 
-On Thu, May 16, 2024 at 10:28=E2=80=AFAM Yuan, Perry <Perry.Yuan@amd.com> w=
-rote:
->
-> [AMD Official Use Only - AMD Internal Distribution Only]
->
-> > -----Original Message-----
-> > From: zhida312@outlook.com <zhida312@outlook.com>
-> > Sent: Thursday, May 16, 2024 2:31 PM
-> > To: rafael@kernel.org; viresh.kumar@linaro.org
-> > Cc: Peng Ma <andypma@tencent.com>; Huang, Ray <Ray.Huang@amd.com>;
-> > Shenoy, Gautham Ranjal <gautham.shenoy@amd.com>; Limonciello, Mario
-> > <Mario.Limonciello@amd.com>; Yuan, Perry <Perry.Yuan@amd.com>; linux-
-> > pm@vger.kernel.org; linux-kernel@vger.kernel.org
-> > Subject: [PATCH v4] cpufreq: amd-pstate: fix the memory to free after e=
-pp
-> > exist
-> >
-> > From: andypma <andypma.tencent.com>
+Hi Yasuoka-san,
 
-The name and e-mail address in the From: header must be the same as in
-the Signed-off-by tag, so I've fixed that up.
+On Thu, May 16, 2024 at 12:17:07AM +0900, Ryosuke Yasuoka wrote:
+> When nci_rx_work() receives a zero-length payload packet, it should
+> discard the packet without exiting the loop. Instead, it should continue
+> processing subsequent packets.
 
-> > the cpudata memory from kzmalloc in epp init function is not free after=
- epp
-> > exist, so we should free it.
-> >
-> > Signed-off-by: Peng Ma <andypma@tencent.com>
-> >
-> > Changes from v3 to v4:
-> >       update subject used git command "git format-patch -1 -v x"
-> >
-> > Changes from v2 to v3:
-> >       update Signed-off-by to Peng Ma <andypma@tencent.com>.
-> >       set a space between if and "(".
-> >
-> > Changes from v1 to v2:
-> >       check whether it is empty before releasing
-> >       set driver_data is NULL after free
-> > ---
-> >  drivers/cpufreq/amd-pstate.c | 7 +++++++
-> >  1 file changed, 7 insertions(+)
-> >
-> > diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.=
-c
-> > index 6a342b0c0140..1b7e82a0ad2e 100644
-> > --- a/drivers/cpufreq/amd-pstate.c
-> > +++ b/drivers/cpufreq/amd-pstate.c
-> > @@ -1441,6 +1441,13 @@ static int amd_pstate_epp_cpu_init(struct
-> > cpufreq_policy *policy)
-> >
-> >  static int amd_pstate_epp_cpu_exit(struct cpufreq_policy *policy)  {
-> > +     struct amd_cpudata *cpudata =3D policy->driver_data;
-> > +
-> > +     if (cpudata) {
-> > +             kfree(cpudata);
-> > +             policy->driver_data =3D NULL;
-> > +     }
+nit: I think it would be clearer to say:
 
-This does not need to be conditional, because you can pass NULL to
-kfree(), but it is correct and since Mario has ACKed it ->
+.. it should not discard the packet and exit the loop. Instead, ...
 
-> > +
-> >       pr_debug("CPU %d exiting\n", policy->cpu);
-> >       return 0;
-> >  }
-> > --
-> > 2.41.0
->
-> Looks good now
->
-> Reviewed-by: Perry Yuan <Perry.Yuan@amd.com>
+> 
+> Fixes: d24b03535e5e ("nfc: nci: Fix uninit-value in nci_dev_up and nci_ntf_packet")
+> Closes: https://lore.kernel.org/lkml/20240428134525.GW516117@kernel.org/T/
 
--> applied as 6.10 material (with edited subject and changelog).
+nit: I'm not sure this Closes link is adding much,
+     there are more changes coming, right?
 
-Thanks!
+> Reported-by: Ryosuke Yasuoka <ryasuoka@redhat.com>
+> Signed-off-by: Ryosuke Yasuoka <ryasuoka@redhat.com>
+> ---
+>  net/nfc/nci/core.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/net/nfc/nci/core.c b/net/nfc/nci/core.c
+> index b133dc55304c..f2ae8b0d81b9 100644
+> --- a/net/nfc/nci/core.c
+> +++ b/net/nfc/nci/core.c
+> @@ -1518,8 +1518,7 @@ static void nci_rx_work(struct work_struct *work)
+>  
+>  		if (!nci_plen(skb->data)) {
+>  			kfree_skb(skb);
+> -			kcov_remote_stop();
+> -			break;
+> +			continue;
+>  		}
+>  
+>  		/* Process frame */
+> -- 
+> 2.44.0
+> 
+> 
 
