@@ -1,175 +1,234 @@
-Return-Path: <linux-kernel+bounces-181634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 873ED8C7EF0
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 01:21:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EFE58C7EF4
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 01:25:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 00EAFB20E28
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 23:21:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 902761C21F60
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 23:25:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CA452C697;
-	Thu, 16 May 2024 23:21:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D73D2C68C;
+	Thu, 16 May 2024 23:24:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="YFJAVgjX"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="KxE5JjLg"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 397F92AF0F
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 23:21:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40202273FC;
+	Thu, 16 May 2024 23:24:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715901680; cv=none; b=TMD2PkIxX+loKPesrhbue/walh6RmEJ0q0wwA/V68dBLdI2wFgh/wUH7wAAZRhPDKbSr8fes0e+CbbexVRIHh2S6ZT6b2TqjqSV3cUL6/sVbbJsEyB289k3pAmkfYf+OZmPw5dGx6/QaDioTbULRRdh0BHjI1b/PMTrTrYbCkgM=
+	t=1715901897; cv=none; b=W8J2VK+L/PcWW1VGWwXUCQd/gT3vD1qs8FIGWVQ2dbApQvyiQpUC2zYq40cvvi1ut88mHWpgKMlHoUzYZRfmKiv6D2ccAk6Bb9wnZcC95d043BEV/5tKKg3VIVXvnxeLmJZ+AXMuFAo3YCuDxfUZxLsUzt9pCyuGI9cDTlLvKo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715901680; c=relaxed/simple;
-	bh=Qui0DEbevuwNLaQ5JuIVShEJXLfv1M7Yu4u8VZtKVeM=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=JXNTeSWaLTOgB5Q5a6pD+P41hBqSsrmSJiiR/4EM8tbVLcImN2ghyEgSDx1nhO2DdPA8gktc7ZgB7dXlWCUSGYA0tItZj0a04wB7kCwPwTRjwVqoumfPmMfCj/zEwlH1jVLHEjcXGdyvXECNtwK/JINbdcFbbQQMD83Yd7RtzOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=YFJAVgjX; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-34d7b0dac54so5031509f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 16:21:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1715901677; x=1716506477; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lp5Q4kFI8X/cmoTJxmxu71qy/umo6wOz6GO12/MOAWM=;
-        b=YFJAVgjXgPMDvfKpjas29KRGtjZbCn+OLM/26D1l5/mTYQZCe2frNM/j0j2kfgXGDg
-         kIQb79ENVSRdV8A7phKrflSIVQpjXN64OlAxYn1YuRojCWtmIc3I3QbIdhXuPDjwiNJx
-         DevigPwXbyHsnU3FSUz0i+9/PyZC+K7KBEIZLB4oHn+pGcfqaYTjlLhFcziDi6N8zpbE
-         cRL5WwgKrwalFEtV3uo1UCFPEdbOcqGPq67Tl8SSZcZ8LeVAyO2yBgpG3Rd6ZytkPI5A
-         Lf5m6FEVI+9fPFZBpsCBePkKr+JDhj+29gkyjlmVxF4+kx9dstZEOnSlLvMaAdZR7b87
-         khYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715901677; x=1716506477;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lp5Q4kFI8X/cmoTJxmxu71qy/umo6wOz6GO12/MOAWM=;
-        b=c0eh94O5/35k6jhYGJrtyNg3tk1dNx0MuBhwKLNHHoyXfLulI7HqpDRrVTHxhl4Zl5
-         UqiNO6bXdiABoDI2cPJx4BDJIQ7r2rFTDKZ6Pa4sihzDXmCqeaomHeS5eXC8s89QkyFQ
-         PZuCJt1IZIKs4RhHxY3vnZhxiJSfBimryvAh8ZeCHszSTMREAnOZz5JQM9XyBq5OB7Tp
-         gIBjLS7RxOiVDPK+YVT5E1UggtqNfnnwcHLvQ0Uji8ir9VKvtJCokTBya6p9U9j4d4D1
-         GvtYOse6rDAL/eNeWULD8uI8eHGHA+y+3sb8lPmxQcOvEJXX/COnBt4hiklHTWxYvSRS
-         6LYA==
-X-Forwarded-Encrypted: i=1; AJvYcCWitKwE76Os2tX3omd0YzNalOjQCNJLfBoHdx9PlV519q5iBxl5LrLsVwI0uD8IcSAKZtCzTLUvqXAehEJCjzqQrWyLwGnfUp4pzwlr
-X-Gm-Message-State: AOJu0Yx5iuiqqruMERX3l1FBnbdNyFg2z4GO20uw4VywWErovf3oghgw
-	/3wHTzZJSM41kvjly1owiGAhKsYL+IYiZ3DDmxG0SdGwwC89eyglang95l6Aggc=
-X-Google-Smtp-Source: AGHT+IG/4VDfaLpKv9+Hy9psRkakHJC/Qh+jThNDXbSICnYlct9NikIvzEy+1yhDJ0NQy6xbO4H4Ig==
-X-Received: by 2002:a5d:5889:0:b0:352:12ff:2323 with SMTP id ffacd0b85a97d-35212ff240bmr1780438f8f.28.1715901677079;
-        Thu, 16 May 2024 16:21:17 -0700 (PDT)
-Received: from smtpclient.apple ([2001:a61:aa3:5c01:4c77:13bf:9f9f:140])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502baad1f0sm20293435f8f.89.2024.05.16.16.21.15
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 16 May 2024 16:21:16 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+	s=arc-20240116; t=1715901897; c=relaxed/simple;
+	bh=8UfRvXPJInoBARYhKyGq7WtuC0wWRvDVOrc+9rsSkOQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HdCiMLHnxbFX8d0Bc+39z2Z+RWgr6vyUBagg6isZXBWYerZBK+avoQBi8yi+DFRl9nIzDYiPtybmorom+GB8HeYFCCO1nNrrAxgXNTxFTnn6MoswlvHp/++itLsNmaESUXQwgI+cmigZTAiaF5oqTqAXAOvidIpCu7HuOBWf7BY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=KxE5JjLg; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1715901890;
+	bh=uiq30w+Wytv4IQVw78pBDutmxF0gf8kmW4JYleMO+hw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=KxE5JjLgzYwJPq2/jkyvesOWG78iLpVGhPoTya/uG+F592fvoa2Fycio+v8sq0yaV
+	 GRc1HrY1I+QUJvRA8uDbfCg1sxALkHKf3/0FKIarREPwCTjpJmS9X8JWrI+HzEGDp8
+	 TqaxZV8VVTpKj1scqap43OM6099NkJ8lRMK0vv9ww31JhNaekT3vdxTSgDJFNidoDs
+	 R9Z3XoeF/I68Ps7e1gkFRwCSsTB6+9ZyTnmIEVpdNAMOeDtv+Xk6CK/JCneI+YDJWQ
+	 b21q4sUXWspo8QSELrg0Z19sNwoaUsaKn1wUImOxba90AL+niuphwI/eCuBLOWvZR/
+	 pFCLW9oRh7v+A==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VgR5F4SfQz4wbr;
+	Fri, 17 May 2024 09:24:49 +1000 (AEST)
+Date: Fri, 17 May 2024 09:23:47 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, "Mike Rapoport (IBM)" <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>
+Subject: Re: linux-next: manual merge of the modules tree with the mm tree
+Message-ID: <20240517092347.469578bb@canb.auug.org.au>
+In-Reply-To: <20240412120421.27d86c34@canb.auug.org.au>
+References: <20240412120421.27d86c34@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
-Subject: Re: [PATCH v3] net: smc91x: Fix pointer types
-From: Thorsten Blum <thorsten.blum@toblux.com>
-In-Reply-To: <f192113c-9aee-47be-85f6-cd19fcb81a5e@lunn.ch>
-Date: Fri, 17 May 2024 01:21:04 +0200
-Cc: Arnd Bergmann <arnd@arndb.de>,
- "David S. Miller" <davem@davemloft.net>,
- edumazet@google.com,
- glaubitz@physik.fu-berlin.de,
- kuba@kernel.org,
- linux-kernel@vger.kernel.org,
- lkp@intel.com,
- netdev@vger.kernel.org,
- nico@fluxnic.net,
- pabeni@redhat.com
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/L=X4De.cj.n6k2pLnEOss1T";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/L=X4De.cj.n6k2pLnEOss1T
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <66AB9A6F-4D24-4033-96B9-E5F2F700029D@toblux.com>
-References: <0efd687d-3df5-49dd-b01c-d5bd977ae12e@lunn.ch>
- <20240516223004.350368-2-thorsten.blum@toblux.com>
- <f192113c-9aee-47be-85f6-cd19fcb81a5e@lunn.ch>
-To: Andrew Lunn <andrew@lunn.ch>
-X-Mailer: Apple Mail (2.3774.500.171.1.1)
 
-On 17. May 2024, at 00:51, Andrew Lunn <andrew@lunn.ch> wrote:
-> On Fri, May 17, 2024 at 12:30:05AM +0200, Thorsten Blum wrote:
->> Use void __iomem pointers as parameters for mcf_insw() and =
-mcf_outsw()
->> to align with the parameter types of readw() and writew() to fix the
->> following warnings reported by kernel test robot:
->>=20
->> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse: warning: incorrect =
-type in argument 1 (different address spaces)
->> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse:    expected void *a
->> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse:    got void =
-[noderef] __iomem *
->> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse: warning: incorrect =
-type in argument 1 (different address spaces)
->> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse:    expected void *a
->> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse:    got void =
-[noderef] __iomem *
->> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse: warning: incorrect =
-type in argument 1 (different address spaces)
->> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse:    expected void *a
->> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse:    got void =
-[noderef] __iomem *
->> drivers/net/ethernet/smsc/smc91x.c:483:17: sparse: warning: incorrect =
-type in argument 1 (different address spaces)
->> drivers/net/ethernet/smsc/smc91x.c:483:17: sparse:    expected void =
-*a
->> drivers/net/ethernet/smsc/smc91x.c:483:17: sparse:    got void =
-[noderef] __iomem *
->>=20
->> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
->> Reported-by: kernel test robot <lkp@intel.com>
->> Closes: =
-https://lore.kernel.org/oe-kbuild-all/202405160853.3qyaSj8w-lkp@intel.com/=
+Hi all,
 
->> Acked-by: Nicolas Pitre <nico@fluxnic.net>
->> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
->> ---
->> Changes in v2:
->> - Use lp->base instead of __ioaddr as suggested by Andrew Lunn. They =
-are
->> essentially the same, but using lp->base results in a smaller diff
->> - Remove whitespace only changes as suggested by Andrew Lunn
->> - Preserve Acked-by: Nicolas Pitre tag (please let me know if you
->> somehow disagree with the changes in v2 or v3)
->>=20
->> Changes in v3:
->> - Revert changing the macros as this is unnecessary. Neither the =
-types
->>  nor the __iomem attributes get lost across macro boundaries
->> - Preserve Reviewed-by: Andrew Lunn tag (please let me know if you
->>  somehow disagree with the changes in v3)
+On Fri, 12 Apr 2024 12:04:21 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Today's linux-next merge of the modules tree got a conflict in:
 >=20
-> This fixes the warning, but we still have the macro accessing things
-> not passed to them. If you are going to brother to fix the warnings,
-> it would also be good to fix the bad practice. Please make a patchset
-> to do this.
-
-I would prefer to submit another patch to fix the macros. I submitted v3
-because the patch description for v2 was wrong (type information or
-attributes don't get lost across macro boundaries) and the macro changes
-are unnecessary to fix the warnings.
-
-I should never have changed the macros, but after first adding __iomem
-to mcf_insw() and mcf_outsw(), I kept getting the same errors and looked
-for the problem in the SMC_* macros. I probably didn't do a clean build
-or forgot to save my changes and just refactored the macros as a side
-effect.
-
-> It would also be good if you read:
+>   kernel/module/main.c
 >=20
-> https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html
+> between commit:
+>=20
+>   58782d7a7ccd ("lib: prevent module unloading if memory is not freed")
+>=20
+> from the mm-unstable branch of the mm tree and commit:
+>=20
+>   a4ee8c9b86bd ("module: make module_memory_{alloc,free} more self-contai=
+ned")
+>=20
+> from the modules tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+> diff --cc kernel/module/main.c
+> index 2d25eebc549d,d56b7df0cbb6..000000000000
+> --- a/kernel/module/main.c
+> +++ b/kernel/module/main.c
+> @@@ -56,8 -56,8 +56,9 @@@
+>   #include <linux/dynamic_debug.h>
+>   #include <linux/audit.h>
+>   #include <linux/cfi.h>
+>  +#include <linux/codetag.h>
+>   #include <linux/debugfs.h>
+> + #include <linux/execmem.h>
+>   #include <uapi/linux/module.h>
+>   #include "internal.h"
+>  =20
+> @@@ -1204,26 -1194,51 +1195,55 @@@ static bool mod_mem_use_vmalloc(enum mo
+>   		mod_mem_type_is_core_data(type);
+>   }
+>  =20
+> - static void *module_memory_alloc(unsigned int size, enum mod_mem_type t=
+ype)
+> + static int module_memory_alloc(struct module *mod, enum mod_mem_type ty=
+pe)
+>   {
+> + 	unsigned int size =3D PAGE_ALIGN(mod->mem[type].size);
+> + 	void *ptr;
+> +=20
+> + 	mod->mem[type].size =3D size;
+> +=20
+>   	if (mod_mem_use_vmalloc(type))
+> - 		return vzalloc(size);
+> - 	return module_alloc(size);
+> + 		ptr =3D vmalloc(size);
+> + 	else
+> + 		ptr =3D execmem_alloc(EXECMEM_MODULE_TEXT, size);
+> +=20
+> + 	if (!ptr)
+> + 		return -ENOMEM;
+> +=20
+> + 	/*
+> + 	 * The pointer to these blocks of memory are stored on the module
+> + 	 * structure and we keep that around so long as the module is
+> + 	 * around. We only free that memory when we unload the module.
+> + 	 * Just mark them as not being a leak then. The .init* ELF
+> + 	 * sections *do* get freed after boot so we *could* treat them
+> + 	 * slightly differently with kmemleak_ignore() and only grey
+> + 	 * them out as they work as typical memory allocations which
+> + 	 * *do* eventually get freed, but let's just keep things simple
+> + 	 * and avoid *any* false positives.
+> + 	 */
+> + 	kmemleak_not_leak(ptr);
+> +=20
+> + 	memset(ptr, 0, size);
+> + 	mod->mem[type].base =3D ptr;
+> +=20
+> + 	return 0;
+>   }
+>  =20
+> - static void module_memory_free(void *ptr, enum mod_mem_type type,
+>  -static void module_memory_free(struct module *mod, enum mod_mem_type ty=
+pe)
+> ++static void module_memory_free(struct module *mod, enum mod_mem_type ty=
+pe,
+>  +			       bool unload_codetags)
+>   {
+> + 	void *ptr =3D mod->mem[type].base;
+> +=20
+>  +	if (!unload_codetags && mod_mem_type_is_core_data(type))
+>  +		return;
+>  +
+>   	if (mod_mem_use_vmalloc(type))
+>   		vfree(ptr);
+>   	else
+> - 		module_memfree(ptr);
+> + 		execmem_free(ptr);
+>   }
+>  =20
+>  -static void free_mod_mem(struct module *mod)
+>  +static void free_mod_mem(struct module *mod, bool unload_codetags)
+>   {
+>   	for_each_mod_mem_type(type) {
+>   		struct module_memory *mod_mem =3D &mod->mem[type];
+> @@@ -1234,13 -1249,12 +1254,13 @@@
+>   		/* Free lock-classes; relies on the preceding sync_rcu(). */
+>   		lockdep_free_key_range(mod_mem->base, mod_mem->size);
+>   		if (mod_mem->size)
+> - 			module_memory_free(mod_mem->base, type,
+>  -			module_memory_free(mod, type);
+> ++			module_memory_free(mod, type,
+>  +					   unload_codetags);
+>   	}
+>  =20
+>   	/* MOD_DATA hosts mod, so free it at last */
+>   	lockdep_free_key_range(mod->mem[MOD_DATA].base, mod->mem[MOD_DATA].siz=
+e);
+> - 	module_memory_free(mod->mem[MOD_DATA].base, MOD_DATA, unload_codetags);
+>  -	module_memory_free(mod, MOD_DATA);
+> ++	module_memory_free(mod, MOD_DATA, unload_codetags);
+>   }
+>  =20
+>   /* Free a module, remove from lists, etc. */
+> @@@ -2309,7 -2301,7 +2314,7 @@@ static int move_module(struct module *m
+>   	return 0;
+>   out_enomem:
+>   	for (t--; t >=3D 0; t--)
+> - 		module_memory_free(mod->mem[t].base, t, true);
+>  -		module_memory_free(mod, t);
+> ++		module_memory_free(mod, t, true);
+>   	return ret;
+>   }
+>  =20
 
-Will do.
+This is now a conflict between the mm-stable tree and Linus' tree.
 
-Thanks,
-Thorsten=
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/L=X4De.cj.n6k2pLnEOss1T
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZGlYMACgkQAVBC80lX
+0GxAtQf+LxK16YKpbKCQqAcEbb28PvCQKB1eSPu0ceEZxTEmuBoYtQ9IiVl1LJOq
+wnhueFdBKdcXtTQNwqKMNaTPfGTBHVBpNZQTix8gcRgrpW0ZH0ly+y78b9s5B1A3
+vSsV1nsQHm3ZiJq7qsatt3Ti72t/yupdYmPhp/ZoeFJPc4/K3ixH7SPpW615RnIY
+Oyd+wGtjp/6gcBD+jY8iIiVdfvzXNgfoqq+xMPW2A4TqUob/2n0K4LTmsWa6fRZs
+5oEFnYrYhJKNLX+CKUGhsj9QnQU+ASm8TYyR+I1WZQGfOo2Lfw5BEU8mfArL6Av5
+A9+vsBAVEYGqL1k+VEyVMr+4JTBgew==
+=//Ql
+-----END PGP SIGNATURE-----
+
+--Sig_/L=X4De.cj.n6k2pLnEOss1T--
 
