@@ -1,201 +1,150 @@
-Return-Path: <linux-kernel+bounces-180809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 479E28C735F
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 11:02:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 813ED8C7372
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 11:04:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2B1C1F23961
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 09:02:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CB341F238AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 09:04:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13EC9143723;
-	Thu, 16 May 2024 09:02:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46ACA143723;
+	Thu, 16 May 2024 09:04:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="JryNDAFA"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="beLa1hUk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7B67142912;
-	Thu, 16 May 2024 09:02:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82F8A142E75;
+	Thu, 16 May 2024 09:04:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715850128; cv=none; b=ImlV0uuRZBSAK1T0UeYKUG40HLTqMypl6zFp41qjKjBp9g8/tCelsea2ddfXQMeDns2vNS36NTckLncQDlgJ2uvj63g24z4ZXMdkAlQG2ttEmohk4ELPyushGFSEqMNJaW9e9/bhroHtauAqmi7xk8kR/aoeMrCxSTSrlPNBEV8=
+	t=1715850278; cv=none; b=ixnuLNljvQtIeab/0OhPIPxEvfHc2dycs3pBKxTDrHeYCe5t1uYMvb8LNl/JVLOwa/Ei9oVMzej+JmVWVgCImcki44vBCO7ENCCktCJx0icBDyKGyP0HkSnivdhTVkfcOH8pyJTW/0HKhTl2R/tfgUKq3G1CW64h2MAI6sNxH98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715850128; c=relaxed/simple;
-	bh=lIRA8UJBvXfoXmKVmWIGOJ0GywIizfIUSdLRyMXqjMs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pKVBpEUB+IK2BJpJwLpr1+lsqAI5P/zC02fwA8RR9JDbXljRV9Jm5iHjMx1tcEGnWDECKR+vi4HsWnPhFcVvnSmWutdMjaC+iflM03xZNveom3QWnu1pVPPY0/Yn/g4gF5aQQ/Is0g5wfRorn1kr/HwtEHGRYnMS/gUVz44aubA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=JryNDAFA; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
-	s=s31663417; t=1715850122; x=1716454922; i=quwenruo.btrfs@gmx.com;
-	bh=mnnHi7dEPrzkF5r/8QGFI2q704iOW15PoFd8fUilYcM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=JryNDAFA144apy42OoPmPAIMaifYmMeiwZjtV2/mjHUGG1lSJrMztA4xTwjlpW06
-	 Ut6gjBUXi/ilH84cunooz/LOOZhT7KAD+oqwNdIsSsMj9JGdyTsof93CNd111/86m
-	 lCCD+ZSkwgTV7q+wvqd3bM0jQsLp/6J/f4jdue9fNhiJjMkFGsTjx+yOmShHbiDKm
-	 RQmxJPGlZElEJSFKskEFqiaevOe+oVCiasIc/zUQz6dgvxSQ76aJFCc/9/p2F7dqj
-	 kl12GY+MmWEWJ9tC62sINqVmYPOYctBGprWc86jHjkgU/9jYagXE57kfewo9yWvfx
-	 C4kpC/fPpNDz5SREKg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [172.16.0.219] ([159.196.52.54]) by mail.gmx.net (mrgmx104
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1MuUjC-1sPTI33Hda-00vBbD; Thu, 16
- May 2024 11:02:02 +0200
-Message-ID: <32730052-b40e-4262-a1c4-0d45a9b6de53@gmx.com>
-Date: Thu, 16 May 2024 18:31:57 +0930
+	s=arc-20240116; t=1715850278; c=relaxed/simple;
+	bh=/7ZU5SWPryG28/JDJjQorPZqPib2O3IGB90+Qe8THyY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Derdwr49QIyWwQwep+lmvS3CsE0oRyFH/1kwBidaHnRDDwzvCPgMoyxWO2rTMsZxqKcxIR4rrGnspniO/4KEIeSx7gFQ2WnYqNv5fZcLGlGi8Tt/8nuyNoUE36b+teRDRDtSfzstjNFOr4OHysHmKfCPd9UOVufl899DML3gv7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=beLa1hUk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7ABFC32789;
+	Thu, 16 May 2024 09:04:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715850277;
+	bh=/7ZU5SWPryG28/JDJjQorPZqPib2O3IGB90+Qe8THyY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=beLa1hUkjo5E+6DNPm+9Cokg2HWoOeKFDfBE7O2zfs3H6V7HHghFIuQB5A7KR95z+
+	 plHUe0bD8pUe7dR0WlMrIrrO/VM+WjRL/UbMWGcztFIbeVAQBc0E7PFnz/mKZMf+rs
+	 Fe0K+WskqeAun5qWlTbe3yHN+cIeeUwwT3Bg7M4geuJVvkjH0P80LUNdtacG8D8epD
+	 fczn5ZhQ8hr7e/LcUhyY4JZ5o6RDqLXODpcu+3HJ3LAbJ84cO8fwC+kukzeh929vyq
+	 YrPhSGfkInHWeLlktaZ0Jia/UIXMLz/2cV+pWZ9ez/gf8aaH/F4TEdgq/yWAhzsAoe
+	 iOTFsAdtC837g==
+Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-5b2e8d73bfcso382650eaf.1;
+        Thu, 16 May 2024 02:04:37 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUkCf77TNFTkdDNNr46FImmSQ9xWyYcSaj6YBA24aeT5N/kw4Qm5LZL0RR+bH/Dd9iAbS5JCSrEVq1mIiLMvzEyMNBVotpEUdVBBCPBrUVdfG0w0F05cqpNfr4GXJP0sIELiEAXs/4=
+X-Gm-Message-State: AOJu0YyyQZPuhPyjaK0EPgA8Znza5wK7CIRKaMD7cQNU/ZwZLl+mM8FV
+	aX2a6pVe+ZoXo9RgMS83bBRWBCZhbmnX6BZoBSC1ZD8ts6zaYMGIMXm6FQVEK1i2E/wYJGjInYy
+	jXbErdB8xO6q8vgz5W22thQ8yATw=
+X-Google-Smtp-Source: AGHT+IGVktTlkAlAt579AU1bpoblCiDv4Jhmu5uultBm9470EEpde8igEf9/i0o7iFtco8K170hIzVgrgMzS35qXRzg=
+X-Received: by 2002:a05:6870:ff83:b0:241:9bee:b6fe with SMTP id
+ 586e51a60fabf-2419beec7d0mr17786411fac.2.1715850277022; Thu, 16 May 2024
+ 02:04:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] Btrfs updates for 6.10
-To: Linus Torvalds <torvalds@linux-foundation.org>,
- David Sterba <dsterba@suse.com>
-Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1715616501.git.dsterba@suse.com>
- <CAHk-=wgt362nGfScVOOii8cgKn2LVVHeOvOA7OBwg1OwbuJQcw@mail.gmail.com>
-Content-Language: en-US
-From: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
- BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00iVQUJDToH
- pgAKCRDCPZHzoSX+qNKACACkjDLzCvcFuDlgqCiS4ajHAo6twGra3uGgY2klo3S4JespWifr
- BLPPak74oOShqNZ8yWzB1Bkz1u93Ifx3c3H0r2vLWrImoP5eQdymVqMWmDAq+sV1Koyt8gXQ
- XPD2jQCrfR9nUuV1F3Z4Lgo+6I5LjuXBVEayFdz/VYK63+YLEAlSowCF72Lkz06TmaI0XMyj
- jgRNGM2MRgfxbprCcsgUypaDfmhY2nrhIzPUICURfp9t/65+/PLlV4nYs+DtSwPyNjkPX72+
- LdyIdY+BqS8cZbPG5spCyJIlZonADojLDYQq4QnufARU51zyVjzTXMg5gAttDZwTH+8LbNI4
- mm2YzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
- CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
- /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
- GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
- q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
- ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00ibgUJDToHvwAK
- CRDCPZHzoSX+qK6vB/9yyZlsS+ijtsvwYDjGA2WhVhN07Xa5SBBvGCAycyGGzSMkOJcOtUUf
- tD+ADyrLbLuVSfRN1ke738UojphwkSFj4t9scG5A+U8GgOZtrlYOsY2+cG3R5vjoXUgXMP37
- INfWh0KbJodf0G48xouesn08cbfUdlphSMXujCA8y5TcNyRuNv2q5Nizl8sKhUZzh4BascoK
- DChBuznBsucCTAGrwPgG4/ul6HnWE8DipMKvkV9ob1xJS2W4WJRPp6QdVrBWJ9cCdtpR6GbL
- iQi22uZXoSPv/0oUrGU+U5X4IvdnvT+8viPzszL5wXswJZfqfy8tmHM85yjObVdIG6AlnrrD
-In-Reply-To: <CAHk-=wgt362nGfScVOOii8cgKn2LVVHeOvOA7OBwg1OwbuJQcw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+References: <13518388.uLZWGnKmhe@kreacher> <3304112.44csPzL39Z@kreacher> <39e15eef-f7fd-4e16-bc74-7f1c6820fe6a@arm.com>
+In-Reply-To: <39e15eef-f7fd-4e16-bc74-7f1c6820fe6a@arm.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 16 May 2024 11:04:25 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gZJE6jfa8_9LgDdjYotY+crLH1JJXHdAWREPz4SJ305A@mail.gmail.com>
+Message-ID: <CAJZ5v0gZJE6jfa8_9LgDdjYotY+crLH1JJXHdAWREPz4SJ305A@mail.gmail.com>
+Subject: Re: [PATCH v1 1/6] thermal: sysfs: Trigger zone temperature updates
+ on sysfs reads
+To: Lukasz Luba <lukasz.luba@arm.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, LKML <linux-kernel@vger.kernel.org>, 
+	Linux PM <linux-pm@vger.kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Zhang Rui <rui.zhang@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:th+2L7V190rD1RfZG7IykMwoYEu+a/e8iWdrSQcDSM7CF3pGlE0
- ED4C6ybhHVhS72ZRzw1PPP5ygvEt/G8t2qa5Xvr2NmzVezeLJbGIDUi8zIr8gxiKMDFo9/v
- CZkajmKEvkbMLyR3lpRryDeEre0AnDqMZkNZBtO9rOiE69NY8X5dLZ+6htYWRmrFSM0eyK2
- 6nIVbANucZKuG2wPoVuoA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:4078ckCVUVY=;5I3RZz7zgkLCRpnmRxPUhXv5DQa
- T9GDZ7+06Eii5qb3kGHsBg/rUo02h2rwo9HT2bWCflAga/Ii3L9nsIINJRlYPSEXHileqa8b2
- Pp4OwS0cdFFThFRSSg2wPD2mtIDoFv2emG6/v+lvNu9d3SRsbMaOmn80Jl2GfybRcfem3goXD
- eVPg6SYHBJeYq0J8/jfD7E0ETwjE0VI7ftCk062S3rarOA/dxtaQEwyHuZQ6BRueiegYelOFp
- 8fhHUXhuTnNmrofZkUBFWq1R/skhqC112MkmYlnND3WQ7WPehY1gkrpl3XdWwbol4h9t5CFUI
- /Bi+WAi2vOku1b6kU0M4MYgR+nip+lSvRPCzMXWtvrwYcB5qJIFoD9FBvUP5Q9/LUx5OC8+EE
- kPhP74ZW2jJ7RxIkfy0PSRZ0QWlpP9plZck/qIRqcjNHQE3K+VXpjkNB4nilS3NglwvgvQO4p
- 9fTd9UoQmYqvb4pNpBpn0+vf2BWQXngTpz0okx/c8d2/GJyBWI4d90Tkliq23eV8Sb3LsIsKO
- uyLK5S0CgW6N62N15JfkwgQHXu6AWDugnTR3oBFy529vPfVKLk6ZBkDVh6d6t/phaCcxFiLj+
- LVRT39D33m4K0f3SrrqkuirmrhpjseGcCIoghxGKj14AOZMT/u2/ueDR+yoX+HSi1+jJX7Jy+
- rDguDFhaco+x0yEuDmJ06tJSV3ucHWfsglWE0jTn5y+0egvT0Tj/VDB+3Si3I8k1WwTYMrq+R
- RQAY4Llr1FD03LDGiiZJ6hVHq2rcpxnPy1d96JImRVBFyNF0/f2VjFd79kzsmd1Id9y4eivre
- SEdWfRhs16NVFKACk1cR5Nu9/Q118S38Kvs58yBqX9/H8=
 
+Hi Lukasz,
 
+On Mon, May 13, 2024 at 9:11=E2=80=AFAM Lukasz Luba <lukasz.luba@arm.com> w=
+rote:
+>
+> Hi Rafael,
+>
+> On 5/10/24 15:13, Rafael J. Wysocki wrote:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >
+> > Reading the zone temperature via sysfs causes the driver callback to
+> > be invoked, but it does not cause the thermal zone object to be updated=
+.
+> >
+> > This is problematic if the zone temperature read via sysfs differs from
+> > the temperature value stored in the thermal zone object as it may cause
+> > the kernel and user space to act against each other in some cases.
+> >
+> > For this reason, make temp_show() trigger a zone temperature update if
+> > the temperature returned by thermal_zone_get_temp() is different from
+> > the temperature value stored in the thermal zone object.
+> >
+> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > ---
+> >   drivers/thermal/thermal_core.c  |    2 +-
+> >   drivers/thermal/thermal_sysfs.c |    3 +++
+> >   2 files changed, 4 insertions(+), 1 deletion(-)
+> >
+> > Index: linux-pm/drivers/thermal/thermal_sysfs.c
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > --- linux-pm.orig/drivers/thermal/thermal_sysfs.c
+> > +++ linux-pm/drivers/thermal/thermal_sysfs.c
+> > @@ -42,6 +42,9 @@ temp_show(struct device *dev, struct dev
+> >       if (ret)
+> >               return ret;
+> >
+> > +     if (temperature !=3D READ_ONCE(tz->temperature))
+> > +             thermal_zone_device_update(tz, THERMAL_EVENT_TEMP_SAMPLE)=
+;
+>
+> That's a bit problematic because it will trigger
+> governor->manage()
+>
+> In case of IPA governor we relay on constant polling
+> period. We estimate the past power usage and current
+> thermal budget, to derive the next period power budget
+> for devices. I don't know if the internal PID algorithm
+> will be resilient enough to compensate this asynchronous
+> trigger caused from user-space.
+>
+> We choose the period to be at least 1 frame (e.g. ~16ms)
+> to have good avg usage of CPUs and GPU. TBH I don't know
+> what would happen if someone reads the temp after e.g. 1ms
+> of last IPA trigger, but some devices (e.g. GPU) wasn't
+> loaded in that last 1ms delta...
+> I'm a bit more relaxed about CPUs because we use utilization
+> signal from runqueues (like the TEO util gov). That's a moving
+> avg signal which should keep some history, like low-pass
+> filter, so information is more resilient in that case.
+>
+> Could we think about that IPA constant period usage?
+> I think I understand the proposal of your patch.
+> We might add a filter inside IPA to ignore such async
+> triggers in the .manage() callback.
+> What do you think?
 
-=E5=9C=A8 2024/5/16 10:01, Linus Torvalds =E5=86=99=E9=81=93:
-> On Mon, 13 May 2024 at 09:28, David Sterba <dsterba@suse.com> wrote:
->>
->>    git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git tags/f=
-or-6.10-tag
->
-> So I initially blamed a GPU driver for the following problem, but Dave
-> Airlie seems to think it's unlikely that problem would cause this kind
-> of corruption, so now it looks like it might just be btrfs itself:
->
->    BUG: Bad page state in process kworker/u261:13  pfn:31fb9a
->    page: refcount:0 mapcount:0 mapping:00000000ff0b239e index:0x37ce8
-> pfn:0x31fb9a
->    aops:btree_aops ino:1
->    flags: 0x2fffc600000020c(referenced|uptodate|workingset|node=3D0|zone=
-=3D2|lastcpupid=3D0x3fff)
->    page_type: 0xffffffff()
->    raw: 02fffc600000020c dead000000000100 dead000000000122 ffff9b191efb0=
-338
->    raw: 0000000000037ce8 0000000000000000 00000000ffffffff 0000000000000=
-000
->    page dumped because: non-NULL mapping
->    CPU: 18 PID: 141351 Comm: kworker/u261:13 Tainted: G        W
->    6.9.0-07381-g3860ca371740 #60
->    Workqueue: btrfs-delayed-meta btrfs_work_helper
->    Call Trace:
->     bad_page+0xe0/0xf0
->     free_unref_page_prepare+0x363/0x380
->     ? __count_memcg_events+0x63/0xd0
->     free_unref_page+0x33/0x1f0
->     ? __mem_cgroup_uncharge+0x80/0xb0
->     __folio_put+0x62/0x80
->     release_extent_buffer+0xad/0x110
->     btrfs_force_cow_block+0x68f/0x890
->     btrfs_cow_block+0xe5/0x240
->     btrfs_search_slot+0x30e/0x9f0
->     btrfs_lookup_inode+0x31/0xb0
->     __btrfs_update_delayed_inode+0x5c/0x350
->     ? kfree+0x80/0x250
->     __btrfs_commit_inode_delayed_items+0x7a1/0x7d0
->     btrfs_async_run_delayed_root+0xf7/0x1b0
->     btrfs_work_helper+0xc0/0x320
->     process_scheduled_works+0x196/0x360
->     worker_thread+0x2b8/0x370
->     ? pr_cont_work+0x190/0x190
->     kthread+0x111/0x120
->     ? kthread_blkcg+0x30/0x30
->     ret_from_fork+0x30/0x40
->     ? kthread_blkcg+0x30/0x30
->     ret_from_fork_asm+0x11/0x20
->
-> Note the line
->
->      page dumped because: non-NULL mapping
->
-> but the actual mapping pointer isn't a valid kernel pointer. I suspect
-> that may be due to pointer hashing, though. I'm not convinced that's a
-> great idea for this case, but hey, here we are. Sometimes those "don't
-> leak kernel pointers" things cause problems for debugging.
->
-> Anyway, it looks like the btrfs_cow_block -> btrfs_force_cow_block ->
-> release_extent_buffer -> __folio_put path might be releasing a page
-> that is still attached to a mapping. Perhaps some page counting
-> imbalance?
->
-> This all happened under fairly normal - for me - workstation loads. I
-> was (of course) doing an allmodconfig kernel build after a pull, and I
-> had a handful of terminals and the web browser open. Nothing
-> particularly interesting or odd.
+Thanks for pointing this out.
 
-Considering aarch64 is going more and more common, is the workstation
-also an aarch64 platform? (the Ampere one?)
-If so, mind to share the page size and the fs sectorsize?
-That would at least help us to know if it's the subpage routine or the
-regular routine.
-
-Thanks,
-Qu
-
->
-> Does the above make any btrfs people go "Ahh, I see how that would be
-> a problem"?
->
->              Linus
->
+Actually, the target audience for this change are thermal zones that
+are not updated on a regular basis, so what about storing the last
+zone temperature update time in the zone object and only running an
+update from temp_show() if sufficient time has elapsed since the last
+update (say 1 sec)?
 
