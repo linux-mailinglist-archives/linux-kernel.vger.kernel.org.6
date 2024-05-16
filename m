@@ -1,139 +1,119 @@
-Return-Path: <linux-kernel+bounces-181314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 104F08C7A50
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:25:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45D9D8C7A52
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:27:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 421001C21877
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:25:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA0DF1F22417
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:27:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 559D414E2D2;
-	Thu, 16 May 2024 16:25:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C743A14E2D7;
+	Thu, 16 May 2024 16:27:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Xm+tt4vj"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gejhb1GP"
+Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4AAB14D719;
-	Thu, 16 May 2024 16:25:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC63A14D719;
+	Thu, 16 May 2024 16:27:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715876725; cv=none; b=DYu7jtCUA14I9tzylwGiWKa8gjrhbk4SyKZegheLwjYlSpiQSsLlYxWnZ8mFQw5Cr+X9kDKbcYuDmwLyJZqJFl9GCJKrtdPaVNs5t5wsmqLB7hS1bd8TjqsYqTfWuJzyzTrAuHQsBRYUwlEQx3Lf8+UXuLFuMJwgH6GW3ihItko=
+	t=1715876823; cv=none; b=U/I19IeAzVm9PoBzLtAbAgEn1HRSrMCIP0cth6aK8d2YCE9IX0DBKAF3RSMEHK6AL5Rdy2Fu6Ti8AkxLYKIP445cPmReItu5sd3Y3tDYIuCSFYD2GayYG6b6F0PpA0U+KqcKxMqjv4arW8RG0WGbUy3khatpg9vkV2cGE4DMmtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715876725; c=relaxed/simple;
-	bh=ManuiqZkVA/LH1oUi2yvZnP0nenBUYYloncINkTTt/0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FeZibkrTPWWTBDbkKZk+JMr6SK9VSQPsTKg4zuVdqGjShZDJKCwSrSkcdkjGr1U401SxKVeOdwsN5YbS6sWQEUk0PKytzsPyNLW1lq9Jye2zF1wAD2ljhR1uQBPEe365Ab4uivrfJegZz5nvLFfo0CTS2VYash7I8trv65S7xfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Xm+tt4vj; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1715876722;
-	bh=ManuiqZkVA/LH1oUi2yvZnP0nenBUYYloncINkTTt/0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Xm+tt4vj6fqAqYaWHMwVxBRNN8IZbrcKZPOKlbahvYjbr9pbSTsFviXlxn9Vli/UU
-	 hhwcWkdWc0uj6pvmD2TdX/QqOPk5iKPS5LlmFf1b3AsQGkwKHKcF+1xTvJ5HXgI1/w
-	 0KdnZ+9h4XCrW3M5nWnSTcYVKtLa1efrKXzWY4qrq+dRBs6juWPMKR+cXAXghDts1G
-	 E+N59YppiTHxN+O3tK8eusFL0w0YwReqjMrN4KEGBmscTs+mL5FpFb2VNk1ne2q8DY
-	 yQ2bkdCgJYjWwo0fF5N7zzIbc6nURvnFt0nT0ON3qDrTqPOtJNgWKcgDKAM6/cug89
-	 A5w0XmuK9wUOw==
-Received: from notapiano (zone.collabora.co.uk [167.235.23.81])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 23933378143B;
-	Thu, 16 May 2024 16:25:21 +0000 (UTC)
-Date: Thu, 16 May 2024 12:25:19 -0400
-From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/1] spi: Remove unneded check for orig_nents
-Message-ID: <2fccdd9a-5b97-4dc6-a6b1-ce2d9e0819bd@notapiano>
-References: <20240507201028.564630-1-andriy.shevchenko@linux.intel.com>
- <d8930bce-6db6-45f4-8f09-8a00fa48e607@notapiano>
- <ZkXdXO4Xb83270V7@smile.fi.intel.com>
- <ZkYJTxmlM5oWOzFL@smile.fi.intel.com>
+	s=arc-20240116; t=1715876823; c=relaxed/simple;
+	bh=TWuCOrwRfsE/7sgVxnRfNWS8mwZphX3KUBtRSNprbzA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iPYf6kyBZn6CXb1f/LsnKA6oYcQUzyzRyYjaKXtP7vd2y5cqmIF2MHfN9Up2PtZYNXNL27tp8mtZYTmkxlqtF6kokHBAg9xPgAavslPQ9fSCl/OnRD5lgMq9tJdnJiycm0TNSXQEt3Zpe5ks3khmxdaUr9HIRDg5Vmn7gsfiR9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gejhb1GP; arc=none smtp.client-ip=209.85.161.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-5b279e04391so267256eaf.3;
+        Thu, 16 May 2024 09:27:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715876821; x=1716481621; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4PkpXYOeMxPez0BVFDxZmvaRNFBBosJL15zaQ2tgikE=;
+        b=gejhb1GPcNDDPREUPoN2M4VTQzAkaCcrwUwBTrMzTlDAVyj4RJ2iOSdgLkjFClvGNz
+         9U4hlfB8GCg6AsL0MtK0ILY85Ta9PU1U115XAH77oIYefXh8QndWF4fiv277Z+xsLSxJ
+         1E8Q0IMAXBTDICRy9l+ZI/dC4x8U2arRB6+V9j8IPc0i7m3n0zDYr6Sztnf/aC4j1YN+
+         zHosXTeg/euyHFofJu93tcYbZX/U9tUv5UJaM9FV/yD+GPtZzvRLC4hfmyFYW9TlIdQc
+         ud1Fp3Nc/OrqxeEheJPwqVt8BuYAjwnyLDfcIaIHpAVRoQfAP9tIyuETi+Iy5zbPhhHi
+         1Jdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715876821; x=1716481621;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4PkpXYOeMxPez0BVFDxZmvaRNFBBosJL15zaQ2tgikE=;
+        b=rbA3FyfNXea5dM4IjPWPVWq/r9YIeUaAuV3xTCWDZNbHjwMOx5UtMYbqO33tr0qvzR
+         ET3xX7bLSOi4Zf0nMe45B358/fEPejkO1S4H0mXa0+V3gQjlK/xt96Mt+fo+0Ho8yZQM
+         NZT51BrH2SrTSTwu3F/gnmEAEmDwFXFg93hDQOIEna12ZKcwp4qQFqV4Pii/bi0mZn3y
+         FKQWL9GKURA1a2mRcz6O0yGrIaI6RVBQeMCd28tAwO72W0OPW8vMAnjAxKd0Rp/VdPEF
+         W6aOdZEKiHKluQmgje22dVAoZCGyE6GCmDW1LeAso4CDbTBbzQ6Ul3kprnECJUtFaKfW
+         i9VQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW6g2M4YqSNJ3ah4E2g+J9NOJC9cRZToIaF/gIhYI4QpAc+W77IeqEtS7HCWYhKrnTUIkuGOjHTXL5xr5O/Cl57tdIRR5uycI2IkYccSgHI1ZI/dF2Hm0GNwNIJEpkG0+QrPDGU
+X-Gm-Message-State: AOJu0YwXhPB8QYLnuZJW6daQ+dNvq/yHn8A1uiBkLRiBEePeCzTGCAQw
+	LYMBywewuCvClK8v6SMfsdJWFZppV9nLZVm3OlP/mjyHZKaKVl0ZmK2aZEOv
+X-Google-Smtp-Source: AGHT+IHvj2AgQ12I86jA52pef5ba8vJfLez/dY+rnEyOErhv3j6oahEuM7HfVkV8VBZQ/uVrNuQLGg==
+X-Received: by 2002:a05:6870:a985:b0:22e:7390:da7 with SMTP id 586e51a60fabf-2417287ba81mr22782982fac.21.1715876820835;
+        Thu, 16 May 2024 09:27:00 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.googlemail.com with ESMTPSA id af79cd13be357-792bf31171esm812657285a.116.2024.05.16.09.26.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 May 2024 09:27:00 -0700 (PDT)
+Message-ID: <7e8306a7-c32e-40a1-9f99-78cfd5a49835@gmail.com>
+Date: Thu, 16 May 2024 09:26:57 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZkYJTxmlM5oWOzFL@smile.fi.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.6 000/308] 6.6.31-rc3 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240516121335.906510573@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <20240516121335.906510573@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 16, 2024 at 04:25:35PM +0300, Andy Shevchenko wrote:
-> On Thu, May 16, 2024 at 01:18:04PM +0300, Andy Shevchenko wrote:
-> > On Wed, May 15, 2024 at 05:09:33PM -0400, Nícolas F. R. A. Prado wrote:
-> > > On Tue, May 07, 2024 at 11:10:27PM +0300, Andy Shevchenko wrote:
-> > > > Both dma_unmap_sgtable() and sg_free_table() in spi_unmap_buf_attrs()
-> > > > have checks for orig_nents against 0. No need to duplicate this.
-> > > > All the same applies to other DMA mapping API calls.
-> > > > 
-> > > > Also note, there is no other user in the kernel that does this kind of
-> > > > checks.
-> > > > 
-> > > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > > 
-> > > this commit caused a regression which I reported here:
-> > > 
-> > > https://lore.kernel.org/all/d3679496-2e4e-4a7c-97ed-f193bd53af1d@notapiano
-> > > 
-> > > along with some thoughts on the cause and a possible solution, though I'm not
-> > > familiar with this code base at all and would really appreciate any feedback you
-> > > may have.
-> > 
-> > Thanks for the report and preliminary analysis!
-> > I'll look at it hopefully sooner than later.
-> > 
-> > But at least what I think now is that my change revealed a problem somewhere
-> > else, because that's how DMA mapping / streaming APIs designed, it's extremely
-> > rare to check orig_nents field.
+On 5/16/24 05:15, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.31 release.
+> There are 308 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Can you test the below patch?
+> Responses should be made by Sat, 18 May 2024 12:12:33 +0000.
+> Anything received after that time might be too late.
 > 
-> diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
-> index b2efd4964f7c..51811f04e463 100644
-> --- a/drivers/spi/spi.c
-> +++ b/drivers/spi/spi.c
-> @@ -1243,6 +1243,7 @@ static int __spi_map_msg(struct spi_controller *ctlr, struct spi_message *msg)
->  	else
->  		rx_dev = ctlr->dev.parent;
->  
-> +	ret = -ENOMSG;
->  	list_for_each_entry(xfer, &msg->transfers, transfer_list) {
->  		/* The sync is done before each transfer. */
->  		unsigned long attrs = DMA_ATTR_SKIP_CPU_SYNC;
-> @@ -1272,6 +1273,9 @@ static int __spi_map_msg(struct spi_controller *ctlr, struct spi_message *msg)
->  			}
->  		}
->  	}
-> +	/* No transfer has been mapped, bail out with success */
-> +	if (ret)
-> +		return 0;
->  
->  	ctlr->cur_rx_dma_dev = rx_dev;
->  	ctlr->cur_tx_dma_dev = tx_dev;
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.31-rc3.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Hi Andy,
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-thank you for the patch. Unfortunately it didn't completely solve the issue. Now
-the stack trace is slightly different and points at the next line:
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
-	dma_sync_sgtable_for_device(rx_dev, &xfer->rx_sg, DMA_FROM_DEVICE);
-
-So now we're hitting the case where only the tx buffer was DMA mapped, but the
-rx is still uninitialized, though the cur_msg_mapped flag is set to true, since
-it is shared between them. The original code checked for the initialization of
-each scatterlist individually, which is why it worked.
-
-Thanks,
-Nícolas
 
