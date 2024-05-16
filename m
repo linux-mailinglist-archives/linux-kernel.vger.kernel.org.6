@@ -1,110 +1,160 @@
-Return-Path: <linux-kernel+bounces-180737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 840888C7274
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:07:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6C768C7275
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:08:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 399A32821D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 08:07:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2562DB23092
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 08:08:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 133E51327FD;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECAED137778;
 	Thu, 16 May 2024 08:06:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Udmyx05N"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vco1HtXF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A124120A;
-	Thu, 16 May 2024 08:06:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AB4813443C
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 08:06:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715846798; cv=none; b=awuKunsgi9IbXNNXisFP5kpgAC5j+hVpzPMsAkK2bAftPLKdUCJ3fcWrZBSRa271qa1vAXBPkgpE0Tz5nP+cZxViRq4K7cYoKtDa2z1koM3jbS9dKrm116n3DfSlRhLGhyN67VNkg5HLHCP72ZUv14W4BFNZvBk8BnyvVKorzxw=
+	t=1715846799; cv=none; b=nETfXPLSkrjNH0Anfw1pqGa1y/HfZDVVJTqckaLpCGv7FvLWTqKdf5Q0q7jfKWfzGjZuJMCDQFfisMyzmyI08arKXI1rFjyX3YdPfDUJCZW9gt73Ympcvjj5GbgtJjqnfDUoFAwMMtIgRVWuWin2HhF684ZzS4Vpd2+9kDA3Kps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715846798; c=relaxed/simple;
-	bh=zmrYzsDBzvTZniaVCCeuBZSYiuTRObWwzzeoGzPyFQ4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=hGz6Dxsw7YoZHIC+TU9P4ptBEV84OEduB+HlpAWAPa1MEuYcNQlZCfewNa5ckCEuOww6ueazUK+SjXJXQ7hXAIA7BJeYtTIdpwIM2T7qzpFKq/WPxk0vdptJ7CIbcKImyAQItQDRlXtAMcWvhIa0fFw45NnzgL26gGruuw5gMD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Udmyx05N; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44G5QUrZ015678;
-	Thu, 16 May 2024 08:06:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=EvtDLPUioGQv95bvrfcXzbPUlQC83IW0glY8CjGmWTY=; b=Ud
-	myx05NrrKbkJFGLEzZzURHVvM6Fc1pOGQASRp18jJZsTeE/yAqBlMh6X8M/+Z245
-	Xs+4DaMRG4qQlJfmGR10l5grCiqJkeV6CJG9iz8ZOanBnC+KUDzCc56lTQPN1peF
-	oaefIaIGmNBj1yprowkCu1Z4oqMIsHa0e4iUg5qQR3sI5lXZloHLlo8lw4a05wGQ
-	8R+k3FStWUFjmr9ftzfxf9xmsc0pOObuilhd+FXTASc/Tw/OEPLHI+BFgv0uIo4C
-	017imQotTGS+cszipyrSCyVtGy2Xj9KHRStYPFeblo0OnLQ70r6Q+P1g01lMoWRc
-	l0guDuVSUwqOhBVa4B1A==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y5c05rbsp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 16 May 2024 08:06:21 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44G86LN9011028
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 16 May 2024 08:06:21 GMT
-Received: from [10.216.55.40] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 16 May
- 2024 01:06:17 -0700
-Message-ID: <20d7b8e9-ab72-6a4a-ea04-728cd289bf12@quicinc.com>
-Date: Thu, 16 May 2024 13:36:03 +0530
+	s=arc-20240116; t=1715846799; c=relaxed/simple;
+	bh=Cpes2UwySJ5Ss9+H0DDEAlFZX5mKWDHgKLb1yKMu3OI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JQg0e+NmB1XdSJtaOh8QPHQH0BUJXzxjf2OXwYtJmBwTQ2iScIWsVKsm4cbEnA66Zc7t696xfVrhDc6ahpYRgDCKcDDzeJsJQhunWNUK1bmxS278HinV3LvjWrmQkhR5kUF7VZgpJaC1t7eNpxNpqbj1vvjF7uabjlnCSEsw0lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vco1HtXF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61C0BC32781;
+	Thu, 16 May 2024 08:06:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715846798;
+	bh=Cpes2UwySJ5Ss9+H0DDEAlFZX5mKWDHgKLb1yKMu3OI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Vco1HtXF/lVJfAJo4GYPqv/q5dp57R2B9PypCmBdhq/n/3Hjebue4fGhBUEUb1m8o
+	 EInyD9fNStefU14k2Q3xO5GKF44UFEphHfSSAXqGp7SzkdtDybBhupHbbg9J+XHmz4
+	 AAGA0oHGuyV5ET5zZ59HFjz/gfmxAbWFhQHhuzZCaV4TjeLxjjtU+b05Eyg0QgkIrM
+	 iQOBy30ImeILZIL/HRvUdxZIKyC3a0+9d2fszXSdRUJwvQC1zuP00MxJcDxI6PBXa+
+	 hrkgdVbbJQ2E8uJJhAJb+HjZb8cfBeLqRpi42fN49u+OQPqjg029NZelaC2Hoq2SQJ
+	 Kgmq4h6LRsRzg==
+Message-ID: <c9c8b609-68b8-4f44-98eb-8d04e1a270fb@kernel.org>
+Date: Thu, 16 May 2024 16:06:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v2 00/34] Qualcomm video encoder and decoder driver
-To: Hyunjun Ko <zzoon@igalia.com>, <quic_dikshita@quicinc.com>
-CC: <agross@kernel.org>, <andersson@kernel.org>, <bryan.odonoghue@linaro.org>,
-        <konrad.dybcio@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <mchehab@kernel.org>, <quic_abhinavk@quicinc.com>,
-        <stanimir.k.varbanov@gmail.com>
-References: <1702899149-21321-1-git-send-email-quic_dikshita@quicinc.com>
- <20240516075732.105878-1-zzoon@igalia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] f2fs:modify the entering condition for
+ f2fs_migrate_blocks()
+To: Liao Yuanhong <liaoyuanhong@vivo.com>, Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: bo.wu@vivo.com, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org
+References: <20240515082433.24411-1-liaoyuanhong@vivo.com>
 Content-Language: en-US
-From: Vikash Garodia <quic_vgarodia@quicinc.com>
-In-Reply-To: <20240516075732.105878-1-zzoon@igalia.com>
-Content-Type: text/plain; charset="UTF-8"
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20240515082433.24411-1-liaoyuanhong@vivo.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: vg9UdyFDzi2gOuNGAtya5FVdAo57Ki2-
-X-Proofpoint-ORIG-GUID: vg9UdyFDzi2gOuNGAtya5FVdAo57Ki2-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-16_03,2024-05-15_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- malwarescore=0 mlxlogscore=759 mlxscore=0 suspectscore=0 adultscore=0
- spamscore=0 lowpriorityscore=0 bulkscore=0 phishscore=0 priorityscore=1501
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405010000 definitions=main-2405160056
+
+On 2024/5/15 16:24, Liao Yuanhong wrote:
+> Currently, when we allocating a swap file on zone UFS, this file will
+> created on conventional UFS. If the swap file size is not aligned with the
+> zone size, the last extent will enter f2fs_migrate_blocks(), resulting in
+> significant additional I/O overhead and prolonged lock occupancy. In most
+> cases, this is unnecessary, because on Conventional UFS, as long as the
+> start block of the swap file is aligned with zone, it is sequentially
+> aligned.To circumvent this issue, we have altered the conditions for
+> entering f2fs_migrate_blocks(). Now, if the start block of the last extent
+> is aligned with the start of zone, we avoids entering
+> f2fs_migrate_blocks().
 
 Hi,
 
-On 5/16/2024 1:27 PM, Hyunjun Ko wrote:
-> Hi,
-> 
-> Thanks for this series of patches. I successfully adjusted these patches and tried to test video features with gstreamer or ffmpeg.
-> But I found this provides staetful interfaces while I need stateless, which might cause an issue for my side..
-> 
-> My question is do you have any plan to implement stateless interfaces or already you have somewhere?
-There is no plan to implement stateless interfaces.
+Is it possible that we can pin swapfile, and fallocate on it aligned to
+zone size, then mkswap and swapon?
 
-Regards,
-Vikash
+Thanks,
+
+> 
+> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
+> Signed-off-by: Wu Bo <bo.wu@vivo.com>
+> ---
+>   fs/f2fs/data.c | 23 +++++++++++++++++++++--
+>   1 file changed, 21 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 50ceb25b3..4d58fb6c2 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -3925,10 +3925,12 @@ static int check_swap_activate(struct swap_info_struct *sis,
+>          block_t pblock;
+>          block_t lowest_pblock = -1;
+>          block_t highest_pblock = 0;
+> +       block_t blk_start;
+>          int nr_extents = 0;
+>          unsigned int nr_pblocks;
+>          unsigned int blks_per_sec = BLKS_PER_SEC(sbi);
+>          unsigned int not_aligned = 0;
+> +       unsigned int cur_sec;
+>          int ret = 0;
+> 
+>          /*
+> @@ -3965,23 +3967,39 @@ static int check_swap_activate(struct swap_info_struct *sis,
+>                  pblock = map.m_pblk;
+>                  nr_pblocks = map.m_len;
+> 
+> -               if ((pblock - SM_I(sbi)->main_blkaddr) % blks_per_sec ||
+> +               blk_start = pblock - SM_I(sbi)->main_blkaddr;
+> +
+> +               if (blk_start % blks_per_sec ||
+>                                  nr_pblocks % blks_per_sec ||
+>                                  !f2fs_valid_pinned_area(sbi, pblock)) {
+>                          bool last_extent = false;
+> 
+>                          not_aligned++;
+> 
+> +                       cur_sec = (blk_start + nr_pblocks) / BLKS_PER_SEC(sbi);
+>                          nr_pblocks = roundup(nr_pblocks, blks_per_sec);
+> -                       if (cur_lblock + nr_pblocks > sis->max)
+> +                       if (cur_lblock + nr_pblocks > sis->max) {
+>                                  nr_pblocks -= blks_per_sec;
+> 
+> +                               /* the start address is aligned to section */
+> +                               if (!(blk_start % blks_per_sec))
+> +                                       last_extent = true;
+> +                       }
+> +
+>                          /* this extent is last one */
+>                          if (!nr_pblocks) {
+>                                  nr_pblocks = last_lblock - cur_lblock;
+>                                  last_extent = true;
+>                          }
+> 
+> +                       /*
+> +                        * the last extent which located on conventional UFS doesn't
+> +                        * need migrate
+> +                        */
+> +                       if (last_extent && f2fs_sb_has_blkzoned(sbi) &&
+> +                               cur_sec < GET_SEC_FROM_SEG(sbi, first_zoned_segno(sbi)))
+> +                               goto next;
+> +
+>                          ret = f2fs_migrate_blocks(inode, cur_lblock,
+>                                                          nr_pblocks);
+>                          if (ret) {
+> @@ -3994,6 +4012,7 @@ static int check_swap_activate(struct swap_info_struct *sis,
+>                                  goto retry;
+>                  }
+> 
+> +next:
+>                  if (cur_lblock + nr_pblocks >= sis->max)
+>                          nr_pblocks = sis->max - cur_lblock;
+> 
+> --
+> 2.25.1
+> 
 
