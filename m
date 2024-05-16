@@ -1,114 +1,116 @@
-Return-Path: <linux-kernel+bounces-180934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 583028C751F
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 13:21:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 952088C7527
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 13:24:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEBA61F23363
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 11:21:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C600C1C221C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 11:23:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5533E1459EE;
-	Thu, 16 May 2024 11:21:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24ADC1459F1;
+	Thu, 16 May 2024 11:23:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Gue0RRZr"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="LmVHVuQv";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="rOBMwhYf"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E472A143896;
-	Thu, 16 May 2024 11:21:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1447F143747;
+	Thu, 16 May 2024 11:23:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715858470; cv=none; b=LmaeBB4g2nPr3SOmotoEKZs2rMYb5iheB3sdvSjIfkbCMJiZrgeFkq8nz66dEFLXiuMFrnsCOoIOwR5wplh8mZR2RXNbGoSdWdBs0cDSBhLd19knZqVaSIM+3oQc340g+od353X32JP5eZCt1MmFwrqo0x1s1d/1pj7HUYqCAk8=
+	t=1715858634; cv=none; b=qpRlsyEFqOgztpnBr+wQVXIHLaJjzwyWXMIf5u8JRAyCyCSbOGCPHTdz1VxOiiwVhHSIT+U205OJC5hoWNLiQZMf7oVf0w1qQ3Wu/aj0rLLWzgR5BBCx9XPU0hgDgrR4Sg89T3rw3RWuEU1TZ5qdkYTPA8uCl/iXDHje0yeALVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715858470; c=relaxed/simple;
-	bh=zOS8dze4DHU+JcfmWuNExW36s1PrTMzSDeM83PQTAEo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HNrgAhmVy5LpFHJm3jBCiZS3hwFJxtxiZXGglSonkkJjyEOhurO8/tpdpl1X1j90g5l0W3uYs34qPafqiCPD+rbLv/Dcr/50OPLg+E1Hp/6m9xygp+iVXvauXGtExvYm4OGb6JxvXXRC87b0QYfgD8BMiPFdx+4b/lR152qls8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Gue0RRZr; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1BD7527C;
-	Thu, 16 May 2024 13:20:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1715858455;
-	bh=zOS8dze4DHU+JcfmWuNExW36s1PrTMzSDeM83PQTAEo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Gue0RRZrMUUTfv1S3jH6uD0PSmsbRLpG4yyPFWD3DIXNYU2EguRKev+56NuegTm6N
-	 7ZTaGR+m0g0q+G5H+3/QBGhDxR7exhKyoV/ZrIrTylqf4XM1NMkHON/NdkeJRgfJiW
-	 0ZOaHcJADgAdNCuAb8yDlbYShhfeAjl4z9UNm9Gg=
-Date: Thu, 16 May 2024 14:20:55 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Simon Ser <contact@emersion.fr>
-Cc: Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-	Maxime Ripard <mripard@redhat.com>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Brian Starkey <Brian.Starkey@arm.com>,
-	John Stultz <jstultz@google.com>,
-	"T.J. Mercier" <tjmercier@google.com>,
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
-	Lennart Poettering <mzxreary@0pointer.de>,
-	Robert Mader <robert.mader@collabora.com>,
-	Sebastien Bacher <sebastien.bacher@canonical.com>,
-	Linux Media Mailing List <linux-media@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	linaro-mm-sig@lists.linaro.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Milan Zamazal <mzamazal@redhat.com>,
-	Andrey Konovalov <andrey.konovalov.ynk@gmail.com>
-Subject: Re: Safety of opening up /dev/dma_heap/* to physically present users
- (udev uaccess tag) ?
-Message-ID: <20240516112055.GB5253@pendragon.ideasonboard.com>
-References: <3c0c7e7e-1530-411b-b7a4-9f13e0ff1f9e@redhat.com>
- <Zjpmu_Xj6BPdkDPa@phenom.ffwll.local>
- <20240507183613.GB20390@pendragon.ideasonboard.com>
- <4f59a9d78662831123cc7e560218fa422e1c5eca.camel@collabora.com>
- <Zjs5eM-rRoh6WYYu@phenom.ffwll.local>
- <20240513-heretic-didactic-newt-1d6daf@penduick>
- <20240513083417.GA18630@pendragon.ideasonboard.com>
- <c4db22ad94696ed22282bf8dad15088d94ade5d6.camel@collabora.com>
- <20240514204223.GN32013@pendragon.ideasonboard.com>
- <ttHZ6_mxyApQbVuEg7V20i3gCZ0nCr26aymroG2zxHv3CMRAA6RqZsUxNY3eBiYjycfb1r1WQdyMTwJO_I38FsJQMHA_Zdiqbbjs_YJWKr8=@emersion.fr>
+	s=arc-20240116; t=1715858634; c=relaxed/simple;
+	bh=/gj7iIwcvKFWR02PQfrKrZc+tVj5Yu6eNlj7UaW4tMQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iYG0pWjbWcrUkbzOt4oQFp16djUElzJKY3LorzyHHPZqvK2aCOu9MqhfwI9qP4rOPnkpDKSZFxkseJXPwcYcM1bAWusfHTZQC0VSz0iq5MIUhdWaVkjZZNSf7oih7spA8JSgd9nzW3EvCqOAgn2pABsP2ys9wYifNWi48bIx90M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=LmVHVuQv; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=rOBMwhYf reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1715858629; x=1747394629;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=3PaondP2vCY+Il27mm6X+8OdOJ6oWIlMkkq/jKHGv2w=;
+  b=LmVHVuQvjZyFHwBqhDBV/yW9EOM04I98cP4WAjpdW66qJIwVnArCGiQe
+   fxubUkizMov1T+5bE/MfhnslTwnh2ayOwvYQBT0E+ve5mWems4Zkhz7/F
+   K/JYupboUx07wSRBTHcaU1pRP74k4TJatXtEQcLyGCPPvptC8pUKBKBUE
+   6WtBhtHNShFScE+j2s0zpn+7ZO0xtxx+EVGOOtsTPjKSog8pUXnmUF1ZE
+   ggDIgkTRuD8zTepibkTwFgM6ujI+fYk6QvxSmJg18U1HpAryd5xOQmvk1
+   DeqhZjeCKizA0Synho0e8iCPxLyHFYeQ2DcG+ARt0QHjZIxyKbB2JCXHu
+   Q==;
+X-CSE-ConnectionGUID: zZZTLLukTNSm1kpKsSkEmg==
+X-CSE-MsgGUID: mGnkgi9aSVyBwKK5iJZKqw==
+X-IronPort-AV: E=Sophos;i="6.08,164,1712613600"; 
+   d="scan'208";a="36936022"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 16 May 2024 13:23:46 +0200
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 82FCE173BE2;
+	Thu, 16 May 2024 13:23:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1715858622; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=3PaondP2vCY+Il27mm6X+8OdOJ6oWIlMkkq/jKHGv2w=;
+	b=rOBMwhYfi9zcrF/Ns7syh3UduzyJT9xhsYYXTIwo70uSQeLWGuhJdWmtrYszXSqqui1pDF
+	ZMqSJUUnQhPX7hdcQjZhjXriw1MAbKp6nDEauSY6ehYS12emkSAoWvBGjYXOHgYqyKFbq9
+	cq7/8Ofk7LpDrQRJiMSRTYNfu0Y1Qlp6z7vwkCpwZA9sceyYRyO/eYAISKKvbTVxUXtI/5
+	Z1QfEMsePoPFWwzTz76VNnjfMOA6KbEoI2TLFSZU+ovaX5UVoCIOuFn+ojbocxiSLeVsKe
+	VVvAgeTVXruVGtffCQL6GEk2H7RxXAVbn0OCTA8hO05Up/HSU1QnYIEQVQpkWg==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
+	linux@ew.tq-group.com,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/1] arm64: dts: imx8mp-tqma8mpql-mba8mpxl: Remove unused ocram node
+Date: Thu, 16 May 2024 13:23:43 +0200
+Message-Id: <20240516112344.200166-1-alexander.stein@ew.tq-group.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ttHZ6_mxyApQbVuEg7V20i3gCZ0nCr26aymroG2zxHv3CMRAA6RqZsUxNY3eBiYjycfb1r1WQdyMTwJO_I38FsJQMHA_Zdiqbbjs_YJWKr8=@emersion.fr>
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Thu, May 16, 2024 at 07:00:31AM +0000, Simon Ser wrote:
-> On Tuesday, May 14th, 2024 at 22:42, Laurent Pinchart wrote:
-> 
-> > My experience on Arm platforms is that the KMS drivers offer allocation
-> > for scanout buffers, not render buffers, and mostly using the dumb
-> > allocator API. If the KMS device can scan out YUV natively, YUV buffer
-> > allocation should be supported. Am I missing something here ?
-> 
-> Note that dumb buffers are only intended for simple software-rendering
-> use-cases. Anything more complicated (e.g. involving GPU rendering)
-> should use another mechanism.
+This node is unused and origins from downstream kernel where it is
+used for the DSP.
 
-Sure. Even if dumb buffers may work for GPU rendering in some cases,
-there's no guarantee they will, so they shouldn't be used.
+Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+---
+ arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mpxl.dts | 5 -----
+ 1 file changed, 5 deletions(-)
 
-My comment was related to scanout buffers, as I was puzzled by Nicolas
-mentioning how "KMS drivers only offer allocation for render buffers".
-On Arm platforms the render buffers are allocated on the GPU's DRM
-device as far as I understand, while the KMS drivers allocate scanout
-buffers using the dumb buffers API.
-
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mpxl.dts b/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mpxl.dts
+index c51ed7d991d18..ae64731266f35 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mpxl.dts
++++ b/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mpxl.dts
+@@ -222,11 +222,6 @@ reserved-memory {
+ 		#size-cells = <2>;
+ 		ranges;
+ 
+-		ocram: ocram@900000 {
+-			no-map;
+-			reg = <0 0x900000 0 0x70000>;
+-		};
+-
+ 		/* global autoconfigured region for contiguous allocations */
+ 		linux,cma {
+ 			compatible = "shared-dma-pool";
 -- 
-Regards,
+2.34.1
 
-Laurent Pinchart
 
