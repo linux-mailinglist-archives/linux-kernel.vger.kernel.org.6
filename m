@@ -1,155 +1,162 @@
-Return-Path: <linux-kernel+bounces-181598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 247CB8C7E1D
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 23:47:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41F218C7E20
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 23:52:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6B2A1F22269
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 21:47:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DABA2282C8C
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 21:52:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB1B715821F;
-	Thu, 16 May 2024 21:47:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38E30158216;
+	Thu, 16 May 2024 21:52:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="cNi+44bU"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="g28s2P68"
+Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0267156F2A
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 21:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2D4B156F2A;
+	Thu, 16 May 2024 21:52:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715896067; cv=none; b=bK8Fsd4qNA3nVrmH+KUvkhE1VHzYsWFrsSV3C+Wzb6+dZ2JQ0cq16JAPQm4mMXisHO4wSdt3L4GgxFqLF5e7UWcDCY2PPeL6Typi6iJ0sVNSMUxpsin3E0UdAsn7iz6IGFqqTBTxUs77mNuHiBtNDY5CR6mI/nQl/FsqdrmiD7E=
+	t=1715896326; cv=none; b=RpRbn9OVLM12wEvx+q86CAKucJOaIqKN1keO+ZUE5bW17T5fkfyoRzU2Kfhz0y20xAgjbgxwh453F1Nz4+WzK5/+YZHhivZ7Azq2+Os2E3pvQBcz4BAbbnE7AVdEeP+patpeRFBHC7oNiyyTeYZZQQH0u/luMnJTA3IzZIxQg2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715896067; c=relaxed/simple;
-	bh=Ik3s0QLEXOEOiIZxz0puFyUkL4LHRBNiHbWr/YLRhRY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=NCXCbgHD/U7rOW6SEj+9+pXfvvue2O0W33YL+OOVCkhUDu4EVXa0qcW3gcqcSD1/YPuLNzPP0UHOJFu+aMNCLkbTGoXCVQZ55ojMTDZk0g+ZNPKb9SCXWg7lH9w02WXQl7kulnG/xyDnR+Dn8PS+tjx1dTgM3uBkv8uT3iXRwaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cNi+44bU; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-43df9ac3ebcso12661cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 14:47:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715896065; x=1716500865; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=J+LTJasaamsJYF6JqhtXSMHdgg8g7mtflmrbwlVkiUs=;
-        b=cNi+44bU6T5Ut5O4/zLtmHuA37wYQRHWmrgMLPuNSZypiQJurkeS2mtHbqWmfxIyii
-         +ZSC0iI00P2wmsZK44bdkkyfcYbJakFu+j0G5Qa5Tiqmiw43Qm9S/Hvd40/BU/8HvHM+
-         jlNQWAsky05s0qYKHbqVJn/5jQHPQHQMT/KJopLYj0WymbmkHdFZuivxGjJyx2ZdUopJ
-         mM5IDM63KvqCVMEO+KQBw+ijqkJJYuf/x1InLtVJsCZUZ2lWUPDhQ3Lti3zZR+l+1Qxj
-         WcsqeM0Wt6rDnVb8w6Ho4E90hGQcmE7qnxNAbcDwPI+iXislGNSqqyNz7n4eNCt7h8N0
-         ZD6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715896065; x=1716500865;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=J+LTJasaamsJYF6JqhtXSMHdgg8g7mtflmrbwlVkiUs=;
-        b=f8v7ZfT4i38zlDhaeHyqfBwsPE5KsncY6F7i9HZ04X1ViWWZZg33EcuJfEkp7su9hH
-         ksS+YjfAF0lDgFp5QvkYZlOC37+Nvldfak4le2w2qJdyRkI3jvJOIT8dDW+nUemOZXE1
-         UMJLsvehtBVy4hhP4OvVAmOozKdziRjrJKuGeBj8LNMkIOiBa45pEb6h36g4xiGq1dcs
-         ayD2hyVoW2v0Kr+sEaaFMhEUsEmyMuL+zjLeI9g3D0imYrKb0/mqpTeN+MGy/EQfaw1W
-         Ln9Hsqu4Zni5rYGb5AWpaSSlJ2j0tT05vJQP5uCZHcQE89sos08RnyPyveYtfKSMhebT
-         F+Tw==
-X-Forwarded-Encrypted: i=1; AJvYcCX3lwr1JtluIzUurYnlyLo78Ph/q75B0Qrc2XifOu7E4uixktSdqm2sx37zHzsZ7TuWB3cW58UisGWHbHsfj0aBSK6y/1JqD3eXX1nV
-X-Gm-Message-State: AOJu0YxXNlZP8f701oyssFaUoEXXsRCqRakcy2gjqNkUjcfgrfoJQL/h
-	t9y8/muV6X8S9PruRPTsQsAbUl4qMdMci5wADrapQhzlp7b7foD5s1B/XOO+MWZ0YaS3JCDxYp7
-	Mf84oO9/5xTGIsrjVbOnhxnOytRfA+pWnCIF4
-X-Google-Smtp-Source: AGHT+IEpoh5SflmwhsKZRGb3uWj2PRx5Ka0tqoJkAt6PPLPWsRA8EGE0KrjbIGmbq+C71K3g+J62d+JbvN7hamNw4tg=
-X-Received: by 2002:a05:622a:7e4e:b0:43e:473e:fcf7 with SMTP id
- d75a77b69052e-43e473efd46mr122311cf.6.1715896064428; Thu, 16 May 2024
- 14:47:44 -0700 (PDT)
+	s=arc-20240116; t=1715896326; c=relaxed/simple;
+	bh=AJ+oje2i3UVqPU/z/dt3ZEHV3byJ0YBoiG6SDi/9wvY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Rh+Aa4HALpPrPxcjKYV7KmtNL/edyV4Ql7VhQYYnbmQYnYN2jJd/HIC3EcDT2vMBG4Ukq2Gv3J8MzU+bMePzDdan7sqI4Hhl3WWyHgyZQ8EPOgIxsgQtDCmh592sVqHwhiPlg2bOsDWAldE1OhakHQD+UsaKddKZJAKtN356V5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=g28s2P68; arc=none smtp.client-ip=199.89.1.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 008.lax.mailroute.net (Postfix) with ESMTP id 4VgP2C1Wb3z6Cnk8t;
+	Thu, 16 May 2024 21:52:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1715896318; x=1718488319; bh=Bj5eq4OL55W+rSK34Om4WapA
+	HrhBgkSRR4zqYMOa1zs=; b=g28s2P68w6nddG6TXyHYAcas2m9OfthI/sezG3gI
+	V98hD0ogSxI6tDZ86MfOBqf/FrGTEEGxlGpDUbJmfclilROt/u2QQIdfGJaIxKST
+	vWLUTLHwlVPtmA5twqSrt+1VkOpEWJ4hmTwF4cw6mux7HENLEmg0bAZQrXnY3fML
+	2Gaw6XNWclnKAJSZz7Etw8pi8+DE0C/WYVpaci+7cBBi1RAnMu6aQSDnVwz8JFct
+	xiJG2dfN8fpYauv4lT6IjMyf2hcHakxNkHSh/y1Xj5PGah0FnV+U5zkb9ehKtH8F
+	xgbVXlvuVYo28ZxCaZ1I8KmzoDtCjHgeUZO9InPLznuciA==
+X-Virus-Scanned: by MailRoute
+Received: from 008.lax.mailroute.net ([127.0.0.1])
+ by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id 0YZ5q-mvcmGY; Thu, 16 May 2024 21:51:58 +0000 (UTC)
+Received: from [192.168.51.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4VgP242XHVz6Cnk8s;
+	Thu, 16 May 2024 21:51:55 +0000 (UTC)
+Message-ID: <4a5cf233-a4e6-48ce-b9ba-f1014f452892@acm.org>
+Date: Thu, 16 May 2024 15:51:54 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240516041948.3546553-1-irogers@google.com> <CAP-5=fW8TA0KQOepQRuC_0mhyp6kHbPodh+6-uoVxsmC=09tTw@mail.gmail.com>
-In-Reply-To: <CAP-5=fW8TA0KQOepQRuC_0mhyp6kHbPodh+6-uoVxsmC=09tTw@mail.gmail.com>
-From: Ian Rogers <irogers@google.com>
-Date: Thu, 16 May 2024 14:47:32 -0700
-Message-ID: <CAP-5=fVzxAMrFFC9bsgUV73WLcywYgNW_1A+x47-N68FaBFrKA@mail.gmail.com>
-Subject: Re: [PATCH v1 0/3] Use BPF filters for a "perf top -u" workaround
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, Changbin Du <changbin.du@huawei.com>, 
-	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -mm] nilfs2: Use __field_struct() for a bitwise field
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-nilfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ Steven Rostedt <rostedt@goodmis.org>,
+ Ryusuke Konishi <konishi.ryusuke@gmail.com>
+References: <20240507142454.3344-1-konishi.ryusuke@gmail.com>
+ <CAHk-=wgogPoSdCYw9jhc2Zm=BaE19nXYwFn_F9SwD2C-DyrmCw@mail.gmail.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <CAHk-=wgogPoSdCYw9jhc2Zm=BaE19nXYwFn_F9SwD2C-DyrmCw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, May 15, 2024 at 10:04=E2=80=AFPM Ian Rogers <irogers@google.com> wr=
-ote:
->
-> On Wed, May 15, 2024 at 9:20=E2=80=AFPM Ian Rogers <irogers@google.com> w=
-rote:
-> >
-> > Allow uid and gid to be terms in BPF filters by first breaking the
-> > connection between filter terms and PERF_SAMPLE_xx values. Calculate
-> > the uid and gid using the bpf_get_current_uid_gid helper, rather than
-> > from a value in the sample. Allow filters to be passed to perf top, thi=
-s allows:
-> >
-> > $ perf top -e cycles:P --filter "uid =3D=3D $(id -u)"
-> >
-> > to work as a "perf top -u" workaround, as "perf top -u" usually fails
-> > due to processes/threads terminating between the /proc scan and the
-> > perf_event_open.
->
-> Fwiw, something I noticed playing around with this (my workload was
-> `perf test -w noploop 100000` as different users) is that old samples
-> appeared to linger around making terminated processes still appear in
-> the top list. My guess is that there aren't other samples showing up
-> and pushing the old sample events out of the ring buffers due to the
-> filter. This can look quite odd and I don't know if we have a way to
-> improve upon it, flush the ring buffers, histograms, etc. It appears
-> to be a latent `perf top` issue that you could encounter on other low
-> frequency events, but I thought I'd mention it anyway.
+On 5/7/24 10:25, Linus Torvalds wrote:
+> On Tue, 7 May 2024 at 07:25, Ryusuke Konishi <konishi.ryusuke@gmail.com> wrote:
+>>
+>>     Despite that change, sparse complains when
+>> passing a bitwise type to is_signed_type(). It is not clear to me why.
+> 
+> Bah. The reason is this:
+> 
+>     #define is_signed_type(type) (((type)(-1)) < (__force type)1)
+> 
+> Basically, the way "is_signed_type()" works is that it casts a
+> negative integer to the type, and checks to see if the value has now
+> become a large value.
+> 
+> Now, it looks odd, because only one of those casts has a "__force" on
+> it, but the reason for that is that casting all-ones and all-zeroes is
+> ok for bitwise types (think of bitwise types as being a "collection of
+> bits" - so all bits set or all bits clear are sane concepts regardless
+> of any other semantics).
+> 
+> So it's not the casts themselves that are problematic: that part works fine.
+> 
+> But you cannot compare a random collection of bits for greater than or
+> lesser than.
+> 
+> Think of things like byte orders: you can compare two values for
+> _equality_ even if they are in the wrong byte order, but you can't
+> compare them for "larger than" unless you turn them into the right CPU
+> byte order.
+> 
+> Basically, a "collection of bits" doesn't have an ordering in itself,
+> even if equality comparisons are ok.
+> 
+> So yeah, is_signed_type() doesn't work for bitwise types.
+> 
+> And I don't see a sane way to make "is_signed_type()" to work for
+> bitwise types - the whole concept of signedness of "bunch of bits" is
+> kind of nonsensical - so I suspect your workaround is the best we can
+> do (alternatively, tracing would have to figure out a different way to
+> test for signedness).
 
-Oh, this is expected "perf top" behavior and "-z" fixes it:
-```
-$ man perf-top
-..
-       -z, --zero
-          Zero history across display updates.
-...
-```
-Why isn't "-z" the default? It would more naturally align with the
-behavior of "top". I'll send a patch.
+(replying to an email from ten days ago)
+
+Thanks Linus for the detailed analysis. I tried the patch below but
+unfortunately it is not sufficient to suppress sparse warnings about
+bitwise types (all enum req_op values have the type __bitwise __u32):
+
+diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+index 8c252e073bd8..940563438b87 100644
+--- a/include/linux/compiler.h
++++ b/include/linux/compiler.h
+@@ -287,7 +287,14 @@ static inline void *offset_to_ptr(const int *off)
+   * Whether 'type' is a signed type or an unsigned type. Supports 
+scalar types,
+   * bool and also pointer types.
+   */
+-#define is_signed_type(type) (((type)(-1)) < (__force type)1)
++#define is_signed_type(type)            \
++	(_Generic((__force type)1,      \
++		 unsigned char: 0,      \
++		 unsigned short: 0,     \
++		 unsigned int: 0,       \
++		 unsigned long: 0,      \
++		 unsigned long long: 0, \
++		 default: ((type)(-1)) < (type)1))
+  #define is_unsigned_type(type) (!is_signed_type(type))
+
+  /*
+
+It seems like sparse verifies the types of all expressions in a
+_Generic() argument list instead of only the expression for which the
+type matches. Could this indicate a bug in sparse? On
+https://en.cppreference.com/w/c/language/generic I found the
+following (I'm not sure whether that website is a good reference):
+
+"The controlling-expression and the expressions of the selections that 
+are not chosen are never evaluated."
 
 Thanks,
-Ian
 
-> Thanks,
-> Ian
->
-> > Ian Rogers (3):
-> >   perf bpf filter: Give terms their own enum
-> >   perf bpf filter: Add uid and gid terms
-> >   perf top: Allow filters on events
-> >
-> >  tools/perf/Documentation/perf-record.txt     |  2 +-
-> >  tools/perf/Documentation/perf-top.txt        |  4 ++
-> >  tools/perf/builtin-top.c                     |  9 +++
-> >  tools/perf/util/bpf-filter.c                 | 55 ++++++++++++----
-> >  tools/perf/util/bpf-filter.h                 |  5 +-
-> >  tools/perf/util/bpf-filter.l                 | 66 +++++++++----------
-> >  tools/perf/util/bpf-filter.y                 |  7 +-
-> >  tools/perf/util/bpf_skel/sample-filter.h     | 27 +++++++-
-> >  tools/perf/util/bpf_skel/sample_filter.bpf.c | 67 +++++++++++++++-----
-> >  9 files changed, 172 insertions(+), 70 deletions(-)
-> >
-> > --
-> > 2.45.0.rc1.225.g2a3ae87e7f-goog
-> >
+Bart.
 
