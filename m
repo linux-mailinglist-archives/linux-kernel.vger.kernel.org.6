@@ -1,141 +1,126 @@
-Return-Path: <linux-kernel+bounces-181164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC9148C7859
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:17:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 988378C785D
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:18:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78B3CB2284C
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:17:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 397B41F22697
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:18:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1EB714A4E5;
-	Thu, 16 May 2024 14:17:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6FFB149E00;
+	Thu, 16 May 2024 14:18:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kjfc0Ikh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eDYC4GvO"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEBEF14A4E1;
-	Thu, 16 May 2024 14:17:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEBE31474C6
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 14:18:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715869064; cv=none; b=JOurS6o+en6O0xuj6KJcjtOFc4/tIJYUUtnx0rmoDmtfR+blWDxURUjDmLDFcLLi66ofA0GVewkLOULKbFHe+5Uckd16YOHXfgvXTOX52bH+99QVYhCSBk6JOE7DRKNPze9SRrhSjhZMtkyku928SxvnsIk8vFg/9scV325ZO9c=
+	t=1715869118; cv=none; b=Iv4W7MHo6tnPTb7n58AX+C5kv8Ux4+ZCb6/ayN7WLlFm+Qid0WiGsiF72CwcRpT7we6QtNab1ZFm8T2LpI1PDqCjHSTS7daSGlUUPUA/ar+mHLT9nq0KlOrbtYOV66cH5NvFEN6cKYlcml4EgD1Xhqjxs6v13zHJI5RzSNXbyA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715869064; c=relaxed/simple;
-	bh=xMv7XT50PYQKLPovqBhh7bmTIxuh18H6PUJ2EPoy6u8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=MyHtm/fjn4JoMqEnA8JfFvz2CI25o0KwqTWEnjYbmxPSXII0ohS/WLwryraXiyHK5WIQWDqxPGpsbJsrDouF++zYoO1Jz8UnmztUlMly5KIXSeymhwr7H7YIggR88zlufGp3Yg8X0GdnGP4OT2xgGXA/v8dJsYKxjN8oJ+QWKO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kjfc0Ikh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC60AC113CC;
-	Thu, 16 May 2024 14:17:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715869064;
-	bh=xMv7XT50PYQKLPovqBhh7bmTIxuh18H6PUJ2EPoy6u8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=Kjfc0IkhMHVHFnfxmOd2jro4rjH+gKB/gy2doI4HcBeGt0EUDniqlL0+B53yKUoQS
-	 iP+x9qB/rqsFwNPjy7TzFDVo76JhA0/2ZRrm9vUfIS62+zCbpgTgJU5Hv9Y8r1+8SF
-	 hMv2Xuiq0DLYIt+NlHbvelhpnSVzvSzuk5Wr5ElZIvtR6SYooK01prdKH8hrTgXlYp
-	 YbDSH/wZFUIQFEQgIdHApYFg+KXkyPku6hzF2pg4s9SfO1ECfIGq9KG5n2B/LdoGut
-	 93R9egqzEpqLQRkDWP68NHSc0SD4jSZnGAtGR+Gdg+wDcikonmxoUujdlKCpwQKdQz
-	 4LzP4wGNeksJg==
-Date: Thu, 16 May 2024 09:17:42 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Siddharth Vadapalli <s-vadapalli@ti.com>
-Cc: lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
-	bhelgaas@google.com, manivannan.sadhasivam@linaro.org,
-	fancer.lancer@gmail.com, u.kleine-koenig@pengutronix.de,
-	cassel@kernel.org, dlemoal@kernel.org,
-	yoshihiro.shimoda.uh@renesas.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	srk@ti.com
-Subject: Re: [PATCH v7 2/2] PCI: keystone: Fix pci_ops for AM654x SoC
-Message-ID: <20240516141742.GA2204499@bhelgaas>
+	s=arc-20240116; t=1715869118; c=relaxed/simple;
+	bh=JPrbuvzJmP549EXMhSurniQz/CR0BpLb88/Sk6ORJvQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Uk5+qT6rb9fmHS7qoAW/x3lIIBPAP3iJ+rsxlXygUg0bkkfn1U7YnvIW2Z76XxWcnklcJMJ3JIPJezvCAXU/VJbauquWrZjR1Aht+nVffA2Mto2RMrrzixPAkKs7pvW9av46hCHbjWgZ6Q8S+NLvFAvd2zwKK8IXx7RfPaAtVaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eDYC4GvO; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-656d8b346d2so204750a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 07:18:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715869116; x=1716473916; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MFqFvB9X9x/SOQWaJl/MFlMCgaLN3M7Ecw56sYSywTw=;
+        b=eDYC4GvOSb9YuLB4Z5nN4BJ7+IUaj+6OS6+6t4uNaiGkzOueMqLcAuWdCO48w/iAe/
+         QXLhXCl+TQgbGEM6S+XnRSXP4AJrthn2+/d9nI80H2bCO8QgiFZ3eIsePS/1D+JliQah
+         qnlcLnukQ/aIUo+s3CuIQ6IGbSyN1pV+rxel9TnOBJLpOqZVg9bQNZoy/Quxyrp8nm6t
+         GULM3haInyWMyPJUPUNukevZVVAOHI0Xv7oLN+zWlPPMgvrLBxJN2UNSjq9ec7H2NAex
+         wSuVwGXJLJL33orB090eETjPeu5eX722jtCXS6uW6tcoBTpmRM69k7Zo/IfMscgHECuz
+         ThLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715869116; x=1716473916;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MFqFvB9X9x/SOQWaJl/MFlMCgaLN3M7Ecw56sYSywTw=;
+        b=GDZfDYzbTWtE6HgZEd37SAVe0Ny0Xa8LY7JDaUmxQQ5E6getRJyBYTRK4dbUBYnUb6
+         sUkJChroMOgzwqNeMU85ygvAUZJLC+HEWUHRihPJLU+GeZBPtMVj6zJ1fmgKl5SIqict
+         lRht/7fRgGIl3MldgJd72ORdhET9sXwuN8sQxAs0SCFN3H3gfM4kdZUfZlZ7A7LDlD0v
+         iffhlxKKC1w7MIoASj9EMjXpfQRZQYkm5Tnr+1a7aRHbQ7S+MNeHhwUdHqK6tL1zsVr9
+         2lWwqQylXTlpaD6g0eL5lrqMX9ooeTSBJtNIGt7zPWKDmjYowUgvL6For06Q8mL2q1wK
+         Q+fg==
+X-Forwarded-Encrypted: i=1; AJvYcCVS3w7g5nEBe5vaKwDCKuyG8PkhH9tF2osMM5Ug85bPTJKZVKP3As39BFPVuegpEq7OkM3NUyV1BP3/vaixA4QHsdMNMQl9PHqgnXMO
+X-Gm-Message-State: AOJu0YxNBQZ2G2pb/TB5mX/9YFC4qvzlxZ8lt9+HeQaKDFJwbu49OED7
+	XPjYOrdL4LPHAZL2twK816nqqEoEDitkRdiZQddj2X7erzEuHSQEIVzG/VwtxTQr0wMde/3Iu4F
+	Ue3YHSnradKoREh5YtZ92T2Q27EE=
+X-Google-Smtp-Source: AGHT+IF7rqtlefoJskjfOVgRm5ttPIIXk/Hr85QpfbCuEVZDyoCo4P3ZYjyXFT1cO5o/oo/mwamP+cL6UUb1NwbjAVs=
+X-Received: by 2002:a17:90b:b0f:b0:2b2:7c42:bcd7 with SMTP id
+ 98e67ed59e1d1-2b6cc97c729mr17131456a91.21.1715869116108; Thu, 16 May 2024
+ 07:18:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ee5f54a8-c19f-4a56-9a9b-f8aeebf475d0@ti.com>
+References: <20240515192009.14362-1-kendallsm2@icloud.com>
+In-Reply-To: <20240515192009.14362-1-kendallsm2@icloud.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Thu, 16 May 2024 10:18:24 -0400
+Message-ID: <CADnq5_Mb1fDJ=Z8Knnyj5B1YRN+ni1_mmje+==-C9ytmX0Z1uQ@mail.gmail.com>
+Subject: Re: [PATCH] drm/radeon: initialize atom DIG backlight for iMac12, 1
+ and iMac12, 2 with Radeon 6750M
+To: Kendall Smith <kendallsm2@icloud.com>
+Cc: amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 16, 2024 at 11:07:27AM +0530, Siddharth Vadapalli wrote:
-> On Wed, May 15, 2024 at 02:26:14PM -0500, Bjorn Helgaas wrote:
-> > On Tue, May 14, 2024 at 04:14:54PM -0500, Bjorn Helgaas wrote:
-> > > On Tue, May 14, 2024 at 05:41:48PM +0530, Siddharth Vadapalli wrote:
-> > > > On Mon, May 13, 2024 at 04:53:50PM -0500, Bjorn Helgaas wrote:
-> > > ...
-> > 
-> > > > > I'm not quite clear on the mechanism, but it would be helpful to at
-> > > > > least know what's wrong and on what platform.  E.g., currently v4.90
-> > > > > suffers Completion Timeouts and 45 second boot delays?  And this patch
-> > > > > fixes that?
-> > > > 
-> > > > Yes, the Completion Timeouts cause the 45 second boot delays and this
-> > > > patch fixes that.
-> > > 
-> > > And this problem happens on AM654x/v4.90a, right?  I really want the
-> > > commit log to say what platform is affected!
-> > > 
-> > > Maybe something like this?
-> > > 
-> > >   PCI: keystone: Enable BAR 0 only for v3.65a
-> > > 
-> > >   The BAR 0 initialization done by ks_pcie_v3_65_add_bus() should
-> > >   happen for v3.65a devices only.  On other devices, BAR 0 should be
-> > >   left disabled, as it is by dw_pcie_setup_rc().
-> > > 
-> > >   After 6ab15b5e7057 ("PCI: dwc: keystone: Convert .scan_bus()
-> > >   callback to use add_bus"), ks_pcie_v3_65_add_bus() enabled BAR 0 for
-> > >   both v3.65a and v4.90a devices.  On the AM654x SoC, which uses
-> > >   v4.90a, enabling BAR 0 causes Completion Timeouts when setting up
-> > >   MSI-X.  These timeouts delay boot of the AM654x by about 45 seconds.
-> > > 
-> > >   Move the BAR 0 initialization to ks_pcie_msi_host_init(), which is
-> > >   only used for v3.65a devices, and remove ks_pcie_v3_65_add_bus().
-> > 
-> > I haven't heard anything so I amended it to the above.  But please
-> > correct me if it's wrong.
-> 
-> I would suggest specifying the failing combination since I do not know
-> if there is another device that is using v4.90a but doesn't see this
-> issue. What is certain is that this issue is seen with the v4.90a
-> controller on AM654x platform. Despite the PCIe Controller version
-> remaining the same across different platforms, it might be possible
-> that not all features supported by the PCIe Controller are enabled on
-> all platforms. For that reason, it appears to me that the subject could
-> be:
-> 
->   PCI: keystone: Don't enable BAR 0 for AM654x
-> 
-> which implicitly indicates the combination as well (v4.90a on AM654x).
-> 
-> The commit message's contents could be reduced to:
-> 
->   After 6ab15b5e7057 ("PCI: dwc: keystone: Convert .scan_bus()
->   callback to use add_bus"), ks_pcie_v3_65_add_bus() enabled BAR 0 for
->   both v3.65a and v4.90a devices.  On the AM654x SoC, which uses
->   v4.90a, enabling BAR 0 causes Completion Timeouts when setting up
->   MSI-X.  These timeouts delay boot of the AM654x by about 45 seconds.
-> 
->   Move the BAR 0 initialization to ks_pcie_msi_host_init(), which is
->   only used for v3.65a devices, and remove ks_pcie_v3_65_add_bus().
-> 
-> by dropping:
-> 
->   The BAR 0 initialization done by ks_pcie_v3_65_add_bus() should
->   happen for v3.65a devices only.  On other devices, BAR 0 should be
->   left disabled, as it is by dw_pcie_setup_rc().
-> 
-> The reason behind dropping the above paragraph is that BAR 0 could
-> probably be enabled on other controller versions as well, but not on the
-> v4.90a controller on the AM654x SoC.
+Applied.  Thanks!
 
-Thanks, that makes good sense, I changed the subject and dropped that
-paragraph.
+Alex
 
-Bjorn
+On Wed, May 15, 2024 at 5:47=E2=80=AFPM Kendall Smith <kendallsm2@icloud.co=
+m> wrote:
+>
+> If a Radeon 6750M GPU from an iMac12,1 is installed into an iMac 12,2, th=
+ere is no backlight device initialized during boot. Everything else is func=
+tional, but the display brightness cannot be controlled. There are no direc=
+tories present in /sys/class/backlight after booting. A simple one line mod=
+ification to an if statement fixes this issue by initializing the radeon ba=
+cklight device for an iMac12,2 as well if it has a 6750M. After the patch, =
+brightness can be controlled and radeon_bl0 is present in /sys/class/backli=
+ght. This was tested by compiling the latest kernel with and without the pa=
+tch.
+>
+> Signed-off-by: Kendall Smith <kendallsm2@icloud.com>
+> ---
+>  drivers/gpu/drm/radeon/atombios_encoders.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/radeon/atombios_encoders.c b/drivers/gpu/drm=
+/radeon/atombios_encoders.c
+> index 2bff0d9e20f5..7b11674f5d45 100644
+> --- a/drivers/gpu/drm/radeon/atombios_encoders.c
+> +++ b/drivers/gpu/drm/radeon/atombios_encoders.c
+> @@ -201,7 +201,7 @@ void radeon_atom_backlight_init(struct radeon_encoder=
+ *radeon_encoder,
+>          */
+>         if ((rdev->pdev->subsystem_vendor =3D=3D PCI_VENDOR_ID_APPLE) &&
+>             (rdev->pdev->device =3D=3D 0x6741) &&
+> -           !dmi_match(DMI_PRODUCT_NAME, "iMac12,1"))
+> +           !(dmi_match(DMI_PRODUCT_NAME, "iMac12,1") || dmi_match(DMI_PR=
+ODUCT_NAME, "iMac12,2")))
+>                 return;
+>
+>         if (!radeon_encoder->enc_priv)
+> --
+> 2.34.1
+>
 
