@@ -1,211 +1,134 @@
-Return-Path: <linux-kernel+bounces-181046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9FA88C76B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:43:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 101A78C76C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:44:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4ABAC1F2204C
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:43:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B78281F21DA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:44:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C939F14601B;
-	Thu, 16 May 2024 12:43:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 062FF145FF9;
+	Thu, 16 May 2024 12:44:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="lfFd290Q";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="7w/3v7pY";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="lfFd290Q";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="7w/3v7pY"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JTMEdYqI"
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69880335B5;
-	Thu, 16 May 2024 12:43:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E58BD335B5
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 12:44:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715863405; cv=none; b=ryZ7FDXhuK26B2BwMtdWNwOz0itssDduxnF62bfLGLwU2N3Z2Ywlyc4/mvq5f7jnwpn+1t9EBaw3GULYH4O9g3jbIXX8lCXJx/c+zJqOocHWcxshtnNBh45Cp9z71dgXypClNCnHwLBI6TqQ4j7Pj9tL7FvZhVFzXvcRn8ovQCc=
+	t=1715863443; cv=none; b=swJgpIAXXX4BFTSVNUhjgESmZhSikbV3HwYTN9w+IIPxSH3FojLzTy2qn6bA5UhIqX05HqrL9xt0/7m0FP7cH2dqxzUEzlPTgoJrzLQp2f9Nx8xoLNSmok0v8qWR4voLjwQLhrWaoCtNd+10CSFxdReOCxFHLN5x8+ukKPFFqa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715863405; c=relaxed/simple;
-	bh=1HyW0gCvi46vYJIx6HzhgwPyzVZRVNb82UZXwWS3WQw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eM3LXT6ysV52T+msrm3BCth1CNyY+wmhGVYcBytRWyDiTqWPG9YYaMMSXvwanzDU2CYtjuNeMa586GbyXVht1EyIrPvnxpILUHTrc5tgVchPvcawjUpeAuTEcPalUX9U9F0PIauDxaQW63jFMQ5Al8P/fXwr+nLUil54CS7ATfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=lfFd290Q; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=7w/3v7pY; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=lfFd290Q; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=7w/3v7pY; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 4E4FC5C399;
-	Thu, 16 May 2024 12:43:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1715863401; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=ekZcd8pJFpXVNDlEU83NveCWqM2djxgv35HO1YJlkyA=;
-	b=lfFd290QtjS+lowshx7oGM3UbFZcSJIap0DHzkn1mqsE9pCC9lTxenQlCUgZj24E1JzKPV
-	8j7JH6jMRDqdW80/1yFh9p45d/ufgvLsFlR8ZyeOngXPmxY/lzEOvc1ARJ5XnqWBj8W1/Q
-	B8ia9Kd7HjM+SQSFejnPj2xumgyNCuI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1715863401;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=ekZcd8pJFpXVNDlEU83NveCWqM2djxgv35HO1YJlkyA=;
-	b=7w/3v7pYZrCZGViKO0nJgFV5VuX7WseN6i/uv1Lay2Tdd+s+NVBIMn6Di7L0JQnARtKjIn
-	KvXe69XxMZnL0gBA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=lfFd290Q;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="7w/3v7pY"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1715863401; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=ekZcd8pJFpXVNDlEU83NveCWqM2djxgv35HO1YJlkyA=;
-	b=lfFd290QtjS+lowshx7oGM3UbFZcSJIap0DHzkn1mqsE9pCC9lTxenQlCUgZj24E1JzKPV
-	8j7JH6jMRDqdW80/1yFh9p45d/ufgvLsFlR8ZyeOngXPmxY/lzEOvc1ARJ5XnqWBj8W1/Q
-	B8ia9Kd7HjM+SQSFejnPj2xumgyNCuI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1715863401;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=ekZcd8pJFpXVNDlEU83NveCWqM2djxgv35HO1YJlkyA=;
-	b=7w/3v7pYZrCZGViKO0nJgFV5VuX7WseN6i/uv1Lay2Tdd+s+NVBIMn6Di7L0JQnARtKjIn
-	KvXe69XxMZnL0gBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EE1FF137C3;
-	Thu, 16 May 2024 12:43:20 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id qYnLOGj/RWavCwAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Thu, 16 May 2024 12:43:20 +0000
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: rafael@kernel.org,
-	lenb@kernel.org,
-	arnd@arndb.de,
-	chaitanya.kumar.borah@intel.com,
-	suresh.kumar.kurmi@intel.com,
-	jani.saarinen@intel.com
-Cc: linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org,
-	linux-arch@vger.kernel.org,
-	linux-fbdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH] ACPI: video: Fix name collision with architecture's video.o
-Date: Thu, 16 May 2024 14:43:15 +0200
-Message-ID: <20240516124317.710-1-tzimmermann@suse.de>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1715863443; c=relaxed/simple;
+	bh=ZE+ZF476CDghs+ffsIPZ9mw9R4UOZsjwNbsbIKcpz1w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Bk69xYSHz3uhy8c9pn93GVIcs9axQkpMQT57dZJvoMzx20mkSAqQ89eSS8VpBL20080Cnez9ikm52kK+S8xfJqYEe07Nq3ZMExPnuf1UPtqZv3ZFpn0ttnLY6T0U/ELRRBBG6ja8x0xy18LsL1gzqGtUx8WmGWdTQRv3/d0cOic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JTMEdYqI; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-61df496df01so65786697b3.3
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 05:44:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715863441; x=1716468241; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=EymfovAPaOqIf8lLoq7gmRWeAEinSnJKTksVAj9AZKo=;
+        b=JTMEdYqIougv3WeyatidM6S2Yye56KbE+YFYNjB3QPhMIQGZ2ZK6N3ox82q3fJRUIG
+         QpCgW8DTKsAwrkzKsWH92J2zpLISpSfWl6KGG8uo/xT19IPZLvCdFsMkmkpW6w0flC1X
+         ZmK9X91GF2QwCPwtfhk4ikACw7QoZ8ObarcX49SRPeWzGzspifCGqiIojHY3bFq3Crdf
+         44bOsc20ZD4WCjFn4xVAdU2pDOZT3LrMphCjbJAMhmIuREWmnpWJRfrnGSjF0F82X5mo
+         CUwbJ2XJrcDKbziJQcW0Kk4vFtdCIERF79LUV303Y51xCaFDLN4av+O4B2mZy1p9DZTa
+         TEqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715863441; x=1716468241;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EymfovAPaOqIf8lLoq7gmRWeAEinSnJKTksVAj9AZKo=;
+        b=Nl7xcrMcVHxR3hJwR2XT8qVs7O7drhKnSouhk8Sx6rj+/34jWyXs7/mEp0b6m87iC1
+         n3o7nKyD06186m8IDsapY/GA5CyFgyFtAk2J0b2D3kzD/+Iqlj130qSQs9cIgnkpsbJA
+         O0uVQuuKyPZoDyvX8EnLm2CeWJokB6TjvFmCjDJLMyjcRI4A+XGSNk2XGle8ltBKZrG+
+         Y2XCbuLwyr1BWy3FVh3O9dWfi4N7yEw/Zp7Teesn1JR3hvFKwCvSsolIfUvOrWfmAY8T
+         rT1iUP0SW4DoXkjOvvlgQGUx1IEgM3EUI1hoP9N+oQ9+3E7gHlMSnjXMIB1qFiXPI8dn
+         onFg==
+X-Forwarded-Encrypted: i=1; AJvYcCVXYtUS0TgBM6UpzZ8uOfhTCbhB3UWc55kfcFvUKaEr7My3zMFZTU/YAPD+u80OUwZLvv1oWyIUk0UPCu8Ffz6s0fbP1qGrPtKKRdQ0
+X-Gm-Message-State: AOJu0YzBYORfr48p3q3OBEz1DJB63SeMfgM7YNJYGYadFGpT/zdq0LJ7
+	8aQ6obbtwDrWuKse5yCsBSL3qoM8kmCW8p2Im6nqWymBJ1sb+Wtqx/MeYZfCwcux2eAYhNh+LJ9
+	Um/IoRdG0+V8RmlERpblvC3dpi1I=
+X-Google-Smtp-Source: AGHT+IHrI4jUCBjRCHqP9QayOPeWRyo8ofuG56YrsuCTAfjHbvJRAr755l0rsEWgiQEQUHsbKKLr3SoU5r7UWiIXUck=
+X-Received: by 2002:a81:6d05:0:b0:611:26e0:f24b with SMTP id
+ 00721157ae682-622aff3c05emr181789987b3.9.1715863440861; Thu, 16 May 2024
+ 05:44:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Flag: NO
-X-Spam-Score: -5.01
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 4E4FC5C399
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-5.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_COUNT_TWO(0.00)[2];
-	DKIM_TRACE(0.00)[suse.de:+];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,intel.com:email]
+References: <20240508172621.30069-1-ppbuk5246@gmail.com> <20240509092931.35209-2-ppbuk5246@gmail.com>
+ <ZkU8lm2tjm_r9FpZ@pavilion.home> <20240516075628.GC22557@noisy.programming.kicks-ass.net>
+ <CAM7-yPRHp3tiZjuBTesdRQoU8WJNg1scon_txS_6R-pZq9MXHw@mail.gmail.com>
+ <20240516084911.GF22557@noisy.programming.kicks-ass.net> <ZkXtHv+fHUD2+lFJ@lothringen>
+In-Reply-To: <ZkXtHv+fHUD2+lFJ@lothringen>
+From: Yun Levi <ppbuk5246@gmail.com>
+Date: Thu, 16 May 2024 13:43:49 +0100
+Message-ID: <CAM7-yPTSq0CSmRsTpeXwzhFk77gfwUK_LZKnbgo4NPk5zPCaAg@mail.gmail.com>
+Subject: Re: [PATCH v4] time/tick-sched: idle load balancing when nohz_full
+ cpu becomes idle.
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Joel Fernandes <joel@joelfernandes.org>, 
+	Vineeth Pillai <vineeth@bitbyteword.org>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, anna-maria@linutronix.de, mingo@kernel.org, 
+	tglx@linutronix.de, Markus.Elfring@web.de, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Commit 2fd001cd3600 ("arch: Rename fbdev header and source files")
-renames the video source files under arch/ such that they does not
-refer to fbdev any longer. The new files named video.o conflict with
-ACPI's video.ko module. Modprobing the ACPI module can then fail with
-warnings about missing symbols, as shown below.
+> > > > As such, I don't think the HK_TYPE_SCHED check in
+> > > > nohz_balance_enter_idle() actually makes sense, the on_null_omain()
+> > > > check a little below that should already take care of things, no?
+> > >
+> > > IIUC,
+> > > currently, whether cpu belongs on domain or null is determined by
+> > > HK_DOMAIN_FLAGS
+> >
+> > No! you can create NULL domains without any of the HK nonsense. Both
+> > isolcpus and cpusets can create single CPU partitions.
 
-  (i915_selftest:1107) igt_kmod-WARNING: i915: Unknown symbol acpi_video_unregister (err -2)
-  (i915_selftest:1107) igt_kmod-WARNING: i915: Unknown symbol acpi_video_register_backlight (err -2)
-  (i915_selftest:1107) igt_kmod-WARNING: i915: Unknown symbol __acpi_video_get_backlight_type (err -2)
-  (i915_selftest:1107) igt_kmod-WARNING: i915: Unknown symbol acpi_video_register (err -2)
+Yes. However what I said, nohz_full cpu isn't on null_domain
+unless it was configured by cpusets.
+even with option "nohz_full="
 
-Fix this problem by renaming ACPI's video.ko to acpi_video.ko. Also
-rename a related source file and clean up the Makefile.
+> > > However, when "nohz_full=" is used, it still on HK_DOMAIN, so it
+> > > belongs to sched_domain
+> > > so, it couldn't be filtered out by on_null_domain().
+> > >
+> > > unless "isolcpus=domain" or "isolcpus={cpu_list}", it's on null domain.
+> > > with "isolcpus=tick", it participates sched_domain.
+> >
+> > Frederic ?!? You can use nohz_full without isolcpus? That makes no
+> > sense. If you do that you get to keep the pieces.
+>
+> I fear you can yes, even though most users combine it with isolcpus. I
+> know, that interface is terrible but it dates from times when we weren't
+> sure about all the potential usecases of nohz_full. There was a possibility
+> that HPC could just want to reduce ticks without all the hard and costly
+> isolation around. But all the usecases I have witnessed so far in ten years
+> involved wanting 0 noise after all...
 
-Reported-by: Chaitanya Kumar Borah <chaitanya.kumar.borah@intel.com>
-Closes: https://lore.kernel.org/intel-gfx/9dcac6e9-a3bf-4ace-bbdc-f697f767f9e0@suse.de/T/#t
-Tested-by: Chaitanya Kumar Borah <chaitanya.kumar.borah@intel.com>
-Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-Fixes: 2fd001cd3600 ("arch: Rename fbdev header and source files")
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arch@vger.kernel.org
-Cc: linux-fbdev@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org
----
- drivers/acpi/Makefile                            | 5 +++--
- drivers/acpi/{acpi_video.c => acpi_video_core.c} | 2 +-
- 2 files changed, 4 insertions(+), 3 deletions(-)
- rename drivers/acpi/{acpi_video.c => acpi_video_core.c} (99%)
 
-diff --git a/drivers/acpi/Makefile b/drivers/acpi/Makefile
-index 8cc8c0d9c8732..fc9e11f7afbf7 100644
---- a/drivers/acpi/Makefile
-+++ b/drivers/acpi/Makefile
-@@ -84,7 +84,9 @@ obj-$(CONFIG_ACPI_FAN)		+= fan.o
- fan-objs			:= fan_core.o
- fan-objs			+= fan_attr.o
- 
--obj-$(CONFIG_ACPI_VIDEO)	+= video.o
-+obj-$(CONFIG_ACPI_VIDEO)	+= acpi_video.o
-+acpi_video-objs			+= acpi_video_core.o video_detect.o
-+
- obj-$(CONFIG_ACPI_TAD)		+= acpi_tad.o
- obj-$(CONFIG_ACPI_PCI_SLOT)	+= pci_slot.o
- obj-$(CONFIG_ACPI_PROCESSOR)	+= processor.o
-@@ -124,7 +126,6 @@ obj-$(CONFIG_ACPI_CONFIGFS)	+= acpi_configfs.o
- 
- obj-y				+= pmic/
- 
--video-objs			+= acpi_video.o video_detect.o
- obj-y				+= dptf/
- 
- obj-$(CONFIG_ARM64)		+= arm64/
-diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video_core.c
-similarity index 99%
-rename from drivers/acpi/acpi_video.c
-rename to drivers/acpi/acpi_video_core.c
-index 1fda303882973..32bf81c5773a4 100644
---- a/drivers/acpi/acpi_video.c
-+++ b/drivers/acpi/acpi_video_core.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-or-later
- /*
-- *  video.c - ACPI Video Driver
-+ *  acpi_video_core.c - ACPI Video Driver
-  *
-  *  Copyright (C) 2004 Luming Yu <luming.yu@intel.com>
-  *  Copyright (C) 2004 Bruno Ducrot <ducrot@poupinou.org>
--- 
-2.45.0
+If I make you annoyed I'm sorry in advance but let me clarify please.
 
+1. In case of none-HK-TICK-housekeeping cpu (a.k.a nohz_full cpu),
+    It should be on the null_domain. right?
+
+2. If (1) is true, when none-HK-TICK is set, should it set none-HK-DOMAIN
+    to prevent on any sched_domain (cpusets filter out none-HK-DOMAIN cpu)?
+
+3. If (1) is true, Is HK_SCHED still necessary? There seems to be no use case
+    and the check for this can be replaced by on_null_domain().
+
+Many thanks!
 
