@@ -1,156 +1,75 @@
-Return-Path: <linux-kernel+bounces-180685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F4078C71C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 08:57:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A88838C71C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 09:00:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C194F1C20F00
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 06:57:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A21F1F21C02
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 07:00:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFFE52A8FE;
-	Thu, 16 May 2024 06:57:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2236C2C1A7;
+	Thu, 16 May 2024 07:00:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="p0LJDtuV"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=emersion.fr header.i=@emersion.fr header.b="IGAZBS1y"
+Received: from mail-0201.mail-europe.com (mail-0201.mail-europe.com [51.77.79.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 157C618635;
-	Thu, 16 May 2024 06:57:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A1C329424
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 07:00:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.77.79.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715842650; cv=none; b=uGjxvQx0wnUEwHHODsr6QbeCBc08FXbffpuKIcA/GaWYa5MstDRVlg/mjIL+tqYBQ43eoD/1AloqTAETJN43oErfdOM6tfIn1hzAensQ2uBcaH2OLy2YFFmTcbb0wNLlPkX7YxlHwtMmk+62xeSmh8GKhQCa7twlSH4khMRf9mI=
+	t=1715842849; cv=none; b=tLihMZUE5RP1U0XeQsi++f1ub9ueJ8g81J66daU8x0bEWoD3W2Gusw1PsV5cd+nrs00fRAqG+oZHEjorEsuL4KQvozg/ObyjXimC1pKf4gqniA95q4hl42iSkWq/c5vN0BqZaNesUnkvrXrdPbTY8tULpRtcztr2Xwbn4Fzq/fM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715842650; c=relaxed/simple;
-	bh=6IjZadEQJIHv5tk4TwGJe6gpZ6evHRuOZzcAlcgqyk4=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QY43erfnUZGkQRl6yfqceBu6A2Im+9KcUMZBBUkCryeC3S2ovwyb2/iDd1DYUPp7/PuGE/pwkaJxkAkM/ak8ykwqA/KdmFU8CoVzjhMOAKJaPczeLxlyra+NxsBq+J2m9ItzJnkU0dBs/nel9H7fHRLOxvFmlv/U2CchWsRN710=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=p0LJDtuV; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1715842648; x=1747378648;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=6IjZadEQJIHv5tk4TwGJe6gpZ6evHRuOZzcAlcgqyk4=;
-  b=p0LJDtuVNwwpeiwCLxUHPDE/K/aflfKnpZ3nj9jem7NwYNocUI5ps2Lt
-   1fwScxiXsvfbLZ3bD33YNcC8KlYYFoTTs1j3c7eVlOsUSYzcJXvIENWfa
-   XD3BYh0gtLEhPVjniU3Cp5ac1fn+pVTYrD9Ru3qnlL0ZyrdA1vR6dj4vx
-   yelrdZUPhPXXt82zIMRZcylJ2D8spxsQBT38ddxbSUxwPQsyzRqk3cBMb
-   Y8bakWJUOo+Eg8UrPc//i8YMFnm2b7ngMw2vXjVAWl6AirVNWYrZyWx4z
-   Xq04Eiy7RZ4HnabTckEcsQ565ezL+bG8eZJmeSOi3T5dCO0ayf2E1Z2fn
-   g==;
-X-CSE-ConnectionGUID: muChaTU1T4yrMkfn1JCFOg==
-X-CSE-MsgGUID: OTNc74XwSLi6GypTtBzPMw==
-X-IronPort-AV: E=Sophos;i="6.08,163,1712646000"; 
-   d="asc'?scan'208";a="192313660"
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 15 May 2024 23:57:26 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Wed, 15 May 2024 23:56:56 -0700
-Received: from wendy (10.10.85.11) by chn-vm-ex02.mchp-main.com (10.10.85.144)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
- Transport; Wed, 15 May 2024 23:56:53 -0700
-Date: Thu, 16 May 2024 07:56:39 +0100
-From: Conor Dooley <conor.dooley@microchip.com>
-To: Kanak Shilledar <kanakshilledar@gmail.com>
-CC: Conor Dooley <conor@kernel.org>, <wahrenst@gmx.net>, Kanak Shilledar
-	<kanakshilledar111@protonmail.com>, Mark Brown <broonie@kernel.org>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
-	<rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Broadcom internal
- kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	<linux-spi@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-rpi-kernel@lists.infradead.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3] dt-bindings: spi: brcm,bcm2835-spi: convert to
- dtschema
-Message-ID: <20240516-encourage-bouncing-77e9c14c9887@wendy>
-References: <20240514070051.2959-1-kanakshilledar111@protonmail.com>
- <20240514-sitting-ritzy-498d35eb5ac8@spud>
- <CAGLn_=vRDj_A2VpqQ6eT3OX6AgCfesA1KzJh+6djyF6MhAgEvw@mail.gmail.com>
+	s=arc-20240116; t=1715842849; c=relaxed/simple;
+	bh=leylzAvFIkYOhbcV7jem/Mh2/ncqrFvUUBxajYae3KI=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TRUfGx5eOQObuSYrf9PHkjk4o6bAXSn0YqXkqoTH3fcOb7jt4yEwFWold2ABUhjluttsp8Kh/l4vrDCXorUHSz+NI2VRpKRdJZiToMKr9TpJGblz8ujtxq8lJ6LT1i9htTj1Q7ED9tH6EW9bkG+Qr9kbvu129lRaztaiY97NjdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=emersion.fr; spf=pass smtp.mailfrom=emersion.fr; dkim=pass (2048-bit key) header.d=emersion.fr header.i=@emersion.fr header.b=IGAZBS1y; arc=none smtp.client-ip=51.77.79.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=emersion.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=emersion.fr
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=emersion.fr;
+	s=protonmail3; t=1715842836; x=1716102036;
+	bh=leylzAvFIkYOhbcV7jem/Mh2/ncqrFvUUBxajYae3KI=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=IGAZBS1ywHjG+Qgfei0nIbaiB88Bj8RWeijm4CgpCI+BXXoT0Jqpr6jswQEfiY7IX
+	 MVCr7iqpB0qwoeJi50pQUg+3U41aIt4dfFCARDTLqbw+JWPR+3yPE9J/koviw4SpOF
+	 hnti8NZzSUk+LYyYz2U729onxAw4A5vJkCW4EPoGjHBk1JdWakj3I16Rq+2EN4N3t+
+	 oDrKFRBJ1Zv8bt/9uhGCOhE5nsG+4VRisMznQadNpDZjRygyAmVy8H2xQKe4Xm1oVE
+	 61QhmxqvrKlXpX4uoZwJ3WnQrLtOA1TxdwNL4IdMWozxVJyEAEEUIw4LkxKh4/Qjcr
+	 ZAi7jKUmPdUcQ==
+Date: Thu, 16 May 2024 07:00:31 +0000
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+From: Simon Ser <contact@emersion.fr>
+Cc: Nicolas Dufresne <nicolas.dufresne@collabora.com>, Maxime Ripard <mripard@redhat.com>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Hans de Goede <hdegoede@redhat.com>, Sumit Semwal <sumit.semwal@linaro.org>, Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>, "T.J. Mercier" <tjmercier@google.com>, =?utf-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, Lennart Poettering <mzxreary@0pointer.de>, Robert Mader <robert.mader@collabora.com>, Sebastien Bacher <sebastien.bacher@canonical.com>, Linux Media Mailing List <linux-media@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, linaro-mm-sig@lists.linaro.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Milan Zamazal <mzamazal@redhat.com>, Andrey Konovalov <andrey.konovalov.ynk@gmail.com>
+Subject: Re: Safety of opening up /dev/dma_heap/* to physically present users (udev uaccess tag) ?
+Message-ID: <ttHZ6_mxyApQbVuEg7V20i3gCZ0nCr26aymroG2zxHv3CMRAA6RqZsUxNY3eBiYjycfb1r1WQdyMTwJO_I38FsJQMHA_Zdiqbbjs_YJWKr8=@emersion.fr>
+In-Reply-To: <20240514204223.GN32013@pendragon.ideasonboard.com>
+References: <3c0c7e7e-1530-411b-b7a4-9f13e0ff1f9e@redhat.com> <Zjpmu_Xj6BPdkDPa@phenom.ffwll.local> <20240507183613.GB20390@pendragon.ideasonboard.com> <4f59a9d78662831123cc7e560218fa422e1c5eca.camel@collabora.com> <Zjs5eM-rRoh6WYYu@phenom.ffwll.local> <20240513-heretic-didactic-newt-1d6daf@penduick> <20240513083417.GA18630@pendragon.ideasonboard.com> <c4db22ad94696ed22282bf8dad15088d94ade5d6.camel@collabora.com> <20240514204223.GN32013@pendragon.ideasonboard.com>
+Feedback-ID: 1358184:user:proton
+X-Pm-Message-ID: 0685ead30ccf82fc3e353c2ffb3045b08edb5c59
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="0nhWKHEN5fKFMQ8b"
-Content-Disposition: inline
-In-Reply-To: <CAGLn_=vRDj_A2VpqQ6eT3OX6AgCfesA1KzJh+6djyF6MhAgEvw@mail.gmail.com>
-
---0nhWKHEN5fKFMQ8b
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 16, 2024 at 12:00:29PM +0530, Kanak Shilledar wrote:
-> On Tue, May 14, 2024 at 11:44=E2=80=AFPM Conor Dooley <conor@kernel.org> =
-wrote:
-> >
-> > On Tue, May 14, 2024 at 12:30:47PM +0530, Kanak Shilledar wrote:
-> >
-> > > Changes in v3:
-> > > - Updated DCO email address
-> >
-> > I was really hoping you'd tell me why you'd not used the same email
-> > address, rather than just sending another version. My ulterior motive is
-> > that I wrote the section in email-clients.rst saying that protonmail had
-> > WKD issues with kernel.org accounts but apparently proton added a
-> > workaround and have yet to be sent an email that confirmed that the
-> > workaround fixed things. (I'm not sure that the WKD issues ever applied
-> > as there's no GPG key posted for conor+dt@kernel.org, only
-> > conor@kernel.org).
->=20
-> Oh, I am primarily using protonmail and I am aware that there are some
-> issues with protonmail and kernel.org so for that reason I am sending my
-> patches via @gmail.com address. I was trying out some things with
-> gmail and proton so had changed my signing email address to @gmail.com
-> apart from sending emails I have no motive on using gmail.com account.
-> Also I am adding my protonmail account in the `CC`.
-> Hope this helps.
-> If this is not the intended route then I will change it and stick
-> to one email address.
+On Tuesday, May 14th, 2024 at 22:42, Laurent Pinchart <laurent.pinchart@ide=
+asonboard.com> wrote:
 
-I don't care what email you use for stuff, that's your business. I just
-want to know if we can remove the section from the docs that says not to
-use proton. Maybe you could send me an off-list email to
-conor@kernel.org from your proton account, so I can see if it ends up
-getting encrypted? That'd be helpful if you could.
+> My experience on Arm platforms is that the KMS drivers offer allocation
+> for scanout buffers, not render buffers, and mostly using the dumb
+> allocator API. If the KMS device can scan out YUV natively, YUV buffer
+> allocation should be supported. Am I missing something here ?
 
-> > The patch is fine IMO though, so
-> > Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
->=20
-> Do I need to roll out another version with this reviewed by flag?
-
-No, Mark should be able to pick that up. There's usually no need to
-resend patches solely pick up tags, that's the maintainer's
-responsibility. If you're resending for any other reason, then yes, pick
-up tags.
-
-Cheers,
-Conor.
-
---0nhWKHEN5fKFMQ8b
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZkWuJwAKCRB4tDGHoIJi
-0gN/AQCnEN4vuOOsE6DO4QFtsxZtw+1x1mtb49PyKpWtqtPQ8QD/RhI9DwfjF5Tp
-CnTBU0ZQV31OVZpr1OkYHZWVykwLGwM=
-=uPOG
------END PGP SIGNATURE-----
-
---0nhWKHEN5fKFMQ8b--
+Note that dumb buffers are only intended for simple software-rendering
+use-cases. Anything more complicated (e.g. involving GPU rendering)
+should use another mechanism.
 
