@@ -1,134 +1,102 @@
-Return-Path: <linux-kernel+bounces-181184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0DB68C789D
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:48:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D6168C789F
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:48:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4E1DB2229C
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:48:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 514EE284397
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:48:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 288DA14D2AE;
-	Thu, 16 May 2024 14:48:30 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 707D914B979;
+	Thu, 16 May 2024 14:48:48 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB89214B973
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 14:48:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A8EC14B959
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 14:48:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715870909; cv=none; b=IwdHQxEULl4GTatuNl/AWvm5TXWH8/Gm2aVwF4SuEcSZv04Qrzu0FnPQNYiI5mZ6wjsZrn+9bP1IXpChda0cP/geEX5nJVPv+LLxnd9qamsweOuo3Q2kzSh9YzfTj0+pjV4alyxtRnk+kiwaqSbRVY2znAC36hF7gW0+9NxYF0A=
+	t=1715870928; cv=none; b=dvH8OZ+R5Xvt+aRasY+q2gweIh2yDzzd0A+vdzsiaFS1mWLSKYJTTeAtv8zxlFQHBKrLitM6thiBRR3WRAYzdtU/eMyEtRyJyl7IMYAH7W/qtW6bWor3UWRG7mXSeGfifDw9UZRI6f6VpzFQfl9oDTTUMr9B6hDKO3gNcwihJ0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715870909; c=relaxed/simple;
-	bh=eGibcuJLfqXum3ESdm+NGKonua1wTXgzFMQgE8FqEsY=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FBy5urwP3wuF+hdmtczdPqO/Gw8tWexolOIRki3yVCHlS1FMIPkK9Gn0pAJrHL5QukQqv5s8fK2Bs7AuUYnkF0iek++ThDVh2Eu6c/q3yXfwbbkjSd3jcz3joSU1H4CtpeLgpYUJzKjQzq0IroMUHcr+bA2ra7542CyWEQuMhZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4VgCYK2wGZz6J6mh;
-	Thu, 16 May 2024 22:44:53 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id D29B4140A36;
-	Thu, 16 May 2024 22:48:25 +0800 (CST)
-Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 16 May
- 2024 15:48:25 +0100
-Date: Thu, 16 May 2024 15:48:23 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Kousik Sanagavarapu <five231003@gmail.com>
-CC: Nathan Chancellor <nathan@kernel.org>, kernel test robot <lkp@intel.com>,
-	Nishanth Menon <nm@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Julia
- Lawall <julia.lawall@inria.fr>, <llvm@lists.linux.dev>,
-	<oe-kbuild-all@lists.linux.dev>, Shuah Khan <skhan@linuxfoundation.org>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 2/3] soc: ti: knav_qmss_queue: do device_node auto
- cleanup
-Message-ID: <20240516154823.00000974@Huawei.com>
-In-Reply-To: <ZkG_7wJvIjZ4ZlcV@five231003>
-References: <20240510071432.62913-3-five231003@gmail.com>
-	<202405111846.3m9z398l-lkp@intel.com>
-	<ZkCZTv0Gci3xxKtw@five231003>
-	<20240513064451.GB652533@thelio-3990X>
-	<ZkG_7wJvIjZ4ZlcV@five231003>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1715870928; c=relaxed/simple;
+	bh=6bjpy2R23BCG5xOBILH4E+1osU51ofiN4fTAHBzuyP4=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=ssw/307qhr4OK7NzHUm3GUzPEOP9ce1Mx5gXYdsHegDvMVbHizvZHV7NkC6sEjSbIg8EnNUm43EdKUrImBTePx6nBqL0Fm1x1HnFwRwALobXg594tkTLtPyGJ1NlMwOxWoAFQetHmPHm/G2mpPZ11CLduYgjl1TO5BXbfo5BphI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7e1d3e81a00so614013039f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 07:48:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715870925; x=1716475725;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jIfzr+hfxXE0Yom5oh+at3Y9Ho3Ikwwt+w53cnIzr7I=;
+        b=q4EZyzkMLnOn3fwgjSm3h6+DAJAn9pa7xSdzExYzohkwShPKPHYTJpbrSD0cKe78/A
+         TaCGLivA1DJ1aUnudUbBYM6VWQmnFpWplNVe9FLLkFJwf45o0VMyXD2ltNExcowSoPDw
+         VtsQFZT/lrslx6caeuZBjiCPzKSyYqvXG93IPiitWOy+S+1MdrxGPTFd/pYVLxZ725eP
+         KjYKZVcsCN2ktXXD31IXvPWQWJOIOARQ1b+b9MiPmbpGhM3AqG7HJOG9PiAvdIR/1i+O
+         Ci0fvXhUQkuEsG+dZhUyAE9/iJbZ/nR58ZOZ33nRBJqQ0dmGrfWzn86rqFu1p+QsMhVw
+         B7yw==
+X-Gm-Message-State: AOJu0Yx+kIC220lgfujsp9IId1ElD+leObIggrUo/sZrNqYm2/+1H6Z3
+	QOUcrDo7Y35VcsmN8UupJVAWTiIirQrCY66GAevYvH0+8dEoT3Qazb4Sm0K3YbCE49NYl/nkemq
+	hPDY2FXOa96nRqxekJv0t4XZvhWzzOX25sXU5sGMnyKWAfQSKwZ0Ng0w=
+X-Google-Smtp-Source: AGHT+IHZ14Sr1btn4O3xqJW0Fmcbj8mE4cPYkoAThKl7EPyIbNe1tAR8tBFt/xxz0puCSco/+cIS9E+Owhnhzpvo067q3HhQYEzd
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100002.china.huawei.com (7.191.160.241) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+X-Received: by 2002:a05:6638:2727:b0:488:ac5a:7fe9 with SMTP id
+ 8926c6da1cb9f-48958e0d6e5mr1135126173.4.1715870925031; Thu, 16 May 2024
+ 07:48:45 -0700 (PDT)
+Date: Thu, 16 May 2024 07:48:45 -0700
+In-Reply-To: <0000000000007e4a2e0616fdde23@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f79cb1061893548e@google.com>
+Subject: Re: [syzbot] Test for 5681e40d297b30f5b513
+From: syzbot <syzbot+5681e40d297b30f5b513@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 13 May 2024 12:53:27 +0530
-Kousik Sanagavarapu <five231003@gmail.com> wrote:
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-> On Sun, May 12, 2024 at 11:44:51PM -0700, Nathan Chancellor wrote:
-> > On Sun, May 12, 2024 at 03:56:22PM +0530, Kousik Sanagavarapu wrote:  
-> > > On Sat, May 11, 2024 at 06:12:39PM +0800, kernel test robot wrote:  
-> > > > Hi Kousik,
-> > > > 
-> > > > kernel test robot noticed the following build errors:
-> > > >   
-> > > 
-> > > [...]
-> > >   
-> > > > All errors (new ones prefixed by >>):
-> > > >   
-> > > > >> drivers/soc/ti/knav_qmss_queue.c:1853:3: error: cannot jump from this goto statement to its label  
-> > > >                    goto err;
-> > > >                    ^
-> > > >    drivers/soc/ti/knav_qmss_queue.c:1855:22: note: jump bypasses initialization of variable with __attribute__((cleanup))
-> > > >            struct device_node *regions __free(device_node) =
-> > > >                                ^  
-> 
-> [...]
-> 
-> > > Seems like gcc didn't catch this when I compiled locally.  
-> > 
-> > FWIW, you may notice this as you do more conversions. The fact that GCC
-> > does not warn at all is a GCC bug as far as I am aware (i.e., clang's
-> > error is correct):
-> > 
-> > https://gcc.gnu.org/bugzilla/show_bug.cgi?id=91951
-> > 
-> > which has come up in other places:
-> > 
-> > https://lore.kernel.org/20240425174732.GA270911@dev-arch.thelio-3990X/  
-> 
-> Thank you so much for these links :)
-> 
-> All my internet searches ended up at stackoverflow posts which didn't
-> even describe the problem correctly, which also lead me to write an
-> email explaining a partly erroneous solution, which is sitting in my
-> mailbox ;)
-> 
-> Thanks again, these will help a lot.
+***
 
-Independent of all this, it's not a good idea form a readability point
-of view to mix automated and manual cleanup.  So in cases like this
-where you want to do scope based cleanup, use separate functions
-that have appropriately defined scope (or brackets for the really minor
-cases).
+Subject: Test for 5681e40d297b30f5b513
+Author: syoshida@redhat.com
 
-Here, you may just be able to push the device_node get into
-knav_queue_setup_regions() for example.
+#syz test
 
-Jonathan
-
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+diff --git a/net/can/j1939/main.c b/net/can/j1939/main.c
+index a6fb89fa6278..7e8a20f2fc42 100644
+--- a/net/can/j1939/main.c
++++ b/net/can/j1939/main.c
+@@ -30,10 +30,6 @@ MODULE_ALIAS("can-proto-" __stringify(CAN_J1939));
+ /* CAN_HDR: #bytes before can_frame data part */
+ #define J1939_CAN_HDR (offsetof(struct can_frame, data))
+ 
+-/* CAN_FTR: #bytes beyond data part */
+-#define J1939_CAN_FTR (sizeof(struct can_frame) - J1939_CAN_HDR - \
+-		 sizeof(((struct can_frame *)0)->data))
+-
+ /* lowest layer */
+ static void j1939_can_recv(struct sk_buff *iskb, void *data)
+ {
+@@ -342,7 +338,7 @@ int j1939_send_one(struct j1939_priv *priv, struct sk_buff *skb)
+ 	memset(cf, 0, J1939_CAN_HDR);
+ 
+ 	/* make it a full can frame again */
+-	skb_put(skb, J1939_CAN_FTR + (8 - dlc));
++	skb_put_zero(skb, 8 - dlc);
+ 
+ 	canid = CAN_EFF_FLAG |
+ 		(skcb->priority << 26) |
 
 
