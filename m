@@ -1,124 +1,154 @@
-Return-Path: <linux-kernel+bounces-181532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94FA48C7D43
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 21:31:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E60A8C7D4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 21:33:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FFE4285BB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 19:31:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3BC12B23E0A
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 19:33:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D349156F43;
-	Thu, 16 May 2024 19:30:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FDE6157496;
+	Thu, 16 May 2024 19:32:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jwbbNtdh"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A9QZRkvs"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA348156F29
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 19:30:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E58D156F29;
+	Thu, 16 May 2024 19:32:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715887854; cv=none; b=VRpa4ROw+8ZdEklBBUCjXjuHZagc/0GHtpph/245U52Fqfc3EZzwi0nVEdCntQFH93qD2cciEElPt38Dr44rZGC8++5i7ezdGkNAV8zMe++YspB0j8snNF/cQnOSWW6BlbwvQXLDhxZwalmILas1i8pbvpNJ6nmfQ1dfAoItP8Y=
+	t=1715887978; cv=none; b=TLfYeV0z/jVPcx2zJloXE9JQXSMex209Pras4jOXk1UjRtE9Pz5f4uah82r9jEjqYjNJmQA4CEZ7wAcP2VLtecBKVA4saQVBD5EbASwc7vNV/VM4PRR1oRpTqYrk5jXDZcTP2Ys9qDfG/whV8PQn6VB0w1q9qgwi9VgYcPq0OcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715887854; c=relaxed/simple;
-	bh=fHPQQvEebj4CGLf7Tcw69wXDLmMQSbx7Cu+MmXyUVoc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IvmkCEvd14Ke96rgWFQoaVk2jTknyQjHgiOrrXIOTY82UFXwyd4nOf3I46qBrAJ2dwMPHnDz+NLrmgBaz8qD58pN95IX9yZrZNbWmqYzjM4wbUFOO24XNx0gp7wnKoyCjvo4f+sj6Bx/fOLRZipPbw/ebnekNPOnH5CEiJMz21I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jwbbNtdh; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44GIK6HI012591;
-	Thu, 16 May 2024 19:30:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	from:to:cc:subject:date:message-id:mime-version:content-type; s=
-	qcppdkim1; bh=v4Hy9vgPlqEwpi8ML5a7lKaruYKTTqHgBrgOL6Gyf2A=; b=jw
-	bbNtdhaXIF0RI3kjMWjKABq+Yj0JXJMSEcb2KecL68zlBKJ6q2OodEw8rjLE8wx/
-	dXJEz3WRxMR7lAsI1hGcn3VJKuWB9VMBOCHkTV58ZgqlFt4xau1SlWG6a9hM/DPk
-	TSLRmTwhgpA9wd6NO3Vx0uZrPh+4OkK25tDjLJVzqSKkMpFMsV3TmZhqZAlTThZq
-	dBcZ4sJKEsCRXdRKhyzjOwEA6X0XnbDYmFLPcejaQCNb1DG2eKIptO3y2cYaSb8y
-	ixca2964CemGz9dD8+n5l9aWW7ho8hk0teXhtfB5KwfxdrLlDxfbsPA48KQbla/G
-	qUzwK86BAUOiqCz1kzpQ==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y5e9csfdb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 16 May 2024 19:30:44 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44GJUhoK024476
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 16 May 2024 19:30:43 GMT
-Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 16 May 2024 12:30:42 -0700
-From: Mukesh Ojha <quic_mojha@quicinc.com>
-To: <tglx@linutronix.de>
-CC: <linux-kernel@vger.kernel.org>, Mukesh Ojha <quic_mojha@quicinc.com>
-Subject: [PATCH] genirq/chip: Fix the warn for non-SMP system
-Date: Fri, 17 May 2024 01:00:25 +0530
-Message-ID: <1715887825-1031-1-git-send-email-quic_mojha@quicinc.com>
-X-Mailer: git-send-email 2.7.4
+	s=arc-20240116; t=1715887978; c=relaxed/simple;
+	bh=F+2v2+xUF084Tonn2JxepjXqiHplTniHyiir7MNmqac=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f6myKIOTFxRFtT86UHCJRdKsjU+OB1xhEGaKCCkcNWYa6apoqKgson1FVZ5XEktDdU4uHCs9t59JwAuoRVPeDQ/szCN1d63atz3yZBo8fg0FQtGJ6Oot6pDcOZLC+1PdjkYKZG8S/rWXmmdgXWuEi/UeUDtrYtv/6DqEuXXNKWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A9QZRkvs; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715887977; x=1747423977;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=F+2v2+xUF084Tonn2JxepjXqiHplTniHyiir7MNmqac=;
+  b=A9QZRkvsq9b6lOKRWN/OOBkt4k3qE3Ezldx1nnkHfHFTmGOaUVwAG5BM
+   /T1AQZAlBOqZkv0Y5IKw0ZIZwwygnI1z1NclL4UKpm00r0xwiqmghhEaP
+   ANlT03790ODc4uKlAojBaGyi42fDa+jAjbHBo4+HO7FNDIE3yePTV8L6h
+   Kt8WTdzd0x5V8XUC/l7hhJWpaWWq3rl9/VAAojxpDO1SiaFH5SrloSnge
+   9X1dlFlLh4jM9jW7Er6UR+MRKiChZqXbFgA6rf55KDTsUyt6xJNQyGllE
+   HvtNLqhNx8/4OzDOPyKU2+fpedfNAI/J0Xy1w1AA3RlTebeTvGOqyxDmo
+   A==;
+X-CSE-ConnectionGUID: eC2FWTFySQ6yf6CoZM7ljQ==
+X-CSE-MsgGUID: KOWs2NU0RUa6fRgd3J4QeA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="29534717"
+X-IronPort-AV: E=Sophos;i="6.08,165,1712646000"; 
+   d="scan'208";a="29534717"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 12:32:56 -0700
+X-CSE-ConnectionGUID: 4nkztOPnTliFpzBhonI88g==
+X-CSE-MsgGUID: Ep0hYkanRwyYg79M2JjH/g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,165,1712646000"; 
+   d="scan'208";a="31468887"
+Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 16 May 2024 12:32:52 -0700
+Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s7gqQ-000Ehd-0w;
+	Thu, 16 May 2024 19:32:50 +0000
+Date: Fri, 17 May 2024 03:31:51 +0800
+From: kernel test robot <lkp@intel.com>
+To: Zhang Yi <yi.zhang@huaweicloud.com>, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org,
+	djwong@kernel.org, hch@infradead.org, brauner@kernel.org,
+	david@fromorbit.com, chandanbabu@kernel.org, jack@suse.cz,
+	yi.zhang@huawei.com, yi.zhang@huaweicloud.com,
+	chengzhihao1@huawei.com, yukuai3@huawei.com
+Subject: Re: [PATCH v2 1/3] iomap: pass blocksize to iomap_truncate_page()
+Message-ID: <202405170356.gLrF2NDl-lkp@intel.com>
+References: <20240516073001.1066373-2-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: v5_Ju6jc2n1FVQ3WFbc-v7XWG-axmSBk
-X-Proofpoint-ORIG-GUID: v5_Ju6jc2n1FVQ3WFbc-v7XWG-axmSBk
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-16_07,2024-05-15_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 spamscore=0
- adultscore=0 lowpriorityscore=0 mlxscore=0 clxscore=1015 mlxlogscore=977
- priorityscore=1501 bulkscore=0 malwarescore=0 suspectscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405010000 definitions=main-2405160140
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240516073001.1066373-2-yi.zhang@huaweicloud.com>
 
-__irq_startup_managed() for !SMP system returns IRQ_STARTUP_NORMAL
-which may result in a WARNING during enablement of an irq i.e.,
-starting a irq while it is not activated.
+Hi Zhang,
 
-Fix this by appropriately returning IRQ_STARTUP_MANAGED.
+kernel test robot noticed the following build warnings:
 
-[   11.129246] ------------[ cut here ]------------
-[   11.133891] WARNING: CPU: 0 PID: 39 at kernel/irq/chip.c:243 irq_startup+0x87/0x88
-[   11.146370] CPU: 0 PID: 39 Comm: kworker/0:5 Tainted: G   OE     5.15.123-perf-gc692140b4d58-dirty #1
-[   11.156289] Hardware name: Generic DT based system
-[   11.161081] Workqueue: pm pm_runtime_work
-[   11.165112] (unwind_backtrace) from [<c0108c37>] (show_stack+0xb/0xc)
-[   11.172695] (show_stack) from [<c01154d5>] (__warn+0x8d/0x8e)
-[   11.179581] (__warn) from [<c0115525>] (warn_slowpath_fmt+0x4f/0x68)
-[   11.187063] (warn_slowpath_fmt) from [<c0146d89>] (irq_startup+0x87/0x88)
-[   11.194992] (irq_startup) from [<c0144969>] (enable_irq+0x31/0x70)
-[   11.202313] (enable_irq) from [<c05726bb>]
+[auto build test WARNING on brauner-vfs/vfs.all]
+[also build test WARNING on linus/master v6.9 next-20240516]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
----
- kernel/irq/chip.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+url:    https://github.com/intel-lab-lkp/linux/commits/Zhang-Yi/iomap-pass-blocksize-to-iomap_truncate_page/20240516-154238
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
+patch link:    https://lore.kernel.org/r/20240516073001.1066373-2-yi.zhang%40huaweicloud.com
+patch subject: [PATCH v2 1/3] iomap: pass blocksize to iomap_truncate_page()
+config: arm-davinci_all_defconfig (https://download.01.org/0day-ci/archive/20240517/202405170356.gLrF2NDl-lkp@intel.com/config)
+compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project d3455f4ddd16811401fa153298fadd2f59f6914e)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240517/202405170356.gLrF2NDl-lkp@intel.com/reproduce)
 
-diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
-index dc94e0bf2c94..a243f5ce786c 100644
---- a/kernel/irq/chip.c
-+++ b/kernel/irq/chip.c
-@@ -228,7 +228,7 @@ static __always_inline int
- __irq_startup_managed(struct irq_desc *desc, const struct cpumask *aff,
- 		      bool force)
- {
--	return IRQ_STARTUP_NORMAL;
-+	return IRQ_STARTUP_MANAGED;
- }
- #endif
- 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405170356.gLrF2NDl-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from fs/iomap/buffered-io.c:9:
+   In file included from include/linux/iomap.h:7:
+   In file included from include/linux/blk_types.h:10:
+   In file included from include/linux/bvec.h:10:
+   In file included from include/linux/highmem.h:8:
+   In file included from include/linux/cacheflush.h:5:
+   In file included from arch/arm/include/asm/cacheflush.h:10:
+   In file included from include/linux/mm.h:2210:
+   include/linux/vmstat.h:522:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     522 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+>> fs/iomap/buffered-io.c:1453:7: warning: comparison of distinct pointer types ('typeof ((pos)) *' (aka 'long long *') and 'uint64_t *' (aka 'unsigned long long *')) [-Wcompare-distinct-pointer-types]
+    1453 |                            do_div(pos, blocksize);
+         |                            ^~~~~~~~~~~~~~~~~~~~~~
+   include/asm-generic/div64.h:222:28: note: expanded from macro 'do_div'
+     222 |         (void)(((typeof((n)) *)0) == ((uint64_t *)0));  \
+         |                ~~~~~~~~~~~~~~~~~~ ^  ~~~~~~~~~~~~~~~
+   2 warnings generated.
+
+
+vim +1453 fs/iomap/buffered-io.c
+
+  1446	
+  1447	int
+  1448	iomap_truncate_page(struct inode *inode, loff_t pos, unsigned int blocksize,
+  1449			bool *did_zero, const struct iomap_ops *ops)
+  1450	{
+  1451		loff_t start = pos;
+  1452		unsigned int off = is_power_of_2(blocksize) ? (pos & (blocksize - 1)) :
+> 1453				   do_div(pos, blocksize);
+  1454	
+  1455		/* Block boundary? Nothing to do */
+  1456		if (!off)
+  1457			return 0;
+  1458		return iomap_zero_range(inode, start, blocksize - off, did_zero, ops);
+  1459	}
+  1460	EXPORT_SYMBOL_GPL(iomap_truncate_page);
+  1461	
+
 -- 
-2.7.4
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
