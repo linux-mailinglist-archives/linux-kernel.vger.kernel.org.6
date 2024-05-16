@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-181405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C58088C7B96
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 19:48:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 562518C7B97
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 19:49:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4125C1F22BBB
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:48:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 797881C21497
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:49:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C47715ADA6;
-	Thu, 16 May 2024 17:45:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFBD9159204;
+	Thu, 16 May 2024 17:45:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y/yufmPy"
-Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R2s9qS9s"
+Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E48B9158DD4
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 17:45:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43585159917
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 17:45:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715881507; cv=none; b=C94SGupvozwr6VZT31JWPMhxlWYWC4/X71cQpUk3+s+FzYTYhA0S0A+j1lPPDyomlsNRLr/nqDS1EGdHrOMQQiun/RszPIOThzo5UREjFNZ0J07NaWRcwZwufk+WR12M2C1GYI7zabCfSm3FCgdhrKxPWa1g42dwmwJvSsHEz3E=
+	t=1715881509; cv=none; b=fL6AP3N8HCwPE7jyh8qK6E6mydhztvCmHf8vnwSXtoP+BwIR3IIJ6vGk3ShjeDKLDfg65IjWMn947w88OV331hk1vZIlZYyPwYZ9S/cvXq5t1hRKw7W8vVEySK0tVHZ4yMhD3lIT5K5D4x+4RHPA4UKTYGFP+B84DtGQb1Z0fbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715881507; c=relaxed/simple;
-	bh=5RXdrrebCLyRNRu/PswOiPBlRFFX/KYQGPs3XeSm0zM=;
+	s=arc-20240116; t=1715881509; c=relaxed/simple;
+	bh=wyt5TeuMHVxw0kvBQCXwTOsU2/UU1RQiOPIBUMKdca0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XRu91sby6zoxnxdTp8UOevgs/+I1060lhgQMht51nOFlTqZ5fhudnIxaZchDYr5KE9C5VXIuFADOKjIq01esJF0RknaIs/YKnykzNsncJcnWOiqxBHXBep2eLGriDDdZLsSuba1+tJ3RcTEjpPmNkovEZVc7IyUkAGMrpz894xQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y/yufmPy; arc=none smtp.client-ip=209.85.166.42
+	 MIME-Version; b=jB5X0Jmd/gy235IGakWqJoikwKWsCNRee6t8mGC0mJixM0eExrBFUQQ1WSls14lhdM3MU39vXWOzMnR12RVkMxjGr3mBzDsEJ6vEXMKrCIQK4cOOdBrC2Lmg+FhPORF1BaVkOVuyxOs94gjFbJoEhMyaerC892MSVxlZ9Mh3IMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R2s9qS9s; arc=none smtp.client-ip=209.85.166.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-7e1bb4abfcfso64732739f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 10:45:05 -0700 (PDT)
+Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-7e1e06c9a10so67248239f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 10:45:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715881505; x=1716486305; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1715881506; x=1716486306; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zPvugwzLWUwzXXCLLOQaHatMSlMOb9JzZ40gA0iDEDg=;
-        b=Y/yufmPyw9qfNiAInVCzekWz+achx7L8B2LBzhRPI8cC9wJovI8F7L1kZQeYUCKgzr
-         rQN7v7UNX3Tvt9K3nWm+pDR12D56deLP4kDDkrxtSWwKJrIMYEucG8IqJvF6VZn2lozi
-         3WdJePPlrvZ+UsOcbL+QflTqEJBqdEiIrVkL2dMBDeVhD8BhrxvdNO9pmPRHGESC9HgG
-         c892v7PqJ6TMfXh4fvzC3FIT1DF0nqK5HWgQuvWf8dCZlBbTX/9agZ2+A/+tu2qFggAy
-         X1W3xJKohkl5qQnj2ZbHegzQ4azVxQ1ya2le1fzbp2VoGOMrpay9BJ5W7oz4EfC5n8PT
-         FetQ==
+        bh=P6B0otVk+eOeb6hk65r7u/cdtYXtppvakvgUuU81roA=;
+        b=R2s9qS9sF8HcsXfbEuFi44o3qK7+zHrBtqML5CNsQhK6MniDuazdbjBXMqwIDowekk
+         DMIgFybVgoTnRIFhe3rUvI0PP0iBhO/3V8VoSFNlyEqoBk+Hr7oEFxkZZxOBvB0cTYLY
+         /BNQ1JMC3Q8nNOjnCj+SX51g5c4DBFpVqCU1pn23Z+edHchbiHCTldDsFto0A5fk4Ks2
+         iUJriNgIg5eU1yrZGvDC0/AWQ7yNJNTojIjkc9pZSz9NVQbS2UcLnB5hK5ayEmEuZpdI
+         MtO2dEjEVSRfWAf1H2PXBpep6YJaxiRrCUfmnUY4nezuhWIQOxhiPO2fSvTIVCTLSAqI
+         VMSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715881505; x=1716486305;
+        d=1e100.net; s=20230601; t=1715881506; x=1716486306;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=zPvugwzLWUwzXXCLLOQaHatMSlMOb9JzZ40gA0iDEDg=;
-        b=YJg6JBsDMK6dyR+cPQzK1KvPJrwu05Uvts0z6Wt9SCTtlngtnEwRGXOMgKaBaGKuHe
-         LnJGLz81GUgBAxsYYpIUfL5t+5VJ4fNRpYLmCIXmlLulA062StPpTKfR/RzrlAIu8xAe
-         vHMg+W0NT0AqMZfd1RSrqb+bX/Vp8Fthwr+B83rQQGv8D8uzYF9R1j89VM4dPSTF7Ac4
-         X9mB1gjdNBB7ufgnMygvp9GWFh7ZYrze/xGMdelJW6M1AmlGSLql5jU+r0/oWUAg/EsC
-         KMdRyxdMDvJW8lxuxci1B8jipEa9eD79NW1qgJ47Vv5Ah61X+Ruzuqwcm5IMT6tIOf5O
-         /AZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX3fL6YjwJFOufD5hCZnoIoECmL4JXJbe/TeWvaAER5aNF0IWPSmWG7JZY8ycfVbMGIp+fh4Ej/Y7W4BohwvBcikkvvpvuShJXC/N3x
-X-Gm-Message-State: AOJu0YzNyAyL+EAnQEeM91+lHiXe95OFIBTlKdDjdn7Ti/3wuQQEgnXv
-	acNo94W/OL0ShxDEzJBxuo/MdYzr7/lzw8fk0GbCqwK0D8ra3dbt2q4xSi6+
-X-Google-Smtp-Source: AGHT+IFLNKeTaw9iXVo5cxXFbdAHesMIZkS5AmGLUXUNEYlNOXHJW3I4DpYnys/G9UM+IcGgvUqZag==
-X-Received: by 2002:a05:6e02:1a6a:b0:36c:d52:e969 with SMTP id e9e14a558f8ab-36cc1476080mr241739195ab.6.1715881505054;
-        Thu, 16 May 2024 10:45:05 -0700 (PDT)
+        bh=P6B0otVk+eOeb6hk65r7u/cdtYXtppvakvgUuU81roA=;
+        b=DaVRsfr/0OuFlwJWzKBpfreB1DrAXDzMcWodLxmKHI8muXSTMN1cfY5i/KPG8Jp4wu
+         /hYusVBBTMY13Kt7yByd9lEE3lMaDbnusx643GuXxCkTc6BisFz0pIzDHVxjGeQ+NO4t
+         dx2DZNtxJ5dZHAuJ+W02I1m6iyLCZmJRcC4HnIvkOk6MJVpKz8KXp1FFSapybFbGS1+X
+         pY5yZUfMjW1mC42Y5FrPVoLfig7mK7P7xzThHGLt34B8HLddxNOa30kD0pYVB8JMZIoZ
+         /PPzz8RYj4ylbDVkll152syLLf0NZ7SMy6SsXvesEItzUiycB74gRUUrnXOu5+R5HlyI
+         XCow==
+X-Forwarded-Encrypted: i=1; AJvYcCUwQCrYZ4R+awcbSTYoi7kIrYGYAHVXjtAzSHFP4SLCX2JY1LyPLjFBTead2m71/8TLLhwC3cSvInU+p5MmMDNF2Bq00I5O4kfp9uue
+X-Gm-Message-State: AOJu0YyVwe83KcAsG+zUoDtxq22cSzWOu+G66guya+TttHXLvgwhl9XH
+	I37xhiEd0SsEgLiHINQ9sAlQgaW+Tv7khcXb3mVmxOdvGuBnQjJF
+X-Google-Smtp-Source: AGHT+IFfNKxOu0YMJf8LIdPkkjzcglQuoJNP/OgNxbJXyxVYC2axWflxm1HjwNIxuW2cTmt4VSSykg==
+X-Received: by 2002:a05:6e02:1543:b0:36b:26df:ccec with SMTP id e9e14a558f8ab-36cc1447afemr229618225ab.16.1715881506442;
+        Thu, 16 May 2024 10:45:06 -0700 (PDT)
 Received: from frodo.. (c-73-78-62-130.hsd1.co.comcast.net. [73.78.62.130])
-        by smtp.googlemail.com with ESMTPSA id 8926c6da1cb9f-4893715057csm4273595173.80.2024.05.16.10.45.04
+        by smtp.googlemail.com with ESMTPSA id 8926c6da1cb9f-4893715057csm4273595173.80.2024.05.16.10.45.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 May 2024 10:45:04 -0700 (PDT)
+        Thu, 16 May 2024 10:45:06 -0700 (PDT)
 From: Jim Cromie <jim.cromie@gmail.com>
 To: jbaron@akamai.com,
 	gregkh@linuxfoundation.org,
@@ -84,9 +84,9 @@ Cc: ukaszb@chromium.org,
 	yanivt@google.com,
 	bleung@google.com,
 	Jim Cromie <jim.cromie@gmail.com>
-Subject: [PATCH v8-RESEND 23/33] selftests-dyndbg: test_percent_splitting multi-cmds on module classes
-Date: Thu, 16 May 2024 11:43:47 -0600
-Message-ID: <20240516174357.26755-24-jim.cromie@gmail.com>
+Subject: [PATCH v8-RESEND 24/33] docs/dyndbg: explain new delimiters: comma, percent
+Date: Thu, 16 May 2024 11:43:48 -0600
+Message-ID: <20240516174357.26755-25-jim.cromie@gmail.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20240516174357.26755-1-jim.cromie@gmail.com>
 References: <20240516174357.26755-1-jim.cromie@gmail.com>
@@ -98,50 +98,71 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-New fn tests multi-queries composed with % splitters.  It uses both
-test_dynamic_debug and test_dynamic_debug_submod, and manipulates
-several classes at once.  So despite the syntactic-oriented name, it
-also tests classmaps.
+Add mention of comma and percent delimiters into the respective
+paragraphs describing their equivalents: space and newline.
 
 Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
 ---
- .../dynamic_debug/dyndbg_selftest.sh          | 20 +++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ .../admin-guide/dynamic-debug-howto.rst        | 18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
 
-diff --git a/tools/testing/selftests/dynamic_debug/dyndbg_selftest.sh b/tools/testing/selftests/dynamic_debug/dyndbg_selftest.sh
-index 7a7d437e948b..ddb04c0a7fd2 100755
---- a/tools/testing/selftests/dynamic_debug/dyndbg_selftest.sh
-+++ b/tools/testing/selftests/dynamic_debug/dyndbg_selftest.sh
-@@ -231,9 +231,29 @@ function comma_terminator_tests {
-     ddcmd =_
- }
+diff --git a/Documentation/admin-guide/dynamic-debug-howto.rst b/Documentation/admin-guide/dynamic-debug-howto.rst
+index 742eb4230c6e..7b570f29ae98 100644
+--- a/Documentation/admin-guide/dynamic-debug-howto.rst
++++ b/Documentation/admin-guide/dynamic-debug-howto.rst
+@@ -73,16 +73,18 @@ Command Language Reference
+ ==========================
  
-+function test_percent_splitting {
-+    echo -e "${GREEN}# TEST_PERCENT_SPLITTING - multi-command splitting on % ${NC}"
-+    ifrmmod test_dynamic_debug_submod
-+    ifrmmod test_dynamic_debug
-+    ddcmd =_
-+    modprobe test_dynamic_debug dyndbg=class,D2_CORE,+pf%class,D2_KMS,+pt%class,D2_ATOMIC,+pm
-+    check_match_ct =pf 1
-+    check_match_ct =pt 1
-+    check_match_ct =pm 1
-+    check_match_ct test_dynamic_debug 23 -r
-+    # add flags to those callsites
-+    ddcmd class,D2_CORE,+mf%class,D2_KMS,+lt%class,D2_ATOMIC,+ml
-+    check_match_ct =pmf 1
-+    check_match_ct =plt 1
-+    check_match_ct =pml 1
-+    check_match_ct test_dynamic_debug 23 -r
-+    ifrmmod test_dynamic_debug
-+}
+ At the basic lexical level, a command is a sequence of words separated
+-by spaces or tabs.  So these are all equivalent::
++by spaces, tabs, or commas.  So these are all equivalent::
+ 
+   :#> ddcmd file svcsock.c line 1603 +p
+   :#> ddcmd "file svcsock.c line 1603 +p"
+   :#> ddcmd '  file   svcsock.c     line  1603 +p  '
++  :#> ddcmd file,svcsock.c,line,1603,+p
+ 
+-Command submissions are bounded by a write() system call.
+-Multiple commands can be written together, separated by ``;`` or ``\n``::
++Command submissions are bounded by a write() system call.  Multiple
++commands can be written together, separated by ``%``, ``;`` or ``\n``::
+ 
+-  :#> ddcmd "func pnpacpi_get_resources +p; func pnp_assign_mem +p"
++  :#> ddcmd func foo +p % func bar +p
++  :#> ddcmd func foo +p \; func bar +p
+   :#> ddcmd <<"EOC"
+   func pnpacpi_get_resources +p
+   func pnp_assign_mem +p
+@@ -104,7 +106,6 @@ The match-spec's select *prdbgs* from the catalog, upon which to apply
+ the flags-spec, all constraints are ANDed together.  An absent keyword
+ is the same as keyword "*".
+ 
+-
+ A match specification is a keyword, which selects the attribute of
+ the callsite to be compared, and a value to compare against.  Possible
+ keywords are:::
+@@ -128,7 +129,6 @@ keywords are:::
+   ``line-range`` cannot contain space, e.g.
+   "1-30" is valid range but "1 - 30" is not.
+ 
+-
+ The meanings of each keyword are:
+ 
+ func
+@@ -153,9 +153,11 @@ module
+     The given string is compared against the module name
+     of each callsite.  The module name is the string as
+     seen in ``lsmod``, i.e. without the directory or the ``.ko``
+-    suffix and with ``-`` changed to ``_``.  Examples::
++    suffix and with ``-`` changed to ``_``.
 +
- tests_list=(
-     basic_tests
-     comma_terminator_tests
-+    test_percent_splitting
- )
++    Examples::
  
- # Run tests
+-	module sunrpc
++	module,sunrpc	# with ',' as token separator
+ 	module nfsd
+ 	module drm*	# both drm, drm_kms_helper
+ 
 -- 
 2.45.0
 
