@@ -1,214 +1,184 @@
-Return-Path: <linux-kernel+bounces-180589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9B698C708A
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 05:12:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C971A8C70AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 05:26:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEB601C21722
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 03:12:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 815DC28110F
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 03:26:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BB244A3F;
-	Thu, 16 May 2024 03:12:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 068F8182AF;
+	Thu, 16 May 2024 03:26:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=amd.com header.i=@amd.com header.b="aXonmDoY"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2043.outbound.protection.outlook.com [40.107.223.43])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="BHmfPTvS"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E04514436;
-	Thu, 16 May 2024 03:12:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.43
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715829137; cv=fail; b=PWG2lw6bhoczqgVUp0g5WVR3x5aWzUMx0r58CYLHLb6OTPQJ489u7JHKRQMnuDVnnnCY0tDS36pQvM7GdyWJU3P2rIyMuFLt4Q8uI8oazmAhDEsK+D79OgBunJXuMqLfsCwVHpog+mVxiVPQky3p2WAEMmW8C2wJOSZtIpRnG90=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715829137; c=relaxed/simple;
-	bh=jx5I7qyoVpqtVDh5lsmYekGySPjsv54gJ/vn2Gqx+JQ=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jfJPlD+Oo3yFu5PiftTuRUJtj+XGG9CFtLeZzhyZhBSxLnQPEW0KQ+Gk6x34rZSadSuvhO0sdxUV60ns3R6n6Wr2g/GBzsbKMDCXKEzUZzTRinjWeHmX9QQY/XrgHtQzsySE0vOP6iYTG68+JV7Bzc4I8BlqeJStbc1iTFTzdPw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=aXonmDoY; arc=fail smtp.client-ip=40.107.223.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Ct0MIDcQq/i4roPvjSRyvKG+b7fdol0lVOQycKRZQsJYlqYDfqu+Nd1zB1tWAWA63TCth9wsd1t8aAS3XODbUL2d8o5YNYl9NZoKeLQRwGvxj/F0HZeaKSMBZCgM470SdaNUBPwIKP0LA6Ec63vJL99txwxi7bbGwB6BA38u+d62ygU24vHpX215rk9CIArSbOA5w/agdMftLW2M1b0XvlgEg+/eY1ZoyoBHZG9w0ws7ZfKKndNhpQ+B+gKrJLHS+4b9EcEA7UiBbQdLoilLAhlOb7LLPKFROJRfZIemi1KIoSrMkFT8NfCaett+ROdtdLWfzBvdKO+jt+eYs4IcpQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4QMaYxMr01Yvv6VyEmOAe10kXBHIqaQYI5l0CNSypGc=;
- b=IE4Xij/lb+1q9JOjd+LoEigUZkU61ROdSGl9NWRZ4NgIASr85d98YZ80CU57dZdPRa9kTMXbcZkE/nOOpCg4mWiTKVJUBRTLIke6ZPy+29Qzz+nqXjuhZCaJxQbwD4mh1MYDQTWq3DR+GK2bvMN3zUyV6fwILEZs+oUZpPQaCKeNA9wF00l0lrMiXZLN3j2FzmM6QVYQ2yxSg8GEWdt24XyRpFFJ+OZlLwZQ+2KAnB+r3gm4E7n+DO6INZCT9iKqef1VGl33RmYGJOTflWajg6bhIxSzjmSY6x1mvSZSYLH8JRbNXe+vzbCP2DASiYCFNEU99Uk8d/EP+VWrgfgkQg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4QMaYxMr01Yvv6VyEmOAe10kXBHIqaQYI5l0CNSypGc=;
- b=aXonmDoYNue+4dhNcBpZoGKdWdhDwpksMWh85+i0QoCv5b/fgV5U6eT6P/BqAhSM8uMqxCOZl5C3nLE87MVu3lVnGY8CqBnXYBM2SXr6PbqVHu2m5xTCEeUWibppF4qE6/0XfrlJr0SsEtqLK6X5HH/MRxImAH3RyZpSNcKUQA4=
-Received: from BN0PR07CA0026.namprd07.prod.outlook.com (2603:10b6:408:141::26)
- by MW6PR12MB8951.namprd12.prod.outlook.com (2603:10b6:303:244::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.25; Thu, 16 May
- 2024 03:12:13 +0000
-Received: from BN3PEPF0000B373.namprd21.prod.outlook.com
- (2603:10b6:408:141:cafe::be) by BN0PR07CA0026.outlook.office365.com
- (2603:10b6:408:141::26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.28 via Frontend
- Transport; Thu, 16 May 2024 03:12:12 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BN3PEPF0000B373.mail.protection.outlook.com (10.167.243.170) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7587.0 via Frontend Transport; Thu, 16 May 2024 03:12:12 +0000
-Received: from localhost (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Wed, 15 May
- 2024 22:12:12 -0500
-Date: Wed, 15 May 2024 22:11:55 -0500
-From: Michael Roth <michael.roth@amd.com>
-To: Sean Christopherson <seanjc@google.com>
-CC: Paolo Bonzini <pbonzini@redhat.com>, <kvm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PULL 13/19] KVM: SEV: Implement gmem hook for invalidating
- private pages
-Message-ID: <20240516031155.meola5hmlk24qv52@amd.com>
-References: <20240510211024.556136-1-michael.roth@amd.com>
- <20240510211024.556136-14-michael.roth@amd.com>
- <ZkU3_y0UoPk5yAeK@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AA48B642
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 03:26:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715829967; cv=none; b=WD+L2hu4YoFTp6mzBjWuATcHHLycVUCfddiXwBqB7UvbBmQwVz2Jovx36FStoxKtOkQfYOkogPOy+SB7BxoeCbSDXCdlWjJrGiv4JOTNMGdnR9OfimZPJNzjB+x/6xHKxxr6H72AwQQZM943X+Ua6ZpY4VXTgfSjfhsp1w5Y8vI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715829967; c=relaxed/simple;
+	bh=Fj9DFQbUIHz++fbxS9Gb93DcDizppZYPSDVmzUo6mYs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=bKwwpOreJHAE+4qLk4yewONgJzGr1PrSTIhe4N2/20szJ5SOkg6UuLrdTPABmrL1pKPUGc/PG7LPDZ3j+0+luvZEQFwiKpMyEGkqsE9LEriTzwiLvxBPLs/Ox+2GrCtlpscJXMWLh01UTNqxzpwi4+tJjgsmKFxEUxljuwoP8CI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=BHmfPTvS; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240516032555epoutp030a9a18750b77321f5382de63660e608a~P2kDasjIq1689616896epoutp03S
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 03:25:55 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240516032555epoutp030a9a18750b77321f5382de63660e608a~P2kDasjIq1689616896epoutp03S
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1715829955;
+	bh=RVQ/+Lsjjx2p15g745Qf4Umsx247PWwm8nk3ogxPp2I=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=BHmfPTvSadGgoo+ZzSbakfy7RaQKO+qhbLPKmwnikcYBYHyGL5NdODRQSXZXzUtSv
+	 5CJGSsegsfQK6/6IRsAalCgZzFktSA6cCtvG/zuI78GcL8h+0a+asWXpbfg+54v27d
+	 z3opoOb4Y6oWuOUPnMRgBMYt+MOG174a9p4dsya8=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas2p2.samsung.com (KnoxPortal) with ESMTP id
+	20240516032554epcas2p2d86e41d5685adb5bbf161c56cdec7939~P2kDGcvG50494604946epcas2p2b;
+	Thu, 16 May 2024 03:25:54 +0000 (GMT)
+Received: from epsmges2p1.samsung.com (unknown [182.195.36.90]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4VfwTt0GNKz4x9Q0; Thu, 16 May
+	2024 03:25:54 +0000 (GMT)
+Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
+	epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	0A.31.09673.1CC75466; Thu, 16 May 2024 12:25:53 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
+	20240516032553epcas2p3b8f34d03f32cccccc628027fbe1e8356~P2kBzKd970613006130epcas2p3N;
+	Thu, 16 May 2024 03:25:53 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240516032553epsmtrp20d14534e6924a6ada1f43016c58e5e92~P2kBxuSeZ0411704117epsmtrp25;
+	Thu, 16 May 2024 03:25:53 +0000 (GMT)
+X-AuditID: b6c32a45-a89fa700000025c9-79-66457cc1670d
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	B3.B6.09238.1CC75466; Thu, 16 May 2024 12:25:53 +0900 (KST)
+Received: from localhost.dsn.sec.samsung.com (unknown [10.229.54.230]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240516032553epsmtip2a5cc07a4ec700d70fc0eb8cf97e19007~P2kBhReN12157021570epsmtip2Y;
+	Thu, 16 May 2024 03:25:53 +0000 (GMT)
+From: Minwoo Im <minwoo.im@samsung.com>
+To: "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>, Alim Akhtar
+	<alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>, Bart Van
+	Assche <bvanassche@acm.org>
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, Joel Granados
+	<j.granados@samsung.com>, gost.dev@samsung.com, Minwoo Im
+	<minwoo.im@samsung.com>, Asutosh Das <quic_asutoshd@quicinc.com>
+Subject: [PATCH] ufs: mcq: Fix missing argument 'hba' in MCQ_OPR_OFFSET_n
+Date: Thu, 16 May 2024 12:14:05 +0900
+Message-Id: <20240516031405.586706-1-minwoo.im@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <ZkU3_y0UoPk5yAeK@google.com>
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN3PEPF0000B373:EE_|MW6PR12MB8951:EE_
-X-MS-Office365-Filtering-Correlation-Id: 938260ef-8461-4a8f-e5b3-08dc7555fb26
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|376005|1800799015|36860700004|82310400017;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?lH3kHORD0LG1gMA8m4skBNE3fG7Xjc3gu6jnYZ5T4YDMJoNr9fY2oFtvY+df?=
- =?us-ascii?Q?3i5bU/bMcgorVr8TR/1Q+e1XfwYDBCRpXu7AP1muuTeQcRqO00zmOzsSsKRA?=
- =?us-ascii?Q?AMVwyiSR5aYneRxI8G3sBwBd86X3XP09vThlRvzWYofR/DFSesW0iZKiEOPk?=
- =?us-ascii?Q?c0cR+xxfhqZQRCzICRIvv3zRACSr8yCazx2kHO4FAcLMBbW6AZPVi5z7yvqF?=
- =?us-ascii?Q?E9J4SRKhJ1OVMuwfJECxMBtpEnokGRBRDdvFyT1ohus6U6waJyCga8og/UpY?=
- =?us-ascii?Q?Ii6z7elqfhQJJwwRFIoHLddMNpVrp+ewQ83Zh5yd6sEP19/QPUfZQdfFaUwY?=
- =?us-ascii?Q?gYXLOpDVazhnceuBjfTp0VUjGwwXbIWxyEGznMK4E6hWRKwyfvJKKOj3CIc+?=
- =?us-ascii?Q?lBlnAz3EfNaQquauOc3LSp8bCqSTtTN464PAUS+3agVyRa6SQLMpuG4OlEYp?=
- =?us-ascii?Q?dmjF/XvbfOUgnxzxDJ03EPnjN3E+M1QUqxI5CkBE8AxJK59upfifcmGU6kps?=
- =?us-ascii?Q?lPO1iosZ0Rcd52U0GzJPsrzSeq4Tz2vrPLg61R3XhnMSkmtHOXDA2m7X/H4u?=
- =?us-ascii?Q?hzxKiZUfD1TH0gX95hgPA7wP8W9agVg4emy27KUx5T9yQcCbck20nKNvA2OL?=
- =?us-ascii?Q?UhYudCdB5oZRvRPcsLGqUASfe4nzN7Q+w2/LiBGhWwcUknQcgMbCfKgKqdV5?=
- =?us-ascii?Q?h5WvgHhBQFcZdgCeZaQrPn2HmYPWuzmLNtKT+1uk4TuN3x7mSNHzSjxLsuyn?=
- =?us-ascii?Q?eVX8K6wQPSSb33GAAld5PaybrZB0B/2gpA/FenWpk7FJauFWi4DnF8VYxzMh?=
- =?us-ascii?Q?oyvzMG+nmDXgxwTWoujSp9IkFZQZmQ2Mwd6HqOC8YXXNQkqxPHzDRjUcDQ1D?=
- =?us-ascii?Q?eDINiPxFIl6WiD0IAL0Ro2ZhJSGS2Z9w07T9eAGSNMPz4PSb9ycX+HIQeX2Q?=
- =?us-ascii?Q?9Vim4RhcnMKeLk2tHo0jFjF2sqPqtzBHNNYqmyd9DbM78OCf0JmUlA8ywakk?=
- =?us-ascii?Q?Ee5wtWesHlKDtbWRXHHqL4SjYMAaZWqEYyJevw8pQH364OLsxHlr2alOnky7?=
- =?us-ascii?Q?wGcomJ8i1jYASN2ZGJnBfR/WquZ72yLmtZs0ymKohA3CpM82PhUgJfb/O2MN?=
- =?us-ascii?Q?utDRhY8bMu2gHXM6swSRP6N1QovGXkwCxARPRvJHOme/ROyVY6mNmcHqWyKP?=
- =?us-ascii?Q?alvs51bdvCqsbr7TNFkHYXGZP5/WN0t6K6e2brIuO4PatjJev8LnH0WX291c?=
- =?us-ascii?Q?yscQ6ATyvj17b29n0IgmcYDlvfwcsPuTHmbtNbx3tggCVOpsDZANkAu3d8az?=
- =?us-ascii?Q?unIxjF41aYa7EZNX35v5NHpRUez2+Fpevg6tEa4LNw3fj5IEFVpw+rqlIpwb?=
- =?us-ascii?Q?4ZkfflwHiqDeUkWh0o22ZXikgW0N?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(376005)(1800799015)(36860700004)(82310400017);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 May 2024 03:12:12.5599
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 938260ef-8461-4a8f-e5b3-08dc7555fb26
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN3PEPF0000B373.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8951
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprFJsWRmVeSWpSXmKPExsWy7bCmqe7BGtc0g00zrCwezNvGZvHy51U2
+	i2kffjJb3Dywk8li6f6HjBYb+zksLu+aw2bRfX0Hm8Xy4/+YLJ6dPsBssbBjLosDt8flK94e
+	0yadYvP4+PQWi8fEPXUefVtWMXp83iTn0X6gmymAPSrbJiM1MSW1SCE1Lzk/JTMv3VbJOzje
+	Od7UzMBQ19DSwlxJIS8xN9VWycUnQNctMwfoQiWFssScUqBQQGJxsZK+nU1RfmlJqkJGfnGJ
+	rVJqQUpOgXmBXnFibnFpXrpeXmqJlaGBgZEpUGFCdsaktm62gvVCFW93d7M0MC7i72Lk5JAQ
+	MJGYt+krM4gtJLCDUeLtdYUuRi4g+xOjxOK3DxghnG+MEgsObmCF6fi05DozRGIvo8SmObOY
+	IJzfjBILe94zgVSxCahLNEx9xQKSEBF4zyhx//ZTdhCHWeAUo8Tn++2MIFXCAp4Sj1vug21n
+	EVCVmN2+gw3E5hWwlli0vYkFYp+8xP6DZ5kh4oISJ2c+AYszA8Wbt84Gu0NC4Cu7xNM365kh
+	Glwk1q1ZwAZhC0u8Or6FHcKWkvj8bi9UvFzi55tJjBB2hcTBWbeB4hxAtr3EtecpICazgKbE
+	+l36EFFliSO3oLbySXQc/ssOEeaV6GgTgpihLPHx0CGo/ZISyy+9htrjIXHxxGQ2SPDGSjx4
+	e4l1AqP8LCS/zELyyyyEvQsYmVcxiqUWFOempxYbFRjCIzU5P3cTIziRarnuYJz89oPeIUYm
+	DsZDjBIczEoivCJpzmlCvCmJlVWpRfnxRaU5qcWHGE2BoTuRWUo0OR+YyvNK4g1NLA1MzMwM
+	zY1MDcyVxHnvtc5NERJITyxJzU5NLUgtgulj4uCUamCasfF/UMOJ+59indzPCx5+Zigfk2Px
+	u/tU56F1ytcn28Wdk3+nNaNMSkZl14RzPbNr7y1s+XPpZrNc/CbWr1eblmfplez4ZOOpE8u/
+	aGsh140UG4MsTet7E1pmNJdsSxNbbbju1JO2NmeH9hcbK7svnVC8s3/tu+USTG6z3nnkeisH
+	njWpfnrw9/UzHvtep/+uzC16b51uIK0/6+Xkj1xOJyXufGj+x/XcwDjP4XDErJ3m069/nPTo
+	/U7rKf+P7L5nE7oube573Re73ITqGfbbVlSeV5mlOocv3W71bf9c07O6Ok8vmkv61X9lYfl3
+	MFvuSw8Pq+3muqQNJ8TjA/3dNMOjcpS7mZYnvj2p+fKSEktxRqKhFnNRcSIAltpcOC0EAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNLMWRmVeSWpSXmKPExsWy7bCSvO7BGtc0g8c9/BYP5m1js3j58yqb
+	xbQPP5ktbh7YyWSxdP9DRouN/RwWl3fNYbPovr6DzWL58X9MFs9OH2C2WNgxl8WB2+PyFW+P
+	aZNOsXl8fHqLxWPinjqPvi2rGD0+b5LzaD/QzRTAHsVlk5Kak1mWWqRvl8CVMamtm61gvVDF
+	293dLA2Mi/i7GDk5JARMJD4tuc7cxcjFISSwm1Hi9a+XLBAJSYl9p2+yQtjCEvdbjrBCFP1k
+	lDh9dCpYEZuAukTD1FdgtojAR0aJpReKQYqYBS4wSsz59IkZJCEs4CnxuOU+mM0ioCoxu30H
+	G4jNK2AtsWh7E9Q2eYn9B88yQ8QFJU7OfAIWZwaKN2+dzTyBkW8WktQsJKkFjEyrGCVTC4pz
+	03OTDQsM81LL9YoTc4tL89L1kvNzNzGCw1tLYwfjvfn/9A4xMnEwHmKU4GBWEuEVSXNOE+JN
+	SaysSi3Kjy8qzUktPsQozcGiJM5rOGN2ipBAemJJanZqakFqEUyWiYNTqoEp5HRZFcfmzclM
+	mzc7hB08xZnpqbmNw37ViYpHZ5fMXmTslM1XO1Hl8ku2p8blD3YWz58otaiq6MYJkdVme9Ke
+	HeRZZXl295eKfbNPWezmfJVWJ5X/T2XyntT/R38t/yA9mX1zm4WuBWfnbA7VBfws4ROVVha5
+	PuFr99L9Uv36n53E5RMyc6a5F8/Zke/TpXjOgeHYu18Z1qfbcy7azVCV+L3vsvubw3fkbvcx
+	zM/L3tC+ulP+/7o72czX+/enKCd2xuqZaQTcOX90Da/xyQ/aJwtYb8zUU3NI82CbI/vrSazY
+	m9qu/08C5hkqBp8yioh2uK4bMX21/tRiH4HXqisjv6158EJkTaB+hOQelaJNSizFGYmGWsxF
+	xYkAp+hCdN4CAAA=
+X-CMS-MailID: 20240516032553epcas2p3b8f34d03f32cccccc628027fbe1e8356
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240516032553epcas2p3b8f34d03f32cccccc628027fbe1e8356
+References: <CGME20240516032553epcas2p3b8f34d03f32cccccc628027fbe1e8356@epcas2p3.samsung.com>
 
-On Wed, May 15, 2024 at 03:32:31PM -0700, Sean Christopherson wrote:
-> On Fri, May 10, 2024, Michael Roth wrote:
-> > Implement a platform hook to do the work of restoring the direct map
-> > entries of gmem-managed pages and transitioning the corresponding RMP
-> > table entries back to the default shared/hypervisor-owned state.
-> 
-> ...
-> 
-> > +void sev_gmem_invalidate(kvm_pfn_t start, kvm_pfn_t end)
-> > +{
-> > +	kvm_pfn_t pfn;
-> > +
-> > +	pr_debug("%s: PFN start 0x%llx PFN end 0x%llx\n", __func__, start, end);
-> > +
-> > +	for (pfn = start; pfn < end;) {
-> > +		bool use_2m_update = false;
-> > +		int rc, rmp_level;
-> > +		bool assigned;
-> > +
-> > +		rc = snp_lookup_rmpentry(pfn, &assigned, &rmp_level);
-> > +		if (WARN_ONCE(rc, "SEV: Failed to retrieve RMP entry for PFN 0x%llx error %d\n",
-> > +			      pfn, rc))
-> > +			goto next_pfn;
-> 
-> This is comically trivial to hit, as it fires when running guest_memfd_test on a
-> !SNP host.  Presumably the correct fix is to simply do nothing for !sev_snp_guest(),
-> but that's easier said than done due to the lack of a @kvm in .gmem_invalidate().
+The MCQ_OPR_OFFSET_n macro has taken 'hba' on the caller context
+without receiving 'hba' instance as an argument.  To prevent potential
+bugs in future use cases, this patch added an argument 'hba'.
 
-Yah, the code assumes that SNP is the only SVM user that would use gmem
-pages. Unfortunately KVM_X86_SW_PROTECTED_VM is the one other situation
-where this can be the case. The minimal fix would be to squash the below
-into this patch:
+Fixes: 2468da61ea09 ("scsi: ufs: core: mcq: Configure operation and runtime interface")
+Cc: Asutosh Das <quic_asutoshd@quicinc.com>
+Signed-off-by: Minwoo Im <minwoo.im@samsung.com>
+---
+ drivers/ufs/core/ufs-mcq.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-  diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-  index 176ba117413a..56b0b59b8263 100644
-  --- a/arch/x86/kvm/svm/sev.c
-  +++ b/arch/x86/kvm/svm/sev.c
-  @@ -4675,6 +4675,9 @@ void sev_gmem_invalidate(kvm_pfn_t start,
-  kvm_pfn_t end)
-   {
-           kvm_pfn_t pfn;
-  
-           +       if (!cc_platform_has(CC_ATTR_HOST_SEV_SNP))
-           +               return;
-           +
-                   pr_debug("%s: PFN start 0x%llx PFN end 0x%llx\n",
-                   __func__, start, end);
-  
-                           for (pfn = start; pfn < end;) {
+diff --git a/drivers/ufs/core/ufs-mcq.c b/drivers/ufs/core/ufs-mcq.c
+index 768bf87cd80d..1cfdda9acb0a 100644
+--- a/drivers/ufs/core/ufs-mcq.c
++++ b/drivers/ufs/core/ufs-mcq.c
+@@ -231,7 +231,7 @@ int ufshcd_mcq_memory_alloc(struct ufs_hba *hba)
+ 
+ /* Operation and runtime registers configuration */
+ #define MCQ_CFG_n(r, i)	((r) + MCQ_QCFG_SIZE * (i))
+-#define MCQ_OPR_OFFSET_n(p, i) \
++#define MCQ_OPR_OFFSET_n(hba, p, i) \
+ 	(hba->mcq_opr[(p)].offset + hba->mcq_opr[(p)].stride * (i))
+ 
+ static void __iomem *mcq_opr_base(struct ufs_hba *hba,
+@@ -343,10 +343,10 @@ void ufshcd_mcq_make_queues_operational(struct ufs_hba *hba)
+ 		ufsmcq_writelx(hba, upper_32_bits(hwq->sqe_dma_addr),
+ 			      MCQ_CFG_n(REG_SQUBA, i));
+ 		/* Submission Queue Doorbell Address Offset */
+-		ufsmcq_writelx(hba, MCQ_OPR_OFFSET_n(OPR_SQD, i),
++		ufsmcq_writelx(hba, MCQ_OPR_OFFSET_n(hba, OPR_SQD, i),
+ 			      MCQ_CFG_n(REG_SQDAO, i));
+ 		/* Submission Queue Interrupt Status Address Offset */
+-		ufsmcq_writelx(hba, MCQ_OPR_OFFSET_n(OPR_SQIS, i),
++		ufsmcq_writelx(hba, MCQ_OPR_OFFSET_n(hba, OPR_SQIS, i),
+ 			      MCQ_CFG_n(REG_SQISAO, i));
+ 
+ 		/* Completion Queue Lower Base Address */
+@@ -356,10 +356,10 @@ void ufshcd_mcq_make_queues_operational(struct ufs_hba *hba)
+ 		ufsmcq_writelx(hba, upper_32_bits(hwq->cqe_dma_addr),
+ 			      MCQ_CFG_n(REG_CQUBA, i));
+ 		/* Completion Queue Doorbell Address Offset */
+-		ufsmcq_writelx(hba, MCQ_OPR_OFFSET_n(OPR_CQD, i),
++		ufsmcq_writelx(hba, MCQ_OPR_OFFSET_n(hba, OPR_CQD, i),
+ 			      MCQ_CFG_n(REG_CQDAO, i));
+ 		/* Completion Queue Interrupt Status Address Offset */
+-		ufsmcq_writelx(hba, MCQ_OPR_OFFSET_n(OPR_CQIS, i),
++		ufsmcq_writelx(hba, MCQ_OPR_OFFSET_n(hba, OPR_CQIS, i),
+ 			      MCQ_CFG_n(REG_CQISAO, i));
+ 
+ 		/* Save the base addresses for quicker access */
+-- 
+2.34.1
 
-It's not perfect because the callback will still run for
-KVM_X86_SW_PROTECTED_VM if SNP is enabled, but in the context of
-KVM_X86_SW_PROTECTED_VM being a stand-in for testing SNP/TDX, that
-might not be such a bad thing.
-
-Longer term if we need something more robust would be to modify the
-free_folio callback path to pass along folio->mapping, or switch to
-something else that provides similar functionality. Another approach
-might be to set .free_folio dynamically based on the vm_type of the
-gmem user when creating the gmem instance.
-
-> 
-> That too is not a big fix, but that's beside the point.  IMO, the fact that I'm
-> the first person to (completely inadvertantly) hit this rather basic bug is a
-> good hint that we should wait until 6.11 to merge SNP support.
-
-We do regular testing of normal guests with/without SNP enabled, but
-unfortunately we've only been doing KST runs on SNP-enabled hosts.
-I've retested with the above fix and everything looks good with
-SVM/SEV/SEV-ES/SNP/selftests with and without SNP enabled, but I
-understand if we still have reservations after this.
-
--Mike
 
