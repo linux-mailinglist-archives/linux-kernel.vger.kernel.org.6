@@ -1,158 +1,114 @@
-Return-Path: <linux-kernel+bounces-180653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 961F88C7164
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 07:38:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DBAD8C7166
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 07:45:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4FEE1C22AEE
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 05:38:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6F59283693
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 05:45:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D8EC1D53F;
-	Thu, 16 May 2024 05:38:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="M0fIfb+v"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B1BD1DFCE;
+	Thu, 16 May 2024 05:45:18 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1FAC10A23;
-	Thu, 16 May 2024 05:38:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1DCA11CA0;
+	Thu, 16 May 2024 05:45:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715837883; cv=none; b=uN4C3xOgr1SCWL73Y/f30EpZhOgBy3WkSyxZhp88NTY0Vdf5GcuVoQj/MfGkLxy1/C3NJWCSUrJuODiJTTbOsofOXLDtDPzJWIVSA9e+aT7Gl1mKj26nxaAI7dSoc05WjU+/xxer03fZLsSIVXULRCWlxINUHmJejF/cxjYRZ/E=
+	t=1715838317; cv=none; b=G6gX3kp9VCo0jVRhCnuGD1g4UuaBqRhkfm1OGxZmqTECOqRFAW1NzTFCMpLFfuwYhBqQv9LUJQ3BP2aWEHuwQT0oG8awxbj2yzpuz0LI2tASlm0isyeSFxxcXPJpyHCiBLrfposcdkB0sa+chvJ5jhCmMOomDCLNwpfnQgC0MSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715837883; c=relaxed/simple;
-	bh=+x9P2g10w13sFtsPvEkQvrH5zn5tUCuZy9wdbJMlwyw=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q1r28qMCDKM36qDQO0P3EUaSvAoj88oJFtKJ8X4nZmS+zp6zF1MECVblEojGNcFFd3mFQGCtsDHlYkldMluuCoXC0FRWrFihDfTqSB3cB18wu2D35BkEdSDSbSZsUE7fpHeJgZPNKAhI2AhzhtqEWWHkPGLCkiUL58Yh1fzf8VI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=M0fIfb+v; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44G5bTiY107053;
-	Thu, 16 May 2024 00:37:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1715837849;
-	bh=Y+0+gVcTYlTJ4NuM6emf0ej+bmnF17XCG4Y5MCExeEM=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=M0fIfb+vug0ndmHZykTjjoy+wJnfkyjq5jD7Zk9UPyIXNuJooZJbfUKs1yR41eR4h
-	 1Zc3eAm8Dj8wh5bETHru5KCxzrUZ39tKExNVgtPnB9NJH6ee1tzqSLpz18GZyu85wO
-	 uDJJ9Hcx7qRwOzSH/77e6PQ8RBlzHaZjOcMH+4iw=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44G5bTS3063310
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 16 May 2024 00:37:29 -0500
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 16
- May 2024 00:37:28 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 16 May 2024 00:37:28 -0500
-Received: from localhost (uda0492258.dhcp.ti.com [172.24.227.9])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44G5bSjM068377;
-	Thu, 16 May 2024 00:37:28 -0500
-Date: Thu, 16 May 2024 11:07:27 +0530
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-CC: Siddharth Vadapalli <s-vadapalli@ti.com>, <lpieralisi@kernel.org>,
-        <kw@linux.com>, <robh@kernel.org>, <bhelgaas@google.com>,
-        <manivannan.sadhasivam@linaro.org>, <fancer.lancer@gmail.com>,
-        <u.kleine-koenig@pengutronix.de>, <cassel@kernel.org>,
-        <dlemoal@kernel.org>, <yoshihiro.shimoda.uh@renesas.com>,
-        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>
-Subject: Re: [PATCH v7 2/2] PCI: keystone: Fix pci_ops for AM654x SoC
-Message-ID: <ee5f54a8-c19f-4a56-9a9b-f8aeebf475d0@ti.com>
-References: <20240514211452.GA2082543@bhelgaas>
- <20240515192614.GA2133406@bhelgaas>
+	s=arc-20240116; t=1715838317; c=relaxed/simple;
+	bh=kNqTM4bX8IampPJrP/pQJTOVJFaoMRwaXGjYsBwVtiI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=blYisxr30EWbwy6xR8TYmnAMfCVO0aoO9CCUqf8a5e0DJSC3o6HLYjHXLpy/Ld7dJH9hnLMtBgqDDVMveISCXmU4OKZSFbklII38psVbqylCNZeF+lISnTOZ0iHcgqtJIcFGQ/HwWXML93f8dQwbbqih5ZilDYlkSkJa3OpZCic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.0.224] (ip5f5aefc6.dynamic.kabel-deutschland.de [95.90.239.198])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id D4D4161E5FE01;
+	Thu, 16 May 2024 07:44:46 +0200 (CEST)
+Message-ID: <5aa68ee5-dd84-4ac2-9fd1-36160358fdcf@molgen.mpg.de>
+Date: Thu, 16 May 2024 07:44:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240515192614.GA2133406@bhelgaas>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] bluetooth: btintel_pcie: nonsense error recording in irq
+To: Oliver Neukum <oneukum@suse.com>, marcel@holtmann.org,
+ luiz.dentz@gmail.com, linux-bluetooth@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Kiran K <kiran.k@intel.com>
+References: <20240516045118.18552-1-oneukum@suse.com>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20240516045118.18552-1-oneukum@suse.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, May 15, 2024 at 02:26:14PM -0500, Bjorn Helgaas wrote:
-> On Tue, May 14, 2024 at 04:14:54PM -0500, Bjorn Helgaas wrote:
-> > On Tue, May 14, 2024 at 05:41:48PM +0530, Siddharth Vadapalli wrote:
-> > > On Mon, May 13, 2024 at 04:53:50PM -0500, Bjorn Helgaas wrote:
-> > ...
+[Cc: +Kiran]
+
+Dear Oliver,
+
+
+Thank you for the patch. I have two minor comments. Could you please 
+word the summary as a statement by adding a verb (in imperative mood). 
+Maybe:
+
+ > Fix nonsense …
+
+or
+
+ > Remove unused `ret` assignment
+
+Am 16.05.24 um 06:50 schrieb Oliver Neukum:
+> Either you return an error or you ignore it.
+> Recording it but then overwriting it makes no sense.
+It’d be great if you added a Fixes: tag.
+
+> Signed-off-by: Oliver Neukum <oneukum@suse.com>
+> ---
+>   drivers/bluetooth/btintel_pcie.c | 8 ++------
+>   1 file changed, 2 insertions(+), 6 deletions(-)
 > 
-> > > > I'm not quite clear on the mechanism, but it would be helpful to at
-> > > > least know what's wrong and on what platform.  E.g., currently v4.90
-> > > > suffers Completion Timeouts and 45 second boot delays?  And this patch
-> > > > fixes that?
-> > > 
-> > > Yes, the Completion Timeouts cause the 45 second boot delays and this
-> > > patch fixes that.
-> > 
-> > And this problem happens on AM654x/v4.90a, right?  I really want the
-> > commit log to say what platform is affected!
-> > 
-> > Maybe something like this?
-> > 
-> >   PCI: keystone: Enable BAR 0 only for v3.65a
-> > 
-> >   The BAR 0 initialization done by ks_pcie_v3_65_add_bus() should
-> >   happen for v3.65a devices only.  On other devices, BAR 0 should be
-> >   left disabled, as it is by dw_pcie_setup_rc().
-> > 
-> >   After 6ab15b5e7057 ("PCI: dwc: keystone: Convert .scan_bus()
-> >   callback to use add_bus"), ks_pcie_v3_65_add_bus() enabled BAR 0 for
-> >   both v3.65a and v4.90a devices.  On the AM654x SoC, which uses
-> >   v4.90a, enabling BAR 0 causes Completion Timeouts when setting up
-> >   MSI-X.  These timeouts delay boot of the AM654x by about 45 seconds.
-> > 
-> >   Move the BAR 0 initialization to ks_pcie_msi_host_init(), which is
-> >   only used for v3.65a devices, and remove ks_pcie_v3_65_add_bus().
-> 
-> I haven't heard anything so I amended it to the above.  But please
-> correct me if it's wrong.
+> diff --git a/drivers/bluetooth/btintel_pcie.c b/drivers/bluetooth/btintel_pcie.c
+> index 590c188a4bb3..c507422d6b1b 100644
+> --- a/drivers/bluetooth/btintel_pcie.c
+> +++ b/drivers/bluetooth/btintel_pcie.c
+> @@ -498,19 +498,15 @@ static int btintel_pcie_submit_rx_work(struct btintel_pcie_data *data, u8 status
+>   	rfh_hdr = buf;
+>   
+>   	len = rfh_hdr->packet_len;
+> -	if (len <= 0) {
+> -		ret = -EINVAL;
+> +	if (len <= 0)
+>   		goto resubmit;
+> -	}
+>   
+>   	/* Remove RFH header */
+>   	buf += sizeof(*rfh_hdr);
+>   
+>   	skb = alloc_skb(len, GFP_ATOMIC);
+> -	if (!skb) {
+> -		ret = -ENOMEM;
+> +	if (!skb)
+>   		goto resubmit;
+> -	}
+>   
+>   	skb_put_data(skb, buf, len);
+>   	skb_queue_tail(&data->rx_skb_q, skb);
 
-I would suggest specifying the failing combination since I do not know
-if there is another device that is using v4.90a but doesn't see this
-issue. What is certain is that this issue is seen with the v4.90a
-controller on AM654x platform. Despite the PCIe Controller version
-remaining the same across different platforms, it might be possible
-that not all features supported by the PCIe Controller are enabled on
-all platforms. For that reason, it appears to me that the subject could
-be:
 
-  PCI: keystone: Don't enable BAR 0 for AM654x
+Kind regards,
 
-which implicitly indicates the combination as well (v4.90a on AM654x).
-
-The commit message's contents could be reduced to:
-
-  After 6ab15b5e7057 ("PCI: dwc: keystone: Convert .scan_bus()
-  callback to use add_bus"), ks_pcie_v3_65_add_bus() enabled BAR 0 for
-  both v3.65a and v4.90a devices.  On the AM654x SoC, which uses
-  v4.90a, enabling BAR 0 causes Completion Timeouts when setting up
-  MSI-X.  These timeouts delay boot of the AM654x by about 45 seconds.
-
-  Move the BAR 0 initialization to ks_pcie_msi_host_init(), which is
-  only used for v3.65a devices, and remove ks_pcie_v3_65_add_bus().
-
-by dropping:
-
-  The BAR 0 initialization done by ks_pcie_v3_65_add_bus() should
-  happen for v3.65a devices only.  On other devices, BAR 0 should be
-  left disabled, as it is by dw_pcie_setup_rc().
-
-The reason behind dropping the above paragraph is that BAR 0 could
-probably be enabled on other controller versions as well, but not on the
-v4.90a controller on the AM654x SoC.
-
-Thank you Bjorn, for enhancing the commit message.
-
-Regards,
-Siddharth.
+Paul
 
