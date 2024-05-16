@@ -1,141 +1,143 @@
-Return-Path: <linux-kernel+bounces-180922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D4768C74D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:51:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D7BA8C74E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:56:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B957B1C21DDA
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:51:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5817B284BDA
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:56:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7FC1145345;
-	Thu, 16 May 2024 10:51:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07026145356;
+	Thu, 16 May 2024 10:56:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="knM0xaSy";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ks2B2d6y"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TE9hf5ya"
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B2D0143866;
-	Thu, 16 May 2024 10:51:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 951AC145339
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 10:56:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715856709; cv=none; b=LFUvIhfYX9R6EFH59ggkPdQiUAPNz4DjBuLgigTQP5eZvJgj9fzGZ8tEamyQHU6Kb/E0oEx1qb9NgOKSHSRG/MqXeDuvoArskIXO0h1yF7187G59GMb55dW5YorWC+WYEVy247DqPZFhkekhDOh2eZ8xCLT2Ba9+jFGNvmFkXBE=
+	t=1715856979; cv=none; b=kQkL7US/htw2PEMGt+RmU6iFw1WCZSpS5p5mfuA5Yuf3aATSlm9GBPc/a9NZjWT2q8ndIjcXqhccMXrETjI3f9UaBCl2JtPUY2fN7oPoEnrU06VHFwyj+VoIwYRHIOb+ocuUZaY6Uo5Nds8XE5PAR5nIq/L178ONrMDg+2eMjJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715856709; c=relaxed/simple;
-	bh=ddwSZ0rfxaLzTSLiACUTmn4XATY/arbreMqI2FnP5IA=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=EIogGqYt7mV5it5uLG8jgp3fVvWNx7vgEmwcrYx2V+qV8EuPKItSq7GMBLzpOwfFHTu+FBQykD30Uyh2mQBMFx0mMuqHcT0DvbtqZoVq8vH565xxSdixdGD+uTPf4b3oSa08qKjNdCr8a7Hs2J89BsP5aGbEa9wlDxfP5BfwIw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=knM0xaSy; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ks2B2d6y; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 16 May 2024 10:51:38 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1715856699;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EYwh9LNFmp9S2lIWZ26ZRPJGUQ8EBuLmGBdMkkajOXo=;
-	b=knM0xaSyoxFmMpyZ6i8rDG/mv/oe70gcmvqY37vc5bJADDtNcur7wR55O6Q9LQbfTf0jAE
-	W3xSUrQMMUf+JxJT0bDpdnRz4Vh7C5T+JSQuNND8I/ZldfDunIlib65WI7mn+1+ZpfLDJh
-	EQ45QNKEhFjgE9gcidM8vZHaJXki3ZCI1U0cFn6zMsldIDW5QTRkFS5HOpQTVsI8a7UIrd
-	QipIkW7E3rEMFNV71WjBvSup6JaQplAZ0LZ6uiRS12XXiQ0uvlkNHOixrFXE5ovO7urxv/
-	Atnlm2a8FN3+vcDvMiwTdrtSyn31A36sY1lK7KErZvtcMH/zkwmJD0USIPT7og==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1715856699;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EYwh9LNFmp9S2lIWZ26ZRPJGUQ8EBuLmGBdMkkajOXo=;
-	b=ks2B2d6yKXzp4k3hLXpECK0WufAQZsqEmwo7C5j2+c5938dfKoIfV5b95r9wUEmw9GGAPX
-	LJAIt/ExcpHTO4Ag==
-From: "tip-bot2 for Borislav Petkov" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/urgent] x86/boot: Add a fallthrough annotation
-Cc: Borislav Petkov <bp@suse.de>, "Borislav Petkov (AMD)" <bp@alien8.de>,
- Ingo Molnar <mingo@kernel.org>, x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240516102240.16270-1-bp@kernel.org>
-References: <20240516102240.16270-1-bp@kernel.org>
+	s=arc-20240116; t=1715856979; c=relaxed/simple;
+	bh=aCXY487Vxu2tav49EYVB23ecLd3zrF9qRUTgLAbSiNg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dYypNDEU3X8IcoQ1jEMosUYC11X3d0BKXvqqq3WvFswfAYrIIEmryhIwd6elapxSDtWW7S1hK+3Lvjhlr4zj5TE/YcuQyJdcVK46zjZMKUzb7TCyFn0lOEWJF9bbVjeAMa5t4+/Jyz10j15wa/BIiJbJM3S5COl6aM8wxzT+jMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TE9hf5ya; arc=none smtp.client-ip=209.85.221.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-4df3ad5520aso3151860e0c.0
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 03:56:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715856975; x=1716461775; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=8hvYdyfxE3IpE/vm58h7LJU7ngmgeqBpo8sHkqV4Ox4=;
+        b=TE9hf5yaU8iDoNze1GUkhXXHYRmW/CsFo0KDlNOoaKgQLvkdu8+fp0VRZCEnrexS8M
+         SqaKYSAAf+qUQGUCcU9Aftj2o5MF+qVIgMKZ7yb4rIKCVG9QvKYyG215U+7BHYCEAEId
+         IET0za4d/eN09BoBz3pkqIw1CQD4m1W6MutiY1MOYa1udQ44KFFBF2X681WgWd6Wh/GR
+         pAVxcSQdlU+BbNl8qnuYBSk4apX9qn63Z83dDRaVRFzvV0n5ZuOyw9CgFDA4jarOB4Bd
+         rwv/aXTaaFFWow59+p0lrmtqkWaheERUTiD/VWY4k5f9fboiDQdulPoijHctpeFU761O
+         cUsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715856975; x=1716461775;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8hvYdyfxE3IpE/vm58h7LJU7ngmgeqBpo8sHkqV4Ox4=;
+        b=S3hWHptRRA06RM6mY9d6Zc08xbUGPS3AIf7UWAopzI+y0v4vK9UJIEvbkTyEGWvXwX
+         OJEzb5M7SwgY0KU8FLfNKMMnVFnTNst6NvBNBFy5j6pWtzGeO3F+IIWyP0zYEMCYfBxt
+         sRo5+XxxAJ7N4NSFVNTmvwSVTeVo6DI0bzDfijxqZelSBToMDvusRntY0jrPzq08kxQW
+         WHeJPy+nOD5V6em13xNasyBhVqSGl6D5JYmSJlhT/2vXpm6B45NRMhOmJ+grz9qgem+s
+         /Mo4RY4HY3L7pymVpdSdQq7DfMJw1tpYJc2+M7WSG+mTRGtOzHD/bEp28U6ab9mSjZ4N
+         wBiw==
+X-Forwarded-Encrypted: i=1; AJvYcCXsHqBhM5R76WWIg6z4rpfSNrjtmiw6J6rrPDkJ35VTrqbivYr1kfoVJzAe5vLR7wNZO36dXAEk4pABrMTjZgbgPN7sCiC6MZyQYO+M
+X-Gm-Message-State: AOJu0YwFnUOF41QUUuH8XJgT8Pw2D2Y18vRJ3u7AsBMcOTvynjJRQcu8
+	SR8VMPCC/xavOpTIwPowOqqMADXTPpSHe1FAbTrywpYs3JIMVV5MqgkAEWl9Vh4KVzT8BHiO16V
+	bNcGwAT/qxdnF/W3tr3Pix+7yGk25LcPKmaeUlQ==
+X-Google-Smtp-Source: AGHT+IHLfOcjHOyNax1qpFAJlUavmIK8GXsB4d5nnt42V8lPqyLhP6Ngp7Ge930ihPYf+AX/U/jPZnq78529h9Sa7uE=
+X-Received: by 2002:a05:6122:4698:b0:4df:315a:adab with SMTP id
+ 71dfb90a1353d-4df882c2956mr17221080e0c.5.1715856975523; Thu, 16 May 2024
+ 03:56:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <171585669878.10875.8116182217321169904.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+References: <20240515082517.910544858@linuxfoundation.org>
+In-Reply-To: <20240515082517.910544858@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Thu, 16 May 2024 12:56:04 +0200
+Message-ID: <CA+G9fYsZ7iTr8UGyaN-FB1R8=zLWnciB_10mzk8QCRhUMLSfFQ@mail.gmail.com>
+Subject: Re: [PATCH 6.8 000/340] 6.8.10-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-The following commit has been merged into the x86/urgent branch of tip:
+On Wed, 15 May 2024 at 10:27, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.8.10 release.
+> There are 340 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Fri, 17 May 2024 08:23:27 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.8.10-rc2.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.8.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Commit-ID:     dd0716c2b87792ebea30864e7ad1df461d4c1525
-Gitweb:        https://git.kernel.org/tip/dd0716c2b87792ebea30864e7ad1df461d4=
-c1525
-Author:        Borislav Petkov <bp@suse.de>
-AuthorDate:    Thu, 16 May 2024 12:22:40 +02:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Thu, 16 May 2024 12:46:36 +02:00
+As Mark Brown reported and bisected.
+LKFT also noticed this test regression on 6.8 and 6.6 branches.
 
-x86/boot: Add a fallthrough annotation
+kselftest-ftrace test case,
+ftrace_ftracetest-ktap_Test_file_and_directory_owership_changes_for_eventfs
+failed on all the boards.
 
-Add implicit fallthrough checking to the decompressor code and fix this
-warning:
+Looks we need to add this patch,
+  d57cf30c4c07837799edec949102b0adf58bae79
+  eventfs: Have "events" directory get permissions from its parent
 
-  arch/x86/boot/printf.c: In function =E2=80=98vsprintf=E2=80=99:
-  arch/x86/boot/printf.c:248:10: warning: this statement may fall through [-W=
-implicit-fallthrough=3D]
-    248 |    flags |=3D SMALL;
-        |          ^
-  arch/x86/boot/printf.c:249:3: note: here
-    249 |   case 'X':
-        |   ^~~~
+Let me try this patch and get back to you.
 
-This is a patch from three years ago which I found in my trees, thus the
-SUSE authorship still.
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Link: https://lore.kernel.org/r/20240516102240.16270-1-bp@kernel.org
+Links:
 ---
- arch/x86/boot/Makefile | 1 +
- arch/x86/boot/printf.c | 1 +
- 2 files changed, 2 insertions(+)
+- https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.8.y/build/v6.8.9-341-gcfe824b75b3d/testrun/23938179/suite/kselftest-ftrace/test/ftrace_ftracetest-ktap_Test_file_and_directory_owership_changes_for_eventfs/history/
 
-diff --git a/arch/x86/boot/Makefile b/arch/x86/boot/Makefile
-index 3cece19..343aef6 100644
---- a/arch/x86/boot/Makefile
-+++ b/arch/x86/boot/Makefile
-@@ -69,6 +69,7 @@ KBUILD_CFLAGS	:=3D $(REALMODE_CFLAGS) -D_SETUP
- KBUILD_AFLAGS	:=3D $(KBUILD_CFLAGS) -D__ASSEMBLY__
- KBUILD_CFLAGS	+=3D $(call cc-option,-fmacro-prefix-map=3D$(srctree)/=3D)
- KBUILD_CFLAGS	+=3D -fno-asynchronous-unwind-tables
-+KBUILD_CFLAGS	+=3D $(CONFIG_CC_IMPLICIT_FALLTHROUGH)
- GCOV_PROFILE :=3D n
- UBSAN_SANITIZE :=3D n
-=20
-diff --git a/arch/x86/boot/printf.c b/arch/x86/boot/printf.c
-index 1237bee..c0ec1dc 100644
---- a/arch/x86/boot/printf.c
-+++ b/arch/x86/boot/printf.c
-@@ -246,6 +246,7 @@ int vsprintf(char *buf, const char *fmt, va_list args)
-=20
- 		case 'x':
- 			flags |=3D SMALL;
-+			fallthrough;
- 		case 'X':
- 			base =3D 16;
- 			break;
+- https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.8.y/build/v6.8.9-341-gcfe824b75b3d/testrun/23929234/suite/kselftest-ftrace/test/ftrace_ftracetest-ktap_Test_file_and_directory_owership_changes_for_eventfs/details/
+
+## Build
+* kernel: 6.8.10-rc2
+* git: https://gitlab.com/Linaro/lkft/mirrors/stable/linux-stable-rc
+* git branch: linux-6.8.y
+* git commit: cfe824b75b3d9d13a891ad1c4a2d6fe0eceed1e9
+* git describe: v6.8.9-341-gcfe824b75b3d
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.8.y/build/v6.8.9-341-gcfe824b75b3d
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
