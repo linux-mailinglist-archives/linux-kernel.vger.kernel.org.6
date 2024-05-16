@@ -1,271 +1,167 @@
-Return-Path: <linux-kernel+bounces-180897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7CB28C748C
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:21:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F3CA18C748E
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:21:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E3DE1F24AC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:21:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 915B71F24C80
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:21:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0840214389A;
-	Thu, 16 May 2024 10:21:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CFB9143C58;
+	Thu, 16 May 2024 10:21:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YlwsgGEn"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uhjANRDC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95C8F143754;
-	Thu, 16 May 2024 10:21:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4950B143754;
+	Thu, 16 May 2024 10:21:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715854893; cv=none; b=ZTxLtZE0aPx9hTd9wAE2tSiRwufKiTlDxwuwkwSmO1BKjTK6yu2gs5imD704ZY+R5Je635ZFBJgZ9isiH/2WuYdtP46uU/3nr0muFhO5Ebot7csK6ePIs3OAuHArLlkZO/4YGxuJKuxq8N71DQNfloybno34YHqyePhezat17LE=
+	t=1715854899; cv=none; b=EyBYbELwrLOqB0TvZcPrM6RYcYyqZJnC5UgrTVX0iGF9aJlZvkg9j0+Sm24L9D41frXWHan9Ws0J06eq9b8oyA/VwwpD/YAf7e1bu1bKR5qjX1M5UM32VPjX+P2PQcosEqLYHicQ7leWARGmjTKLiY8O3Jy8c1galNHiAiIwdr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715854893; c=relaxed/simple;
-	bh=Joxfcfe7fW8z16rGh8KZuwy8XFk9ndFsv4HjTAGt6mQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sX65VhdalfwYEThUK9Pyltd6ixXR1IgQE+XwmXIIx4KDpVLznziPsz0DmFI//l7Ugt4xoC+9q3AnyXmH1iAY2CgwvRKlZzgN+IvweENuYAlTyev/EiUhiLrl804q9NvIUYcPLSccRV72NVU2kMfkpolhiLnuZiSGTSDBJki+h2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YlwsgGEn; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715854892; x=1747390892;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=Joxfcfe7fW8z16rGh8KZuwy8XFk9ndFsv4HjTAGt6mQ=;
-  b=YlwsgGEnqglsstaM1XF3Rb36DRXnrptdkscCo4mBvPG+8oGB70sp4ihx
-   xTuWUlQPRkA5AveYgE7Y0jX6XBoDiOjdC28ahhq4KuZcXNWM5+F7fQz22
-   DMuh+P6ljMDXljmuhq0z9Tn3iobMyObAEmM0RNm1dzL8BwCIY9bjXLa+L
-   JWb0bcqblcSIVU60fIfcU8hXGWBBn+Fbn2IseZK6Y5D0uLA0D1vzNnDZl
-   3483p/bBm1ZLXW8J9oy0Pziz6IWJZSPJ37qzjLJMnvAZn7JySdwMBEdRj
-   w6TdgdBhCdtDFM+r3kdrpsxPEY9qD10xU9sVlFgQDShu4QRoxGactBFei
-   Q==;
-X-CSE-ConnectionGUID: yetk3EliRki5TZoBad2fqQ==
-X-CSE-MsgGUID: kCuMvmLoRRy1YVi4KFBslA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="15779736"
-X-IronPort-AV: E=Sophos;i="6.08,164,1712646000"; 
-   d="scan'208";a="15779736"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 03:21:30 -0700
-X-CSE-ConnectionGUID: RCvc+vtDSGuT5szdcLGb0w==
-X-CSE-MsgGUID: ReIRkGR4SP2DTeALuC6vlQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,164,1712646000"; 
-   d="scan'208";a="68834528"
-Received: from fdefranc-mobl3.ger.corp.intel.com (HELO localhost.localdomain) ([10.245.246.216])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 03:21:26 -0700
-From: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
-To: Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
-Subject: [PATCH v2] cxl/events: Use a common struct for DRAM and General Media events
-Date: Thu, 16 May 2024 12:19:53 +0200
-Message-ID: <20240516102116.3512377-1-fabio.m.de.francesco@linux.intel.com>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1715854899; c=relaxed/simple;
+	bh=jl7IMtgEPzBKL5CPg7t4BVUmG2ehe9JU4HSBiI77hjk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lXIOdSqwc1w8gfuEj9KcvMwktbMwbySvqybyB+OTfqmz/W9p3OP4Wp/0vxZ2Viyn8QjXSYwyst8TqSdE/vDG3B2XY4D68+VNqLoyR2lC6oW1X14fjYO/Am86xQ7xPY/lJ+FptL4p75t6bzKa2IpbaZFR6dzHbI2XmsGbhpFLoV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uhjANRDC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF6D1C32789;
+	Thu, 16 May 2024 10:21:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715854898;
+	bh=jl7IMtgEPzBKL5CPg7t4BVUmG2ehe9JU4HSBiI77hjk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=uhjANRDCJ2ATp7JfsX+Ft9DAxHszd1esLr3C3f3/nWEXtZO0Bby9jOk77SAYfDkT5
+	 2eNRNhl1UZ0hh9fY2UjGAFcdLYgBXar11eXgdWNHDKXDYoTidxl1JrcA291O4xtVoL
+	 lCR2t+ZOBUo5pCJe7vkKo61p9cScOYLnTVgaiimxnYR7qR1OPeBKROWo8U/RNx6uGN
+	 EPL3ggy3ga8mqv7TgUjCjzs0OLD/eQEhgWK8dkzEr9nCRX+PQ6bN42F4aP2JwOnHrC
+	 fkTlEpaex1d0rKOZHn//S2k1FUU/hOAguZwLzvGtYeAnbSQ2OZb3ylCIznHadKCEl0
+	 BpEGy2PvwcWeQ==
+Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-5ac970dded6so2319eaf.0;
+        Thu, 16 May 2024 03:21:38 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUORPB4Hv42tFu23HLUJnU6VbZ+Fy7T6EjPa0K8UBdhSk7p7J1T9OCOU2OWHoKDX23xTS1wdYjCQCwIg1lJ3a9vJm6rlE9fYqAaPGoE681l0O1bClfn+tFPBtvGJnFeaC6QkhcFrOBulw==
+X-Gm-Message-State: AOJu0YwJUVLrsUyW7tRGoWNeYdOCgUEVrSHlmYaY55ntCpuKixiKH9kl
+	7Ml2CMtYgtyuDuXcdCw0ovwK6zoBrcagI854PO3g7q3Xpn9lkEdQDuC47WTiputemHtm5mNGF4b
+	U9hztYLcphA4yrE1+lrCz5orHGM8=
+X-Google-Smtp-Source: AGHT+IF23aAFo2LYSbazpSjDOWbAdAKsRHExhiDfsFi+eMHe49t3Dylrom1FonaKjaKCP8GUjyuCIIB7agE5jrRixnQ=
+X-Received: by 2002:a05:6871:414:b0:23c:9036:1f61 with SMTP id
+ 586e51a60fabf-24172a15676mr20725484fac.1.1715854898087; Thu, 16 May 2024
+ 03:21:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <12437901.O9o76ZdvQC@kreacher> <5161bd95-d51e-49cc-bcbd-523fbb747e4b@redhat.com>
+ <CAJZ5v0gf-oLcjT8dxnpjAyVfpUep5ST2mHDJy2dySBGCJwjMxg@mail.gmail.com>
+ <b53b4fe4-e3b7-4939-a8ea-9eb55f0bece6@redhat.com> <CAJZ5v0i+ejMyj0j7RvVY7+g6eU8bQ9QLG=08fm78i9Ui1fEiVA@mail.gmail.com>
+ <2e5c9108-9ca4-4d7c-a062-2a9a5baaf06e@redhat.com>
+In-Reply-To: <2e5c9108-9ca4-4d7c-a062-2a9a5baaf06e@redhat.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 16 May 2024 12:21:27 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0ipB1aLCSv9NGukjW8u09qi628sHvgudReV4-=FvrCZMA@mail.gmail.com>
+Message-ID: <CAJZ5v0ipB1aLCSv9NGukjW8u09qi628sHvgudReV4-=FvrCZMA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] ACPI: EC: Install EC address space handler at the
+ namespace root
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, 
+	Linux ACPI <linux-acpi@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Mario Limonciello <mario.limonciello@amd.com>, Armin Wolf <w_armin@gmx.de>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-cxl_event_common was a poor naming choice and caused confusion with the
-existing Common Event Record.
+Hi,
 
-Use cxl_event_media as a common structure to record information about DRAM
-and General Media events because it simplifies handling the two events.
+On Thu, May 16, 2024 at 12:14=E2=80=AFPM Hans de Goede <hdegoede@redhat.com=
+> wrote:
+>
+> Hi,
+>
+> On 5/16/24 12:09 PM, Rafael J. Wysocki wrote:
+> > Hi,
+> >
+> > On Thu, May 16, 2024 at 11:50=E2=80=AFAM Hans de Goede <hdegoede@redhat=
+com> wrote:
+> >>
+> >> Hi,
+> >>
+> >> On 5/16/24 10:37 AM, Rafael J. Wysocki wrote:
+> >>> On Thu, May 16, 2024 at 10:35=E2=80=AFAM Hans de Goede <hdegoede@redh=
+at.com> wrote:
+> >>>>
+> >>>> Hi,
+> >>>>
+> >>>> On 5/15/24 9:39 PM, Rafael J. Wysocki wrote:
+> >>>>> Hi Everyone,
+> >>>>>
+> >>>>> This is an update of
+> >>>>>
+> >>>>> https://lore.kernel.org/linux-acpi/5787281.DvuYhMxLoT@kreacher/
+> >>>>>
+> >>>>> which was a follow up for the discussion in:
+> >>>>>
+> >>>>> https://lore.kernel.org/linux-acpi/CAJZ5v0hiXdv08PRcop7oSYqgr_g5rwz=
+RTj7HgdNCCGjXeV44zA@mail.gmail.com/T/#t
+> >>>>>
+> >>>>> Patch [1/2] has been updated to avoid possible issues related to
+> >>>>> systems with defective platform firmware and patch [2/2] is a resen=
+d
+> >>>>> with a couple of tags added.
+> >>>>
+> >>>> Thanks, the series looks good to me:
+> >>>>
+> >>>> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+> >>>>
+> >>>> for the series.
+> >>>>
+> >>>> I assume you are going to send this in as a fix for 6.10 ?
+> >>>
+> >>> Yes, I am.
+> >>>
+> >>>> In that case feel free to merge both patches through the
+> >>>> linux-pm tree.
+> >>>
+> >>> Thank you!
+> >>
+> >> Hmm, I just realized that this:
+> >>
+> >> https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers=
+-x86.git/commit/?h=3Dfor-next&id=3Dc663b26972eae7d2a614f584c92a266fe9a2d44c
+> >>
+> >> Is part of the main pdx86 pull-request for 6.10 which I'm going to
+> >> send to Linus in the next 10 minutes or so. So that is going to
+> >> conflict with your 2/2.
+> >>
+> >> Options:
+> >>
+> >> a) You only send 1/2 upstream as a fix and I'll then send a rebased
+> >> 2/2 upstream as part of the first pdx86 pull-request.
+> >>
+> >> b) You merge the git://git.kernel.org/pub/scm/linux/kernel/git/pdx86/p=
+latform-drivers-x86.git
+> >> platform-drivers-x86-v6.10-1 tag (which is the tag for the pull-reques=
+t
+> >> I'm about to send to Linus) and rebase on top of that before sending
+> >> a pull-request for both to Linus.
+> >
+> > I would rather wait for Linus to merge your PR and merge my changes on
+> > top of his merge.
+>
+> That is fine too. I just send out the pull-request so hopefully Linus wil=
+l
+> merge it soon(ish).
+>
+> Note (stating the obvious) when rebasing 2/2 you will pretty much need to
+> remove all the new code added by:
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x8=
+6.git/commit/?id=3Dc663b26972eae7d2a614f584c92a266fe9a2d44c
 
-Suggested-by: Dan Williams <dan.j.williams@intel.com>
-Fixes: 6aec00139d3a ("cxl/core: Add region info to cxl_general_media and cxl_dram events")
-Signed-off-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.com>
----
-
-Changes for v2:
-	- Extend the commit message (Alison);
-	- Add a "Fixes" tag (Alison, thanks).
-
- drivers/cxl/core/mbox.c      |  6 ++--
- drivers/cxl/core/trace.h     |  4 +--
- include/linux/cxl-event.h    | 70 +++++++++++++++---------------------
- tools/testing/cxl/test/mem.c |  4 +--
- 4 files changed, 36 insertions(+), 48 deletions(-)
-
-diff --git a/drivers/cxl/core/mbox.c b/drivers/cxl/core/mbox.c
-index 2626f3fff201..ad4d7b0f7f4d 100644
---- a/drivers/cxl/core/mbox.c
-+++ b/drivers/cxl/core/mbox.c
-@@ -875,16 +875,16 @@ void cxl_event_trace_record(const struct cxl_memdev *cxlmd,
- 		guard(rwsem_read)(&cxl_region_rwsem);
- 		guard(rwsem_read)(&cxl_dpa_rwsem);
- 
--		dpa = le64_to_cpu(evt->common.phys_addr) & CXL_DPA_MASK;
-+		dpa = le64_to_cpu(evt->media_common.phys_addr) & CXL_DPA_MASK;
- 		cxlr = cxl_dpa_to_region(cxlmd, dpa);
- 		if (cxlr)
- 			hpa = cxl_trace_hpa(cxlr, cxlmd, dpa);
- 
- 		if (event_type == CXL_CPER_EVENT_GEN_MEDIA)
- 			trace_cxl_general_media(cxlmd, type, cxlr, hpa,
--						&evt->gen_media);
-+						&evt->media_general);
- 		else if (event_type == CXL_CPER_EVENT_DRAM)
--			trace_cxl_dram(cxlmd, type, cxlr, hpa, &evt->dram);
-+			trace_cxl_dram(cxlmd, type, cxlr, hpa, &evt->media_dram);
- 	}
- }
- EXPORT_SYMBOL_NS_GPL(cxl_event_trace_record, CXL);
-diff --git a/drivers/cxl/core/trace.h b/drivers/cxl/core/trace.h
-index 07a0394b1d99..2c7293761bb2 100644
---- a/drivers/cxl/core/trace.h
-+++ b/drivers/cxl/core/trace.h
-@@ -316,7 +316,7 @@ TRACE_EVENT(cxl_generic_event,
- TRACE_EVENT(cxl_general_media,
- 
- 	TP_PROTO(const struct cxl_memdev *cxlmd, enum cxl_event_log_type log,
--		 struct cxl_region *cxlr, u64 hpa, struct cxl_event_gen_media *rec),
-+		 struct cxl_region *cxlr, u64 hpa, struct cxl_event_media *rec),
- 
- 	TP_ARGS(cxlmd, log, cxlr, hpa, rec),
- 
-@@ -413,7 +413,7 @@ TRACE_EVENT(cxl_general_media,
- TRACE_EVENT(cxl_dram,
- 
- 	TP_PROTO(const struct cxl_memdev *cxlmd, enum cxl_event_log_type log,
--		 struct cxl_region *cxlr, u64 hpa, struct cxl_event_dram *rec),
-+		 struct cxl_region *cxlr, u64 hpa, struct cxl_event_media *rec),
- 
- 	TP_ARGS(cxlmd, log, cxlr, hpa, rec),
- 
-diff --git a/include/linux/cxl-event.h b/include/linux/cxl-event.h
-index 60b25020281f..e417556cc120 100644
---- a/include/linux/cxl-event.h
-+++ b/include/linux/cxl-event.h
-@@ -32,41 +32,38 @@ struct cxl_event_generic {
-  * CXL rev 3.0 Section 8.2.9.2.1.1; Table 8-43
-  */
- #define CXL_EVENT_GEN_MED_COMP_ID_SIZE	0x10
--struct cxl_event_gen_media {
--	struct cxl_event_record_hdr hdr;
--	__le64 phys_addr;
--	u8 descriptor;
--	u8 type;
--	u8 transaction_type;
--	u8 validity_flags[2];
--	u8 channel;
--	u8 rank;
--	u8 device[3];
--	u8 component_id[CXL_EVENT_GEN_MED_COMP_ID_SIZE];
--	u8 reserved[46];
--} __packed;
--
- /*
-  * DRAM Event Record - DER
-  * CXL rev 3.0 section 8.2.9.2.1.2; Table 3-44
-  */
- #define CXL_EVENT_DER_CORRECTION_MASK_SIZE	0x20
--struct cxl_event_dram {
-+struct cxl_event_media {
- 	struct cxl_event_record_hdr hdr;
--	__le64 phys_addr;
--	u8 descriptor;
--	u8 type;
--	u8 transaction_type;
--	u8 validity_flags[2];
--	u8 channel;
--	u8 rank;
--	u8 nibble_mask[3];
--	u8 bank_group;
--	u8 bank;
--	u8 row[3];
--	u8 column[2];
--	u8 correction_mask[CXL_EVENT_DER_CORRECTION_MASK_SIZE];
--	u8 reserved[0x17];
-+	struct_group_tagged(cxl_event_media_hdr, media_hdr,
-+		__le64 phys_addr;
-+		u8 descriptor;
-+		u8 type;
-+		u8 transaction_type;
-+		u8 validity_flags[2];
-+		u8 channel;
-+		u8 rank;
-+	);
-+	union {
-+		struct_group(general,
-+			u8 device[3];
-+			u8 component_id[CXL_EVENT_GEN_MED_COMP_ID_SIZE];
-+			u8 gen_reserved[46];
-+		);
-+		struct_group(dram,
-+			u8 nibble_mask[3];
-+			u8 bank_group;
-+			u8 bank;
-+			u8 row[3];
-+			u8 column[2];
-+			u8 correction_mask[CXL_EVENT_DER_CORRECTION_MASK_SIZE];
-+			u8 dram_reserved[0x17];
-+		);
-+	};
- } __packed;
- 
- /*
-@@ -95,21 +92,12 @@ struct cxl_event_mem_module {
- 	u8 reserved[0x3d];
- } __packed;
- 
--/*
-- * General Media or DRAM Event Common Fields
-- * - provides common access to phys_addr
-- */
--struct cxl_event_common {
--	struct cxl_event_record_hdr hdr;
--	__le64 phys_addr;
--} __packed;
--
- union cxl_event {
- 	struct cxl_event_generic generic;
--	struct cxl_event_gen_media gen_media;
--	struct cxl_event_dram dram;
-+	struct cxl_event_media media_general;
-+	struct cxl_event_media media_dram;
- 	struct cxl_event_mem_module mem_module;
--	struct cxl_event_common common;
-+	struct cxl_event_media media_common;
- } __packed;
- 
- /*
-diff --git a/tools/testing/cxl/test/mem.c b/tools/testing/cxl/test/mem.c
-index 6584443144de..0a8fd145c391 100644
---- a/tools/testing/cxl/test/mem.c
-+++ b/tools/testing/cxl/test/mem.c
-@@ -378,7 +378,7 @@ struct cxl_event_record_raw hardware_replace = {
- 
- struct cxl_test_gen_media {
- 	uuid_t id;
--	struct cxl_event_gen_media rec;
-+	struct cxl_event_media rec;
- } __packed;
- 
- struct cxl_test_gen_media gen_media = {
-@@ -402,7 +402,7 @@ struct cxl_test_gen_media gen_media = {
- 
- struct cxl_test_dram {
- 	uuid_t id;
--	struct cxl_event_dram rec;
-+	struct cxl_event_media rec;
- } __packed;
- 
- struct cxl_test_dram dram = {
--- 
-2.45.0
-
+I see, thanks for the notice!
 
