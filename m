@@ -1,167 +1,189 @@
-Return-Path: <linux-kernel+bounces-180811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF9448C7373
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 11:05:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E0148C7376
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 11:06:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 652F4B23CD1
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 09:05:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CC651F23B14
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 09:06:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65FD9142E98;
-	Thu, 16 May 2024 09:05:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77D41142E98;
+	Thu, 16 May 2024 09:06:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="p1CQuLpn"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SdRdpQPZ"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46F06142E75
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 09:05:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FC86142E94
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 09:05:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715850345; cv=none; b=EUhOLNpZrfdQZRqWrzK/BcLPbPldLfx6Xxun1wTWKqEmP1MhInD3uEEs9jmxfDsHy+R6RV2085GJkPk0j6pTuitXh6ltdPre8J0cMbM/QwaD/HPJ4ryRnw6eWCabxyNhxCV072VrymHXuhJ4xvNuS5y6sH4BA5AbnxSPLxVSmdE=
+	t=1715850359; cv=none; b=s3rgwNKqDkRoxcOMsvoQ2xXcMpZV8Jxn5egKcG6ln3EH6r8n8A7OO+PxzvC3TFlEeNfJ8uh9dwLMYFPFb9oywmRrqQV2ODfDXz0iFjCtfr1HAPb3fvoNRx+b6mBXIs7dQBFmtVQ1Ehe9gUCZntCjHx7IZkVCFS2SFBB25HJVcrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715850345; c=relaxed/simple;
-	bh=RHSX2yKsuPqAL+lWO3G5kIbkjnDQKu9dA9oMc8iQu0o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RVkI/NdAB7HHsa0ylq+ZA4TvQFyXSD6vjLHOFqaN6HnqQjGmKbCcuqxjvJe4av6DGvcPP3lYrm0jLMGJn0EF0O3RJondOAZ58AB7VeVd2NZoEJlalaLDg1khj6AjIPMzrut+wXTKxKyCwIogsAZpAcnjU+56Xg1iDVZ3JQY0IF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=p1CQuLpn; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=itjTlUPY9VTCjwdh1TN5R/QTu3m/DiLZSbOLn98mcqY=; b=p1CQuLpnmkX9AmcLKMNgmZamWh
-	mXXSnhlzPDEjNSgX4CcYRGKNxwNWZ/Ne3q8+iWjMuIrxlSzBPWzp3ykbsjfN1lh8yFpZ4zKxmXmwi
-	U4XypldYBaqZo5eElZdyq5pSQ6cxHl/mrv5kCaAL+KdUAXxHkqDu26Nl0uJiqKmq0jBTqtJY6kCy6
-	X0YmRQPYpX+4kdl6IOwqg47Mh3eAIszVcCoUgs228MJLrB2RcyHMmI8wcUUAnFSHVJ7pV1nSwY0rK
-	QSpwlXhRnXUuNCpKzKPiz6BZsBum1e+LS7b2XXU8tsVfnh5cUQPLXEiUkw52T8gWU0kUy+vQ7YIpI
-	CrpilRJg==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s7X3K-00000005O4T-0ZTu;
-	Thu, 16 May 2024 09:05:31 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id A1C6B30068B; Thu, 16 May 2024 11:05:29 +0200 (CEST)
-Date: Thu, 16 May 2024 11:05:29 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: Re: [PATCH 3/4] perf: Fix event leak upon exit
-Message-ID: <20240516090529.GH22557@noisy.programming.kicks-ass.net>
-References: <20240515144311.16038-1-frederic@kernel.org>
- <20240515144311.16038-4-frederic@kernel.org>
+	s=arc-20240116; t=1715850359; c=relaxed/simple;
+	bh=0E+gPqH6jSJafScL9pyYv33ymYZlJA8AedYepE0ldGY=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=dqToklWrXZ1MU53BDwnT7TzEFzY2AcIwWUTUApQw9DXax1cAkjWXdQRZwNdkm/bgIIZQfLz7hRcq/YhYaIpXydOa8zl/UmkRyJn3FaNKwM87u6DPZPx7q2HJs8Il1n0ghdrhG8KvEx6GQ4v6rdX0iuzjPKMHW1dmG3ldEWQoC+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SdRdpQPZ; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-42024ca94d0so9024195e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 02:05:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715850355; x=1716455155; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=eCVjg4sqSDfY9TI5zH06fjgzS/36wYmW5IVSJ2sv/qA=;
+        b=SdRdpQPZUsg7VDeysAh0OEXsppk9PcbWNAimh5KzdU8ojMTRQ1U8RxGxNrYVZzco12
+         u9eM8fsn2hjDZtxJbMQmQ7m27tIDX5ogq5IT0DXdyWeUVgD3PYC2wabooCdwhFleovKt
+         XoO4ksK7yKHXkDacT+iIZJKluRviDnsc73mQPn0Kej15PyCFE+nXYXDjtL5hl0Tn+siI
+         FGy7yLbZiFRmfC4Bvo8QZYP+oXSAlZMZSnzgt1qSCftE/AIz1HPpAA7652jd3xiQoasE
+         9xuqCZ7mdU8ai1Ak+QfmwtQEhgLV/UDwaQ+kTXaznY3Qny3XxfFa20RBOHNILQ0/7IIC
+         lbew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715850355; x=1716455155;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=eCVjg4sqSDfY9TI5zH06fjgzS/36wYmW5IVSJ2sv/qA=;
+        b=Pcl0gT/7YXlhw5GH7XsZT4gjWNy4Zr0ZTZqpnb0cvMCzdWS/SKuYpIdnIKSQXRtXDV
+         Hmss8GlJwjY8LhTO077YlUbbkn7tooddze2Uu6ckinl2PPFh+q2jy6u0V2rlA3wGLJVx
+         ZOdOI4pjSTFRFDgLS8zQvCv3D1P9IVcRHbO1cDqnoQYDKyRUlfhmB0opU8FVkvS/pvke
+         6+lkQ56UhaWX4Oc/ouKFDMpOlsV1sMXB7vADnQfqmQozK3C0X8jmg2W9TzUlLI1iDHgd
+         uhpCjyyj+3ROUfOBGP1I4Lh5ET5S6SV3c3o9WPYA9hbq/L7pWnUtgz9lgq+XyZqmqeuR
+         XsCw==
+X-Forwarded-Encrypted: i=1; AJvYcCXXM6STF1JdQKbHHZ2LpmHCGt7Bk75CJq+60WjrOpAxEUvYHGeFWlXu3t/CmirNZbPQXs4Z9fqZK6Om25uaL7dOqL2Jf62de1a3IhNb
+X-Gm-Message-State: AOJu0Yy+fiiHwUESaenA8NmtkrWZvDwpLCBEEw8om5n8vvmFvg6u28x2
+	ZGKvBMkoX0ZKC8IkgiqYHe0vY/QxQu4nqPIFfqKAlATAjJKM9IhQzc6/IMYJhyA6qcbYIA==
+X-Google-Smtp-Source: AGHT+IExAYePWaQ3A5GVUKfOSn5p57YB46bPWL6/P0sXj67q8bQsgVt0zHPnfetLFURFlbMeUdkLlKxe
+X-Received: from palermo.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:118a])
+ (user=ardb job=sendgmr) by 2002:a05:600c:1d86:b0:420:2962:242d with SMTP id
+ 5b1f17b1804b1-4202962261cmr141205e9.8.1715850354957; Thu, 16 May 2024
+ 02:05:54 -0700 (PDT)
+Date: Thu, 16 May 2024 11:05:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240515144311.16038-4-frederic@kernel.org>
+Mime-Version: 1.0
+X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4092; i=ardb@kernel.org;
+ h=from:subject; bh=TsQg8UBvrS233z0bzqtKVfmyw4Ycif6w17yanCPXV7E=;
+ b=owGbwMvMwCFmkMcZplerG8N4Wi2JIc31TBpHW/RC/rlrTUxnZcf/uLb3/ESheT/barJqLDtiq
+ jO2qT/qKGVhEONgkBVTZBGY/ffdztMTpWqdZ8nCzGFlAhnCwMUpABOJ3s7I8KtS7ou1ytW3Sswh
+ c9W+XfX6vcPqrIfP98XVXFe+39F4EcPwzzBp5vzKGrUX64NiNJ5+vGxuy8HzPdHQMu3c8t5a99e 8vAA=
+X-Mailer: git-send-email 2.45.0.rc1.225.g2a3ae87e7f-goog
+Message-ID: <20240516090541.4164270-2-ardb+git@google.com>
+Subject: [PATCH] x86/efistub: Omit physical KASLR when memory reservations exist
+From: Ard Biesheuvel <ardb+git@google.com>
+To: linux-efi@vger.kernel.org
+Cc: keescook@chromium.org, linux-kernel@vger.kernel.org, x86@kernel.org, 
+	Ard Biesheuvel <ardb@kernel.org>, Ben Chaney <bchaney@akamai.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, May 15, 2024 at 04:43:10PM +0200, Frederic Weisbecker wrote:
-> When a task is scheduled out, pending sigtrap deliveries are deferred
-> to the target task upon resume to userspace via task_work.
-> 
-> However failures while adding en event's callback to the task_work
-> engine are ignored. And since the last call for events exit happen
-> after task work is eventually closed, there is a small window during
-> which pending sigtrap can be queued though ignored, leaking the event
-> refcount addition such as in the following scenario:
-> 
->     TASK A
->     -----
-> 
->     do_exit()
->        exit_task_work(tsk);
-> 
->        <IRQ>
->        perf_event_overflow()
->           event->pending_sigtrap = pending_id;
->           irq_work_queue(&event->pending_irq);
->        </IRQ>
->     =========> PREEMPTION: TASK A -> TASK B
->        event_sched_out()
->           event->pending_sigtrap = 0;
->           atomic_long_inc_not_zero(&event->refcount)
->           // FAILS: task work has exited
->           task_work_add(&event->pending_task)
->        [...]
->        <IRQ WORK>
->        perf_pending_irq()
->           // early return: event->oncpu = -1
->        </IRQ WORK>
->        [...]
->     =========> TASK B -> TASK A
->        perf_event_exit_task(tsk)
->           perf_event_exit_event()
->              free_event()
->                 WARN(atomic_long_cmpxchg(&event->refcount, 1, 0) != 1)
->                 // leak event due to unexpected refcount == 2
-> 
-> As a result the event is never released while the task exits.
+From: Ard Biesheuvel <ardb@kernel.org>
 
-Urgh...
+The legacy decompressor has elaborate logic to ensure that the
+randomized physical placement of the decompressed kernel image does not
+conflict with any memory reservations, including ones specified on the
+command line using mem=, memmap=, efi_fake_mem= or hugepages=, which are
+taken into account by the kernel proper at a later stage.
 
-> 
-> Fix this with appropriate task_work_add()'s error handling.
-> 
-> Fixes: 517e6a301f34 ("perf: Fix perf_pending_task() UaF")
-> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-> ---
->  kernel/events/core.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
-> 
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index 724e6d7e128f..c1632e69c69d 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -2289,10 +2289,11 @@ event_sched_out(struct perf_event *event, struct perf_event_context *ctx)
->  		event->pending_sigtrap = 0;
->  		if (state != PERF_EVENT_STATE_OFF &&
->  		    !event->pending_work) {
-> -			event->pending_work = 1;
-> -			dec = false;
-> -			WARN_ON_ONCE(!atomic_long_inc_not_zero(&event->refcount));
-> -			task_work_add(current, &event->pending_task, TWA_RESUME);
-> +			if (task_work_add(current, &event->pending_task, TWA_RESUME) >= 0) {
+When booting in EFI mode, it is the firmware's job to ensure that the
+chosen range does not conflict with any memory reservations that it
+knows about, and this is trivially achieved by using the firmware's
+memory allocation APIs.
 
-AFAICT the thing is a return 0 on success -Efoo on fail, no? That is,
-should this not simply be '== 0' ?
+That leaves reservations specified on the command line, though, which
+the firmware knows nothing about, as these regions have no other special
+significance to the platform. Since commit
 
-> +				WARN_ON_ONCE(!atomic_long_inc_not_zero(&event->refcount));
-> +				dec = false;
-> +				event->pending_work = 1;
-> +			}
+  a1b87d54f4e4 ("x86/efistub: Avoid legacy decompressor when doing EFI boot")
 
-Also, do we want to write it like so and save an indent?
+these reservations are not taken into account when randomizing the
+physical placement, which may result in conflicts where the memory
+cannot be reserved by the kernel proper because its own executable image
+resides there.
 
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -2288,11 +2288,11 @@ event_sched_out(struct perf_event *event
+To avoid having to duplicate or reuse the existing complicated logic,
+disable physical KASLR entirely when such overrides are specified. These
+are mostly diagnostic tools or niche features, and physical KASLR (as
+opposed to virtual KASLR, which is much more important as it affects the
+memory addresses observed by code executing in the kernel) is something
+we can live without.
+
+Closes: https://lkml.kernel.org/r/FA5F6719-8824-4B04-803E-82990E65E627%40akamai.com
+Reported-by: Ben Chaney <bchaney@akamai.com>
+Fixes: a1b87d54f4e4 ("x86/efistub: Avoid legacy decompressor when doing EFI boot")
+Cc: <stable@vger.kernel.org> # v6.1+
+Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+---
+ drivers/firmware/efi/libstub/x86-stub.c | 28 +++++++++++++++++++++++--
+ 1 file changed, 26 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/firmware/efi/libstub/x86-stub.c b/drivers/firmware/efi/libstub/x86-stub.c
+index d5a8182cf2e1..1983fd3bf392 100644
+--- a/drivers/firmware/efi/libstub/x86-stub.c
++++ b/drivers/firmware/efi/libstub/x86-stub.c
+@@ -776,6 +776,26 @@ static void error(char *str)
+ 	efi_warn("Decompression failed: %s\n", str);
+ }
  
- 		event->pending_sigtrap = 0;
- 		if (state != PERF_EVENT_STATE_OFF &&
--		    !event->pending_work) {
-+		    !event->pending_work &&
-+		    !task_work_add(current, &event->pending_task, TWA_RESUME)) {
- 			event->pending_work = 1;
- 			dec = false;
- 			WARN_ON_ONCE(!atomic_long_inc_not_zero(&event->refcount));
--			task_work_add(current, &event->pending_task, TWA_RESUME);
++static const char *cmdline_memmap_override;
++
++static efi_status_t parse_options(const char *cmdline)
++{
++	static const char opts[][14] = {
++		"mem=", "memmap=", "efi_fake_mem=", "hugepages="
++	};
++
++	for (int i = 0; i < ARRAY_SIZE(opts); i++) {
++		const char *p = strstr(cmdline, opts[i]);
++
++		if (p == cmdline || (p > cmdline && isspace(p[-1]))) {
++			cmdline_memmap_override = opts[i];
++			break;
++		}
++	}
++
++	return efi_parse_options(cmdline);
++}
++
+ static efi_status_t efi_decompress_kernel(unsigned long *kernel_entry)
+ {
+ 	unsigned long virt_addr = LOAD_PHYSICAL_ADDR;
+@@ -807,6 +827,10 @@ static efi_status_t efi_decompress_kernel(unsigned long *kernel_entry)
+ 		    !memcmp(efistub_fw_vendor(), ami, sizeof(ami))) {
+ 			efi_debug("AMI firmware v2.0 or older detected - disabling physical KASLR\n");
+ 			seed[0] = 0;
++		} else if (cmdline_memmap_override) {
++			efi_info("%s detected on the kernel command line - disabling physical KASLR\n",
++				 cmdline_memmap_override);
++			seed[0] = 0;
  		}
- 		if (dec)
- 			local_dec(&event->ctx->nr_pending);
+ 
+ 		boot_params_ptr->hdr.loadflags |= KASLR_FLAG;
+@@ -883,7 +907,7 @@ void __noreturn efi_stub_entry(efi_handle_t handle,
+ 	}
+ 
+ #ifdef CONFIG_CMDLINE_BOOL
+-	status = efi_parse_options(CONFIG_CMDLINE);
++	status = parse_options(CONFIG_CMDLINE);
+ 	if (status != EFI_SUCCESS) {
+ 		efi_err("Failed to parse options\n");
+ 		goto fail;
+@@ -892,7 +916,7 @@ void __noreturn efi_stub_entry(efi_handle_t handle,
+ 	if (!IS_ENABLED(CONFIG_CMDLINE_OVERRIDE)) {
+ 		unsigned long cmdline_paddr = ((u64)hdr->cmd_line_ptr |
+ 					       ((u64)boot_params->ext_cmd_line_ptr << 32));
+-		status = efi_parse_options((char *)cmdline_paddr);
++		status = parse_options((char *)cmdline_paddr);
+ 		if (status != EFI_SUCCESS) {
+ 			efi_err("Failed to parse options\n");
+ 			goto fail;
+-- 
+2.45.0.rc1.225.g2a3ae87e7f-goog
+
 
