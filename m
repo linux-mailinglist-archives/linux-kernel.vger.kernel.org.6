@@ -1,329 +1,386 @@
-Return-Path: <linux-kernel+bounces-181593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EF018C7E0F
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 23:32:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BBD28C7E10
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 23:33:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4214A1C20E5C
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 21:32:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DA00282CBA
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 21:33:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F27BC1586C2;
-	Thu, 16 May 2024 21:32:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7C54158217;
+	Thu, 16 May 2024 21:33:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Upg+zkrO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AF5MxXyP"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC76E158201;
-	Thu, 16 May 2024 21:32:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715895159; cv=none; b=FTBM/kf0jpsho1xUmFCoUzAGk3anwfXkdzu6/+TCC0OnAX6YiOcRRXbrVWHQ09GEszbGSTlnTCDJ//r+u6nne4CzSGbkhlsOoTRycXOyf2xRa9naJaaUU2K5MpY0chC5Org6lllozmXBK3tkfd6pVwElRWjcVdOVkIVBZsrYb6g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715895159; c=relaxed/simple;
-	bh=6/nLKJK7PKRS4GpkLXpEnALO7ddtUV4Kb4dHjwWKrlA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OjWJe0Ug81P8gZhxaF++A7g2R7ZyeVmAUyJft9d1xGd3LFeVarb8O2LqEd1BAynIRiEp9fAZi9NfiPSQjZpED9kFqmRWp/dzdhTxvShmqQcvWA/XZpKwW1+edk170yt/DYW2Hmm3eL3RD36auUadzD/9we1BcUYg/VdG8dCDCyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Upg+zkrO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7360BC113CC;
-	Thu, 16 May 2024 21:32:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715895158;
-	bh=6/nLKJK7PKRS4GpkLXpEnALO7ddtUV4Kb4dHjwWKrlA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Upg+zkrO/L6fvgCWF1Cvrqgs9OYE1knIZYdCiLaHUl//g9bkqxsVx1vSuSA7obwrV
-	 53sNajB7QzAHL4EEiMDgnWIkc2cUPr+Vk1yE7qo8T4s7LOPjAruH77sSGtt4UMhkFm
-	 yf9MWCgz7rF50gOnCU00YlPh14u4uvmszic0hOhP9fKax1XRP16OAx6/h9+3iEzvCV
-	 YSBJ5cS47pr7rtTQR3CR4gwWEe+AmQkeuPvoIkbZM4TGwKc0tZl0wCCEsithlA5P0c
-	 hbGoeEyCpziB0rkvAWDzIzsu+jxkj9NNuPaBrbXY7MF+er1oFpaiXyHH5mlPuIUtFj
-	 4WgxuKdYiRy5A==
-Date: Thu, 16 May 2024 22:32:33 +0100
-From: Conor Dooley <conor@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Mark Brown <broonie@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	David Jander <david@protonic.nl>,
-	Martin Sperl <kernel@martin.sperl.org>, linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org
-Subject: Re: [PATCH RFC v2 1/8] spi: dt-bindings: spi-peripheral-props: add
- spi-offloads property
-Message-ID: <20240516-rudder-reburial-dcf300504c0a@spud>
-References: <20240510-dlech-mainline-spi-engine-offload-2-v2-0-8707a870c435@baylibre.com>
- <20240510-dlech-mainline-spi-engine-offload-2-v2-1-8707a870c435@baylibre.com>
- <20240513-headsman-hacking-d51fcc811695@spud>
- <CAMknhBE5XJzhdJ=PQUXiubw_CiCLcn1jihiscnQZUzDWMASPKw@mail.gmail.com>
- <20240514-aspire-ascension-449556da3615@spud>
- <CAMknhBFFpEGcMoLo5gsC11Syv+CwUM0mnq1yDMUzL1uutUtB+Q@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2CE61581EE;
+	Thu, 16 May 2024 21:33:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715895188; cv=fail; b=tJrMdaexiKtLqmMsx16GWO/XvrnVtrzwAVxe2Q3gato3m1g/bCGgA0N/qkDzI9O58ZCQ0X61X6WJB1gJGYPlDTxettrr1Tfdl/ygEA8TSIdcM8k4S+8F9F1MKrnqqbv/nCinw3qekfyHFYgmeL4WgKFmF+hNR39AbCecqePy/aQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715895188; c=relaxed/simple;
+	bh=zvLW4325qIQaNOY71g2i9lmuYbZy2iekTp/wLjJrvkE=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Bt9yU1iQDBCjVLDrDRkfm1DdyjDKfzswRshE2wJq3nz2tlxfGcCVol+6QLoqKhWngR5kL53B0v+yRPKLZGx0c3mLQnqHywiSTiUuP//ljycEUQoWcBYFfdue7ptL3YkSlEZvGlu2n+jBVrd+bt/gXQ1XJP0CF3lDbTMdzJGihcI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AF5MxXyP; arc=fail smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715895187; x=1747431187;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=zvLW4325qIQaNOY71g2i9lmuYbZy2iekTp/wLjJrvkE=;
+  b=AF5MxXyPg5uCT4h3snUoAHZY1iaovncmr4rsQAo5wVtdCpng4u2016Eq
+   aMcsovc68hdYRmIJ2CGmaSSzaoPAphgeC9kKRA+7rX8Tx/HOnx6NS83SU
+   rto0mRgwXvdHKZhSzNDIpn0HPT1q42zQmkd7p4OKHH5om4UW6mbZCxQLg
+   fqADD4i/alPTsCwbr7s3A+tTJ88xiNms6w87tAAMwrZsySLEiSOLl09wt
+   AtPfB5UOVHoG55v0fVfs0iytB6ONkDebjmrFPQaR95IK/9ewtwIRGsPQf
+   7dthBHbDE2SchzvNvzEcTgWuqAWLtXvjyM8FCml/Fw0dAV4PBFMimV+p+
+   w==;
+X-CSE-ConnectionGUID: nhDJFWvmQSKX/B+ikS6U1Q==
+X-CSE-MsgGUID: gPHKM7EOR0iQq2AaVDscTA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="11915159"
+X-IronPort-AV: E=Sophos;i="6.08,165,1712646000"; 
+   d="scan'208";a="11915159"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 14:33:06 -0700
+X-CSE-ConnectionGUID: lZMz0JEPQMSn4Kq8a29+KQ==
+X-CSE-MsgGUID: s+Ksx7w/SEK/Icd+eyBfdQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,165,1712646000"; 
+   d="scan'208";a="31501199"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 16 May 2024 14:33:06 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Thu, 16 May 2024 14:33:05 -0700
+Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Thu, 16 May 2024 14:33:05 -0700
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.169)
+ by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Thu, 16 May 2024 14:33:05 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=KbkzMbCD3XVE16kLKqiPuYn7Id3LIUVusRBHZqt3fh0O5mlsdC5wfk7Y/8fyH4Ku1bve13mSSOKbHcX+Rr+x9L0UB1tKP+kPCbLRNn3qZVDZI0+FlFjEkXykS9oRTRV8l/o1Kht/ei6cVRDJEZSd6JurRP1VnHJqwyWd6TpFB/KxFJKuMzBervB4EFZs/7vJ6oSLcC+rmtXCi7cNMyRoGHXshAFtDXuXFOI4FE7dReENpACV9cbQtZ5GXMqUIBZZdTJd9mMo65Wwy8L1i8X7woZO1Qyb7CZRom+U9FlE1LxyFHoTQ01E8Mlv5cQJgGVOiW508QoTnYqV6D2Z42u8AQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NRDpf8zuGw84/I4wE99DEsI6IOTZTWaQ4OAJMrlqfLA=;
+ b=lwbpXDLbw0Tjj83u73LlF9pUFtq5DveBgI9XYZHRmacXXmnYUO1s6g0N4QQ5L0uXKSOELtcx/ufC6ix5XDoxxH9w64rsnpR3pygK6VFSYPJfcLjoCt01eAbXlBNdRhXOqXpNSlXhTIk/EFgvXo2pMD+rROHzyZMNDqwnOKvupM1R7kzda4W0Gx0fp6O91zGgciV5h9srS289iEXUv9mtpa7bbTfk8kKAunh+oJbsJLVKqmwFJnn3RFacOwhkV2YQcUWTHAjDeTHlNvtCp97CL3sgxa1DxPItEpCS6VnNgJjVBZgCIf/bqM4qsOzFqxfTswFY/FlMwu+vk3BiMQn+yg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SA1PR11MB6733.namprd11.prod.outlook.com (2603:10b6:806:25c::17)
+ by SN7PR11MB6557.namprd11.prod.outlook.com (2603:10b6:806:26f::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.30; Thu, 16 May
+ 2024 21:33:02 +0000
+Received: from SA1PR11MB6733.namprd11.prod.outlook.com
+ ([fe80::cf7d:9363:38f4:8c57]) by SA1PR11MB6733.namprd11.prod.outlook.com
+ ([fe80::cf7d:9363:38f4:8c57%4]) with mapi id 15.20.7544.052; Thu, 16 May 2024
+ 21:33:02 +0000
+Date: Thu, 16 May 2024 16:32:59 -0500
+From: Ira Weiny <ira.weiny@intel.com>
+To: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>, "Davidlohr
+ Bueso" <dave@stgolabs.net>, Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>, Alison Schofield
+	<alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, "Ira
+ Weiny" <ira.weiny@intel.com>, Dan Williams <dan.j.williams@intel.com>,
+	<linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
+Subject: Re: [PATCH] cxl/events: Use a common struct for DRAM and General
+ Media events
+Message-ID: <66467b8b47170_8c79294b3@iweiny-mobl.notmuch>
+References: <20240515190512.3480817-1-fabio.m.de.francesco@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240515190512.3480817-1-fabio.m.de.francesco@linux.intel.com>
+X-ClientProxiedBy: BY5PR17CA0060.namprd17.prod.outlook.com
+ (2603:10b6:a03:167::37) To SA1PR11MB6733.namprd11.prod.outlook.com
+ (2603:10b6:806:25c::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="PUrxS0tHEjun6Sgc"
-Content-Disposition: inline
-In-Reply-To: <CAMknhBFFpEGcMoLo5gsC11Syv+CwUM0mnq1yDMUzL1uutUtB+Q@mail.gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA1PR11MB6733:EE_|SN7PR11MB6557:EE_
+X-MS-Office365-Filtering-Correlation-Id: 62fd3207-2ad8-4e6e-a02b-08dc75efc3a9
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|366007|376005|921011;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?+qDB7b0KtwTXsWuA6UyDTZUDqzaa0LBPy7+6XDj6Xa7XavKzGXmFurjxItmP?=
+ =?us-ascii?Q?mebYILp6KnCYKkV005mxk4fxfT2fOSbPzeA71k663EmSGHdeE6NggxbJcCbW?=
+ =?us-ascii?Q?fMnhPjK91i58y4qu1BUTb6ALkcJxvin0gohHjQg83JNP4e5T7ZBi+PyVto0w?=
+ =?us-ascii?Q?rYHmu4B6+riEcINkuJtA7kza+SCEJulIDUnnkzJN+Ez7t7WEBeTslT6LMK/i?=
+ =?us-ascii?Q?UE17+v/4GQe46p8bhomPbDoNpKhpmRktu+A5R4+pBx/O8zu4Htmoa/m6RyxS?=
+ =?us-ascii?Q?lqTEboTCNy4bR0s9dJ+x1+I0S6kbichdsXIT3l2vPGfgjwpIh8hhLNDKNaH5?=
+ =?us-ascii?Q?vf2e76yhU1lvIEUb/PhvcZG+EWCXmW7/uhN0W7jy0Emgk3eXoYZYIXTCx2bJ?=
+ =?us-ascii?Q?05NBoK8F+NZEum5vhqF5gwLgc88D3KVlBQ+ARR0GyjUkpSTGqPgjDn67siHc?=
+ =?us-ascii?Q?elgkuh0v4RIiCYQHrlFek4KtutNAgiMyZqGbPhmsm/3u2REqUCTv/6OyHOcf?=
+ =?us-ascii?Q?8rMwUGb08YC3lAIWVlVyqeuHfI4vjO+au6Df03nztOU75kuohStraoCg0j6r?=
+ =?us-ascii?Q?fzhkiqxi6ouiKb+C3SLXh4XQnR3KkOt2WnwU79GR/WSZzYhafLCX4fuH8Jfz?=
+ =?us-ascii?Q?936WoQ6HVE3qtxYhkn6aGbf4QZ2ruT199HqGdk7MzOrFKduN5AU/qLJnslZ0?=
+ =?us-ascii?Q?ku9jTxFK4p1iXw9D9TeMxvD/fZn64ZW554f+yebRvdGL2wz43DP0RKwrcPRb?=
+ =?us-ascii?Q?VvgGqj6fH1mA60vbFi92xuuVN+8E0qoKQwWbOmxiIumRy5LzTiPO0sTQmq19?=
+ =?us-ascii?Q?xUiWvMMify2YH6Zzjdr4Xblaiddm+LGdUBEIqqE2iC8CDhrj3GQ4OsggCUWz?=
+ =?us-ascii?Q?LZgUEpvvzhtjLAbUIp+i2JTK9rvVN/+XAXHg3iTw4ZxlNzXvDkc9Eb60BOE8?=
+ =?us-ascii?Q?UqsSiw0jRTcXeC4YPpJK7oYDopLYFOtE77qqzyg9IwEQwLdxldkVXl29o8Wb?=
+ =?us-ascii?Q?kGgihxahStV3b9xngfrNM5tmHETn4cwd3/EA+9SqA/DybWEsEIAR/zwAiafg?=
+ =?us-ascii?Q?Zj34Sqoq1H0Vh8TG+CU7fcTH5K/zCoaP3uRfnXCcKHm9ISYwIx77ne1LPDEM?=
+ =?us-ascii?Q?93ja96x8L2jAcGzQbre/MVBl4Py/E+i/386QoiZOKnzihhqKUUF6XPLnnPL/?=
+ =?us-ascii?Q?3cyTsWesW14cBfFhxhQXFu6H6CRPjdc3r7M1Po+oBKSIClic0zA4+c3S9jsS?=
+ =?us-ascii?Q?GhLtH2/MlOlqxUaCBWLkXk4VBygRlAHpdh91mJPJ+AFmTTqyUX/wRvoBgE/p?=
+ =?us-ascii?Q?T8Jba4dVDKJK8dOcW2MsAOH4?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB6733.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(366007)(376005)(921011);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?1h2pYJucsic2qfOGUtfwqQDoDEKzzx6NCsXDA65go3IvQyKGqHiUkAhFe9KK?=
+ =?us-ascii?Q?BB3a+w+Plwdb6HZB2CVbQfE9a5uwhkfci1cmjnPtByV4wbEm7id6B9n/pWyo?=
+ =?us-ascii?Q?qA71yCNXa7tkp59PKS3q/cmzC9mkp0LFzcgPqn4XIdKvbMSdfCuL6eh0L+2P?=
+ =?us-ascii?Q?fCjPrYi5iJGGGUMJgB010NfLAG2Ic11YaPmaaehbv0Lr5Z1bwp3CQ9osZJLp?=
+ =?us-ascii?Q?29ORxlcY6eFD2P7lHkxOo/0xCXTywuHPde2Gb/vUQgWZ8uDNlchAathBvgwx?=
+ =?us-ascii?Q?j5H56SFRmef18IzTuq/4EeFT/+GSRkOTtceLHqIyFf/YcPsBHvuAZ+GsmwgF?=
+ =?us-ascii?Q?PgSlzFZiek82t65mZcn4VbC48Uwe88uconYe9kwkwEqwP3dbubYA59XOy5QQ?=
+ =?us-ascii?Q?eBGhrhPifLrz+jHLsnG9pivG8SWHfjZwLOF5HiOr97iMlwZ6wUSLQcUm67gA?=
+ =?us-ascii?Q?+IQ/r8Gy3yAfy8Ntz2qN4IfCd4XkWoYVqMbsdXFhjxMmUvqtlV5IaHkjnrtz?=
+ =?us-ascii?Q?E56EaIrcE7C2c83mq5RWINv9oZWaZrcrc5+RvkPf7qa5zlhGua4Y9LzIEVtA?=
+ =?us-ascii?Q?AZR6SoJmXcdbC6ntQWpuMhMS6eJo1VhGEGombfU4Iw+eDu/kRUta6kafWlgu?=
+ =?us-ascii?Q?6BdoGheIAB+WzJxV/u2hmOzdO+T5+rGw+or2hnrR03C1jvfQWjfI/AZnxJfc?=
+ =?us-ascii?Q?cKRJGgMtHvrj9Fz7vkwp+j38NswObNAXXd5YO1Ab8uEBykzuoQrCOJtbjFRK?=
+ =?us-ascii?Q?Q7O783Y3lJqtQ0KzA11unUYZAVqb7k7pP243x9MUOcp90WbUbsSLsm0Sin2z?=
+ =?us-ascii?Q?ruO9x82AHGQVI7mrGhKl7Wu0bHxo+s/qDzBZ3+TrpS/3jBsCltRpwP+66Cms?=
+ =?us-ascii?Q?8G4Savh2azzm5Tavo9FMhWRNx7bWjgEr9aPAY8NxR75NTTkonviDTvEKW0/p?=
+ =?us-ascii?Q?UOweDRxTcyyYQ3uiejj05WOWK5WXkPz4ffm7fHbiOUmFes57fIrPqKDkb3+P?=
+ =?us-ascii?Q?GfrFbJbnSBlBP4oCgUnSkk+M0mkaf/sIzNvel0MCZkhR3trz5uovrEYkTWG8?=
+ =?us-ascii?Q?KOHvfg2MJWzwV9fNyD6E6C7UqHdyp6hQMHciXnNBoqlGxWp9/15xI5/WlriS?=
+ =?us-ascii?Q?4/Gprfq81PQx59hKmF9C9DQWZco4Dgh8K5tgvs4xT5Cw0JwN/uSF5N5AU5Y7?=
+ =?us-ascii?Q?WALfLfbFmG2zZVgspXMdLdpASpc6wI+s4gBZV4AogYezYAuDoPF/Gxdx+vfr?=
+ =?us-ascii?Q?rufl7vFM9okkOmY3XtdgZxybRsQ9G8u1NSJ/Af2RbBW8SiWCgKtsmps9G3zr?=
+ =?us-ascii?Q?lWmKHP4+ssgGv1YIK67pZNjGq83tKW7+Dc5+3N68B9tdJu8hl93EJKC0e00U?=
+ =?us-ascii?Q?wx5geNLYSFWfduKF3bqSn0qbZjc/9TQ5eRBKderdlrmYtWM9zHRRc9ue2t3w?=
+ =?us-ascii?Q?k/lZQ0EMzuwK4Dm7I6RJSpmdQd630HzOnt0cqbtjtwQ8k5I5LI+NW+lkHeZY?=
+ =?us-ascii?Q?f2QtbhhAvyvup9BRQG82VsQEFxBAYBO16AHAv86Ji0Vdb10CJMiGClHavTLw?=
+ =?us-ascii?Q?hr6OyQUA9W614oxirckPu3ZaDSoqc9kZXoBrwFg+REqvgl4OYUEcLkOioPhQ?=
+ =?us-ascii?Q?rNl1c4RUJ2eD1qtwVssIfgw=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 62fd3207-2ad8-4e6e-a02b-08dc75efc3a9
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB6733.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 May 2024 21:33:02.2036
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: lMkSP+NHBvkFwItQELuoxxycAILo4KmG6zzCNBXtHL+hYDu+oIJoRnE1CIIWeNQL2CdDl057dKi94bDDP5tigQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB6557
+X-OriginatorOrg: intel.com
+
+Fabio M. De Francesco wrote:
+> Use cxl_event_media as a common structure to record information about DRAM
+> and General Media events because it simplifies handling the two events.
+> 
+> Suggested-by: Dan Williams <dan.j.williams@intel.com>
+> Signed-off-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.com>
+> ---
+>  drivers/cxl/core/mbox.c      |  6 ++--
+>  drivers/cxl/core/trace.h     |  4 +--
+>  include/linux/cxl-event.h    | 70 +++++++++++++++---------------------
+>  tools/testing/cxl/test/mem.c |  4 +--
+>  4 files changed, 36 insertions(+), 48 deletions(-)
+
+Other than saving 12 lines of code what are we saving with this change?
+
+The addition of media_common implies an additional event type which is not
+in the specification.  (perhaps confusing future contributors?)  And the
+code is more complex to follow.  The decode of the phys_addr field is not
+simplified (which IIRC was the point of this idea.)
+
+I'm probably being dense but I just don't see the need for the
+struct_group complexity here.
+
+Ira
+
+> 
+> diff --git a/drivers/cxl/core/mbox.c b/drivers/cxl/core/mbox.c
+> index 2626f3fff201..ad4d7b0f7f4d 100644
+> --- a/drivers/cxl/core/mbox.c
+> +++ b/drivers/cxl/core/mbox.c
+> @@ -875,16 +875,16 @@ void cxl_event_trace_record(const struct cxl_memdev *cxlmd,
+>  		guard(rwsem_read)(&cxl_region_rwsem);
+>  		guard(rwsem_read)(&cxl_dpa_rwsem);
+>  
+> -		dpa = le64_to_cpu(evt->common.phys_addr) & CXL_DPA_MASK;
+> +		dpa = le64_to_cpu(evt->media_common.phys_addr) & CXL_DPA_MASK;
+>  		cxlr = cxl_dpa_to_region(cxlmd, dpa);
+>  		if (cxlr)
+>  			hpa = cxl_trace_hpa(cxlr, cxlmd, dpa);
+>  
+>  		if (event_type == CXL_CPER_EVENT_GEN_MEDIA)
+>  			trace_cxl_general_media(cxlmd, type, cxlr, hpa,
+> -						&evt->gen_media);
+> +						&evt->media_general);
+>  		else if (event_type == CXL_CPER_EVENT_DRAM)
+> -			trace_cxl_dram(cxlmd, type, cxlr, hpa, &evt->dram);
+> +			trace_cxl_dram(cxlmd, type, cxlr, hpa, &evt->media_dram);
+>  	}
+>  }
+>  EXPORT_SYMBOL_NS_GPL(cxl_event_trace_record, CXL);
+> diff --git a/drivers/cxl/core/trace.h b/drivers/cxl/core/trace.h
+> index 07a0394b1d99..2c7293761bb2 100644
+> --- a/drivers/cxl/core/trace.h
+> +++ b/drivers/cxl/core/trace.h
+> @@ -316,7 +316,7 @@ TRACE_EVENT(cxl_generic_event,
+>  TRACE_EVENT(cxl_general_media,
+>  
+>  	TP_PROTO(const struct cxl_memdev *cxlmd, enum cxl_event_log_type log,
+> -		 struct cxl_region *cxlr, u64 hpa, struct cxl_event_gen_media *rec),
+> +		 struct cxl_region *cxlr, u64 hpa, struct cxl_event_media *rec),
+>  
+>  	TP_ARGS(cxlmd, log, cxlr, hpa, rec),
+>  
+> @@ -413,7 +413,7 @@ TRACE_EVENT(cxl_general_media,
+>  TRACE_EVENT(cxl_dram,
+>  
+>  	TP_PROTO(const struct cxl_memdev *cxlmd, enum cxl_event_log_type log,
+> -		 struct cxl_region *cxlr, u64 hpa, struct cxl_event_dram *rec),
+> +		 struct cxl_region *cxlr, u64 hpa, struct cxl_event_media *rec),
+>  
+>  	TP_ARGS(cxlmd, log, cxlr, hpa, rec),
+>  
+> diff --git a/include/linux/cxl-event.h b/include/linux/cxl-event.h
+> index 60b25020281f..e417556cc120 100644
+> --- a/include/linux/cxl-event.h
+> +++ b/include/linux/cxl-event.h
+> @@ -32,41 +32,38 @@ struct cxl_event_generic {
+>   * CXL rev 3.0 Section 8.2.9.2.1.1; Table 8-43
+>   */
+>  #define CXL_EVENT_GEN_MED_COMP_ID_SIZE	0x10
+> -struct cxl_event_gen_media {
+> -	struct cxl_event_record_hdr hdr;
+> -	__le64 phys_addr;
+> -	u8 descriptor;
+> -	u8 type;
+> -	u8 transaction_type;
+> -	u8 validity_flags[2];
+> -	u8 channel;
+> -	u8 rank;
+> -	u8 device[3];
+> -	u8 component_id[CXL_EVENT_GEN_MED_COMP_ID_SIZE];
+> -	u8 reserved[46];
+> -} __packed;
+> -
+>  /*
+>   * DRAM Event Record - DER
+>   * CXL rev 3.0 section 8.2.9.2.1.2; Table 3-44
+>   */
+>  #define CXL_EVENT_DER_CORRECTION_MASK_SIZE	0x20
+> -struct cxl_event_dram {
+> +struct cxl_event_media {
+>  	struct cxl_event_record_hdr hdr;
+> -	__le64 phys_addr;
+> -	u8 descriptor;
+> -	u8 type;
+> -	u8 transaction_type;
+> -	u8 validity_flags[2];
+> -	u8 channel;
+> -	u8 rank;
+> -	u8 nibble_mask[3];
+> -	u8 bank_group;
+> -	u8 bank;
+> -	u8 row[3];
+> -	u8 column[2];
+> -	u8 correction_mask[CXL_EVENT_DER_CORRECTION_MASK_SIZE];
+> -	u8 reserved[0x17];
+> +	struct_group_tagged(cxl_event_media_hdr, media_hdr,
+> +		__le64 phys_addr;
+> +		u8 descriptor;
+> +		u8 type;
+> +		u8 transaction_type;
+> +		u8 validity_flags[2];
+> +		u8 channel;
+> +		u8 rank;
+> +	);
+> +	union {
+> +		struct_group(general,
+> +			u8 device[3];
+> +			u8 component_id[CXL_EVENT_GEN_MED_COMP_ID_SIZE];
+> +			u8 gen_reserved[46];
+> +		);
+> +		struct_group(dram,
+> +			u8 nibble_mask[3];
+> +			u8 bank_group;
+> +			u8 bank;
+> +			u8 row[3];
+> +			u8 column[2];
+> +			u8 correction_mask[CXL_EVENT_DER_CORRECTION_MASK_SIZE];
+> +			u8 dram_reserved[0x17];
+> +		);
+> +	};
+>  } __packed;
+>  
+>  /*
+> @@ -95,21 +92,12 @@ struct cxl_event_mem_module {
+>  	u8 reserved[0x3d];
+>  } __packed;
+>  
+> -/*
+> - * General Media or DRAM Event Common Fields
+> - * - provides common access to phys_addr
+> - */
+> -struct cxl_event_common {
+> -	struct cxl_event_record_hdr hdr;
+> -	__le64 phys_addr;
+> -} __packed;
+> -
+>  union cxl_event {
+>  	struct cxl_event_generic generic;
+> -	struct cxl_event_gen_media gen_media;
+> -	struct cxl_event_dram dram;
+> +	struct cxl_event_media media_general;
+> +	struct cxl_event_media media_dram;
+>  	struct cxl_event_mem_module mem_module;
+> -	struct cxl_event_common common;
+> +	struct cxl_event_media media_common;
+>  } __packed;
+>  
+>  /*
+> diff --git a/tools/testing/cxl/test/mem.c b/tools/testing/cxl/test/mem.c
+> index 6584443144de..0a8fd145c391 100644
+> --- a/tools/testing/cxl/test/mem.c
+> +++ b/tools/testing/cxl/test/mem.c
+> @@ -378,7 +378,7 @@ struct cxl_event_record_raw hardware_replace = {
+>  
+>  struct cxl_test_gen_media {
+>  	uuid_t id;
+> -	struct cxl_event_gen_media rec;
+> +	struct cxl_event_media rec;
+>  } __packed;
+>  
+>  struct cxl_test_gen_media gen_media = {
+> @@ -402,7 +402,7 @@ struct cxl_test_gen_media gen_media = {
+>  
+>  struct cxl_test_dram {
+>  	uuid_t id;
+> -	struct cxl_event_dram rec;
+> +	struct cxl_event_media rec;
+>  } __packed;
+>  
+>  struct cxl_test_dram dram = {
+> -- 
+> 2.45.0
+> 
 
 
---PUrxS0tHEjun6Sgc
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Yo,
-
-Sorry for the delay, long reply deserved some time to sit and think
-about it.
-
-On Tue, May 14, 2024 at 05:56:47PM -0500, David Lechner wrote:
-> On Tue, May 14, 2024 at 1:46=E2=80=AFPM Conor Dooley <conor@kernel.org> w=
-rote:
-> >
-> > On Mon, May 13, 2024 at 12:06:17PM -0500, David Lechner wrote:
-> > > On Mon, May 13, 2024 at 11:46=E2=80=AFAM Conor Dooley <conor@kernel.o=
-rg> wrote:
-> > > >
-> > > > On Fri, May 10, 2024 at 07:44:24PM -0500, David Lechner wrote:
-> > > > > This adds a new property to the spi-peripheral-props binding for =
-use
-> > > > > with peripherals connected to controllers that support offloading.
-> > > > >
-> > > > > Here, offloading means that the controller has the ability to per=
-form
-> > > > > complex SPI transactions without CPU intervention in some shape o=
-r form.
-> > > > >
-> > > > > This property will be used to assign controller offload resources=
- to
-> > > > > each peripheral that needs them. What these resources are will be
-> > > > > defined by each specific controller binding.
-> > > > >
-> > > > > Signed-off-by: David Lechner <dlechner@baylibre.com>
-> > > > > ---
-> > > > >
-> > > > > v2 changes:
-> > > > >
-> > > > > In v1, instead of generic SPI bindings, there were only controlle=
-r-
-> > > > > specific bindings, so this is a new patch.
-> > > > >
-> > > > > In the previous version I also had an offloads object node that d=
-escribed
-> > > > > what the offload capabilities were but it was suggested that this=
- was
-> > > > > not necessary/overcomplicated. So I've gone to the other extreme =
-and
-> > > > > made it perhaps over-simplified now by requiring all information =
-about
-> > > > > how each offload is used to be encoded in a single u32.
-> > > >
-> > > > The property is a u32-array, so I guess, not a single u32?
-> > >
-> > > It is an array to handle cases where a peripheral might need more than
-> > > one offload. But the idea was it put everything about each individual
-> > > offload in a single u32. e.g. 0x0101 could be offload 1 with hardware
-> > > trigger 1 and 0x0201 could be offload 1 with hardware trigger 2. Then
-> > > a peripheral could have spi-offloads =3D <0x0101>, <0x0201>; if it
-> > > needed to select between both triggers at runtime.
-> > >
-> > > >
-> > > > > We could of course consider using #spi-offload-cells instead for
-> > > > > allowing encoding multiple parameters for each offload instance i=
-f that
-> > > > > would be preferable.
-> > > >
-> > > > A -cells property was my gut reaction to what you'd written here and
-> > > > seems especially appropriate if there's any likelihood of some futu=
-re
-> > > > device using some external resources for spi-offloading.
-> > > > However, -cells properties go in providers, not consumers, so it wo=
-uldn't
-> > > > end up in spi-periph-props.yaml, but rather in the controller bindi=
-ng,
-> > > > and instead there'd be a cell array type property in here. I think =
-you
-> > > > know that though and I'm interpreting what's been written rather th=
-an
-> > > > what you meant.
-> > >
-> > > Indeed you guess correctly. So the next question is if it should be
-> > > the kind of #-cells that implies a phandle like most providers or
-> > > without phandles like #address-cells?
-> >
-> > I'm trying to understand if the offload could ever refer to something
-> > beyond the controller that you'd need the phandle for. I think it would
-> > be really helpful to see an example dt of a non-trivial example for how
-> > this would work. The example in the ad7944 patch has a stub controller
-> > node & the clocks/dmas in the peripheral node so it is difficult to
-> > reason about the spi-offloads property there.
->=20
-> The fully implemented and tested version of the .dts corresponding to
-> the hardware pictured in the cover letter can be found at [1].
->=20
-> [1]: https://github.com/dlech/linux/blob/axi-spi-engine-offload-v2/arch/a=
-rm/boot/dts/xilinx/zynq-zed-adv7511-ad7986.dts
-
-Unfortunately this is a trivial example, so there's not much to be
-gained in new information from the example in the bindings :/ Your
-examples below are good though, which makes up for that and more.
-
-> To be clear though, the idea that I am proposing here is that if there
-> is something beyond the SPI controller directly connected to the
-> offload, then we would add those things in the peripheral node along
-> with the spi-offloads property that specifies the offload those other
-> things are connected to.
->=20
-> Tangent on phandle vs. no phandle:
-
-Yeah, I think not having a phandle makes sense based on what you've
-said.
-
-> Back to "something beyond the SPI controller":
->=20
-> Here are some examples of how I envision this would work.
->=20
-> Let's suppose we have a SPI controller that has some sort of offload
-> capability with a configurable trigger source. The trigger can either
-> be an internal software trigger (i.e. writing a register of the SPI
-> controller) or and external trigger (i.e. a input signal from a pin on
-> the SoC). The SPI controller has a lookup table with 8 slots where it
-> can store a series of SPI commands that can be played back by
-> asserting the trigger (this is what provides the "offloading").
->=20
-> So this SPI controller would have #spi-offload-cells =3D <2>; where the
-> first cell would be the index in the lookup table 0 to 7 and the
-> second cell would be the trigger source 0 for software or 1 for
-> hardware.
->=20
-> Application 1: a network controller
->=20
-> This could use two offloads, one for TX and one for RX. For TX, we use
-> the first slot with a software trigger because the data is coming from
-> Linux. For RX we use the second slot with a hardware trigger since
-> data is coming from the network controller (i.e. a data ready signal
-> that would normally be wired to a gpio for interrupt but wired to the
-> SPI offload trigger input pin instead). So the peripheral bindings
-> would be:
->=20
-> #define SOFTWARE_TRIGGER 0
-> #define HARDWARE_TRIGGER 1
->=20
-> can@0 {
->     ...
->     spi-offloads =3D <0 SOFTWARE_TRIGGER>, <1 HARDWARE_TRIGGER>;
->     /* maybe we need names too? */
->     spi-offload-names =3D "tx", "rx";
-> };
->=20
-> In this case, there is nothing extra beyond the SPI controller and the
-> network controller, so no extra bindings beyond this are needed.
->=20
-> Application 2: an advanced ADC + FPGA
->=20
-> This is basically the same as the ad7944 case seen already with one
-> extra feature. In this case, the sample data also contains a CRC byte
-> for error checking. So instead of SPI RX data going directly to DMA,
-> the FPGA removes the CRC byte from the data stream an only the sample
-> data goes to the DMA buffer. The CRC is checked and if bad, an
-> interrupt is asserted.
->=20
-> Since this is an FPGA, most everything is hardwired rather than having
-> any kind of mux selection so #spi-offload-cells =3D <1>; for this
-> controller.
->=20
-> By adding spi-offloads to the peripheral node, it also extends the
-> peripheral binding to include the additional properties needed for the
-> extra features provided by the FPGA. In other words, we are saying
-> this DT node now represents the ADC chip plus everything connected to
-> the offload instance used by the ADC chip.
-
-It seems very strange to me that the dmas and the clock triggers are
-going into the spi device nodes. The description is=20
-| +  dmas:
-| +    maxItems: 1
-| +    description: RX DMA Channel for receiving a samples from the SPI off=
-load.
-But as far as I can tell this device is in a package of its own and not
-some IP provided by Analog that an engine on the FPGA can actually do
-DMA to, and the actual connection of the device is "just" SPI.
-The dmas and clock triggers etc appear to be resources belonging to the
-controller that can "assigned" to a particular spi device. If the adc
-gets disconnected from the system, the dmas and clock triggers are still
-connected to the spi controller/offload engine, they don't end up n/c,
-right? (Well maybe they would in the case of a fancy SPI device that
-provides it's own sampling clock or w/e, but then it'd be a clock
-provider of sorts). I'd be expecting the spi-offloads property to be
-responsible for selecting which of the various resources belonging to
-the controller are to be used by a device.
-Maybe it overcomplicates the shit out of things and Rob or Mark are
-gonna start screaming at me but w/e, looking at it from the point of
-view of how the hardware is laid out (or at least how it is described
-in your FPGA case above) the dma/clock properties looks like they're
-misplaced. IOW, I don't think that adding the spi-offloads property
-should convert a node from representing an ADC in a qfn-20 or w/e
-to "the ADC chip plus everything connected to the offload instance
-used by the ADC chip".
-
-> adc@0 {
->     ...
->     spi-offloads =3D <0>;
->     dmas =3D <&dma 0>; /* channel receiving split out sample data */
->     dma-names =3D "rx";
->     interrupts =3D <&intc 99>; /* interrupt for bad CRC */
->     interrupt-names =3D "crc";
-> };
->=20
-> >
-> > > Asking because I got pushback on
-> > > v1 for using a phandle with offloads (although in that case, the
-> > > phandle was for the offload instance itself instead for the SPI
-> > > controller, so maybe this is different in this case?).
-> >
-> > Do you have a link to this v1 pushback?
->=20
-> Hmm... maybe that was from some internal review before v1 that I was
-> remembering and confusing with the resistance of different aspects you
-> mention below.
->=20
-> > I had looked at the v1's binding
-> > comments and didn't see that type of property being resisted - although
-> > I did see some resistance to the spi peripheral node containing any of
-> > the information about the offloads it had been assigned and instead
-> > doing that mapping in the controller so that the cs was sufficient. I
-> > don't think that'd work with the scenario you describe above though
-> > where there could be two different triggers per device tho.
->=20
-> I think most of the objection was to having an offloads object node
-> with offload@ subnodes in the SPI controller node along side the
-> peripheral nodes.
-
-I dunno, that was my reading of Rob's comments at least. I know he had
-more than one objection though, so maybe we're just looking at different
-portions of it - I did note that you removed the offload@ though.
-
-Cheers,
-Conor.
-
---PUrxS0tHEjun6Sgc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZkZ7cQAKCRB4tDGHoIJi
-0votAQCzjlAGpb2kXqqg1VZQ11eZbkgGcaR8LRcmlpKReyfVWQEA3MpGhoVbwRvk
-FDc3e10HSjGXmu20tqkrNO2ttutoNQE=
-=hdFd
------END PGP SIGNATURE-----
-
---PUrxS0tHEjun6Sgc--
 
