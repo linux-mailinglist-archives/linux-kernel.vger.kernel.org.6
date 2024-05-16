@@ -1,210 +1,114 @@
-Return-Path: <linux-kernel+bounces-181243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D433E8C7979
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:28:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E0D18C797B
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:29:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B7A228B2D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:28:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14FB61F21A57
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:29:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B387914D708;
-	Thu, 16 May 2024 15:28:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33B6714D70C;
+	Thu, 16 May 2024 15:28:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=pobox.com header.i=@pobox.com header.b="iIMabCed";
-	dkim=pass (1024-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b="iRF+9Q2q"
-Received: from pb-smtp2.pobox.com (pb-smtp2.pobox.com [64.147.108.71])
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="iUDlKF7z"
+Received: from smtp-fw-33001.amazon.com (smtp-fw-33001.amazon.com [207.171.190.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDD9F14D431;
-	Thu, 16 May 2024 15:28:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.108.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6BC614B97D;
+	Thu, 16 May 2024 15:28:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.190.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715873296; cv=none; b=miJaGR+OjsK8dAvMFt8YcC/lLIlI1eufYTzDXJ/qwlAZBWD5uaT7dB+eBRDOzNGeaKYhK4RLaxPj/x1hDYoPwgtyapRfQYjkGTAF9BktC4Qg9O4V/QxbNa5xYJgTFh3vM9YJ9QWsCX/Je54MXqQ3J04SOpjCxkpYjQbNBPinH0k=
+	t=1715873307; cv=none; b=r1Hsw9HDj05KzWl1HBoEZlx/ziXkXJE8WbacGNoxHHNFCOZWcZAda8CcOYJC9Re+/tXkA0HjycQxGbOsI5gtfkxBeNKRfT5gLgY9E2ZpdmAv5VeQ6GUzbjzD2VN3PbWrvwVgpmwL24Cd7Fh1kqBRV+mLluHFlMF9LFTLG8LSKOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715873296; c=relaxed/simple;
-	bh=jDGaIXZ6mwJSE++TssF9Hgd5zL7rRZplsxBJ8LGhBE0=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=hNpOUDTOOZkqli2PYjt6g62th3v+IEE1ZwpMw95eAj5bCvLkfcatRmWSOYo4SSY3T4hkN5UrmMA0IeXBjLNL+rESusT+qegiEu2tS+LY5MxbZW7owslwOtyFwz5fg+r10IE6oqsD4gJ8fAOIsEIVU+AIzlo+iVzkT9LBG8h+lRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fluxnic.net; spf=pass smtp.mailfrom=fluxnic.net; dkim=pass (1024-bit key) header.d=pobox.com header.i=@pobox.com header.b=iIMabCed; dkim=pass (1024-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b=iRF+9Q2q; arc=none smtp.client-ip=64.147.108.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fluxnic.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fluxnic.net
-Received: from pb-smtp2.pobox.com (unknown [127.0.0.1])
-	by pb-smtp2.pobox.com (Postfix) with ESMTP id 3CBDD20145;
-	Thu, 16 May 2024 11:28:08 -0400 (EDT)
-	(envelope-from nico@fluxnic.net)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=pobox.com; h=date:from
-	:to:cc:subject:in-reply-to:message-id:references:mime-version
-	:content-type; s=sasl; bh=jDGaIXZ6mwJSE++TssF9Hgd5zL7rRZplsxBJ8L
-	GhBE0=; b=iIMabCed0OLIq2MSNYAdqqL5B00RDZCoGMHJ+oKGm1jaBCDA2Vjs1w
-	JlD9VLaJuZCyxIj84vW0xKKixfE41XreZbErLJOWgHR/vDlxKaNTNli6E53FrHem
-	7OaffE4dpQ2+0Zk2ye2TcVDatSbWGz2lFyDNUk6kK0Ia+vo2s3+eM=
-Received: from pb-smtp2.nyi.icgroup.com (unknown [127.0.0.1])
-	by pb-smtp2.pobox.com (Postfix) with ESMTP id 2FC8120144;
-	Thu, 16 May 2024 11:28:08 -0400 (EDT)
-	(envelope-from nico@fluxnic.net)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=fluxnic.net;
- h=date:from:to:cc:subject:in-reply-to:message-id:references:mime-version:content-type; s=2016-12.pbsmtp; bh=jDGaIXZ6mwJSE++TssF9Hgd5zL7rRZplsxBJ8LGhBE0=; b=iRF+9Q2qWzw2ciruz1uGT5msSsWhWF+t0SqcIAcRKLfKZI9byA9Bg+I+r/KAit9buJxLZgg2E3DkBI9XwJ3eRn5qckpB+unpqs0Dq7Wb1YRAtLRn1BT+0cfTil9AIGZtktisONajvPuVvpYdRidGRvuZcO6iDFcG4+r5/T+nsNA=
-Received: from yoda.fluxnic.net (unknown [184.162.15.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by pb-smtp2.pobox.com (Postfix) with ESMTPSA id 6979020143;
-	Thu, 16 May 2024 11:28:07 -0400 (EDT)
-	(envelope-from nico@fluxnic.net)
-Received: from xanadu (unknown [IPv6:fd17:d3d3:663b:0:9696:df8a:e3:af35])
-	by yoda.fluxnic.net (Postfix) with ESMTPSA id 5B3AACAF973;
-	Thu, 16 May 2024 11:28:06 -0400 (EDT)
-Date: Thu, 16 May 2024 11:28:06 -0400 (EDT)
-From: Nicolas Pitre <nico@fluxnic.net>
-To: Thorsten Blum <thorsten.blum@toblux.com>
-cc: "David S. Miller" <davem@davemloft.net>, 
-    Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-    Paolo Abeni <pabeni@redhat.com>, 
-    John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
-    Arnd Bergmann <arnd@arndb.de>, Andrew Lunn <andrew@lunn.ch>, 
-    netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-    kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] net: smc91x: Fix pointer types
-In-Reply-To: <20240516121142.181934-3-thorsten.blum@toblux.com>
-Message-ID: <o61rp249-27sr-q9q5-118r-o531s8o80o8r@syhkavp.arg>
-References: <20240516121142.181934-3-thorsten.blum@toblux.com>
+	s=arc-20240116; t=1715873307; c=relaxed/simple;
+	bh=5U0KMV2C/c892y1VrfZ5naiyiiT+W1EsNrkhQahBFWU=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=Gvy4mkR2fA1EGYNvCKDDDppj7ir38jW2rkepoazVJGcvc4EXi+vgCH+jhsuElAvslTL99l0hQIMsacYyWhHBII+uObCHVVYQclbvTy+ac9476BRc+gjbQ2uuP8Y0u/ezbkXmq3/mutpDM++3wLAhkAareFU45XzD1hS1BuHGlF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b=iUDlKF7z; arc=none smtp.client-ip=207.171.190.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1715873305; x=1747409305;
+  h=from:to:cc:subject:date:message-id:content-id:
+   mime-version:content-transfer-encoding;
+  bh=5U0KMV2C/c892y1VrfZ5naiyiiT+W1EsNrkhQahBFWU=;
+  b=iUDlKF7z/VhC7Yp47Y+ref1W1q6CSn69JaV3Izn393Wm1drdsQ+aG5XY
+   zuzswcKNC7+XrIP/vfwuXge7+OK+VDUGemZvp+puKmS+rnE9WlhtSSJMI
+   9TMJJbe3s/nPkcLPmLrRLWr91cnUHJ/8OcfwoR5vaUQWnfab4eVDPVVTZ
+   o=;
+X-IronPort-AV: E=Sophos;i="6.08,164,1712620800"; 
+   d="scan'208";a="344862544"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-33001.sea14.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 15:28:18 +0000
+Received: from EX19MTAEUA002.ant.amazon.com [10.0.43.254:59697]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.39.135:2525] with esmtp (Farcaster)
+ id ad0209d0-e9fb-4e92-a94b-04e2f86d58c5; Thu, 16 May 2024 15:28:16 +0000 (UTC)
+X-Farcaster-Flow-ID: ad0209d0-e9fb-4e92-a94b-04e2f86d58c5
+Received: from EX19D043EUB003.ant.amazon.com (10.252.61.69) by
+ EX19MTAEUA002.ant.amazon.com (10.252.50.124) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.28; Thu, 16 May 2024 15:28:16 +0000
+Received: from EX19D002EUC004.ant.amazon.com (10.252.51.230) by
+ EX19D043EUB003.ant.amazon.com (10.252.61.69) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.28; Thu, 16 May 2024 15:28:16 +0000
+Received: from EX19D002EUC004.ant.amazon.com ([fe80::fa57:3c1:c670:f520]) by
+ EX19D002EUC004.ant.amazon.com ([fe80::fa57:3c1:c670:f520%3]) with mapi id
+ 15.02.1258.028; Thu, 16 May 2024 15:28:16 +0000
+From: "Manthey, Norbert" <nmanthey@amazon.de>
+To: "keescook@chromium.org" <keescook@chromium.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC: "Woodhouse, David" <dwmw@amazon.co.uk>, "Stieger, Andreas"
+	<astieger@amazon.de>, "linux-hardening@vger.kernel.org"
+	<linux-hardening@vger.kernel.org>, "Hemdan, Hagar Gamal Halim"
+	<hagarhem@amazon.de>
+Subject: Extending Linux' Coverity model and also cover aarch64
+Thread-Topic: Extending Linux' Coverity model and also cover aarch64
+Thread-Index: AQHap6Wsmrdu7IK9QEOStpjMecz3Dg==
+Date: Thu, 16 May 2024 15:28:16 +0000
+Message-ID: <77f6e6fc46232db82a3c63e93877c9534334e407.camel@amazon.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <9B7489B3CBD9B741AD1B080B393DE304@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Pobox-Relay-ID:
- E5494648-1398-11EF-AF40-25B3960A682E-78420484!pb-smtp2.pobox.com
+Content-Transfer-Encoding: base64
 
-On Thu, 16 May 2024, Thorsten Blum wrote:
+RGVhciBLZWVzLCBhbGwsDQoNCndlIHB1Ymxpc2hlZCBhbiBleHRlbnNpb24gZm9yIHRoZSBDb3Zl
+cml0eSBtb2RlbCB0aGF0IGlzIHVzZWQgYnkgdGhlDQpDb3Zlcml0eVNjYW4gc2V0dXAgZm9yIHRo
+ZSBMaW51eCBrZXJuZWwgWzFdLiBXZSBoYXZlIGJlZW4gdXNpbmcgdGhpcw0KZXh0ZW5zaW9uIHRv
+IGFuYWx5emUgdGhlIDYuMSBrZXJuZWwgYnJhbmNoLCBhbmQgcmVwb3J0ZWQgc29tZSBmaXhlcyB0
+bw0KdGhlIHVwc3RyZWFtIGNvZGUgYmFzZSB0aGF0IGFyZSBiYXNlZCBvbiB0aGlzIG1vZGVsIFsy
+XS4gRmVlbCBmcmVlIHRvDQptZXJnZSB0aGUgcHVsbCByZXF1ZXN0LCBhbmQgdXBkYXRlIHRoZSBt
+b2RlbCBpbiB0aGUgQ292ZXJpdHlTY2FuIHNldHVwLg0KV2UgZG8gbm90IGhhdmUgYWNjZXNzIHRv
+IHRoYXQgcHJvamVjdCB0byBwZXJmb3JtIHRoZXNlIHVwZGF0ZXMNCm91cnNlbHZlcy4NCg0KVG8g
+aW5jcmVhc2UgdGhlIGFuYWx5c2lzIGNvdmVyYWdlIHRvIGFhcmNoNjQsIHdlIGFuYWx5emVkIGEg
+eDg2IGFuZCBhDQphYXJjaDY0IGNvbmZpZ3VyYXRpb24uIFRoZSBpbmNyZWFzZWQgY292ZXJhZ2Ug
+aXMgYWNoaWV2ZWQgYnkgdXNpbmcgcmUtDQpjb25maWd1cmF0aW9uIGFuZCBjcm9zcy1jb21waWxh
+dGlvbiBkdXJpbmcgdGhlIGFuYWx5c2lzIGJ1aWxkLiBJZiB5b3UNCmFyZSBpbnRlcmVzdGVkIGlu
+IHRoaXMgc2V0dXAgd2UgY2FuIHNoYXJlIHRoZSBEb2NrZXJmaWxlIGFuZCBzY3JpcHQgd2UNCnVz
+ZWQgZm9yIHRoaXMgcHJvY2Vzcy4NCg0KVG8gcHJldmVudCByZWdyZXNzaW9ucyBpbiBiYWNrcG9y
+dHMgdG8gTFRTIGtlcm5lbHMsIHdlIHdvbmRlcmVkIHdoZXRoZXINCnRoZSBjb21tdW5pdHkgaXMg
+aW50ZXJlc3RlZCBpbiBzZXR0aW5nIHVwIENvdmVyaXR5U2NhbiBwcm9qZWN0cyBmb3INCm9sZGVy
+IGtlcm5lbCByZWxlYXNlcy4gV291bGQgc3VjaCBhbiBleHRlbnNpb24gYmUgdXNlZnVsIHRvIHNo
+b3cgbmV3DQpkZWZlY3RzIGluIGFkZGl0aW9uIHRvIHRoZSBjdXJyZW50IHJlbGVhc2UgdGVzdGlu
+Zz8NCg0KQmVzdCwNCk5vcmJlcnQNCg0KWzFdIGdpdGh1YiBDb3Zlcml0eSBtb2RlbCBwdWxsIHJl
+cXVlc3QgbGluazoNCmh0dHBzOi8vZ2l0aHViLmNvbS9rZWVzL2NvdmVyaXR5LWxpbnV4L3B1bGwv
+MQ0KWzJdIEVtYWlscyBmb3IgbW9zdCBmaXhlcyBieSBIYWdhcjoNCmh0dHBzOi8vbG9yZS5rZXJu
+ZWwub3JnL2FsbC8/cT1mJTNBaGFnYXJoZW0NCg0KCgoKQW1hem9uIFdlYiBTZXJ2aWNlcyBEZXZl
+bG9wbWVudCBDZW50ZXIgR2VybWFueSBHbWJICktyYXVzZW5zdHIuIDM4CjEwMTE3IEJlcmxpbgpH
+ZXNjaGFlZnRzZnVlaHJ1bmc6IENocmlzdGlhbiBTY2hsYWVnZXIsIEpvbmF0aGFuIFdlaXNzCkVp
+bmdldHJhZ2VuIGFtIEFtdHNnZXJpY2h0IENoYXJsb3R0ZW5idXJnIHVudGVyIEhSQiAyNTc3NjQg
+QgpTaXR6OiBCZXJsaW4KVXN0LUlEOiBERSAzNjUgNTM4IDU5Nwo=
 
-> Use void __iomem pointers as parameters for mcf_insw() and mcf_outsw()
-> to align with the parameter types of readw() and writew().
-> 
-> Consistently call SMC_outsw(), SMC_outsb(), SMC_insw(), and SMC_insb()
-> with void __iomem pointers to address the following warnings reported by
-> kernel test robot:
-> 
-> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse: warning: incorrect type in argument 1 (different address spaces)
-> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse:    expected void *a
-> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse:    got void [noderef] __iomem *
-> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse: warning: incorrect type in argument 1 (different address spaces)
-> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse:    expected void *a
-> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse:    got void [noderef] __iomem *
-> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse: warning: incorrect type in argument 1 (different address spaces)
-> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse:    expected void *a
-> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse:    got void [noderef] __iomem *
-> drivers/net/ethernet/smsc/smc91x.c:483:17: sparse: warning: incorrect type in argument 1 (different address spaces)
-> drivers/net/ethernet/smsc/smc91x.c:483:17: sparse:    expected void *a
-> drivers/net/ethernet/smsc/smc91x.c:483:17: sparse:    got void [noderef] __iomem *
-> 
-> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202405160853.3qyaSj8w-lkp@intel.com/
-
-Acked-by: Nicolas Pitre <nico@fluxnic.net>
-
-> ---
->  drivers/net/ethernet/smsc/smc91x.h | 34 +++++++++++++++---------------
->  1 file changed, 17 insertions(+), 17 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/smsc/smc91x.h b/drivers/net/ethernet/smsc/smc91x.h
-> index 45ef5ac0788a..204fbb5c975c 100644
-> --- a/drivers/net/ethernet/smsc/smc91x.h
-> +++ b/drivers/net/ethernet/smsc/smc91x.h
-> @@ -142,14 +142,14 @@ static inline void _SMC_outw_align4(u16 val, void __iomem *ioaddr, int reg,
->  #define SMC_CAN_USE_32BIT	0
->  #define SMC_NOWAIT		1
->  
-> -static inline void mcf_insw(void *a, unsigned char *p, int l)
-> +static inline void mcf_insw(void __iomem *a, unsigned char *p, int l)
->  {
->  	u16 *wp = (u16 *) p;
->  	while (l-- > 0)
->  		*wp++ = readw(a);
->  }
->  
-> -static inline void mcf_outsw(void *a, unsigned char *p, int l)
-> +static inline void mcf_outsw(void __iomem *a, unsigned char *p, int l)
->  {
->  	u16 *wp = (u16 *) p;
->  	while (l-- > 0)
-> @@ -1026,15 +1026,15 @@ static const char * chip_ids[ 16 ] =  {
->  		}							\
->  	} while (0)
->  
-> -#define SMC_PUSH_DATA(lp, p, l)					\
-> +#define SMC_PUSH_DATA(lp, p, l)						\
->  	do {								\
-> -		if (SMC_32BIT(lp)) {				\
-> +		void __iomem *__ioaddr = ioaddr;			\
-> +		if (SMC_32BIT(lp)) {					\
->  			void *__ptr = (p);				\
->  			int __len = (l);				\
-> -			void __iomem *__ioaddr = ioaddr;		\
->  			if (__len >= 2 && (unsigned long)__ptr & 2) {	\
->  				__len -= 2;				\
-> -				SMC_outsw(ioaddr, DATA_REG(lp), __ptr, 1); \
-> +				SMC_outsw(__ioaddr, DATA_REG(lp), __ptr, 1); \
->  				__ptr += 2;				\
->  			}						\
->  			if (SMC_CAN_USE_DATACS && lp->datacs)		\
-> @@ -1042,20 +1042,20 @@ static const char * chip_ids[ 16 ] =  {
->  			SMC_outsl(__ioaddr, DATA_REG(lp), __ptr, __len>>2); \
->  			if (__len & 2) {				\
->  				__ptr += (__len & ~3);			\
-> -				SMC_outsw(ioaddr, DATA_REG(lp), __ptr, 1); \
-> +				SMC_outsw(__ioaddr, DATA_REG(lp), __ptr, 1); \
->  			}						\
->  		} else if (SMC_16BIT(lp))				\
-> -			SMC_outsw(ioaddr, DATA_REG(lp), p, (l) >> 1);	\
-> -		else if (SMC_8BIT(lp))				\
-> -			SMC_outsb(ioaddr, DATA_REG(lp), p, l);	\
-> +			SMC_outsw(__ioaddr, DATA_REG(lp), p, (l) >> 1);	\
-> +		else if (SMC_8BIT(lp))					\
-> +			SMC_outsb(__ioaddr, DATA_REG(lp), p, l);	\
->  	} while (0)
->  
-> -#define SMC_PULL_DATA(lp, p, l)					\
-> +#define SMC_PULL_DATA(lp, p, l)						\
->  	do {								\
-> -		if (SMC_32BIT(lp)) {				\
-> +		void __iomem *__ioaddr = ioaddr;			\
-> +		if (SMC_32BIT(lp)) {					\
->  			void *__ptr = (p);				\
->  			int __len = (l);				\
-> -			void __iomem *__ioaddr = ioaddr;		\
->  			if ((unsigned long)__ptr & 2) {			\
->  				/*					\
->  				 * We want 32bit alignment here.	\
-> @@ -1072,7 +1072,7 @@ static const char * chip_ids[ 16 ] =  {
->  				 */					\
->  				__ptr -= 2;				\
->  				__len += 2;				\
-> -				SMC_SET_PTR(lp,			\
-> +				SMC_SET_PTR(lp,				\
->  					2|PTR_READ|PTR_RCV|PTR_AUTOINC); \
->  			}						\
->  			if (SMC_CAN_USE_DATACS && lp->datacs)		\
-> @@ -1080,9 +1080,9 @@ static const char * chip_ids[ 16 ] =  {
->  			__len += 2;					\
->  			SMC_insl(__ioaddr, DATA_REG(lp), __ptr, __len>>2); \
->  		} else if (SMC_16BIT(lp))				\
-> -			SMC_insw(ioaddr, DATA_REG(lp), p, (l) >> 1);	\
-> -		else if (SMC_8BIT(lp))				\
-> -			SMC_insb(ioaddr, DATA_REG(lp), p, l);		\
-> +			SMC_insw(__ioaddr, DATA_REG(lp), p, (l) >> 1);	\
-> +		else if (SMC_8BIT(lp))					\
-> +			SMC_insb(__ioaddr, DATA_REG(lp), p, l);		\
->  	} while (0)
->  
->  #endif  /* _SMC91X_H_ */
-> -- 
-> 2.45.0
-> 
-> 
 
