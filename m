@@ -1,115 +1,268 @@
-Return-Path: <linux-kernel+bounces-180860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01A9E8C7408
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 11:44:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1ACB8C740C
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 11:45:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24D561C20B64
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 09:44:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0BC61C233C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 09:45:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7938143868;
-	Thu, 16 May 2024 09:44:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C984143872;
+	Thu, 16 May 2024 09:45:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iiJCit0q"
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ba5TCAMY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02754206C;
-	Thu, 16 May 2024 09:44:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42CF33FBA7;
+	Thu, 16 May 2024 09:45:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715852691; cv=none; b=ER6MBbgvkXSojk11y4Mu2PTdqRC5V8J8BePnIz+YTIQcIaX6Yc1QbXqZB6eX8XONUrXsLJrvzbtF6QFN5k2898KLNjbzeewVSSxJgZ60Q+8wk4lchEpFP6+1qLaIou5pdemMNuj0uecWyB8Qq7T9v0u+bqJgc3DkiXbwGO6vBBI=
+	t=1715852737; cv=none; b=A4oMDK8ABdeJD4y/2ZwPLdYM3mYYOsLe+9yAJcyrA2sHQncxpweIrN+cTTBFGP8Q6WisUauqv3s5bHIVGbqZL/VB0aE3Gw+I+Ya86DJZ1R8I48mRJczbKLdd/9S9BHItAM62hDHGaavgETy7YAkQmRWJkG2KZGpZSR0JECdewCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715852691; c=relaxed/simple;
-	bh=Mv4lNrglqS4nAOAX/673bvBVveCRgVuJ/fLlNsqmFkY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NiOlo9gfQQyHNXArjd254twrqCphuQYot6wMyGaqVe7gXF2nUfxh0imNfPgcHZffjTux2Ztvzi5PujOgryxtnGGcX1DmqEyxm2BFCuXBCRgMnrwCdHsgjrD/F5bAMzeI3LLuQ9FiMgR7KVRQGkdTNy/OoAorjAlVMnCTxA9PnTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iiJCit0q; arc=none smtp.client-ip=209.85.219.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-deb99fa47c3so8054877276.2;
-        Thu, 16 May 2024 02:44:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715852688; x=1716457488; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Mv4lNrglqS4nAOAX/673bvBVveCRgVuJ/fLlNsqmFkY=;
-        b=iiJCit0qk7w3p7zytFdclCSYDlrMSZbeoyhUYKtq3UcuOZyUunyZYFQMDqrx37NKkx
-         0Yc3cUfh/3L+UwXAxuZQbOglFrugy8cSjzt6wj6sVOZtJaavDYDGL6V/5I/NMGrnHBuR
-         Lzgp9z2rzYdvfAIdj6YQM0dLeVbqME/OF3e+G+n9mtVnfyvo2z+s+SrfyXVfyre6tHqc
-         Z85HjN1gOp1kBk3cK7nP0N8Mzkf2XqjIbgBI7JIQCVS7yatwsGxD9EMP/JmPtI2qaH95
-         4lfvcfdxdoS7RtX1ajs/GgsB/LrIUnk501YWfpImB5b+bzRL6f6MA7Kdm4rY+NJ9wX6o
-         lTdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715852688; x=1716457488;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Mv4lNrglqS4nAOAX/673bvBVveCRgVuJ/fLlNsqmFkY=;
-        b=qnaQT/O3kC+Z3fkTeoYn9sTgig3JG1k2xwtKmMREoR8pddttz7Qbhtw11IUNWlvBmZ
-         H4bnD+LfGmArlX5wGASmHJAlpLLg0tjrnGIBni77TpxXpBT8pSGTUVS0Zebumt8gRQhi
-         +eHlFT19ozZob36qKH/nqG4RR+RaOMIBzw/81oO+05KjC9nwzidtJXM9s6nyjQmf9A54
-         bJsDOhUTFbt50g7C6WKg1HlYoVxLnIo2F3AO0Bujv59eQ9u2OiYh/HDN09hxtdQ+6nEo
-         ylxX/2CGGKqWGFNGBV79WrZYT1In8AdgFueYXTpYqpmfzuf5HPcXYVqaTfxi35oVw2o9
-         dwHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVUU9BOrXfQIDyWw1fjWhgpVU8WYLQB3pu1M7FytGVqTajd+2blq2aZhAQB8DS9BcoUhTnlWPekFuwwOY8CdbnHLOrhXCcN3y5KcbtukXuo4xIXzBCKWbzYghVJqUntEa7r0MjcpQnfu6fxu8VILrVJBmMcQVxvXZhg4AZURgz+JSO54A==
-X-Gm-Message-State: AOJu0YxIQK3CiHbDNSXyZMK6b6JboXWu69LIi4wnyx9GCMxHFibqwIrz
-	hsJiKo1D+aJyHiREwyQIh9vnkGfajlfzQro4t/oG19Dcotia6b/clnEARWJOi3SfuzRKmbnKeHZ
-	hipXw2V9Z3Dn2JIU6KgAJgeZAmlk=
-X-Google-Smtp-Source: AGHT+IGt4GOJGeaaemGwA4Ckt+18xxZfU1hLBTK3dGN/PrXCsjugWmUU80kcg1X7vu7MfI7i+fk+lUadWbYn6YM/PMQ=
-X-Received: by 2002:a25:c70d:0:b0:de6:4ff:3155 with SMTP id
- 3f1490d57ef6-dee4f2dae9fmr19813993276.16.1715852688597; Thu, 16 May 2024
- 02:44:48 -0700 (PDT)
+	s=arc-20240116; t=1715852737; c=relaxed/simple;
+	bh=yXCqhL29SVvT8WjrDeHNlvHXxEyfDjFKwsltPgc1BOk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YvzVnWf96pHhfL6hRECYLNjNmx1eSlaGQvZOE+vOU3sMCi3RxgSV0oAv2THrH/jrxdpKeG1l1ABnlAjn3t724UrMAx0OJpvJweXkAw7wcjJElin5mjbMMeVvMnP8gwq/Z2Q7LQhGoidHr6vKwUeJUtPNXEhHA5aWAL5rtiGxA5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ba5TCAMY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58290C113CC;
+	Thu, 16 May 2024 09:45:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715852736;
+	bh=yXCqhL29SVvT8WjrDeHNlvHXxEyfDjFKwsltPgc1BOk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ba5TCAMYUEVuM1HddFl0N3gS+f6oX3izyFyLul6eetaKJMafh+e+7Viqp5sb7HNqG
+	 JTLMIiFC0eRSKkd+Y8l65cNK5FwB1B4WvIaoKTNusgD29wj/dSoQkb2CVPaobbkzV+
+	 oT2CLHsEwaLSyJ4sT9NxQJod5gJXsXs7/LKWj6SYgaOnaNLoYwZ8ci9sMh4omr0l/O
+	 sR3UslWLSnq1Bo8ZTc15qw1rNXRP2VriSlqYjdzr1JpYgm6wmWPo7nx1ScKhPWQcUt
+	 Pdkbr/wPIX5cnWl48RtbVW9zjxhVqPHVZLEpvAo3u7Hs8wXe0+g3ewoztFpHXqP3Ru
+	 MjyLNkPCTlpJQ==
+Date: Thu, 16 May 2024 11:45:33 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Andy Yan <andyshrk@163.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Jonathan Corbet <corbet@lwn.net>, 
+	Sandy Huang <hjc@rock-chips.com>, Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, 
+	Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Samuel Holland <samuel@sholland.org>, Andy Yan <andy.yan@rock-chips.com>, 
+	Hans Verkuil <hverkuil@xs4all.nl>, Sebastian Wick <sebastian.wick@redhat.com>, 
+	Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, dri-devel@lists.freedesktop.org, 
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-sunxi@lists.linux.dev
+Subject: Re: [PATCH v13 15/28] drm/connector: hdmi: Compute bpc and format
+ automatically
+Message-ID: <20240516-lean-smooth-bonobo-d7e198@penduick>
+References: <20240507-kms-hdmi-connector-state-v13-0-8fafc5efe8be@kernel.org>
+ <20240507-kms-hdmi-connector-state-v13-15-8fafc5efe8be@kernel.org>
+ <73944574.1631.18f6be1e78f.Coremail.andyshrk@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240509192411.2432066-1-tmaimon77@gmail.com> <20240509192411.2432066-5-tmaimon77@gmail.com>
- <20240513155330.GA2676859-robh@kernel.org>
-In-Reply-To: <20240513155330.GA2676859-robh@kernel.org>
-From: Tomer Maimon <tmaimon77@gmail.com>
-Date: Thu, 16 May 2024 12:44:36 +0300
-Message-ID: <CAP6Zq1hRw6xfNKKfBFGuKbZk0su3ys6+hnMzqRWrZeKzDoKLEw@mail.gmail.com>
-Subject: Re: [PATCH v24 4/4] dt-binding: clock: remove nuvoton npcm845-clk bindings
-To: Rob Herring <robh@kernel.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de, 
-	krzysztof.kozlowski+dt@linaro.org, tali.perry1@gmail.com, joel@jms.id.au, 
-	venture@google.com, yuenn@google.com, benjaminfair@google.com, 
-	openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="zvciie23y5uhhbzh"
+Content-Disposition: inline
+In-Reply-To: <73944574.1631.18f6be1e78f.Coremail.andyshrk@163.com>
 
-Hi Rob,
 
-Thanks for your comment.
+--zvciie23y5uhhbzh
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 13 May 2024 at 18:53, Rob Herring <robh@kernel.org> wrote:
->
-> On Thu, May 09, 2024 at 10:24:11PM +0300, Tomer Maimon wrote:
-> > Remove nuvoton,npcm845-clk binding since the NPCM8xx clock driver
-> > using the auxiliary device framework and not the device tree framework.
->
-> Again, this is an ABI break. Changing driver architecture for 1 OS is
-> not a reason to change DT.
-Is it an ABI break even if the NPCM8xx clock driver hasn't upstream
-the kernel vanilla yet?
+Hi again,
 
-I thought that since the NPCM8xx clock driver hasn't upstream the
-kernel vanilla yet and and in the latest NPCM8xx clock driver patch
-the NPCM8xx clock driver.
-using auxiliary device framework instead of DT we should remove the
-nuvoton,npcm845-clk.yaml file.
-https://patchwork.kernel.org/project/linux-clk/patch/20240509192411.2432066-4-tmaimon77@gmail.com/
+On Sun, May 12, 2024 at 04:18:38PM +0800, Andy Yan wrote:
+> =E5=9C=A8 2024-05-07 21:17:33=EF=BC=8C"Maxime Ripard" <mripard@kernel.org=
+> =E5=86=99=E9=81=93=EF=BC=9A
+> >Now that we have all the infrastructure needed, we can add some code
+> >that will, for a given connector state and mode, compute the best output
+> >format and bpc.
+> >
+> >The algorithm is equivalent to the one already found in i915 and vc4.
+> >
+> >Cc: Ville Syrj=C3=A4l=C3=A4 <ville.syrjala@linux.intel.com>
+> >Signed-off-by: Maxime Ripard <mripard@kernel.org>
+> >---
+> > drivers/gpu/drm/display/drm_hdmi_state_helper.c    | 199 ++++++++++++++=
+++++++-
+> > drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c |  25 ++-
+> > 2 files changed, 212 insertions(+), 12 deletions(-)
+> >
+> >diff --git a/drivers/gpu/drm/display/drm_hdmi_state_helper.c b/drivers/g=
+pu/drm/display/drm_hdmi_state_helper.c
+> >index 063421835dba..f20dcfecb6b8 100644
+> >--- a/drivers/gpu/drm/display/drm_hdmi_state_helper.c
+> >+++ b/drivers/gpu/drm/display/drm_hdmi_state_helper.c
+> >@@ -1,9 +1,11 @@
+> > // SPDX-License-Identifier: MIT
+> >=20
+> > #include <drm/drm_atomic.h>
+> > #include <drm/drm_connector.h>
+> >+#include <drm/drm_edid.h>
+> >+#include <drm/drm_print.h>
+> >=20
+> > #include <drm/display/drm_hdmi_helper.h>
+> > #include <drm/display/drm_hdmi_state_helper.h>
+> >=20
+> > /**
+> >@@ -46,10 +48,112 @@ connector_state_get_mode(const struct drm_connector=
+_state *conn_state)
+> > 		return NULL;
+> >=20
+> > 	return &crtc_state->mode;
+> > }
+> >=20
+> >+static bool
+> >+sink_supports_format_bpc(const struct drm_connector *connector,
+> >+			 const struct drm_display_info *info,
+> >+			 const struct drm_display_mode *mode,
+> >+			 unsigned int format, unsigned int bpc)
+> >+{
+> >+	struct drm_device *dev =3D connector->dev;
+> >+	u8 vic =3D drm_match_cea_mode(mode);
+> >+
+> >+	/*
+> >+	 * CTA-861-F, section 5.4 - Color Coding & Quantization states
+> >+	 * that the bpc must be 8, 10, 12 or 16 except for the default
+> >+	 * 640x480 VIC1 where the value must be 8.
+> >+	 *
+> >+	 * The definition of default here is ambiguous but the spec
+> >+	 * refers to VIC1 being the default timing in several occasions
+> >+	 * so our understanding is that for the default timing (ie,
+> >+	 * VIC1), the bpc must be 8.
+> >+	 */
+> >+	if (vic =3D=3D 1 && bpc !=3D 8) {
+> >+		drm_dbg_kms(dev, "VIC1 requires a bpc of 8, got %u\n", bpc);
+> >+		return false;
+> >+	}
+> >+
+> >+	if (!info->is_hdmi &&
+> >+	    (format !=3D HDMI_COLORSPACE_RGB || bpc !=3D 8)) {
+> >+		drm_dbg_kms(dev, "DVI Monitors require an RGB output at 8 bpc\n");
+> >+		return false;
+> >+	}
+> >+
+> >+	if (!(connector->hdmi.supported_formats & BIT(format))) {
+> >+		drm_dbg_kms(dev, "%s format unsupported by the connector.\n",
+> >+			    drm_hdmi_connector_get_output_format_name(format));
+> >+		return false;
+> >+	}
+> >+
+> >+	switch (format) {
+> >+	case HDMI_COLORSPACE_RGB:
+> >+		drm_dbg_kms(dev, "RGB Format, checking the constraints.\n");
+> >+
+> >+		if (!(info->color_formats & DRM_COLOR_FORMAT_RGB444)) {
+> >+			drm_dbg_kms(dev, "Sink doesn't support RGB.\n");
+> >+			return false;
+> >+		}
+> >+
+> As I reported in V12,  the HDMI output on my rk3036-kylin was lost after =
+apply this series.
+> This is because there is something wrong with the DDC on my board, the ed=
+id read always failed
+> on first bootup. That means inno_hdmi_connector_get_modes will return 0.
+>=20
+> and in function drm_helper_probe_single_connector_modes:
+>=20
+>          count =3D drm_helper_probe_get_modes(connector);
+>=20
+>          if (count =3D=3D 0 && (connector->status =3D=3D connector_status=
+_connected ||
+>                             connector->status =3D=3D connector_status_unk=
+nown)) {
+>                  count =3D drm_add_modes_noedid(connector, 1024, 768);
+>=20
+>                  /*
+>                   * Section 4.2.2.6 (EDID Corruption Detection) of the DP=
+ 1.4a
+>                   * Link CTS specifies that 640x480 (the official "failsa=
+fe"
+>                   * mode) needs to be the default if there's no EDID.
+>                   */
+>                  if (connector->connector_type =3D=3D DRM_MODE_CONNECTOR_=
+DisplayPort)
+>                          drm_set_preferred_mode(connector, 640, 480);
+>          }
+> drm_add_modes_noedid will not initialize display_info. So the check about=
+ display info will always failed here:
+>=20
+> [    4.205368] rockchip-drm display-subsystem: [drm:drm_atomic_check_only=
+] checking (ptrval)
+> [    4.205410] rockchip-drm display-subsystem: [drm:drm_atomic_helper_che=
+ck_modeset] [CRTC:35:crtc-0] mode changed
+> [    4.205439] rockchip-drm display-subsystem: [drm:drm_atomic_helper_che=
+ck_modeset] [CRTC:35:crtc-0] enable changed
+> [    4.205464] rockchip-drm display-subsystem: [drm:drm_atomic_helper_che=
+ck_modeset] [CRTC:35:crtc-0] active changed
+> [    4.205490] rockchip-drm display-subsystem: [drm:drm_atomic_helper_che=
+ck_modeset] Updating routing for [CONNECTOR:37:HDMI-A-1]
+> [    4.205517] rockchip-drm display-subsystem: [drm:drm_atomic_helper_che=
+ck_modeset] [CONNECTOR:37:HDMI-A-1] using [ENCODER:36:TMDS-36] on [CRTC:35:=
+crtc-0]
+> [    4.205545] rockchip-drm display-subsystem: [drm:drm_atomic_helper_con=
+nector_hdmi_check] Trying with a 8 bpc output
+> [    4.205575] rockchip-drm display-subsystem: [drm:drm_atomic_helper_con=
+nector_hdmi_check] Trying RGB output format
+> [    4.205670] rockchip-drm display-subsystem: [drm:drm_atomic_helper_con=
+nector_hdmi_check] RGB Format, checking the constraints.
+> [    4.205696] rockchip-drm display-subsystem: [drm:drm_atomic_helper_con=
+nector_hdmi_check] Sink doesn't support RGB.
+> [    4.205720] rockchip-drm display-subsystem: [drm:drm_atomic_helper_con=
+nector_hdmi_check] RGB output format not supported with 8 bpc
+> [    4.205747] rockchip-drm display-subsystem: [drm:drm_atomic_helper_con=
+nector_hdmi_check] Failed. No Format Supported for that bpc count.
+> [    4.205772] rockchip-drm display-subsystem: [drm:drm_atomic_helper_che=
+ck_modeset] [CONNECTOR:37:HDMI-A-1] driver check failed
+> [    4.205796] rockchip-drm display-subsystem: [drm:drm_atomic_check_only=
+] atomic driver check for (ptrval) failed: -22
+>=20
+> My reply for your email in V12[0] was bounced, so I think you didn't read=
+ it.
+>=20
+> [0]https://patchwork.kernel.org/project/linux-rockchip/patch/20240423-kms=
+-hdmi-connector-state-v12-27-3338e4c0b189@kernel.org/
 
->
-> Rob
+Indeed, I never received it, sorry.
 
-Thanks,
+Thanks for looking into it, it's very valuable.
 
-Tomer
+I can see several things that interact and could go wrong:
+
+* The DDC readout should not fail like that. From a quick look at the
+  driver, I'm wondering if it's not due to the fact that the DDC
+  controller isn't powered until the first modeset happens. Since the
+  first get_modes call is done with the controller disabled, it's
+  probably not initialized enough yet. The first modeset then comes and
+  will initialize the controller enough for the subsequent get_modes to
+  work. Is it something you could look into?
+
+* drm_display_info not being filled to some sane default when there's no
+  EDID is indeed an issue. I can't be made generic, but the HDMI spec
+  provides us with some minimum requirements we can probably set in this
+  case (RGB supported, 8bpc supported, etc.) I'll work on that.
+
+Thanks again,
+Maxime
+
+--zvciie23y5uhhbzh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZkXVvQAKCRAnX84Zoj2+
+dhk4AYDogM4jEJWYBgXDz/9UjL6hM3e7hDiwpTPzxkObPEWZiK3oKr2a2v7jLuE5
+xTCqq9MBegJT2DFubE/fsL0xtq9L6tXFall+M0VLBe504G/qtrbBpVtz4xc3xqIJ
+KoTH3BOGyQ==
+=996h
+-----END PGP SIGNATURE-----
+
+--zvciie23y5uhhbzh--
 
