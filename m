@@ -1,107 +1,104 @@
-Return-Path: <linux-kernel+bounces-181136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C71018C77E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:45:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 021DD8C77F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:54:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 041331C223FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 13:45:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A4B81F22048
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 13:54:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D79AD147C77;
-	Thu, 16 May 2024 13:45:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F9F41482F0;
+	Thu, 16 May 2024 13:54:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="4ZQtU7XF"
-Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gz1BKpbF"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B65E61474B4;
-	Thu, 16 May 2024 13:45:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB231143886;
+	Thu, 16 May 2024 13:54:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715867134; cv=none; b=Fu3L8V/RGRsbyrEjk26mscwseYEpV2eVzPeM+Hja+obnUam5U/485/rpsz2TAu17WtYg8dgCQqgmfqnIwriZBslBXQqZr+/dCQ2Nzvk4LpYPIqHbjax0SCt5jrOcIqJ9nCHnBh/7dEMDbBWXir/BBvz10gu2SFTrRXx/bI+GsXE=
+	t=1715867686; cv=none; b=ngpmMeTcfgkZQ5LXwxS7/CvhKQNGTKIEGRYuEPtSwgjOBYzGPktoF8TbPRKFWa/tQs6NEjnXESuCfFhIdcBg9Fot3p4bTnHUZyMqW/RlpIfe+0l8FIsZFnwjsE+rzkCoNuVHWJKK+FO7aiMmxBXbQI5//1Nf+BgAjVco1XYDemM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715867134; c=relaxed/simple;
-	bh=SyLiGL7iHwYcUTCQzV17dRHo+K34vzQ26/nHK00U0Dk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=luzbjnyYc4T4ZfLPBQY2yIyLHOdfcp3cw4qB1AHbmY+KF7eVZ+LhxO1DXMcNUXw6MkoUO+SUPiKRfQIv5IOh68EKXA+6iHhReuEUEHowPAbekRsQhURnjchvqxyICKEGaQDwqEmCXSSIR7Ldm3q4eauPntLS1WvP5osVrkiR1Tg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=4ZQtU7XF; arc=none smtp.client-ip=199.89.1.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4VgBDk4qyGzlgMVL;
-	Thu, 16 May 2024 13:45:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1715867124; x=1718459125; bh=x8LBwIIWWmPk2MeweSlKgqm+
-	Gv+UrO9eXS3tAe90WIo=; b=4ZQtU7XF4CMymS5TSAMJ5b5KAsIt7Ywz68MLKbUF
-	oxJe9nquoFJzSO96q4E99kXvqUrIj27mz/4Qp8FLwK7wY5O4g2Y9t7nabRO9ST8x
-	60iQQDrj8kFhHwKf1sJLoX/zQRC+VeCQfPmQ234Gug4xYhjynDlaLNqNltQCo1tW
-	LUIkxa68gpQtqaSf01JHHCx8+qDcxWpCj+6NqY/UULBK9p82a7Uz6zaZXo0nlA+7
-	Yg6WMRsY+n+OgHVK0+TcuWUBdZxNWUuPlJpmIHx4oriiza1e0gc/frKjsa3SOVgK
-	rhzLpcu0vgfGTUChxsqjoH1FqKaA2IsLOTFhO08Gmb2Ntw==
-X-Virus-Scanned: by MailRoute
-Received: from 009.lax.mailroute.net ([127.0.0.1])
- by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id NXC3SSf5GU_H; Thu, 16 May 2024 13:45:24 +0000 (UTC)
-Received: from [172.20.0.79] (unknown [8.9.45.205])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4VgBDg2Zv2zlgT1K;
-	Thu, 16 May 2024 13:45:23 +0000 (UTC)
-Message-ID: <a1c24153-007c-4510-9cb3-bc207e9a75e8@acm.org>
-Date: Thu, 16 May 2024 07:45:21 -0600
+	s=arc-20240116; t=1715867686; c=relaxed/simple;
+	bh=+/sGHoVHNh7aDbg74jwHs3yv+dQdkDY6SZT5+s9g1/M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SMfu6Xz9xkxzVffYX5i3/85B8ZYsxv36Y+Dx+9UuvvH7QGCK0oepxL8iZvG0FcOKJPemKEbpBsP93KBZ1eGhyprm62c+WYXjmrEMZeBstqM8HI+8qjl7uREj8JYgaBBCzXVEww+bD8feRvjaOsjuI7i8daxRqXJpHqB1zlT1VWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gz1BKpbF; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715867685; x=1747403685;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=+/sGHoVHNh7aDbg74jwHs3yv+dQdkDY6SZT5+s9g1/M=;
+  b=gz1BKpbFnY+FmpztnptLByZKBe35QeEkuqbrYQLryDhx+tCELy/lGT8y
+   SxExYcCfhy9dDDHZBHTT5HOBF2/u1ffyhtxu4VeGAedYZBGYW3p9JcUBF
+   9rNf7/YrmIzL6McB212cWA0mREaRiBEghG7sm8qgxtExVwW4wugxQJXrf
+   j/XlZEfwerp6+lOMXLpUhON3RHdSZfF1kTIKFurc3fDc3NEyeDGmrfnlu
+   RqcktvScs2oE49NKb76bO/W7WRxoRhzcZynIfLXldeCtM9ggq49aPyel+
+   lf8FQzCEs+3ezc6mhD/CNKv/xzB1DWbjn5Bw9jwMykmFUK0FxOfSTzcPA
+   w==;
+X-CSE-ConnectionGUID: lyYJu9U7Qn2pUv7O/peESQ==
+X-CSE-MsgGUID: ByKj6GvsSJCaHnqMHd5Mug==
+X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="12190229"
+X-IronPort-AV: E=Sophos;i="6.08,164,1712646000"; 
+   d="scan'208";a="12190229"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 06:54:44 -0700
+X-CSE-ConnectionGUID: pBlz2EjuTyyvjt6hpl+yQA==
+X-CSE-MsgGUID: L/cy23MOSQK7TU5pBtUfEA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,164,1712646000"; 
+   d="scan'208";a="36214456"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 06:54:41 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1s7bZ8-000000084Xq-1boe;
+	Thu, 16 May 2024 16:54:38 +0300
+Date: Thu, 16 May 2024 16:54:38 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Vegard Nossum <vegard.nossum@oracle.com>,
+	Kent Gibson <warthog618@gmail.com>,
+	Hu Haowen <2023002089@link.tyut.edu.cn>, linux-gpio@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Jonathan Corbet <corbet@lwn.net>, Alex Shi <alexs@kernel.org>,
+	Yanteng Si <siyanteng@loongson.cn>
+Subject: Re: [PATCH v1 1/1] gpio: Remove legacy API documentation
+Message-ID: <ZkYQHnF76WLIf8-r@smile.fi.intel.com>
+References: <20240508101703.830066-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH stable] block/mq-deadline: fix different priority request
- on the same zone
-To: Wu Bo <bo.wu@vivo.com>, linux-kernel@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
- Wu Bo <wubo.oduw@gmail.com>, stable@vger.kernel.org,
- Damien Le Moal <dlemoal@kernel.org>
-References: <20240516092838.1790674-1-bo.wu@vivo.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20240516092838.1790674-1-bo.wu@vivo.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240508101703.830066-1-andriy.shevchenko@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 5/16/24 03:28, Wu Bo wrote:
-> Zoned devices request sequential writing on the same zone. That means
-> if 2 requests on the saem zone, the lower pos request need to dispatch
-> to device first.
-> While different priority has it's own tree & list, request with high
-> priority will be disptch first.
-> So if requestA & requestB are on the same zone. RequestA is BE and pos
-> is X+0. ReqeustB is RT and pos is X+1. RequestB will be disptched before
-> requestA, which got an ERROR from zoned device.
-> 
-> This is found in a practice scenario when using F2FS on zoned device.
-> And it is very easy to reproduce:
-> 1. Use fsstress to run 8 test processes
-> 2. Use ionice to change 4/8 processes to RT priority
+On Wed, May 08, 2024 at 01:17:01PM +0300, Andy Shevchenko wrote:
+> In order to discourage people to use old and legacy GPIO APIs
+> remove the respective documentation completely. It also helps
+> further cleanups of the legacy GPIO API leftovers, which is
+> ongoing task.
 
-Hi Wu,
+Bart, Linus, Kent, what do you think about this?
 
-I agree that there is a problem related to the interaction of I/O
-priority and zoned storage. A solution with a lower runtime overhead
-is available here:
-https://lore.kernel.org/linux-block/20231218211342.2179689-1-bvanassche@acm.org/T/#me97b088c535278fe3d1dc5846b388ed58aa53f46
+If there is a positive consensus, I would even dare to go for v6.10-rc2
+with it.
 
-Are you OK with that alternative solution?
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Thanks,
 
-Bart.
 
