@@ -1,148 +1,143 @@
-Return-Path: <linux-kernel+bounces-181215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D2BE8C7915
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:13:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5B0F8C7916
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:14:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3936B21E70
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:13:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0311B1C220B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:14:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E908714D446;
-	Thu, 16 May 2024 15:13:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="A6fUyDEb"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB8F11E491
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 15:13:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A613A14D431;
+	Thu, 16 May 2024 15:13:53 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF17F14B973;
+	Thu, 16 May 2024 15:13:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715872396; cv=none; b=sQGhYErOEi0aSFK2gcpPf7vC7kx37tEmWjtiH4O1PuFaZyIJz0z82SdpN/WFBMLpPI7LO+3lKFeBFtjR/0p96f2iv+JbonpKuSONKani2VBSz4aGTkpN4aoUH+ZhsJBuAtRAwsXJRFa7gJOQEg6ICUixX4Uz6IG5wgQ6D/ctlAc=
+	t=1715872433; cv=none; b=UOeFhINK4Kc1V0OL0XevBaYCnW0nGjcjV4YinYzweiiY/tGccN+VmZZ/Mz5tqablrcAbVvQrUX1HeetuLoLYqedMPvhx7uCswwz5Moyo8J5QcSW6s9T1cqG3uoc7Ie2Li2o/Nw5CyPhDsBHymWKSiDSJxJf9/kV/k5PM9NsIquw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715872396; c=relaxed/simple;
-	bh=apMWFyWzDxCIes+oxvQb5FaNJe2ZBqfCD2Bawd4Apms=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=ftICmDdDj4iD6aua93/A0fhcnUdyH8MPwg8nLymjwz8gf2ocUgDbVnA7Ud9YVFPqluiO1vWw3a8SQteqD0xdYw9Pk+1fgvLGrzM6C9Y83Z7+OokGwxBTh69qSawSctH1hLXtj8wDfDrxg9NCTWiE88ZDo1IypL9d36Hfxq5aKFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=A6fUyDEb; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42016c8db2aso32121945e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 08:13:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1715872393; x=1716477193; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Pe5Vtdlgyg4X8O20OCekmLHTuiLDo63Hjvcy1VkxkQ8=;
-        b=A6fUyDEbjhEZs3gCXlWi2xz9WP7b5MEsckD44elyFrg3mYo9Z9h2e0hVvP0mYPg388
-         Qx4d0evESs193xMZgOUROa6xvrGgx4acoiQy8itMuNWgGvHh+y8JszA7rAlvmczH8eHP
-         Tyk5VYVO3MuR2aCyPAo/wv+8Oscl0ZruSKMtatAZDa5PBN6Cz31a2tBu/rHQUvzJd0ao
-         rrtzmsQLt6aeINbJYa0JU6Mju9dn1MY9E8Js+x43iV+W4OlLpzo+asjK9NvFooKkJRvF
-         xO6M7WC6yry3r1OPVBBvNrYLXY17pcax1sGN/QCQOZxEYCokGrASBNc7g8FQpJFN1sdT
-         gl9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715872393; x=1716477193;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Pe5Vtdlgyg4X8O20OCekmLHTuiLDo63Hjvcy1VkxkQ8=;
-        b=jUVavGRauyny6J5FC9FsCgsoYcj/hca7nHpC+uW+tRWrU7nIgAkE8hEECl4FNh2BUq
-         V5n+PQKC0IIHqmrBmwky7dBwkwn547ClDywLfcNXdrXCC8zZVjKac6+1Y5wDg3eZQmZ8
-         HyEsgeL1RCJgoVzu5EQG1Q1wyrBmeGIvY+lpaTIH0mOnj9EJo0Q364gavYuR20ly5V4i
-         l8/4kO1Lpnc5Hk7ilTHh1ntmI9u2gUKPNrquS0vTDZXOhJwu2iMt38EL3pAFumNzM4E+
-         Dx4aNe1wkaaSE/88FLxF1pjYkykcG8/AEPVXR5D0Fm+ySBdHSEltRhyCm7dQ2uw4Hagb
-         GhbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXVxlpmM3TDVoi6ecjC93gSjle9e83sgdY1yk6fKdTAUerYQF6GPRPfBhrNHa/U93+KHSxcOEc4K8So799KQXTVNFkd1Ouw5ELKeOfl
-X-Gm-Message-State: AOJu0YzGAKnLPfYeQN7fhGBPWXXuvLg/xUgD8hyvWSHfxM0sAVWCYdTv
-	fnrpx2VwJBIijDgDLdtmx1guNt6VLSfHsYV9DWKpwsZJQhssespnGbp7z2wK/7Y=
-X-Google-Smtp-Source: AGHT+IFxzcSeFBgqI1jSuNq7sJ8N7L4zmdV8rX1GnpfWMzRCEzXPF9y1c4mAXMbQPylM+6aicZ4Apg==
-X-Received: by 2002:a05:600c:45d2:b0:41f:eba9:ced4 with SMTP id 5b1f17b1804b1-41feba9d048mr143258545e9.16.1715872392657;
-        Thu, 16 May 2024 08:13:12 -0700 (PDT)
-Received: from smtpclient.apple (aftr-62-216-208-100.dynamic.mnet-online.de. [62.216.208.100])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41fccce2580sm270540805e9.18.2024.05.16.08.13.11
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 16 May 2024 08:13:12 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+	s=arc-20240116; t=1715872433; c=relaxed/simple;
+	bh=XfgR26NvsXa0WA/2rJqxXL9YCkCSEKI2m8bMfsvqjog=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hKHg9cqxoquAgBLBB8jzbfygXBgubCZRZ0e4BpXYdjgWUZrIrPGt1z1nmzuxcW3TkoKfcV72xHaVJwPfNz1BQu5sZfa+sD7BmJmzU/f8977Y+1VtvPAROkIWc1Wmedxw6VYFW6a9kZynbTgpWsGjbMoDIgoshAutZflu+PAZs+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5B7E8DA7;
+	Thu, 16 May 2024 08:14:12 -0700 (PDT)
+Received: from [10.1.25.38] (e122027.cambridge.arm.com [10.1.25.38])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2C64F3F7A6;
+	Thu, 16 May 2024 08:13:45 -0700 (PDT)
+Message-ID: <c3672ee2-ae50-4750-87e0-5001953a5371@arm.com>
+Date: Thu, 16 May 2024 16:13:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
-Subject: Re: [PATCH] net: smc91x: Fix pointer types
-From: Thorsten Blum <thorsten.blum@toblux.com>
-In-Reply-To: <b15d7689-0385-4d9c-b5e0-afc525ac9578@lunn.ch>
-Date: Thu, 16 May 2024 17:13:00 +0200
-Cc: Nicolas Pitre <nico@fluxnic.net>,
- "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>,
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
- Arnd Bergmann <arnd@arndb.de>,
- netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- kernel test robot <lkp@intel.com>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 03/14] arm64: realm: Query IPA size from the RMM
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev, Marc Zyngier
+ <maz@kernel.org>, Will Deacon <will@kernel.org>,
+ James Morse <james.morse@arm.com>, Oliver Upton <oliver.upton@linux.dev>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
+ <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
+ Alexandru Elisei <alexandru.elisei@arm.com>,
+ Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
+ linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
+References: <20240412084213.1733764-1-steven.price@arm.com>
+ <20240412084213.1733764-4-steven.price@arm.com> <ZkIdqoELmQ3tUJ8M@arm.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <ZkIdqoELmQ3tUJ8M@arm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <AEF82223-BB2B-4AF0-9732-0F2F605AAEC2@toblux.com>
-References: <20240516121142.181934-3-thorsten.blum@toblux.com>
- <b15d7689-0385-4d9c-b5e0-afc525ac9578@lunn.ch>
-To: Andrew Lunn <andrew@lunn.ch>
-X-Mailer: Apple Mail (2.3774.500.171.1.1)
 
-On 16. May 2024, at 16:13, Andrew Lunn <andrew@lunn.ch> wrote:
-> -#define SMC_PUSH_DATA(lp, p, l) \
->> +#define SMC_PUSH_DATA(lp, p, l) \
->> do { \
->> - if (SMC_32BIT(lp)) { \
->> + void __iomem *__ioaddr = ioaddr; \
+On 13/05/2024 15:03, Catalin Marinas wrote:
+> On Fri, Apr 12, 2024 at 09:42:02AM +0100, Steven Price wrote:
+>> diff --git a/arch/arm64/include/asm/pgtable-prot.h b/arch/arm64/include/asm/pgtable-prot.h
+>> index dd9ee67d1d87..15d8f0133af8 100644
+>> --- a/arch/arm64/include/asm/pgtable-prot.h
+>> +++ b/arch/arm64/include/asm/pgtable-prot.h
+>> @@ -63,6 +63,9 @@
+>>  #include <asm/pgtable-types.h>
+>>  
+>>  extern bool arm64_use_ng_mappings;
+>> +extern unsigned long prot_ns_shared;
+>> +
+>> +#define PROT_NS_SHARED		((prot_ns_shared))
 > 
-> ioaddr is not a parameter passed to this macro.
+> Nit: what's with the double parenthesis here?
 
-Yes, most (all?) macros in this file rely on ioaddr being implicitly
-defined in the surrounding scope.
+No idea - I'll remove a set!
 
-> + if (SMC_32BIT(lp)) { \
->> void *__ptr = (p); \
->> int __len = (l); \
->> - void __iomem *__ioaddr = ioaddr; \
->> if (__len >= 2 && (unsigned long)__ptr & 2) { \
->> __len -= 2; \
->> - SMC_outsw(ioaddr, DATA_REG(lp), __ptr, 1); \
->> + SMC_outsw(__ioaddr, DATA_REG(lp), __ptr, 1); \
+>>  #define PTE_MAYBE_NG		(arm64_use_ng_mappings ? PTE_NG : 0)
+>>  #define PMD_MAYBE_NG		(arm64_use_ng_mappings ? PMD_SECT_NG : 0)
+>> diff --git a/arch/arm64/kernel/rsi.c b/arch/arm64/kernel/rsi.c
+>> index 1076649ac082..b93252ed6fc5 100644
+>> --- a/arch/arm64/kernel/rsi.c
+>> +++ b/arch/arm64/kernel/rsi.c
+>> @@ -7,6 +7,11 @@
+>>  #include <linux/memblock.h>
+>>  #include <asm/rsi.h>
+>>  
+>> +struct realm_config __attribute((aligned(PAGE_SIZE))) config;
 > 
-> You probably should use lp->base here, which is passed into this
-> macro, and should have the correct type.
-
-ioaddr is lp->base:
-
-	void __iomem *ioaddr = lp->base;
-
-but the type information for ioaddr gets lost across multiple macro
-boundaries which is why either __ioaddr or lp->base must be used when
-calling the SMC_* macros. Both __ioaddr and lp->base work, but I guess
-you prefer lp->base? I'm fine with both.
-
-> @@ -1072,7 +1072,7 @@ static const char * chip_ids[ 16 ] =  {
->> */ \
->> __ptr -= 2; \
->> __len += 2; \
->> - SMC_SET_PTR(lp, \
->> + SMC_SET_PTR(lp, \
->> 2|PTR_READ|PTR_RCV|PTR_AUTOINC); \
->> } \
->> if (SMC_CAN_USE_DATACS && lp->datacs) \
+> Another nit: use __aligned(PAGE_SIZE).
 > 
-> This is just a whitespace change. Please put that into a different
-> patch.
+> However, does the spec require this to be page-size aligned? The spec
+> says aligned to 0x1000 and that's not necessarily the kernel page size.
+> It also states that the RsiRealmConfig structure is 4096 and I did not
+> see this in the first patch, you only have 8 bytes in this structure.
+> Some future spec may write more data here overriding your other
+> variables in the data section.
+> 
+> So that's the wrong place to force the alignment. Just do this when you
+> define the actual structure in the first patch:
+> 
+> struct realm_config {
+> 	union {
+> 		unsigned long ipa_bits; /* Width of IPA in bits */
+> 		u8 __pad[4096];
+> 	};
+> } __aligned(4096);
+> 
+> and maybe with a comment on why the alignment and padding. You could
+> also have an unnamed struct around ipa_bits in case you want to add more
+> fields in the future (siginfo follows this pattern).
 
-Ok, I'll change this in v2.
+Good suggestion - I'll update this. It turns out struct realm_config is
+already missing "hash_algo" (not that we use it yet), so I'll add that too.
 
 Thanks,
-Thorsten
+
+Steve
+
+>> +
+>> +unsigned long prot_ns_shared;
+>> +EXPORT_SYMBOL(prot_ns_shared);
+>> +
+>>  DEFINE_STATIC_KEY_FALSE_RO(rsi_present);
+>>  EXPORT_SYMBOL(rsi_present);
+>>  
+>> @@ -53,6 +58,9 @@ void __init arm64_rsi_init(void)
+>>  {
+>>  	if (!rsi_version_matches())
+>>  		return;
+>> +	if (rsi_get_realm_config(&config))
+>> +		return;
+>> +	prot_ns_shared = BIT(config.ipa_bits - 1);
+>>  
+>>  	static_branch_enable(&rsi_present);
+>>  }
+> 
+
 
