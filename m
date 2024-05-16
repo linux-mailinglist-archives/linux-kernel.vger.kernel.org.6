@@ -1,141 +1,106 @@
-Return-Path: <linux-kernel+bounces-181220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 317C28C7921
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:17:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EA7C8C7928
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:20:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6359A1C216FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:17:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB01D1C2095A
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:20:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91B1314D2B5;
-	Thu, 16 May 2024 15:16:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91CAF14D2A6;
+	Thu, 16 May 2024 15:20:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LetnUTAp"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GU4NPhW0"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BAEE148856
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 15:16:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF4341E491
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 15:19:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715872615; cv=none; b=jjlLqwLqhMOanvIj5tPV97uzOAsWM6a9yJ29k56DiW97I+0Fau/h5aCZaYOViXYUCoEnnbEVHTRd0pOePeHYCPll/tLwBUqz9pC3w/Irdmt5nwrz5v31UEZpJzufw3t5T00znztF/4CuikTyit2ADns6Uct75+76b3X+ZwN8iuA=
+	t=1715872801; cv=none; b=j/t74u+e1YtkAfxVnqy2KUyGMfExeXH75zy991QzFL6dU+cAEmkv94RkVgTgjdBPKn1BQ/xXXo/wTcoBI9RTO7F6t0/az/yC+El4zCWW6492ongaD/K5rGgCnlalKKzx4yjFeQhCzB7+/9OXK3CRTWv3XiKiUJ5xPSvoG0NqgKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715872615; c=relaxed/simple;
-	bh=IaLO8A8eOYs5s/2/cuHYZ/9daRCUlFtjjAcRYjoYHbc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CerhluSA1skvGpnTKqB4v34VgGbTwgGNj2NGWipehqu/R9wsZ1vCEagC/pi9qYxwVO6o9XOMSy9z4lZLgzsETMkehC0scQlEbVzqc3WW7tW3q9fhIrKSYl47U3aXlOjJM0Z4b0N2ZwKdQH4/16NK/jF4IpJhklETADYJ1CGvFWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LetnUTAp; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715872613;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4iOgbS6qeObzrg8GE2s02mcHzXvs1fEJ62WhOsFVoik=;
-	b=LetnUTApS9rOMinRA9PPN1FMqHsQVFOK3UQV1W/gtEN1pacN5tMikYZGHdbDvkpCOTCvm/
-	z5WcrdBvVNiUaf1wKWNWw4mg/Uf8qzlmCLr9lHb6NCUgdUFYdvpqX+jj0JGDm2Dul4sAbs
-	wKOeBW/oYzi9OQAp9BmAyy4+7D5+laQ=
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
- [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-489-sRR66JinPoOqcl5mYgqB0Q-1; Thu, 16 May 2024 11:16:51 -0400
-X-MC-Unique: sRR66JinPoOqcl5mYgqB0Q-1
-Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-5222c9b6fd4so6263458e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 08:16:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715872610; x=1716477410;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4iOgbS6qeObzrg8GE2s02mcHzXvs1fEJ62WhOsFVoik=;
-        b=qDjoyIXvFkGpWRlqT6NpFOQjyjPHd0mYiBTx7q/T5QLFqWUYGt6JzErIeIHhtVfTPX
-         8THkWcIn1192ZasIjB+pvko32Ggxg4gU+Lruedpije1ZGanfNrAZiO+FJu74WtVzKzEf
-         HVTqUr0ltRVuffV6VFTdvYkOy/aYCCN7uZyxnTLd8JMsrMyD+YYwHSExe07pIez0nXWM
-         BD/vTxrawaUWkjCcFgtymE8+I1/q2YFxqBEz6yLgslF6VsNWOOd7xucJLCMdgqaKpWum
-         AE4kSC34CuCcfJ7doTdHMmpolBOEJWRwbjuij3YVLwDJ6pf+JzhK3+7nxQ5FyT/zDcVz
-         tJsg==
-X-Forwarded-Encrypted: i=1; AJvYcCWS/3ONAVnySx87wFgt7j+aZV4h0f2Yz5MCQQRuy7d1r0PDr86rNztPMUP5jVwA5WMQ8yeAWmmjeJuFxrC05WqmatJUVF8easa1RWre
-X-Gm-Message-State: AOJu0YyXONE81Wt17qgfcWmqs/5aT69Tp4F2gpMlCfIjacy/3yJuIF4b
-	SXP1ZN2Kx3OyLL8F9DhO6I4+dIkUWfxf9bZRUdd95ONPhm4Fv9+xoLqNh1+hhNwJBWibrry+XLa
-	LtNsNB3kYuo/keEohHmiTsL3z4BEJ16h/2z89lEonP86Iz/Ll8IgsPQqjvZlTZw==
-X-Received: by 2002:a05:6512:444:b0:51f:3e0c:ace3 with SMTP id 2adb3069b0e04-5220fd7c6bdmr16656964e87.16.1715872609954;
-        Thu, 16 May 2024 08:16:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGn+FVB1tK34ViV8+agUiDomeCaRnMnSEIgSm4pt/ya2IBcjeS4X3/vaKP4GVA4MVD2ub1n+A==
-X-Received: by 2002:a05:6512:444:b0:51f:3e0c:ace3 with SMTP id 2adb3069b0e04-5220fd7c6bdmr16656944e87.16.1715872609565;
-        Thu, 16 May 2024 08:16:49 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a60eabd3csm596814866b.108.2024.05.16.08.16.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 May 2024 08:16:49 -0700 (PDT)
-Message-ID: <b9a5068c-8760-4f92-8a1b-bd276532109d@redhat.com>
-Date: Thu, 16 May 2024 17:16:47 +0200
+	s=arc-20240116; t=1715872801; c=relaxed/simple;
+	bh=g4pCKFHtNv8tWxkrcOunRV36cnVd3ULvVwjtURKk6wk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aqrJVyg19vT1GjA5xL8ltJFZZ8t1UdHUJr+GwwbfPQnXWByvXPOrRSd1h6LlnJOQxx2kVOEFB9ZOvBAZ0EtzgjBS1H7h/KjCWPhUMM7IAD45yU1MSnFzRdzIKsSCkqmV6wfj3Q9NZdxXn58KA4aKnbcXUuioFkuvAPrgLzL9HeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=GU4NPhW0; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=vfRYymjV7A2ksiA1ifbCkQIzMUN+OUNKRWRmXGE/juQ=; b=GU4NPhW0NSrW3wS9kvVVbr9Ov6
+	kVillMd+D/CsiGg8X2K8B71+JW3sGmv6PWZOinBZISE1sr8ZCZQjy2JaBTg8l1H4zgU9I6TYW9PBC
+	4xohhmK5bfCpFeY6HZT/3kNatqA+HMqxNlAHP8jHUWQGIQrdEP6OEl0kyBPzfPKlbg2vFWMwhz92+
+	zYUeEbMa8P+0p7bcKxAUOoPLhRampjlERPb5Z0QwdphJnTz7sE4IOx2sWPJU+lboJWh992au7xL0W
+	HV5eNk0qMnOCJlQledOoGpFiSWpMx10J2UkapoopwLqj7yj3PvEmfM/myZ2rEptV4MR9oSMjbbxEs
+	D2EVAlEA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1s7ctd-00000005Sgs-473N;
+	Thu, 16 May 2024 15:19:54 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 4367330068B; Thu, 16 May 2024 17:19:53 +0200 (CEST)
+Date: Thu, 16 May 2024 17:19:53 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: Yun Levi <ppbuk5246@gmail.com>, Joel Fernandes <joel@joelfernandes.org>,
+	Vineeth Pillai <vineeth@bitbyteword.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	anna-maria@linutronix.de, mingo@kernel.org, tglx@linutronix.de,
+	Markus.Elfring@web.de, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] time/tick-sched: idle load balancing when nohz_full
+ cpu becomes idle.
+Message-ID: <20240516151953.GM22557@noisy.programming.kicks-ass.net>
+References: <ZkU8lm2tjm_r9FpZ@pavilion.home>
+ <20240516075628.GC22557@noisy.programming.kicks-ass.net>
+ <CAM7-yPRHp3tiZjuBTesdRQoU8WJNg1scon_txS_6R-pZq9MXHw@mail.gmail.com>
+ <20240516084911.GF22557@noisy.programming.kicks-ass.net>
+ <ZkXtHv+fHUD2+lFJ@lothringen>
+ <CAM7-yPTSq0CSmRsTpeXwzhFk77gfwUK_LZKnbgo4NPk5zPCaAg@mail.gmail.com>
+ <20240516140003.GJ22557@noisy.programming.kicks-ass.net>
+ <ZkYW48dTX2FH5NaD@lothringen>
+ <20240516144504.GL22557@noisy.programming.kicks-ass.net>
+ <ZkYgG9KYMpUPeJsM@lothringen>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ACPI: video: Fix name collision with architecture's
- video.o
-To: Thomas Zimmermann <tzimmermann@suse.de>,
- "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: lenb@kernel.org, arnd@arndb.de, chaitanya.kumar.borah@intel.com,
- suresh.kumar.kurmi@intel.com, jani.saarinen@intel.com,
- linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
- intel-gfx@lists.freedesktop.org, linux-arch@vger.kernel.org,
- linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
-References: <20240516124317.710-1-tzimmermann@suse.de>
- <CAJZ5v0gw620SLfxM66FfVeWMTN=dSZZtpH-=mFT_0HsumT3SsA@mail.gmail.com>
- <1850b44d-e468-44db-82b7-f57e77fe49ba@redhat.com>
- <82731e7d-e34f-46c4-8f54-c5d7d3d60b5a@suse.de>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <82731e7d-e34f-46c4-8f54-c5d7d3d60b5a@suse.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZkYgG9KYMpUPeJsM@lothringen>
 
-Hi,
+On Thu, May 16, 2024 at 05:02:51PM +0200, Frederic Weisbecker wrote:
 
-On 5/16/24 5:11 PM, Thomas Zimmermann wrote:
-> Hi
+> > I'm confused, none of that makes sense. If you're part of a
+> > load-balancer, you're part of a load-balancer, no ifs buts or other
+> > nonsense.
+> > 
+> > idle load balancer is no different from regular load balancing.
+> > 
+> > Fundamentally, you can't disable the tick if you're part of a
+> > load-balance group, the load-balancer needs the tick.
+> > 
+> > The only possible way to use nohz_full is to not be part of a
+> > load-balancer, and the only way that is so is by having (lots of) single
+> > CPU partitions.
 > 
-> Am 16.05.24 um 17:03 schrieb Hans de Goede:
->> Hi,
->>
->> On 5/16/24 3:04 PM, Rafael J. Wysocki wrote:
->>> CC Hans who has been doing the majority of the ACPI video work.
->>>
->>> On Thu, May 16, 2024 at 2:43 PM Thomas Zimmermann <tzimmermann@suse.de> wrote:
->>>> Commit 2fd001cd3600 ("arch: Rename fbdev header and source files")
->>>> renames the video source files under arch/ such that they does not
->>>> refer to fbdev any longer. The new files named video.o conflict with
->>>> ACPI's video.ko module.
->>> And surely nobody knew or was unable to check upfront that there was a
->>> video.ko already in the kernel.
->> Sorry, but nack for this change. I very deliberately kept the module-name
->> as video when renaming the actual .c file from video.c to acpi_video.c
->> because many people pass drivers/video/acpi_video.c module arguments
->> on the kernel commandline using video.param=val .
->>
->> Try e.g. doing a duckduckgo search for 1 off:
->>
->> "video.only_lcd"
->> "video.allow_duplicates"
->> "video.brightness_switch_enabled"
-> 
-> Ok, that makes sense. I'll rename the other files.
+> So you're suggesting that nohz_full should just be part of the whole
+> ilb machinery by default (that is, not fiddle with ilb internals) and
+> then it's up to CPU partitioning (through cpuset or isolcpus) to disable
+> ilb naturally. Right?
 
-Great, thank you.
+Yes, but stronger, as long as the CPU is part of a load-balance domain,
+it must not disable the tick while running anything.
 
-Regards,
-
-Hans
-
-
+that is, NOHZ_FULL must not become active unless it's running on a
+single CPU partition.
 
