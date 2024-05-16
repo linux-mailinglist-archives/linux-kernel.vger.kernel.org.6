@@ -1,125 +1,120 @@
-Return-Path: <linux-kernel+bounces-180580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 351CA8C706D
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 04:52:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 187958C706F
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 04:54:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C93151F22468
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 02:52:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6112282B27
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 02:54:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DBFC443D;
-	Thu, 16 May 2024 02:52:18 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E324215C3;
-	Thu, 16 May 2024 02:52:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63AFF4696;
+	Thu, 16 May 2024 02:54:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bD48ujYD"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 247584411
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 02:54:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715827938; cv=none; b=DdA6df0S5bGV8qxewib7aM/YllrD1BO+/KJ5gBApcF6RE8CZAVmjNslWc4Atrq2Z3Q3ryu9L1dT2vOVPLWbE357cZQFLDIGyVcyIg8SCdnQmkTQJFpQ/eVnrgGfz7rXvLNzCZnr98OtWDevHu+IJ76U/IYZod1hFeH0eCrioXFU=
+	t=1715828047; cv=none; b=NvxEEUY65uMDLyl8UKq6zLV/uFfEFIkaaeZeDQargiahJiJAJJqIAt8brhJ0zu9XeG9VGKFGmmluI/4hgJX2PxXc1kpBN9YfbXDutqO8xGN+o4bp5CMGzF3eGuHbeSZ6K5cusnm+41PxfVdWypBvcXMSsZKWryq0CP6hT9VdkdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715827938; c=relaxed/simple;
-	bh=Bpp2sS8JAC34w//706OVYxm4uK643Velk4anITvY9sQ=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=eORwFTLk7DsKVxPOYN4iWIdUuB7/o6biBHz55wy61sf/1U6TEdQQlXV4T/7WrWhMAwLP55AakApJVSr0pwNCC5sKQ4oSkm9JvgTxe1pr+LZT69x9ih9Bf6gzhpchvPVNJ+7Fil9Ye4r166bPyzutabUR0L0cLpsBlQ7ouEEz3hc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.173])
-	by gateway (Coremail) with SMTP id _____8BxeOnbdEVm+lsNAA--.19759S3;
-	Thu, 16 May 2024 10:52:11 +0800 (CST)
-Received: from [10.20.42.173] (unknown [10.20.42.173])
-	by localhost.localdomain (Coremail) with SMTP id AQAAf8Dxb1XWdEVmdXkiAA--.2393S3;
-	Thu, 16 May 2024 10:52:08 +0800 (CST)
-Subject: Re: [PATCH] LoongArch: Define __ARCH_WANT_NEW_STAT in unistd.h
-To: Arnd Bergmann <arnd@arndb.de>, Huacai Chen <chenhuacai@loongson.cn>,
- Huacai Chen <chenhuacai@kernel.org>
-Cc: loongarch@lists.linux.dev, Linux-Arch <linux-arch@vger.kernel.org>,
- Xuefeng Li <lixuefeng@loongson.cn>, guoren <guoren@kernel.org>,
- WANG Xuerui <kernel@xen0n.name>, Jiaxun Yang <jiaxun.yang@flygoat.com>,
- linux-kernel@vger.kernel.org, loongson-kernel@lists.loongnix.cn,
- stable@vger.kernel.org
-References: <20240511100157.2334539-1-chenhuacai@loongson.cn>
- <f92e23be-3f3f-4bc6-8711-3bcf6beb7fa2@app.fastmail.com>
- <3937d6b1-119b-195e-8b9b-314a0bfbeaeb@loongson.cn>
- <ebf493ee-1e8b-426d-bcf4-d8e17d10844a@app.fastmail.com>
-From: maobibo <maobibo@loongson.cn>
-Message-ID: <14d52b91-58b2-6079-b66a-f01d1bac583f@loongson.cn>
-Date: Thu, 16 May 2024 10:52:06 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1715828047; c=relaxed/simple;
+	bh=h6W3K644TyYTLD+ElFlD0WBXJIXzaEy9/xqUC9eFq7g=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=rar7snfIfKMvfwnZ7+HNH7FiygFojaZo+tu0EwgecvDHnU+kXtW+dWsW2dnF71jYsI5TMkjaboySxFnNc4nnu8sLBw5atgSG5KH750/ehDYiyolb6O5Qi14brFQqRNsgfVtKHcmEtZWddzaRd2kg813PDI8eeaJ+UpavtGfV1BA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bD48ujYD; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-51fdc9af005so397205e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 19:54:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715828044; x=1716432844; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Fc9idQrdbpiwMBSt6L8BxJOv1+2OpDzw7KOALEJ4jJ8=;
+        b=bD48ujYDW0UhrpPtY3knHNivFgaTUkCERzbtyBiTzMicaD75ZHaaH7dDnXexlL4dmP
+         OxhAXDEGRFHUYrg4YcQ9Z5N+Ub50RpZ+/+c7EkbeRHeLxh2iAKEQw3tsHIUI57VQoArL
+         BYMrvf1IRltla/ECl+sm0Xu1kzOHPLYsLYdnBgsVtdWfjxaALbFnQEP/0bkVNxJU+qCK
+         aKdoSeIlXN4D5SLmrSt39Oy4VAZHhM+hbKxViQrx0abFEKdO5QO3BFcNuDYF7274OQNF
+         RzwcmTmpONTa8qyyOpxVyCYrJGC2J7k9TTx6cHAKFdy+NGCqOh/6RYBkJ5C4azfSNaoq
+         CF5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715828044; x=1716432844;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Fc9idQrdbpiwMBSt6L8BxJOv1+2OpDzw7KOALEJ4jJ8=;
+        b=i3AFIr2ELba+qs39Hfo2Nk9cSC0wHeOiYGfsaBLfuOI1A1oONfqi9yc1nlhWADN7Up
+         VQqF+R489FR2YF0mFpJsxDFLE5+vrSQLQ6kHM3G/RWtxVoO//jRHD2B2T5ye3FnFVFaq
+         us34yJ1udvD2Tlw/3XC166RoV1+NdBqyK/qZoh9LbW4zRsGMhEm71u1LKAUF6SzLthKO
+         ieKQqXI0YLdT0V85JF6mn79o7TDoQU1ze0x17l3DiSFUF852crACxF2sLoksmZxtilh+
+         99SnpCVtm3FzBv9qi+4aDI3je7NkUkJFXKtbqhK30zkTCNgzutCpo5qcQ44cmHsL/nQI
+         W2Rw==
+X-Forwarded-Encrypted: i=1; AJvYcCWU4SCe1AWxuU8+6nkvUiPmJYuF/shmLv/xoLiHWPdW3q84pue7Np+cIzynVbRMZ3DrH4aHlUJvdWlYC+e2ygAr+Gr3YdSYcLrDJCgl
+X-Gm-Message-State: AOJu0YyBrR9Vy1qCTszkpRZixyE54KGvFhO1r1NnanCaRoDMc1fqAPni
+	uBm853SmQC7NcpBRQ7xeAS87pdPQ1bgMKhJr73xspVLovtqpR34szFBIS5eVQqUyiNjcPnOuCFc
+	koUS1ZZaHwENol8bFd1/Giza/1aM=
+X-Google-Smtp-Source: AGHT+IEIVpnumLI29ZUaA8RK49U1gN6tcXn5ifUPu5C2wHhtI90oLioFPwr1i+oB405rRZyrCbG9Ny4XUqRc0DzrcD4=
+X-Received: by 2002:ac2:504c:0:b0:51a:df97:cc8d with SMTP id
+ 2adb3069b0e04-5220fd7cc70mr10958319e87.26.1715828043991; Wed, 15 May 2024
+ 19:54:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ebf493ee-1e8b-426d-bcf4-d8e17d10844a@app.fastmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:AQAAf8Dxb1XWdEVmdXkiAA--.2393S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoW7tF1kGrW5Cw1UtryrWr47KFX_yoW8XF17pF
-	WSgF1a9FWqyr1Syw4Ikw1DtFnYkryrJr45Z34FqryxAay5Xr13tr1FqrWUCFyaqFyxCFyj
-	va93Wa4fuFZ8ZagCm3ZEXasCq-sJn29KB7ZKAUJUUUUx529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUP2b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6r4UJVWxJr1ln4kS14v26r126r1DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12
-	xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r12
-	6r1DMcIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr4
-	1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxG
-	rwCFx2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWUAVWUtwC20s026c02F40E14
-	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkG
-	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI
-	0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4U
-	MIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8Dl1DUUUU
-	U==
+From: Dave Airlie <airlied@gmail.com>
+Date: Thu, 16 May 2024 12:53:52 +1000
+Message-ID: <CAPM=9tx_KS1qc8E1kUB5PPBvO9EKHNkk7hYWu-WwWJ6os=otJA@mail.gmail.com>
+Subject: [git pull] drm urgent for 6.10-rc1
+To: Linus Torvalds <torvalds@linux-foundation.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, 
+	"Deucher, Alexander" <Alexander.Deucher@amd.com>, 
+	Arunpravin Paneer Selvam <Arunpravin.PaneerSelvam@amd.com>
+Cc: dri-devel <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Linus,
 
+Here is the buddy allocator fix I picked up from the list, please apply.
 
-On 2024/5/15 下午10:25, Arnd Bergmann wrote:
-> On Wed, May 15, 2024, at 09:30, maobibo wrote:
->> On 2024/5/11 下午8:17, Arnd Bergmann wrote:
->>> On Sat, May 11, 2024, at 12:01, Huacai Chen wrote:
->>>
->>> Importantly, we can't just add fstatat64() on riscv32 because
->>> there is no time64 version for it other than statx(), and I don't
->>> want the architectures to diverge more than necessary.
->> yes, I agree. Normally there is newfstatat() on 64-bit architectures but
->> fstatat64() on 32-bit ones.
->>
->> I do not understand why fstatat64() can be added for riscv32 still.
->> 32bit timestamp seems works well for the present, it is valid until
->> (0x1UL << 32) / 365 / 24 / 3600 + 1970 == 2106 year. Year 2106 should
->> be enough for 32bit system.
-> 
-> There is a very small number of interfaces for which we ended up
-> not using a 64-bit time_t replacement, but those are only for
-> relative times, not epoch based offsets. The main problems
-> here are:
-> 
-> - time_t is defined to be a signed value in posix, and we need
->    to handle file timestamps before 1970 in stat(), so changing
->    this one to be unsigned is not an option.
-> 
-> - A lot of products have already shipped that will have to
->    be supported past 2038 on existing 32-bit hardware. We
->    cannot regress on architectures that have already been
->    fixed to support this.
-> 
-> - file timestamps can also be set into the future, so applications
->    relying on this are broken before 2038.
-I see. And thanks for detailed explanation.
+Dave.
 
-Regards
-Bibo Mao
-> 
->        Arnd
-> 
+drm-next-2024-05-16:
+drm urgent for 6.10-rc1 merge:
 
+buddy:
+- fix breakage in buddy allocator.
+The following changes since commit 275654c02f0ba09d409c36d71dc238e470741e30:
+
+  Merge tag 'drm-xe-next-fixes-2024-05-09-1' of
+https://gitlab.freedesktop.org/drm/xe/kernel into drm-next (2024-05-10
+12:41:34 +1000)
+
+are available in the Git repository at:
+
+  https://gitlab.freedesktop.org/drm/kernel.git tags/drm-next-2024-05-16
+
+for you to fetch changes up to 431c590c3ab0469dfedad3a832fe73556396ee52:
+
+  drm/tests: Add a unit test for range bias allocation (2024-05-16
+12:50:14 +1000)
+
+----------------------------------------------------------------
+drm urgent for 6.10-rc1 merge:
+
+buddy:
+- fix breakage in buddy allocator.
+
+----------------------------------------------------------------
+Arunpravin Paneer Selvam (2):
+      drm/buddy: Fix the range bias clear memory allocation issue
+      drm/tests: Add a unit test for range bias allocation
+
+ drivers/gpu/drm/drm_buddy.c            |  3 ++-
+ drivers/gpu/drm/tests/drm_buddy_test.c | 36 +++++++++++++++++++++++++++++++++-
+ 2 files changed, 37 insertions(+), 2 deletions(-)
 
