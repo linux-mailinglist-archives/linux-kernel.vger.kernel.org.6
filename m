@@ -1,162 +1,176 @@
-Return-Path: <linux-kernel+bounces-180813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B35218C7378
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 11:07:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEF4C8C7379
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 11:07:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21186B20E92
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 09:06:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E0881C22A4F
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 09:07:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73C6F14372C;
-	Thu, 16 May 2024 09:06:46 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FE06142E8A;
-	Thu, 16 May 2024 09:06:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FB26142E8E;
+	Thu, 16 May 2024 09:07:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="gaF1jYvA";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="2zl8rMy+";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="gaF1jYvA";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="2zl8rMy+"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9A47142E96
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 09:07:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715850406; cv=none; b=Aq4+mzTGqUlwQt6yqiZ/D4EWLE34FtZHsFiDOr9I2eypp6ePmyWu8MguUMrc4ncM6kPSYbfxgwTj70iu2nS96Bjkr3VBaPGX7QNnxlXUt2gD89I4fXiD/Dw/mGfvwXdtFJhvPyEjcZsSGXL0cMsHs6eGabN+Yb32P2znMZmpoT0=
+	t=1715850439; cv=none; b=mP3WuiofL2ehULSPl1PVwBEZxsh78h7fWcSAvjXK6f3z++y9knh3ZAYNBbaWhNmZDjsqa5RfHqmeZ8+8mi0BikxK4IKJIMIZd607bjHNrw92xNvVhMzSffT751PUPpk4clPofRZEea4iwIM3+69S0HhDGY3ntu+bhnynFGsgXo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715850406; c=relaxed/simple;
-	bh=+Jlyv5HcMaUNPlQ6mVoxa3FJu4ksG1w7kjJzgf+HZ3E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jwKItAB4Kyv0wiIRkZDiLMM6X1jaP+UrFU54zaTwz5jl7C6LQ79rqUyfkAEzGTy+j5waV02izre2DAyr+0Mbe78Jn5cMFOctm0CTpJoasB16tsZ5zfLcWv5ThmPoRgPKhw1/wAwt0S2/eWVQt5F00BY3OiKbW1LNcMKc4K/OYvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 504C2DA7;
-	Thu, 16 May 2024 02:07:08 -0700 (PDT)
-Received: from [10.57.35.131] (unknown [10.57.35.131])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 77A383F7A6;
-	Thu, 16 May 2024 02:06:41 -0700 (PDT)
-Message-ID: <d9d35115-0fb5-4e8e-a99c-ff85ba4a7967@arm.com>
-Date: Thu, 16 May 2024 10:06:39 +0100
+	s=arc-20240116; t=1715850439; c=relaxed/simple;
+	bh=lLXZ5P4hNA3m4VBR78XGJDYwRUuwy1e+C7SNetPp6VQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZFODtMXcf9s1LP/SVK5jZT9uUOYNQit3oLVCtL1b6BFKSnn5IE6n1Mtf8JZOhlmLOT5oj+J2w2+J0+KozWyWXWxleakbse+LJ55NGkMa4UmzJfMZx3Q4vh/ZZg4CjJK92FvApRX9vF8+F5SEPJ04emJwG0OyPsYNQoXOJhULHE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=gaF1jYvA; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=2zl8rMy+; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=gaF1jYvA; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=2zl8rMy+; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 7DEBC346ED;
+	Thu, 16 May 2024 09:07:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1715850430; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XLeTIM45ewjev4DQ6PoqdCo+wq0wfEIEwRwtJcI36LI=;
+	b=gaF1jYvAzi0ecbsxKz4M//m5K4Zr1t/VaydIphUgvFveCyRKe9bsawBXYmn3Tpc/IlJqpy
+	ZyNSz6Bplw3H3I/PFYIUvDagiQrLlWv8vp3L7TAvD2WTBtKEsjokE808qAIsoZF2MaJtDi
+	Qxgw8DjU4Kkxxd+On1lCcDIdBnWykHs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1715850430;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XLeTIM45ewjev4DQ6PoqdCo+wq0wfEIEwRwtJcI36LI=;
+	b=2zl8rMy+xcbx4jcJu9sQai10RG3tH8Ob/Q95lvfFo6zAZBNVv7cGMiR8hzpgl84xMG+nbf
+	j+/tV4nfe0MdKeBA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=gaF1jYvA;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=2zl8rMy+
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1715850430; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XLeTIM45ewjev4DQ6PoqdCo+wq0wfEIEwRwtJcI36LI=;
+	b=gaF1jYvAzi0ecbsxKz4M//m5K4Zr1t/VaydIphUgvFveCyRKe9bsawBXYmn3Tpc/IlJqpy
+	ZyNSz6Bplw3H3I/PFYIUvDagiQrLlWv8vp3L7TAvD2WTBtKEsjokE808qAIsoZF2MaJtDi
+	Qxgw8DjU4Kkxxd+On1lCcDIdBnWykHs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1715850430;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XLeTIM45ewjev4DQ6PoqdCo+wq0wfEIEwRwtJcI36LI=;
+	b=2zl8rMy+xcbx4jcJu9sQai10RG3tH8Ob/Q95lvfFo6zAZBNVv7cGMiR8hzpgl84xMG+nbf
+	j+/tV4nfe0MdKeBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EBA54137C3;
+	Thu, 16 May 2024 09:07:09 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id qYHNNr3MRWaUCwAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Thu, 16 May 2024 09:07:09 +0000
+Date: Thu, 16 May 2024 11:07:04 +0200
+From: Oscar Salvador <osalvador@suse.de>
+To: Miaohe Lin <linmiaohe@huawei.com>
+Cc: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org,
+	shy828301@gmail.com, nao.horiguchi@gmail.com,
+	xuyu@linux.alibaba.com, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] mm/huge_memory: don't unpoison huge_zero_folio
+Message-ID: <ZkXMuHcWPBXy9sT3@localhost.localdomain>
+References: <20240515023607.870022-1-linmiaohe@huawei.com>
+ <e1c93779-8cde-4986-85d3-2134fb8970b3@redhat.com>
+ <ZkXDS9y_cBSzBzeN@localhost.localdomain>
+ <fd1b4d3f-be4c-16e2-00d9-8ea6443c68f3@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 09/14] arm64: Enable memory encrypt for Realms
-Content-Language: en-GB
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
- kvmarm@lists.linux.dev, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <yuzenghui@huawei.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei
- <alexandru.elisei@arm.com>, Christoffer Dall <christoffer.dall@arm.com>,
- Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
-References: <20240412084213.1733764-1-steven.price@arm.com>
- <20240412084213.1733764-10-steven.price@arm.com> <ZkOmrMIMFCgEKuVw@arm.com>
- <5b2db977-7f0f-4c3a-b278-f195c7ddbd80@arm.com> <ZkW6UgrwJT6G9UN-@arm.com>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <ZkW6UgrwJT6G9UN-@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fd1b4d3f-be4c-16e2-00d9-8ea6443c68f3@huawei.com>
+X-Spam-Flag: NO
+X-Spam-Score: -5.00
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: 7DEBC346ED
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-5.00 / 50.00];
+	BAYES_HAM(-2.99)[99.96%];
+	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[redhat.com,linux-foundation.org,gmail.com,linux.alibaba.com,kvack.org,vger.kernel.org];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim]
 
-Hi Catalin
-
-On 16/05/2024 08:48, Catalin Marinas wrote:
-> On Wed, May 15, 2024 at 11:47:02AM +0100, Suzuki K Poulose wrote:
->> On 14/05/2024 19:00, Catalin Marinas wrote:
->>> On Fri, Apr 12, 2024 at 09:42:08AM +0100, Steven Price wrote:
->>> Can someone summarise what the point of this protection bit is? The IPA
->>> memory is marked as protected/unprotected already via the RSI call and
->>> presumably the RMM disables/permits sharing with a non-secure hypervisor
->>> accordingly irrespective of which alias the realm guest has the linear
->>> mapping mapped to. What does it do with the top bit of the IPA? Is it
->>> that the RMM will prevent (via Stage 2) access if the IPA does not match
->>> the requested protection? IOW, it unmaps one or the other at Stage 2?
->>
->> The Realm's IPA space is split in half. The lower half is "protected"
->> and all pages backing the "protected" IPA is in the Realm world and
->> thus cannot be shared with the hypervisor. The upper half IPA is
->> "unprotected" (backed by Non-secure PAS pages) and can be accessed
->> by the Host/hyp.
+On Thu, May 16, 2024 at 04:45:22PM +0800, Miaohe Lin wrote:
+> Thanks for your comment. Do you mean something like below?
 > 
-> What about emulated device I/O where there's no backing RAM at an IPA.
-> Does it need to have the top bit set?
-
-The behaviour depends on the IPA (i.e, protected vs unprotected).
-
-1. Unprotected : All stage2 faults in the Unprotected half are serviced
-by the Host, including the areas that may be "Memory" backed. RMM 
-doesn't provide any guarantees on accesses to the unprotected half. 
-i.e., host could even inject a Synchronous External abort, if an MMIO
-region is not understood by it.
-
-2. Protected : The behaviour depends on the "IPA State" (only applicable 
-for the protected IPAs). The possible states are RIPAS_RAM,  RIPAS_EMPTY 
-and RIPAS_DESTROYED(not visible for the Realm).
-
-The default IPA state is RIPAS_EMPTY for all IPA and the state is 
-controlled by Realm with the help of RMM (serviced by Host), except
-during the Realm initialisation. i.e., the Host is allowed to "mark"
-some IPAs as RIPAS_RAM (for e.g., initial images loaded into the Realm)
-during Realm initiliasation (via RMI_RTT_INIT_RIPAS), which gets
-measured by the RMM (and affects the Realm Initial Measurement). After
-the Realm is activated, the Host can only perform the changes requested
-by the Realm (RMM monitors this). Hence, the Realm at boot up, marks all
-of its "Described RAM" areas as RIPAS_RAM (via RSI_IPA_STATE_SET), so
-that it can go ahead and acccess the RAM as normal.
-
-
-a) RIPAS_EMPTY: Any access to an IPA in RIPAS_EMPTY generates a 
-Synchronous External Abort back to the Realm. (In the future, this may
-be serviced by another entity in the Realm).
-
-b) RIPAS_RAM: A stage2 fault at a mapped entry triggers a Realm Exit to 
-the Host (except Instruction Aborts) and the host is allowed to map a
-page (that is "scrubbed" by RMM) at stage2 and continue the execution.
-
-[ ---->8  You may skip this ---
-  c) RIPAS_DESTROYED: An IPA is turned to RIPAS_DESTROYED, if the host
-     "unmaps" a protected IPA in RIPAS_RAM (via RMI_DATA_DESTROY). This
-     implies that the Realm contents were destroyed with no way of
-     restoring back. Any access to such IPA from the Realm also causes
-     a Realm EXIT, however, the Host is not allowed to map anything back
-     there and thus the vCPU cannot proceed with the execution.
-----<8----
-]
-
+> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+> index 16ada4fb02b7..a9fe9eda593f 100644
+> --- a/mm/memory-failure.c
+> +++ b/mm/memory-failure.c
+> @@ -2546,6 +2546,13 @@ int unpoison_memory(unsigned long pfn)
+>                 goto unlock_mutex;
+>         }
 > 
->> The RSI call (RSI_IPA_STATE_SET) doesn't make an IPA unprotected. It
->> simply "invalidates" a (protected) IPA to "EMPTY" implying the Realm doesn't
->> intend to use the "ipa" as RAM anymore and any access to it from
->> the Realm would trigger an SEA into the Realm. The RSI call triggers an exit
->> to the host with the information and is a hint to the hypervisor to reclaim
->> the page backing the IPA.
->>
->> Now, given we need dynamic "sharing" of pages (instead of a dedicated
->> set of shared pages), "aliasing" of an IPA gives us shared pages.
->> i.e., If OS wants to share a page "x" (protected IPA) with the host,
->> we mark that as EMPTY via RSI call and then access the "x" with top-bit
->> set (aliasing the IPA x). This fault allows the hyp to map the page backing
->> IPA "x" as "unprotected" at ALIAS(x) address.
-> 
-> Does the RMM sanity-checks that the NS hyp mappings are protected or
-> unprotected depending on the IPA range?
+> +       if (is_huge_zero_folio(folio)) {
+> +               unpoison_pr_info("Unpoison: huge zero page is not supported %#lx\n",
+> +                                pfn, &unpoison_rs);
+> +               ret = -EOPNOTSUPP;
+> +               goto unlock_mutex;
+> +       }
+> +
+>         if (!PageHWPoison(p)) {
+>                 unpoison_pr_info("Unpoison: Page was already unpoisoned %#lx\n",
+>                                  pfn, &unpoison_rs);
 
-RMM moderates the mappings in the protected half (as mentioned above).
-Any mapping in the unprotected half is not monitored. The host is
-allowed unmap, remap with anything in the unprotected half.
+Yes, something like that makes much more sense to me.
 
-> 
-> I assume that's also the case if the NS hyp is the first one to access a
-> page before the realm (e.g. inbound virtio transfer; no page allocated
-> yet because of a realm access).
-> 
 
-Correct. The host need not map anything upfront in the Unprotected half
-as it is allowed to map a page "with contents" at any time. A stage2 
-fault can be serviced by the host to load a page with contents.
+Thanks
 
-Suzuki
+-- 
+Oscar Salvador
+SUSE Labs
 
