@@ -1,86 +1,126 @@
-Return-Path: <linux-kernel+bounces-180973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72F548C759F
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:06:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0CAF8C75A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:07:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D36A1C21123
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:06:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22AE91C210DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:07:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ED47145B1E;
-	Thu, 16 May 2024 12:06:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AA4B145A06;
+	Thu, 16 May 2024 12:06:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="SmX3PKSl"
-Received: from submarine.notk.org (62-210-214-84.rev.poneytelecom.eu [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BFC9145A1F
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 12:06:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WzozJMDv"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13C941459E2;
+	Thu, 16 May 2024 12:06:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715861195; cv=none; b=JSQe4V5qwtiABP2DUZrFCWWaSmQGPTgVKyyNeWg6HaL4ox79E1bczV4czOLHf7vfKnSUYSY+SsCyDk2szb3QZKGl7O++hnKMkkN7ltDbZog6IFtiyHCnHZomsbLg2oHELZAsVbTEj6Stx+J+zmpExEX/os0HH7HlQScGuOSdSNA=
+	t=1715861212; cv=none; b=aTG8mU87EM+bs4vrqaFxidD/AsM9IkCMPOjFlW3NMONDzgICvGBMadqs7jgdQAz2QDvmy2TaMF+zkQh0ZciGoTnbrBxDwn+1qKm/QiMK9ld/TKTMwq1uBWswegOYVYNG7uOvc8PPzIoKCyWeMXMbVVZ/teuUuvOsRLx8+ouoWzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715861195; c=relaxed/simple;
-	bh=4NjjwSr4Ahv0C5KPcCIAl9LPHi84Ps/jY77lOeIowL0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=icNSDpjAI0I6YDVnJcdNlI4i5tZMyLmNCnMEes/goBLbt//S0rmi8yp9ygyY6kaDxd1me2gBo/cX0p6kodSA1qwV8xFrRovTTa1V9VO+eANTbC+03o+xZj3fzrh4fLStYq6KpLmIFE63DUqsbCeFfpq5pbIxZ1KGDElD7thXp1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=SmX3PKSl; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id 8F5C514C2DC;
-	Thu, 16 May 2024 14:06:23 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1715861186;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ibK20Oi6M32rpg7TSWRqlsDzrOFnl8LL6s8Vh9NS0vk=;
-	b=SmX3PKSl+Z11NjrYS3W5QFj8msIUV1tXW2MkYAlJ+Eg6quIn71l11Vy25IiI/dxpQuokII
-	WlM+coLUHPrQbp6mIANJmbEuwPsv0/wkKfpMKqKlyOZEhq0zl1u8uPrkRASNPMFlNBqwoR
-	FIiGCEs+bA39ZsBRv9CMRkDUe4GRHGTyODQ8cUul/jhNOzTyXLOnC+juYfaO5e8vZe1B+k
-	iKed2t1Si/oWJZrIs/i/f0uQBESSSq3q+PcyUWTCVI58eDGSz00r9uYGuwDDTai1/a28Ul
-	q6T/yixfxYpVthUC0y0C6oyQmMkZpyeAh9w1sE3PgtMp3BLZtjXYlGu5YkowlA==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 3a491bde;
-	Thu, 16 May 2024 12:06:19 +0000 (UTC)
-Date: Thu, 16 May 2024 21:06:04 +0900
-From: Dominique Martinet <asmadeus@codewreck.org>
-To: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
-Cc: Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>,
-	v9fs@lists.linux.dev, linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org,
-	syzbot+ff14db38f56329ef68df@syzkaller.appspotmail.com
-Subject: Re: [PATCH net v2] net/9p: fix uninit-value in p9_client_rpc()
-Message-ID: <ZkX2rG5D2dnit9dB@codewreck.org>
-References: <20240408141039.30428-1-n.zhandarovich@fintech.ru>
- <ac84eefc-e024-40fb-a92d-3109f686d122@fintech.ru>
+	s=arc-20240116; t=1715861212; c=relaxed/simple;
+	bh=iOUIrdlu87CHnC7pAPLPHYIfXVJw3A6l8WecuIe9HRU=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=J5vOemJ995AUsDXjzu+XWNx4Cvhhg6T3zLoYK/JCgwzwm2JdrSQXGUJSXcLtkJQQRhTpYeGaSmrFq747KN3SApPWL1+0Pm7HEFEX3aXVeHAzyBHtZJK1v3m6xZ1GMuvt2SpyW4C4/d+/zeWvaWyeykV8n7x0c9akuvV21xNoevs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WzozJMDv; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2e3e18c240fso8214281fa.0;
+        Thu, 16 May 2024 05:06:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715861209; x=1716466009; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=d/+iOXfE5JhcsldrJn15mneL9tsGrRwJenKZ7TfkMY0=;
+        b=WzozJMDvx8fx9C0seY2dgyyzOT8V3TFnVzJpVR1jqakpfY/jGfK+V/jUIrOea+ZYPj
+         ovt08twrTKjE6Zt73tYiQwk4e40QoLjJT3SG+ebmh7iGC+remWCqI8cbvffYAejXUvcL
+         uB7ldqFZNlHTqlwtxOFW5Q1U3+0B/qqJ297FlBXbtQsrqZxIVfQi2mGMCeHxaORcIWkc
+         UJLac2Bavsu0jEaeBM0IqlFp6gyMUbl7IzdQ9ZnG5ETN/8IzpfqOTqThAabh9ZCDFe42
+         uAhTYmPW7rIkzrSKxFMd95mIdlwpFNA0v9N7Iy9TgMA9QP90F3eYqUi+l/1j8K0Yu8ji
+         DquQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715861209; x=1716466009;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=d/+iOXfE5JhcsldrJn15mneL9tsGrRwJenKZ7TfkMY0=;
+        b=pSha17KRw6iW3ODSD2IySAYj6pV6QFxSKvFHm/6tOmLOkFNVH74I+OGIJRRyZBQYKu
+         czXGORQPiYVUGTaMrN9QW3Zj8nCSxxAivlG+bxNtak86K+QJYJPbm6fbsyRa8xoUb/8s
+         fVgsYQngwoGbdixclCY8xmWaZr61Q93Y18XxaFGjZCJvJgE7Hu7lW6383Bv+vaskpjkq
+         V4jnjkAZsAvy4s4xIeCL9H0vngiEw8TB5lPMTBO0MMqfKdjAiHyPbbmGGYTni7nqUjOg
+         hoKkzB0C7pNGx8s77TXVl0kR60xf2XBwL6zQmu1XWkMjWpDcHpJdmjDUVSbwp4AIz+89
+         q1og==
+X-Forwarded-Encrypted: i=1; AJvYcCWQEiqcF/bGpB7Xf2wPJ0rygFR1AAgDWTHTxB9LhQYdsqMkbYImIrXCWqq80Y1/GDtH0dJWK4SbHsQlbtXsPEOYziXh9gX3FVTCZ1VM7FObbwt9FZpApSgkqIjKNBqwwyWpcQCK22i4VkodNTS9mThpzg0g7vf61VH28PZFkP0G99ZeKkI=
+X-Gm-Message-State: AOJu0YwKPHZfx/c9RPZpAA4ggP/KmhpH1J5wMB8PZkuaIe8+ndNaWlJ0
+	GmsJdkiVh6+lquv7dB6yGZ3/MlIPmbO4qeR7vMqvjfBPC68ouet+uMmVwUss
+X-Google-Smtp-Source: AGHT+IGRXdu4e46HW+sJ65tDSzWCXInDmL+maJuMRLPwnyxExOFx8EFCPUqneDMLyHGHRnj5Mj8LLA==
+X-Received: by 2002:a05:651c:546:b0:2df:1e3e:3280 with SMTP id 38308e7fff4ca-2e51ff5da7dmr204135241fa.28.1715861208838;
+        Thu, 16 May 2024 05:06:48 -0700 (PDT)
+Received: from [192.168.0.107] ([91.90.219.38])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2e4d15155fdsm24154071fa.83.2024.05.16.05.06.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 May 2024 05:06:48 -0700 (PDT)
+Message-ID: <81aa0e4e-a3c7-41d1-8cd2-4d060730b37a@gmail.com>
+Date: Thu, 16 May 2024 17:06:46 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ac84eefc-e024-40fb-a92d-3109f686d122@fintech.ru>
+User-Agent: Mozilla Thunderbird
+From: Dmitry Yashin <dmt.yashin@gmail.com>
+Subject: Re: [PATCH 3/3] pinctrl: rockchip: add rk3308b SoC support
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Heiko Stuebner
+ <heiko@sntech.de>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ Jianqun Xu <jay.xu@rock-chips.com>, devicetree@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Dmitry Yashin <dmt.yashin@gmail.com>
+References: <20240515121634.23945-1-dmt.yashin@gmail.com>
+ <20240515121634.23945-4-dmt.yashin@gmail.com> <20240515182954.03c4a475@booty>
+Content-Language: en-US
+In-Reply-To: <20240515182954.03c4a475@booty>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Nikita Zhandarovich wrote on Wed, May 15, 2024 at 08:18:19AM -0700:
-> Gentle ping on this issue as it is still open. Thanks in advance :)
+Hi Luca,
 
-Thanks for the ping and sorry for the inactivity -- your patch came in
-the middle of a rough patch (ha, ha..) with a couple of regressions that
-drained me and we didn't get any other outside patch this cycle, so I
-didn't prepare a pull request for Linus.
+On 15.05.24 21:29, Luca Ceresoli wrote:
+> I'm skeptical about this being bound to a new DT compatible. As far as I
+> know the RK3308 and RK3308B are mostly equivalent, so it looks as the
+> pinctrl implementation could be detected at runtime. This would let
+> products to be built with either chip version and work on any without
+> any DT change.
 
-(In theory, it should have made it in one of Eric's pull for 6.9-rc5/6,
-but I guess it slipped through his mailer as well)
 
-I'll queue the patch to -next now and send it next week if nothing else
-pops up.
+Thanks for your feedback.
+
+Indeed, these SoC's have a lot in common, but as I can see the rk3308b
+has more blocks, like extra PWM's (rk3308 datasheet 1.5 [0] shows only
+1x PWM 4ch, when rk3308b and rk3308b-s have 3x PWM 4ch), 1-wire and
+CAN controller (mentioned in the TRM, but dropped from rk3308b
+datasheet for some reason).
+
+So, in my view, it really makes sense to add rk3308b.dtsi, where extra
+PWM's, pinctrl compatible and its pin functions can be moved. And if
+its not worth it, then I will try to adapt the entire series to runtime
+config based on cpuid like you suggested.
+
+Additional thoughts on this would be appreciated.
+
+[0] https://rockchip.fr/RK3308%20datasheet%20V1.5.pdf
+
 -- 
-Dominique Martinet | Asmadeus
+Thanks,
+Dmitry
+
 
