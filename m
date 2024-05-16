@@ -1,255 +1,230 @@
-Return-Path: <linux-kernel+bounces-180662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9A368C717A
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 07:55:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA2ED8C717E
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 07:55:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9325D281137
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 05:55:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48A80B212E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 05:55:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23764208A8;
-	Thu, 16 May 2024 05:55:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79C562137E;
+	Thu, 16 May 2024 05:55:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n8TmgJGB"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="llxG7/7+"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C77529CEA;
-	Thu, 16 May 2024 05:55:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9D611C695;
+	Thu, 16 May 2024 05:55:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715838920; cv=none; b=YvDQ+zcAiA8CaUPVnlQmPHWICdOZjej6IMKiTWCIhoNlsyyyolzQt/p0KQLegOZ+UTaE2EodHjU0xQTbeHmYI3Dj+SvnPt4vzbbXkCF3t9yaoAHmNE4J1Vcb8CvI+QGQ2ZpnTko6BDwuRJfghknmGL6T7kAjs5IBxf6TrvsndAQ=
+	t=1715838940; cv=none; b=OEhBaPPJ3nDQuzhj26Wq5H3B7t4Agv/tYUvF1tky2pfK18Rp3tf2VD+cAGzLvr5E/t70d62hb3z6GG7JvEX72tsaExhtLz9cU3Ljg5WN5+jT5W1/iAgkv4h5nTjSYUfA20JV7bPLxga6KDBcs4BvOfho36OO+nK+76WjwLlkTIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715838920; c=relaxed/simple;
-	bh=xMvyt0Z5g7e3xmtO9PR6aw0WgugOD1OHXY3O55x0INQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Prov8jnZ01j4ClxkdGoikI17xa3Tk/4AzggEsmwEPahhyRfehdYB4/SdF4LLS28LmX9Dt6/t0IUQZ+80rE+q0c73AngmH2ea6D/mqdxFM7197Dakhuxwe9YmUvS8+JidWVtGu7uk2axRqZblrTaVW7DASk3l+TPzR03gQpLOo4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n8TmgJGB; arc=none smtp.client-ip=198.175.65.14
+	s=arc-20240116; t=1715838940; c=relaxed/simple;
+	bh=R58SNveZIj3aSv3Z2D6thaQAbSttnQhJAJZ3CW/vfFI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gfFs1rqKisC1ZsieV+XKjJ/e9PjIlI4m8BqjTn0KJGj41Vn0/xOl9TesW8/lBfbgKdbZDKJv6dMnog5gx940wR4ls+ha5eiVygck665/dnGzbANMrkh4lewlh7GvFYNfiZ4WGLTAk9imRLrMCOC5qjoZs4qAJndcp5D0tQxCyyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=llxG7/7+; arc=none smtp.client-ip=192.198.163.17
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715838918; x=1747374918;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=xMvyt0Z5g7e3xmtO9PR6aw0WgugOD1OHXY3O55x0INQ=;
-  b=n8TmgJGBCALq1e0HEUgrg9ESdrJBAEw7avnZvcmR4kPlXpUDBoytMTL4
-   9CJGkH+FJYkHDkPTE9Qww5dRWpLvSj2LPhy15R2IZy0YQ602ZLMV4f0ll
-   jE/ZC6n5KY6u5oCJMdMjRez9v8YMA8zk4ONu0mGClO0XFPXOQKFmRU09k
-   mqyodWw+zjQb4QXd3MxamFEcL8hTZWF1TiCXj6bT6UAYAuKC53J3Riukr
-   l349sYQDnnIpYqnMNzKj6NFMy4x0OJz4I9JACpwQF9MkVNWH57i5mMKDk
-   oyuVx14ozPtBO3mXgxchudtCikTp3Tamfv/Pc0TAmT6QWoypLuQvDdIrg
+  t=1715838938; x=1747374938;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=R58SNveZIj3aSv3Z2D6thaQAbSttnQhJAJZ3CW/vfFI=;
+  b=llxG7/7+HickZWY9G7Skorj8+bDX3z3CC5uYLoeHvUZyxRr0o9dfT17V
+   sllBFHkcOHn4iLHJvnWq6s3J2VZnFU3aPO3cpwB1JD37w3hpM0MPL1Pfv
+   ZxV5et/3t4BfIT7hI2aLaWUs73GX3HHKpTLnIUlKV3P1MrAmuSmwmhscc
+   gbTAyRM3Ucmu8byDHi10kkjt5a2nhGgg+9O+jK4r+oXQI+M9S2z5RGBuW
+   ymwK27Iwd94CGZxWlKqEUOMlr7rBMydKdQWys7exk3PMIwfsd9xIai65L
+   iqVYsGvoiVyNe7JgLGQL4s+O/ihLQ13xQ0mbEjaesYBwGVlT0WTczI8bf
    w==;
-X-CSE-ConnectionGUID: I36hOh0jQP+IO5xavYaRJQ==
-X-CSE-MsgGUID: xaPDt0urQT6pyyyaguoXRQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="15754318"
+X-CSE-ConnectionGUID: epVkDTrJRYiUU46inOp3jg==
+X-CSE-MsgGUID: OY6DvdACQ1uN0AGk2ix7QQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="11793745"
 X-IronPort-AV: E=Sophos;i="6.08,163,1712646000"; 
-   d="scan'208";a="15754318"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 22:55:17 -0700
-X-CSE-ConnectionGUID: KTBMe29zTS+0c4w5wkmLoQ==
-X-CSE-MsgGUID: xc3VgJ2pQMe1HxnSw9hpOg==
+   d="scan'208";a="11793745"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 22:55:37 -0700
+X-CSE-ConnectionGUID: P5KtU3vyTj62DIkhrBvbbg==
+X-CSE-MsgGUID: mRpI8vHgScSrDtXBQNQ8pw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,163,1712646000"; 
-   d="scan'208";a="31306965"
-Received: from unknown (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 22:55:10 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Yuanchu Xie <yuanchu@google.com>
-Cc: David Hildenbrand <david@redhat.com>,  "Aneesh Kumar K.V"
- <aneesh.kumar@linux.ibm.com>,  Khalid Aziz <khalid.aziz@oracle.com>,
-  Henry Huang <henry.hj@antgroup.com>,  Yu Zhao <yuzhao@google.com>,  Dan
- Williams <dan.j.williams@intel.com>,  Gregory Price
- <gregory.price@memverge.com>,  Kalesh Singh <kaleshsingh@google.com>,  Wei
- Xu <weixugc@google.com>,  David Rientjes <rientjes@google.com>,  Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>,  "Rafael J. Wysocki"
- <rafael@kernel.org>,  Andrew Morton <akpm@linux-foundation.org>,  Johannes
- Weiner <hannes@cmpxchg.org>,  Michal Hocko <mhocko@kernel.org>,  Roman
- Gushchin <roman.gushchin@linux.dev>,  Muchun Song <muchun.song@linux.dev>,
-  Shuah Khan <shuah@kernel.org>,  Yosry Ahmed <yosryahmed@google.com>,
-  Matthew Wilcox <willy@infradead.org>,  Sudarshan Rajagopalan
- <quic_sudaraja@quicinc.com>,  Kairui Song <kasong@tencent.com>,  "Michael
- S. Tsirkin" <mst@redhat.com>,  Vasily Averin <vasily.averin@linux.dev>,
-  Nhat Pham <nphamcs@gmail.com>,  Miaohe Lin <linmiaohe@huawei.com>,  Qi
- Zheng <zhengqi.arch@bytedance.com>,  Abel Wu <wuyun.abel@bytedance.com>,
-  "Vishal Moola (Oracle)" <vishal.moola@gmail.com>,  Kefeng Wang
- <wangkefeng.wang@huawei.com>,  linux-kernel@vger.kernel.org,
-  linux-mm@kvack.org,  cgroups@vger.kernel.org,
-  linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v1 0/7] mm: workingset reporting
-In-Reply-To: <20240504073011.4000534-1-yuanchu@google.com> (Yuanchu Xie's
-	message of "Sat, 4 May 2024 00:30:04 -0700")
-References: <20240504073011.4000534-1-yuanchu@google.com>
-Date: Thu, 16 May 2024 13:53:17 +0800
-Message-ID: <87v83eb8vm.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+   d="scan'208";a="31434644"
+Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 15 May 2024 22:55:33 -0700
+Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s7U5S-000Dgt-0P;
+	Thu, 16 May 2024 05:55:30 +0000
+Date: Thu, 16 May 2024 13:55:02 +0800
+From: kernel test robot <lkp@intel.com>
+To: Maxime Ripard <mripard@kernel.org>, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+	Brian Starkey <Brian.Starkey@arm.com>,
+	John Stultz <jstultz@google.com>,
+	"T.J. Mercier" <tjmercier@google.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Mattijs Korpershoek <mkorpershoek@baylibre.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org, Maxime Ripard <mripard@kernel.org>
+Subject: Re: [PATCH 7/8] dma-buf: heaps: cma: Handle ECC flags
+Message-ID: <202405161341.XBePS2s0-lkp@intel.com>
+References: <20240515-dma-buf-ecc-heap-v1-7-54cbbd049511@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240515-dma-buf-ecc-heap-v1-7-54cbbd049511@kernel.org>
 
-Hi, Yuanchu,
+Hi Maxime,
 
-Yuanchu Xie <yuanchu@google.com> writes:
+kernel test robot noticed the following build warnings:
 
-> Changes from RFC v3 -> PATCH v1:
-> - Updated selftest to use ksft_print_msg instead of fprintf(stderr, ...)
->   (Muhammad Usama Anjum)
-> - Included more detail in patch skipping pmd_young with force_scan
->   (Huang, Ying)
-> - Deferred reaccess histogram as a followup
-> - Removed per-memcg page age interval configs for simplicity
->
-> Changes from RFC v2 -> RFC v3:
-> - Update to v6.8
-> - Added an aging kernel thread (gated behind config)
-> - Added basic selftests for sysfs interface files
-> - Track swapped out pages for reaccesses
-> - Refactoring and cleanup
-> - Dropped the virtio-balloon extension to make things manageable
->
-> Changes from RFC v1 -> RFC v2:
-> - Refactored the patchs into smaller pieces
-> - Renamed interfaces and functions from wss to wsr (Working Set Reporting)
-> - Fixed build errors when CONFIG_WSR is not set
-> - Changed working_set_num_bins to u8 for virtio-balloon
-> - Added support for per-NUMA node reporting for virtio-balloon
->
-> [rfc v1]
-> https://lore.kernel.org/linux-mm/20230509185419.1088297-1-yuanchu@google.com/
-> [rfc v2]
-> https://lore.kernel.org/linux-mm/20230621180454.973862-1-yuanchu@google.com/
-> [rfc v3]
-> https://lore.kernel.org/linux-mm/20240327213108.2384666-1-yuanchu@google.com/
->
-> This patch series provides workingset reporting of user pages in
-> lruvecs, of which coldness can be tracked by accessed bits and fd
-> references. However, the concept of workingset applies generically to
-> all types of memory, which could be kernel slab caches, discardable
-> userspace caches (databases), or CXL.mem. Therefore, data sources might
-> come from slab shrinkers, device drivers, or the userspace. IMO, the
-> kernel should provide a set of workingset interfaces that should be
-> generic enough to accommodate the various use cases, and be extensible
-> to potential future use cases. The current proposed interfaces are not
-> sufficient in that regard, but I would like to start somewhere, solicit
-> feedback, and iterate.
->
-> Use cases
-> ==========
-> Job scheduling
-> On overcommitted hosts, workingset information allows the job scheduler
-> to right-size each job and land more jobs on the same host or NUMA node,
-> and in the case of a job with increasing workingset, policy decisions
-> can be made to migrate other jobs off the host/NUMA node, or oom-kill
-> the misbehaving job. If the job shape is very different from the machine
-> shape, knowing the workingset per-node can also help inform page
-> allocation policies.
->
-> Proactive reclaim
-> Workingset information allows the a container manager to proactively
-> reclaim memory while not impacting a job's performance. While PSI may
-> provide a reactive measure of when a proactive reclaim has reclaimed too
-> much, workingset reporting allows the policy to be more accurate and
-> flexible.
->
-> Ballooning (similar to proactive reclaim)
-> While this patch series does not extend the virtio-balloon device,
-> balloon policies benefit from workingset to more precisely determine
-> the size of the memory balloon. On desktops/laptops/mobile devices where
-> memory is scarce and overcommitted, the balloon sizing in multiple VMs
-> running on the same device can be orchestrated with workingset reports
-> from each one.
->
-> Promotion/Demotion
-> Similar to proactive reclaim, a workingset report enables demotion to a
-> slower tier of memory.
-> For promotion, the workingset report interfaces need to be extended to
-> report hotness and gather hotness information from the devices[1].
->
-> [1]
-> https://www.opencompute.org/documents/ocp-cms-hotness-tracking-requirements-white-paper-pdf-1
+[auto build test WARNING on a38297e3fb012ddfa7ce0321a7e5a8daeb1872b6]
 
-This mechanism can also provide a way to control the pages ping-pong
-caused by promotion and demotion.  If different methods are used for
-promotion and demotion, some pages may be migrated between the fast and
-slow memory back and forth.  Because there's no connection between
-promotion side and demotion side.  For example, if we use NUMA balancing
-based promotion and MGLRU based demotion.
+url:    https://github.com/intel-lab-lkp/linux/commits/Maxime-Ripard/dma-buf-heaps-Introduce-a-new-heap-for-reserved-memory/20240515-215850
+base:   a38297e3fb012ddfa7ce0321a7e5a8daeb1872b6
+patch link:    https://lore.kernel.org/r/20240515-dma-buf-ecc-heap-v1-7-54cbbd049511%40kernel.org
+patch subject: [PATCH 7/8] dma-buf: heaps: cma: Handle ECC flags
+config: mips-allmodconfig (https://download.01.org/0day-ci/archive/20240516/202405161341.XBePS2s0-lkp@intel.com/config)
+compiler: mips-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240516/202405161341.XBePS2s0-lkp@intel.com/reproduce)
 
-If we use workingset reporting on the fast memory nodes, then we can
-establish the connection between demotion and promotion with it.  For
-example, the promotion hot pages threshold (determined as accessed every
-N seconds) should be set to make 80% of the fast memory pages pass the
-threshold.  This can be calculated with the workingset reporting
-statistics.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405161341.XBePS2s0-lkp@intel.com/
 
-> Sysfs and Cgroup Interfaces
-> ==========
-> The interfaces are detailed in the patches that introduce them. The main
-> idea here is we break down the workingset per-node per-memcg into time
-> intervals (ms), e.g.
->
-> 1000 anon=137368 file=24530
-> 20000 anon=34342 file=0
-> 30000 anon=353232 file=333608
-> 40000 anon=407198 file=206052
-> 9223372036854775807 anon=4925624 file=892892
->
-> I realize this does not generalize well to hotness information, but I
-> lack the intuition for an abstraction that presents hotness in a useful
-> way. Please advise.
->
-> Implementation
-> ==========
-> Currently, the reporting of user pages is based off of MGLRU, and
-> therefore requires CONFIG_LRU_GEN=y. We would benefit from more MGLRU
-> generations for a more fine-grained workingset report. I will make the
-> generation count configurable in the next version. The workingset
-> reporting mechanism is gated behind CONFIG_WORKINGSET_REPORT, and the
-> aging thread is behind CONFIG_WORKINGSET_REPORT_AGING.
->
-> Yuanchu Xie (7):
->   mm: multi-gen LRU: ignore non-leaf pmd_young for force_scan=true
->   mm: aggregate working set information into histograms
->   mm: use refresh interval to rate-limit workingset report aggregation
->   mm: report workingset during memory pressure driven scanning
->   mm: extend working set reporting to memcgs
->   mm: add kernel aging thread for workingset reporting
->   selftest: test system-wide workingset reporting
->
->  drivers/base/node.c                           |   6 +
->  include/linux/memcontrol.h                    |   5 +
->  include/linux/mmzone.h                        |   9 +
->  include/linux/workingset_report.h             |  97 ++++
->  mm/Kconfig                                    |  15 +
->  mm/Makefile                                   |   2 +
->  mm/internal.h                                 |  17 +
->  mm/memcontrol.c                               | 184 +++++-
->  mm/mm_init.c                                  |   2 +
->  mm/mmzone.c                                   |   2 +
->  mm/vmscan.c                                   |  85 ++-
->  mm/workingset_report.c                        | 545 ++++++++++++++++++
->  mm/workingset_report_aging.c                  | 127 ++++
->  tools/testing/selftests/mm/.gitignore         |   1 +
->  tools/testing/selftests/mm/Makefile           |   3 +
->  .../testing/selftests/mm/workingset_report.c  | 317 ++++++++++
->  .../testing/selftests/mm/workingset_report.h  |  39 ++
->  .../selftests/mm/workingset_report_test.c     | 332 +++++++++++
->  18 files changed, 1786 insertions(+), 2 deletions(-)
->  create mode 100644 include/linux/workingset_report.h
->  create mode 100644 mm/workingset_report.c
->  create mode 100644 mm/workingset_report_aging.c
->  create mode 100644 tools/testing/selftests/mm/workingset_report.c
->  create mode 100644 tools/testing/selftests/mm/workingset_report.h
->  create mode 100644 tools/testing/selftests/mm/workingset_report_test.c
+All warnings (new ones prefixed by >>):
 
---
-Best Regards,
-Huang, Ying
+   drivers/dma-buf/heaps/cma_heap.c: In function 'cma_heap_allocate':
+>> drivers/dma-buf/heaps/cma_heap.c:293:24: warning: returning 'int' from a function with return type 'struct dma_buf *' makes pointer from integer without a cast [-Wint-conversion]
+     293 |                 return -EINVAL;
+         |                        ^
+   drivers/dma-buf/heaps/cma_heap.c:296:24: warning: returning 'int' from a function with return type 'struct dma_buf *' makes pointer from integer without a cast [-Wint-conversion]
+     296 |                 return -EINVAL;
+         |                        ^
+   drivers/dma-buf/heaps/cma_heap.c: In function '__add_cma_heap':
+   drivers/dma-buf/heaps/cma_heap.c:386:13: error: implicit declaration of function 'of_memory_get_ecc_correction_bits' [-Werror=implicit-function-declaration]
+     386 |         if (of_memory_get_ecc_correction_bits() > 0)
+         |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   cc1: some warnings being treated as errors
+
+
+vim +293 drivers/dma-buf/heaps/cma_heap.c
+
+   275	
+   276	static struct dma_buf *cma_heap_allocate(struct dma_heap *heap,
+   277						 unsigned long len,
+   278						 unsigned long fd_flags,
+   279						 unsigned long heap_flags)
+   280	{
+   281		struct cma_heap *cma_heap = dma_heap_get_drvdata(heap);
+   282		struct cma_heap_buffer *buffer;
+   283		DEFINE_DMA_BUF_EXPORT_INFO(exp_info);
+   284		size_t size = PAGE_ALIGN(len);
+   285		pgoff_t pagecount = size >> PAGE_SHIFT;
+   286		unsigned long align = get_order(size);
+   287		struct page *cma_pages;
+   288		struct dma_buf *dmabuf;
+   289		int ret = -ENOMEM;
+   290		pgoff_t pg;
+   291	
+   292		if (!cma_heap->ecc_enabled && (heap_flags & DMA_HEAP_FLAG_ECC_PROTECTED))
+ > 293			return -EINVAL;
+   294	
+   295		if (cma_heap->ecc_enabled && (heap_flags & DMA_HEAP_FLAG_ECC_UNPROTECTED))
+   296			return -EINVAL;
+   297	
+   298		buffer = kzalloc(sizeof(*buffer), GFP_KERNEL);
+   299		if (!buffer)
+   300			return ERR_PTR(-ENOMEM);
+   301	
+   302		INIT_LIST_HEAD(&buffer->attachments);
+   303		mutex_init(&buffer->lock);
+   304		buffer->len = size;
+   305	
+   306		if (align > CONFIG_CMA_ALIGNMENT)
+   307			align = CONFIG_CMA_ALIGNMENT;
+   308	
+   309		cma_pages = cma_alloc(cma_heap->cma, pagecount, align, false);
+   310		if (!cma_pages)
+   311			goto free_buffer;
+   312	
+   313		/* Clear the cma pages */
+   314		if (PageHighMem(cma_pages)) {
+   315			unsigned long nr_clear_pages = pagecount;
+   316			struct page *page = cma_pages;
+   317	
+   318			while (nr_clear_pages > 0) {
+   319				void *vaddr = kmap_atomic(page);
+   320	
+   321				memset(vaddr, 0, PAGE_SIZE);
+   322				kunmap_atomic(vaddr);
+   323				/*
+   324				 * Avoid wasting time zeroing memory if the process
+   325				 * has been killed by by SIGKILL
+   326				 */
+   327				if (fatal_signal_pending(current))
+   328					goto free_cma;
+   329				page++;
+   330				nr_clear_pages--;
+   331			}
+   332		} else {
+   333			memset(page_address(cma_pages), 0, size);
+   334		}
+   335	
+   336		buffer->pages = kmalloc_array(pagecount, sizeof(*buffer->pages), GFP_KERNEL);
+   337		if (!buffer->pages) {
+   338			ret = -ENOMEM;
+   339			goto free_cma;
+   340		}
+   341	
+   342		for (pg = 0; pg < pagecount; pg++)
+   343			buffer->pages[pg] = &cma_pages[pg];
+   344	
+   345		buffer->cma_pages = cma_pages;
+   346		buffer->heap = cma_heap;
+   347		buffer->pagecount = pagecount;
+   348	
+   349		/* create the dmabuf */
+   350		exp_info.exp_name = dma_heap_get_name(heap);
+   351		exp_info.ops = &cma_heap_buf_ops;
+   352		exp_info.size = buffer->len;
+   353		exp_info.flags = fd_flags;
+   354		exp_info.priv = buffer;
+   355		dmabuf = dma_buf_export(&exp_info);
+   356		if (IS_ERR(dmabuf)) {
+   357			ret = PTR_ERR(dmabuf);
+   358			goto free_pages;
+   359		}
+   360		return dmabuf;
+   361	
+   362	free_pages:
+   363		kfree(buffer->pages);
+   364	free_cma:
+   365		cma_release(cma_heap->cma, cma_pages, pagecount);
+   366	free_buffer:
+   367		kfree(buffer);
+   368	
+   369		return ERR_PTR(ret);
+   370	}
+   371	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
