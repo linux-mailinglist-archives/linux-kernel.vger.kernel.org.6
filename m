@@ -1,117 +1,118 @@
-Return-Path: <linux-kernel+bounces-180688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E43798C71CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 09:03:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 191FB8C71D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 09:09:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 067481C20FB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 07:03:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A79B1C20F9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 07:09:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F5D92C1B6;
-	Thu, 16 May 2024 07:03:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iZc1Srpw"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7871F29D08;
+	Thu, 16 May 2024 07:09:08 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CCF425570;
-	Thu, 16 May 2024 07:03:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8526625760
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 07:09:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715843005; cv=none; b=lZ8RjKc7OJ+V/G6HIRA0GWnhSSeAraKfOR4JBd4Gm6BVUUsuPe8yijxuj52BOTa0RIaMKlQ5hYy7KHHbSuIZYlm7agAiY7kALYhd7RYG0ti4cfyuzUwP57J8PyLRjhr6VbKK1R52OClRq5YCz93oF0LqQb7W+qPeoCzTqrmZTXE=
+	t=1715843348; cv=none; b=p9LFv5B02I7NHBhVfp93At4NSJGS4nLAhaCRcJ0T6nKXIewqpxHXfj//AKIwUJD0xWJkWM/i6nOSlr3bY28Sj2V/ts1VubJyeiUeQkzyZY8K7QkI8L8FpwRE7sVwyflqnzwt8rEAQSQC+jFCAyJFw+j9k+BfRZYPnhxJYYyPaK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715843005; c=relaxed/simple;
-	bh=+/dHCk2+/e+u3IYcLkP466CAIjDYqJ2ulQ+tRU+hsBg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N6Ff6EMqaOqYPhgt2u+M2MWalOApXJ/Hf2GSnqgxZDS9OBVPAFoLM21LCF2FiQBivj6XLwxHFyOiMMgAJh5SZT8dWor0ReIPGAibUt48aRcfRJ2MrsbFpNNP3SFuO1xLSv6QIQVgONyFENgJf8WTyPkcSJxbcrKFBU4AHXwxw5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iZc1Srpw; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715843003; x=1747379003;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=+/dHCk2+/e+u3IYcLkP466CAIjDYqJ2ulQ+tRU+hsBg=;
-  b=iZc1SrpwfsHdNiGtiG2C/VNleWdNA+HoDjmDz1flBjSZUpWgp+9s0pZG
-   1M/u6StUBLEgRpI090T6c8QkdTNT53l57wFBb6bMw83HvRf0P/OX+44Tj
-   YO1gigUzJV2OcfIrkagF7ba5Lpf8lBl7XmI2FvGMs4BxqZ5aNbXv8ULpz
-   TwSZ4pvWGL/7He/K+QytmgoO/DtziChspC/934bQXIGiwVs2BGwXr+s6y
-   JLrAmaOR51yvue4oTRK7OPSRY7gnU4AF8r9dM9Lqa6JPhTzRDIofsCa6p
-   FTK0BZHg4HO3GsgfnJVhDHwoJFyycUQlfWDAnrSGIzu4v4AoDqCwlzlcr
-   w==;
-X-CSE-ConnectionGUID: 5DgPWDYAQG25iPmfm8yqbQ==
-X-CSE-MsgGUID: uK2MH+//RYevo679ocMAfQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="29430511"
-X-IronPort-AV: E=Sophos;i="6.08,163,1712646000"; 
-   d="scan'208";a="29430511"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 00:03:23 -0700
-X-CSE-ConnectionGUID: 0ELDhARxTkWZf9KkB3h9LQ==
-X-CSE-MsgGUID: uKCOrT1lTpqHz4ociGgnSQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,163,1712646000"; 
-   d="scan'208";a="62163266"
-Received: from josephjo-mobl1.amr.corp.intel.com (HELO desk) ([10.212.146.49])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 00:03:23 -0700
-Date: Thu, 16 May 2024 00:03:15 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Kalle Valo <kvalo@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>, x86@kernel.org,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	regressions@lists.linux.dev,
-	Jeff Johnson <quic_jjohnson@quicinc.com>,
-	Daniel Sneddon <daniel.sneddon@linux.intel.com>
-Subject: Re: [regression] suspend stress test stalls within 30 minutes
-Message-ID: <20240516070315.swz2golcrfp3uvfd@desk>
-References: <20240511184847.GCZj-9j2sh1Akpt9iS@fat_crate.local>
- <20240511184945.GDZj-9yaOEWqf1ng8u@fat_crate.local>
- <87h6f4jdrq.fsf@kernel.org>
- <878r0djxgc.fsf@kernel.org>
- <874jb0jzx5.fsf@kernel.org>
- <feaefaae-e25b-4a48-b6be-e20054f2c8df@intel.com>
- <20240515072231.z3wlyoblyc34ldmr@desk>
- <529C9374-DA6F-49C8-9B32-91741800F8E4@alien8.de>
- <20240515162747.6shmaoelc4mt7nro@desk>
- <878r0bhvjq.fsf@kernel.org>
+	s=arc-20240116; t=1715843348; c=relaxed/simple;
+	bh=f3MDXizVpz5AMps7xWG2L7B0OhEHYRetsA5RWxit9fg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=clpdvJLojMWEm+NYaN65FqkZA/UVPv6vbkeCDHLxqAwH4IJXA9Tn5LSan0r8sFBesmYtBAa95Qn87QuLhpLVvi0mB6LMvH1nehYtELmGVTkyo5g21UF7MtMO07yZC35r2vsA3It5FPlUzrkLwOqSudVjozAkopvcy3uSmIuOJUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1s7VEV-0006C4-R4; Thu, 16 May 2024 09:08:55 +0200
+Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ore@pengutronix.de>)
+	id 1s7VET-001fTT-No; Thu, 16 May 2024 09:08:53 +0200
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1s7VET-008CG3-21;
+	Thu, 16 May 2024 09:08:53 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: "David S. Miller" <davem@davemloft.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Eric Dumazet <edumazet@google.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	Woojung Huh <woojung.huh@microchip.com>,
+	Arun Ramadoss <arun.ramadoss@microchip.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	UNGLinuxDriver@microchip.com,
+	David Ahern <dsahern@kernel.org>,
+	Simon Horman <horms@kernel.org>,
+	Willem de Bruijn <willemb@google.com>,
+	=?UTF-8?q?S=C3=B8ren=20Andersen?= <san@skov.dk>
+Subject: [PATCH net v1 1/1] net: dsa: microchip: Correct initialization order for KSZ88x3 ports
+Date: Thu, 16 May 2024 09:08:52 +0200
+Message-Id: <20240516070852.1953381-1-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <878r0bhvjq.fsf@kernel.org>
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Wed, May 15, 2024 at 07:47:05PM +0300, Kalle Valo wrote:
-> Pawan Gupta <pawan.kumar.gupta@linux.intel.com> writes:
-> 
-> > On Wed, May 15, 2024 at 09:44:42AM +0200, Borislav Petkov wrote:
-> >> On May 15, 2024 9:22:31 AM GMT+02:00, Pawan Gupta <pawan.kumar.gupta@linux.intel.com> wrote:
-> >> > Other interesting thing to try is cmdline
-> >> >"dis_ucode_ldr".
-> >> 
-> >> Right, is his microcode revision 0xf4 the right one for that model?
-> >
-> > 0xf4 microcode is not the latest one, the latest is 0xf8:
-> >
-> > https://github.com/intel/Intel-Linux-Processor-Microcode-Data-Files/blob/main/intel-ucode/06-9e-09
-> >
-> > Kalle, can you please try with 0xf8 and see if the issue is still present?
-> 
-> I can't test right now but I'll try to find time later this week, I will
-> also reply to other emails then.
+Adjust the initialization sequence of KSZ88x3 switches to enable
+802.1p priority control on Port 2 before configuring Port 1. This
+change ensures the apptrust functionality on Port 1 operates
+correctly, as it depends on the priority settings of Port 2. The
+prior initialization sequence incorrectly configured Port 1 first,
+which could lead to functional discrepancies.
 
-After switching to a different machine (same model/stepping as yours) I am
-able to boot with the config you shared. Also changed the microcode to 0xf4
-so as to match your setup. I am running the suspend test now and will
-update in the morning if I could reproduce the hang.
+Fixes: a1ea57710c9d ("net: dsa: microchip: dcb: add special handling for KSZ88X3 family")
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+---
+ drivers/net/dsa/microchip/ksz_dcb.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/drivers/net/dsa/microchip/ksz_dcb.c b/drivers/net/dsa/microchip/ksz_dcb.c
+index a971063275629..19b228b849247 100644
+--- a/drivers/net/dsa/microchip/ksz_dcb.c
++++ b/drivers/net/dsa/microchip/ksz_dcb.c
+@@ -805,5 +805,18 @@ int ksz_dcb_init(struct ksz_device *dev)
+ 	if (ret)
+ 		return ret;
+ 
++	/* Enable 802.1p priority control on Port 2 during switch initialization.
++	 * This setup is critical for the apptrust functionality on Port 1, which
++	 * relies on the priority settings of Port 2. Note: Port 1 is naturally
++	 * configured before Port 2, necessitating this configuration order.
++	 */
++	if (ksz_is_ksz88x3(dev)) {
++		ret = ksz_prmw8(dev, KSZ_PORT_2, KSZ8_REG_PORT_1_CTRL_0,
++				KSZ8_PORT_802_1P_ENABLE,
++				KSZ8_PORT_802_1P_ENABLE);
++		if (ret)
++			return ret;
++	}
++
+ 	return 0;
+ }
+-- 
+2.39.2
+
 
