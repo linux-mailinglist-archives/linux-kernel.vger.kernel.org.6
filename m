@@ -1,96 +1,101 @@
-Return-Path: <linux-kernel+bounces-181158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFF368C784E
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:13:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 062898C7851
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:14:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75887B20A76
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:12:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 003E2280ECF
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:14:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4989E14A097;
-	Thu, 16 May 2024 14:12:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E51C014A097;
+	Thu, 16 May 2024 14:14:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="ysihGnLM"
-Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="iau85TuQ"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 176D9147C6E;
-	Thu, 16 May 2024 14:12:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43EFB147C6E;
+	Thu, 16 May 2024 14:14:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715868769; cv=none; b=mLeBH0hgBotHZdYugUJgqFKDlBbnqw5hAEzijRbAIDj34iSl5X1mETs5YEik4KKl2sw+20TnHfnTOAvCfG6W6cj5+UI19jEKnN55pKqXmPLikCSs/xJmrgZ+4GjbYe2V3Kdlbnduqgy83sziETIrukz5ZDf9Tac5nxcRpkMIyKc=
+	t=1715868846; cv=none; b=YYs/V5fjMNNnUvBl+bLglSLkSLgo83Vo15ZVKNx9uIaW1LAKDvvDJlunM+G4uKTd4WuRr5Nn9xgCn4Pxp3UjAYB/ymaj0HD6EMxbyfSrIO+45lpsGjsri/Sj+3es1z/b78HxH1nv/3Oo8Lf3WLb1uEITKYmea6Ij0muqNY4luV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715868769; c=relaxed/simple;
-	bh=Ojt3pjOCn0RbAGr2ayZl+L4kVqTQUmhctn6BUkSoUu4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p2Obrdufw4FQPNQ5pCygVfqV+qCGLuVqW2ajznwJOLJhoO/Y2lZKzYlbP2P491sII/wy82/MisisIm0hA0g5rMidFawcvurk4ZgV+0U1wTgxgoWqqpRiOaCIOcBeFPPByhb3d55jdjM6GGgFKZoIZ/7mqyMUwxs7z4T+VnFaf+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=ysihGnLM; arc=none smtp.client-ip=199.89.1.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4VgBrH40hfzlgMVL;
-	Thu, 16 May 2024 14:12:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1715868765; x=1718460766; bh=4E23K/E1QtmA+PPs5r5aUQ3M
-	7ln8vX71SiSe+oC10Aw=; b=ysihGnLMHCZn4B8wPShxfqEh5u2/Yst5fJGFhv2P
-	2bbvQP3k9dzEweOFFpeLMM2lngies39mnX59UG8TD7GQbqybHj27ORpMUJ5H0FZ7
-	3cACq2Y4Z/Yu5bnzXRJxqQVX+gJ7vJCqkOyc/HeSyNYGW6uUmP+ZWEHO1JClen2e
-	EUPYVp0U7xJIbN1220UwK9JIpQVK44kld9Ve1q63pSdpFuztiJsUia8ebJrsinWW
-	zNVOLz5X/R9HcPuuba95sOJIB4pjz4EXAvDfYMDbsYd5Vxn6TcKIHcRprLSpnjeR
-	+vDsYOVpmlJUUX3D5OwIAL0nNzz8s4qwDGdtTQGA+7KqgQ==
-X-Virus-Scanned: by MailRoute
-Received: from 009.lax.mailroute.net ([127.0.0.1])
- by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id u_wCCydG-Q_S; Thu, 16 May 2024 14:12:45 +0000 (UTC)
-Received: from [172.20.0.79] (unknown [8.9.45.205])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4VgBrD723vzlgT1K;
-	Thu, 16 May 2024 14:12:44 +0000 (UTC)
-Message-ID: <e6a5c633-7de5-44bf-af1a-ead577d079e6@acm.org>
-Date: Thu, 16 May 2024 08:12:39 -0600
+	s=arc-20240116; t=1715868846; c=relaxed/simple;
+	bh=DljRi1gAVLhNjMhkBNML4Mys92kIb7fRsmAUlbeVYeI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bm8WzyIP56aif0YLpV+A54K7lJtmiks5EhwV7gZ5GJxRTqxLMCBXpyzHBreW/SZKnZMalkFxjRsKerphenKTKrQyFTSSJzD6bCh8JREsx5EOX3A0ZJfsgf4crIQ5xAQlLCLEBRgeE9HXRdr8wgpuLcL6kI+ZhmDR1eclITlAdBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=iau85TuQ; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=srq/5gaQL99coY1BQJnPkM6P8FfTUHHR+hVB7Lf6F+M=; b=iau85TuQEkJez5Yl3zhXy2V6Cg
+	yFX5SZvFaO+fP924k3+pywvz67iHXYoT2e+58jXEMk4aB5F2A+U3Dgat/crReZ53l4ZYfN1YXtFw4
+	YHVyw3r+SSli9XzIohJI9knG7Z/0cop7BaY34DHbb3pYNeVFmCtwaz415hcw3grKvryI=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1s7bra-00FW3d-Qz; Thu, 16 May 2024 16:13:42 +0200
+Date: Thu, 16 May 2024 16:13:42 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Thorsten Blum <thorsten.blum@toblux.com>
+Cc: Nicolas Pitre <nico@fluxnic.net>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Arnd Bergmann <arnd@arndb.de>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH] net: smc91x: Fix pointer types
+Message-ID: <b15d7689-0385-4d9c-b5e0-afc525ac9578@lunn.ch>
+References: <20240516121142.181934-3-thorsten.blum@toblux.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/3] scsi: ufs: Allow platform vendors to set rtt
-To: Avri Altman <avri.altman@wdc.com>,
- "Martin K . Petersen" <martin.petersen@oracle.com>
-Cc: Bean Huo <beanhuo@micron.com>, Peter Wang <peter.wang@mediatek.com>,
- linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240516055124.24490-1-avri.altman@wdc.com>
- <20240516055124.24490-3-avri.altman@wdc.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20240516055124.24490-3-avri.altman@wdc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240516121142.181934-3-thorsten.blum@toblux.com>
 
-On 5/15/24 23:51, Avri Altman wrote:
-> Allow platform vendors to take precedence having their own rtt
-> negotiation mechanism.  This makes sense because the host controller's
-> nortt characteristic may defer among vendors.
+> -#define SMC_PUSH_DATA(lp, p, l)					\
+> +#define SMC_PUSH_DATA(lp, p, l)						\
+>  	do {								\
+> -		if (SMC_32BIT(lp)) {				\
+> +		void __iomem *__ioaddr = ioaddr;			\
 
-defer -> vary?
+ioaddr is not a parameter passed to this macro. 
 
-> +	void	(*rtt_set)(struct ufs_hba *hba, u8 *desc_buf);
+> +		if (SMC_32BIT(lp)) {					\
+>  			void *__ptr = (p);				\
+>  			int __len = (l);				\
+> -			void __iomem *__ioaddr = ioaddr;		\
+>  			if (__len >= 2 && (unsigned long)__ptr & 2) {	\
+>  				__len -= 2;				\
+> -				SMC_outsw(ioaddr, DATA_REG(lp), __ptr, 1); \
+> +				SMC_outsw(__ioaddr, DATA_REG(lp), __ptr, 1); \
 
-Please change "rtt_set" into "set_rtt" such that the word order matches
-the regular word order in the English language.
+You probably should use lp->base here, which is passed into this
+macro, and should have the correct type.
 
-Thanks,
+> @@ -1072,7 +1072,7 @@ static const char * chip_ids[ 16 ] =  {
+>  				 */					\
+>  				__ptr -= 2;				\
+>  				__len += 2;				\
+> -				SMC_SET_PTR(lp,			\
+> +				SMC_SET_PTR(lp,				\
+>  					2|PTR_READ|PTR_RCV|PTR_AUTOINC); \
+>  			}						\
+>  			if (SMC_CAN_USE_DATACS && lp->datacs)		\
 
-Bart.
+This is just a whitespace change. Please put that into a different
+patch.
 
+	Andrew
 
