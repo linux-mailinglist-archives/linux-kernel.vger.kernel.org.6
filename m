@@ -1,332 +1,182 @@
-Return-Path: <linux-kernel+bounces-180850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 999C78C73E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 11:35:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 390F78C73ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 11:36:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24DD41F244E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 09:35:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5510E1C23625
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 09:36:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69FE1144D1C;
-	Thu, 16 May 2024 09:34:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73F81143756;
+	Thu, 16 May 2024 09:36:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="SaPIrMQM"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2074.outbound.protection.outlook.com [40.107.220.74])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NFZblfy3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63D0A1448CB;
-	Thu, 16 May 2024 09:34:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.74
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715852053; cv=fail; b=K/Qz5nm8bgdyzqZLy1srqmj3g5i0ixaOgmww+2Nb2kQGJKUYKkBVeXTw3xrQz3GAVICaqHjNFO69XoA7L/6DAnT/9IYjUVbOr6wLLrNL3Ie4Tpk89SsIexN63Z/Xke8dmCGYQi0C9dk4BkTFjvCvlLnU2HvrfZGZ2oKrXI7iSL8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715852053; c=relaxed/simple;
-	bh=pjH7lWhaoZTYGCJLu4w4YutR368Fcgi2rLFlDTMQre0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=V83VfpuBPfOn38ppVPsuak+99shlfyKt2e1QVgFtqMff/VpnCgLNtsiq84S9qhRVm0bx46aHMVclMBS9YyvFUO1HbbQJA9aFGz1JglPqOdt1tyIx1urvkc5iQTSrJwkeEwuHFBQIkE23lckdm0lM3RC0kcwHHLb+eXuhTtdSag8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=SaPIrMQM; arc=fail smtp.client-ip=40.107.220.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=g/EoogB7lqyb5eufieMMHUG+TN0P4wcnDGGmDGmNRLJ832bEhLrEduXS/AzkQ76pjOv9OVIC4joQm+mqMwI4820nelgcpdIxTAdqOsiKE1dIZ1pq7FPbDCFO/QvCcwEMRMt8WF/cbbWfBi2eB0sh4L9JM98UXLJSugs/4djOvEVXq1thhrQq89x9o7rFWCIewowTkfbjIpIyiKuqA1B3c8UwsvchqWUnGB1Kq58AplE/GRdeQvayo3rzXZuOZ0jENdakVVhO5FUAAbMJ7HkaVAHn2K1wfPZv987BD6JaM7D9XG0rhZvb4V2f/s2L+iNq0iMKqIUUgz8FPctbuYMCBQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nO8KbzV9Wlyu53SmuLGW5u9WmmJdo64UTJ1CpsyrUy0=;
- b=FSqcbDE/910NBEqSjzIRx8M195uveL2vkdiLq3/Ltc+BbCpJRQxKxLyCDp0JRkLcQI8ivZz5gow9bCrzIGPc7amHQ7ORXO5tmFYRfGV+T7sOPVzVAoqenr67WwerwTyLLEUY6TUtGsSKWkzHvNnkkwOc6/HZQfBQkroov4JQ13ejiBIFtwUeo9FTaoWxcrTQPfrBdBz4cFp7Ql4O477oBN6UuzM0Vt0ybT9H86GfdBoCD/ks7MRDX0CZRYLeIY1m1ZPJ141sSUigfYjoQwjeGC8NsfyYaVMwOzYhc8dvzA+rhTAAOuepWjDLjt3S7Y4c2HHKLEoD7SdyinVDZoy+Gw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nO8KbzV9Wlyu53SmuLGW5u9WmmJdo64UTJ1CpsyrUy0=;
- b=SaPIrMQMhGRiJnzWNI5TKYQjj4z5TjIPy739z9mx/RAfi+00+T4i/I++pJMt+44piVk7j+CGh4lrmRMqVzlv0GDNjqpQ2mCyxR3W2EnwDI6OKjsHXGELzi5qNXbeob7tu22nPU9rm+9Wsip5A98WsbOIvLdR3B9LefM5Kt5o+yc=
-Received: from BL0PR1501CA0003.namprd15.prod.outlook.com
- (2603:10b6:207:17::16) by CH3PR12MB8880.namprd12.prod.outlook.com
- (2603:10b6:610:17b::18) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.26; Thu, 16 May
- 2024 09:34:07 +0000
-Received: from BL6PEPF00022571.namprd02.prod.outlook.com
- (2603:10b6:207:17:cafe::a0) by BL0PR1501CA0003.outlook.office365.com
- (2603:10b6:207:17::16) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.28 via Frontend
- Transport; Thu, 16 May 2024 09:34:06 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- BL6PEPF00022571.mail.protection.outlook.com (10.167.249.39) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7587.21 via Frontend Transport; Thu, 16 May 2024 09:34:06 +0000
-Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Thu, 16 May
- 2024 04:34:06 -0500
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB06.amd.com
- (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Thu, 16 May
- 2024 04:34:06 -0500
-Received: from sriov-ubuntu2204.amd.com (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Thu, 16 May 2024 04:34:04 -0500
-From: Lianjie Shi <Lianjie.Shi@amd.com>
-To: <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Bjorn Helgaas
-	<bhelgaas@google.com>
-CC: Lianjie Shi <Lianjie.Shi@amd.com>
-Subject: [PATCH 1/1] PCI: Support VF resizable BAR
-Date: Thu, 16 May 2024 17:33:34 +0800
-Message-ID: <20240516093334.2266599-2-Lianjie.Shi@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240516093334.2266599-1-Lianjie.Shi@amd.com>
-References: <20240516093334.2266599-1-Lianjie.Shi@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 049014206C
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 09:36:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715852169; cv=none; b=BwB2HgKkvJguS0ipfSGHueheFfdiTpbx+iVjwdecWom2qclDHjinuLZkSl23oc44yUSMw7oVlS9YUOEsr1utEpvjtQr29VNBUaGJrm+Jf2DF0dAmkY51ql69UsjDw+aiWmocd8QaqdA/fiUhUcCsP4FFa1Fqc0oE8JKbTExUp08=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715852169; c=relaxed/simple;
+	bh=uCfkLZC4W23IMhkNSt5UjZZOZ8zoEycyPFMgOcCJxr0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aqAKrK2dTLo7vs8kO+suyWPAENA3HodzXunTQwWy9SGOsWJ0E5alsCd+JUefXHDF8K3fDMXbCVaaMzCrgEvFYkqaCymF1cXnR1Anwg13M1rIDqpbEHTFfJPhAm7ssLGpqDY/TTFIuevxrd2DthFsJND7sTrLC2R58N8BE/1wY3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NFZblfy3; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715852166;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9UByR8P9Oho2soPbcOv2VtbjmixfuIwy3VhsBVqvGng=;
+	b=NFZblfy3xW+/05G+9hMuP8Cdjzo8SeNPw43FWvnTNs9gqa/mB8wnLHly1UMXB+suDQO/TB
+	GTTxIDJLX3kiJC/D2VaLBIVQpWJ3iatAhn9bFj96cxwnlTTPMVPGRqd/mOD8v/jYhFwwOU
+	PlT3GIvGFuqbCCH+YQKGhjyDs1Olpd4=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-671-GgKswWIXM-OD4SoPgGOvQA-1; Thu, 16 May 2024 05:35:56 -0400
+X-MC-Unique: GgKswWIXM-OD4SoPgGOvQA-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 10F98857A83;
+	Thu, 16 May 2024 09:35:56 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.2])
+	by smtp.corp.redhat.com (Postfix) with SMTP id 02C76100046D;
+	Thu, 16 May 2024 09:35:53 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Thu, 16 May 2024 11:34:30 +0200 (CEST)
+Date: Thu, 16 May 2024 11:34:27 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Andrei Vagin <avagin@google.com>
+Cc: Kees Cook <keescook@chromium.org>,
+	Tycho Andersen <tandersen@netflix.com>,
+	Andy Lutomirski <luto@amacapital.net>,
+	Will Drewry <wad@chromium.org>, Jens Axboe <axboe@kernel.dk>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] seccomp: release task filters when the task exits
+Message-ID: <20240516093427.GA19105@redhat.com>
+References: <20240514175551.297237-1-avagin@google.com>
+ <20240514175551.297237-3-avagin@google.com>
+ <20240515125113.GC6821@redhat.com>
+ <CAEWA0a5dBvRwGAnztL56i=JV-WGGiaTd-GdJYdOxZmq1c+bdpg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL6PEPF00022571:EE_|CH3PR12MB8880:EE_
-X-MS-Office365-Filtering-Correlation-Id: a254521c-275d-45e2-7dc7-08dc758b550f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|36860700004|82310400017|1800799015|376005;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?aev7Fyd08S0gsFynG2oF38SzrrNZko9Gcu5Rb9htfyv8euQ2yvmYng/IPdPj?=
- =?us-ascii?Q?cdKpU0n6f0nzxk5QVv7fr8Ty18Z7rgnBGka8I/2tcuhBwN1Yhp6dpCOSW7sJ?=
- =?us-ascii?Q?ULl+vMQXbqs8L1nWUaDHLpq9Tiqrz8VndbjcgnlnfrH6RcdvY5N8gFITe5QU?=
- =?us-ascii?Q?NnvobrMMjCNchMmnpI5dO+T+XULcP6hUdYOPLqr799u+8tPjEDKDm8fyZh8t?=
- =?us-ascii?Q?sZloc23agrqWQIOJwJOXYyX2FDTR41rgVXnPcMmTJEbDpug+cxantkC9GPN1?=
- =?us-ascii?Q?u79j5UCVUGT+EzGEhDN8cjWLTeOJYHK8f9g4aCSeTKy0iE/fPXYErM22RhRp?=
- =?us-ascii?Q?TE22lJCG3YCh/GIhpFv9bcqGDNr7YhzuXGTT2xdr9ldLCPUVe1QINrfEIp1c?=
- =?us-ascii?Q?0t8Jh56x+/edC0S0GNgQMe2uHKmh8eICgFOIqMnuHuosiBmpTCW5KtyJhOOt?=
- =?us-ascii?Q?R/UQDy87TstAt2mwf8cKm3d20jJ365VTYWiqGn//KZqmzTy3f+xLA+BDgIbL?=
- =?us-ascii?Q?ofeNtsV3ZZpdzhFJ78KyMkQAL1729u5k33Nt3aSV6M+bGfwiMSDvLZIh4VHc?=
- =?us-ascii?Q?jH7Xx4bsipp5S6oM7g0OIQYeRz8JJzxloQ3NvUdX3dAg+QdGg1LL70miqm5F?=
- =?us-ascii?Q?HCSq7jbw68oaFxhQOHipfBCCE9N9nPAmz/RWrTvD6Fa61z67lAYLYizsMuyN?=
- =?us-ascii?Q?95MQEF76zJVI/5aBSgIFvQGaCrlhtqJ97HNbwxBrbN42WeiARuiO9un2iwLC?=
- =?us-ascii?Q?vwXDRpGUlSqogddFgZx/E90aj//LbAlnxc3F7bi+Kz8rvUvBRyyzC5DbXtjo?=
- =?us-ascii?Q?sdOsA8urTI7BcOUqTYwY4L7w8QiexW4Se3cs+m3wRsfQG9EW6f91cNE5Jpx/?=
- =?us-ascii?Q?aoGMVY64DSt2P7ZsJma+0U1xI9A12+11BwhG8XQiKORtaC3LpUh4jqB4yHTQ?=
- =?us-ascii?Q?UEeLPPOLpX6zUig/dWbxXQoVza9qxFq2SwJRp7aF8M2kU1TpoaGOSNSYaG5A?=
- =?us-ascii?Q?toSYAJlk6mCLrsN6fxtGQQibhed+/Tv4x2A2zMTSm8IX7pmEcDBmbdsIub/o?=
- =?us-ascii?Q?W1pzTuRy3C/vTMJivtmI2b+HUX1LCsIzu52j3EHz0FzoARwgV70eETvqxx/i?=
- =?us-ascii?Q?cmfL553NsboAEZ9YDPZGy307oKfKZiOt0cyJBEAOYMAENU9bvTCG7OsTZ44N?=
- =?us-ascii?Q?PoOGcAlQKbw3H9MLCvlFhgczDGkgAFuhfTttoh/CLTrx7lm2TEw/XZ4K6qCq?=
- =?us-ascii?Q?74WkpfBN7wXsLXniViGst3tuhqQonC+GPN8zt6YUUBKiw4sIDtIQKmv3bDxN?=
- =?us-ascii?Q?74xiXx9kxIB9AG0sS5AoYNci?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(36860700004)(82310400017)(1800799015)(376005);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 May 2024 09:34:06.7281
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a254521c-275d-45e2-7dc7-08dc758b550f
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL6PEPF00022571.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8880
+In-Reply-To: <CAEWA0a5dBvRwGAnztL56i=JV-WGGiaTd-GdJYdOxZmq1c+bdpg@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.3
 
-Add support for VF resizable BAR PCI extended cap.
-Similar to regular BAR, drivers can use pci_resize_resource() to
-resize an IOV BAR. For each VF, dev->sriov->barsz of the IOV BAR is
-resized, but the total resource size of the IOV resource should not
-exceed its original size upon init.
+(add lkml)
 
-Based on following patch series:
-Link: https://lore.kernel.org/lkml/YbqGplTKl5i%2F1%2FkY@rocinante/T/
+On 05/15, Andrei Vagin wrote:
+>
+> On Wed, May 15, 2024 at 5:52 AM Oleg Nesterov <oleg@redhat.com> wrote:
+> >
+> > Let me repeat I forgot everything about seccomp, but let me ask
+> > a couple of questions...
+>
+> It seems you still remember something:). Thank you for the feedback.
 
-Signed-off-by: Lianjie Shi <Lianjie.Shi@amd.com>
----
- drivers/pci/pci.c             | 44 +++++++++++++++++++++++++++++++++-
- drivers/pci/setup-res.c       | 45 +++++++++++++++++++++++++++++------
- include/uapi/linux/pci_regs.h |  1 +
- 3 files changed, 82 insertions(+), 8 deletions(-)
+Just I am still remember how to use grep ;)
 
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index e5f243dd4..bb9a2f322 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -1867,6 +1867,39 @@ static void pci_restore_rebar_state(struct pci_dev *pdev)
- 	}
- }
- 
-+static void pci_restore_vf_rebar_state(struct pci_dev *pdev)
-+{
-+#ifdef CONFIG_PCI_IOV
-+	unsigned int pos, nbars, i;
-+	u32 ctrl;
-+	u16 total;
-+
-+	pos = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_VF_REBAR);
-+	if (!pos)
-+		return;
-+
-+	pci_read_config_dword(pdev, pos + PCI_REBAR_CTRL, &ctrl);
-+	nbars = FIELD_GET(PCI_REBAR_CTRL_NBAR_MASK, ctrl);
-+
-+	for (i = 0; i < nbars; i++, pos += 8) {
-+		struct resource *res;
-+		int bar_idx, size;
-+
-+		pci_read_config_dword(pdev, pos + PCI_REBAR_CTRL, &ctrl);
-+		bar_idx = ctrl & PCI_REBAR_CTRL_BAR_IDX;
-+		total = pdev->sriov->total_VFs;
-+		if (!total)
-+			return;
-+
-+		res = pdev->resource + bar_idx + PCI_IOV_RESOURCES;
-+		size = pci_rebar_bytes_to_size(resource_size(res) / total);
-+		ctrl &= ~PCI_REBAR_CTRL_BAR_SIZE;
-+		ctrl |= FIELD_PREP(PCI_REBAR_CTRL_BAR_SIZE, size);
-+		pci_write_config_dword(pdev, pos + PCI_REBAR_CTRL, ctrl);
-+	}
-+#endif
-+}
-+
- /**
-  * pci_restore_state - Restore the saved state of a PCI device
-  * @dev: PCI device that we're dealing with
-@@ -1882,6 +1915,7 @@ void pci_restore_state(struct pci_dev *dev)
- 	pci_restore_ats_state(dev);
- 	pci_restore_vc_state(dev);
- 	pci_restore_rebar_state(dev);
-+	pci_restore_vf_rebar_state(dev);
- 	pci_restore_dpc_state(dev);
- 	pci_restore_ptm_state(dev);
- 
-@@ -3677,10 +3711,18 @@ void pci_acs_init(struct pci_dev *dev)
-  */
- static int pci_rebar_find_pos(struct pci_dev *pdev, int bar)
- {
-+	int cap = PCI_EXT_CAP_ID_REBAR;
- 	unsigned int pos, nbars, i;
- 	u32 ctrl;
- 
--	pos = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_REBAR);
-+#ifdef CONFIG_PCI_IOV
-+	if (bar >= PCI_IOV_RESOURCES) {
-+		cap = PCI_EXT_CAP_ID_VF_REBAR;
-+		bar -= PCI_IOV_RESOURCES;
-+	}
-+#endif
-+
-+	pos = pci_find_ext_capability(pdev, cap);
- 	if (!pos)
- 		return -ENOTSUPP;
- 
-diff --git a/drivers/pci/setup-res.c b/drivers/pci/setup-res.c
-index c6d933ddf..d978a2ccf 100644
---- a/drivers/pci/setup-res.c
-+++ b/drivers/pci/setup-res.c
-@@ -427,13 +427,32 @@ void pci_release_resource(struct pci_dev *dev, int resno)
- }
- EXPORT_SYMBOL(pci_release_resource);
- 
-+static int pci_memory_decoding(struct pci_dev *dev, int resno)
-+{
-+	u16 cmd;
-+
-+#ifdef CONFIG_PCI_IOV
-+	if (resno >= PCI_IOV_RESOURCES) {
-+		pci_read_config_word(dev, dev->sriov->pos + PCI_SRIOV_CTRL, &cmd);
-+		if (cmd & PCI_SRIOV_CTRL_MSE)
-+			return -EBUSY;
-+		else
-+			return 0;
-+	}
-+#endif
-+	pci_read_config_word(dev, PCI_COMMAND, &cmd);
-+	if (cmd & PCI_COMMAND_MEMORY)
-+		return -EBUSY;
-+
-+	return 0;
-+}
-+
- int pci_resize_resource(struct pci_dev *dev, int resno, int size)
- {
- 	struct resource *res = dev->resource + resno;
- 	struct pci_host_bridge *host;
- 	int old, ret;
- 	u32 sizes;
--	u16 cmd;
- 
- 	/* Check if we must preserve the firmware's resource assignment */
- 	host = pci_find_host_bridge(dev->bus);
-@@ -444,9 +463,9 @@ int pci_resize_resource(struct pci_dev *dev, int resno, int size)
- 	if (!(res->flags & IORESOURCE_UNSET))
- 		return -EBUSY;
- 
--	pci_read_config_word(dev, PCI_COMMAND, &cmd);
--	if (cmd & PCI_COMMAND_MEMORY)
--		return -EBUSY;
-+	ret = pci_memory_decoding(dev, resno);
-+	if (ret)
-+		return ret;
- 
- 	sizes = pci_rebar_get_possible_sizes(dev, resno);
- 	if (!sizes)
-@@ -463,19 +482,31 @@ int pci_resize_resource(struct pci_dev *dev, int resno, int size)
- 	if (ret)
- 		return ret;
- 
--	res->end = res->start + pci_rebar_size_to_bytes(size) - 1;
-+#ifdef CONFIG_PCI_IOV
-+	if (resno >= PCI_IOV_RESOURCES)
-+		dev->sriov->barsz[resno - PCI_IOV_RESOURCES] = pci_rebar_size_to_bytes(size);
-+	else
-+#endif
-+		res->end = res->start + pci_rebar_size_to_bytes(size) - 1;
- 
- 	/* Check if the new config works by trying to assign everything. */
- 	if (dev->bus->self) {
- 		ret = pci_reassign_bridge_resources(dev->bus->self, res->flags);
--		if (ret)
-+		if (ret && ret != -ENOENT)
- 			goto error_resize;
- 	}
- 	return 0;
- 
- error_resize:
- 	pci_rebar_set_size(dev, resno, old);
--	res->end = res->start + pci_rebar_size_to_bytes(old) - 1;
-+
-+#ifdef CONFIG_PCI_IOV
-+	if (resno >= PCI_IOV_RESOURCES)
-+		dev->sriov->barsz[resno - PCI_IOV_RESOURCES] = pci_rebar_size_to_bytes(old);
-+	else
-+#endif
-+		res->end = res->start + pci_rebar_size_to_bytes(old) - 1;
-+
- 	return ret;
- }
- EXPORT_SYMBOL(pci_resize_resource);
-diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
-index a39193213..a66b90982 100644
---- a/include/uapi/linux/pci_regs.h
-+++ b/include/uapi/linux/pci_regs.h
-@@ -738,6 +738,7 @@
- #define PCI_EXT_CAP_ID_L1SS	0x1E	/* L1 PM Substates */
- #define PCI_EXT_CAP_ID_PTM	0x1F	/* Precision Time Measurement */
- #define PCI_EXT_CAP_ID_DVSEC	0x23	/* Designated Vendor-Specific */
-+#define PCI_EXT_CAP_ID_VF_REBAR	0x24	/* VF Resizable BAR */
- #define PCI_EXT_CAP_ID_DLF	0x25	/* Data Link Feature */
- #define PCI_EXT_CAP_ID_PL_16GT	0x26	/* Physical Layer 16.0 GT/s */
- #define PCI_EXT_CAP_ID_PL_32GT  0x2A    /* Physical Layer 32.0 GT/s */
--- 
-2.34.1
+> > > @@ -2126,6 +2137,11 @@ static struct seccomp_filter *get_nth_filter(struct task_struct *task,
+> > >        */
+> > >       spin_lock_irq(&task->sighand->siglock);
+> > >
+> > > +     if (task->flags & PF_EXITING) {
+> > > +             spin_unlock_irq(&task->sighand->siglock);
+> > > +             return ERR_PTR(-EINVAL);
+> > > +     }
+> >
+> > Why do we need the PF_EXITING check here?
+> >
+> > This looks unnecessary even if get_nth_filter() could race with the
+> > exiting task, but this doesn't matter.
+> >
+> > This race is not possible, get_nth_filter() is only called from ptrace()
+> > paths, but the tracee can't stop in TASK_TRACED after exit_signals() which
+> > sets PF_EXITING.
+>
+> If we rely on using seccomp_get_filter only from ptrace, you are right.
+
+Plus it too does __get_seccomp_filter/__get_seccomp_filter, so I guess it
+should be safe without this check even if it could be used outside of ptrace.
+Just like proc_pid_seccomp_cache(), see below.
+
+> > > @@ -2494,6 +2510,11 @@ int proc_pid_seccomp_cache(struct seq_file *m, struct pid_namespace *ns,
+> > >       if (!lock_task_sighand(task, &flags))
+> > >               return -ESRCH;
+> > >
+> > > +     if (thread->flags & PF_EXITING) {
+> > > +             unlock_task_sighand(task, &flags);
+> > > +             return 0;
+> >
+> > Again, do we really need this check?
+> >
+> > It can race with the exiting task and (without this check) do
+> > __get_seccomp_filter(f) right before seccomp_filter_release()
+> > takes sighand->siglock. But why is it bad?
+>
+> I think you are right, this check isn't required.
+>
+> >
+> > OTOH. I guess proc_pid_seccomp_cache() is the only reason why
+> > seccomp_filter_release() takes ->siglock with your patch?
+>
+> seccomp_sync_threads and seccomp_can_sync_threads should be considered too.
+
+Yes. But we only need to consider them in the multi-thread case, right?
+In this case exit_signals() sets PF_EXITING under ->siglock, so they can't
+miss this flag, seccomp_filter_release() doesn't need to take siglock.
+
+> If we check PF_EXITING in all of them, we don't need to take ->siglock in
+> seccomp_filter_release. Does it sound right?
+
+The problem is a single-threaded exiting task. In this case exit_signals()
+sets PF_EXITING lockless. This means that in this case
+
+	- proc_pid_seccomp_cache() can't rely on the PF_EXITING check
+	  but it can be safely removed.
+
+	- seccomp_filter_release() needs to take ->siglock to avoid the
+	  race with proc_pid_seccomp_cache().
+
+And this chunk from your patch
+
+	 static void __seccomp_filter_orphan(struct seccomp_filter *orig)
+	 {
+	+       lockdep_assert_held(&current->sighand->siglock);
+	+
+
+looks unnecessary too, seccomp_filter_release() can just do
+
+	spin_lock_irq(siglock);
+	orig = tsk->seccomp.filter;
+	tsk->seccomp.filter = NULL;
+	spin_unlock_irq(siglock);
+
+	__seccomp_filter_release(orig);
+
+Right?
+
+Oleg.
 
 
