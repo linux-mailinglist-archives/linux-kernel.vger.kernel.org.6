@@ -1,133 +1,123 @@
-Return-Path: <linux-kernel+bounces-180796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 429898C7346
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:52:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EE848C731C
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:45:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9C2D1F22B5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 08:52:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DCA52B22DC8
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 08:45:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36F84142E98;
-	Thu, 16 May 2024 08:52:18 +0000 (UTC)
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8FB5142E88;
+	Thu, 16 May 2024 08:45:30 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC8A42D054;
-	Thu, 16 May 2024 08:52:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 912E437142
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 08:45:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715849537; cv=none; b=qsLhu7XDXfKpV4d3tnEzSE8OcgTFN/NG4iz4Ex26DH0yrCN3s8yUsFyshRIpQ7PQaDp++viW1SYDtMeNZKkBs2DKllT1uJN3Gt/4q11EBEXS2xVJxb1YXZXV6p1dPoo1Wd+U5P+7gxsv1wS146Tm3j7DkhFnTA5TiCHpG70y4nk=
+	t=1715849130; cv=none; b=hzCimQSF1Lgofyt4GkKoOUyNEY+DvmQtTCwR5sSRXLZ6XRTNP+YuhR0kTY94YP5PjOEdmQyveykYcVFezp402q7cJ0nXRrpXYQp6f5jKy5r0FkBRAKOfBSRHc+YBbUXMx0OGAU0GyHztjePcJ0cMDpwr+02E1lQKOdRNRHC1AbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715849537; c=relaxed/simple;
-	bh=EPyGLyG+K4E+o1cu+2hycPZHn68duC90xuBVoJXjJzY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fLxgNd+XMo0ElFr2SV8gcvrYDP8UHNVrfQWy+mHFT2xe1XWVaTXX5Zaq6OpRO2EmBrGAuKpDSO33d76NRfIRlS6SphqwcnyJw4DT7Ovus6+Nh/4m3sc9gYQqySfJX4fgA6alDHj5BBDeqEs7Q6KERgd5ADsO29+sS1pBIhH6u9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4Vg3LZ40zSz9v7Hm;
-	Thu, 16 May 2024 16:35:02 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 37875140628;
-	Thu, 16 May 2024 16:52:04 +0800 (CST)
-Received: from [10.221.98.131] (unknown [10.221.98.131])
-	by APP1 (Coremail) with SMTP id LxC2BwCnmhMqyUVmGfBGCA--.55916S2;
-	Thu, 16 May 2024 09:52:03 +0100 (CET)
-Message-ID: <a9bf972c-b5ee-f1c2-36bf-30ba62f419d7@huaweicloud.com>
-Date: Thu, 16 May 2024 10:44:05 +0200
+	s=arc-20240116; t=1715849130; c=relaxed/simple;
+	bh=7aYx2NAHJSdm6UY/JfxSDGIF/gJzItywug9/e9fWLng=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=dz7xbDpU//s7if2M5ZHa72oTGjpbqaQjkQSaz280r2V7u74HG4REVyN9B8eMOcaD5IePz/IUPjghrfuh0omhL55IgrAtyLCe9WLPApMUHN+Y2iOirlNB4ZcCG69qTIsSWvQRDjLuxgwKYBTgU9dUF0DaceebvAW7ZIPbHYhQ5Vw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Vg3VN5cTSzxNgp;
+	Thu, 16 May 2024 16:41:48 +0800 (CST)
+Received: from canpemm500002.china.huawei.com (unknown [7.192.104.244])
+	by mail.maildlp.com (Postfix) with ESMTPS id 8E42D1800C7;
+	Thu, 16 May 2024 16:45:23 +0800 (CST)
+Received: from [10.173.135.154] (10.173.135.154) by
+ canpemm500002.china.huawei.com (7.192.104.244) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Thu, 16 May 2024 16:45:23 +0800
+Subject: Re: [PATCH v2] mm/huge_memory: don't unpoison huge_zero_folio
+To: Oscar Salvador <osalvador@suse.de>, David Hildenbrand <david@redhat.com>
+CC: <akpm@linux-foundation.org>, <shy828301@gmail.com>,
+	<nao.horiguchi@gmail.com>, <xuyu@linux.alibaba.com>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20240515023607.870022-1-linmiaohe@huawei.com>
+ <e1c93779-8cde-4986-85d3-2134fb8970b3@redhat.com>
+ <ZkXDS9y_cBSzBzeN@localhost.localdomain>
+From: Miaohe Lin <linmiaohe@huawei.com>
+Message-ID: <fd1b4d3f-be4c-16e2-00d9-8ea6443c68f3@huawei.com>
+Date: Thu, 16 May 2024 16:45:22 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: LKMM: Making RMW barriers explicit
-To: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
- Alan Stern <stern@rowland.harvard.edu>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>, linux-kernel@vger.kernel.org,
- linux-arch@vger.kernel.org, kernel-team@meta.com, parri.andrea@gmail.com,
- boqun.feng@gmail.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
- Joel Fernandes <joel@joelfernandes.org>
-References: <72c804c8-2511-4349-a823-bc1de8bb729e@rowland.harvard.edu>
- <e030f7a4-97e7-4e91-bbae-230ee5c97763@huaweicloud.com>
+In-Reply-To: <ZkXDS9y_cBSzBzeN@localhost.localdomain>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-From: Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>
-In-Reply-To: <e030f7a4-97e7-4e91-bbae-230ee5c97763@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:LxC2BwCnmhMqyUVmGfBGCA--.55916S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7WF4kZw1rJry5JFW3tw17Awb_yoW8ArWfpF
-	sxC3yvkr4DJ393uwnrZr47XryFqan3JrW8Jr93Wws3Aas8KF1xKFs8tayj9FZxXrs7uF42
-	qr1aqas8u3WDZFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r
-	4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
-	AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
-	17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
-	IF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_WFyUJVCq
-	3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
-	nIWIevJa73UjIFyTuYvjfUoOJ5UUUUU
-X-CM-SenderInfo: xkhu0tnqos00pfhgvzhhrqqx5xdzvxpfor3voofrz/
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ canpemm500002.china.huawei.com (7.192.104.244)
 
-On 5/16/2024 10:31 AM, Jonas Oberhauser wrote:
+On 2024/5/16 16:26, Oscar Salvador wrote:
+> On Wed, May 15, 2024 at 05:55:39PM +0200, David Hildenbrand wrote:
+>>> +	if (is_huge_zero_folio(folio)) {
+>>> +		unpoison_pr_info("Unpoison: huge zero page is not supported %#lx\n",
+>>> +				 pfn, &unpoison_rs);
+>>> +		goto unlock_mutex;
+>>> +	}
+>>> +
 > 
+> Sorry for spamming your reply David, but for some unknown reason I am not able
+> to find the original patch in my mailbox, in none of the two accountes I am
+> subscribed, so I guess I will have to reply here.
 > 
-> Am 5/16/2024 um 3:43 AM schrieb Alan Stern:
->> Hernan and Jonas:
->>
->> Can you explain more fully the changes you want to make to herd7 and/or
->> the LKMM?  The goal is to make the memory barriers currently implicit in
->> RMW operations explicit, but I couldn't understand how you propose to do
->> this.
->>
->> Are you going to change herd7 somehow, and if so, how?  It seems like
->> you should want to provide sufficient information so that the .bell
->> and .cat files can implement the appropriate memory barriers associated
->> with each RMW operation.  What additional information is needed?  And
->> how (explained in English, not by quoting source code) will the .bell
->> and .cat files make use of this information?
->>
->> Alan
+> Just two things
 > 
+> 1) We do not care if someone grabs a refcount for huge_zero_folio,
+>    because since it is not supported anyway the outcome will not change.
+>    Also, AFAIK, there is no chance we can unpoison that folio.
+>    Therefore, I would just lift the check two blocks and place it right after
+>    the hw_memory_failure check.
 > 
-> I don't know whether herd7 needs to be changed. Probably, herd7 does the 
-> following:
-> - if a tag called Mb appears on an rmw instruction (by instruction I 
-> mean things like xchg(), atomic_inc_return_relaxed()), replace it with 
-> one of those things:
->    * full mb ; once (the rmw) ; full mb, if a value returning 
-> (successful) rmw
->    * once (the rmw)   otherwise
-> - everything else gets translated 1:1 into some internal representation
-
-This is my understanding from reading the source code of CSem.ml in 
-herd7's repo.
-
-Also, this is exactly what dartagnan is currently doing.
-
+> 2) The whole thing is unsupported, but you will return -EBUSY while you
+>    should be returning -EOPNOTSUPP AFAICS.
 > 
-> What I'm proposing is:
-> 1. remove this transpilation step,
-> 2. and instead allow the Mb tag to actually appear on RMW instructions
-> 3. change the cat file to explicitly define the behavior of the Mb tag 
-> on RMW instructions
 
-These are the exact 3 things I changed in dartagnan for testing what 
-Jonas proposed.
+Thanks for your comment. Do you mean something like below?
 
-I am not sure if further changes are needed for herd7.
+diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+index 16ada4fb02b7..a9fe9eda593f 100644
+--- a/mm/memory-failure.c
++++ b/mm/memory-failure.c
+@@ -2546,6 +2546,13 @@ int unpoison_memory(unsigned long pfn)
+                goto unlock_mutex;
+        }
 
-Hernan
++       if (is_huge_zero_folio(folio)) {
++               unpoison_pr_info("Unpoison: huge zero page is not supported %#lx\n",
++                                pfn, &unpoison_rs);
++               ret = -EOPNOTSUPP;
++               goto unlock_mutex;
++       }
++
+        if (!PageHWPoison(p)) {
+                unpoison_pr_info("Unpoison: Page was already unpoisoned %#lx\n",
+                                 pfn, &unpoison_rs);
+
+Thanks.
+.
+
+> with that you can add:
+> 
+> Reviewed-by: Oscar Salvador <osalvador@suse.de>
+> 
+>  
+> 
 
 
