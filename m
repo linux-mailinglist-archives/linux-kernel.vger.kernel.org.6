@@ -1,94 +1,103 @@
-Return-Path: <linux-kernel+bounces-181126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 672D48C77C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:34:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76B6F8C77CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:36:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04FA9B24025
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 13:34:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BFBF1F222EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 13:36:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB0881474C6;
-	Thu, 16 May 2024 13:34:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFAB41482E4;
+	Thu, 16 May 2024 13:36:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="owcwvjZq"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dNlMIP63"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A51E6143749;
-	Thu, 16 May 2024 13:34:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1A2D145A13;
+	Thu, 16 May 2024 13:36:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715866454; cv=none; b=eVA2DU0Fdxb8cIHcJoPZq8v+jHRM47r1b/msimUrd6JOmbV0NudA3hyGNjaNLR62Z3xf8jo+sh3jUftsXGSwseyVapqSUgoFOv2gUb3YBO205+KduY1p6tzXZpQ25dm8GtvD7yFWFowggmgcdNJDcGH+S1Giza5IByWPsGifeR0=
+	t=1715866573; cv=none; b=gUzcIZ5AX5ZoC9+m/vSNLee4kEqk+0ju4tFRgsQAWKwmt71wfQ5+6UkNCuzZeUhcL6j6O3gbArBVR4ZCGL3YY4qD5iFkzCYaDZA3ke2J0IY5u5nvl6wQAAP6S4cW9P6gXGB5iMaaKjgivFMXGbK4Dh/XZxlqWEszzoPhOButK1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715866454; c=relaxed/simple;
-	bh=JZvIP7fkjlxerYAwRuAF9K+xV359GpVBqaDRbE9116Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t6E+sbJZQDYUlunY5R4LJh5PZcBp+mheq/6euZJpCC914G020Oi5AyK0Aw7jGhSFTkEIEADwc/edN7E6jzdOKFCT/DgFIHEEhiouCv8AA1m9sc6Tjpjsdv2A9r43Gdfs5Nw7cnvt9X1OqvNLxAcOdQsygjfSe0GHCB4uCPGPxfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=owcwvjZq; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=vBlXl//d/RAlmi+HPxPl7U1cJg4Qh2W+C0TMwykXuCM=; b=owcwvjZqnqwfx97a
-	Kg8KkWhv6iQak1OkJCznYE9cXRQagAbfagvCTPVhu0k/xFtifRQCAwTxCzyc0JX3s1VdxwokMcFYD
-	bR3QAAkOnKTkD83BkXnR//hCjUIoUS2WM3XmCZ+jHKUav48YvtUpA+KdopFXTFILylGh3UTqEtQhB
-	j2P0vUMOzlC+SD7C+Hf7mBUFdk+QgklMen5j5FHteWSK6rmx+UVf5aFPKyVfsaRUSoOJO/NzfP7sT
-	fB3Fpl5wi8QwscfO75HM0IA6ml2IqU79PGa1sjMOS6JXIJYGBjNBASAmvO7g4RjBdJndTLj50JrA6
-	MVXxtSIJ6z4v/F0mWg==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1s7bFG-001EoT-0y;
-	Thu, 16 May 2024 13:34:06 +0000
-From: linux@treblig.org
-To: rric@kernel.org,
-	bp@alien8.de,
-	james.morse@arm.com
-Cc: linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] edac: thunderx: remove unused struct 'error_syndrome'
-Date: Thu, 16 May 2024 14:34:04 +0100
-Message-ID: <20240516133404.251397-1-linux@treblig.org>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1715866573; c=relaxed/simple;
+	bh=+X/pJ+cjQTPvyiXa9RlyRxNcuMfpjhyz9k+r/NmP/WY=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=rtAlH9yOLkMMnYH2jO5AstpDVL0HLGqtneCf/jPmDsrUIY5TWKysJ+9RqMN2S3E74YFCnp0sDMZt7y+DX6AbH1CjAKQjxQd04GnTUeCSzKvbKATEM5/nFnxUP1VD1FCbg/JMGQETO4CgEBGPrbb0/yX+kOfYqa0Hu6GSrwrc0rY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dNlMIP63; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34313C113CC;
+	Thu, 16 May 2024 13:36:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715866572;
+	bh=+X/pJ+cjQTPvyiXa9RlyRxNcuMfpjhyz9k+r/NmP/WY=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=dNlMIP63DMon7wdup7/PSlufCpBM3kgmim23PNWd6NN5hxQJ8SEk1godal4HV4LOu
+	 v4v8ECOM+6olmSSSzmjeu0I5ABuCHFHBISDIcUH6ptvx2R6lyLAmBb5QknQej8tHRw
+	 VxDVmPXSZRuoiAaa+15rP9BOwcFfzwob5/7KWhM83/oeean4xO/gksPZD2LYKmp7hd
+	 /mv22xlDcQaKuqTZWkrYtzhu3PrmJcMm0Vf0NEDr+5FZy0QBsai5s0ptdkKDcht2xH
+	 /ceZkDUqvklKuy5QUkE2BpfHwf7mVisucs5zNM8ujHMPvMVF2grFmO3vF+HJqQUcG6
+	 61xV0KeMa+GqA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 16 May 2024 16:36:07 +0300
+Message-Id: <D1B3XN42A6DR.1RSMLZ6R7VRHT@kernel.org>
+Cc: <brauner@kernel.org>, <ebiederm@xmission.com>, "Luis Chamberlain"
+ <mcgrof@kernel.org>, "Kees Cook" <keescook@chromium.org>, "Joel Granados"
+ <j.granados@samsung.com>, "Serge Hallyn" <serge@hallyn.com>, "Paul Moore"
+ <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "David Howells"
+ <dhowells@redhat.com>, <containers@lists.linux.dev>,
+ <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+ <linux-security-module@vger.kernel.org>, <keyrings@vger.kernel.org>
+Subject: Re: [PATCH 0/3] Introduce user namespace capabilities
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Ben Boeckel" <me@benboeckel.net>, "Jonathan Calmels"
+ <jcalmels@3xx0.net>
+X-Mailer: aerc 0.17.0
+References: <20240516092213.6799-1-jcalmels@3xx0.net>
+ <ZkYKgNltq2hlBzbx@farprobe>
+In-Reply-To: <ZkYKgNltq2hlBzbx@farprobe>
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Thu May 16, 2024 at 4:30 PM EEST, Ben Boeckel wrote:
+> On Thu, May 16, 2024 at 02:22:02 -0700, Jonathan Calmels wrote:
+> > Jonathan Calmels (3):
+> >   capabilities: user namespace capabilities
+> >   capabilities: add securebit for strict userns caps
+> >   capabilities: add cap userns sysctl mask
+> >=20
+> >  fs/proc/array.c                 |  9 ++++
+> >  include/linux/cred.h            |  3 ++
+> >  include/linux/securebits.h      |  1 +
+> >  include/linux/user_namespace.h  |  7 +++
+> >  include/uapi/linux/prctl.h      |  7 +++
+> >  include/uapi/linux/securebits.h | 11 ++++-
+> >  kernel/cred.c                   |  3 ++
+> >  kernel/sysctl.c                 | 10 ++++
+> >  kernel/umh.c                    | 16 +++++++
+> >  kernel/user_namespace.c         | 83 ++++++++++++++++++++++++++++++---
+> >  security/commoncap.c            | 59 +++++++++++++++++++++++
+> >  security/keys/process_keys.c    |  3 ++
+> >  12 files changed, 204 insertions(+), 8 deletions(-)
+>
+> I note a lack of any changes to `Documentation/` which seems quite
+> glaring for something with such a userspace visibility aspect to it.
+>
+> --Ben
 
-'error_syndrome' appears never to have been used.
-Remove it, together with the MAX_SYNDROME_REGS it used.
+Yeah, also in cover letter it would be nice to refresh what is
+a bounding set. I had to xref that (recalled what it is), and
+then got bored reading the rest :-)
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- drivers/edac/thunderx_edac.c | 6 ------
- 1 file changed, 6 deletions(-)
+Not exactly in the nutshell cover letter tbh, but maybe the
+content in that would be better put to Documentation/
 
-diff --git a/drivers/edac/thunderx_edac.c b/drivers/edac/thunderx_edac.c
-index fab9891e569a..75c04dfc3962 100644
---- a/drivers/edac/thunderx_edac.c
-+++ b/drivers/edac/thunderx_edac.c
-@@ -35,12 +35,6 @@ enum {
- 	ERR_UNKNOWN	= 3,
- };
- 
--#define MAX_SYNDROME_REGS 4
--
--struct error_syndrome {
--	u64 reg[MAX_SYNDROME_REGS];
--};
--
- struct error_descr {
- 	int	type;
- 	u64	mask;
--- 
-2.45.0
-
+BR, Jarkko
 
