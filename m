@@ -1,134 +1,171 @@
-Return-Path: <linux-kernel+bounces-181544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E415D8C7D76
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 21:49:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 081178C7D79
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 21:52:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E0AD284138
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 19:49:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7F30281531
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 19:52:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CD8A156F55;
-	Thu, 16 May 2024 19:49:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AzHTHcbB"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDB62157480;
+	Thu, 16 May 2024 19:51:54 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9226FD271
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 19:49:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B9ED156F50
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 19:51:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715888991; cv=none; b=S3w3340aytPIvAVHmEu/HGVP+lvYpAhBlnlaODf0fFoyVE1h2yedIC1FswjpYBtFA+4LvpD86DNDz6/7yXv8W/sEp7vLU0BeTFQ+gP7PFtTWDKdcIkt7LY+VHhjczRVXqbRNxrSeO6/f2eLGnLphQDfKoJ/f1mA/USlNPoOl0Kk=
+	t=1715889114; cv=none; b=nxSsTk6V1FeHkSH+x5CZle7EbgoLKMJlETAKDotYlejLl49dScTcDettkqb/hKf2CbWKhicx22QV6DEhbyO4ikW3DVHlZBhO5gyGXgvqzwkOqntfHNdZH+CEUzveKd+tT2xme4gYyzAH9tLuS1HL/T+wiktjvsgVgMm4Ly1C5I8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715888991; c=relaxed/simple;
-	bh=0p374y+uMsMQtR/4CfZqKLd9w2DHJE+tMmkzJ5ltTqc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JvVDCZ1sMV1We3SAcnMXvXdBvuN875RVY02u55B8Ro2mhlvqDbLr508SOrDKv0/I+PBjBXtqpk/oHuaLZjumosMs7HYYOhzcPrsGOCmlN10nnELbb19xRSSk/MModNhv4ciKYrHWuHZhPH7VzX+zRt4McY7Skf2s4ahcSZIPgug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AzHTHcbB; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2b12b52fbe0so453717a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 12:49:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715888990; x=1716493790; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dMYV96lYb81BflDXHkzjhpZxuga4YZNOpQVldb0+fDk=;
-        b=AzHTHcbBGaX1P5izYin9CBw9iMN7dBFf78GnI+96XPI0q7kdkXUphtmuzxEg7+DGT+
-         0AVQbXBNUsoUcCJlg2BeqmeiIQ/GDxydWcnhJ4QXKmxWFG2p7xyXTdgFob3l1wnr6Noh
-         lLjQ4aRXv6JBqfRQ33meiONWEkLrUi1yxoDQOZMOR5+JBMjdaOBBALnj/SI1nT62//As
-         D3ENYj/cv3IQAexdzb57vEKVfkrkyF79jqGfdD6BEausn7S+1IQDtzw5TQroE6SKj/Z4
-         bY4RssWKPS4NIzfJQBe205po5dx+roLBIN2y6BT3PfLPikyYBOk5thenBqo5ZqEDhhKW
-         50Mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715888990; x=1716493790;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dMYV96lYb81BflDXHkzjhpZxuga4YZNOpQVldb0+fDk=;
-        b=OwETnMvRIEMESevqp592pLWTKKk9IEIp1ZjIFk96ADcARKjPwjutBXognduZPc7Bs6
-         PB+8PDqvJ5pZpN7XZKNNHFJaKJ6TU1oiun2VlIsXehXLFjBUrHRuJQvXWxIkgwEUuFF5
-         2bASvjdoB0i5AcDDxet8G4FCM0am9OhQMStnisshoLHzCx30oaqMndb7nY9Y9VeWyhUW
-         Xi1+iEm27uUaa1uRCkdK+Oq+dIupsKthTqI0nartwINAqDfNQR2viPmWMJt5mi0WRfnG
-         n6BuiO6YZjA227hxdwGT4ePO+jemCs/TqFNWGhXnZ4FotpDrEm4oWWyUrQj/dyzq+epL
-         6A1Q==
-X-Gm-Message-State: AOJu0YzatTwjE4I8ZZ+LRRycUdDpVRZs2AP9q297seGHEeCrWx3AM4sm
-	eVNVoz1RbMFD5pSjCITDbNDXMW+jE38EJJkIPF9IyixxgUc6WtvUVAT9OkHqf9NWeBiFmJBX0fr
-	MQDSYnsdb4QI/ZVW5qv97MfA0HUs=
-X-Google-Smtp-Source: AGHT+IHO2r9iV0Nf/KnfJsuujjZdu5xgf0GlYWTa/Z8VQoPXq9yH0ZDUJNDMTE3Cvh901LrugzbFcE7ixusomO+K8Yc=
-X-Received: by 2002:a17:90a:a38c:b0:2ad:fed5:e639 with SMTP id
- 98e67ed59e1d1-2b6cc4502b9mr22341481a91.9.1715888989916; Thu, 16 May 2024
- 12:49:49 -0700 (PDT)
+	s=arc-20240116; t=1715889114; c=relaxed/simple;
+	bh=s0VpWl+ubeSr9Wh6Ks9w3sfKCAJcIdouKzCfod5VvHM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tuBJrbeCWfryIv13jx7Kso+o8lM19z7jxOaB/bdI1OAjH1fzApP9jtPHexW35p5K5GMzdRH2Beoaiv21Dk8gJQW2+zUCxpAyvlcjtdLTh/nTp6KN+Qd2PnCnkm0CnwJp13V6zLFSPkTRktulgY6l1EUaw+vNSjoQ8/piPOgypCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mgr@pengutronix.de>)
+	id 1s7h8V-0004Kf-9Z; Thu, 16 May 2024 21:51:31 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mgr@pengutronix.de>)
+	id 1s7h8T-001lyt-UL; Thu, 16 May 2024 21:51:29 +0200
+Received: from mgr by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mgr@pengutronix.de>)
+	id 1s7h8T-00ExOe-2j;
+	Thu, 16 May 2024 21:51:29 +0200
+Date: Thu, 16 May 2024 21:51:29 +0200
+From: Michael Grzeschik <mgr@pengutronix.de>
+To: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+Cc: Eric Van Hensbergen <ericvh@kernel.org>,
+	Latchesar Ionkov <lucho@ionkov.net>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	v9fs@lists.linux.dev, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	kernel@pengutronix.de
+Subject: Re: [PATCH v4 2/3] net/9p/usbg: Add new usb gadget function transport
+Message-ID: <ZkZjwcd95fYKdm-w@pengutronix.de>
+References: <20240116-ml-topic-u9p-v4-0-722ed28b0ade@pengutronix.de>
+ <20240116-ml-topic-u9p-v4-2-722ed28b0ade@pengutronix.de>
+ <c78c9e88-bd53-4ae5-8f78-d8b1c468a5cd@collabora.com>
+ <Zj3y04btf16BGZAJ@pengutronix.de>
+ <2f36e766-054c-4001-addf-fe388916d858@collabora.com>
+ <ZkZVHoHcdoNF6T2-@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240516115721.1.I8d413e641239c059d018d46cc569048b813a5d9b@changeid>
-In-Reply-To: <20240516115721.1.I8d413e641239c059d018d46cc569048b813a5d9b@changeid>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Thu, 16 May 2024 15:49:38 -0400
-Message-ID: <CADnq5_PGfjJMvER2o+z3niTPjdq8vMuHfzyr7OYC40LNyqkWmQ@mail.gmail.com>
-Subject: Re: [PATCH] drm/amdgpu: Remove GC HW IP 9.3.0 from noretry=1
-To: Tim Van Patten <timvp@chromium.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, alexander.deucher@amd.com, 
-	prathyushi.nangia@amd.com, Tim Van Patten <timvp@google.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>, 
-	Felix Kuehling <Felix.Kuehling@amd.com>, Ikshwaku Chauhan <ikshwaku.chauhan@amd.com>, Le Ma <le.ma@amd.com>, 
-	Lijo Lazar <lijo.lazar@amd.com>, Mario Limonciello <mario.limonciello@amd.com>, 
-	"Pan, Xinhui" <Xinhui.Pan@amd.com>, "Shaoyun.liu" <Shaoyun.liu@amd.com>, 
-	Shiwu Zhang <shiwu.zhang@amd.com>, Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>, 
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="JjFffksc5WuBgX2B"
+Content-Disposition: inline
+In-Reply-To: <ZkZVHoHcdoNF6T2-@pengutronix.de>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mgr@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+
+
+--JjFffksc5WuBgX2B
+Content-Type: text/plain; charset=iso-8859-15; format=flowed
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Applied.  Thanks!
+On Thu, May 16, 2024 at 08:49:02PM +0200, Michael Grzeschik wrote:
+>Hi
+>
+>On Fri, May 10, 2024 at 04:11:27PM +0200, Andrzej Pietrasiewicz wrote:
+>>W dniu 10.05.2024 o=A012:11, Michael Grzeschik pisze:
+>>>On Fri, May 10, 2024 at 11:25:47AM +0200, Andrzej Pietrasiewicz wrote:
+>>>>Hi Michael,
+>>>>
+>>>>W dniu 30.04.2024 o=A001:33, Michael Grzeschik pisze:
+>>>>>Add the new gadget function for 9pfs transport. This function is
+>>>>>defining an simple 9pfs transport interface that consists of one in and
+>>>>>one out endpoint. The endpoints transmit and receive the 9pfs protocol
+>>>>>payload when mounting a 9p filesystem over usb.
+>>>>>
+>>>>>Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
+>>>>>
+>>>>>---
+>>>>>v3 -> v4:
+>>>>>=A0 - implemented conn_cancel
+>>>>
+>>>>I tried this scenario:
+>>>>
+>>>>1) run all the components and have 9pfs up and running
+>>>>2) stop the forwarder
+>>>>3) umount -f at the gadget side - this indeed succeeds now in v4
+>>>>4) start the forwarder again
+>>>>5) mount at the gadget side - this hangs.
+>>>>
+>>>>Did this scenario work for you?
+>>>
+>>>I actually tested this exact scenario. So this is
+>>>suprising. I will try this again just to be sure
+>>>that I did send the latest version.
+>>>
+>>>My latest testsetup included the dummy_hcd. Did you test on real hardwar=
+e?
+>>
+>>Yes, I did.
+>
+>I just also tested this again on real hardware. With the imx6 chipidea
+>udc I indeed see that this is stuck after the first round of mount and
+>remount. With the musb core on the beaglebone this seems to be fine.
+>
+>While debugging this I also ran into some shutdown issues and lockdep
+>issues I see because the complete handler is possible to be resumed
+>immedeatly on musb, which is odd. However I fixed/fix them and send an
+>v5 afterwards.
+>
+>Regarding the hang on the imx6, which hardware did you test this on?
 
-Alex
+Nevermind. I can also reproduce the hang with the musb.
 
-On Thu, May 16, 2024 at 3:46=E2=80=AFPM Tim Van Patten <timvp@chromium.org>=
- wrote:
->
-> From: Tim Van Patten <timvp@google.com>
->
-> The following commit updated gmc->noretry from 0 to 1 for GC HW IP
-> 9.3.0:
->
->     commit 5f3854f1f4e2 ("drm/amdgpu: add more cases to noretry=3D1")
->
-> This causes the device to hang when a page fault occurs, until the
-> device is rebooted. Instead, revert back to gmc->noretry=3D0 so the devic=
-e
-> is still responsive.
->
-> Fixes: 5f3854f1f4e2 ("drm/amdgpu: add more cases to noretry=3D1")
-> Signed-off-by: Tim Van Patten <timvp@google.com>
-> ---
->
->  drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.c | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.c b/drivers/gpu/drm/am=
-d/amdgpu/amdgpu_gmc.c
-> index be4629cdac049..bff54a20835f1 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.c
-> @@ -876,7 +876,6 @@ void amdgpu_gmc_noretry_set(struct amdgpu_device *ade=
-v)
->         struct amdgpu_gmc *gmc =3D &adev->gmc;
->         uint32_t gc_ver =3D amdgpu_ip_version(adev, GC_HWIP, 0);
->         bool noretry_default =3D (gc_ver =3D=3D IP_VERSION(9, 0, 1) ||
-> -                               gc_ver =3D=3D IP_VERSION(9, 3, 0) ||
->                                 gc_ver =3D=3D IP_VERSION(9, 4, 0) ||
->                                 gc_ver =3D=3D IP_VERSION(9, 4, 1) ||
->                                 gc_ver =3D=3D IP_VERSION(9, 4, 2) ||
-> --
-> 2.45.0.rc1.225.g2a3ae87e7f-goog
->
+Michael
+
+--=20
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+
+--JjFffksc5WuBgX2B
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEElXvEUs6VPX6mDPT8C+njFXoeLGQFAmZGY78ACgkQC+njFXoe
+LGSTWQ//WxyTQBPN02DdbwotbPTfWvYawG2G3/I0tqgV3BX/q6shqvOCiFL5nmDo
+8fkMDfi6+csGacPtPeZBvDUFzfL66laRSO/sdH+ZAKEJK/chv7pufRBUMYdQlz15
+qRaaLvAK1hvuONCjA2bw4WDDaNm/GgUymAogjE9yQlDsj8F6QSt252F3ZQBQKaCM
+uWZy+eUUm83h/rNYkvZqN3oCVbo43HpFXrDKQSAOpPJ+TT32wVBba7HgkYjVNimN
+hSfLDKxAUJdqUfAGToj59eF63rUe+t31iZN1vgk/k3HJXmEP+nvuxes+N2cx8xVH
+2v7cpIEJacspSRuGiAL+fY4xRCXJyAtlQGgllfhKZitrLAUjzDHL9mP4lK7Z7Y5q
+cSGa4006jogsQSSHdQCsVfZyHUqs6ZTgJYVNSeND/ezDiAEowmdR3vq65BaRRSec
+kmkQ2A9kzZmdR/PwlgyrwcP1RbHybgZH0pc9mkDFbPMzGS+XIm0w7ZWF9IX1zN5w
+sKepQa+XzLfvlX0d5JVYROfXBOhEozP0s7pPQqvY/sy8B5qYZADuO5OSnA4eYRdi
+M0gf6Cxj/CFCGuqKCBH5QqIrzOeB54edNFEF5Y5UzFD7T5c09GgvOd3zgaTqPxRy
+MA94+dooEc/8bbHNZZuV7D8UC94YhDwWQmXZfbhNJ4piRYQSjf8=
+=zqmW
+-----END PGP SIGNATURE-----
+
+--JjFffksc5WuBgX2B--
 
