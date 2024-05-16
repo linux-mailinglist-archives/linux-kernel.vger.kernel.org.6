@@ -1,177 +1,156 @@
-Return-Path: <linux-kernel+bounces-180684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 989BD8C71BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 08:55:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F4078C71C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 08:57:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 500A42823CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 06:55:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C194F1C20F00
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 06:57:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E9BA28E11;
-	Thu, 16 May 2024 06:55:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFFE52A8FE;
+	Thu, 16 May 2024 06:57:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NquOSk2n"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="p0LJDtuV"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFBA025778
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 06:55:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 157C618635;
+	Thu, 16 May 2024 06:57:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715842523; cv=none; b=j4sk9cTYYTN6gL3U6NzyiFUB4FwVGDcS0Atm/8dmv3/YfRR5wQVC7P2nqjP7G5ldSWS04SGvEo8sLATYHJcSU1zcPA44+2tpD18uScE7/2bjSSCGwNA/rOXM88z9IXQWq5bNp9Fk3230DBQbLBJlY0S/n9u5izYPrXzcoT9kFXI=
+	t=1715842650; cv=none; b=uGjxvQx0wnUEwHHODsr6QbeCBc08FXbffpuKIcA/GaWYa5MstDRVlg/mjIL+tqYBQ43eoD/1AloqTAETJN43oErfdOM6tfIn1hzAensQ2uBcaH2OLy2YFFmTcbb0wNLlPkX7YxlHwtMmk+62xeSmh8GKhQCa7twlSH4khMRf9mI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715842523; c=relaxed/simple;
-	bh=AvgdCoHfSzIMek2YyD7gcjmptyQmLQh6/OM/iTS71lI=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=mEvy7iHg4bCwbkAIRmmQOp8dll6q1r7d7MLpP9IfSYZo9caBNZBPGlo/OGwr19DRNtt0Dz+UCpP8Ec47TYdycRSEY5FRKJhLtOW7V1LVFJe+hRt7zJ//zROmRsdKLjhpPXWP8m7ksqJEbOk5BMyX7jfMajYfv0tV0A27tTxIhCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NquOSk2n; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4202959b060so3598755e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 23:55:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715842519; x=1716447319; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zApq4EhEn1SkxpN84kRXwF8kImjxLliRj17breW4Is4=;
-        b=NquOSk2nT/1cX6TWm/O4WVUquLLWEv7k2TC8w65nbnWEhA44dAU2wgqlyJqHiMVoNv
-         Me696o9LKp4BfpLFco8ojgdbu6+JInhq96YuWOE+nW6nkEUWUNoXTjktG8giOZDSlFqO
-         ic3ZeWSBUfD7mavVM4yvf8Dcb+RaExBzGiRGQFdQUFr3B7W79aEaucTjmw3uD7I8Pomt
-         VUjwXaIMX/mD8Po/CMTqHZbJlti4aZvdOwbBMhPk+EXCAuxH6jcnJSS63zcyRtyWUQub
-         SGZgc+AOh2ioNZPq/iUVk0IKZl+6OrdNuIlUATmggDzOd8g175s07yOlCxLMJlHorCEo
-         g6xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715842519; x=1716447319;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=zApq4EhEn1SkxpN84kRXwF8kImjxLliRj17breW4Is4=;
-        b=NSqd0ZY0syTWbO8u86phVp9NIb8Aky//zYX/RdGzj3eCROtWHZ3DyU/TePr/iF+N7l
-         qIyn0DFgt8JhmptafYzSgiehsHw612zSwnK/T9ycW6YmQcVSTVQC1YF+ZWsYLf66M/jm
-         UU1wtOJiVlhA9WJcHzZbqZh1hUTS1cqae++Ilzls0CumodpD3BlkHB4wjqMtvoQiMAzg
-         ZPk2KPFrUgPwOqJb+USpLNTU4vf+v8eq/Suk8zS6JR3CQvnQlLt7dbleIhVPAGpEw+Ah
-         YAmDIR3ARyUYAIjp+/6Qw/XoX/JLJrwYFyQwJcl2oc9nnWpQjLdCKyx62jNm5yy53SL5
-         Qpmw==
-X-Forwarded-Encrypted: i=1; AJvYcCVNUnK30/mhbA4FiaM49BcBfrEGXnXkJbthbiFqkO/MAHDjr/2bdKzDd+quqHZ0slHbUD5kA39H2G6mD1n08dio9uEKEv/8Ln7/rIU/
-X-Gm-Message-State: AOJu0YzsFu9tJK2HR1Os5mPx6YyF9Li/ZNZXmg/6s1AQqyd8z13Ha9yw
-	HQIQtN7MLmI4P+jEs4ln+kuw9ef9rSFH17771NA4VFWBlOsfTJ9HAxi6nihd8CA=
-X-Google-Smtp-Source: AGHT+IHmfhzYhswL+q5F4aVR+npRhzdTj2L7dKbOyBQ9wI3xHaXvPRu7CbbM43TEedhU2ph/itihzA==
-X-Received: by 2002:a05:600c:3108:b0:416:536b:683a with SMTP id 5b1f17b1804b1-41fead65000mr120876815e9.32.1715842518928;
-        Wed, 15 May 2024 23:55:18 -0700 (PDT)
-Received: from [10.96.0.27] ([149.14.240.163])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4201916e7c6sm118983755e9.12.2024.05.15.23.55.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 May 2024 23:55:18 -0700 (PDT)
-Message-ID: <7b488473-7fd1-4f4f-8c32-72e84420b478@linaro.org>
-Date: Thu, 16 May 2024 08:55:16 +0200
+	s=arc-20240116; t=1715842650; c=relaxed/simple;
+	bh=6IjZadEQJIHv5tk4TwGJe6gpZ6evHRuOZzcAlcgqyk4=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QY43erfnUZGkQRl6yfqceBu6A2Im+9KcUMZBBUkCryeC3S2ovwyb2/iDd1DYUPp7/PuGE/pwkaJxkAkM/ak8ykwqA/KdmFU8CoVzjhMOAKJaPczeLxlyra+NxsBq+J2m9ItzJnkU0dBs/nel9H7fHRLOxvFmlv/U2CchWsRN710=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=p0LJDtuV; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1715842648; x=1747378648;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=6IjZadEQJIHv5tk4TwGJe6gpZ6evHRuOZzcAlcgqyk4=;
+  b=p0LJDtuVNwwpeiwCLxUHPDE/K/aflfKnpZ3nj9jem7NwYNocUI5ps2Lt
+   1fwScxiXsvfbLZ3bD33YNcC8KlYYFoTTs1j3c7eVlOsUSYzcJXvIENWfa
+   XD3BYh0gtLEhPVjniU3Cp5ac1fn+pVTYrD9Ru3qnlL0ZyrdA1vR6dj4vx
+   yelrdZUPhPXXt82zIMRZcylJ2D8spxsQBT38ddxbSUxwPQsyzRqk3cBMb
+   Y8bakWJUOo+Eg8UrPc//i8YMFnm2b7ngMw2vXjVAWl6AirVNWYrZyWx4z
+   Xq04Eiy7RZ4HnabTckEcsQ565ezL+bG8eZJmeSOi3T5dCO0ayf2E1Z2fn
+   g==;
+X-CSE-ConnectionGUID: muChaTU1T4yrMkfn1JCFOg==
+X-CSE-MsgGUID: OTNc74XwSLi6GypTtBzPMw==
+X-IronPort-AV: E=Sophos;i="6.08,163,1712646000"; 
+   d="asc'?scan'208";a="192313660"
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 15 May 2024 23:57:26 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Wed, 15 May 2024 23:56:56 -0700
+Received: from wendy (10.10.85.11) by chn-vm-ex02.mchp-main.com (10.10.85.144)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
+ Transport; Wed, 15 May 2024 23:56:53 -0700
+Date: Thu, 16 May 2024 07:56:39 +0100
+From: Conor Dooley <conor.dooley@microchip.com>
+To: Kanak Shilledar <kanakshilledar@gmail.com>
+CC: Conor Dooley <conor@kernel.org>, <wahrenst@gmx.net>, Kanak Shilledar
+	<kanakshilledar111@protonmail.com>, Mark Brown <broonie@kernel.org>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
+	<rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Broadcom internal
+ kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	<linux-spi@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-rpi-kernel@lists.infradead.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3] dt-bindings: spi: brcm,bcm2835-spi: convert to
+ dtschema
+Message-ID: <20240516-encourage-bouncing-77e9c14c9887@wendy>
+References: <20240514070051.2959-1-kanakshilledar111@protonmail.com>
+ <20240514-sitting-ritzy-498d35eb5ac8@spud>
+ <CAGLn_=vRDj_A2VpqQ6eT3OX6AgCfesA1KzJh+6djyF6MhAgEvw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [v7 3/7] arm64: defconfig: Enable HIMAX_HX83102 panel
-To: cong yang <yangcong5@huaqin.corp-partner.google.com>,
- Doug Anderson <dianders@chromium.org>
-Cc: sam@ravnborg.org, daniel@ffwll.ch, linus.walleij@linaro.org,
- krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org, conor+dt@kernel.org,
- airlied@gmail.com, dmitry.baryshkov@linaro.org,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, xuxinxiong@huaqin.corp-partner.google.com
-References: <20240515014643.2715010-1-yangcong5@huaqin.corp-partner.google.com>
- <20240515014643.2715010-4-yangcong5@huaqin.corp-partner.google.com>
- <0fcdb0ac-2e4a-44b2-a5d6-a67a1d747df8@linaro.org>
- <CAD=FV=XkBkQUN-93eQDKZcw_66uSeNBBhbiq2hRLcFN+Ck71RQ@mail.gmail.com>
- <CAHwB_N+foZpCjqUy0dJdS2wBbUjHVRQQP0p7S_eTG1Yrh0bgPw@mail.gmail.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <CAHwB_N+foZpCjqUy0dJdS2wBbUjHVRQQP0p7S_eTG1Yrh0bgPw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="0nhWKHEN5fKFMQ8b"
+Content-Disposition: inline
+In-Reply-To: <CAGLn_=vRDj_A2VpqQ6eT3OX6AgCfesA1KzJh+6djyF6MhAgEvw@mail.gmail.com>
 
-On 16/05/2024 08:43, cong yang wrote:
-> Hi:
-> 
-> If it is determined that a separately patch needs to be sent, then I
-> will remove this patch in V8 series?
-> 
-> Doug Anderson <dianders@chromium.org> 于2024年5月16日周四 05:28写道：
-> 
->>
->> Hi,
->>
->> On Wed, May 15, 2024 at 2:16 PM <neil.armstrong@linaro.org> wrote:
->>>
->>> Hi,
->>>
->>> On 15/05/2024 03:46, Cong Yang wrote:
->>>> DRM_PANEL_HIMAX_HX83102 is being split out from DRM_PANEL_BOE_TV101WUM_NL6.
->>>> Since the arm64 defconfig had the BOE panel driver enabled, let's also
->>>> enable the himax driver.
->>>>
->>>> Signed-off-by: Cong Yang <yangcong5@huaqin.corp-partner.google.com>
->>>> Reviewed-by: Douglas Anderson <dianders@chromium.org>
->>>> ---
->>>>    arch/arm64/configs/defconfig | 1 +
->>>>    1 file changed, 1 insertion(+)
->>>>
->>>> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
->>>> index 2c30d617e180..687c86ddaece 100644
->>>> --- a/arch/arm64/configs/defconfig
->>>> +++ b/arch/arm64/configs/defconfig
->>>> @@ -864,6 +864,7 @@ CONFIG_DRM_PANEL_BOE_TV101WUM_NL6=m
->>>>    CONFIG_DRM_PANEL_LVDS=m
->>>>    CONFIG_DRM_PANEL_SIMPLE=m
->>>>    CONFIG_DRM_PANEL_EDP=m
->>>> +CONFIG_DRM_PANEL_HIMAX_HX83102=m
->>>>    CONFIG_DRM_PANEL_ILITEK_ILI9882T=m
->>>>    CONFIG_DRM_PANEL_MANTIX_MLAF057WE51=m
->>>>    CONFIG_DRM_PANEL_RAYDIUM_RM67191=m
->>>
->>> You should probably sent this one separately since only an ARM SoC maintainer
->>> can apply this, probably via the qcom tree.
->>
->> Really? I always kinda figured that this was a bit like MAINTAINERS
->> where it can come through a bunch of different trees. Certainly I've
->> landed changes to it before through the drm-misc tree. If that was
->> wrong then I'll certainly stop doing it, of course.
+--0nhWKHEN5fKFMQ8b
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yeah we usually don't mess with arch specific defconfig from drm tree
+On Thu, May 16, 2024 at 12:00:29PM +0530, Kanak Shilledar wrote:
+> On Tue, May 14, 2024 at 11:44=E2=80=AFPM Conor Dooley <conor@kernel.org> =
+wrote:
+> >
+> > On Tue, May 14, 2024 at 12:30:47PM +0530, Kanak Shilledar wrote:
+> >
+> > > Changes in v3:
+> > > - Updated DCO email address
+> >
+> > I was really hoping you'd tell me why you'd not used the same email
+> > address, rather than just sending another version. My ulterior motive is
+> > that I wrote the section in email-clients.rst saying that protonmail had
+> > WKD issues with kernel.org accounts but apparently proton added a
+> > workaround and have yet to be sent an email that confirmed that the
+> > workaround fixed things. (I'm not sure that the WKD issues ever applied
+> > as there's no GPG key posted for conor+dt@kernel.org, only
+> > conor@kernel.org).
+>=20
+> Oh, I am primarily using protonmail and I am aware that there are some
+> issues with protonmail and kernel.org so for that reason I am sending my
+> patches via @gmail.com address. I was trying out some things with
+> gmail and proton so had changed my signing email address to @gmail.com
+> apart from sending emails I have no motive on using gmail.com account.
+> Also I am adding my protonmail account in the `CC`.
+> Hope this helps.
+> If this is not the intended route then I will change it and stick
+> to one email address.
 
->>
->> -Doug
+I don't care what email you use for stuff, that's your business. I just
+want to know if we can remove the section from the docs that says not to
+use proton. Maybe you could send me an off-list email to
+conor@kernel.org from your proton account, so I can see if it ends up
+getting encrypted? That'd be helpful if you could.
 
+> > The patch is fine IMO though, so
+> > Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+>=20
+> Do I need to roll out another version with this reviewed by flag?
+
+No, Mark should be able to pick that up. There's usually no need to
+resend patches solely pick up tags, that's the maintainer's
+responsibility. If you're resending for any other reason, then yes, pick
+up tags.
+
+Cheers,
+Conor.
+
+--0nhWKHEN5fKFMQ8b
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZkWuJwAKCRB4tDGHoIJi
+0gN/AQCnEN4vuOOsE6DO4QFtsxZtw+1x1mtb49PyKpWtqtPQ8QD/RhI9DwfjF5Tp
+CnTBU0ZQV31OVZpr1OkYHZWVykwLGwM=
+=uPOG
+-----END PGP SIGNATURE-----
+
+--0nhWKHEN5fKFMQ8b--
 
