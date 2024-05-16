@@ -1,96 +1,103 @@
-Return-Path: <linux-kernel+bounces-180948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 038DC8C754E
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 13:34:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CC078C7552
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 13:36:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9715A1F2131A
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 11:34:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A081B2103F
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 11:36:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AFEC145A04;
-	Thu, 16 May 2024 11:34:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="IQEiFTbk"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6DB4145A08;
+	Thu, 16 May 2024 11:36:23 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 179D61459E2;
-	Thu, 16 May 2024 11:34:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69413145A02
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 11:36:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715859246; cv=none; b=K0Xig2tY3vTi4HpJ20mvQdXSaK3QRXfNEVIJ6ogK/kCW+23Boq/tWU+aXGn/0qj6vVO6OxMWB2vaUIyHh2FUuBC6n6UsoQcUNYiOIrjJcWJP2bDwd/VvFKlYeGFROEA159d1cvlBsuK5eQYpQkNrcXAMfZr4BPsy+ZeN+43SEI4=
+	t=1715859383; cv=none; b=n1NpQo/FjFA+FxB1KeXrAYf2QYSns6hOSx+GTV9GEkHUaiUs+bZaOlL10J381WkVCKZonJhCY/NEyE1tbczCnts4PINDanW2zgQMU74O8lHg3YUrSCz15kcKkubXUZgK8Hv4PbBCgfbki2AzGPjIJ+1jSCIjW2oDLWRwdZWCxhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715859246; c=relaxed/simple;
-	bh=WOf2leyhgMuRezn+1sQ8Gbe03Kn4oCimAqgdwwfMg5E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=akTxuU4uFuLocwhILJFi0GAHn1OpOhZrVPNDWryXwTBCdkHvH2WbYFbvxUsmcwYcAKqJYsAv2q+z0uiySnjLArCOCIsh4d4FCFutQuk6SQzjM3p6vOB/pyvn4BfapyMrrmjA8RVRxeIXYCkoymlzCN5chi7CRNdCZEJaFQlkJWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=IQEiFTbk; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=CXEnYn+n/oPUwvw8XY2bU5Doe0EGHASmi9eJ//nBzoo=; b=IQEiFTbkAL6mW74WuXn8eQ0T4p
-	DbFAFRVc/6P6DGKfS4mRVaA1+Nb+es07n+jGFcVRZkonW+pNtmGuTlw81YgdrzQ5cJ6EtjaWZeuTC
-	BwdbC2F+dvbEqJ74E1kfA08S4h38IRt6Hkh1KzAssSpWVehAnYpfhAVnm7vWnRPafxKUyJ94dDAqb
-	+9O1NSu2DDs/gh9SMLiQLEENPW4WKxMfBUnjZkPApNIk5JvJTrnXRO07Jkue2n/HK3AHX9WaJOqcq
-	PXQ/in7Iw+eFOsi2OViKDrwIX4ZAjtqxfNd5M/Ib5diSx/TNXdRC9Ngfx/b+Tr5JiUdPvPIZ+fasd
-	2gLU5+AQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:42986)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1s7ZMv-0004mH-2r;
-	Thu, 16 May 2024 12:33:53 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1s7ZMx-0000Zt-J5; Thu, 16 May 2024 12:33:55 +0100
-Date: Thu, 16 May 2024 12:33:55 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Naresh Kamboju <naresh.kamboju@linaro.org>,
-	Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>, lkft-triage@lists.linaro.org,
-	open list <linux-kernel@vger.kernel.org>,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Subject: Re: clkdev: report over-sized strings when creating clkdev entries
-Message-ID: <ZkXvI2D8tH0aG/Cl@shell.armlinux.org.uk>
-References: <CA+G9fYuZd_ur56H8fwDSvUywopvn_b7ogprGkjEatQ7EPTLwYQ@mail.gmail.com>
- <11be44d3-0f32-49c6-b4ae-ba97a9f97763@app.fastmail.com>
- <820ddc2ec70780ae1ecd3af864dc8bd6.sboyd@kernel.org>
- <ZkUgqzUn1EmjrPdl@shell.armlinux.org.uk>
- <CGME20240516102738eucas1p2eee547d4b78c347308b0979fa98ede39@eucas1p2.samsung.com>
- <CA+G9fYurPNaW=u2E+h+segnXhY3cfWo3BJpfYDJxKRFPY4epsQ@mail.gmail.com>
- <29f30eda-deba-4092-9b4c-8cb101b8691d@samsung.com>
+	s=arc-20240116; t=1715859383; c=relaxed/simple;
+	bh=xnCHpjWJCxd1ThpugjVih1IsrG1enpQdqddYfJNlRLA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ns9gGtea/zFQdoxSW2rfBsUveoTcpDsyUwG/XlUezGGPqNSFQzNP/KMya+V6pso8hoP7SOKyuerM3yy+GFMfNP6hleRlY7PlzEEcnWvI4SciysjMRFu3sUxebZoLRhUyjnXtKIuTQ/vodTCc8iX57qzdc4G1VdIX+wHLfvaeZPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <a.fatoum@pengutronix.de>)
+	id 1s7ZOz-0007RY-PT; Thu, 16 May 2024 13:36:01 +0200
+Message-ID: <b354724f-5235-4519-8361-b8209ab99d36@pengutronix.de>
+Date: Thu, 16 May 2024 13:36:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <29f30eda-deba-4092-9b4c-8cb101b8691d@samsung.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: imx8mp: Enable HDMI on i.MX8MP DHCOM PDK2 and
+ PDK3
+To: Marek Vasut <marex@denx.de>, Francesco Dolcini <francesco@dolcini.it>
+Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ devicetree@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, kernel@dh-electronics.com,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Fabio Estevam
+ <festevam@gmail.com>, linux-arm-kernel@lists.infradead.org
+References: <20240514010706.245874-1-marex@denx.de>
+ <20240516080008.GA9338@francesco-nb>
+ <76b3cee8-1fe3-4192-b8c9-7a9c2b7165f0@denx.de>
+Content-Language: en-US
+From: Ahmad Fatoum <a.fatoum@pengutronix.de>
+In-Reply-To: <76b3cee8-1fe3-4192-b8c9-7a9c2b7165f0@denx.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Thu, May 16, 2024 at 12:57:53PM +0200, Marek Szyprowski wrote:
-> The fix for drivers/clk/samsung/clk.c driver has been merged to clk-next:
+Hello Marek,
+
+On 16.05.24 13:14, Marek Vasut wrote:
+> On 5/16/24 10:00 AM, Francesco Dolcini wrote:
+>> Hello Marek,
 > 
-> https://lore.kernel.org/all/f7a877622829db499bf2bc65fe9ffbff.sboyd@kernel.org/
+> Hi,
+> 
+>> On Tue, May 14, 2024 at 03:06:42AM +0200, Marek Vasut wrote:
+>>> Enable HDMI output on i.MX8MP DHCOM PDK2 and PDK3. The I2C5 on PDK2 and
+>>> I2C mux port 1 on PDK3 respectively are used in regular I2C mode instead
+>>> of HDMI DDC mode to permit connection of other I2C devices on those buses.
+>>
+>> Are you able to read the HDMI EDID with such configuration? I have the
+>> patch ready for verdin imx8mp, I just did not have time to figure out
+>> this last details.
+> 
+> Yes with ddc-i2c-bus in hdmi_tx{} node, no with ddc-i2c-bus in connector node. Maybe that's what you're running into ? The DW HDMI core needs the ddc-i2c-bus property in hdmi_tx{} node if you use non-native I2C bus for the DDC channel.
 
-Good to know, would be nice to be kept in the loop though, especially
-as the first version was submitted to me.
+What benefit does the hdmi-connector provide over just omitting it?
+Just for documentation purposes?
+
+Thanks,
+Ahmad
+
+
+
+> 
+> 
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+
 
