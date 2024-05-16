@@ -1,115 +1,118 @@
-Return-Path: <linux-kernel+bounces-181246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7E3C8C7980
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:29:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 853F58C7982
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:29:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09A061C21404
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:29:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C82D1F21629
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:29:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D10E714D435;
-	Thu, 16 May 2024 15:28:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DE4414D6F8;
+	Thu, 16 May 2024 15:29:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="Z5hPHuuD"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DMr1c36K"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9918D14D45B;
-	Thu, 16 May 2024 15:28:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A27E1459F3;
+	Thu, 16 May 2024 15:29:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715873325; cv=none; b=rkV/flk+gPvhOsq/BdkYz2wTdt5Yg3qCfU5S2LyRYYfbi07+w0ppXxEwn6K0tqu0EMBGua2yNgQfNhD6wgBw1cWvHRXBm88hy9J0sUFv3IHPEI65B9/Jn8FNtyM+D+iIWA9hmFO4wem00AhY63MQgsVXS1ZjMpmEn9jSxvbzlaI=
+	t=1715873342; cv=none; b=IzyQMzI204y0bk8tzuqI6wuLuns2Y23sHDGUu8PUawZfIVpmjLR4MlMwJw0osQ8sDgzmikgdeMDjHajJfhfbTKEHmM4mQ71GqThefSPTKHkVdW+GnhbfnqEZjvdVIOiHvjXQDhI2fzRuP8XhTy56lkV8Ri3NItTQMPn/qbFjk3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715873325; c=relaxed/simple;
-	bh=xCuk8ZzFJym6L8TZxuo7kEre6sk+X7WHmfdRRx/azAU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S38y3EOlgd6cdLlEVNUmnrLhEx7BuJbr51x8JyKI4yRekVij+26wMCJssCBacxMSK2DpalwG7bfBx1Vug8Xbd7dV2o1uiSJZXdmsJAsTVm7XEI5F3QeVn7epxjJaGqKCoAWqgJmmN/Y4M0hiKYxZaekzQc/CW64jnkgM3D7hILY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=Z5hPHuuD; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=2VWTf8Mt+BUEGSmfkFPAKH4Wh10gssG2SiLRzDX3BqM=; b=Z5hPHuuDMUSHauH1
-	c7l6j74fDGVAqL+LNQr3kauUbKmGz5NujWBujw0WMr3ZxgAxIlk1UigGnXUIxxpSx8UqPTdXHkGE0
-	UZqyRFPsHuH+20BC3w6u0Brvd0vv5n1+ZEXUtK3OAJ0CPIvTuu2/EeXA01XAfBFezK7rzSpj0pVbb
-	PJHr06u/lmF6IuQB/sddRADaUw4hGZboAR1jCuyMUgoDB2eZgp1/6WRIne01WdbAGK5iMOJizPpSV
-	6MVkzb84TsJr6rEPiTAYxx+VJoukVnTcJgrGOkKLRsQ5zJ4grMZu+rtRfkIlPReAiv5cULylRKJ+d
-	TkNVyScMk6YX+zZenA==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1s7d29-001FyV-1B;
-	Thu, 16 May 2024 15:28:41 +0000
-Date: Thu, 16 May 2024 15:28:41 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Frank Li <Frank.li@nxp.com>
-Cc: vkoul@kernel.org, dmaengine@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dmaengine: moxart-dma: remove unused struct
- 'moxart_filter_data'
-Message-ID: <ZkYmKVQ5NRwgSA53@gallifrey>
-References: <20240516133250.251252-1-linux@treblig.org>
- <ZkYeE2SgzCFDqKs2@lizhi-Precision-Tower-5810>
+	s=arc-20240116; t=1715873342; c=relaxed/simple;
+	bh=MX0LRjLXUQsWzGkFdsvQn8hzF7tAiJFexrrfTe22xVw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=K631/pBGivhaG0IVQYkSB+WiSuI2zS5gI2E2QKYObITubGd7xum8TDtTmka9IvfITq9k6nBVndMbCsHX2MxMnPCRAlNduvem5/aSHLnidk5BTjdflN9DGPzlI71jXEZiXsDBMGnIdADBECOwnlx2+2eP1sV+q0Ogsq11sdUAklI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DMr1c36K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30A01C113CC;
+	Thu, 16 May 2024 15:29:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715873342;
+	bh=MX0LRjLXUQsWzGkFdsvQn8hzF7tAiJFexrrfTe22xVw=;
+	h=From:Date:Subject:To:Cc:From;
+	b=DMr1c36Kp7sYIsOmLCKxQ3frHRaXSZB1vmY3AMxacwQaauZBGACmFLL2LlyqBIVXS
+	 lPQJNUf+Cbwc35WUQ3716LYyieEsQJ+fx/rMGPnsnr1mZW3q4PQaL2kKZupq+PLZ8Z
+	 IHh5fCG20DuEQIpN9V41Fl1e2qE2qA4Kcm/E40XG2/ETWNvMZyxQhQIIspKgvn6v6G
+	 5fEnDmYBJn7JDln0702Ohlhf+0oRbSX/B3Tp4Chs4fT6TEIDUpyvCAcynkO7K0fVNI
+	 DlG5BWkK1OToZo/nsVUN/12GH+tnnFT8awhvEIn0uZQjZ6LL3IUyAiFYpPDyfwIPt4
+	 p8BwbvhlKuPFA==
+From: Mark Brown <broonie@kernel.org>
+Date: Thu, 16 May 2024 16:28:48 +0100
+Subject: [PATCH] kselftest: Desecalate reporting of missing _GNU_SOURCE
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <ZkYeE2SgzCFDqKs2@lizhi-Precision-Tower-5810>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 15:28:29 up 8 days,  2:42,  2 users,  load average: 0.05, 0.04, 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240516-kselftest-mitigate-gnu-source-v1-1-a0e814ff2874@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAC8mRmYC/x3MQQqDMBAF0KvIrDtgghXpVaSLJH7j0DZKJpaCe
+ PcGl2/zDlJkgdKjOSjjKyprqjC3hsLiUgTLVE22tV17Nz2/FO+5QAt/pEh0BRzTzrruOYB9Z7y
+ dbPCDM1SPLWOW3/WPz/P8A80IG+tvAAAA
+To: Kees Cook <keescook@chromium.org>, 
+ Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>, 
+ Shuah Khan <shuah@kernel.org>
+Cc: Edward Liaw <edliaw@google.com>, John Hubbard <jhubbard@nvidia.com>, 
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.14-dev-f3d47
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1707; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=MX0LRjLXUQsWzGkFdsvQn8hzF7tAiJFexrrfTe22xVw=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBmRiY7+vE/+V3F6Kk7JCm6dlXM/vKtGVY4wTiFBJIg
+ Mew9OSOJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZkYmOwAKCRAk1otyXVSH0Dw1B/
+ 9G2K4hWOH06GeuNL5GeG9rLmd1wIqlzhrxS5KWedK6dePhwbZ3lLSEzsxfQGx2iqFw3p7CYKLFVetA
+ Y1UvTKA6O0fhboW+Pwy4wMTpTbhbxhgE5gbhLUKv7sKr7UEEWk0AleC4uIUT+3W3D0HWseSjq4Ov1E
+ klbTO8e++42Iy9vvFj6X5wKiiw7HRCsPZCEArwTCk/MY1hK8guPiOnXxuKcYlfvjtvAsiek6IWJCws
+ VgVslBKyjGmI/fzirCAFDlMD6FJdc49OsP1sfQTkSd3UXi/n4vNS9gtbYM9gBU5kuaYIQyZLhDVDHD
+ qcySElUzOA9eA1vS/B6EH7cQQr7aAu
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-* Frank Li (Frank.li@nxp.com) wrote:
-> On Thu, May 16, 2024 at 02:32:50PM +0100, linux@treblig.org wrote:
-> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> > 
-> > 'moxart_filter_data' never appears to have been used.
-> > Remove it.
-> 
-> You can duplicate subject.
-> 
-> Remove unused struct moxart_filter_data.
+Commit daef47b89efd0b7 ("selftests: Compile kselftest headers with
+-D_GNU_SOURCE") adds a static_assert() which means that things which
+would be warnings about undeclared functions get escalated into build
+failures.  While we do actually want _GNU_SOURCE to be defined for users
+of kselftest_harness we haven't actually done that yet and this is
+causing widespread build breaks which were previously warnings about
+uses of asprintf() without prototypes, including causing other test
+programs in the same directory to fail to build.
 
-V2 sent.
+Since the build failures that are introduced cause additional issues due
+to make stopping builds early replace the static_assert() with a
+missing without making the error more severe than it already was.  This
+will be moot once the issue is fixed properly but reduces the disruption
+while that happens.
 
-Dave
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ tools/testing/selftests/kselftest_harness.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> > 
-> > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> > ---
-> >  drivers/dma/moxart-dma.c | 5 -----
-> >  1 file changed, 5 deletions(-)
-> > 
-> > diff --git a/drivers/dma/moxart-dma.c b/drivers/dma/moxart-dma.c
-> > index c48d68cbff92..66dc6d31b603 100644
-> > --- a/drivers/dma/moxart-dma.c
-> > +++ b/drivers/dma/moxart-dma.c
-> > @@ -148,11 +148,6 @@ struct moxart_dmadev {
-> >  	unsigned int			irq;
-> >  };
-> >  
-> > -struct moxart_filter_data {
-> > -	struct moxart_dmadev		*mdc;
-> > -	struct of_phandle_args		*dma_spec;
-> > -};
-> > -
-> >  static const unsigned int es_bytes[] = {
-> >  	[MOXART_DMA_DATA_TYPE_S8] = 1,
-> >  	[MOXART_DMA_DATA_TYPE_S16] = 2,
-> > -- 
-> > 2.45.0
-> > 
-> 
+diff --git a/tools/testing/selftests/kselftest_harness.h b/tools/testing/selftests/kselftest_harness.h
+index 37b03f1b8741..1cee8cacf9dc 100644
+--- a/tools/testing/selftests/kselftest_harness.h
++++ b/tools/testing/selftests/kselftest_harness.h
+@@ -51,7 +51,7 @@
+ #define __KSELFTEST_HARNESS_H
+ 
+ #ifndef _GNU_SOURCE
+-static_assert(0, "kselftest harness requires _GNU_SOURCE to be defined");
++#warning kselftest harness requires _GNU_SOURCE to be defined
+ #endif
+ #include <asm/types.h>
+ #include <ctype.h>
+
+---
+base-commit: 3c999d1ae3c75991902a1a7dad0cb62c2a3008b4
+change-id: 20240516-kselftest-mitigate-gnu-source-b41b2d2cb8a1
+
+Best regards,
 -- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+Mark Brown <broonie@kernel.org>
+
 
