@@ -1,225 +1,158 @@
-Return-Path: <linux-kernel+bounces-180853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 480278C73F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 11:36:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BA5C8C73F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 11:36:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B9081C2364F
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 09:36:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C87E1C23663
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 09:36:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B90FF143865;
-	Thu, 16 May 2024 09:36:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58A95143872;
+	Thu, 16 May 2024 09:36:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QBKJ+EGR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fMMZSXSN"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF82514374C;
-	Thu, 16 May 2024 09:36:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E259514374C;
+	Thu, 16 May 2024 09:36:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715852180; cv=none; b=IKqo7b8Rmk0OR32pWwex7gsBbwpokxI06tE3QupVG5zdY5NcX3EMJVYx9EhtUHrTW/KuFP7LKHqD1wnuMznA8OpgTiM6oXr6nBqpTZ1kY5apJNOCgnNTGM59OgHJ6zMKC4YsjqyYmTQ8adFZshEE8F5e248renFiwJa+3dWiYkI=
+	t=1715852191; cv=none; b=hV7DTVR9LgWsh34aUBKfqHMGazqyTr1KoVQZVJvgPoHjA7v1mWeLORGIrmMoQfhaCnVHwO4Uz8Jhmg2rzb88VSzfAasiNiQyszOK3sWrdZoF4MLQMV5Ejkr0DBQ0NH95Ns1gQ/vX2nXMW0jydc5Lyig+o4/afALteDHrorpJ1Sc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715852180; c=relaxed/simple;
-	bh=DD6VkVQwYr5qx+QtEY3TjdvNx99y2R6fc5bKmJrT/yU=;
+	s=arc-20240116; t=1715852191; c=relaxed/simple;
+	bh=J6sD28lgfKh27e2j9CLxVNjQggPRio4KaVElzKmuzCw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g4UXSiNbsvx5RZinRosr2sRCd7cTIDBFd9Ijj9+VasB8vcZyRURZOs62QTnHPYrg3xqdAVyS2wpw/EU9yCXNbtCN3KVhDBqaC7qOqSTAiUKRJUKPUtDCZ1jkv79LbR8JWPJ144/iEyHGuBxNm0CDYFCWXr35gb7RCGSooRT0YzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QBKJ+EGR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2DFAC32786;
-	Thu, 16 May 2024 09:36:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715852180;
-	bh=DD6VkVQwYr5qx+QtEY3TjdvNx99y2R6fc5bKmJrT/yU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QBKJ+EGRMsSNdlLBhmx53NWlpf+CzZyD6Xltp3lapOO4kKjqkEIyYWYTJ6IgNfD+J
-	 dpGkuxqkwdVly4WexTyd0WNIiGgZ93P9AaZVBpOxARuVE03VwQRspXwiSG56EiR3hz
-	 dTFlBUMwmy5ZDKI3/+8pcHBnYMLn2JmGwFOS8W95AywbGZdhpupmQzo475khgSIRoo
-	 RTrao7VNnZ0ENZondAbSeVjp4MpC5Fd0b3RtR/5A+uJKniHE9J9D0mfpvF3DEckH7O
-	 FSPYDwomE7Erk+SMone0rTuL5aHot6mbrHEYsWD/zCSDwyUs/QjZ17V0rlze2utFsC
-	 U9B7RXNH6AoOw==
-Date: Thu, 16 May 2024 11:36:17 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Andy Yan <andyshrk@163.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Jonathan Corbet <corbet@lwn.net>, 
-	Sandy Huang <hjc@rock-chips.com>, Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, 
-	Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Samuel Holland <samuel@sholland.org>, Andy Yan <andy.yan@rock-chips.com>, 
-	Hans Verkuil <hverkuil@xs4all.nl>, Sebastian Wick <sebastian.wick@redhat.com>, 
-	Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, dri-devel@lists.freedesktop.org, 
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH v13 27/28] drm/rockchip: inno_hdmi: Switch to HDMI
- connector
-Message-ID: <20240516-romantic-goose-of-fame-ef968f@penduick>
-References: <20240507-kms-hdmi-connector-state-v13-0-8fafc5efe8be@kernel.org>
- <20240507-kms-hdmi-connector-state-v13-27-8fafc5efe8be@kernel.org>
- <2d3073ce.16e2.18f6bec1d61.Coremail.andyshrk@163.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TZJ5R5Qo6domSEGlBqlX9ea0jgjW11jwO1oh3V65PoB4doAq3si3Zl3HkmmPblgdKN+EAGtOwdXLrJANilmkcUjgNZC4nI1ff+HH2R9UuQfyvGs8aGPiCHLqKwWgRfsGrAdjpZS6ZXVDQ+H0cQIL4VX4spvxsX3oW/+GTRc9zho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fMMZSXSN; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5723edf0ae5so2799256a12.0;
+        Thu, 16 May 2024 02:36:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715852188; x=1716456988; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hvXv+pGqbfkwd6X1s9SxJ9Fq0l86c61XKwIlx/950E4=;
+        b=fMMZSXSNrkwdx6XFr8ci++sBH50hbGoOS8jiQgJ7WrpXjtKptvS6trjmK1rQ3HDtJD
+         tgXMTjXCr62om4vatG1He1vIW+QuyTB081IBJ5Ojk7o71TyvSMNGef0OAKZ61oWJz8Yy
+         bByrm68rhqkx+Tf3U3y6sEQs/UEIOMBAPDPPOd8nSWdTkMj2Ni/PCeV42LXIvpUOYeIt
+         sqxkQtFY7ekQb2imeUfHpakc9qUoK+aIiX/310M4U2fvYDR4uhWWV4rzqXlNDaj7qJMI
+         txJWwgzGMFUmXJVCgRjKPreuaeJEbCxfluVlRzgCARYZ56QkQ0OXTAhLI38DeRKq4vgl
+         poAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715852188; x=1716456988;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hvXv+pGqbfkwd6X1s9SxJ9Fq0l86c61XKwIlx/950E4=;
+        b=bWHrK3mHJpcfg2RTACaSyXondmjIXUIfn5ujgfoj5Q6wkzbCqyInBx54hyk8v5rwPV
+         lW4KZPCLYHfsKorQh+rlOnwrPzwVryGHHKbTw/8SwUy0VAMQ/Zk0pNsCDJWi0vI/1Jlr
+         4SOq0pimejG2bphx30hlYI/DB0TofQeAbv401PZbQjGxAQWiGKGAF8swl5pMdTqP1jo0
+         GxsyaBd6YLTkTrsOddHFWYxvtpTB0PE1y6oyAuiKzv5CtXHXfTuT25r1rXdbnVqGDH7Z
+         MzAIyu78waLKeT7Dc1LhM9AgPeyK9ktlW0yze88ZG2sON1+azGEM2mFyVGQ1eola1ECf
+         1VtA==
+X-Forwarded-Encrypted: i=1; AJvYcCV05EJHKB8KyubZWc5Cp77UQZ5HzIsdfT2QQwE5ma1Tn0kwT/pHfaAEozaHwqNvu4KJ7cizqupxmMmH7Wh8/TqDjPAsuvODQFJFg1NpkS1m8se2Qnp0mFUMj7pdC6MmtbZa
+X-Gm-Message-State: AOJu0YwfwHUxAR0Mw1iyxQrJuTIW+40PkDVmVz9OUI2ReOcS0HYlt7b8
+	yaEOSrzpanP+9nROC948EzsvtTP52QLVhlrgskXYmdjhKLxr/ygF
+X-Google-Smtp-Source: AGHT+IHHV69RLJNpaBjl5GbwCsRINJCGP6ZRDgLVz7LqC3L1sToOsa41I3DZilJuFLG+fWtHkZZEFA==
+X-Received: by 2002:a50:aada:0:b0:572:7b08:d497 with SMTP id 4fb4d7f45d1cf-5734d5c17acmr13034438a12.17.1715852187856;
+        Thu, 16 May 2024 02:36:27 -0700 (PDT)
+Received: from localhost (77-162-229-73.fixed.kpn.net. [77.162.229.73])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733c2c7de4sm10127159a12.63.2024.05.16.02.36.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 May 2024 02:36:27 -0700 (PDT)
+Sender: Domenico Andreoli <domenico.andreoli.it@gmail.com>
+Date: Thu, 16 May 2024 11:36:25 +0200
+From: Domenico Andreoli <domenico.andreoli@linux.com>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: dwarves@vger.kernel.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	bpf@vger.kernel.org, Alan Maguire <alan.maguire@oracle.com>,
+	Andrii Nakryiko <andrii@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+	Jan Engelhardt <jengelh@inai.de>,
+	Matthias Schwarzott <zzam@gentoo.org>,
+	Viktor Malik <vmalik@redhat.com>,
+	Eduard Zingerman <eddyz87@gmail.com>, J B <jb.1234abcd@gmail.com>
+Subject: Re: ANNOUNCE: pahole v1.26 (more holes, --bpf_features,
+ --contains_enum)
+Message-ID: <ZkXTmTvII2PDqVvx@localhost>
+References: <YbC5MC+h+PkDZten@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="uaerwrggzaiekave"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="sY/nlHJyYy4WYvdJ"
 Content-Disposition: inline
-In-Reply-To: <2d3073ce.16e2.18f6bec1d61.Coremail.andyshrk@163.com>
+In-Reply-To: <YbC5MC+h+PkDZten@kernel.org>
 
 
---uaerwrggzaiekave
+--sY/nlHJyYy4WYvdJ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andy,
-
-On Sun, May 12, 2024 at 04:29:47PM +0800, Andy Yan wrote:
-> At 2024-05-07 21:17:45, "Maxime Ripard" <mripard@kernel.org> wrote:
-> >The new HDMI connector infrastructure allows to remove some boilerplate,
-> >especially to generate infoframes. Let's switch to it.
-> >
-> >Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-> >Acked-by: Heiko Stuebner <heiko@sntech.de>
-> >Signed-off-by: Maxime Ripard <mripard@kernel.org>
-> >---
-> > drivers/gpu/drm/rockchip/Kconfig       |   3 +
-> > drivers/gpu/drm/rockchip/inno_hdmi.c   | 153 ++++++++++++--------------=
--------
-> > drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c |   3 +
-> > 3 files changed, 61 insertions(+), 98 deletions(-)
-> >
-> >diff --git a/drivers/gpu/drm/rockchip/Kconfig b/drivers/gpu/drm/rockchip=
-/Kconfig
-> >index 1bf3e2829cd0..7df875e38517 100644
-> >--- a/drivers/gpu/drm/rockchip/Kconfig
-> >+++ b/drivers/gpu/drm/rockchip/Kconfig
-> >@@ -72,10 +72,13 @@ config ROCKCHIP_DW_MIPI_DSI
-> > 	  enable MIPI DSI on RK3288 or RK3399 based SoC, you should
-> > 	  select this option.
-> >=20
-> > config ROCKCHIP_INNO_HDMI
-> > 	bool "Rockchip specific extensions for Innosilicon HDMI"
-> >+	select DRM_DISPLAY_HDMI_HELPER
-> >+	select DRM_DISPLAY_HDMI_STATE_HELPER
-> >+	select DRM_DISPLAY_HELPER
-> > 	help
-> > 	  This selects support for Rockchip SoC specific extensions
-> > 	  for the Innosilicon HDMI driver. If you want to enable
-> > 	  HDMI on RK3036 based SoC, you should select this option.
-> >=20
-> >diff --git a/drivers/gpu/drm/rockchip/inno_hdmi.c b/drivers/gpu/drm/rock=
-chip/inno_hdmi.c
-> >index 3df2cfcf9998..5069403c3b80 100644
-> >--- a/drivers/gpu/drm/rockchip/inno_hdmi.c
-> >+++ b/drivers/gpu/drm/rockchip/inno_hdmi.c
-> >@@ -20,10 +20,13 @@
-> > #include <drm/drm_edid.h>
-> > #include <drm/drm_of.h>
-> > #include <drm/drm_probe_helper.h>
-> > #include <drm/drm_simple_kms_helper.h>
-> >=20
-> >+#include <drm/display/drm_hdmi_helper.h>
-> >+#include <drm/display/drm_hdmi_state_helper.h>
-> >+
-> ......
-> >=20
-> > static int inno_hdmi_config_video_csc(struct inno_hdmi *hdmi)
-> > {
-> > 	struct drm_connector *connector =3D &hdmi->connector;
-> > 	struct drm_connector_state *conn_state =3D connector->state;
-> >@@ -359,12 +323,12 @@ static int inno_hdmi_config_video_csc(struct inno_=
-hdmi *hdmi)
-> > 	value =3D v_VIDEO_INPUT_BITS(VIDEO_INPUT_8BITS) |
-> > 		v_VIDEO_OUTPUT_COLOR(0) |
-> > 		v_VIDEO_INPUT_CSP(0);
-> > 	hdmi_writeb(hdmi, HDMI_VIDEO_CONTRL2, value);
-> >=20
-> >-	if (inno_conn_state->enc_out_format =3D=3D HDMI_COLORSPACE_RGB) {
-> >-		if (inno_conn_state->rgb_limited_range) {
-> >+	if (conn_state->hdmi.output_format =3D=3D HDMI_COLORSPACE_RGB) {
-> >+		if (conn_state->hdmi.is_limited_range) {
-> > 			csc_mode =3D CSC_RGB_0_255_TO_RGB_16_235_8BIT;
-> > 			auto_csc =3D AUTO_CSC_DISABLE;
-> > 			c0_c2_change =3D C0_C2_CHANGE_DISABLE;
-> > 			csc_enable =3D v_CSC_ENABLE;
-> >=20
-> >@@ -378,18 +342,18 @@ static int inno_hdmi_config_video_csc(struct inno_=
-hdmi *hdmi)
-> > 				  v_VIDEO_C0_C2_SWAP(C0_C2_CHANGE_DISABLE));
-> > 			return 0;
-> > 		}
-> > 	} else {
-> > 		if (inno_conn_state->colorimetry =3D=3D HDMI_COLORIMETRY_ITU_601) {
-> >-			if (inno_conn_state->enc_out_format =3D=3D HDMI_COLORSPACE_YUV444) {
-> >+			if (conn_state->hdmi.output_format =3D=3D HDMI_COLORSPACE_YUV444) {
-> > 				csc_mode =3D CSC_RGB_0_255_TO_ITU601_16_235_8BIT;
-> > 				auto_csc =3D AUTO_CSC_DISABLE;
-> > 				c0_c2_change =3D C0_C2_CHANGE_DISABLE;
-> > 				csc_enable =3D v_CSC_ENABLE;
-> > 			}
-> > 		} else {
-> >-			if (inno_conn_state->enc_out_format =3D=3D HDMI_COLORSPACE_YUV444) {
-> >+			if (conn_state->hdmi.output_format =3D=3D HDMI_COLORSPACE_YUV444) {
-> > 				csc_mode =3D CSC_RGB_0_255_TO_ITU709_16_235_8BIT;
-> > 				auto_csc =3D AUTO_CSC_DISABLE;
-> > 				c0_c2_change =3D C0_C2_CHANGE_DISABLE;
-> > 				csc_enable =3D v_CSC_ENABLE;
-> > 			}
-> >@@ -460,14 +424,16 @@ static int inno_hdmi_config_video_timing(struct in=
-no_hdmi *hdmi,
-> >=20
-> > 	return 0;
-> > }
-> >=20
-> > static int inno_hdmi_setup(struct inno_hdmi *hdmi,
-> >-			   struct drm_display_mode *mode)
-> >+			   struct drm_crtc_state *new_crtc_state,
-> >+			   struct drm_connector_state *new_conn_state)
-> > {
-> >-	struct drm_display_info *display =3D &hdmi->connector.display_info;
-> >-	unsigned long mpixelclock =3D mode->clock * 1000;
-> >+	struct drm_connector *connector =3D &hdmi->connector;
-> >+	struct drm_display_info *display =3D &connector->display_info;
-> >+	struct drm_display_mode *mode =3D &new_crtc_state->adjusted_mode;
-> >=20
-> > 	/* Mute video and audio output */
-> > 	hdmi_modb(hdmi, HDMI_AV_MUTE, m_AUDIO_MUTE | m_VIDEO_BLACK,
-> > 		  v_AUDIO_MUTE(1) | v_VIDEO_MUTE(1));
-> >=20
-> >@@ -477,26 +443,26 @@ static int inno_hdmi_setup(struct inno_hdmi *hdmi,
-> >=20
-> > 	inno_hdmi_config_video_timing(hdmi, mode);
-> >=20
-> > 	inno_hdmi_config_video_csc(hdmi);
-> >=20
-> >-	if (display->is_hdmi)
-> >-		inno_hdmi_config_video_avi(hdmi, mode);
-> >+	drm_atomic_helper_connector_hdmi_update_infoframes(connector,
-> >+							   new_conn_state->state);
-> >=20
+On Wed, Feb 28, 2024 at 04:39:21PM -0300, Arnaldo Carvalho de Melo wrote:
+> Hi,
+> =20
+> 	The v1.26 release of pahole and its friends is out, showing more
+> holes (the ones in contained types) the ability to express the BTF
+> features to encode, to simplify the addition of new BTF features in the
+> Linux kernel build infrastructure, a way to find the enumeration with
+> some enumerator and various fixes.
 >=20
-> new_conn_state->state will be set NULL in drm_atomic_helper_swap_state,
-> so this will cause a NULL pointer reference panic here.
+> Main git repo:
+>=20
+>    git://git.kernel.org/pub/scm/devel/pahole/pahole.git
+>=20
+> Mirror git repo:
+>=20
+>    https://github.com/acmel/dwarves.git
+>=20
+> tarball + gpg signature:
+>=20
+>    https://fedorapeople.org/~acme/dwarves/dwarves-1.26.tar.xz
+>    https://fedorapeople.org/~acme/dwarves/dwarves-1.26.tar.bz2
+>    https://fedorapeople.org/~acme/dwarves/dwarves-1.26.tar.sign
 
-That's a good catch, I'll fix it, thanks!
-Maxime
+Which key do you use to sign this?          ^^^^^^^^^^^^^^^^^^^^^
 
---uaerwrggzaiekave
+>=20
+> 	Thanks a lot to all the contributors and distro packagers, you're on the
+> CC list, I appreciate a lot the work you put into these tools,
+>=20
+> Best Regards,
+
+--=20
+rsa4096: 3B10 0CA1 8674 ACBA B4FE  FCD2 CE5B CF17 9960 DE13
+ed25519: FFB4 0CC3 7F2E 091D F7DA  356E CC79 2832 ED38 CB05
+
+--sY/nlHJyYy4WYvdJ
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZkXTkAAKCRAnX84Zoj2+
-drHFAX0WNL3Wj3Fov5y9wmbhRlVOE3cZBO2OqCK8lFoIx3jXXKZebGyaAtxrBPIm
-NWKddK8BgK5/Qs7oRmknzpUJJMceIrrXhv1HUGmQ9aVTrxk9JlXkqf8DDsZaKwVr
-nNmDraUwrg==
-=4TDG
+iQIzBAABCgAdFiEEIhioiE2Z74CX+BiELwJgSGECT1EFAmZF05UACgkQLwJgSGEC
+T1HmwBAAsxEaGM+xrNDoTEWojFRH8sL3fd/gaegb0oUzRl/+F+EoYjinB6N8UpZe
+3wrWYPJLAdb5jZDfhei8uJWS3hsKFd0nD6orh1enkTuTmLUYwD2BLzgfrDnK0A+R
+rPt4IUg1kqPPKrBsJaSQG0eDug8bbZjzyl0Qv4ae5aPzdcDQutQYxOHJNFPItZrx
+XS7tKd3IckX88ikebhd0lYSN9rTxPpLRFqNq1Ukp6BlsT+jDQ7G5kSHkRtJSaAfs
+dcwW4qDG736TBS9q7FqI2q/aPy/bGaXqFIjVhIdYGzYLMcc2A/73FmFHd+aGKHL/
+VkhH6x6txarHWjldeTmRx4Vcb5VJ9Nuq4xMW0MhJ4B6cfUtbsGxVbfMP/wUevm7y
+D3jszUDMcP5v84p4bQkNLExR+kfUB/ttx7LDS7Zy9VlmrgpdKfVyyTmp1EvlsAC8
+ArcgxIFD/v9tR4ReLMAmoBx0kDcvICW3uhoxjJ12+QJk+hYNR91pvVQFqOjyd8dJ
+cOSd2irL+yMUQkilcbWDHXyxAu3GfdBo36/eCWwJH1ap072HNAxUhoCKq3BU9zNB
+UHEP7qbfyEEWYKIrVrkTczZJ6KuorBui3OXiIyz1bM7uiPtTgbr3PE0kQj1KLa6j
+GwNnVIG16UWd6Rp/CmLxZeGewuWbLyb0Q0wmd4EqA5zerZLarwc=
+=z3uI
 -----END PGP SIGNATURE-----
 
---uaerwrggzaiekave--
+--sY/nlHJyYy4WYvdJ--
 
