@@ -1,153 +1,140 @@
-Return-Path: <linux-kernel+bounces-180761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE0728C72C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:27:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D51D48C72CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:28:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50ED51F21647
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 08:27:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 906F3281D9B
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 08:28:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D221130A56;
-	Thu, 16 May 2024 08:27:36 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EA8512EBFE;
+	Thu, 16 May 2024 08:27:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YXbJsieC"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3BFE76C76;
-	Thu, 16 May 2024 08:27:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B3176C76
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 08:27:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715848055; cv=none; b=k6VBcxmthZa6n8HHxFU/5joIrZwcb04pXZ0vsSaB69CYP9m8rdLlxTBKIgEu5KpgIkEoG5NifCnrE0FbWimNC/1B8jF8VvhL4LpH9OmSvI1wtSvlmaFD2odvFqbu6lqVPDLh77i+ht1wREgACaM+U4lrz1Wq4VH1dELX7yKuTa0=
+	t=1715848072; cv=none; b=cB1t9wesetOeJVSYpM/yb5HXgldCns0Rfq05cDKaaDOehDE9mWBTqF+7Ma7OW37oQ8kD13Ty6IQfyNK8QedYpb6izbLw6W2bfwlnOVp3oH8uP44m6SwUy2xwzEu1l7WmsZZ5LXvfUkUk4WkC5jyGfbfpb2dghuY1jswnUgDck0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715848055; c=relaxed/simple;
-	bh=Fa3tCa+nHTX5GaUek5DQjejgVE5UyfDOFzTBnbAZZgQ=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=WYd1o5mteRp6hPuHUxqGHvKtTvmibBGabvja/ZMUscaNboOa1GEBO/2wazSZFvdK6MsI6FpFBNE7CKv6YnGzuJRD3OKIXda6L4nsTQXfMNIpDOXLye0lAoB4570oyWx/+c71BR/HEAlKygPT7WnFcj1W9WlrNRMiybkKZ/vJd1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Vg39h3dg3z4f3jYN;
-	Thu, 16 May 2024 16:27:20 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 381E41A10BC;
-	Thu, 16 May 2024 16:27:29 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP2 (Coremail) with SMTP id Syh0CgAnmAttw0VmcIZ6NA--.39916S3;
-	Thu, 16 May 2024 16:27:27 +0800 (CST)
-Subject: Re: [PATCH] ext4/jbd2: drop jbd2_transaction_committed()
-To: Jan Kara <jack@suse.cz>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
- ritesh.list@gmail.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
- yukuai3@huawei.com
-References: <20240513072119.2335346-1-yi.zhang@huaweicloud.com>
- <20240515002513.yaglghza4i4ldmr5@quack3>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <f0eb115d-dd10-e156-9aed-65b7f479f008@huaweicloud.com>
-Date: Thu, 16 May 2024 16:27:25 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	s=arc-20240116; t=1715848072; c=relaxed/simple;
+	bh=rvAPyJkeR+TboZ8lV4SzobDUy8jvlE9fbDs25cQI/TM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Rh+53qEaW8KEIVGPMmw3WHZSB2r22ioqMaCYyaDd0CY5MgaPPXtvR77c026DdalUcPykDO/8C+fNsLBBXb7sqgdVH4R2wCUzFvYGHYjWK8uVZ1kU8nQVtyTZSKRc4hTzrSptWR28ZcDSXU20GNslXhb7TLjTAyILLjPyoy+eRwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YXbJsieC; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715848069;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Wp3xz/jEXktsfVHXaP1pl4p7Vr0VDUO5oIkhNKKtxrw=;
+	b=YXbJsieCrKCPNKqqICsw+fkE4McgxQrktXbOiFjeVP0bSohjnOMuj4aXYkqNc6O9J3TIjR
+	C1fyiODOPhd+LQvuwzexLvtswynye0MpOcigojdoW0lVFiTv1ak28Wqt4h2S3t1JfygMTs
+	F/Qu2CRPFnAsF4rh8JMZZbsglKPaQqc=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-349-yw0N3rezPtq1pnTrowYLiQ-1; Thu,
+ 16 May 2024 04:27:46 -0400
+X-MC-Unique: yw0N3rezPtq1pnTrowYLiQ-1
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 974C83C025B8;
+	Thu, 16 May 2024 08:27:45 +0000 (UTC)
+Received: from ksundara-mac.redhat.com (unknown [10.74.17.49])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id E4CF85ADC45;
+	Thu, 16 May 2024 08:27:37 +0000 (UTC)
+From: Karthik Sundaravel <ksundara@redhat.com>
+To: jesse.brandeburg@intel.com,
+	wojciech.drewek@intel.com,
+	sumang@marvell.com,
+	jacob.e.keller@intel.com,
+	anthony.l.nguyen@intel.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	intel-wired-lan@lists.osuosl.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	horms@kernel.org
+Cc: pmenzel@molgen.mpg.de,
+	jiri@resnulli.us,
+	michal.swiatkowski@linux.intel.com,
+	bcreeley@amd.com,
+	rjarry@redhat.com,
+	aharivel@redhat.com,
+	vchundur@redhat.com,
+	ksundara@redhat.com,
+	cfontain@redhat.com
+Subject: [PATCH iwl-next v10] ice: Add get/set hw address for VFs using devlink commands 
+Date: Thu, 16 May 2024 13:57:32 +0530
+Message-Id: <20240516082733.35783-1-ksundara@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240515002513.yaglghza4i4ldmr5@quack3>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:Syh0CgAnmAttw0VmcIZ6NA--.39916S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxArWxCw4fAr1xXry8Jw47Arb_yoW5Aw43pF
-	W0k3W2gr4kZ34I9r40qa17ZFW0yws5Ja48XrsxXwsaga1UG3s7KrW7tFyavFyDtFs5Ww4U
-	XF4S9rn7Kryj937anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvab4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
-	e2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
-	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
-	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
-	kF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv
-	67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyT
-	uYvjxUrR6zUUUUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.9
 
-On 2024/5/15 8:25, Jan Kara wrote:
-> On Mon 13-05-24 15:21:19, Zhang Yi wrote:
->> From: Zhang Yi <yi.zhang@huawei.com>
->>
->> jbd2_transaction_committed() is used to check whether a transaction with
->> the given tid has already committed, it hold j_state_lock in read mode
->> and check the tid of current running transaction and committing
->> transaction, but holding the j_state_lock is expensive.
->>
->> We have already stored the sequence number of the most recently
->> committed transaction in journal t->j_commit_sequence, we could do this
->> check by comparing it with the given tid instead. If the given tid isn't
->> smaller than j_commit_sequence, we can ensure that the given transaction
->> has been committed. That way we could drop the expensive lock and
->> achieve about 10% ~ 20% performance gains in concurrent DIOs on may
->> virtual machine with 100G ramdisk.
->>
->> fio -filename=/mnt/foo -direct=1 -iodepth=10 -rw=$rw -ioengine=libaio \
->>     -bs=4k -size=10G -numjobs=10 -runtime=60 -overwrite=1 -name=test \
->>     -group_reporting
->>
->> Before:
->>   overwrite       IOPS=88.2k, BW=344MiB/s
->>   read            IOPS=95.7k, BW=374MiB/s
->>   rand overwrite  IOPS=98.7k, BW=386MiB/s
->>   randread        IOPS=102k, BW=397MiB/s
->>
->> After:
->>   verwrite:       IOPS=105k, BW=410MiB/s
->>   read:           IOPS=112k, BW=436MiB/s
->>   rand overwrite: IOPS=104k, BW=404MiB/s
->>   randread:       IOPS=111k, BW=432MiB/s
->>
->> CC: Dave Chinner <david@fromorbit.com>
->> Suggested-by: Dave Chinner <david@fromorbit.com>
->> Link: https://lore.kernel.org/linux-ext4/493ab4c5-505c-a351-eefa-7d2677cdf800@huaweicloud.com/T/#m6a14df5d085527a188c5a151191e87a3252dc4e2
->> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-> 
-> I agree this is workable solution and the performance benefits are nice. But
-> I have some comments regarding the implementation:
-> 
->> @@ -3199,8 +3199,8 @@ static bool ext4_inode_datasync_dirty(struct inode *inode)
->>  	journal_t *journal = EXT4_SB(inode->i_sb)->s_journal;
->>  
->>  	if (journal) {
->> -		if (jbd2_transaction_committed(journal,
->> -			EXT4_I(inode)->i_datasync_tid))
->> +		if (tid_geq(journal->j_commit_sequence,
->> +			    EXT4_I(inode)->i_datasync_tid))
-> 
-> Please leave the helper jbd2_transaction_committed(), just make the
-> implementation more efficient. 
+Dear Maintainers,
+    Thanks for the review and suggestions for my patch.
 
-Sure.
+v9 -> v10
+--------
+- Refactor ice_set_vf_mac() to use reuse the common code blocks
+  for setting the MAC addresses in both netdev and devlink flow.
 
-> Also accessing j_commit_sequence without any
-> lock is theoretically problematic wrt compiler optimization. You should have
-> READ_ONCE() there and the places modifying j_commit_sequence need to use
-> WRITE_ONCE().
-> 
+v8 -> v9
+--------
+- Rebasing against dev-queue branch of next-queue tree
 
-Thanks for pointing this out, but I'm not sure if we have to need READ_ONCE()
-here. IIUC, if we add READ_ONCE(), we could make sure to get the latest
-j_commit_sequence, if not, there is a window (it might becomes larger) that
-we could get the old value and jbd2_transaction_committed() could return false
-even if the given transaction was just committed, but I think the window is
-always there, so it looks like it is not a big problem, is that right?
+v7 -> v8
+--------
+- Added const keyword for the parameter ``mac`` in ice_set_vf_fn_mac()
 
-Thanks,
-Yi.
+v6 -> v7
+--------
+- Addressed Smatch and checkpatch issues
+
+v5 -> v6
+--------
+- Changed data type of vf_id to u16
+- Used container_of(port, struct ice_vf, devlink_port) to
+  get the vf instead of ice_get_vf_by_id()/ice_put_vf()
+
+v4 -> v5
+--------
+- Cloned ice_set_vf_mac() to ice_set_vf_fn_mac() so that the
+  parameter ice_pf is used instead of net_device of vf
+- removed redundant error handling
+
+v3 -> v4
+--------
+- Released the vf device by calling ice_put_vf()
+
+v2 -> v3
+--------
+- Fill the extack message instead of dev_err()
+
+v1 -> v2
+--------
+- called ice_set_vf_mac() directly from the devlink port function
+  handlers.
+
+RFC -> v1
+---------
+- Add the function handlers to set and get the HW address for the
+  VF representor ports.
 
 
