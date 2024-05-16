@@ -1,167 +1,98 @@
-Return-Path: <linux-kernel+bounces-180876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09CF68C7442
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 11:59:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 564398C7447
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:01:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9717281CA1
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 09:59:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10ECA284616
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:01:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD00214388A;
-	Thu, 16 May 2024 09:59:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E75F6143894;
+	Thu, 16 May 2024 10:01:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="qdf7UJxl"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RJECdNHv"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B1AD14293;
-	Thu, 16 May 2024 09:59:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF3CF143880;
+	Thu, 16 May 2024 10:01:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715853578; cv=none; b=URhgKnDj7C6e+u6qIOSH9WYxC4ntPAB3zK+b/E9J7O7X1iePAzBW7rXY5vFsoecr/y79XN6lw2CAr5QKGbDIWfCz4CMuacoo8dLwpO6+tDo/fLqWIjKf/ZGNjpBWf0pA5kqMKTLN7a2EnoEUVas6tuIXNXwxKo00oIIhsn9tClw=
+	t=1715853678; cv=none; b=a2wHoEU6OByCXdC5gcvmR2jGP1iurTYxpOP2UTi49hghBmv629t96j8aOA3qZK6qjJQQieTOnf1urGuH6T72pr02zw3FyuJ6NUNTroIRkZatkGUx7q0LIoH0mog1CNWEY9tm6XkM3xY1RNbjovOdXb35onhV4YpePo9kEXrNxZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715853578; c=relaxed/simple;
-	bh=dK2WkFIc661KKKqOwvbtfh51Ajk+5fstyZfpRUmwN2M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DB7zWJxUMACFXp/OostE/XDdixgx7qYzH8mzw15uwYFsqS2/1Rf8NYqsc05eN27RcXEkK4YzFvOxGn+ui+/m//puWZTKjxnw2reC5Se2psgnvBFJ4Dy2oCKEnoVJsAy1LysqL3XyFJA1t5xlk7RE3tmDqqRxfBNicM7x2mgyrrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=qdf7UJxl; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1715853574;
-	bh=dK2WkFIc661KKKqOwvbtfh51Ajk+5fstyZfpRUmwN2M=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qdf7UJxluJK7VRWEKILOAxaP85bTBG6aWspLroV80yixGNmF+YeHh3KaaEQ54GWC6
-	 MFF0PReIwv3Tb+NZgyCaVmHtAi2TIHYZT+rqfslChY2gL3EVI86K//FHPSmhH2y6Q+
-	 vVFgRpybXddrl63bTWXm80tWUPOem0I2PZuPyeBTtzYPePWnE+OthXuCDER7SRS7Tq
-	 ffehsgmYFMGtvzeASN5aAGEgVp4r1Xu3I4z+4NpQOMO61GgSYhxcUG6F4yXu5xOZfq
-	 efT0kxjT8MMuw2KFQu9vUPez1MN58/reCdKydoel5SrNhGiBH9FoOzAIFmZcpraHFk
-	 Qhs155mWVGxNA==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id BAD343780C13;
-	Thu, 16 May 2024 09:59:32 +0000 (UTC)
-Message-ID: <a1d91cee-e2e4-4310-a9b4-984626144ab2@collabora.com>
-Date: Thu, 16 May 2024 11:59:31 +0200
+	s=arc-20240116; t=1715853678; c=relaxed/simple;
+	bh=JLPwevbZr7qyG05/ysC6iuRNGwXqdjfIgp7fbEN99Og=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=VytLfL7GNry4d6hglix22AylqGbLhyP5dXIlnzJOW3PGGh7HM8i6kcpMH0xw8pByIMFThRygg3oKhjbR38/06gwBG9YfOorAo1C3YogdYOPgEpKIDv1f0bw+EB3ONTXUUVYiOcIhpem7hjURljUC8ScXv1dAWOmHA+cUwtQx3to=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RJECdNHv; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715853677; x=1747389677;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=JLPwevbZr7qyG05/ysC6iuRNGwXqdjfIgp7fbEN99Og=;
+  b=RJECdNHvCEL5+AcGvQ2KXToO2xo2vX8bWOwlOYR8QflyG3Es8OIrChDI
+   AyOS6eolm28/EMUr5+W3iFPWN9NHTbvtJTEfdNRRqeToIPrLEpRe+rg2T
+   PEAvh1EJPxSn1nYGB2fxNPYL56X9tDhhZfwbAiPrMYAT4XQFoSC2qSxAw
+   hyrR7++OzRNC0DgobE4sgMLhVysnA263cZ3eVgIaWweT7HUX62GBJIPYI
+   G+6nQYWkbjNJBKM3FpkbC3icrVO+g+sZsKMBE1t3+C9PHgem+NmAoDARV
+   jZ5hnN2vwQSTGiBG4vACk7epb8r6Cq5hY5Q2BcoHuZHStYeIpVdoHcB/u
+   g==;
+X-CSE-ConnectionGUID: yTF68hfmQmuESq0uVNgcCQ==
+X-CSE-MsgGUID: 1JlLBk9YTtaOP3QQ+9GduQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="14904542"
+X-IronPort-AV: E=Sophos;i="6.08,164,1712646000"; 
+   d="scan'208";a="14904542"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 03:01:15 -0700
+X-CSE-ConnectionGUID: iFfmqHnZTvWBzGzC4IR4PQ==
+X-CSE-MsgGUID: 08gnIcHCTqunVJDmnlbing==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,164,1712646000"; 
+   d="scan'208";a="35813173"
+Received: from unknown (HELO localhost.igk.intel.com) ([10.211.13.141])
+  by fmviesa005.fm.intel.com with ESMTP; 16 May 2024 03:01:11 -0700
+From: Sergey Temerkhanov <sergey.temerkhanov@intel.com>
+To: larysa.zaremba@intel.com
+Cc: ast@kernel.org,
+	bpf@vger.kernel.org,
+	daniel@iogearbox.net,
+	davem@davemloft.net,
+	edumazet@google.com,
+	hawk@kernel.org,
+	igor.bagnucki@intel.com,
+	intel-wired-lan@lists.osuosl.org,
+	jacob.e.keller@intel.com,
+	john.fastabend@gmail.com,
+	kuba@kernel.org,
+	linux-kernel@vger.kernel.org,
+	maciej.fijalkowski@intel.com,
+	magnus.karlsson@gmail.com,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	przemyslaw.kitszel@intel.com
+Subject: [PATCH iwl-net 2/3] ice: add flag to distinguish reset from .ndo_bpf in XDP rings config
+Date: Thu, 16 May 2024 12:00:39 +0200
+Message-Id: <20240516100039.88189-1-sergey.temerkhanov@intel.com>
+X-Mailer: git-send-email 2.35.3
+In-Reply-To: <20240515160246.5181-3-larysa.zaremba@intel.com>
+References: <20240515160246.5181-3-larysa.zaremba@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/9] scatterlist: Add a flag for the restricted memory
-To: Yong Wu <yong.wu@mediatek.com>, Rob Herring <robh+dt@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>, christian.koenig@amd.com,
- Sumit Semwal <sumit.semwal@linaro.org>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Benjamin Gaignard <benjamin.gaignard@collabora.com>,
- Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>,
- tjmercier@google.com, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- Robin Murphy <robin.murphy@arm.com>,
- Vijayanand Jitta <quic_vjitta@quicinc.com>,
- Joakim Bech <joakim.bech@linaro.org>,
- Jeffrey Kardatzke <jkardatzke@google.com>, Pavel Machek <pavel@ucw.cz>,
- Simon Ser <contact@emersion.fr>, Pekka Paalanen <ppaalanen@gmail.com>,
- willy@infradead.org, Logan Gunthorpe <logang@deltatee.com>,
- Daniel Vetter <daniel@ffwll.ch>, jianjiao.zeng@mediatek.com,
- kuohong.wang@mediatek.com, youlin.pei@mediatek.com
-References: <20240515112308.10171-1-yong.wu@mediatek.com>
- <20240515112308.10171-3-yong.wu@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20240515112308.10171-3-yong.wu@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Organization: Intel Technology Poland sp. z o.o. - ul. Slowackiego 173, 80-298 Gdansk - KRS 101882 - NIP 957-07-52-316
+Content-Transfer-Encoding: 8bit
 
-Il 15/05/24 13:23, Yong Wu ha scritto:
-> Introduce a FLAG for the restricted memory which means the memory is
-> protected by TEE or hypervisor, then it's inaccessiable for kernel.
-> 
-> Currently we don't use sg_dma_unmark_restricted, thus this interface
-> has not been added.
-> 
-> Signed-off-by: Yong Wu <yong.wu@mediatek.com>
-> ---
->   include/linux/scatterlist.h | 34 ++++++++++++++++++++++++++++++++++
->   1 file changed, 34 insertions(+)
-> 
-> diff --git a/include/linux/scatterlist.h b/include/linux/scatterlist.h
-> index 77df3d7b18a6..a6ad9018eca0 100644
-> --- a/include/linux/scatterlist.h
-> +++ b/include/linux/scatterlist.h
-> @@ -282,6 +282,7 @@ static inline void sg_unmark_end(struct scatterlist *sg)
->   
->   #define SG_DMA_BUS_ADDRESS	(1 << 0)
->   #define SG_DMA_SWIOTLB		(1 << 1)
-> +#define SG_DMA_RESTRICTED	(2 << 1)
+This patch also fixes an issue when XDP programs become detached from the RX rings on channel number reconfiguration
 
-I think you wanted to write (1 << 2) here :-)
-
-Cheers,
-Angelo
-
->   
->   /**
->    * sg_dma_is_bus_address - Return whether a given segment was marked
-> @@ -352,6 +353,31 @@ static inline void sg_dma_mark_swiotlb(struct scatterlist *sg)
->   	sg->dma_flags |= SG_DMA_SWIOTLB;
->   }
->   
-> +/**
-> + * sg_dma_mark_restricted - Mark the scatterlist for restricted buffer.
-> + * @sg:		SG entry
-> + *
-> + * Description:
-> + *   Marks a a scatterlist for the restricted buffer that may be inaccessiable
-> + *   in kernel if it is protected.
-> + */
-> +static inline void sg_dma_mark_restricted(struct scatterlist *sg)
-> +{
-> +	sg->dma_flags |= SG_DMA_RESTRICTED;
-> +}
-> +
-> +/**
-> + * sg_dma_is_restricted - Return whether the scatterlist was marked as restricted
-> + *                        buffer.
-> + * @sg:		SG entry
-> + *
-> + * Description:
-> + *   Returns true if the scatterlist was marked as restricted buffer.
-> + */
-> +static inline bool sg_dma_is_restricted(struct scatterlist *sg)
-> +{
-> +	return sg->dma_flags & SG_DMA_RESTRICTED;
-> +}
->   #else
->   
->   static inline bool sg_dma_is_bus_address(struct scatterlist *sg)
-> @@ -372,6 +398,14 @@ static inline void sg_dma_mark_swiotlb(struct scatterlist *sg)
->   {
->   }
->   
-> +static inline bool sg_dma_is_restricted(struct scatterlist *sg)
-> +{
-> +	return false;
-> +}
-> +
-> +static inline void sg_dma_mark_restrited(struct scatterlist *sg)
-> +{
-> +}
->   #endif	/* CONFIG_NEED_SG_DMA_FLAGS */
->   
->   /**
-
-
+Regards,
+Sergey
 
