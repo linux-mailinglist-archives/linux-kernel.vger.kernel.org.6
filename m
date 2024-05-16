@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-181152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D08908C7844
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:10:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B9A98C7846
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:10:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BDE71F21870
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:10:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC19DB2137F
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:10:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5671314A612;
-	Thu, 16 May 2024 14:09:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDC9E14D2BF;
+	Thu, 16 May 2024 14:09:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IrvobaTp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i/S2yQ2T"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C66A14B969
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 14:09:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 101D614D2A6
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 14:09:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715868587; cv=none; b=KNixPW/nHQl5yBnxDFXeOKq7bfunssZnDwxGa8cWH8SVDWsndOhkrJUZxnJS1YL21M9N4DdTjrjesdk29r8nJjBkD2KVKSx4Bm56OQi6Mwjw25gTLsEkPhA5mVJzGf2582hFPKT8uQmRBfEveQUHQgNPrTHMOLcK4BXnv7dRMfk=
+	t=1715868590; cv=none; b=TaRskOWVHukCOJ73XE/FGuw3+egJDEJn7c62ktf3iO5NLbF9kTKKdzMfxy42e43/mOAM+VMY+87FjRA4yJ49aMesXGlo1BHsbTeM/kDaA4vw3DmYocNydIrvCliLBxcBZs12lkFf7PSD89+lRSuvDRIGMBPURL9gVppNO40Ro7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715868587; c=relaxed/simple;
-	bh=8ujq2iQEISU0Ou+VI37VHgm8fH2OCc7fS2VtpmzXXUY=;
+	s=arc-20240116; t=1715868590; c=relaxed/simple;
+	bh=h3hTYa+QVLo1ar17Qiq7dfJ3JmqF/A7sdI3WXMpbxes=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=m1aXCjqsmsbvSuVDweNYEtWDMiI2sfsHXLyIzhXCcX9hk2F6RrBra0wbgjZDIE34Pm+mssk/9BGnT/PjqnPP9hyQywgcM8Q6Y3az7HgnLuO65FU47Ud12jJB0TwyQrp9JwiKthbgu52mlT3jFIp3ZqOK9mGcnZ1RP2w616bh8BY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IrvobaTp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0185CC32786;
-	Thu, 16 May 2024 14:09:44 +0000 (UTC)
+	 MIME-Version; b=HH9HfctUyyM7T/FRHbFvTYbOVhIuUfz/eLuwmCWNZycI7MwbZEwVq0DzxzmLwrddqMkXJbAp+uUObyGvanf9Cc/s5KNAUgKgOMv2GL5QaUusZthpRK3mOLXNlonPdxC6Xi3ORpjAmTji8WOj0pxheX/6EKmb3BGwjBuCy16xg2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i/S2yQ2T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1D73C4AF07;
+	Thu, 16 May 2024 14:09:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715868587;
-	bh=8ujq2iQEISU0Ou+VI37VHgm8fH2OCc7fS2VtpmzXXUY=;
+	s=k20201202; t=1715868589;
+	bh=h3hTYa+QVLo1ar17Qiq7dfJ3JmqF/A7sdI3WXMpbxes=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=IrvobaTpzSzkaFAgbJfPzWh4QH25Ys49NPrVlxjiT90HomxxrxvF/qEPFaYsDbfrJ
-	 euuhho0U9A5h90eoJMphnQhwXDKcfO6bzb11i67H528Lb9By8wBN+yqnbRpKnD1u6O
-	 bZFbgnRG8Y2b92WU8WzO99xsIrti7Y9E1Y15U478LvKzg2b5/1TvahFrsItwiL4f8P
-	 iZoCYp4EbBzY+IL7S+d+LQa8Ageyx6Q02psdtscG0n2RsQndbKikpDXt+m4vFJZFzL
-	 O4g7E54WkTpv4ca4Xj+UwTr2hOYnD0HREYWCCZeGTyWmdiSQ3UivKWV4g6jaZYJ79p
-	 deJZpaqQocGvw==
+	b=i/S2yQ2TQwsMe1LqJ5T4I+ryqon6kdFShMOPc9B2wiZhNTm/sikbCrRtQ4HO2r1W5
+	 46hjavwQwclVUy8HH1bKQq/a44ILMp2dvt0QZHTKf+TZnt5k+6UQLQEg0jzK8QjVBL
+	 we1xSfYTc4bCSiyo1QprKI7PkqikQc82zwEwt4PIlFjHDuRR7jnJxvjxXWu5Zs6jio
+	 JXn96gQUUsNQjdd3vu0zTszYLB/uXrLq+ukNiVvLGmc/u/tl6S1pALtxxfRYRnYFn2
+	 8h3TZcNv1/LXwDWuaMi3Gfz9WQzBeY8MC06SSauRbLGTWNE+F+YfegK8RMACeugxhW
+	 X8gsBKhWdKWSA==
 From: Frederic Weisbecker <frederic@kernel.org>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Frederic Weisbecker <frederic@kernel.org>,
@@ -53,9 +53,9 @@ Cc: Frederic Weisbecker <frederic@kernel.org>,
 	Ian Rogers <irogers@google.com>,
 	Adrian Hunter <adrian.hunter@intel.com>,
 	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 2/4] task_work: Introduce task_work_cancel() again
-Date: Thu, 16 May 2024 16:09:34 +0200
-Message-Id: <20240516140936.13694-3-frederic@kernel.org>
+Subject: [PATCH 3/4] perf: Fix event leak upon exit
+Date: Thu, 16 May 2024 16:09:35 +0200
+Message-Id: <20240516140936.13694-4-frederic@kernel.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240516140936.13694-1-frederic@kernel.org>
 References: <20240516140936.13694-1-frederic@kernel.org>
@@ -67,63 +67,83 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Re-introduce task_work_cancel(), this time to cancel an actual callback
-and not *any* callback pointing to a given function. This is going to be
-needed for perf events event freeing.
+When a task is scheduled out, pending sigtrap deliveries are deferred
+to the target task upon resume to userspace via task_work.
 
+However failures while adding en event's callback to the task_work
+engine are ignored. And since the last call for events exit happen
+after task work is eventually closed, there is a small window during
+which pending sigtrap can be queued though ignored, leaking the event
+refcount addition such as in the following scenario:
+
+    TASK A
+    -----
+
+    do_exit()
+       exit_task_work(tsk);
+
+       <IRQ>
+       perf_event_overflow()
+          event->pending_sigtrap = pending_id;
+          irq_work_queue(&event->pending_irq);
+       </IRQ>
+    =========> PREEMPTION: TASK A -> TASK B
+       event_sched_out()
+          event->pending_sigtrap = 0;
+          atomic_long_inc_not_zero(&event->refcount)
+          // FAILS: task work has exited
+          task_work_add(&event->pending_task)
+       [...]
+       <IRQ WORK>
+       perf_pending_irq()
+          // early return: event->oncpu = -1
+       </IRQ WORK>
+       [...]
+    =========> TASK B -> TASK A
+       perf_event_exit_task(tsk)
+          perf_event_exit_event()
+             free_event()
+                WARN(atomic_long_cmpxchg(&event->refcount, 1, 0) != 1)
+                // leak event due to unexpected refcount == 2
+
+As a result the event is never released while the task exits.
+
+Fix this with appropriate task_work_add()'s error handling.
+
+Fixes: 517e6a301f34 ("perf: Fix perf_pending_task() UaF")
 Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 ---
- include/linux/task_work.h |  1 +
- kernel/task_work.c        | 24 ++++++++++++++++++++++++
- 2 files changed, 25 insertions(+)
+ kernel/events/core.c | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
 
-diff --git a/include/linux/task_work.h b/include/linux/task_work.h
-index 23ab01ae185e..26b8a47f41fc 100644
---- a/include/linux/task_work.h
-+++ b/include/linux/task_work.h
-@@ -31,6 +31,7 @@ int task_work_add(struct task_struct *task, struct callback_head *twork,
- struct callback_head *task_work_cancel_match(struct task_struct *task,
- 	bool (*match)(struct callback_head *, void *data), void *data);
- struct callback_head *task_work_cancel_func(struct task_struct *, task_work_func_t);
-+bool task_work_cancel(struct task_struct *task, struct callback_head *cb);
- void task_work_run(void);
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 724e6d7e128f..f2a366e736a4 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -2284,18 +2284,15 @@ event_sched_out(struct perf_event *event, struct perf_event_context *ctx)
+ 	}
  
- static inline void exit_task_work(struct task_struct *task)
-diff --git a/kernel/task_work.c b/kernel/task_work.c
-index 54ac24059daa..2134ac8057a9 100644
---- a/kernel/task_work.c
-+++ b/kernel/task_work.c
-@@ -136,6 +136,30 @@ task_work_cancel_func(struct task_struct *task, task_work_func_t func)
- 	return task_work_cancel_match(task, task_work_func_match, func);
- }
+ 	if (event->pending_sigtrap) {
+-		bool dec = true;
+-
+ 		event->pending_sigtrap = 0;
+ 		if (state != PERF_EVENT_STATE_OFF &&
+-		    !event->pending_work) {
+-			event->pending_work = 1;
+-			dec = false;
++		    !event->pending_work &&
++		    !task_work_add(current, &event->pending_task, TWA_RESUME)) {
+ 			WARN_ON_ONCE(!atomic_long_inc_not_zero(&event->refcount));
+-			task_work_add(current, &event->pending_task, TWA_RESUME);
+-		}
+-		if (dec)
++			event->pending_work = 1;
++		} else {
+ 			local_dec(&event->ctx->nr_pending);
++		}
+ 	}
  
-+static bool task_work_match(struct callback_head *cb, void *data)
-+{
-+	return cb == data;
-+}
-+
-+/**
-+ * task_work_cancel - cancel a pending work added by task_work_add()
-+ * @task: the task which should execute the work
-+ * @cb: the callback to remove if queued
-+ *
-+ * Remove a callback from a task's queue if queued.
-+ *
-+ * RETURNS:
-+ * True if the callback was queued and got cancelled, false otherwise.
-+ */
-+bool task_work_cancel(struct task_struct *task, struct callback_head *cb)
-+{
-+	struct callback_head *ret;
-+
-+	ret = task_work_cancel_match(task, task_work_match, cb);
-+
-+	return ret == cb;
-+}
-+
- /**
-  * task_work_run - execute the works added by task_work_add()
-  *
+ 	perf_event_set_state(event, state);
 -- 
 2.34.1
 
