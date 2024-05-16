@@ -1,184 +1,177 @@
-Return-Path: <linux-kernel+bounces-180601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C971A8C70AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 05:26:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2018A8C7091
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 05:15:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 815DC28110F
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 03:26:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E19F1C2232B
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 03:15:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 068F8182AF;
-	Thu, 16 May 2024 03:26:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="BHmfPTvS"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9B5C4A15;
+	Thu, 16 May 2024 03:14:51 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AA48B642
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 03:26:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0021F4688;
+	Thu, 16 May 2024 03:14:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715829967; cv=none; b=WD+L2hu4YoFTp6mzBjWuATcHHLycVUCfddiXwBqB7UvbBmQwVz2Jovx36FStoxKtOkQfYOkogPOy+SB7BxoeCbSDXCdlWjJrGiv4JOTNMGdnR9OfimZPJNzjB+x/6xHKxxr6H72AwQQZM943X+Ua6ZpY4VXTgfSjfhsp1w5Y8vI=
+	t=1715829291; cv=none; b=O/zY/nL+zJZdNHhHlRXMQuyYiIq1ZpBXCkPQ2j+Jj+ir/ssvfnlyAtBptHlRUVbNP/861+iov34Ud++udcDWj5+a6Y89GzB80LGKPqrrZcb+0rb6RM6CS41sqxHr6poEcgcIdUSVGX0jmnLI+1QEwgy2UPb4JImOKCdH+Y8Jh8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715829967; c=relaxed/simple;
-	bh=Fj9DFQbUIHz++fbxS9Gb93DcDizppZYPSDVmzUo6mYs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 References; b=bKwwpOreJHAE+4qLk4yewONgJzGr1PrSTIhe4N2/20szJ5SOkg6UuLrdTPABmrL1pKPUGc/PG7LPDZ3j+0+luvZEQFwiKpMyEGkqsE9LEriTzwiLvxBPLs/Ox+2GrCtlpscJXMWLh01UTNqxzpwi4+tJjgsmKFxEUxljuwoP8CI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=BHmfPTvS; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240516032555epoutp030a9a18750b77321f5382de63660e608a~P2kDasjIq1689616896epoutp03S
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 03:25:55 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240516032555epoutp030a9a18750b77321f5382de63660e608a~P2kDasjIq1689616896epoutp03S
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1715829955;
-	bh=RVQ/+Lsjjx2p15g745Qf4Umsx247PWwm8nk3ogxPp2I=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=BHmfPTvSadGgoo+ZzSbakfy7RaQKO+qhbLPKmwnikcYBYHyGL5NdODRQSXZXzUtSv
-	 5CJGSsegsfQK6/6IRsAalCgZzFktSA6cCtvG/zuI78GcL8h+0a+asWXpbfg+54v27d
-	 z3opoOb4Y6oWuOUPnMRgBMYt+MOG174a9p4dsya8=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas2p2.samsung.com (KnoxPortal) with ESMTP id
-	20240516032554epcas2p2d86e41d5685adb5bbf161c56cdec7939~P2kDGcvG50494604946epcas2p2b;
-	Thu, 16 May 2024 03:25:54 +0000 (GMT)
-Received: from epsmges2p1.samsung.com (unknown [182.195.36.90]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4VfwTt0GNKz4x9Q0; Thu, 16 May
-	2024 03:25:54 +0000 (GMT)
-Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
-	epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	0A.31.09673.1CC75466; Thu, 16 May 2024 12:25:53 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
-	20240516032553epcas2p3b8f34d03f32cccccc628027fbe1e8356~P2kBzKd970613006130epcas2p3N;
-	Thu, 16 May 2024 03:25:53 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240516032553epsmtrp20d14534e6924a6ada1f43016c58e5e92~P2kBxuSeZ0411704117epsmtrp25;
-	Thu, 16 May 2024 03:25:53 +0000 (GMT)
-X-AuditID: b6c32a45-a89fa700000025c9-79-66457cc1670d
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	B3.B6.09238.1CC75466; Thu, 16 May 2024 12:25:53 +0900 (KST)
-Received: from localhost.dsn.sec.samsung.com (unknown [10.229.54.230]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240516032553epsmtip2a5cc07a4ec700d70fc0eb8cf97e19007~P2kBhReN12157021570epsmtip2Y;
-	Thu, 16 May 2024 03:25:53 +0000 (GMT)
-From: Minwoo Im <minwoo.im@samsung.com>
-To: "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>, Alim Akhtar
-	<alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>, Bart Van
-	Assche <bvanassche@acm.org>
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, Joel Granados
-	<j.granados@samsung.com>, gost.dev@samsung.com, Minwoo Im
-	<minwoo.im@samsung.com>, Asutosh Das <quic_asutoshd@quicinc.com>
-Subject: [PATCH] ufs: mcq: Fix missing argument 'hba' in MCQ_OPR_OFFSET_n
-Date: Thu, 16 May 2024 12:14:05 +0900
-Message-Id: <20240516031405.586706-1-minwoo.im@samsung.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1715829291; c=relaxed/simple;
+	bh=rowuu9ugrGKZ/V2f9RKstIG9lCJHliRej0gakn/Cc0Y=;
+	h=Subject:To:References:From:Cc:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=LqfAiWHYIj5JRBZVNkGO+URP+Md07qP5JD0yosOTD4EWrW6plXrefJu5FHXmOM+iiYelnvP/70ryEp28356RsV4HOePlJsHj7j751gtRal8cQzi8rJb/MKW9wKbfduXKWpH1+zhAfKfcY/cq0pXVm2aZraAt58anH+C1zqzH5BE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VfwDm2M7Vz4f3jdX;
+	Thu, 16 May 2024 11:14:32 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 0866C1A0B41;
+	Thu, 16 May 2024 11:14:41 +0800 (CST)
+Received: from [10.174.176.117] (unknown [10.174.176.117])
+	by APP1 (Coremail) with SMTP id cCh0CgBXbQYaekVmhbsnMw--.9025S2;
+	Thu, 16 May 2024 11:14:37 +0800 (CST)
+Subject: Re: [syzbot] [bpf?] KASAN: slab-use-after-free Read in htab_map_alloc
+ (2)
+To: syzbot <syzbot+061f58eec3bde7ee8ffa@syzkaller.appspotmail.com>,
+ bpf@vger.kernel.org, netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <000000000000ac237d06179e3237@google.com>
+From: Hou Tao <houtao@huaweicloud.com>
+Cc: andrii@kernel.org, ast@kernel.org, daniel@iogearbox.net,
+ eddyz87@gmail.com, haoluo@google.com, john.fastabend@gmail.com,
+ jolsa@kernel.org, kpsingh@kernel.org, linux-kernel@vger.kernel.org,
+ martin.lau@linux.dev, sdf@google.com, song@kernel.org,
+ yonghong.song@linux.dev
+Message-ID: <d28e4f02-965d-96de-ee56-f7a001b67fe7@huaweicloud.com>
+Date: Thu, 16 May 2024 11:14:34 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprFJsWRmVeSWpSXmKPExsWy7bCmqe7BGtc0g00zrCwezNvGZvHy51U2
-	i2kffjJb3Dywk8li6f6HjBYb+zksLu+aw2bRfX0Hm8Xy4/+YLJ6dPsBssbBjLosDt8flK94e
-	0yadYvP4+PQWi8fEPXUefVtWMXp83iTn0X6gmymAPSrbJiM1MSW1SCE1Lzk/JTMv3VbJOzje
-	Od7UzMBQ19DSwlxJIS8xN9VWycUnQNctMwfoQiWFssScUqBQQGJxsZK+nU1RfmlJqkJGfnGJ
-	rVJqQUpOgXmBXnFibnFpXrpeXmqJlaGBgZEpUGFCdsaktm62gvVCFW93d7M0MC7i72Lk5JAQ
-	MJGYt+krM4gtJLCDUeLtdYUuRi4g+xOjxOK3DxghnG+MEgsObmCF6fi05DozRGIvo8SmObOY
-	IJzfjBILe94zgVSxCahLNEx9xQKSEBF4zyhx//ZTdhCHWeAUo8Tn++2MIFXCAp4Sj1vug21n
-	EVCVmN2+gw3E5hWwlli0vYkFYp+8xP6DZ5kh4oISJ2c+AYszA8Wbt84Gu0NC4Cu7xNM365kh
-	Glwk1q1ZwAZhC0u8Or6FHcKWkvj8bi9UvFzi55tJjBB2hcTBWbeB4hxAtr3EtecpICazgKbE
-	+l36EFFliSO3oLbySXQc/ssOEeaV6GgTgpihLPHx0CGo/ZISyy+9htrjIXHxxGQ2SPDGSjx4
-	e4l1AqP8LCS/zELyyyyEvQsYmVcxiqUWFOempxYbFRjCIzU5P3cTIziRarnuYJz89oPeIUYm
-	DsZDjBIczEoivCJpzmlCvCmJlVWpRfnxRaU5qcWHGE2BoTuRWUo0OR+YyvNK4g1NLA1MzMwM
-	zY1MDcyVxHnvtc5NERJITyxJzU5NLUgtgulj4uCUamCasfF/UMOJ+59indzPCx5+Zigfk2Px
-	u/tU56F1ytcn28Wdk3+nNaNMSkZl14RzPbNr7y1s+XPpZrNc/CbWr1eblmfplez4ZOOpE8u/
-	aGsh140UG4MsTet7E1pmNJdsSxNbbbju1JO2NmeH9hcbK7svnVC8s3/tu+USTG6z3nnkeisH
-	njWpfnrw9/UzHvtep/+uzC16b51uIK0/6+Xkj1xOJyXufGj+x/XcwDjP4XDErJ3m069/nPTo
-	/U7rKf+P7L5nE7oube573Re73ITqGfbbVlSeV5mlOocv3W71bf9c07O6Ok8vmkv61X9lYfl3
-	MFvuSw8Pq+3muqQNJ8TjA/3dNMOjcpS7mZYnvj2p+fKSEktxRqKhFnNRcSIAltpcOC0EAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNLMWRmVeSWpSXmKPExsWy7bCSvO7BGtc0g8c9/BYP5m1js3j58yqb
-	xbQPP5ktbh7YyWSxdP9DRouN/RwWl3fNYbPovr6DzWL58X9MFs9OH2C2WNgxl8WB2+PyFW+P
-	aZNOsXl8fHqLxWPinjqPvi2rGD0+b5LzaD/QzRTAHsVlk5Kak1mWWqRvl8CVMamtm61gvVDF
-	293dLA2Mi/i7GDk5JARMJD4tuc7cxcjFISSwm1Hi9a+XLBAJSYl9p2+yQtjCEvdbjrBCFP1k
-	lDh9dCpYEZuAukTD1FdgtojAR0aJpReKQYqYBS4wSsz59IkZJCEs4CnxuOU+mM0ioCoxu30H
-	G4jNK2AtsWh7E9Q2eYn9B88yQ8QFJU7OfAIWZwaKN2+dzTyBkW8WktQsJKkFjEyrGCVTC4pz
-	03OTDQsM81LL9YoTc4tL89L1kvNzNzGCw1tLYwfjvfn/9A4xMnEwHmKU4GBWEuEVSXNOE+JN
-	SaysSi3Kjy8qzUktPsQozcGiJM5rOGN2ipBAemJJanZqakFqEUyWiYNTqoEp5HRZFcfmzclM
-	mzc7hB08xZnpqbmNw37ViYpHZ5fMXmTslM1XO1Hl8ku2p8blD3YWz58otaiq6MYJkdVme9Ke
-	HeRZZXl295eKfbNPWezmfJVWJ5X/T2XyntT/R38t/yA9mX1zm4WuBWfnbA7VBfws4ROVVha5
-	PuFr99L9Uv36n53E5RMyc6a5F8/Zke/TpXjOgeHYu18Z1qfbcy7azVCV+L3vsvubw3fkbvcx
-	zM/L3tC+ulP+/7o72czX+/enKCd2xuqZaQTcOX90Da/xyQ/aJwtYb8zUU3NI82CbI/vrSazY
-	m9qu/08C5hkqBp8yioh2uK4bMX21/tRiH4HXqisjv6158EJkTaB+hOQelaJNSizFGYmGWsxF
-	xYkAp+hCdN4CAAA=
-X-CMS-MailID: 20240516032553epcas2p3b8f34d03f32cccccc628027fbe1e8356
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240516032553epcas2p3b8f34d03f32cccccc628027fbe1e8356
-References: <CGME20240516032553epcas2p3b8f34d03f32cccccc628027fbe1e8356@epcas2p3.samsung.com>
+In-Reply-To: <000000000000ac237d06179e3237@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-CM-TRANSID:cCh0CgBXbQYaekVmhbsnMw--.9025S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxCw15JF4DAr47tr1xCr48Zwb_yoWrtF1Dpw
+	s8KFyxCr4FqryUZryUJr1UCF1UtwsxCF17GF4fWr1rZ3ZIgw1xKr1ktFWUXF9rCry8uFya
+	qwn8Z3yrKw1rZaUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
+	07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c
+	02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_
+	WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
+	CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAF
+	wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa
+	7IU13rcDUUUUU==
+X-CM-SenderInfo: xkrx3t3r6k3tpzhluzxrxghudrp/
 
-The MCQ_OPR_OFFSET_n macro has taken 'hba' on the caller context
-without receiving 'hba' instance as an argument.  To prevent potential
-bugs in future use cases, this patch added an argument 'hba'.
+Hi,
 
-Fixes: 2468da61ea09 ("scsi: ufs: core: mcq: Configure operation and runtime interface")
-Cc: Asutosh Das <quic_asutoshd@quicinc.com>
-Signed-off-by: Minwoo Im <minwoo.im@samsung.com>
----
- drivers/ufs/core/ufs-mcq.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+On 5/4/2024 6:21 PM, syzbot wrote:
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    2506f6229bd0 Merge branch 'net-dsa-adjust_link-removal'
+> git tree:       net-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=11ac64ef180000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=15dda165e1d20cf1
+> dashboard link: https://syzkaller.appspot.com/bug?extid=061f58eec3bde7ee8ffa
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+>
+> Unfortunately, I don't have any reproducer for this issue yet.
+>
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/fc61e6a6e169/disk-2506f622.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/3ed6cc1ccbe5/vmlinux-2506f622.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/c6ea42464245/bzImage-2506f622.xz
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+061f58eec3bde7ee8ffa@syzkaller.appspotmail.com
+>
+> ==================================================================
+> BUG: KASAN: slab-use-after-free in lockdep_register_key+0x253/0x3f0 kernel/locking/lockdep.c:1225
+> Read of size 8 at addr ffff88805fe2c298 by task syz-executor.1/5906
+>
+> CPU: 1 PID: 5906 Comm: syz-executor.1 Not tainted 6.9.0-rc5-syzkaller-01473-g2506f6229bd0 #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:88 [inline]
+>  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+>  print_address_description mm/kasan/report.c:377 [inline]
+>  print_report+0x169/0x550 mm/kasan/report.c:488
+>  kasan_report+0x143/0x180 mm/kasan/report.c:601
+>  lockdep_register_key+0x253/0x3f0 kernel/locking/lockdep.c:1225
+>  htab_map_alloc+0x9b/0xe60 kernel/bpf/hashtab.c:506
+>  map_create+0x90c/0x1200 kernel/bpf/syscall.c:1333
+>  __sys_bpf+0x6d1/0x810 kernel/bpf/syscall.c:5659
+>  __do_sys_bpf kernel/bpf/syscall.c:5784 [inline]
+>  __se_sys_bpf kernel/bpf/syscall.c:5782 [inline]
+>  __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5782
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f7781e7dea9
+> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007f7782c720c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
+> RAX: ffffffffffffffda RBX: 00007f7781fabf80 RCX: 00007f7781e7dea9
+> RDX: 0000000000000048 RSI: 0000000020000140 RDI: 0100000000000000
+> RBP: 00007f7781eca4a4 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 000000000000000b R14: 00007f7781fabf80 R15: 00007ffe14057dd8
+>  </TASK>
+>
+> Allocated by task 5593:
+>  kasan_save_stack mm/kasan/common.c:47 [inline]
+>  kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+>  poison_kmalloc_redzone mm/kasan/common.c:370 [inline]
+>  __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:387
+>  kasan_kmalloc include/linux/kasan.h:211 [inline]
+>  __do_kmalloc_node mm/slub.c:3966 [inline]
+>  __kmalloc_node_track_caller+0x24e/0x4e0 mm/slub.c:3986
+>  kmalloc_reserve+0x111/0x2a0 net/core/skbuff.c:597
+>  __alloc_skb+0x1f3/0x440 net/core/skbuff.c:666
+>  alloc_skb include/linux/skbuff.h:1308 [inline]
 
-diff --git a/drivers/ufs/core/ufs-mcq.c b/drivers/ufs/core/ufs-mcq.c
-index 768bf87cd80d..1cfdda9acb0a 100644
---- a/drivers/ufs/core/ufs-mcq.c
-+++ b/drivers/ufs/core/ufs-mcq.c
-@@ -231,7 +231,7 @@ int ufshcd_mcq_memory_alloc(struct ufs_hba *hba)
- 
- /* Operation and runtime registers configuration */
- #define MCQ_CFG_n(r, i)	((r) + MCQ_QCFG_SIZE * (i))
--#define MCQ_OPR_OFFSET_n(p, i) \
-+#define MCQ_OPR_OFFSET_n(hba, p, i) \
- 	(hba->mcq_opr[(p)].offset + hba->mcq_opr[(p)].stride * (i))
- 
- static void __iomem *mcq_opr_base(struct ufs_hba *hba,
-@@ -343,10 +343,10 @@ void ufshcd_mcq_make_queues_operational(struct ufs_hba *hba)
- 		ufsmcq_writelx(hba, upper_32_bits(hwq->sqe_dma_addr),
- 			      MCQ_CFG_n(REG_SQUBA, i));
- 		/* Submission Queue Doorbell Address Offset */
--		ufsmcq_writelx(hba, MCQ_OPR_OFFSET_n(OPR_SQD, i),
-+		ufsmcq_writelx(hba, MCQ_OPR_OFFSET_n(hba, OPR_SQD, i),
- 			      MCQ_CFG_n(REG_SQDAO, i));
- 		/* Submission Queue Interrupt Status Address Offset */
--		ufsmcq_writelx(hba, MCQ_OPR_OFFSET_n(OPR_SQIS, i),
-+		ufsmcq_writelx(hba, MCQ_OPR_OFFSET_n(hba, OPR_SQIS, i),
- 			      MCQ_CFG_n(REG_SQISAO, i));
- 
- 		/* Completion Queue Lower Base Address */
-@@ -356,10 +356,10 @@ void ufshcd_mcq_make_queues_operational(struct ufs_hba *hba)
- 		ufsmcq_writelx(hba, upper_32_bits(hwq->cqe_dma_addr),
- 			      MCQ_CFG_n(REG_CQUBA, i));
- 		/* Completion Queue Doorbell Address Offset */
--		ufsmcq_writelx(hba, MCQ_OPR_OFFSET_n(OPR_CQD, i),
-+		ufsmcq_writelx(hba, MCQ_OPR_OFFSET_n(hba, OPR_CQD, i),
- 			      MCQ_CFG_n(REG_CQDAO, i));
- 		/* Completion Queue Interrupt Status Address Offset */
--		ufsmcq_writelx(hba, MCQ_OPR_OFFSET_n(OPR_CQIS, i),
-+		ufsmcq_writelx(hba, MCQ_OPR_OFFSET_n(hba, OPR_CQIS, i),
- 			      MCQ_CFG_n(REG_CQISAO, i));
- 
- 		/* Save the base addresses for quicker access */
--- 
-2.34.1
+SNIP
+>
+> The buggy address belongs to the object at ffff88805fe2c000
+>  which belongs to the cache kmalloc-2k of size 2048
+> The buggy address is located 664 bytes inside of
+>  freed 2048-byte region [ffff88805fe2c000, ffff88805fe2c800)
+
+After checking all possible callers of lockdep_register_key(), it seems
+that the culprit is Qdisc instead of bpf hash-table, because only the
+offset of lock_class_key in Qdisc is 664. And I think the use-after-free
+problem happens as follow:
+
+(1) call qdisc_alloc()
+After calling lockdep_register_key(), qdisc_alloc() goes to errout1 due
+to netdev_alloc_pcpu_stats() fails. However it doesn't call
+lockdep_register_key() to unregister root_lock_key, but it frees the
+allocated memory
+
+(2) call htab_map_alloc
+During the calling of lockdep_register_key(), it finds the lockdep_key
+registered by free-ed Qdisc and triggers the use-after-free.
+
+Will post a simple patch to fix it.
 
 
