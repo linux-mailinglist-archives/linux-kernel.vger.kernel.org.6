@@ -1,116 +1,110 @@
-Return-Path: <linux-kernel+bounces-180735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC0AA8C726E
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:06:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 840888C7274
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:07:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 157D4B22053
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 08:06:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 399A32821D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 08:07:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D41613849A;
-	Thu, 16 May 2024 08:04:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 133E51327FD;
+	Thu, 16 May 2024 08:06:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M9KiKs33"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Udmyx05N"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E36F12DDAF
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 08:04:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A124120A;
+	Thu, 16 May 2024 08:06:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715846689; cv=none; b=HGtri/8Rs1UQc87RMUFOWj95XihbMgaNK6wuhpOJWDhlBNDpSP6/j1C5ALCuHaJWu58329Ov30jGixkeihymVLsuU8Xbegl91Nb8eWdfrEdKznkpCl/tOYQlj0zXeTCzu7ISHIOEOQR8H8igjLPFW8MyqjwFPLhhipsUEc0YUvY=
+	t=1715846798; cv=none; b=awuKunsgi9IbXNNXisFP5kpgAC5j+hVpzPMsAkK2bAftPLKdUCJ3fcWrZBSRa271qa1vAXBPkgpE0Tz5nP+cZxViRq4K7cYoKtDa2z1koM3jbS9dKrm116n3DfSlRhLGhyN67VNkg5HLHCP72ZUv14W4BFNZvBk8BnyvVKorzxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715846689; c=relaxed/simple;
-	bh=2tXHTi0dLNSZyf6qV6/xdIj/MMJqYMPKAqzz1CzpkkQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=tN74csV2A89pUDas8B7sR5G3cPHC5QctpaT6U0GPb+oNw8y+wwwjc9EVO2bbOc92BJ8aiZ2UG2ok6nAjXVtqJrqx6dvDgtHZCtGakbT/C98nygISZFhysXcNenhIKUIqIc6Gg/d3wLS0xfbvCwwps7aMNZNzF+GHSxcG8uvOxdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M9KiKs33; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715846687; x=1747382687;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=2tXHTi0dLNSZyf6qV6/xdIj/MMJqYMPKAqzz1CzpkkQ=;
-  b=M9KiKs33A6DMJ4IijbFOH/okBYWZVW6X2LXoxMyd+fwZGJWC1SgPC/n+
-   lT/YFJD6ArgAphjTk6OdyGP+KR2lhn9UelVfVifyS4AM3DqBhfPDY50kR
-   rhGWFQf0GzBES7ZQbyZohUjS2JBZUa2bOHRGLyf8MLAiUXpR7KC1Tk2Zk
-   wijgjqF6kzBF2OdMADBjwBExJdxLH16ns/ZdHpMSMjcCjprmxeC+ZCQqF
-   KiXjcXcdn3I2J7P9I0hJ4C9XfaMDhDzmIR+cCEvQy/77xGxf4IaZYpFAM
-   gaQxoF6126GeWNIaoax/PekaaxpsUxGCiqwQ8qj7Q5CBUC/rBH+l6yz3B
-   w==;
-X-CSE-ConnectionGUID: MoKln77PTP+BZ3tsUNPHbQ==
-X-CSE-MsgGUID: VP8O0IxwSk2Ea5JShMPu/Q==
-X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="22613470"
-X-IronPort-AV: E=Sophos;i="6.08,163,1712646000"; 
-   d="scan'208";a="22613470"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 01:04:47 -0700
-X-CSE-ConnectionGUID: 9QUzi2JtTcG3QGDSVfTjzQ==
-X-CSE-MsgGUID: MHU8v8iiTRmi9b+L7Xo8ug==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,163,1712646000"; 
-   d="scan'208";a="31277273"
-Received: from fdefranc-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.246.208])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 01:04:44 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>, Dave Airlie
- <airlied@gmail.com>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, dri-devel
- <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [git pull] drm for 6.10-rc1
-In-Reply-To: <CAHk-=whuCX-NAGOLzwn5sObPDJX-pdqamZ7YTpHFHODAMv4P+A@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <CAPM=9tw-53PCvveRcdLUUQ+mjq2X2er5zp6n1KeE8Nu8x=VP2g@mail.gmail.com>
- <CAHk-=whxT8D_0j=bjtrvj-O=VEOjn6GW8GK4j2V+BiDUntZKAQ@mail.gmail.com>
- <CAPM=9tyOtH24Mw_2X+bgV9iChOQV3LtmRCoR5x6KXhSUD6FjUg@mail.gmail.com>
- <CAHk-=wh8DWSMrtuhZOzanfBCFcuJCihO9x7fkzx-dBhLddXF-Q@mail.gmail.com>
- <CAPM=9twCVkx9OqndCcvjjgx+P7ixBRwttiz25-R=bkycEo5vrQ@mail.gmail.com>
- <CAHk-=whuCX-NAGOLzwn5sObPDJX-pdqamZ7YTpHFHODAMv4P+A@mail.gmail.com>
-Date: Thu, 16 May 2024 11:04:40 +0300
-Message-ID: <87v83eb2sn.fsf@intel.com>
+	s=arc-20240116; t=1715846798; c=relaxed/simple;
+	bh=zmrYzsDBzvTZniaVCCeuBZSYiuTRObWwzzeoGzPyFQ4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=hGz6Dxsw7YoZHIC+TU9P4ptBEV84OEduB+HlpAWAPa1MEuYcNQlZCfewNa5ckCEuOww6ueazUK+SjXJXQ7hXAIA7BJeYtTIdpwIM2T7qzpFKq/WPxk0vdptJ7CIbcKImyAQItQDRlXtAMcWvhIa0fFw45NnzgL26gGruuw5gMD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Udmyx05N; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44G5QUrZ015678;
+	Thu, 16 May 2024 08:06:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=EvtDLPUioGQv95bvrfcXzbPUlQC83IW0glY8CjGmWTY=; b=Ud
+	myx05NrrKbkJFGLEzZzURHVvM6Fc1pOGQASRp18jJZsTeE/yAqBlMh6X8M/+Z245
+	Xs+4DaMRG4qQlJfmGR10l5grCiqJkeV6CJG9iz8ZOanBnC+KUDzCc56lTQPN1peF
+	oaefIaIGmNBj1yprowkCu1Z4oqMIsHa0e4iUg5qQR3sI5lXZloHLlo8lw4a05wGQ
+	8R+k3FStWUFjmr9ftzfxf9xmsc0pOObuilhd+FXTASc/Tw/OEPLHI+BFgv0uIo4C
+	017imQotTGS+cszipyrSCyVtGy2Xj9KHRStYPFeblo0OnLQ70r6Q+P1g01lMoWRc
+	l0guDuVSUwqOhBVa4B1A==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y5c05rbsp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 16 May 2024 08:06:21 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44G86LN9011028
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 16 May 2024 08:06:21 GMT
+Received: from [10.216.55.40] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 16 May
+ 2024 01:06:17 -0700
+Message-ID: <20d7b8e9-ab72-6a4a-ea04-728cd289bf12@quicinc.com>
+Date: Thu, 16 May 2024 13:36:03 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v2 00/34] Qualcomm video encoder and decoder driver
+To: Hyunjun Ko <zzoon@igalia.com>, <quic_dikshita@quicinc.com>
+CC: <agross@kernel.org>, <andersson@kernel.org>, <bryan.odonoghue@linaro.org>,
+        <konrad.dybcio@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <mchehab@kernel.org>, <quic_abhinavk@quicinc.com>,
+        <stanimir.k.varbanov@gmail.com>
+References: <1702899149-21321-1-git-send-email-quic_dikshita@quicinc.com>
+ <20240516075732.105878-1-zzoon@igalia.com>
+Content-Language: en-US
+From: Vikash Garodia <quic_vgarodia@quicinc.com>
+In-Reply-To: <20240516075732.105878-1-zzoon@igalia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: vg9UdyFDzi2gOuNGAtya5FVdAo57Ki2-
+X-Proofpoint-ORIG-GUID: vg9UdyFDzi2gOuNGAtya5FVdAo57Ki2-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-16_03,2024-05-15_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ malwarescore=0 mlxlogscore=759 mlxscore=0 suspectscore=0 adultscore=0
+ spamscore=0 lowpriorityscore=0 bulkscore=0 phishscore=0 priorityscore=1501
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405010000 definitions=main-2405160056
 
-On Wed, 15 May 2024, Linus Torvalds <torvalds@linux-foundation.org> wrote:
-> On Wed, 15 May 2024 at 16:17, Dave Airlie <airlied@gmail.com> wrote:
->> AMDGPU, I915 and XE all have !COMPILE_TEST on their variants
->
-> Hmm.  It turns out that I didn't notice the AMDGPU one because my
-> Threadripper - that has AMDGPU enabled - I have actually turned off
-> EXPERT on, so it's hidden by that for me.
->
-> But yes, both of those should be "depends on !WERROR" too.
+Hi,
 
-Fair enough. Honestly it just didn't occur to me.
+On 5/16/2024 1:27 PM, Hyunjun Ko wrote:
+> Hi,
+> 
+> Thanks for this series of patches. I successfully adjusted these patches and tried to test video features with gstreamer or ffmpeg.
+> But I found this provides staetful interfaces while I need stateless, which might cause an issue for my side..
+> 
+> My question is do you have any plan to implement stateless interfaces or already you have somewhere?
+There is no plan to implement stateless interfaces.
 
-The main goal here was to ensure the drm subsystem does not have any
-build warnings, but without halting CI on any non-drm warnings that
-might occasionally creep in and that we can't fix as quickly.
-
-If there was a way to somehow limit WERROR by subdirectories, without
-config options, I'd love to ditch the config.
-
-> Or maybe they should just go away entirely, and be subsumed by the
-> DRM_WERROR thing.
-
-For i915, this was the idea anyway, we just haven't gotten around to it
-yet.
-
-
-BR,
-Jani.
-
-
--- 
-Jani Nikula, Intel
+Regards,
+Vikash
 
