@@ -1,132 +1,155 @@
-Return-Path: <linux-kernel+bounces-180777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B196C8C72F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:35:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 568A58C72F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:36:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E27E01C22610
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 08:35:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2D981F23086
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 08:36:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 032581411CB;
-	Thu, 16 May 2024 08:35:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16DF2140E47;
+	Thu, 16 May 2024 08:36:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YrtLsCNT"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="YmM4KM2V"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E617BEAD7
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 08:35:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E05013E88C
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 08:36:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715848543; cv=none; b=XWkeWdVZ3Bv5Jbe4dP+K9GtI++qF5vTQ7dnZjY+TG5TAuxVZhyI0kyIoT92IQpAmlyeazjfbyTZQ8qcKscTNnUFIVVT2yX3/Dm5yB7/wMwGp7DcySkv/6YbBgwLVRMOAFuq0xRlC8TBJu4CmUBbidTuzpTv3URt8l454yr1PVNE=
+	t=1715848582; cv=none; b=oGqBBMmTQ8xcBKUu+EI/9Kq1sCRhucRUtXty4VfugH1CMhdLvaF0oKmSBi/+LInJ1gY2I7mrPsrpsjRgJUcIfqS5aUTFBLOR5G2JEk9IWuebwF7C+HOuCKOKjJpg6mxxRljEax3vPhbHtJkftF/tAWbz9mRlIEugmYZ1dSK/Pa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715848543; c=relaxed/simple;
-	bh=oo8O8Dcaaijl0P4hmnJdYe/yUNgFhAJcyi9f3JA3zPk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=co86v95Rfpx+Yjz2sa/oBFg6bQ8a7Fhv1GAxGJZuRtYTQDlpMbgSixdVKOev1NaotKc3WzhlgoMkP82U7wifNP31Hm3XDInMSntDLGJdveJwZCboaLrCqiFKs0poRtwRmdg715Yw/Y1ndJ4higH7Q1G4QGg2TuCmHmZSfnOAgRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YrtLsCNT; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715848540;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SYmuujxXBhD2mn7on4bQ5dzfou146JwBEZ+r/yhSuTg=;
-	b=YrtLsCNTX3Bh3paCyrY98KmlaGp/d4FIA/J3Nvmqh56C9uBP4vP1gGIfslDLJHb+WQO6EU
-	cc8HGVgLtMh8RtFKQug9FJGqR+GCAg4EGFYGNhqJztE4fdhJlINrd+eMxlwrMmMbWrl+rR
-	HS2U0MrP5xfPg7JPrcELMJSbzie7CXs=
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
- [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-569-T9asFGBSN5a_qYD235zGaQ-1; Thu, 16 May 2024 04:35:30 -0400
-X-MC-Unique: T9asFGBSN5a_qYD235zGaQ-1
-Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-52395bc1813so1453451e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 01:35:30 -0700 (PDT)
+	s=arc-20240116; t=1715848582; c=relaxed/simple;
+	bh=dwC6cRbODnGd61OEFofYN+ABCksxryw+47FpuuIGhpo=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zc1BehF1WcpDMaMliJXyaBDb67wnJA2nvBFf6yk6XKfbDqemCctOobxoAt6MklSS8y1hI/baT0lY11/D7/rSlzhfo8jE53PohqyB+tJoCW7PMtf7E9BdOQMKnRNJA3QIQENxjeb0ReUKwyYbg+LeGAvr9JYC87hgg1Qo+sFVIDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=YmM4KM2V; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a59b178b75bso223306966b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 01:36:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1715848579; x=1716453379; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:date:from:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=d6SlACI4eez2IkJWPlonbnYSeybNPJ5ifMFU+WZkjDs=;
+        b=YmM4KM2VK5nG/kADiU9qmVdh6HZXlOu5VLmZ7M17FKbCQx9H/kwz+Zdk1B1MzyQmq5
+         qhzferAMZGxkh7dv6hH9xpfowkhCtRAZm657XMAVbQ13PsP9K5zkV/YvKgSL5EVIzPPx
+         neLFExMyn6+RV9lohTobxO9dF2p7iqEXxFJNdmfN21ZtLOVlmWXsp74WnJqXfaOSveZO
+         kMmmgYFfsEIKxit2AWj6WevmbFIv0N2Knhw1dS/3MKBtJeDLA6TdLlxohoDXJ2BWtvZl
+         ZY/mI291Z88BYLov2ikwq8zTgrOFeOUuUDVmps92gf2A641t+q8zieqZUO2s7YzHkrKY
+         Ginw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715848529; x=1716453329;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1715848579; x=1716453379;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:date:from
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SYmuujxXBhD2mn7on4bQ5dzfou146JwBEZ+r/yhSuTg=;
-        b=bd9O2PSwVjdzLJs+0VaZhFugnnF+z5ES3mEMyJ9eTkHBCnf69fHYDjlAvumxr+qN6W
-         wYfOAiQeeRPfhWkIe6NoOK58lLSNjn49S1YHH2p5pqpdzilB0rw4XYPunD0xQQYnDSLj
-         htNGs6hUP+ReukPAEkl4FjN6MYKBIm9iaMjUMxk/1rM7UlmIxn3is56lFStIoc+qug/7
-         WfYFuS2gEHChBg00zaFdB9mABu8PJ3kyzIq/gfPM2BEouJ+RWEj3oJSp2O51YGvhiMhn
-         hE/3oTkx/znMXErm3nr3EdSCVTDXYJgCilH4y/g9OgC/cx0aPtPSRdKTW0GRuyCZdRqC
-         1RWw==
-X-Gm-Message-State: AOJu0Yy+EzkGDZLIua/VHld6EeMXO5noziEj64skh1YjxKy50nr+OmqR
-	uF/v61647LySo1Wvwbjayq+apcgol0qyN97ro9i76VesiNTLZIM6uzG6rgUrKI2NQEFVyV94rSa
-	ZnSzBVBA073ttYUTQVl2ke9bWF2f+J1/VtpyVCEU2MNudSjenVaOKS3yBQZLTFQ==
-X-Received: by 2002:a05:6512:158d:b0:519:5df9:d945 with SMTP id 2adb3069b0e04-5220fb77429mr16542555e87.4.1715848529103;
-        Thu, 16 May 2024 01:35:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHj3vDyFOlnPaeCzyl328j8BfErkTQsUgK6I5x9aUnU3vXkenCsOHvyVEAgMrpq3mhh9Pl7lA==
-X-Received: by 2002:a05:6512:158d:b0:519:5df9:d945 with SMTP id 2adb3069b0e04-5220fb77429mr16542526e87.4.1715848528671;
-        Thu, 16 May 2024 01:35:28 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733bed72bbsm10232486a12.57.2024.05.16.01.35.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 May 2024 01:35:28 -0700 (PDT)
-Message-ID: <5161bd95-d51e-49cc-bcbd-523fbb747e4b@redhat.com>
-Date: Thu, 16 May 2024 10:35:27 +0200
+        bh=d6SlACI4eez2IkJWPlonbnYSeybNPJ5ifMFU+WZkjDs=;
+        b=RWLG9Fy7LiBGzUzrW6bFNpVcA+6TV0DbmB8zgmyAVCDeY7OfxIbTTzyCHVpnE6qOFD
+         M/Iebb9sF1NR5BsEFZsPX9f9fzFZWwUpkZxPETRlffJGuJhoIEdwKitLZgMDdJGDUolK
+         VfQX1RKM7Y3V1vSo3Gt7YqxmtJ1i8A9eJwBqOa9w849yOZEw/V3OmQv5uodtQO0RY/45
+         NhT4LQ+jpIsOQnBRLnjP/7TzMJyA4C97r1ULr38epHPneMJq7UOKhsB9JPhYWwrizUUr
+         4ln5QZNTWdRXeBZs63H3WwxU2Pdztf+o9B35quetHvO0HJ7XR+ZKGh6vsoBsuROvCNk2
+         q1Wg==
+X-Forwarded-Encrypted: i=1; AJvYcCUzVPnC44fdtRsT06jrPLqwn+VwCEeahvKsP8h9ARsaFBD+7V14VXGX+Rp1xnEmSYEpoww/KqPyicoqWPEKGBEsoIjo/WA5qQH3C1x2
+X-Gm-Message-State: AOJu0Yw9fXt0sKYTNsiGLLrGaVfWMaptz0c6XFd5Qt2xFN+Wb+oyv5fV
+	TESJhzXro2NjupSs2T8Ws013CGqByNY+oAJauqs+yvMDL/8U3XFYTKB2hDiT8sk=
+X-Google-Smtp-Source: AGHT+IGGFxatrdPISpX+xAY6+xCuM1eumthYKhRaUXY2RINVYNPzbNBTe5QAL9ecMqHyH3zvIKdvOw==
+X-Received: by 2002:a17:906:2708:b0:a5a:84c8:7710 with SMTP id a640c23a62f3a-a5a84c8b9eamr483964166b.55.1715848578649;
+        Thu, 16 May 2024 01:36:18 -0700 (PDT)
+Received: from localhost (host-79-19-230-33.retail.telecomitalia.it. [79.19.230.33])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a8883344bsm289752066b.9.2024.05.16.01.36.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 May 2024 01:36:18 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Thu, 16 May 2024 10:36:27 +0200
+To: Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>, Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kamal Dasu <kamal.dasu@broadcom.com>,
+	Al Cooper <alcooperx@gmail.com>, Eric Anholt <eric@anholt.net>,
+	Stefan Wahren <wahrenst@gmx.net>, devicetree@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-mmc@vger.kernel.org
+Subject: Re: [PATCH v2 4/4] arm64: dts: broadcom: Add support for BCM2712
+Message-ID: <ZkXFi6_2DkXRNgSL@apocalypse>
+Mail-Followup-To: Florian Fainelli <florian.fainelli@broadcom.com>,
+	Andrea della Porta <andrea.porta@suse.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>, Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kamal Dasu <kamal.dasu@broadcom.com>,
+	Al Cooper <alcooperx@gmail.com>, Eric Anholt <eric@anholt.net>,
+	Stefan Wahren <wahrenst@gmx.net>, devicetree@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-mmc@vger.kernel.org
+References: <cover.1715332922.git.andrea.porta@suse.com>
+ <59a3015c3a6f2f0b70a38c030274a163773e7757.1715332922.git.andrea.porta@suse.com>
+ <786bbf35-e9fe-445c-b6f9-21119e60fb34@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] ACPI: EC: Install EC address space handler at the
- namespace root
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
- Linux ACPI <linux-acpi@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Mario Limonciello <mario.limonciello@amd.com>, Armin Wolf <w_armin@gmx.de>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>
-References: <12437901.O9o76ZdvQC@kreacher>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <12437901.O9o76ZdvQC@kreacher>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <786bbf35-e9fe-445c-b6f9-21119e60fb34@broadcom.com>
 
-Hi,
-
-On 5/15/24 9:39 PM, Rafael J. Wysocki wrote:
-> Hi Everyone,
+On 09:14 Fri 10 May     , Florian Fainelli wrote:
+> On 5/10/24 07:35, Andrea della Porta wrote:
 > 
-> This is an update of
+> This should be #size-cells = <2> to be future proof and support over 4GB of
+> DRAM, because the DDR controller and the memory map on that chip have been
+> designed with that requirement.
 > 
-> https://lore.kernel.org/linux-acpi/5787281.DvuYhMxLoT@kreacher/
+> > +
+> > +	interrupt-parent = <&gicv2>;
+> > +
+> > +	axi: axi {
+> > +		compatible = "simple-bus";
+> > +		#address-cells = <2>;
+> > +		#size-cells = <1>;
+> > +		ranges;
 > 
-> which was a follow up for the discussion in:
+> The AXI peripheral window should be defined in the ranges property. The
+> aperture is from 0x10_0000_0000 to 0x10_3FFF_FFFF.
 > 
-> https://lore.kernel.org/linux-acpi/CAJZ5v0hiXdv08PRcop7oSYqgr_g5rwzRTj7HgdNCCGjXeV44zA@mail.gmail.com/T/#t
-> 
-> Patch [1/2] has been updated to avoid possible issues related to
-> systems with defective platform firmware and patch [2/2] is a resend
-> with a couple of tags added.
+> From that point on you can define all peripherals under the axi node to be
+> relative to that axi aperture, just like what you did for the legacy Pi
+> peripherals in the subsequent bus node.
 
-Thanks, the series looks good to me:
+This doesn't seem to match with what I have here:
+- some axi peripherals goes beyond 0x10_3FFF_FFFF (e.g. the interrupt
+  controller is @0x107fff9000)
+- downstream dts have that ranges going from 0x10 0x00000000 0x11 0x00000000,
+  so to span all the peripheral (included e.g. the above int controller)
+- another comment in downstream dts says: // 10_00000000-1x_xxxxxxxx = up to
+  64GB system RAM
 
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+I'm a little confused here, of course we could also define multiple ranges
+but I don't really know what the boundaries are. Anyway, I would opt for the
+extended range (0x10 0x00000000 - 0x11 0x00000000) unless there is concern
+about it. Any thoughts?
 
-for the series.
-
-I assume you are going to send this in as a fix for 6.10 ?
-
-In that case feel free to merge both patches through the
-linux-pm tree.
-
-Regards,
-
-Hans
-
-
-
+Many thanks,
+Andrea
 
