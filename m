@@ -1,101 +1,129 @@
-Return-Path: <linux-kernel+bounces-181159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 062898C7851
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:14:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7873E8C7850
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:14:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 003E2280ECF
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:14:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E28D1F22FA3
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:14:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E51C014A097;
-	Thu, 16 May 2024 14:14:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AC49149DFB;
+	Thu, 16 May 2024 14:14:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="iau85TuQ"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QcWuseYu"
+Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43EFB147C6E;
-	Thu, 16 May 2024 14:14:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B8321474D1
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 14:14:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715868846; cv=none; b=YYs/V5fjMNNnUvBl+bLglSLkSLgo83Vo15ZVKNx9uIaW1LAKDvvDJlunM+G4uKTd4WuRr5Nn9xgCn4Pxp3UjAYB/ymaj0HD6EMxbyfSrIO+45lpsGjsri/Sj+3es1z/b78HxH1nv/3Oo8Lf3WLb1uEITKYmea6Ij0muqNY4luV4=
+	t=1715868870; cv=none; b=l1jEG8AnLQOt0WgxvF29Ur15Ro49rjoG7GJDy4Plpal3WYG4mcxjkKAjfp7BXbobJOhG79RMVG8JlhjgnGxeSnIvERkqR0EkQ81NrL0zvOfNEEp63OWziESF7nGO9DlLmLCegIhFVdwX1Qo9ekThHP91hOk5jVuh+XrpKw0aEos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715868846; c=relaxed/simple;
-	bh=DljRi1gAVLhNjMhkBNML4Mys92kIb7fRsmAUlbeVYeI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bm8WzyIP56aif0YLpV+A54K7lJtmiks5EhwV7gZ5GJxRTqxLMCBXpyzHBreW/SZKnZMalkFxjRsKerphenKTKrQyFTSSJzD6bCh8JREsx5EOX3A0ZJfsgf4crIQ5xAQlLCLEBRgeE9HXRdr8wgpuLcL6kI+ZhmDR1eclITlAdBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=iau85TuQ; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=srq/5gaQL99coY1BQJnPkM6P8FfTUHHR+hVB7Lf6F+M=; b=iau85TuQEkJez5Yl3zhXy2V6Cg
-	yFX5SZvFaO+fP924k3+pywvz67iHXYoT2e+58jXEMk4aB5F2A+U3Dgat/crReZ53l4ZYfN1YXtFw4
-	YHVyw3r+SSli9XzIohJI9knG7Z/0cop7BaY34DHbb3pYNeVFmCtwaz415hcw3grKvryI=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1s7bra-00FW3d-Qz; Thu, 16 May 2024 16:13:42 +0200
-Date: Thu, 16 May 2024 16:13:42 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Thorsten Blum <thorsten.blum@toblux.com>
-Cc: Nicolas Pitre <nico@fluxnic.net>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Arnd Bergmann <arnd@arndb.de>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] net: smc91x: Fix pointer types
-Message-ID: <b15d7689-0385-4d9c-b5e0-afc525ac9578@lunn.ch>
-References: <20240516121142.181934-3-thorsten.blum@toblux.com>
+	s=arc-20240116; t=1715868870; c=relaxed/simple;
+	bh=UmKIrSg4ynhZVpemxfEfIZRxQvu+Crio/QC+XAqfZQg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KkSSAQLjPTYsy9yhnPAtiASOKGq25YxqV7ffU8roUcgyC9LUt+mwXt9MjRNU64XlV1HLLqCQwUwJrT1HsYbCtt08rzQYqlkwiio0xKZYe6N78/ZyDeYcvaF5g2ZC/2BXjXxy+steNr6Fm9om9Q/50WxaV8aUUchprTcab6mUF+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QcWuseYu; arc=none smtp.client-ip=209.85.166.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-7e1b936987fso41788939f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 07:14:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715868868; x=1716473668; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=r/2FOoA91NkUeK0C95CT3vcLU7VJcFennlVEdV0K/sw=;
+        b=QcWuseYuQiQopGQHhI9J0kPtK37qxbgePrU7mSbasfCdDgsrdLOmQZzLyu/iQgYFeK
+         0G8q/fWljy8nb9YJEeJMm7S08pZKWNj4yS6WZG2cGrw97QLyjxqi8kfw8Crkg/filZ9h
+         NyFk2Ll/lVACxfI0UaE40HrDOAPpHT1NQzd3eP8FaMBm0fFQrOKEOwlnLW0Xqw69dAVb
+         hER5blHvbitPo4xIDWkw1E2aQtIBn2fpO2nxhzxBoJRt88CvxNZCTBs/jOYmFAtQL5ci
+         ViFpnVwjaD9WL8ulJ6G9KSQdwh2iHP92QdWOoH+GFKk+jnQZVYSABAqpbgJqEAqekxWH
+         BHaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715868868; x=1716473668;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=r/2FOoA91NkUeK0C95CT3vcLU7VJcFennlVEdV0K/sw=;
+        b=uM6X79M8D/SK5DtuF4eO7z0v+MNPKtQ0WpDt/rEZKqYgOVb4hWEFQIC/6fiIfgge1n
+         8fuIrh8yYIrc5fIZKRteYLdzzYTunFyh5XCCMReXXgHbM0q1uLLQO+uv5EzMnhYlSjym
+         tuahfCAmWz/AtX13Yowrd72+8nvrriE+Ie6341JCwtjPcX08Jkr9SUk65f6e3q5PXOKe
+         R3lZU/DKUTvW6mjIpmhzdbQD7x9ll3ARhOTwAKVcfe0urnM+ZK5vMDIl7GjLkJUc7ehZ
+         JWe4wxAaUi/RlyozTH67WVnC5G3QTs0ZoKggGtpyRNlZQtMIJ+NdYLJavoF8gw6vI2nV
+         X9NQ==
+X-Gm-Message-State: AOJu0YxGVwI+OU+9ZVTYffN1DfMNva7GpeadDYgiNZdFGfwu7uVw0DOR
+	2JujJsYGGhIA4xT9H3MgXxOUQ574z+Q77wVZymN4lRy6TZoILGYYRTPI0w==
+X-Google-Smtp-Source: AGHT+IEaZvDJfqtyJqKpX6aGSYkoLHiHEzguYTGxerURTWW8CMN/2adPbenTYofd+axgskL45GBRbQ==
+X-Received: by 2002:a05:6602:14d:b0:7e1:b3fa:6470 with SMTP id ca18e2360f4ac-7e1b52205abmr1898022839f.19.1715868868381;
+        Thu, 16 May 2024 07:14:28 -0700 (PDT)
+Received: from frodo.. (c-73-78-62-130.hsd1.co.comcast.net. [73.78.62.130])
+        by smtp.googlemail.com with ESMTPSA id ca18e2360f4ac-7e207673a0asm99332939f.11.2024.05.16.07.14.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 May 2024 07:14:27 -0700 (PDT)
+From: Jim Cromie <jim.cromie@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: akpm@linuxfoundation.org,
+	Jim Cromie <jim.cromie@gmail.com>,
+	Andy Whitcroft <apw@canonical.com>,
+	Joe Perches <joe@perches.com>,
+	Dwaipayan Ray <dwaipayanray1@gmail.com>,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH 1/1] checkpatch: allow multi-statement declarative macros.
+Date: Thu, 16 May 2024 08:14:18 -0600
+Message-ID: <20240516141418.25345-1-jim.cromie@gmail.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240516121142.181934-3-thorsten.blum@toblux.com>
+Content-Transfer-Encoding: 8bit
 
-> -#define SMC_PUSH_DATA(lp, p, l)					\
-> +#define SMC_PUSH_DATA(lp, p, l)						\
->  	do {								\
-> -		if (SMC_32BIT(lp)) {				\
-> +		void __iomem *__ioaddr = ioaddr;			\
+Declarative macros, which declare/define storage (at either file or
+function scope), cannot be wrapped in do-while statements.  So
+checkpatch advice is incorrect here.
 
-ioaddr is not a parameter passed to this macro. 
+The code has an $exceptions regex which allows multiple statements
+based on the macro name, etc; /DECLARE_PER_CPU|DEFINE_PER_CPU/ are
+currently accepted, widen those to accept /DECLARE|DEFINE/.
 
-> +		if (SMC_32BIT(lp)) {					\
->  			void *__ptr = (p);				\
->  			int __len = (l);				\
-> -			void __iomem *__ioaddr = ioaddr;		\
->  			if (__len >= 2 && (unsigned long)__ptr & 2) {	\
->  				__len -= 2;				\
-> -				SMC_outsw(ioaddr, DATA_REG(lp), __ptr, 1); \
-> +				SMC_outsw(__ioaddr, DATA_REG(lp), __ptr, 1); \
+cc: Andy Whitcroft <apw@canonical.com>		# (maintainer:CHECKPATCH)
+cc: Joe Perches <joe@perches.com>		# (maintainer:CHECKPATCH)
+cc: Dwaipayan Ray <dwaipayanray1@gmail.com>	# (reviewer:CHECKPATCH)
+cc: Lukas Bulwahn <lukas.bulwahn@gmail.com>	# (reviewer:CHECKPATCH)
+Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
+---
+ scripts/checkpatch.pl | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-You probably should use lp->base here, which is passed into this
-macro, and should have the correct type.
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 9c4c4a61bc83..cddf4c416523 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -5901,6 +5901,7 @@ sub process {
+ 			}
+ 		}
+ 
++# except for declarative macros (whether file or function scope),
+ # multi-statement macros should be enclosed in a do while loop, grab the
+ # first statement and ensure its the whole macro if its not enclosed
+ # in a known good container
+@@ -5958,8 +5959,8 @@ sub process {
+ 				$Declare|
+ 				module_param_named|
+ 				MODULE_PARM_DESC|
+-				DECLARE_PER_CPU|
+-				DEFINE_PER_CPU|
++				DECLARE|
++				DEFINE|
+ 				__typeof__\(|
+ 				union|
+ 				struct|
+-- 
+2.45.0
 
-> @@ -1072,7 +1072,7 @@ static const char * chip_ids[ 16 ] =  {
->  				 */					\
->  				__ptr -= 2;				\
->  				__len += 2;				\
-> -				SMC_SET_PTR(lp,			\
-> +				SMC_SET_PTR(lp,				\
->  					2|PTR_READ|PTR_RCV|PTR_AUTOINC); \
->  			}						\
->  			if (SMC_CAN_USE_DATACS && lp->datacs)		\
-
-This is just a whitespace change. Please put that into a different
-patch.
-
-	Andrew
 
