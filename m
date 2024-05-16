@@ -1,138 +1,206 @@
-Return-Path: <linux-kernel+bounces-180736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48E228C7271
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:07:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 508AB8C726A
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:05:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7ABEA1C21D20
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 08:07:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC9591F2256B
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 08:05:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B295984D2C;
-	Thu, 16 May 2024 08:06:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E44686EB5F;
+	Thu, 16 May 2024 08:04:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="lHRcDfor"
-Received: from smtp-fw-80009.amazon.com (smtp-fw-80009.amazon.com [99.78.197.220])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="VuHs++ep"
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2086.outbound.protection.outlook.com [40.107.117.86])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD86769D2B;
-	Thu, 16 May 2024 08:06:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.220
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715846790; cv=none; b=ExeHYijwIiQrf69ji6P52qKTeC3udtOeOikXHhQFS9M1NzuzyvtayeQlBmexDH9/JPXDRzqZmfuf0+jfuNLNljVy3riGkYqkxItwboHOjsKC6gdAqaGTKxiPxXu8VHzL1is0tlfjh3WSVLqL3VItvF6BEuToIhxHDneMNYfvc0Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715846790; c=relaxed/simple;
-	bh=owQIT5HD7OJm8jW2vo7iEeB4HQZrjCDFv0xnzHggShY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fJr2VEi5hkdzfjArZ36cUwAquGl7U3U7MRCrVZUcPDfrQU05ubqMrtVl6S6O+PLPSTzDHt1igAx/bvZGNCllYPA519nCwOG3ic6KwEi5bCgrlTnRTwjaZWiugWv0+Q5FSIRoYO1eDOmHtIfClhY+EJZIlHQPaW0PyJzawCWXmQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=lHRcDfor; arc=none smtp.client-ip=99.78.197.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1715846788; x=1747382788;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=2HnucdSCbwmmrq18H0sTxqOAmaX8YFcHdjs/KVqRrxo=;
-  b=lHRcDforotFU1Uqv1GBzrQGutIniwBTctJi4YI1lnmty+aIzfdd7NrEs
-   1xp175kfZ0U53xTcagJ663pv4yeh5oJP+MJiUf3WD5icH50e3iPMrMFfC
-   ylIU/zGbgwM/uKswuk+WPrZy9bBEo9M8dEd68Wxv+3vYycHcRZ3+GK60r
-   s=;
-X-IronPort-AV: E=Sophos;i="6.08,163,1712620800"; 
-   d="scan'208";a="89622299"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-80009.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 08:06:25 +0000
-Received: from EX19MTAEUA001.ant.amazon.com [10.0.17.79:39479]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.39.135:2525] with esmtp (Farcaster)
- id de62bcfb-7319-429d-bc38-d1d0827c5886; Thu, 16 May 2024 08:06:24 +0000 (UTC)
-X-Farcaster-Flow-ID: de62bcfb-7319-429d-bc38-d1d0827c5886
-Received: from EX19D002EUA004.ant.amazon.com (10.252.50.181) by
- EX19MTAEUA001.ant.amazon.com (10.252.50.50) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.28; Thu, 16 May 2024 08:06:23 +0000
-Received: from EX19MTAUEA001.ant.amazon.com (10.252.134.203) by
- EX19D002EUA004.ant.amazon.com (10.252.50.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.28; Thu, 16 May 2024 08:06:23 +0000
-Received: from dev-dsk-hagarhem-1b-b868d8d5.eu-west-1.amazon.com
- (10.253.65.58) by mail-relay.amazon.com (10.252.134.102) with Microsoft SMTP
- Server id 15.2.1258.28 via Frontend Transport; Thu, 16 May 2024 08:06:23
- +0000
-Received: by dev-dsk-hagarhem-1b-b868d8d5.eu-west-1.amazon.com (Postfix, from userid 23002382)
-	id 169CC20AC1; Thu, 16 May 2024 08:06:23 +0000 (UTC)
-From: Hagar Hemdan <hagarhem@amazon.com>
-To:
-CC: Norbert Manthey <nmanthey@amazon.de>, Hagar Hemdan <hagarhem@amazon.com>,
-	Steffen Klassert <steffen.klassert@secunet.com>, Herbert Xu
-	<herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, David
- Ahern <dsahern@kernel.org>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "Sabrina
- Dubroca" <sd@queasysnail.net>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH] net: esp: cleanup esp_output_tail_tcp() in case of unsupported ESPINTCP
-Date: Thu, 16 May 2024 08:03:09 +0000
-Message-ID: <20240516080309.1872-1-hagarhem@amazon.com>
-X-Mailer: git-send-email 2.40.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 764CB13443C
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 08:04:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.86
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715846656; cv=fail; b=BuyS5jcc3rFZgq2Ob7PqzTDGiS13Ffc0ba0Na26TEjWeTgxd+unrKxMLrcPMqv8MlgvwoxUuNyQvLEMoY0NbNZLNP8QnzP3w5DkPMmhI6WR71o9zyDmT7BCKGJ5biiLJKQ62Gb6anBRDmFNPzM29n16GbwaY2e1gcgDMLywDbRM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715846656; c=relaxed/simple;
+	bh=Ka0RlUPOcraRrZGtj2xqynrRqvKUIqfl5gHglLt+BvI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=u+DuTF4pL7H+z9L62fAACERpRRq9kaoiSQvaB7RZOul7lBWvlmxPeaJZWiY/Ncu6hsr9LinNtkORyliMEK/5BiAnNPX4c/KfFoxPx/Xq9bSLU5mUw1VNO8OM5EHEuC4xEtLagxed7vba5n+AqckTW9hAGx9dpXincbM7l3m6LT0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=VuHs++ep; arc=fail smtp.client-ip=40.107.117.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=IeK1UKFCZk8WqQGk++D8O/mjhBWr/8XzSvee5/ceNu3kpJkrOo+M8WZxP1Tuq7PFXod+9zeU2M7JX7Rhi7iCqy3hPj95u1TIk1H8brXrlgflEGtDBQJStsVHPmJpoV0AxvjZ2Ifkr90j8NSSLilAoDxnngrc+GuQc1mpEeEC/JCHegoVrx4jMXqHidMgjtzCZCeXjjFJWYg/18nOT1//T1Tu9yeoiccclU0X9NjuafjDRkx5IWTMvNJsvVfsAg4RhRjm64SbhhOtltQ8qyePPARInt/OOFsScqJNmBPUqnB7ld/gg3DFSqNEPWYxFKOGmkQUc4QUFMdk4BGVbYgJGw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IGw8QMlOkK53XoUQo8KmpkoyGxRrVd+a4gf6PImb2ko=;
+ b=kGBbD7FpmM/SQGdqstEr7tIDfoaZJrA7JrOZ5K5x8BTmrIc/Yx/8WT4kMvk3iukzoRbx/G26N5rEhGmN/1tubaPtYR7ZuMgxhp/DuaX938p4KD/a2EhNN/pyco3XpmBnAcPVCyyaJP524Tv+n+f3XDHHiLEz7qtxQygh8nSxkS3XYUbuJnLgK1v6dUJclRE4VCIzOTEutqOJ/9HXLccNVuq+Sa5/60gLK5Xa8awYtklESDuIeDTUgCBJZ2oX5QJT2E7zOQv4egMA0MrokQXqCDFkysdjeElQiyAf+vf/tytXIZJIty/JEOvROqfz9IQp02H7SI0ixX6LCSlMG3oB+Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IGw8QMlOkK53XoUQo8KmpkoyGxRrVd+a4gf6PImb2ko=;
+ b=VuHs++epf62mpRjBwVWA6S0JVCFSUS7NnT0FKh5EAeorLygHoLZSKJq6tt/c8UhyV6Lh/j0OV2n23YQ5pvZA+6BSv6U3sL003lbz0mPeL53bWxQV4BO31dryplb7/qAvsHzoUS3NZdZQwVAaW2idliOph6CVf0U5nvZd2H+KOwQBN1Nfn0R1gq07C9hp/kOnUEqBaLxR6l5lr2pByi2R+dFb6ont0o9RhZyuVZC3Gk9T4prOo8hAaBTUPgyxabRnwkz9Ah/YHXLOUv6gynGY1TAgA2bje+o5eiDwOsSsrBgyg7hfroLbi0MevWynXbUPCndMwhTEmRjymcgEXyF34w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from TYSPR06MB6411.apcprd06.prod.outlook.com (2603:1096:400:42a::11)
+ by SEYPR06MB6830.apcprd06.prod.outlook.com (2603:1096:101:1b3::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.28; Thu, 16 May
+ 2024 08:04:13 +0000
+Received: from TYSPR06MB6411.apcprd06.prod.outlook.com
+ ([fe80::8e76:5af3:e027:ccee]) by TYSPR06MB6411.apcprd06.prod.outlook.com
+ ([fe80::8e76:5af3:e027:ccee%3]) with mapi id 15.20.7587.025; Thu, 16 May 2024
+ 08:04:13 +0000
+From: Yang Yang <yang.yang@vivo.com>
+To: Alasdair Kergon <agk@redhat.com>,
+	Mike Snitzer <snitzer@kernel.org>,
+	Mikulas Patocka <mpatocka@redhat.com>,
+	dm-devel@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: Yang Yang <yang.yang@vivo.com>
+Subject: [PATCH v4 4/5] dm: Avoid sending redundant empty flush bios to the same block device
+Date: Thu, 16 May 2024 16:03:17 +0800
+Message-Id: <20240516080318.120231-5-yang.yang@vivo.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240516080318.120231-1-yang.yang@vivo.com>
+References: <20240516080318.120231-1-yang.yang@vivo.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYCPR01CA0201.jpnprd01.prod.outlook.com
+ (2603:1096:405:7a::18) To TYSPR06MB6411.apcprd06.prod.outlook.com
+ (2603:1096:400:42a::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYSPR06MB6411:EE_|SEYPR06MB6830:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6ed83c32-e6bf-4f77-8611-08dc757ec67e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|376005|52116005|1800799015|366007|38350700005;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?JjDkkDgH/Io2dPnOho9wjfvV9f1VsILh5Q1QRkJm+HoCwyehPWO8zmyLRKHE?=
+ =?us-ascii?Q?Kaj3n2knHSakeH/J8Tai4fc/l5F47VhDDkxD4KDgLswEr7yry3iCjXHMuS/Y?=
+ =?us-ascii?Q?oF50Dm10GJAcWiaYE1XrSmTbW9Wr+yFlQG/yr7hJT8NajMnvH0OAhVQG2MaI?=
+ =?us-ascii?Q?SMMXbmT0p7L7lxFWyCip6S7HclCYr++K6JJWlWC0FkmnpSZC7ENctCTRzN7z?=
+ =?us-ascii?Q?QgrHsbg5H0N67uIqGW+ZOUjutJqI8Vh3ZcWndGcHYxSR5PJpnzrh16LiHJ4u?=
+ =?us-ascii?Q?egweAvzkkQTDPI3pOf66vLQQCriZM1S8XK4LP92d7KFb/52PP+Fh0YIjt3f6?=
+ =?us-ascii?Q?bzXK8IqZPJCbbPLNZNEnpv8E89Vm3SZzqhk00/F1jE69F/rlwggQEu9ojsoj?=
+ =?us-ascii?Q?l3K/lPiMcQqf8V6SSXJ7I+2FGcyjErua3m3v0YYLzPG+jfcTfusZQOO3RLJl?=
+ =?us-ascii?Q?sccPywC0yu9OZWMjlICe0iaj+Gx2bM+0vHe8HFam6Td7WN1c1I9KeUAHTIsA?=
+ =?us-ascii?Q?KDK9qngOB1XbyH/HXewLTa73CESKmsQmwA06dA4mfmQqaGZc4r/EqZasADyi?=
+ =?us-ascii?Q?Hwh1/hNOn4LJTJK5oe/rrHg+xE/dgNvXPl7YTIpoGE/e7eodiCxjoznaqaE0?=
+ =?us-ascii?Q?JHBFHk2Vcqnkk91MFrwfJfm9XlYEt29wPv480OvAONF3bO8nGfUpEcSdyrR4?=
+ =?us-ascii?Q?q2VaG8DmRNTthiQS3GtAicGrM2wGgZXbMtkC6Bb7953StJRIWwWUh16GGHPZ?=
+ =?us-ascii?Q?y30ZuH5VIlm3Q0rcwMxIX1ZxJC5H7XdVrFD60jyniE7eYGj7/wKJgwZxncxE?=
+ =?us-ascii?Q?RNJbZNIKHm4F13lA7K299+vzmMvZlKx2fd++oGLmTvxJ//RzYpKi9/iqrE66?=
+ =?us-ascii?Q?ZXhQRdgEBTbVqZUtd6mH0H2x7sMUYBeuUJKF3QG5CJD22IJ0cc3bevacza69?=
+ =?us-ascii?Q?ipt40YleaRVIqNpP9/GZOaOmsKs8Dm4xwQ4uZy0nsZgPBjfiexKTLAFS5mwz?=
+ =?us-ascii?Q?eNeHfvOZnxFgDryUbHrkxzPpOGMcF3gBrYhYJ5Ot6LpwtcJplYWqbfrB6MSU?=
+ =?us-ascii?Q?E8E9Jh8ELYQY/WDSmDOt5zPEFypmG6C80SUHV3x271qJrB85Rzf06olPGsrL?=
+ =?us-ascii?Q?cI+EdXnv1UGMLKzcicIOkKXT/VoE/WCu53hb/YhiU7lQDUDydY0tF00hl6MR?=
+ =?us-ascii?Q?BfzST0k4Q9Is9G72R0V8gwtFOAvIlmCsvTd5e05zpaH7/zCB5W4XmhY+Hdg1?=
+ =?us-ascii?Q?n5r6LiFqVn4ofJgg97knwa5LSYLy9pDDkoEdlWh31whoPAjm9OKrFbBTXDg+?=
+ =?us-ascii?Q?I4IrWrJQUmiavLM6kpX3mIA08RGfFqYA7VewrXNCBEu71g=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYSPR06MB6411.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(52116005)(1800799015)(366007)(38350700005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?KI/mL0AeTwWoy0nDbkTVNimcTYlcZCzqAHb/hZcR9/elYENcp5tWyBsGDKfr?=
+ =?us-ascii?Q?Hk/ke9z9eqoVCuFh6lyXu9HIplzjYUR5djQO4/PkaKK9XTUd4uKqVf5D/hGA?=
+ =?us-ascii?Q?xdy6flGJ7+CfJElNZ5X3VtMTwcz8GXPfpwwXKe+9+u3dsnTHWj5VPbn0/Y+u?=
+ =?us-ascii?Q?Dd1LyxJMHQSWifpiG6k7ypG16BNxGV1V293ICLg28ETO73iFHmTin25b1tUa?=
+ =?us-ascii?Q?gWBvjkWv8YTa5jyiC6UEVqiu2VujB1WsfpEmMi+ne8OGMw51nHkM3BJ3tUha?=
+ =?us-ascii?Q?AJsVdhFZ96EnobwKA5rEq3MkysZlQeZsnIbWwaALaNUYlUAWbvtLNgUo8wDr?=
+ =?us-ascii?Q?/xWbvrZdudGCSj6X07hCULhowzV75JMFz/H2xWrOO0kYr5+Qpp1OGmuJMdgs?=
+ =?us-ascii?Q?fCV2GKatKng8KQKwA7DImaNW5XPJ+vbq7c1tjubITLO/P5w3nwyXnZ4oDnmr?=
+ =?us-ascii?Q?AEkZh51uaPNjXLl7aOStN+YJXkK8ZDfJK09c4uCw5MrcxY4MYoDS+u7diwgG?=
+ =?us-ascii?Q?QDXJrBYdp1Sn23xV0FYCSwLTsSDmvTAg6EvsVgN3/dUMgGrtlkN1eKxG/8+9?=
+ =?us-ascii?Q?TAUlULawbGmo5DXNkzUHN+kwsU4U7Gtpi2dMXFq0XENPHhZlM8QxzyqvnIok?=
+ =?us-ascii?Q?+Omd/91frxctBoSqZvP0Kzeuxvo5jnDPfVIGHen/LFR867NKBf1V0H/lwIzQ?=
+ =?us-ascii?Q?7Xdy7f0kOTXdrX/lyh8pLkBmKgMi1cVEJl7qaXfKgjEgEwMR2IPe2ovyeOm+?=
+ =?us-ascii?Q?Au4wse9vaUJBOCAK7FZOEm7batqbi2pnsma4gJzZSUz0CUTi+CM9XYra1nGC?=
+ =?us-ascii?Q?3xDYdzZu5c0Hi9X+BWOqXiTsUAiXBv5UCVSyxPnDW+LGoKovGd2Vz0124LJc?=
+ =?us-ascii?Q?V7uh+QHUgtddQB+Kj5X2U/qTSrHBVfNuL1MYLpnnZnl4ezmtx5XZy+0zvAiA?=
+ =?us-ascii?Q?XTAH/q3UXG8beWuqS4aCMNJ9rcr2WGmcbiDeESGKSAml2sr8NULI3Jydjki6?=
+ =?us-ascii?Q?WEsNWpQa2SmpqClzWJqesNOIjzprjT0f+br0OrNDjIbx5q56LPzsGfhXPKOO?=
+ =?us-ascii?Q?hf4mANZGkEZlWSwvuY0MG+vei/QrzcKPy3kE7q5ISLT+yJpct47/AMB09+4f?=
+ =?us-ascii?Q?KmNZqhjvV1LsS/BKk7KWAlqOJGanD+DoM6kNfnDwqraKltpYTc7wTncAxRKG?=
+ =?us-ascii?Q?bDGZx23agfOL+l/TleVgNmZn/oWouWWZizwVCHrAL+NQwZte+sDOyogzVG6d?=
+ =?us-ascii?Q?H8/xlF2cQyAqNy/werJy+ppKW7gj0TpWcufkrBoSHv5A88wb7Eu0aIMT/oUt?=
+ =?us-ascii?Q?UAs2GAIjEXctzj78HYRIcm/s3Ai1O/LNdX5fKU9e2PG4dHy5Ti6Cud/L5wby?=
+ =?us-ascii?Q?UgJp1OZKr81ekMRjimJ0l4gClFOHEHCRgHb5yDx0ACMdNQhyuSZxoLKyc4Gf?=
+ =?us-ascii?Q?KRH4jyrQlp4q+FDUB1hPPOJHZvHYEFlft7W9sxKhHkVyaJ3X0Qn48ybj0Wzu?=
+ =?us-ascii?Q?VgCp7adsC5BZWnBBnS9TOhSrM98nIpsi0wNBcyM0lUeZalU+Cpe96aGRHAGb?=
+ =?us-ascii?Q?PH7qMMtqT63K27IpgA4v30WqdyET4hCDD52hPmdb?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6ed83c32-e6bf-4f77-8611-08dc757ec67e
+X-MS-Exchange-CrossTenant-AuthSource: TYSPR06MB6411.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 May 2024 08:04:13.7946
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: BeI8ubqFgMmQgk3sx0uObkAM5DLSuUeWSr6zRd/matPnYRh57OfKCW54NCLxsb3d9I21+5M3wyMqmrwsEi0X+A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB6830
 
-xmit() functions should consume skb or return error codes in error
-paths.
-When the configuration "CONFIG_INET_ESPINTCP" is not used, the
-implementation of the function "esp_output_tail_tcp" violates this rule.
-The function frees the skb and returns the error code.
-This change removes the kfree_skb from both functions, for both
-esp4 and esp6.
+If the num_targets is greater than the number of dm_devs in the
+dm_table's devices list, __send_empty_flush() might invoke
+__send_duplicate_bios() multiple times for the same block device.
+This could lead to a substantial decrease in performance when
+num_targets significantly exceeds the number of dm_devs.
+This patch ensure that __send_duplicate_bios() is only called once
+for each dm_dev.
 
-This should not be reachable in the current code, so this change is just
-a cleanup.
-
-This bug was discovered and resolved using Coverity Static Analysis
-Security Testing (SAST) by Synopsys, Inc.
-
-Fixes: e27cca96cd68 ("xfrm: add espintcp (RFC 8229)")
-Signed-off-by: Hagar Hemdan <hagarhem@amazon.com>
+Signed-off-by: Yang Yang <yang.yang@vivo.com>
 ---
- net/ipv4/esp4.c | 3 +--
- net/ipv6/esp6.c | 3 +--
- 2 files changed, 2 insertions(+), 4 deletions(-)
+ drivers/md/dm.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
-diff --git a/net/ipv4/esp4.c b/net/ipv4/esp4.c
-index d33d12421814..e73de3abe37c 100644
---- a/net/ipv4/esp4.c
-+++ b/net/ipv4/esp4.c
-@@ -238,8 +238,7 @@ static int esp_output_tail_tcp(struct xfrm_state *x, struct sk_buff *skb)
- #else
- static int esp_output_tail_tcp(struct xfrm_state *x, struct sk_buff *skb)
+diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+index 25215b93c3cf..9dd0f5c97028 100644
+--- a/drivers/md/dm.c
++++ b/drivers/md/dm.c
+@@ -1561,6 +1561,7 @@ static void __send_empty_flush(struct clone_info *ci)
  {
--	kfree_skb(skb);
--
-+	WARN_ON(1);
- 	return -EOPNOTSUPP;
- }
- #endif
-diff --git a/net/ipv6/esp6.c b/net/ipv6/esp6.c
-index 7371886d4f9f..600402e54ccd 100644
---- a/net/ipv6/esp6.c
-+++ b/net/ipv6/esp6.c
-@@ -255,8 +255,7 @@ static int esp_output_tail_tcp(struct xfrm_state *x, struct sk_buff *skb)
- #else
- static int esp_output_tail_tcp(struct xfrm_state *x, struct sk_buff *skb)
- {
--	kfree_skb(skb);
--
-+	WARN_ON(1);
- 	return -EOPNOTSUPP;
- }
- #endif
+ 	struct dm_table *t = ci->map;
+ 	struct bio flush_bio;
++	struct dm_dev_internal *dd;
+ 
+ 	/*
+ 	 * Use an on-stack bio for this, it's safe since we don't
+@@ -1574,10 +1575,18 @@ static void __send_empty_flush(struct clone_info *ci)
+ 	ci->sector_count = 0;
+ 	ci->io->tio.clone.bi_iter.bi_size = 0;
+ 
+-	for (unsigned int i = 0; i < t->num_targets; i++) {
+-		struct dm_target *ti = dm_table_get_target(t, i);
++	if (!t->flush_pass_around) {
++		for (unsigned int i = 0; i < t->num_targets; i++) {
++			struct dm_target *ti = dm_table_get_target(t, i);
++			__send_empty_flush_bios(t, ti, ci);
++		}
++	} else {
++		down_read(&t->devices_lock);
++
++		list_for_each_entry(dd, dm_table_get_devices(t), list)
++			__send_empty_flush_bios(t, dd->dm_dev->ti, ci);
+ 
+-		__send_empty_flush_bios(t, ti, ci);
++		up_read(&t->devices_lock);
+ 	}
+ 
+ 	/*
 -- 
-2.40.1
+2.34.1
 
 
