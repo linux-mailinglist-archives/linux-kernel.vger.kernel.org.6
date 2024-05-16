@@ -1,140 +1,141 @@
-Return-Path: <linux-kernel+bounces-181221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 001A48C7925
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:17:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 317C28C7921
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:17:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84A56283A70
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:17:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6359A1C216FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:17:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EBE514D6E0;
-	Thu, 16 May 2024 15:17:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91B1314D2B5;
+	Thu, 16 May 2024 15:16:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="O9jJV8Y1"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LetnUTAp"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7B1C14D452
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 15:16:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BAEE148856
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 15:16:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715872621; cv=none; b=nkqMooZPTKR+q2ZqD1qDALstTqi2M14/ZMWTHkBWgIYhT8lG94X9lYjgqk6/Zde/Yz4caPGEbs2+r1MwHTynXdcl4RjZ7wHzl7YCdDBWtWiq7/NWL1WJ/ERi9GAxzR1KKbXyqdFRwibTShS57+oh8mHkwv30mH5eye1+912K11M=
+	t=1715872615; cv=none; b=jjlLqwLqhMOanvIj5tPV97uzOAsWM6a9yJ29k56DiW97I+0Fau/h5aCZaYOViXYUCoEnnbEVHTRd0pOePeHYCPll/tLwBUqz9pC3w/Irdmt5nwrz5v31UEZpJzufw3t5T00znztF/4CuikTyit2ADns6Uct75+76b3X+ZwN8iuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715872621; c=relaxed/simple;
-	bh=ZXs22x8gjkyO5FvWfIYFnYooRXNq/Z5RnIzauYycA2c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aHjGvHV4sx/LtuYV066NCaJy+Cxhu5xHxOPjMq+vkbb5ybV5xc4I1MDUvld/u01NMkPhb8oFFWrt38WnGhGXYVx4dbuXsnEVxepf2m1OcxepiBWCZkDF1vYPycjdjSZ1oBMWtFj8608q3PkL9fvNnf0tzD2XtjjKgK5Blszi8gQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=O9jJV8Y1; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5750a8737e5so10421a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 08:16:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715872618; x=1716477418; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S4aYJn/xV/PKWXs5PNzajPV5h6iws4xgG9CE/ZAuxU8=;
-        b=O9jJV8Y1NfSroH7pVBI1a0MwoviYauaTDffLSrwHr2ANL2cwvNsI96mZEZwTI9pAds
-         gCiIFDAwYiSSz5n2BPRulynH+x9aB+dmA0l7Aus8N3mCNcaEmDeJ3MGVXzRyWKjnQ1/S
-         j6sbtkwDE0FGG6Gf98vXQpR3lkExREtyhz+oNSEeewpK/vx0tlJqXKjqeKuPXxt/dFPL
-         aA4WFw7MphbIdnuGKeOcPnITQdPmN8ogDcpVB/mtYBU5nnYfi2kMMsduzLGjN4Ab/wJT
-         giZYJCUD2uoyWBYbd6iuSFMFFtn6w5V8tfTh+lV1f8OwmgQ+yie8V19JMnOSuhgCvjy7
-         yMaQ==
+	s=arc-20240116; t=1715872615; c=relaxed/simple;
+	bh=IaLO8A8eOYs5s/2/cuHYZ/9daRCUlFtjjAcRYjoYHbc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CerhluSA1skvGpnTKqB4v34VgGbTwgGNj2NGWipehqu/R9wsZ1vCEagC/pi9qYxwVO6o9XOMSy9z4lZLgzsETMkehC0scQlEbVzqc3WW7tW3q9fhIrKSYl47U3aXlOjJM0Z4b0N2ZwKdQH4/16NK/jF4IpJhklETADYJ1CGvFWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LetnUTAp; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715872613;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4iOgbS6qeObzrg8GE2s02mcHzXvs1fEJ62WhOsFVoik=;
+	b=LetnUTApS9rOMinRA9PPN1FMqHsQVFOK3UQV1W/gtEN1pacN5tMikYZGHdbDvkpCOTCvm/
+	z5WcrdBvVNiUaf1wKWNWw4mg/Uf8qzlmCLr9lHb6NCUgdUFYdvpqX+jj0JGDm2Dul4sAbs
+	wKOeBW/oYzi9OQAp9BmAyy4+7D5+laQ=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-489-sRR66JinPoOqcl5mYgqB0Q-1; Thu, 16 May 2024 11:16:51 -0400
+X-MC-Unique: sRR66JinPoOqcl5mYgqB0Q-1
+Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-5222c9b6fd4so6263458e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 08:16:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715872618; x=1716477418;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=S4aYJn/xV/PKWXs5PNzajPV5h6iws4xgG9CE/ZAuxU8=;
-        b=kQIEDC+rDuyh0SdVghGPH1bMueOWptmTeO3PQ1D+y+D+9QW7CU/b0fFCLkN/MXDlaH
-         eS1lJoDusxsoyGSY47xkaN/LlGw96CCBnmxLbCI75KeQwzUBMTO/2FvO4kk9V2lXg81G
-         onKB/aal/5CjtqFt7Rb1R/OoRVE3e0QqIelhom+ludd6/6i+PsL5mAheB2S5CfONRTR/
-         0oDUJFMbYW6oCeCyJWnI/l6WnNFaxGAytvo1z2H2jRgdlq1jV296fmADBFV4oK598wFH
-         AseTCg+0X5SFob1O7Og00o2f6CtcbijSJJGWbNAUzRj/MXh20zUtcOPUYrsTfVKVLdU1
-         sd6w==
-X-Forwarded-Encrypted: i=1; AJvYcCVHusYEmozEjo9LFuqX7l+UBL3QdIWVk9NvJQl1PUnw+lztpNu0BxYEMrAI5xG/sqUnn1ItesRqpXPdmzTIjkcDHHvUN3jJq7EwbWiW
-X-Gm-Message-State: AOJu0YzLTf1B5abO9nvI0f1BP16rPPEb4hwH1oDh3A6xzxotD8rPL4hM
-	qex+P93pCQaD6LLLleneCxsi5rl6i0iDoAEXoYNOioKaMV72s9CLE+EF8WfNZ54NxnVf58JCxht
-	2jReZrMrbKO2V860w+KLRFBybf0hySF/vGElewj+n6+Btu1WGZw==
-X-Google-Smtp-Source: AGHT+IHMNTC40XpTvgL1XTSP35Cv+n/Rhk6HldIuh2H5A/OEKFOgYm6M15rG805D9tnLx4WQjYkOJaxE+AAac13kuWk=
-X-Received: by 2002:a50:c90b:0:b0:572:a33d:437f with SMTP id
- 4fb4d7f45d1cf-5743a0a4739mr1000638a12.2.1715872617792; Thu, 16 May 2024
- 08:16:57 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715872610; x=1716477410;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4iOgbS6qeObzrg8GE2s02mcHzXvs1fEJ62WhOsFVoik=;
+        b=qDjoyIXvFkGpWRlqT6NpFOQjyjPHd0mYiBTx7q/T5QLFqWUYGt6JzErIeIHhtVfTPX
+         8THkWcIn1192ZasIjB+pvko32Ggxg4gU+Lruedpije1ZGanfNrAZiO+FJu74WtVzKzEf
+         HVTqUr0ltRVuffV6VFTdvYkOy/aYCCN7uZyxnTLd8JMsrMyD+YYwHSExe07pIez0nXWM
+         BD/vTxrawaUWkjCcFgtymE8+I1/q2YFxqBEz6yLgslF6VsNWOOd7xucJLCMdgqaKpWum
+         AE4kSC34CuCcfJ7doTdHMmpolBOEJWRwbjuij3YVLwDJ6pf+JzhK3+7nxQ5FyT/zDcVz
+         tJsg==
+X-Forwarded-Encrypted: i=1; AJvYcCWS/3ONAVnySx87wFgt7j+aZV4h0f2Yz5MCQQRuy7d1r0PDr86rNztPMUP5jVwA5WMQ8yeAWmmjeJuFxrC05WqmatJUVF8easa1RWre
+X-Gm-Message-State: AOJu0YyXONE81Wt17qgfcWmqs/5aT69Tp4F2gpMlCfIjacy/3yJuIF4b
+	SXP1ZN2Kx3OyLL8F9DhO6I4+dIkUWfxf9bZRUdd95ONPhm4Fv9+xoLqNh1+hhNwJBWibrry+XLa
+	LtNsNB3kYuo/keEohHmiTsL3z4BEJ16h/2z89lEonP86Iz/Ll8IgsPQqjvZlTZw==
+X-Received: by 2002:a05:6512:444:b0:51f:3e0c:ace3 with SMTP id 2adb3069b0e04-5220fd7c6bdmr16656964e87.16.1715872609954;
+        Thu, 16 May 2024 08:16:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGn+FVB1tK34ViV8+agUiDomeCaRnMnSEIgSm4pt/ya2IBcjeS4X3/vaKP4GVA4MVD2ub1n+A==
+X-Received: by 2002:a05:6512:444:b0:51f:3e0c:ace3 with SMTP id 2adb3069b0e04-5220fd7c6bdmr16656944e87.16.1715872609565;
+        Thu, 16 May 2024 08:16:49 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a60eabd3csm596814866b.108.2024.05.16.08.16.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 May 2024 08:16:49 -0700 (PDT)
+Message-ID: <b9a5068c-8760-4f92-8a1b-bd276532109d@redhat.com>
+Date: Thu, 16 May 2024 17:16:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20210416180427.1545645-1-dlatypov@google.com> <b7155efb-e99c-f385-3bf3-3ffcdefd1260@ti.com>
-In-Reply-To: <b7155efb-e99c-f385-3bf3-3ffcdefd1260@ti.com>
-From: Daniel Latypov <dlatypov@google.com>
-Date: Thu, 16 May 2024 08:16:44 -0700
-Message-ID: <CAGS_qxoSgEGThm3RfSc2jXrCUFwSs6HnfNcsg+EMMvWYWRbKWw@mail.gmail.com>
-Subject: Re: [PATCH v6] lib: add basic KUnit test for lib/math
-To: Devarsh Thakkar <devarsht@ti.com>
-Cc: andriy.shevchenko@linux.intel.com, brendanhiggins@google.com, 
-	davidgow@google.com, linux-kernel@vger.kernel.org, kunit-dev@googlegroups.com, 
-	linux-kselftest@vger.kernel.org, skhan@linuxfoundation.org, 
-	Linux Media Mailing List <linux-media@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ACPI: video: Fix name collision with architecture's
+ video.o
+To: Thomas Zimmermann <tzimmermann@suse.de>,
+ "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: lenb@kernel.org, arnd@arndb.de, chaitanya.kumar.borah@intel.com,
+ suresh.kumar.kurmi@intel.com, jani.saarinen@intel.com,
+ linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ intel-gfx@lists.freedesktop.org, linux-arch@vger.kernel.org,
+ linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
+References: <20240516124317.710-1-tzimmermann@suse.de>
+ <CAJZ5v0gw620SLfxM66FfVeWMTN=dSZZtpH-=mFT_0HsumT3SsA@mail.gmail.com>
+ <1850b44d-e468-44db-82b7-f57e77fe49ba@redhat.com>
+ <82731e7d-e34f-46c4-8f54-c5d7d3d60b5a@suse.de>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <82731e7d-e34f-46c4-8f54-c5d7d3d60b5a@suse.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 16, 2024 at 3:19=E2=80=AFAM Devarsh Thakkar <devarsht@ti.com> w=
-rote:
->
-> Hi Daniel, Andy,
->
-> On 16/04/21 23:34, Daniel Latypov wrote:
-> > Add basic test coverage for files that don't require any config options=
-:
-> > * part of math.h (what seem to be the most commonly used macros)
-> > * gcd.c
-> > * lcm.c
-> > * int_sqrt.c
-> > * reciprocal_div.c
-> > (Ignored int_pow.c since it's a simple textbook algorithm.)
-> >
-> > These tests aren't particularly interesting, but they
-> > * provide short and simple examples of parameterized tests
-> > * provide a place to add tests for any new files in this dir
-> > * are written so adding new test cases to cover edge cases should be ea=
-sy
-> >   * looking at code coverage, we hit all the branches in the .c files
-> >
-> > Signed-off-by: Daniel Latypov <dlatypov@google.com>
-> > Reviewed-by: David Gow <davidgow@google.com>
->
-> Just checking if something else was pending on this patch-set for this no=
-t
-> getting merged?
->
-> I needed this patch-set for adding tests for new macros I am adding in ma=
-th.h
-> as suggested in this thread [1], so wanted to pull this in my series and =
-add
-> changes on top of that for new macros.
->
-> Kindly let me know your thoughts on this.
+Hi,
 
-This patch just fell through the cracks for me.
-I had (wrongly) inferred that Andy might have had some lingering
-reservations about this patch (that it was too contrived, might not be
-useful to have tests for stuff like abs(), etc.).
+On 5/16/24 5:11 PM, Thomas Zimmermann wrote:
+> Hi
+> 
+> Am 16.05.24 um 17:03 schrieb Hans de Goede:
+>> Hi,
+>>
+>> On 5/16/24 3:04 PM, Rafael J. Wysocki wrote:
+>>> CC Hans who has been doing the majority of the ACPI video work.
+>>>
+>>> On Thu, May 16, 2024 at 2:43 PM Thomas Zimmermann <tzimmermann@suse.de> wrote:
+>>>> Commit 2fd001cd3600 ("arch: Rename fbdev header and source files")
+>>>> renames the video source files under arch/ such that they does not
+>>>> refer to fbdev any longer. The new files named video.o conflict with
+>>>> ACPI's video.ko module.
+>>> And surely nobody knew or was unable to check upfront that there was a
+>>> video.ko already in the kernel.
+>> Sorry, but nack for this change. I very deliberately kept the module-name
+>> as video when renaming the actual .c file from video.c to acpi_video.c
+>> because many people pass drivers/video/acpi_video.c module arguments
+>> on the kernel commandline using video.param=val .
+>>
+>> Try e.g. doing a duckduckgo search for 1 off:
+>>
+>> "video.only_lcd"
+>> "video.allow_duplicates"
+>> "video.brightness_switch_enabled"
+> 
+> Ok, that makes sense. I'll rename the other files.
 
-Feel free to pull this into your series.
+Great, thank you.
 
-Looking over the code itself, I think this still looks valid and
-stylistically correct with regard to KUnit.
-I haven't gone and validated that it still compiles and runs just yet, thou=
-gh.
-But if you do run into any problems, let me know and I can help send
-you a fixed version.
+Regards,
 
-Thanks for picking this up,
-Daniel
+Hans
+
+
 
