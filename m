@@ -1,58 +1,79 @@
-Return-Path: <linux-kernel+bounces-180902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F083A8C7498
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:25:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFB0E8C749E
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:26:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA61D2845C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:25:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A42171F24DF9
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:26:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66D8214389B;
-	Thu, 16 May 2024 10:25:55 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 018C8143C4B;
+	Thu, 16 May 2024 10:26:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gPfUkLrk"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF92F143898
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 10:25:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA778143898;
+	Thu, 16 May 2024 10:26:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715855155; cv=none; b=FfCqE6ocz6XcFdFP0znBpXSM8bWM40Eg8ulx1BcI5imdqnIWK5cdavvUmwDup5Zo2BaoIifIfQDigyr2vlYz2RjBJwDai5dKf6IwOR//udPZE4g/qg2dTfK0wCLe37un+RhRPDJ3BKkAOezBnPSGzTQ6cN+vWZuyPatkDdb8G7g=
+	t=1715855198; cv=none; b=AxFI+LrAknVnfGFmLfV9x2WFOzNDLeujCIRYq0HZdl8gXSo0fa++76/Ua90kN4Uni5W6ERWFm8MnEK2eD9SLrbiGlDXfbktEYw/YI4BPpxTsNG+hpeP4xQMg/uUZwtChirksPKIpr2k43Ap0BWAp3LBLbUGqus0jjoknXunlfak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715855155; c=relaxed/simple;
-	bh=IPtgZuups6F+a4Fqarl6T/Cojz57fikXb4I5WZNsdb4=;
+	s=arc-20240116; t=1715855198; c=relaxed/simple;
+	bh=6irmRYyO6aI1ugOg4kgQ1h12u9uSfnzT47OyGU1W4lU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dY4S/2PZ2o5pze4p73fo9iuKBs0+SlvdjzPFocG5LEk/g9+LMWRWrdmOzNFmbGNdrsuCesqSiWW2y5zIa7T8T+QFVcBmMlRLNPPeaTMFiGhft+R+q5fqKFK6xbx9F/whoYwmGUPIs3DsMHSIQDyx3CoFN6o2uzKVlQjL5Ql6V/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <sha@pengutronix.de>)
-	id 1s7YIz-0003ji-7V; Thu, 16 May 2024 12:25:45 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <sha@pengutronix.de>)
-	id 1s7YIx-001h9K-52; Thu, 16 May 2024 12:25:43 +0200
-Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1s7YIx-00Epwj-0D;
-	Thu, 16 May 2024 12:25:43 +0200
-Date: Thu, 16 May 2024 12:25:43 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] mtd: nand: mxc_nand: implement exec_op
-Message-ID: <ZkXfJ6n-06YqOr39@pengutronix.de>
-References: <20240514-mtd-nand-mxc-nand-exec-op-v3-0-3e6f45fd3d82@pengutronix.de>
- <20240514-mtd-nand-mxc-nand-exec-op-v3-2-3e6f45fd3d82@pengutronix.de>
- <20240516103214.57a8ce33@xps-13>
+	 Content-Type:Content-Disposition:In-Reply-To; b=S3xk7SBDqaPCYmTEKSEhsoTbyn0fA9/wJ5njDnl9dY5fnXVjMb8dbO/MoRlFr80k+p7d6f10jR3LRJwFkApGIcE+qsmgu3mh/7r6M1pFhOQbogdqOrCNd77AuDy1sYnlNP7hQO+oSujTfh6+vt/tF1tjFG3r51GGRpS0JfGiTuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gPfUkLrk; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715855197; x=1747391197;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=6irmRYyO6aI1ugOg4kgQ1h12u9uSfnzT47OyGU1W4lU=;
+  b=gPfUkLrkA2ENb63pkQ5Vkc65+90OrU89BJbru95RfpLwEoCFQNXVqADp
+   wyhe6ANPEqzLc9obHB6C0PECeLcori1HzitCFSWWpcHSs9yPcSOhei/gD
+   vWsDSYuyFS1hXOcSYafTaxW7c4hAJFfHF3TG7FGlgsXa9bJt22BYx70HZ
+   Mq2MiQWS0Z9sXevbfSBeKwLwWwO8sxUAiW7LD0Tzyw3cVoxupHMoTxq8/
+   aTgSPkNzaSqNpE4XS4PntugGEKtB9tVy4HSvjuIKQOXBwXCRFDxLNoJyV
+   VdUYzP9yaHZoxwt6RjCFXmdvcQ18xzq2Om1sO5umb+IjffFJDXdz+r++z
+   A==;
+X-CSE-ConnectionGUID: 4gD4A0KaSrOGFGFNLON+Dg==
+X-CSE-MsgGUID: kPv/2X+PQUivodWnEahB0w==
+X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="22559639"
+X-IronPort-AV: E=Sophos;i="6.08,164,1712646000"; 
+   d="scan'208";a="22559639"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 03:26:36 -0700
+X-CSE-ConnectionGUID: +iBBDJxASNmMxB7aHGkj8w==
+X-CSE-MsgGUID: 0/10U3klRTirxFvbJ7jXGw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,164,1712646000"; 
+   d="scan'208";a="36265589"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 03:26:34 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1s7YJi-000000080YQ-1zYF;
+	Thu, 16 May 2024 13:26:30 +0300
+Date: Thu, 16 May 2024 13:26:30 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Devarsh Thakkar <devarsht@ti.com>
+Cc: Daniel Latypov <dlatypov@google.com>, brendanhiggins@google.com,
+	davidgow@google.com, linux-kernel@vger.kernel.org,
+	kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	Linux Media Mailing List <linux-media@vger.kernel.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>
+Subject: Re: [PATCH v6] lib: add basic KUnit test for lib/math
+Message-ID: <ZkXfViBFU0BWpOMM@smile.fi.intel.com>
+References: <20210416180427.1545645-1-dlatypov@google.com>
+ <b7155efb-e99c-f385-3bf3-3ffcdefd1260@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,43 +82,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240516103214.57a8ce33@xps-13>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <b7155efb-e99c-f385-3bf3-3ffcdefd1260@ti.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Thu, May 16, 2024 at 10:32:14AM +0200, Miquel Raynal wrote:
-> Hi Sascha,
+On Thu, May 16, 2024 at 03:49:44PM +0530, Devarsh Thakkar wrote:
+> Hi Daniel, Andy,
 > 
-> > +static const struct nand_op_parser mxcnd_op_parser = NAND_OP_PARSER(
-> > +	NAND_OP_PARSER_PATTERN(mxcnd_do_exec_op,
-> > +			       NAND_OP_PARSER_PAT_CMD_ELEM(false),
-> > +			       NAND_OP_PARSER_PAT_ADDR_ELEM(true, 7),
-> > +			       NAND_OP_PARSER_PAT_CMD_ELEM(true),
-> > +			       NAND_OP_PARSER_PAT_WAITRDY_ELEM(true),
-> > +			       NAND_OP_PARSER_PAT_DATA_IN_ELEM(true, MAX_DATA_SIZE)),
+> On 16/04/21 23:34, Daniel Latypov wrote:
+> > Add basic test coverage for files that don't require any config options:
+> > * part of math.h (what seem to be the most commonly used macros)
+> > * gcd.c
+> > * lcm.c
+> > * int_sqrt.c
+> > * reciprocal_div.c
+> > (Ignored int_pow.c since it's a simple textbook algorithm.)
+> > 
+> > These tests aren't particularly interesting, but they
+> > * provide short and simple examples of parameterized tests
+> > * provide a place to add tests for any new files in this dir
+> > * are written so adding new test cases to cover edge cases should be easy
+> >   * looking at code coverage, we hit all the branches in the .c files
+> > 
+> > Signed-off-by: Daniel Latypov <dlatypov@google.com>
+> > Reviewed-by: David Gow <davidgow@google.com>
 > 
-> CMD, ADDR, CMD, DATA is the RNDOUT pattern. So it is now working fine?
+> Just checking if something else was pending on this patch-set for this not
+> getting merged?
+> 
+> I needed this patch-set for adding tests for new macros I am adding in math.h
+> as suggested in this thread [1], so wanted to pull this in my series and add
+> changes on top of that for new macros.
+> 
+> Kindly let me know your thoughts on this.
 
-Yes, RNDOUT is working now.
-
-> Or did you forget to adapt the patterns to your use case?
-
-Although it looks like the patterns from the pl35x-nand-controller.c,
-there is one slight difference. The 'false' in the NAND_OP_PARSER_PAT_CMD_ELEM
-above has the effect that a plain NAND_OP_PARSER_PAT_DATA_IN_ELEM is
-disallowed.
-
-Sascha
+Wow, blast from the past!
+But good finding, it would be good to have more math.h related test cases.
 
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+With Best Regards,
+Andy Shevchenko
+
+
 
