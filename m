@@ -1,156 +1,118 @@
-Return-Path: <linux-kernel+bounces-180877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 056D88C7444
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:01:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D69F28C73C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 11:28:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A100FB24C44
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:01:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66F851F23CD2
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 09:28:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B9DD143882;
-	Thu, 16 May 2024 10:00:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65CEE14374D;
+	Thu, 16 May 2024 09:28:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b="jf2ezs57"
-Received: from kylie.crudebyte.com (kylie.crudebyte.com [5.189.157.229])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ems0LfIf"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79E1C143754;
-	Thu, 16 May 2024 10:00:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.189.157.229
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32C4B2576F
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 09:28:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715853654; cv=none; b=Ai/VUEeWgW/jFXrBX0nlij+1tMERbCJZgobuVc5ja/IcPbr+S2RvDHHMslZMoRA7aZh/skP0p8Va0OHNfS+EiJRi1ETiAjr4bAvfir+symEoQtt8fEPf2Yb3qOeTMeqD5gqFCJN8D24oBqOED1C6JKqYQPCMOYBSBpT+lDKo6a0=
+	t=1715851684; cv=none; b=KUbH4NRwno1ZWeA/YM+94RgiG3exQXSoIGBTucm8CK6YsxGStN+UX14n8ga52TgPT14t1kRkIsJqseL7jtDCG+U+KCLVTDl1QtdNc/qL4lKq5iQIBlOZX8u8OgGzy16PrZbX5Zca3C4/OxiCZ8/BMGjeGVP/rTZyVrw3vgbcA8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715853654; c=relaxed/simple;
-	bh=8HXogCTpnJ/n4MmOkUeaDBlbudv84EkCG4VMtstjvmQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=M8S20Fn9c1gf09D4mGQQdH6egXhJW7TbtLxq8sXABnZ7YNyr5KFfnvZ9Sh1W4C/3LRLKCxVhgNZgmzM5UTIT3XGq3Nwn1p/WafRwYJFhQZ2XW4a4TnP1Gd85gtKi1IMlhmTvmSsTPN7x4rus7RFrBgxo86y9OH2isoKbTRQ3ZP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com; spf=pass smtp.mailfrom=crudebyte.com; dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b=jf2ezs57; arc=none smtp.client-ip=5.189.157.229
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crudebyte.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=crudebyte.com; s=kylie; h=Content-Type:Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-	Content-ID:Content-Description;
-	bh=ZOdg+UxEX0UYoNsiLotMQ5sr/A6Ve75FAxdqq6STPCI=; b=jf2ezs57UCUKXx/sircGT0LdPB
-	xPAGh1Cdn6buWBed/Gmq53llWqOrzXwr6YpwqUJmZe8piJKAsd83YaiLwYX3Kk0onUrRGPqAqi/PC
-	RemYT6EInkg2heGsesVl2IYqK4++yNSRn1tDlq4PWnH8gjU2oxxOfkJx8cOetphZquu7H9anMmmRN
-	S3hpMj1iO3OTNJO7rr1VEFT7UOVo2C00Ww/K+gUe4tm5I3dfUaYSJkwg1YzUpaDcgvy6Kuxi7j1gF
-	erYjMVTKXn0T2+4pyYUW7gux2ILIinifaVkkOlz0Hwb79AECJfcKXmWBvg2W9Lq29bxmQpSZJ5Nrd
-	waUVEVDI2EC+jGF8N4vqqGLt5eWYJwOCacPF0uoG75HDzqY+uSOIFsJHS333CKGIOCpyz2EzbCGpU
-	oFdTjg4g2TSFsqda74wgDgF+DoYStG9b27WokFpXNKRgnjwKwf3XAfmSOEj6eQ0vhD48GCwSJNuXP
-	jZA04DmieDSfXMoYf5uLxoyVJ3LTOzW+vqta1qQCiVuUU+s7riCBxF4mzZBo/ShuMmX3oGFi46RqZ
-	ewzVO7F4Hui3Lq7iEDlDEZIbmO03oP92bnjPNVclpqryqdOANJpwiLmfOgwJ8HdpK/xR/ETXdt+dN
-	MNNh0XWEh6Dv4UTUzKQSjZOX4V2T96hP557JuU2FI=;
-From: Christian Schoenebeck <linux_oss@crudebyte.com>
-To: Eric Van Hensbergen <ericvh@kernel.org>,
- Nikita Zhandarovich <n.zhandarovich@fintech.ru>,
- Latchesar Ionkov <lucho@ionkov.net>
-Cc: Dominique Martinet <asmadeus@codewreck.org>, v9fs@lists.linux.dev,
- linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org,
- syzbot+ff14db38f56329ef68df@syzkaller.appspotmail.com
-Subject: Re: [PATCH net v2] net/9p: fix uninit-value in p9_client_rpc()
-Date: Thu, 16 May 2024 11:27:21 +0200
-Message-ID: <1731146.XZuUqIVtO3@silver>
-In-Reply-To: <20240408141039.30428-1-n.zhandarovich@fintech.ru>
-References: <20240408141039.30428-1-n.zhandarovich@fintech.ru>
+	s=arc-20240116; t=1715851684; c=relaxed/simple;
+	bh=CD5pJH6BvK5fp8EhPCUsBKFQmAv0wh7P06/iCc0Eh1M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bz/Js3u/kKDb6xzs/r1WvJApoVfBuTLWM1AyMjDZJrgjVrhmyO91czK6WzlqMGHnf5GqeGYM3YfFHDpInlEe734Y+kkXCSyE3k0ZBtT0C+1HnfnP5Y66w7PdIujcgDTODbPNByzF1LP/XD89mFM8t4o8orJWerCp0ixuXC/Ci68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ems0LfIf; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-51f60817e34so667549e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 02:28:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715851681; x=1716456481; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iBQbQB4BJv6I8rVVrg3uUQxRil7xE13pAUI65M2O3CY=;
+        b=Ems0LfIf88Cb5y4ZZYGCVp8tvyynbqorIsQ6toWud2j5uj3ljyyFzG8n1A2LoRqkXg
+         KjroYP6zsltIVR0noeLW1gRfA4n5/gClM+8zWpToi2WSQne0EXrCy1E8Tur2pUsTCwkV
+         p0XYw3aalHABilUHpkTDFwTtIAVovhSxdphEcgzH/crn6juqpgXRVYP3nYaHTytR7bBZ
+         qxvNo7ZTvKwc6ItFebr+rD6RO4RdPjQTHlEGqk9j3ObQktoOu8zEKxQ7V2sU4eA/1m5r
+         afulgYAU3DbfFXLiH9Ep3Glfu0eqq0le+Rq3bl2NqV3aez91ICPuDq34oB1ncwRTUqky
+         VWEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715851681; x=1716456481;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iBQbQB4BJv6I8rVVrg3uUQxRil7xE13pAUI65M2O3CY=;
+        b=RASTgea/wWKbRcoOrseRwspzvcSdzl5KePfszeJZCQRLGiXG18+TN/ZxR3HtoWPmuH
+         vWAW4U4nuLBw1P35y4xdH7ryJZeuIWrlRrZMIIoi2JxiqoOsr8kv6/kR0ZyG1zG16rCv
+         uGCuBK5Icfaz7j6pIG/b0rqiwDjj3DmAoCDyo0q6mJQIIRFl+wqdOWTuPFqVyxIL7d/E
+         8yfph6ANvH1cuntIJYDio8BcLQg+Mgi04jztWjSn1xfWdaK6jPGlKL6p/tKVerYTVBVI
+         Qsppqz6G7EZngNOrsrXTs57kIS17nHKD899WsPvbrNH4GTPitBx/mIS8T3VkK5IWGGAQ
+         O4rg==
+X-Forwarded-Encrypted: i=1; AJvYcCUxdfbU1slfh3TB7y+24VXbTpcuKkyutmS1BJmEnRTRQekA0IpTMfIX/4oyBzorjZGV7ZmGQNtN+R3oeGnI9ohJzArphwSMcikOxIm2
+X-Gm-Message-State: AOJu0YxHh2bazUK7O+FKs+pOiaRl1X6KWofnHPH2VRWF6Vxxxz5bEiXm
+	5XQUblScwe6szoiXMG7wlgfg+cCaEhh7QZOL66lHNWA/cfW+jNTff4Klmp/QdG8TldNOEtg1zN4
+	1PvP2mF8yKHNB/CCU574uYSj30uk=
+X-Google-Smtp-Source: AGHT+IEE/V/zIX6jMESAZCo5U6n5vHqiBnuoPYW1nKfUSBtdhaT/7QROXyDduokumF2XPeJijWE9oN7xE/IJRhP5zO0=
+X-Received: by 2002:a05:6512:3447:b0:51d:82a2:8d72 with SMTP id
+ 2adb3069b0e04-5220fc6d7fcmr10228789e87.40.1715851681124; Thu, 16 May 2024
+ 02:28:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+References: <212a9464-d52b-4730-95b9-5a0aebd38c91@gmail.com>
+ <CAHx5RXCWW5M-eW5v65bAkQWZemsU2NTvDv3jA9_XKz=+YP56Qg@mail.gmail.com>
+ <688e54ec-3b29-4e3b-a2c3-f2c83b9c97b7@lunn.ch> <CAHx5RXBFdzsgKXR94gdZd2b=uz8PJDg4OjLPJxKtsdhcjJq3Qw@mail.gmail.com>
+ <e307a237-68e3-40c9-be31-4fe3d560ada2@lunn.ch> <CAHx5RXCF0=Soz_k88RGvJFGrajaxn=mVnqpb99GAQ=b7XOcWiw@mail.gmail.com>
+ <732d8bb2-1d4f-4958-b130-0bd15a407271@gmail.com> <CAHx5RXDaweFTF_Qt0GdBH4nBeMqwL4VVto7xzHBvFgFL5n=Ebg@mail.gmail.com>
+ <c8c01e53-0a45-4319-88ff-bfb0caba150c@lunn.ch> <CAHx5RXDzN93WaYFe2bk6m2TmMC+A9vsmhodRFmZi17cFY5CrWQ@mail.gmail.com>
+ <949fcbea-23dc-44c1-9146-c358b15b9253@lunn.ch> <CAHx5RXC44V-qsN9QiuhKrDdGZ4ppXpT_cQz3XNAa2aQnf7Pe5Q@mail.gmail.com>
+ <cb0f929b-75aa-4ff6-98dc-217b34421e5a@gmail.com>
+In-Reply-To: <cb0f929b-75aa-4ff6-98dc-217b34421e5a@gmail.com>
+From: Stephen Langstaff <stephenlangstaff1@gmail.com>
+Date: Thu, 16 May 2024 10:27:49 +0100
+Message-ID: <CAHx5RXCaiHav5fbUwYe40_7XJbNSrTDO90fUD8ZMAryUovH0gA@mail.gmail.com>
+Subject: Re: drivers/net/dsa/dsa_loop_bdinfo.c build problems
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, linux-kernel@vger.kernel.org, OlteanV@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Monday, April 8, 2024 4:10:39 PM CEST Nikita Zhandarovich wrote:
-> Syzbot with the help of KMSAN reported the following error:
-> 
-> BUG: KMSAN: uninit-value in trace_9p_client_res include/trace/events/9p.h:146 [inline]
-> BUG: KMSAN: uninit-value in p9_client_rpc+0x1314/0x1340 net/9p/client.c:754
->  trace_9p_client_res include/trace/events/9p.h:146 [inline]
->  p9_client_rpc+0x1314/0x1340 net/9p/client.c:754
->  p9_client_create+0x1551/0x1ff0 net/9p/client.c:1031
->  v9fs_session_init+0x1b9/0x28e0 fs/9p/v9fs.c:410
->  v9fs_mount+0xe2/0x12b0 fs/9p/vfs_super.c:122
->  legacy_get_tree+0x114/0x290 fs/fs_context.c:662
->  vfs_get_tree+0xa7/0x570 fs/super.c:1797
->  do_new_mount+0x71f/0x15e0 fs/namespace.c:3352
->  path_mount+0x742/0x1f20 fs/namespace.c:3679
->  do_mount fs/namespace.c:3692 [inline]
->  __do_sys_mount fs/namespace.c:3898 [inline]
->  __se_sys_mount+0x725/0x810 fs/namespace.c:3875
->  __x64_sys_mount+0xe4/0x150 fs/namespace.c:3875
->  do_syscall_64+0xd5/0x1f0
->  entry_SYSCALL_64_after_hwframe+0x6d/0x75
-> 
-> Uninit was created at:
->  __alloc_pages+0x9d6/0xe70 mm/page_alloc.c:4598
->  __alloc_pages_node include/linux/gfp.h:238 [inline]
->  alloc_pages_node include/linux/gfp.h:261 [inline]
->  alloc_slab_page mm/slub.c:2175 [inline]
->  allocate_slab mm/slub.c:2338 [inline]
->  new_slab+0x2de/0x1400 mm/slub.c:2391
->  ___slab_alloc+0x1184/0x33d0 mm/slub.c:3525
->  __slab_alloc mm/slub.c:3610 [inline]
->  __slab_alloc_node mm/slub.c:3663 [inline]
->  slab_alloc_node mm/slub.c:3835 [inline]
->  kmem_cache_alloc+0x6d3/0xbe0 mm/slub.c:3852
->  p9_tag_alloc net/9p/client.c:278 [inline]
->  p9_client_prepare_req+0x20a/0x1770 net/9p/client.c:641
->  p9_client_rpc+0x27e/0x1340 net/9p/client.c:688
->  p9_client_create+0x1551/0x1ff0 net/9p/client.c:1031
->  v9fs_session_init+0x1b9/0x28e0 fs/9p/v9fs.c:410
->  v9fs_mount+0xe2/0x12b0 fs/9p/vfs_super.c:122
->  legacy_get_tree+0x114/0x290 fs/fs_context.c:662
->  vfs_get_tree+0xa7/0x570 fs/super.c:1797
->  do_new_mount+0x71f/0x15e0 fs/namespace.c:3352
->  path_mount+0x742/0x1f20 fs/namespace.c:3679
->  do_mount fs/namespace.c:3692 [inline]
->  __do_sys_mount fs/namespace.c:3898 [inline]
->  __se_sys_mount+0x725/0x810 fs/namespace.c:3875
->  __x64_sys_mount+0xe4/0x150 fs/namespace.c:3875
->  do_syscall_64+0xd5/0x1f0
->  entry_SYSCALL_64_after_hwframe+0x6d/0x75
-> 
-> If p9_check_errors() fails early in p9_client_rpc(), req->rc.tag
-> will not be properly initialized. However, trace_9p_client_res()
-> ends up trying to print it out anyway before p9_client_rpc()
-> finishes.
-> 
-> Fix this issue by assigning default values to p9_fcall fields
-> such as 'tag' and (just in case KMSAN unearths something new) 'id'
-> during the tag allocation stage.
-> 
-> Reported-and-tested-by: syzbot+ff14db38f56329ef68df@syzkaller.appspotmail.com
-> Fixes: 348b59012e5c ("net/9p: Convert net/9p protocol dumps to tracepoints")
-> Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
-> ---
-> v2: change fc->tag init value from 0 to P9_NOTAG per Dominique
-> Martinet's <asmadeus@codewreck.org> helpful suggestion.
-> Link: https://lore.kernel.org/all/ZhNVMivKCCq6wir0@codewreck.org/
-> 
->  net/9p/client.c | 2 ++
->  1 file changed, 2 insertions(+)
+On Wed, May 15, 2024 at 8:27=E2=80=AFPM Florian Fainelli <f.fainelli@gmail.=
+com> wrote:
+> What changes have you done to the dsa_loop.c file for this error to show
+> up? Currently the driver does the following:
+>
+> static void dsa_loop_phylink_get_caps(struct dsa_switch *dsa, int port,
+>                                          struct phylink_config *config)
+>    {
+>            bitmap_fill(config->supported_interfaces,
+> PHY_INTERFACE_MODE_MAX);
+>            __clear_bit(PHY_INTERFACE_MODE_NA, config->supported_interface=
+s);
+>            config->mac_capabilities =3D ~0;
+>    }
+>
+> which is basically to say: I support everything, except
+> PHY_INTERFACE_MDOE_NA.
 
-Reviewed-by: Christian Schoenebeck <linux_oss@crudebyte.com>
+I am currently on kernel version 6.1.55 which does not appear to have
+this caps code in, and neither does 6.1.90.
 
-> diff --git a/net/9p/client.c b/net/9p/client.c
-> index f7e90b4769bb..b05f73c291b4 100644
-> --- a/net/9p/client.c
-> +++ b/net/9p/client.c
-> @@ -235,6 +235,8 @@ static int p9_fcall_init(struct p9_client *c, struct p9_fcall *fc,
->  	if (!fc->sdata)
->  		return -ENOMEM;
->  	fc->capacity = alloc_msize;
-> +	fc->id = 0;
-> +	fc->tag = P9_NOTAG;
->  	return 0;
->  }
->  
-> 
+The following commit to net/dsa/port.c, backported to the 6.1 tree,
+appears to fix the issue
+https://github.com/torvalds/linux/commit/9945c1fb03a3c9f7e0dcf9aa17041a70e5=
+51387a
 
-
+Steve.
 
