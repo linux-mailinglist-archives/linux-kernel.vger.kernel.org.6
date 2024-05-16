@@ -1,223 +1,194 @@
-Return-Path: <linux-kernel+bounces-181251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92B388C798D
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:32:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6F108C7987
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:31:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 495902864BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:32:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9C6F1C20AD4
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:31:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70D1E14884E;
-	Thu, 16 May 2024 15:32:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2112D14D2B7;
+	Thu, 16 May 2024 15:31:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="pz+WG1rQ";
-	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="uSfTxPKu"
-Received: from esa1.hgst.iphmx.com (esa1.hgst.iphmx.com [68.232.141.245])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EJeXHAGa"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 771D014D435;
-	Thu, 16 May 2024 15:32:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=68.232.141.245
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715873541; cv=fail; b=ZCL0MDaLLBQipskucNKtwp6eXsK4p37HeaGUtznNoFYklTIuZYVr4LdwxVGuJPTCvJNLgQ5VUPRGTU2L84G4T8Nh33WYxaZoYI25LJ4nFM5vj6Zw8PP3GGaolfpL+g/pK9X9P7u5JvP6zF6Sc3Yj53n6owEWbq1xLbjEVUo9ov0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715873541; c=relaxed/simple;
-	bh=jXeSy4jTKIxLTuV5gbLcKEjNGlJjBUP2+xabqGx0iHA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=G276nayiCjZzRyhU8Lm3mvPbSbjuSlDss498+RTWeVLv8tQsGsDAHEiCMnYSMgHE2TqVE733eFpokBfl0BTHHC8tmrRXm+5Fe+oCUAi3vfkE1IXZRBP7LLdxMKnbxhPOY7kInV3TTCw2x/rP1Bdu6iQYhVVn6hBdI57CJ01Mhm8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=pz+WG1rQ; dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b=uSfTxPKu; arc=fail smtp.client-ip=68.232.141.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1715873539; x=1747409539;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=jXeSy4jTKIxLTuV5gbLcKEjNGlJjBUP2+xabqGx0iHA=;
-  b=pz+WG1rQcVZVgJsEQbG0EhObKHdbNG7Hs3K7VWX+1OpZfhoGYn/dk1nf
-   uFtgaDrNkuMXrqsrUo84sFkJue1bV0vcyZKwocwZ9j/ws7TuADOKXIqNi
-   nE7uds+kFK/SP3ECNYR9qZhFF44/N8iUq35U4EnvIlWeXwOLlY7xP8lVC
-   rIIc542dCHXnq5v4I6hdD65rixGeY9yC1qufmt6j9ccfLk9fPd/kFZu3M
-   28XAnrnIyDfB72KLpklKOkAiqYNjmhP1hLLSCzHBg+6EMl74vX7bAZD2J
-   gBRTSI51U0D5Fv8nONpPIlDh4bJe4e+MLNaGkDmAGnIJqX2CYYWiXelAd
-   A==;
-X-CSE-ConnectionGUID: K9jXtQ8vReCK3R2s786+pA==
-X-CSE-MsgGUID: XdFrJp0iSo+PU+9lijX2sA==
-X-IronPort-AV: E=Sophos;i="6.08,164,1712592000"; 
-   d="scan'208";a="16741464"
-Received: from mail-bn8nam12lp2168.outbound.protection.outlook.com (HELO NAM12-BN8-obe.outbound.protection.outlook.com) ([104.47.55.168])
-  by ob1.hgst.iphmx.com with ESMTP; 16 May 2024 23:31:03 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=CYkzTadEJ4P72WqE4b1pEI7KEgKxrFmWUjjf0vAkatolepjfuufVeJ6cvAHr7n0y/gMIqOJErOlWqpqJ4NjnCLrw3sv6341/4Z5fmiXydIJJh152CQ0DblzHU/CThAQy10kh/zTYG1UTUu7DiVF0w94GNMZHRP21wJhiRnQ86GxKoCmwf4H6qfEYcd4PxCRs6Pe3L7QWqy4THOk/dfoMJ6vnGFWzbkrY6nP6WwPW0biWe+cgoi1UA5f1YUcBj7jLZrxqKGJq8eQMM0kqlgdDpbfdizOLWdwmuENbFnvZVqcpmdFIrKjq9wv8NGysVh8EO4NSdYvSibDEetcBQLaOkA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jXeSy4jTKIxLTuV5gbLcKEjNGlJjBUP2+xabqGx0iHA=;
- b=OwXqfQkGAP3SI/15FVE/xg8l2lwnDLkIKoFItd0R0L9NhacS3ug5XH87RQrIBxGTqOI0/Y8CH8fJhPN2b2ru/Dt4hURoLA7kWkqZ3PSQ7bvl06zkDJcSbvOBiJFFM+j9X3at+wCePhjVRb3qL4gatIThqLITGOrf/LyeRG4mmaMVSFKDknrmmdIHODULQwXlWK73qzwUPWgNsjd4aTTDQeRuq7/t7QmaaYkBG6CBP6V+hI+T9enR2nOiSrd/5ZJmDcEo052FIxfsMzc3lLkn9z8CyyUvsadGKjB/8Z4m92rMc78Xbv21Yfggid51xg6/r+j+L7Kihz3h8+m/rZgXBw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jXeSy4jTKIxLTuV5gbLcKEjNGlJjBUP2+xabqGx0iHA=;
- b=uSfTxPKuD2fIvM8KVh9JCMnyC7Tfp4AbPKiqrSiM72l98uaKDsoYW5nW9q3kNTs6JbrFBZbPeleXQS6pI8lMcH73PGgZ1WsULrpB/cZKA19inxDRrp011GRmIlTxUnne7uv4YBlHtNFANx+0uTk1Gjx7r9tRj4wnRzto8B/v+Mk=
-Received: from DM6PR04MB6575.namprd04.prod.outlook.com (2603:10b6:5:1b7::7) by
- CO6PR04MB7489.namprd04.prod.outlook.com (2603:10b6:303:a0::12) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7587.30; Thu, 16 May 2024 15:31:01 +0000
-Received: from DM6PR04MB6575.namprd04.prod.outlook.com
- ([fe80::73a8:8d4e:8c05:62a5]) by DM6PR04MB6575.namprd04.prod.outlook.com
- ([fe80::73a8:8d4e:8c05:62a5%5]) with mapi id 15.20.7587.028; Thu, 16 May 2024
- 15:31:01 +0000
-From: Avri Altman <Avri.Altman@wdc.com>
-To: Bart Van Assche <bvanassche@acm.org>, "Martin K . Petersen"
-	<martin.petersen@oracle.com>
-CC: Bean Huo <beanhuo@micron.com>, Peter Wang <peter.wang@mediatek.com>,
-	"linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v4 3/3] scsi: ufs: sysfs: Make max_number_of_rtt
- read-write
-Thread-Topic: [PATCH v4 3/3] scsi: ufs: sysfs: Make max_number_of_rtt
- read-write
-Thread-Index: AQHap1UqCn30QJuzdkSR4jUZe60dILGZ6NSAgAAUfIA=
-Date: Thu, 16 May 2024 15:31:01 +0000
-Message-ID:
- <DM6PR04MB6575E8AF1B1B0ECAF6F169F6FCED2@DM6PR04MB6575.namprd04.prod.outlook.com>
-References: <20240516055124.24490-1-avri.altman@wdc.com>
- <20240516055124.24490-4-avri.altman@wdc.com>
- <054739a5-f38c-4756-b248-94dfb6bad916@acm.org>
-In-Reply-To: <054739a5-f38c-4756-b248-94dfb6bad916@acm.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=wdc.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM6PR04MB6575:EE_|CO6PR04MB7489:EE_
-x-ms-office365-filtering-correlation-id: 23a30bc4-dd60-4c7a-4b79-08dc75bd310e
-wdcipoutbound: EOP-TRUE
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230031|376005|1800799015|366007|38070700009;
-x-microsoft-antispam-message-info:
- =?utf-8?B?Um5UU0VQME9meFRKU0Zhd2IzMFZlNDRZUWE4K2ZqYmEvdHUraHdSbFg2K3Nr?=
- =?utf-8?B?U1N4bUJETWZIbzllSzdMWDZRa1VYdkJmQm5GcU5ZU1NlNDZFV1VwNW42TTUv?=
- =?utf-8?B?aXp3emJ4ckcrdVdpVUZLZXV4UDRSUXg0bnRHR3FrbzhVTlNKWGZSZjJhYUU5?=
- =?utf-8?B?SE1GVlkvUlY3N1hUOTJpaHJBVm1OR2JOTUpjRGdKb0lkYXRhbnlpeGFDRTRW?=
- =?utf-8?B?Z1o4cUIzMFVXK00vWnBYd25tUnRjeGc5ZXFxYkJtVnBNb1lIK0NDWFlxOFYv?=
- =?utf-8?B?Q0FtK1AzdVhiU0E3VWIwQjlQWjE4RUFvTjRWbnVWQytXWXE1eE1jUldsQ2o5?=
- =?utf-8?B?cmNoblZkV3BDaFZ0ZHFEdWNCVzNrNGw3M29UU29GbFdodGNXdlFmOWw0WE0x?=
- =?utf-8?B?RUlVYjFpUVd3WFdLK3JPbkNnUWFjK0pGNTFrOHhoWGRMVmdVbHc2ZGFtY2pr?=
- =?utf-8?B?T1B6SzdTYUdtcFpUdGNoUjJ2VHNoaEZpZkdwVUJnZzJzZjN1eTE5MXd5RTla?=
- =?utf-8?B?WjR4bHNndWZjcHliZU5FWWdEQk5WZkVxZjBidmtNeHNMVGRmazM5VEhUWnpu?=
- =?utf-8?B?MlQ3dlhkSWdUeEg2dHh2TWMxa1Z5VXpjV3V4VVdLNkFMRHIzY2U1Q3NuZEVV?=
- =?utf-8?B?SmZhOFZGZkExQVFKYkRvckhqSlYrOWJkSlFLZ0JIOHk1aXVjMDQ0dDZKYXNy?=
- =?utf-8?B?a0JXTDlCY0k2UGdXUGJEa2p0em14a2t1WCs3L2g5eEpiVzhjSXRiZGd4N3FB?=
- =?utf-8?B?Z0F4am5ydFNpbnJRdHl4U0x3NjlTWHd3TnIrNmQ4bVR1L1Qvbithb3BKdFVp?=
- =?utf-8?B?cHhWdG96T2ljYS81ZTVrWXBsc2NJYmJ6elZmR2hndXZFWG50bmowRW5QdUJF?=
- =?utf-8?B?SVg3SE9hMFhOcEszcTIrcVV6bGc4cTk0OUpwbURiV0RtbUxRcWovTkxtREpi?=
- =?utf-8?B?S0FwQ0dPOVFSRnVCSG1jRFdFZjJmQ0JUYWpHYXNESHdKY0NiR1d5aFc4SkY3?=
- =?utf-8?B?SWowb043TS9WQjZZTkRMc1QwSVUyUlo2MVNNakNQeFl0bGhMTzB3bUpoYTUv?=
- =?utf-8?B?VS9haWNPRjdaYkd3eGxYYmNXaEZlbUJOcnF0dzFoYUZoc2IvcWpxNVdlYnFP?=
- =?utf-8?B?alRqaVQ1ajFKMGlDbjh3cG04cWh4alhiNWhvc0xUamVQNGJhTFR3VjI2eTJu?=
- =?utf-8?B?eDJ1NHlVdWtkbnBBdDdFRzFYS2VrUVA5bDQ0VUNYWFQrZVdkQUhsc2JScFBv?=
- =?utf-8?B?cnNSS2VtYjdHemFoNjlFT0ZydVFzSmppaVBRWlBROEgwZHhHSEZ4T3ZlVHlV?=
- =?utf-8?B?QVMyenNMcnVqUm5tUDlMbEZuRWhKMzkrSTRzNnF3QU5idkZBeTJVMHlldVdT?=
- =?utf-8?B?dTNoMlJmb2NCNHFqak11dW0zVUVLNHdiRUZHOEFLOG1YUm8rbDc4RmZNcHBs?=
- =?utf-8?B?cEpZS1FqWjZiOFErRXBuOUFyczJrUURYbHV4N3NScHdIeGtQN2hWZDRRRUM4?=
- =?utf-8?B?UE9aemtYYzNrWFJDZE1ETGNKc0V0cHJQYm9wamk1WGR1aDY5RHFQOVNUb09i?=
- =?utf-8?B?NU1aOTdDVTVPam05RlZ4SXFsRW1PaWZVME9waWJQaTBRU0s2aWI4cXpGTVhT?=
- =?utf-8?B?TGgxTG9XNmxJaXorcGNHN3FNKzNxOWU4UEozMmM4aUFabDdOUllMNlpsL0w3?=
- =?utf-8?B?d3dkUEVSSEdhbzVIVWFuVEZGZG1aWlA3eFNRVmp1Qm9odmEzOUx0Q2I4QmNk?=
- =?utf-8?B?YjlidVVUSVFYOFF2TDgxbTlDeHdIWkFNVnhCWFdqOWJiR1EyekszSGhJUUxW?=
- =?utf-8?B?NVU4WiswTUJlL2prbVBVQT09?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR04MB6575.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(366007)(38070700009);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?WGo0NEk4aUlBQUFYMnJhbkE1U0NxMzB1QmdGdTNhcVlrZWF1S0NuNTR2bHlN?=
- =?utf-8?B?RDlWRVpsVkpFK25wV2VRc21OZ01QQUJ6dmxhVjZOd2xHTXVYRlhHM2RmT0xl?=
- =?utf-8?B?VmUxSlRuWEhBUVAxa3FRUFBmMjBUbVIrSWtZc1VCelFkN0hxTWlzanIzR08y?=
- =?utf-8?B?QUxvY0JsUmpkYnoxTUt6MGlhVG5HbkRyVE5pQnZ5K2RvUWo0Y1ozRWFRRVNv?=
- =?utf-8?B?Q2ZENlJLTHJlZjNhMFlweWFxWkNnLzEwUTdZK2pud05SU29wRzB2Tm1iRG14?=
- =?utf-8?B?UFFvT3NhZVY3TUE3aVVhWldVR2syNGRBNjFIQWhPM0Y4SVF2U05BOUJ6THlj?=
- =?utf-8?B?MDJ5clNnUGxVTEt1VDBnL1V6L2kycmdFejFZN1N5MDVaRFhpRVVWMWZFMlVE?=
- =?utf-8?B?SzZhL2pmSU41NFZ1Z2FxNDR2bWlqSXl6L3F0b1ZPZnRZWEQrV042U2h3M2E2?=
- =?utf-8?B?dUZDbUJlKzU1YWw2WXlENlE3dm5hSTY3aXp3U3FaWWRqQTFMRzJpWi84VEZD?=
- =?utf-8?B?eW5pSWxGdFJNYnBSeEVJcWlEazJNVjJ6ZFkwYUsxTnpVdWVwVDBkbjFaN25S?=
- =?utf-8?B?VUZRTGRNMW41dEZ1N0k3NFcraElDL202azdIZ3ViTGN5UHZGdHJ4aUFiSjhr?=
- =?utf-8?B?ZkVzTTNjU2p0aCtKWGx4eXgwV2ZWakF6MUM0dkJzNTN0cHErNSs1dkFUcTFm?=
- =?utf-8?B?dGh2bk9ENXNGWUdWdmc0SW5wYTJDQ2tXOTNSemM4c29GeS9KOVQwMmMrN2l5?=
- =?utf-8?B?YVB0Wk0vZXM5STRPdDBUMDkxU2FqOGFBMXpCM3l4Vi9YeUVzdExJVHdSUFo3?=
- =?utf-8?B?YVNORkd1TEZKWWpkQjYvMUp6MHgyQjhXdFZOcjdQbW93MmZIZnBpcGRoNmdE?=
- =?utf-8?B?TndYTWEvU3pqL1NXeU4xc3BXZE4vd2NoYmdkQzBoZUJWL2x3TjFLVkJvRXdH?=
- =?utf-8?B?UXJnK1UzWkV3YjUvNzRzV3VQMzRMTlhzZXB1cjVJSHQzbmZscG82cU1ET0tl?=
- =?utf-8?B?VldybTdzdG9BWmpXZnBSN0FvcFVreVIvRXJyQXU3MGxkSFlSUGpqRFlTbXNi?=
- =?utf-8?B?SThMWUN6a042Y0tXbG44MjB0V3I0R1pRTzN6S2QrNFFRWmMvcEg3K3JpOEhL?=
- =?utf-8?B?WHQvK2RpSnVGZVFWeVY2N3E1VnViZTNKeHlIN05RUjFVdEZjSU56UGo1eVNR?=
- =?utf-8?B?R2p0UG9vS2wzelNvRzdQdmtpeUx0ckNVa2VKQkFBREszRHBMbmtlQXdtbEw3?=
- =?utf-8?B?WFlYdVlxbzlYUjhsY2cyL0NvSEpnLzYreUl6WHNIMURrQnpMRlZoTnllL2FI?=
- =?utf-8?B?UGR4N2xlWnY2d1g5NjY0ZFUvb2RQM2FxTnlmb05uN0QzeHM2TE9RZjJpT21T?=
- =?utf-8?B?QmJidzVQL054VnhGc2FjaS9DalVXZDh4WGN6ekQwVUVJTUIxdzFncEZTL2hG?=
- =?utf-8?B?NVVDZHp2Z0tmVDlUUDNWaVdWaFFJTjBQZGZYaStOckVCYVdBNWtOTlRWSVo4?=
- =?utf-8?B?MHhGeTZZak95QlRVcEh2cncrTktwVjZKZHhUNVZLU1dLdE9kYmduUlJXL1kw?=
- =?utf-8?B?a0dOSHhnVTI4dEUrMHZJamY1bGpWUG4rTDRXSi96Sis4UEJ4b0JDTE1mbDhZ?=
- =?utf-8?B?Z0FwSUF4ejQzT3BZNFFyaVprSkNnS3NHem5NdjNCdUxGS2dQNDZxL0V2ZC9E?=
- =?utf-8?B?UkRWV1NzbUNBSjZPcnZZd0t1U0xwcDNEbDB1NFRxcnFFZjJyUk1KU3RFcmpE?=
- =?utf-8?B?UVpLWGRPc3krSnpKdkxTOGRManlUSTB0MFBWa2liZkNXSmZWQm1aSjB6ZHBU?=
- =?utf-8?B?TWJHK1IyN0h4WjNuODZUaGxST2RkOTQxUmpObllPbDlFM1IxeFhyRXBDMzhX?=
- =?utf-8?B?Z251d25TMW5aOFhmY014YTUzVHZDbXo0cFNxamtXanpDcWJrK1BhRmthYmk3?=
- =?utf-8?B?ajV3eUdsVnNGUEpMRnJ2R25zYUdRMm1ZaVBTaVdlUEJjNjdORzJYdHBRYXE2?=
- =?utf-8?B?WWU3QThjS3V3c3U1NlVtbnJiMXNXcy9QTm9mSGxZSFBSYUp2bXhIQ2FFU2dZ?=
- =?utf-8?B?dHhySFArLzd4NFNzYTM0YVlqQ2N0dWNyNjJpODR5QlFMOGpxcGZUQXp5Mmdq?=
- =?utf-8?Q?ko7s=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3CCA1459F3
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 15:31:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715873510; cv=none; b=DuBp3W+JrbRp5iGcww3E7RFla1lICE9KZDRAFk4wjVq2KClGAfO6j5ouulSpEV/qjBXvBsqxdxh8mXAaNfJihVEkUxm1zKDtnOuOSGshkGP5w26O67S4O4gQwEUJHAUYOl2mKeIFU7TvwD9R1dHTzZum3mTjNtvNiK9lwAwM1bs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715873510; c=relaxed/simple;
+	bh=CSxlFZa4UXxr66D229r3M88rP93BccsItmm2lqbdGDY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=CSmft/lEoSwirPjPaVZygWtLQ9ZdGDwsoNmAxxqdaR+j0vDoM3MrvnQYAsALgiYuVv+uiIxCUmumRlXfWpXHKo4a3Zg7n2upGy9iRAQyGrhgYRv7nialA+zs0MQqnKQcDBj7VZ8Q60kC0A85Xiy0a60/EFkBMR4tfE7M7NnHFGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EJeXHAGa; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715873507;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+8vCmwzfIi1WsXVSAkQT/J8aQjrqLjeYZ5L4roMvwBQ=;
+	b=EJeXHAGa+W+bQgd3dGUqHtfbvmgWCQKJvXNjsovLzcdehU+FJIPph8AIrBh+mGp00UCmjA
+	zpsIeKZPxHm8YEaUXM8FrTLluwhx3SB0FBtWwNjGiXtshefs4IMSR5BpmxmcwXMJxLywew
+	zWaVRD8nOemENtFWq3+OqLi7S7O2/eU=
+Received: from mail-oo1-f70.google.com (mail-oo1-f70.google.com
+ [209.85.161.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-357-yTgodCIcOXO-zHKwzpLHJw-1; Thu, 16 May 2024 11:31:46 -0400
+X-MC-Unique: yTgodCIcOXO-zHKwzpLHJw-1
+Received: by mail-oo1-f70.google.com with SMTP id 006d021491bc7-5b273efe12aso9428012eaf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 08:31:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715873505; x=1716478305;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+8vCmwzfIi1WsXVSAkQT/J8aQjrqLjeYZ5L4roMvwBQ=;
+        b=ax+fFyOjc+AzQdgO3jtJj7Oc+RxlAYbmTM1xJpCjIXuEGjBRxKiO1K7TV0IvW1F2cu
+         W6qM6QtFBaiRR8qYAFWAycZ+Lbx0+DPKjyP1ltBRfHYR3KZxp4Hph4LrW8SPNUhVk1xS
+         f7/AKh6Omj/61ZGhgAwKWOmrCyl10eGluKpN7CRfml+pfESI5GucAHpdVJJJPPs9cipw
+         lhLWR44EBHPko2KklxX9xzW3S/UsmZ/2ycGv2P4hx6T4BVUEXjLPn1kIp/uwnnlvi6Rn
+         sClwBzYEuXkM791wa7pS3l/R1pHVrhdMdEaCS0R+q150CpPGg0wmIqLAC+9QmQqpJaW3
+         1NrA==
+X-Forwarded-Encrypted: i=1; AJvYcCXyicJSBpu1BrlEz3yiBm8iyAZtmPiIbh/gSckB+N9boItpR5SlwVDAib4c+/rSrHgF88uZ1VBA90c58JR+qkxHyYgZ93czR1d3Nm7l
+X-Gm-Message-State: AOJu0YxnOIgc7Pv8/y595qsD2f7cf3ROVBF/VqdbIMYDeX65Hn8qAB53
+	mZxcayXeWRcLCwaOKhYqYtp8d+xhvlVq2EYvjkilo3F2xWoWUHqwhvwSCS9snch6LNJiI6+hZwI
+	db7vz+d+rtyEN+/RFJNrIUOGJuAfCbHWrUOi3fT5uD/s7+o1sIrd7eJnqGuEb3A==
+X-Received: by 2002:a05:6358:70c1:b0:17e:8ea3:83cc with SMTP id e5c5f4694b2df-193bcfd421amr1959872755d.24.1715873504692;
+        Thu, 16 May 2024 08:31:44 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGE41GJnq+HtznMWb6X6izWXUDrLVmkKJuJMyuZB7TKWKACkFsrJ0Hf+ACdaFGTSA2DKuBzpA==
+X-Received: by 2002:a05:6358:70c1:b0:17e:8ea3:83cc with SMTP id e5c5f4694b2df-193bcfd421amr1959869255d.24.1715873504128;
+        Thu, 16 May 2024 08:31:44 -0700 (PDT)
+Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-141-166.abo.bbox.fr. [213.44.141.166])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6a15f185787sm77010226d6.45.2024.05.16.08.31.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 May 2024 08:31:43 -0700 (PDT)
+From: Valentin Schneider <vschneid@redhat.com>
+To: Frederic Weisbecker <frederic@kernel.org>, LKML
+ <linux-kernel@vger.kernel.org>
+Cc: Frederic Weisbecker <frederic@kernel.org>, "Paul E . McKenney"
+ <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Joel Fernandes
+ <joel@joelfernandes.org>, Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
+ Uladzislau Rezki <urezki@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
+ rcu <rcu@vger.kernel.org>
+Subject: Re: [PATCH 2/6] rcu: Remove superfluous full memory barrier upon
+ first EQS snapshot
+In-Reply-To: <20240515125332.9306-3-frederic@kernel.org>
+References: <20240515125332.9306-1-frederic@kernel.org>
+ <20240515125332.9306-3-frederic@kernel.org>
+Date: Thu, 16 May 2024 17:31:40 +0200
+Message-ID: <xhsmhfruhhixv.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	C4CdGVY7P1I1Tp6pUCW1vXsylcpWiD//o+QZg83yxxslufPPcDD7qAvdrcpmV8i5pZRqCygJbchh3PylCbFAv5sZVtMtQoollHE06+FDGkCAgrZ5k5NbkkrvuhI1lwdBTi0O6O4IlurVa+uT9BnjHW8fN6HF6ojVJSf3ms7kMom2/ZAbDKmn295MDofyZjY58DL+tUxtCwHwItBAen9Hv85x2l+Szvce4F6gwCYYfKjbgs3vT2wF0uFXlNFCD9TRo4Z/ng6saHlgsCdaqwMVoQO6x3Z7PR0Z6EBF6OObv2P8pMBERoG4yGJPqZz6AF0F329B6EhMgdrok+CpUSwAV8z4I+RMFwlDz1uWrnlgdxlv3KpgmOstiWoHauzm2ISIZYO6Y9g/STbp8Rr1wK8AXyKuN8l7jcqmiZAwJMWJ3UhPkgUNqeVUd8R+H1fCvkTshf8rCD3qXxHVp5B4DbHdihS7i+vXz8XGsynLD3XFvJB4w5nnb1kdr34nm2vL0MoGwpbgtB9XNXg09L9i58IhyFsIQs92DAm9AQWAysCWHcLgT1/7U+sngusOmaijyCy+kKhyB+neCwb/P9u41zOZN6T1c9XiISHAZvDv/1hKvyzY5xnWjQ55okvGu7ZodBg6
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR04MB6575.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 23a30bc4-dd60-4c7a-4b79-08dc75bd310e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 May 2024 15:31:01.1525
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: cecn03rwRd/ultdlFJsAkffJLwpIo54PU1uBDbid1zsvlqqc/XE/WliIo7TotaQWpIhFKylHRChvb2LwJuhGFA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO6PR04MB7489
+Content-Type: text/plain
 
-PiBPbiA1LzE1LzI0IDIzOjUxLCBBdnJpIEFsdG1hbiB3cm90ZToNCj4gPiArc3RhdGljIHNzaXpl
-X3QgbWF4X251bWJlcl9vZl9ydHRfc3RvcmUoc3RydWN0IGRldmljZSAqZGV2LA0KPiA+ICsgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgc3RydWN0IGRldmljZV9hdHRyaWJ1dGUgKmF0
-dHIsDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBjb25zdCBjaGFyICpi
-dWYsIHNpemVfdCBjb3VudCkNCj4gPiArew0KPiA+ICsgICAgIHN0cnVjdCB1ZnNfaGJhICpoYmEg
-PSBkZXZfZ2V0X2RydmRhdGEoZGV2KTsNCj4gPiArICAgICB1bnNpZ25lZCBpbnQgcnR0Ow0KPiA+
-ICsgICAgIGludCByZXQ7DQo+ID4gKw0KPiA+ICsgICAgIGlmIChrc3RydG91aW50KGJ1ZiwgMCwg
-JnJ0dCkpDQo+ID4gKyAgICAgICAgICAgICByZXR1cm4gLUVJTlZBTDsNCj4gPiArDQo+ID4gKyAg
-ICAgZG93bigmaGJhLT5ob3N0X3NlbSk7DQo+ID4gKyAgICAgaWYgKCF1ZnNoY2RfaXNfdXNlcl9h
-Y2Nlc3NfYWxsb3dlZChoYmEpKSB7DQo+ID4gKyAgICAgICAgICAgICByZXQgPSAtRUJVU1k7DQo+
-ID4gKyAgICAgICAgICAgICBnb3RvIG91dDsNCj4gPiArICAgICB9DQo+ID4gKw0KPiA+ICsgICAg
-IHVmc2hjZF9ycG1fZ2V0X3N5bmMoaGJhKTsNCj4gPiArICAgICByZXQgPSB1ZnNoY2RfcXVlcnlf
-YXR0cihoYmEsIFVQSVVfUVVFUllfT1BDT0RFX1dSSVRFX0FUVFIsDQo+ID4gKyAgICAgICAgICAg
-ICBRVUVSWV9BVFRSX0lETl9NQVhfTlVNX09GX1JUVCwgMCwgMCwgJnJ0dCk7DQo+ID4gKyAgICAg
-dWZzaGNkX3JwbV9wdXRfc3luYyhoYmEpOw0KPiA+ICsNCj4gPiArb3V0Og0KPiA+ICsgICAgIHVw
-KCZoYmEtPmhvc3Rfc2VtKTsNCj4gPiArICAgICByZXR1cm4gcmV0IDwgMCA/IHJldCA6IGNvdW50
-Ow0KPiA+ICt9DQo+IA0KPiBTaW5jZSBtb2RpZnlpbmcgUlRUIGlzIG9ubHkgYWxsb3dlZCB3aGls
-ZSBubyBjb21tYW5kcyBhcmUgaW4gcHJvZ3Jlc3MsDQo+IHNob3VsZG4ndCBtYXhfbnVtYmVyX29m
-X3J0dF9zdG9yZSgpIGZyZWV6ZSBhbmQgdW5mcmVlemUgYWxsIHJlcXVlc3QNCj4gcXVldWVzIG9m
-IGFsbCBsb2dpY2FsIHVuaXRzPw0KRG9uZS4NCg0KVGhhbmtzLA0KQXZyaQ0KDQo+IA0KPiBUaGFu
-a3MsDQo+IA0KPiBCYXJ0Lg0KDQo=
+On 15/05/24 14:53, Frederic Weisbecker wrote:
+> When the grace period kthread checks the extended quiescent state
+> counter of a CPU, full ordering is necessary to ensure that either:
+>
+> * If the GP kthread observes the remote target in an extended quiescent
+>   state, then that target must observe all accesses prior to the current
+>   grace period, including the current grace period sequence number, once
+>   it exits that extended quiescent state.
+>
+> or:
+>
+> * If the GP kthread observes the remote target NOT in an extended
+>   quiescent state, then the target further entering in an extended
+>   quiescent state must observe all accesses prior to the current
+>   grace period, including the current grace period sequence number, once
+>   it enters that extended quiescent state.
+>
+> This ordering is enforced through a full memory barrier placed right
+> before taking the first EQS snapshot. However this is superfluous
+> because the snapshot is taken while holding the target's rnp lock which
+> provides the necessary ordering through its chain of
+> smp_mb__after_unlock_lock().
+>
+> Remove the needless explicit barrier before the snapshot and put a
+> comment about the implicit barrier newly relied upon here.
+>
+> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+> ---
+>  .../Design/Memory-Ordering/Tree-RCU-Memory-Ordering.rst    | 6 +++---
+>  kernel/rcu/tree.c                                          | 7 ++++++-
+>  2 files changed, 9 insertions(+), 4 deletions(-)
+>
+> diff --git a/Documentation/RCU/Design/Memory-Ordering/Tree-RCU-Memory-Ordering.rst b/Documentation/RCU/Design/Memory-Ordering/Tree-RCU-Memory-Ordering.rst
+> index 5750f125361b..728b1e690c64 100644
+> --- a/Documentation/RCU/Design/Memory-Ordering/Tree-RCU-Memory-Ordering.rst
+> +++ b/Documentation/RCU/Design/Memory-Ordering/Tree-RCU-Memory-Ordering.rst
+> @@ -149,9 +149,9 @@ This case is handled by calls to the strongly ordered
+>  ``atomic_add_return()`` read-modify-write atomic operation that
+>  is invoked within ``rcu_dynticks_eqs_enter()`` at idle-entry
+>  time and within ``rcu_dynticks_eqs_exit()`` at idle-exit time.
+> -The grace-period kthread invokes ``rcu_dynticks_snap()`` and
+> -``rcu_dynticks_in_eqs_since()`` (both of which invoke
+> -an ``atomic_add_return()`` of zero) to detect idle CPUs.
+> +The grace-period kthread invokes first ``ct_dynticks_cpu_acquire()``
+> +(preceded by a full memory barrier) and ``rcu_dynticks_in_eqs_since()``
+> +(both of which rely on acquire semantics) to detect idle CPUs.
+>
+>  +-----------------------------------------------------------------------+
+>  | **Quick Quiz**:                                                       |
+> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> index 58415cdc54f8..f5354de5644b 100644
+> --- a/kernel/rcu/tree.c
+> +++ b/kernel/rcu/tree.c
+> @@ -773,7 +773,12 @@ static void rcu_gpnum_ovf(struct rcu_node *rnp, struct rcu_data *rdp)
+>   */
+>  static int dyntick_save_progress_counter(struct rcu_data *rdp)
+>  {
+> -	rdp->dynticks_snap = rcu_dynticks_snap(rdp->cpu);
+
+So for PPC, which gets the smp_mb() at the lock acquisition, this is an
+"obvious" redundant smp_mb().
+
+For the other archs, per the definition of smp_mb__after_unlock_lock() it
+seems implied that UNLOCK+LOCK is a full memory barrier, but I wanted to
+see it explicitly stated somewhere. From a bit of spelunking below I still
+think it's the case, but is there a "better" source of truth?
+
+  01352fb81658 ("locking: Add an smp_mb__after_unlock_lock() for UNLOCK+BLOCK barrier")
+  """
+  The Linux kernel has traditionally required that an UNLOCK+LOCK pair act as a
+  full memory barrier when either (1) that UNLOCK+LOCK pair was executed by the
+  same CPU or task, or (2) the same lock variable was used for the UNLOCK and
+  LOCK.
+  """
+
+and
+
+  https://lore.kernel.org/all/1436789704-10086-1-git-send-email-will.deacon@arm.com/
+  """
+  This ordering guarantee is already provided without the barrier on
+  all architectures apart from PowerPC
+  """
+
+> +	/*
+> +	 * Full ordering against accesses prior current GP and also against
+                                          ^^^^^
+                                          prior to
+
+> +	 * current GP sequence number is enforced by current rnp locking
+> +	 * with chained smp_mb__after_unlock_lock().
+> +	 */
+> +	rdp->dynticks_snap = ct_dynticks_cpu_acquire(rdp->cpu);
+>       if (rcu_dynticks_in_eqs(rdp->dynticks_snap)) {
+>               trace_rcu_fqs(rcu_state.name, rdp->gp_seq, rdp->cpu, TPS("dti"));
+>               rcu_gpnum_ovf(rdp->mynode, rdp);
+> --
+> 2.44.0
+
 
