@@ -1,159 +1,150 @@
-Return-Path: <linux-kernel+bounces-180516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 821D38C6F87
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 02:32:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F41A8C6F8B
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 02:33:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 650341F21109
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 00:32:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDBDB283BC4
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 00:33:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 454B510F1;
-	Thu, 16 May 2024 00:31:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36ECB10F1;
+	Thu, 16 May 2024 00:33:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="V326Vpyr"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ibno+YeB"
+Received: from mail-qv1-f66.google.com (mail-qv1-f66.google.com [209.85.219.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D6E620
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 00:31:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 226E3620;
+	Thu, 16 May 2024 00:33:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715819512; cv=none; b=SWijWmpvtYkriV98hDz4VU+QelwXsItPZEuC9vHlUlhJDQh4KmdRvc1P5ENO1/zNDyk1v6EK385p75F7IXRd73TChPis8BELIQIyGeEOIJT5sJK/7BgKWxyY5Hou9wJpQDesPq+nvxbsYn5g4ZK3idL4a45fLV4TaPsjhtl6aPc=
+	t=1715819628; cv=none; b=pPGPixSDIi5ggVcItSN59BR8ERKAoI0WzvUm/re7HTQQO3Lj8WhpDVPn/75xON9iH7TOUYVGege6eve1KgEn3DbKb2H1SqUt6dfcMPjxjIIWjSN8KqsR0OI5PjY3lSBaUWwQ0Edc05QrN+vROYeGMUSp0aegwkhAnuj/O2bJYGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715819512; c=relaxed/simple;
-	bh=jEyumzpkWwYSzcvpMppl0gq1MCtH5yDL7td38D8uy+Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SBEPwJE0m31bCFI0d2p6ui/YUyZ4xt9rzPp2MEuZH6t3w7EYUnuRNVEUfzcrK+IUAAYIShYvCYmwVHbWpFIdvkqR0YSh13yI6rTfOpNtI+vrZKWTlEkXLX1djBykBiJRMEh/YUwHWpM/AfbCmsGUkY9Y7ia6nhwnLW/BS8dAk+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=V326Vpyr; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-572c65cea55so5007508a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 17:31:50 -0700 (PDT)
+	s=arc-20240116; t=1715819628; c=relaxed/simple;
+	bh=EN9plsmwACHgXkbMKx+IVZKYo3CNhx7HHKOBfiGzO14=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=iDu55NxQqxiekt0WLKlpE27RbrL/NFdHNgQgU2gw7xyZDNtOKu28Zzu09jUTP5TVqQUiu4AVG/MMKe8VTDk0Q9zi5ad2uoH7SPCi72dQb1bY+0rec62v4mMKwT18laWM7PIhEvZM6BTD2mk6lCBidQ8VNLoXHgVoURkr7F1Z5iA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ibno+YeB; arc=none smtp.client-ip=209.85.219.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f66.google.com with SMTP id 6a1803df08f44-6a071595d22so30136146d6.3;
+        Wed, 15 May 2024 17:33:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1715819509; x=1716424309; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=/1ZOEzEyRsWPFtMmIxhfNXeTL3zlVab8wCdGYOykNMk=;
-        b=V326Vpyr8xGzhaikT0A2VYvzhUGEBmSG3NV41xOHu6vmtEMVDJNVE+uEGh5JPee554
-         WM6jv61P0vmsSzXmkm6bUZvve4EQ2x9o8fp5FLRcdhbnrYRsAdPckwhKNYHyrwB6mDE4
-         8VtPwtEEwj19sshjVnXFfn63OzYq52eypm3ts=
+        d=gmail.com; s=20230601; t=1715819626; x=1716424426; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=x5sidTUddXfpi2LHAtDx9zikhDWNEYE/1JDeYKEgcis=;
+        b=ibno+YeB/y/tUk3gSBKEIptb9FtNE/tGX9uoATlD5xAFY16gWEacncFzFu83VUQv+d
+         HRtSPHz6Rbe17360psAIv/dxDVUVcwkqmLiAOOxl4qdVu7LJ8HvR/Yt39wKigmDKf8ZY
+         NFZkC0kheFMFfIzJcXjFetQsxpH/GiVcXLroCVa0a1x8EOWpPIUhIJDzfWnIkXk4Ga+a
+         ukFFz4sCTf5AuTCcSR3jgB6MfAuTvCCYXILmgRaM5s0bJgJbznFKn0T2fBDpbxkAzIi1
+         ibCKj0ifW7QiiFDVxE8WFAkuG0nhFr+bcsSWlM5lWDA/GlR8P9HpYKMMSuY+zePNLdFv
+         ySww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715819509; x=1716424309;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/1ZOEzEyRsWPFtMmIxhfNXeTL3zlVab8wCdGYOykNMk=;
-        b=JOFnKu7b08aL0YFp/QNgZOzsi1nagoSd9wnqaE7H4kg05JqiPVkXya71Im8JRGf0aq
-         bVTSs6a/dDpOlXE9AN+oGFZm72sLolXpc9lxi4FPnvPo5ATWWFQLCFyafsOS11nR4Uxh
-         NSTrWgIlbBlclaUgoTxsRPg/FGBkZ4dPra6xbFnCpoVw3995eYgi7QV0cl3lwXWFTSW1
-         taAnBeU5OH6GdnlJ9Q31JQo6n7jYBx9gVC0kpc6wFEM6ONuXQW8jxRJOntRrBkMYB17v
-         eL6syx0KvZdFOxLgqAGwvG1lA0+yfxrM3vWemQ2nI5gu1PKNGaFx0R0mcXQAWcWBKd5P
-         VqEg==
-X-Forwarded-Encrypted: i=1; AJvYcCVs9LHa5aqMy5d/fA2gbs9sNIJQpPXIgWvvJUBfM/74TMut4lxJUHfh3iSGXh8EVTzEdlqeU90MAS8BKvpG+6Ta7i8gDImnv1eY5IRi
-X-Gm-Message-State: AOJu0YwgIELvdh4mWE2y3sUQGWezJr3Y+m/0l2Sp3K4ajsaA4H7S3RWb
-	xAEa3XW450w5PM65xDSDZkYcFhtsiDWyvTCjj0GUCVleRC7kkuvLqj3fiPE/wqGuBsXJTHdeWht
-	0mErJ3A==
-X-Google-Smtp-Source: AGHT+IGG6D+PytE2U/HoOAHnXbqsbYt1nvZlhw6+TXR+xlNg8medCyEF7l37aAAwClvPY7vC8ryNLw==
-X-Received: by 2002:aa7:c712:0:b0:574:ea0b:c1a3 with SMTP id 4fb4d7f45d1cf-574ea0bc231mr4630813a12.1.1715819508620;
-        Wed, 15 May 2024 17:31:48 -0700 (PDT)
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com. [209.85.208.42])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57421480d99sm7840548a12.8.2024.05.15.17.31.47
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 May 2024 17:31:48 -0700 (PDT)
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-574f7c0bab4so2386525a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 17:31:47 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUkQ/Lk9z9j9Je2RKjL8XiYK7h1yrgcfk1RC+NW6nsB1hfk0/kXUo+7NTB/iofMitezUFZz+lR0SaMsPE8TmA0XCWG8bxM7ctkQX9or
-X-Received: by 2002:a17:906:f582:b0:a5a:66a7:47f3 with SMTP id
- a640c23a62f3a-a5a66a74d79mr966476866b.35.1715819507655; Wed, 15 May 2024
- 17:31:47 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715819626; x=1716424426;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=x5sidTUddXfpi2LHAtDx9zikhDWNEYE/1JDeYKEgcis=;
+        b=dq8dylTifLM642iycS4eXyRVfCooH7olnux8L//la48EQ/viLaQaJ4/xze7jz1TjZW
+         fEOIyV2mEegpYZTmBsokcA+eAYWAOzvostzaJm+SuqVz0e0WCfuek3SPWW/MIAGB+njM
+         omZvTJwZq6JXwDPoKkkcVQWo/Vh4qGECl+l+yGjbOFW0wKJza1tENW+cuAun71C4bsQP
+         /gS2utg9UA3d/++ay+uixPLYqpY8boJ1Hc6f/ystFvdputI1cCoZHGS9rxvazBVzYM4e
+         wiOVI6mUcJEteEKAqX8YJqL9bQYsu5gBffdAQHPrGQ7NA4rSLhsgLY8vKtPsba4KlnIy
+         nuug==
+X-Forwarded-Encrypted: i=1; AJvYcCUMR4Xn64Nx8Bx44vNlblAnMjU5nOdZFBfiLsShBa7ETR+tfgHk0v1mOu2qSdPgYdsJoCz46BIIJOPNlRDbgP7cmQp35zwfl6Rx7KxE
+X-Gm-Message-State: AOJu0YzOWzR/tqN4xGc2i9KUX2Z58S/AgMR9SAXzC5IBaMJsgzhwcbYO
+	vtYeA78ArGEB1LI04Z12lxU087fQnBrmIdwJXpo1vOTM6M7MCCkItooSagwDrNs=
+X-Google-Smtp-Source: AGHT+IGX4ISSqNbd9oXgSUgfybUHoui62YoQ2Y59eK4Jy2dYz+5FKzM8IXvpI4pClTwvRcmFQO1k0g==
+X-Received: by 2002:a05:6214:428f:b0:6a0:d298:e04e with SMTP id 6a1803df08f44-6a168259307mr231293756d6.43.1715819625850;
+        Wed, 15 May 2024 17:33:45 -0700 (PDT)
+Received: from smtpclient.apple ([2601:98a:4102:7e80:e978:2977:f486:8f27])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6a15f1cd245sm69464846d6.77.2024.05.15.17.33.44
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 15 May 2024 17:33:45 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <cover.1715616501.git.dsterba@suse.com>
-In-Reply-To: <cover.1715616501.git.dsterba@suse.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 15 May 2024 17:31:30 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgt362nGfScVOOii8cgKn2LVVHeOvOA7OBwg1OwbuJQcw@mail.gmail.com>
-Message-ID: <CAHk-=wgt362nGfScVOOii8cgKn2LVVHeOvOA7OBwg1OwbuJQcw@mail.gmail.com>
-Subject: Re: [GIT PULL] Btrfs updates for 6.10
-To: David Sterba <dsterba@suse.com>
-Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.300.61.1.2\))
+Subject: Re: KASAN: use-after-free in ext4_find_extent in v6.9
+From: Shuangpeng Bai <shuangpengbai@gmail.com>
+In-Reply-To: <20240515224932.GA202157@mit.edu>
+Date: Wed, 15 May 2024 20:33:33 -0400
+Cc: linux-ext4@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ syzkaller@googlegroups.com
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <2184C9DB-DDC2-484B-A1B2-A1E312B62D54@gmail.com>
+References: <5B9F0C1F-C804-4A9C-8597-4E1A7D16B983@gmail.com>
+ <20240515224932.GA202157@mit.edu>
+To: Theodore Ts'o <tytso@mit.edu>
+X-Mailer: Apple Mail (2.3774.300.61.1.2)
 
-On Mon, 13 May 2024 at 09:28, David Sterba <dsterba@suse.com> wrote:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git tags/for-6.10-tag
+Hi Ted,
 
-So I initially blamed a GPU driver for the following problem, but Dave
-Airlie seems to think it's unlikely that problem would cause this kind
-of corruption, so now it looks like it might just be btrfs itself:
+Thanks for your reply!=20
 
-  BUG: Bad page state in process kworker/u261:13  pfn:31fb9a
-  page: refcount:0 mapcount:0 mapping:00000000ff0b239e index:0x37ce8
-pfn:0x31fb9a
-  aops:btree_aops ino:1
-  flags: 0x2fffc600000020c(referenced|uptodate|workingset|node=0|zone=2|lastcpupid=0x3fff)
-  page_type: 0xffffffff()
-  raw: 02fffc600000020c dead000000000100 dead000000000122 ffff9b191efb0338
-  raw: 0000000000037ce8 0000000000000000 00000000ffffffff 0000000000000000
-  page dumped because: non-NULL mapping
-  CPU: 18 PID: 141351 Comm: kworker/u261:13 Tainted: G        W
-  6.9.0-07381-g3860ca371740 #60
-  Workqueue: btrfs-delayed-meta btrfs_work_helper
-  Call Trace:
-   bad_page+0xe0/0xf0
-   free_unref_page_prepare+0x363/0x380
-   ? __count_memcg_events+0x63/0xd0
-   free_unref_page+0x33/0x1f0
-   ? __mem_cgroup_uncharge+0x80/0xb0
-   __folio_put+0x62/0x80
-   release_extent_buffer+0xad/0x110
-   btrfs_force_cow_block+0x68f/0x890
-   btrfs_cow_block+0xe5/0x240
-   btrfs_search_slot+0x30e/0x9f0
-   btrfs_lookup_inode+0x31/0xb0
-   __btrfs_update_delayed_inode+0x5c/0x350
-   ? kfree+0x80/0x250
-   __btrfs_commit_inode_delayed_items+0x7a1/0x7d0
-   btrfs_async_run_delayed_root+0xf7/0x1b0
-   btrfs_work_helper+0xc0/0x320
-   process_scheduled_works+0x196/0x360
-   worker_thread+0x2b8/0x370
-   ? pr_cont_work+0x190/0x190
-   kthread+0x111/0x120
-   ? kthread_blkcg+0x30/0x30
-   ret_from_fork+0x30/0x40
-   ? kthread_blkcg+0x30/0x30
-   ret_from_fork_asm+0x11/0x20
+You are right. I disabled CONFIG_BLK_DEV_WRITE_MOUNTED and found this =
+bug can not be triggered anymore.=20
 
-Note the line
+I am wondering if there is any suggested way for me to check whether a =
+bug is reproduced under a reasonable environment (such as compiling =
+config) or not? If so, that would be very helpful.
 
-    page dumped because: non-NULL mapping
 
-but the actual mapping pointer isn't a valid kernel pointer. I suspect
-that may be due to pointer hashing, though. I'm not convinced that's a
-great idea for this case, but hey, here we are. Sometimes those "don't
-leak kernel pointers" things cause problems for debugging.
+Best,
+Shuangpeng
 
-Anyway, it looks like the btrfs_cow_block -> btrfs_force_cow_block ->
-release_extent_buffer -> __folio_put path might be releasing a page
-that is still attached to a mapping. Perhaps some page counting
-imbalance?
 
-This all happened under fairly normal - for me - workstation loads. I
-was (of course) doing an allmodconfig kernel build after a pull, and I
-had a handful of terminals and the web browser open. Nothing
-particularly interesting or odd.
+> On May 15, 2024, at 18:49, Theodore Ts'o <tytso@mit.edu> wrote:
+>=20
+> On Tue, May 14, 2024 at 08:40:36PM -0400, Shuangpeng Bai wrote:
+>> Hi Kernel Maintainers,
+>>=20
+>> Our tool found a kernel bug KASAN: use-after-free in =
+ext4_find_extent. Please see the details below.
+>>=20
+>> Kernel commit: v6.9 (Commits on May 12, 2024)
+>> Kernel config: attachment
+>> C/Syz reproducer: attachment
+>>=20
+>> We find this bug was reported and marked as fixed. =
+(https://syzkaller.appspot.com/bug?extid=3D7ec4ebe875a7076ebb31)
+>>=20
+>> Our reproducer can trigger this bug in v6.9, so the bug may have not =
+been fixed correctly.
+>=20
+> The reason why it was marked as fixed is because the reproducer no
+> longer reproduces with CONFIG_BLK_DEV_WRITE_MOUNTED disabled.
+> Upstream syzkaller unconditionally disables this config, and we don't
+> consider reproducers that have CONFIG_BLK_DEV_WRITE_MOUNTED enabled to
+> be a bug.
+>=20
+> If the reproducer is actively modifying the block device (or the
+> underlying file for a loop device) while it is mounted, we don't
+> consider this a bug.  This is requires root, and it's no more a
+> "security bug" than someone complaining that root can execute a
+> reboot(2) system call and calling it a "security bug".
+>=20
+> I've looked at your "reproducer" and it does appear to be modifying
+> the block device while it is mounted, and the config does have
+> CONFIG_BLK_DEV_WRITE_MOUNTED enabled.  So I don't care (tm).  If you
+> want to put an engineer to work on addressing the bug, and the patch
+> is a clean and maintable code fix, I'll certainly consider the change.
+> But it's not something that upstream will work on a volunteer basis;
+> no company I am aware of is willing to pay for engineers to work on
+> this sort of issue.
+>=20
+> Cheers,
+>=20
+> - Ted
 
-Does the above make any btrfs people go "Ahh, I see how that would be
-a problem"?
-
-            Linus
 
