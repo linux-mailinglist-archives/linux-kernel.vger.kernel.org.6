@@ -1,170 +1,133 @@
-Return-Path: <linux-kernel+bounces-180677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A2368C71A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 08:31:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A9998C71AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 08:35:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BC971F213E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 06:31:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 928781C20DE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 06:35:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BACA422EF3;
-	Thu, 16 May 2024 06:31:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E67982F3B;
+	Thu, 16 May 2024 06:35:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="Gf3YsIP3"
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01olkn2022.outbound.protection.outlook.com [40.92.53.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="j/fVSDIr"
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE776249F7;
-	Thu, 16 May 2024 06:31:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.53.22
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715841085; cv=fail; b=A70J8WzhEY3JAuJvGc6sDRdo+/PU0QVl12L7rJEKtP/iqt39uGqYuKbpPW/14EI4OqeSbKDsPVxhrAsx0KxGVZxIoNhDG1IuJ0UB87181UTmS0QJFIqJ+JCQ570PDDMJvtqHLpzg+i9RBlsnZV/Vlaf716n3HPBNTPOS1z2Ned4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715841085; c=relaxed/simple;
-	bh=mg9LK5E8arpRzuntSzUD23+A4wrpv38IYIuexGQgy0A=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=So8McXZqdfnuU4yNJamgCOv6eL5qNfWV9QI9wZTzVPdPIum9d/579vg4GW6nCjd0uNERNsEW3qBnYbUBOFlrhnp5AuqT0YpzNdpfBA+akvJZzu0TzLzEx5VAOd4N6xKXiJCrxaT/8VgLqURSEqLL1CWRABUlbZfHoxB6e3jnr0E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=Gf3YsIP3; arc=fail smtp.client-ip=40.92.53.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=NOVDVVLa7rox/i6Aii5XO0m1Suyich/4uYstLHBjyszChtcehp88+EVyC6L/z3aAnsal+2S7iAzBAZrUV9E5QKBqxWdXCL6Wq0JnZXLlgqbE3rkItK48K5hLBY8oU0v4TYa/uaH2CYJl5M4TNyQ7efRGzbnKXJ4nYuJp8ewuD5fbsp5M2lMFTk1OOw1+NAJKSnCeh/IGCDuFW9+7USbi9qYcZ0vg62hNiGO90jm3I6JA14STjA3aW+1cZt8iZHE85zysxaSCCS+ldU9PSLCN4xX4nqQ6B8RIArtofFNUwSvSV0OKYqWxdZl8kh7n8k3rZc2D2Ofv/TnBolfZwIpNQg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sa2VERR4mp9uAE47rBzsUUrUySBsgd8Lx3lAkLh1WWU=;
- b=jlHIb10h6HrgcHgSjCSXBSeuxRWu85lKMnSR1VutPSVZgUWM03JeRFjgR5Y8P5DBWAqM7oi0Det3dYfAJjA+kO1Em+qJ6DN/R8VAfIPhcd4O+cwckrpCDg5GfD2vz63g39N6yM7hhiHHU64eX9K5PKtyZ8mMAP5W1uBmGBMpBb/AG+Wrfoe4RJ/czhQYXE4pBoDJCnDMASNaBKoeWuZTrmZXdhqxsQjiMnBDSsKgQKEUsZqzA+YnIwR0ftdig7xedlMBQ4YPvQGUCVCDH9+oHTMh0ePDBaHv+uLj4+mDtfYg/a/Tdhv/OYnk9RVxFSPH/+m8Zfu7VstZEQSaJNXhSw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sa2VERR4mp9uAE47rBzsUUrUySBsgd8Lx3lAkLh1WWU=;
- b=Gf3YsIP3EzyvhZ2pSgLuyLt6xypnrTse3rQ6bQUmzGg6AxCGSrVV6uQpM8cRTG3Q+rrS/EutDo04FttGRSjyhFotlpXNvtoe/Ne+gpFLUXp+eH63K5HX5NoNLBZEOte0jjoJWh9ziZ/5IwQZB1r5EqwaqUdviTZMStiuRJR729Oht0ay2WNyYjuyEpcN1RCExW6aqFQFlalF5aAIDOwSiIzb1KC4RMUbaOZOddzyFHtgg3pdve4104YAQoh42mrCr9x7lOsC9B0BfFc/Pim3oFj9K+D+sHxkXbDVdsF2Om0xX9r08AfCQCaNWNRoEBgWIjjjF0d4x9JjvZbsRrGw/w==
-Received: from PUZPR01MB5120.apcprd01.prod.exchangelabs.com
- (2603:1096:301:110::8) by SEZPR01MB5631.apcprd01.prod.exchangelabs.com
- (2603:1096:101:133::6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Thu, 16 May
- 2024 06:31:19 +0000
-Received: from PUZPR01MB5120.apcprd01.prod.exchangelabs.com
- ([fe80::c050:3818:262f:8ddd]) by PUZPR01MB5120.apcprd01.prod.exchangelabs.com
- ([fe80::c050:3818:262f:8ddd%7]) with mapi id 15.20.7587.026; Thu, 16 May 2024
- 06:31:19 +0000
-From: zhida312@outlook.com
-To: rafael@kernel.org,
-	viresh.kumar@linaro.org
-Cc: Peng Ma <andypma@tencent.com>,
-	Huang Rui <ray.huang@amd.com>,
-	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Perry Yuan <perry.yuan@amd.com>,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4] cpufreq: amd-pstate: fix the memory to free after epp exist
-Date: Thu, 16 May 2024 14:30:42 +0800
-Message-ID:
- <PUZPR01MB5120A03DFF0EA1CE70E7334E92ED2@PUZPR01MB5120.apcprd01.prod.exchangelabs.com>
-X-Mailer: git-send-email 2.41.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TMN: [FJq1E+vmtPpi4bHJd2zwQlENxYiAS/IO]
-X-ClientProxiedBy: BYAPR03CA0033.namprd03.prod.outlook.com
- (2603:10b6:a02:a8::46) To PUZPR01MB5120.apcprd01.prod.exchangelabs.com
- (2603:1096:301:110::8)
-X-Microsoft-Original-Message-ID:
- <20240516063105.1167452-1-zhida312@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E1D171AF
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 06:35:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715841341; cv=none; b=s4gUnNL8KX0X0pvtOyaedhQCw7IUoGG0WCYaRTBjJaPQ2QxT5juFrTvandXvynVi1c6jE6MtDITcg5A83ZBXcp/YRU70PAPRKSqrmigb32ydZWpuBqY7zmdm980+beD0XoYjeXK4i3p0907WxeeVgmNcWOLTiNp7jAwoynFOjSg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715841341; c=relaxed/simple;
+	bh=4qYPgB7w3VWHV5nxyHVEaF4494UUC1haBn1zRSaJ8Ug=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tcc2KtsFuIXdwZiaRSWkanphSK7fdPNnPlIRCP+9vpJzuzz0LNDNBXM3+RxSqKwvIF4uzjm9KDDGW+jr35r/hc9NoETIlqOGsEvHss8/pOBe38BkZnbDHoP4SZ7mP9dr3bsJsRNUC+R/fhoecUzzGaNdUB/LHgGoOf4yyCXgSbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=j/fVSDIr; arc=none smtp.client-ip=209.85.217.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-47f3e985a84so2702157137.2
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2024 23:35:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715841339; x=1716446139; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=bmfXEWdtGqKswH9Xu4JgGerg0k5E2Nij58vjYt+4SMk=;
+        b=j/fVSDIr1fv4dg62OLMX+mJF4ZPwXWPZzWV7Vk3yARcSBOKcIAlee4CEWYwIPp+O0b
+         14TLIHZdOw4+Dd0x1I8ZQJBbpesP4eKBn9jb4KuwJl2Mfn4Y6NQtg4zRH3gaNEhdvbVm
+         dQT+qSUuB8zWjXbDpA4LrTpA6vq9C6hAMDgrNx+kYiAYznBeElgj/QHl18gkoiZmgc8B
+         VI5fLUxRVmOfr6fVLVjka7F4RUwc2/o/thg1wwOA8vuBFxf+BKmPRWFeWQUkHqaX7jjB
+         +3u34d8Zei5zLf80rKcNtLtVWvUsV0oo8GrSkr5kIoanozzuvGX5MGhWi/SWSryKT2D6
+         BLjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715841339; x=1716446139;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bmfXEWdtGqKswH9Xu4JgGerg0k5E2Nij58vjYt+4SMk=;
+        b=Ja/A6KZ6kZfwAUlMCFgowRGDGY/VMX/vfMRPXii7Z9CtclcI97cVf78WtDveRfALC7
+         wTQDjsgzKYQzDvyYSEGRDND5ekFZbbP/deVFtDo9gxahdEOTzB25rW3fO2jt5C/4aSCq
+         YypUYQMELAtx/57Ld6yHVJY8zmLfxGQ8mw6mdeJx51T7ece68dRyloOhF43Rrd9Sa2ZG
+         oxL7WQ8sicgPmpCwwxnddpmXLTM1H5VlpuVru1uplSmZ3xhNBjXSiBv+3Zld+kPMxEMz
+         5K6M9X2c50hWDrWaJtF8nkctqFlUKphbuFPN4OI5xwptPkV/cNLfKF+0EiDG+XnVIoUe
+         gsrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXNUXaC/zpC6mn5cFnd8Y8PrMd3amYjbakXPVnHKVMgdphO5DonwQs9XRCazdGoBhFDkJT0/hXP5dDHDLMwW8UDuiDrp6JjnrlAlJdy
+X-Gm-Message-State: AOJu0YxNkF++jSCLbiopgskEXonUuVJC1W52HqQBGUxvX2LPMJYp+LCq
+	Uxj7EPxW3IvK6KMAgb30QcGdVjwiwYViP2Lfy6c2f67bSF2XRd0fI8OpTcO97UasO+veeXuclie
+	ji3BF1EI7C3JA5PhyAwsZ7ZL1NWHiPHl3m8et
+X-Google-Smtp-Source: AGHT+IHlDQ/eBAofLlOUojbiT4Ni38v9AQ8HQ8GEW7AT/J3jdp0eY8vVJPIgTi6v40/0Xd25DHGwDvZXK48eXKzavgU=
+X-Received: by 2002:a05:6102:a47:b0:47e:ee4b:5e83 with SMTP id
+ ada2fe7eead31-48077e87f61mr19122474137.25.1715841338556; Wed, 15 May 2024
+ 23:35:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PUZPR01MB5120:EE_|SEZPR01MB5631:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0da696aa-a3fc-4134-f789-08dc7571cbc0
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|461199019|3420499023|3430499023|3412199016|440099019;
-X-Microsoft-Antispam-Message-Info:
-	h0P7PnGR38AHDFjqpMFOcssxBILATwipyVbyTUZxS93OSntWi0ZidyY5phXc7rEzFalpRVQW75VWA6WSvsw9mlzUvfTeE+Gq+jqxFXDXrVMW8awB6nku38ZFE1eOwc27z/badYYZo/8nxQNWQZHvgbFAeso73qwPdXj9y5K4ouv5//naJQp3AgzP+aeebaARKCbg6pXZ4x1AXbz6WFn4+x72imUXS8eAqW8eZvtE+3NbIh4CL8adHcS0+sD/F85VYjDujxDucSntd4A9LdvWsjn9DkIWhHDE7btpJ1D+FwyFxqb6Vh4GEIKw+niZBzV3wUXXr+IEDhR9B7X+SHR2bFcHdH9kUdAuuUvVoAIGRyGMY659H3P62OuwrJhqQ0mNrmUru+jgRNAPTMPClOsaZ+4ZW9GSxYsLEco2u2eIUayvTvlG7ni784fNfNP5RxRWH48Hu4IqTTuzIfCkZS6JoYgWc0er8++DAmAwLkBQuZpTp84OVadMCGs18BPjrxGsGhC2V7RN2JglK479CXN+LRXeJ76NOal+IA8PJ5iJDoXcS+tOXPIXAcEDH+38aPi0
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Xs+bLdftHqayGpIcRp7K+9gZ/rmuwL/6SaejWVWzifs5Kv+9g7NVtMVdCrSN?=
- =?us-ascii?Q?xbH69up2QKdW+TEvp0QGGtXge6XPkEfizBRKP4SjBeo0uBMPcFl38pACfFO9?=
- =?us-ascii?Q?NvnO3zEz+qQtk7vH6MU5Qa/dieFMLjUARtAgPGssAaY7gGbfcDBDgQCBw6op?=
- =?us-ascii?Q?gaqleRJd/+pspSU+qdZ/NJKJJ+96fGQ1punhUJGjnykY9ijNj9NMWG8BYALQ?=
- =?us-ascii?Q?r/VvdFMjVMxH1bFqPgezQshb8E2pyEjbuDecow58DCy4a5ISttIjOAmlxhCQ?=
- =?us-ascii?Q?yBs7C849t/hHQ9uyoj/Yak2b1F/6jSyQdZ0s6W84gXRjbaTkc1atMJCMad3y?=
- =?us-ascii?Q?hWwzx8lUE7BGuoE/HQ4M8avaT/Prv7c9RHRtV5WOWQeZO7f1vx8suveiz5eH?=
- =?us-ascii?Q?XyEroTr87waLupQOebbJoyYYtA10ZldeSACWh4j//uA1nMlBnyPOsWX5Vx1A?=
- =?us-ascii?Q?oys+HI80iMOHoXBfpAznKUAUa+GOC0QBdu5GOJtfhj81uty+ai1wy96L88tl?=
- =?us-ascii?Q?Q+4Y/jmbUcU24mWPNr9cENHaNOStfJO6riF+Yj+W6utJoyDzGzz3WyrHfVju?=
- =?us-ascii?Q?taqbgNpYod5k0+lFTBL8tWLMVY2q7SbbmHpD5wl7GgLnuYQx3QquHvumECbM?=
- =?us-ascii?Q?lVuv9SYb5oTbsIvJAIp3DWb7pxEW+3/XFt1+kLPZehkQ00VwICqg1hSnbZSj?=
- =?us-ascii?Q?C1K8kPcwRlhz+VV73QenSctiZ6XZwo/myYTScsN9QziRVgOqVW9AZ3H/Wygq?=
- =?us-ascii?Q?quEeRTeysIh4jRQrmI5KWUMN+Ojnu93rMnD6yxPjAUsWk3pV8lDY8lgxTxBs?=
- =?us-ascii?Q?gXMJwhQijbkc1gIfmIpvlqLjglIBUbdEvyAT100oPKzuRvHi42Lo5Xex0siE?=
- =?us-ascii?Q?wr6hv+2aWJhKl/Z4hB5DPA1oFDIETVtG12CW9bl8K1IueBrLMXMI+mxYgKhB?=
- =?us-ascii?Q?hpP9U4zyyGaTVOEYDgmQBhXz0CeKBhkqCzeIeS+oMnOrq9hO4oFeFC5wYP3Z?=
- =?us-ascii?Q?Lane9hgEsxtIP45njgXHMdR3r+JvWXGJZdiuaZS/c+Y77hzEWBGaMyvj2vfM?=
- =?us-ascii?Q?YAZMrZImHp/VXTYbPNfPw4Klj5ckPTeQ34zkK15R8eJ/yt1mOK83HZcsObX/?=
- =?us-ascii?Q?g/rcXFikuCube6RmR0SNEZuvf5jUjsrtK/dfKBfsC8vRN6hBis7lFcBIa6l2?=
- =?us-ascii?Q?Xs66cE4C+W5uaSPNSPErE0wRFXoXxoq+myso9+Sk2UA8fO6MMFXbXH5hHEY?=
- =?us-ascii?Q?=3D?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0da696aa-a3fc-4134-f789-08dc7571cbc0
-X-MS-Exchange-CrossTenant-AuthSource: PUZPR01MB5120.apcprd01.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 May 2024 06:31:19.3634
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR01MB5631
+References: <c83d9c25-b839-4e31-8dd4-85f3cb938653@paulmck-laptop>
+ <4d230bac-bdb0-4a01-8006-e95156965aa8@acm.org> <447ad732-3ff8-40bf-bd82-f7be66899cee@paulmck-laptop>
+ <ca7c2ef0-7e21-4fb3-ac6b-3dae652a7a0e@acm.org> <59ec96c2-52ce-4da1-92c3-9fe38053cd3d@paulmck-laptop>
+ <CANpmjNMj9r1V6Z63fcJxrFC1v4i2vUCEhm1HT77ikxhx0Rghdw@mail.gmail.com>
+ <dd251dba-0a63-4b57-a05b-bfa02615fae5@paulmck-laptop> <CANpmjNMqRUNUs1mZEhrOSyK0Hk+PdGOi+VAs22qYD+1zTkwfhg@mail.gmail.com>
+ <75421237-4c5a-48bc-849e-87a216ee9d32@paulmck-laptop> <CANpmjNM-Cg12qCU3WoLeBboogLQVgn4znFerRwD3BVAFMc9BiQ@mail.gmail.com>
+ <d9df8351-7cc2-4562-a8b5-440344bfeb91@paulmck-laptop>
+In-Reply-To: <d9df8351-7cc2-4562-a8b5-440344bfeb91@paulmck-laptop>
+From: Marco Elver <elver@google.com>
+Date: Thu, 16 May 2024 08:35:02 +0200
+Message-ID: <CANpmjNO+WDF804s49VdCf2=3io5Uh=8ZbM_jiW5j1rcbcONbUA@mail.gmail.com>
+Subject: Re: [PATCH] block: Annotate a racy read in blk_do_io_stat()
+To: paulmck@kernel.org
+Cc: Bart Van Assche <bvanassche@acm.org>, Breno Leitao <leitao@debian.org>, Jens Axboe <axboe@kernel.dk>, 
+	"open list:BLOCK LAYER" <linux-block@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-From: andypma <andypma.tencent.com>
+On Wed, 15 May 2024 at 23:51, Paul E. McKenney <paulmck@kernel.org> wrote:
+[...]
+> > And I just checked the current access-marking.txt to see where we
+> > might add more, and found the section "ACCESS-DOCUMENTATION OPTIONS"
+> > already exists. I think that section is perfectly reasonable as is,
+> > and it does explicitly talk about ASSERT_EXCLUSIVE* macros.
+> >
+> > Did you want to add it more prominently at the top? If so, maybe a
+> > brief forward-reference to that section might be helpful.
+>
+> How about like this?
+>
+> ------------------------------------------------------------------------
+>
+> The Linux kernel provides the following access-marking options:
+>
+> 1.      Plain C-language accesses (unmarked), for example, "a = b;"
+>
+> 2.      Data-race marking, for example, "data_race(a = b);"
+>
+> 3.      READ_ONCE(), for example, "a = READ_ONCE(b);"
+>         The various forms of atomic_read() also fit in here.
+>
+> 4.      WRITE_ONCE(), for example, "WRITE_ONCE(a, b);"
+>         The various forms of atomic_set() also fit in here.
+>
+> 5.      __data_racy, for example "int __data_racy a;"
+>
+> 6.      KCSAN's negative-marking assertions, ASSERT_EXCLUSIVE_ACCESS()
+>         and ASSERT_EXCLUSIVE_WRITER(), are desccribed in the
+>         "ACCESS-DOCUMENTATION OPTIONS" section below.
 
-the cpudata memory from kzmalloc in epp init function is
-not free after epp exist, so we should free it.
+s/desccribed/described/
 
-Signed-off-by: Peng Ma <andypma@tencent.com>
+> ------------------------------------------------------------------------
+>
+> Would that work?
 
-Changes from v3 to v4:
-	update subject used git command "git format-patch -1 -v x"
+It works for me, if we agree that "negative marking" makes sense: if
+the other markings indicate the access is happening concurrently with
+others, a negative marking does the opposite.
 
-Changes from v2 to v3:
-	update Signed-off-by to Peng Ma <andypma@tencent.com>.
-	set a space between if and "(".
-
-Changes from v1 to v2:
-	check whether it is empty before releasing
-	set driver_data is NULL after free
----
- drivers/cpufreq/amd-pstate.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
-index 6a342b0c0140..1b7e82a0ad2e 100644
---- a/drivers/cpufreq/amd-pstate.c
-+++ b/drivers/cpufreq/amd-pstate.c
-@@ -1441,6 +1441,13 @@ static int amd_pstate_epp_cpu_init(struct cpufreq_policy *policy)
- 
- static int amd_pstate_epp_cpu_exit(struct cpufreq_policy *policy)
- {
-+	struct amd_cpudata *cpudata = policy->driver_data;
-+
-+	if (cpudata) {
-+		kfree(cpudata);
-+		policy->driver_data = NULL;
-+	}
-+
- 	pr_debug("CPU %d exiting\n", policy->cpu);
- 	return 0;
- }
--- 
-2.41.0
-
+Thanks,
+-- Marco
 
