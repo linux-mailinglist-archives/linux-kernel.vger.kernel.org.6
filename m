@@ -1,264 +1,141 @@
-Return-Path: <linux-kernel+bounces-181320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF4D78C7A68
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:33:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15C928C7A6C
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:34:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90707281C78
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:33:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9DC41F2234B
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:34:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 645ED4A2C;
-	Thu, 16 May 2024 16:33:27 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FF3879E4;
+	Thu, 16 May 2024 16:33:51 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF7234A15;
-	Thu, 16 May 2024 16:33:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 357DC63BF
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 16:33:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715877206; cv=none; b=Kd4dJNHxnkwAoYPzqsUEZVdqb1ggHTAV+CS/WvdTh7yLLRh2bdTjJAbz3/Fa9kZnW7msho/Rl1xAsbZqA+g0K6ROd3Ne+ipeJ4aH3MKjj8PbATj80may5A4V9Gdy3E6wBSoZBcrFK1L/HWMfYgEq9P71+rqdNJPmlyf8ZPHabL8=
+	t=1715877231; cv=none; b=mx/mJR+zbe/me66AiSq/rPz2bxAHTqhDuBNBm0Z7SXCfkpsmvGxasCwtWseytUBaEcrI1kkFH0HfBNxOGQ2yb020Sdt1Q8Y8JxCmmAw/eOP2CjN4+HIncQTS8UX85gEC1zvcJhdC7CEFHJ0WCww10DxpSSYLstb6tglb0as8bOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715877206; c=relaxed/simple;
-	bh=HyxKbm7lvP7BZCmAfJtpChzelCXKU4ecBlBVnNw5c5Y=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=boDv3wX235W+ASRkLqiQ2Fy+cc/mEy6bivQL4ZvsMG4HGicSPObKMgbTZp6wZwOLnjYAZOwPp5jur6o2KYzXKkivWaNBlNtC9yEsnSIN/lC1CvVzq/gy8prUHINmbkhMNLVFxhS8MHMko9yNqCspvYccpihuMZhLaWqdpH6hT3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4VgFxh1rKGz6J7yy;
-	Fri, 17 May 2024 00:32:40 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 84B04140594;
-	Fri, 17 May 2024 00:33:21 +0800 (CST)
-Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 16 May
- 2024 17:33:21 +0100
-Date: Thu, 16 May 2024 17:33:19 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
-CC: Davidlohr Bueso <dave@stgolabs.net>, Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>, Vishal Verma
-	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
-	<dan.j.williams@intel.com>, <linux-cxl@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] cxl/events: Use a common struct for DRAM and General
- Media events
-Message-ID: <20240516173319.00007429@Huawei.com>
-In-Reply-To: <20240516102116.3512377-1-fabio.m.de.francesco@linux.intel.com>
-References: <20240516102116.3512377-1-fabio.m.de.francesco@linux.intel.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1715877231; c=relaxed/simple;
+	bh=TKa2BFpOcJzNM2WCakr46UXPsFJ6lrdeUWrLHFHLwCU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=UNDc0cG6uzXZWOE7q8KhjIlqiJ7chexb7Yr2DksaU67QMP8RPTkP+1JqLrs8NbIwcvcwqsRtAeGztLcMQyw6EmYu21Ts8edffUL7MtxbLOxGg2WOBUWg0YT8LvbWZOXyoIqUT4/gvjUAAkS0ix3q9HhWT4ZSyVKgNDGPauc9xqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62186C4AF0C;
+	Thu, 16 May 2024 16:33:50 +0000 (UTC)
+Date: Thu, 16 May 2024 12:33:48 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Vincent Donnefort <vdonnefort@google.com>, Andrew Morton
+ <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, Mike
+ Rapoport <rppt@kernel.org>
+Subject: [GIT PULL] tracing/ring-buffer: Updates for v6.10
+Message-ID: <20240516123348.1feacd26@rorschach.local.home>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On Thu, 16 May 2024 12:19:53 +0200
-"Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com> wrote:
 
-> cxl_event_common was a poor naming choice and caused confusion with the
-> existing Common Event Record.
-> 
-> Use cxl_event_media as a common structure to record information about DRAM
-> and General Media events because it simplifies handling the two events.
-> 
-> Suggested-by: Dan Williams <dan.j.williams@intel.com>
-> Fixes: 6aec00139d3a ("cxl/core: Add region info to cxl_general_media and cxl_dram events")
-> Signed-off-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.com>
-> ---
+Linus,
 
-Packing question inline.
+tracing ring buffer updates for v6.10:
 
-> 
-> Changes for v2:
-> 	- Extend the commit message (Alison);
-> 	- Add a "Fixes" tag (Alison, thanks).
-> 
->  drivers/cxl/core/mbox.c      |  6 ++--
->  drivers/cxl/core/trace.h     |  4 +--
->  include/linux/cxl-event.h    | 70 +++++++++++++++---------------------
->  tools/testing/cxl/test/mem.c |  4 +--
->  4 files changed, 36 insertions(+), 48 deletions(-)
-> 
-> diff --git a/drivers/cxl/core/mbox.c b/drivers/cxl/core/mbox.c
-> index 2626f3fff201..ad4d7b0f7f4d 100644
-> --- a/drivers/cxl/core/mbox.c
-> +++ b/drivers/cxl/core/mbox.c
-> @@ -875,16 +875,16 @@ void cxl_event_trace_record(const struct cxl_memdev *cxlmd,
->  		guard(rwsem_read)(&cxl_region_rwsem);
->  		guard(rwsem_read)(&cxl_dpa_rwsem);
->  
-> -		dpa = le64_to_cpu(evt->common.phys_addr) & CXL_DPA_MASK;
-> +		dpa = le64_to_cpu(evt->media_common.phys_addr) & CXL_DPA_MASK;
->  		cxlr = cxl_dpa_to_region(cxlmd, dpa);
->  		if (cxlr)
->  			hpa = cxl_trace_hpa(cxlr, cxlmd, dpa);
->  
->  		if (event_type == CXL_CPER_EVENT_GEN_MEDIA)
->  			trace_cxl_general_media(cxlmd, type, cxlr, hpa,
-> -						&evt->gen_media);
-> +						&evt->media_general);
->  		else if (event_type == CXL_CPER_EVENT_DRAM)
-> -			trace_cxl_dram(cxlmd, type, cxlr, hpa, &evt->dram);
-> +			trace_cxl_dram(cxlmd, type, cxlr, hpa, &evt->media_dram);
->  	}
->  }
->  EXPORT_SYMBOL_NS_GPL(cxl_event_trace_record, CXL);
-> diff --git a/drivers/cxl/core/trace.h b/drivers/cxl/core/trace.h
-> index 07a0394b1d99..2c7293761bb2 100644
-> --- a/drivers/cxl/core/trace.h
-> +++ b/drivers/cxl/core/trace.h
-> @@ -316,7 +316,7 @@ TRACE_EVENT(cxl_generic_event,
->  TRACE_EVENT(cxl_general_media,
->  
->  	TP_PROTO(const struct cxl_memdev *cxlmd, enum cxl_event_log_type log,
-> -		 struct cxl_region *cxlr, u64 hpa, struct cxl_event_gen_media *rec),
-> +		 struct cxl_region *cxlr, u64 hpa, struct cxl_event_media *rec),
->  
->  	TP_ARGS(cxlmd, log, cxlr, hpa, rec),
->  
-> @@ -413,7 +413,7 @@ TRACE_EVENT(cxl_general_media,
->  TRACE_EVENT(cxl_dram,
->  
->  	TP_PROTO(const struct cxl_memdev *cxlmd, enum cxl_event_log_type log,
-> -		 struct cxl_region *cxlr, u64 hpa, struct cxl_event_dram *rec),
-> +		 struct cxl_region *cxlr, u64 hpa, struct cxl_event_media *rec),
->  
->  	TP_ARGS(cxlmd, log, cxlr, hpa, rec),
->  
-> diff --git a/include/linux/cxl-event.h b/include/linux/cxl-event.h
-> index 60b25020281f..e417556cc120 100644
-> --- a/include/linux/cxl-event.h
-> +++ b/include/linux/cxl-event.h
-> @@ -32,41 +32,38 @@ struct cxl_event_generic {
->   * CXL rev 3.0 Section 8.2.9.2.1.1; Table 8-43
->   */
->  #define CXL_EVENT_GEN_MED_COMP_ID_SIZE	0x10
-> -struct cxl_event_gen_media {
-> -	struct cxl_event_record_hdr hdr;
-> -	__le64 phys_addr;
-> -	u8 descriptor;
-> -	u8 type;
-> -	u8 transaction_type;
-> -	u8 validity_flags[2];
-> -	u8 channel;
-> -	u8 rank;
-> -	u8 device[3];
-> -	u8 component_id[CXL_EVENT_GEN_MED_COMP_ID_SIZE];
-> -	u8 reserved[46];
-> -} __packed;
-> -
->  /*
->   * DRAM Event Record - DER
->   * CXL rev 3.0 section 8.2.9.2.1.2; Table 3-44
->   */
->  #define CXL_EVENT_DER_CORRECTION_MASK_SIZE	0x20
-> -struct cxl_event_dram {
-> +struct cxl_event_media {
->  	struct cxl_event_record_hdr hdr;
-> -	__le64 phys_addr;
-> -	u8 descriptor;
-> -	u8 type;
-> -	u8 transaction_type;
-> -	u8 validity_flags[2];
-> -	u8 channel;
-> -	u8 rank;
-> -	u8 nibble_mask[3];
-> -	u8 bank_group;
-> -	u8 bank;
-> -	u8 row[3];
-> -	u8 column[2];
-> -	u8 correction_mask[CXL_EVENT_DER_CORRECTION_MASK_SIZE];
-> -	u8 reserved[0x17];
-> +	struct_group_tagged(cxl_event_media_hdr, media_hdr,
-> +		__le64 phys_addr;
-> +		u8 descriptor;
-> +		u8 type;
-> +		u8 transaction_type;
-> +		u8 validity_flags[2];
-> +		u8 channel;
-> +		u8 rank;
-> +	);
+- Add ring_buffer memory mappings
 
-Does the struct that is created end up __packed?
-Also, why is tagged useful here?  
+  The tracing ring buffer was created based on being mostly used with the
+  splice system call. It is broken up into page ordered sub-buffers and the
+  reader swaps a new sub-buffer with an existing sub-buffer that's part
+  of the write buffer. It then has total access to the swapped out
+  sub-buffer and can do copyless movements of the memory into other mediums
+  (file system, network, etc).
 
-> +	union {
-> +		struct_group(general,
-> +			u8 device[3];
-> +			u8 component_id[CXL_EVENT_GEN_MED_COMP_ID_SIZE];
-> +			u8 gen_reserved[46];
-> +		);
-> +		struct_group(dram,
-> +			u8 nibble_mask[3];
-> +			u8 bank_group;
-> +			u8 bank;
-> +			u8 row[3];
-> +			u8 column[2];
-> +			u8 correction_mask[CXL_EVENT_DER_CORRECTION_MASK_SIZE];
-> +			u8 dram_reserved[0x17];
-> +		);
-> +	};
->  } __packed;
->  
->  /*
-> @@ -95,21 +92,12 @@ struct cxl_event_mem_module {
->  	u8 reserved[0x3d];
->  } __packed;
->  
-> -/*
-> - * General Media or DRAM Event Common Fields
-> - * - provides common access to phys_addr
-> - */
-> -struct cxl_event_common {
-> -	struct cxl_event_record_hdr hdr;
-> -	__le64 phys_addr;
-> -} __packed;
-> -
->  union cxl_event {
->  	struct cxl_event_generic generic;
-> -	struct cxl_event_gen_media gen_media;
-> -	struct cxl_event_dram dram;
-> +	struct cxl_event_media media_general;
-> +	struct cxl_event_media media_dram;
->  	struct cxl_event_mem_module mem_module;
-> -	struct cxl_event_common common;
-> +	struct cxl_event_media media_common;
->  } __packed;
->  
->  /*
-> diff --git a/tools/testing/cxl/test/mem.c b/tools/testing/cxl/test/mem.c
-> index 6584443144de..0a8fd145c391 100644
-> --- a/tools/testing/cxl/test/mem.c
-> +++ b/tools/testing/cxl/test/mem.c
-> @@ -378,7 +378,7 @@ struct cxl_event_record_raw hardware_replace = {
->  
->  struct cxl_test_gen_media {
->  	uuid_t id;
-> -	struct cxl_event_gen_media rec;
-> +	struct cxl_event_media rec;
->  } __packed;
->  
->  struct cxl_test_gen_media gen_media = {
-> @@ -402,7 +402,7 @@ struct cxl_test_gen_media gen_media = {
->  
->  struct cxl_test_dram {
->  	uuid_t id;
-> -	struct cxl_event_dram rec;
-> +	struct cxl_event_media rec;
->  } __packed;
->  
->  struct cxl_test_dram dram = {
+  The buffer is great for passing around the ring buffer contents in the
+  kernel, but is not so good for when the consumer is the user space task
+  itself.
 
+  A new interface is added that allows user space to memory map the ring
+  buffer. It will get all the write sub-buffers as well as reader sub-buffer
+  (that is not written to). It can send an ioctl to change which sub-buffer
+  is the new reader sub-buffer.
+
+  The ring buffer is read only to user space. It only needs to call the
+  ioctl when it is finished with a sub-buffer and needs a new sub-buffer
+  that the writer will not write over.
+
+  A self test program was also created for testing and can be used as
+  an example for the interface to user space. The libtracefs (external
+  to the kernel) also has code that interacts with this, although it is
+  disabled until the interface is in a official release. It can be enabled
+  by compiling the library with a special flag. This was used for testing
+  applications that perform better with the buffer being mapped.
+
+  Memory mapped buffers have limitations. The main one is that it can not be
+  used with the snapshot logic. If the buffer is mapped, snapshots will be
+  disabled. If any logic is set to trigger snapshots on a buffer, that
+  buffer will not be allowed to be mapped.
+
+- Changes since last pull request:
+    https://lore.kernel.org/all/20240315122934.1d3231ce@gandalf.local.home/
+
+  All the pages of the ring buffer are mapped at the mmap() system call
+  instead of paging them in when they are accessed. The VMA page flags
+  have been updated and the mappings are done via vm_insert_pages().
+  I'd like to thank both Mike Rapoport and  David Hildenbrand for their
+  review of these patches to make sure they are doing things correctly
+  from a memory management point of view.
+
+
+Please pull the latest trace-ringbuffer-v6.10 tree, which can be found at:
+
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+trace-ringbuffer-v6.10
+
+Tag SHA1: 61407f35944db217cadb6a520906d52668d6d212
+Head SHA1: b9c6820f029abaabbc37646093866aa730ca0928
+
+
+Steven Rostedt (Google) (2):
+      ring-buffer: Have mmapped ring buffer keep track of missed events
+      ring-buffer: Add cast to unsigned long addr passed to virt_to_page()
+
+Vincent Donnefort (5):
+      ring-buffer: Allocate sub-buffers with __GFP_COMP
+      ring-buffer: Introducing ring-buffer mapping functions
+      tracing: Allow user-space mapping of the ring-buffer
+      Documentation: tracing: Add ring-buffer mapping
+      ring-buffer/selftest: Add ring-buffer mapping test
+
+----
+ Documentation/trace/index.rst                  |   1 +
+ Documentation/trace/ring-buffer-map.rst        | 106 ++++++
+ include/linux/ring_buffer.h                    |   6 +
+ include/uapi/linux/trace_mmap.h                |  48 +++
+ kernel/trace/ring_buffer.c                     | 471 ++++++++++++++++++++++++-
+ kernel/trace/trace.c                           | 104 +++++-
+ kernel/trace/trace.h                           |   1 +
+ tools/testing/selftests/ring-buffer/.gitignore |   1 +
+ tools/testing/selftests/ring-buffer/Makefile   |   8 +
+ tools/testing/selftests/ring-buffer/config     |   2 +
+ tools/testing/selftests/ring-buffer/map_test.c | 294 +++++++++++++++
+ 11 files changed, 1026 insertions(+), 16 deletions(-)
+ create mode 100644 Documentation/trace/ring-buffer-map.rst
+ create mode 100644 include/uapi/linux/trace_mmap.h
+ create mode 100644 tools/testing/selftests/ring-buffer/.gitignore
+ create mode 100644 tools/testing/selftests/ring-buffer/Makefile
+ create mode 100644 tools/testing/selftests/ring-buffer/config
+ create mode 100644 tools/testing/selftests/ring-buffer/map_test.c
+---------------------------
 
