@@ -1,263 +1,136 @@
-Return-Path: <linux-kernel+bounces-181627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DE608C7ED8
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 01:03:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D49B08C7EDD
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 01:05:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 121101F21F16
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 23:03:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 122771C20F07
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 23:05:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BD734F61D;
-	Thu, 16 May 2024 23:02:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D3492D044;
+	Thu, 16 May 2024 23:04:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LJnh9Qi+"
-Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Vj7jXEjv"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 225134087F;
-	Thu, 16 May 2024 23:02:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29C42249F7;
+	Thu, 16 May 2024 23:04:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715900530; cv=none; b=HnXvag32n5SEx+SU981AQ2sngt+9vtb+B8ohRqA/YyGf13QyQUUMosw3iOeg0NlPHcYBFPOQROsYRWMRWWuAxDluJiXCGo9qzxYRT/UGz4E6pnjzlvJ5D2DlJ6zLED3V3PAaWUFUu102mpbBJQD564T4V4oJHrTIxKqkiJGkkDs=
+	t=1715900694; cv=none; b=V0RQ3x9ZaHGT2a+UbkD4RWSGeSZxvx2F4/Pf6bwLdA6W0LjSVF7u7RiZakTzm3r857n1fdwZMa90/UMXR9e4EO1hnD70YOIs6UETacFZsukOCqOzqmCFcrD3dOidCXI5WvNxuNWUDrClDWjxYWSzdxv6+NGgljQhhZsEKDwwPsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715900530; c=relaxed/simple;
-	bh=a7SEqQDNz97OSHhoT4UBY69oGPl9v7HBaYUzz/5xOiQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=TUa85L6T8Hs7I7FXM70rhb4S9raK9/bt+GG9QX19/dvDNRf/exYxG0i49VnNDuPNwb/i+p4+9COI9h75D8EIpj3E/hG+g0+0bH7NzjBJDCDD9Y9ANB7PJU+YXdalUWUqdgd3OIWkJJjqpp1G4p5CZttNhj888rCS3rTZIbUWgtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LJnh9Qi+; arc=none smtp.client-ip=209.85.161.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5b2e942171cso448749eaf.3;
-        Thu, 16 May 2024 16:02:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715900527; x=1716505327; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VoeHJzNVkB54yDBVnMDfuwpD4ZrJsaFqixROui8d5X0=;
-        b=LJnh9Qi+rMKRe3Ku+wZJtk6L1+wj2Zg+sgT04SPuJtUNhiJnQvV5irgYMevM1VzBE7
-         dly6SHCXD1ZIT5cQVeCk8/P/dEYDQN7jVJRdZZh30gwvFOBOUc6uLMebQRAKxESZCUnM
-         I4p604/hMkXKBbLGEsM8x5Om3r1H0gaNv/YNBHr14IfbgREOaYxFt54GIb4NJhTiQMV5
-         I27GQOnh6yMfVkAkLKw0k2yZ2tn/7itZp99GhI92DqknLX+Vlux3F/74t5pZyt9zN6vD
-         fjIWEzm4GeOvK/j1sOmTWcBvVRw3HmWMkTJHQkq1TGgXKID+Cf43BeFgkmd/oHdyR07j
-         dz0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715900527; x=1716505327;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VoeHJzNVkB54yDBVnMDfuwpD4ZrJsaFqixROui8d5X0=;
-        b=h9DWA/v7OZyzQJGSG6gzVc6ObsKnAPN2uDJBQrBewWH74Cf1qmPcpO0S/JlwnkX0gT
-         MADETJKiMBZUk0jZBwH9CIhVsSj/GOOceOZaw2l1TTURGFUG4b8wUESDbFct+zLSpFL3
-         QYKwle7q9Up0V6y2mddBGDJWzE4K7XPBk1IbeKWIfcUjjwHBfaEKjm4NRtWjQhCZUs6R
-         4IfqdhsDqdbJMn8frS3U5d2TvjCL5Sl3Lfl4jdZ3jf3FSJxBdS26leXiTFuf5UV0ziBa
-         CUAX9hZdn0ABvZrHoMmZitOC8xFmi63dSXF3QWgT6cSzX2Zv49/aezqbJV5HYEhwmDHR
-         8y1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWTpFUj+7o8L1w35ZZmfmuowyzxbHCPTHgBJfBMKV5G7vLJLS/N9isNtj9ha+fba0ShMFgOmGYmIm4vn5MkWgpPpr/8dRR0nk8OFObHyZmHyWvqjLKYyi1cCxwsf72MwMSXvg4a
-X-Gm-Message-State: AOJu0YzZFnHfPgWkWsk9mNr9KFYMNrMh70+9Pb3KffSwJPSWMFAY5fWN
-	QD6QFoZtF6Az3WwQe2ihVnry1W4kMCKFcoHZ66NGaBtoE0W8pz6XcP9DOg==
-X-Google-Smtp-Source: AGHT+IGyHb0zSCOVAfsCt9H6tPVqdxfL0VPhf0pPA7lbucNTv3brCKOa5YPLYQnuJpsOWCiH/E2I6g==
-X-Received: by 2002:a05:6358:98a5:b0:194:81b4:e96 with SMTP id e5c5f4694b2df-19481b412c2mr848089255d.30.1715900527178;
-        Thu, 16 May 2024 16:02:07 -0700 (PDT)
-Received: from stbirv-lnx-1.igp.broadcom.net ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43e251233c6sm47154851cf.84.2024.05.16.16.02.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 May 2024 16:02:06 -0700 (PDT)
-From: Doug Berger <opendmb@gmail.com>
-To: stable@vger.kernel.org
-Cc: Doug Berger <opendmb@gmail.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	bcm-kernel-feedback-list@broadcom.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Florian Fainelli <florian.fainelli@broadcom.com>
-Subject: [PATCH stable 5.4 3/3] net: bcmgenet: synchronize UMAC_CMD access
-Date: Thu, 16 May 2024 16:01:51 -0700
-Message-Id: <20240516230151.1031190-4-opendmb@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240516230151.1031190-1-opendmb@gmail.com>
-References: <20240516230151.1031190-1-opendmb@gmail.com>
+	s=arc-20240116; t=1715900694; c=relaxed/simple;
+	bh=nh4nGr+gQ6wnevCjIVCmzspYxt6MCbloYi4F9t67PIg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T+OmpzkiLyLa3/ogWjSCSAZpQL1gHL3s1+EKJuFtqd+b/ALTkp0PKHn4rvDG7pBcx7VYJwd0UVaP9fiBAI05LqM2u7qQDLxOIVo2AUDr5w3gR0pnHCsaQvhgYNx3sIu9fqH9W7ZhRQvMCzzdpLN7X81Inq+xbs7Sry4BzOIL4Cg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Vj7jXEjv; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715900693; x=1747436693;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=nh4nGr+gQ6wnevCjIVCmzspYxt6MCbloYi4F9t67PIg=;
+  b=Vj7jXEjva+EPdM5lqBvLwDq/Nqx79yO3kynUcy2fXe0np6p7P4sEW2Bd
+   sVo8KoWG0N9l3p8h+b/jERr5W8eSGLfKFhpdcV6i27ws3vXNbhmfq14DZ
+   4qFumpK8kbfO/urKBmLvxpoQSS/l0fPgqF2ha0jyIpzyFqHV7d2o6rqpX
+   n2nn0C4bmUMiGLaFFpr4PF4PtZoYKOa+fj/DQbd9zjbUQGCkEkkB0I7l1
+   TfroctM87xz+JnpcVCuhObg9g0diiSmM6Y2+QGiq2dZUFIlwaQSH/i5Gb
+   /ZukLeQN9F0KDkNqE353MHpONZWS7eVfGshfVqP0LleJx10dLYy6JLX6f
+   g==;
+X-CSE-ConnectionGUID: JBuN+R9nT7GY6p160paclw==
+X-CSE-MsgGUID: OfnCxF1jTj6N5yjPAom1Yw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="12266918"
+X-IronPort-AV: E=Sophos;i="6.08,165,1712646000"; 
+   d="scan'208";a="12266918"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 16:04:52 -0700
+X-CSE-ConnectionGUID: +k415JnMQi+FptgiSeOfPw==
+X-CSE-MsgGUID: bl9Y4xyLRXy+FsAFUdig8g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,165,1712646000"; 
+   d="scan'208";a="36499893"
+Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 16 May 2024 16:04:45 -0700
+Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s7k9S-000Exl-1e;
+	Thu, 16 May 2024 23:04:42 +0000
+Date: Fri, 17 May 2024 07:03:46 +0800
+From: kernel test robot <lkp@intel.com>
+To: Zhang Yi <yi.zhang@huaweicloud.com>, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-ext4@vger.kernel.org, djwong@kernel.org, hch@infradead.org,
+	brauner@kernel.org, david@fromorbit.com, chandanbabu@kernel.org,
+	jack@suse.cz, yi.zhang@huawei.com, yi.zhang@huaweicloud.com,
+	chengzhihao1@huawei.com, yukuai3@huawei.com
+Subject: Re: [PATCH v2 1/3] iomap: pass blocksize to iomap_truncate_page()
+Message-ID: <202405170624.liC4qYj3-lkp@intel.com>
+References: <20240516073001.1066373-2-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240516073001.1066373-2-yi.zhang@huaweicloud.com>
 
-[ Upstream commit 0d5e2a82232605b337972fb2c7d0cbc46898aca1 ]
+Hi Zhang,
 
-The UMAC_CMD register is written from different execution
-contexts and has insufficient synchronization protections to
-prevent possible corruption. Of particular concern are the
-acceses from the phy_device delayed work context used by the
-adjust_link call and the BH context that may be used by the
-ndo_set_rx_mode call.
+kernel test robot noticed the following build warnings:
 
-A spinlock is added to the driver to protect contended register
-accesses (i.e. reg_lock) and it is used to synchronize accesses
-to UMAC_CMD.
+[auto build test WARNING on brauner-vfs/vfs.all]
+[also build test WARNING on linus/master v6.9 next-20240516]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Fixes: 1c1008c793fa ("net: bcmgenet: add main driver file")
-Cc: stable@vger.kernel.org
-Signed-off-by: Doug Berger <opendmb@gmail.com>
-Acked-by: Florian Fainelli <florian.fainelli@broadcom.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
----
- drivers/net/ethernet/broadcom/genet/bcmgenet.c     | 12 +++++++++++-
- drivers/net/ethernet/broadcom/genet/bcmgenet.h     |  2 ++
- drivers/net/ethernet/broadcom/genet/bcmgenet_wol.c |  6 ++++++
- drivers/net/ethernet/broadcom/genet/bcmmii.c       |  2 ++
- 4 files changed, 21 insertions(+), 1 deletion(-)
+url:    https://github.com/intel-lab-lkp/linux/commits/Zhang-Yi/iomap-pass-blocksize-to-iomap_truncate_page/20240516-154238
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
+patch link:    https://lore.kernel.org/r/20240516073001.1066373-2-yi.zhang%40huaweicloud.com
+patch subject: [PATCH v2 1/3] iomap: pass blocksize to iomap_truncate_page()
+config: arm-randconfig-r111-20240517 (https://download.01.org/0day-ci/archive/20240517/202405170624.liC4qYj3-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 13.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20240517/202405170624.liC4qYj3-lkp@intel.com/reproduce)
 
-diff --git a/drivers/net/ethernet/broadcom/genet/bcmgenet.c b/drivers/net/ethernet/broadcom/genet/bcmgenet.c
-index e34df8da65e7..da9df1d3662b 100644
---- a/drivers/net/ethernet/broadcom/genet/bcmgenet.c
-+++ b/drivers/net/ethernet/broadcom/genet/bcmgenet.c
-@@ -1990,14 +1990,18 @@ static void umac_enable_set(struct bcmgenet_priv *priv, u32 mask, bool enable)
- {
- 	u32 reg;
- 
-+	spin_lock_bh(&priv->reg_lock);
- 	reg = bcmgenet_umac_readl(priv, UMAC_CMD);
--	if (reg & CMD_SW_RESET)
-+	if (reg & CMD_SW_RESET) {
-+		spin_unlock_bh(&priv->reg_lock);
- 		return;
-+	}
- 	if (enable)
- 		reg |= mask;
- 	else
- 		reg &= ~mask;
- 	bcmgenet_umac_writel(priv, reg, UMAC_CMD);
-+	spin_unlock_bh(&priv->reg_lock);
- 
- 	/* UniMAC stops on a packet boundary, wait for a full-size packet
- 	 * to be processed
-@@ -2013,8 +2017,10 @@ static void reset_umac(struct bcmgenet_priv *priv)
- 	udelay(10);
- 
- 	/* issue soft reset and disable MAC while updating its registers */
-+	spin_lock_bh(&priv->reg_lock);
- 	bcmgenet_umac_writel(priv, CMD_SW_RESET, UMAC_CMD);
- 	udelay(2);
-+	spin_unlock_bh(&priv->reg_lock);
- }
- 
- static void bcmgenet_intr_disable(struct bcmgenet_priv *priv)
-@@ -3140,16 +3146,19 @@ static void bcmgenet_set_rx_mode(struct net_device *dev)
- 	 * 3. The number of filters needed exceeds the number filters
- 	 *    supported by the hardware.
- 	*/
-+	spin_lock(&priv->reg_lock);
- 	reg = bcmgenet_umac_readl(priv, UMAC_CMD);
- 	if ((dev->flags & (IFF_PROMISC | IFF_ALLMULTI)) ||
- 	    (nfilter > MAX_MDF_FILTER)) {
- 		reg |= CMD_PROMISC;
- 		bcmgenet_umac_writel(priv, reg, UMAC_CMD);
-+		spin_unlock(&priv->reg_lock);
- 		bcmgenet_umac_writel(priv, 0, UMAC_MDF_CTRL);
- 		return;
- 	} else {
- 		reg &= ~CMD_PROMISC;
- 		bcmgenet_umac_writel(priv, reg, UMAC_CMD);
-+		spin_unlock(&priv->reg_lock);
- 	}
- 
- 	/* update MDF filter */
-@@ -3507,6 +3516,7 @@ static int bcmgenet_probe(struct platform_device *pdev)
- 		goto err;
- 	}
- 
-+	spin_lock_init(&priv->reg_lock);
- 	spin_lock_init(&priv->lock);
- 
- 	SET_NETDEV_DEV(dev, &pdev->dev);
-diff --git a/drivers/net/ethernet/broadcom/genet/bcmgenet.h b/drivers/net/ethernet/broadcom/genet/bcmgenet.h
-index 29bf256d13f6..9efc503a9c8b 100644
---- a/drivers/net/ethernet/broadcom/genet/bcmgenet.h
-+++ b/drivers/net/ethernet/broadcom/genet/bcmgenet.h
-@@ -608,6 +608,8 @@ struct bcmgenet_rx_ring {
- /* device context */
- struct bcmgenet_priv {
- 	void __iomem *base;
-+	/* reg_lock: lock to serialize access to shared registers */
-+	spinlock_t reg_lock;
- 	enum bcmgenet_version version;
- 	struct net_device *dev;
- 
-diff --git a/drivers/net/ethernet/broadcom/genet/bcmgenet_wol.c b/drivers/net/ethernet/broadcom/genet/bcmgenet_wol.c
-index 8ebca6bf300e..973275d116b6 100644
---- a/drivers/net/ethernet/broadcom/genet/bcmgenet_wol.c
-+++ b/drivers/net/ethernet/broadcom/genet/bcmgenet_wol.c
-@@ -133,6 +133,7 @@ int bcmgenet_wol_power_down_cfg(struct bcmgenet_priv *priv,
- 	}
- 
- 	/* Can't suspend with WoL if MAC is still in reset */
-+	spin_lock_bh(&priv->reg_lock);
- 	reg = bcmgenet_umac_readl(priv, UMAC_CMD);
- 	if (reg & CMD_SW_RESET)
- 		reg &= ~CMD_SW_RESET;
-@@ -140,6 +141,7 @@ int bcmgenet_wol_power_down_cfg(struct bcmgenet_priv *priv,
- 	/* disable RX */
- 	reg &= ~CMD_RX_EN;
- 	bcmgenet_umac_writel(priv, reg, UMAC_CMD);
-+	spin_unlock_bh(&priv->reg_lock);
- 	mdelay(10);
- 
- 	reg = bcmgenet_umac_readl(priv, UMAC_MPD_CTRL);
-@@ -163,6 +165,7 @@ int bcmgenet_wol_power_down_cfg(struct bcmgenet_priv *priv,
- 		  retries);
- 
- 	/* Enable CRC forward */
-+	spin_lock_bh(&priv->reg_lock);
- 	reg = bcmgenet_umac_readl(priv, UMAC_CMD);
- 	priv->crc_fwd_en = 1;
- 	reg |= CMD_CRC_FWD;
-@@ -170,6 +173,7 @@ int bcmgenet_wol_power_down_cfg(struct bcmgenet_priv *priv,
- 	/* Receiver must be enabled for WOL MP detection */
- 	reg |= CMD_RX_EN;
- 	bcmgenet_umac_writel(priv, reg, UMAC_CMD);
-+	spin_unlock_bh(&priv->reg_lock);
- 
- 	return 0;
- }
-@@ -191,8 +195,10 @@ void bcmgenet_wol_power_up_cfg(struct bcmgenet_priv *priv,
- 	bcmgenet_umac_writel(priv, reg, UMAC_MPD_CTRL);
- 
- 	/* Disable CRC Forward */
-+	spin_lock_bh(&priv->reg_lock);
- 	reg = bcmgenet_umac_readl(priv, UMAC_CMD);
- 	reg &= ~CMD_CRC_FWD;
- 	bcmgenet_umac_writel(priv, reg, UMAC_CMD);
-+	spin_unlock_bh(&priv->reg_lock);
- 	priv->crc_fwd_en = 0;
- }
-diff --git a/drivers/net/ethernet/broadcom/genet/bcmmii.c b/drivers/net/ethernet/broadcom/genet/bcmmii.c
-index d0b59d1f6c73..bd532e5b9f73 100644
---- a/drivers/net/ethernet/broadcom/genet/bcmmii.c
-+++ b/drivers/net/ethernet/broadcom/genet/bcmmii.c
-@@ -91,6 +91,7 @@ void bcmgenet_mii_setup(struct net_device *dev)
- 		reg |= RGMII_LINK;
- 		bcmgenet_ext_writel(priv, reg, EXT_RGMII_OOB_CTRL);
- 
-+		spin_lock_bh(&priv->reg_lock);
- 		reg = bcmgenet_umac_readl(priv, UMAC_CMD);
- 		reg &= ~((CMD_SPEED_MASK << CMD_SPEED_SHIFT) |
- 			       CMD_HD_EN |
-@@ -103,6 +104,7 @@ void bcmgenet_mii_setup(struct net_device *dev)
- 			reg |= CMD_TX_EN | CMD_RX_EN;
- 		}
- 		bcmgenet_umac_writel(priv, reg, UMAC_CMD);
-+		spin_unlock_bh(&priv->reg_lock);
- 
- 		priv->eee.eee_active = phy_init_eee(phydev, 0) >= 0;
- 		bcmgenet_eee_enable_set(dev,
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405170624.liC4qYj3-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> fs/iomap/buffered-io.c:1453:28: sparse: sparse: incompatible types in comparison expression (different signedness):
+   fs/iomap/buffered-io.c:1453:28: sparse:    long long *
+   fs/iomap/buffered-io.c:1453:28: sparse:    unsigned long long [usertype] *
+
+vim +1453 fs/iomap/buffered-io.c
+
+  1446	
+  1447	int
+  1448	iomap_truncate_page(struct inode *inode, loff_t pos, unsigned int blocksize,
+  1449			bool *did_zero, const struct iomap_ops *ops)
+  1450	{
+  1451		loff_t start = pos;
+  1452		unsigned int off = is_power_of_2(blocksize) ? (pos & (blocksize - 1)) :
+> 1453				   do_div(pos, blocksize);
+  1454	
+  1455		/* Block boundary? Nothing to do */
+  1456		if (!off)
+  1457			return 0;
+  1458		return iomap_zero_range(inode, start, blocksize - off, did_zero, ops);
+  1459	}
+  1460	EXPORT_SYMBOL_GPL(iomap_truncate_page);
+  1461	
+
 -- 
-2.34.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
