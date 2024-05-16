@@ -1,136 +1,170 @@
-Return-Path: <linux-kernel+bounces-181280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 550D18C79DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:55:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AE158C79E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:55:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB8D7B22534
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:55:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD2491C21655
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:55:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AD9814D718;
-	Thu, 16 May 2024 15:55:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1989F14D711;
+	Thu, 16 May 2024 15:55:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="g2MMtuiR"
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gScUhOYS";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="dR/IrjwU";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gScUhOYS";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="dR/IrjwU"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2A42145FE0
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 15:55:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E4FE14A097;
+	Thu, 16 May 2024 15:55:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715874907; cv=none; b=b9Ky/u2B38LSGJejJ4lSlU9WCi5z581WEyB5xQ6bUpvv+Qws7zw6VhjSY1FNueIIwP6u6JzfjFvPnh9ufuCnrsG4ByaDpJuCtj4MReIFf5D32w4MrCUDfhpkSGEP9WVL8N+APi0p6W65QfMjbt85J+HvJdX2dwCdLfHj4lkmh0o=
+	t=1715874934; cv=none; b=WhkZubajpZl9Se+21Pn2NDknDzp76zGVHyEi2stKSTmvnWh4lg+B2MAxtr/w10EkeMGQIXk6lhPoyqPbVXODy/sJ5S1u5Z/etbk2ECWmJOzX9KUuHc5c6CxyYaSvsJq7s7v+e/KyhSNu2MVgYgQM6IRsBKn8ZbvaZdGU4nyQPsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715874907; c=relaxed/simple;
-	bh=nN00p+BB6G3oXDgct+EBmEwHz4fIJMGD6RriYL6RGhY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZP5yAL/tWQ9uQkwUg9LbJQnG48CjNABu1J+LWvP5irWBVBYzzsxqJ/XFlZ3eWAk3fCn19qKI9czCT4pgbyJHizDpQhEpXiaoImnr4PF+5BFsNPYzXRBKHVq2RMkS16chiwKZ5YXl3Ub1rAHh+xSBWf9bGAw75heDJBldEWHA36I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=g2MMtuiR; arc=none smtp.client-ip=209.85.166.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-7e195fd1d8eso6553039f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 08:55:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1715874905; x=1716479705; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Ab4/9SXReNXDQjfL5I+PFsnXsCfrtKWnsASearG9QQU=;
-        b=g2MMtuiRfR8eHXbLO01GoAyMEOgBmWwpF20hCztLiCp2zPTkPtmpSjvaUsPZUBsfaA
-         BGotKNuX3/E07EZ4cDdg2Fb8ZTArNUIS2XHGHS0OgLdveMuodH/vKu9T6QCsARjYGgDE
-         MLB5r4wc2CdpXcSXJQ0+NxE+SkJjRejGqo1fo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715874905; x=1716479705;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ab4/9SXReNXDQjfL5I+PFsnXsCfrtKWnsASearG9QQU=;
-        b=GgucPcfKGCeWzXSzIrBlXHRXBc6mwOgmhbVqjcqrUEMCb6EkVZcs1LRzwIQ6y/Nm7h
-         FlCn3R4ietcBokJBkTHL9zvYqsSBvBj5VtxWkVScQaEaV6ywnK3VoYwZkgyttpbsETa4
-         SLseHWWoLgU+5Sl3m+aJDFEvmju3IVDepW6YmnvABqZkGWijMDLGnahC+sP67NJ0zDQD
-         rfMa+o36ZsWr4ubn6DBHFHm2h04D3NKqNeHiz37cvlv7QCDytulPZq4rftKb4Fc9Onqg
-         h9st9hwa9wFxkjAap3ppdYLDgpO8CZgsLjvP4TKncsQqoZ8sGXFFKTISYKS9k17df774
-         JtJA==
-X-Gm-Message-State: AOJu0YxN9l9HJimzZJ0zOBaYP5pk08eGWDVBSR28KGOAut3VX6RyFkjW
-	La4mZsQMigFLjwv/zHpshPOt67K4wJfkw0S81a44ssw63B0KAlm85CAXjJP4nDY=
-X-Google-Smtp-Source: AGHT+IFkrQ63gFwV/5y3qWi0SsRylHli+g/GXjCSjbCIbAnwmlot3x2PILn1QDwIRhTHEUwb7pHpvA==
-X-Received: by 2002:a6b:d203:0:b0:7e1:8bc8:8228 with SMTP id ca18e2360f4ac-7e1b501f23dmr1984498939f.0.1715874905028;
-        Thu, 16 May 2024 08:55:05 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-7e20378a041sm127028439f.26.2024.05.16.08.55.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 May 2024 08:55:04 -0700 (PDT)
-Message-ID: <bf762b3d-4776-4041-864f-03094a9bea66@linuxfoundation.org>
-Date: Thu, 16 May 2024 09:55:03 -0600
+	s=arc-20240116; t=1715874934; c=relaxed/simple;
+	bh=1Nwm8qdDFRNEZx7WNaDQabozWH6b1j4ykGmeVq/JdbU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qKGZnNgiXpAZPzCl2kimBFQSN6bzI/ChgglE2NFSfx89xdQFlzoHHP/H0u6DwO5nPh5QnosMpremqViM7AAu6UB1gVnBxsJFotCUZAQJl+qQOpS/dV27AwyiQ4qYqj0cI3agIwYXNlSSjjupohCr+1fPB7CPMLGBlvAcj/iPles=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=gScUhOYS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=dR/IrjwU; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=gScUhOYS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=dR/IrjwU; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 7022E5C66A;
+	Thu, 16 May 2024 15:55:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1715874924;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1KezvWlzVnxI862WBQg1zAOLmg8OzwPLiM1I741YDGA=;
+	b=gScUhOYSDbTYl8utOjQyeeni9sAiPS2USJAVK+kekl9kVUsl++INe8+x8NF3GigYWBvekg
+	lFuOWu5v7cbSU/g7BPZ+H1yG31PNs6wXE5SRkq6tBum7DtgekNqhlT3rXzxL2voErhfYo6
+	FslgkOJHdvClW1TjBBzbcDKvpZaeOOc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1715874924;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1KezvWlzVnxI862WBQg1zAOLmg8OzwPLiM1I741YDGA=;
+	b=dR/IrjwUaGrBZtaQ+UYRzjmQoKUCNEq6HRF7gwLNBMfTfSZ5mk4dO6jp9bzBI5oblpfiKf
+	JEnygAGCQ3lw0lAg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=gScUhOYS;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="dR/IrjwU"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1715874924;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1KezvWlzVnxI862WBQg1zAOLmg8OzwPLiM1I741YDGA=;
+	b=gScUhOYSDbTYl8utOjQyeeni9sAiPS2USJAVK+kekl9kVUsl++INe8+x8NF3GigYWBvekg
+	lFuOWu5v7cbSU/g7BPZ+H1yG31PNs6wXE5SRkq6tBum7DtgekNqhlT3rXzxL2voErhfYo6
+	FslgkOJHdvClW1TjBBzbcDKvpZaeOOc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1715874924;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1KezvWlzVnxI862WBQg1zAOLmg8OzwPLiM1I741YDGA=;
+	b=dR/IrjwUaGrBZtaQ+UYRzjmQoKUCNEq6HRF7gwLNBMfTfSZ5mk4dO6jp9bzBI5oblpfiKf
+	JEnygAGCQ3lw0lAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4FB2E13991;
+	Thu, 16 May 2024 15:55:24 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id B3PiEmwsRmboPQAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Thu, 16 May 2024 15:55:24 +0000
+Date: Thu, 16 May 2024 17:55:22 +0200
+From: David Sterba <dsterba@suse.cz>
+To: syzbot <syzbot+5244d35be7f589cf093e@syzkaller.appspotmail.com>
+Cc: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] WARNING in btrfs_fileattr_set
+Message-ID: <20240516155522.GG4449@suse.cz>
+Reply-To: dsterba@suse.cz
+References: <000000000000e7579c05e9d6e701@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 00/66] Define _GNU_SOURCE for sources using
-To: Edward Liaw <edliaw@google.com>, shuah@kernel.org,
- =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
- =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
- Christian Brauner <brauner@kernel.org>,
- Richard Cochran <richardcochran@gmail.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>, Mark Brown <broonie@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- kernel-team@android.com, linux-security-module@vger.kernel.org,
- netdev@vger.kernel.org, linux-riscv@lists.infradead.org,
- bpf@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
-References: <20240510000842.410729-1-edliaw@google.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240510000842.410729-1-edliaw@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <000000000000e7579c05e9d6e701@google.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Level: 
+X-Spamd-Result: default: False [-1.27 / 50.00];
+	BAYES_HAM(-2.56)[98.05%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=ba0d23aa7e1ffaf5];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TAGGED_RCPT(0.00)[5244d35be7f589cf093e];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[appspotmail.com:email,syzkaller.appspot.com:url,suse.cz:dkim,suse.cz:replyto,storage.googleapis.com:url]
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: 7022E5C66A
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Score: -1.27
 
-On 5/9/24 18:06, Edward Liaw wrote:
-> Centralizes the definition of _GNU_SOURCE into KHDR_INCLUDES and removes
-> redefinitions of _GNU_SOURCE from source code.
+On Thu, Sep 29, 2022 at 01:41:46PM -0700, syzbot wrote:
+> Hello,
 > 
-> 809216233555 ("selftests/harness: remove use of LINE_MAX") introduced
-> asprintf into kselftest_harness.h, which is a GNU extension and needs
-> _GNU_SOURCE to either be defined prior to including headers or with the
-> -D_GNU_SOURCE flag passed to the compiler.
+> syzbot found the following issue on:
 > 
-> v1: https://lore.kernel.org/linux-kselftest/20240430235057.1351993-1-edliaw@google.com/
-> v2: https://lore.kernel.org/linux-kselftest/20240507214254.2787305-1-edliaw@google.com/
->   - Add -D_GNU_SOURCE to KHDR_INCLUDES so that it is in a single
->     location.
->   - Remove #define _GNU_SOURCE from source code to resolve redefinition
->     warnings.
-> v3: https://lore.kernel.org/linux-kselftest/20240509200022.253089-1-edliaw@google.com/
->   - Rebase onto linux-next 20240508.
->   - Split patches by directory.
->   - Add -D_GNU_SOURCE directly to CFLAGS in lib.mk.
->   - Delete additional _GNU_SOURCE definitions from source code in
->     linux-next.
->   - Delete additional -D_GNU_SOURCE flags from Makefiles.
-> v4:
->   - Rebase onto linux-next 20240509.
->   - Remove Fixes tag from patches that drop _GNU_SOURCE definition.
->   - Restore space between comment and includes for selftests/damon.
-> > Edward Liaw (66):
->    selftests: Compile with -D_GNU_SOURCE when including lib.mk
+> HEAD commit:    49c13ed0316d Merge tag 'soc-fixes-6.0-rc7' of git://git.ke..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=129847ff080000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=ba0d23aa7e1ffaf5
+> dashboard link: https://syzkaller.appspot.com/bug?extid=5244d35be7f589cf093e
+> compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/418654aab051/disk-49c13ed0.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/49c501fc7ae3/vmlinux-49c13ed0.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+5244d35be7f589cf093e@syzkaller.appspotmail.com
+> 
+> WARNING: CPU: 0 PID: 29090 at fs/btrfs/ioctl.c:367 btrfs_fileattr_set+0xae4/0xbd0 fs/btrfs/ioctl.c:367
 
-This above change is causing some build problems - I didn't
-notice them when I tested on linux-next. However some problems
-are seen by Mark. He sent in a fix for ALSA and a change to
-descalate build warn.
+That was an injected ENOMEM that then hit a transaction abort, we used
+to print a full trace on that but it's been silenced.
 
-Please don't apply these for 6.10 for now. I will take all
-of these together.
-
-thanks,
--- Shuah
+#syz fix: btrfs: don't print stack trace when transaction is aborted due to ENOMEM
 
