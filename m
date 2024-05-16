@@ -1,99 +1,130 @@
-Return-Path: <linux-kernel+bounces-181379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 533D88C7B75
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 19:41:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC2EA8C7B77
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 19:42:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F45C28449E
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:41:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B3EDB20F85
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:42:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BF25156871;
-	Thu, 16 May 2024 17:41:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8256515696F;
+	Thu, 16 May 2024 17:42:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="RGRniXv7"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ltehudAH"
+Received: from mail-qv1-f67.google.com (mail-qv1-f67.google.com [209.85.219.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1AD51E880;
-	Thu, 16 May 2024 17:41:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7109E1E880;
+	Thu, 16 May 2024 17:42:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715881274; cv=none; b=npMaAKB/T/K8cPoIUBxlGlc/5HSwlaCbsh5PQ9lg+PwGF7nWwDK7k0JNMaq6BDQezsKZaR6U6X6I9eeu4P1PHeLiuUUCA3UwI7Knk/yQ0He4LQD/kzQDPab2zgYyLtpV82C2TrRXfWmfHUpZysbN64Z7YrZeQHw34PMdoPWACzA=
+	t=1715881334; cv=none; b=sFrIXMer3Him+oz3F+JAw627Z0rA7mcvRr/PKVdRZ5hxIwSXUDPA8U9kcuO1LIUApvoiyZrevd0Oh/6WtiKC9nO0Db1/O1qur80PyQH72Y/FGOH5qSa5IBbxhPv/ZzCkOMm7YEBr0dEyZam3y7Y9/ebAgvWuhmYteiiaENI6Fpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715881274; c=relaxed/simple;
-	bh=vI0ipwrO+rA38r05jmC2doxqTL2Cxt3UGgSgZmCgQ1k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pahiozuInVy7p0GSvZ9Mpa9nxKvkAx3g5i8HKgn9SwlyIveW2G3IZG0RTPdt/AHHXzVzR0hrFN3BrBWqCn7vjPvWttC1DJclgB4lQIuKi4dhHDg6KbLbpT1puvwyYkH9Pq7LWy6lumKHI7kKZfdL4ucSDQiARx1pZW5hyXouYhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=RGRniXv7; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1715881267;
-	bh=vI0ipwrO+rA38r05jmC2doxqTL2Cxt3UGgSgZmCgQ1k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RGRniXv7e07u7/z136+xgWJF/8A6VQ1EXb/ETGLbRpoEM3AYN93hR5Zsqm/7Givtc
-	 Tbm2xbt+xqfusc9nAmruizWXi+ePo9Jto9UCg+AcBbiO29sZjoZz1+lf6z4B0ZH18L
-	 hLZgv/Ud+KsQtCLNKY9wQ1uf54AhWR5ftp8NjQk4=
-Date: Thu, 16 May 2024 19:41:07 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org, Sebastian Reichel <sre@kernel.org>, 
-	linux-pm@vger.kernel.org
-Subject: Re: [PATCH RFC] kobject_uevent: notify uevent sysfs file on changes
-Message-ID: <74e7cc7b-3b3f-4dae-bcb2-7eb4f9d478cd@t-8ch.de>
-References: <20240516-uevent-sysfs-notify-v1-1-2ebb39930c09@weissschuh.net>
- <2024051640-earthen-granite-0847@gregkh>
+	s=arc-20240116; t=1715881334; c=relaxed/simple;
+	bh=7Yn7F5L68sDLIdlskeOzBHsQHVfBVBbjMZHq3csBVI0=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=WbHEeiNKIj2x79y26QebBqxfdhwCHV3coCxXIXtp9RT2EdwPSOHrEwBElY23SrasOi8ozg8OdavWvjSLuHaIB+sAdoIS+G9kz3yFGq9cv7fp+VAwKhs+2rsPpcOSrJ0fHKWqNLtwYjmPjf70TOZEbM3VpGkDRpWg3/JYV8NRH8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ltehudAH; arc=none smtp.client-ip=209.85.219.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f67.google.com with SMTP id 6a1803df08f44-6a0c8fb3540so56571846d6.1;
+        Thu, 16 May 2024 10:42:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715881332; x=1716486132; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C2IWn5x9QtjyRy8l6pMXslqytYKJTjqGvZ/CNJ1mSN8=;
+        b=ltehudAHhGhxGIZZG1sKZj12JysUE6Av9arkbI099M70Hjnkk58OL90ddfl+9eTvsD
+         5YATAebC9uCHmjz0FNVime8a2+GFF6m+yJIJZ0PCutlRbGMa1G+jnwSw/vY/fPisXXo8
+         TnY2yQHVR1YOptKCH+R5jJIGAPdH0OYK6lOfPynZT5imvGWOj87kfrGUq8+S59KTKHJK
+         uigovILjSswJahjeCRyptVEE2kyVA35Pq8RPxmSoRJ8NHRXi9G9fUrbT5h3Cr6HjMaaO
+         krlFL80uO1hx0k0iIY5ccafu+fSDMi7bnXFn7CkyGv7WhfYpawlQWLl+zB2nBY/hMcvw
+         i0rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715881332; x=1716486132;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=C2IWn5x9QtjyRy8l6pMXslqytYKJTjqGvZ/CNJ1mSN8=;
+        b=sw+FwWx3z31k5MFoSJ57/HR5K4qRO6FEiu+DPymdr+SrZDfG8R0jElcOqUUzUoP8Fj
+         tV6f4kq60rvk/4oweljzUS23bugNBj5nQLBFHm76UdNkI3/LJk1mI+Wo2MI4RDjiPvqJ
+         ZLt2RqMK2+57ZJ4QfLu96CVY2MaacyAu8JWXxN6W+3GQ21PdmFQpeROdi3Dc5gQ04vTm
+         5X5DY/cd7BA5XMisuyed1mP1cyJjNTnghhZ2zFd7OPtCNmYa50tSXjiG7nw4g2SdEw3y
+         CF6/NphCsumyZv36O/SE9uX01XNXyY54zcE6TQ55CPf3+3UAItkawqFdB1aR7EwEjMLp
+         aZ7A==
+X-Forwarded-Encrypted: i=1; AJvYcCWtvITNw5D212G0MC7qr7oILNYOlMjl3edkF62miIwE+qKNG1LAAeNyAju2wK1fAkDVCGWyf1eubBHSYyrJng9MTNrbUI7xYQPHP15C
+X-Gm-Message-State: AOJu0YxLXLzqn15EBz9ULXMBA1tYlSZ/O1TOewiIb1yUpeeUZgQASwWs
+	htKV5cchnLtnLUkZx3QF6b1bhJgL8peOL/0KDrYtXdF07/yMe8dl
+X-Google-Smtp-Source: AGHT+IGcqsLo3pmIpQ6GlROvCQMJ8rUY5hll4YJVFpsQGsGlbCYTe44xLZw+yW3FSNmgEesh2jBQVQ==
+X-Received: by 2002:a0c:f6c4:0:b0:6a3:58a1:1e24 with SMTP id 6a1803df08f44-6a358a129b7mr78572886d6.25.1715881332192;
+        Thu, 16 May 2024 10:42:12 -0700 (PDT)
+Received: from smtpclient.apple ([2601:98a:4102:7e80:ac34:7fcf:f3a5:4fd8])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6a15f1cd17bsm77554206d6.96.2024.05.16.10.42.11
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 16 May 2024 10:42:11 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2024051640-earthen-granite-0847@gregkh>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.300.61.1.2\))
+Subject: Re: KASAN: use-after-free in ext4_find_extent in v6.9
+From: Shuangpeng Bai <shuangpengbai@gmail.com>
+In-Reply-To: <CACT4Y+a3Tvh5eQuuCcrFuBfzAPQMVwEh0o5jLtASB_xVnKt_cg@mail.gmail.com>
+Date: Thu, 16 May 2024 13:42:00 -0400
+Cc: linux-ext4@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ syzkaller@googlegroups.com
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <77DB8D1D-4650-4A4C-BAE0-B04C29A06E20@gmail.com>
+References: <5B9F0C1F-C804-4A9C-8597-4E1A7D16B983@gmail.com>
+ <20240515224932.GA202157@mit.edu>
+ <2184C9DB-DDC2-484B-A1B2-A1E312B62D54@gmail.com>
+ <20240516135821.GA272071@mit.edu>
+ <CACT4Y+a3Tvh5eQuuCcrFuBfzAPQMVwEh0o5jLtASB_xVnKt_cg@mail.gmail.com>
+To: Dmitry Vyukov <dvyukov@google.com>,
+ Theodore Ts'o <tytso@mit.edu>
+X-Mailer: Apple Mail (2.3774.300.61.1.2)
 
-On 2024-05-16 13:17:34+0000, Greg Kroah-Hartman wrote:
-> On Thu, May 16, 2024 at 12:27:58PM +0200, Thomas Weißschuh wrote:
-> > The sysfs file "uevent" that exists for each device
-> > contains the same information that is attached to uevents emitted via
-> > netlink (or the usermode helper).
-> > This is useful for userspace which interacts with sysfs directly,
-> > without using (lib)udev.
-> > 
-> > However it is not possible to actually get notified when the data in
-> > the "uevent" file changes.
-> 
-> What is wrong with listening to the uevent that is happening when the
-> file changes?
+I will follow the suggestions. Thank you!=20
 
-It requires netlink or libudev which is not available or ergonimic for
-all userspace programs.
-Shellscripts, simple C applications, programing languages without
-access to netlink/libudev.
+> On May 16, 2024, at 10:44, Dmitry Vyukov <dvyukov@google.com> wrote:
+>=20
+> On Thu, 16 May 2024 at 15:58, Theodore Ts'o <tytso@mit.edu> wrote:
+>>=20
+>> On Wed, May 15, 2024 at 08:33:33PM -0400, Shuangpeng Bai wrote:
+>>>=20
+>>> You are right. I disabled CONFIG_BLK_DEV_WRITE_MOUNTED and found
+>>> this bug can not be triggered anymore.
+>>>=20
+>>> I am wondering if there is any suggested way for me to check whether
+>>> a bug is reproduced under a reasonable environment (such as
+>>> compiling config) or not? If so, that would be very helpful.
+>>=20
+>> As I mentioned, the upstream syzkaller always forces the
+>> CONFIG_BLK_DEV_WRITE_MOUNTED to be disabled.  That's the best way to
+>> check whether the bug is reproducible under a reasonable environment,
+>> and to do it in an automated way.
+>=20
+> FWIW we provide configs used by syzbot here (upstream-*):
+> https://github.com/google/syzkaller/tree/master/dashboard/config/linux
+>=20
+> + a bunch of configs fragments with explanations why things are
+> enabled/disabled:
+> =
+https://github.com/google/syzkaller/blob/master/dashboard/config/linux/bit=
+s/maintained.yml
+> =
+https://github.com/google/syzkaller/blob/master/dashboard/config/linux/bit=
+s/base.yml
+> =
+https://github.com/google/syzkaller/blob/master/dashboard/config/linux/bit=
+s/debug.yml
 
-I noticed this when using the "Waybar" application[0] and missing power
-supply event updates. Both me and the authors of Waybar expected sysfs
-notifications to work for uevent files.
-
-Using sysfs notifications looks like an easy quality-of-life
-improvement.
-
-> > Enable these notifications, so that the "uevent" file can be used
-> > together with inotify and friends.
-> 
-> uevent files are meant to be listened to by the uevent itself, why not do
-> that?
-
-I can't parse this sentence, sorry. Could you elaborate?
-
-Thanks,
-Thomas
-
-[0] https://github.com/Alexays/Waybar/pull/2704
 
