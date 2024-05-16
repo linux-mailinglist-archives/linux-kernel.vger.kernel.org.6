@@ -1,198 +1,144 @@
-Return-Path: <linux-kernel+bounces-180659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 185E88C7172
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 07:52:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F1918C7175
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 07:52:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77D48B2202B
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 05:52:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 706ED1C22931
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 05:52:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3B872E40D;
-	Thu, 16 May 2024 05:51:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28EA0210FF;
+	Thu, 16 May 2024 05:52:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="jYpS8t5W"
-Received: from esa5.hgst.iphmx.com (esa5.hgst.iphmx.com [216.71.153.144])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TOTYgMIf"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49B892CCC2;
-	Thu, 16 May 2024 05:51:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.71.153.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4C4E20317;
+	Thu, 16 May 2024 05:52:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715838716; cv=none; b=Rd0vWLXlmjAL8e5LqeCzj5Ndtvr24Zym/jNE8fibgd+liIbb6GIOWodR6yra1RAaUL1A9V1VgMyfpimNtt1TjU8g3I5ZEHgaqYDKTiq2qo0vr3JE9McV2JXgS8KSORo+5H03LWxKjt8wYgzOtVsyIcbrbsnPfkJiUjb20MWGa5U=
+	t=1715838758; cv=none; b=uQ/zeQf4eV3A2ct6mrl9DgDxLtow5hK77tIFVzCrGWC1X8Gz3Is42jl9cWxoAuLD9ZgGTNhe7y+kc5rREvHfcOntOOYn4DjvxAGnqx80iDFjm+3ET/ztcV3S3ILfinwz1VkVpHQywSQRv8+CuuLqm2fkWc7uL8ZRXylfWOof72U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715838716; c=relaxed/simple;
-	bh=mlTAF9IzZ5MszVVLrlFoPVpBmLnU5DPQaAULf7aCYbs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ir8onV9D0/qwp+QhMf5DDpkcDuN7J9g5M5S9x1uNXzgBv13pdShmNTwrjpF58uMpMBMqxDIUrvkomkpjxvIj6UpZ+67YHxqCdj1h6ibmwvfVwv0FLGbpEnSI0c1C8x6xM7T2JzSpeOLwRUsHr2B5urcUryVkDJQ++QCIPz/IIz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=jYpS8t5W; arc=none smtp.client-ip=216.71.153.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1715838715; x=1747374715;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=mlTAF9IzZ5MszVVLrlFoPVpBmLnU5DPQaAULf7aCYbs=;
-  b=jYpS8t5W9nRZzd6S5rQaBQAiTzT4KglJ8d0MItgi2P7/EZKxmSGwBEMM
-   zHMxAax8eCL7A2yChym6Ak3PmuuDOVYSqjIb1OUMMhzvzorfVtOeIbZgh
-   HmFrwMgIIV8jg+GZoBfhcRgZb8EkWpQD69/f987DB2xslSBmvpfgfQpJM
-   DvVVvKAzFqelfRFD5kTG8IU4YEOFrWpG/kXmHGdgT29TSi4BHz70E+hk3
-   HTnSsqygCMljeXfdsqitA+Jx4tVw1viBMsxctv06T91EZ5oKh+9v9lNKd
-   81zYOg5exfkHVQw5YqoZLEH//9Y/3AzmtVW1YNRMepWnz/eDoVpyEs6IK
-   A==;
-X-CSE-ConnectionGUID: uS2NQsooQUyfYY8zn3e4PA==
-X-CSE-MsgGUID: Dd9XOfrYQq23V6RqKM+4lw==
-X-IronPort-AV: E=Sophos;i="6.08,163,1712592000"; 
-   d="scan'208";a="17296259"
-Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 16 May 2024 13:51:54 +0800
-IronPort-SDR: 664592ba_pa912tIsMhlzTVLeTqH8evgXhe7dysXnMntJiZo7BHQYtf0
- 7iN/iz5rZzF2lW7E6Ux/AsewEMHVj2CXNf46M1A==
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 15 May 2024 21:59:39 -0700
-WDCIronportException: Internal
-Received: from bxygm33.ad.shared ([10.45.31.229])
-  by uls-op-cesaip02.wdc.com with ESMTP; 15 May 2024 22:51:53 -0700
-From: Avri Altman <avri.altman@wdc.com>
-To: "Martin K . Petersen" <martin.petersen@oracle.com>
-Cc: Bart Van Assche <bvanassche@acm.org>,
-	Bean Huo <beanhuo@micron.com>,
-	Peter Wang <peter.wang@mediatek.com>,
-	linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Avri Altman <avri.altman@wdc.com>
-Subject: [PATCH v4 3/3] scsi: ufs: sysfs: Make max_number_of_rtt read-write
-Date: Thu, 16 May 2024 08:51:24 +0300
-Message-ID: <20240516055124.24490-4-avri.altman@wdc.com>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20240516055124.24490-1-avri.altman@wdc.com>
-References: <20240516055124.24490-1-avri.altman@wdc.com>
+	s=arc-20240116; t=1715838758; c=relaxed/simple;
+	bh=/+Ow78sUbpOddw6QMkRuc13wUjQlwvOjuOngn+eapoc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ciPTMD8frsE/pVuT1cwZeYtVUf36fNla6DIaBnTHzPDGqb75skgLleSLBtZlV7rHdMrRD+0JuJYPeD8Xl9w0e/2SRv9gw6I1VmErF4q7ANgKnbhEJ+JrnNGxEwNEw6Z7ofClRsnrQyovPKZiUhl8jlPqHqY8csuRRbXlupzpkzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TOTYgMIf; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44FKGVP8012294;
+	Thu, 16 May 2024 05:52:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=Q1+UqqKqXZ+UrIGBtfXi/73W9Q+v3r9ONSYGA+nWMLY=; b=TO
+	TYgMIfJsI1BwJBEbVpIxXXiwRZtzUUIPp2dkJkvUFS0UwULZuB/e+f4fsCFxsR8E
+	RPMNEeabR6rF4wlbM9LAKjdyKBGGS+cetONu2Hdl1GPF8wPMuQ9ZJQnocQr+vANO
+	HiC4TL1gIzT8p3zfzwLkSIEU/7UpI6LUk8VNGSqOZ/yTSy66agsheJFEcjGZ5GKY
+	/067ext+Ws2r9PeQvmj8h5GCCeM/pyBazCj5O5+goqMpEa+jCu/+HImbnllMwWhQ
+	vRqt7UpRKD3acFlQwSKeqbe4OXQ+HStP41XJDXfZODPmTPywFdOaMhfL83jWBreU
+	C5qyIARLq65e4zE0kReQ==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y3j28qdqj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 16 May 2024 05:52:30 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44G5qTPW030672
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 16 May 2024 05:52:29 GMT
+Received: from [10.214.67.128] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 15 May
+ 2024 22:52:25 -0700
+Message-ID: <1c214d8b-9c59-7266-4c80-4b548ad6c7f9@quicinc.com>
+Date: Thu, 16 May 2024 11:22:15 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [PATCH] arm64: dts: qcom: qdu/qru1000-idp: Fix the voltage
+ setting
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>
+CC: Melody Olvera <quic_molvera@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240514131038.28036-1-quic_kbajaj@quicinc.com>
+ <45e0aee9-87d5-434f-8ffe-d3270def0f72@kernel.org>
+Content-Language: en-US
+From: Komal Bajaj <quic_kbajaj@quicinc.com>
+In-Reply-To: <45e0aee9-87d5-434f-8ffe-d3270def0f72@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 5WAsNb2OR303Ri9Gh11NWI1ZjBV1Nocm
+X-Proofpoint-GUID: 5WAsNb2OR303Ri9Gh11NWI1ZjBV1Nocm
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-16_02,2024-05-15_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
+ impostorscore=0 malwarescore=0 phishscore=0 bulkscore=0 suspectscore=0
+ mlxscore=0 clxscore=1011 priorityscore=1501 mlxlogscore=689
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405010000 definitions=main-2405160039
 
-Given the importance of the RTT parameter, we want to be able to
-configure it via sysfs. This is because UFS users should be discouraged
-from change UFS device parameters without the UFSHCI driver being aware
-of these changes.
 
-Signed-off-by: Avri Altman <avri.altman@wdc.com>
----
- Documentation/ABI/testing/sysfs-driver-ufs | 14 +++---
- drivers/ufs/core/ufs-sysfs.c               | 58 +++++++++++++++++++++-
- 2 files changed, 65 insertions(+), 7 deletions(-)
 
-diff --git a/Documentation/ABI/testing/sysfs-driver-ufs b/Documentation/ABI/testing/sysfs-driver-ufs
-index 5bf7073b4f75..fe943ce76c60 100644
---- a/Documentation/ABI/testing/sysfs-driver-ufs
-+++ b/Documentation/ABI/testing/sysfs-driver-ufs
-@@ -920,14 +920,16 @@ Description:	This file shows whether the configuration descriptor is locked.
- 
- What:		/sys/bus/platform/drivers/ufshcd/*/attributes/max_number_of_rtt
- What:		/sys/bus/platform/devices/*.ufs/attributes/max_number_of_rtt
--Date:		February 2018
--Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-+Date:		May 2024
-+Contact:	Avri Altman <avri.altman@wdc.com>
- Description:	This file provides the maximum current number of
--		outstanding RTTs in device that is allowed. The full
--		information about the attribute could be found at
--		UFS specifications 2.1.
-+		outstanding RTTs in device that is allowed. bMaxNumOfRTT is a
-+		read-write persistent attribute and is equal to two after device
-+		manufacturing. It shall not be set to a value greater than
-+		bDeviceRTTCap value, and it may be set only when the hw queues are
-+		empty.
- 
--		The file is read only.
-+		The file is read write.
- 
- What:		/sys/bus/platform/drivers/ufshcd/*/attributes/exception_event_control
- What:		/sys/bus/platform/devices/*.ufs/attributes/exception_event_control
-diff --git a/drivers/ufs/core/ufs-sysfs.c b/drivers/ufs/core/ufs-sysfs.c
-index 3d049967f6bc..8c6aeb836407 100644
---- a/drivers/ufs/core/ufs-sysfs.c
-+++ b/drivers/ufs/core/ufs-sysfs.c
-@@ -1340,6 +1340,63 @@ static const struct attribute_group ufs_sysfs_flags_group = {
- 	.attrs = ufs_sysfs_device_flags,
- };
- 
-+static ssize_t max_number_of_rtt_show(struct device *dev,
-+				      struct device_attribute *attr, char *buf)
-+{
-+	struct ufs_hba *hba = dev_get_drvdata(dev);
-+	u32 rtt;
-+	int ret;
-+
-+	down(&hba->host_sem);
-+	if (!ufshcd_is_user_access_allowed(hba)) {
-+		up(&hba->host_sem);
-+		return -EBUSY;
-+	}
-+
-+	ufshcd_rpm_get_sync(hba);
-+	ret = ufshcd_query_attr(hba, UPIU_QUERY_OPCODE_READ_ATTR,
-+		QUERY_ATTR_IDN_MAX_NUM_OF_RTT, 0, 0, &rtt);
-+	ufshcd_rpm_put_sync(hba);
-+
-+	if (ret)
-+		goto out;
-+
-+	ret = sysfs_emit(buf, "0x%08X\n", rtt);
-+
-+out:
-+	up(&hba->host_sem);
-+	return ret;
-+}
-+
-+static ssize_t max_number_of_rtt_store(struct device *dev,
-+				     struct device_attribute *attr,
-+				     const char *buf, size_t count)
-+{
-+	struct ufs_hba *hba = dev_get_drvdata(dev);
-+	unsigned int rtt;
-+	int ret;
-+
-+	if (kstrtouint(buf, 0, &rtt))
-+		return -EINVAL;
-+
-+	down(&hba->host_sem);
-+	if (!ufshcd_is_user_access_allowed(hba)) {
-+		ret = -EBUSY;
-+		goto out;
-+	}
-+
-+	ufshcd_rpm_get_sync(hba);
-+	ret = ufshcd_query_attr(hba, UPIU_QUERY_OPCODE_WRITE_ATTR,
-+		QUERY_ATTR_IDN_MAX_NUM_OF_RTT, 0, 0, &rtt);
-+	ufshcd_rpm_put_sync(hba);
-+
-+out:
-+	up(&hba->host_sem);
-+	return ret < 0 ? ret : count;
-+}
-+
-+static DEVICE_ATTR_RW(max_number_of_rtt);
-+
- static inline bool ufshcd_is_wb_attrs(enum attr_idn idn)
- {
- 	return idn >= QUERY_ATTR_IDN_WB_FLUSH_STATUS &&
-@@ -1387,7 +1444,6 @@ UFS_ATTRIBUTE(max_data_in_size, _MAX_DATA_IN);
- UFS_ATTRIBUTE(max_data_out_size, _MAX_DATA_OUT);
- UFS_ATTRIBUTE(reference_clock_frequency, _REF_CLK_FREQ);
- UFS_ATTRIBUTE(configuration_descriptor_lock, _CONF_DESC_LOCK);
--UFS_ATTRIBUTE(max_number_of_rtt, _MAX_NUM_OF_RTT);
- UFS_ATTRIBUTE(exception_event_control, _EE_CONTROL);
- UFS_ATTRIBUTE(exception_event_status, _EE_STATUS);
- UFS_ATTRIBUTE(ffu_status, _FFU_STATUS);
--- 
-2.34.1
+On 5/14/2024 6:57 PM, Krzysztof Kozlowski wrote:
+> On 14/05/2024 15:10, Komal Bajaj wrote:
+>> Fixing the regulator voltages for qdu/qru1000 idp boards.
+>> In particular -
+>> - smps4 is 1.574V min and 2.04V max
+>> - smps5 is 1.2V min and 1.4V max
+>> - smps6 is 0.382V min and 1.12V max
+> 
+> Wait, why? This looks, at least partially, you are changing from fixed
+> voltage choice to full range, without clear explanation.
+> 
 
+When we started using one of these regulators for USB enablement as sent 
+in the patch series [1], we saw a sudden reboot.
+After adding more debug logs, came to know the configuration for smps5 
+was incorrect.
+
+Therefore, cross verified the configurations for all the regulators and 
+got to know that these are incorrectly configured.
+This fixes some manual errors introduced in the initial patch (mentioned 
+in fixes tag).
+
+[1] 
+https://lore.kernel.org/linux-arm-msm/20240502090326.21489-1-quic_kbajaj@quicinc.com/
+
+Thanks,
+Komal.
+
+
+>> - smps8 is fixed at 0.752V
+> 
+> 
+>>
+>> Fixes: d1f2cfe2f669 ("arm64: dts: qcom: Add base QDU1000/QRU1000 IDP DTs")
+>> Signed-off-by: Komal Bajaj <quic_kbajaj@quicinc.com>
+> 
+> Best regards,
+> Krzysztof
+> 
 
