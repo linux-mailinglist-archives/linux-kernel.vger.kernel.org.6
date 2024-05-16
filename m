@@ -1,262 +1,159 @@
-Return-Path: <linux-kernel+bounces-181055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8DEF8C76DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:49:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33EFB8C76D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:48:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED2481C21016
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:49:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E9301F218E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:48:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7993E1465A3;
-	Thu, 16 May 2024 12:49:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4773146584;
+	Thu, 16 May 2024 12:48:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Krhiy3u7"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="OUaZWwnG"
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7825F145FE2;
-	Thu, 16 May 2024 12:49:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 730A0145FE7
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 12:48:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715863746; cv=none; b=hBvplUrcsOBc4e8tQnlw/y2EZhyagmb8gZBcEqkKTRyUO1z2PJKkvOpfr9brJYwYIHDCbvd/bC2wMSdz+L5+SWVNSrQ4ojw1KavCj8k+2oAcAZCXiwG7PK7h8PuJEwe4x6boCXHE1WDbVSynr0puMPbkW9fTzhCXycVwsAc8SS0=
+	t=1715863712; cv=none; b=Hn+rO2vWvi57EuvWHcLHJUZfs0gRydvop+79dpr/HvoKmz0YkOCgPWCfdVQA5J75Kql7cTk9JkZa/dskArd0zzWUrMDhvEaMeW8ABasPvpT4z5Qdo4sbo23nv8H49quM4OVQbwqKYRUXxDDYr4QtAyR4VoTmq/1rcTDlZunE0Ss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715863746; c=relaxed/simple;
-	bh=/iRbkuVATe5k/WXAjHoSspHziFV+5t4MrNeTh/j+A4I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=knIMioh9Hnf91igzm95MShV3+IseVJ+cSaPTx0QqC3XM6VW9VzA2pVgtEiFf1Ux28bkmWhW4PGGkaca7sMPIvPsLDa71IMd4hHRon0MSpa0ZXqsyDFFrCjIGcmEC275KW6vG1LqlcFnGjqMqpVjiPqla9ika9aBk850tbmr6uQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Krhiy3u7; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715863744; x=1747399744;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=/iRbkuVATe5k/WXAjHoSspHziFV+5t4MrNeTh/j+A4I=;
-  b=Krhiy3u7NDhRNUF5+TZmznYTQ7/H3cqF+ntZsLe+oFBXmJbawYU3cwFA
-   5YWYZ88ZnCHUuNimcxktOK6xC7jXnPLfhpEdv5z4Ilx6VpXIVeU406EnM
-   dw5WBp9n1MyocWycR5abJAoIBMcdsduAa3UNFpkeq9LFl8ue4x2TMBqoX
-   HYLVE5tACPXCi109/ee5blnVmP8r5OxSLdEHhzqHzHNWYDADYIUe00qJN
-   lvQnsqHCRsvRLvWhKI/FT9qeOO45VyrWNIezt65hK4SD2h10+ywak5bew
-   PDUOggkvzNW5lAltfnClKuClWTTmyPOhDhLZMQTvpkjRTzGu2mrxzzvzn
-   w==;
-X-CSE-ConnectionGUID: krAWcV0JQ9ezdGXRhv+pRg==
-X-CSE-MsgGUID: 6o3v8RvmT7WBwz5y2rMwqg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="11835136"
-X-IronPort-AV: E=Sophos;i="6.08,164,1712646000"; 
-   d="scan'208";a="11835136"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 05:49:03 -0700
-X-CSE-ConnectionGUID: VGW6IyLTSF6Dv0zZz0FjKg==
-X-CSE-MsgGUID: h+5SZJRHSE2BXyiG3EgmAw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,164,1712646000"; 
-   d="scan'208";a="36150958"
-Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 16 May 2024 05:48:59 -0700
-Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s7aXY-000EEo-1i;
-	Thu, 16 May 2024 12:48:56 +0000
-Date: Thu, 16 May 2024 20:48:15 +0800
-From: kernel test robot <lkp@intel.com>
-To: Maxime Ripard <mripard@kernel.org>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Brian Starkey <Brian.Starkey@arm.com>,
-	John Stultz <jstultz@google.com>,
-	"T.J. Mercier" <tjmercier@google.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Mattijs Korpershoek <mkorpershoek@baylibre.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org, Maxime Ripard <mripard@kernel.org>
-Subject: Re: [PATCH 7/8] dma-buf: heaps: cma: Handle ECC flags
-Message-ID: <202405162048.CExrV8yy-lkp@intel.com>
-References: <20240515-dma-buf-ecc-heap-v1-7-54cbbd049511@kernel.org>
+	s=arc-20240116; t=1715863712; c=relaxed/simple;
+	bh=llODjkQVmJ0JRKqb9IK76GX35Rinj4g9QpPEqkPd/NQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NoEFyzT0qw5DCWK8WwmNUh2y9UYHIDZAweckReZ+hsraZ2c+8nPabkLwCjM72JduXRisFypCqedyhxrRl2EBj/21KWaYex9WIVzhocVR5SWoOxUrZKwJeLuI1wT79vrZFLZOo+yzdZRRAlyJmlekD5dxo1yv/QxcSbQIgQFdJU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=OUaZWwnG; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6181d032bf9so79383647b3.3
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 05:48:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1715863708; x=1716468508; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A0YMZmj/yuBSBh3+Prm3doCFTI5UB0khyraQ6llJYcQ=;
+        b=OUaZWwnGukTrPBrYgpPgMd1Mow6UWQwtew+9Lw2/5dDHJlcLL9tb0QMmazNf28brgS
+         YcEwna7b+dSvrX4FCaoPzyvRdP6Ow9wEyzh+d/vmvH6HZw4HncO8AKe2hcW9xpTihkxj
+         umR2M6/Tzjtk7/vlz3OhzWmtmP45Exk4ZOB65CQEA326cOq2m/AOkvcZY921ePkLIIYp
+         Y9o9lunFpYX16TPdWSxktA4sbnyuovQGJC0QrD3J0qHGip46+W9ph4x5GTZG20Y9MrM2
+         AUu+pXccdFxqTf+evpQIZ8KUMtSjJAxNBMvUkPq8GwaCwh/j7mMRzkQfBWIjjzqrIZWJ
+         nkLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715863708; x=1716468508;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=A0YMZmj/yuBSBh3+Prm3doCFTI5UB0khyraQ6llJYcQ=;
+        b=AOgJjJbN0pYgu4JGGX1MVMKUdv4qh5KaxcPEQKBD2KkpHnTexpZXCkUWD64oigvOkw
+         wmo1nguTzgjC6Ry/0v8kcy4lz2HhjYC9yVb1hMKW3sbG/ffbOtu02RICX0XBo0X/vOnF
+         kyeRHP0yyiZD1ykwKl5D/xprUvR7hTQKjwnD34oWQ0lrtlTBju0MT18pCHmTRrN74G/A
+         PxeViO99E+UnA/qsxXxmH8sQQ7HKpf51rJoCEwwiDaypunXejvzwWxV8CYVOI8EqgtpV
+         8RcF6JrLIoi3YhN6QndSiE22djo0BgVNxwyiLTsWn9/+9kiCwQpDh5zNPfFusMsMsbO4
+         +O+g==
+X-Forwarded-Encrypted: i=1; AJvYcCWaFxIx6nXv8G2FUgTmdZ9HYCW6B+VjCSKj/LolElmr51TBNbzJt7iuF0czlAyUzS6eN3whZpp1sv1eEKEwlKSNZmPXaDMAdI1+FaO8
+X-Gm-Message-State: AOJu0YxBGZ2GGef6Ql/3XStCk3wuijDpUcUZwz98BxPvBBZZTRjtqsXA
+	iOb8ml6FVD/JaKT8QWy/alxITTD4DnE/cxJdFVN92C04wWBsmWfKZvxTHL6Zoa0DKe1hVaSixtQ
+	hB1+7emmNKeyqu460XGywSKS0X2e9ciqduVteGA==
+X-Google-Smtp-Source: AGHT+IFmiatJ0VGsQTQP54hpUSwoqwi/xnPZ1Pzr4sv0QEqyqVyV9N5SU92rESBXEGjCyeby+CMydFjJBhLe6iYVziE=
+X-Received: by 2002:a81:c70d:0:b0:61b:1bf5:67a9 with SMTP id
+ 00721157ae682-622affc9c33mr175662497b3.22.1715863708404; Thu, 16 May 2024
+ 05:48:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240515-dma-buf-ecc-heap-v1-7-54cbbd049511@kernel.org>
+References: <20240503-dev-charlie-support_thead_vector_6_9-v6-0-cb7624e65d82@rivosinc.com>
+ <20240503-dev-charlie-support_thead_vector_6_9-v6-1-cb7624e65d82@rivosinc.com>
+In-Reply-To: <20240503-dev-charlie-support_thead_vector_6_9-v6-1-cb7624e65d82@rivosinc.com>
+From: Andy Chiu <andy.chiu@sifive.com>
+Date: Thu, 16 May 2024 20:48:17 +0800
+Message-ID: <CABgGipU6rybwUo3ZW_RhH5VgWcFqV0x6RTrKAaMXS6=tfe2t5Q@mail.gmail.com>
+Subject: Re: [PATCH v6 01/17] dt-bindings: riscv: Add xtheadvector ISA
+ extension description
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Guo Ren <guoren@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Conor Dooley <conor.dooley@microchip.com>, Evan Green <evan@rivosinc.com>, 
+	=?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, linux-riscv@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Palmer Dabbelt <palmer@rivosinc.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, linux-doc@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Maxime,
+On Sat, May 4, 2024 at 3:33=E2=80=AFAM Charlie Jenkins <charlie@rivosinc.co=
+m> wrote:
+>
+> The xtheadvector ISA extension is described on the T-Head extension spec
+> Github page [1] at commit 95358cb2cca9.
+>
+> Link: https://github.com/T-head-Semi/thead-extension-spec/blob/95358cb2cc=
+a9489361c61d335e03d3134b14133f/xtheadvector.adoc [1]
+>
+> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 
-kernel test robot noticed the following build errors:
+Reviewed-by: Andy Chiu <andy.chiu@sifive.com>
 
-[auto build test ERROR on a38297e3fb012ddfa7ce0321a7e5a8daeb1872b6]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Maxime-Ripard/dma-buf-heaps-Introduce-a-new-heap-for-reserved-memory/20240515-215850
-base:   a38297e3fb012ddfa7ce0321a7e5a8daeb1872b6
-patch link:    https://lore.kernel.org/r/20240515-dma-buf-ecc-heap-v1-7-54cbbd049511%40kernel.org
-patch subject: [PATCH 7/8] dma-buf: heaps: cma: Handle ECC flags
-config: mips-allmodconfig (https://download.01.org/0day-ci/archive/20240516/202405162048.CExrV8yy-lkp@intel.com/config)
-compiler: mips-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240516/202405162048.CExrV8yy-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405162048.CExrV8yy-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/dma-buf/heaps/cma_heap.c: In function 'cma_heap_allocate':
-   drivers/dma-buf/heaps/cma_heap.c:293:24: warning: returning 'int' from a function with return type 'struct dma_buf *' makes pointer from integer without a cast [-Wint-conversion]
-     293 |                 return -EINVAL;
-         |                        ^
-   drivers/dma-buf/heaps/cma_heap.c:296:24: warning: returning 'int' from a function with return type 'struct dma_buf *' makes pointer from integer without a cast [-Wint-conversion]
-     296 |                 return -EINVAL;
-         |                        ^
-   drivers/dma-buf/heaps/cma_heap.c: In function '__add_cma_heap':
->> drivers/dma-buf/heaps/cma_heap.c:386:13: error: implicit declaration of function 'of_memory_get_ecc_correction_bits' [-Werror=implicit-function-declaration]
-     386 |         if (of_memory_get_ecc_correction_bits() > 0)
-         |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
-
-
-vim +/of_memory_get_ecc_correction_bits +386 drivers/dma-buf/heaps/cma_heap.c
-
-   275	
-   276	static struct dma_buf *cma_heap_allocate(struct dma_heap *heap,
-   277						 unsigned long len,
-   278						 unsigned long fd_flags,
-   279						 unsigned long heap_flags)
-   280	{
-   281		struct cma_heap *cma_heap = dma_heap_get_drvdata(heap);
-   282		struct cma_heap_buffer *buffer;
-   283		DEFINE_DMA_BUF_EXPORT_INFO(exp_info);
-   284		size_t size = PAGE_ALIGN(len);
-   285		pgoff_t pagecount = size >> PAGE_SHIFT;
-   286		unsigned long align = get_order(size);
-   287		struct page *cma_pages;
-   288		struct dma_buf *dmabuf;
-   289		int ret = -ENOMEM;
-   290		pgoff_t pg;
-   291	
-   292		if (!cma_heap->ecc_enabled && (heap_flags & DMA_HEAP_FLAG_ECC_PROTECTED))
- > 293			return -EINVAL;
-   294	
-   295		if (cma_heap->ecc_enabled && (heap_flags & DMA_HEAP_FLAG_ECC_UNPROTECTED))
-   296			return -EINVAL;
-   297	
-   298		buffer = kzalloc(sizeof(*buffer), GFP_KERNEL);
-   299		if (!buffer)
-   300			return ERR_PTR(-ENOMEM);
-   301	
-   302		INIT_LIST_HEAD(&buffer->attachments);
-   303		mutex_init(&buffer->lock);
-   304		buffer->len = size;
-   305	
-   306		if (align > CONFIG_CMA_ALIGNMENT)
-   307			align = CONFIG_CMA_ALIGNMENT;
-   308	
-   309		cma_pages = cma_alloc(cma_heap->cma, pagecount, align, false);
-   310		if (!cma_pages)
-   311			goto free_buffer;
-   312	
-   313		/* Clear the cma pages */
-   314		if (PageHighMem(cma_pages)) {
-   315			unsigned long nr_clear_pages = pagecount;
-   316			struct page *page = cma_pages;
-   317	
-   318			while (nr_clear_pages > 0) {
-   319				void *vaddr = kmap_atomic(page);
-   320	
-   321				memset(vaddr, 0, PAGE_SIZE);
-   322				kunmap_atomic(vaddr);
-   323				/*
-   324				 * Avoid wasting time zeroing memory if the process
-   325				 * has been killed by by SIGKILL
-   326				 */
-   327				if (fatal_signal_pending(current))
-   328					goto free_cma;
-   329				page++;
-   330				nr_clear_pages--;
-   331			}
-   332		} else {
-   333			memset(page_address(cma_pages), 0, size);
-   334		}
-   335	
-   336		buffer->pages = kmalloc_array(pagecount, sizeof(*buffer->pages), GFP_KERNEL);
-   337		if (!buffer->pages) {
-   338			ret = -ENOMEM;
-   339			goto free_cma;
-   340		}
-   341	
-   342		for (pg = 0; pg < pagecount; pg++)
-   343			buffer->pages[pg] = &cma_pages[pg];
-   344	
-   345		buffer->cma_pages = cma_pages;
-   346		buffer->heap = cma_heap;
-   347		buffer->pagecount = pagecount;
-   348	
-   349		/* create the dmabuf */
-   350		exp_info.exp_name = dma_heap_get_name(heap);
-   351		exp_info.ops = &cma_heap_buf_ops;
-   352		exp_info.size = buffer->len;
-   353		exp_info.flags = fd_flags;
-   354		exp_info.priv = buffer;
-   355		dmabuf = dma_buf_export(&exp_info);
-   356		if (IS_ERR(dmabuf)) {
-   357			ret = PTR_ERR(dmabuf);
-   358			goto free_pages;
-   359		}
-   360		return dmabuf;
-   361	
-   362	free_pages:
-   363		kfree(buffer->pages);
-   364	free_cma:
-   365		cma_release(cma_heap->cma, cma_pages, pagecount);
-   366	free_buffer:
-   367		kfree(buffer);
-   368	
-   369		return ERR_PTR(ret);
-   370	}
-   371	
-   372	static const struct dma_heap_ops cma_heap_ops = {
-   373		.allocate = cma_heap_allocate,
-   374	};
-   375	
-   376	static int __add_cma_heap(struct cma *cma, void *data)
-   377	{
-   378		struct cma_heap *cma_heap;
-   379		struct dma_heap_export_info exp_info;
-   380	
-   381		cma_heap = kzalloc(sizeof(*cma_heap), GFP_KERNEL);
-   382		if (!cma_heap)
-   383			return -ENOMEM;
-   384		cma_heap->cma = cma;
-   385	
- > 386		if (of_memory_get_ecc_correction_bits() > 0)
-   387			cma_heap->ecc_enabled = true;
-   388	
-   389		exp_info.name = cma_get_name(cma);
-   390		exp_info.ops = &cma_heap_ops;
-   391		exp_info.priv = cma_heap;
-   392	
-   393		cma_heap->heap = dma_heap_add(&exp_info);
-   394		if (IS_ERR(cma_heap->heap)) {
-   395			int ret = PTR_ERR(cma_heap->heap);
-   396	
-   397			kfree(cma_heap);
-   398			return ret;
-   399		}
-   400	
-   401		return 0;
-   402	}
-   403	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> ---
+>  Documentation/devicetree/bindings/riscv/extensions.yaml | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml b/Do=
+cumentation/devicetree/bindings/riscv/extensions.yaml
+> index 468c646247aa..99d2a9e8c52d 100644
+> --- a/Documentation/devicetree/bindings/riscv/extensions.yaml
+> +++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
+> @@ -477,6 +477,10 @@ properties:
+>              latency, as ratified in commit 56ed795 ("Update
+>              riscv-crypto-spec-vector.adoc") of riscv-crypto.
+>
+> +        # vendor extensions, each extension sorted alphanumerically unde=
+r the
+> +        # vendor they belong to. Vendors are sorted alphanumerically as =
+well.
+> +
+> +        # Andes
+>          - const: xandespmu
+>            description:
+>              The Andes Technology performance monitor extension for count=
+er overflow
+> @@ -484,5 +488,11 @@ properties:
+>              Registers in the AX45MP datasheet.
+>              https://www.andestech.com/wp-content/uploads/AX45MP-1C-Rev.-=
+5.0.0-Datasheet.pdf
+>
+> +        # T-HEAD
+> +        - const: xtheadvector
+> +          description:
+> +            The T-HEAD specific 0.7.1 vector implementation as written i=
+n
+> +            https://github.com/T-head-Semi/thead-extension-spec/blob/953=
+58cb2cca9489361c61d335e03d3134b14133f/xtheadvector.adoc.
+> +
+>  additionalProperties: true
+>  ...
+>
+> --
+> 2.44.0
+>
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
