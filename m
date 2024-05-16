@@ -1,129 +1,167 @@
-Return-Path: <linux-kernel+bounces-181160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7873E8C7850
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:14:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F09708C7852
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:15:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E28D1F22FA3
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:14:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81FA51F22F11
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:15:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AC49149DFB;
-	Thu, 16 May 2024 14:14:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05688147C6E;
+	Thu, 16 May 2024 14:14:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QcWuseYu"
-Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="esYbWuhk"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B8321474D1
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 14:14:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F5B81487E1
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 14:14:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715868870; cv=none; b=l1jEG8AnLQOt0WgxvF29Ur15Ro49rjoG7GJDy4Plpal3WYG4mcxjkKAjfp7BXbobJOhG79RMVG8JlhjgnGxeSnIvERkqR0EkQ81NrL0zvOfNEEp63OWziESF7nGO9DlLmLCegIhFVdwX1Qo9ekThHP91hOk5jVuh+XrpKw0aEos=
+	t=1715868894; cv=none; b=XCrxDuGvVAfiy1CHwKJ9TX4CH+RhrGUUQwyk2C4t2/uJ3gNOX4I9UKRrTIDjaY641GpiuFI7u+EsJBpaiLBIYb4rxJROVsZHp5OYMcmR81hnjFwq2l3IIVB3sGG+mBbVJEOzz16+Em5URBBJUKGytkb+J4qnz9vyUKd9uZQ7KRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715868870; c=relaxed/simple;
-	bh=UmKIrSg4ynhZVpemxfEfIZRxQvu+Crio/QC+XAqfZQg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KkSSAQLjPTYsy9yhnPAtiASOKGq25YxqV7ffU8roUcgyC9LUt+mwXt9MjRNU64XlV1HLLqCQwUwJrT1HsYbCtt08rzQYqlkwiio0xKZYe6N78/ZyDeYcvaF5g2ZC/2BXjXxy+steNr6Fm9om9Q/50WxaV8aUUchprTcab6mUF+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QcWuseYu; arc=none smtp.client-ip=209.85.166.53
+	s=arc-20240116; t=1715868894; c=relaxed/simple;
+	bh=C34TBrZ5ugDdNSq+yVLVgLcAhq0WAhMHWclweyMoEWU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oTvrLfASVDeFm7rdQHJqDQ2mck4WmojGKv+Ym7CCHXq8PlUrGJ1tC121N1YHEgbTBJcKEQq0D+m3HlMCxxrXutsVAXBGDpRdvdmhE0mI0og8ehspCKSWyaetcSFcPPeolsSxGFExJlDuN4jpLSTD9e/mTSUkl8a8mrtI6VwNOeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=esYbWuhk; arc=none smtp.client-ip=209.85.167.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-7e1b936987fso41788939f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 07:14:29 -0700 (PDT)
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-51f4d2676d1so1088093e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 07:14:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715868868; x=1716473668; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=r/2FOoA91NkUeK0C95CT3vcLU7VJcFennlVEdV0K/sw=;
-        b=QcWuseYuQiQopGQHhI9J0kPtK37qxbgePrU7mSbasfCdDgsrdLOmQZzLyu/iQgYFeK
-         0G8q/fWljy8nb9YJEeJMm7S08pZKWNj4yS6WZG2cGrw97QLyjxqi8kfw8Crkg/filZ9h
-         NyFk2Ll/lVACxfI0UaE40HrDOAPpHT1NQzd3eP8FaMBm0fFQrOKEOwlnLW0Xqw69dAVb
-         hER5blHvbitPo4xIDWkw1E2aQtIBn2fpO2nxhzxBoJRt88CvxNZCTBs/jOYmFAtQL5ci
-         ViFpnVwjaD9WL8ulJ6G9KSQdwh2iHP92QdWOoH+GFKk+jnQZVYSABAqpbgJqEAqekxWH
-         BHaQ==
+        d=gmail.com; s=20230601; t=1715868891; x=1716473691; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ON/wab2YZE4UmkNgg09Z7pgaaoU1oue8TaWpgW4fwFM=;
+        b=esYbWuhkGhr3MXvxVV/6k0KM2jbpR6tMl+t8SDZw5EKSyrIMLk6ft9sapux8krzJWb
+         E5zqkQF+2mosNJjpSyOe8Qga+LqmPNbDWE2LawHXOYcOFxhbnjnkjwIDmAQmiHo4BKQz
+         tqG0474q//pi1t8uW/oYzOR329/cF2Kdn/qQAffRG0BgpdejDtbpiZovGhVYFLhtl38L
+         NxFl6JdmFTb+FIwC6NTHm5+JY+xAylnua9KPn1ndbrVJTfTZEq5pEyXoXbaKudzHO1QI
+         LQ5Ogi8LP9UhWgwRuDF8o3dVzjk0WHx83aAy28TBfOSyCr4/JRqPPZw39wnW1aFYWVlG
+         f2Xw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715868868; x=1716473668;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=r/2FOoA91NkUeK0C95CT3vcLU7VJcFennlVEdV0K/sw=;
-        b=uM6X79M8D/SK5DtuF4eO7z0v+MNPKtQ0WpDt/rEZKqYgOVb4hWEFQIC/6fiIfgge1n
-         8fuIrh8yYIrc5fIZKRteYLdzzYTunFyh5XCCMReXXgHbM0q1uLLQO+uv5EzMnhYlSjym
-         tuahfCAmWz/AtX13Yowrd72+8nvrriE+Ie6341JCwtjPcX08Jkr9SUk65f6e3q5PXOKe
-         R3lZU/DKUTvW6mjIpmhzdbQD7x9ll3ARhOTwAKVcfe0urnM+ZK5vMDIl7GjLkJUc7ehZ
-         JWe4wxAaUi/RlyozTH67WVnC5G3QTs0ZoKggGtpyRNlZQtMIJ+NdYLJavoF8gw6vI2nV
-         X9NQ==
-X-Gm-Message-State: AOJu0YxGVwI+OU+9ZVTYffN1DfMNva7GpeadDYgiNZdFGfwu7uVw0DOR
-	2JujJsYGGhIA4xT9H3MgXxOUQ574z+Q77wVZymN4lRy6TZoILGYYRTPI0w==
-X-Google-Smtp-Source: AGHT+IEaZvDJfqtyJqKpX6aGSYkoLHiHEzguYTGxerURTWW8CMN/2adPbenTYofd+axgskL45GBRbQ==
-X-Received: by 2002:a05:6602:14d:b0:7e1:b3fa:6470 with SMTP id ca18e2360f4ac-7e1b52205abmr1898022839f.19.1715868868381;
-        Thu, 16 May 2024 07:14:28 -0700 (PDT)
-Received: from frodo.. (c-73-78-62-130.hsd1.co.comcast.net. [73.78.62.130])
-        by smtp.googlemail.com with ESMTPSA id ca18e2360f4ac-7e207673a0asm99332939f.11.2024.05.16.07.14.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 May 2024 07:14:27 -0700 (PDT)
-From: Jim Cromie <jim.cromie@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: akpm@linuxfoundation.org,
-	Jim Cromie <jim.cromie@gmail.com>,
-	Andy Whitcroft <apw@canonical.com>,
-	Joe Perches <joe@perches.com>,
-	Dwaipayan Ray <dwaipayanray1@gmail.com>,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH 1/1] checkpatch: allow multi-statement declarative macros.
-Date: Thu, 16 May 2024 08:14:18 -0600
-Message-ID: <20240516141418.25345-1-jim.cromie@gmail.com>
-X-Mailer: git-send-email 2.45.0
+        d=1e100.net; s=20230601; t=1715868891; x=1716473691;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ON/wab2YZE4UmkNgg09Z7pgaaoU1oue8TaWpgW4fwFM=;
+        b=WTZkBZGVA1bcoAupp2iSbktZCOZf93gCht83mOGbBES9+BspajCsL2frrVJcAXGNsC
+         BfLpPp9N6UQZKiYA88UwAD8tFlGjnC6eTyxmGZ237XTWrARWoGlC1hXmo7VAubO5ss+V
+         P9ycyi80ve2Ay/ANfRdRsH96km4oJ7kwPNCKWXv4khqLJLU5W+mVfWGBJpgZuYOEfXHR
+         eQqbAAIVNOG4GXadAc+aNKLylaDmRQzgUg6dCuK6DHJkgsq03CykHJ+Pd6CTn185C+Ac
+         pKpeew0n39FQpXYG2gZ+TgPBFFp72u+CbnGHPvpOFagn5JdKYQicBBGUvjUjCmwNkJae
+         X8kA==
+X-Forwarded-Encrypted: i=1; AJvYcCWvoYpfwBp8IDR/+pAY21IKjGbXrn+BKNlCuOuIug5UDILZP3Lyhc966r/B3p3867Lh+ghGplOofRl04wjTWCyE/ytgPCX9WzRcDDqH
+X-Gm-Message-State: AOJu0YyWHqctA48DxJ2fNOPOX6DvX1ZZASgDabfgZH+eUkvymsXWtvhq
+	8yId39fR/UwezrraEcimNR6VylSIiS5cm50wY0iUhFENZuO+HLPc
+X-Google-Smtp-Source: AGHT+IEXdqM5LOvnTndRtmqmOy9OVg/uJa+5xlbrEpwPonOFDnExwl5+h6Ue+XjXRQIfT3J1S1AXgQ==
+X-Received: by 2002:a05:6512:e94:b0:521:cee5:db36 with SMTP id 2adb3069b0e04-52210074834mr15347725e87.48.1715868890346;
+        Thu, 16 May 2024 07:14:50 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd? ([2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-521f35ba517sm3030754e87.81.2024.05.16.07.14.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 May 2024 07:14:49 -0700 (PDT)
+Message-ID: <6f3052a4-e3b9-4ffb-9251-1f469e13a1d4@gmail.com>
+Date: Thu, 16 May 2024 17:14:47 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] regulator: don't cache vsel to ensure voltage setting
+To: Mark Brown <broonie@kernel.org>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Okan Sahin <okan.sahin@analog.com>,
+ Vincent Whitchurch <vincent.whitchurch@axis.com>,
+ =?UTF-8?Q?M=C3=A5rten_Lindahl?= <marten.lindahl@axis.com>
+References: <cover.1715848512.git.mazziesaccount@gmail.com>
+ <a8ee4ae5532b67a5aef0f6e482cb37f5efbd8952.1715848512.git.mazziesaccount@gmail.com>
+ <f7cf4ac0-afa2-4f64-818b-1275b1e8a6ee@sirena.org.uk>
+Content-Language: en-US, en-GB
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <f7cf4ac0-afa2-4f64-818b-1275b1e8a6ee@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Declarative macros, which declare/define storage (at either file or
-function scope), cannot be wrapped in do-while statements.  So
-checkpatch advice is incorrect here.
+Hi Mark,
 
-The code has an $exceptions regex which allows multiple statements
-based on the macro name, etc; /DECLARE_PER_CPU|DEFINE_PER_CPU/ are
-currently accepted, widen those to accept /DECLARE|DEFINE/.
+Added some driver folks to CC. It'd be great to lean how other devices 
+avoid having intermediate voltages if range and vsel write is not atomic.
 
-cc: Andy Whitcroft <apw@canonical.com>		# (maintainer:CHECKPATCH)
-cc: Joe Perches <joe@perches.com>		# (maintainer:CHECKPATCH)
-cc: Dwaipayan Ray <dwaipayanray1@gmail.com>	# (reviewer:CHECKPATCH)
-cc: Lukas Bulwahn <lukas.bulwahn@gmail.com>	# (reviewer:CHECKPATCH)
-Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
----
- scripts/checkpatch.pl | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+On 5/16/24 14:33, Mark Brown wrote:
+> On Thu, May 16, 2024 at 11:53:46AM +0300, Matti Vaittinen wrote:
+> 
+>> +		/*
+>> +		 * Some PMICs treat the vsel_reg same as apply-bit. Force it
+>> +		 * to be written even if the old selector were same as the new
+>> +		 * (but range changed) by using regmap_write_bits() and not the
+>> +		 * regmap_update_bits().
+>> +		 */
+>> +		ret = regmap_write_bits(rdev->regmap, rdev->desc->vsel_reg,
+>> +					rdev->desc->vsel_mask, sel);
+> 
+> This feels like a special case for those devices, for devices that don't
+> have this behaviour it'd be a regression in that it'd increase I/O
+> traffic.
 
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index 9c4c4a61bc83..cddf4c416523 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -5901,6 +5901,7 @@ sub process {
- 			}
- 		}
- 
-+# except for declarative macros (whether file or function scope),
- # multi-statement macros should be enclosed in a do while loop, grab the
- # first statement and ensure its the whole macro if its not enclosed
- # in a known good container
-@@ -5958,8 +5959,8 @@ sub process {
- 				$Declare|
- 				module_param_named|
- 				MODULE_PARM_DESC|
--				DECLARE_PER_CPU|
--				DEFINE_PER_CPU|
-+				DECLARE|
-+				DEFINE|
- 				__typeof__\(|
- 				union|
- 				struct|
+I thought most of devices which have pickable voltage ranges and a 
+separate register for range and voltage selector would need some 
+mechanism to prevent 'intermediate voltages' as writing the vsel and 
+range won't be atomic.
+
+Also, the "pickable ranges" is not that widely used, and many of the 
+users have the range and vsel selectors in same register (and if they 
+don't, they're likely to see unwanted side effects due to non atomic write).
+
+I did actually go through the drivers. These seem to be clear:
+
+atc260x-regulator.c: vsel and range in same register
+max77650-regulator.c: vsel and range in same register
+tps6287x-regulator.c: According to a data-sheet, this requires a vsel 
+write for range change to take effect (just like the device I am working 
+with), so the current implementation may be suffering from the bug I am 
+trying to solve.
+
+Anyways, following might be unnecessarily impacted:
+
+max77541-regulator.c - but, I briefly looked at the data-sheet, and I am 
+not sure the driver operates according to the spec. The spec I found 
+stated the range bits must not be changed when the output is enabled.
+
+mt6358-regulator.c: I didn't find proper spec details.
+
+>  At least this should be specialised to only devices that have
+> ranges I think?
+
+This operation is the regulator_set_voltage_sel_pickable_regmap() - 
+which should be only used for devices which use pickable ranges. 
+Furthermore, it's inside the else branch for if (rdev->desc->vsel_reg == 
+rdev->desc->vsel_range_reg) meaning the range selection bit is in 
+separate register from the voltage selection.
+
+Anyways, thanks for the heads up. I really didn't know we had other 
+users which would be affected. I'll consider adding a flag to the 
+regulator desc for deciding if the vsel should always be written when 
+range changes.
+
+Yours,
+	-- Matti
+
 -- 
-2.45.0
+Matti Vaittinen
+Linux kernel developer at ROHM Semiconductors
+Oulu Finland
+
+~~ When things go utterly wrong vim users can always type :help! ~~
 
 
