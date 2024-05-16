@@ -1,114 +1,155 @@
-Return-Path: <linux-kernel+bounces-180549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A58C18C700C
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 03:36:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C4D988C700D
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 03:39:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A3D12828AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 01:36:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7976628282A
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 01:39:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC50715D1;
-	Thu, 16 May 2024 01:36:02 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2194715C3;
+	Thu, 16 May 2024 01:39:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gzEeaPzk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAE45EBB;
-	Thu, 16 May 2024 01:35:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 611EC10E3;
+	Thu, 16 May 2024 01:39:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715823362; cv=none; b=M5EnKeXzUO7PklJkaqiK6k/dO63NC/sm2RClg10DrmAjDn/Z/A8uMN2xjP9WhdjJQ/9YTm2LBuWOV/xLdTFWQ81q0u/l4iKdQoRA8VDG1JhOxxymJYFpCeTESU8iw+jP8Erig3Fl50pMxz8an2VbsXZ846dFgDIq2O6wZl4rDnA=
+	t=1715823574; cv=none; b=q/JNJw0U3M/gwVSIVFRVRGi0SFnZLO4X0a9XfmKySHsqA2+JgtGZPbPtaP5jL7kOLx6VApmRoIQ98WqAaGJyl3hETQQYzanfsnnCMCE4CCGLLEj0ssotXx3SkP+2gB3drwG5S+12/J5wCWoQTgfHtxOVekRWQOqO6yZCt/jd5iU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715823362; c=relaxed/simple;
-	bh=FrGq2YrBThf3E1IoJyu8KCt62cSocVHlIxWXr8AXgIQ=;
-	h=Subject:To:References:Cc:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=l12AR5niuOLxnTjNJW8Z68x44EckCd3IwKfkbL66oLATa60bErmJSYGNU0HDCyXzFIs42e8fUp1/ehyGBzI7SJPWDSJ0QLxS6CdsBP2UBThMGf46uo1/lnZU7rnGOhTQr2jF8F6HDWxsy99b1d2QLTaK/jgQf737jcvSkolxjd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Vft2n6XBpz4f3lfZ;
-	Thu, 16 May 2024 09:35:45 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 1FAC21A0B33;
-	Thu, 16 May 2024 09:35:56 +0800 (CST)
-Received: from [10.174.176.117] (unknown [10.174.176.117])
-	by APP2 (Coremail) with SMTP id Syh0CgCnPBD2YkVmYmJfNA--.63684S2;
-	Thu, 16 May 2024 09:35:54 +0800 (CST)
-Subject: Re: [syzbot] [bpf?] KASAN: stack-out-of-bounds Read in hash
-To: syzbot <syzbot+9459b5d7fab774cf182f@syzkaller.appspotmail.com>,
- bpf@vger.kernel.org
-References: <000000000000485a2d06187fc7a7@google.com>
-Cc: alexei.starovoitov@gmail.com, andrii@kernel.org, ast@kernel.org,
- daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com,
- joannekoong@fb.com, john.fastabend@gmail.com, jolsa@kernel.org,
- kpsingh@kernel.org, linux-kernel@vger.kernel.org, martin.lau@linux.dev,
- netdev@vger.kernel.org, sdf@google.com, song@kernel.org,
- syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
-From: Hou Tao <houtao@huaweicloud.com>
-Message-ID: <e8b52077-f0f2-bfa7-a170-09202c86dd24@huaweicloud.com>
-Date: Thu, 16 May 2024 09:35:50 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+	s=arc-20240116; t=1715823574; c=relaxed/simple;
+	bh=FmMtybhZYs1e5AN33E5WpxqtlLbnaIg7KEc6WGebVmw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GKaOOFirZXGcT08lSinE9MqMCevDEE5WKQaAchLBm1ACDAYFh1znwRbltloAswWC8XVA6GPXvC9wG7+S7VnXI9Vx7i1hZDMxAe0uOe4f58ec1ewqHRXz+bM0smkekpZLmgy7qptzSv1n+vM2O5zPUlZAiLbqLypakfvV2s6udwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gzEeaPzk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34E91C116B1;
+	Thu, 16 May 2024 01:39:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715823574;
+	bh=FmMtybhZYs1e5AN33E5WpxqtlLbnaIg7KEc6WGebVmw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gzEeaPzk5KK5Lo3QAapPqzCPdzXzSYw2CCwrjMnDnXXXlWF+6FM/q9VOIIUi2VhbF
+	 zvGFriJ6dp9iYzwrhtGVL1ZNOtvZ/fhflDltCRqgTiejz2i5hAVykwmze/g1SFX9dy
+	 uAxtmAXmbDfhDbwzL6bT2cnSnfgCOrOjZQOuhecBqEcW2mANy1+0zXdGtzbJE8Rt5V
+	 pULG5WaUkcsHCN8JjAY04hmfo3W5ua1WH8usZuKOWoCAiibtYJrUHMNYwaZKbzbz6b
+	 jWVRRlf6O2eShqisqYhTyjWyrdL5ETKPzYuEwr7yTPGOM+nCT97XB54a/wIk1Y02Av
+	 3gHBYepfLuC0w==
+Date: Thu, 16 May 2024 09:39:24 +0800
+From: Peter Chen <peter.chen@kernel.org>
+To: Ravi Gunasekaran <r-gunasekaran@ti.com>
+Cc: pawell@cadence.com, rogerq@kernel.org, gregkh@linuxfoundation.org,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] usb: cdns3: Add quirk flag to enable suspend
+ residency
+Message-ID: <20240516013924.GA3283751@nchen-desktop>
+References: <20240514092421.20897-1-r-gunasekaran@ti.com>
+ <20240514092421.20897-2-r-gunasekaran@ti.com>
+ <20240515013838.GA3279984@nchen-desktop>
+ <dde63edb-9057-2d33-032a-8ee25e981c72@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <000000000000485a2d06187fc7a7@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-CM-TRANSID:Syh0CgCnPBD2YkVmYmJfNA--.63684S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Jw4Dtr4UKw4UXw45uF18Grg_yoW8JrW7pr
-	WrGrW3KwsYyF1jy3WIgFnrWw1vg395CrW7W34Utry09an7tr1vyws2yFWrWr4UGr1DZF90
-	vrn8Cw1rK348uaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
-	e2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
-	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a
-	6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
-	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE
-	14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf
-	9x07UZ18PUUUUU=
-X-CM-SenderInfo: xkrx3t3r6k3tpzhluzxrxghudrp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dde63edb-9057-2d33-032a-8ee25e981c72@ti.com>
 
+On 24-05-15 09:52:57, Ravi Gunasekaran wrote:
+> 
+> 
+> On 5/15/24 7:08 AM, Peter Chen wrote:
+> > On 24-05-14 14:54:20, Ravi Gunasekaran wrote:
+> >> From: Roger Quadros <rogerq@kernel.org>
+> >>
+> >> Some platforms (e.g. ti,j721e-usb, ti,am64-usb) require
+> >> this bit to be set to workaround a lockup issue with PHY
+> >> short suspend intervals [1]. Add a platform quirk flag
+> >> to indicate if Suspend Residency should be enabled.
+> >>
+> >> [1] - https://www.ti.com/lit/er/sprz457h/sprz457h.pdf
+> >> i2409 - USB: USB2 PHY locks up due to short suspend
+> >>
+> >> Signed-off-by: Roger Quadros <rogerq@kernel.org>
+> >> Signed-off-by: Ravi Gunasekaran <r-gunasekaran@ti.com>
+> >> ---
+> 
+> [...]
+> 
+> >>  	regs = devm_ioremap_resource(cdns->dev, &cdns->otg_res);
+> >> @@ -439,6 +439,13 @@ int cdns_drd_init(struct cdns *cdns)
+> >>  			return -EINVAL;
+> >>  		}
+> >>  
+> >> +		if (cdns->pdata &&
+> >> +		    (cdns->pdata->quirks & CDNS3_DRD_SUSPEND_RESIDENCY_ENABLE)) {
+> >> +			reg = readl(&cdns->otg_v1_regs->susp_ctrl);
+> >> +			reg |= SUSP_CTRL_SUSPEND_RESIDENCY_ENABLE;
+> >> +			writel(reg, &cdns->otg_v1_regs->susp_ctrl);
+> >> +		}
+> >> +
+> > 
+> > It is better put this above (just above code cdns->version  =
+> > CDNS3_CONTROLLER_V1;)
+> > 
+> 
+> You mean here, to group it with CDNS3 v1?
+> 
+> else if (OTG_CDNS3_CHECK_DID(state)) {                                               
+>       cdns->otg_irq_regs = (struct cdns_otg_irq_regs __iomem *)
+>                             &cdns->otg_v1_regs->ien;
+>       writel(1, &cdns->otg_v1_regs->simulate);
+> 
+> +     if (cdns->pdata &&
+> +	  (cdns->pdata->quirks & CDNS3_DRD_SUSPEND_RESIDENCY_ENABLE)) {
+> +	      reg = readl(&cdns->otg_v1_regs->susp_ctrl);
+> +	      reg |= SUSP_CTRL_SUSPEND_RESIDENCY_ENABLE;
+> +	      writel(reg, &cdns->otg_v1_regs->susp_ctrl);
+> +     }
+>       dns->version  = CDNS3_CONTROLLER_V1;
 
+Yes.
 
-On 5/15/2024 11:29 PM, syzbot wrote:
-> syzbot has bisected this issue to:
->
-> commit 9330986c03006ab1d33d243b7cfe598a7a3c1baa
-> Author: Joanne Koong <joannekoong@fb.com>
-> Date:   Wed Oct 27 23:45:00 2021 +0000
->
->     bpf: Add bloom filter map implementation
->
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1543bd5c980000
-> start commit:   443574b03387 riscv, bpf: Fix kfunc parameters incompatibil..
-> git tree:       bpf
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=1743bd5c980000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1343bd5c980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=6fb1be60a193d440
-> dashboard link: https://syzkaller.appspot.com/bug?extid=9459b5d7fab774cf182f
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13d86795180000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=143eff76180000
->
-> Reported-by: syzbot+9459b5d7fab774cf182f@syzkaller.appspotmail.com
-> Fixes: 9330986c0300 ("bpf: Add bloom filter map implementation")
->
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
->
-> .
+Peter
 
-#syz fix: bpf: Check bloom filter map value size
+> } else
+> 
+> > Peter
+> >>  		dev_dbg(cdns->dev, "DRD version v1 (ID: %08x, rev: %08x)\n",
+> >>  			 readl(&cdns->otg_v1_regs->did),
+> >>  			 readl(&cdns->otg_v1_regs->rid));
+> >> diff --git a/drivers/usb/cdns3/drd.h b/drivers/usb/cdns3/drd.h
+> >> index d72370c321d3..1e2aee14d629 100644
+> >> --- a/drivers/usb/cdns3/drd.h
+> >> +++ b/drivers/usb/cdns3/drd.h
+> >> @@ -193,6 +193,9 @@ struct cdns_otg_irq_regs {
+> >>  /* OTGREFCLK - bitmasks */
+> >>  #define OTGREFCLK_STB_CLK_SWITCH_EN	BIT(31)
+> >>  
+> >> +/* SUPS_CTRL - bitmasks */
+> >> +#define SUSP_CTRL_SUSPEND_RESIDENCY_ENABLE	BIT(17)
+> >> +
+> >>  /* OVERRIDE - bitmasks */
+> >>  #define OVERRIDE_IDPULLUP		BIT(0)
+> >>  /* Only for CDNS3_CONTROLLER_V0 version */
+> >> -- 
+> >> 2.17.1
+> >>
+> > 
+> 
+> -- 
+> Regards,
+> Ravi
 
+-- 
+
+Thanks,
+Peter Chen
 
