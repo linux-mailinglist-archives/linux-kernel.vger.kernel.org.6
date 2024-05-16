@@ -1,128 +1,218 @@
-Return-Path: <linux-kernel+bounces-180585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B7FC8C707C
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 04:57:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CE768C7081
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 04:58:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA6A5282C2E
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 02:57:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FA541C2221B
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 02:58:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67A60D271;
-	Thu, 16 May 2024 02:57:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ACE82EAE9;
+	Thu, 16 May 2024 02:57:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ReJ90PEl"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ubbK04He"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61203522E;
-	Thu, 16 May 2024 02:57:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84E24249F7;
+	Thu, 16 May 2024 02:57:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715828235; cv=none; b=dwlt58DFftKw7zMLq1wozeKY90xChEtTXGPv6ceEki9M5ntxj1lhiFQqZMwY3IEYNaPnmvaETFTT6YlbWw7Aw0xnXjRyGn32Az1MB7XmtMhvGhk8POGGi0ofep+d004uCYJAWfNLruZhOHS78zx1XlFMVlZpZWOgPD43UcszEfQ=
+	t=1715828237; cv=none; b=l/pqNEF8nstFkrGTAqVhA5f+jDeakgqEwC7x4Ia3bcJrNhIbcLngJxItXMWHLq3TYqNSJaE2TOY/ufSKNbAzwEerr1Ms3VgSGkM0AMbMRrcMaaWBGRXTxgo/ifyobYsEC23oQrymeRzeXihg6/O12MjVULMXGlW5wl8MEr0r8AM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715828235; c=relaxed/simple;
-	bh=GziP5EuxONdYvySF6zDKZ9ctaWsBMTU2rlgzt665eRg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cTRNSP6i3ifozcyvTYmliF2tzkwK7iH0P2+2pl32cbaZO9SRPzrvfbHaV+/5leGYAeYnjJzd08YXJypEKxGOFThOjUQqLz6pGeRTBlArMHRFUc0rxu5VN8GNs+uyQRD1nAkFU2qdf6BOMBFHAF5pVp/Y1JoX6f5QV/VkAGFnmdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ReJ90PEl; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44FLC8QM024800;
-	Thu, 16 May 2024 02:56:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	from:to:cc:subject:date:message-id:mime-version
-	:content-transfer-encoding:content-type; s=qcppdkim1; bh=KPSTHVO
-	hJbfke8X0OKBwneEFhJUY7shxJp8KynfdjUI=; b=ReJ90PEl0k+7Ub4iYp9ADYt
-	HfKGcH6YWIg/trFkrq0dHkoYqDJqOjZ5LwBM/pxg1e8cOEfbCF6lej22M4Y6C1N/
-	8+vskoSIo2l2hXn4sykix4KbQXHXXM4NHr1x+ZPvuX7CejgiJ9TEgC5f9SE61gSR
-	chCeRqDrfD7w0OCOfpbD9k4xoHyofHFltDe8xSl4OpuglpgzsPdu9QWXNDrln62M
-	Kco4z1BiAqZA32/1dyEuGSqRdu2buT2vzssFjX+zPH2y3nQmKwYWOpZn9eqQKP7x
-	8TS1X7S3zIEJyVZyC1lzg3mnDTMFaffX1phuWGLLd7FZiqHYQBMUvVGrpgqmL7A=
-	=
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y49gdv0vr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 16 May 2024 02:56:57 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44G2uuVb001680
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 16 May 2024 02:56:56 GMT
-Received: from hu-jinlmao-lv.qualcomm.com (10.49.16.6) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 15 May 2024 19:56:56 -0700
-From: Mao Jinlong <quic_jinlmao@quicinc.com>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach
-	<mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Mao Jinlong <quic_jinlmao@quicinc.com>,
-        "Alexander
- Shishkin" <alexander.shishkin@linux.intel.com>
-CC: <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>,
-        Tingwei Zhang <quic_tingweiz@quicinc.com>,
-        Yuanfang Zhang <quic_yuanfang@quicinc.com>,
-        Tao Zhang
-	<quic_taozha@quicinc.com>,
-        songchai <quic_songchai@quicinc.com>
-Subject: [PATCH v1 0/3] coresight: Add reserve trace id support
-Date: Wed, 15 May 2024 19:56:39 -0700
-Message-ID: <20240516025644.4383-1-quic_jinlmao@quicinc.com>
-X-Mailer: git-send-email 2.41.0
+	s=arc-20240116; t=1715828237; c=relaxed/simple;
+	bh=rvzB2c+5K+tSKQUQdjVcVTg7NDEPAimqY/VI6X6o7wI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TXQbB1+klBKUhLOcoeKJnxhB7mdDA0Aba3UtbERZBZioaQBKWsdQHHFfg+2oJfZTF//wrwbF8wifsTiqyxTTV2yyzbKqbQxVRNW1W3+0ktqhKJPwtvLGvBQX1qv94Kp4fWfSz8CWCWmYGy/prz2wgdegTtHTKQJ2Ix+9kD45SyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ubbK04He; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AEB5C32786;
+	Thu, 16 May 2024 02:57:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715828237;
+	bh=rvzB2c+5K+tSKQUQdjVcVTg7NDEPAimqY/VI6X6o7wI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ubbK04HeSCwv4J84OA4MPWiyDbMwPAG7k0z6zkWZiE76A5iLSmCTol/3jdRKTxGru
+	 tuKsQliLwtv1mZ4NcqwKAVv6KibZh9/MWvGcYTR1JreU8DbbyvMhdjoLPRMFQ9nJjn
+	 erimRl+KpWBzV/XOlKx3q2OJyQFOiap/kT/rnjddQZzeuYWOsOmFJfwVPe/FyaQOuC
+	 rmoobgb/ItmE1ovF/SEriJtenuObGn3ndt6FfelrfbV3Fl+6nXWet3r0JixQZqiEAQ
+	 jBRMqLDuvX4+6BlL2X9PNxvNpsmjBr80MSDgJWSfi7q5tD1aVQVCC/0eZ3CYrsWyWl
+	 PNj4d43qlD6qA==
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2df83058d48so2867851fa.1;
+        Wed, 15 May 2024 19:57:16 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVB6GClIdbwZ3/HeemccXuYWTH4/bYCKO/9gZZ3g1gRuxYD9SskDyLb7+cTM/dah7mYj47FnKQFWSKt0Z4k4oVO9qV4xOPHXKsWo+kuh8RQg7ZeuHg82BRKdONj+1EzaqZvPQeXagek7xV4gpdz9iDwF8IqftETC9Pdg+b7Z1v9GTJiog2/U4LnYYmNaQE07A==
+X-Gm-Message-State: AOJu0YxXldtJo2shN8IiXxGRaeuF1z/ijQH1e+AOqPCe1rDl3HVY627E
+	YU5aY9xOqC+5ipePA7fEsk0Rjq81PT4UN+FkhczVXgpZy5at+HIiGUsi5Tuw8PhkIRNlQ46J66P
+	6lCMRHd9VCWHNImrCBLvovp3Q6j8=
+X-Google-Smtp-Source: AGHT+IE7fy4YTIxImy+5LghYG+uGawZq4fEPT5h9Z75JqfrIPrMR8odl8dcIbIniOFnkPtUIdCP7vSUcSMa7WVqEHVY=
+X-Received: by 2002:a2e:9ed9:0:b0:2e5:2eaf:b0a4 with SMTP id
+ 38308e7fff4ca-2e52eafb1e4mr102648091fa.41.1715828235704; Wed, 15 May 2024
+ 19:57:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: ZR5JZ_7ZG0E4tv2M234P1Vu7hXVMu69p
-X-Proofpoint-ORIG-GUID: ZR5JZ_7ZG0E4tv2M234P1Vu7hXVMu69p
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-16_01,2024-05-15_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=828
- impostorscore=0 clxscore=1011 priorityscore=1501 phishscore=0 spamscore=0
- mlxscore=0 lowpriorityscore=0 suspectscore=0 bulkscore=0 adultscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405010000 definitions=main-2405160019
+References: <20240511224035.27775-1-kris.van.hees@oracle.com>
+ <CAK7LNATwSDyAWR2FqccF5RFLpw5CYFyndR0N814nC7G7EaL2Tw@mail.gmail.com> <ZkTnwwyTF0WSMmqI@oracle.com>
+In-Reply-To: <ZkTnwwyTF0WSMmqI@oracle.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Thu, 16 May 2024 11:56:39 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARRzGt8EWhRcXnj=2G7E1KOq4E-PGUX53wBoCXAsmSr_g@mail.gmail.com>
+Message-ID: <CAK7LNARRzGt8EWhRcXnj=2G7E1KOq4E-PGUX53wBoCXAsmSr_g@mail.gmail.com>
+Subject: Re: [PATCH v2 0/6] Generate address range data for built-in modules
+To: Kris Van Hees <kris.van.hees@oracle.com>
+Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-modules@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	Steven Rostedt <rostedt@goodmis.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Jiri Olsa <olsajiri@gmail.com>, Elena Zannoni <elena.zannoni@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Some HW has static trace id which cannot be changed via software programming.
-For this case, configure the trace id in device tree with
-"trace-id = <xxx>", and call coresight_trace_id_reserve_system_id in
-device probe function. The id will be reserved for the HW all the time
-if the device is probed.
+On Thu, May 16, 2024 at 1:50=E2=80=AFAM Kris Van Hees <kris.van.hees@oracle=
+com> wrote:
+>
+> On Mon, May 13, 2024 at 01:43:15PM +0900, Masahiro Yamada wrote:
+> > On Sun, May 12, 2024 at 7:42???AM Kris Van Hees <kris.van.hees@oracle.c=
+om> wrote:
+> > >
+> > > Especially for tracing applications, it is convenient to be able to
+> > > refer to a symbol using a <module name, symbol name> pair and to be a=
+ble
+> > > to translate an address into a <nodule mname, symbol name> pair.  But
+> > > that does not work if the module is built into the kernel because the
+> > > object files that comprise the built-in module implementation are sim=
+ply
+> > > linked into the kernel image along with all other kernel object files=
+.
+> > >
+> > > This is especially visible when providing tracing scripts for support
+> > > purposes, where the developer of the script targets a particular kern=
+el
+> > > version, but does not have control over whether the target system has
+> > > a particular module as loadable module or built-in module.  When trac=
+ing
+> > > symbols within a module, referring them by <module name, symbol name>
+> > > pairs is both convenient and aids symbol lookup.  But that naming wil=
+l
+> > > not work if the module name information is lost if the module is buil=
+t
+> > > into the kernel on the target system.
+> > >
+> > > Earlier work addressing this loss of information for built-in modules
+> > > involved adding module name information to the kallsyms data, but tha=
+t
+> > > required more invasive code in the kernel proper.  This work never di=
+d
+> > > get merged into the kernel tree.
+> > >
+> > > All that is really needed is knowing whether a given address belongs =
+to
+> > > a particular module (or multiple modules if they share an object file=
+).
+> > > Or in other words, whether that address falls within an address range
+> > > that is associated with one or more modules.
+> > >
+> > > This patch series is baaed on Luis Chamberlain's patch to generate
+> > > modules.builtin.objs, associating built-in modules with their object
+> > > files.  Using this data, vmlinux.o.map and vmlinux.map can be parsed =
+in
+> > > a single pass to generate a modules.buitin.ranges file with offset ra=
+nge
+> > > information (relative to the base address of the associated section) =
+for
+> > > built-in modules.  The file gets installed along with the other
+> > > modules.builtin.* files.
+> >
+> >
+> >
+> > I still do not want to see modules.builtin.objs.
+> >
+> >
+> > During the vmlinux.o.map parse, every time an object path
+> > is encountered, you can open the corresponding .cmd file.
+> >
+> >
+> >
+> > Let's say, you have the following in vmlinux.o.map:
+> >
+> > .text          0x00000000007d4fe0     0x46c8 drivers/i2c/i2c-core-base.=
+o
+> >
+> >
+> >
+> > You can check drivers/i2c/.i2c-core-base.o.cmd
+> >
+> >
+> > $ cat drivers/i2c/.i2c-core-base.o.cmd | tr ' ' '\n' | grep KBUILD_MODF=
+ILE
+> > -DKBUILD_MODFILE=3D'"drivers/i2c/i2c-core"'
+> >
+> >
+> > Now you know this object is part of drivers/i2c/i2c-core
+> > (that is, its modname is "i2c-core")
+> >
+> >
+> >
+> >
+> > Next, you will get the following:
+> >
+> >  .text          0x00000000007dc550     0x13c4 drivers/i2c/i2c-core-acpi=
+o
+> >
+> >
+> > $ cat drivers/i2c/.i2c-core-acpi.o.cmd | tr ' ' '\n' | grep KBUILD_MODF=
+ILE
+> > -DKBUILD_MODFILE=3D'"drivers/i2c/i2c-core"'
+> >
+> >
+> > This one is also a part of drivers/i2c/i2c-core
+> >
+> >
+> > You will get the address range of "i2c-core" without changing Makefiles=
+.
+>
+> Thank you for this suggestion.  I have this approach now implemented, mak=
+ing
+> use of both KBUILD_MODFILE and KBUILD_MODNAME (both are needed to conclus=
+ively
+> determine that an object belongs to a module).
+>
+> However, this is not catching objects that are compiled from assembler so=
+urce,
+> because modfile_flags and modname_flags are not added to the assembler fl=
+ags,
+> and thus KBUILD_MODFILE and KBUILD_MODNAME are not present in the .cmd fi=
+le
+> for those objects.
+>
+> It would seem that it is harmless to add those flags to assembler flags, =
+so
+> would that be an acceptable solution?  It definitely would provide consis=
+tency
+> with non-asm objects.  And we already pass modfile and modname flags to t=
+he
+> non-asm builds for objects that most certainly do not belong in modules a=
+mnyway,
+> e.g.
+>
+> $ cat arch/x86/boot/.cmdline.o.cmd| tr ' ' '\n' | grep -- -DKBUILD_MOD
+> -DKBUILD_MODFILE=3D'"arch/x86/boot/cmdline"'
+> -DKBUILD_MODNAME=3D'"cmdline"'
 
-Mao Jinlong (3):
-  dt-bindings: arm: Add trace-id for coresight dummy source
-  coresight: Add reserve trace id support
-  coresight: dummy: Add reserve atid support for dummy source
 
- .../sysfs-bus-coresight-devices-dummy-source  | 15 +++++
- .../arm/arm,coresight-dummy-source.yaml       |  6 ++
- drivers/hwtracing/coresight/coresight-dummy.c | 56 +++++++++++++++++--
- .../hwtracing/coresight/coresight-platform.c  | 26 +++++++++
- .../hwtracing/coresight/coresight-trace-id.c  | 24 ++++++++
- .../hwtracing/coresight/coresight-trace-id.h  | 11 ++++
- include/linux/coresight.h                     |  1 +
- 7 files changed, 135 insertions(+), 4 deletions(-)
- create mode 100644 Documentation/ABI/testing/sysfs-bus-coresight-devices-dummy-source
 
--- 
-2.41.0
+I am fine with passing these to *.S files,
+as the -D is a preprocessor option.
 
+
+
+
+--
+Best Regards
+Masahiro Yamada
 
