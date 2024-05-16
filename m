@@ -1,264 +1,255 @@
-Return-Path: <linux-kernel+bounces-180661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56BCA8C7177
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 07:53:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9A368C717A
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 07:55:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79F6C1C22443
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 05:53:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9325D281137
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 05:55:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 145F9249F7;
-	Thu, 16 May 2024 05:53:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23764208A8;
+	Thu, 16 May 2024 05:55:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ks2SSCAo"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n8TmgJGB"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 529B521104;
-	Thu, 16 May 2024 05:53:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715838793; cv=fail; b=OBjJv+2YkLIgXSNwpNl6Tpr7SRfmzUykaOC1w6uMqtdAVgtFguPKbPD4Ky6e67Bv+saT+ySjSoaJSdJ561yeRHa4DNY7Shhzls4h11ZNj/4JTebvDWtBYPlPNu0y9AyZ4tR5NmG4Ouwp4BDdewUmhDCKXkPYaCPZu45Ovp5FpMI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715838793; c=relaxed/simple;
-	bh=QzlzCXKePyuL2H/xpFi9DeM4kofg5fd9mZYC2+zWS8M=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=NMMIYdvethZw1Jo4JLwxHe0YQ8oyIlbw6N7nzuu44ZtlAtUTAsERB+je8cEd8vfJ01JzhAX8yQSoDQKKk9y3jTwyZ0bqDZ0IsYes7yLX6USS5fEXo3wOifu1Oxkm1GuOmTwp6OiEycN9SocuBBYi867hkesk6f4CDDQ4eXWsUas=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ks2SSCAo; arc=fail smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C77529CEA;
+	Thu, 16 May 2024 05:55:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715838920; cv=none; b=YvDQ+zcAiA8CaUPVnlQmPHWICdOZjej6IMKiTWCIhoNlsyyyolzQt/p0KQLegOZ+UTaE2EodHjU0xQTbeHmYI3Dj+SvnPt4vzbbXkCF3t9yaoAHmNE4J1Vcb8CvI+QGQ2ZpnTko6BDwuRJfghknmGL6T7kAjs5IBxf6TrvsndAQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715838920; c=relaxed/simple;
+	bh=xMvyt0Z5g7e3xmtO9PR6aw0WgugOD1OHXY3O55x0INQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Prov8jnZ01j4ClxkdGoikI17xa3Tk/4AzggEsmwEPahhyRfehdYB4/SdF4LLS28LmX9Dt6/t0IUQZ+80rE+q0c73AngmH2ea6D/mqdxFM7197Dakhuxwe9YmUvS8+JidWVtGu7uk2axRqZblrTaVW7DASk3l+TPzR03gQpLOo4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n8TmgJGB; arc=none smtp.client-ip=198.175.65.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715838790; x=1747374790;
-  h=date:from:to:cc:subject:message-id:reply-to:references:
-   content-transfer-encoding:in-reply-to:mime-version;
-  bh=QzlzCXKePyuL2H/xpFi9DeM4kofg5fd9mZYC2+zWS8M=;
-  b=Ks2SSCAou0rhC1ejbyXCwwPSNfd2DJVK/7Q2z7CgbU3z4aX6dq4RVWen
-   Mj2FZFLfE2lSR8u23KvrwMNB/zIi3iaYtQp/XKa5MOUtGvYruOBlBgvaq
-   5wmpuFknmPnnV5SWAgooWLnvs6zqhFx5zxs+CCFkgBy+HnRNv6zI23Bk4
-   fDUxjYwIIM3e2+59A6vH7fo0teR7eLqyimdjzM/uy97Tq8gVC5JT/cmMm
-   Ml40VKrR5ldKNBEx7ZUfFX3iVEWzaQMGqBZRPFOZ+cFJdDdoAjPKLaMqt
-   ILN1i7eQKAq2qG/AwBO4ZZ5Jn6K9QZEGeo2Kxm9WpuEtv4g7OzVPkHd5q
-   g==;
-X-CSE-ConnectionGUID: Yrjn8SLmTQOuwcpwJ5weOg==
-X-CSE-MsgGUID: /bJWb1eITneFIFSeouG7vw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="15754070"
+  t=1715838918; x=1747374918;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=xMvyt0Z5g7e3xmtO9PR6aw0WgugOD1OHXY3O55x0INQ=;
+  b=n8TmgJGBCALq1e0HEUgrg9ESdrJBAEw7avnZvcmR4kPlXpUDBoytMTL4
+   9CJGkH+FJYkHDkPTE9Qww5dRWpLvSj2LPhy15R2IZy0YQ602ZLMV4f0ll
+   jE/ZC6n5KY6u5oCJMdMjRez9v8YMA8zk4ONu0mGClO0XFPXOQKFmRU09k
+   mqyodWw+zjQb4QXd3MxamFEcL8hTZWF1TiCXj6bT6UAYAuKC53J3Riukr
+   l349sYQDnnIpYqnMNzKj6NFMy4x0OJz4I9JACpwQF9MkVNWH57i5mMKDk
+   oyuVx14ozPtBO3mXgxchudtCikTp3Tamfv/Pc0TAmT6QWoypLuQvDdIrg
+   w==;
+X-CSE-ConnectionGUID: I36hOh0jQP+IO5xavYaRJQ==
+X-CSE-MsgGUID: xaPDt0urQT6pyyyaguoXRQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="15754318"
 X-IronPort-AV: E=Sophos;i="6.08,163,1712646000"; 
-   d="scan'208";a="15754070"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 22:53:09 -0700
-X-CSE-ConnectionGUID: 9ezaEPUNQ0K0UP61syEZOw==
-X-CSE-MsgGUID: /NCKCxgSQfOhnCEOltGc6w==
+   d="scan'208";a="15754318"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 22:55:17 -0700
+X-CSE-ConnectionGUID: KTBMe29zTS+0c4w5wkmLoQ==
+X-CSE-MsgGUID: xc3VgJ2pQMe1HxnSw9hpOg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,163,1712646000"; 
-   d="scan'208";a="62511351"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 15 May 2024 22:53:09 -0700
-Received: from fmsmsx602.amr.corp.intel.com (10.18.126.82) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Wed, 15 May 2024 22:53:09 -0700
-Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35 via Frontend Transport; Wed, 15 May 2024 22:53:09 -0700
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (104.47.73.168)
- by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Wed, 15 May 2024 22:53:09 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Bby1LxvApymh6RC9U6zXhJpt2yG56RbRZMJhnEJtikSgMKOFZ/5j3jPRk32aaYEULW6DnTfbKtJQ9p0KsJM0uhIUobyWZRimvpQbkN7b1ftfV0+twZ5rInFMwXNTCAKikXhM1ea7fizydMkKi3WruA+cY5tXJA31lqm3r2JxHFSzgxLTZthsgasU7UjWdZvahjzSoWXpEwvYqkKw0oZBvxhq3TgelXkfxqQoD3YkGVX75UqW+w7LefhHJTtq0L0S6TqS4EHXD5sq3Dpf2gu7sCCwqFgI4jjvUHFTQ3D3aC6DQjgkH3Oer7si6NxyB9xdUl28v5Ilpzvt3mhW/pmzzQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2uwZOIzLq7BX1Nt2evGGEMKPlu4kpTPp+gb/eQ32V9U=;
- b=noLNo/8gjXSlBAOyddziE3fvY73se7JWtsV5xd6zyK4NIpFmsLhdRnA9oZ90OzWFZLYbnk0LntAk/3zcVE0xcm4xRnZrwKOKJkuBsjFyoUAdnBaBqO3I5TmkQzp7v+lpxeNohoPHF4h1glPmD/gJ150QcXTp6b19IbDmm3hlbz6uMSniP/fOdClxVynK2kb0zHCyiLUDtHqwGbPzLnv05wru7NL6OdeW+T+Q99choYtQmT49q8hDwS4ucC9Ogf33+KWq4mRBEBwEnYw+lST98X/h0qkXAN9DIKpOZI7iMcvl13hrsb98wOVueQ8Tkna61CQR2/JNESgeynvzqwMNJA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS7PR11MB5966.namprd11.prod.outlook.com (2603:10b6:8:71::6) by
- SN7PR11MB7089.namprd11.prod.outlook.com (2603:10b6:806:298::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Thu, 16 May
- 2024 05:53:06 +0000
-Received: from DS7PR11MB5966.namprd11.prod.outlook.com
- ([fe80::e971:d8f4:66c4:12ca]) by DS7PR11MB5966.namprd11.prod.outlook.com
- ([fe80::e971:d8f4:66c4:12ca%6]) with mapi id 15.20.7587.026; Thu, 16 May 2024
- 05:53:06 +0000
-Date: Thu, 16 May 2024 13:52:19 +0800
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: "Huang, Kai" <kai.huang@intel.com>
-CC: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>, "kvm@vger.kernel.org"
-	<kvm@vger.kernel.org>, "pbonzini@redhat.com" <pbonzini@redhat.com>,
-	"seanjc@google.com" <seanjc@google.com>, "sagis@google.com"
-	<sagis@google.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "Aktas, Erdem" <erdemaktas@google.com>,
-	"isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>, "dmatlack@google.com"
-	<dmatlack@google.com>
-Subject: Re: [PATCH 04/16] KVM: x86/mmu: Add address conversion functions for
- TDX shared bit of GPA
-Message-ID: <ZkWfE2KSpPgv6RND@yzhao56-desk.sh.intel.com>
-Reply-To: Yan Zhao <yan.y.zhao@intel.com>
-References: <fe9687d5f17fa04e5e15fdfd7021fa6e882d5e37.camel@intel.com>
- <465b8cb0-4ce1-4c9b-8c31-64e4a503e5f2@intel.com>
- <bf1038ae56693014e62984af671af52a5f30faba.camel@intel.com>
- <4e0968ae-11db-426a-b3a4-afbd4b8e9a49@intel.com>
- <0a168cbcd8e500452f3b6603cc53d088b5073535.camel@intel.com>
- <6df62046-aa3b-42bd-b5d6-e44349332c73@intel.com>
- <1270d9237ba8891098fb52f7abe61b0f5d02c8ad.camel@intel.com>
- <d5c37fcc-e457-43b0-8905-c6e230cf7dda@intel.com>
- <0a1afee57c955775bef99d6cf34fd70a18edb869.camel@intel.com>
- <d8ff5e19-85a7-46bf-9dad-7221b54d8502@intel.com>
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d8ff5e19-85a7-46bf-9dad-7221b54d8502@intel.com>
-X-ClientProxiedBy: KU1PR03CA0005.apcprd03.prod.outlook.com
- (2603:1096:802:18::17) To DS7PR11MB5966.namprd11.prod.outlook.com
- (2603:10b6:8:71::6)
+   d="scan'208";a="31306965"
+Received: from unknown (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 22:55:10 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Yuanchu Xie <yuanchu@google.com>
+Cc: David Hildenbrand <david@redhat.com>,  "Aneesh Kumar K.V"
+ <aneesh.kumar@linux.ibm.com>,  Khalid Aziz <khalid.aziz@oracle.com>,
+  Henry Huang <henry.hj@antgroup.com>,  Yu Zhao <yuzhao@google.com>,  Dan
+ Williams <dan.j.williams@intel.com>,  Gregory Price
+ <gregory.price@memverge.com>,  Kalesh Singh <kaleshsingh@google.com>,  Wei
+ Xu <weixugc@google.com>,  David Rientjes <rientjes@google.com>,  Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>,  "Rafael J. Wysocki"
+ <rafael@kernel.org>,  Andrew Morton <akpm@linux-foundation.org>,  Johannes
+ Weiner <hannes@cmpxchg.org>,  Michal Hocko <mhocko@kernel.org>,  Roman
+ Gushchin <roman.gushchin@linux.dev>,  Muchun Song <muchun.song@linux.dev>,
+  Shuah Khan <shuah@kernel.org>,  Yosry Ahmed <yosryahmed@google.com>,
+  Matthew Wilcox <willy@infradead.org>,  Sudarshan Rajagopalan
+ <quic_sudaraja@quicinc.com>,  Kairui Song <kasong@tencent.com>,  "Michael
+ S. Tsirkin" <mst@redhat.com>,  Vasily Averin <vasily.averin@linux.dev>,
+  Nhat Pham <nphamcs@gmail.com>,  Miaohe Lin <linmiaohe@huawei.com>,  Qi
+ Zheng <zhengqi.arch@bytedance.com>,  Abel Wu <wuyun.abel@bytedance.com>,
+  "Vishal Moola (Oracle)" <vishal.moola@gmail.com>,  Kefeng Wang
+ <wangkefeng.wang@huawei.com>,  linux-kernel@vger.kernel.org,
+  linux-mm@kvack.org,  cgroups@vger.kernel.org,
+  linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v1 0/7] mm: workingset reporting
+In-Reply-To: <20240504073011.4000534-1-yuanchu@google.com> (Yuanchu Xie's
+	message of "Sat, 4 May 2024 00:30:04 -0700")
+References: <20240504073011.4000534-1-yuanchu@google.com>
+Date: Thu, 16 May 2024 13:53:17 +0800
+Message-ID: <87v83eb8vm.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR11MB5966:EE_|SN7PR11MB7089:EE_
-X-MS-Office365-Filtering-Correlation-Id: 83b5403d-8506-4250-5158-08dc756c7502
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|366007|376005;
-X-Microsoft-Antispam-Message-Info: =?iso-8859-1?Q?dh4wDyZFvLUDvv/1BOMXA0cTGjmxFFI9AAYjIMIabwekIPFQ76xXiFOR02?=
- =?iso-8859-1?Q?1YD2usSj+5ZCjo/BtzGZ6UyOcg4WbfMh4sXJZPZWokFDabgEZL4/XRP55u?=
- =?iso-8859-1?Q?sQuBNUxYUGTE2f0JSEjgu63/bQBN/HpA6gOxafVfnSUL5JOi7LgIpUsnM8?=
- =?iso-8859-1?Q?ATZW/8jxSIIq813yBYrD21SqFOncmNEOinRuQuQBjJ/3Ac857X1FkpPXP8?=
- =?iso-8859-1?Q?qLDCuoilFlVVuVa37NIV/XUU48jx6Vkfxu6TRu1HNQKoG0PDUzRPzNvMgc?=
- =?iso-8859-1?Q?CaEO7Rih1GySqpkraSYP4v2KI/pBVJ5c8cpTORn9XfekNTrjSiD2YFLVwv?=
- =?iso-8859-1?Q?qMfDx9n5kWhPfb5gJLweaxyip2S3ph/abvr7EWrOs9wnAjkP2Eguuz18eu?=
- =?iso-8859-1?Q?IFyWT+2ErWEQ2+FWf5qYI7BqfFPS2/0OQ11eg2jVV/OJvKYSwjoTuDcfCF?=
- =?iso-8859-1?Q?IxjjP1HMkqZwWu4q43XebDyLdRHW1yK6iKcDEN0CVkSsYae3/Sgg/C+soz?=
- =?iso-8859-1?Q?omlt/RU4uk73w+MYFlWaT5UsusZXQae30ODGHg7vGk+t1PB4YfO3ekwBUK?=
- =?iso-8859-1?Q?tqLHyNmCCuwHCkbA1LODi5rRuhNdgOXe2xdsx0266dMBEVx968zlzXngxd?=
- =?iso-8859-1?Q?yfL9iUvE+9cCc3SLZfDrM12dXqtnLznShcx8joEiaRdRSoHMy7b6/fS2/+?=
- =?iso-8859-1?Q?wkAok41Q8AxaerEH5ElYOncQ4n5OdnaWzG0LmWXRoOQFRrLU92/K+8ftTA?=
- =?iso-8859-1?Q?SO0bKTHyiqi/Pcypjf/u/8cm9TbEzOI79GVziWjeXT4jVFjMuWxHUmXz8d?=
- =?iso-8859-1?Q?iK4IcI/zjeo2wrKrMBuZ6ae5jqXXp3GKHNiACs8Ti8Oq2kcsjERMQ2spdo?=
- =?iso-8859-1?Q?MvKEHiOkdaNoZzKhu1chg/k9+Lyrp0Cm1oZ0lwIGiykCrN3OdzQetIfTey?=
- =?iso-8859-1?Q?DZ+OPuX0LDIZul9JqPU5lnU+brFSt6t+ambcwPG2KQj4oupQFYKRr6zL+5?=
- =?iso-8859-1?Q?121g2bj4/QU81PPF/BD7YCllKtsf6czxKKYVXfLkEjjF9MYvnXn2sAukon?=
- =?iso-8859-1?Q?GYYnbNWlSMmm0JWFwvnF0z4KEx17OBa7kRvinwKUOVp5wsZg9/F3U8rS7w?=
- =?iso-8859-1?Q?lhAuCam+Lgg1s+ZBZZj0ZyY5OqV5nKj51kwxXnoVvHtfYZwR6Q/+/sXqpO?=
- =?iso-8859-1?Q?vDMLwxxYiTdW852i3fn82tmCmo5MjfKKBJMSIeFUL9ImmmHoBjigsKpPdj?=
- =?iso-8859-1?Q?EhGicGsd38pcLH5G/30wKw90KC5kv36tKbH2lrAOWkjbGAh+p4qlSRcprz?=
- =?iso-8859-1?Q?mqZnsB4kVcJMrhuBvFjR5wfPzQ=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR11MB5966.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(366007)(376005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?zD5jUxnDPYxZB6ezqZ7D0l2LvuSyWrBvEuSroiAI9K5VPTgRu8m28ejlAZ?=
- =?iso-8859-1?Q?uHD+zaCbbVFPCbM3yX25dmWpfRqz5E5O48pDCiOj1ZDFMtRCpvuN8cA/yf?=
- =?iso-8859-1?Q?ZokdQl4UVvhBi29zwgAXJNpoSa5lfMvIT7qW7epHJhrMh8NI3QSA1Ri31p?=
- =?iso-8859-1?Q?LyQ8sXUuiZSNUuuKEZCtNSH56yp1fQ0DRfK9X/fGdZpVtqb3BwtsKZ3/56?=
- =?iso-8859-1?Q?mquSrs/oRDH8eE7KEBbgyg3U6py5y2vH2V/IzKQZ1FG0Nk4ik0B2vwTgst?=
- =?iso-8859-1?Q?szRAdd/xUGiVkdMPSkrmdLL6xVNHH3/60Z3MGFkUw+LuXxH6/dEzX/KFD0?=
- =?iso-8859-1?Q?wCXGnrceOf8kTS49HudhDnZNnHBceY6pqqnh6jlHonmTDLRK7PvauyxAMn?=
- =?iso-8859-1?Q?+rFzb0zzpY1qPkY8Lo0hn7WNf3yK3O2RIffEtu7gPvSFU6siPcwJqcA04b?=
- =?iso-8859-1?Q?rJbLwewWpryD/YL1XHSYccoCi4doscpVxXqcyjoJ/yj9WB1YeGaq45P/sX?=
- =?iso-8859-1?Q?NSs//hRK9+H7HO7YbluvHqXr5Ef0qwo0GduoY/2HWJsKkZKt1dz4V0qsqn?=
- =?iso-8859-1?Q?3YMPMVMgZ6spOr8oMpPvQ10nicZaJO8JQbn0a9jsfzgcOKf8GfDSMlE/xo?=
- =?iso-8859-1?Q?1+gROcx9MiG8yFt6jpEUG1mwOt+tx7vsJGCWi2bxbIw30tFjyBtZShFret?=
- =?iso-8859-1?Q?Cuyymv4miSNZuzHk9Lhk9rmrX8DTdz0NJ96yea8hp8HfUX5CsAQI+t8kDJ?=
- =?iso-8859-1?Q?/Boo+LlYIEJjMniZePhgnnM2Nfimqn1pw6qlBotWUySYP/GBpg7NkCrGz/?=
- =?iso-8859-1?Q?rZKH8BH4cZZDGj+2depePEUOT+7TDGoTEEwxm0YtWYH5SjPEyWza+LAtXK?=
- =?iso-8859-1?Q?aYPfCnYMBK+pEAtNfTz3ie0u0T00J1Lq+MFZ+3QoEF9IYCGQSVDNZo8OJQ?=
- =?iso-8859-1?Q?ngRb+MJ5TDGOs5uKo96ivxdgrxYIBByP9zD5BCoLy4oDsCRBSSjup7qrd5?=
- =?iso-8859-1?Q?jHapuC8cb1vfTxNwaLeVp6u+42yIiAEK4ifZfR+Pwo/+x3jo2A2ROjrP5P?=
- =?iso-8859-1?Q?D4iCQZke1pVADt0k6CssMmNdGiDOFigx/XOtZCc5vtQtIW+vkJounK9fvb?=
- =?iso-8859-1?Q?0CJ77l5btMqHFM9GkUKiGPRLk11HinKDo1wwQp+THYZfyhVT025w6RVUnt?=
- =?iso-8859-1?Q?KpR5QfUxwSEZZ7r/+d8VpSPx+fGEriITsf/ND5ed3/mIHdx2qNLELov7IV?=
- =?iso-8859-1?Q?5OOXIcl8ivwIymzBSvkPowXsKlrR+WwDEdgE6s7LqxQNjzsy2CnHYCLdiU?=
- =?iso-8859-1?Q?hR54DyOdq4be88EFwhrwDKEwfQVy3Pd/aBoyipidZ5hJIDKlQvEhvWW5/x?=
- =?iso-8859-1?Q?HNJFwpePqgc6uEi/HXLtFEdrtCTTuqtVIFXhY53uWCwu3+he9GGH0sABpZ?=
- =?iso-8859-1?Q?8znoPtGrdiRZW4HKu0qj2s3UYyrmtzhaiEPtCAiJX02B4h9ThyRvC826QX?=
- =?iso-8859-1?Q?4TqHAOEtL/IbqBgdezVyarPMVFN6zV9mg7mg+YjeKQmeNnnmlwaEFJZqkL?=
- =?iso-8859-1?Q?VqeKgUO04h/oidxCXU6PAgUu3u38kSJV0xSYu+CPyTl5d245JgzacMyqMz?=
- =?iso-8859-1?Q?6sSnDJ/y4ymFlomsIW9D40o7h/QQHwR5es?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 83b5403d-8506-4250-5158-08dc756c7502
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR11MB5966.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 May 2024 05:53:06.0936
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: AO8bOhk0r3sudzKYyZmrcjUBdLQZo09zltpL4NVlsNW6qa6C8g36p51g3dp7r8Wqp1/V7lgvn4FnM2CqEm12jw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB7089
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=ascii
 
-On Thu, May 16, 2024 at 01:40:41PM +1200, Huang, Kai wrote:
-> 
-> 
-> On 16/05/2024 1:20 pm, Edgecombe, Rick P wrote:
-> > On Thu, 2024-05-16 at 13:04 +1200, Huang, Kai wrote:
-> > > 
-> > > I really don't see difference between ...
-> > > 
-> > >          is_private_mem(gpa)
-> > > 
-> > > ... and
-> > > 
-> > >          is_private_gpa(gpa)
-> > > 
-> > > If it confuses me, it can confuses other people.
-> > 
-> > Again, point taken. I'll try to think of a better name. Please share if you do.
-> > 
-> > > 
-> > > The point is there's really no need to distinguish the two.  The GPA is
-> > > only meaningful when it refers to the memory that it points to.
-> > > 
-> > > So far I am not convinced we need this helper, because such info we can
-> > > already get from:
-> > > 
-> > >     1) fault->is_private;
-> > >     2) Xarray which records memtype for given GFN.
-> > > 
-> > > So we should just get rid of it.
-> > 
-> > Kai, can you got look through the dev branch a bit more before making the same
-> > point on every patch?
-> > 
-> > kvm_is_private_gpa() is used to set PFERR_PRIVATE_ACCESS, which in turn sets
-> > fault->is_private. So you are saying we can use these other things that are
-> > dependent on it. Look at the other callers too.
-> 
-> Well, I think I didn't make myself clear.
-> 
-> I don't object to have this helper.  If it helps, then we can have it.
-> 
-> My objection is the current implementation of it, because it is
-> *conceptually* wrong for SEV-SNP.
-> 
-> Btw, I just look at the dev branch.
-> 
-> For the common code, it is used in kvm_tdp_mmu_map() and
-> kvm_tdp_mmu_fast_pf_get_last_sptep() to get whether a GPA is private.
-> 
-> As said above, I don't see why we need a helper with the "current
-> implementation" (which consults kvm_shared_gfn_mask()) for them.  We can
-> just use fault->gfn + fault->is_private for such purpose.
-What about a name like kvm_is_private_and_mirrored_gpa()?
-Only TDX's private memory is mirrored and the common code needs a way to
-tell that.
+Hi, Yuanchu,
 
+Yuanchu Xie <yuanchu@google.com> writes:
 
-> It is also used in the TDX code like TDX variant handle_ept_violation() and
-> tdx_vcpu_init_mem_region().  For them to be honest I don't quite care
-> whether a helper is used.  We can have a helper if we have multiple callers,
-> but this helper should be in TDX code, but not common MMU code.
-> 
+> Changes from RFC v3 -> PATCH v1:
+> - Updated selftest to use ksft_print_msg instead of fprintf(stderr, ...)
+>   (Muhammad Usama Anjum)
+> - Included more detail in patch skipping pmd_young with force_scan
+>   (Huang, Ying)
+> - Deferred reaccess histogram as a followup
+> - Removed per-memcg page age interval configs for simplicity
+>
+> Changes from RFC v2 -> RFC v3:
+> - Update to v6.8
+> - Added an aging kernel thread (gated behind config)
+> - Added basic selftests for sysfs interface files
+> - Track swapped out pages for reaccesses
+> - Refactoring and cleanup
+> - Dropped the virtio-balloon extension to make things manageable
+>
+> Changes from RFC v1 -> RFC v2:
+> - Refactored the patchs into smaller pieces
+> - Renamed interfaces and functions from wss to wsr (Working Set Reporting)
+> - Fixed build errors when CONFIG_WSR is not set
+> - Changed working_set_num_bins to u8 for virtio-balloon
+> - Added support for per-NUMA node reporting for virtio-balloon
+>
+> [rfc v1]
+> https://lore.kernel.org/linux-mm/20230509185419.1088297-1-yuanchu@google.com/
+> [rfc v2]
+> https://lore.kernel.org/linux-mm/20230621180454.973862-1-yuanchu@google.com/
+> [rfc v3]
+> https://lore.kernel.org/linux-mm/20240327213108.2384666-1-yuanchu@google.com/
+>
+> This patch series provides workingset reporting of user pages in
+> lruvecs, of which coldness can be tracked by accessed bits and fd
+> references. However, the concept of workingset applies generically to
+> all types of memory, which could be kernel slab caches, discardable
+> userspace caches (databases), or CXL.mem. Therefore, data sources might
+> come from slab shrinkers, device drivers, or the userspace. IMO, the
+> kernel should provide a set of workingset interfaces that should be
+> generic enough to accommodate the various use cases, and be extensible
+> to potential future use cases. The current proposed interfaces are not
+> sufficient in that regard, but I would like to start somewhere, solicit
+> feedback, and iterate.
+>
+> Use cases
+> ==========
+> Job scheduling
+> On overcommitted hosts, workingset information allows the job scheduler
+> to right-size each job and land more jobs on the same host or NUMA node,
+> and in the case of a job with increasing workingset, policy decisions
+> can be made to migrate other jobs off the host/NUMA node, or oom-kill
+> the misbehaving job. If the job shape is very different from the machine
+> shape, knowing the workingset per-node can also help inform page
+> allocation policies.
+>
+> Proactive reclaim
+> Workingset information allows the a container manager to proactively
+> reclaim memory while not impacting a job's performance. While PSI may
+> provide a reactive measure of when a proactive reclaim has reclaimed too
+> much, workingset reporting allows the policy to be more accurate and
+> flexible.
+>
+> Ballooning (similar to proactive reclaim)
+> While this patch series does not extend the virtio-balloon device,
+> balloon policies benefit from workingset to more precisely determine
+> the size of the memory balloon. On desktops/laptops/mobile devices where
+> memory is scarce and overcommitted, the balloon sizing in multiple VMs
+> running on the same device can be orchestrated with workingset reports
+> from each one.
+>
+> Promotion/Demotion
+> Similar to proactive reclaim, a workingset report enables demotion to a
+> slower tier of memory.
+> For promotion, the workingset report interfaces need to be extended to
+> report hotness and gather hotness information from the devices[1].
+>
+> [1]
+> https://www.opencompute.org/documents/ocp-cms-hotness-tracking-requirements-white-paper-pdf-1
+
+This mechanism can also provide a way to control the pages ping-pong
+caused by promotion and demotion.  If different methods are used for
+promotion and demotion, some pages may be migrated between the fast and
+slow memory back and forth.  Because there's no connection between
+promotion side and demotion side.  For example, if we use NUMA balancing
+based promotion and MGLRU based demotion.
+
+If we use workingset reporting on the fast memory nodes, then we can
+establish the connection between demotion and promotion with it.  For
+example, the promotion hot pages threshold (determined as accessed every
+N seconds) should be set to make 80% of the fast memory pages pass the
+threshold.  This can be calculated with the workingset reporting
+statistics.
+
+> Sysfs and Cgroup Interfaces
+> ==========
+> The interfaces are detailed in the patches that introduce them. The main
+> idea here is we break down the workingset per-node per-memcg into time
+> intervals (ms), e.g.
+>
+> 1000 anon=137368 file=24530
+> 20000 anon=34342 file=0
+> 30000 anon=353232 file=333608
+> 40000 anon=407198 file=206052
+> 9223372036854775807 anon=4925624 file=892892
+>
+> I realize this does not generalize well to hotness information, but I
+> lack the intuition for an abstraction that presents hotness in a useful
+> way. Please advise.
+>
+> Implementation
+> ==========
+> Currently, the reporting of user pages is based off of MGLRU, and
+> therefore requires CONFIG_LRU_GEN=y. We would benefit from more MGLRU
+> generations for a more fine-grained workingset report. I will make the
+> generation count configurable in the next version. The workingset
+> reporting mechanism is gated behind CONFIG_WORKINGSET_REPORT, and the
+> aging thread is behind CONFIG_WORKINGSET_REPORT_AGING.
+>
+> Yuanchu Xie (7):
+>   mm: multi-gen LRU: ignore non-leaf pmd_young for force_scan=true
+>   mm: aggregate working set information into histograms
+>   mm: use refresh interval to rate-limit workingset report aggregation
+>   mm: report workingset during memory pressure driven scanning
+>   mm: extend working set reporting to memcgs
+>   mm: add kernel aging thread for workingset reporting
+>   selftest: test system-wide workingset reporting
+>
+>  drivers/base/node.c                           |   6 +
+>  include/linux/memcontrol.h                    |   5 +
+>  include/linux/mmzone.h                        |   9 +
+>  include/linux/workingset_report.h             |  97 ++++
+>  mm/Kconfig                                    |  15 +
+>  mm/Makefile                                   |   2 +
+>  mm/internal.h                                 |  17 +
+>  mm/memcontrol.c                               | 184 +++++-
+>  mm/mm_init.c                                  |   2 +
+>  mm/mmzone.c                                   |   2 +
+>  mm/vmscan.c                                   |  85 ++-
+>  mm/workingset_report.c                        | 545 ++++++++++++++++++
+>  mm/workingset_report_aging.c                  | 127 ++++
+>  tools/testing/selftests/mm/.gitignore         |   1 +
+>  tools/testing/selftests/mm/Makefile           |   3 +
+>  .../testing/selftests/mm/workingset_report.c  | 317 ++++++++++
+>  .../testing/selftests/mm/workingset_report.h  |  39 ++
+>  .../selftests/mm/workingset_report_test.c     | 332 +++++++++++
+>  18 files changed, 1786 insertions(+), 2 deletions(-)
+>  create mode 100644 include/linux/workingset_report.h
+>  create mode 100644 mm/workingset_report.c
+>  create mode 100644 mm/workingset_report_aging.c
+>  create mode 100644 tools/testing/selftests/mm/workingset_report.c
+>  create mode 100644 tools/testing/selftests/mm/workingset_report.h
+>  create mode 100644 tools/testing/selftests/mm/workingset_report_test.c
+
+--
+Best Regards,
+Huang, Ying
 
