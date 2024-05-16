@@ -1,55 +1,57 @@
-Return-Path: <linux-kernel+bounces-181125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 793E48C77BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:33:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 672D48C77C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:34:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 186ED1F23B3A
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 13:33:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04FA9B24025
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 13:34:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08BE31474DA;
-	Thu, 16 May 2024 13:32:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB0881474C6;
+	Thu, 16 May 2024 13:34:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="f8zPVTPn"
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="owcwvjZq"
 Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79CD828680;
-	Thu, 16 May 2024 13:32:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A51E6143749;
+	Thu, 16 May 2024 13:34:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715866377; cv=none; b=I82urFkYGXAI/ummY9CNJ46Jykd8NEMWDsvdRQOgID2g9L4xk9UsucP1SIb5sERd6RQjYGs2FdKHu8HPMSWIkjE+uztFi8P5qyDuGw7+ASHLGwQXHZikH8xlqfR0bwC4WOwgAq0VSiDmuhRe7D4HiR8dPPz5pu3QUixRuKJdtQE=
+	t=1715866454; cv=none; b=eVA2DU0Fdxb8cIHcJoPZq8v+jHRM47r1b/msimUrd6JOmbV0NudA3hyGNjaNLR62Z3xf8jo+sh3jUftsXGSwseyVapqSUgoFOv2gUb3YBO205+KduY1p6tzXZpQ25dm8GtvD7yFWFowggmgcdNJDcGH+S1Giza5IByWPsGifeR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715866377; c=relaxed/simple;
-	bh=jApHfm8/bGAOo7hSMkRKiQcKQv8hcQiKeAJ//Yh4Vwc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dsw8I6vhTpI7GQPN3M349TdM3K3TJ+jZeEOGw60T2UfAmHnqMSFEniPT9eZPSEFjN913Ss5pT6JTdb7VMt6fhu5B7obvw9yabe/mqL3tOhCTV4bEcw0499qPFmQf1d0WSSZWsqbRB+YKXF2KcMcu8iwUpCjxCmlQYEcsCjCQpwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=f8zPVTPn; arc=none smtp.client-ip=46.235.229.95
+	s=arc-20240116; t=1715866454; c=relaxed/simple;
+	bh=JZvIP7fkjlxerYAwRuAF9K+xV359GpVBqaDRbE9116Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t6E+sbJZQDYUlunY5R4LJh5PZcBp+mheq/6euZJpCC914G020Oi5AyK0Aw7jGhSFTkEIEADwc/edN7E6jzdOKFCT/DgFIHEEhiouCv8AA1m9sc6Tjpjsdv2A9r43Gdfs5Nw7cnvt9X1OqvNLxAcOdQsygjfSe0GHCB4uCPGPxfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=owcwvjZq; arc=none smtp.client-ip=46.235.229.95
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
 	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=4CckRCztzC0FnG15EZ5xwjbQEYuzYOC91cP0DsJpFpQ=; b=f8zPVTPncpSQqRqt
-	YdvW4tS99vg2+3kaJ6Aa9k44yxJ4CKRVp8v6rw8BLmbzkJ1TAlWVicfL1r+sM13v8Z/e8iitifsJq
-	74ThXqQbXTWw1CpafjHTxg8zGQ7mVHz3CMvagpdy5kTNCmsOFYEWsY52Ne2M/SLVK5tSAGhm52XdW
-	dctqbIYeSsO6kbM9pRoLiM2u8iyzhe34jzFDm8NfK3MfoYxNSVnLFyPMOvANLkpOrn0SwhFReNdvP
-	RVan5dDeLJfh/X03pnNozjMdcZTnC61zUbSbU7LX9hycnuZweYkQtkN55lzM7jSfV2+CBOlzKoWMD
-	HKFVWBzwBh1IVc5B1A==;
+	:Subject; bh=vBlXl//d/RAlmi+HPxPl7U1cJg4Qh2W+C0TMwykXuCM=; b=owcwvjZqnqwfx97a
+	Kg8KkWhv6iQak1OkJCznYE9cXRQagAbfagvCTPVhu0k/xFtifRQCAwTxCzyc0JX3s1VdxwokMcFYD
+	bR3QAAkOnKTkD83BkXnR//hCjUIoUS2WM3XmCZ+jHKUav48YvtUpA+KdopFXTFILylGh3UTqEtQhB
+	j2P0vUMOzlC+SD7C+Hf7mBUFdk+QgklMen5j5FHteWSK6rmx+UVf5aFPKyVfsaRUSoOJO/NzfP7sT
+	fB3Fpl5wi8QwscfO75HM0IA6ml2IqU79PGa1sjMOS6JXIJYGBjNBASAmvO7g4RjBdJndTLj50JrA6
+	MVXxtSIJ6z4v/F0mWg==;
 Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
 	by mx.treblig.org with esmtp (Exim 4.96)
 	(envelope-from <linux@treblig.org>)
-	id 1s7bE3-001EmN-1u;
-	Thu, 16 May 2024 13:32:52 +0000
+	id 1s7bFG-001EoT-0y;
+	Thu, 16 May 2024 13:34:06 +0000
 From: linux@treblig.org
-To: vkoul@kernel.org
-Cc: dmaengine@vger.kernel.org,
+To: rric@kernel.org,
+	bp@alien8.de,
+	james.morse@arm.com
+Cc: linux-edac@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] dmaengine: moxart-dma: remove unused struct 'moxart_filter_data'
-Date: Thu, 16 May 2024 14:32:50 +0100
-Message-ID: <20240516133250.251252-1-linux@treblig.org>
+Subject: [PATCH] edac: thunderx: remove unused struct 'error_syndrome'
+Date: Thu, 16 May 2024 14:34:04 +0100
+Message-ID: <20240516133404.251397-1-linux@treblig.org>
 X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -61,30 +63,31 @@ Content-Transfer-Encoding: 8bit
 
 From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-'moxart_filter_data' never appears to have been used.
-Remove it.
+'error_syndrome' appears never to have been used.
+Remove it, together with the MAX_SYNDROME_REGS it used.
 
 Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 ---
- drivers/dma/moxart-dma.c | 5 -----
- 1 file changed, 5 deletions(-)
+ drivers/edac/thunderx_edac.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-diff --git a/drivers/dma/moxart-dma.c b/drivers/dma/moxart-dma.c
-index c48d68cbff92..66dc6d31b603 100644
---- a/drivers/dma/moxart-dma.c
-+++ b/drivers/dma/moxart-dma.c
-@@ -148,11 +148,6 @@ struct moxart_dmadev {
- 	unsigned int			irq;
+diff --git a/drivers/edac/thunderx_edac.c b/drivers/edac/thunderx_edac.c
+index fab9891e569a..75c04dfc3962 100644
+--- a/drivers/edac/thunderx_edac.c
++++ b/drivers/edac/thunderx_edac.c
+@@ -35,12 +35,6 @@ enum {
+ 	ERR_UNKNOWN	= 3,
  };
  
--struct moxart_filter_data {
--	struct moxart_dmadev		*mdc;
--	struct of_phandle_args		*dma_spec;
+-#define MAX_SYNDROME_REGS 4
+-
+-struct error_syndrome {
+-	u64 reg[MAX_SYNDROME_REGS];
 -};
 -
- static const unsigned int es_bytes[] = {
- 	[MOXART_DMA_DATA_TYPE_S8] = 1,
- 	[MOXART_DMA_DATA_TYPE_S16] = 2,
+ struct error_descr {
+ 	int	type;
+ 	u64	mask;
 -- 
 2.45.0
 
