@@ -1,106 +1,200 @@
-Return-Path: <linux-kernel+bounces-181356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BC6F8C7AEC
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 19:13:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D25A18C7AF0
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 19:15:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B209B21BCA
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:13:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01ED01C21A93
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:15:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2221A1553B1;
-	Thu, 16 May 2024 17:13:19 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2AB1156249;
+	Thu, 16 May 2024 17:15:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ta6k+4xH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE492154BF0
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 17:13:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5DAB155388;
+	Thu, 16 May 2024 17:15:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715879598; cv=none; b=aAb8IHGcSVdhrJqjFcrDgg3LZnLZqsAkbuIg46Mwv+d2vSWDSV5f0aFMCbtioRwUDLCBw8Cf/u5JwaPJLhW5yBN5aBco5FgPQ11X+VVKfPJvn8yDHGCZTpDxEkMdI+VkED7+2ltOOQIZLHW7+5utK2kuC1qsHoD3hmfsQIrVufU=
+	t=1715879725; cv=none; b=JCHHo8XGYWxUj1eciE8RgOsm9GN4kiEBIseTEuPPBk1eI3ufOTTJorLrkYXNTWVRr7OZ7pubfo44Utjj/OLKuG2flSAvj/tgz/1VnC5M4to0DKZ7y1zaZMCy6wAqEkP1IyGzlFJAOLEMTu63M6V0zeDdzf/qXGURljm6l4aCjU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715879598; c=relaxed/simple;
-	bh=Ntp9s3ZQjej96T2DegVyNKETmpnMIscSNouwatw/mIA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=JCBlZmilI+XBDFW4yPuwfEaRmK0cjxxdxiFr/Ty+EEa0yN9dvUCuLVPhW63eEcoXvUs0GA8bl1AKm3kgu381O/ADvQVF2nH5pL8gtZTxm6sALLwkaG+vswzXIqUsfSl1qjFwvSmpBegts2w3o325yWJjc7K6JP/Y5VDfX5eSa4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[IPv6:::1])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <l.stach@pengutronix.de>)
-	id 1s7efD-0005Hj-LM; Thu, 16 May 2024 19:13:07 +0200
-Message-ID: <2c5b62e0898efc61da7bec7a261d10e89ccd4a1e.camel@pengutronix.de>
-Subject: Re: [PATCH] drm/etnaviv: drop driver owner assignment
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Christian Gmeiner <christian.gmeiner@gmail.com>, Krzysztof Kozlowski
-	 <krzysztof.kozlowski@linaro.org>
-Cc: Russell King <linux+etnaviv@armlinux.org.uk>, David Airlie
-	 <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Date: Thu, 16 May 2024 19:13:06 +0200
-In-Reply-To: <CAH9NwWfU5eaBRSqhgJgHwgphtL+KUAiX3Tx_7vO11N_BV7qUQQ@mail.gmail.com>
-References: <20240330205241.92711-1-krzysztof.kozlowski@linaro.org>
-	 <CAH9NwWfU5eaBRSqhgJgHwgphtL+KUAiX3Tx_7vO11N_BV7qUQQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+	s=arc-20240116; t=1715879725; c=relaxed/simple;
+	bh=tJHICD/Spu7eyWw+3JsUCt45YC1BDTTlj6WiULrpyjo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hwUfRCDiETqxM1cks92ApVFgZ68Z8zMxhgmHlqzOo5TAEmlTLcwNY2LKnPqyjBWw9988Ho+ckK445WNbyd/Siy19bI5YqQFKVcH3uGJ1TqZmJsNkbc09eM6+XeanH+bmglSPfqshuFspeMchEeELokToIEO300xy57q3A2UefBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ta6k+4xH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71BC2C113CC;
+	Thu, 16 May 2024 17:15:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715879724;
+	bh=tJHICD/Spu7eyWw+3JsUCt45YC1BDTTlj6WiULrpyjo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ta6k+4xHFjq8OMAL8mQH/vxXeT08gJX4KhTtsBpFPKWTUhfZY8hLfhV33XVBe72r7
+	 PokO8N81kRVzAFYmolhItHrFfsih4DSGPiyfmGKxNrjiUxEMF8pqCW5tVSguH+IaNi
+	 M1ekGqPXV3U9g1jmNJzaPwG1GAorYN/g+fsQHo+X42EUgErNrZmthTHpm5VDogt1D+
+	 a3JMvwY5oVrQF5eHKcTJlzvhkRg2RJwUVRaVmQoItmjvCnTIuOKqtYm/XdANZMBHTq
+	 llyeZ3Wqq8Mfrhn5DMlSWrBqo3p4F4cqwgJyMz2qMf4tzl9xawmY2hC3X4BZfPup64
+	 XNKCxcoznr2CA==
+Date: Thu, 16 May 2024 18:15:18 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Shengjiu Wang <shengjiu.wang@gmail.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Shengjiu Wang <shengjiu.wang@nxp.com>, abelvesa@kernel.org,
+	peng.fan@nxp.com, mturquette@baylibre.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org,
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+	marex@denx.de, linux-clk@vger.kernel.org, imx@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, p.zabel@pengutronix.de
+Subject: Re: [PATCH v3 3/6] dt-bindings: clock: imx8mp: Add reset-controller
+ sub-node
+Message-ID: <20240516-reversing-demeanor-def651bc82ac@spud>
+References: <1715679210-9588-1-git-send-email-shengjiu.wang@nxp.com>
+ <1715679210-9588-4-git-send-email-shengjiu.wang@nxp.com>
+ <20240514-campus-sibling-21cdf4c78366@spud>
+ <b86c83a520f0c45a60249468fa92b1de.sboyd@kernel.org>
+ <CAA+D8ANTdvQJVtniyMtqjnJdT4qX+LDGjVuFO6H0RSO+GDw+ng@mail.gmail.com>
+ <20240515-unbundle-bubble-8623b495a4f1@spud>
+ <ZkT+4yUgcUdB/i2t@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="U2yG7SBZt5e06VSB"
+Content-Disposition: inline
+In-Reply-To: <ZkT+4yUgcUdB/i2t@lizhi-Precision-Tower-5810>
 
-Am Montag, dem 01.04.2024 um 12:26 +0200 schrieb Christian Gmeiner:
+
+--U2yG7SBZt5e06VSB
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, May 15, 2024 at 02:28:51PM -0400, Frank Li wrote:
+> On Wed, May 15, 2024 at 05:04:48PM +0100, Conor Dooley wrote:
+> > On Wed, May 15, 2024 at 10:47:57AM +0800, Shengjiu Wang wrote:
+> > > On Wed, May 15, 2024 at 5:09=E2=80=AFAM Stephen Boyd <sboyd@kernel.or=
+g> wrote:
+> > > >
+> > > > Quoting Conor Dooley (2024-05-14 11:06:14)
+> > > > > On Tue, May 14, 2024 at 05:33:27PM +0800, Shengjiu Wang wrote:
+> > > > > > diff --git a/Documentation/devicetree/bindings/clock/imx8mp-aud=
+iomix.yaml b/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml
+> > > > > > index 0a6dc1a6e122..a403ace4d11f 100644
+> > > > > > --- a/Documentation/devicetree/bindings/clock/imx8mp-audiomix.y=
+aml
+> > > > > > +++ b/Documentation/devicetree/bindings/clock/imx8mp-audiomix.y=
+aml
+> > > > > > @@ -15,7 +15,10 @@ description: |
+> > > > > >
+> > > > > >  properties:
+> > > > > >    compatible:
+> > > > > > -    const: fsl,imx8mp-audio-blk-ctrl
+> > > > > > +    items:
+> > > > > > +      - const: fsl,imx8mp-audio-blk-ctrl
+> > > > > > +      - const: syscon
+> > > > > > +      - const: simple-mfd
+> > > > > >
+> > > > > >    reg:
+> > > > > >      maxItems: 1
+> > > > > > @@ -44,6 +47,11 @@ properties:
+> > > > > >        ID in its "clocks" phandle cell. See include/dt-bindings=
+/clock/imx8mp-clock.h
+> > > > > >        for the full list of i.MX8MP IMX8MP_CLK_AUDIOMIX_ clock =
+IDs.
+> > > > > >
+> > > > > > +  reset-controller:
+> > > > > > +    type: object
+> > > > > > +    $ref: /schemas/reset/fsl,imx8mp-audiomix-reset.yaml#
+> > > > > > +    description: The child reset devices of AudioMIX Block Con=
+trol.
+> > > > >
+> > > > > Why not just set #reset-cells =3D <1> in the existing node? IIRC =
+it was
+> > > > > already suggested to you to do that and use auxdev to set up the =
+reset
+> > > > > driver.
+> > > >
+> > > > Yes, do that.
+> > >=20
+> > > Can I know why sub nodes can't be used? the relationship of parent and
+> > > child devices looks better with sub nodes.
 > >=20
-> > Core in platform_driver_register() already sets the .owner, so driver
-> > does not need to.  Whatever is set here will be anyway overwritten by
-> > main driver calling platform_driver_register().
+> > That's pretty subjective. I don't think it looks better to have a clock
+> > node that is also a syscon with a reset child node as it is rather
+> > inconsistent.
+>=20
+> I think it is multi function device syscon node. it should be like
+>=20
+> mfd
+> {
+> 	clock
+> 	{
+> 		...
+> 	}
+>=20
+> 	reset
+> 	{
+> 		...
+> 	}
+> }
+>=20
+> clock and reset are difference device node with totally difference's
+> compatible string.
+
+Which is I suspect is gonna require a change to your clock driver,
+because the range in the existing clock nodes:
+	audio_blk_ctrl: clock-controller@30e20000 {
+		compatible =3D "fsl,imx8mp-audio-blk-ctrl";
+		reg =3D <0x30e20000 0x10000>;
+	};
+would then have to move to the mfd parent node, and your clock child
+would have a reg property that overlaps the reset region. You'd need to
+then define a new binding that splits the range in two - obviously
+doable, but significantly more work and more disruptive than using an
+auxdev.
+
+> > > A further question is can I use the reset-ti-syscon? which is a gener=
+ic reset
+> > > device for SoCs.  with it I don't even need to write a new reset devi=
+ce driver.
+> > > it is more simple.
 > >=20
-> > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> > That is for a TI SoC. You're working on an imx. I don't think that you
+> > should be using that...
 >=20
-> Reviewed-by: Christian Gmeiner <cgmeiner@igalia.com>
+> I think this statement violate the linux basic reuse prinicple. If the
+> code logic are the same why need duplicate it just because it is differen=
+ce
+> company. Of coures, if it is generic enough, it'd better to add a more
+> generic compatible string.
 
-Applied to the etnaviv/next branch.
+That's true, but I suspect it only works because only through (ab)use
+of the ti,reset-bits property not because you're actually compatible
+with TI's reset hardware.
 
-Regards,
-Lucas
+Cheers,
+Conor.
 
->=20
-> > ---
-> > =C2=A0drivers/gpu/drm/etnaviv/etnaviv_gpu.c | 1 -
-> > =C2=A01 file changed, 1 deletion(-)
-> >=20
-> > diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c b/drivers/gpu/drm/et=
-naviv/etnaviv_gpu.c
-> > index 734412aae94d..87b31cfee41d 100644
-> > --- a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
-> > +++ b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
-> > @@ -1995,7 +1995,6 @@ static const struct dev_pm_ops etnaviv_gpu_pm_ops=
- =3D {
-> > =C2=A0struct platform_driver etnaviv_gpu_driver =3D {
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.driver =3D {
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0.name =3D "etnaviv-gpu",
-> > -               .owner =3D THIS_MODULE,
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0.pm =3D pm_ptr(&etnaviv_gpu_pm_ops),
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0.of_match_table =3D etnaviv_gpu_match,
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0},
-> > --
-> > 2.34.1
-> >=20
->=20
->=20
+--U2yG7SBZt5e06VSB
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZkY/JgAKCRB4tDGHoIJi
+0q+6AQCaCdwhlVdXFZP7SLpIqoKwLTKzXYkUuCLzJaLFquKGEQD9Gnc2Qf41W7Rp
+SFmFc2JvIqe5qBGdEVUNt25VHvyqsgA=
+=A/oq
+-----END PGP SIGNATURE-----
+
+--U2yG7SBZt5e06VSB--
 
