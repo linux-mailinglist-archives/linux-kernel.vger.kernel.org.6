@@ -1,166 +1,77 @@
-Return-Path: <linux-kernel+bounces-181484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E18E8C7CA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 20:49:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 120288C7CB0
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 20:51:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9338E1F218BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:49:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB4301F219AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:51:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7392C156F3B;
-	Thu, 16 May 2024 18:49:24 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05195156F28;
+	Thu, 16 May 2024 18:51:05 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 026A14688
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 18:49:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BFF54688
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 18:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715885364; cv=none; b=WHkXFAtMOmgbXKlf8KcbB/pG/pJOEhi3vqXRryYOJev+TbKm0oupbeHMOcy0X19ydVVbq1LIe9kAuMXTeTIWw44Ut6BbjSGZmqTEtFGeCImMYeJxVgsZYz+qy6ELU7kyWIofx1X2hJq2lgX5UwJu1rADOGq9/6LeGWEttAqxz/o=
+	t=1715885464; cv=none; b=fkm0QXhDh5dBhG2G/8w0DHEwatvqR8UG03YJG+7cE8ZeKMVizDM7RjzjUmd9mqqPsCbkqPkMu6tICebUCsxC7hT8TceAA82XB+Q9Pp0AlD2LAg/Hdlky8HiPaQYuEtFTcT9OXCVc82R8usnW5aa7tc0230jJkAAt6tEZ1fKdUGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715885364; c=relaxed/simple;
-	bh=7sDQLbzYPoMng3X/oV0YblZ0kaUEel4rP8Huz0OPohs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EK5s2lh9lqPWPWvuwwF5ImvBmwF7VohWKxCl2p+GA7KITbch5OjMbsJe0ZTx0lBCKAn7lxnETel+ExuQIW78pWfBEg284HrprN0FQDQ/nXLswffAqviZhpPD9RYQvPA4KbSqoCi8T7K6CeSVn93rQ8Dfb+ik2UngzLKdnU4ivJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mgr@pengutronix.de>)
-	id 1s7gA5-00022d-RR; Thu, 16 May 2024 20:49:05 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mgr@pengutronix.de>)
-	id 1s7gA2-001let-Ll; Thu, 16 May 2024 20:49:02 +0200
-Received: from mgr by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mgr@pengutronix.de>)
-	id 1s7gA2-00Ewms-1m;
-	Thu, 16 May 2024 20:49:02 +0200
-Date: Thu, 16 May 2024 20:49:02 +0200
-From: Michael Grzeschik <mgr@pengutronix.de>
-To: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-Cc: Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	v9fs@lists.linux.dev, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	kernel@pengutronix.de
-Subject: Re: [PATCH v4 2/3] net/9p/usbg: Add new usb gadget function transport
-Message-ID: <ZkZVHoHcdoNF6T2-@pengutronix.de>
-References: <20240116-ml-topic-u9p-v4-0-722ed28b0ade@pengutronix.de>
- <20240116-ml-topic-u9p-v4-2-722ed28b0ade@pengutronix.de>
- <c78c9e88-bd53-4ae5-8f78-d8b1c468a5cd@collabora.com>
- <Zj3y04btf16BGZAJ@pengutronix.de>
- <2f36e766-054c-4001-addf-fe388916d858@collabora.com>
+	s=arc-20240116; t=1715885464; c=relaxed/simple;
+	bh=wKf3MK9DtGzKUzdQByd/03VlFSVP+H7T9f/Z5DRUA/s=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=VKvSs1horQOYeIQxsqAQgv3z5Y+YRdP+nA9z2WQlE6b7AbDyP8AMtFzim6jL7StQtz+/Pdb/1ziKkkp+3FagFb7J8r6S22J5I0q7189zrQlsQSc65qmodTV0bUMhTQQrpnNPMdEEKQvFYNeJfDGc29kn0KpjaIvbfrBcTX81UR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7da4360bbacso1006462939f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 11:51:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715885462; x=1716490262;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wKf3MK9DtGzKUzdQByd/03VlFSVP+H7T9f/Z5DRUA/s=;
+        b=bSx6lYEGSevX5JMnh+/2Chj9tGAN4HvUwn6EXbIOYIcmMI1oq7+iLgrZHM+WTXVfNx
+         DDf5LeDA+SQVTu6yiA4oTNKhtDeWxHd/q7BVaDnnFsnW9VQGJbgP7PblNSwpmUQxhSZA
+         7mFyx7GnZ9h6j6AFTkP/fQ9z2DT7xgzkM65EsSwV+VCPMiTQxnW6fysm63fyUP0jzJr1
+         lwyDSmMbj7+385gU9XLkcYOR6kUMrQtwVQLpWYxOeNITb3IwgRHYQsmwIHptO2NrKV4W
+         uUxSlvfhurX8aMdBNNHPt9+pun1DZJU1LwGojDIMBjp6j/ak448TJgAQHCzBLumnwJPs
+         D8Xg==
+X-Gm-Message-State: AOJu0YyIkH3i+LclELTgdPx2iOKgS9m73G4CAwfKZL5buQOtujWC/rAP
+	khULZNwSmu9Fh8ohmU/Y6uyqdRotjGT79mmADKPBahWQJ6FNz0OuceHWksvxYBD8i3f21XytUMF
+	5ah/TohUaYNvoiQAXrgKjmAiyCE5s6uviI01oMEbzxzqezmmt1JKZTyk=
+X-Google-Smtp-Source: AGHT+IHRBoiwu2oaacgR3qVFP4x4J/MxRwHJtMr2+sL4DUH4NsLXaPGSu0aqg/Ji5+8nH/5YZ39LquB5vp1iyVZYQjfIcHk5fcVz
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="8+72CV5QLt3FWqM3"
-Content-Disposition: inline
-In-Reply-To: <2f36e766-054c-4001-addf-fe388916d858@collabora.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mgr@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-Received: by 2002:a05:6602:134c:b0:7de:e75e:6170 with SMTP id
+ ca18e2360f4ac-7e1b51fb329mr86964639f.2.1715885462582; Thu, 16 May 2024
+ 11:51:02 -0700 (PDT)
+Date: Thu, 16 May 2024 11:51:02 -0700
+In-Reply-To: <000000000000aaf7ec06186a8d13@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000790b48061896b7b5@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [ext4?] KASAN: use-after-free Read in
+ __ext4_check_dir_entry (2)
+From: syzbot <syzbot+11af34d3c0711f233fd4@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
---8+72CV5QLt3FWqM3
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+***
 
-Hi
+Subject: Re: [syzbot] [ext4?] KASAN: use-after-free Read in __ext4_check_dir_entry (2)
+Author: tytso@mit.edu
 
-On Fri, May 10, 2024 at 04:11:27PM +0200, Andrzej Pietrasiewicz wrote:
->W dniu 10.05.2024 o=A012:11, Michael Grzeschik pisze:
->>On Fri, May 10, 2024 at 11:25:47AM +0200, Andrzej Pietrasiewicz wrote:
->>>Hi Michael,
->>>
->>>W dniu 30.04.2024 o=A001:33, Michael Grzeschik pisze:
->>>>Add the new gadget function for 9pfs transport. This function is
->>>>defining an simple 9pfs transport interface that consists of one in and
->>>>one out endpoint. The endpoints transmit and receive the 9pfs protocol
->>>>payload when mounting a 9p filesystem over usb.
->>>>
->>>>Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
->>>>
->>>>---
->>>>v3 -> v4:
->>>>=A0 - implemented conn_cancel
->>>
->>>I tried this scenario:
->>>
->>>1) run all the components and have 9pfs up and running
->>>2) stop the forwarder
->>>3) umount -f at the gadget side - this indeed succeeds now in v4
->>>4) start the forwarder again
->>>5) mount at the gadget side - this hangs.
->>>
->>>Did this scenario work for you?
->>
->>I actually tested this exact scenario. So this is
->>suprising. I will try this again just to be sure
->>that I did send the latest version.
->>
->>My latest testsetup included the dummy_hcd. Did you test on real hardware?
->
->Yes, I did.
-
-I just also tested this again on real hardware. With the imx6 chipidea
-udc I indeed see that this is stuck after the first round of mount and
-remount. With the musb core on the beaglebone this seems to be fine.
-
-While debugging this I also ran into some shutdown issues and lockdep
-issues I see because the complete handler is possible to be resumed
-immedeatly on musb, which is odd. However I fixed/fix them and send an
-v5 afterwards.
-
-Regarding the hang on the imx6, which hardware did you test this on?
-
-Michael
-
---=20
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
-
---8+72CV5QLt3FWqM3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEElXvEUs6VPX6mDPT8C+njFXoeLGQFAmZGVRsACgkQC+njFXoe
-LGRgFw//WscWMXZFcbFLW4HiBLc2QmGtJZP2s/7F9Evy6G7D1trQoFPBP9TimGPI
-/Hh6cbdJOtcUeg62SdHx2WWwPEdC5S4a/WDxAGmWmmpJsvKnHORq+auPWBdG6Lnb
-/Q93NqZKlSO9eByMWSigLlxCNEcRgpdKR2lePU5zF8leavY2iS2sVB2eAAFNYURS
-K3WiL/PGjuJ6eWUUfpSug/zMwDmrZHlX91zraeDcicjVrDFUuoz4/AxtWIsM6xM8
-6RBcsQg1kqMIeUrbynqzUe997CckffDAoQBrfizydTKqFGRwt4Ofv+m0KFmqBhAl
-1g332cvvJRGy3R4B9lIWWz99at67nF7eC/Fb9FHYG7e+Gf50rpCnP8RWV8xHycFP
-SlKSDlqgCD9shSBmPWpJYbOTEFwrGbCVjew1SOgkMklI+heQDi6QJxsK/WGKO9Sq
-xD6LxCogW3qrCrBru7Q6lkaUDTwaF6ol/DNnAotsCygHI9lye+gdJptJbo4jnDUv
-AsbiBzU6vxx6D9vw2LhaNS8MHRNzChpjo5hAWu11jdhFQnukqgvscfAPc0I4A31F
-Qgw/p2dB8sAPH21CNz3Y6eipXiDwKv2tvm/jOClgDw7bNU5BC6xDGUFlKzfSg7H4
-tungGeFatDe+7SUKh0lJOOnGqYnhVjG3bbB5eOUbsAvYQSCW8JQ=
-=WIQ9
------END PGP SIGNATURE-----
-
---8+72CV5QLt3FWqM3--
+#syz test git://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git origin
 
