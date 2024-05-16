@@ -1,102 +1,111 @@
-Return-Path: <linux-kernel+bounces-180779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6615E8C72F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:37:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76DFC8C72F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:37:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FB451F22E98
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 08:37:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A190D1C22843
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 08:37:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80A9B1411CB;
-	Thu, 16 May 2024 08:37:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66CE41411CB;
+	Thu, 16 May 2024 08:37:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="KiGuGY/3"
-Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rcAZH9kv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CF3F7829C;
-	Thu, 16 May 2024 08:37:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A83C66D1AF;
+	Thu, 16 May 2024 08:37:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715848634; cv=none; b=r0aGPjP1eK5+e/tRDMU83ih0S0E0gxPmT4oj37cTYqGtu5y53BP8sgJeZ31CSfAFbRDD4R43U8SUJWGzrhSI3PeQNYXn5Ot53Bq38UePBi2ruj3X0tyo7KREg6vCe2keU6YHRdFb5HVeQsH1wvuJs0hmC6B/14pjyFFkikyqCxI=
+	t=1715848642; cv=none; b=Yap7F89nPGgu2KUb9u4dRA1JJbFbIvhqCwlgiz6hVIoHBgOos+mR/YQHCVokMWiA9Ysinhxdy6GwOAxXLVGj2MeP1gDoXrn/38aP2NSu0s4e2dktk1W3+xXLI7xDJn+7Syus+ZmQWz1nU/QM5C26rLLJNLEPvjQKeOFgZlZPOTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715848634; c=relaxed/simple;
-	bh=p1TDTHB+gDApLl2JnMKdQtfTOQu61TwnB5cs/mE/78s=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UncwS6J6onCMf3X5NgvWF1Fk2a5+bkLr3QkaBOAsxICRE3GAqx18xd4FogdvU0Sxm/DBifYh8DXPqB1ZSgXR5ZbWknpTZsC+PMHT3Sza+r6hjBbByZzCwVNSEeWCQYy0jgPNOQdo+kVrI94UBL4Bg9uFBnAEguzR3V79TDVaj70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=KiGuGY/3; arc=none smtp.client-ip=115.124.30.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1715848623; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=Nn0VvhjDzqkUVvey0Nz7TX61fwgUMsXmbLHYFkVl6ic=;
-	b=KiGuGY/3TRTvqhvwre+fkhQCzLkMI2NOBrpQtJdt4MQQ4+AoCD9HSBlOoPKaX/pkvWAuQLZtuFGvXnhPKtsIoeKHYq25BqmY/ZDSIOpsoz+zvQGXWFva4tHDNr/9lZsqjz4Q8RY/fLP5ck31O3YZ+HU+k6tqL7Mm65nll9u9oA4=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R401e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033068173054;MF=jiapeng.chong@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0W6arX-m_1715848616;
-Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0W6arX-m_1715848616)
-          by smtp.aliyun-inc.com;
-          Thu, 16 May 2024 16:37:03 +0800
-From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-To: manivannan.sadhasivam@linaro.org
-Cc: kw@linux.com,
-	kishon@kernel.org,
-	arnd@arndb.de,
-	gregkh@linuxfoundation.org,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
-	Abaci Robot <abaci@linux.alibaba.com>
-Subject: [PATCH] misc: pci_endpoint_test: Remove some unused functions
-Date: Thu, 16 May 2024 16:36:54 +0800
-Message-Id: <20240516083654.44087-1-jiapeng.chong@linux.alibaba.com>
-X-Mailer: git-send-email 2.20.1.7.g153144c
+	s=arc-20240116; t=1715848642; c=relaxed/simple;
+	bh=T33zBUgNEcsAzHk0mLYF9iCN1qabeKB1opEAFm1TzHs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EvxJXb0Hgq8+bHWYRvrEO7VT+ITUB3qhSdJlaOJ6d2BtKxhjSIK43AmgykNE7F6MrPYik0ItsDOEUUdo8tiTK6hjh2W5bfylGSvR/rS2y857866UlwLAwpxlI6hTJtyOf6ldOmrS5mY8MJHExeW7+N7sqbkWm9IaWpNwfdwKZTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rcAZH9kv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87045C32786;
+	Thu, 16 May 2024 08:37:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715848642;
+	bh=T33zBUgNEcsAzHk0mLYF9iCN1qabeKB1opEAFm1TzHs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=rcAZH9kvGgZooC4cL1BXNJ3vZfF1sfxToMhVB/sbrDKc8JUL1YMH9GY7b/AaI4EgX
+	 FJAsRoBHbA95z2zIKQdns4Ill7IqdazmbSZqA+7JBMlkcR00zn/HyqOK8toiXyQJe4
+	 +wL2dreAbBdUT9VckxX0SrrR/r/mmy6/cxoc8dsWJMc/z8R/Ilmcb2EpqouCPr6WWv
+	 e0Iant8smctaX8boDyojJHMomoL/FU2/G5XgXxzhMUyFiXbVCdVMPJ1i2cV1VZOPwQ
+	 bjoAHF47D+Hn2otOHO3kmGWmbqcGYM90kMvZ+//wt9hjXhD9krvhLFX7Twx3Yag5xc
+	 YIDfGVgBpbqzQ==
+Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-3c992e5c821so1280076b6e.2;
+        Thu, 16 May 2024 01:37:22 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVzFH5yqvZ5TwWJENJ4aWbHCNrl/GJSa4aEIK/Hyxz0M/zUFWByaDQEGE26VQIMQAyXb9L4eqiezOw21JmpxezbOakAH9G8+yEaUuSoxbHi2GoEabDf9HrzMxNobBCqANROKW/7vOzXXQ==
+X-Gm-Message-State: AOJu0Yy3nerYwSmYRcQCFWScRMHkaXTpoYO3c972mrc1p2OAukpweDoT
+	X3SkjOp8go4uNTzyP64bwKM7jk77Ek0BqDszgJvlw0rf6Cmt/HI0uehW+3c+HH7kHYLqq2RbrRT
+	TqiVxo008k9V8uvFL65aF59W7l3A=
+X-Google-Smtp-Source: AGHT+IHu7wLVYbn10Mc7E1o/4BDoFnp+0du3C5+ILremNc0dFyZZxOL8b+hKRATK57zmhP5ypmJg/dsUy4VeDM1uSO4=
+X-Received: by 2002:a05:6870:ac23:b0:239:d0ff:f428 with SMTP id
+ 586e51a60fabf-241723001cemr21138319fac.0.1715848641637; Thu, 16 May 2024
+ 01:37:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <12437901.O9o76ZdvQC@kreacher> <5161bd95-d51e-49cc-bcbd-523fbb747e4b@redhat.com>
+In-Reply-To: <5161bd95-d51e-49cc-bcbd-523fbb747e4b@redhat.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 16 May 2024 10:37:09 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gf-oLcjT8dxnpjAyVfpUep5ST2mHDJy2dySBGCJwjMxg@mail.gmail.com>
+Message-ID: <CAJZ5v0gf-oLcjT8dxnpjAyVfpUep5ST2mHDJy2dySBGCJwjMxg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] ACPI: EC: Install EC address space handler at the
+ namespace root
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux ACPI <linux-acpi@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Mario Limonciello <mario.limonciello@amd.com>, Armin Wolf <w_armin@gmx.de>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-These functions are defined in the pci_endpoint_test.c file, but not
-called elsewhere, so delete these unused functions.
+On Thu, May 16, 2024 at 10:35=E2=80=AFAM Hans de Goede <hdegoede@redhat.com=
+> wrote:
+>
+> Hi,
+>
+> On 5/15/24 9:39 PM, Rafael J. Wysocki wrote:
+> > Hi Everyone,
+> >
+> > This is an update of
+> >
+> > https://lore.kernel.org/linux-acpi/5787281.DvuYhMxLoT@kreacher/
+> >
+> > which was a follow up for the discussion in:
+> >
+> > https://lore.kernel.org/linux-acpi/CAJZ5v0hiXdv08PRcop7oSYqgr_g5rwzRTj7=
+HgdNCCGjXeV44zA@mail.gmail.com/T/#t
+> >
+> > Patch [1/2] has been updated to avoid possible issues related to
+> > systems with defective platform firmware and patch [2/2] is a resend
+> > with a couple of tags added.
+>
+> Thanks, the series looks good to me:
+>
+> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+>
+> for the series.
+>
+> I assume you are going to send this in as a fix for 6.10 ?
 
-drivers/misc/pci_endpoint_test.c:144:19: warning: unused function 'pci_endpoint_test_bar_readl'.
-drivers/misc/pci_endpoint_test.c:150:20: warning: unused function 'pci_endpoint_test_bar_writel'.
+Yes, I am.
 
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=9064
-Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
----
- drivers/misc/pci_endpoint_test.c | 12 ------------
- 1 file changed, 12 deletions(-)
+> In that case feel free to merge both patches through the
+> linux-pm tree.
 
-diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
-index 4f3ec1f2ba9f..5d98b82da17a 100644
---- a/drivers/misc/pci_endpoint_test.c
-+++ b/drivers/misc/pci_endpoint_test.c
-@@ -141,18 +141,6 @@ static inline void pci_endpoint_test_writel(struct pci_endpoint_test *test,
- 	writel(value, test->base + offset);
- }
- 
--static inline u32 pci_endpoint_test_bar_readl(struct pci_endpoint_test *test,
--					      int bar, int offset)
--{
--	return readl(test->bar[bar] + offset);
--}
--
--static inline void pci_endpoint_test_bar_writel(struct pci_endpoint_test *test,
--						int bar, u32 offset, u32 value)
--{
--	writel(value, test->bar[bar] + offset);
--}
--
- static irqreturn_t pci_endpoint_test_irqhandler(int irq, void *dev_id)
- {
- 	struct pci_endpoint_test *test = dev_id;
--- 
-2.20.1.7.g153144c
-
+Thank you!
 
