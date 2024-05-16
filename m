@@ -1,285 +1,262 @@
-Return-Path: <linux-kernel+bounces-181192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13DC18C78CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:58:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D23D28C78D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:59:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 957031F22C76
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:58:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E0731F23349
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:59:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96EAC14B970;
-	Thu, 16 May 2024 14:58:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6815814BFA5;
+	Thu, 16 May 2024 14:59:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d6UH/ROx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=perex.cz header.i=@perex.cz header.b="s0RsLqQM"
+Received: from mail1.perex.cz (mail1.perex.cz [77.48.224.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B86E11E491
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 14:58:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 043051E491;
+	Thu, 16 May 2024 14:59:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=77.48.224.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715871511; cv=none; b=WxN93yzMhxGevaw2Py4iuy+4M/VlMKnC6G9TvDoOhQwGmlKMePfnzDwbFb7qm3q4W6spJDT3QmSSnTNCLVo14XtghkhD9g9hiyLqet/fcnA9v9ev7kiIVTwn7lOcDu5bHPW9VAx+vt/5xA0yGeFGuALPE9ZNQdcT2UKXQ9SpyTw=
+	t=1715871559; cv=none; b=nxQO4vnQqkMB4p7+W1nADitSZVoqaNccxnnL0/bNuTRYlQN79nnXLMjdekW7YGgUbgBVRtYST3RbBSDpsdvVIhLVJIi/w15yE66DXnpEMZwmIvJupWkzakPBS1F9z91yxldB6cyy+cQTLkhSlFRPfXmEfaeaAALMaZ6Ak/obTWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715871511; c=relaxed/simple;
-	bh=C8sulEDJMrxWYwdcSw3tGuQJg30NjDlZJQNANrn1vsA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=BJLLiOTf5YEbqMtUERw9PpVnh6s4DXnq+g4g8y/aMtmCaIn1tXFzn0hVA8ex5D89bvhghHqPYkmt3aRDGdAw7XWbNRN+gAcojvw9tyY4jOZFc6GYugXfbja9EQqf6EImXn4RMeHGLMe9zljJ74qxbdoBNQQEdW1SO/OcD3rIkHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d6UH/ROx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05E26C113CC;
-	Thu, 16 May 2024 14:58:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715871511;
-	bh=C8sulEDJMrxWYwdcSw3tGuQJg30NjDlZJQNANrn1vsA=;
-	h=From:To:Cc:Subject:Date:From;
-	b=d6UH/ROxjVr7ZimdfV/GmliF7x7WpcyhHXvOSEui1blfE6jsPgOz156GCqKHXQL2I
-	 t6xm3YjiWKqc5uXXu12LrDe2I4PP42SXuCTzTGv+DzexUMksV4+nTdLWJsnH6bjvbO
-	 SXdKNRcGxU9TkD9Pgo9otj4li6piB6NbW6mb5mGxlnr8DpeFM1vwx2k9UVvM7rYTdr
-	 /ql3G0dBSZ7+77+QvDgIje9Hpb9mheZiFqP2hPv+f/XQW4fRzAO0KXNQ5kA1GWZmD/
-	 EKQsLlAwTZFsjzKGq8yvpmNH/0v28+kECY2jYKNshOmefNhCBjRpmvhIUf3+EfygbN
-	 t3usg4GmwA92Q==
-From: Michael Walle <mwalle@kernel.org>
-To: Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Jitao Shi <jitao.shi@mediatek.com>,
-	Stu Hsieh <stu.hsieh@mediatek.com>,
-	"Jason-JH . Lin" <jason-jh.lin@mediatek.com>,
-	dri-devel@lists.freedesktop.org,
-	Frank Wunderlich <frank-w@public-files.de>,
-	linux-mediatek@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Michael Walle <mwalle@kernel.org>,
-	=?UTF-8?q?N=C3=ADcolas=20F=20=2E=20R=20=2E=20A=20=2E=20Prado?= <nfraprado@collabora.com>
-Subject: [PATCH v5] drm/mediatek: dpi/dsi: fix possible_crtcs calculation
-Date: Thu, 16 May 2024 16:58:24 +0200
-Message-Id: <20240516145824.1669263-1-mwalle@kernel.org>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1715871559; c=relaxed/simple;
+	bh=TEgyeOIBIyfhuIOv446q/MbgUveg9VV8KhGybk9xzWs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SVo+uxbjzve8XhD+PcAYGmz0YiXk7ZuAKxG2BfkbrSvQ21IHCOTmo7/A5HtTx4Px461BskeLSX0YZNUHgLBsdbmAgvrJ2oVzQsGwd5bnpQXeLUfa8msGOejGMvraDXGlGmJVhEyzwARG1Uf5FErpzwq7SIKIyO60CbMbwshjh70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=perex.cz; spf=pass smtp.mailfrom=perex.cz; dkim=pass (1024-bit key) header.d=perex.cz header.i=@perex.cz header.b=s0RsLqQM; arc=none smtp.client-ip=77.48.224.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=perex.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perex.cz
+Received: from mail1.perex.cz (localhost [127.0.0.1])
+	by smtp1.perex.cz (Perex's E-mail Delivery System) with ESMTP id C6EBE45B9;
+	Thu, 16 May 2024 16:59:13 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.perex.cz C6EBE45B9
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=perex.cz; s=default;
+	t=1715871553; bh=E37t/wiEilpJfGfz1Kzwd27xayIRgTZoOH7EN27Xj+4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=s0RsLqQM9urENxnM8KAiNXP8CShGtnlMYrnsgJoWIw6isubrtP6i5c+t4YpgsyT3W
+	 8ORHoDKqpEZCKAgzm4PDejj2mPlUwVzRBoOUSk/wQBELCvfT0b+7+Kx2JSGnykXeZE
+	 LSefVBMKHI+lkm7fO0lpZx4Hz2vI5CMD7Br1H5m0=
+Received: from [192.168.100.98] (unknown [192.168.100.98])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: perex)
+	by mail1.perex.cz (Perex's E-mail Delivery System) with ESMTPSA;
+	Thu, 16 May 2024 16:58:53 +0200 (CEST)
+Message-ID: <2411016f-2289-4a2b-8bf8-39ab2f9f1571@perex.cz>
+Date: Thu, 16 May 2024 16:58:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v15 00/16] Add audio support in v4l2 framework
+To: Shengjiu Wang <shengjiu.wang@gmail.com>
+Cc: Takashi Iwai <tiwai@suse.de>, Hans Verkuil <hverkuil@xs4all.nl>,
+ =?UTF-8?Q?Amadeusz_S=C5=82awi=C5=84ski?=
+ <amadeuszx.slawinski@linux.intel.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Mark Brown <broonie@kernel.org>,
+ Sebastian Fricke <sebastian.fricke@collabora.com>,
+ Shengjiu Wang <shengjiu.wang@nxp.com>, sakari.ailus@iki.fi,
+ tfiga@chromium.org, m.szyprowski@samsung.com, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Xiubo.Lee@gmail.com, festevam@gmail.com,
+ nicoleotsuka@gmail.com, lgirdwood@gmail.com, tiwai@suse.com,
+ alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org
+References: <1710834674-3285-1-git-send-email-shengjiu.wang@nxp.com>
+ <ZjRCJ2ZcmKOIo7_p@finisterre.sirena.org.uk> <20240503094225.47fe4836@sal.lan>
+ <CAA+D8APfM3ayXHAPadHLty52PYE9soQM6o780=mZs+R4px-AOQ@mail.gmail.com>
+ <22d94c69-7e9f-4aba-ae71-50cc2e5dd8ab@xs4all.nl>
+ <51408e79-646d-4d23-bc5b-cd173d363327@linux.intel.com>
+ <CAA+D8AM7+SvXBi=LKRqvJkLsrYW=nkHTfFe957z2Qzm89bc48g@mail.gmail.com>
+ <cd71e8e8-b4dc-40ed-935e-a84c222997e6@linux.intel.com>
+ <CAA+D8AMpLB0N++_iLWLN_qettNz-gKGQz2c2yLsY8qSycibkYg@mail.gmail.com>
+ <2f771fe9-7c09-4e74-9b04-de52581133fd@linux.intel.com>
+ <CAA+D8AMJKPVR99jzYCR5EsbMa8P95jQrDL=4ayYMuz+Cu1d2mQ@mail.gmail.com>
+ <28d423b1-49d8-4180-8394-622b1afd9cd9@perex.cz>
+ <850a80b2-d952-4c14-bd0b-98cb5a5c0233@perex.cz>
+ <c5dbb765-8c93-4050-84e1-c0f63b43d6c2@xs4all.nl>
+ <8a6f84ac-5813-4954-b852-84f5118e607c@perex.cz> <87o7975qcw.wl-tiwai@suse.de>
+ <e63ec6c8-7da7-4b87-b7ff-a71ff12dcfc1@perex.cz>
+ <CAA+D8AOj2ZkiSg2sXfQypg-xc4f8dMykENu5GoGMx6REGu+WBQ@mail.gmail.com>
+From: Jaroslav Kysela <perex@perex.cz>
+Content-Language: en-US
+Autocrypt: addr=perex@perex.cz; keydata=
+ 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
+In-Reply-To: <CAA+D8AOj2ZkiSg2sXfQypg-xc4f8dMykENu5GoGMx6REGu+WBQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-mtk_find_possible_crtcs() assumes that the main path will always have
-the CRTC with id 0, the ext id 1 and the third id 2. This is only true
-if the paths are all available. But paths are optional (see also
-comment in mtk_drm_kms_init()), e.g. the main path might not be enabled
-or available at all. Then the CRTC IDs will shift one up, e.g. ext will
-be 0 and the third path will be 1.
+On 15. 05. 24 15:34, Shengjiu Wang wrote:
+> On Wed, May 15, 2024 at 6:46 PM Jaroslav Kysela <perex@perex.cz> wrote:
+>>
+>> On 15. 05. 24 12:19, Takashi Iwai wrote:
+>>> On Wed, 15 May 2024 11:50:52 +0200,
+>>> Jaroslav Kysela wrote:
+>>>>
+>>>> On 15. 05. 24 11:17, Hans Verkuil wrote:
+>>>>> Hi Jaroslav,
+>>>>>
+>>>>> On 5/13/24 13:56, Jaroslav Kysela wrote:
+>>>>>> On 09. 05. 24 13:13, Jaroslav Kysela wrote:
+>>>>>>> On 09. 05. 24 12:44, Shengjiu Wang wrote:
+>>>>>>>>>> mem2mem is just like the decoder in the compress pipeline. which is
+>>>>>>>>>> one of the components in the pipeline.
+>>>>>>>>>
+>>>>>>>>> I was thinking of loopback with endpoints using compress streams,
+>>>>>>>>> without physical endpoint, something like:
+>>>>>>>>>
+>>>>>>>>> compress playback (to feed data from userspace) -> DSP (processing) ->
+>>>>>>>>> compress capture (send data back to userspace)
+>>>>>>>>>
+>>>>>>>>> Unless I'm missing something, you should be able to process data as fast
+>>>>>>>>> as you can feed it and consume it in such case.
+>>>>>>>>>
+>>>>>>>>
+>>>>>>>> Actually in the beginning I tried this,  but it did not work well.
+>>>>>>>> ALSA needs time control for playback and capture, playback and capture
+>>>>>>>> needs to synchronize.  Usually the playback and capture pipeline is
+>>>>>>>> independent in ALSA design,  but in this case, the playback and capture
+>>>>>>>> should synchronize, they are not independent.
+>>>>>>>
+>>>>>>> The core compress API core no strict timing constraints. You can eventually0
+>>>>>>> have two half-duplex compress devices, if you like to have really independent
+>>>>>>> mechanism. If something is missing in API, you can extend this API (like to
+>>>>>>> inform the user space that it's a producer/consumer processing without any
+>>>>>>> relation to the real time). I like this idea.
+>>>>>>
+>>>>>> I was thinking more about this. If I am right, the mentioned use in gstreamer
+>>>>>> is supposed to run the conversion (DSP) job in "one shot" (can be handled
+>>>>>> using one system call like blocking ioctl).  The goal is just to offload the
+>>>>>> CPU work to the DSP (co-processor). If there are no requirements for the
+>>>>>> queuing, we can implement this ioctl in the compress ALSA API easily using the
+>>>>>> data management through the dma-buf API. We can eventually define a new
+>>>>>> direction (enum snd_compr_direction) like SND_COMPRESS_CONVERT or so to allow
+>>>>>> handle this new data scheme. The API may be extended later on real demand, of
+>>>>>> course.
+>>>>>>
+>>>>>> Otherwise all pieces are already in the current ALSA compress API
+>>>>>> (capabilities, params, enumeration). The realtime controls may be created
+>>>>>> using ALSA control API.
+>>>>>
+>>>>> So does this mean that Shengjiu should attempt to use this ALSA approach first?
+>>>>
+>>>> I've not seen any argument to use v4l2 mem2mem buffer scheme for this
+>>>> data conversion forcefully. It looks like a simple job and ALSA APIs
+>>>> may be extended for this simple purpose.
+>>>>
+>>>> Shengjiu, what are your requirements for gstreamer support? Would be a
+>>>> new blocking ioctl enough for the initial support in the compress ALSA
+>>>> API?
+>>>
+>>> If it works with compress API, it'd be great, yeah.
+>>> So, your idea is to open compress-offload devices for read and write,
+>>> then and let them convert a la batch jobs without timing control?
+>>>
+>>> For full-duplex usages, we might need some more extensions, so that
+>>> both read and write parameters can be synchronized.  (So far the
+>>> compress stream is a unidirectional, and the runtime buffer for a
+>>> single stream.)
+>>>
+>>> And the buffer management is based on the fixed size fragments.  I
+>>> hope this doesn't matter much for the intended operation?
+>>
+>> It's a question, if the standard I/O is really required for this case. My
+>> quick idea was to just implement a new "direction" for this job supporting
+>> only one ioctl for the data processing which will execute the job in "one
+>> shot" at the moment. The I/O may be handled through dma-buf API (which seems
+>> to be standard nowadays for this purpose and allows future chaining).
+>>
+>> So something like:
+>>
+>> struct dsp_job {
+>>      int source_fd;     /* dma-buf FD with source data - for dma_buf_get() */
+>>      int target_fd;     /* dma-buf FD for target data - for dma_buf_get() */
+>>      ... maybe some extra data size members here ...
+>>      ... maybe some special parameters here ...
+>> };
+>>
+>> #define SNDRV_COMPRESS_DSPJOB _IOWR('C', 0x60, struct dsp_job)
+>>
+>> This ioctl will be blocking (thus synced). My question is, if it's feasible
+>> for gstreamer or not. For this particular case, if the rate conversion is
+>> implemented in software, it will block the gstreamer data processing, too.
+>>
+> 
+> Thanks.
+> 
+> I have several questions:
+> 1.  Compress API alway binds to a sound card.  Can we avoid that?
+>       For ASRC, it is just one component,
 
-To fix that, dynamically calculate the IDs by the presence of the paths.
+Is this a real issue? Usually, I would expect a sound hardware (card) presence 
+when ASRC is available, or not? Eventually, a separate sound card with one 
+compress device may be created, too. For enumeration - the user space may just 
+iterate through all sound cards / compress devices to find ASRC in the system.
 
-While at it, make the return code a signed one and return -ENODEV if no
-path is found and handle the error in the callers.
+The devices/interfaces in the sound card are independent. Also, USB MIDI 
+converters offer only one serial MIDI interface for example, too.
 
-Fixes: 5aa8e7647676 ("drm/mediatek: dpi/dsi: Change the getting possible_crtc way")
-Suggested-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
-Signed-off-by: Michael Walle <mwalle@kernel.org>
----
-You can find v4 at [1]. Unfortunately, it was never applied and in the
-meantime there was a change in mtk_find_possible_crtcs(). So I've
-dropped Nícolas Reviewed and Tested-by tags and Angelos Reviewed-by
-tag.
+> 2.  Compress API doesn't seem to support mmap().  Is this a problem
+>       for sending and getting data to/from the driver?
 
-[1] https://lore.kernel.org/r/20230905084922.3908121-2-mwalle@kernel.org/
----
- drivers/gpu/drm/mediatek/mtk_ddp_comp.c | 105 ++++++++++++++++--------
- drivers/gpu/drm/mediatek/mtk_ddp_comp.h |   2 +-
- drivers/gpu/drm/mediatek/mtk_dpi.c      |   5 +-
- drivers/gpu/drm/mediatek/mtk_dsi.c      |   5 +-
- 4 files changed, 78 insertions(+), 39 deletions(-)
+I proposed to use dma-buf for I/O (separate source and target buffer).
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_ddp_comp.c b/drivers/gpu/drm/mediatek/mtk_ddp_comp.c
-index 17b036411292..9a8c1cace8a0 100644
---- a/drivers/gpu/drm/mediatek/mtk_ddp_comp.c
-+++ b/drivers/gpu/drm/mediatek/mtk_ddp_comp.c
-@@ -514,29 +514,42 @@ static bool mtk_ddp_comp_find(struct device *dev,
- 	return false;
- }
- 
--static unsigned int mtk_ddp_comp_find_in_route(struct device *dev,
--					       const struct mtk_drm_route *routes,
--					       unsigned int num_routes,
--					       struct mtk_ddp_comp *ddp_comp)
-+static int mtk_ddp_comp_find_in_route(struct device *dev,
-+				      const struct mtk_drm_route *routes,
-+				      unsigned int num_routes,
-+				      struct mtk_ddp_comp *ddp_comp)
- {
--	int ret;
- 	unsigned int i;
- 
--	if (!routes) {
--		ret = -EINVAL;
--		goto err;
--	}
-+	if (!routes)
-+		return -EINVAL;
- 
- 	for (i = 0; i < num_routes; i++)
- 		if (dev == ddp_comp[routes[i].route_ddp].dev)
- 			return BIT(routes[i].crtc_id);
- 
--	ret = -ENODEV;
--err:
-+	return -ENODEV;
-+}
- 
--	DRM_INFO("Failed to find comp in ddp table, ret = %d\n", ret);
-+static bool mtk_ddp_path_available(const unsigned int *path,
-+				   unsigned int path_len,
-+				   struct device_node **comp_node)
-+{
-+	unsigned int i;
- 
--	return 0;
-+	if (!path || !path_len)
-+		return false;
-+
-+	for (i = 0U; i < path_len; i++) {
-+		/* OVL_ADAPTOR doesn't have a device node */
-+		if (path[i] == DDP_COMPONENT_DRM_OVL_ADAPTOR)
-+			continue;
-+
-+		if (!comp_node[path[i]])
-+			return false;
-+	}
-+
-+	return true;
- }
- 
- int mtk_ddp_comp_get_id(struct device_node *node,
-@@ -554,32 +567,52 @@ int mtk_ddp_comp_get_id(struct device_node *node,
- 	return -EINVAL;
- }
- 
--unsigned int mtk_find_possible_crtcs(struct drm_device *drm, struct device *dev)
-+int mtk_find_possible_crtcs(struct drm_device *drm, struct device *dev)
- {
- 	struct mtk_drm_private *private = drm->dev_private;
--	unsigned int ret = 0;
--
--	if (mtk_ddp_comp_find(dev,
--			      private->data->main_path,
--			      private->data->main_len,
--			      private->ddp_comp))
--		ret = BIT(0);
--	else if (mtk_ddp_comp_find(dev,
--				   private->data->ext_path,
--				   private->data->ext_len,
--				   private->ddp_comp))
--		ret = BIT(1);
--	else if (mtk_ddp_comp_find(dev,
--				   private->data->third_path,
--				   private->data->third_len,
--				   private->ddp_comp))
--		ret = BIT(2);
--	else
--		ret = mtk_ddp_comp_find_in_route(dev,
--						 private->data->conn_routes,
--						 private->data->num_conn_routes,
--						 private->ddp_comp);
-+	const struct mtk_mmsys_driver_data *data;
-+	struct mtk_drm_private *priv_n;
-+	int i = 0, j;
-+	int ret;
- 
-+	for (j = 0; j < private->data->mmsys_dev_num; j++) {
-+		priv_n = private->all_drm_private[j];
-+		data = priv_n->data;
-+
-+		if (mtk_ddp_path_available(data->main_path, data->main_len,
-+					   priv_n->comp_node)) {
-+			if (mtk_ddp_comp_find(dev, data->main_path,
-+					      data->main_len,
-+					      priv_n->ddp_comp))
-+				return BIT(i);
-+			i++;
-+		}
-+
-+		if (mtk_ddp_path_available(data->ext_path, data->ext_len,
-+					   priv_n->comp_node)) {
-+			if (mtk_ddp_comp_find(dev, data->ext_path,
-+					      data->ext_len,
-+					      priv_n->ddp_comp))
-+				return BIT(i);
-+			i++;
-+		}
-+
-+		if (mtk_ddp_path_available(data->third_path, data->third_len,
-+					   priv_n->comp_node)) {
-+			if (mtk_ddp_comp_find(dev, data->third_path,
-+					      data->third_len,
-+					      priv_n->ddp_comp))
-+				return BIT(i);
-+			i++;
-+		}
-+	}
-+
-+	ret = mtk_ddp_comp_find_in_route(dev,
-+					 private->data->conn_routes,
-+					 private->data->num_conn_routes,
-+					 private->ddp_comp);
-+
-+	DRM_INFO("Failed to find comp in ddp table, ret = %d\n", ret);
- 	return ret;
- }
- 
-diff --git a/drivers/gpu/drm/mediatek/mtk_ddp_comp.h b/drivers/gpu/drm/mediatek/mtk_ddp_comp.h
-index 26236691ce4c..e2ea19d5ddcb 100644
---- a/drivers/gpu/drm/mediatek/mtk_ddp_comp.h
-+++ b/drivers/gpu/drm/mediatek/mtk_ddp_comp.h
-@@ -326,7 +326,7 @@ static inline void mtk_ddp_comp_encoder_index_set(struct mtk_ddp_comp *comp)
- 
- int mtk_ddp_comp_get_id(struct device_node *node,
- 			enum mtk_ddp_comp_type comp_type);
--unsigned int mtk_find_possible_crtcs(struct drm_device *drm, struct device *dev);
-+int mtk_find_possible_crtcs(struct drm_device *drm, struct device *dev);
- int mtk_ddp_comp_init(struct device_node *comp_node, struct mtk_ddp_comp *comp,
- 		      unsigned int comp_id);
- enum mtk_ddp_comp_type mtk_ddp_comp_get_type(unsigned int comp_id);
-diff --git a/drivers/gpu/drm/mediatek/mtk_dpi.c b/drivers/gpu/drm/mediatek/mtk_dpi.c
-index 5c86aa0b75b2..b894be9f1f53 100644
---- a/drivers/gpu/drm/mediatek/mtk_dpi.c
-+++ b/drivers/gpu/drm/mediatek/mtk_dpi.c
-@@ -814,7 +814,10 @@ static int mtk_dpi_bind(struct device *dev, struct device *master, void *data)
- 		return ret;
- 	}
- 
--	dpi->encoder.possible_crtcs = mtk_find_possible_crtcs(drm_dev, dpi->dev);
-+	ret = mtk_find_possible_crtcs(drm_dev, dpi->dev);
-+	if (ret < 0)
-+		goto err_cleanup;
-+	dpi->encoder.possible_crtcs = ret;
- 
- 	ret = drm_bridge_attach(&dpi->encoder, &dpi->bridge, NULL,
- 				DRM_BRIDGE_ATTACH_NO_CONNECTOR);
-diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c b/drivers/gpu/drm/mediatek/mtk_dsi.c
-index 2b0ac859a653..b450b7223aa2 100644
---- a/drivers/gpu/drm/mediatek/mtk_dsi.c
-+++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
-@@ -861,7 +861,10 @@ static int mtk_dsi_encoder_init(struct drm_device *drm, struct mtk_dsi *dsi)
- 		return ret;
- 	}
- 
--	dsi->encoder.possible_crtcs = mtk_find_possible_crtcs(drm, dsi->host.dev);
-+	ret = mtk_find_possible_crtcs(drm, dsi->host.dev);
-+	if (ret < 0)
-+		goto err_cleanup_encoder;
-+	dsi->encoder.possible_crtcs = ret;
- 
- 	ret = drm_bridge_attach(&dsi->encoder, &dsi->bridge, NULL,
- 				DRM_BRIDGE_ATTACH_NO_CONNECTOR);
+> 3. How does the user get output data from ASRC after each conversion?
+>     it should happen every period.
+
+target dma-buf
+
+				Jaroslav
+
 -- 
-2.39.2
+Jaroslav Kysela <perex@perex.cz>
+Linux Sound Maintainer; ALSA Project; Red Hat, Inc.
 
 
