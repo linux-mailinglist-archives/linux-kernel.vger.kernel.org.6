@@ -1,192 +1,133 @@
-Return-Path: <linux-kernel+bounces-181419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 163138C7BAB
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 19:52:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 426508C7BAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 19:52:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3924E1C2141E
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:52:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2BAD284AD7
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:52:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5928C156F27;
-	Thu, 16 May 2024 17:46:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C971156F48;
+	Thu, 16 May 2024 17:52:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Dmh04/mW"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ue3VJ34d"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDAEB156F23;
-	Thu, 16 May 2024 17:46:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C0FC1553BD;
+	Thu, 16 May 2024 17:52:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715881589; cv=none; b=E8rUSYqJpQpZ6a4GlHh2wc4Ccp8u7UBQOW01NXA5SHTWRHOP/tP+O93lBAeaKCJEsydeLgcP3ub08ESnQOXF1ZztP82+RIIhM2Il6+rBUDSJFrbYM1Oj9EE0Jk+flpoWqjeLf+/KxzP17q9D0Eh+tRzrWzPS2FUjV1SATMg9EXk=
+	t=1715881949; cv=none; b=Akk6CHMPCkmRSVt0TIWSMB4WLNll9t7Ha4jTYvCxWh2blxVgDd0xUG7M6L2VzGo3A7oROxDzODr75GmYCZyrgv9725DwR4xvG48LrQlwTf/5b+RBfU1k9ZRaFu02JS3cgG3aD+xeOHZF4BUeI3z3kZeaANO6caaet295HgmEoh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715881589; c=relaxed/simple;
-	bh=Pip3wql6yyEL2BrMvPa75zxHMs613XqiPAnva0+Dfu0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EErXFgKz5ZWHJt2iGeT52ky6zQfHga9BMwVlwZyV0Gb1Yc45qr4bR6uikhgB15ypsXrfEziRxIih35WCkArEquTI+m0dwA+FRguO1zUErYFlu/cEndNScdNH/sAYOltWwkSomgB4k0DmPRyFIoxFzgyuIys8u/DrtzNh0ntCKfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Dmh04/mW; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715881588; x=1747417588;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=Pip3wql6yyEL2BrMvPa75zxHMs613XqiPAnva0+Dfu0=;
-  b=Dmh04/mWZPbR2CIabH5vXK9S5aAj/EruZeLxL585EVk5EeivnVvcvQp6
-   swDhXGAduSnkYDjCN7C14LFVErueWhknD8AWe6QxWXYZZEYnzkI/6uW1U
-   KbQwitEzzd3YgymnGBLzz+ilMS+biYU9Uh1yNGZMP6UJXl+DMKo/Dkddm
-   +RlPArT/m2XSHAGpLpAFuDYq3kxBz4fPzrDjhUYIazoQPNJV49XfFeDZG
-   K78mDiCxCkYqV+JN9Y/qdrQIBMmoLENA0g4huDscLQFRCsWbq3VQCb6bQ
-   ii4Ig09goi2jxfjfs74mSaHqEyGsX8g/HIKksGoQ3XLPCc0xMVNaEzrna
-   A==;
-X-CSE-ConnectionGUID: HYhNevZERySCeZYSYwC+aw==
-X-CSE-MsgGUID: e2K+LT00Sya4JamvZEEQAw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="29533974"
-X-IronPort-AV: E=Sophos;i="6.08,165,1712646000"; 
-   d="scan'208";a="29533974"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 10:46:27 -0700
-X-CSE-ConnectionGUID: uXhyjaUSSdikXinTg+GxpQ==
-X-CSE-MsgGUID: uAWpkVS3RR2aBkwFDDbn9w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,165,1712646000"; 
-   d="scan'208";a="31650787"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 10:46:26 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1s7fBP-000000088AH-1hpF;
-	Thu, 16 May 2024 20:46:23 +0300
-Date: Thu, 16 May 2024 20:46:23 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: =?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado <nfraprado@collabora.com>
-Cc: Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/1] spi: Remove unneded check for orig_nents
-Message-ID: <ZkZGbz0RlUHshneC@smile.fi.intel.com>
-References: <20240507201028.564630-1-andriy.shevchenko@linux.intel.com>
- <d8930bce-6db6-45f4-8f09-8a00fa48e607@notapiano>
- <ZkXdXO4Xb83270V7@smile.fi.intel.com>
- <ZkYJTxmlM5oWOzFL@smile.fi.intel.com>
- <2fccdd9a-5b97-4dc6-a6b1-ce2d9e0819bd@notapiano>
+	s=arc-20240116; t=1715881949; c=relaxed/simple;
+	bh=zOc0bq0Q8lD7wXxEGGsJlN5D1ud+1kdpAHTSlJsG4v8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KuFuou37Q8JqDCFK7apKKlAgRM32tBu0A71y0ThQDF1nJWtfr63E2k8ysiAuFqy2NaBxh5r1VRQVbE8eBmV/S0EmbfY3JbU8NaBoSTs+oJ2E1YuTNHjC6Bg3TT309pH7w60z2bT69qkqaSD3ArOcK6mSmF8wEqhkN4W59yTZCCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ue3VJ34d; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-6f4521ad6c0so448010b3a.0;
+        Thu, 16 May 2024 10:52:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715881948; x=1716486748; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gDmhWEiMJ5CnV3oGozg5alnQWKxPvnqmiaAt5RGDDRk=;
+        b=Ue3VJ34dkWiOpQ0VLAW82PPmPtIL29V6O8JIuj4g6LTJHIpQ2ir0EhPJ8LddQ8vswr
+         CWKuQDVsJL00t1PLpwKASyKdDZTDQHcWfMeRtCDWGZ8MHyog7VhMPi/RLJw9F1Yy2SlB
+         LAVDNciL607H4dk/v8nrj7o3pHsQRiV7s2IKKbPMvfdRN+3B6rHHMp7u4aAXQm+j8UqW
+         7yBA2CU8f6fAgZH0t1OFsgoMiuzUKhfmXv7d7P9lgETJariq78BD3TPiYxaw65tNkRfJ
+         ZFiS9uDACrUps1UAyhxkT3WPPnPhr90tVWS/FmSEfiRmVzqwj2WNN9ggSdT4IapWw4GE
+         jsww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715881948; x=1716486748;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gDmhWEiMJ5CnV3oGozg5alnQWKxPvnqmiaAt5RGDDRk=;
+        b=WfJ2/qAj3sL25uZ84jDDhlRQTdCt4ynjiLpdDP7Tf7KUqy58+bpDip31UmqsL/zdKh
+         3KNW+yODWkxoXyoNNh9XH9XaR0PvXBGsV+UctaGz7+JoTF/RsXs5coeFiyD0sw4/4t6P
+         a2PJUVTO/v46IBxEW+uZcPP+X+yHSftGgrz3GESpOYdExofuteus9uazq8jkiJkiyQfk
+         D9q5WdXUbFzZ186WkQhpO3t7bdeTJ14ymdoYKRx0RTsvYgsVjvaEeU6QkpokhQqC6fv/
+         jg7jwgKoHAOozfH+ytdMjUU/R8B0Gd+B/OAt2lM0IpGXR1Zl8nGpKl0ilhMsol6Ypk4q
+         JoKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUmelqf6t7NKeBd/qwk2m+j+FjMzlj+Ztj+njQ6CsORQPIjW0O8gFwTwAGL5fMaNNiF7oreNm7Dmo117rdGOH5iruV1w7rgZgamu8RPPD78i99riMXiOvdxXVonPdO+MPwX2WGD6XJOrJE=
+X-Gm-Message-State: AOJu0YxJ+LaaFCqrMRwp77KxDRCOHIHzUO/Nk7NO8/R9OcPqwUqDdRXH
+	ZlcBUH1nIdi4Rd3fGREC2zTfyjKek/pN7L7MCBiuH3MvYC68VAO2+Uh0Up5ZpIs=
+X-Google-Smtp-Source: AGHT+IEqqTKsoVZ8amcaBaR5SBa3obXoMNGF0fq41SqYvXalybmo7t+x8s8FV0XSDLDU1WYqXds51Q==
+X-Received: by 2002:a05:6a00:1ad0:b0:6e6:9f47:c18c with SMTP id d2e1a72fcca58-6f4e03858b3mr23691543b3a.33.1715881947854;
+        Thu, 16 May 2024 10:52:27 -0700 (PDT)
+Received: from paran-QEMU-Virtual-Machine.. ([118.32.98.101])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4f2cdedb7sm9727615b3a.52.2024.05.16.10.52.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 May 2024 10:52:27 -0700 (PDT)
+From: yskelg@gmail.com
+To: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>
+Cc: skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	Austin Kim <austindh.kim@gmail.com>,
+	shjy180909@gmail.com,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yunseong Kim <yskelg@gmail.com>
+Subject: [PATCH] line6: add midibuf init failure handling in line6_init_midi()
+Date: Fri, 17 May 2024 02:47:38 +0900
+Message-Id: <20240516174737.415912-1-yskelg@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <2fccdd9a-5b97-4dc6-a6b1-ce2d9e0819bd@notapiano>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Thu, May 16, 2024 at 12:25:19PM -0400, Nícolas F. R. A. Prado wrote:
-> On Thu, May 16, 2024 at 04:25:35PM +0300, Andy Shevchenko wrote:
-> > On Thu, May 16, 2024 at 01:18:04PM +0300, Andy Shevchenko wrote:
-> > > On Wed, May 15, 2024 at 05:09:33PM -0400, Nícolas F. R. A. Prado wrote:
-> > > > On Tue, May 07, 2024 at 11:10:27PM +0300, Andy Shevchenko wrote:
-> > > > > Both dma_unmap_sgtable() and sg_free_table() in spi_unmap_buf_attrs()
-> > > > > have checks for orig_nents against 0. No need to duplicate this.
-> > > > > All the same applies to other DMA mapping API calls.
-> > > > > 
-> > > > > Also note, there is no other user in the kernel that does this kind of
-> > > > > checks.
-> > > > > 
-> > > > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > > > 
-> > > > this commit caused a regression which I reported here:
-> > > > 
-> > > > https://lore.kernel.org/all/d3679496-2e4e-4a7c-97ed-f193bd53af1d@notapiano
-> > > > 
-> > > > along with some thoughts on the cause and a possible solution, though I'm not
-> > > > familiar with this code base at all and would really appreciate any feedback you
-> > > > may have.
-> > > 
-> > > Thanks for the report and preliminary analysis!
-> > > I'll look at it hopefully sooner than later.
-> > > 
-> > > But at least what I think now is that my change revealed a problem somewhere
-> > > else, because that's how DMA mapping / streaming APIs designed, it's extremely
-> > > rare to check orig_nents field.
-> > 
-> > Can you test the below patch?
-> > 
-> > diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
-> > index b2efd4964f7c..51811f04e463 100644
-> > --- a/drivers/spi/spi.c
-> > +++ b/drivers/spi/spi.c
-> > @@ -1243,6 +1243,7 @@ static int __spi_map_msg(struct spi_controller *ctlr, struct spi_message *msg)
-> >  	else
-> >  		rx_dev = ctlr->dev.parent;
-> >  
-> > +	ret = -ENOMSG;
-> >  	list_for_each_entry(xfer, &msg->transfers, transfer_list) {
-> >  		/* The sync is done before each transfer. */
-> >  		unsigned long attrs = DMA_ATTR_SKIP_CPU_SYNC;
-> > @@ -1272,6 +1273,9 @@ static int __spi_map_msg(struct spi_controller *ctlr, struct spi_message *msg)
-> >  			}
-> >  		}
-> >  	}
-> > +	/* No transfer has been mapped, bail out with success */
-> > +	if (ret)
-> > +		return 0;
-> >  
-> >  	ctlr->cur_rx_dma_dev = rx_dev;
-> >  	ctlr->cur_tx_dma_dev = tx_dev;
-> 
-> Hi Andy,
-> 
-> thank you for the patch. Unfortunately it didn't completely solve the issue. Now
-> the stack trace is slightly different and points at the next line:
-> 
-> 	dma_sync_sgtable_for_device(rx_dev, &xfer->rx_sg, DMA_FROM_DEVICE);
-> 
-> So now we're hitting the case where only the tx buffer was DMA mapped, but the
-> rx is still uninitialized, though the cur_msg_mapped flag is set to true, since
-> it is shared between them. The original code checked for the initialization of
-> each scatterlist individually, which is why it worked.
+From: Yunseong Kim <yskelg@gmail.com>
 
-I was kinda expecting that, and already have another patch to try (should
-applied on top):
+This patch fixes potential memory allocation failures in the
+line6_midibuf_init(). If either midibuf_in, midibuf_out allocation
+line6_midibuf_init call failed, the allocated memory for line6midi
+might have been leaked.
 
-diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
-index 51811f04e463..5c607dd21fe7 100644
---- a/drivers/spi/spi.c
-+++ b/drivers/spi/spi.c
-@@ -1258,6 +1258,8 @@ static int __spi_map_msg(struct spi_controller *ctlr, struct spi_message *msg)
- 						attrs);
- 			if (ret != 0)
- 				return ret;
-+		} else {
-+			memset(&xfer->tx_sg, 0, sizeof(xfer->tx_sg));
- 		}
+This patch introduces an error handling label and uses goto to jump there
+in case of allocation failures. A kfree call is added to release any
+partially allocated memory before returning the error code.
+
+Signed-off-by: Yunseong Kim <yskelg@gmail.com>
+---
+ sound/usb/line6/midi.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/sound/usb/line6/midi.c b/sound/usb/line6/midi.c
+index 0838632c788e..abcf58f46673 100644
+--- a/sound/usb/line6/midi.c
++++ b/sound/usb/line6/midi.c
+@@ -283,13 +283,18 @@ int line6_init_midi(struct usb_line6 *line6)
  
- 		if (xfer->rx_buf != NULL) {
-@@ -1271,6 +1273,8 @@ static int __spi_map_msg(struct spi_controller *ctlr, struct spi_message *msg)
+ 	err = line6_midibuf_init(&line6midi->midibuf_in, MIDI_BUFFER_SIZE, 0);
+ 	if (err < 0)
+-		return err;
++		goto error;
  
- 				return ret;
- 			}
-+		} else {
-+			memset(&xfer->rx_sg, 0, sizeof(xfer->rx_sg));
- 		}
- 	}
- 	/* No transfer has been mapped, bail out with success */
-
-
-If my understanding is correct, my patch revealed two issues:
-- for non-mapped message at all;
-- for unidirect transfers.
-
-But I will wait for your test results to make the final conclusion.
-
+ 	err = line6_midibuf_init(&line6midi->midibuf_out, MIDI_BUFFER_SIZE, 1);
+ 	if (err < 0)
+-		return err;
++		goto error;
+ 
+ 	line6->line6midi = line6midi;
+ 	return 0;
++
++error:
++	kfree(line6midi);
++	return err;
++
+ }
+ EXPORT_SYMBOL_GPL(line6_init_midi);
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.34.1
 
 
