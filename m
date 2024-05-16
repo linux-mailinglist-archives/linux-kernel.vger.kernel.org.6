@@ -1,97 +1,105 @@
-Return-Path: <linux-kernel+bounces-180967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C4AA8C758F
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:03:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DE408C7591
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:03:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2625BB21285
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:03:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22BC91F22D2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:03:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81EDF145B06;
-	Thu, 16 May 2024 12:03:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9B2014601C;
+	Thu, 16 May 2024 12:03:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hC/QoI5g"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V8JHdMeg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1692145A06;
-	Thu, 16 May 2024 12:03:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14AC0145A06;
+	Thu, 16 May 2024 12:03:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715861013; cv=none; b=UvLlFv0luLKLJPelgIpt6Mgci6GHE9ddG59ZVkicJLpFKh8THwia7LNxEv9BPkok7IdRIcOQa60ZLoRZSz2PSGsaR01awy7+fDMLRzNYxickT9f3RURunbPo9xAfOXjqKZpSqvT5tbNJtrHZNWaUMBapVRC8uEXlq4+CvxPeuSs=
+	t=1715861017; cv=none; b=faNLQeTtGSF2M2vvY9C2ovIkLbs4ohLFNnQOAv29Iy1CTST7eBOX3RTkAe48CBGt4g2F4D7vbpPQ+pNxjFXW8P+pf7kfax3ovpI96Nx+g+2QfDOFWgj03nK1JopK2chy//5DVaOHG1OCFmNLpw0Q3TlTQJCPHciBiyeCtxDTATg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715861013; c=relaxed/simple;
-	bh=dg6kzJAPjiuh2fIwqiqDebaA+cAJh3JzkSfG1x0+Xq4=;
+	s=arc-20240116; t=1715861017; c=relaxed/simple;
+	bh=ao3vT+/wgbwOmNIGPIj0yiu9lABcaUGxyDAadsmJeK0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XfSCJ0TCfdGHr4wtmuh2FNaktqp8uKNF57ox5+i3xKppS4M6rLvu6IdDrLjfOfoyLCtpEofF/EZUg+lPlf/GKJZpb2bdFk5j/rwsrOh4U5b3nuudWLmr55v19zhtL0viyPxwAWwWdsGbxRAuFXDeSuh2f7uNyoJx6POf2xve8jQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hC/QoI5g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9005C113CC;
-	Thu, 16 May 2024 12:03:29 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=qHlkVQdBtCXEbtpkah+BMvXbJZ95p7jBCuQDc4bHktDhgjryqGgDJ2/dWe0HKhqipLC9jbPZftq2TlPM6nVqq9FYrkyGWbJ66WHs1OnOgn7YU7PvNEaEp4D4X4P1T4eVbeJ0JREYez7x+5M140Kb13ieqF+xfz80bp6DvIpWO6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V8JHdMeg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C47DBC113CC;
+	Thu, 16 May 2024 12:03:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715861013;
-	bh=dg6kzJAPjiuh2fIwqiqDebaA+cAJh3JzkSfG1x0+Xq4=;
+	s=k20201202; t=1715861016;
+	bh=ao3vT+/wgbwOmNIGPIj0yiu9lABcaUGxyDAadsmJeK0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hC/QoI5gIisaYfXB9gv1f0UEWPn9oNmVxkOEApp6Qnh8lQwQboocqcfk4skv4Z9m2
-	 uNI4xlAG2E/i7Pa1ZMELDah8ba9KiYePPInzbpsqPAarKNTGjKIcvpah2DjpuW8asW
-	 LJuvI7/yiOulONHQkGW+K7ZCqJAftjrkXpDP0UnG33WEOZJp1waADYEWPu0Z5cKnSG
-	 4GyI0kNJMq7YXeXw+gS9pnfS2EVgOhX57e0e+oO7BDiymwGXGv9LbAMf5ZT5EHvcxK
-	 w4Hh23hOkP8SQgOXTcSIF1Vk5nEiCo4XXwPXOFMc/+qDWsTD7+crhml8HbuDJuamFX
-	 vH91Yc6l7tXAQ==
-Date: Thu, 16 May 2024 13:03:26 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com
-Subject: Re: [PATCH 6.9 0/5] 6.9.1-rc1 review
-Message-ID: <d29a1fd0-2f41-4bb1-8b58-3247e3c78fcf@sirena.org.uk>
-References: <20240515082345.213796290@linuxfoundation.org>
+	b=V8JHdMegnhJJfdQwfbG/Po0osKXDtPq89J2E86h/wMBCidUzF6BQOxsmrHLHc1/zy
+	 eSwX59oExTKxdILgy2f3icMFNHrBtS0+uH3QYYyqLUH3tdTn6ksBbs8KdOLCNF84zd
+	 7mK9EYogE0k2pKc6YMajLgYfNcBgFBYk/6Ic498ttBbNE4bsa3YFSyDe3rvp8SLD6W
+	 Ft0EZ9yD9mNwrOEuAKrnj9dsP0+TaghtkGZVCP5aT3HpqdezEwSKz5mD9II0m8+KnF
+	 CqGijKUefTUEF1/XdhLAqp34mAdsYYrxrfmrhDWoLlJgP+SS3sBs8H6EwjW1O1h8C0
+	 zGnvxeIOrr++w==
+Date: Thu, 16 May 2024 13:03:32 +0100
+From: Simon Horman <horms@kernel.org>
+To: Ryosuke Yasuoka <ryasuoka@redhat.com>
+Cc: krzk@kernel.org, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, syoshida@redhat.com
+Subject: Re: [PATCH net] nfc: nci: Fix handling of zero-length payload
+ packets in nci_rx_work()
+Message-ID: <20240516120332.GB443134@kernel.org>
+References: <20240515151757.457353-1-ryasuoka@redhat.com>
+ <20240516084348.GF179178@kernel.org>
+ <ZkXQ5h8fla1KhX6A@zeus>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="r6DbF3qCc2Bch+MR"
-Content-Disposition: inline
-In-Reply-To: <20240515082345.213796290@linuxfoundation.org>
-X-Cookie: I'm having a MID-WEEK CRISIS!
-
-
---r6DbF3qCc2Bch+MR
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <ZkXQ5h8fla1KhX6A@zeus>
 
-On Wed, May 15, 2024 at 10:26:37AM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.9.1 release.
-> There are 5 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Thu, May 16, 2024 at 06:24:54PM +0900, Ryosuke Yasuoka wrote:
+> Thank you for your review and comment, Simon.
+> 
+> On Thu, May 16, 2024 at 09:43:48AM +0100, Simon Horman wrote:
+> > Hi Yasuoka-san,
+> > 
+> > On Thu, May 16, 2024 at 12:17:07AM +0900, Ryosuke Yasuoka wrote:
+> > > When nci_rx_work() receives a zero-length payload packet, it should
+> > > discard the packet without exiting the loop. Instead, it should continue
+> > > processing subsequent packets.
+> > 
+> > nit: I think it would be clearer to say:
+> > 
+> > ... it should not discard the packet and exit the loop. Instead, ...
+> 
+> Great. I'll update commit msg like this.
+> 
+> > > 
+> > > Fixes: d24b03535e5e ("nfc: nci: Fix uninit-value in nci_dev_up and nci_ntf_packet")
+> > > Closes: https://lore.kernel.org/lkml/20240428134525.GW516117@kernel.org/T/
+> > 
+> > nit: I'm not sure this Closes link is adding much,
+> >      there are more changes coming, right?
+> 
+> No. I just wanna show the URL link as a reference where this bug is
+> found. This URL discuss a little bit different topic as you know.
+> 
+> In the following discussion [1], Jakub pointed out that changing
+> continue statement to break is not related to the patch "Fix
+> uninit-value in nci_rw_work". So I posted this new small patch before
+> posting v5 patch for "Fix: uninit-value in nci_rw_work".
+> 
+> If Closes tag is not appropriate, I can remove this in this v2 patch.
+> What do you think?
 
-Tested-by: Mark Brown <broonie@kernel.org>
+Thanks, if it was me I would drop the Closes tag.
 
---r6DbF3qCc2Bch+MR
-Content-Type: application/pgp-signature; name="signature.asc"
+> [1] https://lore.kernel.org/all/20240510190613.72838bf0@kernel.org/
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZF9g0ACgkQJNaLcl1U
-h9BcfAf+IbVHHMX00WfhtJLpT3cfR3TbLPPQt9ylUUycotD5fVSakrlP1gwrzc1e
-Ne+2H8lXkh+Qzj6LF3d37fMIUZoWaqmPdt62hC/Vjj7WXNI4tef8Vyv1xzrwtVPr
-Vf/g5+oUxXJoqmghktEjDcoCD7w0BuUtZ+/mCuLWLVCLcYiFwTGtAB7tmeNb/cIl
-RZph9izFSJhvfWVJNac/zM3y8ySiyeC2DAh+nGm690KpkS1tyCBhqafyVijFWg59
-jRNdID6KecNseZevmwmGj5Z4j1RISwZgKPYpO7tPBpSYMvmDCni1yZi1MBr9Qxlu
-s4wMqosFx6JEya8OX6uTVAp8wvSpAA==
-=BCmV
------END PGP SIGNATURE-----
-
---r6DbF3qCc2Bch+MR--
+..
 
