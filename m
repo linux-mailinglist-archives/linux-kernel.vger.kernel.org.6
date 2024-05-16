@@ -1,116 +1,119 @@
-Return-Path: <linux-kernel+bounces-180626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC34F8C70F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 06:35:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C1FD58C70FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 06:44:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 243641C22ADA
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 04:35:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C89A01C21669
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 04:44:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A30CB10A0E;
-	Thu, 16 May 2024 04:35:00 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF898208A8;
-	Thu, 16 May 2024 04:34:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D100C11721;
+	Thu, 16 May 2024 04:43:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=rothwell.id.au header.i=@rothwell.id.au header.b="Y71SZzMK"
+Received: from mail.rothwell.id.au (gimli.rothwell.id.au [103.230.158.156])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8832F9CF;
+	Thu, 16 May 2024 04:43:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.230.158.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715834100; cv=none; b=m2gya8eFfRtpBNsARhmTHON1ZwfekD26kQ8kn+qJ38qz5Q8EPM9f2WrgSkeXSGt4qQ21MC6gDcA4xL8257roD3SvpT/BikZQTAbH36HjitlAPiTNZOiwDsSBlS62TzZB+2T/ccLPKHxCCj1zlxftEEat1v1s4bOtxoSJWfjQO6k=
+	t=1715834638; cv=none; b=ht8VZ6eqYvqB1wyhZTaTJ+WOkPAWmG8tq1p4Mcdf8l9e0+si8eiqDL/oKOKHP/310pIeE5aZx3jVBdxN/de73VQemEm5S61OJzY6/8d96WpzIgiYSBIhOzqFYXvBep/2YSkR8M5Xl1/L1AcIkad4gdP6FMyDShBR61rGMAIHcPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715834100; c=relaxed/simple;
-	bh=pZYNF4rE7QtTO092Rcuu7tJaH9xaf3reE8YCScETk0E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tsXA5WhGB9R3F+t27ksLXjKGyskrS4NPos8Sej/PTgz9myKZY+KdMncx42a5STA9RjVQPE1YMA/hRSFr7WDpp/hBlDVOqFL3l9b8u5/kV1onHzNQqJh/Yu034kGqqAHYKvx3OsdYsOO+DKkmW22f4/+N1oO1kDid2HDVWuGwquA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 60908DA7;
-	Wed, 15 May 2024 21:35:21 -0700 (PDT)
-Received: from [10.163.39.35] (unknown [10.163.39.35])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 737943F762;
-	Wed, 15 May 2024 21:34:50 -0700 (PDT)
-Message-ID: <e92a8423-9172-4aec-acbf-c9f136e6884f@arm.com>
-Date: Thu, 16 May 2024 10:05:01 +0530
+	s=arc-20240116; t=1715834638; c=relaxed/simple;
+	bh=r1kOvfgIYROHWlLOWok8nOUpUvblp7y8+UA6RrmiDLY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UwJStwRHThbrw7eyfxYvDZXJgmRyC6dqqbRi6qa2fyrS0zp/5TOgCMI6o6Gcf5pUAHsd8O5ebQvETG28nXqMTlgInaFGXrZCQ75YXjTh5ZGK776My/fWdFFOVTdw1KkGC1BB4d8NPrQphqNhqRK7bKtWFILcnTG0AiaWS+m+PvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rothwell.id.au; spf=pass smtp.mailfrom=rothwell.id.au; dkim=pass (2048-bit key) header.d=rothwell.id.au header.i=@rothwell.id.au header.b=Y71SZzMK; arc=none smtp.client-ip=103.230.158.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rothwell.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rothwell.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rothwell.id.au;
+	s=201702; t=1715834180;
+	bh=r1kOvfgIYROHWlLOWok8nOUpUvblp7y8+UA6RrmiDLY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Y71SZzMKdNFi775gwXxXQZntcsEzWtoVGOTUG5yNXVlDLCfBWHVFOjfF9lrhTKObR
+	 zWA5kOBA+5xP90d/ObePZi8BufFHwGrkhvOjNa8UhtYsDOQUXNH26cTeulASLhduTI
+	 AyQNYfJ7XRX/7E4CHPiU5EQF4yk8yuFMKtlAUNpx3m3n0H6aVPWGkte6shEQGVZ8uz
+	 bKQFAO//OtvPlcTLQGCg6F4LlaTWrhLR9D9/ei3sdCWmkDp8fYr3kDFeWqKUxUBW6H
+	 UCoalryUFWvtD0cCVMV5dN9jsUCvdXLsPj7b/bwo1bxh9Dw+vHePp2hv/uS79DzpG2
+	 gpaKQqPlg7YqA==
+Received: from authenticated.rothwell.id.au (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.rothwell.id.au (Postfix) with ESMTPSA id 4Vfy354RHgz4L;
+	Thu, 16 May 2024 14:36:17 +1000 (AEST)
+Date: Thu, 16 May 2024 14:36:12 +1000
+From: Stephen Rothwell <sfr@rothwell.id.au>
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, PowerPC
+ <linuxppc-dev@lists.ozlabs.org>, Hari Bathini <hbathini@linux.ibm.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build warning after merge of the powerpc tree
+Message-ID: <20240516143612.1a369133@oak>
+In-Reply-To: <87cypmwk92.fsf@mail.lhotse>
+References: <20240515163708.3380c4d1@canb.auug.org.au>
+	<87cypmwk92.fsf@mail.lhotse>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] MAINTAINERS: perf: arm64: Catch all Arm files and folders
-Content-Language: en-US
-To: James Clark <james.clark@arm.com>, linux-perf-users@vger.kernel.org
-Cc: gregkh@linuxfoundation.org, John Garry <john.g.garry@oracle.com>,
- Will Deacon <will@kernel.org>, Mike Leach <mike.leach@linaro.org>,
- Leo Yan <leo.yan@linux.dev>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20240515151221.204163-1-james.clark@arm.com>
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <20240515151221.204163-1-james.clark@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/8=rEbHDsm_Vfaw.dcRcMzja";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
+--Sig_/8=rEbHDsm_Vfaw.dcRcMzja
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi Michael,
 
-On 5/15/24 20:42, James Clark wrote:
-> Catch all files and folders with Arm in the name in tools/perf/ up to
-> two levels deep. There currently no false positives.
-> 
-> This catches lots of missing items like these and more:
-> 
->   * util/arm-spe-decoder/
->     (The existing util/arm-spe* entry only matched files not folders)
->   * util/perf-regs-arch/perf_regs_arm.c
->   * scripts/python/arm-cs-trace-disasm.py
->   * tests/shell/test_arm_spe.sh
+On Thu, 16 May 2024 12:42:01 +1000 Michael Ellerman <mpe@ellerman.id.au> wr=
+ote:
+>
+> Stephen Rothwell <sfr@canb.auug.org.au> writes:
+> >
+> > After merging the powerpc tree, today's (it may have been yesterday's)
+> > linux-next build (powerpc allyesconfig) produced this warning:
+> >
+> > WARNING: modpost: vmlinux: section mismatch in reference: fadump_setup_=
+param_area+0x200 (section: .text.fadump_setup_param_area) -> memblock_phys_=
+alloc_range (section: .init.text) =20
+>=20
+> I don't see the warning, but clearly it is possible if the compiler
+> decides not to inline fadump_setup_param_area().
+>=20
+> What compiler version are you using?
 
-Agreed.
+$ gcc --version
+gcc (Debian 13.2.0-7) 13.2.0
 
-> 
-> Signed-off-by: James Clark <james.clark@arm.com>
-> ---
->  MAINTAINERS | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index ec0284125e8f..c5d0256d32dd 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -17318,9 +17318,10 @@ R:	Leo Yan <leo.yan@linux.dev>
->  L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
->  S:	Supported
->  F:	tools/build/feature/test-libopencsd.c
-> -F:	tools/perf/arch/arm*/
-> -F:	tools/perf/pmu-events/arch/arm64/
-> -F:	tools/perf/util/arm-spe*
-> +F:	tools/perf/*/*/*arm*
-> +F:	tools/perf/*/*/*arm*/
-> +F:	tools/perf/*/*arm*
-> +F:	tools/perf/*/*arm*/
->  F:	tools/perf/util/cs-etm*
+(on zz1 if you want to test)
+--=20
+Cheers,
+Stephen Rothwell
 
-Very minor nit, these regular expressions should be arranged as per
-the increasing directory depth levels, just to make it apparent in
-terms of which files are being covered here ?
+--Sig_/8=rEbHDsm_Vfaw.dcRcMzja
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-F:	tools/perf/*/*arm*
-F:	tools/perf/*/*arm*/
-F:	tools/perf/*/*/*arm*
-F:	tools/perf/*/*/*arm*/
+-----BEGIN PGP SIGNATURE-----
 
-But regardless, with or without the above changes
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZFjTwACgkQAVBC80lX
+0Gz/qgf/UJFGAJa8YAH/RLjgrt44P6TQj7A0baJl0AhyJHCh4vSoeUKU76gt1a4y
+yLMDSLtS8ar9pHKQO1+HAVEaboun2nieyDDoM6qDeyw0Pywm58+r5XjeSxEGOEfb
+5QPKnGihFEbxxoU2RQjIpT9A4Jk6X9P4gILdcy9EtFSvIK0OG6PgIIaisQCfUWnT
+fSjvKKSKcFsz/vRMIvr5rTPXgIUHSyMC93h1cSKv4izciaeGxvmup/iu8FPS7Txl
+MTUDFpDINHJOLG82u6CedDXuqlOcCBgtYXBvmCkIH/dEfGeVjevDwokpbrFjk3qC
+GGjpxOLqlbzxgqp9o2c7Qs4YG1F0/Q==
+=MM25
+-----END PGP SIGNATURE-----
 
-Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
-
->  
->  PERSONALITY HANDLING
+--Sig_/8=rEbHDsm_Vfaw.dcRcMzja--
 
