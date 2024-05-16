@@ -1,90 +1,149 @@
-Return-Path: <linux-kernel+bounces-180570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A4E08C704A
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 04:29:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40E9B8C704F
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 04:30:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06F7E1F232CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 02:29:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC063283C38
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 02:30:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1515A1FA5;
-	Thu, 16 May 2024 02:29:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBFD34688;
+	Thu, 16 May 2024 02:30:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="W6AFsVHd"
-Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fmEo1gSu"
+Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39F1B138C
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 02:29:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0275320C;
+	Thu, 16 May 2024 02:30:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715826578; cv=none; b=u5wxCOt6QvQE4Ndvuo9ASQO4iQWSDemhXDF+MYtWJPvk0nSghdpTHaD6WRaJm1W3CqOEzQ2iVY59qRYgMZMdA/Ypf2SsTc/bNWxJsOFPRPQ3VUOxXkckTDiZWR0hcU1S7lRHhmqGyAXKGDQI6A/65ziTLbvSuE/ixGeS40iUWyE=
+	t=1715826623; cv=none; b=sohsqQJ0thzmQ0CajHpL3cLSgXgaWInPHt5yHU/wHhPG66VpFt9f7OMBZRGqQtyurusrTJ5dwEjXGDeGwMT2BSfMEBv7yle5amMcm3PZNOSpXogZCcVOP8JGuQSxl8ZPrjc6ZIELBvxXAoh3UCHtMErO3LYn04T5D/yu4YsbcrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715826578; c=relaxed/simple;
-	bh=64eqbHF30pFDvZplJnmy2dWsn/ELyqHpe4QH89CQlOw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pOWJg0Sjvox1gcNIT1M84GKPnHqgZrfzw7YKOc3OqLgbNCn6sYXRnwoNsfqYeYeU1upFprgDtgeYp476BasvviZLUvCGg9ngvpy+qYBik0hStzbvPxIXHF1Qk2iQxoyTPwug8TN6LsMkqm9JhGYzC9RVH0rHulFewgZJ61vyyAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=W6AFsVHd; arc=none smtp.client-ip=95.215.58.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <f90a46dc-8842-47a2-a269-826367f991fb@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1715826574;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=POjo41Qty2BYUDgH9m3H+3cml12oIPmG9DVVmyYHKx8=;
-	b=W6AFsVHdGQnW0sZExoT5TvfA/u6N2+D9Hv5YDhe5+QkE3S/K1Ccn3GZOlNW5uQkXqSlLIu
-	q/Vw4SGlKr+0G0E8IaCsMQDj9w9/wVkI1/jlza8rB2HAsAGDI+8owaDIceKTvGYBUtPlow
-	PGfiHkX9qfYZUe83PEw9XBDQcsQI4nc=
-Date: Thu, 16 May 2024 10:29:26 +0800
+	s=arc-20240116; t=1715826623; c=relaxed/simple;
+	bh=luuZCOwHRQzcsKdhemBb69s42Jy1t33jiaLSTq1qmrE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Q5bREzB58fOmSZRU8fFgi0syBYbuAJ9FMNpIByPks8B7JfmUczxKpEAG3w3V3KwEym8pM9O4ls3/tefMRVIHfgNP2Fbbu21ik0TcoeG+ZXJ+im/+HPeXztD8lC/gIpztVx9WRKsbtOAEehucQy5HFVht6LlmukebfGaRRWix8lI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fmEo1gSu; arc=none smtp.client-ip=209.85.210.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-6f0f728d373so2862143a34.0;
+        Wed, 15 May 2024 19:30:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715826621; x=1716431421; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=S3HxxeZ7mdHwDKn/7AQjzq+Cq5PG4lChvk4r41U5858=;
+        b=fmEo1gSuX1Xv8Ud55q8VFFvnPJrsgQsgITZB3XFvxDqGwNm0jZ9+Jmk7mJT5avud8G
+         L3E8nrSpCRXnWLu/wJOp5srKtT4n+9GkPHnuoSnBBQR7+LAEbQcJRyoSAAr0gWIXR9Eo
+         vr7bRnFnFVfi8nV3NfFi/dpjEUA+dkxNlQB5KsvnnKUPFGP2bSmM/1Z5lPiseFZT5nw+
+         ddUtckKTf83MbKZLg2qj1Td5njZk5fIHqu2VY+hk+GqJemBbmtt2IwEdMpBSKuO89c5K
+         TgQmx93XJVYP0tmXq35KUg0tgE1oEZr9YRJxQNJ085JPL2VcHMHjh+epKCijwt/umBb6
+         VmvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715826621; x=1716431421;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=S3HxxeZ7mdHwDKn/7AQjzq+Cq5PG4lChvk4r41U5858=;
+        b=JW9fPoYhychNaaV80aip8uV0a7FzfguN+bnJJlszboe+XYUxlq1HzKTtHq0j2F84Lb
+         20R0Kxp8TsYr8OKonKC6HydI+hRHdYxprV1dB0WouUZIZuO3VxP3ppWPA5ZXCX0DC8W4
+         Pm7LoQO74t7/I8YbsWhVTNbtzSa98H4NeGZS55E7IJ03qQWVu3Qj6+Z+6DaEQ7V6fpNv
+         j6dzJZVv1N9Hn340iBcSN7dWxMvSBs6DdnqbMjBIc4UNRcS8DDdpRMiwKB930Ia9fz6b
+         04CiVTER6n+fmqbOr/w1LMalhcp+dk8qc9lzuvrIVPcmsItePgyD4ggbCUW71EfZmXQy
+         uqlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU4ymq5zde05+dq3P6Dt2nK9hHOZVQUlcYMx5HQK76ASReQYaMWFVTY0hMsMncZCfm2N0tggeK/y/BIWGF2J88d6Qie5oq/ba5NfR3F1OkeOYVUAT/QA/k2QXWQQg733Tn1pPj0b120
+X-Gm-Message-State: AOJu0Yx52DZVpmtoPj2322tU/eFq5aLZK8rWCvbEyv4VP8CVGy/GmmPJ
+	ojnABzcj4a2nNrYEsbEHxCG4krq73SmLIGz2UkoQpFCT7QTgQms1
+X-Google-Smtp-Source: AGHT+IH2iA6yNkrsVaY3XeU7OEvrXCvN9AWyyvM6DuW9wN2hXlgxsVnnbClBjcPlY6k+FYVy0uUNyg==
+X-Received: by 2002:a05:6870:7096:b0:23d:49b4:6788 with SMTP id 586e51a60fabf-24172aa2c2dmr25778539fac.21.1715826620560;
+        Wed, 15 May 2024 19:30:20 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2ade2c9sm11827127b3a.125.2024.05.15.19.30.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 May 2024 19:30:19 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id D409E186C082D; Thu, 16 May 2024 09:30:16 +0700 (WIB)
+Date: Thu, 16 May 2024 09:30:16 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Regressions <regressions@lists.linux.dev>,
+	Linux Power Management <linux-pm@vger.kernel.org>,
+	Linux Filesystems Development <linux-fsdevel@vger.kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>, Christoph Hellwig <hch@lst.de>,
+	Jan Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+	Petri Kaukasoina <petri.kaukasoina@tuni.fi>
+Subject: Fwd: Kernel panic in 6.9.0 after changes in kernel/power/swap.c
+Message-ID: <ZkVvuKHV-jdOMnB1@archie.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 1/3] drm/loongson: Add helpers for creating subdevice
-To: Markus Elfring <Markus.Elfring@web.de>, dri-devel@lists.freedesktop.org,
- kernel-janitors@vger.kernel.org, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Sui Jingfeng <suijingfeng@loongson.cn>
-References: <20240513001243.1739336-2-sui.jingfeng@linux.dev>
- <fe55ddf4-b86f-4d9f-aac4-373c5f2a46ac@web.de>
-Content-Language: en-US, en-AU
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sui Jingfeng <sui.jingfeng@linux.dev>
-In-Reply-To: <fe55ddf4-b86f-4d9f-aac4-373c5f2a46ac@web.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="OHWfg0fovwQn+CBZ"
+Content-Disposition: inline
+
+
+--OHWfg0fovwQn+CBZ
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi,
 
-On 5/16/24 04:30, Markus Elfring wrote:
->> In some display subsystems, the functionality of a PCI(e) device may too
-> …
->> of the functionality into child devices can helps to achieve better
->> modularity, eaiser for understand and maintain.
->>
->> Add the loongson_create_platform_device() function to pove the way …
-> 
-> Please avoid typos in such a change description.
+Petri Kaukasoina <petri.kaukasoina@tuni.fi> reported on Bugzilla
+(https://bugzilla.kernel.org/show_bug.cgi?id=3D218845) VFS kernel panic
+regression when reading hibernation image. He wrote:
 
+> 6.9.0 crashes on boot while 6.8.0 is ok.
+>=20
+> Kernel panic - not syncing: VFS: Unable to mount root fs on unknown-block=
+(8,1)
+>=20
+> bisect result:
+>=20
+> 4379f91172f39d999919c8e8b2b5e1d665d8972d is the first bad commit
+> commit 4379f91172f39d999919c8e8b2b5e1d665d8972d
+> Author: Christian Brauner <brauner@kernel.org>
+> Date:   Tue Jan 23 14:26:23 2024 +0100
+>=20
+>     power: port block device access to file
+>    =20
+>     Link: https://lore.kernel.org/r/20240123-vfs-bdev-file-v2-6-adbd023e1=
+9cc@kernel.org
+>     Reviewed-by: Christoph Hellwig <hch@lst.de>
+>     Reviewed-by: Jan Kara <jack@suse.cz>
+>     Signed-off-by: Christian Brauner <brauner@kernel.org>
+>=20
+>  kernel/power/swap.c | 28 ++++++++++++++--------------
+>=20
+> 6.9.0 with only this reverted did not compile. This has something to do w=
+ith reading a hibernation image from disk. I use a swap file, not a partiti=
+on. The system was not hibernated, though. After I removed resume=3D and re=
+sume_offset=3D from the kernel command line, even 6.9.0 boots without panic.
+>=20
 
-I was too hurry, sorry, my bad.
-Will be fixed at the next version.
+Thanks.
 
+--=20
+An old man doll... just what I always wanted! - Clara
 
-> Regards,
-> Markus
+--OHWfg0fovwQn+CBZ
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-Best regards
-Sui
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZkVvswAKCRD2uYlJVVFO
+o/SxAP4sikhakMMJf5TMjw7SN2qc2KZ893jwWhW0TXgeTMCRqgD+MpgwZ0zPaRfe
+EbWTwhe0+C4ChDxW8nBIE+Nf24OQNQE=
+=8S11
+-----END PGP SIGNATURE-----
+
+--OHWfg0fovwQn+CBZ--
 
