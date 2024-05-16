@@ -1,157 +1,91 @@
-Return-Path: <linux-kernel+bounces-180883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E45218C7452
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:03:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 772388C7453
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:04:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A1B51C23607
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:03:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C5571C223D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:04:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF43D143894;
-	Thu, 16 May 2024 10:03:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UG72apak"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF7BE14388A;
+	Thu, 16 May 2024 10:03:56 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF68143883;
-	Thu, 16 May 2024 10:03:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF6D7143754
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 10:03:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715853801; cv=none; b=u5EbAPtLJx/b1r36JyquhJKvBvgf94lUvqjPRkXDf5GTbOJIkrhl7GbCNqEE9NNBNCDBLVGRztVd4fi9gDSLMGvFIGc10rZQM30o4TaO0ZiJZULBMIkYNUt43dWS2RjpbhDU74kYqup1Ap9YR2Im54s/8Ux/mrhMWY4NRGUww64=
+	t=1715853836; cv=none; b=I2xk8nsjapAXW51qV2gpSW3eBKcgcAoqEFoGVFCIe3mbJ7Wf6QZUg1O9LanOIJTNN/o5XFQHHTBeoOKnnaAV75fMTGLM5kBnKwVskSV31sE2isQ79rCFopXWOxgZeuXaTcNpxTW+8MQu/4QNaMvFkLv7AqpF0ggw4ijesdLQ4i0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715853801; c=relaxed/simple;
-	bh=r1RHPwjyAgK2tGzBnhNg6KelUvF/Lg5CeAK7qt4ClQw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bFQcmmszaASgQlJ2gGXHbqsgRTgHtLqsy8G4fW1mEkYkeBtPfGFsUoR37MD5imv2vDHY9koahMb4dqYYptESm3etLQ50cRgNqYs3ClGh5Cy4NFn/8nwaU5H4sbfal+BegikMRKi92jYqeGqIcIwiQcoVSPk5eSXxoGpX8IEWKlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UG72apak; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715853800; x=1747389800;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=r1RHPwjyAgK2tGzBnhNg6KelUvF/Lg5CeAK7qt4ClQw=;
-  b=UG72apakARQ3MKOfaPBl0tNsUsCKAygMVbfPErovaDPQEyr7o5p/9zoo
-   nIisflh03kPO0zoupvhBcFneLQA58efHDOnkYOSukVRazFXArYoKqbYsd
-   BvbBU32MGCRRkwFiBpVXO3ScsL7SyvwyLZZz6NIWhwycyFr3F8JzG2WL6
-   iPzsiwdCaoPj/EqRZkngRjjRRS2hIYMbaTeRwE630/9mW4uXGszJEglgN
-   EOkstG/Fd50F9kt1l0zg2jQDF/zSNetbdNnH/tv0+lniHBdo9EmF/Q55W
-   ETYETqF4bjEidPM7m9pkBqOPNtsssdwsf6vXbDUUGPnPPOQ41vKYnCAxz
-   g==;
-X-CSE-ConnectionGUID: dFU9DBb+T2yGAY92tbcpXg==
-X-CSE-MsgGUID: mHEJaAoPQnq+4D6YqO98Fw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="11764064"
-X-IronPort-AV: E=Sophos;i="6.08,164,1712646000"; 
-   d="scan'208";a="11764064"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 03:03:19 -0700
-X-CSE-ConnectionGUID: g0V9RiB1SOWq1ESDSqoWdQ==
-X-CSE-MsgGUID: pNZHGDq9SeSoRLGhGP/4eQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,164,1712646000"; 
-   d="scan'208";a="62215168"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa002.jf.intel.com with ESMTP; 16 May 2024 03:03:17 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1001)
-	id 63ABB9F6; Thu, 16 May 2024 13:03:15 +0300 (EEST)
-Date: Thu, 16 May 2024 13:03:15 +0300
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Lukas Wunner <lukas@wunner.de>
-Cc: Esther Shimanovich <eshimanovich@chromium.org>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Rajat Jain <rajatja@google.com>
-Subject: Re: [PATCH v4] PCI: Relabel JHL6540 on Lenovo X1 Carbon 7,8
-Message-ID: <20240516100315.GC1421138@black.fi.intel.com>
-References: <Zi0VLrvUWH6P1_or@wunner.de>
- <CA+Y6NJE8hA+wt+auW1wJBWA6EGMc6CGpmdExr3475E_Yys-Zdw@mail.gmail.com>
- <ZjsKPSgV39SF0gdX@wunner.de>
- <20240510052616.GC4162345@black.fi.intel.com>
- <CA+Y6NJF2Ex6Rwxw0a5V1aMY2OH4=MP5KTtat9x9Ge7y-JBdapw@mail.gmail.com>
- <20240511043832.GD4162345@black.fi.intel.com>
- <20240511054323.GE4162345@black.fi.intel.com>
- <CA+Y6NJF+sJs_zQEF7se5QVMBAhoXJR3Y7x0PHfnBQZyCBbbrQg@mail.gmail.com>
- <ZkUcihZR_ZUUEsZp@wunner.de>
- <20240516083017.GA1421138@black.fi.intel.com>
+	s=arc-20240116; t=1715853836; c=relaxed/simple;
+	bh=009iAbl0t2VqPd7PIsRrUBmqkdj8koEBV/R4e8ltrCo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=NBCoBtLX81A2e0STF9jqWIZlAfmtTF6Nhv0sd5HCMWkGmuYzdEdfudftzHq+Jqaqu/zNAwrrRDTS30WWHHNecQkiTvVP3hjmrL/rIRSMNUuxw/HudH5+uY14FEPO9oi9yuP3YyTcHs1dmhK6DoBRQEhT1UngnYwSy6ZL1ZLKk8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Vg5HV2Y4gzcf7D;
+	Thu, 16 May 2024 18:02:30 +0800 (CST)
+Received: from dggpemm100001.china.huawei.com (unknown [7.185.36.93])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2747B14038F;
+	Thu, 16 May 2024 18:03:45 +0800 (CST)
+Received: from [10.174.177.243] (10.174.177.243) by
+ dggpemm100001.china.huawei.com (7.185.36.93) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Thu, 16 May 2024 18:03:44 +0800
+Message-ID: <1d38aa26-cd2f-4330-9dcc-6c379cecb83b@huawei.com>
+Date: Thu, 16 May 2024 18:03:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240516083017.GA1421138@black.fi.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/cma: get nid from physical address
+Content-Language: en-US
+To: Yajun Deng <yajun.deng@linux.dev>, <akpm@linux-foundation.org>
+CC: <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
+References: <20240516091701.1527002-1-yajun.deng@linux.dev>
+From: Kefeng Wang <wangkefeng.wang@huawei.com>
+In-Reply-To: <20240516091701.1527002-1-yajun.deng@linux.dev>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggpemm100001.china.huawei.com (7.185.36.93)
 
-On Thu, May 16, 2024 at 11:30:17AM +0300, Mika Westerberg wrote:
-> Hi,
+
+
+On 2024/5/16 17:17, Yajun Deng wrote:
+> The nid passed to cma_declare_contiguous_nid() may be NUMA_NO_NODE,
+> which is not the actual nid. To get the correct nid, we can get the nid
+> from physical address.
 > 
-> On Wed, May 15, 2024 at 10:35:22PM +0200, Lukas Wunner wrote:
-> > On Wed, May 15, 2024 at 02:53:54PM -0400, Esther Shimanovich wrote:
-> > > On Wed, May 8, 2024 at 1:23???AM Lukas Wunner <lukas@wunner.de> wrote:
-> > > > On Wed, May 01, 2024 at 06:23:28PM -0400, Esther Shimanovich wrote:
-> > > > > On Sat, Apr 27, 2024 at 3:17AM Lukas Wunner <lukas@wunner.de> wrote:
-> > > > > That is correct, when the user-visible issue occurs, no driver is
-> > > > > bound to the NHI and XHCI. The discrete JHL chip is not permitted to
-> > > > > attach to the external-facing root port because of the security
-> > > > > policy, so the NHI and XHCI are not seen by the computer.
-> > > >
-> > > > Could you rework your patch to only rectify the NHI's and XHCI's
-> > > > device properties and leave the bridges untouched?
-> > > 
-> > > So I tried a build with that patch, but it never reached the
-> > > tb_pci_fixup function
-> > 
-> > That means that for some reason, the PCI devices are not associated with
-> > the Thunderbolt ports.  Could you add this to the command line:
-> > 
-> >   thunderbolt.dyndbg ignore_loglevel log_buf_len=10M
-> > 
-> > and this to your kernel config:
-> > 
-> >   CONFIG_DYNAMIC_DEBUG=y
-> > 
-> > You should see "... is associated with ..." messages in dmesg.
-> > This did work for Mika during his testing with recent Thunderbolt chips.
-> > I amended the patches after his testing but wouldn't expect that to
-> > cause issues.
-> > 
-> > @Mika, would you mind re-testing if you've got cycles to spare?
+
+Please check
+
+https://lore.kernel.org/linux-riscv/47437c2b-5946-41c6-ad1b-cc03329eb230@huawei.com/
+
+> Signed-off-by: Yajun Deng <yajun.deng@linux.dev>
+> ---
+>   mm/cma.c | 1 +
+>   1 file changed, 1 insertion(+)
 > 
-> Sure, I'll try this today and update.
-
-Okay now tried with your latest branch on Meteor Lake-P (integrated
-Thunderbolt). I do get these:
-
-[   12.911728] thunderbolt 0000:00:0d.2: 0:8: associated with 0000:00:07.0
-[   12.911732] thunderbolt 0000:00:0d.2: 0:9: associated with 0000:00:07.1
-..
-[   13.250242] thunderbolt 0000:00:0d.3: 0:8: associated with 0000:00:07.2
-[   13.250245] thunderbolt 0000:00:0d.3: 0:9: associated with 0000:00:07.3
-
-The adapters 8 and 9 are PCIe as expected
-
-# tbadapters -r 0 -a 8 -a 9
- 8: PCIe Down                     Disabled  
- 9: PCIe Down                     Disabled  
-
-# tbadapters -d1 -r 0 -a 8 -a 9
- 8: PCIe Down                     Disabled  
- 9: PCIe Down                     Disabled  
-
-And the 07.[0-3] are the PCIe Thunderbolt Root Ports:
-
-# lspci
-..
-00:07.0 PCI bridge: Intel Corporation Meteor Lake-P Thunderbolt 4 PCI Express Root Port #0 (rev 10)
-00:07.1 PCI bridge: Intel Corporation Meteor Lake-P Thunderbolt 4 PCI Express Root Port #1 (rev 10)
-00:07.2 PCI bridge: Intel Corporation Meteor Lake-P Thunderbolt 4 PCI Express Root Port #2 (rev 10)
-00:07.3 PCI bridge: Intel Corporation Meteor Lake-P Thunderbolt 4 PCI Express Root Port #3 (rev 10)
-..
+> diff --git a/mm/cma.c b/mm/cma.c
+> index 3e9724716bad..be6cdde32944 100644
+> --- a/mm/cma.c
+> +++ b/mm/cma.c
+> @@ -361,6 +361,7 @@ int __init cma_declare_contiguous_nid(phys_addr_t base,
+>   		kmemleak_ignore_phys(addr);
+>   		base = addr;
+>   	}
+> +	nid = early_pfn_to_nid(PHYS_PFN(base));
+>   
+>   	ret = cma_init_reserved_mem(base, size, order_per_bit, name, res_cma);
+>   	if (ret)
 
