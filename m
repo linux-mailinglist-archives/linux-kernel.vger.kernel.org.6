@@ -1,237 +1,124 @@
-Return-Path: <linux-kernel+bounces-181286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B08ED8C79FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:03:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B3088C7A01
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:03:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1DDB1C20AA5
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:03:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F09941F2250B
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:03:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E38E814D711;
-	Thu, 16 May 2024 16:03:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5FFB14D6E9;
+	Thu, 16 May 2024 16:03:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hyGTErEQ"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R5uUj/P4"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FF8F14D2AE;
-	Thu, 16 May 2024 16:03:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB8FC14E2EF;
+	Thu, 16 May 2024 16:03:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715875395; cv=none; b=MTeCdTfaxCFkxGV6XzP7gBovj81T+pwGgdCqxCdCo6S2iwv6ZzJFHqSRPqv/FbxYCxV4owY7K5CWIcr8BppxgLXrFjCEtBAF8TTMfor4lmQyIKCvX0fRmNvPuV8AYpIFSceop8DlpC5Y+N01tACDoDxPBjvwFzz98+b0e5NSjG0=
+	t=1715875399; cv=none; b=oBRPN2ULpqjVPKsCHRDz3kWX+NWEQsSYflRGdhqAsN3qx2xLVt/DbKIjZA8X0eXmMwVFhHYoYKBwmkGyKy/hf3yimTllpH+JhPbiqPt8877OO4jl6iwG7ow7m7AODfM73hh9HGGEe3NhEnBs1qsPHSfiKClV7rHxXM1aQZGMCco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715875395; c=relaxed/simple;
-	bh=XfbK26HHwTXb9D6hf85Wv5JSchZA7ZbGTeN/kOh0rRw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dGULdCkYYkWKO3bRe3v7Vs1XhB80f9tTp00REYe5D9nDB7LtArgPjeWHBD7obd3DkhIl/dxONJ/hiAJXlVfcBG6wgMJ5giDc3w8RwwcjGjY7RB1F3ZPYCZBqLpZz4cV5AKEvQzjC9HMB4KphSU5KCr6PIApQ+00ngO8MLOJTACs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hyGTErEQ; arc=none smtp.client-ip=209.85.160.174
+	s=arc-20240116; t=1715875399; c=relaxed/simple;
+	bh=I2HxkgYxcy+MWDcGiUKLXiPl4ji8qHCK6XMx7iOMO2c=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=RFFAoyuOMfEB6RHX1gT2y5pQaKUj7qDyLJI1WDhvcuy2imsjVpC6AY506YiwIi33G9QljJzCtr+EuXGrmO6wMPDCBorjFhay9oDC/Ys/5zSBDWoCj7KlMO1/t3rczX6czvwhKtSVz0BdPvzKBfs3kzBDkap+OsANNLOCcp829gU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R5uUj/P4; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-43df44ef3e3so33174691cf.2;
-        Thu, 16 May 2024 09:03:13 -0700 (PDT)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a59ad12efe3so161034266b.3;
+        Thu, 16 May 2024 09:03:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715875392; x=1716480192; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=quQEENvi+8m2W7cBE5Cl749lOV0EoC/dR++hJ/4pzdI=;
-        b=hyGTErEQFmXvFTZKsDMCaA5I3ANYEZweCWknpV9mi5taZz0bkBwO+f8Tlf3pKpP8AT
-         xYr7pTCAKJOcJM3w05M/je0jq7ffozvkXNr8jB+5MFUJNMcz1FWdrOM4HCbF/4iyWinz
-         Gqt3YVyPSijQtraH3ZmNqxZI9pKQeQAVlZNu910S6eTIoVp87xPeOq9/uY0CuDWWv/7u
-         9h433goprZqKl2d93BGOJpgSMaoUAeOdtjt0HjoXemMwW05fl4kIOGx/ZNiJSU75xIqv
-         9woM0/W0XooQ6i6F9mzJUamuZgw8t6NT6/ZPntVR9cm/8NdfMbBPQpnd7aIeicyXO3UV
-         2H8Q==
+        d=gmail.com; s=20230601; t=1715875396; x=1716480196; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=h2UlXLlotwfBEqJl5RyF1BB7i1PhDgWjZZExNzHpicY=;
+        b=R5uUj/P4hzFDSx4egN6EwgjuJUPY4x8h/9KbQjIXJEHVaEVe+xxwNJ6lHMTh5VjRQB
+         4tyaCZRRJ/Wqvi7Xh0ypvzNuFPRfPitsJYq9h6mZTeEiiDdnopgpFLymw+dIK3cKZRkr
+         rau2G0tvCS8zS3yTO8AU3wmiyi4qIVTOjCCxbb5SH+FcLjnk3cqPYlqGU70AxostcE6v
+         n2uuLLxb6okMnpBbx/x6jXUiAv9+SdA8C/9JAJCGlRahsXiz+ZXZdlaPrsbiuUbgpZiG
+         pEJa16I1gYnFGEr+RxqhB47wJftUXl9+1/p5VXmmkO2eDCOm6Y0yhSDeNOjsu6lgZe0b
+         ygBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715875392; x=1716480192;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=quQEENvi+8m2W7cBE5Cl749lOV0EoC/dR++hJ/4pzdI=;
-        b=wSvjOSO2LM0/WMrgu8LaHgmapz9+i5x0n67GAm2LzhHIzsfS58IoyiarWmdMOu3oHZ
-         fkbQnTwbm4rH1LPDBhLjx5L23LcrYEWksgF+CbfKaw1QB1B9cOGBt9TW4SyAy6vgh6UH
-         QVAv3YqJu4Zqc4+NpY9LAEAas4PNB527L5VVV7xvggIxXrIwZ1L98Hq+3rqAxAsjJx1D
-         1UFLtZmuuVS85YAo+Y+GLV+WZ0umR3pkBHqo3FEGk0B9AHonWpMgLtHh9kX6G9c7xrWa
-         WiCDXdXCamWWli2op8LRyoZl+gMaUtgCAsCvZs8gYszErzR6WqydBgRJDGCEqGVqukn/
-         1MHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWmyfZ6A8xgVz4N99qjR/A8dDYhOtp1bmaVOFMkDvlT/uNA27FkY2NzXi4Wtlh8fgdJM0+C9dec70LTVeVXMVhIsXnCdEA04wZXdifS3Xi4p5zp7hhixHEnFtAygzHAuepVWiA8s3cnOMYkn/LBbRewLH1IUYlAV1okky2/shyfKQA/rg==
-X-Gm-Message-State: AOJu0Yzz3REoeEpRzAgGKkjWMYRl/vN1QVyche4T37TqfofAPHNWpShW
-	TrNo8R+YM7+gfdcedgLjNcSoagq+hyDxrzxxsaax1YOFWij2ZawT
-X-Google-Smtp-Source: AGHT+IHUQiwlM/E+TmpEM0zYayXuGOsA78RdCCnlxaFfplbOFlUmqLjP2bBU4RWTImAmH4BW4JkH8w==
-X-Received: by 2002:ac8:5a8c:0:b0:439:f51a:2c1 with SMTP id d75a77b69052e-43dfda9664bmr233981201cf.1.1715875392075;
-        Thu, 16 May 2024 09:03:12 -0700 (PDT)
-Received: from [192.168.0.137] ([188.24.105.36])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43df54f216esm99899601cf.31.2024.05.16.09.03.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 May 2024 09:03:11 -0700 (PDT)
-Message-ID: <9c58e5d3-d31c-4dd2-b89d-3acf744b3a28@gmail.com>
-Date: Thu, 16 May 2024 19:03:07 +0300
+        d=1e100.net; s=20230601; t=1715875396; x=1716480196;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=h2UlXLlotwfBEqJl5RyF1BB7i1PhDgWjZZExNzHpicY=;
+        b=tmI9aYCOVwKh4okCYEsI5VuejUr3H3L2YxT+tSWtK7VOc/TG2cg0USAFWF+zXGfjTR
+         pPM3dPuvugZhu2wcNMmzQXqY0jMZxiLDq1XBRcQd805SejWXjUC0aGi1KhdgyYrDOvcW
+         1XqhJ/wpUjArXtlJ9V/VWHOvvB/b7lHo0tmDLtZk5u19y4DzOMwGZjvvGiQkTS0Zv+Oj
+         jcNBNvRiGaSDETAPZ8tovnsQoAPbzlsplLePRih/+ZBDBWmkmuzA0+zJiLLTpwaYuqiP
+         aQclPiLDZDgJAPSTq8fq4qKH7510BNakw9ioEselfJ7pds/o3sOffmJCG+2qzhvVS6FN
+         C0IA==
+X-Forwarded-Encrypted: i=1; AJvYcCWV/j1YmB9EQNd6z8aHeTIFTv0e8Q9aSJaak2hWl+VBT6/yEJozO1qq2FsODJsjbZb3QLPVOFURJPQePINC8dMMJuSNIjVmBOVBOUle4n3XOBOJTHJTtw0u3SioahJnf1o+aK/qYrP8PQ==
+X-Gm-Message-State: AOJu0YyKrZpnv6OXmU4hDtirdACRzVa0kqX+3El9gkNMYv5OCbfqf5OY
+	CEhptunVLepyGS1ny3/5LtSkd12L5LUt7SsamZHetY5A6dSIfKy+
+X-Google-Smtp-Source: AGHT+IGUmF1po0i4xBr81rQ2OeOh8QF45K6Bg7Kx7HO+pT8V6cPBtdynozaaidZkQFVmKBx8d0YJ3Q==
+X-Received: by 2002:a50:8d06:0:b0:572:7d75:a70e with SMTP id 4fb4d7f45d1cf-5734d5d0208mr17338442a12.25.1715875395933;
+        Thu, 16 May 2024 09:03:15 -0700 (PDT)
+Received: from localhost (host-95-246-50-43.retail.telecomitalia.it. [95.246.50.43])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733bebb6casm10560431a12.29.2024.05.16.09.03.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 May 2024 09:03:15 -0700 (PDT)
+Date: Thu, 16 May 2024 18:03:14 +0200
+From: Matteo Martelli <matteomartelli3@gmail.com>
+To: Matteo Martelli <matteomartelli3@gmail.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, 
+ Mark Brown <broonie@kernel.org>, 
+ Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, 
+ Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-sound@vger.kernel.org, 
+ devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Matteo Martelli <matteomartelli3@gmail.com>
+Message-ID: <66462e42bebfe_15e553703c@njaxe.notmuch>
+In-Reply-To: <20240516154800.125284-1-matteomartelli3@gmail.com>
+References: <20240516154800.125284-1-matteomartelli3@gmail.com>
+Subject: Re: [PATCH v2 0/2] ASoC: codecs: add support for everest-semi es8311
+ codec
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/9] iio: adc: ad7173: add support for special inputs
-To: David Lechner <dlechner@baylibre.com>, dumitru.ceclan@analog.com
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240514-ad4111-v2-0-29be6a55efb5@analog.com>
- <20240514-ad4111-v2-5-29be6a55efb5@analog.com>
- <CAMknhBF8D3YCro4duKrBoEkdc-SiCGwvHTg4SFb17ympUsG1nA@mail.gmail.com>
-Content-Language: en-US
-From: "Ceclan, Dumitru" <mitrutzceclan@gmail.com>
-In-Reply-To: <CAMknhBF8D3YCro4duKrBoEkdc-SiCGwvHTg4SFb17ympUsG1nA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-On 16/05/2024 02:27, David Lechner wrote:
-> On Tue, May 14, 2024 at 2:23 AM Dumitru Ceclan via B4 Relay
-> <devnull+dumitru.ceclan.analog.com@kernel.org> wrote:
->>
->> From: Dumitru Ceclan <dumitru.ceclan@analog.com>
->>
->>  Add support for selecting REF+ and REF- inputs on all models.
->>  Add support for selecting ((AVDD1 − AVSS)/5) inputs
->>   on supported models.
->>
->> Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
->> ---
->>  drivers/iio/adc/ad7173.c | 21 +++++++++++++++++++++
->>  1 file changed, 21 insertions(+)
->>
->> diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
->> index fb33534d63a9..1e9ba3070770 100644
->> --- a/drivers/iio/adc/ad7173.c
->> +++ b/drivers/iio/adc/ad7173.c
->> @@ -65,6 +65,10 @@
->>          FIELD_PREP(AD7173_CH_SETUP_AINNEG_MASK, neg))
->>  #define AD7173_AIN_TEMP_POS    17
->>  #define AD7173_AIN_TEMP_NEG    18
->> +#define AD7173_AIN_COM_IN_POS  19
->> +#define AD7173_AIN_COM_IN_NEG  20
->> +#define AD7173_AIN_REF_POS     21
->> +#define AD7173_AIN_REF_NEG     22
->>
->>  #define AD7172_2_ID                    0x00d0
->>  #define AD7175_ID                      0x0cd0
->> @@ -145,6 +149,8 @@ struct ad7173_device_info {
->>         unsigned int id;
->>         char *name;
->>         bool has_temp;
->> +       /* ((AVDD1 − AVSS)/5) */
->> +       bool has_common_input;
->>         bool has_input_buf;
->>         bool has_int_ref;
->>         bool has_ref2;
->> @@ -215,6 +221,7 @@ static const struct ad7173_device_info ad7173_device_info[] = {
->>                 .has_temp = true,
->>                 .has_input_buf = true,
->>                 .has_int_ref = true,
->> +               .has_common_input = true,
->>                 .clock = 2 * HZ_PER_MHZ,
->>                 .sinc5_data_rates = ad7173_sinc5_data_rates,
->>                 .num_sinc5_data_rates = ARRAY_SIZE(ad7173_sinc5_data_rates),
->> @@ -228,6 +235,7 @@ static const struct ad7173_device_info ad7173_device_info[] = {
->>                 .has_temp = false,
->>                 .has_input_buf = true,
->>                 .has_ref2 = true,
->> +               .has_common_input = true,
->>                 .clock = 2 * HZ_PER_MHZ,
->>                 .sinc5_data_rates = ad7173_sinc5_data_rates,
->>                 .num_sinc5_data_rates = ARRAY_SIZE(ad7173_sinc5_data_rates),
->> @@ -243,6 +251,7 @@ static const struct ad7173_device_info ad7173_device_info[] = {
->>                 .has_input_buf = true,
->>                 .has_int_ref = true,
->>                 .has_ref2 = true,
->> +               .has_common_input = false,
->>                 .clock = 2 * HZ_PER_MHZ,
->>                 .sinc5_data_rates = ad7173_sinc5_data_rates,
->>                 .num_sinc5_data_rates = ARRAY_SIZE(ad7173_sinc5_data_rates),
->> @@ -257,6 +266,7 @@ static const struct ad7173_device_info ad7173_device_info[] = {
->>                 .has_temp = true,
->>                 .has_input_buf = true,
->>                 .has_int_ref = true,
->> +               .has_common_input = true,
->>                 .clock = 16 * HZ_PER_MHZ,
->>                 .sinc5_data_rates = ad7175_sinc5_data_rates,
->>                 .num_sinc5_data_rates = ARRAY_SIZE(ad7175_sinc5_data_rates),
->> @@ -271,6 +281,7 @@ static const struct ad7173_device_info ad7173_device_info[] = {
->>                 .has_input_buf = true,
->>                 .has_int_ref = true,
->>                 .has_ref2 = true,
->> +               .has_common_input = true,
->>                 .clock = 16 * HZ_PER_MHZ,
->>                 .sinc5_data_rates = ad7175_sinc5_data_rates,
->>                 .num_sinc5_data_rates = ARRAY_SIZE(ad7175_sinc5_data_rates),
->> @@ -285,6 +296,7 @@ static const struct ad7173_device_info ad7173_device_info[] = {
->>                 .has_temp = false,
->>                 .has_input_buf = false,
->>                 .has_int_ref = true,
->> +               .has_common_input = false,
->>                 .clock = 16 * HZ_PER_MHZ,
->>                 .sinc5_data_rates = ad7175_sinc5_data_rates,
->>                 .num_sinc5_data_rates = ARRAY_SIZE(ad7175_sinc5_data_rates),
->> @@ -298,6 +310,7 @@ static const struct ad7173_device_info ad7173_device_info[] = {
->>                 .has_temp = true,
->>                 .has_input_buf = true,
->>                 .has_int_ref = true,
->> +               .has_common_input = true,
->>                 .clock = 16 * HZ_PER_MHZ,
->>                 .odr_start_value = AD7177_ODR_START_VALUE,
->>                 .sinc5_data_rates = ad7175_sinc5_data_rates,
->> @@ -920,6 +933,14 @@ static int ad7173_validate_voltage_ain_inputs(struct ad7173_state *st,
->>                 if (ain[i] < st->info->num_inputs)
->>                         continue;
->>
->> +               if (ain[i] == AD7173_AIN_REF_POS || ain[i] == AD7173_AIN_REF_NEG)
->> +                       continue;
->> +
->> +               if ((ain[i] == AD7173_AIN_COM_IN_POS ||
->> +                    ain[i] == AD7173_AIN_COM_IN_NEG) &&
->> +                   st->info->has_common_input)
->> +                       continue;
->> +
-> 
-> If there is only one valid combination, it seems like these should be
-> fixed channels like the temperature input rather than something coming
-> from the device tree.
-> 
-As I've said, I do not agree with forcing one channel slot to be used.
-I could add a property that spawns this channel. Although as I see under,
-I think I'll permit these inputs to be mixed and matched.
+Matteo Martelli wrote:
+>  .../bindings/sound/everest,es8311.yaml        |  52 +
+>  sound/soc/codecs/Kconfig                      |   4 +
+>  sound/soc/codecs/Makefile                     |   2 +
+>  sound/soc/codecs/es8311.c                     | 970 ++++++++++++++++++
+>  sound/soc/codecs/es8311.h                     | 162 +++
+>  5 files changed, 1190 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/sound/everest,es8311.yaml
+>  create mode 100644 sound/soc/codecs/es8311.c
+>  create mode 100644 sound/soc/codecs/es8311.h
 
-> It looks like on AD411x, it is the case that there is only one valid
-> option for the reference input in the channel configuration. But in
-> the case of AD717x since both REF+ and REF- are listed as possible
-> inputs for both AINPOS0 and AINNEG0, it seems like they could be mixed
-> and matched with other channels. The datasheet doesn't seem very clear
-> on this though.
-> 
-This is imposed artificially, AD411x has the same cross-point mux that
-can mix and match all the inputs.
+This is the wrong diffstat from previous patch v1, sorry for that.
 
-> If it is valid to combine, say AIN0 with REF+ though, then the
-> validation would need to be relaxed. But I'm guessing that is not
-> actually the case?
->
+Here's the correct diffstat:
 
-I think it is the case.
+ .../bindings/sound/everest,es8316.yaml        |   7 +-
+ sound/soc/codecs/Kconfig                      |   4 +
+ sound/soc/codecs/Makefile                     |   2 +
+ sound/soc/codecs/es8311.c                     | 970 ++++++++++++++++++
+ sound/soc/codecs/es8311.h                     | 162 +++
+ 5 files changed, 1143 insertions(+), 2 deletions(-)
+ create mode 100644 sound/soc/codecs/es8311.c
+ create mode 100644 sound/soc/codecs/es8311.h
 
->>                 return dev_err_probe(dev, -EINVAL,
->>                         "Input pin number out of range for pair (%d %d).\n",
->>                         ain[0], ain[1]);
->>
->> --
->> 2.43.0
->>
->>
-
+Best regards,
+Matteo Martelli
 
