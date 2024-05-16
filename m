@@ -1,163 +1,116 @@
-Return-Path: <linux-kernel+bounces-180722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15BD88C724A
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 09:57:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6C238C724B
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 09:57:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B08A71F213B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 07:57:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AC391F22548
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 07:57:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A9B3604D5;
-	Thu, 16 May 2024 07:56:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47F38604D5;
+	Thu, 16 May 2024 07:57:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iKVF4eIc"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HQdQplp/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5E6550A80
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 07:56:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 847A3282EF
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 07:57:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715846216; cv=none; b=H4f1AI49DReIaD0aMQUPoZAK/WFoOiYixPngFF6UM0Ce1X+HKGIPQGlwPCQ8SSB8kebyuQebnzxOWZJ6HgKjCrwtxRJ+6QTe6qhQFLEKEPLputuTq5cPow6MQ6JIvzI01Z83tMsjrTLzxzlLTsf/tyUaERSexqvbcEum1dTiNwo=
+	t=1715846266; cv=none; b=Egf+IhUDcNss0zWqbjBNIxOtaWmVcb3618okzo92SOEyNvgK4TJjAQO8nZkZJqbfvu6HMEDBrmdhEvGavRSqzlFMDtiGN+zCIBS3TE3twJjGL/SJPY/SbKMzPdbYnZCY761Sb5eiBBiUT6DfpvePd11xWz+iF7PEVgMHrulYytk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715846216; c=relaxed/simple;
-	bh=Q+g6RohzgurGfkkfJHgvSkttco96KwzHqWDEt+e0kVc=;
+	s=arc-20240116; t=1715846266; c=relaxed/simple;
+	bh=6nEVeR2xHqL+xtbx4QyEOB31XerRon6nHmu9UdguhZI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QEgheqAyz8rKD8CKJsZETlVepQ5t0JYT9ThNW98lu1GcBfGeGbr4UR0zKaIbSwklNKn691a5ld29FMCa869rEPsedg6hiapJlfrNWQtfG8DAJyfpNXdrMrB+lXKt5QAaYod8swmenDvbZbeeNswWdu98CjzADbINdDmBJRk73uk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=iKVF4eIc; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=v68Ze4zS81jeyEPkpC8TF4NYVy29m7I2JYql5hSnaB8=; b=iKVF4eIcJHJ/g9qCyhQYNuNdzN
-	sS63KHa/kpNtE/QGQqzvkWBf5won4RdHaZecRuJwFg5vNKX4rxJDYOkLmZShZXtQDQldM6zNg0zI1
-	nU4ZZGnenrFdppCKXrmLaO/vlw4p2jsMovExzNiLhlpyEsUERFE3l0DINCBFxJ/q2K4aG2s9O9voC
-	FiX/wGn92TBoKfACEmo4SUTYX/J5vkEQoOO8sWtJ9nkLU+BATLg9t6VPcWfzG0u2Nl4LLOjc2FGae
-	bjbA+Md2Hncx6CijPDZZmE6IMjMA/J3miuwpsFwXlvLRAbn1kT61LOvJo1laNpVIcbRpEaCcec1mc
-	DGYnm81A==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s7VyX-00000005NMW-1BmR;
-	Thu, 16 May 2024 07:56:32 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id AFDFC30068B; Thu, 16 May 2024 09:56:28 +0200 (CEST)
-Date: Thu, 16 May 2024 09:56:28 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: Levi Yun <ppbuk5246@gmail.com>, Joel Fernandes <joel@joelfernandes.org>,
-	Vineeth Pillai <vineeth@bitbyteword.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	anna-maria@linutronix.de, mingo@kernel.org, tglx@linutronix.de,
-	Markus.Elfring@web.de, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] time/tick-sched: idle load balancing when nohz_full
- cpu becomes idle.
-Message-ID: <20240516075628.GC22557@noisy.programming.kicks-ass.net>
-References: <20240508172621.30069-1-ppbuk5246@gmail.com>
- <20240509092931.35209-2-ppbuk5246@gmail.com>
- <ZkU8lm2tjm_r9FpZ@pavilion.home>
+	 Content-Type:Content-Disposition:In-Reply-To; b=W4Gqw6Wwmj1DozF/alY07/ChOerEXkDPUfAb6BvSI1Lov0r/XHYu2SXHUU3HOQI8b8Qc/xDd08ZBjVJLa2TLbsRclArsi3VB5T9vXa56CeLhL4N/Dcbyyw6L4SG98J/pYdFIANuSt0X00PRvPGIVkH9N9soUXraM3bZTwM8Uoe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HQdQplp/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC21FC113CC;
+	Thu, 16 May 2024 07:57:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715846265;
+	bh=6nEVeR2xHqL+xtbx4QyEOB31XerRon6nHmu9UdguhZI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HQdQplp/8vX86ut/jbMDglepohWQgHpTSGUBJw5PCnN2bj1KN+lWktM6Ew8WDG8n5
+	 GLYZuRwTXCu+d0aBeKS6AZSaF2+j7+yoHCeApnvQPGkmgsDc+BpbvxqiA5inLuy/Yj
+	 Kd+ZpV0QUCXgUhRKLdKNhE+cONsjuF5oqNwOHNdE4HaDxy06gOHkSSruALVq7MgMBH
+	 ctSWmpNnk1KJ402LE3GmAZlfQJtbbd2IT0kiblJ5PVYspbW+2I/w+dTWdKB7mweMIg
+	 In0kmbucUq4iXpyEPee1LFAv6mOPze8wfo8EJnAwYgcpbdKPjOQvtN15B8+3fSq59J
+	 WFc1z8GjKwpvw==
+Date: Thu, 16 May 2024 09:57:31 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Sean Nyekjaer <sean@geanix.com>
+Cc: Yannick FERTRE <yannick.fertre@foss.st.com>, 
+	Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, Philippe Cornu <philippe.cornu@foss.st.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Robert Foss <rfoss@kernel.org>, Antonio Borneo <antonio.borneo@foss.st.com>, 
+	dri-devel@lists.freedesktop.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/stm: dsi: relax mode_valid clock tolerance
+Message-ID: <20240516-astonishing-tasteful-tuatara-7d29bd@penduick>
+References: <20240322104732.2327060-1-sean@geanix.com>
+ <lkrxoqhcitmvjvzslhx6mrdjaa6lpxtpmdjt7wwollm6z4h65q@jk5esjje6ppy>
+ <b58c9073-02c6-4b5e-9082-fb11f388842d@foss.st.com>
+ <44grbp56thhsbxf3i3yicsxgftbuhzebetioxfuibrpw6vbc6l@qqphfke5vgl5>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="35odebnap6x5sjhe"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZkU8lm2tjm_r9FpZ@pavilion.home>
+In-Reply-To: <44grbp56thhsbxf3i3yicsxgftbuhzebetioxfuibrpw6vbc6l@qqphfke5vgl5>
 
-On Thu, May 16, 2024 at 12:52:06AM +0200, Frederic Weisbecker wrote:
-> Le Thu, May 09, 2024 at 10:29:32AM +0100, Levi Yun a écrit :
-> > When nohz_full CPU stops tick in tick_nohz_irq_exit(),
-> > It wouldn't be chosen to perform idle load balancing because it doesn't
-> > call nohz_balance_enter_idle() in tick_nohz_idle_stop_tick() when it
-> > becomes idle.
-> > 
-> > Formerly, __tick_nohz_idle_enter() is called in both
-> > tick_nohz_irq_exit() and in do_idle().
-> > That's why commit a0db971e4eb6 ("nohz: Move idle balancer registration
-> > to the idle path") prevents nohz_full cpu which isn't yet
-> > idle state but tick is stopped from entering idle balance.
-> > 
-> > However, this prevents nohz_full cpu which already stops tick from
-> > entering idle balacne when this cpu really becomes idle state.
-> > 
-> > Currently, tick_nohz_idle_stop_tick() is only called in idle state and
-> > it calls nohz_balance_enter_idle(). this function tracks the CPU
-> > which is part of nohz.idle_cpus_mask with rq->nohz_tick_stopped properly.
-> > 
-> > Therefore, Change tick_nohz_idle_stop_tick() to call nohz_balance_enter_idle()
-> > without checking !was_stopped so that nohz_full cpu can be chosen to
-> > perform idle load balancing when it enters idle state.
-> > 
-> > Fixes: a0db971e4eb6 ("nohz: Move idle balancer registration to the idle path")
-> > Signed-off-by: Levi Yun <ppbuk5246@gmail.com>
-> > ---
-> > v4:
-> > 	- Add fixes tags.
-> > 
-> > v3:
-> > 	- Rewording commit message.
-> > 
-> > v2:
-> > 	- Fix typos in commit message.
-> > 
-> >  kernel/time/tick-sched.c | 6 ++++--
-> >  1 file changed, 4 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
-> > index 71a792cd8936..31a4cd89782f 100644
-> > --- a/kernel/time/tick-sched.c
-> > +++ b/kernel/time/tick-sched.c
-> > @@ -1228,8 +1228,10 @@ void tick_nohz_idle_stop_tick(void)
-> >  		ts->idle_sleeps++;
-> >  		ts->idle_expires = expires;
-> > 
-> > -		if (!was_stopped && tick_sched_flag_test(ts, TS_FLAG_STOPPED)) {
-> > -			ts->idle_jiffies = ts->last_jiffies;
-> > +		if (tick_sched_flag_test(ts, TS_FLAG_STOPPED)) {
-> > +			if (!was_stopped)
-> > +				ts->idle_jiffies = ts->last_jiffies;
-> > +
-> 
-> I've taken some time to respond because your patch has raised more questions
-> while discussing this with Anna-Maria:
-> 
-> 1) Is Idle load balancing actually relevant for nohz_full? HK_TYPE_MISC already
->    prevent those CPUs from becoming idle load balancer. They can still be
->    targets for load balancing but nohz_full CPUs are supposed to run only one
->    task.
-> 
-> 2) This is related to previous point: HK_TYPE_SCHED is never activated. It would
->    prevent the CPU from even beeing part of idle load balancing. Should we
->    remove it or plug it?
->    
-> 
-> 3) nohz_balance_enter_idle() is called when the tick is stopped for the first
->    time and nohz_balance_exit_idle() is called from the tick. But that also
->    applies to idle ticks. So if the load balancing triggers while the tick is
->    stopped, nohz_balance_enter_idle() won't be re-called in the idle loop even
->    though the tick is stopped (that would be fixed with your patch).
-> 
-> 4) Why is nohz_balance_exit_idle() called from the tick and not from the idle
->    exit path? Is it to avoid overhead?
-> 
-> I'm adding some scheduler people in Cc who might help answer some of those
-> questions.
 
-None of that HK nonsense is relevant. The NOHZ_FULL nonsense implies
-single CPU partitions, and *that* should be avoiding any and all
-load-balancing.
+--35odebnap6x5sjhe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-If there still is, that's a bug, but that's not related to HK goo.
+Hi,
 
-As such, I don't think the HK_TYPE_SCHED check in
-nohz_balance_enter_idle() actually makes sense, the on_null_omain()
-check a little below that should already take care of things, no?
+On Wed, May 15, 2024 at 09:42:34AM +0200, Sean Nyekjaer wrote:
+> On Wed, May 15, 2024 at 08:39:49AM UTC, Yannick FERTRE wrote:
+> > Hi Sean,
+> >=20
+> > thanks for your patch.
+> >=20
+> > Tested-by: Yannick Fertre <yannick.fertre@foss.st.com>
+> >=20
+> > I think that a helper could be useful in simplifying this part.
+> > This might be reworked when a new helper will be implemented.
+> >=20
+> > Best regards
+>=20
+> Hi Yannick,
+>=20
+> Will this mean that this will patch will go in?
+>=20
+> I still have plans to do the helper, but I'm limited on time :)
+
+I still think we should work on the helper and merge that directly. It's
+been broken for a while anyway so it's not like it's a regression anyway.
+
+Maxime
+
+--35odebnap6x5sjhe
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZkW8XwAKCRAnX84Zoj2+
+dunqAYDKPCmEKxonPhhitWf97oBPBxfeBTdrMIqsZGA8qieRjVX6swAQk63a86xv
+MGEjr/ABgKUizwvYzV/yf1DXkDoX8hAGZLW2VxvK4KC9FZNWg2EQXreBaig7iA9r
+2Te1Kbufww==
+=TSXP
+-----END PGP SIGNATURE-----
+
+--35odebnap6x5sjhe--
 
