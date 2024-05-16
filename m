@@ -1,122 +1,125 @@
-Return-Path: <linux-kernel+bounces-181258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 594EA8C79A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:42:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDCAD8C79B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:49:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14947284076
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:42:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D846B21210
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:49:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2A361DFD6;
-	Thu, 16 May 2024 15:41:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FEE514D452;
+	Thu, 16 May 2024 15:49:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JdwgMiBf"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hxXZmyhp"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B61C14D452;
-	Thu, 16 May 2024 15:41:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638EA143895;
+	Thu, 16 May 2024 15:49:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715874119; cv=none; b=kFtWVSM4o5MC9XkUUJO60Qx4xZu8j+s9V0TJJLVHV13mfZhnyoDSI6TdtZzhHNyHvWGc36/Y5lqDIU2a9IePy2vGkxT/q4LbbXZ7RtM+B4mgxeeNRuMcUKom8OQr3QOyS0HThY0uXe5xwFnpagTHlJYpfvtDnBSgM28FlTlLky8=
+	t=1715874545; cv=none; b=lPtza/hVdAbN4Luf3PznHM1+fD8BVyRQzI1fIrVOKlw6XgYeg2nfGIUkX6/rfuCv7NSL03l9RIeqs1Uf4mHf6tzFbAbfZum31a55t6FgEztpD3mziHo7n+5T3A+ppu8UUmADmFQblw/zDp0CEiY3KofRy0ChGQo4o9s4r+LS8Io=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715874119; c=relaxed/simple;
-	bh=Hn7/vCbl6NJlnjzeYD+Ur3zP/ut2JNfZwZRZ8ytN7LI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Uw8Bkto6A84elmuKT80M244761LmbRkLv2PL2uRoPjbpb0J4u5XkTj47nvZn68ZeW1Pp0n4PnHYJeUQRnF/Z/MqgDdxyRjh4YzbtVpZkEUvyWtv9ZlHUxpCiKFuUthvBNe9kvB6Eze3c2SUKRIodsdWBAC83hfPNb8Qrg8OSCvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JdwgMiBf; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715874118; x=1747410118;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=Hn7/vCbl6NJlnjzeYD+Ur3zP/ut2JNfZwZRZ8ytN7LI=;
-  b=JdwgMiBfiZLsBCPF7TphMK5Nvz1UQjXqOb/eWONagf3l/Q8lXYaR1jBp
-   /zgShH1SU73tvB33NLRUPYX0XAQBHmfy4B0Vh77CrpQZ0IdJrDQzQ2Rdv
-   3+3KeT1X0hG9yNgWV/1tvWJBKv/ZLkT5BIeXilC4AjISgPJXIzsZYB2Ye
-   3Lxez43TzlA+dshVaNTrRElVCos8FV5aUjRlKbynh6+YxIisMATl8mWP3
-   rtPzbLVmF4u7mGAmmtLAhfU7pFSs24/tNPabQy9nIaZdR3Lg+L0VuEFWN
-   zKqmqFi/zS6gpwLEDoJYqEx71rBovwPQC/gBC4jzu8tghI/UJddnkoxuY
-   Q==;
-X-CSE-ConnectionGUID: i+BGohMvSveJGos3VltXcQ==
-X-CSE-MsgGUID: eQklBbbwSJe3BzOQBbqf4g==
-X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="23403787"
-X-IronPort-AV: E=Sophos;i="6.08,164,1712646000"; 
-   d="scan'208";a="23403787"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 08:41:57 -0700
-X-CSE-ConnectionGUID: UjuNcKFuSGGH3e6htSU5PQ==
-X-CSE-MsgGUID: h9KSI5c5Qzi2CoBjhYktow==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,164,1712646000"; 
-   d="scan'208";a="62301778"
-Received: from josephjo-mobl1.amr.corp.intel.com (HELO desk) ([10.212.146.49])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 08:41:57 -0700
-Date: Thu, 16 May 2024 08:41:50 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Kalle Valo <kvalo@kernel.org>, Borislav Petkov <bp@alien8.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>, x86@kernel.org,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	regressions@lists.linux.dev,
-	Jeff Johnson <quic_jjohnson@quicinc.com>,
-	Daniel Sneddon <daniel.sneddon@linux.intel.com>
-Subject: Re: [regression] suspend stress test stalls within 30 minutes
-Message-ID: <20240516154150.46w4h2ro6sm5yyzx@desk>
-References: <878r0djxgc.fsf@kernel.org>
- <874jb0jzx5.fsf@kernel.org>
- <feaefaae-e25b-4a48-b6be-e20054f2c8df@intel.com>
- <20240515072231.z3wlyoblyc34ldmr@desk>
- <529C9374-DA6F-49C8-9B32-91741800F8E4@alien8.de>
- <20240515162747.6shmaoelc4mt7nro@desk>
- <878r0bhvjq.fsf@kernel.org>
- <20240516070315.swz2golcrfp3uvfd@desk>
- <20240516142513.qqy7wbmja5frizuj@desk>
- <ab00d8e5-8400-451e-9435-becb0b3fa80c@intel.com>
+	s=arc-20240116; t=1715874545; c=relaxed/simple;
+	bh=TaCKIb+tOlae/OaZnCw4aoUwvzQ2N3Q/DzEajBzwE8w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=f/tJtppE2Omt6b7cdpAPDWEP6bZSV7PytqyDuXNJn9XObCRAQ8wziQybeSaalh1PjP7xT/X28rsSWJ10G704DDfoupu4V8pzRlFSq3HyPexzN7iYvxus+/jAP1ohUVI9AYRVMEi5MMAkTOmvpLXISA5decbb4dB16/0Sh5byVgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hxXZmyhp; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-572e8028e0cso3693988a12.3;
+        Thu, 16 May 2024 08:49:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715874543; x=1716479343; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EVGMf75YF+vt1t27uWnw5jAT2X3eMlVNjnjRhN5vWv4=;
+        b=hxXZmyhpV8+/Gy/hU2Rqptf1VE2ZP57apPbg7oTaL/rVPOVZb9dSG0WkdQtzSV/Ucq
+         httY5qTayTKJzzBhTWI+ODq8Cm4PWE+xcXIVMsaQRS+vu94tFGTbZT4CQiyEHrafuErp
+         Ohwe6vAOE7EZllUfC7OgLFMQTwjP1wqvgYqWHNC9o6qkgfb2gALFmYuzl4C5xuMKd+rg
+         ISnjvc+ccz0LiGJaxe+DaGTyegsywOu0kyX16ZXCLKnondrmtRTxhSJmOunTKagz0KXd
+         0xdkTmHw6Dju2jNeV8Pq/9lne9rMKSmCgvn4AEijs0SNmWONVZG6RO6ls4qyybVjE4T9
+         vo1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715874543; x=1716479343;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EVGMf75YF+vt1t27uWnw5jAT2X3eMlVNjnjRhN5vWv4=;
+        b=NnYgKrMo0EeqkuoWjiuFFZ/4nnOTD0MtQdLI9XYHbkWn84iB73OLO5uaC3dIzIaSHd
+         sVL0ixvIuSvQq/G2L60yOsLKvE6CIpZbuDskx3b6iYjKtZZCQIEAWXFBWozsi9PM1mMi
+         2bGXDu8q817noGg09d6AHbvsxhg11R9/xF4k1vPsZW4TrdPWX29Wge4zBHAG6dtXeDX/
+         ydIhasTHAR1eKKzyKfHOdz1/XZT9WGRe1tglPRjcl1sNmFr5Q78APWM4HeYeJWBjx1sI
+         M12VYTxxerS6fyv4Fi4FSZ9jHJ3bnF6dL8wxhyOdmvdvV+mwfCkpqX6W9CuM2zjA6f3D
+         r+5A==
+X-Forwarded-Encrypted: i=1; AJvYcCXxdPYCJLnHAMTxZ/f1KcsmbsBTabzCvTldB81uOOoh8XiqcNn6jBlxPixdYfL+V9gICguUkj26UygIsALYCZUX0ZBK7/npM8xpkj3NqUET1eOlZUWXi5njJKaEXMj2SP9Tg4ndhhWj/Q==
+X-Gm-Message-State: AOJu0YxrogXouSQKUfdYWek61GsGxCLXMOIyMkkMeB2X28Ug0P+56Lc1
+	M3UYC768A7xzOnr3v/c3oXZHzQoqSf42w5A3Vdpi/fLF7dl3YE9R
+X-Google-Smtp-Source: AGHT+IEOXzHhAeph+JwKQNsAh5vTm8beBoiALShHRSVjBXyTmqnOak4rMy3vcQIPzPH7/wuZU+EBQQ==
+X-Received: by 2002:a50:d5dc:0:b0:56e:60d:9b16 with SMTP id 4fb4d7f45d1cf-5734d5974e6mr12980759a12.6.1715874542455;
+        Thu, 16 May 2024 08:49:02 -0700 (PDT)
+Received: from localhost (host-95-246-50-43.retail.telecomitalia.it. [95.246.50.43])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-574bcad0362sm7372766a12.20.2024.05.16.08.49.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 May 2024 08:49:02 -0700 (PDT)
+From: Matteo Martelli <matteomartelli3@gmail.com>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Matteo Martelli <matteomartelli3@gmail.com>
+Subject: [PATCH v2 0/2] ASoC: codecs: add support for everest-semi es8311 codec
+Date: Thu, 16 May 2024 17:43:29 +0200
+Message-ID: <20240516154800.125284-1-matteomartelli3@gmail.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ab00d8e5-8400-451e-9435-becb0b3fa80c@intel.com>
 
-On Thu, May 16, 2024 at 07:32:54AM -0700, Dave Hansen wrote:
-> On 5/16/24 07:25, Pawan Gupta wrote:
-> > On Thu, May 16, 2024 at 12:03:22AM -0700, Pawan Gupta wrote:
-> >> I am running the suspend test now and will update in the morning if I
-> >> could reproduce the hang.
-> > Completed 500 suspend iterations, but the hang is not reproduced 🙁
-> > I have restarted the test.
-> > 
-> > BTW, could you please share your /proc/cmdline? Also, was there any
-> > workload running with the suspend test? If I could not reproduce it in the
-> > next run, I will run stress-ng with the suspend test.
-> 
-> I'd suggest two things:
-> 
->   * Run everything in tools/testing/selftests/x86 in a loop during the
->     suspend test.
->   * Run perf or something else to generate some NMIs.
+This patch set adds support for the Everest-semi ES8311 codec.
 
-Will do.
+Everest-semi ES8311 codec is a low-power mono audio codec with I2S audio
+interface and I2C control.
 
-> Those will ensure the dark corners of the entry code are being
-> sufficiently prodded.
-> 
-> I also have sneaking suspicion that microcode updates during resume are
-> the aggravating factor.
+Implemented and tested most of the codec features, with few limitations
+listed in the driver commit message. The test setup was composed of a
+ESP32-LyraT-Mini board, which embeds the codec, connected via I2C and
+I2S to a Raspberry Pi Zero W host board. Some tests were also performed
+on a Pine64 A64 host board (e.g. to test the suspend/resume not
+supported by the rpi). The codec driver was bound with the simple-card
+driver running on kernel v6.9-rc7.
+---
+Changes in v2:
+- dt-bindings: removed wrong es8311 schema file
+- dt-bindings: added es8311 into existing es8316 schema file
+- Link to v1: https://lore.kernel.org/all/20240510131238.1319333-1-matteomartelli3@gmail.com/
+---
+Matteo Martelli (2):
+  ASoC: es8311: dt-bindings: add everest es8311 codec
+  ASoC: codecs: es8311: add everest es8311 codec support
 
-Lets see if Kalle is able to reproduce the hang with "dis_ucode_ldr".
+ .../bindings/sound/everest,es8311.yaml        |  52 +
+ sound/soc/codecs/Kconfig                      |   4 +
+ sound/soc/codecs/Makefile                     |   2 +
+ sound/soc/codecs/es8311.c                     | 970 ++++++++++++++++++
+ sound/soc/codecs/es8311.h                     | 162 +++
+ 5 files changed, 1190 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/everest,es8311.yaml
+ create mode 100644 sound/soc/codecs/es8311.c
+ create mode 100644 sound/soc/codecs/es8311.h
+---
+base-commit: dccb07f2914cdab2ac3a5b6c98406f765acab803
+-- 
 
