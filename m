@@ -1,111 +1,111 @@
-Return-Path: <linux-kernel+bounces-180900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 110368C7491
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:23:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42C3A8C7494
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:24:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9B641F2423C
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:23:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D58DB1F24AFF
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:24:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87758143C5F;
-	Thu, 16 May 2024 10:22:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A8B0143C44;
+	Thu, 16 May 2024 10:24:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MInJD0O0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fNoQCKO4"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD2F3143754
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 10:22:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6268214388A;
+	Thu, 16 May 2024 10:24:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715854965; cv=none; b=uwM4lv4dmm/z2Z0oyWOEdlEcWF2LHtMwqybSy740YENO90a3isQK0Sdkgrx+Z9UdHcPNwGX9yFxA4SLYfUpm8tZyVJA96s/H2/FFrbBgZjhEpvyTB41HCxXy3O10//2R0REBqsY8uf9OaS8UNmulwO0d0wmUX3ZDAV2IobY6GY0=
+	t=1715855078; cv=none; b=jdjB3/qJ3gqmzdu9UWe46CFKapTNJylQ0yt76hKRGMrp2pjVZDAE/UNOtitzHgJ2JXx6HVGu6RyxXtvE46ePsKHxP1RgsbYlV1XG4II5MwfqTP9BdMHRKTEcKhbKomb1sN0TScdFpK13MFG/yNy59l7W2HOiIQnlTk2jXfQIyfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715854965; c=relaxed/simple;
-	bh=4RESYLk2bxiIAc2MMrElvplj/bOnF/qlafcOgSEVD4k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RV8XRqPqs4nMThDnX1a1vW8bAo7ayNjsGmwpTebnRodqp2Tuyk+skMiVZaxP0+OnT4PCM6Xx+ilvIIwPsuOQnqj8CWGgJwWADXunyIgiZgoULV+UGEaNHwmxiSFJjoCydy8gO36YOyqfsQ8w0sKLL0xOs49oDt2Hlov8yrjhAMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MInJD0O0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68333C32786;
-	Thu, 16 May 2024 10:22:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715854965;
-	bh=4RESYLk2bxiIAc2MMrElvplj/bOnF/qlafcOgSEVD4k=;
-	h=From:To:Cc:Subject:Date:From;
-	b=MInJD0O0w3I5bZuGy31dUwr8mUye/DTHdK17Mgrpg77dVf82/nj9Hh8UvkZ9KkVgc
-	 hdOjnlXdWnOeBrJLyeMhV7umhv44hBf4hAEsnqrUe1H78W00D5Qi4Jh/bdFFi50LR2
-	 WGuM4Tu1P/hyKAf1GAYLkc1u6rfKOzNXDAEsWvxOQ3IJJoPUUZOJDPWB2XLHlwoTzT
-	 e8Y4UJrgRaDYxAHU0BJ4wNyqncyoWfcsIjOMVK0RbY7MNUNy3v3YgsMal2dkgQJvG5
-	 0iF0Rh07pbjTuKOWiESdTH9VzHnJHD8XDkizCgyS8y5aiZzyAocdsUF74q1wzPhdSA
-	 suZHtYHCr9AGQ==
-From: Borislav Petkov <bp@kernel.org>
-To: X86 ML <x86@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Borislav Petkov <bp@suse.de>,
-	Borislav Petkov <bp@alien8.de>
-Subject: [PATCH] x86/boot: Add a fallthrough annotation
-Date: Thu, 16 May 2024 12:22:40 +0200
-Message-ID: <20240516102240.16270-1-bp@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1715855078; c=relaxed/simple;
+	bh=tbwbFxoda4n29a6HTG7mVjGRU4BB+ruKHjA9NThZsSE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZaDKWbv8+lx87L+BCYhjC3dqj9J+7pOY8rRpJCdUdxEOFc8YPuVIsKq/4oj6m+a3kLgQaY2EMnzMYhLraHRPZO/TLMIIvhlVJCJdTr5RrHTpxujE+fh9lvC16Eb9PNgzy6ORZ/uk+Cz2STToQ/DQ4JeNHH2EOsSS9qjt5TAg7+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fNoQCKO4; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715855076; x=1747391076;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=tbwbFxoda4n29a6HTG7mVjGRU4BB+ruKHjA9NThZsSE=;
+  b=fNoQCKO4S7KE8+CJnN4Orp7L2Zf+kax2inBAFVmiswxNrWwRjo9Qh+uV
+   9O2ab6PHKJC4KJaPM/JuKWFwYRxt9V9dlC5sU7LxsjrPG3BnwmkVafPCG
+   PiNaQvbnTjk/WXuaM5w8FbAIVmaUFFrZTRfx+PO6HPcrOQR4Aa40K9czg
+   GadY66ZLqNsGs98USC8vtiyk6gVBqE4Usrb/DjFmdV1hbgr1FIhHslxYu
+   l7rCPcWC9eiFfEoQ+NlWqPWR7AiGfG/fpX/KjhM5JzpDfMHVG+Npe3uGb
+   4sf7NcC5gTN2fj7WJNB77arlP4agMzKCW7hOaC+oTxSvNuGQCyJIjL8V0
+   A==;
+X-CSE-ConnectionGUID: pIC2bv+XS1i1b55+au/Pow==
+X-CSE-MsgGUID: MCucpIL0Ssm3qXKr18mv4w==
+X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="12165492"
+X-IronPort-AV: E=Sophos;i="6.08,164,1712646000"; 
+   d="scan'208";a="12165492"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 03:24:35 -0700
+X-CSE-ConnectionGUID: pn2rNk/IQu6InMufb0x/nQ==
+X-CSE-MsgGUID: cY4qZzFWSTmfooYOvVGIBQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,164,1712646000"; 
+   d="scan'208";a="35818983"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 03:24:34 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1s7YHn-000000080Wy-0cni;
+	Thu, 16 May 2024 13:24:31 +0300
+Date: Thu, 16 May 2024 13:24:30 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Linux ACPI <linux-acpi@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Armin Wolf <w_armin@gmx.de>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Subject: Re: [PATCH v2 0/2] ACPI: EC: Install EC address space handler at the
+ namespace root
+Message-ID: <ZkXe3m0DwToiixam@smile.fi.intel.com>
+References: <12437901.O9o76ZdvQC@kreacher>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <12437901.O9o76ZdvQC@kreacher>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-From: Borislav Petkov <bp@suse.de>
+On Wed, May 15, 2024 at 09:39:15PM +0200, Rafael J. Wysocki wrote:
+> Hi Everyone,
+> 
+> This is an update of
+> 
+> https://lore.kernel.org/linux-acpi/5787281.DvuYhMxLoT@kreacher/
+> 
+> which was a follow up for the discussion in:
+> 
+> https://lore.kernel.org/linux-acpi/CAJZ5v0hiXdv08PRcop7oSYqgr_g5rwzRTj7HgdNCCGjXeV44zA@mail.gmail.com/T/#t
+> 
+> Patch [1/2] has been updated to avoid possible issues related to
+> systems with defective platform firmware and patch [2/2] is a resend
+> with a couple of tags added.
 
-Add implicit fallthrough checking to the decompressor code and fix this
-warning:
+FWIW, LGTM (and I followed the discussions around this)
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-  arch/x86/boot/printf.c: In function ‘vsprintf’:
-  arch/x86/boot/printf.c:248:10: warning: this statement may \
-  fall through [-Wimplicit-fallthrough=]
-    248 |    flags |= SMALL;
-        |          ^
-  arch/x86/boot/printf.c:249:3: note: here
-    249 |   case 'X':
-        |   ^~~~
-
-This is a patch from three years ago which I found in my trees, thus the
-SUSE authorship still.
-
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
----
- arch/x86/boot/Makefile | 1 +
- arch/x86/boot/printf.c | 1 +
- 2 files changed, 2 insertions(+)
-
-diff --git a/arch/x86/boot/Makefile b/arch/x86/boot/Makefile
-index 3cece19b7473..343aef6d752f 100644
---- a/arch/x86/boot/Makefile
-+++ b/arch/x86/boot/Makefile
-@@ -69,6 +69,7 @@ KBUILD_CFLAGS	:= $(REALMODE_CFLAGS) -D_SETUP
- KBUILD_AFLAGS	:= $(KBUILD_CFLAGS) -D__ASSEMBLY__
- KBUILD_CFLAGS	+= $(call cc-option,-fmacro-prefix-map=$(srctree)/=)
- KBUILD_CFLAGS	+= -fno-asynchronous-unwind-tables
-+KBUILD_CFLAGS	+= $(CONFIG_CC_IMPLICIT_FALLTHROUGH)
- GCOV_PROFILE := n
- UBSAN_SANITIZE := n
- 
-diff --git a/arch/x86/boot/printf.c b/arch/x86/boot/printf.c
-index 1237beeb9540..c0ec1dc355ab 100644
---- a/arch/x86/boot/printf.c
-+++ b/arch/x86/boot/printf.c
-@@ -246,6 +246,7 @@ int vsprintf(char *buf, const char *fmt, va_list args)
- 
- 		case 'x':
- 			flags |= SMALL;
-+			fallthrough;
- 		case 'X':
- 			base = 16;
- 			break;
 -- 
-2.43.0
+With Best Regards,
+Andy Shevchenko
+
 
 
