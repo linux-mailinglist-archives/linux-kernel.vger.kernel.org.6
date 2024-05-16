@@ -1,133 +1,130 @@
-Return-Path: <linux-kernel+bounces-180906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CC0D8C74A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:27:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 504D58C74A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:29:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C04081F221D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:27:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E268B1F23A0B
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 10:29:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E985143C41;
-	Thu, 16 May 2024 10:27:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89FE5143C46;
+	Thu, 16 May 2024 10:29:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IVnLRMNM"
-Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="p7GQIrVf"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11E68143895
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 10:27:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A59A143866;
+	Thu, 16 May 2024 10:28:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715855255; cv=none; b=bYX80h1Ogha08ZqQeGktCyiHlWDfsJHabCUptFi8K2BMH3LzATsAoyXsAqAFPigU/LR35opJCnZ/c14Aw3ggBIUssiJnSmNnjLJFc3lkZQ874A65PkKUA/fEMiqtdU0+PIOceSkihDCjfermBbZP/HMGgprSqTyMM1wwclag0To=
+	t=1715855344; cv=none; b=qJZpvFPNRYh3TLvwyCdnZCyooyN4SjGFP3CadvlhDp78l3MQTdiBH3d2Gtv+tpCKpjImcMkw5ZxsmSMwsEQEaaYg/La24UzF7qsGjtfkBfPQcXV1JvdOdhdOT1bswP2baw4+js2Kz9fZIkmWjlGG6GBa5LCZp3qvxkwhkdHp00Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715855255; c=relaxed/simple;
-	bh=kBASHLh2eyH3I0mizgz8GzGzaOda0gqP4B/VWaD/CaQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L+rIFvopDrMByzW/FJ2AMrqPSnaUuXQHvdVQGrGHRBMYVLim9nlJYT0bgbkd8uCr/vnFv1GGQzs6PaMqZIQ3n21nQT4/cIlkkT9MIUBbAq5kIikrVzmPDMCietS3EIRxsWdNpsNjh7Y4CQ+25MA3HED69JxDKz8u/AQ0V6QV6N4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IVnLRMNM; arc=none smtp.client-ip=209.85.222.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-7f919bc2e1cso3866244241.1
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 03:27:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715855253; x=1716460053; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wr/BX8NF3zifG/NDTQUbMR51wrpA+K5HDZ0+1mCSbgg=;
-        b=IVnLRMNMadF/4dU0qEl+RlajbVlNal3GHavEfSz1MQ8n4ZNMwk3j79ajhAVG8jDCqd
-         Dexo2TcApqG1AhwshoNiQMlpm54ZuT/7N0RxxXD8wZIVDZuhwvQt8buPgvZukeq5nklb
-         MvM6JBZqz685Qdb6awErt5lNWsaaGv++kAQ6nfAaurRkpFt3VzEECK8KhBMCVmn1mouX
-         GIoCynCCxX95iF54oN8BjOy2JkrVDP5MfFCJp256nsWJxeBreSwPpKJQq1wur+Ij2jV3
-         PzrvIMaNfz7wSESFNBMGKfRIVB9QX7PcgyJaTf25+GAKikUIcU+ZL6lGILkOb9cAHHDv
-         0BQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715855253; x=1716460053;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Wr/BX8NF3zifG/NDTQUbMR51wrpA+K5HDZ0+1mCSbgg=;
-        b=wVLxVIkeI7s9wdZj9h+gXB3ixtrBbm7kjuGUyfm/pchkX/WXEoBcqdpRFyPDRRZUYf
-         o58fmX2pqV1Dp0MT/XP17YMvjCn3i/G53XzB4+pWnbXReEIEjVujuTJTRwCg5DgV7XfF
-         Z+ELIJ7xnRFIDH+DzNgi88stHG5TqfCzsHlos9Lk82NfhVUGSeJdy+tKMJXyorONd5as
-         anxvIkMA2tuhka3ocMiAp1rn47myveMM06O/hWuWNVC2U76QdvcyQnXbiSqoDYrT3FjU
-         9FpvZNdIia6R9raojTbmd7m1Bjv+zY4mrnR5rPVzUvi/1dGZFRtFL5aFyyH5/JoeD2Fl
-         N8KA==
-X-Forwarded-Encrypted: i=1; AJvYcCXSwMHnmrID135Y8Bl8K5z6K3d+CtLzd/gXV39FHVz4nd+7DcOTgRFFpR87UjF+z1lA2LW/kNLSS4YG/c61Ka7whqU19yizTmIapwcU
-X-Gm-Message-State: AOJu0YyKCNHzfIY1iR1TpgCMrSCJKDoQnK7fJqMMYXo4WhLyzwRKzs6B
-	H4E5m43Cpsw8baewcv9XOFxFhc468W2vvdcxEMlM24QonO0toM4boUarcshv65BjIThUAKWYJYL
-	UfGxgCloPUi6ZJhwOH7JYv6u9ucrBO+sUtefAB09XmqBhtePJkdGUzQ==
-X-Google-Smtp-Source: AGHT+IGWpVZvSMUt20NSMuau/tfLKHpp/+EepllazSc5v5QmheoZd7J0sjLY5dmSCxrLYl3d79vmIUTSg2jw7h7stwc=
-X-Received: by 2002:a05:6102:117b:b0:47c:254:2919 with SMTP id
- ada2fe7eead31-47fb6c62c31mr15440141137.13.1715855252928; Thu, 16 May 2024
- 03:27:32 -0700 (PDT)
+	s=arc-20240116; t=1715855344; c=relaxed/simple;
+	bh=rhWKU/w9EhYtdGU3yXEB9F2o1FFwvXQv9QHzvfSeWm8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=T95Mkz0psLIJ+91lv/Y9zPy6DkewsfdpXHid1QOmEpl1x9pzBrslQ5eXtyvXvk1FGsPj0lVWbbHUBJ2QmfJU1J7tBBHEA+VPmd9C4YwRmJE218Tzp4BYa4UFX0kXyLGfPaXApzSaa4WtyGmSEZrReo9J+/vo6qPsyIyylU3TIus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=p7GQIrVf; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1715855331;
+	bh=rhWKU/w9EhYtdGU3yXEB9F2o1FFwvXQv9QHzvfSeWm8=;
+	h=From:Date:Subject:To:Cc:From;
+	b=p7GQIrVfXT/4YTBAILCAbJv/R+06z/uETHEniJwvS7mLHUItHoFambXxhAba5qizg
+	 xk+TWh4InQukHD6QBu5u7NrFL4jIqsSrgPdjIE6gJxXXzUTcFX1FN1y/4BdWu29Z3z
+	 mYIhUHIolrhGgUxd8crwlUslX0zO1c/xRRRsUDbQ=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Date: Thu, 16 May 2024 12:27:58 +0200
+Subject: [PATCH RFC] kobject_uevent: notify uevent sysfs file on changes
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+G9fYuZd_ur56H8fwDSvUywopvn_b7ogprGkjEatQ7EPTLwYQ@mail.gmail.com>
- <11be44d3-0f32-49c6-b4ae-ba97a9f97763@app.fastmail.com> <820ddc2ec70780ae1ecd3af864dc8bd6.sboyd@kernel.org>
- <ZkUgqzUn1EmjrPdl@shell.armlinux.org.uk>
-In-Reply-To: <ZkUgqzUn1EmjrPdl@shell.armlinux.org.uk>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Thu, 16 May 2024 12:27:20 +0200
-Message-ID: <CA+G9fYurPNaW=u2E+h+segnXhY3cfWo3BJpfYDJxKRFPY4epsQ@mail.gmail.com>
-Subject: Re: clkdev: report over-sized strings when creating clkdev entries
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Linux ARM <linux-arm-kernel@lists.infradead.org>, 
-	linux-clk <linux-clk@vger.kernel.org>, lkft-triage@lists.linaro.org, 
-	open list <linux-kernel@vger.kernel.org>, Anders Roxell <anders.roxell@linaro.org>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20240516-uevent-sysfs-notify-v1-1-2ebb39930c09@weissschuh.net>
+X-B4-Tracking: v=1; b=H4sIAK3fRWYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDU0NT3dLUstS8Et3iyuK0Yt28/JLMtEpdk9Qky1RLU2NL87QUJaDOgqL
+ UtMwKsKnRSkFuzkqxtbUANjsAumoAAAA=
+To: Andrew Morton <akpm@linux-foundation.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Sebastian Reichel <sre@kernel.org>, 
+ linux-pm@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1715855331; l=1997;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=rhWKU/w9EhYtdGU3yXEB9F2o1FFwvXQv9QHzvfSeWm8=;
+ b=LTz1bpDcGQFHz/mOSRq2nXcpsX6XtUet8VwgBaPFE6QIY63XT4/pGmiPw57GoK7UVOIgNNEjN
+ qGdjFBZrdOIBOQnLeg6GhMtSOIBtuPmVC2ubITEfRPV1HGf6XVM0hbp
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-On Wed, 15 May 2024 at 22:53, Russell King (Oracle)
-<linux@armlinux.org.uk> wrote:
->
-> On Tue, May 07, 2024 at 01:26:17PM -0700, Stephen Boyd wrote:
-> > Quoting Arnd Bergmann (2024-05-07 00:44:15)
-> > > On Tue, May 7, 2024, at 09:20, Naresh Kamboju wrote:
-> > > > The WinLink E850-96 board boot failed with Linux next-20240506 but there
-> > > > is no kernel crash log on the serial [1].
-> > > >
-> > > > Anders bisection results pointing to this commit,
-> > > > # first bad commit:
-> > > >   [4d11c62ca8d77cb1f79054844b598e0f4e92dabe]
-> > > >   clkdev: report over-sized strings when creating clkdev entrie
-> > > >
-> > > > After reverting the above patch the boot test passed [2].
-> > > >
-> > > > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> > > >
-> >
-> > There are two fixes on the list: [1] and [2]. Perhaps one of those
-> > resolves this?
-> >
-> > [1] https://lore.kernel.org/r/20240507065317.3214186-1-m.szyprowski@samsung.com
->
-> This one has (I think) ended up in the patch system last week, but it's
-> not clkdev, it's only related. I'm also not Cc'd on its posting, and
-> it's not posted to any mailing list that I'm a part of. So I've not
-> been following any discussion on it.
->
-> Digging in to the discussion, I see various attributations, and a final
-> message reporting an unused variable, and a promise to send v2. So,
-> I'm guessing that
-> http://www.home.armlinux.org.uk/developer/patches/viewpatch.php?id=9397/1
+The sysfs file "uevent" that exists for each device
+contains the same information that is attached to uevents emitted via
+netlink (or the usermode helper).
+This is useful for userspace which interacts with sysfs directly,
+without using (lib)udev.
 
-I do not have access to this link ^.
+However it is not possible to actually get notified when the data in
+the "uevent" file changes.
 
-> is now superseded in some way... I wouldn't have known without locating
-> this email and checking the links.
->
-> --
-> RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-> FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Enable these notifications, so that the "uevent" file can be used
+together with inotify and friends.
 
-- Naresh
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+My original usecase is to get updates for power supplies.
+Current charge status and similar.
+All this data is exposed via "uevent", and on updates an KOBJ_CHANGED
+event is emitted.
+
+To me, a general solution covering all devices looked the best.
+
+Open questions for the RFC:
+* Is this a good idea?
+* How to handle other actions?
+  _ADD and _REMOVE should not call sysfs_notify() in any case, these
+  cases can be detected otherwise.
+---
+ lib/kobject_uevent.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/lib/kobject_uevent.c b/lib/kobject_uevent.c
+index 03b427e2707e..74047a79cb13 100644
+--- a/lib/kobject_uevent.c
++++ b/lib/kobject_uevent.c
+@@ -24,6 +24,7 @@
+ #include <linux/netlink.h>
+ #include <linux/uidgid.h>
+ #include <linux/uuid.h>
++#include <linux/sysfs.h>
+ #include <linux/ctype.h>
+ #include <net/sock.h>
+ #include <net/netlink.h>
+@@ -593,6 +594,9 @@ int kobject_uevent_env(struct kobject *kobj, enum kobject_action action,
+ 	retval = kobject_uevent_net_broadcast(kobj, env, action_string,
+ 					      devpath);
+ 
++	if (action == KOBJ_CHANGE)
++		sysfs_notify(kobj, NULL, "uevent");
++
+ #ifdef CONFIG_UEVENT_HELPER
+ 	/* call uevent_helper, usually only enabled during early boot */
+ 	if (uevent_helper[0] && !kobj_usermode_filter(kobj)) {
+
+---
+base-commit: 3c999d1ae3c75991902a1a7dad0cb62c2a3008b4
+change-id: 20240515-uevent-sysfs-notify-4eb9e95397fd
+
+Best regards,
+-- 
+Thomas Weißschuh <linux@weissschuh.net>
+
 
