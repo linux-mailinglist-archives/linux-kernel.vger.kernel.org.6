@@ -1,163 +1,131 @@
-Return-Path: <linux-kernel+bounces-181201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A0078C78F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:08:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E69AB8C78F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:09:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC43AB22079
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:08:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DA81281F40
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:09:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBF1D14D2AE;
-	Thu, 16 May 2024 15:08:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A01FC14D2B7;
+	Thu, 16 May 2024 15:08:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mW5unzg1";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ubUCighw";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mW5unzg1";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ubUCighw"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="tLq3oeZx"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 624B11459F3;
-	Thu, 16 May 2024 15:08:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FFC8146D7F
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 15:08:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715872113; cv=none; b=K4f9F/xMWtuTPv9PBnxvZXMXSC0MoDmXhLO271GwI7kAD8wry2KATXF29fVCUG2dH+Z798wQK46dC7+8yuhMBtfLGnk8UbQV+sXBObCCYFmeFVNEhxkFYa+dzpgPYQvlwnzOIJAz2zSD/gMXALHUZuL6xnm38vrnI4K/KYQ9n90=
+	t=1715872131; cv=none; b=SxlqIYr5IYR4ja6sRgQ2HzxQ8iXCqJ6viCqhdSs7CbY+8h4/g7xsgOCRL45G7AqrtvIzs0t3GVJuBWpgcZGwPbN/2tGUxKX/lOi9cPFJdUZWR/ptotWDcZKvxOkTvEBC+4lVLvicTERxawHYMqFw21RT+sf0sFfKQSi+5zwunBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715872113; c=relaxed/simple;
-	bh=PLj3kHvsq5pXlJ3MZBETvmLmxpLPhx6qk+JPicL+q04=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YY3ofc9bQltH3OKettRRiDxlyDWSfqZwKKJpUUnLTFUmJW/w5/lb1WX73RcEmdojUGv/PlgATqhuf9Pa+p+mYCOKMnc26T8dplkf/VgrT1Q4FbK9OYbBRca6cfl9l6kEybX0oweMGP34ptBq/ah/EbdcYkqkrwbr18gzWqm/dtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mW5unzg1; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ubUCighw; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mW5unzg1; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ubUCighw; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id B66D55C5D1;
-	Thu, 16 May 2024 15:08:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1715872109;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JwOCimsYiQZW+MRPKFuhdCubR4+tShwzjZXOuhyF9Ek=;
-	b=mW5unzg1n8r2KDbdhto6yyL8PgBgQO0lzT7LOSnoqTv0l0EP+mR9ZGvYz9HqauKK71YDrz
-	4U4Jns98nuqsBwuUIjPGC0+dsRQF9Wimp1jArsx5Bca0F/zmFrCLdkCryZCIW8KtZHeFO3
-	m0jjnhwhDeJHoCsIfDxNxXADY0MioBM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1715872109;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JwOCimsYiQZW+MRPKFuhdCubR4+tShwzjZXOuhyF9Ek=;
-	b=ubUCighwwB4LHsYQNZjVkORRDznbxZJJOKg8EObqMuD3K5NW4q/5w/Teo6rnhi405rzdLN
-	O5yTIZtlSLm15bDA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1715872109;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JwOCimsYiQZW+MRPKFuhdCubR4+tShwzjZXOuhyF9Ek=;
-	b=mW5unzg1n8r2KDbdhto6yyL8PgBgQO0lzT7LOSnoqTv0l0EP+mR9ZGvYz9HqauKK71YDrz
-	4U4Jns98nuqsBwuUIjPGC0+dsRQF9Wimp1jArsx5Bca0F/zmFrCLdkCryZCIW8KtZHeFO3
-	m0jjnhwhDeJHoCsIfDxNxXADY0MioBM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1715872109;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JwOCimsYiQZW+MRPKFuhdCubR4+tShwzjZXOuhyF9Ek=;
-	b=ubUCighwwB4LHsYQNZjVkORRDznbxZJJOKg8EObqMuD3K5NW4q/5w/Teo6rnhi405rzdLN
-	O5yTIZtlSLm15bDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A2B7F137C3;
-	Thu, 16 May 2024 15:08:29 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id zkCRJ20hRmaBSQAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Thu, 16 May 2024 15:08:29 +0000
-Date: Thu, 16 May 2024 17:08:27 +0200
-From: David Sterba <dsterba@suse.cz>
-To: syzbot <syzbot+9992306148b06272f3bb@syzkaller.appspotmail.com>
-Cc: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
-	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [btrfs?] WARNING in emit_fiemap_extent
-Message-ID: <20240516150827.GA4449@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <00000000000091164305fe966bdd@google.com>
+	s=arc-20240116; t=1715872131; c=relaxed/simple;
+	bh=we6lbVPR1oC6Gjni/0inzK6tb5qWDsUccHkewq+P1B4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NDaBHP+L0eZMyKZ2cpJtR97J1LqA8K3jM9qAiPNXwhW0wiOvOc6RjmkIO4BNVn90+sEBJhMnL8B6O3IR1fc+XcsTHcRRVENbUqyhy/2sB6zzxV6NK8E4wz+EvSDeuBfts0ldcS5yXGjTiVmopumrMn4bC6XGilSEyjzkff017dE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=tLq3oeZx; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2e3e18c24c1so10088181fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 08:08:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1715872128; x=1716476928; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7ioxEy7SZPKbhBowmAqXOs3HJ/6GyUDvxxnPo9F3uNU=;
+        b=tLq3oeZxCaCNzKGURu5K7x5Ai0VxzLyGpn5p2sR0zr8s7gc+2/sM0b5ogjvVDY3vNT
+         xp2y9NhdZRzGWHLuOpiVXM+7EypwGqEHMVjWlh3YzXjGap6Hq86fXuLPOEK/3eKYit+c
+         q+6y4N7gt05tnR8ZitYVsRIb5kgRV3PMtnC2/rhkOroR+AVjt3H9TGjawqCGtHSIuImH
+         lLvJZmU6ExW4vqpUD3ppeQmdj1kvnGkGQG+7sN7kJKS997QKTFBSRsxqWPtI9VCVxDrA
+         rL+qpEXx023uS8v6kT7kwc+kjOrGKgqZwktPQdnva2CG1v4HmTUvRP2GUGZDKqxsSSto
+         ZLsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715872128; x=1716476928;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7ioxEy7SZPKbhBowmAqXOs3HJ/6GyUDvxxnPo9F3uNU=;
+        b=jj5upE/iUN02TqnkK1CCx4cxLhrufc0Ib5gj9Fc1B/oQgMyq3K/3SYxba3kgVzvhR9
+         FiPfpnFylmw674xsqBKQawKnJTTFl1aFS2GhnA57wF1YU/NGDHxeWCf6nkcAwaXiebB/
+         qIS3sLV+WcG9eohdtfgaMnZMpuFjB/ZupLDO99goUijUXbefvkPgn+kMKPjmnNv+/W0a
+         yOlWLoJif4F5IXYBSNQsbRnPme4s2zQMuueETAAxpXgZfYIkuYoV2j0kjIZ2ajkR6aqb
+         g0qiwK8GIZTDfZbfhA1+ky9oQ+gyVCEcxiJOymBgxs1ZMY7al8tyMfmhg5lxrWI1Uaca
+         /lHA==
+X-Forwarded-Encrypted: i=1; AJvYcCWVS4slJb1aPg9SqDYR4PGYEYt4VjNTEqcxwwzLlkBxSRwPrbY489lg9q1TA8RAMhWkqQeb8FsH6bwb4GbRU7BazgyST2rM/54ntoX8
+X-Gm-Message-State: AOJu0YwKm3c3kic9uKBEvhKkYY+DsRxbvLwnuIQujQe1tAAYw19hBNM0
+	ar/qjqA1G1pCV11B2nj4vAZ09nd3dBJb8hkUHsWWcOIdWgABNTgmIr5G4bSf5WU=
+X-Google-Smtp-Source: AGHT+IGKctbnPBmcJ2QPLjHUp6edy8mIEVUT9pkFFtdxGM+N329/NRHhlQe7LdHxvECgOEtFtlKB4A==
+X-Received: by 2002:a2e:4a11:0:b0:2e5:8720:50d2 with SMTP id 38308e7fff4ca-2e5891d3b9dmr83515781fa.0.1715872127572;
+        Thu, 16 May 2024 08:08:47 -0700 (PDT)
+Received: from toaster.lan ([2a01:e0a:3c5:5fb1:1fce:7e5a:e201:edd5])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-41f87c25459sm309351725e9.18.2024.05.16.08.08.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 May 2024 08:08:47 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Jan Dakinevich <jan.dakinevich@salutedevices.com>,
+	linux-kernel@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: [RFC PATCH 0/9] reset: amlogic: move reset drivers out of CCF
+Date: Thu, 16 May 2024 17:08:30 +0200
+Message-ID: <20240516150842.705844-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <00000000000091164305fe966bdd@google.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spam-Level: 
-X-Spamd-Result: default: False [-0.10 / 50.00];
-	BAYES_HAM(-1.60)[92.47%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=7ff8f87c7ab0e04e];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[9992306148b06272f3bb];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:replyto];
-	RCVD_COUNT_TWO(0.00)[2];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	SUBJECT_HAS_QUESTION(0.00)[]
-X-Spam-Score: -0.10
-X-Spam-Flag: NO
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jun 20, 2023 at 02:34:46PM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    40f71e7cd3c6 Merge tag 'net-6.4-rc7' of git://git.kernel.o..
-> git tree:       upstream
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=166d2acf280000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=7ff8f87c7ab0e04e
-> dashboard link: https://syzkaller.appspot.com/bug?extid=9992306148b06272f3bb
-> compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10c65e87280000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1094a78b280000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/2dc89d5fee38/disk-40f71e7c.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/0ced5a475218/vmlinux-40f71e7c.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/d543a4f69684/bzImage-40f71e7c.xz
-> mounted in repro: https://storage.googleapis.com/syzbot-assets/7cde8d2312ae/mount_0.gz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+9992306148b06272f3bb@syzkaller.appspotmail.com
-> 
-> ------------[ cut here ]------------
-> WARNING: CPU: 1 PID: 5351 at fs/btrfs/extent_io.c:2824 emit_fiemap_extent+0xee/0x410
+This RFC follows the discussion about having reset driver in the clock tree
+[1]. Ideally those should reside in the reset part of tree.
 
-#syz fix: btrfs: fix race between ordered extent completion and fiemap
+Also the code of the amlogic reset driver is very similar between the 2 trees
+and could use the same driver code.
+
+This RFC moves the reset driver of audio clock controller of the g12 and
+sm1 SoC family to the reset tree, using the auxiliary bus.
+
+The infrastructure put in place is meant to be generic enough so we may
+eventually also move the reset drivers in the meson8b and aoclk clock
+controllers.
+
+[1] https://lore.kernel.org/linux-clk/e3a85852b911fdf16dd9ae158f42b3ef.sboyd@kernel.org
+
+Jerome Brunet (9):
+  reset: amlogic: convert driver to regmap
+  reset: amlogic: add driver parameters
+  reset: amlogic: split the device and platform probe
+  reset: amlogic: use reset number instead of register count
+  reset: amlogic: add reset status support
+  reset: amlogic: add toggle reset support
+  reset: amlogic: add auxiliary reset driver support
+  clk: meson: add auxiliary reset helper driver
+  clk: amlogic: axg-audio: use the auxiliary reset driver
+
+ drivers/clk/meson/Kconfig                     |   6 +
+ drivers/clk/meson/Makefile                    |   1 +
+ drivers/clk/meson/axg-audio.c                 | 108 +--------
+ drivers/clk/meson/meson-clk-rst-aux.c         |  84 +++++++
+ drivers/clk/meson/meson-clk-rst-aux.h         |  14 ++
+ drivers/reset/Kconfig                         |   1 +
+ drivers/reset/reset-meson.c                   | 210 ++++++++++++++----
+ include/soc/amlogic/meson8b-auxiliary-reset.h |  17 ++
+ 8 files changed, 293 insertions(+), 148 deletions(-)
+ create mode 100644 drivers/clk/meson/meson-clk-rst-aux.c
+ create mode 100644 drivers/clk/meson/meson-clk-rst-aux.h
+ create mode 100644 include/soc/amlogic/meson8b-auxiliary-reset.h
+
+-- 
+2.43.0
+
 
