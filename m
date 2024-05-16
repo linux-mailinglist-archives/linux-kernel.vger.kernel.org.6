@@ -1,156 +1,198 @@
-Return-Path: <linux-kernel+bounces-181175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B0328C7870
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:33:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 434108C787B
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:36:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76ADEB21D5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:33:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66A361C211CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:36:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B31714B968;
-	Thu, 16 May 2024 14:33:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16DB214B96D;
+	Thu, 16 May 2024 14:35:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="apXo/w1e"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ydLXNBzY";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="E3EP4dB3";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ilPM3lk7";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="vJGao9t8"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA81A146583;
-	Thu, 16 May 2024 14:33:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BB9A1DFEF;
+	Thu, 16 May 2024 14:35:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715869982; cv=none; b=rdxvYtL+eKFqkva1mwWafz3SnwR3ZJli9+ZW5zCMvorqsS5sJVodpHbovqjLDQR6btk5WBIFFiJKhOlTOPGGOlueW2bhBmYYpJl6F13PD1YFnmYc00yqyjHGHPweIIg7RZQ5uV0Rf7QQUvV8wsuaXackeoHCkn78l7HhspdVakY=
+	t=1715870157; cv=none; b=lkBLEID2+MytS5s7+yeqR5nVfthuzSuZErtGAtittJLa3u5HuBgn/sp89MlghkLS+KzFw7L3Kl1VvSchISWywD9m5h3blvYWF+1GQLxahC+sGCk3e9yVCp8cxsivk2nXjX83HO9qokoxayCcL7xuQ9yt/g0Phi6F2dCs4Es+lzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715869982; c=relaxed/simple;
-	bh=YSGxDHo3S40XhBcX0j2/tal+VEhClJzUNvlb3qCnLIc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IPz35xBW9sZVItf0wOWaLpr86sqYbDSIzeuGScpPnsJDCnRQQeQ4ZfmzPCIWyoO0hiwD327GM5lvPEqSwqDsxDMLgTbUyM33o9mg0DMn4sHt3g0zCx7J3exc/WclmAIHvSnz4Gz1a6iR1pV63S5QSMGn3cF7iWCHIeNVUxwXZDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=apXo/w1e; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715869981; x=1747405981;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=YSGxDHo3S40XhBcX0j2/tal+VEhClJzUNvlb3qCnLIc=;
-  b=apXo/w1eUkWVaOKEVTa8mFwBufWkQjKb7Cpc4otDanJUVvU6FBwIRCzx
-   AtUZyt1BgBN19kq19SoPTmOU5GKEbRUUbPOfwRqz3aqDGfeR3OTjEgAiZ
-   WiSdE4jMVCm1YDOJeygcvdzZLMpJGovyuSMbjIapgy2VDl8EBs+eRqb87
-   SKHn2l9iLyDEUcXr+jmVopeSjU6AQRkv45aNOpO3H6Qc70wcI4qOg2cNo
-   klhFKzX/p0ieQyaaJIKI8S+eqDE0JuzN3fgdtcFyDphSt2zbZH/RQWZVW
-   LMaVNRxbZvaOrPl1P0kcIVWZYIA4oQnthWJy4JRfSGHTkLjDzIoby7BHo
-   g==;
-X-CSE-ConnectionGUID: nhToMylzSfeiGLqrv483EQ==
-X-CSE-MsgGUID: +gfU+l0IQQ2NeMFZHYkvqw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="37362557"
-X-IronPort-AV: E=Sophos;i="6.08,164,1712646000"; 
-   d="scan'208";a="37362557"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 07:32:56 -0700
-X-CSE-ConnectionGUID: qT3LVgguTjagpzKBkxF5LA==
-X-CSE-MsgGUID: eLMovlXtQFGJ1mzLFvc1pA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,164,1712646000"; 
-   d="scan'208";a="35879219"
-Received: from angaikwa-mobl1.amr.corp.intel.com (HELO [10.212.163.41]) ([10.212.163.41])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 07:32:55 -0700
-Message-ID: <ab00d8e5-8400-451e-9435-becb0b3fa80c@intel.com>
-Date: Thu, 16 May 2024 07:32:54 -0700
+	s=arc-20240116; t=1715870157; c=relaxed/simple;
+	bh=ijQlsnNW7lJzuUB4KNofJ7wkb6Kv+AAcAqf1SHUvUMo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JRLe5/G8uMhOGmvSxrNcpZDvJubAurusrB/lqGQM5gfwF/+i0nJOP2JmE6a8dKRRA3TJhJfVYq35EM4IE42U1jMbM8ZA60PScwLBp2ZH83cLTT066YKGNRJLOCAqEs3TQ2RelF8/XVfigLS2CnKGGtJU51DV7GbJ7YcrnQZQSMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ydLXNBzY; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=E3EP4dB3; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ilPM3lk7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=vJGao9t8; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id CF9445C54B;
+	Thu, 16 May 2024 14:35:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1715870150;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Sdc0aA9Zp1xa9M6PnPI2To4Pdsq08YKwmPt1p6bHXds=;
+	b=ydLXNBzYKk47goltPP396i0/+nCqnKsEPfY0iIYOEXEo0DDO3+KioHjg03VDc4rca26OIl
+	QcehGjz//D/2lut8IpxtV7htuDMQRSXJYyZFlkefzpsi7qSxAoumobxZZhwDtOs3ao0EHV
+	02PNn4/GvCLcJjrI8f4Tp8JX6SR3+b4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1715870150;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Sdc0aA9Zp1xa9M6PnPI2To4Pdsq08YKwmPt1p6bHXds=;
+	b=E3EP4dB3b0vKwoMmA1wXyTcHWVPF9AWHPj8/bYH2lk3hur0BI8NdvXSjrKCarZZwiNX2gG
+	eNEZWVZ1phh4uqDg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=ilPM3lk7;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=vJGao9t8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1715870149;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Sdc0aA9Zp1xa9M6PnPI2To4Pdsq08YKwmPt1p6bHXds=;
+	b=ilPM3lk7RvZlVDpahCWHZClAXveeyL8WpsnlNwYk973dPsQMoZSWpr2Bz34wSf+T61ao+Z
+	tw5GkwKcLon7CM0RVSuEavXH6XJ1mRNSp89BL2BX8ZyeZzEEdG2+/KMi/6Wj9Fs7bWZWgt
+	wApofg3HgjAhWKZA5AO3JV/3FsSxLyk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1715870149;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Sdc0aA9Zp1xa9M6PnPI2To4Pdsq08YKwmPt1p6bHXds=;
+	b=vJGao9t8pWC7xOQI0ixHs2Im3wDcaVxv2J7eOPQfojRMR51Obztip2WPliG/U9SwQ08eNf
+	bBB8zhu++b2Tt6Dw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B845C137C3;
+	Thu, 16 May 2024 14:35:49 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id JxTOLMUZRmbfXwAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Thu, 16 May 2024 14:35:49 +0000
+Date: Thu, 16 May 2024 16:35:43 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: David Sterba <dsterba@suse.cz>,
+	syzbot <syzbot+c92c93d1f1aaaacdb9db@syzkaller.appspotmail.com>,
+	axboe@kernel.dk, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, maz@kernel.org, oleg@redhat.com,
+	peterz@infradead.org, syzkaller-bugs@googlegroups.com
+Subject: Re: kernel BUG at fs/inode.c:LINE! (2)
+Message-ID: <20240516143543.GY4449@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <000000000000c8fcd905adefe24b@google.com>
+ <20240515161314.GO4449@twin.jikos.cz>
+ <20240515170054.GM2118490@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [regression] suspend stress test stalls within 30 minutes
-To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
- Kalle Valo <kvalo@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>, x86@kernel.org,
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- regressions@lists.linux.dev, Jeff Johnson <quic_jjohnson@quicinc.com>,
- Daniel Sneddon <daniel.sneddon@linux.intel.com>
-References: <20240511184945.GDZj-9yaOEWqf1ng8u@fat_crate.local>
- <87h6f4jdrq.fsf@kernel.org> <878r0djxgc.fsf@kernel.org>
- <874jb0jzx5.fsf@kernel.org> <feaefaae-e25b-4a48-b6be-e20054f2c8df@intel.com>
- <20240515072231.z3wlyoblyc34ldmr@desk>
- <529C9374-DA6F-49C8-9B32-91741800F8E4@alien8.de>
- <20240515162747.6shmaoelc4mt7nro@desk> <878r0bhvjq.fsf@kernel.org>
- <20240516070315.swz2golcrfp3uvfd@desk> <20240516142513.qqy7wbmja5frizuj@desk>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
- oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
- 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
- ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
- VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
- iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
- c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
- pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
- ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
- QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzUVEYXZpZCBDaHJp
- c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
- LmNvbT7CwXgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
- lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
- MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
- IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
- aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
- I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
- E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
- F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
- CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
- P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
- 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lczsFNBFRjzmoBEACyAxbvUEhd
- GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
- MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
- Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
- lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
- 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
- qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
- BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
- 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
- vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
- FCRl0Bvyj1YZUql+ZkptgGjikQARAQABwsFfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
- l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
- yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
- +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
- asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
- WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
- sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
- KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
- MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
- hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
- vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
-In-Reply-To: <20240516142513.qqy7wbmja5frizuj@desk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240515170054.GM2118490@ZenIV>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Level: 
+X-Spamd-Result: default: False [-1.71 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=891ca5711a9f1650];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	SUBJECT_HAS_EXCLAIM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	TAGGED_RCPT(0.00)[c92c93d1f1aaaacdb9db];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[syzkaller.appspot.com:url,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim,suse.cz:replyto]
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: CF9445C54B
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Score: -1.71
 
-On 5/16/24 07:25, Pawan Gupta wrote:
-> On Thu, May 16, 2024 at 12:03:22AM -0700, Pawan Gupta wrote:
->> I am running the suspend test now and will update in the morning if I
->> could reproduce the hang.
-> Completed 500 suspend iterations, but the hang is not reproduced 🙁
-> I have restarted the test.
+On Wed, May 15, 2024 at 06:00:54PM +0100, Al Viro wrote:
+> On Wed, May 15, 2024 at 06:13:14PM +0200, David Sterba wrote:
+> > On Fri, Aug 28, 2020 at 06:18:17AM -0700, syzbot wrote:
+> > > Hello,
+> > > 
+> > > syzbot found the following issue on:
+> > > 
+> > > HEAD commit:    d012a719 Linux 5.9-rc2
+> > > git tree:       upstream
+> > > console output: https://syzkaller.appspot.com/x/log.txt?x=15aa650e900000
+> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=891ca5711a9f1650
+> > > dashboard link: https://syzkaller.appspot.com/bug?extid=c92c93d1f1aaaacdb9db
+> > > compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
+> > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12ecb939900000
+> > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=140a19a9900000
+> > > 
+> > > The issue was bisected to:
+> > > 
+> > > commit a9ed4a6560b8562b7e2e2bed9527e88001f7b682
+> > > Author: Marc Zyngier <maz@kernel.org>
+> > > Date:   Wed Aug 19 16:12:17 2020 +0000
+> > > 
+> > >     epoll: Keep a reference on files added to the check list
+> > > 
+> > > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16a50519900000
+> > > final oops:     https://syzkaller.appspot.com/x/report.txt?x=15a50519900000
+> > > console output: https://syzkaller.appspot.com/x/log.txt?x=11a50519900000
+> > > 
+> > > IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> > > Reported-by: syzbot+c92c93d1f1aaaacdb9db@syzkaller.appspotmail.com
+> > > Fixes: a9ed4a6560b8 ("epoll: Keep a reference on files added to the check list")
+> > > 
+> > > ------------[ cut here ]------------
+> > > kernel BUG at fs/inode.c:1668!
+> > 
+> > #syz set subsystem: fs
+> > 
+> > This has been among btrfs bugs but this is is 'fs' and probably with a
+> > fix but I was not able to identify it among all the changes in
+> > eventpoll.c
 > 
-> BTW, could you please share your /proc/cmdline? Also, was there any
-> workload running with the suspend test? If I could not reproduce it in the
-> next run, I will run stress-ng with the suspend test.
+> It has nothing to do with btrfs, and there's a good chance it had been
+> fixed as a side effect of 319c15174757 "epoll: take epitem list out of struct file"
+> merge at 1a825a6a0e7e in 5.10 merge window; IOW, it should be in 5.11-rc1.
 
-I'd suggest two things:
+Ok, thanks, let's use the commit 319c15174757 as the fix,
 
-  * Run everything in tools/testing/selftests/x86 in a loop during the
-    suspend test.
-  * Run perf or something else to generate some NMIs.
-
-Those will ensure the dark corners of the entry code are being
-sufficiently prodded.
-
-I also have sneaking suspicion that microcode updates during resume are
-the aggravating factor.
+#syz fix: epoll: take epitem list out of struct file
 
