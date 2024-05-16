@@ -1,118 +1,96 @@
-Return-Path: <linux-kernel+bounces-181527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEAD08C7D19
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 21:20:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72D2B8C7D20
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 21:22:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D50C21C218B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 19:20:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A917286CC6
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 19:22:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70FCA156F43;
-	Thu, 16 May 2024 19:20:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="T78WJJpK"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 520B8156F4A;
+	Thu, 16 May 2024 19:22:25 +0000 (UTC)
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71088D271
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 19:20:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 719AE156F2E;
+	Thu, 16 May 2024 19:22:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715887222; cv=none; b=d5LVSMYLsUwxLOHSTmkwUwHzU16wz1m+c9pIl+Ht0761li+vF0ubgVbzO55WZ/uKZPsNIRYonp6/SXRoj4j+QMh/QtTTWt+qohlU83SRfSNI3QAJSX6Iv7krxTpBPto0kLDJXbCiAYRSoUd00+mwxKoe38u2xWKcVSdU64Mjwhs=
+	t=1715887344; cv=none; b=PvritpySAOtIklYVq7es8REWLUDBOayyll4qX1doi3YkDrQL04NrHhrkD3oMGXNgQYJCQQeG7Oe8ta4Q+p/GDkKOREzRSaQxPhDDMktX+GjxeuW2SDbgr7Eq8xfUpCWPgzQ8r9X+V35AzXz6flKLwHkNMDmwRhMM0VZJbyMfZo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715887222; c=relaxed/simple;
-	bh=cecDsCS1JgN0/FP61uJPZQH9+fhYkN4AuLokJpvFnD4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QhIt/Ssc8I3EmXnvGeNcfv8BTHtbpFkuELSbQrrnUg1WniRnahEHPVkDvHBsM6h4hLY9MmL3UVDA9a+QYz+TzqwPxWN1+9mf/m+2+EHg5Merv639HRYilEOtSTXcMOn60f30bELnnffxy/lLWJB4l4iy8gEcmfCGcqJDv8EBueE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=T78WJJpK; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1ecc23e6c9dso59078885ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 12:20:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1715887221; x=1716492021; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EHSzNaB00onTGCVgdV5WXuaIuSKL0HrxfhXFYoCqc/I=;
-        b=T78WJJpKNSF/EGdllf7oVLmKlN7E4izQ/kbdwOcfo7FmVi5BOy4Vx1SsHCmTA+xJIj
-         2UMS2gA3zxjQG+aKhdv+XuUh++otUeo5J5tQ7d9PfNfNcCYNFsYxV9dPvKUX2iCccQCE
-         qN61uWNo19H7xjeX0EOWIoCwsPKFU6MDX+duA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715887221; x=1716492021;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EHSzNaB00onTGCVgdV5WXuaIuSKL0HrxfhXFYoCqc/I=;
-        b=arcumN3g5hMqTSENFLp4l6sMFmR1yaA1lXgVE3hCyvAigNDfaJLUzq7SM58kLrkGqg
-         cWfcPLrV7FsvIyZu5Xf9V04FyVDG2GQOmoNbnAX0Ie+hBIUnY7MN2oDu8Y/sUOMmOM1Y
-         +JDrFbVk7Gdqf9vjE7MyqT9AlLgCA+8jHYYOQNROJbSogIzFfdAKAwgSAZWdmR2c7Tkx
-         D1ERGFkR0JdQ4lsb/501y/kqZ4Gi57lXN1dR8iYOaFE7taUqT7M0KFgyFbDpusOIqwXb
-         7G2XaVzpz8nX0u36PkdnF4MNpwA8L9M23Oh93Xs7xxMT1wDmb2Ng3zZgHfP6Q8mQOmhp
-         VgVA==
-X-Gm-Message-State: AOJu0Yycld/hD2uErCsVvBMR0JYgimwGJq70Cx+m+ms4C3+2RsueT1Wn
-	5zWBl7r2qKaU2UNug9ryQK/PanxNLsKcU59CXL29+bUsjEEBHp9YC5msYhgUiA==
-X-Google-Smtp-Source: AGHT+IEl9yDXsJVCh8Q+woUCQGWBCD92F59UBfoXPHHzCsxbLL7z7A6t1AFJMPRzTRnJ3zY+pojz7Q==
-X-Received: by 2002:a17:903:1c9:b0:1e3:e081:d29b with SMTP id d9443c01a7336-1ef4404fc55mr246620125ad.45.1715887220716;
-        Thu, 16 May 2024 12:20:20 -0700 (PDT)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0c036135sm141967705ad.205.2024.05.16.12.20.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 May 2024 12:20:20 -0700 (PDT)
-Date: Thu, 16 May 2024 12:20:19 -0700
-From: Kees Cook <keescook@chromium.org>
-To: "Manthey, Norbert" <nmanthey@amazon.de>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Woodhouse, David" <dwmw@amazon.co.uk>,
-	"Stieger, Andreas" <astieger@amazon.de>,
-	"linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>,
-	"Hemdan, Hagar Gamal Halim" <hagarhem@amazon.de>
-Subject: Re: Extending Linux' Coverity model and also cover aarch64
-Message-ID: <202405161217.4984DE258@keescook>
-References: <77f6e6fc46232db82a3c63e93877c9534334e407.camel@amazon.de>
+	s=arc-20240116; t=1715887344; c=relaxed/simple;
+	bh=MsPxAsB2IQyEs3D3KGaAQRNxnWjTBDxfefVhv/dRmjE=;
+	h=From:In-Reply-To:Content-Type:References:Date:Cc:To:MIME-Version:
+	 Message-ID:Subject; b=p42E+38oCSzK4m2GPcc2H1XejPUd5FJdQW6ZO+61ocCaMP+KSUlCxAymsLu6pcF7/lO0uPcPsUpERFJJdhif9YtZa8fFr0TtBHJHokoOTlV5OWw2aVqO/MWS/4YeYw2Jy/IqzIRuL+skqzbQyoPmWzIbYEW+fjL1k9X0ovBnQo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Received: from harlem.collaboradmins.com (harlem.collaboradmins.com [IPv6:2a01:4f8:1c0c:5936::1])
+	by madrid.collaboradmins.com (Postfix) with ESMTP id E50F63782186;
+	Thu, 16 May 2024 19:22:13 +0000 (UTC)
+From: "Shreeya Patel" <shreeya.patel@collabora.com>
+In-Reply-To: <20240516121349.430565475@linuxfoundation.org>
+Content-Type: text/plain; charset="utf-8"
+X-Forward: 127.0.0.1
+References: <20240516121349.430565475@linuxfoundation.org>
+Date: Thu, 16 May 2024 20:22:13 +0100
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org, "Gustavo Padovan" <gustavo.padovan@collabora.com>, "kernelci-regressions mailing list" <kernelci-regressions@lists.collabora.co.uk>
+To: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <77f6e6fc46232db82a3c63e93877c9534334e407.camel@amazon.de>
+Message-ID: <1572a4-66465d00-7-1446c200@6917456>
+Subject: =?utf-8?q?Re=3A?= [PATCH =?utf-8?q?6=2E8?= 000/339] 
+ =?utf-8?q?6=2E8=2E10-rc3?= review
+User-Agent: SOGoMail 5.10.0
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 16, 2024 at 03:28:16PM +0000, Manthey, Norbert wrote:
-> we published an extension for the Coverity model that is used by the
-> CoverityScan setup for the Linux kernel [1]. We have been using this
-> extension to analyze the 6.1 kernel branch, and reported some fixes to
-> the upstream code base that are based on this model [2]. Feel free to
-> merge the pull request, and update the model in the CoverityScan setup.
-> We do not have access to that project to perform these updates
-> ourselves.
+On Thursday, May 16, 2024 17:44 IST, Greg Kroah-Hartman <gregkh@linuxfo=
+undation.org> wrote:
 
-Thanks for this! I'll get it loaded into the Linux-Next scanner.
+> This is the start of the stable review cycle for the 6.8.10 release.
+> There are 339 patches in this series, all will be posted as a respons=
+e
+> to this one.  If anyone has any issues with these being applied, plea=
+se
+> let me know.
+>=20
+> Responses should be made by Sat, 18 May 2024 12:12:41 +0000.
+> Anything received after that time might be too late.
+>=20
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.8=
+10-rc3.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc=
+git linux-6.8.y
+> and the diffstat can be found below.
+>=20
 
-> To increase the analysis coverage to aarch64, we analyzed a x86 and a
-> aarch64 configuration. The increased coverage is achieved by using re-
-> configuration and cross-compilation during the analysis build. If you
-> are interested in this setup we can share the Dockerfile and script we
-> used for this process.
+KernelCI report for stable-rc/linux-6.8.y for this week :-
 
-We've only got access to the free Coverity scanner, but it would be nice
-to see if there was anything specific to arm64.
+## stable-rc HEAD for linux-6.8.y:
 
-> To prevent regressions in backports to LTS kernels, we wondered whether
-> the community is interested in setting up CoverityScan projects for
-> older kernel releases. Would such an extension be useful to show new
-> defects in addition to the current release testing?
+Date: 2024-05-16
+https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.=
+git/log/?h=3Dcb6ab33e1bb7469fd441b6a9c50c92190913ceb3
 
-The only one we (lightly) manage right now is the linux-next scanner. If
-other folks want to host scanners for -stable kernels, that would be
-interesting, yes.
+## Build failures:
+No build failures seen for the stable-rc/linux-6.8.y commit head \o/
 
--Kees
+## Boot failures:
+No **new** boot failures seen for the stable-rc/linux-6.8.y commit head=
+ \o/
 
--- 
-Kees Cook
+Tested-by: kernelci.org bot <bot@kernelci.org>
+
+Thanks,
+Shreeya Patel
+
 
