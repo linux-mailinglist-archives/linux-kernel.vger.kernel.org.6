@@ -1,257 +1,143 @@
-Return-Path: <linux-kernel+bounces-181050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E84DF8C76CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:45:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40E128C76CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:46:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 516B8B23366
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:45:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71F721C210E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:46:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26AF1335B5;
-	Thu, 16 May 2024 12:44:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CC0F146580;
+	Thu, 16 May 2024 12:46:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MlcHoaQU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JbWIxIwt"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35AA3145FE8;
-	Thu, 16 May 2024 12:44:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7276D3A1B7
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 12:45:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715863492; cv=none; b=He0sVezODFYZhkR53Wq914787H81KTWR/FsXyieJjcyVagXHliSn6tGNes9DnU01cTQnhM+ABwLKYiDWGuS+uL5mXF0ime3blxt9gLEDv04ks3X8w+a0U8+HKS0ergz6kp6VQ73Ohmry7G9wjDQPldRwZ9KjYk9wM2S/o+8ckxo=
+	t=1715863559; cv=none; b=qTrz1q9y0ch211ez1/sSr3fphvihY1iNGzZpNLHN7ew1RC33TepWhl2sWLloJ5F+Z1ymvCsGWNP4qBVmWM4mZgwzKKApq+5XydB93wLcvAcFWTbmMp9pynlTbWVgyiYa05rt1uY+gaNTI4KXzyTUQkM+keTqKB5CgFHLtnYkOZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715863492; c=relaxed/simple;
-	bh=HNOtQUG9MUiVrbS1Rj3PWqKRiSI6WizkIia5pGml0tM=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=RFyTvLiOFOmrJ0LZwYoDyBcLZI1Wd7kmHxF397VEVt3vO6+naumLDlOS75TjvhdkP+451Pb+mkoKKL4tluSg3BUQhiOZeVNgK9Ug4Z49AABQy9NMZQq0YX3KaqZ8e1SPGsrEoujxtWuMssWY2+QDGoaigDZh9JOgVPK+kIdMpwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MlcHoaQU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6A0BC113CC;
-	Thu, 16 May 2024 12:44:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715863491;
-	bh=HNOtQUG9MUiVrbS1Rj3PWqKRiSI6WizkIia5pGml0tM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MlcHoaQUzF1XSoHvAzPPMhNekinp3krzfJQF1pCbS8yC9EscVaJ6Ptn/35p05Be4Z
-	 wIFUAak38MWHjTIREBMNa+yje67qXlt2U2JQPWKuXsilqnw5953dbcw9AD/BUoBX4Y
-	 WPI4x9rKt6otw9zrvoYmfhhZR+6LiBxcGwmfgBnm89NGjuCGjgo/QESzrLAWFkOG0m
-	 0THqK/z36jaQ1s2NeOI/s1w3QV5+0pp15vIXYhzbbAXDovyTLBXB+9wKOSVCi1TFt6
-	 GWm0Dardjn3SRkEyepZl9OepphGvVgl+kJM6qDRIKkcncU+kWoxXt/uBQ3YdQC2kOC
-	 OEdpQmFnQwn/Q==
+	s=arc-20240116; t=1715863559; c=relaxed/simple;
+	bh=xHfa5u2tqq62Z2Yqj7BohljmTIio2h6h+05EN60Voxc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=f/SE0Geiyeeu5L9URVR/Irls2m6D2VicUJRcUm1KeU/xAks513yRhyCtxJQRpVlwa3gfg3KQPQx4DJOcu5sZcGu1wkr20TqcjHGREdIxbsigHjbeZW3BmSr5cQv6LR8ghEWdfrizly3KCnsfo0o0r0vMhBckcBRxvCKczyN7OLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JbWIxIwt; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715863557;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7dG6Z+45v2q5x1q/1fMWlQrJ5gyYce9+KheVF6sIr+g=;
+	b=JbWIxIwtALlmRlpOpfSpqBdOndvWs4vzsCnUIEA8daNwFNPi+IjLHYLzUnS/518C/aVRG1
+	xsRt+1SnSSNdrW7A+Cwqj0/KDsl1EpivQVeJsLivH4VNpM75RcQ/GzEtvvcW/Dh63t4guz
+	n5dcCMjyVZvHZ6D9qlGHpTPOt5iqJlU=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-607-pnl1F1f5P3yXkUW7PfD7rQ-1; Thu, 16 May 2024 08:45:55 -0400
+X-MC-Unique: pnl1F1f5P3yXkUW7PfD7rQ-1
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-35044e65060so4096581f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 05:45:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715863554; x=1716468354;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7dG6Z+45v2q5x1q/1fMWlQrJ5gyYce9+KheVF6sIr+g=;
+        b=osDDcEwFj8ikcM8RwwfD9b8qkkstvgmL7o51V88dS738T823d8YRwG8u2Bpu1wBbx9
+         t0UC9DwCjquq4Kb2OxmmnCV/3pDaHL5sFufMoC2uf3D9169KiZYMi3oraJ70tH7kTomF
+         iBKvWDRjEmVipTbv9NtozuF0SC6VgFmBP2bkzQHKXPEQR9gAltgvJY5IgI7lEdN1nUH0
+         Kc2wa9pSwEvd0DmL3zRSe968AdmeAIavxqaZSiZ0A7kM8MTO2WJal90Ydli/mYlhdYSg
+         nhmWsDfT0XofO5VVs6BK/vtZVvnZkRJjuc0mft5L7imrdp9Cvuy58Q9La0Hw3MmJJflf
+         oBDA==
+X-Forwarded-Encrypted: i=1; AJvYcCU4RQ2EfoyUgdXqpbUjARIpff25qNZ+dXoyQDRWlrejrbzQkRdWqcbPcW1T0XHZzar4wXl5X+hVEVEzbBAhtt0Pqs7MEZTDkx2GiXz1
+X-Gm-Message-State: AOJu0Yw4Fj7pwTbjG3tZhdBG475HZHdbxKVVQXt9SILuJaTr7a30UAiD
+	cv8FXsMiTsEch3lXa3EFI8fUgTArGX2ysGu15U3Eq1XRLy7a2XAbSbjNveUSuPRvP14AKGZ0593
+	svejyA4AA1s4r2IHcVwrFJlVbKPLWWzQF7u3oz3OwANXohCs9NgMaTOdqln2MVM0YmJiyisKgRg
+	eCEY08Zu9MS6mtDrR3KQzrnsUVwX2muh3HSdJj
+X-Received: by 2002:a5d:550b:0:b0:34a:9afe:76f with SMTP id ffacd0b85a97d-3504a73749cmr14015563f8f.30.1715863554124;
+        Thu, 16 May 2024 05:45:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEQ2EdeulUpFW4L96VwQkufH/EGbNBZaA8+A6kpKigJT6nq88J8jsTsHca1puBuLIbcAMkH5jX3IOPWEwU8ztQ=
+X-Received: by 2002:a5d:550b:0:b0:34a:9afe:76f with SMTP id
+ ffacd0b85a97d-3504a73749cmr14015549f8f.30.1715863553739; Thu, 16 May 2024
+ 05:45:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <20240510211024.556136-1-michael.roth@amd.com> <20240510211024.556136-14-michael.roth@amd.com>
+ <ZkU3_y0UoPk5yAeK@google.com>
+In-Reply-To: <ZkU3_y0UoPk5yAeK@google.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Thu, 16 May 2024 14:45:41 +0200
+Message-ID: <CABgObfZXvq8_j+tm8zJ_F=5XAD22rky1JtdUSzV+VgpOXqOn-g@mail.gmail.com>
+Subject: Re: [PULL 13/19] KVM: SEV: Implement gmem hook for invalidating
+ private pages
+To: Sean Christopherson <seanjc@google.com>
+Cc: Michael Roth <michael.roth@amd.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 16 May 2024 15:44:46 +0300
-Message-Id: <D1B2UBTP0QTI.2LJ7B6NUNHNOJ@kernel.org>
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Jonathan Calmels" <jcalmels@3xx0.net>, <brauner@kernel.org>,
- <ebiederm@xmission.com>, "Luis Chamberlain" <mcgrof@kernel.org>, "Kees
- Cook" <keescook@chromium.org>, "Joel Granados" <j.granados@samsung.com>,
- "Serge Hallyn" <serge@hallyn.com>, "Paul Moore" <paul@paul-moore.com>,
- "James Morris" <jmorris@namei.org>, "David Howells" <dhowells@redhat.com>
-Cc: <containers@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
- <linux-fsdevel@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
- <keyrings@vger.kernel.org>
-Subject: Re: [PATCH 3/3] capabilities: add cap userns sysctl mask
-X-Mailer: aerc 0.17.0
-References: <20240516092213.6799-1-jcalmels@3xx0.net>
- <20240516092213.6799-4-jcalmels@3xx0.net>
-In-Reply-To: <20240516092213.6799-4-jcalmels@3xx0.net>
 
-On Thu May 16, 2024 at 12:22 PM EEST, Jonathan Calmels wrote:
-> This patch adds a new system-wide userns capability mask designed to mask
-> off capabilities in user namespaces.
+On Thu, May 16, 2024 at 12:32=E2=80=AFAM Sean Christopherson <seanjc@google=
+com> wrote:
+> > +void sev_gmem_invalidate(kvm_pfn_t start, kvm_pfn_t end)
+> > +{
+> > +     kvm_pfn_t pfn;
+> > +
+> > +     pr_debug("%s: PFN start 0x%llx PFN end 0x%llx\n", __func__, start=
+, end);
+> > +
+> > +     for (pfn =3D start; pfn < end;) {
+> > +             bool use_2m_update =3D false;
+> > +             int rc, rmp_level;
+> > +             bool assigned;
+> > +
+> > +             rc =3D snp_lookup_rmpentry(pfn, &assigned, &rmp_level);
+> > +             if (WARN_ONCE(rc, "SEV: Failed to retrieve RMP entry for =
+PFN 0x%llx error %d\n",
+> > +                           pfn, rc))
+> > +                     goto next_pfn;
 >
-> This mask is controlled through a sysctl and can be set early in the boot
-> process or on the kernel command line to exclude known capabilities from
-> ever being gained in namespaces. Once set, it can be further restricted t=
-o
-> exert dynamic policies on the system (e.g. ward off a potential exploit).
+> This is comically trivial to hit, as it fires when running guest_memfd_te=
+st on a
+> !SNP host.  Presumably the correct fix is to simply do nothing for !sev_s=
+np_guest(),
+> but that's easier said than done due to the lack of a @kvm in .gmem_inval=
+idate().
 >
-> Changing this mask requires privileges over CAP_SYS_ADMIN and CAP_SETPCAP
-> in the initial user namespace.
->
-> Example:
->
->     # sysctl -qw kernel.cap_userns_mask=3D0x1fffffdffff && \
->       unshare -r grep Cap /proc/self/status
->     CapInh: 0000000000000000
->     CapPrm: 000001fffffdffff
->     CapEff: 000001fffffdffff
->     CapBnd: 000001fffffdffff
->     CapAmb: 0000000000000000
->     CapUNs: 000001fffffdffff
->
-> Signed-off-by: Jonathan Calmels <jcalmels@3xx0.net>
-> ---
->  include/linux/user_namespace.h |  7 ++++
->  kernel/sysctl.c                | 10 ++++++
->  kernel/user_namespace.c        | 66 ++++++++++++++++++++++++++++++++++
->  3 files changed, 83 insertions(+)
->
-> diff --git a/include/linux/user_namespace.h b/include/linux/user_namespac=
-e.h
-> index 6030a8235617..e3478bd54ee5 100644
-> --- a/include/linux/user_namespace.h
-> +++ b/include/linux/user_namespace.h
-> @@ -2,6 +2,7 @@
->  #ifndef _LINUX_USER_NAMESPACE_H
->  #define _LINUX_USER_NAMESPACE_H
-> =20
-> +#include <linux/capability.h>
->  #include <linux/kref.h>
->  #include <linux/nsproxy.h>
->  #include <linux/ns_common.h>
-> @@ -14,6 +15,12 @@
->  #define UID_GID_MAP_MAX_BASE_EXTENTS 5
->  #define UID_GID_MAP_MAX_EXTENTS 340
-> =20
-> +#ifdef CONFIG_SYSCTL
-> +extern kernel_cap_t cap_userns_mask;
-> +int proc_cap_userns_handler(struct ctl_table *table, int write,
-> +			    void *buffer, size_t *lenp, loff_t *ppos);
-> +#endif
-> +
->  struct uid_gid_extent {
->  	u32 first;
->  	u32 lower_first;
-> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> index 81cc974913bb..1546eebd6aea 100644
-> --- a/kernel/sysctl.c
-> +++ b/kernel/sysctl.c
-> @@ -62,6 +62,7 @@
->  #include <linux/sched/sysctl.h>
->  #include <linux/mount.h>
->  #include <linux/userfaultfd_k.h>
-> +#include <linux/user_namespace.h>
->  #include <linux/pid.h>
-> =20
->  #include "../lib/kstrtox.h"
-> @@ -1846,6 +1847,15 @@ static struct ctl_table kern_table[] =3D {
->  		.mode		=3D 0444,
->  		.proc_handler	=3D proc_dointvec,
->  	},
-> +#ifdef CONFIG_USER_NS
-> +	{
-> +		.procname	=3D "cap_userns_mask",
-> +		.data		=3D &cap_userns_mask,
-> +		.maxlen		=3D sizeof(kernel_cap_t),
-> +		.mode		=3D 0644,
-> +		.proc_handler	=3D proc_cap_userns_handler,
-> +	},
-> +#endif
->  #if defined(CONFIG_X86_LOCAL_APIC) && defined(CONFIG_X86)
->  	{
->  		.procname       =3D "unknown_nmi_panic",
-> diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
-> index 53848e2b68cd..e0cf606e9140 100644
-> --- a/kernel/user_namespace.c
-> +++ b/kernel/user_namespace.c
-> @@ -26,6 +26,66 @@
->  static struct kmem_cache *user_ns_cachep __ro_after_init;
->  static DEFINE_MUTEX(userns_state_mutex);
-> =20
-> +#ifdef CONFIG_SYSCTL
-> +static DEFINE_SPINLOCK(cap_userns_lock);
+> That too is not a big fix, but that's beside the point.  IMO, the fact th=
+at I'm
+> the first person to (completely inadvertantly) hit this rather basic bug =
+is a
+> good hint that we should wait until 6.11 to merge SNP support.
 
-Generally new global or file-local locks are better to have a comment
-that describes their use.
+Of course there is an explanation - I usually run all the tests before
+pushing anything to kvm/next, here I did not do it because 1) I was
+busy with the merge window and 2) I wanted to give exposure to the
+code in linux-next, which was the right call indeed but it's beside
+the point. Between the clang issue and this one, it's clear that even
+though the implementation is 99.99% okay (especially considering the
+size), there are a few kinks to fix.
 
-> +kernel_cap_t cap_userns_mask =3D CAP_FULL_SET;
-> +
+I'll fix everything up and re-push to kvm/next, but I agree that we
+shouldn't rush it any further. What really matters is that development
+on userspace can proceed.
 
-Non-static symbol should have appropriate kdoc with alll arguments
-and return values documented.
+This also confirms that it's important to replace kvm/next with
+kvm/queue in linux-next, since linux-next doesn't care that much about
+branches that rebase.
 
-> +int proc_cap_userns_handler(struct ctl_table *table, int write,
-> +			    void *buffer, size_t *lenp, loff_t *ppos)
-> +{
-> +	struct ctl_table t;
-> +	unsigned long mask_array[2];
-> +	kernel_cap_t new_mask, *mask;
-> +	int err;
-> +
-> +	if (write && (!capable(CAP_SETPCAP) ||
-> +		      !capable(CAP_SYS_ADMIN)))
-> +		return -EPERM;
-> +
-> +	/*
-> +	 * convert from the global kernel_cap_t to the ulong array to print to
-> +	 * userspace if this is a read.
-> +	 *
-> +	 * capabilities are exposed as one 64-bit value or two 32-bit values
-> +	 * depending on the architecture
-> +	 */
-> +	mask =3D table->data;
-> +	spin_lock(&cap_userns_lock);
-> +	mask_array[0] =3D (unsigned long) mask->val;
-> +#if BITS_PER_LONG !=3D 64
-> +	mask_array[1] =3D mask->val >> BITS_PER_LONG;
-> +#endif
+Paolo
 
-Why not just "if (BITS_PER_LONG !=3D 64)"?
-
-Compiler will do its job here.
-
-> +	spin_unlock(&cap_userns_lock);
-> +
-> +	t =3D *table;
-> +	t.data =3D &mask_array;
-> +
-> +	/*
-> +	 * actually read or write and array of ulongs from userspace.  Remember
-> +	 * these are least significant bits first
-> +	 */
-> +	err =3D proc_doulongvec_minmax(&t, write, buffer, lenp, ppos);
-> +	if (err < 0)
-> +		return err;
-> +
-> +	new_mask.val =3D mask_array[0];
-> +#if BITS_PER_LONG !=3D 64
-> +	new_mask.val +=3D (u64)mask_array[1] << BITS_PER_LONG;
-> +#endif
-
-Ditto.
-
-> +
-> +	/*
-> +	 * Drop everything not in the new_mask (but don't add things)
-> +	 */
-> +	if (write) {
-> +		spin_lock(&cap_userns_lock);
-> +		*mask =3D cap_intersect(*mask, new_mask);
-> +		spin_unlock(&cap_userns_lock);
-> +	}
-> +
-> +	return 0;
-> +}
-> +#endif
-> +
->  static bool new_idmap_permitted(const struct file *file,
->  				struct user_namespace *ns, int cap_setid,
->  				struct uid_gid_map *map);
-> @@ -46,6 +106,12 @@ static void set_cred_user_ns(struct cred *cred, struc=
-t user_namespace *user_ns)
->  	/* Limit userns capabilities to our parent's bounding set. */
->  	if (iscredsecure(cred, SECURE_USERNS_STRICT_CAPS))
->  		cred->cap_userns =3D cap_intersect(cred->cap_userns, cred->cap_bset);
-> +#ifdef CONFIG_SYSCTL
-> +	/* Mask off userns capabilities that are not permitted by the system-wi=
-de mask. */
-> +	spin_lock(&cap_userns_lock);
-> +	cred->cap_userns =3D cap_intersect(cred->cap_userns, cap_userns_mask);
-> +	spin_unlock(&cap_userns_lock);
-> +#endif
-> =20
->  	/* Start with the capabilities defined in the userns set. */
->  	cred->cap_bset =3D cred->cap_userns;
-
-BR, Jarkko
 
