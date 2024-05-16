@@ -1,152 +1,178 @@
-Return-Path: <linux-kernel+bounces-181106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88D3B8C777D
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:20:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F4028C777E
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 15:21:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F061282107
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 13:20:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3535028164B
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 13:21:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F3EF14B953;
-	Thu, 16 May 2024 13:20:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06DCF1474B4;
+	Thu, 16 May 2024 13:21:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Z+ELg8JU"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="P0SF3w0u"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E472146D51
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 13:20:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7728E6BB4E
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 13:21:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715865616; cv=none; b=sYBFt+Ow5bImenKNbGZE4lec/XrzaoUMo1WtFAqRKOoJ3tPiNqQjJCvs0hbdDPWoxLCzG6wz5xk/UQEQvTmTZtxZNo5oxOMQmQ4z0n8m+fcEiAv2MU2JQPLhvBgeolvQg+EJxEsZjKknPxHZgQ19yrAN8TY5+/fY3LCIicC+I/w=
+	t=1715865708; cv=none; b=dzaCCOhVTdgjT3wGRpIJiTPy0BBWv0m89NL5I+DC82AqRDpED7M5692j5qBsRFC9/2pbAPBPaiiH/t0TSkUtUqjtWh4M+OIIpY45cy8WyJVDjAnGlaGhnXO4TuDCj0MyY6dRv14Rw/2ikQH+i19PfQ9RfSQFtzlv2cUHsk/PbBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715865616; c=relaxed/simple;
-	bh=1OJ19Pl47nRtdHCzGqcZtNX9EYkZYfEVLt9EdjsyHOI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=sIFsvXiQ0rN/7cpkTHignjnGl8mvcr1Hs/5Gtjk880xRNlw1G9UiMfur6qtnclugAlsEayhqNT1gkn7maa3mzFWe7zFzF0coPOF6x6pLIzV+SPN/WKJzZHyu0QzoekBkDh+0VWCZWn2vs5mIFxdvJLRRhQdMxNh0DeWLKUyaNDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Z+ELg8JU; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 22C8E1C0003;
-	Thu, 16 May 2024 13:20:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1715865612;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Gxsky9In9MMh/e1w5QTvAWtdGDRX6UThnRqmblTzJ18=;
-	b=Z+ELg8JUhcl0r9jzdSzkiJrO+6Wea7A1CE1GDFSgg6pV0od+aA/OadiO6L16C4M5S4jPcJ
-	KeABzRoWSyn0ECqTLayKaVgUXu/MXpgKBtLxapYAJ4z/xS7oWLrPvuKGdHEdJB3KZKOrhy
-	lfgOZs8NU8/mUAUGgAbXq6/FU49hUwACV38/tnQM6Qg6q+fd5GmyTNU63fFKSNf8qAzOmL
-	NM9CsvR0EQUmfiiFMz17+XiG2wVC8BQH7oenKqa380IgoACucr0noTrjqASU2SOmakL+Ad
-	A75Dxlb/C+6xNeBGAU8PDsaa+GyIDZCOP56LUKprrikjq+AxFd2MMhUieZnbZQ==
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-Date: Thu, 16 May 2024 15:20:07 +0200
-Subject: [PATCH 3/3] drm/vkms: Add support for XRGB2101010
+	s=arc-20240116; t=1715865708; c=relaxed/simple;
+	bh=Ktri3O+y1JiTtE3Cd6eQ+A0O7nMjt46pOkSdqwviEaU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Vlm3Ydo8PDY5emrLOKN4hi8rQpr40d0gCzuM+LqHQmXkGZCEEQXotwJ7d68Tv8+1oHRaICIUILAQYsUaPw+kLRfZcP5B76Kd38Us0eYin/v1yf8XYFIxnwwPTEqM+1ySr+o4OIYi3qT8kxlmHdcZULthKi8FChriVBcr7Aed5zg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=P0SF3w0u; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2e428242a38so9797821fa.2
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 06:21:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1715865704; x=1716470504; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yrv6VISaglcxTRZ/0ZiSzXEYQeCVDXkyflKgtaSfATY=;
+        b=P0SF3w0u3a+l7fTTDKSEKu6EFYWycGCuNei77XVOMoVdwar70SSZolCqX3wQ5DjSfo
+         mQ+50x1chol0JtZX/wNuriJmNW80GEz/jU0BxjJOI5nNFpPJx8FLTyqcoE3XZDigBGZD
+         vCqrJLRZmtUrYpr266fWAG/rBpJ8uBmWYgCOTBd9BFxIhI3OXGp6LI/q2tVCJMVbc67p
+         mefFW3XFiLhz12ztEQSt62DM6wl9+JssmkmpTUIdNVrHPapVfYASNrztHlcC+bAYKaJJ
+         6yU3femh5vz3QhHpYF9Lv0TAUSR7htVg9GSpPRLsaZJXwiuhLTCY98rEUleRKyViDoWm
+         5oew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715865704; x=1716470504;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yrv6VISaglcxTRZ/0ZiSzXEYQeCVDXkyflKgtaSfATY=;
+        b=eYGB154x1LE0gnvXJdeQbGDMw2ZCr4Neuaqba0fOFNBilXxa3AqXDpbeueUl5TlNJt
+         N2mUcJ1LjRE7Vbg2/TpGUiYfOvtqWEr52+pg+1e0S+r+0gTL8sfc3UHWlTz9+zyVosaz
+         YmxPvBDMyDWuHKw373n0eEhCODXvmDuYIK8Jt5IwoPP31hsuoEZKkzdvOLHT99kB6PP/
+         4y69KOws67Ot+JObFdsAmwFt69fxM9BuJjgBBXJtXJZGC7zcEvYiTQniN2fX4gf9dJ2c
+         P9ixgD2ZSrkIbqHRjFSYCS84bf2+prCfYMlWa9K6a2Mrjv/kjruXWw/uPYQLD3WjBQgt
+         LoPw==
+X-Forwarded-Encrypted: i=1; AJvYcCUrWV3GNJL/N8PA8jfn8pzTznAYDakhMZPn0W0XOgoGAodkN2YulRIcMI/twv/aJsLhQwCAWcmUbt9ienLDYm08FQeGyqFqh2yyvSQA
+X-Gm-Message-State: AOJu0YyhMRZfAqDsP5G22vzOpLJ+o/b0RAEYG5Ups+nKr8/Bg4YYlP4O
+	CZ8cEqPu2aH2QAYJGsX4sB7Pi8pzoZdThMK2k4oULm5yp3T0VJGljK3RYGrXCic=
+X-Google-Smtp-Source: AGHT+IGPzxjcYgd94UKow7Dij1TOsrAaSOrA+bVuaeThwzPzNBvd6EdpewP4a0WRZZ0zr9KYdakxCw==
+X-Received: by 2002:a2e:b385:0:b0:2e1:9c57:195a with SMTP id 38308e7fff4ca-2e52028921amr159361861fa.32.1715865704467;
+        Thu, 16 May 2024 06:21:44 -0700 (PDT)
+Received: from [192.168.0.2] (host-79-16-6-145.retail.telecomitalia.it. [79.16.6.145])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41f882086f0sm306095145e9.42.2024.05.16.06.21.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 May 2024 06:21:38 -0700 (PDT)
+Message-ID: <2699ec89-29a1-4b9d-b3ec-7792713041c4@baylibre.com>
+Date: Thu, 16 May 2024 15:20:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240516-writeback_line_by_line-v1-3-7b2e3bf9f1c9@bootlin.com>
-References: <20240516-writeback_line_by_line-v1-0-7b2e3bf9f1c9@bootlin.com>
-In-Reply-To: <20240516-writeback_line_by_line-v1-0-7b2e3bf9f1c9@bootlin.com>
-To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>, 
- Melissa Wen <melissa.srw@gmail.com>, 
- =?utf-8?q?Ma=C3=ADra_Canal?= <mairacanal@riseup.net>, 
- Haneen Mohammed <hamohammed.sa@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- Louis Chauvet <louis.chauvet@bootlin.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2232;
- i=louis.chauvet@bootlin.com; h=from:subject:message-id;
- bh=1OJ19Pl47nRtdHCzGqcZtNX9EYkZYfEVLt9EdjsyHOI=;
- b=owEBbQKS/ZANAwAIASCtLsZbECziAcsmYgBmRggHCQK7xwYqKIIeeA0rVmlaVziGdYQOydOcA
- acReLtoUVOJAjMEAAEIAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCZkYIBwAKCRAgrS7GWxAs
- 4lhOD/0Z3LDnJlwTF1nleuo7YXbCMUURCN8v3uFz4goGOoWXD40S2ebgWzUMZ/UlG/Z+NQjf/PD
- z2PgAunHRR1YtWBAjYLVe+5y0JG7BvcEzwEwO1IOLfik+yMQ5KSz1uGjGx1xVCG7I6ptYxMeRXU
- YeKoxs7aXkcZaQOWRpA9m/u/4pcF5belsn21W7mtq+KuOADpcPQ7aT58osDJAHSjyJFp7THD6h+
- EVO75UXYPza561UDcN2ZTTO6+Cp4ZF2KaqmQEMbo1AWuxvPkVxTeY0iz9cnGPuVOYjsm8dXC2si
- gjUTcfb8EdtditlCJQWZxVukITRR96SoY464F/NOy0Z7gzksY+5Szn/Zy12HRIW5DVoAhP/K3GK
- t7TW77RkJuWvTnoH6xTO1kUon782rI6da2dd3cKiomR6HVkzRwv59nTwd6AOZjKP8JWImiUp8Hn
- WS8wn/qBFgEKfJNB5RuGD26P9h0CfKmllT//R8Y6QVLLfv2GhZ6EGj8oCFOyhWRAmVZ+jBUq0DI
- Hf+NucgHuEkvxG5NvPhNQE+hwCJhS6yw2ByoUoKJpR9wzviDDzlswJVXwxqEBilnYdWxVoMcGa4
- lEE1LhVyfTzNnIoYH1GkAn0kf/CkAqSyuCRhQXp762rnCYQZSO9FUivTOsf+xiEzz6t6vDc3Y39
- q8KTiL51bBkGPng==
-X-Developer-Key: i=louis.chauvet@bootlin.com; a=openpgp;
- fpr=8B7104AE9A272D6693F527F2EC1883F55E0B40A5
-X-GND-Sasl: louis.chauvet@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dt-bindings: iio: dac: add ad35xxr single output
+ variants
+To: Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ nuno.sa@analog.com, lars@metafoo.de, Michael.Hennerich@analog.com,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240510141836.1624009-1-adureghello@baylibre.org>
+ <CAMknhBFUUCvxbuHz0pPKd-KBcG3zfXNr8wu=AnrZx0C495RKOQ@mail.gmail.com>
+ <20240511170529.742e6e6f@jic23-huawei>
+Content-Language: en-US
+From: Angelo Dureghello <adureghello@baylibre.com>
+In-Reply-To: <20240511170529.742e6e6f@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Thanks to the WRITE_LINE macro, adding the format XRGB210101010 is trivial.
+Hi,
 
-Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
----
- drivers/gpu/drm/vkms/vkms_formats.c   | 12 ++++++++++++
- drivers/gpu/drm/vkms/vkms_writeback.c |  2 +-
- 2 files changed, 13 insertions(+), 1 deletion(-)
+On 11/05/24 6:05 PM, Jonathan Cameron wrote:
+> On Fri, 10 May 2024 10:39:31 -0500
+> David Lechner <dlechner@baylibre.com> wrote:
+>
+>> On Fri, May 10, 2024 at 9:19 AM Angelo Dureghello
+>> <adureghello@baylibre.com> wrote:
+>>> From: Angelo Dureghello <adureghello@baylibre.com>
+>>>
+>>> Add support for ad3541r and ad3551r single output variants.
+>>>
+>>> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+>>> ---
+>>>   .../devicetree/bindings/iio/dac/adi,ad3552r.yaml       | 10 ++++++++--
+>>>   1 file changed, 8 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml b/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
+>>> index 8265d709094d..17442cdfbe27 100644
+>>> --- a/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
+>>> +++ b/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
+>> It would be nice to also add the datasheet links in the description.
 
-diff --git a/drivers/gpu/drm/vkms/vkms_formats.c b/drivers/gpu/drm/vkms/vkms_formats.c
-index 51b1c04e6781..92f1b2f5a8dd 100644
---- a/drivers/gpu/drm/vkms/vkms_formats.c
-+++ b/drivers/gpu/drm/vkms/vkms_formats.c
-@@ -642,6 +642,14 @@ static void argb_u16_to_RGB565(u8 *out_pixel, const struct pixel_argb_u16 *in_pi
- 	*pixel = cpu_to_le16(r << 11 | g << 5 | b);
- }
- 
-+static void argb_u16_to_XRGB2101010(u8 *out_pixel, const struct pixel_argb_u16 *in_pixel)
-+{
-+	out_pixel[0] = (u8)(in_pixel->b & 0xFF);
-+	out_pixel[1] = (u8)((in_pixel->b >> 8) & 0x03) | (u8)((in_pixel->g << 2) & 0xFC);
-+	out_pixel[2] = (u8)((in_pixel->g >> 6) & 0x0F) | (u8)((in_pixel->r << 4) & 0xF0);
-+	out_pixel[3] = (u8)((in_pixel->r >> 4) & 0x3F);
-+}
-+
- /**
-  * WRITE_LINE() - Generic generator for write_line functions
-  *
-@@ -688,6 +696,8 @@ WRITE_LINE(XRGB16161616_write_line, argb_u16_to_XRGB16161616)
- 
- WRITE_LINE(RGB565_write_line, argb_u16_to_RGB565)
- 
-+WRITE_LINE(XRGB2101010_write_line, argb_u16_to_XRGB2101010)
-+
- /**
-  * argb_u16_to_nothing() - pixel_write callback with no effect
-  *
-@@ -979,6 +989,8 @@ pixel_write_line_t get_pixel_write_line_function(u32 format)
- 		return &XRGB16161616_write_line;
- 	case DRM_FORMAT_RGB565:
- 		return &RGB565_write_line;
-+	case DRM_FORMAT_XRGB2101010:
-+		return &XRGB2101010_write_line;
- 	default:
- 		/*
- 		 * This is a bug in vkms_writeback_atomic_check. All the supported
-diff --git a/drivers/gpu/drm/vkms/vkms_writeback.c b/drivers/gpu/drm/vkms/vkms_writeback.c
-index 53bddcf33eab..c86020ef667a 100644
---- a/drivers/gpu/drm/vkms/vkms_writeback.c
-+++ b/drivers/gpu/drm/vkms/vkms_writeback.c
-@@ -21,7 +21,7 @@ static const u32 vkms_wb_formats[] = {
- 	DRM_FORMAT_XRGB16161616,
- 	DRM_FORMAT_ARGB16161616,
- 	DRM_FORMAT_RGB565,
--	DRM_FORMAT_YUV422
-+	DRM_FORMAT_XRGB2101010,
- };
- 
- static const struct drm_connector_funcs vkms_wb_connector_funcs = {
+ack,
 
--- 
-2.43.2
+
+>>> @@ -19,7 +19,9 @@ description: |
+>>>   properties:
+>>>     compatible:
+>>>       enum:
+>>> +      - adi,ad3541r
+>>>         - adi,ad3542r
+>>> +      - adi,ad3551r
+>>>         - adi,ad3552r
+>>>
+>>>     reg:
+>>> @@ -128,7 +130,9 @@ allOf:
+>>>         properties:
+>>>           compatible:
+>>>             contains:
+>>> -            const: adi,ad3542r
+>>> +            enum:
+>>> +              - adi,ad3541r
+>>> +              - adi,ad3542r
+>>>       then:
+>>>         patternProperties:
+>>>           "^channel@([0-1])$":
+>>> @@ -158,7 +162,9 @@ allOf:
+>>>         properties:
+>>>           compatible:
+>>>             contains:
+>>> -            const: adi,ad3552r
+>>> +            enum:
+>>> +              - adi,ad3551r
+>>> +              - adi,ad3552r
+>>>       then:
+>>>         patternProperties:
+>>>           "^channel@([0-1])$":
+>>> --
+>>> 2.45.0.rc1
+>>>
+>>>   
+>> Since these are single channel, it would not hurt to restrict the
+>> `reg` property of of the `channel@` nodes to 1.
+
+ack,
+
+
+> Ah. I missed David's email because threading goes weird without a cover letter
+> and hence duplicated his comment.
+> Please add a cover letter with a brief description of the series to
+> your v2.  Means we get a nice title in patchwork as well!
+>
+> Thanks,
+>
+> Jonathan
+>   
+>
+Thanks for the feedbacks, will fix all in v2.
+
+Regards,
+angelo
+
 
 
