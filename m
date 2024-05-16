@@ -1,256 +1,159 @@
-Return-Path: <linux-kernel+bounces-181361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BED218C7AFF
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 19:18:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21E418C7B08
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 19:20:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D6A71F21EED
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:18:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45F291C20A77
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 17:20:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A88BD156238;
-	Thu, 16 May 2024 17:18:50 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 416D315625B;
+	Thu, 16 May 2024 17:20:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="Y8qaVhEV"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C09001429E
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 17:18:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A07091E519;
+	Thu, 16 May 2024 17:20:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715879930; cv=none; b=WmL6DW20zo91bPlBiGJP24UusYu/p2iZFqWtb5YKY7HgoW5OeJ8rFk8yZ3UepJLQ9qZHXI77iNC+Y0PU0h4ZL8CUWtXUEqWg1IvSuy0Os1XTkuK2O+0mmkkzks9ipodLmG7l9NktY5ti8KJ2yUljH8TyqbbxK4XIBWYQynGmWCM=
+	t=1715880025; cv=none; b=jhBcvAFBMwd2Hf7e5uxjksawkbv12l2GjlWjl9GqzdBW3xYOXqx/Iccwhg6PyHL5uhLcQ8e+4XvjawDBQj8KbBbTH0QJZoVNykwmdgXrgZ0ABx4NxX/3O1otR07A/wRQhKfq7MxsJnAEp6410O5I1S3lNxSibru02xc2pAtIhRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715879930; c=relaxed/simple;
-	bh=A7jD0x16kHayI04EdOsyg94SPS2TMDLYLkBaZV8SR88=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=qjUgfj+USiiLgHBz/gKs0bJKc8pcPUmOp8N4kwr/o1WfrYHuSeqxaJgkIBpOs8vhL6fRMLEg0EaTuceZTyXU4SV/2R9Qc63NTBpnfhwbYeGkHNjfg/j3Ybk5h1ubyeunpJHs1787ZfAkin9vuGMD+s4Q4jT2TGIlQI1bCH2KemA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[IPv6:::1])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <l.stach@pengutronix.de>)
-	id 1s7ekb-00077U-3t; Thu, 16 May 2024 19:18:41 +0200
-Message-ID: <57ea9084c792f642ea25d96d40c4425de061a3ef.camel@pengutronix.de>
-Subject: Re: [PATCH v2 2/3] drm/etnaviv: Turn etnaviv_is_model_rev() into a
- function
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Philipp Zabel <p.zabel@pengutronix.de>, Russell King
- <linux+etnaviv@armlinux.org.uk>, Christian Gmeiner
- <christian.gmeiner@gmail.com>
-Cc: etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Date: Thu, 16 May 2024 19:18:40 +0200
-In-Reply-To: <20240125-etnaviv-npu-v2-2-ba23c9a32be1@pengutronix.de>
-References: <20240125-etnaviv-npu-v2-0-ba23c9a32be1@pengutronix.de>
-	 <20240125-etnaviv-npu-v2-2-ba23c9a32be1@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+	s=arc-20240116; t=1715880025; c=relaxed/simple;
+	bh=jKuBLxLiB/BSzgv0Cf5ZWG6LMDWfkmTlYFjooSwDuIM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=S/4VacIYjGiSguOTcNQdScgkWzRPF6nCjM+yIWwFB6Qnui/XHoAjYlRw+SmBOBTXBQhvUjpAKxWyTFQU7eBYuqxPJpaSif50lRfVBkyegXobhPHxYU1FCYXol6dSizSqWkxZmJmOKqg1f2I5/qrvnenZePGfqfEsalBxNjgVSVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=Y8qaVhEV; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.1.0)
+ id 361194f984dcb5b6; Thu, 16 May 2024 19:20:20 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id B082373AC72;
+	Thu, 16 May 2024 19:20:19 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1715880020;
+	bh=jKuBLxLiB/BSzgv0Cf5ZWG6LMDWfkmTlYFjooSwDuIM=;
+	h=From:To:Cc:Subject:Date;
+	b=Y8qaVhEVO6zoWKJCAlsq1EoIukydxyuFkkcD1IiRnJR2ZjZLjiqaV4PyV1vlH09Ey
+	 8tW2Zo74bb7L3klkbzzJwJRbcSNThwmACaj1lI7gEBHKvArkS0B624NoD3e1lGFZFL
+	 2WVdaxHfOpdLevMo92/a9UQwe1/syn3UJUEGDSfogHOZuGUrCnYJp+/GskXxZifReG
+	 v3nfl6rS5PlvqYUt2sQCAon5LHuHPowIkE3xO4HyfTahm5ygFdYGFdcr+PRBcQV92a
+	 WmVoZh8DHjoo7AkXmVj3QIsLJZIjJWx3TYAe5RKaf1f69RlwV59YahocVXEbmd6ArF
+	 h4M9D8At2oMjA==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Zhang Rui <rui.zhang@intel.com>
+Subject: [PATCH v1] thermal: core: Fix the handling of invalid trip points
+Date: Thu, 16 May 2024 19:20:19 +0200
+Message-ID: <12441937.O9o76ZdvQC@kreacher>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvledrvdehuddguddtlecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpeffffffkefgheehffelteeiveeffeevhfelteejvddvieejjeelvdeiheeuveeuffenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqpdhnsggprhgtphhtthhopeejpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhmpdhrtghpthhtohepuggrnhhivghlrdhlvgiitggr
+ nhhosehlihhnrghrohdrohhrghdprhgtphhtthhopehsrhhinhhivhgrshdrphgrnhgurhhuvhgruggrsehlihhnuhigrdhinhhtvghlrdgtohhm
+X-DCC--Metrics: v370.home.net.pl 1024; Body=7 Fuz1=7 Fuz2=7
 
-Am Donnerstag, dem 25.01.2024 um 12:07 +0100 schrieb Philipp Zabel:
-> Turn the etnaviv_is_model_rev() macro into a static inline function.
-> Use the raw model number as a parameter instead of the chipModel_GCxxxx
-> defines. This reduces synchronization requirements for the generated
-> headers. For newer hardware, the GCxxxx names are not the correct model
-> names anyway. For example, model 0x8000 NPUs are called VIPNano-QI/SI(+)
-> by VeriSilicon.
->=20
-> Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-I've applied the series to the etnaviv/next branch. I had to alter
-$subject patch to fix the conflict with d7a5c9de99b3a ("drm/etnaviv:
-fix tx clock gating on some GC7000 variants").
+Commit 9ad18043fb35 ("thermal: core: Send trip crossing notifications
+at init time if needed") overlooked the case when a trip point that
+has started as invalid is set to a valid temperature later.  Namely,
+the initial threshold value for all trips is zero, so if a previously
+invalid trip becomes valid and its (new) low temperature is above the
+zone temperature, a spurious trip crossing notification will occur and
+it may trigger the WARN_ON() in handle_thermal_trip().
 
-Regards,
-Lucas
+To address this, set the initial threshold for all trips to INT_MAX.
 
-> ---
->  drivers/gpu/drm/etnaviv/etnaviv_gpu.c | 66 ++++++++++++++++++-----------=
-------
->  1 file changed, 34 insertions(+), 32 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c b/drivers/gpu/drm/etna=
-viv/etnaviv_gpu.c
-> index 9b8445d2a128..c61d50dd3829 100644
-> --- a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
-> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
-> @@ -172,10 +172,12 @@ int etnaviv_gpu_get_param(struct etnaviv_gpu *gpu, =
-u32 param, u64 *value)
->  	return 0;
->  }
-> =20
-> +static inline bool etnaviv_is_model_rev(struct etnaviv_gpu *gpu, u32 mod=
-el, u32 revision)
-> +{
-> +	return gpu->identity.model =3D=3D model &&
-> +	       gpu->identity.revision =3D=3D revision;
-> +}
-> =20
-> -#define etnaviv_is_model_rev(gpu, mod, rev) \
-> -	((gpu)->identity.model =3D=3D chipModel_##mod && \
-> -	 (gpu)->identity.revision =3D=3D rev)
->  #define etnaviv_field(val, field) \
->  	(((val) & field##__MASK) >> field##__SHIFT)
-> =20
-> @@ -281,7 +283,7 @@ static void etnaviv_hw_specs(struct etnaviv_gpu *gpu)
-> =20
->  	switch (gpu->identity.instruction_count) {
->  	case 0:
-> -		if (etnaviv_is_model_rev(gpu, GC2000, 0x5108) ||
-> +		if (etnaviv_is_model_rev(gpu, 0x2000, 0x5108) ||
->  		    gpu->identity.model =3D=3D chipModel_GC880)
->  			gpu->identity.instruction_count =3D 512;
->  		else
-> @@ -315,17 +317,17 @@ static void etnaviv_hw_specs(struct etnaviv_gpu *gp=
-u)
->  	 * For some cores, two varyings are consumed for position, so the
->  	 * maximum varying count needs to be reduced by one.
->  	 */
-> -	if (etnaviv_is_model_rev(gpu, GC5000, 0x5434) ||
-> -	    etnaviv_is_model_rev(gpu, GC4000, 0x5222) ||
-> -	    etnaviv_is_model_rev(gpu, GC4000, 0x5245) ||
-> -	    etnaviv_is_model_rev(gpu, GC4000, 0x5208) ||
-> -	    etnaviv_is_model_rev(gpu, GC3000, 0x5435) ||
-> -	    etnaviv_is_model_rev(gpu, GC2200, 0x5244) ||
-> -	    etnaviv_is_model_rev(gpu, GC2100, 0x5108) ||
-> -	    etnaviv_is_model_rev(gpu, GC2000, 0x5108) ||
-> -	    etnaviv_is_model_rev(gpu, GC1500, 0x5246) ||
-> -	    etnaviv_is_model_rev(gpu, GC880, 0x5107) ||
-> -	    etnaviv_is_model_rev(gpu, GC880, 0x5106))
-> +	if (etnaviv_is_model_rev(gpu, 0x5000, 0x5434) ||
-> +	    etnaviv_is_model_rev(gpu, 0x4000, 0x5222) ||
-> +	    etnaviv_is_model_rev(gpu, 0x4000, 0x5245) ||
-> +	    etnaviv_is_model_rev(gpu, 0x4000, 0x5208) ||
-> +	    etnaviv_is_model_rev(gpu, 0x3000, 0x5435) ||
-> +	    etnaviv_is_model_rev(gpu, 0x2200, 0x5244) ||
-> +	    etnaviv_is_model_rev(gpu, 0x2100, 0x5108) ||
-> +	    etnaviv_is_model_rev(gpu, 0x2000, 0x5108) ||
-> +	    etnaviv_is_model_rev(gpu, 0x1500, 0x5246) ||
-> +	    etnaviv_is_model_rev(gpu, 0x880, 0x5107) ||
-> +	    etnaviv_is_model_rev(gpu, 0x880, 0x5106))
->  		gpu->identity.varyings_count -=3D 1;
->  }
-> =20
-> @@ -351,7 +353,7 @@ static void etnaviv_hw_identify(struct etnaviv_gpu *g=
-pu)
->  		 * Reading these two registers on GC600 rev 0x19 result in a
->  		 * unhandled fault: external abort on non-linefetch
->  		 */
-> -		if (!etnaviv_is_model_rev(gpu, GC600, 0x19)) {
-> +		if (!etnaviv_is_model_rev(gpu, 0x600, 0x19)) {
->  			gpu->identity.product_id =3D gpu_read(gpu, VIVS_HI_CHIP_PRODUCT_ID);
->  			gpu->identity.eco_id =3D gpu_read(gpu, VIVS_HI_CHIP_ECO_ID);
->  		}
-> @@ -368,7 +370,7 @@ static void etnaviv_hw_identify(struct etnaviv_gpu *g=
-pu)
->  		}
-> =20
->  		/* Another special case */
-> -		if (etnaviv_is_model_rev(gpu, GC300, 0x2201)) {
-> +		if (etnaviv_is_model_rev(gpu, 0x300, 0x2201)) {
->  			u32 chipTime =3D gpu_read(gpu, VIVS_HI_CHIP_TIME);
-> =20
->  			if (chipDate =3D=3D 0x20080814 && chipTime =3D=3D 0x12051100) {
-> @@ -387,15 +389,15 @@ static void etnaviv_hw_identify(struct etnaviv_gpu =
-*gpu)
->  		 * Fix model/rev here, so all other places can refer to this
->  		 * core by its real identity.
->  		 */
-> -		if (etnaviv_is_model_rev(gpu, GC2000, 0xffff5450)) {
-> +		if (etnaviv_is_model_rev(gpu, 0x2000, 0xffff5450)) {
->  			gpu->identity.model =3D chipModel_GC3000;
->  			gpu->identity.revision &=3D 0xffff;
->  		}
-> =20
-> -		if (etnaviv_is_model_rev(gpu, GC1000, 0x5037) && (chipDate =3D=3D 0x20=
-120617))
-> +		if (etnaviv_is_model_rev(gpu, 0x1000, 0x5037) && (chipDate =3D=3D 0x20=
-120617))
->  			gpu->identity.eco_id =3D 1;
-> =20
-> -		if (etnaviv_is_model_rev(gpu, GC320, 0x5303) && (chipDate =3D=3D 0x201=
-40511))
-> +		if (etnaviv_is_model_rev(gpu, 0x320, 0x5303) && (chipDate =3D=3D 0x201=
-40511))
->  			gpu->identity.eco_id =3D 1;
->  	}
-> =20
-> @@ -630,14 +632,14 @@ static void etnaviv_gpu_enable_mlcg(struct etnaviv_=
-gpu *gpu)
->  		pmc |=3D BIT(15); /* Unknown bit */
-> =20
->  	/* Disable TX clock gating on affected core revisions. */
-> -	if (etnaviv_is_model_rev(gpu, GC4000, 0x5222) ||
-> -	    etnaviv_is_model_rev(gpu, GC2000, 0x5108) ||
-> -	    etnaviv_is_model_rev(gpu, GC2000, 0x6202) ||
-> -	    etnaviv_is_model_rev(gpu, GC2000, 0x6203))
-> +	if (etnaviv_is_model_rev(gpu, 0x4000, 0x5222) ||
-> +	    etnaviv_is_model_rev(gpu, 0x2000, 0x5108) ||
-> +	    etnaviv_is_model_rev(gpu, 0x2000, 0x6202) ||
-> +	    etnaviv_is_model_rev(gpu, 0x2000, 0x6203))
->  		pmc |=3D VIVS_PM_MODULE_CONTROLS_DISABLE_MODULE_CLOCK_GATING_TX;
-> =20
->  	/* Disable SE and RA clock gating on affected core revisions. */
-> -	if (etnaviv_is_model_rev(gpu, GC7000, 0x6202))
-> +	if (etnaviv_is_model_rev(gpu, 0x7000, 0x6202))
->  		pmc |=3D VIVS_PM_MODULE_CONTROLS_DISABLE_MODULE_CLOCK_GATING_SE |
->  		       VIVS_PM_MODULE_CONTROLS_DISABLE_MODULE_CLOCK_GATING_RA;
-> =20
-> @@ -690,14 +692,14 @@ static void etnaviv_gpu_setup_pulse_eater(struct et=
-naviv_gpu *gpu)
->  	 */
->  	u32 pulse_eater =3D 0x01590880;
-> =20
-> -	if (etnaviv_is_model_rev(gpu, GC4000, 0x5208) ||
-> -	    etnaviv_is_model_rev(gpu, GC4000, 0x5222)) {
-> +	if (etnaviv_is_model_rev(gpu, 0x4000, 0x5208) ||
-> +	    etnaviv_is_model_rev(gpu, 0x4000, 0x5222)) {
->  		pulse_eater |=3D BIT(23);
-> =20
->  	}
-> =20
-> -	if (etnaviv_is_model_rev(gpu, GC1000, 0x5039) ||
-> -	    etnaviv_is_model_rev(gpu, GC1000, 0x5040)) {
-> +	if (etnaviv_is_model_rev(gpu, 0x1000, 0x5039) ||
-> +	    etnaviv_is_model_rev(gpu, 0x1000, 0x5040)) {
->  		pulse_eater &=3D ~BIT(16);
->  		pulse_eater |=3D BIT(17);
->  	}
-> @@ -718,8 +720,8 @@ static void etnaviv_gpu_hw_init(struct etnaviv_gpu *g=
-pu)
->  	WARN_ON(!(gpu->state =3D=3D ETNA_GPU_STATE_IDENTIFIED ||
->  		  gpu->state =3D=3D ETNA_GPU_STATE_RESET));
-> =20
-> -	if ((etnaviv_is_model_rev(gpu, GC320, 0x5007) ||
-> -	     etnaviv_is_model_rev(gpu, GC320, 0x5220)) &&
-> +	if ((etnaviv_is_model_rev(gpu, 0x320, 0x5007) ||
-> +	     etnaviv_is_model_rev(gpu, 0x320, 0x5220)) &&
->  	    gpu_read(gpu, VIVS_HI_CHIP_TIME) !=3D 0x2062400) {
->  		u32 mc_memory_debug;
-> =20
-> @@ -745,7 +747,7 @@ static void etnaviv_gpu_hw_init(struct etnaviv_gpu *g=
-pu)
->  		  VIVS_HI_AXI_CONFIG_ARCACHE(2));
-> =20
->  	/* GC2000 rev 5108 needs a special bus config */
-> -	if (etnaviv_is_model_rev(gpu, GC2000, 0x5108)) {
-> +	if (etnaviv_is_model_rev(gpu, 0x2000, 0x5108)) {
->  		u32 bus_config =3D gpu_read(gpu, VIVS_MC_BUS_CONFIG);
->  		bus_config &=3D ~(VIVS_MC_BUS_CONFIG_FE_BUS_CONFIG__MASK |
->  				VIVS_MC_BUS_CONFIG_TX_BUS_CONFIG__MASK);
->=20
+There is also the case when a valid writable trip becomes invalid that
+requires special handling.  First, in accordance with the change
+mentioned above, the trip's threshold needs to be set to INT_MAX to
+avoid the same issue.  Second, if the trip in question is passive and
+it has been crossed by the thermal zone temperature on the way up, the
+zone's passive count has been incremented and it is in the passive
+polling mode, so its passive count needs to be adjusted to allow the
+passive polling to be turned off eventually.
+
+Fixes: 9ad18043fb35 ("thermal: core: Send trip crossing notifications at init time if needed")
+Fixes: 042a3d80f118 ("thermal: core: Move passive polling management to the core")
+Reported-by: Zhang Rui <rui.zhang@intel.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/thermal/thermal_core.c |    9 ++++++++-
+ drivers/thermal/thermal_trip.c |   18 ++++++++++++++++++
+ 2 files changed, 26 insertions(+), 1 deletion(-)
+
+Index: linux-pm/drivers/thermal/thermal_core.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/thermal_core.c
++++ linux-pm/drivers/thermal/thermal_core.c
+@@ -1401,8 +1401,15 @@ thermal_zone_device_register_with_trips(
+ 	tz->device.class = thermal_class;
+ 	tz->devdata = devdata;
+ 	tz->num_trips = num_trips;
+-	for_each_trip_desc(tz, td)
++	for_each_trip_desc(tz, td) {
+ 		td->trip = *trip++;
++		/*
++		 * Mark all thresholds as invalid to start with even though
++		 * this only matters for the trips that start as invalid and
++		 * become valid later.
++		 */
++		td->threshold = INT_MAX;
++	}
+ 
+ 	thermal_set_delay_jiffies(&tz->passive_delay_jiffies, passive_delay);
+ 	thermal_set_delay_jiffies(&tz->polling_delay_jiffies, polling_delay);
+Index: linux-pm/drivers/thermal/thermal_trip.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/thermal_trip.c
++++ linux-pm/drivers/thermal/thermal_trip.c
+@@ -137,6 +137,24 @@ void thermal_zone_set_trip_temp(struct t
+ 	if (trip->temperature == temp)
+ 		return;
+ 
++	if (temp == THERMAL_TEMP_INVALID) {
++		struct thermal_trip_desc *td = trip_to_trip_desc(trip);
++
++		if (trip->type == THERMAL_TRIP_PASSIVE &&
++		    tz->temperature >= td->threshold) {
++			/*
++			 * The trip has been crossed, so the thermal zone's
++			 * passive count needs to be adjusted.
++			 */
++			tz->passive--;
++			WARN_ON_ONCE(tz->passive < 0);
++		}
++		/*
++		 * Invalidate the threshold to avoid triggering a spurious
++		 * trip crossing notification when the trip becomes valid.
++		 */
++		td->threshold = INT_MAX;
++	}
+ 	WRITE_ONCE(trip->temperature, temp);
+ 	thermal_notify_tz_trip_change(tz, trip);
+ }
+
+
 
 
