@@ -1,107 +1,64 @@
-Return-Path: <linux-kernel+bounces-180552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F5658C7014
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 03:42:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40F168C7018
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 03:43:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D47D1F2221D
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 01:42:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E90E11F2216C
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 01:43:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 059591854;
-	Thu, 16 May 2024 01:42:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="A/uOHvn2"
-Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFE9010F1
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 01:42:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E479415D1;
+	Thu, 16 May 2024 01:43:26 +0000 (UTC)
+Received: from netrider.rowland.org (netrider.rowland.org [192.131.102.5])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id EEAA510FA
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 01:43:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.131.102.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715823726; cv=none; b=qp+Ew5oethijfMElMCgnb720Cu8jxDbnzEADIBDCy4RhSM0Etb+47hmgbIsLsCxt5R0zLC5MT9QmKg15gGQes5B7Y8nhaiLO/cWQ83vClS3afFUiRyQmIbM/0xAcPBiObVhku3u+v2aEOwHTKR2cZ39V2SbyqlDoOF4eyHiNN/Q=
+	t=1715823806; cv=none; b=LQiHCRD6OkdSwaXMFBVpbbnlyia6xKUeVXXXRWJ/yuz+wIKKcruX3nO+ClyQM76xps6laQ5cfQD9jmdJ3p9taLW/b+Fj9JIrS5rsUHQF9XMesDfW/mKqw+9Hm8DphYLigCncZP6r4IBMJ+Kc2ZApfv+5l9z5yv6sficrXIdbVtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715823726; c=relaxed/simple;
-	bh=sphSLpGX7TeKcLF0fd/4ZGq0GRD9kGI/Sv5KgFRyTKA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nHPcQmD2efTl3JjQMFjT7+x/w0mkOUKGcGvNuKYfLG6qlmlUufIgb1j9sDSFuIMSXHihO445BwanSGq63FVkBDu6XhQ/SMda6+Mj2kQPvBg3kAV506ykWOG46n+yt5R25rQA914lDID4jfQ13S5ri4kKsclSOUlEysTSo59qN4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=A/uOHvn2; arc=none smtp.client-ip=115.124.30.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1715823720; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=6l2j1hfJLj/NOswmfviaKoySFrdt0h7TrfH/eLX7gz8=;
-	b=A/uOHvn2dexNJX04dZ+KHLaxirLwb/7Si+3TrR1fwnWQfM/OCuBkb8Iyjm6OezPcMBsZKno0ylaDf3/OSBILyasGCskVvLDmT1zMKphU4WY//B/M17cPQB8bQMnR6EYN7B95heRML1x74IbgLxRN+nOuyAJMD1wT+m//3pDkENA=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067112;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0W6ZPauu_1715823718;
-Received: from 30.221.128.154(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0W6ZPauu_1715823718)
-          by smtp.aliyun-inc.com;
-          Thu, 16 May 2024 09:41:59 +0800
-Message-ID: <03f031e5-ed9c-4794-8f08-8a4007c1d704@linux.alibaba.com>
-Date: Thu, 16 May 2024 09:41:58 +0800
+	s=arc-20240116; t=1715823806; c=relaxed/simple;
+	bh=aJ1HYO2k1NY8pFcW+T62qja/tqE9SP8PlX9DwyFk8VU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=VO4ARn4V/JhWBeYQoBTFUVECYoYRrBJONmWkjeGNmafSt4MqdyaNrT/nB1timIT+kAXn3eiSDE193GkGd2SUWOplc7a1tpCrGJS0D0h9UVqqd/jKudVComTwuO5qBEBKEqGA9JzK56F5EJoadNZbN8iRXWskI0dr+FcMrIr8rIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=netrider.rowland.org; arc=none smtp.client-ip=192.131.102.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netrider.rowland.org
+Received: (qmail 246864 invoked by uid 1000); 15 May 2024 21:43:17 -0400
+Date: Wed, 15 May 2024 21:43:17 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>,
+  Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>, linux-kernel@vger.kernel.org,
+  linux-arch@vger.kernel.org, kernel-team@meta.com, parri.andrea@gmail.com,
+  boqun.feng@gmail.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
+  Joel Fernandes <joel@joelfernandes.org>
+Subject: LKMM: Making RMW barriers explicit
+Message-ID: <72c804c8-2511-4349-a823-bc1de8bb729e@rowland.harvard.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] ocfs2: strict bound check before memcmp in
- ocfs2_xattr_find_entry()
-To: Ferry Meng <mengferry@linux.alibaba.com>, Mark Fasheh <mark@fasheh.com>,
- Joel Becker <jlbec@evilplan.org>, ocfs2-devel@lists.linux.dev
-Cc: linux-kernel@vger.kernel.org
-References: <20240515132934.69511-1-mengferry@linux.alibaba.com>
- <20240515132934.69511-3-mengferry@linux.alibaba.com>
-Content-Language: en-US
-From: Joseph Qi <joseph.qi@linux.alibaba.com>
-In-Reply-To: <20240515132934.69511-3-mengferry@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+Hernan and Jonas:
 
+Can you explain more fully the changes you want to make to herd7 and/or 
+the LKMM?  The goal is to make the memory barriers currently implicit in 
+RMW operations explicit, but I couldn't understand how you propose to do 
+this.
 
-On 5/15/24 9:29 PM, Ferry Meng wrote:
-> xattr in ocfs2 maybe not INLINE, but saved with additional space
-> requested. It's better to check if the memory is out of bound before
-> memcmp, although this possibility mainly comes from custom poisonous
-> images.
+Are you going to change herd7 somehow, and if so, how?  It seems like 
+you should want to provide sufficient information so that the .bell 
+and .cat files can implement the appropriate memory barriers associated 
+with each RMW operation.  What additional information is needed?  And 
+how (explained in English, not by quoting source code) will the .bell 
+and .cat files make use of this information?
 
-Specifically, this only addresses the case non-indexed xattr. 
-
-> 
-> Signed-off-by: Ferry Meng <mengferry@linux.alibaba.com>
-> ---
->  fs/ocfs2/xattr.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/ocfs2/xattr.c b/fs/ocfs2/xattr.c
-> index 37be4a286faf..4ceb0cb4cb71 100644
-> --- a/fs/ocfs2/xattr.c
-> +++ b/fs/ocfs2/xattr.c
-> @@ -1083,10 +1083,15 @@ static int ocfs2_xattr_find_entry(struct inode *inode, void *end,
->  		cmp = name_index - ocfs2_xattr_get_type(entry);
-
-Or define a local variable 'offset' for le16_to_cpu(entry->xe_name_offset).
-
-Thanks,
-Joseph
-
->  		if (!cmp)
->  			cmp = name_len - entry->xe_name_len;
-> -		if (!cmp)
-> +		if (!cmp) {
-> +			if ((xs->base + le16_to_cpu(entry->xe_name_offset) + name_len) > end) {
-> +				ocfs2_error(inode->i_sb, "corrupted xattr entries");
-> +				return -EFSCORRUPTED;
-> +			}
->  			cmp = memcmp(name, (xs->base +
->  				     le16_to_cpu(entry->xe_name_offset)),
->  				     name_len);
-> +		}
->  		if (cmp == 0)
->  			break;
->  		entry += 1;
+Alan
 
