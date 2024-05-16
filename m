@@ -1,199 +1,144 @@
-Return-Path: <linux-kernel+bounces-181316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F28F88C7A5A
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:29:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78A028C7A5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 18:29:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82F811F21ED7
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:29:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2ED512818ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:29:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA6A415099A;
-	Thu, 16 May 2024 16:29:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAB121514E8;
+	Thu, 16 May 2024 16:29:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NAqCT0JW"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TibPwk7S"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AAD7150991
-	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 16:29:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2B241509BC;
+	Thu, 16 May 2024 16:29:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715876976; cv=none; b=T2rkn1BaqUqtPISlJ0sgfc6nKTAyl0ra7Dub8i3tFW2zx7lFjR9vSaRj61rU0gzTW+t/pPt3Y7SGJncGb47aSEv+J48zsRWJF5yFv7qYCOBgFDd5BCYBw95Nt7Iwp5U6AfCX4UeX8JqV22Z06zjQMRir8VDWJj+xPH2kTmDJZxA=
+	t=1715876980; cv=none; b=mPrb5r+PRL9CkEuEtohE0c4eOR4jfpom/gCptkYqc2MDckFu3StE7FiX9DZ+iMXE+uxG1n4nQN3nEaTxON35dUDvhSHtznPm8up7rrZWyQIEUJRRKnbfVq1KVLnvCSbRMari14MfMX1xkaXNUkQGRs4N9rRcR5pMrFyWoBB0pUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715876976; c=relaxed/simple;
-	bh=oH7jW/qEeaQFMv1KiZOCshAmxrfYFU2lxVVW+EBHAs8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OLKsX6RvFeXM62qxxfwZnxIiCvX9L5ZtbEEv8NjG+qd8f/EYJbdBTPYsIBdUz2Whh4MPx4ShHfzxZ1iXlG6gXVHN2r3Z0xsC7b6rn2nSCTpu9cw4KvUpC/vXPya94Y0I8WVxG5aHo4hBn25CzW/CoYJVjBwBzVk84oZj2mcSmjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NAqCT0JW; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715876973; x=1747412973;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=oH7jW/qEeaQFMv1KiZOCshAmxrfYFU2lxVVW+EBHAs8=;
-  b=NAqCT0JWkZwri7cOcYbDN2aYnmHf9zw1mG88gdLbO1c9HlqQ4YmaPndc
-   eDW21SUjkoGc66yd1WbFxrwfo09qH83SYRXrF9stsELscpem2/R/nOHQW
-   6c92kL70PLcdUcpb0oDT79Dbu8tODLcPdBIcTc4zVsQ0SCIU8THqAliXR
-   clKYMc+ZtuezG7lSrsSUuI66IE5fnSAxv30Z/vWzgYdDRCPJh1Iz9GqUq
-   xpxVWdGI2nCANuIZSXaRap/na6C6flEB4cuNAm4SFX5APti0uX4kHaouv
-   +YIsOiotrfpl1wMYdPT4qpAs1g5V5ldWzXBt293iFzSi8EyUYCe6bAKqm
-   w==;
-X-CSE-ConnectionGUID: +eVv7Z6DTx+nsB8A3V5YJw==
-X-CSE-MsgGUID: mTnztSj9RAahzj+WUYyzng==
-X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="11871766"
-X-IronPort-AV: E=Sophos;i="6.08,165,1712646000"; 
-   d="scan'208";a="11871766"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 09:29:32 -0700
-X-CSE-ConnectionGUID: SyNlay/xSGi25eLc74TvzA==
-X-CSE-MsgGUID: 0rTHOyvpRi+TlH5j1E31vw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,165,1712646000"; 
-   d="scan'208";a="68936483"
-Received: from agluck-desk3.sc.intel.com ([172.25.222.105])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 09:29:32 -0700
-From: Tony Luck <tony.luck@intel.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org
-Cc: "H. Peter Anvin" <hpa@zytor.com>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Uros Bizjak <ubizjak@gmail.com>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Tony Luck <tony.luck@intel.com>,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	Thomas Renninger <trenn@suse.de>,
-	Greg Kroah-Hartman <gregkh@suse.de>,
-	Andi Kleen <ak@linux.intel.com>,
-	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev
-Subject: [PATCH v2] x86/cpu: Fix x86_match_cpu() to match just X86_VENDOR_INTEL
-Date: Thu, 16 May 2024 09:29:25 -0700
-Message-ID: <20240516162925.79245-1-tony.luck@intel.com>
-X-Mailer: git-send-email 2.44.0
+	s=arc-20240116; t=1715876980; c=relaxed/simple;
+	bh=lY+7S4A6XSmJq1CdWc9SPvUyzxh3QRd8mgOGmumG8w0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WhSwoYn0/6VL8x5qs2nEEeLn8f/ExEbzJkup/xmyXLLrS8RsAFg5LK5XXA66+Lz2xwebfYhY5pOzQhZbISzQeB2J7W3UuOnpCR6KfXWTtUezeM4kPgo4xgQQXYGyQGg25iyfs7/8dskgifVXSUa0Tlk/BwJ4xkJm4Dw5B9sey0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TibPwk7S; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1ed0abbf706so61765135ad.2;
+        Thu, 16 May 2024 09:29:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715876978; x=1716481778; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qCM0vLqYp4D0LsdwKJQuyqySBeLV8hOPzh1mYzxab6U=;
+        b=TibPwk7SwXwBkqnqnN4wCILAFaPmj6p0GuOdXjyvAvzpKD9rLIo6AFG0vLeiWOjuDx
+         TMBdDYSvEVlkyPG5ZPZllRnfBh/ej73hEskaC1TzJRRDg49/ylg5UVbOnczcJj7sOR5z
+         muR855P2HL0OIAb41CTbpGFqfUXx2KLpAfyTTpYgFyvA5jEyaH7wURNjnBSst7qT7cWq
+         tXJHy/A57czsVGyE0nUYbGITaUXTy8n3SMnXoyhGPTr+vIEljSYQ95S6y7yFRZ2cr6Uc
+         DoxoJ7g/OTUL8zNVAtiOkquWvF48T7eEe9KdcwxEB22RD/RVHfTevKYnLpK9HpzO3ukP
+         Lb5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715876978; x=1716481778;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qCM0vLqYp4D0LsdwKJQuyqySBeLV8hOPzh1mYzxab6U=;
+        b=cwxid7mfPH3ylpDMly4GLfGpROT1kqJgaxHCm1RKrJjaI62iwNunJKnSclBzHqP8li
+         hWi0x0fCTzKRRVjpWqi87sbdQPXBh6uRgSm/wRftr8GRmn2hLtoQxxlJ5xPG80RH4FYm
+         rfTjKP64jkrMy/bS3ueXhkd2lpvY5zUjfIdhGfYw9tiyJOsmk6uUDZJzESTxqIb5o4oh
+         cA63MfEpQZ/BsszylBnf27+lwJgxz3TipX4vvDxcOnXqy+NVoleMpIi+mgckZzOTrFZ1
+         /bkkiByzEDS+sDT+I1w8wxmdDmmeFfh9i8d8c0jzpSir0AV7CzcrgE4MsgyFpU0XTcVW
+         sF9g==
+X-Forwarded-Encrypted: i=1; AJvYcCUInG6fnSk9p58YIKkJU/Qpk/V2TCYtNX/gHGSV5x1BTbd5RpwbLxX89v7cqmHzNr5YS46D82UqFeOC01E2JPfZfR3KvjjYKuxboM9Gr8gPmk81ygloRSLlK210u90/CJ3B5vVq
+X-Gm-Message-State: AOJu0Yz2luYjbVdjtnN++Dbteeut2PknwT8fcBSRC7DWBhNvaLz15uQb
+	CRdHT+4q3sHHTHeJPvYGYdS8xRnSCr83kxtHg+oePE692F3IcKk/
+X-Google-Smtp-Source: AGHT+IEKSm615OM2jZEEZXeRy8N6csz1RX69uyZnxpvohc49WnXZe704AwFWfI/zi975MB8nCXBC9A==
+X-Received: by 2002:a17:903:230b:b0:1e6:7731:80 with SMTP id d9443c01a7336-1ef43d16e69mr252547495ad.11.1715876977933;
+        Thu, 16 May 2024 09:29:37 -0700 (PDT)
+Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0bf30c09sm140439565ad.130.2024.05.16.09.29.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 May 2024 09:29:37 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Thu, 16 May 2024 06:29:36 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Haakon Bugge <haakon.bugge@oracle.com>
+Cc: OFED mailing list <linux-rdma@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	netdev <netdev@vger.kernel.org>,
+	"rds-devel@oss.oracle.com" <rds-devel@oss.oracle.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Tariq Toukan <tariqt@nvidia.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Allison Henderson <allison.henderson@oracle.com>,
+	Manjunath Patil <manjunath.b.patil@oracle.com>,
+	Mark Zhang <markzhang@nvidia.com>,
+	Chuck Lever III <chuck.lever@oracle.com>,
+	Shiraz Saleem <shiraz.saleem@intel.com>,
+	Yang Li <yang.lee@linux.alibaba.com>
+Subject: Re: [PATCH v2 1/6] workqueue: Inherit NOIO and NOFS alloc flags
+Message-ID: <ZkY0cIiFOmkwzn5G@slm.duckdns.org>
+References: <20240515125342.1069999-1-haakon.bugge@oracle.com>
+ <20240515125342.1069999-2-haakon.bugge@oracle.com>
+ <ZkTos2YXowEFS2fR@slm.duckdns.org>
+ <D9786636-CACE-47E1-B4B6-26AB2C4244C3@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <D9786636-CACE-47E1-B4B6-26AB2C4244C3@oracle.com>
 
-Code in v.9 arch/x86/kernel/smpboot.c was changed by commit 4db64279bc2b
-("x86/cpu: Switch to new Intel CPU model defines") from old code: 
+Hello,
 
- 440 static const struct x86_cpu_id intel_cod_cpu[] = {
- 441         X86_MATCH_INTEL_FAM6_MODEL(HASWELL_X, 0),       /* COD */
- 442         X86_MATCH_INTEL_FAM6_MODEL(BROADWELL_X, 0),     /* COD */
- 443         X86_MATCH_INTEL_FAM6_MODEL(ANY, 1),             /* SNC */
- 444         {}
- 445 };
- 446
- 447 static bool match_llc(struct cpuinfo_x86 *c, struct cpuinfo_x86 *o)
- 448 {
- 449         const struct x86_cpu_id *id = x86_match_cpu(intel_cod_cpu);
+On Thu, May 16, 2024 at 03:27:15PM +0000, Haakon Bugge wrote:
+> > So, yeah, please don't do this. What if a NOIO callers wants to scheduler a
+> > work item so that it can user GFP_KERNEL allocations.
+> 
+> If one work function want to use GPF_KERNEL and another using GFP_NOIO,
+> queued on the same workqueue, one could create two workqueues. Create one
+> that is surrounded by memalloc_noio_{save,restore}, another surrounded by
+> memalloc_flags_save() + current->flags &= ~PF_MEMALLOC_NOIO and
+> memalloc_flags_restore().
 
-new code:
+This is too subtle and the default behavior doesn't seem great either - in
+most cases, the code path which sets up workqueues would be in GFP_KERNEL
+context as init paths usually are, so it's not like this would make things
+work automatically in most cases. In addition, now, the memory allocations
+for workqueues themselves have to be subject to the same GFP restrictions
+even when alloc_workqueue() is called from GFP_KERNEL context. It just
+doesn't seem well thought out.
 
-440 static const struct x86_cpu_id intel_cod_cpu[] = {
- 441         X86_MATCH_VFM(INTEL_HASWELL_X,   0),    /* COD */
- 442         X86_MATCH_VFM(INTEL_BROADWELL_X, 0),    /* COD */
- 443         X86_MATCH_VFM(INTEL_ANY,         1),    /* SNC */
- 444         {}
- 445 };
- 446
- 447 static bool match_llc(struct cpuinfo_x86 *c, struct cpuinfo_x86 *o)
- 448 {
- 449         const struct x86_cpu_id *id = x86_match_cpu(intel_cod_cpu);
+> When you say "deal with gfp flags directly", do you imply during WQ
+> creation or queuing work on one? I am OK with adding the other per-process
+> memory allocation flags, but that doesn's solve your initial issue ("if a
+> NOIO callers wants to scheduler a work item so that it can user
+> GFP_KERNEL").
 
-On an Intel CPU with SNC enabled this code previously matched the rule
-on line 443 to avoid printing messages about insane cache configuration.
-The new code did not match any rules.
+It being a purely convenience feature, I don't think there's hard
+requirement on where this should go although I don't know where you'd carry
+this information if you tied it to each work item. And, please don't single
+out specific GFP flags. Please make the feature generic so that users who
+may need different GFP masking can also use it too. The underlying GFP
+feature is already like that. There's no reason to restrict it from
+workqueue side.
 
-Expanding the macros for the intel_cod_cpu[] array shows that the old
-is equivalent to:
+Thanks.
 
-static const struct x86_cpu_id intel_cod_cpu[] = {
-[0] = { .vendor = 0, .family = 6, .model = 0x3F, .steppings = 0, .feature = 0, .driver_data = 0 },
-[1] = { .vendor = 0, .family = 6, .model = 0x4F, .steppings = 0, .feature = 0, .driver_data = 0 },
-[2] = { .vendor = 0, .family = 6, .model = 0x00, .steppings = 0, .feature = 0, .driver_data = 0 },
-[3] = { .vendor = 0, .family = 0, .model = 0x00, .steppings = 0, .feature = 0, .driver_data = 0 }
-}
-
-while the new code expands to:
-
-static const struct x86_cpu_id intel_cod_cpu[] = {
-[0] = { .vendor = 0, .family = 6, .model = 0x3F, .steppings = 0, .feature = 0, .driver_data = 0 },
-[1] = { .vendor = 0, .family = 6, .model = 0x4F, .steppings = 0, .feature = 0, .driver_data = 0 },
-[2] = { .vendor = 0, .family = 0, .model = 0x00, .steppings = 0, .feature = 0, .driver_data = 0 },
-[3] = { .vendor = 0, .family = 0, .model = 0x00, .steppings = 0, .feature = 0, .driver_data = 0 }
-}
-
-Looking at the code for x86_match_cpu():
-
-36 const struct x86_cpu_id *x86_match_cpu(const struct x86_cpu_id *match)
- 37 {
- 38         const struct x86_cpu_id *m;
- 39         struct cpuinfo_x86 *c = &boot_cpu_data;
- 40
- 41         for (m = match;
- 42              m->vendor | m->family | m->model | m->steppings | m->feature;
- 43              m++) {
-			...
- 56         }
- 57         return NULL;
- 58 }
- 59 EXPORT_SYMBOL(x86_match_cpu);
-
-it is clear that there was no match because the ANY entry in the table
-(array index 2) is now the loop termination condition (all of vendor,
-family, model, steppings, and feature are zero).
-
-So this code was working before because the "ANY" check was looking for
-any Intel CPU in family 6. But fails now because the family is a wild
-card. So the root cause is that x86_match_cpu() has never been able to
-match on a rule with just X86_VENDOR_INTEL and all other fields set to
-wildcards.
-
-Fix by changing X86_VENDOR_INTEL to a non-zero value (4 was lowest
-unused value, so I picked that).
-
-Fixes: 644e9cbbe3fc ("Add driver auto probing for x86 features v4")
-Signed-off-by: Tony Luck <tony.luck@intel.com>
----
-
-Changes since v1:
-1) More detailed commit description.
-2) Changed "Fixes" tag. Commit 4db64279bc2b merely revealed a twelve
-   year old gap in the implementation of x86_match_cpu().
-
- arch/x86/include/asm/processor.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-index cb4f6c513c48..271c4c95bc37 100644
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -175,10 +175,10 @@ struct cpuinfo_x86 {
- 	unsigned		initialized : 1;
- } __randomize_layout;
- 
--#define X86_VENDOR_INTEL	0
- #define X86_VENDOR_CYRIX	1
- #define X86_VENDOR_AMD		2
- #define X86_VENDOR_UMC		3
-+#define X86_VENDOR_INTEL	4
- #define X86_VENDOR_CENTAUR	5
- #define X86_VENDOR_TRANSMETA	7
- #define X86_VENDOR_NSC		8
 -- 
-2.44.0
-
+tejun
 
