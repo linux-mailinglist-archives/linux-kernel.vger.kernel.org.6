@@ -1,198 +1,131 @@
-Return-Path: <linux-kernel+bounces-181176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 434108C787B
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:36:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E58E8C7889
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 16:40:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66A361C211CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:36:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FD671F22241
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:40:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16DB214B96D;
-	Thu, 16 May 2024 14:35:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CB4E14B974;
+	Thu, 16 May 2024 14:39:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ydLXNBzY";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="E3EP4dB3";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ilPM3lk7";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="vJGao9t8"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="rm/JyvVs"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BB9A1DFEF;
-	Thu, 16 May 2024 14:35:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F1B8225D0
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 14:39:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715870157; cv=none; b=lkBLEID2+MytS5s7+yeqR5nVfthuzSuZErtGAtittJLa3u5HuBgn/sp89MlghkLS+KzFw7L3Kl1VvSchISWywD9m5h3blvYWF+1GQLxahC+sGCk3e9yVCp8cxsivk2nXjX83HO9qokoxayCcL7xuQ9yt/g0Phi6F2dCs4Es+lzg=
+	t=1715870398; cv=none; b=sH+YA4HIL5AJEqZDdunLzXNaAPer9q5X/l36fTzfFi3SghBi2FHJMk34uk4fwhkO06pYgI/JZ7NdANW6bQtO+2P0hnBP62hr9p1BqXi9V6GgaPnFraTWVtTVP+xKHcO1sGJhEcrECna3ZSHLik+4fHf0nGZTAEBdHFtMOhWwL+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715870157; c=relaxed/simple;
-	bh=ijQlsnNW7lJzuUB4KNofJ7wkb6Kv+AAcAqf1SHUvUMo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JRLe5/G8uMhOGmvSxrNcpZDvJubAurusrB/lqGQM5gfwF/+i0nJOP2JmE6a8dKRRA3TJhJfVYq35EM4IE42U1jMbM8ZA60PScwLBp2ZH83cLTT066YKGNRJLOCAqEs3TQ2RelF8/XVfigLS2CnKGGtJU51DV7GbJ7YcrnQZQSMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ydLXNBzY; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=E3EP4dB3; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ilPM3lk7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=vJGao9t8; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id CF9445C54B;
-	Thu, 16 May 2024 14:35:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1715870150;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Sdc0aA9Zp1xa9M6PnPI2To4Pdsq08YKwmPt1p6bHXds=;
-	b=ydLXNBzYKk47goltPP396i0/+nCqnKsEPfY0iIYOEXEo0DDO3+KioHjg03VDc4rca26OIl
-	QcehGjz//D/2lut8IpxtV7htuDMQRSXJYyZFlkefzpsi7qSxAoumobxZZhwDtOs3ao0EHV
-	02PNn4/GvCLcJjrI8f4Tp8JX6SR3+b4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1715870150;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Sdc0aA9Zp1xa9M6PnPI2To4Pdsq08YKwmPt1p6bHXds=;
-	b=E3EP4dB3b0vKwoMmA1wXyTcHWVPF9AWHPj8/bYH2lk3hur0BI8NdvXSjrKCarZZwiNX2gG
-	eNEZWVZ1phh4uqDg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=ilPM3lk7;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=vJGao9t8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1715870149;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Sdc0aA9Zp1xa9M6PnPI2To4Pdsq08YKwmPt1p6bHXds=;
-	b=ilPM3lk7RvZlVDpahCWHZClAXveeyL8WpsnlNwYk973dPsQMoZSWpr2Bz34wSf+T61ao+Z
-	tw5GkwKcLon7CM0RVSuEavXH6XJ1mRNSp89BL2BX8ZyeZzEEdG2+/KMi/6Wj9Fs7bWZWgt
-	wApofg3HgjAhWKZA5AO3JV/3FsSxLyk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1715870149;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Sdc0aA9Zp1xa9M6PnPI2To4Pdsq08YKwmPt1p6bHXds=;
-	b=vJGao9t8pWC7xOQI0ixHs2Im3wDcaVxv2J7eOPQfojRMR51Obztip2WPliG/U9SwQ08eNf
-	bBB8zhu++b2Tt6Dw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B845C137C3;
-	Thu, 16 May 2024 14:35:49 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id JxTOLMUZRmbfXwAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Thu, 16 May 2024 14:35:49 +0000
-Date: Thu, 16 May 2024 16:35:43 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: David Sterba <dsterba@suse.cz>,
-	syzbot <syzbot+c92c93d1f1aaaacdb9db@syzkaller.appspotmail.com>,
-	axboe@kernel.dk, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, maz@kernel.org, oleg@redhat.com,
-	peterz@infradead.org, syzkaller-bugs@googlegroups.com
-Subject: Re: kernel BUG at fs/inode.c:LINE! (2)
-Message-ID: <20240516143543.GY4449@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <000000000000c8fcd905adefe24b@google.com>
- <20240515161314.GO4449@twin.jikos.cz>
- <20240515170054.GM2118490@ZenIV>
+	s=arc-20240116; t=1715870398; c=relaxed/simple;
+	bh=vc3rGzOVvzFelycXJ1pDcYNPxetD6J5GoLUwsKnR864=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Xx+L8PGqs9joOCYaz0TXO/zl6AGFJ2wsDWrvuY79G+UTFR0Vu6PqmVhnqNJ4b22hO2xDpukibsRRRX6zMuFs6v94e1sHT3Zeirr9X0Q9Y85DhGRwAsHkVd9MiUb3QBI1n0BJIOvIyfM+KFjEMdmtwuvCw2KqfsN1S/vwiBL8hVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rm/JyvVs; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-62777fe7b86so16765207b3.1
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 07:39:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715870395; x=1716475195; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zpZS4ufdGYjcABwthGAJQK0pYz3YRaST36jpxGjIiPQ=;
+        b=rm/JyvVswA9jOWIfPDt7PMJ+02o1+bfnPcsdw47L8LKtdQaUt5nawn1ADFmfu9Y0Q8
+         NtCknabAvhAowqucjfKCHZ/FXsSxUOx+YJ/n+JuHsSILtIwDWYDpzIsVNEbPO+CkHHnM
+         gwjoyJM1WzB4PRMRin6/C8o8TGO+hIE7Om1PGms5qYA9LHIR/EX2Y2o5j1pkEz/gGf9S
+         quMEThUyIyIyv97lFaVr/kquSXsqH1wLKeAUcAveuCn+Pz1RHzkZFL5fLy/OGOmpkVQ1
+         +IbOqoFeATFjnexNyvOxRIVbOaFRmEBa4BKrSJk6layCMqoDBIKNEwYF+7Cbu19yMOMS
+         /aBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715870395; x=1716475195;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=zpZS4ufdGYjcABwthGAJQK0pYz3YRaST36jpxGjIiPQ=;
+        b=bgC1+M9NQ+RymyXBQoZeIbYDjCX3a0Y+yuKDqooysufE0v0hiaMOTexT0kvGwTLOYG
+         vOJ7QIdxSZY6dQLTqd4c6OARCVjKMTihwuaqrr8y4LhLwKJ6qPk4P0fqm8MAxbbPMbMR
+         Iy9iDvMVKWypHlFYuSbBaex37zu3/F6KaolRVTWGNcH+dtnzxbtqvNS4TuMPDyfbnszA
+         tCQJEnwSbrSmsGeWGP4B5cdK/RRq7vGHP//j9iZHRudunL8oMdsJJFsBmSvB0yCm2OL/
+         2GTObRshKGvkX7g4E4GkgQPoCa56KeeAgOrtNbU02MwIGrN5Vr/rmnUEkHwByZ29g/aW
+         zbTg==
+X-Forwarded-Encrypted: i=1; AJvYcCW14wx2BymdEFVHyfGGbqA4b26Ab3hAbI9MmPGqsXJwJ/h4XP8NUtWj0X0v+BccYnk8ZC1ajq6Egl0OmsCfQLTiM8cMx+UE4SXl6sd0
+X-Gm-Message-State: AOJu0YzD30krPV7G5NWO9XH9ZZZHfrLblbAX7oRi4qd4TorTZNG22TnI
+	q42bIc0KBMbfIcmUiBGSpTmzGlW/so6rvbAw+z0skryn56mCnNbqHj7H0K7IxcDKXBjz8EToWce
+	nbQ==
+X-Google-Smtp-Source: AGHT+IHVtLu9UCPFuOUuBvCNpOrqW5lPUfFjJC9X2uq74NBH/vD63xB/W9ejzFWXbtPGSfyISsJyN3w/3d8=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:690c:6107:b0:61b:e165:44ba with SMTP id
+ 00721157ae682-622aff75294mr43894097b3.1.1715870395487; Thu, 16 May 2024
+ 07:39:55 -0700 (PDT)
+Date: Thu, 16 May 2024 07:39:53 -0700
+In-Reply-To: <39b95ac6-f163-4461-93f3-eaa653ab1355@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240515170054.GM2118490@ZenIV>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spam-Level: 
-X-Spamd-Result: default: False [-1.71 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=891ca5711a9f1650];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	SUBJECT_HAS_EXCLAIM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	TAGGED_RCPT(0.00)[c92c93d1f1aaaacdb9db];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[syzkaller.appspot.com:url,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim,suse.cz:replyto]
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: CF9445C54B
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Score: -1.71
+Mime-Version: 1.0
+References: <20240219074733.122080-1-weijiang.yang@intel.com>
+ <20240219074733.122080-25-weijiang.yang@intel.com> <ZjLNEPwXwPFJ5HJ3@google.com>
+ <39b95ac6-f163-4461-93f3-eaa653ab1355@intel.com>
+Message-ID: <ZkYauRJBhaw9P1A_@google.com>
+Subject: Re: [PATCH v10 24/27] KVM: x86: Enable CET virtualization for VMX and
+ advertise to userspace
+From: Sean Christopherson <seanjc@google.com>
+To: Weijiang Yang <weijiang.yang@intel.com>
+Cc: rick.p.edgecombe@intel.com, pbonzini@redhat.com, dave.hansen@intel.com, 
+	x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	peterz@infradead.org, chao.gao@intel.com, mlevitsk@redhat.com, 
+	john.allen@amd.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 15, 2024 at 06:00:54PM +0100, Al Viro wrote:
-> On Wed, May 15, 2024 at 06:13:14PM +0200, David Sterba wrote:
-> > On Fri, Aug 28, 2020 at 06:18:17AM -0700, syzbot wrote:
-> > > Hello,
-> > > 
-> > > syzbot found the following issue on:
-> > > 
-> > > HEAD commit:    d012a719 Linux 5.9-rc2
-> > > git tree:       upstream
-> > > console output: https://syzkaller.appspot.com/x/log.txt?x=15aa650e900000
-> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=891ca5711a9f1650
-> > > dashboard link: https://syzkaller.appspot.com/bug?extid=c92c93d1f1aaaacdb9db
-> > > compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
-> > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12ecb939900000
-> > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=140a19a9900000
-> > > 
-> > > The issue was bisected to:
-> > > 
-> > > commit a9ed4a6560b8562b7e2e2bed9527e88001f7b682
-> > > Author: Marc Zyngier <maz@kernel.org>
-> > > Date:   Wed Aug 19 16:12:17 2020 +0000
-> > > 
-> > >     epoll: Keep a reference on files added to the check list
-> > > 
-> > > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16a50519900000
-> > > final oops:     https://syzkaller.appspot.com/x/report.txt?x=15a50519900000
-> > > console output: https://syzkaller.appspot.com/x/log.txt?x=11a50519900000
-> > > 
-> > > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > > Reported-by: syzbot+c92c93d1f1aaaacdb9db@syzkaller.appspotmail.com
-> > > Fixes: a9ed4a6560b8 ("epoll: Keep a reference on files added to the check list")
-> > > 
-> > > ------------[ cut here ]------------
-> > > kernel BUG at fs/inode.c:1668!
-> > 
-> > #syz set subsystem: fs
-> > 
-> > This has been among btrfs bugs but this is is 'fs' and probably with a
-> > fix but I was not able to identify it among all the changes in
-> > eventpoll.c
-> 
-> It has nothing to do with btrfs, and there's a good chance it had been
-> fixed as a side effect of 319c15174757 "epoll: take epitem list out of struct file"
-> merge at 1a825a6a0e7e in 5.10 merge window; IOW, it should be in 5.11-rc1.
+On Thu, May 16, 2024, Weijiang Yang wrote:
+> On 5/2/2024 7:15 AM, Sean Christopherson wrote:
+> > On Sun, Feb 18, 2024, Yang Weijiang wrote:
+> > > @@ -696,6 +697,20 @@ void kvm_set_cpu_caps(void)
+> > >   		kvm_cpu_cap_set(X86_FEATURE_INTEL_STIBP);
+> > >   	if (boot_cpu_has(X86_FEATURE_AMD_SSBD))
+> > >   		kvm_cpu_cap_set(X86_FEATURE_SPEC_CTRL_SSBD);
+> > > +	/*
+> > > +	 * Don't use boot_cpu_has() to check availability of IBT because th=
+e
+> > > +	 * feature bit is cleared in boot_cpu_data when ibt=3Doff is applie=
+d
+> > > +	 * in host cmdline.
+> > I'm not convinced this is a good reason to diverge from the host kernel=
+  E.g.
+> > PCID and many other features honor the host setup, I don't see what mak=
+es IBT
+> > special.
+> >=20
+> >=20
+> Hi, Sean,
+> We synced the issue internally, and got conclusion that KVM should honor =
+host
+> IBT config.  In this case IBT bit in boot_cpu_data should be honored.=C2=
+=A0 With
+> this policy, it can avoid CPUID confusion to guest side due to host ibt=
+=3Doff
+> config.
 
-Ok, thanks, let's use the commit 319c15174757 as the fix,
+What was the reasoning?  CPUID confusion is a weak justification, e.g. it's=
+ not
+like the guest has visibility into the host kernel, and raw CPUID will stil=
+l show
+IBT support in the host.
 
-#syz fix: epoll: take epitem list out of struct file
+On the other hand, I can definitely see folks wanting to expose IBT to gues=
+ts
+when running non-complaint host kernels, especially when live migration is =
+in
+play, i.e. when hiding IBT from the guest will actively cause problems.
 
