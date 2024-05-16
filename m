@@ -1,92 +1,86 @@
-Return-Path: <linux-kernel+bounces-180972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-180973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A53A8C759E
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:06:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 72F548C759F
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 14:06:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B9A11C20B44
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:06:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D36A1C21123
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2024 12:06:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C147C14601B;
-	Thu, 16 May 2024 12:06:25 +0000 (UTC)
-Received: from unicom145.biz-email.net (unicom145.biz-email.net [210.51.26.145])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B47145FE5;
-	Thu, 16 May 2024 12:06:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ED47145B1E;
+	Thu, 16 May 2024 12:06:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="SmX3PKSl"
+Received: from submarine.notk.org (62-210-214-84.rev.poneytelecom.eu [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BFC9145A1F
+	for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 12:06:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715861185; cv=none; b=J+sn90QgBKDARM+SPq07nzTQFsm+l4/J+/tUEa0XDdszTs9+wCelPnLxq94qr+UYO1qfpmmEBQaj/0P8kz/aUJ6qva0kuBz9bDUNpH2WgTiDF+iuYUQXsNNybuj218iXNhamcd6TxQDwfGqIKeZPhSAs+40PANlBdygj9lPP/4g=
+	t=1715861195; cv=none; b=JSQe4V5qwtiABP2DUZrFCWWaSmQGPTgVKyyNeWg6HaL4ox79E1bczV4czOLHf7vfKnSUYSY+SsCyDk2szb3QZKGl7O++hnKMkkN7ltDbZog6IFtiyHCnHZomsbLg2oHELZAsVbTEj6Stx+J+zmpExEX/os0HH7HlQScGuOSdSNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715861185; c=relaxed/simple;
-	bh=ZrkME+u5Uv/8b40EDiD4n2PP4kiAQP1GT7BPu4lgrGw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PB4I36Q//lU0ciYDSqyeX2FKrY/PREVxNhTEM/gKhvFc9p3MP9eci8+Uo2UDVFYPcv/RBPr9T+pUF1HvRgRjPyylIezAArXm6FQ7lVmSCfFIjYwmKyVtQBpKgeGpKNKzAWk2SqoezSz/GAcomNQmILUXgjn88UBKAx/xfMvnxPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from unicom145.biz-email.net
-        by unicom145.biz-email.net ((D)) with ASMTP (SSL) id NJX00017;
-        Thu, 16 May 2024 20:06:17 +0800
-Received: from localhost.localdomain (10.94.5.253) by
- jtjnmail201611.home.langchao.com (10.100.2.11) with Microsoft SMTP Server id
- 15.1.2507.35; Thu, 16 May 2024 20:06:16 +0800
-From: Deming Wang <wangdeming@inspur.com>
-To: <jejb@linux.ibm.com>, <martin.petersen@oracle.com>,
-	<MPT-FusionLinux.pdl@broadcom.com>, <linux-scsi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: Deming Wang <wangdeming@inspur.com>
-Subject: [PATCH] scsi: mpt3sas: use pcie_device replace ret
-Date: Thu, 16 May 2024 08:05:04 -0400
-Message-ID: <20240516120504.1694-1-wangdeming@inspur.com>
-X-Mailer: git-send-email 2.31.1
+	s=arc-20240116; t=1715861195; c=relaxed/simple;
+	bh=4NjjwSr4Ahv0C5KPcCIAl9LPHi84Ps/jY77lOeIowL0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=icNSDpjAI0I6YDVnJcdNlI4i5tZMyLmNCnMEes/goBLbt//S0rmi8yp9ygyY6kaDxd1me2gBo/cX0p6kodSA1qwV8xFrRovTTa1V9VO+eANTbC+03o+xZj3fzrh4fLStYq6KpLmIFE63DUqsbCeFfpq5pbIxZ1KGDElD7thXp1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=SmX3PKSl; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id 8F5C514C2DC;
+	Thu, 16 May 2024 14:06:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1715861186;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ibK20Oi6M32rpg7TSWRqlsDzrOFnl8LL6s8Vh9NS0vk=;
+	b=SmX3PKSl+Z11NjrYS3W5QFj8msIUV1tXW2MkYAlJ+Eg6quIn71l11Vy25IiI/dxpQuokII
+	WlM+coLUHPrQbp6mIANJmbEuwPsv0/wkKfpMKqKlyOZEhq0zl1u8uPrkRASNPMFlNBqwoR
+	FIiGCEs+bA39ZsBRv9CMRkDUe4GRHGTyODQ8cUul/jhNOzTyXLOnC+juYfaO5e8vZe1B+k
+	iKed2t1Si/oWJZrIs/i/f0uQBESSSq3q+PcyUWTCVI58eDGSz00r9uYGuwDDTai1/a28Ul
+	q6T/yixfxYpVthUC0y0C6oyQmMkZpyeAh9w1sE3PgtMp3BLZtjXYlGu5YkowlA==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 3a491bde;
+	Thu, 16 May 2024 12:06:19 +0000 (UTC)
+Date: Thu, 16 May 2024 21:06:04 +0900
+From: Dominique Martinet <asmadeus@codewreck.org>
+To: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+Cc: Eric Van Hensbergen <ericvh@kernel.org>,
+	Latchesar Ionkov <lucho@ionkov.net>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>,
+	v9fs@lists.linux.dev, linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org,
+	syzbot+ff14db38f56329ef68df@syzkaller.appspotmail.com
+Subject: Re: [PATCH net v2] net/9p: fix uninit-value in p9_client_rpc()
+Message-ID: <ZkX2rG5D2dnit9dB@codewreck.org>
+References: <20240408141039.30428-1-n.zhandarovich@fintech.ru>
+ <ac84eefc-e024-40fb-a92d-3109f686d122@fintech.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-tUid: 2024516200617f8eec022e4bc83d813917b89af661a5d
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ac84eefc-e024-40fb-a92d-3109f686d122@fintech.ru>
 
-Use pcie_device replace the 'ret' may be better in the function
-of mpt3sas_get_pdev_from_target.
+Nikita Zhandarovich wrote on Wed, May 15, 2024 at 08:18:19AM -0700:
+> Gentle ping on this issue as it is still open. Thanks in advance :)
 
-Signed-off-by: Deming Wang <wangdeming@inspur.com>
----
- drivers/scsi/mpt3sas/mpt3sas_scsih.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Thanks for the ping and sorry for the inactivity -- your patch came in
+the middle of a rough patch (ha, ha..) with a couple of regressions that
+drained me and we didn't get any other outside patch this cycle, so I
+didn't prepare a pull request for Linus.
 
-diff --git a/drivers/scsi/mpt3sas/mpt3sas_scsih.c b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-index 12d08d8ba538..edb7dfffa8e8 100644
---- a/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-@@ -700,14 +700,14 @@ static struct _pcie_device *
- mpt3sas_get_pdev_from_target(struct MPT3SAS_ADAPTER *ioc,
- 	struct MPT3SAS_TARGET *tgt_priv)
- {
--	struct _pcie_device *ret;
-+	struct _pcie_device *pcie_device;
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&ioc->pcie_device_lock, flags);
--	ret = __mpt3sas_get_pdev_from_target(ioc, tgt_priv);
-+	pcie_device = __mpt3sas_get_pdev_from_target(ioc, tgt_priv);
- 	spin_unlock_irqrestore(&ioc->pcie_device_lock, flags);
- 
--	return ret;
-+	return pcie_device;
- }
- 
- 
+(In theory, it should have made it in one of Eric's pull for 6.9-rc5/6,
+but I guess it slipped through his mailer as well)
+
+I'll queue the patch to -next now and send it next week if nothing else
+pops up.
 -- 
-2.31.1
-
+Dominique Martinet | Asmadeus
 
