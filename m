@@ -1,235 +1,258 @@
-Return-Path: <linux-kernel+bounces-182629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CAF88C8D82
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 23:00:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78BF08C8D86
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 23:05:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71699B21B82
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 21:00:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18A031F22926
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 21:05:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FDB8140E50;
-	Fri, 17 May 2024 20:59:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF56360B9C;
+	Fri, 17 May 2024 21:05:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="19TyXORL"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ainBj5Ga"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA27F140E2F
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 20:59:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 243EF2F30
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 21:05:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715979590; cv=none; b=aXYSyLWyMywRkSDDVs4HeJv5Oq2FVYbhB8RMgjAVGXez15A84/ZykZm2Zp7z7gszPNIZX5IzpaL/5R5L7Sa7s8ZjxCvqkhJJtyXDS2q+3uvqm2EtV2rSjnxe/9XVzBfrOV31UF+E1J2DSmEq6SMcMetiU3eWuPArfZ4SBD+ePRQ=
+	t=1715979906; cv=none; b=DtI4t6/H9Sjf4TjEhWuw9Wds8n6D/ZBQL9oa+A+CHTSHc3yEXKiHrhesbg85EKXccsFtcR/snKIWl1gPFojOSWL2Txm86rSicW7j4fnMMcGpKKenWc1itVmn2rgmSoDUSjpULFXPaXRLfkEipbHOa5dQddyW8f1YOClDRkMSm6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715979590; c=relaxed/simple;
-	bh=0TZxtabTN9ES/yjWEVp1TeEISsbnCtrQpRlL28vKIKM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uQK0+C8+p07P0qeMFrc8Z8PxiKOzwGM6TcYfT+Sj1CP7OYuHBZysnRGMINIDuPZokARsiX9i4f5xYqRl6slZbuKEkSsq2DfaBnBhTRc0SiErxm/C9Nal+vvccMr7pxpVOgK4tjNHWXOpkEYW5GtYDay3Zu5Y7YCDQklFbHiYqqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=19TyXORL; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-350513d2c6aso445789f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 13:59:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715979587; x=1716584387; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=V6O0tC8na6Pj3c9nhuKHr2BFcOQR/Gezv9wh+gJUdbU=;
-        b=19TyXORLVN8H/DqVeZgeOXtDnQuVz+vPzIFm3loOT3S+jPuOrdXO1qEwxPofs3+EF1
-         Ak10nByMEpyGD124SHrQIs33bXErLLaGyTSC8GGMLnKdLOCb4m/y8p2S521wFmKzKuLR
-         ORGaRtBXlHXxcfk5muYKDOj6cVN8SxMCQOXnQ9Dwhx9EVrqcuGN1mxYP1j/yL4eM3KpE
-         TFhgfGlRE4Fm1/CUKYran0nBYXDNBHGJCkdFzWfDOO0giYuAfPYxxSKZYiMGqtUFB3Ob
-         4wcbYRnXZrKuOibejN7GVlLOz3+w6PC0sZ19GLNfR8k9rR3exUaRQV0VkpMXFSizWMUM
-         fA/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715979587; x=1716584387;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=V6O0tC8na6Pj3c9nhuKHr2BFcOQR/Gezv9wh+gJUdbU=;
-        b=IgWRbGZfyAppt1mmbFNzq2Y0L+UnKck0tAodtBfWbvCI6COrNTfIb9jrPP9wvCrk3r
-         R6/jbyZB7XxzeeIDXfkYUWlahNV42au+oEyXjOSjoySMskkdc8IkQs3KSugLVMJKMIsH
-         ZWKjTybelmiPb3hrrf07HnPOKvKpChMg+t6l6uAO49DzFS7DaL2nRYSyY2qDXu7ua+dq
-         0/fyeE7v8bul17o1YD8qOU0bFk36oVB0+vNxpvxK+cposEsRUtw1AWS8wlFY2Nw65sUR
-         nYO5OIzJ9faUQD7HnJYGlk8FVs9wztPCps/TLgMCbGy+xAmmyESoIJqhQWpfSx9Coi7R
-         dmuA==
-X-Forwarded-Encrypted: i=1; AJvYcCXMrerC36D99+mA+YhPJs/VDd+/D+PDtkaBx0dBkj6/Slx0502hH3ARQaNB+lBS1Bl9/rVo2GcIXtzYk+VQIUBeXqEYuz+fC1rKYc4P
-X-Gm-Message-State: AOJu0Yy43dKLrg7fyKxpP8sYHMjigFk3wOKy9IvhkTC9q6SuGnLiFfb5
-	b2cErdYFxIsZW7EHgOz3UQ+K7MN7PerJoDuJvgZvPNMyhIkM93pcAVXHDm/T2VAnlHfFzIzGMTW
-	HKvD/tPRQ050YY7ysOCxd21+wcyJLFfSSeWDU
-X-Google-Smtp-Source: AGHT+IGhIiX3M7zHX/c/sT/HHbRWZo1wnXb6C38RXtq2uUkXk2rK+mfOp74wDEFz8G/GWAFGkLyz6440mpHNuoZxsyA=
-X-Received: by 2002:a5d:4451:0:b0:349:cd18:abbd with SMTP id
- ffacd0b85a97d-3504a96895dmr16923988f8f.46.1715979586981; Fri, 17 May 2024
- 13:59:46 -0700 (PDT)
+	s=arc-20240116; t=1715979906; c=relaxed/simple;
+	bh=jwm5d7c0FPHAQdtFzv2L3yxm+UOx5J8jba6GP6nf0Hk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=RAT/3F8+aqZuO2wPtDABYsWADPedqXvabNoX9pt2Pcqn3kP/bQHxFjqWxzK+KxG0/iArq9m+xBEjmWoomfJgevDOi7dKte764L4XK4vBm3yWg4Aelgzia6hQ4AuHWBqAxjB0w3vkALDLhChYhLFeyu8xAWxSsrkGh9AwjmgkMiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ainBj5Ga; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715979904; x=1747515904;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=jwm5d7c0FPHAQdtFzv2L3yxm+UOx5J8jba6GP6nf0Hk=;
+  b=ainBj5Ga5X2CioMQNO0gVLymc0HzGmF8NVZul/Sz/Er9cUS8ceIg4yoS
+   NrpKqjf3rsxngPNojVxyXSnWp6ZRu5/9ZGihQX2FbL/7xsqL4RSojCtf1
+   LRc+AzC83PnYTIK45s+QzfvLwC73jDuQr2KQrAH0ZRt1fixK49JztqNkE
+   zoxc0O8cuaaDbHVP7QDpnNnc7Dfs5WKyBo35/36V3/ojTltTY3hR/NEnK
+   AeIok6Mpok4uIMP3asyHSoiymcLeVPz0WwpW18LQX5hQCVK2cuA30hwEd
+   7ioKQ1QTucp8Tws9uqVx1F0lh6zEItJlDvLyo8KtY6WbLvNos5g7RVkW7
+   Q==;
+X-CSE-ConnectionGUID: e2l/HvD8RGORXyCxhfxwIg==
+X-CSE-MsgGUID: x6LEnA/oSd6Jtbov9L6eJg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11075"; a="34691831"
+X-IronPort-AV: E=Sophos;i="6.08,168,1712646000"; 
+   d="scan'208";a="34691831"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 14:05:03 -0700
+X-CSE-ConnectionGUID: w5DNbwUZTKOokIxhdwKyew==
+X-CSE-MsgGUID: Kpr25AmASlaKfZN+/BIhYw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,168,1712646000"; 
+   d="scan'208";a="36820155"
+Received: from vcostago-mobl3.jf.intel.com (HELO vcostago-mobl3) ([10.241.229.15])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 14:05:03 -0700
+From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+To: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>, Linux List Kernel
+ Mailing <linux-kernel@vger.kernel.org>, vinschen@redhat.com,
+ hkelam@marvell.com, naamax.meir@linux.intel.com,
+ anthony.l.nguyen@intel.com
+Cc: intel-wired-lan@lists.osuosl.org
+Subject: Re: 6.10;regression;bisected - commit 86167183a17e cause info msg
+ "trying to register non-static key"
+In-Reply-To: <CABXGCsOkiGxAfA9tPKjYX7wqjBZQxqK2PzTcW-RgLfgo8G74EQ@mail.gmail.com>
+References: <CABXGCsOkiGxAfA9tPKjYX7wqjBZQxqK2PzTcW-RgLfgo8G74EQ@mail.gmail.com>
+Date: Fri, 17 May 2024 14:05:03 -0700
+Message-ID: <87zfso6tfk.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240127004321.1902477-1-davidai@google.com> <20240127004321.1902477-2-davidai@google.com>
- <20240131170608.GA1441369-robh@kernel.org> <CAGETcx8S0oS67oMZsPKk6_MGAtygoHEf_LN1gbcNDEBqRJ4PPg@mail.gmail.com>
- <20240202155352.GA37864-robh@kernel.org> <20240215112626.zfkiq2i2imbqcdof@bogus>
- <CABN1KCLbhh9Rf9R2J2UoTS+6Dzc8yysOedKgXizPbQvYuG8tqQ@mail.gmail.com> <ZjoAwVKvyHzX4_QW@bogus>
-In-Reply-To: <ZjoAwVKvyHzX4_QW@bogus>
-From: David Dai <davidai@google.com>
-Date: Fri, 17 May 2024 13:59:35 -0700
-Message-ID: <CABN1KCJbuZ-+VmvF4OhtngZr095F6RZ5BipGvF8chqKkoZkG4g@mail.gmail.com>
-Subject: Re: [PATCH v5 1/2] dt-bindings: cpufreq: add virtual cpufreq device
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Saravana Kannan <saravanak@google.com>, Rob Herring <robh@kernel.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Quentin Perret <qperret@google.com>, Masami Hiramatsu <mhiramat@google.com>, Will Deacon <will@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Pavan Kondeti <quic_pkondeti@quicinc.com>, 
-	Gupta Pankaj <pankaj.gupta@amd.com>, Mel Gorman <mgorman@suse.de>, kernel-team@android.com, 
-	linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Tue, May 7, 2024 at 3:21=E2=80=AFAM Sudeep Holla <sudeep.holla@arm.com> =
-wrote:
->
-> On Thu, May 02, 2024 at 01:17:57PM -0700, David Dai wrote:
-> > On Thu, Feb 15, 2024 at 3:26=E2=80=AFAM Sudeep Holla <sudeep.holla@arm.=
-com> wrote:
-> > >
-> > > On Fri, Feb 02, 2024 at 09:53:52AM -0600, Rob Herring wrote:
-> > > > On Wed, Jan 31, 2024 at 10:23:03AM -0800, Saravana Kannan wrote:
-> > > > >
-> > > > > We also need the OPP tables to indicate which CPUs are part of th=
-e
-> > > > > same cluster, etc. Don't want to invent a new "protocol" and just=
- use
-> > > > > existing DT bindings.
-> > > >
-> > > > Topology binding is for that.
-> > > >
-> > > > What about when x86 and other ACPI systems need to do this too? You
-> > > > define a discoverable interface, then it works regardless of firmwa=
-re.
-> > > > KVM, Virtio, VFIO, etc. are all their own protocols.
-> > > >
-> > >
-> > > +1 for the above. I have mentioned the same couple of times but I am =
-told
-> > > it can be taken up later which I fail to understand. Once we define D=
-T
-> > > bindings, it must be supported for long time which doesn't provide an=
-y
-> > > motivation to such a discoverable interface which works on any virtua=
-l
-> > > platforms irrespective of the firmware.
-> > >
-> >
-> > Hi Sudeep,
-> >
-> > We are thinking of a discoverable interface like this, where the
-> > performance info and performance domain mappings are discoverable
-> > through the device registers. This should make it more portable across
-> > firmwares. Would this address your concerns?
->
-> Yes.
->
-> > Also, you asked to  document this.
-> > Where exactly would you want to document this?
->
-> IMO it could go under Documentation/firmware-guide ? Unless someone
-> has any other suggestions.
->
-> > AFAIK the DT bindings documentation is not supposed to include this lev=
-el of
-> > detail. Would a comment in the driver be sufficient?
->
-> Agree, DT bindings is not the right place. May be even comment in the
-> driver would be sufficient.
+Hi,
 
-Alright, I=E2=80=99ll make this into a comment in the driver itself.
++ intel-wired-lan
+
+Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com> writes:
+
+> Hi,
+> I am here to test unstable kernels.
+> Yesterday at Fedora Rawhide arrived the new kernel
+> 20240515git1b294a1f3561 and I spotter in kernel log new "red" message
+> with follow stacktrace:
+> [    8.471610] nvme nvme1: pci function 0000:0e:00.0
+> [    8.471616] nvme nvme0: pci function 0000:04:00.0
+> [    8.492638] nvme nvme1: 32/0/0 default/read/poll queues
+> [    8.496190] nvme nvme0: 31/0/0 default/read/poll queues
+> [    8.507051]  nvme0n1: p1 p2 p3
+> [    8.522270] INFO: trying to register non-static key.
+> [    8.522273] The code is fine but needs lockdep annotation, or maybe
+> [    8.522274] you didn't initialize this object before use?
+> [    8.522275] turning off the locking correctness validator.
+> [    8.522276] CPU: 31 PID: 683 Comm: (udev-worker) Not tainted
+> 6.10.0-0.rc0.20240515git1b294a1f3561.4.fc41.x86_64+debug #1
+> [    8.522278] Hardware name: ASUS System Product Name/ROG STRIX
+> B650E-I GAMING WIFI, BIOS 2611 04/07/2024
+> [    8.522280] Call Trace:
+> [    8.522281]  <TASK>
+> [    8.522282]  dump_stack_lvl+0x84/0xd0
+> [    8.522287]  register_lock_class+0xd84/0x1000
+> [    8.522291]  ? __pfx_register_lock_class+0x10/0x10
+> [    8.522293]  __lock_acquire+0x3d2/0x5c70
+> [    8.522295]  ? debug_object_free+0x298/0x550
+> [    8.522297]  ? __pfx_debug_object_free+0x10/0x10
+> [    8.522299]  ? __pfx_lock_release+0x10/0x10
+> [    8.522301]  ? __pfx___lock_acquire+0x10/0x10
+> [    8.522302]  ? hrtimer_try_to_cancel+0x22/0x460
+> [    8.522305]  lock_acquire+0x1ae/0x540
+> [    8.522307]  ? igc_ptp_clear_tx_tstamp+0x38/0x1b0 [igc]
+> [    8.522321]  ? __pfx_lock_acquire+0x10/0x10
+> [    8.522323]  ? seqcount_lockdep_reader_access.constprop.0+0xa5/0xb0
+> [    8.522325]  ? lockdep_hardirqs_on+0x7c/0x100
+> [    8.522326]  ? seqcount_lockdep_reader_access.constprop.0+0xa5/0xb0
+> [    8.522329]  _raw_spin_lock_irqsave+0x51/0xa0
+> [    8.522330]  ? igc_ptp_clear_tx_tstamp+0x38/0x1b0 [igc]
+> [    8.522337]  igc_ptp_clear_tx_tstamp+0x38/0x1b0 [igc]
+> [    8.522344]  igc_ptp_set_timestamp_mode+0x3cc/0x700 [igc]
+> [    8.522350]  ? igc_power_down_phy_copper+0xf1/0x140 [igc]
+> [    8.522358]  igc_ptp_reset+0x3b/0x5e0 [igc]
+> [    8.530693]  ? igc_set_eee_i225+0xfd/0x1e0 [igc]
+> [    8.530706]  igc_reset+0x2d9/0x3d0 [igc]
+> [    8.531707]  igc_probe+0x14ca/0x1e20 [igc]
+> [    8.531715]  ? _raw_spin_unlock_irqrestore+0x4f/0x80
+> [    8.531717]  ? __pfx_igc_probe+0x10/0x10 [igc]
+> [    8.531723]  local_pci_probe+0xdc/0x180
+> [    8.531727]  pci_device_probe+0x23c/0x810
+> [    8.531729]  ? kernfs_add_one+0x3ab/0x4a0
+> [    8.534068]  ? kernfs_new_node+0x13d/0x240
+> [    8.534070]  ? __pfx_pci_device_probe+0x10/0x10
+> [    8.534072]  ? kernfs_create_link+0x16e/0x240
+> [    8.534074]  ? kernfs_put+0x1c/0x40
+> [    8.534076]  ? sysfs_do_create_link_sd+0x8e/0x100
+> [    8.534078]  really_probe+0x1e0/0x8a0
+> [    8.536433]  __driver_probe_device+0x18c/0x370
+> [    8.536436]  driver_probe_device+0x4a/0x120
+> [    8.536438]  __driver_attach+0x194/0x4a0
+> [    8.536439]  ? __pfx___driver_attach+0x10/0x10
+> [    8.536441]  bus_for_each_dev+0x106/0x190
+> [    8.536443]  ? __pfx_bus_for_each_dev+0x10/0x10
+> [    8.536445]  bus_add_driver+0x2ff/0x530
+> [    8.536448]  driver_register+0x1a5/0x360
+> [    8.536449]  ? __pfx_igc_init_module+0x10/0x10 [igc]
+> [    8.536456]  do_one_initcall+0xd6/0x460
+> [    8.536459]  ? __pfx_do_one_initcall+0x10/0x10
+> [    8.536461]  ? kasan_unpoison+0x44/0x70
+> [    8.536464]  do_init_module+0x296/0x7c0
+> [    8.536466]  load_module+0x567b/0x74f0
+> [    8.536470]  ? __pfx_load_module+0x10/0x10
+> [    8.536473]  ? __might_fault+0x9d/0x120
+> [    8.536475]  ? local_clock_noinstr+0xd/0x100
+> [    8.536478]  ? __pfx___might_resched+0x10/0x10
+> [    8.536481]  ? __do_sys_init_module+0x1ef/0x220
+> [    8.536482]  __do_sys_init_module+0x1ef/0x220
+> [    8.536483]  ? __pfx___do_sys_init_module+0x10/0x10
+> [    8.536487]  do_syscall_64+0x97/0x190
+> [    8.536490]  ? lockdep_hardirqs_on_prepare+0x171/0x400
+> [    8.536492]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> [    8.536494] RIP: 0033:0x7f29997265ae
+> [    8.536499] Code: 48 8b 0d 85 a8 0c 00 f7 d8 64 89 01 48 83 c8 ff
+> c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa 49 89 ca b8 af 00 00
+> 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 52 a8 0c 00 f7 d8 64 89
+> 01 48
+
+It seems I have missed this following flow (in reverse):
+
++ igc_ptp_clear_tx_tstamp
+  + igc_ptp_disable_tx_timestamp
+    + igc_ptp_set_timestamp_mode
+      + igc_ptp_reset
+        + igc_reset
+          + igc_probe
+
+And that in igc_ptp_clear_tx_tstamp(), it uses ->ptp_tx_lock. So
+igc_ptp_init() needs to be called before igc_reset().
+
+I think that is what this splat is telling us.
+
+Don't know what's the best way forward, reverting the commit in question
+or trying to fix the initial problem some other way?
+
+> [    8.536500] RSP: 002b:00007ffee505bff8 EFLAGS: 00000246 ORIG_RAX:
+> 00000000000000af
+> [    8.536502] RAX: ffffffffffffffda RBX: 000055eafe4a2ac0 RCX: 00007f29997265ae
+> [    8.536503] RDX: 00007f2998e6007d RSI: 00000000001067d6 RDI: 00007f299828c010
+> [    8.536504] RBP: 00007ffee505c0b0 R08: 000055eafe43a010 R09: 0000000000000007
+> [    8.536505] R10: 0000000000000007 R11: 0000000000000246 R12: 00007f2998e6007d
+> [    8.536506] R13: 0000000000020000 R14: 000055eafe476280 R15: 000055eafe4a25a0
+> [    8.536508]  </TASK>
+> [    8.542741] pps pps0: new PPS source ptp0
+> [    8.550932] igc 0000:0a:00.0 eth0: PHC added
+> [    8.550992] igc 0000:0a:00.0: 4.000 Gb/s available PCIe bandwidth
+> (5.0 GT/s PCIe x1 link)
+> [    8.550996] igc 0000:0a:00.0 eth0: MAC: e8:9c:25:6c:40:75
+> [    8.558160] igc 0000:0a:00.0 eno1: renamed from eth0
+>
+> Of course, I immediately wanted to find the first bad commit.
+> And now it has already been found:
+> 86167183a17e03ec77198897975e9fdfbd53cb0b is the first bad commit
+> commit 86167183a17e03ec77198897975e9fdfbd53cb0b (HEAD)
+> Author: Corinna Vinschen <vinschen@redhat.com>
+> Date:   Tue Apr 23 12:24:54 2024 +0200
+>
+>     igc: fix a log entry using uninitialized netdev
+>
+>     During successful probe, igc logs this:
+>
+>     [    5.133667] igc 0000:01:00.0 (unnamed net_device)
+> (uninitialized): PHC added
+>                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>     The reason is that igc_ptp_init() is called very early, even before
+>     register_netdev() has been called. So the netdev_info() call works
+>     on a partially uninitialized netdev.
+>
+>     Fix this by calling igc_ptp_init() after register_netdev(), right
+>     after the media autosense check, just as in igb.  Add a comment,
+>     just as in igb.
+>
+>     Now the log message is fine:
+>
+>     [    5.200987] igc 0000:01:00.0 eth0: PHC added
+>
+>     Signed-off-by: Corinna Vinschen <vinschen@redhat.com>
+>     Reviewed-by: Hariprasad Kelam <hkelam@marvell.com>
+>     Acked-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+>     Tested-by: Naama Meir <naamax.meir@linux.intel.com>
+>     Signed-off-by: Tony Nguyen <anthony.l.nguyen@intel.com>
+>
+>  drivers/net/ethernet/intel/igc/igc_main.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+>
+> The next step I was convinced that reverting the commit 86167183a17e
+> removed this info message.
+
+Thank you for the effort.
 
 >
-> Overall it looks good and on the right path IMO.
+> I also attach here a full kernel log and build config.
 >
-
-Okay, I=E2=80=99ll submit V6 patches and continue from there.
-
-> >
-> > CPU0..CPUn
-> > +-------------+-------------------------------+--------+-------+
-> > | Register    | Description                   | Offset |   Len |
-> > +-------------+-------------------------------+--------+-------+
-> > | cur_perf    | read this register to get     |    0x0 |   0x4 |
-> > |             | the current perf (integer val |        |       |
-> > |             | representing perf relative to |        |       |
-> > |             | max performance)              |        |       |
-> > |             | that vCPU is running at       |        |       |
-> > +-------------+-------------------------------+--------+-------+
-> > | set_perf    | write to this register to set |    0x4 |   0x4 |
-> > |             | perf value of the vCPU        |        |       |
-> > +-------------+-------------------------------+--------+-------+
-> > | perftbl_len | number of entries in perf     |    0x8 |   0x4 |
-> > |             | table. A single entry in the  |        |       |
-> > |             | perf table denotes no table   |        |       |
-> > |             | and the entry contains        |        |       |
-> > |             | the maximum perf value        |        |       |
-> > |             | that this vCPU supports.      |        |       |
-> > |             | The guest can request any     |        |       |
-> > |             | value between 1 and max perf. |        |       |
+> My hardware specs: https://linux-hardware.org/?probe=98ecbf3636
 >
-> Does this have to be per cpu ? It can be simplified by keeping
-> just cur_perf, set_perf and perf_domain in per-cpu entries and this
-> per domain entries separate. But I am not against per cpu entries
-> as well.
-
-I think separating out the perf domain entries may make the device
-emulation and the driver slightly more complicated. Emulating the perf
-domain regions per CPU is a simpler layout if we need to install eBPF
-programs to handle the backend per vCPU. Each vCPU looking up its own
-frequency information in its own MMIO region is a bit easier too when
-initializing the driver. Also each vCPU will be in its own perf domain
-for the majority of the use cases, so it won=E2=80=99t make much of a
-difference most of the time.
-
+> I hope it helps.
 >
-> Also why do you need the table if the guest can request any value from
-> 1 to max perf ? The table will have discrete OPPs ? If so, how to they
-> map to the perf range [1 - maxperf] ?
+> -- 
+> Best Regards,
+> Mike Gavrilov.
 
-Let me clarify this in the comment, the perf range [1 - maxperf] is
-only applicable in the case where the frequency table is not
-supported. The cpufreq driver will still vote for discrete levels if
-tables are used. The VMM(Virtual Machine Manager) may choose to use
-tables depending on the use case and the driver will support both
-cases.
 
-Thanks,
-David
-
->
-> > +---------------------------------------------+--------+-------+
-> > | perftbl_sel | write to this register to     |    0xc |   0x4 |
-> > |             | select perf table entry to    |        |       |
-> > |             | read from                     |        |       |
-> > +---------------------------------------------+--------+-------+
-> > | perftbl_rd  | read this register to get     |   0x10 |   0x4 |
-> > |             | perf value of the selected    |        |       |
-> > |             | entry based on perftbl_sel    |        |       |
-> > +---------------------------------------------+--------+-------+
-> > | perf_domain | performance domain number     |   0x14 |   0x4 |
-> > |             | that this vCPU belongs to.    |        |       |
-> > |             | vCPUs sharing the same perf   |        |       |
-> > |             | domain number are part of the |        |       |
-> > |             | same performance domain.      |        |       |
-> > +-------------+-------------------------------+--------+-------+
->
-> The above are couple of high level questions I have ATM.
->
-> --
-> Regards,
-> Sudeep
+Cheers,
+-- 
+Vinicius
 
