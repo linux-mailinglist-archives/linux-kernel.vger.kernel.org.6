@@ -1,174 +1,176 @@
-Return-Path: <linux-kernel+bounces-182217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEDDD8C8834
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 16:41:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 360B78C87C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 16:14:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3A01B24A1E
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 14:41:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A4B21F243A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 14:14:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D44D79EA;
-	Fri, 17 May 2024 14:41:03 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4201B5BAC1;
+	Fri, 17 May 2024 14:14:45 +0000 (UTC)
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FEDE1A2C2E
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 14:41:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28B085787B;
+	Fri, 17 May 2024 14:14:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715956862; cv=none; b=ZAVZRFn1764zZxV1vDm8TzIbhbXr6AkTqGYDISMu4itZ+oNPC1fta0ZyG3Dx6uaHfDIjm3s67G/Qy/D3udAjUHD8S2WRbejAAwpY6BUrjKqeZo44oNT2tcck/lhjnxIm7VL0ANR2EaU8ec8a+qtY497D+VazzRkvBw3liKYhVZE=
+	t=1715955284; cv=none; b=c16VgV/Cy7iZG+O+9C2dGryarU5JaYEGR5EnSwDyslKuXjjm479+yQhAUG6gvZT1jeTMV1coWDtxqw8EMw3dQ9DSpFnqJTST9k95JboVJ2c+qCJomDStGnVz/TiduX/uDFXcY5dIenRVv1UJ0XSUa7KtRrlZW1B1rieOrc+u35k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715956862; c=relaxed/simple;
-	bh=EGn3ljBz6rxQ4NlQ7kY83/2B6Dqy4mSY8TiKcxSKrFI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=htz2oIZVZ6RqasqqZx5fZitLPMnZV1hE4aSR9uMXVMNkV6UgtZqEAqsjxLDUlbcKITMrTQ6c29+TbW3J1j2oeRf4S252m66YG37pT03gg+EYNn81/AJpfD8K/HFoz9Ty+4xwlOdxwKeEAwcz72Rnk+KoKnBvkj5mj9ODYY/QjYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4VgqLD2xrZzvYx9;
-	Fri, 17 May 2024 22:37:24 +0800 (CST)
-Received: from canpemm500010.china.huawei.com (unknown [7.192.105.118])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5372C1800C7;
-	Fri, 17 May 2024 22:40:56 +0800 (CST)
-Received: from huawei.com (10.67.189.167) by canpemm500010.china.huawei.com
- (7.192.105.118) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Fri, 17 May
- 2024 22:40:56 +0800
-From: Jiangfeng Xiao <xiaojiangfeng@huawei.com>
-To: <catalin.marinas@arm.com>, <will@kernel.org>, <Dave.Martin@arm.com>,
-	<xieyuanbin1@huawei.com>, <xiaojiangfeng@huawei.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<nixiaoming@huawei.com>, <wangbing6@huawei.com>, <douzhaolei@huawei.com>,
-	<liaohua4@huawei.com>, <lijiahuan5@huawei.com>, <wangfangpeng1@huawei.com>
-Subject: [PATCH] arm64: asm-bug: Add .align 2 to the end of __BUG_ENTRY
-Date: Fri, 17 May 2024 22:13:28 +0800
-Message-ID: <1715955208-17109-1-git-send-email-xiaojiangfeng@huawei.com>
-X-Mailer: git-send-email 1.8.5.6
+	s=arc-20240116; t=1715955284; c=relaxed/simple;
+	bh=t7TPOZcH88piEkHq3EwlPueXhbXs0lNxI+Jfxed7YiA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BxjfTQ5hPaUc3IUgMeBP7uhcaRtB3t9GVFpTMxlleHLdVeEFnrg4KDrK2WhK90yPGEHpF28C8T5WYJlpndIiweiDnXfYMWFCkFWiuEIvS0boJSTgz38/q1SRyhWTs1wN4xKLln7DVONxLtpE/189yG3GPrNmc/IS2CNtEr9pujQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-574ea5184abso5459421a12.3;
+        Fri, 17 May 2024 07:14:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715955281; x=1716560081;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XTiT+5csVtpVWTO/kiliCCsPmMNHf5p3YMe8QI/zwMI=;
+        b=eT6tdj3fNWHFaG+yFzDCeNtbipEnLQLUpSj8k8IMhZjjrjGLCBIvfXKK2Mq1wSqlus
+         Ut5egTU3QocNi9J2tUJu4OkBAoVM6om7d4TFg5Uk5a4//Lro5rpqfdcTC9VYzFVpkjDW
+         svNB0BzhrRa6snABDb5f/6F7nwwjJ517RqXzqwXhVsSKb18YdLQDA69WVOYLut12OhGB
+         B6FdtP9aqMXVjm6rjQ3kq2kOBTRV2MmymUrAgfWsDMiKYt8cOV8v7MUPsa1quPU7hx+v
+         J6XlZli8lo1sYxgCBJ05MtPwyDT4zspPDOkUBJLJU8YhWPGglt1pbD9v1XjWxqgT8UaK
+         Sh3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWCg6a4nD/2cK6Ky3ya7hJE2oPQ7RUNSyssZGxbmUbIxGlJTm6k5h7+MuPj7W0RsQwJ6gRGOpcoop18/WQ9PLF68DrH3+BC62mlZxm8nhNjH75uG8ThmEpEUyRwez9Xw4HMCLb17LKdOtYN+3i2uQ==
+X-Gm-Message-State: AOJu0YyUIgr4+tuRc2sYAFX18CoequeJrs2VYp3DT/vgiBhVbZY1FDzE
+	tVXivlQ3tqqENF6Ew8UFWqZ3cqcQlfILj43tlkuS2lpJgzNyR7/8
+X-Google-Smtp-Source: AGHT+IHJnqTwTompMNRqA/4ufYRk/mTDXpf6660tS8lercswA94/IdhNMOyogBfvkRHJgcQeQMnEaw==
+X-Received: by 2002:a17:907:3595:b0:a5a:8bde:8300 with SMTP id a640c23a62f3a-a5a8bde992cmr702572966b.30.1715955281235;
+        Fri, 17 May 2024 07:14:41 -0700 (PDT)
+Received: from localhost (fwdproxy-lla-006.fbsv.net. [2a03:2880:30ff:6::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b18110sm1125842466b.225.2024.05.17.07.14.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 May 2024 07:14:39 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+To: irogers@google.com,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>
+Cc: leit@meta.com,
+	linux-perf-users@vger.kernel.org (open list:PERFORMANCE EVENTS SUBSYSTEM),
+	linux-kernel@vger.kernel.org (open list:PERFORMANCE EVENTS SUBSYSTEM)
+Subject: [PATCH v4] perf list: Fix the --no-desc option
+Date: Fri, 17 May 2024 07:14:26 -0700
+Message-ID: <20240517141427.1905691-1-leitao@debian.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- canpemm500010.china.huawei.com (7.192.105.118)
+Content-Transfer-Encoding: 8bit
 
-I'm using the latest linux kernel mainline code,
-with the default arm64 configuration:
-make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- defconfig,
-and set CONFIG_EXPERT=y, CONFIG_DEBUG_BUGVERBOSE=n,
-CONFIG_PANIC_ON_OOPS=y.
+Currently, the --no-desc option in perf list isn't functioning as
+intended.
 
-Loading the following kernel module will cause kernel panic.
+This issue arises from the overwriting of struct option->desc with the
+opposite value of struct option->long_desc. Consequently, whatever
+parse_options() returns at struct option->desc gets overridden later,
+rendering the --desc or --no-desc arguments ineffective.
 
-The call stack is as follows:
+To resolve this, set ->desc as true by default and allow parse_options()
+to adjust it accordingly. This adjustment will fix the --no-desc
+option while preserving the functionality of the other parameters.
 
-root@(none):/# /root/insmod hello.ko
-[    6.035003] hello: loading out-of-tree module taints kernel.
-[    6.039129] ------------[ cut here ]------------
-[    6.039287] hello
-[    6.039704] Unexpected kernel BRK exception at EL1
-[    6.040059] Internal error: BRK handler: 00000000f2000800 [#1] PREEMPT SMP
-[    6.040457] Modules linked in: hello(O+)
-[    6.041311] CPU: 0 PID: 50 Comm: insmod Tainted: G           O       6.9.1 #8
-[    6.041755] Hardware name: linux,dummy-virt (DT)
-[    6.042238] pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[    6.042594] pc : buginit+0x18/0x1000 [hello]
-[    6.043601] lr : buginit+0x18/0x1000 [hello]
-[    6.043852] sp : ffff800080533ae0
-[    6.044121] x29: ffff800080533ae0 x28: 0000000000000000 x27: 0000000000000000
-[    6.044523] x26: ffffaba8c4e70510 x25: ffff800080533c30 x24: ffffaba8c4a28a58
-[    6.044961] x23: 0000000000000000 x22: 0000000000000000 x21: ffff3947c0eab3c0
-[    6.045503] x20: ffffaba8c4e3f000 x19: ffffaba846464000 x18: 0000000000000006
-[    6.046124] x17: 0000000000000000 x16: ffffaba8c2492834 x15: 0720072007200720
-[    6.046387] x14: 0720072007200720 x13: ffffaba8c49b27c8 x12: 0000000000000312
-[    6.046829] x11: 0000000000000106 x10: ffffaba8c4a0a7c8 x9 : ffffaba8c49b27c8
-[    6.047293] x8 : 00000000ffffefff x7 : ffffaba8c4a0a7c8 x6 : 80000000fffff000
-[    6.047739] x5 : 0000000000000107 x4 : 0000000000000000 x3 : 0000000000000000
-[    6.047955] x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff3947c0eab3c0
-[    6.048366] Call trace:
-[    6.048653]  buginit+0x18/0x1000 [hello]
-[    6.048922]  do_one_initcall+0x80/0x1c8
-[    6.049333]  do_init_module+0x60/0x218
-[    6.049475]  load_module+0x1ba4/0x1d70
-[    6.049755]  __do_sys_init_module+0x198/0x1d0
-[    6.049959]  __arm64_sys_init_module+0x1c/0x28
-[    6.050160]  invoke_syscall+0x48/0x114
-[    6.050334]  el0_svc_common.constprop.0+0x40/0xe0
-[    6.050468]  do_el0_svc+0x1c/0x28
-[    6.050635]  el0_svc+0x34/0xd8
-[    6.050852]  el0t_64_sync_handler+0x120/0x12c
-[    6.051088]  el0t_64_sync+0x190/0x194
-[    6.051433] Code: d0ffffe0 910003fd 91000000 9400000b (d4210000)
-[    6.052212] ---[ end trace 0000000000000000 ]---
-[    6.052473] Kernel panic - not syncing: BRK handler: Fatal exception
-
-The kernel module source code is as follows:
-```
-
-static int __init buginit(void)
-{
-	WARN(1, "hello\n");
-	return 0;
-}
-
-static void __exit bugexit(void)
-{
-}
-
-module_init(buginit);
-module_exit(bugexit);
-MODULE_LICENSE("GPL");
-```
-
-When CONFIG_DEBUG_BUGVERBOSE macro is disabled,
-the size of "__bug_table" section in hello.ko
-is only 6 bytes instead of the expected 8 bytes.
-As a result,
-mod->num_bugs = sechdrs[i].sh_size / sizeof(struct bug_entry) = 6 / 8 = 0
-calculated in module_bug_finalize when the kernel loads ko is incorrect.
-
-When running `WARN()`, the following backtrace is triggered:
-
-module_find_bug() at lib/bug.c
-find_bug() at lib/bug.c
-__report_bug() at lib/bug.c
-report_bug() at lib/bug.c
-call_break_hook() at arch/arm64/kernel/debug-monitors.c
-brk_handler() at arch/arm64/kernel/debug-monitors.c
-
-It will return -EFAULT because hello.ko's mod->num_bugs is 0.
-Finally, the kernel OOPS is triggered.
-
-Add .align 2 to the end of __BUG_ENTRY
-to make the object layout generated by the assembly code
-consistent with that of the C struct bug_entry.
-
-Fixes: 9fb7410f955f ("arm64/BUG: Use BRK instruction for generic BUG traps")
-
-Signed-off-by: Yuanbin Xie <xieyuanbin1@huawei.com>
-Signed-off-by: Jiangfeng Xiao <xiaojiangfeng@huawei.com>
+Signed-off-by: Breno Leitao <leitao@debian.org>
 ---
- arch/arm64/include/asm/asm-bug.h | 1 +
- 1 file changed, 1 insertion(+)
+Changelog:
 
-diff --git a/arch/arm64/include/asm/asm-bug.h b/arch/arm64/include/asm/asm-bug.h
-index c762038..6e73809 100644
---- a/arch/arm64/include/asm/asm-bug.h
-+++ b/arch/arm64/include/asm/asm-bug.h
-@@ -28,6 +28,7 @@
- 	14470:	.long 14471f - .;			\
- _BUGVERBOSE_LOCATION(__FILE__, __LINE__)		\
- 		.short flags; 				\
-+		.align 2;				\
- 		.popsection;				\
- 	14471:
- #else
+v4:
+	* Revert the change in json_print_event() from v3.
+v3:
+       	* Applied the same logic to default_print_metric() and
+          json_print_event() functions, as identified by Ian Rogers.
+v2:
+       	* Do not print desc if long_desc is being printed, as identified
+          by Ian Rogers.
+---
+ tools/perf/builtin-list.c | 23 ++++++++++-------------
+ 1 file changed, 10 insertions(+), 13 deletions(-)
+
+diff --git a/tools/perf/builtin-list.c b/tools/perf/builtin-list.c
+index 02bf608d585e..24a136ea015e 100644
+--- a/tools/perf/builtin-list.c
++++ b/tools/perf/builtin-list.c
+@@ -149,7 +149,11 @@ static void default_print_event(void *ps, const char *pmu_name, const char *topi
+ 	} else
+ 		fputc('\n', fp);
+ 
+-	if (desc && print_state->desc) {
++	if (long_desc && print_state->long_desc) {
++		fprintf(fp, "%*s", 8, "[");
++		wordwrap(fp, long_desc, 8, pager_get_columns(), 0);
++		fprintf(fp, "]\n");
++	} else if (desc && print_state->desc) {
+ 		char *desc_with_unit = NULL;
+ 		int desc_len = -1;
+ 
+@@ -165,12 +169,6 @@ static void default_print_event(void *ps, const char *pmu_name, const char *topi
+ 		fprintf(fp, "]\n");
+ 		free(desc_with_unit);
+ 	}
+-	long_desc = long_desc ?: desc;
+-	if (long_desc && print_state->long_desc) {
+-		fprintf(fp, "%*s", 8, "[");
+-		wordwrap(fp, long_desc, 8, pager_get_columns(), 0);
+-		fprintf(fp, "]\n");
+-	}
+ 
+ 	if (print_state->detailed && encoding_desc) {
+ 		fprintf(fp, "%*s", 8, "");
+@@ -243,15 +241,14 @@ static void default_print_metric(void *ps,
+ 	}
+ 	fprintf(fp, "  %s\n", name);
+ 
+-	if (desc && print_state->desc) {
+-		fprintf(fp, "%*s", 8, "[");
+-		wordwrap(fp, desc, 8, pager_get_columns(), 0);
+-		fprintf(fp, "]\n");
+-	}
+ 	if (long_desc && print_state->long_desc) {
+ 		fprintf(fp, "%*s", 8, "[");
+ 		wordwrap(fp, long_desc, 8, pager_get_columns(), 0);
+ 		fprintf(fp, "]\n");
++	} else if (desc && print_state->desc) {
++		fprintf(fp, "%*s", 8, "[");
++		wordwrap(fp, desc, 8, pager_get_columns(), 0);
++		fprintf(fp, "]\n");
+ 	}
+ 	if (expr && print_state->detailed) {
+ 		fprintf(fp, "%*s", 8, "[");
+@@ -491,6 +488,7 @@ int cmd_list(int argc, const char **argv)
+ 	int i, ret = 0;
+ 	struct print_state default_ps = {
+ 		.fp = stdout,
++		.desc = true,
+ 	};
+ 	struct print_state json_ps = {
+ 		.fp = stdout,
+@@ -563,7 +561,6 @@ int cmd_list(int argc, const char **argv)
+ 		};
+ 		ps = &json_ps;
+ 	} else {
+-		default_ps.desc = !default_ps.long_desc;
+ 		default_ps.last_topic = strdup("");
+ 		assert(default_ps.last_topic);
+ 		default_ps.visited_metrics = strlist__new(NULL, NULL);
 -- 
-1.8.5.6
+2.43.0
 
 
