@@ -1,167 +1,204 @@
-Return-Path: <linux-kernel+bounces-182652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D2F68C8DD0
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 23:39:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE4C68C8DDA
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 23:43:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EABF1C21DAD
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 21:39:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FC1B1F23EF3
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 21:43:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80A561420A2;
-	Fri, 17 May 2024 21:38:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pbL1P25V";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ljOPtLVG"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07C381420B0;
+	Fri, 17 May 2024 21:43:23 +0000 (UTC)
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 457D11419AA;
-	Fri, 17 May 2024 21:37:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B76F141981;
+	Fri, 17 May 2024 21:43:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715981881; cv=none; b=rQQxlzVFP9ZL8PMBBCgeCervdEkwt7mp38FZRKOZW5gHChbkpK/WzZYLwWhhRvjJFxGausybQEAInqbHc+6LBQpxz5McnMKWO5IWfhmT/DBCT7U+9UGqJkq0lh4ZVBzsHA3Owkmq9XnlwYjlhjOUWRTPi3JTB+J2teKZjX2VrLY=
+	t=1715982202; cv=none; b=A+bmXojuvDdj+jimSiQjYgzETBUY5Z1XkqcBMEkEeeeAmmkgFRyIndbeX6aZ3Uu7xkt/L2NpbJ0RvV4n0JZjFRIqBsQt2WZkwUuMnwV0sqjFY/O/3Nlu9KAo8yy4Uv2c/EPePd5krMTB5dw7Qi52HHkXu3IN/aBGSjUcKWy+nDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715981881; c=relaxed/simple;
-	bh=O59K4hbDSsfiQU0mSa0j9lbI6l1M9YPmNCHJAuUsARc=;
-	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=IXOaKBCKpx+vuMd+F9Cw6tGll//1OW+GrZJVhaw28BVziC+JqwESaRjTMv/eIFn+CMU6JRmvGRlOfEiJ6sMB1A5GcZT9p6V0mAjpnJiFyozHySX/B+Nql++uSU3Q4ccC/jsVJzNiBGYKQ/AHWGmDgfF2rRAQAIciQbxilW1g0MU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pbL1P25V; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ljOPtLVG; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1715981878;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DXtrA5LLFohLOjGP/edadyudWrEZRBECLedxJJ0rcYI=;
-	b=pbL1P25VT61HHZRS50rO5Gwpx0znpq5MQBGNgqKMYKYleyJZOtQx/eoVHjlw/zuCRaSnJC
-	ULNr2b2vZQ7C8CJO34JuGGF5mWaWHGTOB2t2RNmso+xBL8Oo4zlEbAlXHkIMwS4hFtwlIz
-	2wdHQ3Wf3U5sCusbJzVXSrZnf+mQuntB6pjpF1nXhmp14eCOWy3OUCsyCOsLF0HUtsTcNI
-	+E11XF1xFIS/0YWOW1JlCrgmm706qH6lj3GAIaEkqqEZhydbpekZh6nnAMxIuWVhc8WcFe
-	dRco29ASa07t9RPrZ//V0G43K+YJ4zFOSZWBUnempkruDisMuCKTTuBP3LHF7w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1715981878;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DXtrA5LLFohLOjGP/edadyudWrEZRBECLedxJJ0rcYI=;
-	b=ljOPtLVGpxmk0jU3L4UqfG5IrEz0yayhXyrM3c/ZgIIHuhN+I+V36vHKQAxVndVuIuwDKX
-	O1HriLIZJtakL3Bw==
-To: Costa Shulyupin <costa.shul@redhat.com>, longman@redhat.com,
- pauld@redhat.com, juri.lelli@redhat.com, prarit@redhat.com,
- vschneid@redhat.com, Anna-Maria Behnsen <anna-maria@linutronix.de>,
- Frederic Weisbecker <frederic@kernel.org>, Zefan Li
- <lizefan.x@bytedance.com>, Tejun Heo <tj@kernel.org>, Johannes Weiner
- <hannes@cmpxchg.org>, Ingo Molnar <mingo@redhat.com>, Peter Zijlstra
- <peterz@infradead.org>, Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt
- <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman
- <mgorman@suse.de>, Daniel Bristot de Oliveira <bristot@redhat.com>, Petr
- Mladek <pmladek@suse.com>, Andrew Morton <akpm@linux-foundation.org>,
- Masahiro Yamada <masahiroy@kernel.org>, Randy Dunlap
- <rdunlap@infradead.org>, Yoann Congal <yoann.congal@smile.fr>, "Gustavo A.
- R. Silva" <gustavoars@kernel.org>, Nhat Pham <nphamcs@gmail.com>, Costa
- Shulyupin <costa.shul@redhat.com>, linux-kernel@vger.kernel.org,
- cgroups@vger.kernel.org
-Subject: Re: [PATCH v1 1/7] sched/isolation: Add infrastructure to adjust
- affinity for dynamic CPU isolation
-In-Reply-To: <20240516190437.3545310-2-costa.shul@redhat.com>
-References: <20240516190437.3545310-1-costa.shul@redhat.com>
- <20240516190437.3545310-2-costa.shul@redhat.com>
-Date: Fri, 17 May 2024 23:37:57 +0200
-Message-ID: <877cfsjf0q.ffs@tglx>
+	s=arc-20240116; t=1715982202; c=relaxed/simple;
+	bh=TOQR4C7aJOSef0guoBb210jKTjOGMJ9RgirLaoUIQwc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=czATfmRl9a/pCEr3VfUbNxA+LxKoM5dtIKbuNX/hLdZ/PHJ7TdFyygy4c1xtoYyJ4C76vEKX4LWydoereW261vcF92QWTcjMzdWapAAIWA1G6rMt5G39Zx/W7FDLAia0+/7XyMAGmMxSpOo9NaB2cm/A4bzoWbq39N5buObfJps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1ec4dc64c6cso21410845ad.0;
+        Fri, 17 May 2024 14:43:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715982200; x=1716587000;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IDCtfy/Bp0EaDflNWvcEH2uJMngajJPoBsVPh87Br9Q=;
+        b=HzQvNswhF1bv6klLwyhfaLWgirrAMQiQauH3egU3WLlj3DfNLYd4x01k6zihV6rekp
+         24dDhKbF9TmPxOH0K0wEC316cHeXNd9FKtyqTGpa3m4/8MVAQWNVyDVwxxluBrOzWDkS
+         +RwQs2FFOeSrpJ1Lcu4eIi3VoOJynknfr5QGIubrjnbG62/cpARdMcted1HghMn8jXvr
+         p//YoYbzuSGVn9paVXrnv46JvbHZePglb9O6Djb9h2k+7RzdYKFz1NgVRHC2yb7XKeMD
+         68aNAUf9gT1H9cPvlm1M+GK4gU5g1irOiOLZRd0/8hs/EHtwq4MZnHofKNwcjU6E7F4P
+         nxzw==
+X-Forwarded-Encrypted: i=1; AJvYcCUeAejqh+zZaGa0y3ObhKt/69Xsg5VMEZLF8AgX2J8Y8A/+oMsTaTf57ahCuocNMxnvPlUyIFq0Yw03dmVycJvA/94eGkClCd8l5x5HatoYxoCtVuRqRzFedROqIJMM/ueYdWe6PIPOGUpKnUKq7Q==
+X-Gm-Message-State: AOJu0YyQl1dVmsyfuwbpzOcSmvMcl/C+VfTvKMv7N3zN/XrsPBnPfN+F
+	Ky+s12jJFEU1O25vuyWM8yTv7M60wguJgOyxpri2PAKCH3K3v1aAEnVmcP//wBWbTHhNwWUBoCt
+	iCMTtBBxfZwdPAAHXZb3dM53NVSk=
+X-Google-Smtp-Source: AGHT+IFQzzj4MbTJHZyEjTtikdclQUIr7f3DIllHHceH0poyK3GrBfzAJAsMWeu441s5luETSgaxE9psrCVaiUTHS2U=
+X-Received: by 2002:a17:903:1d2:b0:1eb:2ee2:43bd with SMTP id
+ d9443c01a7336-1ef43d0acc1mr286452235ad.7.1715982200271; Fri, 17 May 2024
+ 14:43:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20240515054443.2824147-1-weilin.wang@intel.com> <20240515054443.2824147-4-weilin.wang@intel.com>
+In-Reply-To: <20240515054443.2824147-4-weilin.wang@intel.com>
+From: Namhyung Kim <namhyung@kernel.org>
+Date: Fri, 17 May 2024 14:43:08 -0700
+Message-ID: <CAM9d7cghtG-9rwy5Yg-oJDETO-J5OUzPt6=xMCwacKqfwo+sZA@mail.gmail.com>
+Subject: Re: [RFC PATCH v8 3/7] perf stat: Fork and launch perf record when
+ perf stat needs to get retire latency value for a metric.
+To: weilin.wang@intel.com
+Cc: Ian Rogers <irogers@google.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Perry Taylor <perry.taylor@intel.com>, Samantha Alt <samantha.alt@intel.com>, 
+	Caleb Biggers <caleb.biggers@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 16 2024 at 22:04, Costa Shulyupin wrote:
-> Introduce infrastructure function housekeeping_update() to change
-> housekeeping_cpumask during runtime and adjust affinities of depended
-> subsystems.
+On Tue, May 14, 2024 at 10:44=E2=80=AFPM <weilin.wang@intel.com> wrote:
 >
-> Affinity adjustments of subsystems follow in subsequent patches.
+> From: Weilin Wang <weilin.wang@intel.com>
 >
-> Parent patch:
-> "sched/isolation: Exclude dynamically isolated CPUs from housekeeping masks"
-> https://lore.kernel.org/lkml/20240229021414.508972-2-longman@redhat.com/
+> When retire_latency value is used in a metric formula, perf stat would fo=
+rk a
+> perf record process with "-e" and "-W" options. Perf record will collect
+> required retire_latency values in parallel while perf stat is collecting
+> counting values.
 >
-> Test example for cgroup2:
+> At the point of time that perf stat stops counting, it would send sigterm=
+ signal
+> to perf record process and receiving sampling data back from perf record =
+from a
+> pipe. Perf stat will then process the received data to get retire latency=
+ data
+> and calculate metric result.
 >
-> cd /sys/fs/cgroup/
-> echo +cpuset > cgroup.subtree_control
-> mkdir test
-> echo isolated > test/cpuset.cpus.partition
-> echo $isolate > test/cpuset.cpus
-
-This changelog is not telling me anything. Please see
-Documentation/process/ what changelogs should contain.
-
+> Another thread is required to synchronize between perf stat and perf reco=
+rd
+> when we pass data through pipe.
+>
+> Signed-off-by: Weilin Wang <weilin.wang@intel.com>
+> Reviewed-by: Ian Rogers <irogers@google.com>
+> ---
+[SNIP]
+> diff --git a/tools/perf/util/intel-tpebs.c b/tools/perf/util/intel-tpebs.=
+c
+> new file mode 100644
+> index 000000000000..4b7a98794fae
+> --- /dev/null
+> +++ b/tools/perf/util/intel-tpebs.c
+> @@ -0,0 +1,285 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
 > +/*
-> + * housekeeping_update - change housekeeping.cpumasks[type] and propagate the
-> + * change.
-> + *
-> + * Assuming cpuset_mutex is held in sched_partition_write or
-> + * cpuset_write_resmask.
+> + * intel_pt.c: Intel Processor Trace support
+> + * Copyright (c) 2013-2015, Intel Corporation.
 
-Locking cannot be assumed. lockdep_assert_held() is there to document
-and enforce such requirements.
+This needs some updates. :)
+
 
 > + */
-> +static int housekeeping_update(enum hk_type type, cpumask_var_t update)
-
-Please us 'struct cpumask *update' as it makes it clear what this is
-about. cpumask_var_t is a hack to make onstack and embedded cpumask and
-their allocated counterparts possible without #ifdeffery in the code.
-
-But any function which is not related to alloc/free of cpumask_var_t
-should simply use 'struct cpumask *' as argument type.
-
-> +	housekeeping.flags |= BIT(type);
-
-The existing code uses WRITE_ONCE() probably for a reason. Why is that
-not longer required here?
-
->  static int __init housekeeping_setup(char *str, unsigned long flags)
->  {
->  	cpumask_var_t non_housekeeping_mask, housekeeping_staging;
-> @@ -314,9 +347,12 @@ int housekeeping_exlude_isolcpus(const struct cpumask *isolcpus, unsigned long f
->  		/*
->  		 * Reset housekeeping to bootup default
->  		 */
-> -		for_each_set_bit(type, &housekeeping_boot.flags, HK_TYPE_MAX)
-> -			cpumask_copy(housekeeping.cpumasks[type],
-> -				     housekeeping_boot.cpumasks[type]);
-> +		for_each_set_bit(type, &housekeeping_boot.flags, HK_TYPE_MAX) {
-> +			int err = housekeeping_update(type, housekeeping_boot.cpumasks[type]);
 > +
-> +			if (err)
-> +				return err;
-> +		}
->  
->  		WRITE_ONCE(housekeeping.flags, housekeeping_boot.flags);
->  		if (!housekeeping_boot.flags &&
-> @@ -344,9 +380,11 @@ int housekeeping_exlude_isolcpus(const struct cpumask *isolcpus, unsigned long f
->  		cpumask_andnot(tmp_mask, src_mask, isolcpus);
->  		if (!cpumask_intersects(tmp_mask, cpu_online_mask))
->  			return -EINVAL;	/* Invalid isolated CPUs */
-> -		cpumask_copy(housekeeping.cpumasks[type], tmp_mask);
-> +		int err = housekeeping_update(type, tmp_mask);
 > +
-> +		if (err)
-> +			return err;
+> +#include <sys/param.h>
+> +#include <subcmd/run-command.h>
+> +#include <thread.h>
+> +#include "intel-tpebs.h"
+> +#include <linux/list.h>
+> +#include <linux/zalloc.h>
+> +#include <linux/err.h>
+> +#include "sample.h"
+> +#include "debug.h"
+> +#include "evlist.h"
+> +#include "evsel.h"
+> +#include "session.h"
+> +#include "tool.h"
+> +#include "metricgroup.h"
+> +#include <sys/stat.h>
+> +#include <sys/file.h>
+> +
+> +
+> +
+> +#define PERF_DATA              "-"
+> +#define CONTROL                        "/tmp/control"
+> +#define ACK                    "/tmp/ack"
+> +pthread_t reader_thread;
+> +struct child_process *cmd;
+> +struct perf_stat_config *stat_config;
 
-Do we really need two places to define 'int err' or might it be possible
-to have one instance defined at function scope?
+static ?
+
+> +
+> +static int get_perf_record_args(const char **record_argv)
+> +{
+> +       int i =3D 0;
+> +       struct tpebs_retire_lat *e;
+> +
+> +       pr_debug("Prepare perf record for retire_latency\n");
+> +
+> +       record_argv[i++] =3D "perf";
+> +       record_argv[i++] =3D "record";
+> +       record_argv[i++] =3D "-W";
+> +       record_argv[i++] =3D "--synth=3Dno";
+
+Unfortunately this still synthesizes MMAP records for the kernel
+and modules.  As we don't care about them and just want to
+minimize the overhead at the beginning, we can add
+"--tail-synthesize" too.
+
+
+> +       record_argv[i++] =3D "--control=3Dfifo:/tmp/control,/tmp/ack";
+
+This hard-coded path won't work well when more than one users
+want to run the perf command at the same time.
 
 Thanks,
+Namhyung
 
-        tglx
+> +
+> +       if (stat_config->user_requested_cpu_list) {
+> +               record_argv[i++] =3D "-C";
+> +               record_argv[i++] =3D stat_config->user_requested_cpu_list=
+;
+> +       }
+> +
+> +       if (stat_config->system_wide)
+> +               record_argv[i++] =3D "-a";
+> +
+> +       if (!stat_config->system_wide && !stat_config->user_requested_cpu=
+_list) {
+> +               pr_err("Require -a or -C option to run sampling.\n");
+> +               return -ECANCELED;
+> +       }
+> +
+> +       list_for_each_entry(e, &stat_config->tpebs_results, nd) {
+> +               record_argv[i++] =3D "-e";
+> +               record_argv[i++] =3D e->name;
+> +       }
+> +
+> +       record_argv[i++] =3D "-o";
+> +       record_argv[i++] =3D PERF_DATA;
+> +
+> +       return 0;
+> +}
+> +
+>
 
