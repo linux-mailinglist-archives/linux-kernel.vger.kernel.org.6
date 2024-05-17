@@ -1,115 +1,132 @@
-Return-Path: <linux-kernel+bounces-182625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 935EC8C8D77
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 22:53:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 605F48C8D79
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 22:54:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C01BD1C2242E
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 20:53:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91F571C221BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 20:54:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5EDB12FB10;
-	Fri, 17 May 2024 20:53:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF200140363;
+	Fri, 17 May 2024 20:54:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AsHJ+WWG";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Q+mrmRFC"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2ERloO8o"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF6BF3C489
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 20:53:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84E191A2C1E
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 20:54:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715979201; cv=none; b=ZL4xERblpX/49nzRwY2OFwe5Ws4TpNG5x9nvkoskNOOJT9WtPU7FK7ZlSVYgv5hN5HQHN6Gy/XE5wvubdU4/MUj2bY4NDapHoqg6Qzb8XYP4IN8w8Gblq5Uac1dlzjGg8BNCkm3pVH77kMwIK2equWpPZ1Nk8GfI7k3G1gZEyJ0=
+	t=1715979244; cv=none; b=pJsACbVvT5/R7z2immAVWRIFhapK+mL6c91YOX1awWu7mKPLh9J1fN0lNssdtTw2sQDOe4OPsUlQeiC89yqkIf4AYorlU28rxIh8evDVV/pJBV5QnwIoJq8jn01lVV802Ec7zyIURsxnpOpgSKd5s1MqrKbYr38AkIumLO0+XHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715979201; c=relaxed/simple;
-	bh=tK9pBSIz6Z4aG/7wfoByRED2a8aC5VOKanqMUCImif4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=sZ6P1cStgOWGruDQsOUQJJ1y8sU1K4K8EKhcrjWCya9aOfXCtbZw2bWZ8bfubiT2aljobvSlh1iG5dt6ZGu5MK2k+nT4HUdKrrX4Ce6quBH38qgTEN/nr35eE9ZaSECpsnMDNRDHLc6IbB8HxB9a5DMaop54pHk6ifWZ7oelLfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AsHJ+WWG; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Q+mrmRFC; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1715979198;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+qZPdcMmSdZgJZSuN/e5pS3lfwWTp+KrsaCYNQeGP9E=;
-	b=AsHJ+WWGU1BYBKW00N2nqdTHD76QGP5j5UvB3e9vfbLzHvmfaYtBm/esPGUrWUbJSMmSAH
-	8td0NYONmdzabawHauF5UjBpnWARQf6UKKN53FyJ/N+M4a8TLdKxcFJh+EdPh3t/6kLk8G
-	CmLkw4G9Zip/O0e1vOFUju0ZNb6/Ap88dJxVJWoybyZPTa0aod0KqhfRxwGnIDV+zG9Rrm
-	VICjP2euQHpsaaaERlN3iuTec9XS0JdHQsVoHPNYHButqAX6uhsPVkfyU+h90Bwyx5+49q
-	RppMma5dcWlxMdMyeXM7yYSOo82Ks2KnVAZBo6XuyX7lkE8OnPKmNJO8zAqxEQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1715979198;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+qZPdcMmSdZgJZSuN/e5pS3lfwWTp+KrsaCYNQeGP9E=;
-	b=Q+mrmRFC1dKcN11RbggtjjRhForM0Fm4nnWUZIhtXqM0lIgx6nFoGaxhrdArfvM3ZYMMaO
-	JqACZN99mn6D9ZDA==
-To: "Luck, Tony" <tony.luck@intel.com>, Borislav Petkov <bp@alien8.de>
-Cc: Ingo Molnar <mingo@redhat.com>, Dave
- Hansen <dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>, "H.
- Peter Anvin" <hpa@zytor.com>, "Peter Zijlstra (Intel)"
- <peterz@infradead.org>, Uros Bizjak <ubizjak@gmail.com>, "Edgecombe, Rick
- P" <rick.p.edgecombe@intel.com>, Arnd Bergmann <arnd@arndb.de>, Mateusz
- Guzik <mjguzik@gmail.com>, Thomas Renninger <trenn@suse.de>, Greg
- Kroah-Hartman <gregkh@suse.de>, Andi Kleen <ak@linux.intel.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "patches@lists.linux.dev" <patches@lists.linux.dev>
-Subject: RE: [PATCH v3] x86/cpu: Fix x86_match_cpu() to match just
- X86_VENDOR_INTEL
-In-Reply-To: <SJ1PR11MB608353ACE099975A02532C6FFCEE2@SJ1PR11MB6083.namprd11.prod.outlook.com>
-References: <20240517172134.7255-1-tony.luck@intel.com>
- <20240517173811.GFZkeWAzKjYtEMwe1e@fat_crate.local>
- <SJ1PR11MB608386716D1DA533791DE7A2FCEE2@SJ1PR11MB6083.namprd11.prod.outlook.com>
- <20240517175324.GGZkeZlNgjGxwfumLu@fat_crate.local>
- <SJ1PR11MB608353ACE099975A02532C6FFCEE2@SJ1PR11MB6083.namprd11.prod.outlook.com>
-Date: Fri, 17 May 2024 22:53:17 +0200
-Message-ID: <87bk54jh36.ffs@tglx>
+	s=arc-20240116; t=1715979244; c=relaxed/simple;
+	bh=vn13dLP5pRrsDv4NOdbcqGoQN2bmYpHdTGHpP55EB4g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WgEIBhm7ihwFzGGgHu66DWD1smbBIzdrKm2IoW4Pl80vnJqVg+jSfb9BYIeeQ7AUfjMdC+POT3iIcG59seE6NzS7Wm8u3o6PJ2SptNgF51O7/EXgRo2bUlr61hWR1VBvejC5+B4DJHVi65dz415g7rLT+czQMXHsjsfc1AWnG4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2ERloO8o; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-572f6c56cdaso4905a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 13:54:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715979241; x=1716584041; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vn13dLP5pRrsDv4NOdbcqGoQN2bmYpHdTGHpP55EB4g=;
+        b=2ERloO8odOMloUw8cFRMxlB643roWDB8ViPC+u+m6wveygHhji9yYKsynG1Z0tmHG2
+         vRD8jii3rPmUfYQztBKv5+oCWywvYAs8xizFq1Emu3142DqU0p3hQZ7+gY48ejgxZ9Q5
+         jEeBUyy9oEtteJq26yFJPXjGdfVRJF19+FhvhyARUB4ro65VGLq0P0E6N5rTbkzcKcal
+         XQv6/zsFMVEbIfdyMOYLHPznBDIi+vTI+mJbZLzJWcMbtbBveo6JPiwGYV4B/0qeyJlA
+         KbgaNlp5cadRa1ejK/OAnxTHwSsiucOnr7lfWgxQJv5oQTKwYL7Q9p9qcuYJE7Qg1Xvu
+         uDYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715979241; x=1716584041;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vn13dLP5pRrsDv4NOdbcqGoQN2bmYpHdTGHpP55EB4g=;
+        b=mTVA7X5TBIZrD85N2Xe06MjFf/5KVziiq/wWd/sMpXWaYECu3PlclIpsVVIFjWXP9R
+         6A1dIFVE54IxQJaavJ3R4pf8n4QM33cOqemTmIhVKvtf/QJeo8lU0ETH1wlWh5hmV1xG
+         P0qNxWmJR9O4EnBWSG/DlFPpcVrvfsC7x9sjW1FwTEvTDgsWTaXCtQPwLGcRnjkhrc4a
+         wwjIaQF77IoyPH3B/iWqeY7aV6IcHsW8tylw9rwVvrYUMf7WWvNom5x6jfE6kAcs9YJk
+         ggohdS31b43HMGlG7H9E41wvXaX1ly/TTPynqb6f/HfgDeuI+8KaRe9hfTs66rJyZp59
+         cfYA==
+X-Forwarded-Encrypted: i=1; AJvYcCX/owGKqF6awzyRWMrZiuZ/U2ommtNv8cRyh70vv+0w8DN5qbluJTriOJeLH/k8QpmmMLsBySmPXajAhWH7/4nvp7Z5pJRaVXyq8vn7
+X-Gm-Message-State: AOJu0YzniOjqzBaBC1M2clYiJQPSetykJQyGWko5C0NVTPHfsjNcHZZA
+	lp+6E7q5XTPpz5BqDNjHwNtscxVpRLrSzibkH+T88j9lfaxhMO+vbseLpetExfJ9/+AH4RwBZdh
+	BSXdxjxLsnWGTTlbwRur7QNVDIaYNFSuTjz2J
+X-Google-Smtp-Source: AGHT+IFRAIfV54+Aa1LbyF88d23hN+YT1t2sexWDi9c3fyTst75D5FRNvAf6sgXSn3IVxUNlK5yurWk/GWDFHEMqw/c=
+X-Received: by 2002:a05:6402:2158:b0:573:438c:778d with SMTP id
+ 4fb4d7f45d1cf-5752c3f15c3mr3670a12.1.1715979239492; Fri, 17 May 2024 13:53:59
+ -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20240517171532.748684-1-devarsht@ti.com> <20240517173607.800549-1-devarsht@ti.com>
+ <Zke6o3HYnUrgtD0K@smile.fi.intel.com>
+In-Reply-To: <Zke6o3HYnUrgtD0K@smile.fi.intel.com>
+From: Daniel Latypov <dlatypov@google.com>
+Date: Fri, 17 May 2024 13:53:47 -0700
+Message-ID: <CAGS_qxpCM=Aw1J_EVQPZv_nDy0zCp6JqxfQk5mGkV+5iCe1OZA@mail.gmail.com>
+Subject: Re: [PATCH v8 07/10] lib: add basic KUnit test for lib/math
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Devarsh Thakkar <devarsht@ti.com>, mchehab@kernel.org, hverkuil-cisco@xs4all.nl, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	benjamin.gaignard@collabora.com, sebastian.fricke@collabora.com, 
+	akpm@linux-foundation.org, gregkh@linuxfoundation.org, adobriyan@gmail.com, 
+	jani.nikula@intel.com, p.zabel@pengutronix.de, airlied@gmail.com, 
+	daniel@ffwll.ch, dri-devel@lists.freedesktop.org, 
+	laurent.pinchart@ideasonboard.com, praneeth@ti.com, nm@ti.com, 
+	vigneshr@ti.com, a-bhatia1@ti.com, j-luthra@ti.com, b-brnich@ti.com, 
+	detheridge@ti.com, p-mantena@ti.com, vijayp@ti.com, andrzej.p@collabora.com, 
+	nicolas@ndufresne.ca, davidgow@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 17 2024 at 18:13, Luck, Tony wrote:
->>> 	for (m = match; m->flags & X86_CPU_ID_FLAG_ENTRY_VALID; m++) {
->>
->> Yeah, makes sense at a first glance.
->>
->> This'll keep the terminators "{}" unchanged so that we don't have to
->> touch all those gazillion places and it'll explicitly state that an
->> entry is valid or not.
+On Fri, May 17, 2024 at 1:14=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+> > [devarsht: Rebase to 6.9 and change license to GPL]
 >
->> But the devil's in the detail, as always...
+> I'm not sure that you may change license. It needs the author's confirmat=
+ion.
+
+Checking, this is referring to the MODULE_LICENSE, which used to be
+MODULE_LICENSE("GPL v2");
+
+and is now
+MODULE_LICENSE("GPL");
+
+If checkpatch is suggesting that now, then changing it sounds good to me.
+
 >
-> Yes. One detail is that there are places not using the X86_MATCH
-> macros.
-
-Groan.
-
-> E.g. in arch/x86/crypto/aesni-intel_glue.c there is:
+> > ---
+> > Changes since v6:
+> > * Rebase to linux-next, change license to GPL as suggested by checkpatc=
+h.
 >
-> static const struct x86_cpu_id zmm_exclusion_list[] = {
->         { .vendor = X86_VENDOR_INTEL, .family = 6, .model = INTEL_FAM6_SKYLAKE_X },
-> 	...
-> };
+> Note, checkpatch.pl is not false positives free. Be careful
+> with what it suggests.
 >
-> This one (and likely most/all others) will be fixed by the remaining
-> patches in my new families[1] series.
+> > +#include <kunit/test.h>
+> > +#include <linux/gcd.h>
+>
+> > +#include <linux/kernel.h>
+>
+> Do you know why this header is included?
 
-AFAICT, that's the only one.
+I think I had put it in the original before a lot of the work you did
+to split things out of kernel.h.
+I haven't had time to look apply this patch series locally yet, but
+I'd be pretty sure we can remove it without anything breaking.
 
-# git grep -C5 'struct x86_cpu_id' | grep '\.vendor' | awk '{ print $1; }' | uniq
-arch/x86/crypto/aesni-intel_glue.c-
-
-
-
+Thanks,
+Daniel
 
