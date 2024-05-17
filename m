@@ -1,112 +1,128 @@
-Return-Path: <linux-kernel+bounces-182617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CFC18C8D5C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 22:41:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D07828C8D5D
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 22:41:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3C411F23BDB
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 20:41:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B2F3284694
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 20:41:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8DE713DDDB;
-	Fri, 17 May 2024 20:41:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C08741C6E;
+	Fri, 17 May 2024 20:41:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mH+oa/U+"
-Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="n0E5/zDO";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="55g4QL0b"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A24671E89C
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 20:41:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C3F51CAA9
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 20:41:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715978475; cv=none; b=A2foJ051Qv3xzM/rjCDijb9Ta3Qw+vbwMijc1yk4PJdEcx18YPvnWyGlXT7qZY6HXb8jGx/tXqwp8I5z8qiJSyVYczbmwzhrP1+g5r3gzcwM6uFRhv2JH+XrIPxeXdCPj3nxbEI9hw+l7aGL8XhzvTg53YRTDOwXuV5CgoLT9AU=
+	t=1715978485; cv=none; b=hNAnoaN2zY2RGUnhu6Pw3GWG7KeSpIxcsn2XpQ1N+fMx1yZY9W6ss+xB8CTlqr22lB4++Mo8K6m2OhCxwrcsfTZ+y+usrZr3tFIxHRXGQhVVN1kSqsKwDKHC4kVftGdpYYdKkJyg5ELAs+z2RSd7K/ZVdP/dxLS1fXhs0RHO0Dw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715978475; c=relaxed/simple;
-	bh=1zR4oNwvnA8BkAHQhbNCPpvycGJsy3kDip8fLJUMvs0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FNGcKT5qiiZ3U8S8Xynt9Zb/UpOGO/1m/EGOSKEndqhpOwMYu1oRsvdts4o3ThexxF8zAA0LhHBpjgrT+LalhXNGiNAlPCEgNkYqnqalZGPsqMwhgt2Vv1Jt5xJ5x4T5+qHP9m8ZhWXR6ekZHn6KUbP/Hk5bLOQp5P2XJnL34PE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mH+oa/U+; arc=none smtp.client-ip=209.85.222.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-7fbbb2cf3c1so414254241.3
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 13:41:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715978472; x=1716583272; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R30tVZwDgV0/d0XFfhvgj7VuYYCEcxfHEIQCyiSom9Q=;
-        b=mH+oa/U+pZw9M6PdpQ0Ikf9E0v+oC4j3gECWwxWWr9cRfLqWdCjLZ3Tq/F9vO3H8AZ
-         RJX2aEPhAz6oT7DMFisz6xSAKeosAs1p/h5fj9zJMg3WmlrbLt0bEkQiS6Cwk+pp7yeq
-         mFkspH4SPjy0Xt/0azA07J7te/vpitJsbEUFmnliPiiRzb1cmVR6eVrcuC0HhD5tL48u
-         fPOOzWJrBCkTZlYbsl+TdPT937jCX3bVLOj/c0Agmd4k1GWtp3+lwuvPRm9vfLtMq/mC
-         DLReSp6iscWNBwxP8tz6NRgSreGqkrovduvwEGc9qfvIJ3b6q/PWf367QqFqPfWHGWdY
-         D2iQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715978472; x=1716583272;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=R30tVZwDgV0/d0XFfhvgj7VuYYCEcxfHEIQCyiSom9Q=;
-        b=vh6S66QpLl2+LzHA4bMUE53LjePKHfIPZZylsykxzmUJrKegDBo9tCsIdR+EPW8A/n
-         5vbIisBQa779sQc2fClt06KXZ/pcx6I+jA0FvX5FjrAfc7O/iQynuCkAT0YYnEZifneJ
-         RaKKTN4G/1diTZNuALBkha0Qx7e2XjNPIyxLpBpFVzlV4W5gbwlyD48KDBALu5yPuP3C
-         YSsVdX1d2y7DLwqOC8urhuBhq/0Liga3CDTpWbBMHcbmTCcUVKn+8Q8u6oPVFXjj0oir
-         /DrBBjTpMEI+KnbHBp+094Sy3t+PdRDs39Kd30qF7nZsMEdQ0d8UtxwDgZYmXYc8+97O
-         xuDw==
-X-Forwarded-Encrypted: i=1; AJvYcCWGPPEpRCuVXSdVmbEI0pnK1kFzf2nsZ/wcgJTPDCPpWQFEjvB5bKgSZR7+JQZXGm8aPic39txqVLM8sBfA68lqWAZqQh2OHATr0bZP
-X-Gm-Message-State: AOJu0YwIMnwMpsz0ivaJkriW89VeMZHMlsOVGSoWgzS7N5Wk1YGC8AgD
-	+O1Nbp2qxsJWi9EDpBYBmK/8F+UEN7pIXzWHD4934QWTTPzs+EcvLrsa8JGsrDU4EIjMOs19lju
-	EMTmFJLxl+7LWKSB2a6wKC9G8yUGRIm7ZSYE8
-X-Google-Smtp-Source: AGHT+IHmfBLbTvuWZDrq9Mhu7TtpE/aaISjoWzyeUMYFC/bgu3kwTmD10Cx24kOB+yYtazT4c5jmMdY6e5JklVkmxy8=
-X-Received: by 2002:a05:6102:390b:b0:486:2c0:1d86 with SMTP id
- ada2fe7eead31-48602c02a3cmr6067630137.7.1715978472478; Fri, 17 May 2024
- 13:41:12 -0700 (PDT)
+	s=arc-20240116; t=1715978485; c=relaxed/simple;
+	bh=zyOuYSC78p7yIHSIK3YPMOawrAe8CDN7YBWgxS3A4DQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=nqhASKkJkzxqMicawa0CmLJJAbfK6PDhwoekNth3mG0CzaKrAEWH1R0wJ53/NbN7bSR1It/OFBS4qAG58Gf63EeDZU3eGxetSpRfBo9T4puFNcvvtfimKHLzgcc1TuTu7BWtYCh2gGyoArUqWynL+cFydzkmJ2jKHhVXwCwWDT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=n0E5/zDO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=55g4QL0b; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1715978482;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QZ4h1wQmVnSiPurtyO10mrFNnm7uledEHoSaoAVavPw=;
+	b=n0E5/zDOzUr/2cjZmyqgrTpcWoh1DlfH4ji1W+cmuZgXmfqW95WmnY+F6sEDjnrkfFbyte
+	c+ZxJJ7/u7RPWRShl81Wy8uLGeB+FswNIj5w/OYC3rW4p0FuFQ8aj4Gq9yUBgw0qGDmOCw
+	5aPzMSXxziu9kRh2W1LI/AIBkn/cmvUtLmM4RYFPnd05GeZFd1ou6uVf0SkKReFoL0YzVZ
+	9W+LlP3OWNQK/XfLt6IFvpwFd37rGSAIvTDUhUEWaCnpWqJR8nShglK/nFphstG+U2YCPv
+	JN0XxScEjqEv9YPT7oyoI2EbwGJMCbfoKGfzHXw5tOKZWAkw5lOJIA9twvIr2g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1715978482;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QZ4h1wQmVnSiPurtyO10mrFNnm7uledEHoSaoAVavPw=;
+	b=55g4QL0bLJxk3dZjc4ExSoZPUHzrPkGPNSdsBkZjhanf8L8la2xMotYhnf58itwaB0iUEf
+	hwXf/NpJjRgo2/BA==
+To: "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@alien8.de>, Tony
+ Luck <tony.luck@intel.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Dave Hansen
+ <dave.hansen@linux.intel.com>, x86@kernel.org, "Peter Zijlstra (Intel)"
+ <peterz@infradead.org>, Uros Bizjak <ubizjak@gmail.com>, Rick Edgecombe
+ <rick.p.edgecombe@intel.com>, Arnd Bergmann <arnd@arndb.de>, Mateusz Guzik
+ <mjguzik@gmail.com>, Thomas Renninger <trenn@suse.de>, Greg Kroah-Hartman
+ <gregkh@suse.de>, Andi Kleen <ak@linux.intel.com>,
+ linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Subject: Re: [PATCH v2] x86/cpu: Fix x86_match_cpu() to match just
+ X86_VENDOR_INTEL
+In-Reply-To: <863D0F06-1217-4C94-B2CA-816FC4ABB103@zytor.com>
+References: <20240516162925.79245-1-tony.luck@intel.com>
+ <20240517144312.GBZkdtAOuJZCvxhFbJ@fat_crate.local>
+ <863D0F06-1217-4C94-B2CA-816FC4ABB103@zytor.com>
+Date: Fri, 17 May 2024 22:41:21 +0200
+Message-ID: <87h6ewjhn2.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240517-b4-sio-read_write-v3-1-f180df0a19e6@google.com> <ZkavMgtP2IQFGCoQ@casper.infradead.org>
-In-Reply-To: <ZkavMgtP2IQFGCoQ@casper.infradead.org>
-From: Justin Stitt <justinstitt@google.com>
-Date: Fri, 17 May 2024 13:40:59 -0700
-Message-ID: <CAFhGd8pQKE_uak2gqUXjbQy4LCGoJqVD2XCZrOC606u-tzS0mg@mail.gmail.com>
-Subject: Re: [PATCH v3] fs: fix unintentional arithmetic wraparound in offset calculation
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Nathan Chancellor <nathan@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Bill Wendling <morbo@google.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	llvm@lists.linux.dev, linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-Hi,
-
-On Thu, May 16, 2024 at 6:13=E2=80=AFPM Matthew Wilcox <willy@infradead.org=
-> wrote:
+On Fri, May 17 2024 at 10:35, H. Peter Anvin wrote:
+> On May 17, 2024 7:43:12 AM PDT, Borislav Petkov <bp@alien8.de> wrote:
+>>And then do:
+>>
+>>struct x86_cpu_id {
+>>        __u16 vendor;
+>>        __u16 family;
+>>        __u16 model;
+>>        __u16 steppings;
+>>        __u16 feature;  /* bit index */
+>>	__u16 flags;
+>>        kernel_ulong_t driver_data;
+>>};
+>>
+>>#define X86_CPU_ID_FLAG_VENDOR_VALID		BIT(0)
+>>
+>>and then have the macros in arch/x86/include/asm/cpu_device_id.h set
+>>that valid flag and then have x86_match_cpu() check it.
+>>
+>>Then you don't risk a userspace breakage and that x86_match_cpu() crap
+>>thing is fixed.
 >
-> On Fri, May 17, 2024 at 12:29:06AM +0000, Justin Stitt wrote:
-> > When running syzkaller with the newly reintroduced signed integer
-> > overflow sanitizer we encounter this report:
->
-> why do you keep saying it's unintentional?  it's clearly intended.
+> I'm confused. Why not simply use say -1 for wildcard vendor match, -2
+> for no vendor ID (no CPUID or other known probing mechanism) and -3
+> for unrecognized vendor (vendor detectable but not known.)
 
-Right, "unintentional" is a poor choice of phrasing. I actually mean:
-"overflow-checking arithmetic was done in a way that intrinsically
-causes an overflow (wraparound)".
+This has nothing to do with wildcards.
 
-I can clearly see the intent of the code; there's even comments saying
-exactly what it does: "/* Ensure offsets don't wrap. */"... So the
-thinking is: let's use the overflow-checking helpers so we can get a
-good signal through the sanitizers on _real_ bugs, especially in spots
-with no bounds handling.
+The problem at hand is about loop termination. Making that explicit by
+having a valid bit in the existing struct hole is trivial, straight
+forward and just works obviously correct.
 
+> I *hate* these strings with the passion of a thousand suns: they are a
+> classic case of how just blindly converting binary information to hex
+> adds absolutely no value, and often makes the result worse than what
+> one started with. And yes, I complained about that when they first
+> went in as a classic case of exposing what was always simply intended
+> as a kernel internal interface to user space.
 
-Thanks
-Justin
+You obviously did not complain loud enough :)
+
+> This is particularly pathetic as there already is a canonical string
+> representation of the vendor ID!
+
+I agree, but that train has left the station long ago,
+
+Thanks,
+
+        tglx
 
