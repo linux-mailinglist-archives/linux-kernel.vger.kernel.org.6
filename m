@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-182645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 876728C8DC8
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 23:38:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADA848C8DC9
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 23:38:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B284EB2340B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 21:38:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3F501C21410
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 21:38:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FA0F1420C4;
-	Fri, 17 May 2024 21:37:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 317E31422AE;
+	Fri, 17 May 2024 21:37:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="eiyZ9J5U"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VxA4tp/K"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6366A1411FE
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 21:37:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28F7C1420B9
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 21:37:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715981860; cv=none; b=KaYtdPoEqn/1d4IkVEPnUT+SEk9CqjdzRBrfXvg2ACEn49C0tovfWRfDevJItASDbAUadyIFE27+yWCA9ozE+unvpDUdzmPHwbqREpMVADwHn9qSGn3zHAx++/+/ZtRt/vhhzFbMRuey2SlXYdnhIJeT954E/eA7WmsuND3A1Ew=
+	t=1715981862; cv=none; b=sR9I9DVX4ogER7uNANx4doe1Ce9363Ijze6kE8dkxmuLHDXtS9w5DWBFRZWZVvC2fi7OXsWbnA8uTwqDuyn7jRH08qTCzK5Pmoj0dIaoQXH3UjNmf6WmeVg6lFHEnmZDnz+eKaAAlnEVK3e7d34B9jib9ysZnZy5Ll6TbN80+70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715981860; c=relaxed/simple;
-	bh=aVpIH2UqSqo9VK8FTySoOzXmbprOkeQDUcwtLW84ErY=;
+	s=arc-20240116; t=1715981862; c=relaxed/simple;
+	bh=FlKZAl7IvkiENnscHBKvzQjnIjGrDUrh/2f8yIWJZDE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QRUIqyS5NkL6aU9kmuYVaZ6bOwn/hSX8ZyMH66vyzjqy+rGb1sf00UsaDt5jYDVCJf5EtrlbRJ2PY0pdm2YxWc+H5z7uc6RaZevyn+N0GbDOmO0PHHjdxxxXQ8shG91QnWLxpiMtio/jdo31LOo/X2vrRhWGa1r/EM8JtRN1gvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=eiyZ9J5U; arc=none smtp.client-ip=209.85.214.182
+	 MIME-Version; b=PxjGEBvv+9BZB98TFGFWJjV0i0z9onKSZ1Cx6bE75QjSrN/XuEsnCJdjwFQEVQ30rLFczrbeUEyBAM+L2WFGs6cNwpYlitCe5rv39l9tv+FHawj7NggtxU1H9r4NDUlaCXDHR/hmz/Ilzkf+4CrGInscS1p5dK/2ARWno++Y72M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=VxA4tp/K; arc=none smtp.client-ip=209.85.215.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1edfc57ac0cso21853035ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 14:37:39 -0700 (PDT)
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-5f80aa2d4a3so136185a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 14:37:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1715981859; x=1716586659; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1715981860; x=1716586660; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=otBGDKVA9IXvnt4HBmF8aixiY7lsB5c27hifCvrdcgw=;
-        b=eiyZ9J5UfV5CGo2CWc0DjXlttxnuSWZLKob53LoPoynb1dRCUHN9s/47dZrC/CHCr5
-         e5laxk8piybK8CEK7lc43MCML9Xfj8iQETPyAIv5ul17JL2yjMhLI1VX16IRe+l/745S
-         Rx2YZ5GtY0Gludni/JyvVDUcgjhmb5VrgGFh0=
+        bh=m6V1DTOaoA4qH0IIompQM1ktLyB9pQcF5OQ8P3nV8rs=;
+        b=VxA4tp/KUIPuT3ZX5a+kL0+OZXwEOVWKtMW2jh9274XhWV+z+WDOVwXSP13p0y8ZOt
+         fbuMQdmZIyI9Ao6IVobmuGCLD4EXtWhrs8rDscSKETQEasUgZ0kG7robXtEi+OTlPCFm
+         ZsfCxdaxRrzpLJFKEITmeVLKzhuF9EQEXv8/Q=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715981859; x=1716586659;
+        d=1e100.net; s=20230601; t=1715981860; x=1716586660;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=otBGDKVA9IXvnt4HBmF8aixiY7lsB5c27hifCvrdcgw=;
-        b=LxAAYNkDCIMixjh3vx6znfDv1xTRpNBwd56Hcol9kKG1b5OyGm0fvRNb0vgYxUcJKy
-         SzLDt1P679PysG27HLo4+LIdjenZ1xt+daMkF7dG0lkdNtGzhbxnX8CWekaxayQe8JbZ
-         VkR0z9OfLu2TpL8SMArlxzUv8291phPFy+glzBchq7CFh1b/OoDDw3sDqK2O1z+zWjJ1
-         iTCfvCmevlfoF1SG12H5j/K8CMB24URU7E5wtOPZqaMD8LgFD7gBgp+rDYXrPzHldqw8
-         CzA4H9heu/fXqXPCVuOKxHPuZNZUHz9n+QHrGdCJpLSFs+Ao+05zy4qIsAM54p7wuRs9
-         zGUw==
-X-Forwarded-Encrypted: i=1; AJvYcCWHFe5S9nmqtLxjdQaoUGDN6yamgPXBvJcY/J8CurP4YA2VXoj+jw4Dwl0gsOea/2axX9p68cfZ5m7yi5BOsqTz6VOFLWw/WFLV76lt
-X-Gm-Message-State: AOJu0YyuGMOlNtZnUG0uoaHp8zPuNxSW6PbB66sopp3Ui94ColBa4dcl
-	C+6/e1pNiO8aIGc1wmLhtrywEdvU6gESftxV9p2z9t2wXfXblWE+r8kB2/7l3w==
-X-Google-Smtp-Source: AGHT+IG9oTcMCg7rkDReYhIwGehOkT+PViM2X4yuDk+pejmeAywc0nLdIrwyw2PSTgQN8mmuXIRQ6g==
-X-Received: by 2002:a05:6a00:1953:b0:6e7:32a0:806a with SMTP id d2e1a72fcca58-6f4e039bc12mr23778076b3a.28.1715981858605;
-        Fri, 17 May 2024 14:37:38 -0700 (PDT)
+        bh=m6V1DTOaoA4qH0IIompQM1ktLyB9pQcF5OQ8P3nV8rs=;
+        b=DVyi79xtksg7pLdoJylAmztqPGmAM5c6L1Fb3aEvx9FerrHZmi6oCjPZeY1Zzmx63L
+         2XL517KQrRQU/l4O/yhJFopRo55y60Bk4nGVsFX0f6VlrMY0LYVs9fgRwwWa7E3u5nU2
+         SDQegra+vm1mu6KNr3wtvCTIvtQojAtAWCZoi/EvrCTX/ZZHHviwghi8GgZJIjMHrscV
+         lDr4/Lumii9Mk5ZFmQjNSdi7le2nfqvCY31UQ8hjIlW5YsiPUvcNiG3ssokV+rG5XrCw
+         6THYtzjT6PXFrtXnM/VkctroZ3/0wrhZOgQ5N7c+1RdKOxlFao4k3iIOTx5TDgfoTJjW
+         hAVw==
+X-Forwarded-Encrypted: i=1; AJvYcCWO7sUIu/9l2EpKNpWeg0S+NgKmiXaQHXNIDvhbgYbfWokLp6Rymxx5kWNu+oFbk6Ld40R2toDcHmlhgMSpdOcrkU9KWcF+NaNWH0UD
+X-Gm-Message-State: AOJu0YzKXVI3jD5e99igF8iy+rCdbYK0VTxzZ9bMJdpzVTsonvPlbcpO
+	yP6v2jcnJjXARVJyU2h04bCzXU/IhLVrULO1MnrVZ3e+pV1o8/MrONfrL3xj1A==
+X-Google-Smtp-Source: AGHT+IHm5RdVFjZ89P0T1AzZMKaNsfexwf2EZJjaYa/Kewivy7mYMercZQ/c+BtdjQ/LoSpevWMT2w==
+X-Received: by 2002:a05:6a00:3996:b0:6ec:ceb4:49b8 with SMTP id d2e1a72fcca58-6f4e01ba036mr25987075b3a.0.1715981860345;
+        Fri, 17 May 2024 14:37:40 -0700 (PDT)
 Received: from dianders.sjc.corp.google.com ([2620:15c:9d:2:26de:b1dd:5:771c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2b2f8b3sm15168736b3a.211.2024.05.17.14.37.37
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2b2f8b3sm15168736b3a.211.2024.05.17.14.37.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 May 2024 14:37:38 -0700 (PDT)
+        Fri, 17 May 2024 14:37:39 -0700 (PDT)
 From: Douglas Anderson <dianders@chromium.org>
 To: Neil Armstrong <neil.armstrong@linaro.org>,
 	Jessica Zhang <quic_jesszhan@quicinc.com>,
@@ -70,17 +70,19 @@ To: Neil Armstrong <neil.armstrong@linaro.org>,
 Cc: Linus Walleij <linus.walleij@linaro.org>,
 	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
 	Douglas Anderson <dianders@chromium.org>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
 	Daniel Vetter <daniel@ffwll.ch>,
 	David Airlie <airlied@gmail.com>,
-	Jitao Shi <jitao.shi@mediatek.com>,
 	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	Maxime Ripard <mripard@kernel.org>,
+	Shuijing Li <shuijing.li@mediatek.com>,
 	Thomas Zimmermann <tzimmermann@suse.de>,
+	Xinlei Lee <xinlei.lee@mediatek.com>,
 	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/8] drm/panel: boe-tv101wum-nl6: If prepare fails, disable GPIO before regulators
-Date: Fri, 17 May 2024 14:36:37 -0700
-Message-ID: <20240517143643.2.Ieac346cd0f1606948ba39ceea06b55359fe972b6@changeid>
+Subject: [PATCH 3/8] drm/panel: boe-tv101wum-nl6: Check for errors on the NOP in prepare()
+Date: Fri, 17 May 2024 14:36:38 -0700
+Message-ID: <20240517143643.3.Ibffbaa5b4999ac0e55f43bf353144433b099d727@changeid>
 X-Mailer: git-send-email 2.45.0.rc1.225.g2a3ae87e7f-goog
 In-Reply-To: <20240517213712.3135166-1-dianders@chromium.org>
 References: <20240517213712.3135166-1-dianders@chromium.org>
@@ -92,36 +94,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The enable GPIO should clearly be set low before turning off
-regulators. That matches both the inverse order that things were
-enabled and also the order in unprepare().
+The mipi_dsi_dcs_nop() function returns an error but we weren't
+checking it in boe_panel_prepare(). Add a check. This is highly
+unlikely to matter in practice. If the NOP failed then likely later
+MIPI commands would fail too.
 
-Fixes: a869b9db7adf ("drm/panel: support for boe tv101wum-nl6 wuxga dsi video mode panel")
+Found by code inspection.
+
+Fixes: 812562b8d881 ("drm/panel: boe-tv101wum-nl6: Fine tune the panel power sequence")
 Signed-off-by: Douglas Anderson <dianders@chromium.org>
 ---
 
- drivers/gpu/drm/panel/panel-boe-tv101wum-nl6.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/panel/panel-boe-tv101wum-nl6.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/gpu/drm/panel/panel-boe-tv101wum-nl6.c b/drivers/gpu/drm/panel/panel-boe-tv101wum-nl6.c
-index 8e839a1749e4..028625d2d37d 100644
+index 028625d2d37d..f7beace455c3 100644
 --- a/drivers/gpu/drm/panel/panel-boe-tv101wum-nl6.c
 +++ b/drivers/gpu/drm/panel/panel-boe-tv101wum-nl6.c
-@@ -1475,13 +1475,13 @@ static int boe_panel_prepare(struct drm_panel *panel)
- 	return 0;
+@@ -1456,7 +1456,11 @@ static int boe_panel_prepare(struct drm_panel *panel)
+ 	usleep_range(10000, 11000);
  
- poweroff:
-+	gpiod_set_value(boe->enable_gpio, 0);
- 	regulator_disable(boe->avee);
- poweroffavdd:
- 	regulator_disable(boe->avdd);
- poweroff1v8:
- 	usleep_range(5000, 7000);
- 	regulator_disable(boe->pp1800);
--	gpiod_set_value(boe->enable_gpio, 0);
- 
- 	return ret;
- }
+ 	if (boe->desc->lp11_before_reset) {
+-		mipi_dsi_dcs_nop(boe->dsi);
++		ret = mipi_dsi_dcs_nop(boe->dsi);
++		if (ret < 0) {
++			dev_err(&boe->dsi->dev, "Failed to send NOP: %d\n", ret);
++			goto poweroff;
++		}
+ 		usleep_range(1000, 2000);
+ 	}
+ 	gpiod_set_value(boe->enable_gpio, 1);
 -- 
 2.45.0.rc1.225.g2a3ae87e7f-goog
 
