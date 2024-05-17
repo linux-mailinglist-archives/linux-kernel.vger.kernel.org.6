@@ -1,98 +1,128 @@
-Return-Path: <linux-kernel+bounces-182219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 488688C8838
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 16:41:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90E0E8C883E
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 16:42:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04428288843
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 14:41:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2861B1F252F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 14:42:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E1143219F;
-	Fri, 17 May 2024 14:41:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07B853BBDC;
+	Fri, 17 May 2024 14:42:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TUflN7Bx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kjGwxqiz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56F861863F;
-	Fri, 17 May 2024 14:41:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35AC6399;
+	Fri, 17 May 2024 14:42:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715956889; cv=none; b=DE3aYHZXCIbk6DzSqeR4SrQV777z+SUl34DLlyEQ0aJj5xCvooklI5T9Pndlo2Nk5LxFJCP+y5zNZHF7ROUbyk2Tciw3bWLgi+nLJpeYP6mFghb+qPCfwLQtnTv3Lx9OSTisEPXSZJ2TmLDU2wUBsP2l1Ea1Mor7cKXtrRwzG7Q=
+	t=1715956960; cv=none; b=Y5HY1uKDYV9554fQw0Txjkj5jAw4dZr5w5rANp3BejILai62atWoax9h/HIuGcbi1oXLDkR1jTFzPmxsDilMttz7YJBmsILPCs1MA6oBqFfeLQcArrdeuOPIGB3+KCkgy8AeWHcowmuWudzundc7Q4c7SutTc3i6gJ1XoI4vymk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715956889; c=relaxed/simple;
-	bh=76Nt0O2hctz5gqI5NrYMMVOVC+VAz16TUsv7w9gd1iY=;
+	s=arc-20240116; t=1715956960; c=relaxed/simple;
+	bh=jKRgN0QD9wRM4aUvZG8JXovQYD/wGll0Cdifvs5S1b8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cG2IbGolpebmiWWylJmt/QpYAfc/RHIgJuW/UhBV5q4PxLpnQckN9IkYawHL6nKez2kthSw7rGOwB8Rx/F82rl6tFJ3HAdYrqHUHER2cQQJqmmjnj8jgmu5Y14d3+D/UfVeJgDl4PPcN+NtJVCISKmqU2C9mlGMR2FAQ/mIJdJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TUflN7Bx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 376B1C2BD10;
-	Fri, 17 May 2024 14:41:26 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=sbqOsqSVWDXRP2vKxJfCKf7K5KCX9A9xO3ulGhSTDxw6Kcapng3LWiW6tCUvz0HssSOjMxoLuvrt07uTOebcJHiqA3P8wi7Ejix9tymgpu6jWEAPEMOyTxQwg4PEh3iD3VX1uHOhE0Fsnydse6tf+0RKi+E5f8ZthhYbhGbMhUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kjGwxqiz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F32D5C2BD10;
+	Fri, 17 May 2024 14:42:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715956888;
-	bh=76Nt0O2hctz5gqI5NrYMMVOVC+VAz16TUsv7w9gd1iY=;
+	s=k20201202; t=1715956959;
+	bh=jKRgN0QD9wRM4aUvZG8JXovQYD/wGll0Cdifvs5S1b8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TUflN7BxRMGJTVijHZpyqwKnd6B/W90RmJmUGRJmKbk2QeYjM7SjmPB+dKpVx5yNU
-	 RgPl/hZuI734O8eyUe2k8kB48/lWR3sgSFdbsByc8Lj1og86bmAA+DS9Jnu5parkpy
-	 8KnE93m8MmEhenEYZH3M0UclX5WnmR7pIGDCpMD4Z7UkB/4m/wg04Kz0KWp/2pxuMd
-	 ELG1wNnngskTUu9eKCGo6FxLyQzkjOIJfzP8vB8m/kDSq0ZJUEj37FaXRWTVMOLvQB
-	 FX/OiWMld1wx7c9ndnBsd5Ljy7pCtCO89nHz9Wz3RNvqKyTLSzmXZXMZwfBVUcyOzm
-	 wupiO3BAmEIUw==
-Date: Fri, 17 May 2024 15:41:24 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Udit Kumar <u-kumar1@ti.com>
-Cc: vigneshr@ti.com, nm@ti.com, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Kip Broadhurst <kbroadhurst@ti.com>
-Subject: Re: [PATCH] dt-bindings: net: dp8386x: Add MIT license along with
- GPL-2.0
-Message-ID: <20240517-fastball-stable-9332cae850ea@spud>
-References: <20240517104226.3395480-1-u-kumar1@ti.com>
- <20240517-poster-purplish-9b356ce30248@spud>
+	b=kjGwxqizbfMy/89nLYJd7BTwYgtKI+YKReedplRu+ebvikohESEJ4mNl/EVFV6PH1
+	 k/n35Tu7ytDaWdmUDDV1Q0ne99h0qszV0pEl0ZT+/Xh9OProXD2gN4QsqNEIZdI1Rw
+	 1K4zMSuS5Nt4j1LF+hBRqR1buTcgJ6HdEiBayh3vMPwDWhsI4K3xKxvVBCtAqCBb3B
+	 2nWhT0jF/nyqtiOJx+mWzL6Ha4ldnVgSj0JiecEVj1D8Dc+AoIhYR6LsV8i/PwXN1N
+	 YXdYXgo4YurdqCHEpfBRTszB+kULbJQtxh43prQkSSM4w9JHfvtj1yh55hxPqFFCAn
+	 dAyaXe/ts0v2g==
+Date: Fri, 17 May 2024 15:42:31 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Alvin =?utf-8?Q?=C5=A0ipraga?= <alvin@pqrs.dk>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Emil Svendsen <emas@bang-olufsen.dk>, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-sound@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	Alvin =?utf-8?Q?=C5=A0ipraga?= <alsi@bang-olufsen.dk>
+Subject: Re: [PATCH 02/13] regmap: add A2B support
+Message-ID: <49cd7b8e-d104-4136-bf7d-7eb45725c596@sirena.org.uk>
+References: <20240517-a2b-v1-0-b8647554c67b@bang-olufsen.dk>
+ <20240517-a2b-v1-2-b8647554c67b@bang-olufsen.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="SwZyRbd43sg29RgW"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Qt8EKyDk+1Qw4HPv"
 Content-Disposition: inline
-In-Reply-To: <20240517-poster-purplish-9b356ce30248@spud>
+In-Reply-To: <20240517-a2b-v1-2-b8647554c67b@bang-olufsen.dk>
+X-Cookie: Function reject.
 
 
---SwZyRbd43sg29RgW
-Content-Type: text/plain; charset=us-ascii
+--Qt8EKyDk+1Qw4HPv
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 17, 2024 at 03:39:20PM +0100, Conor Dooley wrote:
-> On Fri, May 17, 2024 at 04:12:26PM +0530, Udit Kumar wrote:
-> > Modify license to include dual licensing as GPL-2.0-only OR MIT
-> > license for TI specific phy header files. This allows for Linux
-> > kernel files to be used in other Operating System ecosystems
-> > such as Zephyr or FreeBSD.
->=20
-> What's wrong with BSD-2-Clause, why not use that?
+On Fri, May 17, 2024 at 02:58:00PM +0200, Alvin =C5=A0ipraga wrote:
 
-I cut myself off, I meant to say:
-What's wrong with BSD-2-Clause, the standard dual license for
-bindings, why not use that?
+> +static int regmap_a2b_write(void *context, const void *data, size_t coun=
+t)
+> +{
 
---SwZyRbd43sg29RgW
+> +	for (i =3D 0; i < count - 1; i++) {
+> +		ret =3D bus->ops->write(bus, node, reg + i, d[i + 1]);
+> +		if (ret)
+> +			return ret;
+> +	}
+
+Just force single_read and single_write (looks like you'll need to add
+the hook for the bus there).
+
+> +struct regmap *__devm_regmap_init_a2b_node(struct a2b_node *node,
+> +					   const struct regmap_config *config,
+> +					   struct lock_class_key *lock_key,
+> +					   const char *lock_name)
+> +{
+> +	return __devm_regmap_init(&node->dev, &regmap_a2b, node, config,
+> +				  lock_key, lock_name);
+> +}
+> +EXPORT_SYMBOL_GPL(__devm_regmap_init_a2b_node);
+
+Should there be validation of val_bits?
+
+--Qt8EKyDk+1Qw4HPv
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZkdslAAKCRB4tDGHoIJi
-0kTrAQDJ7y89owej/45s2YYuPVZOx3PEXF5YdiHU463IdepEaAEAkgZueywNtp2R
-mfeQk9vGdrOgG7SojmF/AuMPTL0j2Qk=
-=PCfe
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZHbNcACgkQJNaLcl1U
+h9DP5Af+OAUcNbSUZNsBiGMNoWWL9BqTN9x5hsblj8pit+bjIa6k4Un5NW4To/Tz
+lpxrs+5G210GiKB/Pce3ysC61iSyxxAEtYi+WxNbUTNgMXcEcxXlA7REku4GaqUB
+aBg6LevsX756RuU7lTJaIyYZigD0X5a8s1MOqFbRVsTI9cMRvDM/65Gxvp61+ea3
+IrLkn49TOwHAfk66W7il6diBi4ZLseiGII8I+i0wanPqNauRyXFN9l4pnZW4AtLt
+HI64kfng1cRujCp9NSDUwYoo5xabgTY1129pRNHsy+qr0alqiTt0GMabpNRqiAxl
+pqz9+CYAZjxgLgtP7zyeEuFFmao9wg==
+=hWRE
 -----END PGP SIGNATURE-----
 
---SwZyRbd43sg29RgW--
+--Qt8EKyDk+1Qw4HPv--
 
