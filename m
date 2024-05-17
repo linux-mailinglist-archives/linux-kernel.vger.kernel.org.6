@@ -1,160 +1,112 @@
-Return-Path: <linux-kernel+bounces-182690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BA968C8E82
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 01:33:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33F168C8E86
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 01:34:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B23CA1F21EEC
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 23:33:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4571281D0A
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 23:34:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CDC41411FF;
-	Fri, 17 May 2024 23:33:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A802E1419AA;
+	Fri, 17 May 2024 23:34:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tj/nsTyx"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="IlOm3EsP"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C383B43ACA;
-	Fri, 17 May 2024 23:33:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E71443ACA
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 23:34:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715988798; cv=none; b=XzEKZIvIFsh+l8DqJYSYTG4/mKfyg+QOCpiOuDw+n6RUDinWwKRVGa7xq+mvDkW/DbT9cmCwWtqLZjXafmbh0rG7O9Nn7zl0RTLTZLvP99RAOR0mFpM9JjbafPxrPlboPk6dpsnY6l0RnH8pMUrPI5sKcQM7MyE22dUsWnshOqI=
+	t=1715988852; cv=none; b=RwYG6zDTU1a+oheANByK14926UxMFz1i9eZQSVhWHbe3RxubUtmVKQpquF6jqLH1ZQ4STq2X6IVAcnKtUuHgTZEBcDguJLMrPOk548/7P9tDhhXg5EsJBIhl5HJCnUIs+8QRYcm6TXpf4tNdG0ns/PTj1ykKn2GrnhuTe0AmjjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715988798; c=relaxed/simple;
-	bh=6E7a1R54O4oY/Bv3V3I/b/LpPkVXPb2htFKqeLsOJQM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I2ABcNS0gSwfDlcQJPb8uKRkMYe+hZqbpM8L3+uW3bW8FSbsF/jSO8kU+lf1X8nGxpDTme7sbzRWlujCpbMsREtErcT2RVwpj4MIm8Ou+XC1opKB3xzPOdvOg7y366UeYvBUTfOoaAmSghSCRx6yC7DTsqJlmK2BmK9jfjVMas0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tj/nsTyx; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-34e0d47bd98so381704f8f.0;
-        Fri, 17 May 2024 16:33:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715988795; x=1716593595; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Qy5GA9CL6efAYNR6rsn4txm+1VlWlDb+jy2cujQvFME=;
-        b=Tj/nsTyxveSoWWPWDLqCKv2+DS2BfXuA2vE4wqi5f8ZS5Bv5MlxV+DMg7Sz5hf6oER
-         BUrr1+pdeAlVzfBE8wEwkJ0qJpEeNr6ITZFseLyvtVDSZ+g2lFaDv9CgLlygiZYwcD0s
-         1lMU9tlILG9ZYIbaslew0trKJBwn9KnU3Ek96Y4tmeXNoOFZJuQdtg3WvI0XPpBruqA6
-         vyraMQTltcRnEpyPD6YmQjoIOpNTvsX6XFXCG8EPsTybo9ovwLlgX0b2h+jIHWz2ozEf
-         2t55rRjJ/Q/QpE3Aaz7cdnPgdEPFhaYPpkhhDo/FFAFJrQiFKkWGeoMvtx4i6h5VIvjm
-         qWGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715988795; x=1716593595;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Qy5GA9CL6efAYNR6rsn4txm+1VlWlDb+jy2cujQvFME=;
-        b=rg7yButq8vrgGRwrF6dJVslORXE0jE3p76RNsE0UI4F/6s+GTLK9910U8FpU781q4K
-         68Atdni+VQfy+3JUI/cAv93SWSq4EZp04t4LaFWWRan06jxdS8i6SE93TaO7t/SCosb+
-         /hS1odgaM0o49duLH9zxKxn6VSxTXSOaWhFjpsrrY6MYeV2l3VxvrH2bQkxnMYxMZM1z
-         s/RCe1m8iQ6BfEEsiEj823Kjgoz0I2XIx3VCj5rzSHRO84Sq3ahNfxY1fyMpF+OFnHv3
-         iz0PQgE3FzBRKwXxCmIJahVgvnGOWXP+RglDLYzUIXR7br22jvoW9bbljdPNCvSpPUwZ
-         xisQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVkYutZ//M0P7saTdeepUkjNSyeu02aGiP2/c0Eb/+1f8hhctZId/Z3ci8hu/NHt8GC6y+F539YRaGWY4d1h5naJgSRFj62tDwrFLnL
-X-Gm-Message-State: AOJu0Yw3ER10ySlrIOlq8LHWRStmnE8xI0YZxPwkbbbUJz71Z7sW7d1y
-	IAnAL6oo57SGZjTQ3dcCAYRXO0KsEvAqEvC20hqllcDvPyvMtGxV16pUP1f7i2a4CgveovlXLY1
-	tJGuxAH78cPcjor6MkJpNFp/1R3A=
-X-Google-Smtp-Source: AGHT+IFkvtdpZQ7uzEvzJEF1GhJfoeLNWA35B9P6yCrzkpFHgHgdYb8Apw1NgA9K6XxflUZUV0/k/R3PENWBVmlX+kE=
-X-Received: by 2002:a05:6000:e50:b0:34a:6fac:6dab with SMTP id
- ffacd0b85a97d-354b8dfddc1mr333994f8f.12.1715988794866; Fri, 17 May 2024
- 16:33:14 -0700 (PDT)
+	s=arc-20240116; t=1715988852; c=relaxed/simple;
+	bh=8DPhNaqe/N6w9oI+xj9s51m1FI5ST+027Bbd814DH9M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CPy7oQZC3g3LXxPVGZPTY5cvqLmbkLAqOx3ETIzIi9H1lke1KbS5Ri3cVq6d7iWmU73/ZbAiG97cMypfbiUsRvSmAg2axAeYx05ZRAB2NgDs9STbS5z6qd0HBgpkR/Y4YQPBKSpgBZVK5vUCFn9OnCCcBcdXwBHnWMWYjXcAp9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=IlOm3EsP; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=tpXjH4wlI2gDEjHISCa0fJRzaI47j+Q15Jmn84/q5X8=; b=IlOm3EsPRkxGH6We
+	T38EbWVr44PtyzFKIMsFIiAedB9vaeWKKEwxUlQICYGUeuEu42b4qw+WJVdQVnVuBWo0rKDydqqe9
+	eQVGiPLf031INCWKiz5kXyCZabNAxJSGtqIkE0H/lhEkfnGnhoXjlCKjhTVq6TaJjH+e2QeCbueFN
+	ZqSCJ5HNZJ9WbCb+mWrEizT37PkhXIhFlHp7B1cAJ+Mlh1Vt77f+P6HsQzYI/sgZTwAGKn/jTlX3q
+	DA4efTeUoudxNrsEpxkS265YBGdJSQd6aO8eifez4vTJu4Zy1dtq09H5obggWcTZXU87HadEYpGI9
+	GURs83BmyfydDd01kQ==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1s875R-001ToB-1x;
+	Fri, 17 May 2024 23:34:05 +0000
+Date: Fri, 17 May 2024 23:34:05 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: andrzej.hajda@intel.com, neil.armstrong@linaro.org
+Cc: maarten.lankhorst@linux.intel.com, daniel@ffwll.ch,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/6] drm/bridge: analogix: remove unused struct
+ 'bridge_init'
+Message-ID: <ZkfpbdOu9m41S1b1@gallifrey>
+References: <20240517232427.230709-1-linux@treblig.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CABWYdi0ymezpYsQsPv7qzpx2fWuTkoD1-wG1eT-9x-TSREFrQg@mail.gmail.com>
-In-Reply-To: <CABWYdi0ymezpYsQsPv7qzpx2fWuTkoD1-wG1eT-9x-TSREFrQg@mail.gmail.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Fri, 17 May 2024 16:33:03 -0700
-Message-ID: <CAADnVQ+YXf=1iO3C7pBvV1vhfWDyko2pJzKDXv7i6fkzsBM0ig@mail.gmail.com>
-Subject: Re: bpftool does not print full names with LLVM 17 and newer
-To: Ivan Babrou <ivan@cloudflare.com>
-Cc: bpf <bpf@vger.kernel.org>, kernel-team <kernel-team@cloudflare.com>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, clang-built-linux <llvm@lists.linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <20240517232427.230709-1-linux@treblig.org>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 23:33:35 up 9 days, 10:47,  1 user,  load average: 0.00, 0.01, 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-On Fri, May 17, 2024 at 2:51=E2=80=AFPM Ivan Babrou <ivan@cloudflare.com> w=
-rote:
->
-> Hello,
->
-> We recently bumped LLVM used for bpftool compilation from 15 to 18 and
-> our alerting system notified us about some unknown bpf programs. It
-> turns out, the names were truncated to 15 chars, whereas before they
-> were longer.
->
-> After some investigation, I was able to see that the following code:
->
->     diff --git a/src/common.c b/src/common.c
->     index 958e92a..ac38506 100644
->     --- a/src/common.c
->     +++ b/src/common.c
->     @@ -435,7 +435,9 @@ void get_prog_full_name(const struct
-> bpf_prog_info *prog_info, int prog_fd,
->         if (!prog_btf)
->             goto copy_name;
->
->     +    printf("[0] finfo.type_id =3D %x\n", finfo.type_id);
->         func_type =3D btf__type_by_id(prog_btf, finfo.type_id);
->     +    printf("[1] finfo.type_id =3D %x\n", finfo.type_id);
->         if (!func_type || !btf_is_func(func_type))
->             goto copy_name;
->
-> When ran under gdb, shows:
->
->     (gdb) b common.c:439
->     Breakpoint 1 at 0x16859: file common.c, line 439.
->
->     (gdb) r
->     3403: tracing  [0] finfo.type_id =3D 0
->
->     Breakpoint 1, get_prog_full_name (prog_info=3D0x7fffffffe160,
-> prog_fd=3D3, name_buff=3D0x7fffffffe030 "", buff_len=3D128) at common.c:4=
-39
->     439        func_type =3D btf__type_by_id(prog_btf, finfo.type_id);
->     (gdb) print finfo
->     $1 =3D {insn_off =3D 0, type_id =3D 1547}
->
->
-> Notice that finfo.type_id is printed as zero, but in gdb it is in fact 15=
-47.
->
-> Disassembly difference looks like this:
->
->     -    8b 75 cc                 mov    -0x34(%rbp),%esi
->     -    e8 47 8d 02 00           call   3f5b0 <btf__type_by_id>
->     +    31 f6                    xor    %esi,%esi
->     +    e8 a9 8c 02 00           call   3f510 <btf__type_by_id>
->
-> This can be avoided if one removes "const" during finfo initialization:
->
->     const struct bpf_func_info finfo =3D {};
->
-> This seems like a pretty annoying miscompilation, and hopefully
-> there's a way to make clang complain about this loudly, but that's
-> outside of my expertise. There might be other places like this that we
-> just haven't noticed yet.
->
-> I can send a patch to fix this particular issue, but I'm hoping for a
-> more comprehensive approach from people who know better.
+(oops the patch numbering in these 3 are wrong, they're all independent
+patches)
 
-Wow. Great catch. Please send a patch to fix bpftool and,
-I agree, llvm should be warning about such footgun,
-but the way ptr_to_u64() is written is probably silencing it.
-We probably should drop 'const' from it:
-static inline __u64 ptr_to_u64(const void *ptr)
+Dave
 
-and maybe add a flavor of ptr_to_u64 with extra check
-that the arg doesn't have a const modifier.
-__builtin_types_compatible_p(typeof(ptr), void *)
-should do the trick.
+* linux@treblig.org (linux@treblig.org) wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> 
+> 'bridge_init' is unused, I think following:
+> commit 6a1688ae8794 ("drm/bridge: ptn3460: Convert to I2C driver model")
+> (which is where a git --follow finds it)
+> Remove it.
+> 
+> Build tested.
+> 
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> ---
+>  drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 5 -----
+>  1 file changed, 5 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> index df9370e0ff23..1e03f3525a92 100644
+> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> @@ -36,11 +36,6 @@
+>  
+>  static const bool verify_fast_training;
+>  
+> -struct bridge_init {
+> -	struct i2c_client *client;
+> -	struct device_node *node;
+> -};
+> -
+>  static int analogix_dp_init_dp(struct analogix_dp_device *dp)
+>  {
+>  	int ret;
+> -- 
+> 2.45.1
+> 
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
