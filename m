@@ -1,123 +1,127 @@
-Return-Path: <linux-kernel+bounces-182149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CEAC8C8753
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 15:36:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AF0F28C875F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 15:41:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E57731F21615
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 13:36:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6290D1F22F84
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 13:41:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEA5654F95;
-	Fri, 17 May 2024 13:36:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 956D15820C;
+	Fri, 17 May 2024 13:40:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GLVE1+TD"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="IQGRpVxi";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="IQGRpVxi"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68DC6548F1;
-	Fri, 17 May 2024 13:36:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27AD55812F;
+	Fri, 17 May 2024 13:40:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715952988; cv=none; b=NxNVtsDM95ZaoPtfDfW0OKN+549X3/33Dn6vKDYlkABE7k2FAutXZQQE+08hyvC4ffHSUnvPjT87dvvOqqWsyloGso+iu95qS++ZiI0YzMb9HL4bt4AsKl1B0FJ8ZpuhSVArApCQTuQM43xpa6DNHdl8+4XrCUwCy6eLcw5AIdM=
+	t=1715953231; cv=none; b=aBbGNbehIOLUWUC1WA6CPW7FIVm+DC7Th9hNo5cArtV6p7BiuiBiI/Z9k72zISP1atgCfIhnmCnwAMeZuQ3ZOnPbCzSJAe/yDRr0BsB7iSJzLxQ8e2555B4y2qh4P4kSOTjaBAaPndD2uWEuVFID0Ni4D0vZhIp/9NverhUbYAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715952988; c=relaxed/simple;
-	bh=Jn7zwgtw8zPXbp3XlrdrrybXQAtHJe4Qo6Tf/v8KOUU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gBYIeYeM/H10MQUUVydQVJrfavqczaAU56q91fexMu+oObPYZe3USwrlbmvhatFvP19vNai3D3G04dmwbIXEALNky3GGKqa7+QDXCqdW/JXtwSc7KJIy8f2dNpTyJA99hwjNa5mmcTYMc14XGxqhFh81zu3u9ozKU01x4d+Nx1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GLVE1+TD; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715952987; x=1747488987;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=Jn7zwgtw8zPXbp3XlrdrrybXQAtHJe4Qo6Tf/v8KOUU=;
-  b=GLVE1+TDn1+B+Yvz1TDYsrnHwHKuwnEaOHON1aDguXhPcSKWapzQLrCP
-   Zmm3BPBcaZWWLB8tof7gthuCMyKUFnH+GP+BEsNKSz6FMQeEevVLyJAdD
-   UHGs6MTuFP9+dARRoni9Bmz4N3hMR5j4y/mt6n5sV9h8ZJqm1NXqrHWVZ
-   jPp01eiWt3JeJ/3kkkIza+YMCjVKAFbbQvyIqvhJiGMabQR2d9nWijfO+
-   iQo90bw7saGxZOZCwRvQ74lemjNcdVoi0NBb5fXiplIeBJRJZCmDs2UaD
-   jnnEZUqE4zExEzIi81yKZ4JNhaPkZmOTpxPrWJC2PeMSYSU4F8dhwzDKM
-   A==;
-X-CSE-ConnectionGUID: kPiR+F8/Rqmslq0Yx1dcVg==
-X-CSE-MsgGUID: ePwl3apbSpquXl+4wUveJg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="15956634"
-X-IronPort-AV: E=Sophos;i="6.08,167,1712646000"; 
-   d="scan'208";a="15956634"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 06:36:26 -0700
-X-CSE-ConnectionGUID: hv+jf/nYRMKp252TDzhWlA==
-X-CSE-MsgGUID: rHPZ9NOjRN2blqqMK8l1iw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,167,1712646000"; 
-   d="scan'208";a="55005642"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 06:36:18 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1s7xks-00000008Lkv-21yz;
-	Fri, 17 May 2024 16:36:14 +0300
-Date: Fri, 17 May 2024 16:36:14 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Frank Li <Frank.Li@nxp.com>, linux-omap@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	linux-tegra@vger.kernel.org, Vignesh Raghavendra <vigneshr@ti.com>,
-	Siddharth Vadapalli <s-vadapalli@ti.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Yue Wang <yue.wang@amlogic.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Xiaowei Song <songxiaowei@hisilicon.com>,
-	Binghui Wang <wangbinghui@hisilicon.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v4 0/5] PCI: controller: Move to agnostic GPIO API
-Message-ID: <ZkddTpyC177ZGoMH@smile.fi.intel.com>
-References: <20240506142142.4042810-1-andriy.shevchenko@linux.intel.com>
- <20240517102234.GA333779@rocinante>
+	s=arc-20240116; t=1715953231; c=relaxed/simple;
+	bh=dWndnL2fcmjN6OLz/k5yycYyXhbbDCUqxD4dhl9EUxs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Lwp/USBC5kTmB0hz1FJt/4Rot7/inTV2oeZK+UDdbqyq0uIU9hkFuTJwU6HiB+fJP6tN7JfEiR+H4Y9MQd/Y3xtCuNxlmEckmuNdqtAuG8Ovuhb79jB3/dm4NgDjad5EC4dzO2Ha/ypF/RchYVTdzYcul9F3UrSbZD+U1c1ZIv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=IQGRpVxi; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=IQGRpVxi; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 576C0374EA;
+	Fri, 17 May 2024 13:40:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1715953228; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=zG4qeZ4wXm0hhUEol81eqqpjCLMzzmjIMFnN0YK47ls=;
+	b=IQGRpVxiYr0SkqYdxRblxdnj1xMPd93+UG2TUL9pn0rGGgz1YmI4amlpiNeNuSbcyLNF1S
+	n4bHvAcsn9liD8wTtgSgG0D26yM2FS6uTbzIgCrWF05wDhqzMf88V6FkDkLGfeXf+bHsI+
+	jzNv4byDymOe0/lxskzpva46epP9I9A=
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1715953228; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=zG4qeZ4wXm0hhUEol81eqqpjCLMzzmjIMFnN0YK47ls=;
+	b=IQGRpVxiYr0SkqYdxRblxdnj1xMPd93+UG2TUL9pn0rGGgz1YmI4amlpiNeNuSbcyLNF1S
+	n4bHvAcsn9liD8wTtgSgG0D26yM2FS6uTbzIgCrWF05wDhqzMf88V6FkDkLGfeXf+bHsI+
+	jzNv4byDymOe0/lxskzpva46epP9I9A=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3F23413991;
+	Fri, 17 May 2024 13:40:28 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 55PrDkxeR2Z/BQAAD6G6ig
+	(envelope-from <petr.pavlu@suse.com>); Fri, 17 May 2024 13:40:28 +0000
+From: Petr Pavlu <petr.pavlu@suse.com>
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: linux-trace-kernel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Petr Pavlu <petr.pavlu@suse.com>
+Subject: [PATCH 0/2] ring-buffer: Fix a race between readers and resize checks
+Date: Fri, 17 May 2024 15:40:06 +0200
+Message-Id: <20240517134008.24529-1-petr.pavlu@suse.com>
+X-Mailer: git-send-email 2.35.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240517102234.GA333779@rocinante>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+X-Spam-Flag: NO
+X-Spam-Score: -0.17
+X-Spam-Level: 
+X-Spamd-Result: default: False [-0.17 / 50.00];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	BAYES_HAM(-0.37)[77.01%];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo];
+	RCVD_TLS_ALL(0.00)[]
 
-On Fri, May 17, 2024 at 07:22:34PM +0900, Krzysztof Wilczyński wrote:
-> Hello,
-> 
-> > While at it, remove of_gpio.h leftover from some of the drivers.
-> 
-> Applied to gpio, thank you!
+Fix a race between a reader swapping a new reader page into the
+ring-buffer from rb_get_reader_page() and the rb_check_pages() check
+invoked at the end of the resize operation in ring_buffer_resize().
 
-Thank you!
+Note that a similar problem with rb_check_pages() being executed with
+concurrent readers looks to exist for ring_buffer_subbuf_order_set()
+too. I plan to tackle it in a separate series.
 
+Petr Pavlu (2):
+  ring-buffer: Correct stale comments related to non-consuming readers
+  ring-buffer: Fix a race between readers and resize checks
+
+ kernel/trace/ring_buffer.c | 26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
+
+
+base-commit: ea5f6ad9ad9645733b72ab53a98e719b460d36a6
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.35.3
 
 
