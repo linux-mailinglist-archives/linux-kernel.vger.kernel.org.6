@@ -1,101 +1,140 @@
-Return-Path: <linux-kernel+bounces-182405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A5428C8AEB
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:24:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6A5D8C8AEC
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:25:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BED351F2133B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:24:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53045281B3C
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:25:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 271AF13DDAB;
-	Fri, 17 May 2024 17:24:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M5hRCUIj"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6096A13DBBF;
+	Fri, 17 May 2024 17:25:47 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60B0F38DD6;
-	Fri, 17 May 2024 17:24:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE77638DD6
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 17:25:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715966683; cv=none; b=YlbcdPPDWkEfKrpXsQszbVC1/hCY4rVTs8Edw3tUP5hmn61/fx6z6qmMLz1LBeTW/T52sQRftpardiItuq+qg/YRPe3YHiYo+V3ha0ZBargytUsdq6LozpUCxbQRc47dvH/yX+mIWYhIFK+jh95ez+1de3P3ejDH8NDcNYMkcRw=
+	t=1715966747; cv=none; b=VYWdr6TjlqSB8A0lIFvE/C5sNNsc2yVAQpWf0xto0EfPfyBRZwWeqHM5v+EWED2Pigad+szXNZmlzgg3FfhBBt41OIUBR/aXqHbFDnDaAfjRpUKv3quG/PEmD8XedG5+Hr1oMh4t7QjpdBRdqek1x0CpJOkuus8kw0qg5YspSaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715966683; c=relaxed/simple;
-	bh=rjTs1bN+hgsUK6tXA1jKQzxe9KRIcBfqG1Hp0wZaUbE=;
+	s=arc-20240116; t=1715966747; c=relaxed/simple;
+	bh=xTrgfjrD4g3Hlii3WVx0sS/D+vbmZjqWJkxgae/P9qs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mC+C4AXu2Q7xTb0QBiyteczK+lfbsbWp5+ssUE06N0CuO5nPKcrrOJXhkv2kVPe7jC/NOq8o1gESWTSIrtyU8XGULstQm9xDlqVqdc4STxTGZ0LRwCWJshiztCdRMuN0WNOye3SY/ZxZNpnTjVpTdE4HzO7kc3YUHP8PbJ9bDxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M5hRCUIj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5BACC2BD10;
-	Fri, 17 May 2024 17:24:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715966682;
-	bh=rjTs1bN+hgsUK6tXA1jKQzxe9KRIcBfqG1Hp0wZaUbE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=M5hRCUIjC9rVrZwTGH2u6b8M8J93C9mUq6Ubs923sLq747034VxoBbds4Ebnw0A0k
-	 37M1vm9bDfDzm15Voz3iUqflqKvqGmsXSMqbr54U+ZaXE59eoVoDb/4ZSrUy2aXICv
-	 jUYtDnHX/agDZIs5BMMS46zYKiUxoG7wkABQz/KkO33wx3t31uS1HH3o2QmXd3WmhS
-	 vO+ti7w1BIrn6O7m72Rp0qsjdzWH+HdhaM219dgY2qB1OABitAXi17VAklciDmdd5T
-	 gfv/a783xy85MpepntAdmuUCCWBmd2HeScUEJ4BdK7imRdaZGq3DoAkeC9U2z6n4kG
-	 UvowbL+WniRIg==
-Date: Fri, 17 May 2024 18:24:37 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-spi@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Subject: Re: [PATCH v1 1/1] spi: pxa2xx: Move PXA SSP bindings to the correct
- folder
-Message-ID: <e81d43f8-a3ba-41b4-a86f-af2d6943e917@sirena.org.uk>
-References: <20240517171103.221856-1-andriy.shevchenko@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=meb2vAnAuYGb2CnK5cDpL+4psQgTelG2ov0xY9XsPxRe0mYgPA6apdSLJJprThaItp76DRGbBVcYV/dzJePpNcmemsnqTw79aEPSH59Pk6XT8RR0fcit5vdGu5fuY0EnT5jvp6oikHZa1t7uhuDTpyNDZ9/N8kE10EoID1Q47dY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24867C2BD10;
+	Fri, 17 May 2024 17:25:44 +0000 (UTC)
+Date: Fri, 17 May 2024 18:25:42 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Yang Shi <yang@os.amperecomputing.com>
+Cc: peterx@redhat.com, will@kernel.org, scott@os.amperecomputing.com,
+	cl@gentwo.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: mm: force write fault for atomic RMW instructions
+Message-ID: <ZkeTFiF_OOy80stO@arm.com>
+References: <20240507223558.3039562-1-yang@os.amperecomputing.com>
+ <Zj4O8q9-bliXE435@arm.com>
+ <6066e0da-f00a-40fd-a5e2-d4d78786c227@os.amperecomputing.com>
+ <ZkM_WXxEQo51mrK5@arm.com>
+ <570c686c-6aa1-43f0-ba31-3597a329e037@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="yglz+J6siImMAjPA"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240517171103.221856-1-andriy.shevchenko@linux.intel.com>
-X-Cookie: Function reject.
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <570c686c-6aa1-43f0-ba31-3597a329e037@os.amperecomputing.com>
 
+On Fri, May 17, 2024 at 09:30:23AM -0700, Yang Shi wrote:
+> On 5/14/24 3:39 AM, Catalin Marinas wrote:
+> > It would be good to understand why openjdk is doing this instead of a
+> > plain write. Is it because it may be racing with some other threads
+> > already using the heap? That would be a valid pattern.
+> 
+> Yes, you are right. I think I quoted the JVM justification in earlier email,
+> anyway they said "permit use of memory concurrently with pretouch".
 
---yglz+J6siImMAjPA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ah, sorry, I missed that. This seems like a valid reason.
 
-On Fri, May 17, 2024 at 08:11:03PM +0300, Andy Shevchenko wrote:
-> SSP stands for Serial Synchronous Protocol and has nothing to do with
-> UART, also known as USART, where 'A' stands for Asynchronous.
->=20
-> Move the SSP bindings to where it belongs.
+> > A point Will raised was on potential ABI changes introduced by this
+> > patch. The ESR_EL1 reported to user remains the same as per the hardware
+> > spec (read-only), so from a SIGSEGV we may have some slight behaviour
+> > changes:
+> > 
+> > 1. PTE invalid:
+> > 
+> >     a) vma is VM_READ && !VM_WRITE permission - SIGSEGV reported with
+> >        ESR_EL1.WnR == 0 in sigcontext with your patch. Without this
+> >        patch, the PTE is mapped as PTE_RDONLY first and a subsequent
+> >        fault will report SIGSEGV with ESR_EL1.WnR == 1.
+> 
+> I think I can do something like the below conceptually:
+> 
+> if is_el0_atomic_instr && !is_write_abort
+>     force_write = true
+> 
+> if VM_READ && !VM_WRITE && force_write == true
 
-It's a serial device which is also used for other applications (the
-other one upstream being audio) so I can see where the current binding
-comes from and it's not super obvious that spi is especially better
-here.
+Nit: write implies read, so you only need to check !write.
 
---yglz+J6siImMAjPA
-Content-Type: application/pgp-signature; name="signature.asc"
+>     vm_flags = VM_READ
+>     mm_flags ~= FAULT_FLAG_WRITE
+> 
+> Then we just fallback to read fault. The following write fault will trigger
+> SIGSEGV with consistent ABI.
 
------BEGIN PGP SIGNATURE-----
+I think this should work. So instead of reporting the write fault
+directly in case of a read-only vma, we let the core code handle the
+read fault and first and we retry the atomic instruction.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZHktQACgkQJNaLcl1U
-h9Dkegf+PfmAzJMnJ7JxbPX21j0FUyCOCV8ZS8xqbV52T3VQ0lfj0ocnx7b4gTFc
-G/brmViTfVU6isTz1SEMEkYm04dRfcCkzCQNi22abMDops27xiKvIhOhw6WlrzUN
-vljrkpudj8MI+Gb76u/dY/MXjnjASj5o3qFSIAZZoZO7B8ws6ofjLeAdynAY/Re9
-z0dokasDuiujuIeO4QY70ZNj4jezgFN/8Wnp+DUpa07XyQvTV6lvplKIRBVUbOPt
-gREMbGy996hEf55KgEwsr3Nft6HahmHVd1T4CVI6gnTHYE1OzoXzTbFmUyHeXb08
-ffJckIM6CffQdDRBbmCEeYSH/HPaaA==
-=Argb
------END PGP SIGNATURE-----
+> >     b) vma is !VM_READ && !VM_WRITE permission - SIGSEGV reported with
+> >        ESR_EL1.WnR == 0, so no change from current behaviour, unless we
+> >        fix the patch for (1.a) to fake the WnR bit which would change the
+> >        current expectations.
+> > 
+> > 2. PTE valid with PTE_RDONLY - we get a normal writeable fault in
+> >     hardware, no need to fix ESR_EL1 up.
+> > 
+> > The patch would have to address (1) above but faking the ESR_EL1.WnR bit
+> > based on the vma flags looks a bit fragile.
+> 
+> I think we don't need to fake the ESR_EL1.WnR bit with the fallback.
 
---yglz+J6siImMAjPA--
+I agree, with your approach above we don't need to fake WnR.
+
+> > Similarly, we have userfaultfd that reports the fault to user. I think
+> > in scenario (1) the kernel will report UFFD_PAGEFAULT_FLAG_WRITE with
+> > your patch but no UFFD_PAGEFAULT_FLAG_WP. Without this patch, there are
+> > indeed two faults, with the second having both UFFD_PAGEFAULT_FLAG_WP
+> > and UFFD_PAGEFAULT_FLAG_WRITE set.
+> 
+> I don't quite get what the problem is. IIUC, uffd just needs a signal from
+> kernel to tell this area will be written. It seems not break the semantic.
+> Added Peter Xu in this loop, who is the uffd developer. He may shed some
+> light.
+
+Not really familiar with uffd but just looking at the code, if a handler
+is registered for both MODE_MISSING and MODE_WP, currently the atomic
+instruction signals a user fault without UFFD_PAGEFAULT_FLAG_WRITE (the
+do_anonymous_page() path). If the page is mapped by the uffd handler as
+the zero page, a restart of the instruction would signal
+UFFD_PAGEFAULT_FLAG_WRITE and UFFD_PAGEFAULT_FLAG_WP (the do_wp_page()
+path).
+
+With your patch, we get the equivalent of UFFD_PAGEFAULT_FLAG_WRITE on
+the first attempt, just like having a STR instruction instead of
+separate LDR + STR (as the atomics behave from a fault perspective).
+
+However, I don't think that's a problem, the uffd handler should cope
+with an STR anyway, so it's not some unexpected combination of flags.
+
+-- 
+Catalin
 
