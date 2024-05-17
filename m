@@ -1,168 +1,113 @@
-Return-Path: <linux-kernel+bounces-181839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F9248C8200
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 10:01:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4A428C8208
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 10:01:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF731B21BB3
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 08:01:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F96628336F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 08:01:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E22F32C68F;
-	Fri, 17 May 2024 08:00:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA26420300;
+	Fri, 17 May 2024 08:01:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lw4BhSBa"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="k3eoWmSs"
+Received: from smtp-fw-80009.amazon.com (smtp-fw-80009.amazon.com [99.78.197.220])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A6F122301;
-	Fri, 17 May 2024 08:00:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C63112E62C;
+	Fri, 17 May 2024 08:00:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715932841; cv=none; b=e8Q94Ndx0eeXd4vCY/9Eibguf+1N6zuMrWtg6VBjh+/3IR7xodywPG5fTdY9kaShAD2+81SNpfGqeRKYdmaA7UwlT9O9WubL6RWF+zooztgnu3wmpt+nkeQDrDXoqi7+ixP4Rze7TLaVYvttYJaIHgHcA+bQJvcLhnaLkUMRKxk=
+	t=1715932861; cv=none; b=rD74SmuDRa7qqfNrs1zwZFoP+BPqyTpmxe4RqE7uy5FUXidopz6djKo2cehGnDjRSiwuewtHYx34feA2Ews3Y4m36ReCgZ/FsTP4OiXT1B+5esQ4TYUK7/W7wqCgesy+GAx+o9dQS7C7T+CzvoZLeHsIXajenwHgrqvG4ipY8+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715932841; c=relaxed/simple;
-	bh=4VHpapHi+PH+rYnOezaLaPm5bmjATK2euB+emCV6fpw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CbYV0wqmi1n2E2KRTg/h33ZmrqY0J6JD6ytodQI7A1EPufxF/zTcHo6MWwpdWMk3AKn6YLD6ilTHjm3Ru1lY31apkRr0b87FJSdqe1hrxmGOt0tX0IN2Vjzt1849R4N5pt3+dLk5xZVAAm59AtMz9LlTShvEuTW4YCn79egf4Z8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lw4BhSBa; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a59a5f81af4so404253466b.3;
-        Fri, 17 May 2024 01:00:39 -0700 (PDT)
+	s=arc-20240116; t=1715932861; c=relaxed/simple;
+	bh=Vdoo6QU/u39c9Rgl96CtP6qcbMot2KPUxgfcFSgZyBI=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tq+pR/kSgE6TkYwJk8tRVjRONhfmRDV3FFipGRSO2zpv0QB9B5pCLqQqhKoS6PBbUJFKLgal34mW0a96HYiaTtZB5rm2rt/G2566/067ZqZW6k2Zm8woutCnEbrEUmKdxdlahdQlNZvdEmtEuhs1jHs8fYFDQeBOit4RqzXVFCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=k3eoWmSs; arc=none smtp.client-ip=99.78.197.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715932838; x=1716537638; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9WHUQbwGFE5vWk241LLGD7IkNMzFlEX8C8V5LVuH5QU=;
-        b=lw4BhSBaqkccRsMm/Z6Sp63Lf/Jl5dQDF663VyJH1AgNpImHd/Q3ZKISpiwpLq7XNj
-         KrYpQQywnIZ54eWa6NL8/U+FaNUc905gHk4pvhCqsECarNw9EE5Yb3fjXC/veMLh5g3Y
-         9HdoGvjTHc8ocPlXk216AlNXCea0WL4GrgZ6Fmtl1XHBySFBzjm1hpIaK1NQNaIIJs50
-         X0jDWus8JbErCfdmyWItd4uuKt41ODdNPSpFuGALQeFMkaQYJaSd8SLs1e2HJcBiyL7E
-         mzat7bfVBsEnbvR+IMMcV6cFEaa3W/tjNNTZVb774LOfMd97NbSiTBc45orJS5KiWPCB
-         hI7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715932838; x=1716537638;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9WHUQbwGFE5vWk241LLGD7IkNMzFlEX8C8V5LVuH5QU=;
-        b=G38KC5AIkaJl9qUMyZ7WrKwmlO//Ek/a/vpN8IYQJCHEjfczAnyrsC8ZXv1+dg9BiN
-         o6MdHxcPd5cnQdGyRfd2mA2NHsiDERkAKiAl4F1Z6f29lpaSY4u7v4zUtRYr7RC9q0Oo
-         11V+Duyh+TKhYHBgNOFPXa9nbmdQfwYSnaehPaLxOM6/LNNCj9lpOt8JM/73q6ox4MC3
-         jVsaijlsgRGrurm9yNJOCZF5XzTK9TgCih/r9ltSUt85ZeXJh23kKGytVk/WEerpZtBM
-         j9itf7Vzr/XPHXxKGUPYb6MtOrV+Fqv+x2sAAUGKhNjMJNIMOJPPT9853aJ8SG3vuVLd
-         ABjw==
-X-Forwarded-Encrypted: i=1; AJvYcCX46xloLTwNtSAdxQlOcc+2cwcii4JKPWkh64GcO8tjLiHFCcXY7+a+auU9n91cPCJ6TcSLlQdy1MvUT0QZIo+r+z3QYVEYmnlP8jDs9Y1VxkfUN2j/YHDm84uey8GgKpStzRBRcQ==
-X-Gm-Message-State: AOJu0YxK4vf7W4bo/40EJieIbL21wPko7ePJdzHVsTDPuxZS5IEiMjEP
-	ox0pNes6bgAnB3UdNf/zDj06XW2X5IVbIU6KRQe9/Zbz5Ko92kR1
-X-Google-Smtp-Source: AGHT+IFgPZxrOpJ1GJjTjTxZW6yzslVDP6OCOT/2BnUK6zwhcsGRHrerb5dBzWocqZOIQ3nVNtUchg==
-X-Received: by 2002:a17:907:d25:b0:a5a:2aed:ca2b with SMTP id a640c23a62f3a-a5a2d5c9fdcmr1831518366b.28.1715932837421;
-        Fri, 17 May 2024 01:00:37 -0700 (PDT)
-Received: from ?IPV6:2a02:2f0e:350b:4500:569e:359d:dfe4:922e? ([2a02:2f0e:350b:4500:569e:359d:dfe4:922e])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b17d10sm1082684266b.198.2024.05.17.01.00.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 May 2024 01:00:37 -0700 (PDT)
-Message-ID: <ec8174c5-723d-43ad-beaf-0930d1b2c19e@gmail.com>
-Date: Fri, 17 May 2024 11:00:36 +0300
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1715932859; x=1747468859;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=vm22BVZO7WVhxQCWzSyuBh1sHNc/VQxR59e5eUx+xd4=;
+  b=k3eoWmSsD4hZMAzQad/QUuCfeJvJavE2aFhdzP3v/u44N/uhF68VFZ8O
+   3pqmmSqE/IHdWEEwOaplIWNXFtvmEQEmKHRA1RP4MROnsURM7mcpopkrQ
+   3wDMgIQG/kGd6M/XG+YQvFTcp/Gp9o5smWtlA/Gj5v5oLDEtGCzEsBUy4
+   A=;
+X-IronPort-AV: E=Sophos;i="6.08,167,1712620800"; 
+   d="scan'208";a="89887872"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-80009.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 08:00:57 +0000
+Received: from EX19MTAEUB002.ant.amazon.com [10.0.10.100:16909]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.18.108:2525] with esmtp (Farcaster)
+ id 8a5c4799-5210-44e6-a13c-cf4505886cc0; Fri, 17 May 2024 08:00:56 +0000 (UTC)
+X-Farcaster-Flow-ID: 8a5c4799-5210-44e6-a13c-cf4505886cc0
+Received: from EX19D002EUC003.ant.amazon.com (10.252.51.218) by
+ EX19MTAEUB002.ant.amazon.com (10.252.51.59) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.28; Fri, 17 May 2024 08:00:56 +0000
+Received: from EX19MTAUWA001.ant.amazon.com (10.250.64.204) by
+ EX19D002EUC003.ant.amazon.com (10.252.51.218) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.28; Fri, 17 May 2024 08:00:55 +0000
+Received: from dev-dsk-hagarhem-1b-b868d8d5.eu-west-1.amazon.com
+ (10.253.65.58) by mail-relay.amazon.com (10.250.64.204) with Microsoft SMTP
+ Server id 15.2.1258.28 via Frontend Transport; Fri, 17 May 2024 08:00:55
+ +0000
+Received: by dev-dsk-hagarhem-1b-b868d8d5.eu-west-1.amazon.com (Postfix, from userid 23002382)
+	id D32C420C24; Fri, 17 May 2024 08:00:54 +0000 (UTC)
+Date: Fri, 17 May 2024 08:00:54 +0000
+From: Hagar Hemdan <hagarhem@amazon.com>
+To: Kent Gibson <warthog618@gmail.com>
+CC: Norbert Manthey <nmanthey@amazon.de>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Linus Walleij <linus.walleij@linaro.org>, <linux-gpio@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <hagarhem@amazon.com>
+Subject: Re: [PATCH] gpio: prevent potential speculation leaks in
+ gpio_device_get_desc()
+Message-ID: <20240517080054.GA12268@amazon.com>
+References: <20240514122601.15261-1-hagarhem@amazon.com>
+ <20240514124221.GA76024@rigel>
+ <20240516125742.GA14240@amazon.com>
+ <20240516145540.GA116534@rigel>
+ <20240516162239.GA184911@rigel>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 8/8] drivers: iio: imu: Add support for adis1657x
- family
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, conor+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, robh@kernel.org, nuno.sa@analog.com
-References: <20240508131310.880479-1-ramona.bolboaca13@gmail.com>
- <20240508131310.880479-9-ramona.bolboaca13@gmail.com>
- <20240511145447.68de0f59@jic23-huawei>
-Content-Language: en-US
-From: Ramona Gradinariu <ramona.bolboaca13@gmail.com>
-In-Reply-To: <20240511145447.68de0f59@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240516162239.GA184911@rigel>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
->> + * device will send the data popped with the (n-1)th consecutive burst request.
->> + * In order to read the data which was popped previously, without popping the FIFO,
->> + * the 0x00 0x00 burst request has to be sent.
->> + * If after a 0x68 0x00 FIFO pop burst request, there is any other device access
->> + * different from a 0x68 0x00 or a 0x00 0x00 burst request, the FIFO data popped
->> + * previously will be lost.
->> + */
->> +static irqreturn_t adis16475_trigger_handler_with_fifo(int irq, void *p)
->>  {
->>  	struct iio_poll_func *pf = p;
->>  	struct iio_dev *indio_dev = pf->indio_dev;
->> +	struct adis16475 *st = iio_priv(indio_dev);
->> +	struct adis *adis = &st->adis;
->> +	int ret;
->> +	u16 fifo_cnt, i;
->>
->> -	adis16475_push_single_sample(pf);
->> +	adis_dev_lock(&st->adis);
->> +
->> +	ret = __adis_read_reg_16(adis, ADIS16575_REG_FIFO_CNT, &fifo_cnt);
->> +	if (ret)
->> +		goto unlock;
->> +
->> +	/*
->> +	 * If no sample is available, nothing can be read. This can happen if
->> +	 * a the used trigger has a higher frequency than the selected sample rate.
->> +	 */
->> +	if (!fifo_cnt)
->> +		goto unlock;
->> +
->> +	/*
->> +	 * First burst request - FIFO pop: popped data will be returned in the
->> +	 * next burst request.
->> +	 */
->> +	ret = adis16575_custom_burst_read(pf, adis->data->burst_reg_cmd);
->> +	if (ret)
->> +		goto unlock;
->> +
->> +	for (i = 0; i < fifo_cnt - 1; i++) {
->> +		ret = adis16475_push_single_sample(pf);
->> +		if (ret)
->> +			goto unlock;
->> +	}
->> +
-> My paranoid instincts for potential race conditions kick in.
-> Is this one of those annoying devices where the fifo interrupt will only occur
-> again if we successfully read enough data to get below the threshold?
-> Snag with no public datasheet is I can't just look it up!
-> If it's a level interrupt this won't be a problem.
+On Fri, May 17, 2024 at 12:22:39AM +0800, Kent Gibson wrote:
+> On Thu, May 16, 2024 at 10:55:40PM +0800, Kent Gibson wrote:
+> > On Thu, May 16, 2024 at 12:57:42PM +0000, Hagar Hemdan wrote:
+> > > On Tue, May 14, 2024 at 08:42:21PM +0800, Kent Gibson wrote:
+> >
+> > Now I need to test your patch to see what it actually does.
+> >
+> 
+> Tested.  Fails.  It does what I thought it would - clamps the offset into
+> bounds BEFORE the call to gpio_device_get_desc().
+> 
+> The appropriate place for this fix is in gpio_device_get_desc(), after
+> the bounds check.
+> 
+> Cheers,
+> Kent.
 >
-> If so the race is the following.
-> 1. Interrupt happens, we read the number of entries in fifo.
-> 2. We read out the fifo, but for some reason our read is slow... (contention on
->    bus, CPU overheating, who knows).  The data fills up at roughly the
->    same rate as we are reading.
-> 3. We try to carry on but in reality the fifo contents never dropped below
->    the watermark, so not more interrupts ever occur.
->
-> Solution normally is to put this read sequence in a while (fifo_cnt)
-> and reread that after you've done the burst read.  If there is more data
-> go around again.  That way we drive for definitely having gotten to zero
-> at some stage - and hence whatever the threshold is set to a new interrupt
-> will occur.
+yes, you are right. The speculation macro should be after the bounds
+check. I missed this property this time.
+I will fix it in v2.
 
-Hello Jonathan,
-
-Indeed the watermark interrupt is a level interrupt. However adis lib does not 
-allow for level interrupts, so I had to create a new patch in v3 to handle it.
-Until now I tested the watermark interrupt as and edge interrupt and I did not
-see any issues, but indeed if the FIFO is not read fast enough the watermark pin 
-will stay high (or low depending on the configured polarity), so the correct 
-implementation is to use level interrupts for FIFO watermark interrupts.
-
-Ramona G.
-
+Thanks,
+Hagar Hemdan
 
