@@ -1,418 +1,215 @@
-Return-Path: <linux-kernel+bounces-181737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49E428C807B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 06:39:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B45BF8C807C
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 06:45:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9ECF4283026
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 04:39:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 830E5B20EE9
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 04:45:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDB09DDCD;
-	Fri, 17 May 2024 04:39:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9E06DDCD;
+	Fri, 17 May 2024 04:44:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="c5kfACWn"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Oxo0cHVf"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97A0C387
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 04:39:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82B5ED524
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 04:44:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715920774; cv=none; b=ftzG9eOgTaDtZVsyVPklNLKpDWA+FvJx4tXDruu37KcfBX7iYmdgP+J+qTl0VR0vFcw/l2EeBdF9ur2Xy6hroFFVChHMcZR383vQ2l/LG5TBHL/r/rb6jC8WfFztoRqOMAw+VElcZkiQvXsGKspyd6mprHfWnzZjRRXcXCS9MKU=
+	t=1715921095; cv=none; b=WX1dZ43xluIJPaQp+MLSnXU9V8EbTRPh0YstSVkmTvbPl/XxLQn5XUQlneHVkxABpte61mvRQRlkmExfsfdr0yxz7GNXOjN8eUTTG3CYAJiwk5wZ3cAjcdj77qaQDmWQ3xjx8+KlKm1GkoluY+RAqnCXdPPY4vRch/WJAm1ua2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715920774; c=relaxed/simple;
-	bh=7yWR6LUX/LUln4RAXO+bVIVYSKMbM7bC2WXtzBdpMzo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cWDiSebQUWxazpH2gtl91yybu2dAmOwbyGG/JJwe9erz6HM2MiK3f0VhCbWrBthGmaAI2JJebnqfmRCVwr53XODu1Yx/orOvQJZPtyEwrOZ4rJ0NF+WHS9IF8k5MYIqGoDmWNQBVT2oRUgt4qEn8r87RkgB6D+WS3LzHJ2U5jlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=c5kfACWn; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-51f71e4970bso1853889e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 21:39:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1715920770; x=1716525570; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XXsog4qOFxHNn+bj1EwI26SGwR8rdrDu1a+dbrSkxSM=;
-        b=c5kfACWnW4ISDUndzFl+8JNOwkyt0GBYU/SG8GPyH9pDjDP23qem4dITgG3K+suv3I
-         9TTzxL0SEz/FFODoRWAjEa/IskMbWyl2lw5Eqa7BZlUQQPANh8N7cAqUvdrAbufmEFGG
-         IczANF/Ne11LXEJcYHbemMHu/HtcxK+pz5PhrHOjAnsSloIejNfycsDzDT+kp6ynFI7m
-         mRsi2RlwNUPWP2aRV2bVOBnQNcvvPXgR35Mzlwg7UhOTYKDFfMnn2FI5+W2brQTyqd/z
-         y2eLjK9nqoLWT37NHJ53hxGio/2ZMWwqUgeaNWpwsOPbhBbTakOOxse7llSn+njrIF+s
-         oKGg==
+	s=arc-20240116; t=1715921095; c=relaxed/simple;
+	bh=Hyg1w276bZZtvMX+mZmirznVDfUaMn2+t1CYZpDH00U=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rpp+yqCkmkKfur8QVk9WLgE1EDCXjKqVLK0Ka+EZ8u288okSzt96mnsyk7tNjPRDcFS/rtzxx81jO5p4kOL6s572ijOmpeilMQ/4APwH110+CL6ka2qaSt09hMlAaQ2dNERF0P7gKeKa8c0pSYKQVsrZVKRy57Idi1I3n5kHeds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Oxo0cHVf; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715921092;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+Pho0BMrYFF2YDAB5tlU7tWcVNwJsnl8ML6imB+XGp8=;
+	b=Oxo0cHVfA0tfktsn5sSyBk9XTA3w00rgByriVunCpfNPOolv5b4Cs6SS6YPskttwqc9INb
+	8V37nSWAFg8onmzNsAMnnkrOMXRvriM2hAvCxCHUCLjmlODhXU7ztpOGDm6OOHXEbZzzhP
+	13R5xp39BNleN/iMSWDrsP4SBSENSr0=
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com
+ [209.85.166.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-391-mOC7WPi4M6yQqlJTuZwYAQ-1; Fri, 17 May 2024 00:44:50 -0400
+X-MC-Unique: mOC7WPi4M6yQqlJTuZwYAQ-1
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7e1ac2fbcb7so1035085939f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 21:44:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715920770; x=1716525570;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XXsog4qOFxHNn+bj1EwI26SGwR8rdrDu1a+dbrSkxSM=;
-        b=gzloRgJM+KMN/qqWmpLr74icgkZ8ArZE1AvffwcLpTDFLrXS08+jI9zSPAzcyZ+U6e
-         PouxiVwFr8lZxvi881pj6Qlagvg2VJVmOl5+oaH0t6k8rI/wEzA10oDMDk3zSwTy7EVJ
-         Rrl7otDsMRuuLSqORh/5zF7TjC1IP6zRvyIGkbNwXtcQrTwMDWZF/AGbJe64ZsL00D4Q
-         pjLAcQAR9BPITHfI30Gq3BnXVRaQPS12S1C8sujZ2RZTufvZ6CxAjQpLkMJeHBHBN3yJ
-         4+aEivAhiEAxW1NE9n5x3XbbE7VIhfl0vZ9/6q5lAUIAsHWKN1d8xorfdLro9zA3rH0G
-         /AaA==
-X-Forwarded-Encrypted: i=1; AJvYcCVfpcRzAk2u8z+yslS4eZgJ2ta/BSZKUcoITWEHdDfqRtsJ0NrL03tNvs2+aWH0GLVxhmXiuHEl6Ypabb/NnME7s8O7bez6YfvGEjTZ
-X-Gm-Message-State: AOJu0YyHSU1uhsXUG9I9PpkcYTMkRjUloIismpP4rb3zk84oj98QwRkz
-	JCVtBCNv2ip2VSJod2n5itlmbz1o6As4D/CGb2AJo9Iedp6pR9u0AwEE9mrXctL+pluX4QWz4ty
-	xuxvF8kwwdEqBAvu0BzB30BvgKw4qGqRWiQYhXA==
-X-Google-Smtp-Source: AGHT+IHeKKLNIPRXAhbJL6F4BtgSqSFFsregZFMHXj3tlZvItc1t0y5KW+x47BPGVTGaTvaGmQ12GFNwpap9QV18B/0=
-X-Received: by 2002:ac2:5331:0:b0:51d:a8ce:540 with SMTP id
- 2adb3069b0e04-5220fd7bb24mr17319494e87.35.1715920769436; Thu, 16 May 2024
- 21:39:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715921090; x=1716525890;
+        h=content-transfer-encoding:mime-version:organization:references
+         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+Pho0BMrYFF2YDAB5tlU7tWcVNwJsnl8ML6imB+XGp8=;
+        b=e2+yUKT34VtuGO2vBxkLonKJEJ2n135FFNX4vTbegSuwh1+IDPTDTm+W4Fmk40WznF
+         pzYV+CXfOKJe7Ixz6/VJLVrEWpQi2v6j2TZjROILH0kJlqR/ZeJyzLraDXHu2jZT4hpx
+         6yTNAn9cpmv7mcnJfE6ThRyuP8cY6YmkwOQW70AW416j73k6TRMU8kKhDfkBEQCx8/NJ
+         IKfblAjnDilYh5+rTF7O2vwmVaAEQaMJsOJG1AQtqcMKMMUmlc8P4/eUTpLWP+j3IQGi
+         90d/gJHJ0KS8B+NnrkFdn0v1cTLgsuqSteItR9tjjI9bpchTl+ZnpSXBYQMVyJDDjViD
+         oS2A==
+X-Forwarded-Encrypted: i=1; AJvYcCVz2xyxo5tqoQtO+yKmjYK/gnKq4Tqh4pBE0mYg7hEpTV7tjBuaWwcce7b1NPa4xZLKzOezYkMG3hPJiW2uuuoA3qvqhaq4GYgsi/eZ
+X-Gm-Message-State: AOJu0Yx9rjS5SncCnNWKBd4ghy4Ce0qCxwpEFg9qy9goZdA3l3lcieUu
+	bfjtLi3gP2O1x7GG55IKhW/cxMp3aGfJvwY9YGxjilaq9WYUt9+PBO18hTiHvlhB7ieMSonVXpL
+	Mwa2EZhVinY9qvb/onZ/uLxhjb9Hy2NY1Cpkt/7g+pZ6qyhaus+eHR8zueEYnjQ==
+X-Received: by 2002:a5e:c702:0:b0:7de:dbcf:b67f with SMTP id ca18e2360f4ac-7e1b5229628mr2108276439f.21.1715921090072;
+        Thu, 16 May 2024 21:44:50 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF8SJkDmskTL1TlkipsUfaSNL7CgupEzTaNdCDxXRpHof+4T200uekUmWGBuKMc6pRxG0+GtQ==
+X-Received: by 2002:a5e:c702:0:b0:7de:dbcf:b67f with SMTP id ca18e2360f4ac-7e1b5229628mr2108275439f.21.1715921089725;
+        Thu, 16 May 2024 21:44:49 -0700 (PDT)
+Received: from redhat.com ([38.15.36.11])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-489375c1a86sm4497757173.105.2024.05.16.21.44.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 May 2024 21:44:49 -0700 (PDT)
+Date: Thu, 16 May 2024 22:44:42 -0600
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
+ <jgg@nvidia.com>, <kevin.tian@intel.com>, <iommu@lists.linux.dev>,
+ <pbonzini@redhat.com>, <seanjc@google.com>, <dave.hansen@linux.intel.com>,
+ <luto@kernel.org>, <peterz@infradead.org>, <tglx@linutronix.de>,
+ <mingo@redhat.com>, <bp@alien8.de>, <hpa@zytor.com>, <corbet@lwn.net>,
+ <joro@8bytes.org>, <will@kernel.org>, <robin.murphy@arm.com>,
+ <baolu.lu@linux.intel.com>, <yi.l.liu@intel.com>
+Subject: Re: [PATCH 4/5] vfio/type1: Flush CPU caches on DMA pages in
+ non-coherent domains
+Message-ID: <20240516224442.56df5c23.alex.williamson@redhat.com>
+In-Reply-To: <ZkbK9CzmcxgqhSuR@yzhao56-desk.sh.intel.com>
+References: <20240507061802.20184-1-yan.y.zhao@intel.com>
+	<20240507062138.20465-1-yan.y.zhao@intel.com>
+	<20240509121049.58238a6f.alex.williamson@redhat.com>
+	<Zj33cUe7HYOIfj5N@yzhao56-desk.sh.intel.com>
+	<20240510105728.76d97bbb.alex.williamson@redhat.com>
+	<ZkG9IEQwi7HG3YBk@yzhao56-desk.sh.intel.com>
+	<20240516145009.3bcd3d0c.alex.williamson@redhat.com>
+	<ZkbK9CzmcxgqhSuR@yzhao56-desk.sh.intel.com>
+Organization: Red Hat
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240226065113.1690534-1-nick.hu@sifive.com> <CAPDyKFph3WsZMmALnzBQKE4S_80Ji5h386Wi0vHda37QUsjMtg@mail.gmail.com>
- <CAKddAkDcdaXKzpcKN=LCCx9S4Trv+joLX2s=nyhzaRtM5HorqA@mail.gmail.com>
- <CAKddAkC6N=Cfo0z+F8herKTuJzCyt_MA0vWNbLCr6CbQnj0y8g@mail.gmail.com>
- <CAPDyKFr_M0NDH0gaunBpybnALOFfz4LpX4_JW2GCUxjwGzdZsg@mail.gmail.com>
- <CAKddAkC5CRX+ZTh=MgzPYU72SY13+AQYhknhV_CC+=XX9=DKyg@mail.gmail.com>
- <CAAhSdy1SDd=VUqDQA0T5n9LwHo=3uGzFq1dUcbDFcB3aBdaioA@mail.gmail.com>
- <CAAhSdy33DcNw+pbDRrR=hBH86kwvu3xZbomQby8XhRXcc-exqQ@mail.gmail.com>
- <CAKddAkBrP2iQBC+aY1Xw5pssBpiQZe4V-6ww5m8hbKP6V0jzLg@mail.gmail.com>
- <CAAhSdy12-_Hdb-WVrs8kyfCy_OQA0p27DS6TOV87dh9HODrU_Q@mail.gmail.com> <CAKddAkCQOvnci-bzKx1pBUJh5t1uPT-wNXGH1WyqDyb5qR_Scg@mail.gmail.com>
-In-Reply-To: <CAKddAkCQOvnci-bzKx1pBUJh5t1uPT-wNXGH1WyqDyb5qR_Scg@mail.gmail.com>
-From: Anup Patel <apatel@ventanamicro.com>
-Date: Fri, 17 May 2024 10:09:16 +0530
-Message-ID: <CAK9=C2V2xYwi4wK2+e=z7NF8Ph7+LxvWh4J4TmQrbVfSfpO-Ag@mail.gmail.com>
-Subject: Re: [PATCH] cpuidle: riscv-sbi: Add cluster_pm_enter()/exit()
-To: Nick Hu <nick.hu@sifive.com>
-Cc: Anup Patel <anup@brainfault.org>, Ulf Hansson <ulf.hansson@linaro.org>, palmer@dabbelt.com, 
-	rafael@kernel.org, daniel.lezcano@linaro.org, paul.walmsley@sifive.com, 
-	linux-pm@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, zong.li@sifive.com, 
-	Cyan Yang <cyan.yang@sifive.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 16, 2024 at 9:40=E2=80=AFAM Nick Hu <nick.hu@sifive.com> wrote:
->
-> Hi Anup
->
-> On Wed, May 15, 2024 at 9:46=E2=80=AFPM Anup Patel <anup@brainfault.org> =
-wrote:
-> >
-> > Hi Nick,
-> >
-> > On Wed, May 15, 2024 at 5:45=E2=80=AFPM Nick Hu <nick.hu@sifive.com> wr=
-ote:
-> > >
-> > > Hi Anup,
-> > >
-> > > Thank you for your guidance.
-> > > After enabling the debug message, we found a way to solve the problem
-> > > by the following steps:
-> > > 1. Add a compatible string in 'power-domains' node otherwise it won't
-> > > be the supplier of the consumers. (See of_link_to_phandle())
-> >
-> > Hmm, requiring a compatible string is odd. Where should we document
-> > this compatible string ?
-> >
-> Sorry, this is my fault. I didn't include some updates in
-> of_link_to_phandle(). This led some misunderstandings here.
-> You are right, we don't need it.
-> The supplier will be linked to the CLUSTER_PD node.
->
-> > > 2. Move the 'power-domains' node outside the 'cpus' node otherwise it
-> > > won't be added to the device hierarchy by device_add().
-> > > 3. Update the cpuidle-riscv-sbi driver to get the pds_node from
-> > > '/power-domains'.
-> >
-> > By adding a compatible string and moving the "power-domains" node
-> > outside, you are simply forcing the OF framework to populate devices.
-> >
-> > How about manually creating platform_device for each power-domain
-> > DT node using of_platform_device_create() in sbi_pd_init() ?
-> >
-> Thanks for the suggestion! We have test the solution and it could work.
-> We was wondering if it's feasible for us to relocate the
-> 'power-domains' node outside of the /cpus? The CLUSTER_PD might
-> encompass not only the CPUs but also other components within the
-> cluster.
+On Fri, 17 May 2024 11:11:48 +0800
+Yan Zhao <yan.y.zhao@intel.com> wrote:
 
-The cpuidle-riscv-sbi driver expects "power-domains" DT node
-under "/cpus" DT node because this driver only deals with power
-domains related to CPU cluster or CPU cache-hierarchy. It does
-make sense to define L2/L3 power domains under
-"/cpus/power-domain" since these are related to CPUs.
+> On Thu, May 16, 2024 at 02:50:09PM -0600, Alex Williamson wrote:
+> > On Mon, 13 May 2024 15:11:28 +0800
+> > Yan Zhao <yan.y.zhao@intel.com> wrote:
+> >   
+> > > On Fri, May 10, 2024 at 10:57:28AM -0600, Alex Williamson wrote:  
+> > > > On Fri, 10 May 2024 18:31:13 +0800
+> > > > Yan Zhao <yan.y.zhao@intel.com> wrote:
+> > > >     
+> > > > > On Thu, May 09, 2024 at 12:10:49PM -0600, Alex Williamson wrote:    
+> > > > > > On Tue,  7 May 2024 14:21:38 +0800
+> > > > > > Yan Zhao <yan.y.zhao@intel.com> wrote:      
+> ...   
+> > > > > > > @@ -1683,9 +1715,14 @@ static int vfio_iommu_replay(struct vfio_iommu *iommu,
+> > > > > > >  	for (; n; n = rb_next(n)) {
+> > > > > > >  		struct vfio_dma *dma;
+> > > > > > >  		dma_addr_t iova;
+> > > > > > > +		bool cache_flush_required;
+> > > > > > >  
+> > > > > > >  		dma = rb_entry(n, struct vfio_dma, node);
+> > > > > > >  		iova = dma->iova;
+> > > > > > > +		cache_flush_required = !domain->enforce_cache_coherency &&
+> > > > > > > +				       !dma->cache_flush_required;
+> > > > > > > +		if (cache_flush_required)
+> > > > > > > +			dma->cache_flush_required = true;      
+> > > > > > 
+> > > > > > The variable name here isn't accurate and the logic is confusing.  If
+> > > > > > the domain does not enforce coherency and the mapping is not tagged as
+> > > > > > requiring a cache flush, then we need to mark the mapping as requiring
+> > > > > > a cache flush.  So the variable state is something more akin to
+> > > > > > set_cache_flush_required.  But all we're saving with this is a
+> > > > > > redundant set if the mapping is already tagged as requiring a cache
+> > > > > > flush, so it could really be simplified to:
+> > > > > > 
+> > > > > > 		dma->cache_flush_required = !domain->enforce_cache_coherency;      
+> > > > > Sorry about the confusion.
+> > > > > 
+> > > > > If dma->cache_flush_required is set to true by a domain not enforcing cache
+> > > > > coherency, we hope it will not be reset to false by a later attaching to domain 
+> > > > > enforcing cache coherency due to the lazily flushing design.    
+> > > > 
+> > > > Right, ok, the vfio_dma objects are shared between domains so we never
+> > > > want to set 'dma->cache_flush_required = false' due to the addition of a
+> > > > 'domain->enforce_cache_coherent == true'.  So this could be:
+> > > > 
+> > > > 	if (!dma->cache_flush_required)
+> > > > 		dma->cache_flush_required = !domain->enforce_cache_coherency;    
+> > > 
+> > > Though this code is easier for understanding, it leads to unnecessary setting of
+> > > dma->cache_flush_required to false, given domain->enforce_cache_coherency is
+> > > true at the most time.  
+> > 
+> > I don't really see that as an issue, but the variable name originally
+> > chosen above, cache_flush_required, also doesn't convey that it's only
+> > attempting to set the value if it wasn't previously set and is now
+> > required by a noncoherent domain.  
+> Agreed, the old name is too vague.
+> What about update_to_noncoherent_required?
 
-Moving the CPU "power-domains" DT node directly under "/" or
-somewhere else would mean that it covers system-wide power
-domains which is not true.
+set_noncoherent?  Thanks,
 
-I suggest we continue using "/cpus/power-domains" DT node
-only for power domains related to CPU clusters or CPU
-cache-hierarchy.
+Alex
 
-For system wide power domains of SoC devices, we can either:
-1) Use device power domains through the SBI MPXY extension
-    via different driver
-2) Use a platform specific driver
+> Then in vfio_iommu_replay(), it's like
+> 
+> update_to_noncoherent_required = !domain->enforce_cache_coherency && !dma->is_noncoherent;
+> if (update_to_noncoherent_required)
+>          dma->is_noncoherent = true;
+> 
+> ...
+> if (update_to_noncoherent_required)
+> 	arch_flush_cache_phys((phys, size);
+> >   
+> > > > > > It might add more clarity to just name the mapping flag
+> > > > > > dma->mapped_noncoherent.      
+> > > > > 
+> > > > > The dma->cache_flush_required is to mark whether pages in a vfio_dma requires
+> > > > > cache flush in the subsequence mapping into the first non-coherent domain
+> > > > > and page unpinning.    
+> > > > 
+> > > > How do we arrive at a sequence where we have dma->cache_flush_required
+> > > > that isn't the result of being mapped into a domain with
+> > > > !domain->enforce_cache_coherency?    
+> > > Hmm, dma->cache_flush_required IS the result of being mapped into a domain with
+> > > !domain->enforce_cache_coherency.
+> > > My concern only arrives from the actual code sequence, i.e.
+> > > dma->cache_flush_required is set to true before the actual mapping.
+> > > 
+> > > If we rename it to dma->mapped_noncoherent and only set it to true after the
+> > > actual successful mapping, it would lead to more code to handle flushing for the
+> > > unwind case.
+> > > Currently, flush for unwind is handled centrally in vfio_unpin_pages_remote()
+> > > by checking dma->cache_flush_required, which is true even before a full
+> > > successful mapping, so we won't miss flush on any pages that are mapped into a
+> > > non-coherent domain in a short window.  
+> > 
+> > I don't think we need to be so literal that "mapped_noncoherent" can
+> > only be set after the vfio_dma is fully mapped to a noncoherent domain,
+> > but also we can come up with other names for the flag.  Perhaps
+> > "is_noncoherent".  My suggestion was more from the perspective of what
+> > does the flag represent rather than what we intend to do as a result of
+> > the flag being set.  Thanks,   
+> Makes sense!
+> I like the name "is_noncoherent" :)
+> 
 
->
-> We also look at cpuidle_psci_domain driver and it seems Arm doesn't
-> create the devices for each subnode of psci domain.
-> Is there any reason that they don't need it?
-
-Existing ARM DTS files under arch/arm64/boot/dts, use device
-power domains through SCMI (or platform specific mechanism)
-which are already populated as devices by Linux DD framework.
-
-Regards,
-Anup
-
->
-> > >
-> > > So the DTS will be like:
-> > > cpus {
-> > >     ...
-> > >      domain-idle-states {
-> > >            CLUSTER_SLEEP:cluster-sleep {
-> > >                         compatible =3D "domain-idle-state";
-> > >                         ...
-> > >             }
-> > >      }
-> > > }
-> > > power-domains {
-> > >             compatible =3D "riscv,sbi-power-domains"
-> > >             ...
-> > >             ...
-> > >             CLUSTER_PD: clusterpd {
-> > >                     domain-idle-states =3D <&CLUSTER_SLEEP>;
-> > >             };
-> > > }
-> > > soc {
-> > >       deviceA@xxx{
-> > >              ...
-> > >              power-domains =3D <&CLUSTER_PD>;
-> > >              ...
-> > >       }
-> > > }
-> >
-> > Regards,
-> > Anup
-> >
-> > >
-> > > Regards,
-> > > Nick
-> > >
-> > > On Tue, May 14, 2024 at 10:54=E2=80=AFPM Anup Patel <anup@brainfault.=
-org> wrote:
-> > > >
-> > > > On Tue, May 14, 2024 at 7:53=E2=80=AFPM Anup Patel <anup@brainfault=
-org> wrote:
-> > > > >
-> > > > > Hi Nick,
-> > > > >
-> > > > > On Tue, May 14, 2024 at 3:20=E2=80=AFPM Nick Hu <nick.hu@sifive.c=
-om> wrote:
-> > > > > >
-> > > > > > Hi Ulf,
-> > > > > >
-> > > > > > Thank you for your valuable suggestion.
-> > > > > > I sincerely apologize for the delay in responding to your messa=
-ge We
-> > > > > > have diligently worked on experimenting with the suggestion you
-> > > > > > provided.
-> > > > > >
-> > > > > > As per your recommendation, we have incorporated the "power-dom=
-ains=3D<>
-> > > > > > property" into the consumer's node, resulting in modifications =
-to the
-> > > > > > DTS as illustrated below:
-> > > > > >
-> > > > > > cpus {
-> > > > > >     ...
-> > > > > >      domain-idle-states {
-> > > > > >            CLUSTER_SLEEP:cluster-sleep {
-> > > > > >                         compatible =3D "domain-idle-state";
-> > > > > >                         ...
-> > > > > >             }
-> > > > > >      }
-> > > > > >      power-domains {
-> > > > > >             ...
-> > > > > >             ...
-> > > > > >             CLUSTER_PD: clusterpd {
-> > > > > >                     domain-idle-states =3D <&CLUSTER_SLEEP>;
-> > > > > >             };
-> > > > > >      }
-> > > > > > }
-> > > > > > soc {
-> > > > > >       deviceA@xxx{
-> > > > > >              ...
-> > > > > >              power-domains =3D <&CLUSTER_PD>;
-> > > > > >              ...
-> > > > > >       }
-> > > > > > }
-> > > > > >
-> > > > > > However, this adjustment has led to an issue where the probe fo=
-r
-> > > > > > 'deviceA' is deferred by 'device_links_check_suppliers()' withi=
-n
-> > > > > > 'really_probe()'. In an attempt to mitigate this issue, we
-> > > > > > experimented with a workaround by adding the attribute
-> > > > > > "status=3D"disabled"" to the 'CLUSTER_PD' node. This action aim=
-ed to
-> > > > > > prevent the creation of a device link between 'deviceA' and
-> > > > > > 'CLUSTER_PD'. Nevertheless, we remain uncertain about the
-> > > > > > appropriateness of this solution.
-> > > > > >
-> > > > > > Do you have suggestions on how to effectively address this issu=
-e?
-> > > > >
-> > > > > I totally missed this email since I was not CC'ed sorry about tha=
-t. Please
-> > > > > use get_maintainers.pl when sending patches.
-> > > >
-> > > > I stand corrected. This patch had landed in the "spam" folder. I do=
-n't know why.
-> > > >
-> > > > Regards,
-> > > > Anup
-> > > >
-> > > > >
-> > > > > The genpd_add_provider() (called by of_genpd_add_provider_simple(=
-))
-> > > > > does mark the power-domain DT node as initialized (fwnode_dev_ini=
-tialized())
-> > > > > so after the cpuidle-riscv-sbi driver is probed the 'deviceA' dep=
-endency is
-> > > > > resolved and 'deviceA' should be probed unless there are other un=
-met
-> > > > > dependencies.
-> > > > >
-> > > > > Try adding "#define DEBUG" before all includes in drivers/core/ba=
-sec
-> > > > > and add "loglevel=3D8" in kernel parameters, this will print prod=
-ucer-consumer
-> > > > > linkage of all devices.
-> > > > >
-> > > > > Marking the power-domain DT node as "disabled" is certainly not t=
-he
-> > > > > right way.
-> > > > >
-> > > > > Regards,
-> > > > > Anup
-> > > > >
-> > > > > >
-> > > > > > Regards,
-> > > > > > Nick
-> > > > > >
-> > > > > > On Tue, Apr 30, 2024 at 4:13=E2=80=AFPM Ulf Hansson <ulf.hansso=
-n@linaro.org> wrote:
-> > > > > > >
-> > > > > > > On Mon, 29 Apr 2024 at 18:26, Nick Hu <nick.hu@sifive.com> wr=
-ote:
-> > > > > > > >
-> > > > > > > > On Tue, Apr 30, 2024 at 12:22=E2=80=AFAM Nick Hu <nick.hu@s=
-ifive.com> wrote:
-> > > > > > > > >
-> > > > > > > > > Hi Ulf
-> > > > > > > > >
-> > > > > > > > > On Mon, Apr 29, 2024 at 10:32=E2=80=AFPM Ulf Hansson <ulf=
-hansson@linaro.org> wrote:
-> > > > > > > > > >
-> > > > > > > > > > On Mon, 26 Feb 2024 at 07:51, Nick Hu <nick.hu@sifive.c=
-om> wrote:
-> > > > > > > > > > >
-> > > > > > > > > > > When the cpus in the same cluster are all in the idle=
- state, the kernel
-> > > > > > > > > > > might put the cluster into a deeper low power state. =
-Call the
-> > > > > > > > > > > cluster_pm_enter() before entering the low power stat=
-e and call the
-> > > > > > > > > > > cluster_pm_exit() after the cluster woken up.
-> > > > > > > > > > >
-> > > > > > > > > > > Signed-off-by: Nick Hu <nick.hu@sifive.com>
-> > > > > > > > > >
-> > > > > > > > > > I was not cced this patch, but noticed that this patch =
-got queued up
-> > > > > > > > > > recently. Sorry for not noticing earlier.
-> > > > > > > > > >
-> > > > > > > > > > If not too late, can you please drop/revert it? We shou=
-ld really move
-> > > > > > > > > > away from the CPU cluster notifiers. See more informati=
-on below.
-> > > > > > > > > >
-> > > > > > > > > > > ---
-> > > > > > > > > > >  drivers/cpuidle/cpuidle-riscv-sbi.c | 24 +++++++++++=
-+++++++++++--
-> > > > > > > > > > >  1 file changed, 22 insertions(+), 2 deletions(-)
-> > > > > > > > > > >
-> > > > > > > > > > > diff --git a/drivers/cpuidle/cpuidle-riscv-sbi.c b/dr=
-ivers/cpuidle/cpuidle-riscv-sbi.c
-> > > > > > > > > > > index e8094fc92491..298dc76a00cf 100644
-> > > > > > > > > > > --- a/drivers/cpuidle/cpuidle-riscv-sbi.c
-> > > > > > > > > > > +++ b/drivers/cpuidle/cpuidle-riscv-sbi.c
-> > > > > > > > > > > @@ -394,6 +394,7 @@ static int sbi_cpuidle_pd_power_o=
-ff(struct generic_pm_domain *pd)
-> > > > > > > > > > >  {
-> > > > > > > > > > >         struct genpd_power_state *state =3D &pd->stat=
-es[pd->state_idx];
-> > > > > > > > > > >         u32 *pd_state;
-> > > > > > > > > > > +       int ret;
-> > > > > > > > > > >
-> > > > > > > > > > >         if (!state->data)
-> > > > > > > > > > >                 return 0;
-> > > > > > > > > > > @@ -401,6 +402,10 @@ static int sbi_cpuidle_pd_power_=
-off(struct generic_pm_domain *pd)
-> > > > > > > > > > >         if (!sbi_cpuidle_pd_allow_domain_state)
-> > > > > > > > > > >                 return -EBUSY;
-> > > > > > > > > > >
-> > > > > > > > > > > +       ret =3D cpu_cluster_pm_enter();
-> > > > > > > > > > > +       if (ret)
-> > > > > > > > > > > +               return ret;
-> > > > > > > > > >
-> > > > > > > > > > Rather than using the CPU cluster notifiers, consumers =
-of the genpd
-> > > > > > > > > > can register themselves to receive genpd on/off notifie=
-rs.
-> > > > > > > > > >
-> > > > > > > > > > In other words, none of this should be needed, right?
-> > > > > > > > > >
-> > > > > > > > > Thanks for the feedback!
-> > > > > > > > > Maybe I miss something, I'm wondering about a case like b=
-elow:
-> > > > > > > > > If we have a shared L2 cache controller inside the cpu cl=
-uster power
-> > > > > > > > > domain and we add this controller to be a consumer of the=
- power
-> > > > > > > > > domain, Shouldn't the genpd invoke the domain idle only a=
-fter the
-> > > > > > > > > shared L2 cache controller is suspended?
-> > > > > > > > > Is there a way that we can put the L2 cache down while al=
-l cpus in the
-> > > > > > > > > same cluster are idle?
-> > > > > > > > > > [...]
-> > > > > > > > Sorry, I made some mistake in my second question.
-> > > > > > > > Update the question here:
-> > > > > > > > Is there a way that we can save the L2 cache states while a=
-ll cpus in the
-> > > > > > > > same cluster are idle and the cluster could be powered down=
-?
-> > > > > > >
-> > > > > > > If the L2 cache is a consumer of the cluster, the consumer dr=
-iver for
-> > > > > > > the L2 cache should register for genpd on/off notifiers.
-> > > > > > >
-> > > > > > > The device representing the L2 cache needs to be enabled for =
-runtime
-> > > > > > > PM, to be taken into account correctly by the cluster genpd. =
-In this
-> > > > > > > case, the device should most likely remain runtime suspended,=
- but
-> > > > > > > instead rely on the genpd on/off notifiers to understand when
-> > > > > > > save/restore of the cache states should be done.
-> > > > > > >
-> > > > > > > Kind regards
-> > > > > > > Uffe
->
 
