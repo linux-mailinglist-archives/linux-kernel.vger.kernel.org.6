@@ -1,188 +1,104 @@
-Return-Path: <linux-kernel+bounces-182221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C2E48C883F
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 16:43:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FC768C8844
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 16:45:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 172FA282340
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 14:43:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15C47B251DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 14:45:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71DCE883D;
-	Fri, 17 May 2024 14:43:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED18364CE1;
+	Fri, 17 May 2024 14:44:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="fy08KIsZ"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="sAzn2EV2"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95F3479CC
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 14:43:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2B308BEE;
+	Fri, 17 May 2024 14:44:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715957021; cv=none; b=OarohaEV0JX7DW3CEthTllP7QmJZVJNtcXOt1bKIEBXG67DkGHdTNZDUbiglVgKBeFjHYumQyy761pEsmsj9j0+a1d46mZIJQ3nNUa6iyQTW3R0LpoDADj22IIRM96Ytq9lLQRpbgZhumJBaQKVpS+BEQLjcZoTnTZGC2xmMVUY=
+	t=1715957093; cv=none; b=L2LeyvxLfR3DuP+25LjT30CD9GODqDn2a1fMsZtO+OQessH8SgoD4kwr61mb6VcOVESSDGepIQQNx02x7bxfYIHvB/yS4ekKAiC77xEN10eQhyO8Um3btWeg3/+FJFOSaFla4wDKpTv2kgYPNN1Ift1zDS+psRz9RpXYTcsBo6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715957021; c=relaxed/simple;
-	bh=5RHEgT4TRXWuR2TCtYoK0E9wYhkS7QE0koMrQ034yfU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ead96tJmP5L+84Om8rDM/M6Xhfig6MoeoB3WFa81LSYJgqedyASekFj6WJJQ6a1BrOpVmatILnPVPxAG5AmbeW/kVbEmSb5fSI/Ut5dCCZff+noV8QszM3xU3dNxKWZLfw3Agze0R5PknsoqpoTGGeUt4KsLwqdmY7g7Vpa0L9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=fy08KIsZ; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 56D5E40E0177;
-	Fri, 17 May 2024 14:43:37 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id mRYkkgVPbLtB; Fri, 17 May 2024 14:43:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1715957014; bh=nNhARHRzM+VvAMzzt6iIDXpl51Q18SFqa8WDQFl7zJI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fy08KIsZosFStvfj1WTdLhGI7NKVAOsUsZVJleADawRD0LG/LghLnENAaELOxarqK
-	 L7kmlcDUAads8HJPvs60uYKYBoRwgNc6OG/sewA+e7lwTqtxr0L/l0m/IzQHzT12vx
-	 ZyGAMSRRCAI2qbOoVSVpxW7IgGkWkolJfpW5REwAqy4lgOA7svdDgov9pBLKKGuAUX
-	 7XYCJQTPTkgrqK5LcPKY21B9h9Z3v6wgICYRvHa3mIXoXkZNt3N6QVP118KTN0gMq5
-	 9Wt7iqdM7YzaHL7wVkiiqU6F1AGf3N3xbK9qO8dGif8RSiiQgoj30ZvpZm9qxn5dlz
-	 EWvVhg58gu3WkZMxpCpW2YSu7BXAuP2Qev00yuCsmlMLQ7szyOAiWzOeONJkQRFFqF
-	 0CQ3aVhdO9ERnLuSMyB/H09CwPOl8eMrJvlFh62EFEy/ytKYQPRiA5CcX1m34xWU0i
-	 u8X6wWCGQ48ff21Fv9ws0kQHPtWVkIorWwHng35o5tAch/mymTCvyPGjf9DyQo88mQ
-	 uS5syOLH3m3aiKgQl6pm60x5WApdInOfqc+akuEURzLaa8tiqz1hjW454z7jRQJLtZ
-	 +ApmScmoOj3yrAxbwidikrjYu63AT1u3i6IH/Le+2ef6qxVUTnL3dUrtnEp0xc/lIA
-	 XXmgPSOy574w7FWZLz4Hhu6g=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id DF2B040E016A;
-	Fri, 17 May 2024 14:43:17 +0000 (UTC)
-Date: Fri, 17 May 2024 16:43:12 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Tony Luck <tony.luck@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Uros Bizjak <ubizjak@gmail.com>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Arnd Bergmann <arnd@arndb.de>, Mateusz Guzik <mjguzik@gmail.com>,
-	Thomas Renninger <trenn@suse.de>,
-	Greg Kroah-Hartman <gregkh@suse.de>,
-	Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev
-Subject: Re: [PATCH v2] x86/cpu: Fix x86_match_cpu() to match just
- X86_VENDOR_INTEL
-Message-ID: <20240517144312.GBZkdtAOuJZCvxhFbJ@fat_crate.local>
-References: <20240516162925.79245-1-tony.luck@intel.com>
+	s=arc-20240116; t=1715957093; c=relaxed/simple;
+	bh=+aVeKwNOkrb3tLI0V3LcMqYrP6mqiK5EMZdPc+VX5HE=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=Dt6M6NX6U8hg/7s2VRxyya5IA9diOAOrH+d9nQ6mmdDBTJYOZ1B6kpXTFJhV6+vzW8HdXZppoPJPtsfdLvyZoLJNwB+4K6vTYoZIji+jc0kBp2fxcY04t1n08Uu/5gikXj8SOXMy/Qq6mT7I52+RgSzAH1CpGpi21DRvqIFEn/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=sAzn2EV2; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1715957063; x=1716561863; i=markus.elfring@web.de;
+	bh=+aVeKwNOkrb3tLI0V3LcMqYrP6mqiK5EMZdPc+VX5HE=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=sAzn2EV2K3gYDcmAUxz6SNR/oCJQLkgwsfxtPH1jl8wqSWYBNOUcJHBPt29K91Tn
+	 pLOO/DBDOqCpHpfkZhnT1fUywr65u0+NsSz0u+aILZWs5pOlUMDdyJe6sT0O4MYdK
+	 i0atqq2wpjMSIn/Q3L5otxnM+ZY5teX8ySRHTmLSqimcA14lmWawsdK1Gqm9HbIj7
+	 BUcqH3FhH/C5g6y6D5PUXxmdib0bmHKx1mOvOuAi2DsTLAImCJokIedphgAh8Tx0u
+	 OkxHnQ1081fZkQUjP/l8oQ7DkGbOiwOOSYYmzdHbvnpDW3vpwONCKBp26+SRLOd2z
+	 cy9WvruWe+xHKfR21Q==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MjPU0-1sriyS3uzS-00kwyD; Fri, 17
+ May 2024 16:44:23 +0200
+Message-ID: <b95de04f-a2f8-4564-b9d4-9c09c47f23c3@web.de>
+Date: Fri, 17 May 2024 16:44:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240516162925.79245-1-tony.luck@intel.com>
+User-Agent: Mozilla Thunderbird
+To: Vitor Soares <vitor.soares@toradex.com>, linux-can@vger.kernel.org,
+ netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Marc Kleine-Budde <mkl@pengutronix.de>, Paolo Abeni <pabeni@redhat.com>,
+ Thomas Kopp <thomas.kopp@microchip.com>,
+ Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Cc: LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org,
+ Vitor Soares <ivitro@gmail.com>
+References: <20240517134355.770777-1-ivitro@gmail.com>
+Subject: Re: [PATCH v6] can: mcp251xfd: fix infinite loop when xmit fails
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240517134355.770777-1-ivitro@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:jQda5thjhQ3+QAQBTzGmnXxok3VeF3AuKuknKXbC7+IM7t+r+bA
+ TyEOkBpzU+hrdwFcDAi7NkHzuYemBbBDhFBmYmjemZ+V6Fhz8fwxghf9Kg/o29smoSZKsMm
+ Elrw7pVIP+KjcoJFP2N/F1mPcCPSeOL3E/oE6HAGkAFaE79/AOM62uQJ6Cey1cUNZq+IGkP
+ fJ7p4oO6HjybBBeP28fLQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:dsfVgghV4pY=;3XMg0of8EhzPihplMuDL52QZrKU
+ Z9uZdUEkcO4ApLZYj+O/swICZ4s2v3CDDp9NFzVXkBDz1JWXRLqnWs0Uc8UJ0zVecPMgTkpDn
+ oUp3e5yl2nluOmiECQ0UPyNT4aBQ8773j3R5aTzHXIE6gF1XQKGQuYP8dNevPHsg8X7fCefpY
+ MZI/GxeAsOYXtlM3CsNYvEdkul6PG3Gb8H/d52FYHeioxtRts09KNeE2ZGoo48BA6m/gzSQa1
+ q4CRFbj9pNDrrdNwQ9grUvZvMumGRpOVvwfBq9JyXv6Dd547viBwCQDlyd59BiLQZXUws6XhB
+ 4gl1iCkl/5Et65aYsvXXi2ZBWH0efI1hQK5YRWba5dmpeUd0E+0DibVOkaxZpt6FHAaYGnArB
+ xVI7BwAmDFcfwMz9Ywgj3Za55OKkkSoiNn6Ytiv7UC/gmKXHhOdMlt6RLy1dOFcVFBT8BPC2I
+ jOV9DR6UoRhF2fjpv7BqaSnbMbS4r98SgPyv7Sc4Fey1FD99kanAtACoBBoMuf/SBzEOxhFp7
+ EBi8HIOuvmwm3ac5ZcQuxXubkHu6y6TMTS69MnpRm+XgNt7GkGGVItub2Xq1v2Qn/QXLWsf2W
+ EWiw/QNJCfcrPzE8LQ2eihLe9exLwe/c/kiJuDCapc/5mNkNNHymGfsLfk0d/V1/0+gq+0jMu
+ Jr1KSJyhejqSkZoOxoKsLKHcyKaIfn8+AfPh7f0xIMTxdDxoJhdgmUgoUoGqkC6WmEi6IDqhW
+ 2tfo/fTqgIvhJ6iER4Eow8wJJt+Nt4FRe1duH2hBOEgu2HRjynov6yNW7+PkXw3X+IcNkvTp/
+ KyDb4oNI5KplT4OwEoLNkgF7F1Y+aBYL8TGVE3h1ahlv8=
 
-On Thu, May 16, 2024 at 09:29:25AM -0700, Tony Luck wrote:
-> -#define X86_VENDOR_INTEL	0
->  #define X86_VENDOR_CYRIX	1
->  #define X86_VENDOR_AMD		2
->  #define X86_VENDOR_UMC		3
-> +#define X86_VENDOR_INTEL	4
->  #define X86_VENDOR_CENTAUR	5
->  #define X86_VENDOR_TRANSMETA	7
->  #define X86_VENDOR_NSC		8
-> -- 
+=E2=80=A6
+> This patch resolves the issue by starting =E2=80=A6
 
-From my last review:
+Will further imperative wordings be more desirable for an improved change =
+description?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.9#n94
 
-> But the Intel vendor has been 0 for what, 30 years?
-
-> Are you sure no other code in the tree relies on that? Audited?
-
-But nope, apparently that's too much to ask. :-(
-
-modinfo ./arch/x86/events/intel/intel-uncore.ko
-filename:       ./arch/x86/events/intel/intel-uncore.ko
-license:        GPL
-srcversion:     ECE38449B18DD83223B93FD
-alias:          cpu:type:x86,ven0000fam0006mod00B6:feature:*
-alias:          cpu:type:x86,ven0000fam0006mod00AF:feature:*
-alias:          cpu:type:x86,ven0000fam0006mod00BE:feature:*
-			     ^^^^^^^^^
-
-Would everything still work if it said "ven0004" now?
-
-So tglx and I just did some poking and we think the best solution would
-be to add a __u16 flags field to struct x86_cpu_id right...
-
-struct x86_cpu_id {
-        __u16                      vendor;               /*     0     2 */
-        __u16                      family;               /*     2     2 */
-        __u16                      model;                /*     4     2 */
-        __u16                      steppings;            /*     6     2 */
-        __u16                      feature;              /*     8     2 */
-
-        /* XXX 6 bytes hole, try to pack */
-
-<--- HERE
-
-        kernel_ulong_t             driver_data;          /*    16     8 */
-
-        /* size: 24, cachelines: 1, members: 6 */
-        /* sum members: 18, holes: 1, sum holes: 6 */
-        /* last cacheline: 24 bytes */
-};
-
-and the 32-bit version has the same hole:
-
-struct x86_cpu_id {
-        __u16                      vendor;               /*     0     2 */
-        __u16                      family;               /*     2     2 */
-        __u16                      model;                /*     4     2 */
-        __u16                      steppings;            /*     6     2 */
-        __u16                      feature;              /*     8     2 */
-
-        /* XXX 2 bytes hole, try to pack */
-
-<--- HERE
-
-        kernel_ulong_t             driver_data;          /*    12     4 */
-
-        /* size: 16, cachelines: 1, members: 6 */
-        /* sum members: 14, holes: 1, sum holes: 2 */
-        /* last cacheline: 16 bytes */
-};
-
-And then do:
-
-struct x86_cpu_id {
-        __u16 vendor;
-        __u16 family;
-        __u16 model;
-        __u16 steppings;
-        __u16 feature;  /* bit index */
-	__u16 flags;
-        kernel_ulong_t driver_data;
-};
-
-#define X86_CPU_ID_FLAG_VENDOR_VALID		BIT(0)
-
-and then have the macros in arch/x86/include/asm/cpu_device_id.h set
-that valid flag and then have x86_match_cpu() check it.
-
-Then you don't risk a userspace breakage and that x86_match_cpu() crap
-thing is fixed.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Regards,
+Markus
 
