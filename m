@@ -1,173 +1,176 @@
-Return-Path: <linux-kernel+bounces-182162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1C588C8787
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 15:54:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA8EE8C878E
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 15:55:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A6751F21466
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 13:54:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 918FD281962
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 13:55:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5408B5812F;
-	Fri, 17 May 2024 13:54:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 690F555769;
+	Fri, 17 May 2024 13:55:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FqciInBf"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZbeYyxqj"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F76D56B81
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 13:54:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57AC247A7D
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 13:55:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715954083; cv=none; b=IwNHFe1vMQlyBIjnpQwTuDosyeoxAVsaObp7xM3e9+QUraS5TDioQrz2M2EzTccyJUXLLkGbr2E8nc2KK2CDm7C8Qj8ybwlzSQyKALgZrjjcYKYl6nQnhvOEAxiCHaxAkZO8+OGI0DOc5zZFe97hIP5njN6e3YGOYTiUUgVMbv4=
+	t=1715954120; cv=none; b=mjFtiTHL4A2/XxzPcbXIlC1lK0wr7zPTkRAIvQ1Q6q9HFxnC99X36U8//JHtldOIJWwGIdraCYVxX4hH9iwifKQhUoTMlS8wQ5tEPeXbEUs0YwqJqYRR4PNsdSAYjHPEoMrFtRQsOFKKmyvKrT/VJrwVOfCgG1oRza7/x3gBXjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715954083; c=relaxed/simple;
-	bh=PboiBS4ZzUdLaUHPHA2orxrOnIuUIXb03qsrzol/Lpk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cEyHSiaI3kbxawdp8vG7rUn/qcR6KimaTU3dJnZWn2r41j/KEcP4cs/tXBYQSsdEHAPmiv3Ygq+OI6WddOk1wI5fhwI1e4v/JfkOU8hy1f2pXwdXoPdbg5PmWICjFjX01fOPDv4GrNN+DFmHZvgYKnB3+fSbrEl2xldmd/kiYp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FqciInBf; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715954079;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ckgzF/gF0LVkJPIHaMi6FsUAJKsbsEhiiso6m6KhFLY=;
-	b=FqciInBfECmndZ1+u6oABqdWo0Bd+IWXLMsHkU5LcTbnD3uGwMYyrRWFxww22zUPowYF96
-	58bTT7pqs5klw0js6L9fdI5u8oBIDWZES/16652BCXIJ3+L+/tRfeWpAIUpKFmkR/4GiwI
-	DQRnfbDIzlTOgs7XpCvnkkxrUfLoefg=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-641-BzEV1W0BPOShsHVuZezzUA-1; Fri, 17 May 2024 09:54:38 -0400
-X-MC-Unique: BzEV1W0BPOShsHVuZezzUA-1
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a59a0d2280cso673703066b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 06:54:37 -0700 (PDT)
+	s=arc-20240116; t=1715954120; c=relaxed/simple;
+	bh=kmLRaan199TtvtBsPNWNz/2/KbfZ7Bw18heNS9jkiDk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P192FB3o8ahUzshKimgaGDD7PlEfkkSSbqnbgc+i9MKVbfveKcHZobT/4l8fAxf2eeLXu4V9cSGFA7ZENbX0VmDrJo1isIgK01o8sPRJlgDYlnrwwAbjWwe50VvOVnKOmbGiGsUnGLxfc92Bkq/37c6ADVCJmJxmcE9ox9LwE8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZbeYyxqj; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1e83a2a4f2cso7198215ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 06:55:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715954118; x=1716558918; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7ZxQSJrLWHCfnaAsDV35fIgvxplbZ5Wh2f2VjoJkfWc=;
+        b=ZbeYyxqjPKeG19eA3LE8eG5aaq2N7DZtHi36Lxd821HWKcm5O0P2awUoylIyuHg/Fd
+         PnaHHQLTT/1NzaAAWOeCeB9drDAU58j3OzLADV3vg8Way5UgN9k7bnWQ5qgbfiU0cpWh
+         j1hfAv5eYAG2Yj1vs9ksVvTFXQEHZs2l00H+RRuZ1s0fqd4p8wlZBRX2EuC9oXGmnoHG
+         ANrxgKier+Yhsf0t0GhRMlcB0neohB1fA4LQKIT+KPZzbDKgDJu1Hg6VMHkHbQ5soxtl
+         DjO9ol/dWpfC/s0nTB4B+oAW3DyZhCKuWP4pFmE6Vj3P8K8QiE3t/VBN3JcbzJdLi+wN
+         zfPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715954077; x=1716558877;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ckgzF/gF0LVkJPIHaMi6FsUAJKsbsEhiiso6m6KhFLY=;
-        b=CuVamhTtEQ5TYB0Wa7asQRfbXWMnZmA1xBOiLtugxQzWmMs2tW9QAThSHL+Wgfx5kD
-         jvWA/jkd0RCNuifWEQyYm38dGwkZBJv87eOt2J4OhS4fLSARKbQoLILyaFc4j1wnahsz
-         ZtSdDmy4KNfS4+ChhsZadvfS3abdC/x66QG95DY+kVKS9iM5J160uBvPSrzoleGEi/mZ
-         V0b5UrdK522qlA/bW0smfKmo/8dwyGEWnD6tuixEhOI5TrRHMx5RNDwkIr2Awr8CVHd8
-         Dcd0y6/rhbenhBprWx75v57D6SYMtxlRyuJKAnVvCkR56jo9Twbd5Z1lk4w6/u6g/PEG
-         6wkA==
-X-Forwarded-Encrypted: i=1; AJvYcCUUZ2pXfeBTEE7E3J8tzOJ2zPmqDZ7LoC4q8XXT2DOB93jXbm+Vyd1VSX8PhGc4C6HHaf0KPHGLRpaFOKauxGVUXNmrjNSAJelXkpiE
-X-Gm-Message-State: AOJu0YwrwPD2yeakElZa65Vv+3WS4OG1K/iSehgBvJz4Ors+FVFaTb9n
-	RyxkVJcsFP5VV9m0JNBc66buwA9dOxBoqoTIyJXJDGhscvOcqUEFtZO9CxSQ8PdGQutzojUI+/i
-	i+rwWVxM33BthUu8WJY0ZtThTwmJ2MLBGI+F/oxBMwuJklk01WSMIMxZTw0twyA==
-X-Received: by 2002:a17:906:ae45:b0:a59:c208:a4c with SMTP id a640c23a62f3a-a5a2d583d60mr1357057066b.17.1715954076936;
-        Fri, 17 May 2024 06:54:36 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFfJJCDx/mcZGpVUvsHhPUh6z3RkyZXkBJ3RqvMnfIOyn/dCG2D89v/HagZxG/or5jXzYtY3Q==
-X-Received: by 2002:a17:906:ae45:b0:a59:c208:a4c with SMTP id a640c23a62f3a-a5a2d583d60mr1357053966b.17.1715954076330;
-        Fri, 17 May 2024 06:54:36 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b17cd0sm1114128366b.214.2024.05.17.06.54.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 May 2024 06:54:35 -0700 (PDT)
-Message-ID: <d074cf56-c7e4-41ba-9e8e-931a5d350578@redhat.com>
-Date: Fri, 17 May 2024 15:54:35 +0200
+        d=1e100.net; s=20230601; t=1715954118; x=1716558918;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7ZxQSJrLWHCfnaAsDV35fIgvxplbZ5Wh2f2VjoJkfWc=;
+        b=IVioAmhjDESBB7zAeIWT7G5ZBE/kxM+bjApZxaDoOkcu9ae40ZD4a13sc/5GgKUv9w
+         WJsu50FMvDTtagYgaglBB5DLCVDxNbd9Bx0g8zPObPw/gw55wfmlqE80uqiTZbnLViTy
+         VelfBNvTkF5JGjtfEUoNnFdCMDo8ZsEZ1nQA5iZ8gZzNYxSJisOwR1bpWdy2Hrd4Sm7O
+         32EKeVrCS/ZcB2XO1e1Iry+HKsov5XJCc0mLr2uqUv0TWO4rymDI6akGe6ZjV+T/bNvI
+         SGU6cxb+ibTlq+kwlkY+dTPSZUzbFM+/Bl4GXY1L/GVByyX+d42bvYd4ii2QqdreOkRa
+         0kWw==
+X-Forwarded-Encrypted: i=1; AJvYcCU0D9YJ7QjxMicUVdS181rlspTV5b214CiypTcc0Ra+a47afMBzyqY4BCDT3QduvKYPexidAqVCE39L5/H+Afmw7tUIhuN/Q3Ml0vr1
+X-Gm-Message-State: AOJu0YwjISa+PRGwaGHIdWek0Gb/3/4YYylN57WlILu1iNypdmMftEy6
+	wrkDW2ccEQXnLlL5Ppt7QYNOxuBoXnFHnmtV6PDLe5eLgJ8C610DGdhZRb+x5Qc+IUpW+Jvmcv1
+	CqyKeDg0J8ceca4bpsSHWh4TvxSY=
+X-Google-Smtp-Source: AGHT+IGwEX78O0IPn/LXQEz9L1cBE2phMOdId85UeU23Pc2FrTGewlbOW/8t6Hjkh2Ub/HWo7jrIvmSVn/vzYm5neUc=
+X-Received: by 2002:a05:6a20:914f:b0:1ad:89e:21b5 with SMTP id
+ adf61e73a8af0-1afde0d4ce4mr24848771637.15.1715954118578; Fri, 17 May 2024
+ 06:55:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arch: Fix name collision with ACPI's video.o
-To: Thomas Zimmermann <tzimmermann@suse.de>, arnd@arndb.de,
- chaitanya.kumar.borah@intel.com, suresh.kumar.kurmi@intel.com,
- jani.saarinen@intel.com, davem@davemloft.net, andreas@gaisler.com,
- tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, rafael@kernel.org
-Cc: linux-arch@vger.kernel.org, sparclinux@vger.kernel.org,
- linux-acpi@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20240517091557.25800-1-tzimmermann@suse.de>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20240517091557.25800-1-tzimmermann@suse.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <CAPM=9tx_KS1qc8E1kUB5PPBvO9EKHNkk7hYWu-WwWJ6os=otJA@mail.gmail.com>
+ <CAHk-=wjdyimk4t2C7xfqLYFX1HUH92yTRTFQXAitJJT+REvF3Q@mail.gmail.com>
+In-Reply-To: <CAHk-=wjdyimk4t2C7xfqLYFX1HUH92yTRTFQXAitJJT+REvF3Q@mail.gmail.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Fri, 17 May 2024 09:55:07 -0400
+Message-ID: <CADnq5_P3pR8C=SsZWv85h7rZUxxfoQBeMsNbTWnLpOqeQ-2m=Q@mail.gmail.com>
+Subject: Re: [git pull] drm urgent for 6.10-rc1
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Dave Airlie <airlied@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, 
+	"Deucher, Alexander" <Alexander.Deucher@amd.com>, 
+	Arunpravin Paneer Selvam <Arunpravin.PaneerSelvam@amd.com>, 
+	dri-devel <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Thu, May 16, 2024 at 2:02=E2=80=AFPM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Wed, 15 May 2024 at 19:54, Dave Airlie <airlied@gmail.com> wrote:
+> >
+> > Here is the buddy allocator fix I picked up from the list, please apply=
+.
+>
+> So I removed my reverts, and am running a kernel that includes the
+> merge 972a2543e3dd ("Merge tag 'drm-next-2024-05-16' of
+> https://gitlab.freedesktop.org/drm/kernel") but I still see a lot of
+> warnings as per below.
+>
+> I was going to say that the difference is that now they trigger
+> through the page fault path (amdgpu_gem_fault) while previously they
+> triggered through the system call path and amdgpu_drm_ioctl. But it
+> turns out it's both in both cases, and it just happened to be one or
+> the other in the particular warnings that I cut-and-pasted.
+>
+> As before, there are tens of thousands of them after being up for less
+> than an hour, so this is not some kind of rare thing.
+>
+> The machine hasn't _crashed_ yet, though. But I'm going to be out and
+> about and working on my laptop the rest of the day, so I won't be able
+> to test.
+>
+> (And that kernel version of "6.9.0-08295-gfd39ab3b5289" that is quoted
+> in the WARN isn't some official kernel, I have about ten private
+> patches that I keep testing in my tree, so if you wondered what the
+> heck that git version is, it's not going to match anything you see,
+> but the ~ten patches also aren't relevant to this).
+>
+> Nothing unusual in the config, although this is clang-built. Shouldn't
+> matter, never has before.
 
-On 5/17/24 11:14 AM, Thomas Zimmermann wrote:
-> Commit 2fd001cd3600 ("arch: Rename fbdev header and source files")
-> renames the video source files under arch/ such that they do not
-> refer to fbdev any longer. The new files named video.o conflict with
-> ACPI's video.ko module. Modprobing the ACPI module can then fail with
-> warnings about missing symbols, as shown below.
-> 
->   (i915_selftest:1107) igt_kmod-WARNING: i915: Unknown symbol acpi_video_unregister (err -2)
->   (i915_selftest:1107) igt_kmod-WARNING: i915: Unknown symbol acpi_video_register_backlight (err -2)
->   (i915_selftest:1107) igt_kmod-WARNING: i915: Unknown symbol __acpi_video_get_backlight_type (err -2)
->   (i915_selftest:1107) igt_kmod-WARNING: i915: Unknown symbol acpi_video_register (err -2)
-> 
-> Fix the issue by renaming the architecture's video.o to video-common.o.
-> 
-> Reported-by: Chaitanya Kumar Borah <chaitanya.kumar.borah@intel.com>
-> Closes: https://lore.kernel.org/intel-gfx/9dcac6e9-a3bf-4ace-bbdc-f697f767f9e0@suse.de/T/#t
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-> Fixes: 2fd001cd3600 ("arch: Rename fbdev header and source files")
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: linux-arch@vger.kernel.org
-> Cc: linux-fbdev@vger.kernel.org
-> Cc: dri-devel@lists.freedesktop.org
+Can you try this patch?
+https://patchwork.freedesktop.org/patch/594539/
 
-Thanks, patch looks good to me:
+Alex
 
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-
-Regards,
-
-Hans
-
-
-
-
+>
+>             Linus
+>
 > ---
->  arch/sparc/video/Makefile                    | 2 +-
->  arch/sparc/video/{video.c => video-common.c} | 0
->  arch/x86/video/Makefile                      | 2 +-
->  arch/x86/video/{video.c => video-common.c}   | 0
->  4 files changed, 2 insertions(+), 2 deletions(-)
->  rename arch/sparc/video/{video.c => video-common.c} (100%)
->  rename arch/x86/video/{video.c => video-common.c} (100%)
-> 
-> diff --git a/arch/sparc/video/Makefile b/arch/sparc/video/Makefile
-> index fdf83a408d750..dcfbe7a5912c0 100644
-> --- a/arch/sparc/video/Makefile
-> +++ b/arch/sparc/video/Makefile
-> @@ -1,3 +1,3 @@
->  # SPDX-License-Identifier: GPL-2.0-only
->  
-> -obj-y	+= video.o
-> +obj-y	+= video-common.o
-> diff --git a/arch/sparc/video/video.c b/arch/sparc/video/video-common.c
-> similarity index 100%
-> rename from arch/sparc/video/video.c
-> rename to arch/sparc/video/video-common.c
-> diff --git a/arch/x86/video/Makefile b/arch/x86/video/Makefile
-> index fdf83a408d750..dcfbe7a5912c0 100644
-> --- a/arch/x86/video/Makefile
-> +++ b/arch/x86/video/Makefile
-> @@ -1,3 +1,3 @@
->  # SPDX-License-Identifier: GPL-2.0-only
->  
-> -obj-y	+= video.o
-> +obj-y	+= video-common.o
-> diff --git a/arch/x86/video/video.c b/arch/x86/video/video-common.c
-> similarity index 100%
-> rename from arch/x86/video/video.c
-> rename to arch/x86/video/video-common.c
-
+> CPU: 28 PID: 3326 Comm: mutter-x11-fram Tainted: G        W
+> 6.9.0-08295-gfd39ab3b5289 #64
+> Hardware name: Gigabyte Technology Co., Ltd. TRX40 AORUS MASTER/TRX40
+> AORUS MASTER, BIOS F7 09/07/2022
+> RIP: 0010:__force_merge+0x14f/0x180 [drm_buddy]
+> Code: 74 0d 49 8b 44 24 18 48 d3 e0 49 29 44 24 30 4c 89 e7 ba 01 00
+> 00 00 e8 9f 00 00 00 44 39 e8 73 1f 49 8b 04 24 e9 25 ff ff ff <0f> 0b
+> 4c 39 c3 75 a3 eb 99 b8 f4 ff ff ff c3 b8 f4 ff ff ff eb 02
+> RSP: 0000:ffff9e350314baa0 EFLAGS: 00010246
+> RAX: ffff974a227a4a00 RBX: ffff974a2d024b88 RCX: 000000000b8eb800
+> RDX: ffff974a2d024bf8 RSI: ffff974a2d024bd0 RDI: ffff974a2d024bb0
+> RBP: 0000000000000000 R08: ffff974a2d024b88 R09: 0000000000001000
+> R10: 0000000000000800 R11: 0000000000000000 R12: ffff974a2198fa18
+> R13: 0000000000000009 R14: 0000000010000000 R15: 0000000000000000
+> FS:  00007f56a78b6540(0000) GS:ffff97591e700000(0000) knlGS:0000000000000=
+000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f5688040000 CR3: 0000000198cc9000 CR4: 0000000000350ef0
+> Call Trace:
+>  <TASK>
+>  ? __warn+0xc1/0x190
+>  ? __force_merge+0x14f/0x180 [drm_buddy]
+>  ? report_bug+0x129/0x1a0
+>  ? handle_bug+0x3d/0x70
+>  ? exc_invalid_op+0x16/0x40
+>  ? asm_exc_invalid_op+0x16/0x20
+>  ? __force_merge+0x14f/0x180 [drm_buddy]
+>  drm_buddy_alloc_blocks+0x249/0x400 [drm_buddy]
+>  ? __cond_resched+0x16/0x40
+>  amdgpu_vram_mgr_new+0x204/0x3f0 [amdgpu]
+>  ttm_resource_alloc+0x31/0x120 [ttm]
+>  ttm_bo_alloc_resource+0xbc/0x260 [ttm]
+>  ? memcg_account_kmem+0x4a/0xe0
+>  ? ttm_resource_compatible+0xbb/0xe0 [ttm]
+>  ttm_bo_validate+0x9f/0x210 [ttm]
+>  ? __alloc_pages+0x129/0x210
+>  amdgpu_bo_fault_reserve_notify+0x98/0x110 [amdgpu]
+>  amdgpu_gem_fault+0x53/0xd0 [amdgpu]
+>  __do_fault+0x41/0x140
+>  do_pte_missing+0x453/0xfd0
+>  handle_mm_fault+0x73c/0x1090
+>  do_user_addr_fault+0x2e2/0x6f0
+>  exc_page_fault+0x56/0x110
+>  asm_exc_page_fault+0x22/0x30
 
