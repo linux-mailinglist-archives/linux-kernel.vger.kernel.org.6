@@ -1,95 +1,86 @@
-Return-Path: <linux-kernel+bounces-181761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B05A38C80E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 08:25:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 624AA8C80EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 08:25:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E31871C20F35
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 06:25:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6CC31F2190B
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 06:25:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01FE313FF2;
-	Fri, 17 May 2024 06:25:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A36214AB0;
+	Fri, 17 May 2024 06:25:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="cHa/WkRA"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1921913AC5;
-	Fri, 17 May 2024 06:25:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="tk+gIjdr"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99B4A134A6;
+	Fri, 17 May 2024 06:25:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715927112; cv=none; b=F2cllDP+mqROoSeL78tIMgzRrXlewtGfx/PgnU+3hY4kYUcAD6v3H3pooBP6tE2S3BN/UX7c47P5gquN9KHL4y7eCp8dsNNsMFy/9z84mbVvf15V6R8y6hwRpo0BPuLX+u9xkPatKWgWfycnJmtiqe46D+MJoimb5t4Wwgjo2Ww=
+	t=1715927135; cv=none; b=CDC+OMVSYHrEjggq5ct3byF/0CdJYcx3dBbjRj+2ntJeCtDvO2eNYoiM0boo9iBaS8KnMgZ4SDUHF/STHvdb8HzwRMoYcM2NIEq8eaLcSqGmkRl/iafQIZ5jaoKBx/ApGSy2HL7d9zKWmZvVnPrQE4ZcnoViz7eIzNXQ4OrQAGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715927112; c=relaxed/simple;
-	bh=fh4WwPUAdmk3bzl1TBfQSECk5v1gX7NZDqFuBoZ0beE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=d3csVTjVQ/NmEUAIMeSgAKSpoN4kYYi5MlKvdz06WBc5eblKxeqJTw2p377dCbpuf7Ov7mO6yuj9BU9pl31RJu+sbF8ZlUJLhSGooZO7r7+dia0og8cE9H5MrysIF7B4bU+RKoAAzCyN04hhTkWbZpqSo0hTQQpkXtPYcj5cSqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=cHa/WkRA; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=3af1U
-	0H/g2zUdtLmuWBn6FIU+1LQ1Dqa4JirWL1awz4=; b=cHa/WkRAbqrbslbb0dKFX
-	uEvT4TDH/6YlzD7Iggj6Xt2f55sVE4d39+DZ/lJHC+vKH4F+Fv7W92LB7pdbSbY+
-	tgriFkWA/xdi0Rb4C91rvB+Uc3ihuHrByHA0PRrEgDMQU+fC2oG4xJt43ehR5tGk
-	ujTb32ihzyJwzhTLhYibtg=
-Received: from localhost.localdomain (unknown [111.35.185.173])
-	by gzga-smtp-mta-g3-3 (Coremail) with SMTP id _____wDnl10m+EZmsKT0Ag--.57131S4;
-	Fri, 17 May 2024 14:24:43 +0800 (CST)
-From: David Wang <00107082@163.com>
-To: tj@kernel.org,
-	lizefan.x@bytedance.com,
-	hannes@cmpxchg.org
-Cc: cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	David Wang <00107082@163.com>
-Subject: [PATCH] kernel/cgroup: cleanup cgroup_base_files when fail to add cgroup_psi_files
-Date: Fri, 17 May 2024 14:24:05 +0800
-Message-Id: <20240517062405.115253-1-00107082@163.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1715927135; c=relaxed/simple;
+	bh=qt28qpGihbsLNTy0QXcH6ifyS6+qu1VlVPg9r03RQhY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Yoto5i5D+3PU4geFUPi1iG+Y0m1VIdZQ7+m/70HpksE81gSOipgozfIFwhHMkyxKgjoXbYvsBEDrs5s8M0b8g+UUqYd6BckJyOo2QRpljqdecci3kSv9hGTTNA3HakZRxdZXWqY9fldqDJMZBbTMMXLWzOGXcoAfWwFo/v25x1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=tk+gIjdr; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=qt28qpGihbsLNTy0QXcH6ifyS6+qu1VlVPg9r03RQhY=;
+	t=1715927132; x=1717136732; b=tk+gIjdrr8g9u5ZUUYdHSRIKOd4JG17w4s2NoFRnogztVV8
+	S0z2JARR68+V3lgZQMwqEV6BV94SQiGHcBEaBo0axNfx7WXFf3i2jYS2L3tw2uNaEEuHJkDVUMpN9
+	xtkZNLERmiwppVIegzpN4Cbr6f/3593ecjYD0ukSmZP8yXNDwvrFXZ1AJS9u+8FtFQcZK1Xbz7hZ7
+	0Fx/B11q+/jiy3h6ESPl1Ldz3PAKI6W0EGDz7TpLRkMSYOC9XRD3mBlFG5GSkJue0JHn3EowTprP9
+	aeX5ujB0cKzkWn1y3cEkg4Tvmd1HOrUVQi8xdALnCMIqHAHFpxZFhn4txBm0OGAQ==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.97)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1s7r1p-0000000AVQj-3PVg;
+	Fri, 17 May 2024 08:25:18 +0200
+Message-ID: <e2363a1ca932cf1534f9f006e6cf4f30a8c7a0cd.camel@sipsolutions.net>
+Subject: Re: [PATCH 1/1] wifi: mac80211: Avoid address calculations via out
+ of bounds array indexing
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Kenton Groombridge <concord@gentoo.org>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com,  linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+  linux-kernel@vger.kernel.org, keescook@chromium.org, 
+ linux-hardening@vger.kernel.org
+Date: Fri, 17 May 2024 08:25:16 +0200
+In-Reply-To: <20240517002352.12717-1-concord@gentoo.org>
+References: <20240517002352.12717-1-concord@gentoo.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDnl10m+EZmsKT0Ag--.57131S4
-X-Coremail-Antispam: 1Uf129KBjvdXoW7XFWkWFy5GrWkur1Dtr1fZwb_yoWfArg_Z3
-	4IvFn2grWfA3y7KanIvws5GrWxGr4Fqr9Yvr1UGrsrJF1UJr98JwnxJrn8Jrsxua1kGr1D
-	Cr9rKrs7trn7GjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRAwI63UUUUU==
-X-CM-SenderInfo: qqqrilqqysqiywtou0bp/xtbBEAngqmVOEAsnowABsm
+X-malware-bazaar: not-scanned
 
-Even though css_clear_dir would be called to cleanup
-all existing cgroup files when css_populate_dir failed,
-reclaiming newly created cgroup files before
-css_populate_dir returns with failure makes code more
-consistent.
+On Thu, 2024-05-16 at 20:23 -0400, Kenton Groombridge wrote:
+> req->n_channels must be set before req->channels[] can be used.
+> Additionally, memory addresses after the "channels" array need to be
+> calculated from the allocation base ("request") instead of the first
+> "out of bounds" index of "channels" to avoid a runtime bounds check
+> warning.
 
-Signed-off-by: David Wang <00107082@163.com>
----
- kernel/cgroup/cgroup.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Thanks. Can you please drop the cfg80211 parts from this to match the
+subject, the code there is broken in other ways too, I have a fix for
+all of that:
+https://patchwork.kernel.org/project/linux-wireless/patch/20240510113738.41=
+90692ef4ee.I0cb19188be17a8abd029805e3373c0a7777c214c@changeid/
 
-diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-index a66c088c851c..6c255b5a331f 100644
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -1744,8 +1744,11 @@ static int css_populate_dir(struct cgroup_subsys_state *css)
- 			if (cgroup_psi_enabled()) {
- 				ret = cgroup_addrm_files(css, cgrp,
- 							 cgroup_psi_files, true);
--				if (ret < 0)
-+				if (ret < 0) {
-+					cgroup_addrm_files(css, cgrp,
-+							   cgroup_base_files, false);
- 					return ret;
-+				}
- 			}
- 		} else {
- 			ret = cgroup_addrm_files(css, cgrp,
--- 
-2.39.2
+johannes
 
 
