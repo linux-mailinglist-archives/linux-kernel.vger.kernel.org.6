@@ -1,52 +1,100 @@
-Return-Path: <linux-kernel+bounces-182012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25EBB8C851B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 12:50:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7876D8C8513
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 12:46:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 499091C230C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 10:49:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DD8B2845CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 10:46:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20A293B78B;
-	Fri, 17 May 2024 10:49:53 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CA273BB35;
+	Fri, 17 May 2024 10:46:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b="jzzlTSfl";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="e8aaZBQa"
+Received: from wflow6-smtp.messagingengine.com (wflow6-smtp.messagingengine.com [64.147.123.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AB333A8EF;
-	Fri, 17 May 2024 10:49:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 709B13A8EF;
+	Fri, 17 May 2024 10:46:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715942992; cv=none; b=H+2BAKgNxwx307GZolJmKe27PgSUh+SgVZXZW9Yp7Dm+QCjHqwsYH+4+uEVYpEEpdAURKN077vY9pH9d1kjj2AYK81nGhortDtZgLtPP5j91hokkKMn6r85CM6Bev5R8Ln8EwPLikZscVtUm8pz+RhTPNgyMY9BvZH1AmdKOD1A=
+	t=1715942779; cv=none; b=gkOBvwbbKYOGn7/FQfhVjdabt+wWpH0m0eLw8juXtolqFCi/q5ve3uNtHXxV101SwqQk0HM81o1/5q/rXh1qbX9OydjTMYuTVl85l5xAPDsT/g8gBKtjFA+bQ3/tvYnTE6/OWkB7fxmtNZQqX3omxgS0XDCRHE3iiWdkjCWzaAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715942992; c=relaxed/simple;
-	bh=jkmAOsbok6iFKZnbW/F64C2dnD3tCsh5hLRpd4Hh5v4=;
+	s=arc-20240116; t=1715942779; c=relaxed/simple;
+	bh=Usv8FrNMyMA/e9bwDI/XPptjxA/X7snPzywB+T3VSws=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Iw69GEPSBDRrEjZ2VKCm9Koiow/WdMl4Ytx9ZLzZPpKp+Fj5ZITGRBHuaoLD1hbw+S5EhdysFA/7mVBtEDkAXak3eRIDtIHBJtgTKXpBBM24VchTY5k0HaIZMahSJZhfj6uyzwSuINuvvntFhWRs5I2CVdyvAWOPsMFAB2N0KdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79E0BC2BD10;
-	Fri, 17 May 2024 10:49:50 +0000 (UTC)
-Date: Fri, 17 May 2024 12:49:47 +0200
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Slark Xiao <slark_xiao@163.com>
-Cc: Manivannan Sadhasivam <mani@kernel.org>, loic.poulain@linaro.org,
-	mhi@lists.linux.dev, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, quic_qianyu@quicinc.com
-Subject: Re: Re:Re: Re: Re: Re: [PATCH] bus: mhi: host: Add Foxconn SDX72
- related support
-Message-ID: <20240517104947.GA41015@thinkpad>
-References: <20240510032657.789629-1-slark_xiao@163.com>
- <20240514143741.GA2306@thinkpad>
- <541de8e4.1600.18f79de44f3.Coremail.slark_xiao@163.com>
- <20240515074119.GA2445@thinkpad>
- <5eee5967.7bdf.18f7b4567b7.Coremail.slark_xiao@163.com>
- <20240515115239.GD4488@thinkpad>
- <58fb648d.ab03.18f7c2f90bd.Coremail.slark_xiao@163.com>
- <20240516142346.GA6922@thinkpad>
- <20b11ca1.101c.18f8418706b.Coremail.slark_xiao@163.com>
- <6f6143b2.9e05.18f85fda5f9.Coremail.slark_xiao@163.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tjYrnYFrP7Wp2Q0E9q6uME1J1iK3o53rhCO+SSWIZLl9Dl3iWS96zepCXyC2MkAjbeFESWKph7bZCnRYmR8i++OerSqi8gC/eZYDXvkbug+vV7ERdNfCXga4RcasKGsjd2QpLSNPNoz1Qei7nfZwFOwMAe4ml+95ocZ7VfscRgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net; spf=pass smtp.mailfrom=3xx0.net; dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b=jzzlTSfl; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=e8aaZBQa; arc=none smtp.client-ip=64.147.123.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3xx0.net
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+	by mailflow.west.internal (Postfix) with ESMTP id 9ACE52CC01B2;
+	Fri, 17 May 2024 06:46:15 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Fri, 17 May 2024 06:46:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=3xx0.net; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1715942775;
+	 x=1715946375; bh=t6vROMqJIpuDwOB1qQz1P/6tRxrDcWWoZxr9yWTTUM0=; b=
+	jzzlTSfliC7aJdxhlr8U2PaYNhESWNMCT5aBL2w+A90PrnXH2I0i10rsFJx9t9D0
+	sF5ZTql9I06Il8rtHgu8Ffusc+FFdV5x+4ENwWwtNXt12bSZ3b3jLq1LnKeBX2mV
+	iEWZOnubDMdAQYwN9lryqZcXAZ3HriQG8ocqSwKQ1VWp55I38wZ5NkPx3qXaiRgT
+	ayTcwLxYywzfNbDxUPXRWW92h2qvslpTa07Qh6W3sVhqLdGnYHk5DOx2AwLLNlb5
+	YKtMLmyM630PmwNf8N65ZsaLaj8AGZT1I/u0P3Qo+BQ0t6g8IicMGhnQ+/0p7Xgc
+	/ZUcy9H7q89nOke8tingjQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=i76614979.fm3; t=
+	1715942775; x=1715946375; bh=t6vROMqJIpuDwOB1qQz1P/6tRxrDcWWoZxr
+	9yWTTUM0=; b=e8aaZBQaXu/jah8iqCXyY6FZKnj7y3GGKyqJrC8oOj6TLG3XOtb
+	gc6GgTHLQQ/iB5x0J3eG3FOKgDybE25yY070f5vJKR2aJkmLJogydrWSz4Y6ETWH
+	QxJ//M6+vNpY5t7WglbgN0SKFMdbSEgpDo0neP28cnQ67RatW1ZiyozQZMV7+GcG
+	N4j6LbPKFXZzXhJjqk2pVnh15Dc9RTdl4N+X7SHrKthGVdRkobDbv/n1w56bA4/o
+	2yMnSdl/C4ymfdQSRESrJLT4BY8mh2NsKc0nnnIszkQhJok5O5MAezxnXV1C5Vnp
+	kSOVMpzffngSmxWweB83DfKbq0rJ95R3xdQ==
+X-ME-Sender: <xms:djVHZsjkhqVsujms6Czt6anR5qrHKswYqBGJ2ls6ufpscgxMpyu9-A>
+    <xme:djVHZlA1UUy7bO9bl-9pp1NV94Ih_BS2SI-SjtOPnB8zbtb0kPZPCzYGpH2LSyt88
+    UWep3qscd9sK2oTjQU>
+X-ME-Received: <xmr:djVHZkHrmfETrJrmj1JbNHYGnhXwvW3kSK1GV5XbyDqyT1q3KtwrVj8Odh2JAwV1Yp6ZM-CXuqJUyLai0lD7ltE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdehfedgkeehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggugfgjsehtkefstddttdejnecuhfhrohhmpeflohhn
+    rghthhgrnhcuvegrlhhmvghlshcuoehjtggrlhhmvghlshesfeiggidtrdhnvghtqeenuc
+    ggtffrrghtthgvrhhnpeetgedutdfggeetleefhfeuhedtheduteekieduvdeigeegvdev
+    vddtieekiedvheenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
+    hrohhmpehjtggrlhhmvghlshesfeiggidtrdhnvght
+X-ME-Proxy: <xmx:djVHZtT8tKpB0YwfwFdvbIMCK_Lx9ylbTqHPhrKsZBaQd0Ycr9p2zA>
+    <xmx:djVHZpzi6XHWQtZ6JLh6O2gg2xySSm9ILCMrLroqynQo6YjSqAwspQ>
+    <xmx:djVHZr5A5FJ6AjCrgofiB93uhjrI8iSL4QyfeCjvOR6rRYAwE4htPg>
+    <xmx:djVHZmzWH0OgtQkzOyD62fqrWWI5Rfd6-jQeOixgJIrCyihu9j20NQ>
+    <xmx:dzVHZphiCg2eM012AMibbr1TZeelQKIqYrExPad6dfKJhQ7fgrR8R7O->
+Feedback-ID: i76614979:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 17 May 2024 06:46:12 -0400 (EDT)
+Date: Fri, 17 May 2024 03:51:14 -0700
+From: Jonathan Calmels <jcalmels@3xx0.net>
+To: John Johansen <john.johansen@canonical.com>
+Cc: brauner@kernel.org, ebiederm@xmission.com, 
+	Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <keescook@chromium.org>, 
+	Joel Granados <j.granados@samsung.com>, Serge Hallyn <serge@hallyn.com>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	David Howells <dhowells@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>, containers@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
+Subject: Re: [PATCH 1/3] capabilities: user namespace capabilities
+Message-ID: <jwuknxmitht42ghsy6nkoegotte5kxi67fh6cbei7o5w3bv5jy@eyphufkqwaap>
+References: <20240516092213.6799-1-jcalmels@3xx0.net>
+ <20240516092213.6799-2-jcalmels@3xx0.net>
+ <641a34bd-e702-4f02-968e-4f71e0957af1@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,165 +104,93 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <6f6143b2.9e05.18f85fda5f9.Coremail.slark_xiao@163.com>
+In-Reply-To: <641a34bd-e702-4f02-968e-4f71e0957af1@canonical.com>
 
-On Fri, May 17, 2024 at 05:59:03PM +0800, Slark Xiao wrote:
+On Thu, May 16, 2024 at 03:07:28PM GMT, John Johansen wrote:
+> agreed, though it really is application dependent. Some applications handle
+> the denial at userns creation better, than the capability after. Others
+> like anything based on QTWebEngine will crash on denial of userns creation
+> but handle denial of the capability within the userns just fine, and some
+> applications just crash regardless.
+
+Yes this is application specific, but I would argue that the latter is
+much more preferable. For example, having one application crash in a
+container is probably ok, but not being able to start the container in
+the first place is probably not. Similarly, preventing the network
+namespace creation breaks services which rely on systemd’s
+PrivateNetwork, even though they most likely use it to prevent any
+networking from being done.
+
+> The userns cred from the LSM hook can be modified, yes it is currently
+> specified as const but is still under construction so it can be safely
+> modified the LSM hook just needs a small update.
 > 
-> At 2024-05-17 09:09:05, "Slark Xiao" <slark_xiao@163.com> wrote:
-> >
-> >At 2024-05-16 22:23:46, "Manivannan Sadhasivam" <manivannan.sadhasivam@linaro.org> wrote:
-> >>On Wed, May 15, 2024 at 08:17:23PM +0800, Slark Xiao wrote:
-> >>> 
-> >>> 
-> >>> At 2024-05-15 19:52:39, "Manivannan Sadhasivam" <mani@kernel.org> wrote:
-> >>> >On Wed, May 15, 2024 at 04:01:37PM +0800, Slark Xiao wrote:
-> >>> >> 
-> >>> >> At 2024-05-15 15:41:19, "Manivannan Sadhasivam" <manivannan.sadhasivam@linaro.org> wrote:
-> >>> >> >+ Qiang
-> >>> >> >
-> >>> >> >On Wed, May 15, 2024 at 09:29:20AM +0800, Slark Xiao wrote:
-> >>> >> >> At 2024-05-14 22:37:41, "Manivannan Sadhasivam" <manivannan.sadhasivam@linaro.org> wrote:
-> >>> >> >> >On Fri, May 10, 2024 at 11:26:57AM +0800, Slark Xiao wrote:
-> >>> >> >> >> Align with Qcom SDX72, add ready timeout item for Foxconn SDX72.
-> >>> >> >> >> And also, add firehose support since SDX72.
-> >>> >> >> >> 
-> >>> >> >> >> Signed-off-by: Slark Xiao <slark_xiao@163.com>
-> >>> >> >> >> ---
-> >>> >> >> >>  drivers/bus/mhi/host/pci_generic.c | 31 ++++++++++++++++++++++++++++++
-> >>> >> >> >>  1 file changed, 31 insertions(+)
-> >>> >> >> >> 
-> >>> >> >> >> diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
-> >>> >> >> >> index 08844ee79654..0fd94c193fc6 100644
-> >>> >> >> >> --- a/drivers/bus/mhi/host/pci_generic.c
-> >>> >> >> >> +++ b/drivers/bus/mhi/host/pci_generic.c
-> >>> >> >> >> @@ -399,6 +399,8 @@ static const struct mhi_channel_config mhi_foxconn_sdx55_channels[] = {
-> >>> >> >> >>  	MHI_CHANNEL_CONFIG_DL(13, "MBIM", 32, 0),
-> >>> >> >> >>  	MHI_CHANNEL_CONFIG_UL(32, "DUN", 32, 0),
-> >>> >> >> >>  	MHI_CHANNEL_CONFIG_DL(33, "DUN", 32, 0),
-> >>> >> >> >> +	MHI_CHANNEL_CONFIG_UL_FP(34, "FIREHOSE", 32, 0),
-> >>> >> >> >> +	MHI_CHANNEL_CONFIG_DL_FP(35, "FIREHOSE", 32, 0),
-> >>> >> >> >
-> >>> >> >> >This means SDX55 is also supporting FIREHOSE channels, which is not true I
-> >>> >> >> >believe.
-> >>> >> >> Actually, I just verified it with my sdx55 and the answer is Yes. These channels
-> >>> >> >> are common settings for Qcom device which support PCIe mode. BTW, the
-> >>> >> >> default settings of Qcom and Quectel support firehose for their sdx55 products.
-> >>> >> >
-> >>> >> >Qiang, can you please confirm that SDX55 supports FIREHOSE channels?
-> >>> >> >
-> >>> >> >> >
-> >>> >> >> >>  	MHI_CHANNEL_CONFIG_HW_UL(100, "IP_HW0_MBIM", 128, 2),
-> >>> >> >> >>  	MHI_CHANNEL_CONFIG_HW_DL(101, "IP_HW0_MBIM", 128, 3),
-> >>> >> >> >>  };
-> >>> >> >> >> @@ -419,6 +421,16 @@ static const struct mhi_controller_config modem_foxconn_sdx55_config = {
-> >>> >> >> >>  	.event_cfg = mhi_foxconn_sdx55_events,
-> >>> >> >> >>  };
-> >>> >> >> >>  
-> >>> >> >> >> +static const struct mhi_controller_config modem_foxconn_sdx72_config = {
-> >>> >> >> >> +	.max_channels = 128,
-> >>> >> >> >> +	.timeout_ms = 20000,
-> >>> >> >> >> +	.ready_timeout_ms = 50000,
-> >>> >> >> >> +	.num_channels = ARRAY_SIZE(mhi_foxconn_sdx55_channels),
-> >>> >> >> >> +	.ch_cfg = mhi_foxconn_sdx55_channels,
-> >>> >> >> >> +	.num_events = ARRAY_SIZE(mhi_foxconn_sdx55_events),
-> >>> >> >> >> +	.event_cfg = mhi_foxconn_sdx55_events,
-> >>> >> >> >> +};
-> >>> >> >> >> +
-> >>> >> >> >>  static const struct mhi_pci_dev_info mhi_foxconn_sdx24_info = {
-> >>> >> >> >>  	.name = "foxconn-sdx24",
-> >>> >> >> >>  	.config = &modem_foxconn_sdx55_config,
-> >>> >> >> >> @@ -448,6 +460,16 @@ static const struct mhi_pci_dev_info mhi_foxconn_sdx65_info = {
-> >>> >> >> >>  	.sideband_wake = false,
-> >>> >> >> >>  };
-> >>> >> >> >>  
-> >>> >> >> >> +static const struct mhi_pci_dev_info mhi_foxconn_sdx72_info = {
-> >>> >> >> >> +	.name = "foxconn-sdx72",
-> >>> >> >> >> +	.edl = "qcom/sdx72m/xbl_s_devprg_ns.melf",
-> >>> >> >> >
-> >>> >> >> >What is '.melf'? Is the firmware available somewhere? Did you plan to upstream
-> >>> >> >> >it to linux-firmware?
-> >>> >> >> >
-> >>> >> >> This file similar with "edl.mbn". In SDX72 product, the default "edl" file name is
-> >>> >> >> "xbl_s_devprg_ns.melf". Currently we don't plan to upstream it to linux-firmware
-> >>> >> >> since 2 reasons: 1: we share the same fold name sdx72m with qcom or other vendors
-> >>> >> >> 2: this file may be changed since sdx72 product still under developing in our side. we
-> >>> >> >> may change the base line according to QCOM release.
-> >>> >> >
-> >>> >> >Then I would ask you to add support when you have a stable firmware. I do not
-> >>> >> >want to change the firmware name after some time as it will confuse users.
-> >>> >> >
-> >>> >> >- Mani
-> >>> >> If a stable firmware must be provided, I think I shall change the folder name from qcom to
-> >>> >> fox, do you agree this?
-> >>> >
-> >>> >Even in that case, where can the user find the firmware?
-> >>> >
-> >>> I think this edl file could help user let device enter into edl mode(wwan0firehose0).
-> >>> For PCIE device, there is no opensource tool to support PCIE edl download. If user
-> >>> could get the tool to do the firehose download, I think it's not hard to get complete firmware
-> >>> from PC vendor or somewhere else.
-> >>
-> >>I was told that Qcom will upstream the PCI support for QDL in the coming weeks.
-> >>Once that happens (even if a PR), I'll share that with you. Please test it and
-> >>let me know if that works or not.
-> >>
-> >Sure. But I think this shall not the block cause for merging this patch, right?
-> >Before that PR, we have verified the firehose function in our local with our
-> >firehose tool which is not open. 
+> The advantage of doing it under the LSM is an LSM can have a richer policy
+> around what can use them and tracking of what is allowed. That is to say the
+> LSM has the capability of being finer grained than doing it via capabilities.
 
-Yeah, QDL is not a blocker for this device.
+Sure, we could modify the LSM hook to do all sorts of things, but
+leveraging it would be quite cumbersome, will take time to show up in
+userspace, or simply never be adopted.
+We’re already seeing it in Ubuntu which started requiring Apparmor profiles.
 
-> >>And for entering EDL mode, we have recently added support to trigger EDL mode
-> >>from host [1]. Could you also test that? You just need to add `edl_trigger =
-> >>true` to the `mhi_pci_dev_info` struct of SDX72 and trigger EDL mode from host
-> >>by:
-> >>
-> >>echo 1 > /sys/bus/mhi/devices/.../trigger_edl
-> >>
-> >Do you remember that I told you I want to merge such function from qualcomm driver
-> >in last year? I merge the commit from QUD driver in my local. Actually it's same as the
-> >commit [1], it's called "force_edl". And sure, the result is yes, it works well.
-> >
-> Latest test, it doesn't work in Linux V6.9 since there is a patch missing. In my local previous
-> test, there is no mhi_cntrl->edl_trigger condition to set up dev_attr_trigger_edl.
-> Seems patch [2] is missed.
-> 
-> [2]-https://lore.kernel.org/mhi/1713928915-18229-4-git-send-email-quic_qianyu@quicinc.com/
+This new capability set would be a universal thing that could be
+leveraged today without modification to userspace. Moreover, it’s a
+simple framework that can be extended.
+As you mentioned, LSMs are even finer grained, and that’s the idea,
+those could be used hand in hand eventually. You could envision LSM
+hooks controlling the userns capability set, and thus enforce policies
+on the creation of nested namespaces without limiting the other tasks’
+capabilities.
 
-You need to apply the whole series. But anyway, thanks for testing it out.
+> I am not opposed to adding another mechanism to control user namespaces,
+> I am just not currently convinced that capabilities are the right
+> mechanism.
 
-> >>> >> BTW, I need to check if it works after updating 'edl fw' from  xbl_s_devprg_ns.melf to
-> >>> >> edl.mbn. 
-> >>> 
-> >>> >
-> >>> >Okay. IMO, we should upstream the product support only after a stable firmware
-> >>> >release (well stable in the sense a stable name at least).
-> >>> >
-> >>> >- Mani
-> >>> The check result is we can rename it to align with previous format. Until now, 
-> >>> I didn't see any mhi device has upstream their firmware to /lib/firmware/qcom folder.
-> >>
-> >>It is not mandatory, but it is a best practise that I recently started asking
-> >>for.
-> >>
-> >>> If it's a must, I think we can upstream the edl file later.  Anyway, we hope we can
-> >>> merge this sdx72 support into 6.10 since customer(Dell) would use this kernel for official
-> >>> release. But no worry, we can make sure this firehose download method works well in
-> >>>  our local side.
-> >>> And also, please help a review about my previous email about fix sdx72 ping failure issue.
-> >>> There is a fix solution from us. 
-> >>> 
-> >>
-> >>Qiang is working on that.
-> >Good to hear that. BTW, may I know the feature merge window in V6.10? I don't worry about
-> >merge window of the network fix commit, since it's a fix with higher priority. But I want to
-> >merge the basic support of my SDX72 before merge window close. This is important for us.
-> >
+Well that’s the thing, from past conversations, there is a lot of
+disagreement about restricting namespaces. By restricting the
+capabilities granted by namespaces instead, we’re actually treating the
+root cause of most concerns.
 
-MHI tree is closed during -rc6, so there is no way this patch can make 6.10.
+Today user namespaces are "special" and always grant full caps. Adding a
+new capability set to limit this behavior is logical; same way it's done
+for usual process transitions.
+Essentially this set is to namespaces what the inheritable set is to
+root.
 
-- Mani
+> this should be bounded by the creating task's bounding set, other wise
+> the capability model's bounding invariant will be broken, but having the
+> capabilities that the userns want to access in the task's bounding set is
+> a problem for all the unprivileged processes wanting access to user
+> namespaces.
 
--- 
-மணிவண்ணன் சதாசிவம்
+This is possible with the security bit introduced in the second patch.
+The idea of having those separate is that a service which has dropped
+its capabilities can still create a fully privileged user namespace.
+For example, systemd’s machined drops capabilities from its bounding set,
+yet it should be able to create unprivileged containers.
+The invariant is sound because a child userns can never regain what it
+doesn’t have in its bounding set. If it helps you can view the userns
+set as a “namespace bounding set” since it defines the future bounding
+sets of namespaced tasks.
+
+> If I am reading this right for unprivileged processes the capabilities in
+> the userns are bounded by the processes permitted set before the userns is
+> created?
+
+Yes, unprivileged processes that want to raise a capability in their
+userns set need it in their permitted set (as well as their bounding
+set). This is similar to inheritable capabilities.
+Recall that processes start with a full set of userns capabilities, so
+if you drop a userns capability (or something else did, e.g.
+init/pam/sysctl/parent) you will never be able to regain it, and
+namespaces you create won't have it included.
+Now, if you’re root (or cap privileged) you can always regain it.
+
+> This is only being respected in PR_CTL, the user mode helper is straight
+> setting the caps.
+
+Usermod helper requires CAP_SYS_MODULE and CAP_SETPCAP in the initns so
+the permitted set is irrelevant there. It starts with a full set but from
+there you can only lower caps, so the invariant holds.
 
