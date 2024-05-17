@@ -1,140 +1,78 @@
-Return-Path: <linux-kernel+bounces-182533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A548D8C8C67
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 21:01:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C1AD18C8C7F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 21:04:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D9A81F245B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:01:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 611131F27575
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:04:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DC7913FD78;
-	Fri, 17 May 2024 19:00:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 797C414265F;
+	Fri, 17 May 2024 19:01:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TD3YDl+t"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cI889mZr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9591713E414;
-	Fri, 17 May 2024 19:00:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1C2E1428EE;
+	Fri, 17 May 2024 19:01:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715972445; cv=none; b=ENpfjET6et0HN8yOfCdAMySWPYopu7+A87LQdoydZHSfxdTTYriYpjDv5C2cd7yJFw/z/6175depQ6x3th3WcrT4ew0ljrLGTz0yVRfV+Xfeav3xWfZx9fmol8U/x500+VFBzf0NR3JYijY3nK6y6cVCzh5dP9wE7urF5npZVT0=
+	t=1715972503; cv=none; b=h36egbgzPwEfEOrRvrOq7M0kq6knPmVWsgRKAj2svOL9FawGhF1MjTQ4rr6DO4BmIQXiAXkOH1UYx8wQcpEqASgvwRq/WwVItVdI7TvEVth0IDeS/2g89nCoPCiEK748Al15K3EPdJ5dffkdPFZkq/61CsNuQMsJxM+gkleIXw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715972445; c=relaxed/simple;
-	bh=ADnkPt6I97GHoVi8MXMcPa3bF85S6IMqkxYA1vtcreo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Dh7yDNJp7utO3etS/+UlC6tfvgFa1BJORkfzVhPPsgw8YjMti7LgjvXmE+o6lXmyj7ldWaWjvnrmDYMikz96gitTpo/THKa5YnZ1lrZNZi7YQJsaM+53bZNCAIe6DFP4lvHcr9vqpQHGuF+oXUC0Iv/0M8u3fZRhQVp8bQirKW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TD3YDl+t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C91BC4AF0B;
-	Fri, 17 May 2024 19:00:45 +0000 (UTC)
+	s=arc-20240116; t=1715972503; c=relaxed/simple;
+	bh=a2St1COHMmyuL8VEWYPleeBpklVTgOPd/JYoTuTXTgw=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=l9fUpgGcEbiHYbz3e0WvEF36Qw9gmomKTlvEma5gEFB/6dmIhqXOjLMJVthCdnJYCwM5DUkBJkVLwJg03Te3cVRmdCzHxOExnMrINTH3NI9i4PJ7I1SXL5BuwetGMBq0nnN73yw0eNksDErcLfunzJHYVtXfXDaxxdpH82GC8JQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cI889mZr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 8C25CC2BD10;
+	Fri, 17 May 2024 19:01:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715972445;
-	bh=ADnkPt6I97GHoVi8MXMcPa3bF85S6IMqkxYA1vtcreo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=TD3YDl+tH9Qq1XpiA5U7xKZ86nvTAj0TK4kPw6UjQHrIix512K9cs2WG1BN+U6xcy
-	 189qHR0xfnHAmg1cIqWn1OMR1733ImnBPScO2fLyivkAi+G64Xrjzwpy+O2U3/mNUp
-	 I6qrVo+5e99XGkcVanOkKP7HL7BvJ9FO8YJ8crIRxGNl3eDFMD1IEIKxjyEMrSnUF1
-	 qkDfSWV0XveBhLWc6To03E6W0PpivejQtWqzpx29t88fb5IsBRJz+W6WFFm1fQm7yO
-	 eAcEwAKtGFW3zbFNsF3NyqpOo0PId7cimuv+S2JS42aTnO2flYKac1QNWy9yna+Zf8
-	 65xAIziICuTzA==
-Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3c992e5c821so299619b6e.2;
-        Fri, 17 May 2024 12:00:45 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXODlLLWal98CsdD8gGya0EbkoVj3kH0KMHgAy59UP3dFsDJSj+Zjzvlt99ETWh1zUmCA0NMiV9PYg01VQ5qQ+IVJ0p1k63WJj8Oe0JKUqWdMdlhbrvfyPGMLf5Vhpg3zEK+fV1iNU=
-X-Gm-Message-State: AOJu0Yy4YTulQI0cQ5f2O7mdd8LbLDscQEQ1/LxVMY7gHdi5ulw+mgb3
-	LlJvD0OephGyZ1HnGVKrTp07f2Jm43wZv9F68FIkQ6zOXa8Qf/7xhCAedxEFOLP54pP4pSjImHG
-	wZKjt3kaXrdpRnbooG8zI5WGmSPo=
-X-Google-Smtp-Source: AGHT+IGkXcfQC2f4iOxP1rUvz4ub0Dh5q3DMeMbKL1l2x1rk8J0zs1a4GCCNtZVO/eZUGYa78kpjaYJ7/E2frxnJTV8=
-X-Received: by 2002:a05:6808:148f:b0:3c8:4227:4fb0 with SMTP id
- 5614622812f47-3c997056b60mr26057516b6e.2.1715972444363; Fri, 17 May 2024
- 12:00:44 -0700 (PDT)
+	s=k20201202; t=1715972503;
+	bh=a2St1COHMmyuL8VEWYPleeBpklVTgOPd/JYoTuTXTgw=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=cI889mZrZyKwBiabnM6a7q2oHx01tgLAZw+PUTmUExNqWJlWxSeQ161U5Hth0jRlo
+	 G9wttpHvbK2Aj7j8SNkhYEQZTwv02WvGm0IQvB1R1McQxcGxRu7n/KIUVEn3+MtMRy
+	 Ex4L1l2kScrU/SYCT2hI+u2D1+ZkhMT3XGX3r3BYQpS23rNWQY4ZCrwUKo98INX8Cv
+	 RmqxcTCJuZxjwb5tQBmAQBMqcAzs5GhcBiROSshwjRckSXhlGXSXOYCz05SX5r4xW9
+	 K9VBqq9CcsdPJmK9bIxIDFRVxZUapktKIduLTDSEV0a+dGGqK3xfozq2nhON1f/s8h
+	 kdyoxXue+88iA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 81883C43336;
+	Fri, 17 May 2024 19:01:43 +0000 (UTC)
+Subject: Re: [GIT PULL] parisc architecture fixes for v6.10-rc1
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <ZkelZteEp_Cgqwo1@p100>
+References: <ZkelZteEp_Cgqwo1@p100>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <ZkelZteEp_Cgqwo1@p100>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/deller/parisc-linux.git tags/parisc-for-6.10-1
+X-PR-Tracked-Commit-Id: d4a599910193b85f76c100e30d8551c8794f8c2a
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 7ee332c9f12bc5b380e36919cd7d056592a7073f
+Message-Id: <171597250351.25909.4152617023438792632.pr-tracker-bot@kernel.org>
+Date: Fri, 17 May 2024 19:01:43 +0000
+To: Helge Deller <deller@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-parisc@vger.kernel.org, James Bottomley <James.Bottomley@hansenpartnership.com>, John David Anglin <dave.anglin@bell.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <87o79cjjik.fsf@kernel.org> <20240511184847.GCZj-9j2sh1Akpt9iS@fat_crate.local>
- <20240511184945.GDZj-9yaOEWqf1ng8u@fat_crate.local> <87h6f4jdrq.fsf@kernel.org>
- <878r0djxgc.fsf@kernel.org> <874jb0jzx5.fsf@kernel.org> <20240514160555.GCZkOL41oB3hBt45eO@fat_crate.local>
- <87msoofjg1.fsf@kernel.org> <35086bb6-ee11-4ac6-b8ba-5fab20065b54@intel.com> <871q60ffnr.fsf@kernel.org>
-In-Reply-To: <871q60ffnr.fsf@kernel.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 17 May 2024 21:00:33 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0iHoU7dHxzL5ryehZT7unZiapoiBzPo1d=wsffNGqcS7Q@mail.gmail.com>
-Message-ID: <CAJZ5v0iHoU7dHxzL5ryehZT7unZiapoiBzPo1d=wsffNGqcS7Q@mail.gmail.com>
-Subject: Re: [regression] suspend stress test stalls within 30 minutes
-To: Kalle Valo <kvalo@kernel.org>
-Cc: Dave Hansen <dave.hansen@intel.com>, Borislav Petkov <bp@alien8.de>, 
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, x86@kernel.org, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, regressions@lists.linux.dev, 
-	Jeff Johnson <quic_jjohnson@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 17, 2024 at 8:37=E2=80=AFPM Kalle Valo <kvalo@kernel.org> wrote=
-:
->
-> Dave Hansen <dave.hansen@intel.com> writes:
->
-> > On 5/17/24 10:15, Kalle Valo wrote:
-> >> Borislav Petkov <bp@alien8.de> writes:
-> >>> There might be some #GP or so in the logs in case we've managed to f*=
-ck
-> >>> up microcode application which emulates that IBRS MSR bit and the
-> >>> actual toggling or so when suspending...
-> >> So the weird part is that when the bug happens (ie. suspend stalls) I
-> >> can access the box normally using ssh and I don't see anything special
-> >> in dmesg. Below is a full copy of dmesg output after the suspend
-> >> stalled. Do note that I copied this dmesg before I updated microcode s=
-o
-> >> it will still show the old microcode version.
-> >>
-> >> Let me know if you need more info.
-> >
-> > Kalle, could you remind us what we're seeing here?  Does this show 30
-> > working rtcwake tests followed by a failure at "rtcwake test 31" where
-> > the system failed to suspend?
->
-> Correct. So basically what I do is that I start the nuc box, ssh into it
-> and run:
->
-> sudo su
-> for i in {1..400}; do echo "rtcwake test $i" > /dev/kmsg; rtcwake -m mem =
--s 10; sleep 10; done
->
-> Here's the start of first loop:
->
-> [   54.945105] rtcwake test 1
-> [   55.162603] PM: suspend entry (deep)
-> [   55.168875] Filesystems sync: 0.006 seconds
-> [   55.182427] Freezing user space processes
-> [   55.191498] Freezing user space processes completed (elapsed 0.008 sec=
-onds)
-> [   55.191711] OOM killer disabled.
-> [   55.191805] Freezing remaining freezable tasks
-> [   55.193507] Freezing remaining freezable tasks completed (elapsed 0.00=
-1 seconds)
-> [   55.194056] printk: Suspending console(s) (use no_console_suspend to d=
-ebug)
-> [   55.244962] e1000e: EEE TX LPI TIMER: 00000011
->
-> Now I leave the box to run it's test. I come back later to see that the
-> for loop has stalled and the box is not going into suspend gain. I ssh
-> into the machine and see this in dmesg:
->
-> [  449.061525] rtcwake test 31
-> [  449.176854] PM: suspend entry (deep)
-> [  449.179072] Filesystems sync: 0.002 seconds
+The pull request you sent on Fri, 17 May 2024 20:43:50 +0200:
 
-This means that ksys_sync_helper() has run, so it blocks somewhere in
-enter_state() around suspend_prepare().
+> git://git.kernel.org/pub/scm/linux/kernel/git/deller/parisc-linux.git tags/parisc-for-6.10-1
 
-Can please echo 1 (as root) to /sys/power/pm_debug_messages and retest?
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/7ee332c9f12bc5b380e36919cd7d056592a7073f
 
-This should allow us to see more in the log.
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
