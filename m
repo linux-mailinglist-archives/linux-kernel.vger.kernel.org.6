@@ -1,135 +1,156 @@
-Return-Path: <linux-kernel+bounces-182042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C3C48C857C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 13:21:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0BEC8C857D
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 13:22:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12F35B23169
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:21:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E74D1F22E79
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:22:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0C8B3D97A;
-	Fri, 17 May 2024 11:21:44 +0000 (UTC)
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B3D73D541;
+	Fri, 17 May 2024 11:21:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RfGgUZnf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 068BE3D0B3;
-	Fri, 17 May 2024 11:21:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7397D3A8EF
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 11:21:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715944904; cv=none; b=LSTF2kK4mcVD9S4veAq9D2gxsTkSLt1VmQFdrhgrAeUSOUjXnzHOwLJNm4kRAh/AT2dlrGyuL8adqYNOBUuVJKrhEaJMiYtvAQbUm3gnt1TSot8tCYLA9IckamIK8KQFs8suVRHGnTzSY3/wD7uEnhzOTiy7GO7B9kOQcXPjTso=
+	t=1715944908; cv=none; b=KaGCIYav3FRwMVWXl5G2F/F2r3AZRi0ORlGFCFtL+sVN4LKI2rlvOmhjz1So9p9e6C3K5Zn1Wx0VYv3FsaHyBNZYOQi8vqjbO9qMO3i/XYq/cCMSNCfShoam8Ar87BN/g25P1UhbWaXVfkFYL+wIbnQqZ/kNTxalo8eLvzDnSq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715944904; c=relaxed/simple;
-	bh=r9yApgmZbuFByJJ9p+oj7H1B539TR1bZFitaz6+3RGU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aQLJAH6HqPrZlZOIJJHurnwTC0ibzrQ1rI2/jVbTr8FYcdAMBxnFNm/JBK/ybEHf89l7Z8NgFn5pwfO6IRUJbm+RwD/ZGMhXElbgvu8tvb9HnkyyafiyYNAHqCl9ilysH3LpPodEwICbHfgp3l/Gms7khZQ4D/kM4tvVaR9sovM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1eb0e08bfd2so4882425ad.1;
-        Fri, 17 May 2024 04:21:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715944902; x=1716549702;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Jn+RIDUkf3/BZVVCviqN56NNCVH5vL0DPPQQRoSbg3g=;
-        b=rUce2/RhU7i8RjPuf77F+/Nzb4BvYnYn2E/Vnf982Af1NAh8gHsaB7bwjLNxzT8pY8
-         S/HAr6MpT6+awq1DPUUlwNqegDw43wXKLTCg89ZemQI2/8Pec3Z/IVe+U7JQyVqFE4My
-         T846R58V3O7favxe6nNRn0JvlUTLnH0ee7mSw9N6/wRuAcpgTq+AIC7ZFb2aPrup9NjE
-         Xl+2EuT8bvWwuu6kZsddX1KiqVEYw++6Ld+pf271Y9QHcgdshH/fUUGktOwrdreddLW6
-         rNiCFb2D6IStxcehId3ukGD+JbDzp/4zNrTYOpjq1kSsZ2iyxHDwkQVOZva9TkWXFfW/
-         aimg==
-X-Forwarded-Encrypted: i=1; AJvYcCWimb8nLGSFmjyuuHSMx7LxI/6OLu6WEeSS0X4dEiJmFv9shAT30CtWzOCB0AJFfwIsYytoLQYunZKQEJJpIY56I5P3pgpAblwCbp8gYR5wpywjjRq9Ux3mTa67JUqXbyn6srLUX/38JUW1uxfmiHg9ruiEoU/KkQPSz3/0ifXH
-X-Gm-Message-State: AOJu0Yy2SP1ejNcHoZBlKxrSkajVCC07IGuhwg8yrgU7b+bdr0aqukUN
-	uxD82MiTm0RsXYdWrNjOKzCYw44hBQ1CPGn76JKMBFABS0TZfhYx
-X-Google-Smtp-Source: AGHT+IFZFxWQm02AYDAYBE9xRx/6Hp6ZxJQsmgya1Nc5RoSrp2j2eI5OpH4MHv2En0GrntatXs4fZQ==
-X-Received: by 2002:a17:902:e5c2:b0:1eb:2fb3:f9fd with SMTP id d9443c01a7336-1ef43c0cecbmr273809195ad.14.1715944902340;
-        Fri, 17 May 2024 04:21:42 -0700 (PDT)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0c2568a3sm154618455ad.300.2024.05.17.04.21.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 May 2024 04:21:41 -0700 (PDT)
-Date: Fri, 17 May 2024 20:21:39 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Shawn Lin <shawn.lin@rock-chips.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Brian Norris <briannorris@chromium.org>, linux-pci@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	mhi@lists.linux.dev, stable@vger.kernel.org,
-	Slark Xiao <slark_xiao@163.com>
-Subject: Re: [PATCH] PCI: rockchip: Use GPIOD_OUT_LOW flag while requesting
- ep_gpio
-Message-ID: <20240517112139.GT202520@rocinante>
-References: <20240416-pci-rockchip-perst-fix-v1-1-4800b1d4d954@linaro.org>
+	s=arc-20240116; t=1715944908; c=relaxed/simple;
+	bh=b0lV1xNI1sGMBf3SxQ8We4qaXsv8KcwIYCN+H6yYwCA=;
+	h=Content-Type:Date:Message-Id:To:Subject:Cc:From:References:
+	 In-Reply-To; b=g3xz+urWiOTlPahVqZSYCWuSnIaw8ubbjGCCxO6Wfx8k/I6SIyoNK7fzftSNCVVPQC85V33XBCDmFjsAt7M1yhwjKm7rmMTtJlRKd17Wakc+9fqG+zLyNORMhNdVLv8vF+1Sh3q1hfoUMdcH0xvRTviVlPcTDgRTffiyxNaR1Ac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RfGgUZnf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77FC5C2BD10;
+	Fri, 17 May 2024 11:21:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715944908;
+	bh=b0lV1xNI1sGMBf3SxQ8We4qaXsv8KcwIYCN+H6yYwCA=;
+	h=Date:To:Subject:Cc:From:References:In-Reply-To:From;
+	b=RfGgUZnfV+RGuV6hr5/G3C67JOijfH9uijgkLEMsLQVOfu3La5R10DegzfYxjapKT
+	 +/U+4raQqcGW5LyUFrSiay9Au8VjYKSN4mt0UzJD9fNlAXKe7hL65Vlz5LfGW1d/pB
+	 jZDlOOA4nxaDVfbKTw3VVjbizFTAkVt+B55TFoJit54XVSjOzWjl0XIb9KW4zRYkLh
+	 Mj2J2lf5pbF4KoupzlN85n9qpcxvrxw0My2qXyExjJZQuybZVTDbV3/Oc3dx5cUvjt
+	 nZRhvAO2lWD3MFvqU/af/Mucx6f7Bf9WSKSYIhuuwVzh8RdG7KGaonxRpIkn7QLDEN
+	 +I90Ji3Nr9V3Q==
+Content-Type: multipart/signed;
+ boundary=f27161c941001cd0bbbbc62b61244dbaa44f7ccf8dabf629896d85fb65df;
+ micalg=pgp-sha384; protocol="application/pgp-signature"
+Date: Fri, 17 May 2024 13:21:43 +0200
+Message-Id: <D1BVPABXTSPH.22ML1GLOMHEJR@kernel.org>
+To: "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
+ "Chun-Kuang Hu" <chunkuang.hu@kernel.org>, "Philipp Zabel"
+ <p.zabel@pengutronix.de>, "David Airlie" <airlied@gmail.com>, "Daniel
+ Vetter" <daniel@ffwll.ch>, "Matthias Brugger" <matthias.bgg@gmail.com>
+Subject: Re: [PATCH] drm/mediatek/dp: fix spurious kfree()
+Cc: "Jani Nikula" <jani.nikula@intel.com>, "Chen-Yu Tsai"
+ <wenst@chromium.org>, <linux-mediatek@lists.infradead.org>,
+ <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+From: "Michael Walle" <mwalle@kernel.org>
+X-Mailer: aerc 0.16.0
+References: <20240517093024.1702750-1-mwalle@kernel.org>
+ <de0191f3-271b-4f0e-aa73-910543587c9d@collabora.com>
+ <D1BVE3G40OVL.3KX13LU75M122@kernel.org>
+ <0d8f89d4-e16e-4c8d-b983-38df8fcc387e@collabora.com>
+In-Reply-To: <0d8f89d4-e16e-4c8d-b983-38df8fcc387e@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240416-pci-rockchip-perst-fix-v1-1-4800b1d4d954@linaro.org>
 
-Hello,
+--f27161c941001cd0bbbbc62b61244dbaa44f7ccf8dabf629896d85fb65df
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-> Rockchip platforms use 'GPIO_ACTIVE_HIGH' flag in the devicetree definition
-> for ep_gpio. This means, whatever the logical value set by the driver for
-> the ep_gpio, physical line will output the same logic level.
-> 
-> For instance,
-> 
-> 	gpiod_set_value_cansleep(rockchip->ep_gpio, 0); --> Level low
-> 	gpiod_set_value_cansleep(rockchip->ep_gpio, 1); --> Level high
-> 
-> But while requesting the ep_gpio, GPIOD_OUT_HIGH flag is currently used.
-> Now, this also causes the physical line to output 'high' creating trouble
-> for endpoint devices during host reboot.
-> 
-> When host reboot happens, the ep_gpio will initially output 'low' due to
-> the GPIO getting reset to its POR value. Then during host controller probe,
-> it will output 'high' due to GPIOD_OUT_HIGH flag. Then during
-> rockchip_pcie_host_init_port(), it will first output 'low' and then 'high'
-> indicating the completion of controller initialization.
-> 
-> On the endpoint side, each output 'low' of ep_gpio is accounted for PERST#
-> assert and 'high' for PERST# deassert. With the above mentioned flow during
-> host reboot, endpoint will witness below state changes for PERST#:
-> 
-> 	(1) PERST# assert - GPIO POR state
-> 	(2) PERST# deassert - GPIOD_OUT_HIGH while requesting GPIO
-> 	(3) PERST# assert - rockchip_pcie_host_init_port()
-> 	(4) PERST# deassert - rockchip_pcie_host_init_port()
-> 
-> Now the time interval between (2) and (3) is very short as both happen
-> during the driver probe(), and this results in a race in the endpoint.
-> Because, before completing the PERST# deassertion in (2), endpoint got
-> another PERST# assert in (3).
-> 
-> A proper way to fix this issue is to change the GPIOD_OUT_HIGH flag in (2)
-> to GPIOD_OUT_LOW. Because the usual convention is to request the GPIO with
-> a state corresponding to its 'initial/default' value and let the driver
-> change the state of the GPIO when required.
-> 
-> As per that, the ep_gpio should be requested with GPIOD_OUT_LOW as it
-> corresponds to the POR value of '0' (PERST# assert in the endpoint). Then
-> the driver can change the state of the ep_gpio later in
-> rockchip_pcie_host_init_port() as per the initialization sequence.
-> 
-> This fixes the firmware crash issue in Qcom based modems connected to
-> Rockpro64 based board.
+On Fri May 17, 2024 at 1:09 PM CEST, AngeloGioacchino Del Regno wrote:
+> Il 17/05/24 13:07, Michael Walle ha scritto:
+> > On Fri May 17, 2024 at 12:35 PM CEST, AngeloGioacchino Del Regno wrote:
+> >> Il 17/05/24 11:30, Michael Walle ha scritto:
+> >>> drm_edid_to_sad() might return an error or just zero. If that is the
+> >>> case, we must not free the SADs because there was no allocation in
+> >>> the first place.
+> >>>
+> >>> Fixes: dab12fa8d2bd ("drm/mediatek/dp: fix memory leak on ->get_edid =
+callback audio detection")
+> >>> Signed-off-by: Michael Walle <mwalle@kernel.org>
+> >>> ---
+> >>>    drivers/gpu/drm/mediatek/mtk_dp.c | 10 ++++++++--
+> >>>    1 file changed, 8 insertions(+), 2 deletions(-)
+> >>>
+> >>> diff --git a/drivers/gpu/drm/mediatek/mtk_dp.c b/drivers/gpu/drm/medi=
+atek/mtk_dp.c
+> >>> index 536366956447..ada12927bbac 100644
+> >>> --- a/drivers/gpu/drm/mediatek/mtk_dp.c
+> >>> +++ b/drivers/gpu/drm/mediatek/mtk_dp.c
+> >>> @@ -2073,9 +2073,15 @@ static const struct drm_edid *mtk_dp_edid_read=
+(struct drm_bridge *bridge,
+> >>>    		 */
+> >>>    		const struct edid *edid =3D drm_edid_raw(drm_edid);
+> >>>    		struct cea_sad *sads;
+> >>> +		int ret;
+> >>>   =20
+> >>> -		audio_caps->sad_count =3D drm_edid_to_sad(edid, &sads);
+> >>> -		kfree(sads);
+> >>> +		ret =3D drm_edid_to_sad(edid, &sads);
+> >>> +		/* Ignore any errors */
+> >>> +		if (ret < 0)
+> >>> +			ret =3D 0;
+> >>> +		if (ret)
+> >>
+> >> Eh, this will never work, because you're clearing the error before che=
+cking
+> >> if there's any error here?!?! :-P
+> >=20
+> > Don't get what you mean? Yes, I'm ignoring the error. Thus, in case
+> > of an error ret will be zero and there will be no free. If ret was
+> > zero, there won't be a free either. So you're left with the "normal"
+> > case, where you have to free the sads. Just like before.
+> >=20
+> >> Anyway in reality, it returns -ENOMEM if the allocation was not succes=
+sful...
+> >> in the event that any future update adds any other error we'd be back =
+with the same
+> >> issue, but I'm not sure how much should we worry about that.
+> >>
+> >> To be extremely safe, we could do...
+> >>
+> >> if (ret !=3D -ENOMEM)
+> >> 	kfree(sads)
+> >>
+> >> audio_caps->sad_count =3D ret < 0 ? 0 : ret;
+> >=20
+> > Which is the same as above, but you only check for ENOMEM?
+> >=20
+>
+> Yes, the point is to avoid kfree(sads) for -ENOMEM only, as other errors =
+that may
+> be introduced later might still allocate it and leave it allocated.
 
-Applied to controller/rockchip, thank you!
+Honestly, I doubt that any sane function will allocate memory, then
+return an error and expect the caller to free it.
 
-[1/1] PCI: rockchip: Use GPIOD_OUT_LOW flag while requesting ep_gpio
-      https://git.kernel.org/pci/pci/c/fa562e9441e3
+-michael
 
-	Krzysztof
+--f27161c941001cd0bbbbc62b61244dbaa44f7ccf8dabf629896d85fb65df
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCZkc9yBIcbXdhbGxlQGtl
+cm5lbC5vcmcACgkQEic87j4CH/hZRgGA3L/dMBtHlbW7ZOV5nIDapRev3O4bmq6g
+8ONEpwEM2TT1gUSVO++inHv0WwdC/5P5AX45dE/OEijkk2jcFlW7qjVKOYztnjwz
+6Augvm2E5aMYSW9zE3gdpGOeijQL7myf92w=
+=7cyw
+-----END PGP SIGNATURE-----
+
+--f27161c941001cd0bbbbc62b61244dbaa44f7ccf8dabf629896d85fb65df--
 
