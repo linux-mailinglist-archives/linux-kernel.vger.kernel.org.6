@@ -1,321 +1,149 @@
-Return-Path: <linux-kernel+bounces-182329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DE088C89BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 18:04:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03D7B8C89C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 18:05:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0C491F26057
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 16:04:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B507D2824E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 16:05:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E057712F5B2;
-	Fri, 17 May 2024 16:04:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13E4A12F5B9;
+	Fri, 17 May 2024 16:05:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IENZa+Yt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nQVUWZd0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEC173D9E;
-	Fri, 17 May 2024 16:04:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55A5612F58E;
+	Fri, 17 May 2024 16:05:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715961887; cv=none; b=dQwFaPEkONVnZnhf2Gwyg8BAkxqbB+9fJgRZqaOuqILmf+Mb/nvgj0ktyaTuhfzrUKN+Ktik95OSiMDGKPNGS2rUeJfx9Abz0fjTvvUev+W09mlvogSR4R1IqDB6b+R7RnyObs4jgcwLT5BI+uGqVLo5g7pqUDlBKrTqesaPdIY=
+	t=1715961903; cv=none; b=J8xs4CDRQrnEsoxiwYEXHDUMxhRg+bAxz9rTEgYVwgCu0cUciym7Mvlscha/VB9elRoXkpB5EdleyN0X9czJEKWrjeVxvK3vSTaBTvM4boo5WGCDrbtrf6dFSyK0+iCo4/qtT4hMbXjYaerUWJli1e79/w0plC2jV0xu+L/Fw4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715961887; c=relaxed/simple;
-	bh=PRGn5yS45nGwi27XM7eShxf8tGp3/cS4hWoTWqSmaxk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mw8HpqWO2vd8s/qhSxC2Fy6QU+FdmXdndCQwYMb0pH/Jeg+YHJ/w2LhV93ZIaAc/699IWXDJ3DmJse2GqMKQ2YYu35cScGKqOzWuFW0AQ971awWj9zCiw8kkvhnanCeiiSZL4CowHJSCFJ4dcr7BpjUa9EYw+gDxTeWeqGk38jM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IENZa+Yt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC6D7C2BD10;
-	Fri, 17 May 2024 16:04:43 +0000 (UTC)
+	s=arc-20240116; t=1715961903; c=relaxed/simple;
+	bh=dCTYsvvxFgi7FATRWxnawc0wrUUcw+8JKULz4rwaMvc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=DXvfKxBiTCDw2MetnUid83slyDaV3G7rjkqBBlHUAh8nEdRmTc1Kjf9Wld9EPhuJZEMLpO6NbFIo/tlLw54KBSm8Fpx5MWCS3oJVq/LsihcaIINb9OAQ45P6wyfOYNVbBp4UrV1EZ+e8cHPy7jvoiiBcq0mLBmifT0fR4cfwRzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nQVUWZd0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3728C2BD10;
+	Fri, 17 May 2024 16:05:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715961886;
-	bh=PRGn5yS45nGwi27XM7eShxf8tGp3/cS4hWoTWqSmaxk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IENZa+YtYz5FtNibpC769+vO2zenR/BKAsTUwCq1ZDRQ4YVls6Lhkrc9AlyXvuD7r
-	 N+2i06r7DAoq01usdyD4Jp+ssY57DuOqq7FaitmWbPT0F2nQVx1xeqbL882SLjjh8H
-	 WXRoCXuknegPjBcynLkm0yGQkC9QOP71xbsNeW4qGJqSbYTyCD7aZCai8vSZhgObMw
-	 pHqIceuuITdDGyxMeb6CG1RwDy5QUtfk0kDpxs91fhQqqs0rcDHz44zLLA68gExs6o
-	 LyY4DWcLks+e/CXuyX5er//2Gbrgp+VQJtxExClGsV1PUP2MomjTFnscGv1b/K9C2K
-	 6Fz6luBwpNrnA==
-Date: Fri, 17 May 2024 17:04:41 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Kanak Shilledar <kanakshilledar@gmail.com>
-Cc: Kanak Shilledar <kanakshilledar111@protonmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH] dt-bindings: interrupt-controller: riscv,cpu-intc:
- convert to dtschema
-Message-ID: <20240517-disfigure-disperser-1fa6b36729ec@spud>
-References: <20240517150741.181303-1-kanakshilledar111@protonmail.com>
+	s=k20201202; t=1715961902;
+	bh=dCTYsvvxFgi7FATRWxnawc0wrUUcw+8JKULz4rwaMvc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=nQVUWZd0RsJNH89xwvk+2P8RVGpzPLxFi7RhoGr6u0tRlUfSrDpeHozk32B1dnp+/
+	 spdu7Vm4J3tXc11w4suJTQJmcp30RUaKq8ER555DYbWs3XpBwuJFI1/8vdi42WPEEY
+	 hfi2QbnIKi8rnUuy5dlnOz41ppmUTGDK2bhrT9JrNpNLFhfEpeuNgHf4qKB4RHNPM2
+	 CP5jAw2L9ehVSQ7Z6yUg0KKoXBiLzXgVWlT3ucf4vAthk8+4FL3K/2YLSVs5fZoO7f
+	 Sq0w7v9YP6Uk0G+c4bvDkBN53IlDIJseojeglbWkNVso3XX0BOy3gZgzTL7I4//6uH
+	 bVxsyKLsR4xAA==
+Received: by mercury (Postfix, from userid 1000)
+	id 9709E10605D4; Fri, 17 May 2024 18:05:00 +0200 (CEST)
+Date: Fri, 17 May 2024 18:05:00 +0200
+From: Sebastian Reichel <sre@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: [GIT PULL] power-supply changes for 6.10
+Message-ID: <cxfqbs4vvzniebbpvajkymvjfztst75z5di6dvuk3gyvyiodnl@s5phlkjujcon>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="21BkFEkE1h7lw5HM"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="pzfq6bthdjrnx7d2"
 Content-Disposition: inline
-In-Reply-To: <20240517150741.181303-1-kanakshilledar111@protonmail.com>
 
 
---21BkFEkE1h7lw5HM
-Content-Type: text/plain; charset=us-ascii
+--pzfq6bthdjrnx7d2
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Yo,
+Hi Linus,
 
-On Fri, May 17, 2024 at 08:37:40PM +0530, Kanak Shilledar wrote:
-> Convert the RISC-V Hart-Level Interrupt Controller (HLIC) to newer
-> DT schema, Created DT schema based on the .txt file which had
-> `compatible`, `#interrupt-cells` and `interrupt-controller` as
-> required properties.
-> Changes made with respect to original file:
-> - Changed the example to just use interrupt-controller instead of
-> using the whole cpu block
-> - Changed the example compatible string.
->=20
-> Signed-off-by: Kanak Shilledar <kanakshilledar111@protonmail.com>
-> ---
->  .../interrupt-controller/riscv,cpu-intc.txt   | 52 -----------------
->  .../interrupt-controller/riscv,cpu-intc.yaml  | 57 +++++++++++++++++++
->  2 files changed, 57 insertions(+), 52 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/interrupt-controlle=
-r/riscv,cpu-intc.txt
->  create mode 100644 Documentation/devicetree/bindings/interrupt-controlle=
-r/riscv,cpu-intc.yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/riscv=
-,cpu-intc.txt b/Documentation/devicetree/bindings/interrupt-controller/risc=
-v,cpu-intc.txt
-> deleted file mode 100644
-> index 265b223cd978..000000000000
-> --- a/Documentation/devicetree/bindings/interrupt-controller/riscv,cpu-in=
-tc.txt
-> +++ /dev/null
-> @@ -1,52 +0,0 @@
-> -RISC-V Hart-Level Interrupt Controller (HLIC)
-> ----------------------------------------------
-> -
-> -RISC-V cores include Control Status Registers (CSRs) which are local to =
-each
-> -CPU core (HART in RISC-V terminology) and can be read or written by soft=
-ware.
-> -Some of these CSRs are used to control local interrupts connected to the=
- core.
-> -Every interrupt is ultimately routed through a hart's HLIC before it
-> -interrupts that hart.
-> -
-> -The RISC-V supervisor ISA manual specifies three interrupt sources that =
-are
-> -attached to every HLIC: software interrupts, the timer interrupt, and ex=
-ternal
-> -interrupts.  Software interrupts are used to send IPIs between cores.  T=
-he
-> -timer interrupt comes from an architecturally mandated real-time timer t=
-hat is
-> -controlled via Supervisor Binary Interface (SBI) calls and CSR reads.  E=
-xternal
-> -interrupts connect all other device interrupts to the HLIC, which are ro=
-uted
-> -via the platform-level interrupt controller (PLIC).
-> -
-> -All RISC-V systems that conform to the supervisor ISA specification are
-> -required to have a HLIC with these three interrupt sources present.  Sin=
-ce the
-> -interrupt map is defined by the ISA it's not listed in the HLIC's device=
- tree
-> -entry, though external interrupt controllers (like the PLIC, for example=
-) will
-> -need to define how their interrupts map to the relevant HLICs.  This mea=
-ns
-> -a PLIC interrupt property will typically list the HLICs for all present =
-HARTs
-> -in the system.
-> -
-> -Required properties:
-> -- compatible : "riscv,cpu-intc"
+Just a few changes this time. All patches have been in -next for 7
+weeks except for the dt-binding change, which I apparently forgot
+to push out. I still included it in the pull request, since it is
+just a simple documentation fix. There should be no merge conflicts.
 
-> -- #interrupt-cells : should be <1>.  The interrupt sources are defined b=
-y the
-> -  RISC-V supervisor ISA manual, with only the following three interrupts=
- being
-> -  defined for supervisor mode:
-> -    - Source 1 is the supervisor software interrupt, which can be sent b=
-y an SBI
-> -      call and is reserved for use by software.
-> -    - Source 5 is the supervisor timer interrupt, which can be configure=
-d by
-> -      SBI calls and implements a one-shot timer.
-> -    - Source 9 is the supervisor external interrupt, which chains to all=
- other
-> -      device interrupts.
+The following changes since commit 4cece764965020c22cff7665b18a012006359095:
 
-I don't think that we should remove this test from the binding.
+  Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
 
-> -- interrupt-controller : Identifies the node as an interrupt controller
-> -
-> -Furthermore, this interrupt-controller MUST be embedded inside the cpu
-> -definition of the hart whose CSRs control these local interrupts.
-> -
-> -An example device tree entry for a HLIC is show below.
-> -
-> -	cpu1: cpu@1 {
-> -		compatible =3D "riscv";
-> -		...
-> -		cpu1-intc: interrupt-controller {
-> -			#interrupt-cells =3D <1>;
-> -			compatible =3D "sifive,fu540-c000-cpu-intc", "riscv,cpu-intc";
-> -			interrupt-controller;
-> -		};
-> -	};
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/riscv=
-,cpu-intc.yaml b/Documentation/devicetree/bindings/interrupt-controller/ris=
-cv,cpu-intc.yaml
-> new file mode 100644
-> index 000000000000..6fe86d243633
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/riscv,cpu-in=
-tc.yaml
-> @@ -0,0 +1,57 @@
-> +# SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/interrupt-controller/riscv,cpu-intc.y=
-aml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: RISC-V Hart-Level Interrupt Controller (HLIC)
-> +
-> +description:
-> +  RISC-V cores include Control Status Registers (CSRs) which are local to
-> +  each CPU core (HART in RISC-V terminology) and can be read or written =
-by
-> +  software. Some of these CSRs are used to control local interrupts conn=
-ected
-> +  to the core. Every interrupt is ultimately routed through a hart's HLIC
-> +  before it interrupts that hart.
-> +
-> +  The RISC-V supervisor ISA manual specifies three interrupt sources tha=
-t are
-> +  attached to every HLIC namely software interrupts, the timer interrupt=
-, and
-> +  external interrupts. Software interrupts are used to send IPIs between
-> +  cores.  The timer interrupt comes from an architecturally mandated rea=
-l-
-> +  time timer that is controlled via Supervisor Binary Interface (SBI) ca=
-lls
-> +  and CSR reads. External interrupts connect all other device interrupts=
- to
-> +  the HLIC, which are routed via the platform-level interrupt controller
-> +  (PLIC).
-> +
-> +  All RISC-V systems that conform to the supervisor ISA specification are
-> +  required to have a HLIC with these three interrupt sources present.  S=
-ince
-> +  the interrupt map is defined by the ISA it's not listed in the HLIC's =
-device
-> +  tree entry, though external interrupt controllers (like the PLIC, for
-> +  example) will need to define how their interrupts map to the relevant =
-HLICs.
-> +  This means a PLIC interrupt property will typically list the HLICs for=
- all
-> +  present HARTs in the system.
-> +
+are available in the Git repository at:
 
-> +maintainers:
-> +  - Kanak Shilledar <kanakshilledar111@protonmail.com>
+  https://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.gi=
+t tags/for-v6.10
 
-Are you knowledgeable about the cpu-intc on RISC-V? If you put yourself
-down just to satisfy dt_binding_check, I would suggest that you put down
-Palmer and Paul here as the maintainers of the architecture instead.
+for you to fetch changes up to 55f7073f6f59ef2c9e98b70f74118dba62e1aabc:
 
-> +properties:
-> +  compatible:
-> +    const: "riscv,cpu-intc"
+  dt-bindings: power: supply: max8903: specify flt-gpios as input (2024-04-=
+30 16:43:09 +0200)
 
-A new warning with dtbs_check from your patch:
-/stuff/linux/build/arch/riscv/boot/dts/renesas/r9a07g043f01-smarc.dtb: inte=
-rrupt-controller: compatible:0: 'riscv,cpu-intc' was expected
-	from schema $id: http://devicetree.org/schemas/interrupt-controller/riscv,=
-cpu-intc.yaml#
-/stuff/linux/build/arch/riscv/boot/dts/renesas/r9a07g043f01-smarc.dtb: inte=
-rrupt-controller: compatible: ['andestech,cpu-intc', 'riscv,cpu-intc'] is t=
-oo long
-	from schema $id: http://devicetree.org/schemas/interrupt-controller/riscv,=
-cpu-intc.yaml#
+----------------------------------------------------------------
+power supply and reset changes for the 6.10 series
 
-There's a duplicate description in riscv/cpus.yaml:
-  interrupt-controller:
-    type: object
-    additionalProperties: false
-    description: Describes the CPU's local interrupt controller
+ * core: simplify POWER_SUPPLY_PROP_CHARGE_BEHAVIOUR handling
+ * test-power: add POWER_SUPPLY_PROP_CHARGE_BEHAVIOUR support
+ * chrome EC drivers: add ID based probing
+ * bq27xxx: simplify update loop to reduce I2C traffic
+ * max8903 binding: fix GPIO polarity description
 
-    properties:
-      '#interrupt-cells':
-        const: 1
+----------------------------------------------------------------
+Andrew Davis (6):
+      power: supply: bq27xxx: Move temperature reading out of update loop
+      power: supply: bq27xxx: Move time reading out of update loop
+      power: supply: bq27xxx: Move charge reading out of update loop
+      power: supply: bq27xxx: Move energy reading out of update loop
+      power: supply: bq27xxx: Move cycle count reading out of update loop
+      power: supply: bq27xxx: Move health reading out of update loop
 
-      compatible:
-        oneOf:
-          - items:
-              - const: andestech,cpu-intc
-              - const: riscv,cpu-intc
-          - const: riscv,cpu-intc
+Herman van Hazendonk (1):
+      dt-bindings: power: supply: max8903: specify flt-gpios as input
 
-      interrupt-controller: true
+Thomas Wei=DFschuh (2):
+      power: supply: test-power: implement charge_behaviour property
+      power: supply: core: simplify charge_behaviour formatting
 
-I think the one in cpus.yaml should be converted to a ref and the
-andestech compatible added here.
+Tzung-Bi Shih (2):
+      power: supply: cros_usbpd: provide ID table for avoiding fallback mat=
+ch
+      power: supply: cros_pchg: provide ID table for avoiding fallback match
 
-> +  interrupt-controller: true
-> +
-> +  '#interrupt-cells': true
+ .../bindings/power/supply/maxim,max8903.yaml       |   2 +-
+ drivers/power/supply/bq27xxx_battery.c             | 116 ++++++++++++-----=
+----
+ drivers/power/supply/cros_peripheral_charger.c     |  11 +-
+ drivers/power/supply/cros_usbpd-charger.c          |  11 +-
+ drivers/power/supply/power_supply_sysfs.c          |  20 +---
+ drivers/power/supply/test_power.c                  |  36 +++++++
+ include/linux/power/bq27xxx_battery.h              |   8 --
+ 7 files changed, 121 insertions(+), 83 deletions(-)
 
-`const: 1` to match the text binding being removed.
-
-Cheers,
-Conor.
-
-> +
-> +required:
-> +  - compatible
-> +  - '#interrupt-cells'
-> +  - interrupt-controller
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    interrupt-controller {
-> +        #interrupt-cells =3D <1>;
-> +        compatible =3D "riscv,cpu-intc";
-> +        interrupt-controller;
-> +    };
-> --=20
-> 2.34.1
->=20
-
---21BkFEkE1h7lw5HM
+--pzfq6bthdjrnx7d2
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZkeAGQAKCRB4tDGHoIJi
-0iLpAP0U6v1uqKIyhBNx1wD1zg6ylJa1asw97S4cAYOXdq5Y2gEAv6UyS+m9dbHN
-ZR9d9gmD0h/jlIqgsCfEufhc8VmEXwg=
-=QVAp
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmZHgCcACgkQ2O7X88g7
++pqzuw/+ORVHAzMgh0FyQO6Wr2S5aV8o7QoTBxJc0WX35/QU2j+xbf7d72x2Jray
+VJdbRW1nZX1pG5nrDhfw5Fbl7wI542qCMDGX1KYgGDzJRTEh7S5qv1bXIqi5k7D9
+99V6gYz0Kaquo4sx7vrQhDCGR8Sc3NE4s4sTDixMEjPeq7x51i/Y1xa/YT8fEo0q
+x3Qu9KoSwKDGsMF4ZTZ3oMUbrbGSXkWd1YC4tio47medVBAZoeJNgO6ZxOSqmzb5
+ZHT3REZd4tAB7J+DONUWqREUZlb9jyNo9tCQ8S1UDPUe1zV3uruJqr4vQvTx4Xc5
+47ZeLIR1SghZEedryh4JdMt/PZZeRI52bu9PFXLmmspVy6iZMp+PRKY/jNZqXDsq
+nEyk5lpxHYCVJgYchCBt1wlfFitc9Xyfz2ZSj70XaUQtqOl3XOqKmwwEjdK5Wygg
+k+6pS9HlCVCuIviXPhwYeuLKTnTNVqPU0m2nXdc0ofT1x+p3p71nacq4sqN/gtX5
+0/konxwvaVKEVPZL/nnC63JU/wvUxH1Oyr7G+/hJBbzwveyR93qvyGR8rJngS3mx
+4djZ42aNBVMSc95bvPgLKcgh+YtVfMzlGGm5bujiSCWk+Xt/90Z7Zgo4k0JM5q4k
+tBEYotnffgUdJQ4ZH6F6sMq+8IvQOTIO7ZmO5eaKboDuk6AeCzE=
+=JCrL
 -----END PGP SIGNATURE-----
 
---21BkFEkE1h7lw5HM--
+--pzfq6bthdjrnx7d2--
 
