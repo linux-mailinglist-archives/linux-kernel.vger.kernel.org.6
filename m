@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-182451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AC7B8C8B6C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:45:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19A6B8C8B6E
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:45:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C31351F2858F
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:45:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 732A3B24453
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:45:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46586146A8A;
-	Fri, 17 May 2024 17:40:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 027D314B95D;
+	Fri, 17 May 2024 17:40:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cA25VLje"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="X+tL38Fj"
 Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38072144D39
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 17:40:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E13AF14A097
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 17:40:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715967619; cv=none; b=RLHYAMALelHavEH+1GYZ/InAA2YWw/sMjQEevrERbb5SdO6noxtalaABxXUYvZgyioSMMbK3NFhi62rKgXjnfFaB6olcN5fstMq9CXNMM6XbieE8x7V+bl3eddSQ4TijiASSU9Da6uEicugJ6k70oE8WF1r0XoVNCPZzd8spN2c=
+	t=1715967622; cv=none; b=lonUc1aFeJnsCj9H26wsCwfC46jXw5ZM0lv64djWrU1XJfSjeISaKF5KbX0BzV/SJELWwww4+gWyp8Wx9zUkHN9nXKoYWJRvoK+6r2eHozEXaVxdXui4i9hMKqtZZRpZcMX8XZgXQvWG73r/bq1U4Z0tua8dXDYrcj4j2l5DUw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715967619; c=relaxed/simple;
-	bh=E6LgUeDIffwkx0+8Lxw4NCEFqiek6fuwZ9kkRbcXbvc=;
+	s=arc-20240116; t=1715967622; c=relaxed/simple;
+	bh=WpEfgTqvxMmTqgtRjBGJ9mUo4mMumn0xpoO2FP087q4=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Kht02AB8FwacsLvryYv4qSlt/iR+wx7wqif1CcO+vE4XMiWp+g4ukNaAXenMgMwmknzJV84hQKRymfmIQkDlUQvgjMkj57q8aut2EcheL8ZpA5aPPTLB/WLG7YVYTm5Tsp8tG5mLq38DcMVqZGSifH+Ex1lKwA7+QpJ+DgkjkuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cA25VLje; arc=none smtp.client-ip=209.85.210.202
+	 To:Cc:Content-Type; b=ED7SeFLX9s4LYd5cAa/ojAUby2r7VuXosNd8n6Z4hH/ca8y6AehyebmSvnKTJ9iyIktZRtEdRwsyovmKQvBwNGgAuuJ0y/39QHazn46JtFrYa4/spF1hIu+dWMnbnvpcpujuvpvJWcXBbN8nnfgxSQKabylqo7bSsk55qKy8hzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=X+tL38Fj; arc=none smtp.client-ip=209.85.210.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-6f46acb3537so6689720b3a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 10:40:17 -0700 (PDT)
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-6f467b9e948so8082128b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 10:40:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715967617; x=1716572417; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1715967620; x=1716572420; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=fknuicu/P7ZeItkSn6tGc+U7pN3vSqibLegNNza/UIw=;
-        b=cA25VLjezgJd70261B8TG0b7LIEi1s7tBOGcxegHFwnm0LzVIt1VcJUlmk4YeBS7Y3
-         JYMm/B1YvO72NmrxVYD0nXvWJuLPtO5TcNwoBKwwNGBRlVHwdT0ELXQrZmzZkiI/BRqz
-         gz5XQOladAGUkX9jxJtCpwSoskLs9YpoSGk5869nZFJU48sQnxyksURQnTWC3+xhXBDC
-         PA4ie0T/Kt4bMyBiGiZjcQI0mbSEYCkp0ALKa1DqEqYwc+dwXppaoBz95T/X3YIymVTo
-         YmTQbZAjz7/bjLdZWyrRI11dG3SoEoZ2DcvmLfTXuivn8E6KjuDE3rG56Ho31tn411BA
-         9MzQ==
+        bh=0wWTJWtW4FJprikXgCXBDeS0rSMKlETzXy6OsT3CYpI=;
+        b=X+tL38Fjnp0EAUOwrNdDxdUv2OejlJVUlUn8T5fo1V9Iz/IwIYbFJQhGZStQZPPJ1r
+         rlM5zCjB03QIzgzkIaQqiUtGLI/Vz0wlR9EFGZF6cO3PebdJs7P1pSrITpeks6pbc61o
+         JSa3fjpWGSiFH7iXdHYYVqq8rON4VshHKw/lOWpPR7JambUa7XPuyEVOOM/USGivk/LV
+         6Jffs+OtmvcPtv3ws8MfRberslR4nwcnuFfNPH07W0qsZ/SVytaeb0oEf7BcGgXg/f/9
+         dRxURWsbF2nCyZBHlvYr30COLOamLHODU8rz8nedkaqj3HmBRJ0MHK6nGMeMxh18esO0
+         hE3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715967617; x=1716572417;
+        d=1e100.net; s=20230601; t=1715967620; x=1716572420;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=fknuicu/P7ZeItkSn6tGc+U7pN3vSqibLegNNza/UIw=;
-        b=HXbS0OHLoLVhOE5PlaY4zb1I8yHCdkEQ1/jNGGl7ifS4sRnXGwbeyA+/rITM2PjMdV
-         33xKVESS1JOBfbBFOF4zOYu/Lhvf6J9lrhNK35YuibUAjsCiMD75oNCg+zSbmXAge7kd
-         lCfoJ90AGk3v8SNyVIX4+mpXu2FVjU68xFWnH4vPrpNRpDqof49iL2u1yvIBhNwaeYtO
-         /U3DWz8iu0fJT/kKOAH/8dAGnKpQdB6iURdqwBQauQPP2GKH+rETIhAFp/QUmUPjHzbw
-         EJDcpnvwaqjn52upcwcLpdT1aD0qurfk2akokvOpf9TIn0CtGLULFlxk0OLGycRsl+EW
-         QZOg==
-X-Forwarded-Encrypted: i=1; AJvYcCWCWZRhfzx6am5aUAHflSoPMYnP1TnvAMlr62QI8XXpraaKoLCL7oNaVJtp11oYJ+xMAfqyZj2hBnJjrhL6CgA5jdlcw02/YWT7wJWH
-X-Gm-Message-State: AOJu0YyR7v5k3BMiB9qx3vbG/22REqgBb04vJlHnrczfR3eD7fw6V/nb
-	vkLnSaRQpdURkILmjoxWeCqO7q8azhlvdsaKPvcrxk2wtTicqMAmYPyq4Hd3atFCIf7OIWBW82A
-	NZw==
-X-Google-Smtp-Source: AGHT+IEYb9XucBtFyugqfhcxaqHJPHS9Dd4UUZVrs27sCzXHfxzBAfLUwXRfyGuC/W3LuyW1l0NFfg1t1Wk=
+        bh=0wWTJWtW4FJprikXgCXBDeS0rSMKlETzXy6OsT3CYpI=;
+        b=QlR5/R3ljAYQ1Q/fAXVdqK9w7tjVdlTnqQUA4YbA47K/c5X4BD55uK3p6bmjVWaeAw
+         jBmePhPfh4+dWMg8m1VX3U7cxjZjV0FgUsuRyK5d5OEDrwrLfW5e+p9eJfP+4Fmya2N3
+         FaEIXfKLquzL8yC2Q8VAIq7SvXTly+kYNabX50JI9VOD3GagWpxvUhdK4/ly52aMVPZ1
+         uNZaMwpSyEF98qtid4me7Q183CpzoD4Ka2Zl9AK3EnhrpeBE+VXmFb01WGQapubKnJF7
+         6GM6tgsSY8ZSHLtg4OsldwuGBVIvnKhrOZIHNRbnP9yf7P5tq7X6b6C7D8+8DOxbPz1G
+         RWjA==
+X-Forwarded-Encrypted: i=1; AJvYcCX+GQdedOg0lHXcPavF9NToTsgiLl063SqVCzEPz2j41fK6sVwo2ASNJOctIDMyPRY0leZ1WLtSqpfDOIErQtTq2eT2YhnjBO6iFsPw
+X-Gm-Message-State: AOJu0YxROpKnAPxqnwI8EbwSg9c+7x+hxzdZXF5JH04kl5nchhBNcbpL
+	9qdr3qI7DbTJCd2t4dKJGwrfxdrEIH3yLh/9z9KEUtzRZQsHzhrdLckF9bqBOlRBaVVRerAIwH4
+	1kg==
+X-Google-Smtp-Source: AGHT+IGVlkDMu6SgCRXvEPKEGroeOFGxol5oKg2OzOEvQ55LbhOp4rIso0qjuMbugc7tID63+956tNJ52dM=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6a00:3999:b0:6ec:f3e8:46a8 with SMTP id
- d2e1a72fcca58-6f4c8e4058bmr121470b3a.1.1715967617457; Fri, 17 May 2024
- 10:40:17 -0700 (PDT)
+ (user=seanjc job=sendgmr) by 2002:a05:6a00:1144:b0:6f3:ecdc:1b94 with SMTP id
+ d2e1a72fcca58-6f4e03a253amr307893b3a.6.1715967619193; Fri, 17 May 2024
+ 10:40:19 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri, 17 May 2024 10:38:55 -0700
+Date: Fri, 17 May 2024 10:38:56 -0700
 In-Reply-To: <20240517173926.965351-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,9 +75,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240517173926.965351-1-seanjc@google.com>
 X-Mailer: git-send-email 2.45.0.215.g3402c0e53f-goog
-Message-ID: <20240517173926.965351-19-seanjc@google.com>
-Subject: [PATCH v2 18/49] KVM: x86: Account for max supported CPUID leaf when
- getting raw host CPUID
+Message-ID: <20240517173926.965351-20-seanjc@google.com>
+Subject: [PATCH v2 19/49] KVM: x86: Add a macro to init CPUID features that
+ ignore host kernel support
 From: Sean Christopherson <seanjc@google.com>
 To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, 
 	Vitaly Kuznetsov <vkuznets@redhat.com>
@@ -88,73 +88,72 @@ Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Robert Hoo <robert.hoo.linux@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Explicitly zero out the feature word in kvm_cpu_caps if the word's
-associated CPUID function is greater than the max leaf supported by the
-CPU.  For such unsupported functions, Intel CPUs return the output from
-the last supported leaf, not all zeros.
+Add a macro for use in kvm_set_cpu_caps() to automagically initialize
+features that KVM wants to support based solely on the CPU's capabilities,
+e.g. KVM advertises LA57 support if it's available in hardware, even if
+the host kernel isn't utilizing 57-bit virtual addresses.
 
-Practically speaking, this is likely a benign bug, as KVM uses the raw
-host CPUID to mask the kernel's computed capabilities, and the kernel does
-perform max leaf checks when populating boot_cpu_data.  The only way KVM's
-goof could be problematic is if the kernel force-set a feature in a leaf
-that is completely unsupported, _and_ the max supported leaf happened to
-return a value with '1' the same bit position.  Which is theoretically
-possible, but extremely unlikely.  And even if that did happen, it's
-entirely possible that KVM would still provide the correct functionality;
-the kernel did set the capability after all.
+Take advantage of the fact that kvm_cpu_cap_mask() adjusts kvm_cpu_caps
+based on raw CPUID, i.e. will clear features bits that aren't supported in
+hardware, and simply force-set the capability before applying the mask.
+
+Abusing kvm_cpu_cap_set() is a borderline evil shenanigan, but doing so
+avoid extra CPUID lookups, and a future commit will harden the entire
+family of *F() macros to assert (at compile time) that every feature being
+allowed is part of the capability word being processed, i.e. using a macro
+will bring more advantages in the future.
+
+Avoiding CPUID also fixes a largely benign bug where KVM could incorrectly
+report LA57 support on Intel CPUs whose max supported CPUID is less than 7,
+i.e. if the max supported leaf (<7) happened to have bit 16 set.  In
+practice, barring a funky virtual machine setup, the bug is benign as all
+known CPUs that support VMX also support leaf 7.
 
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kvm/cpuid.c | 29 ++++++++++++++++++++++++-----
- 1 file changed, 24 insertions(+), 5 deletions(-)
+ arch/x86/kvm/cpuid.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
 
 diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index a51e48663f53..77625a5477b1 100644
+index 77625a5477b1..a802c09b50ab 100644
 --- a/arch/x86/kvm/cpuid.c
 +++ b/arch/x86/kvm/cpuid.c
-@@ -571,18 +571,37 @@ int kvm_vcpu_ioctl_get_cpuid2(struct kvm_vcpu *vcpu,
- 	return 0;
- }
+@@ -70,6 +70,18 @@ u32 xstate_required_size(u64 xstate_bv, bool compacted)
+ 	(boot_cpu_has(X86_FEATURE_##name) ? F(name) : 0);	\
+ })
  
-+static __always_inline u32 raw_cpuid_get(struct cpuid_reg cpuid)
-+{
-+	struct kvm_cpuid_entry2 entry;
-+	u32 base;
++/*
++ * Raw Feature - For features that KVM supports based purely on raw host CPUID,
++ * i.e. that KVM virtualizes even if the host kernel doesn't use the feature.
++ * Simply force set the feature in KVM's capabilities, raw CPUID support will
++ * be factored in by kvm_cpu_cap_mask().
++ */
++#define RAW_F(name)						\
++({								\
++	kvm_cpu_cap_set(X86_FEATURE_##name);			\
++	F(name);						\
++})
 +
-+	/*
-+	 * KVM only supports features defined by Intel (0x0), AMD (0x80000000),
-+	 * and Centaur (0xc0000000).  WARN if a feature for new vendor base is
-+	 * defined, as this and other code would need to be updated.
-+	 */
-+	base = cpuid.function & 0xffff0000;
-+	if (WARN_ON_ONCE(base && base != 0x80000000 && base != 0xc0000000))
-+		return 0;
-+
-+	if (cpuid_eax(base) < cpuid.function)
-+		return 0;
-+
-+	cpuid_count(cpuid.function, cpuid.index,
-+		    &entry.eax, &entry.ebx, &entry.ecx, &entry.edx);
-+
-+	return *__cpuid_entry_get_reg(&entry, cpuid.reg);
-+}
-+
- /* Mask kvm_cpu_caps for @leaf with the raw CPUID capabilities of this CPU. */
- static __always_inline void __kvm_cpu_cap_mask(unsigned int leaf)
- {
- 	const struct cpuid_reg cpuid = x86_feature_cpuid(leaf * 32);
--	struct kvm_cpuid_entry2 entry;
+ /*
+  * Magic value used by KVM when querying userspace-provided CPUID entries and
+  * doesn't care about the CPIUD index because the index of the function in
+@@ -682,15 +694,12 @@ void kvm_set_cpu_caps(void)
+ 		F(AVX512VL));
  
- 	reverse_cpuid_check(leaf);
+ 	kvm_cpu_cap_mask(CPUID_7_ECX,
+-		F(AVX512VBMI) | F(LA57) | F(PKU) | 0 /*OSPKE*/ | F(RDPID) |
++		F(AVX512VBMI) | RAW_F(LA57) | F(PKU) | 0 /*OSPKE*/ | F(RDPID) |
+ 		F(AVX512_VPOPCNTDQ) | F(UMIP) | F(AVX512_VBMI2) | F(GFNI) |
+ 		F(VAES) | F(VPCLMULQDQ) | F(AVX512_VNNI) | F(AVX512_BITALG) |
+ 		F(CLDEMOTE) | F(MOVDIRI) | F(MOVDIR64B) | 0 /*WAITPKG*/ |
+ 		F(SGX_LC) | F(BUS_LOCK_DETECT)
+ 	);
+-	/* Set LA57 based on hardware capability. */
+-	if (cpuid_ecx(7) & F(LA57))
+-		kvm_cpu_cap_set(X86_FEATURE_LA57);
  
--	cpuid_count(cpuid.function, cpuid.index,
--		    &entry.eax, &entry.ebx, &entry.ecx, &entry.edx);
--
--	kvm_cpu_caps[leaf] &= *__cpuid_entry_get_reg(&entry, cpuid.reg);
-+	kvm_cpu_caps[leaf] &= raw_cpuid_get(cpuid);
- }
- 
- static __always_inline
+ 	/*
+ 	 * PKU not yet implemented for shadow paging and requires OSPKE
 -- 
 2.45.0.215.g3402c0e53f-goog
 
