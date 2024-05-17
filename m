@@ -1,189 +1,133 @@
-Return-Path: <linux-kernel+bounces-182653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 369538C8DD3
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 23:40:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 088778C8DBE
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 23:37:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E94CB23434
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 21:40:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 413CD1C21CD3
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 21:37:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE5BF1411F4;
-	Fri, 17 May 2024 21:39:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0B721411C7;
+	Fri, 17 May 2024 21:37:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J5vEFyTp"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lMYQKt7j"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F12C839FFD;
-	Fri, 17 May 2024 21:39:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB4DD5231
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 21:37:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715981990; cv=none; b=rHrh88Q4EE9V3KRZEaOmj7EV9BtdKoQDdfdFuZ7irzR3ph/RNHuNWYe1lzHxWDeM0qaVLaQ5Np+K72j6bkWJzsnzqMIVe8ruFE9qISD3DVFhgkxWykVbx0dwrXlReG9A2UJa/jPloZKJyO5ePoad4AnKtOUDwnzrDVUpYPLHTdw=
+	t=1715981857; cv=none; b=ECdKikyyIwXMC0k8jRCDrSe3flHGDy9f+emSAqJN+cblsJw2klL+3o1UAk2zPA5bSWDW3aAFZTOOlmp3Ir2U9nMV67PmZLFQOJw6N9qvEwFgY2C/3/uNWFbNBL1f3tYI1L+giRbMzAR5xtMMji1FwhRIbjPzui0Kpa9KZHWtykE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715981990; c=relaxed/simple;
-	bh=2SS4RimWdSKvDc8cYyQUQTKo0de1Bc26jlHfZplTVjE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BYfSdVx/LjYw6eoxHgx4hBu7GkfhBOHwi5TCOQyw1dW+diEX749xeuOJ1+NzlN3WvpTHZxFjrXz+eDvO1MOHU3tgt/IARFuJQFhyEUP/uEIzKUKb79wMQiBk7t1rw+yaOZ+dctH/M6kXGYgFf3n93j6utxNIF+y/HwtCv9gElec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J5vEFyTp; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715981987; x=1747517987;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=2SS4RimWdSKvDc8cYyQUQTKo0de1Bc26jlHfZplTVjE=;
-  b=J5vEFyTpnVvnOKkJSStUGWO9PBRkSwaPrvmipmVn0vBrOKBGuZV098+k
-   u5ns1CJ+uUeK31K9Wyw+drtCwu+E9aM0xCztDcnllKt820oX2CE+7DnvV
-   5uhD3w7uJ3L4Bfks5xa8TQBI//fbze4E0ZEyxKl8RTg28XhKDaRH5JqKj
-   rklNwTKbNfbnGORcg0DuoB/uOUWWn51m/9qKmq9q2P0ItNQRamigw7x8j
-   Om9T+NkTIRmG1wW/NotRv1YkwX3UhSyoSlEZRatY1DJvOOzFLVwthlVsA
-   yKFlMeQINo/rgX3faEzXEdXPmSe4LdCVYc8ErUYYJSZcxkM7MMf5DctLT
-   g==;
-X-CSE-ConnectionGUID: KlXoS4UxRPm+TIRTqelx9w==
-X-CSE-MsgGUID: AYwRRiQETJ2Br4KIYUvTGw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11075"; a="12356749"
-X-IronPort-AV: E=Sophos;i="6.08,168,1712646000"; 
-   d="scan'208";a="12356749"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 14:39:46 -0700
-X-CSE-ConnectionGUID: gkIVbgFKR4KZwf7oGFI1XQ==
-X-CSE-MsgGUID: zsKfyn7DTkeY+sy0JqMShA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,168,1712646000"; 
-   d="scan'208";a="36827114"
-Received: from unknown (HELO 108735ec233b) ([10.239.97.151])
-  by orviesa004.jf.intel.com with ESMTP; 17 May 2024 14:39:41 -0700
-Received: from kbuild by 108735ec233b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s85Fv-00019g-0g;
-	Fri, 17 May 2024 21:37:44 +0000
-Date: Sat, 18 May 2024 05:34:18 +0800
-From: kernel test robot <lkp@intel.com>
-To: ye.xingchen@zte.com.cn, davem@davemloft.net
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	corbet@lwn.net, dsahern@kernel.org, ncardwell@google.com,
-	soheil@google.com, mfreemon@cloudflare.com, lixiaoyan@google.com,
-	david.laight@aculab.com, haiyangz@microsoft.com,
-	ye.xingchen@zte.com.cn, netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	xu.xin16@zte.com.cn, zhang.yunkai@zte.com.cn, fan.yu9@zte.com.cn
-Subject: Re: [PATCH net-next] icmp: Add icmp_timestamp_ignore_all to control
- ICMP_TIMESTAMP
-Message-ID: <202405180545.RQgwvazz-lkp@intel.com>
-References: <20240517172639229ec5bN7VBV7SGEHkSK5K6f@zte.com.cn>
+	s=arc-20240116; t=1715981857; c=relaxed/simple;
+	bh=0ydemrb0H9QqilRkRIhbSjUUxnDO0ID5Wn3jsidfUrI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IJM/GTeP7LOJt0iCqaRpP5WI3zuHem++zG90Ym2+WGgVuqjmBDh9uSgxhh8QLvq97BRnLm6YfMN5VZVAYUPsWZQCM4T2JOW3x6vagGtgiMqjUNimeQ641YHgSVgK8IXRqRdN2fbOWrvxQqsHQubmw7EukzivfiTsKHHh82E191g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=lMYQKt7j; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1ee42b97b32so22877435ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 14:37:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1715981855; x=1716586655; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QQ2PInY+uC/KLW9XRBt6i2mdUuDTT+fEYpnbjgM4Q5k=;
+        b=lMYQKt7jQrkN7SqVkbgT+hgDodB6R79KjbA5MzoDPLZc4NVO/RR6ZoDZfStmpGlaAN
+         ygkS+MaNwCl87+puTop4vbH9uXO2c+jDIHjedLFGuTeMnAD/QfPy5eolt1KnJubXmt0w
+         cZ0pneROWeGJGuGA9RAeFgFc8o6dvScjfUx/A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715981855; x=1716586655;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QQ2PInY+uC/KLW9XRBt6i2mdUuDTT+fEYpnbjgM4Q5k=;
+        b=e1dnAXWy+udWrHWSb5+Px2G6lax0utwLNfDsyswriEoBUT6k0+F6gHIzQVToXrVa1S
+         wpwobmiYZA4NgCSw1vWpZK7sWu+0byduKdjdf5LHjUBlVb3Iufyu28l4isVTM3mX1TE9
+         xocvSjtsn5FiETTKPZD8oW9lOPZeuMgpOBVKG+dxkVFeZ6WJB7D01LcdXHiFyw9HO8eZ
+         5OkQOgy2xrTZEjoDm/KkH3gkZ9g9DHn8As5mMpmkt3WIibyb2XQn3IUZRYGdMg3l6+g6
+         sIyJ0wF+VwUtS7fmIBJn0q5Bc9HW1ryyGlkmzhZw4CoV2eKhcW7y2KpsgeMlt6PHI++2
+         UDHg==
+X-Forwarded-Encrypted: i=1; AJvYcCUGXU3PBwSOeqAuBxuw73xCwty70uikLqq+Gl9A42EXPNdwbpfQdBUjAPzC2/MXAWJIfZw/5ZQruhovrm8w2tElDyuaC0gPbYwrFrqC
+X-Gm-Message-State: AOJu0Yz7RZV+KmclTq/8ZqA28ZV4+2rJXo1TPFoTmJUk1yOHjtkDSAm2
+	N6YcoozWc+JyonwFJukHKUVqSp8VKJtqUxuHpim72VU6EUhvw65rOPOOAeSZjQ==
+X-Google-Smtp-Source: AGHT+IE5ukk1eYupJDXgn9GYxBxWGiXIOAifNl3mLurCa9fk2quD0QLQybES+xForsch1qL2iYidFg==
+X-Received: by 2002:a05:6a20:5a9d:b0:1af:dbc6:baf9 with SMTP id adf61e73a8af0-1afde0e6310mr20912711637.36.1715981855066;
+        Fri, 17 May 2024 14:37:35 -0700 (PDT)
+Received: from dianders.sjc.corp.google.com ([2620:15c:9d:2:26de:b1dd:5:771c])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2b2f8b3sm15168736b3a.211.2024.05.17.14.37.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 May 2024 14:37:34 -0700 (PDT)
+From: Douglas Anderson <dianders@chromium.org>
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Sam Ravnborg <sam@ravnborg.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Douglas Anderson <dianders@chromium.org>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Cong Yang <yangcong5@huaqin.corp-partner.google.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	David Airlie <airlied@gmail.com>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	Jitao Shi <jitao.shi@mediatek.com>,
+	=?UTF-8?q?Kamil=20Trzci=C5=84ski?= <ayufan@ayufan.eu>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Ondrej Jirman <megi@xff.cz>,
+	Shuijing Li <shuijing.li@mediatek.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Xinlei Lee <xinlei.lee@mediatek.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/8] drm/panel: Some very minor err handling fixes + more _multi
+Date: Fri, 17 May 2024 14:36:35 -0700
+Message-ID: <20240517213712.3135166-1-dianders@chromium.org>
+X-Mailer: git-send-email 2.45.0.rc1.225.g2a3ae87e7f-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240517172639229ec5bN7VBV7SGEHkSK5K6f@zte.com.cn>
-
-Hi,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on net-next/main]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/ye-xingchen-zte-com-cn/icmp-Add-icmp_timestamp_ignore_all-to-control-ICMP_TIMESTAMP/20240517-172903
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20240517172639229ec5bN7VBV7SGEHkSK5K6f%40zte.com.cn
-patch subject: [PATCH net-next] icmp: Add icmp_timestamp_ignore_all to control ICMP_TIMESTAMP
-config: arm-clps711x_defconfig (https://download.01.org/0day-ci/archive/20240518/202405180545.RQgwvazz-lkp@intel.com/config)
-compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project fa9b1be45088dce1e4b602d451f118128b94237b)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240518/202405180545.RQgwvazz-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405180545.RQgwvazz-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from net/ipv4/icmp.c:69:
-   In file included from include/linux/inet.h:42:
-   In file included from include/net/net_namespace.h:43:
-   In file included from include/linux/skbuff.h:17:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:8:
-   In file included from include/linux/cacheflush.h:5:
-   In file included from arch/arm/include/asm/cacheflush.h:10:
-   In file included from include/linux/mm.h:2210:
-   include/linux/vmstat.h:522:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     522 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
->> net/ipv4/icmp.c:1157:16: warning: variable 'net' is uninitialized when used here [-Wuninitialized]
-    1157 |         if (READ_ONCE(net->ipv4.sysctl_icmp_timestamp_ignore_all))
-         |                       ^~~
-   include/asm-generic/rwonce.h:50:14: note: expanded from macro 'READ_ONCE'
-      50 |         __READ_ONCE(x);                                                 \
-         |                     ^
-   include/asm-generic/rwonce.h:44:72: note: expanded from macro '__READ_ONCE'
-      44 | #define __READ_ONCE(x)  (*(const volatile __unqual_scalar_typeof(x) *)&(x))
-         |                                                                         ^
-   net/ipv4/icmp.c:1155:17: note: initialize the variable 'net' to silence this warning
-    1155 |         struct net *net;
-         |                        ^
-         |                         = NULL
-   2 warnings generated.
+Content-Transfer-Encoding: 8bit
 
 
-vim +/net +1157 net/ipv4/icmp.c
+This series is pretty much just addressing a few minor error handling
+bugs that I noticed recently while reviewing some panel patches. For
+the most part these are all old issues.
 
-  1144	
-  1145	/*
-  1146	 *	Handle ICMP Timestamp requests.
-  1147	 *	RFC 1122: 3.2.2.8 MAY implement ICMP timestamp requests.
-  1148	 *		  SHOULD be in the kernel for minimum random latency.
-  1149	 *		  MUST be accurate to a few minutes.
-  1150	 *		  MUST be updated at least at 15Hz.
-  1151	 */
-  1152	static enum skb_drop_reason icmp_timestamp(struct sk_buff *skb)
-  1153	{
-  1154		struct icmp_bxm icmp_param;
-  1155		struct net *net;
-  1156	
-> 1157		if (READ_ONCE(net->ipv4.sysctl_icmp_timestamp_ignore_all))
-  1158			return SKB_NOT_DROPPED_YET;
-  1159	
-  1160		/*
-  1161		 *	Too short.
-  1162		 */
-  1163		if (skb->len < 4)
-  1164			goto out_err;
-  1165	
-  1166		/*
-  1167		 *	Fill in the current time as ms since midnight UT:
-  1168		 */
-  1169		icmp_param.data.times[1] = inet_current_timestamp();
-  1170		icmp_param.data.times[2] = icmp_param.data.times[1];
-  1171	
-  1172		BUG_ON(skb_copy_bits(skb, 0, &icmp_param.data.times[0], 4));
-  1173	
-  1174		icmp_param.data.icmph	   = *icmp_hdr(skb);
-  1175		icmp_param.data.icmph.type = ICMP_TIMESTAMPREPLY;
-  1176		icmp_param.data.icmph.code = 0;
-  1177		icmp_param.skb		   = skb;
-  1178		icmp_param.offset	   = 0;
-  1179		icmp_param.data_len	   = 0;
-  1180		icmp_param.head_len	   = sizeof(struct icmphdr) + 12;
-  1181		icmp_reply(&icmp_param, skb);
-  1182		return SKB_NOT_DROPPED_YET;
-  1183	
-  1184	out_err:
-  1185		__ICMP_INC_STATS(dev_net(skb_dst(skb)->dev), ICMP_MIB_INERRORS);
-  1186		return SKB_DROP_REASON_PKT_TOO_SMALL;
-  1187	}
-  1188	
+This also adjusts the new himax-hx83102 in a similar way that Dmitry
+did in his recent series that included commit f79d6d28d8fe
+("drm/mipi-dsi: wrap more functions for streamline handling"). His
+series handled the panel driver that himax-hx83102 forked from but not
+himax-hx83102.
+
+
+Douglas Anderson (8):
+  drm/panel: himax-hx8394: Handle errors from
+    mipi_dsi_dcs_set_display_on() better
+  drm/panel: boe-tv101wum-nl6: If prepare fails, disable GPIO before
+    regulators
+  drm/panel: boe-tv101wum-nl6: Check for errors on the NOP in prepare()
+  drm/panel: ilitek-ili9882t: If prepare fails, disable GPIO before
+    regulators
+  drm/panel: ilitek-ili9882t: Check for errors on the NOP in prepare()
+  drm/panel: himax-hx83102: If prepare fails, disable GPIO before
+    regulators
+  drm/panel: himax-hx83102: Check for errors on the NOP in prepare()
+  drm/panel: himax-hx83102: use wrapped MIPI DCS functions
+
+ .../gpu/drm/panel/panel-boe-tv101wum-nl6.c    |  8 +-
+ drivers/gpu/drm/panel/panel-himax-hx83102.c   | 92 ++++++-------------
+ drivers/gpu/drm/panel/panel-himax-hx8394.c    |  3 +-
+ drivers/gpu/drm/panel/panel-ilitek-ili9882t.c |  8 +-
+ 4 files changed, 43 insertions(+), 68 deletions(-)
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.45.0.rc1.225.g2a3ae87e7f-goog
+
 
