@@ -1,532 +1,238 @@
-Return-Path: <linux-kernel+bounces-181717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2B438C802E
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 05:29:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82CDF8C8030
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 05:30:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39AC01F22214
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 03:29:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 396D1282055
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 03:30:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB1E2DDB2;
-	Fri, 17 May 2024 03:29:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ADE310A25;
+	Fri, 17 May 2024 03:30:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GiSRI5Yh"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gihMkjok"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D35A9D530
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 03:29:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9DFD10A09
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 03:30:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715916548; cv=none; b=TJJiqiQ7w4ANRmZkbeekfzs1qgQaJds5S6Vqa84qZcc7VRa8+fcGoaegbBRVl9OPleiF5UXmkvlgNFK+s6ltOZD2B9KOz/bWLIgH+ZRyLSYBuHKRfnjkLb65hWFEG0YkpfPxDeOQdp0EUVnINgf8FBPkBh4kNMygAxvMRLcBruM=
+	t=1715916618; cv=none; b=isnheUgNwLUF/iw7Nyple9qspH0BYMnwo2KL4Sc+Lohd5rUArI/hkuOLJH7aq5xq7NE1c0HoXo+dDKq2VKApdAw4t3TMcocMBtKmeGkotpZykXvfODIrmfh0WIMy5Nd32M7R78sM+omvF0wSlrDhCs7UeJQLIjljD7OjlClKSyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715916548; c=relaxed/simple;
-	bh=DcXdB8GNx2KcWYNHFKagw9Ps/O3VZoaqADWYxpjyocs=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=nlT1u6kH2TpcBhD4ASnMJJsymBmdEj8Y/uOUVbDtlH9FioYUtaMr9uV3n8VoCrWwfkqDvLGov1IHDN93Pc/WaqI0wE1b4cPu2cCuBGd0NiCpbSt2J4K37RHOqdz4dqMfbizK1GepFMJ2B4CeI5F7GQLLVShnZksrS9t6cpfHObs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GiSRI5Yh; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-1ec43465046so80251675ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 20:29:06 -0700 (PDT)
+	s=arc-20240116; t=1715916618; c=relaxed/simple;
+	bh=Xm9gOqUBaf688SaRu8s+Kakp+APap5QeqRhDKUwrOlM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ldoq+ngyZfaVYnH2Uy+faAw7UdUBibQSTxt1BSWKM4DhuA3vqLclu87DRgCcCvqYHX4Y0cVbK3Wi8ngDYfKqi442K0z85oV1TMlAXbDdFQgT+rg2rGIP4ba0FnC7uph+KP3iUX1/W43dRt6Q4IVUy7NgnqRSO0fXZVgkyugyugs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gihMkjok; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2e2b468ea12so13067111fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 20:30:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715916546; x=1716521346; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FXYj5ljf4V6lUFY+k/rklmJ4IyTKYsmTsQbIEcSBGH8=;
-        b=GiSRI5YhlWati2/zfqVq4sdRV9nO4ULB5PylIG//Zjuvm4h0rndX//kPLC9Mk8vJkw
-         FI/aLmMZ5WE8pJoAFoJn2gHFeQ4h9V4WXsF2nwaVpRM9+RC+a2tKo1rsGoVJSNBWjvIT
-         f96yaaiCS5o23S5DcygzJpVGve/lCoGjPwCzUe5J0QXiQuUcljQ6nVdXT7z5cmtTd5EK
-         sEFBgPZ5hkXKAJbLCLZ5TQViTycc5cWGH0/WOqsxxF83K4XjaW5JvPwe30DPM/m3MQxo
-         w6ArLd/rIeXQ7Sq/0GynySNhc5cFY3S2cV1T82YnI6t1jfyF/uV1/rgeXV8D1ZoVwl3i
-         fKMA==
+        d=gmail.com; s=20230601; t=1715916615; x=1716521415; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5Cz7/vI1LH0f2WLQEBvwGZZcGzYd1g9y6LcZk4JclSo=;
+        b=gihMkjokOXP8g7kbB2+83rv7ejT94BnJHEnaTuJ0xVs9HfVPXE1ES1HJgIaTfVHKZr
+         AFltd+/UT0cFu6bcJap1NsEP1DjDs+/cAT45AYONbwAMa7QcHk26/hJIPpBZHwppf7Cr
+         Un95dDeWpn6VwpU6SGLnH06hNzlsfHqD4ywoKvOHOq5XSSRxbNJ0BqR/LnkNwxAYjyn5
+         96HO8nRLP7DgqpwgfwyKztWkvNSZ7KBeKo0CL8HND+Qevleo+bkoLMKqBxKkikz3EVvj
+         2Kv7EOA4vzSFphqy683LnAXmilUlH8aVsuqPdsVfC5cBQUookz+v8gAkN8s6INQdXql4
+         olXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715916546; x=1716521346;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=FXYj5ljf4V6lUFY+k/rklmJ4IyTKYsmTsQbIEcSBGH8=;
-        b=Csnmgw/WuQTPc5Rwh6pMUdm+ujSNxidJZOB89W9A+Eh5nYm/FuDiub8gqODYY3fiY+
-         jF5WfYc7+FrUYP/an7ghDVJbFYiNb2ia5UPOUGDUYZFxTogciej/uwNaEnc3aPvYFXfv
-         9exDEyu4sRS8f9WTwIWvuLVlAxVVWx1fXrqz1Y2fkAXOE8q6moyz8++1r5pbcxGCZTTX
-         979rdQbBj+/cL0s2jbQN7tUQ51zkZKyVGfXzTNmblT9F+PunDIrlh7OBHl9znBAM9qVG
-         B9AdMrQtWdyt8UInwa9YbZjmjaivZfme30IgyVrhO1mUOY0XzLaaNsVVyzuoBx+kPt3S
-         baqg==
-X-Forwarded-Encrypted: i=1; AJvYcCV009z53IJrA93gdzTBjJE1ytNF39VY7WjLfTKUkkwPMosSclxzdx19AWHfaHz1wZbgVt8V8fWD6zZsoFzzm6SiMLyV0eG7xxZySExH
-X-Gm-Message-State: AOJu0YyRkVz3SSzQqMQJ/wuopnWo++P/p4FhgyRncsyaGX05KDNa/7m4
-	UQPRzj8eQnG3i4PZJKnKzF2ANzfEn12ooQrtHGmJz/zdjGnC0Atx1ByykcvfzN+SptnJ7NFntTo
-	k8udpAY2+7Q==
-X-Google-Smtp-Source: AGHT+IGm1pgzVh+nSNkG9RlbnCCf7stxvXa4P2LTeK+MqjVR3x4BdHTPcLFyDC0DLTvHlQWAbBdOHK6GdSLeTA==
-X-Received: from xllamas.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5070])
- (user=cmllamas job=sendgmr) by 2002:a17:903:32ce:b0:1dd:cc3f:6510 with SMTP
- id d9443c01a7336-1ef43c0fd41mr8121565ad.3.1715916546061; Thu, 16 May 2024
- 20:29:06 -0700 (PDT)
-Date: Fri, 17 May 2024 03:28:27 +0000
-In-Reply-To: <CAH5fLgjP8eozdA3wSari2LHyVUzaOMNTU12JWb2rzGgy9RRpsg@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1715916615; x=1716521415;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5Cz7/vI1LH0f2WLQEBvwGZZcGzYd1g9y6LcZk4JclSo=;
+        b=gHY9Wr4Ps/xRr3tbZ5FCRSvT+2jfVQSxF2KE6Woe9m8SAiMGd38oVhDPoQCWH5R+dj
+         yr+URi8inrZgQeEOakfp3/Hqoy2ee2bYzJc8zmxO/KfOD0I7L7LEKMlfJKd1KWhLNP9d
+         s0LoSokPOR9B8RYg5JAJHbwvpeaLLM0f3coPpKUuoRn7P13oQvJ08l/mX7l9XVzx72Bq
+         aEZ1fF9Qkdks+I3f1KmgEtGnfGFze9NYm83g3swp6gdn4fVMBMJDArwGfSb9ViGPOqIS
+         p7NDWZt3m56zdk13eNTeb7Hi+48Ubd0B5jfUX5hKUYcITxCdxtb4adnjlajZIa+ciI0B
+         lkpg==
+X-Forwarded-Encrypted: i=1; AJvYcCW/dAHhZ103KY+9dyGwfHvgWHVlQ2oG1IWQR3PO7fHy3sY8UPkMCjPEvYJqfH9+hUpqOkdkaSorl3WZv1Ws6fiEPAu8KG4fd0qnJil0
+X-Gm-Message-State: AOJu0YzaBm7Yg4L2UneZ0WsbJJQKxbNs0/DECN/3l7AlsoMcJ0Q11S3w
+	lHGM+e1z4MW+QMKz3yYDeqIMiOrkceD4KjijLD21akacr2I/nT1KElI7Th8Nu/7teNKjSOA+4eC
+	WUyKfBf+0xGSvcJU2bNWcMpuYcoo=
+X-Google-Smtp-Source: AGHT+IHxdGRowkhI8JyVI/R/U+n2YMZLnVoEbowchZjFVvm0PTMlqKjRrbJSZNvULmQ438LX58zIBcV/whp7Xh2hA08=
+X-Received: by 2002:a2e:3518:0:b0:2e5:67a8:10fc with SMTP id
+ 38308e7fff4ca-2e567a811e0mr56894041fa.9.1715916614622; Thu, 16 May 2024
+ 20:30:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <CAH5fLgjP8eozdA3wSari2LHyVUzaOMNTU12JWb2rzGgy9RRpsg@mail.gmail.com>
-X-Mailer: git-send-email 2.45.0.rc1.225.g2a3ae87e7f-goog
-Message-ID: <20240517032849.58437-1-cmllamas@google.com>
-Subject: [PATCH v4] binder: use bitmap for faster descriptor lookup
-From: Carlos Llamas <cmllamas@google.com>
-To: Alice Ryhl <aliceryhl@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"=?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Christian Brauner <brauner@kernel.org>, 
-	Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, linux-kernel@vger.kernel.org, 
-	kernel-team@android.com, Tim Murray <timmurray@google.com>, 
-	John Stultz <jstultz@google.com>, Steven Moreland <smoreland@google.com>, Nick Chen <chenjia3@oppo.com>
+MIME-Version: 1.0
+References: <20240418142008.2775308-1-zhangpeng362@huawei.com>
+ <20240418142008.2775308-3-zhangpeng362@huawei.com> <ec2b110b-fb85-4af2-942b-645511a32297@gmail.com>
+ <c1c79eb5-4d48-40e5-6f17-f8bc42f2d274@huawei.com> <CAMgjq7DHUgyR0vtkYXH4PuzBHUVZ5cyCzi58TfShL57TUSL+Tg@mail.gmail.com>
+ <5nv3r7qilsye5jgqcjrrbiry6on7wtjmce6twqbxg6nmvczue3@ikc22ggphg3h>
+In-Reply-To: <5nv3r7qilsye5jgqcjrrbiry6on7wtjmce6twqbxg6nmvczue3@ikc22ggphg3h>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Fri, 17 May 2024 11:29:57 +0800
+Message-ID: <CAMgjq7DgE6NZPR8Sf2nq3vpVG8ZoC03e8aXi-QKbiievi3BB_g@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 2/2] mm: convert mm's rss stats to use atomic mode
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: "zhangpeng (AS)" <zhangpeng362@huawei.com>, Rongwei Wang <rongwei.wrw@gmail.com>, linux-mm@kvack.org, 
+	LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	dennisszhou@gmail.com, shakeelb@google.com, jack@suse.cz, 
+	Suren Baghdasaryan <surenb@google.com>, kent.overstreet@linux.dev, mhocko@suse.cz, 
+	vbabka@suse.cz, Yu Zhao <yuzhao@google.com>, yu.ma@intel.com, 
+	wangkefeng.wang@huawei.com, sunnanyong@huawei.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-When creating new binder references, the driver assigns a descriptor id
-that is shared with userspace. Regrettably, the driver needs to keep the
-descriptors small enough to accommodate userspace potentially using them
-as Vector indexes. Currently, the driver performs a linear search on the
-rb-tree of references to find the smallest available descriptor id. This
-approach, however, scales poorly as the number of references grows.
+Mateusz Guzik <mjguzik@gmail.com> =E4=BA=8E 2024=E5=B9=B45=E6=9C=8816=E6=97=
+=A5=E5=91=A8=E5=9B=9B 23:14=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On Thu, May 16, 2024 at 07:50:52PM +0800, Kairui Song wrote:
+> > > > On 2024/4/18 22:20, Peng Zhang wrote:
+> > > >> From: ZhangPeng <zhangpeng362@huawei.com>
+> > > >>
+> > > >> Since commit f1a7941243c1 ("mm: convert mm's rss stats into
+> > > >> percpu_counter"), the rss_stats have converted into percpu_counter=
+,
+> > > >> which convert the error margin from (nr_threads * 64) to approxima=
+tely
+> > > >> (nr_cpus ^ 2). However, the new percpu allocation in mm_init() cau=
+ses a
+> > > >> performance regression on fork/exec/shell. Even after commit
+> > > >> 14ef95be6f55
+> > > >> ("kernel/fork: group allocation/free of per-cpu counters for mm
+> > > >> struct"),
+> > > >> the performance of fork/exec/shell is still poor compared to previ=
+ous
+> > > >> kernel versions.
+> > > >>
+> > > >> To mitigate performance regression, we delay the allocation of per=
+cpu
+> > > >> memory for rss_stats. Therefore, we convert mm's rss stats to use
+> > > >> percpu_counter atomic mode. For single-thread processes, rss_stat =
+is in
+> > > >> atomic mode, which reduces the memory consumption and performance
+> > > >> regression caused by using percpu. For multiple-thread processes,
+> > > >> rss_stat is switched to the percpu mode to reduce the error margin=
+.
+> > > >> We convert rss_stats from atomic mode to percpu mode only when the
+> > > >> second thread is created.
+> >
+> > I've a patch series that is earlier than commit f1a7941243c1 ("mm:
+> > convert mm's rss stats into
+> > percpu_counter"):
+> >
+> > https://lwn.net/ml/linux-kernel/20220728204511.56348-1-ryncsn@gmail.com=
+/
+> >
+> > Instead of a per-mm-per-cpu cache, it used only one global per-cpu
+> > cache, and flush it on schedule. Or, if the arch supports, flush and
+> > fetch it use mm bitmap as an optimization (like tlb shootdown).
+> >
+>
+> I just spotted this thread.
+>
+> I have a rather long rant to write about the entire ordeal, but don't
+> have the time at the moment. I do have time to make some remarks though.
+>
+> Rolling with a centralized counter and only distributing per-cpu upon
+> creation of a thread is something which was discussed last time and
+> which I was considering doing. Then life got it in the way and in the
+> meantime I managed to conclude it's a questionable idea anyway.
+>
+> The state prior to the counters moving to per-cpu was not that great to
+> begin with, with quite a few serialization points. As far as allocating
+> stuff goes one example is mm_alloc_cid, with the following:
+>         mm->pcpu_cid =3D alloc_percpu(struct mm_cid);
+>
+> Converting the code to avoid per-cpu rss counters in the common case or
+> the above patchset only damage-control the state back to what it was,
+> don't do anything to push things further.
+>
+> Another note is that unfortunately userspace is increasingly
+> multithreaded for no good reason, see the Rust ecosystem as an example.
+>
+> All that to say is that the multithreaded case is what has to get
+> faster, as a side effect possibly obsoleting both approaches proposed
+> above. I concede if there is nobody wiling to commit to doing the work
+> in the foreseeable future then indeed a damage-controlling solution
+> should land.
 
-This patch introduces the usage of bitmaps to boost the performance of
-descriptor assignments. This optimization results in notable performance
-gains, particularly in processes with a large number of references. The
-following benchmark with 100,000 references showcases the difference in
-latency between the dbitmap implementation and the legacy approach:
+Hi, Mateusz,
 
-  [  587.145098] get_ref_desc_olocked: 15us (dbitmap on)
-  [  602.788623] get_ref_desc_olocked: 47343us (dbitmap off)
+Which patch are you referencing? My series didn't need any allocations
+on thread creation or destruction. Also RSS update is extremely
+lightweight (pretty much just read GS and do a few ADD/INC, that's
+all), performance is better than all even with micro benchmarks. RSS
+read only collects info from CPUs that may contain real updates.
 
-Note the bitmap size is dynamically adjusted in line with the number of
-references, ensuring efficient memory usage. In cases where growing the
-bitmap is not possible, the driver falls back to the slow legacy method.
+I understand you may not have time to go through my series... but I
+think I should add some details here.
 
-A previous attempt to solve this issue was proposed in [1]. However,
-such method involved adding new ioctls which isn't great, plus older
-userspace code would not have benefited from the optimizations either.
+> On that note in check_mm there is this loop:
+>         for (i =3D 0; i < NR_MM_COUNTERS; i++) {
+>                 long x =3D percpu_counter_sum(&mm->rss_stat[i]);
+>
+> This avoidably walks all cpus 4 times with a preemption and lock trip
+> for each round. Instead one can observe all modifications are supposed
+> to have already stopped and that this is allocated in a banch. A
+> routine, say percpu_counter_sum_many_unsafe, could do one iteration
+> without any locks or interrupt play and return an array. This should be
+> markedly faster and I perhaps will hack it up.
 
-Link: https://lore.kernel.org/all/20240417191418.1341988-1-cmllamas@google.=
-com/ [1]
-Cc: Tim Murray <timmurray@google.com>
-Cc: Arve Hj=C3=B8nnev=C3=A5g <arve@android.com>
-Cc: Alice Ryhl <aliceryhl@google.com>
-Cc: Martijn Coenen <maco@android.com>
-Cc: Todd Kjos <tkjos@android.com>
-Cc: John Stultz <jstultz@google.com>
-Cc: Steven Moreland <smoreland@google.com>
-Suggested-by: Nick Chen <chenjia3@oppo.com>
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-Signed-off-by: Carlos Llamas <cmllamas@google.com>
----
+Which is similar to the RSS read in my earlier series... It is based
+on the assumption that updates are likely stopped so just read the
+counter "unsafely" with a double (and fast) check to ensure no race.
 
-Notes:
-    v1: first solution using a new "flags" ioctl:
-        https://lore.kernel.org/all/20240417191418.1341988-1-cmllamas@googl=
-e.com/
-   =20
-    v2: switched to different implementation using bitmaps.
-   =20
-    v3: dropped __GFP_ZERO when using zalloc().
-        renamed ...get_first_zero_bit() to ...acquire_first_zero_bit()
-   =20
-    v4: fix bit range check for 25% bitmap capacity.
+And even more, when coupled with mm shootdown
+(CONFIG_ARCH_PCP_RSS_USE_CPUMASK), it doesn't need to collect RSS info
+on thread exit at all.
 
- drivers/android/binder.c          | 113 +++++++++++++++++++++---
- drivers/android/binder_internal.h |   5 +-
- drivers/android/dbitmap.h         | 139 ++++++++++++++++++++++++++++++
- 3 files changed, 243 insertions(+), 14 deletions(-)
- create mode 100644 drivers/android/dbitmap.h
+>
+> A part of The Real Solution(tm) would make counter allocations scale
+> (including mcid, not just rss) or dodge them (while maintaining the
+> per-cpu distribution, see below for one idea), but that boils down to
+> balancing scalability versus total memory usage. It is trivial to just
+> slap together a per-cpu cache of these allocations and have the problem
+> go away for benchmarking purposes, while being probably being too memory
+> hungry for actual usage.
+>
+> I was pondering an allocator with caches per some number of cores (say 4
+> or 8). Microbenchmarks aside I suspect real workloads would not suffer
+> from contention at this kind of granularity. This would trivially reduce
+> memory usage compared to per-cpu caching. I suspect things like
+> mm_struct, task_struct, task stacks and similar would be fine with it.
+>
+> Suppose mm_struct is allocated from a more coarse grained allocator than
+> per-cpu. Total number of cached objects would be lower than it is now.
+> That would also mean these allocated but not currently used mms could
+> hold on to other stuff, for example per-cpu rss and mcid counters. Then
+> should someone fork or exit, alloc/free_percpu would be avoided for most
+> cases. This would scale better and be faster single-threaded than the
+> current state.
 
-diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-index dd6923d37931..39e3d840fb96 100644
---- a/drivers/android/binder.c
-+++ b/drivers/android/binder.c
-@@ -1045,6 +1045,67 @@ static struct binder_ref *binder_get_ref_olocked(str=
-uct binder_proc *proc,
- 	return NULL;
- }
-=20
-+/* find first non-zero available descriptor the "slow way" */
-+static u32 slow_desc_lookup_olocked(struct binder_proc *proc)
-+{
-+	struct binder_ref *ref;
-+	struct rb_node *n;
-+	u32 desc;
-+
-+	desc =3D 1;
-+	for (n =3D rb_first(&proc->refs_by_desc); n; n =3D rb_next(n)) {
-+		ref =3D rb_entry(n, struct binder_ref, rb_node_desc);
-+		if (ref->data.desc > desc)
-+			break;
-+		desc =3D ref->data.desc + 1;
-+	}
-+
-+	return desc;
-+}
-+
-+/*
-+ * Find an available reference descriptor. Note that the proc->outer_lock
-+ * might be released in the process. In such case, -EAGAIN is returned and
-+ * the provided descriptor is invalid.
-+ */
-+static int get_ref_desc_olocked(struct binder_proc *proc,
-+				struct binder_node *node,
-+				u32 *desc)
-+{
-+	struct dbitmap *dmap =3D &proc->dmap;
-+	unsigned long *new, bit;
-+	unsigned int nbits;
-+
-+	/* 0 is reserved for the context manager */
-+	if (node =3D=3D proc->context->binder_context_mgr_node) {
-+		*desc =3D 0;
-+		return 0;
-+	}
-+
-+	if (unlikely(!dbitmap_enabled(dmap))) {
-+		*desc =3D slow_desc_lookup_olocked(proc);
-+		return 0;
-+	}
-+
-+	if (dbitmap_acquire_first_zero_bit(dmap, &bit) =3D=3D 0) {
-+		*desc =3D bit;
-+		return 0;
-+	}
-+
-+	/*
-+	 * The descriptors bitmap is full and needs to be expanded.
-+	 * The proc->outer_lock is briefly released to allocate the
-+	 * new bitmap safely.
-+	 */
-+	nbits =3D dbitmap_expand_nbits(dmap);
-+	binder_proc_unlock(proc);
-+	new =3D bitmap_zalloc(nbits, GFP_KERNEL);
-+	binder_proc_lock(proc);
-+	dbitmap_expand(dmap, new, nbits);
-+
-+	return -EAGAIN;
-+}
-+
- /**
-  * binder_get_ref_for_node_olocked() - get the ref associated with given n=
-ode
-  * @proc:	binder_proc that owns the ref
-@@ -1068,12 +1129,14 @@ static struct binder_ref *binder_get_ref_for_node_o=
-locked(
- 					struct binder_node *node,
- 					struct binder_ref *new_ref)
- {
--	struct binder_context *context =3D proc->context;
--	struct rb_node **p =3D &proc->refs_by_node.rb_node;
--	struct rb_node *parent =3D NULL;
- 	struct binder_ref *ref;
--	struct rb_node *n;
-+	struct rb_node *parent;
-+	struct rb_node **p;
-+	u32 desc;
-=20
-+retry:
-+	p =3D &proc->refs_by_node.rb_node;
-+	parent =3D NULL;
- 	while (*p) {
- 		parent =3D *p;
- 		ref =3D rb_entry(parent, struct binder_ref, rb_node_node);
-@@ -1088,6 +1151,10 @@ static struct binder_ref *binder_get_ref_for_node_ol=
-ocked(
- 	if (!new_ref)
- 		return NULL;
-=20
-+	/* might release the proc->outer_lock */
-+	if (get_ref_desc_olocked(proc, node, &desc) =3D=3D -EAGAIN)
-+		goto retry;
-+
- 	binder_stats_created(BINDER_STAT_REF);
- 	new_ref->data.debug_id =3D atomic_inc_return(&binder_last_id);
- 	new_ref->proc =3D proc;
-@@ -1095,14 +1162,7 @@ static struct binder_ref *binder_get_ref_for_node_ol=
-ocked(
- 	rb_link_node(&new_ref->rb_node_node, parent, p);
- 	rb_insert_color(&new_ref->rb_node_node, &proc->refs_by_node);
-=20
--	new_ref->data.desc =3D (node =3D=3D context->binder_context_mgr_node) ? 0=
- : 1;
--	for (n =3D rb_first(&proc->refs_by_desc); n !=3D NULL; n =3D rb_next(n)) =
-{
--		ref =3D rb_entry(n, struct binder_ref, rb_node_desc);
--		if (ref->data.desc > new_ref->data.desc)
--			break;
--		new_ref->data.desc =3D ref->data.desc + 1;
--	}
--
-+	new_ref->data.desc =3D desc;
- 	p =3D &proc->refs_by_desc.rb_node;
- 	while (*p) {
- 		parent =3D *p;
-@@ -1131,6 +1191,7 @@ static struct binder_ref *binder_get_ref_for_node_olo=
-cked(
-=20
- static void binder_cleanup_ref_olocked(struct binder_ref *ref)
- {
-+	struct dbitmap *dmap =3D &ref->proc->dmap;
- 	bool delete_node =3D false;
-=20
- 	binder_debug(BINDER_DEBUG_INTERNAL_REFS,
-@@ -1138,6 +1199,8 @@ static void binder_cleanup_ref_olocked(struct binder_=
-ref *ref)
- 		      ref->proc->pid, ref->data.debug_id, ref->data.desc,
- 		      ref->node->debug_id);
-=20
-+	if (dbitmap_enabled(dmap))
-+		dbitmap_clear_bit(dmap, ref->data.desc);
- 	rb_erase(&ref->rb_node_desc, &ref->proc->refs_by_desc);
- 	rb_erase(&ref->rb_node_node, &ref->proc->refs_by_node);
-=20
-@@ -1298,6 +1361,25 @@ static void binder_free_ref(struct binder_ref *ref)
- 	kfree(ref);
- }
-=20
-+/* shrink descriptor bitmap if needed */
-+static void try_shrink_dmap(struct binder_proc *proc)
-+{
-+	unsigned long *new;
-+	int nbits;
-+
-+	binder_proc_lock(proc);
-+	nbits =3D dbitmap_shrink_nbits(&proc->dmap);
-+	binder_proc_unlock(proc);
-+
-+	if (!nbits)
-+		return;
-+
-+	new =3D bitmap_zalloc(nbits, GFP_KERNEL);
-+	binder_proc_lock(proc);
-+	dbitmap_shrink(&proc->dmap, new, nbits);
-+	binder_proc_unlock(proc);
-+}
-+
- /**
-  * binder_update_ref_for_handle() - inc/dec the ref for given handle
-  * @proc:	proc containing the ref
-@@ -1334,8 +1416,10 @@ static int binder_update_ref_for_handle(struct binde=
-r_proc *proc,
- 		*rdata =3D ref->data;
- 	binder_proc_unlock(proc);
-=20
--	if (delete_ref)
-+	if (delete_ref) {
- 		binder_free_ref(ref);
-+		try_shrink_dmap(proc);
-+	}
- 	return ret;
-=20
- err_no_ref:
-@@ -4931,6 +5015,7 @@ static void binder_free_proc(struct binder_proc *proc=
-)
- 	put_task_struct(proc->tsk);
- 	put_cred(proc->cred);
- 	binder_stats_deleted(BINDER_STAT_PROC);
-+	dbitmap_free(&proc->dmap);
- 	kfree(proc);
- }
-=20
-@@ -5634,6 +5719,8 @@ static int binder_open(struct inode *nodp, struct fil=
-e *filp)
- 	proc =3D kzalloc(sizeof(*proc), GFP_KERNEL);
- 	if (proc =3D=3D NULL)
- 		return -ENOMEM;
-+
-+	dbitmap_init(&proc->dmap);
- 	spin_lock_init(&proc->inner_lock);
- 	spin_lock_init(&proc->outer_lock);
- 	get_task_struct(current->group_leader);
-diff --git a/drivers/android/binder_internal.h b/drivers/android/binder_int=
-ernal.h
-index 7270d4d22207..256bb75d9d8c 100644
---- a/drivers/android/binder_internal.h
-+++ b/drivers/android/binder_internal.h
-@@ -14,6 +14,7 @@
- #include <linux/uidgid.h>
- #include <uapi/linux/android/binderfs.h>
- #include "binder_alloc.h"
-+#include "dbitmap.h"
-=20
- struct binder_context {
- 	struct binder_node *binder_context_mgr_node;
-@@ -368,6 +369,8 @@ struct binder_ref {
-  * @freeze_wait:          waitqueue of processes waiting for all outstandi=
-ng
-  *                        transactions to be processed
-  *                        (protected by @inner_lock)
-+ * @dmap                  bitmap to manage available reference descriptors
-+ *                        (protected by @outer_lock)
-  * @todo:                 list of work for this process
-  *                        (protected by @inner_lock)
-  * @stats:                per-process binder statistics
-@@ -417,7 +420,7 @@ struct binder_proc {
- 	bool sync_recv;
- 	bool async_recv;
- 	wait_queue_head_t freeze_wait;
--
-+	struct dbitmap dmap;
- 	struct list_head todo;
- 	struct binder_stats stats;
- 	struct list_head delivered_death;
-diff --git a/drivers/android/dbitmap.h b/drivers/android/dbitmap.h
-new file mode 100644
-index 000000000000..2cf470702bbb
---- /dev/null
-+++ b/drivers/android/dbitmap.h
-@@ -0,0 +1,139 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+#ifndef _LINUX_DBITMAP_H
-+#define _LINUX_DBITMAP_H
-+#include <linux/bitmap.h>
-+
-+#define NBITS_MIN	BITS_PER_TYPE(unsigned long)
-+
-+struct dbitmap {
-+	unsigned int nbits;
-+	unsigned long *map;
-+};
-+
-+static inline int dbitmap_enabled(struct dbitmap *dmap)
-+{
-+	return dmap->map !=3D NULL;
-+}
-+
-+static inline void dbitmap_free(struct dbitmap *dmap)
-+{
-+	dmap->nbits =3D 0;
-+	kfree(dmap->map);
-+	dmap->map =3D NULL;
-+}
-+
-+static inline unsigned int dbitmap_shrink_nbits(struct dbitmap *dmap)
-+{
-+	unsigned int bit;
-+
-+	if (dmap->nbits <=3D NBITS_MIN)
-+		return 0;
-+
-+	bit =3D find_last_bit(dmap->map, dmap->nbits);
-+	if (unlikely(bit =3D=3D dmap->nbits))
-+		return NBITS_MIN;
-+
-+	if (unlikely(bit < (dmap->nbits >> 2)))
-+		return dmap->nbits >> 1;
-+
-+	return 0;
-+}
-+
-+static inline void
-+dbitmap_replace(struct dbitmap *dmap, unsigned long *new, unsigned int nbi=
-ts)
-+{
-+	bitmap_copy(new, dmap->map, min(dmap->nbits, nbits));
-+	kfree(dmap->map);
-+	dmap->map =3D new;
-+	dmap->nbits =3D nbits;
-+}
-+
-+static inline void
-+dbitmap_shrink(struct dbitmap *dmap, unsigned long *new, unsigned int nbit=
-s)
-+{
-+	if (unlikely(!new))
-+		return;
-+
-+	/*
-+	 * Make sure we can still shrink to the requested nbits as
-+	 * this call might have raced with another shrink or more
-+	 * bits have been assigned. In such case, release the @new
-+	 * bitmap and move on.
-+	 */
-+	if (unlikely(!dbitmap_enabled(dmap) ||
-+		     dbitmap_shrink_nbits(dmap) !=3D nbits)) {
-+		kfree(new);
-+		return;
-+	}
-+
-+	dbitmap_replace(dmap, new, nbits);
-+}
-+
-+static inline unsigned int
-+dbitmap_expand_nbits(struct dbitmap *dmap)
-+{
-+	return dmap->nbits << 1;
-+}
-+
-+static inline void
-+dbitmap_expand(struct dbitmap *dmap, unsigned long *new, unsigned int nbit=
-s)
-+{
-+	/*
-+	 * Determine if the expand is still valid as it might have
-+	 * raced with another expand or free. In such case, release
-+	 * the @new bitmap and move on.
-+	 */
-+	if (unlikely(!dbitmap_enabled(dmap) || nbits <=3D dmap->nbits)) {
-+		kfree(new);
-+		return;
-+	}
-+
-+	/*
-+	 * ENOMEM is checked here as we can now discard a potential
-+	 * race with another successful expand. In such case, disable
-+	 * the dbitmap and fallback to slow_desc_lookup_olocked().
-+	 */
-+	if (unlikely(!new)) {
-+		dbitmap_free(dmap);
-+		return;
-+	}
-+
-+	dbitmap_replace(dmap, new, nbits);
-+}
-+
-+static inline int
-+dbitmap_acquire_first_zero_bit(struct dbitmap *dmap, unsigned long *bit)
-+{
-+	unsigned long n;
-+
-+	n =3D find_first_zero_bit(dmap->map, dmap->nbits);
-+	if (unlikely(n =3D=3D dmap->nbits))
-+		return -ENOSPC;
-+
-+	*bit =3D n;
-+	set_bit(n, dmap->map);
-+
-+	return 0;
-+}
-+
-+static inline void
-+dbitmap_clear_bit(struct dbitmap *dmap, unsigned long bit)
-+{
-+	clear_bit(bit, dmap->map);
-+}
-+
-+static inline int dbitmap_init(struct dbitmap *dmap)
-+{
-+	dmap->map =3D bitmap_zalloc(NBITS_MIN, GFP_KERNEL);
-+	if (!dmap->map) {
-+		dmap->nbits =3D 0;
-+		return -ENOMEM;
-+	}
-+
-+	dmap->nbits =3D NBITS_MIN;
-+	/* 0 is reserved for the context manager */
-+	set_bit(0, dmap->map);
-+
-+	return 0;
-+}
-+#endif
---=20
-2.45.0.rc1.225.g2a3ae87e7f-goog
+And what is the issue with using only one CPU cache, and flush on mm
+switch? No more alloc after boot, and the total (and fixed) memory
+usage is just about a few unsigned long per CPU, which should be even
+lower that the old RSS cache solution (4 unsigned long per task). And
+it scaled very well with many kinds of microbench or workload I've
+tested.
 
+Unless the workload keeps doing something like "alloc one page then
+switch to another mm", I think the performance will be horrible
+already due to cache invalidations and many switch_*()s, RSS isn't
+really a concern there.
+
+>
+> (believe it or not this is not the actual long rant I have in mind)
+>
+> I can't commit to work on the Real Solution though.
+>
+> In the meantime I can submit percpu_counter_sum_many_unsafe as described
+> above if Denis likes the idea.
 
