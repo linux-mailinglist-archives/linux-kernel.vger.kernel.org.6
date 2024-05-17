@@ -1,223 +1,284 @@
-Return-Path: <linux-kernel+bounces-181786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 288CE8C8140
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 09:20:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC7778C8145
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 09:20:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C83B1C20F02
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 07:20:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 825A22828A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 07:20:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CE6D171C9;
-	Fri, 17 May 2024 07:20:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37BB117BB6;
+	Fri, 17 May 2024 07:20:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="JiHkGtGC"
-Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="B1E5jVNP"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C887168C4
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 07:19:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 491AF16415;
+	Fri, 17 May 2024 07:19:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715930400; cv=none; b=c/u8dz417smx8goCyeAxFGzbK0szDD7Tr58qUphpoHmPSnBG/4O2QotfuDSr81algJ8M80kRyh2xbfb2Qakb9jfJwXu8zvM8p1+dZRTy1zG/Zn3fgX5pDwPJfS+oq5EAhJGRUR0tRk06g85mrQ33530PO8uVxI7KXmZROFDeLXs=
+	t=1715930402; cv=none; b=HC5oDAKnFtzt8ERdH8lSw3BrWiTFqVNqB/b1zsZBPxhHe4DzIKHtDhERnzvMTYbYThRyZY4ypww29f4aF988nYAXw+j4tnA2DYLsOl4mxLPrmUGjBLE63Wsoco4s3+DWMZvALxCEz8jLpmxH2riz3AUOUfDt1700UshquWTADmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715930400; c=relaxed/simple;
-	bh=VPdVtsCdvH0FWtAzjEnwbG4aKW0bLBPevKsTmJFxsLQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YR/MqaJlHeHkAXINmEbiPPLszj6BoH03XLsFp/dHGkSMyAlhozkj0R7py5WV8afEgVsJfaTD2y+nMr1eF1XZOoO4VWC8mB4JGgD5YuxVLg79bfQcfMNstRsEPFMGD2iuGu6zGkMdgQtxozvLe1tPcpXJBLMkIBRyli4LWQFO2uU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=JiHkGtGC; arc=none smtp.client-ip=209.85.166.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-7da04b08b82so5246439f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 00:19:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1715930398; x=1716535198; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DARwQ7xcLW9SgOpwsz1tepc/1IVi/5Qc1nde5sSyF/U=;
-        b=JiHkGtGCwSU1Vz/XfBPZPfzwKoadUiYN9oZG9igGduOUDhkcGOy/+Wv6ikiiL8TPYu
-         e6qcY7KwiU7bH/bqpRCygjoMu2+FHh5RVLghvtb4XbZlJBHgtFc1IbOB+0ZLkd/PfT/k
-         +1eQTY2AfMQPzIlWwjqM8KTX2Y8cr2fbASPC0keVnCJNCXT3+Q71jjRznpbhzwmoxwn1
-         1fv1EV4c9v/4HE7EH0CQFORDNK9dBJtk2WX5wqidfqmMPMrlVAess3/eJAWMh6qhKFVp
-         c+C1kreFBbavigdD95j6w6T7ON/prBGmuhADmawd4mlLkJqsBJ66e0uOMr7JyNqA9VmX
-         KjdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715930398; x=1716535198;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DARwQ7xcLW9SgOpwsz1tepc/1IVi/5Qc1nde5sSyF/U=;
-        b=s52A1ULUQy6cyhiXLEs0C3E28sXpBSiCfY7VsChm9cS1sIldZJNe4cMQAhOXVFITdX
-         zKskuxNo4Z0FUXDu95b22mc1TQDPro5xdarrZY0i3HGS4XjbQTFEA32KzrrhgI9SY3iw
-         0M4ogwuwYnYQxm+ns8AYVvTR0ULO7wh1tabhE0mgMVFZBXVy1WXIvYnkpPbOEybfYdgc
-         mknrdiLAkNOCTNXDY2J7nxAFcnajyYyWHj1IKT8JKkwTXzPbes9NV4EAuTXDYL9CsuNK
-         rX0NNvuqaAgunRwz6a1TJpoV2pHwBhbIrnpQoUVV1+/zxR5UiCc5SsQsFgR2J0RwhoHx
-         BGSw==
-X-Forwarded-Encrypted: i=1; AJvYcCWl7E5t67k5Xn03OGyVEt0+vUojA0aUApp1i18KeRoJC+p0LjglHD5f11STNnaQVKBMXFiTDRbPgho7pyapCowYePHNOsV1CfIe/OIB
-X-Gm-Message-State: AOJu0Yw/tzYsNRi7AkVMhe40OeqqT966UlEQe3dmuudu5syWGszxg3Ax
-	BKO1pYyplAc2eUG+tMCWS6e6aTDn6er5M+zhs5ekkCMVBXa2rJXUVDMDatLmpbfk5REER4q6zF2
-	N35RIC0aeuBYt0ZUJheCcW/v4ykmox2yEhWbXCA==
-X-Google-Smtp-Source: AGHT+IG1fjp7xxbg2syelNzLcWdSnkAmZ5HEN4zUxVFk7Uehy8tOYpkomfU3wpTuk49Q+M+PRGzHlSGJOXy2iAV7KzU=
-X-Received: by 2002:a6b:7f42:0:b0:7e1:839e:5ab3 with SMTP id
- ca18e2360f4ac-7e1b51ba8a6mr2350130739f.6.1715930398577; Fri, 17 May 2024
- 00:19:58 -0700 (PDT)
+	s=arc-20240116; t=1715930402; c=relaxed/simple;
+	bh=BGck91VU9beP2abZzw/rtJxU09+f8W3SkIsxCeaIzKc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ex2gnrfPvbHrekEovTpKRUoZ24v7+HZ9xlioaWmZIVI3FAxsgRmHTqxGPpInMPrjqLyr1tQ07o/alwLakgE9OLbX1eOpKVuex06KA+ccAfN4puqQmeEqdMiUYlFf0Ljauo1BmjBC9sygK1G/CxuMp9yMozQIsj1ZHj7LpibAfYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=B1E5jVNP; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 0F1411C000C;
+	Fri, 17 May 2024 07:19:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1715930397;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vtNkh6lct/Bn//Hd3X1lliFFmrekYtlN0ngpcECGIUU=;
+	b=B1E5jVNP6+dsEJDwkBKDWpecNxgeRnRXcNfwDW5Q2qETDxSRVCgB82AwM+bpnqb2oXwV+c
+	ocAq5qyOYOggpTa+SY3n35xbcYwndztV8ync4V6t652cnDQXLe1z19pZPK0aI4pS4cep7n
+	dBMXEybf9YMuBPpE/9HQO3pYlmeuo4uOzLODEKbgM37y8ZlQqVDYO0T2zztZ58xGoMM9dd
+	JFbea6F5/xhiJRogH/I31z675gY5qyPuawBF58E5JoWkLI87Ip4IuA6I+48/CnykID7GAG
+	YkTXFmUrIECiNf6dLsKtoGseEsF8Uno7sm4JTofzJUfetBkGqMe9J/N7aWUGFg==
+Date: Fri, 17 May 2024 09:19:51 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Joseph Jang <jjang@nvidia.com>
+Cc: shuah@kernel.org, avagin@google.com, amir73il@gmail.com,
+	brauner@kernel.org, mochs@nvidia.com, jszu@nvidia.com,
+	linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] selftest: rtc: Add to check rtc alarm status for alarm
+ related test
+Message-ID: <202405170719515a9c6d2f@mail.local>
+References: <20240517022847.4094731-1-jjang@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1715708679.git.tjeznach@rivosinc.com> <518a4b0bf651707a9508c169fe3868e669ec2c6d.1715708679.git.tjeznach@rivosinc.com>
-In-Reply-To: <518a4b0bf651707a9508c169fe3868e669ec2c6d.1715708679.git.tjeznach@rivosinc.com>
-From: Zong Li <zong.li@sifive.com>
-Date: Fri, 17 May 2024 15:19:48 +0800
-Message-ID: <CANXhq0q60CeN7nx7ubG580HgSOmPQZgu5oJLfcUf0wRhSj-z9g@mail.gmail.com>
-Subject: Re: [PATCH v5 4/7] iommu/riscv: Enable IOMMU registration and device probe.
-To: Tomasz Jeznach <tjeznach@rivosinc.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
-	Robin Murphy <robin.murphy@arm.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Anup Patel <apatel@ventanamicro.com>, devicetree@vger.kernel.org, 
-	Conor Dooley <conor+dt@kernel.org>, Albert Ou <aou@eecs.berkeley.edu>, linux@rivosinc.com, 
-	linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, 
-	Sebastien Boeuf <seb@rivosinc.com>, iommu@lists.linux.dev, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Nick Kossifidis <mick@ics.forth.gr>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-riscv@lists.infradead.org, 
-	Lu Baolu <baolu.lu@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240517022847.4094731-1-jjang@nvidia.com>
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-On Wed, May 15, 2024 at 2:17=E2=80=AFAM Tomasz Jeznach <tjeznach@rivosinc.c=
-om> wrote:
->
-> Advertise IOMMU device and its core API.
-> Only minimal implementation for single identity domain type, without
-> per-group domain protection.
->
-> Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
-> Signed-off-by: Tomasz Jeznach <tjeznach@rivosinc.com>
+On 16/05/2024 19:28:47-0700, Joseph Jang wrote:
+> In alarm_wkalm_set and alarm_wkalm_set_minute test, they use different
+> ioctl (RTC_ALM_SET/RTC_WKALM_SET) for alarm feature detection. They will
+> skip testing if RTC_ALM_SET/RTC_WKALM_SET ioctl returns an EINVAL error
+> code. This design may miss detecting real problems when the
+> efi.set_wakeup_time() return errors and then RTC_ALM_SET/RTC_WKALM_SET
+> ioctl returns an EINVAL error code with RTC_FEATURE_ALARM enabled.
+> 
+> In order to make rtctest more explicit and robust, we propose to use
+> RTC_PARAM_GET ioctl interface to check rtc alarm feature state before
+> running alarm related tests. If the kernel does not support RTC_PARAM_GET
+> ioctl interface, we will fallback to check the presence of "alarm" in
+> /proc/driver/rtc.
+> 
+> The rtctest requires the read permission on /dev/rtc0. The rtctest will
+> be skipped if the /dev/rtc0 is not readable.
+> 
+
+This change as to be separated. Also, I'm not sure what happened with
+https://lore.kernel.org/all/20230717175251.54390-1-atulpant.linux@gmail.com/
+
+> Requires commit 101ca8d05913b ("rtc: efi: Enable SET/GET WAKEUP services
+> as optional")
+> 
+> Reviewed-by: Jeremy Szu <jszu@nvidia.com>
+> Reviewed-by: Matthew R. Ochs <mochs@nvidia.com>
+> Signed-off-by: Joseph Jang <jjang@nvidia.com>
 > ---
->  drivers/iommu/riscv/iommu.c | 66 +++++++++++++++++++++++++++++++++++++
->  1 file changed, 66 insertions(+)
->
-> diff --git a/drivers/iommu/riscv/iommu.c b/drivers/iommu/riscv/iommu.c
-> index 3c5a6b49669d..b8e0e4b62585 100644
-> --- a/drivers/iommu/riscv/iommu.c
-> +++ b/drivers/iommu/riscv/iommu.c
-> @@ -17,6 +17,7 @@
->  #include <linux/init.h>
->  #include <linux/iommu.h>
->  #include <linux/kernel.h>
-> +#include <linux/pci.h>
->
->  #include "iommu-bits.h"
->  #include "iommu.h"
-> @@ -36,6 +37,60 @@ static void riscv_iommu_disable(struct riscv_iommu_dev=
-ice *iommu)
->         riscv_iommu_writel(iommu, RISCV_IOMMU_REG_PQCSR, 0);
->  }
->
-> +static int riscv_iommu_attach_identity_domain(struct iommu_domain *iommu=
-_domain,
-> +                                             struct device *dev)
-> +{
-> +       /* Global pass-through already enabled, do nothing for now. */
-> +       return 0;
-> +}
-> +
-> +static struct iommu_domain riscv_iommu_identity_domain =3D {
-> +       .type =3D IOMMU_DOMAIN_IDENTITY,
-> +       .ops =3D &(const struct iommu_domain_ops) {
-> +               .attach_dev =3D riscv_iommu_attach_identity_domain,
-> +       }
-> +};
-> +
-> +static int riscv_iommu_device_domain_type(struct device *dev)
-> +{
-> +       return IOMMU_DOMAIN_IDENTITY;
-> +}
-> +
-> +static struct iommu_group *riscv_iommu_device_group(struct device *dev)
-> +{
-> +       if (dev_is_pci(dev))
-> +               return pci_device_group(dev);
-> +       return generic_device_group(dev);
-> +}
-> +
-> +static int riscv_iommu_of_xlate(struct device *dev, const struct of_phan=
-dle_args *args)
-> +{
-> +       return iommu_fwspec_add_ids(dev, args->args, 1);
-> +}
-> +
-> +static struct iommu_device *riscv_iommu_probe_device(struct device *dev)
-> +{
-> +       struct iommu_fwspec *fwspec =3D dev_iommu_fwspec_get(dev);
-> +       struct riscv_iommu_device *iommu;
-> +
-> +       if (!fwspec || !fwspec->iommu_fwnode->dev || !fwspec->num_ids)
-> +               return ERR_PTR(-ENODEV);
-> +
-> +       iommu =3D dev_get_drvdata(fwspec->iommu_fwnode->dev);
-> +       if (!iommu)
-> +               return ERR_PTR(-ENODEV);
-> +
-> +       return &iommu->iommu;
-> +}
-> +
-> +static const struct iommu_ops riscv_iommu_ops =3D {
-> +       .of_xlate =3D riscv_iommu_of_xlate,
-> +       .identity_domain =3D &riscv_iommu_identity_domain,
-> +       .def_domain_type =3D riscv_iommu_device_domain_type,
-> +       .device_group =3D riscv_iommu_device_group,
-> +       .probe_device =3D riscv_iommu_probe_device,
-> +};
-> +
->  static int riscv_iommu_init_check(struct riscv_iommu_device *iommu)
->  {
->         u64 ddtp;
-> @@ -71,6 +126,7 @@ static int riscv_iommu_init_check(struct riscv_iommu_d=
-evice *iommu)
->
->  void riscv_iommu_remove(struct riscv_iommu_device *iommu)
->  {
-> +       iommu_device_unregister(&iommu->iommu);
->         iommu_device_sysfs_remove(&iommu->iommu);
->  }
->
-> @@ -95,5 +151,15 @@ int riscv_iommu_init(struct riscv_iommu_device *iommu=
-)
->                 return dev_err_probe(iommu->dev, rc,
->                                      "cannot register sysfs interface\n")=
-;
->
-> +       rc =3D iommu_device_register(&iommu->iommu, &riscv_iommu_ops, iom=
-mu->dev);
-> +       if (rc) {
-> +               dev_err_probe(iommu->dev, rc, "cannot register iommu inte=
-rface\n");
-> +               goto err_remove_sysfs;
-> +       }
-> +
->         return 0;
-> +
-> +err_remove_sysfs:
-> +       iommu_device_sysfs_remove(&iommu->iommu);
-> +       return rc;
->  }
+>  tools/testing/selftests/rtc/Makefile  |  2 +-
+>  tools/testing/selftests/rtc/rtctest.c | 72 +++++++++++++++++++--------
+>  2 files changed, 53 insertions(+), 21 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/rtc/Makefile b/tools/testing/selftests/rtc/Makefile
+> index 55198ecc04db..6e3a98fb24ba 100644
+> --- a/tools/testing/selftests/rtc/Makefile
+> +++ b/tools/testing/selftests/rtc/Makefile
+> @@ -1,5 +1,5 @@
+>  # SPDX-License-Identifier: GPL-2.0
+> -CFLAGS += -O3 -Wl,-no-as-needed -Wall
+> +CFLAGS += -O3 -Wl,-no-as-needed -Wall -I../../../../usr/include/
+>  LDLIBS += -lrt -lpthread -lm
+>  
+>  TEST_GEN_PROGS = rtctest
+> diff --git a/tools/testing/selftests/rtc/rtctest.c b/tools/testing/selftests/rtc/rtctest.c
+> index 63ce02d1d5cc..aa47b17fbd1a 100644
+> --- a/tools/testing/selftests/rtc/rtctest.c
+> +++ b/tools/testing/selftests/rtc/rtctest.c
+> @@ -8,6 +8,7 @@
+>  #include <errno.h>
+>  #include <fcntl.h>
+>  #include <linux/rtc.h>
+> +#include <stdbool.h>
+>  #include <stdio.h>
+>  #include <stdlib.h>
+>  #include <sys/ioctl.h>
+> @@ -24,12 +25,17 @@
+>  #define READ_LOOP_SLEEP_MS 11
+>  
+>  static char *rtc_file = "/dev/rtc0";
+> +static char *rtc_procfs = "/proc/driver/rtc";
+>  
+>  FIXTURE(rtc) {
+>  	int fd;
+>  };
+>  
+>  FIXTURE_SETUP(rtc) {
+> +	if (access(rtc_file, R_OK) != 0)
+> +		SKIP(return, "Skipping test since cannot access %s, perhaps miss sudo",
+> +			 rtc_file);
 
-Reviewed-by: Zong Li <zong.li@sifive.com>
+> +
+>  	self->fd = open(rtc_file, O_RDONLY);
+>  }
+>  
+> @@ -82,6 +88,36 @@ static void nanosleep_with_retries(long ns)
+>  	}
+>  }
+>  
+> +static bool is_rtc_alarm_supported(int fd)
+> +{
+> +	struct rtc_param param = { 0 };
+> +	int rc;
+> +	char buf[1024] = { 0 };
+> +
+> +	/* Validate kernel reflects unsupported RTC alarm state */
+> +	param.param = RTC_PARAM_FEATURES;
+> +	param.index = 0;
+> +	rc = ioctl(fd, RTC_PARAM_GET, &param);
+> +	if (rc < 0) {
+> +		/* Fallback to read rtc procfs */
+> +		fd = open(rtc_procfs, O_RDONLY);
 
-Thanks
+I think I was clear on the previous thread, no new users of the procfs
+interface. You can carry this n your own tree but that can't be
+upstream.
 
-> --
+> +		if (fd != -1) {
+> +			rc = read(fd, buf, sizeof(buf));
+> +			close(fd);
+> +
+> +			/* Check for the presence of "alarm" in the buf */
+> +			if (strstr(buf, "alarm") == NULL)
+> +				return false;
+> +		} else
+> +			return false;
+> +	} else {
+> +		if ((param.uvalue & _BITUL(RTC_FEATURE_ALARM)) == 0)
+> +			return false;
+> +	}
+> +
+> +	return true;
+> +}
+> +
+>  TEST_F_TIMEOUT(rtc, date_read_loop, READ_LOOP_DURATION_SEC + 2) {
+>  	int rc;
+>  	long iter_count = 0;
+> @@ -202,6 +238,9 @@ TEST_F(rtc, alarm_alm_set) {
+>  		SKIP(return, "Skipping test since %s does not exist", rtc_file);
+>  	ASSERT_NE(-1, self->fd);
+>  
+> +	if (!is_rtc_alarm_supported(self->fd))
+> +		SKIP(return, "Skipping test since alarms are not supported.");
+> +
+>  	rc = ioctl(self->fd, RTC_RD_TIME, &tm);
+>  	ASSERT_NE(-1, rc);
+>  
+> @@ -209,11 +248,7 @@ TEST_F(rtc, alarm_alm_set) {
+>  	gmtime_r(&secs, (struct tm *)&tm);
+>  
+>  	rc = ioctl(self->fd, RTC_ALM_SET, &tm);
+> -	if (rc == -1) {
+> -		ASSERT_EQ(EINVAL, errno);
+> -		TH_LOG("skip alarms are not supported.");
+> -		return;
+> -	}
+> +	ASSERT_NE(-1, rc);
+>  
+>  	rc = ioctl(self->fd, RTC_ALM_READ, &tm);
+>  	ASSERT_NE(-1, rc);
+> @@ -260,6 +295,9 @@ TEST_F(rtc, alarm_wkalm_set) {
+>  		SKIP(return, "Skipping test since %s does not exist", rtc_file);
+>  	ASSERT_NE(-1, self->fd);
+>  
+> +	if (!is_rtc_alarm_supported(self->fd))
+> +		SKIP(return, "Skipping test since alarms are not supported.");
+> +
+>  	rc = ioctl(self->fd, RTC_RD_TIME, &alarm.time);
+>  	ASSERT_NE(-1, rc);
+>  
+> @@ -269,11 +307,7 @@ TEST_F(rtc, alarm_wkalm_set) {
+>  	alarm.enabled = 1;
+>  
+>  	rc = ioctl(self->fd, RTC_WKALM_SET, &alarm);
+> -	if (rc == -1) {
+> -		ASSERT_EQ(EINVAL, errno);
+> -		TH_LOG("skip alarms are not supported.");
+> -		return;
+> -	}
+> +	ASSERT_NE(-1, rc);
+>  
+>  	rc = ioctl(self->fd, RTC_WKALM_RD, &alarm);
+>  	ASSERT_NE(-1, rc);
+> @@ -312,6 +346,9 @@ TEST_F_TIMEOUT(rtc, alarm_alm_set_minute, 65) {
+>  		SKIP(return, "Skipping test since %s does not exist", rtc_file);
+>  	ASSERT_NE(-1, self->fd);
+>  
+> +	if (!is_rtc_alarm_supported(self->fd))
+> +		SKIP(return, "Skipping test since alarms are not supported.");
+> +
+>  	rc = ioctl(self->fd, RTC_RD_TIME, &tm);
+>  	ASSERT_NE(-1, rc);
+>  
+> @@ -319,11 +356,7 @@ TEST_F_TIMEOUT(rtc, alarm_alm_set_minute, 65) {
+>  	gmtime_r(&secs, (struct tm *)&tm);
+>  
+>  	rc = ioctl(self->fd, RTC_ALM_SET, &tm);
+> -	if (rc == -1) {
+> -		ASSERT_EQ(EINVAL, errno);
+> -		TH_LOG("skip alarms are not supported.");
+> -		return;
+> -	}
+> +	ASSERT_NE(-1, rc);
+>  
+>  	rc = ioctl(self->fd, RTC_ALM_READ, &tm);
+>  	ASSERT_NE(-1, rc);
+> @@ -370,6 +403,9 @@ TEST_F_TIMEOUT(rtc, alarm_wkalm_set_minute, 65) {
+>  		SKIP(return, "Skipping test since %s does not exist", rtc_file);
+>  	ASSERT_NE(-1, self->fd);
+>  
+> +	if (!is_rtc_alarm_supported(self->fd))
+> +		SKIP(return, "Skipping test since alarms are not supported.");
+> +
+>  	rc = ioctl(self->fd, RTC_RD_TIME, &alarm.time);
+>  	ASSERT_NE(-1, rc);
+>  
+> @@ -379,11 +415,7 @@ TEST_F_TIMEOUT(rtc, alarm_wkalm_set_minute, 65) {
+>  	alarm.enabled = 1;
+>  
+>  	rc = ioctl(self->fd, RTC_WKALM_SET, &alarm);
+> -	if (rc == -1) {
+> -		ASSERT_EQ(EINVAL, errno);
+> -		TH_LOG("skip alarms are not supported.");
+> -		return;
+> -	}
+> +	ASSERT_NE(-1, rc);
+>  
+>  	rc = ioctl(self->fd, RTC_WKALM_RD, &alarm);
+>  	ASSERT_NE(-1, rc);
+> -- 
 > 2.34.1
->
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+> 
+
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
