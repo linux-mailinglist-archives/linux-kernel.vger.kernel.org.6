@@ -1,223 +1,106 @@
-Return-Path: <linux-kernel+bounces-181952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD66E8C840F
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:44:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D19388C8414
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:48:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1ABF1C22638
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 09:44:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB9241C2224C
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 09:48:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C1F92C6B2;
-	Fri, 17 May 2024 09:44:04 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 067712561D;
+	Fri, 17 May 2024 09:48:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="nHBv+HMz"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE45D28DB7
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 09:44:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE6552260B
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 09:48:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715939044; cv=none; b=CPuyfKOvnUa5yGXjQYfJiZjjblP5ewe6Tm8ecSQB8rJn7PIOQOatptsGwcW3afhSFY9fG15q2jnT4oJig8OAIc7bcmtWa4G1pnqPo8Ai8edE/7cagfnQn8R+VFVSjxgVK3b6xLm7HnXHKswwL6f4mcqswBZiVkjdxTFgHsIKdfc=
+	t=1715939282; cv=none; b=KU5OYF9is33j0tOElR8XpCwYMwJiNvFsOFXNb62G1wC7EZYWfPD0XWf65RWffaPbCfHw0VISLh+nmQfFBk8LpYAO1bfg+frYwQ/8JpJTYPkSt7mUNyXrwxSQt8zfiXmGIgxIPmwMbtCQ8Rz2ndD338AqkZHRn6wnL7z4r4NGnok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715939044; c=relaxed/simple;
-	bh=Z2N2Ra6+OOg7P8u4zHqK6onGAoDxfqJTe68/K3So4Aw=;
-	h=CC:Subject:To:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=ZYJPyHxGx9wWB8Jww7QtaxEdYly2Jx/JeRor22Up3D39xa45VJ6vK3IQlxZHp7YxQtAWtFyJ1bqjQl+YLpbPEPmodt6eoycnQMZfr4M7KmQViTNVRSi6oe+LfgCYSEeQ5n22T5o5ilypQHQ/49/cd8vBgnLFdjD5B7zoFqEXvN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Vghlj1L1xz1j59x;
-	Fri, 17 May 2024 17:40:33 +0800 (CST)
-Received: from kwepemd200014.china.huawei.com (unknown [7.221.188.8])
-	by mail.maildlp.com (Postfix) with ESMTPS id 79FE618005F;
-	Fri, 17 May 2024 17:43:57 +0800 (CST)
-Received: from [10.67.121.177] (10.67.121.177) by
- kwepemd200014.china.huawei.com (7.221.188.8) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.28; Fri, 17 May 2024 17:43:56 +0800
-CC: Will Deacon <will@kernel.org>, <yangyicong@hisilicon.com>,
-	<mark.rutland@arm.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <jonathan.cameron@huawei.com>,
-	<prime.zeng@hisilicon.com>, <linuxarm@huawei.com>
-Subject: Re: [PATCH 1/2] perf: arm_pmu: Only show online CPUs in device's
- "cpus" attribute
-To: Dongli Zhang <dongli.zhang@oracle.com>
-References: <20240410095833.63934-1-yangyicong@huawei.com>
- <20240410153419.GA25171@willie-the-truck>
- <d7c4da97-92ba-4cb7-ecd5-5edc4f52fd8a@huawei.com>
- <109dada9-3164-9a04-5b7e-1031ff399017@oracle.com>
- <87a01991-3631-431c-8654-5b757b03e2e0@oracle.com>
-From: Yicong Yang <yangyicong@huawei.com>
-Message-ID: <1a67439f-6418-203a-37d8-1682ceb1cb93@huawei.com>
-Date: Fri, 17 May 2024 17:43:56 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.5.1
+	s=arc-20240116; t=1715939282; c=relaxed/simple;
+	bh=rUfteP0LJ3K2Y4OqPDdtCf6B80qEUl+7PxmAXtpchy4=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WrLOzwWw5IoyapYzVkLXUpeXyKOseDYZXFtKtQjc2E0IfE3uFaQPboOQ70S24TaDFKRi5Du7ujUrSzaiNZYLcC9cljVfBcXThoJ5WBr836ateta57vFf1SKKx5o2xfBEQGWipB1nsVoyGjJvpblAYeiKkWW61BRgYpEf6MN8zDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=nHBv+HMz; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52232d0e5ceso536456e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 02:48:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1715939279; x=1716544079; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:references:mime-version:in-reply-to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rUfteP0LJ3K2Y4OqPDdtCf6B80qEUl+7PxmAXtpchy4=;
+        b=nHBv+HMzUl57WoAept4mbbccGc+0hE7lSEKRfqClai/uYn8sxxeKjNdH/SKmGm5K9k
+         dEBooBGYFkmp9hp1ANvlGdazulWu362HaIWs3VJiEItciffuHzJmCBH9O5qorcoY5oqo
+         IC7yfM6ZQ1/0zlZE2q3u28BiX68kt5S+I+zXih9oWEZzFymhdXyqiLPrfbUvWNiye/Kz
+         6FIkqED3gRLkVfVbcrNbEiouwIJynliuzXBSNQRCoOwQJDuuJ9K3v1/xXOkaSicTAxc6
+         Im3h+bM28ptazLHnwayeoMIN+KXeV0cKlTAtXu3pImVpL1hlf81HAoZ2mJcS52nUIAHS
+         ep1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715939279; x=1716544079;
+        h=cc:to:subject:message-id:date:references:mime-version:in-reply-to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rUfteP0LJ3K2Y4OqPDdtCf6B80qEUl+7PxmAXtpchy4=;
+        b=j7AuCk4YW8MBSyhqYvE5SA6FDnANl9QgO3O7b2ke2jbELCvxNjQOEcWWgd3hiMm1N0
+         32vcrrfER8DFBeeNEDsil0wmmqMkdVo6PdrWzocGORzaAo05oU3tVXVCw4SF6Q7zC6E/
+         4/3SgS/SYW06Xno7hg+21aP1O/inkugBTO6NJYU6zQnizpkFvF7tK/dLbziMuS70lQxS
+         wimiLPZPIVbT9ycdvbyXZvBjewfbpnTGyp30ny/KwAh/wC+p/ORKgYqyQMwMb8FcCkcK
+         Z7GF4l7qpnposHf7UaqurMc61j22xLOTrGDEUC9NA36j3S7er055Xbp0gbRvrvs7tKaA
+         q2hQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWrdVnCPsu2TQkjjhml/lwGK5ciJS5/SvU7l0Hpi8LOainTWm3G4bxXiUyxB6A3jT8SkieOL29oEbXEleV8WL8tuwrZIbP2BU73TJdu
+X-Gm-Message-State: AOJu0Yx/Y8/gMQtoh4pQO1C1YLml9R6k/JU24z57V7T1paVTVInfjT4i
+	ZoHu8oociVan0seSq4mi1MPTsA2wYwNw1oTdmUg4V1t1EQu487875bC1QWlRmBwQ3bu6sYvgxcs
+	CBoHNluRac0Ob2xdxAwqJ7Mj3FyKKyB6VbEfHVQ==
+X-Google-Smtp-Source: AGHT+IFlzJPWRpHrqGByKZ4H5QNTQaquVeP+Lx2nIeqMnc82ZPWe4UEVmOrLeu6xqSeYSzujhT+d6PW5+Q+iNITvCTE=
+X-Received: by 2002:a05:6512:a84:b0:523:b261:3ddf with SMTP id
+ 2adb3069b0e04-523b2613ebdmr4377606e87.32.1715939278759; Fri, 17 May 2024
+ 02:47:58 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Fri, 17 May 2024 02:47:58 -0700
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+In-Reply-To: <ZkYQHnF76WLIf8-r@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <87a01991-3631-431c-8654-5b757b03e2e0@oracle.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemd200014.china.huawei.com (7.221.188.8)
+References: <20240508101703.830066-1-andriy.shevchenko@linux.intel.com> <ZkYQHnF76WLIf8-r@smile.fi.intel.com>
+Date: Fri, 17 May 2024 02:47:57 -0700
+Message-ID: <CAMRc=MePRxKumCTQ+2W3Q=UgSetAkAROGRWZApdTcn3dRj79WA@mail.gmail.com>
+Subject: Re: [PATCH v1 1/1] gpio: Remove legacy API documentation
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Jonathan Corbet <corbet@lwn.net>, Alex Shi <alexs@kernel.org>, Yanteng Si <siyanteng@loongson.cn>, 
+	Vegard Nossum <vegard.nossum@oracle.com>, Kent Gibson <warthog618@gmail.com>, 
+	Hu Haowen <2023002089@link.tyut.edu.cn>, linux-gpio@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Dongli,
+On Thu, 16 May 2024 15:54:38 +0200, Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> said:
+> On Wed, May 08, 2024 at 01:17:01PM +0300, Andy Shevchenko wrote:
+>> In order to discourage people to use old and legacy GPIO APIs
+>> remove the respective documentation completely. It also helps
+>> further cleanups of the legacy GPIO API leftovers, which is
+>> ongoing task.
+>
+> Bart, Linus, Kent, what do you think about this?
+>
+> If there is a positive consensus, I would even dare to go for v6.10-rc2
+> with it.
+>
 
-Since it's merge window now, I can resend this along with the userspace perf handling in
-next cycle. We can continue the discussion then.
+I don't have a problem with this change but I will not send it before the
+v6.11 merge window. Why would I? I'll have it go the normal route, it's not
+a fix.
 
-Thanks.
-
-On 2024/5/16 6:10, Dongli Zhang wrote:
-> Ping? Is there any plan to move forward with the patch from Yicong?
-> 
-> Thank you very much!
-> 
-> Dongli Zhang
-> 
-> On 4/18/24 9:32 AM, Dongli Zhang wrote:
->>
->>
->> On 4/11/24 01:55, Yicong Yang wrote:
->>> On 2024/4/10 23:34, Will Deacon wrote:
->>>> On Wed, Apr 10, 2024 at 05:58:32PM +0800, Yicong Yang wrote:
->>>>> From: Yicong Yang <yangyicong@hisilicon.com>
->>>>>
->>>>> When there're CPUs offline after system booting, perf will failed:
->>>>> [root@localhost ~]# /home/yang/perf stat -a -e armv8_pmuv3_0/cycles/
->>>>> Error:
->>>>> The sys_perf_event_open() syscall returned with 19 (No such device) for event (cpu-clock).
->>>>> /bin/dmesg | grep -i perf may provide additional information.
->>>>>
->>>>> This is due to PMU's "cpus" is not updated and still contains offline
->>>>> CPUs and perf will try to open perf event on the offlined CPUs.
->>>>>
->>>>> Make "cpus" attribute only shows online CPUs and introduced a new
->>>>> "supported_cpus" where users can get the range of the CPUs this
->>>>> PMU supported monitoring.
->>>>>
->>>>> Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
->>>>> ---
->>>>>  drivers/perf/arm_pmu.c | 24 +++++++++++++++++++++++-
->>>>>  1 file changed, 23 insertions(+), 1 deletion(-)
->>>>
->>>> Hmm. Is the complexity in the driver really worth it here? CPUs can be
->>>> onlined and offlined after the perf_event_open() syscall has been
->>>> executed, 
->>>
->>> Yes. So we have cpuhp callbacks to handle the cpu online/offline
->>> and migrate the perf context.
->>>
->>>> so this feels like something userspace should be aware of and
->>>> handle on a best-effort basis anyway.
->>>>
->>>
->>> Looks like it's a convention for a PMU device to provide a "cpus" attribute (for core
->>> PMUs) or "cpumask" attribute (for uncore PMUs) to indicates the CPUs on which the
->>> events can be opened. If no such attributes provided, all online CPUs indicated. Perf
->>> will check this and if user doesn't specify a certian range of CPUs the events will
->>> be opened on all the CPUs PMU indicated.
->>>
->>>> Does x86 get away with this because CPU0 is never offlined?
->>>>
->>>
->>> Checked on my x86 server there's no "cpus" or "cpumask" provided so perf will try
->>> to open the events on all the online CPUs if no CPU range specified. But for their
->>> hybrid platform there do have a "cpus" attribute[1] and it'll be updated when CPU
->>> offline[2].
->>>
->>> The arm-cspmu also provides a "cpumask" to indicate supported online CPUs and an
->>> "associated_cpus" to indicated the CPUs related to the PMU.
->>>
->>> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/x86/events/intel/core.c?h=v6.9-rc1#n5931
->>> [2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/x86/events/intel/core.c?h=v6.9-rc1#n4949
->>>
->>> Thanks.
->>>
->>>
->>
->>
->> The arm_dsu has the concepts of 'cpumask' as well. It also has 'associated_cpus'.
->>
->> When the current cpumask offline, the cpuhp handler will migrate the cpumask to
->> other associated_cpus.
->>
->> # cat /sys/devices/arm_dsu_26/associated_cpus
->> 4-5
->> [root@lse-aarch64-bm-ol8 opc]# cat /sys/devices/arm_dsu_26/cpumask
->> 4
->>
->> 812 static int dsu_pmu_cpu_online(unsigned int cpu, struct hlist_node *node)
->> 813 {
->> 814         struct dsu_pmu *dsu_pmu = hlist_entry_safe(node, struct dsu_pmu,
->> 815                                                    cpuhp_node);
->> 816
->> 817         if (!cpumask_test_cpu(cpu, &dsu_pmu->associated_cpus))
->> 818                 return 0;
->> 819
->> 820         /* If the PMU is already managed, there is nothing to do */
->> 821         if (!cpumask_empty(&dsu_pmu->active_cpu))
->> 822                 return 0;
->> 823
->> 824         dsu_pmu_init_pmu(dsu_pmu);
->> 825         dsu_pmu_set_active_cpu(cpu, dsu_pmu);
->> 826
->> 827         return 0;
->> 828 }
->> 829
->> 830 static int dsu_pmu_cpu_teardown(unsigned int cpu, struct hlist_node *node)
->> 831 {
->> 832         int dst;
->> 833         struct dsu_pmu *dsu_pmu = hlist_entry_safe(node, struct dsu_pmu,
->> 834                                                    cpuhp_node);
->> 835
->> 836         if (!cpumask_test_and_clear_cpu(cpu, &dsu_pmu->active_cpu))
->> 837                 return 0;
->> 838
->> 839         dst = dsu_pmu_get_online_cpu_any_but(dsu_pmu, cpu);
->> 840         /* If there are no active CPUs in the DSU, leave IRQ disabled */
->> 841         if (dst >= nr_cpu_ids)
->> 842                 return 0;
->> 843
->> 844         perf_pmu_migrate_context(&dsu_pmu->pmu, cpu, dst);
->> 845         dsu_pmu_set_active_cpu(dst, dsu_pmu);
->> 846
->> 847         return 0;
->> 848 }
->>
->>
->> However, I think the userspace perf tool looks more friendly (just return <not
->> supported>) in this case when I offline all CPUs from cpumask of a DSU. Perhaps
->> because it is NULL now.
->>
->> # perf stat -e arm_dsu_26/l3d_cache_wb/
->> ^C
->>  Performance counter stats for 'system wide':
->>
->>    <not supported>      arm_dsu_26/l3d_cache_wb/
->>
->>        0.553294766 seconds time elapsed
->>
->>
->> # cat /sys/devices/arm_dsu_26/associated_cpus
->> 4-5
->> # cat /sys/devices/arm_dsu_26/cpumask
->> 4
->> # echo 0 > /sys/devices/system/cpu/cpu4/online
->> # cat /sys/devices/arm_dsu_26/cpumask
->> 5
->> # echo 0 > /sys/devices/system/cpu/cpu5/online
->> # cat /sys/devices/arm_dsu_26/cpumask
->>
->> #
->>
->> Dongli Zhang
-> .
-> 
+Bart
 
