@@ -1,108 +1,102 @@
-Return-Path: <linux-kernel+bounces-181743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B04F8C8089
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 07:06:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21D768C8080
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 06:59:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A6F3B20CDB
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 05:06:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8054C2825E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 04:59:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD25BDDCB;
-	Fri, 17 May 2024 05:06:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DA94101DA;
+	Fri, 17 May 2024 04:58:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jFluO/0F"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bIYzXmak"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC254DDCD
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 05:06:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7912CDDB2;
+	Fri, 17 May 2024 04:58:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715922383; cv=none; b=MeQSncm35F/tBXYQZZZ7BN5bFbj2skyQ3YlybVguniURuFX8UNlqjxwxxUD1IBd6elcl84p50+iedxNbnRy3k/Q0hBmFh+ORKsVALhjrSka573bdnX8Vt9e1fArMLOp6PnFhag9Zk1iEkw1EK82/u7vNR4IhijIIQaat/6942Nk=
+	t=1715921933; cv=none; b=hpYkULM7zHqDA7gJvn60u0iLmhkEsKyKrPll9XSwedoOshPxQUdYAHY6RYTXbXQDrdwulkgx6pP5tL6AzUJvM71kRZ+8GmRaEwJehH+mm4Mh3v+QCZfvmE0wL7jRTwoUOMu1+sZ5E+MYJETF+6H7rwoPp/HAiq9DAeYUFvQs9+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715922383; c=relaxed/simple;
-	bh=X65547yC+gjIEWCBBGeUT8y2lrwOCFGBDeGKhjtEZ0I=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=nN3w2YZXOdAVLNFWdW0cwwFWzHtZRxpU9qtV1ZcdtZp8N12E1BK6Ygep6ViRXaJo447k3esHVr5EQk3s5amALizvKixbOto9o1L/5BnF7Up79qIBn3Bb9qZe7WPyHBiSvKBjJcca750TuVzmm8G74cwZzTX8AGJ4jTaHyR6ptTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jFluO/0F; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715922381; x=1747458381;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=X65547yC+gjIEWCBBGeUT8y2lrwOCFGBDeGKhjtEZ0I=;
-  b=jFluO/0F7sQ/Q/PHFGmkpTNEwGZ1AozfHI5EbUV9kMlv1XI+cC45OzWC
-   mRBqsoeBJhiZe3hF7tM6StmnK2B903IGnj9Omkro8KPAyT6u0Y2X3FOP6
-   4P2TA1HySlXiVXmjq/8HTVVyMDPGLZ4r9gAngrAJyRlM8PNZf4Ag+dTx1
-   mCWbD2ERisqsIsSFvEzF2sme18jPJL67muvna5mCoyT15ENmgRhlURN3y
-   H/Kno9D/kYi4ZEkY9BiV6pnBAMsSGoYmEOb3Rdmup0rjFNbaKW5n0RPW3
-   goaUQKFivDJ2TDO2WZx+9MJmjDtLRmLHhQrIRRBQaDus4AE7rpy35d01p
-   Q==;
-X-CSE-ConnectionGUID: UXpWMR1XSjmrmmCqkRI1Gg==
-X-CSE-MsgGUID: ZrV4VDjkRUqkwXtWTzaVGQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="23217513"
-X-IronPort-AV: E=Sophos;i="6.08,166,1712646000"; 
-   d="scan'208";a="23217513"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 22:06:20 -0700
-X-CSE-ConnectionGUID: ZyiHM67ZSk6bw2XCpyqnhQ==
-X-CSE-MsgGUID: us3R7kliTOaP+RiI+h4+CA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,166,1712646000"; 
-   d="scan'208";a="36575684"
-Received: from unknown (HELO 108735ec233b) ([10.239.97.151])
-  by orviesa004.jf.intel.com with ESMTP; 16 May 2024 22:06:19 -0700
-Received: from kbuild by 108735ec233b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s7pnM-0000Es-04;
-	Fri, 17 May 2024 05:06:16 +0000
-Date: Fri, 17 May 2024 12:56:54 +0800
-From: kernel test robot <lkp@intel.com>
-To: Zhen Lei <thunder.leizhen@huawei.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Luis Chamberlain <mcgrof@kernel.org>
-Subject: ld.lld: error: vmlinux.a(kernel/kallsyms.o):(function
- kallsyms_lookup_name: .text+0x6e): relocation R_RISCV_PCREL_HI20 out of
- range: -524440 is not in [-524288, 524287]; references
- kallsyms_seqs_of_names
-Message-ID: <202405171222.JQUW7NxR-lkp@intel.com>
+	s=arc-20240116; t=1715921933; c=relaxed/simple;
+	bh=zD4lWmp3wEmNB1u//FuurUIsViWz6cyW2T5QY6kRnaY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=PmVufR549XIJnMQ9U6EBrJZfv9p+PT+qILVONg+zO1b7c4pIxh9ve2IV2UUSWvr7/s1a7oGQVAdtbzC82dMTZb2+OXbrBK0jt0yjTSjXubbS2F7odu2RmzGPxDEO+jVPmsdqUvSjVcVFk3CVtD+3OWEtNPS0v4tTIwuK4mnpCP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bIYzXmak; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-6f4178aec15so921816b3a.0;
+        Thu, 16 May 2024 21:58:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715921932; x=1716526732; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zD4lWmp3wEmNB1u//FuurUIsViWz6cyW2T5QY6kRnaY=;
+        b=bIYzXmak1ZTOeqNggHit5mWiX6p16HIa3P/9/UsfmXSAweVo7bXNWAMk6O09se8ywl
+         aA/jiDZTJHMywUQyJ46mLQCzjf7lm1UK5nPEAIN5iiwAeBF3Y7gQo/L9GgH+MCX6JPHE
+         xymcOzuYkQfECtYsonWzSmB2IjtG/3QFMCSjL806Qw20P71nUXjcQzh2shrUH4XGJ+Qm
+         GzjdUmIyAalBfUp4I2iOOkTLSkw0v1skj0IMQRAvdkl//XGatYQdgozh0VjseByRBvnh
+         djgLS81VRkp8qA+BRB5TJZjU0iujk2pkPrPZviPE3F8YyWsQ+bJNdejbTFknHvaV8dD/
+         k88Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715921932; x=1716526732;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zD4lWmp3wEmNB1u//FuurUIsViWz6cyW2T5QY6kRnaY=;
+        b=c0YM/gtl4gBxRyyf+FD+vqg7eCHLL05bT/A10FusRlHM/238s4WQ3akd0azjhNgvfc
+         i2RrG1f4Zn3/PqhE+ISu6T7BeeDZIkKkR6p39wWzAROmQnU5XbmnxEE7vvYEkJEOUnEO
+         28137lIGWCvK9sPcQOk1P8f2vw+5Mr/TXqxz8ARlRbQvDD2+Z4jybt3FFQtIO0vpM53V
+         Oyx8NfaF90EBoUhgcFdgNOTfA/3c5UtUmpcoHmuXLit6T92W1llHoD5t8KQvTThNYGYU
+         GiSi/TKSCvy9GTzcGSouDDsMGGPZdrg/rA+gG7VuGuDdMs5DIoJ+6FzAHv2AfZHf6Q9k
+         uSeA==
+X-Forwarded-Encrypted: i=1; AJvYcCV0/DLMJovTocWQC1WGJs4wBZU7XeIRLlxOjrWPjn/SZ4z8F4infn8QTT+xfPr/zgE0Q0Z+EtLvdHkV67YbUz5O4XVxKndvtK2vly1TS8ZIOyZ1OKIQq6pLTToBQ87jIzInt6MrXLWh5FOAnOh3Xk64u16p82zo1/LVDeP7DXZ0e1fRxZjT
+X-Gm-Message-State: AOJu0YxqnBZNXnUTNB3a1GFrcBPoBz+0Q9fhc8hYPRTdXDQIqAogI63/
+	fbuPIudQzWN7xW+UTLCEaDJwSZSMrBX1ngqJEPYfJWGZgEy9JFRq
+X-Google-Smtp-Source: AGHT+IGNjAE1LtfsrOxQVZB5wYX0vjh0z7hg7ne2W52SgHNMNs5KV8V7UlyNJC4JaNo9Xt6rJoE0BQ==
+X-Received: by 2002:a05:6a00:3d07:b0:6ea:d740:62a4 with SMTP id d2e1a72fcca58-6f4e03466d2mr24573444b3a.25.1715921931668;
+        Thu, 16 May 2024 21:58:51 -0700 (PDT)
+Received: from xiaxiShen-ThinkPad.dhcp4.washington.edu ([205.175.106.19])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2af2977sm13917629b3a.153.2024.05.16.21.58.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 May 2024 21:58:51 -0700 (PDT)
+From: Xiaxi Shen <shenxiaxi26@gmail.com>
+To: krzk@kernel.org
+Cc: broonie@kernel.org,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	javier.carrasco.cruz@gmail.com,
+	krzk+dt@kernel.org,
+	lgirdwood@gmail.com,
+	linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	robh@kernel.org,
+	shenxiaxi26@gmail.com,
+	skhan@linuxfoundation.org
+Subject: Re: [PATCH v3] ASoC: dt-bindings: ak4104: convert to dt schema
+Date: Thu, 16 May 2024 21:58:50 -0700
+Message-Id: <20240517045850.463906-1-shenxiaxi26@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <ee193525-ea10-4006-a86e-977e2f0352ea@kernel.org>
+References: <ee193525-ea10-4006-a86e-977e2f0352ea@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Hi Zhen,
+Hi Krzysztof,
 
-FYI, the error/warning still remains.
+Thanks for your advices, I am gradually adapting to using b4 as my new tool for submitting patches.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   ea5f6ad9ad9645733b72ab53a98e719b460d36a6
-commit: 60443c88f3a89fd303a9e8c0e84895910675c316 kallsyms: Improve the performance of kallsyms_lookup_name()
-date:   1 year, 6 months ago
-config: riscv-randconfig-r063-20240515 (https://download.01.org/0day-ci/archive/20240517/202405171222.JQUW7NxR-lkp@intel.com/config)
-compiler: clang version 16.0.6 (https://github.com/llvm/llvm-project 7cbf1a2591520c2491aa35339f227775f4d3adf6)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240517/202405171222.JQUW7NxR-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405171222.JQUW7NxR-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> ld.lld: error: vmlinux.a(kernel/kallsyms.o):(function kallsyms_lookup_name: .text+0x6e): relocation R_RISCV_PCREL_HI20 out of range: -524440 is not in [-524288, 524287]; references kallsyms_seqs_of_names
-   >>> referenced by kallsyms.c
-   >>> defined in vmlinux.a(kernel/kallsyms.o)
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Best regards,
+Xiaxi
 
