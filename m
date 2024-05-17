@@ -1,52 +1,111 @@
-Return-Path: <linux-kernel+bounces-181909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42CA28C832D
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:20:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBF3A8C8324
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:16:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5B8F1F23218
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 09:20:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5782F1F23249
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 09:16:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27D97224EA;
-	Fri, 17 May 2024 09:20:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B6C720DCC;
+	Fri, 17 May 2024 09:16:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yshyn.com header.i=@yshyn.com header.b="s8qF9X+x"
-Received: from phoenix.uberspace.de (phoenix.uberspace.de [95.143.172.135])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="BbghCkdX";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="jt+OyQXy";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="MSoh9Pd4";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="6EmY1xnz"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6B4A1EB5E
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 09:20:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.143.172.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F8F11CFBC;
+	Fri, 17 May 2024 09:16:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715937645; cv=none; b=h8WP06lLh4c5i8k2Kr3F9PNGwLdFYtWXQTEKZrEJt/yAPfhT0yauaPZMc8MhX0T0ib1DA1rAU8U3d/5IUpJaA24+zSMM5x9Kij4KqgK2PUaBNmtRkqynNjiBlPMom3TsnphCKvymXhdtPQf/Gs4y+hYTUC8C8zoqtJuh5GVSVGo=
+	t=1715937369; cv=none; b=Ky+lNV7Fit6tpsCSZZ+IIyUcItC2O4NPHXWw165C4WEpCfymGBSM1Sm+aT/2BJLH4qw2DsVGhTmfKNFNfRJYt88HrkHL2f0/AJ7lYJwKNRk/QNg5+XBuK9uzpbvyHmwu127mw83sWMxOnyBV8/i83K1r59spMnTelc+q02Gjx5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715937645; c=relaxed/simple;
-	bh=zUX5qNIfW548vNLMV3YfOWr2RVuk/rIW/JNspwwgaDA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=miOO6hXABB8WYhRafy1Bd4LdUwtvrI09mh9jefGrk0LJ+VbF5nrE1hMopsMyY3CIZSIM3lSBxjeWj+Xfh7W5mdsYjj500/O9/yOJn2BJFlSydDMw0WucBwVSZRvWdySlkHPtC9ZARWB0L5MjUkA1KIS9Rob/SJz3BSdh8zlrZ54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yshyn.com; spf=pass smtp.mailfrom=yshyn.com; dkim=pass (2048-bit key) header.d=yshyn.com header.i=@yshyn.com header.b=s8qF9X+x; arc=none smtp.client-ip=95.143.172.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yshyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yshyn.com
-Received: (qmail 13005 invoked by uid 988); 17 May 2024 09:13:58 -0000
-Authentication-Results: phoenix.uberspace.de;
-	auth=pass (plain)
-Received: from unknown (HELO unkown) (::1)
-	by phoenix.uberspace.de (Haraka/3.0.1) with ESMTPSA; Fri, 17 May 2024 11:13:57 +0200
-From: Illia Ostapyshyn <illia@yshyn.com>
-To: Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Matthew Wilcox <willy@infradead.org>
-Cc: linux-doc@vger.kernel.org,
+	s=arc-20240116; t=1715937369; c=relaxed/simple;
+	bh=wY4YgXdaqsAKUexBfgDDerI/9Bx+fOhmVvc6Lpv7OVE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UsGji0P0jS7xaF5PCqyCQSv9vuD/r0tD7JSAHmqxEBulkysSJw8cq6FhuJj6eRuoBrlhV2Q9BRjul3rot/bxbm4igWOWV5UEKSKuAifZfhW4oA5b+QG+uQIJG0tYaKGOFDyhi+MI1g1teLH9Cq2iLf9UvSq5ol1Ue7ZCsw2cgW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=BbghCkdX; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=jt+OyQXy; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=MSoh9Pd4; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=6EmY1xnz; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id D221C5D1B3;
+	Fri, 17 May 2024 09:16:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1715937362; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=9wYWAx2PYyOTbB/LCI3hz7bjDkyxOkz1uapIAToUark=;
+	b=BbghCkdXksejkuJqJmch5Ijt4sdQZ5TDSe2a19haeMF2gXOdFAXHuIFAVy/ycjGDKXOahM
+	3s35YHDhSOBZ0DBIbMJoZwDe1zdv8qmX78wJczE5ydgpmTceUqPruOPYs17PnMEifYtyGx
+	Kf3WP8IRkhI9Qg1w1JdkXa4wR3S5njo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1715937362;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=9wYWAx2PYyOTbB/LCI3hz7bjDkyxOkz1uapIAToUark=;
+	b=jt+OyQXy4hJ1K2TSadbh5/0IARkIyYzVbNsRzT7YZJa0Y75FPbMfmoXTKJXCnAHwr/gG2B
+	W7bx/+2Y8JLZKpAQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=MSoh9Pd4;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=6EmY1xnz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1715937361; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=9wYWAx2PYyOTbB/LCI3hz7bjDkyxOkz1uapIAToUark=;
+	b=MSoh9Pd4EH3z9qXcQcZ1OGdOiRW1eI7a9BCPHTXAOfjkWkcMJzvy2v535t1mnqA5yaLg6e
+	KIcpJzCLRWJuOmJ/gF0nIaQShxltOwTdd0B3ersi5TNR0Tlqj9WyvqXlkG2ubPrJbsH3G/
+	znOmxD/guKNiOlbjZztNkImArw9SnKE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1715937361;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=9wYWAx2PYyOTbB/LCI3hz7bjDkyxOkz1uapIAToUark=;
+	b=6EmY1xnz1/aS9A/f+O8Sf2mvTZcnlnUMR9VLtbJP9DiseQxwfCCDwKxnhj+6NTN3hoLP9f
+	n7zleX6+JlE9M5Ag==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 57EBD13991;
+	Fri, 17 May 2024 09:16:01 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 0dNMFFEgR2ZkfAAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Fri, 17 May 2024 09:16:01 +0000
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: arnd@arndb.de,
+	chaitanya.kumar.borah@intel.com,
+	suresh.kumar.kurmi@intel.com,
+	jani.saarinen@intel.com,
+	davem@davemloft.net,
+	andreas@gaisler.com,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org,
+	hpa@zytor.com,
+	rafael@kernel.org,
+	hdegoede@redhat.com
+Cc: linux-arch@vger.kernel.org,
+	sparclinux@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org,
+	linux-fbdev@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org,
-	Illia Ostapyshyn <illia@yshyn.com>
-Subject: [PATCH] mm/vmscan: Update stale references to shrink_page_list
-Date: Fri, 17 May 2024 11:13:48 +0200
-Message-Id: <20240517091348.1185566-1-illia@yshyn.com>
-X-Mailer: git-send-email 2.39.2
+	Thomas Zimmermann <tzimmermann@suse.de>
+Subject: [PATCH] arch: Fix name collision with ACPI's video.o
+Date: Fri, 17 May 2024 11:14:33 +0200
+Message-ID: <20240517091557.25800-1-tzimmermann@suse.de>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,115 +113,94 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Bar: +
-X-Rspamd-Report: MID_CONTAINS_FROM(1) MIME_GOOD(-0.1) R_MISSING_CHARSET(0.5)
-X-Rspamd-Score: 1.4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=yshyn.com; s=uberspace;
-	h=from:to:cc:subject:date;
-	bh=zUX5qNIfW548vNLMV3YfOWr2RVuk/rIW/JNspwwgaDA=;
-	b=s8qF9X+xASJEWN/cMfdXpv37+eChv24TVme12xnLdvA65YeLPvsTXzosKqg8OeC49J5W76JCJG
-	jXt8b3WBCoWyHOW6ZAXTIEhwcx3HgSKo7GNhhPzlmOFAiMkpfbb/Qr2+tBLxzjpAAPK2KqHIAS3X
-	dun0Pvmwj1DQ5Ikf7ijj4Y6RxzPpcYrN9nNzeGMn0R0Thnq6Z3unRuYKkAK98CKUGmfeVqggYD8j
-	7pWiuwES3hWX1bm0vSyKHopIQGsB0IWLRKFbBd0pEPGW4zAG8AmBYKOyWdHAm1T2zG3TdRB4+fRv
-	qKhYjDH39qcYIOrnRP/Z7LvFijc0MOp8VK/n/Kiw==
+X-Spam-Flag: NO
+X-Spam-Score: -5.01
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: D221C5D1B3
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-5.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	ARC_NA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[22];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim,suse.de:email];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DKIM_TRACE(0.00)[suse.de:+]
 
-Commit 49fd9b6df54e ("mm/vmscan: fix a lot of comments") renamed
-shrink_page_list() to shrink_folio_list().  Fix up the remaining
-references to the old name in comments and documentation.
+Commit 2fd001cd3600 ("arch: Rename fbdev header and source files")
+renames the video source files under arch/ such that they do not
+refer to fbdev any longer. The new files named video.o conflict with
+ACPI's video.ko module. Modprobing the ACPI module can then fail with
+warnings about missing symbols, as shown below.
 
-Signed-off-by: Illia Ostapyshyn <illia@yshyn.com>
+  (i915_selftest:1107) igt_kmod-WARNING: i915: Unknown symbol acpi_video_unregister (err -2)
+  (i915_selftest:1107) igt_kmod-WARNING: i915: Unknown symbol acpi_video_register_backlight (err -2)
+  (i915_selftest:1107) igt_kmod-WARNING: i915: Unknown symbol __acpi_video_get_backlight_type (err -2)
+  (i915_selftest:1107) igt_kmod-WARNING: i915: Unknown symbol acpi_video_register (err -2)
+
+Fix the issue by renaming the architecture's video.o to video-common.o.
+
+Reported-by: Chaitanya Kumar Borah <chaitanya.kumar.borah@intel.com>
+Closes: https://lore.kernel.org/intel-gfx/9dcac6e9-a3bf-4ace-bbdc-f697f767f9e0@suse.de/T/#t
+Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+Fixes: 2fd001cd3600 ("arch: Rename fbdev header and source files")
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arch@vger.kernel.org
+Cc: linux-fbdev@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org
 ---
- Documentation/mm/unevictable-lru.rst | 10 +++++-----
- mm/memory.c                          |  2 +-
- mm/swap_state.c                      |  2 +-
- mm/truncate.c                        |  2 +-
- 4 files changed, 8 insertions(+), 8 deletions(-)
+ arch/sparc/video/Makefile                    | 2 +-
+ arch/sparc/video/{video.c => video-common.c} | 0
+ arch/x86/video/Makefile                      | 2 +-
+ arch/x86/video/{video.c => video-common.c}   | 0
+ 4 files changed, 2 insertions(+), 2 deletions(-)
+ rename arch/sparc/video/{video.c => video-common.c} (100%)
+ rename arch/x86/video/{video.c => video-common.c} (100%)
 
-diff --git a/Documentation/mm/unevictable-lru.rst b/Documentation/mm/unevictable-lru.rst
-index b6a07a26b10d..2feb2ed51ae2 100644
---- a/Documentation/mm/unevictable-lru.rst
-+++ b/Documentation/mm/unevictable-lru.rst
-@@ -191,13 +191,13 @@ have become evictable again (via munlock() for example) and have been "rescued"
- from the unevictable list.  However, there may be situations where we decide,
- for the sake of expediency, to leave an unevictable folio on one of the regular
- active/inactive LRU lists for vmscan to deal with.  vmscan checks for such
--folios in all of the shrink_{active|inactive|page}_list() functions and will
-+folios in all of the shrink_{active|inactive|folio}_list() functions and will
- "cull" such folios that it encounters: that is, it diverts those folios to the
- unevictable list for the memory cgroup and node being scanned.
+diff --git a/arch/sparc/video/Makefile b/arch/sparc/video/Makefile
+index fdf83a408d750..dcfbe7a5912c0 100644
+--- a/arch/sparc/video/Makefile
++++ b/arch/sparc/video/Makefile
+@@ -1,3 +1,3 @@
+ # SPDX-License-Identifier: GPL-2.0-only
  
- There may be situations where a folio is mapped into a VM_LOCKED VMA,
- but the folio does not have the mlocked flag set.  Such folios will make
--it all the way to shrink_active_list() or shrink_page_list() where they
-+it all the way to shrink_active_list() or shrink_folio_list() where they
- will be detected when vmscan walks the reverse map in folio_referenced()
- or try_to_unmap().  The folio is culled to the unevictable list when it
- is released by the shrinker.
-@@ -269,7 +269,7 @@ the LRU.  Such pages can be "noticed" by memory management in several places:
+-obj-y	+= video.o
++obj-y	+= video-common.o
+diff --git a/arch/sparc/video/video.c b/arch/sparc/video/video-common.c
+similarity index 100%
+rename from arch/sparc/video/video.c
+rename to arch/sparc/video/video-common.c
+diff --git a/arch/x86/video/Makefile b/arch/x86/video/Makefile
+index fdf83a408d750..dcfbe7a5912c0 100644
+--- a/arch/x86/video/Makefile
++++ b/arch/x86/video/Makefile
+@@ -1,3 +1,3 @@
+ # SPDX-License-Identifier: GPL-2.0-only
  
-  (4) in the fault path and when a VM_LOCKED stack segment is expanded; or
- 
-- (5) as mentioned above, in vmscan:shrink_page_list() when attempting to
-+ (5) as mentioned above, in vmscan:shrink_folio_list() when attempting to
-      reclaim a page in a VM_LOCKED VMA by folio_referenced() or try_to_unmap().
- 
- mlocked pages become unlocked and rescued from the unevictable list when:
-@@ -548,12 +548,12 @@ Some examples of these unevictable pages on the LRU lists are:
-  (3) pages still mapped into VM_LOCKED VMAs, which should be marked mlocked,
-      but events left mlock_count too low, so they were munlocked too early.
- 
--vmscan's shrink_inactive_list() and shrink_page_list() also divert obviously
-+vmscan's shrink_inactive_list() and shrink_folio_list() also divert obviously
- unevictable pages found on the inactive lists to the appropriate memory cgroup
- and node unevictable list.
- 
- rmap's folio_referenced_one(), called via vmscan's shrink_active_list() or
--shrink_page_list(), and rmap's try_to_unmap_one() called via shrink_page_list(),
-+shrink_folio_list(), and rmap's try_to_unmap_one() called via shrink_folio_list(),
- check for (3) pages still mapped into VM_LOCKED VMAs, and call mlock_vma_folio()
- to correct them.  Such pages are culled to the unevictable list when released
- by the shrinker.
-diff --git a/mm/memory.c b/mm/memory.c
-index 0201f50d8307..c58b3d92e6a8 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -4511,7 +4511,7 @@ static vm_fault_t __do_fault(struct vm_fault *vmf)
- 	 * lock_page(B)
- 	 *				lock_page(B)
- 	 * pte_alloc_one
--	 *   shrink_page_list
-+	 *   shrink_folio_list
- 	 *     wait_on_page_writeback(A)
- 	 *				SetPageWriteback(B)
- 	 *				unlock_page(B)
-diff --git a/mm/swap_state.c b/mm/swap_state.c
-index bfc7e8c58a6d..3d163ec1364a 100644
---- a/mm/swap_state.c
-+++ b/mm/swap_state.c
-@@ -28,7 +28,7 @@
- 
- /*
-  * swapper_space is a fiction, retained to simplify the path through
-- * vmscan's shrink_page_list.
-+ * vmscan's shrink_folio_list.
-  */
- static const struct address_space_operations swap_aops = {
- 	.writepage	= swap_writepage,
-diff --git a/mm/truncate.c b/mm/truncate.c
-index 725b150e47ac..e1c352bb026b 100644
---- a/mm/truncate.c
-+++ b/mm/truncate.c
-@@ -554,7 +554,7 @@ EXPORT_SYMBOL(invalidate_mapping_pages);
-  * This is like mapping_evict_folio(), except it ignores the folio's
-  * refcount.  We do this because invalidate_inode_pages2() needs stronger
-  * invalidation guarantees, and cannot afford to leave folios behind because
-- * shrink_page_list() has a temp ref on them, or because they're transiently
-+ * shrink_folio_list() has a temp ref on them, or because they're transiently
-  * sitting in the folio_add_lru() caches.
-  */
- static int invalidate_complete_folio2(struct address_space *mapping,
+-obj-y	+= video.o
++obj-y	+= video-common.o
+diff --git a/arch/x86/video/video.c b/arch/x86/video/video-common.c
+similarity index 100%
+rename from arch/x86/video/video.c
+rename to arch/x86/video/video-common.c
 -- 
-2.39.2
+2.45.0
 
 
