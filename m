@@ -1,127 +1,132 @@
-Return-Path: <linux-kernel+bounces-181961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D7438C8454
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:56:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3B0C8C8466
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 12:01:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D8AE1F23AD6
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 09:56:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F6111C22E80
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 10:01:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA68D3612D;
-	Fri, 17 May 2024 09:56:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b="SFLGcB5W";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="J76x28/z"
-Received: from wflow4-smtp.messagingengine.com (wflow4-smtp.messagingengine.com [64.147.123.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 055CA262A8;
-	Fri, 17 May 2024 09:56:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E0182C85F;
+	Fri, 17 May 2024 10:01:17 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D787323770;
+	Fri, 17 May 2024 10:01:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715939764; cv=none; b=rTxgAc2ET1L3LM0pSMDgTKZRjhgiqXUotXgx22qL7Falqdkm0/5RiL8n5eiQ05aiqDfrKyIzNH4lE14M5BO1z2JHVWhH4NlqlCPOGqG91Z93PeikZBUjNn0BVkKZDmgU1gmI/R0JBwt2cWSZ8T3dJomzeD5ZDOsXn0ZWYRtAlUU=
+	t=1715940077; cv=none; b=alSFO4hipDNtNre7NTQ3bLlWNSUGwZiU9PIq+MEq4S0Gou4Y6cIAFFipIuXUdvXgkceAtCaR0iANc+YrfU72jRHcX8yXrC3IihpMJvPjCENC4zubpvz2asb0SjiLd8pSpt8jJHaVnZ0a4owwx0ATZtUYHdFGUvhizN9TbNeyBl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715939764; c=relaxed/simple;
-	bh=KkGcrkmfBCDmC5wsXf5TmL47hbWnMH6ayavHpq65iaM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uUXoDdhqoJ3NcZNnqWPSGPPo8cfZj80OKv3B+wGSPlbZnJSgLxjZHyLYBO27pXOJhtAx9Yw0OsnupZBeAUtfQQbQjaPzh6QwlMIPpsDavwwpVmjD+1NEgOtjiHaTzysCxnK3kl2EDLw6YnkT8j3ONNFE5JAemcoapIRymk1Cgdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net; spf=pass smtp.mailfrom=3xx0.net; dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b=SFLGcB5W; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=J76x28/z; arc=none smtp.client-ip=64.147.123.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3xx0.net
-Received: from compute7.internal (compute7.nyi.internal [10.202.2.48])
-	by mailflow.west.internal (Postfix) with ESMTP id 308202CC0147;
-	Fri, 17 May 2024 05:55:59 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute7.internal (MEProxy); Fri, 17 May 2024 05:56:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=3xx0.net; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1715939759; x=1715943359; bh=rzLpoh5FVD
-	3LOyLFCdIzkEcNceRgesd/v21Z/l7RZ5E=; b=SFLGcB5WertXb1V3m2fi+z4zdU
-	Jp9S90ls3K+H9voIL3aIAJvTxnNjtJnWNCzLTGwdYoRMvNdLQUPAoi53A3ZbmzFN
-	RlE8d1Snpi/dYtx6gH6uWh/wH3uKykEWklZOvuFDMZy9/o1VQ1u/O8XHKYoyzugn
-	PNKksWA0LVq6/Q2MCD7vuymOtGhnnEoIqWWzVGk1sDKavrJIp1v4QAoqpDVmxaMo
-	LSuehCvyvygU0bfbS5KroosGXeBzFTd2dfV2h/w95wS4ghWZ+QT8mX8ekacHbBmG
-	bVlUNhJ5Py3c0QJHeKaGL1DoD2S6Wf1hDEg8jJCPKyAOEf5Zd8lz2BW9eXZQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	i76614979.fm3; t=1715939759; x=1715943359; bh=rzLpoh5FVD3LOyLFCd
-	IzkEcNceRgesd/v21Z/l7RZ5E=; b=J76x28/z38Uyk36WUZXKSl0R9o1g4tW23+
-	JtnPiGE6MbZgwvdz6mfgHIEWv8388bFiJkRd2c16WvW6fEqe8sUpcmbqBODF1uFY
-	eeTIYBjuqbDDoX32oeXKr75JT++SadWSHuS99rk21COe4YdU/lKTw8K+eyDpknRr
-	iz+aN4cHZGX8NvVtu3eVKEn7WNC71wiKzKRdvpr5FmtEtfxmhc94xpcXnmoNOBYF
-	WviHE/W0ubivbnhaj4fgvYQSmuQL1jxMmelMgA3//R6WaDgu41IEGAi5paEhbS2A
-	NGpaB3RPwBHmGBkJaygKFl07N6z9pb/BgAx+9ncpIGegZG+cmBMQ==
-X-ME-Sender: <xms:rilHZj0FM99tlirSD41vgsWEJEEdqQTGO29OwOru8OwDwnqzlZ8aWg>
-    <xme:rilHZiEloOFsYNCyshssEqC-7yh12MJxICZMxyzRlcPiTYlG5zU42E7EH2wqDIN0Y
-    51tssm036N2jKPFSdk>
-X-ME-Received: <xmr:rilHZj7NV8Ly8xSd9EsBVvlug2QPKNmcEcVlkiU83xlv63_xTWVyLIA_iWkhPP-lwQ9ozA6_CiDU6MAV3nNtBBY>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdehfedgjeehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdtsfdttddtjeenucfhrhhomheplfhonhgr
-    thhhrghnucevrghlmhgvlhhsuceojhgtrghlmhgvlhhsseefgiigtddrnhgvtheqnecugg
-    ftrfgrthhtvghrnhepkeekteegfefgvdefgfefffeufeffjedvudeijeehjeehffekjeek
-    leffueelgffgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
-    homhepjhgtrghlmhgvlhhsseefgiigtddrnhgvth
-X-ME-Proxy: <xmx:rilHZo2D099dIZwbXk55mk2SKAngP2oXBOENCkmjh4DAJPwZ6w9qAw>
-    <xmx:rilHZmF1fx2MHJyoHxM7X06m7qiNCl2lJ54lmveuB-S7nBZFGwm_MQ>
-    <xmx:rilHZp-8DOew53kGbq6lGMvcv9iRDw_tJJ6fxxzywkDXukR7zGxhnw>
-    <xmx:rilHZjm7FAk5hNjKBn5SYAxY8cqgB5IB51w2jF76ZbiZk-WmM0c6kQ>
-    <xmx:rylHZiHgiPuOWpTUiiuyl2BhNMuqGhKfsDpvzi0N3-Wb5eFH1SyQQIzm>
-Feedback-ID: i76614979:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 17 May 2024 05:55:57 -0400 (EDT)
-Date: Fri, 17 May 2024 03:00:58 -0700
-From: Jonathan Calmels <jcalmels@3xx0.net>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Ben Boeckel <me@benboeckel.net>, brauner@kernel.org, 
-	ebiederm@xmission.com, Luis Chamberlain <mcgrof@kernel.org>, 
-	Kees Cook <keescook@chromium.org>, Joel Granados <j.granados@samsung.com>, 
-	Serge Hallyn <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, David Howells <dhowells@redhat.com>, containers@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
-Subject: Re: [PATCH 0/3] Introduce user namespace capabilities
-Message-ID: <lkgjtvvbhiaern2fkcsholu4yaypsykfdpxim3k3mug2oko5iq@hoyossca24y5>
-References: <20240516092213.6799-1-jcalmels@3xx0.net>
- <ZkYKgNltq2hlBzbx@farprobe>
- <D1B3XN42A6DR.1RSMLZ6R7VRHT@kernel.org>
+	s=arc-20240116; t=1715940077; c=relaxed/simple;
+	bh=DIGYKbma4xgmMvhulhhTVRwTtUsbtMcm/O0rYLgnZSc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e/cjGQY5OGyKG28CEO63r59oJGDLgOIIwhs2+fsyoN6QQXc8IIqhEkQum5gTzmoBPPZPQ3j3WMg22m1gFglql3/u/29b2QSKx7KPYOA4yP30hgSDbASs7GswV2KPCrlvQ9gZIS0tNFE695zWJAvyovaT/SZxtGzvd/lh7zgI9j0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AA9C21424;
+	Fri, 17 May 2024 03:01:31 -0700 (PDT)
+Received: from [10.91.2.16] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D98DF3F762;
+	Fri, 17 May 2024 03:01:04 -0700 (PDT)
+Message-ID: <02bec885-5fd7-42dd-b85c-9547be7d3211@arm.com>
+Date: Fri, 17 May 2024 12:01:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <D1B3XN42A6DR.1RSMLZ6R7VRHT@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 16/17] coresight: Re-emit trace IDs when the sink changes
+ in per-thread mode
+To: Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>, John Garry
+ <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+ Leo Yan <leo.yan@linux.dev>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-perf-users@vger.kernel.org, gankulkarni@os.amperecomputing.com,
+ scclevenger@os.amperecomputing.com, coresight@lists.linaro.org,
+ mike.leach@linaro.org
+References: <20240429152207.479221-1-james.clark@arm.com>
+ <20240429152207.479221-18-james.clark@arm.com>
+ <0d433917-f638-4ca6-ba6a-1d5e85895024@arm.com>
+Content-Language: en-US
+From: James Clark <james.clark@arm.com>
+In-Reply-To: <0d433917-f638-4ca6-ba6a-1d5e85895024@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 16, 2024 at 04:36:07PM GMT, Jarkko Sakkinen wrote:
-> On Thu May 16, 2024 at 4:30 PM EEST, Ben Boeckel wrote:
-> > I note a lack of any changes to `Documentation/` which seems quite
-> > glaring for something with such a userspace visibility aspect to it.
-> >
-> > --Ben
+
+
+On 07/05/2024 13:05, Suzuki K Poulose wrote:
+> On 29/04/2024 16:22, James Clark wrote:
+>> In per-cpu mode there are multiple aux buffers and each one has a
+>> fixed sink, so the hw ID mappings which only need to be emitted once
+>> for each buffer, even with the new per-sink trace ID pools.
+>>
+>> But in per-thread mode there is only a single buffer which can be
+>> written to from any sink with now potentially overlapping trace IDs, so
+>> hw ID mappings need to be re-emitted every time the sink changes.
+>>
+>> This will require a change in Perf to track this so it knows which
+>> decode tree to use for each segment of the buffer. In theory it's also
+>> possible to look at the CPU ID on the AUX records, but this is more
+>> consistent with the existing system, and allows for correct decode using
+>> either mechanism.
+>>
+>> Signed-off-by: James Clark <james.clark@arm.com>
+>> ---
+>>   drivers/hwtracing/coresight/coresight-etm-perf.c | 14 ++++++++++++++
+>>   drivers/hwtracing/coresight/coresight-etm-perf.h |  2 ++
+>>   2 files changed, 16 insertions(+)
+>>
+>> diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c
+>> b/drivers/hwtracing/coresight/coresight-etm-perf.c
+>> index f07173aa4d66..08f3958f9367 100644
+>> --- a/drivers/hwtracing/coresight/coresight-etm-perf.c
+>> +++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
+>> @@ -499,6 +499,20 @@ static void etm_event_start(struct perf_event
+>> *event, int flags)
+>>                         &sink->perf_id_map))
+>>           goto fail_disable_path;
+>>   +    /*
+>> +     * In per-cpu mode there are multiple aux buffers and each one has a
+>> +     * fixed sink, so the hw ID mappings which only need to be
+>> emitted once
+>> +     * for each buffer.
+>> +     *
+>> +     * But in per-thread mode there is only a single buffer which can be
+>> +     * written to from any sink with potentially overlapping trace
+>> IDs, so
+>> +     * hw ID mappings need to be re-emitted every time the sink changes.
+>> +     */
+>> +    if (event->cpu == -1 && event_data->last_sink_hwid != sink) {
+>> +        cpumask_clear(&event_data->aux_hwid_done);
+>> +        event_data->last_sink_hwid = sink;
+>> +    }
+>> +
 > 
-> Yeah, also in cover letter it would be nice to refresh what is
-> a bounding set. I had to xref that (recalled what it is), and
-> then got bored reading the rest :-)
+> With the traceid caching in the event_data per-cpu , we could avoid this
+> step ?
+> 
+> Suzuki
+> 
+> 
 
-Thanks for reminding me, I actually meant to do it, just forgot.
-Having said that, `Documentation/security/credentials.rst` is not the
-best documention when it comes to capabilities. I will definitely add
-few more lines in there, but it's probably not what you're looking for.
+I don't think so, this is to inform the tool that the mappings have
+changed if the tool doesn't want to follow switch events.
 
-capabilities(7) is where everything is explained, I should have
-mentioned it. I could try to summarize the existing sets, but honestly I
-will probably do a worse job than the man page.
-
-I do plan to update the man page though if it comes to that.
+Unless I'm missing something, moving where the trace ids are stored
+doesn't mean that they will be re-sent when the mappings change?
 
