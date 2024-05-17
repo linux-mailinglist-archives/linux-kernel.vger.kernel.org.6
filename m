@@ -1,118 +1,133 @@
-Return-Path: <linux-kernel+bounces-182383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B271D8C8AA2
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:12:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 668558C8AAE
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:15:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CF53285C0C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:12:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5337285CB6
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:15:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63A4213DBA2;
-	Fri, 17 May 2024 17:12:18 +0000 (UTC)
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 760D813DBA8;
+	Fri, 17 May 2024 17:14:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YMOW82/b"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B957013D8B9;
-	Fri, 17 May 2024 17:12:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7687912F5A3;
+	Fri, 17 May 2024 17:14:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715965938; cv=none; b=WqcmmQ5BvrN5uORvEi3hckPdd5AxJnuTkjk+rmXKeytryMBBwK6zdi/eVQ3GSG9MhkiftyaLjNdHobTg36H7oxejyM3EdtDOSvIv0gRhUQPnJxJx5vR2VEFm/xzVJ8iqXbhcjlCqpuY7LTVn92UJ8xvadJqKer05FoOT1+l5cis=
+	t=1715966092; cv=none; b=E5CrD5y3Cb6lFR3LLp3cmTkOiFpg44l7YFt/GiJynixGERpM3kKGeiOirTJmxy2sywjJdW6xQiU74cWRXyq4p6/AsJVwYy1oZ/DYQS7Kz5v3UI08PGr0tjQNo6AELXZRyE0WyUtNhO72nii1D0O3cuFKvYq1g4dSH5NmA/k9cBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715965938; c=relaxed/simple;
-	bh=V7Moi5gWFU3OYOWp1ODvyUp0cpccJTi4lzeR8bBjtxc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TArLqOkx5p9i9RFaM/R13vFXnZuLfUCzju9K3OwFyzGicPWGslOoRzM2RTfxqHWqzCFKTekbzr71ZlMki+mVUeXGCCtY0fjfiDl/8gBk3Sm9UGFZWN9rXhjgMSOa45WmZucT+YWwuK7RZtygjuG3ks2jHq4rlLuNVMdD0rFk7Ws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+	s=arc-20240116; t=1715966092; c=relaxed/simple;
+	bh=uw9CPXGjU0B7A7pqt8vkqgvzDyz6OO8UztQRenWCnVQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JUS6UezdSv2LcoXp20WhjM3XbfeFGswGxkCfI2Kx70RhkDsae6fYlbF6BQnV123jHNmmMWkLPFQDIrC0hxGmoz1ZR8QHbDNjpyEk2jxy/+xJsqkAriId3aTIGxj6wJQrQucrQOL/pqozKw58TK4wpJtIZ8J++aIiKwNfhdB7Ehw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YMOW82/b; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-5f80aa2d4a3so90824a12.0;
-        Fri, 17 May 2024 10:12:16 -0700 (PDT)
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1ed96772f92so15461405ad.0;
+        Fri, 17 May 2024 10:14:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715966091; x=1716570891; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=X56rUOhK9RH8FnxHSRChz/vg6z6AwcLdxNOEL1Ao9+4=;
+        b=YMOW82/bN76MHkCqK6fgX3H/4vr3VY1iF3zfdFYlaaA8reqLAbZzUWy9oWSl/P6UFZ
+         rKfIiCxURvy2hGkFMQXGG++jUD+zzopn829bu7OnW8iYQ8lQQVfqMylE4vCncNgWwM5T
+         HLuAr0P5umeKnak0K378a1nwoOEPwnOh4Rl6LMA9KJ0kjs+2uo2CKl5e35qzi7H9qpFq
+         5QwxOrieFznVaZXtdTBR6Q7s2a8zeTrQ/lOZ7hTSQewB/WJszTmfxs+W76LDS63Zl1uI
+         OS4ZsDsxc4+yOrRKof/weqnl5Ll8eWwSngAv8mcOmfWSkcumc/vp0YHQuldzLxu4n9B6
+         a69A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715965936; x=1716570736;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sJP3Bvi4LZvT2V50/zdiKAgCKlmfC4y7jjdKq6zUFW0=;
-        b=bxOSrHTCPlneyUptUHRlx+YbJTqKK/J7pSpxOgypsUogf7eMGFSHI8ltP72Lbf7Cu2
-         X3iocQhu35dVNzNZHQCBMeuXxZuw6D+BpoJhkFkTn8XMjyBnbx2pIr5E20M1ht+pksE6
-         zx6WI3nEfg4f6LCDjF83DjdXqLgUt2ZFnlaf4jaYtx8YVFe/VO18CFSkkLuGEyjZ544w
-         0sKgUESGUkICPHc2dylyWgIePv1KzsrtaO4ZT/LQKoBfLGqkdb45YBs88c2krVknKps2
-         wfm5ge6rDDWNdmZC3mqqvVeL718etRF+wD25ijXPN1NAMaZpAOQkdGAHGNh8dJ7N7TuZ
-         wHdw==
-X-Forwarded-Encrypted: i=1; AJvYcCUJ7Wl6cyxr1xoMeshLiNlZzMtIo5KcyflUEt3BP2IZINNoMFdJvd481TK2XTybHlyahka986XSileTXi7g7kKtDFvUDjtwnCffb3k3tZyQKRpRNy/+Qp5KepfbaaGQxeMOYJW10YnaBgCgFyvrrxYW4c8iCGoD95V7QHSSj8zNyx3gqQ==
-X-Gm-Message-State: AOJu0YyQRqM1RTD60IE3llmL6j1I5eGJ/req8i0FlURmo5C7zduUEhgk
-	LGrezRbrDMvSR1C6vFOL6yWTnjlQ+Um2t0WQQ0j58qMhDsJdAH3Y
-X-Google-Smtp-Source: AGHT+IERiv3eoMFHKpAJyk5tOavTPrH9L+4rFoAlwWFeIVmvoquPL58lrRrbGXcz8+OzDTGfJm4bUQ==
-X-Received: by 2002:a05:6a00:21c6:b0:6f4:9fc7:daf2 with SMTP id d2e1a72fcca58-6f4e02a5f45mr26551627b3a.7.1715965936009;
-        Fri, 17 May 2024 10:12:16 -0700 (PDT)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6340b57ed97sm15246657a12.23.2024.05.17.10.12.15
+        d=1e100.net; s=20230601; t=1715966091; x=1716570891;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=X56rUOhK9RH8FnxHSRChz/vg6z6AwcLdxNOEL1Ao9+4=;
+        b=QtA0UIGV2tWXYfBg5feHXlh3RyBLyDcj5dt6WrQ+3tOD5oe4Z6kbtuc49jYQ6Rgy4o
+         jCZKaCxFEIb3Y1WB1rJU7o6yhRQebCyFyaRTXJ1YuBIYubPs9YFFBEdZQU1QDXAhoKiV
+         NutajSj+/G7Wn8o7r1oju6N5ZWfdU50xt4VwEXfaupuXzfGBOD1VuwlT2YDyvAhp26eC
+         66qvwFf3YYt/fiRD0+YPQdPKAMSmGF0HwairGv6ivEdK04monps8PuGTCD+TLlMiDP45
+         LqtTJm97RqpDFW8m6SpNlYBIuaB7Zz4Hpb8W3VrGWuchlzaYWVEPXDqFTIZyI3s5HHjX
+         rLfA==
+X-Forwarded-Encrypted: i=1; AJvYcCXHTsSDgzaOUECUm6qNgRu6qrBJaZMOXTq3dcRGVoM6pNpFmgVvHGeYH2jl1W/ZjZVTQItOOFmEphcqYRulHzQmHTMM9ho007560gmU9kRN5NkcCQRoFuOJ5E16kMGOSaJfAzhUWkB5sCuoCiA=
+X-Gm-Message-State: AOJu0YxoTgqp9RHwyhr3lmIonKE1flPKTUgeRBC24T/3RWcQlQvuXNPH
+	qwuncVyv9nNnKuSZ3L04aB5ZCp7l5HLPqEoJe/DNirPWIsuOlda2
+X-Google-Smtp-Source: AGHT+IGpa2Dr0JDdAiMoTugcbrVLY0mUR0iw+IOqX/boafkVx/d5zR2uQ7+D1n+sqry4E4YaQ6Ztdw==
+X-Received: by 2002:a05:6a21:3115:b0:1b0:1be7:3705 with SMTP id adf61e73a8af0-1b01be7387cmr10024240637.7.1715966090589;
+        Fri, 17 May 2024 10:14:50 -0700 (PDT)
+Received: from localhost.localdomain ([187.120.157.23])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2a86a4fsm14988250b3a.63.2024.05.17.10.14.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 May 2024 10:12:15 -0700 (PDT)
-Date: Sat, 18 May 2024 02:12:13 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>,
-	Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, imx@lists.linux.dev,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Serge Semin <fancer.lancer@gmail.com>
-Subject: Re: [PATCH v8 0/5] PCI: dwc: Add common pme_turn_off message by
- using outbound iATU
-Message-ID: <20240517171213.GE1947919@rocinante>
-References: <20240418-pme_msg-v8-0-a54265c39742@nxp.com>
+        Fri, 17 May 2024 10:14:50 -0700 (PDT)
+From: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+To: miriam.rachel.korenblit@intel.com,
+	kvalo@kernel.org,
+	rafael.j.wysocki@intel.com,
+	daniel.lezcano@linaro.org,
+	johannes.berg@intel.com,
+	dmantipov@yandex.ru
+Cc: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>,
+	linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] iwlwifi: mvm: adding check if the thermal firmware is running
+Date: Fri, 17 May 2024 14:13:05 -0300
+Message-ID: <20240517171311.3705-1-trintaeoitogc@gmail.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240418-pme_msg-v8-0-a54265c39742@nxp.com>
+Content-Transfer-Encoding: 8bit
 
-> Involve an new and common mathod to send pme_turn_off() message. Previously
-> pme_turn_off() implement by platform related special register to trigge    
-> it.                                                                        
->                                                                            
-> But Yoshihiro give good idea by using iATU to send out message. Previously 
-> Yoshihiro provide patches to raise INTx message by dummy write to outbound 
-> iATU.                                                                      
->                                                                            
-> Use similar mathod to send out pme_turn_off message.                       
->                                                                            
-> Previous two patches is picked from Yoshihiro' big patch serialise.        
->  PCI: dwc: Change arguments of dw_pcie_prog_outbound_atu()                 
->  PCI: Add INTx Mechanism Messages macros                                   
->                                                                            
-> PCI: Add PME_TURN_OFF message macro                                        
-> dt-bindings: PCI: dwc: Add 'msg" register region, Add "msg" region to use  
-> to map PCI msg.                                                            
->                                                                            
-> PCI: dwc: Add common pme_turn_off message method                           
-> Using common pme_turn_off() message if platform have not define their.
+In the dmesg is showing the message "failed to read out thermal zone"
+as if the temperature read is failed by don't find the thermal zone.
 
-Applied to controller/dwc, thank you!
+After researching and debugging, I see that this specific error is
+occurrenced because the thermal try read the temperature when is started,
+but the firmware is not running yet.
 
-[01/05] PCI: Add INTx Mechanism Messages macros
-        https://git.kernel.org/pci/pci/c/182e6ef0df77
-[02/05] PCI: dwc: Consolidate args of dw_pcie_prog_outbound_atu() into a structure
-        https://git.kernel.org/pci/pci/c/523d5018701d
-[03/05] PCI: dwc: Add outbound MSG TLPs support
-        https://git.kernel.org/pci/pci/c/a683a0065ac1
-[04/05] PCI: Add PCIE_MSG_CODE_PME_TURN_OFF message macro
-        https://git.kernel.org/pci/pci/c/a61a1c5932b0
-[05/05] PCI: dwc: Add generic MSG TLP support for sending PME_Turn_Off when system suspend
-        https://git.kernel.org/pci/pci/c/33af7f463b68
+For more legibiliti i change the tt.c for return EAGAIN when this was occurrence.
+After this change, in my computer I compile and install kernel in /boot
+and in my dmesg the message "failed to read out thermal zone" is not show
+any more.
 
-	Krzysztof
+I would like to thanks for Rafael Wysocki <refael.j.wysocki@intel.com> and
+Kalle Valo <kvalo@kernel.org> for your suggestions in my first patch.
+
+Signed-off-by: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+---
+ drivers/net/wireless/intel/iwlwifi/mvm/tt.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/tt.c b/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
+index 8083c4b2ab6b..68ab9966330c 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
+@@ -620,8 +620,14 @@ static int iwl_mvm_tzone_get_temp(struct thermal_zone_device *device,
+ 
+ 	mutex_lock(&mvm->mutex);
+ 
+-	if (!iwl_mvm_firmware_running(mvm) ||
+-	    mvm->fwrt.cur_fw_img != IWL_UCODE_REGULAR) {
++	const int res = iwl_mvm_firmware_running(mvm);
++
++	if (!res) {
++		ret = -EAGAIN;
++		goto out;
++	}
++
++	if (mvm->fwrt.cur_fw_img != IWL_UCODE_REGULAR) {
+ 		ret = -ENODATA;
+ 		goto out;
+ 	}
+-- 
+2.45.1
+
 
