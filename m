@@ -1,146 +1,169 @@
-Return-Path: <linux-kernel+bounces-182288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 003708C8940
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:21:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09F2A8C8942
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:22:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70BC41F21CE7
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 15:21:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4BE4280EC5
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 15:22:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C309212D75D;
-	Fri, 17 May 2024 15:21:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 679D412D1EC;
+	Fri, 17 May 2024 15:22:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cYPrEfsx"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SS9A74wE"
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59A9A12CDBB;
-	Fri, 17 May 2024 15:21:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E1C96A8DE
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 15:22:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715959301; cv=none; b=j0OVzKFH6GgY9FVZLeIFbyzJIrWYUNS1MJNS0o2mvMdxt9br6NgpBuwTnaRKnWBZ0KCp0LdSSZce/djFrBP4fFemNG0oSXo9LCP6+h6QChi5t8HgUduqc7XKvIAZqxVU/4AncfliQVfQoiPBKD36Ib+S+S1u4k5Qt9yjSBVJ56A=
+	t=1715959361; cv=none; b=etfI438lch256RsBWir4lOvUnmzJUHn4Wj8LlJf7Zn7MglBmN13PFLPjHNZCSGdbdX9zxkYdU2iTNotiQajxQai7oKq3KauxdYKAOl81OqfNKQs2tS+I8wPx0QiA+T4nMqqzqslKAh8bbx5cvdmsvPZzJyGHIT0mRTCtpkez7OU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715959301; c=relaxed/simple;
-	bh=jpNsC9cI9iGi7aedbr9RL6SWorewOwQj+OYp2jQWsx8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r9jIW++LHGbBiIgmyeDs5iFzb/NzVXxb+2S5mNlJ6Ux5RmgL23RWkQScJGgHu7Hd6n2HvZ20nMOXUuYtF7YqnRJo+Iv4qT17GLncHC541w0xrIWMXqQ1zEmUzycM8S5YmtebO0gewWxg+cQ8VPLGZvBxgturxXa6XrtrrqHEJbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cYPrEfsx; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715959299; x=1747495299;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=jpNsC9cI9iGi7aedbr9RL6SWorewOwQj+OYp2jQWsx8=;
-  b=cYPrEfsxPp/Ovf1mb6cABpic0qFnlv6lyrnBtrO81cuJfQqXTZvULHRu
-   5an1cnfxWNXTGmaKwqOFhg9sbTqq50cf5f2hxBKdZEvjp4M+BJAdMXKOm
-   etYO/2iafAQ9pcv162d5Rpny4aJRXlo7G7vISm9SQIZK1WdROmT950o7k
-   Zmq8wYuR50MYaVqcC52Y+xe1/D8x2U4zR4lOiLtDmATBwqas2fQIekaNs
-   1dhf2UJAGk7ROOAblNbHOYajUM5WKhSqOnYgAFlGRqzh5WKa5DN2gbEBB
-   xG9swVG8zqZS37UIsQ0QzoWFoKcH46f5nnot1glSjZsoaxxLXLn13a13U
-   w==;
-X-CSE-ConnectionGUID: QFLsj6XjSFiaaZP5Zf0gbA==
-X-CSE-MsgGUID: HLUM5D2fSCOL3B1/4Napdg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11075"; a="23280080"
-X-IronPort-AV: E=Sophos;i="6.08,168,1712646000"; 
-   d="scan'208";a="23280080"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 08:21:39 -0700
-X-CSE-ConnectionGUID: yIfU3bf3Q8agb0Pm4A51zg==
-X-CSE-MsgGUID: 10hV1spdSGC4s6JDTrAs2g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,168,1712646000"; 
-   d="scan'208";a="62655258"
-Received: from kinlongk-mobl1.amr.corp.intel.com (HELO [10.125.108.204]) ([10.125.108.204])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 08:21:38 -0700
-Message-ID: <395850c4-f8a3-46ed-9b0c-b1f47386610c@intel.com>
-Date: Fri, 17 May 2024 08:21:37 -0700
+	s=arc-20240116; t=1715959361; c=relaxed/simple;
+	bh=SoNjM+fZ7CTvIUU9FKqh2EWjcEbzvsg7sGSSi3DdsV0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LEtfHSGskeXSZnP2QrO70MVE/vR7VKt9vjIl2yGofA9rpgYQOq2bp29Gjn/QeFpmGNN8AbGjmND4ydQCSRpzYyE9jGw7C3fnW3r2dnTM2/YkXTm7BaLWtYRAZMDYtowDrhd2+EgmYQMeDlZlF/AtAE8J9EUHxJcNwP5LOqcBqWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SS9A74wE; arc=none smtp.client-ip=209.85.221.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-4df2a816455so254147e0c.3
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 08:22:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715959359; x=1716564159; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=a0X1IdGrvgRbIDZDbKlklVPOFj9du4fG+oJBScJlx9I=;
+        b=SS9A74wE6LHPNSRyFk6q77cTsqUE8hdfUeoiWp63dln8EqOYkAeDslONOwds9H93DA
+         oJnV+RPME8knDHLPyOv7VCBCbjlMIB9+JCEorPj2qNflVw6Q3GP8AwvLDsyLOfN72aG4
+         LCC6Mb1ZT/02JkrhPmNH8FXmlE2wMmTYby2mufeCIHPzdi2lgxW7ANVLRvhTS8zaUNei
+         tEMupoxtfq98Ti7bsxtJb/HVLwTiDC8Nt0GmeZp9GGTWRvEYhiv2j92LO+sDKQLOWUqo
+         Z/GtKij0O+5C3Lo8h1jTLsMsCuBiwzEXSS7KTHgkD5ABWSRTMZ1LN9R4qsqAG0Qj8Fu7
+         c3lw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715959359; x=1716564159;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=a0X1IdGrvgRbIDZDbKlklVPOFj9du4fG+oJBScJlx9I=;
+        b=LrQISJ9G/4TQUawvn+Vm8XgnFjm2LEB4sJg2b33RwvxSIZIauUfPLuNJcdQnQTy880
+         45KLeqhH8NJ6WGu0Z3D9lpd1u2Si8EvFfqEuwhJzUBczFQx2ln43Vqc4PHA4N3YZWxFL
+         B7IlrMP5GfYoodQubtATBjNmsYIxed83rAEZUweKMh6aYkJrH1Mplam8Lmy+q3RhgmmQ
+         A4aYl7qyjmn4n2ZvT3DXg51mybY9nGf38zz9RHBlJt8c2CLD6EXe+REG3nVM/GiZUEZt
+         je16DFvyntzEZORcgx3cRBKtxXwEFUxXlpT7KG25fnJR6433LyTS0PGtwXq499cTotT8
+         rrkg==
+X-Forwarded-Encrypted: i=1; AJvYcCVww9qHipMNpfTbquH6x7FvjnAc/2aAVdZg7bX0skmudWjaCiJ9Csoshh/q19Z9rQ4x8bntoBQVEZBv9GAqNDGSjnwm7BsN0cfbs+3p
+X-Gm-Message-State: AOJu0Yzre8CemHD3qpW96JHyfP8sjcYMO7+miu+QlWIcjgAO79akEPqu
+	sGvT8oIimaC2yBmVbubcmAIvMvdYKRimT6xKKQBQYaVW3Skf5rLmHq5InScs0C0HWVpLukO9tYJ
+	gfWZgAgBpDI291cdLOrWaMI6owV3i5bi2WWtS
+X-Google-Smtp-Source: AGHT+IHimgZxVAtnI+vF7pLVRq7Oh/c7g37qx4xedEDmPMvZxwY+/11EHWLfIn6MDIjYi7FNRJ9mzDpxRGtc3xtIs5c=
+X-Received: by 2002:a05:6122:98a:b0:4d3:362f:f9c1 with SMTP id
+ 71dfb90a1353d-4df88359107mr21578723e0c.13.1715959357364; Fri, 17 May 2024
+ 08:22:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/20] x86/tdx: Introduce tdvmcall_trampoline()
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- Sean Christopherson <seanjc@google.com>, Paolo Bonzini
- <pbonzini@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, "K. Y. Srinivasan" <kys@microsoft.com>,
- Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
- Dexuan Cui <decui@microsoft.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>
-Cc: linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-hyperv@vger.kernel.org
-References: <20240517141938.4177174-1-kirill.shutemov@linux.intel.com>
- <20240517141938.4177174-2-kirill.shutemov@linux.intel.com>
-Content-Language: en-US
-From: Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
- oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
- 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
- ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
- VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
- iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
- c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
- pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
- ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
- QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzUVEYXZpZCBDaHJp
- c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
- LmNvbT7CwXgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
- lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
- MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
- IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
- aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
- I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
- E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
- F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
- CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
- P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
- 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lczsFNBFRjzmoBEACyAxbvUEhd
- GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
- MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
- Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
- lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
- 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
- qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
- BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
- 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
- vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
- FCRl0Bvyj1YZUql+ZkptgGjikQARAQABwsFfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
- l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
- yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
- +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
- asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
- WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
- sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
- KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
- MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
- hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
- vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
-In-Reply-To: <20240517141938.4177174-2-kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240517130118.759301-1-andrey.konovalov@linux.dev>
+In-Reply-To: <20240517130118.759301-1-andrey.konovalov@linux.dev>
+From: Marco Elver <elver@google.com>
+Date: Fri, 17 May 2024 17:21:58 +0200
+Message-ID: <CANpmjNNNW-URJjyEpb9CYM2kvYdzNu-jbmk2V2fukbTU=PB29Q@mail.gmail.com>
+Subject: Re: [PATCH] kasan, fortify: properly rename memintrinsics
+To: andrey.konovalov@linux.dev
+Cc: Andrey Konovalov <andreyknvl@gmail.com>, Alexander Potapenko <glider@google.com>, 
+	Dmitry Vyukov <dvyukov@google.com>, Andrey Ryabinin <ryabinin.a.a@gmail.com>, kasan-dev@googlegroups.com, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
+	Erhard Furtner <erhard_f@mailbox.org>, Nico Pache <npache@redhat.com>, Daniel Axtens <dja@axtens.net>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 5/17/24 07:19, Kirill A. Shutemov wrote:
-> TDCALL calls are centralized into a few megawrappers that take the
-> struct tdx_module_args as input. Most of the call sites only use a few
-> arguments, but they have to zero out unused fields in the structure to
-> avoid data leaks to the VMM. This leads to the compiler generating
-> inefficient code: dozens of instructions per call site to clear unused
-> fields of the structure.
+On Fri, 17 May 2024 at 15:01, <andrey.konovalov@linux.dev> wrote:
+>
+> From: Andrey Konovalov <andreyknvl@gmail.com>
+>
+> After commit 69d4c0d32186 ("entry, kasan, x86: Disallow overriding mem*()
+> functions") and the follow-up fixes, with CONFIG_FORTIFY_SOURCE enabled,
+> even though the compiler instruments meminstrinsics by generating calls
+> to __asan/__hwasan_ prefixed functions, FORTIFY_SOURCE still uses
+> uninstrumented memset/memmove/memcpy as the underlying functions.
+>
+> As a result, KASAN cannot detect bad accesses in memset/memmove/memcpy.
+> This also makes KASAN tests corrupt kernel memory and cause crashes.
+>
+> To fix this, use __asan_/__hwasan_memset/memmove/memcpy as the underlying
+> functions whenever appropriate. Do this only for the instrumented code
+> (as indicated by __SANITIZE_ADDRESS__).
+>
+> Reported-by: Erhard Furtner <erhard_f@mailbox.org>
+> Reported-by: Nico Pache <npache@redhat.com>
+> Closes: https://lore.kernel.org/all/20240501144156.17e65021@outsider.home/
+> Fixes: 69d4c0d32186 ("entry, kasan, x86: Disallow overriding mem*() functions")
+> Fixes: 51287dcb00cc ("kasan: emit different calls for instrumentable memintrinsics")
+> Fixes: 36be5cba99f6 ("kasan: treat meminstrinsic as builtins in uninstrumented files")
+> Signed-off-by: Andrey Konovalov <andreyknvl@gmail.com>
 
-I agree that this is what the silly compiler does in practice.  But my
-first preference for fixing it would just be an out-of-line memset() or
-a pretty bare REP;MOV.
+Reviewed-by: Marco Elver <elver@google.com>
 
-In other words, I think this as the foundational justification for the
-rest of the series leaves a little to be desired.
+This is getting rather complex, but I don't see a better way either.
+
+> ---
+>  include/linux/fortify-string.h | 22 ++++++++++++++++++----
+>  1 file changed, 18 insertions(+), 4 deletions(-)
+>
+> diff --git a/include/linux/fortify-string.h b/include/linux/fortify-string.h
+> index 85fc0e6f0f7f..bac010cfc42f 100644
+> --- a/include/linux/fortify-string.h
+> +++ b/include/linux/fortify-string.h
+> @@ -75,17 +75,30 @@ void __write_overflow_field(size_t avail, size_t wanted) __compiletime_warning("
+>         __ret;                                                  \
+>  })
+>
+> -#if defined(CONFIG_KASAN_GENERIC) || defined(CONFIG_KASAN_SW_TAGS)
+> +#if defined(__SANITIZE_ADDRESS__)
+> +
+> +#if !defined(CONFIG_CC_HAS_KASAN_MEMINTRINSIC_PREFIX) && !defined(CONFIG_GENERIC_ENTRY)
+> +extern void *__underlying_memset(void *p, int c, __kernel_size_t size) __RENAME(memset);
+> +extern void *__underlying_memmove(void *p, const void *q, __kernel_size_t size) __RENAME(memmove);
+> +extern void *__underlying_memcpy(void *p, const void *q, __kernel_size_t size) __RENAME(memcpy);
+> +#elif defined(CONFIG_KASAN_GENERIC)
+> +extern void *__underlying_memset(void *p, int c, __kernel_size_t size) __RENAME(__asan_memset);
+> +extern void *__underlying_memmove(void *p, const void *q, __kernel_size_t size) __RENAME(__asan_memmove);
+> +extern void *__underlying_memcpy(void *p, const void *q, __kernel_size_t size) __RENAME(__asan_memcpy);
+> +#else /* CONFIG_KASAN_SW_TAGS */
+> +extern void *__underlying_memset(void *p, int c, __kernel_size_t size) __RENAME(__hwasan_memset);
+> +extern void *__underlying_memmove(void *p, const void *q, __kernel_size_t size) __RENAME(__hwasan_memmove);
+> +extern void *__underlying_memcpy(void *p, const void *q, __kernel_size_t size) __RENAME(__hwasan_memcpy);
+> +#endif
+> +
+>  extern void *__underlying_memchr(const void *p, int c, __kernel_size_t size) __RENAME(memchr);
+>  extern int __underlying_memcmp(const void *p, const void *q, __kernel_size_t size) __RENAME(memcmp);
+> -extern void *__underlying_memcpy(void *p, const void *q, __kernel_size_t size) __RENAME(memcpy);
+> -extern void *__underlying_memmove(void *p, const void *q, __kernel_size_t size) __RENAME(memmove);
+> -extern void *__underlying_memset(void *p, int c, __kernel_size_t size) __RENAME(memset);
+>  extern char *__underlying_strcat(char *p, const char *q) __RENAME(strcat);
+>  extern char *__underlying_strcpy(char *p, const char *q) __RENAME(strcpy);
+>  extern __kernel_size_t __underlying_strlen(const char *p) __RENAME(strlen);
+>  extern char *__underlying_strncat(char *p, const char *q, __kernel_size_t count) __RENAME(strncat);
+>  extern char *__underlying_strncpy(char *p, const char *q, __kernel_size_t size) __RENAME(strncpy);
+> +
+>  #else
+>
+>  #if defined(__SANITIZE_MEMORY__)
+> @@ -110,6 +123,7 @@ extern char *__underlying_strncpy(char *p, const char *q, __kernel_size_t size)
+>  #define __underlying_strlen    __builtin_strlen
+>  #define __underlying_strncat   __builtin_strncat
+>  #define __underlying_strncpy   __builtin_strncpy
+> +
+>  #endif
+>
+>  /**
+> --
+> 2.25.1
+>
 
