@@ -1,143 +1,160 @@
-Return-Path: <linux-kernel+bounces-182697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2861E8C8E90
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 01:37:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D30638C8E9C
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 01:38:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D81AA281C40
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 23:37:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F2C8281BD6
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 23:38:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9BA11411EA;
-	Fri, 17 May 2024 23:37:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B7F61411FF;
+	Fri, 17 May 2024 23:38:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="k5JZn+N9"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="F4UT8TTr"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A16DA21373;
-	Fri, 17 May 2024 23:37:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1523721373;
+	Fri, 17 May 2024 23:38:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715989053; cv=none; b=D2ToQ6t9vhEVjSG/RxzYEGPaa3BdPyRy3BNXiwCRsqiQVDgOOLv/McWe8Glxx4xDB+Z4HmFmvc0GufQMhyNmS+SQZLWgjj4xbR0V3BKSTywt3KmNvrJTWOcb0G4jnXz5OkR+xO/WAplwR6dgAfLQZtM8rYsRIJkQUNVEfdhgiwQ=
+	t=1715989104; cv=none; b=G4J82nnrkauEg18qofRlcTLSqzZp2ig8uGnH6XVjE4IDf1a4FaTrIPigedLTqU53HjTdcR9vu6e6vqeuUBIiaXKX9jIl5vm30Ru9sEJp67O2afn17lmRBYr2+hEVUQyHN9o1BNtg23psstCS1VT393EWaOPvisJAvXCBaWyDDh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715989053; c=relaxed/simple;
-	bh=9f9zI+W/kOF9PQZyMuQ7fwuoXF6DvwzLPEBJGtN6o78=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V936Sxlg4Mq7nGgBBVDq45VwqFplLKtLJCpwzOBz2eH5Q6FXpA5lfysNPHafgBARdsUR++KbsJ2emsAiDF9SKWE7IaG4W4mc/kp1H6qu0MouxkEYbpT5bsiow5l63/oLO1uaWEslPhp0R1LUj4BoS7VTVcYCU3grobCXO5133R4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=k5JZn+N9; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=5hkFzFH0WqUDtk5tfXiCLXCsPkv9Y87d71GcppOkIUw=; b=k5JZn+N986SzxpVXNYZ2p7sV7Q
-	KBwEmkOAIS4f0ylyAq+HRz5JJLnH61ww4Mx8yEMJw+a/psuslX5V+5QineAEqXfqDOEZEcS2ycBtP
-	D6XSxjH+n5/Aznak+65Ev8XjTvxYoeHsHkdehxV1mabRi77NHlm5VMJVkYYpFT99sMNw66J+mPSQ1
-	hMyN/CS3i4bFQabZzMhXKMMKWuapyFdSt5ROvjJky6olJiRzX89oYpMzrkUIfCIYuoV/9D9XYV91b
-	PX5b5EjXOyXrr9SqrFziBGwtpnZOb1r1yMGKwTihda/k4BHPQAPZGVAQ+zNXAqbVSDymcxRVrTvFY
-	ATsADIGw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:51660)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1s878T-0007B7-0z;
-	Sat, 18 May 2024 00:37:13 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1s878S-0001x4-9e; Sat, 18 May 2024 00:37:12 +0100
-Date: Sat, 18 May 2024 00:37:12 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Duanqiang Wen <duanqiangwen@net-swift.com>, mturquette@baylibre.com,
-	sboyd@kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clkdev: report over-sized strings when creating clkdev
- entries
-Message-ID: <ZkfqKMqkUc/Sr7U2@shell.armlinux.org.uk>
-References: <E1rl62V-004UFh-Te@rmk-PC.armlinux.org.uk>
- <7eda7621-0dde-4153-89e4-172e4c095d01@roeck-us.net>
- <ZkfYqj+OcAxd9O2t@shell.armlinux.org.uk>
- <4ea9cc83-c7ca-47b8-8d43-dab16193108f@roeck-us.net>
+	s=arc-20240116; t=1715989104; c=relaxed/simple;
+	bh=7Z0hd8gMVwETlvpFubrYKupvU3aDqQQdhXmZ5V+apZw=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rcZ3EKvlsfb61uGyyGuGYiqQweW8KNaXX6LQQKLGpI/d7zn6KvhLnQD5PcNh2QrJUiAzsSVandUaBRqXu+PcbvwEpVXdKx9kpg+WzOKesWpdg31PslPPTbTvk1Vgy6QPDPwGY6ydZU2wX6/5d2qJeNKBstS/6GhKRmvu4KiEIvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=F4UT8TTr; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44HI0dwC014256;
+	Fri, 17 May 2024 23:38:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	from:to:cc:subject:date:message-id:in-reply-to:references
+	:mime-version:content-transfer-encoding:content-type; s=
+	qcppdkim1; bh=UcTAQeJAbUmaz0Egw29a72Y6nLLIJr98LFms+WVPNYI=; b=F4
+	UT8TTrCnmldBt56JPNyk0lrdm6XUFcWUM0HzyCwr7WvhlgXOzKoclE0xFT0/xjRJ
+	HQGVgwdJeB+7VBlEUUhv5mdAf7EzNZxTzVU+WS8VSm+yt11Ju9/ZwBS9oRFJLisB
+	yM9rHNHoTsjNaqz/RxrUySR+tBEivEqK667LZ1x8WVBzptTg8sz6MuVp+HZhY82e
+	1THrTEkuy1cJf1UN+w0X5ZtKE8y1ofVYuQhtH9QoIFy6+9q7fjF6wwOCFLr+kFPR
+	7OPlxUQjj2u6Jnkv4aV8jItZQkXquqt/PcNBQahhNRi9vvme0awBh6Ma+XASdjqp
+	MaTLut3+zDkYzIGyJUmw==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y2125qe2g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 17 May 2024 23:38:12 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44HNcBe7006584
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 17 May 2024 23:38:11 GMT
+Received: from abhinavk-linux1.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 17 May 2024 16:38:11 -0700
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+To: <freedreno@lists.freedesktop.org>, Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, "Daniel
+ Vetter" <daniel@ffwll.ch>
+CC: <dri-devel@lists.freedesktop.org>, <seanpaul@chromium.org>,
+        <swboyd@chromium.org>, <dianders@chromium.org>,
+        <quic_jesszhan@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [RFC PATCH 1/4] drm/msm: register a fault handler for display mmu faults
+Date: Fri, 17 May 2024 16:37:56 -0700
+Message-ID: <20240517233801.4071868-2-quic_abhinavk@quicinc.com>
+X-Mailer: git-send-email 2.44.0
+In-Reply-To: <20240517233801.4071868-1-quic_abhinavk@quicinc.com>
+References: <20240517233801.4071868-1-quic_abhinavk@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4ea9cc83-c7ca-47b8-8d43-dab16193108f@roeck-us.net>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: YMqC9xMwEsDHwtiNuFoNmJgO9-l6pWjb
+X-Proofpoint-ORIG-GUID: YMqC9xMwEsDHwtiNuFoNmJgO9-l6pWjb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-17_11,2024-05-17_03,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
+ lowpriorityscore=0 mlxlogscore=999 clxscore=1015 bulkscore=0
+ priorityscore=1501 impostorscore=0 phishscore=0 adultscore=0
+ suspectscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405010000 definitions=main-2405170184
 
-On Fri, May 17, 2024 at 04:34:06PM -0700, Guenter Roeck wrote:
-> On 5/17/24 15:22, Russell King (Oracle) wrote:
-> > On Fri, May 17, 2024 at 03:09:12PM -0700, Guenter Roeck wrote:
-> > > Hi,
-> > > 
-> > > On Fri, Mar 15, 2024 at 11:47:55AM +0000, Russell King (Oracle) wrote:
-> > > > Report an error when an attempt to register a clkdev entry results in a
-> > > > truncated string so the problem can be easily spotted.
-> > > > 
-> > > > Reported by: Duanqiang Wen <duanqiangwen@net-swift.com>
-> > > > Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
-> > > > Reviewed-by: Stephen Boyd <sboyd@kernel.org>
-> > > 
-> > > With this patch in the mainline kernel, I get
-> > > 
-> > > 10000000.clock-controller:corepll: device ID is greater than 24
-> > > sifive-clk-prci 10000000.clock-controller: Failed to register clkdev for corepll: -12
-> > > sifive-clk-prci 10000000.clock-controller: could not register clocks: -12
-> > > sifive-clk-prci 10000000.clock-controller: probe with driver sifive-clk-prci failed with error -12
-> > > ...
-> > > platform 10060000.gpio: deferred probe pending: platform: supplier 10000000.clock-controller not ready
-> > > platform 10010000.serial: deferred probe pending: platform: supplier 10000000.clock-controller not ready
-> > > platform 10011000.serial: deferred probe pending: platform: supplier 10000000.clock-controller not ready
-> > > platform 10040000.spi: deferred probe pending: platform: supplier 10000000.clock-controller not ready
-> > > platform 10050000.spi: deferred probe pending: platform: supplier 10000000.clock-controller not ready
-> > > platform 10090000.ethernet: deferred probe pending: platform: supplier 10000000.clock-controller not ready
-> > > 
-> > > when trying to boot sifive_u in qemu.
-> > > 
-> > > Apparently, "10000000.clock-controller" is too long. Any suggestion on
-> > > how to solve the problem ? I guess using dev_name(dev) as dev_id parameter
-> > > for clk_hw_register_clkdev() is not or no longer a good idea.
-> > > What else should be used instead ?
-> > 
-> > It was *never* a good idea. clkdev uses a fixed buffer size of 20
-> > characters including the NUL character, and "10000000.clock-controller"
-> > would have been silently truncated to "10000000.clock-cont", and thus
-> > 
-> >                          if (!dev_id || strcmp(p->dev_id, dev_id))
-> > 
-> > would never have matched.
-> > 
-> > We need to think about (a) whether your use of clk_hw_register_clkdev()
-> > is still appropriate, and (b) whether we need to increase the size of
-> > the strings.
-> > 
-> 
-> It isn't _my_ use, really. I only run a variety of boot tests with qemu.
-> I expect we'll see reports from others trying to boot the mainline kernel
-> on real sifive_u hardware or other hardware using the same driver or other
-> drivers using dev_name() as dev_id parameter. Coccinelle finds the
-> following callers:
+In preparation to register a iommu fault handler for display
+related modules, register a fault handler for the backing
+mmu object of msm_kms.
 
-Using dev_name() is not an issue. It's when dev_name() exceeds 19
-characters that it becomes an issue (and always has been an issue
-due to the truncation.) clk_get(dev, ...) uses dev_name(dev) to match
-against its entry in the table.
+Currently, the fault handler only captures the display snapshot
+but we can expand this later if more information needs to be
+added to debug display mmu faults.
 
-As I say, dev_name() itself is not an issue. The length used for the
-name is.
+Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+---
+ drivers/gpu/drm/msm/msm_kms.c | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
+diff --git a/drivers/gpu/drm/msm/msm_kms.c b/drivers/gpu/drm/msm/msm_kms.c
+index af6a6fcb1173..62c8e6163e81 100644
+--- a/drivers/gpu/drm/msm/msm_kms.c
++++ b/drivers/gpu/drm/msm/msm_kms.c
+@@ -200,6 +200,28 @@ struct msm_gem_address_space *msm_kms_init_aspace(struct drm_device *dev)
+ 	return aspace;
+ }
+ 
++static int msm_kms_fault_handler(void *arg, unsigned long iova, int flags, void *data)
++{
++	struct msm_kms *kms = arg;
++	struct msm_disp_state *state;
++	int ret;
++
++	ret = mutex_lock_interruptible(&kms->dump_mutex);
++	if (ret)
++		return ret;
++
++	state = msm_disp_snapshot_state_sync(kms);
++
++	mutex_unlock(&kms->dump_mutex);
++
++	if (IS_ERR(state)) {
++		DRM_DEV_ERROR(kms->dev->dev, "failed to capture snapshot\n");
++		return PTR_ERR(state);
++	}
++
++	return 0;
++}
++
+ void msm_drm_kms_uninit(struct device *dev)
+ {
+ 	struct platform_device *pdev = to_platform_device(dev);
+@@ -261,6 +283,9 @@ int msm_drm_kms_init(struct device *dev, const struct drm_driver *drv)
+ 		goto err_msm_uninit;
+ 	}
+ 
++	if (kms->aspace)
++		msm_mmu_set_fault_handler(kms->aspace->mmu, kms, msm_kms_fault_handler);
++
+ 	drm_helper_move_panel_connectors_to_head(ddev);
+ 
+ 	drm_for_each_crtc(crtc, ddev) {
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+2.44.0
+
 
