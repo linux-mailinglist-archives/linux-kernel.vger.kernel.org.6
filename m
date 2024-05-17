@@ -1,163 +1,122 @@
-Return-Path: <linux-kernel+bounces-182472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 834958C8B9C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:51:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 940D48C8B46
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:39:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E645284DF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:51:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C36331C20A4F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:39:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 831D3157A5B;
-	Fri, 17 May 2024 17:41:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 460CF13DDD5;
+	Fri, 17 May 2024 17:39:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FvrM72hR"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qgKkClbJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A64C157474
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 17:40:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BFA513DDBA;
+	Fri, 17 May 2024 17:39:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715967659; cv=none; b=BHIwwcrAQgJ1h4XQjU5ntuTrkMUiAIupDypF4ILercuIYh/4RUXSKz/fIdBP/En1aHdbMlWE8jtdFIdLeYb897Pq/R3oXKenQbljtonsuH+ASFWFP24hW/gNTTIsj9Nw1jCWgz39vmST1b+8d9FcDOtCeIUzSpNmpBwdFT1B3rI=
+	t=1715967561; cv=none; b=oreC4Lh5U28y1CCugDjwRAVx2yQedye3dA3fQalD5NT6CPgXWPCTA5jLybhQBi6ayzMq4snzWLTsL/AFvaCyARSqvHCazyYAsrlwWrCOtEC8zwG5lapIHsXVh+wM80BB/DiiOdvmzVWdD79DauBd1xEaELujDQz9ZIpb9PBTxns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715967659; c=relaxed/simple;
-	bh=Cay94HGTWkCzW13eekg17Dn31y1awAvnR4+4hGNuRyU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=b9o4g27hDylCBb2q5InIQOEwOOWox2BW+xozXCgi8a//nbGC9o14ikU1gv3XN99rfsAoTQs+Shkdz8rISxVaoA8yqcwegWBfER6AFPE8ESKad4xAO75QPnTdeDlLi6P4NlC7yzkBbEeLyk0A2kgFDnzC8+l9Srjgdc2BtH++4jU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FvrM72hR; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-61b1200cc92so167442837b3.0
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 10:40:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715967657; x=1716572457; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=WUhNdB9iIqzolqucVtWTAnagZOY7Bg6qZcQz9vFUY2A=;
-        b=FvrM72hRN10JnzzFU2byT4KjiuE8GSzH5W4rV7WdvMX5fkuO4q6nZZ9+dpKB4LPS7V
-         a702gWXPOWyiqLXaMOtDl7BROReWuRV76Iez9cEMWg6nYFW/y6rOb83u7tRVSLW7swv4
-         YQCVftglVElFz2eKxySCa2mKYOfq+cwslaNGybKabWKxNJPufeUFQHJnG3syAuR6laTF
-         qxQRDSzrfd4FTjxPoTqdnIPUNlYr+wDTYCKgMJHYBDTIREcZsJajSCxQD7wpfDHxX71I
-         hIsrmoNsKSRJWyHW3pObJIpucI6zO89DRS3+rwyU3vv3jANavajrinLorrkZntqYnqo4
-         stEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715967657; x=1716572457;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WUhNdB9iIqzolqucVtWTAnagZOY7Bg6qZcQz9vFUY2A=;
-        b=a2qh0kQYz8ZyDN69VzV/2MD0TF+MGLHdETS58yr/vGWvTOBmfTLL4XrWlbpoSGRdns
-         Smtoi0gkrVpUPccfx1cHVmfDmRaJ3UUqB1Yx568EE8EoFi5TtN2xNKxqEXOWQcW/18wU
-         jdZhFQGzgBwx6gty9KxVkFOZ5X/ltBcvLYSce2dx9tAWpdYV/VoKPqRxmFJXauSYBNwB
-         aHyQlz4oJHkhbv9TvSQax93e6hONF98LLyxKByFMPrXBhUpZ1TXyZNA4PPA3UPXGV0Fd
-         qmEjrF53tDws4/bVd6zU4cjHeFGUIPNAItW9Q7di6U6dw1fBSsAwpRzK3yaxqhhaTEGF
-         9K6A==
-X-Forwarded-Encrypted: i=1; AJvYcCVU1827vgb6/3b+38qqecWMOSiPfqihXMHHKqHFXzyDKLIKesYeb93uxBtbsD0JlPRRgrjzZ1K4iOD+kjBMl9lDTfgmN3InT3TRICdB
-X-Gm-Message-State: AOJu0YyNv+QtaNrI7jURbMqpHE/H+HzgeQaONYZ+FZjx+hfNxbqjUh59
-	B8wJ8mCi1hxgK5f9vfkL3jYX9ASAritkLUCiDusbzUKRAvWpjJWTLR07AnpAV1OE8dg5jFllwtV
-	uKw==
-X-Google-Smtp-Source: AGHT+IFTPW0Wk1n6XlZB5IqAqWVV2h1MhuwZJjgg+6IrPpL1gJ4VNQ4RI3DWEO/Zf6NkYtQyC5efPJOIdJ0=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a25:d353:0:b0:de8:ac4a:1bce with SMTP id
- 3f1490d57ef6-dee4f3210b7mr5483067276.13.1715967657453; Fri, 17 May 2024
- 10:40:57 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri, 17 May 2024 10:39:16 -0700
-In-Reply-To: <20240517173926.965351-1-seanjc@google.com>
+	s=arc-20240116; t=1715967561; c=relaxed/simple;
+	bh=tQOjsUD1QNNPdmrsBIqeqqeA294m5b+0eJ2vo742SP0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U9xqvbC5EBpD8xzDoavmZ9EPTdEkQ3O+t0Tcpeo5oicDBU8ot5kEnPF8tzfg99ikBwqD7U8pQIbqFMZBD6Tk0EyT0MEFocQKew3H/45PRYm3Qs0A5MohX3G1gGnwGW4SjcgD2LwouvZluSoAHo7yMUQwAXsaqmdT/GRBstIN+1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qgKkClbJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFD9DC2BD10;
+	Fri, 17 May 2024 17:39:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715967560;
+	bh=tQOjsUD1QNNPdmrsBIqeqqeA294m5b+0eJ2vo742SP0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qgKkClbJGWKrWh9OKsOPKK3kboH6boQ1WyzS99x6s6Ag1ExaUi5cTlR1KsA/SJRX7
+	 RkQgHw7E5mxTui9FG/Q3Air3GRYzVuAl29hahZXYsFfI0mczO++A2577yDqZp+HTv2
+	 qwGaPLfTJKijYjZpbNzZDykfJS0e/ZgwX/3tvDbIBPC/W6tTRd/b1lwdMVb7/FgIGx
+	 tL5AMkdOCVgatLR1QIl3EAe4BuV/XypFXfPVKRP5fFt/xd+yRWyU1iggVdLZ2oI8nY
+	 EMeOKBkIodjzVvhD4Lmqp+HqpI/Mj8yACd63tppRo5aFiMqhon7uSWu4biZviK1LE1
+	 KItkRwvJXMqeQ==
+Date: Fri, 17 May 2024 18:39:16 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+Cc: Guenter Roeck <linux@roeck-us.net>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	"jdelvare@suse.com" <jdelvare@suse.com>,
+	"robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/2] dt-bindings: hwmon: Document adt7475 PWM initial
+ duty cycle
+Message-ID: <20240517-recognize-broaden-43ba03c9f78c@spud>
+References: <20240508215504.300580-1-chris.packham@alliedtelesis.co.nz>
+ <20240508215504.300580-2-chris.packham@alliedtelesis.co.nz>
+ <fe5b3af9-b307-45e1-b190-ba2b3327a8df@kernel.org>
+ <d11093bb-230b-4918-a8cd-4f4eb760ccf3@alliedtelesis.co.nz>
+ <94c843e2-4415-4786-bfd4-a77fdbbfab07@roeck-us.net>
+ <35361786-ef5f-4d81-83e8-e347f47c83ed@alliedtelesis.co.nz>
+ <df40a387-37db-4a4d-b43f-ae22905789b5@roeck-us.net>
+ <58fb36f5-4d4b-495b-a7cd-6129ab1ed454@alliedtelesis.co.nz>
+ <20240517-pointer-cloning-3889f3d6f744@spud>
+ <20240517-pellet-visa-a2d469dc5f34@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240517173926.965351-1-seanjc@google.com>
-X-Mailer: git-send-email 2.45.0.215.g3402c0e53f-goog
-Message-ID: <20240517173926.965351-40-seanjc@google.com>
-Subject: [PATCH v2 39/49] KVM: x86: Extract code for generating per-entry
- emulated CPUID information
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, 
-	Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Hou Wenlong <houwenlong.hwl@antgroup.com>, Kechen Lu <kechenl@nvidia.com>, 
-	Oliver Upton <oliver.upton@linux.dev>, Maxim Levitsky <mlevitsk@redhat.com>, 
-	Binbin Wu <binbin.wu@linux.intel.com>, Yang Weijiang <weijiang.yang@intel.com>, 
-	Robert Hoo <robert.hoo.linux@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="fU8lYHpRVmPB+Kfl"
+Content-Disposition: inline
+In-Reply-To: <20240517-pellet-visa-a2d469dc5f34@spud>
 
-Extract the meat of __do_cpuid_func_emulated() into a separate helper,
-cpuid_func_emulated(), so that cpuid_func_emulated() can be used with a
-single CPUID entry.  This will allow marking emulated features as fully
-supported in the guest cpu_caps without needing to hardcode the set of
-emulated features in multiple locations.
 
-No functional change intended.
+--fU8lYHpRVmPB+Kfl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/kvm/cpuid.c | 26 +++++++++++++-------------
- 1 file changed, 13 insertions(+), 13 deletions(-)
+On Fri, May 17, 2024 at 06:02:33PM +0100, Conor Dooley wrote:
+> On Fri, May 17, 2024 at 06:00:06PM +0100, Conor Dooley wrote:
+> > > On that point. How would I explain in the bindings that cell 2 is the=
+=20
+> > > duty cycle, cell 3 is the frequency and cell 4 is the flags?
+> >=20
+> > In the pwm-cells property in the pwm provider binding . You might want =
+to
+> > order it as <index freq flags duty> as usually that's the ordering done
+> > in most (all?) pwm provider bindings that I have seen.
+> > The pwm bindings I think are really unhelpful though - they all say "see
+> > pwm.yaml for info on the cells in #pwm-cells, but then pwm.yaml has no
+> > information. The information is actually in pwm.text, but the binding
+> > conversion did s/pwm.text/pwm.yaml/ in pwm controller bindings.
+> > I'll send a patch that fixes up pwm.yaml.
+>=20
+> Possibly cell 4 should be standardised as the period for all pwm
+> providers and then all you'd have to do for your provider is set
+> #pwm-cells:
+>   minItems: 4
 
-diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index fd725cbbcce5..d1849fe874ab 100644
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -1007,14 +1007,10 @@ static struct kvm_cpuid_entry2 *do_host_cpuid(struct kvm_cpuid_array *array,
- 	return entry;
- }
- 
--static int __do_cpuid_func_emulated(struct kvm_cpuid_array *array, u32 func)
-+static int cpuid_func_emulated(struct kvm_cpuid_entry2 *entry, u32 func)
- {
--	struct kvm_cpuid_entry2 *entry;
-+	memset(entry, 0, sizeof(*entry));
- 
--	if (array->nent >= array->maxnent)
--		return -E2BIG;
--
--	entry = &array->entries[array->nent];
- 	entry->function = func;
- 	entry->index = 0;
- 	entry->flags = 0;
-@@ -1022,23 +1018,27 @@ static int __do_cpuid_func_emulated(struct kvm_cpuid_array *array, u32 func)
- 	switch (func) {
- 	case 0:
- 		entry->eax = 7;
--		++array->nent;
--		break;
-+		return 1;
- 	case 1:
- 		entry->ecx = F(MOVBE);
--		++array->nent;
--		break;
-+		return 1;
- 	case 7:
- 		entry->flags |= KVM_CPUID_FLAG_SIGNIFCANT_INDEX;
- 		entry->eax = 0;
- 		if (kvm_cpu_cap_has(X86_FEATURE_RDTSCP))
- 			entry->ecx = F(RDPID);
--		++array->nent;
--		break;
-+		return 1;
- 	default:
--		break;
-+		return 0;
- 	}
-+}
- 
-+static int __do_cpuid_func_emulated(struct kvm_cpuid_array *array, u32 func)
-+{
-+	if (array->nent >= array->maxnent)
-+		return -E2BIG;
-+
-+	array->nent += cpuid_func_emulated(&array->entries[array->nent], func);
- 	return 0;
- }
- 
--- 
-2.45.0.215.g3402c0e53f-goog
+`const: 4`, d'oh.
 
+
+
+--fU8lYHpRVmPB+Kfl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZkeWRAAKCRB4tDGHoIJi
+0s0VAQDSqIpwkV+XgvuoKwnRFDEwmwN4obNBWez9Gf8X0VfxpQD/cNJjz8iKe1Cx
+EBjxNXyPjLRZyHdRPUETZZRnFhkObg4=
+=GLZn
+-----END PGP SIGNATURE-----
+
+--fU8lYHpRVmPB+Kfl--
 
