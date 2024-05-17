@@ -1,90 +1,128 @@
-Return-Path: <linux-kernel+bounces-181689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 352B68C7FBD
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 04:03:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3B1D8C7FC0
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 04:06:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E404A2842D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 02:03:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 210F41C220F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 02:06:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF3F31C3D;
-	Fri, 17 May 2024 02:03:43 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 326EF79CC;
+	Fri, 17 May 2024 02:06:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BMs0GACj"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FBA510FF
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 02:03:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2E9F184D
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 02:06:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715911423; cv=none; b=VuZjXoB7SL3+r4PkVV5mpp+wjrzMSpiTdIs6L1lfn/eFPGeHDGxceX99SXpJMih7eVoAHcKgL0YNuigjmXE+T5lxpk0ZcR+An+6S8vxO1up0eO3AAzeRu1y3biX3VS8E+fuBaKRTG+3sfrp3Yxl2kJTRcpVwM36FO+KbcIkjNvc=
+	t=1715911590; cv=none; b=AwHDpD0AQ0yRCrVFRpj8xjQ7ITqj/dB+tPrlmACS9D7ptOFKrFKnLz0oXLVXc4qowq+wOXa/mX6l4AYhkHJKoPD/riI/nMLLqFBAVHh82NIDZg3JJPB9hOq4eI/PJ9A1udzL/cBWjbB2B0eA52y2x5jBoxwusizUjIri0k4IyH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715911423; c=relaxed/simple;
-	bh=AZZ5qPdSKTP/TZ16p15RVM3zBSNxkmPUJBT4uv59BPY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=p8HANOSfDA4DlVnd23yrQd85Mr2VOBprhD2B1oUHxrUU2dmbKCAxofg82KxNKcnsfDnl7OlW7SGZS0lQmf90ITWwPqVsIdx2XPW9TAWfxTDi47IsfAkMz3wWzl0xwMlAblUQn24Pty0njZi9IAKOQKB6AIxAdp0p8tMw2BZYxcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7ddf0219685so1049206939f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 19:03:41 -0700 (PDT)
+	s=arc-20240116; t=1715911590; c=relaxed/simple;
+	bh=SfHVswkbrQHqpzZdDcPeh/wRZ2CUDzHmY8tYWMbsUvI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c3cWACAji5C9a4RVk2zUsP039wGxtHLDYOdIxm1MHOdxYSeUQTHxV2ZbeDjEDiRfE2ZBW4rSa6ngP+BFiINXlRuxw8cgWDQZ6AVXZ02KHBu/mdypGWDTI7grl3SFBd3JjpTClvJubCtCrtnLaXbjN63SOx2zsgqCBJgZzShGE0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BMs0GACj; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715911587;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=a2qop7DDk0mOLQghvNp8dV8z552lIH0Gw3RJVGiNIog=;
+	b=BMs0GACjA0A2WaJb8jC/Ve6x/xuA3N6yZz2dSI5PYWpfyN31xW8IQ3yR9gUy+iSWSWmMkz
+	DCVmTP/ymqSnth5+Dcl1qb3fSv+5njHKUQw21WX16IPGgbzLMFGU2u7ZJ+BzDbNqLLmZD4
+	ZOO27/mqPB84BSxE3Elm1CfCLpvZmWk=
+Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com
+ [209.85.215.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-61-VzVrIw_3M0Kq4Fk-4TFPSw-1; Thu, 16 May 2024 22:06:26 -0400
+X-MC-Unique: VzVrIw_3M0Kq4Fk-4TFPSw-1
+Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-5c65e666609so7832615a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 19:06:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715911421; x=1716516221;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=k/VfZMYFvZvNIhJYYCNgTSLbryKxeuK6RRHMX09CEjU=;
-        b=lhPh3iy0mVMmGGM3J6h3LKaH1SnyC//dcgHKqvMSKduop26CjXh4g57sOpcCyQ5195
-         GZnr2/cNWj7EfGxrNluwn2qdPfma3RqFLFdowFNNNXELOda9x6XOqqxpgeIqP52qZ+t0
-         kORNH0FAh88hGlEtu/9qpd8i2ae5oqgdb32+BBVZWPJDFgfflu6D0CmovRlZdE+3qa4j
-         fruW3j7Z2PS48HyJ2bJx/uh0P/n11p7BscuCSIALr8Zf68iew/pHBCbEGXGH8gpPP1Mc
-         B3nsRxUmZLBxXzMYcfphy/mqe9krxcaX7pyM/tiwp3bcb5h+qKHFSURi48rGPRXVxfyM
-         OTEg==
-X-Gm-Message-State: AOJu0YyB9yY6qb0A0yFzs2QNn9uyX3G03Pp63Tr1C5VtUO5q806PAfUG
-	aRdKvNdInAX8m9PGFSZCeXL+fLotGFIFHKBoTBqrQXk+Kx8N6qNSuRCA9N0cuoulG4fAUC/9XDh
-	tBc6VxMez7MLe3bv6KmbF0gWaJz81EAROFvubj137ADDyvB+mKfEMmeI=
-X-Google-Smtp-Source: AGHT+IH5lTTxGllN9jARITxHeidCPaSYOR0qXhKp/SazwsvoboHjLllBD2+JQU+tLeOY67ye7cHXyC+nCGd7FVQy2sdbhv0kt57P
+        d=1e100.net; s=20230601; t=1715911585; x=1716516385;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=a2qop7DDk0mOLQghvNp8dV8z552lIH0Gw3RJVGiNIog=;
+        b=Em6mX9diqig2OIkJEl7wBMJxamqa6CnTyZoMg6wrdGv7WL/UoHfgAsucUEciM8WsU3
+         i0HC+bOwmmje6s55MpHZnwENFdlOZFBZDuHG4AHLyph3d3I/eMus9c38AeQ8fAxIpm8A
+         YlYloXX4Ip0u3bAp5E3ilurp38G+kJhRbEsLs6UHCT5MvP2lqqotkAGrpcugHAsi+gAY
+         yZgQqFy8EqSpf9kbsx519aqOr4R91XaOiRe9xTTcq3qRGT7nDzhetKohevXHRBdxMwhs
+         fnBSA5zBIWqpeHEzpCfukwb7RLzmJHZ88ECdIzZGuvTktrxq3nHic0UPiPBA7GpmjO2d
+         Nxpw==
+X-Forwarded-Encrypted: i=1; AJvYcCVMP9BoPP7n4Njl1QpD1nsAjoM0Z/eNF7tveOuZm32+cDWK9Jc3Yp7V5bwj6jwxP68XF2nxlHv11SBGJ4VLqx3VkxnNlBx3kTTX4OSm
+X-Gm-Message-State: AOJu0Yz8DLjz1Rz4idvAutmxyUJVyrxj1GKrjhekEqL8kubLIhwMaeRQ
+	+B0fnssAbGn6JZadowMafsnm+RiT4Ju2bEND8NEFFHl6dD/1dD83QxbKggFUETI2V+7IKKg773q
+	WR9ELTWe3pix+AFMucM/ej823srca3/gXwzZQzXUwD3ftpL8QsC9zFt2yTajACg==
+X-Received: by 2002:a05:6a20:729b:b0:1ab:82fe:910b with SMTP id adf61e73a8af0-1afde1df2b3mr26303603637.58.1715911584935;
+        Thu, 16 May 2024 19:06:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG/9hFAfDVvEiRxBU/C1pVa7/iAU8+CbGaa4VMLjUVVJO21sBSMQyqZTynlZzL/NTGFLkMWuA==
+X-Received: by 2002:a05:6a20:729b:b0:1ab:82fe:910b with SMTP id adf61e73a8af0-1afde1df2b3mr26303585637.58.1715911584524;
+        Thu, 16 May 2024 19:06:24 -0700 (PDT)
+Received: from zeus.elecom ([240b:10:83a2:bd00:6e35:f2f5:2e21:ae3a])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2af2b06sm13699721b3a.167.2024.05.16.19.06.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 May 2024 19:06:24 -0700 (PDT)
+From: Ryosuke Yasuoka <ryasuoka@redhat.com>
+To: krzk@kernel.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	syoshida@redhat.com,
+	horms@kernel.org
+Cc: Ryosuke Yasuoka <ryasuoka@redhat.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net v2] nfc: nci: Fix handling of zero-length payload packets in nci_rx_work()
+Date: Fri, 17 May 2024 11:06:07 +0900
+Message-ID: <20240517020609.476882-1-ryasuoka@redhat.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:26c3:b0:7de:e10d:34e9 with SMTP id
- ca18e2360f4ac-7e1b522988amr128228639f.4.1715911421287; Thu, 16 May 2024
- 19:03:41 -0700 (PDT)
-Date: Thu, 16 May 2024 19:03:41 -0700
-In-Reply-To: <00000000000001ab730616f23768@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000bb6a3706189cc28c@google.com>
-Subject: Re: [syzbot] [syzbot] [jfs?] KASAN: slab-out-of-bounds Write in diWrite
-From: syzbot <syzbot+aa6df9d3b383bf5f047f@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+When nci_rx_work() receives a zero-length payload packet, it should not
+discard the packet and exit the loop. Instead, it should continue
+processing subsequent packets.
 
-***
+Fixes: d24b03535e5e ("nfc: nci: Fix uninit-value in nci_dev_up and nci_ntf_packet")
+Reported-by: Ryosuke Yasuoka <ryasuoka@redhat.com>
+Signed-off-by: Ryosuke Yasuoka <ryasuoka@redhat.com>
+---
+v2
+- Fix commit msg to be clearer to say
+- Remove inappropriate Closes tag
 
-Subject: [syzbot] [jfs?] KASAN: slab-out-of-bounds Write in diWrite
-Author: lizhi.xu@windriver.com
+ net/nfc/nci/core.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git ed30a4a51bb1
-
-diff --git a/fs/jfs/jfs_imap.c b/fs/jfs/jfs_imap.c
-index 2ec35889ad24..d9b302938ed2 100644
---- a/fs/jfs/jfs_imap.c
-+++ b/fs/jfs/jfs_imap.c
-@@ -747,6 +747,8 @@ int diWrite(tid_t tid, struct inode *ip)
- 		xp = (dtpage_t *) & dp->di_dtroot;
- 		lv = ilinelock->lv;
- 		for (n = 0; n < ilinelock->index; n++, lv++) {
-+			printk("lv: %p offset:%d %s\n", lv, lv->offset, __func__);
-+			if (lv->offset < DTPAGEMAXSLOT)
- 			memcpy(&xp->slot[lv->offset], &p->slot[lv->offset],
- 			       lv->length << L2DTSLOTSIZE);
+diff --git a/net/nfc/nci/core.c b/net/nfc/nci/core.c
+index b133dc55304c..f2ae8b0d81b9 100644
+--- a/net/nfc/nci/core.c
++++ b/net/nfc/nci/core.c
+@@ -1518,8 +1518,7 @@ static void nci_rx_work(struct work_struct *work)
+ 
+ 		if (!nci_plen(skb->data)) {
+ 			kfree_skb(skb);
+-			kcov_remote_stop();
+-			break;
++			continue;
  		}
+ 
+ 		/* Process frame */
+-- 
+2.44.0
+
 
