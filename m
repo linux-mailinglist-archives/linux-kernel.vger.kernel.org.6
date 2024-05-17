@@ -1,246 +1,206 @@
-Return-Path: <linux-kernel+bounces-182059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8CCD8C85BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 13:31:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9CD48C85C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 13:37:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FD15285415
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:31:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06E831C23396
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:37:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D7FA208D1;
-	Fri, 17 May 2024 11:31:31 +0000 (UTC)
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD6E03E471;
+	Fri, 17 May 2024 11:37:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Wonq8Dnz"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DA0E2BCFD
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 11:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66455BE4A;
+	Fri, 17 May 2024 11:37:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715945490; cv=none; b=pWH5dnVx0cm2rKSaiR/MtPcyR40/ALG3QpJ+HlZRBIVuOEoWBK5Q1fDq9xXHMC5CHKFE12saVOmtt/LOnU0pI8QllYSl4Ntf8xc8LGgmY+1/ETE2bUuIePBE9+3lzypjY2ga3F+YoCFGbbvz6PMAU77s76fzV6bXK2Sw5VK4YRE=
+	t=1715945863; cv=none; b=kfu/JX5DaTBySR70MjNy5GfJrg3F8cM9e8w+EdLZ/ARHOrkRfhKuvCTWcoK3ad6Qxyinsz1t1GiwKxHmjCnHEtl0IO7yjl+7vRTu8MgBtaXVyLOxM7tRQ6aLiB+VMKmqjlZHwTeG75lqSHsbOeG/WEYj1u4YZ0T8kYuvnKzqyYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715945490; c=relaxed/simple;
-	bh=OZWric8mrBhkdn0L55LZVVwhwJqlYAwEdDvMHFeNQEo=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=aYTejhCqGbaXGZ7nDmVPn2RE/zryT76I2O+fwOAzIA98N/0on0eLScP+1TrYAmBqz4cmCREsrMzPdl4bVIDylLBdaVjb45rZCuEoeM0NmfJKF2xSj0Vh6SPVnn3cWM7AiYVFpZHKANfvE6jM0yY7Wt7Lbf4qck+exD59T1CFTTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-7e1de4c052aso664291039f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 04:31:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715945488; x=1716550288;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0ZxUDwrr5/TxU4rBBf+NSSt/L9HH+2KztHflvEazFfU=;
-        b=gSONcvw1XllohSIKsWbwNzEI5vByDCzNUD9f1I0BDfLI2wsd+ddwoydo8c9vwvAy/Y
-         ARB3aOmB+7AO3Tl5zfeDCusUB7cbEJ4NPdHaCFHzPXPpqWrSZN9t9ffL6t9QpKL6/kNh
-         RL1H7nZZZgN1chKc3aYWMjL0vP+Kl9NbuhHdSpMjW4sRFvTEBKi3xOXrHETJ12wbFimh
-         peI9viDkKaUYxDwtU0q3ycDzeeUWk+GSga1JsB053TgY3/ao8QU270agRdtcnbcS5Ouv
-         8coH7t4G1LoaR6tKql3MY0daJfIj4CgqV35h5XzyAjdmsYMcHwRUc+TxSgxXFmxL5Czo
-         XBcw==
-X-Forwarded-Encrypted: i=1; AJvYcCWhoZK9VyN00VjMZmxoftRPZ9Cn1bxlOQlQljSAhJb+EH+G+vT/P/fum2eDWP99lMEuXdkKOKgfWFtpVCGnaWGgRVfBt686CquU4cNm
-X-Gm-Message-State: AOJu0YxRVZtRQ00/BC21V+LPOpCd/FdmpX+OVccnN2Y4yXUo1rm7RJEj
-	4acN//gNG5l66/b2HGRLp/Rkw4KjzgNRlhVXJ6+hPB77xH9KSDx2NSdanCLOH6QYi0livZKYaRH
-	tBJlSeoLPskH+nFsaE9rsJCp5X8R864YqfIDMtGm8t5T2yn1tK7HRCZg=
-X-Google-Smtp-Source: AGHT+IGJTsW6Og/gIggguEr5/fkXN/TtZz0N+aE0r7+mXy5dbh1GYM0xKwN7D6Zs61D5QDox1pl9rIOpCA3fnmjOoBNgYRh74B24
+	s=arc-20240116; t=1715945863; c=relaxed/simple;
+	bh=aqGgQDx8JqQb1TBydwsm0go4suIdDmmkfQxkdVhpHyA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nvBwth16oBenJgeDdGBKO40pGyvgtPZ+0XGMjSo3rFs57OwQfWhazEcXiyVRnIDoK0mzfkyZl1rHm3p6w7uIrLScEW2MtzWLIrFDHxKjwK/6e0IhG9zN0voCRIdqj8Nyi5PCH0FT+6u01vwNyPoLibS3g7FiaFZgD4+qqyuqz1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Wonq8Dnz; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 59D3CA9A;
+	Fri, 17 May 2024 13:37:30 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1715945850;
+	bh=aqGgQDx8JqQb1TBydwsm0go4suIdDmmkfQxkdVhpHyA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Wonq8DnzoMDfcTjkqS2yP1mkP6fuyDEcbEHK+L9rY04eaVqzEDdq/bhE9vMgodzK7
+	 lkd//XLxag3kpJ5kdNmiEbmaOIBHMEOdQt7hNLOxc45EubdhRwZLbax4Q16LCXdyfz
+	 76gMX4dPRGxLGFGMVq6vOCHsSycAEcct6MI0+ywI=
+Date: Fri, 17 May 2024 14:37:30 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: ChiYuan Huang <cy_huang@richtek.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Daniel Scally <djrscally@gmail.com>,
+	Jean-Michel Hautbois <jeanmichel.hautbois@ideasonboard.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] media: v4l: async: Fix NULL pointer when v4l2 flash
+ subdev binding
+Message-ID: <20240517113730.GF19755@pendragon.ideasonboard.com>
+References: <e2f9f2b7b7de956d70b8567a2ab285409fff988b.1715136478.git.cy_huang@richtek.com>
+ <ZkXi_U5Js34dUQsA@kekkonen.localdomain>
+ <20240517063150.GA12245@linuxcarl2.richtek.com>
+ <ZkcOoLQQRdRYYacd@kekkonen.localdomain>
+ <20240517111944.GD19755@pendragon.ideasonboard.com>
+ <Zkc_ENTqovMg_WnD@kekkonen.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:3ca:b0:7de:e175:fd2d with SMTP id
- ca18e2360f4ac-7e1b521f29dmr178113239f.3.1715945488347; Fri, 17 May 2024
- 04:31:28 -0700 (PDT)
-Date: Fri, 17 May 2024 04:31:28 -0700
-In-Reply-To: <000000000000b86c5e06130da9c6@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000049897e0618a4b1ff@google.com>
-Subject: Re: [syzbot] [v9fs?] KASAN: slab-use-after-free Read in p9_fid_destroy
-From: syzbot <syzbot+d7c7a495a5e466c031b6@syzkaller.appspotmail.com>
-To: asmadeus@codewreck.org, ericvh@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux_oss@crudebyte.com, lucho@ionkov.net, 
-	syzkaller-bugs@googlegroups.com, v9fs@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Zkc_ENTqovMg_WnD@kekkonen.localdomain>
 
-syzbot has found a reproducer for the following issue on:
+On Fri, May 17, 2024 at 11:27:12AM +0000, Sakari Ailus wrote:
+> Hi Laurent,
+> 
+> On Fri, May 17, 2024 at 02:19:44PM +0300, Laurent Pinchart wrote:
+> > On Fri, May 17, 2024 at 08:00:32AM +0000, Sakari Ailus wrote:
+> > > Hi Chi Yuan,
+> > > 
+> > > On Fri, May 17, 2024 at 02:31:50PM +0800, ChiYuan Huang wrote:
+> > > > Hi, Sakari:
+> > > > 
+> > > > 	Thanks for your reply.
+> > > > If any misunderstanding, please correct me.
+> > > > 
+> > > > On Thu, May 16, 2024 at 10:42:05AM +0000, Sakari Ailus wrote:
+> > > > > Hi Chi Yuan,
+> > > > > 
+> > > > > On Wed, May 08, 2024 at 10:51:49AM +0800, cy_huang@richtek.com wrote:
+> > > > > > From: ChiYuan Huang <cy_huang@richtek.com>
+> > > > > > 
+> > > > > > In v4l2_async_create_ancillary_links(), if v4l2 async notifier is
+> > > > > > created from v4l2 device, the v4l2 flash subdev async binding will enter
+> > > > > > the logic to create media link. Due to the subdev of notifier is NULL,
+> > > > > > this will cause NULL pointer to access the subdev entity. Therefore, add
+> > > > > > the check to bypass it.
+> > > > > > 
+> > > > > > Fixes: aa4faf6eb271 ("media: v4l2-async: Create links during v4l2_async_match_notify()")
+> > > > > > Signed-off-by: ChiYuan Huang <cy_huang@richtek.com>
+> > > > > > ---
+> > > > > > Hi,
+> > > > > > 
+> > > > > >   I'm trying to bind the v4l2 subdev for flashlight testing. It seems
+> > > > > > some logic in v4l2 asynd binding is incorrect.
+> > > > > > 
+> > > > > > From the change, I modified vim2m as the test driver to bind mt6370 flashlight.
+> > > > > > 
+> > > > > > Here's the backtrace log.
+> > > > > > 
+> > > > > >  vim2m soc:vim2m: bound [white:flash-2]
+> > > > > >  Unable to handle kernel NULL pointer dereference at virtual address 0000000000000058
+> > > > > >  ......skipping
+> > > > > >  Call trace:
+> > > > > >   media_create_ancillary_link+0x48/0xd8 [mc]
+> > > > > >   v4l2_async_match_notify+0x17c/0x208 [v4l2_async]
+> > > > > >   v4l2_async_register_subdev+0xb8/0x1d0 [v4l2_async]
+> > > > > 
+> > > > > There's something wrong obviously somewhere but wherea?
+> > > >
+> > > > In vim2m driver, I added v4l2_async_nf_init -> v4l2_async_nf_add_fwnode_remote ->
+> > > > v4l2_async_nf_register.
+> > > > 
+> > > > From the async flow, in notifier complete ops to create v4l-subdevX node for the 
+> > > > specified subdev.
+> > > >
+> > > > > A sub-notifier does have a sub-device after the notifier initialisation.
+> > > > 
+> > > > Why? Are you saying to the notifier can only be used for subdev and subdev binding, 
+> > > > not v4l2 and subdev binding?
+> > > > 
+> > > > But to create v4l-subdevX, the key is only v4l2 device and its needed subdev.
+> > > > 
+> > > > > Maybe the initialisation does not happen in the right order?
+> > > >
+> > > > AFAIK, Async flow can solve the probe order and makes the user no need to care
+> > > > the probe order.
+> > > > 
+> > > > From the stacktrace, I'm pretty sure it's not the probe order issue.
+> > > >
+> > > > > >   __v4l2_flash_init.part.0+0x3b4/0x4b0 [v4l2_flash_led_class]
+> > > > > >   v4l2_flash_init+0x28/0x48 [v4l2_flash_led_class]
+> > > > > >   mt6370_led_probe+0x348/0x690 [leds_mt6370_flash]
+> > > > > > 
+> > > > > > After tracing the code, it will let the subdev labeled as F_LENS or
+> > > > > > F_FLASH function to create media link. To prevent the NULL pointer
+> > > > > > issue, the simplest way is add a check when 'n->sd' is NULL and bypass
+> > > > > > the later media link creataion.
+> > > > > > ---
+> > > > > >  drivers/media/v4l2-core/v4l2-async.c | 3 +++
+> > > > > >  1 file changed, 3 insertions(+)
+> > > > > > 
+> > > > > > diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-core/v4l2-async.c
+> > > > > > index 3ec323bd528b..9d3161c51954 100644
+> > > > > > --- a/drivers/media/v4l2-core/v4l2-async.c
+> > > > > > +++ b/drivers/media/v4l2-core/v4l2-async.c
+> > > > > > @@ -324,6 +324,9 @@ static int v4l2_async_create_ancillary_links(struct v4l2_async_notifier *n,
+> > > > > >  	    sd->entity.function != MEDIA_ENT_F_FLASH)
+> > > > > >  		return 0;
+> > > > > >  
+> > > > > > +	if (!n->sd)
+> > > > > > +		return 0;
+> > > > > 
+> > > > > This isn't the right fix: the ancillary link won't be created as a result.
+> > > >
+> > > > Due to the notifier is created by v4l2 device not subdev, this 'n->sd' is NULL.
+> > > > The NULL 'n->sd' will be referenced by the next flow 'media_create_ancillary_link'.
+> > > 
+> > > Ah, right. I took a new look into the code and agree this is a problem.
+> > > This probably hasn't been hit previously as the root notifier driver tends
+> > > not to have any lens or flash devices.
+> > > 
+> > > I'd change the commit message slightly:
+> > > 
+> > > --------8<-------------
+> > > In v4l2_async_create_ancillary_links(), ancillary links are created for
+> > > lens and flash sub-devices. These are sub-device to sub-device links and if
+> > > the async notifier is related to a V4L2 device, the source sub-device of
+> > > the ancillary link is NULL, leading to a NULL pointer dereference. Check
+> > > the notifier's sd field is non-NULL in v4l2_async_create_ancillary_links().
+> > > --------8<-------------
+> > 
+> > What's the use case for including lens or flash devices in the root
+> > notifier ? Shouldn't lens and flash subdevices always be linked to
+> > something ? We should of course not crash, but it seems that simply
+> > ignoring the subdevs and not linking them isn't a great idea either.
+> 
+> Yes, I think triggering this does require a very peculiar setup if not a
+> driver bug. We could also print a warning if this happens.
 
-HEAD commit:    ea5f6ad9ad96 Merge tag 'platform-drivers-x86-v6.10-1' of g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17340168980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f1cd4092753f97c5
-dashboard link: https://syzkaller.appspot.com/bug?extid=d7c7a495a5e466c031b6
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1065b4f0980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11df3084980000
+I think a warning would be good.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-ea5f6ad9.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/a551265cc1bb/vmlinux-ea5f6ad9.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/b814900d9571/bzImage-ea5f6ad9.xz
+> Also using the notifier's sub-device to create ancillary links is somewhat
+> opportunistic. We seem to rely on it currently but it would only seem
+> meaningful for a sensor in practice.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+d7c7a495a5e466c031b6@syzkaller.appspotmail.com
+This should be improved indeed.
 
-9pnet: Found fid 3 not clunked
-==================================================================
-BUG: KASAN: slab-use-after-free in p9_fid_destroy+0xb5/0xd0 net/9p/client.c:885
-Read of size 8 at addr ffff888023d14a00 by task syz-executor145/5220
+> > > > Or is it caused by the wrong usage? 
+> > > > 
+> > > > > > +
+> > > > > >  	link = media_create_ancillary_link(&n->sd->entity, &sd->entity);
+> > > > > >  
+> > > > > >  #endif
 
-CPU: 3 PID: 5220 Comm: syz-executor145 Not tainted 6.9.0-syzkaller-08284-gea5f6ad9ad96 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:114
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0xc3/0x620 mm/kasan/report.c:488
- kasan_report+0xd9/0x110 mm/kasan/report.c:601
- p9_fid_destroy+0xb5/0xd0 net/9p/client.c:885
- p9_client_destroy+0x14c/0x480 net/9p/client.c:1071
- v9fs_session_close+0x49/0x2d0 fs/9p/v9fs.c:506
- v9fs_kill_super+0x4d/0xa0 fs/9p/vfs_super.c:196
- deactivate_locked_super+0xbe/0x1a0 fs/super.c:472
- deactivate_super+0xde/0x100 fs/super.c:505
- cleanup_mnt+0x222/0x450 fs/namespace.c:1267
- task_work_run+0x14e/0x250 kernel/task_work.c:180
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0x278/0x2a0 kernel/entry/common.c:218
- do_syscall_64+0xdc/0x260 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f373e54ddb7
-Code: 07 00 48 83 c4 08 5b 5d c3 66 2e 0f 1f 84 00 00 00 00 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 a6 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 b8
-RSP: 002b:00007ffe809881b8 EFLAGS: 00000206 ORIG_RAX: 00000000000000a6
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 00007f373e54ddb7
-RDX: 0000000000000000 RSI: 0000000000000009 RDI: 00007ffe80988270
-RBP: 00007ffe80988270 R08: 0000000000000000 R09: 0000000000000000
-R10: 00000000ffffffff R11: 0000000000000206 R12: 00007ffe809892e0
-R13: 0000555582e557c0 R14: 431bde82d7b634db R15: 00007ffe80989300
- </TASK>
+-- 
+Regards,
 
-Allocated by task 10647:
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
- kasan_save_track+0x14/0x30 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:370 [inline]
- __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:387
- kmalloc include/linux/slab.h:628 [inline]
- kzalloc include/linux/slab.h:749 [inline]
- p9_fid_create+0x45/0x470 net/9p/client.c:854
- p9_client_walk+0xc6/0x550 net/9p/client.c:1155
- clone_fid fs/9p/fid.h:23 [inline]
- v9fs_fid_clone fs/9p/fid.h:33 [inline]
- v9fs_file_open+0x5b5/0xae0 fs/9p/vfs_file.c:56
- do_dentry_open+0x8da/0x18c0 fs/open.c:955
- do_open fs/namei.c:3650 [inline]
- path_openat+0x1dfb/0x2990 fs/namei.c:3807
- do_filp_open+0x1dc/0x430 fs/namei.c:3834
- do_sys_openat2+0x17a/0x1e0 fs/open.c:1406
- do_sys_open fs/open.c:1421 [inline]
- __do_sys_creat fs/open.c:1497 [inline]
- __se_sys_creat fs/open.c:1491 [inline]
- __x64_sys_creat+0xcd/0x120 fs/open.c:1491
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcf/0x260 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Freed by task 1091:
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
- kasan_save_track+0x14/0x30 mm/kasan/common.c:68
- kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:579
- poison_slab_object mm/kasan/common.c:240 [inline]
- __kasan_slab_free+0x11d/0x1a0 mm/kasan/common.c:256
- kasan_slab_free include/linux/kasan.h:184 [inline]
- slab_free_hook mm/slub.c:2121 [inline]
- slab_free mm/slub.c:4353 [inline]
- kfree+0x129/0x3a0 mm/slub.c:4463
- p9_client_clunk+0x12a/0x170 net/9p/client.c:1457
- p9_fid_put include/net/9p/client.h:280 [inline]
- v9fs_free_request+0xdc/0x110 fs/9p/vfs_addr.c:138
- netfs_free_request+0x22c/0x690 fs/netfs/objects.c:133
- netfs_put_request+0x19b/0x1f0 fs/netfs/objects.c:165
- netfs_write_collection_worker+0x19d0/0x59e0 fs/netfs/write_collect.c:701
- process_one_work+0x9fb/0x1b60 kernel/workqueue.c:3231
- process_scheduled_works kernel/workqueue.c:3312 [inline]
- worker_thread+0x6c8/0xf70 kernel/workqueue.c:3393
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-The buggy address belongs to the object at ffff888023d14a00
- which belongs to the cache kmalloc-96 of size 96
-The buggy address is located 0 bytes inside of
- freed 96-byte region [ffff888023d14a00, ffff888023d14a60)
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x23d14
-anon flags: 0xfff00000000800(slab|node=0|zone=1|lastcpupid=0x7ff)
-page_type: 0xffffffff()
-raw: 00fff00000000800 ffff888015442280 0000000000000000 dead000000000001
-raw: 0000000000000000 0000000000200020 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x52cc0(GFP_KERNEL|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 1, tgid 1 (swapper/0), ts 12927324375, free_ts 10880195922
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x2d4/0x350 mm/page_alloc.c:1534
- prep_new_page mm/page_alloc.c:1541 [inline]
- get_page_from_freelist+0xa28/0x3780 mm/page_alloc.c:3317
- __alloc_pages+0x22b/0x2460 mm/page_alloc.c:4575
- __alloc_pages_node include/linux/gfp.h:238 [inline]
- alloc_pages_node include/linux/gfp.h:261 [inline]
- alloc_slab_page mm/slub.c:2190 [inline]
- allocate_slab mm/slub.c:2353 [inline]
- new_slab+0xcc/0x3a0 mm/slub.c:2406
- ___slab_alloc+0xd28/0x1810 mm/slub.c:3592
- __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3682
- __slab_alloc_node mm/slub.c:3735 [inline]
- slab_alloc_node mm/slub.c:3908 [inline]
- kmalloc_trace+0x306/0x340 mm/slub.c:4065
- kmalloc include/linux/slab.h:628 [inline]
- kzalloc include/linux/slab.h:749 [inline]
- dev_pm_qos_expose_flags+0x96/0x310 drivers/base/power/qos.c:782
- usb_hub_create_port_device+0x8fd/0xde0 drivers/usb/core/port.c:812
- hub_configure drivers/usb/core/hub.c:1710 [inline]
- hub_probe+0x1e31/0x3210 drivers/usb/core/hub.c:1965
- usb_probe_interface+0x309/0x9d0 drivers/usb/core/driver.c:399
- call_driver_probe drivers/base/dd.c:578 [inline]
- really_probe+0x23e/0xa90 drivers/base/dd.c:656
- __driver_probe_device+0x1de/0x440 drivers/base/dd.c:798
- driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:828
- __device_attach_driver+0x1df/0x310 drivers/base/dd.c:956
- bus_for_each_drv+0x157/0x1e0 drivers/base/bus.c:457
-page last free pid 62 tgid 62 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1141 [inline]
- free_unref_page_prepare+0x527/0xb10 mm/page_alloc.c:2347
- free_unref_page+0x33/0x3c0 mm/page_alloc.c:2487
- vfree+0x181/0x7a0 mm/vmalloc.c:3340
- delayed_vfree_work+0x56/0x70 mm/vmalloc.c:3261
- process_one_work+0x9fb/0x1b60 kernel/workqueue.c:3231
- process_scheduled_works kernel/workqueue.c:3312 [inline]
- worker_thread+0x6c8/0xf70 kernel/workqueue.c:3393
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-Memory state around the buggy address:
- ffff888023d14900: 00 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc
- ffff888023d14980: 00 00 00 00 00 00 00 00 00 00 fc fc fc fc fc fc
->ffff888023d14a00: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
-                   ^
- ffff888023d14a80: 00 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc
- ffff888023d14b00: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
-==================================================================
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+Laurent Pinchart
 
