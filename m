@@ -1,129 +1,153 @@
-Return-Path: <linux-kernel+bounces-182395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 592438C8ACC
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:20:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A70D8C8AD1
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:20:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 155EA280E8F
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:20:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BBF01C213BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:20:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 090B813DDCC;
-	Fri, 17 May 2024 17:19:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 703D813DDA9;
+	Fri, 17 May 2024 17:20:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e5mx1wEx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SXv+eT33"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45AE413DDB0;
-	Fri, 17 May 2024 17:19:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22FF713DB83;
+	Fri, 17 May 2024 17:20:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715966395; cv=none; b=jeisjv1fCHb8h+GtGMUDNHRuEa2d+DAbsdqHrYmQMcyYJ8W52i9qGeY8EON66Uihi0vwrhKNTyLYxK5tt8rS6FBNS7pjYiI82I9A+OtEAt2CLh7ORJobaXoSjccx99kz+EAsYLRgMMxr45p9/2WWfnGT3fXXDbeGlpUcUzz6TVs=
+	t=1715966440; cv=none; b=pvw6P7HXUE640TJxBDS9pifhddFS/n4sqkaaYdS1PfCb56gxF3GUbN7jTEe2/8HdLDUpZkcshy/S8luQcaBy9C54lXemgpBWKYQFfk+HlLh7sszmV2O6UEvIK/aPJJ+OR8pJ8kycsrskDpaJOK7r++EFZAOYt1yb5QCxF9emzq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715966395; c=relaxed/simple;
-	bh=JPiqBtueOqPjvHwerNvEOHviFOz8JLhoUGBcqfWBC3c=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=DdVUgAjUM/slswDq5ipqvD68g9PPm8wuXBaOeidd81Ag1RhL85dK6jsuEs3MdOosX7xYB+jMGxYyeoxerwZlsErbkqe79d7SjZ3vF5ktluAip5+v6i3PPTj/1CL36Ka3UsaNm/lvXhdWeQWc3Uoh7R6R4FPcaFJQEBhLwlhD5bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e5mx1wEx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F7E4C2BD10;
-	Fri, 17 May 2024 17:19:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715966394;
-	bh=JPiqBtueOqPjvHwerNvEOHviFOz8JLhoUGBcqfWBC3c=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=e5mx1wEx3q4W4Dg2PF0Vy+sO5zWRFTALnTj034RxWk6s4Z26oID48/LP8xbWhSQCa
-	 wj48FqdekdqhkaxYk4i1tYy2CZRK7kqpP0+n7UoL50xZ3gp7D+BdcyHnG+e1/NrI0D
-	 ltPqbUK6PKbpqRJ+nX9gEisYRCuUDeELQYMMn86/GTe8raOEHlg5WA6q8tmwkv8hL0
-	 JRveOPRg8sqUnKapbaT1atylRRx5JnmkC9vB+Ci6X9fPaPMNXj2aEWGZ6qnxjz7pIj
-	 mkIPTC4zLhZ4R4ye5cddGJHL6Mz7dvKQa20QeuJJXJo6cQJvPF18ESy6Ko3MezgJCB
-	 LbJCIu+4vAbfQ==
-From: Kalle Valo <kvalo@kernel.org>
-To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>,  Borislav Petkov <bp@alien8.de>,
-  Thomas Gleixner <tglx@linutronix.de>,  Ingo Molnar <mingo@redhat.com>,
-  Dave Hansen <dave.hansen@linux.intel.com>,  "Rafael J. Wysocki"
- <rafael@kernel.org>,  x86@kernel.org,  linux-pm@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  regressions@lists.linux.dev,  Jeff Johnson
- <quic_jjohnson@quicinc.com>,  Daniel Sneddon
- <daniel.sneddon@linux.intel.com>
-Subject: Re: [regression] suspend stress test stalls within 30 minutes
-References: <87o79cjjik.fsf@kernel.org>
-	<20240511184847.GCZj-9j2sh1Akpt9iS@fat_crate.local>
-	<20240511184945.GDZj-9yaOEWqf1ng8u@fat_crate.local>
-	<87h6f4jdrq.fsf@kernel.org> <878r0djxgc.fsf@kernel.org>
-	<874jb0jzx5.fsf@kernel.org>
-	<feaefaae-e25b-4a48-b6be-e20054f2c8df@intel.com>
-	<20240515072231.z3wlyoblyc34ldmr@desk>
-Date: Fri, 17 May 2024 20:19:49 +0300
-In-Reply-To: <20240515072231.z3wlyoblyc34ldmr@desk> (Pawan Gupta's message of
-	"Wed, 15 May 2024 00:22:31 -0700")
-Message-ID: <87ikzcfj9m.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1715966440; c=relaxed/simple;
+	bh=bGx5fE8ig9g3KHDsz9s7MhC3JHjF6v+ZqWiEcDWnt5k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=h0NhKE7OdofOwVC1HSq8KZsmSPQcunhyQ1Z4rluwwiJvOUDm7h/dMWTZjDKxzT9NRtf/MXfXOLhL4gcoNRGmKPAxJ7Z/0ei5/7iwDmN80tiFCQ5svH/BiezgSTywnOno0Jlb9p++WLxUIilO4Q7FSdjIvyTan+H+boAv6QtRFKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SXv+eT33; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44H98KK7007278;
+	Fri, 17 May 2024 17:20:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=QEQp5msevNm4J4LDm9KOVT44ZsbOilXU6qGhunnZvBw=; b=SX
+	v+eT33slzj66rpBelip6MvHlnUed3GkAQ4pD0Zi5tc3Tx8iL/MEa7eBwUHs/8SUY
+	IHLugdQ1FWZi8MOd8d5dqpBBXuXHX1niQ+ki1Nd9+X4SehbxC8IgpIXQzQSFVMb5
+	RnW2DZ18Qr/3+PvhvZ5hJ/UIeiH5+qVMu5uKLxhh/kxYPwEEnZnqh+McwInskgfc
+	rZ/ElEC0CVWEutgl6jIBMXDqZgWPABeli3Zi3SKUFHbLMcLM0P66IpoltPJ1sxzL
+	nfKR4E6QjBZ9X/hikxXtYOM5/H/nfanjl+TeELqsExTpkwQqQToGBNUs0QIqQFU4
+	dxr05YbfILxoN483upBw==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y49ge0m58-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 17 May 2024 17:20:16 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44HHKFuP008062
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 17 May 2024 17:20:15 GMT
+Received: from [10.110.27.85] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 17 May
+ 2024 10:20:13 -0700
+Message-ID: <b264bd9c-c355-4b08-8e52-7adc23cb0b20@quicinc.com>
+Date: Fri, 17 May 2024 10:20:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/7] remoteproc: qcom_q6v5_pas: Add hwspinlock bust on
+ stop
+To: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Peter
+ Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Will Deacon
+	<will@kernel.org>, Waiman Long <longman@redhat.com>,
+        Boqun Feng
+	<boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>
+CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, Richard Maina <quic_rmaina@quicinc.com>
+References: <20240516-hwspinlock-bust-v1-0-47a90a859238@quicinc.com>
+ <20240516-hwspinlock-bust-v1-6-47a90a859238@quicinc.com>
+ <40730e9f-ae2b-4b56-89bd-f839876271fe@nexus-software.ie>
+Content-Language: en-US
+From: Chris Lew <quic_clew@quicinc.com>
+In-Reply-To: <40730e9f-ae2b-4b56-89bd-f839876271fe@nexus-software.ie>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: YKCFMaI2rJ-_gTZA9j16KUiazNOWtQPz
+X-Proofpoint-ORIG-GUID: YKCFMaI2rJ-_gTZA9j16KUiazNOWtQPz
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-17_07,2024-05-17_03,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ impostorscore=0 clxscore=1011 priorityscore=1501 phishscore=0 spamscore=0
+ mlxscore=0 lowpriorityscore=0 suspectscore=0 bulkscore=0 adultscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405010000 definitions=main-2405170134
 
-Pawan Gupta <pawan.kumar.gupta@linux.intel.com> writes:
 
-> On Tue, May 14, 2024 at 09:10:07AM -0700, Dave Hansen wrote:
->
->> On 5/14/24 06:17, Kalle Valo wrote:
->> > The kernel we use in our ath11k testing has almost all kernel debug
->> > features enabled so I decided disable all of them, which unsurprisingly
->> > also fixed my suspend problems. So maybe this is something which happens
->> > only when MITIGATION_IBRS_ENTRY and some debug option from 'Kernel
->> > hacking' are both enabled?
->> 
->> I had my money on DEBUG_ENTRY, but it doesn't look like you ever had it
->> enabled.
->> 
->> I've got basically two theories:
->> 
->> One, the IBRS value is getting mucked up somewhere, either that %r15
->> value is getting stepped on or the per-cpu value is corrupt and the
->> WRMSR #GP's, causing the hang.
->> 
->> Two, IBRS_{ENTER,EXIT} is called in a "wrong" context somewhere.  Either
->> it is clobbering something it shouldn't or it is assuming something is
->> in place that is not (like a valid stack).
->> 
->> But the whole "'sudo shutdown -h now' then suspend somehow immediately
->> unstalls" thing is really perplexing.  I hope Pawan has some ideas.
->
-> Nothing promising yet. I now have the system with the same model, but the
-> system is only booting in recovery mode with the config attached with the
-> report.
->
-> Kalle, I wanted to try reverting the below commits:
->
-> aa1567a7e644 ("intel_idle: Add ibrs_off module parameter to force-disable IBRS")
-> 1e4d3001f59f ("x86/entry: Harden return-to-user")
-> c516213726fb ("x86/entry: Optimize common_interrupt_return()")
->
-> ... but I haven't reproduced the issue yet.
 
-I can try to revert those but didn't manage to do it yet.
+On 5/17/2024 2:08 AM, Bryan O'Donoghue wrote:
+> On 17/05/2024 00:58, Chris Lew wrote:
+>> From: Richard Maina <quic_rmaina@quicinc.com>
+>>
+>> When remoteproc goes down unexpectedly this results in a state where any
+>> acquired hwspinlocks will remain locked possibly resulting in deadlock.
+>> In order to ensure all locks are freed we include a call to
+>> hwspin_lock_bust() during remoteproc shutdown.
+>>
+>> For qcom_q6v5_pas remoteprocs, each remoteproc has an assigned id that
+>> is used to take the hwspinlock. Remoteproc should use this id to try and
+>> bust the lock on remoteproc stop.
+>>
+>> This edge case only occurs with q6v5_pas watchdog crashes. The error
+>> fatal case has handling to clear the hwspinlock before the error fatal
+>> interrupt is triggered.
+>>
+>> Signed-off-by: Richard Maina <quic_rmaina@quicinc.com>
+>> Signed-off-by: Chris Lew <quic_clew@quicinc.com>
+>> ---
+> 
+>> +    if (adsp->hwlock) {
+>> +        ret = hwspin_lock_bust(adsp->hwlock, adsp->hwlock_id);
+>> +        if (ret)
+>> +            dev_info(adsp->dev, "failed to bust hwspinlock\n");
+> 
+> qcom_hwspinlock_bust() already prints an error on failure, you're 
+> printing a second error here.
+> 
+> Choose at most one.
+> 
 
-> FYI, cmdline "spectre_v2=off" should have the same effect as
-> CONFIG_IBRS_ENTRY=n.
+Ack, will remove the error print here and leave the one in 
+qcom_hwspinlock_bust()
 
-Confirmed, I don't see the bug with "spectre_v2=off" and the box
-suspended succesfully 400 times.
-
-> Other interesting thing to try is cmdline "dis_ucode_ldr".
-
-This didn't help. I tried twice, the first time it failed after 11
-suspend loops and the second time after 34 loops.
-
--- 
-https://patchwork.kernel.org/project/linux-wireless/list/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+> ---
+> bod
 
