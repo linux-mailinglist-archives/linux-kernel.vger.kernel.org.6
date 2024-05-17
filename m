@@ -1,582 +1,195 @@
-Return-Path: <linux-kernel+bounces-181972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 491408C8477
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 12:05:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 438BE8C846E
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 12:04:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BFD11C22BFA
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 10:05:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86731B20D02
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 10:04:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7806839FE0;
-	Fri, 17 May 2024 10:04:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 424222D044;
+	Fri, 17 May 2024 10:04:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="oNbGawra"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="HMcaF7hS"
+Received: from EUR04-DB3-obe.outbound.protection.outlook.com (mail-db3eur04on2056.outbound.protection.outlook.com [40.107.6.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43DE03613E;
-	Fri, 17 May 2024 10:04:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715940280; cv=none; b=OMM2MZqPGygJ7AqgaljqlpX8dlHS4mdmL2UZKXMtcYvjHR7Iop5onQEKgVKpCTdtf7HLoYcNAgQrTLtpKBkSCEnmgbf0bgGgAxs0B/vijdg6FtWSVBRL7+5OaHb85zTPpvnkEV2UoAjh3tCfoLUCag0QqpntHLokuds2aG8tkoE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715940280; c=relaxed/simple;
-	bh=khnf29i32aNVAMX+4Zk9uX22LHX/hcZuuWR91ou6qAQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ONKucQgoPO51fXKMMFBYM3blupUrijLxX5YtXWTxKsnHVKVWRvDtCmXj2e12k6oCyeKt1pIVziF4h5Y3urWBz081IgEYpsivk54v1Ax19Q/NdkHPw17K/qL4ox8/5z94L5lBVFNavxv0dBHAyeiRUJQMew2Z3zXmFaBWZPrd/y0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=oNbGawra; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44H6nI5t007149;
-	Fri, 17 May 2024 10:04:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	from:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding; s=qcppdkim1; bh=FlgfZTd
-	i55ysQfpWg3ZieDj6f689imZPhj+6Dyj0gSE=; b=oNbGawraBdbbdl0VzzArllJ
-	u+b0txNfmcWPyiNvJeH1PTmY78E3PjrVVbjcvkSWimW6Adjj7N8rxo6YFv5mhGI4
-	cj7RowmbeDNbFN5jKnmIdRuxot/Gw+zctkgaZuTa2b9troz4Kvl7xwYuRf6SnfFa
-	DLT4icxvFDyya4TAXqfovqBkHqekwl+VJ+eaUUkSkfTxM/w/qO5GNooZXcQ/5MzR
-	lYdGBoJig2RwB5xTCsgzn+lKGeRUKsJ//1ou+RPQWYc8ZEEXjDYuOaAsiAge43lV
-	bNA8lcwtyzkh+8zbzafAyWQToUdIHN0HNsvrVqHRLkRzRSGcDBBXWlXs+9X1qpw=
-	=
-Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y62a80d7h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 17 May 2024 10:04:30 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTP id 44HA4QaG008006;
-	Fri, 17 May 2024 10:04:27 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 3y5k8ap6ce-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 17 May 2024 10:04:26 +0000
-Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44HA4QN7007997;
-	Fri, 17 May 2024 10:04:26 GMT
-Received: from hu-devc-hyd-u20-c-new.qualcomm.com (hu-rohiagar-hyd.qualcomm.com [10.147.246.70])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 44HA4QGM007991
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 17 May 2024 10:04:26 +0000
-Received: by hu-devc-hyd-u20-c-new.qualcomm.com (Postfix, from userid 3970568)
-	id B9FD221295; Fri, 17 May 2024 15:34:25 +0530 (+0530)
-From: Rohit Agarwal <quic_rohiagar@quicinc.com>
-To: vkoul@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-        andersson@kernel.org, konrad.dybcio@linaro.org
-Cc: linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rohit Agarwal <rohiagar@qti.qualcomm.com>
-Subject: [PATCH 2/2] arm64: dts: qcom: sdx75: Support for I2C and SPI
-Date: Fri, 17 May 2024 15:34:23 +0530
-Message-Id: <20240517100423.2006022-3-quic_rohiagar@quicinc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240517100423.2006022-1-quic_rohiagar@quicinc.com>
-References: <20240517100423.2006022-1-quic_rohiagar@quicinc.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 653F7224D6;
+	Fri, 17 May 2024 10:04:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.6.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715940274; cv=fail; b=TZac46aZ50Dnph6CuErkKPo9tI7GDKF+Yw5vr2dOJ/dWBaOrwvSAjLC1ICy1FwqDdn9v0YVe8Y5BalOesUy5tAEkiISy3MCxCVEUd/DucXmUBDI4avDDCL2bxmxxlNOacczQcc0npiDeTqj8Ih98ZtLpeDDdtdkJdT9XBTYG5/I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715940274; c=relaxed/simple;
+	bh=Cwffk7gRtXU5i1h99yRLbnFLd2gC2IUmPKesLcn8/6U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Wjf5fF7IpyA+NXUapoWvw7tuS07U8cP0bjlEfIpsYYMfdRMs9nNdykqfgK+Kr5423ZP/NhCOwRTDxORXGraAQCjgtuTmhptU37AvaAjLzPWXOj0sHslpoSBcZlW3rZX+nvlLv5AFV4e4x1i+5vJ1JjOlpR+kjO3vK85bCXm88Bc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=HMcaF7hS; arc=fail smtp.client-ip=40.107.6.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=na0Yi0IOl1gQk+U1G0vOVsPJMHimCN9o9W3Ca/rxZRpBVLrfGN/NysvQKaCxGbMP8lY3ognjpGjqAP7Ir6Ue2/7QsTM6DIPNuw4tcWFZETXTlONB0ensm/efl6Idl39UXSSms2XAp5TeGA31gI7C9FfiaWVCg4jbt7+fgHYkncTE4jGN8EmR+2l+6WeP8rWnYlSWTLSU8Okt/w5lDf+dGeUYfZPqUf9ggu712Lwlla4iAuMGFmiCSb05Grg6NUiQ9E4c9fA26x4cueKxCBtmDN5Jh3s4yx65+IPOmzfLAjZGTb70Nsk8jE/vFlqNpbW7n0wp2Ufj/Ge583nQ3IwLvQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hO627+wAoaMhA8WhEXPpdFBWRu9NzBi6STAfEbkrR5s=;
+ b=CVZ4Ny3/2z/jqIO7vBkcrZLMLLfiOO9ydRI1dMmys/fERKCnkcOpdDe3J2xFteZxNA512IXyfTw7Sy62yUYUCkyC4j+9WEyf6mfL0FhM3bl+OLR8NePaC2KaoA0LmqQPAfqZ5SFmz1ZRd0SIor6mJVt3dMBluClFvr6Nm9nTVF81oao6cB31CEIDlafLJvCuorlGaT53hE9tuHPvvcPcgqLKeLJOJBpECl5za9nOah0VGbdV77OasEL2T93wnz7JXwyHh5aCGmyntZIjvJuRMozuTOdETX2F3s0HeBjfGhIvuD1YoO7+blvK+AVpulkxvyjVvkqqqzBYA1++2aFgug==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hO627+wAoaMhA8WhEXPpdFBWRu9NzBi6STAfEbkrR5s=;
+ b=HMcaF7hSHPcNszoQfzmgudrPKJxG5w5gwyczdmQUCll0bioGJclvAxHrhY+orX5Hb1QeY1jCUGZTmOcyNdABx7zlCqCqz2yAy+ICkDhL8jE0K6qgomvdJH1nJ0FR/2qoP/jxbQQRxnqcHrw/N3cwvjVRXIVZQnmwRzKdnJ4fRKI=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from VE1PR04MB7374.eurprd04.prod.outlook.com (2603:10a6:800:1ac::11)
+ by DU0PR04MB9694.eurprd04.prod.outlook.com (2603:10a6:10:312::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.28; Fri, 17 May
+ 2024 10:04:28 +0000
+Received: from VE1PR04MB7374.eurprd04.prod.outlook.com
+ ([fe80::1a84:eeb0:7353:4b87]) by VE1PR04MB7374.eurprd04.prod.outlook.com
+ ([fe80::1a84:eeb0:7353:4b87%3]) with mapi id 15.20.7587.028; Fri, 17 May 2024
+ 10:04:28 +0000
+Date: Fri, 17 May 2024 13:04:25 +0300
+From: Vladimir Oltean <vladimir.oltean@nxp.com>
+To: Horatiu Vultur <horatiu.vultur@microchip.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, richardcochran@gmail.com,
+	jacob.e.keller@intel.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, UNGLinuxDriver@microchip.com
+Subject: Re: [PATCH net] net: lan966x: Remove ptp traps in case the ptp is
+ not enabled.
+Message-ID: <20240517100425.l5ddxbuyxbgx42ti@skbuf>
+References: <20240514193500.577403-1-horatiu.vultur@microchip.com>
+ <20240514222149.mhwtp3kduebb4zzs@skbuf>
+ <20240516064855.ne6uf3xanns4hh2o@DEN-DL-M31836.microchip.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240516064855.ne6uf3xanns4hh2o@DEN-DL-M31836.microchip.com>
+X-ClientProxiedBy: VI1PR0202CA0031.eurprd02.prod.outlook.com
+ (2603:10a6:803:14::44) To VE1PR04MB7374.eurprd04.prod.outlook.com
+ (2603:10a6:800:1ac::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: ZRwZdF3oyFLGRu2glpDNQ3iJKypzQmM-
-X-Proofpoint-ORIG-GUID: ZRwZdF3oyFLGRu2glpDNQ3iJKypzQmM-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-17_03,2024-05-17_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- lowpriorityscore=0 suspectscore=0 mlxlogscore=999 impostorscore=0
- phishscore=0 clxscore=1015 mlxscore=0 spamscore=0 malwarescore=0
- adultscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405010000 definitions=main-2405170080
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: VE1PR04MB7374:EE_|DU0PR04MB9694:EE_
+X-MS-Office365-Filtering-Correlation-Id: 01046b81-83da-4d51-c3c4-08dc7658bcf7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|366007|7416005|376005;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Hz5C/4fifaxfJfRXYATk2mEAS9BcdkdZvO++K/AC0VjMpvGgzhj4ty3x9q7R?=
+ =?us-ascii?Q?6rP85qIFsAlJ9pHxeGznbIGTNpfI/5UOtzScFhqSXpcnpM/F3I3N6bi/bznF?=
+ =?us-ascii?Q?NnFYnYV8QOWv4lyrN/iYuNsabcTKtQpvq2ymph/MPHW5BfmQsS+yKQFA9Oqs?=
+ =?us-ascii?Q?UvPHcUwxFyK0xV50/WaNnuJo60cnjrc+4OJZOQalkhG53mqIy+kEXZaUGKiG?=
+ =?us-ascii?Q?5YIJ0paN/MqYe1D4nRhV+92mZXL0GmX963lPhX7I13CaR1wONIcf+Xx9Zq4C?=
+ =?us-ascii?Q?BaJAtMEGu1dCbCOihTIyN6mFDAq5wdESmfAIwjptJyphhQQ1IbrMoFXBo4ee?=
+ =?us-ascii?Q?YO55iYNWEIsCpRDgq//sEZ9E2n/TRtb6hCRvDz7b0UdILjczL9iLF0uB18+o?=
+ =?us-ascii?Q?x4tsRs4eW2vAtFBdN41ZpuJvhQl/Cn9Ax9yCNCxSWI7Rg6iGK6weS7/rqtyJ?=
+ =?us-ascii?Q?+speyEmoPbkDDVdkgSzdEEQCjrFgDpton+bDt+uOF04ZyF+dRqrVmktIGX5z?=
+ =?us-ascii?Q?pBt01iNCiqsDKCQvYzkBh/IGGiNmTo2P5g3VgoejXQsxXMjbj6yO5Wgtyi3W?=
+ =?us-ascii?Q?5A07ucUzdgsupPVNO+nxjKBuKZIhbX9RA5+kUd5W6OeX6p05g7EqkdduHJLC?=
+ =?us-ascii?Q?dk2lHDAXcGHcEu4kyCxdOQcCABmc3sCxMSN77pyvSY3/Xkyh8Zw2A+x/dG2e?=
+ =?us-ascii?Q?Yl71Gj584C/zLD558QYahEnhDMQHGaWy7NJvySPKqiHf5TsN3t80mn+IE2WR?=
+ =?us-ascii?Q?9mFcHwQRsie994anMcUHBtGTCg+2oXpJW3IkDB81WDNy4kXAWZKcq60L5pef?=
+ =?us-ascii?Q?ibv2XITu8uCDhnLRMThg3oFvzHfhShlZqvzj8ik16iz+bxCtVcriYbri/uyX?=
+ =?us-ascii?Q?VOUNHZkiw3oW8YD+yFEpxA+bkE3qoKY6U3PRso/udgZiEtI6WQi+Uin9HYxS?=
+ =?us-ascii?Q?/pnYBkE70uiB95sIwzqqsbZ0I4r/ALDDIKGglj8xjo3B65oYS86PM/Gbz7UB?=
+ =?us-ascii?Q?AtYbQmjp7ZIpSLmqtgDL4FnTL0TMmbkyvUMCXa0/u/caklb26k45i7NjQHR0?=
+ =?us-ascii?Q?baIaqxA64ibfVG+b/kw2scsCoxscJ4oMvGp52LSaIFpYjkwU7QIHRvW/uuGC?=
+ =?us-ascii?Q?lH7xw2gHcIaNY7GYIr2j9m2pMPPL1PUTsbamf6EhgRtIk6nrbB6kt7j77imp?=
+ =?us-ascii?Q?Wvv/t1MtyoIHiNxM9xwrmcYAZcjvvjfCs9JpeBpk+q6zO6sJLsviciJbSAXW?=
+ =?us-ascii?Q?OkvbQyPhCR2rSwx6AyPQn6GcS3Jp3eYpjt++dYKijQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VE1PR04MB7374.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(366007)(7416005)(376005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?xgMCs8YJJae1iiFOj9h1BNZhbOWzEZun8caIpKGYCZkE4b3H4tuEx6PPU4Qe?=
+ =?us-ascii?Q?Vi++uXe5dO3M1u2obluSdAMcY/RSVUovTth1Gv9rn8XWNiysPg058SiX74eX?=
+ =?us-ascii?Q?er8iTypWUv550IgPlOWjxgsOUpo+e7vBjhex2xfqhkhlzDKHVTcGNaiL9h1w?=
+ =?us-ascii?Q?Yqt9bNiqTeOIOsPtYhrm7nfQkJHTtamVT5diWrB0ytrztcRCDjXnMcGYlsXR?=
+ =?us-ascii?Q?6SjBadD/cRbGisNmiqN9aYRbW6fOOHUsPW/MMpIoH2j61fbRJMx82eKK5n0Y?=
+ =?us-ascii?Q?dkT3wZRDhrVSy9li3R5C7Q4R37WJi0zS7iHUALJjv6RNz0qCtOu85S24Wxml?=
+ =?us-ascii?Q?Qw4E+En+PnNv1m0bDupjkoX0MDlHYPTNrdltm+1kgc3EG9c0eYmqgt5yt62E?=
+ =?us-ascii?Q?zTIp3vMt009LoD+YKXCTTZUW4VuIq+B6wHR/+YkujQAgUVb7SawzJXnlkaYZ?=
+ =?us-ascii?Q?Uw9LLPymXnLeCxCc+CUyXSI/dbLmjeiqu/p9vJleFipGbWy9EBYYnqov1aUc?=
+ =?us-ascii?Q?F9WT/JWgFP2O/ns5vg2wjZ6sKcV0OWWoQor00rHbcy1ecaVzdiOc3pzfTeA/?=
+ =?us-ascii?Q?8bgptf4zA6d43LhsuxOj0I9fqfqvxayLXm6DdJCj78qx+9Tt2OtJ/pikCwzg?=
+ =?us-ascii?Q?CjYhARFc4BTDobh6qdtwLHWl9DRnCwga5aEN/PoMllRDXOhg7EsarCKbrplx?=
+ =?us-ascii?Q?UluFntW+q6j3V/9zvy6RacjO1QV7eqk9HvhAvvtxvpuXPpJax9TinKPAmUNl?=
+ =?us-ascii?Q?r2RL453CHEs5KdgcCNk3Drf51l8+XLc23Gxx5zGSmXvQKpLPidSWaZXWN/UA?=
+ =?us-ascii?Q?bvW3RKbNq72YnUa5qsRNoZbWAfiRjjhCDE+tlXWTIfD3dRASU9d3+OVEw6rr?=
+ =?us-ascii?Q?OHv/KYAhgKc1S2h7qzKt3gvKDk+Eaq6Upe/K2DpVGwiVFIHTfeqk0Y1dxZzk?=
+ =?us-ascii?Q?PFl5k13XYv1fKbuSoRTERvvWX4UDFS+BkaRT1G7qtZP3n/KEXvXWg04F5Beq?=
+ =?us-ascii?Q?E7Pd876g+pByOnHu1lRUKzNj/MIqUTAAObmYxREUHZqbRi5vrgLhKdDO80Xl?=
+ =?us-ascii?Q?PVEuv6lR6EnR0Yl3ZmvNPJP/6CXj5laweScK+14WedGKI88V5P9EkdWR/NX2?=
+ =?us-ascii?Q?2/0nQeqlMzTL3ZBQN+lJtkuT1c1390dWFnXTFH1TjWkdWpgvdtQWKWQiHpdY?=
+ =?us-ascii?Q?TQwr3x0G8TCJpBj3ozJg4R/F9H5izcmnPlXiTN4xjigf8WUlBp3onq+HDrKd?=
+ =?us-ascii?Q?+0VA3SA1IkZLfp+jEb/f2b3rhYw+87AyofgtYrN3bjNlbL9zcc71m8nE6tVo?=
+ =?us-ascii?Q?sU/9C6YecD+NQ+DROpFiEEnlfjnKD7ZLiwHWrQVxOfGubwFxdkV3yK8wbSfR?=
+ =?us-ascii?Q?K8PQigsiaX+yQ7LwRPqjgdYWFLtDVf28s7vIFhCOWvZDaTzMNhFsinbaE9Ii?=
+ =?us-ascii?Q?RxZs5tSaQjHC/elOwnNKpdTevsLdyVejXc7Rl80/P4iGxHHXlFgsiLLs0B8S?=
+ =?us-ascii?Q?ptJLEJcjbpdBMbuH/x+TG7aWUdYs0KtoJNZiMwf4xfsdh8bR95fXHraXz9d+?=
+ =?us-ascii?Q?2P5qbgQap35Wul7omg1HYDvjvgQCEkSD+H8B7DWiMEbS87y6QOVzZVE2r6jy?=
+ =?us-ascii?Q?7Q=3D=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 01046b81-83da-4d51-c3c4-08dc7658bcf7
+X-MS-Exchange-CrossTenant-AuthSource: VE1PR04MB7374.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 May 2024 10:04:28.3443
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: GXOf0/B6gfpjDL/nGMzy0HR4O7dIIDqRy121nZRvodYEB3iqf9uimtDyBXazhmOLPkX4VE0ZNVSn9wrLTOnDVw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR04MB9694
 
-From: Rohit Agarwal <rohiagar@qti.qualcomm.com>
+On Thu, May 16, 2024 at 08:48:55AM +0200, Horatiu Vultur wrote:
+> > Alternatively, the -EOPNOTSUPP check could be moved before programming
+> > the traps in the first place.
+> 
+> Thanks for the review.
+> Actually I don't think this alternative will work. In case of PHY
+> timestamping, we would still like to add those rules regardless if
+> ptp is enabled on lan966x.
+> 
+> > 
+> > Reviewed-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+> 
+> -- 
+> /Horatiu
 
-Add devicetree node for I2C and SPI busses in SDX75.
+I don't understand why this would not have worked?
 
-Signed-off-by: Rohit Agarwal <rohiagar@qti.qualcomm.com>
----
- arch/arm64/boot/dts/qcom/sdx75.dtsi | 431 ++++++++++++++++++++++++++++
- 1 file changed, 431 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/sdx75.dtsi b/arch/arm64/boot/dts/qcom/sdx75.dtsi
-index da1704061d58..5e0204b3ef7b 100644
---- a/arch/arm64/boot/dts/qcom/sdx75.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdx75.dtsi
-@@ -8,6 +8,7 @@
+diff --git a/drivers/net/ethernet/microchip/lan966x/lan966x_main.c b/drivers/net/ethernet/microchip/lan966x/lan966x_main.c
+index b12d3b8a64fd..1439a36e8394 100644
+--- a/drivers/net/ethernet/microchip/lan966x/lan966x_main.c
++++ b/drivers/net/ethernet/microchip/lan966x/lan966x_main.c
+@@ -474,14 +474,14 @@ static int lan966x_port_hwtstamp_set(struct net_device *dev,
+ 	    cfg->source != HWTSTAMP_SOURCE_PHYLIB)
+ 		return -EOPNOTSUPP;
  
- #include <dt-bindings/clock/qcom,rpmh.h>
- #include <dt-bindings/clock/qcom,sdx75-gcc.h>
-+#include <dt-bindings/dma/qcom-gpi.h>
- #include <dt-bindings/interconnect/qcom,icc.h>
- #include <dt-bindings/interconnect/qcom,sdx75.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-@@ -441,6 +442,28 @@ gcc: clock-controller@80000 {
- 			#power-domain-cells = <1>;
- 		};
++	if (cfg->source == HWTSTAMP_SOURCE_NETDEV && !port->lan966x->ptp)
++		return -EOPNOTSUPP;
++
+ 	err = lan966x_ptp_setup_traps(port, cfg);
+ 	if (err)
+ 		return err;
  
-+		gpi_dma: dma-controller@900000 {
-+			compatible = "qcom,sdx75-gpi-dma", "qcom,sm6350-gpi-dma";
-+			reg = <0x0 0x00900000 0x0 0x60000>;
-+			#dma-cells = <3>;
-+			interrupts = <GIC_SPI 345 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 346 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 347 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 348 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 349 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 350 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 351 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 352 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 353 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 354 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 355 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 356 IRQ_TYPE_LEVEL_HIGH>;
-+			dma-channels = <12>;
-+			dma-channel-mask = <0x7f>;
-+			iommus = <&apps_smmu 0xf6 0x0>;
-+			status = "disabled";
-+		};
-+
- 		qupv3_id_0: geniqup@9c0000 {
- 			compatible = "qcom,geni-se-qup";
- 			reg = <0x0 0x009c0000 0x0 0x2000>;
-@@ -457,6 +480,52 @@ qupv3_id_0: geniqup@9c0000 {
- 			ranges;
- 			status = "disabled";
- 
-+			i2c0: i2c@980000 {
-+				compatible = "qcom,geni-i2c";
-+				reg = <0x0 0x00980000 0x0 0x4000>;
-+				clocks = <&gcc GCC_QUPV3_WRAP0_S0_CLK>;
-+				clock-names = "se";
-+				interrupts = <GIC_SPI 337 IRQ_TYPE_LEVEL_HIGH>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				pinctrl-0 = <&qup_i2c0_data_clk>;
-+				pinctrl-names = "default";
-+				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
-+						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
-+						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-+						 &system_noc SLAVE_QUP_0 QCOM_ICC_TAG_ALWAYS>,
-+						<&system_noc MASTER_QUP_0 QCOM_ICC_TAG_ALWAYS
-+						 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
-+				interconnect-names = "qup-core", "qup-config", "qup-memory";
-+				dmas = <&gpi_dma 0 0 QCOM_GPI_I2C>,
-+				       <&gpi_dma 1 0 QCOM_GPI_I2C>;
-+				dma-names = "tx", "rx";
-+				status = "disabled";
-+			};
-+
-+			spi0: spi@980000 {
-+				compatible = "qcom,geni-spi";
-+				reg = <0x0 0x00980000 0x0 0x4000>;
-+				clocks = <&gcc GCC_QUPV3_WRAP0_S0_CLK>;
-+				clock-names = "se";
-+				interrupts = <GIC_SPI 337 IRQ_TYPE_LEVEL_HIGH>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				pinctrl-0 = <&qup_spi0_data_clk>, <&qup_spi0_cs>;
-+				pinctrl-names = "default";
-+				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
-+						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
-+						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-+						 &system_noc SLAVE_QUP_0 QCOM_ICC_TAG_ALWAYS>,
-+						<&system_noc MASTER_QUP_0 QCOM_ICC_TAG_ALWAYS
-+						 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
-+				interconnect-names = "qup-core", "qup-config", "qup-memory";
-+				dmas = <&gpi_dma 0 0 QCOM_GPI_SPI>,
-+				       <&gpi_dma 1 0 QCOM_GPI_SPI>;
-+				dma-names = "tx", "rx";
-+				status = "disabled";
-+			};
-+
- 			uart1: serial@984000 {
- 				compatible = "qcom,geni-debug-uart";
- 				reg = <0x0 0x00984000 0x0 0x4000>;
-@@ -475,6 +544,229 @@ &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
- 						"sleep";
- 				status = "disabled";
- 			};
-+
-+			i2c2: i2c@988000 {
-+				compatible = "qcom,geni-i2c";
-+				reg = <0x0 0x00988000 0x0 0x4000>;
-+				clocks = <&gcc GCC_QUPV3_WRAP0_S2_CLK>;
-+				clock-names = "se";
-+				interrupts = <GIC_SPI 339 IRQ_TYPE_LEVEL_HIGH>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				pinctrl-0 = <&qup_i2c2_data_clk>;
-+				pinctrl-names = "default";
-+				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
-+						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
-+						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-+						 &system_noc SLAVE_QUP_0 QCOM_ICC_TAG_ALWAYS>,
-+						<&system_noc MASTER_QUP_0 QCOM_ICC_TAG_ALWAYS
-+						 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
-+				interconnect-names = "qup-core", "qup-config", "qup-memory";
-+				dmas = <&gpi_dma 0 2 QCOM_GPI_I2C>,
-+				       <&gpi_dma 1 2 QCOM_GPI_I2C>;
-+				dma-names = "tx", "rx";
-+				status = "disabled";
-+			};
-+
-+			spi2: spi@988000 {
-+				compatible = "qcom,geni-spi";
-+				reg = <0x0 0x00988000 0x0 0x4000>;
-+				clocks = <&gcc GCC_QUPV3_WRAP0_S2_CLK>;
-+				clock-names = "se";
-+				interrupts = <GIC_SPI 339 IRQ_TYPE_LEVEL_HIGH>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				pinctrl-0 = <&qup_spi2_data_clk>, <&qup_spi2_cs>;
-+				pinctrl-names = "default";
-+				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
-+						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
-+						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-+						 &system_noc SLAVE_QUP_0 QCOM_ICC_TAG_ALWAYS>,
-+						<&system_noc MASTER_QUP_0 QCOM_ICC_TAG_ALWAYS
-+						 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
-+				interconnect-names = "qup-core", "qup-config", "qup-memory";
-+				dmas = <&gpi_dma 0 2 QCOM_GPI_SPI>,
-+				       <&gpi_dma 1 2 QCOM_GPI_SPI>;
-+				dma-names = "tx", "rx";
-+				status = "disabled";
-+			};
-+
-+			i2c3: i2c@98c000 {
-+				compatible = "qcom,geni-i2c";
-+				reg = <0x0 0x0098c000 0x0 0x4000>;
-+				clocks = <&gcc GCC_QUPV3_WRAP0_S3_CLK>;
-+				clock-names = "se";
-+				interrupts = <GIC_SPI 340 IRQ_TYPE_LEVEL_HIGH>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				pinctrl-0 = <&qup_i2c3_data_clk>;
-+				pinctrl-names = "default";
-+				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
-+						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
-+						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-+						 &system_noc SLAVE_QUP_0 QCOM_ICC_TAG_ALWAYS>,
-+						<&system_noc MASTER_QUP_0 QCOM_ICC_TAG_ALWAYS
-+						 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
-+				interconnect-names = "qup-core", "qup-config", "qup-memory";
-+				dmas = <&gpi_dma 0 3 QCOM_GPI_I2C>,
-+				       <&gpi_dma 1 3 QCOM_GPI_I2C>;
-+				dma-names = "tx", "rx";
-+				status = "disabled";
-+			};
-+
-+			spi3: spi@98c000 {
-+				compatible = "qcom,geni-spi";
-+				reg = <0x0 0x0098c000 0x0 0x4000>;
-+				clocks = <&gcc GCC_QUPV3_WRAP0_S3_CLK>;
-+				clock-names = "se";
-+				interrupts = <GIC_SPI 340 IRQ_TYPE_LEVEL_HIGH>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				pinctrl-0 = <&qup_spi3_data_clk>, <&qup_spi3_cs>;
-+				pinctrl-names = "default";
-+				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
-+						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
-+						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-+						 &system_noc SLAVE_QUP_0 QCOM_ICC_TAG_ALWAYS>,
-+						<&system_noc MASTER_QUP_0 QCOM_ICC_TAG_ALWAYS
-+						 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
-+				interconnect-names = "qup-core", "qup-config", "qup-memory";
-+				dmas = <&gpi_dma 0 3 QCOM_GPI_SPI>,
-+				       <&gpi_dma 1 3 QCOM_GPI_SPI>;
-+				dma-names = "tx", "rx";
-+				status = "disabled";
-+			};
-+
-+			uart4: serial@990000 {
-+				compatible = "qcom,geni-uart";
-+				reg = <0x0 0x00990000 0x0 0x4000>;
-+				clocks = <&gcc GCC_QUPV3_WRAP0_S4_CLK>;
-+				clock-names = "se";
-+				interrupts = <GIC_SPI 341 IRQ_TYPE_LEVEL_HIGH>;
-+				pinctrl-0 = <&qup_uart4_default>, <&qup_uart4_cts_rts>;
-+				pinctrl-names = "default";
-+				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
-+						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
-+						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-+						 &system_noc SLAVE_QUP_0 QCOM_ICC_TAG_ALWAYS>;
-+				interconnect-names = "qup-core", "qup-config";
-+				status = "disabled";
-+			};
-+
-+			i2c5: i2c@994000 {
-+				compatible = "qcom,geni-i2c";
-+				reg = <0x0 0x00994000 0x0 0x4000>;
-+				clocks = <&gcc GCC_QUPV3_WRAP0_S5_CLK>;
-+				clock-names = "se";
-+				interrupts = <GIC_SPI 342 IRQ_TYPE_LEVEL_HIGH>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				pinctrl-0 = <&qup_i2c5_data_clk>;
-+				pinctrl-names = "default";
-+				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
-+						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
-+						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-+						 &system_noc SLAVE_QUP_0 QCOM_ICC_TAG_ALWAYS>,
-+						<&system_noc MASTER_QUP_0 QCOM_ICC_TAG_ALWAYS
-+						 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
-+				interconnect-names = "qup-core", "qup-config", "qup-memory";
-+				dmas = <&gpi_dma 0 5 QCOM_GPI_I2C>,
-+				       <&gpi_dma 1 5 QCOM_GPI_I2C>;
-+				dma-names = "tx", "rx";
-+				status = "disabled";
-+			};
-+
-+			i2c6: i2c@998000 {
-+				compatible = "qcom,geni-i2c";
-+				reg = <0x0 0x00998000 0x0 0x4000>;
-+				clocks = <&gcc GCC_QUPV3_WRAP0_S6_CLK>;
-+				clock-names = "se";
-+				interrupts = <GIC_SPI 343 IRQ_TYPE_LEVEL_HIGH>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				pinctrl-0 = <&qup_i2c6_data_clk>;
-+				pinctrl-names = "default";
-+				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
-+						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
-+						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-+						 &system_noc SLAVE_QUP_0 QCOM_ICC_TAG_ALWAYS>,
-+						<&system_noc MASTER_QUP_0 QCOM_ICC_TAG_ALWAYS
-+						 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
-+				interconnect-names = "qup-core", "qup-config", "qup-memory";
-+				dmas = <&gpi_dma 0 6 QCOM_GPI_I2C>,
-+				       <&gpi_dma 1 6 QCOM_GPI_I2C>;
-+				dma-names = "tx", "rx";
-+				status = "disabled";
-+			};
-+
-+			spi6: spi@998000 {
-+				compatible = "qcom,geni-spi";
-+				reg = <0x0 0x00998000 0x0 0x4000>;
-+				clocks = <&gcc GCC_QUPV3_WRAP0_S6_CLK>;
-+				clock-names = "se";
-+				interrupts = <GIC_SPI 343 IRQ_TYPE_LEVEL_HIGH>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				pinctrl-0 = <&qup_spi6_data_clk>, <&qup_spi6_cs>;
-+				pinctrl-names = "default";
-+				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
-+						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
-+						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-+						 &system_noc SLAVE_QUP_0 QCOM_ICC_TAG_ALWAYS>,
-+						<&system_noc MASTER_QUP_0 QCOM_ICC_TAG_ALWAYS
-+						 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
-+				interconnect-names = "qup-core", "qup-config", "qup-memory";
-+				dmas = <&gpi_dma 0 6 QCOM_GPI_SPI>,
-+				       <&gpi_dma 1 6 QCOM_GPI_SPI>;
-+				dma-names = "tx", "rx";
-+				status = "disabled";
-+			};
-+
-+			i2c7: i2c@99c000 {
-+				compatible = "qcom,geni-i2c";
-+				reg = <0x0 0x0099c000 0x0 0x4000>;
-+				clocks = <&gcc GCC_QUPV3_WRAP0_S7_CLK>;
-+				clock-names = "se";
-+				interrupts = <GIC_SPI 344 IRQ_TYPE_LEVEL_HIGH>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				pinctrl-0 = <&qup_i2c7_data_clk>;
-+				pinctrl-names = "default";
-+				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
-+						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
-+						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-+						 &system_noc SLAVE_QUP_0 QCOM_ICC_TAG_ALWAYS>,
-+						<&system_noc MASTER_QUP_0 QCOM_ICC_TAG_ALWAYS
-+						 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
-+				interconnect-names = "qup-core", "qup-config", "qup-memory";
-+				dmas = <&gpi_dma 0 7 QCOM_GPI_I2C>,
-+				       <&gpi_dma 1 7 QCOM_GPI_I2C>;
-+				dma-names = "tx", "rx";
-+				status = "disabled";
-+			};
-+
-+			spi7: spi@99c000 {
-+				compatible = "qcom,geni-spi";
-+				reg = <0x0 0x0099c000 0x0 0x4000>;
-+				clocks = <&gcc GCC_QUPV3_WRAP0_S7_CLK>;
-+				clock-names = "se";
-+				interrupts = <GIC_SPI 344 IRQ_TYPE_LEVEL_HIGH>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				pinctrl-0 = <&qup_spi7_data_clk>, <&qup_spi7_cs>;
-+				pinctrl-names = "default";
-+				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
-+						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
-+						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-+						 &system_noc SLAVE_QUP_0 QCOM_ICC_TAG_ALWAYS>,
-+						<&system_noc MASTER_QUP_0 QCOM_ICC_TAG_ALWAYS
-+						 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
-+				interconnect-names = "qup-core", "qup-config", "qup-memory";
-+				dmas = <&gpi_dma 0 7 QCOM_GPI_SPI>,
-+				       <&gpi_dma 1 7 QCOM_GPI_SPI>;
-+				dma-names = "tx", "rx";
-+				status = "disabled";
-+			};
- 		};
- 
- 		usb_hsphy: phy@ff4000 {
-@@ -661,6 +953,145 @@ tlmm: pinctrl@f000000 {
- 			#interrupt-cells = <2>;
- 			wakeup-parent = <&pdc>;
- 
-+			qup_i2c0_data_clk: qup-i2c0-data-clk-state {
-+				/* SDA, SCL */
-+				pins = "gpio8", "gpio9";
-+				function = "qup_se0";
-+				drive-strength = <2>;
-+				bias-pull-up;
-+			};
-+
-+			qup_i2c2_data_clk: qup-i2c2-data-clk-state {
-+				/* SDA, SCL */
-+				pins = "gpio14", "gpio15";
-+				function = "qup_se2";
-+				drive-strength = <2>;
-+				bias-pull-up;
-+			};
-+
-+			qup_i2c3_data_clk: qup-i2c3-data-clk-state {
-+				/* SDA, SCL */
-+				pins = "gpio52", "gpio53";
-+				function = "qup_se3";
-+				drive-strength = <2>;
-+				bias-pull-up;
-+			};
-+
-+			qup_i2c5_data_clk: qup-i2c5-data-clk-state {
-+				/* SDA, SCL */
-+				pins = "gpio110", "gpio111";
-+				function = "qup_se5";
-+				drive-strength = <2>;
-+				bias-pull-up;
-+			};
-+
-+			qup_i2c6_data_clk: qup-i2c6-data-clk-state {
-+				/* SDA, SCL */
-+				pins = "gpio112", "gpio113";
-+				function = "qup_se6";
-+				drive-strength = <2>;
-+				bias-pull-up;
-+			};
-+
-+			qup_i2c7_data_clk: qup-i2c7-data-clk-state {
-+				/* SDA, SCL */
-+				pins = "gpio116", "gpio117";
-+				function = "qup_se7";
-+				drive-strength = <2>;
-+				bias-pull-up;
-+			};
-+
-+			qup_spi0_cs: qup-spi0-cs-state {
-+				pins = "gpio11";
-+				function = "qup_se0";
-+				drive-strength = <6>;
-+				bias-pull-down;
-+			};
-+
-+			qup_spi0_data_clk: qup-spi0-data-clk-state {
-+				/* MISO, MOSI, CLK */
-+				pins = "gpio8", "gpio9", "gpio10";
-+				function = "qup_se0";
-+				drive-strength = <6>;
-+				bias-pull-down;
-+			};
-+
-+			qup_spi2_cs: qup-spi2-cs-state {
-+				pins = "gpio17";
-+				function = "qup_se2";
-+				drive-strength = <6>;
-+				bias-pull-down;
-+			};
-+
-+			qup_spi2_data_clk: qup-spi2-data-clk-state {
-+				/* MISO, MOSI, CLK */
-+				pins = "gpio14", "gpio15", "gpio16";
-+				function = "qup_se2";
-+				drive-strength = <6>;
-+				bias-pull-down;
-+			};
-+
-+			qup_spi3_cs: qup-spi3-cs-state {
-+				pins = "gpio55";
-+				function = "qup_se3";
-+				drive-strength = <6>;
-+				bias-pull-down;
-+			};
-+
-+			qup_spi3_data_clk: qup-spi3-data-clk-state {
-+				/* MISO, MOSI, CLK */
-+				pins = "gpio52", "gpio53", "gpio54";
-+				function = "qup_se3";
-+				drive-strength = <6>;
-+				bias-pull-down;
-+			};
-+
-+			qup_spi6_cs: qup-spi6-cs-state {
-+				pins = "gpio115";
-+				function = "qup_se6";
-+				drive-strength = <6>;
-+				bias-pull-down;
-+			};
-+
-+			qup_spi6_data_clk: qup-spi6-data-clk-state {
-+				/* MISO, MOSI, CLK */
-+				pins = "gpio112", "gpio113", "gpio114";
-+				function = "qup_se6";
-+				drive-strength = <6>;
-+				bias-pull-down;
-+			};
-+
-+			qup_spi7_cs: qup-spi7-cs-state {
-+				pins = "gpio119";
-+				function = "qup_se7";
-+				drive-strength = <6>;
-+				bias-pull-down;
-+			};
-+
-+			qup_spi7_data_clk: qup-spi7-data-clk-state {
-+				/* MISO, MOSI, CLK */
-+				pins = "gpio116", "gpio117", "gpio118";
-+				function = "qup_se7";
-+				drive-strength = <6>;
-+				bias-pull-down;
-+			};
-+
-+			qup_uart4_cts_rts: qup-uart4-cts-rts-state {
-+				/* CTS, RTS */
-+				pins = "gpio52", "gpio53";
-+				function = "qup_se3";
-+				drive-strength = <2>;
-+				bias-pull-down;
-+			};
-+
-+			qup_uart4_default: qup-uart4-default-state {
-+				/* TX, RX */
-+				pins = "gpio54", "gpio55";
-+				function = "qup_se3";
-+				drive-strength = <2>;
-+				bias-pull-up;
-+			};
-+
- 			qupv3_se1_2uart_active: qupv3-se1-2uart-active-state {
- 				tx-pins {
- 					pins = "gpio12";
--- 
-2.25.1
-
+ 	if (cfg->source == HWTSTAMP_SOURCE_NETDEV) {
+-		if (!port->lan966x->ptp)
+-			return -EOPNOTSUPP;
+-
+ 		err = lan966x_ptp_hwtstamp_set(port, cfg, extack);
+ 		if (err) {
+ 			lan966x_ptp_del_traps(port);
 
