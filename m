@@ -1,202 +1,168 @@
-Return-Path: <linux-kernel+bounces-181838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C84318C81FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 10:01:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F9248C8200
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 10:01:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D3F6B220E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 08:01:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF731B21BB3
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 08:01:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2991A2BAFA;
-	Fri, 17 May 2024 08:00:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E22F32C68F;
+	Fri, 17 May 2024 08:00:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="djaxws3o"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lw4BhSBa"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 680D922318;
-	Fri, 17 May 2024 08:00:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A6F122301;
+	Fri, 17 May 2024 08:00:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715932839; cv=none; b=fGCN4zoWBkBwUf8eOdh8W4HPQx+DZXAxXXDLtJF7LRFdjiEPgw564hRwLzHu9+f0FfQIk/szUIeJo3LWM4L6UYo4qij+X9ZAbfZmwesaatGu3dylVpN0s08zwKAsM+hRJ8huB7a+NKgFaZH6mAh3hW8CdZoixG+RgMUOJtvKRQk=
+	t=1715932841; cv=none; b=e8Q94Ndx0eeXd4vCY/9Eibguf+1N6zuMrWtg6VBjh+/3IR7xodywPG5fTdY9kaShAD2+81SNpfGqeRKYdmaA7UwlT9O9WubL6RWF+zooztgnu3wmpt+nkeQDrDXoqi7+ixP4Rze7TLaVYvttYJaIHgHcA+bQJvcLhnaLkUMRKxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715932839; c=relaxed/simple;
-	bh=QxgA8GZnoup8zGH9AmZ4cladIL6JafKC2tee8EIHg/o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i2kLWD9hhOMT3BflT2LL0i7B5+4VR8230BV429is5oIaFT9262p4MfJSmFjOFZOCRjw0B2697OqEm0pKlGzZm1ck3lKsev2ROZoseL41ujzXuDzsDoKcD8qnaJtBwrD22FMgJ3ClwLRfTmE8hHaW3IY/AAr7BIGMxvEwQqmXUtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=djaxws3o; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715932838; x=1747468838;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=QxgA8GZnoup8zGH9AmZ4cladIL6JafKC2tee8EIHg/o=;
-  b=djaxws3oJzRB4mp9eq2cYEWXO3wu+1dlnJkR+DTPCkg6I2W1dIIHBBqC
-   B4QC/lhWQJpDP9ctTqZH1So3aZKvwE3PP7b3lOrnmTnQ0E1u96qSBEtZp
-   lXnaoRf2nzZzm/DRiawKLXjOMgF08S6M73v/ctP38+4yDQeu7aI+hbu33
-   Gelvh8p4ux3Zz5slSUvtVZaA18hB/DcQKXW+QmVTXKJGCGf9Fpcc911PZ
-   rN62dYnNHK8HEpOCMGgFZeigLZyO/47Wk9dp7EmZNxfoNCpadhtyi8vb4
-   i0KxlrdGWKWQ9x5X+qk1VB7VlT5dAKSdXitbjsu3HNZnf0B+GPLyjz4YN
-   Q==;
-X-CSE-ConnectionGUID: hMHaV31sSyWuAcfDFjxfTQ==
-X-CSE-MsgGUID: Q0tWMaZLRtC3fkK25ZhO5A==
-X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="11936373"
-X-IronPort-AV: E=Sophos;i="6.08,167,1712646000"; 
-   d="scan'208";a="11936373"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 01:00:37 -0700
-X-CSE-ConnectionGUID: a9vvjHZlRoqS19wgv+zALQ==
-X-CSE-MsgGUID: Hetpc9OuS2iqE3maXU0NqQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,167,1712646000"; 
-   d="scan'208";a="62918843"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 01:00:35 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 34A9B11FA44;
-	Fri, 17 May 2024 11:00:32 +0300 (EEST)
-Date: Fri, 17 May 2024 08:00:32 +0000
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: ChiYuan Huang <cy_huang@richtek.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Daniel Scally <djrscally@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Jean-Michel Hautbois <jeanmichel.hautbois@ideasonboard.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] media: v4l: async: Fix NULL pointer when v4l2 flash
- subdev binding
-Message-ID: <ZkcOoLQQRdRYYacd@kekkonen.localdomain>
-References: <e2f9f2b7b7de956d70b8567a2ab285409fff988b.1715136478.git.cy_huang@richtek.com>
- <ZkXi_U5Js34dUQsA@kekkonen.localdomain>
- <20240517063150.GA12245@linuxcarl2.richtek.com>
+	s=arc-20240116; t=1715932841; c=relaxed/simple;
+	bh=4VHpapHi+PH+rYnOezaLaPm5bmjATK2euB+emCV6fpw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CbYV0wqmi1n2E2KRTg/h33ZmrqY0J6JD6ytodQI7A1EPufxF/zTcHo6MWwpdWMk3AKn6YLD6ilTHjm3Ru1lY31apkRr0b87FJSdqe1hrxmGOt0tX0IN2Vjzt1849R4N5pt3+dLk5xZVAAm59AtMz9LlTShvEuTW4YCn79egf4Z8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lw4BhSBa; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a59a5f81af4so404253466b.3;
+        Fri, 17 May 2024 01:00:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715932838; x=1716537638; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9WHUQbwGFE5vWk241LLGD7IkNMzFlEX8C8V5LVuH5QU=;
+        b=lw4BhSBaqkccRsMm/Z6Sp63Lf/Jl5dQDF663VyJH1AgNpImHd/Q3ZKISpiwpLq7XNj
+         KrYpQQywnIZ54eWa6NL8/U+FaNUc905gHk4pvhCqsECarNw9EE5Yb3fjXC/veMLh5g3Y
+         9HdoGvjTHc8ocPlXk216AlNXCea0WL4GrgZ6Fmtl1XHBySFBzjm1hpIaK1NQNaIIJs50
+         X0jDWus8JbErCfdmyWItd4uuKt41ODdNPSpFuGALQeFMkaQYJaSd8SLs1e2HJcBiyL7E
+         mzat7bfVBsEnbvR+IMMcV6cFEaa3W/tjNNTZVb774LOfMd97NbSiTBc45orJS5KiWPCB
+         hI7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715932838; x=1716537638;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9WHUQbwGFE5vWk241LLGD7IkNMzFlEX8C8V5LVuH5QU=;
+        b=G38KC5AIkaJl9qUMyZ7WrKwmlO//Ek/a/vpN8IYQJCHEjfczAnyrsC8ZXv1+dg9BiN
+         o6MdHxcPd5cnQdGyRfd2mA2NHsiDERkAKiAl4F1Z6f29lpaSY4u7v4zUtRYr7RC9q0Oo
+         11V+Duyh+TKhYHBgNOFPXa9nbmdQfwYSnaehPaLxOM6/LNNCj9lpOt8JM/73q6ox4MC3
+         jVsaijlsgRGrurm9yNJOCZF5XzTK9TgCih/r9ltSUt85ZeXJh23kKGytVk/WEerpZtBM
+         j9itf7Vzr/XPHXxKGUPYb6MtOrV+Fqv+x2sAAUGKhNjMJNIMOJPPT9853aJ8SG3vuVLd
+         ABjw==
+X-Forwarded-Encrypted: i=1; AJvYcCX46xloLTwNtSAdxQlOcc+2cwcii4JKPWkh64GcO8tjLiHFCcXY7+a+auU9n91cPCJ6TcSLlQdy1MvUT0QZIo+r+z3QYVEYmnlP8jDs9Y1VxkfUN2j/YHDm84uey8GgKpStzRBRcQ==
+X-Gm-Message-State: AOJu0YxK4vf7W4bo/40EJieIbL21wPko7ePJdzHVsTDPuxZS5IEiMjEP
+	ox0pNes6bgAnB3UdNf/zDj06XW2X5IVbIU6KRQe9/Zbz5Ko92kR1
+X-Google-Smtp-Source: AGHT+IFgPZxrOpJ1GJjTjTxZW6yzslVDP6OCOT/2BnUK6zwhcsGRHrerb5dBzWocqZOIQ3nVNtUchg==
+X-Received: by 2002:a17:907:d25:b0:a5a:2aed:ca2b with SMTP id a640c23a62f3a-a5a2d5c9fdcmr1831518366b.28.1715932837421;
+        Fri, 17 May 2024 01:00:37 -0700 (PDT)
+Received: from ?IPV6:2a02:2f0e:350b:4500:569e:359d:dfe4:922e? ([2a02:2f0e:350b:4500:569e:359d:dfe4:922e])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b17d10sm1082684266b.198.2024.05.17.01.00.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 17 May 2024 01:00:37 -0700 (PDT)
+Message-ID: <ec8174c5-723d-43ad-beaf-0930d1b2c19e@gmail.com>
+Date: Fri, 17 May 2024 11:00:36 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240517063150.GA12245@linuxcarl2.richtek.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 8/8] drivers: iio: imu: Add support for adis1657x
+ family
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, conor+dt@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, robh@kernel.org, nuno.sa@analog.com
+References: <20240508131310.880479-1-ramona.bolboaca13@gmail.com>
+ <20240508131310.880479-9-ramona.bolboaca13@gmail.com>
+ <20240511145447.68de0f59@jic23-huawei>
+Content-Language: en-US
+From: Ramona Gradinariu <ramona.bolboaca13@gmail.com>
+In-Reply-To: <20240511145447.68de0f59@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Chi Yuan,
+>> + * device will send the data popped with the (n-1)th consecutive burst request.
+>> + * In order to read the data which was popped previously, without popping the FIFO,
+>> + * the 0x00 0x00 burst request has to be sent.
+>> + * If after a 0x68 0x00 FIFO pop burst request, there is any other device access
+>> + * different from a 0x68 0x00 or a 0x00 0x00 burst request, the FIFO data popped
+>> + * previously will be lost.
+>> + */
+>> +static irqreturn_t adis16475_trigger_handler_with_fifo(int irq, void *p)
+>>  {
+>>  	struct iio_poll_func *pf = p;
+>>  	struct iio_dev *indio_dev = pf->indio_dev;
+>> +	struct adis16475 *st = iio_priv(indio_dev);
+>> +	struct adis *adis = &st->adis;
+>> +	int ret;
+>> +	u16 fifo_cnt, i;
+>>
+>> -	adis16475_push_single_sample(pf);
+>> +	adis_dev_lock(&st->adis);
+>> +
+>> +	ret = __adis_read_reg_16(adis, ADIS16575_REG_FIFO_CNT, &fifo_cnt);
+>> +	if (ret)
+>> +		goto unlock;
+>> +
+>> +	/*
+>> +	 * If no sample is available, nothing can be read. This can happen if
+>> +	 * a the used trigger has a higher frequency than the selected sample rate.
+>> +	 */
+>> +	if (!fifo_cnt)
+>> +		goto unlock;
+>> +
+>> +	/*
+>> +	 * First burst request - FIFO pop: popped data will be returned in the
+>> +	 * next burst request.
+>> +	 */
+>> +	ret = adis16575_custom_burst_read(pf, adis->data->burst_reg_cmd);
+>> +	if (ret)
+>> +		goto unlock;
+>> +
+>> +	for (i = 0; i < fifo_cnt - 1; i++) {
+>> +		ret = adis16475_push_single_sample(pf);
+>> +		if (ret)
+>> +			goto unlock;
+>> +	}
+>> +
+> My paranoid instincts for potential race conditions kick in.
+> Is this one of those annoying devices where the fifo interrupt will only occur
+> again if we successfully read enough data to get below the threshold?
+> Snag with no public datasheet is I can't just look it up!
+> If it's a level interrupt this won't be a problem.
+>
+> If so the race is the following.
+> 1. Interrupt happens, we read the number of entries in fifo.
+> 2. We read out the fifo, but for some reason our read is slow... (contention on
+>    bus, CPU overheating, who knows).  The data fills up at roughly the
+>    same rate as we are reading.
+> 3. We try to carry on but in reality the fifo contents never dropped below
+>    the watermark, so not more interrupts ever occur.
+>
+> Solution normally is to put this read sequence in a while (fifo_cnt)
+> and reread that after you've done the burst read.  If there is more data
+> go around again.  That way we drive for definitely having gotten to zero
+> at some stage - and hence whatever the threshold is set to a new interrupt
+> will occur.
 
-On Fri, May 17, 2024 at 02:31:50PM +0800, ChiYuan Huang wrote:
-> Hi, Sakari:
-> 
-> 	Thanks for your reply.
-> If any misunderstanding, please correct me.
-> 
-> On Thu, May 16, 2024 at 10:42:05AM +0000, Sakari Ailus wrote:
-> > Hi Chi Yuan,
-> > 
-> > On Wed, May 08, 2024 at 10:51:49AM +0800, cy_huang@richtek.com wrote:
-> > > From: ChiYuan Huang <cy_huang@richtek.com>
-> > > 
-> > > In v4l2_async_create_ancillary_links(), if v4l2 async notifier is
-> > > created from v4l2 device, the v4l2 flash subdev async binding will enter
-> > > the logic to create media link. Due to the subdev of notifier is NULL,
-> > > this will cause NULL pointer to access the subdev entity. Therefore, add
-> > > the check to bypass it.
-> > > 
-> > > Fixes: aa4faf6eb271 ("media: v4l2-async: Create links during v4l2_async_match_notify()")
-> > > Signed-off-by: ChiYuan Huang <cy_huang@richtek.com>
-> > > ---
-> > > Hi,
-> > > 
-> > >   I'm trying to bind the v4l2 subdev for flashlight testing. It seems
-> > > some logic in v4l2 asynd binding is incorrect.
-> > > 
-> > > From the change, I modified vim2m as the test driver to bind mt6370 flashlight.
-> > > 
-> > > Here's the backtrace log.
-> > > 
-> > >  vim2m soc:vim2m: bound [white:flash-2]
-> > >  Unable to handle kernel NULL pointer dereference at virtual address 0000000000000058
-> > >  ......skipping
-> > >  Call trace:
-> > >   media_create_ancillary_link+0x48/0xd8 [mc]
-> > >   v4l2_async_match_notify+0x17c/0x208 [v4l2_async]
-> > >   v4l2_async_register_subdev+0xb8/0x1d0 [v4l2_async]
-> > 
-> > There's something wrong obviously somewhere but wherea?
-> > 
-> In vim2m driver, I added v4l2_async_nf_init -> v4l2_async_nf_add_fwnode_remote ->
-> v4l2_async_nf_register.
-> 
-> From the async flow, in notifier complete ops to create v4l-subdevX node for the 
-> specified subdev.
-> > A sub-notifier does have a sub-device after the notifier initialisation.
-> 
-> Why? Are you saying to the notifier can only be used for subdev and subdev binding, 
-> not v4l2 and subdev binding?
-> 
-> But to create v4l-subdevX, the key is only v4l2 device and its needed subdev.
-> 
-> > Maybe the initialisation does not happen in the right order?
-> AFAIK, Async flow can solve the probe order and makes the user no need to care
-> the probe order.
-> 
-> From the stacktrace, I'm pretty sure it's not the probe order issue.
-> > 
-> > >   __v4l2_flash_init.part.0+0x3b4/0x4b0 [v4l2_flash_led_class]
-> > >   v4l2_flash_init+0x28/0x48 [v4l2_flash_led_class]
-> > >   mt6370_led_probe+0x348/0x690 [leds_mt6370_flash]
-> > > 
-> > > After tracing the code, it will let the subdev labeled as F_LENS or
-> > > F_FLASH function to create media link. To prevent the NULL pointer
-> > > issue, the simplest way is add a check when 'n->sd' is NULL and bypass
-> > > the later media link creataion.
-> > > ---
-> > >  drivers/media/v4l2-core/v4l2-async.c | 3 +++
-> > >  1 file changed, 3 insertions(+)
-> > > 
-> > > diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-core/v4l2-async.c
-> > > index 3ec323bd528b..9d3161c51954 100644
-> > > --- a/drivers/media/v4l2-core/v4l2-async.c
-> > > +++ b/drivers/media/v4l2-core/v4l2-async.c
-> > > @@ -324,6 +324,9 @@ static int v4l2_async_create_ancillary_links(struct v4l2_async_notifier *n,
-> > >  	    sd->entity.function != MEDIA_ENT_F_FLASH)
-> > >  		return 0;
-> > >  
-> > > +	if (!n->sd)
-> > > +		return 0;
-> > 
-> > This isn't the right fix: the ancillary link won't be created as a result.
-> > 
-> Due to the notifier is created by v4l2 device not subdev, this 'n->sd' is NULL.
-> The NULL 'n->sd' will be referenced by the next flow 'media_create_ancillary_link'.
+Hello Jonathan,
 
-Ah, right. I took a new look into the code and agree this is a problem.
-This probably hasn't been hit previously as the root notifier driver tends
-not to have any lens or flash devices.
+Indeed the watermark interrupt is a level interrupt. However adis lib does not 
+allow for level interrupts, so I had to create a new patch in v3 to handle it.
+Until now I tested the watermark interrupt as and edge interrupt and I did not
+see any issues, but indeed if the FIFO is not read fast enough the watermark pin 
+will stay high (or low depending on the configured polarity), so the correct 
+implementation is to use level interrupts for FIFO watermark interrupts.
 
-I'd change the commit message slightly:
+Ramona G.
 
---------8<-------------
-In v4l2_async_create_ancillary_links(), ancillary links are created for
-lens and flash sub-devices. These are sub-device to sub-device links and if
-the async notifier is related to a V4L2 device, the source sub-device of
-the ancillary link is NULL, leading to a NULL pointer dereference. Check
-the notifier's sd field is non-NULL in v4l2_async_create_ancillary_links().
---------8<-------------
-
-> 
-> Or is it caused by the wrong usage? 
-> 
-> > > +
-> > >  	link = media_create_ancillary_link(&n->sd->entity, &sd->entity);
-> > >  
-> > >  #endif
-> > 
-
--- 
-Kind regards,
-
-Sakari Ailus
 
