@@ -1,148 +1,141 @@
-Return-Path: <linux-kernel+bounces-181855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8D698C825E
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 10:07:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 883AC8C8263
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 10:08:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4632CB21E2C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 08:07:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 433E22814D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 08:08:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DE233613D;
-	Fri, 17 May 2024 08:06:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E39C199C7;
+	Fri, 17 May 2024 08:07:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZJLyqTjU";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Yo1/S+FT"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WQWyUfhp"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4483328DB7;
-	Fri, 17 May 2024 08:06:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C0A73BBDC
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 08:07:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715933176; cv=none; b=INE3PWSS+hJ2tue/K3RJqZLjBF3rJJ7G6WXJ0XM0A0fVlMoo+QRj0hz/9M/SH8U12mJCxG79lphzqMv1fsaiPCnIUyOa8zfl37Xwry9KGMR+JuXNBOWu1BawC+VDXrwDZNoliAIlbaPrTWn3mX70v3StED6thLMWwFQLWgODDMg=
+	t=1715933275; cv=none; b=cRPeZPAvBOivwMHufDM359CChhrTeTzAoo4WwKZ4GdG8Uh8iAx74aohtvG2ziH+/rVuilY6udDpNwta4P/B5hvc5zPaV6EqN+5ob8smAxq2HuFrfedL0v/ezt+5OXHwwJypRF1e8fZIEwoPcolRgXWrzh4ZFNlwiV+DjWBP8sRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715933176; c=relaxed/simple;
-	bh=I7vKyuuBa21buoq2JjLNZ10zt4Ov1stKHuENPHh67ec=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=PgeYPpKQQmKOlipQXZ86LLeSsZU9I49pI14jKeMX9dYChP54YIWrHexTuj7f1rIHNMLmGQSqRIULph3ySgnGTLIS7sXw6pBgmCC8Q9KCW/rU8dIs5lAzG5Ds6vntS28nReb9b8WgOCs40k0tdCVEbGqhbmCZPH71PLTMZjTX65I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZJLyqTjU; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Yo1/S+FT; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 17 May 2024 08:06:11 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1715933171;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bfjV75NO9SZUF1uggmWNt6tuHqlxRKiRhZjsLp2Oy8c=;
-	b=ZJLyqTjUAOGP+q9C0T355PG4hKWKv+W23F/CDGAvvKUwZCzpcSMOa6Tj4qFtXkAxLXcpe5
-	0fjXYW80YUIKawKIHTWGTbUVyuDvebItIXBQpmyaG3pP/0p2gaRYin1U4MHqNtwbcqt/7A
-	oD2yot78xRQcN6GXTDGreH/GgUGCuAvSlWtp9w1qsizTCJcn6sfdf3LKHGehXufC8XWGlF
-	EKyQUyMxOyqhHd2I1tq4o3LNvc2JZiQsbeZe4o/w9yTdXcZBD5Za6bzI2qRDDouHqoscxE
-	jdgw6/IaRaj2t4+LcKzhk3XJ74WMuXkAoIALXF9QQ8J525+Of/0NfavrwT9xeQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1715933171;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bfjV75NO9SZUF1uggmWNt6tuHqlxRKiRhZjsLp2Oy8c=;
-	b=Yo1/S+FTeIV4A5EpbSXynjpmKMbyN5PGQo/GWwaYKeERVRi2234kxXo+riZ5Aj3YXwRGKZ
-	TdSMqchlCgpUFODA==
-From: "tip-bot2 for Vitalii Bursov" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/urgent] sched/fair: Allow disabling sched_balance_newidle
- with sched_relax_domain_level
-Cc: Vitalii Bursov <vitaly@bursov.com>, Ingo Molnar <mingo@kernel.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Valentin Schneider <vschneid@redhat.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To:
- <bd6de28e80073c79466ec6401cdeae78f0d4423d.1714488502.git.vitaly@bursov.com>
-References:
- <bd6de28e80073c79466ec6401cdeae78f0d4423d.1714488502.git.vitaly@bursov.com>
+	s=arc-20240116; t=1715933275; c=relaxed/simple;
+	bh=67kJhvVJgfr3fdLhnw6mtmsME4ghMjbF6tKsfeoLtJE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SgybyacbvKFxL5UFj0mk3v91KQfBBWbPYQb32d+e1uCsVASk9ZxnxU7NU6YT0fP3G1k3FwJ5VrqdPzyToe8DIvoulIrxmYpTnLCGg/takiB5ePB7SpowWB+pcsp1d5HG3SOuYTTCMUZ6xhWQR/5/sFFjU+mTJJX2CIAyF5nNNH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WQWyUfhp; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-56e37503115so3293427a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 01:07:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715933272; x=1716538072; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ADMoLBL5cnEifhHVW0n3dyo7J3ncObAka0zVx8KrFmM=;
+        b=WQWyUfhp+XHzzN1zHf+gqxgRF7xECOlJuPrB+F4QcszkKIYJl98OFMfwwrRmN7myXh
+         1wvYO4Jd/k0YgxOu1vX2mu60VTD9TdYtKYYvolds9YoVpA5lpesrSAwmF7txEhV2zxuO
+         OezUTQMm5HD+xiGUicgv3muZPUICGCxr552pQXAdDE2cqOKd408WYV7NHTF3egMkOK1n
+         5nkRcD3zzhpspbHhF92q4zhRaQgpftQ6DAip5/SidGckTtmvfupQPqL+s5PoulFGwEKP
+         7hx2IJGav6244guVZjisu+34Ho+t177lg5664BNCxqNKyqFQTplb6N1dL2HkxS9SkzrZ
+         y7hg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715933272; x=1716538072;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ADMoLBL5cnEifhHVW0n3dyo7J3ncObAka0zVx8KrFmM=;
+        b=k+3uuvZwtb6G7X8zqg1dOcLkXl4MJHExinHg00RT7H6vakvQcuXkOgDw7DIIlqvy0r
+         /lzpPHqbwNPo9T6oN4gtQKQtKgjAV5jbB1i7anurYoyT2tSf6X4/KQ9wnj7adxbU/ur8
+         zv5RbH0kS2OQr3CSkzGKUUEAboeostMbffyYZJnZeSZvPJ1TkiswQLvWDNdBRf7sYd+D
+         fXHSWSNEw7G7aEJW6mMrUiBYBeW9FJeCHRvsGJz7MzPblkrD9rdcR3YUJ7r5qCkwLtOV
+         08QNk7RsqFoiLze7jnmKyjrt2McPU+ALUMW/ZQdUpe3b/6hP+0Uk8CGT8leXLYWe8JBb
+         YdBA==
+X-Forwarded-Encrypted: i=1; AJvYcCVQv/38AMLufxGhLOD7+Im2Ols4AMOPfylbNMPbAtCx/HKcm68nzWZRD6eVH2neVpsxIUGu+COskbugMs/D/kqDhc+pnACQMNctN4eh
+X-Gm-Message-State: AOJu0YyPRoYR873Qz+JsRKpsiTbeeHTa0bhKqdmGXaJ4gOmt8J2BAEMU
+	vdHUOgN5KoIHAp4TfCOW3TE/Doz5vwKE/5sNV0PHuKWY4j6kB3kwpZQ6YofweVg=
+X-Google-Smtp-Source: AGHT+IE2fmU8pDp6UlRMGDlXg5CeGrnSfA6SEVVbOUx4aG63KRG891PKcbwDpqb4LC/Ug/MAPPvzjQ==
+X-Received: by 2002:a50:d654:0:b0:572:6cd5:f8d with SMTP id 4fb4d7f45d1cf-5734d5ce1b1mr15053517a12.22.1715933272636;
+        Fri, 17 May 2024 01:07:52 -0700 (PDT)
+Received: from [10.91.2.68] ([149.14.240.163])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-574eba4bc3dsm4452608a12.94.2024.05.17.01.07.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 17 May 2024 01:07:52 -0700 (PDT)
+Message-ID: <77b01a97-de2d-4e10-91f6-915ec414eede@linaro.org>
+Date: Fri, 17 May 2024 10:07:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <171593317134.10875.3767772724461271480.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/7] hwspinlock: Introduce hwspin_lock_bust()
+Content-Language: en-US
+To: Chris Lew <quic_clew@quicinc.com>, Bjorn Andersson
+ <andersson@kernel.org>, Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, Richard Maina <quic_rmaina@quicinc.com>
+References: <20240516-hwspinlock-bust-v1-0-47a90a859238@quicinc.com>
+ <20240516-hwspinlock-bust-v1-3-47a90a859238@quicinc.com>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20240516-hwspinlock-bust-v1-3-47a90a859238@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the sched/urgent branch of tip:
+On 17/05/2024 00:58, Chris Lew wrote:
+> From: Richard Maina <quic_rmaina@quicinc.com>
+> 
+> When a remoteproc crashes or goes down unexpectedly this can result in
+> a state where locks held by the remoteproc will remain locked possibly
+> resulting in deadlock. This new API hwspin_lock_bust() allows
+> hwspinlock implementers to define a bust operation for freeing previously
+> acquired hwspinlocks after verifying ownership of the acquired lock.
+> 
+> Signed-off-by: Richard Maina <quic_rmaina@quicinc.com>
+> Signed-off-by: Chris Lew <quic_clew@quicinc.com>
+> ---
+>   Documentation/locking/hwspinlock.rst     | 11 +++++++++++
+>   drivers/hwspinlock/hwspinlock_core.c     | 30 +++++++++++++++++++++++++++++-
 
-Commit-ID:     a1fd0b9d751f840df23ef0e75b691fc00cfd4743
-Gitweb:        https://git.kernel.org/tip/a1fd0b9d751f840df23ef0e75b691fc00cfd4743
-Author:        Vitalii Bursov <vitaly@bursov.com>
-AuthorDate:    Tue, 30 Apr 2024 18:05:23 +03:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Fri, 17 May 2024 09:48:24 +02:00
+Shouldn't this be added to drivers/hwspinlock/qcom_hwspinlock.c ?
 
-sched/fair: Allow disabling sched_balance_newidle with sched_relax_domain_level
+>   drivers/hwspinlock/hwspinlock_internal.h |  3 +++
+>   include/linux/hwspinlock.h               |  6 ++++++
+>   4 files changed, 49 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/locking/hwspinlock.rst b/Documentation/locking/hwspinlock.rst
+> index c1c2c827b575..6ee94cc6d3b7 100644
+> --- a/Documentation/locking/hwspinlock.rst
+> +++ b/Documentation/locking/hwspinlock.rst
+> @@ -85,6 +85,17 @@ is already free).
+>   
+>   Should be called from a process context (might sleep).
+>   
+> +::
+> +
+> +  int hwspin_lock_bust(struct hwspinlock *hwlock, unsigned int id);
 
-Change relax_domain_level checks so that it would be possible
-to include or exclude all domains from newidle balancing.
+I don't think this is a geat name "bust" looks alot like "burst" and I 
+don't think aligns well with the established namespace.
 
-This matches the behavior described in the documentation:
+Why not simply qcom_hwspinlock_unlock_force() - which is what you are 
+doing - forcing the hw spinlock to unlock.
 
-  -1   no request. use system default or follow request of others.
-   0   no search.
-   1   search siblings (hyperthreads in a core).
-
-"2" enables levels 0 and 1, level_max excludes the last (level_max)
-level, and level_max+1 includes all levels.
-
-Fixes: 1d3504fcf560 ("sched, cpuset: customize sched domains, core")
-Signed-off-by: Vitalii Bursov <vitaly@bursov.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Tested-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
-Reviewed-by: Valentin Schneider <vschneid@redhat.com>
-Link: https://lore.kernel.org/r/bd6de28e80073c79466ec6401cdeae78f0d4423d.1714488502.git.vitaly@bursov.com
 ---
- kernel/cgroup/cpuset.c  | 2 +-
- kernel/sched/topology.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index 4237c87..da24187 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -2948,7 +2948,7 @@ bool current_cpuset_is_being_rebound(void)
- static int update_relax_domain_level(struct cpuset *cs, s64 val)
- {
- #ifdef CONFIG_SMP
--	if (val < -1 || val >= sched_domain_level_max)
-+	if (val < -1 || val > sched_domain_level_max + 1)
- 		return -EINVAL;
- #endif
- 
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 63aecd2..67a777b 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -1475,7 +1475,7 @@ static void set_domain_attribute(struct sched_domain *sd,
- 	} else
- 		request = attr->relax_domain_level;
- 
--	if (sd->level > request) {
-+	if (sd->level >= request) {
- 		/* Turn off idle balance on this domain: */
- 		sd->flags &= ~(SD_BALANCE_WAKE|SD_BALANCE_NEWIDLE);
- 	}
+bod
 
