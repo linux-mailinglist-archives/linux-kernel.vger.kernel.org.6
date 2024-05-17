@@ -1,122 +1,182 @@
-Return-Path: <linux-kernel+bounces-181915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D580D8C8338
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:24:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DDBD08C833E
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:25:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FB1C2827E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 09:24:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94FD8281B9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 09:25:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2327B2137E;
-	Fri, 17 May 2024 09:24:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B80F2137E;
+	Fri, 17 May 2024 09:25:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RyxVw8NN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="CopuHmnt"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FA97288A4;
-	Fri, 17 May 2024 09:24:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6472C200D2;
+	Fri, 17 May 2024 09:25:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715937846; cv=none; b=WtERtnJRTBtfYw+eH7AoNWBEtpAu9mc9qNrJdOhQg0SabFs9F13NPh7QnxkbhIr8Xc/1xNNWs3GcKZv3Vh0PDOOaRnvBMVI36/JsLvSwLH6ytBa00fGcXHer1SDJ1ArRqRoR7xUz3lWiA6KHBo8tHQAcPY2yE7hshv1RSZUf1+o=
+	t=1715937918; cv=none; b=mKsbRAgisPaLBS+0Mshh0Ip+m7byIHYjhFrfaJ3AivUwNx/5xwvMVfB2J8yLWLPe22PbZEGoI2yWlB+MYNaxRwNbznX5PMNisDfVygV4lJ2tDRtq3HWtvVv938KMBCVnIWTgyKrFbEaOV8FTxeZLoUUSosBsYFzTKDMi/lK0RLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715937846; c=relaxed/simple;
-	bh=xGw3hcqvQocrPtmT5TUi1j5xDED+1T1ee3PN48GUQEs=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=bZGn+Yp/nhfrv8SSIuaA1ilNuomcrfVUsrepwr3p5Wbmbja4Fe/hAep7ZLrziZp8WMhCIsnLQJcxMneEDXnHyKY2wc6aG9V9+CT8NtY/Le7rkF9fdOmlPAXgvJYUTNriaGQqb/JH2PjVIDg5U0HC14PLLEGj2xb1Mhwh9TiXbHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RyxVw8NN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C40D2C2BD10;
-	Fri, 17 May 2024 09:24:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715937846;
-	bh=xGw3hcqvQocrPtmT5TUi1j5xDED+1T1ee3PN48GUQEs=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=RyxVw8NNt5Z9Urq6VLHDet3i1YsA6suJDNIsPxRlWlgvAmQYowBnoz/+0tcrvGGLx
-	 2uHP9axO3z8oATbJiD/Lx8lVRgT044Z+XfZ8hoFkDz7WCeXjaA2Te6PCf7WvSlU6fN
-	 /b8BQgdou+IOatGDjeCAVAEgYTHZmMYCn0SvViRD9dU4MgO3l2K/qtp0wCsNOM4rgF
-	 5zmm76TYu2GyaB4jq1nFA5yzUfE9qjZl56m+7r3gG10Bhf5ksifuSkv03NRuie82Tk
-	 cyoXjicup6HNbboIjU/Q6IBAoC48xdtMjDEhKc4gxh5nUMMkUaK42V6B+qxwDco4YU
-	 AlIa02z9VHF0A==
-Date: Fri, 17 May 2024 04:24:04 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1715937918; c=relaxed/simple;
+	bh=wf4DdYAx6ouDs9pAZzz2kkbjENCi4oK8q5wroPEhyAA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ag2jhv8SqEKvt8RC6Q+vTnr3wUrx4MfcDAVPABq3OdHPWy4+nVgwYqV9V3u4nTCM7QXp7wZHDBSnj/I186rCv4TuPP/I1DPNK8/MnZryhxdiHEPQZvtKqRi4GA0TpXA8rbKPghSa44UfYJlFySBb/xY3x37xWK9qDxhQAgeDhhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=CopuHmnt; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1715937914;
+	bh=wf4DdYAx6ouDs9pAZzz2kkbjENCi4oK8q5wroPEhyAA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=CopuHmntB0Kg59SajqNEHy5kI+79ckAIHWCqKCcZOQoO6AiwXXu++tMBkGd1Ri+GX
+	 tw4kX9M+OrJX9vIgEJ8hQEicnLxMGZcU/kfrtHEAPd/TkrnMySecwu7UxyMLMC0wrE
+	 e4aYINrWEUJDanWZ9hMUIDqO36kPVY8m/Hod6vWU12O9IL2WDZgRtJIzgIXqJnrGdi
+	 w6z+YZLx/w5DWXG1sKqYx4flZR6gerVfUAgMg8LrX+OOWh4kyTeaPaf5rh+14X/ax4
+	 LTt8WvCOMLSRdfPhpwPlBB9/ezgUMk6zizpMTWM38fD35Trij41jZwW+Aqq3sWiHWS
+	 xPk/uk9NIuIDQ==
+Received: from localhost.localdomain (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: vignesh)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 759E337821BA;
+	Fri, 17 May 2024 09:25:10 +0000 (UTC)
+From: Vignesh Raman <vignesh.raman@collabora.com>
+To: dri-devel@lists.freedesktop.org
+Cc: daniels@collabora.com,
+	helen.koike@collabora.com,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	robdclark@gmail.com,
+	david.heidelberg@collabora.com,
+	guilherme.gallo@collabora.com,
+	sergi.blanch.torne@collabora.com,
+	dmitry.baryshkov@linaro.org,
+	mcanal@igalia.com,
+	linux-mediatek@lists.infradead.org,
+	linux-amlogic@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	amd-gfx@lists.freedesktop.org,
+	linux-arm-msm@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org,
+	virtualization@lists.linux-foundation.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/6] drm/ci: uprev mesa/IGT and generate testlist
+Date: Fri, 17 May 2024 14:54:56 +0530
+Message-Id: <20240517092502.647420-1-vignesh.raman@collabora.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Mighty <bavishimithil@gmail.com>
-Cc: linux-sound@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
- Liam Girdwood <lgirdwood@gmail.com>, Lopez Cruz <misael.lopez@ti.com>, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Mark Brown <broonie@kernel.org>
-In-Reply-To: <20240517083644.3920-1-bavishimithil@gmail.com>
-References: <20240517083644.3920-1-bavishimithil@gmail.com>
-Message-Id: <171593784468.974781.7311451940963803133.robh@kernel.org>
-Subject: Re: [PATCH v4] ASoC: dt-bindings: omap-mcpdm: Convert to DT schema
+Content-Transfer-Encoding: 8bit
 
+Uprev mesa and IGT to the latest version and stop vendoring the
+testlist into the kernel. Instead, use the testlist from the
+IGT build to ensure we do not miss renamed or newly added tests.
+Update the xfails with the latest testlist run.
 
-On Fri, 17 May 2024 14:06:44 +0530, Mighty wrote:
-> From: Mithil Bavishi <bavishimithil@gmail.com>
-> 
-> Convert the OMAP4+ McPDM bindings to DT schema.
-> 
-> Signed-off-by: Mithil Bavishi <bavishimithil@gmail.com>
-> ---
-> Changelog v4:
-> - Changed maintainer name
-> - Use $ref and enum in ti-hwmods property
-> - Make clocks property only have maxItems, no description
-> - Add items to clock-names
-> - Fix address of node in example
-> - Remove extra line
-> 
->  .../devicetree/bindings/sound/omap-mcpdm.txt  | 30 ----------
->  .../bindings/sound/ti,omap4-mcpdm.yaml        | 59 +++++++++++++++++++
->  2 files changed, 59 insertions(+), 30 deletions(-)
->  delete mode 100644
-> Documentation/devicetree/bindings/sound/omap-mcpdm.txt
->  create mode 100644 Documentation/devicetree/bindings/sound/ti,omap4-mcpdm.yaml
-> 
+Also build virtual GPU driver for virtio as module.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+The flakes list needs to be reported upsteam. Will send it
+after this series is reviewed.
 
-yamllint warnings/errors:
+https://gitlab.freedesktop.org/vigneshraman/linux/-/pipelines/1179691
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/sound/ti,omap4-mcpdm.yaml: properties:ti,hwmods: 'anyOf' conditional failed, one must be fixed:
-	'description' is a dependency of '$ref'
-	'/schemas/types.yaml#/definitions/string' does not match '^#/(definitions|\\$defs)/'
-		hint: A vendor property can have a $ref to a a $defs schema
-	hint: Vendor specific properties must have a type and description unless they have a defined, common suffix.
-	from schema $id: http://devicetree.org/meta-schemas/vendor-props.yaml#
-Error: Documentation/devicetree/bindings/sound/ti,omap4-mcpdm.example.dts:28.25-26 syntax error
-FATAL ERROR: Unable to parse input tree
-make[2]: *** [scripts/Makefile.lib:427: Documentation/devicetree/bindings/sound/ti,omap4-mcpdm.example.dtb] Error 1
-make[2]: *** Waiting for unfinished jobs....
-make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1430: dt_binding_check] Error 2
-make: *** [Makefile:240: __sub-make] Error 2
+Vignesh Raman (6):
+  drm/ci: uprev mesa version
+  drm/ci: generate testlist from build
+  drm/ci: build virtual GPU driver as module
+  drm/ci: uprev IGT
+  drm/ci: skip driver specific tests
+  drm/ci: update xfails for the new testlist
 
-doc reference errors (make refcheckdocs):
+ drivers/gpu/drm/ci/build-igt.sh               |   40 +-
+ drivers/gpu/drm/ci/build.sh                   |    7 +-
+ drivers/gpu/drm/ci/container.yml              |   12 +-
+ drivers/gpu/drm/ci/gitlab-ci.yml              |   46 +-
+ drivers/gpu/drm/ci/igt_runner.sh              |   15 +-
+ drivers/gpu/drm/ci/image-tags.yml             |    6 +-
+ drivers/gpu/drm/ci/lava-submit.sh             |    4 +-
+ drivers/gpu/drm/ci/test.yml                   |    9 +-
+ drivers/gpu/drm/ci/testlist.txt               | 2761 -----------------
+ drivers/gpu/drm/ci/x86_64.config              |    2 +-
+ .../gpu/drm/ci/xfails/amdgpu-stoney-fails.txt |   41 +-
+ .../drm/ci/xfails/amdgpu-stoney-flakes.txt    |    6 +
+ .../gpu/drm/ci/xfails/amdgpu-stoney-skips.txt |   33 +-
+ drivers/gpu/drm/ci/xfails/i915-amly-fails.txt |   31 +
+ .../gpu/drm/ci/xfails/i915-amly-flakes.txt    |    8 +
+ drivers/gpu/drm/ci/xfails/i915-amly-skips.txt |   22 +-
+ drivers/gpu/drm/ci/xfails/i915-apl-fails.txt  |   46 +-
+ drivers/gpu/drm/ci/xfails/i915-apl-flakes.txt |    5 +
+ drivers/gpu/drm/ci/xfails/i915-apl-skips.txt  |   26 +-
+ drivers/gpu/drm/ci/xfails/i915-cml-fails.txt  |   38 +
+ drivers/gpu/drm/ci/xfails/i915-cml-flakes.txt |    5 +
+ drivers/gpu/drm/ci/xfails/i915-cml-skips.txt  |   23 +
+ drivers/gpu/drm/ci/xfails/i915-glk-fails.txt  |   41 +-
+ drivers/gpu/drm/ci/xfails/i915-glk-flakes.txt |    6 +
+ drivers/gpu/drm/ci/xfails/i915-glk-skips.txt  |   26 +-
+ drivers/gpu/drm/ci/xfails/i915-kbl-fails.txt  |   42 +-
+ drivers/gpu/drm/ci/xfails/i915-kbl-flakes.txt |    6 +-
+ drivers/gpu/drm/ci/xfails/i915-kbl-skips.txt  |   36 +-
+ drivers/gpu/drm/ci/xfails/i915-tgl-fails.txt  |   77 +-
+ drivers/gpu/drm/ci/xfails/i915-tgl-skips.txt  |   27 +-
+ drivers/gpu/drm/ci/xfails/i915-whl-fails.txt  |   63 +-
+ drivers/gpu/drm/ci/xfails/i915-whl-flakes.txt |    5 +
+ drivers/gpu/drm/ci/xfails/i915-whl-skips.txt  |   22 +-
+ .../drm/ci/xfails/mediatek-mt8173-fails.txt   |   30 +-
+ .../drm/ci/xfails/mediatek-mt8173-flakes.txt  |   10 +
+ .../drm/ci/xfails/mediatek-mt8173-skips.txt   |   16 +
+ .../drm/ci/xfails/mediatek-mt8183-fails.txt   |   21 +-
+ .../drm/ci/xfails/mediatek-mt8183-skips.txt   |   18 +
+ .../gpu/drm/ci/xfails/meson-g12b-fails.txt    |   24 +-
+ .../gpu/drm/ci/xfails/meson-g12b-skips.txt    |   18 +
+ .../gpu/drm/ci/xfails/msm-apq8016-fails.txt   |   12 +-
+ .../gpu/drm/ci/xfails/msm-apq8016-skips.txt   |   15 +
+ .../gpu/drm/ci/xfails/msm-apq8096-fails.txt   |    7 +
+ .../gpu/drm/ci/xfails/msm-apq8096-flakes.txt  |    5 +
+ .../gpu/drm/ci/xfails/msm-apq8096-skips.txt   |   26 +-
+ .../msm-sc7180-trogdor-kingoftown-fails.txt   |  175 +-
+ .../msm-sc7180-trogdor-kingoftown-flakes.txt  |    7 +
+ .../msm-sc7180-trogdor-kingoftown-skips.txt   |   19 +
+ ...sm-sc7180-trogdor-lazor-limozeen-fails.txt |  175 +-
+ ...m-sc7180-trogdor-lazor-limozeen-flakes.txt |    5 +
+ ...sm-sc7180-trogdor-lazor-limozeen-skips.txt |   16 +
+ .../gpu/drm/ci/xfails/msm-sdm845-fails.txt    |   38 +-
+ .../gpu/drm/ci/xfails/msm-sdm845-flakes.txt   |   26 +-
+ .../gpu/drm/ci/xfails/msm-sdm845-skips.txt    |   19 +
+ .../drm/ci/xfails/rockchip-rk3288-fails.txt   |   62 +-
+ .../drm/ci/xfails/rockchip-rk3288-skips.txt   |   21 +-
+ .../drm/ci/xfails/rockchip-rk3399-fails.txt   |   83 +-
+ .../drm/ci/xfails/rockchip-rk3399-flakes.txt  |   12 +-
+ .../drm/ci/xfails/rockchip-rk3399-skips.txt   |   19 +
+ drivers/gpu/drm/ci/xfails/update-xfails.py    |    4 +-
+ .../drm/ci/xfails/virtio_gpu-none-fails.txt   |   94 +-
+ .../drm/ci/xfails/virtio_gpu-none-skips.txt   |   20 +-
+ 62 files changed, 1334 insertions(+), 3200 deletions(-)
+ delete mode 100644 drivers/gpu/drm/ci/testlist.txt
+ create mode 100644 drivers/gpu/drm/ci/xfails/i915-amly-flakes.txt
+ create mode 100644 drivers/gpu/drm/ci/xfails/i915-apl-flakes.txt
+ create mode 100644 drivers/gpu/drm/ci/xfails/i915-cml-flakes.txt
+ create mode 100644 drivers/gpu/drm/ci/xfails/i915-glk-flakes.txt
+ create mode 100644 drivers/gpu/drm/ci/xfails/i915-whl-flakes.txt
+ create mode 100644 drivers/gpu/drm/ci/xfails/mediatek-mt8173-flakes.txt
+ create mode 100644 drivers/gpu/drm/ci/xfails/mediatek-mt8173-skips.txt
+ create mode 100644 drivers/gpu/drm/ci/xfails/mediatek-mt8183-skips.txt
+ create mode 100644 drivers/gpu/drm/ci/xfails/meson-g12b-skips.txt
+ create mode 100644 drivers/gpu/drm/ci/xfails/msm-apq8016-skips.txt
+ create mode 100644 drivers/gpu/drm/ci/xfails/msm-apq8096-flakes.txt
+ create mode 100644 drivers/gpu/drm/ci/xfails/msm-sc7180-trogdor-kingoftown-flakes.txt
+ create mode 100644 drivers/gpu/drm/ci/xfails/msm-sc7180-trogdor-lazor-limozeen-flakes.txt
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240517083644.3920-1-bavishimithil@gmail.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+-- 
+2.40.1
 
 
