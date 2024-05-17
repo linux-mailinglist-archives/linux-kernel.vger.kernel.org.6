@@ -1,125 +1,78 @@
-Return-Path: <linux-kernel+bounces-182353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B0238C8A2B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 18:36:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 834048C8A2F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 18:36:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C2111F286A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 16:36:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E7BB283536
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 16:36:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB16C13DB83;
-	Fri, 17 May 2024 16:35:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBAE413DBA0;
+	Fri, 17 May 2024 16:36:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dv31S/Dr"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ahssRdDg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88281131BD0
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 16:35:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C86213D89D
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 16:36:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715963749; cv=none; b=Fpelg274CZ7gQ4FlmIXpu+mGwfXbKS+t56wSmI1ql03TInxntutRXbkxhuhrrjggh9j9qgOB5ssOOEIrbBcT0WoDUW5Bql2xMmTZmuyW7bQIzsF4++A0vEkrSBfAOgCqlR0Va3PzzPiD1n/cocK/Wn4shsniI6rlON0DyFkslRg=
+	t=1715963773; cv=none; b=DBdax89d9xbPSaAZ771GStEuJ+ayFKphTso/vM8Y8+Tg38girV1sG3ZIY0NO7AFqAnHkiMnSY3pVWawhmFT7Uw29gyJas0BWkWV8ku3aJxl9/i83Nx2Sw4EQcdor6s+UQ+LS5vehMeX0QZgiE0aD6+tPT+nBIRlyA17VdR6RKxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715963749; c=relaxed/simple;
-	bh=dn2I3QeRbGuLMznRZYnCEyYGH2dD0p7y71tzzAvSUAU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=A2R2Gg0OUrCPKQnMP28RI3+gAwt5peNZNLeIZ4JdanK/cg3ZIqGtM6F1ez+oEYZyn+kTkrqB0Ciwewz6O2+cFFRBKu0FpBspyDEJsnoDvs/2Luup9rq33lOlLIPpvzslujTLL/eswrgOVVEwyt88oDS1+s+55RInhqjR685O+mw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dv31S/Dr; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-61be4b79115so181185617b3.1
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 09:35:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715963746; x=1716568546; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LYclK1Nqgk3C/otGfNkgx1EhBgjnWqPyonRkpKzx7A4=;
-        b=dv31S/DrUXObWY1n2Q0p26lrQM9bkrds/KgMXPbneSy2IasR0Ke0rAtjyhV82S4gM+
-         hhO/Q7xidKmR5eoc8p8Z24y7Zlo7dDiLZyk8xAiDJFVTUJe4+BOC65SfmJ9vPbVIa+DZ
-         OcIQl0F1rOnk8pxJoTfPdeFl0mlWqwerNGEgj+KRaHKNNv+EVuWbwzMFI/NGGxBk93Sa
-         hEDs03qI4d12o0LLsI7HpwmyYQgktEbjPKG2gjqR48CiRfX+ar7wQmWYERPv3nOkNVtv
-         TtYL8O3iBrWtnx2zlDMlUZns3PJ2Ace4vSQTHSdjqrAaqmuQ+78ItNpkAJrtLSLQgx/P
-         eTfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715963746; x=1716568546;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LYclK1Nqgk3C/otGfNkgx1EhBgjnWqPyonRkpKzx7A4=;
-        b=JlDu/4lJHdhs6LRjZ9Lb/ZwJVyLpsBSMTsSbiNdfQLc5Go+w5Cdu3IQWGjwLmaUSlP
-         a5mS5fxqIH+UhkZraXl9OEtKYGLIhsdMkobot5BJidJ2YL9Sm2Uz7n+cwKyC2lr3MVvL
-         kchRNYP0lcPjsVkx8p0MUUynhGDoF+JFLcGas5Kcskmouh8XaIY0ahTuxa2Klk46Ea40
-         OlhkZj9lLivxuX1bRH9Oj0J8qjVpKsu7Ygeuu4FCd/0J7/ysvSZENltEZGzgcdeWk0yS
-         Z0HC1V9juNt07Tj1uW1kypffK7I3GbnUkklmA9Kju9FZ4g+5CcyGtCylbJVaOi+QjwyH
-         yajg==
-X-Forwarded-Encrypted: i=1; AJvYcCXca9T2EDrbbsslMQneLR2QF44WsAnhmTyOgDGOTbGcdOEUz9dyfe/QhSv3VSXowkX8aNE7Ja7ug7f9USmqb/dnKsF5QrzRsyX/KHkF
-X-Gm-Message-State: AOJu0YxC1Gge5V7PiIZx0J7o2F4b1MuoemexjLawXIXLhzEkgeRorlZo
-	EI8noHX61T8bQjwGwSpY9CcFEd4HrvxxNb1m/UftjgHvhqeMVes9qD72o6Nn0/lVmhwN8c+lDpi
-	3BQ==
-X-Google-Smtp-Source: AGHT+IG4+t3aIHvGvVYY+Sa6msqPRgtSgUyf/2Km8yKnyWYTqfj5UbM9ztBh+9XSIrG3ntKnFDL+VhZdbrI=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6902:149:b0:de5:5225:c3a4 with SMTP id
- 3f1490d57ef6-dee4f304cb7mr5161352276.7.1715963746499; Fri, 17 May 2024
- 09:35:46 -0700 (PDT)
-Date: Fri, 17 May 2024 09:35:45 -0700
-In-Reply-To: <20240517095649.GB412700@ls.amr.corp.intel.com>
+	s=arc-20240116; t=1715963773; c=relaxed/simple;
+	bh=SA6WO6wNzW2Iok4qw34x8REiV/41ClfAvnMomEMrciA=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=BlbZ0tUc1f4F/Mj0Z08Sf/422CzbcdJ8F8DvRuLquqhyqIIa+P43SyLUVwdXMVwIUAKFlrcKfKvO8nc7+gwRLRMdOdxpL+IvfmLpyTE04pUOjUL0hymKpNoYIhHZfxZFqIOQ/0PCKd3M9ZUIWxTO86Oa82kZdCg3TGuIKvdlamA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ahssRdDg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id DA46FC2BD10;
+	Fri, 17 May 2024 16:36:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715963772;
+	bh=SA6WO6wNzW2Iok4qw34x8REiV/41ClfAvnMomEMrciA=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=ahssRdDg4ghSC6x+Gl5lUorgLx9jf8XwCtJI5toNyEiXwWwKQqlHz63GVxQH85fwR
+	 ktc74SrUobqjqWQeLQezEt464xxohE+FGH5XLZfQNnKCE6FxeEgYpMDeca4hT+h+Py
+	 UxOBEHttEfl03r6xcJxGkl+hrBkNmK4ORCR6Hkalj+gN3rGFadDBw8DkCcbFXL+4VV
+	 qPCcNRDxA/0CLxTxMIQ9mL1Bhx8MLsoykbUu73XP3SVLrUvaFSGvp2q1k+VenHMS1t
+	 MF8301CHcUPq5sjiU1KaUWThnvmTHr5n9mstqtZENaueaD2E7e58wE2SuPhPedmvsf
+	 PCIf7+7iSJvmQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id CA764C54BB2;
+	Fri, 17 May 2024 16:36:12 +0000 (UTC)
+Subject: Re: [GIT PULL] Please pull powerpc/linux.git powerpc-6.10-1 tag
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <8734qgwsap.fsf@mail.lhotse>
+References: <8734qgwsap.fsf@mail.lhotse>
+X-PR-Tracked-List-Id: Linux on PowerPC Developers Mail List <linuxppc-dev.lists.ozlabs.org>
+X-PR-Tracked-Message-Id: <8734qgwsap.fsf@mail.lhotse>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-6.10-1
+X-PR-Tracked-Commit-Id: 61700f816e6f58f6b1aaa881a69a784d146e30f0
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: ff2632d7d08edc11e8bd0629e9fcfebab25c78b4
+Message-Id: <171596377280.8029.9881035055421932996.pr-tracker-bot@kernel.org>
+Date: Fri, 17 May 2024 16:36:12 +0000
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, ritesh.list@gmail.com, chentao@kylinos.cn, mahesh@linux.ibm.com, lidong.zhong@suse.com, nicholas@linux.ibm.com, bgray@linux.ibm.com, sfr@canb.auug.org.au, maddy@linux.ibm.com, matthias.schiffer@ew.tq-group.com, bhe@redhat.com, masahiroy@kernel.org, guozihua@huawei.com, aneesh.kumar@kernel.org, ganeshgr@linux.ibm.com, joel@jms.id.au, sshegde@linux.ibm.com, colin.i.king@gmail.com, nathanl@linux.ibm.com, prosunofficial@gmail.com, arnd@arndb.de, thorsten.blum@toblux.com, groug@kaod.org, naveen@kernel.org, nathan@kernel.org, christophe.jaillet@wanadoo.fr, bhelgaas@google.com, andriy.shevchenko@linux.intel.com, hbathini@linux.ibm.com, xiaowei.bao@nxp.com, geoff@infradead.org, rdunlap@infradead.org, ghanshyam1898@gmail.com, linux-kernel@vger.kernel.org, sourabhjain@linux.ibm.com, leoyang.li@nxp.com, yang.lee@linux.alibaba.com, linux@treblig.org, vaibhav@linux.ibm.com, ran.wang_1@nxp.com, linuxppc-dev@lists.ozlabs.org, jsavitz@redhat.com
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240507154459.3950778-1-pbonzini@redhat.com> <20240507154459.3950778-8-pbonzini@redhat.com>
- <ZkVHh49Hn8gB3_9o@google.com> <Zka1cub00xu37mHP@google.com> <20240517095649.GB412700@ls.amr.corp.intel.com>
-Message-ID: <ZkeHYUiVnFcv32wI@google.com>
-Subject: Re: [PATCH 7/7] KVM: VMX: Introduce test mode related to EPT
- violation VE
-From: Sean Christopherson <seanjc@google.com>
-To: Isaku Yamahata <isaku.yamahata@intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	rick.p.edgecombe@intel.com
-Content-Type: text/plain; charset="us-ascii"
 
-On Fri, May 17, 2024, Isaku Yamahata wrote:
-> On Thu, May 16, 2024 at 06:40:02PM -0700,
-> Sean Christopherson <seanjc@google.com> wrote:
-> 
-> > On Wed, May 15, 2024, Sean Christopherson wrote:
-> > > On Tue, May 07, 2024, Paolo Bonzini wrote:
-> > > > @@ -5200,6 +5215,9 @@ static int handle_exception_nmi(struct kvm_vcpu *vcpu)
-> > > >  	if (is_invalid_opcode(intr_info))
-> > > >  		return handle_ud(vcpu);
-> > > >  
-> > > > +	if (KVM_BUG_ON(is_ve_fault(intr_info), vcpu->kvm))
-> > > > +		return -EIO;
-> > > 
-> > > I've hit this three times now when running KVM-Unit-Tests (I'm pretty sure it's
-> > > the EPT test, unsurprisingly).  And unless I screwed up my testing, I verified it
-> > > still fires with Isaku's fix[*], though I'm suddenly having problems repro'ing.
-> > > 
-> > > I'll update tomorrow as to whether I botched my testing of Isaku's fix, or if
-> > > there's another bug lurking.
-> > 
-> > *sigh*
-> > 
-> > AFAICT, I'm hitting a hardware issue.  The #VE occurs when the CPU does an A/D
-> > assist on an entry in the L2's PML4 (L2 GPA 0x109fff8).  EPT A/D bits are disabled,
-> > and KVM has write-protected the GPA (hooray for shadowing EPT entries).  The CPU
-> > tries to write the PML4 entry to do the A/D assist and generates what appears to
-> > be a spurious #VE.
-> > 
-> > Isaku, please forward this to the necessary folks at Intel.  I doubt whatever
-> > is broken will block TDX, but it would be nice to get a root cause so we at least
-> > know whether or not TDX is a ticking time bomb.
-> 
-> Sure, let me forward it.
-> I tested it lightly myself.  but I couldn't reproduce it.
+The pull request you sent on Fri, 17 May 2024 22:12:46 +1000:
 
-This repros on a CLX and SKX, but not my client RPL box.  I verified the same
-A/D-assist write-protection EPT Violation occurs on RPL, and that PROVE_VE is
-enabled, so I don't think RPL is simply getting lucky.
+> https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-6.10-1
 
-Unless I'm missing something, this really does look like a CPU issue.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/ff2632d7d08edc11e8bd0629e9fcfebab25c78b4
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
