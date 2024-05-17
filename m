@@ -1,159 +1,148 @@
-Return-Path: <linux-kernel+bounces-182622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E426F8C8D70
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 22:44:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A5DA8C8D73
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 22:45:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21B571C2083C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 20:44:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C39B1C224E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 20:45:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3689938F86;
-	Fri, 17 May 2024 20:44:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B98C61411C5;
+	Fri, 17 May 2024 20:45:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cEkLI+La"
-Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L3cGhsKG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01B941CAA9
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 20:44:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E18C11A2C1E;
+	Fri, 17 May 2024 20:45:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715978685; cv=none; b=IxK7jKnwKqICGq8CtAvEAT8j3Jewy1b0BAB+p01hyTohGTS3t2M0NKbADdoi962ODohM2UVbwEanTec7ASysu1RJy4hMWpN575eWwFOyJn3QZfmPdDAYgjyiwUwmS9cOO5IHY9fsM35UiIGdtQ6PcZnW2RYZIBj+8iS5uHAdWjw=
+	t=1715978738; cv=none; b=LmWvKXIdBEqvUgOnlx1xAIfpi2M+xEvbNWmMTCRw1/BvUEMfv/X5fMBPjXa7ICa/QnpnPKUzLqF+Q3bvuDzLErutUHqdenIrFkFCyaEvZBvBbwHC2+6e3hFxK+fdPK4WNSwDfRy6x1j8kvqtJ2fuH+cUrf1VVYjAoPXlJTHbiiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715978685; c=relaxed/simple;
-	bh=enl/u0WaBGKVumEPgKBxzG2xFD28G267kmodtBlJvbk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qwfhIWyx9zdGh1h03aqCZjNImbgfDHEY3xuNOs0cWxVwmVgTSPRtCHHsMxFsi/V7d/ZeSSYBdCEkPFS88mOuhWekpl7P9HGAa+jXLPUFgVOknBVPDT7rq78SqxL3tpFPrbiFHy1mBBWHhsmVLjjm8EwfaMHkDKgYmSk4CaZ+C10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cEkLI+La; arc=none smtp.client-ip=209.85.222.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-7f3aee7c531so284780241.0
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 13:44:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715978683; x=1716583483; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BfW2CzQXRR9NaohIgk1ll7SgEJQUK4q2DEIg0yJzBQo=;
-        b=cEkLI+LaWPYEo88fd1QkkNy6yVncogG4/gz5ArXjG9Ci/eeMclthOwD3xdmAIrsFiP
-         5ZAa+hVLXQ2K7wfstSxo8Q3GUCZpAXV+Qy/4x6LkbSwmojIzF//ISvNRO1HYbl6haD17
-         jL5Imh5RFuo7FmHqng1V0B+2GCB7FDM5DCVIa//BvW+NbAFp5J/MIRtZ6H+nUeOIhCrA
-         IBC80siB0IH6P9tp7h+9Z/vuyD6FX2tWcYbg3T1Y25R35zxEojtPAdAdlvHFMKrqUmsL
-         hJBjUNsaXq3V6THye9g8u4T1z5gX4INQoHqLFkrst5Dm5F0YsmcyCtNo+Uwh7fh5nKw5
-         P9iQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715978683; x=1716583483;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BfW2CzQXRR9NaohIgk1ll7SgEJQUK4q2DEIg0yJzBQo=;
-        b=jJM4gdgdsDgYLKUAURteRf80y1pFpSF9MtrOiYly5UAQYscP0bhepkOMTgqkvI2Ust
-         h3qmufCvkeqQWLnGHSCh6QLNKwn8hE/RUNK9x72lRE6xr7d94fgXRxalZBhG3ZoU3CI2
-         3gsep4JXnqwgMRn8hJNcrLBLDj/lZnupCHd4VaSp4J9QdiTZWpcIvi4fZlWJGD8JV2AP
-         NbW3nRxiuv2u4czZLRdIVSaeK8scTq5LBLTEA8jthAG9td1RPL46tsXRpDigGLMrLPT4
-         v8/CHH15PDilANNfhddl/gSnjQiAye9SX/z5IHcnItTzjLd2vJQze9jeix/12KEQ/Y+u
-         uiGw==
-X-Forwarded-Encrypted: i=1; AJvYcCUuq4ql4WN20xTgc4lgXPmSBw+gC6oRS/J6goOkVE50TSAPr8WvHKn5AkjmGGlTUsSLUlRSmHIjxO/lA3B5WwXsSO+Q2r7UzMyaVeJm
-X-Gm-Message-State: AOJu0Yyjm/1XSz6OKtBkLxN6YnTAKKJ41Ju0ctpI2/ON8fyM9fsn7bzv
-	pv7oyXSsylI3YtfElxDKIHmUVFaaGp94H9gbBuv2PD9bZGW2kfwANWlfpcG+dPkO+FRp7JpbJvl
-	awAnBqXLAGJQ9ALKgSkN0tebhrZNV2dko
-X-Google-Smtp-Source: AGHT+IG+/zAu1Dl8amLmFT3k5MgQYed9GX65bDZwnT0Z0B9g3f/kbACp5UVaG5InYsDTWEWboSye1VZzuu4pO9hKVeI=
-X-Received: by 2002:a05:6102:38cd:b0:47e:f8c0:c453 with SMTP id
- ada2fe7eead31-48077e187e8mr21855823137.19.1715978682690; Fri, 17 May 2024
- 13:44:42 -0700 (PDT)
+	s=arc-20240116; t=1715978738; c=relaxed/simple;
+	bh=gBMpZMWfyzUQArH1dlBEIH4whj5xwu3YOj/Tb2+i0G0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YSS33C2mgnnx8tj+NGG+pQ2Ox5XkhtwLdoijrDhLuEl7XGXmOM6pu37mLfJs/6cTBSQg2IrmfPu3IIR3dozsXEltJvUhNBNWq2eloQ6Zm95vsjG010vs9k7EsMHdfVaNCp+HifWGTVK1NadZ4bHhZJ/2P7EpjNlyEQkzvvn0Ezs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L3cGhsKG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1178C2BD10;
+	Fri, 17 May 2024 20:45:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715978737;
+	bh=gBMpZMWfyzUQArH1dlBEIH4whj5xwu3YOj/Tb2+i0G0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=L3cGhsKGUMzJO6W4/EstavUeJELZ5ekwnE7cgs1Yn7PdX+my8Oyj9ZLXUxvw0rW50
+	 1quIhMJ8qENat703FZDUnlX4WdP4FDoKFbMhwz7djdERi+DgbyeXXZ7ApcNYIS1xca
+	 7xz7+ZZPyKdAPdX/OvnIjA4n15h7+lDF4xkR5Da8xVeThbwn5oRSSdZguL1DpCq1Ct
+	 r89ZNHTb2Yu9lo8JtG+4erZSNzmbHiNCHk5wOZFudIhRvVT2E3Q+h33uPvq7qsU4vT
+	 nf4fZGBvQJfa/kNO3F1XGWRhlRRJudfKeqXTpvVrBdQXeDdcWZFPQ65mC9/YTphQ+B
+	 5od8+ab9nvTCQ==
+Date: Fri, 17 May 2024 21:45:32 +0100
+From: Simon Horman <horms@kernel.org>
+To: Kenton Groombridge <concord@gentoo.org>
+Cc: johannes@sipsolutions.net, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, linux-wireless@vger.kernel.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org, Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH v2] wifi: mac80211: Avoid address calculations via out of
+ bounds array indexing
+Message-ID: <20240517204532.GC475595@kernel.org>
+References: <20240517145420.8891-1-concord@gentoo.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHhAz+isxCcxq3QLqmapcQwvZDYb-PL7FAi2cFMgFwXVNU2h7g@mail.gmail.com>
-In-Reply-To: <CAHhAz+isxCcxq3QLqmapcQwvZDYb-PL7FAi2cFMgFwXVNU2h7g@mail.gmail.com>
-From: jim.cromie@gmail.com
-Date: Fri, 17 May 2024 14:44:16 -0600
-Message-ID: <CAJfuBxzV5YWOmhU6AdOJetERO0ySs+6GkYxcFjWQiH63_rsXcw@mail.gmail.com>
-Subject: Re: Seeking Assistance with Spin Lock Usage and Resolving Hard LOCKUP Error
-To: Muni Sekhar <munisekharrms@gmail.com>
-Cc: kernelnewbies <kernelnewbies@kernelnewbies.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240517145420.8891-1-concord@gentoo.org>
 
-On Thu, May 9, 2024 at 8:39=E2=80=AFAM Muni Sekhar <munisekharrms@gmail.com=
-> wrote:
->
-> Dear Linux Kernel Community,
->
-> I am reaching out to seek assistance regarding the usage of spin locks
-> in the Linux kernel and to address a recurring issue related to hard
-> LOCKUP errors that I have encountered during testing.
->
+On Fri, May 17, 2024 at 10:54:20AM -0400, Kenton Groombridge wrote:
+> req->n_channels must be set before req->channels[] can be used.
+> 
+> This patch fixes one of the issues encountered in [1].
+> 
+> [   83.964252] ------------[ cut here ]------------
+> [   83.964255] UBSAN: array-index-out-of-bounds in net/mac80211/scan.c:364:4
+> [   83.964258] index 0 is out of range for type 'struct ieee80211_channel *[]'
+> [   83.964260] CPU: 0 PID: 1695 Comm: iwd Tainted: G           O    T 6.8.9-gentoo-hardened1 #1
+> [   83.964262] Hardware name: System76 Pangolin/Pangolin, BIOS ARB928_V00.01_T0025ASY1_ms 04/20/2023
+> [   83.964264] Call Trace:
+> [   83.964267]  <TASK>
+> [   83.964269]  dump_stack_lvl+0x3f/0xc0
+> [   83.964274]  __ubsan_handle_out_of_bounds+0xec/0x110
+> [   83.964278]  ieee80211_prep_hw_scan+0x2db/0x4b0
+> [   83.964281]  __ieee80211_start_scan+0x601/0x990
+> [   83.964284]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [   83.964287]  ? cfg80211_scan+0x149/0x250
+> [   83.964291]  nl80211_trigger_scan+0x874/0x980
+> [   83.964295]  genl_family_rcv_msg_doit+0xe8/0x160
+> [   83.964298]  genl_rcv_msg+0x240/0x270
+> [   83.964301]  ? __cfi_nl80211_trigger_scan+0x10/0x10
+> [   83.964302]  ? __cfi_nl80211_post_doit+0x10/0x10
+> [   83.964304]  ? __cfi_nl80211_pre_doit+0x10/0x10
+> [   83.964307]  ? __cfi_genl_rcv_msg+0x10/0x10
+> [   83.964309]  netlink_rcv_skb+0x102/0x130
+> [   83.964312]  genl_rcv+0x23/0x40
+> [   83.964314]  netlink_unicast+0x23b/0x340
+> [   83.964316]  netlink_sendmsg+0x3a9/0x450
+> [   83.964319]  __sys_sendto+0x3ae/0x3c0
+> [   83.964324]  __x64_sys_sendto+0x21/0x40
+> [   83.964326]  do_syscall_64+0x90/0x150
+> [   83.964329]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [   83.964331]  ? syscall_exit_work+0xc2/0xf0
+> [   83.964333]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [   83.964335]  ? syscall_exit_to_user_mode+0x74/0xa0
+> [   83.964337]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [   83.964339]  ? do_syscall_64+0x9c/0x150
+> [   83.964340]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [   83.964342]  ? syscall_exit_to_user_mode+0x74/0xa0
+> [   83.964344]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [   83.964346]  ? do_syscall_64+0x9c/0x150
+> [   83.964347]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [   83.964349]  ? do_syscall_64+0x9c/0x150
+> [   83.964351]  ? srso_alias_return_thunk+0x5/0xfbef5
+u> [   83.964353]  ? syscall_exit_work+0xc2/0xf0
+> [   83.964354]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [   83.964356]  ? syscall_exit_to_user_mode+0x74/0xa0
+> [   83.964358]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [   83.964359]  ? do_syscall_64+0x9c/0x150
+> [   83.964361]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [   83.964362]  ? do_user_addr_fault+0x488/0x620
+> [   83.964366]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [   83.964367]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [   83.964369]  entry_SYSCALL_64_after_hwframe+0x55/0x5d
+> [   83.964372] RIP: 0033:0x6200808578d7
+> [   83.964374] Code: 00 00 90 f3 0f 1e fa 41 56 55 41 89 ce 48 83 ec 28 80 3d 7b f7 0d 00 00 74 29 45 31 c9 45 31 c0 41 89 ca b8 2c 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 71 48 83 c4 28 5d 41 5e c3 66 0f 1f 84 00 00
+> [   83.964375] RSP: 002b:0000730c4e821530 EFLAGS: 00000246 ORIG_RAX: 000000000000002c
+> [   83.964378] RAX: ffffffffffffffda RBX: 000006dbc456c570 RCX: 00006200808578d7
+> [   83.964379] RDX: 000000000000005c RSI: 000006dbc45884f0 RDI: 0000000000000004
+> [   83.964381] RBP: 0000000000000004 R08: 0000000000000000 R09: 0000000000000000
+> [   83.964382] R10: 0000000000000000 R11: 0000000000000246 R12: 000006dbc456c480
+> [   83.964383] R13: 000006dbc456c450 R14: 0000000000000000 R15: 000006dbc456c610
+> [   83.964386]  </TASK>
+> [   83.964386] ---[ end trace ]---
+> 
+> [1] https://bugzilla.kernel.org/show_bug.cgi?id=218810
+> 
+> v1->v2:
+> - Drop changes in cfg80211 as requested by Johannes
+> 
+> Co-authored-by: Kees Cook <keescook@chromium.org>
+> Signed-off-by: Kenton Groombridge <concord@gentoo.org>
 
-build your kernel with LOCKDEP everything ?
+Thanks Kenton,
 
+FWWIW, it seems unfortunate to me that the __counted_by field (n_channels)
+is set some distance away from the allocation of the flex-array (channels)
+whose bounds it checks. It seems it would be pretty easy for a bug in the
+code being updated here to result in an overrun.
 
-> Recently, I developed a small kernel module that involves ISR handling
-> and utilizes the spinlock_t primitive. In my module, I have employed
-> spin locks both in process context using spin_lock() and spin_unlock()
-> APIs, as well as in ISR context using spin_lock_irqsave() and
-> spin_unlock_irqrestore() APIs.
->
-> Here is a brief overview of how I have implemented spin locks in my modul=
-e:
->
+But in any case, I think this is an improvement and seems correct to me.
 
-I certainly dont know whether the above and below are legal.
-Id be comparing my usage to working examples from the source-code.
-
-and you didnt say anything about your module or what it does.
-(fwiw, you'd get more help if it were "our" module, ie gpl'd)
-
-
-
-> However, during testing, I have encountered a scenario where a hard
-> LOCKUP (NMI watchdog: Watchdog detected hard LOCKUP on cpu 2) error
-> occurs, specifically when a process context code execution triggers
-> the spin_lock() function and is preempted by an interrupt that enters
-> the ISR context and encounters the spin_lock_irqsave() function. This
-> situation leads to the CPU being stuck indefinitely.
->
-
-Id build w/o watchdog, to see what else goes wrong.
-2 different errors might help find common cause.
-
-
-
-> My primary concern is to understand the appropriate usage of spin
-> locks in both process and ISR contexts to avoid such hard LOCKUP
-> errors. I am seeking clarification on the following points:
->
-
-Documentation/locking/hwspinlock.rst
-
->     Is it safe to use spin_lock_irqsave() and spin_unlock_irqrestore()
-> APIs in ISR context and spin_lock() and spin_unlock() APIs in process
-> context simultaneously?
->     In scenarios where a process context code execution is preempted
-> by an interrupt and enters ISR context, how should spin locks be used
-> to prevent hard LOCKUP errors?
->     Are there any specific guidelines or best practices for using spin
-> locks in scenarios involving both process and ISR contexts?
->
-> I would greatly appreciate any insights, guidance, or suggestions from
-> the experienced members of the Linux kernel community to help address
-> this issue and ensure the correct and efficient usage of spin locks in
-> my kernel module.
->
-> Thank you very much for your time and assistance.
->
-> --
-> Thanks,
-> Sekhar
->
-> _______________________________________________
-> Kernelnewbies mailing list
-> Kernelnewbies@kernelnewbies.org
-> https://lists.kernelnewbies.org/mailman/listinfo/kernelnewbies
+Reviewed-by: Simon Horman <horms@kernel.org>
 
