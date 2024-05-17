@@ -1,284 +1,144 @@
-Return-Path: <linux-kernel+bounces-181787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC7778C8145
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 09:20:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E2098C815F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 09:25:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 825A22828A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 07:20:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B37B02828EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 07:25:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37BB117BB6;
-	Fri, 17 May 2024 07:20:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5772A17730;
+	Fri, 17 May 2024 07:25:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="B1E5jVNP"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ZLYJ6lmG"
+Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 491AF16415;
-	Fri, 17 May 2024 07:19:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F90D15AE0;
+	Fri, 17 May 2024 07:25:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715930402; cv=none; b=HC5oDAKnFtzt8ERdH8lSw3BrWiTFqVNqB/b1zsZBPxhHe4DzIKHtDhERnzvMTYbYThRyZY4ypww29f4aF988nYAXw+j4tnA2DYLsOl4mxLPrmUGjBLE63Wsoco4s3+DWMZvALxCEz8jLpmxH2riz3AUOUfDt1700UshquWTADmA=
+	t=1715930732; cv=none; b=uiWGxQrgvOLADfNsPQgeeXgO2bUEDSNzyjnIoB7bVtm2UmU7N8BusaCEdAaSRYuEoAUy8VxlePzhFvwod0grHoKHA6MaWVEbUn/RP1N0DwhxuFo+KuH1aPi8nWqU7xF6yukG2G1cwivD3AIX8XtJMpNuWVJWae6XAp6osGWK4WA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715930402; c=relaxed/simple;
-	bh=BGck91VU9beP2abZzw/rtJxU09+f8W3SkIsxCeaIzKc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ex2gnrfPvbHrekEovTpKRUoZ24v7+HZ9xlioaWmZIVI3FAxsgRmHTqxGPpInMPrjqLyr1tQ07o/alwLakgE9OLbX1eOpKVuex06KA+ccAfN4puqQmeEqdMiUYlFf0Ljauo1BmjBC9sygK1G/CxuMp9yMozQIsj1ZHj7LpibAfYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=B1E5jVNP; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 0F1411C000C;
-	Fri, 17 May 2024 07:19:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1715930397;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vtNkh6lct/Bn//Hd3X1lliFFmrekYtlN0ngpcECGIUU=;
-	b=B1E5jVNP6+dsEJDwkBKDWpecNxgeRnRXcNfwDW5Q2qETDxSRVCgB82AwM+bpnqb2oXwV+c
-	ocAq5qyOYOggpTa+SY3n35xbcYwndztV8ync4V6t652cnDQXLe1z19pZPK0aI4pS4cep7n
-	dBMXEybf9YMuBPpE/9HQO3pYlmeuo4uOzLODEKbgM37y8ZlQqVDYO0T2zztZ58xGoMM9dd
-	JFbea6F5/xhiJRogH/I31z675gY5qyPuawBF58E5JoWkLI87Ip4IuA6I+48/CnykID7GAG
-	YkTXFmUrIECiNf6dLsKtoGseEsF8Uno7sm4JTofzJUfetBkGqMe9J/N7aWUGFg==
-Date: Fri, 17 May 2024 09:19:51 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Joseph Jang <jjang@nvidia.com>
-Cc: shuah@kernel.org, avagin@google.com, amir73il@gmail.com,
-	brauner@kernel.org, mochs@nvidia.com, jszu@nvidia.com,
-	linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] selftest: rtc: Add to check rtc alarm status for alarm
- related test
-Message-ID: <202405170719515a9c6d2f@mail.local>
-References: <20240517022847.4094731-1-jjang@nvidia.com>
+	s=arc-20240116; t=1715930732; c=relaxed/simple;
+	bh=V9pZqZSgm0WFadTWQjQ7+lXhSwdmCrkdWtj1xIfgeCw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YqW4dYrhKchlMvOTs+LkvC3BNK83YHQ/7Qrm75fvMOdQE+JrT4qKHTIBJ3jp7nv3kEDaOGJytokiIQxKlv08NYhZPNA1jfT9Fil600T2TCp+8jZIuuXxgGJKq5dba0/2EOWa2+LgQYStE0w+7uCRugAiPgUUjlQmESJ3fvLO2iE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ZLYJ6lmG; arc=none smtp.client-ip=115.124.30.97
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1715930721; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=Ymc8U18af+lJxyPx76zWHby9MgnIgq3GTnFdlP/uLo4=;
+	b=ZLYJ6lmGOki3PRZ5ryvNCSMQ5WQiwtp4xyG6HeZhPczvHnZxkbmLfRGhPFUmG4G3pynx1kGOikwp+O7XR+w6vSxTHt7TPqSB448lLxaT5438HNYoX6qhWozR+31RKA+hBxXOmpkZkoCnOhUf5TFU2GpkHuSabvM2AZgGbGTy6c8=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067109;MF=guwen@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0W6drV.v_1715930399;
+Received: from 30.221.130.119(mailfrom:guwen@linux.alibaba.com fp:SMTPD_---0W6drV.v_1715930399)
+          by smtp.aliyun-inc.com;
+          Fri, 17 May 2024 15:20:01 +0800
+Message-ID: <cc0480b1-d02a-406c-8b58-aae4ac4aa0ce@linux.alibaba.com>
+Date: Fri, 17 May 2024 15:19:59 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240517022847.4094731-1-jjang@nvidia.com>
-X-GND-Sasl: alexandre.belloni@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: some questions about restrictions in SMC-R v2's implementation
+To: Wenjia Zhang <wenjia@linux.ibm.com>,
+ Guangguan Wang <guangguan.wang@linux.alibaba.com>, jaka@linux.ibm.com,
+ kgraul@linux.ibm.com
+Cc: linux-s390@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <6d6e870a-3fbf-4802-9818-32ff46489448@linux.alibaba.com>
+ <ba4c7916-d6c4-44b6-a649-1e17c65e87f9@linux.ibm.com>
+From: Wen Gu <guwen@linux.alibaba.com>
+In-Reply-To: <ba4c7916-d6c4-44b6-a649-1e17c65e87f9@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 16/05/2024 19:28:47-0700, Joseph Jang wrote:
-> In alarm_wkalm_set and alarm_wkalm_set_minute test, they use different
-> ioctl (RTC_ALM_SET/RTC_WKALM_SET) for alarm feature detection. They will
-> skip testing if RTC_ALM_SET/RTC_WKALM_SET ioctl returns an EINVAL error
-> code. This design may miss detecting real problems when the
-> efi.set_wakeup_time() return errors and then RTC_ALM_SET/RTC_WKALM_SET
-> ioctl returns an EINVAL error code with RTC_FEATURE_ALARM enabled.
+
+
+On 2024/5/10 17:40, Wenjia Zhang wrote:
 > 
-> In order to make rtctest more explicit and robust, we propose to use
-> RTC_PARAM_GET ioctl interface to check rtc alarm feature state before
-> running alarm related tests. If the kernel does not support RTC_PARAM_GET
-> ioctl interface, we will fallback to check the presence of "alarm" in
-> /proc/driver/rtc.
 > 
-> The rtctest requires the read permission on /dev/rtc0. The rtctest will
-> be skipped if the /dev/rtc0 is not readable.
+> On 07.05.24 07:54, Guangguan Wang wrote:
+>> Hi, Wenjia and Jan,
+>>
+>> When testing SMC-R v2, I found some scenarios where SMC-R v2 should be worked, but due to some restrictions in SMC-R v2's implementation,
+>> fallback happened. I want to know why these restrictions exist and what would happen if these restrictions were removed.
+>>
+>> The first is in the function smc_ib_determine_gid_rcu, where restricts the subnet matching between smcrv2->saddr and the RDMA related netdev.
+>> codes here:
+>> static int smc_ib_determine_gid_rcu(...)
+>> {
+>>      ...
+>>          in_dev_for_each_ifa_rcu(ifa, in_dev) {
+>>              if (!inet_ifa_match(smcrv2->saddr, ifa))
+>>                  continue;
+>>              subnet_match = true;
+>>              break;
+>>          }
+>>          if (!subnet_match)
+>>              goto out;
+>>      ...
+>> out:
+>>      return -ENODEV;
+>> }
+>> In my testing environment, either server or client, exists two netdevs, eth0 in netnamespace1 and eth0 in netnamespace2. For the sake of clarity
+>> in the following text, we will refer to eth0 in netnamespace1 as eth1, and eth0 in netnamespace2 as eth2. The eth1's ip is 192.168.0.3/32 and the
+>> eth2's ip is 192.168.0.4/24. The netmask of eth1 must be 32 due to some reasons. The eth1 is a RDMA related netdev, which means the adaptor of eth1
+>> has RDMA function. The eth2 has been associated to the eth1's RDMA device using smc_pnet. When testing connection in netnamespace2(using eth2 for
+>> SMC-R connection), we got fallback connection, rsn is 0x03010000, due to the above subnet matching restriction. But in this scenario, I think
+>> SMC-R should work.
+>> In my another testing environment, either server or client, exists two netdevs, eth0 in netnamespace1 and eth1 in netnamespace1. The eth0's ip is
+>> 192.168.0.3/24 and the eth1's ip is 192.168.1.4/24. The eth0 is a RDMA related netdev, which means the adaptor of eth0 has RDMA function. The eth1 has
+>> been associated to the eth0's RDMA device using smc_pnet. When testing SMC-R connection through eth1, we got fallback connection, rsn is 0x03010000,
+>> due to the above subnet matching restriction. In my environment, eth0 and eth1 have the same network connectivity even though they have different
+>> subnet. I think SMC-R should work in this scenario.
+>>
+>> The other is in the function smc_connect_rdma_v2_prepare, where restricts the symmetric configuration of routing between client and server. codes here:
+>> static int smc_connect_rdma_v2_prepare(...)
+>> {
+>>      ...
+>>      if (fce->v2_direct) {
+>>          memcpy(ini->smcrv2.nexthop_mac, &aclc->r0.lcl.mac, ETH_ALEN);
+>>          ini->smcrv2.uses_gateway = false;
+>>      } else {
+>>          if (smc_ib_find_route(net, smc->clcsock->sk->sk_rcv_saddr,
+>>                smc_ib_gid_to_ipv4(aclc->r0.lcl.gid),
+>>                ini->smcrv2.nexthop_mac,
+>>                &ini->smcrv2.uses_gateway))
+>>              return SMC_CLC_DECL_NOROUTE;
+>>          if (!ini->smcrv2.uses_gateway) {
+>>              /* mismatch: peer claims indirect, but its direct */
+>>              return SMC_CLC_DECL_NOINDIRECT;
+>>          }
+>>      }
+>>      ...
+>> }
+>> In my testing environment, server's ip is 192.168.0.3/24, client's ip 192.168.0.4/24, regarding how many netdev in server or client. Server has special
+>> route setting due to some other reasons, which results in indirect route from 192.168.0.3/24 to 192.168.0.4/24. Thus, when CLC handshake, client will
+>> get fce->v2_direct==false, but client has no special routing setting and will find direct route from 192.168.0.4/24 to 192.168.0.3/24. Due to the above
+>> symmetric configuration of routing restriction, we got fallback connection, rsn is 0x030f0000. But I think SMC-R should work in this scenario.
+>> And more, why check the symmetric configuration of routing only when server is indirect route?
+>>
+>> Waiting for your reply.
+>>
+>> Thanks,
+>> Guangguan Wang
+>>
+> Hi Guangguan,
 > 
-
-This change as to be separated. Also, I'm not sure what happened with
-https://lore.kernel.org/all/20230717175251.54390-1-atulpant.linux@gmail.com/
-
-> Requires commit 101ca8d05913b ("rtc: efi: Enable SET/GET WAKEUP services
-> as optional")
+> Thank you for the questions. We also asked ourselves the same questions a while ago, and also did some research on it. Unfortunately, it was not yet done and I had to delay it because of my vacation last month. Now it's time to pick it up again ;) I'll come back to you as soon as I can give a very 
+> certain answer.
 > 
-> Reviewed-by: Jeremy Szu <jszu@nvidia.com>
-> Reviewed-by: Matthew R. Ochs <mochs@nvidia.com>
-> Signed-off-by: Joseph Jang <jjang@nvidia.com>
-> ---
->  tools/testing/selftests/rtc/Makefile  |  2 +-
->  tools/testing/selftests/rtc/rtctest.c | 72 +++++++++++++++++++--------
->  2 files changed, 53 insertions(+), 21 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/rtc/Makefile b/tools/testing/selftests/rtc/Makefile
-> index 55198ecc04db..6e3a98fb24ba 100644
-> --- a/tools/testing/selftests/rtc/Makefile
-> +++ b/tools/testing/selftests/rtc/Makefile
-> @@ -1,5 +1,5 @@
->  # SPDX-License-Identifier: GPL-2.0
-> -CFLAGS += -O3 -Wl,-no-as-needed -Wall
-> +CFLAGS += -O3 -Wl,-no-as-needed -Wall -I../../../../usr/include/
->  LDLIBS += -lrt -lpthread -lm
->  
->  TEST_GEN_PROGS = rtctest
-> diff --git a/tools/testing/selftests/rtc/rtctest.c b/tools/testing/selftests/rtc/rtctest.c
-> index 63ce02d1d5cc..aa47b17fbd1a 100644
-> --- a/tools/testing/selftests/rtc/rtctest.c
-> +++ b/tools/testing/selftests/rtc/rtctest.c
-> @@ -8,6 +8,7 @@
->  #include <errno.h>
->  #include <fcntl.h>
->  #include <linux/rtc.h>
-> +#include <stdbool.h>
->  #include <stdio.h>
->  #include <stdlib.h>
->  #include <sys/ioctl.h>
-> @@ -24,12 +25,17 @@
->  #define READ_LOOP_SLEEP_MS 11
->  
->  static char *rtc_file = "/dev/rtc0";
-> +static char *rtc_procfs = "/proc/driver/rtc";
->  
->  FIXTURE(rtc) {
->  	int fd;
->  };
->  
->  FIXTURE_SETUP(rtc) {
-> +	if (access(rtc_file, R_OK) != 0)
-> +		SKIP(return, "Skipping test since cannot access %s, perhaps miss sudo",
-> +			 rtc_file);
+> Thanks,
+> Wenjia
 
-> +
->  	self->fd = open(rtc_file, O_RDONLY);
->  }
->  
-> @@ -82,6 +88,36 @@ static void nanosleep_with_retries(long ns)
->  	}
->  }
->  
-> +static bool is_rtc_alarm_supported(int fd)
-> +{
-> +	struct rtc_param param = { 0 };
-> +	int rc;
-> +	char buf[1024] = { 0 };
-> +
-> +	/* Validate kernel reflects unsupported RTC alarm state */
-> +	param.param = RTC_PARAM_FEATURES;
-> +	param.index = 0;
-> +	rc = ioctl(fd, RTC_PARAM_GET, &param);
-> +	if (rc < 0) {
-> +		/* Fallback to read rtc procfs */
-> +		fd = open(rtc_procfs, O_RDONLY);
-
-I think I was clear on the previous thread, no new users of the procfs
-interface. You can carry this n your own tree but that can't be
-upstream.
-
-> +		if (fd != -1) {
-> +			rc = read(fd, buf, sizeof(buf));
-> +			close(fd);
-> +
-> +			/* Check for the presence of "alarm" in the buf */
-> +			if (strstr(buf, "alarm") == NULL)
-> +				return false;
-> +		} else
-> +			return false;
-> +	} else {
-> +		if ((param.uvalue & _BITUL(RTC_FEATURE_ALARM)) == 0)
-> +			return false;
-> +	}
-> +
-> +	return true;
-> +}
-> +
->  TEST_F_TIMEOUT(rtc, date_read_loop, READ_LOOP_DURATION_SEC + 2) {
->  	int rc;
->  	long iter_count = 0;
-> @@ -202,6 +238,9 @@ TEST_F(rtc, alarm_alm_set) {
->  		SKIP(return, "Skipping test since %s does not exist", rtc_file);
->  	ASSERT_NE(-1, self->fd);
->  
-> +	if (!is_rtc_alarm_supported(self->fd))
-> +		SKIP(return, "Skipping test since alarms are not supported.");
-> +
->  	rc = ioctl(self->fd, RTC_RD_TIME, &tm);
->  	ASSERT_NE(-1, rc);
->  
-> @@ -209,11 +248,7 @@ TEST_F(rtc, alarm_alm_set) {
->  	gmtime_r(&secs, (struct tm *)&tm);
->  
->  	rc = ioctl(self->fd, RTC_ALM_SET, &tm);
-> -	if (rc == -1) {
-> -		ASSERT_EQ(EINVAL, errno);
-> -		TH_LOG("skip alarms are not supported.");
-> -		return;
-> -	}
-> +	ASSERT_NE(-1, rc);
->  
->  	rc = ioctl(self->fd, RTC_ALM_READ, &tm);
->  	ASSERT_NE(-1, rc);
-> @@ -260,6 +295,9 @@ TEST_F(rtc, alarm_wkalm_set) {
->  		SKIP(return, "Skipping test since %s does not exist", rtc_file);
->  	ASSERT_NE(-1, self->fd);
->  
-> +	if (!is_rtc_alarm_supported(self->fd))
-> +		SKIP(return, "Skipping test since alarms are not supported.");
-> +
->  	rc = ioctl(self->fd, RTC_RD_TIME, &alarm.time);
->  	ASSERT_NE(-1, rc);
->  
-> @@ -269,11 +307,7 @@ TEST_F(rtc, alarm_wkalm_set) {
->  	alarm.enabled = 1;
->  
->  	rc = ioctl(self->fd, RTC_WKALM_SET, &alarm);
-> -	if (rc == -1) {
-> -		ASSERT_EQ(EINVAL, errno);
-> -		TH_LOG("skip alarms are not supported.");
-> -		return;
-> -	}
-> +	ASSERT_NE(-1, rc);
->  
->  	rc = ioctl(self->fd, RTC_WKALM_RD, &alarm);
->  	ASSERT_NE(-1, rc);
-> @@ -312,6 +346,9 @@ TEST_F_TIMEOUT(rtc, alarm_alm_set_minute, 65) {
->  		SKIP(return, "Skipping test since %s does not exist", rtc_file);
->  	ASSERT_NE(-1, self->fd);
->  
-> +	if (!is_rtc_alarm_supported(self->fd))
-> +		SKIP(return, "Skipping test since alarms are not supported.");
-> +
->  	rc = ioctl(self->fd, RTC_RD_TIME, &tm);
->  	ASSERT_NE(-1, rc);
->  
-> @@ -319,11 +356,7 @@ TEST_F_TIMEOUT(rtc, alarm_alm_set_minute, 65) {
->  	gmtime_r(&secs, (struct tm *)&tm);
->  
->  	rc = ioctl(self->fd, RTC_ALM_SET, &tm);
-> -	if (rc == -1) {
-> -		ASSERT_EQ(EINVAL, errno);
-> -		TH_LOG("skip alarms are not supported.");
-> -		return;
-> -	}
-> +	ASSERT_NE(-1, rc);
->  
->  	rc = ioctl(self->fd, RTC_ALM_READ, &tm);
->  	ASSERT_NE(-1, rc);
-> @@ -370,6 +403,9 @@ TEST_F_TIMEOUT(rtc, alarm_wkalm_set_minute, 65) {
->  		SKIP(return, "Skipping test since %s does not exist", rtc_file);
->  	ASSERT_NE(-1, self->fd);
->  
-> +	if (!is_rtc_alarm_supported(self->fd))
-> +		SKIP(return, "Skipping test since alarms are not supported.");
-> +
->  	rc = ioctl(self->fd, RTC_RD_TIME, &alarm.time);
->  	ASSERT_NE(-1, rc);
->  
-> @@ -379,11 +415,7 @@ TEST_F_TIMEOUT(rtc, alarm_wkalm_set_minute, 65) {
->  	alarm.enabled = 1;
->  
->  	rc = ioctl(self->fd, RTC_WKALM_SET, &alarm);
-> -	if (rc == -1) {
-> -		ASSERT_EQ(EINVAL, errno);
-> -		TH_LOG("skip alarms are not supported.");
-> -		return;
-> -	}
-> +	ASSERT_NE(-1, rc);
->  
->  	rc = ioctl(self->fd, RTC_WKALM_RD, &alarm);
->  	ASSERT_NE(-1, rc);
-> -- 
-> 2.34.1
-> 
-
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Hi Wenjia, is there any new information on the original intent of these designs? :) Thanks!
 
