@@ -1,191 +1,213 @@
-Return-Path: <linux-kernel+bounces-182596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 589038C8D18
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 21:55:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EA1118C8CFB
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 21:50:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C4991C232F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:55:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18E771C21B38
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:50:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EB0B142E93;
-	Fri, 17 May 2024 19:53:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C7C813FD83;
+	Fri, 17 May 2024 19:50:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fnP194dF"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Gr9jCqjK"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BB3B1422C2;
-	Fri, 17 May 2024 19:53:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51EE645007
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 19:50:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715975635; cv=none; b=Dpj1qPRs0fZCZOysM3eV/lSnLNe+iofdLDh77lnkvCPaJUtO1/54rinqr1I/d3rNbqjmr/cmLrT5YVfBMiUUx2jSoMtUwT0M+J5TMFZZyS97QCjmP3WrvSRFIklQCncUDMpKuLQFhDrFl/V2GcPYWE63I1vl8Oo2+GM4Q8nsZsw=
+	t=1715975442; cv=none; b=ekt45jPfJh8wQb6/ErzkWuQYCKi9VpKrNVZHsJD7umBVMBAUhmLFCCmYHOeEnYEljLenaRFXaJwKbCHGLOEFBM9/rnHNcirqvdC8cFyHQCQU+G8x8njxSkfyRyW7xp9zGRx3QboGKQTlct0Ut7MgzdXV9JVHfRq0DxNbMDzPYSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715975635; c=relaxed/simple;
-	bh=7g0FrtRJTKHe6RD7B4mm9xOD9+Ic1TmeKGG546OwPqo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MyYkheVq/8utgxU9O8bJPJK7IHgEadkopgRKAteBPivjNbo7Nxns47zYUspoMqVao3G3+ugB9RPPNJj/tDYIizJOfiiXxRvnuSwHa+T1BnGF6vEpSLkhzDHfZcyc0keb+DTExXC1dsNPBBLK47D8NWiAbXDcBhYEyoUhx2hm8ic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fnP194dF; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715975634; x=1747511634;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=7g0FrtRJTKHe6RD7B4mm9xOD9+Ic1TmeKGG546OwPqo=;
-  b=fnP194dFcpGHhuXxLHJCbPM0ZKbn9HMX4PqssY2Clon1vYM+njKUETY8
-   w7Cz60C16PBse+ZZbV5e06aTJpxK6JDf4saUnyb4PeEsrXl/dozUOcR+I
-   zxKCJCWAoz6CWvhYkdd7uRChu9+wKXhe+Xcj3TB4m+yhCkNowgIEe1JWi
-   SJFWhxQR53DzdJkc1FwVukgFyIDOAJM2NTk7Y/Ok6ifowBQ7LOzbLe4cp
-   rY8cWNHPo15GOPvcZCM/teFnO4GIoifroRpHWOgCKAqad3PaEc1JfO92M
-   KSawEB2NA4s2IzBAQB3qC4l5pLBQYpxQfnop8bj0ovMMkmNohIYaLzveE
-   Q==;
-X-CSE-ConnectionGUID: c43CvMwlSwCMsBfmL8z82Q==
-X-CSE-MsgGUID: s8FwEi0GSkaayeMsQc5uew==
-X-IronPort-AV: E=McAfee;i="6600,9927,11075"; a="12348686"
-X-IronPort-AV: E=Sophos;i="6.08,168,1712646000"; 
-   d="scan'208";a="12348686"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 12:53:52 -0700
-X-CSE-ConnectionGUID: PSNZlpLGT0GsLptac8sf7w==
-X-CSE-MsgGUID: 6JKeLPUWTwmH9hdkS/K0yw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,168,1712646000"; 
-   d="scan'208";a="31915018"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa006.fm.intel.com with ESMTP; 17 May 2024 12:53:49 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 831C4656; Fri, 17 May 2024 22:53:45 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Mark Brown <broonie@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-kernel@vger.kernel.org,
-	linux-spi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Daniel Mack <daniel@zonque.org>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>
-Subject: [PATCH v1 10/10] spi: pxa2xx: Convert PCI driver to use spi-pxa2xx code directly
-Date: Fri, 17 May 2024 22:47:44 +0300
-Message-ID: <20240517195344.813032-11-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
-In-Reply-To: <20240517195344.813032-1-andriy.shevchenko@linux.intel.com>
-References: <20240517195344.813032-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1715975442; c=relaxed/simple;
+	bh=XvCCKx8tFEqP1/BD+I3XNnGYNbZ5f6J3SCFAICBZd0w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kNotMG3VL99jlgirGIHQBsAW1mUHk8khvNht1uofiszM1tSEEyd6Brgd1ySl8QtFkUpdtc4M4VBQhi1D9HmDHVrKFmb8ANSpaT3YgQ/i+FF+QHw0LbECjnuvunyRMZDKHnFbDVtQiw5b80oIeGFYjMdZvzdTFTLbTat5uFAxsBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Gr9jCqjK; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715975439;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1bxakr/BFBoeB5Z7JNvpJE420hX0IdbRkXcnTw/5V8o=;
+	b=Gr9jCqjKifWM9mMN5HXKXVoXQhvJ144mbxGEjIK2YFLhK9rey1zwcuIbrEb83A8jdsOMhW
+	3FlyYgnigTJtNglHkEKee7LI1UB2XHTAda7516xAw+hF1PB6P/hqhYQKIYi15/xGXI8SI/
+	vuRifMwLFvhatGCUSWzsx2MN2QQZi0U=
+Received: from mail-yw1-f200.google.com (mail-yw1-f200.google.com
+ [209.85.128.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-101-y-wtZTZDPSqU9-D7nbH0_A-1; Fri, 17 May 2024 15:50:37 -0400
+X-MC-Unique: y-wtZTZDPSqU9-D7nbH0_A-1
+Received: by mail-yw1-f200.google.com with SMTP id 00721157ae682-61be452c62bso143785727b3.2
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 12:50:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715975437; x=1716580237;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1bxakr/BFBoeB5Z7JNvpJE420hX0IdbRkXcnTw/5V8o=;
+        b=GtD1RDVoaXJHim2AtuGfKZzMm52fnho+cqTo9FseWATxVsKdyWIbOIIJiY+1n4pqqu
+         YrI34n4ZJeaOeOHXaXVw1ah55WdWsG/YMwQMBBGk4OQgx+sp7GAqu7+2OTtQ/BDdzMP+
+         c8l7jyaGSYXMWPU+lxNEO1gAJh3V4yNjhlp8nN1LtPg/DaKzFmPJczyyOFE7iJ5DAYUJ
+         KvjN6ss12hAogOK/TjWNssGc0Ghmuf9eOIHFKzbr64ce1QK0EI0USou4YeRPKMsfXnCo
+         cCfdI2ZDfOZBCT60bb7pHtzC/d3tcVPAXtY3bqgz0+8kopg4/3JjKS7PPxBXtlcW9IFF
+         l1Kw==
+X-Forwarded-Encrypted: i=1; AJvYcCXgdfOecO8a4ykX7eB+5AOGKZvftsO+mIpo56tvXVSw4MHS2F7MQ/+l9Bc2fEreNC9G39Z5fntW0DO5CUkzRwXeAyYEkNu7+ssg5gZq
+X-Gm-Message-State: AOJu0YxtC9nBv0tPe0VDAI8OCUK0dpkr86mqGd5aVbLAydaKYebHpsZa
+	N90JU9MMvA0VPFxXQOe95uul/Poq8QrAD97CpMVFtUf9omG0BzC8puXsUYA0+D2xWttldXCdQT5
+	n6UlFkwWhsfjgnNJXeEWKGBwyiuhYNWjl5BgDKtpzlEBESkTg0n8VdWmKBpA9fhF/bmNDNcL9et
+	ald8d/WQFWJi9cgre9Nn5SAsbwiFA/dbJOYYNK
+X-Received: by 2002:a05:690c:6401:b0:615:35e1:e512 with SMTP id 00721157ae682-622afdb76b9mr250824487b3.0.1715975437070;
+        Fri, 17 May 2024 12:50:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGxZWsOAnMenqeD3LUnJgjbcNzOURcpVyRpjugF02QoP8oAeypq5/rysipjqCLig8Mwkfv+qKUEzIaY6M2epq0=
+X-Received: by 2002:a05:690c:6401:b0:615:35e1:e512 with SMTP id
+ 00721157ae682-622afdb76b9mr250824237b3.0.1715975436677; Fri, 17 May 2024
+ 12:50:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240517130118.759301-1-andrey.konovalov@linux.dev>
+In-Reply-To: <20240517130118.759301-1-andrey.konovalov@linux.dev>
+From: Nico Pache <npache@redhat.com>
+Date: Fri, 17 May 2024 13:50:10 -0600
+Message-ID: <CAA1CXcAdG=OFkBzjPqr7M_kC7VZUdj-+vH_2W4UidfbQwfQbeA@mail.gmail.com>
+Subject: Re: [PATCH] kasan, fortify: properly rename memintrinsics
+To: andrey.konovalov@linux.dev
+Cc: Marco Elver <elver@google.com>, Andrey Konovalov <andreyknvl@gmail.com>, 
+	Alexander Potapenko <glider@google.com>, Dmitry Vyukov <dvyukov@google.com>, 
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>, kasan-dev@googlegroups.com, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
+	Erhard Furtner <erhard_f@mailbox.org>, Daniel Axtens <dja@axtens.net>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-PCI driver has an additional device layer for enumeration.
-Remove that layer and use spi-pxa2xx code directly.
+On Fri, May 17, 2024 at 7:02=E2=80=AFAM <andrey.konovalov@linux.dev> wrote:
+>
+> From: Andrey Konovalov <andreyknvl@gmail.com>
+>
+> After commit 69d4c0d32186 ("entry, kasan, x86: Disallow overriding mem*()
+> functions") and the follow-up fixes, with CONFIG_FORTIFY_SOURCE enabled,
+> even though the compiler instruments meminstrinsics by generating calls
+> to __asan/__hwasan_ prefixed functions, FORTIFY_SOURCE still uses
+> uninstrumented memset/memmove/memcpy as the underlying functions.
+>
+> As a result, KASAN cannot detect bad accesses in memset/memmove/memcpy.
+> This also makes KASAN tests corrupt kernel memory and cause crashes.
+>
+> To fix this, use __asan_/__hwasan_memset/memmove/memcpy as the underlying
+> functions whenever appropriate. Do this only for the instrumented code
+> (as indicated by __SANITIZE_ADDRESS__).
+>
+> Reported-by: Erhard Furtner <erhard_f@mailbox.org>
+> Reported-by: Nico Pache <npache@redhat.com>
+> Closes: https://lore.kernel.org/all/20240501144156.17e65021@outsider.home=
+/
+> Fixes: 69d4c0d32186 ("entry, kasan, x86: Disallow overriding mem*() funct=
+ions")
+> Fixes: 51287dcb00cc ("kasan: emit different calls for instrumentable memi=
+ntrinsics")
+> Fixes: 36be5cba99f6 ("kasan: treat meminstrinsic as builtins in uninstrum=
+ented files")
+> Signed-off-by: Andrey Konovalov <andreyknvl@gmail.com>
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/spi/spi-pxa2xx-pci.c | 39 ++++++++++++------------------------
- 1 file changed, 13 insertions(+), 26 deletions(-)
+Thank you for fixing this !! The test no longer panics :)
 
-diff --git a/drivers/spi/spi-pxa2xx-pci.c b/drivers/spi/spi-pxa2xx-pci.c
-index 6d2efdb0e95f..616d032f1a89 100644
---- a/drivers/spi/spi-pxa2xx-pci.c
-+++ b/drivers/spi/spi-pxa2xx-pci.c
-@@ -10,8 +10,7 @@
- #include <linux/err.h>
- #include <linux/module.h>
- #include <linux/pci.h>
--#include <linux/platform_device.h>
--#include <linux/property.h>
-+#include <linux/pm.h>
- #include <linux/sprintf.h>
- #include <linux/string.h>
- #include <linux/types.h>
-@@ -265,10 +264,8 @@ static int pxa2xx_spi_pci_probe(struct pci_dev *dev,
- 		const struct pci_device_id *ent)
- {
- 	const struct pxa_spi_info *info;
--	struct platform_device_info pi;
- 	int ret;
--	struct platform_device *pdev;
--	struct pxa2xx_spi_controller spi_pdata;
-+	struct pxa2xx_spi_controller *pdata;
- 	struct ssp_device *ssp;
- 
- 	ret = pcim_enable_device(dev);
-@@ -279,15 +276,17 @@ static int pxa2xx_spi_pci_probe(struct pci_dev *dev,
- 	if (ret)
- 		return ret;
- 
--	memset(&spi_pdata, 0, sizeof(spi_pdata));
-+	pdata = devm_kzalloc(&dev->dev, sizeof(*pdata), GFP_KERNEL);
-+	if (!pdata)
-+		return -ENOMEM;
- 
--	ssp = &spi_pdata.ssp;
-+	ssp = &pdata->ssp;
- 	ssp->dev = &dev->dev;
- 	ssp->phys_base = pci_resource_start(dev, 0);
- 	ssp->mmio_base = pcim_iomap_table(dev)[0];
- 
- 	info = (struct pxa_spi_info *)ent->driver_data;
--	ret = info->setup(dev, &spi_pdata);
-+	ret = info->setup(dev, pdata);
- 	if (ret)
- 		return ret;
- 
-@@ -298,28 +297,12 @@ static int pxa2xx_spi_pci_probe(struct pci_dev *dev,
- 		return ret;
- 	ssp->irq = pci_irq_vector(dev, 0);
- 
--	memset(&pi, 0, sizeof(pi));
--	pi.fwnode = dev_fwnode(&dev->dev);
--	pi.parent = &dev->dev;
--	pi.name = "pxa2xx-spi";
--	pi.id = ssp->port_id;
--	pi.data = &spi_pdata;
--	pi.size_data = sizeof(spi_pdata);
--
--	pdev = platform_device_register_full(&pi);
--	if (IS_ERR(pdev))
--		return PTR_ERR(pdev);
--
--	pci_set_drvdata(dev, pdev);
--
--	return 0;
-+	return pxa2xx_spi_probe(&dev->dev, ssp);
- }
- 
- static void pxa2xx_spi_pci_remove(struct pci_dev *dev)
- {
--	struct platform_device *pdev = pci_get_drvdata(dev);
--
--	platform_device_unregister(pdev);
-+	pxa2xx_spi_remove(&dev->dev);
- }
- 
- static const struct pci_device_id pxa2xx_spi_pci_devices[] = {
-@@ -341,6 +324,9 @@ MODULE_DEVICE_TABLE(pci, pxa2xx_spi_pci_devices);
- static struct pci_driver pxa2xx_spi_pci_driver = {
- 	.name           = "pxa2xx_spi_pci",
- 	.id_table       = pxa2xx_spi_pci_devices,
-+	.driver = {
-+		.pm	= pm_ptr(&pxa2xx_spi_pm_ops),
-+	},
- 	.probe          = pxa2xx_spi_pci_probe,
- 	.remove         = pxa2xx_spi_pci_remove,
- };
-@@ -349,4 +335,5 @@ module_pci_driver(pxa2xx_spi_pci_driver);
- 
- MODULE_DESCRIPTION("CE4100/LPSS PCI-SPI glue code for PXA's driver");
- MODULE_LICENSE("GPL v2");
-+MODULE_IMPORT_NS(SPI_PXA2xx);
- MODULE_AUTHOR("Sebastian Andrzej Siewior <bigeasy@linutronix.de>");
--- 
-2.43.0.rc1.1336.g36b5255a03ac
+Now that the test progresses I also see rcu_uaf failing.
+    # rcu_uaf: EXPECTATION FAILED at mm/kasan/kasan_test.c:870
+    KASAN failure expected in "call_rcu(&global_rcu_ptr->rcu,
+rcu_uaf_reclaim); rcu_barrier()", but none occurred
+    not ok 31 rcu_uaf
+ I can open a new thread for that if you'd like.
+
+Tested-by: Nico Pache <npache@redhat.com>
+Acked-by: Nico Pache <npache@redhat.com>
+
+> ---
+>  include/linux/fortify-string.h | 22 ++++++++++++++++++----
+>  1 file changed, 18 insertions(+), 4 deletions(-)
+>
+> diff --git a/include/linux/fortify-string.h b/include/linux/fortify-strin=
+g.h
+> index 85fc0e6f0f7f..bac010cfc42f 100644
+> --- a/include/linux/fortify-string.h
+> +++ b/include/linux/fortify-string.h
+> @@ -75,17 +75,30 @@ void __write_overflow_field(size_t avail, size_t want=
+ed) __compiletime_warning("
+>         __ret;                                                  \
+>  })
+>
+> -#if defined(CONFIG_KASAN_GENERIC) || defined(CONFIG_KASAN_SW_TAGS)
+> +#if defined(__SANITIZE_ADDRESS__)
+> +
+> +#if !defined(CONFIG_CC_HAS_KASAN_MEMINTRINSIC_PREFIX) && !defined(CONFIG=
+_GENERIC_ENTRY)
+> +extern void *__underlying_memset(void *p, int c, __kernel_size_t size) _=
+_RENAME(memset);
+> +extern void *__underlying_memmove(void *p, const void *q, __kernel_size_=
+t size) __RENAME(memmove);
+> +extern void *__underlying_memcpy(void *p, const void *q, __kernel_size_t=
+ size) __RENAME(memcpy);
+> +#elif defined(CONFIG_KASAN_GENERIC)
+> +extern void *__underlying_memset(void *p, int c, __kernel_size_t size) _=
+_RENAME(__asan_memset);
+> +extern void *__underlying_memmove(void *p, const void *q, __kernel_size_=
+t size) __RENAME(__asan_memmove);
+> +extern void *__underlying_memcpy(void *p, const void *q, __kernel_size_t=
+ size) __RENAME(__asan_memcpy);
+> +#else /* CONFIG_KASAN_SW_TAGS */
+> +extern void *__underlying_memset(void *p, int c, __kernel_size_t size) _=
+_RENAME(__hwasan_memset);
+> +extern void *__underlying_memmove(void *p, const void *q, __kernel_size_=
+t size) __RENAME(__hwasan_memmove);
+> +extern void *__underlying_memcpy(void *p, const void *q, __kernel_size_t=
+ size) __RENAME(__hwasan_memcpy);
+> +#endif
+> +
+>  extern void *__underlying_memchr(const void *p, int c, __kernel_size_t s=
+ize) __RENAME(memchr);
+>  extern int __underlying_memcmp(const void *p, const void *q, __kernel_si=
+ze_t size) __RENAME(memcmp);
+> -extern void *__underlying_memcpy(void *p, const void *q, __kernel_size_t=
+ size) __RENAME(memcpy);
+> -extern void *__underlying_memmove(void *p, const void *q, __kernel_size_=
+t size) __RENAME(memmove);
+> -extern void *__underlying_memset(void *p, int c, __kernel_size_t size) _=
+_RENAME(memset);
+>  extern char *__underlying_strcat(char *p, const char *q) __RENAME(strcat=
+);
+>  extern char *__underlying_strcpy(char *p, const char *q) __RENAME(strcpy=
+);
+>  extern __kernel_size_t __underlying_strlen(const char *p) __RENAME(strle=
+n);
+>  extern char *__underlying_strncat(char *p, const char *q, __kernel_size_=
+t count) __RENAME(strncat);
+>  extern char *__underlying_strncpy(char *p, const char *q, __kernel_size_=
+t size) __RENAME(strncpy);
+> +
+>  #else
+>
+>  #if defined(__SANITIZE_MEMORY__)
+> @@ -110,6 +123,7 @@ extern char *__underlying_strncpy(char *p, const char=
+ *q, __kernel_size_t size)
+>  #define __underlying_strlen    __builtin_strlen
+>  #define __underlying_strncat   __builtin_strncat
+>  #define __underlying_strncpy   __builtin_strncpy
+> +
+>  #endif
+>
+>  /**
+> --
+> 2.25.1
+>
 
 
