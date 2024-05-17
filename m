@@ -1,356 +1,117 @@
-Return-Path: <linux-kernel+bounces-182130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DE668C86F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 15:07:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 48FD58C86FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 15:10:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 711CF1C20974
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 13:07:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AA121C22107
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 13:10:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 773244F608;
-	Fri, 17 May 2024 13:07:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F75550297;
+	Fri, 17 May 2024 13:10:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KlU2OuBo"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="ezJV/AUn"
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C05224F1E4;
-	Fri, 17 May 2024 13:07:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7DC74CB58
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 13:10:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715951231; cv=none; b=LgfnG3sRFA6m+l795XzNl16Djq7nGnbl+K0ekzwHHxFeNqmsnVMe2l3wpPSVwZQWqWR5bssZTYxT62IpFjIub/GjCNeLQmf1sxe7mgByswCQlg9qMUanbjOCasCcKzs2xHkRJRhazFRZOe2q2Wo7zMiBouuuhD5LDyWARzlSjxM=
+	t=1715951450; cv=none; b=QqtdneEpoKtGWpIY3eXQhHL3sxRXN58qnAsJPzRBes1cC+K3LFuQJ0lA2t1KV+C3BQ/rQHFwFhSv9vLCxnvjZs4kWO0jArL7GRpyESyB/XGeUTa/PaYEk/QQ8/h54xUqPt02AIcxi9GOthT0gPfjFWe86wVpcRKT2nMJNXEGEWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715951231; c=relaxed/simple;
-	bh=E8NIBmhuXkQWY9tdw0NTb9s7Ylgh7bn9fuNNOGVJNic=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rSQ/xjI/yZETQFG1N8V8r24v/ADgHFDpir9zWIyeaz7jrOxjVeYPod2OqegwuK1z0togVsimBbzEJeZUtF+UUNYgUMrhld8ww8E+BKh0Czd6Lyuq/jCRkv6fyno/MJX9R509UTPPM9oxRszGzsq2juYNVJOn+V49WhEEwoc2f5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KlU2OuBo; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715951230; x=1747487230;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=E8NIBmhuXkQWY9tdw0NTb9s7Ylgh7bn9fuNNOGVJNic=;
-  b=KlU2OuBouO9TmBila2MRLVTaNBVPuDvos4Mp5tvCUGkEGB0Qi2+wfoQx
-   Zx0aFmYmUZrhE8a08MzNsdo44p0SeutP8sqNmb3cfKlCZdWKbvjvj33z5
-   QMfjCwuNtOOZomrIlhgLUH9cvGgqJ5q3toNQbG0pSGkQm4w+Ag/onvKbP
-   X+6aiOaFeBi2ZEXk6ip49FcfLyykrR9+Suwzvr2gsUUrXrvg3RjffC08y
-   s2YZDZBbcI+4hHE8TodaAR8wqqr6FV75l2QU/Pup9T5wJpdVH8a2P39dc
-   Q0JsA8lWUpEpb+adg8389IIrsf+ZEKns89iGjVh2ovg78dm1xIr9tpzU5
-   Q==;
-X-CSE-ConnectionGUID: 5S/0eS+VRjOBj7mNU0lCLQ==
-X-CSE-MsgGUID: Yp+zmC1uRUqbpl0Fl4hsig==
-X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="23527149"
-X-IronPort-AV: E=Sophos;i="6.08,167,1712646000"; 
-   d="scan'208";a="23527149"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 06:07:09 -0700
-X-CSE-ConnectionGUID: xtTZ3099SYu2icluC7wbcg==
-X-CSE-MsgGUID: X+CWfPMdS3S1PjrlrEneAA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,167,1712646000"; 
-   d="scan'208";a="32333302"
-Received: from fdefranc-mobl3.ger.corp.intel.com (HELO fdefranc-mobl3.localnet) ([10.245.246.21])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 06:07:06 -0700
-From: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
-To: Ira Weiny <ira.weiny@intel.com>, Ira Weiny <ira.weiny@intel.com>
-Cc: Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Dave Jiang <dave.jiang@intel.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>,
- Dan Williams <dan.j.williams@intel.com>, linux-cxl@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject:
- Re: [PATCH] cxl/events: Use a common struct for DRAM and General Media events
-Date: Fri, 17 May 2024 15:07:02 +0200
-Message-ID: <5789047.t9SDvczpPo@fdefranc-mobl3>
-In-Reply-To: <66467b8b47170_8c79294b3@iweiny-mobl.notmuch>
-References:
- <20240515190512.3480817-1-fabio.m.de.francesco@linux.intel.com>
- <66467b8b47170_8c79294b3@iweiny-mobl.notmuch>
+	s=arc-20240116; t=1715951450; c=relaxed/simple;
+	bh=rpeGMg3VZFVKTPRzqYdY/OLeiqc2vqeGhOwCqNItokM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=gFwk27gQmQGaP3nwr0W7vDu7VUr2g0Zj11igHbR00kK0oAEAorDP7EWkKZOJcxjuB/iu175TLpM7c7uooEYDHMch0knWpZTPchjnit63EjpwTLsZvcY5zYyrzzJnIuGG6uq7KcsaaDBrLwSUUfxRmCkXWiRCNSyhH5xOq6pY/fU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=ezJV/AUn; arc=none smtp.client-ip=67.231.149.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44HBgiCp013892;
+	Fri, 17 May 2024 08:10:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	PODMain02222019; bh=DExvazvuf+WMGus+dEP2ywWcXztMrVZYz4EzYGscjyc=; b=
+	ezJV/AUnLon9Rj7NClepCn82fCIcFsmOaK+JzOwFnTQXfRXdlaQ/fj3Hc43JkLC5
+	ykAyN4uGuRsLZBx7udP5FtneaLXdDsK1JLEwiLByny2eeaVjKZlIQYt107r7X5+J
+	EV38IUbkVXfqz6/XN5x3PLpt1GYWmBooWRADpqDR6gbotBR8OgGuDcuM+hFuF8TY
+	/t4HcjeUdZIPhw25NUu6qXtkIqtHg0HzzWMz+zFtZQApYonRB95RgsZtff5EGBTr
+	FxmFmafrPiAOD7TmSVqryjfhKoDwWchUn+iIEVIHMz0xCHQ7D/egT1vU73MvwJd9
+	yuGTvjrks+iKKwR/KFIaLg==
+Received: from ediex02.ad.cirrus.com ([84.19.233.68])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 3y3qvevg2b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 17 May 2024 08:10:30 -0500 (CDT)
+Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 17 May
+ 2024 14:10:28 +0100
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
+ 15.2.1544.9 via Frontend Transport; Fri, 17 May 2024 14:10:28 +0100
+Received: from [198.90.208.18] (ediswws06.ad.cirrus.com [198.90.208.18])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id A11A4820244;
+	Fri, 17 May 2024 13:10:28 +0000 (UTC)
+Message-ID: <b198b1e3-3e7e-4ec7-b86f-f09aab22842d@opensource.cirrus.com>
+Date: Fri, 17 May 2024 14:10:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 04/11] regmap: kunit: Run sparse cache tests at non-zero
+ register addresses
+To: Guenter Roeck <linux@roeck-us.net>
+CC: <broonie@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <patches@opensource.cirrus.com>
+References: <20240408144600.230848-1-rf@opensource.cirrus.com>
+ <20240408144600.230848-5-rf@opensource.cirrus.com>
+ <5c1daddb-d8b3-420a-839f-208e0a6e168b@roeck-us.net>
+Content-Language: en-GB
+From: Richard Fitzgerald <rf@opensource.cirrus.com>
+In-Reply-To: <5c1daddb-d8b3-420a-839f-208e0a6e168b@roeck-us.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: _iac-Ca52m6ny2Twes2WVjK6OHXTQg4Y
+X-Proofpoint-GUID: _iac-Ca52m6ny2Twes2WVjK6OHXTQg4Y
+X-Proofpoint-Spam-Reason: safe
 
-On Thursday, May 16, 2024 11:32:59=E2=80=AFPM GMT+2 Ira Weiny wrote:
-> Fabio M. De Francesco wrote:
-> > Use cxl_event_media as a common structure to record information about D=
-RAM
-> > and General Media events because it simplifies handling the two events.
-> >=20
-> > Suggested-by: Dan Williams <dan.j.williams@intel.com>
-> > Signed-off-by: Fabio M. De Francesco
-> > <fabio.m.de.francesco@linux.intel.com>
-> > ---
-> >=20
-> >  drivers/cxl/core/mbox.c      |  6 ++--
-> >  drivers/cxl/core/trace.h     |  4 +--
-> >  include/linux/cxl-event.h    | 70 +++++++++++++++---------------------
-> >  tools/testing/cxl/test/mem.c |  4 +--
-> >  4 files changed, 36 insertions(+), 48 deletions(-)
->=20
-> Other than saving 12 lines of code what are we saving with this change?
->
-> The addition of media_common implies an additional event type which is not
-> in the specification.  (perhaps confusing future contributors?)  And the
-> code is more complex to follow.  The decode of the phys_addr field is not
-> simplified (which IIRC was the point of this idea.)
->
-> I'm probably being dense but I just don't see the need for the
-> struct_group complexity here.
->=20
-> Ira
-
-Ira,
-
-I think you are right, there is no need for struct_group here and this code=
- is=20
-unnecessarily complex.
-
-Anyway, for the next version, I'll use the simpler solution showed by Dan i=
-n=20
-his comment on v2.
-
-Thanks,
-
-=46abio
-=20
->=20
-> > diff --git a/drivers/cxl/core/mbox.c b/drivers/cxl/core/mbox.c
-> > index 2626f3fff201..ad4d7b0f7f4d 100644
-> > --- a/drivers/cxl/core/mbox.c
-> > +++ b/drivers/cxl/core/mbox.c
-> > @@ -875,16 +875,16 @@ void cxl_event_trace_record(const struct cxl_memd=
-ev
-> > *cxlmd,>=20
-> >  		guard(rwsem_read)(&cxl_region_rwsem);
-> >  		guard(rwsem_read)(&cxl_dpa_rwsem);
-> >=20
-> > -		dpa =3D le64_to_cpu(evt->common.phys_addr) &=20
-CXL_DPA_MASK;
-> > +		dpa =3D le64_to_cpu(evt->media_common.phys_addr) &=20
-CXL_DPA_MASK;
-> >=20
-> >  		cxlr =3D cxl_dpa_to_region(cxlmd, dpa);
-> >  		if (cxlr)
-> >  	=09
-> >  			hpa =3D cxl_trace_hpa(cxlr, cxlmd, dpa);
-> >  	=09
-> >  		if (event_type =3D=3D CXL_CPER_EVENT_GEN_MEDIA)
-> >  	=09
-> >  			trace_cxl_general_media(cxlmd, type, cxlr,=20
-hpa,
-> >=20
-> > -						&evt-
->gen_media);
-> > +						&evt-
->media_general);
-> >=20
-> >  		else if (event_type =3D=3D CXL_CPER_EVENT_DRAM)
-> >=20
-> > -			trace_cxl_dram(cxlmd, type, cxlr, hpa, &evt-
->dram);
-> > +			trace_cxl_dram(cxlmd, type, cxlr, hpa, &evt-
->media_dram);
-> >=20
-> >  	}
-> > =20
-> >  }
-> >  EXPORT_SYMBOL_NS_GPL(cxl_event_trace_record, CXL);
-> >=20
-> > diff --git a/drivers/cxl/core/trace.h b/drivers/cxl/core/trace.h
-> > index 07a0394b1d99..2c7293761bb2 100644
-> > --- a/drivers/cxl/core/trace.h
-> > +++ b/drivers/cxl/core/trace.h
-> > @@ -316,7 +316,7 @@ TRACE_EVENT(cxl_generic_event,
-> >=20
-> >  TRACE_EVENT(cxl_general_media,
-> > =20
-> >  	TP_PROTO(const struct cxl_memdev *cxlmd, enum cxl_event_log_type=20
-log,
-> >=20
-> > -		 struct cxl_region *cxlr, u64 hpa, struct=20
-cxl_event_gen_media *rec),
-> > +		 struct cxl_region *cxlr, u64 hpa, struct=20
-cxl_event_media *rec),
-> >=20
-> >  	TP_ARGS(cxlmd, log, cxlr, hpa, rec),
-> >=20
-> > @@ -413,7 +413,7 @@ TRACE_EVENT(cxl_general_media,
-> >=20
-> >  TRACE_EVENT(cxl_dram,
-> > =20
-> >  	TP_PROTO(const struct cxl_memdev *cxlmd, enum cxl_event_log_type=20
-log,
-> >=20
-> > -		 struct cxl_region *cxlr, u64 hpa, struct=20
-cxl_event_dram *rec),
-> > +		 struct cxl_region *cxlr, u64 hpa, struct=20
-cxl_event_media *rec),
-> >=20
-> >  	TP_ARGS(cxlmd, log, cxlr, hpa, rec),
-> >=20
-> > diff --git a/include/linux/cxl-event.h b/include/linux/cxl-event.h
-> > index 60b25020281f..e417556cc120 100644
-> > --- a/include/linux/cxl-event.h
-> > +++ b/include/linux/cxl-event.h
-> > @@ -32,41 +32,38 @@ struct cxl_event_generic {
-> >=20
-> >   * CXL rev 3.0 Section 8.2.9.2.1.1; Table 8-43
-> >   */
-> > =20
-> >  #define CXL_EVENT_GEN_MED_COMP_ID_SIZE	0x10
-> >=20
-> > -struct cxl_event_gen_media {
-> > -	struct cxl_event_record_hdr hdr;
-> > -	__le64 phys_addr;
-> > -	u8 descriptor;
-> > -	u8 type;
-> > -	u8 transaction_type;
-> > -	u8 validity_flags[2];
-> > -	u8 channel;
-> > -	u8 rank;
-> > -	u8 device[3];
-> > -	u8 component_id[CXL_EVENT_GEN_MED_COMP_ID_SIZE];
-> > -	u8 reserved[46];
-> > -} __packed;
-> > -
-> >=20
-> >  /*
-> > =20
-> >   * DRAM Event Record - DER
-> >   * CXL rev 3.0 section 8.2.9.2.1.2; Table 3-44
-> >   */
-> > =20
-> >  #define CXL_EVENT_DER_CORRECTION_MASK_SIZE	0x20
-> >=20
-> > -struct cxl_event_dram {
-> > +struct cxl_event_media {
-> >=20
-> >  	struct cxl_event_record_hdr hdr;
-> >=20
-> > -	__le64 phys_addr;
-> > -	u8 descriptor;
-> > -	u8 type;
-> > -	u8 transaction_type;
-> > -	u8 validity_flags[2];
-> > -	u8 channel;
-> > -	u8 rank;
-> > -	u8 nibble_mask[3];
-> > -	u8 bank_group;
-> > -	u8 bank;
-> > -	u8 row[3];
-> > -	u8 column[2];
-> > -	u8 correction_mask[CXL_EVENT_DER_CORRECTION_MASK_SIZE];
-> > -	u8 reserved[0x17];
-> > +	struct_group_tagged(cxl_event_media_hdr, media_hdr,
-> > +		__le64 phys_addr;
-> > +		u8 descriptor;
-> > +		u8 type;
-> > +		u8 transaction_type;
-> > +		u8 validity_flags[2];
-> > +		u8 channel;
-> > +		u8 rank;
-> > +	);
-> > +	union {
-> > +		struct_group(general,
-> > +			u8 device[3];
-> > +			u8=20
-component_id[CXL_EVENT_GEN_MED_COMP_ID_SIZE];
-> > +			u8 gen_reserved[46];
-> > +		);
-> > +		struct_group(dram,
-> > +			u8 nibble_mask[3];
-> > +			u8 bank_group;
-> > +			u8 bank;
-> > +			u8 row[3];
-> > +			u8 column[2];
-> > +			u8=20
-correction_mask[CXL_EVENT_DER_CORRECTION_MASK_SIZE];
-> > +			u8 dram_reserved[0x17];
-> > +		);
-> > +	};
-> >=20
-> >  } __packed;
-> > =20
-> >  /*
-> >=20
-> > @@ -95,21 +92,12 @@ struct cxl_event_mem_module {
-> >=20
-> >  	u8 reserved[0x3d];
-> > =20
-> >  } __packed;
-> >=20
-> > -/*
-> > - * General Media or DRAM Event Common Fields
-> > - * - provides common access to phys_addr
-> > - */
-> > -struct cxl_event_common {
-> > -	struct cxl_event_record_hdr hdr;
-> > -	__le64 phys_addr;
-> > -} __packed;
-> > -
-> >=20
-> >  union cxl_event {
-> > =20
-> >  	struct cxl_event_generic generic;
-> >=20
-> > -	struct cxl_event_gen_media gen_media;
-> > -	struct cxl_event_dram dram;
-> > +	struct cxl_event_media media_general;
-> > +	struct cxl_event_media media_dram;
-> >=20
-> >  	struct cxl_event_mem_module mem_module;
-> >=20
-> > -	struct cxl_event_common common;
-> > +	struct cxl_event_media media_common;
-> >=20
-> >  } __packed;
-> > =20
-> >  /*
-> >=20
-> > diff --git a/tools/testing/cxl/test/mem.c b/tools/testing/cxl/test/mem.c
-> > index 6584443144de..0a8fd145c391 100644
-> > --- a/tools/testing/cxl/test/mem.c
-> > +++ b/tools/testing/cxl/test/mem.c
-> > @@ -378,7 +378,7 @@ struct cxl_event_record_raw hardware_replace =3D {
-> >=20
-> >  struct cxl_test_gen_media {
-> > =20
-> >  	uuid_t id;
-> >=20
-> > -	struct cxl_event_gen_media rec;
-> > +	struct cxl_event_media rec;
-> >=20
-> >  } __packed;
-> > =20
-> >  struct cxl_test_gen_media gen_media =3D {
-> >=20
-> > @@ -402,7 +402,7 @@ struct cxl_test_gen_media gen_media =3D {
-> >=20
-> >  struct cxl_test_dram {
-> > =20
-> >  	uuid_t id;
-> >=20
-> > -	struct cxl_event_dram rec;
-> > +	struct cxl_event_media rec;
-> >=20
-> >  } __packed;
-> > =20
-> >  struct cxl_test_dram dram =3D {
-
-
-
-
+On 16/05/2024 20:53, Guenter Roeck wrote:
+> Hi,
+> 
+> On Mon, Apr 08, 2024 at 03:45:53PM +0100, Richard Fitzgerald wrote:
+>> Run the cache_drop() and cache_present() tests at blocks of addresses
+>> that don't start at zero.
+>>
+>> This adds a from_reg parameter to struct regmap_test_param. This is
+>> used to set the base address of the register defaults created by
+>> gen_regmap().
+>>
+>> Extra entries are added to sparse_cache_types_list[] to test at non-zero
+>> from_reg values. The cache_drop() and cache_present() tests are updated
+>> to test at the given offset.
+>>
+>> The aim here is to add test cases to cache_drop() for the bug fixed by
+>> commit 00bb549d7d63 ("regmap: maple: Fix cache corruption in
+>> regcache_maple_drop()")
+>>
+>> But the same parameter table is used by the cache_present() test so
+>> let's also update that to use from_reg.
+>>
+>> Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+> 
+> With this patch in mainline, I get lots of errors such as
+> 
+> [   23.494308] =============================================================================
+> [   23.496391] BUG kmalloc-64 (Tainted: G                 N): kmalloc Redzone overwritten
+> 
+I've managed to reproduce redzone errors in a x86_64 build with some of
+the SLUB debugging enabled. I will investigate.
 
