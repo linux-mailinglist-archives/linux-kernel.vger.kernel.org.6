@@ -1,119 +1,96 @@
-Return-Path: <linux-kernel+bounces-182234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E9518C886E
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 16:50:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1C188C8871
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 16:51:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEBCC2860F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 14:50:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98773284251
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 14:51:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6D2E64CE1;
-	Fri, 17 May 2024 14:49:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C41760264;
+	Fri, 17 May 2024 14:51:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="TSyIPQqa"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NCd0e5Wk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 793368F5D;
-	Fri, 17 May 2024 14:49:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DF2E1863F
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 14:50:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715957398; cv=none; b=hPQ19XybFRr8tDPI28iyjLIkVndB9snRnM4OoGGR4Q59AvR1+sCPVNTfpw7mHT0VFnD7fIMrDsz72nonyTm2q6OSHAdSupULxqmqCDOBJH6RE2ZR8nLohPLJrqPU0ji//XzLavNu2+HVobAar57/xH2uezTYQTZ3YM8xnkje2rk=
+	t=1715957459; cv=none; b=gbD7KsPyaiNFqhHQd/k6k5uDwzV2HAmCTvOS0VNAGF7fgd6DrYHKzKTVx5Ah7lnU+EfQOrI1VLeXlEvFksiPLGivgRgkXZUoPifgSE43jsJL9nKSNWAgxC6pHEumF9IzKxN/DJ2jqhCBFkDYxp2mXASEBpgMQ/bENrtANuIKkL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715957398; c=relaxed/simple;
-	bh=uEP6bXRLC9q12FEscst8/uN+p2kIkISUr6VerTGNwpA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LGxz/e6FKAuDonv0jZS8t42eBBnPwf2lqWvaH9csYCPq8oegyzpfIE54ky9VRLvwo8dVJOdGQ4rizZ6OmFvkwHhwVZ0iNrSMk70SJZXzoPnjlYMFoJbHKi3dLcALYUpkChjELiOq27LF6gPByk/dM0DrF2kL7dtnuriMiti8fzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=TSyIPQqa; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44HEIEvm017164;
-	Fri, 17 May 2024 14:49:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-transfer-encoding;
- s=corp-2023-11-20; bh=7qz+qAuahyAyYpbecn6fNefqgMPIWZYlNiXJm0v6E2k=;
- b=TSyIPQqar7lMPL8t8y7pL2ELNXy59EXnAsCvrSkZNIosxpyGEf5or24JN25TTUtdlM8b
- C6AxP2iSUtHstYzM+N/eemQTWCWaqmp1YT3wlElQQ+qhQ5MiBcL4JcpCXmpa1N65+bKQ
- /7bJ92io4+/3KtX///xB5oNgCRSqVMgQ+tErBmMo5PdWA+pxDxNRhXZ7oqVuMn7cAZvo
- XYOUXDTSxTg+O/u6ycUGwX6ss/f7ljQtOgt7EDKzQfu4sp5xZK6ruWgg66vAgNmb5x0S
- JnusmGldUG6E7VOzh2uqtPV50Gi2+FGaz9sLwx++cI5QvkptbNzacQ8oW9eJOzgEAoVZ 4g== 
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3y3tx39snx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 17 May 2024 14:49:50 +0000
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 44HEdYAE038282;
-	Fri, 17 May 2024 14:49:49 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3y24q1emg8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 17 May 2024 14:49:49 +0000
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44HEnnRQ001723;
-	Fri, 17 May 2024 14:49:49 GMT
-Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3y24q1emfh-1;
-	Fri, 17 May 2024 14:49:49 +0000
-From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-        Zhang Rui <rui.zhang@intel.com>, platform-driver-x86@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
-        error27@gmail.com, harshit.m.mogalapalli@oracle.com
-Subject: [PATCH v2] platform/x86: ISST: fix use-after-free in tpmi_sst_dev_remove()
-Date: Fri, 17 May 2024 07:49:46 -0700
-Message-ID: <20240517144946.289615-1-harshit.m.mogalapalli@oracle.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1715957459; c=relaxed/simple;
+	bh=/3Ff205MN8HPJmBvMpwpWRFGY7yUTT9Pn5wmoEEM/gw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ULZOV2AbCa1XzUhq6mVRLRUFB4wUJCmlJak13RzpjHb9RTArFCOjCO9Fu5lo21sjjRXG7aDPnT33bRGUu2sAw5KCLmjG8ic2BXQgd/h2xl1Ia0SSo5s8WsQA5fgt4opUEi7WKtpkmKA6PBrX/cqUhdE6IhWRngEnECBPmuUD3NY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NCd0e5Wk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED950C2BD10;
+	Fri, 17 May 2024 14:50:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715957459;
+	bh=/3Ff205MN8HPJmBvMpwpWRFGY7yUTT9Pn5wmoEEM/gw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NCd0e5WkPiDFIR4LEwBHnb56CyyWxfk3T9IhBesuNmMwENf5/QRX7LAf0BTUkUR2u
+	 IubphLQ0cjXXDv+v9Y9ok5to/pPGfUbLCT8vAlx+BL+QseFMOPa7oCu86VmFcjQcBe
+	 P92YYEHxRQ4joIJNZZFgAibVQFrZooxFnNGztZF30hom2deOHhJ4wzNgOkCNxZY7s8
+	 qK16zwb4hqrKT2+RCaZ6pvZAo1Dw8BT4RMP2ls1XIlj7B2K+4+pO6AfMayDB6fnv9t
+	 1I3dUfkGolM0i2fhPRNL3ZxraygAIPuTSqQ6GM98jx9cKFKnQPNV9gQaiBLyHaSeww
+	 jfFa4hrrpw/BQ==
+Date: Fri, 17 May 2024 16:50:56 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Yun Levi <ppbuk5246@gmail.com>, Joel Fernandes <joel@joelfernandes.org>,
+	Vineeth Pillai <vineeth@bitbyteword.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	anna-maria@linutronix.de, mingo@kernel.org, tglx@linutronix.de,
+	Markus.Elfring@web.de, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] time/tick-sched: idle load balancing when nohz_full
+ cpu becomes idle.
+Message-ID: <Zkdu0Guz8ySN2Qoe@localhost.localdomain>
+References: <20240516084911.GF22557@noisy.programming.kicks-ass.net>
+ <ZkXtHv+fHUD2+lFJ@lothringen>
+ <CAM7-yPTSq0CSmRsTpeXwzhFk77gfwUK_LZKnbgo4NPk5zPCaAg@mail.gmail.com>
+ <20240516140003.GJ22557@noisy.programming.kicks-ass.net>
+ <ZkYW48dTX2FH5NaD@lothringen>
+ <20240516144504.GL22557@noisy.programming.kicks-ass.net>
+ <ZkYgG9KYMpUPeJsM@lothringen>
+ <20240516151953.GM22557@noisy.programming.kicks-ass.net>
+ <ZkYnKAd1Qy+yvjDY@lothringen>
+ <20240516175321.GN22557@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-17_06,2024-05-17_03,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 adultscore=0 mlxscore=0
- spamscore=0 phishscore=0 suspectscore=0 mlxlogscore=999 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
- definitions=main-2405170117
-X-Proofpoint-GUID: yZy3wlnQfHYtgSl2ettVygdbmE3T5hw8
-X-Proofpoint-ORIG-GUID: yZy3wlnQfHYtgSl2ettVygdbmE3T5hw8
+In-Reply-To: <20240516175321.GN22557@noisy.programming.kicks-ass.net>
 
-In tpmi_sst_dev_remove(), tpmi_sst is dereferenced after being freed.
-Fix this by reordering the kfree() post the dereference.
+Le Thu, May 16, 2024 at 07:53:21PM +0200, Peter Zijlstra a écrit :
+> On Thu, May 16, 2024 at 05:32:56PM +0200, Frederic Weisbecker wrote:
+> > On Thu, May 16, 2024 at 05:19:53PM +0200, Peter Zijlstra wrote:
+> 
+> > > Yes, but stronger, as long as the CPU is part of a load-balance domain,
+> > > it must not disable the tick while running anything.
+> > > 
+> > > that is, NOHZ_FULL must not become active unless it's running on a
+> > > single CPU partition.
+> > 
+> > I like the idea but I'm afraid to introduce regressions while doing so,
+> > with people currently using nohz_full without proper partionning...
+> 
+> There is no regression, if this is possible today it is utterly broken.
+> 
+> This should never have been possible.
 
-Fixes: 9d1d36268f3d ("platform/x86: ISST: Support partitioned systems")
-Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
----
-v1->v2: Add R.B from Hans and fix commit message wrapping to 75 chars.
-This is found by smatch and only compile tested.
----
- drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Ok, I'll try something.
 
-diff --git a/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c b/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
-index 7bac7841ff0a..7fa360073f6e 100644
---- a/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
-+++ b/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
-@@ -1610,8 +1610,8 @@ void tpmi_sst_dev_remove(struct auxiliary_device *auxdev)
- 	tpmi_sst->partition_mask_current &= ~BIT(plat_info->partition);
- 	/* Free the package instance when the all partitions are removed */
- 	if (!tpmi_sst->partition_mask_current) {
--		kfree(tpmi_sst);
- 		isst_common.sst_inst[tpmi_sst->package_id] = NULL;
-+		kfree(tpmi_sst);
- 	}
- 	mutex_unlock(&isst_tpmi_dev_lock);
- }
--- 
-2.39.3
-
+Thanks.
 
