@@ -1,108 +1,122 @@
-Return-Path: <linux-kernel+bounces-182325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C32758C89B3
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:58:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7DD58C89B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:59:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 003771C215A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 15:58:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7455EB217FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 15:59:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70B6812FB03;
-	Fri, 17 May 2024 15:58:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB7DA12F5AC;
+	Fri, 17 May 2024 15:59:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="nlBpfuOw"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="YdRKqHrb"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB68712F598;
-	Fri, 17 May 2024 15:58:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2D0A12D20C
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 15:59:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715961513; cv=none; b=Y5h2UcRRmsyR1e4Cd42o4sFxAFETiBCAnQ4lkRNN9Y0Xvj8wk/ItUtOJJIOYS6nOr8w8FiNtMk64Fy/PmXvL1O7hUa9PAVWk6Tukzr2W23p3aoNjOZXbcF2TWHYtnFjJpRBmBz2md2N3b56SBtuoIvhgVuSVBGyA3pV42aGQ2TE=
+	t=1715961566; cv=none; b=Sib7KbbBNApfJ/moPpiJ8oonC+QB+xEPXZ0GLyijamCLZUHbcqCBe9UV5yDD9KhpE62kO/FDDBcSsLo74/RtcJgMOKLqsO8HX/ArkOQksO6q1YR2gDvJLmMXZfXkcslyABl3fX7ozYOiVEZdi9bdGTpAhSfL8148mKiybiz0HiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715961513; c=relaxed/simple;
-	bh=UQresL8i5XslVSjYIf1mYzAjCbmYtYZ0tx9VZLeEh+U=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=K839DwWonpPPW6swWNqKk58id3BFz4J6qB2JeYZ+Gs1IVVsnSLqya6nzn0qqr5ufzoBPkwe/tIICwRwJuEgDDmh8sf3oOgWn9d5sLVo8SG6f5TGytje2199yxoyBYzT9r49hI89VSVG4XLHDPnlMhOmfimC1wXdE7G+VVCorVjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=nlBpfuOw; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 8A47EE0005;
-	Fri, 17 May 2024 15:58:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1715961509;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zixD6G+Iqmvf/KokPf1pygaOfwIjKh/xrai3jHSQCII=;
-	b=nlBpfuOw6YxQxIdFvJTlW2MtgMlSGIi8OgV8bSmY66lUvcxiiIKrANEPWuRJQ0Hh5iMInd
-	ZzIMzY+CSAK/fsMR2rqwFFMLMSJ4eRrx8CSEIhyYJZ+5bzrP+CCR4c6kTYMj3HWmwABTdq
-	KyYb1m/8uShB4d18Ia1Omfxd72WElT6vg8LPvj6nmJXaE5wZFNpF2YBYh0zjFNzGOpTGx0
-	2kPZ4WK0Zvq0h8VhTlbBLH9sCqiirJdn0GR/wLNaEtqkRw3ZVpDv6fWZB+oOXnI4ct/7kW
-	+uwzrduHV8ULUl2JrxzymwPKFVWwNjqRq5TUUQZLbGd0w6MNFimlm+R6ojKKuw==
-Date: Fri, 17 May 2024 17:58:26 +0200
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>, Broadcom internal
- kernel review list <bcm-kernel-feedback-list@broadcom.com>, Andrew Lunn
- <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, Russell King
- <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Richard
- Cochran <richardcochran@gmail.com>, Radu Pirea
- <radu-nicolae.pirea@oss.nxp.com>, Jay Vosburgh <j.vosburgh@gmail.com>, Andy
- Gospodarek <andy@greyhouse.net>, Nicolas Ferre
- <nicolas.ferre@microchip.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Jonathan Corbet
- <corbet@lwn.net>, Horatiu Vultur <horatiu.vultur@microchip.com>,
- UNGLinuxDriver@microchip.com, Simon Horman <horms@kernel.org>, Vladimir
- Oltean <vladimir.oltean@nxp.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, Maxime Chevallier
- <maxime.chevallier@bootlin.com>, Rahul Rameshbabu <rrameshbabu@nvidia.com>
-Subject: Re: [PATCH net-next v12 13/13] netlink: specs: tsinfo: Enhance
- netlink attributes and add a set command
-Message-ID: <20240517175826.690b69e6@kmaincent-XPS-13-7390>
-In-Reply-To: <20240501191407.5661aca0@kernel.org>
-References: <20240430-feature_ptp_netnext-v12-0-2c5f24b6a914@bootlin.com>
-	<20240430-feature_ptp_netnext-v12-13-2c5f24b6a914@bootlin.com>
-	<20240501191407.5661aca0@kernel.org>
-Organization: bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1715961566; c=relaxed/simple;
+	bh=nZo1ezQwgzkz2ktTDyvZlEAx/7HJ9OOhGINJKIrvysc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b+qf7H3dvIQNLrXwaqqOMAuw05iwBuM2Vt7juOxCmRG4Vf5om618AWLXS0Bkckb8HyP0WUZALD2f0F/rZv+TGLkCkP+sjQCNV5o4/Bq0S8GBkZPb+Qdgs9TYmTHJb3GG0IFXLxYYumeR6E+TN0Shzy/pNvuQIVJd6LppNtzZ6+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=YdRKqHrb; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 3219440E023A;
+	Fri, 17 May 2024 15:59:21 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 0uFdlsZhgbxb; Fri, 17 May 2024 15:59:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1715961558; bh=hOyx/EihvgqsW8aos4tSF8YAoqZcNUDe+O1fUCBVb5k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YdRKqHrbxKQ3ln5ZlmKMzEP5uJLmDLNZQZxYa2USdLjBTxOw7rCSXctq0fx7/Dkyn
+	 ZtwLXjftsqLqORPnoTwLAv0qXpuqKZUOU/xMVXbBhm8xMjqPeJRf8V1eVdMkoqeu2P
+	 5Gq6JiapWoStnN0wgWrEH76ROZo1KVsqFrUFdy12L7joHph2nlmnnLFHUBhw4ECyhv
+	 U8ySw9vW9timgUiubo5wIg2MS59hDvZTa+NQX5QkHZfYgpZjmfx1mbUvaJCJkhrJI+
+	 GZD6nb3Khh/O8D32SnXFdmCvFAHFBmm2SrfII8gDOkMdJW/ofX7uxZHUCTrWERCR70
+	 WXLtvsAyFaUTgDMKf8YNKCXbJThUfxiPqY8KTtpiv+D7UxgjtS6Qfqw0cypBME8wF0
+	 hWmYEFgmPaQc7Wi7KDPb2EZ1KykkuLBaUKqBnfp9PvoXVMp0QRbfsmL3Js9lHHImmR
+	 9EpG2PeeK7ydvISaBzwi1ez/ULmNvFGjbbc+fS0Xeum226ygXAFaFF7lMUlADTQX8S
+	 CkkM4UzY6LnKF3Ib25SKLPoY45Pq57RCJooEZbovfmoiZ4F323Q4xMIAvVCIZQq45c
+	 qoIds/N3YzfsJJJFp1WSzl4R8leDxeOYbgEd/t8rroVVGA0EMSLQ/XUXWXWyTurIkT
+	 SeuyUn9uOJ7XClGWXKvAQkYA=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D547A40E01E8;
+	Fri, 17 May 2024 15:59:03 +0000 (UTC)
+Date: Fri, 17 May 2024 17:58:58 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+	linux-coco@lists.linux.dev, svsm-devel@coconut-svsm.dev,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Michael Roth <michael.roth@amd.com>,
+	Ashish Kalra <ashish.kalra@amd.com>
+Subject: Re: [PATCH v4 04/15] x86/sev: Check for the presence of an SVSM in
+ the SNP Secrets page
+Message-ID: <20240517155858.GDZkd-wkWmYegos-eT@fat_crate.local>
+References: <cover.1713974291.git.thomas.lendacky@amd.com>
+ <6cf54cac47f212f4c2b59b123855d8c183989022.1713974291.git.thomas.lendacky@amd.com>
+ <20240502093520.GRZjNeWLXU5j2UMOAM@fat_crate.local>
+ <66928741-aa5c-4bbb-9155-dc3a0609c50a@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: kory.maincent@bootlin.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <66928741-aa5c-4bbb-9155-dc3a0609c50a@amd.com>
 
-On Wed, 1 May 2024 19:14:07 -0700
-Jakub Kicinski <kuba@kernel.org> wrote:
+On Thu, May 02, 2024 at 10:29:02AM -0500, Tom Lendacky wrote:
+> PAGE_ALIGNED and IS_ALIGNED are from two separate header files (mm.h and
+> align.h) which seems like a lot of extra changes for just one check.
 
-> On Tue, 30 Apr 2024 17:49:56 +0200 Kory Maincent wrote:
-> > +      -
-> > +        name: hwtst-provider
-> > +        type: nest
-> > +        nested-attributes: tsinfo-hwtst-provider
-> > +      -
-> > +        name: hwtst-flags
-> > +        type: u32 =20
->=20
-> C code is unhappy about the naming here vs what the actual C enums
-> are called (make -C tools/net/ynl)
+No, pls put them in a single shared/mm.h header. And no, those are not
+a lot of extra changes - those are changes which are moving the code in
+the right direction and we do them sooner rather than later, otherwise
+they'd pile up and we'll never be able to find time to do them - sev.c
+movement attempt case-in-point.
 
-Thanks I didn't know that check.
-It allows me to fix several name issue!
+> Not sure I agree. I'd prefer to keep the comment here because it is
+> specific to this rmpadjust() call. See below.
 
-Regards,
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+Just don't replicate some versions of the same comment all over the
+place. Do one big comment which explains which RMPADJUST has to do with
+VMPL levels - perhaps over the insn - and then refer to it from the
+other places after adding the specific explanations for them.
+
+> Right. Not sure about the "cannot", more like "must not." The specification
+> states that the guest should run at a VMPL other than 0. If an SVSM starts
+> the guest at VMPL0, then the SVSM would not be protected from guest.
+
+Yeah, well, you do terminate the guest if it is running at VMPL 0 *in*
+the presence of a SVSM so it is a "must not". Ok.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
