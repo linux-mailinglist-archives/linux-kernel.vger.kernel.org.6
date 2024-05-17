@@ -1,76 +1,84 @@
-Return-Path: <linux-kernel+bounces-182213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C8478C882E
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 16:40:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC6878C882F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 16:40:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D8F31C21E54
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 14:40:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13CF61C2210A
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 14:40:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF6E7748E;
-	Fri, 17 May 2024 14:39:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4E247490;
+	Fri, 17 May 2024 14:40:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="StVEgwD2"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="OxH4fujh"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0262579F0
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 14:39:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4B2228FF
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 14:40:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715956797; cv=none; b=ZnVRCaFXCVqqIm+qdICAnQnpqteSpeRzjesbx4m6LR9dSRSPZ+LENnPUCMXx0kb3QCoRd+LaSTXUrcZAEPwicyXtRqAJ8vKKVdVjqLMHfRYAPYkbtXXIFNtmLxklIm20CH9Yhi8VM/fMA6tSphQvAEaU1uyn73NxUZ8v/IQlC2Q=
+	t=1715956824; cv=none; b=I9fd+g7wnfCFHjirNpC86MggQnhYzUz6kaMDuJjp6hWnCG3FUr7VXYTRwjBJUoz0UgVVrbQd5wOKOk6XRzrMiGMf3hLnMJWhQVwyIwQuQ0WE32GcvNzYSqihr+POwRnX5TuORzQARSMwofH9JcvG9O6EH8lZbco1gHyJLeVVf1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715956797; c=relaxed/simple;
-	bh=d2i5dDPqJkx8adnPFZl0itpyVtJmwwMOhCHco1pt43E=;
+	s=arc-20240116; t=1715956824; c=relaxed/simple;
+	bh=MbXIwTAyTgQNMyEW8b50nZ3msi8UQOUvoY26I7l2kEw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PZM4tyax8wVTEa/gAMQgy09tDGF8S8+MRExgCxcW1bf17pYFPyIoqrEvWEgbWgL4/JYFp7rIdVEQEKnqUBvxQn3IrChuZlT7jgaYElNwNGB7/nKL2C96l8P3qCSo3quTrxYyALi6/eOzCFHyqosrBiWuSCdZcBRTEmrcd5ooER4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=StVEgwD2; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715956796; x=1747492796;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=d2i5dDPqJkx8adnPFZl0itpyVtJmwwMOhCHco1pt43E=;
-  b=StVEgwD2w8lPgWqrH/2nz7KIOBI7IJ651bL/5OpDp3GJsqnfb8pnDXz6
-   /27T25N6Ih1FA/xVRiWCMMST3pNHo+jT4JLc1kbiRWaa4ICIfS/2hjQdo
-   R0zmtrQ7JFMbr0Nuzu+I1QRdpoysu34YXlO4jvseGVzLn0tX4sVmUfjrz
-   48kKxRuXwDjRZNmWcypqJVhz8jbHuzGTiTVYZDw5zB8VuVuxJP/vik0aP
-   x4036fCJNAjXFyiBwNSyXAzMf2HbtuUX94wAWosZQFiO/c+mS/HJSsrAy
-   61ChMf54ovTCyN7JbHPETMS9kHQww2SMYz1zfTFO2HWymWnlkTPELBxD5
-   w==;
-X-CSE-ConnectionGUID: 7Es76E/ESsOndGeYmGoZeg==
-X-CSE-MsgGUID: 1YDdRMx8QxevDMrw81vfbw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11075"; a="11940203"
-X-IronPort-AV: E=Sophos;i="6.08,167,1712646000"; 
-   d="scan'208";a="11940203"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 07:39:55 -0700
-X-CSE-ConnectionGUID: 2dIMDUYbRJOUBO7ndmZjJA==
-X-CSE-MsgGUID: jAfqlXhtSbef9aoXD2Du1w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,167,1712646000"; 
-   d="scan'208";a="31639195"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa010.jf.intel.com with ESMTP; 17 May 2024 07:39:53 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id AE0E419E; Fri, 17 May 2024 17:39:51 +0300 (EEST)
-Date: Fri, 17 May 2024 17:39:51 +0300
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Juergen Gross <jgross@suse.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, 
-	linux-coco@lists.linux.dev, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH] x86/kvm/tdx: Save %rbp in TDX_MODULE_CALL
-Message-ID: <2a2guben2ysyeb43rzg6zelzpa57o24ufai3mi6ocewwvgu63l@c7dle47q7hzw>
-References: <20240517121450.20420-1-jgross@suse.com>
- <ohvjbokpaxagc26kxmlrujab7cw3bekgi5ln7dt46cbsaxcqqh@crvqeohfazmf>
- <f63e1217-3dbe-458d-8c14-7880811d30ba@suse.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bL0rabHLLE26dJ2rn7yDni5rStZMZCzA4prLPb0C91JRuhdcYL9vNe3LoGmiCcVHxqmy8U+2ewQMact3/NZTNhFZW/VQVw3PPMnLjhfh/kxe5NZW+y5iyvJeky7EvAXyjH6vevZQiVAG2SeSSwcFI8ux//DiSTc9up3QgNC1gkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=OxH4fujh; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2e7144055c7so2660781fa.3
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 07:40:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1715956820; x=1716561620; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rmMqNW6OY6DguA/rCN2USSW4FvKOZoylsSTlZPNM6yE=;
+        b=OxH4fujhJIEB5l5WF8pjDMUVRcRx7WQ7PZsoKmG7/s+A2z+tI5NEuqJZ1iy1u7YCuL
+         Jz1F++bPHjzOTWBgbz9q8X68a5QvuN2ywUSKr45h7GKQ8rjb+7tUmZE0SY17JqCmr8+5
+         RLSOKLwjWgM84U2tiriaQ4bJxCwI4vTedMv/QFsd+wt5dVtq9Uxv6yB3UQOXzivlKIvF
+         jB2o4kBtvgVot+G2E40GjSXfvbUsmjLrY53994yH3CamEi4Zho1TCwef2YHWE6EmGizI
+         e4GgKHBQ5iCS+tAybo67VIb7wqLXjY05SzHE7VZeGM9i2nQt9oPb4l2kd9ldcUHBc+38
+         5Udw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715956820; x=1716561620;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rmMqNW6OY6DguA/rCN2USSW4FvKOZoylsSTlZPNM6yE=;
+        b=nYP0hIO8UP2x0o9v+Gj4mUqMZ8Ilmq2JO/is8/uj0Wj566Qn8DJZ8CQkAkoWy46mXX
+         9ZV53QQUm44J7LWpk8tDlYXquyeOA5jCL3m8hkBAecVAt689K1YO5uzH7LQWnKMrYiro
+         XYztIlv1sljKoqeT0FOaGsTdNTn6zOFkQeAZL6dburWfDid0pnmT5QLtgr7H8LGkX3hv
+         0YXVMh/Qj1xXsaRWKmtBz45VXOV9LRtWIMDlOm7UhUnRBIqvDZ1UbyCFcXUJdVJB+4PA
+         0YJhOYWf1qvF9vzwcZ+COysAVGS94Pr0C6ftJEBzIAR329hmrxZOJW6cxX5CjtbpaW4n
+         MYDg==
+X-Forwarded-Encrypted: i=1; AJvYcCXdQnNeX0dj1hkTKUxnRCcOmBcbE/8vERQfj6tHJUf/H3bkuRn3I4/oyA0Bsejci419O7qrzQffxSEvbqOO0lSC5ERRPfY81U1AXNnx
+X-Gm-Message-State: AOJu0Ywhz40mf9eg+V95uZ7L3FSWpjhgXpu355o1iUiw97i/LgHicLD2
+	CRiJqmLmtzxtdl1KfWWBN6j0aB4WpH2lIaQsD0ow7R8Mx7I7k/mbZPLw33+E8k4=
+X-Google-Smtp-Source: AGHT+IHWdcaJPVE2MqmsmLIq+skXSguavFWfPtgPhSzqR8d5dzXxdFmPcCj2aPUPlLY1zFZHqGIPKg==
+X-Received: by 2002:a2e:8449:0:b0:2e0:3132:94d4 with SMTP id 38308e7fff4ca-2e51fe53f21mr138317551fa.16.1715956819900;
+        Fri, 17 May 2024 07:40:19 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4200a8e6846sm248650515e9.15.2024.05.17.07.40.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 May 2024 07:40:19 -0700 (PDT)
+Date: Fri, 17 May 2024 16:40:18 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH printk v5 06/30] printk: nbcon: Add callbacks to
+ synchronize with driver
+Message-ID: <ZkdsUjP9CLCdY0kw@pathway.suse.cz>
+References: <20240502213839.376636-1-john.ogness@linutronix.de>
+ <20240502213839.376636-7-john.ogness@linutronix.de>
+ <ZkdcFxW-e9LVmMd8@pathway.suse.cz>
+ <87bk54y1vl.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,42 +87,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f63e1217-3dbe-458d-8c14-7880811d30ba@suse.com>
+In-Reply-To: <87bk54y1vl.fsf@jogness.linutronix.de>
 
-On Fri, May 17, 2024 at 04:08:03PM +0200, Juergen Gross wrote:
-> On 17.05.24 15:55, Kirill A. Shutemov wrote:
-> > On Fri, May 17, 2024 at 02:14:50PM +0200, Juergen Gross wrote:
-> > > While testing TDX host support patches, a crash of the host has been
-> > > observed a few instructions after doing a seamcall. Reason was a
-> > > clobbered %rbp (set to 0), which occurred in spite of the TDX module
-> > > offering the feature NOT to modify %rbp across TDX module calls.
-> > > 
-> > > In order not having to build the host kernel with CONFIG_FRAME_POINTER,
-> > > save %rbp across a seamcall/tdcall.
-> > 
-> > There's a feature in TDX module 1.5 that prevents RBP modification across
-> > TDH.VP.ENTER SEAMCALL. See NO_RBP_MOD in TDX Module 1.5 ABI spec.
-> > 
-> > I think it has to be enabled for all TDs and TDX modules that don't
-> > support it need to be rejected.
-> > 
+On Fri 2024-05-17 16:06:30, John Ogness wrote:
+> On 2024-05-17, Petr Mladek <pmladek@suse.com> wrote:
+> > BTW: I wonder if you use AI for generating the commit message.
+> >      My experience is that AI produces longer fancy sentences
+> >      which might be good for a novel but they sometimes hide
+> >      the important details.
 > 
-> Yes, I know. I'm using the patch series:
+> I do not know if that is a compliment or an insult.
 > 
->   [PATCH v19 000/130] KVM TDX basic feature support
+> For the record, I do not use AI. The "long fancy sentences hiding
+> important details" are coming from a sober brain... mine.
+
+Ah, take it as a complaint then ;-) Complicated things are just hard
+to explain.
+
+> > My attempt of a more strightforwward explanation:
 > 
-> which I think does exactly that (see setup_tdparams() and tdx_module_setup()).
+> [...]
+> 
+> Your version does not mention why the generic code now needs to use the
+> driver-specific locking, but I suppose that does not matter (and only
+> adds confusion instead of explanation).
 
-Looks like the check is broken:
+I removed these details on purpose. I think that they will be
+easier to understand with the code.
 
-https://lore.kernel.org/all/46mh5hinsv5mup2x7jv4iu2floxmajo2igrxb3haru3cgjukbg@v44nspjozm4h/
-
-> Nevertheless the clobbering happened, and saving/restoring %rbp made the
-> issue to go away. I suspect there is a path left still clobbering %rbp.
-
-What is your TDX module version? My guess is that NOM_RBP_MOD is not
-supported by it and given that the check is broken nobody enforces it.
-
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+Best Regards,
+Petr
 
