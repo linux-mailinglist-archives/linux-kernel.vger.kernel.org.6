@@ -1,262 +1,150 @@
-Return-Path: <linux-kernel+bounces-181883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 541E58C82C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 10:53:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3649A8C82C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 10:52:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A5A52836F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 08:53:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6758C1C211FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 08:52:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7F051E4AE;
-	Fri, 17 May 2024 08:53:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A14161DA3A;
+	Fri, 17 May 2024 08:52:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R7LI9t4g"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TIQ7H1Zw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 543A21CFBC
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 08:53:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC4C8E572;
+	Fri, 17 May 2024 08:52:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715935996; cv=none; b=V3g8ABmFbuICh4vC4mSpns1xtCIdA+U0qXelNseGtHbCae2u3EfoOlfbJxobn/FW2Ff9WwbVItAdnxvxkI+/7NcR00YCd5gh1uOaOV4SWv9HUOeKLfH3QsAKTOnIcClX03goydoKamI3F1kKBFa8pSsfeDiBIhw4luxOsE4Bhco=
+	t=1715935955; cv=none; b=ur4JWOi8a5CvFARKZzDspRsmdjXUHdqKcLLZ7qgetfcAiXxCqbQ53/7dRM9r1v8n26yNGl5NR1pIS3IwpOiCIBD5UrTQYGuafQbZuYxM6So16yqLMo2aRxQWkA83s8G99EXRcid2PehquxwUd3G/5MtcFOAmzSWz/4Yvjjkk9oI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715935996; c=relaxed/simple;
-	bh=XrDZ2khBHaMtsbW3DKfVfsmfyIUUQMmLqt5TAhl53cU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=syadDqplp2AwmaO9TKDzopd5k2XbCPNBNtJa9DeFWc2+B8oUH1dyyVpbPa9lLceKIj//VZIOmMfPL4j2FHfmbsnmyfUK4GV71bcni+cMc3M/EKN8HbPqP/tsrRz+FzHPl00hAND901cos2CMZEJFgPUenFfV4O11F5BI94XwW9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R7LI9t4g; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2e564cad1f6so21393901fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 01:53:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715935992; x=1716540792; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vUnKK06+m9zxF848R1qs8HU2+D2Pu7/Qze/DSdxTlEg=;
-        b=R7LI9t4gcHIo31g2P85GL/icgnQVVGxrlGuHk+XcILWlmbn6Jx58x9pU8STSYVpbyY
-         neMWZevi/B5XdWxRFz1ByhQumSZ3yGbckXKW9/NNCq+kDF/LyNUw7PlK5hSCvYT6+Qoi
-         UmFkKfYSvCiMxb1fB8PzqD5ohaa5pxmnJcg5sruaryC2QTc3sVIZhWvtvI37VrVSeO6h
-         DxiPSqUHKz0Lw1FqFtRMQ1BIetfjoS6i/wJMG1/MqF/QmO394ugCJ5HeEZTVvU4QtesF
-         ey5c7D7lkh0RlXic+YRknVKxUF4Qj5NOFxk6T5zdp9KuXsUDnic+1BWcHXnQJ63LPcUX
-         9PkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715935992; x=1716540792;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vUnKK06+m9zxF848R1qs8HU2+D2Pu7/Qze/DSdxTlEg=;
-        b=UJNk99kVK9olAgEArY03vjHwr/II9fns+vqiZ0xKZktgonXRDwSYaAbuzomsLx9vYa
-         brGy45XgPsACqCUB9wkD0OoH/SoLZQzeLmQndCXGPobhxAoWVNQ/il05hn4FzindUTx8
-         zqkVahTz4nIp6p4lplVx5td7rByKOS0AV5fTWnr+eCPv/7wmPw78drJOw9GGZLs7ZUZN
-         PrpF3fonK74XGM04lEQp9J0BH2GvYd46TubpKWfE1uZrXgsHI7JNyoJZ7cvoUM3IE7F2
-         gC2/UrIDDd6bGHanE+CQaC43EDRv9eCmPT+0A+uO4FhuqonzJwbAC+Ce+EMuh0g5vr+N
-         sJ5w==
-X-Forwarded-Encrypted: i=1; AJvYcCV4bOXpAvkkP2kIPmLM8rBAGwEON8U2i4ftDmNd6N74r7fuTRmbxPboe8jDkmx7LzU3u9JYP2pTLFyVvbKtXpwkD5dTyv8CkzH0CsGJ
-X-Gm-Message-State: AOJu0YxCPX2nea50jRMQKg6tcZBefEPfsGrvIkFr9NbI8ebBtu4mrvmA
-	vb9GMJ3I2AJlBezB3UmF3HPSxMKOOURwyX16bA3Zm7NCaQ882zP0
-X-Google-Smtp-Source: AGHT+IGUGh68rD9VDYg5VoPspmITc/Dg5WaWIbDgsVs4E0iJoDyb8ifLul6q44yypgR7DR/ARf//Lw==
-X-Received: by 2002:a05:6512:2003:b0:51e:25d2:453f with SMTP id 2adb3069b0e04-5220ff72f1dmr10395650e87.68.1715935992194;
-        Fri, 17 May 2024 01:53:12 -0700 (PDT)
-Received: from localhost.localdomain ([176.59.160.194])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-521f39d2c8fsm3209359e87.279.2024.05.17.01.53.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 May 2024 01:53:11 -0700 (PDT)
-From: Alex Rusuf <yorha.op@gmail.com>
-To: sj@kernel.org
-Cc: damon@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	yorha.op@gmail.com
-Subject: Re: [RFC PATCH v1 0/7] DAMON multiple contexts support
-Date: Fri, 17 May 2024 11:51:51 +0300
-Message-ID: <20240517085151.630844-1-yorha.op@gmail.com>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20240516221735.82564-1-sj@kernel.org>
-References: <20240516221735.82564-1-sj@kernel.org>
+	s=arc-20240116; t=1715935955; c=relaxed/simple;
+	bh=OQVoTWse2zVyZLUZZY0IQ3FmeZD7K5/Q/qilVQc8qmI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ebp2eXLz81Sg0nRQyG8wcs3fWEW0vk6mkiROlLig/nDlBet3mVk/cReRZiSaR+HOvZb4IDzUO3TScHf8JIIuyGdyhOMx5FhVx/Z3Huvpg5gSc64qPUjP1bWJvMwOcv668pFOSLePqBaBaem1yau4W9KLOdjEPM1OVgd9nOX8G0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TIQ7H1Zw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79B2AC2BD10;
+	Fri, 17 May 2024 08:52:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715935955;
+	bh=OQVoTWse2zVyZLUZZY0IQ3FmeZD7K5/Q/qilVQc8qmI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=TIQ7H1ZwlGcqHPS3zWahL7nsSEEup0FUrBwTxSUSgMak2iahHmfnz6AYJ6dlXw1Oo
+	 r7g/Ven7wmg1ZAREazzRA5qSKTcI/fngAA2megMLy/RzyLDxyudVqiSxAGn52p83rs
+	 SOirBH1QGeKtfrnD2Gp85F+Ouw1H47Yx+ZeQZDl4XMdukFtiWoMb4EJFOniW3+0k+W
+	 Wxv+3BiNbWKq2XjzPlYMmJeGu6qfPumiP+AGgg+ySrseNF+M16m4np7SG5vE/pPGG2
+	 V9SI7xrh8Fbt26VNJEVt3KSkkwtJt2hcii94ccAosWhTILCK3F0mq9fEhoPUY6vpBP
+	 CZGhMfTQbvLwg==
+Message-ID: <743c2a10-0ce6-4b84-8127-f3d762976366@kernel.org>
+Date: Fri, 17 May 2024 10:52:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] arm64: dts: qcom: sdx75-idp: add SDHCI for SD Card
+To: Naina Mehta <quic_nainmeht@quicinc.com>, ulf.hansson@linaro.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ andersson@kernel.org, konrad.dybcio@linaro.org, bhupesh.sharma@linaro.org
+Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+References: <20240515120958.32032-1-quic_nainmeht@quicinc.com>
+ <20240515120958.32032-4-quic_nainmeht@quicinc.com>
+ <a5833628-65f3-493d-9de5-33ba87a18875@kernel.org>
+ <2ed5326a-b2ea-220a-2a9b-0478df0c6f12@quicinc.com>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <2ed5326a-b2ea-220a-2a9b-0478df0c6f12@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi SJ
-
-> Hello Alex,
+On 16/05/2024 07:21, Naina Mehta wrote:
 > 
 > 
-> Adding high level comments first.  I will try to read each patch and add
-> detailed comments to those as soon as I get some time.
+> On 5/15/2024 7:53 PM, Krzysztof Kozlowski wrote:
+>> On 15/05/2024 14:09, Naina Mehta wrote:
+>>> Enable SDHCI on sdx75-idp to support SD card.
+>>> Also add the required regulators.
+>>>
+>>> Signed-off-by: Naina Mehta <quic_nainmeht@quicinc.com>
+>>> ---
+>>>   arch/arm64/boot/dts/qcom/sdx75-idp.dts | 45 ++++++++++++++++++++++++++
+>>>   1 file changed, 45 insertions(+)
+>>>
+>>> diff --git a/arch/arm64/boot/dts/qcom/sdx75-idp.dts b/arch/arm64/boot/dts/qcom/sdx75-idp.dts
+>>> index f76e72fb2072..6f94278cf837 100644
+>>> --- a/arch/arm64/boot/dts/qcom/sdx75-idp.dts
+>>> +++ b/arch/arm64/boot/dts/qcom/sdx75-idp.dts
+>>> @@ -41,6 +41,29 @@
+>>>
+>>>   		vin-supply = <&vph_ext>;
+>>>   	};
+>>> +
+>>> +	vreg_sd_vccb: sd-vccb {
+>>
+>> Please use name for all fixed regulators which matches current format
+>> recommendation: 'regulator-[0-9]+v[0-9]+'
 > 
-> Also, please Cc linux-mm@ for DAMON patches.  I'd also recommend cc-ing
-> linux-kernel@.
-
-Thank you for clarification, I'll add them!
-
+> Did you mean that vreg_sd_vdd should be updated according to the 
+> suggested format because vreg_sd_vccb is not a fixed regulator?
 > 
-> On Wed, 15 May 2024 18:24:50 +0300 Alex Rusuf <yorha.op@gmail.com> wrote:
-> > Currently kdamond uses only one context per kthread
-> > and most of its time it sleeps, so utilizing several
-> > contexts can scale kdamond and allow it to use
-> > another set of operations.
-> 
-> Thank you for this patchset.  I believe this change is important for DAMON's
-> long term vision.
-> 
-> A quick question for a clarification and proper prioritization, though,
-> since size of this patch series is not very tiny.  Does this patch series
-> is for your real usage?  If so, could you please clarify your usage and how
-> this patch series can help?
 
-No, this is not for some commercial use or so that I could describe. It is
-rather just a RFC, because I'm even not sure how much this can help
-in real use cases.
+Yeah, it should be about sd-vdd, but then this one should be named as
+well with a similar prefix to have it consistent.
 
-> 
-> > This patch-set implements support for multiple contexts
-> > per kdamond.
-> > 
-> > In pseudo code previous versions worked like
-> > 
-> > the following:
-> > 	while (!kdamond_should_stop()) {
-> > 	
-> > 		/* prepare accesses for only 1 context */
-> > 		prepare_accesses(damon_context);
-> > 		
-> > 		sleep(sample_interval);
-> > 		
-> > 		/* check accesses for only 1 context */
-> > 		check_accesses(damon_context);
-> > 		
-> > 		...
-> > 	
-> > 	}
-> > 
-> > With this patch kdamond workflow will look
-> > 
-> > like the following:
-> > 	while (!kdamond_shoule_stop()) {
-> > 	
-> > 		/* prepare accesses for all contexts in kdamond */
-> > 		damon_for_each_context(ctx, kdamond)
-> > 		
-> > 			prepare_accesses(ctx);
-> > 		
-> > 		sleep(sample_interval);
-> > 		
-> > 		/* check_accesses for all contexts in kdamond */
-> > 		damon_for_each_context(ctx, kdamond)
-> > 		
-> > 			check_accesses(ctx);
-> > 			
-> > 			...
-> > 	
-> > 	}
-> 
-> The overall idea makes sense to me.
-> 
-> > To try this you can use modified kernel[1] and
-> > damo[2]. I also have written few simple shell scripts[3]
-> > to collect data for damo.
-> > 
-> > 	[1] https://github.com/onlyoneofme/damon-multi-contexts.git
-> > 	[2] https://github.com/onlyoneofme/damo/tree/multi-contexts
-> 
-> Looking forward to the patch for DAMO be submitted, or PR-ed!
 
-Sure, I will submit a PR for DAMO later. I supported only 'record'
-and 'report heats' commands, so others haven't touched, that's
-why I decided to post it there (because it is not ready).
 
-> 
-> > 	[3] https://github.com/onlyoneofme/damon-multi-contexts-tests.git
-> 
-> Do you have a plan to integrate this into DAMON selftests or damon-tests?
+Best regards,
+Krzysztof
 
-Not in the form they are for time being. These are just simple shell scripts
-that set up kdamond to use multiple contexts and these scripts only
-collect information like DAMO (but only as perf.data).
-
-Anyway, I think we can integrate them with damon-tests with some modifications
-to be able to actually _test_ if multiple contexts work.
-
-As for DAMON selftests, I didn't touch them for time being, so they truly
-need to be modified and expanded, but before doing that I would like
-you to look at implementation first, because changes in implementation
-could affect selftests, so once we agree on that I will implement selftests.
-
-Also note, that I didn't integrate changes with debugfs. I remember this is
-deprecated interface, but I'm not sure if compatibility need to be preseved
-with it, so do we need to expand debugfs for this?
-
-> 
-> > Alex Rusuf (7):
-> >   mm/damon/core: kdamond_struct abstraction layer
-> 
-> Let's make the subjects clear what it does.  For example, this patch's
-> subject could be "add kdamonds_struct abstraction layer".  Similar comment
-> for other patches.  Also, I think '_struct' suffix of 'kdamond_struct' is
-> not really needed.  Let's remove it if there is no special reason to add
-> it.
-
-Sure, I'll change that in next version, thanks!
-
-> 
-> >   mm/damon/core: list-based contexts organization
-> 
-> I think this can be squashed into the first patch?  If not, could you please
-> let clarify?
-
-I just tried to separate those patches for them to be as simple as
-possible (actually I failed at that...), but sure, we can squash them.
-
-> 
-> >   mm/damon/lru_sort: kdamond_struct abstraction layer
-> >   mm/damon/reclaim: kdamon_struct abstraction layer
-> 
-> Does these two patches mean lru_sort and reclaim are broken by the first
-> patch? Let's keep everything unbroken in middle of the patchset, to help
-> bisect.
-
-Yes, they're broken by the first patch, I'll squash them, thanks!
-
-> >   mm/damon/core: rename nr_running_ctxs -> nr_running_kdamonds
-> 
-> I think this would also better to be together with the first patch?  I know
-> this does not break something, but makes reading patch bit complex.
-
-No problem, thanks!
-
-> 
-> >   mm/damon/core: multi-context support
-> >   mm/damon/core: multi-context awarness for trace events
-> 
-> I think these two patches should be squashed into one patch.  Otherwise, the
-> trace point is broken in the middle of the patch series, right?
-
-You're right, I'll squash them, thanks!
-
-> 
-> >  include/linux/damon.h        |  48 +++-
-> >  include/trace/events/damon.h |  14 +-
-> >  mm/damon/core.c              | 497 +++++++++++++++++++++--------------
-> >  mm/damon/lru_sort.c          |  31 ++-
-> >  mm/damon/modules-common.c    |  35 ++-
-> >  mm/damon/modules-common.h    |   3 +-
-> >  mm/damon/reclaim.c           |  30 ++-
-> >  mm/damon/sysfs.c             | 306 +++++++++++++--------
-> >  8 files changed, 629 insertions(+), 335 deletions(-)
-> 
-> Thanks,
-> SJ
-
-BR,
-Alex
 
