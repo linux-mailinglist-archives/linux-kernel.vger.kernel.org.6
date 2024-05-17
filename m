@@ -1,105 +1,87 @@
-Return-Path: <linux-kernel+bounces-182054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 855418C85AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 13:28:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 110BD8C85B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 13:28:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 840341C22F9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:28:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E880B23B16
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:28:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBD0F3E48F;
-	Fri, 17 May 2024 11:28:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OsT8kEiu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A72833DBB3;
+	Fri, 17 May 2024 11:28:42 +0000 (UTC)
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A6743CF74
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 11:28:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 120A741A91;
+	Fri, 17 May 2024 11:28:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715945291; cv=none; b=SfFvq1nKa4pNdP9QCPKAR0cIKWhYlYepaoCGHhWz45viTjWDmnUGc1nepgQrL11FXfwnI1D1ylRMGtN7IVeJFDY8KbJwdvS8XCwqLq9LtdyorIDDAs/tulPGBu7fRgwm8Iye46oM0k61wIdzfmzhQjBh/GFtU6uQWIaB6MQEwng=
+	t=1715945322; cv=none; b=k25ce0UT2O3lx4GRkEnptGBTgx+mz3o+v4aPM9zHT/JrITyuW7GxWisgcEldSA6V++pxXJA1rh3oNGp1vRvC2XfD0LKR9t0/7rT6EUIaMjCsXCrQ25xaXBgkkacxvzU8GKCCOKmzlkqOOa/rXILpk6bp/V8/HGUlcI1Ln+KPUcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715945291; c=relaxed/simple;
-	bh=0mXDSrSJCDndoAiFbLR5LRn7Epq80zlD2jMKGw9YPz4=;
+	s=arc-20240116; t=1715945322; c=relaxed/simple;
+	bh=MOlfvlG/28VbmFZOFyPcqXJdcaVWt1Be9k2UUTaYKmA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YLu2Mq7bZzwuYlV0tR8kEtd8kcJNeH1EDuo3MFCY6O7nMR9BNosraOIsgQHOnvl/U/3oChNVxos00mPfZAVwFVvD4zU7kWQ0MNS3MBn3p7Z/Ik1LfBhmlK5Y7IOrv7M0b4QceP1GnDmLyL/BCOmzww831heWSdV5yiiDlBksInM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OsT8kEiu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A926AC2BD10;
-	Fri, 17 May 2024 11:28:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715945290;
-	bh=0mXDSrSJCDndoAiFbLR5LRn7Epq80zlD2jMKGw9YPz4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OsT8kEiuSR3HYoe/IlFQg8gfBjBLsYPi5xhNgc13kTXXDv0Jnk1iopxe6EGTp3UdZ
-	 dfGvSlHc7ErOjTKjBL9FnKktzQZAEK5eFhxtZv6Bl8hIHs9IA0Z0Wy8lLqs7EVYRa1
-	 ZFLi8tcmkrR9s0qdyWGCXxZn9x3hmuwFHNMNKbGA3jCmOPbDuIq4L21nZRg1fLBUPC
-	 ZMuLg/6VDiklIsNM0AgAIqdUvoFDgsV0Zq0ZYpRtAIpQeQp8O8MkS2S9mipe8qOUqB
-	 1pmF0um+hHzNjjhlOaK+q1XatAQzCKv6Ff3nVxViDfagu3IdL/tYMlBNJqz/UGlhWb
-	 jcCx45vIFWVTA==
-Date: Fri, 17 May 2024 12:28:06 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Richard Fitzgerald <rf@opensource.cirrus.com>,
-	linux-kernel@vger.kernel.org, patches@opensource.cirrus.com
-Subject: Re: [PATCH 04/11] regmap: kunit: Run sparse cache tests at non-zero
- register addresses
-Message-ID: <5cccbf9e-d706-441a-87f9-578975f8e81a@sirena.org.uk>
-References: <20240408144600.230848-1-rf@opensource.cirrus.com>
- <20240408144600.230848-5-rf@opensource.cirrus.com>
- <5c1daddb-d8b3-420a-839f-208e0a6e168b@roeck-us.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dCyDDQPEeAFfARAt6Lp4mxIap0RXpoquWL4QpeBeUBiDE8p3Z6Jg7n3dCyjcTtNhBfuKImPWXAoJ43Roih+jEhku82qBWYbp1j0aujKtKVx4YkveIL3uGN+OS1UANHyWSJFJlDlAFAdVQPoPluyrq38FIQI6L2N9SKM1V/DxhS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1ec4dc64c6cso4513045ad.0;
+        Fri, 17 May 2024 04:28:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715945320; x=1716550120;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=J/VzM2K19gpP7DtzQSnUBbSooKbYSd9MHhWTzEldclY=;
+        b=k1bhfhbKzKloevKFpYkwZ23cyMqkxqm/XgykM2WxzhNx9npNYrnT37wkH24jzLh4pf
+         5OB8nYeQ4w+t2yEEaiNtfsz562Hy7iGvCyQBM2Aav93ToKLGy5f7yeThAUc+UG+ItYjc
+         cWn2OhkZ0+dFADrS08aNp1T0fSCwtPlRBUooxCN7e4kUSqjLMQdL5dkB9lZrZwdeLSf2
+         EPaFK56w2vdOcX10g1Sd/z/zZljtyTQiWV7Dd70Ay75+5oRCpNSqoj0a9O114xu86nhk
+         C/+ieubF2TP4sw0h4gPiTZHRwKV8ioQW0WcxzXCPLkTVNE8/7oBn6KSIBC+8gE2PDB0D
+         0SDA==
+X-Forwarded-Encrypted: i=1; AJvYcCUO0PrSBLpM5GJXhdwVDhr0uScoqloBX3eUihppmU+RtnYUMrVQbfahcHSoHrc2NF61UB0RkYchLIlh4XvkSCAfdTojMtxzluKv35YsuaFTyHgbq8EfiO8QS8FbkzCWo66JFpGopy1H
+X-Gm-Message-State: AOJu0YypBKGZtytZrcrWY75WZaxNSdSnisGR1BxP5EmWmZmhB6fMjyTJ
+	MttBnvDgs8brIAfvrcdnWThejwW7bDuA66vVmSupAp96YHmccY6Q
+X-Google-Smtp-Source: AGHT+IE/Un83bPzwhmNVQGr25Y+zvb+y67UV9IonvwRucjCGT6y2VPztfcQp+tR2GZDjFKnUMtWJsA==
+X-Received: by 2002:a17:902:b607:b0:1e5:c06b:3330 with SMTP id d9443c01a7336-1ef43d29b42mr212337995ad.24.1715945320503;
+        Fri, 17 May 2024 04:28:40 -0700 (PDT)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0b9d97e9sm155088595ad.17.2024.05.17.04.28.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 May 2024 04:28:39 -0700 (PDT)
+Date: Fri, 17 May 2024 20:28:38 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Siddharth Vadapalli <s-vadapalli@ti.com>
+Cc: lpieralisi@kernel.org, robh@kernel.org, bhelgaas@google.com,
+	manivannan.sadhasivam@linaro.org, fancer.lancer@gmail.com,
+	u.kleine-koenig@pengutronix.de, cassel@kernel.org,
+	dlemoal@kernel.org, yoshihiro.shimoda.uh@renesas.com,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, srk@ti.com
+Subject: Re: [PATCH v7 0/2] PCI: keystone: Fix pci_ops for AM654x SoC
+Message-ID: <20240517112838.GY202520@rocinante>
+References: <20240328085041.2916899-1-s-vadapalli@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="SZGm3XT+YV/fSDfU"
-Content-Disposition: inline
-In-Reply-To: <5c1daddb-d8b3-420a-839f-208e0a6e168b@roeck-us.net>
-X-Cookie: Function reject.
-
-
---SZGm3XT+YV/fSDfU
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240328085041.2916899-1-s-vadapalli@ti.com>
 
-On Thu, May 16, 2024 at 12:53:34PM -0700, Guenter Roeck wrote:
+> This series is based on linux-next tagged next-20240328.
 
->=20
-> With this patch in mainline, I get lots of errors such as
->=20
-> [   23.494308] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D
-> [   23.496391] BUG kmalloc-64 (Tainted: G                 N): kmalloc Red=
-zone overwritten
->=20
-> Bisect log and first of many backtraces attached for reference.
+Applied to controller/keystone, thank you!
 
-What's your kernel architecture and config for this - it looks like
-there's some sanitiser enabled?
+[01/02] PCI: keystone: Relocate ks_pcie_set/clear_dbi_mode()
+        https://git.kernel.org/pci/pci/c/390f4969f26f
+[02/02] PCI: keystone: Fix pci_ops for AM654x SoC
+        https://git.kernel.org/pci/pci/c/9e6ffee1f846
 
---SZGm3XT+YV/fSDfU
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZHP0UACgkQJNaLcl1U
-h9AM7wf/Zuw27uRSAL2MWdrl3tLFhAfyPV/xTuPHant528BVufACC6+m/jJaL3bu
-LLbaNv8TjfdGFWZAPcN26opeYo1LqePzsIvO7jPHaR/XFKpHCp5t7yR9yp232Pzm
-XN0FeBiUfgvpU9X9TatCTCzix7JbuY2RIvfERNdZxw1+mK9rSjo+UaQdiiSHKsN5
-j7ITNBnTO/Pgv8U8tiG7KAyhneGrl9FfmE8UywSPmG4JctJVhRWoqbmVjNfd5m49
-NXrNhRA+qD3bdnjZQISiEHfM/zarm1I5/upgJfufoM9o6Qmx4OGGwVxLO7TCctar
-rxbDzGV0hkkTksLwiMEOAVVsrXg/9g==
-=I5Fa
------END PGP SIGNATURE-----
-
---SZGm3XT+YV/fSDfU--
+	Krzysztof
 
