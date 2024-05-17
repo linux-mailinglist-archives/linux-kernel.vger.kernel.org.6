@@ -1,199 +1,155 @@
-Return-Path: <linux-kernel+bounces-182062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 482498C85C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 13:40:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37E668C85C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 13:37:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76DAD1C231C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:40:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4D5C1F238C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:37:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7819A3E485;
-	Fri, 17 May 2024 11:40:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CADB3F8D6;
+	Fri, 17 May 2024 11:37:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W7CpS19M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b="RP7soohG";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Yow8Rti0"
+Received: from wflow6-smtp.messagingengine.com (wflow6-smtp.messagingengine.com [64.147.123.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B15893D541;
-	Fri, 17 May 2024 11:40:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EB1839FE0;
+	Fri, 17 May 2024 11:37:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715946014; cv=none; b=H8dMEFz7wHQZO5ImWBdI1+Wb9SWxHsSJjS95mmdO4i6d0uciPKTqne1kcZswNhMs7L9vWGdqSHjbn4iZtl5oiE9sgtw24LtesFtflDCKT5Dct82OeMknuBSWY8MBcNa8aVBB4qA1JzDNl2qnTqtYH2xzpgxMOFaMvQDT82QQfBY=
+	t=1715945827; cv=none; b=t+vWUCRdghkev4ovXSn/1xnV2Q5UZBRO/VK1/Uy7SahJb7+t8FDu/jQ6ikCbmQ6quHGVzyISu6OqVsAFY2VTFagALK5Ez2Ve2Xl2O5gRk/xV0h8yyrPu1Xno0FP2DmCB6USQUIiMerQ0Czx3myPF3Ziyam9miBqb/CkXpq60Ros=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715946014; c=relaxed/simple;
-	bh=D256TFI+0c0WlOF4Wi9/+Mvuafjti0O9GN9MOXChFTA=;
+	s=arc-20240116; t=1715945827; c=relaxed/simple;
+	bh=9iwRhGote2VDlqpW9jTKlkdZQA3B+wPYMKRzpfbwwc4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pIIETmOCOhHKy6d0r/DFdUSuGPMH7DfeSzH8DLHknlaXOtSsqqhZ801puFybejS8TE69gxPeOJoh95tROcEZxomZrS1xcqtmmdzfFOUwGa4zoWHR/5LMMDkSSbINwYIOnp3swrn3OaMwmEgz+4rgcxiNM2WoBViwNpKmP9gaXAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W7CpS19M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF65CC2BD10;
-	Fri, 17 May 2024 11:40:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715946014;
-	bh=D256TFI+0c0WlOF4Wi9/+Mvuafjti0O9GN9MOXChFTA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=W7CpS19MtjTMMeLh1uaMPRX3B8kkUBgRRIoCCPR/du5PzbO0OQaCLgG04bB0lPNSw
-	 AWkfT4fXaxe4pPObdcjSZjYrghF90t8xpWkzJ47kHUXGh16nOromse0dMLich+hUt8
-	 AaT4ycaZgOgvBzVvqKXf68jf57vxXcbifAc2H84sD5csirZ8yqcY+hv/CfFUcUf+R8
-	 tSQby/+AzdECBBuDSAC3BtMUiJzTxf4yAioyQxTwRPuI9fWgv8vBpUPefwvyJ/i0wG
-	 MJDcP9WHOG4GMgulHGMdLuAQs2wNOHN4vyYD2DzMdLmmCYAWaplHMTFrbyApaetdB5
-	 lGWfXGXRoWs/Q==
-Date: Fri, 17 May 2024 13:40:11 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Andrea Parri <parri.andrea@gmail.com>
-Cc: Valentin Schneider <vschneid@redhat.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>
-Subject: Re: [PATCH 2/6] rcu: Remove superfluous full memory barrier upon
- first EQS snapshot
-Message-ID: <ZkdCG28qNha2vUSo@localhost.localdomain>
-References: <20240515125332.9306-1-frederic@kernel.org>
- <20240515125332.9306-3-frederic@kernel.org>
- <xhsmhfruhhixv.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <ZkYvemdrEOVFNtVu@lothringen>
- <xhsmha5kphefq.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <ZkcHSnvn0TZX6YzV@andrea>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EhlqbkfybwvGlawJDVKcDhgl6rybsr7+Oo+6ykvvWM02/s7UvAdBUkbJAUNe1QGsCKL3TKI6MFz4AUWAzQ32YILq2OwMzLNo2Y9aqtMbmK1ceKdlwtglq+MX1DbwOBcVjlGPo4zKZFjAu70neG2Q405v5oS5UI3iY9OjrkVRVIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net; spf=pass smtp.mailfrom=3xx0.net; dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b=RP7soohG; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Yow8Rti0; arc=none smtp.client-ip=64.147.123.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3xx0.net
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+	by mailflow.west.internal (Postfix) with ESMTP id 2DF562CC0146;
+	Fri, 17 May 2024 07:37:04 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute1.internal (MEProxy); Fri, 17 May 2024 07:37:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=3xx0.net; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1715945823; x=1715949423; bh=nI3D7dv9ma
+	mdu0MSJ/mg14u62h/nEOjeznANWab6vVU=; b=RP7soohGfwMt3AO8dys3F2agT+
+	EJoeH1j6f/glE00+8FdBTfi+nIkvSiQsJMzL/hwQkn6uCE7KSJ0MweWaxzFCqNwW
+	fXwyJ79qcIdGeKWlLv4vqx00QPKZhsWdADHQedVow+sRy/e1diFo8xN80ELcvNky
+	qmzZSLWm4YeI0+DjQyq+HmWje9eYdAYqAds1DOZ08EAD5QixDFhhAIgDddApmflC
+	+CYyEy0ds6LRlAFGR1R9lScGMaFlskvtMmkIhvGG0d3NC/UbhvHNUbxvF/qpvm8N
+	j0Hg9ElKIZK+FIDMZNmV9kLkSWFBTp2HeLsHtytIYrZQ631cSuphJnhldEEg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	i76614979.fm3; t=1715945823; x=1715949423; bh=nI3D7dv9mamdu0MSJ/
+	mg14u62h/nEOjeznANWab6vVU=; b=Yow8Rti0jLSufYdeUU+Zt81/T5g8I0tDeQ
+	H2YLccyc78jDer7JXkdBBWemJsc82/oINbcPb+RPjtK1mFaqouIQp3FfmHAHeaz2
+	B64dlAPJKZ0KUNzIq6n++6YqAetFzWU8JrEda4OShudEjGcN9TCJe48+wSOF5c4B
+	JPVzNH9niYpxlYXlfO2rXcOsbSP0LC37UUP6/TBM2DF/myvLFq6FfjHZT4DHW+fs
+	gqgQE1pPvvyfxfRy5pm8ezvWLfph39KPiajmY6RivnFhTygiTdWn96ixaVqlFKOx
+	5mg4G2THALUdw49d167R5iA9jU29zZQStpwCw/4YQaUAsbewWODg==
+X-ME-Sender: <xms:XkFHZjSrjq3gJjFRQ-zy8HR8UI7rwwlFKBM-Ws8oxv3eCQ0b6FQ5gA>
+    <xme:XkFHZky5dUePLN8kWq176cfCL68UTmt5tUnMjKmRlfSil2-frNexvUrqNOYo5qqEM
+    jk5yNAyGlZAQmChRYc>
+X-ME-Received: <xmr:XkFHZo2FCuO7bgyYcWm-UpRb3IsT9F2xl-BKUT-u0EAmCkHmCSNfGq-41Faer11c2_tRZgcN-KQyeVvH_f-6OYU>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdehfedgleegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujgesthdtsfdttddtjeenucfhrhhomheplfhonhgr
+    thhhrghnucevrghlmhgvlhhsuceojhgtrghlmhgvlhhsseefgiigtddrnhgvtheqnecugg
+    ftrfgrthhtvghrnhepjeeigefhffdtledukeekueekffdulefhteejhfelvdeftdelteet
+    gedufeeukedunecuffhomhgrihhnpehprghmpggtrghprdhsohenucevlhhushhtvghruf
+    hiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehjtggrlhhmvghlshesfeiggidt
+    rdhnvght
+X-ME-Proxy: <xmx:XkFHZjD3Vsg4c-nwEQfCfbyUM7a4K81Dw6ZJXL75JWdnBvTOAmEpuQ>
+    <xmx:XkFHZsgjoCt2yTlXrwRaXyskCggR7o9rgcp5ZiyeqPk4Dn70_Eminw>
+    <xmx:XkFHZnqIm2Clp1qofP8p9NvhEdc1uNfSweCQx7l3o7CRSV33mw8yPA>
+    <xmx:XkFHZnhJ7O2DiUDDmbLaP5QR3DGLYGU7rlD8kvvfcLaE5RORjdyl7w>
+    <xmx:X0FHZrRlLRs8g3Q5avKRvrUgDEsPG-rYELie3h_iV6JUXA6uI-noNukQ>
+Feedback-ID: i76614979:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 17 May 2024 07:37:00 -0400 (EDT)
+Date: Fri, 17 May 2024 04:42:02 -0700
+From: Jonathan Calmels <jcalmels@3xx0.net>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Casey Schaufler <casey@schaufler-ca.com>, brauner@kernel.org, 
+	ebiederm@xmission.com, Luis Chamberlain <mcgrof@kernel.org>, 
+	Kees Cook <keescook@chromium.org>, Joel Granados <j.granados@samsung.com>, 
+	Serge Hallyn <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, David Howells <dhowells@redhat.com>, containers@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
+Subject: Re: [PATCH 0/3] Introduce user namespace capabilities
+Message-ID: <jvy3npdptyro3m2q2junvnokbq2fjlffljxeqitd55ff37cydc@b7mwtquys6im>
+References: <20240516092213.6799-1-jcalmels@3xx0.net>
+ <2804dd75-50fd-481c-8867-bc6cea7ab986@schaufler-ca.com>
+ <D1BBFWKGIA94.JP53QNURY3J4@kernel.org>
+ <D1BBI1LX2FMW.3MTQAHW0MA1IH@kernel.org>
+ <D1BC3VWXKTNC.2DB9JIIDOFIOQ@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZkcHSnvn0TZX6YzV@andrea>
+In-Reply-To: <D1BC3VWXKTNC.2DB9JIIDOFIOQ@kernel.org>
 
-Le Fri, May 17, 2024 at 09:29:14AM +0200, Andrea Parri a écrit :
-> I know my remark may seem a little biased,  ;-) but the semantics of
-> smp_mb__after_unlock_lock() and smp_mb__after_spinlock() have been
-> somehowr/formally documented in the LKMM.  This means, in particular,
-> that one can write "litmus tests" with the barriers at stake and then
-> "run"/check such tests against the _current model.
-> 
-> For example,  (based on inline comments in include/linux/spinlock.h)
-> 
-> $ cat after_spinlock.litmus
-> C after_spinlock
-> 
-> { }
-> 
-> P0(int *x, spinlock_t *s)
-> {
-> 	spin_lock(s);
-> 	WRITE_ONCE(*x, 1);
-> 	spin_unlock(s);
-> }
-> 
-> P1(int *x, int *y, spinlock_t *s)
-> {
-> 	int r0;
-> 
-> 	spin_lock(s);
-> 	smp_mb__after_spinlock();
-> 	r0 = READ_ONCE(*x);
-> 	WRITE_ONCE(*y, 1);
-> 	spin_unlock(s);
-> }
-> 
-> P2(int *x, int *y)
-> {
-> 	int r1;
-> 	int r2;
-> 
-> 	r1 = READ_ONCE(*y);
-> 	smp_rmb();
-> 	r2 = READ_ONCE(*x);
-> }
-> 
-> exists (1:r0=1 /\ 2:r1=1 /\ 2:r2=0)
-> 
-> $ herd7 -conf linux-kernel.cfg after_spinlock.litmus
-> Test after_spinlock Allowed
-> States 7
-> 1:r0=0; 2:r1=0; 2:r2=0;
-> 1:r0=0; 2:r1=0; 2:r2=1;
-> 1:r0=0; 2:r1=1; 2:r2=0;
-> 1:r0=0; 2:r1=1; 2:r2=1;
-> 1:r0=1; 2:r1=0; 2:r2=0;
-> 1:r0=1; 2:r1=0; 2:r2=1;
-> 1:r0=1; 2:r1=1; 2:r2=1;
-> No
-> Witnesses
-> Positive: 0 Negative: 7
-> Condition exists (1:r0=1 /\ 2:r1=1 /\ 2:r2=0)
-> Observation after_spinlock Never 0 7
-> Time after_spinlock 0.01
-> Hash=b377bde8fe3565fcdd0eb2bdfaf3351e
-> 
-> Notice that, according to the current model at least, the state in
-> the above "exists" clause remains forbidden _after removal of the
-> smp_mb__after_spinlock() barrier.  In this sense, if you want, the
-> inline comment (I contributed to) is misleading/incomplete.  :-/
+> > > On Thu May 16, 2024 at 10:07 PM EEST, Casey Schaufler wrote:
+> > > > I suggest that adding a capability set for user namespaces is a bad idea:
+> > > > 	- It is in no way obvious what problem it solves
+> > > > 	- It is not obvious how it solves any problem
+> > > > 	- The capability mechanism has not been popular, and relying on a
+> > > > 	  community (e.g. container developers) to embrace it based on this
+> > > > 	  enhancement is a recipe for failure
+> > > > 	- Capabilities are already more complicated than modern developers
+> > > > 	  want to deal with. Adding another, special purpose set, is going
+> > > > 	  to make them even more difficult to use.
 
-Z6.0+pooncelock+poonceLock+pombonce.litmus shows an example of
-how full ordering is subtely incomplete without smp_mb__after_spinlock().
+Sorry if the commit wasn't clear enough. Basically:
 
-But still, smp_mb__after_unlock_lock() is supposed to be weaker than
-smp_mb__after_spinlock() and yet I'm failing to produce a litmus test
-that is successfull with the latter and fails with the former.
+- Today user namespaces grant full capabilities.
+  This behavior is often abused to attack various kernel subsystems.
+  Only option is to disable them altogether which breaks a lot of
+  userspace stuff.
+  This goes against the least privilege principle.
 
-For example, and assuming smp_mb__after_unlock_lock() is expected to be
-chained across locking, here is a litmus test inspired by
-Z6.0+pooncelock+poonceLock+pombonce.litmus that never observes the condition
-even though I would expect it should, as opposed to using
-smp_mb__after_spinlock():
+- It adds a new capability set.
+  This set dictates what capabilities are granted in namespaces (instead
+  of always getting full caps).
+  This brings namespaces in line with the rest of the system, user
+  namespaces are no more "special".
+  They now work the same way as say a transition to root does with
+  inheritable caps.
 
-C smp_mb__after_unlock_lock
+- This isn't intended to be used by end users per se (although they could).
+  This would be used at the same places where existing capabalities are
+  used today (e.g. init system, pam, container runtime, browser
+  sandbox), or by system administrators.
 
-{}
+To give you some ideas of things you could do:
 
-P0(int *w, int *x, spinlock_t *mylock)
-{
-	spin_lock(mylock);
-	WRITE_ONCE(*w, 1);
-	WRITE_ONCE(*x, 1);
-	spin_unlock(mylock);
-}
+# E.g. prevent alice from getting CAP_NET_ADMIN in user namespaces under SSH
+echo "auth optional pam_cap.so" >> /etc/pam.d/sshd
+echo "!cap_net_admin alice" >> /etc/security/capability.conf.
 
-P1(int *x, int *y, spinlock_t *mylock)
-{
-	int r0;
+# E.g. prevent any Docker container from ever getting CAP_DAC_OVERRIDE
+systemd-run -p CapabilityBoundingSet=~CAP_DAC_OVERRIDE \
+            -p SecureBits=userns-strict-caps \
+            /usr/bin/dockerd
 
-	spin_lock(mylock);
-	smp_mb__after_unlock_lock();
-	r0 = READ_ONCE(*x);
-	WRITE_ONCE(*y, 1);
-	spin_unlock(mylock);
-}
-
-P2(int *y, int *z, spinlock_t *mylock)
-{
-	int r0;
-
-	spin_lock(mylock);
-	r0 = READ_ONCE(*y);
-	WRITE_ONCE(*z, 1);
-	spin_unlock(mylock);
-}
-
-P3(int *w, int *z)
-{
-	int r1;
-
-	WRITE_ONCE(*z, 2);
-	smp_mb();
-	r1 = READ_ONCE(*w);
-}
-
-exists (1:r0=1 /\ 2:r0=1 /\ z=2 /\ 3:r1=0)
-
-
+# E.g. kernel could be vulnerable to CAP_SYS_RAWIO exploits
+# Prevent users from ever gaining it
+sysctl -w cap_bound_userns_mask=0x1fffffdffff
 
