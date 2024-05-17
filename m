@@ -1,137 +1,144 @@
-Return-Path: <linux-kernel+bounces-182600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7892B8C8D27
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 21:59:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 178CA8C8D2A
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 22:00:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E7F61C2374B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:59:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 754F0B24B47
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 20:00:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3B08140E46;
-	Fri, 17 May 2024 19:59:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1D23140399;
+	Fri, 17 May 2024 20:00:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vCd8nWTr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uO0fxI8F"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 264C445007;
-	Fri, 17 May 2024 19:59:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BDCD1A2C20;
+	Fri, 17 May 2024 20:00:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715975985; cv=none; b=sOARzCVkxCNPBM3N1Ow5irluScnjO6hZNqxIEhUCMNVZF1MZJIyDVztVOakXjzJ4VrZKSyW86M3e5Ff91Ql1N1/+y7AiJYYwJkkpo1eK67svx+/1ObaTAK9qQuC+UG3WXv39BT664kFKmTWvpY1IDig/i/tEgViKQvbt24ANsk4=
+	t=1715976024; cv=none; b=OlNZNW0VeZtaf75p85r/z76SFWeASki5z/zkwsK0sXYcwtHwTBbO7cUb7PlBuO4+xNN+mTQ0u+mm171dPOA+L0u44hbXfWFGOdK8IA85pNue4O2HhUVSELzqHAWTJu+iY50Wb/9pudLSLIbgwDOSBAm7SI++Uk1fq/QBAIDQd/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715975985; c=relaxed/simple;
-	bh=dYYtjZRFg1w3fItuQaPCJGU5QXhIg35KUK9e0MdEWpE=;
+	s=arc-20240116; t=1715976024; c=relaxed/simple;
+	bh=mO7CseUBhealxcctlNPit4cFTmehA1i4nglslSvX8Xk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jxa21BKV1qXwzureoOEIsv9ojAM7Ay7c5FLQPFwct+qv+j1jyJn/b8xDecqV66bizNl/Q3edfW2pZ+/OfNyGH4E7DxMhSk8WcZM3modV5pu+LftpA+/leBUI0t/3TLZeHZD0G/UIZKv6NVkOAWhMSuarXN0Kq+hQ1k0rlx+E48o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vCd8nWTr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 707BDC2BD10;
-	Fri, 17 May 2024 19:59:44 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=IqUwzMPc2mO0LmDSrV/ZzPaeqKBcz08uFTS5pAaNPCC+KLmus542ImYDHrLJPLvNgBTqBi5K6E6tQAmXMFGVgV0igPXHNy+dQ0i+PYVuNgfnA9gs2fMyU7+m/Fbg6slBMOFYziDMdSat0zTX4XbXYWYIT7cXGuSC755UzxnLjxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uO0fxI8F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D682CC2BD10;
+	Fri, 17 May 2024 20:00:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715975984;
-	bh=dYYtjZRFg1w3fItuQaPCJGU5QXhIg35KUK9e0MdEWpE=;
+	s=k20201202; t=1715976023;
+	bh=mO7CseUBhealxcctlNPit4cFTmehA1i4nglslSvX8Xk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vCd8nWTrqP1F+FxyMtyqxSqIGrdlOE3jZE9tZ1LGythn4sC5NqUz+wJ8GuWmnS07k
-	 o1mt2HfxUPx2/+Psc31tEMwCL9JbR9kMgOppdvl1q0WnrBqD3mdvEf2lSUQjffdI1p
-	 nAUiCtDA2rQK7XHnun/A147wzBMDhRLi0SVHG6lMfid0XKCAyUcWd5cUUIFf4lyfCa
-	 GgN5QTmnFH0djiCEzmpzW/13H144vuiHcV0RqpMOe6uqhEsvCQl9j9Vw4YkMuAomjU
-	 Mh5gKa36JIlgU3PjY1kRurlXXQq9FxHpoTzIn3pw8MuzjkMJEubXOI6VsubL6ceW8I
-	 EcX1Rhh7jgTjw==
-Date: Fri, 17 May 2024 14:59:43 -0500
-From: Rob Herring <robh@kernel.org>
-To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Liu Ying <victor.liu@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>, laurentiu.mihalcea@nxp.com,
-	devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] dt-bindings: reset: add schema for imx8ulp SIM reset
-Message-ID: <20240517195943.GA2854624-robh@kernel.org>
-References: <20240516204031.171920-1-laurentiumihalcea111@gmail.com>
- <20240516204031.171920-2-laurentiumihalcea111@gmail.com>
+	b=uO0fxI8FFLkYVRhck0Wkwx/iUrrEBPSCiE1OLZUMOTKhIS+nXvu1wE+JoKWtqMEtA
+	 LXJ5vd6gSyk8beFp1jqgCWWEHoYSMKILQksgqSed+SLOCXZ8siJx9RvnbFxYL9oPcE
+	 YZ/PS0lL2aLLwNdh5F5w7oqBH4DqJ3UuOUUqqJ4hmNpfO6PFnHwdB3AHvfCIT08gKP
+	 9gr/2lLLvdSP1GDtTLKySmBavbprNQNj1rnAcJw4nPbaxI7Rd0S++A6+oGrL+bZJE3
+	 wRjdxVd3SheJRPYXMsUIYfTRjQ8ZW+5hjhOZG72KO8sw73dk0W4LhsxVZ1S58FbsBp
+	 8zNIkWQplmvZw==
+Date: Fri, 17 May 2024 21:00:17 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Kanak Shilledar <kanakshilledar@gmail.com>
+Cc: Kanak Shilledar <kanakshilledar111@protonmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH] dt-bindings: interrupt-controller: riscv,cpu-intc:
+ convert to dtschema
+Message-ID: <20240517-browsing-trespass-a46ef27fc115@spud>
+References: <20240517150741.181303-1-kanakshilledar111@protonmail.com>
+ <20240517-disfigure-disperser-1fa6b36729ec@spud>
+ <CAGLn_=s4ghNODpVhPdk61Jt4XLteXp4W7oFS9WOb9O2-9BiXWQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="D4u/o0+VChCwFfPF"
 Content-Disposition: inline
-In-Reply-To: <20240516204031.171920-2-laurentiumihalcea111@gmail.com>
+In-Reply-To: <CAGLn_=s4ghNODpVhPdk61Jt4XLteXp4W7oFS9WOb9O2-9BiXWQ@mail.gmail.com>
 
-On Thu, May 16, 2024 at 11:40:28PM +0300, Laurentiu Mihalcea wrote:
-> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
-> 
-> Add schema for imx8ulp's SIM reset controller.
-> 
-> Signed-off-by: Liu Ying <victor.liu@nxp.com>
-> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
-> ---
->  .../bindings/reset/nxp,imx8ulp-sim-reset.yaml | 43 +++++++++++++++++++
->  1 file changed, 43 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/reset/nxp,imx8ulp-sim-reset.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/reset/nxp,imx8ulp-sim-reset.yaml b/Documentation/devicetree/bindings/reset/nxp,imx8ulp-sim-reset.yaml
-> new file mode 100644
-> index 000000000000..ec9a5c73e83c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/reset/nxp,imx8ulp-sim-reset.yaml
-> @@ -0,0 +1,43 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/reset/nxp,imx8ulp-sim-reset.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NXP i.MX8ULP System Integration Module Reset Controller
-> +
-> +maintainers:
-> +  - Liu Ying <victor.liu@nxp.com>
-> +
-> +description: |
-> +  Some instances of i.MX8ULP's SIM may offer control over the
-> +  reset of some components of a certain domain (e.g: AVD-SIM).
-> +  As far as the DT is concerned, this means that the reset
-> +  controller needs to be a child of the SIM node.
-> +
-> +properties:
-> +  compatible:
-> +    const: nxp,imx8ulp-avd-sim-reset
-> +
-> +  '#reset-cells':
-> +    const: 1
-> +
-> +required:
-> +  - compatible
-> +  - '#reset-cells'
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/imx8ulp-clock.h>
-> +    syscon@2da50000 {
-> +      compatible = "nxp,imx8ulp-avd-sim", "syscon";
-> +      reg = <0x2da50000 0x38>;
-> +      clocks = <&pcc5 IMX8ULP_CLK_AVD_SIM>;
-> +
-> +      reset-controller {
-> +        compatible = "nxp,imx8ulp-avd-sim-reset";
-> +        #reset-cells = <1>;
-> +      };
-> +    };
 
-Why do you need a child node here? No DT resources or anything for this 
-'sub-block'. Just put "#reset-cells" in the parent node.
+--D4u/o0+VChCwFfPF
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-(Note that examples for MFDs like this go in the MFD binding rather than 
-having incomplete examples here.)
+On Fri, May 17, 2024 at 11:21:54PM +0530, Kanak Shilledar wrote:
+> On Fri, May 17, 2024 at 9:34=E2=80=AFPM Conor Dooley <conor@kernel.org> w=
+rote:
+> > On Fri, May 17, 2024 at 08:37:40PM +0530, Kanak Shilledar wrote:
+> > > +properties:
+> > > +  compatible:
+> > > +    const: "riscv,cpu-intc"
+> >
+> > A new warning with dtbs_check from your patch:
+> > /stuff/linux/build/arch/riscv/boot/dts/renesas/r9a07g043f01-smarc.dtb: =
+interrupt-controller: compatible:0: 'riscv,cpu-intc' was expected
+> >         from schema $id: http://devicetree.org/schemas/interrupt-contro=
+ller/riscv,cpu-intc.yaml#
+> > /stuff/linux/build/arch/riscv/boot/dts/renesas/r9a07g043f01-smarc.dtb: =
+interrupt-controller: compatible: ['andestech,cpu-intc', 'riscv,cpu-intc'] =
+is too long
+> >         from schema $id: http://devicetree.org/schemas/interrupt-contro=
+ller/riscv,cpu-intc.yaml#
+> >
+> > There's a duplicate description in riscv/cpus.yaml:
+> >   interrupt-controller:
+> >     type: object
+> >     additionalProperties: false
+> >     description: Describes the CPU's local interrupt controller
+> >
+> >     properties:
+> >       '#interrupt-cells':
+> >         const: 1
+> >
+> >       compatible:
+> >         oneOf:
+> >           - items:
+> >               - const: andestech,cpu-intc
+> >               - const: riscv,cpu-intc
+> >           - const: riscv,cpu-intc
+> >
+> >       interrupt-controller: true
+> >
+> > I think the one in cpus.yaml should be converted to a ref and the
+> > andestech compatible added here.
+>=20
+> I am working on the v2 patch, in which I didn't provide any ref to the
+> cpus.yaml and just replaced my compatible section with the one above
+> to resolve the issue with `/renesas/r9a07g043f01-smarc.dtb`. I tested
+> with others and didn't get any warnings.
 
-Rob
+Please don't do that, we shouldn't have two different places that each
+are defining compatibles etc for the hardware.
+
+Thanks,
+Conor.
+
+
+--D4u/o0+VChCwFfPF
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZke3UQAKCRB4tDGHoIJi
+0q6PAPwKVqnbhecYJjHe4HwYA3O0NAWGknlpQcOFDft4MhEAGgEAhNhFfkElcT02
+xQCzM1ohYrPWjt9F8QeIP9AviRyqswU=
+=03KH
+-----END PGP SIGNATURE-----
+
+--D4u/o0+VChCwFfPF--
 
