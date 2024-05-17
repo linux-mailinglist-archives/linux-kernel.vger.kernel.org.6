@@ -1,250 +1,210 @@
-Return-Path: <linux-kernel+bounces-181954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C3508C8416
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:48:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D42488C8462
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:59:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0360B284E6B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 09:48:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A9451F241DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 09:59:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87C1C23770;
-	Fri, 17 May 2024 09:48:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46E772C848;
+	Fri, 17 May 2024 09:59:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b="ByBzeppH"
-Received: from ironport.ite.com.tw (60-251-196-230.hinet-ip.hinet.net [60.251.196.230])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BEE92C68F
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 09:48:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.251.196.230
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="XEfgF2K1"
+Received: from m15.mail.163.com (m15.mail.163.com [45.254.50.220])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAF064A3E;
+	Fri, 17 May 2024 09:59:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.50.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715939291; cv=none; b=oEI04R2E8frGYg2g4RsNCpuNQiRTDMur0EGw6ovfdY4Fkk4NYKw6lQl/s1SThqmMK5cEQbEMeKA/NkDHG77H/9D83iqQOCmBlX4v5eT1Re/3+N/HB1o65m71byMugxdiKmOsYfk2ZciOJOEG7rKRlwm9hLeAkSmFwbImcOGvo18=
+	t=1715939981; cv=none; b=ML9ZUewiN0NEEcrxA1P+iBZ4hd+QTnypIhujmB6yES6blCYjBP8dtUIfIB+5cIRuXwRjltlEAUucBTWlyT45/4T2M/vsEOwI2sUrPJS2GaqkrM227d8gHG2YAawcTzDY+zofImBH6xow7tFw6XJxSlb6NlDWTVcoA2L3hC/m+0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715939291; c=relaxed/simple;
-	bh=f5hevyF2D2sxM2S0jtF7Z+e6GRtwwKV4JpKADrh1eo0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sQGar7srYfVHbo6ALRaD22e4Fjwk1kOyGVI1jBHapNikQSBMQjGRGmO0P84iDyHaJLeX1EUODRlB/pXGtUMpjPtNgrlfZKV7JK35tIXfqhRSZ11urZ7BwtwCIU8l4/8CyaBSXiSKNzr2kn4Y7LtO7rME7uVk0etavYs8ZvP4ptw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw; spf=pass smtp.mailfrom=ite.com.tw; dkim=fail (0-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b=ByBzeppH reason="key not found in DNS"; arc=none smtp.client-ip=60.251.196.230
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ite.com.tw
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=ite.com.tw; s=dkim;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=SvJuRNCWuYZEZDBBbRcUdX1kPnc4DTTBAf/hI+tHNis=;
-  b=ByBzeppHdnL8oFZ9fDFvq1LIsFVpRkIHbG5gTGAkEa31Z3SbgKdYk5k4
-   6ibDi6oOJOrt2vsKD69kMEBTDQNbAekRckG8JUmReI3rd/jYRgh11B9nV
-   /JkFycLLKwqxaxkhqHJbamX1XMXCi2n2WAti8/shHc4P1e8hjzw7GcWgj
-   yvRG/d/76ZTp3551s0jrbkyd8y1fK8PO+w+hi5xx4i30l+P0c+YKaVjEq
-   8uKsTgj2Sj7AvIcRVbncfgLhVGBuouIryG/Oayv6pWGP4JRckul5ta7+o
-   aJaMSBoA1IKd9XxOo9h+w32DiJCZc0eTqxExh8WPaL3EYN7bDnINJzq6X
-   g==;
-Received: from unknown (HELO mse.ite.com.tw) ([192.168.35.30])
-  by ironport.ite.com.tw with ESMTP; 17 May 2024 17:48:05 +0800
-Received: from CSBMAIL1.internal.ite.com.tw (CSBMAIL1.internal.ite.com.tw [192.168.65.58])
-	by mse.ite.com.tw with ESMTP id 44H9m2kw037407;
-	Fri, 17 May 2024 17:48:02 +0800 (GMT-8)
-	(envelope-from kuro.chung@ite.com.tw)
-Received: from ite-XPS-13-9360.internal.ite.com.tw (192.168.72.42) by
- CSBMAIL1.internal.ite.com.tw (192.168.65.58) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Fri, 17 May 2024 17:48:02 +0800
-From: kuro <kuro.chung@ite.com.tw>
-To: Pin-yen Lin <treapking@chromium.org>,
-        Kenneth Haung
-	<kenneth.hung@ite.com.tw>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil
- Armstrong <neil.armstrong@linaro.org>,
-        Robert Foss <rfoss@kernel.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman
-	<jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard
-	<mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie
-	<airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        AngeloGioacchino Del
- Regno <angelogioacchino.delregno@collabora.com>,
-        Allen Chen
-	<allen.chen@ite.com.tw>, Hermes Wu <hermes.wu@ite.com.tw>,
-        "open list:DRM
- DRIVERS" <dri-devel@lists.freedesktop.org>,
-        open list
-	<linux-kernel@vger.kernel.org>
-CC: Kuro Chung <kuro.chung@ite.com.tw>
-Subject: [PATCH v10] drm/bridge: it6505: fix hibernate to resume no display issue
-Date: Fri, 17 May 2024 17:58:47 +0800
-Message-ID: <20240517095847.1035228-1-kuro.chung@ite.com.tw>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1715939981; c=relaxed/simple;
+	bh=dpyBEu8gbIL6XlzIlY5fdmx1tZoQWLnVwLsmf6qiYYA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=bA7op62MM6ljhzX5ZSksAlUF5YcHPzbFHoJ2VJ4klKJzzYMdFkMPaICcughkDsWf90WVw0iB5YTklMZSuLuLgRqUOhdH6jgPLDNbYaSjQ9SxozfDuFN2zR8ysmco947jYblIfJI+D8SGeuwGgSzKOdGUsCXSgJKhmU4JnyxLo6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=XEfgF2K1 reason="signature verification failed"; arc=none smtp.client-ip=45.254.50.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=ObJzj8BTvZk1VZywMcjbfxOqh0LbeEj7um1CBAweiKE=; b=X
+	EfgF2K1i+wcumRLG/5SVNTZqDy74L9xKzKSHuGwnFjptinwutNKg3+qBU4HT1LNF
+	J5H/5ZuwFwKIF3G95qx2TyN8WzkshpdwFgNANndD28h4yUhv/b86Zg80wgdfzTg1
+	o8A8pnM45lOmjnBb8IVhTJIc2qVcIObrm1jWYBsgOw=
+Received: from slark_xiao$163.com ( [223.104.68.4] ) by
+ ajax-webmail-wmsvr-40-112 (Coremail) ; Fri, 17 May 2024 17:59:03 +0800
+ (CST)
+Date: Fri, 17 May 2024 17:59:03 +0800 (CST)
+From: "Slark Xiao" <slark_xiao@163.com>
+To: "Manivannan Sadhasivam" <manivannan.sadhasivam@linaro.org>
+Cc: "Manivannan Sadhasivam" <mani@kernel.org>, loic.poulain@linaro.org, 
+	mhi@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, quic_qianyu@quicinc.com
+Subject: Re:Re:Re: Re: Re: Re: [PATCH] bus: mhi: host: Add Foxconn SDX72
+ related support
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20230109(dcb5de15)
+ Copyright (c) 2002-2024 www.mailtech.cn 163com
+In-Reply-To: <20b11ca1.101c.18f8418706b.Coremail.slark_xiao@163.com>
+References: <20240510032657.789629-1-slark_xiao@163.com>
+ <20240514143741.GA2306@thinkpad>
+ <541de8e4.1600.18f79de44f3.Coremail.slark_xiao@163.com>
+ <20240515074119.GA2445@thinkpad>
+ <5eee5967.7bdf.18f7b4567b7.Coremail.slark_xiao@163.com>
+ <20240515115239.GD4488@thinkpad>
+ <58fb648d.ab03.18f7c2f90bd.Coremail.slark_xiao@163.com>
+ <20240516142346.GA6922@thinkpad>
+ <20b11ca1.101c.18f8418706b.Coremail.slark_xiao@163.com>
+X-NTES-SC: AL_Qu2aB/WYtkEv5SmaYOkfm0kaj+c/WMGzu/8m3oFXO51wjDnpxi0GW1lFJV3v0vmdLgGdgR6RVDNy6tVwb7lGU58kTpKLqvJE8EqFhQWYOh2R3A==
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: CSBMAIL1.internal.ite.com.tw (192.168.65.58) To
- CSBMAIL1.internal.ite.com.tw (192.168.65.58)
-X-TM-SNTS-SMTP:
-	4868C337A08707CA42C15F05D7F5B7B7632440A583D998B48401C964B311050B2002:8
-X-MAIL:mse.ite.com.tw 44H9m2kw037407
+Message-ID: <6f6143b2.9e05.18f85fda5f9.Coremail.slark_xiao@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:_____wD3n4FnKkdm3VcDAA--.1856W
+X-CM-SenderInfo: xvod2y5b0lt0i6rwjhhfrp/1tbiNRbgZGV4Hn6kDwAHs2
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-From: Kuro Chung <kuro.chung@ite.com.tw>
-
-This patch added a FIFO reset bit for input video. When system power resume,
-the TTL input of it6505 may get some noise before video signal stable
-and the hardware function reset is required.
-But the input FIFO reset will also trigger error interrupts of output
-module rising. Thus, it6505 have to wait a period can clear those
-expected error interrupts caused by manual hardware reset in one
-interrupt handler calling to avoid interrupt looping.
-
-Fixes: b5c84a9edcd4 ("drm/bridge: add it6505 driver")
-
----
- drivers/gpu/drm/bridge/ite-it6505.c | 73 +++++++++++++++++++----------
- 1 file changed, 49 insertions(+), 24 deletions(-)
-
-diff --git a/drivers/gpu/drm/bridge/ite-it6505.c b/drivers/gpu/drm/bridge/ite-it6505.c
-index 469157341f3ab..5703fcf4b7b00 100644
---- a/drivers/gpu/drm/bridge/ite-it6505.c
-+++ b/drivers/gpu/drm/bridge/ite-it6505.c
-@@ -1307,9 +1307,15 @@ static void it6505_video_reset(struct it6505 *it6505)
- 	it6505_link_reset_step_train(it6505);
- 	it6505_set_bits(it6505, REG_DATA_MUTE_CTRL, EN_VID_MUTE, EN_VID_MUTE);
- 	it6505_set_bits(it6505, REG_INFOFRAME_CTRL, EN_VID_CTRL_PKT, 0x00);
--	it6505_set_bits(it6505, REG_RESET_CTRL, VIDEO_RESET, VIDEO_RESET);
-+
-+	it6505_set_bits(it6505, REG_VID_BUS_CTRL1, TX_FIFO_RESET, TX_FIFO_RESET);
-+	it6505_set_bits(it6505, REG_VID_BUS_CTRL1, TX_FIFO_RESET, 0x00);
-+
- 	it6505_set_bits(it6505, REG_501_FIFO_CTRL, RST_501_FIFO, RST_501_FIFO);
- 	it6505_set_bits(it6505, REG_501_FIFO_CTRL, RST_501_FIFO, 0x00);
-+
-+	it6505_set_bits(it6505, REG_RESET_CTRL, VIDEO_RESET, VIDEO_RESET);
-+	usleep_range(1000, 2000);
- 	it6505_set_bits(it6505, REG_RESET_CTRL, VIDEO_RESET, 0x00);
- }
- 
-@@ -2245,12 +2251,11 @@ static void it6505_link_training_work(struct work_struct *work)
- 	if (ret) {
- 		it6505->auto_train_retry = AUTO_TRAIN_RETRY;
- 		it6505_link_train_ok(it6505);
--		return;
- 	} else {
- 		it6505->auto_train_retry--;
-+		it6505_dump(it6505);
- 	}
- 
--	it6505_dump(it6505);
- }
- 
- static void it6505_plugged_status_to_codec(struct it6505 *it6505)
-@@ -2471,31 +2476,53 @@ static void it6505_irq_link_train_fail(struct it6505 *it6505)
- 	schedule_work(&it6505->link_works);
- }
- 
--static void it6505_irq_video_fifo_error(struct it6505 *it6505)
-+static bool it6505_test_bit(unsigned int bit, const unsigned int *addr)
- {
--	struct device *dev = it6505->dev;
--
--	DRM_DEV_DEBUG_DRIVER(dev, "video fifo overflow interrupt");
--	it6505->auto_train_retry = AUTO_TRAIN_RETRY;
--	flush_work(&it6505->link_works);
--	it6505_stop_hdcp(it6505);
--	it6505_video_reset(it6505);
-+	return 1 & (addr[bit / BITS_PER_BYTE] >> (bit % BITS_PER_BYTE));
- }
- 
--static void it6505_irq_io_latch_fifo_overflow(struct it6505 *it6505)
-+static void it6505_irq_video_handler(struct it6505 *it6505, const int *int_status)
- {
- 	struct device *dev = it6505->dev;
-+	int reg_0d, reg_int03;
- 
--	DRM_DEV_DEBUG_DRIVER(dev, "IO latch fifo overflow interrupt");
--	it6505->auto_train_retry = AUTO_TRAIN_RETRY;
--	flush_work(&it6505->link_works);
--	it6505_stop_hdcp(it6505);
--	it6505_video_reset(it6505);
--}
-+	/*
-+	 * When video SCDT change with video not stable,
-+	 * Or video FIFO error, need video reset
-+	 */
- 
--static bool it6505_test_bit(unsigned int bit, const unsigned int *addr)
--{
--	return 1 & (addr[bit / BITS_PER_BYTE] >> (bit % BITS_PER_BYTE));
-+	if ((!it6505_get_video_status(it6505) &&
-+		(it6505_test_bit(INT_SCDT_CHANGE, (unsigned int *) int_status))) ||
-+		(it6505_test_bit(BIT_INT_IO_FIFO_OVERFLOW, (unsigned int *) int_status)) ||
-+		(it6505_test_bit(BIT_INT_VID_FIFO_ERROR, (unsigned int *) int_status))) {
-+
-+		it6505->auto_train_retry = AUTO_TRAIN_RETRY;
-+		flush_work(&it6505->link_works);
-+		it6505_stop_hdcp(it6505);
-+		it6505_video_reset(it6505);
-+
-+		usleep_range(10000, 11000);
-+
-+		/*
-+		 * Clear FIFO error IRQ to prevent fifo error -> reset loop
-+		 * HW will trigger SCDT change IRQ again when video stable
-+		 */
-+
-+		reg_int03 = it6505_read(it6505, INT_STATUS_03);
-+		reg_0d = it6505_read(it6505, REG_SYSTEM_STS);
-+
-+		reg_int03 &= (BIT(INT_VID_FIFO_ERROR) | BIT(INT_IO_LATCH_FIFO_OVERFLOW));
-+		it6505_write(it6505, INT_STATUS_03, reg_int03);
-+
-+		DRM_DEV_DEBUG_DRIVER(dev, "reg08 = 0x%02x", reg_int03);
-+		DRM_DEV_DEBUG_DRIVER(dev, "reg0D = 0x%02x", reg_0d);
-+
-+		return;
-+	}
-+
-+
-+	if (it6505_test_bit(INT_SCDT_CHANGE, (unsigned int *) int_status))
-+		it6505_irq_scdt(it6505);
- }
- 
- static irqreturn_t it6505_int_threaded_handler(int unused, void *data)
-@@ -2508,15 +2535,12 @@ static irqreturn_t it6505_int_threaded_handler(int unused, void *data)
- 	} irq_vec[] = {
- 		{ BIT_INT_HPD, it6505_irq_hpd },
- 		{ BIT_INT_HPD_IRQ, it6505_irq_hpd_irq },
--		{ BIT_INT_SCDT, it6505_irq_scdt },
- 		{ BIT_INT_HDCP_FAIL, it6505_irq_hdcp_fail },
- 		{ BIT_INT_HDCP_DONE, it6505_irq_hdcp_done },
- 		{ BIT_INT_AUX_CMD_FAIL, it6505_irq_aux_cmd_fail },
- 		{ BIT_INT_HDCP_KSV_CHECK, it6505_irq_hdcp_ksv_check },
- 		{ BIT_INT_AUDIO_FIFO_ERROR, it6505_irq_audio_fifo_error },
- 		{ BIT_INT_LINK_TRAIN_FAIL, it6505_irq_link_train_fail },
--		{ BIT_INT_VID_FIFO_ERROR, it6505_irq_video_fifo_error },
--		{ BIT_INT_IO_FIFO_OVERFLOW, it6505_irq_io_latch_fifo_overflow },
- 	};
- 	int int_status[3], i;
- 
-@@ -2546,6 +2570,7 @@ static irqreturn_t it6505_int_threaded_handler(int unused, void *data)
- 			if (it6505_test_bit(irq_vec[i].bit, (unsigned int *)int_status))
- 				irq_vec[i].handler(it6505);
- 		}
-+		it6505_irq_video_handler(it6505, (unsigned int *) int_status);
- 	}
- 
- 	pm_runtime_put_sync(dev);
--- 
-2.25.1
-
+CkF0IDIwMjQtMDUtMTcgMDk6MDk6MDUsICJTbGFyayBYaWFvIiA8c2xhcmtfeGlhb0AxNjMuY29t
+PiB3cm90ZToKPgo+QXQgMjAyNC0wNS0xNiAyMjoyMzo0NiwgIk1hbml2YW5uYW4gU2FkaGFzaXZh
+bSIgPG1hbml2YW5uYW4uc2FkaGFzaXZhbUBsaW5hcm8ub3JnPiB3cm90ZToKPj5PbiBXZWQsIE1h
+eSAxNSwgMjAyNCBhdCAwODoxNzoyM1BNICswODAwLCBTbGFyayBYaWFvIHdyb3RlOgo+Pj4gCj4+
+PiAKPj4+IEF0IDIwMjQtMDUtMTUgMTk6NTI6MzksICJNYW5pdmFubmFuIFNhZGhhc2l2YW0iIDxt
+YW5pQGtlcm5lbC5vcmc+IHdyb3RlOgo+Pj4gPk9uIFdlZCwgTWF5IDE1LCAyMDI0IGF0IDA0OjAx
+OjM3UE0gKzA4MDAsIFNsYXJrIFhpYW8gd3JvdGU6Cj4+PiA+PiAKPj4+ID4+IEF0IDIwMjQtMDUt
+MTUgMTU6NDE6MTksICJNYW5pdmFubmFuIFNhZGhhc2l2YW0iIDxtYW5pdmFubmFuLnNhZGhhc2l2
+YW1AbGluYXJvLm9yZz4gd3JvdGU6Cj4+PiA+PiA+KyBRaWFuZwo+Pj4gPj4gPgo+Pj4gPj4gPk9u
+IFdlZCwgTWF5IDE1LCAyMDI0IGF0IDA5OjI5OjIwQU0gKzA4MDAsIFNsYXJrIFhpYW8gd3JvdGU6
+Cj4+PiA+PiA+PiBBdCAyMDI0LTA1LTE0IDIyOjM3OjQxLCAiTWFuaXZhbm5hbiBTYWRoYXNpdmFt
+IiA8bWFuaXZhbm5hbi5zYWRoYXNpdmFtQGxpbmFyby5vcmc+IHdyb3RlOgo+Pj4gPj4gPj4gPk9u
+IEZyaSwgTWF5IDEwLCAyMDI0IGF0IDExOjI2OjU3QU0gKzA4MDAsIFNsYXJrIFhpYW8gd3JvdGU6
+Cj4+PiA+PiA+PiA+PiBBbGlnbiB3aXRoIFFjb20gU0RYNzIsIGFkZCByZWFkeSB0aW1lb3V0IGl0
+ZW0gZm9yIEZveGNvbm4gU0RYNzIuCj4+PiA+PiA+PiA+PiBBbmQgYWxzbywgYWRkIGZpcmVob3Nl
+IHN1cHBvcnQgc2luY2UgU0RYNzIuCj4+PiA+PiA+PiA+PiAKPj4+ID4+ID4+ID4+IFNpZ25lZC1v
+ZmYtYnk6IFNsYXJrIFhpYW8gPHNsYXJrX3hpYW9AMTYzLmNvbT4KPj4+ID4+ID4+ID4+IC0tLQo+
+Pj4gPj4gPj4gPj4gIGRyaXZlcnMvYnVzL21oaS9ob3N0L3BjaV9nZW5lcmljLmMgfCAzMSArKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKysKPj4+ID4+ID4+ID4+ICAxIGZpbGUgY2hhbmdlZCwg
+MzEgaW5zZXJ0aW9ucygrKQo+Pj4gPj4gPj4gPj4gCj4+PiA+PiA+PiA+PiBkaWZmIC0tZ2l0IGEv
+ZHJpdmVycy9idXMvbWhpL2hvc3QvcGNpX2dlbmVyaWMuYyBiL2RyaXZlcnMvYnVzL21oaS9ob3N0
+L3BjaV9nZW5lcmljLmMKPj4+ID4+ID4+ID4+IGluZGV4IDA4ODQ0ZWU3OTY1NC4uMGZkOTRjMTkz
+ZmM2IDEwMDY0NAo+Pj4gPj4gPj4gPj4gLS0tIGEvZHJpdmVycy9idXMvbWhpL2hvc3QvcGNpX2dl
+bmVyaWMuYwo+Pj4gPj4gPj4gPj4gKysrIGIvZHJpdmVycy9idXMvbWhpL2hvc3QvcGNpX2dlbmVy
+aWMuYwo+Pj4gPj4gPj4gPj4gQEAgLTM5OSw2ICszOTksOCBAQCBzdGF0aWMgY29uc3Qgc3RydWN0
+IG1oaV9jaGFubmVsX2NvbmZpZyBtaGlfZm94Y29ubl9zZHg1NV9jaGFubmVsc1tdID0gewo+Pj4g
+Pj4gPj4gPj4gIAlNSElfQ0hBTk5FTF9DT05GSUdfREwoMTMsICJNQklNIiwgMzIsIDApLAo+Pj4g
+Pj4gPj4gPj4gIAlNSElfQ0hBTk5FTF9DT05GSUdfVUwoMzIsICJEVU4iLCAzMiwgMCksCj4+PiA+
+PiA+PiA+PiAgCU1ISV9DSEFOTkVMX0NPTkZJR19ETCgzMywgIkRVTiIsIDMyLCAwKSwKPj4+ID4+
+ID4+ID4+ICsJTUhJX0NIQU5ORUxfQ09ORklHX1VMX0ZQKDM0LCAiRklSRUhPU0UiLCAzMiwgMCks
+Cj4+PiA+PiA+PiA+PiArCU1ISV9DSEFOTkVMX0NPTkZJR19ETF9GUCgzNSwgIkZJUkVIT1NFIiwg
+MzIsIDApLAo+Pj4gPj4gPj4gPgo+Pj4gPj4gPj4gPlRoaXMgbWVhbnMgU0RYNTUgaXMgYWxzbyBz
+dXBwb3J0aW5nIEZJUkVIT1NFIGNoYW5uZWxzLCB3aGljaCBpcyBub3QgdHJ1ZSBJCj4+PiA+PiA+
+PiA+YmVsaWV2ZS4KPj4+ID4+ID4+IEFjdHVhbGx5LCBJIGp1c3QgdmVyaWZpZWQgaXQgd2l0aCBt
+eSBzZHg1NSBhbmQgdGhlIGFuc3dlciBpcyBZZXMuIFRoZXNlIGNoYW5uZWxzCj4+PiA+PiA+PiBh
+cmUgY29tbW9uIHNldHRpbmdzIGZvciBRY29tIGRldmljZSB3aGljaCBzdXBwb3J0IFBDSWUgbW9k
+ZS4gQlRXLCB0aGUKPj4+ID4+ID4+IGRlZmF1bHQgc2V0dGluZ3Mgb2YgUWNvbSBhbmQgUXVlY3Rl
+bCBzdXBwb3J0IGZpcmVob3NlIGZvciB0aGVpciBzZHg1NSBwcm9kdWN0cy4KPj4+ID4+ID4KPj4+
+ID4+ID5RaWFuZywgY2FuIHlvdSBwbGVhc2UgY29uZmlybSB0aGF0IFNEWDU1IHN1cHBvcnRzIEZJ
+UkVIT1NFIGNoYW5uZWxzPwo+Pj4gPj4gPgo+Pj4gPj4gPj4gPgo+Pj4gPj4gPj4gPj4gIAlNSElf
+Q0hBTk5FTF9DT05GSUdfSFdfVUwoMTAwLCAiSVBfSFcwX01CSU0iLCAxMjgsIDIpLAo+Pj4gPj4g
+Pj4gPj4gIAlNSElfQ0hBTk5FTF9DT05GSUdfSFdfREwoMTAxLCAiSVBfSFcwX01CSU0iLCAxMjgs
+IDMpLAo+Pj4gPj4gPj4gPj4gIH07Cj4+PiA+PiA+PiA+PiBAQCAtNDE5LDYgKzQyMSwxNiBAQCBz
+dGF0aWMgY29uc3Qgc3RydWN0IG1oaV9jb250cm9sbGVyX2NvbmZpZyBtb2RlbV9mb3hjb25uX3Nk
+eDU1X2NvbmZpZyA9IHsKPj4+ID4+ID4+ID4+ICAJLmV2ZW50X2NmZyA9IG1oaV9mb3hjb25uX3Nk
+eDU1X2V2ZW50cywKPj4+ID4+ID4+ID4+ICB9Owo+Pj4gPj4gPj4gPj4gIAo+Pj4gPj4gPj4gPj4g
+K3N0YXRpYyBjb25zdCBzdHJ1Y3QgbWhpX2NvbnRyb2xsZXJfY29uZmlnIG1vZGVtX2ZveGNvbm5f
+c2R4NzJfY29uZmlnID0gewo+Pj4gPj4gPj4gPj4gKwkubWF4X2NoYW5uZWxzID0gMTI4LAo+Pj4g
+Pj4gPj4gPj4gKwkudGltZW91dF9tcyA9IDIwMDAwLAo+Pj4gPj4gPj4gPj4gKwkucmVhZHlfdGlt
+ZW91dF9tcyA9IDUwMDAwLAo+Pj4gPj4gPj4gPj4gKwkubnVtX2NoYW5uZWxzID0gQVJSQVlfU0la
+RShtaGlfZm94Y29ubl9zZHg1NV9jaGFubmVscyksCj4+PiA+PiA+PiA+PiArCS5jaF9jZmcgPSBt
+aGlfZm94Y29ubl9zZHg1NV9jaGFubmVscywKPj4+ID4+ID4+ID4+ICsJLm51bV9ldmVudHMgPSBB
+UlJBWV9TSVpFKG1oaV9mb3hjb25uX3NkeDU1X2V2ZW50cyksCj4+PiA+PiA+PiA+PiArCS5ldmVu
+dF9jZmcgPSBtaGlfZm94Y29ubl9zZHg1NV9ldmVudHMsCj4+PiA+PiA+PiA+PiArfTsKPj4+ID4+
+ID4+ID4+ICsKPj4+ID4+ID4+ID4+ICBzdGF0aWMgY29uc3Qgc3RydWN0IG1oaV9wY2lfZGV2X2lu
+Zm8gbWhpX2ZveGNvbm5fc2R4MjRfaW5mbyA9IHsKPj4+ID4+ID4+ID4+ICAJLm5hbWUgPSAiZm94
+Y29ubi1zZHgyNCIsCj4+PiA+PiA+PiA+PiAgCS5jb25maWcgPSAmbW9kZW1fZm94Y29ubl9zZHg1
+NV9jb25maWcsCj4+PiA+PiA+PiA+PiBAQCAtNDQ4LDYgKzQ2MCwxNiBAQCBzdGF0aWMgY29uc3Qg
+c3RydWN0IG1oaV9wY2lfZGV2X2luZm8gbWhpX2ZveGNvbm5fc2R4NjVfaW5mbyA9IHsKPj4+ID4+
+ID4+ID4+ICAJLnNpZGViYW5kX3dha2UgPSBmYWxzZSwKPj4+ID4+ID4+ID4+ICB9Owo+Pj4gPj4g
+Pj4gPj4gIAo+Pj4gPj4gPj4gPj4gK3N0YXRpYyBjb25zdCBzdHJ1Y3QgbWhpX3BjaV9kZXZfaW5m
+byBtaGlfZm94Y29ubl9zZHg3Ml9pbmZvID0gewo+Pj4gPj4gPj4gPj4gKwkubmFtZSA9ICJmb3hj
+b25uLXNkeDcyIiwKPj4+ID4+ID4+ID4+ICsJLmVkbCA9ICJxY29tL3NkeDcybS94Ymxfc19kZXZw
+cmdfbnMubWVsZiIsCj4+PiA+PiA+PiA+Cj4+PiA+PiA+PiA+V2hhdCBpcyAnLm1lbGYnPyBJcyB0
+aGUgZmlybXdhcmUgYXZhaWxhYmxlIHNvbWV3aGVyZT8gRGlkIHlvdSBwbGFuIHRvIHVwc3RyZWFt
+Cj4+PiA+PiA+PiA+aXQgdG8gbGludXgtZmlybXdhcmU/Cj4+PiA+PiA+PiA+Cj4+PiA+PiA+PiBU
+aGlzIGZpbGUgc2ltaWxhciB3aXRoICJlZGwubWJuIi4gSW4gU0RYNzIgcHJvZHVjdCwgdGhlIGRl
+ZmF1bHQgImVkbCIgZmlsZSBuYW1lIGlzCj4+PiA+PiA+PiAieGJsX3NfZGV2cHJnX25zLm1lbGYi
+LiBDdXJyZW50bHkgd2UgZG9uJ3QgcGxhbiB0byB1cHN0cmVhbSBpdCB0byBsaW51eC1maXJtd2Fy
+ZQo+Pj4gPj4gPj4gc2luY2UgMiByZWFzb25zOiAxOiB3ZSBzaGFyZSB0aGUgc2FtZSBmb2xkIG5h
+bWUgc2R4NzJtIHdpdGggcWNvbSBvciBvdGhlciB2ZW5kb3JzCj4+PiA+PiA+PiAyOiB0aGlzIGZp
+bGUgbWF5IGJlIGNoYW5nZWQgc2luY2Ugc2R4NzIgcHJvZHVjdCBzdGlsbCB1bmRlciBkZXZlbG9w
+aW5nIGluIG91ciBzaWRlLiB3ZQo+Pj4gPj4gPj4gbWF5IGNoYW5nZSB0aGUgYmFzZSBsaW5lIGFj
+Y29yZGluZyB0byBRQ09NIHJlbGVhc2UuCj4+PiA+PiA+Cj4+PiA+PiA+VGhlbiBJIHdvdWxkIGFz
+ayB5b3UgdG8gYWRkIHN1cHBvcnQgd2hlbiB5b3UgaGF2ZSBhIHN0YWJsZSBmaXJtd2FyZS4gSSBk
+byBub3QKPj4+ID4+ID53YW50IHRvIGNoYW5nZSB0aGUgZmlybXdhcmUgbmFtZSBhZnRlciBzb21l
+IHRpbWUgYXMgaXQgd2lsbCBjb25mdXNlIHVzZXJzLgo+Pj4gPj4gPgo+Pj4gPj4gPi0gTWFuaQo+
+Pj4gPj4gSWYgYSBzdGFibGUgZmlybXdhcmUgbXVzdCBiZSBwcm92aWRlZCwgSSB0aGluayBJIHNo
+YWxsIGNoYW5nZSB0aGUgZm9sZGVyIG5hbWUgZnJvbSBxY29tIHRvCj4+PiA+PiBmb3gsIGRvIHlv
+dSBhZ3JlZSB0aGlzPwo+Pj4gPgo+Pj4gPkV2ZW4gaW4gdGhhdCBjYXNlLCB3aGVyZSBjYW4gdGhl
+IHVzZXIgZmluZCB0aGUgZmlybXdhcmU/Cj4+PiA+Cj4+PiBJIHRoaW5rIHRoaXMgZWRsIGZpbGUg
+Y291bGQgaGVscCB1c2VyIGxldCBkZXZpY2UgZW50ZXIgaW50byBlZGwgbW9kZSh3d2FuMGZpcmVo
+b3NlMCkuCj4+PiBGb3IgUENJRSBkZXZpY2UsIHRoZXJlIGlzIG5vIG9wZW5zb3VyY2UgdG9vbCB0
+byBzdXBwb3J0IFBDSUUgZWRsIGRvd25sb2FkLiBJZiB1c2VyCj4+PiBjb3VsZCBnZXQgdGhlIHRv
+b2wgdG8gZG8gdGhlIGZpcmVob3NlIGRvd25sb2FkLCBJIHRoaW5rIGl0J3Mgbm90IGhhcmQgdG8g
+Z2V0IGNvbXBsZXRlIGZpcm13YXJlCj4+PiBmcm9tIFBDIHZlbmRvciBvciBzb21ld2hlcmUgZWxz
+ZS4KPj4KPj5JIHdhcyB0b2xkIHRoYXQgUWNvbSB3aWxsIHVwc3RyZWFtIHRoZSBQQ0kgc3VwcG9y
+dCBmb3IgUURMIGluIHRoZSBjb21pbmcgd2Vla3MuCj4+T25jZSB0aGF0IGhhcHBlbnMgKGV2ZW4g
+aWYgYSBQUiksIEknbGwgc2hhcmUgdGhhdCB3aXRoIHlvdS4gUGxlYXNlIHRlc3QgaXQgYW5kCj4+
+bGV0IG1lIGtub3cgaWYgdGhhdCB3b3JrcyBvciBub3QuCj4+Cj5TdXJlLiBCdXQgSSB0aGluayB0
+aGlzIHNoYWxsIG5vdCB0aGUgYmxvY2sgY2F1c2UgZm9yIG1lcmdpbmcgdGhpcyBwYXRjaCwgcmln
+aHQ/Cj5CZWZvcmUgdGhhdCBQUiwgd2UgaGF2ZSB2ZXJpZmllZCB0aGUgZmlyZWhvc2UgZnVuY3Rp
+b24gaW4gb3VyIGxvY2FsIHdpdGggb3VyCj5maXJlaG9zZSB0b29sIHdoaWNoIGlzIG5vdCBvcGVu
+LiAKPj5BbmQgZm9yIGVudGVyaW5nIEVETCBtb2RlLCB3ZSBoYXZlIHJlY2VudGx5IGFkZGVkIHN1
+cHBvcnQgdG8gdHJpZ2dlciBFREwgbW9kZQo+PmZyb20gaG9zdCBbMV0uIENvdWxkIHlvdSBhbHNv
+IHRlc3QgdGhhdD8gWW91IGp1c3QgbmVlZCB0byBhZGQgYGVkbF90cmlnZ2VyID0KPj50cnVlYCB0
+byB0aGUgYG1oaV9wY2lfZGV2X2luZm9gIHN0cnVjdCBvZiBTRFg3MiBhbmQgdHJpZ2dlciBFREwg
+bW9kZSBmcm9tIGhvc3QKPj5ieToKPj4KPj5lY2hvIDEgPiAvc3lzL2J1cy9taGkvZGV2aWNlcy8u
+Li4vdHJpZ2dlcl9lZGwKPj4KPkRvIHlvdSByZW1lbWJlciB0aGF0IEkgdG9sZCB5b3UgSSB3YW50
+IHRvIG1lcmdlIHN1Y2ggZnVuY3Rpb24gZnJvbSBxdWFsY29tbSBkcml2ZXIKPmluIGxhc3QgeWVh
+cj8gSSBtZXJnZSB0aGUgY29tbWl0IGZyb20gUVVEIGRyaXZlciBpbiBteSBsb2NhbC4gQWN0dWFs
+bHkgaXQncyBzYW1lIGFzIHRoZQo+Y29tbWl0IFsxXSwgaXQncyBjYWxsZWQgImZvcmNlX2VkbCIu
+IEFuZCBzdXJlLCB0aGUgcmVzdWx0IGlzIHllcywgaXQgd29ya3Mgd2VsbC4KPgpMYXRlc3QgdGVz
+dCwgaXQgZG9lc24ndCB3b3JrIGluIExpbnV4IFY2Ljkgc2luY2UgdGhlcmUgaXMgYSBwYXRjaCBt
+aXNzaW5nLiBJbiBteSBsb2NhbCBwcmV2aW91cwp0ZXN0LCB0aGVyZSBpcyBubyBtaGlfY250cmwt
+PmVkbF90cmlnZ2VyIGNvbmRpdGlvbiB0byBzZXQgdXAgZGV2X2F0dHJfdHJpZ2dlcl9lZGwuClNl
+ZW1zIHBhdGNoIFsyXSBpcyBtaXNzZWQuCgpbMl0taHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvbWhp
+LzE3MTM5Mjg5MTUtMTgyMjktNC1naXQtc2VuZC1lbWFpbC1xdWljX3FpYW55dUBxdWljaW5jLmNv
+bS8KPj4+ID4+IEJUVywgSSBuZWVkIHRvIGNoZWNrIGlmIGl0IHdvcmtzIGFmdGVyIHVwZGF0aW5n
+ICdlZGwgZncnIGZyb20gIHhibF9zX2RldnByZ19ucy5tZWxmIHRvCj4+PiA+PiBlZGwubWJuLiAK
+Pj4+IAo+Pj4gPgo+Pj4gPk9rYXkuIElNTywgd2Ugc2hvdWxkIHVwc3RyZWFtIHRoZSBwcm9kdWN0
+IHN1cHBvcnQgb25seSBhZnRlciBhIHN0YWJsZSBmaXJtd2FyZQo+Pj4gPnJlbGVhc2UgKHdlbGwg
+c3RhYmxlIGluIHRoZSBzZW5zZSBhIHN0YWJsZSBuYW1lIGF0IGxlYXN0KS4KPj4+ID4KPj4+ID4t
+IE1hbmkKPj4+IFRoZSBjaGVjayByZXN1bHQgaXMgd2UgY2FuIHJlbmFtZSBpdCB0byBhbGlnbiB3
+aXRoIHByZXZpb3VzIGZvcm1hdC4gVW50aWwgbm93LCAKPj4+IEkgZGlkbid0IHNlZSBhbnkgbWhp
+IGRldmljZSBoYXMgdXBzdHJlYW0gdGhlaXIgZmlybXdhcmUgdG8gL2xpYi9maXJtd2FyZS9xY29t
+IGZvbGRlci4KPj4KPj5JdCBpcyBub3QgbWFuZGF0b3J5LCBidXQgaXQgaXMgYSBiZXN0IHByYWN0
+aXNlIHRoYXQgSSByZWNlbnRseSBzdGFydGVkIGFza2luZwo+PmZvci4KPj4KPj4+IElmIGl0J3Mg
+YSBtdXN0LCBJIHRoaW5rIHdlIGNhbiB1cHN0cmVhbSB0aGUgZWRsIGZpbGUgbGF0ZXIuICBBbnl3
+YXksIHdlIGhvcGUgd2UgY2FuCj4+PiBtZXJnZSB0aGlzIHNkeDcyIHN1cHBvcnQgaW50byA2LjEw
+IHNpbmNlIGN1c3RvbWVyKERlbGwpIHdvdWxkIHVzZSB0aGlzIGtlcm5lbCBmb3Igb2ZmaWNpYWwK
+Pj4+IHJlbGVhc2UuIEJ1dCBubyB3b3JyeSwgd2UgY2FuIG1ha2Ugc3VyZSB0aGlzIGZpcmVob3Nl
+IGRvd25sb2FkIG1ldGhvZCB3b3JrcyB3ZWxsIGluCj4+PiAgb3VyIGxvY2FsIHNpZGUuCj4+PiBB
+bmQgYWxzbywgcGxlYXNlIGhlbHAgYSByZXZpZXcgYWJvdXQgbXkgcHJldmlvdXMgZW1haWwgYWJv
+dXQgZml4IHNkeDcyIHBpbmcgZmFpbHVyZSBpc3N1ZS4KPj4+IFRoZXJlIGlzIGEgZml4IHNvbHV0
+aW9uIGZyb20gdXMuIAo+Pj4gCj4+Cj4+UWlhbmcgaXMgd29ya2luZyBvbiB0aGF0Lgo+R29vZCB0
+byBoZWFyIHRoYXQuIEJUVywgbWF5IEkga25vdyB0aGUgZmVhdHVyZSBtZXJnZSB3aW5kb3cgaW4g
+VjYuMTA/IEkgZG9uJ3Qgd29ycnkgYWJvdXQKPm1lcmdlIHdpbmRvdyBvZiB0aGUgbmV0d29yayBm
+aXggY29tbWl0LCBzaW5jZSBpdCdzIGEgZml4IHdpdGggaGlnaGVyIHByaW9yaXR5LiBCdXQgSSB3
+YW50IHRvCj5tZXJnZSB0aGUgYmFzaWMgc3VwcG9ydCBvZiBteSBTRFg3MiBiZWZvcmUgbWVyZ2Ug
+d2luZG93IGNsb3NlLiBUaGlzIGlzIGltcG9ydGFudCBmb3IgdXMuCj4KPlRoYW5rcyEKPj4KPj4t
+IE1hbmkKPj4KPj5bMV0gaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvbWhpLzE3MTM5Mjg5MTUtMTgy
+MjktMS1naXQtc2VuZC1lbWFpbC1xdWljX3FpYW55dUBxdWljaW5jLmNvbS8KPj4KPj4tLSAKPj7g
+rq7grqPgrr/grrXgrqPgr43grqPgrqngr40g4K6a4K6k4K6+4K6a4K6/4K614K6u4K+NCg==
 
