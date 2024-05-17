@@ -1,209 +1,469 @@
-Return-Path: <linux-kernel+bounces-182423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7FFC8C8B18
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:36:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A82128C8B14
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:36:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22FEDB21C9E
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:36:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BDFD1F21629
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:36:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8974013DDB9;
-	Fri, 17 May 2024 17:36:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF5CF13DDBF;
+	Fri, 17 May 2024 17:36:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="AUU1gPvX"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="lqmki4WZ"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6BBE12FB3E
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 17:36:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4BAF12FB3E;
+	Fri, 17 May 2024 17:36:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715967396; cv=none; b=VoPrCdT86TlxjQpjdFCF21eQlYtSs/54WTwse2VKLXbL+f6RHr7Z+6p4i3Z7PT1dPbzQA5Qnew2Jxj7wwnoLpSr/5iTUETcrQjDdqGmJui6jR9+DB6cq09TkeuTlbB9zAreTs5VV4uaDS8sr/2pQZKxGlXENkMs/Yp64Tq+OlT8=
+	t=1715967388; cv=none; b=kB9d1dE2c32iPFnkZ44wKdd3INY0HYAG6fSbBhPIuSL2eary3xzRDN+8Mg4H7U86doJNwNtS5scHDIxn5RkyvkvTe1ISFyI4Ej07VYyEY64qTsjisAL2TBfoOqgrat2CuYIeQM643Ihab3OUV9mn+ZwFxL5VG5kBaJ43R/msTjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715967396; c=relaxed/simple;
-	bh=XjAWJ2eqX/XHZTMD+zOyCsPctyAoSmWyVzHoUM4DzkM=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=BHnXzdlhE/rG4Y0CaDUwrrjtL7XAM9hyBkq1nbA5T/IvxC47OYZb9qYgSFNm2VxpocI0hCQaiF9YYOBOhlTL7mAGLuQo4ypZLK+CuCp32iDTvrVNjFiBD0QYYBrvYl827VvOodTAm+SfHbx7xYeDpWuvUkHv+D3Z8C0EBsfdQwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=AUU1gPvX; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] ([76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 44HHZXiO2560155
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Fri, 17 May 2024 10:35:34 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 44HHZXiO2560155
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024051501; t=1715967335;
-	bh=3toScG2epOvz4S6GlSaLW07fm+7T68oT6n8TgjNdwTc=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=AUU1gPvXKMtDVJygcCQcgezfmNVTmjtzgmb1YoFNkKhpgzpf9HQMjm+bb+PbYPcrv
-	 4tmA2dww/zGyOsGPZP2GsDOitxS3ejFZ0zfa+79ErbIy3eYg8qDz1bAfCJ6nckm6qc
-	 SQ8C1u5Wk4gW2tJJL6Zjd92w7dDO9gm0MuHOai1rKwirG1jCCKywdVdMKvIMugTfW2
-	 aNMqLHmCWWdQBrtl6357Cf6hwaKpMskRsVw0DmQCguSm/quTtnQMyJRGnbYCvfA7G3
-	 ThDGb/GHyK1KE84BRSidn2BFTpzUtJ4dE3SZ2qhSDfOIGvGODyXxUoss2bQabbVjMN
-	 168WjfggeI3/g==
-Date: Fri, 17 May 2024 10:35:29 -0700
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>
-CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Uros Bizjak <ubizjak@gmail.com>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Arnd Bergmann <arnd@arndb.de>, Mateusz Guzik <mjguzik@gmail.com>,
-        Thomas Renninger <trenn@suse.de>, Greg Kroah-Hartman <gregkh@suse.de>,
-        Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org,
-        patches@lists.linux.dev
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v2=5D_x86/cpu=3A_Fix_x86=5Fmatch?=
- =?US-ASCII?Q?=5Fcpu=28=29_to_match_just_X86=5FVENDOR=5FINTEL?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20240517144312.GBZkdtAOuJZCvxhFbJ@fat_crate.local>
-References: <20240516162925.79245-1-tony.luck@intel.com> <20240517144312.GBZkdtAOuJZCvxhFbJ@fat_crate.local>
-Message-ID: <863D0F06-1217-4C94-B2CA-816FC4ABB103@zytor.com>
+	s=arc-20240116; t=1715967388; c=relaxed/simple;
+	bh=TAttaT4QKSpw6C6PKsUnaR3kpuThONpIqVd9UlOCg3U=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PhP69zfO2/Vz8UwBL1h9/JamR7NXR5Kts8ZdFFF1sWGEvLTuSvl7c2yQxFhXFzYS7S4qvF/a+xC8TJ9vT557XAgQSiFONnI4TIkCSi4tgVngYycjfCo/7+HPPvgMVXkd5G+OvvvcwH3BsW+xdqsaf76rxhV9B92G8W+A3jv32bc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=lqmki4WZ; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44HHa8AF115810;
+	Fri, 17 May 2024 12:36:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1715967368;
+	bh=MQg8ma3NvCMAMZesN1F4Fn5/DHwPy0dRNwAj5Idlji8=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=lqmki4WZ75LMvtJzfWqlHxn1VYNPMxa8VN+hvG6bD8gUkqUwNs2k98xT1bIdtndMb
+	 gFKT+tMUIbZoXtc06QIRFvUUqGRg2mzjF59vJ6/5u9Ac/NBggn7ezV3mtMT+m5jteV
+	 q3p+yYznzK4Ck6tpNZg8IN0mmAJkK8uVqEWx2cXo=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44HHa89c027615
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 17 May 2024 12:36:08 -0500
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 17
+ May 2024 12:36:08 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 17 May 2024 12:36:08 -0500
+Received: from localhost (ti.dhcp.ti.com [172.24.227.95] (may be forged))
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44HHa7k1004959;
+	Fri, 17 May 2024 12:36:08 -0500
+From: Devarsh Thakkar <devarsht@ti.com>
+To: <mchehab@kernel.org>, <hverkuil-cisco@xs4all.nl>,
+        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <benjamin.gaignard@collabora.com>, <sebastian.fricke@collabora.com>,
+        <akpm@linux-foundation.org>, <gregkh@linuxfoundation.org>,
+        <andriy.shevchenko@linux.intel.com>, <adobriyan@gmail.com>,
+        <jani.nikula@intel.com>, <p.zabel@pengutronix.de>, <airlied@gmail.com>,
+        <daniel@ffwll.ch>, <dri-devel@lists.freedesktop.org>
+CC: <laurent.pinchart@ideasonboard.com>, <praneeth@ti.com>, <nm@ti.com>,
+        <vigneshr@ti.com>, <a-bhatia1@ti.com>, <j-luthra@ti.com>,
+        <b-brnich@ti.com>, <detheridge@ti.com>, <p-mantena@ti.com>,
+        <vijayp@ti.com>, <devarsht@ti.com>, <andrzej.p@collabora.com>,
+        <nicolas@ndufresne.ca>, <davidgow@google.com>, <dlatypov@google.com>
+Subject: [PATCH v8 07/10] lib: add basic KUnit test for lib/math
+Date: Fri, 17 May 2024 23:06:07 +0530
+Message-ID: <20240517173607.800549-1-devarsht@ti.com>
+X-Mailer: git-send-email 2.39.1
+In-Reply-To: <20240517171532.748684-1-devarsht@ti.com>
+References: <20240517171532.748684-1-devarsht@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On May 17, 2024 7:43:12 AM PDT, Borislav Petkov <bp@alien8=2Ede> wrote:
->On Thu, May 16, 2024 at 09:29:25AM -0700, Tony Luck wrote:
->> -#define X86_VENDOR_INTEL	0
->>  #define X86_VENDOR_CYRIX	1
->>  #define X86_VENDOR_AMD		2
->>  #define X86_VENDOR_UMC		3
->> +#define X86_VENDOR_INTEL	4
->>  #define X86_VENDOR_CENTAUR	5
->>  #define X86_VENDOR_TRANSMETA	7
->>  #define X86_VENDOR_NSC		8
->> --=20
->
->From my last review:
->
->> But the Intel vendor has been 0 for what, 30 years?
->
->> Are you sure no other code in the tree relies on that? Audited?
->
->But nope, apparently that's too much to ask=2E :-(
->
->modinfo =2E/arch/x86/events/intel/intel-uncore=2Eko
->filename:       =2E/arch/x86/events/intel/intel-uncore=2Eko
->license:        GPL
->srcversion:     ECE38449B18DD83223B93FD
->alias:          cpu:type:x86,ven0000fam0006mod00B6:feature:*
->alias:          cpu:type:x86,ven0000fam0006mod00AF:feature:*
->alias:          cpu:type:x86,ven0000fam0006mod00BE:feature:*
->			     ^^^^^^^^^
->
->Would everything still work if it said "ven0004" now?
->
->So tglx and I just did some poking and we think the best solution would
->be to add a __u16 flags field to struct x86_cpu_id right=2E=2E=2E
->
->struct x86_cpu_id {
->        __u16                      vendor;               /*     0     2 *=
-/
->        __u16                      family;               /*     2     2 *=
-/
->        __u16                      model;                /*     4     2 *=
-/
->        __u16                      steppings;            /*     6     2 *=
-/
->        __u16                      feature;              /*     8     2 *=
-/
->
->        /* XXX 6 bytes hole, try to pack */
->
-><--- HERE
->
->        kernel_ulong_t             driver_data;          /*    16     8 *=
-/
->
->        /* size: 24, cachelines: 1, members: 6 */
->        /* sum members: 18, holes: 1, sum holes: 6 */
->        /* last cacheline: 24 bytes */
->};
->
->and the 32-bit version has the same hole:
->
->struct x86_cpu_id {
->        __u16                      vendor;               /*     0     2 *=
-/
->        __u16                      family;               /*     2     2 *=
-/
->        __u16                      model;                /*     4     2 *=
-/
->        __u16                      steppings;            /*     6     2 *=
-/
->        __u16                      feature;              /*     8     2 *=
-/
->
->        /* XXX 2 bytes hole, try to pack */
->
-><--- HERE
->
->        kernel_ulong_t             driver_data;          /*    12     4 *=
-/
->
->        /* size: 16, cachelines: 1, members: 6 */
->        /* sum members: 14, holes: 1, sum holes: 2 */
->        /* last cacheline: 16 bytes */
->};
->
->And then do:
->
->struct x86_cpu_id {
->        __u16 vendor;
->        __u16 family;
->        __u16 model;
->        __u16 steppings;
->        __u16 feature;  /* bit index */
->	__u16 flags;
->        kernel_ulong_t driver_data;
->};
->
->#define X86_CPU_ID_FLAG_VENDOR_VALID		BIT(0)
->
->and then have the macros in arch/x86/include/asm/cpu_device_id=2Eh set
->that valid flag and then have x86_match_cpu() check it=2E
->
->Then you don't risk a userspace breakage and that x86_match_cpu() crap
->thing is fixed=2E
->
->Thx=2E
->
+From: Daniel Latypov <dlatypov@google.com>
 
-I'm confused=2E Why not simply use say -1 for wildcard vendor match, -2 fo=
-r no vendor ID (no CPUID or other known probing mechanism) and -3 for unrec=
-ognized vendor (vendor detectable but not known=2E)
+Add basic test coverage for files that don't require any config options:
+* part of math.h (what seem to be the most commonly used macros)
+* gcd.c
+* lcm.c
+* int_sqrt.c
+* reciprocal_div.c
+(Ignored int_pow.c since it's a simple textbook algorithm.)
 
-If we have a match/valid mask, I would suggest that we have *separate* mat=
-ch and valid masks, so that we can explicitly encode the condition of "no v=
-alid vendor", but in the specific case of vendor, there are two conditions =
-(see above=2E)
+These tests aren't particularly interesting, but they
+* provide short and simple examples of parameterized tests
+* provide a place to add tests for any new files in this dir
+* are written so adding new test cases to cover edge cases should be
+  easy
+  * looking at code coverage, we hit all the branches in the .c files
 
-I *hate* these strings with the passion of a thousand suns: they are a cla=
-ssic case of how just blindly converting binary information to hex adds abs=
-olutely no value, and often makes the result worse than what one started wi=
-th=2E And yes, I complained about that when they first went in as a classic=
- case of exposing what was always simply intended as a kernel internal inte=
-rface to user space=2E
+Signed-off-by: Daniel Latypov <dlatypov@google.com>
+Reviewed-by: David Gow <davidgow@google.com>
+[devarsht: Rebase to 6.9 and change license to GPL]
+Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
+---
+Changes since v6:
+* Rebase to linux-next, change license to GPL as suggested by checkpatch.
 
-This is particularly pathetic as there already is a canonical string repre=
-sentation of the vendor ID!
+Changes since v5:
+* add in test cases for roundup/rounddown
+* address misc comments from David
 
-Similarly, kernel internal CPUID feature numbers shouldn't be an API, we o=
-nce again have canonical strings for the API level=2E=20
+Changes since v4:
+* add in test cases for some math.h macros (abs, round_up/round_down,
+  div_round_down/closest)
+* use parameterized testing less to keep things terser
 
-But of course, now the module utilities depend on them, and although they =
-are relatively tightly coupled to the kernel, it still would require a stag=
-ed transition where the legacy strings are included for some time=2E=20
+Changes since v3:
+* fix `checkpatch.pl --strict` warnings
+* add test cases for gcd(0,0) and lcm(0,0)
+* minor: don't test both gcd(a,b) and gcd(b,a) when a == b
+
+Changes since v2: mv math_test.c => math_kunit.c
+
+Changes since v1:
+* Rebase and rewrite to use the new parameterized testing support.
+* misc: fix overflow in literal and inline int_sqrt format string.
+* related: commit 1f0e943df68a ("Documentation: kunit: provide guidance
+for testing many inputs") was merged explaining the patterns shown here.
+  * there's an in-flight patch to update it for parameterized testing.
+---
+ lib/math/Kconfig      |  11 ++
+ lib/math/Makefile     |   1 +
+ lib/math/math_kunit.c | 291 ++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 303 insertions(+)
+ create mode 100644 lib/math/math_kunit.c
+
+diff --git a/lib/math/Kconfig b/lib/math/Kconfig
+index 0634b428d0cb..832c6989ca13 100644
+--- a/lib/math/Kconfig
++++ b/lib/math/Kconfig
+@@ -15,3 +15,14 @@ config PRIME_NUMBERS
+ 
+ config RATIONAL
+ 	tristate
++
++config MATH_KUNIT_TEST
++	tristate "KUnit test for math helper functions"
++	help
++	  This builds unit test for math helper functions as defined in lib/math
++	  and math.h.
++
++	  For more information on KUNIT and unit tests in general, please refer
++	  to the KUnit documentation in Documentation/dev-tools/kunit/.
++
++	  If unsure, say N.
+diff --git a/lib/math/Makefile b/lib/math/Makefile
+index 91fcdb0c9efe..dcf65d10dab2 100644
+--- a/lib/math/Makefile
++++ b/lib/math/Makefile
+@@ -7,3 +7,4 @@ obj-$(CONFIG_RATIONAL)		+= rational.o
+ 
+ obj-$(CONFIG_TEST_DIV64)	+= test_div64.o
+ obj-$(CONFIG_RATIONAL_KUNIT_TEST) += rational-test.o
++obj-$(CONFIG_MATH_KUNIT_TEST) += math_kunit.o
+diff --git a/lib/math/math_kunit.c b/lib/math/math_kunit.c
+new file mode 100644
+index 000000000000..1b00e4195a1a
+--- /dev/null
++++ b/lib/math/math_kunit.c
+@@ -0,0 +1,291 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Simple KUnit suite for math helper funcs that are always enabled.
++ *
++ * Copyright (C) 2020, Google LLC.
++ * Author: Daniel Latypov <dlatypov@google.com>
++ */
++
++#include <kunit/test.h>
++#include <linux/gcd.h>
++#include <linux/kernel.h>
++#include <linux/lcm.h>
++#include <linux/reciprocal_div.h>
++
++static void abs_test(struct kunit *test)
++{
++	KUNIT_EXPECT_EQ(test, abs((char)0), (char)0);
++	KUNIT_EXPECT_EQ(test, abs((char)42), (char)42);
++	KUNIT_EXPECT_EQ(test, abs((char)-42), (char)42);
++
++	/* The expression in the macro is actually promoted to an int. */
++	KUNIT_EXPECT_EQ(test, abs((short)0),  0);
++	KUNIT_EXPECT_EQ(test, abs((short)42),  42);
++	KUNIT_EXPECT_EQ(test, abs((short)-42),  42);
++
++	KUNIT_EXPECT_EQ(test, abs(0),  0);
++	KUNIT_EXPECT_EQ(test, abs(42),  42);
++	KUNIT_EXPECT_EQ(test, abs(-42),  42);
++
++	KUNIT_EXPECT_EQ(test, abs(0L), 0L);
++	KUNIT_EXPECT_EQ(test, abs(42L), 42L);
++	KUNIT_EXPECT_EQ(test, abs(-42L), 42L);
++
++	KUNIT_EXPECT_EQ(test, abs(0LL), 0LL);
++	KUNIT_EXPECT_EQ(test, abs(42LL), 42LL);
++	KUNIT_EXPECT_EQ(test, abs(-42LL), 42LL);
++
++	/* Unsigned types get casted to signed. */
++	KUNIT_EXPECT_EQ(test, abs(0ULL), 0LL);
++	KUNIT_EXPECT_EQ(test, abs(42ULL), 42LL);
++}
++
++static void int_sqrt_test(struct kunit *test)
++{
++	KUNIT_EXPECT_EQ(test, int_sqrt(0UL), 0UL);
++	KUNIT_EXPECT_EQ(test, int_sqrt(1UL), 1UL);
++	KUNIT_EXPECT_EQ(test, int_sqrt(4UL), 2UL);
++	KUNIT_EXPECT_EQ(test, int_sqrt(5UL), 2UL);
++	KUNIT_EXPECT_EQ(test, int_sqrt(8UL), 2UL);
++	KUNIT_EXPECT_EQ(test, int_sqrt(1UL << 30), 1UL << 15);
++}
++
++static void round_up_test(struct kunit *test)
++{
++	KUNIT_EXPECT_EQ(test, round_up(0, 1), 0);
++	KUNIT_EXPECT_EQ(test, round_up(1, 2), 2);
++	KUNIT_EXPECT_EQ(test, round_up(3, 2), 4);
++	KUNIT_EXPECT_EQ(test, round_up((1 << 30) - 1, 2), 1 << 30);
++	KUNIT_EXPECT_EQ(test, round_up((1 << 30) - 1, 1 << 29), 1 << 30);
++}
++
++static void round_down_test(struct kunit *test)
++{
++	KUNIT_EXPECT_EQ(test, round_down(0, 1), 0);
++	KUNIT_EXPECT_EQ(test, round_down(1, 2), 0);
++	KUNIT_EXPECT_EQ(test, round_down(3, 2), 2);
++	KUNIT_EXPECT_EQ(test, round_down((1 << 30) - 1, 2), (1 << 30) - 2);
++	KUNIT_EXPECT_EQ(test, round_down((1 << 30) - 1, 1 << 29), 1 << 29);
++}
++
++/* These versions can round to numbers that aren't a power of two */
++static void roundup_test(struct kunit *test)
++{
++	KUNIT_EXPECT_EQ(test, roundup(0, 1), 0);
++	KUNIT_EXPECT_EQ(test, roundup(1, 2), 2);
++	KUNIT_EXPECT_EQ(test, roundup(3, 2), 4);
++	KUNIT_EXPECT_EQ(test, roundup((1 << 30) - 1, 2), 1 << 30);
++	KUNIT_EXPECT_EQ(test, roundup((1 << 30) - 1, 1 << 29), 1 << 30);
++
++	KUNIT_EXPECT_EQ(test, roundup(3, 2), 4);
++	KUNIT_EXPECT_EQ(test, roundup(4, 3), 6);
++}
++
++static void rounddown_test(struct kunit *test)
++{
++	KUNIT_EXPECT_EQ(test, rounddown(0, 1), 0);
++	KUNIT_EXPECT_EQ(test, rounddown(1, 2), 0);
++	KUNIT_EXPECT_EQ(test, rounddown(3, 2), 2);
++	KUNIT_EXPECT_EQ(test, rounddown((1 << 30) - 1, 2), (1 << 30) - 2);
++	KUNIT_EXPECT_EQ(test, rounddown((1 << 30) - 1, 1 << 29), 1 << 29);
++
++	KUNIT_EXPECT_EQ(test, rounddown(3, 2), 2);
++	KUNIT_EXPECT_EQ(test, rounddown(4, 3), 3);
++}
++
++static void div_round_up_test(struct kunit *test)
++{
++	KUNIT_EXPECT_EQ(test, DIV_ROUND_UP(0, 1), 0);
++	KUNIT_EXPECT_EQ(test, DIV_ROUND_UP(20, 10), 2);
++	KUNIT_EXPECT_EQ(test, DIV_ROUND_UP(21, 10), 3);
++	KUNIT_EXPECT_EQ(test, DIV_ROUND_UP(21, 20), 2);
++	KUNIT_EXPECT_EQ(test, DIV_ROUND_UP(21, 99), 1);
++}
++
++static void div_round_closest_test(struct kunit *test)
++{
++	KUNIT_EXPECT_EQ(test, DIV_ROUND_CLOSEST(0, 1), 0);
++	KUNIT_EXPECT_EQ(test, DIV_ROUND_CLOSEST(20, 10), 2);
++	KUNIT_EXPECT_EQ(test, DIV_ROUND_CLOSEST(21, 10), 2);
++	KUNIT_EXPECT_EQ(test, DIV_ROUND_CLOSEST(25, 10), 3);
++}
++
++/* Generic test case for unsigned long inputs. */
++struct test_case {
++	unsigned long a, b;
++	unsigned long result;
++};
++
++static struct test_case gcd_cases[] = {
++	{
++		.a = 0, .b = 0,
++		.result = 0,
++	},
++	{
++		.a = 0, .b = 1,
++		.result = 1,
++	},
++	{
++		.a = 2, .b = 2,
++		.result = 2,
++	},
++	{
++		.a = 2, .b = 4,
++		.result = 2,
++	},
++	{
++		.a = 3, .b = 5,
++		.result = 1,
++	},
++	{
++		.a = 3 * 9, .b = 3 * 5,
++		.result = 3,
++	},
++	{
++		.a = 3 * 5 * 7, .b = 3 * 5 * 11,
++		.result = 15,
++	},
++	{
++		.a = 1 << 21,
++		.b = (1 << 21) - 1,
++		.result = 1,
++	},
++};
++
++KUNIT_ARRAY_PARAM(gcd, gcd_cases, NULL);
++
++static void gcd_test(struct kunit *test)
++{
++	const char *message_fmt = "gcd(%lu, %lu)";
++	const struct test_case *test_param = test->param_value;
++
++	KUNIT_EXPECT_EQ_MSG(test, test_param->result,
++			    gcd(test_param->a, test_param->b),
++			    message_fmt, test_param->a,
++			    test_param->b);
++
++	if (test_param->a == test_param->b)
++		return;
++
++	/* gcd(a,b) == gcd(b,a) */
++	KUNIT_EXPECT_EQ_MSG(test, test_param->result,
++			    gcd(test_param->b, test_param->a),
++			    message_fmt, test_param->b,
++			    test_param->a);
++}
++
++static struct test_case lcm_cases[] = {
++	{
++		.a = 0, .b = 0,
++		.result = 0,
++	},
++	{
++		.a = 0, .b = 1,
++		.result = 0,
++	},
++	{
++		.a = 1, .b = 2,
++		.result = 2,
++	},
++	{
++		.a = 2, .b = 2,
++		.result = 2,
++	},
++	{
++		.a = 3 * 5, .b = 3 * 7,
++		.result = 3 * 5 * 7,
++	},
++};
++
++KUNIT_ARRAY_PARAM(lcm, lcm_cases, NULL);
++
++static void lcm_test(struct kunit *test)
++{
++	const char *message_fmt = "lcm(%lu, %lu)";
++	const struct test_case *test_param = test->param_value;
++
++	KUNIT_EXPECT_EQ_MSG(test, test_param->result,
++			    lcm(test_param->a, test_param->b),
++			    message_fmt, test_param->a,
++			    test_param->b);
++
++	if (test_param->a == test_param->b)
++		return;
++
++	/* lcm(a,b) == lcm(b,a) */
++	KUNIT_EXPECT_EQ_MSG(test, test_param->result,
++			    lcm(test_param->b, test_param->a),
++			    message_fmt, test_param->b,
++			    test_param->a);
++}
++
++struct u32_test_case {
++	u32 a, b;
++	u32 result;
++};
++
++static struct u32_test_case reciprocal_div_cases[] = {
++	{
++		.a = 0, .b = 1,
++		.result = 0,
++	},
++	{
++		.a = 42, .b = 20,
++		.result = 2,
++	},
++	{
++		.a = 42, .b = 9999,
++		.result = 0,
++	},
++	{
++		.a = (1 << 16), .b = (1 << 14),
++		.result = 1 << 2,
++	},
++};
++
++KUNIT_ARRAY_PARAM(reciprocal_div, reciprocal_div_cases, NULL);
++
++static void reciprocal_div_test(struct kunit *test)
++{
++	const struct u32_test_case *test_param = test->param_value;
++	struct reciprocal_value rv = reciprocal_value(test_param->b);
++
++	KUNIT_EXPECT_EQ_MSG(test, test_param->result,
++			    reciprocal_divide(test_param->a, rv),
++			    "reciprocal_divide(%u, %u)",
++			    test_param->a, test_param->b);
++}
++
++static void reciprocal_scale_test(struct kunit *test)
++{
++	KUNIT_EXPECT_EQ(test, reciprocal_scale(0u, 100), 0u);
++	KUNIT_EXPECT_EQ(test, reciprocal_scale(1u, 100), 0u);
++	KUNIT_EXPECT_EQ(test, reciprocal_scale(1u << 4, 1 << 28), 1u);
++	KUNIT_EXPECT_EQ(test, reciprocal_scale(1u << 16, 1 << 28), 1u << 12);
++	KUNIT_EXPECT_EQ(test, reciprocal_scale(~0u, 1 << 28), (1u << 28) - 1);
++}
++
++static struct kunit_case math_test_cases[] = {
++	KUNIT_CASE(abs_test),
++	KUNIT_CASE(int_sqrt_test),
++	KUNIT_CASE(round_up_test),
++	KUNIT_CASE(round_down_test),
++	KUNIT_CASE(roundup_test),
++	KUNIT_CASE(rounddown_test),
++	KUNIT_CASE(div_round_up_test),
++	KUNIT_CASE(div_round_closest_test),
++	KUNIT_CASE_PARAM(gcd_test, gcd_gen_params),
++	KUNIT_CASE_PARAM(lcm_test, lcm_gen_params),
++	KUNIT_CASE_PARAM(reciprocal_div_test, reciprocal_div_gen_params),
++	KUNIT_CASE(reciprocal_scale_test),
++	{}
++};
++
++static struct kunit_suite math_test_suite = {
++	.name = "lib-math",
++	.test_cases = math_test_cases,
++};
++
++kunit_test_suites(&math_test_suite);
++
++MODULE_LICENSE("GPL");
+-- 
+2.39.1
+
 
