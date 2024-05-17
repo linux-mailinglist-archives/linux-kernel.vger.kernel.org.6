@@ -1,266 +1,207 @@
-Return-Path: <linux-kernel+bounces-182398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AFB08C8AD6
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:21:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4F648C8ADA
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:22:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8BF61F2840D
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:21:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F3E8B23023
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:22:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29EF913DBBE;
-	Fri, 17 May 2024 17:21:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C42B913DDBC;
+	Fri, 17 May 2024 17:22:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EoyEzdFv"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="bq+Keewj"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05olkn2096.outbound.protection.outlook.com [40.92.91.96])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8584113DB83
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 17:21:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715966505; cv=none; b=CEv1NHdstx2dyoPGE7WNGpAXhbSo+DL50lMLhbYpHnUYVr0OefHGD8jXdp0tSFsJ13V613E/XltIR3nAx1zyKWv0ZWHdeorGEHo8WFYJlnin5xDnT9yfeiTg3EUe/jmXRBDIs4o8elO0Tz9CkKWPEDzoApUMu6GF6FAFv4mxB8s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715966505; c=relaxed/simple;
-	bh=TDt0aSlSeO1W8R0aLW312iI7Pq6wK9Emi1wPw+nuOzg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QHB5a7ogZbbZ/G3Zk8K/TzclyHOXslZGflfDm+hYwvfELzNelihmBB+VIA26uDt8yU3oyoeRaQPMlaHA/HCww5krY6SQthyX1p9RVFV6XWxrLAGo5YAbSmlQHRz0UFk7ZQKoV0rCeAF6xfDN3lJYHWiLw1N7S7INUXhB1kOvu34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EoyEzdFv; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715966503; x=1747502503;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=TDt0aSlSeO1W8R0aLW312iI7Pq6wK9Emi1wPw+nuOzg=;
-  b=EoyEzdFvkiHvoI2t8mUSi0DCjL6o7K3C/FCYA6zpAuccdJKk/ObHid2y
-   PzIO7r6Sn8dB7gTxxaiNeYo6uSgC0qdHSfL3uRHC09/1Jpsj1C0J9O4eM
-   8+A0RiXMgAuNuK4OvBk0ydOQiyrV4TLs4dQRFlttMCL8Cx90LKv4FhyYJ
-   CgIXZj9sUV5w/0GR0wUifOUIx05JXSKuP1jUFxXHB+tb25pj0qG49vDeR
-   PDQJbVzFaOWeS0cBoVBdFgg0CxeenbosHKT3nrhmcTsQYKhT4sioj2xXQ
-   Pv8I9j2okLsWmfBTAxMpoNxnmvT7yQiougvulcJ4KbAjGQGX2JFOHTN98
-   w==;
-X-CSE-ConnectionGUID: BX5S9rhfQwWaaikOo6CvVQ==
-X-CSE-MsgGUID: GaZ6qNorTcOOaLEQa7Tz2g==
-X-IronPort-AV: E=McAfee;i="6600,9927,11075"; a="22833124"
-X-IronPort-AV: E=Sophos;i="6.08,168,1712646000"; 
-   d="scan'208";a="22833124"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 10:21:42 -0700
-X-CSE-ConnectionGUID: URzGRJRHR+OhjJwyubxITA==
-X-CSE-MsgGUID: 4Sw5FwBRRHOeDKhSWZxYZw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,168,1712646000"; 
-   d="scan'208";a="32416073"
-Received: from agluck-desk3.sc.intel.com ([172.25.222.105])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 10:21:41 -0700
-From: Tony Luck <tony.luck@intel.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org
-Cc: "H. Peter Anvin" <hpa@zytor.com>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Uros Bizjak <ubizjak@gmail.com>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Tony Luck <tony.luck@intel.com>,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	Thomas Renninger <trenn@suse.de>,
-	Greg Kroah-Hartman <gregkh@suse.de>,
-	Andi Kleen <ak@linux.intel.com>,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A12013DBA8;
+	Fri, 17 May 2024 17:22:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.91.96
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715966540; cv=fail; b=rrfmx78kiQPVRBR3vLKm5HvHKlfDOH91y9xxDhlSKPRdJHxj6CpILz+bPhEViVEMTyj0O4KF91CAykIruLjv4sidXzVEjn2cjBBLh0arwRi4a92wVjA2wcnJvaXtJ44byW6Tw9U0WC/qUYhVXd3VWsiVPaBXgFvhiVDyrxb+LVc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715966540; c=relaxed/simple;
+	bh=zfGYCYCTsVjgOGh0USQRYsk//hl5jvLDFo/kHNWT1xM=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=nrhsbxX2V+9fJCyDLI9jEfbeC2o3rLpRZBYev8Dc+jcZxVmltRmt6OnR7RF9uX2B8AhyNb5KY61Nm+4F2n+udA69ZhpwnB4/1F+KDQVEzdp2XZDX/LBUUdQuBCDYcAKlJNe/em1nfwg3DVDm2o3G3ZlY/AFSVNkGEELo4JOD5dE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=bq+Keewj; arc=fail smtp.client-ip=40.92.91.96
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=T5KCxvMqplgO+zE2NRIAB9yjwCKNCqKET+pUyXrR6sO62eLKzMbRRYIiT4WuepvVvoArYuxMXl0ypf33XkpoJvuoErmIqhfjHzGyvfzQZ0G2qXIsz/+uAYukP+nRVvV/IjVwQJUMy3GAf5y2w16ABRMNVjYyUGjx8yjcliHna21YN4U4NS3upK+c3tpVfiwzJBs8l7IqdR+3bsg7dxzuNiS9SZSC93naqKHO81eL8e/dyFQi44KQJ9OarEVFuQwCYgh7tueoniF6oAeg8hw6u/0nD+rUFd4n2Iloq0/jy3qvL8D63Xd0YSuJiKogTL9au+9z3nLXYZtloM8Wtr/Nkw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=brKLmGcjtCzC9NlGG9vJLiNdOEeQppFxJprMiKEwQf4=;
+ b=g+x5bK3Uo7qyLRR84KGfS/Jl9moJ7ZNZHXrtNjJxkuyyFagw4qcpG+ROnfEeaTqDin6oLLhHDwDqpKhwWQXWJ7nPrAh2u1h+efLqiP1ZqXL1X2pgVah5ipzZT0mzs036N3dFRF/TTVivjoyWsmWGFwMvSiGV9YvuncO16TaiW6xJS47GvEsG72qykyF3YTeJbSvsB722pp766gwtiavZTsqpGYLtUTkM2UgHArjLjusSFDY+KO13TleeHJ9zXV4ixdQta8p85wtEts4rfclDfTPiQaMjLR9imChWOu23uJMq6LHwP3GP1q+8fk4FePHOt0zz+wtD4tH6gtdI5gPADw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=brKLmGcjtCzC9NlGG9vJLiNdOEeQppFxJprMiKEwQf4=;
+ b=bq+KeewjLDpo0OTlRDOBI0bRYvd7GQ40/BtiZnuFp+nnYSHc1q9nOEtp4HfuiaGtmf46XhYznZChbNdIhoG3Pp2F1cdZJxhbPMcVwkt0JFpTJcqyqJnvzn3hU19WYXt27w9lfrSigvbui1k+4z1s6xdNWkwCiEdh3MgaBQiO94/m2w5b2RQTPVKRIXhk+FtEZpejsdJDybJLrU8+XnvbE4oKlJAaq3a2lFSpN0CZOHMOpxjVwVBKIGBTcb7LJ3TGZ2CZEQ8v0VV1+HOlrM6VgMVPS7HiWqgPReSyA7CKDP88rGtCAnTuCkUpuGWHSkgHTZJGE/k2uv50pRIOuo6F7g==
+Received: from AS8PR02MB7237.eurprd02.prod.outlook.com (2603:10a6:20b:3f1::10)
+ by AM7PR02MB6195.eurprd02.prod.outlook.com (2603:10a6:20b:1ac::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.30; Fri, 17 May
+ 2024 17:22:15 +0000
+Received: from AS8PR02MB7237.eurprd02.prod.outlook.com
+ ([fe80::409b:1407:979b:f658]) by AS8PR02MB7237.eurprd02.prod.outlook.com
+ ([fe80::409b:1407:979b:f658%5]) with mapi id 15.20.7587.028; Fri, 17 May 2024
+ 17:22:15 +0000
+From: Erick Archer <erick.archer@outlook.com>
+To: Marcel Holtmann <marcel@holtmann.org>,
+	Johan Hedberg <johan.hedberg@gmail.com>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Kees Cook <keescook@chromium.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Erick Archer <erick.archer@outlook.com>,
+	linux-bluetooth@vger.kernel.org,
+	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev
-Subject: [PATCH v3] x86/cpu: Fix x86_match_cpu() to match just X86_VENDOR_INTEL
-Date: Fri, 17 May 2024 10:21:34 -0700
-Message-ID: <20240517172134.7255-1-tony.luck@intel.com>
-X-Mailer: git-send-email 2.45.0
+	linux-hardening@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: [PATCH v3 0/2] tty: rfcomm: refactor rfcomm_get_dev_list() function
+Date: Fri, 17 May 2024 19:21:48 +0200
+Message-ID:
+ <AS8PR02MB7237393A039AC1EFA204831F8BEE2@AS8PR02MB7237.eurprd02.prod.outlook.com>
+X-Mailer: git-send-email 2.25.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TMN: [nejQjQ7PGntaNje7bd61MTfW/wdD94bC]
+X-ClientProxiedBy: MA2P292CA0028.ESPP292.PROD.OUTLOOK.COM (2603:10a6:250::15)
+ To AS8PR02MB7237.eurprd02.prod.outlook.com (2603:10a6:20b:3f1::10)
+X-Microsoft-Original-Message-ID:
+ <20240517172150.5476-1-erick.archer@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS8PR02MB7237:EE_|AM7PR02MB6195:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5b413c75-aca7-466a-aad9-08dc7695e579
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|461199019|1602099003|3412199016|440099019|1710799017;
+X-Microsoft-Antispam-Message-Info:
+	PS0ryx0K+03RjK2hh+H8InpoCPjSfi1BsuprjpJiltVlocEspQqEzpnzB7eR6r/S24hPW5kr83wuuFu79RPVSNqcSA+YMmZa2uzRpALydXpbVGGvHXLHxeIdJ6F/p0lCUJTm/BYv4+QiXQ/QsNZH6jw0ovArqtNri9ZrTmxidZqCEBTxw7YIxQtTzpgPa4VDH425x7fZZ0ewd6RI02LOhRAGgu5tf0DHuL+va/hlvtduLtBhvmUIhbuyVbDpM6gq8E/4leGsuUP6gPGi4mszsU4uQ28isDo5BN/K1LtimnXVWcst7AyemvwyVZwvvVMIRQN52XcVJBJp0Pwh3x15XclHs5W6HKGg8S4D2oJT1mBWFOsoXa7wX4L9G5eNxUBIVTCdOKqPqNGn4ipEFOlgNgfnKVtSp/by5yDG+nVGiNfpDPK+hkj+uY40IOT4F3FEX/Y2g+EABY5xq5DviQpT1gDvq0GKictCcolKWP6t8gICg+gPGtToqGEaXlW5w0BtUMWiE+WbQ5Jg9j2Uo/feQXUm5+5tEwvPrvu6YIdeUNT/UkrKFdU8pZzBaF9CQNczbbVWHV8hl1vTTcVeZ/7j1JJOjpraUMMSnRsThRZhm6iIzn1oqSQGcuZjvkjbyU6wx9aQ5woikaKfDMURK0R1ph6xuoE5SuJXUHlgcNeYbcns+HsjVBtdBflkov8AsWoZyXu7msSwH1pcOF263D9iVA==
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?TXKqt8yIOX2R3/CRFUomQ2eNt50LQezZv1hSuAgR/jIa1YAFQ9V4dtga+7Yd?=
+ =?us-ascii?Q?lStZBlWTdfTS3jhbFWVHKyWtTbHsVPxqR7zudTyjQ+flVGjguLjBN29Pd1Qr?=
+ =?us-ascii?Q?p4qTlBZTxhU/IKMgL+yMu++lEamlnrG+15XqwS3g9W1J3xIuRYFDicG6rKkn?=
+ =?us-ascii?Q?iUR1sdmgj+xk8E6amJW/cvNK9b7uT3CLFJnN8Wpa8W8EN7ME5xLCDJxr9ct3?=
+ =?us-ascii?Q?Y1y8EKICEQHXdlfTc0XUmtWasFu19Ax/HTtvwFNwH6CNRYb4tfEIJNCcUJve?=
+ =?us-ascii?Q?rgtVtHm6Gg3tfEXiuOcQy9VJYUHKm/mCLuZmtewY0yUaz21gr4cTx4Bf+JNj?=
+ =?us-ascii?Q?S7QEM5hqs/wALr8O4nvY8S2g1vD9Mv5DVSh44ryjNmgTTTmNt2u+Put5kur+?=
+ =?us-ascii?Q?neFayCH5pihKCzAqwoEp59OaJys1uzIAFUpIa/IvtDt4KnNpXbSV44Jk0LK7?=
+ =?us-ascii?Q?p7jW04U0lsf8dFpGHOLq6APMN+a1bS5SKSh7Y53ybHkN+YT/IHf8qehoh+pj?=
+ =?us-ascii?Q?lkCueEgTNIcjmGaaTdJDgFVk7McA6g0YoVaThBi2tW4RBS+8cOgQ7LZ5uHYc?=
+ =?us-ascii?Q?G2iv2gdF5PVT6/cANh6mP/uKxW6sDuXGJWc4vb9Pta83wb3jKBg60rjHM8ng?=
+ =?us-ascii?Q?5FWgiIzuQwhq1KyMPDKJcemuYcUhgC5IG6TYDMm108YU2um/pUd5mgz9LK4R?=
+ =?us-ascii?Q?LDs0XwIVY7UDRbkWOlOB21Qz+jopi3sRFIHXZ8twQaAr6pVCgR1/tSDzpNet?=
+ =?us-ascii?Q?qphaqTls9q/NnMzl/eti7TDglixgEVKPr2qFsB206PWglU46HxlTEhaQ+glF?=
+ =?us-ascii?Q?+Y0YUd6QK5/C+LsFcUJPkC2g6702E206R7aZoA/Z5ajH2ns0YDJ+qBNq3wgl?=
+ =?us-ascii?Q?ZgvTw0vk+DHObsgElxjMj2otLhCZ4x8r1o7SUMoLd/mcgR8wBMKERDnajrrZ?=
+ =?us-ascii?Q?cEB0Tv+fjV+OXC8hIkOu9NFwLChBCl8DOAUcSI13Pb35gcL1D9N5t8J4F4zU?=
+ =?us-ascii?Q?wfiPOyhrLJNUXIhy2dlepbS5mO/BjmPYmjzs9vFjlczYSGwqxqDKfQals5l8?=
+ =?us-ascii?Q?7mbOqXpI2HyjDLL8TuI3tdlP/DTxsavb4tT7dx1G0d4aAk7Q6Wpy59Twak1H?=
+ =?us-ascii?Q?SRnpsn2+Z8CRNdZL3ExmgNbmgq3o7H5/73F2FcMD6db7mlciHr/vlXU9MXkM?=
+ =?us-ascii?Q?JSLZRJrlnEeGslrnhiQGoKhwMUNUpwyoo4MMQmN1vRbsTfbpdgCaI3XD+0cv?=
+ =?us-ascii?Q?TRBFGlDL4ekREZmmO+J+?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5b413c75-aca7-466a-aad9-08dc7695e579
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR02MB7237.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 May 2024 17:22:15.7768
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR02MB6195
 
-Code in v6.9 arch/x86/kernel/smpboot.c was changed by commit 4db64279bc2b
-("x86/cpu: Switch to new Intel CPU model defines") from old code:
+This is an effort to get rid of all multiplications from allocation
+functions in order to prevent integer overflows [1][2].
 
- 440 static const struct x86_cpu_id intel_cod_cpu[] = {
- 441         X86_MATCH_INTEL_FAM6_MODEL(HASWELL_X, 0),       /* COD */
- 442         X86_MATCH_INTEL_FAM6_MODEL(BROADWELL_X, 0),     /* COD */
- 443         X86_MATCH_INTEL_FAM6_MODEL(ANY, 1),             /* SNC */
- 444         {}
- 445 };
- 446
- 447 static bool match_llc(struct cpuinfo_x86 *c, struct cpuinfo_x86 *o)
- 448 {
- 449         const struct x86_cpu_id *id = x86_match_cpu(intel_cod_cpu);
+As the "dl" variable is a pointer to "struct rfcomm_dev_list_req" and
+this structure ends in a flexible array:
 
-new code:
+struct rfcomm_dev_list_req {
+	[...]
+	struct   rfcomm_dev_info dev_info[];
+};
 
-440 static const struct x86_cpu_id intel_cod_cpu[] = {
- 441         X86_MATCH_VFM(INTEL_HASWELL_X,   0),    /* COD */
- 442         X86_MATCH_VFM(INTEL_BROADWELL_X, 0),    /* COD */
- 443         X86_MATCH_VFM(INTEL_ANY,         1),    /* SNC */
- 444         {}
- 445 };
- 446
- 447 static bool match_llc(struct cpuinfo_x86 *c, struct cpuinfo_x86 *o)
- 448 {
- 449         const struct x86_cpu_id *id = x86_match_cpu(intel_cod_cpu);
+the preferred way in the kernel is to use the struct_size() helper to
+do the arithmetic instead of the calculation "size + count * size" in
+the kzalloc() and copy_to_user() functions.
 
-On an Intel CPU with SNC enabled this code previously matched the rule
-on line 443 to avoid printing messages about insane cache configuration.
-The new code did not match any rules.
+At the same time, prepare for the coming implementation by GCC and Clang
+of the __counted_by attribute. Flexible array members annotated with
+__counted_by can have their accesses bounds-checked at run-time via
+CONFIG_UBSAN_BOUNDS (for array indexing) and CONFIG_FORTIFY_SOURCE (for
+strcpy/memcpy-family functions).
 
-Expanding the macros for the intel_cod_cpu[] array shows that the old
-is equivalent to:
+In this case, it is important to note that the logic needs a little
+refactoring to ensure that the "dev_num" member is initialized before
+the first access to the flex array. Specifically, add the assignment
+before the list_for_each_entry() loop.
 
-static const struct x86_cpu_id intel_cod_cpu[] = {
-[0] = { .vendor = 0, .family = 6, .model = 0x3F, .steppings = 0, .feature = 0, .driver_data = 0 },
-[1] = { .vendor = 0, .family = 6, .model = 0x4F, .steppings = 0, .feature = 0, .driver_data = 0 },
-[2] = { .vendor = 0, .family = 6, .model = 0x00, .steppings = 0, .feature = 0, .driver_data = 1 },
-[3] = { .vendor = 0, .family = 0, .model = 0x00, .steppings = 0, .feature = 0, .driver_data = 0 }
-}
+Also remove the "size" variable as it is no longer needed and refactor
+the list_for_each_entry() loop to use di[n] instead of (di + n).
 
-while the new code expands to:
+This way, the code is more readable, idiomatic and safer.
 
-static const struct x86_cpu_id intel_cod_cpu[] = {
-[0] = { .vendor = 0, .family = 6, .model = 0x3F, .steppings = 0, .feature = 0, .driver_data = 0 },
-[1] = { .vendor = 0, .family = 6, .model = 0x4F, .steppings = 0, .feature = 0, .driver_data = 0 },
-[2] = { .vendor = 0, .family = 0, .model = 0x00, .steppings = 0, .feature = 0, .driver_data = 1 },
-[3] = { .vendor = 0, .family = 0, .model = 0x00, .steppings = 0, .feature = 0, .driver_data = 0 }
-}
+This code was detected with the help of Coccinelle, and audited and
+modified manually.
 
-Looking at the code for x86_match_cpu():
+Specifically, the first patch is related to the struct_size() helper
+and the second patch refactors the list_for_each_entry() loop to use
+array indexing instead of pointer arithmetic.
 
-36 const struct x86_cpu_id *x86_match_cpu(const struct x86_cpu_id *match)
- 37 {
- 38         const struct x86_cpu_id *m;
- 39         struct cpuinfo_x86 *c = &boot_cpu_data;
- 40
- 41         for (m = match;
- 42              m->vendor | m->family | m->model | m->steppings | m->feature;
- 43              m++) {
-			...
- 56         }
- 57         return NULL;
- 58 }
- 59 EXPORT_SYMBOL(x86_match_cpu);
+Regards,
+Erick
 
-it is clear that there was no match because the ANY entry in the table
-(array index 2) is now the loop termination condition (all of vendor,
-family, model, steppings, and feature are zero).
-
-So this code was working before because the "ANY" check was looking for
-any Intel CPU in family 6. But fails now because the family is a wild
-card. So the root cause is that x86_match_cpu() has never been able to
-match on a rule with just X86_VENDOR_INTEL and all other fields set to
-wildcards.
-
-Fix by adding a new flags field to struct x86_cpu_id that has a bit set
-to indicate that the vendor field is valid. Update X86_MATCH*() macros
-to set that bit. Extend the end-marker check in x86_match_cpu() to
-check the flags field too.
-
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Suggested-by: Borislav Petkov <bp@alien8.de>
-Fixes: 644e9cbbe3fc ("Add driver auto probing for x86 features v4")
-Signed-off-by: Tony Luck <tony.luck@intel.com>
+Link: https://www.kernel.org/doc/html/latest/process/deprecated.html#open-coded-arithmetic-in-allocator-arguments [1]
+Link: https://github.com/KSPP/linux/issues/160 [2]
 ---
+Changes in v3:
+- Add the "Reviewed-by:" tags.
+- Split the changes in two commits (Jiri Slaby, Luiz Augusto von Dentz).
 
-Changes since v1:
-1) More detailed commit description.
-2) Changed "Fixes" tag. Commit 4db64279bc2b merely revealed a twelve
-   year old gap in the implementation of x86_match_cpu().
+Changes in v2:
+- Add the __counted_by() attribute (Kees Cook).
+- Refactor the list_for_each_entry() loop to use di[n] instead of
+  (di + n) (Kees Cook).
 
- arch/x86/include/asm/processor.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-index cb4f6c513c48..271c4c95bc37 100644
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -175,10 +175,10 @@ struct cpuinfo_x86 {
- 	unsigned		initialized : 1;
- } __randomize_layout;
-
--#define X86_VENDOR_INTEL	0
- #define X86_VENDOR_CYRIX	1
- #define X86_VENDOR_AMD		2
- #define X86_VENDOR_UMC		3
-+#define X86_VENDOR_INTEL	4
- #define X86_VENDOR_CENTAUR	5
- #define X86_VENDOR_TRANSMETA	7
- #define X86_VENDOR_NSC		8
---
-2.44.0
+Previous versions:
+v2 -> https://lore.kernel.org/linux-hardening/AS8PR02MB7237262C62B054FABD7229168BE12@AS8PR02MB7237.eurprd02.prod.outlook.com/
+v1 -> https://lore.kernel.org/linux-hardening/AS8PR02MB723725E0069F7AE8F64E876E8B142@AS8PR02MB7237.eurprd02.prod.outlook.com/
 ---
- include/linux/mod_devicetable.h      | 4 ++++
- arch/x86/include/asm/cpu_device_id.h | 2 ++
- arch/x86/kernel/cpu/match.c          | 2 +-
- 3 files changed, 7 insertions(+), 1 deletion(-)
+Erick Archer (2):
+  tty: rfcomm: prefer struct_size over open coded arithmetic
+  tty: rfcomm: prefer array indexing over pointer arithmetic
 
-diff --git a/include/linux/mod_devicetable.h b/include/linux/mod_devicetable.h
-index 7a9a07ea451b..ede1bd8bc4b1 100644
---- a/include/linux/mod_devicetable.h
-+++ b/include/linux/mod_devicetable.h
-@@ -690,6 +690,7 @@ struct x86_cpu_id {
- 	__u16 model;
- 	__u16 steppings;
- 	__u16 feature;	/* bit index */
-+	__u16 flags;
- 	kernel_ulong_t driver_data;
- };
- 
-@@ -700,6 +701,9 @@ struct x86_cpu_id {
- #define X86_STEPPING_ANY 0
- #define X86_FEATURE_ANY 0	/* Same as FPU, you can't test for that */
- 
-+/* x86_cpu_id::flags */
-+#define X86_CPU_ID_FLAG_VENDOR_VALID	BIT(0)
-+
- /*
-  * Generic table type for matching CPU features.
-  * @feature:	the bit number of the feature (0 - 65535)
-diff --git a/arch/x86/include/asm/cpu_device_id.h b/arch/x86/include/asm/cpu_device_id.h
-index 970a232009c3..7fde9bd896d3 100644
---- a/arch/x86/include/asm/cpu_device_id.h
-+++ b/arch/x86/include/asm/cpu_device_id.h
-@@ -79,6 +79,7 @@
- 	.model		= _model,					\
- 	.steppings	= _steppings,					\
- 	.feature	= _feature,					\
-+	.flags		= X86_CPU_ID_FLAG_VENDOR_VALID,			\
- 	.driver_data	= (unsigned long) _data				\
- }
- 
-@@ -89,6 +90,7 @@
- 	.model		= _model,					\
- 	.steppings	= _steppings,					\
- 	.feature	= _feature,					\
-+	.flags		= X86_CPU_ID_FLAG_VENDOR_VALID,			\
- 	.driver_data	= (unsigned long) _data				\
- }
- 
-diff --git a/arch/x86/kernel/cpu/match.c b/arch/x86/kernel/cpu/match.c
-index 8651643bddae..996f96cfce68 100644
---- a/arch/x86/kernel/cpu/match.c
-+++ b/arch/x86/kernel/cpu/match.c
-@@ -39,7 +39,7 @@ const struct x86_cpu_id *x86_match_cpu(const struct x86_cpu_id *match)
- 	struct cpuinfo_x86 *c = &boot_cpu_data;
- 
- 	for (m = match;
--	     m->vendor | m->family | m->model | m->steppings | m->feature;
-+	     m->vendor | m->family | m->model | m->steppings | m->feature | m->flags;
- 	     m++) {
- 		if (m->vendor != X86_VENDOR_ANY && c->x86_vendor != m->vendor)
- 			continue;
+ include/net/bluetooth/rfcomm.h |  2 +-
+ net/bluetooth/rfcomm/tty.c     | 23 ++++++++++-------------
+ 2 files changed, 11 insertions(+), 14 deletions(-)
+
 -- 
-2.45.0
+2.25.1
 
 
