@@ -1,50 +1,86 @@
-Return-Path: <linux-kernel+bounces-182180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69AA68C87D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 16:19:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D86F28C87D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 16:20:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 042721F2128C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 14:19:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F8071F25002
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 14:20:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C8885C61C;
-	Fri, 17 May 2024 14:19:35 +0000 (UTC)
-Received: from exchange.fintech.ru (exchange.fintech.ru [195.54.195.159])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 867D95E060;
+	Fri, 17 May 2024 14:19:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FtCvrHL3"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA8C054F95;
-	Fri, 17 May 2024 14:19:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.54.195.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39BF15B1E9;
+	Fri, 17 May 2024 14:19:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715955575; cv=none; b=jSOLwyviHtmC+7ShF4m1spPBOh1QxKWFjGjiQ8bLvW3m8nqT9MG148f1XNPUWAFAbnMwJqdpORpM5xahJ8Myv0jyR/MzRlomndbPB5tsrTzbQD99CQnWYUUL6rTju9uful7oGMoDW4Rwo+uSDli6jdunPXXr6szpYJto2iGyfCM=
+	t=1715955597; cv=none; b=gceHemCFQL61eGNNgcoywFSYcA7GDPtAV6CuRMYAr0PM0qjlUpVQEYqT9eCAd5K8McZ6vKUYSaGNQ5dkW38tBzdbc3uWKEowg85t02uxBNPGVDtWlmx1fts4Vq3Dx/Nj0pTo0AOPqWRyJnpXlQUiTCd5lKJqyreXmLcazG++muU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715955575; c=relaxed/simple;
-	bh=0Z19W0lYssVtBpmc2IGLBgu9eupgPGN+qoB0RUqW9UU=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tYzdaW3pJ4ycA1MqGU5nH5JNbiwqFvZJhUNLowNm5B3O2T3ICCBYMTzWSyn/HCg1Vta6vRQlgchFzsT/+DTP79YozsKdG0Qur5ujJuapxOo9Il/Et0ZmNzvXODngVyVneKLnz4Z7ZbuAKpWkZnrwK5RymYyLeyElHH/swgLReKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru; spf=pass smtp.mailfrom=fintech.ru; arc=none smtp.client-ip=195.54.195.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fintech.ru
-Received: from Ex16-01.fintech.ru (10.0.10.18) by exchange.fintech.ru
- (195.54.195.169) with Microsoft SMTP Server (TLS) id 14.3.498.0; Fri, 17 May
- 2024 17:19:20 +0300
-Received: from localhost (10.0.253.138) by Ex16-01.fintech.ru (10.0.10.18)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Fri, 17 May
- 2024 17:19:20 +0300
-From: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
-To: Jiri Kosina <jikos@kernel.org>
-CC: Nikita Zhandarovich <n.zhandarovich@fintech.ru>, Benjamin Tissoires
-	<bentiss@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "Douglas
- Anderson" <dianders@chromium.org>, <linux-input@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Alan Stern <stern@rowland.harvard.edu>,
-	<syzbot+5186630949e3c55f0799@syzkaller.appspotmail.com>
-Subject: [PATCH] HID: core: remove unnecessary WARN_ON() in implement()
-Date: Fri, 17 May 2024 07:19:14 -0700
-Message-ID: <20240517141914.8604-1-n.zhandarovich@fintech.ru>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1715955597; c=relaxed/simple;
+	bh=qdA+03KUUXrXT1TuR3oQCBn2z6vx7qFJuNLOGkZcBqs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZInZ50UZ9ww6hhHDG0ZqmnRydybz+fPxfPRXAJmVVc9tEmn91c06i7Za+A2ArIJ+5mDDSNdwrt8flidydYAJeWz8JpdLJYO+W2iPPelL8VgFF6BLJQRDyiLqU+lS4l2FyCGmbt4mMnW7Qx/GwNcwtUQhodIM37eI2P8Xvh0MfWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.helo=mgamail.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FtCvrHL3; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.helo=mgamail.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715955595; x=1747491595;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=qdA+03KUUXrXT1TuR3oQCBn2z6vx7qFJuNLOGkZcBqs=;
+  b=FtCvrHL3GQYmxWI0MPCBgfkDxoS3O6ceuAD8wOJdkgG6AlIoKr5/itOf
+   NL0FTpe8H0uw4ovB+5SFd4sYAhfIEW0iGJp4QJAaZLH4t+6/hsNb7pcR/
+   Pcr7/hcsvn4hnOujDE4Di0rPoV3FWkOuEcXuSWFx9XVJfTgeITJaMU6Tl
+   iI5DZFWOg/3c1neOihhYzTETxa4wiwHSSpVU1G5254D+yxgu28hj+DPzi
+   3731sz4WfEkZDCfbOglwOTAh4S3Sb/I1PgndZ8C25E+PVD9a8UyjR+TeC
+   uUz61FPjiKiD5KEBTZu0DAi8TxhTPmnp8gfE1+W55xvFA3QxraeDOPiT7
+   g==;
+X-CSE-ConnectionGUID: /Esa/iugTg2Ciqgi6JjTAw==
+X-CSE-MsgGUID: nFPruNq6SJ+L4aBwPEG9gQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11075"; a="22808550"
+X-IronPort-AV: E=Sophos;i="6.08,167,1712646000"; 
+   d="scan'208";a="22808550"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 07:19:55 -0700
+X-CSE-ConnectionGUID: pUPJyHyVRUGTE9+FDhsMig==
+X-CSE-MsgGUID: mfRJ+xSfS/+hypUxdYOegA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,167,1712646000"; 
+   d="scan'208";a="31944605"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa009.jf.intel.com with ESMTP; 17 May 2024 07:19:51 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 83A2319E; Fri, 17 May 2024 17:19:49 +0300 (EEST)
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>,
+	Dexuan Cui <decui@microsoft.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>
+Cc: linux-coco@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-hyperv@vger.kernel.org,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: [PATCH 00/20] x86/tdx: Rewrite TDCALL wrappers
+Date: Fri, 17 May 2024 17:19:18 +0300
+Message-ID: <20240517141938.4177174-1-kirill.shutemov@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,60 +88,59 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: Ex16-02.fintech.ru (10.0.10.19) To Ex16-01.fintech.ru
- (10.0.10.18)
 
-Syzkaller hit a warning [1] in a call to implement() when trying
-to write a value into a field of smaller size in an output report.
+Sean noticing that the TDCALL wrappers were generating a lot of awful
+code.
 
-Since implement() already has a warn message printed out with the
-help of hid_warn() and value in question gets trimmed with:
-	...
-	value &= m;
-	...
-WARN_ON may be considered superfluous. Remove it to suppress future
-syzkaller triggers.
+TDCALL calls are centralized into a few megawrappers that take the
+struct tdx_module_args as input. Most of the call sites only use a few
+arguments, but they have to zero out unused fields in the structure to
+avoid data leaks to the VMM. This leads to the compiler generating
+inefficient code: dozens of instructions per call site to clear unused
+fields of the structure.
 
-[1]
-WARNING: CPU: 0 PID: 5084 at drivers/hid/hid-core.c:1451 implement drivers/hid/hid-core.c:1451 [inline]
-WARNING: CPU: 0 PID: 5084 at drivers/hid/hid-core.c:1451 hid_output_report+0x548/0x760 drivers/hid/hid-core.c:1863
-Modules linked in:
-CPU: 0 PID: 5084 Comm: syz-executor424 Not tainted 6.9.0-rc7-syzkaller-00183-gcf87f46fd34d #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-RIP: 0010:implement drivers/hid/hid-core.c:1451 [inline]
-RIP: 0010:hid_output_report+0x548/0x760 drivers/hid/hid-core.c:1863
-..
-Call Trace:
- <TASK>
- __usbhid_submit_report drivers/hid/usbhid/hid-core.c:591 [inline]
- usbhid_submit_report+0x43d/0x9e0 drivers/hid/usbhid/hid-core.c:636
- hiddev_ioctl+0x138b/0x1f00 drivers/hid/usbhid/hiddev.c:726
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:904 [inline]
- __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:890
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-..
+This issue can be avoided by using more targeted wrappers.
 
-Fixes: 95d1c8951e5b ("HID: simplify implement() a bit")
-Reported-by: syzbot+5186630949e3c55f0799@syzkaller.appspotmail.com
-Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
----
- drivers/hid/hid-core.c | 1 -
- 1 file changed, 1 deletion(-)
+After the rewrite code size is cut by ~3K:
 
-diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
-index b1fa0378e8f4..74efda212c55 100644
---- a/drivers/hid/hid-core.c
-+++ b/drivers/hid/hid-core.c
-@@ -1448,7 +1448,6 @@ static void implement(const struct hid_device *hid, u8 *report,
- 			hid_warn(hid,
- 				 "%s() called with too large value %d (n: %d)! (%s)\n",
- 				 __func__, value, n, current->comm);
--			WARN_ON(1);
- 			value &= m;
- 		}
- 	}
+add/remove: 7/15 grow/shrink: 1/17 up/down: 212/-3502 (-3290)
+
+Please take a look. I would appreciate any feedback.
+
+Kirill A. Shutemov (20):
+  x86/tdx: Introduce tdvmcall_trampoline()
+  x86/tdx: Add macros to generate TDVMCALL wrappers
+  x86/tdx: Convert port I/O handling to use new TDVMCALL macros
+  x86/tdx: Convert HLT handling to use new TDVMCALL_0()
+  x86/tdx: Convert MSR read handling to use new TDVMCALL_1()
+  x86/tdx: Convert MSR write handling to use new TDVMCALL_0()
+  x86/tdx: Convert CPUID handling to use new TDVMCALL_4()
+  x86/tdx: Convert MMIO handling to use new TDVMCALL macros
+  x86/tdx: Convert MAP_GPA hypercall to use new TDVMCALL macros
+  x86/tdx: Convert GET_QUOTE hypercall to use new TDVMCALL macros
+  x86/tdx: Rewrite tdx_panic() without __tdx_hypercall()
+  x86/tdx: Rewrite tdx_kvm_hypercall() without __tdx_hypercall()
+  x86/tdx: Rewrite hv_tdx_hypercall() without __tdx_hypercall()
+  x86/tdx: Add macros to generate TDCALL wrappers
+  x86/tdx: Convert PAGE_ACCEPT tdcall to use new TDCALL_0() macro
+  x86/tdx: Convert VP_INFO tdcall to use new TDCALL_5() macro
+  x86/tdx: Convert VM_RD/VM_WR tdcalls to use new TDCALL macros
+  x86/tdx: Convert VP_VEINFO_GET tdcall to use new TDCALL_5() macro
+  x86/tdx: Convert MR_REPORT tdcall to use new TDCALL_0() macro
+  x86/tdx: Remove old TDCALL wrappers
+
+ arch/x86/boot/compressed/tdx.c    |  32 +---
+ arch/x86/coco/tdx/tdcall.S        | 145 ++++++++++-----
+ arch/x86/coco/tdx/tdx-shared.c    |  26 +--
+ arch/x86/coco/tdx/tdx.c           | 298 ++++++++----------------------
+ arch/x86/hyperv/ivm.c             |  33 +---
+ arch/x86/include/asm/shared/tdx.h | 159 +++++++++++-----
+ arch/x86/include/asm/tdx.h        |   2 +
+ arch/x86/virt/vmx/tdx/tdxcall.S   |  29 +--
+ tools/objtool/noreturns.h         |   2 +-
+ 9 files changed, 322 insertions(+), 404 deletions(-)
+
+-- 
+2.43.0
+
 
