@@ -1,134 +1,179 @@
-Return-Path: <linux-kernel+bounces-182102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F08A8C866C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 14:43:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02AF38C86AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 14:55:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DBCE1F23498
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 12:43:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63494B2136F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 12:55:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ADD551010;
-	Fri, 17 May 2024 12:43:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A4184EB5C;
+	Fri, 17 May 2024 12:55:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ferroamp-se.20230601.gappssmtp.com header.i=@ferroamp-se.20230601.gappssmtp.com header.b="KGHJFSkZ"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="bA+wAUc3"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 063294E1C9
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 12:43:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C05E653E0D
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 12:55:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715949794; cv=none; b=NvWzc9+vNM1e5ztHKm+SmLhe373oCloIobPRXG4efnvhWgsGZxkemvtijRJrU4Fm2nytyLibYbKwq0K9nYapV4T7DEftR20fETihuYLEDRjMCiOCwrXZLQ7ZdS5w8wNp3d2X2PJoEXL8qVZ9uow6r3Ft62EnEODy0wvAzdcQnlk=
+	t=1715950510; cv=none; b=ucimYSx833rcfIltJj0WjYFImgjIKfkTf8cgvq9ctqeR+xcv2B7PqsjGDNyD9fUK+AF3e3pzjkcOkMqfrARrSvY8bHUf+BwpgCTpG1KfBp6ahqwsoURuh1VZJ9OmKWkPmoJZpVFxnUWccCrDnjbg5gXqMsQG5GZisJ7uG9VPriA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715949794; c=relaxed/simple;
-	bh=f/aQOdnb1qPEH9OPOG9Jgx9mTvP5LMcSVmCzIweEKcc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BJyGewwixIuTwYaIUvS2orn/WlA4rOIUfcIAQz9KTc8rb28TMjl+KZazgY1TfUAGvS/b/l8H33jFdz43zTleqqMR+2LCh7G5fhJ5EdTYJ0ifTl3YlLhrwWJ+77F9tngl7hcYZP01f1rSEEYKaL1oLI4op7ApkTZ26tWueIYuc6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ferroamp.se; spf=pass smtp.mailfrom=ferroamp.se; dkim=pass (2048-bit key) header.d=ferroamp-se.20230601.gappssmtp.com header.i=@ferroamp-se.20230601.gappssmtp.com header.b=KGHJFSkZ; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ferroamp.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ferroamp.se
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-51f40b5e059so766128e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 05:43:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ferroamp-se.20230601.gappssmtp.com; s=20230601; t=1715949791; x=1716554591; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=p4odqj3f1vqFSZ0CAbdMnpDHtOEgc8xX6bxBAUOmAh0=;
-        b=KGHJFSkZBV53d++jQ1dEqv+eW9/uhHtCxw1KWs4ZM1Fm8BjGMUzIsI4k/kxPTNT8FR
-         2mZbVn1Q9i/Nq9sCc2VWbwQUPvPpgCYFM/16hBdnsGyiQ19KZWW/9BW/t5wGhi9CKnZv
-         qxzBAsCX7dDuEbyOeoEiODn1cLDoXxHozyhm6F9aTWZx539irLHpqD6hltpZ+YHov8Yp
-         2lxSn0GzrynNx70oEALFBX2GL2EAxdDiqxCjlYaHT0323vh3+3nouy+SWLv/LJOO+cx7
-         GNJtupif8fCR7sIqcUErmOo0E9m5eTU0c63rxfJ82Sk+BaNN0fD9tNNR9+f3ufKf5Zxi
-         psZQ==
+	s=arc-20240116; t=1715950510; c=relaxed/simple;
+	bh=XYXVIrGk8WONF2AJBpCrV0JwFIgC5Y4oslQEkZhhPno=;
+	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g8wVBW7TzZ9K5J8S9hXKnQiX21mIknPY7eN0s/UxHuyhs6FGMEVPFY+JsjMQeFY7FLcCWPBsD/l8+jzI24N2tZRVXPE0D8CD/MUgeEQZTw6kKgqjLcNEJFeV/a1pow+fBHytc9aF6sgZk4upqTrns5ekAYtSPc0zciJArf5sWRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=bA+wAUc3; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id A499B41204
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 12:48:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1715950099;
+	bh=zW5wTM7Wxxl+jny7CjNrz3i10lwRcwO9dJoFnZU/wW8=;
+	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
+	 To:Cc:Content-Type;
+	b=bA+wAUc3PPzoStlPejsbvERe1ZgHqEGl3ls8aiBAnMxHPU0U+QoXnl58eWDDCzHly
+	 xS10zCtCQvu4fC81t4Eoo9BznS5DHF0V2NJuWkPC2oD7jLzFms3yKqjwH546PkGGaq
+	 DGJnXBmSW95/XSDbfmwKpd/rH0psmsG1RFH6pMevHGj7CqAo9UHTvmeQ+G1zsGTuZe
+	 P2ZH3Fl3EBeN7d7US5CWFFi3vXuNCO6aR6gzyUIB8TBnuFzSpainEV6R/POK+5Tbzo
+	 cdyuSqSZ90ITJMT+QqjecZ9XQqX5rAVBL0V9Z231QPRwLPMUyc6eqCFY91ogNcwizk
+	 0mTE8bmu0EPjQ==
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-43d1e3e7730so110004191cf.2
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 05:48:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715949791; x=1716554591;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=p4odqj3f1vqFSZ0CAbdMnpDHtOEgc8xX6bxBAUOmAh0=;
-        b=bZlpy0lDubb3dU6GkNPhl9nKFD/L5XI1tRX4oZKgI4wIR7l5NE3lH7N3JrHskB/8kl
-         nC6DlKd5Jvqs8wfuMbcvjg1bIKNLQU42lWCPGbA36GhDU7hUvA24MWPfvekQTWq4Hs0f
-         DAQhmez94beI2Lr/II/gGfccq8xneP9hAXM+7SfEQGQvvlVe2XV+9g7ALoFRQWjxse7T
-         xMkM0modN36pqXKT+hsHvUGYo7qp41TMDgb6v1//9S97oJI2EuM/5kNTaY9O119gRN8d
-         DqySiRzHSIr5utN1Q4/2pJCpx9utdUrpKx180Kx0jkWdymU95U7ZIwqxhT2T1HYBmoCa
-         uVBw==
-X-Forwarded-Encrypted: i=1; AJvYcCVc8BB4xABRstsaqQAQJB7zUvnXAt1fwPzKYtM+76HYruFOz/B1RWr+i4QWLFGVQVyyDS8h9+3vi6jLhuOM0SLnX31XdNTo8dlOLObe
-X-Gm-Message-State: AOJu0Yy+y6d1hBJ/WHT1+D9ZM4uCUncsuow3aWtOXL5NCPJLASqTVde2
-	oFW4LJbJAlhgRVK/YARNWvWbOyDA2xbDZvlG1ssF/JTW4Xox72jFIxyL6aajrnA=
-X-Google-Smtp-Source: AGHT+IHp9p+FH7l3Piksd2SYumeoLKxIBZc1FxIo8Hbs5SbDaClaDIaOn332eu7c17A4SWqlURItxg==
-X-Received: by 2002:a05:6512:124d:b0:51e:f2bb:158a with SMTP id 2adb3069b0e04-5221006cd7cmr15851334e87.64.1715949791256;
-        Fri, 17 May 2024 05:43:11 -0700 (PDT)
-Received: from minibuilder ([185.117.107.42])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-521f35ba8f1sm3340928e87.85.2024.05.17.05.43.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 May 2024 05:43:10 -0700 (PDT)
-Date: Fri, 17 May 2024 14:43:09 +0200
-From: =?iso-8859-1?Q?Ram=F3n?= Nordin Rodriguez <ramon.nordin.rodriguez@ferroamp.se>
-To: Parthiban.Veerasooran@microchip.com
-Cc: andrew@lunn.ch, Pier.Beruto@onsemi.com, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	horms@kernel.org, saeedm@nvidia.com, anthony.l.nguyen@intel.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	corbet@lwn.net, linux-doc@vger.kernel.org, robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-	devicetree@vger.kernel.org, Horatiu.Vultur@microchip.com,
-	ruanjinjie@huawei.com, Steen.Hegelund@microchip.com,
-	vladimir.oltean@nxp.com, UNGLinuxDriver@microchip.com,
-	Thorsten.Kummermehr@microchip.com, Selvamani.Rajagopal@onsemi.com,
-	Nicolas.Ferre@microchip.com, benjamin.bigler@bernformulastudent.ch
-Subject: Re: [PATCH net-next v4 05/12] net: ethernet: oa_tc6: implement error
- interrupts unmasking
-Message-ID: <ZkdQ3eEfvikTavwZ@minibuilder>
-References: <ZjNorUP-sEyMCTG0@builder>
- <ae801fb9-09e0-49a3-a928-8975fe25a893@microchip.com>
- <fd5d0d2a-7562-4fb1-b552-6a11d024da2f@lunn.ch>
- <BY5PR02MB678683EADBC47A29A4F545A59D1C2@BY5PR02MB6786.namprd02.prod.outlook.com>
- <ZkG2Kb_1YsD8T1BF@minibuilder>
- <708d29de-b54a-40a4-8879-67f6e246f851@lunn.ch>
- <ZkIakC6ixYpRMiUV@minibuilder>
- <6e4207cd-2bd5-4f5b-821f-bc87c1296367@microchip.com>
- <ZkUtx1Pj6alRhYd6@minibuilder>
- <e75d1bbe-0902-4ee9-8fe9-e3b7fc9bf3cb@microchip.com>
+        d=1e100.net; s=20230601; t=1715950098; x=1716554898;
+        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zW5wTM7Wxxl+jny7CjNrz3i10lwRcwO9dJoFnZU/wW8=;
+        b=MzI0m2wyPZ8bZ2b8hkrWqOsHjPi0jmMH1N5ZaHux09qhf9asI8VRwz0qlR0EVQJrmP
+         +sKIDWIdgWeeR3lAvTDL6R1kpt7Pv/OPeLyFBJZZRXOSp/5EzaYIQN6wg5ZXe/qzZLAK
+         11wLCdH/+UYnEEwRkyjBMLy8ptrrG4zm+ynQxu0FLOCGwjD+TZlt/ijLBs0zRHSn9PLO
+         votD0DZH0MNekmbwtipURejjBLitgOjqTsoG+Dx3OfM7rugd2+WkVgK3fAq8+0cuaPj1
+         MjnWbsNYp2vgleecft7OdLAjsGCnnvMPOieqWvIKUBckwIAA6x7CHTsvRhoeG2934ahT
+         eK4Q==
+X-Gm-Message-State: AOJu0Yx+kaoftCPM40O/WNLOEpWRufaF4P2ucwSe7OMcSwGWHSaZnp1W
+	/jyI8MHrSrJSzjWHj5srjJl+nFQm72BTUzz/TymbsptxUmWkDQjZYRY2ukqOXNuu8Wo6ortnrOW
+	hdGZ6V5h9sLBRFDVVOoYwYf1L9S28AcVXwouTpknsB6EaKrGlNs8yKcPpwc8cZu2HXjabGhcfdb
+	GU227yOqkh8bMRhbTepe9lxvFw/JSiW1KcKqseKqU56+GBm9ysf7v5
+X-Received: by 2002:a05:622a:8b:b0:43a:d430:b678 with SMTP id d75a77b69052e-43dfdb170a3mr219093471cf.32.1715950098388;
+        Fri, 17 May 2024 05:48:18 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGtRO5hEORW+Wcqb6zHImpmRtuEa+IJ8HEKNoCDnJQ+6k7eHn4EtAEkRMeLCfvr/vbfy2QNeJB++3V1NE8uVYQ=
+X-Received: by 2002:a05:622a:8b:b0:43a:d430:b678 with SMTP id
+ d75a77b69052e-43dfdb170a3mr219093261cf.32.1715950098054; Fri, 17 May 2024
+ 05:48:18 -0700 (PDT)
+Received: from 348282803490 named unknown by gmailapi.google.com with
+ HTTPREST; Fri, 17 May 2024 07:48:17 -0500
+From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+In-Reply-To: <20240115173657.GA999912-robh@kernel.org>
+References: <20240103132852.298964-1-emil.renner.berthing@canonical.com>
+ <20240103132852.298964-2-emil.renner.berthing@canonical.com> <20240115173657.GA999912-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e75d1bbe-0902-4ee9-8fe9-e3b7fc9bf3cb@microchip.com>
+Mime-Version: 1.0
+Date: Fri, 17 May 2024 07:48:17 -0500
+Message-ID: <CAJM55Z9xF6_WCcg02xJJfu=UCOj=4m64BXvJTaV4vX09WLhc0w@mail.gmail.com>
+Subject: Re: [PATCH v2 1/8] dt-bindings: pinctrl: Add thead,th1520-pinctrl bindings
+To: Rob Herring <robh@kernel.org>, 
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	Linus Walleij <linus.walleij@linaro.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Drew Fustini <dfustini@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 
-> Thanks for the consideration. But be informed that the internal PHY 
-> initial settings are updated for the Rev.B1. But the one from the 
-> mainline still supports for Rev.B0. So that microchip_t1s.c to be 
-> updated to support Rev.B1.
+Rob Herring wrote:
+> On Wed, Jan 03, 2024 at 02:28:38PM +0100, Emil Renner Berthing wrote:
+> > Add bindings for the pin controllers on the T-Head TH1520 RISC-V SoC.
+> >
+> > Signed-off-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+> > ---
+> >  .../pinctrl/thead,th1520-pinctrl.yaml         | 372 ++++++++++++++++++
+> >  1 file changed, 372 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/pinctrl/thead,th1520-pinctrl.yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/pinctrl/thead,th1520-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/thead,th1520-pinctrl.yaml
+> > new file mode 100644
+> > index 000000000000..d3ad7a7cfdd1
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/pinctrl/thead,th1520-pinctrl.yaml
+> > @@ -0,0 +1,372 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/pinctrl/thead,th1520-pinctrl.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: T-Head TH1520 SoC pin controller
+> > +
+> > +maintainers:
+> > +  - Emil Renner Berthing <emil.renner.berthing@canonical.com>
+> > +
+> > +description: |
+> > +  Pinmux and pinconf controller in the T-Head TH1520 RISC-V SoC.
+> > +
+> > +  The TH1520 has 3 groups of pads each controlled from different memory ranges.
+> > +  Confusingly the memory ranges are named
+> > +    PADCTRL_AOSYS  -> PAD Group 1
+> > +    PADCTRL1_APSYS -> PAD Group 2
+> > +    PADCTRL0_APSYS -> PAD Group 3
+> > +
+> > +  Each pad can be muxed individually to up to 6 different functions. For most
+> > +  pads only a few of those 6 configurations are valid though, and a few pads in
+> > +  group 1 does not support muxing at all.
+> > +
+> > +  Pinconf is fairly regular except for a few pads in group 1 that either can't
+> > +  be configured or has some special functions. The rest have configurable drive
+> > +  strength, input enable, schmitt trigger, slew rate, pull-up and pull-down in
+> > +  addition to a special strong pull up.
+> > +
+> > +  Certain pads in group 1 can be muxed to AUDIO_PA0 - AUDIO_PA30 functions and
+> > +  are then meant to be used by the audio co-processor. Each such pad can then
+> > +  be further muxed to either audio GPIO or one of 4 functions such as UART, I2C
+> > +  and I2S. If the audio pad is muxed to one of the 4 functions then pinconf is
+> > +  also configured in different registers. All of this is done from a different
+> > +  AUDIO_IOCTRL memory range and is left to the audio co-processor for now.
+>
+> It is still not clear to me if each instance is a different programming
+> model or the same with just different connections. The latter should
+> be the same compatible string. That needs to be answered in *this*
+> patch, not a reply.
 
-So I figured, thanks for making it clear.
+Hi Rob,
 
-> 
-> Also I am in talk with our design team that whether the updated initial 
-> settings for B1 are also applicable for B0. If so, then we will have 
-> only one updated initial setting which supports both B0 and B1.
+Sorry for the late response. I honestly don't know exactly what you mean by
+differenty programming models and what the difference is, so I'll need a bit of
+help with what you want me to write here.
 
-Sounds ideal if one init procedure can cover both chip revs.
+Any driver for the TH1520 SoC (not just Linux) would need some way to discern
+between the 3 pin controllers so they know how many pins to control and what
+pinmux settings are valid. Basically they'd need the data in the three
+th1520_group{1,2,3}_pins arrays in the driver and a way to know which of them
+to use.
 
-> 
-> Do you have any plan to update the microchip_t1s.c for Rev.B1 support OR 
-> do you want me to do it? If you want me to do it then I will prepare a 
-> separate patch series for the support?
+https://lore.kernel.org/linux-riscv/20240103132852.298964-3-emil.renner.berthing@canonical.com/
 
-I'm keen on taking a Rev.B1 chip for a spin, so I'll jump on doing doing
-the init/fixup. I can probably post it to the mailing list during the
-weekend.
-If you're planning on being faster than that I'll wait for your
-submission.
+Another solution would be to just have one compatible value, and then let the
+driver figure out which of the 3 pin controllers it's probing from the base
+physical memory address. That would work fine.
 
-Out of curiosity do you have any insight into if the rev b1 is expected
-to behave differently?
+A third solution would be to encode the data in those three arrays into the
+device tree, but I thought we didn't want to encode register information in
+device trees.
 
-R
+/Emil
 
