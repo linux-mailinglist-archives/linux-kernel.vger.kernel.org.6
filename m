@@ -1,202 +1,113 @@
-Return-Path: <linux-kernel+bounces-182499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D46798C8C0D
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 20:03:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D3D08C8BDF
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:58:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A166282F3E
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 18:03:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE6B81F290F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:57:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EA1313E046;
-	Fri, 17 May 2024 18:03:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EACA7143727;
+	Fri, 17 May 2024 17:53:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="SLZenIlm"
-Received: from sonic312-30.consmr.mail.ne1.yahoo.com (sonic312-30.consmr.mail.ne1.yahoo.com [66.163.191.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="BiJJFotS"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2499D13E024
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 18:03:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.191.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F53C142E83
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 17:53:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715969022; cv=none; b=qpE3Yxc8l+3SRRGlgdsjrXWuB0FdXnRzeSn3Q2ofnQgHCERPRqtwQDibtechGy8ylAw3PJZBl+auUCybNskjzB7c8mXiDj8fDloeEz9dy2g60wG7nzMNyUcJgLSEPVb5LOH1YLI20H69YWVhuRiEYNh6vOM/Uu7AAll0b7JHrs8=
+	t=1715968433; cv=none; b=uTjl2GD1qqyF4wztFpyo0YXH7W2DK9pa3DnsuC5wE4RgoIj3Lhxi5lIL9A1sX/mqeehChOdpMs7rvNtdiZvNq8Ji+OxsnkQyoXyxIrY9oghG9pACevD2axPreHbQ7nTuys80khf4e5IqMs10mZjV7qpMShliYO+1EyxRQTDZqKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715969022; c=relaxed/simple;
-	bh=put+y5/J/5Kd8zNeqN0yRq4nqLEYAbVcLkKYZS8ZTpA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Li3OgMADCjqc5OQ46QNwsGFyxGaSyGeNHgR123EC88yl4uyk+alsvsUM4pYfbdSHdJcgNULpmbwVSZfvnv8gBPsJo1EcIfYDzGZNx8dXo/UDlppVqpSvb7hw49ZJYT5JEogSfG38zYfFbFnEWyCj1kq5kx7DwZdYG3ZvQr5nang=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=SLZenIlm; arc=none smtp.client-ip=66.163.191.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1715969014; bh=tIio+RNaO0tAS6S6sNhPnuxF8pniQ2kOR7PgXrhSanY=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=SLZenIlmVtmyzCw9/jawLtthw1wnJWcaPWr11kfmoO/H/kFqWYWI1CKKHNSWp5TNtbAzAqsiPgzCzbzW4NtXtHpgfghik/gvBOxcrXxtJFNiXfb9xTsyIwakVt5fwLGis0EBC1NDRe1Z1snZ1yQ55F26XjGPdDUFzpBUKtNZexauQ/eOauqUwcXuDYmp0mwq2oBebUXE3cDzOIR2Rdi/mEk6SaSozy0+TmOofizkcGTZTqIPPNyixkw6x4oqUhOD5A0hNwzPPzNHi7udSvw/GBWxhaXWdwuy25eDeqfNUMkW6+Hunf8E1hWNRJUIWQrsH5Q2YIKg0LN4heSdAwo0qw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1715969014; bh=GolWIEwTGLJqvPFPgC2PYtCr1wojqEnMmiIN4mCCkGG=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=RVlNMBRhhp11eo/2PW3Ks+kvLM49A3yBUW4dyjxX99Bd4kNMAH70MwQE0tezo7kp0WPidVdozlnsh9xfdi+3LD208BD8t2B2EToHhAu44TCz934IxWRv7y3vaydCWpuXOY8VrqsxjMH08eTQiRA9iKb53uPcDvyBcz6aFSlA9F0PY19pp00PP+pQVavcxnGHdz0lqVaeBp1xTfev4zosSn2d7pjWO8SbCjuy0NDyICqfd1MqneBaR2Z32IC1BwniNfsIvlKopbdNpbs4z2f4jFmLuHWd40fpm9vBmuCYWvgCY3zYpfI6wuHZI+DRO4frVgkbS32z8JQHAvxleyRX2A==
-X-YMail-OSG: C7dBFvcVM1nvSlNii7HUHZPruZOa8MBqqQnwNdj.jpeoRy.bsooKqqN6CofU7jF
- AL8YqbhgKh5BrdysJb4mCaBoMtviW_OVszlUtSUG0oKLtiK.exYzsRMm9DYYpvPVRu.nwayzcMxa
- 84uWJP4uTL_kv9PTKZ1s.a812AFkOYGjvLUU4IhV52xweas1AptPzJ0REbAEP5WgZgUMKEJfSZyK
- F3TTo3mLHvVjoHsCqlBW4Z6hTP5L8wmhY0OuDSpYmGfdw8GjWoVIhR3sYHs.HHD2f4mvqKT1.6mR
- 2fB9SoGaYaufCWqr4dk9wsrnZIBjmTxs0oyDazXsymW_8iyw9Oft.qtK_RTgFQvBVdkUi_MnjWJP
- 8AVC5wdGXnG4kbyZ8_CSAyB6aH6d4QHE80kIjRXxpOZbMW8xHa0cq64Nbr7gGyR9.j4fkVVRLZcs
- 7Zf1.pQ4p5BEN9uy5YxZlzZb9JA_hYBgdACt0yKhyyu7Z5RfxkLxrz.KNFGuBiyN4mUxAwIDwdP5
- iAPdb0YIuwXp2yQbeazRld2gbzZotLyq1ICxsQjq3UxkUu0uwILGk7StrenoXALkeuEo0esyt1T8
- Q8K.JrNmwZTlAE71jNUvd5Y7Cwi6wHG0bQDT5QZz.PeCqeG1aQUpYJnu0t549jFa05e3got8_B_E
- wtxLYHLutEmGYYXfcCWRopzQgbirFf0XVQ8vh.NiR46Ggo.lq2fviMCrSyxsLj2aNa6XyzEoWaMw
- HifUO2MOiQDi8pFXDUmN..rfWf9d47G2R50Xzorexpbf8bXy0XY1wB7O8DLprNBARiOKsO6.A5_O
- YIVzmby4uix8812HeZc.YG9dFXsmq7P7eX33gTpaCwX7OLAqQ8Rlw7xbL8VNspsCOQv2Uk7Gc6p3
- 12uRD0w5e5EMYiHMES76sGjqnZPkNn_Vc8ndMJYOdzx6aHSaemFtrWe4.nzwWZ9L.dnGDyRbXsZI
- vZxUVNCOQnF3qAcvVq1.nEL_b6eaW65KATQkW4GQ6t2J4NO7mFixnVRh0w.Fh.8vZiLagUNaJTqz
- QVARDPvGlekmwCVhHDEkX5ytWFOQiJ6N0ItESgkPylM2h3YrIvlYtV0rlbGGa0S_.oRXMPRS2Rr9
- Fnsneaar9MxjrrahilxhtAX9nPB0wnvQPiOy__hz8XoX1mZ.8aqHIqplyMzqZPwQEM_zgzp_YamZ
- YXhZ1WWNFPW.Q_qFhSWTj0AELMIXtopd0gpk_oDz3jCnjpMHYzTVHT_V_dguwuoEswZFTzfMzjcj
- Fcg_Bn2v34qDNVCbz1I9zo14svkrDxB2DM38jZbFl1AJleAeulpBnFypKlaNR_bRzpEHwz6bwdmq
- CRvX3kouezgM5_UBFEFCiku8qCIruPUjzlXixde_bZUsS1DygFnc7rl7I2CSXK8.1iD4aYEjtieq
- WHchfHDOPE4xl1V57emQyQtMifa_zh5YbxPe7CEg9djhT6EKtWN6FnNBhl6KOPpjEy1xLaW5097W
- wqhBLRA3mQehTBP_N5HZIKCw_MmWChwwGGSAu0x5tUuB1WaNkPBA..gjkb_YsSLdEh66vtIdohJl
- F88kBpQ_ApaIwcGLs2746VxCHy1PFyqpu4tsZ2kMT4c9zogKaj5yiW5vekRNhSj9HaAQoR23JgEg
- ertRf13zJsneAph2CkqKEw2n28vhn3hqC_hkpXA5_nsXSIwdaAoykUcgxN.S.Mf0v6.CYQlkq1mh
- qxvvIk5pRZ2oQW_ppDrbYtk_fxjbdxjc10ZZ8X9Kf9ljq6uLTo8lCS8MVlltVV6dfOq_.mX4Cj9V
- wKGQtCucyyV6Oo44sD194MDzeot23oJ6aXqjvb9FdouIDF7acea8atdmlua21fPZ3UJ799xwjfvm
- Drsuukqbvp5Wak0N7epSJK_5fxu1VO38qglUK0LYxmKjDscuJbnYkticBqsDt7Zp6xt53Slewtuh
- 1Q7uZQYD4qKe5lyFBl40Fi1AtErRwkx.Wt.B8LdcS.y2RJo26gGghATmbSQ5dM6MggFPPHOorRsa
- ktUTGesdXhUe_i9C6gbe6ykKqMV0nu9yWBgImM7t13zhqGifcmkBFj4MrH8m5MZeouHhJx5qH8aS
- YJ8Ntzi8MbEYXSEYhmX2dQ_xJxc.naYxUVCQPW4zDKkOD7aKg7.PGM7voSR4k3oQPhHoluFwLXR7
- 6ZrS50QFr6Y_2ZkxSbfJZ29X8xQUzPEHoX9STDWOLEf_mJOOOVbbKjk2pQAOBUwS0SXcqi6tEuMQ
- kCwJUstfbt94VqML5Vg.RrNI5rTuk5.3BZsfl2VEEvGxAc_VRJnqeLKOyFERetBj1D54Q2B8yNDg
- dqoXhAm8elfHwXw--
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 85153b7f-4c11-4fca-84a2-cca4d0413b58
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.ne1.yahoo.com with HTTP; Fri, 17 May 2024 18:03:34 +0000
-Received: by hermes--production-gq1-59c575df44-f4snh (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 8b429e65f2d60a3193676eb029935f6a;
-          Fri, 17 May 2024 17:53:25 +0000 (UTC)
-Message-ID: <df3c9e5c-b0e7-4502-8c36-c5cb775152c0@schaufler-ca.com>
-Date: Fri, 17 May 2024 10:53:24 -0700
+	s=arc-20240116; t=1715968433; c=relaxed/simple;
+	bh=Pj3XqwCP/tWyNk1MTxRUoT5OZi3EKwTxbKbZWc4jLRI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AAqIan+oBblgczBmTukxe50ifFd7N/IA7U/K619inAHQdknx9QViaNPNd7zDNWzOwC4vvIl5Eea5JPamfykh1He3JGkpIvynOgA0fsNPiz4F1IEPocavj1ASzL+1XTRWgWu/qSsCcfiWbmnmGFjtLpyCVl5tvmjlQ469/P7Szk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=BiJJFotS; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 3E8BE40E01E8;
+	Fri, 17 May 2024 17:53:49 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id H0VWSqlu61N5; Fri, 17 May 2024 17:53:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1715968426; bh=BklJ0Xy1NwJgkxAFnP/a6AerOzCrYYikftsLx1c6YRo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BiJJFotSKGK3qH/tIdBxj01UL2ZC1FN17eQ4IXKlyPgIpFCj4/A1ZQZgXqMn+U5in
+	 LX+pS60VjFg9CtSkLIKigDBTZmhgaS6WJvwTN5ChKraij4y1eFsxX5SeISeiRG8/NY
+	 Yp0UoNZyuxJUq0tmzGrjBGZkHXWMD9IlegnPvn/kU6/Jioz/mRQBiuZt1an+jsdXky
+	 yHop8mXx439mohzl93AX7vlvIZyCMg9AMKmIYOjZfkRYevTUqNN+T1Pf54HwI1MrZf
+	 PDyZ2RyQpGzrCM87AyWhVGNYozXgjqeS08GM9ie2tJh8V5DpK65BBvbki1nVnGD3BL
+	 nPsgeSbLlgT7dZmKY0WyqVGdmqXGU+2Z60oflzorrmkaAVK+CYAbGVlIy3InOHK4RA
+	 zbWhazdc3K6Qd/lx514pee6vsT5iAlsD9JlLKDW7RmhwvYZr0Olv3I8LszpQjMFKKE
+	 0S1aIKge9IIzyFuuVqriA4OHcFBdYcV6rrTGKbuEISAwysmAQo55jdQbDRlqcAgMSK
+	 jWKb97u4h/IQLRQN7QwCkbCL43S/6NP2+4MJFaXjj9F5DckwlopEYeVJDG2ovY8+OR
+	 4z6r+s0m1ICB9qomj2EV+4ZyjBxj2WatSMTpuVMaXcnaKjZCY90q7XYJ4VhOy/wHVo
+	 J2cFSWgsGEMBuGQGtVMuMEDM=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E87D340E0244;
+	Fri, 17 May 2024 17:53:29 +0000 (UTC)
+Date: Fri, 17 May 2024 19:53:24 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "Luck, Tony" <tony.luck@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"x86@kernel.org" <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	Uros Bizjak <ubizjak@gmail.com>,
+	"Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+	Arnd Bergmann <arnd@arndb.de>, Mateusz Guzik <mjguzik@gmail.com>,
+	Thomas Renninger <trenn@suse.de>,
+	Greg Kroah-Hartman <gregkh@suse.de>,
+	Andi Kleen <ak@linux.intel.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"patches@lists.linux.dev" <patches@lists.linux.dev>
+Subject: Re: [PATCH v3] x86/cpu: Fix x86_match_cpu() to match just
+ X86_VENDOR_INTEL
+Message-ID: <20240517175324.GGZkeZlNgjGxwfumLu@fat_crate.local>
+References: <20240517172134.7255-1-tony.luck@intel.com>
+ <20240517173811.GFZkeWAzKjYtEMwe1e@fat_crate.local>
+ <SJ1PR11MB608386716D1DA533791DE7A2FCEE2@SJ1PR11MB6083.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] Introduce user namespace capabilities
-To: Jonathan Calmels <jcalmels@3xx0.net>, Jarkko Sakkinen <jarkko@kernel.org>
-Cc: brauner@kernel.org, ebiederm@xmission.com,
- Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <keescook@chromium.org>,
- Joel Granados <j.granados@samsung.com>, Serge Hallyn <serge@hallyn.com>,
- Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
- David Howells <dhowells@redhat.com>, containers@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20240516092213.6799-1-jcalmels@3xx0.net>
- <2804dd75-50fd-481c-8867-bc6cea7ab986@schaufler-ca.com>
- <D1BBFWKGIA94.JP53QNURY3J4@kernel.org>
- <D1BBI1LX2FMW.3MTQAHW0MA1IH@kernel.org>
- <D1BC3VWXKTNC.2DB9JIIDOFIOQ@kernel.org>
- <jvy3npdptyro3m2q2junvnokbq2fjlffljxeqitd55ff37cydc@b7mwtquys6im>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <jvy3npdptyro3m2q2junvnokbq2fjlffljxeqitd55ff37cydc@b7mwtquys6im>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.22356 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <SJ1PR11MB608386716D1DA533791DE7A2FCEE2@SJ1PR11MB6083.namprd11.prod.outlook.com>
 
-On 5/17/2024 4:42 AM, Jonathan Calmels wrote:
->>>> On Thu May 16, 2024 at 10:07 PM EEST, Casey Schaufler wrote:
->>>>> I suggest that adding a capability set for user namespaces is a bad idea:
->>>>> 	- It is in no way obvious what problem it solves
->>>>> 	- It is not obvious how it solves any problem
->>>>> 	- The capability mechanism has not been popular, and relying on a
->>>>> 	  community (e.g. container developers) to embrace it based on this
->>>>> 	  enhancement is a recipe for failure
->>>>> 	- Capabilities are already more complicated than modern developers
->>>>> 	  want to deal with. Adding another, special purpose set, is going
->>>>> 	  to make them even more difficult to use.
-> Sorry if the commit wasn't clear enough.
+On Fri, May 17, 2024 at 05:43:10PM +0000, Luck, Tony wrote:
+> What if the bit in flags was named " X86_CPU_ID_FLAG_ENTRY_VALID"
+> 
+> Then the loop in x86_match_cpu() could just be:
+> 
+> 	for (m = match; m->flags & X86_CPU_ID_FLAG_ENTRY_VALID; m++) {
 
-While, as others have pointed out, the commit description left
-much to be desired, that isn't the biggest problem with the change
-you're proposing.
+Yeah, makes sense at a first glance.
 
->  Basically:
->
-> - Today user namespaces grant full capabilities.
+This'll keep the terminators "{}" unchanged so that we don't have to
+touch all those gazillion places and it'll explicitly state that an
+entry is valid or not.
 
-Of course they do. I have been following the use of capabilities
-in Linux since before they were implemented. The uptake has been
-disappointing in all use cases.
+But the devil's in the detail, as always...
 
->   This behavior is often abused to attack various kernel subsystems.
+-- 
+Regards/Gruss,
+    Boris.
 
-Yes. The problems of a single, all powerful root privilege scheme are
-well documented.
-
->   Only option
-
-Hardly.
-
->  is to disable them altogether which breaks a lot of
->   userspace stuff.
-
-Updating userspace components to behave properly in a capabilities
-environment has never been a popular activity, but is the right way
-to address this issue. And before you start on the "no one can do that,
-it's too hard", I'll point out that multiple UNIX systems supported
-rootless, all capabilities based systems back in the day. 
-
->   This goes against the least privilege principle.
-
-If you're going to run userspace that *requires* privilege, you have
-to have a way to *allow* privilege. If the userspace insists on a root
-based privilege model, you're stuck supporting it. Regardless of your
-principles.
-
->
-> - It adds a new capability set.
-
-Which is a really, really bad idea. The equation for calculating effective
-privilege is already more complicated than userspace developers are generally
-willing to put up with.
-
->   This set dictates what capabilities are granted in namespaces (instead
->   of always getting full caps).
-
-I would not expect container developers to be eager to learn how to use
-this facility.
-
->   This brings namespaces in line with the rest of the system, user
->   namespaces are no more "special".
-
-I'm sorry, but this makes no sense to me whatsoever. You want to introduce
-a capability set explicitly for namespaces in order to make them less
-special? Maybe I'm just old and cranky.
-
->   They now work the same way as say a transition to root does with
->   inheritable caps.
-
-That needs some explanation.
-
->
-> - This isn't intended to be used by end users per se (although they could).
->   This would be used at the same places where existing capabalities are
->   used today (e.g. init system, pam, container runtime, browser
->   sandbox), or by system administrators.
-
-I understand that. It is for containers. Containers are not kernel entities.
-
->
-> To give you some ideas of things you could do:
->
-> # E.g. prevent alice from getting CAP_NET_ADMIN in user namespaces under SSH
-> echo "auth optional pam_cap.so" >> /etc/pam.d/sshd
-> echo "!cap_net_admin alice" >> /etc/security/capability.conf.
->
-> # E.g. prevent any Docker container from ever getting CAP_DAC_OVERRIDE
-> systemd-run -p CapabilityBoundingSet=~CAP_DAC_OVERRIDE \
->             -p SecureBits=userns-strict-caps \
->             /usr/bin/dockerd
->
-> # E.g. kernel could be vulnerable to CAP_SYS_RAWIO exploits
-> # Prevent users from ever gaining it
-> sysctl -w cap_bound_userns_mask=0x1fffffdffff
+https://people.kernel.org/tglx/notes-about-netiquette
 
