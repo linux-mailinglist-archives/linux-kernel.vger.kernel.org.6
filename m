@@ -1,221 +1,100 @@
-Return-Path: <linux-kernel+bounces-182135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 054D98C870D
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 15:16:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FFF88C8725
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 15:17:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 705AC1F22C64
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 13:16:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A143A1C2130B
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 13:17:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7D9E5102F;
-	Fri, 17 May 2024 13:16:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D78650A7E;
+	Fri, 17 May 2024 13:17:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z50XfUii"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TGeX7leM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ADF850255;
-	Fri, 17 May 2024 13:16:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F8E64F887;
+	Fri, 17 May 2024 13:17:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715951778; cv=none; b=Gvp+OplCc9EEKixuf75cK3T7lCLYJIPEJoEs29XbJoIu6rkAmYG9X5p2A6y7e25G9KLXD7ujWN05jfLTlQ6L/G/hSs5NRZRrq5z78nIFAtfnFOT2a4V1getc+ghMH6jPC4RXq6zOeBrq5c5rwbaiJ33c5BGlKiKtgEHNf014x68=
+	t=1715951845; cv=none; b=VmQA7YcPaLzme4kY+/r8hrEcf80JtADgWbttuUpg/A6EA2Zr6Iiy1LZpXcftZEXMsyvDhDheylkLlIVO6NQf01wbiBE+PxnZZGPEy4BPF5O3cmUksqeIFDS6a0zik+0Pqe9onM1Ed0VzMMU8cF9feEPXN/IVj2vIRaGctv59Zak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715951778; c=relaxed/simple;
-	bh=oLw1U/bIncficobO2SIQU+Ct9tJgm5fGqsxduffjJ3E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oHMGXysjeGq6j4T9sCEGAsK+MLzJf+jAKH1Tzzvn0ze32dZxznNP/M2IrP3HHYTOLw/IW3IANskR6OrUuVpW62k8Ox1GQrwhtms/Vphz6/spShx8bCZ5x09TmYepHATRq2P15PGzYznoJDZO0+PEMsFnSMemvxFlwTOqLEiN+nE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z50XfUii; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715951776; x=1747487776;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=oLw1U/bIncficobO2SIQU+Ct9tJgm5fGqsxduffjJ3E=;
-  b=Z50XfUii+PU5EAAQfBpMCYhT74qxRHGOLq4OhpdFYqbVw7zgu2fUCDvz
-   faJuX8YHDMEpJ5GH3nosWgTTPkyUn9dgHOAYv8NnNOnAqqe9UOVmf+oza
-   qLbRCQFin4Smfvkcjg6psYTOOP7WGx84WZWHP3hLdNCmaz7+VBGxu/zaX
-   vwGkZoSMgdpXugcTO6tMfzi/04qmig5PwevmXiqkU+zC6Lq3LjXnN1UOF
-   IlGsmU9banVhRjOrJ4OygVXmLutooiQMZ28S95bNP3OcdWf8CveMSF3sl
-   oRnNi06tmPlykjP55wClMa/zSYlVCV05tcmyLUu4R0zKSPq1AHhk2YckC
-   A==;
-X-CSE-ConnectionGUID: NnFLlKM0QCS8m03NtA/O8g==
-X-CSE-MsgGUID: h3sMD/ZlR0Kv614QLk7FhA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="11968770"
-X-IronPort-AV: E=Sophos;i="6.08,167,1712646000"; 
-   d="scan'208";a="11968770"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 06:16:15 -0700
-X-CSE-ConnectionGUID: THVLFMVEQ++8soNt9bp++Q==
-X-CSE-MsgGUID: qVMG0JPBSfKXyIyzr1ohhA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,167,1712646000"; 
-   d="scan'208";a="31803043"
-Received: from fdefranc-mobl3.ger.corp.intel.com (HELO fdefranc-mobl3.localnet) ([10.245.246.21])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 06:16:12 -0700
-From: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
-To: Dan Williams <dan.j.williams@intel.com>,
- Dan Williams <dan.j.williams@intel.com>
-Cc: Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Dave Jiang <dave.jiang@intel.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject:
- Re: [PATCH v2] cxl/events: Use a common struct for DRAM and General Media
- events
-Date: Fri, 17 May 2024 15:16:09 +0200
-Message-ID: <13630976.tdPhlSkOF2@fdefranc-mobl3>
-In-Reply-To: <6646a835ac144_2c26294da@dwillia2-xfh.jf.intel.com.notmuch>
-References:
- <20240516102116.3512377-1-fabio.m.de.francesco@linux.intel.com>
- <6646a835ac144_2c26294da@dwillia2-xfh.jf.intel.com.notmuch>
+	s=arc-20240116; t=1715951845; c=relaxed/simple;
+	bh=+iDpRvaHBF67JDzZJTV4G+Mp9zFa9uxoX38eD+A5Neg=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=lI8b8zS+iTz/7u5/MQRxmj1h1wY0/m4wnss0fxuJfT1BY5v2bwfW/6Q/VZPYNnaZcfA+DFBborwL4pwJcXVnzlHe7flIE8aEIW5mXcGjuaGVScX/RLwFaDpsbBNVDTR3do8/iBZUyKbWMPJKDckF3upduxUwuaJmPS7pQXVOyko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TGeX7leM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AACD0C2BD10;
+	Fri, 17 May 2024 13:17:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715951844;
+	bh=+iDpRvaHBF67JDzZJTV4G+Mp9zFa9uxoX38eD+A5Neg=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=TGeX7leMnfPr2iyTGvGBIWvcK5xTUXzvn22fNP6z+Jfci5PGEX6IeREvFFBGkBhaZ
+	 v0Nz4wmvqcxP4lvsORj2PeyQFKJOv8l4AysmdI1UQDZc2W06xp0EcccZDtt1ZrtkQn
+	 34NshspxVzBIG2WomEdCbWitDmbuh2rDU1tAvR2S2ZzF0J2UOvjbn8e6S6yQvS6AXi
+	 rs0DJuzEvD7I6LwgpGFzBxIEn2iC3PXoXtj3xmYR4wnV8epRSUEF7EuVQUNPyh6VHs
+	 oCBb2To3UsWCAoSKgn1tye83nitvUHYUAVyAge1+K44H9g7KYdqMrzZSJSENftK5LE
+	 DSMK7kKwakLug==
+Date: Fri, 17 May 2024 08:17:23 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Alexander Stein <alexander.stein@ew.tq-group.com>
+Cc: Li Yang <leoyang.li@nxp.com>, Shawn Guo <shawnguo@kernel.org>, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+In-Reply-To: <20240516112355.200265-1-alexander.stein@ew.tq-group.com>
+References: <20240516112355.200265-1-alexander.stein@ew.tq-group.com>
+Message-Id: <171595174000.1651057.6767268550343039132.robh@kernel.org>
+Subject: Re: [PATCH 1/2] dt-bindings: arm: add MBa8MP-RAS314 SBC
 
-On Friday, May 17, 2024 2:43:33=E2=80=AFAM GMT+2 Dan Williams wrote:
-> Fabio M. De Francesco wrote:
-> > cxl_event_common was a poor naming choice and caused confusion with the
-> > existing Common Event Record.
->=20
-> I would say "unfortunate" rather than "poor".
->
 
-Agreed.
-=20
-> > Use cxl_event_media as a common structure to record information about D=
-RAM
-> > and General Media events because it simplifies handling the two events.
-> >=20
-> > Suggested-by: Dan Williams <dan.j.williams@intel.com>
-> > Fixes: 6aec00139d3a ("cxl/core: Add region info to cxl_general_media and
-> > cxl_dram events")
-> What is the fix? There is no user visible behavior changes that results f=
-rom
-> this cleanup, right?
+On Thu, 16 May 2024 13:23:54 +0200, Alexander Stein wrote:
+> MBa8MP-RAS314 is an SBC based on the embedded module TQMa8MPxL.
+> All relevant interfaces integrated in the CPU have been implemented on
+> the MBa8MP-RAS314 for (an) industrial usage. Due to the numerous interfaces
+> and the small size of this SBC the use in different applications
+> is possible without the need of a [special,custom] design.
+> 
+> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+> ---
+>  Documentation/devicetree/bindings/arm/fsl.yaml | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
 
-Right.
-=20
-> > Signed-off-by: Fabio M. De Francesco
-> > <fabio.m.de.francesco@linux.intel.com>
-> > ---
-> >=20
-> > Changes for v2:
-> > 	- Extend the commit message (Alison);
-> > 	- Add a "Fixes" tag (Alison, thanks).
-> > =09
-> >  drivers/cxl/core/mbox.c      |  6 ++--
-> >  drivers/cxl/core/trace.h     |  4 +--
-> >  include/linux/cxl-event.h    | 70 +++++++++++++++---------------------
-> >  tools/testing/cxl/test/mem.c |  4 +--
-> >  4 files changed, 36 insertions(+), 48 deletions(-)
->=20
-> Oh, nice, net reduction in code I was not expecting.
->=20
-> > diff --git a/drivers/cxl/core/mbox.c b/drivers/cxl/core/mbox.c
-> > index 2626f3fff201..ad4d7b0f7f4d 100644
-> > --- a/drivers/cxl/core/mbox.c
-> > +++ b/drivers/cxl/core/mbox.c
-> > @@ -875,16 +875,16 @@ void cxl_event_trace_record(const struct cxl_memd=
-ev
-> > *cxlmd,>=20
-> >  		guard(rwsem_read)(&cxl_region_rwsem);
-> >  		guard(rwsem_read)(&cxl_dpa_rwsem);
-> >=20
-> > -		dpa =3D le64_to_cpu(evt->common.phys_addr) &=20
-CXL_DPA_MASK;
-> > +		dpa =3D le64_to_cpu(evt->media_common.phys_addr) &=20
-CXL_DPA_MASK;
->=20
-> I was hoping at the end of this to get rid of the word "common" to avoid =
-any
-> more "common event record confusion".
 
-Right, still an unfortunate naming choice.=20
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
 
-> > [...]
->=20
-> Oh nice you went for the full 'struct_group_tagged' proposal. However, gi=
-ven
-> that Jonathan is already asking questions about "__packed", lets do the
-> simpler change, something like this, what do you think?=20
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
 
-I think that these simpler changes are better.=20
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
 
-> This also preserves
-> type-safety.
->=20
-> diff --git a/include/linux/cxl-event.h b/include/linux/cxl-event.h
-> index 60b25020281f..f48b59943977 100644
-> --- a/include/linux/cxl-event.h
-> +++ b/include/linux/cxl-event.h
-> @@ -33,14 +33,16 @@ struct cxl_event_generic {
->   */
->  #define CXL_EVENT_GEN_MED_COMP_ID_SIZE 0x10
->  struct cxl_event_gen_media {
-> -       struct cxl_event_record_hdr hdr;
-> -       __le64 phys_addr;
-> -       u8 descriptor;
-> -       u8 type;
-> -       u8 transaction_type;
-> -       u8 validity_flags[2];
-> -       u8 channel;
-> -       u8 rank;
-> +       struct cxl_event_media_hdr {
-> +               struct cxl_event_record_hdr hdr;
-> +               __le64 phys_addr;
-> +               u8 descriptor;
-> +               u8 type;
-> +               u8 transaction_type;
-> +               u8 validity_flags[2];
-> +               u8 channel;
-> +               u8 rank;
-> +       } hdr;
->         u8 device[3];
->         u8 component_id[CXL_EVENT_GEN_MED_COMP_ID_SIZE];
->         u8 reserved[46];
-> @@ -52,14 +54,7 @@ struct cxl_event_gen_media {
->   */
->  #define CXL_EVENT_DER_CORRECTION_MASK_SIZE     0x20
->  struct cxl_event_dram {
-> -       struct cxl_event_record_hdr hdr;
-> -       __le64 phys_addr;
-> -       u8 descriptor;
-> -       u8 type;
-> -       u8 transaction_type;
-> -       u8 validity_flags[2];
-> -       u8 channel;
-> -       u8 rank;
-> +       struct cxl_event_media_hdr hdr;
->         u8 nibble_mask[3];
->         u8 bank_group;
->         u8 bank;
-> @@ -109,7 +104,7 @@ union cxl_event {
->         struct cxl_event_gen_media gen_media;
->         struct cxl_event_dram dram;
->         struct cxl_event_mem_module mem_module;
-> -       struct cxl_event_common common;
-> +       struct cxl_event_media_hdr media_hdr;
->  } __packed;
->=20
->  /*
+  pip3 install dtschema --upgrade
 
-I'll make v3 according to the suggestion showed above.
 
-Thanks,
+New warnings running 'make CHECK_DTBS=y freescale/imx8mp-tqma8mpql-mba8mp-ras314.dtb' for 20240516112355.200265-1-alexander.stein@ew.tq-group.com:
 
-=46abio
+arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mp-ras314.dtb: interrupt-controller@32fc2000: 'power-domains' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/interrupt-controller/fsl,irqsteer.yaml#
+
+
 
 
 
