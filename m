@@ -1,140 +1,164 @@
-Return-Path: <linux-kernel+bounces-182406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6A5D8C8AEC
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:25:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 058188C8AF3
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:26:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53045281B3C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:25:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34F031C20FF3
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:26:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6096A13DBBF;
-	Fri, 17 May 2024 17:25:47 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49CC313DDAE;
+	Fri, 17 May 2024 17:26:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZpNA2eJK"
+Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE77638DD6
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 17:25:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24D0C38DD6;
+	Fri, 17 May 2024 17:26:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715966747; cv=none; b=VYWdr6TjlqSB8A0lIFvE/C5sNNsc2yVAQpWf0xto0EfPfyBRZwWeqHM5v+EWED2Pigad+szXNZmlzgg3FfhBBt41OIUBR/aXqHbFDnDaAfjRpUKv3quG/PEmD8XedG5+Hr1oMh4t7QjpdBRdqek1x0CpJOkuus8kw0qg5YspSaM=
+	t=1715966786; cv=none; b=BX/ZrpswPTuE8hQUzn7VFQxRnpqOEb6Au+VRrrjFngUfU7TMNkY+UtXtRAIuUAoJ8Kg0RSgvBmCs4OJ8/iS0IsNaKgwh5fqcJ+0jhyx4pxb1y3V3BXuW9axgK6lWQ0Mdh4qWNYN7yX+M7u7Qt2gJMA1QDcNyUZh2ufiySETZrrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715966747; c=relaxed/simple;
-	bh=xTrgfjrD4g3Hlii3WVx0sS/D+vbmZjqWJkxgae/P9qs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=meb2vAnAuYGb2CnK5cDpL+4psQgTelG2ov0xY9XsPxRe0mYgPA6apdSLJJprThaItp76DRGbBVcYV/dzJePpNcmemsnqTw79aEPSH59Pk6XT8RR0fcit5vdGu5fuY0EnT5jvp6oikHZa1t7uhuDTpyNDZ9/N8kE10EoID1Q47dY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24867C2BD10;
-	Fri, 17 May 2024 17:25:44 +0000 (UTC)
-Date: Fri, 17 May 2024 18:25:42 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Yang Shi <yang@os.amperecomputing.com>
-Cc: peterx@redhat.com, will@kernel.org, scott@os.amperecomputing.com,
-	cl@gentwo.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: mm: force write fault for atomic RMW instructions
-Message-ID: <ZkeTFiF_OOy80stO@arm.com>
-References: <20240507223558.3039562-1-yang@os.amperecomputing.com>
- <Zj4O8q9-bliXE435@arm.com>
- <6066e0da-f00a-40fd-a5e2-d4d78786c227@os.amperecomputing.com>
- <ZkM_WXxEQo51mrK5@arm.com>
- <570c686c-6aa1-43f0-ba31-3597a329e037@os.amperecomputing.com>
+	s=arc-20240116; t=1715966786; c=relaxed/simple;
+	bh=072dFkS4d4tbkJvVvRwY+LhA/h9LLDGfty0cX3lcm2s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LbYtXcQSS5H+7VN7bNT5hKRdkbI2DYu8WzAEb4cWRTyw/98a5bHrKtpGQgGN8BPajIvF3BdV6116e8Ym9D4v8OipfgfYad5oOq5a3xrs1gUolFLv18UwhW2tXIZIkMrz+fIGrYWUd3C1oj19dtfBBGnS4Ez3aFEvpoJGGCCnKJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZpNA2eJK; arc=none smtp.client-ip=209.85.161.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5b273b9f1deso276146eaf.3;
+        Fri, 17 May 2024 10:26:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715966784; x=1716571584; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cZGrmhkZn+JSkvkm9A1cwxxyX0MxkBYI3NcyHvf0LUk=;
+        b=ZpNA2eJKHZSoLaiskIDMfqR/rB57hOzaZXBvfVLDNuq9Ml9Sisq+zo8GGWRGrwbFHh
+         ETBRfxE+gaXqHkkHGt4bIaCfWJJnNPdNK7PECrobLVFH3kkjMmk/yIXZ5G+BwRubgTpO
+         Z9ZZbLLvCk6qAovwncovPgH7734jUjhzpLq3cdXqe8Q00bGG8eiBdMdKWHb2mAUDpt4e
+         Sp0IYmPSn3N0YkudUg1jiNouv931Qgc8uAk4kgyz8woyr9AdH7gFgg8HLuFg88YWCzNL
+         abdMk93WSmMcO0p2L0u0iOAQWjyJcZKE/vhPlSMQvWMr9t9dK7Xl1A5nJtXTjFQphZtY
+         Fwag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715966784; x=1716571584;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cZGrmhkZn+JSkvkm9A1cwxxyX0MxkBYI3NcyHvf0LUk=;
+        b=gg5DKu4zG9m84iNMGYfmkC6eNenDcCDFVODPBHi4zJE87j5onnxPsu2Ac5s21ow183
+         +oQ5xVM1NoTqMOyOvw+5NbLB1Q7I83J9x0API8NCsdVMShlMNygtOY5KwgmiFPkFiNzO
+         fG9lUACW1nooa8t49v5Z7tdECrLzzKz/b8q3TtJvQaDrtg/LQ5jeqXnRUUDq7rs5DERP
+         LsgkzX/YuzW6/6Tj7eMTw28i4wOTXuTW/+l4PhPrvgke8pr2bThHih2xK0la3cwWyz6c
+         DDWfURDKJ2g89LlfXVgqYEye842zGTfZ9p5DrobleewjsoG4W5QlU6f+WjGsP6ZJ0GrS
+         IEaw==
+X-Forwarded-Encrypted: i=1; AJvYcCUxzy79emLwyi868RteTdLBuIxtYAR5YAuRDu7BseltezPvz0wjAjgM745kJ8Eg+eRgxNQ10OENAcVyarNbHW3h3LS54foBSMalhi1x0/WqJlcZ/tM4s92DwCb8IbwxXtNRp9saoJj138BkQ38=
+X-Gm-Message-State: AOJu0Yz2p4TbsAGM/4p+SnBvD2qMnmEEQ0VlUzClPK/cIetBI/bwKiAo
+	FpLa9J8wfu6FES1HqTzXb6G2qX3O7Wx8QzVw+ey8Z8IDQQ6QIKyfmp6qvquZ6OfRQhwtOaqBWtj
+	NiGY9UjGV5k5wLmh4HQLZv34M5Mv6WGOrihs=
+X-Google-Smtp-Source: AGHT+IGOfKY+UBUaUm6h9GuOYIuW1nWsBC9NcJyqaZgUvLnYOjU5WP4uMThorKRVVc1YDztEugD+hNOi2jnSEFP/40Q=
+X-Received: by 2002:a05:6359:4587:b0:18a:62fd:b874 with SMTP id
+ e5c5f4694b2df-193bb63f000mr2904732855d.17.1715966783985; Fri, 17 May 2024
+ 10:26:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <570c686c-6aa1-43f0-ba31-3597a329e037@os.amperecomputing.com>
+References: <20240517141655.2797-1-trintaeoitogc@gmail.com> <a1cd16d2-1fbc-6543-c17c-a321ac72a2f3@gmail.com>
+In-Reply-To: <a1cd16d2-1fbc-6543-c17c-a321ac72a2f3@gmail.com>
+From: =?UTF-8?Q?Guilherme_Gi=C3=A1como_Sim=C3=B5es?= <trintaeoitogc@gmail.com>
+Date: Fri, 17 May 2024 14:25:48 -0300
+Message-ID: <CAM_Rzfb8f4ki4UB2+9EtnpJL8oMY6x0q=HmDm92mdbhLQafFOQ@mail.gmail.com>
+Subject: Re: [PATCH] thermal: adding check if the thermal firmware is running
+To: Jonathan Bither <jonbither@gmail.com>
+Cc: miriam.rachel.korenblit@intel.com, kvalo@kernel.org, 
+	rafael.j.wysocki@intel.com, daniel.lezcano@linaro.org, 
+	johannes.berg@intel.com, dmantipov@yandex.ru, linux-wireless@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 17, 2024 at 09:30:23AM -0700, Yang Shi wrote:
-> On 5/14/24 3:39 AM, Catalin Marinas wrote:
-> > It would be good to understand why openjdk is doing this instead of a
-> > plain write. Is it because it may be racing with some other threads
-> > already using the heap? That would be a valid pattern.
-> 
-> Yes, you are right. I think I quoted the JVM justification in earlier email,
-> anyway they said "permit use of memory concurrently with pretouch".
+Em sex., 17 de mai. de 2024 =C3=A0s 13:57, Jonathan Bither
+<jonbither@gmail.com> escreveu:
+>
+>
+> On 5/17/24 10:16, Guilherme Giacomo Simoes wrote:
+> > In the dmesg is showing the message "failed to read out thermal zone"
+> > as if the temperature read is failed by don't find the thermal zone.
+> >
+> > After researching and debugging, I see that this specific error is
+> > occurrenced because the thermal try read the temperature when is starte=
+d,
+> > but the firmware is not running yet.
+> >
+> > For more legibiliti i change the tt.c for return EAGAIN when this was o=
+ccurrence.
+> > After this change, in my computer I compile and install kernel in /boot
+> > and in my dmesg the message "failed to read out thermal zone" is not sh=
+ow
+> > any more.
+> >
+> > I would like to thanks for Rafael Wysocki <refael.j.wysocki@intel.com> =
+for
+> > your suggestions in mu first patch that results in this another patch.
+> > ---
+> >   drivers/net/wireless/intel/iwlwifi/mvm/tt.c | 10 ++++++++--
+> >   1 file changed, 8 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/tt.c b/drivers/net/=
+wireless/intel/iwlwifi/mvm/tt.c
+> > index 8083c4b2ab6b..68ab9966330c 100644
+> > --- a/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
+> > +++ b/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
+> > @@ -620,8 +620,14 @@ static int iwl_mvm_tzone_get_temp(struct thermal_z=
+one_device *device,
+> >
+> >       mutex_lock(&mvm->mutex);
+> >
+> > -     if (!iwl_mvm_firmware_running(mvm) ||
+> > -         mvm->fwrt.cur_fw_img !=3D IWL_UCODE_REGULAR) {
+> > +     const int res =3D iwl_mvm_firmware_running(mvm);
+> > +
+> > +     if (!res) {
+> > +             ret =3D -EAGAIN;
+> > +             goto out;
+> > +     }
+> > +
+>
+> You could skip using the res variable and move the mutex lock here and
+> simplify the above a bit. Ex:
+>
+>          int temp;
+>
+> -       mutex_lock(&mvm->mutex);
+> +       if (!iwl_mvm_firmware_running(mvm))
+> +               return -EAGAIN;
+>
+> -       if (!iwl_mvm_firmware_running(mvm) ||
+> -           mvm->fwrt.cur_fw_img !=3D IWL_UCODE_REGULAR) {
+> +       mutex_lock(&mvm->mutex);
+> +       if (mvm->fwrt.cur_fw_img !=3D IWL_UCODE_REGULAR) {
+>                  ret =3D -ENODATA;
+>                  goto out;
+>          }
+>
+> > +     if (mvm->fwrt.cur_fw_img !=3D IWL_UCODE_REGULAR) {
+> >               ret =3D -ENODATA;
+> >               goto out;
+> >       }
 
-Ah, sorry, I missed that. This seems like a valid reason.
+Hey Jonathan, Thank you for your suggestion.
+I sended a v2 patch of this patch
+https://patchwork.kernel.org/project/linux-wireless/patch/20240517171311.37=
+05-1-trintaeoitogc@gmail.com/
 
-> > A point Will raised was on potential ABI changes introduced by this
-> > patch. The ESR_EL1 reported to user remains the same as per the hardware
-> > spec (read-only), so from a SIGSEGV we may have some slight behaviour
-> > changes:
-> > 
-> > 1. PTE invalid:
-> > 
-> >     a) vma is VM_READ && !VM_WRITE permission - SIGSEGV reported with
-> >        ESR_EL1.WnR == 0 in sigcontext with your patch. Without this
-> >        patch, the PTE is mapped as PTE_RDONLY first and a subsequent
-> >        fault will report SIGSEGV with ESR_EL1.WnR == 1.
-> 
-> I think I can do something like the below conceptually:
-> 
-> if is_el0_atomic_instr && !is_write_abort
->     force_write = true
-> 
-> if VM_READ && !VM_WRITE && force_write == true
+If you want, you can send this suggestion in this patch v2.
 
-Nit: write implies read, so you only need to check !write.
-
->     vm_flags = VM_READ
->     mm_flags ~= FAULT_FLAG_WRITE
-> 
-> Then we just fallback to read fault. The following write fault will trigger
-> SIGSEGV with consistent ABI.
-
-I think this should work. So instead of reporting the write fault
-directly in case of a read-only vma, we let the core code handle the
-read fault and first and we retry the atomic instruction.
-
-> >     b) vma is !VM_READ && !VM_WRITE permission - SIGSEGV reported with
-> >        ESR_EL1.WnR == 0, so no change from current behaviour, unless we
-> >        fix the patch for (1.a) to fake the WnR bit which would change the
-> >        current expectations.
-> > 
-> > 2. PTE valid with PTE_RDONLY - we get a normal writeable fault in
-> >     hardware, no need to fix ESR_EL1 up.
-> > 
-> > The patch would have to address (1) above but faking the ESR_EL1.WnR bit
-> > based on the vma flags looks a bit fragile.
-> 
-> I think we don't need to fake the ESR_EL1.WnR bit with the fallback.
-
-I agree, with your approach above we don't need to fake WnR.
-
-> > Similarly, we have userfaultfd that reports the fault to user. I think
-> > in scenario (1) the kernel will report UFFD_PAGEFAULT_FLAG_WRITE with
-> > your patch but no UFFD_PAGEFAULT_FLAG_WP. Without this patch, there are
-> > indeed two faults, with the second having both UFFD_PAGEFAULT_FLAG_WP
-> > and UFFD_PAGEFAULT_FLAG_WRITE set.
-> 
-> I don't quite get what the problem is. IIUC, uffd just needs a signal from
-> kernel to tell this area will be written. It seems not break the semantic.
-> Added Peter Xu in this loop, who is the uffd developer. He may shed some
-> light.
-
-Not really familiar with uffd but just looking at the code, if a handler
-is registered for both MODE_MISSING and MODE_WP, currently the atomic
-instruction signals a user fault without UFFD_PAGEFAULT_FLAG_WRITE (the
-do_anonymous_page() path). If the page is mapped by the uffd handler as
-the zero page, a restart of the instruction would signal
-UFFD_PAGEFAULT_FLAG_WRITE and UFFD_PAGEFAULT_FLAG_WP (the do_wp_page()
-path).
-
-With your patch, we get the equivalent of UFFD_PAGEFAULT_FLAG_WRITE on
-the first attempt, just like having a STR instruction instead of
-separate LDR + STR (as the atomics behave from a fault perspective).
-
-However, I don't think that's a problem, the uffd handler should cope
-with an STR anyway, so it's not some unexpected combination of flags.
-
--- 
-Catalin
+Thanks.
 
