@@ -1,114 +1,155 @@
-Return-Path: <linux-kernel+bounces-182484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09C158C8BB7
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:55:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0795E8C8BB9
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:55:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D9B3B232EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:55:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D3B81C20401
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:55:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5BA0140394;
-	Fri, 17 May 2024 17:41:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18FEB1411D1;
+	Fri, 17 May 2024 17:42:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="orQ+RWOD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="QrW8C06o";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="gjRCT2/7"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E8F813FD81;
-	Fri, 17 May 2024 17:41:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8679F13FD87;
+	Fri, 17 May 2024 17:42:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715967706; cv=none; b=XZIc0waEB+2EUDAnOpk6stVSCNaB2iiEKusvvPWAWopUWNVQRUxWYDpIh6lQUSeWHHGSxOpLAl1gHuapRaZVLGrBfrImIg1DO8bAnGRfAMxIffkFcgrjlpdIuhd562y/HPzBECM8vQCHQJIwuAXhyB/q6ww01+3R4ozsGuRFALc=
+	t=1715967740; cv=none; b=aqH7fu4pUeeeoibLfqzX+iZXt4Gdtj3A9afliPUg8U/qy4lWi4hW0BndxxhHz41M2Kv0gYnm2XAHqlawzcSPlJG9k5V8Cvs3SQp3xWwD37n+AEG+yA26oODs/OZX7oMwm+9hbh0RN1lkw7zf9d5G3QLXA+q5C2AVkKrvanL0Fec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715967706; c=relaxed/simple;
-	bh=mC1ywOvsKwJqlrV9KUwm4F1IrjKMz9Sv1nAsgzY9tRA=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=BMclU1derU1+PAG6kDHcpPUzy2ISPQP4ARzqiktDrCkA4YL5Ag5TX2P3iajXvMBmhAr1rJKhEAK1vuGwCbhncfuXNkHpT7SZMOIBcw70AKxipgq16JmpSInQpdr10UDTw+8EScP50IsX8lJUju3jHIqVi3VclHzzvfJia5STftE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=orQ+RWOD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DABE1C2BD10;
-	Fri, 17 May 2024 17:41:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715967705;
-	bh=mC1ywOvsKwJqlrV9KUwm4F1IrjKMz9Sv1nAsgzY9tRA=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=orQ+RWODE9Epe4j41qe3ySukioq+cxqVXRzWIqYZov0AyB4EwE/V9d0twuR7lo5jd
-	 H3hqd7omgHr4yv7IwICfpKBRVZ27zv/F7wxh/pAcgrUbY4Im0BHuPVkrJkFVmgmIUP
-	 Wdrwc+AXM+aBL+ixeT4npKfK9L3tibOIafK3/HpQwRz2Zd52GEdUt8E4tyY+/63GHI
-	 LdEqeXplyMwjCRZNzvCq1NDZiKf6uXWN2tA8K9w8Wi7XKD1krk6JJaRfhAC4ODaBMs
-	 zJkVvlrskTs4N2oxTLlZuEA/0Mc+GxTwpTI/ZZunEmoBHYqacjyIp7Xe/XNzXetfQ/
-	 kK9bQvLQEuMpQ==
-From: Kalle Valo <kvalo@kernel.org>
-To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Cc: Borislav Petkov <bp@alien8.de>,  Dave Hansen <dave.hansen@intel.com>,
-  Thomas Gleixner <tglx@linutronix.de>,  Ingo Molnar <mingo@redhat.com>,
-  Dave Hansen <dave.hansen@linux.intel.com>,  "Rafael J. Wysocki"
- <rafael@kernel.org>,  x86@kernel.org,  linux-pm@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  regressions@lists.linux.dev,  Jeff Johnson
- <quic_jjohnson@quicinc.com>,  Daniel Sneddon
- <daniel.sneddon@linux.intel.com>
-Subject: Re: [regression] suspend stress test stalls within 30 minutes
-References: <20240511184945.GDZj-9yaOEWqf1ng8u@fat_crate.local>
-	<87h6f4jdrq.fsf@kernel.org> <878r0djxgc.fsf@kernel.org>
-	<874jb0jzx5.fsf@kernel.org>
-	<feaefaae-e25b-4a48-b6be-e20054f2c8df@intel.com>
-	<20240515072231.z3wlyoblyc34ldmr@desk>
-	<529C9374-DA6F-49C8-9B32-91741800F8E4@alien8.de>
-	<20240515162747.6shmaoelc4mt7nro@desk> <878r0bhvjq.fsf@kernel.org>
-	<20240516070315.swz2golcrfp3uvfd@desk>
-	<20240516142513.qqy7wbmja5frizuj@desk>
-Date: Fri, 17 May 2024 20:41:41 +0300
-In-Reply-To: <20240516142513.qqy7wbmja5frizuj@desk> (Pawan Gupta's message of
-	"Thu, 16 May 2024 07:25:13 -0700")
-Message-ID: <87a5kofi96.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1715967740; c=relaxed/simple;
+	bh=LdlqTwe/mO4GC3DW1gY14MWjg0vJJEYkMXUv2/W5k30=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZMaFyLRn5n+H2gODAeNQU+yIZtn9sO0dXxSnpmjgPuobqjhbo6Z8EkByvRvUOGKW05L7hKbDp8X/XrLlE6ZXp9++bcsrWmAaQTz3fsLUNVx7GMraPi9R2+4vmVQOfHjD9DZfKO+WOKYNamJoqee/ttSiUPhi8jGhDGC/QEnmlkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=QrW8C06o; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=gjRCT2/7; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 578135D64A;
+	Fri, 17 May 2024 17:42:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1715967736; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uI2N/LU7fmAr1C+mGRMoNgvCi87LviYVMcbAgfVaCtw=;
+	b=QrW8C06oht8OpaOw/EY/VRJ8pAz/OvSySyEaZY+WhP09eVF8A/4yFtZgXVFH1hyTW53HeX
+	O6C9/99mfhll/5qxtAEwAuDF69EXawXfX0a6qnyvzo1Sd0s8h/J+f1tPkmXQdJZ3bp54Vx
+	cJ1ciH1goigbQEOybPbmfeW+OrMMYzo=
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b="gjRCT2/7"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1715967735; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uI2N/LU7fmAr1C+mGRMoNgvCi87LviYVMcbAgfVaCtw=;
+	b=gjRCT2/7GRS5jHmCniIfr3VsDyhJGuiT4bFGGOLkNmbiDXKTmQaGbqdDrMDILaCKVXqLkA
+	VjapRHSkWYI0M3onX3tTuyECTlrCFqJ5mBaGe3/nGSCjJdLLGOowxRKVbOZh+rfgmc//EL
+	Zru+zG7/bxoY4d4VqY0tLVet4wNwJ0Q=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4D33013991;
+	Fri, 17 May 2024 17:42:15 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id VtapEveWR2YqUQAAD6G6ig
+	(envelope-from <mkoutny@suse.com>); Fri, 17 May 2024 17:42:15 +0000
+Date: Fri, 17 May 2024 19:42:14 +0200
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: cve@kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-cve-announce@vger.kernel.org, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: CVE-2024-27406: lib/Kconfig.debug: TEST_IOV_ITER depends on MMU
+Message-ID: <ot4g5zxesgwpzbgvb7yjazsgdxojktdph42qbw6pik3tvyswhj@kdo44nmnwwcq>
+References: <2024051739-CVE-2024-27406-cfc3@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="q2prxzht2io4igc6"
+Content-Disposition: inline
+In-Reply-To: <2024051739-CVE-2024-27406-cfc3@gregkh>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-8.08 / 50.00];
+	BAYES_HAM(-2.97)[99.85%];
+	DWL_DNSWL_MED(-2.00)[suse.com:dkim];
+	SIGNED_PGP(-2.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	MIME_GOOD(-0.20)[multipart/signed,text/plain];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	TO_DN_SOME(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MIME_TRACE(0.00)[0:+,1:+,2:~];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
+	MISSING_XM_UA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.com:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim,linuxfoundation.org:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: 578135D64A
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Score: -8.08
 
-Pawan Gupta <pawan.kumar.gupta@linux.intel.com> writes:
 
-> On Thu, May 16, 2024 at 12:03:22AM -0700, Pawan Gupta wrote:
->> I am running the suspend test now and will update in the morning if I
->> could reproduce the hang.
->
-> Completed 500 suspend iterations, but the hang is not reproduced :(
-> I have restarted the test.
+--q2prxzht2io4igc6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-In a way I'm not surprised as nobody else has reported anything similar.
-I guess it's something really specific on my box, so weird.
+On Fri, May 17, 2024 at 01:40:41PM GMT, Greg Kroah-Hartman <gregkh@linuxfou=
+ndation.org> wrote:
+> BUG: failure at mm/nommu.c:318/vmap()!
+> Kernel panic - not syncing: BUG!
+>=20
+> The test calls vmap() directly, but vmap() is not supported on nommu
+> systems, causing the crash.  TEST_IOV_ITER therefore needs to depend on
+> MMU.
 
-> BTW, could you please share your /proc/cmdline?
+This is fixing mising assumption of a testing module.
+The BUG is deserved AFAIU. The CVE should be reverted IMO.
 
-This is the simplified command line with which I can reproduce the bug:
 
-$ cat /proc/cmdline 
-BOOT_IMAGE=/boot/vmlinuz-6.9.0 root=UUID=61a268dc-df96-4e69-9272-928240dcc445 ro net.ifnames=0
+Thanks,
+Michal
 
-> Also, was there any workload running with the suspend test?
+--q2prxzht2io4igc6
+Content-Type: application/pgp-signature; name="signature.asc"
 
-There is no special workload when I reproduce the bug. This NUC box is
-one of our test setups which I use to test ath11k and ath12k wireless
-drivers, but when I'm debugging this suspend issue none of the wireless
-drivers are not even loaded. I don't normally have a display connected
-to the box but I do run netconsole, although I just verified that I see
-the bug if I remove netconsole configuration from cmdline.
+-----BEGIN PGP SIGNATURE-----
 
-The distro is Ubuntu 20.04.6 LTS. Oh, but I do have installed a WCN6855
-PCI module to the box so that I can test ath11k. That can of course make
-a difference. And maybe also BIOS settings?
+iHUEABYKAB0WIQQpEWyjXuwGT2dDBqAGvrMr/1gcjgUCZkeW9AAKCRAGvrMr/1gc
+jiCgAPsE6bEHzqHkZz/5Qsi4IIuq1AGOE5pAFUGGsTjj5yH+UwEA53XWDAdBJnDM
+eyKSRH0pVQkqEUBSMz7vz3BWuoMRnQo=
+=6mTW
+-----END PGP SIGNATURE-----
 
-I think is easiest if I try get more info about with my box first, it
-might be quite challenging for you to reproduce it.
-
--- 
-https://patchwork.kernel.org/project/linux-wireless/list/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+--q2prxzht2io4igc6--
 
