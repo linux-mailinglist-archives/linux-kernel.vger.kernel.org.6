@@ -1,215 +1,108 @@
-Return-Path: <linux-kernel+bounces-181738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B45BF8C807C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 06:45:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B04F8C8089
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 07:06:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 830E5B20EE9
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 04:45:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A6F3B20CDB
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 05:06:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9E06DDCD;
-	Fri, 17 May 2024 04:44:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD25BDDCB;
+	Fri, 17 May 2024 05:06:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Oxo0cHVf"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jFluO/0F"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82B5ED524
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 04:44:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC254DDCD
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 05:06:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715921095; cv=none; b=WX1dZ43xluIJPaQp+MLSnXU9V8EbTRPh0YstSVkmTvbPl/XxLQn5XUQlneHVkxABpte61mvRQRlkmExfsfdr0yxz7GNXOjN8eUTTG3CYAJiwk5wZ3cAjcdj77qaQDmWQ3xjx8+KlKm1GkoluY+RAqnCXdPPY4vRch/WJAm1ua2A=
+	t=1715922383; cv=none; b=MeQSncm35F/tBXYQZZZ7BN5bFbj2skyQ3YlybVguniURuFX8UNlqjxwxxUD1IBd6elcl84p50+iedxNbnRy3k/Q0hBmFh+ORKsVALhjrSka573bdnX8Vt9e1fArMLOp6PnFhag9Zk1iEkw1EK82/u7vNR4IhijIIQaat/6942Nk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715921095; c=relaxed/simple;
-	bh=Hyg1w276bZZtvMX+mZmirznVDfUaMn2+t1CYZpDH00U=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rpp+yqCkmkKfur8QVk9WLgE1EDCXjKqVLK0Ka+EZ8u288okSzt96mnsyk7tNjPRDcFS/rtzxx81jO5p4kOL6s572ijOmpeilMQ/4APwH110+CL6ka2qaSt09hMlAaQ2dNERF0P7gKeKa8c0pSYKQVsrZVKRy57Idi1I3n5kHeds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Oxo0cHVf; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715921092;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+Pho0BMrYFF2YDAB5tlU7tWcVNwJsnl8ML6imB+XGp8=;
-	b=Oxo0cHVfA0tfktsn5sSyBk9XTA3w00rgByriVunCpfNPOolv5b4Cs6SS6YPskttwqc9INb
-	8V37nSWAFg8onmzNsAMnnkrOMXRvriM2hAvCxCHUCLjmlODhXU7ztpOGDm6OOHXEbZzzhP
-	13R5xp39BNleN/iMSWDrsP4SBSENSr0=
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com
- [209.85.166.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-391-mOC7WPi4M6yQqlJTuZwYAQ-1; Fri, 17 May 2024 00:44:50 -0400
-X-MC-Unique: mOC7WPi4M6yQqlJTuZwYAQ-1
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7e1ac2fbcb7so1035085939f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 21:44:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715921090; x=1716525890;
-        h=content-transfer-encoding:mime-version:organization:references
-         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+Pho0BMrYFF2YDAB5tlU7tWcVNwJsnl8ML6imB+XGp8=;
-        b=e2+yUKT34VtuGO2vBxkLonKJEJ2n135FFNX4vTbegSuwh1+IDPTDTm+W4Fmk40WznF
-         pzYV+CXfOKJe7Ixz6/VJLVrEWpQi2v6j2TZjROILH0kJlqR/ZeJyzLraDXHu2jZT4hpx
-         6yTNAn9cpmv7mcnJfE6ThRyuP8cY6YmkwOQW70AW416j73k6TRMU8kKhDfkBEQCx8/NJ
-         IKfblAjnDilYh5+rTF7O2vwmVaAEQaMJsOJG1AQtqcMKMMUmlc8P4/eUTpLWP+j3IQGi
-         90d/gJHJ0KS8B+NnrkFdn0v1cTLgsuqSteItR9tjjI9bpchTl+ZnpSXBYQMVyJDDjViD
-         oS2A==
-X-Forwarded-Encrypted: i=1; AJvYcCVz2xyxo5tqoQtO+yKmjYK/gnKq4Tqh4pBE0mYg7hEpTV7tjBuaWwcce7b1NPa4xZLKzOezYkMG3hPJiW2uuuoA3qvqhaq4GYgsi/eZ
-X-Gm-Message-State: AOJu0Yx9rjS5SncCnNWKBd4ghy4Ce0qCxwpEFg9qy9goZdA3l3lcieUu
-	bfjtLi3gP2O1x7GG55IKhW/cxMp3aGfJvwY9YGxjilaq9WYUt9+PBO18hTiHvlhB7ieMSonVXpL
-	Mwa2EZhVinY9qvb/onZ/uLxhjb9Hy2NY1Cpkt/7g+pZ6qyhaus+eHR8zueEYnjQ==
-X-Received: by 2002:a5e:c702:0:b0:7de:dbcf:b67f with SMTP id ca18e2360f4ac-7e1b5229628mr2108276439f.21.1715921090072;
-        Thu, 16 May 2024 21:44:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF8SJkDmskTL1TlkipsUfaSNL7CgupEzTaNdCDxXRpHof+4T200uekUmWGBuKMc6pRxG0+GtQ==
-X-Received: by 2002:a5e:c702:0:b0:7de:dbcf:b67f with SMTP id ca18e2360f4ac-7e1b5229628mr2108275439f.21.1715921089725;
-        Thu, 16 May 2024 21:44:49 -0700 (PDT)
-Received: from redhat.com ([38.15.36.11])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-489375c1a86sm4497757173.105.2024.05.16.21.44.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 May 2024 21:44:49 -0700 (PDT)
-Date: Thu, 16 May 2024 22:44:42 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Yan Zhao <yan.y.zhao@intel.com>
-Cc: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
- <jgg@nvidia.com>, <kevin.tian@intel.com>, <iommu@lists.linux.dev>,
- <pbonzini@redhat.com>, <seanjc@google.com>, <dave.hansen@linux.intel.com>,
- <luto@kernel.org>, <peterz@infradead.org>, <tglx@linutronix.de>,
- <mingo@redhat.com>, <bp@alien8.de>, <hpa@zytor.com>, <corbet@lwn.net>,
- <joro@8bytes.org>, <will@kernel.org>, <robin.murphy@arm.com>,
- <baolu.lu@linux.intel.com>, <yi.l.liu@intel.com>
-Subject: Re: [PATCH 4/5] vfio/type1: Flush CPU caches on DMA pages in
- non-coherent domains
-Message-ID: <20240516224442.56df5c23.alex.williamson@redhat.com>
-In-Reply-To: <ZkbK9CzmcxgqhSuR@yzhao56-desk.sh.intel.com>
-References: <20240507061802.20184-1-yan.y.zhao@intel.com>
-	<20240507062138.20465-1-yan.y.zhao@intel.com>
-	<20240509121049.58238a6f.alex.williamson@redhat.com>
-	<Zj33cUe7HYOIfj5N@yzhao56-desk.sh.intel.com>
-	<20240510105728.76d97bbb.alex.williamson@redhat.com>
-	<ZkG9IEQwi7HG3YBk@yzhao56-desk.sh.intel.com>
-	<20240516145009.3bcd3d0c.alex.williamson@redhat.com>
-	<ZkbK9CzmcxgqhSuR@yzhao56-desk.sh.intel.com>
-Organization: Red Hat
+	s=arc-20240116; t=1715922383; c=relaxed/simple;
+	bh=X65547yC+gjIEWCBBGeUT8y2lrwOCFGBDeGKhjtEZ0I=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=nN3w2YZXOdAVLNFWdW0cwwFWzHtZRxpU9qtV1ZcdtZp8N12E1BK6Ygep6ViRXaJo447k3esHVr5EQk3s5amALizvKixbOto9o1L/5BnF7Up79qIBn3Bb9qZe7WPyHBiSvKBjJcca750TuVzmm8G74cwZzTX8AGJ4jTaHyR6ptTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jFluO/0F; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715922381; x=1747458381;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=X65547yC+gjIEWCBBGeUT8y2lrwOCFGBDeGKhjtEZ0I=;
+  b=jFluO/0F7sQ/Q/PHFGmkpTNEwGZ1AozfHI5EbUV9kMlv1XI+cC45OzWC
+   mRBqsoeBJhiZe3hF7tM6StmnK2B903IGnj9Omkro8KPAyT6u0Y2X3FOP6
+   4P2TA1HySlXiVXmjq/8HTVVyMDPGLZ4r9gAngrAJyRlM8PNZf4Ag+dTx1
+   mCWbD2ERisqsIsSFvEzF2sme18jPJL67muvna5mCoyT15ENmgRhlURN3y
+   H/Kno9D/kYi4ZEkY9BiV6pnBAMsSGoYmEOb3Rdmup0rjFNbaKW5n0RPW3
+   goaUQKFivDJ2TDO2WZx+9MJmjDtLRmLHhQrIRRBQaDus4AE7rpy35d01p
+   Q==;
+X-CSE-ConnectionGUID: UXpWMR1XSjmrmmCqkRI1Gg==
+X-CSE-MsgGUID: ZrV4VDjkRUqkwXtWTzaVGQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="23217513"
+X-IronPort-AV: E=Sophos;i="6.08,166,1712646000"; 
+   d="scan'208";a="23217513"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 22:06:20 -0700
+X-CSE-ConnectionGUID: ZyiHM67ZSk6bw2XCpyqnhQ==
+X-CSE-MsgGUID: us3R7kliTOaP+RiI+h4+CA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,166,1712646000"; 
+   d="scan'208";a="36575684"
+Received: from unknown (HELO 108735ec233b) ([10.239.97.151])
+  by orviesa004.jf.intel.com with ESMTP; 16 May 2024 22:06:19 -0700
+Received: from kbuild by 108735ec233b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s7pnM-0000Es-04;
+	Fri, 17 May 2024 05:06:16 +0000
+Date: Fri, 17 May 2024 12:56:54 +0800
+From: kernel test robot <lkp@intel.com>
+To: Zhen Lei <thunder.leizhen@huawei.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Luis Chamberlain <mcgrof@kernel.org>
+Subject: ld.lld: error: vmlinux.a(kernel/kallsyms.o):(function
+ kallsyms_lookup_name: .text+0x6e): relocation R_RISCV_PCREL_HI20 out of
+ range: -524440 is not in [-524288, 524287]; references
+ kallsyms_seqs_of_names
+Message-ID: <202405171222.JQUW7NxR-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Fri, 17 May 2024 11:11:48 +0800
-Yan Zhao <yan.y.zhao@intel.com> wrote:
+Hi Zhen,
 
-> On Thu, May 16, 2024 at 02:50:09PM -0600, Alex Williamson wrote:
-> > On Mon, 13 May 2024 15:11:28 +0800
-> > Yan Zhao <yan.y.zhao@intel.com> wrote:
-> >   
-> > > On Fri, May 10, 2024 at 10:57:28AM -0600, Alex Williamson wrote:  
-> > > > On Fri, 10 May 2024 18:31:13 +0800
-> > > > Yan Zhao <yan.y.zhao@intel.com> wrote:
-> > > >     
-> > > > > On Thu, May 09, 2024 at 12:10:49PM -0600, Alex Williamson wrote:    
-> > > > > > On Tue,  7 May 2024 14:21:38 +0800
-> > > > > > Yan Zhao <yan.y.zhao@intel.com> wrote:      
-> ...   
-> > > > > > > @@ -1683,9 +1715,14 @@ static int vfio_iommu_replay(struct vfio_iommu *iommu,
-> > > > > > >  	for (; n; n = rb_next(n)) {
-> > > > > > >  		struct vfio_dma *dma;
-> > > > > > >  		dma_addr_t iova;
-> > > > > > > +		bool cache_flush_required;
-> > > > > > >  
-> > > > > > >  		dma = rb_entry(n, struct vfio_dma, node);
-> > > > > > >  		iova = dma->iova;
-> > > > > > > +		cache_flush_required = !domain->enforce_cache_coherency &&
-> > > > > > > +				       !dma->cache_flush_required;
-> > > > > > > +		if (cache_flush_required)
-> > > > > > > +			dma->cache_flush_required = true;      
-> > > > > > 
-> > > > > > The variable name here isn't accurate and the logic is confusing.  If
-> > > > > > the domain does not enforce coherency and the mapping is not tagged as
-> > > > > > requiring a cache flush, then we need to mark the mapping as requiring
-> > > > > > a cache flush.  So the variable state is something more akin to
-> > > > > > set_cache_flush_required.  But all we're saving with this is a
-> > > > > > redundant set if the mapping is already tagged as requiring a cache
-> > > > > > flush, so it could really be simplified to:
-> > > > > > 
-> > > > > > 		dma->cache_flush_required = !domain->enforce_cache_coherency;      
-> > > > > Sorry about the confusion.
-> > > > > 
-> > > > > If dma->cache_flush_required is set to true by a domain not enforcing cache
-> > > > > coherency, we hope it will not be reset to false by a later attaching to domain 
-> > > > > enforcing cache coherency due to the lazily flushing design.    
-> > > > 
-> > > > Right, ok, the vfio_dma objects are shared between domains so we never
-> > > > want to set 'dma->cache_flush_required = false' due to the addition of a
-> > > > 'domain->enforce_cache_coherent == true'.  So this could be:
-> > > > 
-> > > > 	if (!dma->cache_flush_required)
-> > > > 		dma->cache_flush_required = !domain->enforce_cache_coherency;    
-> > > 
-> > > Though this code is easier for understanding, it leads to unnecessary setting of
-> > > dma->cache_flush_required to false, given domain->enforce_cache_coherency is
-> > > true at the most time.  
-> > 
-> > I don't really see that as an issue, but the variable name originally
-> > chosen above, cache_flush_required, also doesn't convey that it's only
-> > attempting to set the value if it wasn't previously set and is now
-> > required by a noncoherent domain.  
-> Agreed, the old name is too vague.
-> What about update_to_noncoherent_required?
+FYI, the error/warning still remains.
 
-set_noncoherent?  Thanks,
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   ea5f6ad9ad9645733b72ab53a98e719b460d36a6
+commit: 60443c88f3a89fd303a9e8c0e84895910675c316 kallsyms: Improve the performance of kallsyms_lookup_name()
+date:   1 year, 6 months ago
+config: riscv-randconfig-r063-20240515 (https://download.01.org/0day-ci/archive/20240517/202405171222.JQUW7NxR-lkp@intel.com/config)
+compiler: clang version 16.0.6 (https://github.com/llvm/llvm-project 7cbf1a2591520c2491aa35339f227775f4d3adf6)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240517/202405171222.JQUW7NxR-lkp@intel.com/reproduce)
 
-Alex
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405171222.JQUW7NxR-lkp@intel.com/
 
-> Then in vfio_iommu_replay(), it's like
-> 
-> update_to_noncoherent_required = !domain->enforce_cache_coherency && !dma->is_noncoherent;
-> if (update_to_noncoherent_required)
->          dma->is_noncoherent = true;
-> 
-> ...
-> if (update_to_noncoherent_required)
-> 	arch_flush_cache_phys((phys, size);
-> >   
-> > > > > > It might add more clarity to just name the mapping flag
-> > > > > > dma->mapped_noncoherent.      
-> > > > > 
-> > > > > The dma->cache_flush_required is to mark whether pages in a vfio_dma requires
-> > > > > cache flush in the subsequence mapping into the first non-coherent domain
-> > > > > and page unpinning.    
-> > > > 
-> > > > How do we arrive at a sequence where we have dma->cache_flush_required
-> > > > that isn't the result of being mapped into a domain with
-> > > > !domain->enforce_cache_coherency?    
-> > > Hmm, dma->cache_flush_required IS the result of being mapped into a domain with
-> > > !domain->enforce_cache_coherency.
-> > > My concern only arrives from the actual code sequence, i.e.
-> > > dma->cache_flush_required is set to true before the actual mapping.
-> > > 
-> > > If we rename it to dma->mapped_noncoherent and only set it to true after the
-> > > actual successful mapping, it would lead to more code to handle flushing for the
-> > > unwind case.
-> > > Currently, flush for unwind is handled centrally in vfio_unpin_pages_remote()
-> > > by checking dma->cache_flush_required, which is true even before a full
-> > > successful mapping, so we won't miss flush on any pages that are mapped into a
-> > > non-coherent domain in a short window.  
-> > 
-> > I don't think we need to be so literal that "mapped_noncoherent" can
-> > only be set after the vfio_dma is fully mapped to a noncoherent domain,
-> > but also we can come up with other names for the flag.  Perhaps
-> > "is_noncoherent".  My suggestion was more from the perspective of what
-> > does the flag represent rather than what we intend to do as a result of
-> > the flag being set.  Thanks,   
-> Makes sense!
-> I like the name "is_noncoherent" :)
-> 
+All errors (new ones prefixed by >>):
 
+>> ld.lld: error: vmlinux.a(kernel/kallsyms.o):(function kallsyms_lookup_name: .text+0x6e): relocation R_RISCV_PCREL_HI20 out of range: -524440 is not in [-524288, 524287]; references kallsyms_seqs_of_names
+   >>> referenced by kallsyms.c
+   >>> defined in vmlinux.a(kernel/kallsyms.o)
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
