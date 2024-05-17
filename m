@@ -1,155 +1,93 @@
-Return-Path: <linux-kernel+bounces-182060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37E668C85C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 13:37:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E14B8C8610
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 14:00:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4D5C1F238C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:37:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4898128603E
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 12:00:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CADB3F8D6;
-	Fri, 17 May 2024 11:37:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b="RP7soohG";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Yow8Rti0"
-Received: from wflow6-smtp.messagingengine.com (wflow6-smtp.messagingengine.com [64.147.123.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93E1D53E3F;
+	Fri, 17 May 2024 11:59:09 +0000 (UTC)
+Received: from mail.actia.se (mail.actia.se [212.181.117.226])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EB1839FE0;
-	Fri, 17 May 2024 11:37:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94A7951C59;
+	Fri, 17 May 2024 11:59:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.181.117.226
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715945827; cv=none; b=t+vWUCRdghkev4ovXSn/1xnV2Q5UZBRO/VK1/Uy7SahJb7+t8FDu/jQ6ikCbmQ6quHGVzyISu6OqVsAFY2VTFagALK5Ez2Ve2Xl2O5gRk/xV0h8yyrPu1Xno0FP2DmCB6USQUIiMerQ0Czx3myPF3Ziyam9miBqb/CkXpq60Ros=
+	t=1715947149; cv=none; b=SIGPPsx1iE5/j/pgUAPn7u+9BWOR/rsavYwgmsW0x+SSJ1WlDSwFsG8QxlOI/zF64zXDXhhXf3B1YNZXW8ewpAX1aeGcxNwakc+pa8h9V4/mCpwrm7zex6IgnvKJ3aziJ7qzxUksg+bj9EyD9ZcCuNNiLGclNh1C4J7ifXgT5KE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715945827; c=relaxed/simple;
-	bh=9iwRhGote2VDlqpW9jTKlkdZQA3B+wPYMKRzpfbwwc4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EhlqbkfybwvGlawJDVKcDhgl6rybsr7+Oo+6ykvvWM02/s7UvAdBUkbJAUNe1QGsCKL3TKI6MFz4AUWAzQ32YILq2OwMzLNo2Y9aqtMbmK1ceKdlwtglq+MX1DbwOBcVjlGPo4zKZFjAu70neG2Q405v5oS5UI3iY9OjrkVRVIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net; spf=pass smtp.mailfrom=3xx0.net; dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b=RP7soohG; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Yow8Rti0; arc=none smtp.client-ip=64.147.123.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3xx0.net
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-	by mailflow.west.internal (Postfix) with ESMTP id 2DF562CC0146;
-	Fri, 17 May 2024 07:37:04 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Fri, 17 May 2024 07:37:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=3xx0.net; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1715945823; x=1715949423; bh=nI3D7dv9ma
-	mdu0MSJ/mg14u62h/nEOjeznANWab6vVU=; b=RP7soohGfwMt3AO8dys3F2agT+
-	EJoeH1j6f/glE00+8FdBTfi+nIkvSiQsJMzL/hwQkn6uCE7KSJ0MweWaxzFCqNwW
-	fXwyJ79qcIdGeKWlLv4vqx00QPKZhsWdADHQedVow+sRy/e1diFo8xN80ELcvNky
-	qmzZSLWm4YeI0+DjQyq+HmWje9eYdAYqAds1DOZ08EAD5QixDFhhAIgDddApmflC
-	+CYyEy0ds6LRlAFGR1R9lScGMaFlskvtMmkIhvGG0d3NC/UbhvHNUbxvF/qpvm8N
-	j0Hg9ElKIZK+FIDMZNmV9kLkSWFBTp2HeLsHtytIYrZQ631cSuphJnhldEEg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	i76614979.fm3; t=1715945823; x=1715949423; bh=nI3D7dv9mamdu0MSJ/
-	mg14u62h/nEOjeznANWab6vVU=; b=Yow8Rti0jLSufYdeUU+Zt81/T5g8I0tDeQ
-	H2YLccyc78jDer7JXkdBBWemJsc82/oINbcPb+RPjtK1mFaqouIQp3FfmHAHeaz2
-	B64dlAPJKZ0KUNzIq6n++6YqAetFzWU8JrEda4OShudEjGcN9TCJe48+wSOF5c4B
-	JPVzNH9niYpxlYXlfO2rXcOsbSP0LC37UUP6/TBM2DF/myvLFq6FfjHZT4DHW+fs
-	gqgQE1pPvvyfxfRy5pm8ezvWLfph39KPiajmY6RivnFhTygiTdWn96ixaVqlFKOx
-	5mg4G2THALUdw49d167R5iA9jU29zZQStpwCw/4YQaUAsbewWODg==
-X-ME-Sender: <xms:XkFHZjSrjq3gJjFRQ-zy8HR8UI7rwwlFKBM-Ws8oxv3eCQ0b6FQ5gA>
-    <xme:XkFHZky5dUePLN8kWq176cfCL68UTmt5tUnMjKmRlfSil2-frNexvUrqNOYo5qqEM
-    jk5yNAyGlZAQmChRYc>
-X-ME-Received: <xmr:XkFHZo2FCuO7bgyYcWm-UpRb3IsT9F2xl-BKUT-u0EAmCkHmCSNfGq-41Faer11c2_tRZgcN-KQyeVvH_f-6OYU>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdehfedgleegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdtsfdttddtjeenucfhrhhomheplfhonhgr
-    thhhrghnucevrghlmhgvlhhsuceojhgtrghlmhgvlhhsseefgiigtddrnhgvtheqnecugg
-    ftrfgrthhtvghrnhepjeeigefhffdtledukeekueekffdulefhteejhfelvdeftdelteet
-    gedufeeukedunecuffhomhgrihhnpehprghmpggtrghprdhsohenucevlhhushhtvghruf
-    hiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehjtggrlhhmvghlshesfeiggidt
-    rdhnvght
-X-ME-Proxy: <xmx:XkFHZjD3Vsg4c-nwEQfCfbyUM7a4K81Dw6ZJXL75JWdnBvTOAmEpuQ>
-    <xmx:XkFHZsgjoCt2yTlXrwRaXyskCggR7o9rgcp5ZiyeqPk4Dn70_Eminw>
-    <xmx:XkFHZnqIm2Clp1qofP8p9NvhEdc1uNfSweCQx7l3o7CRSV33mw8yPA>
-    <xmx:XkFHZnhJ7O2DiUDDmbLaP5QR3DGLYGU7rlD8kvvfcLaE5RORjdyl7w>
-    <xmx:X0FHZrRlLRs8g3Q5avKRvrUgDEsPG-rYELie3h_iV6JUXA6uI-noNukQ>
-Feedback-ID: i76614979:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 17 May 2024 07:37:00 -0400 (EDT)
-Date: Fri, 17 May 2024 04:42:02 -0700
-From: Jonathan Calmels <jcalmels@3xx0.net>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Casey Schaufler <casey@schaufler-ca.com>, brauner@kernel.org, 
-	ebiederm@xmission.com, Luis Chamberlain <mcgrof@kernel.org>, 
-	Kees Cook <keescook@chromium.org>, Joel Granados <j.granados@samsung.com>, 
-	Serge Hallyn <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, David Howells <dhowells@redhat.com>, containers@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
-Subject: Re: [PATCH 0/3] Introduce user namespace capabilities
-Message-ID: <jvy3npdptyro3m2q2junvnokbq2fjlffljxeqitd55ff37cydc@b7mwtquys6im>
-References: <20240516092213.6799-1-jcalmels@3xx0.net>
- <2804dd75-50fd-481c-8867-bc6cea7ab986@schaufler-ca.com>
- <D1BBFWKGIA94.JP53QNURY3J4@kernel.org>
- <D1BBI1LX2FMW.3MTQAHW0MA1IH@kernel.org>
- <D1BC3VWXKTNC.2DB9JIIDOFIOQ@kernel.org>
+	s=arc-20240116; t=1715947149; c=relaxed/simple;
+	bh=fe43fJSj3i9NMSzNqNRStwhPd10HNnKc47sfeXR3k8E=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=DpVmuSfsUkMbxrcUT726hiMV7fAkX1cghOjOK+l/0Y7RCSY/eiLWyU8Xcm6XlJht8b58BxqVWZ1DkWFQHgLAo7t3i7e5OKYcf67LivfSE/2uQW9te3CUUuC/iZ+AceflJ6ot1B+xiwkPJk76tT4dt2lj3axEZhiTbb4S9oQgSd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=actia.se; spf=pass smtp.mailfrom=actia.se; arc=none smtp.client-ip=212.181.117.226
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=actia.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=actia.se
+Received: from S036ANL.actianordic.se (10.12.31.117) by S036ANL.actianordic.se
+ (10.12.31.117) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 17 May
+ 2024 13:43:52 +0200
+Received: from S036ANL.actianordic.se ([fe80::e13e:1feb:4ea6:ec69]) by
+ S036ANL.actianordic.se ([fe80::e13e:1feb:4ea6:ec69%4]) with mapi id
+ 15.01.2507.039; Fri, 17 May 2024 13:43:52 +0200
+From: John Ernberg <john.ernberg@actia.se>
+To: Juergen Gross <jgross@suse.com>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>
+CC: "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, John Ernberg
+	<john.ernberg@actia.se>, "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: [PATCH] USB: xen-hcd: Traverse host/ when CONFIG_USB_XEN_HCD is
+ selected
+Thread-Topic: [PATCH] USB: xen-hcd: Traverse host/ when CONFIG_USB_XEN_HCD is
+ selected
+Thread-Index: AQHaqE99M70NH7RzN0K31Fykj7Mi3Q==
+Date: Fri, 17 May 2024 11:43:52 +0000
+Message-ID: <20240517114345.1190755-1-john.ernberg@actia.se>
+Accept-Language: en-US, sv-SE
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-mailer: git-send-email 2.45.0
+x-esetresult: clean, is OK
+x-esetid: 37303A29059A2F57607765
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <D1BC3VWXKTNC.2DB9JIIDOFIOQ@kernel.org>
 
-> > > On Thu May 16, 2024 at 10:07 PM EEST, Casey Schaufler wrote:
-> > > > I suggest that adding a capability set for user namespaces is a bad idea:
-> > > > 	- It is in no way obvious what problem it solves
-> > > > 	- It is not obvious how it solves any problem
-> > > > 	- The capability mechanism has not been popular, and relying on a
-> > > > 	  community (e.g. container developers) to embrace it based on this
-> > > > 	  enhancement is a recipe for failure
-> > > > 	- Capabilities are already more complicated than modern developers
-> > > > 	  want to deal with. Adding another, special purpose set, is going
-> > > > 	  to make them even more difficult to use.
+If no other USB HCDs are selected when compiling a small pure virutal
+machine, the Xen HCD driver cannot be built.
 
-Sorry if the commit wasn't clear enough. Basically:
+Fix it by traversing down host/ if CONFIG_USB_XEN_HCD is selected.
 
-- Today user namespaces grant full capabilities.
-  This behavior is often abused to attack various kernel subsystems.
-  Only option is to disable them altogether which breaks a lot of
-  userspace stuff.
-  This goes against the least privilege principle.
+Fixes: 494ed3997d75 ("usb: Introduce Xen pvUSB frontend (xen hcd)")
+Cc: stable@vger.kernel.org # v5.17+
+Signed-off-by: John Ernberg <john.ernberg@actia.se>
+---
+ drivers/usb/Makefile | 1 +
+ 1 file changed, 1 insertion(+)
 
-- It adds a new capability set.
-  This set dictates what capabilities are granted in namespaces (instead
-  of always getting full caps).
-  This brings namespaces in line with the rest of the system, user
-  namespaces are no more "special".
-  They now work the same way as say a transition to root does with
-  inheritable caps.
-
-- This isn't intended to be used by end users per se (although they could).
-  This would be used at the same places where existing capabalities are
-  used today (e.g. init system, pam, container runtime, browser
-  sandbox), or by system administrators.
-
-To give you some ideas of things you could do:
-
-# E.g. prevent alice from getting CAP_NET_ADMIN in user namespaces under SSH
-echo "auth optional pam_cap.so" >> /etc/pam.d/sshd
-echo "!cap_net_admin alice" >> /etc/security/capability.conf.
-
-# E.g. prevent any Docker container from ever getting CAP_DAC_OVERRIDE
-systemd-run -p CapabilityBoundingSet=~CAP_DAC_OVERRIDE \
-            -p SecureBits=userns-strict-caps \
-            /usr/bin/dockerd
-
-# E.g. kernel could be vulnerable to CAP_SYS_RAWIO exploits
-# Prevent users from ever gaining it
-sysctl -w cap_bound_userns_mask=0x1fffffdffff
+diff --git a/drivers/usb/Makefile b/drivers/usb/Makefile
+index 3a9a0dd4be70..949eca0adebe 100644
+--- a/drivers/usb/Makefile
++++ b/drivers/usb/Makefile
+@@ -35,6 +35,7 @@ obj-$(CONFIG_USB_R8A66597_HCD)	+=3D host/
+ obj-$(CONFIG_USB_FSL_USB2)	+=3D host/
+ obj-$(CONFIG_USB_FOTG210_HCD)	+=3D host/
+ obj-$(CONFIG_USB_MAX3421_HCD)	+=3D host/
++obj-$(CONFIG_USB_XEN_HCD)	+=3D host/
+=20
+ obj-$(CONFIG_USB_C67X00_HCD)	+=3D c67x00/
+=20
+--=20
+2.45.0
 
