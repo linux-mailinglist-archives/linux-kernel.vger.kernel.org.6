@@ -1,93 +1,141 @@
-Return-Path: <linux-kernel+bounces-182026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B1508C8546
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 13:09:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EFC68C854B
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 13:10:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 149242837C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:09:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99617B216AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:10:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80A823C6BA;
-	Fri, 17 May 2024 11:08:59 +0000 (UTC)
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6F513E485;
+	Fri, 17 May 2024 11:09:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UeGDtSxF"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3AAD45007;
-	Fri, 17 May 2024 11:08:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AC113D3BB;
+	Fri, 17 May 2024 11:09:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715944139; cv=none; b=PR0zRy5sCOEu2o3THVrVFmePNbO9clFT5/MvIvNNea3ffFFUXeQiy8H9n6/qza1jiHcBzlcgWMNnEUEVdPu1Rjdn6xhrw19BilCjGkYFfxpsrmkEwBOPuQbJoo/TrVaFtaOMqE46Bhs6QeBZ506EM826KzNDUGrdM86++Wr2Uj8=
+	t=1715944184; cv=none; b=PLdmuc8+vjinFuXy+qbR1xgrXALwSID31l5DKoqp2/OEM2DG/WAyZ7UyZ2iArqxWPxxL1qSPXvg6HY3XWY4AEsy7CDuMFdNFtQuwaMKsrcmZXnnDEfQ7jn34ue7H4D4V5CtGIByVxzhlQOtkndId8JfllNPNxCblg6L1VYGxwJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715944139; c=relaxed/simple;
-	bh=p6dfWuB4Whcj4xr75oZDNBWAzo6Em8ZoqSFzP5xF2y8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rEe7ftw4c8apPwGz8ZXpCWj4M/n4kqAO+p2RBzon2Oe6HQ+Xd2vOcau76ldlQ0j1RHM6yfJ3VxAG4dLwVg4NpZSWYAeODCd7d/KeOoEc55Vyvcd2WPn7mTx1M4gq92dpV37PE13Lxl7Qrkw+oJn2YnOaj75+deoRUODNn6fG1oA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-6f4603237e0so32756b3a.0;
-        Fri, 17 May 2024 04:08:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715944137; x=1716548937;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yht2LD80B28pJAQ4A9hUxuWsUKcbjheod3UZATHiu0E=;
-        b=BQr0xqWu3ACndc5h/OlLFp4FrmofVVbDBkRUgwfnGtx3Mx8YMKX4ySNXakqpiFviPQ
-         tbB3d+EuJkQXKlN4l3cERD90Hoiu2MKI6d3Z36YoAsj4oZjJ3T9r8VT1SKQtFgvhBC9s
-         CGqwYIKNmo+I+ODizytVRUIdAjXgG6JVdXyXH+rXxEbuuZoNCu3NUzYJ/hVMcFecpGQc
-         +hNc6wppWVUQSDtQ3PN2DqpnJskshM6oVreyzju2N8rVPXihQlHzXRKSZMoLCG80Gzt0
-         tsNAghJPBpT1we+G0S/l6udWzI/lTNfpgq+Nw4y65eXhUeasS3gAka80+pa6ad3T7qF4
-         Q6Zw==
-X-Forwarded-Encrypted: i=1; AJvYcCVD8Y+qLPYw3td/vfTWLMrWEf23qoWS6i3YQIfPAN0catWz8ItInbnHyO2mukOgaN9sI6+W5GooY3InbNs3olp6B7WszkXrS4qVArVVla62mwBXmD/pxLh6a5qoMKKmJ8VxxL9Uu4YfbP7IF/TzqaQRQmH9t5sD+KSkwebTGNhH0scll92kezGO
-X-Gm-Message-State: AOJu0YzYP8r0NCqXUB5yIYtkD/ZOsR7ctR47UUnQGyGppx8bIofp9R4T
-	N6VpZJol0dv3tkZ6nyBmJIRIbexPmc+ajD/IW4KxwFVOfl2kG2DQK98lA9s2
-X-Google-Smtp-Source: AGHT+IH+JTp6X4RZaUBISbRbfWD5tivOAWaQzIS4kHHzjX3fhR3zBIPTeH70nbLIGb+mbT98Di+vBA==
-X-Received: by 2002:a05:6a00:23d3:b0:6ea:ed87:1348 with SMTP id d2e1a72fcca58-6f4df435c31mr31860502b3a.13.1715944137135;
-        Fri, 17 May 2024 04:08:57 -0700 (PDT)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2a83d3dsm14567847b3a.65.2024.05.17.04.08.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 May 2024 04:08:56 -0700 (PDT)
-Date: Fri, 17 May 2024 20:08:54 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH] PCI: endpoint: Remove some unused fields in struct
- pci_epf_group
-Message-ID: <20240517110854.GN202520@rocinante>
-References: <6507d44b6c60a19af35a605e2d58050be8872ab6.1712341008.git.christophe.jaillet@wanadoo.fr>
+	s=arc-20240116; t=1715944184; c=relaxed/simple;
+	bh=eQsSSkyQqaAlOfXHMd7JuuXRGlCI2iIQbiFoNl5dTLg=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=h1JfjuYaz5KnXx9tfk3AqUETv5RMTax/INrxby3jxklcoBt3Mo5qMbtb5WnrZbWzqMJ94l7OlIv8a2mNPEQieEi0aq4Y50GscbTkbAXO1iN2OLdaOddVwmfWXVCYwilO7WzBD20QeDiNuauobO0WV2Ad2Qc2rHsbe4fY0ivmewg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UeGDtSxF; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44HA2WdH014892;
+	Fri, 17 May 2024 11:09:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	subject:to:cc:references:from:message-id:date:mime-version
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=Bph/qlNQ/PYBP8C80X56Bd0SlXNXZWoQ/O9Sy/b+pcU=; b=Ue
+	GDtSxF74zTER+9UMCT+8MvCiyFH5RQipX8YGeFDMvRtfRm/ObAEg3+5e6KLf5hZ5
+	kNczVCVC8B05UwKNE0v4mjWadSBR2h3PM12miD7Fvfh6qhvEvbHYxHJ0f4hsa30w
+	nG3B6SDDi5OW5Afa/lWpkx4FFFosR47Ht3BJo48H69INzEm1f7SHayeb07E5j/Z9
+	2eMuEYUIlBVmScbkzmFeRQ3AL9skqGzE7Z1cSHTIecHCloAQWW4PppnroZzGKIp7
+	cQjyd99HhLmMmGr8N4DjJBejMLyx63MikYWw2VrgaGvWcXaeaqyFAw/quJQceKIE
+	OzjbloOLs8zW8dS0u0ug==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y5e9cu1d0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 17 May 2024 11:09:39 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44HB9ckw022789
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 17 May 2024 11:09:38 GMT
+Received: from [10.216.42.234] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 17 May
+ 2024 04:09:34 -0700
+Subject: Re: [PATCH 3/3] arm64: dts: qcom: sdx75-idp: add SDHCI for SD Card
+To: Krzysztof Kozlowski <krzk@kernel.org>, <ulf.hansson@linaro.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
+        <bhupesh.sharma@linaro.org>
+CC: <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
+References: <20240515120958.32032-1-quic_nainmeht@quicinc.com>
+ <20240515120958.32032-4-quic_nainmeht@quicinc.com>
+ <a5833628-65f3-493d-9de5-33ba87a18875@kernel.org>
+ <2ed5326a-b2ea-220a-2a9b-0478df0c6f12@quicinc.com>
+ <743c2a10-0ce6-4b84-8127-f3d762976366@kernel.org>
+From: Naina Mehta <quic_nainmeht@quicinc.com>
+Message-ID: <7a8e4e2d-8ab6-53cc-f98e-285ed22eca1e@quicinc.com>
+Date: Fri, 17 May 2024 16:39:31 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6507d44b6c60a19af35a605e2d58050be8872ab6.1712341008.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <743c2a10-0ce6-4b84-8127-f3d762976366@kernel.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: ilv4kMFtBlcF-t8wiHI_sidD9IJI99IW
+X-Proofpoint-ORIG-GUID: ilv4kMFtBlcF-t8wiHI_sidD9IJI99IW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-17_03,2024-05-17_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 spamscore=0
+ adultscore=0 lowpriorityscore=0 mlxscore=0 clxscore=1015 mlxlogscore=941
+ priorityscore=1501 bulkscore=0 malwarescore=0 suspectscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405010000 definitions=main-2405170089
 
-Hello,
 
-> In "struct pci_epf_group", the 'type_group' field is unused.
+
+On 5/17/2024 2:22 PM, Krzysztof Kozlowski wrote:
+> On 16/05/2024 07:21, Naina Mehta wrote:
+>>
+>>
+>> On 5/15/2024 7:53 PM, Krzysztof Kozlowski wrote:
+>>> On 15/05/2024 14:09, Naina Mehta wrote:
+>>>> Enable SDHCI on sdx75-idp to support SD card.
+>>>> Also add the required regulators.
+>>>>
+>>>> Signed-off-by: Naina Mehta <quic_nainmeht@quicinc.com>
+>>>> ---
+>>>>    arch/arm64/boot/dts/qcom/sdx75-idp.dts | 45 ++++++++++++++++++++++++++
+>>>>    1 file changed, 45 insertions(+)
+>>>>
+>>>> diff --git a/arch/arm64/boot/dts/qcom/sdx75-idp.dts b/arch/arm64/boot/dts/qcom/sdx75-idp.dts
+>>>> index f76e72fb2072..6f94278cf837 100644
+>>>> --- a/arch/arm64/boot/dts/qcom/sdx75-idp.dts
+>>>> +++ b/arch/arm64/boot/dts/qcom/sdx75-idp.dts
+>>>> @@ -41,6 +41,29 @@
+>>>>
+>>>>    		vin-supply = <&vph_ext>;
+>>>>    	};
+>>>> +
+>>>> +	vreg_sd_vccb: sd-vccb {
+>>>
+>>> Please use name for all fixed regulators which matches current format
+>>> recommendation: 'regulator-[0-9]+v[0-9]+'
+>>
+>> Did you mean that vreg_sd_vdd should be updated according to the
+>> suggested format because vreg_sd_vccb is not a fixed regulator?
+>>
 > 
-> This was added, but already unused, by commit 70b3740f2c19 ("PCI: endpoint:
-> Automatically create a function specific attributes group")
-> 
-> Remove it.
-> 
-> Found with cppcheck, unusedStructMember.
+> Yeah, it should be about sd-vdd, but then this one should be named as
+> well with a similar prefix to have it consistent.
 
-Applied to endpoint, thank you!
+Sure, I will update in next revision.
 
-[1/1] PCI: endpoint: Remove unused field in struct pci_epf_group
-      https://git.kernel.org/pci/pci/c/ddc66cc4e695
-
-	Krzysztof
+Thanks,
+Naina
 
