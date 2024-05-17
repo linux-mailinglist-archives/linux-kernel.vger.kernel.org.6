@@ -1,209 +1,219 @@
-Return-Path: <linux-kernel+bounces-182688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFA908C8E7E
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 01:30:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A152B8C8E81
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 01:31:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 806591F22550
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 23:30:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 145911F22BE2
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 23:31:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E764413E03C;
-	Fri, 17 May 2024 23:30:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BbCqnOda"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AC19141999;
+	Fri, 17 May 2024 23:31:25 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 193721DFFD;
-	Fri, 17 May 2024 23:30:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40A4A43ACA
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 23:31:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715988639; cv=none; b=jSolMNLee9S8uBwUu+tmcjP/XjZOy46p+LSPzQ3fCL3K8X7HNsctT6oLLC+/29tzkXhLYdlEnGNdt5eL7vZxqN2LTgV/bw4qf1xoN6Hpf9ROEEhraaVLfBFiHltMowasQfliyiQH2pN282MWUFAB6Cb/XFoeIcX4kS89DmKvbOQ=
+	t=1715988684; cv=none; b=LP4zOJMc4kvljzjCNPVS0lgUZoq+0tzcgflKsgfxOs9EKDrkxW6DzCwgM0a3hb0wPHaoEgCOWJ89VjeMP2GswhMg7RLqVsf9WDf5Eyb7vWrkH8fwh4nsTXx5BTpsBZq3bnqeCNMgQZfdvhSeLbOPH18juZIPeU4dSUuy4obPDBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715988639; c=relaxed/simple;
-	bh=qot/7Z+BVjx8vdmVs4trkSgQAgtLVQ0HVQp6j3d7Ogg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kKYmJKUFnidvhBpJO0W6lCSrnNmM6CqNYKb1gKfpjAzh6EMZMvwNYMQg0syKUMQ6/HOJzDQ9y02qXKDlzHNKz3o3pLQ9K5ITimhTnLkKTbDkOdK9wqPIKgI7ZiOlMaGwG7JZVBXQnodnI51E7MoCRtB4077ILz6PjHb9QzGNFs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BbCqnOda; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99E27C2BD10;
-	Fri, 17 May 2024 23:30:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715988638;
-	bh=qot/7Z+BVjx8vdmVs4trkSgQAgtLVQ0HVQp6j3d7Ogg=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=BbCqnOdayYIY8ZZTIrTD6nu14aL6eF89de0VyhHKGcZG6EFXh7FYbOyyaU6ODWLpJ
-	 m5G0lbzLXutnT3eyhB3rpyfOm5bYc+lzb4z6z7o7iKM9yiz4ysiXbhw6tOkntDU4/5
-	 z5Z8H9g6/ynRkJcQ1TtcPIB1aPq/pYM631gyKCm2nFF/bUKIJ3NpFwwUwjYqCHvV1r
-	 aRCWuESywgHr2gqzWqWpFdAJhnCuJUdgoQNCAGQHc6bqxhFvxcQM3GQ05ysSe9bg4V
-	 8xKWSQvqtyH4ksvNT9GSg+rI9acsVJ54xYE4n2sAKSY/HM2PwadcFJ+RWkU5+groQm
-	 RjJbaBQTRDvLw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 389EACE0C3C; Fri, 17 May 2024 16:30:38 -0700 (PDT)
-Date: Fri, 17 May 2024 16:30:38 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH 1/2] rcu/tasks: Fix stale task snaphot from TASK-TRACE
-Message-ID: <e75f2bd3-96c9-4cb2-83f5-eafb5b68bc3b@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240517152303.19689-1-frederic@kernel.org>
- <20240517152303.19689-2-frederic@kernel.org>
+	s=arc-20240116; t=1715988684; c=relaxed/simple;
+	bh=Tk62uYH+Jez2jlqrkmBZWiG86NusHJOS+Lz2/95F+dE=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=GdEQTtjKMBQVLgqXdjLtbGY0FSMsprP/tuPgxiUsicVoQGG7+x6Mc6UquuXWF12vNQUvNanlGVkumOyRGLJx5UzgdJqF0gyk5gCQNsu8KBufitcRVM/Oqb0D3supynko91GTNmM1LdEQS2Ykb/vZFIQw+Jx5kx4WunAeJv7nANE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-7e1eb98f144so596177839f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 16:31:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715988682; x=1716593482;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cCSO2lkNuggn4gF+aNq1dyTOqh+MVBLkbyj5K1YD8XA=;
+        b=rigOs3I9B0i1cLJ8oQ/EU9w82IdFexMh+Qa8/RWhDn6tWXGNLZTc2cw7/Ab3OnP25n
+         nVeOL8IjSgof3Lzo2A7z7QLUFPzTk1mb2S101ClqTc4N4Vq2FyBzoYKdwqSBTPVRG40e
+         +OnvfAwDg5lJY5uauOkPPPnFn64JftgsBb54+faO01xHftMihLB6Lz5odtJPRaqmWwk2
+         iwi+FrADhbWgo5PIZX1SP3hs4AVhjBazIUkAQbqha5E934yTTKGeMyyCPOxqOyP/ZJ3b
+         23KWgj1LpXDjP0nRmmjFDfoZDWkn5E8Fs3qDh6uBBE18JCHB88YuNFNgONBde1E0uO/P
+         4GnA==
+X-Forwarded-Encrypted: i=1; AJvYcCVGmISuhlah3b+aEJdPvTnBaS4wU3HfSeS9kVY1qhsDSrAdxsjmIm9ZvcIUQ7yQLZq5wuWQtQXi0u4sncHmS8hYT2YNDsm8tez0xGa6
+X-Gm-Message-State: AOJu0YzRFcDoIIyZXN2HuqFqTfnS54oWgY2PfxTbxRLGFHO5t0FHl8ht
+	xxX/IBBa+jPDpA4Suv6eqHrHWZFAb+OeARHo/vGhmURq6mE09AwMZ188yqpidxA1H4xn/2raO73
+	WXmua2fO0VUH9o4EJQd5qTyUhOFi8YfsbwZgAu9u7YcJSFHjMPgYwEHs=
+X-Google-Smtp-Source: AGHT+IGiKakUXRSBFC374kAZf283TAmqiMYP1nPSyBhFmmVl8CHOeh0bhzYvdv49ionEaWwTWm2NtRD5zz84qoFkC7NSuFxGPorC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240517152303.19689-2-frederic@kernel.org>
+X-Received: by 2002:a05:6638:891d:b0:48a:9d8f:9a1e with SMTP id
+ 8926c6da1cb9f-48a9d8f9d80mr497468173.5.1715988682109; Fri, 17 May 2024
+ 16:31:22 -0700 (PDT)
+Date: Fri, 17 May 2024 16:31:22 -0700
+In-Reply-To: <000000000000d4e9e20616259cfe@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d605280618aebfb8@google.com>
+Subject: Re: [syzbot] [bpf?] [net?] possible deadlock in sock_hash_update_common
+From: syzbot <syzbot+0b95946cd0588e2ad0f5@syzkaller.appspotmail.com>
+To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
+	daniel@iogearbox.net, davem@davemloft.net, edumazet@google.com, 
+	jakub@cloudflare.com, john.fastabend@gmail.com, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, May 17, 2024 at 05:23:02PM +0200, Frederic Weisbecker wrote:
-> When RCU-TASKS-TRACE pre-gp takes a snapshot of the current task running
-> on all online CPUs, no explicit ordering enforces a missed context
-> switched task to see the pre-GP update side accesses. The following
-> diagram, courtesy of Paul, shows the possible bad scenario:
-> 
->         CPU 0                                           CPU 1
->         -----                                           -----
-> 
->         // Pre-GP update side access
->         WRITE_ONCE(*X, 1);
->         smp_mb();
->         r0 = rq->curr;
->                                                         RCU_INIT_POINTER(rq->curr, TASK_B)
->                                                         spin_unlock(rq)
->                                                         rcu_read_lock_trace()
->                                                         r1 = X;
->         /* ignore TASK_B */
-> 
-> Either r0==TASK_B or r1==1 is needed but neither is guaranteed.
-> 
-> One possible solution to solve this is to wait for an RCU grace period
-> at the beginning of the TASKS-TRACE grace period before taking the
-> current tasks snaphot. However this would introduce more latency to
-> TASKS-TRACE update sides.
-> 
-> Choose another solution: lock the target runqueue lock while taking the
-> current task snapshot. This makes sure that the update side sees
-> the latest context switch and subsequent context switches will see the
-> pre-GP update side accesses.
-> 
-> Fixes: e386b6725798 ("rcu-tasks: Eliminate RCU Tasks Trace IPIs to online CPUs")
-> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+syzbot has found a reproducer for the following issue on:
 
-Excellent catch!!!
+HEAD commit:    71ed6c266348 bpf: Fix order of args in call to bpf_map_kvc..
+git tree:       bpf-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=17554e3f180000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bd214b7accd7fc53
+dashboard link: https://syzkaller.appspot.com/bug?extid=0b95946cd0588e2ad0f5
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1515d8b2980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=167b60dc980000
 
-Queued for review and testing with the usual wordsmithing shown below.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/5802d805367c/disk-71ed6c26.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/463c507f7ca0/vmlinux-71ed6c26.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/0958a8d8b793/bzImage-71ed6c26.xz
 
-I am happy to push this via -rcu, but if you were instead looking to
-send it via some other path:
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+0b95946cd0588e2ad0f5@syzkaller.appspotmail.com
 
-Acked-by: Paul E. McKenney <paulmck@kernel.org>
+======================================================
+WARNING: possible circular locking dependency detected
+6.9.0-rc7-syzkaller-02064-g71ed6c266348 #0 Not tainted
+------------------------------------------------------
+syz-executor469/5083 is trying to acquire lock:
+ffff88801ba8c2b0 (&psock->link_lock){+...}-{2:2}, at: spin_lock_bh include/linux/spinlock.h:356 [inline]
+ffff88801ba8c2b0 (&psock->link_lock){+...}-{2:2}, at: sock_map_add_link net/core/sock_map.c:146 [inline]
+ffff88801ba8c2b0 (&psock->link_lock){+...}-{2:2}, at: sock_hash_update_common+0x624/0xa30 net/core/sock_map.c:1041
 
-							Thanx, Paul
+but task is already holding lock:
+ffff88801a299520 (&htab->buckets[i].lock){+...}-{2:2}, at: spin_lock_bh include/linux/spinlock.h:356 [inline]
+ffff88801a299520 (&htab->buckets[i].lock){+...}-{2:2}, at: sock_hash_update_common+0x20c/0xa30 net/core/sock_map.c:1025
 
-------------------------------------------------------------------------
+which lock already depends on the new lock.
 
-commit f04b876e13b8218867f4e4538488c20fbcafc4f0
-Author: Frederic Weisbecker <frederic@kernel.org>
-Date:   Fri May 17 17:23:02 2024 +0200
 
-    rcu/tasks: Fix stale task snaphot for Tasks Trace
-    
-    When RCU-TASKS-TRACE pre-gp takes a snapshot of the current task running
-    on all online CPUs, no explicit ordering synchronizes properly with a
-    context switch.  This lack of ordering can permit the new task to miss
-    pre-grace-period update-side accesses.  The following diagram, courtesy
-    of Paul, shows the possible bad scenario:
-    
-            CPU 0                                           CPU 1
-            -----                                           -----
-    
-            // Pre-GP update side access
-            WRITE_ONCE(*X, 1);
-            smp_mb();
-            r0 = rq->curr;
-                                                            RCU_INIT_POINTER(rq->curr, TASK_B)
-                                                            spin_unlock(rq)
-                                                            rcu_read_lock_trace()
-                                                            r1 = X;
-            /* ignore TASK_B */
-    
-    Either r0==TASK_B or r1==1 is needed but neither is guaranteed.
-    
-    One possible solution to solve this is to wait for an RCU grace period
-    at the beginning of the RCU-tasks-trace grace period before taking the
-    current tasks snaphot. However this would introduce large additional
-    latencies to RCU-tasks-trace grace periods.
-    
-    Another solution is to lock the target runqueue while taking the current
-    task snapshot. This ensures that the update side sees the latest context
-    switch and subsequent context switches will see the pre-grace-period
-    update side accesses.
-    
-    This commit therefore adds runqueue locking to cpu_curr_snapshot().
-    
-    Fixes: e386b6725798 ("rcu-tasks: Eliminate RCU Tasks Trace IPIs to online CPUs")
-    Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-    Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+the existing dependency chain (in reverse order) is:
 
-diff --git a/kernel/rcu/tasks.h b/kernel/rcu/tasks.h
-index 8adbd886ad2ee..58d8263c12392 100644
---- a/kernel/rcu/tasks.h
-+++ b/kernel/rcu/tasks.h
-@@ -1737,6 +1737,9 @@ static void rcu_tasks_trace_pregp_step(struct list_head *hop)
- 	// allow safe access to the hop list.
- 	for_each_online_cpu(cpu) {
- 		rcu_read_lock();
-+		// Note that cpu_curr_snapshot() locks the target CPU's
-+		// runqueue.  This ensures that subsequent tasks running
-+		// on that CPU will see the updater's pre-GP accesses.
- 		t = cpu_curr_snapshot(cpu);
- 		if (rcu_tasks_trace_pertask_prep(t, true))
- 			trc_add_holdout(t, hop);
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 7019a40457a6d..fa6e60d5e3be3 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -4467,12 +4467,7 @@ int task_call_func(struct task_struct *p, task_call_f func, void *arg)
-  * @cpu: The CPU on which to snapshot the task.
-  *
-  * Returns the task_struct pointer of the task "currently" running on
-- * the specified CPU.  If the same task is running on that CPU throughout,
-- * the return value will be a pointer to that task's task_struct structure.
-- * If the CPU did any context switches even vaguely concurrently with the
-- * execution of this function, the return value will be a pointer to the
-- * task_struct structure of a randomly chosen task that was running on
-- * that CPU somewhere around the time that this function was executing.
-+ * the specified CPU.
-  *
-  * If the specified CPU was offline, the return value is whatever it
-  * is, perhaps a pointer to the task_struct structure of that CPU's idle
-@@ -4486,11 +4481,16 @@ int task_call_func(struct task_struct *p, task_call_f func, void *arg)
-  */
- struct task_struct *cpu_curr_snapshot(int cpu)
- {
-+	struct rq *rq = cpu_rq(cpu);
- 	struct task_struct *t;
-+	struct rq_flags rf;
- 
--	smp_mb(); /* Pairing determined by caller's synchronization design. */
-+	rq_lock_irqsave(rq, &rf);
-+	smp_mb__after_spinlock(); /* Pairing determined by caller's synchronization design. */
- 	t = rcu_dereference(cpu_curr(cpu));
-+	rq_unlock_irqrestore(rq, &rf);
- 	smp_mb(); /* Pairing determined by caller's synchronization design. */
-+
- 	return t;
- }
- 
+-> #1 (&htab->buckets[i].lock){+...}-{2:2}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+       __raw_spin_lock_bh include/linux/spinlock_api_smp.h:126 [inline]
+       _raw_spin_lock_bh+0x35/0x50 kernel/locking/spinlock.c:178
+       spin_lock_bh include/linux/spinlock.h:356 [inline]
+       sock_hash_delete_elem+0x17c/0x400 net/core/sock_map.c:957
+       bpf_prog_78b015942f8c5b4e+0x63/0x67
+       bpf_dispatcher_nop_func include/linux/bpf.h:1243 [inline]
+       __bpf_prog_run include/linux/filter.h:691 [inline]
+       bpf_prog_run include/linux/filter.h:698 [inline]
+       __bpf_trace_run kernel/trace/bpf_trace.c:2403 [inline]
+       bpf_trace_run2+0x2ec/0x540 kernel/trace/bpf_trace.c:2444
+       trace_kfree include/trace/events/kmem.h:94 [inline]
+       kfree+0x2bd/0x3b0 mm/slub.c:4383
+       sk_psock_free_link include/linux/skmsg.h:425 [inline]
+       sock_map_del_link net/core/sock_map.c:170 [inline]
+       sock_map_unref+0x3ac/0x5e0 net/core/sock_map.c:192
+       sock_map_update_common+0x4f0/0x5b0 net/core/sock_map.c:518
+       sock_map_update_elem_sys+0x55f/0x910 net/core/sock_map.c:594
+       map_update_elem+0x53a/0x6f0 kernel/bpf/syscall.c:1654
+       __sys_bpf+0x76f/0x810 kernel/bpf/syscall.c:5670
+       __do_sys_bpf kernel/bpf/syscall.c:5789 [inline]
+       __se_sys_bpf kernel/bpf/syscall.c:5787 [inline]
+       __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5787
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (&psock->link_lock){+...}-{2:2}:
+       check_prev_add kernel/locking/lockdep.c:3134 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+       validate_chain+0x18cb/0x58e0 kernel/locking/lockdep.c:3869
+       __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+       __raw_spin_lock_bh include/linux/spinlock_api_smp.h:126 [inline]
+       _raw_spin_lock_bh+0x35/0x50 kernel/locking/spinlock.c:178
+       spin_lock_bh include/linux/spinlock.h:356 [inline]
+       sock_map_add_link net/core/sock_map.c:146 [inline]
+       sock_hash_update_common+0x624/0xa30 net/core/sock_map.c:1041
+       sock_map_update_elem_sys+0x5a4/0x910 net/core/sock_map.c:596
+       map_update_elem+0x53a/0x6f0 kernel/bpf/syscall.c:1654
+       __sys_bpf+0x76f/0x810 kernel/bpf/syscall.c:5670
+       __do_sys_bpf kernel/bpf/syscall.c:5789 [inline]
+       __se_sys_bpf kernel/bpf/syscall.c:5787 [inline]
+       __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5787
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&htab->buckets[i].lock);
+                               lock(&psock->link_lock);
+                               lock(&htab->buckets[i].lock);
+  lock(&psock->link_lock);
+
+ *** DEADLOCK ***
+
+3 locks held by syz-executor469/5083:
+ #0: ffff88807e797258 (sk_lock-AF_UNIX){+.+.}-{0:0}, at: lock_sock include/net/sock.h:1595 [inline]
+ #0: ffff88807e797258 (sk_lock-AF_UNIX){+.+.}-{0:0}, at: sock_map_sk_acquire net/core/sock_map.c:129 [inline]
+ #0: ffff88807e797258 (sk_lock-AF_UNIX){+.+.}-{0:0}, at: sock_map_update_elem_sys+0x1cc/0x910 net/core/sock_map.c:590
+ #1: ffffffff8e334ea0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:329 [inline]
+ #1: ffffffff8e334ea0 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:781 [inline]
+ #1: ffffffff8e334ea0 (rcu_read_lock){....}-{1:2}, at: sock_map_sk_acquire net/core/sock_map.c:130 [inline]
+ #1: ffffffff8e334ea0 (rcu_read_lock){....}-{1:2}, at: sock_map_update_elem_sys+0x1d8/0x910 net/core/sock_map.c:590
+ #2: ffff88801a299520 (&htab->buckets[i].lock){+...}-{2:2}, at: spin_lock_bh include/linux/spinlock.h:356 [inline]
+ #2: ffff88801a299520 (&htab->buckets[i].lock){+...}-{2:2}, at: sock_hash_update_common+0x20c/0xa30 net/core/sock_map.c:1025
+
+stack backtrace:
+CPU: 1 PID: 5083 Comm: syz-executor469 Not tainted 6.9.0-rc7-syzkaller-02064-g71ed6c266348 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2187
+ check_prev_add kernel/locking/lockdep.c:3134 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+ validate_chain+0x18cb/0x58e0 kernel/locking/lockdep.c:3869
+ __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+ __raw_spin_lock_bh include/linux/spinlock_api_smp.h:126 [inline]
+ _raw_spin_lock_bh+0x35/0x50 kernel/locking/spinlock.c:178
+ spin_lock_bh include/linux/spinlock.h:356 [inline]
+ sock_map_add_link net/core/sock_map.c:146 [inline]
+ sock_hash_update_common+0x624/0xa30 net/core/sock_map.c:1041
+ sock_map_update_elem_sys+0x5a4/0x910 net/core/sock_map.c:596
+ map_update_elem+0x53a/0x6f0 kernel/bpf/syscall.c:1654
+ __sys_bpf+0x76f/0x810 kernel/bpf/syscall.c:5670
+ __do_sys_bpf kernel/bpf/syscall.c:5789 [inline]
+ __se_sys_bpf kernel/bpf/syscall.c:5787 [inline]
+ __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5787
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f98a7323a69
+Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffea2336c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
+RAX: ffffffffffffffda RBX: 00
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
