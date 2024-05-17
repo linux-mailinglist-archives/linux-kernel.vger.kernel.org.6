@@ -1,131 +1,96 @@
-Return-Path: <linux-kernel+bounces-182038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14A838C856D
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 13:17:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 881968C8571
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 13:18:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C469E2817A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:17:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29AFF1F22EF9
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:18:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E38623D541;
-	Fri, 17 May 2024 11:17:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hQy4PIpg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C63EB3D56D;
+	Fri, 17 May 2024 11:18:05 +0000 (UTC)
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28DC93D0A3;
-	Fri, 17 May 2024 11:17:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B2B13B78B;
+	Fri, 17 May 2024 11:18:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715944648; cv=none; b=T872AUpFmtthbi2lBXrCaH6jJwScVRULaWQ37XpCgx5fuEDhmpyqAiejzDYepCWVTa0x1wSrFmIXdL5p6+HxzLyYFD867jmxy/PAUy8JNO8Tsp/MEuG3lWVVtWonLLmVJGKXZdmG5MJnWjq7L5aATk9HwAA3n7Wx0zIRF0KKel0=
+	t=1715944685; cv=none; b=aMigegvaP7zHkGKIcGp81equsYbFKRzW4kSXJQGXin8rVnjk2RDAhCf5m/XyXV2Gg8qYv4c65fFrpyzuoq8wboRVZhhTlot2wrlN7c6ysTUe/OvlRO7CfvkqqDN/cZFOFIx/5ZsV1nS9OWmyIQ7RE/H9+thCqjoiTSXYMVkJGkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715944648; c=relaxed/simple;
-	bh=tz2kY6qZxYu8TUGihVyLmMBdD0mSnRDdr1XJJV0fdqw=;
+	s=arc-20240116; t=1715944685; c=relaxed/simple;
+	bh=wfHpHnQqgnNSn7YCwv9m9HcQPovFXltGWKsPEmdAunM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X5cN2G9FqsjZHA8ge7Xh+3z+TW/k9CosVT9J4T1+OrzWdxuazbCon+qI+epvueiVFB5t7gDqou+enVMyRIWO/e8FWOVgj2QC1h8yL+GgZnrkA8oJaZm0csJx1qPmXhE5SOVj/wrFERdwzwcZoT1SJxOMMyKsLc38yV/GBw5oFz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hQy4PIpg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29952C2BD10;
-	Fri, 17 May 2024 11:17:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715944647;
-	bh=tz2kY6qZxYu8TUGihVyLmMBdD0mSnRDdr1XJJV0fdqw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hQy4PIpgYaKxXAHLGvLX+gUDvsDu0a15TR2Y2mPX//3bbTmVe/LF42kVNmBCWnrIF
-	 fXggLSUVDlRgG8/nB5tFhPY4GpcIiGYQBQRpMMPvtbclDKqH3Qnab61xQFVGHq2E2B
-	 ao1JK8A6/I+vrUgOJv3Dqfry4TbETyrS/EwqZs6+lMa8i3a3TvJF66NVcnL3FOE/d7
-	 EKMK8Lf7bk4KqjpHqxIZJonIMDYbfuZMldEu32/tyybWRpV/5PTq4PLsakYSgjOjj/
-	 szCeeggBtdpenLeZv1HQ0li+bHqGpiJhMedlDwAJ0RCCwi8ibZnRe2zj8+qUn3xZUy
-	 hTr7GqHUkMODg==
-Date: Fri, 17 May 2024 12:17:20 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Elinor Montmasson <elinor.montmasson@savoirfairelinux.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	shengjiu wang <shengjiu.wang@gmail.com>,
-	Xiubo Lee <Xiubo.Lee@gmail.com>, Fabio Estevam <festevam@gmail.com>,
-	Nicolin Chen <nicoleotsuka@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	linux-sound <linux-sound@vger.kernel.org>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	alsa-devel <alsa-devel@alsa-project.org>,
-	linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [PATCHv4 7/9] ASoC: fsl-asoc-card: add DT clock "cpu_sysclk"
- with generic codec
-Message-ID: <da74d276-b028-448b-bb28-295de49dbcda@sirena.org.uk>
-References: <20240515135411.343333-1-elinor.montmasson@savoirfairelinux.com>
- <20240515135411.343333-8-elinor.montmasson@savoirfairelinux.com>
- <ffb3624f-2170-4642-aaa5-fb6736a75d59@sirena.org.uk>
- <822567441.349330.1715936735603.JavaMail.zimbra@savoirfairelinux.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=iKNQoF5QZtpEYFuOJyK2OgnaUbZ1kvtwBBFu4oodcFaDmVdmyN7e+Y1MfJEWZN2JvMNADmNO87o12Q1bkQU2B9PvF8vEf7T+ktqgWJxncPSqbQPlYQmmkRnjk4kwg7AooqnplQZ+5yR7nobouLS8UwTMbqDUEDfesLc1TOhPunM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1f08442b7bcso4833645ad.1;
+        Fri, 17 May 2024 04:18:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715944683; x=1716549483;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sg/FBsZBDfXOHm/J/YMr0AFImmpjs5YKstuD+GBKpXk=;
+        b=EJ27qeVpqHvCVkJmPAk1QVmtPNv/Lv8FdCPhUpSZzRUOLDC/FqVT1T/P/mBtQFs+3p
+         fRv5M+r3DkpQ6fMNUKU8geEPc8wMGvP4VmtJ2u7iOPhhlA7mO5VeviAliNV0fp71F8UX
+         AZSL7FZfNHQzQSzPJaNocMHnjwfXq744OptTNqV0bxfD/76Rpr9sU4+qKyGfn3FDTnF8
+         +ca7b4CE+KLmxKUXZlztUwxvGeV2eU2FeAMPhxQPzd69oCZ01Y9kcY+mfZKRq/9bucvg
+         836jvf0u42HyD5+0tH4hpGfbgaAjNCh5bfYxkY7lSrzM/a+0OKhkJ2VvTOnwNLw59W8L
+         sUSA==
+X-Forwarded-Encrypted: i=1; AJvYcCWdjCQj/k0YDYeisme+aEpwxHtpysRfnQ8xcx8XWWEqyKsVopRgVoBRZ4VRrrB8VjIysF+9e8yLXK8AQZ2HHgEVwEJZE0imrJrAHmmAqZqY6GjEo7PrAD05cNlojMYUkf3Hi04khhlkpPl039padiqrtrjudtPkCv2Ui4NwB6kh
+X-Gm-Message-State: AOJu0YxBei53opMDCs/yudiU5E/bj/djPbbTvQikqJpymSTh/CVGOmRA
+	SUB1+zlIFr0Gp4us4mkWujc8/oJo2ly+GTj6nTJXdbXX4fnWiJMC
+X-Google-Smtp-Source: AGHT+IGLCMl5Tz+z4zgIma4FE1efOHYJkIWhZpHWnn6EOooX40/8TI3S0B+Ebm6UayoulagUE+YyWA==
+X-Received: by 2002:a05:6a20:6f0e:b0:1b0:66d:1596 with SMTP id adf61e73a8af0-1b0066d17b0mr12990949637.57.1715944683500;
+        Fri, 17 May 2024 04:18:03 -0700 (PDT)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2b67158c39dsm15203894a91.35.2024.05.17.04.18.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 May 2024 04:18:03 -0700 (PDT)
+Date: Fri, 17 May 2024 20:18:01 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Rick Wertenbroek <rick.wertenbroek@gmail.com>
+Cc: rick.wertenbroek@heig-vd.ch, dlemoal@kernel.org, stable@vger.kernel.org,
+	Shawn Lin <shawn.lin@rock-chips.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Heiko Stuebner <heiko@sntech.de>, linux-pci@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: rockchip-ep: Remove wrong mask on subsys_vendor_id
+Message-ID: <20240517111801.GQ202520@rocinante>
+References: <20240403144508.489835-1-rick.wertenbroek@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ZuqvFG62+4JL9ncV"
-Content-Disposition: inline
-In-Reply-To: <822567441.349330.1715936735603.JavaMail.zimbra@savoirfairelinux.com>
-X-Cookie: Function reject.
-
-
---ZuqvFG62+4JL9ncV
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20240403144508.489835-1-rick.wertenbroek@gmail.com>
 
-On Fri, May 17, 2024 at 05:05:35AM -0400, Elinor Montmasson wrote:
-> From: "Mark Brown" <broonie@kernel.org>
-> > On Wed, May 15, 2024 at 03:54:09PM +0200, Elinor Montmasson wrote:
+> Remove wrong mask on subsys_vendor_id. Both the Vendor ID and Subsystem
+> Vendor ID are u16 variables and are written to a u32 register of the
+> controller. The Subsystem Vendor ID was always 0 because the u16 value
+> was masked incorrectly with GENMASK(31,16) resulting in all lower 16
+> bits being set to 0 prior to the shift.
+> 
+> Remove both masks as they are unnecessary and set the register correctly
+> i.e., the lower 16-bits are the Vendor ID and the upper 16-bits are the
+> Subsystem Vendor ID.
+> 
+> This is documented in the RK3399 TRM section 17.6.7.1.17
 
-> >> +		struct clk *cpu_sysclk = clk_get(&pdev->dev, "cpu_sysclk");
-> >> +		if (!IS_ERR(cpu_sysclk)) {
-> >> +			priv->cpu_priv.sysclk_freq[TX] = clk_get_rate(cpu_sysclk);
-> >> +			priv->cpu_priv.sysclk_freq[RX] = priv->cpu_priv.sysclk_freq[TX];
-> >> +			clk_put(cpu_sysclk);
-> >> +		}
+Applied to controller/rockchip, thank you!
 
-> > I don't really understand the goal here - this is just reading whatever
-> > frequency happens to be set in the hardware when the driver starts up
-> > which if nothing else seems rather fragile?
+[1/1] PCI: rockchip-ep: Remove wrong mask on subsys_vendor_id
+      https://git.kernel.org/pci/pci/c/2f014bf195ae
 
-> The driver allow to set the sysclk frequency
-> of the CPU DAI through `priv->cpu_priv.sysclk_freq` when calling
-> `fsl_asoc_card_hw_params()`.
-> Currently it is hard-coded per use-case in the driver.
-
-> My reasoning was that with a generic codec/compatible, there might
-> be use-cases needing to use this parameter, so I exposed it here via DT.
-
-> Is it a bad idea to expose this parameter ? This is not a requirement for the
-> driver to work, most of the current compatibles do not use this parameter.
-> It is currently used only for `fsl,imx-audio-cs42888`.
-> In that case I can remove this commit.
-
-I'm having a hard time connecting your reply here with my comment.  This
-isn't as far as I can see allowing the frequency to be explicitly
-configured, it's just using whatever value happens to be programmed in
-the clock when the driver starts.
-
---ZuqvFG62+4JL9ncV
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZHPMAACgkQJNaLcl1U
-h9A/Mwf/e8Oa99TU5bBwUqPPv4RdS3EWv4/897XflQzPXjxfkxnMFOUUf0EBVm61
-5WnYoirwxy+DfhNF5ubdVm7WNINPuCs1X7mMZcN6aBE4Vo9yw1deDjFV8/s+QSCd
-6JpsmssN8sIOQh+w5Axkp+Qk9JuVRbVI8nFDMhD/tPRUMkUG9mjCLjP3xQoV59+d
-p9ElIEC+zSBWu9HCQW4i19eO+O53iT/9s7jkpXhFBbai02OOzw5q5LcwyL/qh0Zg
-fhOWA9PFrwg7iS7Rknp3Np5Msb09gh86McZtp2htgkkbggFl7ak0nRG+qlfyN0P/
-AKOYQ4agvMxC3FKsb/HmPv9Q+Brc5w==
-=Zf2Q
------END PGP SIGNATURE-----
-
---ZuqvFG62+4JL9ncV--
+	Krzysztof
 
