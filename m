@@ -1,96 +1,173 @@
-Return-Path: <linux-kernel+bounces-181978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E801E8C8487
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 12:07:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 890508C8488
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 12:09:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B0AE28157F
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 10:07:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28AD32813E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 10:09:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D84B62E646;
-	Fri, 17 May 2024 10:07:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8569A2E417;
+	Fri, 17 May 2024 10:08:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="EsGD6JFd"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pbev1wbq"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A4FC2C69C
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 10:07:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD6A2C69C;
+	Fri, 17 May 2024 10:08:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715940460; cv=none; b=lVX0EF8UrCVQHobFm5iW9UyRxnnDMVkbcz0NPZaLeN/eDqMnLGkW+o7xMlmYbUOWKTB82UC04HQCsxYE7kDBzqxns3QAyadVJR29O7d5KWvTgN6KRYDfpDwj/r22EBJ0TXF2N42UJJxmA/FYZB00g6dsbnZ0dWbH/qPZ7iNVwaQ=
+	t=1715940533; cv=none; b=lG/3f37AsMJQUbl5o+PeDa6Dot/uQ42K3/bFH6XQ2ANwF37/ska9BC8/ZZzCVu2lUC6Lfq+4zpHbEaTIS/BqAJX6xNMlERsdJKmuqjboESwJzMOCVgQhvhpCVcCqO0DusI2Ho+INV2yQH517mrzF9N2ubnFvgLdPDibZiAFU/og=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715940460; c=relaxed/simple;
-	bh=QBT+qEM2pjZjgyv+4u9pdeganrrxkRsrU8ojAFlzxVI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nDTVQthh9kHy50/WY9FinSiw5n1EG3CztYXNjms1H3sM1rqg4ucF28Ij0nJC7z0vkdCGzexnGnHWetEOeYWEpzuLu+SlgymnO2RX+Yz8dCxuhwWdk7JOYLGRwOl2ItXtVLI73yjYhfkGPNzF8OwHK7TLEj8MlnxytZu2TwjpHS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=EsGD6JFd; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id B0B9040E0177;
-	Fri, 17 May 2024 10:07:35 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id J_hDZ4ChGJYP; Fri, 17 May 2024 10:07:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1715940451; bh=fgsksDGvpkbJix4G3B/ukq5St7H0Tecp7h0VFNE9OKM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EsGD6JFdWu9djOpVDPQjfAulQGOZTQLNrkh3c+NuoidKKzrDFyNHXp0NyxP0emG5R
-	 lbJx1CyLDSVeeSbROqVwJ5b8T9s7piQEmz4ZEdikDdEvAXB+g7olLOXKfw4DF8mFLp
-	 kDnn+q9tu+JU1lgQVT9AsC9s38YhRhoy6dBGzM/y/nPZxAqn2bQPbK8+z9YDpGzkRo
-	 afWX9YFSEdX5o794dkx7jXHHb8b1s1nQYMgju8PHypj2s3LtKwWHEQtW866HyYrMHq
-	 ZZXsuSFSQKc+3sZeHHxTFAhml22GPTK5dGwaU7xhVdH+yBmDhjGQb7YZY66wqYpPd9
-	 2S29u1JFv8TSd1Gtfj2PH8Y7L3/3+GCZy+ZByIpsmGEPaxtMh0HPF6JP9mxv9kJ2bB
-	 i7I/XKdTNueq9sGk7BIC2+IQgHvyYiD7BbPLkvFMvdhDAn0lfI4MPGTRnhXURiN260
-	 KcTc0s7SCsU5KpUXtWtskHMtboAy9UZOU57NZb5trrIbZMdgOsotc8OuOyqaCQ541P
-	 8sT3zD7y9YpPBEgJldZZTy34m95S73Onm54RNyXwBwOd1rxQTtSZET2/10wXH/+d22
-	 FLqomnthGsfTaP/Wp1fKQ99eH6Z7hQthrJSkfXOk/4IyLsuddEOfJnYwRom0Abp4gh
-	 ebHl+79B+tLgV4C7CXZ/USik=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B4C7740E01E8;
-	Fri, 17 May 2024 10:07:20 +0000 (UTC)
-Date: Fri, 17 May 2024 12:07:14 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Jordan Niethe <jniethe@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, jgross@suse.com, ajay.kaher@broadcom.com,
-	alexey.amakhalov@broadcom.com, tglx@linutronix.de, mingo@redhat.com,
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-	peterz@infradead.org
-Subject: Re: [PATCH] x86/paravirt: Ensure calls to pv_op functions are RIP
- relative
-Message-ID: <20240517100714.GAZkcsUqHxScXJErxP@fat_crate.local>
-References: <20240517024224.995517-1-jniethe@nvidia.com>
+	s=arc-20240116; t=1715940533; c=relaxed/simple;
+	bh=pfuCaal2BbH2H2hAduZ+yPJwkOr35rv6GubynynOKNs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XEGrk6DO/HtLyDuShdqmfBFNiURuHSKqzF4MyrChUlKEU0l5TnveN0n4FMyml+C2zprg6Up1awkwy6wqWThRYmrHAxWLtYglRPwzyx5qE79jrXxsQnEDFpMRpEHfJB02DEipCu+if5xc25adIoqG1/krImFL33v4klERyM7AggA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pbev1wbq; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715940533; x=1747476533;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=pfuCaal2BbH2H2hAduZ+yPJwkOr35rv6GubynynOKNs=;
+  b=Pbev1wbqIcHUvtorJeWO6z2sOdpx59AE68pxNIgljVF2amXVEfNBGdqn
+   WFqYMmnzA4fcyYWW+feuV2EwcqV4D8UqlAqGZ1oScQeBdbQKx3iYEKTCi
+   TgwULxDjEXuzEl1WvY+E4QUtnpcvtO11vXjwL2Gt+kg0VGWfiiQbpcKZb
+   J4FqASJe+37Vyb92OMZT4IvVjz5QKF3xU67KKO5ifHVa429vAnQBuQUaI
+   S6u2CoBCy+rbUlEYIB7/qbyIw1ebYjzZ7a3bbqaS1Bw6PqxsdxGBiwkht
+   RZQaHgDUoEf99E+RguMyFbpC6pP2fOl8Dq+a2oDUQBZGpCBrPv2mdSUFb
+   w==;
+X-CSE-ConnectionGUID: BTgj9ey/Tmu/6pWl9wgTTQ==
+X-CSE-MsgGUID: c1HcfxBySPGO0vwKF/dEpA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="11950421"
+X-IronPort-AV: E=Sophos;i="6.08,167,1712646000"; 
+   d="scan'208";a="11950421"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 03:08:52 -0700
+X-CSE-ConnectionGUID: 0KBlDWPsRzq3yu15syg1rw==
+X-CSE-MsgGUID: 43lF/XZvQ8yTvCWhav0Ytw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,167,1712646000"; 
+   d="scan'208";a="31571973"
+Received: from fdefranc-mobl3.ger.corp.intel.com (HELO fdefranc-mobl3.localnet) ([10.245.246.21])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 03:08:49 -0700
+From: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: Davidlohr Bueso <dave@stgolabs.net>, Dave Jiang <dave.jiang@intel.com>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>, linux-cxl@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH v2] cxl/events: Use a common struct for DRAM and General Media
+ events
+Date: Fri, 17 May 2024 12:08:45 +0200
+Message-ID: <6226704.vuYhMxLoTh@fdefranc-mobl3>
+In-Reply-To: <20240516173319.00007429@Huawei.com>
+References:
+ <20240516102116.3512377-1-fabio.m.de.francesco@linux.intel.com>
+ <20240516173319.00007429@Huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240517024224.995517-1-jniethe@nvidia.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On Fri, May 17, 2024 at 12:42:24PM +1000, Jordan Niethe wrote:
-> This has been observed at lower levels of compiler optimisation but
-> there is nothing preventing it from occurring generally.
+Jonathan,
 
-How can I reproduce this?
+Thanks for your comments.
 
-Thx.
+On Thursday, May 16, 2024 6:33:19=E2=80=AFPM GMT+2 Jonathan Cameron wrote:
+> On Thu, 16 May 2024 12:19:53 +0200
+>=20
+> "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com> wrote:
+> > cxl_event_common was a poor naming choice and caused confusion with the
+> > existing Common Event Record.
+> >=20
+> > Use cxl_event_media as a common structure to record information about D=
+RAM
+> > and General Media events because it simplifies handling the two events.
+> >=20
+> > Suggested-by: Dan Williams <dan.j.williams@intel.com>
+> > Fixes: 6aec00139d3a ("cxl/core: Add region info to cxl_general_media and
+> > cxl_dram events") Signed-off-by: Fabio M. De Francesco
+> > <fabio.m.de.francesco@linux.intel.com> ---
+>=20
+> Packing question inline.
+>
+> > [...]
+> >=20
+> > -struct cxl_event_dram {
+> > +struct cxl_event_media {
+> >=20
+> >  	struct cxl_event_record_hdr hdr;
+> >=20
+> > -	__le64 phys_addr;
+> > -	u8 descriptor;
+> > -	u8 type;
+> > -	u8 transaction_type;
+> > -	u8 validity_flags[2];
+> > -	u8 channel;
+> > -	u8 rank;
+> > -	u8 nibble_mask[3];
+> > -	u8 bank_group;
+> > -	u8 bank;
+> > -	u8 row[3];
+> > -	u8 column[2];
+> > -	u8 correction_mask[CXL_EVENT_DER_CORRECTION_MASK_SIZE];
+> > -	u8 reserved[0x17];
+> > +	struct_group_tagged(cxl_event_media_hdr, media_hdr,
+> > +		__le64 phys_addr;
+> > +		u8 descriptor;
+> > +		u8 type;
+> > +		u8 transaction_type;
+> > +		u8 validity_flags[2];
+> > +		u8 channel;
+> > +		u8 rank;
+> > +	);
+>=20
+> Does the struct that is created end up __packed?
 
--- 
-Regards/Gruss,
-    Boris.
+No, I should have noticed it.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+> Also, why is tagged useful here?
+
+It is not useful. I'll rework it not tagged.
+
+Again thanks,
+
+=46abio
+
+> > +	union {
+> > +		struct_group(general,
+> > +			u8 device[3];
+> > +			u8=20
+component_id[CXL_EVENT_GEN_MED_COMP_ID_SIZE];
+> > +			u8 gen_reserved[46];
+> > +		);
+> > +		struct_group(dram,
+> > +			u8 nibble_mask[3];
+> > +			u8 bank_group;
+> > +			u8 bank;
+> > +			u8 row[3];
+> > +			u8 column[2];
+> > +			u8=20
+correction_mask[CXL_EVENT_DER_CORRECTION_MASK_SIZE];
+> > +			u8 dram_reserved[0x17];
+> > +		);
+> > +	};
+> >=20
+> >  } __packed;
+> > =20
+
+
 
