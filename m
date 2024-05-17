@@ -1,118 +1,111 @@
-Return-Path: <linux-kernel+bounces-181665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 941FB8C7F60
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 03:07:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41D508C7F64
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 03:08:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5A141C20ABC
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 01:07:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F03B4282338
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 01:08:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 283B4EC4;
-	Fri, 17 May 2024 01:06:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E841811;
+	Fri, 17 May 2024 01:08:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L3STPNMZ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i/60Q3pQ"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37278622;
-	Fri, 17 May 2024 01:06:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6310622
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 01:08:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715908017; cv=none; b=VTHP0L6WN3i64nGwEXiH+2WSm8IAtDNCH8Cw3BwevQUkeEIk4vVMif44xlc1ITjuJlC0P5bwEVo2qC26hkqDW8Kas+6qFggXifBucmb1VHK8xZDeNKKpA9HvN42Y9tgYPBYFZ6XlS84od1OJVVrvYcETZ/jdowhlO8BnhV3jRJQ=
+	t=1715908102; cv=none; b=CdN8BDtlKDyQiUOlylH759ks48btDodELGR9+T8MEMRs367URigJgL1UHGRqJUPdBQ3ivmAz2E5/jHGYEOeU01JEu36/Qp14EYnKx+KMw96/n66THm9Brc8wQe0eziK6z2r2xqrMpHBxOupMd0/6xZ2isFn3R37cmgRX9OOX/Ao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715908017; c=relaxed/simple;
-	bh=6n1sbF7/4b4JqOGlapOQrVWAyJBowv28nqLWZTDggdI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BQ+/gh0F/hqKm/U81sKwAC9qoPelsbQKxvvPLRYYORuXybMvYdYGceqVPfZH++fxRb+m+5gek8ZqKOx7/bWL0Wh0ZWJDHhUldjEtiG0izMOj/w3dAVTuRqF+QToeWd44lQT+VKSIAO8KTDXZPxdfhsA6qE9h4hRmb5h7dc08+Kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L3STPNMZ; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715908016; x=1747444016;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=6n1sbF7/4b4JqOGlapOQrVWAyJBowv28nqLWZTDggdI=;
-  b=L3STPNMZNoFWV03iCyfh544sVZGJ/6KiGoeXjpfFl9fPRSoZ9RI2P811
-   cgBIqyP7Dq0tt5WQXk75DnosebAywNkfa/M0YlvnR8UV26R5srGwvVXjg
-   ykeozIov04MNxV7X2ki0nosTU1vwtRMNCSeOjS6/kCuXaKI4JANTWduw6
-   WmF4uv/hY3NCZAgaOivuUWbXbSZX/gHMKl8KEk65PelPuBeF81Rz7lQV9
-   G8WCp2VADJUljuL29Wu0EUL04/GkyFK6+EMODD1U9q+nPbFninzqeBFYS
-   Z+nHRcd0jrPaCk/aedyyKsAtaCyPkODM3Up+Aqemz5BLaTmiLZgKnU4xb
-   A==;
-X-CSE-ConnectionGUID: PIAIjC6sSba+uuAVe2JyNA==
-X-CSE-MsgGUID: i+Eppp3zT3K0z2TpQKk24w==
-X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="11565762"
-X-IronPort-AV: E=Sophos;i="6.08,166,1712646000"; 
-   d="scan'208";a="11565762"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 18:06:55 -0700
-X-CSE-ConnectionGUID: qZIvFWG3R+C/Nq/b3q1eVA==
-X-CSE-MsgGUID: TtATRyHEQ5iGQX4TsjsseA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,166,1712646000"; 
-   d="scan'208";a="31628614"
-Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 16 May 2024 18:06:52 -0700
-Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s7m3e-000F3x-06;
-	Fri, 17 May 2024 01:06:50 +0000
-Date: Fri, 17 May 2024 09:06:32 +0800
-From: kernel test robot <lkp@intel.com>
-To: Dimitri Fedrau <dima.fedrau@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev, Dimitri Fedrau <dima.fedrau@gmail.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-pwm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] pwm: add support for NXPs high-side switch
- MC33XS2410
-Message-ID: <202405170826.pUFGJfD7-lkp@intel.com>
-References: <20240515112034.298116-3-dima.fedrau@gmail.com>
+	s=arc-20240116; t=1715908102; c=relaxed/simple;
+	bh=czWvvFaMk9bvlBTDKT/n/qEoQNIBEys935Xzs55orSo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PEH0eoZ7WbBUQppQNZyf+q6j1VHTThbOpAgoNRqaBrtlbJMtY2mAxsdYzUdDsPD7Kn4DTsqEoNQr2QD9VpTFcC4Z9h15DN79ktXi6dR8vK9kCXw/bSwHhk/83jjDHSMOa/NMT0Gbu7j0p/EgpyiWX/hwy+iIXA1LhAW9/E8/KwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i/60Q3pQ; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a5a5c930cf6so376122966b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 18:08:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715908099; x=1716512899; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=HKmYG8xCXUNt8KM3AI9ihqZhXFfndGJhx62ZDLuNUm0=;
+        b=i/60Q3pQF5Ys5PiSFFJaT2tzxJilmF7eW5t0GkPJjLb1AjVEECvyseVSIFRThEQEUe
+         sHU8uLAPSR0K9ge/ZLQaVU33VUqb95rHysasWQr5kNNSTK7JC9iJEDi6DfNG5TQEaw3h
+         6MMSct9vQ1JgUvbKhZ4Q+yAtTM4lD51F2qNDNIGnhXJRPObdIv5BLMB6kOm5Imnjeq4C
+         FxVvMySvCpx2wdCo1g9Tacn0Wcu4gD+CRSMWPXUZ6fOlNhrqgq9qDW1D4Z6GO4VzcEI0
+         V7FAE416pya4OgRPkKUC8+ppylVPa/vFfXF9A4G3v7ABp5QgJU0giLsYeaaGUCCvYaM4
+         atEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715908099; x=1716512899;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HKmYG8xCXUNt8KM3AI9ihqZhXFfndGJhx62ZDLuNUm0=;
+        b=G1owf/QZBEuLskm2BNykX9V28eC0IDGDTaW2sxu66w95TZLcRa0ebWTjBkvgT8jL4X
+         hZYn88sQatWRpHPMSu7ouubQBanUus0D24ijGSaXTpzVnAx67Hr5/QO8lxNyhN3RF0dH
+         j3qMUyKMlSjww3GIjrs60bDmOHaY6xMXWrZiIngiogYx96WAy3rKLoCMd7+Z+sgAlPpD
+         IYZYqmJfzC8UmynXKuZtO7j5UDCIKZYbRvAdA8XpPkl0mJOjciO6bE/vMZ9VbfnBjpKz
+         o5lWBPDN4ipFQ94AvmPpkgMfhERvnaHOPYfqPgikbx5kfdFQbzuXhx22H7grO5fB3a5C
+         9bsw==
+X-Forwarded-Encrypted: i=1; AJvYcCX/QYLneJK4hucdnBN4kUtiWFo8X06L5G6085hANO1tnO/p7X36AkIY+Opac4ewjKSLxNoE6X7DvaeNK1knsRAhcW+V4nCeb2JIHHSv
+X-Gm-Message-State: AOJu0YzWbx2FRjfxvp3GF6Sk68q/1uRb4Nbf8fgQ95jZif3lyN41LeC8
+	Id5q9xTDHK70GTmem2qYYGS8Te3AMEav8xsUNOTC4wGliK93jXmXEEe6J1I1xtBCHJ3GYvNzb7r
+	+pPWF/jz2vvFqpNK2iMT0Xc6L+38=
+X-Google-Smtp-Source: AGHT+IF0+yGmXXW46xFjjfGuDr19Y9YP8gbVSUnKUsgiu/201syTbQ+og4I51pzcxuN8vpMXdciwjKUIRK3J8YUSjY0=
+X-Received: by 2002:a17:906:9815:b0:a5a:c194:b53d with SMTP id
+ a640c23a62f3a-a5ac194b61fmr496160666b.20.1715908099037; Thu, 16 May 2024
+ 18:08:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240515112034.298116-3-dima.fedrau@gmail.com>
+References: <CAPM=9tx_KS1qc8E1kUB5PPBvO9EKHNkk7hYWu-WwWJ6os=otJA@mail.gmail.com>
+ <CAHk-=wjdyimk4t2C7xfqLYFX1HUH92yTRTFQXAitJJT+REvF3Q@mail.gmail.com>
+ <CADnq5_NmC9bYkPFUD35gBtxsk_9jYhOTugni-q4WGXggf6=rLA@mail.gmail.com> <6225ecf4-f4ca-4ed7-a316-69c86f4ade7f@amd.com>
+In-Reply-To: <6225ecf4-f4ca-4ed7-a316-69c86f4ade7f@amd.com>
+From: Dave Airlie <airlied@gmail.com>
+Date: Fri, 17 May 2024 11:08:07 +1000
+Message-ID: <CAPM=9tyJCJ+D4h7BZ3dBpm6R33gTfwtigDtmt6g9KX25Jun9Hg@mail.gmail.com>
+Subject: Re: [git pull] drm urgent for 6.10-rc1
+To: "Paneer Selvam, Arunpravin" <arunpravin.paneerselvam@amd.com>
+Cc: Alex Deucher <alexdeucher@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Daniel Vetter <daniel.vetter@ffwll.ch>, "Deucher, Alexander" <Alexander.Deucher@amd.com>, 
+	dri-devel <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Dimitri,
+> >>
+> >> (And that kernel version of "6.9.0-08295-gfd39ab3b5289" that is quoted
+> >> in the WARN isn't some official kernel, I have about ten private
+> >> patches that I keep testing in my tree, so if you wondered what the
+> >> heck that git version is, it's not going to match anything you see,
+> >> but the ~ten patches also aren't relevant to this).
+> >>
+> >> Nothing unusual in the config, although this is clang-built. Shouldn't
+> >> matter, never has before.
+> > Arun is investigating and trying to repro it.  You still have a
+> > polaris based GPU right?
+> We haven't been able to reproduce it across variety of GPU's. Would it
+> please be possible
+> to send your dmesg logs and kernel config, I will check this on the same
+> GPU you are using.
 
-kernel test robot noticed the following build errors:
+I just installed my RX480 polaris card in my AMD test machine, and
+with current origin/master
+I'm not seeing this at all.
 
-[auto build test ERROR on robh/for-next]
-[also build test ERROR on linus/master v6.9 next-20240516]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Running an F40 GNOME desktop, doing firefox etc.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Dimitri-Fedrau/dt-bindings-pwm-add-support-for-MC33XS2410/20240515-192237
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/20240515112034.298116-3-dima.fedrau%40gmail.com
-patch subject: [PATCH v3 2/2] pwm: add support for NXPs high-side switch MC33XS2410
-config: arm-randconfig-r121-20240517 (https://download.01.org/0day-ci/archive/20240517/202405170826.pUFGJfD7-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 13.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20240517/202405170826.pUFGJfD7-lkp@intel.com/reproduce)
+Linus, do you see it a boot straight away?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405170826.pUFGJfD7-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   arm-linux-gnueabi-ld: drivers/pwm/pwm-mc33xs2410.o: in function `mc33xs2410_pwm_apply':
->> pwm-mc33xs2410.c:(.text+0x3c0): undefined reference to `__aeabi_uldivmod'
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Dave.
 
