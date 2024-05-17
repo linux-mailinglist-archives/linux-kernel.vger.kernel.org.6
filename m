@@ -1,200 +1,124 @@
-Return-Path: <linux-kernel+bounces-181903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E82C48C8311
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:11:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F06428C8313
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:11:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F09181C2250E
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 09:11:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 666161F232E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 09:11:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D3422E41C;
-	Fri, 17 May 2024 09:10:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 914A423758;
+	Fri, 17 May 2024 09:11:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="klGl0Tyc"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qg/Fr2OF"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BF0E23754;
-	Fri, 17 May 2024 09:10:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F4F22324
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 09:11:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715937027; cv=none; b=Nyt9+Q7fwO0tfWKkZUzMqHOVFmVW7lPdV5/lAlf/Kjz1N3kuqSIhYuVBGVdXzkdf9s3D6i8jTEQy7dYFdFsMRbIuKYN+eUgGRNc7DCyXF9ab0e4HEb5vm2RlOqMmst+QQ/spVGtSxNst8kqXv7E54bcTT/n333LyYu67z6a1lYk=
+	t=1715937095; cv=none; b=DtEtszDq4aQGSuKE++KUbyvRYatl6uaOJ1KTV23PaOJqjREKyMZ7TE41V4rtgV12EBT54qAzToW98JkCmKx66Z30QCl31Ie5cKfenXc12ABLxGZhh0uiPtiotqC1inA7l638RG6GZ263IrVH/bZ7drrod+fwKRHymMRXut1aKYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715937027; c=relaxed/simple;
-	bh=S35cwDcF37dQ5mmiKFpcw7jseCSlFn4J7c+6yymc8Sg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=sUsOtzpoKgrFMCXbyLDOJatSirMjGBhv+Mg1WWHepvVrdaLjIxCl3Q6dLumCdzVc0G3y6IxhhvsGSsZz+aHD6lD6cfGi36iZ4l4wcS7QW5wbcbp2gMe1RAXOjmoEph9oqp+ntz9ME0gHBSNE0W249qUnnTx6Y1NcgrhjmG/lKg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=klGl0Tyc; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id DCD142000E;
-	Fri, 17 May 2024 09:10:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1715937016;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AFbldK+YrNkPHEp7U+iGoJtDTLbUW/U0B2C/LsdOF6E=;
-	b=klGl0Tyc1SJDCTEgSMqT8gslZT1WoMIsRul91Fj6KHTBRJAkMGueFNTsdogwc9TTIuKN1+
-	q7MjMuwS4DRHn+A+7S93UAu0hDz7p60u9KHYUu4C+CjzctkD7KJTabkjw+07ZaR7IsMYee
-	IQ8irHYV5w9J6dpkCjfXIDwwmKfPp7xT4Xd/oeA+5FXtbzeV6q2VGsqdvUqIFA3PhMk4ZU
-	mFE1jtlJWKqLHOU7tYAliU5uHyctDNJZZzcUkIeEar5nTNNM7U4vNUV8jVs1E9x2VqOgjj
-	qke6aaFRTiGT27xsBgU8+f48uqusnMcjyFeBQ0uLuXNsYFleQ6awAvYkBr7vfw==
-From: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
-Date: Fri, 17 May 2024 11:09:55 +0200
-Subject: [PATCH v2 3/3] riscv: dts: thead: Enable I2C on the BeagleV-Ahead
+	s=arc-20240116; t=1715937095; c=relaxed/simple;
+	bh=DoLTsawHpeTfuB9cwiMX8gLog+phP2olzr7YENPNrxg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SfiR8iDQ5u4bGRKW97ilgfmUbQm785ZKMMuU634jEC92AqKJQYP6i9jBwCcMSdfywQr8Yw4dJpxFoDfTitwVY6Nck+MHqo54rd+lOR1uMU8N4yaTm/yrPQXkcfPYk4d4BttGW3QbNWzvQf+vKYTy3dMsuh8MvNlD9YuGO2/AE/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qg/Fr2OF; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a59cf8140d0so375706266b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 02:11:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715937092; x=1716541892; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3wbo50xwb3HFwy2Js34OThKfA1hpUVathWWvMAHMruo=;
+        b=qg/Fr2OFlFQTT3Aol9ciNz8tsTHJM2U1dKVMIOqUlhQzbAOSrNKlNhTCX4anwSpxmN
+         rkA/jtsf5La4dmXoZfOo2NlVokOQIhd6SrRaI3sNjkWN9DVgaFjC4Q/uh8vDvBnh2ut1
+         fvGoKabouycpXWto8NWaYLuvZwv2f7hUfQwebBajG0T3QLPKD7U5nnMzeYZllPDfPUfs
+         YQpn8Vo3oPoPQ5/76amJO38E02xiB1Dmzvg44cZWB0qBQCS64DY6gypy7MPof5WhTJA8
+         Vzi/zem1SSANoyoqUEY5vOxaGsunwLx86pOXMnG3dMU1jgHWR/Bl7JS6mcO7WK+IYdff
+         TJwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715937092; x=1716541892;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3wbo50xwb3HFwy2Js34OThKfA1hpUVathWWvMAHMruo=;
+        b=ChPJRhmgbyUs/1+C48fBL38b6YEyxO7MnuTFDTT5OvuLOZS7AtLiE+/DOGXF210gfT
+         S7/2p/+lzvSPVdHsdDGe0SJzfnWzaVWdtj4/HopeL9axNZPXgfY2ef8KRO3nhd2TffA/
+         /PvAK6Um5xU1OL3hMSY89yzqYLfIO3rW6An/4qbwWhpimfujLSZdDUTcBrx8l2vCcOK9
+         JlQh0+HStDl6HV3Zacv9/rkjBQdMNf8tsMmyfyhlt+tY4IyW7KF8V6fSMKtT3r5Ucdlm
+         L/g78pwfAxLR6U+8NlkhBHpuIzWaU5uRYjZj/1C7o+H0kkgAa9QUISx6FLme/iUc5z3x
+         CCzw==
+X-Forwarded-Encrypted: i=1; AJvYcCXlE6eFJ0VfR+jGk6yNB9esu7/hgxaSrgxPq6EzwSupYyNVTjuXK34t3jkF2MWtafzcXkUjqsgOY/uT7nJD8xh0LL8I71hxab29N2C7
+X-Gm-Message-State: AOJu0YwuLesJ/Qcmm7UjcNGASXBJLMj4Pdnp4xGrQTvVRO9eKUDrCEoC
+	TzZlRF9QJK3QuBGmbcqqrirDU6Tt6mXIeti1Yp9VXslBtRU+BuO7ucFWd+sudSk=
+X-Google-Smtp-Source: AGHT+IFUuE27SOBRiwiM5jzv8pfjnHU4AIrW12/v2KmpB6rpAdGZVts7qvikNVwq4pSeqOpzntfyrg==
+X-Received: by 2002:a17:906:32d9:b0:a59:dd9d:6da5 with SMTP id a640c23a62f3a-a5a2d54c07amr1318225066b.3.1715937092597;
+        Fri, 17 May 2024 02:11:32 -0700 (PDT)
+Received: from [10.91.1.133] ([149.14.240.163])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17892471sm1096886566b.84.2024.05.17.02.11.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 17 May 2024 02:11:32 -0700 (PDT)
+Message-ID: <39b66355-f67e-49e9-a64b-fdd87340f787@linaro.org>
+Date: Fri, 17 May 2024 11:11:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] dmaengine: qcom: gpi: remove unused struct 'reg_info'
+Content-Language: en-US
+To: linux@treblig.org, Frank.li@nxp.com, vkoul@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240516152537.262354-1-linux@treblig.org>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20240516152537.262354-1-linux@treblig.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240517-i2c-th1520-v2-3-d364d135ccc6@bootlin.com>
-References: <20240517-i2c-th1520-v2-0-d364d135ccc6@bootlin.com>
-In-Reply-To: <20240517-i2c-th1520-v2-0-d364d135ccc6@bootlin.com>
-To: Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Jisheng Zhang <jszhang@kernel.org>, 
- Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
- Drew Fustini <dfustini@tenstorrent.com>, 
- Emil Renner Berthing <emil.renner.berthing@canonical.com>, 
- Conor Dooley <conor@kernel.org>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- =?utf-8?q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>, 
- linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
- Thomas Bonnefille <thomas.bonnefille@bootlin.com>
-X-Mailer: b4 0.13.0
-X-GND-Sasl: thomas.bonnefille@bootlin.com
 
-This commit enables the I2C0 controller of the TH1520, together with
-the FT24C32A EEPROM that is connected to it.
-In addition, this commit also enables the I2C controllers I2C2, I2C4
-and I2C5 as they are all three exposed on headers (P9 19 and 20 for I2C2,
-P9 17 and 18 for I2C5 and MikroBus 7 and 5 for I2C4).
-It also defined the required pinctrl nodes.
+On 16/05/2024 17:25, linux@treblig.org wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> 
+> Remove unused struct 'reg_info'
+> 
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> ---
+>   drivers/dma/qcom/gpi.c | 6 ------
+>   1 file changed, 6 deletions(-)
+> 
+> diff --git a/drivers/dma/qcom/gpi.c b/drivers/dma/qcom/gpi.c
+> index 1c93864e0e4d..639ab304db9b 100644
+> --- a/drivers/dma/qcom/gpi.c
+> +++ b/drivers/dma/qcom/gpi.c
+> @@ -476,12 +476,6 @@ struct gpi_dev {
+>   	struct gpii *gpiis;
+>   };
+>   
+> -struct reg_info {
+> -	char *name;
+> -	u32 offset;
+> -	u32 val;
+> -};
+> -
+>   struct gchan {
+>   	struct virt_dma_chan vc;
+>   	u32 chid;
 
-Signed-off-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+More detail in the commit log please - is the structure unused ? What is 
+the provenance of it being added and becoming dead code.
+
+More detail required here.
+
 ---
- arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts | 84 ++++++++++++++++++++++
- 1 file changed, 84 insertions(+)
-
-diff --git a/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts b/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts
-index 57a2578123eb..aeb04f5159d5 100644
---- a/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts
-+++ b/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts
-@@ -121,6 +121,47 @@ led-pins {
- 	};
- };
- 
-+&padctrl1_apsys {
-+	i2c0_pins: i2c0-0 {
-+		i2c-pins {
-+			pins = "I2C0_SDA",
-+			       "I2C0_SCL";
-+			function = "i2c";
-+			bias-pull-up = <2100>;
-+			drive-strength = <7>;
-+			input-enable;
-+			input-schmitt-enable;
-+			slew-rate = <0>;
-+		};
-+	};
-+
-+	i2c4_pins: i2c4-0 {
-+		i2c-pins {
-+			pins = "GPIO0_19", /*I2C4_SDA*/
-+			       "GPIO0_18"; /*I2C4_SCL*/
-+			function = "i2c";
-+			bias-pull-up = <2100>;
-+			drive-strength = <7>;
-+			input-enable;
-+			input-schmitt-enable;
-+			slew-rate = <0>;
-+		};
-+	};
-+
-+	i2c5_pins: i2c5-0 {
-+		i2c-pins {
-+			pins = "QSPI1_D0_MOSI", /*I2C5_SDA*/
-+			       "QSPI1_CSN0";    /*I2C5_SCL*/
-+			function = "i2c";
-+			bias-pull-up = <2100>;
-+			drive-strength = <7>;
-+			input-enable;
-+			input-schmitt-enable;
-+			slew-rate = <0>;
-+		};
-+	};
-+};
-+
- &padctrl0_apsys {
- 	uart0_pins: uart0-0 {
- 		tx-pins {
-@@ -143,6 +184,19 @@ rx-pins {
- 			slew-rate = <0>;
- 		};
- 	};
-+
-+	i2c2_pins: i2c2-0 {
-+		i2c-pins {
-+			pins = "I2C2_SDA",
-+			       "I2C2_SCL";
-+			function = "i2c";
-+			bias-pull-up = <2100>;
-+			drive-strength = <7>;
-+			input-enable;
-+			input-schmitt-enable;
-+			slew-rate = <0>;
-+		};
-+	};
- };
- 
- &uart0 {
-@@ -150,3 +204,33 @@ &uart0 {
- 	pinctrl-0 = <&uart0_pins>;
- 	status = "okay";
- };
-+
-+&i2c0 {
-+	status = "okay";
-+	clock-frequency = <100000>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c0_pins>;
-+
-+	eeprom@50 {
-+		compatible = "atmel,24c32";
-+		reg = <0x50>;
-+	};
-+};
-+
-+&i2c2 {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c2_pins>;
-+};
-+
-+&i2c4 {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c4_pins>;
-+};
-+
-+&i2c5 {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c5_pins>;
-+};
-
--- 
-2.45.1
-
+bod
 
