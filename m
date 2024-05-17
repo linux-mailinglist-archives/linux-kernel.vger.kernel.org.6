@@ -1,109 +1,129 @@
-Return-Path: <linux-kernel+bounces-182274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 528B68C891A
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:14:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3F518C8920
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:16:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 082B31F21C72
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 15:14:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55A6F1F21DC8
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 15:16:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0D726A33D;
-	Fri, 17 May 2024 15:14:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD11112CD8A;
+	Fri, 17 May 2024 15:16:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Rfv23b5/"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Gx2NzsEH"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFBB56A325;
-	Fri, 17 May 2024 15:14:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BA4E1F93E;
+	Fri, 17 May 2024 15:15:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715958843; cv=none; b=rndg24dPB31N4lAHtKA56uRrw4tiLPNvkVCD/h83ZQ3Q/Bvo2tUtiK7jCjy4MF44jsunfOJ4Maa87l+MiY3eHwcIXR7vTLKnqgkBmBth1K399iKXWLLybtsy6XCyelU+8b9+RirUPmBrvwTn2qKFmkLf9OrM5rqhT15lBupaRXs=
+	t=1715958962; cv=none; b=dLTaEkQzIImfvaXAjUURISVbUzvWfLTaNMbGhVc7u3smi9ZNurNcTgVwv/YGKOeh4ru+KcVayLNzaAcK8VLruCpbKI3PZk1LHo9g5LmxvaBl4EAdpsb4AHbLXkn+/MU2ktjijamP6/FwYtuaNqpgUryKJ0vPUU/fRaDX2Au+lnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715958843; c=relaxed/simple;
-	bh=b8BwasW2wpCf4km+OXto+ewclPGsdKNXI2hXEUZMm0A=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=L2h7EiSS6t+ASdLbWt7WhecClg/Uok9Ct6JxISKNhXHkzx52RiKsIy2MwSvYXSuLuDJgsTGTS9FB1sJJWDwx275Pj6Ix4NiaIYsTI28OVYK2+y4gtD/m/qOR4wJs++eOzaSblp+WxQtI8FhpFxPjSztOldY0H06OSf3Qpf6BJzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Rfv23b5/; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 38FFB60002;
-	Fri, 17 May 2024 15:13:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1715958839;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=b8BwasW2wpCf4km+OXto+ewclPGsdKNXI2hXEUZMm0A=;
-	b=Rfv23b5/HdsOhMcx0s8aGcPQZPDazt8vsyoqc1HVwsEWkgD7QsHCkXUp/hsJolTx32HXDr
-	NSebq+qYhnpRRCOySs6eOlQkM+CrAw2moMP3BBXw/KbQQFRH/PcBvGwNpllONCMXTyPv43
-	/ikugNzujeqdwwfml8K9UIbYhbRw3ebrLd5mhL+LkqSfVUtqxvZ/vdQwfD31cBp/vAxMPd
-	zwd0/2KeqkLvbWWAFIefkrzez32LFsWwNpUABYm3Y92ORlo0lBlS/qYs4uCrjUeAo+J3RE
-	EZENFmsFgrxTmWszoMVPooFz21zlPxz3hXSolzwl04lEuaVY/gMeHu1OyhxmiQ==
-Date: Fri, 17 May 2024 17:13:55 +0200
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>, Broadcom internal
- kernel review list <bcm-kernel-feedback-list@broadcom.com>, Andrew Lunn
- <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, Russell King
- <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Richard
- Cochran <richardcochran@gmail.com>, Radu Pirea
- <radu-nicolae.pirea@oss.nxp.com>, Jay Vosburgh <j.vosburgh@gmail.com>, Andy
- Gospodarek <andy@greyhouse.net>, Nicolas Ferre
- <nicolas.ferre@microchip.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Jonathan Corbet
- <corbet@lwn.net>, Horatiu Vultur <horatiu.vultur@microchip.com>,
- UNGLinuxDriver@microchip.com, Simon Horman <horms@kernel.org>, Vladimir
- Oltean <vladimir.oltean@nxp.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, Maxime Chevallier
- <maxime.chevallier@bootlin.com>, Rahul Rameshbabu <rrameshbabu@nvidia.com>,
- Willem de Bruijn <willemb@google.com>, Alexandra Winter
- <wintera@linux.ibm.com>
-Subject: Re: [PATCH net-next v12 00/13] net: Make timestamping selectable
-Message-ID: <20240517171355.0a46ad53@kmaincent-XPS-13-7390>
-In-Reply-To: <20240501190925.34c76ada@kernel.org>
-References: <20240430-feature_ptp_netnext-v12-0-2c5f24b6a914@bootlin.com>
-	<20240501190925.34c76ada@kernel.org>
-Organization: bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1715958962; c=relaxed/simple;
+	bh=6SGRzemzE222vlrc/5jANNd2vwMs0qyJ0hvxeF436QA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=dWBk58dCBrAOckYUmMlrKZ9C5nTwfDf5sIpQibDZLVu4ghMT2iabG9S5zQE3u1Yu6lOSEz3zsG/4MD6TUgCe6kRG8BNXMD/WVo9v6zYuMFLZDfTpMl8tMDMu16AhzZZ6FjhZGCaA50pzg06rDXoNRsyiSCYycpWh2K8O70IXpzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Gx2NzsEH; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715958960; x=1747494960;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=6SGRzemzE222vlrc/5jANNd2vwMs0qyJ0hvxeF436QA=;
+  b=Gx2NzsEHBwqaqqkpa1B63TuzUcem3cJCbWOHPZuq5lRgAkxvwA5pUHy1
+   5eVFIL88CkwlpvqCj9mn4ATu0aE+jIeOwSZ8E42r55KgSf2nGAZop2gaC
+   qzKzZZhag9rQVKgYz++bh0Ea4l8zZn1+ZEGxhzCqlkiFAiuryGHhWMkTl
+   pcNbhOp2jzgK9KUu6TvZ+NOB/+0E3EhQSYj9mKlqe94VuewxXQdiopff9
+   AxV6j+zX9vg9xDUURVdqxJ5G0wB6gBCP8J6JV+p8xEPhfWU1F5rEUn/Xp
+   onUFcdroO1bGSKk2A5Sw07cqgh4O7V0m0GcuXFnr55HPYKkFg5pX3ZoWf
+   g==;
+X-CSE-ConnectionGUID: FQrkQWcVSCmaTr1yWS4YJQ==
+X-CSE-MsgGUID: tfjDikL/Q9WrGHzas6TmGA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11075"; a="23279378"
+X-IronPort-AV: E=Sophos;i="6.08,168,1712646000"; 
+   d="scan'208";a="23279378"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 08:15:59 -0700
+X-CSE-ConnectionGUID: Tb8kRrpgRgSE/FtMnbu54w==
+X-CSE-MsgGUID: 1WreihPMQVOPVhn5DjrZag==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,168,1712646000"; 
+   d="scan'208";a="31743028"
+Received: from velpulaa-mobl3.amr.corp.intel.com (HELO spandruv-desk1.amr.corp.intel.com) ([10.212.227.54])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 08:15:59 -0700
+Message-ID: <9293c51c7d502843bfff90c5664be00bfe112e8d.camel@linux.intel.com>
+Subject: Re: [PATCH v2] platform/x86: ISST: fix use-after-free in
+ tpmi_sst_dev_remove()
+From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
+To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>, Hans de Goede
+	 <hdegoede@redhat.com>, Ilpo =?ISO-8859-1?Q?J=E4rvinen?=
+	 <ilpo.jarvinen@linux.intel.com>, Zhang Rui <rui.zhang@intel.com>, 
+	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org, 
+	error27@gmail.com
+Date: Fri, 17 May 2024 08:15:58 -0700
+In-Reply-To: <20240517144946.289615-1-harshit.m.mogalapalli@oracle.com>
+References: <20240517144946.289615-1-harshit.m.mogalapalli@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: kory.maincent@bootlin.com
 
-On Wed, 1 May 2024 19:09:25 -0700
-Jakub Kicinski <kuba@kernel.org> wrote:
-
-> On Tue, 30 Apr 2024 17:49:43 +0200 Kory Maincent wrote:
-> > Up until now, there was no way to let the user select the hardware
-> > PTP provider at which time stamping occurs. The stack assumed that PHY =
-time
-> > stamping is always preferred, but some MAC/PHY combinations were buggy.
-> >=20
-> > This series updates the default MAC/PHY default timestamping and aims to
-> > allow the user to select the desired hwtstamp provider administratively=
- =20
+On Fri, 2024-05-17 at 07:49 -0700, Harshit Mogalapalli wrote:
+> In tpmi_sst_dev_remove(), tpmi_sst is dereferenced after being freed.
+> Fix this by reordering the kfree() post the dereference.
 >=20
-> Looks like there's a linking problem starting with patch 9. On a quick
-> look the functions from a module are now called by build-in code.
+> Fixes: 9d1d36268f3d ("platform/x86: ISST: Support partitioned
+> systems")
+> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+Acked-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 
-Indeed I have issues in the patch series when building PTP core as module.
-Will fix it. Thanks.
+> ---
+> v1->v2: Add R.B from Hans and fix commit message wrapping to 75
+> chars.
+> This is found by smatch and only compile tested.
+> ---
+> =C2=A0drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c | 2 +-
+> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git
+> a/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
+> b/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
+> index 7bac7841ff0a..7fa360073f6e 100644
+> --- a/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
+> +++ b/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
+> @@ -1610,8 +1610,8 @@ void tpmi_sst_dev_remove(struct
+> auxiliary_device *auxdev)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0tpmi_sst->partition_mask_=
+current &=3D ~BIT(plat_info-
+> >partition);
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/* Free the package insta=
+nce when the all partitions are
+> removed */
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (!tpmi_sst->partition_=
+mask_current) {
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0kfree(tpmi_sst);
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0isst_common.sst_inst[tpmi_sst->package_id] =3D NULL=
+;
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0kfree(tpmi_sst);
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0mutex_unlock(&isst_tpmi_d=
+ev_lock);
+> =C2=A0}
 
-Regards,
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
 
