@@ -1,92 +1,92 @@
-Return-Path: <linux-kernel+bounces-182660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0FA38C8DE6
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 23:55:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FC278C8DE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 23:56:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C52B1C21E11
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 21:55:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C87991F23C16
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 21:56:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58AB21411D2;
-	Fri, 17 May 2024 21:55:18 +0000 (UTC)
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58B5C1411DC;
+	Fri, 17 May 2024 21:56:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="br3RZU5R"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 787721A2C20;
-	Fri, 17 May 2024 21:55:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96D0A1A2C20;
+	Fri, 17 May 2024 21:55:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715982917; cv=none; b=rDZE5guawPceodxC4hqneS0J4DrSNG3inZ3wsO0REfhcIK1jviaaoJ0rTSsScVxe8s7c0VSvX+Gu1kjlW0p/lAygcG23aP3zwICXfllsc4Vab4x643rw7rku5S7wMVKnyiPKonZh0NvMMgpLDgs4XyN3izadeDuaGvu6pW3zFeE=
+	t=1715982959; cv=none; b=kfC2ZFWQorRhsrnJO+Ezb6VDq1h68LIWJsF3SAHz9+h7qzAk4FAEmB6Y7WpKC2xdYgM9jR3i+CnC0lDC6O3hfBxEXYNFlWox2MdJyxo+RAm7VXNLbC5QG2sZBMbH1dWmGypCF4bYE4Xmony3Ap48wUxfxig4wIyjPVwuQFC+KMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715982917; c=relaxed/simple;
-	bh=sJ+GtFwuKBg7t9R/MxdBCOuh6fAmgDIhwKbiz2Mm6xo=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BgRBl5//hRlF9s2EGtwwTS5vKaKvR0M6rnn8iatcVjZ/QnkqfRWIB+eXHJrhkMYLYsCmGRKGOhiDV6ffcIDNzkQ/wYzSeRHnZu5Wai1HTpH8WZNqNL7bXLuBmY5D1FgDoEVzJREIAo4kLPlTfCQrWB2nCXu2km/KQKKRtOBAiF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44H9GMA2002440;
-	Fri, 17 May 2024 14:55:04 -0700
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 3y64f41yfp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 17 May 2024 14:55:04 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Fri, 17 May 2024 14:55:03 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Fri, 17 May 2024 14:55:03 -0700
-Received: from Dell2s-9.sclab.marvell.com (unknown [10.110.150.250])
-	by maili.marvell.com (Postfix) with ESMTP id 1CB523F706F;
-	Fri, 17 May 2024 14:55:03 -0700 (PDT)
-From: Vasyl Gomonovych <gomonovych@gmail.com>
-To: <Yazen.Ghannam@amd.com>, <tony.luck@intel.com>
-CC: Vasyl Gomonovych <gomonovych@gmail.com>, Borislav Petkov <bp@alien8.de>,
-        <linux-edac@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] RAS: Add missing newlines to pr_info
-Date: Fri, 17 May 2024 14:54:37 -0700
-Message-ID: <20240517215452.2020680-1-gomonovych@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1715982959; c=relaxed/simple;
+	bh=ghGC/qD4YYwRu7VJcfFZKkyW1l1SLUi2sKVi4dYyITU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sy7la/z3+T7I7zmRMm08rNJGgSO4I7Q5xXsvP7RV19T08wKwMZvi9OA9m8fYEqRgHLeAgvkDfXAMeTUe9IzcdtR8fOryk2jCSrROpsJl0JjlRLEn7gp8CTeNVLemBevZ6XHMkEdVpGGmE1YCHzZOOeTNmDuR8xdkfLyrMDmYUz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=br3RZU5R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB900C2BD10;
+	Fri, 17 May 2024 21:55:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715982959;
+	bh=ghGC/qD4YYwRu7VJcfFZKkyW1l1SLUi2sKVi4dYyITU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=br3RZU5RKzjPkkHDhTB8a7BD6A+j+/+FAEnnMgM1Bm7UG91jxu350+15IV2VZmNGC
+	 TBStr+E8Il/cgwT10FinDZTIsb9r9Ixtrze19b9P73XcXKyYF78p/ze+Wpc4lnktlj
+	 JiXS8SvQIYFS5KfbcMws5tGQRzVU0gAhZioL+7rt1ehWug7WEslrZM76+a3gQZGkeI
+	 Li7NNgjiXp3K5+5R49z3Wt/VjrCvEUc+vZdSeg2s4mXXXz1/+gEiv1u4iA7OMlq8O/
+	 W5XInYZvDmmOeqIMokgHTV/aHppPS5VyL0N/YNB3SyEHKUQ3ZQokwu1Vt8NjqBagYf
+	 yIpV5sfkrDPwA==
+Date: Fri, 17 May 2024 22:55:55 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 3/3] spi: gpio: Make num_chipselect 8-bit in the
+ struct spi_gpio_platform_data
+Message-ID: <ce75b03e-e061-43ac-94fa-1539c8fe6203@sirena.org.uk>
+References: <20240517194246.747427-1-andriy.shevchenko@linux.intel.com>
+ <20240517194246.747427-4-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: KbOv8qa4a5-PuEAHhx8t1J7yho_7nPmT
-X-Proofpoint-ORIG-GUID: KbOv8qa4a5-PuEAHhx8t1J7yho_7nPmT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-17_10,2024-05-17_03,2023-05-22_02
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="lx1NAW7LWTAVBckq"
+Content-Disposition: inline
+In-Reply-To: <20240517194246.747427-4-andriy.shevchenko@linux.intel.com>
+X-Cookie: Function reject.
 
-Fix RAS log statement by adding missing newline character
 
-Signed-off-by: Vasyl Gomonovych <gomonovych@gmail.com>
----
- drivers/ras/amd/atl/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--lx1NAW7LWTAVBckq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/ras/amd/atl/core.c b/drivers/ras/amd/atl/core.c
-index 6dc4e06305f7..f9f760d780c4 100644
---- a/drivers/ras/amd/atl/core.c
-+++ b/drivers/ras/amd/atl/core.c
-@@ -206,7 +206,7 @@ static int __init amd_atl_init(void)
- 	__module_get(THIS_MODULE);
- 	amd_atl_register_decoder(convert_umc_mca_addr_to_sys_addr);
- 
--	pr_info("AMD Address Translation Library initialized");
-+	pr_info("AMD Address Translation Library initialized\n");
- 	return 0;
- }
- 
--- 
-2.43.0
+On Fri, May 17, 2024 at 10:42:03PM +0300, Andy Shevchenko wrote:
+> There is no use for whole 16-bit for the number of chip select pins.
+> Drop it to 8 bits.
 
+because...?  It's the only field in the struct so it's not like it makes
+any meaningful different to struct layout.
+
+--lx1NAW7LWTAVBckq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZH0moACgkQJNaLcl1U
+h9DPZAf+Lqc9Ezwvnd8c3HfCfl8KYyxemvF6LAJrcp/+ZxXZI9AfBNeDIKOrCXQl
+nTLcrteD3bfQaOfM4Bm8ZpScR5SGlZYKVDqJlevrn3ATSGNZOwW+uwdvgmyNrhaR
+6G+UncXMes3ebPUxs4faStgb4SkYAPbD/JVGYIuiN3M4wK4dxgcDO7jHmkiq2LPk
+OkCvsk2bC16I7ip875hXNHONjT/KP/vrwTKnMxwmj/mi22fWb6hsj1mjLpScQuOG
+DCRx2iH9LxEDKJaATFWQ8nQv/bw/C9rQzVCw+WKbCdhrzBaZdN+1TwTK68MJ1eMC
+vGWMOu7gRalV5rcnO8WGhzqQ3/vV2Q==
+=KR/p
+-----END PGP SIGNATURE-----
+
+--lx1NAW7LWTAVBckq--
 
