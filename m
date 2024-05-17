@@ -1,120 +1,95 @@
-Return-Path: <linux-kernel+bounces-182214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC6878C882F
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 16:40:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E32108C8832
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 16:40:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13CF61C2210A
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 14:40:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E7ED1C23362
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 14:40:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4E247490;
-	Fri, 17 May 2024 14:40:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 182E241C66;
+	Fri, 17 May 2024 14:40:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="OxH4fujh"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RXFw+nJY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4B2228FF
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 14:40:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F076748E;
+	Fri, 17 May 2024 14:40:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715956824; cv=none; b=I9fd+g7wnfCFHjirNpC86MggQnhYzUz6kaMDuJjp6hWnCG3FUr7VXYTRwjBJUoz0UgVVrbQd5wOKOk6XRzrMiGMf3hLnMJWhQVwyIwQuQ0WE32GcvNzYSqihr+POwRnX5TuORzQARSMwofH9JcvG9O6EH8lZbco1gHyJLeVVf1k=
+	t=1715956834; cv=none; b=V5eEWMwgVrv4uH6MrCw0uXGRB3cC/oDFWFzqZWCK64SQga6/gv5baEigxMUfQleKfyDAb35JnU+vop6OrPm90SpbWgvLEI6A62YteFfxO2B8O62vonJCl9KAg1aGYlb1mnq3ewDU1wx5dZizGZksSHuhCQh5jV1Nw6HKAw4HmrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715956824; c=relaxed/simple;
-	bh=MbXIwTAyTgQNMyEW8b50nZ3msi8UQOUvoY26I7l2kEw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bL0rabHLLE26dJ2rn7yDni5rStZMZCzA4prLPb0C91JRuhdcYL9vNe3LoGmiCcVHxqmy8U+2ewQMact3/NZTNhFZW/VQVw3PPMnLjhfh/kxe5NZW+y5iyvJeky7EvAXyjH6vevZQiVAG2SeSSwcFI8ux//DiSTc9up3QgNC1gkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=OxH4fujh; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2e7144055c7so2660781fa.3
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 07:40:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1715956820; x=1716561620; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rmMqNW6OY6DguA/rCN2USSW4FvKOZoylsSTlZPNM6yE=;
-        b=OxH4fujhJIEB5l5WF8pjDMUVRcRx7WQ7PZsoKmG7/s+A2z+tI5NEuqJZ1iy1u7YCuL
-         Jz1F++bPHjzOTWBgbz9q8X68a5QvuN2ywUSKr45h7GKQ8rjb+7tUmZE0SY17JqCmr8+5
-         RLSOKLwjWgM84U2tiriaQ4bJxCwI4vTedMv/QFsd+wt5dVtq9Uxv6yB3UQOXzivlKIvF
-         jB2o4kBtvgVot+G2E40GjSXfvbUsmjLrY53994yH3CamEi4Zho1TCwef2YHWE6EmGizI
-         e4GgKHBQ5iCS+tAybo67VIb7wqLXjY05SzHE7VZeGM9i2nQt9oPb4l2kd9ldcUHBc+38
-         5Udw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715956820; x=1716561620;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rmMqNW6OY6DguA/rCN2USSW4FvKOZoylsSTlZPNM6yE=;
-        b=nYP0hIO8UP2x0o9v+Gj4mUqMZ8Ilmq2JO/is8/uj0Wj566Qn8DJZ8CQkAkoWy46mXX
-         9ZV53QQUm44J7LWpk8tDlYXquyeOA5jCL3m8hkBAecVAt689K1YO5uzH7LQWnKMrYiro
-         XYztIlv1sljKoqeT0FOaGsTdNTn6zOFkQeAZL6dburWfDid0pnmT5QLtgr7H8LGkX3hv
-         0YXVMh/Qj1xXsaRWKmtBz45VXOV9LRtWIMDlOm7UhUnRBIqvDZ1UbyCFcXUJdVJB+4PA
-         0YJhOYWf1qvF9vzwcZ+COysAVGS94Pr0C6ftJEBzIAR329hmrxZOJW6cxX5CjtbpaW4n
-         MYDg==
-X-Forwarded-Encrypted: i=1; AJvYcCXdQnNeX0dj1hkTKUxnRCcOmBcbE/8vERQfj6tHJUf/H3bkuRn3I4/oyA0Bsejci419O7qrzQffxSEvbqOO0lSC5ERRPfY81U1AXNnx
-X-Gm-Message-State: AOJu0Ywhz40mf9eg+V95uZ7L3FSWpjhgXpu355o1iUiw97i/LgHicLD2
-	CRiJqmLmtzxtdl1KfWWBN6j0aB4WpH2lIaQsD0ow7R8Mx7I7k/mbZPLw33+E8k4=
-X-Google-Smtp-Source: AGHT+IHWdcaJPVE2MqmsmLIq+skXSguavFWfPtgPhSzqR8d5dzXxdFmPcCj2aPUPlLY1zFZHqGIPKg==
-X-Received: by 2002:a2e:8449:0:b0:2e0:3132:94d4 with SMTP id 38308e7fff4ca-2e51fe53f21mr138317551fa.16.1715956819900;
-        Fri, 17 May 2024 07:40:19 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4200a8e6846sm248650515e9.15.2024.05.17.07.40.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 May 2024 07:40:19 -0700 (PDT)
-Date: Fri, 17 May 2024 16:40:18 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH printk v5 06/30] printk: nbcon: Add callbacks to
- synchronize with driver
-Message-ID: <ZkdsUjP9CLCdY0kw@pathway.suse.cz>
-References: <20240502213839.376636-1-john.ogness@linutronix.de>
- <20240502213839.376636-7-john.ogness@linutronix.de>
- <ZkdcFxW-e9LVmMd8@pathway.suse.cz>
- <87bk54y1vl.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1715956834; c=relaxed/simple;
+	bh=WcnDMWC5m0Qf3HEHyWs/JC3uDjcP2QIwCvwotQ5JlEs=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=IdT6V/vvEvBYWRv4nHZzX4HL/yNFmJZlhqUyxfvczseHFmFwbhen3ew9Y8KJlPYJLBBLj8zLfcv6XWm3xRuJTNBhJhuUzEwFMc3sGCxM//haFjMAgxASGpKCay/X1qfH/5dkgv3uV16z/PykkSEMJT7vuvke3wkhAF9nQ+xV0vs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RXFw+nJY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id D7A1FC32789;
+	Fri, 17 May 2024 14:40:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715956833;
+	bh=WcnDMWC5m0Qf3HEHyWs/JC3uDjcP2QIwCvwotQ5JlEs=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=RXFw+nJYPQYnASuWo6jyxiEqP1yqqxziusrnrvlwQ5ez+852or9YlH/nigC95Sx13
+	 +ONpKFgHPtXpRxtVdEPHfru4l54k7dfSOAWoTYuHUO0sqsaFwROdU4BNo/D5GJOErs
+	 z8K/7d0BbLtMmc/3SEMPutAnBD2p3FyJ/Mr2weAkhw+CO/dEkrcurYi6tdKhUfClIV
+	 HM+dI25qt12o+XcNSg7GcCFA21qFKYouYkkDG7D2xRzXTuxOBMD/fTCfy6XHGFiGqz
+	 khj5vA1nQ9jI4AGOQbrtwI+NKQNi15zHC/QHShhxGPXYgDtX909M9/dalMKk2Pab+j
+	 Rz5ZZvoEcFkdw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id C1613C54BD4;
+	Fri, 17 May 2024 14:40:33 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87bk54y1vl.fsf@jogness.linutronix.de>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] Bluetooth: btnxpuart: Shutdown timer and prevent rearming
+ when driver unloading
+From: patchwork-bot+bluetooth@kernel.org
+Message-Id: 
+ <171595683378.30517.9280094714253637646.git-patchwork-notify@kernel.org>
+Date: Fri, 17 May 2024 14:40:33 +0000
+References: <20240517111535.856723-1-ziniu.wang_1@nxp.com>
+In-Reply-To: <20240517111535.856723-1-ziniu.wang_1@nxp.com>
+To: None <ziniu.wang_1@nxp.com>
+Cc: marcel@holtmann.org, luiz.dentz@gmail.com,
+ linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+ amitkumar.karwar@nxp.com, rohit.fule@nxp.com, neeraj.sanjaykale@nxp.com,
+ sherry.sun@nxp.com, haibo.chen@nxp.com, jun.li@nxp.com,
+ guillaume.legoupil@nxp.com, salim.chebbo@nxp.com, imx@lists.linux.dev
 
-On Fri 2024-05-17 16:06:30, John Ogness wrote:
-> On 2024-05-17, Petr Mladek <pmladek@suse.com> wrote:
-> > BTW: I wonder if you use AI for generating the commit message.
-> >      My experience is that AI produces longer fancy sentences
-> >      which might be good for a novel but they sometimes hide
-> >      the important details.
+Hello:
+
+This patch was applied to bluetooth/bluetooth-next.git (master)
+by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
+
+On Fri, 17 May 2024 19:15:35 +0800 you wrote:
+> From: Luke Wang <ziniu.wang_1@nxp.com>
 > 
-> I do not know if that is a compliment or an insult.
-> 
-> For the record, I do not use AI. The "long fancy sentences hiding
-> important details" are coming from a sober brain... mine.
-
-Ah, take it as a complaint then ;-) Complicated things are just hard
-to explain.
-
-> > My attempt of a more strightforwward explanation:
+> When unload the btnxpuart driver, its associated timer will be deleted.
+> If the timer happens to be modified at this moment, it leads to the
+> kernel call this timer even after the driver unloaded, resulting in
+> kernel panic.
+> Use timer_shutdown_sync() instead of del_timer_sync() to prevent rearming.
 > 
 > [...]
-> 
-> Your version does not mention why the generic code now needs to use the
-> driver-specific locking, but I suppose that does not matter (and only
-> adds confusion instead of explanation).
 
-I removed these details on purpose. I think that they will be
-easier to understand with the code.
+Here is the summary with links:
+  - Bluetooth: btnxpuart: Shutdown timer and prevent rearming when driver unloading
+    https://git.kernel.org/bluetooth/bluetooth-next/c/3afc41cbec84
 
-Best Regards,
-Petr
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
