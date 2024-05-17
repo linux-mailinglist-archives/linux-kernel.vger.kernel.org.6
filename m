@@ -1,144 +1,183 @@
-Return-Path: <linux-kernel+bounces-181795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D70618C8168
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 09:28:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0F068C8152
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 09:21:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9274A281AD1
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 07:28:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E45221C20CAD
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 07:21:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A567617756;
-	Fri, 17 May 2024 07:28:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29C3D1757D;
+	Fri, 17 May 2024 07:21:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="KBSuWkDE"
-Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Ur45jLTc"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D119A17557;
-	Fri, 17 May 2024 07:27:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E491A17552;
+	Fri, 17 May 2024 07:21:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715930881; cv=none; b=HB0fiAQDQqR4tdXQoF7bExza+Y4J7KHUKzHRWtb1rEM86tZiTy9/7PpbS8OcFYz96HaCjW3HmCBWs+6QfKfX1vz7IApzFfS3jozmgzFY/OA/ZSVzbDegh6NP2Ky/RPHnyOH61sGB1WS7tttiStQSSqE7CIzcel3EuB4OsuGdDGQ=
+	t=1715930499; cv=none; b=JECgMJMXomj3m9aexBFt5YKUekYSN94Xv4YxNQoSc+NRYQmVr7SrUJQq936k6BeA/9LN+7H41Me0eDpkHwGA8Z4aN8H0GJcAghrGk4bHtIVXDGo93T49vWKkeq/Y5xGUTP+4ABaB2sZSP+NEx2664M+q80lnh2N93wzn9CPK+BU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715930881; c=relaxed/simple;
-	bh=V9pZqZSgm0WFadTWQjQ7+lXhSwdmCrkdWtj1xIfgeCw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jcM/LUxhyjrJFJw5/Klv8JtLrwYmSv9eYwClcHJcsk4dsCBSBpoZ2ZfKrmZkQOB6wLmM8EtgkjWPKiR2vDrbETIhwJI4wlYjiqNqJUw3JtgkuwiziIbnxbdAMQ9lW4Ig/kC0CdAXU2709ybrtn27U1YTbLtywOni9C53dgbqsWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=KBSuWkDE; arc=none smtp.client-ip=115.124.30.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1715930876; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=Ymc8U18af+lJxyPx76zWHby9MgnIgq3GTnFdlP/uLo4=;
-	b=KBSuWkDEASFK5Wj0gOvHsuGGE4Wg7LyY2ZeaEOkjK6azroF4WcE5p3xcQJ3CDyWprmOmrkQS1RC5EkJPi/n2b6IOBOkaP4puqS9YnoLvbO11GNLN6HE6ByzOUMJdQDvNRnJkd68f6DO5wZPIV2AZZldTwiBg8+svocgwyL7GNC8=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067109;MF=guwen@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0W6drV.v_1715930399;
-Received: from 30.221.130.119(mailfrom:guwen@linux.alibaba.com fp:SMTPD_---0W6drV.v_1715930399)
-          by smtp.aliyun-inc.com;
-          Fri, 17 May 2024 15:20:01 +0800
-Message-ID: <cc0480b1-d02a-406c-8b58-aae4ac4aa0ce@linux.alibaba.com>
-Date: Fri, 17 May 2024 15:19:59 +0800
+	s=arc-20240116; t=1715930499; c=relaxed/simple;
+	bh=fFe9A+03pnKocm377PKFv9FBQBGD+nfpn00TMsnyDR8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=WRFMKzO8epS3JSTzntT3ryr9Ck8rLlXGajP7W4CyLKkxzAV0M/gHOZqNEe6fp7S9moCJvTx7V8T1WpC/4GB+7dJiM3Ix4IT1W0sVX3Kx33XJd++2MkJSxh5RenWFt/M3NeAybfMZYEQ1pW+3Fn/jX7FlClfp3SynyLoZWATeUUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Ur45jLTc; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44GKMsIt008130;
+	Fri, 17 May 2024 07:21:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=V13+1xk8KEU7CNK8QkeG0dJeVpQfsz+902pDd7kRldQ=; b=Ur
+	45jLTcA8wi2c98jS/1YCUfhD4N7fuAAyAXzCbJHeQ2aXe0UfSWe7KGX9lea9pC+I
+	6UlrYj8+qtoYfH7IzCYNJ7fJbO4VXAfWvkR1qH+VVs6hBEmTv+auRnmKPcvwlv5p
+	7N7SPU4gjNJ+zB6TAAOciiRy+nZVzQfCPuu5t2o0qorTVqbMBNuJ4aKyD5vYJp5c
+	832HI8pw06oDTvsUbLPGHD0s2uhbLJBhZzwcFoAq402plYGMpj2hMTAQspHXFTpJ
+	wi1Il/xA0iG0MoZa1U2FmLzexIDkKPA4KU7xvpwYUo7PQr/XO03FaAvoi56NO/Ut
+	NHdkF2z9734tSqfJEdrw==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y45vbfsts-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 17 May 2024 07:21:20 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44H7LIVB018736
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 17 May 2024 07:21:18 GMT
+Received: from [10.216.53.65] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 17 May
+ 2024 00:21:11 -0700
+Message-ID: <1238fa39-f0da-fb4c-0668-caa946505373@quicinc.com>
+Date: Fri, 17 May 2024 12:51:06 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: some questions about restrictions in SMC-R v2's implementation
-To: Wenjia Zhang <wenjia@linux.ibm.com>,
- Guangguan Wang <guangguan.wang@linux.alibaba.com>, jaka@linux.ibm.com,
- kgraul@linux.ibm.com
-Cc: linux-s390@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <6d6e870a-3fbf-4802-9818-32ff46489448@linux.alibaba.com>
- <ba4c7916-d6c4-44b6-a649-1e17c65e87f9@linux.ibm.com>
-From: Wen Gu <guwen@linux.alibaba.com>
-In-Reply-To: <ba4c7916-d6c4-44b6-a649-1e17c65e87f9@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH 6/7] remoteproc: qcom_q6v5_pas: Add hwspinlock bust on
+ stop
+Content-Language: en-US
+To: Chris Lew <quic_clew@quicinc.com>, Bjorn Andersson <andersson@kernel.org>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Peter Zijlstra
+	<peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Will Deacon
+	<will@kernel.org>, Waiman Long <longman@redhat.com>,
+        Boqun Feng
+	<boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>
+CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, Richard Maina <quic_rmaina@quicinc.com>
+References: <20240516-hwspinlock-bust-v1-0-47a90a859238@quicinc.com>
+ <20240516-hwspinlock-bust-v1-6-47a90a859238@quicinc.com>
+From: Mukesh Ojha <quic_mojha@quicinc.com>
+In-Reply-To: <20240516-hwspinlock-bust-v1-6-47a90a859238@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Q7iFiLrN1qh9344l0MaOtp_Y2B9i4K0w
+X-Proofpoint-ORIG-GUID: Q7iFiLrN1qh9344l0MaOtp_Y2B9i4K0w
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-16_07,2024-05-15_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ clxscore=1015 mlxscore=0 suspectscore=0 spamscore=0 malwarescore=0
+ adultscore=0 mlxlogscore=999 phishscore=0 priorityscore=1501 bulkscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405010000 definitions=main-2405170056
 
 
 
-On 2024/5/10 17:40, Wenjia Zhang wrote:
+On 5/17/2024 4:28 AM, Chris Lew wrote:
+> From: Richard Maina <quic_rmaina@quicinc.com>
 > 
+> When remoteproc goes down unexpectedly this results in a state where any
+> acquired hwspinlocks will remain locked possibly resulting in deadlock.
+> In order to ensure all locks are freed we include a call to
+> hwspin_lock_bust() during remoteproc shutdown.
 > 
-> On 07.05.24 07:54, Guangguan Wang wrote:
->> Hi, Wenjia and Jan,
->>
->> When testing SMC-R v2, I found some scenarios where SMC-R v2 should be worked, but due to some restrictions in SMC-R v2's implementation,
->> fallback happened. I want to know why these restrictions exist and what would happen if these restrictions were removed.
->>
->> The first is in the function smc_ib_determine_gid_rcu, where restricts the subnet matching between smcrv2->saddr and the RDMA related netdev.
->> codes here:
->> static int smc_ib_determine_gid_rcu(...)
->> {
->>      ...
->>          in_dev_for_each_ifa_rcu(ifa, in_dev) {
->>              if (!inet_ifa_match(smcrv2->saddr, ifa))
->>                  continue;
->>              subnet_match = true;
->>              break;
->>          }
->>          if (!subnet_match)
->>              goto out;
->>      ...
->> out:
->>      return -ENODEV;
->> }
->> In my testing environment, either server or client, exists two netdevs, eth0 in netnamespace1 and eth0 in netnamespace2. For the sake of clarity
->> in the following text, we will refer to eth0 in netnamespace1 as eth1, and eth0 in netnamespace2 as eth2. The eth1's ip is 192.168.0.3/32 and the
->> eth2's ip is 192.168.0.4/24. The netmask of eth1 must be 32 due to some reasons. The eth1 is a RDMA related netdev, which means the adaptor of eth1
->> has RDMA function. The eth2 has been associated to the eth1's RDMA device using smc_pnet. When testing connection in netnamespace2(using eth2 for
->> SMC-R connection), we got fallback connection, rsn is 0x03010000, due to the above subnet matching restriction. But in this scenario, I think
->> SMC-R should work.
->> In my another testing environment, either server or client, exists two netdevs, eth0 in netnamespace1 and eth1 in netnamespace1. The eth0's ip is
->> 192.168.0.3/24 and the eth1's ip is 192.168.1.4/24. The eth0 is a RDMA related netdev, which means the adaptor of eth0 has RDMA function. The eth1 has
->> been associated to the eth0's RDMA device using smc_pnet. When testing SMC-R connection through eth1, we got fallback connection, rsn is 0x03010000,
->> due to the above subnet matching restriction. In my environment, eth0 and eth1 have the same network connectivity even though they have different
->> subnet. I think SMC-R should work in this scenario.
->>
->> The other is in the function smc_connect_rdma_v2_prepare, where restricts the symmetric configuration of routing between client and server. codes here:
->> static int smc_connect_rdma_v2_prepare(...)
->> {
->>      ...
->>      if (fce->v2_direct) {
->>          memcpy(ini->smcrv2.nexthop_mac, &aclc->r0.lcl.mac, ETH_ALEN);
->>          ini->smcrv2.uses_gateway = false;
->>      } else {
->>          if (smc_ib_find_route(net, smc->clcsock->sk->sk_rcv_saddr,
->>                smc_ib_gid_to_ipv4(aclc->r0.lcl.gid),
->>                ini->smcrv2.nexthop_mac,
->>                &ini->smcrv2.uses_gateway))
->>              return SMC_CLC_DECL_NOROUTE;
->>          if (!ini->smcrv2.uses_gateway) {
->>              /* mismatch: peer claims indirect, but its direct */
->>              return SMC_CLC_DECL_NOINDIRECT;
->>          }
->>      }
->>      ...
->> }
->> In my testing environment, server's ip is 192.168.0.3/24, client's ip 192.168.0.4/24, regarding how many netdev in server or client. Server has special
->> route setting due to some other reasons, which results in indirect route from 192.168.0.3/24 to 192.168.0.4/24. Thus, when CLC handshake, client will
->> get fce->v2_direct==false, but client has no special routing setting and will find direct route from 192.168.0.4/24 to 192.168.0.3/24. Due to the above
->> symmetric configuration of routing restriction, we got fallback connection, rsn is 0x030f0000. But I think SMC-R should work in this scenario.
->> And more, why check the symmetric configuration of routing only when server is indirect route?
->>
->> Waiting for your reply.
->>
->> Thanks,
->> Guangguan Wang
->>
-> Hi Guangguan,
+> For qcom_q6v5_pas remoteprocs, each remoteproc has an assigned id that
+> is used to take the hwspinlock. Remoteproc should use this id to try and
+> bust the lock on remoteproc stop.
 > 
-> Thank you for the questions. We also asked ourselves the same questions a while ago, and also did some research on it. Unfortunately, it was not yet done and I had to delay it because of my vacation last month. Now it's time to pick it up again ;) I'll come back to you as soon as I can give a very 
-> certain answer.
+> This edge case only occurs with q6v5_pas watchdog crashes. The error
+> fatal case has handling to clear the hwspinlock before the error fatal
+> interrupt is triggered.
 > 
-> Thanks,
-> Wenjia
+> Signed-off-by: Richard Maina <quic_rmaina@quicinc.com>
+> Signed-off-by: Chris Lew <quic_clew@quicinc.com>
+> ---
+>   drivers/remoteproc/qcom_q6v5_pas.c | 28 ++++++++++++++++++++++++++++
+>   1 file changed, 28 insertions(+)
+> 
+> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+> index 54d8005d40a3..57178fcb9aa3 100644
+> --- a/drivers/remoteproc/qcom_q6v5_pas.c
+> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+> @@ -10,6 +10,7 @@
+>   #include <linux/clk.h>
+>   #include <linux/delay.h>
+>   #include <linux/firmware.h>
+> +#include <linux/hwspinlock.h>
+>   #include <linux/interrupt.h>
+>   #include <linux/kernel.h>
+>   #include <linux/module.h>
+> @@ -52,6 +53,7 @@ struct adsp_data {
+>   	const char *ssr_name;
+>   	const char *sysmon_name;
+>   	int ssctl_id;
+> +	int hwlock_id;
+>   
+>   	int region_assign_idx;
+>   	int region_assign_count;
+> @@ -84,6 +86,9 @@ struct qcom_adsp {
+>   	bool decrypt_shutdown;
+>   	const char *info_name;
+>   
+> +	struct hwspinlock *hwlock;
+> +	int hwlock_id;
+> +
+>   	const struct firmware *firmware;
+>   	const struct firmware *dtb_firmware;
+>   
+> @@ -399,6 +404,12 @@ static int adsp_stop(struct rproc *rproc)
+>   	if (handover)
+>   		qcom_pas_handover(&adsp->q6v5);
+>   
+> +	if (adsp->hwlock) {
+> +		ret = hwspin_lock_bust(adsp->hwlock, adsp->hwlock_id);
+> +		if (ret)
+> +			dev_info(adsp->dev, "failed to bust hwspinlock\n");
+> +	}
+> +
 
-Hi Wenjia, is there any new information on the original intent of these designs? :) Thanks!
+As you said above, you seem to cover only wdog case and fatal cases
+are already handled at remote;
+
+You are clearing here for both ? is this right understanding ?
+
+-Mukesh
 
