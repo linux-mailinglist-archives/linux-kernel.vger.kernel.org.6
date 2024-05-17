@@ -1,303 +1,183 @@
-Return-Path: <linux-kernel+bounces-181965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87D398C845C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:58:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C207A8C841A
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:50:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38BA6284F2F
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 09:58:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E572E1C22A57
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 09:50:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 027042C1B6;
-	Fri, 17 May 2024 09:58:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F56B282D6;
+	Fri, 17 May 2024 09:49:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=walle.cc header.i=@walle.cc header.b="IVhaQzs1"
-Received: from mail.3ffe.de (0001.3ffe.de [159.69.201.130])
+	dkim=pass (1024-bit key) header.d=chipsnmedia.com header.i=@chipsnmedia.com header.b="aJWfcreG"
+Received: from SLXP216CU001.outbound.protection.outlook.com (mail-koreacentralazon11020002.outbound.protection.outlook.com [52.101.154.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 937162E40D;
-	Fri, 17 May 2024 09:58:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.201.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715939917; cv=none; b=I9B8dOlupmRY+d4rvpWDW3SosZj+hMiUkfctg58nYq3SKl3MJoCCLr4ezoYcKAAtjYdYyHF4CFLkVmBz3JGjTdM+t4TiN6I5rbtM5AGNykDHrfIt+HMJTRqqw6GApE/ERLTi1brpJy8SVQAFalMxldFJgSxJfxEfxOUzxLSHEjw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715939917; c=relaxed/simple;
-	bh=Ra7Jo6/3GJwMX4XJP4ghAFxd4vrySlbx749+tUbNuco=;
-	h=Content-Type:Date:Message-Id:Subject:Cc:From:To:References:
-	 In-Reply-To; b=Fy1GAQOLyJ1ZOleXlrQIy0z7NEokViOHiqWym3qk5reDbSFEFRb2cecphxVF0FF/ylKszBEUL5vmArRg6ZDcykrEVrPnHJoJXG60rmzNBaruBpBDhBeZDEyCSCRxPZAZVDYd54yHUsTet8WSvMscZiC1/dX8SZiHINBA1yPuL54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=walle.cc; spf=pass smtp.mailfrom=walle.cc; dkim=pass (2048-bit key) header.d=walle.cc header.i=@walle.cc header.b=IVhaQzs1; arc=none smtp.client-ip=159.69.201.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=walle.cc
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=walle.cc
-Received: from localhost (unknown [213.135.10.150])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.3ffe.de (Postfix) with ESMTPSA id 05DF750B;
-	Fri, 17 May 2024 11:49:28 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2022082101;
-	t=1715939369;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:content-type:content-type:in-reply-to:in-reply-to:
-	 references:references; bh=hUAPlHyXrESwA904RoKrpKALi6/2HCs8vSayDwgxKvE=;
-	b=IVhaQzs1ynu45luIOLSUzs2QpJIVfZo75dinI6rZBU+YAYAPv+kFqDGGXJ40WeEJGwGS+O
-	0SZ3GW9++Y2sWVhRr7Mj5UD8PeySGEv23PIOhr0dzUv1gT8Jql4g6tKZFFyRGWCupqvRFM
-	e96t0yHhFlumCnpE5wZQkzFCFdlHUDQ4Rb4u9GOaU/6kT2UhiPpWBP/X+4oRuuL+X9kQhH
-	Nkorr+yQ7zcdKgALDUq0chynHRYtXaHO8gvP8p8qNepl15snhfkSrfYqI5morMt+6Zh7ss
-	tofi8sCK4PmMcScbAci28a3Nprlk5vSI58LLJRO8Bw3hnk++oC3PnmkoUP55og==
-Content-Type: multipart/signed;
- boundary=18dede9a640603fdcd5671b64893c8b65da4bac91be4f9f750e9f84ab4c5;
- micalg=pgp-sha384; protocol="application/pgp-signature"
-Date: Fri, 17 May 2024 11:49:18 +0200
-Message-Id: <D1BTQIQ2AQIS.G12ROFB149QB@walle.cc>
-Subject: Re: [PATCH v4 3/3] drm/mediatek: Implement OF graphs support for
- display paths
-Cc: <robh@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
- <conor+dt@kernel.org>, <p.zabel@pengutronix.de>, <airlied@gmail.com>,
- <daniel@ffwll.ch>, <maarten.lankhorst@linux.intel.com>,
- <mripard@kernel.org>, <tzimmermann@suse.de>, <matthias.bgg@gmail.com>,
- <shawn.sung@mediatek.com>, <yu-chang.lee@mediatek.com>,
- <ck.hu@mediatek.com>, <jitao.shi@mediatek.com>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
- <linux-arm-kernel@lists.infradead.org>, <wenst@chromium.org>,
- <kernel@collabora.com>
-From: "Michael Walle" <michael@walle.cc>
-To: "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
- <chunkuang.hu@kernel.org>
-X-Mailer: aerc 0.16.0
-References: <20240516081104.83458-1-angelogioacchino.delregno@collabora.com>
- <20240516081104.83458-4-angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20240516081104.83458-4-angelogioacchino.delregno@collabora.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47DFA1EB48;
+	Fri, 17 May 2024 09:49:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.154.2
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715939395; cv=fail; b=GRzhE6C/jR2U6Z4VWrxHVXefk9RM1iaEVww45yhfioIkCo30lyD0nD0k313hB2a6zjK2F/iQT/pOmGcFZ3knWoPN4FirPwoB7rglut35roPKQBPOMDgPItqP62VQR/fIu+4w15wQ91SZ2AKGs6SjSu8LENXKSgqjoQRJh+gmjns=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715939395; c=relaxed/simple;
+	bh=8wixs9KktvKVLDwNnu/oWSpJyxfllMrAn8ulQMDCYRg=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=u0YJ9csOo9L3qO9zFdnRQyAvIQXGTmBWvafAYs3Qw0V+isPQRuZEu8IcLsJ5d375AMFEi9RFxrHNkP3iB67OsuxCz3VbylvV5IPYUsUCFnCAYjkmzks5AtoA5l++GQK6SLV3NsMFGm3XHStf57HB/xXTBursCcd1PCiWqhDBWgE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chipsnmedia.com; spf=pass smtp.mailfrom=chipsnmedia.com; dkim=pass (1024-bit key) header.d=chipsnmedia.com header.i=@chipsnmedia.com header.b=aJWfcreG; arc=fail smtp.client-ip=52.101.154.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chipsnmedia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chipsnmedia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=kFNPvpuEaK5zCIO5R9m/8qJrDXt466ybg2yjg4GF6ToZwHdbCtLYPtKZypi7rl3akFBMZCd13MdK+t8xb0ljACF0ADwisuxiYPbq5oPIQ++e71MSVVclDUlZvenwlg/HhWFXIhXQaq80c+ElM2WDprUHkSVmXZM+Xy3SesEM/3UbP3in1eFfVcxUHNoGfaOb2JGSyM7nP2qs1+V9JVxnFjDYul2kCg2jzRENTdlwNwQ5VYnDlCRE3enmJ5s5v2Nvmh6MvX+DLF61tYtv0LLTOUoyUZs2wNlOQIdGIeawMqsqsUTkNK0hxeRwBon7w3MvqDd8g+32iwpTTWIbZDtJrw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=mT/z9Wm2coDk4CyO+OSPldqlfaO2Mdv/YQQ8LbBLbJ4=;
+ b=HsorrB7WhyCV6T5DEOAWNpLST7J5WqOxXNzLOYTts2TYyPkxsYANSfnkPL8gyRli9dkbwA99iVvTZAbFHWydxJsDkrRTNWyyX8DK7R1dgxrNTCNptFpgm6BfSvmztiH7I8MPxWqkRxROitZDPJcQr4fIsEkpR8NhCxG6t3xiFIcnLvfx7X1o81r4mjpuR3pmQs3Dki3sQSvQZYScbSqezNar41aEhWLWcWWn1Tt1p/mdoxpVzCi97WhzTtzPc7yc2SLcbHzzFXTv+nIoIqoYr6pG+bk4g+wSISO9v5kCoE9728xoRKR+U2kvxihNRuySzU3jAtRGhVbSqtC3uHZdnA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=chipsnmedia.com; dmarc=pass action=none
+ header.from=chipsnmedia.com; dkim=pass header.d=chipsnmedia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=chipsnmedia.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mT/z9Wm2coDk4CyO+OSPldqlfaO2Mdv/YQQ8LbBLbJ4=;
+ b=aJWfcreGf/JgfzbnisIXHvgsV+56zf36Wwr2iW+GcwP/0ZevGNvx5IVzWiO/yNkpRSBlUJM9naH6QdfhAFIlUi/y2TwQDzn2zred+aLiyu7DrSwBIvNbHimyD3mgElS2NspZrhu4oH34KP6SWd6YzTo9eOR/5AzIAhezz4YEseA=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=chipsnmedia.com;
+Received: from SL2P216MB1246.KORP216.PROD.OUTLOOK.COM (2603:1096:101:a::9) by
+ PU4P216MB1999.KORP216.PROD.OUTLOOK.COM (2603:1096:301:12d::12) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7587.30; Fri, 17 May 2024 09:49:49 +0000
+Received: from SL2P216MB1246.KORP216.PROD.OUTLOOK.COM
+ ([fe80::8bac:533d:dbe5:ba28]) by SL2P216MB1246.KORP216.PROD.OUTLOOK.COM
+ ([fe80::8bac:533d:dbe5:ba28%7]) with mapi id 15.20.7587.028; Fri, 17 May 2024
+ 09:49:49 +0000
+From: Nas Chung <nas.chung@chipsnmedia.com>
+To: mchehab@kernel.org,
+	linux-media@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Nas Chung <nas.chung@chipsnmedia.com>
+Subject: [PATCH] media: uapi: v4l: Change V4L2_TYPE_IS_CAPTURE condition
+Date: Fri, 17 May 2024 18:49:40 +0900
+Message-Id: <20240517094940.1169-1-nas.chung@chipsnmedia.com>
+X-Mailer: git-send-email 2.25.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SL2P216CA0175.KORP216.PROD.OUTLOOK.COM
+ (2603:1096:101:1b::6) To SL2P216MB1246.KORP216.PROD.OUTLOOK.COM
+ (2603:1096:101:a::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SL2P216MB1246:EE_|PU4P216MB1999:EE_
+X-MS-Office365-Filtering-Correlation-Id: e84c618b-d87f-494a-fb17-08dc7656b124
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|1800799015|52116005|376005|366007|38350700005;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?o4UMcvbJ6ZoQq7fIXvlEkJa3zpWz2H4srUsOhHuRZTXAkGxVCqry8w5z2+1+?=
+ =?us-ascii?Q?0+aZFKTD/tHGYo+c2F9jT5Urffc1FHOsjwoF4bjcKzIfYcI1KRQ6iO47xocV?=
+ =?us-ascii?Q?lVXD//S0UFxvfFJLViWHHYuh4mX+5/cy84t4fxO0ftOk87sios+rUCwExB3W?=
+ =?us-ascii?Q?kB0YrRyMy0vCMreVN9KCkc7L4xVx02T6C1t3Ekk6GMI7He5gMWNZHxFaUbaO?=
+ =?us-ascii?Q?42nqzuq0IKTE7nVHsuJQxOt37cr8ut2/p75BxrCX6qH2RmytgyJZW/5q45zx?=
+ =?us-ascii?Q?FutvblUbYGnpMohNpto7p4GMH70Z8Xse2SGORQaWfwL5uGeOc0bCm3yzmMgN?=
+ =?us-ascii?Q?3bflvXRt0nC7HxTd7SlafzlM4dBoNx9ZGFH4E16eRnLKjl9YCkighzxeYpx0?=
+ =?us-ascii?Q?2v0sq9GtKpfVaSUQQnSJaRZ5d4j5y17nMOiVnm33hD2IEHdM0HLBR4sipy4b?=
+ =?us-ascii?Q?lNsnydo62xzMYF/WznaiuO5C4jvsbHRaNac0pEk1BY3k8bco80mnR3IWul2b?=
+ =?us-ascii?Q?ixHM33QHcPxZNE0NRByxOhwr03ypIZu5c/B9eOeVWM7ceWMQZ+EhZklbuQLf?=
+ =?us-ascii?Q?SqT7m+dyHTk8XGj4JmBuoFOGbHL4ktuoW3/JfF75kWJLDecajHQ1J/F05ivB?=
+ =?us-ascii?Q?bUtC+IstZufaV3VjQog1O3TtuM7cAwHvfUkXhthMNENR9fu2vQ0UGLgqhFM5?=
+ =?us-ascii?Q?oNpLa5kYRkGXq+DT0fAThoKUuCfli33NxTTz7Gqm+F5QMJmEgbaRfkIwQcP3?=
+ =?us-ascii?Q?1fIPkIxbK6hr7QmPfySA/JjhsH2rdfrBj59L11yV0XesWjczv0J1ZDbd2Yjc?=
+ =?us-ascii?Q?JK+xMLOwHuQNcczapmZfZqG1FqyWnQxZOk9vqnOhyljZjkXk4kh2A3CBqAZd?=
+ =?us-ascii?Q?QjYLba3LgrbSxnPGJFmUHU8Vwzek2UjLDOZtdMY5T58uE+6kZbwuRowIKMBk?=
+ =?us-ascii?Q?BEfizyx7sCIlM4mqK0/rcehAyV8pNgixOvl4Tp3dKLBkq8jodmhntS4UGLy0?=
+ =?us-ascii?Q?21bn2VmY03HCnSDqRtGavwFCvLyYLx+NB4Okocja76WcnxLdn4iePWRTQKWG?=
+ =?us-ascii?Q?/xv0HDzG8SbijF2NzgwsLFysWkagkeNgnlQ2WEz3XebSYtDHSHPutteBMbjl?=
+ =?us-ascii?Q?SnUAfBIUfT8QluftmIkxn2On3qNaNyH1yiHrAPGYxKjPRIemyy+kUo40sfT8?=
+ =?us-ascii?Q?sP92azFX80jMMkKd+7JeaUqkLY7sVNnuF5YSmhRHBZmdppZRWFlbH3TDD/Hj?=
+ =?us-ascii?Q?vt/ga90vTgfAjnEHp6QiXxb2BxJZiT2Wtb6ozE4PBHDC1oA64c36Ke0gYDrh?=
+ =?us-ascii?Q?G4A11Vhz6f/2povECMJIa8UaMZqQSnQek5aCxndQnrhUDA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SL2P216MB1246.KORP216.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(52116005)(376005)(366007)(38350700005);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?DtFQCw73f1f248XoGquBH9f6huJnvpCcgIn1UquwARt2GB2WuMfmzEa+mXOy?=
+ =?us-ascii?Q?+S9BCqOEwiKqXU7z6Z13dDvgi5Qxl+eBOFUzK4APeVyQah/0RE/DjngRx+jW?=
+ =?us-ascii?Q?0gGbu5PKFs78Fc3vMkMMc/mvepDPPD1LiTY5b/kRsoSR58p05mTurFSFNwFm?=
+ =?us-ascii?Q?IaLMW1kXawsSL/ZF3aajYVOBpvAjrqKYeRUIYpuM2p+L1Y6zA6V+ajjdLWpt?=
+ =?us-ascii?Q?omCcnfUqZW9CxNbW/vJ3qkrey/s2+Gi8bDnJJE5bHvsVCO2+MCgHLs5pDpc8?=
+ =?us-ascii?Q?H+CDhTSHlyp3MOPbOLx4VmFmVfy/tWB/XvmNqOWBWUojtPTm9Djhl1WRVB96?=
+ =?us-ascii?Q?k6mqp2IWANxVpupm955RtkrjW5MU2nRanjDu8QxYMiN0D2DigACZgSB5v8jX?=
+ =?us-ascii?Q?TGe7c8HtauNPDDR17rYZGlApEQifODNvnjG/SZ6rLuOKSWrOZ75g1U9SwGop?=
+ =?us-ascii?Q?qUn9omkrdEpRrPiuYLZO/aQTWtONmVtR0asOh4S7SQWbETTenFCWGVaDVjId?=
+ =?us-ascii?Q?3HQLOqZ/kbgPRyDwT0W7Xk002R0O2dzNxNzdFIrRcD9CtHOu3u8VKq3GkGmH?=
+ =?us-ascii?Q?1/6SogE+9tYCnPDzQgJURW7ARKhGQDF3p6CQHMdpreDVXuv6UFL8sOhSK9YS?=
+ =?us-ascii?Q?98OdfAqkruTdnw4+qDX5o+UHEc7IoGHDIUR9rYUIImad7l2vljGqn68CAjDv?=
+ =?us-ascii?Q?FUTQNBDEaDJWI9lYRZu+ekYiqGuobszGtNe/Iaix+Vqe6C2pfIExI5tEg+z9?=
+ =?us-ascii?Q?KLVk3sH4SlXmRmP915sy2kfZ70d45JW4+msQd/BFtMriP9R8Gk4sD2UnD1O+?=
+ =?us-ascii?Q?pgfFCpGO+geRbuinJnm56UzY4yphaLKf26imyRjrlyN2P0s0KOG0Eks79Oqa?=
+ =?us-ascii?Q?fEJn+JcLT8WCltk+kg2o774LqNKLliRx9gE1++T4hLnSJpKdxWbCgiUcoDJu?=
+ =?us-ascii?Q?qRub8YqvfVzS3AW9pmTfZeuIPA/FCjBthtsXMWiyIqmPFf0saeU6O2rNNj3G?=
+ =?us-ascii?Q?IFWK5ZKXkofUS5T9408GiiO+MjMB0d09z1L+ADFPsMvxqAlMCEFILu+wYnhN?=
+ =?us-ascii?Q?vNFKvfFW3jpmN4BH8F9mS2QYNziHXyZDsQCBqzqzlikL3h1MgV3TdSwv/XJ7?=
+ =?us-ascii?Q?EOmK6iW1qcEqap2AAdv8U72DBQTPEdEa3s0LDazPyBMjPoy1/6DeFecw9f/9?=
+ =?us-ascii?Q?40IIOMz8Q5p2AljBYWx2DncnrLrseGkLhL5geDUi3QQtE+EVSzhaMWOdoO7w?=
+ =?us-ascii?Q?Y7FzQYhV8KUAst9pie+07xQ9levH7sBE1O3SQeemkmebd/9OkIOnI+dCwnk0?=
+ =?us-ascii?Q?PiaBBCRzUOZJq/5hJBT1uMYJTK0fTIym0LJKYWrgJxX2VOF8SEVL5fYpUgjS?=
+ =?us-ascii?Q?xUhtal6bj8ujCI5rVJWfOzopA1c59GvHMssUMku3tW+4qJZdn5pCplDoFOlu?=
+ =?us-ascii?Q?hIsvFclCX5B69htSsC6aCu1DGaIquhL/feDVOdsMYfP+iPnfDg9Nuo1dix6V?=
+ =?us-ascii?Q?4WIw8ldLyQprbdGAgAuj4aHw9uOGrkcFssJ1DQ5nVReGgIDsj48JLbwDUDq4?=
+ =?us-ascii?Q?+cDyRhFhOFy+64jsJFtb5VM9lnqF6f0kbsNuNkhZJ71rGUmegLTEOjU2Zj7o?=
+ =?us-ascii?Q?OQ=3D=3D?=
+X-OriginatorOrg: chipsnmedia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e84c618b-d87f-494a-fb17-08dc7656b124
+X-MS-Exchange-CrossTenant-AuthSource: SL2P216MB1246.KORP216.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 May 2024 09:49:49.1778
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4d70c8e9-142b-4389-b7f2-fa8a3c68c467
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Z2FKZS46gimDdbElxRQylk9MqOn5BSlnzYT5MmmX0z+pv5KJlL12kOHsWzK4GAISUHHa3dR21vN/V9QMRxeugDhwUfyNsM6oVYSeQ+QXz44=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PU4P216MB1999
 
---18dede9a640603fdcd5671b64893c8b65da4bac91be4f9f750e9f84ab4c5
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+We expect V4L2_TYPE_IS_CAPTURE() macro allow only CAPTURE type.
+But, Inverting OUTPUT type can allow undefined v4l2_buf_type.
+Check CAPTURE type directly instead of inverting OUTPUT type.
 
-Hi Angelo,
+Signed-off-by: Nas Chung <nas.chung@chipsnmedia.com>
+---
+ include/uapi/linux/videodev2.h | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-On Thu May 16, 2024 at 10:11 AM CEST, AngeloGioacchino Del Regno wrote:
-> Implement OF graphs support to the mediatek-drm drivers, allowing to
-> stop hardcoding the paths, and preventing this driver to get a huge
-> amount of arrays for each board and SoC combination, also paving the
-> way to share the same mtk_mmsys_driver_data between multiple SoCs,
-> making it more straightforward to add support for new chips.
+diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+index fe6b67e83751..32b10e2b7695 100644
+--- a/include/uapi/linux/videodev2.h
++++ b/include/uapi/linux/videodev2.h
+@@ -171,7 +171,13 @@ enum v4l2_buf_type {
+ 	 || (type) == V4L2_BUF_TYPE_SDR_OUTPUT			\
+ 	 || (type) == V4L2_BUF_TYPE_META_OUTPUT)
+ 
+-#define V4L2_TYPE_IS_CAPTURE(type) (!V4L2_TYPE_IS_OUTPUT(type))
++#define V4L2_TYPE_IS_CAPTURE(type)				\
++	((type) == V4L2_BUF_TYPE_VIDEO_CAPTURE			\
++	 || (type) == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE	\
++	 || (type) == V4L2_BUF_TYPE_VBI_CAPTURE			\
++	 || (type) == V4L2_BUF_TYPE_SLICED_VBI_CAPTURE		\
++	 || (type) == V4L2_BUF_TYPE_SDR_CAPTURE			\
++	 || (type) == V4L2_BUF_TYPE_META_CAPTURE)
+ 
+ enum v4l2_tuner_type {
+ 	V4L2_TUNER_RADIO	     = 1,
+-- 
+2.25.1
 
-paths might be optional, see comment in mtk_drm_kms_init(). But with
-this patch, you'll get an -EINVAL with a disabled path. See my
-proposals how to fix that below.
-
-With these changes and the following two patches I was able to get
-DisplayPort working on vdosys1. vdosys0 wasn't used at all.
-https://lore.kernel.org/r/20240516145824.1669263-1-mwalle@kernel.org/
-https://lore.kernel.org/r/20240517093024.1702750-1-mwalle@kernel.org/
-
-I've already successfully tested a former version with DSI output on
-vdosys0.
-
-Thanks for working on this!
-
-> +/**
-> + * mtk_drm_of_ddp_path_build_one - Build a Display HW Pipeline for a CRT=
-C Path
-> + * @dev:          The mediatek-drm device
-> + * @cpath:        CRTC Path relative to a VDO or MMSYS
-> + * @out_path:     Pointer to an array that will contain the new pipeline
-> + * @out_path_len: Number of entries in the pipeline array
-> + *
-> + * MediaTek SoCs can use different DDP hardware pipelines (or paths) dep=
-ending
-> + * on the board-specific desired display configuration; this function wa=
-lks
-> + * through all of the output endpoints starting from a VDO or MMSYS hard=
-ware
-> + * instance and builds the right pipeline as specified in device trees.
-> + *
-> + * Return:
-> + * * %0       - Display HW Pipeline successfully built and validated
-> + * * %-ENOENT - Display pipeline was not specified in device tree
-> + * * %-EINVAL - Display pipeline built but validation failed
-> + * * %-ENOMEM - Failure to allocate pipeline array to pass to the caller
-> + */
-> +static int mtk_drm_of_ddp_path_build_one(struct device *dev, enum mtk_cr=
-tc_path cpath,
-> +					 const unsigned int **out_path,
-> +					 unsigned int *out_path_len)
-> +{
-> +	struct device_node *next, *prev, *vdo =3D dev->parent->of_node;
-> +	unsigned int temp_path[DDP_COMPONENT_DRM_ID_MAX] =3D { 0 };
-> +	unsigned int *final_ddp_path;
-> +	unsigned short int idx =3D 0;
-> +	bool ovl_adaptor_comp_added =3D false;
-> +	int ret;
-> +
-> +	/* Get the first entry for the temp_path array */
-> +	ret =3D mtk_drm_of_get_ddp_ep_cid(vdo, 0, cpath, &next, &temp_path[idx]=
-);
-> +	if (ret) {
-> +		if (next && temp_path[idx] =3D=3D DDP_COMPONENT_DRM_OVL_ADAPTOR) {
-> +			dev_err(dev, "Adding OVL Adaptor for %pOF\n", next);
-> +			ovl_adaptor_comp_added =3D true;
-> +		} else {
-> +			if (next)
-> +				dev_err(dev, "Invalid component %pOF\n", next);
-> +			else
-> +				dev_err(dev, "Cannot find first endpoint for path %d\n", cpath);
-> +
-> +			return ret;
-> +		}
-> +	}
-> +	idx++;
-> +
-> +	/*
-> +	 * Walk through port outputs until we reach the last valid mediatek-drm=
- component.
-> +	 * To be valid, this must end with an "invalid" component that is a dis=
-play node.
-> +	 */
-> +	do {
-> +		prev =3D next;
-> +		ret =3D mtk_drm_of_get_ddp_ep_cid(next, 1, cpath, &next, &temp_path[id=
-x]);
-> +		of_node_put(prev);
-> +		if (ret) {
-> +			of_node_put(next);
-> +			break;
-> +		}
-> +
-> +		/*
-> +		 * If this is an OVL adaptor exclusive component and one of those
-> +		 * was already added, don't add another instance of the generic
-> +		 * DDP_COMPONENT_OVL_ADAPTOR, as this is used only to decide whether
-> +		 * to probe that component master driver of which only one instance
-> +		 * is needed and possible.
-> +		 */
-> +		if (temp_path[idx] =3D=3D DDP_COMPONENT_DRM_OVL_ADAPTOR) {
-> +			if (!ovl_adaptor_comp_added)
-> +				ovl_adaptor_comp_added =3D true;
-> +			else
-> +				idx--;
-> +		}
-> +	} while (++idx < DDP_COMPONENT_DRM_ID_MAX);
-
-/* The device might not be disabled. In that case, don't check the last
- * entry but just report the missing device. */
-if (ret =3D=3D -ENODEV)
-	return ret;
-
-> +
-> +	/* If the last entry is not a final display output, the configuration i=
-s wrong */
-> +	switch (temp_path[idx - 1]) {
-> +	case DDP_COMPONENT_DP_INTF0:
-> +	case DDP_COMPONENT_DP_INTF1:
-> +	case DDP_COMPONENT_DPI0:
-> +	case DDP_COMPONENT_DPI1:
-> +	case DDP_COMPONENT_DSI0:
-> +	case DDP_COMPONENT_DSI1:
-> +	case DDP_COMPONENT_DSI2:
-> +	case DDP_COMPONENT_DSI3:
-> +		break;
-> +	default:
-> +		dev_err(dev, "Invalid display hw pipeline. Last component: %d (ret=3D%=
-d)\n",
-> +			temp_path[idx - 1], ret);
-> +		return -EINVAL;
-> +	}
-> +
-> +	final_ddp_path =3D devm_kmemdup(dev, temp_path, idx * sizeof(temp_path[=
-0]), GFP_KERNEL);
-> +	if (!final_ddp_path)
-> +		return -ENOMEM;
-> +
-> +	dev_dbg(dev, "Display HW Pipeline built with %d components.\n", idx);
-> +
-> +	/* Pipeline built! */
-> +	*out_path =3D final_ddp_path;
-> +	*out_path_len =3D idx;
-> +
-> +	return 0;
-> +}
-> +
-> +static int mtk_drm_of_ddp_path_build(struct device *dev, struct device_n=
-ode *node,
-> +				     struct mtk_mmsys_driver_data *data)
-> +{
-> +	struct device_node *ep_node;
-> +	struct of_endpoint of_ep;
-> +	bool output_present[MAX_CRTC] =3D { false };
-> +	int ret;
-> +
-> +	for_each_endpoint_of_node(node, ep_node) {
-> +		ret =3D of_graph_parse_endpoint(ep_node, &of_ep);
-> +		of_node_put(ep_node);
-> +		if (ret) {
-> +			dev_err_probe(dev, ret, "Cannot parse endpoint\n");
-> +			break;
-> +		}
-> +
-> +		if (of_ep.id >=3D MAX_CRTC) {
-> +			ret =3D dev_err_probe(dev, -EINVAL,
-> +					    "Invalid endpoint%u number\n", of_ep.port);
-> +			break;
-> +		}
-> +
-> +		output_present[of_ep.id] =3D true;
-> +	}
-> +
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (output_present[CRTC_MAIN]) {
-> +		ret =3D mtk_drm_of_ddp_path_build_one(dev, CRTC_MAIN,
-> +						    &data->main_path, &data->main_len);
-> +		if (ret)
-if (ret && ret !=3D -ENODEV)
-
-> +			return ret;
-> +	}
-> +
-> +	if (output_present[CRTC_EXT]) {
-> +		ret =3D mtk_drm_of_ddp_path_build_one(dev, CRTC_EXT,
-> +						    &data->ext_path, &data->ext_len);
-> +		if (ret)
-likewise
-
-> +			return ret;
-> +	}
-> +
-> +	if (output_present[CRTC_THIRD]) {
-> +		ret =3D mtk_drm_of_ddp_path_build_one(dev, CRTC_THIRD,
-> +						    &data->third_path, &data->third_len);
-> +		if (ret)
-likewise
-
-> +			return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-
--michael
-
---18dede9a640603fdcd5671b64893c8b65da4bac91be4f9f750e9f84ab4c5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iKcEABMJAC8WIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCZkcoIBEcbWljaGFlbEB3
-YWxsZS5jYwAKCRASJzzuPgIf+F0aAYD6W0fQ3ywOFdk0kyow3ETjztMvzk4VHslN
-ZALjOF3Iw7ETvkf2VWhItnpJisgqsjsBgIIFEwBEUNRLm45iMHmXfClJJIdeKozJ
-k8J5f1QXzzkE7Jo+XWuspumSoqBP20IRgg==
-=NAvJ
------END PGP SIGNATURE-----
-
---18dede9a640603fdcd5671b64893c8b65da4bac91be4f9f750e9f84ab4c5--
 
