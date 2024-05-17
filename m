@@ -1,125 +1,129 @@
-Return-Path: <linux-kernel+bounces-181773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94BD88C8121
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 08:58:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B794C8C8127
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 09:02:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 333C61F21FAE
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 06:58:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73F732828B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 07:02:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4CA215E83;
-	Fri, 17 May 2024 06:58:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12DA015E83;
+	Fri, 17 May 2024 07:02:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="f8KVFHeN"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="DsR8dTEH"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98A4E14A8D;
-	Fri, 17 May 2024 06:58:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C53E814A9F;
+	Fri, 17 May 2024 07:02:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715929126; cv=none; b=VLqn52wxqx/2rWfxCVjPvSWNA0ws7zGM2WsqVc62CcuYmYZUesucRBMVBVX61IKsLLW/+32ztB2ZVuceL3D8dSUCM8wGm21pwsCt4zniahz+C+ktxmbw8vY5HkCXRUE4gXIR26GChD+wd+b8XZ3qkXJRA+5uoNV87+sLhfIYf6k=
+	t=1715929366; cv=none; b=K+YK0adrXvX4RL9xWyMLnuiL4GkbyMp8ZsfBB4kXBjtb8xwo9f7opmNioPH280K9saHsMQJ2qa1cji1blE2V86W4dX5qo2fKEmV+2HjefSw3PTcox7xFapO82rglqP/AZZb7MKZ/ZpyyltIsNrLa0T7ys5icL4xZJBS2lHmdWcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715929126; c=relaxed/simple;
-	bh=vEIiADZtH0GuW0hNucCCzsAmTERzBSekKmZgJqaVvNQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nph3ncLbh8XeRstBi9VATrS+5C6qrz7DDAS/gXA5YvEhxHo55o0w9Q9grVnw1sLFLt+1j09RErRrWIViR6xa67/Vn5OWwSilpSSO/kBaqWLewrePWkLhqstJrdRW46dhlyTomJkYHq2YVGzVY4RmVs6IT5KHio+QB6HXcAvyhWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=f8KVFHeN; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 5366060016;
-	Fri, 17 May 2024 06:58:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1715929116;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8+WtpG+JowVcU8bh3DYjQQ6K0ukhxfEGwefCmJzc8YA=;
-	b=f8KVFHeNh2VvHZZ6hzRy0KYo2z1+B2wGwXn7zUG349l2A4tKLI0ZDhpexlh3IUzFtK/cnH
-	G4vfuEDwNMPNJmSzzVKJTqJkec3UDkhb7Ri4LEuTyTyQUy6andM+Hdr7ASxso739ADCNPf
-	Ko2E4NMePCqgMC1A7+eqx3f8QeIF3NA3fUwPrU+0d2wbbE4Xl5hJJ2PXaQO6+G79OZlB49
-	Vj8Yl1i5JyjqZXeJ6PFT0cGNZNX4RmNQb3gU6C55uHf8H9w8r1JsdI8Hp2gyLKvg/YudPM
-	6YxX7AHARvGW/6A5RRP+N28w/ZyAq10mTdiG1jEHqlveht7usBO2Q8V8FqmNjQ==
-Date: Fri, 17 May 2024 08:58:32 +0200
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Dmitry Yashin <dmt.yashin@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Heiko Stuebner
- <heiko@sntech.de>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Rob Herring <robh@kernel.org>, Jianqun Xu
- <jay.xu@rock-chips.com>, devicetree@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] pinctrl: rockchip: add rk3308b SoC support
-Message-ID: <20240517085832.365ac878@booty>
-In-Reply-To: <81aa0e4e-a3c7-41d1-8cd2-4d060730b37a@gmail.com>
-References: <20240515121634.23945-1-dmt.yashin@gmail.com>
-	<20240515121634.23945-4-dmt.yashin@gmail.com>
-	<20240515182954.03c4a475@booty>
-	<81aa0e4e-a3c7-41d1-8cd2-4d060730b37a@gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1715929366; c=relaxed/simple;
+	bh=yfF8T0qSQyJNeBh2GE62uu/f4rsUpxn6cGIf7Wi5s6Y=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WuYa11GCwDPbqFWvHeUnJH60ZnOPZuwpT2J8C+Z4RhXpMgwjiZTAW30u/H37MyglNSlJdi7SrhbXGWKWsK8/Q2edtO3upQhoRvkarSj70maLqi6GlawgOSsBmY4aP3C+tn0b2Vorl42qUCJrJyym/ucuM65DB5hmdWyACuqP484=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=DsR8dTEH; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44GKMq0H020849;
+	Fri, 17 May 2024 07:02:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	from:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding:content-type; s=qcppdkim1; bh=EdfTodF
+	m2OFLJ/9JBCUXk4QT9oTn5vS52O0Pgs8Cyqg=; b=DsR8dTEHmUYrF3uGJq2W0+S
+	e5NBd8hJWGy1UX7GxkEKX6ORcTAaTodP4A3UtQZv0ESKxqyYJP0mTB+HcJ07yfHN
+	u9FUn1ghijsNsa8ebplg/7Hu1qVefE2Wnwdm680lEnjVb8zbDJOkWh7YVX0kLpMO
+	QB0ZQ+j5noNKLKnwLu1ozH4fcE4HiU0hIjbDNo6tyF80djukRQPKsvQnPCbemZzC
+	e3BetdMIaWPE81ml+tZ4AN39rmCwyiSW/lD/iw+IRMKAb8Qh8Yw9ikC6HxFWxMaQ
+	hsjAPHb3houB46xYhAB+OUmd7YDs45+r+Kd19qP8gs7gl2T0pgo3AMRWHS7SMOg=
+	=
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y42kw082p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 17 May 2024 07:02:24 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44H72M09007517
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 17 May 2024 07:02:22 GMT
+Received: from hu-jkona-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 17 May 2024 00:02:18 -0700
+From: Jagadeesh Kona <quic_jkona@quicinc.com>
+To: Sudeep Holla <sudeep.holla@arm.com>,
+        Viresh Kumar
+	<viresh.kumar@linaro.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        "Cristian Marussi" <cristian.marussi@arm.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-pm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
+        "Ajit
+ Pandey" <quic_ajipan@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        Vivek Aknurwar <quic_viveka@quicinc.com>,
+        Mike Tipton
+	<quic_mdtipton@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>
+Subject: [PATCH] cpufreq: scmi: Avoid overflow of target_freq in fast switch
+Date: Fri, 17 May 2024 12:31:57 +0530
+Message-ID: <20240517070157.19553-1-quic_jkona@quicinc.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: luca.ceresoli@bootlin.com
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: VtqDQfNAvGcP8u5ca1Ejpm2-7TMNedd7
+X-Proofpoint-ORIG-GUID: VtqDQfNAvGcP8u5ca1Ejpm2-7TMNedd7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-16_07,2024-05-15_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 malwarescore=0
+ mlxlogscore=831 phishscore=0 lowpriorityscore=0 bulkscore=0
+ priorityscore=1501 spamscore=0 adultscore=0 mlxscore=0 impostorscore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405010000 definitions=main-2405170054
 
-Hello Dmitry,
+Conversion of target_freq to HZ in scmi_cpufreq_fast_switch()
+can lead to overflow if the multiplied result is greater than
+UINT_MAX, since type of target_freq is unsigned int. Avoid this
+overflow by assigning target_freq to u64 variable for converting
+it to HZ.
 
-On Thu, 16 May 2024 17:06:46 +0500
-Dmitry Yashin <dmt.yashin@gmail.com> wrote:
+Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+---
+ drivers/cpufreq/scmi-cpufreq.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> Hi Luca,
-> 
-> On 15.05.24 21:29, Luca Ceresoli wrote:
-> > I'm skeptical about this being bound to a new DT compatible. As far as I
-> > know the RK3308 and RK3308B are mostly equivalent, so it looks as the
-> > pinctrl implementation could be detected at runtime. This would let
-> > products to be built with either chip version and work on any without
-> > any DT change.  
-> 
-> 
-> Thanks for your feedback.
-> 
-> Indeed, these SoC's have a lot in common, but as I can see the rk3308b
-> has more blocks, like extra PWM's (rk3308 datasheet 1.5 [0] shows only
-> 1x PWM 4ch, when rk3308b and rk3308b-s have 3x PWM 4ch), 1-wire and
-> CAN controller (mentioned in the TRM, but dropped from rk3308b
-> datasheet for some reason).
-> 
-> So, in my view, it really makes sense to add rk3308b.dtsi, where extra
-> PWM's, pinctrl compatible and its pin functions can be moved. And if
-> its not worth it, then I will try to adapt the entire series to runtime
-> config based on cpuid like you suggested.
-
-Having a rk3308b.dtsi would probably make sense, yes, as there are
-several differences as you described. However for the pinctrl it seems
-probably not necessary.
-
-I've seen actual products being manufactured with two different RK3308
-variants in different lots of production, but with the same DT that has
-rockchip,rk3308-pinctrl in it. Those would need a _selective_ DT
-upgrade in order to benefit from your changes.
-
-And even if a product had always used the B variant, it would need DT
-upgrade when upgrading to a kernel with your changes. Otherwise with
-patch 1/3 of this series the pictrl driver would lose many routes after
-upgrading the kernel (but not the DT): can this lead to
-previously-working devices to stop working? I think this is a
-fundamental question to reply.
-
-Luca
-
+diff --git a/drivers/cpufreq/scmi-cpufreq.c b/drivers/cpufreq/scmi-cpufreq.c
+index 3b4f6bfb2f4c..42be87aebe6f 100644
+--- a/drivers/cpufreq/scmi-cpufreq.c
++++ b/drivers/cpufreq/scmi-cpufreq.c
+@@ -63,9 +63,9 @@ static unsigned int scmi_cpufreq_fast_switch(struct cpufreq_policy *policy,
+ 					     unsigned int target_freq)
+ {
+ 	struct scmi_data *priv = policy->driver_data;
++	u64 freq = target_freq;
+ 
+-	if (!perf_ops->freq_set(ph, priv->domain_id,
+-				target_freq * 1000, true))
++	if (!perf_ops->freq_set(ph, priv->domain_id, freq * 1000, true))
+ 		return target_freq;
+ 
+ 	return 0;
 -- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.43.0
+
 
