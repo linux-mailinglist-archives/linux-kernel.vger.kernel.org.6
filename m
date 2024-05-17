@@ -1,146 +1,160 @@
-Return-Path: <linux-kernel+bounces-182313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 200B18C898B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:46:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BACF38C8994
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:47:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B38B6B2183E
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 15:46:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71AE71F2154E
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 15:47:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E771D12F5A7;
-	Fri, 17 May 2024 15:46:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5CE312FF6B;
+	Fri, 17 May 2024 15:46:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F2H+UFAH"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qPsMCEt7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA4FC12F591
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 15:46:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1FED12F5A3;
+	Fri, 17 May 2024 15:46:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715960790; cv=none; b=Cu+8MRdtJXvkNTWzWpx/G/uakv05ScItN2YSp7O8xNtZo6YW6y4G9+tUGLgcmQys1DUslhjIouKAFuwFLradl7N2pC3jnx7XdfBjj+YlhysOHWzHxtBEYVZMHg7dRSiffy0+qz258gLwYOsa3nRGM7z6QSNOMVwD9Yf+/A9+r0Q=
+	t=1715960805; cv=none; b=gD8HYbVUMThpuyZ8qsBs01Umko4W99irkrqfgoYL5QZ31P+g+zVhyR+0DoDFCF15cmaqKMiv4xZEK2YF51cfOy9PBkzfZ8scdLOMPD6oeFmouXvGb9nr73C2QmWIR8xR/dti6z3AowYxTM9+o2qmF/aI56LCOCtd67Mc8lOVNoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715960790; c=relaxed/simple;
-	bh=L+/cqJrfLgz1kjou+NmF9NFKoLdY5p3cQhtaNnEuh5E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VKKJHv+7fX4O8rGaYzgsFnKP8fGJUd9pUWGkjjVeG66vvzy4lCtwagFloyCdJ6n621q8RMlzh/xo9FBy/ASF4MEJNAahLamSRxoUfMr64LQY7Xxo28mlGA7z6J4c24QLXcfIpHRHyscL2tWv7lnyTwhi/GHKt4MClFwSlTGDbYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F2H+UFAH; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1ec486198b6so12109295ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 08:46:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715960788; x=1716565588; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DgpuDYI8j+33tJ7Dk5uqzFwntZEb5ZpRgbewCzVqOoQ=;
-        b=F2H+UFAHtsLTpHJ++449q8j4Zki8P5I6kcDQZzzSGItv4OMoFUYHfeDBFfxuhbLYUU
-         TzK2A5mekil7v+566mPr0PfEJS0nv5DF+ojXiYZxri8HFRH4GRMEG8CwvqkGD71oujz5
-         CgMNtgAvDGbiEdfF8coNPQQ4dEBQVi1Au7RVLJq+SODxw8gnFseP1SgWkuWaSGdsqHJf
-         L+K6KDeL5s/N+3puJSAMe2V0UXIvRQxfWlQyPycF9vuL52J+bil2Mra8mWOb3Z6tY8BA
-         6ibaukpghoW24B7ae083FuJLf7GYtjq/gNS7OSWArD6zinITXAXMQ+hs1jlj0fkU5bxm
-         gsRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715960788; x=1716565588;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DgpuDYI8j+33tJ7Dk5uqzFwntZEb5ZpRgbewCzVqOoQ=;
-        b=sSaRA4x48MJtTt+0NcvMsfCPFsqaVfVAnr6Um3lzMY6/sQYWGKSZkUBF0K9UbpqGeJ
-         9TBRExe7NavP4Jq4Ncaw3rkvJYRoK0am1XV50OyYg83G+lj60Y00qyDNGpIjnPWZUMQl
-         tEWF2OlxReHbzAhngjFea9kywOtDndv23PxSCA1v4n8OMQIz2JtRz/4qus10SvWS6otj
-         FrHuOLJQsm+vNgPDvsWWohpdpVUmpxibcy4nuN7tY4bdGC2x/qfyCraSLSmBKu9Ha22U
-         qESBvFZE95eWi4Hr3Xy0s/NmDmdDjz4Lt9iCk6qpdl8oNr5sDvl9brghmtS4bRH6HY5E
-         QSRw==
-X-Forwarded-Encrypted: i=1; AJvYcCW6d/jr08bzygedDQ2VGvG7/jP61daD4oyqzC8T/WffyIUHqd/RnJsng/jeXNPweEfKPSEBAwbTbuLxJVckkmWZruMDbbA5jE1GX/Pw
-X-Gm-Message-State: AOJu0YywO9Qeo1tX5Zj1A+1+7XB4bDRu/JfTSWHm/tE4Jr21Vr35AU77
-	WM3LQn7uyjkwuBOrBYe31vmRzrpr1gBENgu4+VvIslrjf+rbwIp9aGaxom+IeFjDjNaryGXz/mY
-	J7KpodKKbPWQCUHEkhMJxrZIBvTQ=
-X-Google-Smtp-Source: AGHT+IG4waejpOf/qZLwoj5ZE1TOjOYuV5JPU5s1UwIqmRNmcsyC3TIfxfK361yvR3M1Lc0rBKgAs5yjmvxDuRVdaMQ=
-X-Received: by 2002:a17:90b:4f45:b0:2b1:534f:ea09 with SMTP id
- 98e67ed59e1d1-2b6cc76d27amr21340210a91.23.1715960788222; Fri, 17 May 2024
- 08:46:28 -0700 (PDT)
+	s=arc-20240116; t=1715960805; c=relaxed/simple;
+	bh=EpkhHazhMZ2fwuDobsplhqZvRLo+YDrsHfPiI4NpGv4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tKACy+u1+YztLmWQdjIiCnkGINYxyXb6Ut+09sAoH/qghxGCCU01rG3+LAFET8qc4JwFGgFIxIAxZryqeu80xnpu35x0RC0EodpbWWvApr86E2ooFn8RYqZM6vWE0/WPeIuRQiBUEqaKiBu+vmZWSXuzZ9HDN1J32+/geUD7pw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qPsMCEt7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 111FAC4AF67;
+	Fri, 17 May 2024 15:46:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715960804;
+	bh=EpkhHazhMZ2fwuDobsplhqZvRLo+YDrsHfPiI4NpGv4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qPsMCEt72a5yEc9EgEt6r+yjYEkV9BPAe1xRO8Mnx0FWUaiC9lvILRG04VRJZWw48
+	 6oi3NhTWACIBMVCpaYFZBzGgjvog9Y2TBWGjwbtg4as/XPHXHwLo0KeYmlix1Tn8jJ
+	 4VeuQ6blAMOigvYJG5R5zp9Slb7rxBGhcGmnSRhVLw3HY2TMrkHzFxNCfy5TM2KOl7
+	 3goZJdJ9Tr8Zr9DvcjkvtgL8pUnnLDDUJrwFLygDVMOs6MaI5wNJFVtqt+sDPTLZKE
+	 8D0fBgS7iYh917OFn63YR+c8+L84i4xjQMciA0V/P7pqzz6WoJLNRgmPCqv4y8iZTU
+	 E4tvvudi2KGsA==
+Date: Fri, 17 May 2024 16:46:32 +0100
+From: Will Deacon <will@kernel.org>
+To: Klara Modin <klarasmodin@gmail.com>
+Cc: Mike Rapoport <rppt@kernel.org>, linux-kernel@vger.kernel.org,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	"David S. Miller" <davem@davemloft.net>,
+	Dinh Nguyen <dinguyen@kernel.org>,
+	Donald Dutile <ddutile@redhat.com>,
+	Eric Chanudet <echanude@redhat.com>,
+	Heiko Carstens <hca@linux.ibm.com>, Helge Deller <deller@gmx.de>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Liviu Dudau <liviu@dudau.co.uk>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nadav Amit <nadav.amit@gmail.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Philippe =?iso-8859-1?Q?Mathieu-Daud=E9?= <philmd@linaro.org>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Sam Ravnborg <sam@ravnborg.org>, Song Liu <song@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Thomas Gleixner <tglx@linutronix.de>, bpf@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mips@vger.kernel.org, linux-mm@kvack.org,
+	linux-modules@vger.kernel.org, linux-parisc@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	loongarch@lists.linux.dev, netdev@vger.kernel.org,
+	sparclinux@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH RESEND v8 16/16] bpf: remove CONFIG_BPF_JIT dependency on
+ CONFIG_MODULES of
+Message-ID: <20240517154632.GA320@willie-the-truck>
+References: <20240505160628.2323363-1-rppt@kernel.org>
+ <20240505160628.2323363-17-rppt@kernel.org>
+ <7983fbbf-0127-457c-9394-8d6e4299c685@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240516115721.1.I8d413e641239c059d018d46cc569048b813a5d9b@changeid>
- <9dd1cfd1-fe13-4434-a7cc-e14113dcaf53@amd.com>
-In-Reply-To: <9dd1cfd1-fe13-4434-a7cc-e14113dcaf53@amd.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Fri, 17 May 2024 11:46:16 -0400
-Message-ID: <CADnq5_NGLrrFmFHFX2bC7naByJGofEiYQyWvRP6CO4BDFo52TQ@mail.gmail.com>
-Subject: Re: [PATCH] drm/amdgpu: Remove GC HW IP 9.3.0 from noretry=1
-To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-Cc: Tim Van Patten <timvp@chromium.org>, LKML <linux-kernel@vger.kernel.org>, 
-	alexander.deucher@amd.com, prathyushi.nangia@amd.com, 
-	Tim Van Patten <timvp@google.com>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>, 
-	Felix Kuehling <Felix.Kuehling@amd.com>, Ikshwaku Chauhan <ikshwaku.chauhan@amd.com>, Le Ma <le.ma@amd.com>, 
-	Lijo Lazar <lijo.lazar@amd.com>, Mario Limonciello <mario.limonciello@amd.com>, 
-	"Pan, Xinhui" <Xinhui.Pan@amd.com>, "Shaoyun.liu" <Shaoyun.liu@amd.com>, 
-	Shiwu Zhang <shiwu.zhang@amd.com>, Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>, 
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7983fbbf-0127-457c-9394-8d6e4299c685@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Fri, May 17, 2024 at 2:35=E2=80=AFAM Christian K=C3=B6nig
-<christian.koenig@amd.com> wrote:
->
-> Am 16.05.24 um 19:57 schrieb Tim Van Patten:
-> > From: Tim Van Patten <timvp@google.com>
-> >
-> > The following commit updated gmc->noretry from 0 to 1 for GC HW IP
-> > 9.3.0:
-> >
-> >      commit 5f3854f1f4e2 ("drm/amdgpu: add more cases to noretry=3D1")
-> >
-> > This causes the device to hang when a page fault occurs, until the
-> > device is rebooted. Instead, revert back to gmc->noretry=3D0 so the dev=
-ice
-> > is still responsive.
->
-> Wait a second. Why does the device hang on a page fault? That shouldn't
-> happen independent of noretry.
->
-> So that strongly sounds like this is just hiding a bug elsewhere.
+Hi Klara,
 
-Fair enough, but this is also the only gfx9 APU which defaults to
-noretry=3D1, all of the rest are dGPUs.  I'd argue it should align with
-the other GFX9 APUs or they should all enable noretry=3D1.
-
-Alex
-
->
-> Regards,
-> Christian.
->
-> >
-> > Fixes: 5f3854f1f4e2 ("drm/amdgpu: add more cases to noretry=3D1")
-> > Signed-off-by: Tim Van Patten <timvp@google.com>
+On Fri, May 17, 2024 at 01:00:31AM +0200, Klara Modin wrote:
+> On 2024-05-05 18:06, Mike Rapoport wrote:
+> > From: "Mike Rapoport (IBM)" <rppt@kernel.org>
+> > 
+> > BPF just-in-time compiler depended on CONFIG_MODULES because it used
+> > module_alloc() to allocate memory for the generated code.
+> > 
+> > Since code allocations are now implemented with execmem, drop dependency of
+> > CONFIG_BPF_JIT on CONFIG_MODULES and make it select CONFIG_EXECMEM.
+> > 
+> > Suggested-by: Björn Töpel <bjorn@kernel.org>
+> > Signed-off-by: Mike Rapoport (IBM) <rppt@kernel.org>
 > > ---
-> >
-> >   drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.c | 1 -
-> >   1 file changed, 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.c b/drivers/gpu/drm/=
-amd/amdgpu/amdgpu_gmc.c
-> > index be4629cdac049..bff54a20835f1 100644
-> > --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.c
-> > +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.c
-> > @@ -876,7 +876,6 @@ void amdgpu_gmc_noretry_set(struct amdgpu_device *a=
-dev)
-> >       struct amdgpu_gmc *gmc =3D &adev->gmc;
-> >       uint32_t gc_ver =3D amdgpu_ip_version(adev, GC_HWIP, 0);
-> >       bool noretry_default =3D (gc_ver =3D=3D IP_VERSION(9, 0, 1) ||
-> > -                             gc_ver =3D=3D IP_VERSION(9, 3, 0) ||
-> >                               gc_ver =3D=3D IP_VERSION(9, 4, 0) ||
-> >                               gc_ver =3D=3D IP_VERSION(9, 4, 1) ||
-> >                               gc_ver =3D=3D IP_VERSION(9, 4, 2) ||
->
+> >   kernel/bpf/Kconfig | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/kernel/bpf/Kconfig b/kernel/bpf/Kconfig
+> > index bc25f5098a25..f999e4e0b344 100644
+> > --- a/kernel/bpf/Kconfig
+> > +++ b/kernel/bpf/Kconfig
+> > @@ -43,7 +43,7 @@ config BPF_JIT
+> >   	bool "Enable BPF Just In Time compiler"
+> >   	depends on BPF
+> >   	depends on HAVE_CBPF_JIT || HAVE_EBPF_JIT
+> > -	depends on MODULES
+> > +	select EXECMEM
+> >   	help
+> >   	  BPF programs are normally handled by a BPF interpreter. This option
+> >   	  allows the kernel to generate native code when a program is loaded
+> 
+> This does not seem to work entirely. If build with BPF_JIT without module
+> support for my Raspberry Pi 3 B I get warnings in my kernel log (easiest way
+> to trigger it seems to be trying to ssh into it, which fails).
+
+Thanks for the report. I was able to reproduce this using QEMU and it
+looks like the problem is because bpf_arch_text_copy() silently fails
+to write to the read-only area as a result of patch_map() faulting and
+the resulting -EFAULT being chucked away.
+
+Please can you try the diff below?
+
+Will
+
+--->8
+
+diff --git a/arch/arm64/kernel/patching.c b/arch/arm64/kernel/patching.c
+index 255534930368..94b9fea65aca 100644
+--- a/arch/arm64/kernel/patching.c
++++ b/arch/arm64/kernel/patching.c
+@@ -36,7 +36,7 @@ static void __kprobes *patch_map(void *addr, int fixmap)
+ 
+        if (image)
+                page = phys_to_page(__pa_symbol(addr));
+-       else if (IS_ENABLED(CONFIG_STRICT_MODULE_RWX))
++       else if (IS_ENABLED(CONFIG_EXECMEM))
+                page = vmalloc_to_page(addr);
+        else
+                return addr;
+
 
