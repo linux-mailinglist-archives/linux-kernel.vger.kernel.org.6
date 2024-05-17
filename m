@@ -1,97 +1,101 @@
-Return-Path: <linux-kernel+bounces-182404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B688D8C8AE7
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:24:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A5428C8AEB
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:24:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E78881C2140A
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:24:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BED351F2133B
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:24:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38CA213DDB9;
-	Fri, 17 May 2024 17:23:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 271AF13DDAB;
+	Fri, 17 May 2024 17:24:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gB/SYknI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M5hRCUIj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74FB413DBBB;
-	Fri, 17 May 2024 17:23:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60B0F38DD6;
+	Fri, 17 May 2024 17:24:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715966638; cv=none; b=DBCu7BIwJAsrllDiu3tX/uNwkX9visQVaAycPB5VI2ofd3Whj2oDjkBucEN2vZV6vKh0wbf78FuYDP/y+an/7eo+mjEQ53tJnfZD7/WqEciumw2AS991YFMA35aNixJF+sN8SydZjb5C3f9HzfcKbyY3uFeWm/2iFIUylRE9lH8=
+	t=1715966683; cv=none; b=YlbcdPPDWkEfKrpXsQszbVC1/hCY4rVTs8Edw3tUP5hmn61/fx6z6qmMLz1LBeTW/T52sQRftpardiItuq+qg/YRPe3YHiYo+V3ha0ZBargytUsdq6LozpUCxbQRc47dvH/yX+mIWYhIFK+jh95ez+1de3P3ejDH8NDcNYMkcRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715966638; c=relaxed/simple;
-	bh=TZU3z8IWnx7CUMuj79eonsqv+gjyOnE3Wi/7eRQVMV8=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=FebMrFfmRO6hoxuwvY4xYAbPIg1Dd7qkezUCW21BzYbMZ6a9uKY9eAahv2iIDGJE+dA6r2/DGHy24xckrBojozco2Jo3yMwm8WNQlSBUuyrB/s+XuyriekuoPNBCdNxrapV1zIpN7y8DId96HjnW8umWCXlqywGQKOskf9yTOp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gB/SYknI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DED1C32781;
-	Fri, 17 May 2024 17:23:54 +0000 (UTC)
+	s=arc-20240116; t=1715966683; c=relaxed/simple;
+	bh=rjTs1bN+hgsUK6tXA1jKQzxe9KRIcBfqG1Hp0wZaUbE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mC+C4AXu2Q7xTb0QBiyteczK+lfbsbWp5+ssUE06N0CuO5nPKcrrOJXhkv2kVPe7jC/NOq8o1gESWTSIrtyU8XGULstQm9xDlqVqdc4STxTGZ0LRwCWJshiztCdRMuN0WNOye3SY/ZxZNpnTjVpTdE4HzO7kc3YUHP8PbJ9bDxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M5hRCUIj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5BACC2BD10;
+	Fri, 17 May 2024 17:24:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715966638;
-	bh=TZU3z8IWnx7CUMuj79eonsqv+gjyOnE3Wi/7eRQVMV8=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=gB/SYknIfX9sI4KFtCfwEgWuqQGrimVZmGjZQHRaW3A+VyvlafCF9LF/uWJhxRRR+
-	 OT/WiL+wwMkEv8ztFZ7uO98Lx+Qg+RSasTD8ucxZxxmVJhjfPw0KwEjhdPDbX4G+zf
-	 PmDfZ1HnhrQE88VUwYCXFnKbCMIP5w/k/EIIP1kEAraC+T8ctXAqNTEDjHIEfGz8GV
-	 eWkDYty8VCkwLU8X5qoeF+NgsESdbdmjf3dtzD/yFO/ASpd54/Yf+s9n7FyH4lVNJm
-	 9PwinlTjoYe8kKUBG+z2QPd3qijcOrj3OhXYw8jGsgiCRlaU1X51Bg7XEQ+s1kVB3z
-	 WuCKF5jMLhDtQ==
-From: Kalle Valo <kvalo@kernel.org>
-To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Cc: Borislav Petkov <bp@alien8.de>,  Dave Hansen <dave.hansen@intel.com>,
-  Thomas Gleixner <tglx@linutronix.de>,  Ingo Molnar <mingo@redhat.com>,
-  Dave Hansen <dave.hansen@linux.intel.com>,  "Rafael J. Wysocki"
- <rafael@kernel.org>,  x86@kernel.org,  linux-pm@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  regressions@lists.linux.dev,  Jeff Johnson
- <quic_jjohnson@quicinc.com>,  Daniel Sneddon
- <daniel.sneddon@linux.intel.com>
-Subject: Re: [regression] suspend stress test stalls within 30 minutes
-References: <87o79cjjik.fsf@kernel.org>
-	<20240511184847.GCZj-9j2sh1Akpt9iS@fat_crate.local>
-	<20240511184945.GDZj-9yaOEWqf1ng8u@fat_crate.local>
-	<87h6f4jdrq.fsf@kernel.org> <878r0djxgc.fsf@kernel.org>
-	<874jb0jzx5.fsf@kernel.org>
-	<feaefaae-e25b-4a48-b6be-e20054f2c8df@intel.com>
-	<20240515072231.z3wlyoblyc34ldmr@desk>
-	<529C9374-DA6F-49C8-9B32-91741800F8E4@alien8.de>
-	<20240515162747.6shmaoelc4mt7nro@desk>
-Date: Fri, 17 May 2024 20:23:53 +0300
-In-Reply-To: <20240515162747.6shmaoelc4mt7nro@desk> (Pawan Gupta's message of
-	"Wed, 15 May 2024 09:27:47 -0700")
-Message-ID: <87eda0fj2u.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=k20201202; t=1715966682;
+	bh=rjTs1bN+hgsUK6tXA1jKQzxe9KRIcBfqG1Hp0wZaUbE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=M5hRCUIjC9rVrZwTGH2u6b8M8J93C9mUq6Ubs923sLq747034VxoBbds4Ebnw0A0k
+	 37M1vm9bDfDzm15Voz3iUqflqKvqGmsXSMqbr54U+ZaXE59eoVoDb/4ZSrUy2aXICv
+	 jUYtDnHX/agDZIs5BMMS46zYKiUxoG7wkABQz/KkO33wx3t31uS1HH3o2QmXd3WmhS
+	 vO+ti7w1BIrn6O7m72Rp0qsjdzWH+HdhaM219dgY2qB1OABitAXi17VAklciDmdd5T
+	 gfv/a783xy85MpepntAdmuUCCWBmd2HeScUEJ4BdK7imRdaZGq3DoAkeC9U2z6n4kG
+	 UvowbL+WniRIg==
+Date: Fri, 17 May 2024 18:24:37 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-spi@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Subject: Re: [PATCH v1 1/1] spi: pxa2xx: Move PXA SSP bindings to the correct
+ folder
+Message-ID: <e81d43f8-a3ba-41b4-a86f-af2d6943e917@sirena.org.uk>
+References: <20240517171103.221856-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="yglz+J6siImMAjPA"
+Content-Disposition: inline
+In-Reply-To: <20240517171103.221856-1-andriy.shevchenko@linux.intel.com>
+X-Cookie: Function reject.
 
-Pawan Gupta <pawan.kumar.gupta@linux.intel.com> writes:
 
-> On Wed, May 15, 2024 at 09:44:42AM +0200, Borislav Petkov wrote:
->> On May 15, 2024 9:22:31 AM GMT+02:00, Pawan Gupta
->> <pawan.kumar.gupta@linux.intel.com> wrote:
->> > Other interesting thing to try is cmdline
->> >"dis_ucode_ldr".
->> 
->> Right, is his microcode revision 0xf4 the right one for that model?
->
-> 0xf4 microcode is not the latest one, the latest is 0xf8:
->
-> https://github.com/intel/Intel-Linux-Processor-Microcode-Data-Files/blob/main/intel-ucode/06-9e-09
->
-> Kalle, can you please try with 0xf8 and see if the issue is still present?
+--yglz+J6siImMAjPA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I updated to this version:
+On Fri, May 17, 2024 at 08:11:03PM +0300, Andy Shevchenko wrote:
+> SSP stands for Serial Synchronous Protocol and has nothing to do with
+> UART, also known as USART, where 'A' stands for Asynchronous.
+>=20
+> Move the SSP bindings to where it belongs.
 
-[   11.907565] microcode: Current revision: 0x000000f8
-[   11.907614] microcode: Updated early from: 0x000000ea
+It's a serial device which is also used for other applications (the
+other one upstream being audio) so I can see where the current binding
+comes from and it's not super obvious that spi is especially better
+here.
 
-But unfortunately no luck, the suspend still fails after 29 loops.
+--yglz+J6siImMAjPA
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZHktQACgkQJNaLcl1U
+h9Dkegf+PfmAzJMnJ7JxbPX21j0FUyCOCV8ZS8xqbV52T3VQ0lfj0ocnx7b4gTFc
+G/brmViTfVU6isTz1SEMEkYm04dRfcCkzCQNi22abMDops27xiKvIhOhw6WlrzUN
+vljrkpudj8MI+Gb76u/dY/MXjnjASj5o3qFSIAZZoZO7B8ws6ofjLeAdynAY/Re9
+z0dokasDuiujuIeO4QY70ZNj4jezgFN/8Wnp+DUpa07XyQvTV6lvplKIRBVUbOPt
+gREMbGy996hEf55KgEwsr3Nft6HahmHVd1T4CVI6gnTHYE1OzoXzTbFmUyHeXb08
+ffJckIM6CffQdDRBbmCEeYSH/HPaaA==
+=Argb
+-----END PGP SIGNATURE-----
+
+--yglz+J6siImMAjPA--
 
