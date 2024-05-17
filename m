@@ -1,189 +1,199 @@
-Return-Path: <linux-kernel+bounces-182041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A94548C8578
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 13:20:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7732A8C8582
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 13:22:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 356D81F231DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:20:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E4BB28514C
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB8FF3D961;
-	Fri, 17 May 2024 11:19:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ADDD40870;
+	Fri, 17 May 2024 11:21:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Corjv+R+"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="pnKxv3wR"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57C733F8D6;
-	Fri, 17 May 2024 11:19:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90B8F3A8EF;
+	Fri, 17 May 2024 11:21:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715944798; cv=none; b=SW0s5k9pEs4SirUFbkCLbL9upqW9iVMs7khhoMLW8AI53ICGZOLnrX+ov3gRSx0WrgC4vjey5HwEktXrH5a5a2+dhz4uVcGjw3VC2h1YVQywQmikMrHDN9gCDtmKTr53JJ7K42V5dl2+2YzrxW8TJUR7lMliTCAjn4gbjB9FDHo=
+	t=1715944917; cv=none; b=lyLiXLoRcHXIZ7yFgHlLqCJyaeSVcp2i5hRBAVI829HBVPsRd4bbeReePMCzpDhn9J6xcntonbW1lnZPelyNDDatDCCroCkUcVKd8y3+wCBNe4B96MMe4+Jrkh2OMJts/UN+EcVjDLthSaMA/8NLoUqkhf/nsce7PYnm+gm4PXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715944798; c=relaxed/simple;
-	bh=bVBSHHTwjk7r5Ay2aMI6ZrBecR5S06CsKavj2yj6LG0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ghX75+kf1sCb9Qtm8jCY9IZx6gSWwZNHXbBaf+3pUDPccY1frV5g8GVW6yjNzBLvLc/nTtrju8su3aoWsIwgALkfkKq3Pd7xAdIE2lvmJzi/RYENTkxPqsxpJ/7EayCCoHYKX73RxBXXFXSdaxkzA3erB5b6avbwlIo416Lpxpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Corjv+R+; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0DA2DA9A;
-	Fri, 17 May 2024 13:19:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1715944785;
-	bh=bVBSHHTwjk7r5Ay2aMI6ZrBecR5S06CsKavj2yj6LG0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Corjv+R+2zZ6IJvjwnyiMNKnavpJEKaA1rondWAfOpRYGBbOfJzI2jUG3W6q7SXjM
-	 6csSmc+yFGE6mEG7hDh2Td3j6tVLcbWB9i2DIzNqEBrArjwT0cdHAx0u1iLa4TBxz1
-	 xO9JRm/G7/8X0meZoODHd9csWHlMc8/PYpNkRzXA=
-Date: Fri, 17 May 2024 14:19:44 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: ChiYuan Huang <cy_huang@richtek.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Daniel Scally <djrscally@gmail.com>,
-	Jean-Michel Hautbois <jeanmichel.hautbois@ideasonboard.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] media: v4l: async: Fix NULL pointer when v4l2 flash
- subdev binding
-Message-ID: <20240517111944.GD19755@pendragon.ideasonboard.com>
-References: <e2f9f2b7b7de956d70b8567a2ab285409fff988b.1715136478.git.cy_huang@richtek.com>
- <ZkXi_U5Js34dUQsA@kekkonen.localdomain>
- <20240517063150.GA12245@linuxcarl2.richtek.com>
- <ZkcOoLQQRdRYYacd@kekkonen.localdomain>
+	s=arc-20240116; t=1715944917; c=relaxed/simple;
+	bh=cCiMLIeRQ2EXgfa0YgaB46BmldEjRuND+u8cgoXj8jA=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nq54Fkimf1wchCvA/g/E6EFYzJ2L9CkFLF7k/H9SyQRC64Mx5ryyucX39gF7p/knmoWwU5bKtHQIDUwbl+yLLYNEXQs5UCkZyjEHuoutJhFiSYsiYBJFJhrTIC9CwR/8u7PA/WWsFe0V+Y91dUmViKui0iDFc6NlxRSnPo7sM7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=pnKxv3wR; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44HBKg9V111437;
+	Fri, 17 May 2024 06:20:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1715944842;
+	bh=M9gLMIAiDHAcckpBA6eubUaCYcUpTziwh4/Q77XTl20=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=pnKxv3wREjHrW3r0IDs9vWgsr1lVRgaHQZuEryX4lHHhpM8MLY7TQnUzYwVTT3nMY
+	 o/xww5ONhLtQyUiudXBPeHrqexHCBRCyEdxllCMkL1NTvEboN89YNDoHVKEsM9qQVr
+	 qiIJByQY2KYw1OLVKCf32o+PG6Jx6wS+qmbDIIRU=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44HBKgTI067066
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 17 May 2024 06:20:42 -0500
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 17
+ May 2024 06:20:42 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 17 May 2024 06:20:42 -0500
+Received: from localhost (uda0492258.dhcp.ti.com [172.24.227.9])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44HBKfhh080832;
+	Fri, 17 May 2024 06:20:41 -0500
+Date: Fri, 17 May 2024 16:50:40 +0530
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: Onkarnarth <onkarnath.1@samsung.com>
+CC: <bhelgaas@google.com>, <vigneshr@ti.com>, <s-vadapalli@ti.com>,
+        <lpieralisi@kernel.org>, <kw@linux.com>, <robh@kernel.org>,
+        <yue.wang@Amlogic.com>, <neil.armstrong@linaro.org>,
+        <khilman@baylibre.com>, <jbrunet@baylibre.com>,
+        <martin.blumenstingl@googlemail.com>, <thomas.petazzoni@bootlin.com>,
+        <shawn.guo@linaro.org>, <lchuanhua@maxlinear.com>,
+        <srikanth.thokala@intel.com>, <songxiaowei@hisilicon.com>,
+        <wangbinghui@hisilicon.com>, <manivannan.sadhasivam@linaro.org>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <hayashi.kunihiko@socionext.com>, <mhiramat@kernel.org>,
+        <pali@kernel.org>, <toan@os.amperecomputing.com>,
+        <daire.mcnamara@microchip.com>, <conor.dooley@microchip.com>,
+        <marek.vasut+renesas@gmail.com>, <shawn.lin@rock-chips.com>,
+        <heiko@sntech.de>, <nirmal.patel@linux.intel.com>,
+        <jonathan.derrick@linux.dev>, <kishon@kernel.org>, <jdmason@kudzu.us>,
+        <dave.jiang@intel.com>, <rafael@kernel.org>, <lenb@kernel.org>,
+        <mahesh@linux.ibm.com>, <oohall@gmail.com>,
+        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-amlogic@lists.infradead.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <r.thapliyal@samsung.com>,
+        Maninder Singh <maninder1.s@samsung.com>
+Subject: Re: [PATCH 1/1] PCI : Refactoring error log prints for better
+ readability
+Message-ID: <4ec3b167-9324-41d3-a086-74ca001b9042@ti.com>
+References: <CGME20240517105941epcas5p3e8dbb97f19c9553bf9942ad146124806@epcas5p3.samsung.com>
+ <20240517105923.2406246-1-onkarnath.1@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <ZkcOoLQQRdRYYacd@kekkonen.localdomain>
+In-Reply-To: <20240517105923.2406246-1-onkarnath.1@samsung.com>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Fri, May 17, 2024 at 08:00:32AM +0000, Sakari Ailus wrote:
-> Hi Chi Yuan,
-> 
-> On Fri, May 17, 2024 at 02:31:50PM +0800, ChiYuan Huang wrote:
-> > Hi, Sakari:
-> > 
-> > 	Thanks for your reply.
-> > If any misunderstanding, please correct me.
-> > 
-> > On Thu, May 16, 2024 at 10:42:05AM +0000, Sakari Ailus wrote:
-> > > Hi Chi Yuan,
-> > > 
-> > > On Wed, May 08, 2024 at 10:51:49AM +0800, cy_huang@richtek.com wrote:
-> > > > From: ChiYuan Huang <cy_huang@richtek.com>
-> > > > 
-> > > > In v4l2_async_create_ancillary_links(), if v4l2 async notifier is
-> > > > created from v4l2 device, the v4l2 flash subdev async binding will enter
-> > > > the logic to create media link. Due to the subdev of notifier is NULL,
-> > > > this will cause NULL pointer to access the subdev entity. Therefore, add
-> > > > the check to bypass it.
-> > > > 
-> > > > Fixes: aa4faf6eb271 ("media: v4l2-async: Create links during v4l2_async_match_notify()")
-> > > > Signed-off-by: ChiYuan Huang <cy_huang@richtek.com>
-> > > > ---
-> > > > Hi,
-> > > > 
-> > > >   I'm trying to bind the v4l2 subdev for flashlight testing. It seems
-> > > > some logic in v4l2 asynd binding is incorrect.
-> > > > 
-> > > > From the change, I modified vim2m as the test driver to bind mt6370 flashlight.
-> > > > 
-> > > > Here's the backtrace log.
-> > > > 
-> > > >  vim2m soc:vim2m: bound [white:flash-2]
-> > > >  Unable to handle kernel NULL pointer dereference at virtual address 0000000000000058
-> > > >  ......skipping
-> > > >  Call trace:
-> > > >   media_create_ancillary_link+0x48/0xd8 [mc]
-> > > >   v4l2_async_match_notify+0x17c/0x208 [v4l2_async]
-> > > >   v4l2_async_register_subdev+0xb8/0x1d0 [v4l2_async]
-> > > 
-> > > There's something wrong obviously somewhere but wherea?
-> >
-> > In vim2m driver, I added v4l2_async_nf_init -> v4l2_async_nf_add_fwnode_remote ->
-> > v4l2_async_nf_register.
-> > 
-> > From the async flow, in notifier complete ops to create v4l-subdevX node for the 
-> > specified subdev.
-> >
-> > > A sub-notifier does have a sub-device after the notifier initialisation.
-> > 
-> > Why? Are you saying to the notifier can only be used for subdev and subdev binding, 
-> > not v4l2 and subdev binding?
-> > 
-> > But to create v4l-subdevX, the key is only v4l2 device and its needed subdev.
-> > 
-> > > Maybe the initialisation does not happen in the right order?
-> >
-> > AFAIK, Async flow can solve the probe order and makes the user no need to care
-> > the probe order.
-> > 
-> > From the stacktrace, I'm pretty sure it's not the probe order issue.
-> >
-> > > >   __v4l2_flash_init.part.0+0x3b4/0x4b0 [v4l2_flash_led_class]
-> > > >   v4l2_flash_init+0x28/0x48 [v4l2_flash_led_class]
-> > > >   mt6370_led_probe+0x348/0x690 [leds_mt6370_flash]
-> > > > 
-> > > > After tracing the code, it will let the subdev labeled as F_LENS or
-> > > > F_FLASH function to create media link. To prevent the NULL pointer
-> > > > issue, the simplest way is add a check when 'n->sd' is NULL and bypass
-> > > > the later media link creataion.
-> > > > ---
-> > > >  drivers/media/v4l2-core/v4l2-async.c | 3 +++
-> > > >  1 file changed, 3 insertions(+)
-> > > > 
-> > > > diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-core/v4l2-async.c
-> > > > index 3ec323bd528b..9d3161c51954 100644
-> > > > --- a/drivers/media/v4l2-core/v4l2-async.c
-> > > > +++ b/drivers/media/v4l2-core/v4l2-async.c
-> > > > @@ -324,6 +324,9 @@ static int v4l2_async_create_ancillary_links(struct v4l2_async_notifier *n,
-> > > >  	    sd->entity.function != MEDIA_ENT_F_FLASH)
-> > > >  		return 0;
-> > > >  
-> > > > +	if (!n->sd)
-> > > > +		return 0;
-> > > 
-> > > This isn't the right fix: the ancillary link won't be created as a result.
-> >
-> > Due to the notifier is created by v4l2 device not subdev, this 'n->sd' is NULL.
-> > The NULL 'n->sd' will be referenced by the next flow 'media_create_ancillary_link'.
-> 
-> Ah, right. I took a new look into the code and agree this is a problem.
-> This probably hasn't been hit previously as the root notifier driver tends
-> not to have any lens or flash devices.
-> 
-> I'd change the commit message slightly:
-> 
-> --------8<-------------
-> In v4l2_async_create_ancillary_links(), ancillary links are created for
-> lens and flash sub-devices. These are sub-device to sub-device links and if
-> the async notifier is related to a V4L2 device, the source sub-device of
-> the ancillary link is NULL, leading to a NULL pointer dereference. Check
-> the notifier's sd field is non-NULL in v4l2_async_create_ancillary_links().
-> --------8<-------------
+On Fri, May 17, 2024 at 04:29:23PM +0530, Onkarnarth wrote:
+> From: Onkarnath <onkarnath.1@samsung.com>
 
-What's the use case for including lens or flash devices in the root
-notifier ? Shouldn't lens and flash subdevices always be linked to
-something ? We should of course not crash, but it seems that simply
-ignoring the subdevs and not linking them isn't a great idea either.
+I think that the $subject should be similar to:
+https://patchwork.kernel.org/comment/25712288/
+rather than the generic "refactoring error log".
 
-> > Or is it caused by the wrong usage? 
-> > 
-> > > > +
-> > > >  	link = media_create_ancillary_link(&n->sd->entity, &sd->entity);
-> > > >  
-> > > >  #endif
+> 
+> As %pe is already introduced, it's better to use it in place of (%ld) or (%d) for
+> printing error in logs. It will enhance readability of logs.
+> 
+> Error print style is more consistent now.
+> 
+> Co-developed-by: Maninder Singh <maninder1.s@samsung.com>
+> Signed-off-by: Maninder Singh <maninder1.s@samsung.com>
+> Signed-off-by: Onkarnath <onkarnath.1@samsung.com>
+> ---
+> Suggested by Bjorn Helgaas in below discussion
+> https://patchwork.kernel.org/comment/25712288/
 
--- 
+Since you have indicated that Bjorn has suggested it, shouldn't there
+also be a "Suggested-by tag" in the commit message?
+
+> 
+>  drivers/pci/bus.c                             |   2 +-
+>  drivers/pci/controller/dwc/pci-dra7xx.c       |   2 +-
+>  drivers/pci/controller/dwc/pci-meson.c        |  16 +--
+>  drivers/pci/controller/dwc/pcie-armada8k.c    |   4 +-
+>  drivers/pci/controller/dwc/pcie-histb.c       |   6 +-
+>  drivers/pci/controller/dwc/pcie-intel-gw.c    |  10 +-
+>  drivers/pci/controller/dwc/pcie-keembay.c     |   2 +-
+>  drivers/pci/controller/dwc/pcie-kirin.c       |   6 +-
+>  drivers/pci/controller/dwc/pcie-qcom-ep.c     |  18 +--
+>  drivers/pci/controller/dwc/pcie-qcom.c        |  18 +--
+>  drivers/pci/controller/dwc/pcie-tegra194.c    | 132 +++++++++---------
+>  drivers/pci/controller/dwc/pcie-uniphier-ep.c |   2 +-
+>  drivers/pci/controller/pci-aardvark.c         |   6 +-
+>  drivers/pci/controller/pci-ftpci100.c         |   2 +-
+>  drivers/pci/controller/pci-tegra.c            |  86 ++++++------
+>  drivers/pci/controller/pci-xgene.c            |   4 +-
+>  drivers/pci/controller/pcie-microchip-host.c  |   2 +-
+>  drivers/pci/controller/pcie-rcar-host.c       |  14 +-
+>  drivers/pci/controller/pcie-rockchip.c        |  34 ++---
+>  drivers/pci/controller/vmd.c                  |   2 +-
+>  drivers/pci/doe.c                             |   4 +-
+>  drivers/pci/endpoint/functions/pci-epf-mhi.c  |   8 +-
+>  drivers/pci/endpoint/functions/pci-epf-ntb.c  |   2 +-
+>  drivers/pci/endpoint/functions/pci-epf-test.c |   4 +-
+>  drivers/pci/endpoint/functions/pci-epf-vntb.c |   2 +-
+>  drivers/pci/endpoint/pci-ep-cfs.c             |  12 +-
+>  drivers/pci/endpoint/pci-epf-core.c           |  16 +--
+>  drivers/pci/hotplug/acpiphp_core.c            |   2 +-
+>  drivers/pci/hotplug/pciehp_core.c             |   8 +-
+>  drivers/pci/hotplug/shpchp_core.c             |   4 +-
+>  drivers/pci/of.c                              |   6 +-
+>  drivers/pci/pci-driver.c                      |   4 +-
+>  drivers/pci/pcie/dpc.c                        |   4 +-
+>  drivers/pci/quirks.c                          |   2 +-
+>  drivers/pci/setup-bus.c                       |   2 +-
+>  drivers/pci/slot.c                            |   4 +-
+>  drivers/pci/vgaarb.c                          |   2 +-
+>  37 files changed, 227 insertions(+), 227 deletions(-)
+> 
+> diff --git a/drivers/pci/bus.c b/drivers/pci/bus.c
+> index 826b5016a101..dbc16cf5a246 100644
+> --- a/drivers/pci/bus.c
+> +++ b/drivers/pci/bus.c
+> @@ -351,7 +351,7 @@ void pci_bus_add_device(struct pci_dev *dev)
+>  	dev->match_driver = !dn || of_device_is_available(dn);
+>  	retval = device_attach(&dev->dev);
+>  	if (retval < 0 && retval != -EPROBE_DEFER)
+> -		pci_warn(dev, "device attach failed (%d)\n", retval);
+> +		pci_warn(dev, "device attach failed: %pe\n", ERR_PTR(retval));
+
+Is there a reason behind dropping the parantheses?
+
+>  
+>  	pci_dev_assign_added(dev, true);
+>  }
+> diff --git a/drivers/pci/controller/dwc/pci-dra7xx.c b/drivers/pci/controller/dwc/pci-dra7xx.c
+> index d2d17d37d3e0..79b6cc7f0287 100644
+> --- a/drivers/pci/controller/dwc/pci-dra7xx.c
+> +++ b/drivers/pci/controller/dwc/pci-dra7xx.c
+> @@ -801,7 +801,7 @@ static int dra7xx_pcie_probe(struct platform_device *pdev)
+>  	reset = devm_gpiod_get_optional(dev, NULL, GPIOD_OUT_HIGH);
+>  	if (IS_ERR(reset)) {
+>  		ret = PTR_ERR(reset);
+> -		dev_err(&pdev->dev, "gpio request failed, ret %d\n", ret);
+> +		dev_err(&pdev->dev, "gpio request failed: %pe\n", ERR_PTR(ret));
+
+Similar question as above regarding converting "failed, ret" to
+"failed:". Is this a new convention that is expected to be followed,
+where all errors are supposed to have "failed: %pe", rather than custom
+statements? Please let me know if this has already been discussed
+elsewhere.
+
+[...]
+
 Regards,
-
-Laurent Pinchart
+Siddharth.
 
