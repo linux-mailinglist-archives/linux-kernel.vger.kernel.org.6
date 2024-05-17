@@ -1,143 +1,156 @@
-Return-Path: <linux-kernel+bounces-182106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F0618C8682
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 14:49:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48C678C86A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 14:54:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42A421C20F4E
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 12:49:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E751B28589D
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 12:54:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F2734C61F;
-	Fri, 17 May 2024 12:49:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8530C5026A;
+	Fri, 17 May 2024 12:51:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g93ddjKa"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Iy2Q7w75"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80E5A481C7;
-	Fri, 17 May 2024 12:49:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5DB84F890
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 12:51:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715950158; cv=none; b=lsMJ3cKFqbeydFQd4etv9N6CUHSqJCWWyN88rHWZN67NJ8/fWd4++u5PxUf7GwjwG0pdHF8ZgKpwAK9l4RwbdJ106ELLR81S+/VS2LsFaVob6467iqC+SIRLk/zFUAxvM94p8ciPV+Ee/cSJEaV9XLymhHISDmsLw8lUgEkXfsI=
+	t=1715950307; cv=none; b=LJtU+x/3tgelqj9GYJsS/8bXEKxntQAwvgLp6bFfEuOqgUQsR2YVrCdYL1jFrPzEEQgoeRdgWvugJiKe2HoLgG/8571IPU98uLW0Lp/wYKrO42uhHsOhH6MUzWrLJK6mt7+7w2kfmpIqZTx3j954K8eGnRjmxj33A1+hMcr97Yo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715950158; c=relaxed/simple;
-	bh=dFdaHos0UdTJQEbHjqSGh82k3xs2CBpBqd+kZi11i8Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UPtUrxiQrbsgKv4XeEQK2te7u9uZWU+jHh6Dz04tw+oxnVOEI9/WBxbtI+wLW3tNIfJSam+tFfNTj8NHIsLJvQW7uFHi8WS8cvfGNhoD2+radt0juEFWJMbe6kikjLKKmus2lbt3DiBXeQ8xyaOWRElzdlPrzgq6HYkE873OaXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g93ddjKa; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2b9cdbd6da9so926857a91.1;
-        Fri, 17 May 2024 05:49:17 -0700 (PDT)
+	s=arc-20240116; t=1715950307; c=relaxed/simple;
+	bh=Vq4/ozJIACZOKOlrKWjGJ/ITZ67a1Onaw8acoBVl86E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AbdbtKIa2pDXhJv/KMD75DRvwezIqymbKtWMga7HsoLDIrqy1bPBn73+av+Qy76cZEVghsI4hbFB/z4rLZLZxcVoyvbwgmyRfzeGY4tQvtdmSQ1ctQX4FmAmCjofHqdp0taMaFVgG3k3CzMPDanA7rUlXb/SC/0imfNIsrjfbW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Iy2Q7w75; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-572a93890d1so5209436a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 05:51:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715950157; x=1716554957; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nfAjld03szr0Dl9MxPW24cnUDUMLGuL4kllMrODJJg4=;
-        b=g93ddjKaCTQAVH5AsNVJu8SB19p+8X8UY1vzcIXIOI6vUr/b1tE9nKfuGoRIrKqMS+
-         b7EVC72l4ndE7dA5FvfzeSaxGf/4Nib1W9YFwtasI8WqLcfIB2+AqYgkxfxZ5lSLkmTw
-         q6f73kRRKjcBhbpRYuoUfCB1OlSH+RfcA1i0AIj0xcP3pDqH0+Y6p0wbAdSzEn9l/ffa
-         /s08TFsFbR+Zw/eXs5MVZSvHy1f7zV4WhTlUpIvw0sPVS2ZVQ8zibXlqsxb+iSEk0ImQ
-         hhoP6hlYlCPvyIw+NOJA9QqamHGEw9YcbXqj+qL7KK7qavw+oMTpZO0iwY36h36UWHSE
-         Dk3A==
+        d=linaro.org; s=google; t=1715950303; x=1716555103; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uBDeP9nwT+3vg7rh6Kfq9TwLIodJdwZEaPm8bRsiuNE=;
+        b=Iy2Q7w75h/Zfv9p7KvFkCQVwK/J6wzRch4+kdxQJ1Ht/vZusif1zQ6jBYF2EFbvdGb
+         krpTB0oSkXxDBFvEAwR1FZspXwdoKlBDOcHuFj3OWdmnPS2u/9+pcbwmz+M6TNeHFe+m
+         GAHrlPOyATwOCDJ1Zlt0YJbI1pjizqRxcVXgBd1uUuyU8hxTVchRxV4J1gMKdpXBFhxS
+         BD0gl8MNOema4TwFKZB9UNWBuT+obIxTviPLl/sJDgoh0Nu4QKirjmmSaX4KDwZHP9nm
+         n63lNazZmn9HrHNyL79cfinCYGiZ+ef1+GQwtsei8uZMN1M7I8RfWy+Vv5tx9ZC/BoSR
+         ypYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715950157; x=1716554957;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nfAjld03szr0Dl9MxPW24cnUDUMLGuL4kllMrODJJg4=;
-        b=DjqSevAX2uhjjyLiqbSWZ78Gg2gPFdzx9yCZEMWsF5TjquSzl2qxzN8WmosqyhzXC3
-         je9s+4kshb1909h3RZwVp0lQMVvUPyiplsmdJMHXQNTddZkmZrD9Eoz1qgwWlucVt8Fu
-         czROL/FHsom0Dl9KP5vu2CKkOzAeAhhqHAhY/CRPdCySuJkA6Bc05OpaO8tqwe4n2W68
-         WRHrLOsUX1xIt5BZ/tPqTEEgI7dGfVWR5IE4+inYNyd4f1CURAjGy/h6eUFMVViARMOg
-         wCWyv/wbM9UQumSX2YBzEht8gEt7jpmmNrAUMnibZtzvPviK5rcQy47IPq5/36pElZei
-         KZ/g==
-X-Forwarded-Encrypted: i=1; AJvYcCVNs+x1ZYicKUgG3zCl/2RyxkMREFQMeQo8LdCaUTmEKEkBLfNWzhcKi5Mw4enCVRFB5Cmb6UUc8GGrk9IjrvgV4QuBKpG6JvZaJ827nKP3hfFLjCY3L+JZZCY9ka/ATYPnX+XNnvtReQ==
-X-Gm-Message-State: AOJu0YwG2k0Xe4noWSRg3FXrWrTkoil8+kh0g7bT8HvvUm06OfVza+kP
-	iDbTJLLne3NkF1iWZbuOgoYeQcv4vSoRB1h20vH1h2OQXWAjCY4m
-X-Google-Smtp-Source: AGHT+IGJ+sh/UuHCqsSKSmlt2bfJowQnq7DLmIOltX9wlrRABLAulYmoELkb4dnfkZLe7fbfJDMA7g==
-X-Received: by 2002:a17:90a:a108:b0:2b0:e497:56f2 with SMTP id 98e67ed59e1d1-2b6c70faab7mr32624976a91.10.1715950156637;
-        Fri, 17 May 2024 05:49:16 -0700 (PDT)
-Received: from rigel (60-241-107-82.static.tpgi.com.au. [60.241.107.82])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2b6710565e3sm15392349a91.11.2024.05.17.05.49.13
+        d=1e100.net; s=20230601; t=1715950303; x=1716555103;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uBDeP9nwT+3vg7rh6Kfq9TwLIodJdwZEaPm8bRsiuNE=;
+        b=pNUMO8i9wCeTU4LPXGyUWjmXimovATpkWqX6w6Yqh05YZx6lfZ63lR1Q4a4bZ3xwXt
+         l26UFc+SdxsqXHINnv9KRum9/yzKAuA2UWRixb8iaI0PdfYz/bz8lSivUJYWQzrMq5UZ
+         LiU6NS2Qj15iqmYAp0Afv8psHhFVhd84WlRyuXWkh/U8eiZEl0qMiT4BkfPCFaT273bO
+         pSBHv4H2CXNWjZmXUdiDM3Yb78KFevlAYSyd3vr7NTPSw8VmlrVBeW22WMll61hAvk6M
+         cWkegODnQqK7R9q+Y3d8YVjeNnTlhJp28ZZ3QOkcQSkbnTsp0FbtKKNsqnpBUgXsob19
+         4g+w==
+X-Forwarded-Encrypted: i=1; AJvYcCWKB2cIEm2sd58xBLng0AMDNKzK9x+ew03yCwrcXVTNrmBFu4HHfXJs4TtuPywiGglHnU1wU3pbbual5/gNiBPME2DDdC1+3v1mzJS0
+X-Gm-Message-State: AOJu0Yxg4uonlDcRxEl15/Y7+dn4LN/FJp8ODqCQS4ylJZf/o/+pCz1a
+	7ParsH5whEKQHoLNXehFaFN21N6AXYhmMm8w1HYQP1CTCpH3vCcrnp/gB7kHq6o=
+X-Google-Smtp-Source: AGHT+IH2rlo+iZOPkGsHzGODAy1kMGiRTqA99W8UoQQqxB5KaE7eFk+2sx7TdMoVT9m8zu7m5sMMHQ==
+X-Received: by 2002:a50:cd41:0:b0:574:eca8:631c with SMTP id 4fb4d7f45d1cf-574eca865a6mr8447514a12.1.1715950302929;
+        Fri, 17 May 2024 05:51:42 -0700 (PDT)
+Received: from krzk-bin.. ([149.14.240.163])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5735a2490casm10540527a12.32.2024.05.17.05.51.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 May 2024 05:49:16 -0700 (PDT)
-Date: Fri, 17 May 2024 20:49:11 +0800
-From: Kent Gibson <warthog618@gmail.com>
-To: Hagar Hemdan <hagarhem@amazon.com>
-Cc: Norbert Manthey <nmanthey@amazon.de>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
+        Fri, 17 May 2024 05:51:42 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	devicetree@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] gpio: prevent potential speculation leaks in
- gpio_device_get_desc()
-Message-ID: <20240517124911.GA435070@rigel>
-References: <20240517101227.12118-1-hagarhem@amazon.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] dt-bindings: soc: bcm: document brcm,bcm2711-avs-monitor
+Date: Fri, 17 May 2024 14:51:38 +0200
+Message-ID: <20240517125138.53441-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240517101227.12118-1-hagarhem@amazon.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, May 17, 2024 at 10:12:27AM +0000, Hagar Hemdan wrote:
-> Userspace may trigger a speculative read of an address outside the gpio
-> descriptor array.
-> Users can do that by calling gpio_ioctl() with an offset out of range.
-> Offset is copied from user and then used as an array index to get
-> the gpio descriptor without sanitization in gpio_device_get_desc().
->
-> This change ensures that the offset is sanitized by using
-> array_index_nospec() to mitigate any possibility of speculative
-> information leaks.
->
-> This bug was discovered and resolved using Coverity Static Analysis
-> Security Testing (SAST) by Synopsys, Inc.
->
-> Fixes: aad955842d1c ("gpiolib: cdev: support GPIO_V2_GET_LINEINFO_IOCTL and GPIO_V2_GET_LINEINFO_WATCH_IOCTL")
+Document alreasdy used binding for Syscon / AVS monitor:
+brcm,bcm2711-avs-monitor to fix dt_binding_check and dtbs_check warnings
+like:
 
-I still don't think this Fixes commit is right, and that would impact
-where this gets backported to, but Bart can weigh in on that.
+  brcm,avs-ro-thermal.example.dtb: /example-0/avs-monitor@7d5d2000: failed to match any schema with compatible: ['brcm,bcm2711-avs-monitor', 'syscon', 'simple-mfd']
 
-Cheers,
-Kent.
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ .../soc/bcm/brcm,bcm2711-avs-monitor.yaml     | 44 +++++++++++++++++++
+ 1 file changed, 44 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/soc/bcm/brcm,bcm2711-avs-monitor.yaml
 
+diff --git a/Documentation/devicetree/bindings/soc/bcm/brcm,bcm2711-avs-monitor.yaml b/Documentation/devicetree/bindings/soc/bcm/brcm,bcm2711-avs-monitor.yaml
+new file mode 100644
+index 000000000000..e02d9d7e7d9a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/soc/bcm/brcm,bcm2711-avs-monitor.yaml
+@@ -0,0 +1,44 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/soc/bcm/brcm,bcm2711-avs-monitor.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Broadcom AVS Monitor
++
++maintainers:
++  - Stefan Wahren <wahrenst@gmx.net>
++
++properties:
++  compatible:
++    items:
++      - const: brcm,bcm2711-avs-monitor
++      - const: syscon
++      - const: simple-mfd
++
++  reg:
++    maxItems: 1
++
++  thermal:
++    $ref: /schemas/thermal/brcm,avs-ro-thermal.yaml
++    description: Broadcom AVS ring oscillator thermal
++
++required:
++  - compatible
++  - reg
++  - thermal
++
++additionalProperties: false
++
++examples:
++  - |
++    avs-monitor@7d5d2000 {
++        compatible = "brcm,bcm2711-avs-monitor", "syscon", "simple-mfd";
++        reg = <0x7d5d2000 0xf00>;
++
++        thermal: thermal {
++            compatible = "brcm,bcm2711-thermal";
++            #thermal-sensor-cells = <0>;
++        };
++    };
++...
+-- 
+2.43.0
 
-> Signed-off-by: Hagar Hemdan <hagarhem@amazon.com>
-> ---
-> v3: update the commit mesg
-> ---
->  drivers/gpio/gpiolib.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index fa50db0c3605..b58e4fe78cec 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -17,6 +17,7 @@
->  #include <linux/list.h>
->  #include <linux/lockdep.h>
->  #include <linux/module.h>
-> +#include <linux/nospec.h>
->  #include <linux/of.h>
->  #include <linux/pinctrl/consumer.h>
->  #include <linux/seq_file.h>
-> @@ -201,7 +202,7 @@ gpio_device_get_desc(struct gpio_device *gdev, unsigned int hwnum)
->  	if (hwnum >= gdev->ngpio)
->  		return ERR_PTR(-EINVAL);
->
-> -	return &gdev->descs[hwnum];
-> +	return &gdev->descs[array_index_nospec(hwnum, gdev->ngpio)];
->  }
->  EXPORT_SYMBOL_GPL(gpio_device_get_desc);
->
-> --
-> 2.40.1
->
 
