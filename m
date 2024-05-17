@@ -1,128 +1,93 @@
-Return-Path: <linux-kernel+bounces-181983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E13D28C849A
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 12:12:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFFF58C849D
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 12:14:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9667C1F24661
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 10:12:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1108E1C22B43
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 10:14:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D1392E64C;
-	Fri, 17 May 2024 10:12:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="cbZ8dS/o"
-Received: from smtp-fw-33001.amazon.com (smtp-fw-33001.amazon.com [207.171.190.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8689A35280;
+	Fri, 17 May 2024 10:13:56 +0000 (UTC)
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B3B7200D2;
-	Fri, 17 May 2024 10:12:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.190.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA2722E62C;
+	Fri, 17 May 2024 10:13:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715940764; cv=none; b=Z8GbfHgKyXa8TWNJE1i8GvkXDzUsXwVIFIrMiTuO57rC3c8uRnAbjjDj2b7ndfXH3WIUqZbivOw92xe+fGM/UQ2uf9035UEKwOknjlLNUB5gL3YqI9HAooa1e8iSqLxA3Vof/3FE993NY+wAiySE6yQ4vsY3m3XM16hrCkxtkGM=
+	t=1715940836; cv=none; b=ZZp6LfbiAVJ3FTR29PKyAlvjSoYQluc/ehFY8g6KD9xbTinyh1D1pBRYT2WuffFD5dh0GpUrSXxbtDZOoZLx63taUUNFvKV8TqbOoByvVonstOWVplo60QCb5tXwmodnvW2TSrP/5XAQqZhuZHpGs80b64UEc01YaMB5C+okjeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715940764; c=relaxed/simple;
-	bh=DNCDM6IxkJLGGSLYqPfZ1r8XHL+hCpAHIncnxjbHTj4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XRDXDcm7EXRc+/H+t4ehPjHEeJ5zJAfwAVvmsYz+CDpnv5p76YksGkLpAuPvz09R31E3l4t+33ChgOtuSulzus6ftbLvKcQ/N2teFQwsshP6RBJ0BTWP3gl1wfXrtfm8g0UlEUlyBDhdpmm5p4B/WHOLQp7XewNIhaZAzIyyFhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=cbZ8dS/o; arc=none smtp.client-ip=207.171.190.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1715940764; x=1747476764;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=DdDjU8RAWsRCjt4a0p8GXfqvpw/fXzr4zK/kj9NVBs0=;
-  b=cbZ8dS/o3XOfgEmbr9hyYLdpOy/oLlyKpf4tUCw7zK89ZcVxaKfLaK1a
-   YjP4K7nS/owvkDejz7V10czzDtnVaVLhQ//qkEtF9uN6d12TkPoINYx+5
-   vvt9fdXgdFkA9F7NTl2lf3gtK1wH9xHAwyqL8sRbmI+MwXgVcbOL+vNKh
-   E=;
-X-IronPort-AV: E=Sophos;i="6.08,167,1712620800"; 
-   d="scan'208";a="345036791"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-33001.sea14.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 10:12:38 +0000
-Received: from EX19MTAEUC002.ant.amazon.com [10.0.10.100:33278]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.12.108:2525] with esmtp (Farcaster)
- id d0dc88c3-ff31-469a-bfb3-2ca9871ee2a6; Fri, 17 May 2024 10:12:36 +0000 (UTC)
-X-Farcaster-Flow-ID: d0dc88c3-ff31-469a-bfb3-2ca9871ee2a6
-Received: from EX19D002EUA004.ant.amazon.com (10.252.50.181) by
- EX19MTAEUC002.ant.amazon.com (10.252.51.245) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.28; Fri, 17 May 2024 10:12:35 +0000
-Received: from EX19MTAUEC001.ant.amazon.com (10.252.135.222) by
- EX19D002EUA004.ant.amazon.com (10.252.50.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.28; Fri, 17 May 2024 10:12:35 +0000
-Received: from dev-dsk-hagarhem-1b-b868d8d5.eu-west-1.amazon.com
- (10.253.65.58) by mail-relay.amazon.com (10.252.135.200) with Microsoft SMTP
- Server id 15.2.1258.28 via Frontend Transport; Fri, 17 May 2024 10:12:35
- +0000
-Received: by dev-dsk-hagarhem-1b-b868d8d5.eu-west-1.amazon.com (Postfix, from userid 23002382)
-	id EE56320C24; Fri, 17 May 2024 10:12:34 +0000 (UTC)
-From: Hagar Hemdan <hagarhem@amazon.com>
-To:
-CC: Norbert Manthey <nmanthey@amazon.de>, Hagar Hemdan <hagarhem@amazon.com>,
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
-	<brgl@bgdev.pl>, Kent Gibson <warthog618@gmail.com>,
-	<linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3] gpio: prevent potential speculation leaks in gpio_device_get_desc()
-Date: Fri, 17 May 2024 10:12:27 +0000
-Message-ID: <20240517101227.12118-1-hagarhem@amazon.com>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1715940836; c=relaxed/simple;
+	bh=3eS4A6sBBete3+3nwqBVB9lVdGi0DqXxA3+ObVoYmKc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C5FGhScNUHsc77NcYvBO7eGCM4tOiEKS3S9h6fdE4UpHrI+t66XG+Ayuncmza/UPGS2am35/vsVaq27lk0hLpI5AhGgIGkLUgRZV9e2m15KWKfLZy9n3WDJNGRi0ReXIIbUZ3Jeq+1LhdSKWHNKUUek1ncfKdSWNtwxIhqviw08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-6f453d2c5a1so1139970b3a.2;
+        Fri, 17 May 2024 03:13:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715940834; x=1716545634;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6winQhTaiaX3qtpQtT67k6lYj7ciZqa7ndc5/SwCEuA=;
+        b=i9+4OoW2a1P/roslGyb5ilZrreyRvb2zySHKzCrnrIDS65Wzro41DauLTZr715duCU
+         5bsAETIMTEI+pQqvvV7+iV9cjqrh/yTZRAio8r17I14VFPWdpl2+aWTgyWmfIA4/9E/8
+         mOw3fFnddTBlDpffijelFbudMI4g4kuXizkBPg4XWRQjliuWHromDMn2Zl14aPD6vx8o
+         pvd6YN4dji2CeGWz853LNGrkokhg7mZlJM1S97Y+BR8Dj/rBhzOjremqHCgGPSTOmlZI
+         xLT0+vC25Gymx1pgDE4SwA9nwj+V1QOu7YVdQUgmgzkkO0se6+jy2oUnSKu0U0i8YUip
+         w4WQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXtSaMpR0dkPdQxYBafewAV+Yfpqu++w4GxR141Pa0TaC31CuQSaeEBNUsiyeVqKaDMGy/W+YJFs704HYMI9bI4DFgkUdFOUWCCYyy8n6qed0wQr9q073P5Qva5lR1hv6GyplU7W/mh2RKRfUVEsyNNCyW/MwhAJ9Zes/1yWj6Z
+X-Gm-Message-State: AOJu0Yw4kI43o2wVs8Ex4ZwLPvhBa6gwfJWFzK1Q8+UqlqBZen5NbkKK
+	tkiPQCXOwyKBjW5eFohPI7vwBDb4msjn4+GKcdZdvT3qBKfjxZfm
+X-Google-Smtp-Source: AGHT+IG9P8DIxQ8nLaNW5D9C+GvuVUP0c3EKFA8sgKAW6lF1YQHb78ZqQuJdMoV41TSUncZYR6YNVA==
+X-Received: by 2002:a05:6a00:845:b0:6f3:368d:6f64 with SMTP id d2e1a72fcca58-6f4e026b863mr28976797b3a.2.1715940833974;
+        Fri, 17 May 2024 03:13:53 -0700 (PDT)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f6688ed547sm6734600b3a.165.2024.05.17.03.13.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 May 2024 03:13:53 -0700 (PDT)
+Date: Fri, 17 May 2024 19:13:52 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Ajit Khaparde <ajit.khaparde@broadcom.com>
+Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	andrew.gospodarek@broadcom.com, michael.chan@broadcom.com,
+	kuba@kernel.org, davem@davemloft.net,
+	Andy Gospodarek <gospo@broadcom.com>
+Subject: Re: [PATCH] pci: Add ACS quirk for Broadcom BCM5760X NIC
+Message-ID: <20240517101352.GD202520@rocinante>
+References: <20240510204228.73435-1-ajit.khaparde@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240510204228.73435-1-ajit.khaparde@broadcom.com>
 
-Userspace may trigger a speculative read of an address outside the gpio
-descriptor array.
-Users can do that by calling gpio_ioctl() with an offset out of range.
-Offset is copied from user and then used as an array index to get
-the gpio descriptor without sanitization in gpio_device_get_desc().
+Hello,
 
-This change ensures that the offset is sanitized by using
-array_index_nospec() to mitigate any possibility of speculative
-information leaks.
+> The Broadcom BCM5760X NIC may be a multi-function device.
+> While it does not advertise an ACS capability, peer-to-peer
+> transactions are not possible between the individual functions.
+> So it is ok to treat them as fully isolated.
+> 
+> Add an ACS quirk for this device so the functions can be in independent
+> IOMMU groups and attached individually to userspace applications using
+> VFIO.
 
-This bug was discovered and resolved using Coverity Static Analysis
-Security Testing (SAST) by Synopsys, Inc.
+Applied to acs, thank you!
 
-Fixes: aad955842d1c ("gpiolib: cdev: support GPIO_V2_GET_LINEINFO_IOCTL and GPIO_V2_GET_LINEINFO_WATCH_IOCTL")
-Signed-off-by: Hagar Hemdan <hagarhem@amazon.com>
----
-v3: update the commit mesg
----
- drivers/gpio/gpiolib.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+[1/1] PCI: Add ACS quirk for Broadcom BCM5760X NIC
+      https://git.kernel.org/pci/pci/c/694b705cdbf7
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index fa50db0c3605..b58e4fe78cec 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -17,6 +17,7 @@
- #include <linux/list.h>
- #include <linux/lockdep.h>
- #include <linux/module.h>
-+#include <linux/nospec.h>
- #include <linux/of.h>
- #include <linux/pinctrl/consumer.h>
- #include <linux/seq_file.h>
-@@ -201,7 +202,7 @@ gpio_device_get_desc(struct gpio_device *gdev, unsigned int hwnum)
- 	if (hwnum >= gdev->ngpio)
- 		return ERR_PTR(-EINVAL);
- 
--	return &gdev->descs[hwnum];
-+	return &gdev->descs[array_index_nospec(hwnum, gdev->ngpio)];
- }
- EXPORT_SYMBOL_GPL(gpio_device_get_desc);
- 
--- 
-2.40.1
-
+	Krzysztof
 
