@@ -1,44 +1,44 @@
-Return-Path: <linux-kernel+bounces-181948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D0CE8C8402
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:42:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49FBE8C8404
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:42:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECAA528147E
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 09:42:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B5D91C22D29
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 09:42:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73C4F23770;
-	Fri, 17 May 2024 09:42:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 078A12C84F;
+	Fri, 17 May 2024 09:42:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="eZfbJz9C"
-Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="OxUbCqgO"
+Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C32561FA5
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 09:42:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EF6422324
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 09:42:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715938931; cv=none; b=Xc90j4lUa63iYnZqqhkP+1FXxZ3WehCa2ALNnxrT1Vp30BfFkWynxBB+OOgrZVd4om2S7NpP22oBndhHuXCQvDM3+eeFKN09rHsqwnTc2EArKXUlObTbcjq2uptbXwmjPLZvWS1WWyul468MOjUDDGETrjG8fvWc+rvcTNFH7YI=
+	t=1715938933; cv=none; b=NAop7zWiIyAVcawfIJ7vJj3x5Fy5wiKsPZvm426mV32i/tA/BY8XyIZS+zTzw10JmuT2cF2BPWKMH3y+Ot2wu3v4hFhUfPyjh9nWu/8Lbq3Pnpju5dWEQuZ9aU+Jm0g78Q6ohAvmdZH7vlD3PgaWPTYYQr0qb0Q9g2F0IclyTdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715938931; c=relaxed/simple;
-	bh=0nMX2E+j5B7we7+MGJ5BtRp3za/9P7lYO4LXsS704dc=;
+	s=arc-20240116; t=1715938933; c=relaxed/simple;
+	bh=g2mtvEDKT6K/qKPF1XuOt7jvGo9xLXUL9uFTaUoQL74=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=mTFkXqQC3rhaeLrU/GLfaTvwUXMpLjV4Zg67eI8Z3ZcdFhDiTVIdrC/eHj2f5ZvhBG6hR13QuA7M7UZhzxPx+yxteuzMLi1z4ygDVgVmN2RfciWOc+6AgGh2eCwtGbjk3uphdlKAdvVgH1uyLcsvBRoezTRRyEn5frTpli+a71M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=eZfbJz9C; arc=none smtp.client-ip=115.124.30.100
+	 MIME-Version; b=T1NxgX/7ii2Fu0toHV5spaHErhCNTs+s6bdV5dSGrJbM+pzZ8b3s7LflKkvNRVn8guLuIgUpejY7SIuGFyL3Pqhj2z41thUVrEXBGg0+ODJ4ihg1qaEhGCRcNPYThhe3S7xcBR3rXSGQ4jIP5sZsHpaN1eGkUZfOgavbCP2MWo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=OxUbCqgO; arc=none smtp.client-ip=115.124.30.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=linux.alibaba.com; s=default;
-	t=1715938926; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=40GtNblDPP3TS7cSe7qZNOe3ShmaHLkVbPBVLZEn+n4=;
-	b=eZfbJz9CchVZn2yBcxd+T/t7s237ci1gF5/xCuprMkl7rE+3MPeA3F1S7ft/tuMW4JAQmcdgdLxnNU0lGKLEcFUjvy9zFlI9HhvRwlM6Ji162gxVbrx+oVeiKNQ1w2P/lnb3YxKlQxVhqJiwigKUiTgJND+Ai2+mcmkuuIUuhjg=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067110;MF=mengferry@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0W6eF4Jj_1715938921;
-Received: from j66c13357.sqa.eu95.tbsite.net(mailfrom:mengferry@linux.alibaba.com fp:SMTPD_---0W6eF4Jj_1715938921)
+	t=1715938928; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=jOPrgQph3RGN8jKqsS+ujDSxSagogaAaFxEI3R+UkrM=;
+	b=OxUbCqgOE2LTox+UvMJ9AfQ4jq52ccXrbgZHJ9gl5G3DMhY9k/VPLWol0v/KIDty8cO+AebcMIJPqD5+798yAU4etRYPBxbM+h7k0/1H6JFhLuWPX/4dyB7qnxzMiyfCeDaElC2YxTITLZucd/7wicYw0l4ZNLw6C01eEHCaDJg=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033068173054;MF=mengferry@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0W6eF4Lh_1715938925;
+Received: from j66c13357.sqa.eu95.tbsite.net(mailfrom:mengferry@linux.alibaba.com fp:SMTPD_---0W6eF4Lh_1715938925)
           by smtp.aliyun-inc.com;
-          Fri, 17 May 2024 17:42:05 +0800
+          Fri, 17 May 2024 17:42:07 +0800
 From: Ferry Meng <mengferry@linux.alibaba.com>
 To: Mark Fasheh <mark@fasheh.com>,
 	Joel Becker <jlbec@evilplan.org>,
@@ -46,9 +46,9 @@ To: Mark Fasheh <mark@fasheh.com>,
 	ocfs2-devel@lists.linux.dev
 Cc: linux-kernel@vger.kernel.org,
 	Ferry Meng <mengferry@linux.alibaba.com>
-Subject: [PATCH v2 1/2] ocfs2: add bounds checking to ocfs2_xattr_find_entry()
-Date: Fri, 17 May 2024 17:41:46 +0800
-Message-Id: <20240517094147.87133-2-mengferry@linux.alibaba.com>
+Subject: [PATCH v2 2/2] ocfs2: strict bound check before memcmp in ocfs2_xattr_find_entry()
+Date: Fri, 17 May 2024 17:41:47 +0800
+Message-Id: <20240517094147.87133-3-mengferry@linux.alibaba.com>
 X-Mailer: git-send-email 2.32.0.3.g01195cf9f
 In-Reply-To: <20240517094147.87133-1-mengferry@linux.alibaba.com>
 References: <20240517094147.87133-1-mengferry@linux.alibaba.com>
@@ -60,66 +60,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a paranoia check to make sure it doesn't stray beyond valid memory
-region containing ocfs2 xattr entries when scanning for a match.
-It will prevent out-of-bound access in case of crafted images.
+xattr in ocfs2 maybe 'non-indexed', which saved with additional space
+requested. It's better to check if the memory is out of bound before
+memcmp, although this possibility mainly comes from crafted poisonous
+images.
 
 Signed-off-by: Ferry Meng <mengferry@linux.alibaba.com>
 ---
- fs/ocfs2/xattr.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ fs/ocfs2/xattr.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
 diff --git a/fs/ocfs2/xattr.c b/fs/ocfs2/xattr.c
-index 3b81213ed7b8..8aea94c90739 100644
+index 8aea94c90739..35c0cc2a51af 100644
 --- a/fs/ocfs2/xattr.c
 +++ b/fs/ocfs2/xattr.c
-@@ -1062,7 +1062,7 @@ ssize_t ocfs2_listxattr(struct dentry *dentry,
- 	return i_ret + b_ret;
- }
- 
--static int ocfs2_xattr_find_entry(int name_index,
-+static int ocfs2_xattr_find_entry(struct inode *inode, int name_index,
- 				  const char *name,
- 				  struct ocfs2_xattr_search *xs)
+@@ -1068,7 +1068,7 @@ static int ocfs2_xattr_find_entry(struct inode *inode, int name_index,
  {
-@@ -1076,6 +1076,10 @@ static int ocfs2_xattr_find_entry(int name_index,
- 	name_len = strlen(name);
- 	entry = xs->here;
- 	for (i = 0; i < le16_to_cpu(xs->header->xh_count); i++) {
-+		if ((void *)entry >= xs->end) {
-+			ocfs2_error(inode->i_sb, "corrupted xattr entries");
-+			return -EFSCORRUPTED;
-+		}
+ 	struct ocfs2_xattr_entry *entry;
+ 	size_t name_len;
+-	int i, cmp = 1;
++	int i, name_offset, cmp = 1;
+ 
+ 	if (name == NULL)
+ 		return -EINVAL;
+@@ -1083,10 +1083,15 @@ static int ocfs2_xattr_find_entry(struct inode *inode, int name_index,
  		cmp = name_index - ocfs2_xattr_get_type(entry);
  		if (!cmp)
  			cmp = name_len - entry->xe_name_len;
-@@ -1166,7 +1170,7 @@ static int ocfs2_xattr_ibody_get(struct inode *inode,
- 	xs->base = (void *)xs->header;
- 	xs->here = xs->header->xh_entries;
- 
--	ret = ocfs2_xattr_find_entry(name_index, name, xs);
-+	ret = ocfs2_xattr_find_entry(inode, name_index, name, xs);
- 	if (ret)
- 		return ret;
- 	size = le64_to_cpu(xs->here->xe_value_size);
-@@ -2698,7 +2702,7 @@ static int ocfs2_xattr_ibody_find(struct inode *inode,
- 
- 	/* Find the named attribute. */
- 	if (oi->ip_dyn_features & OCFS2_INLINE_XATTR_FL) {
--		ret = ocfs2_xattr_find_entry(name_index, name, xs);
-+		ret = ocfs2_xattr_find_entry(inode, name_index, name, xs);
- 		if (ret && ret != -ENODATA)
- 			return ret;
- 		xs->not_found = ret;
-@@ -2833,7 +2837,7 @@ static int ocfs2_xattr_block_find(struct inode *inode,
- 		xs->end = (void *)(blk_bh->b_data) + blk_bh->b_size;
- 		xs->here = xs->header->xh_entries;
- 
--		ret = ocfs2_xattr_find_entry(name_index, name, xs);
-+		ret = ocfs2_xattr_find_entry(inode, name_index, name, xs);
- 	} else
- 		ret = ocfs2_xattr_index_block_find(inode, blk_bh,
- 						   name_index,
+-		if (!cmp)
+-			cmp = memcmp(name, (xs->base +
+-				     le16_to_cpu(entry->xe_name_offset)),
+-				     name_len);
++		if (!cmp) {
++			name_offset = le16_to_cpu(entry->xe_name_offset);
++			if ((xs->base + name_offset + name_len) > xs->end) {
++				ocfs2_error(inode->i_sb,
++					    "corrupted xattr entries");
++				return -EFSCORRUPTED;
++			}
++			cmp = memcmp(name, (xs->base + name_offset), name_len);
++		}
+ 		if (cmp == 0)
+ 			break;
+ 		entry += 1;
 -- 
 2.32.0.3.g01195cf9f
 
