@@ -1,56 +1,77 @@
-Return-Path: <linux-kernel+bounces-181964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDC488C8459
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:57:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 719398C845E
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:59:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 679D51F2174D
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 09:57:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1E321F23AE2
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 09:59:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 694D02941F;
-	Fri, 17 May 2024 09:57:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48CD128DB7;
+	Fri, 17 May 2024 09:58:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="P3HZANmW"
-Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7E2A39FC5
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 09:57:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715939866; cv=none; b=mVWuq8mcYhhP2XIDyUS60DscQMHrwt35t+u8WkcR1+wlkMEldaF3ZkEyDIJ7h9rTaQdZfmHNBbIDVaKJQRZ7glkovPHNQMtNCPkS9WYLyAzEOdQ22x7651zMHhhYh6IgkDLpQjDUMHYb+WN1BPCd9nj+ywa5xHkZ9l1oP2xNxMI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715939866; c=relaxed/simple;
-	bh=Q59QUcYATVoiGnVZA4Y30AzDdBYL5H61GMjEm6yTfSU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=bZ8nE5up+lI0R/P7NMcWb2JbedWD6v0dV4Q/Pw6/os7Dgn2dCPph1yfRTZcohLAI/IUK83QCDmY3QI5S1drLl/ywqg0HWs7q6M3M5DYPTYoiCRj6dzyY7c1xikVJPjNkiZYCT5PZN3zFAzTOQq3K8YYfXmx0oigZAk6N1PxdIa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=P3HZANmW; arc=none smtp.client-ip=85.214.250.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
-Received: from 8bytes.org (pd9fe9dd8.dip0.t-ipconnect.de [217.254.157.216])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VlRnJynH"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.8bytes.org (Postfix) with ESMTPSA id 52B511C0B67;
-	Fri, 17 May 2024 11:57:36 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
-	s=default; t=1715939856;
-	bh=Q59QUcYATVoiGnVZA4Y30AzDdBYL5H61GMjEm6yTfSU=;
-	h=Date:From:To:Cc:Subject:From;
-	b=P3HZANmW0HH9Lc7KLo9yS+wowd4UBo+GuETRE1CZHiVQ1uz+uvNAPV1J7Xp0+OWQR
-	 vQ/7aQiM/8z2ZfHoJHjNH05ON+zEQHk+wrSqa1PE0kFsYGV5553C1tZnZH+/wweviM
-	 GpbhLDSmu+TQJPKRtDIkQK8WIeOtnMbLacedOpUKRQORD1+FuIjKO+fkICttDi+IKD
-	 boxv2Os08eV//mBfTQF8rxBjy1U+bUKUmZjXk/xHlpK+byp2e8iVNmMWfihlQlzZZa
-	 vbS1oJ2H/xrx1aXKr+rAnsen9oM4fAbD4G3nc2+P0nO9bZciYLyaC8U2s/hR2qaLxq
-	 /9apKzHdBPOBA==
-Date: Fri, 17 May 2024 11:57:34 +0200
-From: Joerg Roedel <joro@8bytes.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
-	iommu@lists.linux.dev
-Subject: [git pull] IOMMU Updates for Linux v6.10
-Message-ID: <ZkcqDrFmd4ZHv7Qf@8bytes.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DC192C68F;
+	Fri, 17 May 2024 09:58:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715939922; cv=none; b=dJPQIx5ZOCN3gwcm9JZa2jexv/9HGIv3equzdTNIpxOh4CNXRJiFus6HAW/M5U8dW4VKGXg5g/lDdeALXSC926bBQpl0EBhWtMBl+QEI3yWsQnqiaYr9ASEkr7M5/pCU2iw7QXqWwNoITbREgTtU2qoiDbME4vsvIP0TjKJxTjk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715939922; c=relaxed/simple;
+	bh=Ia/dVEWr7HUDim7yKQ618Z6eSusWdkAeUMCVf/PkIBs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RKpGrzlIvxs/gXj6zVQdR978ICeU56xf45Wu7ofilNAqlycEb4oxqpnDy/yNZOxUPkmPofwm5vAhgeKdgyJUMf39HdeWREjV6gcYijeL5bkxke9MLjbdOIqXK1zAkdnYyG8QBui7fIPbgG+6O+CWmvbOujqEys7cudGG5C8PhmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=VlRnJynH; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=hxpi/TgnORew9Z/XVkDVjx2QVxlulE667vNxVvqbtUY=; b=VlRnJynHf9XB1WJ2PuU8uoeNgE
+	VdIMolFav8OAqCi1rx/aeYzCQ5aWp6It1sZZRN8BaQATBARFNT0qTDGipMZggVztCksTuSiTW9Xod
+	h7r0+s51aMAtM2HoQ5EfDx9DIBhsjZff/7Hl74WAvcruReu/0HGpQ0EyIWFIUtqjmc/8YNduhWw26
+	sHNIsA7PWEcbQ1+0UPn7DfJPFOOgmTqp9sC6pcY+FAKWFy4P6Ku736gXrhmJgvnCO4gdadR4DXkAP
+	p8KukVuQkhH160MXcGP8GtmlCgLUl3fh2EIxK4ZeO/XCi64BWpa16V2qfytp6hFKbQnHYJHYA9VY2
+	MRLOcXQA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1s7uLn-00000005eN4-0oKS;
+	Fri, 17 May 2024 09:58:10 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id C30AE3005E3; Fri, 17 May 2024 11:58:06 +0200 (CEST)
+Date: Fri, 17 May 2024 11:58:06 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Qais Yousef <qyousef@layalina.io>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Tejun Heo <tj@kernel.org>,
+	torvalds@linux-foundation.org, mingo@redhat.com,
+	juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de,
+	bristot@redhat.com, vschneid@redhat.com, ast@kernel.org,
+	daniel@iogearbox.net, andrii@kernel.org, martin.lau@kernel.org,
+	joshdon@google.com, brho@google.com, pjt@google.com,
+	derkling@google.com, haoluo@google.com, dvernet@meta.com,
+	dschatzberg@meta.com, dskarlat@cs.cmu.edu, riel@surriel.com,
+	changwoo@igalia.com, himadrics@inria.fr, memxor@gmail.com,
+	andrea.righi@canonical.com, joel@joelfernandes.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	kernel-team@meta.com
+Subject: Re: [PATCHSET v6] sched: Implement BPF extensible scheduler class
+Message-ID: <20240517095806.GJ30852@noisy.programming.kicks-ass.net>
+References: <20240501151312.635565-1-tj@kernel.org>
+ <20240502084800.GY30852@noisy.programming.kicks-ass.net>
+ <ZjPnb1vdt80FrksA@slm.duckdns.org>
+ <20240503085232.GC30852@noisy.programming.kicks-ass.net>
+ <ZjgWzhruwo8euPC0@slm.duckdns.org>
+ <20240513080359.GI30852@noisy.programming.kicks-ass.net>
+ <20240513142646.4dc5484d@rorschach.local.home>
+ <20240514000715.4765jfpwi5ovlizj@airbuntu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,264 +80,239 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20240514000715.4765jfpwi5ovlizj@airbuntu>
 
-Hi Linus,
+On Tue, May 14, 2024 at 01:07:15AM +0100, Qais Yousef wrote:
+> On 05/13/24 14:26, Steven Rostedt wrote:
 
-There is a small and easy to resolve conflict with these changes in
-drivers/acpi/scan.c. Please take the version that comes from the iommu
-tree.  With this being said:
+> > > That is, from where I am sitting I see $vendor mandate their $enterprise
+> > > product needs their $BPF scheduler. At which point $vendor will have no
+> > > incentive to ever contribute back.
+> > 
+> > Believe me they already have their own scheduler, and because its so
+> > different, it's very hard to contribute back.
 
-The following changes since commit a38297e3fb012ddfa7ce0321a7e5a8daeb1872b6:
+'They' are free to have their own scheduler, but since 'nobody' is using
+it and 'they' want to have their product work on RHEL / SLES / etc..
+therefore are bound to respect the common interfaces, no?
 
-  Linux 6.9 (2024-05-12 14:12:29 -0700)
+> > > So I don't at all mind people playing around with schedulers -- they can
+> > > do so today, there are a ton of out of tree patches to start or learn
+> > > from, or like I said, it really isn't all that hard to just rip out fair
+> > > and write something new.
+> > 
+> > For cloud servers, I bet a lot of schedulers are not public. Although,
+> > my company tries to publish the schedulers they use.
 
-are available in the Git repository at:
+Yeah, it's the TIVO thing. Keeping all that private creates the rebase
+pain. Outside of that there's nothing we can do.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git tags/iommu-updates-v6.10
+Anyway, instead of doing magic mushroom schedulers, what does the cloud
+crud actually want? I know the KVM people were somewhat looking forward
+to the EEVDF sched_attr::sched_runtime extension because virt likes the
+longer slices. Less preemption more better for them.
 
-for you to fetch changes up to 2bd5059c6cc04b02073d4d9f57137ab74e1d8e7a:
+In fact, some of the facebook workloads also wanted longer slices (and
+no wakeup preemption).
 
-  Merge branches 'arm/renesas', 'arm/smmu', 'x86/amd', 'core' and 'x86/vt-d' into next (2024-05-13 14:06:54 +0200)
+> > From what I understand (I don't work on production, but Chromebooks), a
+> > lot of changes cannot be contributed back because their updates are far
+> > from what is upstream. Having a plugable scheduler would actually allow
+> > them to contribute *more*.
 
-----------------------------------------------------------------
-IOMMU Updates for Linux v6.10
+So can we please start by telling what kind of magic hacks ChromeOS has
+and whatfor?
 
-Including:
+The term contributing seems to mean different things to us. Building a
+external scheduler isn't contributing, it's fragmenting.
 
-	- Core:
-	  - IOMMU memory usage observability - This will make the memory used
-	    for IO page tables explicitly visible.
-	  - Simplify arch_setup_dma_ops()
+> > > Keeping a rando github repo with BPF schedulers is not contributing.
+> > 
+> > Agreed, and I would guess having them in the Linux kernel tree would be
+> > more beneficial.
 
-	- Intel VT-d:
-	  - Consolidate domain cache invalidation
-	  - Remove private data from page fault message
-	  - Allocate DMAR fault interrupts locally
-	  - Cleanup and refactoring
+Yeah, no. Same thing. It's just a pile of junk until someone puts the
+time in to figure out how to properly integrate it. Very much like Qais
+argues below.
 
-	- ARM-SMMUv2:
-	  - Support for fault debugging hardware on Qualcomm implementations
-	  - Re-land support for the ->domain_alloc_paging() callback
+> > > That's just a repo with multiple out of tree schedulers to be ignored.
+> > > Who will put in the effort of upsteaming things if they can hack up a
+> > > BPF and throw it over the wall?
+> > 
+> > If there's a place in the Linux kernel tree, I'm sure there would be
+> > motivation to place it there. Having it in the kernel proper does give
+> > more visibility of code, and therefore enhancements to that code. This
+> > was the same rationale for putting perf into the kernel proper.
 
-	- ARM-SMMUv3:
-	  - Improve handling of MSI allocation failure
-	  - Drop support for the "disable_bypass" cmdline option
-	  - Major rework of the CD creation code, following on directly from the
-	    STE rework merged last time around.
-	  - Add unit tests for the new STE/CD manipulation logic
+These things are very much not the same. A pile of random hacks vs a
+single unified interface to PMUs. They're like the polar opposite of
+one another.
 
-	- AMD-Vi:
-	  - Final part of SVA changes with generic IO page fault handling
+> > > So yeah, I'm very much NOT supportive of this effort. From where I'm
+> > > sitting there is simply not a single benefit. You're not making my life
+> > > better, so why would I care?
+> > > 
+> > > How does this BPF muck translate into better quality patches for me?
+> > 
+> > Here's how we will be using it (we will likely be porting sched_ext to
+> > ChromeOS regardless of its acceptance).
+> > 
+> > Doing testing of scheduler changes in the field is extremely time
+> > consuming and complex. We tested EEVDF vs CFS by backporting EEVDF to
+> > 5.15 (as that is the kernel version we are using on the chromebooks we
 
-	- Renesas IPMMU:
-	  - Add support for R8A779H0 hardware
+/me mumbles something about necro-kernels...
 
-	- A couple smaller fixes and updates across the sub-tree
+> > were testing on), and then we need to add a user space "switch" to
+> > change the scheduler. Note, this also risks causing a bug in adding
+> > these changes. Then we push the kernel out, and then start our
+> > experiment that enables our feature to a small percentage, and slowly
+> > increases the number of users until we have a enough for a statistical
+> > result.
+> > 
+> > What sched_ext would give us is a easy way to try different scheduling
+> > algorithms and get feedback much quicker. Once we determine a solution
+> > that improves things, we would then spend the time to implement it in
+> > the scheduler, and yes, send it upstream.
 
-----------------------------------------------------------------
-Aleksandr Aprelkov (1):
-      iommu/arm-smmu-v3: Free MSIs in case of ENOMEM
+This sounds a little backwards... ok, a lot. How do you do actual
+problem analysis in this case? Having random statistics is not really
+useful - beyond determining there might be a problem.
 
-Andy Shevchenko (1):
-      iommu/amd: Fix compilation error
+The next step is isolating that problem locally and reproducing it. Then
+analysing *what* the actual problem is and how it happens, and then try
+and think of a solution.
 
-Colin Ian King (1):
-      iommu/vt-d: Remove redundant assignment to variable err
+(preferably one that then doesn't break another thing :-)
 
-Dimitri Sivanich (1):
-      iommu/vt-d: Allocate DMAR fault interrupts locally
+> > To me, sched_ext should never be the final solution, but it can be
+> > extremely useful in testing various changes quickly in the field. Which
+> > to me would encourage more contributions.
 
-Georgi Djakov (5):
-      dt-bindings: iommu: Add Qualcomm TBU
-      iommu/arm-smmu-qcom-debug: Add support for TBUs
-      iommu/arm-smmu: Allow using a threaded handler for context interrupts
-      iommu/arm-smmu-qcom: Use a custom context fault handler for sdm845
-      iommu/arm-smmu-qcom: Use the custom fault handler on more platforms
+Well, the thing is, the moment sched_ext itself lands upstream, it will
+become the final solution for a fair number of people and leave us, the
+wider Linux scheduler community, up a creek without no paddles on.
 
-Jason Gunthorpe (16):
-      iommu/arm-smmu-v3: Do not allow a SVA domain to be set on the wrong PASID
-      iommu/arm-smmu-v3: Do not ATC invalidate the entire domain
-      iommu/arm-smmu-v3: Add a type for the CD entry
-      iommu/arm-smmu: Convert to domain_alloc_paging()
-      iommu: Add ops->domain_alloc_sva()
-      iommu: Add ops->domain_alloc_sva()
-      iommu/arm-smmu-v3: Add an ops indirection to the STE code
-      iommu/arm-smmu-v3: Make CD programming use arm_smmu_write_entry()
-      iommu/arm-smmu-v3: Move the CD generation for S1 domains into a function
-      iommu/arm-smmu-v3: Consolidate clearing a CD table entry
-      iommu/arm-smmu-v3: Make arm_smmu_alloc_cd_ptr()
-      iommu/arm-smmu-v3: Allocate the CD table entry in advance
-      iommu/arm-smmu-v3: Move the CD generation for SVA into a function
-      iommu/arm-smmu-v3: Build the whole CD in arm_smmu_make_s1_cd()
-      iommu/arm-smmu-v3: Add unit tests for arm_smmu_write_entry
-      iommu/arm-smmu-v3: Make the kunit into a module
+There is absolutely no inherent incentive to further contribute. Your
+immediate problem is solved, you get assigned the next problem. That is
+reality.
 
-Jingqi Liu (2):
-      iommu/vt-d: Remove debugfs use of private data field
-      iommu/vt-d: Remove private data use in fault message
+Worse, they can share the BPF hack and get warm fuzzy feeling of
+'contribution' while in fact it's useless. At best we know 'random hack
+changed something for them'. No problem description, no reproducer, no
+nothing.
 
-Joerg Roedel (4):
-      Merge branch 'iommu/fixes' into x86/amd
-      Merge branch 'memory-observability' into x86/amd
-      Merge tag 'arm-smmu-updates' of git://git.kernel.org/pub/scm/linux/kernel/git/will/linux into arm/smmu
-      Merge branches 'arm/renesas', 'arm/smmu', 'x86/amd', 'core' and 'x86/vt-d' into next
+Anyway, if you feel you need BPF hackery to do this, by all means, do
+so. But realize that it is a debug tool and in general we don't merge
+debug tools.
 
-Lu Baolu (13):
-      iommu/vt-d: Remove caching mode check before device TLB flush
-      iommu/vt-d: Add cache tag assignment interface
-      iommu/vt-d: Add cache tag invalidation helpers
-      iommu/vt-d: Add trace events for cache tag interface
-      iommu/vt-d: Use cache_tag_flush_all() in flush_iotlb_all
-      iommu/vt-d: Use cache_tag_flush_range() in tlb_sync
-      iommu/vt-d: Use cache_tag_flush_range_np() in iotlb_sync_map
-      iommu/vt-d: Cleanup use of iommu_flush_iotlb_psi()
-      iommu/vt-d: Use cache_tag_flush_range() in cache_invalidate_user
-      iommu/vt-d: Use cache helpers in arch_invalidate_secondary_tlbs
-      iommu/vt-d: Remove intel_svm_dev
-      iommu/vt-d: Remove struct intel_svm
-      iommu/vt-d: Decouple igfx_off from graphic identity mapping
+Also, I would argue that perhaps a scheduler livepatch would be more
+convenient to actually debug / A-B test things.
 
-Pasha Tatashin (11):
-      iommu/vt-d: add wrapper functions for page allocations
-      iommu/dma: use iommu_put_pages_list() to releae freelist
-      iommu/amd: use page allocation function provided by iommu-pages.h
-      iommu/io-pgtable-arm: use page allocation function provided by iommu-pages.h
-      iommu/io-pgtable-dart: use page allocation function provided by iommu-pages.h
-      iommu/exynos: use page allocation function provided by iommu-pages.h
-      iommu/rockchip: use page allocation function provided by iommu-pages.h
-      iommu/sun50i: use page allocation function provided by iommu-pages.h
-      iommu/tegra-smmu: use page allocation function provided by iommu-pages.h
-      iommu: observability of the IOMMU allocations
-      iommu: account IOMMU allocated memory
+> I really don't think the problems we have are because of EEVDF vs CFS vs
+> anything else. Other major OSes have one scheduler, but what they exceed on is
+> providing better QoS interfaces and mechanism to handle specific scenarios that
+> Linux lacks.
 
-Robin Murphy (9):
-      iommu/arm-smmu-v3: Retire disable_bypass parameter
-      OF: Retire dma-ranges mask workaround
-      OF: Simplify DMA range calculations
-      ACPI/IORT: Handle memory address size limits as limits
-      dma-mapping: Add helpers for dma_range_map bounds
-      iommu/dma: Make limit checks self-contained
-      iommu/dma: Centralise iommu_setup_dma_ops()
-      dma-mapping: Simplify arch_setup_dma_ops()
-      arm64: Properly clean up iommu-dma remnants
+Quite possibly. The immediate problem being that adding interfaces is
+terrifying. Linus has a rather strong opinion about breaking stuff, and
+getting this wrong will very quickly result in a paint-into-corner type
+problem.
 
-Suravee Suthikulpanit (3):
-      iommu/amd: Move PPR-related functions into ppr.c
-      iommu/amd: Define per-IOMMU iopf_queue
-      iommu/amd: Add support for page response
+We can/could add fields to sched_attr under the understanding that
+they're purely optional and try thing, *however* too many such fields
+and we're up a creek again.
 
-Thanh Le (1):
-      dt-bindings: iommu: renesas,ipmmu-vmsa: add r8a779h0 support
+> The confusion I see again and again over the years is the fragmentation of
+> Linux eco system and app writers don't know how to do things properly on Linux
+> vs other OSes. Note our CONFIG system is part of this fragmentation.
+> 
+> The addition of more flavours which inevitably will lead to custom QoS specific
+> to that scheduler and libraries built on top of it that require that particular
+> extension available is a recipe for more confusion and fragmentation.
 
-Uros Bizjak (1):
-      iommu/vt-d: Use try_cmpxchg64{,_local}() in iommu.c
+Yes, this!
 
-Vasant Hegde (10):
-      iommu/amd: Rename amd_iommu_v2_supported() as amd_iommu_pasid_supported()
-      iommu/amd: Introduce per device DTE update function
-      iommu/amd: Fix PPR interrupt processing logic
-      iommu/amd: Introduce iommu_dev_data.max_pasids
-      iommu/amd: Setup GCR3 table in advance if domain is SVA capable
-      iommu/amd: Enable PCI features based on attached domain capability
-      iommu/amd: Add support for enable/disable IOPF
-      iommu/amd: Initial SVA support for AMD IOMMU
-      iommu/amd: Add SVA domain support
-      iommu/amd: Enable Guest Translation after reading IOMMU feature register
+> I really don't buy the rapid development aspect too. The scheduler was heavily
+> influenced by the early contributors which come from server market that had
+> (few) very specific workloads they needed to optimize for and throughput had
+> a heavier weight vs latency. Fast forward to now, things are different. Even on
+> server market latency/responsiveness has become more important. Power and
+> thermal are important on a larger class of systems now too. I'd dare say even
+> on server market.
 
-Wei Huang (2):
-      iommu/amd: Add support for enabling/disabling IOMMU features
-      iommu/amd: Add IO page fault notifier handler
+Absolutely, AFAIU racks are both power and thermal limited. There are
+some crazy ACPI protocols to manage some of this.
 
-Will Deacon (1):
-      iommu/arm-smmu-qcom: Don't build debug features as a kernel module
+> How do you know when it's okay for an app/task to consume too
+> much power and when it is not? Hint hint, you can't unless someone in userspace
+> tells you.
 
-Yi Liu (2):
-      iommu: Undo pasid attachment only for the devices that have succeeded
-      iommu: Pass domain to remove_dev_pasid() op
+Yes, cluster/cloud infrastructure needs to manage that. There is nothing
+smart the kernel can do here on its own, except respect the ACPI lunacy
+and hard throttle itself when the panic signal comes.
 
- Documentation/admin-guide/cgroup-v2.rst            |   2 +-
- .../devicetree/bindings/iommu/qcom,tbu.yaml        |  69 +++
- .../bindings/iommu/renesas,ipmmu-vmsa.yaml         |   1 +
- Documentation/filesystems/proc.rst                 |   4 +-
- arch/arc/mm/dma.c                                  |   3 +-
- arch/arm/mm/dma-mapping-nommu.c                    |   3 +-
- arch/arm/mm/dma-mapping.c                          |  16 +-
- arch/arm64/Kconfig                                 |   1 -
- arch/arm64/mm/dma-mapping.c                        |  13 +-
- arch/loongarch/kernel/dma.c                        |   9 +-
- arch/mips/mm/dma-noncoherent.c                     |   3 +-
- arch/riscv/mm/dma-noncoherent.c                    |   3 +-
- drivers/acpi/arm64/dma.c                           |  17 +-
- drivers/acpi/arm64/iort.c                          |  20 +-
- drivers/acpi/scan.c                                |   7 +-
- drivers/hv/hv_common.c                             |   6 +-
- drivers/iommu/Kconfig                              |  25 +-
- drivers/iommu/amd/Kconfig                          |   3 +
- drivers/iommu/amd/Makefile                         |   2 +-
- drivers/iommu/amd/amd_iommu.h                      |  60 ++-
- drivers/iommu/amd/amd_iommu_types.h                |  33 ++
- drivers/iommu/amd/init.c                           | 177 +++----
- drivers/iommu/amd/io_pgtable.c                     |  13 +-
- drivers/iommu/amd/io_pgtable_v2.c                  |  18 +-
- drivers/iommu/amd/iommu.c                          | 302 +++++++----
- drivers/iommu/amd/pasid.c                          | 198 +++++++
- drivers/iommu/amd/ppr.c                            | 288 +++++++++++
- drivers/iommu/arm/arm-smmu-v3/Makefile             |   2 +
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c    | 168 ++++--
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-test.c   | 468 +++++++++++++++++
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c        | 568 +++++++++++----------
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h        |  60 ++-
- drivers/iommu/arm/arm-smmu/arm-smmu-qcom-debug.c   | 496 ++++++++++++++++++
- drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c         |   8 +
- drivers/iommu/arm/arm-smmu/arm-smmu-qcom.h         |   2 +
- drivers/iommu/arm/arm-smmu/arm-smmu.c              |  20 +-
- drivers/iommu/arm/arm-smmu/arm-smmu.h              |   3 +
- drivers/iommu/dma-iommu.c                          |  46 +-
- drivers/iommu/dma-iommu.h                          |  14 +-
- drivers/iommu/exynos-iommu.c                       |  14 +-
- drivers/iommu/intel/Makefile                       |   2 +-
- drivers/iommu/intel/cache.c                        | 419 +++++++++++++++
- drivers/iommu/intel/debugfs.c                      |   7 -
- drivers/iommu/intel/dmar.c                         |  26 +-
- drivers/iommu/intel/iommu.c                        | 383 +++-----------
- drivers/iommu/intel/iommu.h                        |  88 +++-
- drivers/iommu/intel/irq_remapping.c                |  16 +-
- drivers/iommu/intel/nested.c                       |  69 +--
- drivers/iommu/intel/pasid.c                        |  18 +-
- drivers/iommu/intel/perf.h                         |   1 -
- drivers/iommu/intel/svm.c                          | 383 ++++----------
- drivers/iommu/intel/trace.h                        |  97 ++++
- drivers/iommu/io-pgtable-arm.c                     |  15 +-
- drivers/iommu/io-pgtable-dart.c                    |  37 +-
- drivers/iommu/iommu-pages.h                        | 186 +++++++
- drivers/iommu/iommu-sva.c                          |  16 +-
- drivers/iommu/iommu.c                              |  48 +-
- drivers/iommu/irq_remapping.c                      |   5 +-
- drivers/iommu/irq_remapping.h                      |   2 +-
- drivers/iommu/rockchip-iommu.c                     |  14 +-
- drivers/iommu/s390-iommu.c                         |   6 -
- drivers/iommu/sun50i-iommu.c                       |   7 +-
- drivers/iommu/tegra-smmu.c                         |  18 +-
- drivers/iommu/virtio-iommu.c                       |  10 -
- drivers/of/device.c                                |  42 +-
- include/linux/acpi_iort.h                          |   4 +-
- include/linux/dma-direct.h                         |  18 +
- include/linux/dma-map-ops.h                        |   6 +-
- include/linux/dmar.h                               |   2 +-
- include/linux/iommu.h                              |  16 +-
- include/linux/mmzone.h                             |   5 +-
- mm/vmstat.c                                        |   3 +
- 72 files changed, 3536 insertions(+), 1598 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/iommu/qcom,tbu.yaml
- create mode 100644 drivers/iommu/amd/pasid.c
- create mode 100644 drivers/iommu/amd/ppr.c
- create mode 100644 drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-test.c
- create mode 100644 drivers/iommu/intel/cache.c
- create mode 100644 drivers/iommu/iommu-pages.h
+> Similarly for latency vs throughput. What is the correct way to
+> write an application to provide this info? Then we can ask what is missing in
+> the scheduler to enable this.
 
-Please pull.
+Right, so the EEVDF thing is a start here. By providing a per task
+request size, applications can indicate if they want frequent and short
+activations or more infrequent longer activations.
 
-Thanks,
+An application can know it's (average) activation time, the kernel has
+no clue when work starts and is completed. Applications can fairly
+trivially measure this using CLOCK_THREAD_CPUTIME_ID reads before and
+after and communicate this (very much like SCHED_DEADLINE).
 
-	Joerg
+Anyway, yes, userspace needs to change and provide more information. The
+trick ofcourse is figuring out which bit of information is critical /
+useful etc.
+
+There is a definite limit on the amount of constraints you want to solve
+at runtime.
+
+Everybody going off and hacking their own thing does not help, we need
+collaboration to figure out what it is that is needed.
+
+> Note the original min/wakeup_granularity_ns, latency_ns etc were tuned by
+> default for throughput by the way (server market bias). You can manipulate
+> those and get better latencies.
+
+The immediate problem with those knobs is that they are system wide. But
+yes, everybody was randomly poking them knobs, sometimes in obviously
+insane ways.
+
+> FWIW IMO the biggest issues I see in the scheduler is that its testability and
+> debuggability is hard. I think BPF can be a good fit for that. For the latter
+> I started this project, yet I am still trying to figure out how to add tracer
+> for the difficult paths to help people more easily report when a bad decision
+> has happened to provide more info about the internal state of the scheduler, in
+> hope to accelerate the process of finding solutions. 
+
+So the pitfalls here are that exposing that information for debug
+purposes can/will lead to people consuming this information for
+non-debug purposes and then when we want to change things we're stuck
+because suddenly someone relies something we believed was an
+implementation detail :/
+
+I've been bitten by this before and this is why I'm so very hesitant to
+put tracepoints in the scheduler.
+
+> I think it would be great to have a clear list of the current limitations
+> people see in the scheduler. It could be a failure on my end, but I haven't
+> seen specifics of problems and what was tried and failed to the point it is
+> impossible to move forward. 
+
+Right, list, but also ideally reproducers (yeah, I know, really hard).
+
+The moment we merge sched_ext all motivation to do any of this work goes
+out the window.
+
+> From what I see, I am hitting bugs here and there
+> all the time. But they are hard to debug to truly understand where things went
+> wrong. Like this one for example where PTHREAD_PRIO_PI is a NOP for fair tasks.
+> Many thought using this flag doesn't help (rather than buggy)..
+
+Yay for the terminal backlog :/ I'll try and have a look.
 
