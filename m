@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-182447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F89F8C8B65
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:44:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC93A8C8B66
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:44:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75CAFB2405A
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:44:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87AEA288184
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:44:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07BE414389B;
-	Fri, 17 May 2024 17:40:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7437143C72;
+	Fri, 17 May 2024 17:40:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Xxmup4vt"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s+9kuIVP"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB0DC142E82
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 17:40:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D58143880
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 17:40:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715967612; cv=none; b=rlaqZb6OwDYD2wX6o/T6LO+zQeG2QYn3HYcqx1n3QQ5es43LytDHJc7FIt5WV51zE7L3S+posnPTHVQlbRFt0BJJneBr6PCShduDUzh7pmRzpG01xZiXcNav4gHIEA+AufG6ZEsrYlilqwN9oE6leEMy39hpYr/6FexaySeh3a0=
+	t=1715967614; cv=none; b=nhMRkD08O6JFp+nURh+wCTB3N9130FwoNzBHppy1gdl1yKd9cQhf/u/zl8Jbmc1aSQtMPI8yNXlaH/LsgrgUTaEveSKANfzQ3vFAWVwQI+cN+2Yx+6GzL9q0g2v0lvg+RDJSl2dYmxnpUI8jdv78o0hG7kQe1IYPWtA26j+OFoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715967612; c=relaxed/simple;
-	bh=zRj32qdgHhJsALJpg2jyemKEBBr88t5aYQ51Nc8NJEE=;
+	s=arc-20240116; t=1715967614; c=relaxed/simple;
+	bh=JWFYm3hzYs3OhfFjHKQqDUvFKX5QGqdvk4KVBkOltW8=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=UIaS/UVZjBgAJPdOdFE9g82tCvT2y8FXAE/Zb8T/VWUrDOYCN06IhDlUZhhYa1ZPyXfptGb+t/VJ8+5mgbYgx+cGnAHKgTBbxs8l60MRiFVwiawChaC1u/adhOQ4gGcxj572XweYvYFGi1hzaRoqFAuBVwu3ebT2F8se4HYJ4Lo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Xxmup4vt; arc=none smtp.client-ip=209.85.216.73
+	 To:Cc:Content-Type; b=iJaHWle3/1JRNRUsF8aTD2nOYpNkXfLf0ltvSxqVvp6VepxJNojJcOAMqrEzFvYvY0UGYfepUOrQ8woLaD/PuwUtDrNxh+nOmNVptzaQVDIIKckZRQby8+L7R2KRcrZKJV50XYLBbn3KvMo/1KNy9lVrZGYyrnICwjfGB68mLD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=s+9kuIVP; arc=none smtp.client-ip=209.85.210.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2ba0fd5142dso1871574a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 10:40:10 -0700 (PDT)
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-6f44e0a2756so7724590b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 10:40:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715967610; x=1716572410; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1715967612; x=1716572412; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=6bzxOU8NhNsl1Y52djteXEYcFAfWB0zibELE07MjEz8=;
-        b=Xxmup4vt1L/AEF6Yy7VHF+MOc47yxsdaW58uLhBl5/GImOS6xkI1jR3UKI5YMLpWb3
-         bEQ+WJk7N2ca0laqE3rPlYG37/hZQZZyO2Z1EnMHjNNiMbTG00/iD0r0pgJMJ/xd0O9C
-         PlpXXvJei+/NGCoqKXQuxZ69+DrGbWleDATcmKfryygy23DdaxBDUA34ym/g/yTs12/z
-         cPDAosw2vKWLkpnmbQ/GF1xtxo6Ty4y1Y0v4b+siQZpEzRPw1vurS5y2NxOcsPaJGI2T
-         7I/aa/zCdQnqnunzVV20zmmJEw2R5GOis/xeOxNhRi6zAktDxpjoYlqzmi6J+G7Mm4wj
-         N3ig==
+        bh=+xzcZH1oX82o+qOCBsf3LxtdbYVe7tXAJ4CjGFkhZ1E=;
+        b=s+9kuIVPvj7qjbEf5NbiNyiqCOlCCPfuNSmvSaafb3/N/d9trIE9IsKqTxPGVBnf0B
+         h9t2gVrPJDvnBATNw1Wvb7V0RzUPKrCM3wI6Q84jpeiVxHYgB8Xdv/k58HLvmjaMZJCb
+         YHAsxhlB1RDJEznXSjEdrXFFzK+YeWX8A8fdLxSrfK5/7HYjo7o/KvX7j+idKeX3KRei
+         8vq8ijyGJbb1XUZHWNnAYSrP2ykBBBGu9xEfT6nyVIazzYnPILudcQYMosFlPfznbh7M
+         Hf7h5ZDdhcF3C9/WjpdsPb8bAqF9aWDaqw1IB+2wpt4EfReiMQLJiiRE3SERNGkhAQvH
+         oxgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715967610; x=1716572410;
+        d=1e100.net; s=20230601; t=1715967612; x=1716572412;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=6bzxOU8NhNsl1Y52djteXEYcFAfWB0zibELE07MjEz8=;
-        b=c3PaI4HJTdF2aoyYV16Xohv2yTiNllvOQ/5r5gv3CaWy9jihz+AxDu7FCxua06cewA
-         Q8Y0pYcERkI25bStMTIuleA208SvaD7uJL7ST0ApD7FYCB6Amk7a0R8ZApwPeZFpivPB
-         18KBng7NH48RcYdYcjh4ypsyQCmm2AW9W3LeyvEETG4jfNb0PZOOVdnGisVh7JFCRB0s
-         zSOE0wKjRAI4/62SXVvOzdzvQ+4iXKEQB78z/e7gc+yzo2qTCp8yv2b/1KhmTvQaOASI
-         azwdg9AeuNro4Q/awf1qJX4WvuSX1VqUqs8JiNU1Z6s4e7tBnutBuIT2V5bOHTkEkA+E
-         0QAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXkR02M1YAlYJUZgcaKub9igxg+0NIAe6XAgId9P2XhZfF1lfaD48uHW4Amv25aEdhFRqRZmVPyrxf+E8thww0q2IydPsfL+Mmhn+I7
-X-Gm-Message-State: AOJu0YwI+V9y9wU19YXPOX5+RCaIP8trCtnvHKhE8grN74MJBJXDnRAi
-	X28j4soC7MwqLdIWlcBNbSY2e/lfCO9v0GEsZN/XVZZlzptCE3Be+62J+XxhqO5lYPMHHLYk1ck
-	tZw==
-X-Google-Smtp-Source: AGHT+IFcLo7rDAywCFo+bppcXqC0KCOZkzjWf6sQX6YTcrUeeHqCwQvqaaQ8ZGIZSQ3h26muIlAjIduKPl4=
+        bh=+xzcZH1oX82o+qOCBsf3LxtdbYVe7tXAJ4CjGFkhZ1E=;
+        b=i6xYhvq/IIHqLJkq8WFcNPvjUvJf/1ughRfMDv/j72hIKat3dGdFyTil9zh8HHmb7B
+         Tc4iVH/9Hdv9wyO33HCfeLvyJhJZqOk09DSZKBFnhLbzksrA7KPr4QIWecbOviN0X+ZN
+         XHtAnuU30T6yko4QsViWPV044pagIA5Xh1CSJvWuSinyEfiIKlK2BqpUb/JxDBvMmj5k
+         8ic0wf6NgbtAnfftmrVMt5Z9cXWD8CWkEFjZNAQbSqOvskUtG81tv9E3mOl6p1mmtO0U
+         np44H0GOpXHr4mVro8k/EiBQDbUNQdYDPhy9cH1h0kurQ9LwTxLpPjUZGZ8yDhzCHxT9
+         d5iw==
+X-Forwarded-Encrypted: i=1; AJvYcCXI0NoEBXVq11VuUWcSDQsJuZ1jtu2kru+NipAQQazM1zFkOVBz8LL/AVPlYxx93G73F8rOak+m3abWXyp9XwJ8cVAGp8k92nv5uk9A
+X-Gm-Message-State: AOJu0Yx5+fQh8sF+aps12GUeIaqmDzTsPvGMydDhPLvsx3r9nKAqhDq/
+	Edlpw3rSh782sTaGWLGXcTQ3VN/NnLqVwFwbpixfMPR6i/tXlQHcf8+a6/BTMH5FEmdBL5MzhYa
+	Y/g==
+X-Google-Smtp-Source: AGHT+IGsN6Qh61VqtBf96frE+hd3CwAur9vrPpJuALwxwHlbxVPzVF/y8P8dpbLdPI8ksAq7YkoDW5FYIR8=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:90a:a886:b0:2b5:d981:29af with SMTP id
- 98e67ed59e1d1-2b66002b693mr113340a91.4.1715967610168; Fri, 17 May 2024
- 10:40:10 -0700 (PDT)
+ (user=seanjc job=sendgmr) by 2002:a05:6a00:390d:b0:6eb:1d5:a3a with SMTP id
+ d2e1a72fcca58-6f4df3b1c35mr975367b3a.1.1715967612089; Fri, 17 May 2024
+ 10:40:12 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri, 17 May 2024 10:38:51 -0700
+Date: Fri, 17 May 2024 10:38:52 -0700
 In-Reply-To: <20240517173926.965351-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,9 +75,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240517173926.965351-1-seanjc@google.com>
 X-Mailer: git-send-email 2.45.0.215.g3402c0e53f-goog
-Message-ID: <20240517173926.965351-15-seanjc@google.com>
-Subject: [PATCH v2 14/49] KVM: selftests: Update x86's KVM PV test to match
- KVM's disabling exits behavior
+Message-ID: <20240517173926.965351-16-seanjc@google.com>
+Subject: [PATCH v2 15/49] KVM: x86: Zero out PV features cache when the CPUID
+ leaf is not present
 From: Sean Christopherson <seanjc@google.com>
 To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, 
 	Vitaly Kuznetsov <vkuznets@redhat.com>
@@ -88,78 +88,30 @@ Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Robert Hoo <robert.hoo.linux@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Rework x86's KVM PV features test to align with KVM's new, fixed behavior
-of not allowing userspace to disable HLT-exiting after vCPUs have been
-created.  Rework the core testcase to disable HLT-exiting before creating
-a vCPU, and opportunistically modify keep the paired VM+vCPU creation to
-verify that KVM rejects KVM_CAP_X86_DISABLE_EXITS as expected.
+Clear KVM's PV feature cache prior when processing a new guest CPUID so
+that KVM doesn't keep a stale cache entry if userspace does KVM_SET_CPUID2
+multiple times, once with a PV features entry, and a second time without.
 
+Fixes: 66570e966dd9 ("kvm: x86: only provide PV features if enabled in guest's CPUID")
+Cc: Oliver Upton <oliver.upton@linux.dev>
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- .../selftests/kvm/x86_64/kvm_pv_test.c        | 33 +++++++++++++++++--
- 1 file changed, 30 insertions(+), 3 deletions(-)
+ arch/x86/kvm/cpuid.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/tools/testing/selftests/kvm/x86_64/kvm_pv_test.c b/tools/testing/selftests/kvm/x86_64/kvm_pv_test.c
-index 2aee93108a54..1b805cbdb47b 100644
---- a/tools/testing/selftests/kvm/x86_64/kvm_pv_test.c
-+++ b/tools/testing/selftests/kvm/x86_64/kvm_pv_test.c
-@@ -139,6 +139,7 @@ static void test_pv_unhalt(void)
- 	struct kvm_vm *vm;
- 	struct kvm_cpuid_entry2 *ent;
- 	u32 kvm_sig_old;
-+	int r;
+diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+index f756a91a3f2f..be1c8f43e090 100644
+--- a/arch/x86/kvm/cpuid.c
++++ b/arch/x86/kvm/cpuid.c
+@@ -246,6 +246,8 @@ void kvm_update_pv_runtime(struct kvm_vcpu *vcpu)
+ {
+ 	struct kvm_cpuid_entry2 *best = kvm_find_kvm_cpuid_features(vcpu);
  
- 	if (!(kvm_check_cap(KVM_CAP_X86_DISABLE_EXITS) & KVM_X86_DISABLE_EXITS_HLT))
- 		return;
-@@ -152,19 +153,45 @@ static void test_pv_unhalt(void)
- 	TEST_ASSERT(vcpu_cpuid_has(vcpu, X86_FEATURE_KVM_PV_UNHALT),
- 		    "Enabling X86_FEATURE_KVM_PV_UNHALT had no effect");
- 
--	/* Make sure KVM clears vcpu->arch.kvm_cpuid */
-+	/* Verify KVM disallows disabling exits after vCPU creation. */
-+	r = __vm_enable_cap(vm, KVM_CAP_X86_DISABLE_EXITS, KVM_X86_DISABLE_EXITS_HLT);
-+	TEST_ASSERT(r && errno == EINVAL,
-+		    "Disabling exits after vCPU creation didn't fail as expected");
++	vcpu->arch.pv_cpuid.features = 0;
 +
-+	kvm_vm_free(vm);
-+
-+	/* Verify that KVM clear PV_UNHALT from guest CPUID. */
-+	vm = vm_create(1);
-+	vm_enable_cap(vm, KVM_CAP_X86_DISABLE_EXITS, KVM_X86_DISABLE_EXITS_HLT);
-+
-+	vcpu = vm_vcpu_add(vm, 0, NULL);
-+	TEST_ASSERT(!vcpu_cpuid_has(vcpu, X86_FEATURE_KVM_PV_UNHALT),
-+		    "vCPU created with PV_UNHALT set by default");
-+
-+	vcpu_set_cpuid_feature(vcpu, X86_FEATURE_KVM_PV_UNHALT);
-+	TEST_ASSERT(!vcpu_cpuid_has(vcpu, X86_FEATURE_KVM_PV_UNHALT),
-+		    "PV_UNHALT set in guest CPUID when HLT-exiting is disabled");
-+
-+	/*
-+	 * Clobber the KVM PV signature and verify KVM does NOT clear PV_UNHALT
-+	 * when KVM PV is not present, and DOES clear PV_UNHALT when switching
-+	 * back to the correct signature..
-+	 */
- 	ent = vcpu_get_cpuid_entry(vcpu, KVM_CPUID_SIGNATURE);
- 	kvm_sig_old = ent->ebx;
- 	ent->ebx = 0xdeadbeef;
- 	vcpu_set_cpuid(vcpu);
- 
--	vm_enable_cap(vm, KVM_CAP_X86_DISABLE_EXITS, KVM_X86_DISABLE_EXITS_HLT);
-+	vcpu_set_cpuid_feature(vcpu, X86_FEATURE_KVM_PV_UNHALT);
-+	TEST_ASSERT(vcpu_cpuid_has(vcpu, X86_FEATURE_KVM_PV_UNHALT),
-+		    "PV_UNHALT cleared when using bogus KVM PV signature");
-+
- 	ent = vcpu_get_cpuid_entry(vcpu, KVM_CPUID_SIGNATURE);
- 	ent->ebx = kvm_sig_old;
- 	vcpu_set_cpuid(vcpu);
- 
- 	TEST_ASSERT(!vcpu_cpuid_has(vcpu, X86_FEATURE_KVM_PV_UNHALT),
--		    "KVM_FEATURE_PV_UNHALT is set with KVM_CAP_X86_DISABLE_EXITS");
-+		    "PV_UNHALT set in guest CPUID when HLT-exiting is disabled");
- 
- 	/* FIXME: actually test KVM_FEATURE_PV_UNHALT feature */
- 
+ 	/*
+ 	 * save the feature bitmap to avoid cpuid lookup for every PV
+ 	 * operation
 -- 
 2.45.0.215.g3402c0e53f-goog
 
