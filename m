@@ -1,90 +1,105 @@
-Return-Path: <linux-kernel+bounces-182514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC5478C8C35
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 20:22:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 836D88C8C39
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 20:29:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3BC72845F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 18:22:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA8F0B2178F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 18:29:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57FD913DDD3;
-	Fri, 17 May 2024 18:22:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4EDB13DDCB;
+	Fri, 17 May 2024 18:29:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CAJXcxHI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="ApTxYsNI"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93ED41FC8;
-	Fri, 17 May 2024 18:22:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21E631FC8
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 18:29:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715970134; cv=none; b=YEP8JVoBa/tFVaO6JvYZYwETa7ZRY94145YKyNzS6i8KGPFv73NyZHxGvhKrBbH6Y9eRPkQtR/wp1de3wPW8AgPWWmdYFk/0sZVVhfSTvRdvItaV+g2AA+1DGv4K2V9e8IJYi0PiXLoHjxIeGY8HU0rLpfeXzIB7OhwBHqtUdrI=
+	t=1715970566; cv=none; b=bdct7YS+kEtShwfTJr4RIVdc1g5VQE7wWPQXQolfkra7HiCHrNr+b1LmCFb3EeZQOV89nXBxZya0djfINfWmKlnsIhvnylkBz26m8dfJdxasDVK/7s+gZVo1l2w7XmAo9xMkysMJeJJQ23YIG6hgD9cTrcLW1y1d5mZAckIfL84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715970134; c=relaxed/simple;
-	bh=EwkmU5I4ug4JOYE7xX0QXVZ/KNP0gdUYZGWe5VRcPLI=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=ql+qTSO90hkBbsb35jogh5wcRaQA0oTf7Z/FJA6TOqTvu2uzWN9w07uLPcMMy93Jq3ikD++GMVR+adKv8p+tHFZVDIAKeNcueQnVJjUlaXLfdmB/68QE3F0gXRjNQTnabVjPcZ05yityBCrQrtm5IFNqMq4PlLMuBW2G5+D0x6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CAJXcxHI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B16C5C2BD10;
-	Fri, 17 May 2024 18:22:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715970134;
-	bh=EwkmU5I4ug4JOYE7xX0QXVZ/KNP0gdUYZGWe5VRcPLI=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=CAJXcxHIx8NJrDAea5sluXd0jcn3DnG/W72bOyKcI1cSxur8crcoakSNzVoCMFbL/
-	 mc+INzNvgdbxXuefnmlya83RELKQzzADN+TFJHAFTMmkokP9MwG6sMw6DS6WQfFzF1
-	 0tXMOCvMbiNPE1kHyB6dAqQMvuLL7g+pgC4oevh0uIKazXiiQHy0UaiTH09rE7yaKD
-	 rwN56OpPecWDy+sNZesU1Wit5dzy8qhyLTLIA8f+VgycIaTw7YEQhjohyEBtyBcrZn
-	 hl6CNHmVAHPmM8pRMC6W4kGakVqQsvCZhV4O+h9JkVq+C5Z5CnMjGCu2QgThDIk0dp
-	 RrGItsdQVObYw==
-From: Kalle Valo <kvalo@kernel.org>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,  Thomas Gleixner
- <tglx@linutronix.de>,  Ingo Molnar <mingo@redhat.com>,  Dave Hansen
- <dave.hansen@linux.intel.com>,  "Rafael J. Wysocki" <rafael@kernel.org>,
-  x86@kernel.org,  linux-pm@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  regressions@lists.linux.dev,  Jeff Johnson <quic_jjohnson@quicinc.com>
-Subject: Re: [regression] suspend stress test stalls within 30 minutes
-References: <87o79cjjik.fsf@kernel.org>
-	<20240511184847.GCZj-9j2sh1Akpt9iS@fat_crate.local>
-	<20240511184945.GDZj-9yaOEWqf1ng8u@fat_crate.local>
-	<87h6f4jdrq.fsf@kernel.org> <878r0djxgc.fsf@kernel.org>
-	<874jb0jzx5.fsf@kernel.org>
-	<20240514160555.GCZkOL41oB3hBt45eO@fat_crate.local>
-	<87msoofjg1.fsf@kernel.org>
-	<20240517172603.GEZkeTK246tBvGEtgF@fat_crate.local>
-Date: Fri, 17 May 2024 21:22:09 +0300
-In-Reply-To: <20240517172603.GEZkeTK246tBvGEtgF@fat_crate.local> (Borislav
-	Petkov's message of "Fri, 17 May 2024 19:26:03 +0200")
-Message-ID: <875xvcfgdq.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1715970566; c=relaxed/simple;
+	bh=df+lEAM18IB6tecfCHigBHT3gT3NP3mvFuDueA2ulTA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ce074IfVQSaP+sTn1xm4ZDfA2rVXDctjnnYpj+0+RnESH68ovn5N7dZvZMY/vSKU6ebmKk4L92ctpr07WiVFVMz7kCovql6Mb+e3y7LOgIDSHn5nieuJKNjQ/YfR9CX+ZaLa3n+U6Swt7Zb1I1m3+jZqTcgSYzaMBrVIJMxFYoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=ApTxYsNI; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 98F4340E02A6;
+	Fri, 17 May 2024 18:29:21 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id bmz9oZhizfq2; Fri, 17 May 2024 18:29:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1715970558; bh=/NB5BQv4FVCJGiaPuaya/FSVElUlT/rXVpI7wxyep7s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ApTxYsNI6qiO/wGxpxZyJ/HWrT4rgnWdpLhfWX2Hr8QRf8SB6dNUdWI5S0oknAMKR
+	 GkgruKDoZU47rSiYHJno+MmZPSvK3Vy3L/eBwSg1dzXOnRA2OTfiJBMF/T5eBQwR75
+	 mzW1RwaSw5hCwBBHYwZL2SuXGcnf94g/vqSkOa5FlrS45RfzWgkmvoXs/lLpkYg0Yr
+	 IwF6epYEFmWEVY9J86KpNR7ZEws39vQGx2VnDTXGaO/3+wgIlFjXHWhe6f8elI0Y9q
+	 +7mmfkxQ2c3QTQgmE/5autkSNAACgCXLYZqYY080QgTiYUmfHFA7mwOI4Jj3Tl6MQD
+	 ulj2WXLzVw36qTtdwOf9SeNtRhf3eyFJB5Fa2TZAlZGDicm1Q9SsmIbFqAfaXzgNSV
+	 AzNJ5lNexMPlo5ggLuHXu1YdPBBKSWXCjQs2VQlO0jaqWRfV0djF7jtMLd2KlblsBr
+	 yUdzeVx8sK/spF/TD3DPcBbXP7nGpyHE3Grj/y3WHwCm8gz4hQ9+RMhFuOkpJpCEkr
+	 8e3BuUfwJqaePSaWpUNKTk7f79tx9ai6L9XiGU765cWKc76FjU0Z/ualpEGPjwCFHf
+	 G5UKsZOPlq/ib6XLKsg/hP9YHR3kRpnYA78QvvOD3NlcqYvoG5jwMHcNBw+YE8eXfo
+	 rFsfMy+mEfh2p36EZBRPkV1Q=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D649D40E023A;
+	Fri, 17 May 2024 18:29:01 +0000 (UTC)
+Date: Fri, 17 May 2024 20:28:56 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Tony Luck <tony.luck@intel.com>, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	Uros Bizjak <ubizjak@gmail.com>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Arnd Bergmann <arnd@arndb.de>, Mateusz Guzik <mjguzik@gmail.com>,
+	Thomas Renninger <trenn@suse.de>,
+	Greg Kroah-Hartman <gregkh@suse.de>,
+	Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev
+Subject: Re: [PATCH v3] x86/cpu: Fix x86_match_cpu() to match just
+ X86_VENDOR_INTEL
+Message-ID: <20240517182856.GHZkeh6DOiNa-23-EW@fat_crate.local>
+References: <20240517172134.7255-1-tony.luck@intel.com>
+ <20240517173811.GFZkeWAzKjYtEMwe1e@fat_crate.local>
+ <EEEDDDD9-3514-4246-B506-6A1DBD5CF794@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <EEEDDDD9-3514-4246-B506-6A1DBD5CF794@zytor.com>
 
-Borislav Petkov <bp@alien8.de> writes:
+On Fri, May 17, 2024 at 10:46:29AM -0700, H. Peter Anvin wrote:
+> Thought: why don't we add VENDOR and CPUID as synthetic CPU feature flags as well? Not saying it necessarily solves this specific problem but it might make some other code more uniform. 
+> 
+> Obviously on x86-64 CPUID is baseline; VENDOR might not be known, however.
 
-> On Fri, May 17, 2024 at 08:15:58PM +0300, Kalle Valo wrote:
->> So the weird part is that when the bug happens (ie. suspend stalls) I
->> can access the box normally using ssh and I don't see anything special
->> in dmesg. Below is a full copy of dmesg output after the suspend
->> stalled. Do note that I copied this dmesg before I updated microcode so
->> it will still show the old microcode version.
->
-> Does that mean that you'd still see the stall even with the latest
-> microcode revision 0xf8?
-
-Yeah, no luck with that. I have more information in my other email.
+Well, there's only a handful of X86_VENDOR_UNKNOWN usages in the kernel
+so meh. Or do you mean something else?
 
 -- 
-https://patchwork.kernel.org/project/linux-wireless/list/
+Regards/Gruss,
+    Boris.
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+https://people.kernel.org/tglx/notes-about-netiquette
 
