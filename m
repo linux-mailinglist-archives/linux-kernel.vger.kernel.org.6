@@ -1,113 +1,112 @@
-Return-Path: <linux-kernel+bounces-181651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E9C48C7F35
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 02:29:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A41A8C7F3C
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 02:33:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60DC21C21985
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 00:29:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC3681C2185E
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 00:33:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC7F365F;
-	Fri, 17 May 2024 00:29:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D75A1A5F;
+	Fri, 17 May 2024 00:33:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tbt4d+qT"
-Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HD7Szvyn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEADD387;
-	Fri, 17 May 2024 00:29:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12283389;
+	Fri, 17 May 2024 00:33:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715905792; cv=none; b=j3sYyVdcvOXCdqJ2KYmLWaaII79dQ8Tr8/kAyAjq27HYnlPDQ46bOEXAKESTSzJtI68fW4IViY+h/II3/BG/wyBRqyaTjYYqSMDr0Azc36cOB5bjcq5eembWOx3NG5/w8UZCC+9uKupZT2z1hvI2bvS0yCzIxRIbrXMWBpUHhz8=
+	t=1715906014; cv=none; b=oWdY8+o8vM+DIBMjeNWAzFz7YZIFcemQJVKQTzZPYp6EG7XFAz7NzFDOd/yQVj7pRCe8sYTjpB9TlESckmzG/2dmuI9V8QduACyY3zrkCW6IhJE+CmERJvwpvRYsrLErOztjY/kM1tzxaJfwv9RgcMcMJmfX7h59Q4TS7M6RaAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715905792; c=relaxed/simple;
-	bh=KH0mu/PBKvyDTtRbZDfMad/j9+AAEqnKA8oRnYYewaU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ccBr/j1WuhtPvU5tSV3cPK37atlN3/zgBiLO2AlIHCYu4sUa2Kv7PoSG7bT9sohordQFD+tQfHXJSMZsJsN1ybO+HoDo8sQwj+ir9HH4CsriqAepA7u2pPgfXWiE0wlw0tCM4F5mxCTWnmAz4sW/DepW/QM7mfM0FvQvy0eQyLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tbt4d+qT; arc=none smtp.client-ip=209.85.217.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-481398a7381so1698413137.3;
-        Thu, 16 May 2024 17:29:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715905790; x=1716510590; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=N+KmOyC/iV8n/07rVcqpUpUm3beAF6+iOzU5m/G/q6o=;
-        b=Tbt4d+qTzmsRUGEGyxIxmqLCeQTDsruswGIhwiWR7d7didwpHQNb47wQx1dOBQVuBr
-         P58bQkBlNbbZEqFU4G8a94BqnvUDs7OhdUzjEhRnwwAOeqY3i/YndtvjX9aNt24mM7pC
-         zWaGscvWducpCEwcqY8FNvKUdLLKe3w4nNdo2rYPioNU+oVuIbKvtyArpKfa3h5HXC9g
-         ieW8RR19yocuJNXRRo/5nhtGsVXcUCEsr6XwtG9wnOCWFUvy9is041lEkyE8EMmr4A/r
-         4HGE/Ig2rUYTqWNQCSJMuQKaftqIT/F3dT+Ncs5BIwiubfv4bU0lWoLZxTKs3Z4+6g7T
-         BFDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715905790; x=1716510590;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=N+KmOyC/iV8n/07rVcqpUpUm3beAF6+iOzU5m/G/q6o=;
-        b=K+d56ZILAjqLGg1BoIyYJt1D+Ex+NGCFnry3o5wUJ9fuHZOP2aK/KzZROqNHBR99RQ
-         J4/+cC64WUchkly6S79Kg9PF8xK4LQOl9e0yT7VVkWesZlbaWZBakXo8LoKNMht8lpLJ
-         4K6kW4NXeXYb2vtFUWFIf8R85EN89OqVTPXF/RXY/Hcfgg+n+bwiMPoivI6YGSTatt3o
-         b2OUEQBdsmVEbSxD33gANKvRdIvR8CO6z2oB3C4467Q/90VvuEhInxp8AGFjPj0XqD4J
-         KhNUag3BE+eMGyvaSgqbEqJz39KdWoq6LJywmz/FtVnlnSGuFBaMLU9H9l9ec/L3c1/p
-         4chQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVflsn336Fi5eV81xEY88diOtKYBKyNLV87Fp8/JgZwQXf5y2jhttt4laffOHYjPAbaFS0HJVLZvjV07/v6RscpBF+TZ6uODfNPPhdA
-X-Gm-Message-State: AOJu0YxdnrigHAfF2gHX64NKCg3HkSmhjp/VlX9EyxIYrKyWUW9LKu+d
-	ZZPbiFGVCG/yqdfM0erJ1MSiEu3JdgzWKFGareiRAyTVOaD4KYJi3lUBGaR1x2t0BQtoFkOBTrf
-	mq44Vzsz9sur02cGkjR6gXDms7vg=
-X-Google-Smtp-Source: AGHT+IHvllubFZaKY6KPvv1qxfS9Saxnyz/cYL94fUH5oUTlB1YWBRPY36H/Sx5fd2+exy7HAXc8Wf55NEjs5679QeY=
-X-Received: by 2002:a05:6102:14a7:b0:47c:28c1:5379 with SMTP id
- ada2fe7eead31-48077eb3c8fmr20452446137.33.1715905789817; Thu, 16 May 2024
- 17:29:49 -0700 (PDT)
+	s=arc-20240116; t=1715906014; c=relaxed/simple;
+	bh=NtdMFwjCCg6DRe8jJko5fsFCy+aStnuV7IT8PB1A13Y=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=QH93JmupedKdsukGr94Z+8CWlw//qBNegTkGO0UCvdSU8NZC2M5nnlnM4e1Yka5bfrFs1wUDeQEeEuqYAEFRSrtygLELhq1GuONS9YKjFAxucLHTCf/IHxQcPLJ+tuNw2ZSbaJyThPRZs2I6fOhJ9HLNFnqSY4VEA7yaEoFFx9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HD7Szvyn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7095DC113CC;
+	Fri, 17 May 2024 00:33:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715906013;
+	bh=NtdMFwjCCg6DRe8jJko5fsFCy+aStnuV7IT8PB1A13Y=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=HD7SzvynKcjYOsvcvN/G2QU4qpCjqTri3qEAUXZJKLDZd8DaMG3OHyjJWQvd/PNSN
+	 Hp3G5XPAdtvJsu/IhGFHIdDEP2qwIMy4G3HWe3wmKLvS+77nMDzpRF/H7juYwzhCcq
+	 LGYLU2dy6v05RtemPVjwjMaeiojcS/Ic8eojFv8JE+gKUbdF69Pbpkr13ptXIlpgBb
+	 1vc6a+nFcvDpsnmOhOSw7xMZ/50XnFVYsNWeU9GCgkfaUDR53tPeRIlPGD9gpFI+ZI
+	 6R4pkCX9kR4SJYk04QKvI8BF6y67hgnec7XugZyYDBNO47GSXeReF5OSF4XIhCiqNk
+	 fHuH7AyWjgkQQ==
+Message-ID: <a5a821acebb8f447e3f17a0b5ba7f4e2.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240516091232.619851361@linuxfoundation.org>
-In-Reply-To: <20240516091232.619851361@linuxfoundation.org>
-From: Allen <allen.lkml@gmail.com>
-Date: Thu, 16 May 2024 17:29:38 -0700
-Message-ID: <CAOMdWSK7KC18aVMn9mo22s3g8BFj2oGVRdosNkF4fY3k7xPp2w@mail.gmail.com>
-Subject: Re: [PATCH 6.1 000/244] 6.1.91-rc3 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAL_Jsq+M953w4FdOHmDWByqUbJmB+g_G=KxAuZ04zFqV6zBmzg@mail.gmail.com>
+References: <20240422232404.213174-1-sboyd@kernel.org> <CABVgOSmgUJp3FijpYGCphi1OzRUNvmYQmPDdL6mN59YnbkR2iQ@mail.gmail.com> <b822c6a5488c4098059b6d3c35eecbbd.sboyd@kernel.org> <5c919f0d3d72fe1592a11c45545e8a60.sboyd@kernel.org> <CAL_JsqK4EZ0RhYCw6ZaeYSJu5Ps1J+J25vjwQy2XvNa5F5d7Pw@mail.gmail.com> <f6d7574582592f3bfa50fc45fefc53be.sboyd@kernel.org> <CAL_Jsq+M953w4FdOHmDWByqUbJmB+g_G=KxAuZ04zFqV6zBmzg@mail.gmail.com>
+Subject: Re: [PATCH v4 00/10] clk: Add kunit tests for fixed rate and parent data
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: David Gow <davidgow@google.com>, Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, patches@lists.linux.dev, kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org, devicetree@vger.kernel.org, Brendan Higgins <brendan.higgins@linux.dev>, Rae Moar <rmoar@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rafael J . Wysocki <rafael@kernel.org>, Saravana Kannan <saravanak@google.com>, Daniel Latypov <dlatypov@google.com>, Christian Marangi <ansuelsmth@gmail.com>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Maxime Ripard <maxime@cerno.tech>
+To: Rob Herring <robh@kernel.org>
+Date: Thu, 16 May 2024 17:33:31 -0700
+User-Agent: alot/0.10
 
->
-> This is the start of the stable review cycle for the 6.1.91 release.
-> There are 244 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sat, 18 May 2024 09:11:43 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.91-rc3.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
->
+Quoting Rob Herring (2024-05-15 15:08:47)
+> On Wed, May 15, 2024 at 4:15=E2=80=AFPM Stephen Boyd <sboyd@kernel.org> w=
+rote:
+> > diff --git a/drivers/of/platform.c b/drivers/of/platform.c
+> > index 389d4ea6bfc1..acecefcfdba7 100644
+> > --- a/drivers/of/platform.c
+> > +++ b/drivers/of/platform.c
+> > @@ -421,6 +421,7 @@ int of_platform_bus_probe(struct device_node *root,
+> >         if (of_match_node(matches, root)) {
+> >                 rc =3D of_platform_bus_create(root, matches, NULL, pare=
+nt, false);
+> >         } else for_each_child_of_node(root, child) {
+> > +               of_node_set_flag(root, OF_POPULATED_BUS);
+>=20
+> No, the same spot as of_platform_populate has it. I guess this would
+> be the same, but no reason to do this in the for_each_child_of_node
+> loop...
 
-Compiled and booted on my x86_64 and ARM64 test systems. No errors or
-regressions.
+Ok. I'm not intending to send this patch.
 
-Tested-by: Allen Pais <apais@linux.microsoft.com>
+>=20
+> >                 if (!of_match_node(matches, child))
+> >                         continue;
+> >                 rc =3D of_platform_bus_create(child, matches, NULL, par=
+ent, false);
+> >
+> >
+> > This doesn't work though. I see that prom_init() is called, which
+> > constructs a DTB and flattens it to be unflattened by
+> > unflatten_device_tree(). The powerpc machine type used by qemu is
+> > PLATFORM_PSERIES_LPAR. It looks like it never calls
+> > of_platform_bus_probe() from the pseries platform code.
+>=20
+> Huh. Maybe pseries doesn't have any platform devices?
 
-Thanks.
+Looks like it.
+
+>=20
+> Ideally, we'd still do it in of_platform_default_populate_init(), but
+> if you look at the history, you'll see that broke some PPC boards
+> (damn initcall ordering).
+>=20
+> > What about skipping the OF_POPULATED_BUS check, or skipping the check
+> > when the parent is the root node? This is the if condition that's
+> > giving the headache.
+>=20
+> I don't think we should just remove it, but a root node check seems fine.
+>=20
+
+Alright. I've added a check to see if the root node is the parent to
+allow it. That works well enough, so I'll send that in v5.
 
