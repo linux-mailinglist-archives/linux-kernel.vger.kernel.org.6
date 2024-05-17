@@ -1,196 +1,132 @@
-Return-Path: <linux-kernel+bounces-182011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7876D8C8513
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 12:46:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 915048C851D
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 12:52:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DD8B2845CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 10:46:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39775284BE1
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 10:52:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CA273BB35;
-	Fri, 17 May 2024 10:46:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 145633AC36;
+	Fri, 17 May 2024 10:52:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b="jzzlTSfl";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="e8aaZBQa"
-Received: from wflow6-smtp.messagingengine.com (wflow6-smtp.messagingengine.com [64.147.123.141])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="kOVVxkPh"
+Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 709B13A8EF;
-	Fri, 17 May 2024 10:46:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 621603A1C5
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 10:52:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715942779; cv=none; b=gkOBvwbbKYOGn7/FQfhVjdabt+wWpH0m0eLw8juXtolqFCi/q5ve3uNtHXxV101SwqQk0HM81o1/5q/rXh1qbX9OydjTMYuTVl85l5xAPDsT/g8gBKtjFA+bQ3/tvYnTE6/OWkB7fxmtNZQqX3omxgS0XDCRHE3iiWdkjCWzaAI=
+	t=1715943168; cv=none; b=pltXRIHCGYqO75ScXtYev3ZBxwsYvhaQnYQZ5T2ndyE5l3GshocVFC1eTLyENcpbZv1UIyONuP3SKYJRRkA7jjB9GVGh3g8rXAUs+Y3ncv+Br7ELpaP97fFlfA9SrCQUmY99IthSw1KnRvc4OAO3lwwr/w4VECunObA7in+7sWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715942779; c=relaxed/simple;
-	bh=Usv8FrNMyMA/e9bwDI/XPptjxA/X7snPzywB+T3VSws=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tjYrnYFrP7Wp2Q0E9q6uME1J1iK3o53rhCO+SSWIZLl9Dl3iWS96zepCXyC2MkAjbeFESWKph7bZCnRYmR8i++OerSqi8gC/eZYDXvkbug+vV7ERdNfCXga4RcasKGsjd2QpLSNPNoz1Qei7nfZwFOwMAe4ml+95ocZ7VfscRgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net; spf=pass smtp.mailfrom=3xx0.net; dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b=jzzlTSfl; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=e8aaZBQa; arc=none smtp.client-ip=64.147.123.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3xx0.net
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-	by mailflow.west.internal (Postfix) with ESMTP id 9ACE52CC01B2;
-	Fri, 17 May 2024 06:46:15 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Fri, 17 May 2024 06:46:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=3xx0.net; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1715942775;
-	 x=1715946375; bh=t6vROMqJIpuDwOB1qQz1P/6tRxrDcWWoZxr9yWTTUM0=; b=
-	jzzlTSfliC7aJdxhlr8U2PaYNhESWNMCT5aBL2w+A90PrnXH2I0i10rsFJx9t9D0
-	sF5ZTql9I06Il8rtHgu8Ffusc+FFdV5x+4ENwWwtNXt12bSZ3b3jLq1LnKeBX2mV
-	iEWZOnubDMdAQYwN9lryqZcXAZ3HriQG8ocqSwKQ1VWp55I38wZ5NkPx3qXaiRgT
-	ayTcwLxYywzfNbDxUPXRWW92h2qvslpTa07Qh6W3sVhqLdGnYHk5DOx2AwLLNlb5
-	YKtMLmyM630PmwNf8N65ZsaLaj8AGZT1I/u0P3Qo+BQ0t6g8IicMGhnQ+/0p7Xgc
-	/ZUcy9H7q89nOke8tingjQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=i76614979.fm3; t=
-	1715942775; x=1715946375; bh=t6vROMqJIpuDwOB1qQz1P/6tRxrDcWWoZxr
-	9yWTTUM0=; b=e8aaZBQaXu/jah8iqCXyY6FZKnj7y3GGKyqJrC8oOj6TLG3XOtb
-	gc6GgTHLQQ/iB5x0J3eG3FOKgDybE25yY070f5vJKR2aJkmLJogydrWSz4Y6ETWH
-	QxJ//M6+vNpY5t7WglbgN0SKFMdbSEgpDo0neP28cnQ67RatW1ZiyozQZMV7+GcG
-	N4j6LbPKFXZzXhJjqk2pVnh15Dc9RTdl4N+X7SHrKthGVdRkobDbv/n1w56bA4/o
-	2yMnSdl/C4ymfdQSRESrJLT4BY8mh2NsKc0nnnIszkQhJok5O5MAezxnXV1C5Vnp
-	kSOVMpzffngSmxWweB83DfKbq0rJ95R3xdQ==
-X-ME-Sender: <xms:djVHZsjkhqVsujms6Czt6anR5qrHKswYqBGJ2ls6ufpscgxMpyu9-A>
-    <xme:djVHZlA1UUy7bO9bl-9pp1NV94Ih_BS2SI-SjtOPnB8zbtb0kPZPCzYGpH2LSyt88
-    UWep3qscd9sK2oTjQU>
-X-ME-Received: <xmr:djVHZkHrmfETrJrmj1JbNHYGnhXwvW3kSK1GV5XbyDqyT1q3KtwrVj8Odh2JAwV1Yp6ZM-CXuqJUyLai0lD7ltE>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdehfedgkeehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggugfgjsehtkefstddttdejnecuhfhrohhmpeflohhn
-    rghthhgrnhcuvegrlhhmvghlshcuoehjtggrlhhmvghlshesfeiggidtrdhnvghtqeenuc
-    ggtffrrghtthgvrhhnpeetgedutdfggeetleefhfeuhedtheduteekieduvdeigeegvdev
-    vddtieekiedvheenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
-    hrohhmpehjtggrlhhmvghlshesfeiggidtrdhnvght
-X-ME-Proxy: <xmx:djVHZtT8tKpB0YwfwFdvbIMCK_Lx9ylbTqHPhrKsZBaQd0Ycr9p2zA>
-    <xmx:djVHZpzi6XHWQtZ6JLh6O2gg2xySSm9ILCMrLroqynQo6YjSqAwspQ>
-    <xmx:djVHZr5A5FJ6AjCrgofiB93uhjrI8iSL4QyfeCjvOR6rRYAwE4htPg>
-    <xmx:djVHZmzWH0OgtQkzOyD62fqrWWI5Rfd6-jQeOixgJIrCyihu9j20NQ>
-    <xmx:dzVHZphiCg2eM012AMibbr1TZeelQKIqYrExPad6dfKJhQ7fgrR8R7O->
-Feedback-ID: i76614979:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 17 May 2024 06:46:12 -0400 (EDT)
-Date: Fri, 17 May 2024 03:51:14 -0700
-From: Jonathan Calmels <jcalmels@3xx0.net>
-To: John Johansen <john.johansen@canonical.com>
-Cc: brauner@kernel.org, ebiederm@xmission.com, 
-	Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <keescook@chromium.org>, 
-	Joel Granados <j.granados@samsung.com>, Serge Hallyn <serge@hallyn.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	David Howells <dhowells@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>, containers@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
-Subject: Re: [PATCH 1/3] capabilities: user namespace capabilities
-Message-ID: <jwuknxmitht42ghsy6nkoegotte5kxi67fh6cbei7o5w3bv5jy@eyphufkqwaap>
-References: <20240516092213.6799-1-jcalmels@3xx0.net>
- <20240516092213.6799-2-jcalmels@3xx0.net>
- <641a34bd-e702-4f02-968e-4f71e0957af1@canonical.com>
+	s=arc-20240116; t=1715943168; c=relaxed/simple;
+	bh=JDqGBD0D5kpmPykpBr4kW+JyQRNpCrU3OX4bPh5dBfA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bVyJhrvddFcHmca5ZLuM4qfG4TqpzrbT+y0MQ1uQ6HofTODu4shDM78iUtnvCHrlfojHFD+tADSiHCR4aZPhvaRy03TYIXsXTeV+S2tfbUJNFcrKpJt747rbbLQ/WvyhPe6Za2+LsSDR/YzCFeqYQrVgXC9Dauxuy/GEaAkF0fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=kOVVxkPh; arc=none smtp.client-ip=115.124.30.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1715943157; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=XHU484ru7u5dgmBpXpNyU6IxS0QHgLQgPSB3Je2RxDQ=;
+	b=kOVVxkPhqQeAvGu0OWGG14B9bHGqABgdrWPx4C4LTsR+Sl/xbCyFAAR5B4tf7IHe8aXUBMDln2SHN9K0ulBP5ysdILF+lJ3MTb6NvyT/7Aq0kCUhbgiQHRWc0675h9sP9n07p8J35jHiJvXC8elUb1P+d2fg9XXWtpsdaUD6Yaw=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067112;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0W6eXBwH_1715943155;
+Received: from 30.221.128.140(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0W6eXBwH_1715943155)
+          by smtp.aliyun-inc.com;
+          Fri, 17 May 2024 18:52:36 +0800
+Message-ID: <1b906ebc-a850-4974-8ceb-e33d88768bf1@linux.alibaba.com>
+Date: Fri, 17 May 2024 18:52:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <641a34bd-e702-4f02-968e-4f71e0957af1@canonical.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] ocfs2: add bounds checking to
+ ocfs2_xattr_find_entry()
+To: Ferry Meng <mengferry@linux.alibaba.com>, lei lu <llfamsec@gmail.com>,
+ akpm <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Mark Fasheh <mark@fasheh.com>,
+ Joel Becker <jlbec@evilplan.org>, ocfs2-devel@lists.linux.dev
+References: <20240517094147.87133-1-mengferry@linux.alibaba.com>
+ <20240517094147.87133-2-mengferry@linux.alibaba.com>
+Content-Language: en-US
+From: Joseph Qi <joseph.qi@linux.alibaba.com>
+In-Reply-To: <20240517094147.87133-2-mengferry@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 16, 2024 at 03:07:28PM GMT, John Johansen wrote:
-> agreed, though it really is application dependent. Some applications handle
-> the denial at userns creation better, than the capability after. Others
-> like anything based on QTWebEngine will crash on denial of userns creation
-> but handle denial of the capability within the userns just fine, and some
-> applications just crash regardless.
 
-Yes this is application specific, but I would argue that the latter is
-much more preferable. For example, having one application crash in a
-container is probably ok, but not being able to start the container in
-the first place is probably not. Similarly, preventing the network
-namespace creation breaks services which rely on systemd’s
-PrivateNetwork, even though they most likely use it to prevent any
-networking from being done.
 
-> The userns cred from the LSM hook can be modified, yes it is currently
-> specified as const but is still under construction so it can be safely
-> modified the LSM hook just needs a small update.
+On 5/17/24 5:41 PM, Ferry Meng wrote:
+> Add a paranoia check to make sure it doesn't stray beyond valid memory
+> region containing ocfs2 xattr entries when scanning for a match.
+> It will prevent out-of-bound access in case of crafted images.
 > 
-> The advantage of doing it under the LSM is an LSM can have a richer policy
-> around what can use them and tracking of what is allowed. That is to say the
-> LSM has the capability of being finer grained than doing it via capabilities.
+> Signed-off-by: Ferry Meng <mengferry@linux.alibaba.com>
 
-Sure, we could modify the LSM hook to do all sorts of things, but
-leveraging it would be quite cumbersome, will take time to show up in
-userspace, or simply never be adopted.
-We’re already seeing it in Ubuntu which started requiring Apparmor profiles.
+Reported-by: lei lu <llfamsec@gmail.com>
+Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
 
-This new capability set would be a universal thing that could be
-leveraged today without modification to userspace. Moreover, it’s a
-simple framework that can be extended.
-As you mentioned, LSMs are even finer grained, and that’s the idea,
-those could be used hand in hand eventually. You could envision LSM
-hooks controlling the userns capability set, and thus enforce policies
-on the creation of nested namespaces without limiting the other tasks’
-capabilities.
-
-> I am not opposed to adding another mechanism to control user namespaces,
-> I am just not currently convinced that capabilities are the right
-> mechanism.
-
-Well that’s the thing, from past conversations, there is a lot of
-disagreement about restricting namespaces. By restricting the
-capabilities granted by namespaces instead, we’re actually treating the
-root cause of most concerns.
-
-Today user namespaces are "special" and always grant full caps. Adding a
-new capability set to limit this behavior is logical; same way it's done
-for usual process transitions.
-Essentially this set is to namespaces what the inheritable set is to
-root.
-
-> this should be bounded by the creating task's bounding set, other wise
-> the capability model's bounding invariant will be broken, but having the
-> capabilities that the userns want to access in the task's bounding set is
-> a problem for all the unprivileged processes wanting access to user
-> namespaces.
-
-This is possible with the security bit introduced in the second patch.
-The idea of having those separate is that a service which has dropped
-its capabilities can still create a fully privileged user namespace.
-For example, systemd’s machined drops capabilities from its bounding set,
-yet it should be able to create unprivileged containers.
-The invariant is sound because a child userns can never regain what it
-doesn’t have in its bounding set. If it helps you can view the userns
-set as a “namespace bounding set” since it defines the future bounding
-sets of namespaced tasks.
-
-> If I am reading this right for unprivileged processes the capabilities in
-> the userns are bounded by the processes permitted set before the userns is
-> created?
-
-Yes, unprivileged processes that want to raise a capability in their
-userns set need it in their permitted set (as well as their bounding
-set). This is similar to inheritable capabilities.
-Recall that processes start with a full set of userns capabilities, so
-if you drop a userns capability (or something else did, e.g.
-init/pam/sysctl/parent) you will never be able to regain it, and
-namespaces you create won't have it included.
-Now, if you’re root (or cap privileged) you can always regain it.
-
-> This is only being respected in PR_CTL, the user mode helper is straight
-> setting the caps.
-
-Usermod helper requires CAP_SYS_MODULE and CAP_SETPCAP in the initns so
-the permitted set is irrelevant there. It starts with a full set but from
-there you can only lower caps, so the invariant holds.
+> ---
+>  fs/ocfs2/xattr.c | 12 ++++++++----
+>  1 file changed, 8 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/ocfs2/xattr.c b/fs/ocfs2/xattr.c
+> index 3b81213ed7b8..8aea94c90739 100644
+> --- a/fs/ocfs2/xattr.c
+> +++ b/fs/ocfs2/xattr.c
+> @@ -1062,7 +1062,7 @@ ssize_t ocfs2_listxattr(struct dentry *dentry,
+>  	return i_ret + b_ret;
+>  }
+>  
+> -static int ocfs2_xattr_find_entry(int name_index,
+> +static int ocfs2_xattr_find_entry(struct inode *inode, int name_index,
+>  				  const char *name,
+>  				  struct ocfs2_xattr_search *xs)
+>  {
+> @@ -1076,6 +1076,10 @@ static int ocfs2_xattr_find_entry(int name_index,
+>  	name_len = strlen(name);
+>  	entry = xs->here;
+>  	for (i = 0; i < le16_to_cpu(xs->header->xh_count); i++) {
+> +		if ((void *)entry >= xs->end) {
+> +			ocfs2_error(inode->i_sb, "corrupted xattr entries");
+> +			return -EFSCORRUPTED;
+> +		}
+>  		cmp = name_index - ocfs2_xattr_get_type(entry);
+>  		if (!cmp)
+>  			cmp = name_len - entry->xe_name_len;
+> @@ -1166,7 +1170,7 @@ static int ocfs2_xattr_ibody_get(struct inode *inode,
+>  	xs->base = (void *)xs->header;
+>  	xs->here = xs->header->xh_entries;
+>  
+> -	ret = ocfs2_xattr_find_entry(name_index, name, xs);
+> +	ret = ocfs2_xattr_find_entry(inode, name_index, name, xs);
+>  	if (ret)
+>  		return ret;
+>  	size = le64_to_cpu(xs->here->xe_value_size);
+> @@ -2698,7 +2702,7 @@ static int ocfs2_xattr_ibody_find(struct inode *inode,
+>  
+>  	/* Find the named attribute. */
+>  	if (oi->ip_dyn_features & OCFS2_INLINE_XATTR_FL) {
+> -		ret = ocfs2_xattr_find_entry(name_index, name, xs);
+> +		ret = ocfs2_xattr_find_entry(inode, name_index, name, xs);
+>  		if (ret && ret != -ENODATA)
+>  			return ret;
+>  		xs->not_found = ret;
+> @@ -2833,7 +2837,7 @@ static int ocfs2_xattr_block_find(struct inode *inode,
+>  		xs->end = (void *)(blk_bh->b_data) + blk_bh->b_size;
+>  		xs->here = xs->header->xh_entries;
+>  
+> -		ret = ocfs2_xattr_find_entry(name_index, name, xs);
+> +		ret = ocfs2_xattr_find_entry(inode, name_index, name, xs);
+>  	} else
+>  		ret = ocfs2_xattr_index_block_find(inode, blk_bh,
+>  						   name_index,
 
