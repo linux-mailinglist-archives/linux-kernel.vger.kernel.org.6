@@ -1,179 +1,152 @@
-Return-Path: <linux-kernel+bounces-182401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E6B78C8AE0
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:23:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 943F38C8AE2
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:23:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 308431C20751
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:23:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B75BA1C21009
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:23:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 128CE13E3E3;
-	Fri, 17 May 2024 17:22:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20EF413E401;
+	Fri, 17 May 2024 17:22:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="a6I7+rgG"
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05olkn2096.outbound.protection.outlook.com [40.92.91.96])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WJ/eK2j8"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A69E13DDDB;
-	Fri, 17 May 2024 17:22:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.91.96
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715966545; cv=fail; b=VSnASxnu8QDGHBY2YrWoff3Xg+sWRMKt1+VZGSwd7QKOvOuu41DmSfJASGxLe994mSKdM6/F/7/rBoPifMcuPcNUUQk49lAQp6QZVuRWPhdIhczCOtZk0+LPCX6t63Y94modKuWcJm11rLc0q7uTt58khi/CdWglmadbTvqjkpI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715966545; c=relaxed/simple;
-	bh=R2g7aB2FQvoAzLDlfjL4We59knASFYxPNbiWCI5FTAM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=saI3OlhHIUQFlpQiHJm3w8GabtJ/mVtUgOvvBEDOWM/C5YmP+0rUOmIhGFx/gWWDfdi7G/5YQxWVs9di+B/aDxp1qLwHRdJArb8t3ES24vzEJbdi6W0nexQA9VnppnkSF3QgfzMDGrXpq6ckuHchOlzqgzo9euW/vvVxAoVZk3g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=a6I7+rgG; arc=fail smtp.client-ip=40.92.91.96
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=cHdJhw2kOAtViKbNkQpIANPf6wpCMFlhyIRoI3m9qCcELp7hfHseBdkXQRWNl7yGSub2E+hDDCcYjf50ErmKIUInl5RiKs5lbbdlawulSj8HPHY+11qeNebxuPhChFQ/kCFrk5UI4FI1UbAk7alNLsIFCcera5lH5k8A9VpnnHt5LCEhcSeWbCqIP8DRZ+GBnISDD+LHUa9dGXQptX14vtcL4kvqzdl+OUQDlL/U57MaLAgl2jb08/TfvyEdyWbqRwHDh/Q1RLugZzYacP2KC7Cbb6kYDvPoQ24X/7adPYSeXioEXF9gTQYXhNprciTOor2VDOULha2HnR6d+CmM3A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NdXNwbNaULL/bRsVSHS0cQxwWklP6P8Qao9V20EgFTI=;
- b=VSw72wymh9GwpQjfnwCl9hcAvB4SXEfRw1G3Zbtl20S/VB3AmxeaAZax5iTjdcqp+xCTpShOrww360ZcpTazDMo8TX+Ejusyprxcf2yJ0yzg7dBwtxz3vVpJ0ymNCgJ9wIs1r3gBUWTF0SE5qUzFUhMIgncnV3sQfjhlFkbJC/m2VgGBYG0bKJFOGMMDfZGRUyMI3GpNJ8QSuGva/gLP+cHPYjirH/pdRJN2xDmqqBHOdB5r+Oz5x0+5vk15FJd65/1nm6V+Ehf4oJqDQzuq6/Fb638rd0AMDhjPsSUr+JpMpEZFzXJkQY2hjKu4F1RRtmC8etHTi+b6gfp3j1ieQg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NdXNwbNaULL/bRsVSHS0cQxwWklP6P8Qao9V20EgFTI=;
- b=a6I7+rgG9Y1VwI06kSc2TZQBz4Raq12Rk1+gn/CLyDgH5WK73Sdcwr487zQ1yryCPGwM4NCWHewiOjQqhxzWlKOmvLsYAoRzF4MlBpIQu6SD/da1hv8W4+gWwtOd7OttaZ8a3P3bhPbPVigh7x9imwsCtK4X+x+OGO3cCpWXgGYSutxZgCmiIveIt37dL1hAoHuKCn0DvyALLxqdZieT4X2zX6lHzu/CVjWKj+3O4rdWCoemfClzV0LWiiIHhoBhOnoID2/0cJzqmQk+9S/9EaiqNProkd13P7E5hZWz4RBg/UDuG1NKORUY8Ti1jpzNOFNhjwuxihpBBpK0rKgQgg==
-Received: from AS8PR02MB7237.eurprd02.prod.outlook.com (2603:10a6:20b:3f1::10)
- by AM7PR02MB6195.eurprd02.prod.outlook.com (2603:10a6:20b:1ac::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.30; Fri, 17 May
- 2024 17:22:18 +0000
-Received: from AS8PR02MB7237.eurprd02.prod.outlook.com
- ([fe80::409b:1407:979b:f658]) by AS8PR02MB7237.eurprd02.prod.outlook.com
- ([fe80::409b:1407:979b:f658%5]) with mapi id 15.20.7587.028; Fri, 17 May 2024
- 17:22:18 +0000
-From: Erick Archer <erick.archer@outlook.com>
-To: Marcel Holtmann <marcel@holtmann.org>,
-	Johan Hedberg <johan.hedberg@gmail.com>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Kees Cook <keescook@chromium.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Erick Archer <erick.archer@outlook.com>,
-	linux-bluetooth@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: [PATCH v3 2/2] tty: rfcomm: prefer array indexing over pointer arithmetic
-Date: Fri, 17 May 2024 19:21:50 +0200
-Message-ID:
- <AS8PR02MB72371AEAFAEE5563812D189A8BEE2@AS8PR02MB7237.eurprd02.prod.outlook.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240517172150.5476-1-erick.archer@outlook.com>
-References: <20240517172150.5476-1-erick.archer@outlook.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TMN: [AyUf7TvpU/T8yh7Z6kMAXUGQltDUUjYT]
-X-ClientProxiedBy: MA2P292CA0028.ESPP292.PROD.OUTLOOK.COM (2603:10a6:250::15)
- To AS8PR02MB7237.eurprd02.prod.outlook.com (2603:10a6:20b:3f1::10)
-X-Microsoft-Original-Message-ID:
- <20240517172150.5476-3-erick.archer@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E548013D89F;
+	Fri, 17 May 2024 17:22:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715966555; cv=none; b=elEPUTocQdV8cEN7sNKRbDrSeEtL3GuASFmgKiCMu+lJ5rOrQsdkQ2L0qYsAkAyENkzGxJ/k9OiHuKmFT8P/u5+V+ElFguzP6P9PGVa2McWAuOMdUmJW1uF538X7Fo8PB1kdx9CXJlzV8JQBFtanHlBVzmq+ol4UyVp6JcXxh1k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715966555; c=relaxed/simple;
+	bh=NNIjgyuP1PQ3CYL1MR18HK3hcSvljejHJw+vczw4ZQY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aRl9buO/w1RFlavvx4EgVYzu8RbVJO1t3VyFndKo7txg5DrqEae8gPjvmcZ9lltszq+bn/ggHfwDEzIpiJ1kxiHx3I+u31I44fgFoLG0RpmVtBmhVmGKBvPjuIvXXaic6WJDtVFm/y0FP8gG0v0csY6NXdpGR5lhq8wbwYTfUVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WJ/eK2j8; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715966554; x=1747502554;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=NNIjgyuP1PQ3CYL1MR18HK3hcSvljejHJw+vczw4ZQY=;
+  b=WJ/eK2j8TexWkDrf6Y64U9sP2oWkk7hjxre58fEqgnMdG9RiAFyoCHnC
+   QKPcIYripFTwEIMI9YjSMf1AUz6pQfyuhb+nK+Aj6X0Ztfi7AOa/OouOi
+   nq000ZbxYJJgYsHB9RAMAUdnW1ZbqArWLgZuJAc3PikgACOGCLuKygLMT
+   b7zyRxoZ5sYiM/oEeYeA16FD0E8Sedil2pd8pfRY88ZO7Zgp5uk/4XHQT
+   Kzi2geCF05AcYtfpJC2D1PXqBKaxDDjSoJ2aQ2BgvYCwdMbgm7Utp+vEm
+   RWhBAU2BhYUrU3I+hrL418SKyLRY8bJa+yNaYUc37hMlsLkZzSj3FXc28
+   w==;
+X-CSE-ConnectionGUID: xqUV+8QwRI2kvCDndR+Mog==
+X-CSE-MsgGUID: yOAty1MsRAquHTWaeBv2ZA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11075"; a="12281942"
+X-IronPort-AV: E=Sophos;i="6.08,168,1712646000"; 
+   d="scan'208";a="12281942"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 10:22:33 -0700
+X-CSE-ConnectionGUID: qjnkzHB8Ry6MuM1fVrxMpA==
+X-CSE-MsgGUID: fzK0a9mjSI6DwKHRemDpgA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,168,1712646000"; 
+   d="scan'208";a="32011297"
+Received: from kinlongk-mobl1.amr.corp.intel.com (HELO [10.125.108.204]) ([10.125.108.204])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 10:22:34 -0700
+Message-ID: <35086bb6-ee11-4ac6-b8ba-5fab20065b54@intel.com>
+Date: Fri, 17 May 2024 10:22:32 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR02MB7237:EE_|AM7PR02MB6195:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8631edf8-2f37-448b-dc92-08dc7695e758
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|461199019|3412199016|440099019|1710799017;
-X-Microsoft-Antispam-Message-Info:
-	Gqqmtbug8A5m1O38cwGqMZwycpDHjg6WnO8lzrM6adku2vGsxCFt5p1/qqOjZTI5bpsraaIlvhLUPak7WgKWl+E+Fi3k6w59S6O5pdfc2istKFhmBOK4t8btehNU+3aiHLdXnTpPJHjxCbFJXWJ2T4YrZL1WbHgKoYC7M7sQUeM2UJaenZzaFKPJGp8lB9qNfltO3t98JKqrvSZ9vMcI2LuxVbxM9HOUt4wWC1N20dOlVpM2VCToF9BN+bltrULDCPD/Cjmnm6rggePJpx9tgU+kpdyIhDoRloceQMcD0+1L77Eg15eitPZOE4uqoyGJ2u8ZAISeqnUXfUuh864lGIGRtkkeHo9bXceZXG7kOVz5ZR5f7+pC4ElOpdnfFlrTuVNN5ljCVgxKfdvMCYbHuxpaGyLpJbarmrXHPz51rfqdM7DDd4dEVGrcbqIAbFTRysXuiWkFoGUVjGkqGBZGQtzZd1Q473GlJxBMPKtyG/HU8JAngkmBLKdYhB86Gm+xyij5A6cjCH8YyyJyCImin5AizP6oYA/ZSRLUZ2yqdHJpJ+9mxuJ6gxa8pDDayjnrjqnFS6lwSgeUpCNch/k51tiriyqySHvdOUsYCpX2gLnuZvT2hXN7MJ1vX5y7dbu/
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?pWiWxQu8l72kPvWqiweokE6HDiFf/PKZG0O3O3XKKoAyCPOKUMSUOCGZRidQ?=
- =?us-ascii?Q?2PT5GpRZZ+CMtCtCAkzzZC3+olRIZAa0nQx82Y2AoWPZavpxHpMfmperS8wO?=
- =?us-ascii?Q?3SC5pg0r6DKqtGYk8n5fZUFQACZA+CeChBMjlOCXrpKrwXWuK01mIERnpYH2?=
- =?us-ascii?Q?4WBQRt63MPboGZJCJe6CFprOZUFor021bNAOoBWHuc2zysB5eyFbxdEPuGMR?=
- =?us-ascii?Q?JUOId5fBCUX2yUMPzieFMacT+HEa8mXqNf9hepmhT3oms2sSrDxo8QHNBneZ?=
- =?us-ascii?Q?CLA6SOh/6rPr9G4PCUL0mjKXaOKtVvxGr1uWYf4FNDCr+ibn4hwYONtlwRJI?=
- =?us-ascii?Q?aYvaWpBmH050oei6lI6DVVEs47/5X0EfVRmK4P1bFmlRbCYhojTZ5mdlj/z9?=
- =?us-ascii?Q?tiOSpp/3WrNm/fPzhmGME9kFVZnsSY2vJRceUCWoTOv5Pias16P0VH+R73gs?=
- =?us-ascii?Q?4uYrBEGv33ZB8c4O5S8XoO9pfdCC6eohLbFBUo+jjm0o2qIt1axEXDKt0Rv2?=
- =?us-ascii?Q?nKhxwVTmOMbZ0lMqJNXpf+pqXpswHM5P+B+vQO0/htD5tiXsJgB023ZIPDVw?=
- =?us-ascii?Q?P5KsF9XssPiXh6R45HCTEagbX41UVXS7ExoYQF76EoKOUYJcylBOq6p33KI6?=
- =?us-ascii?Q?lRxLKKqNRLBq1yn9IW0L1y9Mkr4uvG7N3JgCyoJI2rwZ27rQBcYIEX9zlDWT?=
- =?us-ascii?Q?uiMqICkX2vFdviabO5XEvNqxecW1VlrPGDAcFkXoMsJG84Oez3HsvT6ixzfo?=
- =?us-ascii?Q?fRgeZd99sjvhtZVSb9T79vOq9oIa6W6ZaK9UtSVzGUmhtiaZZV5icI8fh35X?=
- =?us-ascii?Q?Rk8t4u/zvfQKYESOBIYEv5U6Bv1wUwK+CJN2cF5v1AD3iohRTWIj8r3W/nUi?=
- =?us-ascii?Q?jXwY7tWyVOm0r8EpdPtM5N2+33oOpJVw4QpLHnoHFiyDVtodnJAM+gopXYEf?=
- =?us-ascii?Q?J8KCHoopdGq4AeRR/XOY2GXKoqaulx9JMauEVUnF/qll+greugsXZto+yzFS?=
- =?us-ascii?Q?ZasMAzXqlexRfBk80Mqe0uY6pWhys0hLQQHLONL939GVBbh3PbDVWBLTUwwG?=
- =?us-ascii?Q?ezA/S52uKV1/BD0gMfkZKt44+GKP4wlwf6yrOOcDDV1AFKII1JFm138fGIAJ?=
- =?us-ascii?Q?5DVpOzw8cN6oBC+2Dj6AJEnyaa6pU2q/s8sObq+b5iP3JCIvOkkdyEfWFVhg?=
- =?us-ascii?Q?+SDbQOWWRwp8HFigAdTg93ClQJf8qm+UfzX1RvsIaBShOEIWAIeOIWHRXrec?=
- =?us-ascii?Q?1apGONEDAH038SJPjoO8?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8631edf8-2f37-448b-dc92-08dc7695e758
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR02MB7237.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 May 2024 17:22:18.5226
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR02MB6195
+User-Agent: Mozilla Thunderbird
+Subject: Re: [regression] suspend stress test stalls within 30 minutes
+To: Kalle Valo <kvalo@kernel.org>, Borislav Petkov <bp@alien8.de>
+Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, x86@kernel.org,
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ regressions@lists.linux.dev, Jeff Johnson <quic_jjohnson@quicinc.com>
+References: <87o79cjjik.fsf@kernel.org>
+ <20240511184847.GCZj-9j2sh1Akpt9iS@fat_crate.local>
+ <20240511184945.GDZj-9yaOEWqf1ng8u@fat_crate.local>
+ <87h6f4jdrq.fsf@kernel.org> <878r0djxgc.fsf@kernel.org>
+ <874jb0jzx5.fsf@kernel.org>
+ <20240514160555.GCZkOL41oB3hBt45eO@fat_crate.local>
+ <87msoofjg1.fsf@kernel.org>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <87msoofjg1.fsf@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Refactor the list_for_each_entry() loop of rfcomm_get_dev_list()
-function to use array indexing instead of pointer arithmetic.
+On 5/17/24 10:15, Kalle Valo wrote:
+> Borislav Petkov <bp@alien8.de> writes:
+>> There might be some #GP or so in the logs in case we've managed to f*ck
+>> up microcode application which emulates that IBRS MSR bit and the
+>> actual toggling or so when suspending...
+> So the weird part is that when the bug happens (ie. suspend stalls) I
+> can access the box normally using ssh and I don't see anything special
+> in dmesg. Below is a full copy of dmesg output after the suspend
+> stalled. Do note that I copied this dmesg before I updated microcode so
+> it will still show the old microcode version.
+> 
+> Let me know if you need more info.
 
-This way, the code is more readable and idiomatic.
+Kalle, could you remind us what we're seeing here?  Does this show 30
+working rtcwake tests followed by a failure at "rtcwake test 31" where
+the system failed to suspend?
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Erick Archer <erick.archer@outlook.com>
----
- net/bluetooth/rfcomm/tty.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/net/bluetooth/rfcomm/tty.c b/net/bluetooth/rfcomm/tty.c
-index 44b781e7569e..af80d599c337 100644
---- a/net/bluetooth/rfcomm/tty.c
-+++ b/net/bluetooth/rfcomm/tty.c
-@@ -527,12 +527,12 @@ static int rfcomm_get_dev_list(void __user *arg)
- 	list_for_each_entry(dev, &rfcomm_dev_list, list) {
- 		if (!tty_port_get(&dev->port))
- 			continue;
--		(di + n)->id      = dev->id;
--		(di + n)->flags   = dev->flags;
--		(di + n)->state   = dev->dlc->state;
--		(di + n)->channel = dev->channel;
--		bacpy(&(di + n)->src, &dev->src);
--		bacpy(&(di + n)->dst, &dev->dst);
-+		di[n].id      = dev->id;
-+		di[n].flags   = dev->flags;
-+		di[n].state   = dev->dlc->state;
-+		di[n].channel = dev->channel;
-+		bacpy(&di[n].src, &dev->src);
-+		bacpy(&di[n].dst, &dev->dst);
- 		tty_port_put(&dev->port);
- 		if (++n >= dev_num)
- 			break;
--- 
-2.25.1
 
 
