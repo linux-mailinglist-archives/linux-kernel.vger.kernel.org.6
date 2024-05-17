@@ -1,106 +1,284 @@
-Return-Path: <linux-kernel+bounces-182324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23C1F8C89B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:58:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A44A48C89AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:58:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55EF81C215A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 15:58:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A20E285F30
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 15:58:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CF4812FF61;
-	Fri, 17 May 2024 15:58:18 +0000 (UTC)
-Received: from exchange.fintech.ru (exchange.fintech.ru [195.54.195.159])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3314612F5A7;
+	Fri, 17 May 2024 15:58:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="DxVsAMUg";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="DxVsAMUg"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C9A112FB12;
-	Fri, 17 May 2024 15:58:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.54.195.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C91412FF7E
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 15:58:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715961497; cv=none; b=OkV1BBq+OPNx0SNrD8g+elt7C0skt4ocslgBa+JWL1HkUWqT9OzF9TbHoUoNnAxTpS7knWN8+Ak3+b6Or2cMIyrYKSxlAOCxLuofAzYqFqBpsGKZcXXERfhi1mVYRf5f9DGZ1VrJCqOz8DykfZ7GIZ0FRQ896Zu/Q7S4mAzOMVU=
+	t=1715961486; cv=none; b=ZyNERJ6yHcXv4N6hl9cZcid+zrjozCantCWbnLe+H/W8kQk40GrsWc4E/oT0kNbzDcwkKa7/J0pplkPW3Zj5sqz/Hv27bIsDQ0Gcr5OTbGwk4VcZFYfVC2+68hzySf1Wn5MgL6amNuVkHFqEEIzFYrA4FoyRgBnd/R51L0uf6Dg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715961497; c=relaxed/simple;
-	bh=jPs7IHbfPkYSUHCi80uToaFuP+PivAQ4suilrpSf6d0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Lew5scVLwuXsblXIFM+xjT3Z+czN2I+ILoxbgWrypHWv0WXQh9v++AJDal3AqnVN+fvUrEw7Qz0U1WoN/JEIYbR0/IzU7hCooFg28p4MYyUZ3oA0jS9Sc8C7Zd2x43TdgfLPuX8Vl1O7WEDCAtHM9dMDo5E4k4l7bIY2LnS4fyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru; spf=pass smtp.mailfrom=fintech.ru; arc=none smtp.client-ip=195.54.195.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fintech.ru
-Received: from Ex16-01.fintech.ru (10.0.10.18) by exchange.fintech.ru
- (195.54.195.169) with Microsoft SMTP Server (TLS) id 14.3.498.0; Fri, 17 May
- 2024 18:58:10 +0300
-Received: from localhost (10.0.253.138) by Ex16-01.fintech.ru (10.0.10.18)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Fri, 17 May
- 2024 18:58:10 +0300
-From: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil
-	<hverkuil-cisco@xs4all.nl>
-CC: Nikita Zhandarovich <n.zhandarovich@fintech.ru>, Luis Chamberlain
-	<mcgrof@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Patrick Boettcher" <pb@linuxtv.org>, <linux-media@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>,
-	<syzbot+c88fc0ebe0d5935c70da@syzkaller.appspotmail.com>
-Subject: [PATCH] media: dvb-frontends: dib3000mb: fix uninit-value in dib3000_write_reg
-Date: Fri, 17 May 2024 08:58:00 -0700
-Message-ID: <20240517155800.9881-1-n.zhandarovich@fintech.ru>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1715961486; c=relaxed/simple;
+	bh=a2fBzysMpCaW8+tEHMaUIDgwDVM4a5ldLKDCdwVTU0c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=q99t7y1LQbcVntEoY+5LugCmEPmsIJ4pvexAYB09oIqIP0gyDwL3oCZ9aDzih2uvW+sjAOedn1pZtS43XGELSxlGYBGBfUE9Cy7cGzgVbOsKt+wHH6dc8Waz85sM5kz7WSkw2XVvXkyYsc9LyUvb/3PSU3iwHbxuyLTzXi3j2RI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=DxVsAMUg; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=DxVsAMUg; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 9CF6A21ACF;
+	Fri, 17 May 2024 15:58:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1715961482; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=a2fBzysMpCaW8+tEHMaUIDgwDVM4a5ldLKDCdwVTU0c=;
+	b=DxVsAMUgy30LmWXFoUkeUTnX1Gf+uvmWfXdo509PdhdE9PP23atSdxgFriG+UVrWJrH/52
+	Lrnnv8AeDOt9tJAdCmg8K5CbPB66kdczO8OlFBaIPSbrtp/bFEAogaD1tLM7yCoELdMYoY
+	zwZiEB9NHBjqClwOR2H9oX01isDmMcA=
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1715961482; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=a2fBzysMpCaW8+tEHMaUIDgwDVM4a5ldLKDCdwVTU0c=;
+	b=DxVsAMUgy30LmWXFoUkeUTnX1Gf+uvmWfXdo509PdhdE9PP23atSdxgFriG+UVrWJrH/52
+	Lrnnv8AeDOt9tJAdCmg8K5CbPB66kdczO8OlFBaIPSbrtp/bFEAogaD1tLM7yCoELdMYoY
+	zwZiEB9NHBjqClwOR2H9oX01isDmMcA=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 411D613991;
+	Fri, 17 May 2024 15:58:02 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id CAEHDop+R2bgKQAAD6G6ig
+	(envelope-from <jgross@suse.com>); Fri, 17 May 2024 15:58:02 +0000
+Message-ID: <f02d9ebb-a2b3-4cb3-871b-34324d374d01@suse.com>
+Date: Fri, 17 May 2024 17:58:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: Ex16-02.fintech.ru (10.0.10.19) To Ex16-01.fintech.ru
- (10.0.10.18)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/kvm/tdx: Save %rbp in TDX_MODULE_CALL
+To: Dave Hansen <dave.hansen@intel.com>,
+ "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, linux-coco@lists.linux.dev,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>
+References: <20240517121450.20420-1-jgross@suse.com>
+ <ohvjbokpaxagc26kxmlrujab7cw3bekgi5ln7dt46cbsaxcqqh@crvqeohfazmf>
+ <f63e1217-3dbe-458d-8c14-7880811d30ba@suse.com>
+ <2a2guben2ysyeb43rzg6zelzpa57o24ufai3mi6ocewwvgu63l@c7dle47q7hzw>
+ <03d27b6a-be96-44d7-b4ea-aa00ccab4cc5@suse.com>
+ <fc0e8ab7-86d4-4428-be31-82e1ece6dd21@intel.com>
+ <c0067319-2653-4cbd-8fee-1ccf21b1e646@suse.com>
+ <6df4fb48-9947-46ec-af5a-66fa06d6a83b@intel.com>
+ <86ca805d-7ed7-47dd-8228-5e19fbade53f@suse.com>
+ <f7edef9c-5eb5-4664-a193-3bb063674742@intel.com>
+Content-Language: en-US
+From: Juergen Gross <jgross@suse.com>
+Autocrypt: addr=jgross@suse.com; keydata=
+ xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
+ ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
+ dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
+ NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
+ XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
+ AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
+ CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
+ mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
+ G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
+ kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
+ Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
+ RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
+ vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
+ sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
+ aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
+ w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
+ auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
+ 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
+ fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
+ HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
+ QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
+ ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
+In-Reply-To: <f7edef9c-5eb5-4664-a193-3bb063674742@intel.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------X8DZ3Y7EjPb0AQY02PCi4ZRA"
+X-Spam-Flag: NO
+X-Spam-Score: -6.19
+X-Spam-Level: 
+X-Spamd-Result: default: False [-6.19 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SIGNED_PGP(-2.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MIME_GOOD(-0.20)[multipart/signed,multipart/mixed,text/plain];
+	NEURAL_HAM_SHORT(-0.20)[-0.988];
+	MIME_UNKNOWN(0.10)[application/pgp-keys];
+	MIME_BASE64_TEXT(0.10)[];
+	XM_UA_NO_VERSION(0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	MID_RHS_MATCH_FROM(0.00)[];
+	MIME_TRACE(0.00)[0:+,1:+,2:+,3:+,4:~,5:~];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	HAS_ATTACHMENT(0.00)[]
 
-Syzbot reports [1] an uninitialized value issue found by KMSAN in
-dib3000_read_reg().
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------X8DZ3Y7EjPb0AQY02PCi4ZRA
+Content-Type: multipart/mixed; boundary="------------3WWlCxOsobQA4Uslmp2R0M46";
+ protected-headers="v1"
+From: Juergen Gross <jgross@suse.com>
+To: Dave Hansen <dave.hansen@intel.com>,
+ "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, linux-coco@lists.linux.dev,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>
+Message-ID: <f02d9ebb-a2b3-4cb3-871b-34324d374d01@suse.com>
+Subject: Re: [PATCH] x86/kvm/tdx: Save %rbp in TDX_MODULE_CALL
+References: <20240517121450.20420-1-jgross@suse.com>
+ <ohvjbokpaxagc26kxmlrujab7cw3bekgi5ln7dt46cbsaxcqqh@crvqeohfazmf>
+ <f63e1217-3dbe-458d-8c14-7880811d30ba@suse.com>
+ <2a2guben2ysyeb43rzg6zelzpa57o24ufai3mi6ocewwvgu63l@c7dle47q7hzw>
+ <03d27b6a-be96-44d7-b4ea-aa00ccab4cc5@suse.com>
+ <fc0e8ab7-86d4-4428-be31-82e1ece6dd21@intel.com>
+ <c0067319-2653-4cbd-8fee-1ccf21b1e646@suse.com>
+ <6df4fb48-9947-46ec-af5a-66fa06d6a83b@intel.com>
+ <86ca805d-7ed7-47dd-8228-5e19fbade53f@suse.com>
+ <f7edef9c-5eb5-4664-a193-3bb063674742@intel.com>
+In-Reply-To: <f7edef9c-5eb5-4664-a193-3bb063674742@intel.com>
 
-Local u8 rb[2] is used in i2c_transfer() as a read buffer; in case
-that call fails, the buffer may end up with some undefined values.
+--------------3WWlCxOsobQA4Uslmp2R0M46
+Content-Type: multipart/mixed; boundary="------------j9DN4rZ2rnNijV2gO0KtCBgR"
 
-Since no elaborate error handling is expected in dib3000_write_reg(),
-simply zero out rb buffer to mitigate the problem.
+--------------j9DN4rZ2rnNijV2gO0KtCBgR
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
-[1] Syzkaller report
-dvb-usb: bulk message failed: -22 (6/0)
-=====================================================
-BUG: KMSAN: uninit-value in dib3000mb_attach+0x2d8/0x3c0 drivers/media/dvb-frontends/dib3000mb.c:758
- dib3000mb_attach+0x2d8/0x3c0 drivers/media/dvb-frontends/dib3000mb.c:758
- dibusb_dib3000mb_frontend_attach+0x155/0x2f0 drivers/media/usb/dvb-usb/dibusb-mb.c:31
- dvb_usb_adapter_frontend_init+0xed/0x9a0 drivers/media/usb/dvb-usb/dvb-usb-dvb.c:290
- dvb_usb_adapter_init drivers/media/usb/dvb-usb/dvb-usb-init.c:90 [inline]
- dvb_usb_init drivers/media/usb/dvb-usb/dvb-usb-init.c:186 [inline]
- dvb_usb_device_init+0x25a8/0x3760 drivers/media/usb/dvb-usb/dvb-usb-init.c:310
- dibusb_probe+0x46/0x250 drivers/media/usb/dvb-usb/dibusb-mb.c:110
-..
-Local variable rb created at:
- dib3000_read_reg+0x86/0x4e0 drivers/media/dvb-frontends/dib3000mb.c:54
- dib3000mb_attach+0x123/0x3c0 drivers/media/dvb-frontends/dib3000mb.c:758
-..
+T24gMTcuMDUuMjQgMTc6NTIsIERhdmUgSGFuc2VuIHdyb3RlOg0KPiBPbiA1LzE3LzI0IDA4
+OjQ4LCBKdWVyZ2VuIEdyb3NzIHdyb3RlOg0KPj4gSXMgdGhlIEJJT1MgdmVyc2lvbiBwcmlu
+dGVkIGF0IGJvb3QgZW5vdWdoIHRvIHNlZSB3aGF0IEkgaGF2ZT8NCj4+DQo+PiBbwqDCoMKg
+IDAuMDAwMDAwXSBETUk6IEludGVsIENvcnBvcmF0aW9uIEQ1MEROUC9ENTBETlAsIEJJT1MN
+Cj4+IFNFNUM3NDExLjg2Qi45NTM1LkQwNC4yMzEyMjcwNTE4IDEyLzI3LzIwMjMNCj4gDQo+
+IEkgaG9uZXN0bHkgZG9uJ3Qga25vdy4NCj4gDQo+IFdoYXQgd2UgYWN0dWFsbHkgbmVlZCBp
+cyB0aGUgVERYIG1vZHVsZSB2ZXJzaW9uLiBJJ20gbm90IHN1cmUgaG93DQo+IHRpZ2h0bHkg
+dGllZCB0aGUgVERYIG1vZHVsZSBpcyB0byB0aGUgQklPUyB2ZXJzaW9uLiBJIHN1c3BlY3Qg
+dGhhdA0KPiB0aGV5J3JlIGFjdHVhbGx5IGNvbXBsZXRlbHkgaW5kZXBlbmRlbnQuDQo+IA0K
+PiBPbmNlIHdlIGhhdmUgdGhlIHNwZWNpZmljIFREWCBtb2R1bGUgdmVyc2lvbiwgd2UgY2Fu
+IGdvIGFzayB0aGUgZm9sa3MNCj4gd2hvIHdyaXRlIGl0IGlmIHRoZXJlIHdlcmUgYW55IFJC
+UCBjbG9iYmVyaW5nIGJ1Z3MuDQo+IA0KDQpPa2F5LCBob3cgdG8gZ2V0IHRoZSBURFggbW9k
+dWxlIHZlcnNpb24/DQoNCg0KSnVlcmdlbg0K
+--------------j9DN4rZ2rnNijV2gO0KtCBgR
+Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Description: OpenPGP public key
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: 74340b0a8bc6 ("V4L/DVB (4457): Remove dib3000-common-module")
-Reported-by: syzbot+c88fc0ebe0d5935c70da@syzkaller.appspotmail.com
-Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
----
- drivers/media/dvb-frontends/dib3000mb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+-----BEGIN PGP PUBLIC KEY BLOCK-----
 
-diff --git a/drivers/media/dvb-frontends/dib3000mb.c b/drivers/media/dvb-frontends/dib3000mb.c
-index c598b2a63325..7c452ddd9e40 100644
---- a/drivers/media/dvb-frontends/dib3000mb.c
-+++ b/drivers/media/dvb-frontends/dib3000mb.c
-@@ -51,7 +51,7 @@ MODULE_PARM_DESC(debug, "set debugging level (1=info,2=xfer,4=setfe,8=getfe (|-a
- static int dib3000_read_reg(struct dib3000_state *state, u16 reg)
- {
- 	u8 wb[] = { ((reg >> 8) | 0x80) & 0xff, reg & 0xff };
--	u8 rb[2];
-+	u8 rb[2] = {};
- 	struct i2c_msg msg[] = {
- 		{ .addr = state->config.demod_address, .flags = 0,        .buf = wb, .len = 2 },
- 		{ .addr = state->config.demod_address, .flags = I2C_M_RD, .buf = rb, .len = 2 },
+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
+kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
+=3DeeAB
+-----END PGP PUBLIC KEY BLOCK-----
+
+--------------j9DN4rZ2rnNijV2gO0KtCBgR--
+
+--------------3WWlCxOsobQA4Uslmp2R0M46--
+
+--------------X8DZ3Y7EjPb0AQY02PCi4ZRA
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmZHfokFAwAAAAAACgkQsN6d1ii/Ey/I
+SQf/Z9VCuC3BUlwojJNerHepfPWsWUx+m3qeGpqeSZY9qMR3U5zHZgjPC7f67hInCIk8aNkxtFQJ
+GCvnAPeERCFxoChJH5DiRbkH5SM+6c8O7h4Q0U6wc7IxOujB3k1TGcshNBek0yVtI6IwrCO0mArE
+LQQBDFanGg78C3V3M9fGJDhrHfdnehtDzy3ntCLqT7nWLFa6E+TjWDigMfTSmwyVrDVFtDL+t+Kn
+JXq7xFEGpeNDq9J8cM76Mk/KP91qonZbW8IcVPEbmmkX1YOcQoSqG6qg2q0EvKxOJLiHbIGyDG6g
+6DgocpMaydt4XuPoaFw5Dv5TflTpBA2m34zLBDCyoQ==
+=vjLm
+-----END PGP SIGNATURE-----
+
+--------------X8DZ3Y7EjPb0AQY02PCi4ZRA--
 
