@@ -1,75 +1,123 @@
-Return-Path: <linux-kernel+bounces-182148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 904758C8742
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 15:34:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CEAC8C8753
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 15:36:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1A3B1C2092A
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 13:34:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E57731F21615
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 13:36:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F104954BE4;
-	Fri, 17 May 2024 13:34:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEA5654F95;
+	Fri, 17 May 2024 13:36:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="oHuMDPhn"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GLVE1+TD"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7E9D548F1;
-	Fri, 17 May 2024 13:34:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68DC6548F1;
+	Fri, 17 May 2024 13:36:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715952848; cv=none; b=XhbuQ0g8r8ReBTnhHQ+yOKOv5iDozX+LqyqinnXmfWI7nm+XP49xIQcw11PI3ezPbTEES4rp8GgP3A4paRcfTK3SMFliuuz88K7K6kFZEsZLVWtVhrWe0B2czfVpqo34/bdB2Aa0VnND2dJ4l3OEqQGnF8aMZbYGjoqjYnrU+3U=
+	t=1715952988; cv=none; b=NxNVtsDM95ZaoPtfDfW0OKN+549X3/33Dn6vKDYlkABE7k2FAutXZQQE+08hyvC4ffHSUnvPjT87dvvOqqWsyloGso+iu95qS++ZiI0YzMb9HL4bt4AsKl1B0FJ8ZpuhSVArApCQTuQM43xpa6DNHdl8+4XrCUwCy6eLcw5AIdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715952848; c=relaxed/simple;
-	bh=mSlJs8vptArJdivCbMCT7gFBuXMCAS3di5kemeigX8s=;
+	s=arc-20240116; t=1715952988; c=relaxed/simple;
+	bh=Jn7zwgtw8zPXbp3XlrdrrybXQAtHJe4Qo6Tf/v8KOUU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=adIRWZIKX/vFZU1UuIFe/i+0nEfrX5bPg6Z0o1kwMBgW/1Cmw3m/Hoyt2MzothDyxdHiFAZA0ivyG0PZQRzKBr0+OfU3P9L4WCDwtKbyNA2PhEhj6L7gXOsMO1Gs0XAWgpX81LnMNWpBn7JAvBkXB+XsDtW3Ij1I7Ckjt7AKCdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=oHuMDPhn; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=O2iwCGhnAnVaSClS4jWlyfnd77E8wl0qgKPPK50kjEg=; b=oHuMDPhnYVX21KtNWf0zu1uuYf
-	mZITEx7TQRM+3C3U4idWBLgWLeK3ArPq4zG8QGDt05IK++SF9Y0KklgsvCxKW2HlfEp3ITlaHgXTd
-	Ola48SslEjdOwN26939u46wPyicSZ4IYEvCQer6sXsAHsdOgYNsY0KeoqPT2kOdXS+YY=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1s7xil-00FZql-51; Fri, 17 May 2024 15:34:03 +0200
-Date: Fri, 17 May 2024 15:34:03 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Justin Lai <justinlai0215@realtek.com>
-Cc: kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
-	pabeni@redhat.com, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, jiri@resnulli.us, horms@kernel.org,
-	rkannoth@marvell.com, pkshih@realtek.com, larry.chiu@realtek.com
-Subject: Re: [PATCH net-next v19 12/13] realtek: Update the Makefile and
- Kconfig in the realtek folder
-Message-ID: <c695c61c-318f-4926-b276-f95e65e4a8ca@lunn.ch>
-References: <20240517075302.7653-1-justinlai0215@realtek.com>
- <20240517075302.7653-13-justinlai0215@realtek.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gBYIeYeM/H10MQUUVydQVJrfavqczaAU56q91fexMu+oObPYZe3USwrlbmvhatFvP19vNai3D3G04dmwbIXEALNky3GGKqa7+QDXCqdW/JXtwSc7KJIy8f2dNpTyJA99hwjNa5mmcTYMc14XGxqhFh81zu3u9ozKU01x4d+Nx1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GLVE1+TD; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715952987; x=1747488987;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=Jn7zwgtw8zPXbp3XlrdrrybXQAtHJe4Qo6Tf/v8KOUU=;
+  b=GLVE1+TDn1+B+Yvz1TDYsrnHwHKuwnEaOHON1aDguXhPcSKWapzQLrCP
+   Zmm3BPBcaZWWLB8tof7gthuCMyKUFnH+GP+BEsNKSz6FMQeEevVLyJAdD
+   UHGs6MTuFP9+dARRoni9Bmz4N3hMR5j4y/mt6n5sV9h8ZJqm1NXqrHWVZ
+   jPp01eiWt3JeJ/3kkkIza+YMCjVKAFbbQvyIqvhJiGMabQR2d9nWijfO+
+   iQo90bw7saGxZOZCwRvQ74lemjNcdVoi0NBb5fXiplIeBJRJZCmDs2UaD
+   jnnEZUqE4zExEzIi81yKZ4JNhaPkZmOTpxPrWJC2PeMSYSU4F8dhwzDKM
+   A==;
+X-CSE-ConnectionGUID: kPiR+F8/Rqmslq0Yx1dcVg==
+X-CSE-MsgGUID: ePwl3apbSpquXl+4wUveJg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="15956634"
+X-IronPort-AV: E=Sophos;i="6.08,167,1712646000"; 
+   d="scan'208";a="15956634"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 06:36:26 -0700
+X-CSE-ConnectionGUID: hv+jf/nYRMKp252TDzhWlA==
+X-CSE-MsgGUID: rHPZ9NOjRN2blqqMK8l1iw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,167,1712646000"; 
+   d="scan'208";a="55005642"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 06:36:18 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1s7xks-00000008Lkv-21yz;
+	Fri, 17 May 2024 16:36:14 +0300
+Date: Fri, 17 May 2024 16:36:14 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Frank Li <Frank.Li@nxp.com>, linux-omap@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	linux-tegra@vger.kernel.org, Vignesh Raghavendra <vigneshr@ti.com>,
+	Siddharth Vadapalli <s-vadapalli@ti.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Yue Wang <yue.wang@amlogic.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Xiaowei Song <songxiaowei@hisilicon.com>,
+	Binghui Wang <wangbinghui@hisilicon.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v4 0/5] PCI: controller: Move to agnostic GPIO API
+Message-ID: <ZkddTpyC177ZGoMH@smile.fi.intel.com>
+References: <20240506142142.4042810-1-andriy.shevchenko@linux.intel.com>
+ <20240517102234.GA333779@rocinante>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240517075302.7653-13-justinlai0215@realtek.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240517102234.GA333779@rocinante>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, May 17, 2024 at 03:53:01PM +0800, Justin Lai wrote:
-> 1. Add the RTASE entry in the Kconfig.
-> 2. Add the CONFIG_RTASE entry in the Makefile.
+On Fri, May 17, 2024 at 07:22:34PM +0900, Krzysztof Wilczyński wrote:
+> Hello,
 > 
-> Signed-off-by: Justin Lai <justinlai0215@realtek.com>
+> > While at it, remove of_gpio.h leftover from some of the drivers.
+> 
+> Applied to gpio, thank you!
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Thank you!
 
-    Andrew
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
