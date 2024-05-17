@@ -1,34 +1,34 @@
-Return-Path: <linux-kernel+bounces-181850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 848618C8256
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 10:06:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A84A48C8257
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 10:06:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5F6D1C21FA9
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 08:06:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63527280FDE
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 08:06:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55723224D1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69501224EA;
 	Fri, 17 May 2024 08:06:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YM5HLagf";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nZx9Eu6m"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JEHFuNpP";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="N7LjWV0U"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31511199A2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 314E418EAF;
 	Fri, 17 May 2024 08:06:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715933173; cv=none; b=W7iHAyRETcmeRue8Kt/iL0wXaloWh/FgFNtQDi9PlZiObxd759WP2hKSs0hqcK2IA8byiNVOgCSNtccjQYGNh5rGhfLgOb9s1CIf4Ck+lVTds3I5Uu+WjdsNYuGQUsU7uhGJcOY0XIbqBCc1MTSzv4CmrJlW5xMVcjSIdb0ff3c=
+	t=1715933173; cv=none; b=pgFGPZKztCkeLaJqdL6QuYsFBsiNbTk3mIbKpqXZi2hqNP0LThi4lbKV65yc9ovBIFGMxRXCuv5LoKwLvjy6RwOvPuy1GT3Y4rWXtZu743cinmvIpZw+oTPYEHr3hWA7Crgy4mRW7r5+3cmmN3396rO6FBBKA2ZzMvrz9ur2by0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1715933173; c=relaxed/simple;
-	bh=jNneO9bmaMNPBJVCxleElN3bh9dEZfqgRo76Tfh7peA=;
+	bh=Gy+MfnzKFUlnUmJu/uqoWrGcD3nzjxYvX/tGEREoz8M=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=nOuE8YdKB5HILmPxx8c34fS8rExyyFUOwk9CEQ76LNnMx7Q4Qkme7WBaV/J/VBRZZmug4eQo+ASWl7tOwunA/+u5TxTjGLNpZJjBCV4TPTadM1KqUkE8tT7P3MuHXzW0fztmzYBBfqj40mxH5bll9KRVq7NCzsyNu/zlLbl3VnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YM5HLagf; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nZx9Eu6m; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=WUCVjiCrAs1X1/QO6R3mMRjLqY0uxMNT1r6KSlXWUv1crVQ8pSKHfA6V4wsuG9Rf13iBQ/Eg0uKuh9ls2K+wXo3/5st244zQDRfQghkOPYE9x7LpnCrNEgF/71XA5xaAG5pK9jai4pUR287auk4cQLmkakinullAE5OEW4/gGY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JEHFuNpP; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=N7LjWV0U; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Date: Fri, 17 May 2024 08:06:10 -0000
@@ -39,12 +39,12 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=d3Iy5KH4Ri+raN2Ol1VdPOOeuFVq4IBOP5b//7P0Fc0=;
-	b=YM5HLagftmIMLVzgvXBYEUBO4lbj5JaKnFPVpucjpf/LxxD/Hr4R/T8iNt0MWECMt0mIyl
-	0pw4fh2JObCaEL3n/qwl5ri6aSjPKDkY/kPiOFrZ7ztjYQ2na0apHwCGtpG3stWs71ZzxT
-	lpZ2cchey2UFpWdFrax2+21vyHnVzoO3U0V+xuu3AhfGw0/59ONigyecal79pXp7IiuybL
-	mETGAhISBUC7qPa+25ghJls4WBIoZuWjS+PnzfmrQZh0zBiPSgUReWQ2qkDJhIUB/KnzvS
-	NYTfKwABO2CiUwYREKa2Ie2556B2aV5rysBpCBM/Ha4wisqO++7yXG9x3PoKug==
+	bh=PAqBsmfXaE9NB6/Y4Gt8q2H5wvUn70FgT1PsS5eYfoo=;
+	b=JEHFuNpP/oanSBwHMfwbyKvOWb9U/X0J24oq/My8t8kda6QUoJ/C2sPTb6NGJlHMQj4YTW
+	Qm2FYLFGs5tl2xOlOQmVjVdl/F3Xw3tCcGKOXzNwwffIP8/Y6jYtaG+rM06fV/T4JJ646A
+	aS/mDulkTpZ1NhPMWcKsq3Pnz910wpkyNpmb22BgY3G/obDps0+8ZK/p8zqhXQZ4k2V7/Y
+	zWEmDGHfd0DdziPYo1HDhi03NC9B6mt87Y9KU7yVETDQ5oe6PdgBMhJoFn3OxmfbhugGWT
+	dphws+0SURGc+B4+Y0qEtDYggBGQ3kS4rDVGQMHlp3X0imM9exNQ77TaA/3jew==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1715933170;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -52,26 +52,28 @@ DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=d3Iy5KH4Ri+raN2Ol1VdPOOeuFVq4IBOP5b//7P0Fc0=;
-	b=nZx9Eu6mr8roCLa2tSdI8BF1gWGAINSU9VdclMOkGhc9GH1CPC7PjUjddl/ue+Qupp04fP
-	us0Bv/e1DLJStCAw==
-From: "tip-bot2 for Christian Loehle" <tip-bot2@linutronix.de>
+	bh=PAqBsmfXaE9NB6/Y4Gt8q2H5wvUn70FgT1PsS5eYfoo=;
+	b=N7LjWV0U5QrhbwXXoy/dVPy9IL3uIAHtTHJPctWQQPr1v3oiVBKM0IbnYPwd43SLtBPsGk
+	1Zk5QNfss40fgTBA==
+From: "tip-bot2 for Cheng Yu" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/urgent] sched/fair: Remove stale FREQUENCY_UTIL comment
-Cc: Christian Loehle <christian.loehle@arm.com>,
- Ingo Molnar <mingo@kernel.org>, Vincent Guittot <vincent.guittot@linaro.org>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <0e2833ee-0939-44e0-82a2-520a585a0153@arm.com>
-References: <0e2833ee-0939-44e0-82a2-520a585a0153@arm.com>
+Subject: [tip: sched/urgent] sched/core: Fix incorrect initialization of the
+ 'burst' parameter in cpu_max_write()
+Cc: Qixin Liao <liaoqixin@huawei.com>, Cheng Yu <serein.chengyu@huawei.com>,
+ Zhang Qiao <zhangqiao22@huawei.com>, Ingo Molnar <mingo@kernel.org>,
+ Vincent Guittot <vincent.guittot@linaro.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240424132438.514720-1-serein.chengyu@huawei.com>
+References: <20240424132438.514720-1-serein.chengyu@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <171593317034.10875.13671501551374746016.tip-bot2@tip-bot2>
+Message-ID: <171593317007.10875.3075272533719435489.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -81,56 +83,70 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the sched/urgent branch of tip:
 
-Commit-ID:     7cb7fb5b49399fc59f1c44686d82c0df0776c8c6
-Gitweb:        https://git.kernel.org/tip/7cb7fb5b49399fc59f1c44686d82c0df0776c8c6
-Author:        Christian Loehle <christian.loehle@arm.com>
-AuthorDate:    Tue, 05 Mar 2024 15:18:20 
+Commit-ID:     49217ea147df7647cb89161b805c797487783fc0
+Gitweb:        https://git.kernel.org/tip/49217ea147df7647cb89161b805c797487783fc0
+Author:        Cheng Yu <serein.chengyu@huawei.com>
+AuthorDate:    Wed, 24 Apr 2024 21:24:38 +08:00
 Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Fri, 17 May 2024 09:51:54 +02:00
+CommitterDate: Fri, 17 May 2024 09:53:54 +02:00
 
-sched/fair: Remove stale FREQUENCY_UTIL comment
+sched/core: Fix incorrect initialization of the 'burst' parameter in cpu_max_write()
 
-On 05/03/2024 15:05, Vincent Guittot wrote:
+In the cgroup v2 CPU subsystem, assuming we have a
+cgroup named 'test', and we set cpu.max and cpu.max.burst:
 
-I'm fine with either and that was my first thought here, too, but it did seem like
-the comment was mostly placed there to justify the 'unexpected' high utilization
-when explicitly passing FREQUENCY_UTIL and the need to clamp it then.
-So removing did feel slightly more natural to me anyway.
+    # echo 1000000 > /sys/fs/cgroup/test/cpu.max
+    # echo 1000000 > /sys/fs/cgroup/test/cpu.max.burst
 
-So alternatively:
+then we check cpu.max and cpu.max.burst:
 
-From: Christian Loehle <christian.loehle@arm.com>
-Date: Tue, 5 Mar 2024 09:34:41 +0000
-Subject: [PATCH] sched/fair: Remove stale FREQUENCY_UTIL mention
+    # cat /sys/fs/cgroup/test/cpu.max
+    1000000 100000
+    # cat /sys/fs/cgroup/test/cpu.max.burst
+    1000000
 
-effective_cpu_util() flags were removed, so remove mentioning of the
-flag.
+Next we set cpu.max again and check cpu.max and
+cpu.max.burst:
 
-commit 9c0b4bb7f6303 ("sched/cpufreq: Rework schedutil governor performance estimation")
-reworked effective_cpu_util() removing enum cpu_util_type. Modify the
-comment accordingly.
+    # echo 2000000 > /sys/fs/cgroup/test/cpu.max
+    # cat /sys/fs/cgroup/test/cpu.max
+    2000000 100000
 
-Signed-off-by: Christian Loehle <christian.loehle@arm.com>
+    # cat /sys/fs/cgroup/test/cpu.max.burst
+    1000
+
+.. we find that the cpu.max.burst value changed unexpectedly.
+
+In cpu_max_write(), the unit of the burst value returned
+by tg_get_cfs_burst() is microseconds, while in cpu_max_write(),
+the burst unit used for calculation should be nanoseconds,
+which leads to the bug.
+
+To fix it, get the burst value directly from tg->cfs_bandwidth.burst.
+
+Fixes: f4183717b370 ("sched/fair: Introduce the burstable CFS controller")
+Reported-by: Qixin Liao <liaoqixin@huawei.com>
+Signed-off-by: Cheng Yu <serein.chengyu@huawei.com>
+Signed-off-by: Zhang Qiao <zhangqiao22@huawei.com>
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
-Link: https://lore.kernel.org/r/0e2833ee-0939-44e0-82a2-520a585a0153@arm.com
+Tested-by: Vincent Guittot <vincent.guittot@linaro.org>
+Link: https://lore.kernel.org/r/20240424132438.514720-1-serein.chengyu@huawei.com
 ---
- kernel/sched/fair.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/sched/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 9009787..9744b50 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -7900,8 +7900,8 @@ eenv_pd_max_util(struct energy_env *eenv, struct cpumask *pd_cpus,
- 		 * Performance domain frequency: utilization clamping
- 		 * must be considered since it affects the selection
- 		 * of the performance domain frequency.
--		 * NOTE: in case RT tasks are running, by default the
--		 * FREQUENCY_UTIL's utilization can be max OPP.
-+		 * NOTE: in case RT tasks are running, by default the min
-+		 * utilization can be max OPP.
- 		 */
- 		eff_util = effective_cpu_util(cpu, util, &min, &max);
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 1a91438..f88f505 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -11402,7 +11402,7 @@ static ssize_t cpu_max_write(struct kernfs_open_file *of,
+ {
+ 	struct task_group *tg = css_tg(of_css(of));
+ 	u64 period = tg_get_cfs_period(tg);
+-	u64 burst = tg_get_cfs_burst(tg);
++	u64 burst = tg->cfs_bandwidth.burst;
+ 	u64 quota;
+ 	int ret;
  
 
