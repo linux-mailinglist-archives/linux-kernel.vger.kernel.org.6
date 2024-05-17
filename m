@@ -1,225 +1,129 @@
-Return-Path: <linux-kernel+bounces-182403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C56DF8C8AE4
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:23:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 592438C8ACC
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:20:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3726B1F21C27
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:23:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 155EA280E8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:20:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 027EC13DDDC;
-	Fri, 17 May 2024 17:22:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 090B813DDCC;
+	Fri, 17 May 2024 17:19:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="LuCMXl4n"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e5mx1wEx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D63A13DBA2;
-	Fri, 17 May 2024 17:22:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45AE413DDB0;
+	Fri, 17 May 2024 17:19:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715966578; cv=none; b=mTRIvXqqDHMW/39Pt1aZNznjGaWXZHKdMC8wEAwsRE8Ri850jnwyDSe3GEfF0cbTi8m66W6noc2pnURYEpAycXYAHuIZBmm5OIdQXSDilFoYDt01AXYsUXLguQnXI5q60RyQ3C5A22iOdvyqanhkL+D8qqS5A6ozAUUctiXwkJA=
+	t=1715966395; cv=none; b=jeisjv1fCHb8h+GtGMUDNHRuEa2d+DAbsdqHrYmQMcyYJ8W52i9qGeY8EON66Uihi0vwrhKNTyLYxK5tt8rS6FBNS7pjYiI82I9A+OtEAt2CLh7ORJobaXoSjccx99kz+EAsYLRgMMxr45p9/2WWfnGT3fXXDbeGlpUcUzz6TVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715966578; c=relaxed/simple;
-	bh=A62SrEGUNgarYEucEPNWv0b881kKQnR5p/TPQqVl/x8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FqoagCZ4fiht6mljQ7Cg/Ut0+zFdbz5oxemk8Lyo2sTSZ1DJW7781HmcKknjQ4RPYCi1sw/xo/2m24fcGGNo+V2d0/ARUBCCeia2GVxxYBIUx1UATkQapXyF0w7lZ8qeucD5ZPmN6+NAOX3XwYi/ZF3v/qtesrxGJgeLoXi3R5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=LuCMXl4n; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44HHJZ65112962;
-	Fri, 17 May 2024 12:19:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1715966375;
-	bh=pDGiysoKPG8xVLvKSAMkH4XMIv+M54T2DqtUo9PttQE=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=LuCMXl4nZ9ad43UjnEEZwVI6K8Bwlocl+/wuxDGHH3pfc/db3rrsMrV0tVVvc3QnK
-	 q1VLzVjfIADmh42UDV58mT13p5oHhfNFcjPv4MpYwuxboWXjLLkYHER9YXNm0hb8T+
-	 3YMby0K8ANmWiWAdcdSE0a8BECQcl1KTbKr9Tjag=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44HHJZoL107039
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 17 May 2024 12:19:35 -0500
-Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 17
- May 2024 12:19:35 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 17 May 2024 12:19:35 -0500
-Received: from localhost (ti.dhcp.ti.com [172.24.227.95] (may be forged))
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44HHJYJA106120;
-	Fri, 17 May 2024 12:19:35 -0500
-From: Devarsh Thakkar <devarsht@ti.com>
-To: <mchehab@kernel.org>, <robh@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <hverkuil-cisco@xs4all.nl>, <linux-media@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <benjamin.gaignard@collabora.com>, <sebastian.fricke@collabora.com>
-CC: <laurent.pinchart@ideasonboard.com>, <praneeth@ti.com>, <nm@ti.com>,
-        <vigneshr@ti.com>, <a-bhatia1@ti.com>, <j-luthra@ti.com>,
-        <b-brnich@ti.com>, <detheridge@ti.com>, <p-mantena@ti.com>,
-        <vijayp@ti.com>, <andrzej.p@collabora.com>, <nicolas@ndufresne.ca>
-Subject: [PATCH v8 01/10] media: dt-bindings: Add Imagination E5010 JPEG Encoder
-Date: Fri, 17 May 2024 22:49:34 +0530
-Message-ID: <20240517171934.758643-1-devarsht@ti.com>
-X-Mailer: git-send-email 2.39.1
-In-Reply-To: <20240517171532.748684-1-devarsht@ti.com>
-References: <20240517171532.748684-1-devarsht@ti.com>
+	s=arc-20240116; t=1715966395; c=relaxed/simple;
+	bh=JPiqBtueOqPjvHwerNvEOHviFOz8JLhoUGBcqfWBC3c=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=DdVUgAjUM/slswDq5ipqvD68g9PPm8wuXBaOeidd81Ag1RhL85dK6jsuEs3MdOosX7xYB+jMGxYyeoxerwZlsErbkqe79d7SjZ3vF5ktluAip5+v6i3PPTj/1CL36Ka3UsaNm/lvXhdWeQWc3Uoh7R6R4FPcaFJQEBhLwlhD5bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e5mx1wEx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F7E4C2BD10;
+	Fri, 17 May 2024 17:19:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715966394;
+	bh=JPiqBtueOqPjvHwerNvEOHviFOz8JLhoUGBcqfWBC3c=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=e5mx1wEx3q4W4Dg2PF0Vy+sO5zWRFTALnTj034RxWk6s4Z26oID48/LP8xbWhSQCa
+	 wj48FqdekdqhkaxYk4i1tYy2CZRK7kqpP0+n7UoL50xZ3gp7D+BdcyHnG+e1/NrI0D
+	 ltPqbUK6PKbpqRJ+nX9gEisYRCuUDeELQYMMn86/GTe8raOEHlg5WA6q8tmwkv8hL0
+	 JRveOPRg8sqUnKapbaT1atylRRx5JnmkC9vB+Ci6X9fPaPMNXj2aEWGZ6qnxjz7pIj
+	 mkIPTC4zLhZ4R4ye5cddGJHL6Mz7dvKQa20QeuJJXJo6cQJvPF18ESy6Ko3MezgJCB
+	 LbJCIu+4vAbfQ==
+From: Kalle Valo <kvalo@kernel.org>
+To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Cc: Dave Hansen <dave.hansen@intel.com>,  Borislav Petkov <bp@alien8.de>,
+  Thomas Gleixner <tglx@linutronix.de>,  Ingo Molnar <mingo@redhat.com>,
+  Dave Hansen <dave.hansen@linux.intel.com>,  "Rafael J. Wysocki"
+ <rafael@kernel.org>,  x86@kernel.org,  linux-pm@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  regressions@lists.linux.dev,  Jeff Johnson
+ <quic_jjohnson@quicinc.com>,  Daniel Sneddon
+ <daniel.sneddon@linux.intel.com>
+Subject: Re: [regression] suspend stress test stalls within 30 minutes
+References: <87o79cjjik.fsf@kernel.org>
+	<20240511184847.GCZj-9j2sh1Akpt9iS@fat_crate.local>
+	<20240511184945.GDZj-9yaOEWqf1ng8u@fat_crate.local>
+	<87h6f4jdrq.fsf@kernel.org> <878r0djxgc.fsf@kernel.org>
+	<874jb0jzx5.fsf@kernel.org>
+	<feaefaae-e25b-4a48-b6be-e20054f2c8df@intel.com>
+	<20240515072231.z3wlyoblyc34ldmr@desk>
+Date: Fri, 17 May 2024 20:19:49 +0300
+In-Reply-To: <20240515072231.z3wlyoblyc34ldmr@desk> (Pawan Gupta's message of
+	"Wed, 15 May 2024 00:22:31 -0700")
+Message-ID: <87ikzcfj9m.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Add dt-bindings for Imagination E5010 JPEG Encoder [1] which is implemented
-as stateful V4L2 M2M driver.
+Pawan Gupta <pawan.kumar.gupta@linux.intel.com> writes:
 
-The device supports baseline encoding with two different quantization
-tables and compression ratio as demanded.
+> On Tue, May 14, 2024 at 09:10:07AM -0700, Dave Hansen wrote:
+>
+>> On 5/14/24 06:17, Kalle Valo wrote:
+>> > The kernel we use in our ath11k testing has almost all kernel debug
+>> > features enabled so I decided disable all of them, which unsurprisingly
+>> > also fixed my suspend problems. So maybe this is something which happens
+>> > only when MITIGATION_IBRS_ENTRY and some debug option from 'Kernel
+>> > hacking' are both enabled?
+>> 
+>> I had my money on DEBUG_ENTRY, but it doesn't look like you ever had it
+>> enabled.
+>> 
+>> I've got basically two theories:
+>> 
+>> One, the IBRS value is getting mucked up somewhere, either that %r15
+>> value is getting stepped on or the per-cpu value is corrupt and the
+>> WRMSR #GP's, causing the hang.
+>> 
+>> Two, IBRS_{ENTER,EXIT} is called in a "wrong" context somewhere.  Either
+>> it is clobbering something it shouldn't or it is assuming something is
+>> in place that is not (like a valid stack).
+>> 
+>> But the whole "'sudo shutdown -h now' then suspend somehow immediately
+>> unstalls" thing is really perplexing.  I hope Pawan has some ideas.
+>
+> Nothing promising yet. I now have the system with the same model, but the
+> system is only booting in recovery mode with the config attached with the
+> report.
+>
+> Kalle, I wanted to try reverting the below commits:
+>
+> aa1567a7e644 ("intel_idle: Add ibrs_off module parameter to force-disable IBRS")
+> 1e4d3001f59f ("x86/entry: Harden return-to-user")
+> c516213726fb ("x86/entry: Optimize common_interrupt_return()")
+>
+> ... but I haven't reproduced the issue yet.
 
-Minimum resolution supported is 64x64 and Maximum resolution supported is
-8192x8192.
+I can try to revert those but didn't manage to do it yet.
 
-[1]:  AM62A TRM (Section 7.6 is for JPEG Encoder)
-Link: https://www.ti.com/lit/pdf/spruj16
+> FYI, cmdline "spectre_v2=off" should have the same effect as
+> CONFIG_IBRS_ENTRY=n.
 
-Co-developed-by: David Huang <d-huang@ti.com>
-Signed-off-by: David Huang <d-huang@ti.com>
-Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
-V8:
- - No change
-V7:
- - No change
-V6:
- - No change
-V5:
- - Add Reviewed-By tag
-V4:
- - Use ti-specific compatible ti,am62a-jpeg-enc as secondary one
- - Update commit message and title
- - Remove clock-names as only single clock
-V3:
-- Add vendor specific compatible
-- Update reg names
-- Update clocks to 1
-- Fix dts example with proper naming
-V2: No change
----
- .../bindings/media/img,e5010-jpeg-enc.yaml    | 75 +++++++++++++++++++
- MAINTAINERS                                   |  5 ++
- 2 files changed, 80 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/img,e5010-jpeg-enc.yaml
+Confirmed, I don't see the bug with "spectre_v2=off" and the box
+suspended succesfully 400 times.
 
-diff --git a/Documentation/devicetree/bindings/media/img,e5010-jpeg-enc.yaml b/Documentation/devicetree/bindings/media/img,e5010-jpeg-enc.yaml
-new file mode 100644
-index 000000000000..085020cb9e61
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/img,e5010-jpeg-enc.yaml
-@@ -0,0 +1,75 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/media/img,e5010-jpeg-enc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Imagination E5010 JPEG Encoder
-+
-+maintainers:
-+  - Devarsh Thakkar <devarsht@ti.com>
-+
-+description: |
-+  The E5010 is a JPEG encoder from Imagination Technologies implemented on
-+  TI's AM62A SoC. It is capable of real time encoding of YUV420 and YUV422
-+  inputs to JPEG and M-JPEG. It supports baseline JPEG Encoding up to
-+  8Kx8K resolution.
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - items:
-+          - const: ti,am62a-jpeg-enc
-+          - const: img,e5010-jpeg-enc
-+      - const: img,e5010-jpeg-enc
-+
-+  reg:
-+    items:
-+      - description: The E5010 core register region
-+      - description: The E5010 mmu register region
-+
-+  reg-names:
-+    items:
-+      - const: core
-+      - const: mmu
-+
-+  power-domains:
-+    maxItems: 1
-+
-+  resets:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - reg-names
-+  - interrupts
-+  - clocks
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/soc/ti,sci_pm_domain.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+
-+    soc {
-+      #address-cells = <2>;
-+      #size-cells = <2>;
-+      jpeg-encoder@fd20000 {
-+          compatible = "img,e5010-jpeg-enc";
-+          reg = <0x00 0xfd20000 0x00 0x100>,
-+                <0x00 0xfd20200 0x00 0x200>;
-+          reg-names = "core", "mmu";
-+          clocks = <&k3_clks 201 0>;
-+          power-domains = <&k3_pds 201 TI_SCI_PD_EXCLUSIVE>;
-+          interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
-+      };
-+    };
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 90754a451bcf..f35d1861cc27 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -10766,6 +10766,11 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/auxdisplay/img,ascii-lcd.yaml
- F:	drivers/auxdisplay/img-ascii-lcd.c
- 
-+IMGTEC JPEG ENCODER DRIVER
-+M:	Devarsh Thakkar <devarsht@ti.com>
-+S:	Supported
-+F:	Documentation/devicetree/bindings/media/img,e5010-jpeg-enc.yaml
-+
- IMGTEC IR DECODER DRIVER
- S:	Orphan
- F:	drivers/media/rc/img-ir/
+> Other interesting thing to try is cmdline "dis_ucode_ldr".
+
+This didn't help. I tried twice, the first time it failed after 11
+suspend loops and the second time after 34 loops.
+
 -- 
-2.39.1
+https://patchwork.kernel.org/project/linux-wireless/list/
 
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
