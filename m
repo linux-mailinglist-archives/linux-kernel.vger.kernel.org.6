@@ -1,108 +1,131 @@
-Return-Path: <linux-kernel+bounces-182090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EE928C8629
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 14:13:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF98D8C8634
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 14:25:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13E1828467C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 12:13:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44D5AB21CD2
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 12:25:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE9284503C;
-	Fri, 17 May 2024 12:13:15 +0000 (UTC)
-Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F0AC42059;
+	Fri, 17 May 2024 12:25:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="XuucxtbC"
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3978446D5;
-	Fri, 17 May 2024 12:13:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30CB041C68
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 12:25:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715947995; cv=none; b=th75XBgsL5uqZ6I2rBiVjTGJMV9kBskwD3VuDHIlIJ6XKmPnyOiKO94Cn9jyYiEvAmftPW0S3lXJXl6Io9SmJjwZzWdbavslvTuVj8BacwqC1WSnKLP/mbuYP+SVER2uYk3DCP41LavCXDVbeambXyLS7gF2ZFXTw5qUAotlv24=
+	t=1715948706; cv=none; b=Du5iZRE6PWCiLXYMnM+JoYwV/yCfVg2a/zjwQYKylyY5PHj8H68QwOvK3vQpd/1G/vQuo+pLzmFudYpqnYiaMJ0v4ZJweGaDsi9mp3193VEhkoy5fVox5409cnZIHefJ8dE4AYZgjfh3ykfqMp+dMZtqFGIE7o3g6qwRS4sRmcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715947995; c=relaxed/simple;
-	bh=QY+w7+/xsuNVPLbOX6z71RjMaYe9IzwtylqSW3cExss=;
-	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
-	 Content-Type:Subject; b=SCwIwGb1dH2qr9XL6HoqGFmbUU6H4mzUP77tMO3Z1yX7Y6qCAZAjA+jqAdvMUsNaUPNQY8812IEMqgBtaKc3+2toPSaD9wF7XvVtKL7Kc9ej4KqIdRC17ws/5kVMYixMAZ3BXmzKOSocIbtBLGicTnawmidYJQIyY/tC/5AnOwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
-Received: from in01.mta.xmission.com ([166.70.13.51]:38640)
-	by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1s7vq9-00ELc2-8z; Fri, 17 May 2024 05:33:33 -0600
-Received: from ip68-227-168-167.om.om.cox.net ([68.227.168.167]:56464 helo=email.froward.int.ebiederm.org.xmission.com)
-	by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1s7vq7-00HC6p-QA; Fri, 17 May 2024 05:33:32 -0600
-From: "Eric W. Biederman" <ebiederm@xmission.com>
-To: Jonathan Calmels <jcalmels@3xx0.net>
-Cc: brauner@kernel.org,  Luis Chamberlain <mcgrof@kernel.org>,  Kees Cook
- <keescook@chromium.org>,  Joel Granados <j.granados@samsung.com>,  Serge
- Hallyn <serge@hallyn.com>,  Paul Moore <paul@paul-moore.com>,  James
- Morris <jmorris@namei.org>,  David Howells <dhowells@redhat.com>,  Jarkko
- Sakkinen <jarkko@kernel.org>,  containers@lists.linux.dev,
-  linux-kernel@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
-  linux-security-module@vger.kernel.org,  keyrings@vger.kernel.org
-References: <20240516092213.6799-1-jcalmels@3xx0.net>
-	<20240516092213.6799-2-jcalmels@3xx0.net>
-Date: Fri, 17 May 2024 06:32:46 -0500
-In-Reply-To: <20240516092213.6799-2-jcalmels@3xx0.net> (Jonathan Calmels's
-	message of "Thu, 16 May 2024 02:22:03 -0700")
-Message-ID: <878r08brmp.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1715948706; c=relaxed/simple;
+	bh=auN0caH7D6wVUHe+HwaFcQrcS3XrqjErEzQRs7BVtbs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=BPP3+pumlzGRwZiBaankoYgjsKjBiTnPnHNDfwqkPjiBFbU4gia/eKB8wb9D8pk0nowioT2TBUqJhOBkUjeD3vpsPA109jtVmHyb1+1qyynehETztPzHEVZq1v6md5bpAtEepckms3KWpZfikhjp1OcBf6qllz0RWH3IWlFGJyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=XuucxtbC; arc=none smtp.client-ip=67.231.149.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44HBl9kK019146;
+	Fri, 17 May 2024 06:58:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	PODMain02222019; bh=n/U1T0up33AqvYftHIrXa/+1I2+X8aJw6y0lb6mwEz8=; b=
+	XuucxtbCbY6q1DpvOo9lNtqkpW3+YL7G+hrwyQd9MkMEFUuNUpTckXchnfou9yzR
+	gGgcr0vaRLnrCmYpyxOr1OtUO5ifTv1DZPU+V1SZGff4FpYcasN1nUtwBjyNuBAi
+	Aa/szo2dCdMbs7QED4GDEUm92uc36YmA273E9ZNO8vd1aSTFW2Hp6bFFrioBDB2W
+	Q0qPf17M7IwMckfmfAbkHPp6o03G88f2xxsplNpz7EtV0hKrtuHo5frdnzKoVkL9
+	d6bb6yQMFGkxnW180M7KYcxEkTVIWd6Mfz03KZFIM6MPv2KDM5Cmlb7V/YWHI9xY
+	TY8BkSt9TxnQErw/qKC5UQ==
+Received: from ediex01.ad.cirrus.com ([84.19.233.68])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 3y3qveve4b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 17 May 2024 06:58:33 -0500 (CDT)
+Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 17 May
+ 2024 12:58:30 +0100
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
+ 15.2.1544.9 via Frontend Transport; Fri, 17 May 2024 12:58:30 +0100
+Received: from [198.90.208.18] (ediswws06.ad.cirrus.com [198.90.208.18])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id CE563820244;
+	Fri, 17 May 2024 11:58:30 +0000 (UTC)
+Message-ID: <ffa73a17-ac32-493f-b0a4-32d3ac4c9027@opensource.cirrus.com>
+Date: Fri, 17 May 2024 12:58:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1s7vq7-00HC6p-QA;;;mid=<878r08brmp.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.168.167;;;frm=ebiederm@xmission.com;;;spf=pass
-X-XM-AID: U2FsdGVkX1+q9LcYdBDppWToICMQt2uOx8uVr0xZ4BI=
-X-SA-Exim-Connect-IP: 68.227.168.167
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Level: *
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-	*      [score: 0.4980]
-	*  1.5 XMNoVowels Alpha-numberic number with no vowels
-	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-	*      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: *;Jonathan Calmels <jcalmels@3xx0.net>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 587 ms - load_scoreonly_sql: 0.07 (0.0%),
-	signal_user_changed: 13 (2.1%), b_tie_ro: 11 (1.8%), parse: 1.07
-	(0.2%), extract_message_metadata: 14 (2.4%), get_uri_detail_list: 0.73
-	(0.1%), tests_pri_-2000: 7 (1.2%), tests_pri_-1000: 3.2 (0.5%),
-	tests_pri_-950: 1.38 (0.2%), tests_pri_-900: 1.26 (0.2%),
-	tests_pri_-90: 244 (41.5%), check_bayes: 236 (40.2%), b_tokenize: 6
-	(0.9%), b_tok_get_all: 6 (1.0%), b_comp_prob: 1.81 (0.3%),
-	b_tok_touch_all: 219 (37.4%), b_finish: 1.02 (0.2%), tests_pri_0: 155
-	(26.5%), check_dkim_signature: 0.56 (0.1%), check_dkim_adsp: 2.7
-	(0.5%), poll_dns_idle: 129 (22.0%), tests_pri_10: 3.9 (0.7%),
-	tests_pri_500: 140 (23.8%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH 1/3] capabilities: user namespace capabilities
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 04/11] regmap: kunit: Run sparse cache tests at non-zero
+ register addresses
+To: Guenter Roeck <linux@roeck-us.net>
+CC: <broonie@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <patches@opensource.cirrus.com>
+References: <20240408144600.230848-1-rf@opensource.cirrus.com>
+ <20240408144600.230848-5-rf@opensource.cirrus.com>
+ <5c1daddb-d8b3-420a-839f-208e0a6e168b@roeck-us.net>
+Content-Language: en-GB
+From: Richard Fitzgerald <rf@opensource.cirrus.com>
+In-Reply-To: <5c1daddb-d8b3-420a-839f-208e0a6e168b@roeck-us.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: jQyPbB5cl9eiAX21IbeZVOX5_cO30Wqz
+X-Proofpoint-GUID: jQyPbB5cl9eiAX21IbeZVOX5_cO30Wqz
+X-Proofpoint-Spam-Reason: safe
 
-Jonathan Calmels <jcalmels@3xx0.net> writes:
+On 16/05/2024 20:53, Guenter Roeck wrote:
+> Hi,
+> 
+> On Mon, Apr 08, 2024 at 03:45:53PM +0100, Richard Fitzgerald wrote:
+>> Run the cache_drop() and cache_present() tests at blocks of addresses
+>> that don't start at zero.
+>>
+>> This adds a from_reg parameter to struct regmap_test_param. This is
+>> used to set the base address of the register defaults created by
+>> gen_regmap().
+>>
+>> Extra entries are added to sparse_cache_types_list[] to test at non-zero
+>> from_reg values. The cache_drop() and cache_present() tests are updated
+>> to test at the given offset.
+>>
+>> The aim here is to add test cases to cache_drop() for the bug fixed by
+>> commit 00bb549d7d63 ("regmap: maple: Fix cache corruption in
+>> regcache_maple_drop()")
+>>
+>> But the same parameter table is used by the cache_present() test so
+>> let's also update that to use from_reg.
+>>
+>> Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+> 
+> With this patch in mainline, I get lots of errors such as
+> 
+> [   23.494308] =============================================================================
+> [   23.496391] BUG kmalloc-64 (Tainted: G                 N): kmalloc Redzone overwritten
+> 
 
-> Attackers often rely on user namespaces to get elevated (yet confined)
-> privileges in order to target specific subsystems (e.g. [1]). Distributions
-> have been pretty adamant that they need a way to configure these, most of
-> them carry out-of-tree patches to do so, or plainly refuse to enable
-> them.
+Just a random thought, I wonder whether in gen_regmap() this:
 
-Pointers please?
+   if (config->num_reg_defaults)
+	config->max_register += (config->num_reg_defaults - 1) *
+				config->reg_stride;
+   else
+	config->max_register += (BLOCK_TEST_SIZE * config->reg_stride);
 
-That sentence sounds about 5 years out of date.
+should be:
 
-Eric
+config->max_register += max(config->num_reg_defaults - 1,
+			    BLOCK_TEST_SIZE) * config->reg_stride;
+
+I've only had a quick scan through the code without seeing any other
+obvious problem.
 
