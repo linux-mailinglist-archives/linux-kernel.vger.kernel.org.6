@@ -1,70 +1,70 @@
-Return-Path: <linux-kernel+bounces-182673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24EE48C8E4F
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 00:44:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F29F28C8E52
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 00:44:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 515E11C216B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 22:44:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F8911F22B90
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 22:44:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59F41141999;
-	Fri, 17 May 2024 22:44:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3FD91419B5;
+	Fri, 17 May 2024 22:44:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lyndeno.ca header.i=@lyndeno.ca header.b="sKNqM3jz";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="dQvW2YoC"
-Received: from wfout7-smtp.messagingengine.com (wfout7-smtp.messagingengine.com [64.147.123.150])
+	dkim=pass (2048-bit key) header.d=lyndeno.ca header.i=@lyndeno.ca header.b="uofYj0pO";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="PVvv3a/g"
+Received: from wfhigh2-smtp.messagingengine.com (wfhigh2-smtp.messagingengine.com [64.147.123.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7175140E2E;
-	Fri, 17 May 2024 22:44:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10917140375;
+	Fri, 17 May 2024 22:44:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715985848; cv=none; b=UHkLNl4bixn+E6QUHi34SFCeEAaAEG0swdHUn7fU7qBx2M4HcAwEAcRqMvgq4h6qQ+H0sydduZ71U0EFrSblw//1FzS/GP77/6iq2n519Q3i0FyHCwINy9nv5CH07brl2v41NMhk9iOohtI3D7OejeVqcsKdeScKZ2EcxV3omI8=
+	t=1715985870; cv=none; b=EE822v+oyGK0myPjppDCcwteAqusXKulS7nEehQ8Jy1hgDSFW/oCjjWLqOvh633mE+4POXT0LkOhAis656grqsFhx4M+DTSpSCNdiAa6ADCTEDGPbmSShtxRGl0AZRvGn1ML8cBn1SWK7othnB3cJOsptHlud38lrg4qKiG122g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715985848; c=relaxed/simple;
-	bh=loCrIO0PewTruFGNsjXG5fP1bL8deD1rba3DtzoRRUI=;
+	s=arc-20240116; t=1715985870; c=relaxed/simple;
+	bh=HWrrVsIWO8Y/vDkkDrw8BNTFmPPWbA2OH5R7wP7hxmU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lwYVj8re+TWhP45npuhM9wuC9gzeHTUADIiZM5iBr6EE8wzDxDSluKPZn70IBRvJNkrtLLFLaPeseabrSSJkmOL92k5iaGAlwoa7L7rrvBXsquNfp+7NIZkCJM+Yw+T5btvLmLlFJ4W/liHjE+LzA79BfUgn0B954z1O/pmvGi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lyndeno.ca; spf=pass smtp.mailfrom=lyndeno.ca; dkim=pass (2048-bit key) header.d=lyndeno.ca header.i=@lyndeno.ca header.b=sKNqM3jz; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=dQvW2YoC; arc=none smtp.client-ip=64.147.123.150
+	 MIME-Version; b=ESmZD4Su6HSWpsXJQMRTuQ26vF1lwWMPkOG72ZmLhJTGclI3qlvFhRyo6xkgTgsAw5Hc3DL7Kk/IFJ54XzwjdX8M/qzbaGqQbJmNY1rUWVtMbv6PbgUhiQZHAKeXF2sWquf9yjQX6/k0METwvw9EheeGjW7P8IJeDbectx5OCrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lyndeno.ca; spf=pass smtp.mailfrom=lyndeno.ca; dkim=pass (2048-bit key) header.d=lyndeno.ca header.i=@lyndeno.ca header.b=uofYj0pO; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=PVvv3a/g; arc=none smtp.client-ip=64.147.123.153
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lyndeno.ca
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lyndeno.ca
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-	by mailfout.west.internal (Postfix) with ESMTP id 78CDB1C000AE;
-	Fri, 17 May 2024 18:44:04 -0400 (EDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfhigh.west.internal (Postfix) with ESMTP id 26BDF18000BC;
+	Fri, 17 May 2024 18:44:27 -0400 (EDT)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Fri, 17 May 2024 18:44:05 -0400
+  by compute5.internal (MEProxy); Fri, 17 May 2024 18:44:28 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lyndeno.ca; h=cc
 	:cc:content-transfer-encoding:content-type:date:date:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1715985844; x=
-	1716072244; bh=YkNH9UmdI00+6TF86KxexTrZ0A1ZnZI2cRgBC770hMU=; b=s
-	KNqM3jz3h1jDIlbJLOu3qwiiPb772onuZcx/ItMTcuAPp2Byr/OcrJxQym7lg74C
-	FMuLpm+g4HFS2JHDzNEkz6yFnr3MU5aVdCqsVH9/7RLCR5bUfX7Ih9sKzYE9UOer
-	T+Y97FdNXXMvkVrEylgcbjgE//k856zGOWGVTiQOmtbOqRImb/LIVELH3RXw4TP6
-	B3fruKgRMaWzftTilK4MzLc/X4RVhTeUXaR2El2LBpXVjCy6MfyApAOLcawAYhYO
-	GflnRZBnk55/6hoBRSyPAwc9tnKjJWOf95dkX/Q6HX36RhL3M6Mh1WCKEwwDl4ax
-	volF7Sg2hldF2DKUFx/jA==
+	:reply-to:subject:subject:to:to; s=fm2; t=1715985866; x=
+	1716072266; bh=ophfuI0pldy6rb1ZeywejXaBasnIE+4VwXup8tD4W3A=; b=u
+	ofYj0pOfyxS9Qhb2xjNo68yW7ShUe5HZHL1rfpcGRWiuxYu8cWgECmDSOcgb+DaA
+	q2AZPxdej8jVougetKpaXUnqrMudM4VlQPhPV3V96zBPBLvnhp2XpQ2Qjh6NL1mX
+	fr4bKIHrX77XsGU8YO+ZZ/wz//9lxgzaBZdpRsEaLTiZ3Kxec1VZTIo7T/ZiQQUu
+	g/O3KEwiuoAtb3piYbLETlKv5konHomkshf15i1rmjXbvupGmoVy3ZHqJugU9Wsd
+	vbrfVzennTFsjbfSZrLl2M8plSEmXh7dj17aJC/VqAWJM/S/e3vci16Il64jeDhg
+	34HrugzYOPKzyf/lqoYHg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1715985844; x=
-	1716072244; bh=YkNH9UmdI00+6TF86KxexTrZ0A1ZnZI2cRgBC770hMU=; b=d
-	QvW2YoCrK9eJLl57PbjiWR/z0SbskAR2jcKJV7Yw02UxXyrwgd+OGunxKQrvOugQ
-	Z4JT4f/agUMK7uzmD1pPNb8kIr8w70YD/how97LvUlatzv0OhMlgeW/q58LWeMp5
-	BWn2bPWRtG1RMZBVOyDEUWS2Gqm7A8u22vB6OyW8msj8nVWy3Ce6t0tR3u+0YYVc
-	ZLJ5lLPGbNtI7BFRtsOPg/msa5ir4MFX+lU6gbdInmdNk+aQCGyTseJ/1LJe7OwK
-	Cz3oxyp0UJGBY1PpK5XCIkVP2QlyDJZgkSExlVRI4/zxnjlM83c3bQhCiZHImbyl
-	z2KIv7e7OZDFfZ+SLeo6A==
-X-ME-Sender: <xms:s91HZkzuuvcqFKJTKBACQpR3DAnA-18F6JhFOJ4-6ppOCOhBHAeTwg>
-    <xme:s91HZoTatUrIRMAo6aGEyMU363kbu0w7yzHmDvTB_Hpeys0iQwq_U0EMk1-i2SwPZ
-    Sb2bjdYuYtXkPdwx0k>
-X-ME-Received: <xmr:s91HZmX60BJcOThRxVzu05HIvMHk5BnGK6bBtP-y3NSV-sHXSjP7BcAnzKpUhvrNGdEWSQHcEbg2vq7B3SpJ6N5Z6HRrzQl->
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdehhedgudefucetufdoteggodetrfdotf
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1715985866; x=
+	1716072266; bh=ophfuI0pldy6rb1ZeywejXaBasnIE+4VwXup8tD4W3A=; b=P
+	Vvv3a/gCvQAs4OzG2vRlb7V4swceXLWg8RhrAQ9jo+8osq54rQ3zBsXpQyXjt6q4
+	3p7ham450d+krzfipF3q0aydprZYA+8NDLlFbtiO8dgdjEQ5Bz9lTMUHxx1RmOBu
+	oUceGnaCuOqQAsTrVlIV9G+N7x5HMKpqAYWla1a6B7U9qheMVnT5hVv2YhNecVLt
+	2e/3HgfkzD2Iv9TnIUO3LbIaLuIBdbV1XlsMHMjW/BhHABZSku7ffuiTSmLSfVa6
+	aFUN01DFXNepp/WNx4UF4d5mr23gPWwWTszkGQx0thu1qTYk9tdfeW8k2+cwBx6Y
+	p63Yj5dG1KF6feanbzTvw==
+X-ME-Sender: <xms:yt1HZunOF-Q9VoBD2OaZFAcwg-lEj_CgnKod855WvRJsx3DfsiNoUQ>
+    <xme:yt1HZl2LypbSD1zUCOTeQP7vlz4GyA48mnJk3H9-N_GHLcQNGZZ_m91e4MAkV2mc-
+    4DIKiG2KS9A8aNUvSU>
+X-ME-Received: <xmr:yt1HZso8j0RKQRW5zFsDNqmEjDXkPi4rhUlpSxewwmb6CUo4TqTD_M8GLd31ZDjycUXSeC8flT04naqrPDhy7ZB93qslTQ8w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdehhedgudegucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
     goteeftdduqddtudculdduhedmnecujfgurhephffvvefufffkofgjfhgggfestdekredt
@@ -72,14 +72,14 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdehhedgudefucetufdoteggod
     hnuggvnhhordgtrgeqnecuggftrfgrthhtvghrnheplefhieffkedtledugfetgfegfeeh
     hfethffhffeuvefhtdekvdeikeehleejieetnecuvehluhhsthgvrhfuihiivgeptdenuc
     frrghrrghmpehmrghilhhfrhhomheplhhsrghntghhvgeslhihnhguvghnohdrtggr
-X-ME-Proxy: <xmx:s91HZijH8HN1xu3hfAsHGBYkzT6zsyLJULyBycLe84BVPpTD7_jreQ>
-    <xmx:s91HZmCAljXgfuz3eOpiIpvl6gSEHqTKPD1ELVCPGXGR3s_VbFwfgA>
-    <xmx:s91HZjKF0SHTLIgwnsGENB678tIFnv7xxLqCEf8xNguABInogrHeTg>
-    <xmx:s91HZtAzljx_LhQTkjl-TmuNPl1azg7LJ603aTcUY9228XMHb8zkFA>
-    <xmx:tN1HZgxpHVOtksRVj05o1kksV7ZZokMipHSyQLHj2oKG5OsjucsXIMXm>
+X-ME-Proxy: <xmx:yt1HZinKtVxPjyi8I9r8CLqMsSEACIv2uwMTOBEZI1VFO3dDWd3lyw>
+    <xmx:yt1HZs2tF_WNNIPZq7TOYFu7neqI_WiXGfd2oX2q8bjQ58u6iibXwQ>
+    <xmx:yt1HZpvKHSHJDwQzZeH0ev01s7nHT5kkmN7ga3ctOOav0_gRGOzXMw>
+    <xmx:yt1HZoUXOIHd5oErJwAjZqGBkL5xg6guHPqLAtNybWGAu6NrW0JHng>
+    <xmx:yt1HZlE-ZHUprlh1GEy92wV52DLZ1ZybEY54nk2mxrxyqHPckfwGKDd6>
 Feedback-ID: i1719461a:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 17 May 2024 18:44:03 -0400 (EDT)
+ 17 May 2024 18:44:26 -0400 (EDT)
 From: Lyndon Sanche <lsanche@lyndeno.ca>
 To: lsanche@lyndeno.ca
 Cc: mario.limonciello@amd.com,
@@ -97,9 +97,9 @@ Cc: mario.limonciello@amd.com,
 	linux-kernel@vger.kernel.org,
 	platform-driver-x86@vger.kernel.org,
 	Dell.Client.Kernel@dell.com
-Subject: [PATCH v7 1/3] platform/x86: dell-smbios: Add helper for checking supported class
-Date: Fri, 17 May 2024 16:42:34 -0600
-Message-ID: <20240517224323.10045-2-lsanche@lyndeno.ca>
+Subject: [PATCH v7 2/3] platform/x86: dell-smbios: Move request functions for reuse
+Date: Fri, 17 May 2024 16:42:35 -0600
+Message-ID: <20240517224323.10045-3-lsanche@lyndeno.ca>
 X-Mailer: git-send-email 2.42.0
 In-Reply-To: <20240517224323.10045-1-lsanche@lyndeno.ca>
 References: <20240425172758.67831-1-lsanche@lyndeno.ca>
@@ -112,46 +112,102 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add helper that returns true if smbios command class is supported.
+Move the dell_send_request and dell_fill_request symbols into smbios-base
+so that they can be used in multiple modules.
 
 Signed-off-by: Lyndon Sanche <lsanche@lyndeno.ca>
 ---
- drivers/platform/x86/dell/dell-smbios-base.c | 9 +++++++++
- drivers/platform/x86/dell/dell-smbios.h      | 1 +
- 2 files changed, 10 insertions(+)
+ drivers/platform/x86/dell/dell-laptop.c      | 23 ------------------
+ drivers/platform/x86/dell/dell-smbios-base.c | 25 ++++++++++++++++++++
+ drivers/platform/x86/dell/dell-smbios.h      |  5 ++++
+ 3 files changed, 30 insertions(+), 23 deletions(-)
 
+diff --git a/drivers/platform/x86/dell/dell-laptop.c b/drivers/platform/x86/dell/dell-laptop.c
+index 42f7de2b4522..6552dfe491c6 100644
+--- a/drivers/platform/x86/dell/dell-laptop.c
++++ b/drivers/platform/x86/dell/dell-laptop.c
+@@ -353,29 +353,6 @@ static const struct dmi_system_id dell_quirks[] __initconst = {
+ 	{ }
+ };
+ 
+-static void dell_fill_request(struct calling_interface_buffer *buffer,
+-			       u32 arg0, u32 arg1, u32 arg2, u32 arg3)
+-{
+-	memset(buffer, 0, sizeof(struct calling_interface_buffer));
+-	buffer->input[0] = arg0;
+-	buffer->input[1] = arg1;
+-	buffer->input[2] = arg2;
+-	buffer->input[3] = arg3;
+-}
+-
+-static int dell_send_request(struct calling_interface_buffer *buffer,
+-			     u16 class, u16 select)
+-{
+-	int ret;
+-
+-	buffer->cmd_class = class;
+-	buffer->cmd_select = select;
+-	ret = dell_smbios_call(buffer);
+-	if (ret != 0)
+-		return ret;
+-	return dell_smbios_error(buffer->output[0]);
+-}
+-
+ /*
+  * Derived from information in smbios-wireless-ctl:
+  *
 diff --git a/drivers/platform/x86/dell/dell-smbios-base.c b/drivers/platform/x86/dell/dell-smbios-base.c
-index e61bfaf8b5c4..fbdd12a7cb8d 100644
+index fbdd12a7cb8d..515c454acfe6 100644
 --- a/drivers/platform/x86/dell/dell-smbios-base.c
 +++ b/drivers/platform/x86/dell/dell-smbios-base.c
-@@ -350,6 +350,15 @@ void dell_laptop_call_notifier(unsigned long action, void *data)
+@@ -314,6 +314,31 @@ int dell_smbios_call(struct calling_interface_buffer *buffer)
  }
- EXPORT_SYMBOL_GPL(dell_laptop_call_notifier);
+ EXPORT_SYMBOL_GPL(dell_smbios_call);
  
-+bool dell_smbios_class_is_supported(u16 class)
++void dell_fill_request(struct calling_interface_buffer *buffer,
++			       u32 arg0, u32 arg1, u32 arg2, u32 arg3)
 +{
-+	/* Classes over 30 always unsupported */
-+	if (class > 30)
-+		return false;
-+	return da_supported_commands & (1 << class);
++	memset(buffer, 0, sizeof(struct calling_interface_buffer));
++	buffer->input[0] = arg0;
++	buffer->input[1] = arg1;
++	buffer->input[2] = arg2;
++	buffer->input[3] = arg3;
 +}
-+EXPORT_SYMBOL_GPL(dell_smbios_class_is_supported);
++EXPORT_SYMBOL_GPL(dell_fill_request);
 +
- static void __init parse_da_table(const struct dmi_header *dm)
++int dell_send_request(struct calling_interface_buffer *buffer,
++			     u16 class, u16 select)
++{
++	int ret;
++
++	buffer->cmd_class = class;
++	buffer->cmd_select = select;
++	ret = dell_smbios_call(buffer);
++	if (ret != 0)
++		return ret;
++	return dell_smbios_error(buffer->output[0]);
++}
++EXPORT_SYMBOL_GPL(dell_send_request);
++
+ struct calling_interface_token *dell_smbios_find_token(int tokenid)
  {
- 	/* Final token is a terminator, so we don't want to copy it */
+ 	int i;
 diff --git a/drivers/platform/x86/dell/dell-smbios.h b/drivers/platform/x86/dell/dell-smbios.h
-index eb341bf000c6..756c354b1eef 100644
+index 756c354b1eef..1d6463cca12a 100644
 --- a/drivers/platform/x86/dell/dell-smbios.h
 +++ b/drivers/platform/x86/dell/dell-smbios.h
-@@ -73,6 +73,7 @@ enum dell_laptop_notifier_actions {
- int dell_laptop_register_notifier(struct notifier_block *nb);
- int dell_laptop_unregister_notifier(struct notifier_block *nb);
- void dell_laptop_call_notifier(unsigned long action, void *data);
-+bool dell_smbios_class_is_supported(u16 class);
+@@ -64,6 +64,11 @@ int dell_smbios_call_filter(struct device *d,
+ 	struct calling_interface_buffer *buffer);
+ int dell_smbios_call(struct calling_interface_buffer *buffer);
  
- /* for the supported backends */
- #ifdef CONFIG_DELL_SMBIOS_WMI
++void dell_fill_request(struct calling_interface_buffer *buffer,
++			       u32 arg0, u32 arg1, u32 arg2, u32 arg3);
++int dell_send_request(struct calling_interface_buffer *buffer,
++			     u16 class, u16 select);
++
+ struct calling_interface_token *dell_smbios_find_token(int tokenid);
+ 
+ enum dell_laptop_notifier_actions {
 -- 
 2.42.0
 
